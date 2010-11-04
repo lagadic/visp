@@ -54,8 +54,10 @@
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_XML2
+
 #include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
-#endif
+
+#include <visp/vpXmlParser.h>
 #include <visp/vpMe.h>
 #include <visp/vpCameraParameters.h>
 
@@ -63,102 +65,67 @@
 
 /*!
   \class vpMbtXmlParser
-
   \ingroup ModelBasedTracking
 
+  Data parser for the model based tracker.
+
  */
-class VISP_EXPORT vpMbtXmlParser
+class VISP_EXPORT vpMbtXmlParser: public vpXmlParser
 {
-private:
-    vpMe ecm;
-    vpCameraParameters cam;
+protected:
+  //! Moving edges parameters.
+  vpMe m_ecm;
+  //! Camera parameters.
+  vpCameraParameters cam;
+    
+  typedef enum{
+    conf,
+    ecm,
+    mask,
+    size,
+    nb_mask,
+    range,
+    tracking,
+    contrast,
+    edge_threshold,
+    mu1,
+    mu2,
+    sample,
+    step,
+    nb_sample,
+    camera,
+    height,
+    width,
+    u0,
+    v0,
+    px,
+    py
+  } dataToParse;
 
 
 public:
 
-/* --- CODE XML ------------------------------------------------------------ */
-enum CodeXml
-{
- CODE_XML_AUTRE,
- CODE_XML_ECM,
- CODE_XML_MASK,
- CODE_XML_SIZE,
- CODE_XML_NB_MASK,
- CODE_XML_RANGE,
- CODE_XML_INIT,
- CODE_XML_TRACKING	,
- CODE_XML_CONTRAST	,
- CODE_XML_EDGE_THRESHOLD,
- CODE_XML_MU1				,
- CODE_XML_MU2			,
- CODE_XML_SAMPLE	,
- CODE_XML_STEP		,
- CODE_XML_NB_SAMPLE,
- CODE_XML_CAMERA		,
- CODE_XML_HEIGHT		,
- CODE_XML_WIDTH			,
- CODE_XML_U0		,
- CODE_XML_V0		,
- CODE_XML_PX		,
- CODE_XML_PY		
-};
+	vpMbtXmlParser();
+	virtual ~vpMbtXmlParser();
 
+	void parse(const char * filename);
 
-enum CodeSequence
-{
-	SEQUENCE_OK    ,
-	SEQUENCE_ERROR
-};
+	void readMainClass(xmlDocPtr doc, xmlNodePtr node);
+	void writeMainClass(xmlNodePtr node);
 
-public:
-
-
-
-#ifdef VISP_HAVE_XML2
-void
-myXmlReadIntChild (xmlDocPtr doc,
-		   xmlNodePtr node,
-		   int &res,
-		   int &code_erreur);
-
-void
-myXmlReadDoubleChild (xmlDocPtr doc,
-		     xmlNodePtr node,
-		     double &res,
-		     int &code_erreur);
-
-void
-myXmlReadCharChild (xmlDocPtr doc,
-		   xmlNodePtr node,
-		   char **res);
-#endif
-
-private:
-
-
-int
-code_str_to_int (char * str, int & res);
-
-public:
-
-	vpMbtXmlParser(){}
-
-	~vpMbtXmlParser();
-
-#ifdef VISP_HAVE_XML2
-	int Parse(const char * filename);
-	int lecture (xmlDocPtr doc, xmlNodePtr node);
-
-	int lecture_ecm (xmlDocPtr doc, xmlNodePtr node);
-	int lecture_sample (xmlDocPtr doc, xmlNodePtr node);
-	int lecture_camera (xmlDocPtr doc, xmlNodePtr node);
-	int lecture_mask (xmlDocPtr doc, xmlNodePtr node);
-	int lecture_range (xmlDocPtr doc, xmlNodePtr node);
-	int lecture_contrast (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_ecm (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_sample (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_camera (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_mask (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_range (xmlDocPtr doc, xmlNodePtr node);
+	void lecture_contrast (xmlDocPtr doc, xmlNodePtr node);
 #endif
 	
 	void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
-	void getMe(vpMe& _ecm) const { _ecm = this->ecm;}
+	void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
+	
+protected:
+  void init();
 
 };
 

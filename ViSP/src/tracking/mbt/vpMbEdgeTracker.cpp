@@ -646,9 +646,11 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
-
-  if(xmlp.Parse(filename)!=vpMbtXmlParser::SEQUENCE_OK)
-  {
+  
+  try{
+    xmlp.parse(filename);
+  }
+  catch(...){
     vpERROR_TRACE("Can't open XML file \"%s\"\n ",filename);
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }

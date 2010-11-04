@@ -51,675 +51,452 @@
 
 #include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
 #include <iostream>
+#include <map>
 
-/* -------------------------------------------------------------------------- */
-/* --- LABEL XML ------------------------------------------------------------ */
-/* -------------------------------------------------------------------------- */
-
-// Remarque : CODE_XML_XXX sont definis dans la classe
-
-#define LABEL_XML_ECM												"ecm"
-#define LABEL_XML_MASK											"mask"
-#define LABEL_XML_SIZE											"size"
-#define LABEL_XML_NB_MASK										"nb_mask"
-#define LABEL_XML_RANGE											"range"
-#define LABEL_XML_INIT											"init"
-#define LABEL_XML_TRACKING									"tracking"
-#define LABEL_XML_CONTRAST									"contrast"
-#define LABEL_XML_EDGE_THRESHOLD						"edge_threshold"
-#define LABEL_XML_MU1												"mu1"
-#define LABEL_XML_MU2												"mu2"
-#define LABEL_XML_SAMPLE										"sample"
-#define LABEL_XML_STEP											"step"
-#define LABEL_XML_NB_SAMPLE									"nb_sample"
-#define LABEL_XML_CAMERA										"camera"
-#define LABEL_XML_HEIGHT										"height"
-#define LABEL_XML_WIDTH											"width"
-#define LABEL_XML_U0												"u0"
-#define LABEL_XML_V0								 				"v0"
-#define LABEL_XML_PX												"px"
-#define LABEL_XML_PY												"py"
-
-vpMbtXmlParser::
-~vpMbtXmlParser()
-{
-}
-
-int vpMbtXmlParser::
-Parse(const char * filename)
-{
-	xmlDocPtr doc;
-	xmlNodePtr node;
-
-
-	doc = xmlParseFile(filename);
-	if (doc == NULL)
-	{
-		return SEQUENCE_ERROR;
-	}
-
-	node = xmlDocGetRootElement(doc);
-	if (node == NULL)
-	{
-		xmlFreeDoc(doc);
-		return SEQUENCE_ERROR;
-	}
-
-	this ->lecture (doc, node);
-
-	xmlFreeDoc(doc);
-
-	return SEQUENCE_OK;
-}
-
-
-void vpMbtXmlParser::
-myXmlReadCharChild (xmlDocPtr doc,
-		xmlNodePtr node,
-		char **res)
-{
-	xmlNodePtr cur;
-
-	cur = node ->xmlChildrenNode;
-
-	*res = (char *)	xmlNodeListGetString(doc, cur, 1);
-
-	return ;
-} /* myXmlReadCharChild () */
-
-
-/* Lit un champs du fichier XML en integer
- * INPUT:
- *   - doc, node: l'arbre XML.
- *   - res: variable ou placer le resultat.
- *   - code_erreur: place a SEQUENCE_ERROR si erreur.
- */
-void vpMbtXmlParser::
-myXmlReadIntChild (xmlDocPtr doc,
-		xmlNodePtr node,
-		int &res,
-		int &code_erreur)
-{
-	char * val_char;
-	char * control_convert;
-	int val_int;
-	xmlNodePtr cur;
-
-	cur = node ->xmlChildrenNode;
-
-	val_char = (char *)	xmlNodeListGetString(doc, cur, 1);
-	val_int = strtol ((char *)val_char, &control_convert, 10);
-
-	if (val_char == control_convert)
-	{
-		val_int = 0;
-		code_erreur = SEQUENCE_ERROR;
-	}
-
-	xmlFree(val_char);
-	res = val_int;
-	return ;
-} /* myXmlReadIntChild () */
-
-/* Lit un champs du fichier XML en integer
- * INPUT:
- *   - doc, node: l'arbre XML.
- *   - res: variable ou placer le resultat.
- *   - code_erreur: place a SEQUENCE_ERROR si erreur.
- */
-void vpMbtXmlParser::
-myXmlReadDoubleChild (xmlDocPtr doc,
-		xmlNodePtr node,
-		double &res,
-		int &code_erreur)
-{
-	char * val_char;
-	char * control_convert;
-	double val_double;
-	xmlNodePtr cur;
-
-	cur = node ->xmlChildrenNode;
-
-	val_char = (char *)	xmlNodeListGetString(doc, cur, 1);
-	val_double = strtod ((char *)val_char, &control_convert);
-
-	if (val_char == control_convert)
-	{
-		val_double = 0;
-		code_erreur = SEQUENCE_ERROR;
-	}
-
-	xmlFree(val_char);
-	res = val_double;
-	return ;
-} /* myXmlReaddoubleChild () */
-
-
-/* Lecture des parametres a partir d'un fichier XML.
- * INPUT:
- *   - doc: document XML.
- *   - node: arbre XML, pointant sur un marqueur equipement.
- * OUTPUT:
- *   - code d'erreur.
- */
-int vpMbtXmlParser::
-lecture (xmlDocPtr doc, xmlNodePtr node)
-{
-	int prop;
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_ECM:
-
-			this ->lecture_ecm (doc, node);
-			break;
-
-		case CODE_XML_SAMPLE:
-
-			this ->lecture_sample (doc, node);
-			break;
-
-		case CODE_XML_CAMERA:
-
-			this ->lecture_camera (doc, node);
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-	}
-
-	return retour;
-}
-
-int vpMbtXmlParser::
-lecture_ecm (xmlDocPtr doc, xmlNodePtr node)
-{
-	int prop;
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_MASK:
-
-			this ->lecture_mask (doc, node);
-			break;
-		case CODE_XML_RANGE:
-
-			this ->lecture_range (doc, node);
-			break;
-		case CODE_XML_CONTRAST:
-
-			this ->lecture_contrast (doc, node);
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-	}
-
-	return retour;
-}
-
-int vpMbtXmlParser::
-lecture_sample (xmlDocPtr doc, xmlNodePtr node)
-{
-	int prop;
-	/* Compteur du nombre de parametres lus. */
-	int nb = 0;
-	/* Valeur lue dans le XML. */
-	int val;
-
-	int stp = this->ecm.sample_step;
-	int nb_sample = this->ecm.ntotal_sample;
-
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_STEP:
-
-			myXmlReadIntChild (doc, node, val, retour);
-			stp=val;nb++;
-			break;
-
-		case CODE_XML_NB_SAMPLE:
-
-			myXmlReadIntChild (doc, node, val, retour);
-			nb_sample = val;nb++;
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-
-	}
-
+/*!
+  Default constructor. 
   
-	this->ecm.sample_step = stp;
-	this->ecm.ntotal_sample = nb_sample;
+*/
+vpMbtXmlParser::vpMbtXmlParser()
+{
+  init();
+}
 
-	std::cout <<"**** sample:\n";
-	std::cout <<"sample_step "<< this->ecm.sample_step<<std::endl;
-	std::cout <<"n_total_sample "<< this->ecm.ntotal_sample<<std::endl;
+/*!
+  Default destructor.
+*/
+vpMbtXmlParser::~vpMbtXmlParser()
+{
+}
 
-	if (nb != 2)
-	{
+/*!
+  Initialise internal variables (including the map).
+*/
+void 
+vpMbtXmlParser::init()
+{
+  setMainTag("conf");
+
+  nodeMap["conf"] = conf;
+  nodeMap["ecm"] = ecm;
+  nodeMap["mask"] = mask;
+  nodeMap["size"] = size;
+  nodeMap["nb_mask"] = nb_mask;
+  nodeMap["range"] = range;
+  nodeMap["tracking"] = tracking;
+  nodeMap["contrast"] = contrast;
+  nodeMap["edge_threshold"] = edge_threshold;
+  nodeMap["mu1"] = mu1;
+  nodeMap["mu2"] = mu2;
+  nodeMap["sample"] = sample;
+  nodeMap["step"] = step;
+  nodeMap["nb_sample"] = nb_sample;
+  nodeMap["camera"] = camera;
+  nodeMap["height"] = height;
+  nodeMap["width"] = width;
+  nodeMap["u0"] = u0;
+  nodeMap["v0"] = v0;
+  nodeMap["px"] = px;
+  nodeMap["py"] = py;
+  
+}
+
+/*!
+  Parse the file in parameters.
+  This method is deprecated, use parse() instead.
+  
+  \paran filename : File to parse.
+*/
+void
+vpMbtXmlParser::parse(const char * filename)
+{
+  std::string file = filename;
+  vpXmlParser::parse(file);
+}
+
+/*!
+  Write info to file.
+  
+  \waning Useless, so not yet implemented => Throw exception.
+*/
+void 
+vpMbtXmlParser::writeMainClass(xmlNodePtr node)
+{
+  throw vpException(vpException::notImplementedError, "Not yet implemented." );
+}
+
+/*!
+  Read the parameters of the class from the file given by its document pointer 
+  and by its root node. 
+  
+  \param doc : Document to parse.
+  \param node : Root node. 
+*/
+void
+vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
+{
+    // current data values.
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case ecm:{
+          this->lecture_ecm (doc, dataNode);
+          nb++;
+          }break;
+        case sample:{
+          this->lecture_sample (doc, dataNode);
+          nb++;
+          }break;
+        case camera:{
+          this->lecture_camera (doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  if(nb != 3){
+		std::cout <<"ERROR in 'ECM' field:\n";
+		std::cout << "it must contain 3 parameters\n";
+    throw vpException(vpException::fatalError, "Bad number of data to extract ECM informations.");
+	}
+}
+
+
+/*!
+  Read ecm informations.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the ecm informations.
+*/
+void 
+vpMbtXmlParser::lecture_ecm (xmlDocPtr doc, xmlNodePtr node)
+{
+    // current data values.
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case mask:{
+          this->lecture_mask (doc, dataNode);
+          nb++;
+          }break;
+        case range:{
+          this->lecture_range (doc, dataNode);
+          nb++;
+          }break;
+        case contrast:{
+          this->lecture_contrast (doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_ecm : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  if(nb != 3){
+		std::cout <<"ERROR in 'ECM' field:\n";
+		std::cout << "it must contain 3 parameters\n";
+    throw vpException(vpException::fatalError, "Bad number of data to extract ECM informations.");
+	}
+}
+
+/*!
+  Read sample informations.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the sample informations.
+*/
+void 
+vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
+{
+    // current data values.
+	int d_stp = this->m_ecm.sample_step;
+	int d_nb_sample = this->m_ecm.ntotal_sample;
+	
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case step:{
+          d_stp = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        case nb_sample:{
+          d_nb_sample = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  if(nb == 2){
+	  this->m_ecm.sample_step = d_stp;
+	  this->m_ecm.ntotal_sample = d_nb_sample;
+
+	  std::cout <<"**** sample:\n";
+	  std::cout <<"sample_step "<< this->m_ecm.sample_step<<std::endl;
+	  std::cout <<"n_total_sample "<< this->m_ecm.ntotal_sample<<std::endl;
+  }
+	else{
 		std::cout <<"ERROR in 'sample' field:\n";
 		std::cout << "it must contain 2 parameters\n";
-
-		return SEQUENCE_ERROR;
+    throw vpException(vpException::fatalError, "Bad number of data to extract sample informations.");
 	}
-
-	return retour;
 }
 
-int vpMbtXmlParser::
-lecture_camera (xmlDocPtr doc, xmlNodePtr node)
+/*!
+  Read camera informations.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the camera informations.
+*/
+void 
+vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
 {
-	int prop;
-	/* Compteur du nombre de parametres lus. */
-	int nb = 0;
-	/* Valeur lue dans le XML. */
-	int val;
-	double vald;
+    // current data values.
+	int d_height=0 ;
+	int d_width= 0 ;
+	double d_u0 = this->cam.get_u0();
+	double d_v0 = this->cam.get_v0();
+	double d_px = this->cam.get_px();
+	double d_py = this->cam.get_py();
+	
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case height:{
+          d_height = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        case width:{
+          d_width = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        case u0:{
+          d_u0 = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        case v0:{
+          d_v0 = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        case px:{
+          d_px = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        case py:{
+          d_py = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
 
-	int height=0 ;
-	int width= 0 ;
-	double u0 = this->cam.get_u0();
-	double v0 = this->cam.get_v0();
-	double px = this->cam.get_px();
-	double py = this->cam.get_py();
+  if(nb == 6){
+	  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
 
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_WIDTH:
-			myXmlReadIntChild (doc, node, val, retour);
-			width=val;nb++;
-			break;
-		case CODE_XML_HEIGHT:
-			myXmlReadIntChild (doc, node, val, retour);
-			height = val;nb++;
-			break;
-
-		case CODE_XML_U0:
-			myXmlReadDoubleChild (doc, node, vald, retour);
-			u0=vald;nb++;
-			break;
-		case CODE_XML_V0:
-			myXmlReadDoubleChild (doc, node, vald, retour);
-			v0 = vald;nb++;
-			break;
-			
-		case CODE_XML_PX:
-			myXmlReadDoubleChild (doc, node, vald, retour);
-			px = vald;nb++;
-			break;
-		case CODE_XML_PY:
-			myXmlReadDoubleChild (doc, node, vald, retour);
-			py = vald;nb++;
-			break;
-			
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-
-	}
-
-
-
-	this->cam.initPersProjWithoutDistortion(px, py, u0, v0) ;
-
-	std::cout <<"**** camera: \n"<<nb <<std::endl;
-	std::cout << "u0 "<< this->cam.get_u0() <<std::endl;
-	std::cout << "v0 "<< this->cam.get_v0() <<std::endl;
-	std::cout << "px "<< this->cam.get_px() <<std::endl;
-	std::cout << "py "<< this->cam.get_py() <<std::endl;
-
-	if (nb != 6){
+	  std::cout <<"**** camera: \n"<<nb <<std::endl;
+	  std::cout << "u0 "<< this->cam.get_u0() <<std::endl;
+	  std::cout << "v0 "<< this->cam.get_v0() <<std::endl;
+	  std::cout << "px "<< this->cam.get_px() <<std::endl;
+	  std::cout << "py "<< this->cam.get_py() <<std::endl;
+  }
+	else{
 		std::cout <<"ERROR in 'camera' field:\n";
-		std::cout << "it must contain 6 parameters\n";
-
-		return SEQUENCE_ERROR;
+		std::cout << "it must contain  6 parameters\n";
+    throw vpException(vpException::fatalError, "Bad number of data to extract camera informations.");
 	}
-
-	return retour;
 }
 
-
-int vpMbtXmlParser::
-lecture_mask (xmlDocPtr doc, xmlNodePtr node)
+/*!
+  Read mask informations for the vpMeSite.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the mask informations.
+*/
+void 
+vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
 {
-	int prop;
-	/* Compteur du nombre de parametres lus. */
-	int nb = 0;
-	/* Valeur lue dans le XML. */
-	int val;
+    // current data values.
+	int d_size = this->m_ecm.mask_size;
+	int d_nb_mask = this->m_ecm.n_mask;
+	
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case size:{
+          d_size = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        case nb_mask:{
+          d_nb_mask = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_mask : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
 
-	int size = this->ecm.mask_size;
-	int nb_mask = this->ecm.n_mask;
-
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_SIZE:
-
-			myXmlReadIntChild (doc, node, val, retour);
-			size=val;nb++;
-			break;
-
-		case CODE_XML_NB_MASK:
-
-			myXmlReadIntChild (doc, node, val, retour);
-			nb_mask = val;nb++;
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-
-	}
-
-
-	this->ecm.mask_size=size;
-	this->ecm.n_mask=nb_mask;
-
-	this->ecm.setMaskSize(size) ;
-	this->ecm.setMaskNumber(nb_mask);
-
-	std::cout << "**** mask:\n";
-	std::cout << "size "<< this->ecm.mask_size<<std::endl;
-	std::cout << "nb_mask "<< this->ecm.n_mask<<std::endl;
-
-	if (nb != 2){
+  if(nb == 2){
+	  this->m_ecm.setMaskSize(d_size) ;
+	  this->m_ecm.setMaskNumber(d_nb_mask);
+	
+	  std::cout << "**** mask:\n";
+	  std::cout << "size "<< this->m_ecm.mask_size<<std::endl;
+	  std::cout << "nb_mask "<< this->m_ecm.n_mask<<std::endl;
+  }
+	else{
 		std::cout <<"ERROR in 'mask' field:\n";
 		std::cout << "it must contain  2 parameters\n";
-
-		return SEQUENCE_ERROR;
+    throw vpException(vpException::fatalError, "Bad number of data to extract mask informations.");
 	}
-	return retour;
 }
 
-int vpMbtXmlParser::
-lecture_range (xmlDocPtr doc, xmlNodePtr node)
+/*!
+  Read range informations for the vpMeSite.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the range informations.
+*/
+void 
+vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
 {
-	int prop;
-	/* Compteur du nombre de parametres lus. */
-	int nb = 0;
-	/* Valeur lue dans le XML. */
-	int val;
-
-	int tracking = this->ecm.range;
-
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_TRACKING:
-
-			myXmlReadIntChild (doc, node, val, retour);
-			tracking = val;nb++;
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-
-	}
+    // current data values.
+	int m_range_tracking = this->m_ecm.range;
 	
-	this->ecm.range = tracking;
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case tracking:{
+          m_range_tracking = xmlReadIntChild(doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_range : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
 
-	std::cout <<"**** range:\n";
-	std::cout <<"tracking "<< this->ecm.range<<std::endl;
-	if (nb != 1){
+  if(nb == 1){
+	  this->m_ecm.range = m_range_tracking;
+	  std::cout <<"**** range:\n";
+	  std::cout <<"tracking "<< this->m_ecm.range<<std::endl;
+  }
+	else{
 		std::cout <<"ERROR in 'range' field:\n";
 		std::cout << "it must contain  1 parameters\n";
-
-		return SEQUENCE_ERROR;
+    throw vpException(vpException::fatalError, "Bad number of data to extract range informations.");
 	}
-
-	return retour;
 }
 
-int vpMbtXmlParser::
-lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
+
+/*!
+  Read the contrast informations from the xml file.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the contrast informations.
+*/
+void
+vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
 {
-	int prop;
-	/* Compteur du nombre de parametres lus. */
-	int nb = 0;
-	/* Valeur lue dans le XML. */
-	double val;
+    // current data values.
+	double d_edge_threshold = this->m_ecm.threshold;
+	double d_mu1 = this->m_ecm.mu1;
+	double d_mu2 = this->m_ecm.mu2;
+	
+	unsigned int nb=0;
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case edge_threshold:{
+          d_edge_threshold = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        case mu1:{
+          d_mu1 = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        case mu2:{
+          d_mu2 = xmlReadDoubleChild(doc, dataNode);
+          nb++;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in lecture_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
 
-	double edge_threshold = this->ecm.threshold;
-	double mu1 = this->ecm.mu1;
-	double mu2 = this->ecm.mu2;
+  if(nb == 3){
+	  this->m_ecm.mu1 = d_mu1;
+	  this->m_ecm.mu2 = d_mu2;
+	  this->m_ecm.threshold = d_edge_threshold;
 
-	int retour = SEQUENCE_OK;
-
-	for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
-	{
-		if (node->type != XML_ELEMENT_NODE) continue;
-		if (SEQUENCE_OK != code_str_to_int ((char*)(node ->name), prop))
-		{
-
-			prop = CODE_XML_AUTRE;
-			retour = SEQUENCE_ERROR;
-		}
-
-		switch (prop)
-		{
-		case CODE_XML_EDGE_THRESHOLD:
-
-			myXmlReadDoubleChild (doc, node, val, retour);
-			edge_threshold=val;nb++;
-			break;
-
-		case CODE_XML_MU1:
-
-			myXmlReadDoubleChild (doc, node, val, retour);
-			mu1=val;nb++;
-			break;
-
-		case CODE_XML_MU2:
-
-			myXmlReadDoubleChild (doc, node, val, retour);
-			mu2= val;nb++;
-			break;
-
-		default:
-			retour = SEQUENCE_ERROR;
-			break;
-		}
-
-	}
-
-	this->ecm.mu1 = mu1;
-	this->ecm.mu2 = mu2;
-	this->ecm.threshold = edge_threshold;
-
-	std::cout <<"**** contrast:\n";
-	std::cout <<"mu1 " << this->ecm.mu1<<std::endl;
-	std::cout <<"mu2 " << this->ecm.mu2<<std::endl;
-	std::cout <<"threshold " << this->ecm.threshold<<std::endl;
-
-	if (nb != 3){
+	  std::cout <<"**** contrast:\n";
+	  std::cout <<"mu1 " << this->m_ecm.mu1<<std::endl;
+	  std::cout <<"mu2 " << this->m_ecm.mu2<<std::endl;
+	  std::cout <<"threshold " << this->m_ecm.threshold<<std::endl;
+  }
+	else{
 		std::cout <<"ERROR in 'contrast' field:\n";
 		std::cout << "it must contain  3 parameters\n";
-
-		return SEQUENCE_ERROR;
+    throw vpException(vpException::fatalError, "Bad number of data to extract contrast informations.");
 	}
-
-
-	return retour;
 }
 
 
-
-int
-vpMbtXmlParser::code_str_to_int (char * str, int & res)
-{
-	int val_int = -1;
-	int retour = vpMbtXmlParser::SEQUENCE_OK;
-
-
-	if (! strcmp (str,  LABEL_XML_ECM))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_ECM;
-	}
-	else if (! strcmp (str,  LABEL_XML_MASK))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_MASK;
-	}
-	else if (! strcmp (str,  LABEL_XML_SIZE))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_SIZE;
-	}
-	else if (! strcmp (str,  LABEL_XML_NB_MASK))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_NB_MASK;
-	}
-	else if (! strcmp (str,  LABEL_XML_RANGE))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_RANGE;
-	}
-	else if (! strcmp (str,  LABEL_XML_INIT))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_INIT;
-	}
-	else if (! strcmp (str,  LABEL_XML_TRACKING))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_TRACKING;
-	}
-	else if (! strcmp (str,  LABEL_XML_CONTRAST))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_CONTRAST;
-	}
-	else if (! strcmp (str,  LABEL_XML_EDGE_THRESHOLD))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_EDGE_THRESHOLD;
-	}
-	else if (! strcmp (str,  LABEL_XML_MU1))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_MU1;
-	}
-	else if (! strcmp (str,  LABEL_XML_MU2))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_MU2;
-	}
-	else if (! strcmp (str,  LABEL_XML_SAMPLE))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_SAMPLE;
-	}
-	else if (! strcmp (str,  LABEL_XML_STEP))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_STEP;
-	}
-	else if (! strcmp (str,  LABEL_XML_NB_SAMPLE))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_NB_SAMPLE;
-	}
-	else if (! strcmp (str,  LABEL_XML_CAMERA))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_CAMERA;
-	}
-	else if (! strcmp (str,  LABEL_XML_HEIGHT))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_HEIGHT;
-	}
-	else if (! strcmp (str,  LABEL_XML_WIDTH))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_WIDTH;
-	}
-	else if (! strcmp (str,  LABEL_XML_U0))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_U0;
-	}
-	else if (! strcmp (str,  LABEL_XML_V0))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_V0;
-	}
-	else if (! strcmp (str,  LABEL_XML_PX))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_PX;
-	}
-	else if (! strcmp (str,  LABEL_XML_PY))
-	{
-		val_int = vpMbtXmlParser::CODE_XML_PY;
-	}
-	else
-	{
-		val_int = vpMbtXmlParser::CODE_XML_AUTRE;
-	}
-	res = val_int;
-
-	return retour;
-}
 #endif
 
 #endif
