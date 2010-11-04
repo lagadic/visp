@@ -216,6 +216,7 @@ IF(UNIX)
 
   MARK_AS_ADVANCED(
     GTK_gdk_LIBRARY
+    GTK_pango_INCLUDE_PATH
     GTK_glib_INCLUDE_PATH
     GTK_glib_LIBRARY
     GTK_glibconfig_INCLUDE_PATH
