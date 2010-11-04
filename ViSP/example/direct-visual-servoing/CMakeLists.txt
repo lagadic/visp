@@ -58,7 +58,7 @@ FOREACH(source ${SOURCE})
 
 ENDFOREACH(source)
 
-ADD_TEST(photometricVisualServoing photometricVisualServoing -d -c)
+ADD_TEST(photometricVisualServoing photometricVisualServoing -d -c -n 20)
 
 
 # customize clean target 
