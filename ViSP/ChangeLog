@@ -6,6 +6,14 @@
                   www: http://www.irisa.fr/lagadic
 
 
+ViSP 2.6.1 (under development)
+  - Build
+     - Set the build type by default to release
+  - Improvements
+     - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now 
+       possible to select a specific camera with its GUID by using setCamera()
+     - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser
+----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
       Change the open source license from QPL to GPL v2
