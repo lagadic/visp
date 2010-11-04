@@ -163,7 +163,7 @@
 
   # FFMpeg depend son Zlib
   FIND_PACKAGE(ZLIB)
-  # FFMpeg depend son Zlib
+  # FFMpeg depend son BZip2
   FIND_PACKAGE(BZip2)
 
   # Try to find if avcodec_decode_video2() is avalaible since 
