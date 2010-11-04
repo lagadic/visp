@@ -1002,6 +1002,7 @@ SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_BICLOPS_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_PTU46_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_CYCAB_FOUND "no")  # for ViSP-third-party.txt
 
 # library for Irisa's Afma4 cylindrical robot
 IF(USE_AFMA4)
