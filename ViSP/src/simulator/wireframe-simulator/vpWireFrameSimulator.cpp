@@ -154,6 +154,7 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   close_source ();
   close_lex ();
   close_keyword ();
+  fclose(fd);
 }
 
 #if defined(VISP_HAVE_COIN)
