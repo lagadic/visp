@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -79,9 +79,10 @@
   - writeMainClass 
   - readMainClass
   
-  These two methods depends on the data to parse.
+  These two methods depends on the data to parse, and must not be directly called
+  (they are called from the parse() and the save() methods). 
   
-  Following is an example of implementation for the document
+  Following is an example of implementation for the document:
   
   \code
   <config>
@@ -97,9 +98,9 @@
   class vpDataParser: public vpXmlParser
   {
   private:
-    int range;
-    int step;
-    int size_filter
+    int m_range;
+    int m_step;
+    int m_size_filter
   public:
     typedef enum{
       config,
@@ -129,48 +130,30 @@
   void 
   vpDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   {
-	  xmlNodePtr tmpNode;
-	
-	  for (tmpNode = node->xmlChildrenNode; tmpNode != NULL;  tmpNode = tmpNode->next)  {
-		  if(tmpNode->type == XML_ELEMENT_NODE){
+    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL;  tmpNode = tmpNode->next)  {
+      if(tmpNode->type == XML_ELEMENT_NODE){
 
-		    std::map<std::string, int>::iterator iter= this->nodeMap.find((char*)tmpNode->name);
-		    if(iter == nodeMap.end()){
-		      continue;
-		    }
-		    switch (iter->second){
-		    case config:{
-	        for (tmpNode = node->xmlChildrenNode; tmpNode != NULL;  tmpNode = tmpNode->next)  {
-		        if(tmpNode->type == XML_ELEMENT_NODE){
+        std::map<std::string, int>::iterator iter= this->nodeMap.find((char*)tmpNode->name);
+        if(iter == nodeMap.end()){
+          continue;
+        }
 
-		          std::map<std::string, int>::iterator iter= this->nodeMap.find((char*)tmpNode->name);
-		          if(iter == nodeMap.end()){
-		            continue;
-		          }
-
-		          switch (iter->second){
-		          case range:
-		          	this->range = xmlReadIntChild(doc, tmpNode);
-		          	break;
-		          case step:
-		          	this->step = xmlReadIntChild(doc, tmpNode);
-		          	break;
-		          case size_filter:
-		          	this->size_filter = xmlReadIntChild(doc, tmpNode);
-		          	break;
-		          default:
-		          	std::cout << "problem in the readMainClass (" << iter->second << " , " << iter->first << " )" << std::endl;
-		          	break;
-		          }
-		        }
-	        }
-		      }break;
-		    default:
-		    	std::cout << "problem in the readMainClass (" << iter->second << " , " << iter->first << " )" << std::endl;
-		    	break;
-		    }
-		  }
-	  }
+        switch (iter->second){
+        case range:
+        	this->m_range = xmlReadIntChild(doc, tmpNode);
+        	break;
+        case step:
+        	this->m_step = xmlReadIntChild(doc, tmpNode);
+        	break;
+        case size_filter:
+        	this->m_size_filter = xmlReadIntChild(doc, tmpNode);
+        	break;
+        default:
+        	std::cout << "problem in the readMainClass (" << iter->second << " , " << iter->first << " )" << std::endl;
+        	break;
+        }
+      }
+    }
   }
   \endcode
   
@@ -183,11 +166,11 @@
   
   \code
   void 
-  vpDataParser::writeMainClass(xmlDocPtr doc, xmlNodePtr node)
+  vpDataParser::writeMainClass(xmlNodePtr node)
   {
-    xmlWriteIntChild(doc, node, range);
-    xmlWriteIntChild(doc, node, step);
-    xmlWriteIntChild(doc, node, size_filter);
+    xmlWriteIntChild(node, "range", m_range);
+    xmlWriteIntChild(node, "step", m_step);
+    xmlWriteIntChild(node, "size_filter", m_size_filter);
   }
   \endcode
     
@@ -265,8 +248,17 @@ public:
     \param _map : the map describing the data to parse
   */
   void setMap(const std::map<std::string, int>& _map){ nodeMap = _map;}
-
   
+  /*!
+    set the name of the main tag
+    
+    The main tag corresponds to the name of the root node 
+    
+    \param tag : name of the root node of the document
+  */
+  inline void setMainTag(const std::string& tag){ main_tag = tag;}
+
+protected:
   /*!
     pure virtual method used to read the document.
     
@@ -289,15 +281,6 @@ public:
     \param node : the root node of the document
   */
   virtual void writeMainClass(xmlNodePtr node)=0;
-  
-  /*!
-    set the name of the main tag
-    
-    The main tag corresponds to the name of the root node 
-    
-    \param tag : name of the root node of the document
-  */
-  inline void setMainTag(const std::string& tag){ main_tag = tag;}
    
 };
 
