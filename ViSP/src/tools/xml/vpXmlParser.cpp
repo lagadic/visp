@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -76,12 +76,15 @@ vpXmlParser::~vpXmlParser()
 /* utilities functions to read/write data from an xml document */
 
 /*!
-  read an array of character. 
+  Read an array of character. 
+  
+  \warning The array of characters is allocated and must be explicitly freed to 
+  avoid memory leak. 
   
   \param doc : The main xml document
   \param node : a pointer to the node to read value
   
-  \return pointer to the array of character
+  \return pointer to an allocated array of character.
 */
 char* 
 vpXmlParser::xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node)
@@ -111,8 +114,10 @@ vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
   val_int = strtol ((char *)val_char, &control_convert, 10);
 
   if (val_char == control_convert){
+    xmlFree((xmlChar*) val_char);
     throw vpException(vpException::ioError, "cannot parse entry to int");
   }
+  xmlFree((xmlChar*) val_char);
 
   return val_int;
 }
@@ -139,9 +144,10 @@ vpXmlParser::xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node)
   val_double = strtod ((char *)val_char, &control_convert);
 
   if (val_char == control_convert){
+    xmlFree((xmlChar*) val_char);
     throw vpException(vpException::ioError, "cannot parse entry to double");
   }
-
+  xmlFree((xmlChar*) val_char);
   return val_double;
 }
 
@@ -256,6 +262,7 @@ vpXmlParser::save(const std::string& filename, const bool append)
   }
   else{
   	if(!append){
+      xmlFreeDoc(doc);
   		remove(filename.c_str());
   		doc = xmlNewDoc ((xmlChar*)"1.0");
   		root_node = xmlNewNode(NULL, (xmlChar*)main_tag.c_str());
