@@ -120,7 +120,7 @@ vpMbtXmlParser::parse(const char * filename)
   \waning Useless, so not yet implemented => Throw exception.
 */
 void 
-vpMbtXmlParser::writeMainClass(xmlNodePtr node)
+vpMbtXmlParser::writeMainClass(xmlNodePtr /*node*/)
 {
   throw vpException(vpException::notImplementedError, "Not yet implemented." );
 }
