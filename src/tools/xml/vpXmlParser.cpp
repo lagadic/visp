@@ -64,12 +64,13 @@ vpXmlParser::vpXmlParser()
 }
 
 /*!
-  Basic destructor 
+  Basic destructor.
+  Call function of the libXml to clean its memory.
   
 */
 vpXmlParser::~vpXmlParser()
 {
-
+  xmlCleanupParser();
 }
 
 
