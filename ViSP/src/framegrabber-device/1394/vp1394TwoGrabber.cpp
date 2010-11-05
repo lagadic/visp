@@ -220,11 +220,13 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
   If multiples cameras are connected on the bus, select the camero to dial
   with.
 
-  \param camera_id : A camera identifier. The value must be comprised
-  between 0 (the first camera) and the number of cameras found on the
-  bus and returned by getNumCameras() minus 1. If two cameras are
-  connected on the bus, setting \e camera to one allows to communicate
-  with the second one.
+  \param camera_id : A camera identifier or GUID. By identifier, we
+  mean a value comprised between 0 (the first camera found on the bus)
+  and the number of cameras found on the bus and returned by
+  getNumCameras() minus 1. If two cameras are connected on the bus,
+  setting \e camera_id to one allows to communicate with the second
+  one. This identifier is not unique. That is why, it is also possible
+  to select a camera by its GUID, which is unique.
 
   \exception vpFrameGrabberException::settingError : If the required camera is
   not reachable.
@@ -295,21 +297,38 @@ int main()
 
 */
 void
-vp1394TwoGrabber::setCamera(unsigned int camera_id)
+vp1394TwoGrabber::setCamera(uint64_t camera_id)
 {
+  // Suppose that if camera_id is a camera GUID, this value is greater
+  // than the number of cameras connected to the bus
   if (camera_id >= num_cameras) {
-    close();
-    vpERROR_TRACE("The required camera %u is not present", camera_id);
-    vpERROR_TRACE("Only %u camera on the bus.", num_cameras);
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-                                   "The required camera is not present") );
+    // Check if camera_id is a camera guid
+    bool is_guid = false;
+    // check if the camera_id is a guid
+    for (int i=0; i< num_cameras; i++) {
+      if (cameras[i]->guid == camera_id) {
+	this->camera_id = i; 
+	is_guid = true;
+	break;
+      }
+    }
+    if (is_guid == false) {
+      close();
+      vpERROR_TRACE("The camera with GUID 0x%x or id %u is not present", 
+		    camera_id, camera_id);
+      vpERROR_TRACE("Only %u camera on the bus.", num_cameras);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				     "The required camera is not present") );
+    }
+  }
+  else {
+    this->camera_id =  camera_id;
   }
 
-  this->camera_id =  camera_id;
-
   // create a pointer to the working camera
-  camera = cameras[camera_id];
+  camera = cameras[this->camera_id];
 }
+
 
 /*!
 
@@ -326,7 +345,7 @@ vp1394TwoGrabber::setCamera(unsigned int camera_id)
 
 */
 void
-vp1394TwoGrabber::getCamera(unsigned int &camera_id)
+vp1394TwoGrabber::getCamera(uint64_t &camera_id)
 {
   if (num_cameras) {
     camera_id = this->camera_id;
@@ -1599,20 +1618,19 @@ vp1394TwoGrabber::close()
 #endif
       }
     }
-    if (camIsOpen != NULL) delete [] camIsOpen;
+    if (camIsOpen != NULL) {
+      delete [] camIsOpen;
+      camIsOpen = NULL;
+    }
 
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-    if (list != NULL){
-      dc1394_camera_free_list (list);
-      list = NULL;
+    if (cameras != NULL) {
+      delete [] cameras;
+      cameras = NULL;
     }
     if (d != NULL) {
       dc1394_free (d);
       d = NULL;
-    }
-    if (cameras != NULL) {
-      delete [] cameras;
-      cameras = NULL;
     }
 
 #elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
@@ -2994,10 +3012,6 @@ void vp1394TwoGrabber::resetBus()
   for (unsigned int i=0;i<num_cameras;i++){
     if (i!=camera_id) dc1394_camera_free(cameras[i]);
   }
-  if (list != NULL){
-    dc1394_camera_free_list (list);
-    list = NULL;
-  }
 
   printf ("Reseting bus...\n");
   dc1394_reset_bus (camera);
@@ -3210,6 +3224,26 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
                                      "The camera does not have a manual mode"));
   } 
 }
+/*!
+
+  Query the actual camera GUID.
+
+  \sa setCamera(), getCamera()
+
+*/
+void
+vp1394TwoGrabber::getGuid(uint64_t & guid)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  guid = camera->guid;
+}
+
 
 /*!
   update the data structure used to record the value of the current camera.

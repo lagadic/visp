@@ -325,7 +325,8 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   virtual ~vp1394TwoGrabber();
 
 
-  void getCamera(unsigned int &camera);
+  void getCamera(uint64_t &camera);
+  void getGuid(uint64_t &guid);
   void getColorCoding(vp1394TwoColorCodingType & coding);
   int  getColorCodingSupported(vp1394TwoVideoModeType videomode,
 			       vpList<vp1394TwoColorCodingType> & codings);
@@ -352,7 +353,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
 
   void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
-  void setCamera(unsigned int camera);
+  void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);
   void setFormat7ROI(unsigned int left=0, unsigned int top=0,
 		     unsigned int width=0, unsigned int height=0);
