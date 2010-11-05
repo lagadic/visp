@@ -99,7 +99,7 @@ public:
   vpMatrix *mask ;
 
   vpMe() ;
-  vpMe(vpMe &me) ;
+  vpMe(const vpMe &me) ;
   virtual ~vpMe() ;
   
   const vpMe& operator=(const vpMe &me);
