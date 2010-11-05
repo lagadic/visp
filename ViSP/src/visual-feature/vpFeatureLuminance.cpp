@@ -32,12 +32,6 @@ using namespace std ;
 void
 vpFeatureLuminance::init()
 {
-    nbParameters = 1;
-    dim_s = 0 ;
-    bord = 10 ;
-    flags = NULL;
-    pixInfo = NULL;
-
     if (flags == NULL)
       flags = new bool[nbParameters];
     for (int i = 0; i < nbParameters; i++) flags[i] = false;
@@ -75,6 +69,12 @@ vpFeatureLuminance::init(int _nbr, int _nbc, double _Z)
 */
 vpFeatureLuminance::vpFeatureLuminance() : vpBasicFeature()
 {
+    nbParameters = 1;
+    dim_s = 0 ;
+    bord = 10 ;
+    flags = NULL;
+    pixInfo = NULL;
+
     init() ;
 }
 
