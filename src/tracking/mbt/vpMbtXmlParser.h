@@ -119,7 +119,6 @@ public:
 	void lecture_mask (xmlDocPtr doc, xmlNodePtr node);
 	void lecture_range (xmlDocPtr doc, xmlNodePtr node);
 	void lecture_contrast (xmlDocPtr doc, xmlNodePtr node);
-#endif
 	
 	void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
 	void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
@@ -128,6 +127,8 @@ protected:
   void init();
 
 };
+
+#endif
 
 #endif
 

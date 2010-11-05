@@ -58,6 +58,8 @@
   
 */
 
+#include <iostream>
+
 #include <visp/vpConfig.h>
 
 #if defined(VISP_HAVE_XML2)
