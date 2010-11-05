@@ -49,7 +49,7 @@
 */
 
 #include <iostream>
-
+#include <string>
 
 
 #include <visp/vpConfig.h>
@@ -59,6 +59,7 @@
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpIoTools.h>
 /*!
   \example test1394TwoGrabber.cpp
 
@@ -71,6 +72,12 @@ main()
   try  {
     std::cout << "IEEE1394 test in progress..." << std::endl;
 
+    // Get the user name
+    std::string username;
+    vpIoTools::getUserName(username);
+    std::string outputpath = "/tmp/" + username;
+    vpIoTools::makeDirectory(outputpath);
+
     // Creation of an empty image container
     vpImage<unsigned char> I;
 
@@ -78,7 +85,8 @@ main()
     vp1394TwoGrabber g;
     for (int i=0;i<10;i++) g.acquire(I);
     g.close();
-    vpImageIo::write(I,"/tmp/$USER/imagetest1.pgm");
+    std::string filename = outputpath + "/imagetest1.pgm";
+    vpImageIo::write(I, filename);
 
     std::cout << "New connection..."<< std::endl;
     g.open(I);
@@ -89,7 +97,8 @@ main()
     //g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422);
     g.acquire(I);
     g.close();
-    vpImageIo::write(I,"/tmp/$USER/imagetest2.pgm");
+    filename = outputpath + "/imagetest2.pgm";
+    vpImageIo::write(I, filename);
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
