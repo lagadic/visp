@@ -83,9 +83,30 @@ main()
 
     // Creation of a framegrabber
     vp1394TwoGrabber g;
+    uint64_t guid;
+
+    // Get the number of cameras connected on the bus
+    unsigned int ncameras; // Number of cameras on the bus
+    ncameras = g.getNumCameras();
+    for (int i=0; i < ncameras; i++) {
+      g.setCamera(i);
+      g.getGuid(guid);
+      std::cout << "Detected camera with GUID 0x" 
+		<< std::hex << guid << std::endl;
+    }
+    // If more than one camera connected, use the last one
+    if (ncameras > 1) {
+      g.setCamera(ncameras -1);
+      g.getGuid(guid);
+      std::cout << "Use camera with GUID 0x" << std::hex << guid << std::endl;
+      g.setCamera(0); // to be sure that the setCamera() in the next line with guid as parameter works
+      g.setCamera(guid);
+    }
+
     for (int i=0;i<10;i++) g.acquire(I);
     g.close();
     std::string filename = outputpath + "/imagetest1.pgm";
+    std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
 
     std::cout << "New connection..."<< std::endl;
@@ -98,6 +119,7 @@ main()
     g.acquire(I);
     g.close();
     filename = outputpath + "/imagetest2.pgm";
+    std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
   }
   catch (...) {
