@@ -346,6 +346,9 @@ vpMe::initMask()
 
   int i ;
 
+  if (mask != NULL)
+    delete [] mask;
+
   mask = new vpMatrix[n_mask] ;
 
   vpColVector angle(n_mask) ;
@@ -354,7 +357,7 @@ vpMe::initMask()
   angle_pas = 180 / n_mask ;
 
   int k =0 ;
-  for (i = 0 ; i < 180 ; i += angle_pas)
+  for (i = 0 ; /* i < 180, */ k < n_mask ; i += angle_pas)
     angle[k++] = i ;
 
   calcul_masques(angle, mask_size, mask ) ;
@@ -385,8 +388,6 @@ vpMe::print( )
 
 vpMe::vpMe()
 {
-
-
   mask = NULL ;
   threshold = 1500 ;
   mu1 = 0.5 ;
@@ -396,6 +397,8 @@ vpMe::vpMe()
   mask_size = 5 ;
   n_mask = 180 ;
   mask_sign = 0 ;
+  ntotal_sample = 0; // not sure that it is used
+  points_to_track = 500; // not sure that it is used
   anglestep = (180 / n_mask) ;
   strip = 2 ;
   min_samplestep = 4 ;
@@ -404,23 +407,11 @@ vpMe::vpMe()
   initMask() ;
 }
 
-vpMe::vpMe(vpMe &me)
+vpMe::vpMe(const vpMe &me)
 {
   mask = NULL ;
-  threshold = me.threshold ;
-  mu1 = me.mu1 ;
-  mu2 = me.mu2 ;
-  sample_step = me.sample_step ;
-  range = me.range ;
-  mask_size = me.mask_size ;
-  n_mask = me.n_mask ;
-  mask_sign = me.mask_sign ;
-  anglestep = me.anglestep ;
-  strip = me.strip ;
-  min_samplestep = me.min_samplestep ;
-  aberration = me.aberration ;
-  init_aberration = me.init_aberration;
-  initMask() ;
+  
+  *this = me;
 }
 
 const
@@ -433,14 +424,16 @@ vpMe& vpMe::operator=(const vpMe &me)
   threshold = me.threshold ;
   mu1 = me.mu1 ;
   mu2 = me.mu2 ;
-  sample_step = me.sample_step ;
-  range = me.range ;
+  min_samplestep = me.min_samplestep ;
+  anglestep = me.anglestep ;
   mask_size = me.mask_size ;
   n_mask = me.n_mask ;
   mask_sign = me.mask_sign ;
-  anglestep = me.anglestep ;
+  range = me.range ;
+  sample_step = me.sample_step ;
+  ntotal_sample = me.ntotal_sample;
+  points_to_track = me.points_to_track;
   strip = me.strip ;
-  min_samplestep = me.min_samplestep ;
   aberration = me.aberration ;
   init_aberration = me.init_aberration;
   initMask() ;
@@ -451,8 +444,8 @@ vpMe::~vpMe()
 {
   if (mask != NULL)
   {
-    if (mask != NULL)
-      delete []mask ;
+    delete [] mask ;
+    mask = NULL;
   }
 }
 
@@ -464,12 +457,6 @@ vpMe::~vpMe()
 void
 vpMe::setMaskNumber(int a)
 {
-  if (mask != NULL)
-  {
-    for (int i=0 ; i < n_mask ; i++)
-      mask[i].~vpMatrix()  ;
-    if (mask != NULL) delete []mask ;
-  }
   n_mask = a  ;
   anglestep = 180 / a ;
   initMask() ;
@@ -481,13 +468,7 @@ vpMe::setMaskNumber(int a)
 void
 vpMe::setMaskSize(int a)
 {
-  if (mask != NULL)
-  {
-    for (int i=0 ; i < n_mask ; i++)
-	    mask[i].~vpMatrix()  ;
-    if (mask != NULL) delete []mask ;
-  }
-  mask_size =a  ;
+  mask_size = a  ;
   initMask() ;
 }
 
