@@ -460,16 +460,19 @@ main(int argc, const char ** argv)
 	  vpList<vp1394TwoGrabber::vp1394TwoVideoModeType> lmode;
 	  vpList<vp1394TwoGrabber::vp1394TwoFramerateType> lfps;
 	  vpList<vp1394TwoGrabber::vp1394TwoColorCodingType> lcoding;
+	  uint64_t guid;
 
 	  g.getVideoMode(curmode);
 	  g.getFramerate(curfps);
 	  g.getColorCoding(curcoding);
 	  g.getVideoModeSupported(lmode);
+	  g.getGuid(guid);
 
 	  std::cout << "----------------------------------------------------------"
 	       << std::endl
 	       << "---- Video modes and framerates supported by camera "
 	       << i+offset << " ----" << std::endl
+		    << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
 	       << "---- * is for the current settings                    ----"
 	       << std::endl
 	       << "---- between ( ) you have the corresponding option    ----"
