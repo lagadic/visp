@@ -192,8 +192,8 @@ IF(UNIX OR WIN32)
   )
 
   IF(GTK2_gtk_INCLUDE_PATH)
-  IF(GTK2_glibconfig_INCLUDE_PATH)
   IF(GTK2_glib_INCLUDE_PATH)
+  IF(GTK2_glibconfig_INCLUDE_PATH)
   IF(GTK2_gtk_LIBRARY)
   IF(GTK2_glib_LIBRARY)
   IF(GTK2_pango_INCLUDE_PATH)
@@ -203,14 +203,16 @@ IF(UNIX OR WIN32)
 
     SET( GTK2_FOUND "YES" )
     SET( GTK2_INCLUDE_DIR  ${GTK2_gtk_INCLUDE_PATH}
-                           ${GTK2_glibconfig_INCLUDE_PATH}
                            ${GTK2_glib_INCLUDE_PATH} 
+                           ${GTK2_glibconfig_INCLUDE_PATH}
 			   ${GTK2_pango_INCLUDE_PATH}
-			   ${GTK2_gdkconfig_INCLUDE_PATH}
 			   ${GTK2_atk_INCLUDE_PATH})
     IF(GTK2_cairo_INCLUDE_PATH)
-      SET( GTK2_INCLUDE_DIR  ${GTK2_INCLUDE_DIR} ${GTK2_cairo_INCLUDE_PATH} )
+      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_cairo_INCLUDE_PATH} )
     ENDIF(GTK2_cairo_INCLUDE_PATH)
+    IF(GTK2_gdkconfig_INCLUDE_PATH)
+      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_gdkconfig_INCLUDE_PATH} )
+    ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
    
     SET( GTK2_LIBRARIES  ${GTK2_gtk_LIBRARY}
                         ${GTK2_gdk_LIBRARY}
@@ -218,10 +220,10 @@ IF(UNIX OR WIN32)
 			${GTK2_gobject_LIBRARY})
 
     IF(GTK2_gmodule_LIBRARY)
-      SET(GTK2_LIBRARIES ${GTK2_LIBRARIES} ${GTK2_gmodule_LIBRARY})
+      LIST(APPEND GTK2_LIBRARIES ${GTK2_gmodule_LIBRARY})
     ENDIF(GTK2_gmodule_LIBRARY)
     IF(GTK2_gthread_LIBRARY)
-      SET(GTK2_LIBRARIES ${GTK2_LIBRARIES} ${GTK2_gthread_LIBRARY})
+      LIST(APPEND GTK2_LIBRARIES ${GTK2_gthread_LIBRARY})
     ENDIF(GTK2_gthread_LIBRARY)
 
  ELSE(GTK2_atk_INCLUDE_PATH)
@@ -237,12 +239,12 @@ IF(UNIX OR WIN32)
   ELSE(GTK2_gtk_LIBRARY)
        #MESSAGE("Can not find gtk lib")
   ENDIF(GTK2_gtk_LIBRARY)
+  ELSE(GTK2_glibconfig_INCLUDE_PATH) 
+   #MESSAGE("Can not find glibconfig includes")
+  ENDIF(GTK2_glibconfig_INCLUDE_PATH) 
   ELSE(GTK2_glib_INCLUDE_PATH) 
    #MESSAGE("Can not find glib includes")
   ENDIF(GTK2_glib_INCLUDE_PATH) 
-  ELSE(GTK2_glibconfig_INCLUDE_PATH)
-   #MESSAGE("Can not find glibconfig")
-  ENDIF(GTK2_glibconfig_INCLUDE_PATH)
   ELSE(GTK2_gtk_INCLUDE_PATH)
    #MESSAGE("Can not find gtk includes")
   ENDIF(GTK2_gtk_INCLUDE_PATH)
