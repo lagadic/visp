@@ -924,9 +924,7 @@ vpMeLine::track(const vpImage<unsigned char> &I)
   vpCDEBUG(1) <<"end vpMeLine::track()"<<std::endl ;
 }
 
-
-/*!
-	
+/*	
   Compute the two parameters \f$(\rho, \theta)\f$ of the line.
 
   \param I : Image in which the line appears.
@@ -960,48 +958,110 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
     }
   */
   // convention pour choisir le signe de rho
-  int i,j ;
-  i = vpMath::round((PExt[0].ifloat + PExt[1].ifloat )/2) ;
-  j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
-
-  int  end = false ;
+  int nbpt = 5;
+ 
   double incr = 10 ;
 
-  int i1=0,i2=0,j1=0,j2=0 ;
-  unsigned char v1=0,v2=0 ;
-  while (!end)
-    {
-      end = true;
-      /*i1 = (int)(i + a *incr) ;
-      j1 = (int)(j + b *incr) ;*/
-      i1 = (int)(i + cos(theta) *incr) ;
-      j1 = (int)(j + sin(theta) *incr) ;
-      v1 = I[i1][j1] ;
+  int *i = new int [nbpt];
+  int *j = new int [nbpt];
+  int *i1 = new int [nbpt];
+  int *j1 = new int [nbpt];
+  int *i2 = new int [nbpt];
+  int *j2 = new int [nbpt];
+  unsigned char *v1 = new unsigned char [nbpt];
+  unsigned char *v2 = new unsigned char [nbpt];
 
+  int istep = fabs((PExt[0].ifloat - PExt[1].ifloat)/(nbpt+1)); 
 
-      /*i2 = (int)(i - a *incr) ;
-      j2 = (int)(j - b *incr) ;*/
-      i2 = (int)(i - cos(theta) *incr) ;
-      j2 = (int)(j - sin(theta) *incr) ;
-      v2 = I[i2][j2] ;
+  if (istep != 0) {
+ 
 
+  double minExt_i = PExt[0].ifloat;
+  if (PExt[1].ifloat < PExt[0].ifloat)
+    minExt_i = PExt[1].ifloat;
+ 
+  for (int k=0; k < nbpt; k++) {
+      i[k] = vpMath::round(minExt_i + istep*(k+1));
+    j[k] = vpMath::round(-(a*i[k]+c)/b);
 
-      if (abs(v1-v2) < 1)
-      {
-
-	incr-- ;
-	end = false ;
-	if (incr==1)
-	{
-	  std::cout << "In CStraightLine::GetParameters() " ;
-	  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
-	}
-      }
     }
+    
+  }
+  else {
+
+    int istep = fabs((PExt[0].jfloat - PExt[1].jfloat)/(nbpt+1)); 
+    double minExt_j = PExt[0].jfloat;
+    if (PExt[1].jfloat < PExt[0].jfloat)
+      minExt_j = PExt[1].jfloat;
+    
+    for (int k=0; k < nbpt; k++) {
+      j[k] = vpMath::round(minExt_j + istep*(k+1));
+      i[k] = vpMath::round(-(b*j[k]+c)/a);
+
+    }
+  
+  }
+  //  vpDisplay::getClick(I);
+
+  for (int k=0; k < nbpt; k++) {
+    int  end = false ;
+    while (!end)
+      {
+	end = true;
+	/*i1 = (int)(i + a *incr) ;
+	  j1 = (int)(j + b *incr) ;*/
+	i1[k] = (int)(i[k] + cos(theta) *incr) ;
+	j1[k] = (int)(j[k] + sin(theta) *incr) ;
+	v1[k] = I[i1[k]][j1[k]] ;
+
+
+	/*i2 = (int)(i - a *incr) ;
+	  j2 = (int)(j - b *incr) ;*/
+	i2[k] = (int)(i[k] - cos(theta) *incr) ;
+	j2[k] = (int)(j[k] - sin(theta) *incr) ;
+	v2[k] = I[i2[k]][j2[k]] ;
+
+
+	if (abs(v1[k]-v2[k]) < 1)
+	  {
+
+	    incr-- ;
+	    end = false ;
+	    if (incr==1)
+	      {
+		std::cout << "In CStraightLine::GetParameters() " ;
+		std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
+	      }
+	  }
+      }
+  }
+
+
+
+  // majorite l'emporte
+//   unsigned char mv2 = 0, mv1 = 255;
+//   int cpt_v2_gt_v1 = 0; // number of times v2 > v1
+//   for (int k=0; k < nbpt; k++) {
+//     if (v2[k] > v1[k])
+//       cpt_v2_gt_v1 ++;
+//   }
+//   if (cpt_v2_gt_v1 > nbpt/2) {
+//     mv2 = 255;
+//     mv1 = 0;
+//   }
+
+  // moyenne l'emporte
+  double mv2 = 0;
+  double mv1 = 0;
+  for (int k=0; k < nbpt; k++) {
+    mv1 += v1[k];
+    mv2 += v2[k];
+  }
+
 
   if (theta >=0 && theta <= M_PI/2)
   {
-    if (v2 < v1)
+    if (mv2 < mv1)
     {
       theta += M_PI;
       rho *= -1;
@@ -1012,7 +1072,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
   {
     double jinter;
     jinter = -c/b;
-    if (v2 < v1)
+    if (mv2 < mv1)
     {
       theta += M_PI;
       if (jinter > 0)
@@ -1030,20 +1090,37 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
     }
   }
 
-  if (vpDEBUG_ENABLE(2))
-  {
-    vpImagePoint ip, ip1, ip2;
+  if (1)//vpDEBUG_ENABLE(2))
+    {
+      vpImagePoint ip, ip1, ip2;
+      
+      for (int k=0; k < 2; k++) {
+	ip.set_i( PExt[k].ifloat );
+	ip.set_j( PExt[k].jfloat  );
+   
+	vpDisplay::displayCross(I, ip, 15, vpColor::blue,3) ;
+      }
 
-    ip.set_i( i );
-    ip.set_j( j );
-    ip1.set_i( i1 );
-    ip1.set_j( j1 );
-    ip2.set_i( i2 );
-    ip2.set_j( j2 );
+      for (int k=0; k < nbpt; k++) {
 
-    vpDisplay::displayArrow(I, ip, ip1, vpColor::green) ;
-    vpDisplay::displayArrow(I, ip, ip2, vpColor::red) ;
-  }
+	ip.set_i( i[k] );
+	ip.set_j( j[k] );
+	ip1.set_i( i1[k] );
+	ip1.set_j( j1[k] );
+	ip2.set_i( i2[k] );
+	ip2.set_j( j2[k] );
+
+	if (mv1 > mv2) {
+	  vpDisplay::displayArrow(I, ip, ip1, vpColor::blue,3) ;
+	  vpDisplay::displayArrow(I, ip, ip2, vpColor::green,3) ;
+	}
+	else {
+	  vpDisplay::displayArrow(I, ip, ip1, vpColor::green,3) ;
+	  vpDisplay::displayArrow(I, ip, ip2, vpColor::blue,3) ;
+
+	}
+      }
+    }
 }
 
 /*!
