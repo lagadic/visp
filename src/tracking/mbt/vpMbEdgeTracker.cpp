@@ -110,22 +110,9 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
   \param _me : an instance of vpMe containing all the desired parameters
 */
 void
-vpMbEdgeTracker::setMovingEdge(vpMe &_me)
+vpMbEdgeTracker::setMovingEdge(const vpMe &_me)
 {
-  me.setThreshold (_me.threshold);
-  me.setPointsToTrack (_me.points_to_track);
-  me.setAngleStep (_me.anglestep);
-  me.setRange (_me.range);
-  me.setMu1 (_me.mu1);
-  me.setMu2 (_me.mu2);
-  me.setMaskNumber (_me.n_mask);
-  me.setMaskSign (_me.mask_sign);
-  me.setMaskSize (_me.mask_size);
-  me.setSampleStep (_me.sample_step);
-  me.setStrip (_me.strip);
-  me.setMinSamplestep (_me.min_samplestep);
-  me.setAberration (_me.aberration);
-  me.setInitAberration (_me.init_aberration);
+  this->me = _me;
 
   Lline.front() ;
   vpMbtDistanceLine *l ;

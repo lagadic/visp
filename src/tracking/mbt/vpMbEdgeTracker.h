@@ -126,7 +126,7 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   */
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
-  void setMovingEdge(vpMe &_me);
+  void setMovingEdge(const vpMe &_me);
   void loadConfigFile(const std::string& _filename);
   void loadConfigFile(const char* filename);
   void loadModel(const char* cad_name);
