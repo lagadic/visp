@@ -40,9 +40,6 @@
 
 PROJECT(VISP)
 
-#-----------------------------------------------------------------------------
-# CMake 2.3 is required for INSTALL command functionnality
-# ccmake --help-command INSTALL to kwow more are INSTALL command
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
 #-----------------------------------------------------------------------------
@@ -252,6 +249,13 @@ ELSE(GSL_FOUND)
   SET(USE_GSL OFF)
 ENDIF(GSL_FOUND)
 
+FIND_PACKAGE(X11)
+IF(X11_FOUND)
+  OPTION(USE_X11    "Compile ViSP with the X11 library" ON)
+ELSE(X11_FOUND)
+  SET(USE_X11 OFF)
+ENDIF(X11_FOUND)
+
 FIND_PACKAGE(GTK2)
 IF(GTK2_FOUND)
   OPTION(USE_GTK2    "Compile ViSP with the GTK+ library" ON)
@@ -287,7 +291,7 @@ ELSE(FFMPEG_FOUND)
 ENDIF(FFMPEG_FOUND)
 
 # Set other options to default value
-SET(USE_X11        ON) # For Linux/OSX display
+#SET(USE_X11        ON) # For Linux/OSX display
 #SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
 #SET(USE_COIN       ON) # For the simulator
 #SET(USE_SOWIN      ON) # For the simulator viewer
@@ -357,28 +361,24 @@ ENDIF(BIGENDIAN)
 #----------------------------------------------------------------------
 # Unix libraries :  X11, pthread
 #----------------------------------------------------------------------
-# default initialisation
-SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
 
-IF(UNIX)
-  #--------------------------------------------------------------------
-  # X11 lib
-  #--------------------------------------------------------------------
-  IF(USE_X11)
-    FIND_PACKAGE(X11)
-    IF(X11_FOUND)
-      MESSAGE(STATUS "X11 found")
-      SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
-      SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${X11_INCLUDE_DIR})
-      LIST(APPEND VISP_EXTERN_LIBS ${X11_LIBRARIES} -lm)
-      #MESSAGE("X11: ${X11_LIBRARIES}")
-    ELSE(X11_FOUND)
-      MESSAGE(STATUS "X11 not found")
-      SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
-    ENDIF(X11_FOUND)
-  ENDIF(USE_X11)
-ENDIF(UNIX)
+#--------------------------------------------------------------------
+# X11 lib
+#--------------------------------------------------------------------
+IF(USE_X11)
+  IF(X11_FOUND)
+    MESSAGE(STATUS "X11 found")
+    SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${X11_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${X11_LIBRARIES} -lm)
+    #MESSAGE("X11: ${X11_LIBRARIES}")
+  ELSE(X11_FOUND)
+    MESSAGE(STATUS "X11 not found")
+    SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(X11_FOUND)
+ENDIF(USE_X11)
+
 
 #--------------------------------------------------------------------
 # OpenGL, Qt, SoQt and Coin libs
@@ -582,6 +582,7 @@ ENDIF(PARPORT_FOUND)
 # default initialisation
 SET(VISP_HAVE_OPENCV_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
@@ -1463,7 +1464,7 @@ INCLUDE(CPack)
 #----------------------------------------------------------------------
 SUBDIRS(src)
 IF(BUILD_DEMOS)
-SUBDIRS(demo)
+  SUBDIRS(demo)
 ENDIF(BUILD_DEMOS)
 IF(BUILD_EXAMPLES)
   SUBDIRS(example)
