@@ -58,6 +58,7 @@
 
 #include <string>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpXmlParser.h>
 #include <libxml/xmlmemory.h>      /* Functions of libxml.                */
 
 /*!
@@ -175,7 +176,7 @@ int main()
   \endcode
 */
 
-class VISP_EXPORT vpXmlParserCamera
+class VISP_EXPORT vpXmlParserCamera: public vpXmlParser
 {
 
 public:
@@ -318,6 +319,23 @@ private:
 	     const unsigned int subsampling_width = 0,
 	     const unsigned int subsampling_height = 0);
   int write_camera(xmlNodePtr node_camera);
+  
+private:
+
+  /*!
+        
+    \param 2doc : a pointer representing the document
+    \param node : the root node of the document
+  */
+  virtual void readMainClass(xmlDocPtr , xmlNodePtr ){};
+  
+  /*!
+
+    
+    \param node2 : the root node of the document
+  */
+  virtual void writeMainClass(xmlNodePtr ){};
+  
 };
 #endif //VISP_HAVE_XML2
 #endif
