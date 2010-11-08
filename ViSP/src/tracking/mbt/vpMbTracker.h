@@ -105,7 +105,9 @@ protected:
   //! Flag used to ensure that the CAD model is loaded before the initialisation.
   bool modelInitialised;
   //! Flag used to ensure that the camera is set before the initialisation.
-  bool cameraInitialised;
+  bool cameraInitialised;    
+  //! Flag used to specify that the Coin library has been loaded in order to load a vrml model (used to free the memory).
+  bool coinUsed;
 
 public:
   vpMbTracker();
