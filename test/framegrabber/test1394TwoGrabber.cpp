@@ -88,7 +88,7 @@ main()
     // Get the number of cameras connected on the bus
     unsigned int ncameras; // Number of cameras on the bus
     ncameras = g.getNumCameras();
-    for (int i=0; i < ncameras; i++) {
+    for (unsigned int i=0; i < ncameras; i++) {
       g.setCamera(i);
       g.getGuid(guid);
       std::cout << "Detected camera with GUID 0x" 

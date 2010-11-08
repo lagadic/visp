@@ -305,7 +305,7 @@ vp1394TwoGrabber::setCamera(uint64_t camera_id)
     // Check if camera_id is a camera guid
     bool is_guid = false;
     // check if the camera_id is a guid
-    for (int i=0; i< num_cameras; i++) {
+    for (unsigned int i=0; i< num_cameras; i++) {
       if (cameras[i]->guid == camera_id) {
 	this->camera_id = i; 
 	is_guid = true;
