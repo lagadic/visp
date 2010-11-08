@@ -91,6 +91,7 @@ vpMbTracker::vpMbTracker()
 {
   modelInitialised = false;
   cameraInitialised = false;
+  coinUsed = false;
 }
 
 /*!
@@ -99,7 +100,12 @@ vpMbTracker::vpMbTracker()
 */
 vpMbTracker::~vpMbTracker()
 {
-
+#ifdef VISP_HAVE_COIN
+  if(coinUsed){
+    SoDB::finish();
+    coinUsed = false;
+  }
+#endif
 }
 
 
@@ -430,6 +436,7 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
       }
     }
   }
+  coinUsed = true;
 #else
   vpERROR_TRACE("coin not detected with ViSP, cannot load model");
   throw vpException(vpException::fatalError, "coin not detected with ViSP, cannot load model");
