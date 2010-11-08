@@ -239,113 +239,6 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
   return SEQUENCE_OK;
 }
 
-/*!
-  Read a place of the XML file in char*
-
- \param doc : XML file.
- \param node : XML tree, pointing on a marker equipement.
- \param res : variable where to place the result.
-*/
-void
-vpXmlParserCamera::myXmlReadCharChild (xmlDocPtr doc,
-				       xmlNodePtr node,
-				       char **res)
-{
-  xmlNodePtr cur;
-
-  cur = node ->xmlChildrenNode;
-
-  *res = (char *) xmlNodeListGetString(doc, cur, 1);
-
-  return ;
-} /* myXmlReadCharChild () */
-
-
-/*!
-  Read a place of the XML file in integer
-
- \param doc : XML file.
- \param node : XML tree, pointing on a marker equipement.
- \param res : variable where to place the result.
- \param code_error: place a SEQUENCE_ERROR if error.
-*/
-void
-vpXmlParserCamera::myXmlReadIntChild (xmlDocPtr doc,
-				      xmlNodePtr node,
-				      int &res,
-				      vpXmlCodeSequenceType &code_error)
-{
-  char * val_char;
-  char * control_convert;
-  int val_int;
-  xmlNodePtr cur;
-
-  cur = node ->xmlChildrenNode;
-
-  val_char = (char *) xmlNodeListGetString(doc, cur, 1);
-  val_int = strtol ((char *)val_char, &control_convert, 10);
-
-  if (val_char == control_convert)
-  {
-    //  vpERROR_TRACE ("String %s can't be read "
-    //   "as an integer.", val_char);
-    //  vpERROR_TRACE ("Error line %d of the file %s.",
-    //     XML_GET_LINE (node), doc ->name);
-    val_int = 0;
-    code_error = SEQUENCE_ERROR;
-  }
-
-  //  vpDEBUG_TRACE (15, "Prop: \"%s\" -> %d.", val_char, val_int);
-  //  free (val_char);
-
-  res = val_int;
-  //  vpDEBUG_TRACE (25, "# OUTPUT: res = %d, err = %d.", res, code_erreur);
-  return ;
-} /* myXmlReadIntChild () */
-
-/*!
-  Read a place of the XML file in double
-
- \param doc : XML file.
- \param node : XML tree, pointing on a marker equipement.
- \param res : variable where to place the result.
- \param code_error: place a SEQUENCE_ERROR if error.
-*/
-void
-vpXmlParserCamera::myXmlReadDoubleChild (xmlDocPtr doc,
-					 xmlNodePtr node,
-					 double &res,
-					 vpXmlCodeSequenceType &code_error)
-{
-  char * val_char;
-  char * control_convert;
-  double val_double;
-  xmlNodePtr cur;
-
-  //  vpDEBUG_TRACE (25, "# INPUT.");
-
-  cur = node ->xmlChildrenNode;
-
-  val_char = (char *) xmlNodeListGetString(doc, cur, 1);
-  val_double = strtod ((char *)val_char, &control_convert);
-
-  if (val_char == control_convert)
-  {
-    //   vpERROR_TRACE ("String %s can't be read "
-    //     "as a double.", val_char);
-    //   vpERROR_TRACE ("Error line %d of the file %s.",
-    //     XML_GET_LINE (node), doc ->name);
-    val_double = 0;
-    code_error = SEQUENCE_ERROR;
-  }
-
-  //  vpDEBUG_TRACE (15, "Prop: \"%s\" -> %f.", val_char, val_double);
-  //  free (val_char);
-
-  res = val_double;
-  //  vpDEBUG_TRACE (25, "# Output: res = %f, err = %d.", res, code_error);
-  return ;
-} /* myXmlReaddoubleChild () */
 
 
 /*!
@@ -553,10 +446,8 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 				const unsigned int subsampling_width,
 				const unsigned int subsampling_height)
 {
-  char * val_char;
   vpXmlCodeType prop;
   /* read value in the XML file. */
-  int val;
   std::string camera_name_tmp = "";
   unsigned int image_height_tmp = 0 ;
   unsigned int image_width_tmp = 0 ;
@@ -582,36 +473,31 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 
     switch (prop)
     {
-    case CODE_XML_CAMERA_NAME:
-      myXmlReadCharChild (doc, node, &val_char);
+    case CODE_XML_CAMERA_NAME:{
+      char * val_char = xmlReadCharChild(doc, node);
       camera_name_tmp = val_char;
-     break;
+      xmlFree(val_char);
+     }break;
 
     case CODE_XML_WIDTH:
-      myXmlReadIntChild (doc, node, val, back);
-      image_width_tmp=val;
+      image_width_tmp = xmlReadIntChild(doc, node);
      break;
 
     case CODE_XML_HEIGHT:
-      myXmlReadIntChild (doc, node, val, back);
-      image_height_tmp = val;
+      image_height_tmp = xmlReadIntChild(doc, node);
     break;
     case CODE_XML_SUBSAMPLING_WIDTH:
-      myXmlReadIntChild (doc, node, val, back);
-      subsampling_width_tmp = val;
+      subsampling_width_tmp = xmlReadIntChild(doc, node);
      break;
     case CODE_XML_SUBSAMPLING_HEIGHT:
-      myXmlReadIntChild (doc, node, val, back);
-      subsampling_height_tmp = val;
+      subsampling_height_tmp = xmlReadIntChild(doc, node);
     break;
     case CODE_XML_FULL_WIDTH:
-      myXmlReadIntChild (doc, node, val, back);
-      full_width_tmp = val;
+      full_width_tmp = xmlReadIntChild(doc, node);
      break;
 
     case CODE_XML_FULL_HEIGHT:
-      myXmlReadIntChild (doc, node, val, back);
-      full_height_tmp = val;
+      full_height_tmp = xmlReadIntChild(doc, node);
     break;
 
     case CODE_XML_MODEL:
@@ -675,10 +561,8 @@ read_camera_header (xmlDocPtr doc, xmlNodePtr node,
               const unsigned int subsampling_width,
               const unsigned int subsampling_height)
 {
-  char * val_char;
   vpXmlCodeType prop;
   /* read value in the XML file. */
-  int val;
   std::string camera_name_tmp = "";
   unsigned int image_height_tmp = 0 ;
   unsigned int image_width_tmp = 0 ;
@@ -701,36 +585,31 @@ read_camera_header (xmlDocPtr doc, xmlNodePtr node,
 
     switch (prop)
     {
-      case CODE_XML_CAMERA_NAME:
-        myXmlReadCharChild (doc, node, &val_char);
+      case CODE_XML_CAMERA_NAME:{
+        char * val_char = xmlReadCharChild(doc, node);
         camera_name_tmp = val_char;
-        break;
+        xmlFree(val_char);
+        }break;
 
       case CODE_XML_WIDTH:
-        myXmlReadIntChild (doc, node, val, back);
-        image_width_tmp=val;
+        image_width_tmp = xmlReadIntChild(doc, node);
         break;
 
       case CODE_XML_HEIGHT:
-        myXmlReadIntChild (doc, node, val, back);
-        image_height_tmp = val;
+        image_height_tmp = xmlReadIntChild(doc, node);
         break;
       case CODE_XML_SUBSAMPLING_WIDTH:
-        myXmlReadIntChild (doc, node, val, back);
-        subsampling_width_tmp = val;
+        subsampling_width_tmp = xmlReadIntChild(doc, node);
         break;
       case CODE_XML_SUBSAMPLING_HEIGHT:
-        myXmlReadIntChild (doc, node, val, back);
-        subsampling_height_tmp = val;
+        subsampling_height_tmp = xmlReadIntChild(doc, node);
         break;
       case CODE_XML_FULL_WIDTH:
-        myXmlReadIntChild (doc, node, val, back);
-        full_width_tmp = val;
+        full_width_tmp = xmlReadIntChild(doc, node);
         break;
 
       case CODE_XML_FULL_HEIGHT:
-        myXmlReadIntChild (doc, node, val, back);
-        full_height_tmp = val;
+        full_height_tmp = xmlReadIntChild(doc, node);
         break;
 
       case CODE_XML_MODEL:
@@ -770,8 +649,6 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
   int nb = 0;
   vpXmlCodeType prop;
   /* read value in the XML file. */
-  double vald;
-  char* val_char=NULL;
 
   char* model_type = NULL;
   double u0 = cam_tmp.get_u0();
@@ -795,45 +672,41 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
 
     switch (prop)
     {
-    case CODE_XML_MODEL_TYPE:
-      myXmlReadCharChild (doc, node, &val_char);
-      model_type = val_char;
+    case CODE_XML_MODEL_TYPE:{
+      if(model_type != NULL){
+        xmlFree(model_type);
+      }
+      model_type = xmlReadCharChild(doc, node);
       nb++;
       validation = validation | 0x01;
-      break;
+      }break;
     case CODE_XML_U0:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      u0=vald;
+      u0 = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x02;
       break;
     case CODE_XML_V0:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      v0 = vald;
+      v0 = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x04;
       break;
     case CODE_XML_PX:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      px = vald;
+      px = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x08;
       break;
     case CODE_XML_PY:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      py = vald;
+      py = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x10;
      break;
     case CODE_XML_KUD:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      kud = vald;
+      kud = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x20;
       break;
     case CODE_XML_KDU:
-      myXmlReadDoubleChild (doc, node, vald, back);
-      kdu = vald;
+      kdu = xmlReadDoubleChild(doc, node);
       nb++;
       validation = validation | 0x40;
       break;
@@ -848,6 +721,9 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 5 parameters\n";
+      if(model_type != NULL){
+        xmlFree(model_type);
+      }
       return SEQUENCE_ERROR;
     }
     cam_tmp.initPersProjWithoutDistortion(px,py,u0,v0) ;
@@ -857,14 +733,23 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 7 parameters\n";
+      if(model_type != NULL){
+        xmlFree(model_type);
+      }
       return SEQUENCE_ERROR;
     }
     cam_tmp.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
   }
   else{
     vpERROR_TRACE("projection model type doesn't match with any known model !");
+      if(model_type != NULL){
+        xmlFree(model_type);
+      }
     return SEQUENCE_ERROR;
   }
+      if(model_type != NULL){
+        xmlFree(model_type);
+      }
   return back;
 }
 
