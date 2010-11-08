@@ -234,13 +234,14 @@ void
 vpPoint::display(const vpImage<unsigned char> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
-		 const vpColor color)
+		 const vpColor color,
+		 const unsigned int thickness)
 {
 
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   vpPoint::projection(_cP,_p) ;
-  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color) ;
+  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
 
 }
 
@@ -248,13 +249,14 @@ void
 vpPoint::display(const vpImage<vpRGBa> &I,
 		 const vpHomogeneousMatrix &cMo,
 		 const vpCameraParameters &cam,
-		 const vpColor color)
+		 const vpColor color,
+		 const unsigned int thickness)
 {
 
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   vpPoint::projection(_cP,_p) ;
-  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color) ;
+  vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
 
 }
 
@@ -277,9 +279,10 @@ vpPoint::operator=(const vpPoint&  vpp )
 void
 vpPoint::display(const vpImage<unsigned char> &I,
 		 const vpCameraParameters &cam,
-		 const vpColor color)
+		 const vpColor color,
+		 const unsigned int thickness)
 {
-  vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color) ;
+  vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness) ;
 }
 /*
  * Local variables:

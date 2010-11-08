@@ -174,10 +174,12 @@ public:
     meter to pixel.
 
     \param color : The desired color to display the line in the image.
+    \param thickness : Thickness of the feature representation.
   */
   virtual void display(const vpImage<unsigned char> &I,
 		       const vpCameraParameters &cam,
-		       const vpColor color=vpColor::green) =0;
+		       const vpColor color=vpColor::green,
+		       const unsigned int thickness=1) =0;
 
   /*!
 
@@ -196,11 +198,13 @@ public:
     meter to pixel.
 
     \param color : The desired color to display the line in the image.
-  */
+    \param thickness : Thickness of the feature representation.
+   */
   virtual void display(const vpImage<unsigned char> &I,
 		       const vpHomogeneousMatrix &cMo,
 		       const vpCameraParameters &cam,
-		       const vpColor color=vpColor::green) =0;
+		       const vpColor color=vpColor::green,
+		       const unsigned int thickness=1) =0;
 
   virtual void print() const ;
 
