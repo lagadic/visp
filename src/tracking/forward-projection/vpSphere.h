@@ -105,11 +105,13 @@ public:
 
   void display(const vpImage<unsigned char> &I,
 	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green) ;
+	       const vpColor color=vpColor::green,
+	       const unsigned int thickness=1) ;
   void display(const vpImage<unsigned char> &I,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green) ;
+	       const vpColor color=vpColor::green,
+	       const unsigned int thickness=1) ;
 
 
   vpSphere *duplicate() const ;

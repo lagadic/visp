@@ -509,12 +509,15 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   meter to pixel.
 
   \param color : The desired color to display the line in the image.
+
+  \param thickness : Thickness of the feature representation.
 */
 void vpLine::display(const vpImage<unsigned char> &I,
 		     const vpCameraParameters &cam,
-		     const vpColor color)
+		     const vpColor color,
+		     const unsigned int thickness)
 {
-  vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color) ;
+  vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color, thickness) ;
 }
 
 
@@ -535,18 +538,21 @@ void vpLine::display(const vpImage<unsigned char> &I,
   meter to pixel.
 
   \param color : The desired color to display the line in the image.
+
+  \param thickness : Thickness of the feature representation.
 */
 // non destructive wrt. cP and p
 void vpLine::display(const vpImage<unsigned char> &I,
 		     const vpHomogeneousMatrix &cMo,
 		     const vpCameraParameters &cam,
-		     const vpColor color)
+		     const vpColor color,
+		     const unsigned int thickness)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayLine(_p[0],_p[1],
-				cam, I, color) ;
+				cam, I, color, thickness) ;
 
 }
 
