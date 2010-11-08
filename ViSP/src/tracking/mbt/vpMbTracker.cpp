@@ -648,7 +648,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
   {
     if (_face_set->coordIndex[i] == -1)
     {
-      if(corners.size() > 0)
+      if(corners.size() > 1)
       {
         initFaceFromCorners(corners, indexFace);
         indexFace++;
@@ -695,7 +695,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
   {
     if (_line_set->coordIndex[i] == -1)
     {
-      if(corners.size() > 0)
+      if(corners.size() > 1)
       {
         initFaceFromCorners(corners, indexFace);
         indexFace++;
