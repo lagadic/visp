@@ -265,7 +265,6 @@ vpHomography::insert(const vpPlane &_bP)
 
 
 /*!
-  \relates  vpHomography
   \brief invert the homography
 
 
@@ -283,7 +282,6 @@ vpHomography::inverse() const
 }
 
 /*!
-  \relates vpHomography
   \brief invert the homography
 
 
