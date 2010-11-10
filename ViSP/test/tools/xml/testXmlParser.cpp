@@ -72,6 +72,8 @@
 #include <string>
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /* -------------------------------------------------------------------------- */
 /*                               CLASS EXAMPLE                                */
 /* -------------------------------------------------------------------------- */
@@ -203,7 +205,7 @@ vpExampleDataParser::writeMainClass(xmlNodePtr node)
 }
 
 
-
+#endif // doxygen
 
 /* -------------------------------------------------------------------------- */
 /*                         COMMAND LINE OPTIONS                               */
