@@ -437,6 +437,7 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
     }
   }
   coinUsed = true;
+  sceneGraphVRML2->unref();
 #else
   vpERROR_TRACE("coin not detected with ViSP, cannot load model");
   throw vpException(vpException::fatalError, "coin not detected with ViSP, cannot load model");
@@ -635,15 +636,15 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
   std::vector<vpPoint> corners;
   corners.resize(0);
 
-  SoMFInt32 indexList = _face_set->coordIndex;
-  int indexListSize = indexList.getNum();
-
+//  SoMFInt32 indexList = _face_set->coordIndex;
+//  int indexListSize = indexList.getNum();
+ int indexListSize = _face_set->coordIndex.getNum();
   SbVec3f point(0,0,0);
   vpPoint pt;
   SoVRMLCoordinate *coord;
   
   unsigned int indexFace = 0;
-
+  
   for (int i = 0; i < indexListSize; i++)
   {
     if (_face_set->coordIndex[i] == -1)
@@ -662,7 +663,6 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
       point[0]=coord->point[index].getValue()[0];
       point[1]=coord->point[index].getValue()[1];
       point[2]=coord->point[index].getValue()[2];
-
       pt.setWorldCoordinates(point[0],point[1],point[2]);
       corners.push_back(pt);
     }
@@ -682,8 +682,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
   std::vector<vpPoint> corners;
   corners.resize(0);
 
-  SoMFInt32 indexList = _line_set->coordIndex;
-  int indexListSize = indexList.getNum();
+  int indexListSize = _line_set->coordIndex.getNum();
 
   SbVec3f point(0,0,0);
   vpPoint pt;
@@ -751,4 +750,5 @@ vpMbTracker::computeJTR(const vpMatrix& _interaction, const vpColVector& _error,
     _JTR[i][0] = ssum;
   }
 }
+
 
