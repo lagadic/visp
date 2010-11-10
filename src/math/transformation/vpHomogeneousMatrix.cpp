@@ -355,7 +355,6 @@ vpHomogeneousMatrix::insert(const vpTranslationVector &T)
 
 
 /*!
-  \relates  vpHomogeneousMatrix
   \brief invert the homogeneous matrix
 
   [R T]^-1 = [R^T  -R^T T]
@@ -399,7 +398,6 @@ void vpHomogeneousMatrix::eye()
 }
 
 /*!
-  \relates  vpHomogeneousMatrix
   \brief invert the homogeneous matrix
 
   [R T]^-1 = [R^T  -R^T T]
