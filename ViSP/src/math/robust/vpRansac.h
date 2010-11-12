@@ -58,17 +58,17 @@
 /*!
   \class vpRansac
   \ingroup Robust
-
-  \brief This class is a generic implementation of the Ransac algorithm.
-  It cannot be used alone.
+  
+  \brief This class is a generic implementation of the Ransac algorithm. It 
+  cannot be used alone.
 
   Creation: june, 15 2005
 
   RANSAC is described in :
-
-  M.A. Fishler and  R.C. Boles. "Random sample concensus: A paradigm
-  for model fitting with applications to image analysis and automated
-  cartography". Comm. Assoc. Comp, Mach., Vol 24, No 6, pp 381-395, 1981
+  
+  M.A. Fishler and R.C. Boles. "Random sample consensus: A paradigm for model
+  fitting with applications to image analysis and automated cartography". Comm.
+  Assoc. Comp, Mach., Vol 24, No 6, pp 381-395, 1981
 
   Richard Hartley and Andrew Zisserman. "Multiple View Geometry in
   Computer Vision". pp 101-113. Cambridge University Press, 2001
