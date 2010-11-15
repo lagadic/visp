@@ -64,7 +64,7 @@
 
 #if (defined VISP_HAVE_XML2)
 
-#define GETOPTARGS  "x:m:i:n:dcht"
+#define GETOPTARGS  "x:m:i:n:dchtf"
 
 
 void usage(const char *name, const char *badparam)
@@ -75,7 +75,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h]",
+  [-t] [-c] [-d] [-h] [-f]",
   name );
 
   fprintf(stdout, "\n\
@@ -96,12 +96,18 @@ OPTIONS:                                               \n\
 \n\
   -m <model name>                                 \n\
      Specify the name of the file of the model\n\
-     The model can either be a vrml model or a .cao file.\n\
+     The model can either be a vrml model (.wrl) or a .cao file.\n\
+\n\
+  -f                                  \n\
+     Do not use the vrml model, use the .cao one. These two models are \n\
+     equivalent and comes from ViSP-images-x.y.z.tar.gz available on the ViSP\n\
+     website. However, the .cao model allows to use the 3d model based tracker \n\
+     without Coin.\n\
 \n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
      This base name is also used for the optionnal picture specifying where to \
-     click (a .ppm picture),\
+     click (a .ppm picture).\
 \n\
   -t \n\
      Turn off the display of the the moving edges. \n\
@@ -121,7 +127,7 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display, bool& cao3DModel)
 {
   const char *optarg;
   int   c;
@@ -133,6 +139,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'm': modelFile = optarg; break;
     case 'n': initFile = optarg; break;
     case 't': displayMovingEdge = false; break;
+    case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
@@ -169,6 +176,7 @@ main(int argc, const char ** argv)
   bool displayMovingEdge = true;
   bool opt_click_allowed = true;
   bool opt_display = true;
+  bool cao3DModel = false;
   
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -181,7 +189,7 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display) == false) {
+  if (getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display, cao3DModel) == false) {
     exit (-1);
   }
 
@@ -196,17 +204,21 @@ main(int argc, const char ** argv)
   else
     configFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.xml");
   
-  if (!opt_modelFile.empty())
+  if (!opt_modelFile.empty()){
     modelFile = opt_modelFile;
-  else
-    modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+  }else{
+    if(cao3DModel){
+      modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+    }
+    else{
+      modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+    }
+  }
   
   if (!opt_initFile.empty())
     initFile = opt_initFile;
   else
     initFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube");
-  
-  std::cout << ipath << std::endl;
 
   vpImage<unsigned char> I;
   vpVideoReader reader;
