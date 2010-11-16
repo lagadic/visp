@@ -67,6 +67,7 @@ class VISP_EXPORT vpTriangle
     double uvinv11;
     double ptempo0;
     double ptempo1;
+    double area;
     vpImagePoint apex1;
     vpImagePoint apex2;
     vpImagePoint apex3;
@@ -95,6 +96,17 @@ class VISP_EXPORT vpTriangle
       iP1 = apex1;
       iP2 = apex2;
       iP3 = apex3;}
+      
+      
+    /*!
+      Return the area of the triangle.
+      The area is computed when the triangle is built from three image points.
+      
+      \return The area of the triangle.
+    */
+    inline double getArea() const{
+      return this->area;
+    }
 
   private:
     void init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3);
