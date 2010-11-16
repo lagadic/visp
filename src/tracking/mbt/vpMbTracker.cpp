@@ -439,7 +439,7 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
   coinUsed = true;
   sceneGraphVRML2->unref();
 #else
-  vpERROR_TRACE("coin not detected with ViSP, cannot load model");
+  vpERROR_TRACE("coin not detected with ViSP, cannot load model : %s", _modelFile.c_str());
   throw vpException(vpException::fatalError, "coin not detected with ViSP, cannot load model");
 #endif
 }
