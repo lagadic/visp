@@ -83,6 +83,7 @@ vpTriangle::vpTriangle(const vpTriangle &tri)
   uvinv11 = tri.uvinv11;
   ptempo0 = tri.ptempo0;
   ptempo1 = tri.ptempo1;
+  area = tri.area;
 }
 
 /*!
@@ -106,6 +107,7 @@ vpTriangle::operator=(const vpTriangle& tri)
   uvinv11 = tri.uvinv11;
   ptempo0 = tri.ptempo0;
   ptempo1 = tri.ptempo1;
+  area = tri.area;
   return *this;
 };
 
@@ -153,6 +155,7 @@ vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImage
   uvinv10=uvinv[1][0];
   uvinv11=uvinv[1][1];
   S1 = iP1;
+  area = 0.5 * fabs(uv.det());
 }
 
 
