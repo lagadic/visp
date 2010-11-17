@@ -78,7 +78,7 @@
 
 /*!
   \class vpMbEdgeTracker
-  \ingroup ModelBasedTracking
+  \ingroup ModelBasedTracking 
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
@@ -96,8 +96,8 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     
     //! The moving edges parameters. 
     vpMe  me;
-    //! List of all the lines tracked (each line is linked to a list of moving edges). 
-    vpList<vpMbtDistanceLine *> Lline ;
+    //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
+    std::vector< vpList< vpMbtDistanceLine*> > lines;
     //! Index of the polygon to add, and total number of polygon extracted so far. 
     int nline ;
     
@@ -113,11 +113,22 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     
     //! Percentage of good points over total number of points below which tracking is supposed to have failed.
     double percentageGdPt;
+    
+    //! Vector of scale level to use for the multi-scale tracking.
+    std::vector<bool> scales;
+    
+    //! Pyramid of image associated to the current image. This pyramid is compted in the init() and in the track() methods.
+    std::vector< const vpImage<unsigned char>* > Ipyramid;
+    
+    //! Current scale level used. This attribute must not be modified outsied of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
+    unsigned int scaleLevel;
   
  public:
   
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker(); 
+  
+  inline void setPose(const vpHomogeneousMatrix &cMo) {this->cMo = cMo;}
   
   /*!
     Set the value of the gain used to compute the control law.
@@ -136,7 +147,7 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
   void resetTracker();
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo);
-  
+   
   /*!
     Enable to display the points along the line with a color corresponding to their state.
     
@@ -168,9 +179,19 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   */
   inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
   
-  unsigned int getNbPoints();
+  unsigned int getNbPoints(const unsigned int _level=0);
   vpMbtPolygon* getPolygon(const unsigned int _index); 
   unsigned int getNbPolygon();
+  vpList<vpMbtDistanceLine *>* getLline(const unsigned int _level = 0);
+  
+  void setScales(const std::vector<bool>& _scales);
+  
+  /*!
+    Return the scales levels used for the tracking. 
+    
+    \return The scales levels used for the tracking. 
+  */
+  std::vector<bool> getScales() const {return scales;}
 
  protected:
   void computeVVS(const vpImage<unsigned char>& _I);
@@ -185,19 +206,13 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
   
   void testTracking();
-    
- public:
-  /*!
-    Get the list of the lines tracked. Each line contains the list of the 
-    vpMeSite. 
-    
-    \return Pointer to the list of the lines tracked. 
-  */
-	vpList<vpMbtDistanceLine *>* getLline(){ return &(this->Lline);};
+  void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
+  void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
+  void reInitLevel(const unsigned int _lvl);
+  void downScale(const unsigned int _scale);
+  void upScale(const unsigned int _scale);
+  
 };
 
-
-
-
-
 #endif
+

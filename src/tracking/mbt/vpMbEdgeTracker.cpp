@@ -68,7 +68,7 @@
 #include <visp/vpMbtXmlParser.h>
 
 #include <string>
-
+#include <sstream>
 
 /*!
   Basic constructor
@@ -81,10 +81,13 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   lambda = 1;
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
-//  percentageTtPt = 0.3;
   displayMe = false;
 
-  Lline.kill();
+  lines.resize(1);
+  scales.resize(1);
+  scales[0] = true;
+  lines[0].kill();
+  Ipyramid.resize(0);
 }
 
 /*!
@@ -93,15 +96,21 @@ vpMbEdgeTracker::vpMbEdgeTracker()
 vpMbEdgeTracker::~vpMbEdgeTracker()
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    if (l!=NULL) delete l ;
-    l = NULL ;
-    Lline.next() ;
+  
+  for (unsigned int i = 0; i < lines.size(); i += 1){
+    if(scales[i]){
+      lines[i].front() ;
+      while (!lines[i].outside()){
+        l = lines[i].value() ;
+        if (l!=NULL) delete l ;
+        l = NULL ;
+        lines[i].next() ;
+      }
+      lines[i].kill() ;
+    }
   }
-  Lline.kill() ;
+  lines.resize(0);
+  cleanPyramid(Ipyramid);
 }
 
 /*! 
@@ -114,13 +123,17 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &_me)
 {
   this->me = _me;
 
-  Lline.front() ;
-  vpMbtDistanceLine *l ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    l->setMovingEdge(&me) ;
-    Lline.next();
+  for (unsigned int i = 0; i < lines.size(); i += 1){
+    if(scales[i]){
+      lines[i].front() ;
+      vpMbtDistanceLine *l ;
+      while (!lines[i].outside())
+      {
+        l = lines[i].value() ;
+        l->setMovingEdge(&me) ;
+        lines[i].next();
+      }
+    }
   }
 }
 
@@ -153,13 +166,13 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   //Nombre de moving edges
   int nbrow  = 0;
   
-  Lline.front();
-  while (!Lline.outside())
+  lines[scaleLevel].front();
+  while (!lines[scaleLevel].outside())
   {
-    l = Lline.value() ;
+    l = lines[scaleLevel].value() ;
     nbrow += l->nbFeature ;
     l->initInteractionMatrixError() ;
-    Lline.next() ;
+    lines[scaleLevel].next() ;
   }
   
   if (nbrow==0)
@@ -198,33 +211,33 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     
     count = 0;
     
-    Lline.front();
+    lines[scaleLevel].front();
     int n = 0;
     reloop = false;
-    while (!Lline.outside())
+    while (!lines[scaleLevel].outside())
     {
-      l = Lline.value();
+      l = lines[scaleLevel].value();
       l->computeInteractionMatrixError(cMo);
       
       double fac = 1;
       if (iter == 0)
       {
-	      l->Lindex_polygon.front();
-	      while (!l->Lindex_polygon.outside())
-	      {
-	        int index = l->Lindex_polygon.value();
-	        if (l->hiddenface->isAppearing(index))
-	        {
-	          fac = 0.2;
-	          break;
-	        }
-	        if(l->closeToImageBorder(_I, 10))
-	        {
-	          fac = 0.1;
-	          break;
-	        }
-	        l->Lindex_polygon.next() ;
-	      }
+        l->Lindex_polygon.front();
+        while (!l->Lindex_polygon.outside())
+        {
+          int index = l->Lindex_polygon.value();
+          if (l->hiddenface->isAppearing(index))
+          {
+            fac = 0.2;
+            break;
+          }
+          if(l->closeToImageBorder(_I, 10))
+          {
+            fac = 0.1;
+            break;
+          }
+          l->Lindex_polygon.next() ;
+        }
       }
       
       if (iter == 0 && l->meline != NULL)
@@ -237,7 +250,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           L[n+i][j] = l->L[i][j]; //On remplit la matrice d'interaction globale
         }
         error[n+i] = l->error[i]; //On remplit la matrice d'erreur
-	
+
         if (error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
 
         w[n+i] = 0;
@@ -254,16 +267,16 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         if (i == 0)
         {
           e_cur = l->error[0];
-	        if (l->nbFeature > 1)
-	        {
+          if (l->nbFeature > 1)
+          {
             e_next = l->error[1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
               w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
-	        }
-	        else w[n+i] = 1;
+          }
+          else w[n+i] = 1;
         }
 
         //If pour la derniere extremite des moving edges
@@ -293,7 +306,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       }
       
       n+= l->nbFeature ;
-      Lline.next() ;
+      lines[scaleLevel].next() ;
     }
     
     count = count / (double)nbrow;
@@ -345,11 +358,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
   while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
   {
-    Lline.front() ;
+    lines[scaleLevel].front() ;
     int n = 0 ;
-    while (!Lline.outside())
+    while (!lines[scaleLevel].outside())
     {
-      l = Lline.value();
+      l = lines[scaleLevel].value();
       l->computeInteractionMatrixError(cMo) ;
       for (int i=0 ; i < l->nbFeature ; i++)
       {
@@ -357,11 +370,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         {
           L[n+i][j] = l->L[i][j] ;
           error[n+i] = l->error[i] ;
-	  //error_px[n+i] = l->error[i] * cam.get_px();
+    //error_px[n+i] = l->error[i] * cam.get_px();
         }
       }
       n+= l->nbFeature ;
-      Lline.next() ;
+      lines[scaleLevel].next() ;
     }
     
     if(iter==0)
@@ -369,7 +382,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       weighted_error.resize(nerror) ;
       w.resize(nerror);
       w = 1;
-	
+
        robust.setThreshold(2/cam.get_px()); // limite en metre
        robust.MEstimator(vpRobust::TUKEY, error,w);
        //robust.setThreshold(2); // limite en pixel
@@ -419,11 +432,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     iter++;
   }
 
-  Lline.front() ;
+  lines[scaleLevel].front() ;
   int n =0 ;
-  while (!Lline.outside())
+  while (!lines[scaleLevel].outside())
   {
-    l = Lline.value() ;
+    l = lines[scaleLevel].value() ;
     {
       double wmean = 0 ;
       if (l->nbFeature > 0) l->meline->list.front();
@@ -431,14 +444,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       for (int i=0 ; i < l->nbFeature ; i++)
       {
         wmean += w[n+i] ;
-	vpMeSite p = l->meline->list.value() ;
-	if (w[n+i] < 0.5)
-	{
-	  p.suppress = 4 ;
-	  l->meline->list.modify(p) ;
-	}
-	
-	l->meline->list.next();
+        vpMeSite p = l->meline->list.value() ;
+        if (w[n+i] < 0.5)
+        {
+          p.suppress = 4 ;
+          l->meline->list.modify(p) ;
+        }
+
+        l->meline->list.next();
       }
       n+= l->nbFeature ;
       
@@ -452,12 +465,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       if (wmean < 0.8)
         l->Reinit = true;
     }
-    Lline.next() ;
+    lines[scaleLevel].next() ;
   }
-  
 //   cout << "\t Robust minimization in " << iter << " iteration " << endl ;
 //    std::cout << "error: " << (residu_1 - r) << std::endl;
-
 }
 
 /*!
@@ -473,24 +484,25 @@ vpMbEdgeTracker::testTracking()
   int nbBadPoint = 0;
   
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
+  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside())
   {
-    l = Lline.value() ;
+    l = lines[scaleLevel].value() ;
     if (l->isVisible() && l->meline != NULL)
     {
       nbExpectedPoint += (int)l->meline->expecteddensity;
       l->meline->list.front();
       while (!l->meline->list.outside())
       {
-	vpMeSite pix = l->meline->list.value();
-	if (pix.suppress == 0) nbGoodPoint++;
-	else nbBadPoint++;
-	l->meline->list.next();
+        vpMeSite pix = l->meline->list.value();
+        if (pix.suppress == 0) nbGoodPoint++;
+        else nbBadPoint++;
+        l->meline->list.next();
       }
     }
-    Lline.next();
-  }
+    lines[scaleLevel].next();
+  }    
   
   if (nbGoodPoint < percentageGdPt *(nbGoodPoint+nbBadPoint) || nbExpectedPoint < 2)
   {
@@ -498,7 +510,7 @@ vpMbEdgeTracker::testTracking()
     std::cout << "nbBadPoint :" << nbBadPoint << std::endl;
     std::cout << "nbExpectedPoint :" << nbExpectedPoint << std::endl;
     throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
-  }
+  }      
 }
 
 
@@ -512,83 +524,108 @@ vpMbEdgeTracker::testTracking()
 void
 vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
-  try
-  {  
-    trackMovingEdge(I);
-  }
-  catch(...)
-  {
-    vpTRACE("Error in moving edge tracking") ;
-    throw ;
-  }
-
-  // initialize the vector that contains the error and the matrix that contains
-  // the interaction matrix
-  vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    if (l->isVisible())
-    {
-      l->initInteractionMatrixError() ;
-    }
-
-    Lline.next() ;
-  }
-
-  try
-  {
-    computeVVS(I);
-  }
-  catch(...)
-  {
-    vpTRACE("Error in computeVVS") ;
-    throw std::string("Error in computeVVS");
-  }
+  initPyramid(I, Ipyramid);
   
-  try
-  {
-    testTracking();
-  }
-  catch(...)
-  {
-    throw std::string("test Tracking fail");
-  }
-  
-  if (displayMe)
-  {
-    Lline.front() ;
-    while (!Lline.outside())
-    {
-      l = Lline.value() ;
-      if (l->isVisible())
+  for (int lvl = (scales.size()-1); lvl >= 0; lvl -= 1){
+    if(scales[lvl]){
+      vpHomogeneousMatrix cMo_1 = cMo;
+      try
       {
-        l->displayMovingEdges(I);
-      }
+        downScale(lvl);
 
-      Lline.next() ;
+        try
+        {  
+          trackMovingEdge(*Ipyramid[lvl]);
+        }
+        catch(...)
+        {
+          vpTRACE("Error in moving edge tracking") ;
+          throw ;
+        }
+
+        // initialize the vector that contains the error and the matrix that contains
+        // the interaction matrix
+        vpMbtDistanceLine *l ;
+        lines[lvl].front() ;
+        while (!lines[lvl].outside()){
+          l = lines[lvl].value() ;
+          if (l->isVisible()){
+            l->initInteractionMatrixError() ;
+          }
+          lines[lvl].next() ;
+        }  
+
+        try
+        {
+          computeVVS(*Ipyramid[lvl]);
+        }
+        catch(...)
+        {
+          vpTRACE("Error in computeVVS") ;
+          throw vpException(vpException::fatalError, "Error in computeVVS");
+        }
+        
+        try
+        {
+          testTracking();
+        }
+        catch(...)
+        {
+          throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
+        }
+        
+        if (displayMe)
+        {
+          if(lvl == 0){
+            lines[lvl].front() ;
+            while (!lines[lvl].outside())
+            {
+              l = lines[lvl].value() ;
+              if (l->isVisible())
+              {
+                l->displayMovingEdges(I);
+              }
+
+              lines[lvl].next() ;
+            }
+          }
+        }
+        
+        try
+        {
+          updateMovingEdge(I);
+        }
+        catch(...)
+        {
+          vpTRACE("Error in moving edge updating") ;
+          throw ;
+        }
+        
+        // Looking for new visible face
+        bool newvisibleface = false ;
+        visibleFace(cMo, newvisibleface) ;
+        initMovingEdge(I,cMo) ;
+
+        // Reinit the moving edge for the lines which need it.
+        reinitMovingEdge(I,cMo);
+        upScale(lvl);
+      }
+      catch(...)
+      {
+        if(lvl != 0){
+          cMo = cMo_1;
+          reInitLevel(lvl);
+          upScale(lvl);
+        }
+        else{
+          upScale(lvl);
+          throw ;
+        }
+      }
     }
   }
-  
-  try
-  {
-    updateMovingEdge(I);
-  }
-  catch(...)
-  {
-    vpTRACE("Error in moving edge updating") ;
-    throw ;
-  }
-  
-  // Looking for new visible face
-  bool newvisibleface = false ;
-  visibleFace(cMo, newvisibleface) ;
-  initMovingEdge(I,cMo) ;
 
-  // Reinit the moving edge for the lines which need it.
-  reinitMovingEdge(I,cMo);
-
+  cleanPyramid(Ipyramid);
 }
 
 
@@ -603,8 +640,18 @@ vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix
 {
   this->cMo = _cMo;
   bool a = false;
+  
+  initPyramid(I, Ipyramid);
   visibleFace(_cMo, a);
-  initMovingEdge(I,_cMo);
+  for(int i= (static_cast<int>(scales.size())-1); i>= 0; i--){
+    if(scales[i]){
+      downScale(i);
+      initMovingEdge(*Ipyramid[i],_cMo);
+      upScale(i);
+    }
+  }
+  
+  cleanPyramid(Ipyramid);
 }
 
 /*!
@@ -669,12 +716,18 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
 											const unsigned int thickness)
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    l->display(I,_cMo, cam, col, thickness) ;
-    Lline.next() ;
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      lines[i].front() ;
+      while (!lines[i].outside())
+      {
+        l = lines[i].value() ;
+        l->display(I,_cMo, cam, col, thickness) ;
+        lines[i].next() ;
+      }
+      break ; //displaying model on one clase only
+    }
   }
 }
 
@@ -693,12 +746,18 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_c
 											const unsigned int thickness)
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    l->display(I,_cMo, cam, col, thickness) ;
-    Lline.next() ;
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      lines[i].front() ;
+      while (!lines[i].outside())
+      {
+        l = lines[i].value() ;
+        l->display(I,_cMo, cam, col, thickness) ;
+        lines[i].next() ;
+      }
+      break ; //displaying model on one clase only
+    }
   }
 }
 
@@ -714,11 +773,11 @@ void
 vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
-
-  Lline.front() ;
-  while (!Lline.outside())
+  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside())
   {
-    l = Lline.value() ;
+    l = lines[scaleLevel].value() ;
 
     bool isvisible = false ;
 
@@ -752,8 +811,8 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       if (l->meline!=NULL) delete l->meline;
       l->meline=NULL;
     }
-    Lline.next() ;
-  }
+    lines[scaleLevel].next() ;
+  }   
 }
 
 
@@ -766,18 +825,18 @@ void
 vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value();
+  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside()){
+    l = lines[scaleLevel].value();
     if(l->isVisible() == true){
       if(l->meline == NULL){
         l->initMovingEdge(I, cMo);
       }
       l->trackMovingEdge(I, cMo) ;
     }
-    Lline.next() ;
-  }
+    lines[scaleLevel].next() ;
+  }    
 }
 
 
@@ -790,14 +849,14 @@ void
 vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
+  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside()){
+    l = lines[scaleLevel].value() ;
     l->updateMovingEdge(I, cMo) ;
     if (l->nbFeature == 0 && l->isVisible()) l->Reinit = true;
-    Lline.next() ;
-  }
+    lines[scaleLevel].next() ;
+  }  
 }
 
 
@@ -813,14 +872,14 @@ void
 vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
+  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside()){
+    l = lines[scaleLevel].value() ;
     if (l->Reinit == true  && l->isVisible() == true)
       l->reinitMovingEdge(I, _cMo);
-    Lline.next() ;
-  }
+    lines[scaleLevel].next() ;
+  }  
 }
 
 
@@ -862,50 +921,38 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
   
   bool already_here = false ;
   vpMbtDistanceLine *l ;
-
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    if (samePoint(*(l->p1),P1))
-    {
-      if (samePoint(*(l->p2),P2))
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      downScale(i);
+      lines[i].front() ;
+      while (!lines[i].outside())
       {
-        already_here = true ;
-        l->Lindex_polygon += polygone ;
-        l->hiddenface = &faces ;
+        l = lines[i].value() ;
+        if((samePoint(*(l->p1),P1) && samePoint(*(l->p2),P2)) || 
+           (samePoint(*(l->p1),P2) && samePoint(*(l->p2),P1)) ){
+          already_here = true ;
+          l->Lindex_polygon += polygone ;
+          l->hiddenface = &faces ;
+        }
+        lines[i].next() ;
       }
-    }
-    
-    if (samePoint(*(l->p1),P2))
-    {
-      if (samePoint(*(l->p2),P1))
-      {
+
+      if (!already_here){
+        l = new vpMbtDistanceLine ;
+
+        l->setCameraParameters(&cam) ;
+        l->buildFrom(P1,P2) ;
         l->Lindex_polygon += polygone ;
-        already_here = true ;
+        l->setMovingEdge(&me) ;
         l->hiddenface = &faces ;
+        l->setIndex(nline) ;
+        l->setName(name);
+        nline +=1 ;
+        lines[i] += l ;
       }
+      upScale(i);
     }
-    Lline.next() ;
-  }
-
-  if (!already_here)
-  {
-    l = new vpMbtDistanceLine ;
-
-    l->setCameraParameters(&cam) ;
-    l->buildFrom(P1,P2) ;
-    l->Lindex_polygon += polygone ;
-    l->setMovingEdge(&me) ;
-    l->hiddenface = &faces ;
-    l->setIndex(nline) ;
-    l->setName(name);
-    nline +=1 ;
-    Lline += l ;
-  }
-  else
-  {
-    //vpTRACE("This line is already in the model") ;
   }
 }
 
@@ -918,16 +965,21 @@ void
 vpMbEdgeTracker::removeLine(const std::string& name)
 {
   vpMbtDistanceLine *l;
-  Lline.front();
-  while (!Lline.outside())
-  {
-    l = Lline.value();
-    if (name.compare(l->getName()) == 0)
-    {
-      Lline.suppress();
-      break;
+  
+  for(unsigned int i=0; i<scales.size(); i++){
+    if(scales[i]){
+      lines[i].front();
+      while (!lines[i].outside())
+      {
+        l = lines[i].value();
+        if (name.compare(l->getName()) == 0)
+        {
+          lines[i].suppress();
+          break;
+        }
+        lines[i].next();
+      }    
     }
-    Lline.next();
   }
 }
 
@@ -954,6 +1006,9 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 
 /*!
   Detect the visible faces in the image and says if a new one appeared.
+  
+  \warning If in one iteration one face appears and one disappears, then the 
+  function will not detect the new face. 
   
   \param cMo : The pose of the camera used to project the 3D model into the image.
   \param newvisibleline : This parameter is set to true if a new face appeared.
@@ -1024,15 +1079,20 @@ vpMbEdgeTracker::resetTracker()
 {
   this->cMo.setIdentity();
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
-  {
-    l = Lline.value() ;
-    if (l!=NULL) delete l ;
-    l = NULL ;
-    Lline.next() ;
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      lines[i].front() ;
+      while (!lines[i].outside())
+      {
+        l = lines[i].value() ;
+        if (l!=NULL) delete l ;
+        l = NULL ;
+        lines[i].next() ;
+      }
+      lines[i].kill();
+    }
   }
-  Lline.kill() ;
   
   faces.reset();
   
@@ -1042,6 +1102,9 @@ vpMbEdgeTracker::resetTracker()
   lambda = 1;
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
+  
+  // reinitialisation of the scales.
+  this->setScales(scales);
 }
 
 
@@ -1066,17 +1129,24 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& _I, const char* _cad_
   vpMeSite with its flag "suppress" equal to 0. Only these points are used 
   during the virtual visual servoing stage. 
   
+  \exception vpException::dimensionError if _level does not represent a used 
+  level.
+  
   \return the number of good points. 
 */
 unsigned int 
-vpMbEdgeTracker::getNbPoints()
+vpMbEdgeTracker::getNbPoints(const unsigned int _level)
 {
+  if((_level > scales.size()) || !scales[_level]){
+    throw vpException(vpException::dimensionError, "Level is not used");
+  }
+  
   unsigned int nbGoodPoints = 0;
   vpMbtDistanceLine *l ;
-  Lline.front() ;
-  while (!Lline.outside())
+  lines[_level].front() ;
+  while (!lines[_level].outside())
   {
-    l = Lline.value() ;
+    l = lines[_level].value() ;
     if (l->isVisible() && l->meline != NULL)
     {
       l->meline->list.front();
@@ -1086,7 +1156,7 @@ vpMbEdgeTracker::getNbPoints()
 	      l->meline->list.next();
       }
     }
-    Lline.next();
+    lines[_level].next();
   }
   return nbGoodPoints;
 }
@@ -1123,5 +1193,219 @@ unsigned int
 vpMbEdgeTracker::getNbPolygon() 
 {
   return static_cast<unsigned int>(faces.getPolygon().nb);
+}
+
+/*!
+  Set the scales to use to realise the tracking. The vector of boolean activates
+  or not the scales to se for the object tracking. The first element of the list
+  correspond to the tracking on the full image, the second element corresponds 
+  to the tracking on an image sbsampled by two. 
+  
+  Using multi scale tracking allows to track the object with greater moves. It 
+  requires the computation of a pyramid of images, but the total tracking can be
+  faster than a tracking based only on the full scale. The pose is computed from
+  the smallest image to the biggest. This may be dangerous if the object to 
+  track is small in the image, because the subsampled scale(s) will have only 
+  few points to compute the pose (it could result in a loss of precision). 
+  
+  \warning This method must be used before the tracker has been initialised (
+  before the call of the init() or the initClick() method). 
+  
+  \warning At least one level must be activated. 
+  
+  \param _scales : The vector describing the levels to use. 
+*/
+void 
+vpMbEdgeTracker::setScales(const std::vector<bool>& _scales)
+{
+  unsigned int nbActivatedLevels = 0;
+  for (unsigned int i = 0; i < _scales.size(); i += 1){
+    if(_scales[i]){
+      nbActivatedLevels++;
+    }
+  }
+  if((_scales.size() < 1) || (nbActivatedLevels == 0)){
+    vpERROR_TRACE(" !! WARNING : must use at least one level for the tracking. Use the global one");
+    scales.resize(0);
+    scales.push_back(true);
+    lines.resize(1);
+    lines[0].kill();
+  }
+  else{
+    scales = _scales;
+    lines.resize(_scales.size());
+    for (unsigned int i = 0; i < lines.size(); i += 1){
+      lines[i].kill();
+    }
+  }
+}
+
+/*!
+  Compute the pyramid of image associated to the image in parameter. The scales 
+  computed are the ones corresponding to the scales  attribte of the class. If 
+  OpenCV is detected, the functions used to computed a smoothed pyramid come 
+  from OpenCV, otherwise a simple subsampling (no smoothing, no interpolation) 
+  is realised. 
+  
+  \warning The pyramid contains pointers to vpImage. To properly deallocate the
+  pyramid. All the element but the first (which is a pointer to the input image)
+  must be freed. A proper cleaning is implemented in the cleanPyramid() method. 
+  
+  \param _I : The input image.
+  \param _pyramid : The pyramid of image to build from the input image.
+*/
+void 
+vpMbEdgeTracker::initPyramid(const vpImage<unsigned char>& _I, std::vector< const vpImage<unsigned char>* >& _pyramid)
+{
+  _pyramid.resize(scales.size());
+  
+  if(scales[0]){
+    _pyramid[0] = &_I;
+  }
+  else{
+    _pyramid[0] = NULL;
+  }
+  
+  for(unsigned int i=1; i<_pyramid.size(); i += 1){
+    if(scales[i]){
+      unsigned int cScale = static_cast<unsigned int>(pow(2, i));
+      vpImage<unsigned char>* I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
+#ifdef VISP_HAVE_OPENCV
+      IplImage* vpI0 = cvCreateImageHeader(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
+      vpI0->imageData = (char*)(_I.bitmap);
+      IplImage* vpI = cvCreateImage(cvSize(_I.getWidth() / cScale, _I.getHeight() / cScale), IPL_DEPTH_8U, 1);
+      cvResize(vpI0, vpI, CV_INTER_NN);
+      vpImageConvert::convert(vpI, *I);
+      cvReleaseImage(&vpI);  
+      vpI0->imageData = NULL;
+      cvReleaseImageHeader(&vpI0);    
+#else
+      for (unsigned int k = 0, ii = 0; k < I->getHeight(); k += 1, ii += cScale){
+        for (unsigned int l = 0, jj = 0; l < I->getWidth(); l += 1, jj += cScale){
+          (*I)[k][l] = _I[ii][jj];
+        }
+      }
+#endif   
+      _pyramid[i] = I;
+    }
+    else{
+      _pyramid[i] = NULL;
+    }
+  }
+}
+
+/*!
+  Clean the pyramid of image allocated with the initPyramid() method. The vector
+  has a size equal to zero at the end of the method. 
+  
+  \param _pyramid : The pyramid of image to clean.
+*/
+void 
+vpMbEdgeTracker::cleanPyramid(std::vector< const vpImage<unsigned char>* >& _pyramid)
+{
+  if(_pyramid.size() > 0){
+    _pyramid[0] = NULL;
+    for (unsigned int i = 1; i < _pyramid.size(); i += 1){
+      if(_pyramid[i] != NULL){
+        delete _pyramid[i];
+        _pyramid[i] = NULL;
+      }
+    }
+    _pyramid.resize(0);
+  }
+}
+
+
+/*!
+  Get the list of the lines tracked for the specified level. Each line contains 
+  the list of the vpMeSite. 
+  
+  \throw vpException::dimensionError if the parameter does not correspond to an 
+  used level. 
+  
+  \param _level : Level corresponding to the list to return. 
+  \return Pointer to the list of the lines tracked. 
+*/
+vpList<vpMbtDistanceLine *>* 
+vpMbEdgeTracker::getLline(const unsigned int _level)
+{
+  if(_level > scales.size() || !scales[_level]){
+    std::ostringstream oss;
+    oss << _level;
+    std::string errorMsg = "level " + oss.str() + " is not used, cannot get its distance lines.";    
+    throw vpException(vpException::dimensionError, errorMsg);
+  }
+  
+  return &lines[_level];
+}
+
+/*!
+  Modify the camera parameters to have them corresponding to the current scale.
+  The new parameters are divided by \f$ 2^{\_scale} \f$. 
+  
+  \param _scale : Scale to use. 
+*/
+void 
+vpMbEdgeTracker::downScale(const unsigned int _scale)
+{
+  const double ratio = pow(2, _scale);
+  scaleLevel = _scale;
+  
+  vpMatrix K = cam.get_K();
+  
+  K[0][0] /= ratio;
+  K[1][1] /= ratio;
+  K[0][2] /= ratio;
+  K[1][2] /= ratio;
+
+  cam.initFromCalibrationMatrix(K);
+}
+
+/*!
+  Modify the camera parameters to have them corresponding to the current scale.
+  The new parameters are multiplied by \f$ 2^{\_scale} \f$. 
+  
+  \param _scale : Scale to use. 
+*/
+void 
+vpMbEdgeTracker::upScale(const unsigned int _scale)
+{
+  const double ratio = pow(2, _scale);
+  scaleLevel = 0;
+  
+  vpMatrix K = cam.get_K();
+  
+  K[0][0] *= ratio;
+  K[1][1] *= ratio;
+  K[0][2] *= ratio;
+  K[1][2] *= ratio;
+
+  cam.initFromCalibrationMatrix(K);
+}
+
+/*!
+  Re initialise the moving edges associated to a given level. This method is 
+  used to re-initialise the level if the tracking failed on this level but 
+  succedded on the other one. 
+  
+  \param _lvl : The level to re-initialise.
+*/
+void 
+vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)
+{
+  unsigned int scaleLevel_1 = scaleLevel;
+  scaleLevel = _lvl;
+
+  vpMbtDistanceLine *l;  
+  lines[scaleLevel].front() ;
+  while (!lines[scaleLevel].outside()){
+    l = lines[scaleLevel].value() ;
+    l->reinitMovingEdge(*Ipyramid[_lvl], cMo);
+    lines[scaleLevel].next() ;
+  } 
+  
+  trackMovingEdge(*Ipyramid[_lvl]);
+  updateMovingEdge(*Ipyramid[_lvl]);
+  scaleLevel = scaleLevel_1;
 }
 
