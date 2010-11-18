@@ -176,7 +176,7 @@ vpDot::operator!=(const vpDot& d)
 bool
 vpDot::operator==(const vpDot& d)
 {
-  return ( cog != d.getCog() );
+  return ( cog == d.getCog() );
 }
 
 /*!
