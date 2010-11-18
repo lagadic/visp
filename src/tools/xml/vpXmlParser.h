@@ -200,6 +200,7 @@ protected:
 public:
   
   vpXmlParser();
+  vpXmlParser(const vpXmlParser& _twin);
   virtual ~vpXmlParser();
   void parse(const std::string& filename);
   void save(const std::string& filename, const bool append=false);
