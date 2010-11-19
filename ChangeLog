@@ -12,7 +12,11 @@ ViSP 2.6.1 (under development)
   - Improvements
      - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now 
        possible to select a specific camera with its GUID by using setCamera()
-     - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser
+     - All the specific Xml parser (vpMbtXmlParser, vpXmlParserCamera) 
+       inherit now from vpXmlParser
+     - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser,
+       vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance
+
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
