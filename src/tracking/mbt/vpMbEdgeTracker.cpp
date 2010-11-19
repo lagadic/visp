@@ -1268,7 +1268,7 @@ vpMbEdgeTracker::initPyramid(const vpImage<unsigned char>& _I, std::vector< cons
   
   for(unsigned int i=1; i<_pyramid.size(); i += 1){
     if(scales[i]){
-      unsigned int cScale = static_cast<unsigned int>(pow(2, i));
+      unsigned int cScale = static_cast<unsigned int>(pow(2., (int)i));
       vpImage<unsigned char>* I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
 #ifdef VISP_HAVE_OPENCV
       IplImage* vpI0 = cvCreateImageHeader(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
@@ -1348,7 +1348,7 @@ vpMbEdgeTracker::getLline(const unsigned int _level)
 void 
 vpMbEdgeTracker::downScale(const unsigned int _scale)
 {
-  const double ratio = pow(2, _scale);
+  const double ratio = pow(2., (int)_scale);
   scaleLevel = _scale;
   
   vpMatrix K = cam.get_K();
@@ -1370,7 +1370,7 @@ vpMbEdgeTracker::downScale(const unsigned int _scale)
 void 
 vpMbEdgeTracker::upScale(const unsigned int _scale)
 {
-  const double ratio = pow(2, _scale);
+  const double ratio = pow(2., (int)_scale);
   scaleLevel = 0;
   
   vpMatrix K = cam.get_K();
