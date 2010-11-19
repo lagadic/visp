@@ -76,12 +76,14 @@
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
 #endif
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
-#  include <opencv2/core/core.hpp>
-#  include <opencv2/imgproc/imgproc.hpp>
-#  include <opencv2/imgproc/imgproc_c.h>
-#else
-#  include <cv.h>
+#ifdef VISP_HAVE_OPENCV
+#  if VISP_HAVE_OPENCV_VERSION >= 0x020101
+#    include <opencv2/core/core.hpp>
+#    include <opencv2/imgproc/imgproc.hpp>
+#    include <opencv2/imgproc/imgproc_c.h>
+#  else
+#    include <cv.h>
+#  endif
 #endif
 
 /*!
