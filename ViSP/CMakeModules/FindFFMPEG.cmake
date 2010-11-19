@@ -113,7 +113,7 @@
       ffmpeg/libswscale
   )
 
-# Detection of the FFMPEG library on Unix
+  # Detection of the FFMPEG library on Unix
   FIND_LIBRARY(FFMPEG_AVUTIL_LIBRARY
     NAMES
       avutil
@@ -136,9 +136,9 @@
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
   )
-  FIND_LIBRARY(FFMPEG_AVCODEC_LIBRARY
+  FIND_LIBRARY(FFMPEG_AVFORMAT_LIBRARY
     NAMES
-      avcodec
+      avformat
     PATHS
     /usr/lib
     /usr/local/lib
@@ -173,10 +173,17 @@
   )
 
   # FFMpeg depend son Zlib
-  FIND_PACKAGE(ZLIB)
+  FIND_PACKAGE(ZLIB QUIET)
   # FFMpeg depend son BZip2
-  FIND_PACKAGE(BZIP2)
-  #MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+  # with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
+  # while with CMake 2.8, the name is FindBZIP2.cmake
+  # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2) 
+  FIND_PACKAGE(BZIP2 QUIET)
+  # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+  if(NOT BZIP2_FOUND)
+    FIND_PACKAGE(BZip2 QUIET)
+    # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
+  endif()
 
   # Try to find if avcodec_decode_video2() is avalaible since 
   # avcodec_decode_video() is deprecated. To do that we try to compile 
