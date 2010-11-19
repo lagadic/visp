@@ -60,11 +60,15 @@
 // libavutil/common.h is no more autosufficient for C++ program because
 // stdint.h defines UINT64_C only for C program and not C++ program
 #ifdef __cplusplus
-#define __STDC_CONSTANT_MACROS
-#ifdef _STDINT_H
-#undef _STDINT_H
-#endif
-# include <stdint.h>
+#  define __STDC_CONSTANT_MACROS
+#  ifdef _STDINT_H
+#    undef _STDINT_H
+#  endif
+// On OS X
+#  ifdef _STDINT_H_
+#    undef _STDINT_H_
+#  endif
+#  include <stdint.h>
 #endif
 // end fix
 
