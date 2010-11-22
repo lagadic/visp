@@ -1284,7 +1284,10 @@ vpRobotBiclops::readPositionFile(const char *filename, vpColVector &q)
 
   double q1,q2;
   // Read positions
-  fscanf(pt_f, "%lf %lf", &q1, &q2);
+  if (fscanf(pt_f, "%lf %lf", &q1, &q2) == EOF) {
+    std::cout << "Cannot read joint positions." << std::endl;
+    return false;
+  }
   q.resize(vpBiclops::ndof) ;
 
   q[0] = vpMath::rad(q1) ; // Rot tourelle
