@@ -534,7 +534,7 @@ void vpImageTools::flip(const vpImage<Type> &I,
     for ( i = 0; i < height; i++)
     {
       memcpy(newI.bitmap+i*width, I.bitmap+(height-1-i)*width,
-  	            width);
+	     width*sizeof(Type));
     }
 }
 
@@ -542,7 +542,7 @@ void vpImageTools::flip(const vpImage<Type> &I,
 /*!
   Flip vertically the input image.
 
-  \param I : Input image which is flipped.
+  \param I : Input image which is flipped and modified in output.
 */
 template<class Type>
 void vpImageTools::flip(vpImage<Type> &I)
@@ -558,12 +558,12 @@ void vpImageTools::flip(vpImage<Type> &I)
     for ( i = 0; i < height/2; i++)
     {
       memcpy(Ibuf.bitmap, I.bitmap+i*width,
-  	            width);
+  	            width*sizeof(Type));
 
       memcpy(I.bitmap+i*width, I.bitmap+(height-1-i)*width,
-  	            width);
+  	            width*sizeof(Type));
       memcpy(I.bitmap+(height-1-i)*width, Ibuf.bitmap,
-  	            width);
+  	            width*sizeof(Type));
     }
 }
 
