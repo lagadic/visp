@@ -161,7 +161,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector weighted_error;
   vpColVector factor;
 
-  int iter = 0;
+  unsigned int iter = 0;
 
   //Nombre de moving edges
   int nbrow  = 0;
