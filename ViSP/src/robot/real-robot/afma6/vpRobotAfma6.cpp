@@ -52,6 +52,7 @@
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpRobotAfma6.h>
+#include <visp/vpRotationMatrix.h>
 
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ----------------------------------------------------------- */
@@ -792,7 +793,103 @@ vpRobotAfma6::getPositioningVelocity (void)
   return positioningVelocity;
 }
 
+/*!
 
+  Move the robot to an absolute cartesian position with a given percent of max
+  velocity.  The percent of max velocity is to set with
+  setPositioningVelocity().  The position to reach can only be specified in
+  camera frame or in the reference frame. In joint, an exception is thrown.
+
+  \warning This method is blocking. It returns only when the position
+  is reached by the robot.
+
+  \param pose : A six dimension pose vector corresponding to the position
+  to reach. The three first parameters are the translations in meter, the three
+  last parameters are the rotations expressed as a theta u vector in
+  radians. If the position is out of range, an exception is provided.
+
+  \param frame : Frame in which the position is expressed.
+
+  - In the camera and the reference frame, rotations are
+  represented by a vpThetaUVector.
+
+  - Mixt frame of joint frame is not implemented. 
+
+  \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME 
+  and vpRobot::ARTICULAR_FRAME not implemented.
+
+  \exception vpRobotException::positionOutOfRangeError : The requested
+  position is out of range.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+#include <visp/vpPoseVector.h>
+
+int main()
+{
+#ifdef VISP_HAVE_AFMA6
+  vpPoseVector pose;
+  // Set positions in the reference frame
+  pose[0] = 0.1;    // x axis, in meter
+  pose[1] = 0.;     // y axis, in meter
+  pose[2] = 0.3;    // z axis, in meter
+  pose[3] = M_PI/8; // ThetaU rotation around x axis, in rad
+  pose[4] = M_PI/4; // ThetaU rotation around y axis, in rad
+  pose[5] = 0.;     // ThetaU rotation around z axis, in rad
+
+  vpRobotAfma6 robot;
+
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+
+  // Set the max velocity to 20%
+  robot.setPositioningVelocity(20);
+
+  // Moves the robot in the camera frame
+  robot.setPosition(vpRobot::REFERENCE_FRAME, pose);
+
+  return 0;
+#endif
+}
+ \endcode
+
+  To catch the exception if the position is out of range, modify the code like:
+
+  \code
+  try {
+    robot.setPosition(vpRobot::REFERENCE_FRAME, pose);
+  }
+  catch (vpRobotException e) {
+    if (e.getCode() == vpRobotException::positionOutOfRangeError) {
+      std::cout << "The position is out of range" << std::endl;
+    }
+  }
+  \endcode
+
+*/
+void
+vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
+			   const vpPoseVector & pose )
+
+{
+  vpColVector position(6);
+  vpRxyzVector rxyz;
+  vpRotationMatrix R;
+
+  R.buildFrom(pose[3], pose[4], pose[5]); //thetau
+  rxyz.buildFrom(R);
+
+  for (int i=0; i < 3; i++) {
+    position[i] = pose[i];
+    position[i+3] =  rxyz[i];
+  }
+  if (frame == vpRobot::ARTICULAR_FRAME) {
+    throw vpRobotException (vpRobotException::lowLevelError,
+			    "Positionning error: "
+			    "Joint frame not implemented for pose positionning.");
+  }
+  setPosition (frame, position);
+}
 /*!
 
   Move to an absolute position with a given percent of max velocity.
@@ -828,6 +925,14 @@ vpRobotAfma6::getPositioningVelocity (void)
   position is out of range.
 
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+#include <visp/vpColVector.h>
+#include <visp/vpRobotException.h>
+
+int main()
+{
+#ifdef VISP_HAVE_AFMA6
   vpColVector position(6);
   // Set positions in the camera frame
   position[0] = 0.1;    // x axis, in meter
@@ -835,7 +940,7 @@ vpRobotAfma6::getPositioningVelocity (void)
   position[2] = 0.3;    // z axis, in meter
   position[3] = M_PI/8; // rotation around x axis, in rad
   position[4] = M_PI/4; // rotation around y axis, in rad
-  position[5] = M_PI;   // rotation around z axis, in rad
+  position[5] = M_PI/10;// rotation around z axis, in rad
 
   vpRobotAfma6 robot;
 
@@ -846,6 +951,10 @@ vpRobotAfma6::getPositioningVelocity (void)
 
   // Moves the robot in the camera frame
   robot.setPosition(vpRobot::CAMERA_FRAME, position);
+  
+  return 0;
+#endif
+}
   \endcode
 
   To catch the exception if the position is out of range, modify the code like:
@@ -856,11 +965,13 @@ vpRobotAfma6::getPositioningVelocity (void)
   }
   catch (vpRobotException e) {
     if (e.getCode() == vpRobotException::positionOutOfRangeError) {
-    std::cout << "The position is out of range" << std::endl;
+      std::cout << "The position is out of range" << std::endl;
+    }
   }
   \endcode
 
 */
+
 void
 vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 			   const vpColVector & position )
@@ -1024,6 +1135,12 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   position is out of range.
 
   \code
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+
+int main()
+{
+#ifdef VISP_HAVE_AFMA6
   // Set positions in the camera frame
   double pos1 = 0.1;    // x axis, in meter
   double pos2 = 0.2;    // y axis, in meter
@@ -1041,6 +1158,10 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
   // Moves the robot in the camera frame
   robot.setPosition(vpRobot::CAMERA_FRAME, pos1, pos2, pos3, pos4, pos5, pos6);
+
+  return 0;
+#endif
+}
   \endcode
 
   \sa setPosition()
@@ -1084,11 +1205,23 @@ void vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
   This method has the same behavior than the sample code given below;
   \code
-  vpColVector q;
+#include <visp/vpConfig.h>
+#include <visp/vpRobotAfma6.h>
+#include <visp/vpColVector.h>
+
+int main()
+{
+#ifdef VISP_HAVE_AFMA6
+  vpRobotAfma6 robot;
+  vpColVector q; // joint position
 
   robot.readPosFile("MyPositionFilename.pos", q);
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL)
+  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+
+  return 0;
+#endif
+}
   \endcode
 
   \exception vpRobotException::lowLevelError : vpRobot::MIXT_FRAME not
