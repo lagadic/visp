@@ -137,7 +137,7 @@ main()
 
     vpImage<unsigned char> I ;
 
-    vp1394TwoGrabber g;
+    vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
     g.open(I) ;
