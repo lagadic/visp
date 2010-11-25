@@ -51,6 +51,7 @@
 
 #include <visp/vpRobot.h>
 #include <visp/vpColVector.h>
+#include <visp/vpPoseVector.h>
 #include <visp/vpDebug.h>
 #include <visp/vpAfma6.h>
 
@@ -275,7 +276,9 @@ public:  /* Methode publiques */
   vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame,
+  void setPosition (const vpRobot::vpControlFrameType frame,
+		    const vpPoseVector & pose );
+ void setPosition(const vpRobot::vpControlFrameType frame,
 		   const vpColVector &position) ;
   void setPosition (const vpRobot::vpControlFrameType frame,
 		    const double pos1, const double pos2, const double pos3,
