@@ -16,7 +16,9 @@ ViSP 2.6.1 (under development)
        inherit now from vpXmlParser
      - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser,
        vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance
-
+  - Bug fixed
+     - [11473] vpImageTools::flip() come out error when deal with vpImage 
+       with vpRGBa type
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
