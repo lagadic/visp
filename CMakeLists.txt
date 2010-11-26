@@ -1321,8 +1321,8 @@ ADD_CUSTOM_TARGET(uninstall
 #----------------------------------------------------------------------
 
 # Installation for ViSPConfig.cmake
-# case 1: ${BIN_DIR}/ViSPConfig.cmake for use without make install
-# case 2: ${BIN_DIR}/install/ViSPConfig.cmake for use with make install
+# case 1: <binary dir>/ViSPConfig.cmake for use with make
+# case 2: <install dir>/ViSPConfig.cmake for use with make install
 
 # case 1
 #--------------
@@ -1333,7 +1333,7 @@ CONFIGURE_FILE(
   ${VISP_BINARY_DIR}/VISPConfig.cmake
   IMMEDIATE @ONLY)
 
-# Just to copy ./CMakeModule/VISPUse.cmake.in in ./lib/UseVISP.cmake
+# Just to copy ./CMakeModule/VISPUse.cmake.in <binary dir>/UseVISP.cmake
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
   ${VISP_BINARY_DIR}/VISPUse.cmake
@@ -1349,6 +1349,12 @@ EXPORT_LIBRARY_DEPENDENCIES(
   ${VISP_BINARY_DIR}/VISPLibraryDepends.cmake
   )
 
+# Generate the package dependent file include/visp/vpConfig.h
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
+  ${VISP_BINARY_DIR}/ViSP-third-party.txt
+)
+
+
 # case 2
 #--------------
 set(VISP_ROOT_DIR_CONFIGCMAKE ${CMAKE_INSTALL_PREFIX})
@@ -1362,7 +1368,7 @@ CONFIGURE_FILE(
   ${VISP_BINARY_DIR}/install/VISPConfig.cmake
   IMMEDIATE @ONLY)
 
-# Just to copy ./CMakeModule/VISPUse.cmake.in in ./lib/UseVISP.cmake
+# Just to copy ./CMakeModule/VISPUse.cmake.in in <install dir>/UseVISP.cmake
 CONFIGURE_FILE(
   ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
   ${VISP_BINARY_DIR}/install/VISPUse.cmake
@@ -1385,6 +1391,7 @@ IF(UNIX)
     ${VISP_BINARY_DIR}/install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
     ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
+    ${VISP_BINARY_DIR}/ViSP-third-party.txt
     DESTINATION share/visp
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   )
@@ -1411,53 +1418,11 @@ INCLUDE(Dart)
 # For CPack packaging tool
 #----------------------------------------------------------------------
 
-# InstallRequiredSystemLibraries: Hack for Visual Studio support Search for
-# system runtime libraries based on the platform.
-INCLUDE(InstallRequiredSystemLibraries)
+option(BUILD_PACKAGE "Configure ViSP packaging" OFF)
+if (BUILD_PACKAGE)
+  include (${VISP_SOURCE_DIR}/CMakeModules/CPackConfig.cmake)
+endif(BUILD_PACKAGE)
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "ViSP: Visual Servoing Platform")
-SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
-
-SET(CPACK_PACKAGE_VERSION ${VISP_VERSION})
-SET(CPACK_PACKAGE_VERSION_MAJOR ${VISP_VERSION_MAJOR})
-SET(CPACK_PACKAGE_VERSION_MINOR ${VISP_VERSION_MINOR})
-SET(CPACK_PACKAGE_VERSION_PATCH ${VISP_VERSION_PATCH})
-
-# The following components are regex's to match anywhere (unless anchored)
-# in absolute path + filename to find files or directories to be excluded
-# from source tarball.
-SET(CPACK_SOURCE_IGNORE_FILES
-  "/\\\\.svn/"
-  "/autom4te.cache/"
-  "/build/"
-  "/lib/"
-  "~$"
-)
-
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
-IF(WIN32 AND NOT UNIX)
-  # There is a bug in NSI that does not handle full unix paths properly. Make
-  # sure there is at least one set of four (4) backlasshes.
-#  SET(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\\\InstallIcon.bmp")
-  # CPACK_NSIS_INSTALLED_ICON_NAME icon is the one that shows up in the
-  # Add/Remove control panel
-  #SET(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\ViSP.exe")
-  SET(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} ViSP SDK")
-  SET(CPACK_NSIS_HELP_LINK "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp")
-  SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\www.http://www.irisa.fr/lagadic/visp/what.html")
-  SET(CPACK_NSIS_CONTACT "visp@inria.fr")
-  SET(CPACK_NSIS_MODIFY_PATH ON)
-ELSE(WIN32 AND NOT UNIX)
-  IF(APPLE)
-    SET(CPACK_GENERATOR "PackageMaker;TBZ2")
-  ENDIF()
-#  SET(CPACK_STRIP_FILES "")
-#  SET(CPACK_SOURCE_STRIP_FILES "")
-ENDIF(WIN32 AND NOT UNIX)
-
-INCLUDE(CPack)
 
 #----------------------------------------------------------------------
 # Propagation in sub dirs
@@ -1494,10 +1459,3 @@ IF(BUILD_TESTING)
 
   SUBDIRS(test)
 ENDIF(BUILD_TESTING)
-
-#----------------------------------------------------------------------
-# Generate the package dependent file include/visp/vpConfig.h
-#----------------------------------------------------------------------
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
-  ${VISP_BINARY_DIR}/ViSP-third-party.txt
-)
