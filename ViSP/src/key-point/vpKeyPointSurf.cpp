@@ -369,7 +369,7 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   indexImagePair.front();
   indexReferencePair.front();
 
-  int nbrPair = 0;
+  unsigned int nbrPair = 0;
 
   for(int i = 0; i < ref_descriptors->total; i++ )
   {
@@ -403,7 +403,7 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   currentImagePointsList.resize(nbrPair);
   matchedReferencePoints.resize(nbrPair);
 
-  for (int i = 0; i < nbrPair; i++)
+  for (unsigned int i = 0; i < nbrPair; i++)
   {
       int index = indexImagePair.value();
 
