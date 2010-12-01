@@ -268,6 +268,8 @@ public:
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
+  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char>* I = NULL, vpColor col = vpColor::blue, bool trackDot = true);
+
 private :
 
   virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);

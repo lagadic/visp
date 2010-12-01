@@ -142,6 +142,7 @@ class VISP_EXPORT vpBasicFeature
                        vpColor color=vpColor::green,
 		       unsigned int thickness=1) const = 0;
 
+  void setFlags();
 
  protected:
   void resetFlags();

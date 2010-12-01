@@ -192,6 +192,37 @@ public:
   static bool saveMatrix(const char *filename, const vpMatrix &M, const bool binary = false, const char *Header = "");
   static bool loadMatrix(const char *filename, vpMatrix &M, const bool binary = false, char *Header = NULL);
 
+  /*!
+    Save a matrix to a file
+
+    \param filename : absolute file name
+    \param M : matrix to be saved
+    \param binary :If true the matrix is save in a binary file, else a text file.
+    \param Header : optional line that will be saved at the beginning of the file
+
+    \return Returns true if no problem appends.
+
+    Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
+   */
+  static inline bool saveMatrix(std::string filename, const vpMatrix &M, const bool binary = false, const char *Header = "")
+					  {return vpMatrix::saveMatrix(filename.c_str(), M, binary, Header);}
+
+  /*!
+    Load a matrix to a file
+
+    \param filename : absolute file name
+    \param M : matrix to be loaded
+    \param binary :If true the matrix is load from a binary file, else from a text file.
+    \param Header : Header of the file is load in this parameter
+
+    \return Returns true if no problem appends.
+   */
+  static inline bool loadMatrix(std::string filename, vpMatrix &M, const bool binary = false, char *Header = NULL)
+					  {return vpMatrix::loadMatrix(filename.c_str(), M, binary, Header);}
+
+
+
+
   //---------------------------------
   // Copy / assignment
   //---------------------------------
