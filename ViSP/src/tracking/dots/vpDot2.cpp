@@ -53,6 +53,7 @@
 // exception handling
 #include <visp/vpTrackingException.h>
 #include <visp/vpMath.h>
+#include <visp/vpIoTools.h>
 
 #include <visp/vpDot2.h>
 
@@ -2281,6 +2282,86 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I)
   else{
     mean_gray_level = sum_value/nb_pixels;
   }
+}
+
+
+/*!
+
+  Define a number of dots from a file.
+  If the file does not exist, define it by clicking an image, the dots are then saved into the file.
+
+  Useful when repeating an initialization without having to click.
+
+	\param dot: dot2 array
+	\param n: number of dots, array dimension
+	\param dotFile: path for the file
+	\param I: pointer to image
+	\param col: color to print the dots (default Blue)
+	\param trackDot: if true, tracks the dots in the image, if false simply loads the coordinates (default true)
+
+    \return an nx2 matrix with the coordinates of the dots
+*/
+vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char>* I, vpColor col, bool trackDot)
+{
+	vpMatrix Cogs(n, 2);
+	vpImagePoint cog;
+	unsigned int i;
+	bool newCogs = (vpIoTools::checkFilename(dotFile.c_str()) == false);
+	if(newCogs == false)
+	{
+		vpMatrix::loadMatrix(dotFile, Cogs);
+		std::cout << Cogs.getRows() << " dots loaded from file " << dotFile << std::endl;
+	}
+	else if(I != NULL)
+		std::cout << "Click on the " << n << " dots clockwise starting from upper/left dot..." << std::endl;
+	else
+	{
+		std::cout << "defDots : no file and no image !" << std::endl;
+		return Cogs;
+	}
+
+	if(Cogs.getRows() < n)
+	{
+		std::cout << "Dot file has a wrong number of dots : redefining them" << std::endl;
+		newCogs = true;
+	}
+
+	for (i = 0; i < n; i++)
+	{
+		if (newCogs)
+		{
+			if(trackDot)
+			{
+				dot[i].initTracking(*I);
+				cog = dot[i].getCog();
+			}
+			else
+			{
+				vpDisplay::getClick(*I, cog);
+				dot[i].setCog(cog);
+			}
+			Cogs[i][0] = cog.get_u();
+			Cogs[i][1] = cog.get_v();
+		}
+		else
+		{
+			cog.set_uv(Cogs[i][0], Cogs[i][1]);
+			dot[i].setCog(cog);
+		}
+		if(I != NULL)
+		{
+			vpDisplay::displayCross(*I, cog, 10, col);
+			vpDisplay::flush(*I);
+		}
+	}
+
+	if (newCogs & (dotFile != ""))
+	{
+		vpMatrix::saveMatrix(dotFile, Cogs);
+		std::cout << Cogs.getRows() << " dots written to file " << dotFile << std::endl;
+	}
+
+	return Cogs;
 }
 
 

@@ -106,6 +106,16 @@ void vpBasicFeature::resetFlags()
       flags[i] = false;
   }
 }
+
+//! set feature flags to true to prevent Warning when re-computing the interaction matrix without having updated the feature
+void vpBasicFeature::setFlags()
+{
+  if (flags != NULL)
+    {
+	  for (int i = 0; i < nbParameters; i++)
+	    flags[i] = true;
+    }
+}
 /*
  * Local variables:
  * c-basic-offset: 4
