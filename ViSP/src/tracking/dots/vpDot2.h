@@ -47,7 +47,7 @@
 #ifndef vpDot2_hh
 #define vpDot2_hh
 
-
+#include <vector>
 #include <visp/vpConfig.h>
 #include <visp/vpList.h>
 #include <visp/vpImage.h>
@@ -268,7 +268,9 @@ public:
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
-  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char>* I = NULL, vpColor col = vpColor::blue, bool trackDot = true);
+  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
+
+  static void trackAndDisplay(vpDot2 dot[], const int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
 
 private :
 

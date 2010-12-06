@@ -2286,82 +2286,147 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I)
 
 
 /*!
-
   Define a number of dots from a file.
   If the file does not exist, define it by clicking an image, the dots are then saved into the file.
 
-  Useful when repeating an initialization without having to click.
+  If the dots from the file cannot be tracked in the image, will ask to click them.
 
-	\param dot: dot2 array
-	\param n: number of dots, array dimension
-	\param dotFile: path for the file
-	\param I: pointer to image
-	\param col: color to print the dots (default Blue)
-	\param trackDot: if true, tracks the dots in the image, if false simply loads the coordinates (default true)
+	\param dot : dot2 array
+	\param n : number of dots, array dimension
+	\param dotFile : path for the file
+	\param I : image
+	\param col : color to print the dots (default Blue)
+	\param trackDot : if true, tracks the dots in the image, if false simply loads the coordinates (default true)
 
     \return an nx2 matrix with the coordinates of the dots
 */
-vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char>* I, vpColor col, bool trackDot)
+vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col, bool trackDot)
 {
 	vpMatrix Cogs(n, 2);
 	vpImagePoint cog;
 	unsigned int i;
-	bool newCogs = (vpIoTools::checkFilename(dotFile.c_str()) == false);
-	if(newCogs == false)
+	bool fromFile = vpIoTools::checkFilename(dotFile.c_str());
+	if(fromFile)
 	{
 		vpMatrix::loadMatrix(dotFile, Cogs);
 		std::cout << Cogs.getRows() << " dots loaded from file " << dotFile << std::endl;
 	}
-	else if(I != NULL)
-		std::cout << "Click on the " << n << " dots clockwise starting from upper/left dot..." << std::endl;
-	else
-	{
-		std::cout << "defDots : no file and no image !" << std::endl;
-		return Cogs;
-	}
 
+	// test number of cogs in file
 	if(Cogs.getRows() < n)
 	{
 		std::cout << "Dot file has a wrong number of dots : redefining them" << std::endl;
-		newCogs = true;
+		fromFile = false;
 	}
 
-	for (i = 0; i < n; i++)
+	// read from file and tracks the dots
+	if(fromFile)
 	{
-		if (newCogs)
+		try
+		{
+			for(i=0;i<n;++i)
+			{
+				cog.set_uv(Cogs[i][0], Cogs[i][1]);
+				dot[i].setGraphics(true);
+				dot[i].setCog(cog);
+				if(trackDot)
+				{
+					dot[i].initTracking(I,cog);
+					dot[i].track(I);
+					vpDisplay::displayCross(I, cog, 10, col);
+				}
+			}
+		}
+		catch(...)
+		{
+			std::cout << "Cannot track dots from file" << std::endl;
+			fromFile = false;
+		}
+		vpDisplay::flush(I);
+
+		// check that dots are far away ones from the other
+		double d;
+		for(i=0;i<n & fromFile;++i)
+		{
+			d = sqrt(vpMath::sqr(dot[i].getHeight()) + vpMath::sqr(dot[i].getWidth()));
+			for(int j=0;j<n & fromFile;++j)
+				if(j!=i)
+					if(dot[i].getDistance(dot[j]) < d)
+					{
+						fromFile = false;
+						std::cout << "Dots from file seem incoherent" << std::endl;
+					}
+		}
+	}
+
+	if(!fromFile)
+	{
+		vpDisplay::display(I);
+		vpDisplay::flush(I);
+
+		std::cout << "Click on the " << n << " dots clockwise starting from upper/left dot..." << std::endl;
+		for (i = 0; i < n; i++)
 		{
 			if(trackDot)
 			{
-				dot[i].initTracking(*I);
+				dot[i].setGraphics(true);
+				dot[i].initTracking(I);
 				cog = dot[i].getCog();
 			}
 			else
 			{
-				vpDisplay::getClick(*I, cog);
+				vpDisplay::getClick(I, cog);
 				dot[i].setCog(cog);
 			}
 			Cogs[i][0] = cog.get_u();
 			Cogs[i][1] = cog.get_v();
-		}
-		else
-		{
-			cog.set_uv(Cogs[i][0], Cogs[i][1]);
-			dot[i].setCog(cog);
-		}
-		if(I != NULL)
-		{
-			vpDisplay::displayCross(*I, cog, 10, col);
-			vpDisplay::flush(*I);
+			vpDisplay::displayCross(I, cog, 10, col);
+			vpDisplay::flush(I);
 		}
 	}
 
-	if (newCogs & (dotFile != ""))
+	if (!fromFile & (dotFile != ""))
 	{
 		vpMatrix::saveMatrix(dotFile, Cogs);
 		std::cout << Cogs.getRows() << " dots written to file " << dotFile << std::endl;
 	}
 
+	// back to non graphic mode
+	for(i=0;i<n;++i)
+		dot[i].setGraphics(false);
+
 	return Cogs;
+}
+
+/*!
+  Tracks a number of dots in an image and displays their trajectories
+
+	\param dot : dot2 array
+	\param n : number of dots, array dimension
+	\param I : image
+	\param cogs : vector of vpImagePoint that will be updated with the new dots, will be displayed in green
+	\param cogStar (optional) : array of vpImagePoint indicating the desired position (default NULL), will be displayed in red
+*/
+void vpDot2::trackAndDisplay(vpDot2 dot[], const int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar)
+{
+	int i;
+	// tracking
+	for(i=0;i<n;++i)
+	{
+		dot[i].track(I);
+		cogs.push_back(dot[i].getCog());
+	}
+	// trajectories
+	for(i=n;i<cogs.size();++i)
+		vpDisplay::displayCircle(I,cogs[i],4,vpColor::green,true);
+	// initial position
+	for(i=0;i<n;++i)
+		vpDisplay::displayCircle(I,cogs[i],4,vpColor::blue,true);
+	// if exists, desired position
+	if(cogStar != NULL)
+		for(i=0;i<n;++i)
+			vpDisplay::displayCircle(I,cogStar[i],4,vpColor::red,true);
+	vpDisplay::flush(I);
 }
 
 
