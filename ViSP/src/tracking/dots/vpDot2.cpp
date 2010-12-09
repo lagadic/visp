@@ -2425,7 +2425,10 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const int &n, vpImage<unsigned char> 
 	// if exists, desired position
 	if(cogStar != NULL)
 		for(i=0;i<n;++i)
+		{
+			vpDisplay::displayDotLine(I,cogStar[i],dot[i].getCog(),vpColor::red);
 			vpDisplay::displayCircle(I,cogStar[i],4,vpColor::red,true);
+		}
 	vpDisplay::flush(I);
 }
 
