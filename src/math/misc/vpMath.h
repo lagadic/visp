@@ -167,7 +167,7 @@ class VISP_EXPORT vpMath
   static inline double msinc(double sinx, double x) ;
 
   // sigmoid
-  static inline double sigmoid(double x, double n, double x0=0.,double x1=1.);
+  static inline double sigmoid(double x, double x0=0.,double x1=1., double n=12.);
 
   /*!
     Exchange two numbers.
@@ -352,13 +352,13 @@ double vpMath::msinc(double sinx, double x)
 
  Sigmoid function between [x0,x1] with \f$ s(x)=0 if x\le x0\f$ and \f$ s(x)=1 if x \ge x1 \f$
  \param x : Value of x.
- \param n : Degree of the exponential.
  \param x0 : Lower bound (default 0).
  \param x1 : Upper bound (default 1).
+  \param n : Degree of the exponential (default 12).
 
 \return \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$
  */
-double vpMath::sigmoid(double x, double n, double x0,double x1)
+double vpMath::sigmoid(double x, double x0,double x1, double n)
 {
 	if(x < x0)
 		return 0.;
