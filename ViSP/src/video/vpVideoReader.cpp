@@ -138,7 +138,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
-           formatType == FORMAT_MOV)
+           formatType == FORMAT_MOV ||
+           formatType == FORMAT_OGV)
   {
     ffmpeg = new vpFFMPEG;
     if(!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
@@ -149,12 +150,18 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
-           formatType == FORMAT_MOV)
+           formatType == FORMAT_MOV ||
+           formatType == FORMAT_OGV)
   {
     vpERROR_TRACE("To read video files the FFmpeg library has to be installed");
     throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
   }
   #endif
+  else if (formatType == FORMAT_UNKNOWN)
+  {
+    vpERROR_TRACE("The format of the file does not correpsond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
+  }
   
   frameCount = firstFrame;
   if(!getFrame(I,firstFrame))
@@ -198,7 +205,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
-           formatType == FORMAT_MOV)
+           formatType == FORMAT_MOV ||
+           formatType == FORMAT_OGV)
   {
     ffmpeg = new vpFFMPEG;
     if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
@@ -208,12 +216,18 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
-           formatType == FORMAT_MOV)
+           formatType == FORMAT_MOV ||
+           formatType == FORMAT_OGV)
   {
     vpERROR_TRACE("To read video files the FFmpeg library has to be installed");
     throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
   }
   #endif
+  else if (formatType == FORMAT_UNKNOWN)
+  {
+    vpERROR_TRACE("The format of the file does not correpsond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
+  }
   
   frameCount = firstFrame;
   if(!getFrame(I,firstFrame))
@@ -393,6 +407,8 @@ vpVideoReader::getFormat(const char *filename)
   int mpg = sfilename.find(".mpg");
   int MOV = sfilename.find(".MOV");
   int mov = sfilename.find(".mov");
+  int OGV = sfilename.find(".OGV");
+  int ogv = sfilename.find(".ogv");
   
   int size = sfilename.size();
 
@@ -410,6 +426,8 @@ vpVideoReader::getFormat(const char *filename)
     return FORMAT_MPEG;
   else if ((MOV>0 && MOV<size) || ( mov>0 && mov<size))
     return FORMAT_MOV;
+  else if ((OGV>0 && OGV<size) || ( ogv>0 && ogv<size))
+    return FORMAT_OGV;
   else{ 
     return FORMAT_UNKNOWN;
   } 
