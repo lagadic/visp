@@ -138,6 +138,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       FORMAT_AVI,
       FORMAT_MPEG,
       FORMAT_MOV,
+      FORMAT_OGV,
       FORMAT_UNKNOWN
     } vpVideoFormatType;
     
