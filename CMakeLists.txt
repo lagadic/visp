@@ -365,6 +365,7 @@ ENDIF(BIGENDIAN)
 #--------------------------------------------------------------------
 # X11 lib
 #--------------------------------------------------------------------
+SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
 IF(USE_X11)
   IF(X11_FOUND)
     MESSAGE(STATUS "X11 found")
@@ -582,7 +583,6 @@ ENDIF(PARPORT_FOUND)
 # default initialisation
 SET(VISP_HAVE_OPENCV_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
