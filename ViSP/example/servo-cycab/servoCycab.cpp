@@ -139,8 +139,8 @@ int main()
 
        // Steering decrease to zero
       double sign_phi = 0;
-      if (phim != 0.) 
-	//if (std::fabs(phim) > std::numeric_limits<double>::epsilon()) 
+      //if (phim != 0.) 
+      if (std::fabs(phim) > std::numeric_limits<double>::epsilon()) 
 	sign_phi = fabs(phim)/phim;
       phi = phim - MAX_VEL_PHI*(t1-tprev)/1000*sign_phi;
       if (fabs(phi) < vpMath::rad(5)) phi = 0;
