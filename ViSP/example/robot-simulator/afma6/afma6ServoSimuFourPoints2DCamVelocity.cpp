@@ -62,7 +62,11 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
+#if (defined(WIN32) || defined(VISP_HAVE_PTHREAD)) && (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
+
+// We need to use threading capabilities. Thus on Unix-like
+// platforms, the libpthread third-party library need to be
+// installed. On Windows, we use the native threading capabilities.
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -366,7 +370,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11, OpenCV or GDI display functionalities...");
+  vpERROR_TRACE("You do not have X11, OpenCV or GDI display functionalities or threading capabilities...");
 }
 
 #endif

@@ -86,7 +86,7 @@ vpForceTwistMatrix::operator=(const vpForceTwistMatrix &M)
 void
 vpForceTwistMatrix::init()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   try {
     resize(6,6) ;
@@ -248,10 +248,10 @@ vpForceTwistMatrix::operator*(const vpForceTwistMatrix &F) const
 {
   vpForceTwistMatrix Fout ;
 
-  for (int i=0;i<6;i++) {
-    for (int j=0;j<6;j++) {
+  for (unsigned int i=0;i<6;i++) {
+    for (unsigned int j=0;j<6;j++) {
       double s =0 ;
-      for (int k=0;k<6;k++)
+      for (unsigned int k=0;k<6;k++)
 	s +=rowPtrs[i][k] * F.rowPtrs[k][j];
       Fout[i][j] = s ;
     }
@@ -276,10 +276,10 @@ vpForceTwistMatrix::operator*(const vpMatrix &M) const
   }
 
   vpMatrix p(6, M.getCols()) ;
-  for (int i=0;i<6;i++) {
-    for (int j=0;j<M.getCols();j++) {
+  for (unsigned int i=0;i<6;i++) {
+    for (unsigned int j=0;j<M.getCols();j++) {
       double s =0 ;
-      for (int k=0;k<6;k++)
+      for (unsigned int k=0;k<6;k++)
 	s += rowPtrs[i][k] * M[k][j];
       p[i][j] = s ;
     }
@@ -350,8 +350,8 @@ vpForceTwistMatrix::operator*(const vpColVector &H) const
 
   Hout = 0.0;
 
-  for (int i=0;i<6;i++) {
-    for (int j=0;j<6;j++) {
+  for (unsigned int i=0;i<6;i++) {
+    for (unsigned int j=0;j<6;j++) {
       Hout[i]+=rowPtrs[i][j] * H[j];
     }
   }
@@ -374,7 +374,7 @@ vpForceTwistMatrix
 vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
 			 const vpRotationMatrix &R)
 {
-  int i, j;
+  unsigned int i, j;
   vpMatrix skewaR = t.skew(t)*R ;
   
   for (i=0 ; i < 3 ; i++) {

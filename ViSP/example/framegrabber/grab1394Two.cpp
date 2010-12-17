@@ -285,7 +285,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
     switch (c) {
     case 'c':
-      camera = atoi(optarg); break;
+      camera = (unsigned int)atoi(optarg); break;
     case 'd':
       display = false; break;
     case 'f':
@@ -305,7 +305,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case 'm':
       multi = true; break;
     case 'n':
-      nframes = atoi(optarg); break;
+      nframes = (unsigned int)atoi(optarg); break;
     case 'o':
       save = true;
       opath = optarg; break;
@@ -608,7 +608,7 @@ main(int argc, const char ** argv)
 	  // Initialise the display
 	  char title[100];
 	  sprintf(title, "Images captured by camera %u", i+offset);
-	  d[i].init(Ic[i], 100+i*50, 100+i*50, title) ;
+	  d[i].init(Ic[i], (int)(100+i*50), (int)(100+i*50), title) ;
 	  vpDisplay::display(Ic[i]);
 	  vpDisplay::flush(Ic[i]);
 	}
@@ -625,7 +625,7 @@ main(int argc, const char ** argv)
 	  // Initialise the display
 	  char title[100];
 	  sprintf(title, "Images captured by camera %u", i+offset);
-	  d[i].init(Ig[i], 100+i*50, 100+i*50, title) ;
+	  d[i].init(Ig[i], (int)(100+i*50), (int)(100+i*50), title) ;
 	  vpDisplay::display(Ig[i]);
 	  vpDisplay::flush(Ig[i]);
 	}

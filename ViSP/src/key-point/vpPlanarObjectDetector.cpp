@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -113,22 +113,22 @@ vpPlanarObjectDetector::~vpPlanarObjectDetector()
   \param nbpt : the number of point.
 */
 void 
-vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
+vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const unsigned int nbpt)
 {
   if(nbpt < 3){
-    throw vpException(vpException::badValue, "Not enough point");
+    throw vpException(vpException::badValue, "Not enough point to compute the region of interest.");
   }
   
   std::vector < vpImagePoint > ptsx;
   ptsx.resize(nbpt);
   std::vector < vpImagePoint > ptsy;
   ptsy.resize(nbpt);
-  for(int i=0; i<nbpt; i++){
+  for(unsigned int i=0; i<nbpt; i++){
     ptsx[i] = ptsy[i] = ip[i];
   }
   
-  for(int i=0; i<nbpt; i++){
-    for(int j=0; j<nbpt-1; j++){
+  for(unsigned int i=0; i<nbpt; i++){
+    for(unsigned int j=0; j<nbpt-1; j++){
       if(ptsx[j].get_j() > ptsx[j+1].get_j()){
         double tmp = ptsx[j+1].get_j();
         ptsx[j+1].set_j(ptsx[j].get_j());
@@ -136,8 +136,8 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
       }
     }
   }
-  for(int i=0; i<nbpt; i++){
-    for(int j=0; j<nbpt-1; j++){
+  for(unsigned int i=0; i<nbpt; i++){
+    for(unsigned int j=0; j<nbpt-1; j++){
       if(ptsy[j].get_i() > ptsy[j+1].get_i()){
         double tmp = ptsy[j+1].get_i();
         ptsy[j+1].set_i(ptsy[j].get_i());
@@ -164,13 +164,13 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const int nbpt)
   
   \return The number of reference points.
 */
-int
+unsigned int
 vpPlanarObjectDetector:: buildReference(const vpImage<unsigned char> &_I)
 {
   modelROI.x = 0;
   modelROI.y = 0;
-  modelROI.width = _I.getWidth();
-  modelROI.height = _I.getHeight();  
+  modelROI.width = (int)_I.getWidth();
+  modelROI.height = (int)_I.getHeight();  
 
   initialiseRefCorners(modelROI);  
   
@@ -191,16 +191,16 @@ vpPlanarObjectDetector:: buildReference(const vpImage<unsigned char> &_I)
   
   \return the number of reference points
 */
-int
+unsigned int
 vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
 		       vpImagePoint &_iP,
 		       unsigned int _height, unsigned int _width)
 {
-  int res = fern.buildReference(_I, _iP, _height, _width);
+  unsigned int res = fern.buildReference(_I, _iP, _height, _width);
   modelROI.x = (int)_iP.get_u();
   modelROI.y = (int)_iP.get_v();
-  modelROI.width = _width;
-  modelROI.height = _height; 
+  modelROI.width = (int)_width;
+  modelROI.height = (int)_height; 
 
   initialiseRefCorners(modelROI);  
   
@@ -219,11 +219,11 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
   
   \return The number of reference points.
 */
-int 
+unsigned int 
 vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
 		       const vpRect _rectangle)
 {
-  int res = fern.buildReference(_I, _rectangle);
+  unsigned int res = fern.buildReference(_I, _rectangle);
   
   vpImagePoint iP = _rectangle.getTopLeft();
   
@@ -279,7 +279,7 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
   {
     const cv::Mat_<double>& H_tmp = H;
     dst_corners.resize(4);
-    for(int i = 0; i < 4; i++ )
+    for(unsigned int i = 0; i < 4; i++ )
     {
         cv::Point2f pt = ref_corners[i];
 
@@ -289,8 +289,8 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
     }
     
     double* ptr = (double*)H_tmp.data;
-    for(int i=0; i<9; i++){
-      this->homography[(int)(i/3)][i%3] = *(ptr++);
+    for(unsigned int i=0; i<9; i++){
+      this->homography[(unsigned int)(i/3)][i%3] = *(ptr++);
     }
     isCorrect = true;
   }
@@ -337,7 +337,7 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 */
 bool 
 vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
-	   vpImagePoint &iP, unsigned int height, unsigned int width)
+	   vpImagePoint &iP, const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
      || (iP.get_j()+width) >= I.getWidth()) {

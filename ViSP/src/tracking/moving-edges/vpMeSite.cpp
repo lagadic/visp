@@ -46,6 +46,8 @@
 */
 
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
@@ -57,7 +59,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 static
-bool horsImage( int i , int j , int half , int rows , int cols)
+bool horsImage(unsigned int i , unsigned int j, unsigned int half, unsigned int rows, unsigned int cols)
 {
   return((i < half + 1) || ( i > (rows - half - 3) )||(j < half + 1) || (j > (cols - half - 3) )) ;
 }
@@ -274,6 +276,7 @@ vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
   int i2 = vpMath::round(ifloat+k*salpha);
   int j2 = vpMath::round(jfloat+k*calpha);
 
+  // TODO: Here check if i1,j1,i2,j2 > 0 else ?? 
   if (I[i1][j1] > I[i2][j2]) mask_sign = 1 ; else mask_sign = -1 ;
 }
 
@@ -283,7 +286,7 @@ double
 vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
 {
 
-  int half, index_mask ;
+  unsigned int half, index_mask ;
   double conv = 0.0 ;
   half = (me->mask_size - 1) >> 1 ;
 
@@ -309,17 +312,16 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
       thetadeg= 0 ;
     }
 
-    index_mask = (int)(thetadeg/(double)me->anglestep);
+    index_mask = (unsigned int)(thetadeg/(double)me->anglestep);
 
     int ihalf = i-half ;
     int jhalf = j-half ;
     int ihalfa ;
-    int a ;
-    int b ;
-    for( a = 0 ; a < me->mask_size ; a++ )
+    
+    for(unsigned int a = 0 ; a < me->mask_size ; a++ )
     {
       ihalfa = ihalf+a ;
-      for( b = 0 ; b < me->mask_size ; b++ )
+      for(unsigned int b = 0 ; b < me->mask_size ; b++ )
       {
 	conv += mask_sign* me->mask[index_mask][a][b] *
 	  //	  I(i-half+a,j-half+b) ;
@@ -482,10 +484,10 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
-  int range  = me->range ;
+  unsigned int range  = me->range ;
 
   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  << std::endl ;
-  list_query_pixels = getQueryList(I, range) ;
+  list_query_pixels = getQueryList(I, (int)range) ;
 
   double  contraste_max = 1 + me->mu2 ;
   double  contraste_min = 1 - me->mu1 ;
@@ -502,7 +504,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   double diff = 1e6;
 
   //    std::cout <<"---------------------"<<std::endl ;
-  for(int n = 0 ; n < 2 * range + 1 ; n++)
+  for(unsigned int n = 0 ; n < 2 * range + 1 ; n++)
   {
       //   convolution results
       convolution = list_query_pixels[n].convolution(I, me) ;
@@ -521,7 +523,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 	    diff = fabs(1-contraste);
 	    max_convolution= convolution;
 	    max = likelihood[n] ;
-	    max_rank = n ;
+	    max_rank = (int)n ;
 	    max_rank2 = max_rank1;
 	    max_rank1 = max_rank;
 	  }
@@ -535,7 +537,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 	{
 	  max_convolution= convolution;
           max = likelihood[n] ;
-          max_rank = n ;
+          max_rank = (int)n ;
           max_rank2 = max_rank1;
           max_rank1 = max_rank;
         }
@@ -575,7 +577,8 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 	  vpDisplay::displayPoint(I, ip, vpColor::green);
 	}
       normGradient = 0 ;
-      if(contraste != 0)
+      //if(contraste != 0)
+      if(std::fabs(contraste) > std::numeric_limits<double>::epsilon())
 	suppress = 1; // contrast suppression
       else
 	suppress = 2; // threshold suppression

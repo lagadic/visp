@@ -426,7 +426,7 @@ vpServolens::setAutoIris(bool enable)
 
 */
 void
-vpServolens::setPosition(vpServoType servo, unsigned position)
+vpServolens::setPosition(vpServoType servo, unsigned int position)
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -510,7 +510,7 @@ vpServolens::setPosition(vpServoType servo, unsigned position)
 
 */
 bool
-vpServolens::getPosition(vpServoType servo, unsigned &position)
+vpServolens::getPosition(vpServoType servo, unsigned int &position)
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -615,7 +615,7 @@ vpServolens::getPosition(vpServoType servo, unsigned &position)
   this->clean(posit, posit);
 
   //    printf("\nChaine toilettee: posit: %s", posit);
-  position = atoi(posit);
+  position = (unsigned int)atoi(posit);
 
   return(true);
 }
@@ -704,9 +704,9 @@ vpServolens::wait()
 			    "Cannot dial with Servolens.");
   }
     
-  size_t r;
+  ssize_t r;
   r = ::write(this->remfd, "\r\n", strlen("\r\n"));
-  if (r != (strlen("\r\n"))) {
+  if (r != (ssize_t)(strlen("\r\n"))) {
     throw vpRobotException (vpRobotException::communicationError,
 			    "Cannot write on Servolens.");
   }
@@ -809,7 +809,8 @@ vpServolens::read(char *c, long timeout_s)
   fd_set         readfds; /* list of fds for select to listen to */
   struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
 
-  FD_ZERO(&readfds); FD_SET(this->remfd, &readfds);
+  FD_ZERO(&readfds); 
+  FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
 
   if (select(FD_SETSIZE, &readfds, (fd_set *)NULL,
 	     (fd_set *)NULL, &timeout) > 0) {
@@ -838,11 +839,11 @@ vpServolens::write(const char *s)
     throw vpRobotException (vpRobotException::communicationError,
 			    "Cannot dial with Servolens.");
   }
-  size_t r = 0;
+  ssize_t r = 0;
   r = ::write(this->remfd,"\r", strlen("\r"));
   r += ::write(this->remfd, s, strlen(s));
   r += ::write(this->remfd,"\r", strlen("\r"));
-  if (r != (2*strlen("\r") + strlen(s))) {
+  if (r != (ssize_t)(2*strlen("\r") + strlen(s))) {
     throw vpRobotException (vpRobotException::communicationError,
 			    "Cannot write on Servolens.");
   }

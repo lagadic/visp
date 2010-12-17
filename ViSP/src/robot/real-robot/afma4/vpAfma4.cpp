@@ -63,7 +63,7 @@
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
-const int vpAfma4::njoint = 4;
+const unsigned int vpAfma4::njoint = 4;
 
 
 /*!
@@ -566,7 +566,7 @@ vpColVector
 vpAfma4::getJointMin()
 {
   vpColVector qmin(4);
-  for (int i=0; i < 4; i ++)
+  for (unsigned int i=0; i < 4; i ++)
     qmin[i] = this->_joint_min[i];
   return qmin;
 }
@@ -583,7 +583,7 @@ vpColVector
 vpAfma4::getJointMax()
 {
   vpColVector qmax(4);
-  for (int i=0; i < 4; i ++)
+  for (unsigned int i=0; i < 4; i ++)
     qmax[i] = this->_joint_max[i];
   return qmax;
 }

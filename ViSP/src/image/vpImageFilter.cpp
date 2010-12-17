@@ -136,7 +136,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 double 
 vpImageFilter::gaussianFilter(vpImage<unsigned char> & fr, 
-															const int r, const int c)
+			      const unsigned int r, const unsigned int c)
 {
   //filter Gaussien
   return ( 
@@ -162,11 +162,12 @@ vpImageFilter::gaussianFilter(vpImage<unsigned char> & fr,
  */
 
 double 
-vpImageFilter::derivativeFilterX(vpImage<unsigned char> & fr, const int r, const int c)
+vpImageFilter::derivativeFilterX(vpImage<unsigned char> & fr,
+				 const unsigned int r, const unsigned int c)
 {
-	return (2047.0 *(fr[r][c+1] - fr[r][c-1])
-					+913.0 *(fr[r][c+2] - fr[r][c-2])
-					+112.0 *(fr[r][c+3] - fr[r][c-3]))/8418.0;
+  return (2047.0 *(fr[r][c+1] - fr[r][c-1])
+	  +913.0 *(fr[r][c+2] - fr[r][c-2])
+	  +112.0 *(fr[r][c+3] - fr[r][c-3]))/8418.0;
 }
 
 /*!
@@ -178,11 +179,12 @@ vpImageFilter::derivativeFilterX(vpImage<unsigned char> & fr, const int r, const
  */
 
 double 
-vpImageFilter::derivativeFilterY(vpImage<unsigned char> & fr, const int r, const int c)
+vpImageFilter::derivativeFilterY(vpImage<unsigned char> & fr,
+				 const unsigned int r, const unsigned int c)
 {
-	return (2047.0 *(fr[r+1][c] - fr[r-1][c])
-					+913.0 *(fr[r+2][c] - fr[r-2][c])
-					+112.0 *(fr[r+3][c] - fr[r-3][c]))/8418.0;
+  return (2047.0 *(fr[r+1][c] - fr[r-1][c])
+	  +913.0 *(fr[r+2][c] - fr[r-2][c])
+	  +112.0 *(fr[r+3][c] - fr[r-3][c]))/8418.0;
 }
 
 /*!
@@ -228,10 +230,10 @@ vpImageFilter::coefficientGaussianDerivative(double *filter, const int t)
 
 double 
 vpImageFilter::derivativeFilterX(vpImage<unsigned char> &I, 
-							 const int r, const int c, 
-							 double *filter, const int size)
+				 const unsigned int r, const unsigned int c, 
+				 double *filter, const unsigned int size)
 {
-	int i;
+	unsigned int i;
 	double result;
 	
 	result = 0;
@@ -260,10 +262,10 @@ vpImageFilter::derivativeFilterX(vpImage<unsigned char> &I,
 
 double  
 vpImageFilter::derivativeFilterY(vpImage<unsigned char> &I, 
-							 const int r, const int c, 
-							 double *filter, const int size)
+				 const unsigned int r, const unsigned int c, 
+				 double *filter, const unsigned int size)
 {
-	int i;
+	unsigned int i;
 	double result;
 	
 	result = 0;

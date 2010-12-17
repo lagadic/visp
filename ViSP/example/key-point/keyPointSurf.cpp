@@ -285,10 +285,10 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed)
   {
     std::cout << "Click on the top left and the bottom right corners to define the part of the image where the reference points will be computed" << std::endl;
-    for (int i=0 ; i < 2 ; i++)
+    for (unsigned int i=0 ; i < 2 ; i++)
     {
       vpDisplay::getClick(Iref, corners[i]);
-std::cout << corners[i] << std::endl;
+      std::cout << corners[i] << std::endl;
     }
   }
   else
@@ -311,7 +311,7 @@ std::cout << corners[i] << std::endl;
   }
 
   vpKeyPointSurf surf;
-  int nbrRef;
+  unsigned int nbrRef;
   unsigned int height, width;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
@@ -319,7 +319,7 @@ std::cout << corners[i] << std::endl;
   //Computes the reference points
   nbrRef = surf.buildReference(Iref, corners[0], height, width);
 
-  int nbrPair = 0;
+  unsigned int nbrPair = 0;
 
   vpImageIo::readPGM(Icur, filename);
 

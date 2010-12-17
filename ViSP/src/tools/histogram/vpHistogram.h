@@ -218,7 +218,7 @@ public:
     };
 
   void     calculate(const vpImage<unsigned char> &I);
-  void     smooth(unsigned fsize = 3);
+  void     smooth(const unsigned int fsize = 3);
   unsigned getPeaks(vpList<vpHistogramPeak> & peaks);
   unsigned getPeaks(unsigned char dist, 
 		    vpHistogramPeak & peak1, 

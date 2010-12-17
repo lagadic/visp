@@ -105,10 +105,10 @@ class VISP_EXPORT vpMath
   static inline double sqr(double x) { return x*x ; }
 
   //  factorial of x
-  static inline double fact(int x) ;
+  static inline double fact(unsigned int x) ;
 
   // combinaison
-  static inline double comb(int n, int p) ;
+  static inline double comb(unsigned int n, unsigned int p) ;
 
   //   round x to the nearest integer
   static inline int round(const double x) ;
@@ -197,7 +197,7 @@ class VISP_EXPORT vpMath
 
   \return !x
 */
-double vpMath::fact(int x)
+double vpMath::fact(unsigned int x)
 {
   if ( (x == 1) || (x == 0)) return 1;
   return x * fact(x-1);
@@ -208,7 +208,7 @@ double vpMath::fact(int x)
 
   \return \f$ !n / (!(n-p) !p) \f$
 */
-double vpMath::comb(int n, int p)
+double vpMath::comb(unsigned int n, unsigned int p)
 {
   if (n == p) return 1;
   return fact(n)/ (fact(n-p) * fact(p));

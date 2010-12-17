@@ -59,8 +59,8 @@ vpRowVector & vpRowVector::operator=(const vpRowVector &v)
   if (colNum==0)
     resize(v.getCols());
 
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<colNum; j++) {
       rowPtrs[i][j] = v.rowPtrs[i][j];
     }
   }
@@ -89,8 +89,8 @@ vpRowVector & vpRowVector::operator=(const vpMatrix &m)
 //! initialisation each element of the vector is x
 vpRowVector & vpRowVector::operator=(double x)
 {
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<colNum; j++) {
       rowPtrs[i][j] = x;
     }
   }
@@ -113,7 +113,7 @@ vpRowVector & vpRowVector::operator=(double x)
 */
 double vpRowVector::operator*(const vpColVector &x) const
 {
-  int nelements = x.getRows();
+  unsigned int nelements = x.getRows();
   if (getCols() != nelements ) {
     vpERROR_TRACE("\n\t\t Illegal matrix operation") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
@@ -122,7 +122,7 @@ double vpRowVector::operator*(const vpColVector &x) const
 
   double scalar = 0.0;
 
-  for (int i=0; i<nelements; i++) {
+  for (unsigned int i=0; i<nelements; i++) {
     scalar += (*this)[i] * x[i];
   }
   return scalar;
@@ -155,10 +155,10 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
 
   c = 0.0;
 
-  for (int i=0;i<colNum;i++) {
+  for (unsigned int i=0;i<colNum;i++) {
     {
       double bi = data[i] ; // optimization em 5/12/2006
-      for (int j=0;j<A.getCols();j++) {
+      for (unsigned int j=0;j<A.getCols();j++) {
         c[j]+=bi*A[i][j];
       }
     }
@@ -191,7 +191,7 @@ vpRowVector::vpRowVector (const vpRowVector &v) : vpMatrix(v)
 }
 
 //! Constructor  (Take line i of matrix m)
-vpRowVector::vpRowVector (vpMatrix &m, int i) : vpMatrix(m, i, 0, 1, m.getCols())
+vpRowVector::vpRowVector (vpMatrix &m, unsigned int i) : vpMatrix(m, i, 0, 1, m.getCols())
 {
 }
 
@@ -234,7 +234,7 @@ vpRowVector &vpRowVector::normalize()
   \param ncols : number of columns of the matrix
   \return a vpMatrix
 */
-vpMatrix vpRowVector::reshape(const int &nrows,const int &ncols){
+vpMatrix vpRowVector::reshape(const unsigned int &nrows,const unsigned int &ncols){
   vpMatrix m(nrows,ncols);
   reshape(m,nrows,ncols);
   return m;
@@ -246,7 +246,7 @@ vpMatrix vpRowVector::reshape(const int &nrows,const int &ncols){
   \param nrows : number of rows of the matrix
   \param ncols : number of columns of the matrix
 */
-void vpRowVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
+void vpRowVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols){
   if(dsize!=nrows*ncols)
   {
     vpERROR_TRACE("\n\t\t vpSubRowVector mismatch size for reshape vpSubColVector in a vpMatrix") ;
@@ -263,7 +263,7 @@ void vpRowVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
     std::cout << me << std::endl ;
     throw ;
   }
-     for(int i =0; i< nrows; i++)
-         for(int j =0; j< ncols; j++)
+     for(unsigned int i =0; i< nrows; i++)
+         for(unsigned int j =0; j< ncols; j++)
          	  m[i][j]=data[i*nrows+j];
 }

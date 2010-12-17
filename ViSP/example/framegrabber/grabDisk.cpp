@@ -82,8 +82,8 @@
 
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string basename,
-	   std::string ext, unsigned first, unsigned nimages, unsigned step,
-	   unsigned nzero)
+	   std::string ext, int first, unsigned int nimages, int step,
+	   unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -160,8 +160,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename,
-		std::string &ext, unsigned &first, unsigned &nimages,
-		unsigned &step, unsigned &nzero, bool &display)
+		std::string &ext, int &first, unsigned int &nimages,
+		int &step, unsigned int &nzero, bool &display)
 {
   const char *optarg;
   int	c;
@@ -171,10 +171,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
     case 'b': basename = optarg; break;
     case 'd': display = false; break;
     case 'e': ext = optarg; break;
-    case 'f': first = (unsigned) atoi(optarg); break;
+    case 'f': first = atoi(optarg); break;
     case 'i': ipath = optarg; break;
     case 'n': nimages = (unsigned) atoi(optarg); break;
-    case 's': step = (unsigned) atoi(optarg); break;
+    case 's': step = atoi(optarg); break;
     case 'z': nzero = (unsigned) atoi(optarg); break;
     case 'h': usage(argv[0], NULL, ipath, basename, ext, first, nimages,
 		    step, nzero); return false; break;
@@ -217,10 +217,10 @@ main(int argc, const char ** argv)
   std::string opt_ext = "pgm";
   bool opt_display = true;
 
-  unsigned opt_first = 5;
-  unsigned opt_nimages = 70;
-  unsigned opt_step = 1;
-  unsigned opt_nzero = 4;
+  int opt_first = 5;
+  unsigned int opt_nimages = 70;
+  int opt_step = 1;
+  unsigned int opt_nzero = 4;
 
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");

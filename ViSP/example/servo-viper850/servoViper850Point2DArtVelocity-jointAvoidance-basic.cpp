@@ -58,6 +58,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
@@ -130,7 +132,7 @@ main()
     vpColVector data(10) ;
 
     double rho = 0.25 ;
-    for (int i=0 ; i < 6 ; i++)
+    for (unsigned int i=0 ; i < 6 ; i++)
       {
 	Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
 	Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
@@ -138,7 +140,7 @@ main()
     Qmiddle = (Qmin + Qmax) /2.;
     double rho1 = 0.1 ;
     
-    for (int i=0 ; i < 6 ; i++) {
+    for (unsigned int i=0 ; i < 6 ; i++) {
       tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
       tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
     }
@@ -162,12 +164,12 @@ main()
     //   step is 0.1
     plot.initRange(0,0,200,1,-1.2,1.2,0.1);
     plot.setTitle(0, "Joint behavior");
-   plot.initRange(1,0,200,1,-0.01,0.01,0.05);
+    plot.initRange(1,0,200,1,-0.01,0.01,0.05);
     plot.setTitle(1, "Joint velocity");
 
     // For the first graphic, set the curves legend
     char legend[10];
-    for (int i=0; i < 6; i++) {
+    for (unsigned int i=0; i < 6; i++) {
       sprintf(legend, "q%d", i+1);
       plot.setLegend(0, i, legend); 
       sprintf(legend, "q%d", i+1);
@@ -185,7 +187,7 @@ main()
     plot.setColor(0, 3, vpColor::orange); 
     plot.setColor(0, 4, vpColor(0, 128, 0)); 
     plot.setColor(0, 5, vpColor::cyan); 
-    for (int i= 6; i < 10; i++)
+    for (unsigned int i= 6; i < 10; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
   // Set the curves color
 
@@ -302,8 +304,8 @@ main()
 
       // Identify the joints near the limits
       vpColVector pb(6) ; pb = 0 ;
-      int npb =0 ;
-      for (int i=0 ; i < 6 ;i++) {
+      unsigned int npb =0 ;
+      for (unsigned int i=0 ; i < 6 ;i++) {
 	if (q[i] < tQmin[i])
 	  if (fabs(Qmin[i]-q[i]) > fabs(Qmin[i]-qpre[i])) {
 	    pb[i] = 1 ; npb++ ;
@@ -322,17 +324,18 @@ main()
 
       task.J1.kernel(kernelJ1);
 
-      int dimKernelL = kernelJ1.getCols() ;
+      unsigned int dimKernelL = kernelJ1.getCols() ;
       if (npb != 0) {
 	// Build linear system a0*E = S
 	vpMatrix E(npb, dimKernelL) ;
 	vpColVector S(npb) ;
 
-	int k=0 ;
+	unsigned int k=0 ;
 
-	for (int j=0 ; j < 6 ; j++) // j is the joint
-	  if (pb[j]==1)	{
-	    for (int i=0 ; i < dimKernelL ; i++)
+	for (unsigned int j=0 ; j < 6 ; j++) // j is the joint
+	  //if (pb[j]==1)	{
+	  if (std::fabs(pb[j]-1) <= std::numeric_limits<double>::epsilon())	{
+	    for (unsigned int i=0 ; i < dimKernelL ; i++)
 	      E[k][i] = kernelJ1[j][i] ;
 	  
 	    S[k] = -prim_task[j]  ;
@@ -364,12 +367,12 @@ main()
 	// Add the material to plot curves
 
 	// q normalized between (entre -1 et 1)
-	for (int i=0 ; i < 6 ; i++) {
+	for (unsigned int i=0 ; i < 6 ; i++) {
 	  data[i] = (q[i] - Qmiddle[i]) ;
 	  data[i] /= (Qmax[i] - Qmin[i]) ;
 	  data[i]*=2 ;
 	}
-	int joint = 2;
+	unsigned int joint = 2;
 	data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
 	data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
 	data[8] = -1 ; data[9] = 1 ;

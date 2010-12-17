@@ -100,7 +100,7 @@ vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double
   pointListx.front();
   pointListy.front();
   
-  int k = 0;
+  unsigned int k = 0;
   vpImagePoint iP;
   while (k < nbPoint)
   {

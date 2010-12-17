@@ -434,7 +434,7 @@ vpSimulator::changeZoomFactor(const float zoomFactor, const int index)
 }
 
 void
-vpSimulator::initInternalViewer(int width, int height)
+vpSimulator::initInternalViewer(const unsigned int width, const unsigned int height)
 {
   internal_width = width;
   internal_height = height;
@@ -461,7 +461,7 @@ vpSimulator::initInternalViewer(int width, int height)
   // Turn the viewer decorations
   internalView->setDecoration(false) ;
 
-  internalView->resize(width, height, true) ;
+  internalView->resize((int)width, (int)height, true) ;
   
   // open the window
   internalView->show();
@@ -471,7 +471,7 @@ vpSimulator::initInternalViewer(int width, int height)
 }
 
 void
-vpSimulator::initExternalViewer(int width, int height)
+vpSimulator::initExternalViewer(const unsigned int width, const unsigned int height)
 {
 
   external_width = width;
@@ -490,7 +490,7 @@ vpSimulator::initExternalViewer(int width, int height)
 
   // set the title
   externalView->setTitle("External View") ;
-  externalView->resize(width, height, false) ;
+  externalView->resize((int)width, (int)height, false) ;
   // the goal here is to see all the scene and not to determine
   // a manual viewpoint
   externalView->viewAll ();
@@ -562,9 +562,9 @@ vpSimulator::getExternalCameraPosition(vpHomogeneousMatrix &cMf)
   SbMatrix rotX;
   rotX.setRotate (SbRotation (SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
   matrix.multLeft (rotX);
-  for(int i=0;i<4;i++)
-    for(int j=0;j<4;j++)
-      fMc[j][i]=matrix[i][j];
+  for(unsigned int i=0;i<4;i++)
+    for(unsigned int j=0;j<4;j++)
+      fMc[j][i]=matrix[(int)i][(int)j];
   fMc[0][3] = t[0] ;
   fMc[1][3] = t[1] ;
   fMc[2][3] = t[2] ;
@@ -587,9 +587,9 @@ vpSimulator::moveInternalCamera(vpHomogeneousMatrix &cMf)
   SbRotation rotCam;
   SbMatrix rotX;
   rotX.setRotate (SbRotation (SbVec3f(1.0f, 0.0f, 0.0f), (float)M_PI));
-  for(int i=0;i<4;i++)
-    for(int j=0;j<4;j++)
-      matrix[j][i]=(float)cMf[i][j];
+  for(unsigned int i=0;i<4;i++)
+    for(unsigned int j=0;j<4;j++)
+      matrix[(int)j][(int)i]=(float)cMf[i][j];
 
   matrix= matrix.inverse();
   matrix.multLeft (rotX);
@@ -818,14 +818,16 @@ vpSimulator::addObject(SoSeparator * object,
 {
 
   bool identity = true ;
-  for (int i=0 ; i <4 ;i++)
-    for (int j=0 ; j < 4 ; j++)
-      if (i==j)
-      {
-	if  (fabs(fMo[i][j] -1) > 1e-6)  identity=false ;
+  for (unsigned int i=0 ; i <4 ;i++){
+    for (unsigned int j=0 ; j < 4 ; j++){
+      if (i==j){
+	      if  (fabs(fMo[i][j] -1) > 1e-6)  identity=false ;
       }
-      else
-	if (fabs(fMo[i][j]) > 1e-6)  identity=false ;
+      else{
+      	if (fabs(fMo[i][j]) > 1e-6)  identity=false ;
+      }
+    }
+  }
 
   if (identity==true)
   {
@@ -836,9 +838,9 @@ vpSimulator::addObject(SoSeparator * object,
   {
     SbMatrix matrix;
     SbRotation rotation;
-    for(int i=0;i<4;i++)
-      for(int j=0;j<4;j++)
-	matrix[j][i]=(float)fMo[i][j];
+    for(unsigned int i=0;i<4;i++)
+      for(unsigned int j=0;j<4;j++)
+      	matrix[(int)j][(int)i]=(float)fMo[i][j];
 
     //  matrix= matrix.inverse();
     rotation.setValue(matrix);
@@ -985,14 +987,14 @@ vpSimulator::write (const char * fileName)
   /*  FILE *fp = fopen(fileName, "w");
       fprintf(fp,"P6 \n %d %d \n 255",internal_width,internal_height) ;
       fwrite(bufferView, sizeof(unsigned char), internal_width*internal_height*3, fp) ;*/
-  vpImage<vpRGBa> I(internal_height,internal_width) ;
+  vpImage<vpRGBa> I(internal_height, internal_width) ;
 
 
-  for(int i=0 ; i < internal_height ; i++)
-    for(int j=0 ; j < internal_width ; j++)
+  for(unsigned int i=0 ; i < internal_height ; i++)
+    for(unsigned int j=0 ; j < internal_width ; j++)
     {
       unsigned char r,g,b ;
-      int index = 3*((internal_height-i-1)* internal_width + j );
+      unsigned int index = 3*((internal_height-i-1)* internal_width + j );
       r = *(bufferView+index);
       g = *(bufferView+index+1);
       b = *(bufferView+index+2);

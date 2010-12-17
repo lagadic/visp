@@ -246,7 +246,7 @@ vpFeatureDepth::set_xyZLogZoverZstar(const double x,
   \endcode
 */
 vpMatrix
-vpFeatureDepth::interaction(const int select)
+vpFeatureDepth::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -350,7 +350,7 @@ vpFeatureDepth::interaction(const int select)
 */
 vpColVector
 vpFeatureDepth::error(const vpBasicFeature &s_star,
-		       const int select)
+		       const unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6)
@@ -385,7 +385,7 @@ vpFeatureDepth::error(const vpBasicFeature &s_star,
   \endcode
 */
 void
-vpFeatureDepth::print(const int select ) const
+vpFeatureDepth::print(const unsigned int select ) const
 {
   if (FEATURE_ALL & select)
   {

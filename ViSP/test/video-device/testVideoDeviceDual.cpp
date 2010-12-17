@@ -319,10 +319,10 @@ int main(int argc, const char ** argv)
   }
 
   if (opt_display){
-    unsigned winx1 = 100, winy1 = 200;
+    int winx1 = 100, winy1 = 200;
     d1->init(I1, winx1, winy1, "Display 1");
 
-    unsigned winx2 = winx1+10+I1.getWidth(), winy2 = winy1;
+    int winx2 = winx1+10+(int)I1.getWidth(), winy2 = winy1;
     d2->init(I2, winx2, winy2, "Display 2");
 
     vpDisplay::display(I1);

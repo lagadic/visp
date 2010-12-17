@@ -124,8 +124,8 @@ class VISP_EXPORT vpServolens
 
   void setController(vpControllerType controller);
   void setAutoIris(bool enable);
-  void setPosition(vpServoType servo, unsigned position);
-  bool getPosition(vpServoType servo, unsigned &position);
+  void setPosition(vpServoType servo, unsigned int position);
+  bool getPosition(vpServoType servo, unsigned int &position);
   vpCameraParameters getCameraParameters(vpImage<unsigned char> &I);
 
   void enablePrompt(bool active);

@@ -80,7 +80,7 @@ vpMbtPolygon::~vpMbtPolygon()
   \param nb : The number of corners.
 */
 void
-vpMbtPolygon::setNbPoint(int nb)
+vpMbtPolygon::setNbPoint(const unsigned int nb)
 {
   nbpt = nb ;
   if (p != NULL)
@@ -95,7 +95,7 @@ vpMbtPolygon::setNbPoint(int nb)
   \param P : The point to add.
 */
 void
-vpMbtPolygon::addPoint(unsigned int n, const vpPoint &P)
+vpMbtPolygon::addPoint(const unsigned int n, const vpPoint &P)
 {
   //if( p!NULL && n < nbpt )
     p[n] = P ;
@@ -109,7 +109,7 @@ vpMbtPolygon::addPoint(unsigned int n, const vpPoint &P)
 void
 vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-  for (int i = 0 ; i < nbpt ; i++)
+  for (unsigned int i = 0 ; i < nbpt ; i++)
   {
     p[i].changeFrame(cMo) ;
     p[i].projection() ;
@@ -273,7 +273,7 @@ vpMbtHiddenFaces::addPolygon(vpMbtPolygon *p)
   p_new->index = p->index;
   p_new->setNbPoint(p->nbpt);
   p_new->isvisible = p->isvisible;
-  for(int i = 0; i < p->nbpt; i++)
+  for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];
   Lpol += p_new ;
 }
@@ -286,10 +286,10 @@ vpMbtHiddenFaces::addPolygon(vpMbtPolygon *p)
   
   \return Return the number of visible polygons
 */
-int
+unsigned int
 vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
 {
-  int nbvisiblepolygone = 0 ;
+  unsigned int nbvisiblepolygone = 0 ;
   vpMbtPolygon *p ;
 
   Lpol.front();
@@ -297,7 +297,7 @@ vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
   {
     p = Lpol.value();
 
-    if (p->isVisible(cMo) ==true) nbvisiblepolygone++;
+    if (p->isVisible(cMo)) nbvisiblepolygone++;
     Lpol.next() ;
   }
   return nbvisiblepolygone ;
@@ -311,7 +311,7 @@ vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
   \return Return true if the polygon is visible.
 */
 bool
-vpMbtHiddenFaces::isVisible(int index)
+vpMbtHiddenFaces::isVisible(const int index)
 {
   vpMbtPolygon *p ;
   Lpol.front() ;
@@ -332,7 +332,7 @@ vpMbtHiddenFaces::isVisible(int index)
   \return Return true if the polygon will appear soon.
 */
 bool
-vpMbtHiddenFaces::isAppearing(int index)
+vpMbtHiddenFaces::isAppearing(const int index)
 {
   vpMbtPolygon *p ;
   Lpol.front() ;

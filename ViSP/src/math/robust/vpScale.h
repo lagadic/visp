@@ -81,7 +81,7 @@ class VISP_EXPORT vpScale
 
 private:
   double bandwidth;
-  int dimension;
+  unsigned int dimension;
   int kernel_type;
 
 public:
@@ -93,11 +93,11 @@ public:
   virtual ~vpScale(void);
 
   double MeanShift(vpColVector &error);
-  double KernelDensity(vpColVector &error, int position);
-  double KernelDensityGradient(vpColVector &error, int position);
+  double KernelDensity(vpColVector &error, unsigned int position);
+  double KernelDensityGradient(vpColVector &error, unsigned int position);
 
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
-  double KernelDensityGradient_EPANECHNIKOV(double X, int n);
+  double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
 
 };
 

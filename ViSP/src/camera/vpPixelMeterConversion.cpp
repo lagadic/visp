@@ -74,30 +74,28 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
 
 void
 vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
-				      int order,
+				      unsigned int order,
 				      const vpMatrix &moment_pixel,
 				      vpMatrix &moment_meter)
 {
 
   vpMatrix m(order, order);
-  int p, r, q, t;
-  int k;
   double yc = -cam.v0 ;
   double xc = -cam.u0 ;
 
-  for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
+  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
   {
-    for (p=0 ; p<order; p++) // itération en X
-      for (q=0; q<order; q++) // itération en Y
+    for (unsigned int p=0 ; p<order; p++) // itération en X
+      for (unsigned int q=0; q<order; q++) // itération en Y
 	if (p+q==k) // on est bien dans la matrice triangulaire supérieure
 	{
 	  m[p][q] = 0; // initialisation à 0
-	  for( r=0; r<=p; r++) // somme externe
-	    for( t=0; t<=q; t++) // somme interne
+	  for(unsigned int r=0; r<=p; r++) // somme externe
+	    for(unsigned int t=0; t<=q; t++) // somme interne
 	    {
 	      m[p][q] +=
 		vpMath::comb(p, r) * vpMath::comb(q, t)
-		* pow(xc, p-r) * pow(yc, q-t)
+		* pow(xc, (int)(p-r)) * pow(yc, (int)(q-t))
 		* moment_pixel[r][t];
 
 	    }
@@ -105,17 +103,17 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 
   }
 
-  for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
-    for (p=0 ; p<order; p++)
-      for (q=0; q<order; q++)
+  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
+    for (unsigned int p=0 ; p<order; p++)
+      for (unsigned int q=0; q<order; q++)
 	if (p+q==k)
 	{
-	  m[p][q] *= pow(cam.inv_px,1+p) * pow(cam.inv_py,1+q);
+	  m[p][q] *= pow(cam.inv_px,(int)(1+p)) * pow(cam.inv_py,(int)(1+q));
 	}
 
-  for (k=0; k<order; k++) // itération correspondant à l'ordre du moment
-    for (p=0 ; p<order; p++)
-      for (q=0; q<order; q++)
+  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
+    for (unsigned int p=0 ; p<order; p++)
+      for (unsigned int q=0; q<order; q++)
 	if (p+q==k)
 	{
 	  moment_meter[p][q] = m[p][q];

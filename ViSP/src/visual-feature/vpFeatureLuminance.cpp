@@ -6,11 +6,9 @@
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpImageFilter.h>
+#include <visp/vpException.h>
 
 #include <visp/vpFeatureLuminance.h>
-
-
-using namespace std ;
 
 
 /*!
@@ -45,12 +43,17 @@ vpFeatureLuminance::init()
 
 
 void
-vpFeatureLuminance::init(int _nbr, int _nbc, double _Z)
+vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 {
   init() ;
 
   nbr = _nbr ;
   nbc = _nbc ;
+
+  if((nbr < 2*bord) || (nbc < 2*bord)){
+    throw vpException(vpException::dimensionError, "border is too important compared to number of row or column.");
+  }
+
   // number of feature = nb column x nb lines in the images
   dim_s = (nbr-2*bord)*(nbc-2*bord) ;
 
@@ -129,7 +132,7 @@ vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam)
 void
 vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
 {
-  int    l = 0;
+  unsigned int l = 0;
   double Ix,Iy ;
 
   double px = cam.get_px() ;
@@ -140,10 +143,10 @@ vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
     { 
       firstTimeIn=1 ;
       l =0 ;
-      for (int i=bord; i < nbr-bord ; i++)
+      for (unsigned int i=bord; i < nbr-bord ; i++)
 	{
 	  //   cout << i << endl ;
-	  for (int j = bord ; j < nbc-bord; j++)
+	  for (unsigned int j = bord ; j < nbc-bord; j++)
 	    {	double x=0,y=0;
 	      vpPixelMeterConversion::convertPoint(cam,
 						   i, j,
@@ -160,10 +163,10 @@ vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
     }
 
   l= 0 ;
-  for (int i=bord; i < nbr-bord ; i++)
+  for (unsigned int i=bord; i < nbr-bord ; i++)
     {
       //   cout << i << endl ;
-      for (int j = bord ; j < nbc-bord; j++)
+      for (unsigned int j = bord ; j < nbc-bord; j++)
 	{
 	  // cout << dim_s <<" " <<l <<"  " <<i << "  " << j <<endl ;
 	  Ix =  px * vpImageFilter::derivativeFilterX(I,i,j) ;
@@ -197,7 +200,7 @@ vpFeatureLuminance::interaction(vpMatrix &L)
 
   L.resize(dim_s,6) ;
 
-  for(int m = 0; m< L.getRows(); m++)
+  for(unsigned int m = 0; m< L.getRows(); m++)
     {
       Ix = pixInfo[m].Ix;
       Iy = pixInfo[m].Iy;
@@ -221,7 +224,7 @@ vpFeatureLuminance::interaction(vpMatrix &L)
   Compute and return the interaction matrix \f$ L_I \f$. The computation is made
   thanks to the values of the luminance features \f$ I \f$
 */
-vpMatrix  vpFeatureLuminance::interaction(const int /* select */)
+vpMatrix  vpFeatureLuminance::interaction(const unsigned int /* select */)
 {
   static vpMatrix L  ;
   interaction(L) ;
@@ -242,7 +245,7 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
 {
   e.resize(dim_s) ;
 
-  for (int i =0 ; i < dim_s ; i++)
+  for (unsigned int i =0 ; i < dim_s ; i++)
     {
       e[i] = s[i] - s_star[i] ;
     }
@@ -259,7 +262,7 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
 */
 vpColVector
 vpFeatureLuminance::error(const vpBasicFeature &s_star,
-			  const int /* select */)
+			  const unsigned int /* select */)
 {
   static vpColVector e ;
   
@@ -278,7 +281,7 @@ vpFeatureLuminance::error(const vpBasicFeature &s_star,
 
  */
 void
-vpFeatureLuminance::print(const int /* select */) const
+vpFeatureLuminance::print(const unsigned int /* select */) const
 {
   static int firsttime =0 ;
 

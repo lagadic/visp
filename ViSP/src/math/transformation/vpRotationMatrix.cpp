@@ -72,7 +72,7 @@ const double vpRotationMatrix::minimum = 0.00001;
 void
 vpRotationMatrix::init()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   try {
     resize(3,3) ;
@@ -120,9 +120,9 @@ vpRotationMatrix::eye()
 vpRotationMatrix &
 vpRotationMatrix::operator=(const vpRotationMatrix &m)
 {
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (unsigned int j=0; j<3; j++)
     {
       rowPtrs[i][j] = m.rowPtrs[i][j];
     }
@@ -147,9 +147,9 @@ vpRotationMatrix::operator=(const vpMatrix &m)
 			  "m is not a rotation matrix !!!!!"));
     }
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (unsigned int j=0; j<3; j++)
     {
       (*this)[i][j] = m[i][j];
     }
@@ -171,11 +171,11 @@ vpRotationMatrix::operator*(const vpRotationMatrix &B) const
 {
   vpRotationMatrix p ;
 
-  for (int i=0;i<3;i++)
-    for (int j=0;j<3;j++)
+  for (unsigned int i=0;i<3;i++)
+    for (unsigned int j=0;j<3;j++)
     {
       double s =0 ;
-      for (int k=0;k<3;k++)
+      for (unsigned int k=0;k<3;k++)
 	s +=rowPtrs[i][k] * B.rowPtrs[k][j];
       p[i][j] = s ;
     }
@@ -205,11 +205,11 @@ vpRotationMatrix::operator*(const vpMatrix &B) const
   }
   vpRotationMatrix p ;
 
-  for (int i=0;i<3;i++)
-    for (int j=0;j<3;j++)
+  for (unsigned int i=0;i<3;i++)
+    for (unsigned int j=0;j<3;j++)
     {
       double s =0 ;
-      for (int k=0;k<3;k++)
+      for (unsigned int k=0;k<3;k++)
 	s +=(*this)[i][k] * B[k][j];
       p[i][j] = s ;
     }
@@ -293,10 +293,10 @@ vpRotationMatrix::operator*(const vpTranslationVector &mat) const
 {
   vpTranslationVector p ;
 
-  for (int j=0;j<3;j++)p[j]=0 ;
+  for (unsigned int j=0;j<3;j++)p[j]=0 ;
 
-  for (int j=0;j<3;j++) {
-    for (int i=0;i<3;i++) {
+  for (unsigned int j=0;j<3;j++) {
+    for (unsigned int i=0;i<3;i++) {
       p[i]+=rowPtrs[i][j] * mat[j];
     }
   }
@@ -313,7 +313,7 @@ vpRotationMatrix::operator*(const vpTranslationVector &mat) const
 bool
 vpRotationMatrix::isARotationMatrix() const
 {
-  int i,j ;
+  unsigned int i,j ;
   bool isRotation = true ;
 
   // test R^TR = Id ;
@@ -417,7 +417,7 @@ vpRotationMatrix::t() const
 {
   vpRotationMatrix Rt ;
 
-  int i,j;
+  unsigned int i,j;
   for (i=0;i<3;i++)
     for (j=0;j<3;j++)
       Rt[j][i] = (*this)[i][j];
@@ -453,9 +453,9 @@ vpRotationMatrix::inverse(vpRotationMatrix &M) const
 //! std::cout an rotation matrix [thetaU]
 std::ostream &operator <<(std::ostream &s,const vpRotationMatrix &R)
 {
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
   {
-    for (int j=0; j<3; j++)
+    for (unsigned int j=0; j<3; j++)
       std::cout << R[i][j] << "  " ;
     std::cout << std::endl ;
   }
@@ -469,7 +469,7 @@ vpRotationMatrix::printVector()
 {
   vpThetaUVector tu(*this) ;
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     std::cout << tu[i] << "  " ;
 
   std::cout << std::endl ;
@@ -491,7 +491,7 @@ vpRotationMatrix::printVector()
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 {
-  int i,j;
+  unsigned int i,j;
   double theta, si, co, sinc, mcosc;
   vpRotationMatrix R;
 
@@ -547,7 +547,7 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
     // end old version
     // test the new version
 
-    int pb = 0;
+    unsigned int pb = 0;
     for (i=0;i<3;i++)
     {
       for(j=0;j<3;j++)

@@ -313,7 +313,7 @@ vpRobotViper850::init (void)
   joint_min.deg2rad();
   joint_max.deg2rad();
 
-//   for (int i=0; i < njoint; i++) {
+//   for (unsigned int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
 //   }
 
@@ -410,7 +410,7 @@ vpRobotViper850::init (vpViper850::vpToolType tool,
 
  // Set the camera constant (eMc pose) in the MotionBlox
   double eMc_pose[6];
-  for (int i=0; i < 3; i ++) {
+  for (unsigned int i=0; i < 3; i ++) {
     eMc_pose[i] = etc[i];   // translation in meters
     eMc_pose[i+3] = erc[i]; // rotation in rad
   }
@@ -423,7 +423,7 @@ vpRobotViper850::init (vpViper850::vpToolType tool,
   joint_min.deg2rad();
   joint_max.deg2rad();
 
-//   for (int i=0; i < njoint; i++) {
+//   for (unsigned int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
 //   }
 
@@ -568,9 +568,9 @@ vpRobotViper850::powerOn(void)
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
   bool firsttime = true;
-  int nitermax = 10;
+  unsigned int nitermax = 10;
 
-  for (int i=0; i<nitermax; i++) {
+  for (unsigned int i=0; i<nitermax; i++) {
     Try( PrimitiveSTATUS_Viper850(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
 				  &HIPowerStatus));
     switch(EStopStatus) {
@@ -747,7 +747,7 @@ vpRobotViper850::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(6);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = vpMath::rad(position[i]);
 
   try
@@ -783,7 +783,7 @@ vpRobotViper850::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(6);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try
@@ -960,7 +960,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     // Set cMc from the input position
     vpTranslationVector txyz;
     vpRxyzVector rxyz;
-    for (int i=0; i < 3; i++) {
+    for (unsigned int i=0; i < 3; i++) {
       txyz[i] = position[i];
       rxyz[i] = position[i+3];
     }
@@ -973,7 +973,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     vpHomogeneousMatrix fMc2 = fMc * cMc2;
 
     // Compute the corresponding joint position from the inverse kinematics
-    int solution = this->getInverseKinematics(fMc2, q);
+    unsigned int solution = this->getInverseKinematics(fMc2, q);
     if (solution) { // Position is reachable
       destination = q;
       // convert rad to deg requested for the low level controller
@@ -1005,7 +1005,7 @@ vpRobotViper850::setPosition (const vpRobot::vpControlFrameType frame,
     vpRotationMatrix R(rxyz);
     vpRzyzVector rzyz(R);
 
-    for (int i=0; i <3; i++) {
+    for (unsigned int i=0; i <3; i++) {
       destination[i] = position[i];
       destination[i+3] = vpMath::deg(rzyz[i]); // convert also angles in deg
     }
@@ -1240,7 +1240,7 @@ int main()
   vpRxyzVector frc; // reference frame to camera frame rotations
 
   // Update the transformation between reference frame and camera frame
-  for (int i=0; i < 3; i++) {
+  for (unsigned int i=0; i < 3; i++) {
     ftc[i] = position[i];   // tx, ty, tz
     frc[i] = position[i+3]; // ry, ry, rz
   }
@@ -1288,7 +1288,7 @@ vpRobotViper850::getPosition (const vpRobot::vpControlFrameType frame,
     //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
     // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
     // Convert Euler Rzyz angles from deg to rad
-    for (int i=3; i <6; i++)
+    for (unsigned int i=3; i <6; i++)
       position[i] = vpMath::rad(position[i]);
     // Convert Rzyz angles into Rxyz representation
     vpRzyzVector rzyz(position[3], position[4], position[5]);
@@ -1296,7 +1296,7 @@ vpRobotViper850::getPosition (const vpRobot::vpControlFrameType frame,
     vpRxyzVector rxyz(R);
 
     // Update the position using Rxyz representation
-    for (int i=0; i <3; i++)
+    for (unsigned int i=0; i <3; i++)
       position[i+3] = rxyz[i];
 //     vpCTRACE << "Cartesian position Rxyz (deg)" 
 // 	     << position[0] << " " << position[1] << " " << position[2] << " "  
@@ -1343,13 +1343,13 @@ vpRobotViper850::getPosition (const vpRobot::vpControlFrameType frame,
   //recupere  position en Rxyz
   this->getPosition(frame,posRxyz);
   vpRxyzVector RxyzVect;
-  for(int j=0;j<3;j++)
+  for (unsigned int j=0;j<3;j++)
     RxyzVect[j]=posRxyz[j+3];
   //recupere le vecteur thetaU correspondant
   vpThetaUVector RtuVect(RxyzVect);
 
   //remplit le vpPoseVector avec translation et rotation ThetaU
-  for(int j=0;j<3;j++)
+  for (unsigned int j=0;j<3;j++)
   {
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
@@ -1456,7 +1456,7 @@ vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME :
   case vpRobot::REFERENCE_FRAME :  
   case vpRobot::MIXT_FRAME : {
-    for (int i = 0 ; i < 3; ++ i) {
+    for (unsigned int i = 0 ; i < 3; ++ i) {
       vel_abs = fabs (vel[i]);
       if (vel_abs > vel_trans_max) {
 	vel_trans_max = vel_abs;
@@ -1488,7 +1488,7 @@ vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
   }
     // saturation in joint space
   case vpRobot::ARTICULAR_FRAME : {
-    for (int i = 0 ; i < 6; ++ i) {
+    for (unsigned int i = 0 ; i < 6; ++ i) {
       vel_abs = fabs (vel[i]);
       if (vel_abs > vel_rot_max) {
 	vel_rot_max = vel_abs;
@@ -1545,7 +1545,7 @@ vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
     if (TryStt == VelStopOnJoint) {
       UInt32 axisInJoint[njoint];
       PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
-      for (int i=0; i < njoint; i ++) {
+      for (unsigned int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
 	  std::cout << "\nWarning: Velocity control stopped: axis "
 		    << i+1 << " on joint limit!" <<std::endl;
@@ -1698,7 +1698,7 @@ vpRobotViper850::getVelocity (const vpRobot::vpControlFrameType frame,
       vpThetaUVector thetaU;
       thetaU.buildFrom(cRc);
 
-      for (int i=0; i < 3; i++) {
+      for (unsigned int i=0; i < 3; i++) {
 	// Compute the translation displacement in the reference frame
 	velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
 	// Update the rotation displacement in the camera frame
@@ -2052,7 +2052,7 @@ vpRobotViper850::getDisplacement(vpRobot::vpControlFrameType frame,
 
   // Get the current joint position
   Try( PrimitiveACQ_POS_Viper850(q) );
-  for (int i=0; i < njoint; i ++) {
+  for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
 
@@ -2152,7 +2152,7 @@ int main()
   // Bias the force/torque sensor
   robot.biasForceTorqueSensor();
 
-  for (int i=0; i< 10; i++) {
+  for (unsigned int i=0; i< 10; i++) {
     robot.getForceTorque(H) ;
     std::cout << "Measured force/torque: " << H.t() << std::endl;
     vpTime::wait(5);

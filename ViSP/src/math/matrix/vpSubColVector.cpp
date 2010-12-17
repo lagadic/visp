@@ -63,7 +63,7 @@ vpSubColVector::vpSubColVector(){
   \param offset : offset where subColVector start in the parent colVector
   \param nrows : size of the subColVector
 */
-vpSubColVector::vpSubColVector(vpColVector &v, const int & offset,const int & nrows){
+vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows){
   init(v,offset,nrows);
 }
 
@@ -73,7 +73,9 @@ vpSubColVector::vpSubColVector(vpColVector &v, const int & offset,const int & nr
   \param offset : offset where subColVector start in the parent colVector
   \param nrows : size of the subColVector
 */
-void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
+void vpSubColVector::init(vpColVector &v, 
+			  const unsigned int & offset, 
+			  const unsigned int & nrows){
   
   if(!v.data){
     vpERROR_TRACE("\n\t\t vpSubColvector parent vpColVector has been destroyed");
@@ -95,7 +97,7 @@ void vpSubColVector::init(vpColVector &v, const int & offset,const int & nrows){
     }
     
   rowPtrs=(double**)malloc( parent->getRows() * sizeof(double*));
-    for(int i=0;i<nrows;i++)
+    for(unsigned int i=0;i<nrows;i++)
       rowPtrs[i]=v.data+i+offset;
     
     dsize = rowNum ;
@@ -140,7 +142,7 @@ vpSubColVector & vpSubColVector::operator=(const vpSubColVector &B){
 			    "\n\t\t \n\t\t vpSubMatrix mismatch in operator vpSubColVector=vpSubColVector")) ;
   }
   
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
     data[i] = B[i];
   return *this;
 }
@@ -157,7 +159,7 @@ vpSubColVector & vpSubColVector::operator=(const vpColVector &B){
 			    "\n\t\t \n\t\t vpSubColVector mismatch in operator vpSubColVector=vpColVector")) ;
   }
   
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
     data[i] = B[i];
   
   return *this;
@@ -175,7 +177,7 @@ vpSubColVector & vpSubColVector::operator=(const vpMatrix &B){
 			    "\n\t\t \n\t\t vpSubColVector mismatch in operator vpSubColVector=vpMatrix")) ;
   }
   
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
     data[i] = B[i][1];
   return *this;
 }
@@ -185,7 +187,7 @@ vpSubColVector & vpSubColVector::operator=(const vpMatrix &B){
   \param x : a scalar value
 */
 vpSubColVector & vpSubColVector::operator=(const double &x){
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
     data[i] = x;
   return *this;
 }

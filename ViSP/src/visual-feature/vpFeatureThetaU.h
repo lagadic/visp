@@ -317,7 +317,7 @@ public:
 
     \sa selectTUy(), selectTUz()
   */
-  inline static int selectTUx()  { return FEATURE_LINE[0] ; }
+  inline static unsigned int selectTUx()  { return FEATURE_LINE[0] ; }
   /*! 
 
     Function used to select the \f$ \theta u_y\f$ subset of the \f$
@@ -342,7 +342,7 @@ public:
 
     \sa selectTUx(), selectTUz()
   */
-  inline static int selectTUy()  { return FEATURE_LINE[1] ; }
+  inline static unsigned int selectTUy()  { return FEATURE_LINE[1] ; }
   /*! 
 
     Function used to select the \f$ \theta u_z\f$ subset of the \f$
@@ -367,14 +367,14 @@ public:
 
     \sa selectTUx(), selectTUy()
   */
-  inline static int selectTUz()  { return FEATURE_LINE[2] ; }
+  inline static unsigned int selectTUz()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const int select = FEATURE_ALL);
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-		    const int select = FEATURE_ALL)  ;
-  void print(const int select= FEATURE_ALL) const ;
+		    const unsigned int select = FEATURE_ALL)  ;
+  void print(const unsigned int select= FEATURE_ALL) const ;
 
   //! Feature duplication.
   vpFeatureThetaU *duplicate() const ;

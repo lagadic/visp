@@ -79,8 +79,8 @@ vpDiskGrabber::vpDiskGrabber(const char *genericName)
 */
 
 vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
-                             unsigned long number,
-                             int step, int noz,
+                             long number,
+                             int step, unsigned int noz,
                              const char *ext)
 {
   setDirectory(dir);
@@ -97,7 +97,7 @@ vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
 void
 vpDiskGrabber::open(vpImage<unsigned char> &I)
 {
-  unsigned long first_number = getImageNumber();
+  long first_number = getImageNumber();
 
   vpDEBUG_TRACE(2, "first %ld", first_number);
 
@@ -121,7 +121,7 @@ vpDiskGrabber::open(vpImage<vpRGBa> &I)
 {
   // Fisrt we save the image number, so that it can be reaffected after the
   // acquisition. That means that the first image is readed twice
-  unsigned long first_number = getImageNumber();
+  long first_number = getImageNumber();
   vpDEBUG_TRACE(2, "first %ld", first_number);
 
   acquire(I);
@@ -198,7 +198,7 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
   \param image_number The index of the desired image.
  */
 void
-vpDiskGrabber::acquire(vpImage<unsigned char> &I, unsigned long image_number)
+vpDiskGrabber::acquire(vpImage<unsigned char> &I, long image_number)
 {
 
   char name[FILENAME_MAX] ;
@@ -224,7 +224,7 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I, unsigned long image_number)
   \param image_number The index of the desired image.
  */
 void
-vpDiskGrabber::acquire(vpImage<vpRGBa> &I, unsigned long image_number)
+vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long image_number)
 {
 
   char name[FILENAME_MAX] ;
@@ -296,7 +296,7 @@ vpDiskGrabber::setExtension(const char *ext)
   Set the number of the image to be read.
 */
 void
-vpDiskGrabber::setImageNumber(unsigned long number)
+vpDiskGrabber::setImageNumber(long number)
 {
   image_number = number ;
   vpDEBUG_TRACE(2, "image number %ld", image_number);

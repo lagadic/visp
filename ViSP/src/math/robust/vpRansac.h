@@ -92,7 +92,7 @@ template <class vpTransformation>
 class vpRansac
 {
 public:
-  static  bool ransac(int npts,
+  static  bool ransac(unsigned int npts,
 		      vpColVector &x,
 		      int s, double t,
 		      vpColVector &model,
@@ -130,7 +130,7 @@ public:
 
 template <class vpTransformation>
 bool
-vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
+vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 				   int s, double t,
 				   vpColVector &M,
 				   vpColVector &inliers,
@@ -161,8 +161,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
 
   vpUniRand random ;
   vpColVector bestinliers ;
-  int *ind;
-  ind = new int [s] ;
+  unsigned int *ind = new unsigned int [s] ;
   int numiter = 0;
   int ninliers = 0;
   double residual = 0.0;
@@ -179,7 +178,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     {
       // Generate s random indicies in the range 1..npts
       for  (int i=0 ; i < s ; i++)
-	ind[i] = (int)ceil(random()*npts) -1;
+	ind[i] = (unsigned int)ceil(random()*npts) -1;
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x,ind) ;
@@ -207,7 +206,7 @@ vpRansac<vpTransformation>::ransac(int npts, vpColVector &x,
     // Find the indices of points that are inliers to this model.
     residual = 0.0;
     ninliers =0 ;
-    for (int i=0 ; i < npts ; i++)
+    for (unsigned int i=0 ; i < npts ; i++)
     {
       double resid = fabs(d[i]);
       if (resid < t)

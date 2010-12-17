@@ -80,7 +80,7 @@ vpRobotBiclopsController::vpRobotBiclopsController()
   biclops.SetDebugLevel(0);
 
   // initialize the shared data structure
-  for (int i=0; i < vpBiclops::ndof; i ++) {
+  for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
     shm.status[i] = STOP;
     shm.q_dot[i] = 0.;
     shm.actual_q[i] = 0.;
@@ -373,12 +373,12 @@ vpRobotBiclopsController::getActualVelocity()
 void
 vpRobotBiclopsController::writeShm(shmType &shm_)
 {
-  for(int i=0; i < vpBiclops::ndof; i ++) {
+  for(unsigned int i=0; i < vpBiclops::ndof; i ++) {
     vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm_.q_dot[i]);
   }
   memcpy(&this->shm, &shm_, sizeof(shmType));
    //this->shm = shm_;
-  for(int i=0; i < vpBiclops::ndof; i ++) {
+  for(unsigned int i=0; i < vpBiclops::ndof; i ++) {
     vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
   }
 }
@@ -394,12 +394,12 @@ vpRobotBiclopsController::readShm()
 {
   shmType tmp_shm;
 
-  for(int i=0; i < vpBiclops::ndof; i ++) {
+  for(unsigned int i=0; i < vpBiclops::ndof; i ++) {
     vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
   }
   memcpy(&tmp_shm, &this->shm, sizeof(shmType));
   //tmp_shm = shm;
-  for(int i=0; i < vpBiclops::ndof; i ++) {
+  for(unsigned int i=0; i < vpBiclops::ndof; i ++) {
     vpDEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);
   }
 

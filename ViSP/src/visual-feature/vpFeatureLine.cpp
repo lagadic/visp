@@ -205,7 +205,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   \endcode
 */
 vpMatrix
-vpFeatureLine::interaction(const int select)
+vpFeatureLine::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -333,7 +333,7 @@ vpFeatureLine::interaction(const int select)
 */
 vpColVector
 vpFeatureLine::error(const vpBasicFeature &s_star,
-		      const int select)
+		      const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -400,7 +400,7 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
 */
 
 void
-vpFeatureLine::print(const int select ) const
+vpFeatureLine::print(const unsigned int select ) const
 {
 
   std::cout <<"Line:\t  " << A <<"X+" << B <<"Y+" << C <<"Z +" << D <<"=0" <<std::endl ;;

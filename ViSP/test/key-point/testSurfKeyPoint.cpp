@@ -287,7 +287,7 @@ main(int argc, const char ** argv)
   }
 
   vpKeyPointSurf surf;
-  int nbrRef;
+  unsigned int nbrRef;
 
   if (opt_click_allowed && opt_display)
   {
@@ -319,7 +319,7 @@ main(int argc, const char ** argv)
   }
 
 
-  int nbrPair;
+  unsigned int nbrPair;
   if (opt_display) {
       // display variable.
       vpDisplay::display(Icur) ;

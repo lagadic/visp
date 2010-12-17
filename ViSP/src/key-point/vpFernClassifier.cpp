@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -178,7 +178,7 @@ vpFernClassifier::train()
 
   \return the number of reference points.
 */
-int 
+unsigned int 
 vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
 {
   this->setImage(_I);
@@ -207,10 +207,10 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
 
   \return the number of reference points.
 */
-int 
+unsigned int 
 vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, 
 	      vpImagePoint &_iP, 
-	      unsigned int _height, unsigned int _width)
+	      const unsigned int _height, const unsigned int _width)
 {
   if((_iP.get_i()+_height) >= _I.getHeight()
      || (_iP.get_j()+_width) >= _I.getWidth()) {
@@ -230,8 +230,8 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
     reference image */
   modelROI_Ref.x = (int)_iP.get_u();
   modelROI_Ref.y = (int)_iP.get_v();
-  modelROI_Ref.width = _width;
-  modelROI_Ref.height = _height;  
+  modelROI_Ref.width = (int)_width;
+  modelROI_Ref.height = (int)_height;  
   
   train();
 
@@ -254,9 +254,9 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
 
   \return The number of reference points.
 */
-int 
+unsigned int 
 vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, 
-	      const vpRect _rectangle)
+	      const vpRect& _rectangle)
 {
   vpImagePoint iP;
   iP.set_i(_rectangle.getTop());
@@ -277,7 +277,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
 
   \return The number of point which have been matched.
 */
-int 
+unsigned int 
 vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 {
   if(!hasLearn){
@@ -302,41 +302,42 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   
   ldetector(imgPyr, imgKeypoints, 500);
 
-  int m = (int)modelPoints.size(), n = (int)imgKeypoints.size();
+  unsigned int m = modelPoints.size();
+  unsigned int n = imgKeypoints.size();
   std::vector<int> bestMatches(m, -1);
   std::vector<float> maxLogProb(m, -FLT_MAX);
   std::vector<float> signature;
-  int totalMatch = 0;
+  unsigned int totalMatch = 0;
 
   
   /* part of code from OpenCV planarObjectDetector */
   currentImagePointsList.resize(0);
   matchedReferencePoints.resize(0);
 
-  for(int i = 0; i < n; i++ ){
+  for(unsigned int i = 0; i < n; i++ ){
     cv::KeyPoint kpt = imgKeypoints[i];
     kpt.pt.x /= (float)(1 << kpt.octave);
     kpt.pt.y /= (float)(1 << kpt.octave);
-    int k = fernClassifier(imgPyr[kpt.octave], kpt.pt, signature);
-    if( k >= 0 && (bestMatches[k] < 0 || signature[k] > maxLogProb[k]) ){
-      maxLogProb[k] = signature[k];
-      bestMatches[k] = i;
+    int k = fernClassifier(imgPyr[(unsigned int)kpt.octave], kpt.pt, signature);
+    if( k >= 0 && (bestMatches[(unsigned int)k] < 0 || signature[(unsigned int)k] > maxLogProb[(unsigned int)k]) ){
+      maxLogProb[(unsigned int)k] = signature[(unsigned int)k];
+      bestMatches[(unsigned int)k] = (int)i;
       totalMatch++;
       
       vpImagePoint ip_cur( imgKeypoints[i].pt.y, imgKeypoints[i].pt.x);
     
       currentImagePointsList.push_back(ip_cur);
-      matchedReferencePoints.push_back(k);
+      matchedReferencePoints.push_back((unsigned int)k);
       
     }
   }
 
   refPt.resize(0);
   curPt.resize(0);
-  for(int i = 0; i < m; i++ ){
+  for(unsigned int i = 0; i < m; i++ ){
     if( bestMatches[i] >= 0 ){
       refPt.push_back(modelPoints[i].pt);
-      curPt.push_back(imgKeypoints[bestMatches[i]].pt);
+      curPt.push_back(imgKeypoints[(unsigned int)bestMatches[i]].pt);
     }
   }
 
@@ -358,10 +359,10 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 
   \return the number of point which have been matched.
 */
-int 
+unsigned int 
 vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, 
 	  vpImagePoint &_iP, 
-	  unsigned int _height, unsigned int _width)
+	  const unsigned int _height, const unsigned int _width)
 {
   if((_iP.get_i()+_height) >= _I.getHeight()
      || (_iP.get_j()+_width) >= _I.getWidth()) {
@@ -391,9 +392,9 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
 
   \return the number of point which have been matched.
 */
-int 
+unsigned int 
 vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, 
-	  const vpRect _rectangle)
+	  const vpRect& _rectangle)
 {
   vpImagePoint iP;
   iP.set_i(_rectangle.getTop());

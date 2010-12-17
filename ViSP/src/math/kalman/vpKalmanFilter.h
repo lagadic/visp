@@ -117,43 +117,43 @@ protected :
   long iter ;
 
   //! Size of the state vector \f${\bf x}_k\f$.
-  int size_state ;
+  unsigned int size_state ;
   //! Size of the measure vector \f${\bf z}_k\f$.
-  int size_measure ;
+  unsigned int size_measure ;
   //! Number of signal to filter.
-  int nsignal ;
+  unsigned int nsignal ;
 
   //! When set to true, print the content of internal variables during filtering() and prediction().
   bool verbose_mode;
 
 public:
   vpKalmanFilter() ;
-  vpKalmanFilter(int nsignal) ;
-  vpKalmanFilter(int size_state, int size_measure, int nsignal) ;
+  vpKalmanFilter(unsigned int nsignal) ;
+  vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int nsignal) ;
   /*!
     Set the number of signal to filter.
   */
-  void setNumberOfSignal(int nsignal)
+  void setNumberOfSignal(unsigned int nsignal)
   {
     this->nsignal = nsignal;
   }
 
   // int init() { return init_done ; }
-  void init(int size_state, int size_measure, int nsignal) ;
+  void init(unsigned int size_state, unsigned int size_measure, unsigned int nsignal) ;
   void prediction() ;
   void filtering(vpColVector &z) ;
   /*!
     Return the size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
   */
-  int getStateSize() { return size_state; };
+  unsigned int getStateSize() { return size_state; };
   /*!
     Return the size of the measure vector \f${\bf z}_{(k)}\f$ for one signal.
   */
-  int getMeasureSize() { return size_measure; };
+  unsigned int getMeasureSize() { return size_measure; };
   /*!
     Return the number of signal to filter.
   */
-  int getNumberOfSignal() { return nsignal; };
+  unsigned int getNumberOfSignal() { return nsignal; };
   /*!
     Return the iteration number.
   */

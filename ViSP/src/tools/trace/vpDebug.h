@@ -211,8 +211,8 @@ public:
 
     /*!
 
-      Displays a message to either stdout/std::cout or
-      stderr/std::cerr (based on error boolean).
+      Displays a message to either stdout or
+      stderr (based on error boolean).
 
       \param format Formating string.
       \param args List of arguments.

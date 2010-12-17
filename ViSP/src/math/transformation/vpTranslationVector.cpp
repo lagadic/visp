@@ -133,7 +133,7 @@ vpTranslationVector::operator+(const vpTranslationVector &t) const
 {
     vpTranslationVector sum ;
 
-    for (int i=0;i<3;i++)  sum[i] = (*this)[i]+t[i] ;
+    for (unsigned int i=0;i<3;i++)  sum[i] = (*this)[i]+t[i] ;
 
     return sum;
 }
@@ -160,7 +160,7 @@ vpTranslationVector::operator-(const vpTranslationVector &t) const
 {
     vpTranslationVector sub ;
 
-    for (int i=0;i<3;i++)  sub[i] = (*this)[i]-t[i] ;
+    for (unsigned int i=0;i<3;i++)  sub[i] = (*this)[i]-t[i] ;
 
     return sub;
 }
@@ -183,7 +183,7 @@ vpTranslationVector::operator-(const vpTranslationVector &t) const
 vpTranslationVector vpTranslationVector::operator-() const //negate
 {
     vpTranslationVector t ;
-    for (int i=0;i<dsize;i++)
+    for (unsigned int i=0;i<dsize;i++)
     {
 	*(t.data + i) = -*(data + i) ;
     }
@@ -209,7 +209,7 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
 vpTranslationVector vpTranslationVector::operator*(const double x) const 
 {
     vpTranslationVector t ;
-    for (int i=0;i<dsize;i++)
+    for (unsigned int i=0;i<dsize;i++)
     {
 	*(t.data + i) = (*(data + i)) * x ;
     }
@@ -233,7 +233,7 @@ vpTranslationVector vpTranslationVector::operator*(const double x) const
 vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t)
 {
 
-  int k = t.rowNum ;
+  unsigned int k = t.rowNum ;
   if (rowNum != k){
     try {
       resize(k);

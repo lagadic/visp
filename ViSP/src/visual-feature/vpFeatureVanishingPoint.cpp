@@ -124,7 +124,7 @@ vpFeatureVanishingPoint::set_xy(const double _x,
 
 //! compute the interaction matrix from a subset of the possible features
 vpMatrix
-vpFeatureVanishingPoint::interaction(const int select)
+vpFeatureVanishingPoint::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -190,7 +190,7 @@ vpFeatureVanishingPoint::interaction(const int select)
  */
 vpColVector
 vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
-		      const int select)
+			       const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -228,7 +228,7 @@ vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
 
 
 void
-vpFeatureVanishingPoint::print(const int select ) const
+vpFeatureVanishingPoint::print(const unsigned int select ) const
 {
 
   std::cout <<"Point: " <<std::endl;

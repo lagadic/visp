@@ -147,7 +147,7 @@ class VISP_EXPORT vpPoseVector : public vpColVector
     \endcode
 
   */
-  inline double &operator [](int i) {  return *(data + i);  }
+  inline double &operator [](unsigned int i) {  return *(data + i);  }
   /*!
     Get the value of an element of the pose vector: x = r[i].
 
@@ -166,7 +166,7 @@ class VISP_EXPORT vpPoseVector : public vpColVector
     tuz = r[5];
     \endcode
   */
-  inline const double &operator [](int i) const { return *(data+i);  }
+  inline const double &operator [](unsigned int i) const { return *(data+i);  }
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;

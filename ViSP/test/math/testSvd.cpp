@@ -122,7 +122,7 @@ main(int argc, const char ** argv)
     exit (-1);
   }
 
-  int i,j ;
+  unsigned int i,j ;
   vpMatrix L(60000,6), Ls ;
   for (i=0 ; i < L.getRows() ; i++)
     for  (j=0 ; j < L.getCols() ; j++)

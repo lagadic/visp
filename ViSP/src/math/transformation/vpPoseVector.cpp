@@ -200,7 +200,7 @@ vpPoseVector
 vpPoseVector::buildFrom(const vpTranslationVector& t,
                         const vpThetaUVector& tu)
 {
-  for (int i =0  ; i < 3 ; i++)
+  for (unsigned int i =0  ; i < 3 ; i++)
     {
       (*this)[i] = t[i] ;
       (*this)[i+3] = tu[i] ;
@@ -256,7 +256,7 @@ vpPoseVector::buildFrom(const vpTranslationVector& t,
 void
 vpPoseVector::print()
 {
-  for (int i =0  ; i < 6 ; i++)
+  for (unsigned int i =0  ; i < 6 ; i++)
     if (i<3) std::cout << (*this)[i] <<" " ;
     else  std::cout << vpMath::deg((*this)[i]) <<" " ;
   std::cout <<std::endl ;
@@ -303,7 +303,7 @@ vpPoseVector::load(std::ifstream &f)
 {
   if (f != NULL)
     {
-      for (int i=0 ; i < 6 ; i++)
+      for (unsigned int i=0 ; i < 6 ; i++)
 	{
 	  f>>   (*this)[i] ;
 	}

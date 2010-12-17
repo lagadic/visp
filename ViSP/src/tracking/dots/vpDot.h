@@ -322,7 +322,7 @@ private:
   vpImagePoint cog;
 
   // Bounding box
-  int u_min, u_max, v_min, v_max;
+  unsigned int u_min, u_max, v_min, v_max;
 
   // Flag used to allow display
   bool graphics ;
@@ -337,7 +337,7 @@ private:
   void init() ;
   void setGrayLevelOut();
 
-  int connexe(vpImage<unsigned char>& I, int u, int v,
+  int connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
 	      unsigned int gray_level_min, unsigned int gray_level_max,
 	      double &mean_value, double &u_cog, double &v_cog, double &n);
   void COG(vpImage<unsigned char> &I,double& u, double& v) ;

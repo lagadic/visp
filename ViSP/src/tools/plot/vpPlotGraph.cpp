@@ -41,6 +41,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
 #include <visp/vpMath.h>
@@ -99,14 +102,14 @@ vpPlotGraph::~vpPlotGraph()
 }
 
 void
-vpPlotGraph::initGraph (int nbCurve)
+vpPlotGraph::initGraph (unsigned int nbCurve)
 {
   curveList = new vpPlotCurve[nbCurve];
   curveNbr = nbCurve;
   
   vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::purple};
   
-  for (int i = 0; i < curveNbr; i++)
+  for (unsigned int i = 0; i < curveNbr; i++)
   {
     (curveList+i)->color = colors[i%6]; 
     (curveList+i)->curveStyle = line;
@@ -117,7 +120,7 @@ vpPlotGraph::initGraph (int nbCurve)
 }
 
 void
-vpPlotGraph::initSize (vpImagePoint topLeft, int width, int height, int margei, int margej)
+vpPlotGraph::initSize (vpImagePoint topLeft, unsigned int width, unsigned int height, unsigned int margei, unsigned int margej)
 {
   this->topLeft = topLeft;
   this->width = width;
@@ -196,7 +199,7 @@ vpPlotGraph::findPose()
   vpPose pose;
   pose.clearPoint();
 
-  for (int i=0 ; i < 4 ; i++)
+  for (unsigned int i=0 ; i < 4 ; i++)
   {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
     point[i].set_x(x);
@@ -218,7 +221,7 @@ vpPlotGraph::computeGraphParameters()
 }
 
 void 
-vpPlotGraph::setCurveColor(const int curveNum, const vpColor color)
+vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor color)
 {
   (curveList+curveNum)->color = color;
 }
@@ -252,7 +255,7 @@ vpPlotGraph::setUnitZ (const char *unitz)
 }
 
 void
-vpPlotGraph::setLegend (const int curveNum, const char *legend)
+vpPlotGraph::setLegend (const unsigned int curveNum, const char *legend)
 {
   strcpy((curveList+curveNum)->legend,legend);
   dispLegend = true;
@@ -394,20 +397,28 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &I)
 void
 vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 {
-  int size = strlen(title);
-  size = (int)((double)size/2.0);
-  vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()+dWidth/2.0-4*size),title, vpColor::black);
+  double size = (double)strlen(title);
+  size = size/2.0;
+  vpDisplay::displayCharString(I,
+			       vpImagePoint(dTopLeft.get_i()-3*epsi,
+					    dTopLeft.get_j()+dWidth/2.0-4*size),
+			       title, 
+			       vpColor::black);
 }
 
 void
 vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
-  for (int i = 0; i < curveNbr; i++)
-    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()+i*5*epsi,dTopLeft.get_j()+dWidth-20*epsj),(curveList+i)->legend, (curveList+i)->color);
+  for (int i = 0; i < (int)curveNbr; i++)
+    vpDisplay::displayCharString(I,
+				 vpImagePoint(dTopLeft.get_i()+i*5*epsi,
+					      dTopLeft.get_j()+dWidth-20*epsj),
+				 (curveList+i)->legend, 
+				 (curveList+i)->color);
 }
 
 void
-vpPlotGraph::rescalex(int side, double extremity)
+vpPlotGraph::rescalex(unsigned int side, double extremity)
 {
   switch (side)
   {
@@ -423,7 +434,7 @@ vpPlotGraph::rescalex(int side, double extremity)
 }
 
 void
-vpPlotGraph::rescaley(int side, double extremity)
+vpPlotGraph::rescaley(unsigned int side, double extremity)
 {
   switch (side)
   {
@@ -479,7 +490,7 @@ vpPlotGraph::initScale(vpImage<unsigned char> &I, const double xmin, const doubl
 }
 
 void
-vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y)
+vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y)
 {
   if (!scaleInitialized)
   {
@@ -507,7 +518,8 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
     computeGraphParameters();
     clearGraphZone(I);
     displayGrid(I);
-    if (y == 0)
+    //if (y == 0)
+    if (std::fabs(y) <= std::numeric_limits<double>::epsilon())
       scaleInitialized = false;
   }
   
@@ -552,7 +564,7 @@ vpPlotGraph::replot (vpImage<unsigned char> &I)
 {
   clearGraphZone(I);
   displayGrid(I);
-  for (int i = 0; i < curveNbr; i++)
+  for (unsigned int i = 0; i < curveNbr; i++)
     (curveList+i)->plotList(I,xorg,yorg,zoomx,zoomy);
   vpDisplay::flushROI(I,graphZone);
 }
@@ -585,7 +597,7 @@ vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
 }
 
 void 
-vpPlotGraph::resetPointList(const int curveNum)
+vpPlotGraph::resetPointList(const unsigned int curveNum)
 {
   (curveList+curveNum)->pointListx.kill();
   (curveList+curveNum)->pointListy.kill();
@@ -887,7 +899,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   pt[5].setWorldCoordinates(ptXorg,ptYorg,w_zval);
   
   vpImagePoint iP[6];
-  for (int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++)
   {
     pt[i].track(cMo);
     double u=0.0,v=0.0;
@@ -909,11 +921,13 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   
   power = laFonctionSansNom(xdelt);
   ptunit.setWorldCoordinates(-w_xval,ptYorg,ptZorg);
-  if (iP[0].get_j()-iP[1].get_j() != 0) 
+  //if (iP[0].get_j()-iP[1].get_j() != 0) 
+  if (std::fabs(iP[0].get_j()-iP[1].get_j()) > 
+      vpMath::maximum(std::fabs(iP[0].get_j()), std::fabs(iP[1].get_j()))* std::numeric_limits<double>::epsilon())
     pente = fabs((iP[0].get_i()-iP[1].get_i())/(iP[0].get_j()-iP[1].get_j()));
   else pente = 2;
   
-  int count = 1;
+  unsigned int count = 1;
   for(t=xmin;t<=xmax;t=t+xdelt)
   {
     double x = ptXorg+(zoomx_3D*t);
@@ -951,7 +965,9 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   
   power = laFonctionSansNom(ydelt);
   ptunit.setWorldCoordinates(ptXorg,-w_yval,ptZorg);
-  if (iP[2].get_j()-iP[3].get_j() != 0) 
+  //if (iP[2].get_j()-iP[3].get_j() != 0) 
+  if (std::fabs(iP[2].get_j()-iP[3].get_j()) > 
+      vpMath::maximum(std::fabs(iP[2].get_j()), std::fabs(iP[3].get_j()))* std::numeric_limits<double>::epsilon())
     pente = fabs((iP[2].get_i()-iP[3].get_i())/(iP[2].get_j()-iP[3].get_j()));
   else pente = 2;
   count = 0;
@@ -992,7 +1008,9 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   
   power = laFonctionSansNom(zdelt);
   ptunit.setWorldCoordinates(ptXorg,ptYorg,-w_zval);
-  if (iP[4].get_j()-iP[5].get_j() != 0) 
+  //if (iP[4].get_j()-iP[5].get_j() != 0) 
+  if (std::fabs(iP[4].get_j()-iP[5].get_j()) > 
+      vpMath::maximum(std::fabs(iP[4].get_j()), std::fabs(iP[5].get_j()))* std::numeric_limits<double>::epsilon())
     pente = fabs((iP[4].get_i()-iP[5].get_i())/(iP[4].get_j()-iP[5].get_j()));
   else pente = 2;
   count = 0;
@@ -1071,7 +1089,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
 }
 
 void
-vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y, const double z)
+vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y, const double z)
 {
   if (!scaleInitialized)
   {
@@ -1109,7 +1127,8 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const int curveNb, const double x,
     computeGraphParameters3D();
     clearGraphZone(I);
     displayGrid3D(I);
-    if (y == 0 || z == 0)
+    //if (std::fabs(y) == 0 || z == 0)
+    if (std::fabs(y) <= std::numeric_limits<double>::epsilon()  || std::fabs(z) <= std::numeric_limits<double>::epsilon())
       scaleInitialized = false;
   }
   
@@ -1185,13 +1204,13 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
   clearGraphZone(I);
   displayGrid3D(I);
   
-  for (int i = 0; i < curveNbr; i++)
+  for (unsigned int i = 0; i < curveNbr; i++)
   {
     (curveList+i)->pointListx.front();
     (curveList+i)->pointListy.front();
     (curveList+i)->pointListz.front();
   
-    int k = 0;
+    unsigned int k = 0;
     vpImagePoint iP;
     vpPoint pointPlot;
     double x,y,z;
@@ -1229,7 +1248,7 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
 
 
 void
-vpPlotGraph::rescalez(int side, double extremity)
+vpPlotGraph::rescalez(unsigned int side, double extremity)
 {
   switch (side)
   {
@@ -1250,7 +1269,8 @@ vpPlotGraph::move(vpImage<unsigned char> &I)
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I,changed);
   
-  if (displacement[2][3] != 0)
+  //if (displacement[2][3] != 0)
+  if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon())
     cMf = cMf*displacement;
   vpHomogeneousMatrix fMo = cMf.inverse()*cMo;
   

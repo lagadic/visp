@@ -191,9 +191,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = col;
       }
@@ -212,9 +212,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -259,9 +259,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Is
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = col;
       }
@@ -280,9 +280,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Is
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -318,9 +318,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = col;
       }
@@ -339,9 +339,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -391,9 +391,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = bgColor;
       }
@@ -413,9 +413,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -462,9 +462,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCa
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = bgColor;
       }
@@ -484,9 +484,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCa
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -521,9 +521,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    for (int i = (int)rect.getTop(); i < (int)rect.getBottom(); i++)
+    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
     {
-      for (int j = (int)rect.getLeft(); j < (int)rect.getRight(); j++)
+      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
       {
 	I[i][j] = bgColor;
       }
@@ -542,9 +542,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
     unsigned int width = I.getWidth();
     vpImagePoint ip;
     
-    for (int i = (int)top; i < (int)bottom; i++)
+    for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
-      for (int j = (int)left; j < (int)right; j++)
+      for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
       {
         double x=0,y=0;
 	ip.set_ij(i,j);
@@ -693,7 +693,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
   unsigned int width = I.getWidth();
   unsigned int height = I.getHeight();
   
-  int nbsimList = list.nbElements();
+  unsigned int nbsimList = list.nbElements();
   
   if (nbsimList < 1)
     return;
@@ -707,8 +707,8 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
   
   list.front();
   
-  int unvisible = 0;
-  for (int i = 0; i < nbsimList; i++)
+  unsigned int unvisible = 0;
+  for (unsigned int i = 0; i < nbsimList; i++)
   {
     vpImageSimulator* sim = &(list.value());
     list.next();
@@ -726,7 +726,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
    }
   
       
-  for (int i = 0; i < nbsimList; i++)
+  for (unsigned int i = 0; i < nbsimList; i++)
   {
     
     simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
@@ -742,16 +742,16 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
   unsigned char *bitmap = I.bitmap;
   vpImagePoint ip;
     
-  for (int i = (int)topFinal; i < (int)bottomFinal; i++)
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++)
   {
-    for (int j = (int)leftFinal; j < (int)rightFinal; j++)
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++)
     {
       zmin = -1;
       double x=0,y=0;
       ip.set_ij(i,j);
       vpPixelMeterConversion::convertPoint(cam,ip, x,y);
       ip.set_ij(y,x);
-      for (int k = 0; k < nbsimList; k++)
+      for (int k = 0; k < (int)nbsimList; k++)
       {
 	double z = 0;
 	if(simList[k]->getPixelDepth(ip,z))
@@ -893,7 +893,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
   unsigned int width = I.getWidth();
   unsigned int height = I.getHeight();
   
-  int nbsimList = list.nbElements();
+  unsigned int nbsimList = list.nbElements();
   
   if (nbsimList < 1)
     return;
@@ -907,8 +907,8 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
   
   list.front();
   
-  int unvisible = 0;
-  for (int i = 0; i < nbsimList; i++)
+  unsigned int unvisible = 0;
+  for (unsigned int i = 0; i < nbsimList; i++)
   {
     vpImageSimulator* sim = &(list.value());
     list.next();
@@ -925,7 +925,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
      return;
    }  
       
-  for (int i = 0; i < nbsimList; i++)
+  for (unsigned int i = 0; i < nbsimList; i++)
   {
     
     simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
@@ -941,16 +941,16 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, c
   vpRGBa *bitmap = I.bitmap;
   vpImagePoint ip;
     
-  for (int i = (int)topFinal; i < (int)bottomFinal; i++)
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++)
   {
-    for (int j = (int)leftFinal; j < (int)rightFinal; j++)
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++)
     {
       zmin = -1;
       double x=0,y=0;
       ip.set_ij(i,j);
       vpPixelMeterConversion::convertPoint(cam,ip, x,y);
       ip.set_ij(y,x);
-      for (int k = 0; k < nbsimList; k++)
+      for (int k = 0; k < (int)nbsimList; k++)
       {
 	double z = 0;
 	if(simList[k]->getPixelDepth(ip,z))
@@ -1048,7 +1048,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
       return;
     }
 
-    for(int i = 0; i < 3; i++)
+    for(unsigned int i = 0; i < 3; i++)
     {
       normal_Cam_optim[i] = normal_Cam[i];
       X0_2_optim[i] = X2[0][i];
@@ -1057,7 +1057,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
     }
     
     vpImagePoint iPa[4];
-    for(int i = 0; i < 4; i++)
+    for(unsigned int i = 0; i < 4; i++)
     {
       iPa[i].set_j(X2[i][0]/X2[i][2]);
       iPa[i].set_i(X2[i][1]/X2[i][2]);
@@ -1071,7 +1071,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
 void
 vpImageSimulator::initPlan(vpColVector* _X)
 {
-  for (int i = 0; i < 4; i++)
+  for (unsigned int i = 0; i < 4; i++)
   {
     X[i]=_X[i];
     pt[i].setWorldCoordinates(_X[i][0],_X[i][1],_X[i][2]);
@@ -1171,7 +1171,7 @@ vpImageSimulator::getPixel(const vpImagePoint iP,unsigned char &Ipixelplan)
   //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
   double u = 0, v = 0;
   double diff = 0;
-  for(int i = 0; i < 3; i++)
+  for(unsigned int i = 0; i < 3; i++)
   {
     diff = (Xinter_optim[i]-X0_2_optim[i]);
     u += diff*vbase_u_optim[i];
@@ -1188,7 +1188,7 @@ vpImageSimulator::getPixel(const vpImagePoint iP,unsigned char &Ipixelplan)
     if (interp == BILINEAR_INTERPOLATION)
       Ipixelplan = Ig.getValue(i2,j2);
     else if (interp == SIMPLE)
-      Ipixelplan = Ig[(int)i2][(int)j2];
+      Ipixelplan = Ig[(unsigned int)i2][(unsigned int)j2];
     return true;
   }
   else
@@ -1219,7 +1219,7 @@ vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,u
   //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
   double u = 0, v = 0;
   double diff = 0;
-  for(int i = 0; i < 3; i++)
+  for(unsigned int i = 0; i < 3; i++)
   {
     diff = (Xinter_optim[i]-X0_2_optim[i]);
     u += diff*vbase_u_optim[i];
@@ -1236,7 +1236,7 @@ vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,u
     if (interp == BILINEAR_INTERPOLATION)
       Ipixelplan = Isrc.getValue(i2,j2);
     else if (interp == SIMPLE)
-      Ipixelplan = Isrc[(int)i2][(int)j2];
+      Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
   }
   else
@@ -1268,7 +1268,7 @@ vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
   //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
   double u = 0, v = 0;
   double diff = 0;
-  for(int i = 0; i < 3; i++)
+  for(unsigned int i = 0; i < 3; i++)
   {
     diff = (Xinter_optim[i]-X0_2_optim[i]);
     u += diff*vbase_u_optim[i];
@@ -1285,7 +1285,7 @@ vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
     if (interp == BILINEAR_INTERPOLATION)
       Ipixelplan = Ic.getValue(i2,j2);
     else if (interp == SIMPLE)
-      Ipixelplan = Ic[(int)i2][(int)j2];
+      Ipixelplan = Ic[(unsigned int)i2][(unsigned int)j2];
     return true;
   }
   else
@@ -1316,7 +1316,7 @@ vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &
   //ici j'ai considere que le plan est un rectangle => coordonnees sont simplement obtenu par un produit scalaire
   double u = 0, v = 0;
   double diff = 0;
-  for(int i = 0; i < 3; i++)
+  for(unsigned int i = 0; i < 3; i++)
   {
     diff = (Xinter_optim[i]-X0_2_optim[i]);
     u += diff*vbase_u_optim[i];
@@ -1333,7 +1333,7 @@ vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &
     if (interp == BILINEAR_INTERPOLATION)
       Ipixelplan = Isrc.getValue(i2,j2);
     else if (interp == SIMPLE)
-      Ipixelplan = Isrc[(int)i2][(int)j2];
+      Ipixelplan = Isrc[(unsigned int)i2][(unsigned int)j2];
     return true;
   }
   else
@@ -1373,7 +1373,7 @@ vpImageSimulator::project(const vpColVector &_vin, const vpHomogeneousMatrix &_c
 void
 vpImageSimulator::getHomogCoord(const vpColVector &_v,vpColVector &_vH)
 {
-  for(int i=0;i<3;i++)
+  for(unsigned int i=0;i<3;i++)
     _vH[i]=_v[i];
   _vH[3]=1.;	
 }
@@ -1381,7 +1381,7 @@ vpImageSimulator::getHomogCoord(const vpColVector &_v,vpColVector &_vH)
 void
 vpImageSimulator::getCoordFromHomog(const vpColVector &_vH,vpColVector &_v)
 {
-  for(int i=0;i<3;i++)
+  for(unsigned int i=0;i<3;i++)
     _v[i]=_vH[i]/_vH[3];
 }
 

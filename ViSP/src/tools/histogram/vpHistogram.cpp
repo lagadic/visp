@@ -185,7 +185,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I)
 
 */
 void
-vpHistogram::smooth(unsigned fsize)
+vpHistogram::smooth(const unsigned int fsize)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
@@ -196,17 +196,18 @@ vpHistogram::smooth(unsigned fsize)
   vpHistogram h;
   h = *this;
 
-  int hsize = fsize / 2; // half filter size
-  unsigned sum;
-  unsigned nb;
+  int hsize = (int)fsize / 2; // half filter size
+  unsigned int sum;
+  unsigned int nb;
 
   for (unsigned i=0; i < size; i ++) {
     sum = 0;
     nb = 0;
     for (int j=-hsize; j <= hsize; j ++) {
-      if ( /*(i + j) >= 0 &&*/ (i + j) < size ) {
-	sum += h.histogram[i + j];
-	nb ++;
+      // exploitation of the overflow to detect negative value...
+      if ( /*(i + j) >= 0 &&*/ (i + (unsigned int)j) < size ) {
+	      sum += h.histogram[i + (unsigned int)j];
+	      nb ++;
       }
     }
     histogram[i] = sum / nb;
@@ -253,7 +254,7 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
   prev_slope = 1;
 
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = histogram[i+1] - histogram[i];
+    next_slope = (int)histogram[i+1] - (int)histogram[i];
 
 //     if ((prev_slope < 0) && (next_slope > 0) ) {
 //       sum_level += i;
@@ -401,7 +402,7 @@ vpHistogram::getPeaks(unsigned char dist,
   nbpeaks = 0;
   prev_slope = 1;
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = histogram[i+1] - histogram[i];
+    next_slope = (int)histogram[i+1] - (int)histogram[i];
     if (next_slope == 0)
       continue;
     // Peak detection
@@ -437,27 +438,27 @@ vpHistogram::getPeaks(unsigned char dist,
     if (peak[index_highest_peak] - peak[i] > dist) {
       prof=0;
       for (int j=peak[i]; j <= peak[index_highest_peak]-dist; j++)
-	if((histogram[peak[i]] - histogram[j]) > prof)
-	  prof = histogram[peak[i]] - histogram[j];
+	      if((histogram[peak[i]] - histogram[j]) > prof)
+	        prof = histogram[peak[i]] - histogram[j];
 
       if (prof > maxprof) {
-	maxprof = prof;
-	index_second_peak = i;
+	      maxprof = prof;
+	      index_second_peak = i;
       }
-    }
+    } 
   }
 
   // Search second local maximum on the right of the global maximum
   for (unsigned i = index_highest_peak+1; i < nbpeaks; i++) {
     if (peak[i] - peak[index_highest_peak] > dist) {
       prof=0;
-      for (unsigned j=peak[index_highest_peak]+dist; j <= peak[i]; j++)
-	if((histogram[peak[i]] - histogram[j]) > prof)
-	  prof = histogram[peak[i]] - histogram[j];
+      for (int j=peak[index_highest_peak]+dist; j <= peak[i]; j++)
+	      if((histogram[peak[i]] - histogram[j]) > prof)
+	        prof = histogram[peak[i]] - histogram[j];
 
       if (prof > maxprof) {
-	maxprof = prof;
-	index_second_peak = i;
+        maxprof = prof;
+        index_second_peak = i;
       }
     }
   }
@@ -558,7 +559,7 @@ unsigned vpHistogram::getValey(vpList<vpHistogramValey> & valey)
   prev_slope = -1;
 
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = histogram[i+1] - histogram[i];
+    next_slope = (int)histogram[i+1] - (int)histogram[i];
 
     if ((prev_slope < 0) && (next_slope == 0) ) {
       sum_level += i + 1;
@@ -811,7 +812,7 @@ vpHistogram::getValey(unsigned char dist,
     mini = peak.getValue();
     sumindmini=0;
     nbmini=0;
-    for (unsigned i=peak.getLevel()+1; i <= peakr.getLevel(); i++) {
+    for (unsigned i=(unsigned int)peak.getLevel()+1; i <= (unsigned int)peakr.getLevel(); i++) {
       if (histogram[i] < mini)  {
 	mini=histogram[i];
 	nbmini=1;

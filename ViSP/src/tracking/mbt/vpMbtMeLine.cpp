@@ -47,6 +47,8 @@
  \file vpMbtMeLine.cpp
  \brief Make the complete tracking of an object by using its CAD model.
 */
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpTrackingException.h>
@@ -141,11 +143,12 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 void
 vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 {
-  int rows = I.getHeight() ;
-  int cols = I.getWidth() ;
+  int rows = (int)I.getHeight() ;
+  int cols = (int)I.getWidth() ;
   double n_sample;
 
-  if (me->sample_step==0)
+  //if (me->sample_step==0)
+  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
   {
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
@@ -190,9 +193,9 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 
       if(vpDEBUG_ENABLE(3))
       {
-	ip.set_i( is );
-	ip.set_j( js );
-	vpDisplay::displayCross(I, ip, 2, vpColor::blue);
+	      ip.set_i( is );
+	      ip.set_j( js );
+	      vpDisplay::displayCross(I, ip, 2, vpColor::blue);
       }
 
       list.addRight(pix);
@@ -215,7 +218,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 void
 vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
 {
-  int nbrelmt;
+  unsigned int nbrelmt;
   nbrelmt = list.nbElement();
   list.front();
   while(!list.outside())
@@ -265,11 +268,12 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
 
-  int rows = I.getHeight() ;
-  int cols = I.getWidth() ;
+  int rows = (int)I.getHeight() ;
+  int cols = (int)I.getWidth() ;
   double n_sample;
 
-  if (me->sample_step==0)
+  //if (me->sample_step==0)
+  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
   {
 
     vpERROR_TRACE("function called with sample step = 0") ;
@@ -295,7 +299,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
-  int  memory_range = me->range ;
+  unsigned int  memory_range = me->range ;
   me->range = 1 ;
 
   for (int i=0 ; i < 3 ; i++)
@@ -372,7 +376,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
 {
   double d = sqrt(vpMath::sqr(PExt[0].ifloat-PExt[1].ifloat)+vpMath::sqr(PExt[0].jfloat-PExt[1].jfloat)) ;
 
-  int n = numberOfSignal() ;
+  unsigned int n = numberOfSignal() ;
   double expecteddensity = d / (double)me->sample_step;
 
   if ((double)n<0.5*expecteddensity && n > 0)
@@ -406,7 +410,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
 {
   double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
-  int n = list.nbElements();//numberOfSignal() ;
+  unsigned int n = list.nbElements();//numberOfSignal() ;
   expecteddensity = d / (double)me->sample_step;
 
   if ((double)n<0.5*expecteddensity && n > 0)
@@ -433,7 +437,8 @@ vpMbtMeLine::updateDelta()
 
   double diff = 0;
 
-  if(fabs(theta) == M_PI )
+  //if(fabs(theta) == M_PI )
+  if(std::fabs(std::fabs(theta) - M_PI) <= vpMath::maximum(std::fabs(theta), (double)M_PI)*std::numeric_limits<double>::epsilon() )
   {
     theta = 0 ;
   }
@@ -448,7 +453,7 @@ vpMbtMeLine::updateDelta()
   normalizeAngle(delta);
   
   list.front() ;
-  for (int i=0 ; i < list.nbElement() ; i++)
+  for (unsigned int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
     p.alpha = delta ;
@@ -619,11 +624,11 @@ vpMbtMeLine::setExtremities()
 void
 vpMbtMeLine::bubbleSortI()
 {
-  int nbElmt = list.nbElements();
-  for (int pass = 1; pass < nbElmt; pass++)
+  unsigned int nbElmt = list.nbElements();
+  for (unsigned int pass = 1; pass < nbElmt; pass++)
   {
     list.front();
-    for (int i=0; i < nbElmt-pass; i++)
+    for (unsigned int i=0; i < nbElmt-pass; i++)
     {
       vpMeSite s1 = list.value() ;
       vpMeSite s2 = list.nextValue() ;
@@ -639,11 +644,11 @@ vpMbtMeLine::bubbleSortI()
 void
 vpMbtMeLine::bubbleSortJ()
 {
-  int nbElmt = list.nbElements();
-  for(int pass=1; pass < nbElmt; pass++)
+  unsigned int nbElmt = list.nbElements();
+  for(unsigned int pass=1; pass < nbElmt; pass++)
   {
     list.front();
-    for (int i=0; i < nbElmt-pass; i++)
+    for (unsigned int i=0; i < nbElmt-pass; i++)
     {
       vpMeSite s1 = list.value() ;
       vpMeSite s2 = list.nextValue() ;
@@ -666,15 +671,15 @@ vpMbtMeLine::findSignal(const vpImage<unsigned char>& I, const vpMe *me, double 
   
   vpMeSite  *list_query_pixels;
 //  double  convolution = 0;
-  int range  = me->range;
+  unsigned int range  = me->range;
   
-  list_query_pixels = pix.getQueryList(I, range);
+  list_query_pixels = pix.getQueryList(I, (int)range);
   
   vpDisplay::displayCross(I,itest,5,vpColor::cyan,3);
   vpDisplay::displayLine(I,vpImagePoint(list_query_pixels[0].ifloat,list_query_pixels[0].jfloat),vpImagePoint(list_query_pixels[2*range].ifloat,list_query_pixels[2*range].jfloat),vpColor::cyan);
   vpDisplay::displayCross(I,vpImagePoint(list_query_pixels[0].ifloat,list_query_pixels[0].jfloat),5,vpColor::orange,3);
 
-  for(int n = 0 ; n < 2 * range + 1 ; n++)
+  for(unsigned int n = 0 ; n < 2 * range + 1 ; n++)
   {
     conv[n] = list_query_pixels[n].convolution(I, me);
   }

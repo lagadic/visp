@@ -45,6 +45,9 @@
   Shows how to activates the ring light.
 */
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
@@ -175,7 +178,8 @@ main(int argc, const char **argv)
 
     vpRingLight light;
 
-    if (nmsec == 0.)
+    //if (nmsec == 0.)
+    if (std::fabs(nmsec) <= std::numeric_limits<double>::epsilon())
       light.pulse();
     else
       light.pulse(nmsec);

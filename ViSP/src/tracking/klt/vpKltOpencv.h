@@ -160,15 +160,23 @@ class VISP_EXPORT vpKltOpencv
 
   //Seters
   /* Should be used only before initTracking */
-  void setMaxFeatures(unsigned int input);
+  void setMaxFeatures(const int input);
 
-  void setWindowSize(unsigned int input) {initialized = 0; win_size=input;}
+  void setWindowSize(const int input) {initialized = 0; win_size=input;}
   void setQuality(double input) {initialized = 0; quality=input;}
   void setMinDistance(double input) {initialized = 0; min_distance=input;}
   void setHarrisFreeParameter(double input) {initialized = 0; harris_free_parameter=input;}
-  void setBlockSize(unsigned int input) {initialized = 0; block_size=input;}
-  void setUseHarris(unsigned int input) {initialized = 0; use_harris=input;}
-  void setPyramidLevels(unsigned int input) {initialized = 0; pyramid_level=input;}
+  /*!
+    Set the size of the averaging block used to track the features. 
+    
+    \warning The input is a signed integer to be compatible with OpenCV. However, 
+    it must be a positive integer.
+    
+    \param input : The new size of the block.
+  */
+  void setBlockSize(const int input) {initialized = 0; block_size=input;}
+  void setUseHarris(const int input) {initialized = 0; use_harris=input;}
+  void setPyramidLevels(const int input) {initialized = 0; pyramid_level=input;}
   void setTrackerId(int tid) {_tid = tid;}
 
   //Functors

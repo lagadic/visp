@@ -281,7 +281,7 @@ vpRobotAfma6::init (void)
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Afma6(_joint_min, _joint_max) );
-//   for (int i=0; i < njoint; i++) {
+//   for (unsigned int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
 //   }
 
@@ -361,7 +361,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6ToolType tool,
 
   // Set the camera constant (eMc pose) in the MotionBlox
   double eMc_pose[6];
-  for (int i=0; i < 3; i ++) {
+  for (unsigned int i=0; i < 3; i ++) {
     eMc_pose[i] = _etc[i];   // translation in meters
     eMc_pose[i+3] = _erc[i]; // rotation in rad
   }
@@ -370,7 +370,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6ToolType tool,
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Afma6(_joint_min, _joint_max) );
-//   for (int i=0; i < njoint; i++) {
+//   for (unsigned int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
 //   }
 
@@ -511,9 +511,9 @@ vpRobotAfma6::powerOn(void)
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
   bool firsttime = true;
-  int nitermax = 10;
+  unsigned int nitermax = 10;
 
-  for (int i=0; i<nitermax; i++) {
+  for (unsigned int i=0; i<nitermax; i++) {
     Try( PrimitiveSTATUS_Afma6(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
 			       &HIPowerStatus));
     switch(EStopStatus) {
@@ -687,7 +687,7 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(6);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try
@@ -734,7 +734,7 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(6);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try
@@ -879,7 +879,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
   R.buildFrom(pose[3], pose[4], pose[5]); //thetau
   rxyz.buildFrom(R);
 
-  for (int i=0; i < 3; i++) {
+  for (unsigned int i=0; i < 3; i++) {
     position[i] = pose[i];
     position[i+3] =  rxyz[i];
   }
@@ -994,7 +994,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     Try( PrimitiveACQ_POS_Afma6(_q) );
 
     vpColVector q(njoint);
-    for (int i=0; i < njoint; i++)
+    for (unsigned int i=0; i < njoint; i++)
       q[i] = _q[i];
 
     // Get fMc from the inverse kinematics
@@ -1004,7 +1004,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     // Set cMc from the input position
     vpTranslationVector txyz;
     vpRxyzVector rxyz;
-    for (int i=0; i < 3; i++) {
+    for (unsigned int i=0; i < 3; i++) {
       txyz[i] = position[i];
       rxyz[i] = position[i+3];
     }
@@ -1020,7 +1020,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     bool nearest = true;
     int solution = this->getInverseKinematics(fMc2, q, nearest);
     if (solution) { // Position is reachable
-      for (int i=0; i < njoint; i ++) {
+      for (unsigned int i=0; i < njoint; i ++) {
 	_destination[i] = q[i];
       }
       Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
@@ -1034,7 +1034,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     break ;
   }
   case vpRobot::ARTICULAR_FRAME: {
-    for (int i=0; i < njoint; i ++) {
+    for (unsigned int i=0; i < njoint; i ++) {
       _destination[i] = position[i];
     }
     Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
@@ -1046,7 +1046,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     // Set fMc from the input position
     vpTranslationVector txyz;
     vpRxyzVector rxyz;
-    for (int i=0; i < 3; i++) {
+    for (unsigned int i=0; i < 3; i++) {
       txyz[i] = position[i];
       rxyz[i] = position[i+3];
     }
@@ -1059,7 +1059,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
     bool nearest = true;
     int solution = this->getInverseKinematics(fMc, q, nearest);
     if (solution) { // Position is reachable
-      for (int i=0; i < njoint; i ++) {
+      for (unsigned int i=0; i < njoint; i ++) {
 	_destination[i] = q[i];
       }
       Try( PrimitiveMOVE_Afma6(_destination, positioningVelocity) );
@@ -1317,7 +1317,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME : {
     double _q[njoint];
     Try( PrimitiveACQ_POS_Afma6(_q) );
-    for (int i=0; i < njoint; i ++) {
+    for (unsigned int i=0; i < njoint; i ++) {
       position[i] = _q[i];
     }
 
@@ -1328,7 +1328,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
     Try( PrimitiveACQ_POS_Afma6(_q) );
 
     vpColVector q(njoint);
-    for (int i=0; i < njoint; i++)
+    for (unsigned int i=0; i < njoint; i++)
       q[i] = _q[i];
 
     // Compute fMc
@@ -1341,7 +1341,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
     vpRxyzVector rxyz;
     rxyz.buildFrom(fRc);
 
-    for (int i=0; i < 3; i++) {
+    for (unsigned int i=0; i < 3; i++) {
       position[i] = fMc[i][3]; // translation x,y,z
       position[i+3] = rxyz[i]; // Euler rotation x,y,z
     }
@@ -1383,13 +1383,13 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   //recupere  position en Rxyz
   this->getPosition(frame,posRxyz);
   vpRxyzVector RxyzVect;
-  for(int j=0;j<3;j++)
+  for(unsigned int j=0;j<3;j++)
     RxyzVect[j]=posRxyz[j+3];
   //recupere le vecteur thetaU correspondant
   vpThetaUVector RtuVect(RxyzVect);
 
   //remplit le vpPoseVector avec translation et rotation ThetaU
-  for(int j=0;j<3;j++)
+  for(unsigned int j=0;j<3;j++)
   {
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
@@ -1474,7 +1474,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 
   double vel_abs; // Absolute value
 
-  for (int i = 0 ; i < 3; ++ i) {
+  for (unsigned int i = 0 ; i < 3; ++ i) {
     vel_abs = fabs (vel[i]);
     if (vel_abs > vel_trans_max) {
       vel_trans_max = vel_abs;
@@ -1537,7 +1537,7 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
     if (TryStt == VelStopOnJoint) {
       Int32 axisInJoint[njoint];
       PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
-      for (int i=0; i < njoint; i ++) {
+      for (unsigned int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
 	  std::cout << "\nWarning: Velocity control stopped: axis "
 		    << i+1 << " on joint limit!" <<std::endl;
@@ -1636,7 +1636,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
 
   // Get the current joint position
   Try( PrimitiveACQ_POS_Afma6(q) );
-  for (int i=0; i < njoint; i ++) {
+  for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
 
@@ -1687,7 +1687,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
       vpThetaUVector thetaU;
       thetaU.buildFrom(cRc);
 
-      for (int i=0; i < 3; i++) {
+      for (unsigned int i=0; i < 3; i++) {
 	// Compute the translation displacement in the reference frame
 	velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
 	// Update the rotation displacement in the camera frame
@@ -1861,7 +1861,7 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
 	 &q[3], &q[4], &q[5]);
 
   // converts rotations from degrees into radians
-  for (int i=3; i < njoint; i ++)
+  for (unsigned int i=3; i < njoint; i ++)
     q[i] = vpMath::rad(q[i]) ;
 
   fclose(fd) ;
@@ -2078,7 +2078,7 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
 
   // Get the current joint position
   Try( PrimitiveACQ_POS_Afma6(q) );
-  for (int i=0; i < njoint; i ++) {
+  for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
 
@@ -2099,7 +2099,7 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
       vpRxyzVector rxyz;
       rxyz.buildFrom(R);
       
-      for (int i=0; i<3; i++) {
+      for (unsigned int i=0; i<3; i++) {
 	displacement[i]   = t[i];
 	displacement[i+3] = rxyz[i];
       }
@@ -2162,7 +2162,7 @@ vpRobotAfma6::checkJointLimits(vpColVector& jointsStatus)
 
   Try (PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint,
 NULL));
-  for (int i=0; i < njoint; i ++) {
+  for (unsigned int i=0; i < njoint; i ++) {
     if (axisInJoint[i]){
       std::cout << "\nWarning: Velocity control stopped: axis "
 		<< i+1 << " on joint limit!" <<std::endl;

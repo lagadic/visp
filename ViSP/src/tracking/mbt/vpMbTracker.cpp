@@ -539,10 +539,10 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
   //Read the lines
   unsigned int caoNbrLine;
   file_id >> caoNbrLine;
-  int *caoLinePoints = NULL;
+  unsigned int *caoLinePoints = NULL;
   std::cout << "> " << caoNbrLine << " lines" << std::endl;
   if (caoNbrLine > 0)
-    caoLinePoints = new int[2*caoNbrLine];
+    caoLinePoints = new unsigned int[2*caoNbrLine];
 
   unsigned int index1, index2;
 
@@ -578,12 +578,12 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
   unsigned int caoNbrPolygonLine;
   file_id >> caoNbrPolygonLine;
   std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
-  int index;
+  unsigned int index;
   for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
-    int nbLinePol;
+    unsigned int nbLinePol;
     file_id >> nbLinePol;
     std::vector<vpPoint> corners;
-    for(int i = 0; i < nbLinePol; i++){
+    for(unsigned int i = 0; i < nbLinePol; i++){
       file_id >> index;
       corners.push_back(caoPoints[caoLinePoints[2*index]]);
     }

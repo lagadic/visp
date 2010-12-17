@@ -51,6 +51,8 @@
 #include <visp/vpRobotSimulator.h>
 #include <visp/vpViper850.h>
 
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+
 /*!
   \class vpSimulatorViper850
 
@@ -60,6 +62,10 @@
 
   Implementation of the vpRobotSimulator class in order to simulate Irisa's
   Viper850 robot.  This robot is an ADEPT six degrees of freedom arm.
+
+  \warning This class uses threading capabilities. Thus on Unix-like
+  platforms, the libpthread third-party library need to be
+  installed. On Windows, we use the native threading capabilities.
   
   This class allows to control the Viper850 arm robot in position
   and velocity:
@@ -297,5 +303,7 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper8
       
     void compute_fMi();
 };
+
+#endif
 
 #endif

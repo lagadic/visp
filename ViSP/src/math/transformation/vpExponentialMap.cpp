@@ -129,7 +129,7 @@ vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
   if (0)  // test new version wrt old version
   {
     // old version
-    int i,j;
+    unsigned int i,j;
 
     double sinu,cosi,mcosi,s;
     // double u[3];
@@ -242,7 +242,7 @@ vpColVector
 vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double &delta_t)
 {
   vpColVector v(6);
-  int i;
+  unsigned int i;
   double theta,si,co,sinc,mcosc,msinc,det;
   vpThetaUVector u ;
   vpRotationMatrix Rd,a;

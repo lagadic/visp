@@ -221,16 +221,16 @@ vpDot::setGrayLevelOut()
   \sa setGrayLevelOut()
 */
 int
-vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
+vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
 	       unsigned int gray_level_min, unsigned int gray_level_max,
 	       double &mean_value, double &u_cog, double &v_cog, double &n)
 {
 
-  int width = I.getWidth();
-  int height= I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height= I.getHeight();
 
   // Test if we are in the image
-  if ( (u < 0) || (v < 0) || (u >= width) || (v >= height) ) {
+  if ( /*(u < 0) || (v < 0) ||*/ (u >= width) || (v >= height) ) {
     return  vpDot::out ;
   }
   if (I[v][u] >= gray_level_min && I[v][u] <= gray_level_max)
@@ -292,7 +292,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
   {
     return vpDot::out ;
   }
-  if ( u-1 >= 0)
+  //  if ( u-1 >= 0)
   {
     if (I[v][u-1] >= gray_level_min && I[v][u-1] <= gray_level_max)
       connexe(I,u-1,v, gray_level_min, gray_level_max, mean_value,
@@ -305,7 +305,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
       connexe(I,u+1,v,gray_level_min, gray_level_max, mean_value,
 	      u_cog, v_cog, n) ;
   }
-  if  (v-1 >= 0)
+  //if  (v-1 >= 0)
   {
     if (I[v-1][u] >=gray_level_min && I[v-1][u] <= gray_level_max)
       connexe(I,u, v-1,gray_level_min, gray_level_max, mean_value,
@@ -319,7 +319,7 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
   }
 
   if (connexity == CONNEXITY_8) {
-    if ( (u-1 >= 0) && (v-1 >= 0) )
+    //if ( (u-1 >= 0) && (v-1 >= 0) )
     {
 
       if (I[v-1][u-1] >=gray_level_min && I[v-1][u-1] <= gray_level_max)
@@ -327,14 +327,14 @@ vpDot::connexe(vpImage<unsigned char>& I, int u, int v,
 		u_cog, v_cog, n) ;
     }
 
-    if ( (u+1 < width) && (v-1 >= 0 ) )
+    if ( (u+1 < width) /*&& (v-1 >= 0 ) */)
     {
 
       if (I[v-1][u+1] >=gray_level_min && I[v-1][u+1] <= gray_level_max)
 	connexe(I,u+1,v-1,gray_level_min, gray_level_max, mean_value,
 		u_cog, v_cog, n) ;
     }
-    if  ( (v+1 < height) && (u-1 >= 0) )
+      if  ( (v+1 < height) /*&& (u-1 >= 0)*/ )
     {
 
       if (I[v+1][u-1] >=gray_level_min && I[v+1][u-1] <= gray_level_max)

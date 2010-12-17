@@ -153,7 +153,7 @@ private:
 
 
   virtual ~vpAR() ;
-  void initInternalViewer(int width, int height, vpImageType type = grayImage) ;
+  void initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type = grayImage) ;
   void setImage(vpImage<unsigned char> &I) ;
   void setImage(vpImage<vpRGBa> &I) ;
 

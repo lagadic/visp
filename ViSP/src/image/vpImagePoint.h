@@ -50,6 +50,8 @@
 */
 
 #include <ostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
@@ -285,7 +287,18 @@ class VISP_EXPORT vpImagePoint
 */
 VISP_EXPORT inline bool operator==( const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2 ) {
-  return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ) );
+  //return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ) );
+
+  double i1 = ip1.get_i();
+  double j1 = ip1.get_j();
+  double i2 = ip2.get_i();
+  double j2 = ip2.get_j();
+
+  return (
+	  ( std::fabs(i1-i2) <= std::fabs(vpMath::maximum(i1, i2))*std::numeric_limits<double>::epsilon() )
+	  && 
+	  ( std::fabs(j1-j2) <= std::fabs(vpMath::maximum(j1, j2))*std::numeric_limits<double>::epsilon() )
+	  );
 }
 
 /*!
@@ -297,7 +310,17 @@ VISP_EXPORT inline bool operator==( const vpImagePoint &ip1,
 */
 VISP_EXPORT inline bool operator!=( const vpImagePoint &ip1, 
 				    const vpImagePoint &ip2 ) {
-  return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ) );
+  //return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ) );
+  double i1 = ip1.get_i();
+  double j1 = ip1.get_j();
+  double i2 = ip2.get_i();
+  double j2 = ip2.get_j();
+
+  return (
+	  ( std::fabs(i1-i2) > std::fabs(vpMath::maximum(i1, i2))*std::numeric_limits<double>::epsilon() )
+	  || 
+	  ( std::fabs(j1-j2) > std::fabs(vpMath::maximum(j1, j2))*std::numeric_limits<double>::epsilon() )
+	  );
 }
 
 /*!

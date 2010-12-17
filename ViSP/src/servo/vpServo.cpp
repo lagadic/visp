@@ -440,7 +440,7 @@ vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 
 //! create a new set of 2 features in the task
 void
-vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, int select)
+vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int select)
 {
   featureList += &s ;
   desiredFeatureList += &s_star ;
@@ -452,7 +452,7 @@ vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, int select)
   (the desired feature is then null)
 */
 void
-vpServo::addFeature(vpBasicFeature& s, int select)
+vpServo::addFeature(vpBasicFeature& s, unsigned int select)
 {
   featureList += &s ;
 
@@ -481,7 +481,7 @@ vpServo::addFeature(vpBasicFeature& s, int select)
 }
 
 //! get the task dimension
-int
+unsigned int
 vpServo::getDimension()
 {
 
@@ -493,9 +493,9 @@ vpServo::getDimension()
     {
       vpBasicFeature *s_ptr = NULL;
       s_ptr=  featureList.value() ;
-      int select = featureSelectionList.value() ;
+      unsigned int select = (unsigned int)featureSelectionList.value() ;
 
-      dim_task += s_ptr->getDimension(select) ;
+      dim_task += (unsigned int)s_ptr->getDimension(select) ;
 
       featureSelectionList.next() ;
       featureList.next() ;
@@ -514,7 +514,7 @@ vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &_interactio
 
 static void
 computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureList,
-				   /*const*/ vpList<int> & featureSelectionList,
+				   /*const*/ vpList<unsigned int> & featureSelectionList,
 				   vpMatrix & L)
 {
   if (featureList.empty())
@@ -536,26 +536,26 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 
   /* First assumption: matrix dimensions have not changed. If 0, they are
    * initialized to dim 1.*/
-  int rowL = L .getRows();
-  const int colL = 6;
+  unsigned int rowL = L.getRows();
+  const unsigned int colL = 6;
   if (0 == rowL) { rowL = 1; L .resize(rowL, colL);}
 
   /* vectTmp is used to store the return values of functions get_s() and
    * error(). */
   vpMatrix matrixTmp;
-  int rowMatrixTmp, colMatrixTmp;
+  unsigned int rowMatrixTmp, colMatrixTmp;
 
   /* The cursor are the number of the next case of the vector array to
    * be affected. A memory reallocation should be done when cursor
    * is out of the vector-array range.*/
-  int cursorL = 0;
+  unsigned int cursorL = 0;
 
   for (featureList.front() ,featureSelectionList.front() ;
        !featureList.outside();
        featureSelectionList.next(),featureList.next() )
     {
       vpBasicFeature * sPTR = featureList.value() ;
-      const int select = featureSelectionList.value() ;
+      const unsigned int select = featureSelectionList.value() ;
 
       /* Get s. */
       matrixTmp = sPTR->interaction(select);
@@ -567,8 +567,8 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
 	{ rowL *= 2; L .resize (rowL,colL,false); vpDEBUG_TRACE(15,"Realloc!"); }
 
       /* Copy the temporarily matrix into L. */
-      for (int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
-	for (int j = 0; j <  colMatrixTmp; ++j)
+      for (unsigned int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
+	for (unsigned int j = 0; j <  colMatrixTmp; ++j)
 	  { L[cursorL][j] = matrixTmp[k][j]; }
 
     }
@@ -711,9 +711,9 @@ vpServo::computeError()
 
     /* First assumption: vector dimensions have not changed. If 0, they are
      * initialized to dim 1.*/
-    int dimError = error .getRows();
-    int dimS = s .getRows();
-    int dimSStar = sStar .getRows();
+    unsigned int dimError = error .getRows();
+    unsigned int dimS = s .getRows();
+    unsigned int dimSStar = sStar .getRows();
     if (0 == dimError) { dimError = 1; error .resize(dimError);}
     if (0 == dimS) { dimS = 1; s .resize(dimS);}
     if (0 == dimSStar) { dimSStar = 1; sStar .resize(dimSStar);}
@@ -721,14 +721,14 @@ vpServo::computeError()
     /* vectTmp is used to store the return values of functions get_s() and
      * error(). */
     vpColVector vectTmp;
-    int dimVectTmp;
+    unsigned int dimVectTmp;
 
     /* The cursor are the number of the next case of the vector array to
      * be affected. A memory reallocation should be done when cursor
      * is out of the vector-array range.*/
-    int cursorS = 0;
-    int cursorSStar = 0;
-    int cursorError = 0;
+    unsigned int cursorS = 0;
+    unsigned int cursorSStar = 0;
+    unsigned int cursorError = 0;
 
     /* For each cell of the list, recopy value of s, s_star and error. */
     for (featureList.front(),
@@ -743,21 +743,21 @@ vpServo::computeError()
       {
 	current_s  = featureList.value() ;
 	desired_s  = desiredFeatureList.value() ;
-	int select = featureSelectionList.value() ;
+	unsigned int select = featureSelectionList.value() ;
 
 	/* Get s, and store it in the s vector. */
 	vectTmp = current_s->get_s();
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorS > dimS)
 	  { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
-	for (int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
+	for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 	/* Get s_star, and store it in the s vector. */
 	vectTmp = desired_s->get_s();
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorSStar > dimSStar)
 	  { dimSStar *= 2; sStar .resize (dimSStar,false);  }
-	for (int k = 0; k <  dimVectTmp; ++k)
+	for (unsigned int k = 0; k <  dimVectTmp; ++k)
 	  { sStar[cursorSStar++] = vectTmp[k]; }
 
 	/* Get error, and store it in the s vector. */
@@ -765,7 +765,7 @@ vpServo::computeError()
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorError > dimError)
 	  { dimError *= 2; error .resize (dimError,false);  }
-	for (int k = 0; k <  dimVectTmp; ++k)
+	for (unsigned int k = 0; k <  dimVectTmp; ++k)
 	  { error[cursorError++] = vectTmp[k]; }
       }
 

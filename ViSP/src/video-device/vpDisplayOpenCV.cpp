@@ -54,6 +54,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 // Display stuff
 #include <visp/vpDisplay.h>
@@ -487,7 +489,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     vpImage<vpRGBa> Ic;
     vpImageConvert::convert(Itemp,Ic);
     
-    CvSize size = cvSize(this->width,this->height);
+    CvSize size = cvSize((int)this->width, (int)this->height);
     int depth = 8;
     int channels = 3;
     if (background != NULL){
@@ -593,7 +595,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     vpImage<vpRGBa> Ic;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Ic);
     
-    CvSize size = cvSize(this->width,this->height);
+    CvSize size = cvSize((int)this->width, (int)this->height);
     int depth = 8;
     int channels = 3;
     if (background != NULL){
@@ -757,7 +759,9 @@ void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1,
       double b = ip2.get_j() - ip1.get_j() ;
       double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
-      if ((a==0)&&(b==0))
+      //if ((a==0)&&(b==0))
+      if ((std::fabs(a) <= std::numeric_limits<double>::epsilon())
+	  &&(std::fabs(b)<= std::numeric_limits<double>::epsilon()))
       {
         // DisplayCrossLarge(i1,j1,3,col) ;
       }

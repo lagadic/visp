@@ -239,23 +239,23 @@ main(int argc, const char ** argv)
   std::cout << "The control points are :" <<std::endl;
   (bSpline.get_controlPoints()).display();
 
-  int i = bSpline.findSpan(5/2.0);
+  unsigned int i = bSpline.findSpan(5/2.0);
   std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
  
   vpBasisFunction *N = NULL;
   N = bSpline.computeBasisFuns(5/2.0);
   std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl; 
-  for (int j = 0; j < bSpline.get_p()+1; j++)
+  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
     std::cout << N[j].value << std::endl;
   
   vpBasisFunction **N2 = NULL;
   N2 = bSpline.computeDersBasisFuns(5/2.0, 2);
   std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
-  for (int j = 0; j < bSpline.get_p()+1; j++)
+  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
     std::cout << N2[1][j].value << std::endl; 
   
   std::cout << "The second derivatives of the basis functions N''(u=5/2) are :" << std::endl;
-  for (int j = 0; j < bSpline.get_p()+1; j++)
+  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
     std::cout << N2[2][j].value << std::endl; 
   
   if (opt_display && opt_click_allowed)
@@ -269,7 +269,7 @@ main(int argc, const char ** argv)
       u+=0.01;
     }
     controlPoints.front();
-    for (int j = 0; j < controlPoints.nbElements(); j++)
+    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
     {
       pt = controlPoints.value();
       vpDisplay::displayCross(I,pt,4,vpColor::green);
@@ -282,7 +282,7 @@ main(int argc, const char ** argv)
   if (N != NULL) delete[] N;
   if (N2 != NULL)
   {
-    for (int j = 0; j <= 2; j++)
+    for (unsigned int j = 0; j <= 2; j++)
       delete[] N2[j];
     delete[] N2;
   }

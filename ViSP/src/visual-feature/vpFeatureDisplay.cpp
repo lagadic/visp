@@ -182,9 +182,9 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
   try{
     {
-      int number_of_points = 45 ;
+      unsigned int number_of_points = 45 ;
       const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
-      int i = 0 ;
+      unsigned int i = 0 ;
 
       //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
@@ -365,9 +365,9 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 
   try{
     {
-      int number_of_points = 45 ;
+      unsigned int number_of_points = 45 ;
       const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
-      int i = 0 ;
+      unsigned int i = 0 ;
 
       //	 std::cout << s.t() ;
       double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;

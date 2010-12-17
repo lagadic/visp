@@ -109,14 +109,14 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
     std::vector< vpList< vpMbtDistanceLine*> > lines;
     //! Index of the polygon to add, and total number of polygon extracted so far. 
-    int nline ;
+    unsigned int nline ;
     
-    //! Index of the polygon to add, and total number of polygon extracted so far. 
+    //! Index of the polygon to add, and total number of polygon extracted so far. Cannot be unsigned because the default index of a polygon is -1.
     int index_polygon;
     //! Set of faces describing the object. 
     vpMbtHiddenFaces faces;
     //! Number of polygon (face) currently visible. 
-    int nbvisiblepolygone;
+    unsigned int nbvisiblepolygone;
     
     //! If true, the moving edges are displayed during the track() method. 
     bool displayMe;

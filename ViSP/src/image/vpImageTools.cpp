@@ -152,9 +152,9 @@ void vpImageTools::imageDifference(vpImage<unsigned char> &I1,
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
   
-  int n = I1.getHeight() * I1.getWidth() ;
+  unsigned int n = I1.getHeight() * I1.getWidth() ;
   int diff ;
-  for (int b = 0; b < n ; b++)
+  for (unsigned int b = 0; b < n ; b++)
     {
       diff = I1.bitmap[b] - I2.bitmap[b] + 128;
       Idiff.bitmap[b] = (unsigned char)

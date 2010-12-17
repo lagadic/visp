@@ -90,8 +90,8 @@ vpHomography::computeDisplacement (const vpHomography &aHb,
   double sinusTheta, cosinusTheta, signeSinus= 1;
   double cosinusDesireeEstimee, cosinusAncien;
   double s, determinantU, determinantV;
-  int	 i, j, k, w;
-  int vOrdre[3];
+  unsigned int	 i, j, k, w;
+  unsigned int vOrdre[3];
 
   //vpColVector normaleDesiree(3) ;
   //normaleDesiree[0]=0;normaleDesiree[1]=0;normaleDesiree[2]=1;
@@ -406,8 +406,8 @@ vpHomography::computeDisplacement (const vpHomography &aHb,
   double sinusTheta, cosinusTheta, signeSinus= 1;
   double cosinusDesireeEstimee, cosinusAncien;
   double s, determinantU, determinantV;
-  int	 i, j, k, w;
-  int vOrdre[3];
+  unsigned int	 i, j, k, w;
+  unsigned int vOrdre[3];
 
   vpColVector normaleDesiree(3) ;
   normaleDesiree[0]=0;normaleDesiree[1]=0;normaleDesiree[2]=1;
@@ -724,7 +724,8 @@ vpHomography::computeDisplacement(const vpMatrix H,
   vpColVector Nprim3(3), N3(3);
   vpColVector Nprim4(3), N4(3);
 
-  vpColVector svTemp(3),sv(3),vOrdre(3);
+  vpColVector svTemp(3),sv(3);
+  unsigned int vOrdre[3];
   vpColVector vTp(3);
 
 
@@ -774,11 +775,11 @@ vpHomography::computeDisplacement(const vpMatrix H,
 	en fonction des valeurs singulieres car
 	hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
-  for (int i = 0; i < 3; i++) {
-    sv[i] = svTemp[((int)vOrdre[i])];
-    for (int j = 0; j < 3; j++) {
-      U[i][j] = mTempU[i][((int)vOrdre[j])];
-      V[i][j] = mTempV[i][((int)vOrdre[j])];
+  for (unsigned int i = 0; i < 3; i++) {
+    sv[i] = svTemp[vOrdre[i]];
+    for (unsigned int j = 0; j < 3; j++) {
+      U[i][j] = mTempU[i][vOrdre[j]];
+      V[i][j] = mTempV[i][vOrdre[j]];
     }
   }
 

@@ -83,7 +83,7 @@ public:
   //! Used for backwards compatibility...could be removed
   int nGoodElement;
   int query_range;
-  int init_range;
+  unsigned int init_range;
   double seuil;
   bool display_point;// if 1 (TRUE) displays the line that is being tracked
 
@@ -103,8 +103,8 @@ public:
   int outOfImage( int i , int j , int half , int rows , int cols) ;
   int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
 
-  int numberOfSignal() ;
-  int totalNumberOfSignal() ;
+  unsigned int numberOfSignal() ;
+  unsigned int totalNumberOfSignal() ;
 
   //! Virtual functions for vpMeTracker
   //! Feature dependent functions
@@ -120,7 +120,7 @@ public:
   //!Displays the status of me site
   void display(const vpImage<unsigned char>& I);
   //!Displays the status of me sites
-  void display(const vpImage<unsigned char>& I,vpColVector &w,int &index_w);
+  void display(const vpImage<unsigned char>& I, vpColVector &w, unsigned int &index_w);
   void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
     selectDisplay = select ;
   }

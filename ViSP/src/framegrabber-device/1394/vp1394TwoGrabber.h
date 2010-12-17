@@ -328,10 +328,10 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getCamera(uint64_t &camera);
   void getGuid(uint64_t &guid);
   void getColorCoding(vp1394TwoColorCodingType & coding);
-  int  getColorCodingSupported(vp1394TwoVideoModeType videomode,
+  uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
 			       vpList<vp1394TwoColorCodingType> & codings);
   void getFramerate(vp1394TwoFramerateType & fps);
-  int  getFramerateSupported(vp1394TwoVideoModeType videomode,
+  uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
 			     vpList<vp1394TwoFramerateType> & fps);
   void getHeight(unsigned int &height);
   unsigned int getHeight();
@@ -340,7 +340,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   unsigned int getParameterValue(vp1394TwoParametersType param);
   unsigned int getRingBufferSize();
   void getVideoMode(vp1394TwoVideoModeType & videomode);
-  int  getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
+  uint32_t getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
   void getWidth(unsigned int &width);
   unsigned int getWidth();
 
@@ -359,7 +359,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 		     unsigned int width=0, unsigned int height=0);
   void setFramerate(vp1394TwoFramerateType fps);
   void setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed);
-  void setPanControl(int panControlValue);
+  void setPanControl(unsigned int panControlValue);
   void setParameterValue(vp1394TwoParametersType param, unsigned int val);
   void setRingBufferSize(unsigned int size);
   void setVideoMode(vp1394TwoVideoModeType videomode);

@@ -259,7 +259,7 @@ public:
     task.addFeature(s, vpFeatureLine::selectRho());
     \endcode
   */
-  inline static int selectRho()  { return FEATURE_LINE[0] ; }
+  inline static unsigned int selectRho()  { return FEATURE_LINE[0] ; }
 
   /*! 
 
@@ -277,16 +277,16 @@ public:
     task.addFeature(s, vpFeatureLine::selectTheta());
     \endcode
   */
-  inline static int selectTheta()  { return FEATURE_LINE[1] ; }
+  inline static unsigned int selectTheta()  { return FEATURE_LINE[1] ; }
 
-  vpMatrix  interaction(const int select = FEATURE_ALL);
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
   vpColVector error(const vpBasicFeature &s_star,
-		    const int select = FEATURE_ALL)  ;
+		    const unsigned int select = FEATURE_ALL)  ;
 
   //vpColVector error(const int select = FEATURE_ALL)  ;
 
-  void print(const int select= FEATURE_ALL) const ;
+  void print(const unsigned int select= FEATURE_ALL) const ;
 
   vpFeatureLine *duplicate() const ;
 

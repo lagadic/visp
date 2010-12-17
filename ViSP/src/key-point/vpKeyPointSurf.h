@@ -202,16 +202,16 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
     virtual ~vpKeyPointSurf(); 
 
-    int buildReference(const vpImage<unsigned char> &I);
-    int buildReference(const vpImage<unsigned char> &I,
+    unsigned int buildReference(const vpImage<unsigned char> &I);
+    unsigned int buildReference(const vpImage<unsigned char> &I,
 		       vpImagePoint &iP,
-		       unsigned int height, unsigned int width);
-    int buildReference(const vpImage<unsigned char> &I,
-		       const vpRect rectangle);
-    int matchPoint(const vpImage<unsigned char> &I);
-    int matchPoint(const vpImage<unsigned char> &I,
-		   vpImagePoint &iP, unsigned int height, unsigned int width);
-    int matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle);
+		       const unsigned int height, const unsigned int width);
+    unsigned int buildReference(const vpImage<unsigned char> &I,
+		       const vpRect& rectangle);
+    unsigned int matchPoint(const vpImage<unsigned char> &I);
+    unsigned int matchPoint(const vpImage<unsigned char> &I,
+		   vpImagePoint &iP, const unsigned int height, const unsigned int width);
+    unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect& rectangle);
     void display(const vpImage<unsigned char> &Iref,
 		 const vpImage<unsigned char> &Icurrent);
     void display(const vpImage<unsigned char> &Icurrent);

@@ -69,7 +69,7 @@
 void
 vpHomography::init()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   try {
     vpMatrix::resize(3,3) ;
@@ -324,10 +324,10 @@ vpHomography::save(std::ofstream &f) const
 vpHomography vpHomography::operator*(const vpHomography &H) const
 {
   vpHomography Hp;
-  for(int i = 0; i < 3; i++) {
-    for(int j = 0; j < 3; j++) {
+  for(unsigned int i = 0; i < 3; i++) {
+    for(unsigned int j = 0; j < 3; j++) {
       double s = 0.;
-      for(int k = 0; k < 3; k ++) {
+      for(unsigned int k = 0; k < 3; k ++) {
 	s += (*this)[i][k] * H[k][j]; 
       }
       Hp[i][j] = s;
@@ -354,7 +354,7 @@ vpHomography vpHomography::operator*(const double &v) const
 {
   vpHomography H;
   	
-  for (int i=0; i < 9; i ++) {
+  for (unsigned int i=0; i < 9; i ++) {
     H.data[i] = this->data[i] * v;
   }
 
@@ -379,7 +379,7 @@ vpHomography vpHomography::operator/(const double &v) const
   vpHomography H;
   double one_over_v = 1. / v;
  
-  for (int i=0; i < 9; i ++) {
+  for (unsigned int i=0; i < 9; i ++) {
     H.data[i] = this->data[i] * one_over_v;
   }
 
@@ -396,8 +396,8 @@ vpHomography::load(std::ifstream &f)
 {
   if (f != NULL)
   {
-    for (int i=0 ; i < 3 ; i++)
-      for (int j=0 ; j < 3 ; j++)
+    for (unsigned int i=0 ; i < 3 ; i++)
+      for (unsigned int j=0 ; j < 3 ; j++)
       {
 	f>>   (*this)[i][j] ;
       }
@@ -428,7 +428,7 @@ vpHomography::print()
 void
 vpHomography::build()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   vpColVector n(3) ;
   vpColVector atb(3) ;
@@ -460,7 +460,7 @@ vpHomography::build(vpHomography &aHb,
 		    const vpHomogeneousMatrix &aMb,
 		    const vpPlane &bP)
 {
-  int i,j ;
+  unsigned int i,j ;
 
   vpColVector n(3) ;
   vpColVector atb(3) ;

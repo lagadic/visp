@@ -53,6 +53,64 @@ SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
 SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 #-----------------------------------------------------------------------------
+# Add compilation flags under UNIX
+if(UNIX)
+  set(ACTIVATE_WARNING_ALL "ON" CACHE BOOL "activate -Wall flag")
+  set(WARNING_ALL "-Wall")
+  if(ACTIVATE_WARNING_ALL)
+    list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
+  else()
+    string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  set(ACTIVATE_WARNING_EXTRA "ON" CACHE BOOL "activate -Wextra flag")
+  set(WARNING_EXTRA "-Wextra")
+  if(ACTIVATE_WARNING_EXTRA)
+    list(APPEND CMAKE_CXX_FLAGS ${WARNING_EXTRA})
+  else()
+    string(REPLACE ${WARNING_EXTRA} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  set(ACTIVATE_WARNING_STRICT_OVERFLOW "OFF" CACHE BOOL "activate -Wstrict-overflow=5 flag")
+  set(WARNING_STRICT_OVERFLOW "-Wstrict-overflow=5")
+  if(ACTIVATE_WARNING_STRICT_OVERFLOW)
+    list(APPEND CMAKE_CXX_FLAGS ${WARNING_STRICT_OVERFLOW})
+    list(APPEND CMAKE_C_FLAGS ${WARNING_STRICT_OVERFLOW})
+  else()
+    string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  set(ACTIVATE_WARNING_FLOAT_EQUAL "OFF" CACHE BOOL "activate -Wfloat-equal flag")
+  set(WARNING_FLOAT_EQUAL "-Wfloat-equal")
+  if(ACTIVATE_WARNING_FLOAT_EQUAL)
+    list(APPEND CMAKE_CXX_FLAGS ${WARNING_FLOAT_EQUAL})
+  else()
+    string(REPLACE ${WARNING_FLOAT_EQUAL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+
+  set(ACTIVATE_WARNING_SIGN_CONVERSION "OFF" CACHE BOOL "activate -Wsign-conversion flag")
+  set(WARNING_SIGN_CONVERSION "-Wsign-conversion")
+  if(ACTIVATE_WARNING_SIGN_CONVERSION)
+    list(APPEND CMAKE_CXX_FLAGS ${WARNING_SIGN_CONVERSION})
+  else()
+    string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+endif()
+
+# Remove duplicates compilation flags
+separate_arguments(CMAKE_CXX_FLAGS)
+list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" FORCE)
+separate_arguments(CMAKE_C_FLAGS)
+list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
+string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "common C build flags" FORCE)
+
+#message("CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
+
+#-----------------------------------------------------------------------------
 
 # The location in which to install VISP libraries.
 SET(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/lib)
@@ -228,6 +286,13 @@ IF(USE_COIN)
   ENDIF (SOXT_FOUND)
 ENDIF(USE_COIN)
 
+FIND_PACKAGE(PTHREAD)
+IF (PTHREAD_FOUND)
+  OPTION(USE_PTHREAD    "Compile ViSP with pthread" ON)
+ELSE ()
+  SET(USE_PTHREAD OFF)
+ENDIF ()
+
 FIND_PACKAGE(XML2)
 IF(XML2_FOUND)
   OPTION(USE_XML2    "Compile ViSP with the xml2 library" ON)
@@ -297,7 +362,7 @@ ENDIF(FFMPEG_FOUND)
 #SET(USE_SOWIN      ON) # For the simulator viewer
 #SET(USE_SOQT       ON) # For the simulator viewer
 #SET(USE_SOXT       ON) # For the simulator viewer
-SET(USE_PTHREAD    ON) # For Biclops/Simulator
+#SET(USE_PTHREAD    ON) # For Biclops/Simulator
 #SET(USE_OPENCV     ON) # For Intel opencv
 #SET(USE_GSL        ON) # For matrix manipulations
 #SET(USE_GTK1       ON) # For Linux/OSX/Windows display with gtk-1.x
@@ -357,10 +422,6 @@ TEST_BIG_ENDIAN(BIGENDIAN)
 IF(BIGENDIAN)
   LIST(APPEND VISP_DEFS "-DBIGENDIAN")
 ENDIF(BIGENDIAN)
-
-#----------------------------------------------------------------------
-# Unix libraries :  X11, pthread
-#----------------------------------------------------------------------
 
 #--------------------------------------------------------------------
 # X11 lib
@@ -555,7 +616,7 @@ ENDIF(USE_XML2)
 SET(VISP_HAVE_PTHREAD_FOUND "no")  # for ViSP-third-party.txt
 
 IF(USE_PTHREAD)
-  FIND_PACKAGE(PTHREAD)
+  #FIND_PACKAGE(PTHREAD)
   IF(PTHREAD_FOUND)
     MESSAGE(STATUS "pthread found")
     SET(VISP_HAVE_PTHREAD TRUE)  # for header vpConfig.h
@@ -1235,6 +1296,13 @@ IF(VISP_EXTERN_LINK_DIR)
 ENDIF(VISP_EXTERN_LINK_DIR)
 #MESSAGE("VISP_EXTERN_LINK_DIR without duplicates: ${VISP_EXTERN_LINK_DIR}")
 LINK_DIRECTORIES(${VISP_EXTERN_LINK_DIR})
+
+#----------------------------------------------------------------------
+# Cleanify the libraries list
+#----------------------------------------------------------------------
+IF(APPLE)
+  LIST(REMOVE_DUPLICATES VISP_EXTERN_LIBS)
+ENDIF()
 
 #----------------------------------------------------------------------
 # Generate the package dependent file include/visp/vpConfig.h

@@ -97,7 +97,7 @@ vpGenericFeature::vpGenericFeature()
 
   \param dim_s : Dimension of the feature. It corresponds to the number of features you want to create.
 */
-vpGenericFeature::vpGenericFeature(int dim_s)
+vpGenericFeature::vpGenericFeature(unsigned int dim_s)
 {
   this->dim_s = dim_s ;
   s.resize(dim_s) ;
@@ -160,7 +160,7 @@ vpGenericFeature::setError(vpColVector &error)
   - To compute the error for only two of the component feature you
     have to say which ones you want to take into account. If it is the
     first one and the second one set select to
-    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]. In
     that case the error vector is a 2 dimension column vector.
 
   \return The error \f$ (s-s^*)\f$ between the current and the desired
@@ -187,7 +187,7 @@ vpGenericFeature::setError(vpColVector &error)
 */
 vpColVector
 vpGenericFeature::error(const vpBasicFeature &s_star,
-			const int select)
+			const unsigned int select)
 {
   if (s_star.get_s().getRows() != dim_s)
   {
@@ -216,7 +216,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       {
 	vpDEBUG_TRACE(25,"Error init: e=e.");
 	errorStatus = errorHasToBeUpdated ;
-	for (int i=0 ; i < dim_s ; i++)
+	for (unsigned int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
@@ -229,7 +229,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
       {
 	vpDEBUG_TRACE(25,"Error not init: e=s-s*.");
 
-	for (int i=0 ; i < dim_s ; i++)
+	for (unsigned int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
@@ -278,7 +278,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   - To compute the error for only two of the component feature you
     have to say which ones you want to take into account. If it is the
     first one and the second one set select to
-    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]. In
     that case the error vector is a 2 dimension column vector.
 
   \return The error \f$ (s-s^*)\f$ between the current and the desired
@@ -299,7 +299,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   \endcode
 */
 vpColVector
-vpGenericFeature::error( const int select)
+vpGenericFeature::error( const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -317,7 +317,7 @@ vpGenericFeature::error( const int select)
       if (errorStatus == errorInitialized)
       {
 	errorStatus = errorHasToBeUpdated ;
-	for (int i=0 ; i < dim_s ; i++)
+	for (unsigned int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
@@ -329,7 +329,7 @@ vpGenericFeature::error( const int select)
       else
       {
 
-	for (int i=0 ; i < dim_s ; i++)
+	for (unsigned int i=0 ; i < dim_s ; i++)
 	  if (FEATURE_LINE[i] & select )
 	  {
 	    vpColVector ex(1) ;
@@ -376,7 +376,7 @@ vpGenericFeature::error( const int select)
   - To compute the interaction matrix for only two of the component
     features you have to say which ones you want to take into
     account. If it is the first one and the second one set select to
-    vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1]. In
+    vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]. In
     that case the returned interaction matrix is \f$ [2 \times 6] \f$
     dimension.
 
@@ -409,7 +409,7 @@ vpGenericFeature::error( const int select)
   \endcode
 */
 vpMatrix
-vpGenericFeature::interaction(const int select)
+vpGenericFeature::interaction(const unsigned int select)
 {
   if (L.getRows() == 0)
   {
@@ -429,7 +429,7 @@ vpGenericFeature::interaction(const int select)
 
   Ls.resize(0,6) ;
 
-  for (int i=0 ; i < dim_s ; i++)
+  for (unsigned int i=0 ; i < dim_s ; i++)
     if (FEATURE_LINE[i] & select )
     {
       vpMatrix Lx(1,6) ; Lx = 0;
@@ -714,11 +714,11 @@ vpGenericFeature::get_s(double &s0) const
   \endcode
 */
 void
-vpGenericFeature::print(const int select) const
+vpGenericFeature::print(const unsigned int select) const
 {
 
   std::cout <<"Generic Feature: "  ;
-  for (int i=0 ; i < dim_s ; i++)
+  for (unsigned int i=0 ; i < dim_s ; i++)
     if (FEATURE_LINE[i] & select )
     {
       std::cout << " s["<<i << "]=" << s[i] ;

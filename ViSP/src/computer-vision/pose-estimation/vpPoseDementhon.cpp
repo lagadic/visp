@@ -69,7 +69,7 @@ void
 vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
 
-  int i ;
+  unsigned int i ;
   double normI = 0., normJ = 0.;
   double Z0 = 0.;
   double seuil=1.0;
@@ -341,15 +341,15 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::CalculArbreDementhon() " << std::endl;
 
-  int i, k;
+  unsigned int i, k;
   int erreur = 0;
-  int cpt;
+  unsigned int cpt;
   double s,c,si,co;
   double smin,smin_old, s1,s2;
   double r, theta;
   vpHomogeneousMatrix  cMo1,cMo2,cMo_old;
 
-  int iter_max = 20;
+  unsigned int iter_max = 20;
   vpMatrix eps(iter_max+1,npt) ;
 
 
@@ -519,7 +519,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 {  if (DEBUG_LEVEL1)
     std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl ;
 
-  int i,j,k ;
+  unsigned int i,j,k ;
 
   if (c3d !=NULL) delete []c3d ;
   c3d = new vpPoint[npt] ;
@@ -590,13 +590,13 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   vpMatrix v(ata.getRows(),ata.getCols());
   vpColVector sv(ata.getRows());
   //  ata1 = ata.i() ;
-  int imin = 0;
+  unsigned int imin = 0;
   double s = 0.0;
 
   //calcul de ata^-1
   ata.svd(sv,v) ;
 
-  int nc = sv.getRows() ;
+  unsigned int nc = sv.getRows() ;
   for (i=0; i < nc ; i++)
     if (sv[i] > s) s = sv[i];
 
@@ -740,7 +740,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 */
 double vpPose::computeResidualDementhon(vpHomogeneousMatrix &cMo)
 {
-  int i ;
+  unsigned int i ;
   double residual = 0 ;
 
 

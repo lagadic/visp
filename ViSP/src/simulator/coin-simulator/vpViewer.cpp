@@ -101,12 +101,12 @@ vpViewer::actualRedraw(void)
    {
      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
      if (simu->typeImage == vpSimulator::grayImage)
-       glDrawPixels(simu->getInternalWidth(), simu->getInternalHeight(),
+       glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
 		    (GLenum)GL_LUMINANCE,
 		    GL_UNSIGNED_BYTE,
 		    simu->image_background );
      else
-       glDrawPixels(simu->getInternalWidth(), simu->getInternalHeight(),
+       glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
 		    (GLenum)GL_RGB,
 		    GL_UNSIGNED_BYTE,
 		    simu->image_background );
@@ -126,7 +126,7 @@ vpViewer::actualRedraw(void)
    glSwapBuffers() ;
     if(viewerType == vpViewer::internalView){
        simu->get = 0 ;
-       glReadPixels(0,0,simu->getInternalWidth(), simu->getInternalHeight(),
+       glReadPixels(0, 0, (GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
 		      (GLenum)GL_RGB,
 		      GL_UNSIGNED_BYTE,
 		      simu->bufferView ) ;

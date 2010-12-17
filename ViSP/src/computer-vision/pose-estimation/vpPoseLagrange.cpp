@@ -55,13 +55,13 @@
 
 static
 void
-calculTranslation (vpMatrix &a, vpMatrix &b, int nl, int nc1,
-		   int nc3, vpColVector &x1, vpColVector &x2)
+calculTranslation (vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1,
+		   unsigned int nc3, vpColVector &x1, vpColVector &x2)
 {
 
   try
   {
-    int i,j;
+    unsigned int i,j;
 
     vpMatrix ct(3,nl) ;
     for (i=0 ; i < 3 ; i++)
@@ -148,7 +148,7 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
 
   try{
-    int i,imin;
+    unsigned int i,imin;
 
     vpMatrix ata ; // A^T A
     ata = a.t()*a ;
@@ -241,10 +241,10 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   try
   {
     double s;
-    int i;
+    unsigned int i;
 
-    int k=0;
-    int nl=npt*2;
+    unsigned int k=0;
+    unsigned int nl=npt*2;
 
 
     vpMatrix a(nl,3)  ;
@@ -364,10 +364,10 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
   try{
     double s;
-    int i;
+    unsigned int i;
 
-    int k=0;
-    int nl=npt*2;
+    unsigned int k=0;
+    unsigned int nl=npt*2;
 
 
     vpMatrix a(nl,3)  ;

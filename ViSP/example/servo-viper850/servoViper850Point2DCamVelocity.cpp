@@ -138,7 +138,7 @@ main()
     g.open(I) ;
 
 
-    vpDisplayX display(I, 100+I.getWidth()+30, 200, "Current image") ;
+    vpDisplayX display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;

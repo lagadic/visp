@@ -39,12 +39,16 @@
  *
  *****************************************************************************/
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpSimulatorViper850.h>
 #include <visp/vpTime.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpPoint.h>
 #include <visp/vpMeterPixelConversion.h>
+
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 
@@ -432,15 +436,15 @@ vpSimulatorViper850::updateArticularPosition()
     if (jl != 0 && jointLimit == false)
     {
       if (jl < 0)
-	ellapsedTime = (joint_min[-jl-1] - articularCoordinates[-jl-1])/(articularVelocities[-jl-1]*1e-3);
+	ellapsedTime = (joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]*1e-3);
       else
-	ellapsedTime = (joint_max[jl-1] - articularCoordinates[jl-1])/(articularVelocities[jl-1]*1e-3);
+	ellapsedTime = (joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]*1e-3);
       
-      for (int i = 0; i < 6; i++)
+      for (unsigned int i = 0; i < 6; i++)
 	articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i]*1e-3;
       
       jointLimit = true;
-      jointLimitArt = (int)fabs((double)jl);
+      jointLimitArt = (unsigned int)fabs((double)jl);
     }
 
     set_artCoord(articularCoordinates);
@@ -793,7 +797,7 @@ vpSimulatorViper850::setVelocity (const vpRobot::vpControlFrameType frame, const
 	throw;
       }
       
-      for (int i = 0 ; i < 3; ++ i)
+      for (unsigned int i = 0 ; i < 3; ++ i)
       {
         vel_abs = fabs (vel[i]);
         if (vel_abs > vel_trans_max && !jointLimit)
@@ -835,7 +839,7 @@ vpSimulatorViper850::setVelocity (const vpRobot::vpControlFrameType frame, const
 	vpERROR_TRACE ("The velocity vector must have a size of 6 !!!!");
 	throw;
       }
-      for (int i = 0 ; i < 6; ++ i)
+      for (unsigned int i = 0 ; i < 6; ++ i)
       {
         vel_abs = fabs (vel[i]);
         if (vel_abs > vel_rot_max && !jointLimit)
@@ -923,7 +927,7 @@ vpSimulatorViper850::computeArticularVelocity()
     case vpRobot::CAMERA_FRAME :
     case vpRobot::REFERENCE_FRAME :
     {
-      for (int i = 0 ; i < 6; ++ i)
+      for (unsigned int i = 0 ; i < 6; ++ i)
       {
         vel_abs = fabs (articularVelocity[i]);
         if (vel_abs > vel_rot_max && !jointLimit)
@@ -1096,7 +1100,7 @@ vpSimulatorViper850::findHighestPositioningSpeed(vpColVector &q)
 {
   double vel_rot_max   = getMaxRotationVelocity();
   double velmax =  fabs(q[0]);
-  for (int i = 1; i < 6; i++)
+  for (unsigned int i = 1; i < 6; i++)
   {
     if (velmax < fabs(q[i]))
       velmax =  fabs(q[i]);
@@ -1198,12 +1202,12 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
   {
     case vpRobot::CAMERA_FRAME : 
     {
-      int nbSol;
+      unsigned int nbSol;
       vpColVector qdes(6);
 
       vpTranslationVector txyz;
       vpRxyzVector rxyz;
-      for (int i=0; i < 3; i++)
+      for (unsigned int i=0; i < 3; i++)
       {
         txyz[i] = q[i];
         rxyz[i] = q[i+3];
@@ -1271,12 +1275,12 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
       
     case vpRobot::REFERENCE_FRAME:
     {
-      int nbSol;
+      unsigned int nbSol;
       vpColVector qdes(6);
 
       vpTranslationVector txyz;
       vpRxyzVector rxyz;
-      for (int i=0; i < 3; i++)
+      for (unsigned int i=0; i < 3; i++)
       {
         txyz[i] = q[i];
         rxyz[i] = q[i+3];
@@ -1551,7 +1555,7 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
       vpTranslationVector txyz;
       fMc.extract(txyz);
       
-      for (int i=0; i <3; i++)
+      for (unsigned int i=0; i <3; i++)
       {
         q[i] = txyz[i];
 	q[i+3] = rxyz[i];
@@ -1593,7 +1597,7 @@ vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,
   vpThetaUVector RtuVect(posRxyz[3],posRxyz[4],posRxyz[5]);
 
   //remplit le vpPoseVector avec translation et rotation ThetaU
-  for(int j=0;j<3;j++)
+  for(unsigned int j=0;j<3;j++)
   {
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
@@ -1700,7 +1704,7 @@ vpSimulatorViper850::isInJointLimit ()
   
   vpColVector articularCoordinates = get_artCoord();
   
-  for (int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++)
   {
     if (articularCoordinates[i] <= joint_min[i])
     {
@@ -1708,12 +1712,12 @@ vpSimulatorViper850::isInJointLimit ()
       if (difft > diff)
       {
 	diff = difft;
-	artNumb = -i-1;
+	artNumb = -(int)i-1;
       }
     }
   }
   
-  for (int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; i++)
   {
     if (articularCoordinates[i] >= joint_max[i])
     {
@@ -1721,7 +1725,7 @@ vpSimulatorViper850::isInJointLimit ()
       if (difft > diff)
       {
 	diff = difft;
-	artNumb = i+1;
+	artNumb = (int)(i+1);
       }
     }
   }
@@ -2173,8 +2177,9 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I,changed);
 
-  if (displacement[2][3] != 0)
-      camMf2 = camMf2*displacement;
+  //if (displacement[2][3] != 0)
+  if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon())
+    camMf2 = camMf2*displacement;
 
   f2Mf = camMf2.inverse()*camMf;
 
@@ -2182,7 +2187,10 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
 
   double u;
   double v;
-  if(px_ext != 1 && py_ext != 1)
+  //if(px_ext != 1 && py_ext != 1)
+  // we assume px_ext and py_ext > 0
+  if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_ext);
     v = (double)I.getHeight()/(2*py_ext);
@@ -2262,7 +2270,7 @@ vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   fMc = fMo * cMo.inverse();
   
   vpColVector articularCoordinates = get_artCoord();
-  int nbSol = getInverseKinematics(fMc, articularCoordinates);
+  unsigned int nbSol = getInverseKinematics(fMc, articularCoordinates);
   
   if (nbSol == 0)
     vpERROR_TRACE ("Positionning error. Position unreachable");
@@ -2290,3 +2298,5 @@ vpSimulatorViper850::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
   get_fMi(fMit);
   fMo = fMit[7] * cMo;
 }
+
+#endif

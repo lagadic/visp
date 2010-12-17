@@ -67,14 +67,14 @@ class VISP_EXPORT vpSubColVector : public vpColVector {
   private :
       
       //! Resize method do nothing
-      void resize(const int /* r */ , const int /* c */ ){}
+      void resize(const unsigned int /* r */ , const unsigned int /* c */ ){}
       //!Copy constructor
       vpSubColVector(const vpSubColVector& /* m */);      
        
   protected :
  
       //!Number of row of parent vpColvector at initialization
-      int pRowNum;
+      unsigned int pRowNum;
       //!Parent vpColvector
       vpColVector *parent;
       
@@ -83,12 +83,12 @@ class VISP_EXPORT vpSubColVector : public vpColVector {
     //!Default contructor
     vpSubColVector();
     //!Contructor
-    vpSubColVector(vpColVector &v, const int & offset,const int & nrows);
+    vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
     //!Destructor
     ~vpSubColVector();
     
     //! Initialisation of vpSubColVector
-    void init(vpColVector &v, const int & offset,const int & nrows);
+    void init(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
     
     //!Check is partent vpColVector has changed since initialization
     void checkParentStatus();

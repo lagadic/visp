@@ -74,15 +74,15 @@ class VISP_EXPORT vpColVector : public vpMatrix
 {
    friend class vpMatrix;
 protected:
-  vpColVector (vpMatrix &m, int j);
-  vpColVector (vpColVector &m, int r, int nrows) ;
+  vpColVector (vpMatrix &m, unsigned int j);
+  vpColVector (vpColVector &m, unsigned int r, unsigned int nrows) ;
 
 public:
 
   //! basic constructor
   vpColVector() : vpMatrix() {};
   //! constructor of vector of size n
-  vpColVector(int nn) : vpMatrix(nn,1){};
+  vpColVector(unsigned int nn) : vpMatrix(nn,1){};
   //! copy constructor
   vpColVector (const vpColVector &v);
   //! constructor initialize a vpColVector from a vpRotationVector
@@ -92,14 +92,14 @@ public:
     \param i : Column vector size.
     \param flagNullify : If true, set the data to zero.
    */
-  void resize(const int i, const bool flagNullify = true)
+  void resize(const unsigned int i, const bool flagNullify = true)
   {  vpMatrix::resize(i, 1, flagNullify); }
 
 
   //! Access  V[i] = x
-  inline double &operator [](int n) {  return *(data + n);  }
+  inline double &operator [](unsigned int n) {  return *(data + n);  }
   //! Access x = V[i]
-  inline const double &operator [](int n) const { return *(data+n);  }
+  inline const double &operator [](unsigned int n) const { return *(data+n);  }
   //! Copy operator.   Allow operation such as A = v
   vpColVector &operator=(const vpColVector &v);
   //! Copy operator.   Allow operation such as A = v
@@ -124,12 +124,15 @@ public:
   //! operator A = -A
   vpColVector operator-() ;
 
-  vpColVector rows(int first_row, int last_row)
-  { return vpColVector(*this, first_row-1, last_row-first_row+1); }
+  vpColVector rows(unsigned int first_row, unsigned int last_row)
+  { 
+    return vpColVector(*this, first_row-1, last_row-first_row+1);
+  }
 
   //! Reshape methods
-  void reshape(vpMatrix & m,const int &nrows,const int &ncols);
-  vpMatrix reshape(const int &nrows,const int &ncols);
+  void reshape(vpMatrix & m,
+	       const unsigned int &nrows, const unsigned int &ncols);
+  vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
 
   //! transpose of Vector
   vpRowVector t() const;
@@ -170,7 +173,7 @@ public:
   inline void rad2deg() {
     double rad2deg = 180.0/M_PI;
 
-    for (int i=0; i < rowNum; i++)
+    for (unsigned int i=0; i < rowNum; i++)
       (*this)[i] *= rad2deg;
   }
   /*!
@@ -180,7 +183,7 @@ public:
   inline void deg2rad() {
     double deg2rad = M_PI/180.0;
 
-    for (int i=0; i < rowNum; i++)
+    for (unsigned int i=0; i < rowNum; i++)
       (*this)[i] *= deg2rad;
   }
 };

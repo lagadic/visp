@@ -45,12 +45,12 @@
 
 
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
-
-
-#include "visp/vpScale.h"
-//#include <robust/vpScale.h>
+#include <visp/vpScale.h>
 
 
 #define DEBUG_LEVEL1 0
@@ -105,15 +105,15 @@ double
 vpScale::MeanShift(vpColVector &error)
 {
 
-  int n = error.getRows()/dimension;
+  unsigned int n = error.getRows()/dimension;
   vpColVector density(n);
   vpColVector density_gradient(n);
   vpColVector mean_shift(n);
 
-  int increment=1;
+  unsigned int increment=1;
 
   // choose smallest error as start point
-  int i=0;
+  unsigned int i=0;
   while(error[i]<0 && error[i]<error[i+1])
     i++;
 
@@ -143,13 +143,13 @@ vpScale::MeanShift(vpColVector &error)
 // Calculate the density of each point in the error vector
 // Requires ordered set of errors
 double
-vpScale::KernelDensity(vpColVector &error, int position)
+vpScale::KernelDensity(vpColVector &error, unsigned int position)
 {
 
-  int n = error.getRows()/dimension;
+  unsigned int n = error.getRows()/dimension;
   double density=0;
   double Ke = 1;
-  int j=position;
+  unsigned int j=position;
 
   vpColVector X(dimension);
 
@@ -157,10 +157,11 @@ vpScale::KernelDensity(vpColVector &error, int position)
   // Use each error in the bandwidth to calculate
   // the local density of error i
   // First treat larger errors
-  while(Ke !=0 && j<=n)
+  //while(Ke !=0 && j<=n)
+  while(std::fabs(Ke) > std::numeric_limits<double>::epsilon() && j<=n)
   {
     //Create vector of errors corresponding to each dimension of a feature
-    for(int i=0; i<dimension; i++)
+    for(unsigned int i=0; i<dimension; i++)
     {
       X[i]=(error[position]-error[j])/bandwidth;
       position++;
@@ -175,10 +176,11 @@ vpScale::KernelDensity(vpColVector &error, int position)
   Ke = 1;
   j=position;
   // Then treat smaller errors
-  while(Ke !=0 && j>=dimension)
+  //while(Ke !=0 && j>=dimension)
+  while(std::fabs(Ke) > std::numeric_limits<double>::epsilon() && j>=dimension)
   {
     //Create vector of errors corresponding to each dimension of a feature
-    for(int i=0; i<dimension; i++)
+    for(unsigned int i=0; i<dimension; i++)
     {
       X[i]=(error[position]-error[j])/bandwidth;
       position++;
@@ -197,21 +199,22 @@ vpScale::KernelDensity(vpColVector &error, int position)
 }
 
 double
-vpScale::KernelDensityGradient(vpColVector &error, int position)
+vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
 {
 
-  int n = error.getRows()/dimension;
+  unsigned int n = error.getRows()/dimension;
   double density_gradient=0;
   double sum_delta=0;
   double delta=0;
   int nx=0;
 
   double inside_kernel = 1;
-  int j=position;
+  unsigned int j=position;
   // Use each error in the bandwidth to calculate
   // the local density gradient
   // First treat larger errors than current
-  while(inside_kernel !=0 && j<=n)
+  //while(inside_kernel !=0 && j<=n)
+  while(std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() && j<=n)
   {
     delta = error[position]-error[j];
     if(vpMath::sqr(delta/bandwidth)<1)
@@ -228,7 +231,8 @@ vpScale::KernelDensityGradient(vpColVector &error, int position)
   inside_kernel = 1;
   j=position;
   // Then treat smaller errors than current
-  while(inside_kernel !=0 && j>=dimension)
+  //while(inside_kernel !=0 && j>=dimension)
+  while(std::fabs(inside_kernel) > std::numeric_limits<double>::epsilon() && j>=dimension)
   {
     delta = error[position]-error[j];
     if(vpMath::sqr(delta/bandwidth)<1)
@@ -284,7 +288,7 @@ vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
 
 //Epanechnikov_kernel for an d dimensional Euclidian space R^d
 double
-vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, int n)
+vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
 {
 
   double c;  // Volume of an n dimensional unit sphere

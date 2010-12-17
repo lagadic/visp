@@ -61,6 +61,8 @@
 
 */
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
@@ -204,7 +206,8 @@ main()
       double gain ;
       if (iter>2)
       {
-	if (alpha == 0) gain = lambda_av ;
+	if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
+	  gain = lambda_av ;
 	else
 	  {
 	    gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av;

@@ -83,23 +83,23 @@
 class VISP_EXPORT vpBasicFeature
 {
  public: // Public constantes
-  static const int FEATURE_LINE [32];
+  static const unsigned int FEATURE_LINE [32];
 
-  static const int FEATURE_ALL;
+  static const unsigned int FEATURE_ALL;
 
  protected:
   //! state of the visual feature
   vpColVector s ;
   //! dimension of the visual feature
-  int dim_s ;
+  unsigned int dim_s ;
   //int featureLine[8] ;
   //! ensure that all the parameters needed to compute the iteraction matrix are set.
   bool *flags;
-  //!number of parmeters needed to compute the iteraction matrix.
+  //!number of parmeters needed to compute the interaction matrix.
   int nbParameters;
 
  public:
-  int dimension_s() { return dim_s ; }
+  unsigned int dimension_s() { return dim_s ; }
 
  public:
 
@@ -107,27 +107,25 @@ class VISP_EXPORT vpBasicFeature
 
   vpBasicFeature() ;
   virtual ~vpBasicFeature() { /*vpTRACE("0x%x", this)*/; }
-  //! write element in the state vector (usage : A[i] = x )
-  virtual inline double operator[](const int n) {  return s[n]; }
   //! read element in the state vector  (usage : x = A[i] )
-  virtual inline double operator[](const int n) const {  return s[n]; }
+  virtual inline double operator[](const unsigned int n) const {  return s[n]; }
 
   //! select all the feature
-  static  int selectAll()  { return FEATURE_ALL ; }
+  static  unsigned int selectAll()  { return FEATURE_ALL ; }
 
   //! get the feature vecror
   vpColVector get_s() const;
 
   //! get the feature dimension
-  int getDimension(int select=FEATURE_ALL) const;
+  unsigned int getDimension(unsigned int select=FEATURE_ALL) const;
   //! compute the interaction matrix from a subset a the possible features
-  virtual vpMatrix interaction(const int select = FEATURE_ALL) = 0;
+  virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
   //! compute the error between two visual features from a subset
   //! a the possible features
   virtual vpColVector error(const vpBasicFeature &s_star,
-			    const int select= FEATURE_ALL)  = 0 ;
+			    const unsigned int select= FEATURE_ALL)  = 0 ;
   //! print the name of the feature
-  virtual void print(const int select= FEATURE_ALL) const = 0 ;
+  virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
 
   virtual vpBasicFeature *duplicate() const = 0 ;
 

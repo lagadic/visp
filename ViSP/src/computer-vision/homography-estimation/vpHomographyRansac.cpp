@@ -47,17 +47,17 @@ iscolinear(double *x1, double *x2, double *x3)
 
 
 bool
-vpHomography::degenerateConfiguration(vpColVector &x,int *ind,
+vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind,
 				      double threshold_area)
 {
 
-  int i, j, k;
+  unsigned int i, j, k;
 
   for (i=1 ; i < 4 ; i++)
     for (j=0 ; j<i ; j++)
       if (ind[i]==ind[j]) return true ;
 
-  int n = x.getRows()/4 ;
+  unsigned int n = x.getRows()/4 ;
   double pa[4][3] ;
   double pb[4][3] ;
 
@@ -120,18 +120,18 @@ x1a,y1a, x2a, y2a, ... xna, yna
 leading to 2*2*n
 */
 bool
-vpHomography::degenerateConfiguration(vpColVector &x, int *ind)
+vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind)
 {
-  for (int i = 1; i < 4 ; i++)
-    for (int j = 0 ;j < i ; j++)
+  for (unsigned int i = 1; i < 4 ; i++)
+    for (unsigned int j = 0 ;j < i ; j++)
       if (ind[i] == ind[j]) return true ;
 
-  int n = x.getRows()/4;
+  unsigned int n = x.getRows()/4;
   double pa[4][3];
   double pb[4][3];
-  int n2 = 2 * n;
-  int ind2;
-  for(int i = 0; i < 4 ;i++)
+  unsigned int n2 = 2 * n;
+  unsigned int ind2;
+  for(unsigned int i = 0; i < 4 ;i++)
     {
       ind2 = 2 * ind[i];
       pb[i][0] = x[ind2];
@@ -153,14 +153,14 @@ vpHomography::degenerateConfiguration(vpColVector &x, int *ind)
 }
 // Fit model to this random selection of data points.
 void
-vpHomography::computeTransformation(vpColVector &x,int *ind, vpColVector &M)
+vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
-  int i ;
-  int n = x.getRows()/4 ;
+  unsigned int i ;
+  unsigned int n = x.getRows()/4 ;
   double xa[4], xb[4];
   double ya[4], yb[4];
-  int n2 = n * 2;
-  int ind2;
+  unsigned int n2 = n * 2;
+  unsigned int ind2;
   for(i=0 ; i < 4 ; i++)
     {
       ind2 = 2 * ind[i];
@@ -194,10 +194,10 @@ vpHomography::computeTransformation(vpColVector &x,int *ind, vpColVector &M)
 double
 vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 {
-  int i ;
-  int n = x.getRows()/4 ;
-  int n2 = n  * 2;
-  int i2;
+  unsigned int i ;
+  unsigned int n = x.getRows()/4 ;
+  unsigned int n2 = n  * 2;
+  unsigned int i2;
   vpColVector *pa;
   vpColVector *pb;
 
@@ -245,15 +245,15 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 
 
 void
-vpHomography::initRansac(int n,
+vpHomography::initRansac(unsigned int n,
 			 double *xb, double *yb,
 			 double *xa, double *ya,
 			 vpColVector &x)
 {
   x.resize(4*n) ;
-  int n2 = n * 2;
-  int i2;
-  for (int i=0 ; i < n ; i++)
+  unsigned int n2 = n * 2;
+  unsigned int i2;
+  for (unsigned int i=0 ; i < n ; i++)
   {
     i2 = 2 * i;
     x[i2] = xb[i] ;
@@ -264,7 +264,7 @@ vpHomography::initRansac(int n,
 }
 
 bool
-vpHomography::ransac(int n,
+vpHomography::ransac(unsigned int n,
 		     double *xb, double *yb,
 		     double *xa, double *ya ,
 		     vpHomography &aHb,
@@ -280,10 +280,10 @@ vpHomography::ransac(int n,
 
 
   bool ransacable = vpRansac<vpHomography>::ransac(n, x, 4, threshold, M, inliers,  consensus);
-  //vpRansac<vpHomography>::ransacHomography(n, x, 4, threshold, M, inliers, consensus) ;
+  
   if(ransacable)
   {
-    for (int i = 0 ;i < 9 ;i++)
+    for (unsigned int i = 0 ;i < 9 ;i++)
     {
       aHb.data[i] = M[i];
     }
@@ -322,7 +322,7 @@ vpHomography::ransac(int n,
   points.
 
 */
-bool vpHomography::ransac(int n,
+bool vpHomography::ransac(unsigned int n,
 			  double *xb, double *yb,
 			  double *xa, double *ya ,
 			  vpHomography &bHa,
@@ -342,7 +342,7 @@ bool vpHomography::ransac(int n,
 						  inliers, consensus,
 						  areaThreshold);
 
-  for (int i = 0 ;i < 9 ;i++)
+  for (unsigned int i = 0 ;i < 9 ;i++)
   {
     bHa.data[i] = M[i];
   }

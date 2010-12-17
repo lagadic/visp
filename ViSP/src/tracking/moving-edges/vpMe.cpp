@@ -233,7 +233,7 @@ clipping  (point  A, point B,
 // Rem : P,Q triés sur x, et donc seulement 6 cas
 static double
 S_relative(point P, point Q,
-         	 double Xmin, double Ymin, double Xmax, double Ymax)
+	   double Xmin, double Ymin, double Xmax, double Ymax)
 {
 
   if(Q.x < P.x)         // tri le couple de points
@@ -244,40 +244,58 @@ S_relative(point P, point Q,
   recale(P, Xmin,Ymin,Xmax,Ymax);  // permet des calculs de S_relative
   recale(Q, Xmin,Ymin,Xmax,Ymax);  //  moins approximatifs.
 
+  //if(P.x==Xmin && Q.x==Xmax)
+  if((std::fabs(P.x-Xmin) <= vpMath::maximum(std::fabs(P.x),std::fabs(Xmin))*std::numeric_limits<double>::epsilon()) 
+     && 
+     (std::fabs(Q.x-Xmax) <= vpMath::maximum(std::fabs(Q.x),std::fabs(Xmax))*std::numeric_limits<double>::epsilon()))
+    return( fabs(Ymax+Ymin-P.y-Q.y) );
+
+  //if( (P.y==Ymin && Q.y==Ymax) ||
+  //  (Q.y==Ymin && P.y==Ymax))
+  if( ( (std::fabs(P.y-Ymin) <= vpMath::maximum(std::fabs(P.y),std::fabs(Ymin))*std::numeric_limits<double>::epsilon()) 
+	&& 
+	(std::fabs(Q.y-Ymax) <= vpMath::maximum(std::fabs(Q.y),std::fabs(Ymax))*std::numeric_limits<double>::epsilon()) ) 
+      || 
+      ( (std::fabs(Q.y-Ymin) <= vpMath::maximum(std::fabs(Q.y),std::fabs(Ymin))*std::numeric_limits<double>::epsilon())
+	&&
+	(std::fabs(P.y-Ymax) <= vpMath::maximum(std::fabs(P.y),std::fabs(Ymax))*std::numeric_limits<double>::epsilon()) ) )
+    return( fabs(Xmax+Xmin-P.x-Q.x) );
+
+  //if( P.x==Xmin && Q.y==Ymax )
+  if( std::fabs(P.x-Xmin) <= vpMath::maximum(std::fabs(P.x),std::fabs(Xmin))*std::numeric_limits<double>::epsilon()
+      &&
+      std::fabs(Q.y-Ymax) <= vpMath::maximum(std::fabs(Q.y),std::fabs(Ymax))*std::numeric_limits<double>::epsilon() )
+    return( 1-(Ymax-P.y)*(Q.x-Xmin) );
+  //if( P.x==Xmin && Q.y==Ymin )
+  if( std::fabs(P.x-Xmin) <= vpMath::maximum(std::fabs(P.x),std::fabs(Xmin))*std::numeric_limits<double>::epsilon()
+      && 
+      std::fabs(Q.y-Ymin) <= vpMath::maximum(std::fabs(Q.y),std::fabs(Ymin))*std::numeric_limits<double>::epsilon() )
+    return( 1-(P.y-Ymin)*(Q.x-Xmin) );
+  //if( P.y==Ymin && Q.x==Xmax )
+  if( std::fabs(P.y-Ymin) <= vpMath::maximum(std::fabs(P.y),std::fabs(Ymin))*std::numeric_limits<double>::epsilon()
+      && std::fabs(Q.x-Xmax) <= vpMath::maximum(std::fabs(Q.x),std::fabs(Xmax))*std::numeric_limits<double>::epsilon() )
+    return( 1-(Xmax-P.x)*(Q.y-Ymin) );
+  //if( P.y==Ymax && Q.x==Xmax )
+  if( std::fabs(P.y-Ymax) <= vpMath::maximum(std::fabs(P.y),std::fabs(Ymax))*std::numeric_limits<double>::epsilon()
+      && std::fabs(Q.x-Xmax) <= vpMath::maximum(std::fabs(Q.x),std::fabs(Xmax))*std::numeric_limits<double>::epsilon())
+    return( 1-(Xmax-P.x)*(Ymax-Q.y) );
 
 
-  if(P.x==Xmin && Q.x==Xmax)
-	  return( fabs(Ymax+Ymin-P.y-Q.y) );
-
-  if( (P.y==Ymin && Q.y==Ymax) ||
-      (Q.y==Ymin && P.y==Ymax))
-	  return( fabs(Xmax+Xmin-P.x-Q.x) );
-
-  if( P.x==Xmin && Q.y==Ymax )
-		 return( 1-(Ymax-P.y)*(Q.x-Xmin) );
-  if( P.x==Xmin && Q.y==Ymin )
-		 return( 1-(P.y-Ymin)*(Q.x-Xmin) );
-  if( P.y==Ymin && Q.x==Xmax )
-		 return( 1-(Xmax-P.x)*(Q.y-Ymin) );
-  if( P.y==Ymax && Q.x==Xmax )
-		 return( 1-(Xmax-P.x)*(Ymax-Q.y) );
-
-
- 	printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n",
-        P.x,P.y,Q.x,Q.y,Xmin,Ymin,Xmax,Ymax);
+  printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n",
+	 P.x,P.y,Q.x,Q.y,Xmin,Ymin,Xmax,Ymax);
   exit(-1);	// DEBUG Stoppe net l'execution  
 }
 
 
 static void
 calcul_masques(vpColVector &angle, // définitions des angles theta
-	       int n,             // taille masques (PAIRE ou IMPAIRE Ok)
+	       unsigned int n,             // taille masques (PAIRE ou IMPAIRE Ok)
 	       vpMatrix *M)        // résultat M[theta](n,n)
 {
   // Le coef |a| = |1/2n| n'est pas incorporé dans M(i,j) (=> que des int)
 
-  int i_theta,  // indice (boucle sur les masques)
-      i,j;      // indices de boucle sur M(i,j)
+  unsigned int i_theta,  // indice (boucle sur les masques)
+       i,j;      // indices de boucle sur M(i,j)
   double X,Y,   // point correspondant/centre du masque
     theta, cos_theta, sin_theta, tan_theta,
     moitie = ((double)n)/2.0; // moitie REELLE du masque
@@ -285,7 +303,7 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
   int    sgn;       // signe de M(i,j)
   double v;         // ponderation de M(i,j)
 
- int nb_theta = angle.getRows() ;
+ unsigned int nb_theta = angle.getRows() ;
 
  for(i_theta=0; i_theta<nb_theta; i_theta++)
  {
@@ -296,15 +314,16 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
 
    // PRE-CALCULE 2 POINTS DE D(theta) BIEN EN DEHORS DU MASQUE
    // =========================================================
-   if( angle[i_theta]==90 )                     // => tan(theta) infinie !
+   //if( angle[i_theta]==90 )                     // => tan(theta) infinie !
+   if( std::fabs(angle[i_theta]-90) <= vpMath::maximum(std::fabs(angle[i_theta]), 90.)*std::numeric_limits<double>::epsilon() )                     // => tan(theta) infinie !
    {
-     P1.x=0; P1.y=-n;
-     Q1.x=0; Q1.y=n;
+     P1.x=0; P1.y=-(int)n;
+     Q1.x=0; Q1.y= n;
    }
    else
    {
      tan_theta = sin_theta/cos_theta;       // pente de la droite D(theta)
-     P1.x=-n; P1.y=tan_theta*(-n);
+     P1.x=-(int)n; P1.y=tan_theta*(-(int)n);
      Q1.x=n;  Q1.y=tan_theta*n;
    }
 
@@ -344,8 +363,6 @@ void
 vpMe::initMask()
 {
 
-  int i ;
-
   if (mask != NULL)
     delete [] mask;
 
@@ -353,11 +370,11 @@ vpMe::initMask()
 
   vpColVector angle(n_mask) ;
 
-  int angle_pas ;
+  unsigned int angle_pas ;
   angle_pas = 180 / n_mask ;
 
-  int k =0 ;
-  for (i = 0 ; /* i < 180, */ k < n_mask ; i += angle_pas)
+  unsigned int k =0 ;
+  for (unsigned int i = 0 ; /* i < 180, */ k < n_mask ; i += angle_pas)
     angle[k++] = i ;
 
   calcul_masques(angle, mask_size, mask ) ;
@@ -455,7 +472,7 @@ vpMe::~vpMe()
   Set the number of oriented masks used to perform the convolution.
 */
 void
-vpMe::setMaskNumber(int a)
+vpMe::setMaskNumber(unsigned int a)
 {
   n_mask = a  ;
   anglestep = 180 / a ;
@@ -466,7 +483,7 @@ vpMe::setMaskNumber(int a)
   Set the size of the oriented masks used to perform the convolution.
 */
 void
-vpMe::setMaskSize(int a)
+vpMe::setMaskSize(unsigned int a)
 {
   mask_size = a  ;
   initMask() ;

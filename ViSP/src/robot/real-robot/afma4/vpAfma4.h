@@ -139,8 +139,7 @@ class VISP_EXPORT vpAfma4
 
  public:
 
-  static const int njoint; ///< Number of joint.
-
+  static const unsigned int njoint; ///< Number of joint.
 
  protected:
   // Denavit Hartenberg parameters

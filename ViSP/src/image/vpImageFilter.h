@@ -84,25 +84,25 @@ public:
 		     const vpMatrix& M) ;
 
   static double gaussianFilter(vpImage<unsigned char> &I, 
-			       const int r, 
-			       const int c) ;
+			       const unsigned int r, 
+			       const unsigned int c) ;
 
   static double  derivativeFilterX(vpImage<unsigned char> &I,
-				   const int r, int c) ;
+				   const unsigned int r, unsigned int c) ;
 
   static double  derivativeFilterY(vpImage<unsigned char> &I,
-				   const int r, int c) ;
+				   const unsigned int r, unsigned int c) ;
 
   static void  coefficientGaussianDerivative(double *fg, const int t) ;
 
 
   static double derivativeFilterX(vpImage<unsigned char> &I, 
-			   const int r, const int c, 
-			   double *filter,   const int size)  ;
+				  const unsigned int r, const unsigned int c, 
+				  double *filter, const unsigned int size)  ;
   
   static double  derivativeFilterY(vpImage<unsigned char> &I, 
-				   const int r, const int c, 
-				   double *filter, const int size) ;
+				   const unsigned int r, const unsigned int c, 
+				   double *filter, const unsigned int size) ;
 } ;
 
 

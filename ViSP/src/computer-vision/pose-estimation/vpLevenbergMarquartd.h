@@ -81,8 +81,8 @@ lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 		       double *jac, int ldfjac, int iflag),
        int m, int n, double *x,
        double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
-       double gtol, int maxfev, double *diag, int mode,
-       const double factor, int nprint, int *info, int *nfev,
+       double gtol, unsigned int maxfev, double *diag, int mode,
+       const double factor, int nprint, int *info, unsigned int *nfev,
        int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
        double *wa3, double *wa4);
 

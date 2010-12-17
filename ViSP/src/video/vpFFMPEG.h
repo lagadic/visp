@@ -164,7 +164,8 @@ class VISP_EXPORT vpFFMPEG
     AVFrame *pFrameGRAY;
     AVPacket packet;
     SwsContext *img_convert_ctx  ;
-    int videoStream, numBytes ;
+    unsigned int videoStream;
+    int numBytes ;
     uint8_t * buffer ;
     std::vector<int64_t> index;
     //! Indicates if the openStream method was executed
@@ -180,7 +181,7 @@ class VISP_EXPORT vpFFMPEG
     uint8_t *outbuf, *picture_buf;
     //!Buffer size
     int outbuf_size;
-    //!Size of the data to wrrite in the file
+    //!Size of the data to write in the file
     int out_size;
     //!Bit rate of the video to write    
     unsigned int bit_rate;
@@ -217,7 +218,7 @@ class VISP_EXPORT vpFFMPEG
       
       \param bit_rate : the expected bit rate.
     */
-    inline void setBitRate(const int bit_rate) {this->bit_rate = bit_rate;}
+    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
 
     bool openStream(const char *filename,vpFFMPEGColorType color_type);
     bool initStream();

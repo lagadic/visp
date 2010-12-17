@@ -120,12 +120,13 @@ void vpRingLight::pulse()
   parport.sendData(data); // send a 0-1 pulse
 
   // Wait 500 micro seconds
-  int usTempo = 500;
   struct timeval ti, tc; // Initial and current time
-  gettimeofday(&ti,0);
+  struct timeval tempo;
+  tempo.tv_usec = 500;
+  gettimeofday(&ti,0L);
   do {
-    gettimeofday(&tc,0);
-  } while (tc.tv_usec < ti.tv_usec + usTempo);
+    gettimeofday(&tc,0L);
+  } while (tc.tv_usec < ti.tv_usec + tempo.tv_usec);
 
   data = data & (~mask_pulse_d1);
   //vpTRACE("Send 0x%x = %d\n", data, data);

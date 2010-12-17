@@ -79,7 +79,7 @@ class vpPlotGraph
     char title[256];
     char unitx[256];
     char unity[256];
-    int curveNbr;
+    unsigned int curveNbr;
     vpPlotCurve* curveList;
     bool textdispayed;
     bool scaleInitialized;
@@ -90,14 +90,14 @@ class vpPlotGraph
     
     //Graph complet
     vpImagePoint topLeft;
-    int width;
-    int height;
+    unsigned int width;
+    unsigned int height;
     vpRect graphZone;
     
     //Zone d'affichage
     vpImagePoint dTopLeft;
-    int dWidth;
-    int dHeight;
+    unsigned int dWidth;
+    unsigned int dHeight;
     vpRect dGraphZone;
     
     //Zone d'affichage
@@ -150,8 +150,8 @@ class vpPlotGraph
     ~vpPlotGraph();
     
     void clearGraphZone(vpImage<unsigned char> &I);
-    void initGraph (int nbCurve);
-    void initSize (vpImagePoint topLeft, int width, int height, int margei, int margej);
+    void initGraph (unsigned int nbCurve);
+    void initSize (vpImagePoint topLeft, unsigned int width, unsigned int height, unsigned int margei, unsigned int margej);
     void computeGraphParameters();
     void computeGraphParameters3D();
     void displayGrid (vpImage<unsigned char> &I);
@@ -160,24 +160,24 @@ class vpPlotGraph
     void displayLegend (vpImage<unsigned char> &I);
     void displayGrid3D (vpImage<unsigned char> &I);
     
-    void setCurveColor(const int curveNum, const vpColor color);
+    void setCurveColor(const unsigned int curveNum, const vpColor color);
     void setTitle (const char *title);
     void setUnitX (const char *unitx);
     void setUnitY (const char *unity);
     void setUnitZ (const char *unitz);
-    void setLegend (const int curveNum, const char *legend);
+    void setLegend (const unsigned int curveNum, const char *legend);
     
-    void rescalex(int side, double extremity);
-    void rescaley(int side, double extremity);
-    void rescalez(int side, double extremity);
+    void rescalex(unsigned int side, double extremity);
+    void rescaley(unsigned int side, double extremity);
+    void rescalez(unsigned int side, double extremity);
     //void rescale(double &min, double &max, double &delta, const int nbDiv, int side);
     
     void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin, const double ymax, const int nbDivy, const bool gx, const bool gy);
     
     void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin, const double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz, const bool gx, const bool gy);
     
-    void plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y);
-    void plot (vpImage<unsigned char> &I, const int curveNb, const double x, const double y, const double z);
+    void plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y);
+    void plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y, const double z);
     void replot (vpImage<unsigned char> &I);
     void replot3D (vpImage<unsigned char> &I);
     
@@ -190,7 +190,7 @@ class vpPlotGraph
     bool check3Dline(vpImagePoint &iP1, vpImagePoint &iP2);
     bool check3Dpoint(vpImagePoint &iP);
     
-    void resetPointList(const int curveNum);
+    void resetPointList(const unsigned int curveNum);
     
 };
 

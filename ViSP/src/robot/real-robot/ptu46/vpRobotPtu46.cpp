@@ -634,7 +634,7 @@ vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME :
   case vpRobot::CAMERA_FRAME : {
     double max = this ->maxRotationVelocity;
-    for (int i = 0 ; i < 2; ++ i) // rx and ry of the camera
+    for (unsigned int i = 0 ; i < 2; ++ i) // rx and ry of the camera
     {
       if (fabs (v[i]) > max)
       {
@@ -647,7 +647,7 @@ vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
     // Rotations velocities normalisation
     if (norm == true) {
       max =  this ->maxRotationVelocity / max;
-      for (int i = 0 ; i < 2; ++ i)
+      for (unsigned int i = 0 ; i < 2; ++ i)
 	ptuSpeedInterface [i] = v[i]*max;
     }
     break;

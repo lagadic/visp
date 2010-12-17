@@ -79,9 +79,9 @@ vpTwistMatrix::operator=(const vpTwistMatrix &V)
 {
   init() ;
 
-  for (int i=0; i<6; i++)
+  for (unsigned int i=0; i<6; i++)
   {
-    for (int j=0; j<6; j++)
+    for (unsigned int j=0; j<6; j++)
     {
       rowPtrs[i][j] = V.rowPtrs[i][j];
     }
@@ -101,7 +101,7 @@ vpTwistMatrix::operator=(const vpTwistMatrix &V)
 void
 vpTwistMatrix::init()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   try {
     resize(6,6) ;
@@ -260,11 +260,11 @@ vpTwistMatrix::operator*(const vpTwistMatrix &V) const
 {
   vpTwistMatrix p ;
 
-  for (int i=0;i<6;i++)
-    for (int j=0;j<6;j++)
+  for (unsigned int i=0;i<6;i++)
+    for (unsigned int j=0;j<6;j++)
     {
       double s =0 ;
-      for (int k=0;k<6;k++)
+      for (unsigned int k=0;k<6;k++)
 	s +=rowPtrs[i][k] * V.rowPtrs[k][j];
       p[i][j] = s ;
     }
@@ -328,11 +328,11 @@ vpTwistMatrix::operator*(const vpMatrix &M) const
   }
 
   vpMatrix p(6, M.getCols()) ;
-  for (int i=0;i<6;i++)
-    for (int j=0;j<M.getCols();j++)
+  for (unsigned int i=0;i<6;i++)
+    for (unsigned int j=0;j<M.getCols();j++)
     {
       double s =0 ;
-      for (int k=0;k<6;k++)
+      for (unsigned int k=0;k<6;k++)
 	s += rowPtrs[i][k] * M[k][j];
       p[i][j] = s ;
     }
@@ -369,8 +369,8 @@ vpTwistMatrix::operator*(const vpColVector &v) const
 
   c = 0.0;
 
-  for (int i=0;i<6;i++) {
-    for (int j=0;j<6;j++) {
+  for (unsigned int i=0;i<6;i++) {
+    for (unsigned int j=0;j<6;j++) {
       {
  	c[i]+=rowPtrs[i][j] * v[j];
       }
@@ -398,7 +398,7 @@ vpTwistMatrix
 vpTwistMatrix::buildFrom(const vpTranslationVector &t,
 			 const vpRotationMatrix &R)
 {
-    int i, j;
+    unsigned int i, j;
     vpMatrix skewaR = t.skew(t)*R ;
 
     for (i=0 ; i < 3 ; i++)

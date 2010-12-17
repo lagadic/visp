@@ -38,6 +38,8 @@
 #
 #############################################################################
 
+set(BUILD_SHARED_LIBS CACHE FORCE "Build ViSP with shared libraries." ON)
+
 # InstallRequiredSystemLibraries: Hack for Visual Studio support Search for
 # system runtime libraries based on the platform.
 INCLUDE(InstallRequiredSystemLibraries)
@@ -47,7 +49,7 @@ set(CPACK_NSIS_CONTACT "visp@inria.fr")
 SET(CPACK_NSIS_HELP_LINK "http://www.irisa.fr/lagadic/visp/visp.html")
 set(CPACK_NSIS_URL_INFO_ABOUT "http://www.irisa.fr/lagadic/visp/visp.html")
 set(CPACK_NSIS_MODIFY_PATH "ON")
-set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} ViSP SDK")
+set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} SDK")
 # set(CPACK_PACKAGE_ICON ${VISP_SOURCE_DIR}/visp.bmp)
 # set(CPACK_NSIS_MUI_ICON ${VISP_SOURCE_DIR}/logoViSP.ico)
 # set(CPACK_NSIS_MUI_UNIICON ${VISP_SOURCE_DIR}/logoViSP.ico)

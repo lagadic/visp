@@ -166,7 +166,7 @@ private:
   XEvent	event;
   Pixmap	pixmap;
   unsigned long	*x_color; // Array of predefined colors
-  int screen_depth  ;
+  unsigned int screen_depth  ;
   unsigned short  colortable[256];
   XColor        xcolor;
   XGCValues     values;

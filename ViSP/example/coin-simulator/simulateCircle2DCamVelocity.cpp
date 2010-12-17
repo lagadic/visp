@@ -187,7 +187,7 @@ void *mainLoop (void *_simu)
   cMod[2][3] = 1 ;
 
   int it =0 ;
-  int pos = 2 ;
+  unsigned int pos = 2 ;
   while (pos!=0)
     {
 

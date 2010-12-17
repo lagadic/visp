@@ -267,8 +267,8 @@ void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
 {
   vpUndistortInternalType<Type> *undistortSharedData = (vpUndistortInternalType<Type>*)arg;
   int offset   = undistortSharedData->threadid;
-  int width    = undistortSharedData->width;
-  int height   = undistortSharedData->height;
+  int width    = (int)undistortSharedData->width;
+  int height   = (int)undistortSharedData->height;
   int nthreads = undistortSharedData->nthreads;
 
   double u0 = undistortSharedData->cam.get_u0();
@@ -361,14 +361,15 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   //
   // Optimized version using pthreads
   //
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
 
   undistI.resize(height, width);
 
   double kud = cam.get_kud();
 
-  if (kud == 0) {
+  //if (kud == 0) {
+  if (std::fabs(kud) <= std::numeric_limits<double>::epsilon()) {
     // There is no need to undistort the image
     undistI = I;
     return;
@@ -388,8 +389,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
     //    vpTRACE("create thread %d", i);
     undistortSharedData[i].src      = I.bitmap;
     undistortSharedData[i].dst      = undistI.bitmap;
-    undistortSharedData[i].width    = I.getWidth();
-    undistortSharedData[i].height   = I.getHeight();
+    undistortSharedData[i].width    = (int)I.getWidth();
+    undistortSharedData[i].height   = (int)I.getHeight();
     undistortSharedData[i].cam      = cam;
     undistortSharedData[i].nthreads = nthreads;
     undistortSharedData[i].threadid = i;
@@ -410,8 +411,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   //
   // optimized version without pthreads
   //
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
 
   undistI.resize(height, width);
 

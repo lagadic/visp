@@ -48,6 +48,10 @@
 
 
 #ifndef vpPlane_hh
+
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpPlane.h>
 
 #define DEBUG_LEVEL1 0
@@ -278,14 +282,18 @@ vpPlane::rayIntersection(const vpPoint &M0,
   double k,scal;
   double R[3];
 
-  if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
+  //  if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
+  if(std::fabs(M0.get_X()) > std::numeric_limits<double>::epsilon()
+     || std::fabs(M0.get_Y()) > std::numeric_limits<double>::epsilon()
+     || std::fabs(M0.get_Z()) > std::numeric_limits<double>::epsilon())
   {
     R[0]= M1.get_X() - M0.get_X();
     R[1]= M1.get_Y() - M0.get_Y();
     R[2]= M1.get_Z() - M0.get_Z();
 
     scal = getA()*R[0] + getB()*R[1] + getC()*R[2];
-    if (scal != 0)
+    //if (scal != 0)
+    if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
       k =  -( getA()*M0.get_X() + getB()*M0.get_Y() + getC()*M0.get_Z() + getD())/scal;
     else
       k = 0;
@@ -297,7 +305,8 @@ vpPlane::rayIntersection(const vpPoint &M0,
   else
   {
     scal = getA()*M1.get_X() + getB()*M1.get_Y() + getC()*M1.get_Z();
-    if (scal != 0)
+    //if (scal != 0)
+    if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
       k = -getD()/scal;
     else
       k=0;
@@ -316,7 +325,8 @@ double vpPlane::getIntersection(const vpColVector &M1,vpColVector &H )const
   double k,scal;
 
   scal = A*M1[0] + B*M1[1] + C*M1[2];
-  if (scal != 0)
+  //if (scal != 0)
+  if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
     k = -getD()/scal;
   else
     k=0;

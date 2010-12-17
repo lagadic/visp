@@ -341,7 +341,7 @@ main(int argc, const char ** argv)
   #endif
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
-    d1.init(Idiff, 40+I.getWidth(), 10, "photometric visual servoing : s-s* ") ;
+    d1.init(Idiff, 40+(int)I.getWidth(), 10, "photometric visual servoing : s-s* ") ;
     vpDisplay::display(Idiff) ;
     vpDisplay::flush(Idiff) ;
   }
@@ -391,10 +391,10 @@ main(int argc, const char ** argv)
 
   // Compute the Hessian diagonal for the Levenberg-Marquartd 
   // optimization process
-  int n = 6 ;
+  unsigned int n = 6 ;
   vpMatrix diagHsd(n,n) ;
   diagHsd.eye(n);
-  for(int i = 0 ; i < n ; i++) diagHsd[i][i] = Hsd[i][i];
+  for(unsigned int i = 0 ; i < n ; i++) diagHsd[i][i] = Hsd[i][i];
 
 
 

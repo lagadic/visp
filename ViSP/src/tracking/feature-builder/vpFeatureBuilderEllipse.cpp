@@ -174,7 +174,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   try
   {
 
-    int order = 3 ;
+    unsigned int order = 3 ;
     vpMatrix mp(order,order) ; mp =0 ;
     vpMatrix m(order,order) ; m = 0 ;
 
@@ -236,7 +236,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   try
   {
 
-    int order = 3 ;
+    unsigned int order = 3 ;
     vpMatrix mp(order,order) ; mp =0 ;
     vpMatrix m(order,order) ; m = 0 ;
 
@@ -296,7 +296,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   try
   {
 
-    int order = 3 ;
+    unsigned int order = 3 ;
     vpMatrix mp(order,order) ; mp =0 ;
     vpMatrix m(order,order) ; m = 0 ;
 

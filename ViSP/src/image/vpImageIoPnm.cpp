@@ -1108,8 +1108,8 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
 			     "cannot write file")) ;
   }
 
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
 
   jpeg_stdio_dest(&cinfo, file);
 
@@ -1126,7 +1126,7 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
   unsigned char* input = (unsigned char*)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height)
   {
-    for (int i = 0; i < width; i++)
+    for (unsigned int i = 0; i < width; i++)
     {
       line[i] = *(input);
 	  input++;
@@ -1187,8 +1187,8 @@ vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
 			     "cannot write file")) ;
   }
 
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
 
   jpeg_stdio_dest(&cinfo, file);
 
@@ -1205,7 +1205,7 @@ vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
   unsigned char* input = (unsigned char*)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height)
   {
-    for (int i = 0; i < width; i++)
+    for (unsigned int i = 0; i < width; i++)
     {
       line[i*3] = *(input); input++;
 	  line[i*3+1] = *(input); input++;
@@ -1718,8 +1718,8 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   /* setup libpng for using standard C fwrite() function with our FILE pointer */
   png_init_io (png_ptr, file);
 
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
   int bit_depth = 8;
   int color_type = PNG_COLOR_TYPE_GRAY;
   /* set some usefull information from header */
@@ -1740,15 +1740,15 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   png_write_info(png_ptr, info_ptr);
 
   png_bytep* row_ptrs = new png_bytep[height];
-  for (int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; i++)
     row_ptrs[i] = new png_byte[width];
 
   unsigned char* input = (unsigned char*)I.bitmap;;
 
-  for (int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; i++)
   {
     png_byte* row = row_ptrs[i];
-    for(int j = 0; j < width; j++)
+    for(unsigned int j = 0; j < width; j++)
     {
       row[j] = *(input);
       input++;
@@ -1777,7 +1777,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
 
   png_write_end(png_ptr, NULL);
 
-  for(int j = 0; j < height; j++)
+  for(unsigned int j = 0; j < height; j++)
     delete[] /*(png_byte)*/row_ptrs[j];
 
   delete[] (png_bytep)row_ptrs;
@@ -1856,8 +1856,8 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
   /* setup libpng for using standard C fwrite() function with our FILE pointer */
   png_init_io (png_ptr, file);
 
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
   int bit_depth = 8;
   int color_type = PNG_COLOR_TYPE_RGB;
   /* set some usefull information from header */
@@ -1878,15 +1878,15 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
   png_write_info(png_ptr, info_ptr);
 
   png_bytep* row_ptrs = new png_bytep[height];
-  for (int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; i++)
     row_ptrs[i] = new png_byte[3*width];
 
   unsigned char* input = (unsigned char*)I.bitmap;;
 
-  for (int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; i++)
   {
     png_byte* row = row_ptrs[i];
-    for(int j = 0; j < width; j++)
+    for(unsigned int j = 0; j < width; j++)
     {
       row[3*j] = *(input);input++;
       row[3*j+1] = *(input);input++;
@@ -1917,7 +1917,7 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
 
   png_write_end(png_ptr, NULL);
 
-  for(int j = 0; j < height; j++)
+  for(unsigned int j = 0; j < height; j++)
     delete[] /*(png_byte)*/row_ptrs[j];
 
   delete[] (png_bytep)row_ptrs;
@@ -2031,7 +2031,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   unsigned int width = png_get_image_width(png_ptr, info_ptr);
   unsigned int height = png_get_image_height(png_ptr, info_ptr);
 
-  int bit_depth, channels, color_type;
+  unsigned int bit_depth, channels, color_type;
   /* get some usefull information from header */
   bit_depth = png_get_bit_depth (png_ptr, info_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
@@ -2066,9 +2066,8 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 
   png_bytep* rowPtrs = new png_bytep[height];
 
-  unsigned char* data = new  unsigned char[width * height * bit_depth * channels / 8];
-
   unsigned int stride = width * bit_depth * channels / 8;
+  unsigned char* data = new  unsigned char[stride * height];
 
   for (unsigned int  i =0; i < height; i++)
     rowPtrs[i] = (png_bytep)data + (i * stride);
@@ -2242,7 +2241,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   unsigned int width = png_get_image_width(png_ptr, info_ptr);
   unsigned int height = png_get_image_height(png_ptr, info_ptr);
 
-  int bit_depth, channels, color_type;
+  unsigned int bit_depth, channels, color_type;
   /* get some usefull information from header */
   bit_depth = png_get_bit_depth (png_ptr, info_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
@@ -2277,9 +2276,9 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 
   png_bytep* rowPtrs = new png_bytep[height];
 
-  unsigned char* data = new  unsigned char[width * height * bit_depth * channels / 8];
-
   unsigned int stride = width * bit_depth * channels / 8;
+  unsigned char* data = new  unsigned char[stride * height];
+
 
   for (unsigned int  i =0; i < height; i++)
     rowPtrs[i] = (png_bytep)data + (i * stride);

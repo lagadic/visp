@@ -174,7 +174,7 @@ int main()
   \endcode
  */
 void
-vpLinearKalmanFilterInstantiation::initFilter(int nsignal, 
+vpLinearKalmanFilterInstantiation::initFilter(unsigned int nsignal, 
 			   vpColVector &sigma_state,
 			   vpColVector &sigma_measure,
 			   double rho, double dt)
@@ -296,7 +296,7 @@ vpLinearKalmanFilterInstantiation::initFilter(int nsignal,
 
 */
 void
-vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(int nsignal,
+vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int nsignal,
 					     vpColVector &sigma_state,
 					     vpColVector &sigma_measure, 
 					     double dt )
@@ -318,7 +318,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(int nsignal,
   double dt2 = dt*dt ;
   double dt3 = dt2*dt ;
 
-  for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+  for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
     // State model
     //         | 1  dt |
     //     F = |       |
@@ -505,7 +505,7 @@ int main()
   \endcode
 */
 void 
-vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(int nsignal,
+vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(unsigned int nsignal,
 					       vpColVector &sigma_state,
 					       vpColVector &sigma_measure,
 					       double rho)
@@ -527,7 +527,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(
   R    = 0;
   Q    = 0;
 
-  for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+  for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
     // State model
     //         | 1    1  |
     //     F = |         |
@@ -728,7 +728,7 @@ int main()
 
 */
 void
-vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(int nsignal, 
+vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(unsigned int nsignal, 
 							 vpColVector &sigma_state,
 							 vpColVector &sigma_measure,
 							 double rho,
@@ -751,7 +751,7 @@ vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(
   Q    = 0;
   this->dt = dt;
   // initialise les matrices decrivant les modeles
-  for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+  for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
     // State model
     //         | 1    1   dt |
     //     F = | o   rho   0 |
@@ -821,7 +821,7 @@ vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
     case stateConstVel_MeasurePos:
     case stateConstVelWithColoredNoise_MeasureVel:
     case stateConstAccWithColoredNoise_MeasureVel:
-      for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+      for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
 	Xest[size_state*i] = z[i] ;
       }
       prediction();
@@ -838,7 +838,7 @@ vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
   }
   else if (iter == 1) {
     if (model == stateConstVel_MeasurePos) {
-      for (int i=0;  i < size_measure*nsignal ;  i++ ) {
+      for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
 	double z_prev = Xest[size_state*i]; // Previous mesured position
 	//	std::cout << "Mesure pre: " << z_prev << std::endl;
 	Xest[size_state*i]   = z[i] ;

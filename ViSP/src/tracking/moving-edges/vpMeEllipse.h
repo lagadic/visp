@@ -158,7 +158,7 @@ public:
   void track(const vpImage<unsigned char>& Im);
 
   void initTracking(const vpImage<unsigned char> &I) ;
-  void initTracking(const vpImage<unsigned char> &I, int n,
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
 		    vpImagePoint* iP) ;
   void display(const vpImage<unsigned char>&I, vpColor col) ;
   void printParameters() ;
@@ -168,7 +168,7 @@ public:
     @name Deprecated functions
   */
   //@{
-  void initTracking(const vpImage<unsigned char> &I, int n,
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
 		    unsigned *i, unsigned *j) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS

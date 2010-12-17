@@ -143,46 +143,47 @@ class VISP_EXPORT vpPlot
     vpDisplayOpenCV display;
     #endif
     
-    int graphNbr;
+    unsigned int graphNbr;
     vpPlotGraph* graphList;
     
-    int margei;
-    int margej;
+    unsigned int margei;
+    unsigned int margej;
     
     float factori;
     float factorj;
     
   public:
-    vpPlot(const int nbGraph, const int height=700, const int width=700);
+    vpPlot(const unsigned int nbGraph, const unsigned int height=700, 
+	   const unsigned int width=700);
     ~vpPlot();
     
-    void initGraph (int graphNum, int curveNbr);
+    void initGraph (unsigned int graphNum, unsigned int curveNbr);
 
-    void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax);
-    void initRange (const int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
-    void setColor (const int graphNum, const int curveNum, vpColor color);
-    void setTitle (const int graphNum, const char *title);
-    void setUnitX (const int graphNum, const char *unitx);
-    void setUnitY (const int graphNum, const char *unity);
-    void setUnitZ (const int graphNum, const char *unitz);
-    void setLegend (const int graphNum, const int curveNum, const char *legend);
+    void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
+    void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
+    void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
+    void setTitle (const unsigned int graphNum, const char *title);
+    void setUnitX (const unsigned int graphNum, const char *unitx);
+    void setUnitY (const unsigned int graphNum, const char *unity);
+    void setUnitZ (const unsigned int graphNum, const char *unitz);
+    void setLegend (const unsigned int graphNum, const unsigned int curveNum, const char *legend);
     
-    void plot (const int graphNum, const int curveNum, const double x, const double y);
-    void plot(const int graphNum, const double x, const vpColVector v);
-    void plot (const int graphNum, const int curveNum, const double x, const double y, const double z);
-    void plot(const int graphNum, const double x, const vpColVector vy, const vpColVector vz);
+    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
+    void plot(const unsigned int graphNum, const double x, const vpColVector v);
+    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
+    void plot(const unsigned int graphNum, const double x, const vpColVector vy, const vpColVector vz);
     
     void navigate ();
     
     void getPixelValue(const bool block);
     
-    void resetPointList (const int graphNum);
-    void resetPointList (const int graphNum, const int curveNum);
+    void resetPointList (const unsigned int graphNum);
+    void resetPointList (const unsigned int graphNum, const unsigned int curveNum);
     
-    void saveData(const int graphNum, const char* dataFile);
+    void saveData(const unsigned int graphNum, const char* dataFile);
     
   private:
-    void init (int nbGraph);
+    void init (unsigned int nbGraph);
     void displayGrid();
 };
 #endif

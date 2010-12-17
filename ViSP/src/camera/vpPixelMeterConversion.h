@@ -242,7 +242,7 @@ convertPointWithDistortion(
 
 
   static void convertMoment(const vpCameraParameters &cam,
-			    int order,
+			    unsigned int order,
 			    const vpMatrix &moment_pixel,
 			    vpMatrix &moment_meter) ;
 } ;

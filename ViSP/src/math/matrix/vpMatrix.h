@@ -96,8 +96,6 @@ class vpRowVector;
 */
 class VISP_EXPORT vpMatrix
 {
-  int k ;
-
  public:
   /*!
     Method used to compute the determinant of a square matrix.
@@ -110,9 +108,9 @@ class VISP_EXPORT vpMatrix
 
 protected:
   //! number of rows
-  int rowNum;
+  unsigned int rowNum;
   //! number of columns
-  int colNum;
+  unsigned int colNum;
 
 public:
   //! address of the first element of the data array
@@ -122,18 +120,19 @@ protected:
   double **rowPtrs;
 
   //! Current size (rowNum * colNum)
-  int dsize;
+  unsigned int dsize;
   //! Total row space
-  int trsize;
+  unsigned int trsize;
 
 public:
   //! Basic constructor
   vpMatrix() ;
   //! Constructor. Initialization of A as an r x c matrix with 0.
-  vpMatrix(int r,int c) ;
+  vpMatrix(unsigned int r, unsigned int c) ;
 
   //! sub vpMatrix constructor
-  vpMatrix(const vpMatrix &m, int r, int c, int nrows, int ncols) ;
+  vpMatrix(const vpMatrix &m, unsigned int r, unsigned int c, 
+	   unsigned int nrows, unsigned int ncols) ;
 
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix();
@@ -145,9 +144,9 @@ public:
   void kill() ;
 
   //! Initialize an identity matrix n-by-n
-  void eye(int n) ;
+  void eye(unsigned int n) ;
   //! Initialize an identity matrix m-by-n
-  void eye(int m, int n) ;
+  void eye(unsigned int m, unsigned int n) ;
 
   //! Set the matrix to identity
   void setIdentity(const double & val=1.0) ;
@@ -160,12 +159,13 @@ public:
   /** @name Set/get Matrix size  */
   //@{
   //! Return the number of rows of the matrix
-  inline int getRows() const { return rowNum ;}
+  inline unsigned int getRows() const { return rowNum ;}
   //! Return the number of columns of the matrix
-  inline int getCols() const { return colNum; }
+  inline unsigned int getCols() const { return colNum; }
 
   //! Set the size of the matrix A, initialization with a zero matrix
-  virtual void resize(const int nrows, const int ncols, const bool nullify = true);
+  virtual void resize(const unsigned int nrows, const unsigned int ncols, 
+		      const bool nullify = true);
   
   double getMinValue() const;
   
@@ -180,7 +180,7 @@ public:
   /** @name Printing  */
   //@{
 
-  int print(std::ostream& s, unsigned lenght, char const* intro=0);
+  int print(std::ostream& s, unsigned int lenght, char const* intro=0);
   //! Affichage pour reinsertion dans matlab
   std::ostream & matlabPrint(std::ostream & os);
   //! Affichage pour reinsertion dans ViSP
@@ -247,9 +247,9 @@ public:
   /** @name Access/modification operators  */
   //@{
   //! write elements Aij (usage : A[i][j] = x )
-  inline double *operator[](int n) { return rowPtrs[n]; }
+  inline double *operator[](unsigned int n) { return rowPtrs[n]; }
   //! read elements Aij  (usage : x = A[i][j] )
-  inline double *operator[](int n) const {return rowPtrs[n];}
+  inline double *operator[](unsigned int n) const {return rowPtrs[n];}
   //@}
 
   //---------------------------------
@@ -318,11 +318,12 @@ public:
   /** @name Columns, Rows extraction, Submatrix  */
   //@{
   //! Row extraction
-  vpRowVector row(const int i);
+  vpRowVector row(const unsigned int i);
   //! Column extraction
-  vpColVector column(const int j);
+  vpColVector column(const unsigned int j);
   //! subvpMatrix extraction
-  void init(const vpMatrix &m, int r, int c, int nrows, int ncols);
+  void init(const vpMatrix &m, unsigned int r, unsigned int c, 
+	    unsigned int nrows, unsigned int ncols);
   //@}
 
   //-------------------------------------------------
@@ -386,9 +387,9 @@ public:
   //@{
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //! LU Decomposition
-  void LUDcmp(int* perm, int& d);
+  void LUDcmp(unsigned int* perm, int& d);
   //! solve AX = B using the LU Decomposition
-  void LUBksb(int* perm, vpColVector& b);
+  void LUBksb(unsigned int* perm, vpColVector& b);
 #endif // doxygen should skip this
 
   // inverse matrix A using the LU decomposition 
@@ -426,25 +427,25 @@ public:
   vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank
-  int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6)  const;
+  unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value
-  int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const ;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value, image
-  int pseudoInverse(vpMatrix &Ap,
-		    vpColVector &sv, double svThreshold,
-		    vpMatrix &ImA,
-		    vpMatrix &ImAt) const ;
+  unsigned int pseudoInverse(vpMatrix &Ap,
+			     vpColVector &sv, double svThreshold,
+			     vpMatrix &ImA,
+			     vpMatrix &ImAt) const ;
   //! Compute the pseudo inverse of the matrix using the SVD.
   //! return the rank and the singular value, image, kernel.
-  int pseudoInverse(vpMatrix &Ap,
-		    vpColVector &sv, double svThreshold,
-		    vpMatrix &ImA,
-		    vpMatrix &ImAt,
-		    vpMatrix &kerA) const ;
+  unsigned int pseudoInverse(vpMatrix &Ap,
+			     vpColVector &sv, double svThreshold,
+			     vpMatrix &ImA,
+			     vpMatrix &ImAt,
+			     vpMatrix &kerA) const ;
 
-  int kernel(vpMatrix &KerA, double svThreshold=1e-6);
+  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6);
   //@}
 
   //-------------------------------------------------
