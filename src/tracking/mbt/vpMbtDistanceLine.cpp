@@ -192,7 +192,8 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   V2[1] = p2->get_oY();
   V2[2] = p2->get_oZ();
 
-  if((V1-V2).sumSquare()!=0)
+  //if((V1-V2).sumSquare()!=0)
+  if(std::fabs((V1-V2).sumSquare()) > std::numeric_limits<double>::epsilon())
   {
     {
       V3[0]=double(rand()%1000)/100;
@@ -555,7 +556,7 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
     double x,y ;
     vpMeSite p ;
     meline->list.front() ;
-    int j =0 ;
+    unsigned int j =0 ;
     while (!meline->list.outside())
     {
       x = (double)meline->list.value().j ;
@@ -569,7 +570,7 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
       double *Lrho = H[0] ;
       double *Ltheta = H[1] ;
       // Calculate interaction matrix for a distance
-      for (int k=0 ; k < 6 ; k++)
+      for (unsigned int k=0 ; k < 6 ; k++)
       {
         L[j][k] = (Lrho[k] + alpha*Ltheta[k]);
       }
@@ -599,11 +600,15 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
     meline->list.front() ;
     while (!meline->list.outside())
     {
-      unsigned int i = meline->list.value().i ;
-      unsigned int j = meline->list.value().j ;
+      int i = meline->list.value().i ;
+      int j = meline->list.value().j ;
       
-      if( (i > (I.getHeight()- threshold) ) || i < threshold ||
-          (j > (I.getWidth ()- threshold) ) || j < threshold ) {
+      if(i < 0 || j < 0){ //out of image.
+        return true;
+      }
+      
+      if( ((unsigned int)i > (I.getHeight()- threshold) ) || (unsigned int)i < threshold ||
+          ((unsigned int)j > (I.getWidth ()- threshold) ) || (unsigned int)j < threshold ) {
         return true;
       }
       meline->list.next();

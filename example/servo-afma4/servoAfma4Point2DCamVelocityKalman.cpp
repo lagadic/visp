@@ -330,11 +330,11 @@ main(int argc, const char ** argv)
     vpLinearKalmanFilterInstantiation kalman;
     
     // Initialize the kalman filter
-    int nsignal = 2; // The two values of dedt
+    unsigned int nsignal = 2; // The two values of dedt
     double rho = 0.3;
     vpColVector sigma_state;
     vpColVector sigma_measure(nsignal);
-    int state_size = 0; // Kalman state vector size
+    unsigned int state_size = 0; // Kalman state vector size
 
     switch(opt_kalman) {
     case  K_VELOCITY: {
@@ -457,7 +457,7 @@ main(int argc, const char ** argv)
       case K_VELOCITY:
       case K_ACCELERATION: 
 	kalman.filter(dedt_mes);
-	for (int i=0; i < nsignal; i++) {
+	for (unsigned int i=0; i < nsignal; i++) {
 	  dedt_filt[i] = kalman.Xest[i*state_size]; 
 	}
 	break;

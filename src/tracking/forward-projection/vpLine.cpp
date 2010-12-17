@@ -171,7 +171,7 @@ vpLine::setWorldCoordinates(const vpColVector &oP1,
     if (oP2.getRows() != 4)
       throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
 
-  for (int i=0 ; i < 4 ; i++)
+  for (unsigned int i=0 ; i < 4 ; i++)
   {
     oP[i]   = oP1[i] ;
     oP[i+4] = oP2[i] ;

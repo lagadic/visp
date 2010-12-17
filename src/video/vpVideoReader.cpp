@@ -133,7 +133,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
-    imSequence->setImageNumber(firstFrame);
+    imSequence->setImageNumber((int)firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -200,7 +200,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
-    imSequence->setImageNumber(firstFrame);
+    imSequence->setImageNumber((int)firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -310,13 +310,13 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
   
   \return It returns true if the frame could be read. Else it returns false.
 */
-bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
+bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame)
 {
   if (imSequence != NULL)
   {
     try
     {
-      imSequence->acquire(I,(unsigned long)frame);
+      imSequence->acquire(I, frame);
     }
     catch(...)
     {
@@ -328,9 +328,9 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   else
   {
     
-    if(!ffmpeg->getFrame(I,frame))
+    if(!ffmpeg->getFrame(I, (unsigned int)frame))
     {
-      vpERROR_TRACE("Couldn't find the %u th frame", frame) ;
+      vpERROR_TRACE("Couldn't find the %ld th frame", frame) ;
       return false;
     }
   }
@@ -351,13 +351,13 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   
   \return It returns true if the frame could be read. Else it returns false.
 */
-bool vpVideoReader::getFrame(vpImage<unsigned char> &I, unsigned int frame)
+bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame)
 {
   if (imSequence != NULL)
   {
     try
     {
-      imSequence->acquire(I,(unsigned long)frame);
+      imSequence->acquire(I, frame);
     }
     catch(...)
     {
@@ -368,9 +368,9 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, unsigned int frame)
   #ifdef VISP_HAVE_FFMPEG
   else
   {
-    if(!ffmpeg->getFrame(I,frame))
+    if(!ffmpeg->getFrame(I, (unsigned int)frame))
     {
-      vpERROR_TRACE("Couldn't find the %u th frame", frame) ;
+      vpERROR_TRACE("Couldn't find the %ld th frame", frame) ;
       return false;
     }
   }
@@ -389,28 +389,28 @@ vpVideoReader::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 
-  int PGM = sfilename.find(".PGM");
-  int pgm = sfilename.find(".pgm");
-  int PPM = sfilename.find(".PPM");
-  int ppm = sfilename.find(".ppm");
-  int JPG = sfilename.find(".JPG");
-  int jpg = sfilename.find(".jpg");
-  int JPEG = sfilename.find(".JPEG");
-  int jpeg = sfilename.find(".jpeg");
-  int PNG = sfilename.find(".PNG");
-  int png = sfilename.find(".png");
-  int AVI = sfilename.find(".AVI");
-  int avi = sfilename.find(".avi");
-  int MPEG = sfilename.find(".MPEG");
-  int mpeg = sfilename.find(".mpeg");
-  int MPG = sfilename.find(".MPG");
-  int mpg = sfilename.find(".mpg");
-  int MOV = sfilename.find(".MOV");
-  int mov = sfilename.find(".mov");
-  int OGV = sfilename.find(".OGV");
-  int ogv = sfilename.find(".ogv");
+  size_t PGM = sfilename.find(".PGM");
+  size_t pgm = sfilename.find(".pgm");
+  size_t PPM = sfilename.find(".PPM");
+  size_t ppm = sfilename.find(".ppm");
+  size_t JPG = sfilename.find(".JPG");
+  size_t jpg = sfilename.find(".jpg");
+  size_t JPEG = sfilename.find(".JPEG");
+  size_t jpeg = sfilename.find(".jpeg");
+  size_t PNG = sfilename.find(".PNG");
+  size_t png = sfilename.find(".png");
+  size_t AVI = sfilename.find(".AVI");
+  size_t avi = sfilename.find(".avi");
+  size_t MPEG = sfilename.find(".MPEG");
+  size_t mpeg = sfilename.find(".mpeg");
+  size_t MPG = sfilename.find(".MPG");
+  size_t mpg = sfilename.find(".mpg");
+  size_t MOV = sfilename.find(".MOV");
+  size_t mov = sfilename.find(".mov");
+  size_t OGV = sfilename.find(".OGV");
+  size_t ogv = sfilename.find(".ogv");
   
-  int size = sfilename.size();
+  size_t size = sfilename.size();
 
   if ((PGM>0 && PGM<size ) || (pgm>0 && pgm<size))
     return FORMAT_PGM;
@@ -466,6 +466,6 @@ vpVideoReader::findLastFrameIndex()
     
   #ifdef VISP_HAVE_FFMPEG
   else if (ffmpeg != NULL)
-    lastFrame = ffmpeg->getFrameNumber() - 1;
+    lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
   #endif
 }

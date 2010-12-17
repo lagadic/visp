@@ -302,26 +302,26 @@ vpVideoWriter::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 
-  int PGM = sfilename.find(".PGM");
-  int pgm = sfilename.find(".pgm");
-  int PPM = sfilename.find(".PPM");
-  int ppm = sfilename.find(".ppm");
-  int JPG = sfilename.find(".JPG");
-  int jpg = sfilename.find(".jpg");
-  int JPEG = sfilename.find(".JPEG");
-  int jpeg = sfilename.find(".jpeg");
-  int PNG = sfilename.find(".PNG");
-  int png = sfilename.find(".png");
-  int AVI = sfilename.find(".AVI");
-  int avi = sfilename.find(".avi");
-  int MPEG = sfilename.find(".MPEG");
-  int mpeg = sfilename.find(".mpeg");
-  int MPG = sfilename.find(".MPG");
-  int mpg = sfilename.find(".mpg");
-  int MOV = sfilename.find(".MOV");
-  int mov = sfilename.find(".mov");
+  size_t PGM = sfilename.find(".PGM");
+  size_t pgm = sfilename.find(".pgm");
+  size_t PPM = sfilename.find(".PPM");
+  size_t ppm = sfilename.find(".ppm");
+  size_t JPG = sfilename.find(".JPG");
+  size_t jpg = sfilename.find(".jpg");
+  size_t JPEG = sfilename.find(".JPEG");
+  size_t jpeg = sfilename.find(".jpeg");
+  size_t PNG = sfilename.find(".PNG");
+  size_t png = sfilename.find(".png");
+  size_t AVI = sfilename.find(".AVI");
+  size_t avi = sfilename.find(".avi");
+  size_t MPEG = sfilename.find(".MPEG");
+  size_t mpeg = sfilename.find(".mpeg");
+  size_t MPG = sfilename.find(".MPG");
+  size_t mpg = sfilename.find(".mpg");
+  size_t MOV = sfilename.find(".MOV");
+  size_t mov = sfilename.find(".mov");
   
-  int size = sfilename.size();
+  size_t size = sfilename.size();
 
   if ((PGM>0 && PGM<size ) || (pgm>0 && pgm<size))
     return FORMAT_PGM;

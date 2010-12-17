@@ -352,8 +352,8 @@ void
 vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	int d_size = this->m_ecm.mask_size;
-	int d_nb_mask = this->m_ecm.n_mask;
+	unsigned int d_size = this->m_ecm.mask_size;
+	unsigned int d_nb_mask = this->m_ecm.n_mask;
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -362,11 +362,11 @@ vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case size:{
-          d_size = xmlReadIntChild(doc, dataNode);
+          d_size = xmlReadUnsignedIntChild(doc, dataNode);
           nb++;
           }break;
         case nb_mask:{
-          d_nb_mask = xmlReadIntChild(doc, dataNode);
+          d_nb_mask = xmlReadUnsignedIntChild(doc, dataNode);
           nb++;
           }break;
         default:{
@@ -404,7 +404,7 @@ void
 vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	int m_range_tracking = this->m_ecm.range;
+	unsigned int m_range_tracking = this->m_ecm.range;
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -413,7 +413,7 @@ vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case tracking:{
-          m_range_tracking = xmlReadIntChild(doc, dataNode);
+          m_range_tracking = xmlReadUnsignedIntChild(doc, dataNode);
           nb++;
           }break;
         default:{

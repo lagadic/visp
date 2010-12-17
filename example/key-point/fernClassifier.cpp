@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -397,7 +397,7 @@ main(int argc, const char** argv)
   
   
   if(opt_display){
-    display.init(I, 110 + Iref.getWidth(), 100, "Test vpFernClassifier current image") ;
+    display.init(I, 110 + (int)Iref.getWidth(), 100, "Test vpFernClassifier current image") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }
@@ -434,7 +434,7 @@ main(int argc, const char** argv)
     
     double t0 = vpTime::measureTimeMs (); 
     // detection  of the reference image
-    int nbpts;
+    unsigned int nbpts;
     try{
       nbpts = fern.matchPoint(I);
     }

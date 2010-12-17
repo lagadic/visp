@@ -70,7 +70,7 @@ class VISP_EXPORT vpMbtDistanceLine
 {
   private :
     std::string name;
-    int index;
+    unsigned int index;
     vpCameraParameters *cam;
     vpMe *me;
     double alpha;
@@ -91,7 +91,7 @@ class VISP_EXPORT vpMbtDistanceLine
     //! The error vector
     vpColVector error;
     //! The number of moving edges
-    int nbFeature;
+    unsigned int nbFeature;
     //! Indicates if the line has to be reinitialized
     bool Reinit;
     //! Pointer to the list of faces
@@ -152,14 +152,14 @@ class VISP_EXPORT vpMbtDistanceLine
       
       \param i : The index number
     */
-    inline void setIndex(int i) {index = i;} 
+    inline void setIndex(const unsigned int i) {index = i;} 
     
     /*!
       Get the index of the line.
       
       \return Return the index of the line.
     */
-    inline int getIndex() {return index ;}
+    inline unsigned int getIndex() {return index ;}
     
     /*!
       Get the name of the line.

@@ -75,10 +75,10 @@ template class VISP_EXPORT std::vector<double>;
   - value is the numerical value of \f$ N_{i,p}^k(u) \f$.
 */
 typedef struct vpBasisFunction{
-  int i;
-  int p;
+  unsigned int i;
+  unsigned int p;
   double u;
-  int k;
+  unsigned int k;
   double value;
 } vpBasisFunction;
 #endif
@@ -120,7 +120,7 @@ class VISP_EXPORT vpBSpline
     //! Vector which contain the knots \f$ {u0, ..., um} \f$
     std::vector<double> knots;
     //! Degree of the B-Spline basis functions.
-    int p;
+    unsigned int p;
     //! Vector wich contains the points used during the interpolation method.
     std::vector<vpImagePoint> crossingPoints;  
 
@@ -135,7 +135,7 @@ class VISP_EXPORT vpBSpline
 	  
 	  \return the degree of the B-Spline.
 	*/
-	inline int get_p() const {return p;}
+	inline unsigned int get_p() const {return p;}
 	
 	/*!
 	  Gets all the control points.
@@ -173,7 +173,7 @@ class VISP_EXPORT vpBSpline
 	  
 	  \param p : the degree of the B-Spline.
 	*/
-	inline void set_p(int p) {this->p = p;}
+	inline void set_p(unsigned int p) {this->p = p;}
 	  
 	/*!
 	  Sets all the control points.
@@ -183,7 +183,7 @@ class VISP_EXPORT vpBSpline
 	inline void set_controlPoints(vpList<vpImagePoint> &list) {
 	  controlPoints.clear();
 	  list.front();
-	  for (int i = 0; i < list.nbElements(); i++) 
+	  for (unsigned int i = 0; i < list.nbElements(); i++) 
 	  {
 	    controlPoints.push_back(list.value());
 		list.next();
@@ -198,7 +198,7 @@ class VISP_EXPORT vpBSpline
 	inline void set_knots(vpList<double> &list) {
 	  knots.clear();
 	  list.front();
-	  for (int i = 0; i < list.nbElements(); i++) 
+	  for (unsigned int i = 0; i < list.nbElements(); i++) 
 	  {
 	    knots.push_back(list.value());
 		list.next();
@@ -213,27 +213,27 @@ class VISP_EXPORT vpBSpline
 	inline void set_crossingPoints(vpList<vpImagePoint> &list) {
 	  crossingPoints.clear();
 	  list.front();
-	  for (int i = 0; i < list.nbElements(); i++) 
+	  for (unsigned int i = 0; i < list.nbElements(); i++) 
 	  {
 	    crossingPoints.push_back(list.value());
 		list.next();
 	  }
 	}
 
-    static int findSpan(double l_u, int l_p, std::vector<double> &l_knots);
-    int findSpan(double u);
+    static unsigned int findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots);
+    unsigned int findSpan(double u);
 
-    static vpBasisFunction* computeBasisFuns(double l_u, int l_i, int l_p, std::vector<double> &l_knots);
+    static vpBasisFunction* computeBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots);
     vpBasisFunction* computeBasisFuns(double u);
 
-    static vpBasisFunction** computeDersBasisFuns(double l_u, int l_i, int l_p, int l_der, std::vector<double> &l_knots);
-    vpBasisFunction** computeDersBasisFuns(double u, int der);
+    static vpBasisFunction** computeDersBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der, std::vector<double> &l_knots);
+    vpBasisFunction** computeDersBasisFuns(double u, unsigned int der);
 
-    static vpImagePoint computeCurvePoint(double l_u, int l_i, int l_p, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
+    static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
     vpImagePoint computeCurvePoint(double u);
 
-    static vpImagePoint* computeCurveDers(double l_u, int l_i, int l_p, int l_der, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
-    vpImagePoint* computeCurveDers(double u, int der);
+    static vpImagePoint* computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
+    vpImagePoint* computeCurveDers(double u, unsigned int der);
 };
 
 #endif

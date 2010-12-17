@@ -280,7 +280,7 @@ public:
     \sa selectY(), selectZ()
 
   */
-  inline static int selectX()  { return FEATURE_LINE[0] ; }
+  inline static unsigned int selectX()  { return FEATURE_LINE[0] ; }
 
   /*! 
 
@@ -306,7 +306,7 @@ public:
     \sa selectX(), selectZ()
 
   */
-  inline static int selectY()  { return FEATURE_LINE[1] ; }
+  inline static unsigned int selectY()  { return FEATURE_LINE[1] ; }
 
   /*! 
 
@@ -332,15 +332,15 @@ public:
     \sa selectX(), selectY()
 
   */
-  inline static int selectZ()  { return FEATURE_LINE[2] ; }
+  inline static unsigned int selectZ()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const int select = FEATURE_ALL);
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-		    const int select = FEATURE_ALL)  ;
+		    const unsigned int select = FEATURE_ALL)  ;
   // print the name of the feature
-  void print(const int select=FEATURE_ALL ) const ;
+  void print(const unsigned int select=FEATURE_ALL ) const ;
 
   // feature duplication
   vpFeaturePoint3D *duplicate() const ;

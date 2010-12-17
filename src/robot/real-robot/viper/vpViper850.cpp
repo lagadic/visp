@@ -325,7 +325,7 @@ vpViper850::init (vpViper850::vpToolType tool,
 void
 vpViper850::parseConfigFile (const char * filename)
 {
-  int               dim;
+  size_t            dim;
   int               code;
   char              Ligne[FILENAME_MAX];
   char              namoption[100];
@@ -397,7 +397,7 @@ vpViper850::parseConfigFile (const char * filename)
 
   // Compute the eMc matrix from the translations and rotations
   if (get_rot_eMc && get_trans_eMc) {
-    for (int i=0; i < 3; i ++) {
+    for (unsigned int i=0; i < 3; i ++) {
       erc[i] = rot_eMc[i];
       etc[i] = trans_eMc[i];
     }

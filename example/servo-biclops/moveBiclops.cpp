@@ -145,7 +145,7 @@ main(int argc, const char ** argv)
   if (getOptions(argc, argv, opt_conf) == false) {
     exit (-1);
   }
-
+  try {
   vpRobotBiclops robot(opt_conf.c_str());
   
   vpColVector q     (vpBiclops::ndof) ; // desired position
@@ -295,7 +295,10 @@ main(int argc, const char ** argv)
   vpCTRACE << "Velocity in the articular frame: "
 	   << " pan: " << vpMath::deg(qm[0])
 	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+  }
+  catch(...) {
 
+  }
 
 }
 #else

@@ -67,18 +67,18 @@ class VISP_EXPORT vpSubMatrix : public vpMatrix{
 
   private :
       //! Resize method unavailable
-      void resize(const int /* r */ , const int /* c */ ){}
+      void resize(const unsigned int /* r */ , const unsigned int /* c */ ){}
       //! Eye method unavailable
-      void eye(int n);
+      void eye(unsigned int n);
       //! Eye method unavailable
-      void eye(int m, int n);
+      void eye(unsigned int m, unsigned int n);
       //! Copy constructor unavailable
       vpSubMatrix(const vpSubMatrix& /* m */);      
        
   protected :
  
-      int pRowNum;
-      int pColNum;
+      unsigned int pRowNum;
+      unsigned int pColNum;
       vpMatrix *parent;
       
   public:
@@ -86,12 +86,12 @@ class VISP_EXPORT vpSubMatrix : public vpMatrix{
     //!Default constructor
     vpSubMatrix();
     //!Constructor
-    vpSubMatrix(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols);
+    vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols);
     //!Destructor
     ~vpSubMatrix();
     
     //! Initialisation of vpMatrix
-    void init(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols);
+    void init(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols);
     
     //!Check is parent vpRowVector has changed since initialization
     void checkParentStatus();

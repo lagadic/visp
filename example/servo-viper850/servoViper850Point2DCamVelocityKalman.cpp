@@ -128,11 +128,11 @@ main()
     vpLinearKalmanFilterInstantiation kalman;
     
     // Initialize the kalman filter
-    int nsignal = 2; // The two values of dedt
+    unsigned int nsignal = 2; // The two values of dedt
     double rho = 0.3;
     vpColVector sigma_state;
     vpColVector sigma_measure(nsignal);
-    int state_size = 0; // Kalman state vector size
+    unsigned int state_size = 0; // Kalman state vector size
       
     kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
     state_size = kalman.getStateSize();
@@ -172,7 +172,7 @@ main()
     default: break;
     }
 
-    vpDisplayX display(I, 100+I.getWidth()+30, 200,"Current image") ;
+    vpDisplayX display(I, (int)(100+I.getWidth()+30), 200,"Current image") ;
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
@@ -287,7 +287,7 @@ main()
 	  dedt_mes = 0;
 	kalman.filter(dedt_mes);
 	// Get the filtered values
-	for (int i=0; i < nsignal; i++) {
+	for (unsigned int i=0; i < nsignal; i++) {
 	  dedt_filt[i] = kalman.Xest[i*state_size]; 
 	}
 	if (iter < 2)

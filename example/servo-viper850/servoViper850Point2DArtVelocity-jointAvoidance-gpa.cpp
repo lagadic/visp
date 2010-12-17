@@ -123,7 +123,7 @@ main()
     vpColVector data(10) ;
 
     double rho = 0.15 ;
-    for (int i=0 ; i < 6 ; i++)
+    for (unsigned int i=0 ; i < 6 ; i++)
       {
 	Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
 	Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
@@ -131,7 +131,7 @@ main()
     Qmiddle = (Qmin + Qmax) /2.;
     double rho1 = 0.1 ;
     
-    for (int i=0 ; i < 6 ; i++) {
+    for (unsigned int i=0 ; i < 6 ; i++) {
       tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
       tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
     }
@@ -166,7 +166,7 @@ main()
 
     // For the first graphic, set the curves legend
     char legend[10];
-    for (int i=0; i < 6; i++) {
+    for (unsigned int i=0; i < 6; i++) {
       sprintf(legend, "q%d", i+1);
       plot.setLegend(0, i, legend);
     }
@@ -182,7 +182,7 @@ main()
     plot.setColor(0, 3, vpColor::orange); 
     plot.setColor(0, 4, vpColor(0, 128, 0)); 
     plot.setColor(0, 5, vpColor::cyan); 
-    for (int i= 6; i < 10; i++)
+    for (unsigned int i= 6; i < 10; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
 
     // For the second graphic, set the curves legend
@@ -287,7 +287,7 @@ main()
 	vpColVector de2dt(6);
 	de2dt = 0 ;
 	e2 = 0 ;
-	for (int i=0 ; i < 6 ; i++)
+	for (unsigned int i=0 ; i < 6 ; i++)
 	  {
 	    double S = 0 ;
 	    if (q[i] > tQmax[i]) S = q[i] - tQmax[i] ;
@@ -317,12 +317,12 @@ main()
 	// Add the material to plot curves
 
 	// q normalized between (entre -1 et 1)
-	for (int i=0 ; i < 6 ; i++) {
+	for (unsigned int i=0 ; i < 6 ; i++) {
 	  data[i] = (q[i] - Qmiddle[i]) ;
 	  data[i] /= (Qmax[i] - Qmin[i]) ;
 	  data[i]*=2 ;
 	}
-	int joint = 2;
+	unsigned int joint = 2;
 	data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
 	data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
 	data[8] = -1 ; data[9] = 1 ;

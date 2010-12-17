@@ -54,6 +54,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 // Display stuff
 #include <visp/vpDisplay.h>
@@ -272,7 +274,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK 
 			| GDK_POINTER_MOTION_MASK);
 
-  gtk_window_set_default_size(GTK_WINDOW(widget), width, height);
+  gtk_window_set_default_size(GTK_WINDOW(widget), (gint)width, (gint)height);
 
   gtk_window_move(GTK_WINDOW(widget), x, y); 
 
@@ -281,7 +283,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   gdk_rgb_init();
 
   /* Create background pixmap */
-  background = gdk_pixmap_new(widget->window,width,height,-1);
+  background = gdk_pixmap_new(widget->window, (gint)width, (gint)height, -1);
 
   /* Create graphic context */
   gc = gdk_gc_new(widget->window);
@@ -464,10 +466,10 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
   {
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
-                        gc,0, 0, width, height,
+                        gc, 0, 0, (gint)width, (gint)height,
                         GDK_RGB_DITHER_NONE,
                         I.bitmap,
-                        width);
+                        (gint)width);
 
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, background, FALSE);
@@ -510,10 +512,10 @@ void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpIma
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
-                        gc,(unsigned int)iP.get_u(), (unsigned int)iP.get_v(), width, height,
+                        gc, (gint)iP.get_u(), (gint)iP.get_v(), (gint)width, (gint)height,
                         GDK_RGB_DITHER_NONE,
                         I.bitmap,
-                        width);
+                        (gint)width);
 
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(widget->window, background, FALSE);
@@ -550,10 +552,10 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_rgb_32_image(background,
-                          gc,0, 0,  width, height,
+                          gc, 0, 0,  (gint)width, (gint)height,
                           GDK_RGB_DITHER_NONE,
                           (unsigned char *)I.bitmap,
-                          4* width);
+                          (gint)(4*width));
 
     /* Permet de fermer la fen�tre si besoin (cas des s�quences d'images) */
     //while (g_main_iteration(FALSE));
@@ -599,10 +601,10 @@ void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_rgb_32_image(background,
-                          gc,(unsigned int)iP.get_u(), (unsigned int)iP.get_v(),  width, height,
+                          gc, (gint)iP.get_u(), (gint)iP.get_v(), (gint)width, (gint)height,
                           GDK_RGB_DITHER_NONE,
                           (unsigned char *)Itemp.bitmap,
-                          4* width);
+                          (gint)(4*width));
 
     /* Permet de fermer la fen�tre si besoin (cas des s�quences d'images) */
     //while (g_main_iteration(FALSE));
@@ -727,7 +729,8 @@ void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1,
       double b = ip2.get_j() - ip1.get_j() ;
       double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
 
-      if ((a==0)&&(b==0))
+      //if ((a==0)&&(b==0))
+      if ((std::fabs(a) <= std::numeric_limits<double>::epsilon() )&&(std::fabs(b) <= std::numeric_limits<double>::epsilon()) )
       {
         // DisplayCrossLarge(i1,j1,3,col) ;
       }
@@ -837,7 +840,7 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
       gdk_gc_set_foreground(gc, &gdkcolor);     
     }
 
-    gdk_gc_set_line_attributes(gc, thickness,
+    gdk_gc_set_line_attributes(gc, (gint)thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
 
@@ -845,12 +848,12 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
       gdk_draw_arc(background, gc, FALSE,
 		   vpMath::round( center.get_u()-radius ), 
 		   vpMath::round( center.get_v()-radius ),
-		   2*radius, 2*radius, 23040, 23040) ; /* 23040 = 360*64 */
+		   (gint)(2*radius), (gint)(2*radius), 23040, 23040) ; /* 23040 = 360*64 */
     else
       gdk_draw_arc(background, gc, TRUE,
 		   vpMath::round( center.get_u()-radius ), 
 		   vpMath::round( center.get_v()-radius ),
-		   2*radius, 2*radius, 23040, 23040) ; /* 23040 = 360*64 */
+		   (gint)(2*radius), (gint)(2*radius), 23040, 23040) ; /* 23040 = 360*64 */
   }
   else
   {
@@ -931,7 +934,7 @@ void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1,
       gdk_gc_set_foreground(gc, &gdkcolor);     
     }
 
-    gdk_gc_set_line_attributes(gc, thickness, 
+    gdk_gc_set_line_attributes(gc, (gint)thickness, 
 			       GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT,
                                GDK_JOIN_BEVEL) ;
     gdk_draw_line(background, gc,
@@ -976,7 +979,7 @@ void vpDisplayGTK::displayLine ( const vpImagePoint &ip1,
       gdk_gc_set_foreground(gc, &gdkcolor);     
     }
 
-    gdk_gc_set_line_attributes(gc, thickness,
+    gdk_gc_set_line_attributes(gc, (gint)thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
     gdk_draw_line(background, gc,
@@ -1058,7 +1061,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
       gdk_colormap_alloc_color(colormap,&gdkcolor,FALSE,TRUE);
       gdk_gc_set_foreground(gc, &gdkcolor);     
     }
-    gdk_gc_set_line_attributes(gc, thickness,
+    gdk_gc_set_line_attributes(gc, (gint)thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
 
@@ -1066,12 +1069,12 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
       gdk_draw_rectangle(background, gc, FALSE,
 			 vpMath::round( topLeft.get_u() ),
 			 vpMath::round( topLeft.get_v() ),
-			 width-1,height-1);
+			 (gint)width-1, (gint)height-1);
     else
       gdk_draw_rectangle(background, gc, TRUE,
 			 vpMath::round( topLeft.get_u() ),
 			 vpMath::round( topLeft.get_v() ),
-			 width, height);
+			 (gint)width, (gint)height);
 
     if (thickness > 1)
       gdk_gc_set_line_attributes(gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT,
@@ -1117,7 +1120,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
       gdk_gc_set_foreground(gc, &gdkcolor);     
     }
 
-    gdk_gc_set_line_attributes(gc, thickness,
+    gdk_gc_set_line_attributes(gc, (gint)thickness,
 			       GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
 
@@ -1178,7 +1181,7 @@ vpDisplayGTK::displayRectangle ( const vpRect &rectangle,
 
     if ( thickness == 1 ) thickness = 0;
 
-    gdk_gc_set_line_attributes(gc, thickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
+    gdk_gc_set_line_attributes(gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT,
 			       GDK_JOIN_BEVEL) ;
 
     if (fill == false)
@@ -1462,20 +1465,20 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
     /*
      */
 
-    ImageGtk = gdk_image_get(background,0,0,width,height);
+    ImageGtk = gdk_image_get(background, 0, 0, (gint)width, (gint)height);
 
 
     I.resize(height,width) ;
     guchar *pos;
     guint32 pixel;
-    guint32 x,y;
+    gint x,y;
     guchar OctetRouge,OctetVert,OctetBleu,mask;
     mask = 0x000000FF;
 
     pos = (unsigned char *)I.bitmap;
-    for (y=0;y<height;y++)
+    for (y=0;y<(gint)height;y++)
     {
-      for (x=0;x<width;x++)
+      for (x=0;x<(gint)width;x++)
       {
         pixel = gdk_image_get_pixel(ImageGtk,x,y);
         OctetBleu  = (guchar)pixel & mask;
@@ -1509,7 +1512,7 @@ unsigned int vpDisplayGTK::getScreenDepth()
 
   unsigned int depth;
 
-  depth = gdk_window_get_visual(widget->window)->depth ;
+  depth = (unsigned int)gdk_window_get_visual(widget->window)->depth ;
 
   return (depth);
 }

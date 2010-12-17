@@ -72,18 +72,18 @@
 class VISP_EXPORT vpMe
 {
 public:
-  double threshold ;// likelihood ratio threshold
-  double mu1; //contrast continuity parameter(left boundary)
-  double mu2; //contrast continuity parameter(right boundary)
+  double threshold ;//! Likelihood ratio threshold
+  double mu1; //! Contrast continuity parameter(left boundary)
+  double mu2; //! Contrast continuity parameter(right boundary)
   double min_samplestep;
-  int anglestep;
+  unsigned int anglestep;
 	// convolution masks' size in pixels (masks are square)
-  int mask_size;
+  unsigned int mask_size;
   // the number of convolution masks available for tracking ;
 	// defines resolution
-  int n_mask;
+  unsigned int n_mask;
   int mask_sign;
-  int range; //seek range - on both sides of the reference pixel
+  unsigned int range; //seek range - on both sides of the reference pixel
   double sample_step; // Distance between sampled points (in pixels)
   int ntotal_sample;
   int points_to_track;
@@ -110,13 +110,13 @@ public:
 
   void setThreshold(double lambda) { threshold = lambda ; }
   void setPointsToTrack(int number) { points_to_track = number ; }
-  void setAngleStep(int a) { anglestep =a  ; }
-  void setRange(int a) { range =a  ; }
+  void setAngleStep(unsigned int a) { anglestep =a  ; }
+  void setRange(unsigned int a) { range =a  ; }
   void setMu1(double a) { mu1 =a  ; }
   void setMu2(double a) { mu2 =a  ; }
-  void setMaskNumber(int a) ;
+  void setMaskNumber(unsigned int a) ;
   void setMaskSign(int a){mask_sign = a ; }
-  void setMaskSize(int a) ;
+  void setMaskSize(unsigned int a) ;
   double getSampleStep() { return sample_step ; }
   void setSampleStep(double a) { sample_step = a ; }
   void setStrip(int a) { strip = a ; }

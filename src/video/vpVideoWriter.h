@@ -172,8 +172,8 @@ class VISP_EXPORT vpVideoWriter
     unsigned int firstFrame;
     
     //!Size of the frame
-    int width;
-    int height;
+    unsigned int width;
+    unsigned int height;
 
   public:
     vpVideoWriter();
@@ -208,7 +208,7 @@ class VISP_EXPORT vpVideoWriter
       
       By default the bit rate is set to 500 000.
     */
-    inline void setBitRate(const int bit_rate) {this->bit_rate = bit_rate;}
+    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
     
     /*!
       Sets the codec used to encode the video.

@@ -47,15 +47,16 @@
   pour faire du calcul de pose par difference methode
 */
 
-#include <visp/vpPose.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
+#include <visp/vpPose.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
 #include <visp/vpPoseException.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpDisplay.h>
-
 #include <visp/vpMath.h>
 
 #define DEBUG_LEVEL1 0
@@ -174,8 +175,13 @@ vpPose::coplanaire()
 
   vpPoint P1,P2, P3 ;
   P1 = listP.value() ; listP.next() ;
-  if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0))
-  {   P1 = listP.value() ; listP.next() ;}
+  //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0)) 
+  if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) 
+  { 
+    P1 = listP.value() ; listP.next() ;
+  }
   P2 = listP.value() ; listP.next() ;
   P3 = listP.value() ;
 
@@ -574,8 +580,8 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
 
   //  vpHomography::HartleyDLT(4,rectx,recty,irectx,irecty,hom);
   vpHomography::HLM(4,rectx,recty,irectx,irecty,1,hom);
-  for (int i=0 ; i < 3 ; i++)
-    for(int j=0 ; j < 3 ; j++)
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for(unsigned int j=0 ; j < 3 ; j++)
       H[i][j] = hom[i][j] ;
   //calcul de s =  ||Kh1||/ ||Kh2|| =ratio (length on x axis/ length on y axis)
   vpColVector kh1(3);

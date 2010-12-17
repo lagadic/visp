@@ -43,7 +43,8 @@
 #include <visp/vpRobotSimulator.h>
 #include <visp/vpSimulatorViper850.h>
 
-//#include <sys/resource.h>
+
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
 
 /*!
@@ -295,7 +296,10 @@ vpRobotSimulator::getInternalView(vpImage<vpRGBa> &I)
 
   double u;
   double v;
-  if(px_int != 1 && py_int != 1)
+  //if(px_int != 1 && py_int != 1)
+  // we assume px_int and py_int > 0
+  if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_int);
     v = (double)I.getHeight()/(2*py_int);
@@ -365,7 +369,10 @@ vpRobotSimulator::getInternalView(vpImage<unsigned char> &I)
 
   double u;
   double v;
-  if(px_int != 1 && py_int != 1)
+  //if(px_int != 1 && py_int != 1)
+  // we assume px_int and py_int > 0
+  if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_int);
     v = (double)I.getHeight()/(2*py_int);
@@ -434,3 +441,5 @@ vpRobotSimulator::get_cMo()
   delete[] fMit;
   return cMoTemp;
 }
+
+#endif

@@ -84,7 +84,7 @@ class VISP_EXPORT vpBiclops
 
 public: /* Constants */
 
-  static const int   ndof;  /*!< Number of dof */
+  static const unsigned int ndof;  /*!< Number of dof */
 
 
   /* Geometric model */

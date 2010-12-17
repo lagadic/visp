@@ -94,9 +94,9 @@ void vpServoData::save(const vpServo &task)
   if (cmDeg==false) velocityFile << task.q_dot.t() ;
   else
   {
-    for (int i=0 ; i < 3 ; i++)
+    for (unsigned int i=0 ; i < 3 ; i++)
       velocityFile <<  task.q_dot[i]*100 <<" " ;
-    for (int i=4 ; i < 6 ; i++)
+    for (unsigned int i=4 ; i < 6 ; i++)
       velocityFile <<  vpMath::deg(task.q_dot[i]) <<" " ;
     velocityFile << std::endl ;
   }

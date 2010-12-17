@@ -46,7 +46,7 @@
 
   \file vpAfma6.h
 
-  Modelisation of Irisa's gentry robot named Afma6.
+  Modelisation of Irisa's gantry robot named Afma6.
 
 */
 
@@ -56,7 +56,7 @@
 
   \ingroup Afma6
 
-  \brief Modelisation of Irisa's gentry robot named Afma6.
+  \brief Modelisation of Irisa's gantry robot named Afma6.
 
 */
 
@@ -169,7 +169,7 @@ class VISP_EXPORT vpAfma6
 
  public:
 
-  static const int njoint; ///< Number of joint.
+  static const unsigned int njoint; ///< Number of joint.
 
 
  protected:

@@ -39,7 +39,8 @@
  *
  *****************************************************************************/
 
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpMeEllipse.h>
 
@@ -158,12 +159,13 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 {
   vpCDEBUG(1) <<"begin vpMeEllipse::sample() : "<<std::endl ;
 
-  unsigned height = I.getHeight() ;
-  unsigned width = I.getWidth() ;
+  int height = (int)I.getHeight() ;
+  int width = (int)I.getWidth() ;
 
   double n_sample;
 
-  if (me->sample_step==0)
+  //if (me->sample_step==0)
+  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
   {
     std::cout << "In vpMeEllipse::sample: " ;
     std::cout << "function called with sample step = 0" ;
@@ -253,7 +255,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 void
 vpMeEllipse::reSample(const vpImage<unsigned char>  &I)
 {
-  int n = numberOfSignal() ;
+  unsigned int n = numberOfSignal() ;
   double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->sample_step);
   if ((double)n<0.9*expecteddensity)
     sample(I) ;
@@ -271,7 +273,7 @@ vpMeEllipse::getParameters()
 {
 
   double k[6] ;
-  for (int i=0 ; i < 5 ; i++)
+  for (unsigned int i=0 ; i < 5 ; i++)
     k[i+1] = K[i] ;
   k[0] = 1 ;
 
@@ -399,7 +401,7 @@ vpMeEllipse::updateTheta()
   vpMeSite p;
   list.front();
   double theta;
-  for (int i=0 ; i < list.nbElement() ; i++)
+  for (unsigned int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
     vpImagePoint iP;
@@ -447,12 +449,12 @@ vpMeEllipse::suppressPoints()
 void
 vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 {
-  int rows = I.getHeight() ;
-  int cols = I.getWidth() ;
+  int rows = (int)I.getHeight() ;
+  int cols = (int)I.getWidth() ;
 
   vpImagePoint ip;
 
-  int  memory_range = me->range ;
+  unsigned int  memory_range = me->range ;
   me->range = 2 ;
 
   double  memory_mu1 = me->mu1 ;
@@ -469,7 +471,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
     double k = alpha1;
     double i1,j1;
 
-    for (int i=0 ; i < 3 ; i++)
+    for (unsigned int i=0 ; i < 3 ; i++)
     {
       k -= incr;
       //while ( k < -M_PI ) { k+=2*M_PI; }
@@ -506,7 +508,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
     k = alpha2;
 
-    for (int i=0 ; i < 3 ; i++)
+    for (unsigned int i=0 ; i < 3 ; i++)
     {
       k += incr;
       //while ( k > M_PI ) { k-=2*M_PI; }
@@ -606,11 +608,11 @@ vpMeEllipse::leastSquare()
   // Construction du systeme Ax=b
   //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
   // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
-  int i ;
+  unsigned int i ;
 
   vpMeSite p ;
 
-  int iter =0 ;
+  unsigned int iter =0 ;
   vpColVector b(numberOfSignal()) ;
   vpRobust r(numberOfSignal()) ;
   r.setThreshold(2);
@@ -621,7 +623,7 @@ vpMeEllipse::leastSquare()
   vpColVector DAx ;
   vpColVector w(numberOfSignal()) ;
   w =1 ;
-  int nos_1 = numberOfSignal() ;
+  unsigned int nos_1 = numberOfSignal() ;
 
   if (list.nbElement() < 3)
   {
@@ -636,7 +638,7 @@ vpMeEllipse::leastSquare()
     vpColVector x(5);
 
     list.front() ;
-    int k =0 ;
+    unsigned int k =0 ;
     for (i=0 ; i < list.nbElement() ; i++)
     {
       p = list.value() ;
@@ -702,7 +704,7 @@ vpMeEllipse::leastSquare()
     vpColVector x(3);
 
     list.front() ;
-    int k =0 ;
+    unsigned int k =0 ;
     for (i=0 ; i < list.nbElement() ; i++)
     {
       p = list.value() ;
@@ -843,11 +845,11 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
-  int n=5 ;
+  unsigned int n=5 ;
   vpImagePoint *iP;
   iP = new vpImagePoint[n];
 
-  for (int k =0 ; k < n ; k++)
+  for (unsigned int k =0 ; k < n ; k++)
     {
       std::cout << "Click points "<< k+1 <<"/" << n ;
       std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
@@ -875,7 +877,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   \param iP : A pointer to a list of pointsbelonging to the ellipse edge.
 */
 void
-vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
+vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
 			  vpImagePoint *iP)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
@@ -890,7 +892,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
     //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
     // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
 
-    for (int k =0 ; k < n ; k++)
+    for (unsigned int k =0 ; k < n ; k++)
     {
       A[k][0] = vpMath::sqr(iP[k].get_j()) ;
       A[k][1] = 2* iP[k].get_i() * iP[k].get_j() ;
@@ -911,7 +913,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
     vpColVector x(3) ;
 
     vpColVector Kc(3) ;
-    for (int k =0 ; k < n ; k++)
+    for (unsigned int k =0 ; k < n ; k++)
     {
       A[k][0] =  2* iP[k].get_i() ;
       A[k][1] =  2* iP[k].get_j() ;
@@ -1165,7 +1167,7 @@ vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
 
 
 void
-vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
+vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
 			  unsigned *i, unsigned *j)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
@@ -1180,7 +1182,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
     //! i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
     // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
 
-    for (int k =0 ; k < n ; k++)
+    for (unsigned int k =0 ; k < n ; k++)
     {
       A[k][0] = vpMath::sqr(j[k]) ;
       A[k][1] = 2* i[k] * j[k] ;
@@ -1201,7 +1203,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, int n,
     vpColVector x(3) ;
 
     vpColVector Kc(3) ;
-    for (int k =0 ; k < n ; k++)
+    for (unsigned int k =0 ; k < n ; k++)
     {
       A[k][0] =  2* i[k] ;
       A[k][1] =  2* j[k] ;

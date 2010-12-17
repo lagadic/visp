@@ -76,7 +76,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
     int iter = 0 ;
 
-    int nb = listP.nbElement() ;
+    unsigned int nb = listP.nbElement() ;
     vpMatrix L(2*nb,6) ;
     vpColVector err(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
@@ -86,7 +86,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
     vpList<vpPoint> lP ;
 
     // create sd
-    int k =0 ;
+    unsigned int k =0 ;
     while (!listP.outside())
     {
       	P = listP.value() ;
@@ -102,7 +102,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       residu_1 = r ;
 
       // Compute the interaction matrix and the error
-      int k =0 ;
+      unsigned int k =0 ;
       lP.front() ;
       while (!lP.outside())
       {
@@ -190,7 +190,7 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
     robust.setThreshold(0.0000) ;
     vpColVector w,res ;
 
-    int nb = listP.nbElement() ;
+    unsigned int nb = listP.nbElement() ;
     vpMatrix L(2*nb,6) ;
     vpColVector error(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
@@ -200,7 +200,7 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
     vpList<vpPoint> lP ;
 
     // create sd
-    int k =0 ;
+    unsigned int k =0 ;
     while (!listP.outside())
     {
       	P = listP.value() ;
@@ -264,7 +264,7 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
       r = error.sumSquare() ;
 
 
-      for(int k=0 ; k <error.getRows()/2 ; k++)
+      for(unsigned int k=0 ; k <error.getRows()/2 ; k++)
       {
 	res[k] = vpMath::sqr(error[2*k]) + vpMath::sqr(error[2*k+1]) ;
       }
@@ -273,7 +273,7 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
 
 
       // compute the pseudo inverse of the interaction matrix
-      for (int k=0 ; k < error.getRows()/2 ; k++)
+      for (unsigned int k=0 ; k < error.getRows()/2 ; k++)
       {
 	W[2*k][2*k] = w[k] ;
 	W[2*k+1][2*k+1] = w[k] ;

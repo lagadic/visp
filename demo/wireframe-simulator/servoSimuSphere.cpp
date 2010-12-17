@@ -51,6 +51,8 @@
   Demonstration of the wireframe simulator with a simple visual servoing.
 */
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -170,7 +172,8 @@ void computeVisualFeatures(const vpSphere sphere, vpGenericFeature &s)
   double m20 = sphere.get_mu20();
   double m11 = sphere.get_mu11();
   double h2;
-  if (gx != 0 || gy != 0)
+  //if (gx != 0 || gy != 0)
+  if (std::fabs(gx) > std::numeric_limits<double>::epsilon() || std::fabs(gy) > std::numeric_limits<double>::epsilon())
     h2 = (vpMath::sqr(gx)+vpMath::sqr(gy))/(4*m20*vpMath::sqr(gy)+4*m02*vpMath::sqr(gx)-8*m11*gx*gy);
   else
     h2 = 1/(4*m20);
@@ -205,8 +208,8 @@ void computeInteractionMatrix(const vpGenericFeature s,const vpSphere sphere, vp
   vpMatrix sk;
   sk = c.skew();
   
-  for(int i = 0; i < 3; i++)
-    for(int j = 0; j < 3; j++)
+  for(unsigned int i = 0; i < 3; i++)
+    for(unsigned int j = 0; j < 3; j++)
       L[i][j+3] = sk[i][j];
 }
 

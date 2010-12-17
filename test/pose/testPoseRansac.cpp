@@ -168,7 +168,7 @@ main(int argc, const char ** argv)
 
   for (int i=0 ; i < 10 ; i++) lp += p[i] ;
 
-  int ninliers ;
+  unsigned int ninliers ;
   vpList<vpPoint> lPi ;
 
   vpHomogeneousMatrix cMo ;
@@ -220,7 +220,7 @@ main(int argc, const char ** argv)
   p[9].set_y(-0.05) ;
 
 
-  int ninliers ;
+  unsigned int ninliers ;
   vpList<vpPoint> lPi ;
 
   vpHomogeneousMatrix cMo ;

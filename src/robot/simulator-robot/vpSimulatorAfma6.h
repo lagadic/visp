@@ -51,19 +51,25 @@
 #include <visp/vpRobotSimulator.h>
 #include <visp/vpAfma6.h>
 
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+
 /*!
   \class vpSimulatorAfma6
 
   \ingroup Afma6 RealRobotSimu
 
 
-  \brief Simulator of Irisa's gentry robot named Afma6.
+  \brief Simulator of Irisa's gantry robot named Afma6.
 
   Implementation of the vpRobotSimulator class in order to simulate Irisa's
-  Afma6 robot. This robot is a gentry robot with six degrees of
+  Afma6 robot. This robot is a gantry robot with six degrees of
   freedom manufactured in 1992 by the french Afma-Robots company.
-  
-  This class allows to control the Afma6 gentry robot in position
+
+  \warning This class uses threading capabilities. Thus on Unix-like
+  platforms, the libpthread third-party library need to be
+  installed. On Windows, we use the native threading capabilities.
+
+  This class allows to control the Afma6 gantry robot in position
   and velocity:
   - in the joint space (vpRobot::ARTICULAR_FRAME), 
   - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
@@ -273,5 +279,7 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
       
     void compute_fMi();
 };
+
+#endif
 
 #endif

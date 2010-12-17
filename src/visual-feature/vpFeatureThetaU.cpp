@@ -408,7 +408,7 @@ vpFeatureThetaU::get_TUz() const
 
 */
 vpMatrix
-vpFeatureThetaU::interaction(const int select)
+vpFeatureThetaU::interaction(const unsigned int select)
 {
 
   vpMatrix L ;
@@ -440,7 +440,7 @@ vpFeatureThetaU::interaction(const int select)
 
   // Lw computed using Lw = [theta/2 u]_x +/- (I + alpha [u]_x [u]_x)
   vpColVector u(3)  ;
-  for (int i=0 ; i < 3 ; i++) {
+  for (unsigned int i=0 ; i < 3 ; i++) {
     u[i] = s[i]/2.0 ; 
   }
   
@@ -452,7 +452,7 @@ vpFeatureThetaU::interaction(const int select)
   
   double  theta = sqrt(s.sumSquare()) ;
   if (theta >= 1e-6) {
-    for (int i=0 ; i < 3 ; i++) 
+    for (unsigned int i=0 ; i < 3 ; i++) 
       u[i] = s[i]/theta ;
 
     vpMatrix skew_u ;
@@ -564,7 +564,7 @@ vpFeatureThetaU::interaction(const int select)
 */
 vpColVector
 vpFeatureThetaU::error(const vpBasicFeature &s_star,
-		       const int select)
+		       const unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6)
@@ -627,7 +627,7 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
   \endcode
 */
 void
-vpFeatureThetaU::print(const int select) const
+vpFeatureThetaU::print(const unsigned int select) const
 {
   std::cout <<"ThetaU: ";
   if (vpFeatureThetaU::selectTUx() & select ) {

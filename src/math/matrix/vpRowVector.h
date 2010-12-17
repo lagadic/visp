@@ -79,22 +79,22 @@ class VISP_EXPORT vpRowVector : public vpMatrix
 
 protected:
   //! Constructor  (Take line i of matrix m)
-  vpRowVector(vpMatrix &m, int i);
+  vpRowVector(vpMatrix &m, unsigned int i);
 
 public:
   //! basic constructor
   vpRowVector() : vpMatrix() {};
   //! constructor of vector of size n
-  vpRowVector(int nn) : vpMatrix(1,nn){};
+  vpRowVector(unsigned int nn) : vpMatrix(1,nn){};
   //! copy constructor
   vpRowVector(const vpRowVector &v);
 
   //! Set the size of the Row vector
-  inline void resize(int i)      {   vpMatrix::resize(1, i) ;  }
+  inline void resize(unsigned int i)      {   vpMatrix::resize(1, i) ;  }
   //! Access  V[i] = x
-  inline double &operator [](int n)             { return *(data+n); }
+  inline double &operator [](unsigned int n)             { return *(data+n); }
   //! Access x = V[i]
-  inline const double &operator [](int n) const { return *(data+n) ; }
+  inline const double &operator [](unsigned int n) const { return *(data+n) ; }
 
   //! Copy operator.   Allow operation such as A = v
   vpRowVector &operator=(const vpRowVector &v);
@@ -110,8 +110,8 @@ public:
   vpRowVector& operator=(const double x);
 
   //! Reshape methods
-  void reshape(vpMatrix & m,const int &nrows,const int &ncols);
-  vpMatrix reshape(const int &nrows,const int &ncols);
+  void reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols);
+  vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
   
   //! Transpose the vector
   vpColVector t() const;

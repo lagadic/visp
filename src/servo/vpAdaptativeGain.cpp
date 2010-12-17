@@ -43,6 +43,8 @@
 */
 
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 /* --- VISP --- */
 #include <visp/vpColVector.h>
@@ -136,7 +138,8 @@ initStandard (const double en_zero,
   vpDEBUG_TRACE (10, "# Entree.");
 
   this ->coeff_a = en_zero - en_infini;
-  if (0 == this ->coeff_a)
+  //if (0 == this ->coeff_a)
+  if (std::fabs(this ->coeff_a) <= std::numeric_limits<double>::epsilon())
     {
       this ->coeff_b = 0;
     }

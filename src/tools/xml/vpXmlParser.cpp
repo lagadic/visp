@@ -133,6 +133,35 @@ vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
   return val_int;
 }
 
+/*!
+  read an int
+  
+  \warning throw a vpException::ioError if the value cannot be parsed to an integer
+  
+  \param doc : The main xml document
+  \param node : a pointer to the node to read value
+  
+  \return the unsigned integer value in the node
+*/
+unsigned int 
+vpXmlParser::xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node)
+{
+  char * val_char;
+  char * control_convert;
+  unsigned int val_uint;
+
+  val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
+  val_uint = strtoul ((char *)val_char, &control_convert, 10);
+
+  if (val_char == control_convert){
+    xmlFree((xmlChar*) val_char);
+    throw vpException(vpException::ioError, "cannot parse entry to int");
+  }
+  xmlFree((xmlChar*) val_char);
+
+  return val_uint;
+}
+
 
 /*!
   read a double
@@ -190,6 +219,23 @@ vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char* label, const int valu
 {
   char str[100];
   sprintf(str, "%d", value);
+  xmlNodePtr tmp;
+  tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)str);
+  xmlAddChild(node, tmp); 
+}
+
+/*!
+  write an unsigned integer. 
+  
+  \param node : a pointer to the node to read value
+  \param label : label (name of the data) of the node 
+  \param value : unsigned integer to write
+*/
+void 
+vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value)
+{
+  char str[100];
+  sprintf(str, "%u", value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)str);
   xmlAddChild(node, tmp); 

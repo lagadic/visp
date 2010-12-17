@@ -47,6 +47,8 @@
 
 */
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
@@ -60,7 +62,7 @@
 #include <visp/vpViper.h>
 
 
-const int vpViper::njoint = 6;
+const unsigned int vpViper::njoint = 6;
 
 /*!
 
@@ -148,7 +150,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
   \return true if the joint position is in the joint limits. false otherwise. 
  */
 bool 
-vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
+vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod)
 {
   double eps = 0.01;
   if (q >= joint_min[joint]-eps && q <= joint_max[joint]+eps ) {
@@ -217,12 +219,12 @@ vpViper::convertJointPositionInLimits(int joint, const double &q, double &q_mod)
   \sa getForwardKinematics(), getInverseKinematics()
 
 */
-int
+unsigned int
 vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q)
 {
   vpColVector q_sol[8];
 
-  for (int i=0; i<8; i++)
+  for (unsigned int i=0; i<8; i++)
     q_sol[i].resize(6);
 
   double c1[8]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
@@ -243,7 +245,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   if (q.getRows() != njoint)
     q.resize(6);
 
-  for (int i=0; i< 8; i++)
+  for (unsigned int i=0; i< 8; i++)
     ok[i] = true;
 
   double px = fMw[0][3]; // a*c1
@@ -252,7 +254,8 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
 
   // Compute q1
   double a_2 = px*px+py*py; 
-  if (a_2 == 0) {// singularity
+  //if (a_2 == 0) {// singularity
+  if (std::fabs(a_2) <= std::numeric_limits<double>::epsilon()) {// singularity
     c1[0] = cos(q[0]);
     s1[0] = sin(q[0]);
     c1[4] = cos(q[0]+M_PI);
@@ -267,59 +270,59 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   }
 
   double q1_mod;
-  for(int i=0;i<8;i+=4) {
+  for(unsigned int i=0;i<8;i+=4) {
     q_sol[i][0] = atan2(s1[i],c1[i]);
     if (convertJointPositionInLimits(0, q_sol[i][0], q1_mod) == true) {
       q_sol[i][0] = q1_mod;
-      for(int j=1;j<4;j++) {
+      for(unsigned int j=1;j<4;j++) {
 	c1[i+j] = c1[i];
 	s1[i+j] = s1[i];
 	q_sol[i+j][0] = q_sol[i][0];
       }
     }
     else {
-      for(int j=1;j<4;j++) 
+      for(unsigned int j=1;j<4;j++) 
 	ok[i+j] = false;
     }
   }
 
 //   std::cout << "ok apres q1: ";
-//   for (int i=0; i< 8; i++)
+//   for (unsigned int i=0; i< 8; i++)
 //     std::cout << ok[i] << " ";
 //   std::cout << std::endl;
 
   // Compute q3
   double K, q3_mod;
-  for(int i=0; i<8; i+=4) {
+  for(unsigned int i=0; i<8; i+=4) {
     if(ok[i] == true) {
       K = (px*px+py*py+pz*pz+a1*a1-a2*a2-a3*a3+d1*d1-d4*d4
 	   - 2*(a1*c1[i]*px + a1*s1[i]*py + d1*pz)) / (2*a2);
       q_sol[i][2]   = atan2(a3, d4) + atan2(K, sqrt(d4*d4+a3*a3-K*K));
       q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4*d4+a3*a3-K*K));
 
-      for (int j=0; j<4; j+=2) {
+      for (unsigned int j=0; j<4; j+=2) {
 	if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
-	  for(int k=0; k<2; k++) {
+	  for(unsigned int k=0; k<2; k++) {
 	    q_sol[i+j+k][2] = q3_mod;
 	    c3[i+j+k] = cos(q3_mod);
 	    s3[i+j+k] = sin(q3_mod);
 	  }
 	}
 	else {
-	  for(int k=0; k<2; k++) 
+	  for(unsigned int k=0; k<2; k++) 
 	    ok[i+j+k] = false;
 	}
       }
     }
   }
 //   std::cout << "ok apres q3: ";
-//   for (int i=0; i< 8; i++)
+//   for (unsigned int i=0; i< 8; i++)
 //     std::cout << ok[i] << " ";
 //   std::cout << std::endl;
 
   // Compute q2
   double q23[8], q2_mod;
-  for (int i=0; i<8; i+=2) {
+  for (unsigned int i=0; i<8; i+=2) {
     if (ok[i] == true) {
       // Compute q23 = q2+q3
       c23[i] = (-(a3-a2*c3[i])*(c1[i]*px+s1[i]*py-a1)-(d1-pz)*(d4+a2*s3[i]))
@@ -332,20 +335,20 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
       q_sol[i][1] = q23[i] - q_sol[i][2];
 
       if (convertJointPositionInLimits(1, q_sol[i][1], q2_mod) == true) {
-	for(int j=0; j<2; j++) {
+	for(unsigned int j=0; j<2; j++) {
 	  q_sol[i+j][1] = q2_mod;
 	  c23[i+j] = c23[i];
 	  s23[i+j] = s23[i];
 	}
       }
       else {
-	for(int j=0; j<2; j++)
+	for(unsigned int j=0; j<2; j++)
 	  ok[i+j] = false;
       }
     }
   }
 //   std::cout << "ok apres q2: ";
-//   for (int i=0; i< 8; i++)
+//   for (unsigned int i=0; i< 8; i++)
 //     std::cout << ok[i] << " ";
 //   std::cout << std::endl;
 
@@ -354,7 +357,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   double r23 = fMw[1][2];
   double r33 = fMw[2][2];
   double s4s5, c4s5, q4_mod, q5_mod;
-  for (int i=0; i<8; i+=2) { 
+  for (unsigned int i=0; i<8; i+=2) { 
     if (ok[i] == true) {
       s4s5 = -s1[i]*r13+c1[i]*r23;
       c4s5 =  c1[i]*c23[i]*r13+s1[i]*c23[i]*r23-s23[i]*r33;
@@ -368,7 +371,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
 	  q_sol[i][4] = M_PI;
 	
 	if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod) == true) {
-	  for(int j=0; j<2; j++) {
+	  for(unsigned int j=0; j<2; j++) {
 	    q_sol[i+j][3] = q[3]; // keep current q4
 	    q_sol[i+j][4] = q5_mod;
 	    c4[i] = cos(q_sol[i+j][3]);
@@ -376,13 +379,14 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
 	  }
 	}
 	else {
-	  for(int j=0; j<2; j++)
+	  for(unsigned int j=0; j<2; j++)
 	    ok[i+j] = false;
 	}
       }
       else {
 	// s5 != 0
-	if (c4s5 == 0) {
+	//if (c4s5 == 0) {
+	if (std::fabs(c4s5) <= std::numeric_limits<double>::epsilon()) {
 	  // c4 = 0
 	  //  vpTRACE("c4 = 0");
 	  // q_sol[i][3] = q[3]; // keep current position
@@ -413,7 +417,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
 	}
 	
 	// Compute q5
-	for (int j=0; j<2; j++) { 
+	for (unsigned int j=0; j<2; j++) { 
 	  if (ok[i+j] == true) {
 	    c5[i+j] = c1[i+j]*s23[i+j]*r13+s1[i+j]*s23[i+j]*r23+c23[i+j]*r33;
 	    s5[i+j] = (c1[i+j]*c23[i+j]*c4[i+j]-s1[i+j]*s4[i+j])*r13
@@ -439,7 +443,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   double r22 = fMw[1][1];
   double r32 = fMw[2][1];
   double q6_mod;
-  for (int i=0; i<8; i++) { 
+  for (unsigned int i=0; i<8; i++) { 
     c6[i] = -(c1[i]*c23[i]*s4[i]+s1[i]*c4[i])*r12 
       +(c1[i]*c4[i]-s1[i]*c23[i]*s4[i])*r22+s23[i]*s4[i]*r32;
     s6[i] = -(c1[i]*c23[i]*c4[i]*c5[i]-c1[i]*s23[i]*s5[i]
@@ -457,10 +461,10 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   }
 
   // Select the best config in terms of distance from the current position
-  int nbsol = 0;
-  int sol = 0;
+  unsigned int nbsol = 0;
+  unsigned int sol = 0;
   vpColVector dist(8);
-  for (int i=0; i<8; i++) {
+  for (unsigned int i=0; i<8; i++) {
     if (ok[i] == true) {
       nbsol ++;
       sol = i;
@@ -470,7 +474,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
       weight[0] = 8; 
       weight[1] = weight[2] = 4; 
       dist[i] = 0;
-      for (int j=0; j< 6; j++) {
+      for (unsigned int j=0; j< 6; j++) {
 	double rought_dist = q[j]- q_sol[i][j];
 	double modulo_dist = rought_dist; 
 	if (rought_dist > 0) {
@@ -489,7 +493,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   }
   //std::cout << "dist: " << dist.t() << std::endl;
   if (nbsol) {
-    for (int i=0; i<8; i++) {
+    for (unsigned int i=0; i<8; i++) {
       if (ok[i] == true) 
 	if (dist[i] < dist[sol]) sol = i;
     }
@@ -553,7 +557,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   \sa getForwardKinematics(), getInverseKinematicsWrist
 
 */
-int
+unsigned int
 vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
 {
   vpHomogeneousMatrix fMw;
@@ -974,8 +978,8 @@ vpViper::get_eJe(const vpColVector &q, vpMatrix &eJe)
   fMw.extract(fRw);
   vpRotationMatrix wRf;
   wRf = fRw.inverse();
-  for (int i=0; i<3; i++ ) {
-    for (int j=0; j<3; j++ ) {
+  for (unsigned int i=0; i<3; i++ ) {
+    for (unsigned int j=0; j<3; j++ ) {
       V[i][j] = V[i+3][j+3] = wRf[i][j];
     }
   }
@@ -987,8 +991,8 @@ vpViper::get_eJe(const vpColVector &q, vpMatrix &eJe)
   vpTranslationVector etw;
   eMw.extract(etw);
   vpMatrix block2 = etw.skew()*wRf;
-  for (int i=0; i<3; i++ ) {
-    for (int j=0; j<3; j++ ) {
+  for (unsigned int i=0; i<3; i++ ) {
+    for (unsigned int j=0; j<3; j++ ) {
       V[i][j+3] = block2[i][j];
     }
   }
@@ -1121,7 +1125,7 @@ vpViper::get_fJw(const vpColVector &q, vpMatrix &fJw)
   J6[5] = -s23*c4*s5+c23*c5;
 
   fJw.resize(6,6) ;
-  for (int i=0;i<6;i++) {
+  for (unsigned int i=0;i<6;i++) {
     fJw[i][0] = J1[i];
     fJw[i][1] = J2[i];
     fJw[i][2] = J3[i];
@@ -1160,7 +1164,7 @@ vpViper::get_fJe(const vpColVector &q, vpMatrix &fJe)
   vpMatrix V(6,6);
   V = 0;
   // Set the first and last block to identity
-  for (int i=0; i<6; i++ )
+  for (unsigned int i=0; i<6; i++ )
     V[i][i] = 1;
   
   // Compute the second block of V
@@ -1176,8 +1180,8 @@ vpViper::get_fJe(const vpColVector &q, vpMatrix &fJe)
   eMw.extract(etw);
   vpMatrix block2 = (fRw*etw).skew();
   // Set the second block
-  for (int i=0; i<3; i++ )
-    for (int j=0; j<3; j++ )
+  for (unsigned int i=0; i<3; i++ )
+    for (unsigned int j=0; j<3; j++ )
       V[i][j+3] = block2[i][j];
 
   // Compute fJe

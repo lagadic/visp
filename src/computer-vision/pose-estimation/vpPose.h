@@ -87,7 +87,7 @@ public:
       LAGRANGE_VIRTUAL_VS
     } vpPoseMethodType;
 public:
-  int npt ;       //!< number of point used in pose computation
+  unsigned int npt ;       //!< number of point used in pose computation
   vpList<vpPoint> listP ;     //!< array of point (use here class vpPoint)
 
   double residual ;     //!< compute the residual in meter
@@ -169,33 +169,33 @@ private:
 public:
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
 public:
-  static bool degenerateConfiguration(vpColVector &x,int *ind) ;
-  static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;
+  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind) ;
+  static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
   static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
 private:
-  static void initRansac(const int n,
+  static void initRansac(const unsigned int n,
 			 const double *x, const double *y,
-			 const int m,
+			 const unsigned int m,
 			 const double *X, const double *Y, const double *Z,
 			 vpColVector &data) ;
 public:
-  static void ransac(const int n,
+  static void ransac(const unsigned int n,
 		     const double *x, const double *y,
-		     const int m,
+		     const unsigned int m,
 		     const double *X, const double *Y, const double *Z,
 		     const int numberOfInlierToReachAConsensus,
 		     const double threshold,
-		     int &ninliers,
+		     unsigned int &ninliers,
 		     vpColVector &xi,  vpColVector &yi,
 		     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
 		     vpHomogeneousMatrix &cMo) ;
-  static void ransac(const int n,
+  static void ransac(const unsigned int n,
 		     const vpPoint *p,
-		     const int m,
+		     const unsigned int m,
 		     const vpPoint *P,
 		     const int numberOfInlierToReachAConsensus,
 		     const double threshold,
-		     int &ninliers,
+		     unsigned int &ninliers,
 		     vpList<vpPoint> &Pi,
 		     vpHomogeneousMatrix &cMo) ;
 
@@ -204,7 +204,7 @@ public:
 		     vpList<vpPoint> &P,
 		     const int numberOfInlierToReachAConsensus,
 		     const double threshold,
-		     int &ninliers,
+		     unsigned int &ninliers,
 		     vpList<vpPoint> &lPi,
 		     vpHomogeneousMatrix &cMo) ;
 

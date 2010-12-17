@@ -43,7 +43,7 @@
 
   \file vpAfma6.cpp
 
-  Control of Irisa's gentry robot named Afma6.
+  Control of Irisa's gantry robot named Afma6.
 
 */
 
@@ -132,7 +132,7 @@ const char * const vpAfma6::CONST_VACUUM_CAMERA_NAME = "Dragonfly2-6mm-vacuum";
 
 const vpAfma6::vpAfma6ToolType vpAfma6::defaultTool = TOOL_CCMOP;
 
-const int vpAfma6::njoint = 6;
+const unsigned int vpAfma6::njoint = 6;
 
 /*!
 
@@ -506,7 +506,7 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
     q.resize(6);
 
 
-//   for(int i=0;i<3;i++) {
+//   for(unsigned int i=0;i<3;i++) {
 //     fMe[i][3] = fMc[i][3];
 //     for(int j=0;j<3;j++) {
 //       fMe[i][j] = 0.0;
@@ -588,7 +588,7 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   {
     ok[j] = 1;
     // test is position is reachable
-    for (int i=0;i<6;i++) {
+    for (unsigned int i=0;i<6;i++) {
       if (q_[j][i] < this->_joint_min[i] || q_[j][i] > this->_joint_max[i])
 	ok[j] = 0;
     }
@@ -601,14 +601,14 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
       return nbsol;
     }
     else if (ok[1] == 1) {
-      for (int i=0;i<6;i++) cord[i] = q_[1][i];
+      for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
       nbsol = 1;
     }
   }
   else
   {
     if (ok[1] == 0) {
-      for (int i=0;i<6;i++) cord[i] = q_[0][i];
+      for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
       nbsol = 1;
     }
     else
@@ -618,26 +618,26 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
       for (int j=0;j<2;j++)
       {
 	d[j] = 0.0;
-	for (int i=3;i<6;i++)
+	for (unsigned int i=3;i<6;i++)
 	  d[j] += (q_[j][i] - q[i]) * (q_[j][i] - q[i]);
       }
       if (nearest == true)
       {
 	if (d[0] <= d[1])
-	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
+	  for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
 	else
-	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
+	  for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
       }
       else
       {
 	if (d[0] <= d[1])
-	  for (int i=0;i<6;i++) cord[i] = q_[1][i];
+	  for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
 	else
-	  for (int i=0;i<6;i++) cord[i] = q_[0][i];
+	  for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
       }
     }
   }
-  for(int i=0; i<6; i++)
+  for(unsigned int i=0; i<6; i++)
     q[i] = cord[i] ;
 
   return nbsol;
@@ -927,7 +927,7 @@ vpColVector
 vpAfma6::getJointMin()
 {
   vpColVector qmin(6);
-  for (int i=0; i < 6; i ++)
+  for (unsigned int i=0; i < 6; i ++)
     qmin[i] = this->_joint_min[i];
   return qmin;
 }
@@ -944,7 +944,7 @@ vpColVector
 vpAfma6::getJointMax()
 {
   vpColVector qmax(6);
-  for (int i=0; i < 6; i ++)
+  for (unsigned int i=0; i < 6; i ++)
     qmax[i] = this->_joint_max[i];
   return qmax;
 }
@@ -990,7 +990,7 @@ vpAfma6::getLong56()
 void
 vpAfma6::parseConfigFile (const char * filename)
 {
-  int               dim;
+  size_t            dim;
   int               code;
   char              Ligne[FILENAME_MAX];
   char              namoption[100];
@@ -1086,7 +1086,7 @@ vpAfma6::parseConfigFile (const char * filename)
 
   // Compute the eMc matrix from the translations and rotations
   if (get_rot_eMc && get_trans_eMc) {
-    for (int i=0; i < 3; i ++) {
+    for (unsigned int i=0; i < 3; i ++) {
       _erc[i] = rot_eMc[i];
       _etc[i] = trans_eMc[i];
     }

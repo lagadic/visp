@@ -74,7 +74,7 @@ class vpPlotCurve
     //vpMarkerStyle markerStyle;
     //char lineStyle[20];
     //vpList<vpImagePoint> pointList;
-    int nbPoint;
+    unsigned int nbPoint;
     vpImagePoint lastPoint;
     vpList<double> pointListx;
     vpList<double> pointListy;

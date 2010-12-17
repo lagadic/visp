@@ -300,7 +300,7 @@ main(int argc, const char ** argv)
     E1.initTracking(I) ;
   else {
     // Create a list of points to automate the test
-    int n=5 ;
+    unsigned int n=5 ;
     vpImagePoint *ip = new vpImagePoint [n];
     ip[0].set_i( 30 ); ip[0].set_j( 331 );
     ip[1].set_i( 62 ); ip[1].set_j( 171 );

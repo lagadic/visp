@@ -624,7 +624,7 @@ vpCalibration::writeData(const char *filename)
   f.setf(std::ios::fixed,std::ios::floatfield);
   f << LoX.nbElement() << std::endl ;
 
-  for (int i =0 ; i < LoX.nbElement() ; i++)
+  for (unsigned int i =0 ; i < LoX.nbElement() ; i++)
   {
 
     double oX = LoX.value() ;

@@ -480,24 +480,24 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
      }break;
 
     case CODE_XML_WIDTH:
-      image_width_tmp = xmlReadIntChild(doc, node);
+      image_width_tmp = xmlReadUnsignedIntChild(doc, node);
      break;
 
     case CODE_XML_HEIGHT:
-      image_height_tmp = xmlReadIntChild(doc, node);
+      image_height_tmp = xmlReadUnsignedIntChild(doc, node);
     break;
     case CODE_XML_SUBSAMPLING_WIDTH:
-      subsampling_width_tmp = xmlReadIntChild(doc, node);
+      subsampling_width_tmp = xmlReadUnsignedIntChild(doc, node);
      break;
     case CODE_XML_SUBSAMPLING_HEIGHT:
-      subsampling_height_tmp = xmlReadIntChild(doc, node);
+      subsampling_height_tmp = xmlReadUnsignedIntChild(doc, node);
     break;
     case CODE_XML_FULL_WIDTH:
-      full_width_tmp = xmlReadIntChild(doc, node);
+      full_width_tmp = xmlReadUnsignedIntChild(doc, node);
      break;
 
     case CODE_XML_FULL_HEIGHT:
-      full_height_tmp = xmlReadIntChild(doc, node);
+      full_height_tmp = xmlReadUnsignedIntChild(doc, node);
     break;
 
     case CODE_XML_MODEL:
@@ -592,24 +592,24 @@ read_camera_header (xmlDocPtr doc, xmlNodePtr node,
         }break;
 
       case CODE_XML_WIDTH:
-        image_width_tmp = xmlReadIntChild(doc, node);
+        image_width_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
 
       case CODE_XML_HEIGHT:
-        image_height_tmp = xmlReadIntChild(doc, node);
+        image_height_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
       case CODE_XML_SUBSAMPLING_WIDTH:
-        subsampling_width_tmp = xmlReadIntChild(doc, node);
+        subsampling_width_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
       case CODE_XML_SUBSAMPLING_HEIGHT:
-        subsampling_height_tmp = xmlReadIntChild(doc, node);
+        subsampling_height_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
       case CODE_XML_FULL_WIDTH:
-        full_width_tmp = xmlReadIntChild(doc, node);
+        full_width_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
 
       case CODE_XML_FULL_HEIGHT:
-        full_height_tmp = xmlReadIntChild(doc, node);
+        full_height_tmp = xmlReadUnsignedIntChild(doc, node);
         break;
 
       case CODE_XML_MODEL:

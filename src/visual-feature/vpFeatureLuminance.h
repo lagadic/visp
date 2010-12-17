@@ -97,9 +97,12 @@ class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
   //! default Z = 1m
   double Z ;
 
-  int nbr ;
-  int nbc ;
-  int bord ;
+  //! Number of rows.
+  unsigned int nbr ;
+  //! Number of column.
+  unsigned int nbc ;
+  //! Border size.
+  unsigned int bord ;
   
   //! Store the image (as a vector with intensity and gradient I, Ix, Iy) 
   vpLuminance *pixInfo ;
@@ -111,7 +114,7 @@ class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
 public: 
 
   void init() ;
-  void init(int _nbr, int _nbc, double _Z) ;
+  void init(unsigned int _nbr, unsigned int _nbc, double _Z) ;
 
   vpFeatureLuminance() ;
  
@@ -135,15 +138,15 @@ public:
   */
 
  
-  vpMatrix  interaction(const int select = FEATURE_ALL);
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   void      interaction(vpMatrix &L);
 
   vpColVector error(const vpBasicFeature &s_star,
-		    const int select = FEATURE_ALL)  ;
+		    const unsigned int select = FEATURE_ALL)  ;
   void error(const vpBasicFeature &s_star,
 	     vpColVector &e)  ;
 
-  void print(const int select = FEATURE_ALL ) const ;
+  void print(const unsigned int select = FEATURE_ALL ) const ;
 
   vpFeatureLuminance *duplicate() const ;
 
@@ -157,7 +160,7 @@ public:
 
 
   //! Compute the error between a visual features and zero
-  vpColVector error(const int select = FEATURE_ALL)  ;
+  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
 
 } ;
 

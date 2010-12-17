@@ -49,6 +49,9 @@
 */
 
 #include <stdio.h>
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 extern "C" {
 #include <visp/vpMy.h>
@@ -82,7 +85,7 @@ int View_to_Matrix (View_parameters *vp, Matrix m);
 void postmult_matrix (Matrix a, Matrix b);
 Bound *clipping_Bound (Bound *bp, Matrix m);
 int set_Bound_face_display (Bound *bp, Byte b);
-int point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
+int point_3D_2D (Point3f *p3, Index size, unsigned int xsize, unsigned int ysize, Point2i *p2);
 void point_3D_4D (Point3f *p3, int size, Matrix m, Point4f *p4);
 int wireframe_Face (Face *fp, Point2i *pp);
 }
@@ -251,7 +254,7 @@ class VISP_EXPORT vpWireFrameSimulator
     vpList<vpImagePoint> cameraTrajectory;
     vpList<vpHomogeneousMatrix> poseList;
     vpList<vpHomogeneousMatrix> fMoList;
-    int nbrPtLimit;
+    unsigned int nbrPtLimit;
     
     
     vpImagePoint old_iPr;
@@ -385,11 +388,14 @@ class VISP_EXPORT vpWireFrameSimulator
       \return It returns the camera parameters.
     */
     vpCameraParameters getInternalCameraParameters(const vpImage<vpRGBa> &I) const {
-      if(px_int != 1 && py_int != 1)
+      //if(px_int != 1 && py_int != 1)
+      // we assume px_int and py_int > 0
+      if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+	  && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
         return vpCameraParameters(px_int,py_int,I.getWidth()/2,I.getHeight()/2);
       else
       {
-        int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
+        unsigned int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
         return vpCameraParameters(size,size,I.getWidth()/2,I.getHeight()/2);
       }
     }
@@ -402,11 +408,14 @@ class VISP_EXPORT vpWireFrameSimulator
       \return It returns the camera parameters.
     */
     vpCameraParameters getInternalCameraParameters(const vpImage<unsigned char> &I) const {
-      if(px_int != 1 && py_int != 1)
+      //if(px_int != 1 && py_int != 1)
+      // we assume px_int and py_int > 0
+      if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+	  && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
         return vpCameraParameters(px_int,py_int,I.getWidth()/2,I.getHeight()/2);
       else
       {
-        int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
+        unsigned int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
         return vpCameraParameters(size,size,I.getWidth()/2,I.getHeight()/2);
       }
     }
@@ -419,11 +428,14 @@ class VISP_EXPORT vpWireFrameSimulator
       \return It returns the camera parameters.
     */
     vpCameraParameters getExternalCameraParameters(const vpImage<vpRGBa> &I) const {
-      if(px_ext != 1 && py_ext != 1)
+      //if(px_ext != 1 && py_ext != 1)
+      // we assume px_ext and py_ext > 0
+      if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+	  && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
         return vpCameraParameters(px_ext,py_ext,I.getWidth()/2,I.getHeight()/2);
       else
       {
-        int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
+        unsigned int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
         return vpCameraParameters(size,size,I.getWidth()/2,I.getHeight()/2);
       }
     }
@@ -436,11 +448,14 @@ class VISP_EXPORT vpWireFrameSimulator
       \return It returns the camera parameters.
     */
     vpCameraParameters getExternalCameraParameters(const vpImage<unsigned char> &I) const {
-      if(px_ext != 1 && py_ext != 1)
+      //if(px_ext != 1 && py_ext != 1)
+      // we assume px_ext and py_ext > 0
+      if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+	  && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
         return vpCameraParameters(px_ext,py_ext,I.getWidth()/2,I.getHeight()/2);
       else
       {
-        int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
+        unsigned int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
         return vpCameraParameters(size,size,I.getWidth()/2,I.getHeight()/2);
       }
     }
@@ -491,7 +506,7 @@ class VISP_EXPORT vpWireFrameSimulator
       
       \param nbPt : The desired number of position which are saved.
     */
-    inline void setNbPtTrajectory(const int nbPt) {nbrPtLimit = nbPt;}
+    inline void setNbPtTrajectory(const unsigned int nbPt) {nbrPtLimit = nbPt;}
     
     /*!
       Set the parameter which enables to choose the size of the main camera in the external camera views. By default this parameter is set to 1.

@@ -138,7 +138,7 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     //! Size of the nurbs
     double dist;
     //! Number of control points used to compute the Nurbs.
-    int nbControlPoints;
+    unsigned int nbControlPoints;
     //! counter used to trigger the canny edge detection at the beginning of the Nurbs.
     int beginPtFound;
     //! counter used to trigger the canny edge detection at the end of the Nurbs.
@@ -160,7 +160,7 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
 
       \param nbControlPoints : The number of control points used to compute the Nurbs.
     */
-    void setNbControlPoints(const int nbControlPoints) {this->nbControlPoints = nbControlPoints;}
+    void setNbControlPoints(const unsigned int nbControlPoints) {this->nbControlPoints = nbControlPoints;}
     
     /*!
       Enables or disables the canny detection used during the extremities search.
@@ -204,13 +204,13 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
 				   unsigned int &element);
 
     bool hasGoodLevel(const vpImage<unsigned char>& I,
-			  const vpImagePoint iP) const;
+			  const vpImagePoint& iP) const;
 
     bool isInImage(const vpImage<unsigned char>& I, const vpImagePoint iP) const;
     
     void computeFreemanParameters( unsigned int element, vpImagePoint &diP);
     
-    bool farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint iP);
+    bool farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint& iP);
 };
 
 #endif

@@ -302,11 +302,11 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I);
   }
   
-  unsigned int lastFrame = reader.getLastFrameIndex();
+  int lastFrame = reader.getLastFrameIndex();
   //To go to the beginning of the video
   reader.getFrame(I,0);
   
-  for (unsigned int i = 0; i <= lastFrame; i++)
+  for (int i = 0; i <= lastFrame; i++)
   {
     reader.acquire(I);
     if (opt_display)

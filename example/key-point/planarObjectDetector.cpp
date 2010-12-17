@@ -382,7 +382,7 @@ main(int argc, const char** argv)
   }
     
   if(opt_display){
-    display.init(I, 110 + Iref.getWidth(), 100, "Test vpPlanarObjectDetector") ;
+    display.init(I, 110 + (int)Iref.getWidth(), 100, "Test vpPlanarObjectDetector") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }

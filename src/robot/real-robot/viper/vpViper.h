@@ -116,8 +116,8 @@ class VISP_EXPORT vpViper
   virtual ~vpViper() {};
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
-  int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q);
-  int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q);
+  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q);
+  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q);
   vpHomogeneousMatrix get_fMc (const vpColVector & q);
   void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw);
   void get_wMe(vpHomogeneousMatrix & wMe);
@@ -139,10 +139,10 @@ class VISP_EXPORT vpViper
   double getCoupl56();
 
  private:
-  bool convertJointPositionInLimits(int joint, const double &q, double &q_mod);
+  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod);
 
  public:
-  static const int njoint; ///< Number of joint.
+  static const unsigned int njoint; ///< Number of joint.
 
  protected:
   vpHomogeneousMatrix eMc; //!< End effector to camera transformation

@@ -170,9 +170,9 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
 int
 main(int argc, const char ** argv)
 {
-  unsigned fps = 25;
-  unsigned input = vpV4l2Grabber::DEFAULT_INPUT;
-  unsigned scale = vpV4l2Grabber::DEFAULT_SCALE;
+  unsigned int fps = 25;
+  unsigned int input = vpV4l2Grabber::DEFAULT_INPUT;
+  unsigned int scale = vpV4l2Grabber::DEFAULT_SCALE;
   bool opt_display = true;
 
   // Read the command line options

@@ -55,6 +55,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpGEMM.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"h"
@@ -229,4 +230,25 @@ main(int argc, const char ** argv)
   M.print(std::cout, 10, "M");
   std::cout << "r * M = " << rM << std::endl;
 
+  vpTRACE("------------------------");
+  vpTRACE("--- TEST vpGEMM ");
+  vpTRACE("------------------------");
+  M.resize(3,3) ;
+  M.eye(3);
+  vpMatrix N(3, 3);
+  N[0][0] = 2;
+  N[1][0] = 1.2;
+  N[1][2] = 0.6;
+  N[2][2] = 0.25;
+
+  vpMatrix C(3, 3);
+  C.eye(3);
+  
+  vpMatrix D;
+  
+  //realise the operation D = 2 * M^T * N + 3 C 
+  vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
+  std::cout << D << std::endl;
+
 }
+

@@ -235,10 +235,10 @@ public:
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
-	       const int select=vpBasicFeature::FEATURE_ALL) ;
+	       const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s,
-	       const int select=vpBasicFeature::FEATURE_ALL) ;
+	       const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
 
   //! compute the interaction matrix related to the set of visual features
   vpMatrix computeInteractionMatrix() ;
@@ -261,7 +261,7 @@ public:
   vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
 
   //! get the task dimension
-  int getDimension() ;
+  unsigned int getDimension() ;
 
 
   void print(const vpServo::vpServoPrintType display_level=ALL,
@@ -301,7 +301,7 @@ public:
   vpServoType servoType;
 
   //! Rank of the task Jacobian
-  int rankJ1 ;
+  unsigned int rankJ1 ;
 
   //! List of visual features (produce \f$s\f$)
   vpList<vpBasicFeature *> featureList ;
@@ -309,7 +309,7 @@ public:
   vpList<vpBasicFeature *> desiredFeatureList ;
   //! List of selection among visual features
   //! used for selection of a subset of each visual feature if required
-  vpList<int> featureSelectionList ;
+  vpList<unsigned int> featureSelectionList ;
 
   //! Gain
   vpAdaptativeGain lambda ;
@@ -358,7 +358,7 @@ protected:
   //! true if the interaction matrix has been computed
   bool interactionMatrixComputed ;
   //! dimension of the task
-  int dim_task ;
+  unsigned int dim_task ;
   bool taskWasKilled; // flag to indicate if the task was killed
   //! Force the interaction matrix computation even if it is already done.
   bool forceInteractionMatrixComputation;

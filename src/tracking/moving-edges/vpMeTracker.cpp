@@ -129,10 +129,10 @@ vpMeTracker::operator = (vpMeTracker& p)
   return *this;
 }
 
-int
+unsigned int
 vpMeTracker::numberOfSignal()
 {
-  int number_signal=0;
+  unsigned int number_signal=0;
 
   // Loop through all the points tracked from the contour
   list.front();
@@ -146,7 +146,7 @@ vpMeTracker::numberOfSignal()
   return number_signal;
 }
 
-int
+unsigned int
 vpMeTracker::totalNumberOfSignal()
 {
   return list.nbElement();
@@ -185,7 +185,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 
 
   // Must set range to 0
-  int range_tmp = me->range;
+  unsigned int range_tmp = me->range;
   me->range=init_range;
 
   nGoodElement=0;
@@ -384,7 +384,7 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
 
 
 void
-vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w,int &index_w)
+vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w, unsigned int &index_w)
 {
 
   list.front();

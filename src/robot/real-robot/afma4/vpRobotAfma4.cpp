@@ -254,7 +254,7 @@ vpRobotAfma4::init (void)
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Afma4(_joint_min, _joint_max) );
-//   for (int i=0; i < njoint; i++) {
+//   for (unsigned int i=0; i < njoint; i++) {
 //     printf("axis %d: joint min %lf, max %lf\n", i, _joint_min[i], _joint_max[i]);
 //   }
 
@@ -572,7 +572,7 @@ vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf)
   CatchPrint();
 
   vpColVector q(this->njoint);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try {
@@ -622,7 +622,7 @@ vpRobotAfma4::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(this->njoint);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try {
@@ -659,7 +659,7 @@ vpRobotAfma4::get_eJe(vpMatrix &eJe)
   CatchPrint();
 
   vpColVector q(6);
-  for (int i=0; i < njoint; i++)
+  for (unsigned int i=0; i < njoint; i++)
     q[i] = position[i];
 
   try {
@@ -1047,7 +1047,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME : {
     double _q[njoint];
     Try( PrimitiveACQ_POS_Afma4(_q) );
-    for (int i=0; i < this->njoint; i ++) {
+    for (unsigned int i=0; i < this->njoint; i ++) {
       position[i] = _q[i];
     }
 
@@ -1058,7 +1058,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
     Try( PrimitiveACQ_POS_Afma4(_q) );
 
     vpColVector q(this->njoint);
-    for (int i=0; i < this->njoint; i++)
+    for (unsigned int i=0; i < this->njoint; i++)
       q[i] = _q[i];
 
     // Compute fMc
@@ -1071,7 +1071,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
     vpRxyzVector rxyz;
     rxyz.buildFrom(fRc);
 
-    for (int i=0; i < 3; i++) {
+    for (unsigned int i=0; i < 3; i++) {
       position[i] = fMc[i][3]; // translation x,y,z
       position[i+3] = rxyz[i]; // Euler rotation x,y,z
     }
@@ -1218,7 +1218,7 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     vpColVector velocity( vel.getRows() );
     double max = getMaxRotationVelocity();
     // Determine if we need to saturate the rotation velocities
-    for (int i = 0 ; i < 2; ++ i) { // rx and ry of the camera
+    for (unsigned int i = 0 ; i < 2; ++ i) { // rx and ry of the camera
       if (fabs (vel[i]) > max) {
 	norm = true;
 	max = fabs (vel[i]);
@@ -1279,7 +1279,7 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
 		     "(axe nr.%d).", vel[0], 0);
     }
 
-    for (int i = 2 ; i < 4; ++ i) { // joint 2 and 3
+    for (unsigned int i = 2 ; i < 4; ++ i) { // joint 2 and 3
       if (fabs (vel[i]) > max) {
 	norm = true;
 	max = fabs (vel[i]);
@@ -1323,7 +1323,7 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     if (TryStt == VelStopOnJoint) {
       UInt32 axisInJoint[njoint];
       PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
-      for (int i=0; i < njoint; i ++) {
+      for (unsigned int i=0; i < njoint; i ++) {
 	if (axisInJoint[i])
 	  std::cout << "\nWarning: Velocity control stopped: axis "
 		    << i+1 << " on joint limit!" <<std::endl;
@@ -1421,7 +1421,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
 
   // Get the current joint position
   Try( PrimitiveACQ_POS_Afma4(q) );
-  for (int i=0; i < this->njoint; i ++) {
+  for (unsigned int i=0; i < this->njoint; i ++) {
     q_cur[i] = q[i];
   }
 
@@ -1785,7 +1785,7 @@ vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
 
   // Get the current joint position
   Try( PrimitiveACQ_POS_Afma4(q) );
-  for (int i=0; i < njoint; i ++) {
+  for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
 

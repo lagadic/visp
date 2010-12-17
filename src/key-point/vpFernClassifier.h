@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:$
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -259,20 +259,20 @@ public:
   virtual ~vpFernClassifier();
 
     /* build reference */
-  virtual int buildReference(const vpImage<unsigned char> &I);
-  virtual int buildReference(const vpImage<unsigned char> &I, 
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
 	        vpImagePoint &iP, 
-	        unsigned int height, unsigned int width);
-  virtual int buildReference(const vpImage<unsigned char> &I, 
-	        const vpRect rectangle);
+	        const unsigned int height, const unsigned int width);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
+	        const vpRect& rectangle);
     
     /* matrching */
-  virtual int matchPoint(const vpImage<unsigned char> &I);
-  virtual int matchPoint(const vpImage<unsigned char> &I, 
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
 	    vpImagePoint &iP, 
-	    unsigned int height, unsigned int width);
-  virtual int matchPoint(const vpImage<unsigned char> &I, 
-	    const vpRect rectangle);
+	    const unsigned int height, const unsigned int width);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
+	    const vpRect& rectangle);
 
     /* display */
   virtual void display(const vpImage<unsigned char> &Iref, 

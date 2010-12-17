@@ -52,10 +52,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpHinkley.h>
 #include <visp/vpDebug.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
 
 
 /* VP_DEBUG_MODE fixed by configure:
@@ -379,7 +382,10 @@ void vpHinkley::computeMean(double signal)
   // après un saut, la moyenne a tendance à "dériver". Pour réduire ces
   // dérives de la moyenne, elle n'est remise à jour avec la valeur
   // courante du signal que si un début de saut potentiel n'est pas détecté.
-  if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
+  //if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
+  if ( ( std::fabs(Mk-Sk) <= std::fabs(vpMath::maximum(Mk,Sk))*std::numeric_limits<double>::epsilon() ) 
+       && 
+       ( std::fabs(Tk-Nk) <= std::fabs(vpMath::maximum(Tk,Nk))*std::numeric_limits<double>::epsilon() ) )
   // Fin modif FS le 03/09/2003
 
   // Mise a jour de la moyenne.

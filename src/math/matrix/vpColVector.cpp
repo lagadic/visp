@@ -47,21 +47,18 @@
 */
 
 
-#include <visp/vpColVector.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #include <string.h> //EM gcc 4.3
 #include <math.h> //EM gcc 4.3
 
+#include <visp/vpColVector.h>
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+#include <visp/vpDebug.h>
 
 
   //! operator addition of two vectors
@@ -79,12 +76,9 @@ vpColVector::operator+(const vpColVector &m) const
     throw ;
   }
 
-
-
-
   double *vd = v.data ;   double *d = data ;  double *md = m.data ;
 
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
       *(vd++) = *(d++) + *(md++);
 
   return v;
@@ -96,9 +90,7 @@ vpColVector::operator*(const vpColVector &m) const
 {
   double v = 0 ;
 
-
-
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
       v += (*this)[i] * m[i];
   return v;
 }
@@ -124,19 +116,13 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
     throw ;
   }
 
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
       v[i] = (*this)[i] - m[i];
   return v;
 }
 
-vpColVector::vpColVector (vpColVector &m, int r, int nrows)
+vpColVector::vpColVector (vpColVector &m, unsigned int r, unsigned int nrows)
 {
-  if (r<0)
-  {
-    vpERROR_TRACE("\n\t\t Illegal subMatrix operation") ;
-    throw(vpMatrixException(vpMatrixException::subMatrixError,
-			    "\n\t\t Illegal subMatrix operation")) ;
-  }
   if ( (r+nrows) > m.getRows() )
   {
     vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
@@ -166,10 +152,9 @@ vpColVector vpColVector::operator-()
     throw ;
   }
 
-
   double *vd = A.data ;   double *d = data ;
 
-  for (int i=0; i<rowNum; i++)
+  for (unsigned int i=0; i<rowNum; i++)
     *(vd++)= - (*d++);
 
   return A;
@@ -188,11 +173,9 @@ vpColVector vpColVector::operator*(double x) const
     throw ;
   }
 
-
-
   double *vd = v.data ;   double *d = data ;
 
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
      *(vd++)=  (*d++) * x;
   return v;
 }
@@ -220,12 +203,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
     throw ;
   }
 
- //
-
-
-
   memcpy(data, m.data, rowNum*sizeof(double)) ;
-
 
   /*
     double *md = m.data ;   double *d = data ;
@@ -244,8 +222,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
  //! Copy operator.   Allow operation such as A = v
 vpColVector &vpColVector::operator=(const vpColVector &v)
 {
-
-  int k = v.rowNum ;
+  unsigned int k = v.rowNum ;
   if (rowNum != k){
     try {
       resize(k);
@@ -286,8 +263,8 @@ vpColVector & vpColVector::operator<<(const vpColVector &v)
     throw ;
   }
 
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<colNum; j++) {
       rowPtrs[i][j] = v.rowPtrs[i][j];
     }
   }
@@ -297,10 +274,8 @@ vpColVector & vpColVector::operator<<(const vpColVector &v)
 //! Assigment operator.   Allow operation such as A = *v
 vpColVector & vpColVector::operator<<( double *x )
 {
-
-
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<colNum; j++) {
       rowPtrs[i][j] = *x++;
     }
   }
@@ -310,10 +285,9 @@ vpColVector & vpColVector::operator<<( double *x )
 //! initialisation each element of the vector is x
 vpColVector & vpColVector::operator=(double x)
 {
-
   double *d = data ;
 
-  for (int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++)
     *(d++)=  x ;
   /*
   for (int i=0; i<rowNum; i++) {
@@ -372,7 +346,7 @@ vpColVector::vpColVector (const vpColVector &v) : vpMatrix(v)
 {
 }
 
-vpColVector::vpColVector (vpMatrix &m, int j) : vpMatrix(m, 0, j, m.getRows(), 1)
+vpColVector::vpColVector (vpMatrix &m, unsigned int j) : vpMatrix(m, 0, j, m.getRows(), 1)
 {
 }
 
@@ -397,7 +371,7 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
   double *ad = a.data ;   double *bd = b.data ;
 
   double c = 0 ;
-  for (int i=0 ; i < a.getRows() ; i++)
+  for (unsigned int i=0 ; i < a.getRows() ; i++)
     c += *(ad++)* *(bd++) ;
   //  vpMatrix c = (a.t() * b);
   //  return c[0][0];
@@ -433,7 +407,8 @@ vpColVector &vpColVector::normalize()
 
   double sum = sumSquare() ;
 
-  if (sum != 0.0)
+  //if (sum != 0.0)
+  if (std::fabs(sum) > std::numeric_limits<double>::epsilon())
     *this /= sqrt(sum) ;
 
   // If sum = 0, we have a nul vector. So we return just.
@@ -452,12 +427,12 @@ vpColVector::invSort(const vpColVector &v)
   }
   vpColVector tab ;
   tab = v ;
-  int nb_permutation = 1 ;
-  int i = 0 ;
+  unsigned int nb_permutation = 1 ;
+  unsigned int i = 0 ;
   while (nb_permutation !=0 )
   {
     nb_permutation = 0 ;
-    for (int j =v.getRows()-1 ; j >= i+1 ; j--)
+    for (unsigned int j = v.getRows()-1 ; j >= i+1 ; j--)
     {
       if ((tab[j]>tab[j-1]))
       {
@@ -476,19 +451,18 @@ vpColVector::invSort(const vpColVector &v)
 vpColVector
 vpColVector::sort(const vpColVector &v)
 {
- if (v.data==NULL)
-  {
+  if (v.data==NULL) {
     vpERROR_TRACE("vpColVector a non initialized") ;
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
- vpColVector tab ;
+  vpColVector tab ;
   tab = v ;
-  int nb_permutation = 1 ;
-  int i = 0 ;
+  unsigned int nb_permutation = 1 ;
+  unsigned int i = 0 ;
   while (nb_permutation !=0 )
   {
     nb_permutation = 0 ;
-    for (int j =v.getRows()-1 ; j >= i+1 ; j--)
+    for (unsigned int j = v.getRows()-1 ; j >= i+1 ; j--)
     {
       if ((tab[j]<tab[j-1]))
       {
@@ -516,7 +490,7 @@ double vpColVector::mean(const vpColVector &v)
   }
  double mean = 0 ;
   double *vd = v.data ;
-  for (int i=0 ; i < v.getRows() ; i++)
+  for (unsigned int i=0 ; i < v.getRows() ; i++)
     mean += *(vd++) ;
 
   /*
@@ -542,9 +516,9 @@ vpColVector::median(const vpColVector &v)
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
 
-  int i,j;
-  int inf, sup;
-  int n = v.getRows() ;
+  unsigned int i,j;
+  unsigned int inf, sup;
+  unsigned int n = v.getRows() ;
   vpColVector infsup(n) ;
 
   for (i=0;i<v.getRows();i++)
@@ -569,7 +543,7 @@ vpColVector::median(const vpColVector &v)
   }
 
   // seek for the smaller value of |inf-sup| (should be 0 or 1)
-  int imin=0 ; // index of the median in the array
+  unsigned int imin=0 ; // index of the median in the array
   // min cannot be greater than the number of element
   double  min = v.getRows();
   for (i=0;i<v.getRows();i++)
@@ -660,7 +634,7 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
   \param ncols : number of columns of the matrix
   \return a vpMatrix
 */
-vpMatrix vpColVector::reshape(const int &nrows,const int &ncols){
+vpMatrix vpColVector::reshape(const unsigned int &nrows,const unsigned int &ncols){
   vpMatrix m(nrows,ncols);
   reshape(m,nrows,ncols);
   return m;
@@ -672,7 +646,7 @@ vpMatrix vpColVector::reshape(const int &nrows,const int &ncols){
   \param nrows : number of rows of the matrix
   \param ncols : number of columns of the matrix
 */
-void vpColVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
+void vpColVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols){
   if(dsize!=nrows*ncols)
   {
     vpERROR_TRACE("\n\t\t vpColVector mismatch size for reshape vpSubColVector in a vpMatrix") ;
@@ -690,8 +664,8 @@ void vpColVector::reshape(vpMatrix & m,const int &nrows,const int &ncols){
     throw ;
   }
 
-  for(int j =0; j< ncols; j++)
-     for(int i =0; i< nrows; i++)
+  for(unsigned int j =0; j< ncols; j++)
+     for(unsigned int i =0; i< nrows; i++)
 	  m[i][j]=data[j*ncols+i];
 }
 

@@ -66,7 +66,7 @@ vpSubMatrix::vpSubMatrix(){
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-vpSubMatrix::vpSubMatrix(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols){
+vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols){
   init(m,row,col,nrows,ncols);
 }
 
@@ -78,7 +78,7 @@ vpSubMatrix::vpSubMatrix(vpMatrix &m, const int & row, const int &col , const in
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-void vpSubMatrix::init(vpMatrix &m, const int & row, const int &col , const int & nrows ,  const int & ncols){
+void vpSubMatrix::init(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols){
   
   if(! m.data){
     vpERROR_TRACE("\n\t\t SubMatrix parent matrix is not allocated") ;
@@ -98,7 +98,7 @@ void vpSubMatrix::init(vpMatrix &m, const int & row, const int &col , const int 
       free(rowPtrs);
     
     rowPtrs=(double**) malloc(nrows * sizeof(double*));
-    for(int r=0;r<nrows;r++)
+    for(unsigned int r=0;r<nrows;r++)
       rowPtrs[r]= m.data+col+(r+row)*pColNum;
     
     dsize = pRowNum*pColNum ;
@@ -139,8 +139,8 @@ vpSubMatrix & vpSubMatrix::operator=(const vpMatrix &B){
 			    "\n\t\t \n\t\t vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix")) ;
   }
   
-  for (int i=0;i<rowNum;i++)
-    for(int j=0;j<colNum;j++)
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = B[i][j];
     
     return *this;
@@ -162,8 +162,8 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
   
   double ** BrowPtrs=B.rowPtrs;
   
-  for (int i=0;i<rowNum;i++)
-    for(int j=0;j<colNum;j++)
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = BrowPtrs[i][j];
     
     return *this;
@@ -174,8 +174,8 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
   \param x : a scalar
 */
 vpSubMatrix & vpSubMatrix::operator=(const double &x){
-  for (int i=0;i<rowNum;i++)
-    for(int j=0;j<colNum;j++)
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = x;
     
     return *this;

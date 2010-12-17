@@ -90,7 +90,7 @@ vpAR::~vpAR()
 	\param type : Type of background image ie gray scaled or color.
 */
 void
-vpAR::initInternalViewer(int width, int height,  vpImageType type)
+vpAR::initInternalViewer(const unsigned int width, const unsigned int height,  vpImageType type)
 {
 
   vpSimulator::initInternalViewer(width,height) ;
@@ -127,8 +127,8 @@ void
 vpAR::setImage(vpImage<unsigned char> &I)
 {
 
-  if ((internal_width != (int)I.getWidth()) ||
-      (internal_height != (int)I.getHeight()))
+  if ((internal_width != I.getWidth()) ||
+      (internal_height != I.getHeight()))
 	{
 	  vpERROR_TRACE("The image size is different from the view size ");
 	  throw(vpException(vpException::dimensionError),"The image size is different from the view size") ;
@@ -157,8 +157,8 @@ void
 vpAR::setImage(vpImage<vpRGBa> &I)
 {
 
-  if ((internal_width != (int)I.getWidth()) ||
-      (internal_height != (int)I.getHeight()))
+  if ((internal_width != I.getWidth()) ||
+      (internal_height != I.getHeight()))
 	{
 	  vpERROR_TRACE("The image size is different from the view size ");
 	  throw(vpException(vpException::dimensionError),"The image size is different from the view size") ;

@@ -106,7 +106,7 @@ vpFeatureEllipse::vpFeatureEllipse() : vpBasicFeature()
 
 //! compute the interaction matrix from a subset a the possible features
 vpMatrix
-vpFeatureEllipse::interaction(const int select)
+vpFeatureEllipse::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -242,7 +242,7 @@ vpFeatureEllipse::interaction(const int select)
 //! a the possible features
 vpColVector
 vpFeatureEllipse::error(const vpBasicFeature &s_star,
-			const int select)
+			const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -305,7 +305,7 @@ vpFeatureEllipse::error(const vpBasicFeature &s_star,
 
 
 void
-vpFeatureEllipse::print(const int select ) const
+vpFeatureEllipse::print(const unsigned int select ) const
 {
 
   std::cout <<"Ellipse:  " << std::endl ;

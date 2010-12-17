@@ -317,9 +317,9 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I);
   }
   
-  unsigned int lastFrame = reader.getLastFrameIndex();
+  int lastFrame = reader.getLastFrameIndex();
 
-  for (unsigned int i = opt_first; i <= lastFrame; i++)
+  for (int i = opt_first; i <= lastFrame; i++)
   {
     reader.getFrame(I,i);
     if (opt_display)

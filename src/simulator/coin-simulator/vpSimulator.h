@@ -146,9 +146,9 @@ protected:
 
 public:
   //! initialize the camera view
-  virtual void initInternalViewer(int nlig, int ncol) ;
+  virtual void initInternalViewer(const unsigned int nlig, const unsigned int ncol) ;
   //! initialize the external view
-  void initExternalViewer(int nlig, int ncol) ;
+  void initExternalViewer(const unsigned int nlig, const unsigned int ncol) ;
 
 protected:
   //! thread with the main program
@@ -165,14 +165,24 @@ public:
   //----------------------------------------------------
   // scene description
 protected:
-  int internal_width;
-  int internal_height;
-  int external_width;
-  int external_height;
+  unsigned int internal_width;
+  unsigned int internal_height;
+  unsigned int external_width;
+  unsigned int external_height;
 
 public:
-  int getInternalWidth() { return internal_width; }
-  int getInternalHeight() { return internal_height; }
+  /*!
+    Return the width of the internal view. 
+    
+    \return The width of the internal view.
+  */
+  unsigned int getInternalWidth() const { return internal_width; }
+  /*!
+    Return the height of the internal view. 
+    
+    \return The height of the internal view.
+  */
+  unsigned int getInternalHeight() const { return internal_height; }
 
 protected:
   //! root node of the scene : contains everything except stuff specific to

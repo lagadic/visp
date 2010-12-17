@@ -53,8 +53,8 @@
 int
 main()
 {
-  int nsignal = 1; // Number of signal to filter
-  int niter = 100;
+  unsigned int nsignal = 1; // Number of signal to filter
+  unsigned int niter = 100;
 
   std::string filename = "/tmp/log.dat";
   std::ofstream flog(filename.c_str());
@@ -65,14 +65,14 @@ main()
   model = vpLinearKalmanFilterInstantiation::stateConstAccWithColoredNoise_MeasureVel;
   kalman.setStateModel(model);
 
-  int size_state_vector = kalman.getStateSize()*nsignal;
-  int size_measure_vector = kalman.getMeasureSize()*nsignal;
+  unsigned int size_state_vector = kalman.getStateSize()*nsignal;
+  unsigned int size_measure_vector = kalman.getMeasureSize()*nsignal;
 
   vpColVector sigma_measure(size_measure_vector);
-  for (int signal=0; signal < nsignal; signal ++) 
+  for (unsigned int signal=0; signal < nsignal; signal ++) 
     sigma_measure = 0.0001;
   vpColVector sigma_state(size_state_vector);
-  for (int signal=0; signal < nsignal; signal ++) { 
+  for (unsigned int signal=0; signal < nsignal; signal ++) { 
     sigma_state[3*signal] = 0.; // not used
     sigma_state[3*signal+1] = 0.000001;
     sigma_state[3*signal+2] = 0.000001;
@@ -83,16 +83,16 @@ main()
   double rho = 0.9; // correlation
   double dt = 0.2; // sampling period
 
-  for (int signal=0; signal < nsignal; signal ++) 
+  for (unsigned int signal=0; signal < nsignal; signal ++) 
     velocity_measure[signal] = 3+2*signal;
 
   kalman.verbose(false);
   kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dt);
 
 
-  for (int iter=0; iter <= niter; iter++) {
+  for (unsigned int iter=0; iter <= niter; iter++) {
     std::cout << "-------- iter " << iter << " ------------" << std::endl;
-    for (int signal=0; signal < nsignal; signal ++) {
+    for (unsigned int signal=0; signal < nsignal; signal ++) {
       velocity_measure[signal] = 3+2*signal 
 	+ 0.3*sin(vpMath::rad(360./niter*iter));
     }

@@ -141,17 +141,17 @@ int main()
       break;
     }
   }
-  void initFilter(int nsignal, vpColVector &sigma_state,
+  void initFilter(unsigned int nsignal, vpColVector &sigma_state,
 		  vpColVector &sigma_measure, double rho, double dt);
   //@}
 
   /*! @name Linear filter initializer with constant velocity models */
   //@{
-  void initStateConstVel_MeasurePos(int nsignal, 
+  void initStateConstVel_MeasurePos(unsigned int nsignal, 
 				    vpColVector &sigma_state,
 				    vpColVector &sigma_measure,
 				    double dt);
-  void initStateConstVelWithColoredNoise_MeasureVel(int nsignal, 
+  void initStateConstVelWithColoredNoise_MeasureVel(unsigned int nsignal, 
 						    vpColVector &sigma_state,
 						    vpColVector &sigma_measure, 
 						    double rho);
@@ -159,7 +159,7 @@ int main()
 
   /*! @name Linear filter initializer with constant acceleration models */
   //@{
-  void initStateConstAccWithColoredNoise_MeasureVel(int nsignal, 
+  void initStateConstAccWithColoredNoise_MeasureVel(unsigned int nsignal, 
 						    vpColVector &sigma_state,
 						    vpColVector &sigma_measure, 
 						    double rho,

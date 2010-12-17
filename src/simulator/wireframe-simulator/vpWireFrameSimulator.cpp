@@ -95,12 +95,12 @@ getExtension(const char* file)
 {
   std::string sfilename(file);
 
-  int bnd = sfilename.find("bnd");
-  int BND = sfilename.find("BND");
-  int wrl = sfilename.find("wrl");
-  int WRL = sfilename.find("WRL");
+  size_t bnd = sfilename.find("bnd");
+  size_t BND = sfilename.find("BND");
+  size_t wrl = sfilename.find("wrl");
+  size_t WRL = sfilename.find("WRL");
   
-  int size = sfilename.size();
+  size_t size = sfilename.size();
 
   if ((bnd>0 && bnd<size ) || (BND>0 && BND<size))
     return BND_MODEL;
@@ -138,7 +138,8 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   malloc_Bound_scene (sc, str,(Index)BOUND_NBR);
   parser (sc);
   
-  if (factor != 1)
+  //if (factor != 1)
+  if (std::fabs(factor) > std::numeric_limits<double>::epsilon())
   {
     for (int i = 0; i < sc->bound.nbr; i++)
     {
@@ -250,7 +251,8 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
     }
   }
   
-  if (factor != 1)
+  //if (factor != 1)
+  if (std::fabs(factor) > std::numeric_limits<double>::epsilon())
   {
     for (int i = 0; i < sc->bound.nbr; i++)
     {
@@ -300,21 +302,21 @@ void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
 {
   int nbPt = 0;
   ifs_list.front();
-  for (int i = 0; i < ifs_list.nbElements(); i++)
+  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
   {
     indexFaceSet* ifs = ifs_list.value();
     nbPt += ifs->nbPt;
     ifs_list.next();
   }
   bptr->point.nbr = nbPt;
-  bptr->point.ptr = (Point3f *) malloc (nbPt * sizeof (Point3f));
+  bptr->point.ptr = (Point3f *) malloc ((unsigned int)nbPt * sizeof (Point3f));
   
   ifs_list.front();
-  int iter = 0;
-  for (int i = 0; i < ifs_list.nbElements(); i++)
+  unsigned int iter = 0;
+  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
   {
     indexFaceSet* ifs = ifs_list.value();
-    for (int j = 0; j < ifs->nbPt; j++)
+    for (unsigned int j = 0; j < (unsigned int)ifs->nbPt; j++)
     {
       bptr->point.ptr[iter].x = (float)ifs->pt[j].get_oX();
       bptr->point.ptr[iter].y = (float)ifs->pt[j].get_oY();
@@ -324,14 +326,14 @@ void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
     ifs_list.next();
   }
   
-  int nbFace = 0;
+  unsigned int nbFace = 0;
   ifs_list.front();
   vpList<int> indSize;
   int indice = 0;
-  for (int i = 0; i < ifs_list.nbElements(); i++)
+  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
   {
     indexFaceSet* ifs = ifs_list.value();
-    for (int j = 0; j < ifs->nbIndex; j++)
+    for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++)
     {
       if(ifs->index[j] == -1) 
       {
@@ -349,21 +351,21 @@ void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
   
   
   indSize.front();
-  for (int i = 0; i < indSize.nbElements(); i++)
+  for (unsigned int i = 0; i < indSize.nbElements(); i++)
   {
     bptr->face.ptr[i].vertex.nbr = indSize.value();
-    bptr->face.ptr[i].vertex.ptr = (Index *) malloc (indSize.value() * sizeof (Index));
+    bptr->face.ptr[i].vertex.ptr = (Index *) malloc ((unsigned int)indSize.value() * sizeof (Index));
     indSize.next();
   }
   
   int offset = 0;
   ifs_list.front();
   indice = 0;
-  for (int i = 0; i < ifs_list.nbElements(); i++)
+  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
   {
     indexFaceSet* ifs = ifs_list.value();
     iter = 0;
-    for (int j = 0; j < ifs->nbIndex; j++)
+    for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++)
     {
       if(ifs->index[j] != -1)
       {
@@ -403,9 +405,9 @@ void set_scene_wrl (const char* /*str*/, Bound_scene* /*sc*/, float /*factor*/)
 */
 void vp2jlc_matrix (const vpHomogeneousMatrix vpM, Matrix &jlcM)
 {
-  for (int i = 0; i < 4; i++)
-  {
-    for (int j = 0; j < 4; j++) jlcM[j][i] = (float)vpM[i][j];
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) 
+      jlcM[j][i] = (float)vpM[i][j];
   }
 }
 
@@ -917,7 +919,10 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
 
   double u;
   double v;
-  if(px_int != 1 && py_int != 1)
+  //if(px_int != 1 && py_int != 1)
+  // we assume px_int and py_int > 0
+  if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_int);
     v = (double)I.getHeight()/(2*py_int);
@@ -991,7 +996,8 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I,changed);
 
-  if (displacement[2][3] != 0 /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
+  //if (displacement[2][3] != 0 /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
+  if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon() /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
       camMf2 = camMf2*displacement;
 
   f2Mf = camMf2.inverse()*camMf;
@@ -1000,7 +1006,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
 
   double u;
   double v;
-  if(px_ext != 1 && py_ext != 1)
+  //if(px_ext != 1 && py_ext != 1)
+  // we assume px_ext and py_ext > 0
+  if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_ext);
     v = (double)I.getHeight()/(2*py_ext);
@@ -1141,7 +1150,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix c
 
   double u;
   double v;
-  if(px_ext != 1 && py_ext != 1)
+  //if(px_ext != 1 && py_ext != 1)
+  // we assume px_ext and py_ext > 0
+  if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_ext);
     v = (double)I.getHeight()/(2*py_ext);
@@ -1202,7 +1214,10 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
 
   double u;
   double v;
-  if(px_int != 1 && py_int != 1)
+  //if(px_int != 1 && py_int != 1)
+  // we assume px_int and py_int > 0
+  if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_int);
     v = (double)I.getHeight()/(2*py_int);
@@ -1276,7 +1291,8 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I,changed);
 
-  if (displacement[2][3] != 0 /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
+  //if (displacement[2][3] != 0 /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
+  if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon() /*|| rotation[0][3] != 0 || rotation[1][3] != 0*/)
       camMf2 = camMf2*displacement;
 
   f2Mf = camMf2.inverse()*camMf;
@@ -1285,7 +1301,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
 
   double u;
   double v;
-  if(px_ext != 1 && py_ext != 1)
+  //if(px_ext != 1 && py_ext != 1)
+  // we assume px_ext and py_ext > 0
+  if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_ext);
     v = (double)I.getHeight()/(2*py_ext);
@@ -1427,7 +1446,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
   
   double u;
   double v;
-  if(px_ext != 1 && py_ext != 1)
+  //if(px_ext != 1 && py_ext != 1)
+  // we assume px_ext and py_ext > 0
+  if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+      && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
     u = (double)I.getWidth()/(2*px_ext);
     v = (double)I.getHeight()/(2*py_ext);

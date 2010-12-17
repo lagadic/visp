@@ -58,12 +58,12 @@ typedef enum {
 int
 main()
 {
-  int nsignal = 2; // Number of signal to filter
-  int niter = 200;
-  int size_state_vector = 2*nsignal;
-  int size_measure_vector = 1*nsignal;
+  unsigned int nsignal = 2; // Number of signal to filter
+  unsigned int niter = 200;
+  unsigned int size_state_vector = 2*nsignal;
+  unsigned int size_measure_vector = 1*nsignal;
   //vpMeasureType measure_t = Velocity;
-    vpMeasureType measure_t = Position;
+  vpMeasureType measure_t = Position;
 
   std::string filename = "/tmp/log.dat";
   std::ofstream flog(filename.c_str());
@@ -71,19 +71,19 @@ main()
   vpLinearKalmanFilterInstantiation kalman;
 
   vpColVector sigma_measure(size_measure_vector);
-  for (int signal=0; signal < nsignal; signal ++) 
+  for (unsigned int signal=0; signal < nsignal; signal ++) 
     sigma_measure = 0.000001;
   vpColVector sigma_state(size_state_vector);
 
   switch (measure_t) {
   case Velocity:
-    for (int signal=0; signal < nsignal; signal ++) {
+    for (unsigned int signal=0; signal < nsignal; signal ++) {
       sigma_state[2*signal] = 0.; // not used
       sigma_state[2*signal+1] = 0.000001;
     }
     break;
   case Position:
-    for (int signal=0; signal < nsignal; signal ++) {
+    for (unsigned int signal=0; signal < nsignal; signal ++) {
       sigma_state[2*signal] = 0.000001; 
       sigma_state[2*signal+1] = 0; // not used
     }
@@ -92,7 +92,7 @@ main()
   
   vpColVector measure(size_measure_vector);
 
-  for (int signal=0; signal < nsignal; signal ++) {
+  for (unsigned int signal=0; signal < nsignal; signal ++) {
     measure[signal] = 3+2*signal;
   }
 
@@ -115,9 +115,9 @@ main()
     break;
   }
 
-  for (int iter=0; iter <= niter; iter++) {
+  for (unsigned int iter=0; iter <= niter; iter++) {
     std::cout << "-------- iter " << iter << " ------------" << std::endl;
-    for (int signal=0; signal < nsignal; signal ++) {
+    for (unsigned int signal=0; signal < nsignal; signal ++) {
       measure[signal] = 3+2*signal + 0.3*sin(vpMath::rad(360./niter*iter));
     }
     std::cout << "measure : " << measure.t() << std::endl;

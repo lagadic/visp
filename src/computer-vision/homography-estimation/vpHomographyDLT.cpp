@@ -46,18 +46,21 @@
   This file implements the fonctions related with the homography
   estimation using the DLT algorithm
 */
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpHomography.h>
 
 
 
 void
-vpHomography::HartleyNormalization(int n,
+vpHomography::HartleyNormalization(unsigned int n,
 				   double *x, double *y,
 				   double *xn, double *yn,
 				   double &xg, double &yg,
 				   double &coef)
 {
-  int i;
+  unsigned int i;
   xg = 0 ;
   yg = 0 ;
 
@@ -84,7 +87,8 @@ vpHomography::HartleyNormalization(int n,
   //Changement d'échelle
   distance/=n;
   //calcul du coef de changement d'échelle
-  if(distance ==0)
+  //if(distance ==0)
+  if(std::fabs(distance) <= std::numeric_limits<double>::epsilon())
     coef=1;
   else
     coef=sqrt(2.0)/distance;
@@ -130,8 +134,8 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
 
   vpMatrix maHb=T2T*(vpMatrix)aHbn*T1;
 
-  for (int i=0 ; i < 3 ; i++)
-    for (int j=0 ; j < 3 ; j++) aHb[i][j] = maHb[i][j] ;
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3 ; j++) aHb[i][j] = maHb[i][j] ;
 
 }
 
@@ -148,7 +152,7 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
   \sa DLT()
 */
 void
-vpHomography::HartleyDLT(int n,
+vpHomography::HartleyDLT(unsigned int n,
 			 double *xb, double *yb,
 			 double *xa, double *ya ,
 			 vpHomography &aHb)
@@ -256,7 +260,7 @@ vpHomography::HartleyDLT(int n,
   </b>
 
 */
-void vpHomography::DLT(int n,
+void vpHomography::DLT(unsigned int n,
 		       double *xb, double *yb,
 		       double *xa, double *ya ,
 		       vpHomography &aHb)
@@ -274,7 +278,7 @@ void vpHomography::DLT(int n,
     vpColVector h(9);
     vpColVector D(9);
     vpMatrix V(9,9);
-    int i, j;
+    unsigned int i, j;
     
     // We need here to compute the SVD on a (n*2)*9 matrix (where n is
     // the number of points). if n == 4, the matrix has more columns
@@ -334,7 +338,7 @@ void vpHomography::DLT(int n,
     // since  we are not sure that the svd implemented sort the
     // singular value... we seek for the smallest
     double smallestSv = 1e30 ;
-    int indexSmallestSv  = 0 ;
+    unsigned int indexSmallestSv  = 0 ;
     for (i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 

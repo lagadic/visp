@@ -67,10 +67,10 @@ extern "C" {
 
   \ingroup Afma6 RobotDriver
 
-  \brief Control of Irisa's gentry robot named Afma6.
+  \brief Control of Irisa's gantry robot named Afma6.
 
   Implementation of the vpRobot class in order to control Irisa's
-  Afma6 robot.  This robot is a gentry robot with six degrees of
+  Afma6 robot.  This robot is a gantry robot with six degrees of
   freedom manufactured in 1992 by the french Afma-Robots company. In
   2008, the low level controller change for a more recent Adept
   technology based on the MotionBlox controller. A firewire camera is
@@ -82,7 +82,7 @@ extern "C" {
   end-effector. The pneumatic control of this gripper is possible
   throw the openGripper() or closeGripper() member functions.
 
-  This class allows to control the Afma6 gentry robot in position
+  This class allows to control the Afma6 gantry robot in position
   and velocity:
   - in the joint space (vpRobot::ARTICULAR_FRAME), 
   - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 

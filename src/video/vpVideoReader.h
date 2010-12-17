@@ -152,11 +152,11 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     //!Indicates if the video is "open".
     bool isOpen;
     //!Count the frame number when the class is used as a grabber.
-    unsigned int frameCount;
+    long frameCount;
     //!The first frame index
-    unsigned int firstFrame;
+    long firstFrame;
     //!The last frame index
-    unsigned int lastFrame;
+    long lastFrame;
 
   public:
     vpVideoReader();
@@ -168,7 +168,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       
       \param firstFrame : The first frame index.
     */
-    inline void setFirstFrameIndex(const unsigned int firstFrame) {this->firstFrame = firstFrame;}
+    inline void setFirstFrameIndex(const long firstFrame) {this->firstFrame = firstFrame;}
     
     /*!
       Reset the frame counter and sets it to the first image index.
@@ -184,15 +184,15 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       
       \return Returns the last frame index.
     */
-    inline unsigned int getLastFrameIndex() const {return lastFrame;}
+    inline long getLastFrameIndex() const {return lastFrame;}
     
     void setFileName(const char *filename);
     void open (vpImage< vpRGBa > &I);
     void open (vpImage< unsigned char > &I);
     void acquire(vpImage< vpRGBa > &I);
     void acquire(vpImage< unsigned char > &I);
-    bool getFrame(vpImage<vpRGBa> &I, unsigned int frame);
-    bool getFrame(vpImage<unsigned char> &I, unsigned int frame);
+    bool getFrame(vpImage<vpRGBa> &I, long frame);
+    bool getFrame(vpImage<unsigned char> &I, long frame);
     void close(){;}
     
     /*!
@@ -202,7 +202,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       
       \return Returns the current frame index.
     */
-    inline unsigned int getFrameIndex() const { return frameCount;}
+    inline long getFrameIndex() const { return frameCount;}
     
     
   private:

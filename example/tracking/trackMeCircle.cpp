@@ -301,7 +301,7 @@ main(int argc, const char ** argv)
   }
   else {
     // Create a list of points to automate the test
-    int n=5 ;
+    unsigned int n=5 ;
     vpImagePoint *ip = new vpImagePoint [n];
     ip[0].set_i( 39 ); ip[0].set_j( 136 );
     ip[1].set_i( 42 ); ip[1].set_j( 83 );

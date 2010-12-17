@@ -248,23 +248,23 @@ main(int argc, const char ** argv)
   std::cout << "The associated weights are :" <<std::endl;
   (Nurbs.get_controlPoints()).display();
 
-  int i = Nurbs.findSpan(5/2.0);
+  unsigned int i = Nurbs.findSpan(5/2.0);
   std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
  
   vpBasisFunction *N = NULL;
   N = Nurbs.computeBasisFuns(5/2.0);
   std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl; 
-  for (int j = 0; j < Nurbs.get_p()+1; j++)
+  for (unsigned int j = 0; j < Nurbs.get_p()+1; j++)
     std::cout << N[j].value << std::endl;
   
   vpBasisFunction **N2 = NULL;
   N2 = Nurbs.computeDersBasisFuns(5/2.0, 2);
   std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
-  for (int j = 0; j < Nurbs.get_p()+1; j++)
+  for (unsigned int j = 0; j < Nurbs.get_p()+1; j++)
     std::cout << N2[1][j].value << std::endl; 
   
   std::cout << "The second derivatives of the basis functions N''(u=5/2) are :" << std::endl;
-  for (int j = 0; j < Nurbs.get_p()+1; j++)
+  for (unsigned int j = 0; j < Nurbs.get_p()+1; j++)
     std::cout << N2[2][j].value << std::endl; 
   
   if (opt_display && opt_click_allowed)
@@ -278,7 +278,7 @@ main(int argc, const char ** argv)
       u+=0.01;
     }
     controlPoints.front();
-    for (int j = 0; j < controlPoints.nbElements(); j++)
+    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
     {
       pt = controlPoints.value();
       vpDisplay::displayCross(I,pt,4,vpColor::green);
@@ -315,7 +315,7 @@ main(int argc, const char ** argv)
       u+=0.01;
     }
     controlPoints.front();
-    for (int j = 0; j < controlPoints.nbElements(); j++)
+    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
     {
       pt = controlPoints.value();
       vpDisplay::displayCross(I2,pt,4,vpColor::green);
@@ -353,7 +353,7 @@ main(int argc, const char ** argv)
       u+=0.01;
     }
     controlPoints.front();
-    for (int j = 0; j < controlPoints.nbElements(); j++)
+    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
     {
       pt = controlPoints.value();
       vpDisplay::displayCross(I3,pt,4,vpColor::green);

@@ -65,8 +65,10 @@
 class VISP_EXPORT vpMbtPolygon
 {
   public:
+    //! Index of the polygon. Cannot be unsigned int because deafult value is -1.
     int index;
-    int nbpt;
+    //! Number of points used to define the polygon.
+    unsigned int nbpt;
     bool isvisible;
     bool isappearing;
     
@@ -78,10 +80,10 @@ class VISP_EXPORT vpMbtPolygon
     vpPoint *p ;
     vpMbtPolygon() ;
     ~vpMbtPolygon() ;
-    void setIndex( int i ) { index = i ; } 
-    void setNbPoint(int nb)  ;
-    int getNbPoint() const {return nbpt ;  }
-    void addPoint(unsigned int n, const vpPoint &P) ; 
+    void setIndex(const int i ) { index = i ; } 
+    void setNbPoint(const unsigned int nb)  ;
+    unsigned int getNbPoint() const {return nbpt ;  }
+    void addPoint(const unsigned int n, const vpPoint &P) ; 
 
     int getIndex() const {return index ;}
     void changeFrame(const vpHomogeneousMatrix &cMo) ;
@@ -109,9 +111,9 @@ class VISP_EXPORT vpMbtHiddenFaces
     vpMbtHiddenFaces() ;
     ~vpMbtHiddenFaces() ;
     void addPolygon(vpMbtPolygon *p)  ;
-    int setVisible(const vpHomogeneousMatrix &cMo) ;
-    bool isVisible(int index) ;
-    bool isAppearing(int index);
+    unsigned int setVisible(const vpHomogeneousMatrix &cMo) ;
+    bool isVisible(const int index) ;
+    bool isAppearing(const int index);
     void reset();
     
     vpList<vpMbtPolygon *>& getPolygon() { return Lpol;}

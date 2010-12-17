@@ -81,7 +81,7 @@ int naiveNearestNeighbor( const float *vec, int laplacian,
 			  const CvSeq *model_keypoints,
 			  const CvSeq *model_descriptors )
 {
-  int length = (int)(model_descriptors->elem_size/sizeof(float));
+  int length = (int)(model_descriptors->elem_size/(int)sizeof(float));
   int i, neighbor = -1;
   double d, dist1 = 1e6, dist2 = 1e6;
   CvSeqReader reader, kreader;
@@ -117,7 +117,7 @@ int naiveNearestNeighbor( const float *vec,
 			  const CvSeq *ref_keypoints,
 			  const CvSeq *ref_descriptors )
 {
-  int length = (int)(ref_descriptors->elem_size/sizeof(float));
+  int length = (int)(ref_descriptors->elem_size/(int)sizeof(float));
   int i, neighbor = -1;
   double d, dist1 = 1e6, dist2 = 1e6;
   CvSeqReader reader, kreader;
@@ -230,19 +230,21 @@ vpKeyPointSurf::~vpKeyPointSurf()
 
   \return the number of reference points.
 */
-int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
+unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 {
   IplImage* model = NULL;
 
   vpImageConvert::convert(I,model);
 
   cvExtractSURF( model, 0, &ref_keypoints, &ref_descriptors, storage, params );
+  
+  const unsigned int nbPoints = (unsigned int)ref_keypoints->total;
 
-  referenceImagePointsList.resize(ref_keypoints->total);
+  referenceImagePointsList.resize(nbPoints);
 
-  for(int i = 0; i < ref_keypoints->total; i++ )
+  for(unsigned int i = 0; i < nbPoints; i++ )
   {
-    CvSURFPoint* r1 = (CvSURFPoint*)cvGetSeqElem(ref_keypoints, i);
+    CvSURFPoint* r1 = (CvSURFPoint*)cvGetSeqElem(ref_keypoints, (int)i);
 
     referenceImagePointsList[i].set_i(r1->pt.y);
     referenceImagePointsList[i].set_j(r1->pt.x);
@@ -250,7 +252,7 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   cvReleaseImage(&model);
 
-  return ref_keypoints->total;
+  return nbPoints;
 }
 
 
@@ -271,9 +273,9 @@ int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   \return the number of reference points.
 */
-int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
+unsigned int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
 				    vpImagePoint &iP,
-				    unsigned int height, unsigned int width)
+				    const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
      || (iP.get_j()+width) >= I.getWidth())
@@ -290,9 +292,9 @@ int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
 			       (unsigned int)iP.get_j(),
 			       height, width, subImage);
 
-  int nbRefPoint = this->buildReference(subImage);
+  unsigned int nbRefPoint = this->buildReference(subImage);
 
-  for(int k = 0; k < nbRefPoint; k++)
+  for(unsigned int k = 0; k < nbRefPoint; k++)
   {
     (referenceImagePointsList[k]).set_i((referenceImagePointsList[k]).get_i()
 					+ iP.get_i());
@@ -316,8 +318,8 @@ int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
 
   \return the number of reference points.
 */
-int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
-				    const vpRect rectangle)
+unsigned int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
+				    const vpRect& rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());
@@ -338,7 +340,7 @@ int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 {
   IplImage* currentImage = NULL;
 
@@ -412,7 +414,7 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
       currentImagePointsList[i].set_i(r1->pt.y);
       currentImagePointsList[i].set_j(r1->pt.x);
 
-      matchedReferencePoints[i] = indexReferencePair.value();
+      matchedReferencePoints[i] = (unsigned int)indexReferencePair.value();
 
 //      matchedPointsCurrentImageList.addRight(currentImagePointsList+i);
 
@@ -442,9 +444,9 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 			       vpImagePoint &iP,
-			       unsigned int height, unsigned int width)
+			       const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
      || (iP.get_j()+width) >= I.getWidth())
@@ -461,9 +463,9 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 			       (unsigned int)iP.get_j(),
 			       height, width, subImage);
 
-  int nbMatchedPoint = this->matchPoint(subImage);
+  unsigned int nbMatchedPoint = this->matchPoint(subImage);
 
-  for(int k = 0; k < nbMatchedPoint; k++)
+  for(unsigned int k = 0; k < nbMatchedPoint; k++)
   {
     (currentImagePointsList[k]).set_i((currentImagePointsList[k]).get_i()
 				      + iP.get_i());
@@ -489,8 +491,8 @@ int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 
   \return the number of point which have been matched.
 */
-int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
-			       const vpRect rectangle)
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
+			       const vpRect& rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());

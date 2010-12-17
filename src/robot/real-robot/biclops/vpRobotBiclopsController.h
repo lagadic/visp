@@ -97,9 +97,9 @@ public:
   // SHM
   typedef struct /* ControllerShm_struct */ {
     vpControllerStatusType status[2];
-    float q_dot[2];    /*!< Desired speed. */
-    float actual_q[2]; /*!< Current measured position of each axes. */
-    float actual_q_dot[2]; /*!< Current measured velocity of each axes. */
+    double q_dot[2];    /*!< Desired speed. */
+    double actual_q[2]; /*!< Current measured position of each axes. */
+    double actual_q_dot[2]; /*!< Current measured velocity of each axes. */
     bool  jointLimit[2]; /*!< Indicates if an axe is in joint limit. */
   } shmType;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

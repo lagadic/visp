@@ -75,10 +75,10 @@ class VISP_EXPORT vpUniRand
 {
 
 
-	unsigned long    a  ;
-	unsigned long    m ; //2^31-1
-	unsigned long    q ; //integer part of m/a
-	unsigned long    r ;//r=m mod a
+	/*unsigned*/ long    a  ;
+	/*unsigned*/ long    m ; //2^31-1
+	/*unsigned*/ long    q ; //integer part of m/a
+	/*unsigned*/ long    r ;//r=m mod a
 	double    normalizer ; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
 
 
@@ -90,7 +90,7 @@ protected:
 	void init()
 	{
 		a = 16807 ;
-		m = (unsigned long)2147483647 ; //2^31-1
+		m = /*(unsigned long)*/2147483647 ; //2^31-1
 		q = 127773 ; //integer part of m/a
 		r = 2836 ;//r=m mod a
 		//we use a normalizer > m to ensure ans will never be

@@ -44,6 +44,9 @@
   \file vpPoseRansac.cpp
   \brief function used to estimate a pose using the Ransac algorithm
 */
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpColVector.h>
 #include <visp/vpPose.h>
@@ -66,15 +69,15 @@ xnm, ynm, Xnm, Ynm, Znm
 leading to 5*n*m
 */
 bool
-vpPose::degenerateConfiguration(vpColVector &x,int *ind)
+vpPose::degenerateConfiguration(vpColVector &x, unsigned int *ind)
 {
 
   //  vpTRACE("%p %p %d",&x, ind, x.getRows()) ;
   for (int i=1 ; i < 4 ; i++)
     for (int j=0 ; j<i ; j++)
     {
-      int indi =  5*ind[i] ;
-      int indj =  5*ind[j] ;
+      unsigned int indi =  5*ind[i] ;
+      unsigned int indj =  5*ind[j] ;
 
       if ((fabs(x[indi] - x[indj]) < 1e-6) &&
 	  (fabs(x[indi+1] - x[indj+1]) < 1e-6))
@@ -92,9 +95,9 @@ vpPose::degenerateConfiguration(vpColVector &x,int *ind)
   We chose the Dementhon algorithm to compute the pose
 */
 void
-vpPose::computeTransformation(vpColVector &x,int *ind, vpColVector &M)
+vpPose::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
-  int i ;
+  unsigned int i ;
 
   vpPoint p[4] ;
 
@@ -103,7 +106,7 @@ vpPose::computeTransformation(vpColVector &x,int *ind, vpColVector &M)
   for(i=0 ; i < 4 ; i++)
   {
 
-    int index = 5*ind[i] ;
+    unsigned int index = 5*ind[i] ;
 
     p[i].set_x(x[index]) ;
     p[i].set_y(x[index+1]) ;
@@ -143,8 +146,8 @@ double
 vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 {
 
-  int i ;
-  int n = x.getRows()/5 ;
+  unsigned int i ;
+  unsigned int n = x.getRows()/5 ;
 
   vpPoint *p;
   p = new vpPoint [n] ;
@@ -180,17 +183,17 @@ vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 
 
 void
-vpPose::initRansac(const int n,
+vpPose::initRansac(const unsigned int n,
 		   const double *x, const double *y,
-		   const int m,
+		   const unsigned int m,
 		   const double *X, const double *Y, const double *Z,
 		   vpColVector &data)
 {
   data.resize(5*n*m) ;
-  int k =0 ;
-  for (int i=0 ; i < n ; i++)
+  unsigned int k =0 ;
+  for (unsigned int i=0 ; i < n ; i++)
   {
-    for (int j=0 ; j < m ; j++)
+    for (unsigned int j=0 ; j < m ; j++)
     {
       data[k] = x[i] ;
       data[k+1] = y[i] ;
@@ -216,13 +219,13 @@ vpPose::initRansac(const int n,
   the pose is return in cMo
  */
 void
-vpPose::ransac(const int n,
+vpPose::ransac(const unsigned int n,
 	       const double *x, const double *y,
-	       const int m,
+	       const unsigned int m,
 	       const double *X, const double *Y, const double *Z,
 	       const int  numberOfInlierToReachAConsensus,
 	       const double threshold,
-	       int &ninliers,
+	       unsigned int &ninliers,
 	       vpColVector &xi,  vpColVector &yi,
 	       vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
 	       vpHomogeneousMatrix &cMo)
@@ -231,7 +234,7 @@ vpPose::ransac(const int n,
 
   double tms = vpTime::measureTimeMs() ;
   vpColVector data ;
-  int i;
+  unsigned int i;
   vpPose::initRansac(n,x,y,m,X,Y,Z, data) ;
 
   vpColVector M(16) ;
@@ -245,7 +248,8 @@ vpPose::ransac(const int n,
   ninliers = 0 ;
   for(i=0 ; i < n*m ; i++)
   {
-    if (inliers[i]==1)
+    //if (inliers[i]==1)
+    if (std::fabs(inliers[i]-1) <= std::fabs(vpMath::maximum(inliers[i], 1.)) * std::numeric_limits<double>::epsilon())
     {
       ninliers++ ;
     }
@@ -257,10 +261,11 @@ vpPose::ransac(const int n,
   Yi.resize(ninliers) ;
   Zi.resize(ninliers) ;
 
-  int k =0 ;
+  unsigned int k =0 ;
   for(i=0 ; i < n*m ; i++)
   {
-    if (inliers[i]==1)
+    //if (inliers[i]==1)
+    if (std::fabs(inliers[i]-1) <= std::fabs(vpMath::maximum(inliers[i], 1.)) * std::numeric_limits<double>::epsilon())
     {
       xi[k] = data[5*i] ;
       yi[k] = data[5*i+1] ;
@@ -293,13 +298,13 @@ vpPose::ransac(const int n,
   the pose is return in cMo
  */
 void
-vpPose::ransac(const int n,
+vpPose::ransac(const unsigned int n,
 	       const vpPoint *p,
-	       const int m,
+	       const unsigned int m,
 	       const vpPoint *P,
 	       const int   numberOfInlierToReachAConsensus,
 	       const double threshold,
-	       int &ninliers,
+	       unsigned int &ninliers,
 	       vpList<vpPoint> &lPi,
 	       vpHomogeneousMatrix &cMo)
 {
@@ -308,8 +313,7 @@ vpPose::ransac(const int n,
   double *x, *y;
   x = new double [n];
   y = new double [n] ;
-  int i;
-  for (i=0 ; i < n ; i++)
+  for (unsigned int i=0 ; i < n ; i++)
   {
     x[i] = p[i].get_x() ;
     y[i] = p[i].get_y() ;
@@ -318,7 +322,7 @@ vpPose::ransac(const int n,
   X = new double [m];
   Y = new double [m];
   Z = new double [m];
-  for (i=0 ; i < m ; i++)
+  for (unsigned int i=0 ; i < m ; i++)
   {
     X[i] = P[i].get_oX() ;
     Y[i] = P[i].get_oY() ;
@@ -335,7 +339,7 @@ vpPose::ransac(const int n,
 	 cMo) ;
 
 
-  for(i=0 ; i < ninliers ; i++)
+  for(unsigned int i=0 ; i < ninliers ; i++)
   {
     vpPoint Pi ;
     Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
@@ -370,12 +374,12 @@ vpPose::ransac(vpList<vpPoint> &lp,
 	       vpList<vpPoint> &lP,
 	       const int numberOfInlierToReachAConsensus,
 	       const double threshold,
-	       int &ninliers,
+	       unsigned int &ninliers,
 	       vpList<vpPoint> &lPi,
 	       vpHomogeneousMatrix &cMo)
 {
-  int n = lp.nbElement() ;
-  int m = lP.nbElement() ;
+  unsigned int n = lp.nbElement() ;
+  unsigned int m = lP.nbElement() ;
 
   double *x, *y;
   x = new double [n];
@@ -384,7 +388,7 @@ vpPose::ransac(vpList<vpPoint> &lp,
   vpPoint pin ;
 
   lp.front() ;
-  int i = 0 ;
+  unsigned int i = 0 ;
   while(!lp.outside())
   {
     pin = lp.value() ; lp.next() ;

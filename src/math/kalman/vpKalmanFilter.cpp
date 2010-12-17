@@ -61,7 +61,8 @@
   \param nsignal : Number of signal to filter.
 */
 void
-vpKalmanFilter::init(int size_state, int size_measure, int nsignal)
+vpKalmanFilter::init(unsigned int size_state, unsigned int size_measure, 
+		     unsigned int nsignal)
 {
   this->size_state = size_state;
   this->size_measure = size_measure ;
@@ -107,7 +108,7 @@ vpKalmanFilter::vpKalmanFilter()
   
   \param nsignal : Number of signal to filter.
 */
-vpKalmanFilter::vpKalmanFilter(int nsignal)
+vpKalmanFilter::vpKalmanFilter(unsigned int nsignal)
 {
   verbose(false);
   // init_done = false;
@@ -130,7 +131,7 @@ vpKalmanFilter::vpKalmanFilter(int nsignal)
 
   \param nsignal : Number of signal to filter.
 */
-vpKalmanFilter::vpKalmanFilter(int size_state, int size_measure, int nsignal)
+vpKalmanFilter::vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int nsignal)
 {
   verbose(false);
   init( size_state, size_measure, nsignal) ;

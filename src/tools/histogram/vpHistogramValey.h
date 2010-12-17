@@ -128,7 +128,7 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
   /*!
 
     Get the valey gray \e level. The number of pixels having this
-    gray level is available throw getValue().
+    gray level is available through getValue().
 
     \return Location of the valey or gray level.
 
@@ -142,7 +142,7 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
   /*!
 
     Get the valey number of pixels having a same gray level. The
-    corresponding gray level is available throw getLevel().
+    corresponding gray level is available through getLevel().
 
     \return    : Number of pixels having the same location or gray level.
 

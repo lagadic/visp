@@ -103,7 +103,8 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
   if (av_find_stream_info (pFormatCtx) < 0)
       return false;
   
-  videoStream = -1;
+  videoStream = 0;
+  bool found_codec = false;
   
   /*
   * Detect streams types
@@ -113,11 +114,12 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
     if(pFormatCtx->streams[i]->codec->codec_type==CODEC_TYPE_VIDEO)
     {
       videoStream = i;
+      found_codec= true;
       break;
     }
   }
 
-  if (videoStream != -1)
+  if (found_codec)
   {
     pCodecCtx = pFormatCtx->streams[videoStream]->codec;
     pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
@@ -161,7 +163,7 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
      */
     width = pCodecCtx->width ;
     height = pCodecCtx->height ;
-    buffer = (uint8_t *) malloc (sizeof (uint8_t) * numBytes);
+    buffer = (uint8_t *) malloc (sizeof (uint8_t) * (size_t)numBytes);
   }
   else
   {
@@ -195,7 +197,7 @@ bool vpFFMPEG::initStream()
   else if (color_type == vpFFMPEG::GRAY_SCALED)
     img_convert_ctx= sws_getContext(pCodecCtx->width, pCodecCtx->height, pCodecCtx->pix_fmt, pCodecCtx->width,pCodecCtx->height,PIX_FMT_GRAY8, SWS_BICUBIC, NULL, NULL, NULL);
 
-  int ret = av_seek_frame(pFormatCtx,videoStream, 0, AVSEEK_FLAG_ANY) ;
+  int ret = av_seek_frame(pFormatCtx, (int)videoStream, 0, AVSEEK_FLAG_ANY) ;
   if (ret < 0 )
   {
     vpTRACE("Error rewinding stream for full indexing") ;
@@ -208,7 +210,7 @@ bool vpFFMPEG::initStream()
 
   while (av_read_frame (pFormatCtx, &packet) >= 0)
   {
-    if (packet.stream_index == videoStream)
+    if (packet.stream_index == (int)videoStream)
     {
 #ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
       ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
@@ -251,7 +253,7 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   if (frame < frameNumber && streamWasInitialized== true)
   {
     int64_t targetPts = index[frame];
-    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_ANY);
+    av_seek_frame(pFormatCtx, (int)videoStream,targetPts, AVSEEK_FLAG_ANY);
   }
   else
   {
@@ -265,7 +267,7 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
 
   while (av_read_frame (pFormatCtx, &packet) >= 0)
   {
-    if (packet.stream_index == videoStream)
+    if (packet.stream_index == (int)videoStream)
     {
 #ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
       avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
@@ -310,7 +312,7 @@ bool vpFFMPEG::acquire(vpImage<vpRGBa> &I)
 
   while (av_read_frame (pFormatCtx, &packet) >= 0)
   {
-    if (packet.stream_index == videoStream)
+    if (packet.stream_index == (int)videoStream)
     {
 #ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
       avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
@@ -347,7 +349,7 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
   if (frame < frameNumber && streamWasInitialized== true)
   {
     int64_t targetPts = index[frame];
-    av_seek_frame(pFormatCtx,videoStream,targetPts, AVSEEK_FLAG_ANY);
+    av_seek_frame(pFormatCtx,(int)videoStream,targetPts, AVSEEK_FLAG_ANY);
   }
   else
   {
@@ -361,7 +363,7 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
 
   while (av_read_frame (pFormatCtx, &packet) >= 0)
   {
-    if (packet.stream_index == videoStream)
+    if (packet.stream_index == (int)videoStream)
     {
 #ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
       avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
@@ -406,7 +408,7 @@ bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
 
   while (av_read_frame (pFormatCtx, &packet) >= 0)
   {
-    if (packet.stream_index == videoStream)
+    if (packet.stream_index == (int)videoStream)
     {
 #ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
       avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
@@ -432,10 +434,18 @@ bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
 
 /*!
   This method enable to fill the vpImage bitmap thanks to the selected frame.
+  
+  \throw vpException::dimensionError if either the height or the width 
+  associated to the class is negative. 
+  
+  \param I : the image to fill. 
 */
 void vpFFMPEG::copyBitmap(vpImage<vpRGBa> &I)
 {
-  I.resize(height,width);
+  if(height < 0 || width < 0){
+    throw vpException(vpException::dimensionError, "width or height negative.");
+  }
+  I.resize((unsigned int)height, (unsigned int)width);
   
   unsigned char* line;
   unsigned char* beginOutput = (unsigned char*)I.bitmap;
@@ -488,10 +498,18 @@ void vpFFMPEG::copyBitmap(vpImage<vpRGBa> &I)
 
 /*!
   This method enable to fill the vpImage bitmap thanks to the selected frame.
+  
+  \throw vpException::dimensionError if either the height or the width 
+  associated to the class is negative. 
+  
+  \param I : the image to fill. 
 */
 void vpFFMPEG::copyBitmap(vpImage<unsigned char> &I)
 {
-  I.resize(height,width);
+  if(height < 0 || width < 0){
+    throw vpException(vpException::dimensionError, "width or height negative.");
+  }
+  I.resize((unsigned int)height, (unsigned int)width);
   
   unsigned char* line;
   unsigned char* beginOutput = (unsigned char*)I.bitmap;
@@ -522,7 +540,7 @@ void vpFFMPEG::copyBitmap(vpImage<unsigned char> &I)
     int widthStep = pFrameRGB->linesize[0];
     for (int i = 0  ; i < height ; i++)
     {
-      vpImageConvert::RGBToGrey(input + i*widthStep, beginOutput + i*width,width,1,false);
+      vpImageConvert::RGBToGrey(input + i*widthStep, beginOutput + i*width, (unsigned int)width, 1, false);
     }
   }
 }
@@ -601,12 +619,12 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned in
   pFrameRGB = avcodec_alloc_frame();
 
   /* put sample parameters */
-  pCodecCtx->bit_rate = bit_rate;
+  pCodecCtx->bit_rate = (int)bit_rate;
   /* resolution must be a multiple of two */
-  pCodecCtx->width = width;
-  pCodecCtx->height = height;
-  this->width = width;
-  this->height = height;
+  pCodecCtx->width = (int)width;
+  pCodecCtx->height = (int)height;
+  this->width = (int)width;
+  this->height = (int)height;
   /* frames per second */
   pCodecCtx->time_base= (AVRational){1,25};
   pCodecCtx->gop_size = 10; /* emit one intra frame every ten frames */
@@ -664,7 +682,7 @@ bool vpFFMPEG::saveFrame(vpImage<vpRGBa> &I)
   writeBitmap(I);
   sws_scale(img_convert_ctx, pFrameRGB->data, pFrameRGB->linesize, 0, pCodecCtx->height, pFrame->data, pFrame->linesize);
   out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, pFrame);
-  fwrite(outbuf, 1, out_size, f);
+  fwrite(outbuf, 1, (size_t)out_size, f);
   fflush(stdout);
   return true;
 }
@@ -688,7 +706,7 @@ bool vpFFMPEG::saveFrame(vpImage<unsigned char> &I)
   writeBitmap(I);
   sws_scale(img_convert_ctx, pFrameRGB->data, pFrameRGB->linesize, 0, pCodecCtx->height, pFrame->data, pFrame->linesize);
   out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, pFrame);
-  fwrite(outbuf, 1, out_size, f);
+  fwrite(outbuf, 1, (size_t)out_size, f);
   fflush(stdout);
   return true;
 }
@@ -709,7 +727,7 @@ bool vpFFMPEG::endWrite()
   while (out_size != 0)
   {
     out_size = avcodec_encode_video(pCodecCtx, outbuf, outbuf_size, NULL);
-    fwrite(outbuf, 1, out_size, f);
+    fwrite(outbuf, 1, (size_t)out_size, f);
   }
 
   /*The end of a mpeg file*/

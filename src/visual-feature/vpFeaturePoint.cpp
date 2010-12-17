@@ -245,7 +245,7 @@ vpFeaturePoint::set_xyZ(const double x,
   \endcode
 */
 vpMatrix
-vpFeaturePoint::interaction(const int select)
+vpFeaturePoint::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -360,7 +360,7 @@ vpFeaturePoint::interaction(const int select)
 */
 vpColVector
 vpFeaturePoint::error(const vpBasicFeature &s_star,
-		      const int select)
+		      const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -418,7 +418,7 @@ vpFeaturePoint::error(const vpBasicFeature &s_star,
   \endcode
 */
 void
-vpFeaturePoint::print(const int select ) const
+vpFeaturePoint::print(const unsigned int select ) const
 {
 
   std::cout <<"Point:  Z=" << get_Z() ;

@@ -77,6 +77,9 @@
   Novembre 1998.
   http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
 */
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpHomography.h>
 #include <visp/vpDebug.h>
 #include <visp/vpMatrixException.h>
@@ -116,8 +119,8 @@ const double eps = 1e-6 ;
  */
 
 
-void changeFrame(int *pts_ref,
-		 int nb_pts,
+void changeFrame(unsigned int *pts_ref,
+		 unsigned int nb_pts,
 		 vpMatrix &pd, vpMatrix &p,
 		 vpMatrix &pnd, vpMatrix &pn,
 		 vpMatrix &M, vpMatrix &Mdp)
@@ -125,8 +128,8 @@ void changeFrame(int *pts_ref,
 
 
 
-  int i,j,k ;
-  int cont_pts;		/* */
+  unsigned int i,j, k ;
+  unsigned int cont_pts;		/* */
   double lamb_des[3];	/* */
   double lamb_cour[3] ; /* */
 
@@ -216,23 +219,20 @@ void changeFrame(int *pts_ref,
  *
  ****************************************************************************/
 void
-HLM2D(int nb_pts,
+HLM2D(unsigned int nb_pts,
       vpMatrix &points_des,
       vpMatrix &points_cour,
       vpMatrix &H)
 {
-  int i,j ;
+  unsigned int i,j ;
 
   double  vals_inf ;
-  int  contZeros, vect;
-
+  unsigned int  contZeros, vect;
 
   /** allocation des matrices utilisees uniquement dans la procedure **/
   vpMatrix M(3*nb_pts,9) ;
   vpMatrix V(9,9) ;
   vpColVector sv(9) ;
-
-
 
   /** construction de la matrice M des coefficients dans le cas general **/
   for (j=0; j<nb_pts ;j++) {
@@ -338,23 +338,23 @@ HLM2D(int nb_pts,
  ****************************************************************************
  **/
 void
-HLM3D(int nb_pts,
+HLM3D(unsigned int nb_pts,
       vpMatrix &pd,
       vpMatrix &p,
       vpMatrix &H)
 {
-  int i,j,k,ii,jj ;
-  int cont_pts;			/* Pour compter le nombre de points dans l'image */
-  int nl;			/*** Nombre de lignes ***/
-  int nc ;			/*** Nombre de colonnes ***/
-  int  pts_ref[4];		/*** définit lesquels des points de
+  unsigned int i,j,k,ii,jj ;
+  unsigned int cont_pts;			/* Pour compter le nombre de points dans l'image */
+  unsigned int nl;			/*** Nombre de lignes ***/
+  unsigned int nc ;			/*** Nombre de colonnes ***/
+  unsigned int  pts_ref[4];		/*** définit lesquels des points de
 				     l'image sont les points de référence***/
   /***  ***/
   int perm;			/***  Compte le nombre de permutations, quand le nombre
 				      de permutations =0 arret de l'ordonnancement **/
   int  cont_zeros;		/*** pour compter les valeurs quasi= a zero	***/
-  int  cont;
-  int  vect;
+  unsigned int  cont;
+  unsigned int  vect;
 
   int 	 prob;
 
@@ -385,7 +385,7 @@ HLM3D(int nb_pts,
   pts_ref[0] = 0 ;
   pts_ref[1] = 1 ;
   pts_ref[2] = 2 ;
-  pts_ref[3] = -1 ;
+  pts_ref[3] = 0 ;
 
   /* changement de repere pour tous les points autres que les trois points de reference */
 
@@ -556,8 +556,9 @@ HLM3D(int nb_pts,
 
   vect = 0 ; cont_zeros = 0 ; cont = 0 ;
   for (j=0; j < nc; j++) {
-    if (fabs(sv[j]) == svSorted[cont]) vect = j ;
-    if (fabs(sv[j]/svSorted[nc-1]) < eps) cont_zeros = cont_zeros + 1 ;
+    //if (fabs(sv[j]) == svSorted[cont]) vect = j ;
+    if (std::fabs(sv[j]-svSorted[cont]) <= std::fabs(vpMath::maximum(sv[j],svSorted[cont]))) vect = j ;
+    if (std::fabs(sv[j]/svSorted[nc-1]) < eps) cont_zeros = cont_zeros + 1 ;
   }
 
   if (cont_zeros > 5) {
@@ -670,14 +671,13 @@ HLM3D(int nb_pts,
  *
  ****************************************************************************/
 void
-HLM(int q_cible,
-    int nbpt,
+HLM(unsigned int q_cible,
+    unsigned int nbpt,
     double *xm, double *ym,
     double *xmi, double *ymi,
     vpMatrix &H)
 {
-  int   i;
-
+  unsigned int   i;
 
   /****
        on regarde si il y a au moins un point mais pour l'homographie
@@ -771,7 +771,7 @@ HLM(int q_cible,
   the reference planar is the plane build from the 3 first points
 
 */
-void vpHomography::HLM(int n,
+void vpHomography::HLM(unsigned int n,
 		       double *xb, double *yb,
 		       double *xa, double *ya ,
 		       bool isplanar,
@@ -779,8 +779,8 @@ void vpHomography::HLM(int n,
 {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  int i,j;
-  int q_cible;
+  unsigned int i,j;
+  unsigned int q_cible;
   vpMatrix H; // matrice d'homographie en metre
 
   aHb.setIdentity();

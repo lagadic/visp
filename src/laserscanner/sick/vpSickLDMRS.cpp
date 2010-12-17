@@ -140,7 +140,7 @@ bool vpSickLDMRS::setup()
     tv.tv_sec = 3; 
     tv.tv_usec = 0; 
     FD_ZERO(&myset); 
-    FD_SET(socket_fd, &myset); 
+    FD_SET(static_cast<unsigned int>(socket_fd), &myset); 
     res = select(socket_fd+1, NULL, &myset, NULL, &tv); 
     if (res < 0 && errno != EINTR) { 
       fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno)); 
@@ -194,12 +194,12 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   }
 
   // get the message body
-  unsigned short msgtype = ntohs(ushortptr[7]);
-  unsigned int msgLenght = ntohl(uintptr[2]);
+  uint16_t msgtype = ntohs(ushortptr[7]);
+  uint32_t msgLenght = ntohl(uintptr[2]);
 
-  unsigned int len = recv(socket_fd, body, msgLenght, MSG_WAITALL);
-  if (len != msgLenght){
-    printf("Error, wrong msg lenght: %d of %d bytes.\n", len, msgLenght);
+  ssize_t len = recv(socket_fd, body, msgLenght, MSG_WAITALL);
+  if (len != (ssize_t)msgLenght){
+    printf("Error, wrong msg lenght: %d of %d bytes.\n", (int)len, msgLenght);
     return false;
   }
 

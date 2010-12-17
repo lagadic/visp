@@ -1,3 +1,5 @@
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpCalibration.h>
 #include <visp/vpMath.h>
@@ -98,8 +100,8 @@ vpCalibration::calibLagrange(
   // eigenvector computation of E corresponding to the min eigenvalue.
   /* SVmax  computation*/
   double  svm = 0.0;
-  int imin = 1;
-  for (int i=0;i<x1.getRows();i++)
+  unsigned int imin = 1;
+  for (unsigned int i=0;i<x1.getRows();i++)
   {
     if (x1[i] > svm)
     {
@@ -110,12 +112,12 @@ vpCalibration::calibLagrange(
 
   svm *= 0.1; /* for the rank */
 
-  for (int i=0;i<x1.getRows();i++)
+  for (unsigned int i=0;i<x1.getRows();i++)
   {
     if (x1[i] < x1[imin]) imin = i;
   }
 
-  for (int i=0;i<x1.getRows();i++)
+  for (unsigned int i=0;i<x1.getRows();i++)
     x1[i] = AtA[i][imin];
 
   x2 = - (r*x1) ; // X_2 = - (B^T B)^(-1) B^T A X_1
@@ -123,13 +125,13 @@ vpCalibration::calibLagrange(
 
   vpColVector sol(12) ;
   vpColVector resul(7) ;
-  for (int i=0;i<3;i++) sol[i] = x1[i]; /* X_1  */
-  for (int i=0;i<9;i++)       /* X_2 = - (B^T B)^(-1) B^T A X_1 */
+  for (unsigned int i=0;i<3;i++) sol[i] = x1[i]; /* X_1  */
+  for (unsigned int i=0;i<9;i++)       /* X_2 = - (B^T B)^(-1) B^T A X_1 */
   {
     sol[i+3] = x2[i];
   }
 
-  if (sol[11] < 0.0) for (int i=0;i<12;i++) sol[i] = -sol[i];  /* since Z0 > 0 */
+  if (sol[11] < 0.0) for (unsigned int i=0;i<12;i++) sol[i] = -sol[i];  /* since Z0 > 0 */
 
   resul[0] = sol[3]*sol[0]+sol[4]*sol[1]+sol[5]*sol[2];   /* u0 */
 
@@ -148,19 +150,19 @@ vpCalibration::calibLagrange(
 
   vpMatrix rd(3,3) ;
   /* fill rotation matrix */
-  for (int i=0;i<3;i++) rd[0][i] = (sol[i+3]-sol[i]*resul[0])/resul[2];
-  for (int i=0;i<3;i++) rd[1][i] = (sol[i+6]-sol[i]*resul[1])/resul[3];
-  for (int i=0;i<3;i++) rd[2][i] = sol[i];
+  for (unsigned int i=0;i<3;i++) rd[0][i] = (sol[i+3]-sol[i]*resul[0])/resul[2];
+  for (unsigned int i=0;i<3;i++) rd[1][i] = (sol[i+6]-sol[i]*resul[1])/resul[3];
+  for (unsigned int i=0;i<3;i++) rd[2][i] = sol[i];
 
   //  std::cout << "norme X1 " << x1.sumSquare() <<std::endl;
   //  std::cout << rd*rd.t() ;
 
-  for (int i=0 ; i < 3 ; i++)
+  for (unsigned int i=0 ; i < 3 ; i++)
   {
-    for (int j=0 ; j < 3 ; j++)
+    for (unsigned int j=0 ; j < 3 ; j++)
       cMo[i][j] = rd[i][j];
   }
-  for (int i=0 ; i < 3 ; i++) cMo[i][3] = resul[i+4] ;
+  for (unsigned int i=0 ; i < 3 ; i++) cMo[i][3] = resul[i+4] ;
 
   this->cMo = cMo ;
   this->cMo_dist = cMo;
@@ -178,7 +180,7 @@ vpCalibration::calibVVS(
   bool verbose)
 {
   std::cout.precision(10);
-  int   n_points = npt ;
+  unsigned int   n_points = npt ;
 
   vpColVector oX(n_points), cX(n_points)  ;
   vpColVector oY(n_points), cY(n_points) ;
@@ -197,7 +199,7 @@ vpCalibration::calibVVS(
   LoZ.front() ;
   Lip.front() ;
 
-  for (int i =0 ; i < n_points ; i++)
+  for (unsigned int i =0 ; i < n_points ; i++)
   {
 
     oX[i]  = LoX.value() ;
@@ -234,7 +236,7 @@ vpCalibration::calibVVS(
 
     r = 0 ;
 
-    for (int i=0 ; i < n_points; i++)
+    for (unsigned int i=0 ; i < n_points; i++)
     {
       cX[i] = oX[i]*cMo[0][0]+oY[i]*cMo[0][1]+oZ[i]*cMo[0][2] + cMo[0][3];
       cY[i] = oX[i]*cMo[1][0]+oY[i]*cMo[1][1]+oZ[i]*cMo[1][2] + cMo[1][3];
@@ -255,7 +257,7 @@ vpCalibration::calibVVS(
     //r = r/n_points ;
 
     vpMatrix L(n_points*2,10) ;
-    for (int i=0 ; i < n_points; i++)
+    for (unsigned int i=0 ; i < n_points; i++)
     {
 
       double x = cX[i] ;
@@ -309,7 +311,7 @@ vpCalibration::calibVVS(
     Tc = -e*gain ;
 
     //   Tc_v =0 ;
-    for (int i=0 ; i <6 ; i++)
+    for (unsigned int i=0 ; i <6 ; i++)
       Tc_v[i] = Tc[i] ;
 
     cam.initPersProjWithoutDistortion(px+Tc[8],py+Tc[9],
@@ -344,8 +346,8 @@ vpCalibration::calibVVSMulti(
 )
 {
   std::cout.precision(10);
-  int nbPoint[256]; //number of points by image
-  int nbPointTotal = 0; //total number of points
+  unsigned int nbPoint[256]; //number of points by image
+  unsigned int nbPointTotal = 0; //total number of points
   
   unsigned int nbPose6 = 6*nbPose;
 
@@ -365,7 +367,7 @@ vpCalibration::calibVVSMulti(
   vpColVector Pd(2*nbPointTotal) ;
   vpImagePoint ip;
 
-  int curPoint = 0 ; //current point indice
+  unsigned int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
   {
       
@@ -374,7 +376,7 @@ vpCalibration::calibVVSMulti(
     table_cal[p].LoZ.front() ;
     table_cal[p].Lip.front()  ;
     
-    for (int i =0 ; i < nbPoint[p] ; i++)
+    for (unsigned int i =0 ; i < nbPoint[p] ; i++)
     {
       oX[curPoint]  = table_cal[p].LoX.value() ;
       oY[curPoint]  = table_cal[p].LoY.value() ;
@@ -413,7 +415,7 @@ vpCalibration::calibVVSMulti(
     for (unsigned int p=0; p<nbPose ; p++)
     {
       vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
-      for (int i=0 ; i < nbPoint[p]; i++)
+      for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint2 = 2*curPoint;    
         
@@ -445,7 +447,7 @@ vpCalibration::calibVVSMulti(
     for (unsigned int p=0; p<nbPose ; p++)
     {
       unsigned int q = 6*p;   
-      for (int i=0 ; i < nbPoint[p]; i++)
+      for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint2 = 2*curPoint;
         unsigned int curPoint21 = curPoint2 + 1;
@@ -765,7 +767,7 @@ vpCalibration::calibVVSWithDistortion(
     vpColVector Tc, Tc_v(6) ;
     Tc = -e*gain ;
 
-    for (int i=0 ; i <6 ; i++)
+    for (unsigned int i=0 ; i <6 ; i++)
       Tc_v[i] = Tc[i] ;
 
     cam.initPersProjWithDistortion(px + Tc[8], py + Tc[9],
@@ -821,7 +823,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   vpColVector Pd(4*nbPointTotal) ;
   vpImagePoint ip;
 
-  int curPoint = 0 ; //current point indice
+  unsigned int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
   {
     table_cal[p].LoX.front() ;
@@ -1133,12 +1135,12 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
           double theta = sqrt(rPeij[0]*rPeij[0] + rPeij[1]*rPeij[1]
                               + rPeij[2]*rPeij[2]);
 
-          for (int m=0;m<3;m++) rPeij[m] = rPeij[m] * vpMath::sinc(theta/2);
+          for (unsigned int m=0;m<3;m++) rPeij[m] = rPeij[m] * vpMath::sinc(theta/2);
 
           vpThetaUVector cijPo(cijRo) ;
           theta = sqrt(cijPo[0]*cijPo[0] + cijPo[1]*cijPo[1]
                        + cijPo[2]*cijPo[2]);
-          for (int m=0;m<3;m++) cijPo[m] = cijPo[m] * vpMath::sinc(theta/2);
+          for (unsigned int m=0;m<3;m++) cijPo[m] = cijPo[m] * vpMath::sinc(theta/2);
 
           vpMatrix As;
           vpColVector b(3) ;
@@ -1186,12 +1188,13 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
     // extraction of theta and U
     double theta ;
     double   d=x.sumSquare() ;
-    for (int i=0 ; i < 3 ; i++) x[i] = 2*x[i]/sqrt(1+d) ;
+    for (unsigned int i=0 ; i < 3 ; i++) x[i] = 2*x[i]/sqrt(1+d) ;
     theta = sqrt(x.sumSquare())/2 ;
     theta = 2*asin(theta) ;
-    if (theta !=0)
+    //if (theta !=0)
+    if (std::fabs(theta) > std::numeric_limits<double>::epsilon())
     {
-      for (int i=0 ; i < 3 ; i++) x[i] *= theta/(2*sin(theta/2)) ;
+      for (unsigned int i=0 ; i < 3 ; i++) x[i] *= theta/(2*sin(theta/2)) ;
     }
     else
       x = 0 ;

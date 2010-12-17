@@ -205,7 +205,7 @@ public:
   void getEdges(vpList<vpImagePoint> &ip_edges_list) { 
     ip_edges_list = this->ip_edges_list;
   };
-  void getFreemanChain(vpList<int> &freeman_chain) ;
+  void getFreemanChain(vpList<unsigned int> &freeman_chain) ;
 
   double getWidth() const;
   double getHeight() const;
@@ -264,13 +264,13 @@ public:
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
             int area_u, int area_v,
-            int area_w, int area_h );
+            unsigned int area_w, unsigned int area_h );
 
   vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
 
   static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
 
-  static void trackAndDisplay(vpDot2 dot[], const int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
+  static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
 
 private :
 
@@ -387,7 +387,7 @@ private:
   \sa getFirstBorder_v()
 
   */
-  int getFirstBorder_u() const {
+  unsigned int getFirstBorder_u() const {
     return this->firstBorder_u;
   }
   /*!
@@ -398,7 +398,7 @@ private:
   \sa getFirstBorder_u()
 
   */
-  int getFirstBorder_v() const {
+  unsigned int getFirstBorder_v() const {
     return this->firstBorder_v;
   }
 
@@ -423,7 +423,7 @@ private:
 
   void getGridSize( unsigned int &gridWidth, unsigned int &gridHeight );
   void setArea(vpImage<unsigned char> &I,
-	       int u, int v, int w, int h);
+	       int u, int v, unsigned int w, unsigned int h);
   void setArea(vpImage<unsigned char> &I);
   void setArea(const vpRect & a);
 
@@ -451,7 +451,7 @@ private:
   vpRect area;
 
   // other
-  vpList<int> direction_list;
+  vpList<unsigned int> direction_list;
   vpList<vpImagePoint> ip_edges_list;
 
   // flag

@@ -136,12 +136,12 @@ vpKltOpencv::vpKltOpencv()
   OnMeasureFeature = 0;
   IsFeatureValid = 0;
 
-  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(features[0]));
-  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(prev_features[0]));
-  status = (char*)cvAlloc(maxFeatures);
-  lostDuringTrack = (bool*)cvAlloc(maxFeatures);
-  featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
-  prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+  features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(features[0]));
+  prev_features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(prev_features[0]));
+  status = (char*)cvAlloc((size_t)maxFeatures);
+  lostDuringTrack = (bool*)cvAlloc((size_t)maxFeatures);
+  featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
+  prev_featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
 
 
   _tid = -1;
@@ -221,38 +221,38 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
   //Deep copy of arrays
   if (copy.features) {
       /*CvPoint2D32f **/features =
-	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(CvPoint2D32f));
+	(CvPoint2D32f*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(CvPoint2D32f));
       for (int i = 0; i < copy.maxFeatures; i++)
 	features[i] = copy.features[i];
     }
 
   if (copy.prev_features) {
       /*CvPoint2D32f **/prev_features =
-	(CvPoint2D32f*)cvAlloc(copy.maxFeatures*sizeof(CvPoint2D32f));
+	(CvPoint2D32f*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(CvPoint2D32f));
       for (int i = 0; i < copy.maxFeatures; i++)
 	prev_features[i] = copy.prev_features[i];
     }
 
   if (copy.featuresid) {
-      /*long **/featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
+      /*long **/featuresid = (long*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(long));
       for (int i = 0; i < copy.maxFeatures; i++)
 	featuresid[i] = copy.featuresid[i];
     }
 
   if (copy.prev_featuresid) {
-      /*long **/prev_featuresid = (long*)cvAlloc(copy.maxFeatures*sizeof(long));
+      /*long **/prev_featuresid = (long*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(long));
       for (int i = 0; i < copy.maxFeatures; i++)
 	prev_featuresid[i] = copy.prev_featuresid[i];
     }
 
   if (copy.status) {
-      /*char **/status = (char*)cvAlloc(copy.maxFeatures*sizeof(char));
+      /*char **/status = (char*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(char));
       for (int i = 0; i < copy.maxFeatures; i++)
 	status[i] = copy.status[i];
     }
 
   if (copy.lostDuringTrack) {
-    /*bool **/lostDuringTrack = (bool*)cvAlloc(copy.maxFeatures*sizeof(bool));
+    /*bool **/lostDuringTrack = (bool*)cvAlloc((unsigned int)copy.maxFeatures*sizeof(bool));
     for (int i = 0; i < copy.maxFeatures; i++)
       lostDuringTrack[i] = copy.lostDuringTrack[i];
   }
@@ -264,7 +264,7 @@ vpKltOpencv::~vpKltOpencv()
 
 }
 
-void vpKltOpencv::setMaxFeatures(unsigned int input) {
+void vpKltOpencv::setMaxFeatures(const int input) {
   initialized = 0; maxFeatures=input;
 
   if (features) cvFree(&features);
@@ -275,12 +275,12 @@ void vpKltOpencv::setMaxFeatures(unsigned int input) {
   if (prev_featuresid) cvFree(&prev_featuresid);
  
 
-  features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(CvPoint2D32f));
-  prev_features = (CvPoint2D32f*)cvAlloc(maxFeatures*sizeof(CvPoint2D32f));
-  status = (char*)cvAlloc(maxFeatures*sizeof(char));
-  lostDuringTrack = (bool*)cvAlloc(maxFeatures*sizeof(bool));
-  featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
-  prev_featuresid = (long*)cvAlloc(maxFeatures*sizeof(long));
+  features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(CvPoint2D32f));
+  prev_features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(CvPoint2D32f));
+  status = (char*)cvAlloc((unsigned int)maxFeatures*sizeof(char));
+  lostDuringTrack = (bool*)cvAlloc((unsigned int)maxFeatures*sizeof(bool));
+  featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
+  prev_featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
 
   
 }
@@ -336,7 +336,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
   cvGoodFeaturesToTrack(image, eig, temp, features,
 			&countFeatures, quality, min_distance,
 			masque, block_size, use_harris, harris_free_parameter);
-  cvFindCornerSubPix(image, features, countFeatures, cvSize(win_size,win_size),
+  cvFindCornerSubPix(image, features, countFeatures, cvSize(win_size, win_size),
 		     cvSize(-1,-1),cvTermCriteria(CV_TERMCRIT_ITER|
 						  CV_TERMCRIT_EPS,20,0.03));
   cvReleaseImage(&eig);
@@ -395,7 +395,7 @@ void vpKltOpencv::track(const IplImage *I)
 
   cvCalcOpticalFlowPyrLK( prev_image, image, prev_pyramid, pyramid,
 			  prev_features, features, countFeatures,
-			  cvSize(win_size,win_size), pyramid_level,
+			  cvSize(win_size, win_size), pyramid_level,
 			  status, 0, cvTermCriteria(CV_TERMCRIT_ITER
 						    |CV_TERMCRIT_EPS,20,0.03),
 			  flags );

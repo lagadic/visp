@@ -143,7 +143,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 
 
   if(nChannel == 3 && depth == 8){
-    dest.resize(height,width);
+    dest.resize((unsigned int)height, (unsigned int)width);
 
     //starting source address
     unsigned char* input = (unsigned char*)src->imageData;
@@ -169,7 +169,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
     }
   }
   else if(nChannel == 1 && depth == 8 ){
-    dest.resize(height,width);
+    dest.resize((unsigned int)height, (unsigned int)width);
     //starting source address
     unsigned char * input = (unsigned char*)src->imageData;
     unsigned char * line;
@@ -252,28 +252,28 @@ vpImageConvert::convert(const IplImage* src,
   {
   	if(widthStep == width){
   	  if(nChannel == 1 && depth == 8){
-  	    dest.resize(height,width) ;
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
   	    memcpy(dest.bitmap, src->imageData,
-  	            height*width);
+  	            (size_t)(height*width));
   	  }
   	  if(nChannel == 3 && depth == 8){
-  	    dest.resize(height,width) ;
-  	    BGRToGrey((unsigned char*)src->imageData,dest.bitmap,width,height,false);
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
+  	    BGRToGrey((unsigned char*)src->imageData,dest.bitmap, (unsigned int)width, (unsigned int)height,false);
   	  }
   	}
   	else{
   	  if(nChannel == 1 && depth == 8){
-  	    dest.resize(height,width) ;
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
   	    for (int i =0  ; i < height ; i++){
   	      memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
-  	            width);
+  	            (size_t)width);
   	    }
   	  }
   	  if(nChannel == 3 && depth == 8){
-  	    dest.resize(height,width) ;
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
   	    for (int i = 0  ; i < height ; i++){
   	      BGRToGrey((unsigned char*)src->imageData + i*widthStep,
-  	                  dest.bitmap + i*width,width,1,false);
+  	                  dest.bitmap + i*width, (unsigned int)width, 1, false);
   	    }
   	  }
   	}
@@ -282,17 +282,17 @@ vpImageConvert::convert(const IplImage* src,
   {
   	  if(nChannel == 1 && depth == 8){
 	    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
-  	    dest.resize(height,width) ;
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
   	    for (int i =0  ; i < height ; i++){
   	      memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
-  	            width);
+  	            (size_t)width);
   	    }
   	  }
   	  if(nChannel == 3 && depth == 8){
-  	    dest.resize(height,width) ;
+  	    dest.resize((unsigned int)height, (unsigned int)width) ;
   	    //for (int i = 0  ; i < height ; i++){
   	      BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
-  	                  dest.bitmap /*+ i*width*/,width,height/*1*/,true);
+  	                  dest.bitmap /*+ i*width*/, (unsigned int)width, (unsigned int)height/*1*/, true);
   	    //}
   	  }
   }
@@ -344,14 +344,14 @@ int main() {}
 void
 vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 {
-  unsigned int height = src.getHeight();
-  unsigned int width  = src.getWidth();
-  CvSize size = cvSize(width,height);
+  int height = (int)src.getHeight();
+  int width  = (int)src.getWidth();
+  CvSize size = cvSize(width, height);
   int depth = 8;
   int channels = 3;
   if (dest != NULL){
     if(dest->nChannels != channels || dest->depth != depth
-       || dest->height != (int) height || dest->width != (int) width){
+       || dest->height != height || dest->width != width){
       if(dest->nChannels != 0) cvReleaseImage(&dest);
       dest = cvCreateImage( size, depth, channels );
     }
@@ -364,8 +364,8 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
   unsigned char * line;
   unsigned char * output = (unsigned char*)dest->imageData;//bgr image
 
-  unsigned int j=0;
-  unsigned int i=0;
+  int j=0;
+  int i=0;
   int widthStep = dest->widthStep;
 
   for(i=0 ; i < height ; i++)
@@ -434,7 +434,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
 {
   unsigned int height = src.getHeight();
   unsigned int width  = src.getWidth();
-  CvSize size = cvSize(width,height);
+  CvSize size = cvSize((int)width, (int)height);
   int depth = 8;
   int channels = 1;
   if (dest != NULL){
@@ -446,15 +446,15 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
   }
   else dest = cvCreateImage( size, depth, channels );
 
-  int widthStep = dest->widthStep;
+  unsigned int widthStep = (unsigned int)dest->widthStep;
 
-  if ((int) width == widthStep){
+  if ( width == widthStep){
     memcpy(dest->imageData,src.bitmap, width*height);
   }
   else{
     //copying each line taking account of the widthStep
     for (unsigned int i =0  ; i < height ; i++){
-          memcpy(dest->imageData + i*widthStep,src.bitmap + i*width,
+          memcpy(dest->imageData + i*widthStep, src.bitmap + i*width,
                 width);
     }
   }
@@ -2664,8 +2664,8 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
 void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
 				  unsigned int size)
 {
-  register int i = (size<<1)-1;
-  register int j = size-1;
+  register int i = (((int)size)<<1)-1;
+  register int j = (int)size-1;
   register int y;
 
   while (i >= 0) {

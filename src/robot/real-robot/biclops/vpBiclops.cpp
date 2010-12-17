@@ -56,7 +56,7 @@
 /* ------------------------------------------------------------------------ */
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const int   vpBiclops::ndof = 2; /*<! Only pan and tilt are considered. */
+const unsigned int vpBiclops::ndof = 2; /*<! Only pan and tilt are considered. */
 const float vpBiclops::h    = 0.048f; /*<! Vertical offset from last joint to camera frame. */
 const float vpBiclops::panJointLimit  = (float)(M_PI/2.0); /*!< Pan range (in rad): from -panJointLimit to + panJointLimit */
 const float vpBiclops::tiltJointLimit = (float)(M_PI/4.5); /*!< Tilt range (in rad): from -tiltJointLimit to + tiltJointLimit */

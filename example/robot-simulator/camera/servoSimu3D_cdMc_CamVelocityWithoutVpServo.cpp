@@ -265,7 +265,7 @@ main(int argc, const char ** argv)
 
     // Update the complete camera velocity vector
     vpColVector velocity(6);
-    for (int i=0; i<3; i++) {
+    for (unsigned int i=0; i<3; i++) {
       velocity[i]   = v[i]; // Translational velocity
       velocity[i+3] = w[i]; // Rotational velocity
     }

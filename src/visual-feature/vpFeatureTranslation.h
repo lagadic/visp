@@ -367,7 +367,7 @@ public:
     \sa selectTy(), selectTz()
 
   */
-  inline static int selectTx()  { return FEATURE_LINE[0] ; }
+  inline static unsigned int selectTx()  { return FEATURE_LINE[0] ; }
   /*! 
 
     Function used to select the \f$ t_y\f$ subset of the translation
@@ -411,7 +411,7 @@ public:
 
     \sa selectTx(), selectTz()
   */
-  inline static int selectTy()  { return FEATURE_LINE[1] ; }
+  inline static unsigned int selectTy()  { return FEATURE_LINE[1] ; }
   /*! 
 
     Function used to select the \f$ t_z\f$ subset of the translation
@@ -455,15 +455,15 @@ public:
 
     \sa selectTx(), selectTy()
   */
-  inline static int selectTz()  { return FEATURE_LINE[2] ; }
+  inline static unsigned int selectTz()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const int select = FEATURE_ALL);
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-		    const int select = FEATURE_ALL)  ;
+		    const unsigned int select = FEATURE_ALL)  ;
   // print the name of the feature
-  void print(const int select= FEATURE_ALL) const ;
+  void print(const unsigned int select= FEATURE_ALL) const ;
 
 
   //! Feature duplication

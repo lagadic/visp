@@ -42,6 +42,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpTime.h>
 
@@ -337,7 +339,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
   vpDEBUG_TRACE (12, "unlock mutex vpShm_mutex");
   pthread_mutex_unlock(&vpShm_mutex);
 
-  for (int i=0; i < vpBiclops::ndof; i ++) {
+  for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
     prev_q_dot  [i] = shm.q_dot[i];
     new_q_dot   [i] = false;
     change_dir  [i] = false;
@@ -354,7 +356,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
 
   shm = controller->readShm();
   // Updates the shm
-  for (int i=0; i < vpBiclops::ndof; i ++) {
+  for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
     shm.actual_q[i]     = mes_q[i];
     shm.actual_q_dot[i] = mes_q_dot[i];
   }
@@ -380,7 +382,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
     shm = controller->readShm();
 
     // Updates the shm
-    for (int i=0; i < vpBiclops::ndof; i ++) {
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
       shm.actual_q[i]     = mes_q[i];
       shm.actual_q_dot[i] = mes_q_dot[i];
     }
@@ -398,7 +400,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
 		vpMath::deg(prev_q_dot[0]),
 		vpMath::deg(prev_q_dot[1]));
 
-    for (int i=0; i < vpBiclops::ndof; i ++) {
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
       // test if joint limits are reached
       if (mes_q[i] < -softLimit[i]) {
 	vpDEBUG_TRACE(10, "Axe %d in low joint limit", i);
@@ -416,7 +418,8 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
       }
 
       // Test if new a speed is demanded
-      if (shm.q_dot[i] != prev_q_dot[i])
+      //if (shm.q_dot[i] != prev_q_dot[i])
+      if (std::fabs(shm.q_dot[i] - prev_q_dot[i]) > std::fabs(vpMath::maximum(shm.q_dot[i],prev_q_dot[i]))*std::numeric_limits<double>::epsilon())
 	new_q_dot[i] = true;
       else
 	new_q_dot[i] = false;
@@ -437,7 +440,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
 
 
     bool updateVelocity = false;
-    for (int i=0; i < vpBiclops::ndof; i ++) {
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
       // Test if a new desired speed is to apply
       if (new_q_dot[i]) {
 	// A new desired speed is to apply
@@ -534,7 +537,7 @@ void * vpRobotBiclops::vpRobotBiclopsSpeedControlLoop (void * arg)
 
 
     // Update the previous speed for next iteration
-    for (int i=0; i < vpBiclops::ndof; i ++)
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++)
       prev_q_dot[i] = shm.q_dot[i];
 
     vpDEBUG_TRACE(12, "iter: %d", iter);
@@ -965,7 +968,7 @@ vpRobotBiclops::getPosition (const vpRobot::vpControlFrameType frame,
     vpDEBUG_TRACE (12, "unlock mutex vpShm_mutex");
     pthread_mutex_unlock(&vpShm_mutex);
 
-    for (int i=0; i < vpBiclops::ndof; i ++) {
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
       q[i] = shm.actual_q[i];
     }
 
@@ -1083,7 +1086,7 @@ vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
   // init q_dot_saturated
   q_dot_sat = q_dot;
 
-  for (int i = 0 ; i < vpBiclops::ndof; ++ i) // q1 and q2
+  for (unsigned int i = 0 ; i < vpBiclops::ndof; ++ i) // q1 and q2
   {
     if (fabs (q_dot[i]) > max)
     {
@@ -1108,7 +1111,7 @@ vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
 
   shm = controller.readShm();
 
-  for (int i=0; i < vpBiclops::ndof; i ++)
+  for (unsigned int i=0; i < vpBiclops::ndof; i ++)
     shm.q_dot[i] = q_dot[i];
 
   controller.writeShm(shm);
@@ -1193,7 +1196,7 @@ vpRobotBiclops::getVelocity (const vpRobot::vpControlFrameType frame,
     vpDEBUG_TRACE (12, "unlock mutex vpShm_mutex");
     pthread_mutex_unlock(&vpShm_mutex);
 
-    for (int i=0; i < vpBiclops::ndof; i ++) {
+    for (unsigned int i=0; i < vpBiclops::ndof; i ++) {
       q_dot[i] = shm.actual_q_dot[i];
     }
 

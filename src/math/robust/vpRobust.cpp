@@ -48,6 +48,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
@@ -67,7 +69,7 @@
   \param n_data : Size of the data vector.
 
 */
-vpRobust::vpRobust(int n_data)
+vpRobust::vpRobust(unsigned int n_data)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
@@ -85,7 +87,7 @@ vpRobust::vpRobust(int n_data)
   \param n_data : size of input data vector.
 
 */
-void vpRobust::resize(int n_data){
+void vpRobust::resize(unsigned int n_data){
 
   if(n_data!=size){
   normres.resize(n_data); 
@@ -143,19 +145,19 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   double sigma=0;// Standard Deviation
 
   // resize vector only if the size of residue vector has changed
-  int n_data = residues.getRows();
+  unsigned int n_data = residues.getRows();
   resize(n_data); 
   
   sorted_residues = residues;
   
-  int ind_med = (int)(ceil(n_data/2.0))-1;
+  unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
 
   // Calculate median
-   med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
    //residualMedian = med ;
 
   // Normalize residues
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
   {
     normres[i] = (fabs(residues[i]- med));
     sorted_normres[i] = (fabs(sorted_residues[i]- med));
@@ -215,7 +217,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   double normmedian=0; 	// Normalized median
   double sigma=0;// Standard Deviation
 
-  int n_all_data = all_residues.getRows();
+  unsigned int n_all_data = all_residues.getRows();
   vpColVector all_normres(n_all_data); 
 
   // compute median with the residues vector, return all_normres which are the normalized all_residues vector.
@@ -274,8 +276,8 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   double med=0;
   double normmedian=0;
 
-  int n_all_data = all_residues.getRows();
-  int n_data = residues.getRows();
+  unsigned int n_all_data = all_residues.getRows();
+  unsigned int n_data = residues.getRows();
   
   // resize vector only if the size of residue vector has changed
   resize(n_data);
@@ -290,10 +292,11 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   //vpColVector sorted_residues;
   
 
-  int index =0;
-  for(int j=0;j<n_data;j++)
+  unsigned int index =0;
+  for(unsigned int j=0;j<n_data;j++)
   {
-    if(weights[j]!=0)
+    //if(weights[j]!=0)
+    if(std::fabs(weights[j]) > std::numeric_limits<double>::epsilon())
     {
       no_null_weight_residues[index]=residues[j];
       index++;
@@ -310,10 +313,10 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   // Be careful to not use the rejected residues for the
   // calculation.
   
-  int ind_med = (int)(ceil(n_data/2.0))-1;
+  unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
   med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
-  int i;
+  unsigned int i;
   // Normalize residues
   for(i=0; i<n_all_data; i++)
   {
@@ -350,7 +353,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   double normmedian=0; 	// Normalized Median
   double sigma=0;				// Standard Deviation
 
-  int n_data = residues.getRows();
+  unsigned int n_data = residues.getRows();
   vpColVector normres(n_data); // Normalized Residue
   vpColVector w(n_data);
   
@@ -358,11 +361,11 @@ vpRobust::simultMEstimator(vpColVector &residues)
 	      << std::endl;
 
   // Calculate Median
-  int ind_med = (int)(ceil(n_data/2.0))-1;
+  unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
   med = select(residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
 
   // Normalize residues
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
     normres[i] = (fabs(residues[i]- med));
 
   // Check for various methods.
@@ -400,15 +403,14 @@ vpRobust::simultMEstimator(vpColVector &residues)
 double
 vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
 {
-  int p = 6; //Number of parameters to be estimated.
-  int n = x.getRows();
+  unsigned int p = 6; //Number of parameters to be estimated.
+  unsigned int n = x.getRows();
   double sigma2=0;
   long double Expectation=0;
   long double Sum_chi=0;
   long double chiTmp =0;
 
-
-  for(int i=0; i<n; i++)
+  for(unsigned int i=0; i<n; i++)
   {
 
     chiTmp = constrainedChi(method, x[i]);
@@ -451,15 +453,14 @@ vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
 double
 vpRobust::simultscale(vpColVector &x)
 {
-  int p = 6; //Number of parameters to be estimated.
-  int n = x.getRows();
+  unsigned int p = 6; //Number of parameters to be estimated.
+  unsigned int n = x.getRows();
   double sigma2=0;
   long double Expectation=0;
   long double Sum_chi=0;
   long double chiTmp =0;
 
-
-  for(int i=0; i<n; i++)
+  for(unsigned int i=0; i<n; i++)
   {
 
     chiTmp = simult_chi_huber(x[i]);
@@ -596,12 +597,13 @@ vpRobust::simult_chi_huber(double x)
 void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector & weights)
 {
 
-  int n_data = x.getRows();
+  unsigned int n_data = x.getRows();
   double cst_const = vpCST*4.6851;
 
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
   {
-    if(sig==0 && weights[i]!=0)
+    //if(sig==0 && weights[i]!=0)
+    if(std::fabs(sig) <= std::numeric_limits<double>::epsilon() && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon())
     {
       weights[i]=1;
       continue;
@@ -609,7 +611,8 @@ void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector & weights)
 
     double xi_sig = x[i]/sig;
 
-    if((fabs(xi_sig)<=(cst_const)) && weights[i]!=0)
+    //if((fabs(xi_sig)<=(cst_const)) && weights[i]!=0)
+    if((std::fabs(xi_sig)<=(cst_const)) && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon())
     {
       weights[i] = vpMath::sqr(1-vpMath::sqr(xi_sig/cst_const));
       //w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/sig/4.7));
@@ -632,11 +635,12 @@ void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector & weights)
 void vpRobust::psiHuber(double sig, vpColVector &x, vpColVector &weights)
 {
   double c = 1.2107; //1.345;
-  int n_data = x.getRows();
+  unsigned int n_data = x.getRows();
 
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
   {
-    if(weights[i]!=0)
+    //if(weights[i]!=0)
+    if(std::fabs(weights[i]) > std::numeric_limits<double>::epsilon())
     {
       double xi_sig = x[i]/sig;
       if(fabs(xi_sig)<=c)
@@ -657,11 +661,11 @@ void vpRobust::psiHuber(double sig, vpColVector &x, vpColVector &weights)
 
 void vpRobust::psiCauchy(double sig, vpColVector &x, vpColVector &weights)
 {
-  int n_data = x.getRows();
+  unsigned int n_data = x.getRows();
   double const_sig = 2.3849*sig;
 
   //Calculate Cauchy's equation
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
   {
     weights[i] = 1/(1+vpMath::sqr(x[i]/(const_sig)));
 
@@ -690,10 +694,10 @@ void vpRobust::psiCauchy(double sig, vpColVector &x, vpColVector &weights)
 */
 void vpRobust::psiMcLure(double sig, vpColVector &r,vpColVector &weights)
 {
-  int n_data = r.getRows();
+  unsigned int n_data = r.getRows();
 
   //McLure's function
-  for(int i=0; i<n_data; i++)
+  for(unsigned int i=0; i<n_data; i++)
   {
     weights[i] = 1/(vpMath::sqr(1+vpMath::sqr(r[i]/sig)));
     //w[i] = 2*mad/vpMath::sqr((mad+r[i]*r[i]));//odobez
@@ -720,10 +724,11 @@ void vpRobust::psiMcLure(double sig, vpColVector &r,vpColVector &weights)
   \param l : first value to be considered
   \param r : last value to be considered
 */
-int vpRobust::partition(vpColVector &a, int l, int r)
+unsigned int 
+vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
 {
-  int i = l-1;
-  int j = r;
+  unsigned int i = l-1;
+  unsigned int j = r;
   double v = a[r];
 
   for (;;)
@@ -744,11 +749,12 @@ int vpRobust::partition(vpColVector &a, int l, int r)
   \param r : last value to be considered
   \param k : value to be selected
 */
-double vpRobust::select(vpColVector &a, int l, int r, int k)
+double 
+vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k)
 {
   while (r > l)
   {
-    int i = partition(a, l, r);
+    unsigned int i = partition(a, l, r);
     if (i >= k) r = i-1;
     if (i <= k) l = i+1;
   }
@@ -831,7 +837,8 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
     anf=an*fac;
     a1=x*a0+anf*a1;
     b1=x*b0+anf*b1;
-    if (a1)
+    //if (a1)
+    if (std::fabs(a1) > std::numeric_limits<double>::epsilon())
     {
       fac=1.0/a1;
       g=b1*fac;

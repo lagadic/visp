@@ -41,6 +41,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
@@ -79,11 +82,11 @@
  */
 
 void
-vpMatrix::LUDcmp(int *perm, int& d)
+vpMatrix::LUDcmp(unsigned int *perm, int& d)
 {
-  int n = rowNum;
+  unsigned int n = rowNum;
 
-  int i,imax=0,j,k;
+  unsigned int i,imax=0,j,k;
   double big,dum,sum,temp;
   vpColVector vv(n);
 
@@ -92,7 +95,8 @@ vpMatrix::LUDcmp(int *perm, int& d)
     big=0.0;
     for (j=0;j<n;j++)
       if ((temp=fabs(rowPtrs[i][j])) > big) big=temp;
-    if (big == 0.0)
+    //if (big == 0.0)
+    if (std::fabs(big) <= std::numeric_limits<double>::epsilon())
     {
       vpERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
         throw(vpMatrixException(vpMatrixException::matrixError,
@@ -127,7 +131,9 @@ vpMatrix::LUDcmp(int *perm, int& d)
       vv[imax]=vv[j];
     }
     perm[j]=imax;
-    if (rowPtrs[j][j] == 0.0) rowPtrs[j][j]=TINY;
+    //if (rowPtrs[j][j] == 0.0) 
+    if (std::fabs(rowPtrs[j][j]) <= std::numeric_limits<double>::epsilon()) 
+      rowPtrs[j][j]=TINY;
     if (j != n) {
       dum=1.0/(rowPtrs[j][j]);
       for (i=j+1;i<n;i++) rowPtrs[i][j] *= dum;
@@ -156,27 +162,43 @@ vpMatrix::LUDcmp(int *perm, int& d)
   This function is extracted from the NRC
 
 */
-void vpMatrix::LUBksb(int *perm, vpColVector& b)
+void vpMatrix::LUBksb(unsigned int *perm, vpColVector& b)
 {
-  int n = rowNum;
+  unsigned int n = rowNum;
 
-  int i,ii=-1,ip,j;
+  unsigned int ii=0;
+  unsigned int ip;
   double sum;
+  bool flag = false;
+  unsigned int i;
 
   for (i=0;i<n;i++) {
     ip=perm[i];
     sum=b[ip];
     b[ip]=b[i];
-    if (ii != -1)
-      for (j=ii;j<=i-1;j++) sum -= rowPtrs[i][j]*b[j];
-    else if (sum) ii=i;
+    if (flag) {
+      for (unsigned int j=ii;j<=i-1;j++) sum -= rowPtrs[i][j]*b[j];
+	}
+    //else if (sum) {
+    else if (std::fabs(sum) > std::numeric_limits<double>::epsilon()) {
+      ii=i;
+      flag = true;
+    }
     b[i]=sum;
   }
-  for (i=n-1;i>=0;i--) {
+  // for (int i=n-1;i>=0;i--) {
+  //   sum=b[i];
+  //   for (int j=i+1;j<n;j++) sum -= rowPtrs[i][j]*b[j];
+  //   b[i]=sum/rowPtrs[i][i];
+  // }
+  i=n;
+  do {
+    i --;
+
     sum=b[i];
-    for (j=i+1;j<n;j++) sum -= rowPtrs[i][j]*b[j];
+    for (unsigned int j=i+1;j<n;j++) sum -= rowPtrs[i][j]*b[j];
     b[i]=sum/rowPtrs[i][i];
-  }
+  } while(i != 0);
 }
 #endif // doxygen should skip this
 
@@ -212,7 +234,7 @@ int main()
 vpMatrix
 vpMatrix::inverseByLU() const
 {
-  int i,j;
+  unsigned int i,j;
 
   if ( rowNum != colNum)
   {
@@ -234,7 +256,7 @@ vpMatrix::inverseByLU() const
   vpMatrix A(rowNum, rowNum);
   A = *this;
 
-  int *perm = new int[rowNum];
+  unsigned int *perm = new unsigned int[rowNum];
   int p;
 
   A.LUDcmp(perm, p);
@@ -244,7 +266,7 @@ vpMatrix::inverseByLU() const
   {
     c_tmp =0 ;  c_tmp[j-1] = 1 ;
     A.LUBksb(perm, c_tmp);
-    for (int k=0 ; k < c_tmp.getRows() ; k++)
+    for (unsigned int k=0 ; k < c_tmp.getRows() ; k++)
       B[k][j-1] = c_tmp[k] ;
   }
   delete [] perm;

@@ -41,8 +41,13 @@
 #ifndef vpScanPoint_h
 #define vpScanPoint_h
 
+#include <ostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #include <math.h>
+
 #include "visp/vpConfig.h"
+#include "visp/vpMath.h"
 
 /*!
   \file vpScanPoint.h
@@ -206,9 +211,21 @@ int main()
    */
    friend VISP_EXPORT inline bool operator==( const vpScanPoint &sp1, 
 					      const vpScanPoint &sp2 ) {
-     return ( ( sp1.getRadialDist() == sp2.getRadialDist() ) 
-	      && ( sp1.getHAngle() == sp2.getHAngle() )
-	      && ( sp1.getVAngle() == sp2.getVAngle() ) );
+     //return ( ( sp1.getRadialDist() == sp2.getRadialDist() ) 
+     //	      && ( sp1.getHAngle() == sp2.getHAngle() )
+     //	      && ( sp1.getVAngle() == sp2.getVAngle() ) );
+     double rd1 = sp1.getRadialDist();
+     double ha1 = sp1.getHAngle();
+     double va1 = sp1.getVAngle();
+     double rd2 = sp2.getRadialDist();
+     double ha2 = sp2.getHAngle();
+     double va2 = sp2.getVAngle();
+
+     return ( ( std::fabs(rd1 - rd2) <= std::fabs(vpMath::maximum(rd1,rd2)) * std::numeric_limits<double>::epsilon() ) 
+	      &&
+	      ( std::fabs(ha1 - ha2) <= std::fabs(vpMath::maximum(ha1,ha2)) * std::numeric_limits<double>::epsilon() )
+	      &&
+	      ( std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1,va2)) * std::numeric_limits<double>::epsilon() ) );
    }
    
    /*!
@@ -218,9 +235,20 @@ int main()
    */
    friend VISP_EXPORT inline bool operator!=( const vpScanPoint &sp1, 
 					      const vpScanPoint &sp2 ) {
-     return ( ( sp1.getRadialDist() != sp2.getRadialDist() )
-	      || ( sp1.getHAngle() != sp2.getHAngle() )  
-	      || ( sp1.getVAngle() != sp2.getVAngle() ) );
+     //return ( ( sp1.getRadialDist() != sp2.getRadialDist() )
+     //     || ( sp1.getHAngle() != sp2.getHAngle() )  
+     //     || ( sp1.getVAngle() != sp2.getVAngle() ) );
+     double rd1 = sp1.getRadialDist();
+     double ha1 = sp1.getHAngle();
+     double va1 = sp1.getVAngle();
+     double rd2 = sp2.getRadialDist();
+     double ha2 = sp2.getHAngle();
+     double va2 = sp2.getVAngle();
+     return ( ( std::fabs(rd1 - rd2) > std::fabs(vpMath::maximum(rd1,rd2)) * std::numeric_limits<double>::epsilon() )
+	      || 
+	      ( std::fabs(ha1 - ha2) <= std::fabs(vpMath::maximum(ha1,ha2)) * std::numeric_limits<double>::epsilon() )  
+	      || 
+	      ( std::fabs(va1 - va2) <= std::fabs(vpMath::maximum(va1,va2)) * std::numeric_limits<double>::epsilon() ) );
  }
 
  private:

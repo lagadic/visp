@@ -46,6 +46,8 @@
 */
 
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <signal.h>
 #include <stdlib.h>
@@ -129,13 +131,17 @@ int main()
       std::cout << "Cycab stop requested" << std::endl;
       // Velocity decrease to zero
       double sign_v = 0;
-      if (vm != 0.) sign_v = fabs(vm)/vm;
+      //if (vm != 0.)
+      if (std::fabs(vm) > std::numeric_limits<double>::epsilon())
+	sign_v = fabs(vm)/vm;
       v = vm - MAX_ACC_V*(t1-tprev)/1000*sign_v;
       if (fabs(v) < 0.1) v = 0;
 
        // Steering decrease to zero
       double sign_phi = 0;
-      if (phim != 0.) sign_phi = fabs(phim)/phim;
+      if (phim != 0.) 
+	//if (std::fabs(phim) > std::numeric_limits<double>::epsilon()) 
+	sign_phi = fabs(phim)/phim;
       phi = phim - MAX_VEL_PHI*(t1-tprev)/1000*sign_phi;
       if (fabs(phi) < vpMath::rad(5)) phi = 0;
            

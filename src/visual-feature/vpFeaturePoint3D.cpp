@@ -259,7 +259,7 @@ vpFeaturePoint3D::get_Z() const
 
 */
 vpMatrix
-vpFeaturePoint3D::interaction(const int select)
+vpFeaturePoint3D::interaction(const unsigned int select)
 {
   vpMatrix L ;
 
@@ -387,7 +387,7 @@ vpFeaturePoint3D::interaction(const int select)
 */
 vpColVector
 vpFeaturePoint3D::error(const vpBasicFeature &s_star,
-			const int select)
+			const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -549,7 +549,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
   \endcode
 */
 void
-vpFeaturePoint3D::print(const int select ) const
+vpFeaturePoint3D::print(const unsigned int select ) const
 {
 
   std::cout <<"Point3D:  "  ;

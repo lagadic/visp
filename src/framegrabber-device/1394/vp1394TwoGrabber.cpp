@@ -543,7 +543,7 @@ vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType & videomode)
 
   \sa setVideoMode(), getVideoMode(), getCamera()
 */
-int
+uint32_t
 vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes)
 {
   // Refresh the list of supported modes
@@ -810,7 +810,7 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerateType & fps)
 
   \sa setFramerate(), getFramerate(), setCamera()
 */
-int
+uint32_t
 vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
                                         vpList<vp1394TwoFramerateType> & fps)
 {
@@ -1128,7 +1128,7 @@ vp1394TwoGrabber::getColorCoding(vp1394TwoColorCodingType & coding)
 
   \sa setColorCoding(), getColorCoding(), setCamera()
 */
-int
+uint32_t
 vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
     vpList<vp1394TwoColorCodingType> & codings)
 {
@@ -1345,14 +1345,14 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
                                      "Can't set format7 ROI") );
     }
 
-    int roi_width;
-    int roi_height;
+    int32_t roi_width;
+    int32_t roi_height;
 
     if (width != 0) {
       // Check if roi width is acceptable (ie roi is contained in the image)
       if (width > (max_width - left))
         width = (max_width - left);
-      roi_width = width;
+      roi_width = (int32_t)width;
     }
     else {
       roi_width = DC1394_USE_MAX_AVAIL;
@@ -1362,7 +1362,7 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
       // Check if roi height is acceptable (ie roi is contained in the image)
       if (height > (max_height - top))
         height = (max_height - top);
-      roi_height = height;
+      roi_height = (int32_t)height;
     }
     else {
       roi_height = DC1394_USE_MAX_AVAIL;
@@ -1372,8 +1372,8 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     if (dc1394_format7_set_roi(camera, _videomode,
                                (dc1394color_coding_t) DC1394_QUERY_FROM_CAMERA, // color_coding
                                DC1394_USE_MAX_AVAIL/*DC1394_QUERY_FROM_CAMERA*/, // bytes_per_packet
-                               left, // left
-                               top, // top
+                               (int32_t)left, // left
+                               (int32_t)top, // top
                                roi_width,
                                roi_height)
         != DC1394_SUCCESS) {
@@ -3076,7 +3076,7 @@ void vp1394TwoGrabber::resetBus()
   \exception vpFrameGrabberException::settingError : If the register was not set.
 
  */
-void vp1394TwoGrabber::setPanControl(int panControlValue)
+void vp1394TwoGrabber::setPanControl(unsigned int panControlValue)
 {
   open();
   if (! num_cameras) {
@@ -3086,7 +3086,7 @@ void vp1394TwoGrabber::setPanControl(int panControlValue)
                                    "No camera found") );
   }
   uint64_t offset = 0x884;
-  uint32_t value = 0x82000000 + panControlValue;
+  uint32_t value = 0x82000000 + (uint32_t)panControlValue;
   dc1394error_t err;
   err = dc1394_set_control_register(camera, offset, value);
   if (err != DC1394_SUCCESS) {

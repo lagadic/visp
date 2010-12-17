@@ -46,15 +46,20 @@
   \file vpRobotSimulator.h
   \brief Basic class used to make robot simulators.
 */
-
-#if defined(WIN32)
-#include <windows.h>
-#elif defined(VISP_HAVE_PTHREAD)
-#include <pthread.h>
-#endif
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
+
+
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+
+#if defined(WIN32)
+#  include <windows.h>
+#elif defined(VISP_HAVE_PTHREAD)
+#  include <pthread.h>
+#endif
+
 #include <visp/vpWireFrameSimulator.h>
 #include <visp/vpRobot.h>
 #include <visp/vpDisplayOpenCV.h>
@@ -68,11 +73,18 @@
 
   \ingroup VisuRobotSimu
   
-  \brief This class aims to be a basis used to create all the simulators of robots.
+  \brief This class aims to be a basis used to create all the
+  simulators of robots.
   
-  Thus in this class you will find all the parameters and methods which are necessary to create a simulator. Several methods are pure virtual. In this case it means that they are specific to the each robot, for example the computation of the geometrical model.
-*/
+  Thus in this class you will find all the parameters and methods
+  which are necessary to create a simulator. Several methods are pure
+  virtual. In this case it means that they are specific to the each
+  robot, for example the computation of the geometrical model.
 
+  \warning This class uses threading capabilities. Thus on Unix-like
+  platforms, the libpthread third-party library need to be
+  installed. On Windows, we use the native threading capabilities.
+*/
 class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRobot
 {
   public:
@@ -134,7 +146,7 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     /*! True if one of the joint reach the limit*/
     bool jointLimit;
     /*! Index of the joint which is in limit*/
-    int jointLimitArt;
+    unsigned int jointLimitArt;
     /*! True if the singularity are automatically managed */
     bool singularityManagement;
     
@@ -246,11 +258,14 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
       \return It returns the camera parameters.
     */
     vpCameraParameters getExternalCameraParameters() const {
-      if(px_ext != 1 && py_ext != 1)
+      //if(px_ext != 1 && py_ext != 1)
+      // we assume px_ext and py_ext > 0
+      if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
+	  && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
         return vpCameraParameters(px_ext,py_ext,I.getWidth()/2,I.getHeight()/2);
       else
       {
-        int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
+        unsigned int size = vpMath::minimum(I.getWidth(),I.getHeight())/2;
         return vpCameraParameters(size,size,I.getWidth()/2,I.getHeight()/2);
       }
     }
@@ -403,5 +418,6 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     virtual void get_fMi(vpHomogeneousMatrix *fMit) = 0;
 };
 
+#endif
 
 #endif

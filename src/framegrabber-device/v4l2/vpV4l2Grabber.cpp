@@ -66,14 +66,14 @@
 #include <visp/vpImageIo.h>
 
 
-const int vpV4l2Grabber::DEFAULT_INPUT = 2;
-const int vpV4l2Grabber::DEFAULT_SCALE = 2;
-const int vpV4l2Grabber::MAX_INPUTS    = 16;
-const int vpV4l2Grabber::MAX_NORM      = 16;
-const int vpV4l2Grabber::MAX_FORMAT    = 32;
-const int vpV4l2Grabber::MAX_CTRL      = 32;
-const int vpV4l2Grabber::MAX_BUFFERS   = 32;
-const int vpV4l2Grabber::FRAME_SIZE    = 288;
+const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;
+const unsigned int vpV4l2Grabber::DEFAULT_SCALE = 2;
+const __u32 vpV4l2Grabber::MAX_INPUTS    = 16;
+const __u32 vpV4l2Grabber::MAX_NORM      = 16;
+const __u32 vpV4l2Grabber::MAX_FORMAT    = 32;
+const unsigned int vpV4l2Grabber::MAX_CTRL      = 32;
+const unsigned int vpV4l2Grabber::MAX_BUFFERS   = 32;
+const unsigned int vpV4l2Grabber::FRAME_SIZE    = 288;
 
 /*!
   Default constructor.
@@ -837,20 +837,20 @@ vpV4l2Grabber::open()
 void
 vpV4l2Grabber::getCapabilities()
 {
-  for (int ninputs = 0; ninputs < MAX_INPUTS; ninputs++) {
+  for (__u32 ninputs = 0; ninputs < MAX_INPUTS; ninputs++) {
     inp[ninputs].index = ninputs;
 
     if (ioctl(fd, VIDIOC_ENUMINPUT, &inp[ninputs]))
       break;
 
   }
-  for (int nstds = 0; nstds < MAX_NORM; nstds++) {
+  for (__u32 nstds = 0; nstds < MAX_NORM; nstds++) {
     std[nstds].index = nstds;
     if (ioctl(fd, VIDIOC_ENUMSTD, &std[nstds]))
       break;
 
   }
-  for (int nfmts = 0; nfmts < MAX_FORMAT; nfmts++) {
+  for (__u32 nfmts = 0; nfmts < MAX_FORMAT; nfmts++) {
     fmt[nfmts].index = nfmts;
     fmt[nfmts].type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (ioctl(fd, VIDIOC_ENUM_FMT, &fmt[nfmts]))
@@ -936,7 +936,7 @@ vpV4l2Grabber::setFormat()
   //height and width of the captured image or frame
   width = _width;
   height = _height;
-  if( frameformat == V4L2_FRAME_FORMAT && (int)height > FRAME_SIZE )
+  if( frameformat == V4L2_FRAME_FORMAT && height > FRAME_SIZE )
   {
     height = FRAME_SIZE;
   }
@@ -1025,7 +1025,7 @@ vpV4l2Grabber::startStreaming()
 
     buf_me[i].data = (unsigned char *) mmap(NULL, buf_v4l2[i].length,
 					    PROT_READ | PROT_WRITE, MAP_SHARED,
-					    fd, buf_v4l2[i].m.offset);
+					    fd, (off_t)buf_v4l2[i].m.offset);
 
     if(buf_me[i].data == MAP_FAILED)
     {
@@ -1118,7 +1118,7 @@ vpV4l2Grabber::stopStreaming()
   frame.
 */
 unsigned char *
-vpV4l2Grabber::waiton(int &index, struct timeval &timestamp)
+vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
 {
   struct v4l2_buffer buf;
   struct timeval tv;
@@ -1129,17 +1129,17 @@ vpV4l2Grabber::waiton(int &index, struct timeval &timestamp)
   tv.tv_sec  = 1;
   tv.tv_usec = 0;
   FD_ZERO(&rdset);
-  FD_SET(fd, &rdset);
+  FD_SET(static_cast<unsigned int>(fd), &rdset);
   switch (select(fd + 1, &rdset, NULL, NULL, &tv)) {
   case -1:
     if (EINTR == errno)
       goto again;
-    index = -1;
+    index = 0;
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't access to the frame") );
     return NULL;
   case  0:
-    index = -1;
+    index = 0;
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't access to the frame: timeout") );
     return NULL;
@@ -1150,7 +1150,7 @@ vpV4l2Grabber::waiton(int &index, struct timeval &timestamp)
   memset(&buf, 0, sizeof(buf));
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   if (-1 == ioctl(fd,VIDIOC_DQBUF, &buf)) {
-    index = -1;
+    index = 0;
     switch(errno)
     {
     case EAGAIN:
@@ -1200,7 +1200,7 @@ vpV4l2Grabber::waiton(int &index, struct timeval &timestamp)
 int
 vpV4l2Grabber::queueBuffer()
 {
-  int frame = queue % reqbufs.count;
+  unsigned int frame = queue % reqbufs.count;
   int rc;
 
 

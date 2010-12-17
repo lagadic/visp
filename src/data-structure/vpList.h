@@ -116,7 +116,7 @@ class vpList
   void init() ;
  public:
 
-  int nb;                    //<! number of items in the List
+  unsigned int nb;                    //<! number of items in the List
   /*!
     \brief the first virtual item in the list
     \verbatim
@@ -171,8 +171,8 @@ class vpList
   inline void addLeft(type& el);    // inserts an element on the left
   inline void swapLeft();    // Switch the current element with the element on the left
   inline void swapRight();    // Switch the current element with the element on the right
-  inline int nbElement(void);       // returns the number of items currently in the list
-  inline int nbElements(void);       // returns the number of items currently in the list
+  inline unsigned int nbElement(void);       // returns the number of items currently in the list
+  inline unsigned int nbElements(void);       // returns the number of items currently in the list
 
   void operator=(const vpList<type>& l);
   inline void operator+=(vpList<type>& l);
@@ -250,7 +250,7 @@ vpList<type>::~vpList()
   \brief return the number of element in the list
  */
 template<class type>
-int vpList<type>::nbElement(void)
+unsigned int vpList<type>::nbElement(void)
 {
   return(nb) ;
 }
@@ -259,7 +259,7 @@ int vpList<type>::nbElement(void)
   \brief return the number of element in the list
  */
 template<class type>
-int vpList<type>::nbElements(void)
+unsigned int vpList<type>::nbElements(void)
 {
   return(nb) ;
 }
@@ -818,7 +818,7 @@ vpList<type>::vpList(const vpList<type>& l)
 template<class type>
 void vpList<type>::display()
 {
-  int k = 1 ;
+  unsigned int k = 1 ;
   front() ;
   while(!outside()) {
     std::cout<<k<<" ---> "<<value()<<std::endl ;

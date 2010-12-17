@@ -295,7 +295,7 @@ public:
   vpHomography operator/(const double &v) const;
 
 private:
-  static void HartleyNormalization(int n,
+  static void HartleyNormalization(unsigned int n,
 				   double *x, double *y,
 				   double *xn, double *yn,
 				   double &xg, double &yg,
@@ -306,35 +306,35 @@ private:
 				     double xg2, double yg2, double coef2 ) ;
 
 public:
-  static void HartleyDLT(int n,
+  static void HartleyDLT(unsigned int n,
 			 double *xb, double *yb ,
 			 double *xa, double *ya,
 			 vpHomography &aHb) ;
-  static void DLT(int n,
+  static void DLT(unsigned int n,
 		  double *xb, double *yb ,
 		  double *xa, double *ya,
 		  vpHomography &aHb) ;
 
-  static void HLM(int n,
+  static void HLM(unsigned int n,
 		    double *xb, double *yb,
 		    double *xa, double *ya ,
 		    bool isplan,
 		    vpHomography &aHb) ;
 
 private:
-  static void  initRansac(int n,
+  static void  initRansac(unsigned int n,
 			  double *xb, double *yb,
 			  double *xa, double *ya,
 			  vpColVector &x
 			  ) ;
 public:
-  static bool degenerateConfiguration(vpColVector &x,int *ind) ;
-  static bool degenerateConfiguration(vpColVector &x,int *ind, double threshold_area);
+  static bool degenerateConfiguration(vpColVector &x,unsigned int *ind) ;
+  static bool degenerateConfiguration(vpColVector &x,unsigned int *ind, double threshold_area);
 
-  static void computeTransformation(vpColVector &x,int *ind, vpColVector &M) ;
+  static void computeTransformation(vpColVector &x,unsigned int *ind, vpColVector &M) ;
   static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d);
 
-  static bool ransac(int n,
+  static bool ransac(unsigned int n,
 		     double *xb, double *yb,
 		     double *xa, double *ya ,
 		     vpHomography &aHb,
@@ -342,7 +342,7 @@ public:
 		     double threshold = 1e-6
 		     ) ;
 
-  static  bool ransac(int n,
+  static  bool ransac(unsigned int n,
 		      double *xb, double *yb,
 		      double *xa, double *ya ,
 		      vpHomography &aHb,
@@ -353,14 +353,14 @@ public:
 		      double areaThreshold = 0.0);
 
   public: // VVS
-  static double computeRotation(int nbpoint,
+  static double computeRotation(unsigned int nbpoint,
 			      vpPoint *c1P,
 			      vpPoint *c2P,
 			      vpHomogeneousMatrix &c2Mc1,
 			      int userobust
 			      ) ;
 
-   static double  computeDisplacement(int nbpoint,
+   static double  computeDisplacement(unsigned int nbpoint,
 				      vpPoint *c1P,
 				      vpPoint *c2P,
 				      vpPlane &oN,
@@ -368,7 +368,7 @@ public:
 				      vpHomogeneousMatrix &c1Mo,
 				      int userobust
 				      ) ;
-  static double computeDisplacement(int nbpoint,
+  static double computeDisplacement(unsigned int nbpoint,
 				    vpPoint *c1P,
 				    vpPoint *c2P,
 				    vpPlane *oN,

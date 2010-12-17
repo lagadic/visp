@@ -208,7 +208,7 @@ main(int argc, const char ** argv)
   catch(vpException me){ std::cout << me << std::endl ; }
   std::cout <<"------------------------------------------------------"<<std::endl ;
   vpTRACE("test the  dimension") ;
-  int dim ;
+  unsigned int dim ;
   dim = p.getDimension() ;
   std::cout << "Dimension = " << dim << std::endl ;
 

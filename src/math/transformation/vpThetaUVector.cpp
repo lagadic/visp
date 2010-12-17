@@ -45,6 +45,9 @@
   rotation
 */
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpThetaUVector.h>
 
 #define vpDEBUG_LEVEL1 0
@@ -300,11 +303,12 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
   u.resize(3);
 
   theta = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
-  if (theta == 0) {
+  //if (theta == 0) {
+  if (std::fabs(theta) <= std::numeric_limits<double>::epsilon()) {
     u = 0;
     return;
   }
-  for (int i=0 ; i < 3 ; i++) 
+  for (unsigned int i=0 ; i < 3 ; i++) 
     u[i] = r[i] / theta ;
 }
 

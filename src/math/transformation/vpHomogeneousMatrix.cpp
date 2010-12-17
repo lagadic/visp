@@ -65,7 +65,7 @@
 void
 vpHomogeneousMatrix::init()
 {
-  int i,j ;
+  unsigned int i,j ;
 
   try {
     resize(4,4) ;
@@ -253,8 +253,8 @@ vpHomogeneousMatrix::operator*(vpColVector &v) const
 
   p = 0.0;
 
-  for (int j=0;j<4;j++) {
-    for (int i=0;i<4;i++) {
+  for (unsigned int j=0;j<4;j++) {
+    for (unsigned int i=0;i<4;i++) {
       p[i]+=rowPtrs[i][j] * v[j];
     }
   }
@@ -285,7 +285,7 @@ vpHomogeneousMatrix::isAnHomogeneousMatrix() const
 void
 vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 {
-  int i,j ;
+  unsigned int i,j ;
 
   for (i=0 ; i < 3 ; i++)
     for (j=0 ; j < 3; j++)
@@ -322,7 +322,7 @@ vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
 void
 vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
 {
-  int i,j ;
+  unsigned int i,j ;
 
   for (i=0 ; i < 3 ; i++)
     for (j=0 ; j < 3; j++)
@@ -471,8 +471,8 @@ vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (f != NULL)
   {
-    for (int i=0 ; i < 4 ; i++)
-      for (int j=0 ; j < 4 ; j++)
+    for (unsigned int i=0 ; i < 4 ; i++)
+      for (unsigned int j=0 ; j < 4 ; j++)
       {
 	f>>   (*this)[i][j] ;
       }

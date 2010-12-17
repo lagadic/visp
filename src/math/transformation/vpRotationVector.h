@@ -118,12 +118,12 @@ public:
     Operator that allows to set the value of an element of the rotation 
     vector: r[i] = value
   */
-  inline double &operator [](int n) {  return *(r + n);  }
+  inline double &operator [](unsigned int n) {  return *(r + n);  }
   /*!
     Operator that allows to get the value of an element of the rotation 
     vector: value = r[i]
   */
-  inline const double &operator [](int n) const { return *(r+n);  }
+  inline const double &operator [](unsigned int n) const { return *(r+n);  }
 
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpRotationVector &m);

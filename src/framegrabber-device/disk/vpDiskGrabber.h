@@ -111,7 +111,7 @@ int main(){
 class VISP_EXPORT vpDiskGrabber  : public vpFrameGrabber
 {
 private:
-  unsigned long image_number ; //!< id of the next image to be read
+  long image_number ; //!< id of the next image to be read
   int image_step ;    //!< increment between two image id
   unsigned int number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
 
@@ -126,7 +126,8 @@ public:
   vpDiskGrabber();
   vpDiskGrabber(const char *genericName);
   vpDiskGrabber(const char *dir, const char *basename, 
-                unsigned long number, int step, int noz,const char *ext) ;
+                long number, int step, unsigned int noz,
+		const char *ext) ;
   virtual ~vpDiskGrabber() ;
 
   void open(vpImage<unsigned char> &I) ;
@@ -134,14 +135,14 @@ public:
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<unsigned char> &I, unsigned long image_number);
-  void acquire(vpImage<vpRGBa> &I, unsigned long image_number);
+  void acquire(vpImage<unsigned char> &I, long image_number);
+  void acquire(vpImage<vpRGBa> &I, long image_number);
 
   void close();
 
   void setDirectory(const char *dir);
   void setBaseName(const char *name);
-  void setImageNumber(unsigned long number) ;
+  void setImageNumber(long number) ;
   void setStep(int a);
   void setNumberOfZero(unsigned int noz);
   void setExtension(const char *ext);
@@ -150,7 +151,7 @@ public:
   /*!
     Return the current image number.
   */
-  unsigned long getImageNumber() { return image_number; };
+  long getImageNumber() { return image_number; };
 } ;
 
 #endif

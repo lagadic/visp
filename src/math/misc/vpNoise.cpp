@@ -67,7 +67,7 @@ vpUniRand::draw0()
 //minimal standard
 //Park and Miller random number generator
 {
-  unsigned long k= x/q;//temp value for computing without overflow
+  /*unsigned*/ long k= x/q;//temp value for computing without overflow
   x = a*(x-k*q)-k*r;
   if (x < 0) x += m; //compute x without overflow
 }

@@ -50,30 +50,59 @@
 
 int main()
 {
-  vpImagePoint ip1;
+  vpImagePoint ip1, ip2, ip3;
 
-  ip1.set_u(11.1);
+  ip1.set_u(-11.1);
   ip1.set_v(10);
 
-  std::cout << "We define a first image point with coordinates: " 
+  ip2.set_j(-11.1);
+  ip2.set_i(10);
+
+  ip3.set_j(11.10001);
+  ip3.set_i(10.1);
+
+  std::cout << "We define ip1 with coordinates: " 
 	    << ip1 << std::endl;
 
-  vpImagePoint ip2;
-
-  ip2.set_j(11.1);
-  ip2.set_i(10);
   
-  std::cout << "We define a second image point with coordinates: " 
+  std::cout << "We define ip2 with coordinates: " 
 	    << ip2 << std::endl;
 
-  if (ip1 != ip2) {
-    std::cout << "Image point are different :-(!" << std::endl;
+  std::cout << "We define ip3 with coordinates: " 
+	    << ip3 << std::endl;
+
+  if (ip1 == ip2) {
+    std::cout << "ip1 == ip2" << std::endl;
+  }
+  else {
+    std::cout << "ip1 != ip2 (bad result)" << std::endl;
     return -1;
   }
 
-  if (ip1 == ip2) {
-    std::cout << "Image point are the same :-)" << std::endl;
+  if (ip1 != ip2) {
+    std::cout << "ip1 != ip2 (bad result)" << std::endl;
+    return -1;
+  } 
+  else {
+    std::cout << "ip1 == ip2" << std::endl;
   }
+
+  if (ip1 == ip3) {
+    std::cout << "ip1 == ip3 (bad result)" << std::endl;
+    return -1;
+  }
+  else {
+    std::cout << "ip1 != ip3" << std::endl;
+  }
+
+  if (ip1 != ip3) {
+    std::cout << "ip1 != ip3" << std::endl;
+  }
+  else {
+    std::cout << "ip1 == ip3 (bad result)" << std::endl;
+    return -1;
+  }
+
 
   return 0;
 }

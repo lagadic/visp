@@ -164,7 +164,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   unsigned int iter = 0;
 
   //Nombre de moving edges
-  int nbrow  = 0;
+  unsigned int nbrow  = 0;
   
   lines[scaleLevel].front();
   while (!lines[scaleLevel].outside())
@@ -185,7 +185,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
   // compute the error vector
   vpColVector error(nbrow);
-  int nerror = error.getRows();
+  unsigned int nerror = error.getRows();
   vpColVector v ;
 
   double limite = 3; //Une limite de 3 pixels
@@ -212,7 +212,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     count = 0;
     
     lines[scaleLevel].front();
-    int n = 0;
+    unsigned int n = 0;
     reloop = false;
     while (!lines[scaleLevel].outside())
     {
@@ -243,9 +243,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       if (iter == 0 && l->meline != NULL)
         l->meline->list.front();
       
-      for (int i=0 ; i < l->nbFeature ; i++)
+      for (unsigned int i=0 ; i < l->nbFeature ; i++)
       {
-        for (int j=0; j < 6 ; j++)
+        for (unsigned int j=0; j < 6 ; j++)
         {
           L[n+i][j] = l->L[i][j]; //On remplit la matrice d'interaction globale
         }
@@ -319,7 +319,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     double den=0;
 
     double wi ; double eri ;
-    for(int i = 0; i < nerror; i++)
+    for(unsigned int i = 0; i < nerror; i++)
     {
       wi = w[i]*factor[i];
       eri = error[i];
@@ -331,9 +331,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     if((iter==0) || compute_interaction)
     {
-      for (int i=0 ; i < nerror ; i++)
+      for (unsigned int i=0 ; i < nerror ; i++)
       {
-        for (int j=0 ; j < 6 ; j++)
+        for (unsigned int j=0 ; j < 6 ; j++)
         {
           L[i][j] = w[i]*factor[i]*L[i][j] ;
         }
@@ -359,14 +359,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
   {
     lines[scaleLevel].front() ;
-    int n = 0 ;
+    unsigned int n = 0 ;
     while (!lines[scaleLevel].outside())
     {
       l = lines[scaleLevel].value();
       l->computeInteractionMatrixError(cMo) ;
-      for (int i=0 ; i < l->nbFeature ; i++)
+      for (unsigned int i=0 ; i < l->nbFeature ; i++)
       {
-        for (int j=0; j < 6 ; j++)
+        for (unsigned int j=0; j < 6 ; j++)
         {
           L[n+i][j] = l->L[i][j] ;
           error[n+i] = l->error[i] ;
@@ -401,7 +401,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     double den=0;
     double wi;
     double eri;
-    for(int i=0; i<nerror; i++)
+    for(unsigned int i=0; i<nerror; i++)
     {
       wi = w[i]*factor[i];
       eri = error[i];
@@ -415,9 +415,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     if((iter==0)|| compute_interaction)
     {
-      for (int i=0 ; i < nerror ; i++)
+      for (unsigned int i=0 ; i < nerror ; i++)
       {
-        for (int j=0 ; j < 6 ; j++)
+        for (unsigned int j=0 ; j < 6 ; j++)
         {
           L[i][j] = w[i]*factor[i]*L[i][j];
         }
@@ -433,7 +433,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   }
 
   lines[scaleLevel].front() ;
-  int n =0 ;
+  unsigned int n =0 ;
   while (!lines[scaleLevel].outside())
   {
     l = lines[scaleLevel].value() ;
@@ -441,7 +441,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       double wmean = 0 ;
       if (l->nbFeature > 0) l->meline->list.front();
       
-      for (int i=0 ; i < l->nbFeature ; i++)
+      for (unsigned int i=0 ; i < l->nbFeature ; i++)
       {
         wmean += w[n+i] ;
         vpMeSite p = l->meline->list.value() ;
@@ -526,7 +526,10 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 {
   initPyramid(I, Ipyramid);
   
-  for (int lvl = (scales.size()-1); lvl >= 0; lvl -= 1){
+//  for (int lvl = ((int)scales.size()-1); lvl >= 0; lvl -= 1)
+  unsigned int lvl = scales.size();
+  do{
+    lvl--;
     if(scales[lvl]){
       vpHomogeneousMatrix cMo_1 = cMo;
       try
@@ -623,7 +626,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
       }
     }
-  }
+  } while(lvl != 0);
 
   cleanPyramid(Ipyramid);
 }
@@ -643,13 +646,15 @@ vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix
   
   initPyramid(I, Ipyramid);
   visibleFace(_cMo, a);
-  for(int i= (static_cast<int>(scales.size())-1); i>= 0; i--){
+  unsigned int i=scales.size();
+  do {
+    i--;
     if(scales[i]){
       downScale(i);
       initMovingEdge(*Ipyramid[i],_cMo);
       upScale(i);
     }
-  }
+  } while(i != 0);
   
   cleanPyramid(Ipyramid);
 }
@@ -995,11 +1000,13 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   p.setIndex(index_polygon) ;
   faces.addPolygon(&p) ;
 
-  int nbpt = p.getNbPoint() ;
-  for (int i=0 ; i < nbpt-1 ; i++)
-    addLine(p.p[i],p.p[i+1],index_polygon) ;
-  addLine(p.p[nbpt-1],p.p[0],index_polygon) ;
-
+  unsigned int nbpt = p.getNbPoint() ;
+  if(nbpt > 0){
+    for (unsigned int i=0 ; i < nbpt-1 ; i++)
+      addLine(p.p[i], p.p[i+1], index_polygon) ;
+    addLine(p.p[nbpt-1], p.p[0], index_polygon) ;
+  }
+  
   index_polygon++ ;
 }
 
@@ -1016,7 +1023,7 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 void
 vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
 {
-  int n ;
+  unsigned int n ;
 
   n = faces.setVisible(cMo) ;
 //  cout << "visible face " << n << endl ;
@@ -1059,7 +1066,7 @@ vpMbEdgeTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const
   vpMbtPolygon *polygon = NULL;
   polygon = new vpMbtPolygon;
   polygon->setNbPoint(_corners.size());
-  polygon->setIndex(_indexFace);
+  polygon->setIndex((int)_indexFace);
   for(unsigned int j = 0; j < _corners.size(); j++) {
     polygon->addPoint(j, _corners[j]);
   }
@@ -1271,9 +1278,9 @@ vpMbEdgeTracker::initPyramid(const vpImage<unsigned char>& _I, std::vector< cons
       unsigned int cScale = static_cast<unsigned int>(pow(2., (int)i));
       vpImage<unsigned char>* I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
 #ifdef VISP_HAVE_OPENCV
-      IplImage* vpI0 = cvCreateImageHeader(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
+      IplImage* vpI0 = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
       vpI0->imageData = (char*)(_I.bitmap);
-      IplImage* vpI = cvCreateImage(cvSize(_I.getWidth() / cScale, _I.getHeight() / cScale), IPL_DEPTH_8U, 1);
+      IplImage* vpI = cvCreateImage(cvSize((int)(_I.getWidth() / cScale), (int)(_I.getHeight() / cScale)), IPL_DEPTH_8U, 1);
       cvResize(vpI0, vpI, CV_INTER_NN);
       vpImageConvert::convert(vpI, *I);
       cvReleaseImage(&vpI);  

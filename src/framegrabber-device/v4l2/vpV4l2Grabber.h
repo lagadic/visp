@@ -125,14 +125,14 @@ int main()
 class VISP_EXPORT vpV4l2Grabber : public vpFrameGrabber
 {
 public:
-  static const int DEFAULT_INPUT;
-  static const int DEFAULT_SCALE;
-  static const int MAX_INPUTS;
-  static const int MAX_NORM;
-  static const int MAX_FORMAT;
-  static const int MAX_CTRL;
-  static const int MAX_BUFFERS;
-  static const int FRAME_SIZE;
+  static const unsigned int DEFAULT_INPUT;
+  static const unsigned int DEFAULT_SCALE;
+  static const __u32 MAX_INPUTS;
+  static const __u32 MAX_NORM;
+  static const __u32 MAX_FORMAT;
+  static const unsigned int MAX_CTRL;
+  static const unsigned int MAX_BUFFERS;
+  static const unsigned int FRAME_SIZE;
 
   /*! \enum vpV4l2FramerateType
     Frame rate type for capture.
@@ -290,7 +290,7 @@ private:
   void getCapabilities();
   void startStreaming();
   void stopStreaming();
-  unsigned char * waiton(int &index, struct timeval &timestamp);
+  unsigned char * waiton(__u32 &index, struct timeval &timestamp);
   int  queueBuffer();
   void queueAll();
   void printBufInfo(struct v4l2_buffer buf);
@@ -315,7 +315,7 @@ private:
   struct ng_video_buf           *buf_me; //[vpV4l2Grabber::MAX_BUFFERS];
   unsigned int                  queue;
   unsigned int                  waiton_cpt;
-  int				index_buffer; //!< index of the buffer in use
+  __u32				index_buffer; //!< index of the buffer in use
 
   bool		verbose;
   unsigned	nbuffers;

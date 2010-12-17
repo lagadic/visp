@@ -180,11 +180,13 @@ class VISP_EXPORT vpXmlParser
 protected:
   char* xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node);
   int xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node);
+  unsigned int xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node);
   double xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node);
   
   
   void xmlWriteCharChild(xmlNodePtr node, const char* label, const char* value);
   void xmlWriteIntChild(xmlNodePtr node, const char* label, const int value);
+  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value);
   void xmlWriteDoubleChild(xmlNodePtr node, const char* label, const double value);
   
   /*!

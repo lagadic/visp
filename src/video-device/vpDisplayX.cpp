@@ -52,6 +52,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 // Display stuff
 #include <visp/vpDisplay.h>
@@ -247,7 +249,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 
   screen       = DefaultScreen ( display );
   lut          = DefaultColormap ( display, screen );
-  screen_depth = DefaultDepth ( display, screen );
+  screen_depth = (unsigned int)DefaultDepth ( display, screen );
 
   if ( ( window =
               XCreateSimpleWindow ( display, RootWindow ( display, screen ),
@@ -631,7 +633,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
                             screen_depth, ZPixmap, 0, NULL,
                             I.getWidth() , I.getHeight(), XBitmapPad ( display ), 0 );
 
-    Ximage->data = ( char * ) malloc ( I.getWidth() * I.getHeight() * Ximage->bits_per_pixel / 8 );
+    Ximage->data = ( char * ) malloc ( I.getWidth() * I.getHeight() * (unsigned int)Ximage->bits_per_pixel / 8 );
     ximage_data_init = true;
 
   }
@@ -706,7 +708,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 
   screen       = DefaultScreen ( display );
   lut          = DefaultColormap ( display, screen );
-  screen_depth = DefaultDepth ( display, screen );
+  screen_depth = (unsigned int)DefaultDepth ( display, screen );
 
   vpDEBUG_TRACE ( 1, "Screen depth: %d\n", screen_depth );
 
@@ -1096,7 +1098,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 
 
     Ximage->data = ( char * ) malloc ( I.getWidth() * I.getHeight()
-                                       * Ximage->bits_per_pixel / 8 );
+                                       * (unsigned int)Ximage->bits_per_pixel / 8 );
     ximage_data_init = true;
 
   }
@@ -1168,7 +1170,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
   screen       = DefaultScreen ( display );
   lut          = DefaultColormap ( display, screen );
-  screen_depth = DefaultDepth ( display, screen );
+  screen_depth = (unsigned int)DefaultDepth ( display, screen );
 
   vpTRACE ( "Screen depth: %d\n", screen_depth );
 
@@ -1579,7 +1581,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
                             width, height, XBitmapPad ( display ), 0 );
 
     Ximage->data = ( char * ) malloc ( width * height
-                                       * Ximage->bits_per_pixel / 8 );
+                                       * (unsigned int)Ximage->bits_per_pixel / 8 );
     ximage_data_init = true;
   }
   Xinitialise = true ;
@@ -1697,8 +1699,8 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
         {
-          int i = 0;
-          int size = width * height;
+          unsigned int i = 0;
+          unsigned int size = width * height;
           unsigned char nivGris;
           unsigned char nivGrisMax = 255 - vpColor::id_unknown;
 
@@ -1752,7 +1754,7 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         //for (unsigned int i = 0; i < size; i++) // suppression de l'iterateur i
         while ( bitmap < n )
         {
-          char val = * ( bitmap++ );
+          unsigned char val = * ( bitmap++ );
           * ( dst_32 ++ ) = val;  // Composante Rouge.
           * ( dst_32 ++ ) = val;  // Composante Verte.
           * ( dst_32 ++ ) = val;  // Composante Bleue.
@@ -2014,7 +2016,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
 	  unsigned int j = 0;
 	  while (j < width)
 	  {
-	    char val = *(src_8+j);
+	    unsigned char val = *(src_8+j);
 	    *(dst_32+4*j) = val;
 	    *(dst_32+4*j+1) = val;
 	    *(dst_32+4*j+2) = val;
@@ -2281,7 +2283,8 @@ void vpDisplayX::displayArrow ( const vpImagePoint &ip1,
       double b = ip2.get_j() - ip1.get_j() ;
       double lg = sqrt ( vpMath::sqr ( a ) + vpMath::sqr ( b ) ) ;
 
-      if ( ( a==0 ) && ( b==0 ) )
+      //if ( ( a==0 ) && ( b==0 ) )
+      if ((std::fabs(a) <= std::numeric_limits<double>::epsilon() )&&(std::fabs(b) <= std::numeric_limits<double>::epsilon()) )
       {
         // DisplayCrossLarge(i1,j1,3,col) ;
       }
@@ -2350,7 +2353,7 @@ void vpDisplayX::displayCharString ( const vpImagePoint &ip,
     }
     XDrawString ( display, pixmap, context, 
 		  (int)ip.get_u(), (int)ip.get_v(), 
-		  text, strlen ( text ) );
+		  text, (int)strlen ( text ) );
   }
   else
   {
@@ -2675,8 +2678,8 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
     XSetLineAttributes ( display, context, thickness,
                          LineSolid, CapButt, JoinBevel );
 
-    int width  = vpMath::round( bottomRight.get_u() - topLeft.get_u() );
-    int height = vpMath::round( bottomRight.get_v() - topLeft.get_v() );
+    unsigned int width  = (unsigned int)vpMath::round( bottomRight.get_u() - topLeft.get_u() );
+    unsigned int height = (unsigned int)vpMath::round( bottomRight.get_v() - topLeft.get_v() );
     if ( fill == false )
     {    
       XDrawRectangle ( display, pixmap, context, 
@@ -2739,16 +2742,16 @@ vpDisplayX::displayRectangle ( const vpRect &rectangle,
       XDrawRectangle ( display, pixmap, context,
                        vpMath::round( rectangle.getLeft() ), 
 		       vpMath::round( rectangle.getTop() ),
-		       vpMath::round( rectangle.getWidth()-1 ), 
-		       vpMath::round( rectangle.getHeight()-1 ) );
+		       (unsigned int)vpMath::round( rectangle.getWidth()-1 ), 
+		       (unsigned int)vpMath::round( rectangle.getHeight()-1 ) );
     }
     else
     {
       XFillRectangle ( display, pixmap, context,
                        vpMath::round( rectangle.getLeft() ), 
 		       vpMath::round( rectangle.getTop() ),
-                       vpMath::round( rectangle.getWidth() ), 
-		       vpMath::round( rectangle.getHeight() ) );
+                       (unsigned int)vpMath::round( rectangle.getWidth() ), 
+		       (unsigned int)vpMath::round( rectangle.getHeight() ) );
     }
 
   }
@@ -2838,7 +2841,6 @@ vpDisplayX::getClick ( vpImagePoint &ip, bool blocking )
 
   bool ret = false;
   if ( Xinitialise ) {
-    unsigned int u, v ;
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -2862,10 +2864,8 @@ vpDisplayX::getClick ( vpImagePoint &ip, bool blocking )
                            &root_x, &root_y,
                            &win_x, &win_y,
                            &modifier ) ) {
-        u = event.xbutton.x;
-        v = event.xbutton.y;
-        ip.set_u( u );
-        ip.set_v( v );
+        ip.set_u( (double)event.xbutton.x );
+        ip.set_v( (double)event.xbutton.y );
       }
     }
   }
@@ -2904,7 +2904,6 @@ vpDisplayX::getClick ( vpImagePoint &ip,
 
   bool ret = false;
   if ( Xinitialise ) {
-    unsigned int u,v ;
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -2929,10 +2928,8 @@ vpDisplayX::getClick ( vpImagePoint &ip,
                            &root_x, &root_y,
                            &win_x, &win_y,
                            &modifier ) ) {
-        u = event.xbutton.x;
-        v = event.xbutton.y;
-	ip.set_u( u );
-        ip.set_v( v );
+        ip.set_u( (double)event.xbutton.x );
+        ip.set_v( (double)event.xbutton.y );
         switch ( event.xbutton.button ) {
           case Button1: button = vpMouseButton::button1; break;
           case Button2: button = vpMouseButton::button2; break;
@@ -2980,7 +2977,6 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
 
   bool ret = false;
   if ( Xinitialise ) {
-    unsigned int u,v ;
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
@@ -3004,10 +3000,8 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
                            &root_x, &root_y,
                            &win_x, &win_y,
                            &modifier ) ) {
-        u = event.xbutton.x;
-        v = event.xbutton.y;
-	ip.set_u( u );
-        ip.set_v( v );
+        ip.set_u( (double)event.xbutton.x );
+        ip.set_v( (double)event.xbutton.y );
         switch ( event.xbutton.button ) {
           case Button1: button = vpMouseButton::button1; break;
           case Button2: button = vpMouseButton::button2; break;
@@ -3097,7 +3091,7 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 unsigned int vpDisplayX::getScreenDepth()
 {
   Display *_display;
-  unsigned int  screen;
+  int  screen;
   unsigned int  depth;
 
   if ( ( _display = XOpenDisplay ( NULL ) ) == NULL )
@@ -3108,7 +3102,7 @@ unsigned int vpDisplayX::getScreenDepth()
                                  "Can't connect display on server." ) ) ;
   }
   screen = DefaultScreen ( _display );
-  depth  = DefaultDepth ( _display, screen );
+  depth  = (unsigned int)DefaultDepth ( _display, screen );
 
   XCloseDisplay ( _display );
 
@@ -3122,7 +3116,7 @@ unsigned int vpDisplayX::getScreenDepth()
 void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
 {
   Display *_display;
-  unsigned int  screen;
+  int  screen;
 
   if ( ( _display = XOpenDisplay ( NULL ) ) == NULL )
   {
@@ -3132,8 +3126,8 @@ void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
                                  "Can't connect display on server." ) ) ;
   }
   screen = DefaultScreen ( _display );
-  width = DisplayWidth ( _display, screen );
-  height = DisplayHeight ( _display, screen );
+  width = (unsigned int)DisplayWidth ( _display, screen );
+  height = (unsigned int)DisplayHeight ( _display, screen );
 
   XCloseDisplay ( _display );
 }
@@ -3257,7 +3251,6 @@ vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
 
   bool ret = false;
   if ( Xinitialise ) {
-    unsigned int u, v ;
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -3273,10 +3266,8 @@ vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
                            &root_x, &root_y,
                            &win_x, &win_y,
                            &modifier ) ) {
-        u = event.xbutton.x;
-        v = event.xbutton.y;
-	ip.set_u( u );
-        ip.set_v( v );	
+	      ip.set_u( (double)event.xbutton.x );
+        ip.set_v( (double)event.xbutton.y );	
       }
     }
   }
@@ -3304,7 +3295,6 @@ vpDisplayX::getPointerPosition ( vpImagePoint &ip)
 
   bool ret = false;
   if ( Xinitialise ) {
-    unsigned int u, v ;
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -3320,10 +3310,8 @@ vpDisplayX::getPointerPosition ( vpImagePoint &ip)
                            &root_x, &root_y,
                            &win_x, &win_y,
                            &modifier ) ) {
-        u = win_x;
-        v = win_y;
-	ip.set_u( u );
-        ip.set_v( v );	
+	      ip.set_u( (double)win_x );
+        ip.set_v( (double)win_y );	
       }
     }
   }

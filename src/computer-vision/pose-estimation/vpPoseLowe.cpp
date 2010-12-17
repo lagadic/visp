@@ -296,7 +296,8 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
   int	n, m;	/* nombre d'elements dans la matrice jac */
   int	lwa;	/* taille du vecteur wa */
   int	ldfjac;	/* taille maximum d'une ligne de jac */
-  int	i,  info, ipvt[NBR_PAR];
+  unsigned int	i;
+  int   info, ipvt[NBR_PAR];
   int	tst_lmder;
   double f[2 * NBPTMAX], sol[NBR_PAR];
   double	tol, jac[NBR_PAR][2 * NBPTMAX], wa[2 * NBPTMAX + 50];
@@ -304,7 +305,7 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
   //  double	rd[3][3]; /* matrice de rotation */
 
   n = NBR_PAR;		/* nombres d'inconnues	*/
-  m = 2 * npt;		/* nombres d'equations	*/
+  m = (int)(2 * npt);		/* nombres d'equations	*/
   lwa = 2 * NBPTMAX + 50;  /* taille du vecteur de travail	*/
   ldfjac = 2 * NBPTMAX;	/* nombre d'elements max sur une ligne	*/
   tol = DBL_EPSILON;		/* critere d'arret	*/

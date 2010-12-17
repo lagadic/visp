@@ -46,6 +46,9 @@
 */
 
 #include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpMeTracker.h>
 #include <visp/vpMe.h>
 #include <visp/vpMeSite.h>
@@ -144,11 +147,11 @@ vpMeLine::~vpMeLine()
 void
 vpMeLine::sample(const vpImage<unsigned char>& I)
 {
-  int rows = I.getHeight() ;
-  int cols = I.getWidth() ;
+  int rows = (int)I.getHeight() ;
+  int cols = (int)I.getWidth() ;
   double n_sample;
 
-  if (me->sample_step==0)
+  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
   {
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
@@ -326,7 +329,7 @@ vpMeLine::leastSquare()
   vpColVector x(2), x_1(2) ;
   x_1 = 0;
 
-  int i ;
+  unsigned int i ;
 
   vpRobust r(numberOfSignal()) ;
   r.setThreshold(2);
@@ -339,8 +342,8 @@ vpMeLine::leastSquare()
   vpColVector B(numberOfSignal()) ;
   w =1 ;
   vpMeSite p ;
-  int iter =0 ;
-  int nos_1 = -1 ;
+  unsigned int iter =0 ;
+  unsigned int nos_1 = 0 ;
   double distance = 100;
 
   if (list.nbElement() < 2)
@@ -357,7 +360,7 @@ vpMeLine::leastSquare()
   {
 	nos_1 = numberOfSignal() ;
 	list.front() ;
-	int k =0 ;
+	unsigned int k =0 ;
 	for (i=0 ; i < list.nbElement() ; i++)
 	{
 		p = list.value() ;
@@ -427,7 +430,7 @@ vpMeLine::leastSquare()
   {
 	nos_1 = numberOfSignal() ;
 	list.front() ;
-	int k =0 ;
+	unsigned int k =0 ;
 	for (i=0 ; i < list.nbElement() ; i++)
 	{
 		p = list.value() ;
@@ -656,11 +659,12 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
 
-  int rows = I.getHeight() ;
-  int cols = I.getWidth() ;
+  int rows = (int)I.getHeight() ;
+  int cols = (int)I.getWidth() ;
   double n_sample;
 
-  if (me->sample_step==0)
+  //if (me->sample_step==0)
+  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
   {
 
     vpERROR_TRACE("function called with sample step = 0") ;
@@ -687,7 +691,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
-  int  memory_range = me->range ;
+  unsigned int  memory_range = me->range ;
   me->range = 1 ;
 
   vpImagePoint ip;
@@ -786,7 +790,7 @@ vpMeLine::reSample(const vpImage<unsigned char> &I)
 
   double d = sqrt(vpMath::sqr(i1-i2)+vpMath::sqr(j1-j2)) ;
 
-  int n = numberOfSignal() ;
+  unsigned int n = numberOfSignal() ;
   double expecteddensity = d / (double)me->sample_step;
 
   if ((double)n<0.9*expecteddensity)
@@ -819,7 +823,8 @@ vpMeLine::updateDelta()
 
   angle = vpMath::round(angle * 180 / M_PI) ;
 
-  if(fabs(angle) == 180 )
+  //if(fabs(angle) == 180 )
+  if(std::fabs(std::fabs(angle) - 180) <= std::numeric_limits<double>::epsilon())
   {
     angle= 0 ;
   }
@@ -832,7 +837,7 @@ vpMeLine::updateDelta()
   angle_1 = angle;
   
   list.front() ;
-  for (int i=0 ; i < list.nbElement() ; i++)
+  for (unsigned int i=0 ; i < list.nbElement() ; i++)
   {
     p = list.value() ;
     p.alpha = delta ;
@@ -965,7 +970,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
   j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
 
   int  end = false ;
-  double incr = 10 ;
+  int incr = 10 ;
 
   int i1=0,i2=0,j1=0,j2=0 ;
   unsigned char v1=0,v2=0 ;
@@ -1120,13 +1125,15 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
       {
 	denom = (-(a2/a1) * b1 + b2);
 
-	if (denom == 0)
+	//if (denom == 0)
+	if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
 	  {
 	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
 	    return (false);
 	  }
 
-	if (denom != 0 )
+	//if (denom != 0 )
+	if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
 	  {
 	    j = ( (a2/a1)*c1 - c2 ) / denom;
 	    i = (-b1*j - c1) / a1;
@@ -1137,13 +1144,15 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
       {
 	denom = (-(b2/b1) * a1 + a2);
 
-	if (denom == 0)
+	//if (denom == 0)
+	if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
 	  {
 	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
 	    return (false);
 	  }
 
-	if (denom != 0 )
+	//if (denom != 0 )
+	if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
 	  {
 	    i = ( (b2/b1)*c1 - c2 ) / denom;
 	    j = (-a1*i - c1) / b1;

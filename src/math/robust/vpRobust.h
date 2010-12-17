@@ -88,22 +88,22 @@ private:
   //!
   double sig_prev;
   //!
-  int it;
+  unsigned int it;
   //! Vairiable used in swap method
   double swap;
   //! Size of the containers
-  int size;
+  unsigned int size;
 
 public:
 
   //!Default Constructor
-  vpRobust(int n_data);
+  vpRobust(unsigned int n_data);
   
   //!Destructor
   virtual ~vpRobust(){};
 
   //!Resize containers for sort methods
-  void resize(int n_data);
+  void resize(unsigned int n_data);
   
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method,
@@ -120,7 +120,7 @@ public:
   vpColVector simultMEstimator(vpColVector &residues);
 
   //! Set iteration 
-  void setIteration(const int iter){it=iter;}
+  void setIteration(const unsigned int iter){it=iter;}
   
   /*!
     Set maximal noise threshold.
@@ -202,9 +202,9 @@ public:
   //! Swap two value
   void exch(double &A, double &B){swap = A; A = B;  B = swap;}
   //! Sort function using partition method
-  int partition(vpColVector &a, int l, int r);
+  unsigned int partition(vpColVector &a, unsigned int l, unsigned int r);
   //! Sort the vector and select a value in the sorted vector
-  double select(vpColVector &a, int l, int r, int k);
+  double select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k);
   //@}
 };
 

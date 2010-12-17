@@ -294,7 +294,7 @@ vpFeatureTranslation::get_Tz() const
 
 */
 vpMatrix
-vpFeatureTranslation::interaction(const int select)
+vpFeatureTranslation::interaction(const unsigned int select)
 {
 
   vpMatrix L ;
@@ -467,7 +467,7 @@ vpFeatureTranslation::interaction(const int select)
 */
 vpColVector
 vpFeatureTranslation::error(const vpBasicFeature &s_star,
-			    const int select)
+			    const unsigned int select)
 {
   vpColVector e(0) ;
 
@@ -529,7 +529,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
   \endcode
 */
 void
-vpFeatureTranslation::print(const int select) const
+vpFeatureTranslation::print(const unsigned int select) const
 {
   std::cout <<"Translation 3D: ";
   if (vpFeatureTranslation::selectTx() & select ) {
