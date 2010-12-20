@@ -78,10 +78,10 @@ public:
   vpPlane(const double a, const double b,const  double c,const  double d) ;
   vpPlane() ;
   vpPlane(const vpPlane& P) ;
-  vpPlane(vpPoint& P,vpColVector &n) ;
-  vpPlane(vpPoint &P, vpPoint &Q, vpPoint &R) ;
-  void init(vpPoint& P,   vpPoint& Q,  vpPoint& R) ;
-  void init(vpColVector& P,vpColVector &n) ;
+  vpPlane(const vpPoint& P, const vpColVector &n) ;
+  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R) ;
+  void init(const vpPoint& P, const vpPoint& Q, const vpPoint& R) ;
+  void init(const vpColVector& P, const vpColVector &n) ;
   void init(const vpPlane& P) ;
   // SET information
 public:
