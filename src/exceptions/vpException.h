@@ -68,8 +68,13 @@
 
 /* \class vpException
    \brief error that can be emited by the vp class and its derivates
+
+    This class inherites from the standard std::exception contained in the C++
+    STL.
+    It is therefore possible to catch vpException with any other derivative of
+    std::exception in the same catch.
  */
-class VISP_EXPORT vpException //: public std::exception
+class VISP_EXPORT vpException : public std::exception
 {
 
 private:
@@ -105,6 +110,12 @@ public:
   vpException (const int code, const char * msg);
   vpException (const int code, const std::string & msg);
   vpException (const int code);
+
+  /*!
+    Basic destructor. Do nothing but implemented to fit the inheritance from
+    std::exception
+  */
+  virtual ~vpException() throw() {}
 
   //!  send the object code
   int getCode (void);
