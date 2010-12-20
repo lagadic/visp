@@ -240,6 +240,10 @@ vpPoint::display(const vpImage<unsigned char> &I,
 
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
+
+  if(_cP[2] < 0)	// no display if point is behind the camera
+	  return;
+
   vpPoint::projection(_cP,_p) ;
   vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
 
@@ -255,6 +259,10 @@ vpPoint::display(const vpImage<vpRGBa> &I,
 
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
+
+  if(_cP[2] < 0)	// no display if point is behind the camera
+	  return;
+
   vpPoint::projection(_cP,_p) ;
   vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
 
