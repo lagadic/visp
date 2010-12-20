@@ -197,7 +197,7 @@ vpRobotCamera::setArticularVelocity(const vpColVector &qdot)
 
   \param v : Velocity to apply to the robot.
 
-  - In the camera drame, this velocity is represented by a 6 dimension vector
+  - In the camera frame, this velocity is represented by a vector of dimension 6
   \f$ {\bf v} = [{\bf t}, {\bf \theta u }]^t \f$ where \f$ \bf t \f$ is a
   translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
   vpThetaUVector): \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
