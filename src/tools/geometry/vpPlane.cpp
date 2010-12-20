@@ -114,7 +114,7 @@ vpPlane::vpPlane(const vpPlane& P)
 
 }
 
-vpPlane::vpPlane(vpPoint& P,vpColVector &n)
+vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
 {
   //Equation of the plane is given by:
   A = n[0];
@@ -132,7 +132,7 @@ void vpPlane::init(const vpPlane& P)
   setD(P.getD()) ;
 }
 
-void vpPlane::init(vpColVector & P,vpColVector &n)
+void vpPlane::init(const vpColVector & P, const vpColVector &n)
 {
   //Equation of the plane is given by:
   A = n[0];
@@ -151,7 +151,7 @@ void vpPlane::init(vpColVector & P,vpColVector &n)
 
 */
 void
-vpPlane::init(vpPoint &P, vpPoint &Q, vpPoint &R)
+vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 {
   vpColVector a(3);
   vpColVector b(3);
@@ -193,7 +193,7 @@ vpPlane::init(vpPoint &P, vpPoint &Q, vpPoint &R)
 
   sa init(vpPoint &P, vpPoint &Q, vpPoint &R)
 */
-vpPlane::vpPlane(vpPoint &P, vpPoint &Q, vpPoint &R)
+vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 {
   init(P,Q,R) ;
 }
