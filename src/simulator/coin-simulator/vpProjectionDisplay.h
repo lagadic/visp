@@ -110,7 +110,8 @@ public:
 	       const vpHomogeneousMatrix &cextMo,
 	       const vpHomogeneousMatrix &cMo,
 	       const vpCameraParameters &cam,
-	       const vpColor color) ;
+	       const vpColor color,
+	       const bool &displayTraj = false);
 
 
 private:
@@ -118,6 +119,7 @@ private:
   vpPoint x ;
   vpPoint y ;
   vpPoint z ;
+  vpMatrix traj;
 
 public:
   void displayCamera(vpImage<unsigned char> &I,

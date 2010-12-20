@@ -82,6 +82,7 @@ vpProjectionDisplay::init()
   x.setWorldCoordinates(0.1,0,0) ;
   y.setWorldCoordinates(0,0.1,0) ;
   z.setWorldCoordinates(0,0,0.1) ;
+  traj.resize(0,2);
 }
 void
 vpProjectionDisplay::init(const int select)
@@ -135,7 +136,8 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const vpHomogeneousMatrix &cextMo,
 			     const vpHomogeneousMatrix &cMo,
 			     const vpCameraParameters &cam,
-			     const vpColor color)
+			     const vpColor color,
+			     const bool &displayTraj)
 {
 
     for (listFp.front() ; !listFp.outside() ; listFp.next() )
@@ -144,7 +146,18 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
       fp->display(I,cextMo,cam, color) ;
     }
 
-    displayCamera(I,cextMo,cMo, cam) ;
+    if(displayTraj)	// display past camera positions
+    	for(int i=0;i<traj.getRows();++i)
+    		vpDisplay::displayCircle(I,traj[i][0],traj[i][1],2,vpColor::green,true);
+
+    displayCamera(I,cextMo,cMo, cam);
+
+    if(displayTraj)	// store current camera position
+    {
+    	const int n = traj.getRows();
+    	traj.resize(n+1,2,false);
+    	vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],traj[n][1],traj[n][0]);
+    }
 }
 
 
@@ -158,6 +171,10 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   c1Mc = cextMo*cMo.inverse() ;
 
   o.track(c1Mc) ;
+
+  if(o.get_Z() < 0)	// do not print camera if behind the external camera
+	  return;
+
   x.track(c1Mc) ;
   y.track(c1Mc) ;
   z.track(c1Mc) ;
