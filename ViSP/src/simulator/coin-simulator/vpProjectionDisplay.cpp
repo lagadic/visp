@@ -147,7 +147,7 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
     }
 
     if(displayTraj)	// display past camera positions
-    	for(int i=0;i<traj.getRows();++i)
+    	for(unsigned int i=0;i<traj.getRows();++i)
     		vpDisplay::displayCircle(I,traj[i][0],traj[i][1],2,vpColor::green,true);
 
     displayCamera(I,cextMo,cMo, cam);
