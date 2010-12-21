@@ -161,6 +161,7 @@ vpDot::operator=(const vpDot& d)
   v_max = d.v_max;
 
   gray_level_out = d.gray_level_out;
+  gamma = d.gamma;
 
   nbMaxPoint = d.nbMaxPoint;
 
