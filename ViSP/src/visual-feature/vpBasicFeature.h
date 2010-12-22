@@ -114,21 +114,19 @@ class VISP_EXPORT vpBasicFeature
   static  unsigned int selectAll()  { return FEATURE_ALL ; }
 
   //! get the feature vecror
-  vpColVector get_s() const;
+  vpColVector get_s(unsigned int select=FEATURE_ALL) const;
 
   //! get the feature dimension
   unsigned int getDimension(unsigned int select=FEATURE_ALL) const;
-  //! compute the interaction matrix from a subset a the possible features
+  //! compute the interaction matrix from a subset  the possible features
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
-  //! compute the error between two visual features from a subset
-  //! a the possible features
-  virtual vpColVector error(const vpBasicFeature &s_star,
-			    const unsigned int select= FEATURE_ALL)  = 0 ;
+
+  vpColVector error(const vpBasicFeature &s_star,
+			    const unsigned int select= FEATURE_ALL);
   //! print the name of the feature
   virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
 
   virtual vpBasicFeature *duplicate() const = 0 ;
-
 
  public:
   virtual void display(const vpCameraParameters &cam,
@@ -164,7 +162,6 @@ class VISP_EXPORT vpBasicFeature
   void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
   vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
 } ;
-
 
 #endif
 

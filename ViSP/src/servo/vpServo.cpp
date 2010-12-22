@@ -142,6 +142,7 @@ vpServo::init()
 
   featureList.kill() ;
   desiredFeatureList.kill() ;
+  featureSelectionList.kill();
 
   signInteractionMatrix = 1 ;
 
@@ -746,14 +747,14 @@ vpServo::computeError()
 	unsigned int select = featureSelectionList.value() ;
 
 	/* Get s, and store it in the s vector. */
-	vectTmp = current_s->get_s();
+	vectTmp = current_s->get_s(select);
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorS > dimS)
 	  { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
 	for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 	/* Get s_star, and store it in the s vector. */
-	vectTmp = desired_s->get_s();
+	vectTmp = desired_s->get_s(select);
 	dimVectTmp = vectTmp .getRows();
 	while (dimVectTmp + cursorSStar > dimSStar)
 	  { dimSStar *= 2; sStar .resize (dimSStar,false);  }

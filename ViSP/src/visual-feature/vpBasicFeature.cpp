@@ -98,11 +98,19 @@ vpBasicFeature::getDimension(unsigned int select) const
     return dim ;
 }
 
-//! get the feature vecror
+//! get the feature vector
 vpColVector
- vpBasicFeature::get_s() const
+ vpBasicFeature::get_s(unsigned int select) const
 {
-    vpColVector state  ; state = s ;
+    vpColVector state(0),stateLine(1);
+	for(unsigned int i=0;i<dim_s;++i)
+	{
+		if(FEATURE_LINE[i] & select)
+		{
+			stateLine[0] = s[i];
+			state.stackMatrices(stateLine);
+    	}
+	}
     return state ;
 }
 
@@ -124,6 +132,23 @@ void vpBasicFeature::setFlags()
 	    flags[i] = true;
     }
 }
+
+//! compute the error between two visual features from a subset of the possible features
+vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
+	    const unsigned int select)
+{
+	vpColVector e(0),eLine(1);
+	for(unsigned int i=0;i<dim_s;++i)
+	{
+		if(FEATURE_LINE[i] & select)
+		{
+			eLine[0] = s[i] - s_star[i];
+			e.stackMatrices(eLine);
+		}
+	}
+   return e ;
+}
+
 /*
  * Local variables:
  * c-basic-offset: 4
