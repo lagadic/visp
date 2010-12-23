@@ -90,6 +90,8 @@ unsigned int
 vpBasicFeature::getDimension(unsigned int select) const
 {
     unsigned int dim = 0 ;
+    if(dim_s>31)
+    	return dim_s;
     for (unsigned int i=0 ; i < s.getRows() ; i++)
     {
 	//	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
@@ -100,9 +102,13 @@ vpBasicFeature::getDimension(unsigned int select) const
 
 //! get the feature vector
 vpColVector
- vpBasicFeature::get_s(unsigned int select) const
+ vpBasicFeature::get_s(const unsigned int select) const
 {
     vpColVector state(0),stateLine(1);
+    // if s is higher than the possible selections (photometry), send back the whole vector
+    if(dim_s > 31)
+    	return s;
+
 	for(unsigned int i=0;i<dim_s;++i)
 	{
 		if(FEATURE_LINE[i] & select)
@@ -140,7 +146,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
 	vpColVector e(0),eLine(1);
 	for(unsigned int i=0;i<dim_s;++i)
 	{
-		if(FEATURE_LINE[i] & select)
+		if((FEATURE_LINE[i] & select) | (dim_s>31))
 		{
 			eLine[0] = s[i] - s_star[i];
 			e.stackMatrices(eLine);

@@ -117,7 +117,7 @@ class VISP_EXPORT vpBasicFeature
   vpColVector get_s(unsigned int select=FEATURE_ALL) const;
 
   //! get the feature dimension
-  unsigned int getDimension(unsigned int select=FEATURE_ALL) const;
+  unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
   //! compute the interaction matrix from a subset  the possible features
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
 
