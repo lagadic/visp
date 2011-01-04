@@ -154,7 +154,7 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 
     if(displayTraj)	// store current camera position
     {
-    	const int n = traj.getRows();
+      const unsigned int n = traj.getRows();
     	traj.resize(n+1,2,false);
     	vpMeterPixelConversion::convertPoint(cam,o.p[0],o.p[1],traj[n][1],traj[n][0]);
     }
