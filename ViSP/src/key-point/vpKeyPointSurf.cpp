@@ -252,6 +252,7 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   cvReleaseImage(&model);
 
+  _reference_computed = true;
   return nbPoints;
 }
 

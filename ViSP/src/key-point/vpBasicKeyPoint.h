@@ -4,7 +4,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -79,7 +79,7 @@ class VISP_EXPORT vpBasicKeyPoint
   public:
     vpBasicKeyPoint();
 
-   virtual ~vpBasicKeyPoint() { 
+   virtual ~vpBasicKeyPoint() {
     matchedReferencePoints.resize(0);
     currentImagePointsList.resize(0);
     referenceImagePointsList.resize(0);
@@ -87,26 +87,33 @@ class VISP_EXPORT vpBasicKeyPoint
 
    virtual unsigned int buildReference(const vpImage<unsigned char> &I) =0;
 
-   virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
-			      vpImagePoint &iP, 
-			      const unsigned int height, const unsigned int width) =0;
+   virtual unsigned int buildReference(const vpImage<unsigned char> &I,
+            vpImagePoint &iP,
+            const unsigned int height, const unsigned int width) =0;
 
-   virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
-			      const vpRect& rectangle) =0;
+   virtual unsigned int buildReference(const vpImage<unsigned char> &I,
+            const vpRect& rectangle) =0;
 
    virtual unsigned int matchPoint(const vpImage<unsigned char> &I) =0;
 
-   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
-			  vpImagePoint &iP, 
-			  const unsigned int height, const unsigned int width) =0;
+   virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
+        vpImagePoint &iP,
+        const unsigned int height, const unsigned int width) =0;
 
-   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
-			  const vpRect& rectangle) =0;
+   virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
+        const vpRect& rectangle) =0;
 
-   virtual void display(const vpImage<unsigned char> &Iref, 
-			const vpImage<unsigned char> &Icurrent) =0;
+   virtual void display(const vpImage<unsigned char> &Iref,
+      const vpImage<unsigned char> &Icurrent) =0;
 
    virtual void display(const vpImage<unsigned char> &Icurrent) =0;
+
+   /*!
+    Indicate wether the reference has been built or not.
+
+    \return True if the reference of the current instance has been built.
+   */
+   bool referenceBuilt() const {return _reference_computed;}
 
    /*!
      Get the pointer to the complete list of reference points. The pointer is const. Thus the points can not be modified
@@ -167,32 +174,61 @@ class VISP_EXPORT vpBasicKeyPoint
 
     vpImagePoint referencePoint2;
     const vpImagePoint* referencePointsList = surf.getAllPointsInReferenceImage();
-    int index = surf.getIndexInAllReferencePointList(1);  //Get the first matched reference point index in the complete reference point list 
+    int index = surf.getIndexInAllReferencePointList(1);  //Get the first matched reference point index in the complete reference point list
     referencePoint2 = referencePointsList[index]; //Get the first matched reference point
     \endcode
    */
-   inline unsigned int getIndexInAllReferencePointList ( const unsigned int indexInMatchedPointList ) {
-     if (indexInMatchedPointList >= matchedReferencePoints.size())
-     {
-       vpTRACE("Index of the matched reference point out of range");
-       throw(vpException(vpException::fatalError,"Index of the matched reference point out of range"));
-     }
-     return matchedReferencePoints[indexInMatchedPointList];
-   }
+    inline unsigned int getIndexInAllReferencePointList ( const unsigned int indexInMatchedPointList ) {
+    if (indexInMatchedPointList >= matchedReferencePoints.size())
+    {
+      vpTRACE("Index of the matched reference point out of range");
+      throw(vpException(vpException::fatalError,"Index of the matched reference point out of range"));
+    }
+    return matchedReferencePoints[indexInMatchedPointList];
+    }
 
-   /*!
+    /*!
      Get the number of reference points.
 
      \return the number of reference points.
-   */
-   inline unsigned int getReferencePointNumber() {return referenceImagePointsList.size();};
+    */
+    inline unsigned int getReferencePointNumber() const {return referenceImagePointsList.size();};
 
-   /*!
+    /*!
      Get the number of matched points.
 
      \return the number of matched points.
-   */
-   inline unsigned int getMatchedPointNumber() {return matchedReferencePoints.size();};
+    */
+    inline unsigned int getMatchedPointNumber() const {return matchedReferencePoints.size();};
+
+    /*!
+      Return the vector of reference image point.
+
+      \warning Should not be modified.
+
+      \return Vector of reference image point.
+    */
+    const std::vector<vpImagePoint>& getReferenceImagePointsList() const {return referenceImagePointsList;}
+
+    /*!
+      Return the vector of current image point.
+
+      \warning Should not be modified.
+
+      \return Vector of the current image point.
+    */
+    const std::vector<vpImagePoint>& getCurrentImagePointsList() const {return currentImagePointsList;}
+
+    /*!
+      Return the index of the matched associated to the current image point i.
+      The ith element of the vector is the index of the reference image point
+      matching with the current image point.
+
+      \warning Should not be modified.
+
+      \return The vector of matching index.
+    */
+    const std::vector<unsigned int>& getMatchedReferencePoints() const {return matchedReferencePoints;}
 
   private:
     virtual void init()=0;
@@ -216,6 +252,9 @@ class VISP_EXPORT vpBasicKeyPoint
       The value of n is stored in the first element of the "matchedReferencePoints" array.
     */
     std::vector<unsigned int> matchedReferencePoints;
+
+    //! flag to indicate if the reference has been built.
+    bool _reference_computed;
 };
 
 #endif
