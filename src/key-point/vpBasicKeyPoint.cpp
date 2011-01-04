@@ -49,6 +49,7 @@
 */
 vpBasicKeyPoint::vpBasicKeyPoint()
 {
+  _reference_computed = false;
   matchedReferencePoints.resize(0);
   currentImagePointsList.resize(0);
   referenceImagePointsList.resize(0);

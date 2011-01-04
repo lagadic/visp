@@ -185,6 +185,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
   
   train();
 
+  _reference_computed = true;
   return objKeypoints.size();
 
 }
