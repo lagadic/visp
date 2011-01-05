@@ -525,9 +525,10 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   
   if (firstPoint)
   {
-    clearGraphZone(I);
-    displayGrid(I);
-    vpDisplay::flushROI(I,graphZone);
+//     clearGraphZone(I);
+//     displayGrid(I);
+//     vpDisplay::flushROI(I,graphZone);
+    replot(I);
     firstPoint = false;
   }
   
@@ -602,6 +603,7 @@ vpPlotGraph::resetPointList(const unsigned int curveNum)
   (curveList+curveNum)->pointListx.kill();
   (curveList+curveNum)->pointListy.kill();
   (curveList+curveNum)->pointListz.kill();
+  (curveList+curveNum)->nbPoint = 0;
   firstPoint = true;
 }
 
