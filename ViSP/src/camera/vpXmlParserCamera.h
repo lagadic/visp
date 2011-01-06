@@ -221,6 +221,8 @@ private :
   unsigned int full_width;
   unsigned int full_height;
 
+  //! Allowed size difference between input image and data from the xml parser to handle minor differences (ex. FORMAT7 can creates 648*488 images).
+  static const int allowedPixelDiffOnImageSize = 15;
 
 public:
 
