@@ -513,12 +513,12 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
     }
   }
   if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
-        (image_width == image_width_tmp || image_width == 0) &&
-        (image_height == image_height_tmp || image_height == 0) &&
-        (subsampling_width == subsampling_width_tmp ||
-          subsampling_width == 0)&&
-        (subsampling_height == subsampling_height_tmp ||
-          subsampling_height == 0))){
+        (abs((int)image_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || image_width == 0) &&
+        (abs((int)image_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || image_height == 0) &&
+        ( subsampling_width == 0 ||
+          abs((int)subsampling_width - (int)subsampling_width_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)))&&
+        ( subsampling_height == 0 ||
+         abs((int)subsampling_height - (int)subsampling_height_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width))))){
     back = SEQUENCE_ERROR;
   }
   else{
