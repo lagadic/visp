@@ -235,10 +235,14 @@ main(int argc, const char ** argv)
     vpDisplayGDI display;
 #elif defined VISP_HAVE_D3D
     vpDisplayD3D display;
+#else
+    opt_display = false;
 #endif
   if (opt_display)
   {
+#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GDI) || (defined VISP_HAVE_D3D)
     display.init(I, 100, 100, "Test tracking") ;
+#endif
     vpDisplay::display(I) ;
     vpDisplay::flush(I);
   }
