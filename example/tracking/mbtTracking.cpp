@@ -193,6 +193,20 @@ main(int argc, const char ** argv)
     exit (-1);
   }
 
+  // Test if an input path is set
+  if (opt_ipath.empty() && env_ipath.empty() ){
+    usage(argv[0], NULL);
+    std::cerr << std::endl
+   << "ERROR:" << std::endl;
+    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+   << std::endl
+   << "  environment variable to specify the location of the " << std::endl
+   << "  image path where test images are located." << std::endl
+         << std::endl;
+
+    return (-1);
+  }
+
   // Get the option values
   if (!opt_ipath.empty())
     ipath = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube/image%04d.pgm");
@@ -201,22 +215,36 @@ main(int argc, const char ** argv)
   
   if (!opt_configFile.empty())
     configFile = opt_configFile;
+  else if (!opt_ipath.empty())
+    configFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.xml");
   else
     configFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.xml");
   
   if (!opt_modelFile.empty()){
     modelFile = opt_modelFile;
   }else{
-    if(cao3DModel){
-      modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+    if(!opt_ipath.empty()){
+      if(cao3DModel){
+        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+      }
+      else{
+        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+      }
     }
     else{
-      modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+      if(cao3DModel){
+        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+      }
+      else{
+        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+      }
     }
   }
   
   if (!opt_initFile.empty())
     initFile = opt_initFile;
+  else if (!opt_ipath.empty())
+    initFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube");
   else
     initFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube");
 
