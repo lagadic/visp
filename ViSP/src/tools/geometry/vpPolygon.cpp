@@ -46,6 +46,7 @@
 #include <visp/vpPolygon.h>
 #include <visp/vpException.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpMeterPixelConversion.h>
 
 /*!
   Basic constructor.
@@ -114,7 +115,7 @@ vpPolygon::operator=(const vpPolygon& poly)
 };
 
 /*!
-  Initialise the triangle thanks to the collection of 2D points
+  Initialise the triangle thanks to the collection of 2D points (in pixel).
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
   
@@ -124,6 +125,27 @@ void
 vpPolygon::buildFrom(const std::vector<vpImagePoint>& corners)
 {
   init(corners);
+}
+
+/*!
+  Initialise the triangle thanks to the collection of 2D points (in meter). The
+  fields \e x and \e y are used to compute the corresponding coordinates in
+  pixel thanks to the camera parameters \e cam.
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The corners of the polyon.
+  \param cam : The camera parameters used to convert the coordinates from meter
+  to pixel.
+*/
+void
+vpPolygon::buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam)
+{
+  std::vector<vpImagePoint> ipCorners(corners.size());
+  for(unsigned int i=0; i<corners.size(); ++i){
+    vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(), corners[i].get_y(), ipCorners[i]);
+  }
+  buildFrom(ipCorners);
 }
 
 /*!
@@ -302,8 +324,8 @@ vpPolygon::updateBoundingBox()
   if(tl == br){
     _goodPoly = false;
   }
-  _bbox.setBottomRight(br);
   _bbox.setTopLeft(tl);
+  _bbox.setBottomRight(br);
 }
 
 /*!

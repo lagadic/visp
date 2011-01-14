@@ -62,6 +62,8 @@
 #include <visp/vpRect.h>
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
+#include <visp/vpPoint.h>
+#include <visp/vpCameraParameters.h>
 
 class VISP_EXPORT vpPolygon
 {
@@ -86,6 +88,7 @@ class VISP_EXPORT vpPolygon
     vpPolygon &operator=(const vpPolygon& poly);
     
     void buildFrom(const std::vector<vpImagePoint>& corners);
+    void buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam);
     void initClick(const vpImage<unsigned char>& I);
     
     bool isInside(const vpImagePoint &iP, const double threshold = 0.00001);
