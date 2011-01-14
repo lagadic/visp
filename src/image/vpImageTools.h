@@ -422,7 +422,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   double py = cam.get_py();
   double kud = cam.get_kud();
 
-  if (kud == 0) {
+  //if (kud == 0) {
+  if (std::fabs(kud) <= std::numeric_limits<double>::epsilon()) {
     // There is no need to undistort the image
     undistI = I;
     return;
@@ -463,17 +464,17 @@ void vpImageTools::undistort(const vpImage<Type> &I,
       Type  v01;
       Type  v23;
       if ( (0 <= u_round) && (0 <= v_round) &&
-	   (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
-	//process interpolation
-	const Type* _mp = &I[v_round][u_round];
-	v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
-	_mp += width;
-	v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
-	*dst = (Type)(v01 + ((v23 - v01) * dv_double));
-	//printf("R %d G %d B %d\n", dst->R, dst->G, dst->B);
+           (u_round < (((int)width) - 1)) && (v_round < (((int)height) - 1)) ) {
+        //process interpolation
+        const Type* _mp = &I[(unsigned int)v_round][(unsigned int)u_round];
+        v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+        _mp += width;
+        v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+        *dst = (Type)(v01 + ((v23 - v01) * dv_double));
+        //printf("R %d G %d B %d\n", dst->R, dst->G, dst->B);
       }
       else {
-	*dst = 0;
+        *dst = 0;
       }
       dst++;
     }
