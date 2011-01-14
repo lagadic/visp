@@ -102,7 +102,7 @@ vpMbTracker::~vpMbTracker()
 {
 #ifdef VISP_HAVE_COIN
   if(coinUsed){
-    SoDB::finish();
+//    SoDB::finish();
     coinUsed = false;
   }
 #endif
@@ -377,7 +377,10 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
   std::ifstream infile;
   infile.open (_modelFile.c_str(), std::ifstream::in);
 
-  SoDB::init();
+  if(!coinUsed){
+    SoDB::init();
+    coinUsed = true;
+  }
   SoInput in;
   SbBool ok = in.openFile(_modelFile.c_str());
   SoSeparator  *sceneGraph;
@@ -436,7 +439,7 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
       }
     }
   }
-  coinUsed = true;
+  
   sceneGraphVRML2->unref();
 #else
   vpERROR_TRACE("coin not detected with ViSP, cannot load model : %s", _modelFile.c_str());
