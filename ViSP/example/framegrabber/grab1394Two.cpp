@@ -200,10 +200,9 @@ OPTIONS                                                    Default\n\
     -o [%%s] : Filename for image saving.                     \n\
               Example: -o %s\n\
               The first %%d is for the camera id. The second\n\
-              %%04d is for the image numbering. If color images \n\
-              are acquired the format of the .ppm file is PNM P6.\n\
-              If grey level images are acquired, the format of \n\
-              the .ppm file is PNM P5.\n\
+              %%04d is for the image numbering. The format is set \n\
+              by the extension of the file (ex .png, .pgm, \n\
+              ...) \n\
 \n\
     -r      : Reset the bus attached to the first camera found.\n\
               Bus reset may help to make firewire working if the\n\
@@ -673,10 +672,10 @@ main(int argc, const char ** argv)
 	  std::string filename(buf);
 	  std::cout << "Write: " << filename << std::endl;
 	  if (grab_color[c]) {
-	    vpImageIo::writePPM(Ic[c], filename);
+      vpImageIo::write(Ic[c], filename);
 	  }
 	  else {
-	    vpImageIo::writePGM(Ig[c], filename);
+      vpImageIo::write(Ig[c], filename);
 	  }
 	}
       }
