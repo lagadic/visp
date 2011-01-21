@@ -158,6 +158,15 @@ public:
    */
    inline  unsigned int getCols() const { return width ; }
 
+  /*!  
+    Get the image size.
+
+    \return The image size = width * height.
+
+    \sa getWidth(), getHeight()
+   */
+   inline  unsigned int getSize() const { return width*height ; }
+
 
   // Return the maximum value within the bitmap
   Type getMaxValue() const ;
