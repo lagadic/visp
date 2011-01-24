@@ -108,6 +108,8 @@ protected:
   bool cameraInitialised;    
   //! Flag used to specify that the Coin library has been loaded in order to load a vrml model (used to free the memory).
   bool coinUsed;
+  //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method. 
+  std::string poseSavingFilename;
 
 public:
   vpMbTracker();
@@ -188,6 +190,19 @@ public:
     \param _cMo : the pose
   */
   inline void getPose(vpHomogeneousMatrix& _cMo) const {_cMo = this->cMo;}
+  
+  /*!
+    Set the filename used to save the initial pose computed using the 
+    initClick() method. It is also used to read a previous pose in the same method. 
+    If the file is not set then, the initClick() method will create a .0.pos 
+    file in the root directory. This directory is the path to the file given to 
+    the method initClick() used to know the coordinates in the object frame.
+    
+    \param filename : The new filename.
+  */
+  inline void setPoseSavingFilename(const std::string& filename){
+    poseSavingFilename = filename;
+  }
 
 protected:
   virtual void loadVRMLModel(const std::string& _modelFile);

@@ -124,6 +124,8 @@ vpMbTracker::~vpMbTracker()
   \param _initFile : File containing the points where to click
   \param _displayHelp : Optionnal display of an image ( '_initFile.ppm' ). This 
     image may be used to show where to click. 
+
+  \sa setPathNamePoseSaving()
 */
 void
 vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp)
@@ -135,9 +137,12 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
   std::fstream finitpos ;
   std::fstream finit ;
   char s[FILENAME_MAX];
-
-  sprintf(s, "%s.0.pos", _initFile.c_str());
-  finitpos.open(s ,std::ios::in) ;
+  if(poseSavingFilename.empty()){
+    sprintf(s, "%s.0.pos", _initFile.c_str());
+    finitpos.open(s ,std::ios::in) ;
+  }else{
+    finitpos.open(poseSavingFilename.c_str() ,std::ios::in) ;
+  }
   if(finitpos.fail() ){
   	std::cout << "cannot read " << s << std::endl << "cMo set to identity" << std::endl;
   	last_cMo.setIdentity();
@@ -272,8 +277,6 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       }
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-      std::cout << "cMo:" << std::endl << cMo << std::endl;
-
       display(_I, cMo, cam, vpColor::green);
       vpDisplay::displayCharString(_I, 15, 10,
 				 "left click to validate, right click to re initialize object",
@@ -303,20 +306,16 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     delete [] P;
 
 	//save the pose into file
-//	sprintf(s,"%s.0.pos",filename);
-  sprintf(s,"%s.0.pos", _initFile.c_str());
-	finitpos.open(s, std::ios::out) ;
+  if(poseSavingFilename.empty()){
+    sprintf(s,"%s.0.pos", _initFile.c_str());
+	  finitpos.open(s, std::ios::out) ;
+	}else{
+  	finitpos.open(poseSavingFilename.c_str(), std::ios::out) ;
+	}
 	init_pos.buildFrom(cMo);
 	finitpos << init_pos;
 	finitpos.close();
   }
-
-  //save the pose into file
-  sprintf(s, "%s.0.pos", _initFile.c_str());
-  finitpos.open(s,std::ios::out) ;
-  init_pos.buildFrom(cMo);
-  finitpos << init_pos;
-  finitpos.close();
 
   std::cout <<"cMo : "<<std::endl << cMo <<std::endl;
 
