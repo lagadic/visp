@@ -86,8 +86,8 @@
 
 int main ()
 {
-  //Create a window with two graphics
-  vpPlot A(2);
+  //Create a window (700 by 700) at position (100, 200) with two graphics
+  vpPlot A(2, 700, 700, 100, 200, "Curves...");
 
   //The first graphic contains 1 curve and the second graphic contains 2 curves
   A.initGraph(0,1);
@@ -153,8 +153,10 @@ class VISP_EXPORT vpPlot
     float factorj;
     
   public:
-    vpPlot(const unsigned int nbGraph, const unsigned int height=700, 
-	   const unsigned int width=700);
+    vpPlot(const unsigned int nbGraph, 
+	   const unsigned int height=700, 
+	   const unsigned int width=700, 
+	   const int x=-1, const int y=-1, const char *title=NULL);
     ~vpPlot();
     
     void initGraph (unsigned int graphNum, unsigned int curveNbr);

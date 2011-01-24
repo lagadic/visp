@@ -56,7 +56,7 @@
 
 int main ()
 {
-  vpPlot plot(2);
+  vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
   //Initialize the number of curve for each graphic
   plot.initGraph(0,1);

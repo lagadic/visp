@@ -58,16 +58,19 @@
   \param graphNbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
-
+  \param x,y : The window is set at position x,y (column index, row index).
+  \param title : Window title. 
   \note The basic constructor is not available.
 */
-vpPlot::vpPlot(const unsigned int graphNbr, const unsigned int height, const unsigned int width)
+vpPlot::vpPlot(const unsigned int graphNbr, 
+	       const unsigned int height, const unsigned int width, 
+	       const int x, const int y, const char *title)
 {
   I.init(height,width,255);
   
   graphList = NULL;
   
-  display.init(I);
+  display.init(I, x, y, title);
   
   vpDisplay::display(I);
   
