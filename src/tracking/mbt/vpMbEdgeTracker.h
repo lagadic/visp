@@ -153,8 +153,8 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   void loadModel(const char* cad_name);
   void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
   void track(const vpImage<unsigned char> &I);
-  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
-  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1);
+  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   void resetTracker();
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo);
    
