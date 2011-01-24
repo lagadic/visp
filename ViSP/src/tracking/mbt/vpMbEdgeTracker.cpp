@@ -714,11 +714,12 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
   \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
+  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
 */
 void
 vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
 											const vpColor& col,
-											const unsigned int thickness)
+											const unsigned int thickness, const bool displayFullModel)
 {
   vpMbtDistanceLine *l ;
   
@@ -728,7 +729,7 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
       while (!lines[i].outside())
       {
         l = lines[i].value() ;
-        l->display(I,_cMo, cam, col, thickness) ;
+        l->display(I,_cMo, cam, col, thickness, displayFullModel) ;
         lines[i].next() ;
       }
       break ; //displaying model on one clase only
@@ -744,11 +745,12 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
   \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
+  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
 */
 void
 vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &cam,
 											const vpColor& col,
-											const unsigned int thickness)
+											const unsigned int thickness, const bool displayFullModel)
 {
   vpMbtDistanceLine *l ;
   
@@ -758,7 +760,7 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_c
       while (!lines[i].outside())
       {
         l = lines[i].value() ;
-        l->display(I,_cMo, cam, col, thickness) ;
+        l->display(I,_cMo, cam, col, thickness, displayFullModel) ;
         lines[i].next() ;
       }
       break ; //displaying model on one clase only

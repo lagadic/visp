@@ -419,11 +419,12 @@ vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHom
   \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the line.
+  \param displayFullModel : If true, the line is displayed even if it is not visible.
 */
 void
-vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
+vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if (isvisible ==true)
+  if (isvisible ==true || displayFullModel)
   {
     p1->changeFrame(cMo) ;
     p2->changeFrame(cMo) ;
@@ -451,11 +452,12 @@ vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMa
   \param cam : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the line.
+  \param displayFullModel : If true, the line is displayed even if it is not visible.
 */
 void
-vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
+vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if (isvisible ==true)
+  if (isvisible ==true || displayFullModel)
   {
     p1->changeFrame(cMo) ;
     p2->changeFrame(cMo) ;

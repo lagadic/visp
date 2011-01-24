@@ -152,15 +152,17 @@ public:
   virtual void loadModel(const std::string& _modelFile);
 
   /*!
-    Display the 3D model at a given position using the given camera parameters.
+    Display the 3D model at a given position using the given camera parameters 
+    on a grey level image.
 
     \param _I : The image.
     \param _cMo : Pose used to project the 3D model into the image.
     \param _cam : The camera parameters.
     \param _col : The desired color.
     \param _l : The thickness of the lines.
+  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
-  virtual void display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1)=0;
+  virtual void display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
 
   /*  ACCESSORS */
 
