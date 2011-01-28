@@ -81,8 +81,27 @@ ELSE(NOT UNIX)
   ## --------------------------------
   
   IF(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
-    SET(PTU46_LIBRARIES ${PTUPTU46_LIBRARY} ${EVIPTU46_LIBRARY} 
-      ${SERIALPTU46_LIBRARY})
+    # The material is found. Check if it works on the requested architecture
+    include(CheckCXXSourceCompiles)
+	
+    SET(CMAKE_REQUIRED_LIBRARIES ${PTUPTU46_LIBRARY} ${SERIALPTU46_LIBRARY})
+    SET(CMAKE_REQUIRED_INCLUDES ${PTU46_INCLUDE_DIR})
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <ptu.h> // Contrib for Ptu-46 robot
+      int main()
+      {
+        Ptu ptu;
+	return 0;
+      }
+      " PTU46_BUILD_TEST) 
+    #MESSAGE("PTU46_BUILD_TEST: ${PTU46_BUILD_TEST}")
+    IF(PTU46_BUILD_TEST)
+      SET(PTU46_LIBRARIES ${PTUPTU46_LIBRARY} ${EVIPTU46_LIBRARY} 
+        ${SERIALPTU46_LIBRARY})
+#    ELSE()
+#      MESSAGE("Ptu-46 library found but not compatible with architecture.")
+    ENDIF()
+
   ELSE(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
 #     MESSAGE(SEND_ERROR "Ptu-46 library not found.")
   ENDIF(PTUPTU46_LIBRARY AND EVIPTU46_LIBRARY AND SERIALPTU46_LIBRARY)
