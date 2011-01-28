@@ -19,6 +19,8 @@ ViSP 2.6.1 (under development)
   - Bug fixed
      - [11473] vpImageTools::flip() come out error when deal with vpImage 
        with vpRGBa type
+     - [11617] selecting a subset of features is not taken into account 
+       in vpServo
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
