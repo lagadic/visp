@@ -52,66 +52,6 @@ SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PAT
 SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
 SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
-#-----------------------------------------------------------------------------
-# Add compilation flags under UNIX
-if(UNIX)
-  set(ACTIVATE_WARNING_ALL "ON" CACHE BOOL "activate -Wall flag")
-  set(WARNING_ALL "-Wall")
-  if(ACTIVATE_WARNING_ALL)
-    list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
-  else()
-    string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  set(ACTIVATE_WARNING_EXTRA "ON" CACHE BOOL "activate -Wextra flag")
-  set(WARNING_EXTRA "-Wextra")
-  if(ACTIVATE_WARNING_EXTRA)
-    list(APPEND CMAKE_CXX_FLAGS ${WARNING_EXTRA})
-  else()
-    string(REPLACE ${WARNING_EXTRA} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  set(ACTIVATE_WARNING_STRICT_OVERFLOW "OFF" CACHE BOOL "activate -Wstrict-overflow=5 flag")
-  set(WARNING_STRICT_OVERFLOW "-Wstrict-overflow=5")
-  if(ACTIVATE_WARNING_STRICT_OVERFLOW)
-    list(APPEND CMAKE_CXX_FLAGS ${WARNING_STRICT_OVERFLOW})
-    list(APPEND CMAKE_C_FLAGS ${WARNING_STRICT_OVERFLOW})
-  else()
-    string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  set(ACTIVATE_WARNING_FLOAT_EQUAL "OFF" CACHE BOOL "activate -Wfloat-equal flag")
-  set(WARNING_FLOAT_EQUAL "-Wfloat-equal")
-  if(ACTIVATE_WARNING_FLOAT_EQUAL)
-    list(APPEND CMAKE_CXX_FLAGS ${WARNING_FLOAT_EQUAL})
-  else()
-    string(REPLACE ${WARNING_FLOAT_EQUAL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-
-  set(ACTIVATE_WARNING_SIGN_CONVERSION "OFF" CACHE BOOL "activate -Wsign-conversion flag")
-  set(WARNING_SIGN_CONVERSION "-Wsign-conversion")
-  if(ACTIVATE_WARNING_SIGN_CONVERSION)
-    list(APPEND CMAKE_CXX_FLAGS ${WARNING_SIGN_CONVERSION})
-  else()
-    string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif()
-endif()
-
-# Remove duplicates compilation flags
-separate_arguments(CMAKE_CXX_FLAGS)
-list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
-string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" FORCE)
-separate_arguments(CMAKE_C_FLAGS)
-list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
-string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "common C build flags" FORCE)
-
-#message("CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
-
-#-----------------------------------------------------------------------------
-
 # The location in which to install VISP libraries.
 SET(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/lib)
 # The location in which to install some VISP binaries.
@@ -136,6 +76,14 @@ SET(CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
 
 # Create include directory which will contain all the headers
 MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
+
+#-----------------------------------------------------------------------------
+# Add extra compilation flags under UNIX
+#-----------------------------------------------------------------------------
+if(UNIX)
+  include(${CMAKE_MODULE_PATH}/AddExtraCompilationFlags.cmake)
+  ADD_EXTRA_COMPILATION_FLAGS()
+endif()
 
 #--------------------------------------------------------------------
 # By default set release configuration
