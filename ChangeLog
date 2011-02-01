@@ -21,6 +21,8 @@ ViSP 2.6.1 (under development)
        with vpRGBa type
      - [11617] selecting a subset of features is not taken into account 
        in vpServo
+     - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error: 
+       gdk-pixbuf/gdk-pixbuf.h)
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
