@@ -107,6 +107,17 @@ IF(UNIX OR WIN32)
     /sw/lib/gtk-2.0/include
   )
 
+  FIND_PATH( GTK2_gdkpixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h
+    $ENV{GTK2_DIR}/gdk-pixbuf-2.0
+    $ENV{GTK2_HOME}/gdk-pixbuf-2.0
+    /usr/include/gdk-pixbuf-2.0
+    /usr/include/gtk-2.0
+     "C:/GTK/include/gtk-2.0"
+    /sw/include/gtk-2.0
+  )
+
+  #MESSAGE("GTK2_gdkpixbuf_INCLUDE_PATH: ${GTK2_gdkpixbuf_INCLUDE_PATH}")
+
   FIND_PATH( GTK2_atk_INCLUDE_PATH atk/atk.h
     $ENV{GTK2_DIR}/include/atk-1.0
     $ENV{GTK2_HOME}/include/atk-1.0
@@ -210,6 +221,9 @@ IF(UNIX OR WIN32)
     IF(GTK2_cairo_INCLUDE_PATH)
       LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_cairo_INCLUDE_PATH} )
     ENDIF(GTK2_cairo_INCLUDE_PATH)
+    IF(GTK2_gdkpixbuf_INCLUDE_PATH)
+      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_gdkpixbuf_INCLUDE_PATH} )
+    ENDIF()
     IF(GTK2_gdkconfig_INCLUDE_PATH)
       LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_gdkconfig_INCLUDE_PATH} )
     ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
@@ -263,6 +277,7 @@ IF(UNIX OR WIN32)
     GTK2_gobject_LIBRARY
     GTK2_pango_INCLUDE_PATH 
     GTK2_cairo_INCLUDE_PATH
+    GTK2_gdkpixbuf_INCLUDE_PATH
   )
 
 ELSE(UNIX OR WIN32)
