@@ -69,11 +69,6 @@ static double pythag(double a, double b)
   else return (std::fabs(absb) <= std::numeric_limits<double>::epsilon() ? 0.0 : absb*sqrt(1.0+vpMath::sqr(absa/absb)));
 }
 
-#ifdef EPS_SVD
-#undef EPS_SVD
-#endif
-#define EPS_SVD 1e-16
-
 #ifdef SIGN
 #undef SIGN
 #endif
@@ -100,12 +95,12 @@ static double pythag(double a, double b)
 */
 
 #define  MAX_ITER_SVD 50
-
 void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 {
 
   unsigned int m = rowNum;
   unsigned int n = colNum;
+  double epsilon = 10*std::numeric_limits<double>::epsilon();
 
   unsigned int flag,i,its,j,jj,k,l=0,nm=0;
   double c,f,h,s,x,y,z;
@@ -144,7 +139,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     if (i <= m) {
       for (k=i;k<=m;k++) scale += fabs(a[k][i]);
       //if ((scale != 0.0) || (fabs(scale) > EPS_SVD)) {
-      if ((std::fabs(scale) > std::numeric_limits<double>::epsilon()) || (fabs(scale) > EPS_SVD)) {
+      if ((std::fabs(scale) > epsilon)/* || (fabs(scale) > EPS_SVD)*/) {
 	for (k=i;k<=m;k++) {
 	  a[k][i] /= scale;
 	  s += a[k][i]*a[k][i];
@@ -168,7 +163,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     if (i <= m && i != n) {
       for (k=l;k<=n;k++) scale += fabs(a[i][k]);
       //if ((scale != 0.0) || (fabs(scale) > EPS_SVD)) {
-      if ((std::fabs(scale) > std::numeric_limits<double>::epsilon()) || (fabs(scale) > EPS_SVD)) {
+      if ((std::fabs(scale) > epsilon) /*|| (fabs(scale) > EPS_SVD)*/) {
 	for (k=l;k<=n;k++) {
 	  a[i][k] /= scale;
 	  s += a[i][k]*a[i][k];
@@ -192,7 +187,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
   for (i=n;i>=1;i--) {
     if (i < n) {
       //if ((g) || (fabs(g) > EPS_SVD)) {
-      if ((std::fabs(g) > std::numeric_limits<double>::epsilon()) || (fabs(g) > EPS_SVD)) {
+      if ((std::fabs(g) > epsilon) /*|| (fabs(g) > EPS_SVD)*/) {
 	for (j=l;j<=n;j++)
 	  v[j][i]=(a[i][j]/a[i][l])/g;
 	for (j=l;j<=n;j++) {
@@ -212,7 +207,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
     if (i < n)
       for (j=l;j<=n;j++) a[i][j]=0.0;
     //if ((g != 0.0) || (fabs(g) > EPS_SVD)) {
-    if ((std::fabs(g) > std::numeric_limits<double>::epsilon()) || (fabs(g) > EPS_SVD)) {
+    if ((std::fabs(g) > epsilon) /*|| (fabs(g) > EPS_SVD)*/) {
       g=1.0/g;
       if (i != n) {
 	for (j=l;j<=n;j++) {
@@ -233,12 +228,12 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
       for (l=k;l>=1;l--) {
 	nm=l-1;
 	//if ((fabs(rv1[l])+anorm == anorm) || (fabs(rv1[l]) <= EPS_SVD)) {
-	if ((std::fabs(rv1[l]) <= std::numeric_limits<double>::epsilon()) || (fabs(rv1[l]) <= EPS_SVD)) {
+        if ((std::fabs(rv1[l]) <= epsilon) /*|| (fabs(rv1[l]) <= EPS_SVD)*/) {
 	  flag=0;
 	  break;
 	}
 	//if ((fabs(w[nm])+anorm == anorm) || (fabs(w[nm]) <= EPS_SVD)) break;
-	if ((std::fabs(w[nm]) <= std::numeric_limits<double>::epsilon()) || (fabs(w[nm]) <= EPS_SVD)) break;
+        if ((std::fabs(w[nm]) <= epsilon) /*|| (fabs(w[nm]) <= EPS_SVD)*/) break;
       }
       if (flag) {
 	c=0.0;
@@ -246,7 +241,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	for (i=l;i<=k;i++) {
 	  f=s*rv1[i];
 	  //if ((fabs(f)+anorm != anorm)  || (fabs(f) <= EPS_SVD)) {
-	  if ((std::fabs(f) > std::numeric_limits<double>::epsilon())  || (fabs(f) <= EPS_SVD)) {
+          if ((std::fabs(f) > epsilon)  /*|| (fabs(f) <= EPS_SVD)*/) {
 	    g=w[i];
 	    h=pythag(f,g);
 	    w[i]=h;
@@ -311,7 +306,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	z=pythag(f,h);
 	w[j]=z;
 	//if ((z != 0.0) || (fabs(z) > EPS_SVD)) {
-	if ((std::fabs(z) > std::numeric_limits<double>::epsilon()) || (fabs(z) > EPS_SVD)) {
+        if ((std::fabs(z) > epsilon) /*|| (fabs(z) > EPS_SVD)*/) {
 	  z=1.0/z;
 	  c=f*z;
 	  s=h*z;
@@ -339,7 +334,7 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
   delete[] v;
 
 }
-#undef EPS_SVD
+
 #undef SIGN
 #undef PYTHAG
 
