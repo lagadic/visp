@@ -21,8 +21,13 @@ ViSP 2.6.1 (under development)
        with vpRGBa type
      - [11617] selecting a subset of features is not taken into account 
        in vpServo
+     - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
      - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error: 
        gdk-pixbuf/gdk-pixbuf.h)
+     - [11924] svdNr fails on some matrices where svdGsl succeeds
+     - [11942] Build issues with GSL on OSX due to 32/64 bits architecture
+     - [11943] Build issues with libjpeg on OSX due to 32/64 bits architecture
+     - [11944] Build issues with libpng on OSX due to 32/64 bits architecture
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
