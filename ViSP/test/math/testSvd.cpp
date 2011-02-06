@@ -141,7 +141,7 @@ bool testRandom(double epsilon)
     vpColVector diff = _W0-_W1;
     double error=-1.0;
     
-    for(int i=0;i<6;i++)
+    for(unsigned int i=0;i<6;i++)
 	error=std::max(abs(diff[i]),error);
     
     return error<epsilon;
