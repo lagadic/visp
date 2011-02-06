@@ -131,19 +131,6 @@ ELSE(WIN32)
 	OUTPUT_VARIABLE GSL_CONFIG_LIBS )
       #MESSAGE("GSL_CONFIG_LIBS: ${GSL_CONFIG_LIBS}")
 
-      ## use regular expression to match wildcard equivalent "-l*<endchar>"
-      ## with <endchar> is a space or a semicolon
-      STRING(REGEX MATCHALL "[-][l]([^ ;])+" 
-	GSL_LINK_LIBRARIES 
-	"${GSL_CONFIG_LIBS}" )
-      #MESSAGE("DBG  GSL_LINK_LIBRARIES=${GSL_LINK_LIBRARIES}")
-      # Because in GSL_LINK_LIBRARIES defs are separated by ";", parse the
-      # GSL_LINK_LIBRARIES in order to build a space separated string
-      FOREACH(libs ${GSL_LINK_LIBRARIES})
-	LIST(APPEND GSL_LIBRARIES "${libs}")
-      ENDFOREACH(libs)
-      #MESSAGE("GSL_LIBRARIES=${GSL_LIBRARIES}")
-
       ## split off the link dirs (for rpath)
       ## use regular expression to match wildcard equivalent "-L*<endchar>"
       ## with <endchar> is a space or a semicolon
@@ -170,15 +157,66 @@ ELSE(WIN32)
 #       IF(NOT APPLE)
 #       	SET(GSL_EXE_LINKER_FLAGS "-Wl,-rpath,${GSL_LINK_DIRECTORIES}")
 #       ENDIF(NOT APPLE)
-      #MESSAGE("DBG GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
 
+      #MESSAGE("DBG GSL_EXE_LINKER_FLAGS=${GSL_EXE_LINKER_FLAGS}")
+      ## use regular expression to match wildcard equivalent "-l*<endchar>"
+      ## with <endchar> is a space or a semicolon
+      STRING(REGEX MATCHALL "[-][l]([^ ;])+" 
+	GSL_LINK_LIBRARIES 
+	"${GSL_CONFIG_LIBS}" )
+      #MESSAGE("DBG  GSL_LINK_LIBRARIES=${GSL_LINK_LIBRARIES}")
+      # Because in GSL_LINK_LIBRARIES defs are separated by ";", parse the
+      # GSL_LINK_LIBRARIES in order to build a space separated string
+      #message(GSL_LINK_LIBRARIES ${GSL_LINK_LIBRARIES})
+      SET(GSL_LIB_ONES "")
+      FOREACH(libs ${GSL_LINK_LIBRARIES})
+	STRING(REGEX REPLACE "[-][l]" "" GSL_LIB_ONES ${libs})
+    	#MESSAGE("GSL_LIB_ONES=${GSL_LIB_ONES} -  ${libs}")
+  	MARK_AS_ADVANCED(LIBGSL_${GSL_LIB_ONES})
+	FIND_LIBRARY(LIBGSL_${GSL_LIB_ONES}
+	  NAMES ${GSL_LIB_ONES}
+	  PATHS
+	  ${GSL_LINK_DIRECTORIES}
+	  /usr/lib
+	  /usr/local/lib
+	)
+	#MESSAGE("LIBGSL_${GSL_LIB_ONES} ${LIBGSL_${GSL_LIB_ONES}}")
+	IF(LIBGSL_${GSL_LIB_ONES})
+     	  #MESSAGE("LIB_GSL=${LIB_GSL} -  ${libs}")
+	  LIST(APPEND GSL_LIBRARIES ${LIBGSL_${GSL_LIB_ONES}})
+        ENDIF()
+      ENDFOREACH(libs)
+
+      #MESSAGE("GSL_LIBRARIES=${GSL_LIBRARIES}")
       
     #ELSE(GSL_CONFIG)
     #  MESSAGE("FindGSL.cmake: gsl-config not found. Please set it manually. GSL_CONFIG=${GSL_CONFIG}")
     ENDIF(GSL_CONFIG)
 
   IF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
-    SET(GSL_FOUND TRUE)
+    # The material is found. Check if it works on the requested architecture
+    include(CheckCXXSourceCompiles)
+	
+    SET(CMAKE_REQUIRED_LIBRARIES ${GSL_LIBRARIES})
+    SET(CMAKE_REQUIRED_INCLUDES ${GSL_INCLUDE_DIR})
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <gsl/gsl_linalg.h> // Contrib for GSL library
+      #include <gsl/gsl_math.h>
+      #include <gsl/gsl_eigen.h>
+     int main()
+      {
+        gsl_matrix *A = gsl_matrix_alloc(6, 6) ;
+      }
+      " GSL_BUILD_TEST) 
+    #MESSAGE("GSL_BUILD_TEST: ${GSL_BUILD_TEST}")
+    IF(GSL_BUILD_TEST)
+      SET(GSL_INCLUDE_DIR ${GSL_INCLUDE_PATH})
+      SET(GSL_LIBRARIES ${GSL_LIBRARIES})
+      SET(GSL_FOUND TRUE)
+    ELSE()
+      SET(GSL_FOUND FALSE)
+      #MESSAGE("libgsl library found but not compatible with architecture.")
+    ENDIF()
   ELSE(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
     SET(GSL_FOUND FALSE) 
   ENDIF(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
