@@ -81,11 +81,31 @@
 ## --------------------------------
   
 IF(LIBJPEG_LIBRARY AND LIBJPEG_INCLUDE_PATH)
-
-  SET(LIBJPEG_INCLUDE_DIR ${LIBJPEG_INCLUDE_PATH})
-
-  SET(LIBJPEG_LIBRARIES  ${LIBJPEG_LIBRARY})
-	SET(LIBJPEG_FOUND TRUE)
+    # The material is found. Check if it works on the requested architecture
+    include(CheckCXXSourceCompiles)
+	
+    SET(CMAKE_REQUIRED_LIBRARIES ${LIBJPEG_LIBRARY})
+    SET(CMAKE_REQUIRED_INCLUDES ${LIBJPEG_INCLUDE_DIR})
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <stdio.h>  
+      #include <jpeglib.h> // Contrib for jpeg image io
+      #include <jerror.h>  
+      int main()
+      {
+        struct jpeg_decompress_struct cinfo;
+        struct jpeg_error_mgr jerr;
+        cinfo.err = jpeg_std_error(&jerr);
+      }
+      " LIBJPEG_BUILD_TEST) 
+    #MESSAGE("LIBJPEG_BUILD_TEST: ${LIBJPEG_BUILD_TEST}")
+    IF(LIBJPEG_BUILD_TEST)
+      SET(LIBJPEG_INCLUDE_DIR ${LIBJPEG_INCLUDE_PATH})
+      SET(LIBJPEG_LIBRARIES  ${LIBJPEG_LIBRARY})
+      SET(LIBJPEG_FOUND TRUE)
+    ELSE()
+      SET(LIBJPEG_FOUND FALSE)
+      #MESSAGE("libjpeg library found but not compatible with architecture.")
+    ENDIF() 
 
 ELSE(LIBJPEG_LIBRARY AND LIBJPEG_INCLUDE_PATH)
   SET(LIBJPEG_FOUND FALSE)
