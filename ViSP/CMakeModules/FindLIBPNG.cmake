@@ -82,9 +82,31 @@
 IF(LIBPNG_LIBRARY AND LIBPNG_INCLUDE_PATH)
   FIND_PACKAGE(ZLIB)
   IF(ZLIB_FOUND)
-    SET(LIBPNG_INCLUDE_DIR ${LIBPNG_INCLUDE_PATH})
-    SET(LIBPNG_LIBRARIES  ${LIBPNG_LIBRARY})
-    SET(LIBPNG_FOUND TRUE)
+
+    # The material is found. Check if it works on the requested architecture
+    include(CheckCXXSourceCompiles)
+	
+    SET(CMAKE_REQUIRED_LIBRARIES ${LIBPNG_LIBRARY})
+    SET(CMAKE_REQUIRED_INCLUDES ${LIBPNG_INCLUDE_DIR})
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <png.h> // Contrib for png image io
+      int main()
+      {
+        /* create a png read struct */
+        png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+      }
+      " LIBPNG_BUILD_TEST) 
+    #MESSAGE("LIBPNG_BUILD_TEST: ${LIBPNG_BUILD_TEST}")
+    IF(LIBPNG_BUILD_TEST)
+      SET(LIBPNG_INCLUDE_DIR ${LIBPNG_INCLUDE_PATH})
+      SET(LIBPNG_LIBRARIES ${LIBPNG_LIBRARY})
+      SET(LIBPNG_FOUND TRUE)
+    ELSE()
+      SET(LIBPNG_FOUND FALSE)
+      #MESSAGE("libpng library found but not compatible with architecture.")
+    ENDIF()
+
+    
   ELSE(ZLIB_FOUND)
     MESSAGE("To use the libpng library, the zlib library is required")
   ENDIF(ZLIB_FOUND)
