@@ -42,11 +42,13 @@
  *****************************************************************************/
 
 #include <set>
+#include <limits>
 
 #include <visp/vpPolygon.h>
 #include <visp/vpException.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpMeterPixelConversion.h>
+#include <visp/vpNoise.h>
 
 /*!
   Basic constructor.
@@ -194,43 +196,82 @@ vpPolygon::init(const std::vector<vpImagePoint>& corners)
 }
 
 
+
+/*!
+  Test if two segments are intersecting.
+  
+  \throw vpException::divideByZeroError if the two lines are aligned (
+  denominator equal to zero).
+  
+  \param ip1 : The first image point of the first segment.
+  \param ip2 : The second image point of the first segment.
+  \param ip3 : The first image point of the second segment.
+  \param ip4 : The second image point of the second segment.
+*/
+bool 
+vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4)
+{
+  double di1 = ip2.get_i() - ip1.get_i();
+  double dj1 = ip2.get_j() - ip1.get_j();
+  
+  double di2 = ip4.get_i() - ip3.get_i();
+  double dj2 = ip4.get_j() - ip3.get_j();
+  
+  double denominator = di1 * dj2 - dj1 * di2;
+  
+  if(fabs(denominator) < std::numeric_limits<double>::epsilon()){
+    throw vpException(vpException::divideByZeroError, "Denominator is null, lines are parallels");
+  }
+  
+  double alpha = - ( ( ip1.get_i() - ip3.get_i() ) * dj2 + di2 * ( ip3.get_j() - ip1.get_j())) / denominator;  
+  if(alpha < 0  || alpha >= 1){
+    return false;
+  }
+  
+  double beta = - (di1 * (ip3.get_j() - ip1.get_j() ) + dj1 * (ip1.get_i() - ip3.get_i()) ) / denominator;
+  if(beta < 0  || beta >= 1){
+    return false;
+  }
+  
+  return true;
+}
+
 /*!
   Check if the 2D point \f$ iP \f$ is inside the polygon.
   
-  \param iP : The point which have to be tested.
-  \param threshold : A threshold used to define the accuracy of the computation
-  when the point is very near from the edges of the triangle.
+  \param ip : The point which have to be tested.
   
-  \return Returns true if the point is inside the triangle. Returns false otherwise.
+  \return Returns true if the point is inside the triangle, false otherwise.
 */
-bool
-vpPolygon::isInside(const vpImagePoint &iP, const double threshold)
+bool 
+vpPolygon::isInside(const vpImagePoint& ip)
 {
-  if(!_goodPoly){
-    return false;
-  }
+  vpImagePoint infPoint(100000, 100000); // take a point at 'inifinity'
+  vpUniRand generator;
+  infPoint.set_i( infPoint.get_i() + 1000 * generator());
+  infPoint.set_j( infPoint.get_j() + 1000 * generator());// we add random since it appears that sometimes infPoint may cause a degenerated case (so realucnch and hope that result will be different).
 
-  std::vector<bool> signe(_corners.size(), false);
+  unsigned int nbinterscetion = 0;
   for(unsigned int i=0; i<_corners.size(); ++i){
-    double di = _corners[i].get_i() - _corners[(i+1)%4].get_i();
-    double dj = _corners[i].get_j() - _corners[(i+1)%4].get_j();
+    vpImagePoint ip1 = _corners[i];
+    vpImagePoint ip2 = _corners[(i+1)%_corners.size()];
+    bool intersection = false;    
 
-    double di1 = _corners[i].get_i() - iP.get_i();
-    double dj1 = _corners[i].get_j() - iP.get_j();
+    try{
+      intersection = testIntersectionSegments(ip1, ip2, ip, infPoint );
+    }catch(vpException e){
+      return isInside(ip);
+    }
 
-    double crossProd = di * dj1 - dj * di1;
-
-    signe[i] = (crossProd > threshold);
-  }
-
-  for(unsigned int i=1; i<_corners.size(); ++i){
-    if(signe[i] != signe[i-1]){
-      return false;
+    if(intersection){
+      ++nbinterscetion;
     }
   }
 
-  return true;
+  return ((nbinterscetion%2)==1);
 }
+
+
 
 /*!
   Update the _area attribute of the polygon using the corners.

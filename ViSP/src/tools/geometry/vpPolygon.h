@@ -91,7 +91,7 @@ class VISP_EXPORT vpPolygon
     void buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam);
     void initClick(const vpImage<unsigned char>& I);
     
-    bool isInside(const vpImagePoint &iP, const double threshold = 0.00001);
+    bool isInside(const vpImagePoint &iP);
 
     void display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness=1);
     
@@ -140,6 +140,9 @@ class VISP_EXPORT vpPolygon
     void updateArea();
     void updateCenter();
     void updateBoundingBox();
+    
+  private:
+    bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4);
     
 };
 
