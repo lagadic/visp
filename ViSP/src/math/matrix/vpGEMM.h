@@ -51,10 +51,19 @@
 const vpMatrix null(0,0);
 
 /*!
-  \brief Enumeration of the oeperation applied on matrix in vpGEMM function
+  \brief Enumeration of the operations applied on matrices in vpGEMM function.
+  
+  Operations are : 
+  - VP_GEMM_A_T to use the transpose matrix of A instead of the matrix A
+  - VP_GEMM_B_T to use the transpose matrix of B instead of the matrix B
+  - VP_GEMM_C_T to use the transpose matrix of C instead of the matrix C
+  
+  \relates vpMatrix
   */
 typedef enum {
-  VP_GEMM_A_T=1,VP_GEMM_B_T=2,VP_GEMM_C_T=4,  /*!< GEMM method. */
+  VP_GEMM_A_T=1, //! Use A^T instead of A
+  VP_GEMM_B_T=2, //! Use B^T instead of B
+  VP_GEMM_C_T=4, //! Use C^T instead of C
 } vpGEMMmethod;
 
 
@@ -292,13 +301,21 @@ template<unsigned int> inline void GEMMsize(const vpMatrix & /*A*/,const vpMatri
 
 /*!
   \brief This function performs generalized matrix multiplication: 
-   D = alpha*op(A)*op(B) + beta*op(C), where op(X) is X or X^T 
-   operation on A, B and C matrices is described by enumeration vpGEMMmethod
-   for example to realised alpha*A^T*B^T+beta*C we need to called :
+   D = alpha*op(A)*op(B) + beta*op(C), where op(X) is X or X^T.
+   Operation on A, B and C matrices is described by enumeration vpGEMMmethod.
+   
+   For example, to compute alpha*A^T*B^T+beta*C we need to call :
+   \code
    vpGEMM(A,B,alpha,C,beta, VP_GEMM_A_T + VP_GEMM_B_T);
-   If C is not used vpGEMM must be called  :
+   \endcode
+   
+   If C is not used, vpGEMM must be called using an empty matrix \e null :
+   \code
    vpGEMM(A,B,alpha,C, null,0);
-   where null is a empty matrix
+   \endcode
+   
+   \throw vpMatrixException::incorrectMatrixSizeError if the sizes of the matrices
+   do not allow the operations.
    
    \param A : a Matrix
    \param B : a Matrix
@@ -307,6 +324,8 @@ template<unsigned int> inline void GEMMsize(const vpMatrix & /*A*/,const vpMatri
    \param beta : a scalar
    \param D : a Matrix
    \param ops : a scalar describing operation applied on the matrices
+   
+   \relates vpMatrix
    
 */  
 inline void vpGEMM(const vpMatrix & A,const vpMatrix & B, const double & alpha ,const vpMatrix & C, const double & beta, vpMatrix & D, const unsigned int &ops=0){
