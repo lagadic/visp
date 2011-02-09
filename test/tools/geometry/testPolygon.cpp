@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 
-
+#include <math.h>
 
 #include <iostream>
 #include <string>
@@ -216,7 +216,20 @@ main(int argc, const char** argv)
     std::cout << " Polygon 4 : " << std::endl;
     std::cout << " area : " << p4.getArea() << std::endl;
     std::cout << " center : " << p4.getCenter() << std::endl;
+    std::cout << "Click to continue." << std::endl;
     vpDisplay::flush(I);
+    vpDisplay::getClick(I);
+    
+    vpRect bbox = p4.getBoundingBox();
+    for(unsigned int i= (unsigned int)floor(bbox.getTop()); i<(unsigned int)ceil(bbox.getBottom()); ++i){
+      for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
+        if(p4.isInside(vpImagePoint(i, j))){
+          vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
+        }
+      }
+    }
+    vpDisplay::flush(I);
+    std::cout << "Click to finish." << std::endl;
     vpDisplay::getClick(I);
   }
 
