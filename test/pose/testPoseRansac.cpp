@@ -133,6 +133,7 @@ main(int argc, const char ** argv)
 
 
   {
+  std::cout << "Pose computation using vpList" << std::endl;
   vpPoint P[5]  ;  //  Point to be tracked
   vpList<vpPoint> lp, lP ;
 
@@ -180,13 +181,15 @@ main(int argc, const char ** argv)
     vpPoint Pi ;
     Pi = lPi.value() ; lPi.next() ;
     Pi.print() ;
+    std::cout << std::endl;
   }
 
-  std::cout << cMo << std::endl ;
+  std::cout << "cMo :\n" << cMo << std::endl << std::endl;
 
   }
 
   {
+  std::cout << "Pose computation using arrays" << std::endl;
   vpPoint P[5]  ;  //  Point to be tracked
 
 
@@ -224,7 +227,7 @@ main(int argc, const char ** argv)
   vpList<vpPoint> lPi ;
 
   vpHomogeneousMatrix cMo ;
-  vpPose::ransac(10,p,5,P, 5, 1e-6, ninliers, lPi, cMo) ;
+  vpPose::ransac(10,p,5,P, 5, 1e-6, ninliers, lPi, cMo, 5000) ;//maximum number of trial set to 5000 instead of 10000.
 
   lPi.front() ;
   while (!lPi.outside())
@@ -232,9 +235,10 @@ main(int argc, const char ** argv)
     vpPoint Pi ;
     Pi = lPi.value() ; lPi.next() ;
     Pi.print() ;
+    std::cout << std::endl;
   }
 
-  std::cout << cMo << std::endl ;
+  std::cout << "cMo :\n" << cMo << std::endl ;
 
   }
 
