@@ -370,7 +370,7 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "You should use OpenCV or a 1394 camera (can be set in the source file." << std::endl;
+  std::cout << "Libxml2 is required to read the configuration of the tracker." << std::endl;
   return 0;
 }
 
