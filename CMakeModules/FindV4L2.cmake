@@ -35,8 +35,9 @@
 # capabilities.
 # Once run this will define: 
 #
-# V4L_FOUND
-# V4L_INCLUDE_DIR
+# V4L2_FOUND
+# V4L2_INCLUDE_DIR
+# V4L2_LIBRARIES
 #
 # Authors:
 # Fabien Spindler
@@ -52,8 +53,27 @@ ELSE(NOT UNIX)
     $ENV{V4L2_HOME}/include
     $ENV{V4L2_DIR}/include
     /usr/include 
+    /usr/local/include 
     /usr/src/linux/include)
   #MESSAGE("DBG V4L2_INCLUDE_DIR=${V4L2_INCLUDE_DIR}")  
+  
+  FIND_LIBRARY(V4L2_LIBRARY_V4L2
+    NAMES v4l2
+    PATHS 
+    $ENV{V4L2_HOME}/lib
+    $ENV{V4L2_DIR}/lib  
+    /usr/lib
+    /usr/local/lib
+    )
+  FIND_LIBRARY(V4L2_LIBRARY_V4LCONVERT
+    NAMES v4lconvert
+    PATHS 
+    $ENV{V4L2_HOME}/lib
+    $ENV{V4L2_DIR}/lib  
+    /usr/lib
+    /usr/local/lib
+    )
+
     
   ## --------------------------------
     
@@ -61,13 +81,16 @@ ELSE(NOT UNIX)
   #  MESSAGE(SEND_ERROR "Video For Linux Two include dir not found.")
   #ENDIF(NOT V4L2_INCLUDE_DIR)
   
-  IF(V4L2_INCLUDE_DIR)
+  IF(V4L2_INCLUDE_DIR AND V4L2_LIBRARY_V4L2 AND V4L2_LIBRARY_V4LCONVERT)
+    SET(V4L2_LIBRARIES ${V4L2_LIBRARY_V4L2} ${V4L2_LIBRARY_V4LCONVERT})
     SET(V4L2_FOUND TRUE)
-  ELSE(V4L2_INCLUDE_DIR)
+  ELSE()
     SET(V4L2_FOUND FALSE)
-  ENDIF(V4L2_INCLUDE_DIR)
+  ENDIF()
   
   MARK_AS_ADVANCED(
     V4L2_INCLUDE_DIR
+    V4L2_LIBRARY_V4L2
+    V4L2_LIBRARY_V4LCONVERT
     )
 ENDIF(NOT UNIX)
