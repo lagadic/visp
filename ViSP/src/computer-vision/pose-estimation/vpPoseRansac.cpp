@@ -211,12 +211,34 @@ vpPose::initRansac(const unsigned int n,
   (X,Y,Z) using the Ransac algorithm. It is not assumed that
   the 2D and 3D points are registred (there is nm posibilities)
 
-  at least numberOfInlierToReachAConsensus of true correspondance are required
+  At least numberOfInlierToReachAConsensus of true correspondance are required
   to validate the pose
 
-  the inliers are given in xi, yi, Xi, Yi, Zi
+  The inliers are given in xi, yi, Xi, Yi, Zi
 
-  the pose is return in cMo
+  The pose is returned in cMo.
+
+  \param n : Number of 2d points.
+  \param x : Array (of size \e n) of the x coordinates of the 2d points.
+  \param y : Array (of size \e n) of the y coordinates of the 2d points.
+  \param m : Number of 3d points.
+  \param X : Array (of size \e m) of the oX coordinates of the 3d points.
+  \param Y : Array (of size \e m) of the oY coordinates of the 3d points.
+  \param Z : Array (of size \e m) of the oZ coordinates of the 3d points.
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param xi : Array (of size \e ninliers) of the x coordinates of the inliers.
+  \param yi : Array (of size \e ninliers) of the y coordinates of the inliers.
+  \param Xi : Array (of size \e ninliers) of the oX coordinates of the inliers.
+  \param Yi : Array (of size \e ninliers) of the oY coordinates of the inliers.
+  \param Zi : Array (of size \e ninliers) of the oZ coordinates of the inliers.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
  */
 void
 vpPose::ransac(const unsigned int n,
@@ -228,7 +250,8 @@ vpPose::ransac(const unsigned int n,
 	       unsigned int &ninliers,
 	       vpColVector &xi,  vpColVector &yi,
 	       vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
-	       vpHomogeneousMatrix &cMo)
+         vpHomogeneousMatrix &cMo,
+         const int maxNbTrials)
 {
 
 
@@ -241,7 +264,7 @@ vpPose::ransac(const unsigned int n,
   vpColVector inliers(n*m) ;
   vpRansac<vpPose>::ransac(n*m,data,4,
 			   threshold, M,inliers,
-			   numberOfInlierToReachAConsensus) ;
+         numberOfInlierToReachAConsensus, 0.0, maxNbTrials) ;
 
 
   // we count the number of inliers
@@ -290,12 +313,27 @@ vpPose::ransac(const unsigned int n,
   (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
   the 2D and 3D points are registred (there is nm posibilities)
 
-  at least numberOfInlierToReachAConsensus of true correspondance are required
+  At least numberOfInlierToReachAConsensus of true correspondance are required
   to validate the pose
 
-  the inliers are given in a list of vpPoint
+  The inliers are given in a list of vpPoint
 
-  the pose is return in cMo
+  The pose is returned in cMo.
+
+  \param n : Number of 2d points.
+  \param p : Array (of size n) of 2d points (x and y attributes are used).
+  \param m : Number of 3d points.
+  \param P : Array of size m of 3d points (oX, oY and oZ attributes are used).
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param lPi : List of points (2d and 3d) that are inliers for the best solution.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
  */
 void
 vpPose::ransac(const unsigned int n,
@@ -306,7 +344,8 @@ vpPose::ransac(const unsigned int n,
 	       const double threshold,
 	       unsigned int &ninliers,
 	       vpList<vpPoint> &lPi,
-	       vpHomogeneousMatrix &cMo)
+         vpHomogeneousMatrix &cMo,
+         const int maxNbTrials)
 {
 
 
@@ -336,7 +375,7 @@ vpPose::ransac(const unsigned int n,
 	 threshold,
 	 ninliers,
 	 xi,yi,Xi,Yi,Zi,
-	 cMo) ;
+   cMo, maxNbTrials) ;
 
 
   for(unsigned int i=0 ; i < ninliers ; i++)
@@ -362,12 +401,25 @@ vpPose::ransac(const unsigned int n,
   (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
   the 2D and 3D points are registred
 
-  at least numberOfInlierToReachAConsensus of true correspondance are required
+  At least numberOfInlierToReachAConsensus of true correspondance are required
   to validate the pose
 
-  the inliers are given in a list of lPi vpPoint
+  The inliers are given in a list of vpPoint lPi.
 
-  the pose is return in cMo
+  The pose is returned in cMo.
+
+  \param lp : List of 2d points (x and y attributes are used).
+  \param lP : List of 3d points (oX, oY and oZ attributes are used).
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param lPi : List of points (2d and 3d) that are inliers for the best solution.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
  */
 void
 vpPose::ransac(vpList<vpPoint> &lp,
@@ -376,7 +428,8 @@ vpPose::ransac(vpList<vpPoint> &lp,
 	       const double threshold,
 	       unsigned int &ninliers,
 	       vpList<vpPoint> &lPi,
-	       vpHomogeneousMatrix &cMo)
+         vpHomogeneousMatrix &cMo,
+         const int maxNbTrials)
 {
   unsigned int n = lp.nbElement() ;
   unsigned int m = lP.nbElement() ;
@@ -419,7 +472,7 @@ vpPose::ransac(vpList<vpPoint> &lp,
 	 threshold,
 	 ninliers,
 	 xi,yi,Xi,Yi,Zi,
-	 cMo) ;
+   cMo, maxNbTrials) ;
 
 
   for( i=0 ; i < ninliers ; i++)

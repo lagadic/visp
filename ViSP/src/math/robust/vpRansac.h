@@ -99,7 +99,8 @@ public:
 		      vpColVector &model,
 		      vpColVector &inliers,
 		      int consensus = 1000,
-		      double areaThreshold = 0.0);
+          double areaThreshold = 0.0,
+          const int maxNbumbersOfTrials = 10000);
 };
 
 /*!
@@ -127,6 +128,9 @@ public:
 
   \param areaThreshold : Not used.
 
+  \param maxNbumbersOfTrials : Maximum number of trials. Even if a solution is
+  not found, the method is stopped.
+
 */
 
 template <class vpTransformation>
@@ -136,7 +140,8 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 				   vpColVector &M,
 				   vpColVector &inliers,
 				   int consensus,
-				   double /* areaThreshold */
+           double /* areaThreshold */,
+           const int maxNbumbersOfTrials
 				   )
 {
 
@@ -149,7 +154,7 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
   double p = 0.99;    // Desired probability of choosing at least one sample
 					  // free from outliers
 
-  int maxTrials = 10000;      // Maximum number of trials before we give up.
+  int maxTrials = maxNbumbersOfTrials;      // Maximum number of trials before we give up.
   int  maxDataTrials = 1000;  // Max number of attempts to select a non-degenerate
 							  // data set.
 

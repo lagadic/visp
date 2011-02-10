@@ -188,7 +188,7 @@ public:
 		     unsigned int &ninliers,
 		     vpColVector &xi,  vpColVector &yi,
 		     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
-		     vpHomogeneousMatrix &cMo) ;
+         vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
   static void ransac(const unsigned int n,
 		     const vpPoint *p,
 		     const unsigned int m,
@@ -197,7 +197,7 @@ public:
 		     const double threshold,
 		     unsigned int &ninliers,
 		     vpList<vpPoint> &Pi,
-		     vpHomogeneousMatrix &cMo) ;
+         vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
 
 
   static void ransac(vpList<vpPoint> &p,
@@ -206,7 +206,7 @@ public:
 		     const double threshold,
 		     unsigned int &ninliers,
 		     vpList<vpPoint> &lPi,
-		     vpHomogeneousMatrix &cMo) ;
+         vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
 
   static double poseFromRectangle(vpPoint &p1,vpPoint &p2,
 				vpPoint &p3,vpPoint &p4,
