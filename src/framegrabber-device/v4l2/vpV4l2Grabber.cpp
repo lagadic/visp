@@ -55,6 +55,7 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/mman.h>
@@ -65,7 +66,6 @@
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpImageIo.h>
 
-
 const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;
 const unsigned int vpV4l2Grabber::DEFAULT_SCALE = 2;
 const __u32 vpV4l2Grabber::MAX_INPUTS    = 16;
@@ -74,6 +74,7 @@ const __u32 vpV4l2Grabber::MAX_FORMAT    = 32;
 const unsigned int vpV4l2Grabber::MAX_CTRL      = 32;
 const unsigned int vpV4l2Grabber::MAX_BUFFERS   = 32;
 const unsigned int vpV4l2Grabber::FRAME_SIZE    = 288;
+#define vpCLEAR(x) memset (&(x), 0, sizeof (x))
 
 /*!
   Default constructor.
@@ -137,6 +138,7 @@ vpV4l2Grabber::vpV4l2Grabber()
   setFramerate(vpV4l2Grabber::framerate_25fps);
   setInput(vpV4l2Grabber::DEFAULT_INPUT);
   setScale(vpV4l2Grabber::DEFAULT_SCALE);
+  setPixelFormat(V4L2_YUYV_FORMAT);
 
   init = false;
 }
@@ -205,6 +207,7 @@ vpV4l2Grabber::vpV4l2Grabber(bool verbose)
   setFramerate(vpV4l2Grabber::framerate_25fps);
   setInput(vpV4l2Grabber::DEFAULT_INPUT);
   setScale(vpV4l2Grabber::DEFAULT_SCALE);
+  setPixelFormat(V4L2_YUYV_FORMAT);
 
   init = false;
 }
@@ -435,8 +438,8 @@ vpV4l2Grabber::setScale(unsigned scale)
 				   "Wrong scale") );
   }
 
-  setWidth(768/scale);
-  setHeight(576/scale);
+  setWidth(640/scale);
+  setHeight(480/scale);
 }
 
 /*!
@@ -454,20 +457,54 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 {
   open();
 
-  if( ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
+  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
   {
-    close();
-
-    vpERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Wrong input channel") );
+    std::cout << "Warning: cannot set input channel to " << input << std::endl;
   }
+  
+  vpV4l2PixelFormatType req_pixelformat = getPixelFormat();
 
-  setPixelFormat(V4L2_GREY_FORMAT);
-  //vpCTRACE << _width << "  " << _height << std::endl;
-  setFormat();
+  try {
+    setFormat();
 
-  startStreaming();
+    startStreaming();
+  }
+  catch(...) {
+    if (verbose) {
+      std::cout << "Requested pixel format [" << req_pixelformat 
+		<< "] not compatible with camera" << std::endl;
+      std::cout << "Try to found a compatible pixel format..." << std::endl;
+    }
+    
+    // try to fing a compatible format
+    for (int format=0; format< (int)V4L2_MAX_FORMAT; format ++) {
+      if (format == req_pixelformat) {
+	continue;
+      }
+      try {
+	setPixelFormat((vpV4l2PixelFormatType)format);
+	setFormat();
+	startStreaming();
+	if (verbose)
+	  std::cout << "This format [" << pixelformat 
+		    << "] is compatible with camera" << std::endl;
+	
+	break;
+      }
+      catch (...) {
+	if (verbose)
+	  std::cout << "This format [" << pixelformat 
+		    << "] is not compatible with camera" << std::endl;
+	if (format == (int)V4L2_MAX_FORMAT) {
+	  std::cout << "No pixel format compatible with the camera was found" << std::endl;
+	  close();
+
+	  throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+				   "No pixel format compatible with the camera was found"));
+	}
+      }
+    }
+  }
 
   I.resize(height, width) ;
 
@@ -482,26 +519,54 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   \param I : Image data structure (RGB32 bits image). Once the device is open,
   the image is resized to the current acquisition size.
 
-  \exception vpFrameGrabberException::settingError : Wrong input channel.
 */
 void
 vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 {
   open();
 
-  if( ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
+  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
   {
-    close();
-
-    vpERROR_TRACE("Wrong v4l2 frame grabber input %d channel",input) ;
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Wrong input channel") );
+    std::cout << "Warning: cannot set input channel to " << input << std::endl;
   }
 
-  setPixelFormat(V4L2_RGB32_FORMAT);
-  setFormat();
+  vpV4l2PixelFormatType req_pixelformat = getPixelFormat();
 
-  startStreaming();
+  try {
+    setFormat();
+
+    startStreaming();
+  }
+  catch(...) {
+    if (verbose) {
+      std::cout << "Requested pixel format [" << pixelformat 
+		<< "] not compatible with camera" << std::endl;
+      std::cout << "Try to found a compatible pixel format..." << std::endl;
+    }
+    
+    // try to fing a compatible format
+    for (int format=0; format< (int)V4L2_MAX_FORMAT; format ++) {
+      if (format == req_pixelformat) {
+	continue;
+      }
+      try {
+	setPixelFormat((vpV4l2PixelFormatType)format);
+	setFormat();
+	startStreaming();
+	if (verbose)
+	  std::cout << "This format [" << pixelformat 
+		    << "] is compatible with camera" << std::endl;
+	
+	break;
+      }
+      catch (...) {
+	if (verbose)
+	  std::cout << "This format [" << pixelformat 
+		    << "] is not compatible with camera" << std::endl;
+
+      }
+    }
+  }
 
   I.resize(height, width) ;
 
@@ -523,25 +588,9 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 void
 vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 {
-
-  if (init==false)
-  {
-    close();
-
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "V4l2 frame grabber not initialized") );
-  }
-
   struct timeval timestamp;
-  unsigned  char *bitmap ;
-  bitmap = waiton(index_buffer, timestamp);
 
-  if ((I.getWidth() != width)||(I.getHeight() != height))
-    I.resize(height, width) ;
-
-  memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
-
-  queueAll();
+  acquire(I, timestamp);
 }
 
 /*!
@@ -575,7 +624,30 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
   if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width) ;
 
-  memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
+  switch(pixelformat) {
+  case V4L2_GREY_FORMAT:
+    memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
+    break;
+  case V4L2_RGB24_FORMAT:
+    vpImageConvert::RGBToGrey((unsigned char *) bitmap, I.bitmap, width*height);
+
+    break;
+  case V4L2_RGB32_FORMAT:
+    vpImageConvert::RGBaToGrey((unsigned char *) bitmap, I.bitmap, width*height);
+
+    break;
+  case V4L2_BGR24_FORMAT:
+    vpImageConvert::BGRToGrey( (unsigned char *) bitmap, I.bitmap, width, height, false);
+
+    break;
+  case V4L2_YUYV_FORMAT:
+    vpImageConvert::YUYVToGrey( (unsigned char *) bitmap, I.bitmap, width*height);
+
+    break;
+  default:
+    std::cout << "V4L2 conversion not handled" << std::endl;
+    break;
+  }
 
   queueAll();
 }
@@ -593,29 +665,11 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
 void
 vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 {
-
-  if (init==false)
-  {
-    close();
-
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-				   "V4l2 frame grabber not initialized") );
-  }
-
   struct timeval timestamp;
-  unsigned  char *bitmap ;
-  bitmap = waiton(index_buffer, timestamp);
 
-  if ((I.getWidth() != width)||(I.getHeight() != height))
-    I.resize(height, width) ;
-
-  // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
-
-  memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
-  I[height-1][width-1].A = 0;
-
-  queueAll();
+  acquire(I, timestamp);
 }
+
 /*!
   Acquire a color image.
 
@@ -649,8 +703,30 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
 
-  memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
-  I[height-1][width-1].A = 0;
+  switch(pixelformat) {
+  case V4L2_GREY_FORMAT:
+    vpImageConvert::GreyToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
+    break;
+  case V4L2_RGB24_FORMAT:
+    vpImageConvert::RGBToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
+
+    break;
+  case V4L2_RGB32_FORMAT:
+    // The framegrabber acquire aRGB format. We just shift the data
+    // from 1 byte all the data and initialize the last byte
+    memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
+    I[height-1][width-1].A = 0;
+    break;
+  case V4L2_BGR24_FORMAT:
+    vpImageConvert::BGRToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height, false);
+    break;
+  case V4L2_YUYV_FORMAT:
+    vpImageConvert::YUYVToRGBa( (unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height); 
+    break;
+  default:
+    std::cout << "V4l2 conversion not handled" << std::endl;
+    break;
+  }
 
   queueAll();
 }
@@ -735,7 +811,8 @@ vpV4l2Grabber::close()
   streaming = false;
 
   if (fd >= 0){
-    ::close (fd);
+    //vpTRACE("v4l2_close()");
+    v4l2_close (fd);
     fd = -1;
   }
 
@@ -762,7 +839,23 @@ void
 vpV4l2Grabber::open()
 {
   /* Open Video Device */
-  fd = ::open (device, O_RDWR | O_NONBLOCK, 0);
+  struct stat st; 
+  
+  if (-1 == stat (device, &st)) {
+    fprintf (stderr, "Cannot identify '%s': %d, %s\n",
+	     device, errno, strerror (errno));
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "Cannot identify video device") );
+
+  }
+  
+  if (!S_ISCHR (st.st_mode)) {
+    fprintf (stderr, "%s is no device\n", device);
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+				   "No device") );
+    
+  }
+  fd = v4l2_open (device, O_RDWR | O_NONBLOCK, 0);
   if (fd < 0) {
     close();
 
@@ -787,11 +880,11 @@ vpV4l2Grabber::open()
   buf_me   = new struct ng_video_buf   [vpV4l2Grabber::MAX_BUFFERS];
 
   /* Querry Video Device Capabilities */
-  if ( ioctl (fd, VIDIOC_QUERYCAP, &cap) == -1 ) {
+  if ( v4l2_ioctl (fd, VIDIOC_QUERYCAP, &cap) == -1 ) {
     close();
-
+    fprintf (stderr, "%s is no V4L2 device\n", device);
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-				   "Can't query video capabilities") );
+				   "Is not a V4L2 device") );
   }
   if (verbose) {
     fprintf(stdout, "v4l2 info:\n"
@@ -839,26 +932,24 @@ vpV4l2Grabber::getCapabilities()
 {
   for (__u32 ninputs = 0; ninputs < MAX_INPUTS; ninputs++) {
     inp[ninputs].index = ninputs;
-
-    if (ioctl(fd, VIDIOC_ENUMINPUT, &inp[ninputs]))
+    if (v4l2_ioctl(fd, VIDIOC_ENUMINPUT, &inp[ninputs]))
       break;
-
   }
   for (__u32 nstds = 0; nstds < MAX_NORM; nstds++) {
     std[nstds].index = nstds;
-    if (ioctl(fd, VIDIOC_ENUMSTD, &std[nstds]))
+    if (v4l2_ioctl(fd, VIDIOC_ENUMSTD, &std[nstds]))
       break;
 
   }
   for (__u32 nfmts = 0; nfmts < MAX_FORMAT; nfmts++) {
     fmt[nfmts].index = nfmts;
     fmt[nfmts].type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (ioctl(fd, VIDIOC_ENUM_FMT, &fmt[nfmts]))
+    if (v4l2_ioctl(fd, VIDIOC_ENUM_FMT, &fmt[nfmts]))
       break;
   }
 
   streamparm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (ioctl(fd, VIDIOC_G_PARM, &streamparm) == -1)
+  if (v4l2_ioctl(fd, VIDIOC_G_PARM, &streamparm) == -1)
   {
     close();
 
@@ -871,8 +962,9 @@ vpV4l2Grabber::getCapabilities()
 
   Set the capture format using the settings:
   - image size : specified by setWidth(), setHeight() or setScale()
-  - frame format : specified by setFrameFormat()
+  - frame format : specified by setFramerate()
   - pixel format : specified by setPixelFormat().
+
 
   \exception vpFrameGrabberException::settingError : Bad format, probably do to
   a wrong scale.
@@ -884,15 +976,30 @@ vpV4l2Grabber::setFormat()
 {
   fmt_me.width  = _width;
   fmt_me.height = _height;
-  fmt_me.bytesperline = _width; // bad (normally _width * depth / 8), but works
+  //fmt_me.bytesperline = _width; // bad (normally _width * depth / 8), but works
   // because initialized later by an ioctl call to VIDIOC_S_FMT
 
   switch(pixelformat) {
-  case V4L2_GREY_FORMAT : fmt_me.pixelformat = V4L2_PIX_FMT_GREY; break;
-  case V4L2_RGB24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB24; break;
-  case V4L2_RGB32_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB32; break;
-  case V4L2_BGR24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_BGR24; break;
-  case V4L2_BGR32_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_BGR32; break;
+  case V4L2_GREY_FORMAT : fmt_me.pixelformat = V4L2_PIX_FMT_GREY; 
+    if (verbose) 
+      fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_GREY)\n");
+    break;
+  case V4L2_RGB24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB24; 
+    if (verbose) 
+      fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_RGB24)\n");
+    break;
+  case V4L2_RGB32_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB32; 
+    if (verbose) 
+      fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_RGB32)\n");
+    break;
+  case V4L2_BGR24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_BGR24; 
+    if (verbose) 
+      fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_BGR24)\n");
+    break;
+  case V4L2_YUYV_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_YUYV;
+    if (verbose) 
+      fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_YUYV)\n");
+    break;
 
   default:
     close();
@@ -902,23 +1009,26 @@ vpV4l2Grabber::setFormat()
   }
 
   /* Get Video Format */
+  vpCLEAR (fmt_v4l2);
+
   fmt_v4l2.type                 = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-  if (ioctl (fd, VIDIOC_G_FMT, &fmt_v4l2) == -1 ) {
+  if (v4l2_ioctl (fd, VIDIOC_G_FMT, &fmt_v4l2) == -1 ) {
     close();
 
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't get video format") );
   }
-
   fmt_v4l2.fmt.pix.pixelformat  = fmt_me.pixelformat;
   fmt_v4l2.fmt.pix.width        = fmt_me.width;
   fmt_v4l2.fmt.pix.height       = fmt_me.height;
+  //printf("1 - w: %d h: %d\n", fmt_v4l2.fmt.pix.width, fmt_v4l2.fmt.pix.height);
+
 
   switch (frameformat) {
   case V4L2_FRAME_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_ALTERNATE;
     if (verbose) {
-      fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_ALTERNATE\n");
+      fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_ALTERNATE)\n");
     }
     break;
   case V4L2_IMAGE_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_INTERLACED;
@@ -940,36 +1050,39 @@ vpV4l2Grabber::setFormat()
   {
     height = FRAME_SIZE;
   }
+  //printf("2 - w: %d h: %d\n", fmt_v4l2.fmt.pix.width, fmt_v4l2.fmt.pix.height);
 
-
-  if (ioctl(fd, VIDIOC_S_FMT, &fmt_v4l2) == -1) {
+  if (v4l2_ioctl(fd, VIDIOC_S_FMT, &fmt_v4l2) == -1) {
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't set video format") );
   }
+
   if (fmt_v4l2.fmt.pix.pixelformat != fmt_me.pixelformat) {
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-				   "Bad pixel format") );
+  				   "Bad pixel format") );
   }
+
+  /* Buggy driver paranoia. */
+  unsigned int min = fmt_v4l2.fmt.pix.width * 2;
+  if (fmt_v4l2.fmt.pix.bytesperline < min)
+    fmt_v4l2.fmt.pix.bytesperline = min;
+  min = fmt_v4l2.fmt.pix.bytesperline * fmt_v4l2.fmt.pix.height;
+  if (fmt_v4l2.fmt.pix.sizeimage < min)
+    fmt_v4l2.fmt.pix.sizeimage = min;
 
   fmt_me.width        = fmt_v4l2.fmt.pix.width;
   fmt_me.height       = fmt_v4l2.fmt.pix.height;
   fmt_me.bytesperline = fmt_v4l2.fmt.pix.bytesperline;
 
   if (verbose) {
-    fprintf(stdout,"v4l2: new capture params (%dx%d, %c%c%c%c, %d byte)\n",
+    fprintf(stdout,"v4l2: new capture params (%dx%d, %c%c%c%c, %d byte, %d bytes per line)\n",
 	    fmt_me.width, fmt_me.height,
 	    fmt_v4l2.fmt.pix.pixelformat & 0xff,
 	    (fmt_v4l2.fmt.pix.pixelformat >>  8) & 0xff,
 	    (fmt_v4l2.fmt.pix.pixelformat >> 16) & 0xff,
 	    (fmt_v4l2.fmt.pix.pixelformat >> 24) & 0xff,
-	    fmt_v4l2.fmt.pix.sizeimage);
-//     if (ioctl(fd, VIDIOC_G_FMT, &fmt_v4l2) == -1) {
-//       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-// 				     "Can't get video format") );
-//     }
-//     int w = fmt_v4l2.fmt.pix.width;
-//     int h = fmt_v4l2.fmt.pix.height;
-//     printf("Image %d x %d\n", w, h);
+	    fmt_v4l2.fmt.pix.sizeimage,
+	    fmt_v4l2.fmt.pix.bytesperline);
   }
 
 }
@@ -996,8 +1109,14 @@ vpV4l2Grabber::startStreaming()
   reqbufs.memory = V4L2_MEMORY_MMAP;
 
   
-  if (ioctl(fd, VIDIOC_REQBUFS, &reqbufs) == -1)
+  if (v4l2_ioctl(fd, VIDIOC_REQBUFS, &reqbufs) == -1)
   {
+    if (EINVAL == errno) {
+      fprintf (stderr, "%s does not support "
+                                 "memory mapping\n", device);
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+				     "Does not support memory mapping") );
+    }
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't require video buffers") );
   }
@@ -1009,7 +1128,7 @@ vpV4l2Grabber::startStreaming()
     buf_v4l2[i].type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf_v4l2[i].memory = V4L2_MEMORY_MMAP;
     buf_v4l2[i].length = 0;
-    if (ioctl(fd, VIDIOC_QUERYBUF, &buf_v4l2[i]) == -1)
+    if (v4l2_ioctl(fd, VIDIOC_QUERYBUF, &buf_v4l2[i]) == -1)
     {
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't query video buffers") );
@@ -1017,15 +1136,16 @@ vpV4l2Grabber::startStreaming()
     memcpy(&buf_me[i].fmt, &fmt_me, sizeof(ng_video_fmt));
     buf_me[i].size = buf_me[i].fmt.bytesperline * buf_me[i].fmt.height;
 
-//     if (verbose)
-//       std::cout << "1: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
-// 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
-// 	   << std::endl;
+    // if (verbose)
+    //   std::cout << "1: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
+    // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
+    // 	   << std::endl;
 
 
-    buf_me[i].data = (unsigned char *) mmap(NULL, buf_v4l2[i].length,
-					    PROT_READ | PROT_WRITE, MAP_SHARED,
-					    fd, (off_t)buf_v4l2[i].m.offset);
+    buf_me[i].data = (unsigned char *) v4l2_mmap(NULL, buf_v4l2[i].length,
+						 PROT_READ | PROT_WRITE, 
+						 MAP_SHARED,
+						 fd, (off_t)buf_v4l2[i].m.offset);
 
     if(buf_me[i].data == MAP_FAILED)
     {
@@ -1045,18 +1165,13 @@ vpV4l2Grabber::startStreaming()
 
     if (verbose)
       printBufInfo(buf_v4l2[i]);
-
-    if (MAP_FAILED == buf_me[i].data) {
-      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-				   "Can't map memory") );
-    }
   }
 
   /* queue up all buffers */
   queueAll();
 
   /* Set video stream capture on */
-  if (ioctl(fd, VIDIOC_STREAMON, &fmt_v4l2.type)<0)
+  if (v4l2_ioctl(fd, VIDIOC_STREAMON, &fmt_v4l2.type)<0)
   {
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Can't start streaming") );
@@ -1067,7 +1182,7 @@ vpV4l2Grabber::startStreaming()
 
 /*!
 
-  Stops the streaming capture mode and ummap the device memory.
+  Stops the streaming capture mode and unmap the device memory.
 
   \exception vpFrameGrabberException::otherError : if can't stop streaming.
 */
@@ -1081,19 +1196,18 @@ vpV4l2Grabber::stopStreaming()
 
     //vpTRACE(" Stop the streaming...");
     /* stop capture */
-    if (ioctl(fd, VIDIOC_STREAMOFF,&fmt_v4l2.type)) {
+    fmt_v4l2.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (v4l2_ioctl(fd, VIDIOC_STREAMOFF,&fmt_v4l2.type)) {
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				     "Can't stop streaming") );
     }
     /* free buffers */
     for (i = 0; i < reqbufs.count; i++) {
-      if (0 != buf_me[i].refcount) {
-	// ng_waiton_video_buf(&buf_me[i]);
-	std::cout << "Normalement call ng_waiton_video_buf(&buf_me[i]); --------\n";
-      }
       if (verbose)
 	printBufInfo(buf_v4l2[i]);
-      if (-1 == munmap(buf_me[i].data, buf_me[i].size)) {
+      //vpTRACE("v4l2_munmap()");
+
+      if (-1 == v4l2_munmap(buf_me[i].data, buf_me[i].size)) {
 	throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				       "Can't unmap memory") );
       }
@@ -1126,6 +1240,7 @@ vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
 
   /* wait for the next frame */
  again:
+
   tv.tv_sec  = 1;
   tv.tv_usec = 0;
   FD_ZERO(&rdset);
@@ -1149,7 +1264,8 @@ vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
   /* get it */
   memset(&buf, 0, sizeof(buf));
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (-1 == ioctl(fd,VIDIOC_DQBUF, &buf)) {
+  buf.memory = V4L2_MEMORY_MMAP; // Fabien manquait
+  if (-1 == v4l2_ioctl(fd,VIDIOC_DQBUF, &buf)) {
     index = 0;
     switch(errno)
     {
@@ -1182,13 +1298,12 @@ vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
 
   timestamp = buf_v4l2[index].timestamp;
 
+  // if(verbose)
+  // {
+  //   vpERROR_TRACE("field: %d\n", buf_v4l2[index].field);
 
-  if(verbose)
-  {
-    vpERROR_TRACE("field: %d\n", buf_v4l2[index].field);
-
-    vpERROR_TRACE("data adress : 0x%p\n", buf_me[buf.index].data);
-  }
+  //   vpERROR_TRACE("data adress : 0x%p\n", buf_me[buf.index].data);
+  // }
   return buf_me[buf.index].data;
 }
 
@@ -1213,7 +1328,7 @@ vpV4l2Grabber::queueBuffer()
   }
 
   //    std::cout << "frame: " << frame << std::endl;
-  rc = ioctl(fd, VIDIOC_QBUF, &buf_v4l2[frame]);
+  rc = v4l2_ioctl(fd, VIDIOC_QBUF, &buf_v4l2[frame]);
   if (0 == rc)
     queue++;
   else

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: grabV4l2Grey.cpp 2807 2010-09-14 10:14:54Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -45,9 +45,9 @@
 #include <visp/vpDebug.h>
 
 /*!
-  \file grabV4l2Grey.cpp
+  \file grabV4l2.cpp
 
-  \brief Example of grey level image framegrabbing using vpV4l2Grabber class.
+  \brief Example of image framegrabbing using vpV4l2Grabber class.
 
 */
 
@@ -64,7 +64,12 @@
 #include <visp/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"df:i:hn:s:v"
+#define GETOPTARGS	"df:i:hn:p:s:t:v:x"
+
+typedef enum {
+  grey_image = 0, // for ViSP unsigned char grey images
+  color_image     // for ViSP vpRGBa color images
+} vpImage_type;
 
 /*!
 
@@ -76,21 +81,30 @@
   \param input : Card input number.
   \param scale : Subsampling factor.
   \param niter : Number of images to acquire.
+  \param device : Video device name.
+  \param pixelformat : Pixel format.
+  \param image_type : 0 for unsigned char, 1 for vpRGBa images
 
 */
 void usage(const char *name, const char *badparam, unsigned fps, 
-	   unsigned input, unsigned scale, long niter)
+	   unsigned input, unsigned scale, long niter, char *device, 
+	   vpV4l2Grabber::vpV4l2PixelFormatType pixelformat, 
+	   const vpImage_type &image_type)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the Video For Linux Two framegrabber. \n\
 Display these images using X11 or GTK.\n\
 \n\
 SYNOPSIS\n\
-  %s [-f <fps=25|50>] [-i <input=0|1|2|3> \n\
-     [-s <scale=1|2|4>] [-n <niter>] [-v] [-d] [-h]\n", name);
+  %s [-v <video device>] [-f <fps=25|50>] \n\
+     [-i <input=0|1|2|3> [-s <scale=1|2|4>] [-p <pixel format>]\n\
+     [-n <niter>] [-t <image type>] [-x] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
+  -v <video device>                                         %s\n\
+     Video device to access to the camera\n\
+\n\
   -f <fps>                                                  %u\n\
      Framerate in term od number of images per second.\n\
      Possible values are 25 (for 25Hz) or 50 (for %%) Hz)\n\
@@ -98,10 +112,24 @@ OPTIONS:                                                  Default\n\
   -i <input>                                                %u\n\
      Framegrabber active input. Values can be 0, 1, 2, 4\n\
 \n\
+  -p <pixel format>                                         %d\n\
+     Camera pixel format. Values must be in [0-%d]:\n\
+       0 for gray format\n\
+       1 for RGB24 format\n\
+       2 for RGB32 format\n\
+       3 for BGR24 format\n\
+       4 for YUYV format\n\
+\n\
+  -t <image type>                                           %d\n\
+     Kind of images that are acquired/displayed by ViSP. \n\
+     Values must be in [0-1]:\n\
+       0 for grey images in unsigned char \n\
+       1 for color images in vpRGBa\n\
+\n\
   -s <scale>                                                %u\n\
      Framegrabber subsampling factor. \n\
-     If 1, full resolution image acquisition 768x576.\n\
-     If 2, half resolution acquisition 384x288. The \n\
+     If 1, full resolution image acquisition.\n\
+     If 2, half resolution image acquisition. The \n\
      subsampling is achieved by the hardware.\n\
 \n\
   -n <niter>                                                %ld\n\
@@ -110,12 +138,13 @@ OPTIONS:                                                  Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
-  -v \n\
-     Activates the verbose mode.\n\
+  -x \n\
+     Activates the extra verbose mode.\n\
 \n\
   -h \n\
      Print the help.\n\n",
-	  fps, input, scale, niter);
+	  device, fps, input, pixelformat, 
+	  vpV4l2Grabber::V4L2_MAX_FORMAT-1, image_type, scale, niter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -133,12 +162,18 @@ OPTIONS:                                                  Default\n\
   \param display : Display activation.
   \param verbose : Verbose mode activation.
   \param niter : Number of images to acquire.
+  \param device : Video device name.
+  \param pixelformat : Pixel format.
+  \param image_type : 0 for unsigned char, 1 for vpRGBa images
 
   \return false if the program has to be stopped, true otherwise.
 
 */
 bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
-		unsigned &scale, bool &display, bool &verbose, long &niter)
+		unsigned &scale, bool &display, bool &verbose, 
+		long &niter, char *device, 
+		vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat, 
+		vpImage_type &image_type)
 {
   const char *optarg;
   int	c;
@@ -149,19 +184,25 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
     case 'f': fps = (unsigned) atoi(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
     case 'n': niter = atol(optarg); break;
+    case 'p': pixelformat = (vpV4l2Grabber::vpV4l2PixelFormatType) atoi(optarg); break;
     case 's': scale = (unsigned) atoi(optarg); break;
-    case 'v': verbose = true; break;
-    case 'h': usage(argv[0], NULL, fps, input, scale, niter); 
+    case 't': image_type = (vpImage_type) atoi(optarg); break;
+    case 'v': sprintf(device, "%s", optarg); break;
+    case 'x': verbose = true; break;
+    case 'h': usage(argv[0], NULL, fps, input, scale, niter, 
+		    device, pixelformat, image_type); 
       return false; break;
 
     default:
-      usage(argv[0], optarg, fps, input, scale, niter); return false; break;
+      usage(argv[0], optarg, fps, input, scale, niter, 
+	    device, pixelformat, image_type); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, fps, input, scale, niter);
+    usage(argv[0], NULL, fps, input, scale, niter, 
+	  device, pixelformat, image_type);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -182,54 +223,72 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
 int
 main(int argc, const char ** argv)
 {
-  unsigned fps = 25;
-  unsigned input = vpV4l2Grabber::DEFAULT_INPUT;
-  unsigned scale = vpV4l2Grabber::DEFAULT_SCALE;
-  bool opt_display = true;
+  unsigned int opt_fps = 25;
+  unsigned int opt_input = 0;
+  unsigned int opt_scale = 1;
+  vpV4l2Grabber::vpV4l2PixelFormatType opt_pixelformat = vpV4l2Grabber::V4L2_YUYV_FORMAT;
+  long opt_iter = 100;
   bool opt_verbose = false;
-  long opt_iter    = 20;
+  bool opt_display = true;
+  char opt_device[20];
+  sprintf(opt_device, "/dev/video0");
+  vpImage_type opt_image_type = color_image;
 
   // Read the command line options
-  if (getOptions(argc, argv, fps, input, scale, opt_display, 
-		 opt_verbose, opt_iter) == false) {
+  if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display, 
+		 opt_verbose, opt_iter, opt_device,
+		 opt_pixelformat, opt_image_type) == false) {
     exit (-1);
   }
 
-  // Declare an image, this is a gray level image (unsigned char). It
-  // size is not defined yet. It will be defined when the image will
-  // acquired the first time.
-  vpImage<unsigned char> I ;
+  // Declare an image, this is a gray level image (unsigned char) and
+  // an other one that is a color image. There size is not defined
+  // yet. It will be defined when the image will acquired the first
+  // time.
+  vpImage<unsigned char> Ig ; // grey level image
+  vpImage<vpRGBa> Ic ; // color image
 
   // Creates the grabber
-  vpV4l2Grabber g(opt_verbose);
+  vpV4l2Grabber g;
 
   try{
     // Initialize the grabber
-    g.setInput(input);
-    if (1) {
-      g.setScale(scale);
-    }
-    else {
-      g.setWidth(768/scale);
-      g.setHeight(576/scale);
-    }
-    if (fps == 25)
+    g.setVerboseMode(opt_verbose);
+    g.setDevice(opt_device);
+    g.setInput(opt_input);
+    g.setScale(opt_scale);
+    g.setPixelFormat(opt_pixelformat);
+    if (opt_fps == 25)
       g.setFramerate(vpV4l2Grabber::framerate_25fps);
     else
       g.setFramerate(vpV4l2Grabber::framerate_50fps);
-    // Open the framegrabber with the specified settings
-    g.open(I) ;
-    // Acquire an image
-    g.acquire(I) ;
+    if (opt_image_type == grey_image) {
+      // Open the framegrabber with the specified settings on grey images
+      g.open(Ig) ;
+      // Acquire an image
+      g.acquire(Ig) ;
+      std::cout << "Grey image size: width : " << Ig.getWidth() <<  " height: "
+		<< Ig.getHeight() << std::endl;
+    }
+    else {
+      // Open the framegrabber with the specified settings on color images
+      g.open(Ic) ;
+      // Acquire an image
+      g.acquire(Ic) ;
+      std::cout << "Color image size: width : " << Ic.getWidth() <<  " height: "
+		<< Ic.getHeight() << std::endl;
+    }
+  }
+  catch (vpException e) {
+    std::cout << "Catched exception: " << e.getMessage() << std::endl;
+    return -1;
   }
   catch(...)
   {
     vpERROR_TRACE("Cannot acquire an image...") ;
-    return(0);
+    return(-1);
   }
 
-  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << std::endl;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size
@@ -241,14 +300,25 @@ main(int argc, const char ** argv)
 
   if (opt_display) {
     try{
-      display.init(I, 100, 100, "V4L2 Framegrabber") ;
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
+      if (opt_image_type == grey_image) {
+	display.init(Ig, 100, 100, "V4L2 grey images framegrabbing") ;
+	vpDisplay::display(Ig) ;
+	vpDisplay::flush(Ig) ;
+      }
+      else {
+	display.init(Ic, 100, 100, "V4L2 color images framegrabbing") ;
+	vpDisplay::display(Ic) ;
+	vpDisplay::flush(Ic) ;
+      }
+	
+    }
+    catch (vpException e) {
+      std::cout << "Exception: " << e.getMessage() << std::endl;
     }
     catch(...)
     {
@@ -256,7 +326,7 @@ main(int argc, const char ** argv)
       exit(-1);
     }
   }
-
+  try {
   // Acquisition loop
   long cpt = 1;
   while(cpt ++ < opt_iter)
@@ -264,18 +334,35 @@ main(int argc, const char ** argv)
     // Measure the initial time of an iteration
     double t = vpTime::measureTimeMs();
     // Acquire the image
-    g.acquire(I) ;
-    if (opt_display) {
-      // Display the image
-      vpDisplay::display(I) ;
-      // Flush the display
-      vpDisplay::flush(I) ;
+    if (opt_image_type == grey_image) {
+      g.acquire(Ig) ;
+      if (opt_display) {
+	// Display the image
+	vpDisplay::display(Ig) ;
+	// Flush the display
+	vpDisplay::flush(Ig) ;
+      }
+    }
+    else {
+      g.acquire(Ic) ;
+      if (opt_display) {
+	// Display the image
+	vpDisplay::display(Ic) ;
+	// Flush the display
+	vpDisplay::flush(Ic) ;
+      }
     }
     // Print the iteration duration
     std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
   }
 
   g.close();
+  }
+  catch (vpException e) {
+    std::cout << "Exception: " << e.getMessage() << std::endl;
+    g.close();
+  }
+
 }
 #else
 int
