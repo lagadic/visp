@@ -1,4 +1,4 @@
-                               ViSP 
+                               ViSP
                      Visual Servoing Platform
                      Resume of the change log
 
@@ -10,52 +10,52 @@ ViSP 2.6.1 (under development)
   - Build
      - Set the build type by default to release
   - Improvements
-     - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now 
+     - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now
        possible to select a specific camera with its GUID by using setCamera()
-     - All the specific Xml parser (vpMbtXmlParser, vpXmlParserCamera) 
+     - All the specific Xml parser (vpMbtXmlParser, vpXmlParserCamera)
        inherit now from vpXmlParser
      - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser,
        vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance
-     - It is now possible to grab images from an usb webcam with the 
+     - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
   - Bug fixed
-     - [11473] vpImageTools::flip() come out error when deal with vpImage 
+     - [11473] vpImageTools::flip() come out error when deal with vpImage
        with vpRGBa type
-     - [11617] selecting a subset of features is not taken into account 
+     - [11617] selecting a subset of features is not taken into account
        in vpServo
      - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
-     - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error: 
+     - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error:
        gdk-pixbuf/gdk-pixbuf.h)
      - [11924] svdNr fails on some matrices where svdGsl succeeds
      - [11942] Build issues with GSL on OSX due to 32/64 bits architecture
      - [11943] Build issues with libjpeg on OSX due to 32/64 bits architecture
      - [11944] Build issues with libpng on OSX due to 32/64 bits architecture
-     - [11981] vpV4l2Grabber class based on video 4 linux 2 is not able to 
+     - [11981] vpV4l2Grabber class based on video 4 linux 2 is not able to
        grab images from an usb webcam
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
       Change the open source license from QPL to GPL v2
   - New Features
     - Introduction of a new wireframe simulator. See vpWireFrameSimulator class.
-    - Introduction of a new model-based tracker that allows to track 
+    - Introduction of a new model-based tracker that allows to track
       an object based on its 3D model. See vpMbEdgeTracker class.
     - New vpForceTwistMatrix class that allows to transfer a force/torque skew
       from one frame to another.
     - New vpVelocityTwistMatrix class that allows to transfer a velocity skew
-      from one frame to an other. The vpTwistMatrix class that does the same 
+      from one frame to an other. The vpTwistMatrix class that does the same
       work previously is from now deprecated.
-    - New vpRobotCycab class to communicate with the Cycab car-like mobile 
+    - New vpRobotCycab class to communicate with the Cycab car-like mobile
       robot at Inria.
     - New generic vpRobotSimulator class to create robot simulators.
     - New vpSimulatorViper850 class which simulates the viper850 robot.
     - New vpSimulatorAfma6 class which simulates the Afma 6dof robot.
-    - New vpPlanarObjectDetector class to detect a planar surface based on 
-      the Ferns Classifier. 
-    - New vpSickLDMRS class, a UNIX driver to get measures from a Sick LD-MRS 
+    - New vpPlanarObjectDetector class to detect a planar surface based on
+      the Ferns Classifier.
+    - New vpSickLDMRS class, a UNIX driver to get measures from a Sick LD-MRS
       laser scanner.
-    - New vpPlot class that was recoded to suppress the XPlotter dependency. 
-      This class aims real time drawing of 2D or 3D graphics under Linux, OSX 
+    - New vpPlot class that was recoded to suppress the XPlotter dependency.
+      This class aims real time drawing of 2D or 3D graphics under Linux, OSX
       and Windows.
   - Third party library dependencies
     - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least OpenCV 2.1.
@@ -67,26 +67,25 @@ ViSP 2.6.0 (released September 23rd, 2010)
       add possibility to change during the execution the shutter, the gain, the
       brightness, ... (see documentation for more details)
       . new setIsoTransmissionSpeed(), setAutoShutter() methods
-    - In vpThetaUVector addition of &operator=() method to initialise all the 
+    - In vpThetaUVector addition of &operator=() method to initialise all the
       angles to the same value
-    - In vpHomogeneousMatrix addition of 
+    - In vpHomogeneousMatrix addition of
       . eye() method to set the transformation as identity
       . extract(vpThetaUVector &) to extract the rotation as a Theta U vector
-    - In vpRobotViper850 add openGripper() and closeGripper() functions to 
-      control the Schunk two fingers electric gripper (available only at 
-      Inria). 
-    - In vpRotationVector and vpTranslationVector introduction of set() 
+    - In vpRobotViper850 add openGripper() and closeGripper() functions to
+      control the Schunk two fingers electric gripper (available only at
+      Inria).
+    - In vpRotationVector and vpTranslationVector introduction of set()
       method that allows initialization from 3 doubles
     - Documentation improvements
   - Deprecated
-      . Some deprecated classes were removed: vpItifg8Grabber, 
+      . Some deprecated classes were removed: vpItifg8Grabber,
 	vpEulerVector, vpSubPixel, vpRA
       . Deprecated functions since ViSP 2.4.4 where also removed
   - Examples:
-    - New example calibrateTsai.cpp to show how to use the vpCalibration 
+    - New example calibrateTsai.cpp to show how to use the vpCalibration
       class to estimate the hand to eye transformation.
-    - New examples to illustrate the usage of the new wire-frame simulators:
-      
+    - New examples to illustrate the usage of the new wire-frame simulators
   - Bug fixed
     - [9476] Memory leak in vpImageIo::readPNG() functions.
     - [9505] Problem with the DirectShow grabber : can't be initialised.
@@ -101,13 +100,13 @@ ViSP 2.6.0 (released September 23rd, 2010)
     - [10723] Compilation error in vpFFMPEG.cpp
     - [10748] PThread and Win32 Conflict
     - [10928] vpPlane: rayIntersection from 2 points
-    - [10985] In vpPlot, 2D curve plotting starts with point (0,0) 
+    - [10985] In vpPlot, 2D curve plotting starts with point (0,0)
 	      and not with the first specified point.
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
     - vpMePath has been removed.
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.4-rc1 (released December 21th, 2009)
   - New Features
     - During CMake configuration, when a third-party library is detected,
@@ -116,78 +115,78 @@ ViSP 2.4.4-rc1 (released December 21th, 2009)
     - For the Irisa's Afma6 robot addition of a new vacuum tool (vpAfma6).
     - New vpImagePoint class for image point coordinates.
     - New vpPlot class that enables real time drawing of graphics under Unix.
-    - Ability to use other colors than the predefined ones with the rewriting 
+    - Ability to use other colors than the predefined ones with the rewriting
       of the vpColor class and modifications in display functionalities.
-    - New vpKalmanFilter and vpLinearKalmanFilterInstantiation classes with 
+    - New vpKalmanFilter and vpLinearKalmanFilterInstantiation classes with
       velocity and acceleration state models.
     - New vpFeatureTranslation: ctc*
-    - New USE_COIN_SIMULATOR option during CMake configuration to enable or 
+    - New USE_COIN_SIMULATOR option during CMake configuration to enable or
       disable simulation capabilities based on Coin3D suite.
-    - New vpViper, vpViper850 and vpRobotViper850 classes to provide an 
+    - New vpViper, vpViper850 and vpRobotViper850 classes to provide an
       interface for Inria's Adept Viper 850 robot.
-    - New vpBSpline and vpNurbs classes to manipulate 2D BSpline and 
+    - New vpBSpline and vpNurbs classes to manipulate 2D BSpline and
       2D Nurbs (Non Uniform Rational BSpline).
     - New vpMeNurbs class to track object edges.
     - New vpFFMPEG class to interface the FFmpeg library.
-    - New vpVideoReader and vpVideoWriter classes to manipulate easily the 
+    - New vpVideoReader and vpVideoWriter classes to manipulate easily the
       video files and the image sequences.
   - Improvements
     - In firewire framegrabbing using vp1394TwoGrabber based on libdc1394-2.x,
-      bus reset can be switched off in the constructor. There are also 
-      improvements in the acquisition using acquire(vpImage<unsigned char> &I, 
-      ...) by removing the color coding format request and by support of the 
+      bus reset can be switched off in the constructor. There are also
+      improvements in the acquisition using acquire(vpImage<unsigned char> &I,
+      ...) by removing the color coding format request and by support of the
       RAW8 and RAW16 video format.
-      New dequeue() functions were also introduced to make possible to 
-      separate the ring buffer dequeuing and enqueuing. This behavior 
-      is for example useful when image processing needs to be introduced 
+      New dequeue() functions were also introduced to make possible to
+      separate the ring buffer dequeuing and enqueuing. This behavior
+      is for example useful when image processing needs to be introduced
       between the dequeuing and enqueuing stages. It may also useful
       to synchronise the image acquisition with an other sensor.
-      New setPanControl() function was introduced to set the PAN register 
-      0x884 to control single or multiple image transmission from stereo 
+      New setPanControl() function was introduced to set the PAN register
+      0x884 to control single or multiple image transmission from stereo
       vision cameras like the PointGrey Bumblebee.
-    - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found 
+    - vpDot2: The tracking is restarted in vpDot2::track() if a dot is found
       but is not valid.
-    - In vpDisplay, new getKeyboardEvent() functionality to handle key 
-      events and new getPointerMotionEvent() functionality to handle mouse 
+    - In vpDisplay, new getKeyboardEvent() functionality to handle key
+      events and new getPointerMotionEvent() functionality to handle mouse
       pointer motion event.
     - Optimization of the vpMatrix class.
   - Examples:
-    - New examples in examples/servo-viper850 to show how to use the 
-      linear Kalman filter to compensate the tracking error due to the 
-      motion of a target. 
-    - New examples in examples/servo-viper850 to show how to use the 
-      secondary task to avoid joint limits. 
+    - New examples in examples/servo-viper850 to show how to use the
+      linear Kalman filter to compensate the tracking error due to the
+      motion of a target.
+    - New examples in examples/servo-viper850 to show how to use the
+      secondary task to avoid joint limits.
     - New plotting example in example/tools/plot.cpp
     - In grab1394Two.cpp example, addition of [-r] new option to reset the bus.
     - New examples to show how to build a 3D visual servoing without using the
-      vpServo and vpFeature classes: 
+      vpServo and vpFeature classes:
       servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
       and servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
   - Bug fixed
     - [7638] Memory leak in all vpFeature... classes was reopened
-    - [7888] vpV4l2Grabber cannot acquire an image from an analog camera 
+    - [7888] vpV4l2Grabber cannot acquire an image from an analog camera
 	     on Ubuntu 8.04 Hardy Heron
     - [7994] vpMeLine : initialization problem for horizontal lines
     - [8001] Coin and SoQt are not detected during CMake configuration
 	     under Fedora 10
     - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
     - [8225] Bug in the multiplication of a twist matrix (6x6) by a matrix (6xn)
-    - [8248] Compilation error under Windows MSCV8 if deprecated functions 
+    - [8248] Compilation error under Windows MSCV8 if deprecated functions
 	     are not build
-    - [8249] Compilation error under Windows MSCV8 when building ViSP 
+    - [8249] Compilation error under Windows MSCV8 when building ViSP
 	     as a shared library (DLL)
     - [8257] Bug in vp1394TwoGrabber::resetBus()
     - [8259] Segfault in vpDisplayX
     - [8389] vpKltOpencv : Bug in the copy constructor
-    - [8493] Problem to build ViSP as a dynamic library under windows 
+    - [8493] Problem to build ViSP as a dynamic library under windows
 	     (Visual C++)
-    - [8495] Segmentation fault during the execution of the example 
+    - [8495] Segmentation fault during the execution of the example
 	     grabDirectShow
-    - [8831] Possible bug when extracting axis/angle from theta/u vector	
-----------------------------------------------	
+    - [8831] Possible bug when extracting axis/angle from theta/u vector
+----------------------------------------------
 ViSP 2.4.3 (released April 10th, 2009)
   - New Features
-    - Add vpFeaturePointPolar corresponding the a 2D image point with 
+    - Add vpFeaturePointPolar corresponding the a 2D image point with
       polar coordinates visual feature.
     - Add vpFeatureTranslation for cto (camera to object translation feature)
     - Add vpDisplay::setWindowPosition() functionality
@@ -198,41 +197,41 @@ ViSP 2.4.3 (released April 10th, 2009)
     - [7342] Bug in vpRobotAfma6::setVelocity(vpRobot::CAMERA_FRAME, v)
     - [7494] Division by 0 in vpHomography
     - [7424] Coin3D version 3 not supported under Windows
-    - [7613] vpSimulator::getInternalImage() function yields to an infinite 
+    - [7613] vpSimulator::getInternalImage() function yields to an infinite
 	     loop.
     - [7607] vpDisplayGTK bad window positionning
     - [7638] Memory leak in all vpFeature... classes
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.3-rc2 (released January 29th, 2009)
   - Deprecated
-    - Creation of a deprecated section in the online documentation that 
+    - Creation of a deprecated section in the online documentation that
       gives the list of classes or member function that are deprecated
-    - vpOSXcfoxGrabber was removed, since the C+Fox third party library 
+    - vpOSXcfoxGrabber was removed, since the C+Fox third party library
       available at http://cfox.sourceforge.net/ was not updated since 2005.
-    - vpIcCompGrabber was removed, since it uses a home made wrapper based 
+    - vpIcCompGrabber was removed, since it uses a home made wrapper based
       on itifg-7.2.1 driver which is not maintained yet
   - Testing
-    - Use of CDash insteed of Dart2. Dashboards are sent to 
+    - Use of CDash insteed of Dart2. Dashboards are sent to
       http://cdash.irisa.fr/CDash/index.php?project=ViSP
   - Platform compatibility
     - Compatibility with g++ 4.3.0 coming with fedora 9
   - New Features
-    - Add visp-config.bat under Windows to get the list of include dirs, 
-      library dirs and libraries ViSP depends on. This may help users to 
-      build a Visual Studio project from scratch and where ViSP is used as a 
+    - Add visp-config.bat under Windows to get the list of include dirs,
+      library dirs and libraries ViSP depends on. This may help users to
+      build a Visual Studio project from scratch and where ViSP is used as a
       third party project
-    - vpFeatureThetaU: Add cRcd feature, with ThetaU corresponding to the 
-      rotation the camera has to achieve to move from current frame to the 
+    - vpFeatureThetaU: Add cRcd feature, with ThetaU corresponding to the
+      rotation the camera has to achieve to move from current frame to the
       desired one.
     - vpOpenCVGrabber: New framegrabber based on OpenCV third party library
       (useful for USB cameras).
     - vp1394TwoGrabber: Get the timestamp associated to the grabbed image.
     - vpV4l2Grabber: Get the timestamp associated to the grabbed image.
-    - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new 
+    - vpRobotAfma6 and vpAfma6: Modifications to be compatible with the new
       low level Adept controller provided by Cerebellum Automation.
-    - vpRobotAfma4 and vpAfma4: Modifications to be compatible with the new 
-      low level Adept controller provided by Cerebellum Automation. New 
-      vpServolens class to control the Servolens lens attached to the camera 
+    - vpRobotAfma4 and vpAfma4: Modifications to be compatible with the new
+      low level Adept controller provided by Cerebellum Automation. New
+      vpServolens class to control the Servolens lens attached to the camera
       fixed on the Afma4 end-effector.
   - Examples:
     - New examples in example/manual described in ViSP guide under preparation.
@@ -264,70 +263,70 @@ ViSP 2.4.3-rc2 (released January 29th, 2009)
     - [6962] vpMeLine : problem of tracking
     - [7034] vpMeLine : Bug when a strip is tracked
     - [7126] problem with vpMatrix::eigenValuesByLU()
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.2 (released March 27th, 2008)
   - New classes
-    - vpCalibration : calibration toolkit for intrinsic and 
+    - vpCalibration : calibration toolkit for intrinsic and
         extrinsic parameters of perspective camera.
-    - vpXmlParserCamera : Parser xml to read and save camera parameters 
-        from vpCameraParameters class. 
+    - vpXmlParserCamera : Parser xml to read and save camera parameters
+        from vpCameraParameters class.
     - vpHinkley : Hinkley's cumulative sum test computation.
-    - vpMePath  : Tracking of a white curve by using line and parabola 
+    - vpMePath  : Tracking of a white curve by using line and parabola
         tracker.
-    - vpKeyboard : Gets a key from the keyboard without waiting for the 
+    - vpKeyboard : Gets a key from the keyboard without waiting for the
         enter key.
     - vpParallelPort : Parallel port management under unix.
     - vpRingLight : Irisa's ring light controller.
-    - vpKltOpencv : Interface for the KLT (Kanade-Lucas-Tomasi) feature 
+    - vpKltOpencv : Interface for the KLT (Kanade-Lucas-Tomasi) feature
         tracker implemented with opencv.
   - New Features
   - Bug fix and improvement
     - vpCameraParameters : support for radial distortion camera model.
     - vpAfma6 : Add a getCameraParameters functionnality
-    - vpSimulator : either SoWin or SoQt or SoXt is needed to use 
+    - vpSimulator : either SoWin or SoQt or SoXt is needed to use
         vpSimulator class.
-    - vpDot: setMaxDotSize(double percentage) replace 
+    - vpDot: setMaxDotSize(double percentage) replace
         setNbMaxPoint(double nb) to be less image size dependent.
         The maximal dot size is set by default to 0.25% (quarter image size).
-        setGrayLevelPrecision(double grayLevelPrecision) has been 
+        setGrayLevelPrecision(double grayLevelPrecision) has been
         added for a better management of gray dots detection.
-    - vpDot2: 
+    - vpDot2:
         Changes in searchDotsInArea() :
           The algorithm search now in the bounding boxes of the bad dots.
           Bug fixed : we could fall in an infinite loop.
-          Split accuracy private variable into grayLevelPrecision and 
-          sizePrecision. The gray level min and max are well calculated for 
+          Split accuracy private variable into grayLevelPrecision and
+          sizePrecision. The gray level min and max are well calculated for
           white and black dots.
-        Add setEllipsoidShapePrecision() to turn on/off and modify the test 
+        Add setEllipsoidShapePrecision() to turn on/off and modify the test
         related of the geometry of the shape
     - vpDisplayX : better management of endianness
     - vpDisplayGTK, vpDisplayGDI, vpDisplayD3D, vpDisplayX :
-        To actually display drawings on the screen, a vpDisplay::flush(I) is 
+        To actually display drawings on the screen, a vpDisplay::flush(I) is
         needed. Use it with parsimony : it is time consuming.
-    - vpDisplayGTK, vpDisplayGDI, vpDisplayD3D : 
+    - vpDisplayGTK, vpDisplayGDI, vpDisplayD3D :
         The behavior of the following methods change to be similar
         to vpDisplayX:
         . getClick(..., button) : The button used to click is now an output
         . getClickUp(..., button) : The button used to click is now an output
         Moreover, in vpDisplayGDI, vpDisplayD3D middle button is now managed
     - vpDisplayGTK, vpDisplayGDI, vpDisplayD3D :
-        The usage of display->init(vpImage, int, int); returned a 
+        The usage of display->init(vpImage, int, int); returned a
         segmentation fault : bug fixed
-    - vpDisplayD3D : we couldn't re-use a display after the call of the 
+    - vpDisplayD3D : we couldn't re-use a display after the call of the
         function close(vpImage). We had a black image : bug fixed.
-    - vpDisplay : changes in displayRectangle():an option parameter 
-        fill has been had to precise if the displayed rectangle is filled 
-        or not. 
+    - vpDisplay : changes in displayRectangle():an option parameter
+        fill has been had to precise if the displayed rectangle is filled
+        or not.
     - vpColor : Add orange color.
     - vpServo : To fix bug #3528 you should explicitly call vpServo::kill()
-        in your programs. Otherwise an exception 
-        vpServoException::notKilledProperly is launched by 
+        in your programs. Otherwise an exception
+        vpServoException::notKilledProperly is launched by
         vpServo::~vpServo() destructor.
-    - vpMatrix : Change Infinity Norm and Euclidian Norm formula to match with 
+    - vpMatrix : Change Infinity Norm and Euclidian Norm formula to match with
 	the standard matrix norms definitions.
-        Change determinant formula for 3x3 matrices to match with 
+        Change determinant formula for 3x3 matrices to match with
         the standard determinant definition.
-    - vpImageConvert : 
+    - vpImageConvert :
 	Add IplImage to vpImage and vpImage to IplImage conversion tool.
 	Add MONO16 to grey (MONO8) conversion tool.
     - vp1394TwoGrabber :
@@ -347,14 +346,14 @@ ViSP 2.4.2 (released March 27th, 2008)
     - vpRobust::MEstimator()
     - vpRobotAfma6: example usage of getPosition() was updated
     - vpDisplayGDI is included in the doxygen documentation
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.1 (released May 16th, 2007)
   - New classes
-        - vpRect class for rectangle manipulations, display	
+        - vpRect class for rectangle manipulations, display
         - vpHistogram,vpHistogramPeak and vpHistogramValey classes to
 	  handle gray level image histogram
-	- vpSubPixel for sub-pixel manipulations	
-	- vpMouseButton for mouse click identification	
+	- vpSubPixel for sub-pixel manipulations
+	- vpMouseButton for mouse click identification
   - New Features
         - MinGW supported
 	- ViSP as a third party library in an other project.
@@ -363,35 +362,35 @@ ViSP 2.4.1 (released May 16th, 2007)
 	  directly from the build dir, or from the install dir, or
 	  from a package (NSIS, ...)
 	- vpRobotCamera It is now possible to add a sampling time so that
-          the behavior of this simulated camera is quite realistic. This 
+          the behavior of this simulated camera is quite realistic. This
 	  sampling time is set by default to 40 ms.
-	- vpExponentialMap A sampling time was introduced.	
+	- vpExponentialMap A sampling time was introduced.
   - Bug fix and improvement
-	- vpImage: getWidth() and getHeight() replace getCols() and getRows() 
+	- vpImage: getWidth() and getHeight() replace getCols() and getRows()
 	  which are now obsolete.
-	- More restrictive types in vpImage, vpDisplay..., and vp...Grabber 
-	  classes: const are added, unsigned int replace int for pixel 
+	- More restrictive types in vpImage, vpDisplay..., and vp...Grabber
+	  classes: const are added, unsigned int replace int for pixel
 	  manipulations and image or display size.
-	- In vpDisplay classes:	
+	- In vpDisplay classes:
 	  . vpMouseButton::vpMouseButtonType was introduced to handle
-	    mouse clicks 
+	    mouse clicks
 	  . vpColor::vpColorType was introduced to handle colors to display
 	- Simulator functionality based on Coin usage is now available
 	  under windows. It allows the use of vpSimulator class under this
 	  platform.
 	- Compatibility with Windows platform.
 	- Reference documentation improvement
-	- cfox and std namespace were removed. To use cout you need to call 
+	- cfox and std namespace were removed. To use cout you need to call
 	  std::cout, std::endl, std::cin ...
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.4.0 (released February 6th, 2007)
   - New Feature
-	- add new framegrabber interface for itifg8 driver from Coreco 
+	- add new framegrabber interface for itifg8 driver from Coreco
 	  Imaging Technology (http://sourceforge.net/projects/itifg)
 	  Tested with AM-STD COMP framegrabber board on 2.4 and 2.6
-	  linux kernel (see vpItifg8Grabber). 
-	- add new framegrabber interface and test for firewire 1394 
-	  cameras using libdc1394-2.x. Need a newer version than 
+	  linux kernel (see vpItifg8Grabber).
+	- add new framegrabber interface and test for firewire 1394
+	  cameras using libdc1394-2.x. Need a newer version than
 	  libdc1394-2.0.0-rc4.
 	  Tested with the svn version of libdc1394-2 and Marlin F033C and
           F131B cameras (see vp1394TwoGrabber). Format 7 is supported
@@ -403,15 +402,15 @@ ViSP 2.4.0 (released February 6th, 2007)
         - memory leaks suppression
 	- works fully under windows
 	- doxygen documentation
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.2.0 (released August 25th, 2006)
   - Build
-	- To increase the code portability, especially under windows), 
-	  all the build process is now based on CMake 
+	- To increase the code portability, especially under windows),
+	  all the build process is now based on CMake
 	  (see http://www.cmake.org).
 	- Supported platforms:
 	  Linux, Mac OSX, SunOS: g++ 2.95.3, 2.96, 3.3.x, 3.4.x, 4.1.0)
-	  Windows: MSVC7 (2003.NET), MSVC8 (2005) 
+	  Windows: MSVC7 (2003.NET), MSVC8 (2005)
 	- Suppression of autotools support (configure)
 	- Allows shared library building (.so and .dll)
   - New Feature
@@ -424,14 +423,14 @@ ViSP 2.2.0 (released August 25th, 2006)
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)
 	- some fixes in vpDisplayGTK
-----------------------------------------------	
+----------------------------------------------
 ViSP 2.1.1 (released January 6th, 2006)
-   - New examples 
+   - New examples
 	- create an example directory
-	- add vpDotExample.cpp  
-	- add vpDot2Example.cpp  
-	- add vpPoseExample.cpp 
-	- add 2D0.5.VisualServoingSimulation.cpp 
+	- add vpDotExample.cpp
+	- add vpDot2Example.cpp
+	- add vpPoseExample.cpp
+	- add 2D0.5.VisualServoingSimulation.cpp
   - New Feature
 	- add this ChangleLog file
 	- add a vpDisplayGTK class with the GTK2+ window system
@@ -451,5 +450,5 @@ ViSP 2.1.1 (released January 6th, 2006)
      - add an image sequence to download on the www site cube.tar.gz
 
 
----------------------------------------	
+---------------------------------------
 ViSP 2.1.0 (released October, 24th 2005)
