@@ -461,9 +461,141 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
 }
 
 #endif
+
+#define vpSAT(c) \
+        if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
+/*!
+  Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
+  Destination rgba memory area has to be allocated before.
+  
+  \sa YUV422ToRGBa()
+*/
+void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba, 
+				unsigned int width, unsigned int height)
+{
+  unsigned char *s;
+  unsigned char *d;
+  int w, h, c;
+  int r, g, b, cr, cg, cb, y1, y2;
+
+  h = (int)height;
+  w = (int)width;
+  s = yuyv;
+  d = rgba;
+  while (h--) {
+    c = w >> 1;
+    while (c--) {
+      y1 = *s++;
+      cb = ((*s - 128) * 454) >> 8;
+      cg = (*s++ - 128) * 88;
+      y2 = *s++;
+      cr = ((*s - 128) * 359) >> 8;
+      cg = (cg + (*s++ - 128) * 183) >> 8;
+
+      r = y1 + cr;
+      b = y1 + cb;
+      g = y1 - cg;
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
+
+      *d++ = r;
+      *d++ = g;
+      *d++ = b;
+      *d++ = 0;
+
+      r = y2 + cr;
+      b = y2 + cb;
+      g = y2 - cg;
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
+
+      *d++ = r;
+      *d++ = g;
+      *d++ = b;
+      *d++ = 0;
+
+    }
+  }
+}
 /*!
 
-Convert YUV411 into RGBa
+  Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...)
+  to RGB24. Destination rgb memory area has to be allocated before.
+
+  \sa YUV422ToRGB()
+*/
+void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb, 
+			       unsigned int width, unsigned int height)
+{
+  unsigned char *s;
+  unsigned char *d;
+  int h, w, c;
+  int r, g, b, cr, cg, cb, y1, y2;
+
+  h = (int)height;
+  w = (int)width;
+  s = yuyv;
+  d = rgb;
+  while (h--) {
+    c = w >> 1;
+    while (c--) {
+      y1 = *s++;
+      cb = ((*s - 128) * 454) >> 8;
+      cg = (*s++ - 128) * 88;
+      y2 = *s++;
+      cr = ((*s - 128) * 359) >> 8;
+      cg = (cg + (*s++ - 128) * 183) >> 8;
+
+      r = y1 + cr;
+      b = y1 + cb;
+      g = y1 - cg;
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
+
+      *d++ = r;
+      *d++ = g;
+      *d++ = b;
+
+      r = y2 + cr;
+      b = y2 + cb;
+      g = y2 - cg;
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
+
+      *d++ = r;
+      *d++ = g;
+      *d++ = b;
+    }
+  }
+}
+/*!
+
+  Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...)
+  to grey. Destination rgb memory area has to be allocated before.
+
+  \sa YUV422ToGrey()
+*/
+void vpImageConvert::YUYVToGrey(unsigned char* yuyv, unsigned char* grey,
+				unsigned int size)
+{
+  unsigned int i=0,j=0;
+
+  while( j < size*2)
+    {
+      grey[i++] = yuyv[j];
+      grey[i++] = yuyv[j+2];
+      j+=4;
+    }
+}
+
+
+/*!
+
+Convert YUV411 into RGB32
 yuv411 : u y1 y2 v y3 y4
 
 */
@@ -591,10 +723,10 @@ void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
 }
 
 /*!
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB32 images. 
+  Destination rgba memory area has to be allocated before.
 
-Convert YUV422 into RGBa
-yuv422 : u y1 v y2 u y3 v y4
-
+  \sa YUYVToRGBa()
 */
 void vpImageConvert::YUV422ToRGBa(unsigned char* yuv,
 				  unsigned char* rgba,
@@ -701,8 +833,10 @@ void vpImageConvert::YUV411ToGrey(unsigned char* yuv,
 
 /*!
 
-Convert YUV422 into RGB
-yuv422 : u y1 v y2 u y3 v y4
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB images. 
+  Destination rgb memory area has to be allocated before.
+
+  \sa YUYVToRGB()
 
 */
 void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
@@ -779,9 +913,11 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 
 /*!
 
-Convert YUV422 into Grey
-yuv422 : u y1 v y2 u y3 v y4
-
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into Grey. 
+  Destination grey memory area has to be allocated before.
+  
+  \sa YUYVToGrey()
+  
 */
 void vpImageConvert::YUV422ToGrey(unsigned char* yuv,
 				  unsigned char* grey,
@@ -2311,8 +2447,8 @@ void vpImageConvert::computeYCbCrLUT()
 
 /*!
 
-  Convert an image from YCbCr to RGB format. Destination rgb memory area has to
-  be allocated before.
+  Convert an image from YCbCr 4:2:2 (Y0 Cb01 Y1 Cr01 Y2 Cb23 Y3 ...) to RGB
+  format. Destination rgb memory area has to be allocated before.
 
   - In YCbCr (4:2:2) format  each pixel is coded using 16 bytes.
     Byte 0: YO (Luma for Pixel 0)
@@ -2368,8 +2504,9 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
 
 /*!
 
-  Convert an image from YCbCr to RGBa format. Destination rgba memory area has
-  to be allocated before.
+  Convert an image from YCbCr 4:2:2 (Y0 Cb01 Y1 Cr01 Y2 Cb23 Y3...) to
+  RGBa format. Destination rgba memory area has to be allocated
+  before.
 
   - In YCbCr (4:2:2) format  each pixel is coded using 16 bytes.
     Byte 0: YO (Luma for Pixel 0)
@@ -2428,8 +2565,18 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
 
 /*!
 
-  Convert YUV422 into Grey
-  yuv422 : y1 u1 y2 v1 y3 u2 y4 v2
+  Convert an image from YCrCb 4:2:2 (Y0 Cr01 Y1 Cb01 Y2 Cr23 Y3 ...) to grey
+  format. Destination grey image memory area has to be allocated
+  before.
+
+  - In YCrCb (4:2:2) format  each pixel is coded using 16 bytes.
+    Byte 0: YO (Luma for Pixel 0)
+    Byte 1: Chroma Red Cr (Red Chroma for Pixel 0 and 1)
+    Byte 2: Y1 (Luma for Pixel 1)
+    Byte 3: Chroma blue Cb (Blue Chroma for Pixel 0 and 1)
+    Byte 4: Y2 (Luma for Pixel 2)
+
+  - In grey format, each pixel is coded using 8 bytes.  
 
 */
 void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
@@ -2448,8 +2595,8 @@ void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
 
 /*!
 
-  Convert an image from YCrCb to RGB format. Destination rgb memory area has to
-  be allocated before.
+  Convert an image from YCrCb 4:2:2 (Y0 Cr01 Y1 Cb01 Y2 Cr23 Y3 ...) to RGB
+  format. Destination rgb memory area has to be allocated before.
 
   - In YCrCb (4:2:2) format  each pixel is coded using 16 bytes.
     Byte 0: YO (Luma for Pixel 0)
@@ -2462,7 +2609,6 @@ void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
     Byte 0: Red
     Byte 1: Green
     Byte 2: Blue
-
 
 */
 void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
@@ -2504,8 +2650,8 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
 }
 /*!
 
-  Convert an image from YCrCb to RGBa format. Destination rgba memory area has
-  to be allocated before.
+  Convert an image from YCrCb 4:2:2 (Y0 Cr01 Y1 Cb01 Y2 Cr23 Y3 ...) to RGBa
+  format. Destination rgba memory area has to be allocated before.
 
   - In YCrCb (4:2:2) format  each pixel is coded using 16 bytes.
     Byte 0: YO (Luma for Pixel 0)

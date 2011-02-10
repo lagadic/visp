@@ -56,6 +56,7 @@
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/videodev2.h> // Video For Linux Two interface
+#include <libv4l2.h> // Video For Linux Two interface
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
@@ -74,10 +75,18 @@
   Information about Video4Linux can be found on
   http://linuxtv.org/v4lwiki/index.php/Main_Page
 
-  This class was tested with a Pinnacle PCTV Studio/Rave board.
+  This class was tested with a Pinnacle PCTV Studio/Rave board but
+  also with the following webcams (Logitech QuickCam Vision Pro 9000,
+  Logitech QuickCam Orbit AF, Dell latitude E6400 internal webcam).
 
-  If the grabbing fails, it means potentially that
-  you have not configured the linux bttv kernel module according to your board.
+  If the grabbing fail with a webcam, it means probably that you don't
+  have the read/write permission on the /dev/video%d device. You can
+  set the right permissions by "sudo chmod a+rw /dev/video*".
+
+  If the grabbing fails when the camera is attached to a bttv PCI
+  card, it means potentially that you have not configured the linux
+  bttv kernel module according to your board.
+  
   For that, depending on your linux distribution check the card id in
   - /usr/share/doc/kernel-doc-2.4.20/video4linux/bttv/CARDLIST
   - or /usr/share/doc/kernel-doc-2.6.20/Documentation/video4linux/CARDLIST.bttv
@@ -156,11 +165,12 @@ public:
     Pixel format type for capture.
   */
   typedef enum {
-    V4L2_GREY_FORMAT, /*!<  */
-    V4L2_RGB24_FORMAT, /*!<  */
-    V4L2_RGB32_FORMAT, /*!<  */
-    V4L2_BGR24_FORMAT, /*!<  */
-    V4L2_BGR32_FORMAT /*!<  */
+    V4L2_GREY_FORMAT, /*!< 8  Greyscale */
+    V4L2_RGB24_FORMAT, /*!< 24  RGB-8-8-8 */
+    V4L2_RGB32_FORMAT, /*!< 32  RGB-8-8-8-8 */
+    V4L2_BGR24_FORMAT, /*!< 24  BGR-8-8-8 */
+    V4L2_YUYV_FORMAT, /*!< 16  YUYV 4:2:2  */
+    V4L2_MAX_FORMAT
   } vpV4l2PixelFormatType;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -199,6 +209,18 @@ public:
   void acquire(vpImage<vpRGBa> &I) ;
   void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp) ;
   bool getField();
+  vpV4l2FramerateType getFramerate();
+  /*!
+
+  Get the pixel format used for capture.
+
+  \return Camera pixel format coding.
+
+  */  
+  inline vpV4l2PixelFormatType getPixelFormat() 
+  {
+    return (this->pixelformat);
+  }
   /*!
     Activates the verbose mode to print additionnal informations on stdout.
     \param verbose : If true activates the verbose mode.
@@ -207,8 +229,6 @@ public:
     this->verbose = verbose;
   };
   void setFramerate(vpV4l2FramerateType framerate);
-  vpV4l2FramerateType getFramerate();
-  void close();
 
   void setInput(unsigned input = vpV4l2Grabber::DEFAULT_INPUT) ;
 
@@ -257,23 +277,23 @@ public:
   {
     sprintf(device, "%s", devname);
   }
-
-
-private:
   /*!
-    Set the pixel format.
 
-    \param pixelformat :
-    - vpV4l2Grabber::V4L2_GREY_FORMAT,
-    - vpV4l2Grabber::V4L2_RGB24_FORMAT,
-    - vpV4l2Grabber::V4L2_RGB32_FORMAT,
-    - vpV4l2Grabber::V4L2_BGR24_FORMAT,
-    - vpV4l2Grabber::V4L2_BGR32_FORMAT.
-  */
-  inline void setPixelFormat(vpV4l2PixelFormatType pixelformat)
+  Set the pixel format for capture.
+
+  \param pixelformat : Camera pixel format coding.
+
+  */  
+  inline void setPixelFormat(vpV4l2PixelFormatType pixelformat) 
   {
     this->pixelformat = pixelformat;
   }
+
+  void close();
+
+private:
+ 
+  void setFormat();
   /*!
     Set the frame format.
 
@@ -285,7 +305,6 @@ private:
   {
     this->frameformat = frameformat;
   }
-  void setFormat();
   void open();
   void getCapabilities();
   void startStreaming();

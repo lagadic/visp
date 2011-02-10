@@ -16,6 +16,8 @@ ViSP 2.6.1 (under development)
        inherit now from vpXmlParser
      - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser,
        vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance
+     - It is now possible to grab images from an usb webcam with the 
+       vpV4l2Grabber class that is based on the video 4 linux 2 driver.
   - Bug fixed
      - [11473] vpImageTools::flip() come out error when deal with vpImage 
        with vpRGBa type
@@ -28,6 +30,8 @@ ViSP 2.6.1 (under development)
      - [11942] Build issues with GSL on OSX due to 32/64 bits architecture
      - [11943] Build issues with libjpeg on OSX due to 32/64 bits architecture
      - [11944] Build issues with libpng on OSX due to 32/64 bits architecture
+     - [11981] vpV4l2Grabber class based on video 4 linux 2 is not able to 
+       grab images from an usb webcam
 ----------------------------------------------	
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:

@@ -136,6 +136,12 @@ public:
       g = (unsigned char) dg;
       b = (unsigned char) db;
     };
+  static void YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba, 
+			 unsigned int width, unsigned int height);
+  static void YUYVToRGB(unsigned char* yuyv, unsigned char* rgb, 
+			unsigned int width, unsigned int height);
+  static void YUYVToGrey(unsigned char* yuyv, unsigned char* grey, 
+			unsigned int size);
   static void YUV411ToRGBa(unsigned char* yuv,
 			   unsigned char* rgba, unsigned int size);
   static void YUV411ToRGB(unsigned char* yuv,

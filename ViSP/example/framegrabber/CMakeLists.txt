@@ -47,8 +47,7 @@ SET (SOURCE
   grab1394.cpp
   grab1394Two.cpp
   grabDisk.cpp
-  grabV4l2Color.cpp
-  grabV4l2Grey.cpp
+  grabV4l2.cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
   grabOpenCV.cpp
@@ -72,8 +71,7 @@ ENDFOREACH(source)
 ADD_TEST(grab1394         grab1394 -d)
 ADD_TEST(grab1394Two      grab1394Two -d)
 ADD_TEST(grabDisk         grabDisk -d)
-ADD_TEST(grabV4l2Color    grabV4l2Color -d)
-ADD_TEST(grabV4l2Grey     grabV4l2Grey -d)
+ADD_TEST(grabV4l2         grabV4l2 -d)
 ADD_TEST(grabDirectShow   grabDirectShow -d)
 ADD_TEST(grabDirectShowMulti   grabDirectShowMulti -d)
 ADD_TEST(grabOpenCV       grabOpenCV -d)
