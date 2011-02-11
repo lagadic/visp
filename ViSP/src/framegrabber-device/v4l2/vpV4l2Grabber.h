@@ -279,7 +279,8 @@ public:
   }
   /*!
 
-  Set the pixel format for capture.
+  Set the pixel format for capture.`If the specified pixel format is
+  out of range, we set the V4L2_RGB24_FORMAT.
 
   \param pixelformat : Camera pixel format coding.
 
@@ -287,6 +288,8 @@ public:
   inline void setPixelFormat(vpV4l2PixelFormatType pixelformat) 
   {
     this->pixelformat = pixelformat;
+    if (this->pixelformat >= V4L2_MAX_FORMAT) 
+      this->pixelformat = V4L2_RGB24_FORMAT;
   }
 
   void close();
