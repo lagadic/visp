@@ -40,7 +40,7 @@
 
 # To install the generated debian package use the gdebi-gtk package 
 # installer on Ubuntu:
-# gdebi-gtk libvisp-2.6.0-dev.deb
+# gdebi-gtk libvisp-2.6.1-dev.deb
 #
 # Since there is no opencv package compatible with ViSP for the moment
 # we desactivate the opencv usage and we activate the soqt usage since 
