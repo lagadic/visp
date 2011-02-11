@@ -281,12 +281,12 @@ main(int argc, const char ** argv)
   }
   catch (vpException e) {
     std::cout << "Catched exception: " << e.getMessage() << std::endl;
-    return -1;
+    return 0;
   }
   catch(...)
   {
     vpERROR_TRACE("Cannot acquire an image...") ;
-    return(-1);
+    return 0;
   }
 
 
