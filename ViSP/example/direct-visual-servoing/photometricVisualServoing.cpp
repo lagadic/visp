@@ -3,7 +3,7 @@
  * $Id:  2457 2010-01-07 10:41:18Z Eric Marchand $
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

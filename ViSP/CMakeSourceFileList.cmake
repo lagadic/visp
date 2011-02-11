@@ -3,7 +3,7 @@
 # $Id: CMakeSourceFileList.cmake,v 1.29 2008-12-17 14:45:01 fspindle Exp $
 #
 # This file is part of the ViSP software.
-# Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
+# Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
 # 
 # This software is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
