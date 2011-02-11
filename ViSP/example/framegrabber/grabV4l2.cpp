@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabV4l2Grey.cpp 2807 2010-09-14 10:14:54Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
@@ -212,7 +212,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
 }
 
 /*!
-  \example grabV4l2Grey.cpp
+  \example grabV4l2.cpp
 
   Example of grey level images framegrabbing using vpV4l2Grabber class.
 
