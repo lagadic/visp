@@ -3,7 +3,7 @@
  * $Id: vpSimulatorAfma6.cpp 2595 2010-06-02 08:50:59Z nmelchio $
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2010 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
