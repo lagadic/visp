@@ -169,7 +169,7 @@ vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
       for (unsigned int j = bord ; j < nbc-bord; j++)
 	{
 	  // cout << dim_s <<" " <<l <<"  " <<i << "  " << j <<endl ;
-	  Ix =  px * vpImageFilter::derivativeFilterX(I,i,j) ;
+          Ix =  px * vpImageFilter::derivativeFilterX(I,i,j) ;
 	  Iy =  py * vpImageFilter::derivativeFilterY(I,i,j) ;
 	  
 	  // Calcul de Z
