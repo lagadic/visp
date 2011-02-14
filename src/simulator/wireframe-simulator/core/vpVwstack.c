@@ -45,6 +45,8 @@
 
 #include	<stdio.h>
 #include	<string.h>
+#include	<float.h>
+#include	<math.h>
 
 // #include	<varargs.h> /* modif Fedora
 #include	<stdarg.h>
@@ -236,7 +238,8 @@ add_vwstack (const char* path, ... )
 		float	y = (float) va_arg (ap, double);
 		float	z = (float) va_arg (ap, double);
 
-		if (x == 0.0 && y == 0.0 && z == 0.0)
+		//if (x == 0 && y == 0 && z == 0)
+		if (fabs(x) <= DBL_EPSILON && fabs(y) <= DBL_EPSILON && fabs(z) <= DBL_EPSILON)
 			fprintf (stderr, "%s: bad vpn\n", proc_name);
 		else {
 			SET_COORD3(sp->vpn,x,y,z);
@@ -255,7 +258,8 @@ add_vwstack (const char* path, ... )
 		float	y = (float) va_arg (ap, double);
 		float	z = (float) va_arg (ap, double);
 
-		if (x == 0.0 && y == 0.0 && z == 0.0)
+		//if (x == 0 && y == 0 && z == 0)
+		if (fabs(x) <= DBL_EPSILON && fabs(y) <= DBL_EPSILON && fabs(z) <= DBL_EPSILON)
 			fprintf (stderr, "%s: bad vup\n", proc_name);
 		else {
 			SET_COORD3(sp->vup,x,y,z);

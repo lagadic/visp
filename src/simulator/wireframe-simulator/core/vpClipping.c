@@ -45,9 +45,10 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<stdlib.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>  //DBL_EPSILON
+#include <math.h>  //DBL_EPSILON
 
 #include <visp/vpMy.h>
 #include <visp/vpArit.h>
@@ -331,7 +332,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_ABOVE :
 	/* t = (p0->w - p0->y) / ((p0->w - p0->y) - (p1->w - p1->y));	*/
 		t = (p0->w - p0->y) - (p1->w - p1->y);
-		t = (t == (float)0.0) ? (float)1.0 : (p0->w - p0->y) / t;
+		//t = (t == 0) ? (float)1.0 : (p0->w - p0->y) / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : (p0->w - p0->y) / t;
 		PAR_COORD3(*p,t,*p0,*p1);
 		p->w = p->y;	/* propriete du point d'intersection	*/
 		break;
@@ -339,7 +341,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_BELOW :
 	/* t = (p0->w + p0->y) / ((p0->w + p0->y) - (p1->w + p1->y));	*/
 		t = (p0->w + p0->y) - (p1->w + p1->y);
-		t = (t == (float)0.0) ? (float)1.0 : (p0->w + p0->y) / t;
+		//t = (t == 0) ? (float)1.0 : (p0->w + p0->y) / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : (p0->w + p0->y) / t;
 		PAR_COORD3(*p,t,*p0,*p1);
 		p->w = - p->y;	/* propriete du point d'intersection	*/
 		break;
@@ -347,7 +350,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_RIGHT :
 	/* t = (p0->w - p0->x) / ((p0->w - p0->x) - (p1->w - p1->x));	*/
 		t = (p0->w - p0->x) - (p1->w - p1->x);
-		t = (t == (float)0.0) ? (float)1.0 : (p0->w - p0->x) / t;
+		//t = (t == 0) ? (float)1.0 : (p0->w - p0->x) / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : (p0->w - p0->x) / t;
 		PAR_COORD3(*p,t,*p0,*p1);
 		p->w = p->x;	/* propriete du point d'intersection	*/
 		break;
@@ -355,7 +359,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_LEFT  : 
 	/* t = (p0->w + p0->x) / ((p0->w + p0->x) - (p1->w + p1->x));	*/ 
 		t = (p0->w + p0->x) - (p1->w + p1->x);
-		t = (t == (float)0.0) ? (float)1.0 : (p0->w + p0->x) / t;
+		//t = (t == 0) ? (float)1.0 : (p0->w + p0->x) / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : (p0->w + p0->x) / t;
 		PAR_COORD3(*p,t,*p0,*p1);
 		p->w = - p->x;	/* propriete du point d'intersection	*/
 		break;
@@ -363,7 +368,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_BACK :
 	/* t = (p0->w - p0->z) / ((p0->w - p0->z) - (p1->w - p1->z));	*/
 		t = (p0->w - p0->z) - (p1->w - p1->z);
-		t = (t == (float)0.0) ? (float)1.0 : (p0->w - p0->z) / t;
+		//t = (t == 0) ? (float)1.0 : (p0->w - p0->z) / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : (p0->w - p0->z) / t;
 		PAR_COORD3(*p,t,*p0,*p1);
 		p->w = p->z;	/* propriete du point d'intersection	*/
 		break;
@@ -371,7 +377,8 @@ inter (Byte mask, Index v0, Index v1)
 	case IS_FRONT :
 	/* t =  p0->z / (p0->z - p1->z);				*/
 		t =  (p0->z - p1->z);
-		t = (t == (float)0.0) ? (float)1.0 : p0->z / t;
+		//t = (t == 0) ? (float)1.0 : p0->z / t;
+		t = (fabs(t) <= DBL_EPSILON) ? (float)1.0 : p0->z / t;
 		p->x = (p1->x - p0->x) * t + p0->x;
 		p->y = (p1->y - p0->y) * t + p0->y;
 		p->w = (p1->w - p0->w) * t + p0->w;
