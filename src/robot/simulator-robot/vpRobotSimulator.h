@@ -310,7 +310,8 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     static void* launcher(void *arg)
     {
       (reinterpret_cast<vpRobotSimulator *>(arg))->updateArticularPosition();
-      pthread_exit((void*) 0);
+      // pthread_exit((void*) 0);
+      return NULL;
     }    
     #endif
     
