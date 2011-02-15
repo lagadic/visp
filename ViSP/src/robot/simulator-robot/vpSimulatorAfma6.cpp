@@ -2321,9 +2321,12 @@ vpSimulatorAfma6::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
 
   \param cdMo : the desired pose of the camera wrt. the object
   \param Iint : pointer to the image where the internal view is displayed
+  \param errMax : maximum error to consider the pose is reached
+
+  \return True is the pose is reached, False else
 */
-void
-vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint)
+bool
+vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint, const double &errMax)
 {
 	// get rid of max velocity
 	double vMax = getMaxTranslationVelocity();
@@ -2335,8 +2338,7 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned 
 	vpHomogeneousMatrix cdMc;
 	vpTranslationVector cdTc;vpRotationMatrix cdRc;vpThetaUVector cdTUc;
 	vpColVector err(6);err=1.;
-	const double lambda = 2.;
-	const double errMax = 0.001;
+	const double lambda = 5.;
 	double t;
 
 	vpVelocityTwistMatrix cVe;
@@ -2384,9 +2386,8 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned 
 	setMaxTranslationVelocity(vMax);
 	setMaxRotationVelocity(wMax);
 
-	std::cout << "setPosition: final error " << err.t() << std::endl;
-	if(err.euclideanNorm()> errMax)
-		vpTRACE("setPosition: position not reached");
+	//std::cout << "setPosition: final error " << err.t() << std::endl;
+	return(err.euclideanNorm()<= errMax);
 }
 
 #endif

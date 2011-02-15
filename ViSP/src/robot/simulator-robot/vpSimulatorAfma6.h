@@ -222,7 +222,7 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
 				   const double pos5,
 				   const double pos6);
     void setPosition(const char *filename);
-    void setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint=NULL);
+    bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint=NULL, const double &errMax = 0.001);
     
     void setJointLimit(vpColVector limitMin, vpColVector limitMax);
     
