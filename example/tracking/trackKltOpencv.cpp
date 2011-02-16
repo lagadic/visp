@@ -211,7 +211,7 @@ main(int argc, const char ** argv)
   std::string dirname;
   std::string filename;
   unsigned opt_first = 1;
-  unsigned opt_nimages = 1500;
+  unsigned opt_nimages = 500;
   unsigned opt_step = 1;
   bool opt_click_allowed = true;
   bool opt_display = true;
