@@ -228,7 +228,12 @@ main(int argc, const char ** argv)
         modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
       }
       else{
+#ifdef VISP_HAVE_COIN
         modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+#else
+        std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
+        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+#endif
       }
     }
     else{
@@ -236,7 +241,12 @@ main(int argc, const char ** argv)
         modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
       }
       else{
+#ifdef VISP_HAVE_COIN
         modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+#else
+        std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
+        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+#endif
       }
     }
   }
