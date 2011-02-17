@@ -58,7 +58,7 @@
   
   By default the class uses colored images.
 */
-vpImageSimulator::vpImageSimulator(vpColorPlan col)
+vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
 {
   for(int i=0;i<4;i++)
     X[i].resize(3);
@@ -185,7 +185,8 @@ vpImageSimulator::operator=(const vpImageSimulator& sim)
   \param cam : The parameters of the virtual camera.
 */
 void
-vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<unsigned char> &I, 
+			   const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
   if (cleanPrevImage)
@@ -253,7 +254,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   \param cam : The parameters of the virtual camera.
 */
 void
-vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<unsigned char> &I, 
+			   vpImage<unsigned char> &Isrc, 
+			   const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
   if (cleanPrevImage)
@@ -309,7 +312,8 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Is
   \param zBuffer : A matrix containing the z coordinates of the pixels of the image \f$ I \f$
 */
 void
-vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters cam, vpMatrix &zBuffer)
+vpImageSimulator::getImage(vpImage<unsigned char> &I, 
+			   const vpCameraParameters &cam, vpMatrix &zBuffer)
 {
   if (I.getWidth() != (unsigned int)zBuffer.getCols() || I.getHeight() != (unsigned int)zBuffer.getRows())
     throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError, " zBuffer must have the same size as the image I ! "));
@@ -386,7 +390,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParameters c
   \param cam : The parameters of the virtual camera.
 */
 void
-vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
   if (cleanPrevImage)
@@ -457,7 +461,8 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam)
   \param cam : The parameters of the virtual camera.
 */
 void
-vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, 
+			   const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
   if (cleanPrevImage)
@@ -513,7 +518,8 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const vpCa
   \param zBuffer : A matrix containing the z coordinates of the pixels of the image \f$ I \f$
 */
 void
-vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpMatrix &zBuffer)
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam, 
+			   vpMatrix &zBuffer)
 {
   if (I.getWidth() != (unsigned int)zBuffer.getCols() || I.getHeight() != (unsigned int)zBuffer.getRows())
     throw (vpMatrixException(vpMatrixException::incorrectMatrixSizeError, " zBuffer must have the same size as the image I ! "));
@@ -687,7 +693,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters cam, vpM
   \param cam : The parameters of the virtual camera
 */
 void
-vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<unsigned char> &I, 
+			   vpList<vpImageSimulator> &list, 
+			   const vpCameraParameters &cam)
 {
   
   unsigned int width = I.getWidth();
@@ -887,7 +895,8 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I, vpList<vpImageSimulator> &
   \param cam : The parameters of the virtual camera
 */
 void
-vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list, const vpCameraParameters cam)
+vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
+			   const vpCameraParameters &cam)
 {
   
   unsigned int width = I.getWidth();
@@ -1148,7 +1157,7 @@ vpImageSimulator::init(const char* file_image,vpColVector* _X)
 }
 
 bool
-vpImageSimulator::getPixel(const vpImagePoint iP,unsigned char &Ipixelplan)
+vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1196,7 +1205,8 @@ vpImageSimulator::getPixel(const vpImagePoint iP,unsigned char &Ipixelplan)
 }
 
 bool
-vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,unsigned char &Ipixelplan)
+vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, 
+			   const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1245,7 +1255,7 @@ vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint iP,u
 
 
 bool
-vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
+vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1293,7 +1303,8 @@ vpImageSimulator::getPixel(const vpImagePoint iP,vpRGBa &Ipixelplan)
 }
 
 bool
-vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &Ipixelplan)
+vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
+			   vpRGBa &Ipixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1341,7 +1352,7 @@ vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint iP,vpRGBa &
 }
 
 bool 
-vpImageSimulator::getPixelDepth(const vpImagePoint iP,double &Zpixelplan)
+vpImageSimulator::getPixelDepth(const vpImagePoint &iP, double &Zpixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1352,7 +1363,8 @@ vpImageSimulator::getPixelDepth(const vpImagePoint iP,double &Zpixelplan)
 }
 
 bool
-vpImageSimulator::getPixelVisibility(const vpImagePoint iP,double &Visipixelplan)
+vpImageSimulator::getPixelVisibility(const vpImagePoint &iP, 
+				     double &Visipixelplan)
 {
   //test si pixel dans zone projetee
   if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
@@ -1363,7 +1375,8 @@ vpImageSimulator::getPixelVisibility(const vpImagePoint iP,double &Visipixelplan
 }
 
 void
-vpImageSimulator::project(const vpColVector &_vin, const vpHomogeneousMatrix &_cMt,vpColVector &_vout)
+vpImageSimulator::project(const vpColVector &_vin, 
+			  const vpHomogeneousMatrix &_cMt, vpColVector &_vout)
 {
   vpColVector XH(4);
   getHomogCoord(_vin,XH);
@@ -1371,7 +1384,7 @@ vpImageSimulator::project(const vpColVector &_vin, const vpHomogeneousMatrix &_c
 }
 
 void
-vpImageSimulator::getHomogCoord(const vpColVector &_v,vpColVector &_vH)
+vpImageSimulator::getHomogCoord(const vpColVector &_v, vpColVector &_vH)
 {
   for(unsigned int i=0;i<3;i++)
     _vH[i]=_v[i];
@@ -1379,7 +1392,7 @@ vpImageSimulator::getHomogCoord(const vpColVector &_v,vpColVector &_vH)
 }
 
 void
-vpImageSimulator::getCoordFromHomog(const vpColVector &_vH,vpColVector &_v)
+vpImageSimulator::getCoordFromHomog(const vpColVector &_vH, vpColVector &_v)
 {
   for(unsigned int i=0;i<3;i++)
     _v[i]=_vH[i]/_vH[3];
@@ -1387,7 +1400,10 @@ vpImageSimulator::getCoordFromHomog(const vpColVector &_vH,vpColVector &_v)
 
 
 void
-vpImageSimulator::getRoi(const unsigned int Iwidth, const unsigned int Iheight, const vpCameraParameters cam, vpPoint* point, vpRect &rectangle)
+vpImageSimulator::getRoi(const unsigned int &Iwidth, 
+			 const unsigned int &Iheight, 
+			 const vpCameraParameters &cam, 
+			 vpPoint* point, vpRect &rectangle)
 {
   double top = Iheight+1;
   double bottom = -1;
