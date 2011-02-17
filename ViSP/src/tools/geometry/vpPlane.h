@@ -53,76 +53,127 @@
 
   \brief This class defines the container for a plane geometrical structure.
 
-  \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
-  A plane is given by the equation
-  ax + by + cz + d = 0
-  where
-  (x,y,z) is a point of R^3
+  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is normal
+  vector of the plane.
 
 */
 
 #include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpPoint.h>
+#include <visp/vpHomogeneousMatrix.h>
 
 
 class VISP_EXPORT vpPlane
 {
 
-public:
+private:
   double A,B,C,D ;
 
 
 public:
-  vpPlane(const double a, const double b,const  double c,const  double d) ;
   vpPlane() ;
   vpPlane(const vpPlane& P) ;
+  vpPlane(const double A, const double B,const  double C,const  double D) ;
   vpPlane(const vpPoint& P, const vpColVector &n) ;
   vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R) ;
   void init(const vpPoint& P, const vpPoint& Q, const vpPoint& R) ;
   void init(const vpColVector& P, const vpColVector &n) ;
   void init(const vpPlane& P) ;
-  // SET information
-public:
 
-  inline void setA(const double _a) {   A = _a ; }
-  inline void setB(const double _b) {   B = _b ; }
-  inline void setC(const double _c) {   C = _c ; }
-  inline void setD(const double _d) {   D = _d ; }
-  inline void setABCD(const double _a, const double _b, const double _c, const double _d) {A = _a ;B = _b ;C = _c ;D = _d ; }
+  // SET the parameter
+  /*! Set plane parameter A. */
+  inline void setA(const double A) {   this->A = A ; }
+  /*! Set plane parameter B. */
+  inline void setB(const double B) {   this->B = B ; }
+  /*! Set plane parameter C. */
+  inline void setC(const double C) {   this->C = C ; }
+  /*! Set plane parameter D. */
+  inline void setD(const double D) {   this->D = D ; }
+  /*! Set plane parameters A, B, C, D. */
+  inline void setABCD(const double A, const double B, 
+		      const double C, const double D) 
+  {
+    this->A = A;
+    this->B = B;
+    this->C = C;
+    this->D = D; 
+  }
 
   vpPlane& operator =(const vpPlane& f) ;
 
   // GET information
-
+  /*! \return The value of the plane parameter A. */
   double getA() const { return A ; }
+  /*! \return The value of the plane parameter B. */
   double getB() const { return B ; }
+  /*! \return The value of the plane parameter C. */
   double getC() const { return C ; }
+  /*! \return The value of the plane parameter D. */
   double getD() const { return D ; }
 
-  vpColVector abcd();
+  /*!
+
+    \return Return the four dimension vector \f$[A,B,C,D]^T\f$
+    corresponding to the plane parameters.
+
+  */
+  inline vpColVector getABCD() const {
+    vpColVector n(4);
+    n[0]=A;
+    n[1]=B;
+    n[2]=C;
+    n[3]=D;
+    
+    return n;
+  }
+  /*!
+
+    \warning This method is provided for compatibility with the
+    previous versions. Users should now use getABCD().
+
+    \return Return the four dimension vector \f$[A,B,C,D]^T\f$
+    corresponding to the plane parameters.
+
+    \sa getABCD()
+  */
+  inline vpColVector abcd() const {
+    vpColVector n(4);
+    n[0]=A;
+    n[1]=B;
+    n[2]=C;
+    n[3]=D;
+    
+    return n;
+  }
 
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-public: // Display, Print Member function
+
+  /*!
+
+    Print the plane parameters as a stream like "(A,B,C,D) " where
+    A,B,C and D correspond to the parameters of the plane.
+
+  */
   friend std::ostream& operator<< (std::ostream& os, vpPlane& p)
   {
-    return (os  << "("<<p.getA() << ","<<p.getB()<< ","<<p.getC()<< ","<<p.getD() <<") ") ;
+    return (os  << "("<<p.getA() << ","<<p.getB()
+	    << ","<<p.getC()<< ","<<p.getD() <<") ") ;
   } ;
 
 
-public: // Operation with  Plane
-
-  void projectionPointOnPlan(const vpPoint& P, vpPoint& p2) ;
+  // Operation with  Plane
+  void projectionPointOnPlan(const vpPoint& P, vpPoint& Pproj) const ;
 
   double rayIntersection(const vpPoint &M0,
 			 const vpPoint &M1,
 			 vpColVector &H )const ;
 
   double getIntersection(const vpColVector &M1,vpColVector &H )const ;
-
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
 } ;
 

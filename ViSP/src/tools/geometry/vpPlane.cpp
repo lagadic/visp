@@ -54,16 +54,13 @@
 
 #include <visp/vpPlane.h>
 
-#define DEBUG_LEVEL1 0
-
 
 /*!
-  \brief copy operator
+  Copy operator.
 */
 vpPlane&
 vpPlane::operator =(const vpPlane& p)
 {
-
   A = p.A ;
   B = p.B ;
   C = p.C ;
@@ -73,37 +70,36 @@ vpPlane::operator =(const vpPlane& p)
 }
 
 /*!
-  \brief Basic Constructor
+  Basic constructor that set the plane parameters A, B, C, D to zero.
 */
 vpPlane::vpPlane()
 {
-
   setA(0) ;
   setB(0) ;
   setC(0) ;
   setD(0) ;
-
 }
 
 /*!
-  \brief Constructor
+  Plane constructor from A, B, C, D parameters.
 
-  \param a parameters of the plane
-  \param b
-  \param c
-  \param d
+  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
+  vector of the plane.
+
+  \param A, B, C, D : Parameters of the plane.
 
 */
-vpPlane::vpPlane(const double a,const double b,const double c, const double d)
+vpPlane::vpPlane(const double A,const double B,const double C, const double D)
 {
-  setA(a) ;
-  setB(b) ;
-  setC(c) ;
-  setD(d) ;
+  setA(A) ;
+  setB(B) ;
+  setC(C) ;
+  setD(D) ;
 }
 
 /*!
-  \brief copy constructor
+  Copy constructor.
 */
 vpPlane::vpPlane(const vpPlane& P)
 {
@@ -111,9 +107,22 @@ vpPlane::vpPlane(const vpPlane& P)
   setB(P.getB()) ;
   setC(P.getC()) ;
   setD(P.getD()) ;
-
 }
 
+/*!  
+
+  Plane constructor from a point \e P on the plane and the normal
+  \e n to the plane.
+
+  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
+  vector of the plane.
+
+  \param P : A point with coordinates (x,y,z) on the plane.
+  
+  \param n : The normal to the plane.
+
+*/
 vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
 {
   //Equation of the plane is given by:
@@ -124,6 +133,11 @@ vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
   D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
 }
 
+/*!
+  Initialize the plane with the parameters of an other plane \e P.
+
+  \param P : Plane used as initializer.
+*/
 void vpPlane::init(const vpPlane& P)
 {
   setA(P.getA()) ;
@@ -132,6 +146,16 @@ void vpPlane::init(const vpPlane& P)
   setD(P.getD()) ;
 }
 
+/*!
+  Initialize the plane from a point \e P on the plane and the normal
+  \e n to the plane.
+
+  \param P : A point with coordinates (x,y,z) on the plane.
+  
+  \param n : The normal to the plane.
+
+  \sa vpPlane(const vpPoint&, const vpColVector &)
+*/
 void vpPlane::init(const vpColVector & P, const vpColVector &n)
 {
   //Equation of the plane is given by:
@@ -143,8 +167,7 @@ void vpPlane::init(const vpColVector & P, const vpColVector &n)
 }
 
 /*!
-  \brief Compute the equation of a plane given given three
-  point of this point PQR
+  Compute the equation of a plane given three point P, Q, R.
 
   The normal to the plane is given by
   n = PQ x PR
@@ -184,14 +207,12 @@ vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 
 
 /*!
-  \brief constructor :
-  Compute the equation of a plane given given three
-  point of this point PQR
+  Compute the equation of a plane given three point P, Q, R.
 
   The normal to the plane is given by
   n = PQ x PR
 
-  sa init(vpPoint &P, vpPoint &Q, vpPoint &R)
+  \sa init(const vpPoint &, const vpPoint &, const vpPoint &)
 */
 vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 {
@@ -199,11 +220,10 @@ vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 }
 
 /*!
-  \brief Return the normal to the plan
+  Return the normal to the plane.
 
-  plane equation ax+by+cz+d = 0
-
-  normal is given by [a,b,c]
+  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  (x,y,z) is a point of R^3 and (A,B,C) are the coordinates of the normal.
 
   \sa getNormal(vpColVector &n)
 */
@@ -218,13 +238,13 @@ vpColVector  vpPlane::getNormal() const
 }
 
 /*!
-  \brief Return the normal to the plane
+  Return the normal to the plane.
 
-  plane equation ax+by+cz+d = 0
+  A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
+  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is normal
+  vector of the plane.
 
-  normal is given by [a,b,c]
-
-  \sa vpColVector getNormal()
+  \sa getNormal()
 
 */
 void  vpPlane::getNormal(vpColVector &n) const
@@ -235,26 +255,14 @@ void  vpPlane::getNormal(vpColVector &n) const
   n[2] = C ;
 }
 
-vpColVector
-vpPlane::abcd()
-{
-  vpColVector n(4);
-  n[0]=A;
-  n[1]=B;
-  n[2]=C;
-  n[3]=D;
-
-  return n;
-}
-
 /*!
-  \brief Compute the coordinates of the projection of a point on the plane
+  Compute the coordinates of the projection of a point on the plane.
 
   \param P : point to be projected on the plane
-  \param pproj : result of the projection (pproj belongs to the plane)
+  \param Pproj : result of the projection (pproj belongs to the plane)
 */
 void
-vpPlane::projectionPointOnPlan(const  vpPoint& P, vpPoint& pproj)
+vpPlane::projectionPointOnPlan(const  vpPoint& P, vpPoint& Pproj) const
 {
   double x0,y0,z0 ;
   double rho ;
@@ -265,18 +273,17 @@ vpPlane::projectionPointOnPlan(const  vpPoint& P, vpPoint& pproj)
 
   rho = - (A*x0+B*y0+C*z0+D)/(A*A+B*B+C*C) ;
 
-  pproj.set_X(x0+A*rho) ;
-  pproj.set_Y(y0+B*rho) ;
-  pproj.set_Z(z0+C*rho) ;
-  pproj.set_W(1) ;
-
+  Pproj.set_X(x0+A*rho) ;
+  Pproj.set_Y(y0+B*rho) ;
+  Pproj.set_Z(z0+C*rho) ;
+  Pproj.set_W(1) ;
 }
 
 
 double
 vpPlane::rayIntersection(const vpPoint &M0,
-				const vpPoint &M1,
-				vpColVector &H ) const
+			 const vpPoint &M1,
+			 vpColVector &H ) const
 {
 
   double k,scal;
@@ -336,6 +343,24 @@ double vpPlane::getIntersection(const vpColVector &M1,vpColVector &H )const
 
   return k;
 
+}
+
+/*!
+
+  Considering the plane in the Ro frame computes the equation of the
+  plane in the Rc frame.
+
+  \param cMo : Homogeneous transformation from Rc to Ro frames.
+
+*/
+void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
+{
+  // Save current plane parameters
+  double Ao = A, Bo = B, Co = C, Do =D ;
+  A = cMo[0][0]*Ao + cMo[0][1]*Bo  + cMo[0][2]*Co;
+  B = cMo[1][0]*Ao + cMo[1][1]*Bo  + cMo[1][2]*Co;
+  C = cMo[2][0]*Ao + cMo[2][1]*Bo  + cMo[2][2]*Co;
+  D = Do - (cMo[0][3]*A + cMo[1][3]*B  + cMo[2][3]*C);
 }
 
 #endif
