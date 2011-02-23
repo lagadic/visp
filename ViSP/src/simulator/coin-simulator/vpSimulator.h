@@ -158,6 +158,7 @@ protected:
 public:
   //! begin the main program
   void initApplication(void *(*start_routine)(void *)) ;
+  void initApplication(void *(*start_routine)(void *), void* data);
   //! perform some initialization in the main program thread
   void initMainApplication() ;
   void closeMainApplication() ;
