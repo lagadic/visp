@@ -869,6 +869,20 @@ vpSimulator::initApplication(void *(*start_routine)(void *))
   mainThread  = SbThread::create (start_routine, (void *)this);
 }
 
+/*!
+  Set the function used for the simulation loop and the data to pass to this
+  function. As the data are represented using a generic pointer, care should be
+  taken to ensure there is no memory corruption.
+
+  \param start_routine : A pointer to the function used as a main simulation
+  loop for the simulation.
+  \param data : The data to pass to the main loop.
+*/
+void
+vpSimulator::initApplication(void *(*start_routine)(void *), void* data)
+{
+  mainThread  = SbThread::create (start_routine, (void *)data);
+}
 
 //! performed some initialization in the main program thread
 //! should be locate at the beginning of the main program
