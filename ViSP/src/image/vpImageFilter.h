@@ -83,6 +83,13 @@ public:
 		     vpImage<double>& If,
 		     const vpMatrix& M) ;
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+  static void canny(const vpImage<unsigned char>& I,
+                    vpImage<unsigned char>& Ic,
+                    const unsigned int gaussianFilterSize,
+                    const double thresholdCanny,
+                    const unsigned int apertureSobel);
+#endif
 
   /*!
    Apply a 5x5 Gaussian filter to an image pixel.
