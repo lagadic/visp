@@ -406,6 +406,12 @@ public:
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector& w, vpMatrix& v);
 #endif
+#ifdef VISP_HAVE_OPENCV
+  void svdOpenCV(vpColVector& w, vpMatrix& v);
+#endif
+#ifdef VISP_HAVE_LAPACK_DEV
+  void svdLapack(vpColVector& W, vpMatrix& V);
+#endif
   //! solve AX=B using the SVD decomposition
   void SVBksb(const vpColVector& w,
   	      const vpMatrix& v,

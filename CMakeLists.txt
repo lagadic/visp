@@ -129,6 +129,13 @@ IF (UNIX)
     SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
 
+  FIND_PACKAGE(LAPACK_DEV)
+  IF(LAPACK_DEV_FOUND)
+    OPTION(USE_LAPACK_DEV    "Compile ViSP with the LAPACK library" ON)
+  ELSE(LAPACK_DEV_FOUND)
+    SET(USE_LAPACK_DEV OFF)
+  ENDIF(LAPACK_DEV_FOUND)
+
   IF(NOT RAW1394_FOUND)
     FIND_PACKAGE(RAW1394)
   ENDIF(NOT RAW1394_FOUND)
@@ -370,6 +377,23 @@ TEST_BIG_ENDIAN(BIGENDIAN)
 IF(BIGENDIAN)
   LIST(APPEND VISP_DEFS "-DBIGENDIAN")
 ENDIF(BIGENDIAN)
+
+#--------------------------------------------------------------------
+# LAPACK lib
+#--------------------------------------------------------------------
+SET(VISP_HAVE_LAPACK_DEV_FOUND "no")  # for ViSP-third-party.txt
+IF(USE_LAPACK_DEV)
+  IF(LAPACK_DEV_FOUND)
+    MESSAGE(STATUS "LAPACK_DEV found")
+    SET(VISP_HAVE_LAPACK_DEV TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_LAPACK_DEV_FOUND "yes")  # for ViSP-third-party.txt
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LAPACK_DEV_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LAPACK_DEV_LIBRARIES} -lm)
+  ELSE(LAPACK_DEV_FOUND)
+    MESSAGE(STATUS "LAPACK_DEV not found")
+    SET(VISP_HAVE_LAPACK_DEV_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LAPACK_DEV_FOUND)
+ENDIF(USE_LAPACK_DEV)
 
 #--------------------------------------------------------------------
 # X11 lib

@@ -113,9 +113,10 @@ bool getOptions(int argc, const char **argv)
 
   return true;
 }
+#define abs(x) ((x) < 0 ? - (x) : (x))
 #ifdef VISP_HAVE_GSL
 
-#define abs(x) ((x) < 0 ? - (x) : (x))
+
 bool testRandom(double epsilon)
 {
     vpMatrix L0(6,6);
@@ -149,6 +150,41 @@ bool testRandom(double epsilon)
 }
 
 #endif
+
+bool testSvdOpenCvGSLCoherence(double epsilon){
+#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_GSL)
+    vpMatrix A;
+    vpMatrix vA;
+    vpColVector wA;
+    vpMatrix B;
+    vpMatrix vB;
+    vpColVector wB;
+    A.resize(6,6);
+    B.resize(6,6);
+    vA.resize(6,6);
+    vB.resize(6,6);
+    wA.resize(6);
+    wB.resize(6);
+
+    for (unsigned int i=0 ; i < A.getRows() ; i++)
+        for  (unsigned int j=0 ; j < A.getCols() ; j++)
+            B[i][j] = A[i][j] =  (double)rand()/(double)RAND_MAX;
+
+    A.svdOpenCV(wA,vA);
+    B.svdGsl(wB,vB);
+
+    bool error=false;
+    for (unsigned int i=0 ; i < A.getRows() ; i++){
+        error = error | (abs(wA[i]-wB[i])>epsilon);
+    }
+
+    return !error;
+#else
+    (void)epsilon;
+    return true;
+#endif
+}
+
 int
 main(int argc, const char ** argv)
 {
@@ -177,6 +213,7 @@ main(int argc, const char ** argv)
     std::cout << W.t() ;
   std::cout << "--------------------------------------"<<std::endl ;
 
+
 #ifdef VISP_HAVE_GSL
   L = Ls ;
   t = vpTime::measureTimeMs() ;
@@ -198,6 +235,19 @@ main(int argc, const char ** argv)
 
   std::cout << "--------------------------------------"<<std::endl ;
 #endif
+
+  std::cout << "--------------------------------------"<<std::endl ;
+  std::cout << "TESTING OPENCV-GSL coherence:" ;
+
+  bool ret2 = true;
+  for(int i=0;i<1;i++)
+      ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
+  if(ret2)
+      std:: cout << "Success"<< std:: endl;
+  else
+      std:: cout << "Fail"<< std:: endl;
+
+  std::cout << "--------------------------------------"<<std::endl ;
 
   L = Ls ;
   t = vpTime::measureTimeMs() ;
