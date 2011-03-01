@@ -68,7 +68,12 @@
 class VISP_EXPORT vpPlane
 {
 
-private:
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  // for backward compatibility
+ public:
+#else
+ private:
+#endif
   double A,B,C,D ;
 
 
