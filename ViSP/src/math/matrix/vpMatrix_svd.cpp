@@ -51,7 +51,8 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-
+#include <iostream>
+using namespace std;
 /*---------------------------------------------------------------------
 
 SVD related functions
@@ -536,8 +537,65 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 }
 
 
+#ifdef VISP_HAVE_OPENCV
+#include "cv.h"
+void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
+    using namespace cv;
+    Mat m(this->getRows(),this->getCols(),CV_64F,this->data);
+    SVD opencvSVD(m);
+    Mat opencvV = opencvSVD.vt;
+    Mat opencvW = opencvSVD.w;
+    v.resize(opencvV.rows,opencvV.cols);
+    w.resize(opencvW.rows*opencvW.cols);
+
+    memcpy(v.data,opencvV.data,8*opencvV.rows*opencvV.cols);
+    v=v.transpose();
+    memcpy(w.data,opencvW.data,8*opencvW.rows*opencvW.cols);
+    this->resize(opencvSVD.u.rows,opencvSVD.u.cols);
+    memcpy(this->data,opencvSVD.u.data,8*opencvSVD.u.rows*opencvSVD.u.cols);
 
 
+}
+
+#endif
+
+#ifdef VISP_HAVE_LAPACK_DEV
+extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt, int *ldvt, double *work, int *lwork, int *iwork, int *info);
+
+void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
+    int m = this->getCols(), n = this->getRows(), lda = m, ldu = m, ldvt = n, info, lwork;
+
+    double wkopt;
+    double* work;
+
+    int* iwork = new int[8*std::min(n,m)];
+
+    double *s = W.data;
+    double* a = new double[lda*n];
+    memcpy(a,this->data,this->getRows()*this->getCols()*sizeof(double));
+    double* u = V.data;
+    double* vt = this->data;
+
+
+
+    lwork = -1;
+    dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info );
+    lwork = (int)wkopt;
+    work = new double[lwork];
+
+    dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
+
+    if( info > 0 ) {
+            cout << "The algorithm computing SVD failed to converge." << endl;
+
+    }
+
+    V=V.transpose();
+    delete[] work;
+    delete[] iwork;
+    delete[] a;
+}
+#endif
 
 #ifdef VISP_HAVE_GSL
 #include <gsl/gsl_linalg.h>

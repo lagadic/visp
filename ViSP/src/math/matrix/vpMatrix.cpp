@@ -1702,11 +1702,16 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
   {
     w.resize( this->getCols() );
     v.resize( this->getCols(), this->getCols() );
-#ifdef VISP_HAVE_GSL  /* be careful of the copy below */
+#if defined (VISP_HAVE_LAPACK_DEV)
+    svdLapack(w,v);
+#elif defined (VISP_HAVE_OPENCV)
+    svdOpenCV(w,v);
+#elif defined (VISP_HAVE_GSL)  /* be careful of the copy below */
     svdGsl(w,v) ;
 #else
     svdNr(w,v) ;
 #endif
+
   //svdNr(w,v) ;
   }
   else  /* verification of the SVD */

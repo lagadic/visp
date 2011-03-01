@@ -92,6 +92,9 @@
 // Defined if GSL library available (-lgsl -lgslcblas).
 #cmakedefine VISP_HAVE_GSL
 
+// Defined if LAPACK_DEV library available (-lblas -llapack).
+#cmakedefine VISP_HAVE_LAPACK_DEV
+
 // Defined the path to the basic scenes used by the simulator
 #cmakedefine VISP_SCENES_DIR "${VISP_SCENES_DIR}"
 
