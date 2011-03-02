@@ -563,7 +563,7 @@ void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
 extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt, int *ldvt, double *work, int *lwork, int *iwork, int *info);
 
 void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
-    int m = this->getCols(), n = this->getRows(), lda = m, ldu = m, ldvt = n, info, lwork;
+    int m = this->getCols(), n = this->getRows(), lda = m, ldu = m, ldvt = min(m,n), info, lwork;
 
     double wkopt;
     double* work;
