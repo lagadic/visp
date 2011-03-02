@@ -90,6 +90,118 @@
   \class vpMbEdgeTracker
   \ingroup ModelBasedTracking 
   \brief Make the complete tracking of an object by using its CAD model.
+
+  This class realise the tracking of an object or a scene given its 3D model. A
+  video example can be found in the \e http://www.irisa.fr/lagadic/visp/computer-vision.html
+  webpage.
+  The tracker requires the knowledge of the 3D model (given either in a vrml
+  file or in a cao file (see the loadCAOModel() method for more details)).
+  It may also use an wml file used to tune the behavior of the tracker and an
+  init file used to compute the pose at the very first image.
+
+  The following code shows the simplest way to use the tracker.
+
+\code
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+
+int main()
+{
+  vpMbEdgeTracker tracker; // Create a model based tracker.
+  vpImage<unsigned char> I;
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpCameraParameters cam;
+
+  //acquire an image
+
+  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model the 3d party library coin is required, if coin is not installed .cao file can be used.
+  tracker.initClick(I, "cube"); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+
+  while(true){
+    // acquire a new image
+    tracker.track(I); // track the object on this image
+    tracker.getPose(cMo); // get the pose
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1);// display the model at the computed pose.
+  }
+
+  return 0;
+}
+\endcode
+
+  The tracker can also be used without display, in that case the initial pose
+  must be known (object always at the same initial pose for example) or computed
+  using another method:
+
+\code
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+
+int main()
+{
+  vpMbEdgeTracker tracker; // Create a model based tracker.
+  vpImage<unsigned char> I;
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpCameraParameters cam;
+
+  //acquire an image
+
+  // Get the cMo from a known pose or a 'client' in a server/client configuration
+
+  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.init(I, cMo); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+
+  while(true){
+    // acquire a new image
+    tracker.track(I); // track the object on this image
+    tracker.getPose(cMo); // get the pose
+  }
+
+  return 0;
+}
+\endcode
+
+  Finally it can be used not to track an object but just to display a model at a
+  given pose:
+
+\code
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+
+int main()
+{
+  vpMbEdgeTracker tracker; // Create a model based tracker.
+  vpImage<unsigned char> I;
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpCameraParameters cam;
+
+  //acquire an image
+
+  // Get the cMo from a known pose or a 'server' in a server/client configuration
+
+  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+
+  while(true){
+    // acquire a new image
+    // Get the pose using any method
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1);// display the model at the given pose.
+  }
+
+  return 0;
+}
+\endcode
+
 */
 
 class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
@@ -136,9 +248,7 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
  public:
   
   vpMbEdgeTracker(); 
-  virtual ~vpMbEdgeTracker(); 
-  
-  inline void setPose(const vpHomogeneousMatrix &cMo) {this->cMo = cMo;}
+  virtual ~vpMbEdgeTracker();
   
   /*!
     Set the value of the gain used to compute the control law.
