@@ -541,26 +541,25 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 #ifdef VISP_HAVE_OPENCV
 #include "cv.h"
 void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
-    using namespace cv;
-    Mat m(this->getRows(),this->getCols(),CV_64F,this->data);
-    SVD opencvSVD(m);
-    Mat opencvV = opencvSVD.vt;
-    Mat opencvW = opencvSVD.w;
-    v.resize(opencvV.rows,opencvV.cols);
-    w.resize(opencvW.rows*opencvW.cols);
-
-    memcpy(v.data,opencvV.data,8*opencvV.rows*opencvV.cols);
-    v=v.transpose();
-    memcpy(w.data,opencvW.data,8*opencvW.rows*opencvW.cols);
-    this->resize(opencvSVD.u.rows,opencvSVD.u.cols);
-    memcpy(this->data,opencvSVD.u.data,8*opencvSVD.u.rows*opencvSVD.u.cols);
-
-
+  int rows = (int)this->getRows();
+  int cols = (int)this->getCols();
+  cv::Mat m(rows, cols, CV_64F, this->data);
+  cv::SVD opencvSVD(m);
+  cv::Mat opencvV = opencvSVD.vt;
+  cv::Mat opencvW = opencvSVD.w;
+  v.resize((unsigned int)opencvV.rows, (unsigned int)opencvV.cols);
+  w.resize((unsigned int)(opencvW.rows*opencvW.cols));
+  
+  memcpy(v.data, opencvV.data, (size_t)(8*opencvV.rows*opencvV.cols));
+  v=v.transpose();
+  memcpy(w.data, opencvW.data, (size_t)(8*opencvW.rows*opencvW.cols));
+  this->resize((unsigned int)opencvSVD.u.rows, (unsigned int)opencvSVD.u.cols);
+  memcpy(this->data,opencvSVD.u.data, (size_t)(8*opencvSVD.u.rows*opencvSVD.u.cols));
 }
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK_DEV
+#ifdef VISP_HAVE_LAPACK
 extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt, int *ldvt, double *work, int *lwork, int *iwork, int *info);
 #include <stdio.h>
 #include <string.h>

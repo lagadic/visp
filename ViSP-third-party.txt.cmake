@@ -5,7 +5,7 @@ build ViSP on your computer.
 
 Mathematics:
   Gnu Scientific Library    : ${VISP_HAVE_GSL_FOUND}
-  Lapack	 	    : ${VISP_HAVE_LAPACK_FOUND}
+  Lapack/blas	 	    : ${VISP_HAVE_LAPACK_FOUND}
 Simulator:
   Coin simulator            : ${VISP_HAVE_COIN_AND_GUI_FOUND}
   \- Coin3D                 : ${VISP_HAVE_COIN_FOUND}

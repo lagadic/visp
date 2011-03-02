@@ -129,12 +129,14 @@ IF (UNIX)
     SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
 
-  FIND_PACKAGE(LAPACK_DEV)
-  IF(LAPACK_DEV_FOUND)
-    OPTION(USE_LAPACK_DEV    "Compile ViSP with the LAPACK library" ON)
-  ELSE(LAPACK_DEV_FOUND)
-    SET(USE_LAPACK_DEV OFF)
-  ENDIF(LAPACK_DEV_FOUND)
+  # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
+  # in CMakeModules we have added FindLAPACK_C.cmake for C language
+  FIND_PACKAGE(LAPACK_C)
+  IF(LAPACK_FOUND)
+    OPTION(USE_LAPACK    "Compile ViSP with the lapack/blas libraries" ON)
+  ELSE(LAPACK_FOUND)
+    SET(USE_LAPACK OFF)
+  ENDIF(LAPACK_FOUND)
 
   IF(NOT RAW1394_FOUND)
     FIND_PACKAGE(RAW1394)
@@ -381,35 +383,25 @@ ENDIF(BIGENDIAN)
 #--------------------------------------------------------------------
 # LAPACK lib
 #--------------------------------------------------------------------
-SET(VISP_HAVE_LAPACK_DEV_FOUND "no")  # for ViSP-third-party.txt
-IF(USE_LAPACK_DEV)
-  IF(LAPACK_DEV_FOUND)
-    MESSAGE(STATUS "LAPACK_DEV found")
-    SET(VISP_HAVE_LAPACK_DEV TRUE)  # for header vpConfig.h
-    SET(VISP_HAVE_LAPACK_DEV_FOUND "yes")  # for ViSP-third-party.txt
-    LIST(APPEND VISP_EXTERN_LIBS ${LAPACK_DEV_LIBRARIES})
-  ELSE(LAPACK_DEV_FOUND)
-    MESSAGE(STATUS "LAPACK_DEV not found")
-    SET(VISP_HAVE_LAPACK_DEV_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(LAPACK_DEV_FOUND)
-ENDIF(USE_LAPACK_DEV)
+SET(VISP_HAVE_LAPACK_FOUND "no")      # for ViSP-third-party.txt
+IF(USE_LAPACK)
+  MESSAGE(STATUS "lapack/blas found")
+  SET(VISP_HAVE_LAPACK TRUE)          # for header vpConfig.h
+  SET(VISP_HAVE_LAPACK_FOUND "yes")   # for ViSP-third-party.txt
+  LIST(APPEND VISP_EXTERN_LIBS ${LAPACK_LIBRARIES})
+ENDIF(USE_LAPACK)
 
 #--------------------------------------------------------------------
 # X11 lib
 #--------------------------------------------------------------------
 SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
 IF(USE_X11)
-  IF(X11_FOUND)
-    MESSAGE(STATUS "X11 found")
-    SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
-    SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${X11_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${X11_LIBRARIES} -lm)
-    #MESSAGE("X11: ${X11_LIBRARIES}")
-  ELSE(X11_FOUND)
-    MESSAGE(STATUS "X11 not found")
-    SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(X11_FOUND)
+  MESSAGE(STATUS "X11 found")
+  SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
+  SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
+  LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${X11_INCLUDE_DIR})
+  LIST(APPEND VISP_EXTERN_LIBS ${X11_LIBRARIES} -lm)
+  #MESSAGE("X11: ${X11_LIBRARIES}")
 ENDIF(USE_X11)
 
 
