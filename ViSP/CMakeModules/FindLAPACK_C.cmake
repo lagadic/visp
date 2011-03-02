@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: ${Id}
+# $Id$
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
@@ -31,12 +31,13 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find linux/videodev.h for Video For Linux Two framegrabbing
-# capabilities.
+# Try to find lapack, the Linear Algebra PACKage.
+# Since the FindLAPACK.cmake provided with CMake is for Fortran language,
+# this file is able to detect lapack for C language.
 # Once run this will define:
 #
-# LAPACK_DEV_FOUND
-# LAPACK_DEV_LIBRARIES
+# LAPACK_FOUND
+# LAPACK_LIBRARIES
 #
 # Authors:
 # Filip Novotny
@@ -44,22 +45,20 @@
 #############################################################################
 
 
-FIND_LIBRARY(LAPACK_DEV_LIBRARY_LAPACK
+FIND_LIBRARY(LAPACK_LIBRARY_LAPACK
         NAMES lapack
         PATHS
-        $ENV{CLAPACK_DEV_HOME}/lib
-        $ENV{CLAPACK_DEV_DIR}/lib
+        $ENV{LAPACK_DIR}/lib
         /usr/lib
         /usr/lib64
         /usr/local/lib
         /usr/local/lib64
     )
 
-FIND_LIBRARY(LAPACK_DEV_LIBRARY_BLAS
+FIND_LIBRARY(LAPACK_LIBRARY_BLAS
         NAMES blas
         PATHS
-        $ENV{CLAPACK_DEV_HOME}/lib
-        $ENV{CLAPACK_DEV_DIR}/lib
+        $ENV{LAPACK_DIR}/lib
         /usr/lib
         /usr/lib64
         /usr/local/lib
@@ -69,13 +68,15 @@ FIND_LIBRARY(LAPACK_DEV_LIBRARY_BLAS
 ## --------------------------------
 
 
-IF(LAPACK_DEV_LIBRARY_LAPACK AND LAPACK_DEV_LIBRARY_BLAS)
-SET(LAPACK_DEV_LIBRARIES ${LAPACK_DEV_LIBRARY_LAPACK} ${LAPACK_DEV_LIBRARY_BLAS})
-SET(LAPACK_DEV_FOUND TRUE)
+IF(LAPACK_LIBRARY_LAPACK AND LAPACK_LIBRARY_BLAS)
+  SET(LAPACK_LIBRARIES ${LAPACK_LIBRARY_LAPACK} ${LAPACK_LIBRARY_BLAS})
+  SET(LAPACK_FOUND TRUE)
 ELSE()
-SET(LAPACK_DEV_FOUND FALSE)
+  SET(LAPACK_FOUND FALSE)
 ENDIF()
 
 MARK_AS_ADVANCED(
-LAPACK_DEV_LIBRARIES
+  LAPACK_LIBRARIES
+  LAPACK_LIBRARY_LAPACK
+  LAPACK_LIBRARY_BLAS
 )
