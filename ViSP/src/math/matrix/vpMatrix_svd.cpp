@@ -52,6 +52,7 @@
 #include <visp/vpConfig.h>
 
 #include <iostream>
+
 using namespace std;
 /*---------------------------------------------------------------------
 
@@ -561,9 +562,11 @@ void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
 
 #ifdef VISP_HAVE_LAPACK_DEV
 extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt, int *ldvt, double *work, int *lwork, int *iwork, int *info);
+#include <stdio.h>
+#include <string.h>
 
 void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
-    int m = this->getCols(), n = this->getRows(), lda = m, ldu = m, ldvt = min(m,n), info, lwork;
+    int m = (int)this->getCols(), n = (int)this->getRows(), lda = m, ldu = m, ldvt = min(m,n), info, lwork;
 
     double wkopt;
     double* work;
