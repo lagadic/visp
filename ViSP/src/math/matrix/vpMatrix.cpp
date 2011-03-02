@@ -1703,7 +1703,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
     w.resize( this->getCols() );
     v.resize( this->getCols(), this->getCols() );
 
-#if defined (VISP_HAVE_LAPACK_DEV)
+#if defined (VISP_HAVE_LAPACK)
     svdLapack(w,v);
 #elif defined (VISP_HAVE_OPENCV)
     svdOpenCV(w,v);

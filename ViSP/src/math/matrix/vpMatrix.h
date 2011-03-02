@@ -409,7 +409,7 @@ public:
 #ifdef VISP_HAVE_OPENCV
   void svdOpenCV(vpColVector& w, vpMatrix& v);
 #endif
-#ifdef VISP_HAVE_LAPACK_DEV
+#ifdef VISP_HAVE_LAPACK
   void svdLapack(vpColVector& W, vpMatrix& V);
 #endif
   //! solve AX=B using the SVD decomposition
