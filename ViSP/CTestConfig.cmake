@@ -169,7 +169,11 @@ IF(VISP_HAVE_OPENCV)
 ENDIF(VISP_HAVE_OPENCV)
 
 #---- Mathematics ----
-# GSL (Gnu Scientific Library
+# Lapack (Linear Algebra PACKage)
+IF(VISP_HAVE_LAPACK)
+  SET(BUILDNAME "${BUILDNAME}-lapack")
+ENDIF()
+# GSL (Gnu Scientific Library)
 IF(VISP_HAVE_GSL)
   SET(BUILDNAME "${BUILDNAME}-gsl")
 ENDIF(VISP_HAVE_GSL)
