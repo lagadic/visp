@@ -237,7 +237,8 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 {
   const double	tol1 = 0.1, tol001 = 0.001;	/* tolerance a 0.1 et a 0.001	*/
 
-  long		l, jm1, jp1;
+  int		l, jm1;
+  unsigned int jp1;
   unsigned int	iter;		/* compteur d'iteration */
   int		nsing;		/* nombre de singularite de la matrice */
   double		dxnorm, fp, gnorm, parc;
@@ -275,7 +276,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
       if (jm1 >= 0)
       {
-	for (unsigned long j = 0; j <= (unsigned long)jm1; j++)
+	for (unsigned int j = 0; j <= (unsigned int)jm1; j++)
 	  wa1[j] -= *MIJ(r, i, j, ldr) * temp;
       }
     }
@@ -326,7 +327,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
 	if (im1 >= 0)
 	{
-	  for (unsigned long j = 0; j <= (unsigned long)im1; j++)
+	  for (unsigned int j = 0; j <= (unsigned int)im1; j++)
 	    sum += (*MIJ(r, i, j, ldr) * wa1[j]);
 	}
 	wa1[i] = (wa1[i] - sum) / *MIJ(r, i, i, ldr);
@@ -430,14 +431,14 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 	wa1[i] = diag[l] * (wa2[l] / dxnorm);
       }
 
-      for (int i = 0; i < n; i++)
+      for (unsigned int i = 0; i < (unsigned int)n; i++)
       {
 	wa1[i] = wa1[i] / sdiag[i];
 	temp = wa1[i];
 	jp1 = i + 1;
-	if ( (long) n >= jp1)
+	if (  (unsigned int) n >= jp1)
 	{
-	  for (int j = jp1; j < n; j++)
+	  for (unsigned int j = jp1; j <  (unsigned int)n; j++)
 	    wa1[j] -= (*MIJ(r, i, j, ldr) * temp);
 	}
       }
