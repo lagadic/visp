@@ -44,35 +44,41 @@
 #
 #############################################################################
 
+IF(WIN32)
+    IF(CMAKE_BUILD_TYPE EQUAL Debug)
+        GET_FILENAME_COMPONENT(LAPACK_LIBRARY_LAPACK "[HKEY_LOCAL_MACHINE\\SOFTWARE\\INRIA\\lapack dependencies;lapackd]" ABSOLUTE CACHE)
+        GET_FILENAME_COMPONENT(LAPACK_LIBRARY_BLAS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\INRIA\\lapack dependencies;blasd]" ABSOLUTE CACHE)
+    ELSE()
+        GET_FILENAME_COMPONENT(LAPACK_LIBRARY_LAPACK "[HKEY_LOCAL_MACHINE\\SOFTWARE\\INRIA\\lapack dependencies;lapack]" ABSOLUTE CACHE)
+        GET_FILENAME_COMPONENT(LAPACK_LIBRARY_BLAS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\INRIA\\lapack dependencies;blas]" ABSOLUTE CACHE)
+    ENDIF()    
+ELSE(WIN32)
+    FIND_LIBRARY(LAPACK_LIBRARY_LAPACK
+            NAMES lapack
+            PATHS
+            $ENV{LAPACK_DIR}
+            /usr/lib
+            /usr/lib64
+            /usr/local/lib
+            /usr/local/lib64
+        )
 
-FIND_LIBRARY(LAPACK_LIBRARY_LAPACK
-        NAMES lapack
-        PATHS
-        $ENV{LAPACK_DIR}/lib
-        /usr/lib
-        /usr/lib64
-        /usr/local/lib
-        /usr/local/lib64
-    )
-
-FIND_LIBRARY(LAPACK_LIBRARY_BLAS
-        NAMES blas
-        PATHS
-        $ENV{LAPACK_DIR}/lib
-        /usr/lib
-        /usr/lib64
-        /usr/local/lib
-        /usr/local/lib64
-    )
-
+    FIND_LIBRARY(LAPACK_LIBRARY_BLAS
+            NAMES blas
+            PATHS
+            $ENV{LAPACK_DIR}
+            /usr/lib
+            /usr/lib64
+            /usr/local/lib
+            /usr/local/lib64        
+        )
+ENDIF(WIN32)
 ## --------------------------------
-
-
-IF(LAPACK_LIBRARY_LAPACK AND LAPACK_LIBRARY_BLAS)
-  SET(LAPACK_LIBRARIES ${LAPACK_LIBRARY_LAPACK} ${LAPACK_LIBRARY_BLAS})
-  SET(LAPACK_FOUND TRUE)
+IF((LAPACK_LIBRARY_LAPACK AND LAPACK_LIBRARY_BLAS))
+    SET(LAPACK_LIBRARIES ${LAPACK_LIBRARY_LAPACK} ${LAPACK_LIBRARY_BLAS})
+    SET(LAPACK_FOUND TRUE)
 ELSE()
-  SET(LAPACK_FOUND FALSE)
+    SET(LAPACK_FOUND FALSE)
 ENDIF()
 
 MARK_AS_ADVANCED(
