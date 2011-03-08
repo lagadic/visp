@@ -129,15 +129,6 @@ IF (UNIX)
     SET(USE_V4L2 OFF)
   ENDIF(V4L2_FOUND)
 
-  # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
-  # in CMakeModules we have added FindLAPACK_C.cmake for C language
-  FIND_PACKAGE(LAPACK_C)
-  IF(LAPACK_FOUND)
-    OPTION(USE_LAPACK    "Compile ViSP with the lapack/blas libraries" ON)
-  ELSE(LAPACK_FOUND)
-    SET(USE_LAPACK OFF)
-  ENDIF(LAPACK_FOUND)
-
   IF(NOT RAW1394_FOUND)
     FIND_PACKAGE(RAW1394)
   ENDIF(NOT RAW1394_FOUND)
@@ -198,7 +189,18 @@ IF(WIN32)
   ELSE(DIRECTSHOW_FOUND)
     SET(USE_DIRECTSHOW OFF)
   ENDIF(DIRECTSHOW_FOUND)
+  
 ENDIF(WIN32)
+
+# Since the FindLAPACK.cmake provided with CMake is for Fortran language,
+# in CMakeModules we have added FindLAPACK_C.cmake for C language
+FIND_PACKAGE(LAPACK_C)
+IF(LAPACK_FOUND)
+    OPTION(USE_LAPACK    "Compile ViSP with the lapack/blas libraries" ON)
+ELSE(LAPACK_FOUND)
+    SET(USE_LAPACK OFF)
+ENDIF(LAPACK_FOUND)
+
 
 INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
 FIND_PACKAGE(COIN)
