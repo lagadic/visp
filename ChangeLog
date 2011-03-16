@@ -32,6 +32,7 @@ ViSP 2.6.1 (under development)
      - [11944] Build issues with libpng on OSX due to 32/64 bits architecture
      - [11981] vpV4l2Grabber class based on video 4 linux 2 is not able to
        grab images from an usb webcam
+     - [12329] Bad font problem when opening vpPlot example
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
