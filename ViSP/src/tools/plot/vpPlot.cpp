@@ -55,6 +55,10 @@
 
   \warning You can modify the default window size, but this is not advised.
 
+  \warning Under Unix, when X11 is used to display the curves, the
+  default font is set to "-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*". 
+  Note that you can chose an other one using "xfontsel".
+
   \param graphNbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
@@ -75,7 +79,7 @@ vpPlot::vpPlot(const unsigned int graphNbr,
   vpDisplay::display(I);
   
   #if defined VISP_HAVE_X11
-  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-15");
+  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
   #endif
     
   margei = 30;
