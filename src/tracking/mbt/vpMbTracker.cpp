@@ -157,6 +157,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
   }
   std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
 
+  vpDisplay::display(_I);
   display(_I, last_cMo, cam, vpColor::green);
   vpDisplay::displayFrame(_I, last_cMo, cam, 0.05, vpColor::green);
   vpDisplay::flush(_I);
@@ -197,10 +198,9 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     sprintf(s,"%s.init", _initFile.c_str());
     std::cout << "filename " << s << std::endl ;
     finit.open(s,std::ios::in) ;
-    if (finit.fail())
-    {
+    if (finit.fail()){
       std::cout << "cannot read " << s << std::endl;
-	  throw vpException(vpException::ioError, "cannot read init file");
+	    throw vpException(vpException::ioError, "cannot read init file");
     }
 
     sprintf(s, "%s.ppm", _initFile.c_str());
@@ -218,9 +218,9 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       if(_displayHelp){
         vpImageIo::readPPM(Iref,s) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-      d.init(Iref,10,500, "Where to initialize...")  ;
-  	  vpDisplay::display(Iref) ;
-  	  vpDisplay::flush(Iref);
+        d.init(Iref,10,500, "Where to initialize...")  ;
+    	  vpDisplay::display(Iref) ;
+    	  vpDisplay::flush(Iref);
 #endif
 	  	}
     }
@@ -230,8 +230,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     finit >> n ;
     std::cout << "number of points  " << n << std::endl ;
     vpPoint *P = new vpPoint [n]  ;
-    for (i=0 ; i < n ; i++)
-    {
+    for (i=0 ; i < n ; i++){
       finit >> X ;
       finit >> Y ;
       finit >> Z ;
@@ -640,7 +639,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
 
 //  SoMFInt32 indexList = _face_set->coordIndex;
 //  int indexListSize = indexList.getNum();
- int indexListSize = _face_set->coordIndex.getNum();
+  int indexListSize = _face_set->coordIndex.getNum();
   SbVec3f point(0,0,0);
   vpPoint pt;
   SoVRMLCoordinate *coord;
