@@ -203,7 +203,7 @@ class VISP_EXPORT vpFeatureLine : public vpBasicFeature
 {
   /*!
     attributes and members directly related to the vpBasicFeature needs
-    other functionalities ar usefull but not mandatory
+    other functionalities ar useful but not mandatory
   */
 private:
   //! FeatureLine depth (required to compute the interaction matrix)

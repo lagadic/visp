@@ -178,7 +178,7 @@ class vpList
   inline void operator+=(vpList<type>& l);
   inline void operator+=(const type& l);
 
-  // Other non fundamental member (may be somehow usefull)
+  // Other non fundamental member (may be somehow useful)
   bool nextOutside(void) const;     // test whether we are outside the List
   bool previousOutside(void) const;// test whether we are outside the List
 

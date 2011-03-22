@@ -126,7 +126,7 @@ vpXmlParserCamera::operator =(const vpXmlParserCamera& twinParser) {
   Parse an xml file to load camera parameters.
   \param cam : camera parameters to fill.
   \param filename : name of the xml file to parse
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param projModel : camera projection model needed.
   \param image_width : image width on which camera calibration was performed.
@@ -172,7 +172,7 @@ vpXmlParserCamera::parse(vpCameraParameters &cam, const char * filename,
   Save camera parameters in an xml file.
   \param cam : camera parameters to save.
   \param filename : name of the xml file to fill.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -246,7 +246,7 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
 
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -316,7 +316,7 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
 
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -371,7 +371,7 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
 
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -423,7 +423,7 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
 
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -538,7 +538,7 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 
   \param doc : XML file.
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
@@ -757,7 +757,7 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
   Write camera parameters in an XML Tree.
 
   \param node : XML tree, pointing on a marker equipement.
-  \param camera_name : name of the camera : usefull if the xml file has multiple
+  \param camera_name : name of the camera : useful if the xml file has multiple
   camera parameters. Set as "" if the camera name is not ambiguous.
   \param image_width : width of image  on which camera calibration was performed.
     Set as 0 if not ambiguous.

@@ -150,7 +150,7 @@ public:
 
 private:
   static const double threshold;
-  static const double minimum; // usefull only for debug
+  static const double minimum; // useful only for debug
   };
 
 #endif

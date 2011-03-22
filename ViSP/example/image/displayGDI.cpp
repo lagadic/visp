@@ -113,11 +113,11 @@ OPTIONS:                                               Default\n\
      Klimt_grey.overlay.ppm output image is written.\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automate the \n\
+     Disable the mouse click. Useful to automate the \n\
      execution of this program without humain intervention.\n\
 \n\
   -d                                             \n\
-     Disable the image display. This can be usefull \n\
+     Disable the image display. This can be useful \n\
      for automatic tests using the task manager under \n\
      Windows.\n\
 \n\

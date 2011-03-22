@@ -59,6 +59,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #if defined(VISP_HAVE_COIN)
 //Inventor includes
@@ -84,6 +85,24 @@
 #  else
 #    include <cv.h>
 #  endif
+#endif
+
+// For template instantiation with Visual Studio
+#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
+// These commented lines are not enought to suppress the following warning under Visual
+// C:\...\include\visp/vpMbEdgeTracker.h(140) : warning C4251: 'vpMbEdgeTracker::scales' : class 'std::vector<_Ty,_Ax>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'vpMbEdgeTracker'
+//        with
+//        [
+//            _Ty=bool,
+//            _Ax=std::allocator<bool>
+//        ]
+//template class VISP_EXPORT std::allocator<bool>;
+//template class VISP_EXPORT std::vector<bool>;
+//template class VISP_EXPORT std::vector<bool, std::allocator<bool>>;
+template class VISP_EXPORT std::allocator<vpList<vpMbtDistanceLine *>>;
+template class VISP_EXPORT std::vector<vpList<vpMbtDistanceLine *>>;
+template class VISP_EXPORT std::allocator<const vpImage<unsigned char> *>;
+template class VISP_EXPORT std::vector<const vpImage<unsigned char> *>;
 #endif
 
 /*!

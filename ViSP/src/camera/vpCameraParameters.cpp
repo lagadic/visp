@@ -292,7 +292,7 @@ vpCameraParameters&
   0 & 0 & 1
   \end{array} \right) \f$
 
-  \warning : this function is usefull only in the case of perspective
+  \warning : this function is useful only in the case of perspective
   projection without distortion.
 */
 vpMatrix

@@ -244,7 +244,7 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long image_number)
 }
 
 /*!
-  Not usefull
+  Not useful
 
   Here for compatibility issue with the vpFrameGrabber class
  */

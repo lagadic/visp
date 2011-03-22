@@ -1722,7 +1722,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   unsigned int height = I.getHeight();
   int bit_depth = 8;
   int color_type = PNG_COLOR_TYPE_GRAY;
-  /* set some usefull information from header */
+  /* set some useful information from header */
 
   if (setjmp (png_jmpbuf (png_ptr)))
   {
@@ -1860,7 +1860,7 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
   unsigned int height = I.getHeight();
   int bit_depth = 8;
   int color_type = PNG_COLOR_TYPE_RGB;
-  /* set some usefull information from header */
+  /* set some useful information from header */
 
   if (setjmp (png_jmpbuf (png_ptr)))
   {
@@ -2032,7 +2032,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   unsigned int height = png_get_image_height(png_ptr, info_ptr);
 
   unsigned int bit_depth, channels, color_type;
-  /* get some usefull information from header */
+  /* get some useful information from header */
   bit_depth = png_get_bit_depth (png_ptr, info_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
   color_type = png_get_color_type (png_ptr, info_ptr);
@@ -2242,7 +2242,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   unsigned int height = png_get_image_height(png_ptr, info_ptr);
 
   unsigned int bit_depth, channels, color_type;
-  /* get some usefull information from header */
+  /* get some useful information from header */
   bit_depth = png_get_bit_depth (png_ptr, info_ptr);
   channels = png_get_channels(png_ptr, info_ptr);
   color_type = png_get_color_type (png_ptr, info_ptr);

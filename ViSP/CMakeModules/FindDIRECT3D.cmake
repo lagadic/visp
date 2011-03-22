@@ -68,43 +68,43 @@ IF(WIN32 AND NOT MINGW)
 	  "$ENV{DXSDK_DIR}/Lib"	
 	  "$ENV{DXSDK_DIR}/Lib/x64"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
-        "C:/DXSDK/Include/Lib/x64"
+          "C:/DXSDK/Include/Lib/x64"
 	  NO_DEFAULT_PATH
-        DOC "Where can the Direct3D d3d9 library be found"
-      )
-	ELSE(CMAKE_CL_64)
+          DOC "Where can the Direct3D d3d9 library be found"
+        )
+      ELSE(CMAKE_CL_64)
 	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
 	  "$ENV{DXSDK_DIR}/Lib"	
 	  "$ENV{DXSDK_DIR}/Lib/x86"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-        "C:/DXSDK/Include/Lib/x86"
+          "C:/DXSDK/Include/Lib/x86"
 	  NO_DEFAULT_PATH
-        DOC "Where can the Direct3D d3d9 library be found"
-      )
-	ENDIF(CMAKE_CL_64)
+          DOC "Where can the Direct3D d3d9 library be found"
+        )
+      ENDIF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
         DOC "Where can the Direct3D d3d9 library be found"
       )
 
-	IF(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
+      IF(CMAKE_CL_64)
+        FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
 	  "$ENV{DXSDK_DIR}/Lib/"
 	  "$ENV{DXSDK_DIR}/Lib/x64"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
-        "C:/DXSDK/Include/Lib/x64"
+          "C:/DXSDK/Include/Lib/x64"
 	  NO_DEFAULT_PATH
-        DOC "Where can the Direct3D d3dx9 library be found"
-      )
-	ELSE(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
+          DOC "Where can the Direct3D d3dx9 library be found"
+        )
+      ELSE(CMAKE_CL_64)
+        FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
 	  "$ENV{DXSDK_DIR}/Lib/"
 	  "$ENV{DXSDK_DIR}/Lib/x86"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
-        "C:/DXSDK/Include/Lib/x86"
+          "C:/DXSDK/Include/Lib/x86"
 	  NO_DEFAULT_PATH
-        DOC "Where can the Direct3D d3dx9 library be found"
-      )
-	ENDIF(CMAKE_CL_64)	 
+          DOC "Where can the Direct3D d3dx9 library be found"
+        )
+      ENDIF(CMAKE_CL_64)	 
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
         DOC "Where can the Direct3D d3dx9 library be found"
       )

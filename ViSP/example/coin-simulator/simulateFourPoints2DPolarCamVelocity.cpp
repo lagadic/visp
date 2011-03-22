@@ -124,7 +124,7 @@ Set the program options.
   \param ipath : Input image path.
   \param display : Set as true, activates the image display. This is
   the default configuration. When set to false, the display is
-  disabled. This can be usefull for automatic tests using crontab
+  disabled. This can be useful for automatic tests using crontab
   under Unix or using the task manager under Windows.
 
   \return false if the program has to be stopped, true otherwise.

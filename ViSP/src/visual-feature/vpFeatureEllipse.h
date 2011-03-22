@@ -66,7 +66,7 @@ class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature
 {
   /*
     attributes and members directly related to the vpBasicFeature needs
-    other functionalities are usefull but not mandatory
+    other functionalities are useful but not mandatory
   */
 private:
   //! FeatureEllipse depth (required to compute the interaction matrix)

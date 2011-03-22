@@ -363,7 +363,7 @@ void vpOpenCVGrabber::setDeviceType(int type)
 
 	\param flipType : Expected value of the variable flip. True means that the image is flipped during each image acquisition.
 			
-	\warning This function is only usefull under Windows.
+	\warning This function is only useful under Windows.
 
 	\note The aim of this function is to fix a problem which appears under Windows. Indeed with several cameras the aquired images are flipped.
 */

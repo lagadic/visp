@@ -72,7 +72,28 @@ SET(VISP_DEFS "")
 SET(OS ${CMAKE_SYSTEM_NAME})
 
 # where are user-specific cmake modules
-SET(CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
+set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
+
+list(APPEND CMAKE_MODULE_PATH ${VISP_CMAKE_MODULE_PATH})
+
+SET(OGRE_HOME $ENV{OGRE_HOME})
+if(OGRE_HOME)
+  # replace \ with / especially for windows
+  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME}) 
+endif()
+
+# add the path to detect Ogre3D
+if(WIN32)
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
+endif(WIN32)
+ 
+if(UNIX)
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/cmake")
+  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
+  list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
+  list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
+  list(APPEND CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake")
+endif(UNIX)
 
 # Create include directory which will contain all the headers
 MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
@@ -81,7 +102,7 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 # Add extra compilation flags under UNIX
 #-----------------------------------------------------------------------------
 if(UNIX)
-  include(${CMAKE_MODULE_PATH}/AddExtraCompilationFlags.cmake)
+  include(${VISP_CMAKE_MODULE_PATH}/AddExtraCompilationFlags.cmake)
   ADD_EXTRA_COMPILATION_FLAGS()
 endif()
 
@@ -201,14 +222,30 @@ ELSE(LAPACK_FOUND)
     SET(USE_LAPACK OFF)
 ENDIF(LAPACK_FOUND)
 
-
 INCLUDE (${CMAKE_ROOT}/Modules/FindOpenGL.cmake)
+FIND_PACKAGE(OpenGL)
 FIND_PACKAGE(COIN)
 IF (COIN_FOUND AND OPENGL_FOUND)
   OPTION(USE_COIN    "Compile ViSP with Coin3D" ON)
 ELSE (COIN_FOUND AND OPENGL_FOUND)
   SET(USE_COIN OFF)
 ENDIF (COIN_FOUND AND OPENGL_FOUND)
+
+FIND_PACKAGE(OGRE QUIET)
+MARK_AS_ADVANCED(OGRE_DIR)
+IF (OGRE_FOUND)
+  OPTION(USE_OGRE    "Compile ViSP with Ogre3D engine and renderer" ON)
+ELSE ()
+  SET(USE_OGRE OFF)
+ENDIF ()
+ 
+FIND_PACKAGE(OIS QUIET)
+MARK_AS_ADVANCED(OIS_DIR)
+IF (OGRE_FOUND AND OIS_FOUND)
+  OPTION(USE_OIS    "Compile ViSP with OIS (Object Oriented Input System library)" ON)
+ELSE ()
+  SET(USE_OIS OFF)
+ENDIF ()
 
 IF(WIN32 AND USE_COIN)
   FIND_PACKAGE(SOWIN)
@@ -375,8 +412,10 @@ IF(UNIX)
   ENDIF(APPLE)
 ENDIF(UNIX)
 
-INCLUDE(TestBigEndian)
-TEST_BIG_ENDIAN(BIGENDIAN)
+IF(UNIX)
+  INCLUDE(TestBigEndian)
+  TEST_BIG_ENDIAN(BIGENDIAN)
+ENDIF()
 
 IF(BIGENDIAN)
   LIST(APPEND VISP_DEFS "-DBIGENDIAN")
@@ -413,11 +452,112 @@ ENDIF(USE_X11)
 # default initialisation
 SET(VISP_HAVE_SIMULATOR_FOUND "no") # for ViSP-third-party.txt
 SET(VISP_HAVE_COIN_FOUND "no")      # for ViSP-third-party.txt
+SET(VISP_HAVE_OGRE_FOUND "no")      # for ViSP-third-party.txt
+SET(VISP_HAVE_OIS_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_SOWIN_FOUND "no")     # for ViSP-third-party.txt
 SET(VISP_HAVE_SOXT_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_SOQT_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_QT4_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_QT3_FOUND "no")       # for ViSP-third-party.txt
+SET(VISP_HAVE_OPENGL_FOUND "no")    # for ViSP-third-party.txt
+
+IF(USE_OGRE)
+  # Find Boost
+  if (NOT OGRE_BUILD_PLATFORM_IPHONE)
+    if (WIN32 OR APPLE)
+      set(Boost_USE_STATIC_LIBS TRUE)
+    else ()
+      # Statically linking boost to a dynamic Ogre build doesn't work on Linux 64bit
+      set(Boost_USE_STATIC_LIBS ${OGRE_STATIC})
+    endif ()
+    if (MINGW)
+	# this is probably a bug in CMake: the boost find module tries to look for
+	# boost libraries with name libboost_*, but CMake already prefixes library
+	# search names with "lib". This is the workaround.
+	set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES} "")
+    endif ()
+    set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40" "1.39.0" "1.39" "1.38.0" "1.38" "1.37.0" "1.37" )
+    # Components that need linking (NB does not include header-only components like bind)
+    set(OGRE_BOOST_COMPONENTS thread date_time)
+    find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
+    mark_as_advanced(Boost_LIB_DIAGNOSTIC_DEFINITIONS)
+    if (NOT Boost_FOUND)
+      # Try again with the other type of libs
+      set(Boost_USE_STATIC_LIBS NOT ${Boost_USE_STATIC_LIBS})
+      find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
+    endif()
+    find_package(Boost QUIET)
+ 
+    if (Boost_FOUND)
+      # Set up referencing of Boost
+      include_directories(${Boost_INCLUDE_DIR})
+      add_definitions(-DBOOST_ALL_NO_LIB)
+      set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${Boost_LIBRARIES})
+    endif()
+  endif()
+
+  MARK_AS_ADVANCED(OGRE_SAMPLES_INCLUDEPATH)
+  #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
+  if(OGRE_SAMPLES_INCLUDEPATH)
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OGRE_SAMPLES_INCLUDEPATH})
+  endif()
+
+  #message("OGRE_MEDIA_DIR: ${OGRE_MEDIA_DIR}")
+  #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
+  #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
+  SET(VISP_HAVE_OGRE_FOUND "yes")   # for ViSP-third-party.txt
+  SET(VISP_HAVE_OGRE TRUE)           # for header vpConfig.h
+
+  # Try to search for an existing plugins.cfg file
+  # Here we cannot use OGRE_PLUGIN_DIR_REL or OGRE_PLUGIN_DIR_DBG where
+  # we may find an existing plugins.cfg file, since under Windows in these 
+  # files the PluginFolder is set to a relative path. We need an absolute 
+  # path to avoid recopy of the plugins in ViSP.
+  # Under Linux or OSX, we may find plugins.cfg with a PluginFolder set 
+  # to an absolute path in OGRE_MEDIA_DIR/..
+  FIND_PATH(VISP_HAVE_OGRE_PLUGINS_PATH 
+    NAMES plugins.cfg
+    PATHS ${OGRE_MEDIA_DIR}/..
+    NO_SYSTEM_ENVIRONMENT_PATH
+  )
+  
+  # If no plugins.cfg file is found, we create one with absolute path
+  IF(NOT VISP_HAVE_OGRE_PLUGINS_PATH)
+    include(${VISP_CMAKE_MODULE_PATH}/OgreTools.cmake)
+    CREATE_OGRE_PLUGIN_CONFIG_FILE()
+  ENDIF()  
+
+  # Try to search for an existing resources.cfg file
+  FIND_PATH(VISP_HAVE_OGRE_RESOURCES_PATH 
+    NAMES resources.cfg
+    PATHS ${OGRE_MEDIA_DIR}/..
+    NO_SYSTEM_ENVIRONMENT_PATH
+  )
+
+  IF(NOT VISP_HAVE_OGRE_RESOURCES_PATH)
+    # we create a resources.cfg file for vpAROgre.cpp
+    SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
+    CONFIGURE_FILE(
+      ${VISP_CMAKE_MODULE_PATH}/resources.cfg.in
+      ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+      IMMEDIATE @ONLY)
+  ENDIF()
+  
+  MARK_AS_ADVANCED(VISP_HAVE_OGRE_PLUGINS_PATH)
+  MARK_AS_ADVANCED(VISP_HAVE_OGRE_RESOURCES_PATH)
+  #message("VISP_HAVE_OGRE_PLUGINS_PATH: ${VISP_HAVE_OGRE_PLUGINS_PATH}")
+  #message("VISP_HAVE_OGRE_RESOURCES_PATH: ${VISP_HAVE_OGRE_RESOURCES_PATH}")
+
+  LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OGRE_INCLUDE_DIRS})  
+  LIST(APPEND VISP_EXTERN_LIBS ${OGRE_LIBRARIES})
+ENDIF(USE_OGRE)
+
+IF(USE_OIS AND USE_OGRE)
+  SET(VISP_HAVE_OIS_FOUND "yes")   # for ViSP-third-party.txt
+  SET(VISP_HAVE_OIS TRUE)           # for header vpConfig.h
+  LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OIS_INCLUDE_DIR})
+  LIST(APPEND VISP_EXTERN_LIBS ${OIS_LIBRARIES})   
+ENDIF(USE_OIS AND USE_OGRE)
 
 IF(USE_COIN)
   IF (COIN_FOUND)
@@ -425,12 +565,13 @@ IF(USE_COIN)
     SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
     SET(VISP_HAVE_COIN TRUE)          # for header vpConfig.h
     SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_OPENGL_FOUND "yes")  # for ViSP-third-party.txt
     IF(WIN32)
       LIST(APPEND VISP_DEFS "-DCOIN_DLL")
     ENDIF(WIN32)
     LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${OPENGL_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${COIN_INCLUDE_DIR})  
-    LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_gl_LIBRARY})
+    LIST(APPEND VISP_EXTERN_LIBS ${OPENGL_LIBRARIES})
 
     #MESSAGE("COIN_INCLUDE_DIR = ${COIN_INCLUDE_DIR}")
     IF(UNIX)
@@ -439,11 +580,13 @@ IF(USE_COIN)
     ELSE(UNIX)
       #MESSAGE("COIN_LIBRARY_RELEASE = ${COIN_LIBRARY_RELEASE}")
       #MESSAGE("COIN_LIBRARY_DEBUG = ${COIN_LIBRARY_DEBUG}")
-      IF(COIN_LIBRARY_DEBUG)
+      IF(COIN_LIBRARY_DEBUG AND COIN_LIBRARY_RELEASE)
         LIST(APPEND VISP_EXTERN_LIBS debug ${COIN_LIBRARY_DEBUG})
-      ENDIF()
-      IF(COIN_LIBRARY_RELEASE)
         LIST(APPEND VISP_EXTERN_LIBS optimized ${COIN_LIBRARY_RELEASE})
+      ELSEIF(COIN_LIBRARY_DEBUG)
+        LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_DEBUG})
+      ELSEIF(COIN_LIBRARY_RELEASE)
+        LIST(APPEND VISP_EXTERN_LIBS ${COIN_LIBRARY_RELEASE})
       ENDIF()
     ENDIF(UNIX)
     IF (USE_SOWIN AND SOWIN_FOUND)
@@ -458,11 +601,13 @@ IF(USE_COIN)
 
       LIST(APPEND VISP_DEFS "-DSOWIN_DLL")
       LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${SOWIN_INCLUDE_DIR})
-      IF(SOWIN_LIBRARY_RELEASE)
-          LIST(APPEND VISP_EXTERN_LIBS optimized ${SOWIN_LIBRARY_RELEASE})
-      ENDIF(SOWIN_LIBRARY_RELEASE)
-      IF(SOWIN_LIBRARY_DEBUG)
-          LIST(APPEND VISP_EXTERN_LIBS debug ${SOWIN_LIBRARY_DEBUG})
+      IF(SOWIN_LIBRARY_RELEASE AND SOWIN_LIBRARY_DEBUG)
+        LIST(APPEND VISP_EXTERN_LIBS optimized ${SOWIN_LIBRARY_RELEASE})
+        LIST(APPEND VISP_EXTERN_LIBS debug ${SOWIN_LIBRARY_DEBUG})
+      ELSEIF(SOWIN_LIBRARY_RELEASE)
+        LIST(APPEND VISP_EXTERN_LIBS ${SOWIN_LIBRARY_RELEASE})
+      ELSEIF(SOWIN_LIBRARY_DEBUG)
+        LIST(APPEND VISP_EXTERN_LIBS ${SOWIN_LIBRARY_DEBUG})
       ENDIF(SOWIN_LIBRARY_DEBUG)
     ENDIF(USE_SOWIN AND SOWIN_FOUND)
 
@@ -488,11 +633,13 @@ IF(USE_COIN)
 	  #MESSAGE("SOQT_LIBRARY_RELEASE = ${SOQT_LIBRARY_RELEASE}")
 	  #MESSAGE("SOQT_LIBRARY_DEBUG = ${SOQT_LIBRARY_DEBUG}")
 	  LIST(APPEND VISP_DEFS "-DSOQT_DLL")
-	  IF(SOQT_LIBRARY_RELEASE)
+	  IF(SOQT_LIBRARY_RELEASE AND SOQT_LIBRARY_DEBUG)
 	    LIST(APPEND VISP_EXTERN_LIBS optimized ${SOQT_LIBRARY_RELEASE})
-	  ENDIF()
-	  IF(SOQT_LIBRARY_DEBUG)
 	    LIST(APPEND VISP_EXTERN_LIBS debug ${SOQT_LIBRARY_DEBUG})
+	  ELSEIF(SOQT_LIBRARY_RELEASE)
+	    LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARY_RELEASE})
+	  ELSEIF(SOQT_LIBRARY_DEBUG)
+	    LIST(APPEND VISP_EXTERN_LIBS ${SOQT_LIBRARY_DEBUG})
 	  ENDIF()
 	ELSE(WIN32)
 	  #MESSAGE("SOQT_LIBRARIES = ${SOQT_LIBRARIES}")
@@ -511,13 +658,17 @@ IF(USE_COIN)
 	  #MESSAGE("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
 	  #MESSAGE("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
 	  #MESSAGE("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")
-	  IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	  IF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE AND QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
 	    LIST(APPEND VISP_EXTERN_LIBS optimized ${QT_QTGUI_LIBRARY_RELEASE})
             LIST(APPEND VISP_EXTERN_LIBS optimized ${QT_QTCORE_LIBRARY_RELEASE})
-	  ENDIF()
-	  IF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
 	    LIST(APPEND VISP_EXTERN_LIBS debug ${QT_QTGUI_LIBRARY_DEBUG})
             LIST(APPEND VISP_EXTERN_LIBS debug ${QT_QTCORE_LIBRARY_DEBUG})
+	  ELSEIF (QT_QTGUI_LIBRARY_RELEASE AND QT_QTCORE_LIBRARY_RELEASE)
+	    LIST(APPEND VISP_EXTERN_LIBS ${QT_QTGUI_LIBRARY_RELEASE})
+            LIST(APPEND VISP_EXTERN_LIBS ${QT_QTCORE_LIBRARY_RELEASE})
+	  ELSEIF (QT_QTGUI_LIBRARY_DEBUG AND QT_QTCORE_LIBRARY_DEBUG)
+	    LIST(APPEND VISP_EXTERN_LIBS ${QT_QTGUI_LIBRARY_DEBUG})
+            LIST(APPEND VISP_EXTERN_LIBS ${QT_QTCORE_LIBRARY_DEBUG})
 	  ENDIF()
 	ENDIF (DESIRED_QT_VERSION MATCHES 3)
 
@@ -1284,7 +1435,7 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
 # Usage:
 #    visp-config --cflags ...
 #----------------------------------------------------------------------
-INCLUDE(${CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
+INCLUDE(${VISP_CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 
 #----------------------------------------------------------------------
 # customize install target
@@ -1312,7 +1463,7 @@ INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
 #----------------------------------------------------------------------
 # add distclean target
 #----------------------------------------------------------------------
-INCLUDE(${CMAKE_MODULE_PATH}/TargetDistclean.cmake)
+INCLUDE(${VISP_CMAKE_MODULE_PATH}/TargetDistclean.cmake)
 
 #----------------------------------------------------------------------
 # customize clean target
@@ -1333,7 +1484,7 @@ SET_DIRECTORY_PROPERTIES(PROPERTIES
 # customize uninstall target
 #----------------------------------------------------------------------
 CONFIGURE_FILE(
-  "${CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
+  "${VISP_CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
@@ -1364,13 +1515,13 @@ ADD_CUSTOM_TARGET(uninstall
 set(VISP_ROOT_DIR_CONFIGCMAKE ${VISP_BINARY_DIR})
 set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE ${VISP_BINARY_DIR})
 CONFIGURE_FILE(
-  ${CMAKE_MODULE_PATH}/VISPConfig.cmake.in
+  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
   ${VISP_BINARY_DIR}/VISPConfig.cmake
   IMMEDIATE @ONLY)
 
 # Just to copy ./CMakeModule/VISPUse.cmake.in <binary dir>/UseVISP.cmake
 CONFIGURE_FILE(
-  ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
   ${VISP_BINARY_DIR}/VISPUse.cmake
   IMMEDIATE @ONLY)
 
@@ -1399,13 +1550,13 @@ ELSE()
   set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE ${CMAKE_INSTALL_PREFIX})
 ENDIF()
 CONFIGURE_FILE(
-  ${CMAKE_MODULE_PATH}/VISPConfig.cmake.in
+  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
   ${VISP_BINARY_DIR}/install/VISPConfig.cmake
   IMMEDIATE @ONLY)
 
 # Just to copy ./CMakeModule/VISPUse.cmake.in in <install dir>/UseVISP.cmake
 CONFIGURE_FILE(
-  ${CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
   ${VISP_BINARY_DIR}/install/VISPUse.cmake
   IMMEDIATE @ONLY)
 
@@ -1448,6 +1599,7 @@ ENDIF()
 #----------------------------------------------------------------------
 ENABLE_TESTING()
 INCLUDE(Dart)
+MARK_AS_ADVANCED(DART_ROOT)
 
 #----------------------------------------------------------------------
 # For CPack packaging tool

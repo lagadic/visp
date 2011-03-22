@@ -186,6 +186,7 @@ SET (HEADER_SIMULATOR
   simulator/coin-simulator/vpSimulatorException.h
   simulator/coin-simulator/vpSimulator.h
   simulator/coin-simulator/vpViewer.h
+  simulator/ogre-simulator/vpAROgre.h
   simulator/image-simulator/vpImageSimulator.h
   simulator/wireframe-simulator/vpWireFrameSimulator.h
   simulator/wireframe-simulator/core/vpArit.h

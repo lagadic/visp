@@ -101,6 +101,18 @@
 // Defined the path to the robot's arms 3D model used by the robot simulators
 #cmakedefine VISP_ROBOT_ARMS_DIR "${VISP_ROBOT_ARMS_DIR}"
 
+// Defined if Ogre3d is available.
+#cmakedefine VISP_HAVE_OGRE
+
+// Defined if Ogre3d plugins.cfg is available.
+#cmakedefine VISP_HAVE_OGRE_PLUGINS_PATH "${VISP_HAVE_OGRE_PLUGINS_PATH}"
+
+// Defined if Ogre3d resources.cfg is available.
+#cmakedefine VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_HAVE_OGRE_RESOURCES_PATH}"
+
+// Defined if OIS (Object Oriented Input System) library available.
+#cmakedefine VISP_HAVE_OIS
+
 // Defined if Coin3D and one of the GUI (SoXt, SoWin, SoQt + Qt) 
 // libraries are available.
 #cmakedefine VISP_HAVE_COIN_AND_GUI

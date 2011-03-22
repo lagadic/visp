@@ -142,7 +142,7 @@ OPTIONS:                                               Default\n\
      Step between two images.\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automaze the \n\
+     Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
 \n\
   -d \n\
@@ -168,7 +168,7 @@ Set the program options.
   \param step : Step between two images.
   \param display : Set as true, activates the image display. This is
 the default configuration. When set to false, the display is
-disabled. This can be usefull for automatic tests using crontab
+disabled. This can be useful for automatic tests using crontab
 under Unix or using the task manager under Windows.
 \param click_allowed : set to false, disable the mouse click.
 
