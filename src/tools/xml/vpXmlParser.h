@@ -69,7 +69,7 @@
   \brief This class intends to simplify the creation of xml parser based on the 
   libxml2 third party library.
   
-  This class can be usefull to manage external data parameters (for example for 
+  This class can be useful to manage external data parameters (for example for 
   configuration of an experiment, ...).
 
   \warning This class is only available if libxml2 is installed and detcted by ViSP.

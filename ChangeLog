@@ -7,8 +7,10 @@
 
 
 ViSP 2.6.1 (under development)
-  - Build
-     - Set the build type by default to release
+  - New features
+     - Introduction of Lapack support used for the SVD decomposition in vpMatrix
+     - Introduction of vpAROgre that enables augmented reality applications 
+       based on Ogre 3D. Some examples are provided in examples/ogre-simulator
   - Improvements
      - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now
        possible to select a specific camera with its GUID by using setCamera()
@@ -18,12 +20,18 @@ ViSP 2.6.1 (under development)
        vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance
      - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
+  - Build
+     - Set the build type by default to release
+     - Improve the usage of debug versus release third-party libraries
   - Bug fixed
+     - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
+     - [11147] Coin not installed, cannot read VRML files
      - [11473] vpImageTools::flip() come out error when deal with vpImage
        with vpRGBa type
-     - [11617] selecting a subset of features is not taken into account
-       in vpServo
-     - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
+     - [11529] ViSP / OpenCV(2.2.0) incompatibility
+     - [11563] segfault in vpVideoReader
+     - [11617] selecting a subset of features is not taken into account in 
+       vpServo
      - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error:
        gdk-pixbuf/gdk-pixbuf.h)
      - [11924] svdNr fails on some matrices where svdGsl succeeds
@@ -33,6 +41,8 @@ ViSP 2.6.1 (under development)
      - [11981] vpV4l2Grabber class based on video 4 linux 2 is not able to
        grab images from an usb webcam
      - [12329] Bad font problem when opening vpPlot example
+     - [12334] Under windows, link errors when some 3rd party libs are not
+       build in the same build configuration as ViSP 
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:

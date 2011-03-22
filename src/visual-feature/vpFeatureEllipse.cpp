@@ -70,7 +70,7 @@
 
 
 attributes and members directly related to the vpBasicFeature needs
-other functionalities ar usefull but not mandatory
+other functionalities ar useful but not mandatory
 
 
 

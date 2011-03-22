@@ -236,7 +236,7 @@ OPTIONS                                                    Default\n\
   \param framerate : Framerate setting.
 
   \param colorcoding_is_set : New color coding setting.
-  \param colorcoding : Color coding setting (usefull only for format 7).
+  \param colorcoding : Color coding setting (useful only for format 7).
 
   \param ringbuffersize_is_set : New ring buffer size.
   \param ringbuffersize : Ring buffer size used during capture.

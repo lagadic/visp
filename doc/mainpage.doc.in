@@ -22,7 +22,7 @@ It is also possible to contact ViSP main developers using: <a href="mailto:visp@
 <p>From <a
 href="http://www.irisa.fr/lagadic/visp/download.html" target="_parent">http://www.irisa.fr/lagadic/visp/download.html</a>
 you can either download the latest stable release or the current
-development distribution using CVS.</p>
+development distribution using Subversion.</p>
 
 \section install_sec Installation
 

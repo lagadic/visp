@@ -113,7 +113,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
 \n\
   -c\n\
-     Disable the mouse click. Usefull to automaze the \n\
+     Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
 \n\
   -d \n\

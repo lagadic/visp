@@ -324,7 +324,7 @@ vpMeEllipse::printParameters()
 /*!
   Computes the \f$ alpha \f$ angle of the two points and store them into alpha1 for the smallest and alpha2 for the biggest.
 
-  \note this function is usefull only during the initialization.
+  \note this function is useful only during the initialization.
 
   \param pt1 : First point whose \f$ alpha \f$ angle is computed.
   \param pt2 : Second point whose \f$ alpha \f$ angle is computed.
@@ -393,7 +393,7 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 /*!
   Compute the \f$ theta \f$ angle for each vpMeSite.
 
-  \note The \f$ theta \f$ angle is usefull during the tracking part.
+  \note The \f$ theta \f$ angle is useful during the tracking part.
 */
 void
 vpMeEllipse::updateTheta()

@@ -175,7 +175,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       
       By default the first frame index is set to 0.
       
-      This method is usefull if you use the class like a frame grabber (ie with theacquire method).
+      This method is useful if you use the class like a frame grabber (ie with theacquire method).
     */
     inline void resetFrameCounter() {frameCount = firstFrame;}
     

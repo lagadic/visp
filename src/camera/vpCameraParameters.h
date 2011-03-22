@@ -118,7 +118,7 @@
   \end{array}\right.
   \f]
   with \f[ r^2 = x^2 + y^2 \f]
-  This model is usefull to convert meter to pixel coordinates because in this
+  This model is useful to convert meter to pixel coordinates because in this
   case :
   \f[
   \left\{ \begin{array}{l}
@@ -139,7 +139,7 @@
   \end{array}\right.
   \f]
   with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f]
-  This model is usefull to convert pixel to meter coordinates because in this
+  This model is useful to convert pixel to meter coordinates because in this
   case :
   \f[
   \left\{ \begin{array}{l}

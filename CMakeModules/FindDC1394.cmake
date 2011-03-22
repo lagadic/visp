@@ -46,7 +46,7 @@
 # DC1394_1_LIBRARY
 # DC1394_2_LIBRARY
 #
-# The two defines below are only usefull to compile with libdc1394-2.x. In
+# The two defines below are only useful to compile with libdc1394-2.x. In
 # that case DC1394_VERSION=2. Since the libdc1394-2.x API is not stable, we 
 # need to determine if dc1394_find_cameras() or dc1394_enumerate_cameras() 
 # functions are available. dc1394_enumerate_cameras() was introduced after 

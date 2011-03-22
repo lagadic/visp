@@ -165,7 +165,7 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
   int  bestscore =  -1;
   double   N = 1;            // Dummy initialisation for number of trials.
 
-  vpUniRand random(time(NULL)) ;
+  vpUniRand random((const long)time(NULL)) ;
   vpColVector bestinliers ;
   unsigned int *ind = new unsigned int [s] ;
   int numiter = 0;

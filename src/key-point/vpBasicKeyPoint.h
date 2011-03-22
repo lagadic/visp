@@ -63,6 +63,8 @@ template class VISP_EXPORT std::allocator<vpImagePoint>;
 template class VISP_EXPORT std::vector<vpImagePoint>;
 template class VISP_EXPORT std::allocator<int>;
 template class VISP_EXPORT std::vector<int>;
+template class VISP_EXPORT std::allocator<unsigned int>;
+template class VISP_EXPORT std::vector<unsigned int>;
 #endif
 
 /*!
