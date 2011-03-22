@@ -151,6 +151,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
   void setPosition(const std::string &name,
 		   const vpTranslationVector &position);
+  void setPosition(const std::string &name, const vpHomogeneousMatrix &position);
 
   vpTranslationVector getPosition(const std::string &name)const;
 
@@ -158,7 +159,6 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
   void addRotation(const std::string &name, const vpRotationMatrix &rotation);
 
-  void setPosition(const std::string &name, const vpHomogeneousMatrix &position);
 
   void setVisibility(const std::string &name, bool isVisible);
 

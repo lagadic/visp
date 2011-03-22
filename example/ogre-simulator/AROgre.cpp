@@ -173,11 +173,14 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
 }
 
 
-class VpAROgreExample : public vpAROgre
+class vpAROgreExample : public vpAROgre
 {
 public:
   // The constructor doesn't change here
-  VpAROgreExample(const vpCameraParameters &mcam = vpCameraParameters(), vpBackgroundType type = BACKGROUND_GREY, unsigned int width = 640, unsigned int height = 480, const char *resourcePath=NULL)
+  vpAROgreExample(const vpCameraParameters &mcam = vpCameraParameters(), 
+		  vpBackgroundType type = BACKGROUND_GREY, 
+		  unsigned int width = 640, unsigned int height = 480, 
+		  const char *resourcePath=NULL)
     : vpAROgre(mcam, type, width, height){
     // Direction vectors
     if (resourcePath) mResourcePath = resourcePath;
@@ -633,7 +636,9 @@ int main(int argc, const char **argv)
     }
 
   // Create a vpRAOgre object with color background
-  VpAROgreExample ogre(mcam,vpAROgre::BACKGROUND_COLOR,(unsigned int)grabber.getWidth(),(unsigned int)grabber.getHeight());
+  vpAROgreExample ogre(mcam,vpAROgre::BACKGROUND_COLOR,
+		       (unsigned int)grabber.getWidth(),
+		       (unsigned int)grabber.getHeight());
   // Initialize it
   ogre.init();
 
