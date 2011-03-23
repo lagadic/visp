@@ -517,9 +517,9 @@ int main(int argc, const char **argv)
     }
 
   // Create a vpRAOgre object with color background
-  vpAROgre ogre(mcam,vpAROgre::BACKGROUND_COLOR,(unsigned int)grabber.getWidth(),(unsigned int)grabber.getHeight());
+  vpAROgre ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
   // Initialize it
-  ogre.init();
+  ogre.init(IC);
   ogre.load("Robot", "robot.mesh");
   ogre.setScale("Robot", 0.001f,0.001f,0.001f);
   ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI/2, -M_PI/2, 0)));
