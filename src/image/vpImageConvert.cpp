@@ -2171,7 +2171,7 @@ void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
 
 */
 void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb,
-             unsigned int size)
+			       unsigned int size)
 {
   unsigned char *pt_input = rgba;
   unsigned char *pt_end = rgba + 4*size;
