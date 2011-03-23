@@ -729,9 +729,9 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
 						      mWidth,//width
 						      mHeight,//height
 						      0,  // num of mip maps
-						      Ogre::PF_BYTE_RGBA,
-						      //Ogre::PF_BYTE_BGRA,
-						      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+                  //Ogre::PF_BYTE_RGBA,
+                  Ogre::PF_BYTE_BGRA,
+                  Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
   }
   else{ // As that texture does not seem to work properly with direct3D we use a default texture
     Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
@@ -740,8 +740,8 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
 						      mWidth,//width
 						      mHeight,//height
 						      0,  // num of mip maps
-						      Ogre::PF_BYTE_RGBA,
-						      //Ogre::PF_BYTE_BGRA,
+                  //Ogre::PF_BYTE_RGBA,
+                  Ogre::PF_BYTE_BGRA,
 						      Ogre::TU_DEFAULT);
   }
 
@@ -844,7 +844,7 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
   // Buffer data
   Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
   // Fill in the data in the grey level texture
-#if 0 // if texture in BGRa format
+#if 1 // if texture in BGRa format
   for(unsigned int i=0; i<mHeight; i++){
     for(unsigned int j=0; j<mWidth; j++){
       // Color Image
