@@ -60,7 +60,7 @@
 /*!
   Constructor.
 
-  \param cameraP : Camera parameters.
+  \param cam : Camera parameters.
 
   \param type : Either BACKGROUND_GREY for grey level image in background or
   BACKGROUND_COLOR for a RGBa one.
@@ -75,7 +75,9 @@
   telling Ogre where to look for renderer plugins.
 
 */
-vpAROgre::vpAROgre(const vpCameraParameters &cameraP, vpBackgroundType type, unsigned int width, unsigned int height, const char *resourcePath, const char *pluginsPath)
+vpAROgre::vpAROgre(const vpCameraParameters &cam, 
+		   unsigned int width, unsigned int height, 
+		   const char *resourcePath, const char *pluginsPath)
   : mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0)
 #ifdef VISP_HAVE_OIS
   , mInputManager(0), mKeyboard(0)
@@ -88,9 +90,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cameraP, vpBackgroundType type, uns
   mPluginsPath = pluginsPath;
   std::cout << "mPluginsPath: " << mPluginsPath<< std::endl;
   // Set intrinsic camera parameters
-  mcam = cameraP;
-  // Is the background colored or not
-  BackgroundT = type;
+  mcam = cam;
   // When created no reason to stop displaying
   keepOn = true;
   // Set Dimensions
@@ -98,6 +98,88 @@ vpAROgre::vpAROgre(const vpCameraParameters &cameraP, vpBackgroundType type, uns
   mHeight = height;
   mshowConfigDialog = true;
   mOptionnalResourceLocation.clear();
+}
+
+/*!
+  Initialisation of Ogre with a grey level background. 
+
+  Load the plugins that are specified in the plugins.cfg or
+  plugins_d.cfg files. These files are located in
+  VISP_HAVE_OGRE_PLUGINS_PATH folder that is defined in vpConfig.h.
+  Note that plugins.cfg file is always considered under Unix
+  platforms. The file plugins_d.cfg is only considered under Windows
+  when the build type is Debug.
+  
+  Load also the resources that are defined in the resources.cfg
+  file. This file is located in VISP_HAVE_OGRE_RESOURCES_PATH folder
+  that is defined in vpConfig.h.
+  
+  Create also the grey level background used to display the image. 
+
+  \param I : Image that is displayed in the background.
+
+  \param bufferedKeys : If true, use of buffered input for the keybord (see
+  Ogre documentation). Note that this parameter is only useful if OIS is used.
+ 
+  \exception vpException::ioError : If the required plugins.cfg /
+  plugins_d.cfg or resources.cfg files are not accessible.
+
+*/
+void vpAROgre::init(vpImage<unsigned char> &I,
+		    bool 
+#ifdef VISP_HAVE_OIS
+		    bufferedKeys
+#endif
+		    )
+{
+  init(
+#ifdef VISP_HAVE_OIS
+       bufferedKeys
+#endif
+       );
+  // Create the background image which will come from the grabber
+  createBackground(I);
+}
+
+/*!
+  Initialisation of Ogre with a color background. 
+
+  Load the plugins that are specified in the plugins.cfg or
+  plugins_d.cfg files. These files are located in
+  VISP_HAVE_OGRE_PLUGINS_PATH folder that is defined in vpConfig.h.
+  Note that plugins.cfg file is always considered under Unix
+  platforms. The file plugins_d.cfg is only considered under Windows
+  when the build type is Debug.
+  
+  Load also the resources that are defined in the resources.cfg
+  file. This file is located in VISP_HAVE_OGRE_RESOURCES_PATH folder
+  that is defined in vpConfig.h.
+  
+  Create also a color background used to display the image. 
+
+  \param I : Image that is displayed in the background.
+
+  \param bufferedKeys : If true, use of buffered input for the keybord (see
+  Ogre documentation). Note that this parameter is only useful if OIS is used.
+ 
+  \exception vpException::ioError : If the required plugins.cfg /
+  plugins_d.cfg or resources.cfg files are not accessible.
+
+*/
+void vpAROgre::init(vpImage<vpRGBa> &I,
+		    bool 
+#ifdef VISP_HAVE_OIS
+		    bufferedKeys
+#endif
+		    )
+{
+  init(
+#ifdef VISP_HAVE_OIS
+       bufferedKeys
+#endif
+       );
+  // Create the background image which will come from the grabber
+  createBackground(I);
 }
 
 /*!
@@ -245,13 +327,10 @@ void vpAROgre::init(bool
   mInputManager = OIS::InputManager::createInputSystem( pl );
 
   //Create all devices
+  // Here we only consider the keyboard input
   mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, bufferedKeys ));
   if ( !bufferedKeys ) mKeyboard->setEventCallback ( this);
 #endif
-  // Here we only consider the keybord input
-
-  // Create the background image which will come from the grabber
-  createBackground();
 }
 
 /*!
@@ -375,14 +454,14 @@ void vpAROgre::windowClosed(Ogre::RenderWindow* rw)
 
 /*!
   Display a frame.
-  \param srcI : Grey level image to show in background.
+  \param I : Grey level image to show in background.
   \param cMo : Camera pose as an homogeneous matrix.
 */
-void vpAROgre::display(const vpImage<unsigned char> &srcI, 
+void vpAROgre::display(const vpImage<unsigned char> &I, 
 		       const vpHomogeneousMatrix &cMo)
 {
   // Update the background to match the situation
-  updateBackgroundTexture(srcI);
+  updateBackgroundTexture(I);
 
   // Update the camera parameters to match the grabbed image
   updateCameraParameters(cMo);
@@ -401,10 +480,10 @@ void vpAROgre::display(const vpImage<unsigned char> &srcI,
   \param srcI : RGBa image to show in background.
   \param cMo : Camera pose as an homogeneous matrix.
 */
-void vpAROgre::display(const vpImage<vpRGBa> &srcI, const vpHomogeneousMatrix &cMo)
+void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
 {
   // Update the background to match the situation
-  updateBackgroundTexture(srcI);
+  updateBackgroundTexture(I);
 
   // Update the camera parameters to match the grabbed image
   updateCameraParameters(cMo);
@@ -563,9 +642,11 @@ void vpAROgre::createCamera(void)
 }
 
 /*!
-  Create the background to show the real scene.
+  Create a greylevel background to show the real scene.
+
+  \param I : This parameter is here only used to initialize a grey level background.
 */
-void vpAROgre::createBackground(void)
+void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
 {
   // Create a rectangle to show the incoming images from the camera
   mBackground = new Ogre::Rectangle2D(true); // true = textured
@@ -577,50 +658,91 @@ void vpAROgre::createBackground(void)
   Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(1);
 
   // Dynamic texture
-  if(BackgroundT == BACKGROUND_COLOR){ // RGBA texture
-    // If we are using opengl we can boost a little bit performances with a dynamic texture
-    if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-      Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-							Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-							Ogre::TEX_TYPE_2D,
-							mWidth,//width
-							mHeight,//height
-							0,  // num of mip maps
-							Ogre::PF_BYTE_BGRA,
-							Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-    }
-    else{ // As that texture does not seem to work properly with direct3D we use a default texture
-      Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-							Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-							Ogre::TEX_TYPE_2D,
-							mWidth,//width
-							mHeight,//height
-							0,  // num of mip maps
-							Ogre::PF_BYTE_BGRA,
-							Ogre::TU_DEFAULT);
-    }
+  // If we are using opengl we can boost a little bit performances with a dynamic texture
+  if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
+    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
+						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+						      Ogre::TEX_TYPE_2D,
+						      mWidth,//width
+						      mHeight,//height
+						      0,  // num of mip maps
+						      Ogre::PF_BYTE_L,
+						      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
   }
-  else{ // Grey level texture
-    if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-      Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-							Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-							Ogre::TEX_TYPE_2D,
-							mWidth,//width
-							mHeight,//height
-							0,  // num of mip maps
-							Ogre::PF_BYTE_L,
-							Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-    }
-    else{
-      Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-							Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-							Ogre::TEX_TYPE_2D,
-							mWidth,//width
-							mHeight,//height
-							0,  // num of mip maps
-							Ogre::PF_BYTE_L,
-							Ogre::TU_DEFAULT);
-    }
+  else{
+    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
+						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+						      Ogre::TEX_TYPE_2D,
+						      mWidth,//width
+						      mHeight,//height
+						      0,  // num of mip maps
+						      Ogre::PF_BYTE_L,
+						      Ogre::TU_DEFAULT);
+  }
+
+  // Pointer to the dynamic texture
+  Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
+
+  // Get the pixel buffer
+  mPixelBuffer = dynTexPtr->getBuffer();
+
+  // Material to apply the texture to the background
+  Ogre::MaterialPtr Backgroundmaterial 
+    = Ogre::MaterialManager::getSingleton().create("BackgroundMaterial",
+						   Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+  Backgroundtechnique->createPass();
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
+  mBackground->setMaterial("BackgroundMaterial"); // Attach the material to the rectangle
+  mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
+
+  // Add the background to the Scene Graph so it will be rendered
+  Ogre::SceneNode *BackgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
+  BackgroundNode->attachObject(mBackground);
+}
+
+/*!
+  Create a color background to show the real scene.
+
+  \param I : This parameter is here only used to initialize a color background.
+*/
+void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
+{
+  // Create a rectangle to show the incoming images from the camera
+  mBackground = new Ogre::Rectangle2D(true); // true = textured
+  mBackground->setCorners(-1.0, 1.0, 1.0, -1.0); // Spread all over the window
+  mBackground->setBoundingBox(Ogre::AxisAlignedBox(-100000.0*Ogre::Vector3::UNIT_SCALE, 100000.0*Ogre::Vector3::UNIT_SCALE)); // To be shown everywhere
+
+  // Texture options
+  Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_NONE);
+  Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(1);
+
+  // Dynamic texture
+  // If we are using opengl we can boost a little bit performances with a dynamic texture
+  if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
+    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
+						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+						      Ogre::TEX_TYPE_2D,
+						      mWidth,//width
+						      mHeight,//height
+						      0,  // num of mip maps
+						      Ogre::PF_BYTE_RGBA,
+						      //Ogre::PF_BYTE_BGRA,
+						      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+  }
+  else{ // As that texture does not seem to work properly with direct3D we use a default texture
+    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
+						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+						      Ogre::TEX_TYPE_2D,
+						      mWidth,//width
+						      mHeight,//height
+						      0,  // num of mip maps
+						      Ogre::PF_BYTE_RGBA,
+						      //Ogre::PF_BYTE_BGRA,
+						      Ogre::TU_DEFAULT);
   }
 
 
@@ -702,13 +824,9 @@ void vpAROgre::updateBackgroundTexture(const vpImage<unsigned char> &I)
   const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
   // Buffer data
   Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
-  // Fill in the data
-  for(unsigned int i=0; i<mHeight; i++){
-    for(unsigned int j=0; j<mWidth; j++){
-      // Grey Level Image
-      *pDest++=I[i][j];
-    }
-  }
+  // Fill in the data in the grey level texture
+  memcpy(pDest, I.bitmap, mHeight*mWidth);
+
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
 }
@@ -725,7 +843,8 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
   const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
   // Buffer data
   Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
-  // Fill in the data
+  // Fill in the data in the grey level texture
+#if 0 // if texture in BGRa format
   for(unsigned int i=0; i<mHeight; i++){
     for(unsigned int j=0; j<mWidth; j++){
       // Color Image
@@ -735,6 +854,10 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
       *pDest++ = 255;     // Alpha component
     }
   }
+#else // if texture in RGBa format which is the format of the input image
+  memcpy(pDest, I.bitmap, mHeight*mWidth*sizeof(vpRGBa));
+#endif
+  
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
 }

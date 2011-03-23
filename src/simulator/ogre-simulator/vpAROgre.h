@@ -92,17 +92,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 			   , public OIS::KeyListener
 #endif
 {
- public:
-  /**
-   * Type to determine if the background image will be coloured or in grey levels
-   */
-  typedef enum{
-    BACKGROUND_COLOR,
-    BACKGROUND_GREY
-  }vpBackgroundType;
-	
-  vpAROgre(const vpCameraParameters &cameraP = vpCameraParameters(), 
-	   vpBackgroundType type = BACKGROUND_GREY, 
+ public:	
+  vpAROgre(const vpCameraParameters &cam = vpCameraParameters(), 
 	   unsigned int width = 640, unsigned int height = 480,
 	   const char* resourcePath = 
 #ifdef VISP_HAVE_OGRE_RESOURCES_PATH
@@ -118,7 +109,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #endif
 	   );
 	
-  virtual void init(bool bufferedKeys=false);
+  virtual void init(vpImage<unsigned char> &I, bool bufferedKeys=false);
+  virtual void init(vpImage<vpRGBa> &I, bool bufferedKeys=false);
 
   virtual ~vpAROgre(void);
 
@@ -139,10 +131,10 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
   virtual void windowClosed(Ogre::RenderWindow* rw);
 
-  virtual void display(const vpImage<unsigned char> &srcI, 
+  virtual void display(const vpImage<unsigned char> &I, 
 		       const vpHomogeneousMatrix &cMo);
 
-  virtual void display(const vpImage<vpRGBa> &srcI, 
+  virtual void display(const vpImage<vpRGBa> &I, 
 		       const vpHomogeneousMatrix &cMo);
 
   void setCameraParameters(const vpCameraParameters &cameraP);
@@ -188,19 +180,6 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mHeight = height;
   }
   
-  /*!
-    Set the background type of the image to display (gray level or colored 
-    image).
-  
-    \warning To be effective, this method must be called before the init() one. 
-    
-    \param type : Either BACKGROUND_GREY for grey level image in background or
-    BACKGROUND_COLOR for a RGBa one.
-  */
-  inline void setBackGroundType(const vpBackgroundType type){
-    BackgroundT = type;
-  }
-
   /*!
     Enable/Disable the apparition of the config dialog on startup.
   
@@ -274,6 +253,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   
  protected:
 
+  virtual void init(bool bufferedKeys=false);
   virtual void createCamera(void);
 
   /**
@@ -307,7 +287,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
  private:
 
-  void createBackground(void);
+  void createBackground(vpImage<unsigned char> &I);
+  void createBackground(vpImage<vpRGBa> &I);
 
   bool frameStarted(const Ogre::FrameEvent& evt);
 
@@ -341,7 +322,6 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #endif
 
   // ViSP AR System
-  vpBackgroundType BackgroundT;                  /** Type of background (RGBa or grey level) */
   bool keepOn;                                   /** Has the application recieved a signal to stop(false) or not (true) */
   vpImage<vpRGBa> mImageRGBA;                    /** vpImage to store grabbed image */
   vpImage<unsigned char> mImage;                 /** vpImage to store grabbed image */
