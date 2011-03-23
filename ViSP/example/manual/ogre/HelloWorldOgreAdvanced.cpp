@@ -45,10 +45,10 @@
 */
 
 #include <visp/vpConfig.h>
+#include <visp/vpOpenCVGrabber.h>
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpDirectShowGrabber.h>
-#include <visp/vpOpenCVGrabber.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
