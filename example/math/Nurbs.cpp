@@ -175,6 +175,8 @@ main(int argc, const char ** argv)
   vpDisplayGDI display[3];
 #elif defined VISP_HAVE_GTK
   vpDisplayGTK display[3];
+#elif defined VISP_HAVE_OPENCV
+  vpDisplayOpenCV display[3];
 #endif
 
   if (opt_display) {
