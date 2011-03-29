@@ -174,7 +174,10 @@ class VISP_EXPORT vpColor : public vpRGBa
   static const vpColor  cyan;   
   static const vpColor  orange;
   static const vpColor  purple;
-  static const vpColor  none;  
+  static const vpColor  none;
+
+  static const unsigned int nbColors;
+  static const vpColor allColors[];
 
   /*!
     Default constructor. All the colors components are set to zero. 
@@ -219,6 +222,15 @@ class VISP_EXPORT vpColor : public vpRGBa
     this->A = 0;
     id = id_unknown;
   };
+
+  /*!
+
+   Get a predefined color
+
+   \param i : color indice
+   */
+  static inline vpColor getColor(const unsigned int &i) {return vpColor::allColors[i % vpColor::nbColors];};
+
 };
 
 /*!
