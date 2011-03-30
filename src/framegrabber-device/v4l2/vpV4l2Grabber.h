@@ -80,7 +80,7 @@
   Logitech QuickCam Orbit AF, Dell latitude E6400 internal webcam).
 
   If the grabbing fail with a webcam, it means probably that you don't
-  have the read/write permission on the /dev/video%d device. You can
+  have the read/write permission on the /dev/video%%d device. You can
   set the right permissions by "sudo chmod a+rw /dev/video*".
 
   If the grabbing fails when the camera is attached to a bttv PCI
