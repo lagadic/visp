@@ -61,9 +61,9 @@ int main()
   // Create image points for pixel coordinates
   vpImagePoint ip, ip1, ip2;
 
-  // Load a grey image from the disk
-  //  std::string filename = "/tmp/ViSP-images/Klimt/Klimt.ppm";
-  std::string filename = "Klimt.ppm";
+  // Load a grey image from the disk. Klimt.ppm image is part of the ViSP 
+  // image data set available from http://www.irisa.fr/lagadic/visp/download.html
+  std::string filename = "./Klimt.ppm";
   vpImageIo::read(I, filename) ;
 
 #ifdef VISP_HAVE_GTK
