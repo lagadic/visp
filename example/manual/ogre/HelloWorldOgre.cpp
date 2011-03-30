@@ -38,7 +38,7 @@
  *
  *****************************************************************************/
 /*!
-  \example HelloWorldOgreAdvanced.cpp
+  \example HelloWorldOgre.cpp
 
   \brief Example that shows how to exploit the vpAROgre class.
  
