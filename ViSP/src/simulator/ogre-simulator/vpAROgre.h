@@ -285,6 +285,14 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   */
   virtual bool destroyScene(void) {return true;};
 
+  virtual void updateCameraProjection(void);
+
+  virtual void updateBackgroundTexture(const vpImage<unsigned char> &I);
+
+  virtual void updateBackgroundTexture(const vpImage<vpRGBa> &I);
+
+  virtual void updateCameraParameters (const vpHomogeneousMatrix &cMo);
+
  private:
 
   void createBackground(vpImage<unsigned char> &I);
@@ -295,14 +303,6 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   bool frameEnded( const Ogre::FrameEvent& evt);
 
   bool stopTest(const Ogre::FrameEvent& evt);
-
-  void updateCameraProjection(void);
-
-  void updateBackgroundTexture(const vpImage<unsigned char> &I);
-
-  void updateBackgroundTexture(const vpImage<vpRGBa> &I);
-
-  void updateCameraParameters (const vpHomogeneousMatrix &cMo);
 
  protected:
   // Attributes

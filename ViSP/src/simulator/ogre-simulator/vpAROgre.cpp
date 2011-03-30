@@ -62,9 +62,6 @@
 
   \param cam : Camera parameters.
 
-  \param type : Either BACKGROUND_GREY for grey level image in background or
-  BACKGROUND_COLOR for a RGBa one.
-
   \param width : Width of the grabbed image.
   \param height : Height of the grabbed image.
 
@@ -477,7 +474,7 @@ void vpAROgre::display(const vpImage<unsigned char> &I,
 
 /*!
   Display a frame.
-  \param srcI : RGBa image to show in background.
+  \param I : RGBa image to show in background.
   \param cMo : Camera pose as an homogeneous matrix.
 */
 void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
@@ -848,9 +845,14 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
   for(unsigned int i=0; i<mHeight; i++){
     for(unsigned int j=0; j<mWidth; j++){
       // Color Image
+//      *pDest++=I[i][mWidth-j].B; // Blue component
+//      *pDest++=I[i][mWidth-j].G; // Green component
+//      *pDest++=I[i][mWidth-j].R; // Red component
+      
       *pDest++=I[i][j].B; // Blue component
       *pDest++=I[i][j].G; // Green component
       *pDest++=I[i][j].R; // Red component
+      
       *pDest++ = 255;     // Alpha component
     }
   }
@@ -868,8 +870,8 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMo)
 {
   // The matrix is given to Ogre with some changes to fit with the world projection
-  cMo.inverse();
   Ogre::Matrix4 ModelView 
+//    = Ogre::Matrix4( (Ogre::Real)-cMo[0][0],  (Ogre::Real)-cMo[0][1],  (Ogre::Real)-cMo[0][2],  (Ogre::Real)-cMo[0][3],
     = Ogre::Matrix4( (Ogre::Real)cMo[0][0],  (Ogre::Real)cMo[0][1],  (Ogre::Real)cMo[0][2],  (Ogre::Real)cMo[0][3],
 		     (Ogre::Real)-cMo[1][0], (Ogre::Real)-cMo[1][1], (Ogre::Real)-cMo[1][2], (Ogre::Real)-cMo[1][3],
 		     (Ogre::Real)-cMo[2][0], (Ogre::Real)-cMo[2][1], (Ogre::Real)-cMo[2][2], (Ogre::Real)-cMo[2][3],
