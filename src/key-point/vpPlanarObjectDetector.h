@@ -165,19 +165,15 @@ protected:
   //! The corners in the reference image
   std::vector<cv::Point2f> ref_corners;
   
-  //! The ROI in the reference image.
-  cv::Rect ref_ROI; 
-  //! The ROI for the reference image.
-  cv::Rect cur_ROI;
   //! The ROI for the reference image. 
   cv::Rect modelROI;
   
-  //! list of the image point in the current image that match after the deletion of the outliers with the RANSAC.
+  //! Vector of the image point in the current image that match after the deletion of the outliers with the RANSAC.
   std::vector<vpImagePoint> currentImagePoints;
-  //! list of the image point in the reference image that match after the deletion of the outliers with the RANSAC.
+  //! Vector of the image point in the reference image that match after the deletion of the outliers with the RANSAC.
   std::vector<vpImagePoint> refImagePoints;
   
-  //! minimal number of point to after the ransac needed to suppose that the homography has been correctly computed.
+  //! Minimal number of point to after the ransac needed to suppose that the homography has been correctly computed.
   unsigned int minNbMatching;
 
 public:
@@ -210,8 +206,6 @@ public:
   void display(vpImage<unsigned char> &I, bool displayKpts = true);
   void display(vpImage<unsigned char> &Iref,
 		 vpImage<unsigned char> &Icurrent);
-
-  void setRoi(const vpImagePoint& tl, const vpImagePoint& br);
   
   /*!
     Return the positions of the detected corners.
