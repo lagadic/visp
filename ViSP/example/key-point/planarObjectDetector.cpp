@@ -337,8 +337,8 @@ main(int argc, const char** argv)
       }
     }
     else{
-      corners[0].set_ij(1,1);
-      corners[1].set_ij(I.getHeight()-2,I.getWidth()-2);
+      corners[0].set_ij(50, I.getWidth()-100);// small ROI for the automated test
+      corners[1].set_ij(I.getHeight()-100, I.getWidth()-2);
     }
 
     if (opt_display) {
