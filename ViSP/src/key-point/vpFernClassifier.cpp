@@ -82,8 +82,7 @@ vpFernClassifier::vpFernClassifier(const std::string& _dataFile, const std::stri
 vpFernClassifier::~vpFernClassifier()
 {
   if(curIplImg != NULL){
-    curIplImg->imageData = NULL;
-    cvReleaseImageHeader(&curIplImg);
+    cvReleaseImage(&curIplImg);
     curIplImg = NULL;
   }  
 }
@@ -135,9 +134,6 @@ vpFernClassifier::train()
     // build pyramid 
   std::vector<cv::Mat> objpyr;
   cv::buildPyramid(obj, objpyr, d.nOctaves-1);
-  
-    // patch generator
-//  std::vector<cv::KeyPoint> imgKeypoints;
   
     // getPoints
   d.getMostStable2D(obj, objKeypoints, 100, gen);
@@ -298,8 +294,6 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   std::vector<cv::Mat> imgPyr;
   cv::buildPyramid(img, imgPyr, ldetector.nOctaves-1);
   
-    //matching
-  cv::Mat H;  
   
   ldetector(imgPyr, imgKeypoints, 500);
 

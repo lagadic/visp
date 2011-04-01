@@ -119,10 +119,8 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const unsigned int nbpt)
     throw vpException(vpException::badValue, "Not enough point to compute the region of interest.");
   }
   
-  std::vector < vpImagePoint > ptsx;
-  ptsx.resize(nbpt);
-  std::vector < vpImagePoint > ptsy;
-  ptsy.resize(nbpt);
+  std::vector < vpImagePoint > ptsx(nbpt);
+  std::vector < vpImagePoint > ptsy(nbpt);
   for(unsigned int i=0; i<nbpt; i++){
     ptsx[i] = ptsy[i] = ip[i];
   }
@@ -145,12 +143,7 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const unsigned int nbpt)
       }
     }
   }
-  
-   vpImagePoint tl(ptsx[1].get_j(), ptsy[1].get_i());
-   vpImagePoint br(ptsx[nbpt-2].get_j(), ptsy[nbpt-2].get_i());
-  
-  setRoi(tl, br);
-  
+    
 }
 
 
@@ -165,7 +158,7 @@ vpPlanarObjectDetector::computeRoi(vpImagePoint* ip, const unsigned int nbpt)
   \return The number of reference points.
 */
 unsigned int
-vpPlanarObjectDetector:: buildReference(const vpImage<unsigned char> &_I)
+vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I)
 {
   modelROI.x = 0;
   modelROI.y = 0;
@@ -256,6 +249,15 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
   /* compute homography */
   std::vector<cv::Point2f> refPts = fern.getRefPt();
   std::vector<cv::Point2f> curPts = fern.getCurPt();
+  
+  for(unsigned int i=0; i<refPts.size(); ++i){
+    refPts[i].x += modelROI.x;
+    refPts[i].y += modelROI.y;
+  }
+  for(unsigned int i=0; i<curPts.size(); ++i){
+    curPts[i].x += modelROI.x;
+    curPts[i].y += modelROI.y;
+  }
   
   if(curPts.size() < 4){
     for (unsigned int i = 0; i < 3; i += 1){
@@ -445,6 +447,7 @@ vpPlanarObjectDetector::load(const std::string& dataFilename, const std::string&
 {
   fern.load(dataFilename, objName);
   modelROI = fern.getModelROI();
+  initialiseRefCorners(modelROI);
 }
 
 
@@ -459,26 +462,6 @@ void
 vpPlanarObjectDetector::recordDetector(const std::string& objectName, const std::string& dataFile )
 {
   fern.record(objectName, dataFile);
-}
-
-/*!
-  \brief Set the region of interest (ROI) in the current image.
-
-  \param tl : The top left image point of the ROI.
-  \param br : The bottom right image point of the ROI.
-*/
-void
-vpPlanarObjectDetector::setRoi(const vpImagePoint& tl, const vpImagePoint& br)
-{
-  ref_ROI.x = (int)tl.get_u();
-  ref_ROI.y = (int)tl.get_v();
-  ref_ROI.width = (int)(br.get_u()-tl.get_u());
-  ref_ROI.height = (int)(br.get_v()-tl.get_v());
-  
-  cur_ROI.x = (int)tl.get_u();
-  cur_ROI.y = (int)tl.get_v();
-  cur_ROI.width = (int)(br.get_u()-tl.get_u());
-  cur_ROI.height = (int)(br.get_v()-tl.get_v());
 }
 
 
@@ -510,17 +493,21 @@ void
 vpPlanarObjectDetector::initialiseRefCorners(const cv::Rect& _modelROI)
 {
   cv::Point2f ip;
+  
   ip.y = (float)_modelROI.y; 
   ip.x = (float)_modelROI.x;
   ref_corners.push_back(ip);
+  
   ip.y = (float)(_modelROI.y+_modelROI.height); 
   ip.x = (float)_modelROI.x;  
   ref_corners.push_back(ip);
+  
   ip.y = (float)(_modelROI.y+_modelROI.height); 
   ip.x = (float)(_modelROI.x+_modelROI.width);  
   ref_corners.push_back(ip);  
+  
   ip.y = (float)_modelROI.y; 
-  ip.x = (float)(_modelROI.x+_modelROI.width);  
+  ip.x = (float)(_modelROI.x+_modelROI.width);
   ref_corners.push_back(ip);
 }
 
