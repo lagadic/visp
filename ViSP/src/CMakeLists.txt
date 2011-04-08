@@ -52,7 +52,6 @@ INCLUDE(${VISP_SOURCE_DIR}/CMakeHeaderFileList.cmake)
 #----------------------------------------------------------------------
 # For each header, we create a rule
 SET(HEADER_IN_INCLUDE_DIR "")
-SET(ADDED_SRC_DEPEND_PROPERTIES "")
 FOREACH(header ${HEADER_ALL})
   GET_FILENAME_COMPONENT(headerName ${header} NAME) 
   ADD_CUSTOM_COMMAND(
