@@ -3392,10 +3392,10 @@ double vpMatrix::det(vpDetMethod method) const
 
   \param filename : Absolute file name.
   \param M : Matrix to be saved.
-  \param binary : If true the matrix is save in a binary file, else a text file.
+  \param binary : If true the matrix is saved in a binary file, else a text file.
   \param Header : Optional line that will be saved at the beginning of the file.
   
-  \return Returns true if no problem appends.
+  \return Returns true if no problem happened.
   
   Warning : If you save the matrix as in a text file the precision is
   less than if you save it in a binary file.
@@ -3467,10 +3467,10 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
 
   \param filename : absolute file name.
   \param M : matrix to be loaded.
-  \param binary :If true the matrix is load from a binary file, else from a text file.
-  \param Header : Header of the file is load in this parameter.
+  \param binary :If true the matrix is loaded from a binary file, else from a text file.
+  \param Header : Header of the file loaded in this parameter.
   
-  \return Returns true if no problem appends.
+  \return Returns true if no problem happened.
  */
 bool
 vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 
