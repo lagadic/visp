@@ -178,12 +178,14 @@
 class VISP_EXPORT vpXmlParser
 {
 protected:
+  std::string xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node);
   char* xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node);
   int xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node);
   double xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node);
   
-  
+
+  void xmlWriteStringChild(xmlNodePtr node, const char* label, const std::string& value);
   void xmlWriteCharChild(xmlNodePtr node, const char* label, const char* value);
   void xmlWriteIntChild(xmlNodePtr node, const char* label, const int value);
   void xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value);
