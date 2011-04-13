@@ -175,9 +175,7 @@ vpExampleDataParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_size_filter = xmlReadIntChild(doc, dataNode);
           break;
         case name:{
-            char * val = xmlReadCharChild(doc, dataNode);
-            this->m_name = val;
-            xmlFree(val);
+            this->m_name = xmlReadStringChild(doc, dataNode);
           }break;
         default:
           vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());

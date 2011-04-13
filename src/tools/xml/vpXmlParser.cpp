@@ -103,6 +103,24 @@ vpXmlParser::xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node)
   return (char *) xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
 }
 
+/*!
+  Read an array of character.
+
+
+  \param doc : The main xml document
+  \param node : a pointer to the node to read value
+
+  \return std::string representing the value.
+*/
+
+std::string
+vpXmlParser::xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node)
+{
+  char* dataCh = (char*)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+  std::string dataStr = dataCh;
+  free(dataCh);
+  return dataStr;
+}
 
 /*!
   read an int
@@ -204,6 +222,21 @@ vpXmlParser::xmlWriteCharChild(xmlNodePtr node, const char* label, const char* v
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)value);
   xmlAddChild(node, tmp);  
+}
+
+/*!
+  write an array of character.
+
+  \param node : a pointer to the node to read value
+  \param label : label (name of the data) of the node
+  \param value : std::string to write;
+*/
+void
+vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char* label, const std::string& value)
+{
+  xmlNodePtr tmp;
+  tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)value.c_str());
+  xmlAddChild(node, tmp);
 }
 
 
