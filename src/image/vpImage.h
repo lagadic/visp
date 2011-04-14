@@ -71,7 +71,8 @@ class vpDisplay;
 
   \brief Definition of the vpImage class member functions.
 
-  \author Eric Marchand  (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+  This is a template class, therefore the type of each  element of the
+  array is not a priori defined.
 
   <h3> Data structure </h3>
 
@@ -87,9 +88,24 @@ class vpDisplay;
   if i is the ith rows and j the jth columns the value of this pixel
   is given by I[i][j] (that is equivalent to row[i][j]).
 
-  This is a template class, therefore the type of each  element of the
-  array is not a priori defined.
+  <h3>Important remark</h3> To provide high-performance access there
+  is no verification to ensure that 0 \f$\le\f$ i < height and 0
+  \f$\le\f$ j < width. Since the memory allocated in the bitmap array
+  is continuous, that means that if (i, j) is outside the image you
+  will manipulate a pixel that is not as expected. To highlight this
+  remark, we provide hereafter an example where the considered pixel
+  is outside the image:
 
+\code
+unsigned int width = 320;
+unsigned int height = 240;
+vpImage<unsigned char> I(height, width); // Create an 320x240 image
+// Set pixel coordinates that is outside the image
+unsigned int i = 100;
+unsigned int j = 400;
+unsigned char value;
+value = I[i][j]; // Here we will get the pixel value at position (101, 80)
+\endcode
 
 */
 template<class Type>
