@@ -53,6 +53,9 @@
 #include <visp/vpRobotBiclopsController.h>
 #include <visp/vpRobotException.h>
 
+//#define VP_DEBUG        // Activate the debug mode
+//#define VP_DEBUG_MODE 20 // Activate debug level 1 and 2
+
 #include <visp/vpDebug.h>
 
 
@@ -66,6 +69,7 @@
 */
 vpRobotBiclopsController::vpRobotBiclopsController()
 {
+  stopControllerThread_ = false;
   axisMask = Biclops::PanMask
     + Biclops::TiltMask
     /*+ Biclops::VergeMask*/; // add this if you want verge.

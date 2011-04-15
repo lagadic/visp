@@ -61,7 +61,6 @@
 #include <visp/vpRobot.h>
 #include <visp/vpBiclops.h>
 #include <visp/vpColVector.h>
-#include <visp/vpDebug.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotBiclopsController.h>
 

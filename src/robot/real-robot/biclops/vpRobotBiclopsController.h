@@ -119,6 +119,15 @@ public:
   PMDAxisControl * getVergeAxis() { return vergeAxis; };
   void writeShm(shmType &shm);
   shmType readShm();
+  bool isStopRequested()
+  {
+    return stopControllerThread_;
+  }
+
+  void stopRequest(bool stop)
+  {
+    stopControllerThread_ = stop;
+  }
 
 private:
   Biclops biclops; // THE interface to Biclops.
@@ -134,6 +143,7 @@ private:
   PMDAxisControl::Profile vergeProfile;
 
   shmType shm;
+  bool stopControllerThread_;
 
 };
 
