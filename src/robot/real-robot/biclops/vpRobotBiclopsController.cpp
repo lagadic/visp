@@ -119,46 +119,70 @@ void
 vpRobotBiclopsController::init(const char *configfile)
 {
   vpDEBUG_TRACE (12, "Initialize biclops.");
-  if (biclops.Initialize(configfile)) {
-    vpDEBUG_TRACE(12, "Biclops initialized");
-
-    // Get shortcut references to each axis.
-    panAxis = biclops.GetAxis(Biclops::Pan);
-    tiltAxis = biclops.GetAxis(Biclops::Tilt);
-    if ((axisMask & Biclops::VergeMask) != 0)
-      vergeAxis = biclops.GetAxis(Biclops::Verge);
-
-
-    if (!panAxis -> IsAlreadyHomed() || !tiltAxis -> IsAlreadyHomed()) {
-       vpDEBUG_TRACE(12, "Biclops is not homed");
+  bool binit = false;
+  for (int i=0; i<1; i++) {
+    try {
+      std::cout << "Try to initialize biclops head " << std::endl;
+      binit = biclops.Initialize(configfile);
+      usleep(100000);
+      if (binit) {
+        // Initialization completed successfully. Close the config file.
+        std::cout << "Initialization succeed...\n";
+        break;
+      }
+      else {
+        std::cout << "Initialization failed...\n";
+      }
     }
-
-    //Execute the homing sequence for all axes.
-    vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
-    if ( biclops.HomeAxes(axisMask))
-      vpDEBUG_TRACE(12, "Homing sequence succeed.");
-    else {
-      vpERROR_TRACE("Homing sequence failed. Program is stopped");
-      throw vpRobotException (vpRobotException::constructionError,
-			      "Cannot open connexion with biclops");
+    catch(...)
+    {
+      std::cout << "Initialization failed..."<< std::endl;
     }
-
-    // Get the currently defined (default) motion profiles.
-    //      PMDAxisControl::Profile panProfile,tiltProfile,vergeProfile;
-    panAxis->GetProfile(panProfile);
-    tiltAxis->GetProfile(tiltProfile);
-    if ((axisMask & Biclops::VergeMask) != 0)
-      vergeAxis->GetProfile(vergeProfile);
   }
-  else {
-    vpERROR_TRACE ("Cannot initialize biclops head.");
-    vpERROR_TRACE ("Check if the robot is powered on.");
-    vpERROR_TRACE ("Check if the serial cable is connected.");
-    vpERROR_TRACE ("Check if you try to open the good serial port.");
+
+  if (! binit) {
+    std::cout << "Cannot initialize biclops head. " << std::endl;
+    std::cout << "Check if the serial cable is connected." << std::endl;
+    std::cout << "Check if the robot is powered on." << std::endl;
+    std::cout << "Check if you try to open the good serial port." << std::endl;
+    std::cout << "Try to power off/on and restart..." << std::endl;
+
     throw vpRobotException (vpRobotException::notInitializedError,
-			    "Cannot initialize biclops head.");
+                "Cannot initialize biclops head.");
+
   }
 
+
+  vpDEBUG_TRACE(12, "Biclops initialized");
+
+  // Get shortcut references to each axis.
+  panAxis = biclops.GetAxis(Biclops::Pan);
+  tiltAxis = biclops.GetAxis(Biclops::Tilt);
+  if ((axisMask & Biclops::VergeMask) != 0)
+    vergeAxis = biclops.GetAxis(Biclops::Verge);
+
+
+  if (!panAxis -> IsAlreadyHomed() || !tiltAxis -> IsAlreadyHomed()) {
+    vpDEBUG_TRACE(12, "Biclops is not homed");
+  }
+
+  //Execute the homing sequence for all axes.
+  vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
+  vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
+  if ( biclops.HomeAxes(axisMask))
+    vpDEBUG_TRACE(12, "Homing sequence succeed.");
+  else {
+    vpERROR_TRACE("Homing sequence failed. Program is stopped");
+    throw vpRobotException (vpRobotException::constructionError,
+                            "Cannot open connexion with biclops");
+  }
+
+  // Get the currently defined (default) motion profiles.
+  //      PMDAxisControl::Profile panProfile,tiltProfile,vergeProfile;
+  panAxis->GetProfile(panProfile);
+  tiltAxis->GetProfile(tiltProfile);
+  if ((axisMask & Biclops::VergeMask) != 0)
+    vergeAxis->GetProfile(vergeProfile);
 }
 
 /*!
