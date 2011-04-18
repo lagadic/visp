@@ -230,10 +230,10 @@ main(int argc, const char ** argv)
   
   //The four point used as visual features
   vpPoint point[4] ;
-  point[0].setWorldCoordinates(-0.045,-0.045,0) ;
-  point[3].setWorldCoordinates(-0.045,0.045,0) ;
-  point[2].setWorldCoordinates(0.045,0.045,0) ;
-  point[1].setWorldCoordinates(0.045,-0.045,0) ;
+  point[0].setWorldCoordinates(-0.1,-0.1,0) ;
+  point[3].setWorldCoordinates(-0.1,0.1,0) ;
+  point[2].setWorldCoordinates(0.1,0.1,0) ;
+  point[1].setWorldCoordinates(0.1,-0.1,0) ;
   
   // Projection of the points
   for (int i = 0 ; i < 4 ; i++)
@@ -303,7 +303,7 @@ main(int argc, const char ** argv)
     ipath = opt_ipath;
   
   filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.pgm");
-  
+
   try
   {
     imsim.init(filename.c_str(), X);
