@@ -100,6 +100,11 @@ vpXmlParser::vpXmlParser(const vpXmlParser& _twin)
 char* 
 vpXmlParser::xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node)
 {
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read char*";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
   return (char *) xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
 }
 
@@ -116,6 +121,11 @@ vpXmlParser::xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node)
 std::string
 vpXmlParser::xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node)
 {
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read std::string";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
   char* dataCh = (char*)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
   std::string dataStr = dataCh;
   free(dataCh);
@@ -135,6 +145,11 @@ vpXmlParser::xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node)
 int 
 vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
 {
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read int";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
   char * val_char;
   char * control_convert;
   int val_int;
@@ -164,6 +179,11 @@ vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
 unsigned int 
 vpXmlParser::xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node)
 {
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read unsigned int";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
   char * val_char;
   char * control_convert;
   unsigned int val_uint;
@@ -194,6 +214,11 @@ vpXmlParser::xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node)
 double 
 vpXmlParser::xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node)
 {
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read double";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
   char * val_char;
   char * control_convert;
   double val_double;
