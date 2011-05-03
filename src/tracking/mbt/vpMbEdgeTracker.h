@@ -56,6 +56,7 @@
 #include <visp/vpMe.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpMbtDistanceLine.h>
+#include <visp/vpMbtDistanceCylinder.h>
 
 #include <iostream>
 #include <fstream>
@@ -90,7 +91,7 @@
 // For template instantiation with Visual Studio
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
 // These commented lines are not enought to suppress the following warning under Visual
-// C:\...\include\visp/vpMbEdgeTracker.h(140) : warning C4251: 'vpMbEdgeTracker::scales' : class 'std::vector<_Ty,_Ax>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'vpMbEdgeTracker'
+// C:\...\include\visp/vpMbEdgeTracker.h(140) : warning C4251: 'vpMbEdgeTracker::scales' : class 'std::vector<_Ty,_Ax>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'vpMbEdgeTracker'
 //        with
 //        [
 //            _Ty=bool,
@@ -239,8 +240,14 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     vpMe  me;
     //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
     std::vector< vpList< vpMbtDistanceLine*> > lines;
+    //! Vector of the tracked cylinders.
+    std::vector< vpList < vpMbtDistanceCylinder*> > cylinders;
+
     //! Index of the polygon to add, and total number of polygon extracted so far. 
-    unsigned int nline ;
+    unsigned int nline;
+
+    //! Index of the cylinder to add, and total number of polygon extracted so far.
+    unsigned int ncylinder;
     
     //! Index of the polygon to add, and total number of polygon extracted so far. Cannot be unsigned because the default index of a polygon is -1.
     int index_polygon;
@@ -322,6 +329,7 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   vpMbtPolygon* getPolygon(const unsigned int _index); 
   unsigned int getNbPolygon();
   vpList<vpMbtDistanceLine *>* getLline(const unsigned int _level = 0);
+  vpList<vpMbtDistanceCylinder *>* getLcylinder(const unsigned int _level = 0);
   
   void setScales(const std::vector<bool>& _scales);
   
@@ -342,7 +350,10 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   void addPolygon(vpMbtPolygon &p) ;
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
   void removeLine(const std::string& name);
+  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
+  void removeCylinder(const std::string& name);
   virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
+  virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0);
   
   void testTracking();
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);

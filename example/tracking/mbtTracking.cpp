@@ -64,7 +64,7 @@
 
 #if (defined VISP_HAVE_XML2)
 
-#define GETOPTARGS  "x:m:i:n:dchtf"
+#define GETOPTARGS  "x:m:i:n:dchtfC"
 
 
 void usage(const char *name, const char *badparam)
@@ -75,7 +75,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f]",
+  [-t] [-c] [-d] [-h] [-f] [-C]",
   name );
 
   fprintf(stdout, "\n\
@@ -104,9 +104,14 @@ OPTIONS:                                               \n\
      website. However, the .cao model allows to use the 3d model based tracker \n\
      without Coin.\n\
 \n\
+  -C                                  \n\
+     Track only the cube (not the cylinder). In this case the models files are\n\
+     cube.cao or cube.wrl instead of cube_and_cylinder.cao and \n\
+     cube_and_cylinder.wrl.\n\
+\n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
-     This base name is also used for the optionnal picture specifying where to \
+     This base name is also used for the optionnal picture specifying where to \n\
      click (a .ppm picture).\
 \n\
   -t \n\
@@ -127,7 +132,7 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display, bool& cao3DModel)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display, bool& cao3DModel, bool& trackCylinder)
 {
   const char *optarg;
   int   c;
@@ -142,6 +147,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
+    case 'C': trackCylinder = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -177,6 +183,7 @@ main(int argc, const char ** argv)
   bool opt_click_allowed = true;
   bool opt_display = true;
   bool cao3DModel = false;
+  bool trackCylinder = true;
   
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -189,8 +196,8 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display, cao3DModel) == false) {
-    exit (-1);
+  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display, cao3DModel, trackCylinder)) {
+    return (-1);
   }
 
   // Test if an input path is set
@@ -223,29 +230,39 @@ main(int argc, const char ** argv)
   if (!opt_modelFile.empty()){
     modelFile = opt_modelFile;
   }else{
+    std::string modelFileCao;
+    std::string modelFileWrl;
+    if(trackCylinder){
+      modelFileCao = "/ViSP-images/mbt/cube_and_cylinder.cao";
+      modelFileWrl = "/ViSP-images/mbt/cube_and_cylinder.wrl";
+    }else{
+      modelFileCao = "/ViSP-images/mbt/cube.cao";
+      modelFileWrl = "/ViSP-images/mbt/cube.wrl";
+    }
+
     if(!opt_ipath.empty()){
       if(cao3DModel){
-        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+        modelFile = opt_ipath + vpIoTools::path(modelFileCao);
       }
       else{
 #ifdef VISP_HAVE_COIN
-        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+        modelFile = opt_ipath + vpIoTools::path(modelFileWrl);
 #else
         std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
-        modelFile = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+        modelFile = opt_ipath + vpIoTools::path(modelFileCao);
 #endif
       }
     }
     else{
       if(cao3DModel){
-        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+        modelFile = env_ipath + vpIoTools::path(modelFileCao);
       }
       else{
 #ifdef VISP_HAVE_COIN
-        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.wrl");
+        modelFile = env_ipath + vpIoTools::path(modelFileWrl);
 #else
         std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
-        modelFile = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube.cao");
+        modelFile = env_ipath + vpIoTools::path(modelFileCao);
 #endif
       }
     }
@@ -326,13 +343,13 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed)
   {
     tracker.initClick(I, initFile.c_str(), true);
-
+    tracker.getPose(cMo);
     // display the 3D model at the given pose
     tracker.display(I,cMo, cam, vpColor::red);
   }
   else
   {
-    vpHomogeneousMatrix cMoi(-0.002774173802,-0.001058705951,0.2028195729,2.06760528,0.8287820106,-0.3974327515);
+    vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
     tracker.init(I,cMoi);
   }
 

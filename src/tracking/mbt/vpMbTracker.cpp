@@ -363,7 +363,18 @@ vpMbTracker::loadModel(const std::string& _modelFile)
 /*!
   Load the 3D model of the object from a vrml file. Only LineSet and FaceSet are
   extracted from the vrml file. 
-  
+
+  \warning The cylinders extracted using this method do not use the Cylinder
+  keyword of vrml since vrml exporter such as Blender or AC3D consider a
+  cylinder as an IndexedFaceSet. To test whether an indexedFaceSet is a cylinder
+  or not, the name of the geometry is read. If the name begins with "cyl" then
+  the faceset is supposed to be a cylinder. For example, the line
+  \code
+geometry DEF cyl_cylinder1 IndexedFaceSet
+  \endcode
+  defines a cylinder named cyl_cylinder1.
+
+
   \throw vpException::fatalError if the file cannot be open. 
   
   \param _modelFile : The full name of the file containing the 3D model.
@@ -426,7 +437,11 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
         {
           SoVRMLIndexedFaceSet * face_set;
           face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
-          extractFaces(face_set);
+          if(!strncmp(face_set->getName().getString(),"cyl",3)){
+            extractCylinders(face_set);
+          }else{
+            extractFaces(face_set);
+          }
         }
         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
         {
@@ -454,18 +469,20 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
   V1
   8 // Number of points describing the object
   0.01 0.01 0.01  //  \
-  ...             //  | coordinates of the points in the object frame
+  ...             //  | coordinates of the points in the object frame (in m.)
   0.01 0.01 0.01  // /
   3 // Number of lines to track. 
   0 2 //  \
   1 4 //  | Index of the points representing the extremities of the lines
   1 5 // /
   0 // Number of polygon (face) to track using the line previously described
-  // Face described as follow : nbPoint IndexLine1 indexLine2 ... indexLineN
+  // Face described as follow : nbLine IndexLine1 indexLine2 ... indexLineN
   3 // Number of polygon (face) to track using the line previously described
   4 0 2 3 4 // Face described as follow : nbPoint IndexPoint1 IndexPoint2 ... IndexPointN
   4 1 3 5 7
   3 1 5 6 
+  1 // Number of cylinder
+  6 7 0.05 // Index of the limits points on the axis (used to know the 'height' of the cylinder) and radius of the cyclinder (in m.)
   \endcode
   
   \param _modelFile : Full name of the .CAO file containing the model.
@@ -597,7 +614,6 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
   while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
   while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
   file_id.unget();
-
     
     /* Extract the polygon using the point coordinates (top of the file) */
   unsigned int caoNbrPolygonPoint;
@@ -615,6 +631,35 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
       file_id.ignore(256,'\n');
     }
     initFaceFromCorners(corners, k);
+  }
+
+
+  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+  file_id.unget();
+
+  if(file_id.eof()){// check if not at the end of the file (for old style files)
+    delete[] caoPoints;
+    delete[] caoLinePoints;
+    return ;
+  }
+
+    /* Extract the cylinders */
+  try{
+    unsigned int caoNbCylinder;
+    file_id >> caoNbCylinder;
+    std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
+    for(unsigned int k=0; k<caoNbCylinder; ++k){
+      double radius;
+      unsigned int indexP1, indexP2;
+      file_id >> indexP1;
+      file_id >> indexP2;
+      file_id >> radius;
+      initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
+    }
+
+  }catch(...){
+    std::cerr << "Cannot get the number of cylinder" << std::endl;
   }
   
   delete[] caoPoints;
@@ -668,6 +713,103 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
       corners.push_back(pt);
     }
   }
+}
+
+/*!
+  Extract a cylinder  to track from the VMRL model. This method calls
+  the initCylinder() method implemented in the child class.
+
+  \warning This method extract cylinder described using an indexed face set not
+  a cylinder set since software such as AC3D or blender export a cylinder using
+  this data type. the object name is used, if it begins with "cyl" then this
+  method is called otherwise the extractFaces() is used.
+
+  \param _face_set : Pointer to the cylinder in the vrml format.
+*/
+void
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set)
+{
+  std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
+  SoVRMLCoordinate* coords = (SoVRMLCoordinate *)_face_set->coord.getValue();
+
+  unsigned int indexListSize = (unsigned int)coords->point.getNum();
+
+  if(indexListSize % 2 == 1){
+    std::cout << "Not an even number of points when extracting a cylinder." << std::endl;
+    throw vpException(vpException::dimensionError, "Not an even number of points when extracting a cylinder.");
+  }
+  corners_c1.resize(indexListSize / 2);
+  corners_c2.resize(indexListSize / 2);
+  SbVec3f point(0,0,0);
+  vpPoint pt;
+
+
+  // extract all points and fill the two sets.
+  for(int i=0; i<coords->point.getNum(); ++i){
+    point[0]=coords->point[i].getValue()[0];
+    point[1]=coords->point[i].getValue()[1];
+    point[2]=coords->point[i].getValue()[2];
+
+    pt.setWorldCoordinates(point[0], point[1], point[2]);
+
+    if(i < (int)corners_c1.size()){
+      corners_c1[(unsigned int)i] = pt;
+    }else{
+      corners_c2[(unsigned int)i-corners_c1.size()] = pt;
+    }
+  }
+
+  vpPoint p1 = getGravityCenter(corners_c1);
+  vpPoint p2 = getGravityCenter(corners_c2);
+
+  vpColVector dist(3);
+  dist[0] = p1.get_oX() - corners_c1[0].get_oX();
+  dist[1] = p1.get_oY() - corners_c1[0].get_oY();
+  dist[2] = p1.get_oZ() - corners_c1[0].get_oZ();
+  double radius_c1 = sqrt(dist.sumSquare());
+  dist[0] = p2.get_oX() - corners_c2[0].get_oX();
+  dist[1] = p2.get_oY() - corners_c2[0].get_oY();
+  dist[2] = p2.get_oZ() - corners_c2[0].get_oZ();
+  double radius_c2 = sqrt(dist.sumSquare());
+
+  if(std::fabs(radius_c1 - radius_c2) > std::numeric_limits<double>::epsilon() * std::max(radius_c1, radius_c2)){
+    std::cout << "Radius from the two circles of the cylinders are different." << std::endl;
+    throw vpException(vpException::badValue, "Radius from the two circles of the cylinders are different.");
+  }
+
+  initCylinder(p1, p2, radius_c1);
+
+}
+
+/*!
+  Compute the center of gravity of a set of point. This is used in the cylinder
+  extraction to find the center of the circles.
+
+  \throw vpException::dimensionError if the set is empty.
+
+  \param _pts : Set of point to extract the center of gravity.
+  \return Center of gravity of the set.
+*/
+vpPoint
+vpMbTracker::getGravityCenter(const std::vector<vpPoint>& _pts)
+{
+  if(_pts.empty()){
+    std::cout << "Cannot extract center of gravity of empty set." << std::endl;
+    throw vpException(vpException::dimensionError, "Cannot extract center of gravity of empty set.");
+  }
+  double oX = 0;
+  double oY = 0;
+  double oZ = 0;
+  vpPoint G;
+
+  for(unsigned int i=0; i<_pts.size(); ++i){
+    oX += _pts[i].get_oX();
+    oY += _pts[i].get_oY();
+    oZ += _pts[i].get_oZ();
+  }
+
+  G.setWorldCoordinates(oX/_pts.size(), oY/_pts.size(), oZ/_pts.size());
+  return G;
 }
 
 

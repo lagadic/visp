@@ -261,6 +261,7 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbtMeLine.cpp
   tracking/mbt/vpMbEdgeTracker.cpp
   tracking/mbt/vpMbtXmlParser.cpp
+  tracking/mbt/vpMbtDistanceCylinder.cpp
   )
 
 SET (SRC_VIDEO
