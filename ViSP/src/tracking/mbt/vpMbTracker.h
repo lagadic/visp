@@ -213,7 +213,9 @@ protected:
 #ifdef VISP_HAVE_COIN
   virtual void extractFaces(SoVRMLIndexedFaceSet* _face_set);
   virtual void extractLines(SoVRMLIndexedLineSet* _line_set);
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* _face_set);
 #endif
+  vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
 
   /*!
     Add a face to track from its corners (in the object frame). This method is
@@ -224,6 +226,17 @@ protected:
     \param _indexFace : The index of the face.
   */
   virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1)=0;
+
+  /*!
+    Add a cylinder to track from two points on the axis (defining the length of
+    the cylinder) and its radius.
+
+    \param _p1 : First point on the axis.
+    \param _p2 : Second point on the axis.
+    \param _radius : Radius of the cylinder.
+    \param _indexCylinder : Index of the cylinder.
+  */
+  virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
   
 };
 

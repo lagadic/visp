@@ -251,6 +251,7 @@ SET (HEADER_TRACKING
   tracking/mbt/vpMbtMeLine.h
   tracking/mbt/vpMbEdgeTracker.h
   tracking/mbt/vpMbtXmlParser.h
+  tracking/mbt/vpMbtDistanceCylinder.h
   )
 
 SET (HEADER_VIDEO
