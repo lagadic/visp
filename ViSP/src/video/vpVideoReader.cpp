@@ -435,7 +435,7 @@ vpVideoReader::getFormat(const char *filename)
 
 
 /*!
-  Gets the last frame index
+  Get the last frame index (update the lastFrame attribute).
 */
 void
 vpVideoReader::findLastFrameIndex()
