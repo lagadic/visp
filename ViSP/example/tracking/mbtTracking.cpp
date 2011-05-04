@@ -83,7 +83,7 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mbt/cube/image.%%04d.ppm\". These \n\
+     \"ViSP-images/mbt/cube/image%%04d.ppm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -279,7 +279,12 @@ main(int argc, const char ** argv)
   vpVideoReader reader;
 
   reader.setFileName(ipath.c_str());
-  reader.open(I);
+  try{
+    reader.open(I);
+  }catch(...){
+    std::cout << "Cannot open sequence: " << ipath << std::endl;
+    return -1;
+  }
   
   reader.acquire(I);
 
