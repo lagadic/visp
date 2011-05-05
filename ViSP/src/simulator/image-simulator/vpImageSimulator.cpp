@@ -192,9 +192,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
+    for (unsigned int i = 0; i < I.getHeight(); i++)
     {
-      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
+      for (unsigned int j = 0; j < I.getWidth(); j++)
       {
 	I[i][j] = col;
       }
@@ -262,9 +262,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
+    for (unsigned int i = 0; i < I.getHeight(); i++)
     {
-      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
+      for (unsigned int j = 0; j < I.getWidth(); j++)
       {
 	I[i][j] = col;
       }
@@ -322,9 +322,9 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   if (cleanPrevImage)
   {
     unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
+    for (unsigned int i = 0; i < I.getHeight(); i++)
     {
-      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
+      for (unsigned int j = 0; j < I.getWidth(); j++)
       {
 	I[i][j] = col;
       }
@@ -395,9 +395,9 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam)
   int nb_point_dessine = 0;
   if (cleanPrevImage)
   {
-    for (unsigned int i = (unsigned int)rect.getTop(); i < (unsigned int)rect.getBottom(); i++)
+    for (unsigned int i = 0; i < I.getHeight(); i++)
     {
-      for (unsigned int j = (unsigned int)rect.getLeft(); j < (unsigned int)rect.getRight(); j++)
+      for (unsigned int j = 0; j < I.getWidth(); j++)
       {
 	I[i][j] = bgColor;
       }
