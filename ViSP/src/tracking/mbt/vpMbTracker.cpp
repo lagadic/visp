@@ -46,9 +46,12 @@
   \file vpMbTracker.cpp
   \brief Generic model based tracker
 */
+#include <iostream>
+#include <limits>
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
 #include <visp/vpColVector.h>
 #include <visp/vpPoint.h>
 #include <visp/vpPose.h>
@@ -772,7 +775,7 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set)
   dist[2] = p2.get_oZ() - corners_c2[0].get_oZ();
   double radius_c2 = sqrt(dist.sumSquare());
 
-  if(std::fabs(radius_c1 - radius_c2) > std::numeric_limits<double>::epsilon() * std::max(radius_c1, radius_c2)){
+  if(std::fabs(radius_c1 - radius_c2) > (std::numeric_limits<double>::epsilon() * vpMath::maximum(radius_c1, radius_c2))){
     std::cout << "Radius from the two circles of the cylinders are different." << std::endl;
     throw vpException(vpException::badValue, "Radius from the two circles of the cylinders are different.");
   }

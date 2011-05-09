@@ -46,10 +46,12 @@
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
+#include <limits>
+#include <string>
+#include <sstream>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-
 #include <visp/vpPose.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -59,16 +61,13 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpMatrixException.h>
-
+#include <visp/vpMath.h>
 #include <visp/vpException.h>
 #include <visp/vpTrackingException.h>
-
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
 
-#include <string>
-#include <sstream>
 
 /*!
   Basic constructor
@@ -1347,7 +1346,7 @@ vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double 
         cy = cylinders[i].value() ;
         if((samePoint(*(cy->p1),P1) && samePoint(*(cy->p2),P2)) ||
            (samePoint(*(cy->p1),P2) && samePoint(*(cy->p2),P1)) ){
-          already_here = std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * std::max(cy->radius, r);
+          already_here = (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
         }
         cylinders[i].next() ;
       }
