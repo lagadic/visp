@@ -56,6 +56,8 @@
   See http://www.traclabs.com/tracbiclops.htm for more details.
 */
 
+#include <stdlib.h>
+
 #include <visp/vpParseArgv.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>

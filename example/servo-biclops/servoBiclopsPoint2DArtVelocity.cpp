@@ -63,6 +63,7 @@
 */
 
 #include <signal.h>
+#include <stdlib.h>
 
 #include <visp/vpTime.h>
 #include <visp/vpConfig.h>
