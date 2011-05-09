@@ -49,6 +49,7 @@
 #include <limits>
 #include <string>
 #include <sstream>
+#include <float.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
