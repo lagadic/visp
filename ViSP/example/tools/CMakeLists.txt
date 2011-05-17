@@ -47,6 +47,7 @@ SET (SOURCE
   keyboard.cpp
   parallelPort.cpp
   plot.cpp
+  histogram.cpp
 )
 
 # rule for binary build
@@ -62,6 +63,8 @@ FOREACH(source ${SOURCE})
   #ADD_TEST(${binary} ${binary})
 
 ENDFOREACH(source)
+
+ADD_TEST(histogram histogram)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
