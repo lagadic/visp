@@ -117,7 +117,13 @@ vpRobotSimulator::~vpRobotSimulator()
 void
 vpRobotSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject)
 {
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   vpWireFrameSimulator::initScene(obj, desiredObject);
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   displayCamera = false;
 }
 
@@ -134,7 +140,13 @@ vpRobotSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObjec
 void
 vpRobotSimulator::initScene(const char* obj, const char* desiredObject)
 {
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   vpWireFrameSimulator::initScene(obj, desiredObject);
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   displayCamera = false;
 }
 
@@ -149,7 +161,13 @@ vpRobotSimulator::initScene(const char* obj, const char* desiredObject)
 void
 vpRobotSimulator::initScene(vpSceneObject obj)
 {
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   vpWireFrameSimulator::initScene(obj);
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   displayCamera = false;
 }
 
@@ -164,7 +182,13 @@ vpRobotSimulator::initScene(vpSceneObject obj)
 void
 vpRobotSimulator::initScene(const char* obj)
 {
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   vpWireFrameSimulator::initScene(obj);
+  if(displayCamera){
+    free_Bound_scene (&(this->camera));
+  }
   displayCamera = false;
 }
 

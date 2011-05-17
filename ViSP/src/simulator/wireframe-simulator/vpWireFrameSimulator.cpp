@@ -576,8 +576,9 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
   {
     if(displayObject)
       free_Bound_scene (&(this->scene));
-    if(displayCamera)
+    if(displayCamera){
       free_Bound_scene (&(this->camera));
+    }
     if(displayDesiredObject)
       free_Bound_scene (&(this->desiredScene));
   }
