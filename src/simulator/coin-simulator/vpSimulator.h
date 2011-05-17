@@ -282,6 +282,8 @@ protected:
 public:
   //! image of the internal view
   unsigned char * bufferView;
+
+  //! Flag to protect the read and write of the framebuffer (between the simulator and the viewer).
   int get ;
 public:
   //! get the image corresponding to the internal view
