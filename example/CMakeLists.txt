@@ -47,7 +47,6 @@ SET (SRC_SUBDIRS
   coin-simulator
   direct-visual-servoing
   framegrabber
-  histogram
   homography
   image
   key-point
