@@ -587,6 +587,11 @@ void vpFFMPEG::closeStream()
   }
   
   encoderWasOpened = false;
+
+  if(streamWasInitialized){
+    sws_freeContext (img_convert_ctx);
+  }
+  streamWasInitialized = false;
 }
 
 /*!
