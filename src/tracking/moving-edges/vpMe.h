@@ -77,16 +77,15 @@ public:
   double mu2; //! Contrast continuity parameter(right boundary)
   double min_samplestep;
   unsigned int anglestep;
-	// convolution masks' size in pixels (masks are square)
-  unsigned int mask_size;
-  // the number of convolution masks available for tracking ;
-	// defines resolution
-  unsigned int n_mask;
   int mask_sign;
-  unsigned int range; //seek range - on both sides of the reference pixel
-  double sample_step; // Distance between sampled points (in pixels)
+  unsigned int range; //! Seek range - on both sides of the reference pixel
+  double sample_step; //! Distance between sampled points (in pixels)
   int ntotal_sample;
   int points_to_track;
+  //! convolution masks' size in pixels (masks are square), \warning should not be public, use setMaskSize() and getMaskSize() instead (kept public for compatibility reasons).
+  unsigned int mask_size;
+  //! the number of convolution masks available for tracking ; defines resolution. \warning Should not be public, use setMaskNumber() and getMaskNumber() instead (kept public for compatibility reasons).
+  unsigned int n_mask;
 
   //strip: defines a "security strip" such that Seek_Extremities()
   //cannot return a new extremity which is too close to the
@@ -96,6 +95,7 @@ public:
   double aberration;
   double init_aberration;
   //int graph ;
+  //! Array of matrices defining the different masks (one for every angle step).
   vpMatrix *mask ;
 
   vpMe() ;
@@ -108,23 +108,44 @@ public:
   void initMask() ;// convolution masks - offset computation
   void print( ) ;
 
-  void setThreshold(double lambda) { threshold = lambda ; }
-  void setPointsToTrack(int number) { points_to_track = number ; }
-  void setAngleStep(unsigned int a) { anglestep =a  ; }
-  void setRange(unsigned int a) { range =a  ; }
-  void setMu1(double a) { mu1 =a  ; }
-  void setMu2(double a) { mu2 =a  ; }
-  void setMaskNumber(unsigned int a) ;
-  void setMaskSign(int a){mask_sign = a ; }
-  void setMaskSize(unsigned int a) ;
-  double getSampleStep() { return sample_step ; }
-  void setSampleStep(double a) { sample_step = a ; }
-  void setStrip(int a) { strip = a ; }
+  void setThreshold(const double lambda) { threshold = lambda ; }
+  void setPointsToTrack(const int number) { points_to_track = number ; }
+  void setAngleStep(const unsigned int a) { anglestep =a  ; }
+  void setRange(const unsigned int a) { range =a  ; }
+  void setMu1(const double a) { mu1 =a  ; }
+  void setMu2(const double a) { mu2 =a  ; }
+  void setMaskNumber(const unsigned int a) ;
+  void setMaskSign(const int a){mask_sign = a ; }
+  void setMaskSize(const unsigned int a) ;
+  double getSampleStep() const { return sample_step ; }
+  void setSampleStep(const double a) { sample_step = a ; }
+  void setStrip(const int a) { strip = a ; }
   // in CPixel.convolution() : avoids to get points (In Appariement()
   // and SeekExtremities()) that Get_Sampling_Grid()
   // would reject since too close to the frame borders ;
-  void setMinSamplestep(double a) { min_samplestep = a ; }
+  void setMinSamplestep(const double a) { min_samplestep = a ; }
   //sets the minimum samplestep in pixels ;
+
+  /*!
+    Return the actual mask size. The mask size defines the size of the
+    convolution mask used to detect an edge.
+
+    \return the current mask size.
+  */
+  unsigned int getMaskSize() const {
+    return mask_size;
+  }
+
+  /*!
+    Return the number of mask. The number of mask determines the precision of
+    the normal of the edge for every sample. If precision is 2deg, then there
+    are 360/2 = 180 masks.
+
+    \return the current number of mask.
+  */
+  unsigned int getMaskNumber() const{
+    return n_mask;
+  }
 
   void setAberration( double a) { aberration = a ; }
   void setInitAberration(double a ) { init_aberration = a ; }

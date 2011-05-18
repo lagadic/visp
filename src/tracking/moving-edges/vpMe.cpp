@@ -359,6 +359,11 @@ calcul_masques(vpColVector &angle, // définitions des angles theta
 
 #endif
 
+/*!
+  Initialise the array of matrices with the defined size and the number of
+  matrices to create.
+
+*/
 void
 vpMe::initMask()
 {
