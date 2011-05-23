@@ -123,7 +123,9 @@ public:
   // Needed in order to use it in vpList
   friend std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void getSign(const vpImage<unsigned char> &I, const int range) ;
+#endif
   double convolution(const vpImage<unsigned char>& ima, const vpMe *me) ;
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range) ;
