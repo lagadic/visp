@@ -69,6 +69,13 @@
 #    undef _STDINT_H_
 #  endif
 #  include <stdint.h>
+
+#  ifndef INT64_C
+#    define INT64_C(c) (c ## LL)
+#  endif
+#  ifndef UINT64_C
+#    define UINT64_C(c) (c ## ULL)
+#  endif
 #endif
 // end fix
 
