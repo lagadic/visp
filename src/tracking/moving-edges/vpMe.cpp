@@ -477,7 +477,7 @@ vpMe::~vpMe()
   Set the number of oriented masks used to perform the convolution.
 */
 void
-vpMe::setMaskNumber(unsigned int a)
+vpMe::setMaskNumber(const unsigned int a)
 {
   n_mask = a  ;
   anglestep = 180 / a ;
@@ -488,7 +488,7 @@ vpMe::setMaskNumber(unsigned int a)
   Set the size of the oriented masks used to perform the convolution.
 */
 void
-vpMe::setMaskSize(unsigned int a)
+vpMe::setMaskSize(const unsigned int a)
 {
   mask_size = a  ;
   initMask() ;
