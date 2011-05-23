@@ -352,8 +352,8 @@ void
 vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	unsigned int d_size = this->m_ecm.mask_size;
-	unsigned int d_nb_mask = this->m_ecm.n_mask;
+  unsigned int d_size = this->m_ecm.getMaskSize();
+  unsigned int d_nb_mask = this->m_ecm.getMaskNumber();
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -382,8 +382,8 @@ vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
 	  this->m_ecm.setMaskNumber(d_nb_mask);
 	
 	  std::cout << "**** mask:\n";
-	  std::cout << "size "<< this->m_ecm.mask_size<<std::endl;
-	  std::cout << "nb_mask "<< this->m_ecm.n_mask<<std::endl;
+    std::cout << "size "<< this->m_ecm.getMaskSize() <<std::endl;
+    std::cout << "nb_mask "<< this->m_ecm.getMaskNumber() <<std::endl;
   }
 	else{
 		std::cout <<"ERROR in 'mask' field:\n";
