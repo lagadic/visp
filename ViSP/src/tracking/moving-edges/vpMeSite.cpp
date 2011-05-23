@@ -248,6 +248,7 @@ vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
   return(list_query_pixels) ;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 // ===================================================================
 /*!
  * get the sign (according to the difference of values of the intensities of the extremities).
@@ -279,7 +280,7 @@ vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
   // TODO: Here check if i1,j1,i2,j2 > 0 else ?? 
   if (I[i1][j1] > I[i2][j2]) mask_sign = 1 ; else mask_sign = -1 ;
 }
-
+#endif
 
 // Specific function for ME
 double
@@ -288,7 +289,7 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
 
   unsigned int half, index_mask ;
   double conv = 0.0 ;
-  half = (me->mask_size - 1) >> 1 ;
+  half = (me->getMaskSize() - 1) >> 1 ;
 
   if(horsImage( i , j , half + me->strip , I.getHeight(), I.getWidth()))
   {
@@ -318,10 +319,10 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
     int jhalf = j-half ;
     int ihalfa ;
     
-    for(unsigned int a = 0 ; a < me->mask_size ; a++ )
+    for(unsigned int a = 0 ; a < me->getMaskSize() ; a++ )
     {
       ihalfa = ihalf+a ;
-      for(unsigned int b = 0 ; b < me->mask_size ; b++ )
+      for(unsigned int b = 0 ; b < me->getMaskSize() ; b++ )
       {
 	conv += mask_sign* me->mask[index_mask][a][b] *
 	  //	  I(i-half+a,j-half+b) ;
