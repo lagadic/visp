@@ -109,7 +109,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
     double conv = 0.0;
     unsigned int half;
     int index_mask;
-    half = (me->mask_size - 1) >> 1 ;
+    half = (me->getMaskSize() - 1) >> 1 ;
 
     if(outOfImage( iP , (int)half + me->strip , Iheight, Iwidth))
     {
@@ -127,10 +127,10 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
       unsigned int ihalfa ;
       unsigned int a ;
       unsigned int b ;
-      for( a = 0 ; a < me->mask_size ; a++ )
+      for( a = 0 ; a < me->getMaskSize() ; a++ )
       {
         ihalfa = ihalf+a ;
-        for( b = 0 ; b < me->mask_size ; b++ )
+        for( b = 0 ; b < me->getMaskSize() ; b++ )
         {
 	  conv += me->mask[index_mask][a][b] *
 	  I(ihalfa,jhalf+b) ;
