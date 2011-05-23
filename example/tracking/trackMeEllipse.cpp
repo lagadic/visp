@@ -293,7 +293,6 @@ main(int argc, const char ** argv)
   me.setPointsToTrack(60) ;
   me.setThreshold(15000) ;
 
-
   E1.setMe(&me) ;
   E1.setDisplay(vpMeSite::RANGE_RESULT) ;
   if (opt_click_allowed)
@@ -302,11 +301,11 @@ main(int argc, const char ** argv)
     // Create a list of points to automate the test
     unsigned int n=5 ;
     vpImagePoint *ip = new vpImagePoint [n];
-    ip[0].set_i( 30 ); ip[0].set_j( 331 );
-    ip[1].set_i( 62 ); ip[1].set_j( 171 );
-    ip[2].set_i( 212 ); ip[2].set_j( 50 );
-    ip[3].set_i( 234 ); ip[3].set_j( 196 );
-    ip[4].set_i( 178 ); ip[4].set_j( 353 );
+    ip[0].set_i( 33 ); ip[0].set_j( 276 );
+    ip[1].set_i( 83 ); ip[1].set_j( 126 );
+    ip[2].set_i( 201 ); ip[2].set_j( 36 );
+    ip[3].set_i( 243 ); ip[3].set_j( 164 );
+    ip[4].set_i( 195 ); ip[4].set_j( 329 );
     E1.initTracking(I, n, ip) ;
     delete [] ip ;
   }
