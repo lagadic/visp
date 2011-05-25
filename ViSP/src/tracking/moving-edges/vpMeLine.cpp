@@ -104,6 +104,7 @@ vpMeLine::vpMeLine():vpMeTracker()
 {
   sign = 1;
   angle_1 = 90;
+  _useIntensityForRho = true;
 }
 /*!
 
@@ -123,6 +124,7 @@ vpMeLine::vpMeLine(const vpMeLine &meline):vpMeTracker(meline)
   a = meline.a;
   b = meline.b;
   c = meline.c;
+  _useIntensityForRho = meline._useIntensityForRho;
   PExt[0] = meline.PExt[0];
   PExt[1] = meline.PExt[1];
 }
@@ -346,7 +348,7 @@ vpMeLine::leastSquare()
   unsigned int nos_1 = 0 ;
   double distance = 100;
 
-  if (list.nbElement() < 2)
+  if (list.nbElement() <= 2 || numberOfSignal() <= 2)
   {
     //vpERROR_TRACE("Not enough point") ;
     vpCDEBUG(1) << "Not enough point";
@@ -945,110 +947,114 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
   theta = atan2(b,a) ;
   while (theta >= M_PI)    theta -=M_PI ;
   while (theta < 0)    theta +=M_PI ;
+  
+  if(_useIntensityForRho){
+  
+    /*  while(theta < -M_PI)	theta += 2*M_PI ;
+    while(theta >= M_PI)	theta -= 2*M_PI ;
 
-  /*  while(theta < -M_PI)	theta += 2*M_PI ;
-  while(theta >= M_PI)	theta -= 2*M_PI ;
-
-  // If theta is between -90 and -180 get the equivalent
-  // between 0 and 90
-  if(theta <-M_PI/2)
-    {
-      theta += M_PI ;
-      rho *= -1 ;
-    }
-  // If theta is between 90 and 180 get the equivalent
-  // between 0 and -90
-  if(theta >M_PI/2)
-    {
-      theta -= M_PI ;
-      rho *= -1 ;
-    }
-  */
-  // convention pour choisir le signe de rho
-  int i,j ;
-  i = vpMath::round((PExt[0].ifloat + PExt[1].ifloat )/2) ;
-  j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
-
-  int  end = false ;
-  int incr = 10 ;
-
-  int i1=0,i2=0,j1=0,j2=0 ;
-  unsigned char v1=0,v2=0 ;
-  while (!end)
-    {
-      end = true;
-      /*i1 = (int)(i + a *incr) ;
-      j1 = (int)(j + b *incr) ;*/
-      i1 = (int)(i + cos(theta) *incr) ;
-      j1 = (int)(j + sin(theta) *incr) ;
-      v1 = I[i1][j1] ;
-
-
-      /*i2 = (int)(i - a *incr) ;
-      j2 = (int)(j - b *incr) ;*/
-      i2 = (int)(i - cos(theta) *incr) ;
-      j2 = (int)(j - sin(theta) *incr) ;
-      v2 = I[i2][j2] ;
-
-
-      if (abs(v1-v2) < 1)
+    // If theta is between -90 and -180 get the equivalent
+    // between 0 and 90
+    if(theta <-M_PI/2)
       {
-
-	incr-- ;
-	end = false ;
-	if (incr==1)
-	{
-	  std::cout << "In CStraightLine::GetParameters() " ;
-	  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
-	}
+        theta += M_PI ;
+        rho *= -1 ;
       }
-    }
-
-  if (theta >=0 && theta <= M_PI/2)
-  {
-    if (v2 < v1)
-    {
-      theta += M_PI;
-      rho *= -1;
-    }
-  }
-
-  else
-  {
-    double jinter;
-    jinter = -c/b;
-    if (v2 < v1)
-    {
-      theta += M_PI;
-      if (jinter > 0)
+    // If theta is between 90 and 180 get the equivalent
+    // between 0 and -90
+    if(theta >M_PI/2)
       {
+        theta -= M_PI ;
+        rho *= -1 ;
+      }
+    */
+    // convention pour choisir le signe de rho
+    int i,j ;
+    i = vpMath::round((PExt[0].ifloat + PExt[1].ifloat )/2) ;
+    j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
+
+    int  end = false ;
+    int incr = 10 ;
+
+    int i1=0,i2=0,j1=0,j2=0 ;
+    unsigned char v1=0,v2=0 ;
+    while (!end)
+      {
+        end = true;
+        /*i1 = (int)(i + a *incr) ;
+        j1 = (int)(j + b *incr) ;*/
+        i1 = (int)(i + cos(theta) *incr) ;
+        j1 = (int)(j + sin(theta) *incr) ;
+        v1 = I[i1][j1] ;
+
+
+        /*i2 = (int)(i - a *incr) ;
+        j2 = (int)(j - b *incr) ;*/
+        i2 = (int)(i - cos(theta) *incr) ;
+        j2 = (int)(j - sin(theta) *incr) ;
+        v2 = I[i2][j2] ;
+
+
+        if (abs(v1-v2) < 1)
+        {
+
+    incr-- ;
+    end = false ;
+    if (incr==1)
+    {
+      std::cout << "In CStraightLine::GetParameters() " ;
+      std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
+    }
+        }
+      }
+
+    if (theta >=0 && theta <= M_PI/2)
+    {
+      if (v2 < v1)
+      {
+        theta += M_PI;
         rho *= -1;
       }
     }
 
     else
     {
-      if (jinter < 0)
+      double jinter;
+      jinter = -c/b;
+      if (v2 < v1)
       {
-        rho *= -1;
+        theta += M_PI;
+        if (jinter > 0)
+        {
+          rho *= -1;
+        }
       }
+
+      else
+      {
+        if (jinter < 0)
+        {
+          rho *= -1;
+        }
+      }
+    }
+
+    if (vpDEBUG_ENABLE(2))
+    {
+      vpImagePoint ip, ip1, ip2;
+
+      ip.set_i( i );
+      ip.set_j( j );
+      ip1.set_i( i1 );
+      ip1.set_j( j1 );
+      ip2.set_i( i2 );
+      ip2.set_j( j2 );
+
+      vpDisplay::displayArrow(I, ip, ip1, vpColor::green) ;
+      vpDisplay::displayArrow(I, ip, ip2, vpColor::red) ;
     }
   }
 
-  if (vpDEBUG_ENABLE(2))
-  {
-    vpImagePoint ip, ip1, ip2;
-
-    ip.set_i( i );
-    ip.set_j( j );
-    ip1.set_i( i1 );
-    ip1.set_j( j1 );
-    ip2.set_i( i2 );
-    ip2.set_j( j2 );
-
-    vpDisplay::displayArrow(I, ip, ip1, vpColor::green) ;
-    vpDisplay::displayArrow(I, ip, ip2, vpColor::red) ;
-  }
 }
 
 /*!

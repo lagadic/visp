@@ -161,6 +161,9 @@ protected:
   double angle, angle_1;
   int sign;
 
+  //! Flag to specify wether the intensity of the image at the middle point is used to compute the sign of rho or not.
+  bool _useIntensityForRho;
+
 public:
   double a; //!< Parameter a of the line equation a*i + b*j + c = 0
   double b; //!< Parameter a of the line equation a*i + b*j + c = 0
@@ -195,6 +198,18 @@ public:
   static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
 			   vpImagePoint &ip); 
 
+  /*!
+    This method allows to turn off the computation of the sign of the rho
+    attribute based on the intensity near the middle point of the line. This is
+    usually done to distinguish between a black/white and a white/black edge but
+    it may be source of problem (ex. for a servoing example) when this point can
+    be occluded.
+
+    \param useIntensityForRho : new value of the flag.
+  */
+  inline void computeRhoSignFromIntensity(const bool useIntensityForRho){
+    _useIntensityForRho = useIntensityForRho;
+  }
  
 };
 
