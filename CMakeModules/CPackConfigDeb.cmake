@@ -38,6 +38,7 @@
 #
 #############################################################################
 
+
 # To install the generated debian package use the gdebi-gtk package 
 # installer on Ubuntu:
 # gdebi-gtk libvisp-2.6.1-dev.deb
@@ -47,10 +48,24 @@
 # there exist a soqt package
 # cmake -DUSE_OPENCV=OFF -DUSE_SOQT=ON
 
+# $ dpkg --print-architecture
+FIND_PROGRAM(DPKG_CMD dpkg)
+IF(NOT DPKG_CMD)
+  MESSAGE(STATUS "Can not find dpkg in your path, default to i386.")
+  SET(CPACK_SYSTEM_NAME i386)
+ELSE()
+  EXECUTE_PROCESS(COMMAND "${DPKG_CMD}" --print-architecture
+    OUTPUT_VARIABLE CPACK_SYSTEM_NAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+ENDIF()
+
+set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Debian package install prefix" FORCE)
+
 set(BUILD_SHARED_LIBS CACHE FORCE "Build ViSP with shared libraries." ON)
 list(APPEND CPACK_GENERATOR DEB)
 
-set(CPACK_PACKAGE_FILE_NAME "libvisp-${VISP_VERSION}-dev")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${VISP_VERSION}_${VISP_REVISION}_${CPACK_SYSTEM_NAME}")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "cmake (>=2.6), libx11-dev (>=2:1.3.2), libgsl0-dev (>=1.13), libv4l-dev (>=0.6.4), libdc1394-22-dev (>=2.1.2), libxml2-dev (>=2.7.2), libpng12-dev (>=1.2.42), libjpeg62-dev (>=6b-15), libswscale-dev (>=4:0.5.1), libavutil-dev (>=4:0.5.1), libavformat-dev (>=4:0.5.1), libavcodec-dev (>=4:0.5.1), libbz2-dev (>=1.0.5-4), libbz2-1.0 (>=1.0.5-4), libcoin60-dev (>=3.1.2-1), libsoqt4-dev (>=1.4.2~svn20090224-2)")
 
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\r\rViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform\rlibrary that allows prototyping and developing applications in visual tracking\rand visual servoing. \r\rThis package contains headers and library necessary for developing software\rthat uses ViSP. \r\rViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")
