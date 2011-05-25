@@ -45,6 +45,9 @@ ViSP 2.6.1 (under development)
      - [12329] Bad font problem when opening vpPlot example
      - [12334] Under windows, link errors when some 3rd party libs are not
        build in the same build configuration as ViSP 
+     - [12499] servoSimu4Points: World point disposition does not match camera
+     - [12591] Seg fault when using setCleanPreviousImage() from 
+       vpImageSimulator
      - [12739] Problem initialising a vpMeEllipse
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)

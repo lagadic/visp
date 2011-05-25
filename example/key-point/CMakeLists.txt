@@ -62,7 +62,7 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(planarObjectDetector planarObjectDetector -l -d -c)
+#ADD_TEST(planarObjectDetector planarObjectDetector -l -d -c)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

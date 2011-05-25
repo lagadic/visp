@@ -465,6 +465,7 @@ vpSimulatorAfma6::updateArticularPosition()
     computeArticularVelocity();
     
     double ellapsedTime = tcur - tprev;
+    std::cout << "tps: " << ellapsedTime << std::endl;exit(0);
     
     vpColVector articularCoordinates = get_artCoord();
     articularCoordinates = get_artCoord();

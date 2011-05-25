@@ -63,7 +63,6 @@ SET (SRC_COMPUTER_VISION
   computer-vision/pose-estimation/vpLevenbergMarquartd.cpp
   computer-vision/pose-estimation/vpPose.cpp
   computer-vision/pose-estimation/vpPoseDementhon.cpp
-  computer-vision/pose-estimation/vpPoseException.cpp
   computer-vision/pose-estimation/vpPoseLagrange.cpp
   computer-vision/pose-estimation/vpPoseLowe.cpp
   computer-vision/pose-estimation/vpPoseRansac.cpp
@@ -75,26 +74,34 @@ SET (SRC_EXCEPTION
   )
 
 SET (SRC_FRAMEGRABBER_DEVICE
-  framegrabber-device/1394/vp1394Grabber.cpp
-  framegrabber-device/1394/vp1394TwoGrabber.cpp
   framegrabber-device/disk/vpDiskGrabber.cpp
-  framegrabber-device/generic-framegrabber/vpFrameGrabberException.cpp
-  framegrabber-device/v4l2/vpV4l2Grabber.cpp 
-  framegrabber-device/directshow/vpDirectShowGrabber.cpp
-  framegrabber-device/directshow/vpDirectShowGrabberImpl.cpp
-  framegrabber-device/directshow/vpDirectShowDevice.cpp
-  framegrabber-device/directshow/vpDirectShowSampleGrabberI.cpp
-  framegrabber-device/OpenCV/vpOpenCVGrabber.cpp
   )
+
+IF(VISP_HAVE_DC1394_1)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/1394/vp1394Grabber.cpp)
+ENDIF()
+IF(VISP_HAVE_DC1394_2)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/1394/vp1394TwoGrabber.cpp)
+ENDIF()
+IF(VISP_HAVE_V4L2)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/v4l2/vpV4l2Grabber.cpp)
+ENDIF()
+IF(VISP_HAVE_DIRECTSHOW)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowGrabber.cpp)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowGrabberImpl.cpp)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowDevice.cpp)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowSampleGrabberI.cpp)
+ENDIF()
+IF(VISP_HAVE_OPENCV)
+  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/OpenCV/vpOpenCVGrabber.cpp)
+ENDIF()
 
 SET (SRC_IMAGE
   image/vpColor.cpp
   image/vpImageConvert.cpp
-  image/vpImageException.cpp
   image/vpImageFilter.cpp
   image/vpImageIo.cpp
   image/vpImageIoPnm.cpp
-  image/vpImageMorphology.cpp
   image/vpImageTools.cpp
   image/vpRGBa.cpp
   image/vpImagePoint.cpp
@@ -102,18 +109,23 @@ SET (SRC_IMAGE
 
 SET (SRC_KEY_POINT
   key-point/vpBasicKeyPoint.cpp
-  key-point/vpKeyPointSurf.cpp
-  key-point/vpPlanarObjectDetector.cpp
-  key-point/vpFernClassifier.cpp
   )
+
+IF(VISP_HAVE_OPENCV)
+  LIST(APPEND SRC_KEY_POINT key-point/vpKeyPointSurf.cpp)
+  LIST(APPEND SRC_KEY_POINT key-point/vpPlanarObjectDetector.cpp)
+  LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
+ENDIF()
 
 SET (SRC_LASERSCANNER
   laserscanner/sick/vpSickLDMRS.cpp
   )
 
-SET (SRC_LIGHT
-  light/vpRingLight.cpp
-  )
+IF(VISP_HAVE_PARPORT)
+  SET (SRC_LIGHT
+    light/vpRingLight.cpp
+    )
+ENDIF()
 
 SET (SRC_MATH
   math/kalman/vpKalmanFilter.cpp
@@ -122,7 +134,6 @@ SET (SRC_MATH
   math/matrix/vpMatrix.cpp
   math/matrix/vpMatrix_lu.cpp
   math/matrix/vpMatrix_svd.cpp
-  math/matrix/vpMatrixException.cpp
   math/matrix/vpRowVector.cpp
   math/matrix/vpSubMatrix.cpp
   math/matrix/vpSubColVector.cpp
@@ -151,44 +162,51 @@ SET (SRC_MATH
 
 SET (SRC_ROBOT
   robot/robot/vpRobot.cpp
-  robot/robot/vpRobotException.cpp
   robot/robot/vpRobotTemplate.cpp
   robot/real-robot/afma4/vpAfma4.cpp
-  robot/real-robot/afma4/vpRobotAfma4.cpp
-  robot/real-robot/afma4/vpServolens.cpp
   robot/real-robot/afma6/vpAfma6.cpp
-  robot/real-robot/afma6/vpRobotAfma6.cpp
   robot/real-robot/biclops/vpBiclops.cpp
-  robot/real-robot/biclops/vpRobotBiclopsController.cpp
-  robot/real-robot/biclops/vpRobotBiclops.cpp
-  robot/real-robot/cycab/vpRobotCycab.cpp
   robot/real-robot/ptu46/vpPtu46.cpp
-  robot/real-robot/ptu46/vpRobotPtu46.cpp
   robot/real-robot/viper/vpViper.cpp
   robot/real-robot/viper/vpViper850.cpp
-  robot/real-robot/viper/vpRobotViper850.cpp
   robot/simulator-robot/vpRobotCamera.cpp
   robot/simulator-robot/vpRobotSimulator.cpp
   robot/simulator-robot/vpSimulatorViper850.cpp
   robot/simulator-robot/vpSimulatorAfma6.cpp
   )
 
+IF(VISP_HAVE_AFMA4)
+  LIST(APPEND SRC_ROBOT robot/real-robot/afma4/vpRobotAfma4.cpp)
+ENDIF()
+IF(UNIX)
+  LIST(APPEND SRC_ROBOT robot/real-robot/afma4/vpServolens.cpp)
+ENDIF()
+IF(VISP_HAVE_AFMA6)
+  LIST(APPEND SRC_ROBOT robot/real-robot/afma6/vpRobotAfma6.cpp)
+ENDIF()
+IF(VISP_HAVE_BICLOPS)
+  LIST(APPEND SRC_ROBOT robot/real-robot/biclops/vpRobotBiclopsController.cpp)
+  LIST(APPEND SRC_ROBOT robot/real-robot/biclops/vpRobotBiclops.cpp)
+ENDIF()
+IF(VISP_HAVE_CYCAB)
+  LIST(APPEND SRC_ROBOT robot/real-robot/cycab/vpRobotCycab.cpp)
+ENDIF()
+IF(VISP_HAVE_PTU46)
+  LIST(APPEND SRC_ROBOT robot/real-robot/ptu46/vpRobotPtu46.cpp)
+ENDIF()
+IF(VISP_HAVE_VIPER850)
+  LIST(APPEND SRC_ROBOT robot/real-robot/viper/vpRobotViper850.cpp)
+ENDIF()
 
 SET (SRC_SERVO
   servo/vpAdaptativeGain.cpp
   servo/vpServo.cpp
   servo/vpServoData.cpp
   servo/vpServoDisplay.cpp
-  servo/vpServoException.cpp
   )
 
 SET (SRC_SIMULATOR
-  simulator/coin-simulator/vpAR.cpp
   simulator/coin-simulator/vpProjectionDisplay.cpp
-  simulator/coin-simulator/vpSimulator.cpp
-  simulator/coin-simulator/vpSimulatorException.cpp
-  simulator/coin-simulator/vpViewer.cpp
-  simulator/ogre-simulator/vpAROgre.cpp
   simulator/image-simulator/vpImageSimulator.cpp
   simulator/wireframe-simulator/vpWireFrameSimulator.cpp
   simulator/wireframe-simulator/core/vpArit.c
@@ -210,6 +228,15 @@ SET (SRC_SIMULATOR
   simulator/wireframe-simulator/core/vpVwstack.c
   )
 
+IF(VISP_HAVE_COIN_AND_GUI)
+  LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpAR.cpp)
+  LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpSimulator.cpp)
+  LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpViewer.cpp)
+ENDIF()
+IF(VISP_HAVE_OGRE)
+  LIST(APPEND SRC_SIMULATOR simulator/ogre-simulator/vpAROgre.cpp)
+ENDIF()
+
 SET (SRC_TOOLS
   tools/geometry/vpPlane.cpp
   tools/geometry/vpRect.cpp
@@ -219,17 +246,20 @@ SET (SRC_TOOLS
   tools/histogram/vpHistogramPeak.cpp
   tools/histogram/vpHistogramValey.cpp
   tools/io/vpIoTools.cpp
-  tools/io/vpIoException.cpp
   tools/io/vpKeyboard.cpp
-  tools/io/vpParallelPort.cpp
-  tools/io/vpParallelPortException.cpp
   tools/io/vpParseArgv.cpp
   tools/plot/vpPlot.cpp
   tools/plot/vpPlotCurve.cpp
   tools/plot/vpPlotGraph.cpp
   tools/time/vpTime.cpp
-  tools/xml/vpXmlParser.cpp
   )
+IF(VISP_HAVE_XML2)
+  LIST(APPEND SRC_TOOLS tools/xml/vpXmlParser.cpp)
+ENDIF()
+
+IF(VISP_HAVE_PARPORT)
+  LIST(APPEND SRC_TOOLS tools/io/vpParallelPort.cpp)
+ENDIF()
 
 SET (SRC_TRACKING
   tracking/dots/vpDot2.cpp
@@ -247,8 +277,6 @@ SET (SRC_TRACKING
   tracking/forward-projection/vpPoint.cpp
   tracking/forward-projection/vpSphere.cpp
   tracking/general-tracking-issues/vpTracker.cpp
-  tracking/general-tracking-issues/vpTrackingException.cpp
-  tracking/klt/vpKltOpencv.cpp
   tracking/moving-edges/vpMe.cpp
   tracking/moving-edges/vpMeEllipse.cpp
   tracking/moving-edges/vpMeLine.cpp
@@ -264,32 +292,50 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbtDistanceCylinder.cpp
   )
 
+IF(VISP_HAVE_OPENCV)
+  LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
+ENDIF()
+
 SET (SRC_VIDEO
   video/vpVideoReader.cpp
   video/vpVideoWriter.cpp
-  video/vpFFMPEG.cpp
   )
+
+IF(VISP_HAVE_FFMPEG)
+  LIST(APPEND SRC_VIDEO video/vpFFMPEG.cpp)
+ENDIF()
 
 SET (SRC_VIDEO_DEVICE
   video-device/vpDisplay.cpp
-  video-device/vpDisplayException.cpp
-  video-device/vpDisplayGTK.cpp
-  video-device/vpDisplayOpenCV.cpp
-  video-device/vpDisplayX.cpp
-  video-device/windows/vpDisplayWin32.cpp
-  video-device/windows/vpGDIRenderer.cpp
-  video-device/windows/vpWin32Window.cpp
-  video-device/windows/vpDisplayGDI.cpp
-  video-device/windows/vpDisplayD3D.cpp
-  video-device/windows/vpD3DRenderer.cpp
   )
+
+IF(VISP_HAVE_GTK)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayGTK.cpp)
+ENDIF()
+IF(VISP_HAVE_OPENCV)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayOpenCV.cpp)
+ENDIF()
+IF(VISP_HAVE_X11)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayX.cpp)
+ENDIF()
+IF(WIN32)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayWin32.cpp)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpWin32Window.cpp)
+ENDIF()
+IF(VISP_HAVE_GDI)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpGDIRenderer.cpp)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayGDI)
+ENDIF()
+IF(VISP_HAVE_D3D9)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpD3DRenderer.cpp)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayD3D)
+ENDIF()
 
 SET (SRC_VISUAL_FEATURE
   visual-feature/vpBasicFeature.cpp
   visual-feature/vpFeatureDepth.cpp
   visual-feature/vpFeatureDisplay.cpp
   visual-feature/vpFeatureEllipse.cpp
-  visual-feature/vpFeatureException.cpp
   visual-feature/vpFeatureLine.cpp
   visual-feature/vpFeaturePoint3D.cpp
   visual-feature/vpFeaturePoint.cpp

@@ -126,10 +126,19 @@ public:
     } ;
 
 public:
-  vpRobotException (const int code, const char * msg);
-  vpRobotException (const int code, const std::string & msg);
-  vpRobotException (const int code);
-
+  vpRobotException::vpRobotException (const int code, const char * msg)
+    : vpException(code, msg)
+    {
+    }
+  vpRobotException::vpRobotException (const int code, const std::string & msg)
+    : vpException(code, msg)
+    {
+    }
+  vpRobotException::vpRobotException (const int code)
+    : vpException(code)
+  {
+  }
+  
 };
 
 
