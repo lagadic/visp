@@ -251,6 +251,26 @@ public:
   */
   inline double get_mu20() const {return mu20;}
   
+    /*!
+      Set the new threshold for the robust estimation of the parameters of the
+      ellipse equation.
+      If the weight of a point is below this threshold, this one is removed from
+      the list of tracked meSite.
+      Value must be between 0 (never rejected) and 1 (always rejected).
+
+      \param threshold : The new value of the threshold.
+    */
+    void setThresholdRobust(const double threshold){
+      if(threshold<0){
+        thresholdWeight = 0;
+      }else if(threshold>1){
+        thresholdWeight = 1;
+      }else{
+        thresholdWeight = threshold;
+      }
+    }
+
+
 
 protected:
   //! The coordinates of the point corresponding to the smallest \f$ alpha \f$ angle. More things about the \f$ alpha \f$ are given at the beginning of the class description.
@@ -265,16 +285,18 @@ protected:
   double ce;
   //! Value of sin(e).
   double se;
-  //!Stores the value of the \f$ alpha \f$ angle for each vpMeSite.
+  //! Stores the value of the \f$ alpha \f$ angle for each vpMeSite.
   vpList<double> angle;
-  //!Surface
+  //! Surface
   double m00;
-  //!Second order central moments
+  //! Second order central moments
   double mu11,mu20, mu02;
-  //!First order raw moments
+  //! First order raw moments
   double m10,m01;
-  //!Second order raw moments
+  //! Second order raw moments
   double m11,m02,m20;
+  //! Threshold for the robust least square.
+  double thresholdWeight;
 
 private:
   //! True if the ellipse to track is a circle

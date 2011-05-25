@@ -99,6 +99,8 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   
   m00 = m01 = m10 = m11 = m20 = m02 = mu11 = mu20 = mu02 = 0;
 
+  thresholdWeight = 0.2;
+
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
@@ -120,8 +122,8 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse):vpMeTracker(meellipse)
   ce = meellipse.ce;
   se = meellipse.se;
   
-  angle = meellipse.angle; // Because of this line the copy
-			   // constructor cannot be const
+  angle = meellipse.angle;
+
   m00 = meellipse.m00;
   mu11 = meellipse.mu11;
   mu20 = meellipse.mu20;
@@ -131,6 +133,7 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse):vpMeTracker(meellipse)
   m11 = meellipse.m11;
   m02 = meellipse.m02;
   m20 = meellipse.m20;  
+  thresholdWeight = meellipse.thresholdWeight;
 }
 
 /*!
@@ -224,7 +227,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 
       if(vpDEBUG_ENABLE(3))
       {
-	vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
+        vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
       }
       list.addRight(pix);
       angle.addRight(k);
@@ -257,8 +260,9 @@ vpMeEllipse::reSample(const vpImage<unsigned char>  &I)
 {
   unsigned int n = numberOfSignal() ;
   double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->sample_step);
-  if ((double)n<0.9*expecteddensity)
+  if ((double)n<0.9*expecteddensity){
     sample(I) ;
+  }
 }
 
 
@@ -379,9 +383,10 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 
   if (alpha2 <alpha1)
   {
-    double alphatmp = alpha2;
-    alpha2 = alpha1;
-    alpha1 = alphatmp;
+//    double alphatmp = alpha2;
+//    alpha2 = alpha1;
+//    alpha1 = alphatmp;
+    alpha2 += 2 * M_PI;
   }
 
   //std::cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
@@ -685,7 +690,7 @@ vpMeEllipse::leastSquare()
       p = list.value() ;
       if (p.suppress==0)
       {
-        if (w[k] < 0.2)
+        if (w[k] < thresholdWeight)
         {
           p.suppress  = 3 ;
           list.modify(p) ;
@@ -749,7 +754,7 @@ vpMeEllipse::leastSquare()
       p = list.value() ;
       if (p.suppress==0)
       {
-        if (w[k] < 0.2)
+        if (w[k] < thresholdWeight)
         {
           p.suppress  = 3 ;
           list.modify(p) ;
@@ -845,15 +850,14 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<" begin vpMeEllipse::initTracking()"<<std::endl ;
 
-  unsigned int n=5 ;
-  vpImagePoint *iP;
-  iP = new vpImagePoint[n];
+  const unsigned int n=5 ;
+  vpImagePoint iP[n];
 
   for (unsigned int k =0 ; k < n ; k++)
     {
       std::cout << "Click points "<< k+1 <<"/" << n ;
       std::cout << " on the ellipse in the trigonometric order" <<std::endl ;
-      while (vpDisplay::getClick(I,iP[k])!=true) ;
+      vpDisplay::getClick(I, iP[k], true);
       std::cout << iP[k] << std::endl;
     }
 
@@ -861,8 +865,6 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   iP2 = iP[n-1];
 
   initTracking(I, n, iP) ;
-
-  delete [] iP;
 }
 
 
