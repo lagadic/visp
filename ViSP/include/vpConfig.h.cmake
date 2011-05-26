@@ -77,7 +77,7 @@
 
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
-#  define VISP_HAVE_OPENCV_VERSION (${OpenCV_VERSION_MAJOR}*65536 + ${OpenCV_VERSION_MINOR}*256 + ${OpenCV_VERSION_PATCH})
+#  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}
 #endif
 
 // Defined if GTK library available (either gtk or gtk2).
