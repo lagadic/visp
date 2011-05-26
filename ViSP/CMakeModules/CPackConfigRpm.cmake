@@ -38,22 +38,100 @@
 #
 #############################################################################
 
-# To install the generated debian package use the gdebi-gtk package 
-# installer on Ubuntu:
-# gdebi-gtk libvisp-2.6.1-dev.deb
-#
-# Since there is no opencv package compatible with ViSP for the moment
-# we desactivate the opencv usage and we activate the soqt usage since 
-# there exist a soqt package
-# cmake -DUSE_OPENCV=OFF -DUSE_SOQT=ON
+
+# $ uname -i
+
+FIND_PROGRAM(UNAME_CMD uname)
+MARK_AS_ADVANCED(UNAME_CMD)
+IF(NOT UNAME_CMD)
+  MESSAGE(STATUS "Can not find uname in your path, default to i386.")
+  SET(CPACK_SYSTEM_NAME i386)
+ELSE()
+  EXECUTE_PROCESS(COMMAND "${UNAME_CMD}" -m
+    OUTPUT_VARIABLE CPACK_SYSTEM_NAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+ENDIF()
+
+# create a fedora short name from cat /etc/fedora-release
+# for example, cat .. return "Fedora release 13 (Goddard)" we build "fc13" 
+FIND_PROGRAM(CAT_CMD cat)
+MARK_AS_ADVANCED(CAT_CMD)
+IF(NOT CAT_CMD)
+  MESSAGE(STATUS "Can not find cat in your path, default to empty.")
+  SET(DIST_SHORT_NAME "")
+ELSE()
+  SET(DIST_SHORT_NAME "")
+  EXECUTE_PROCESS(COMMAND "${CAT_CMD}" /etc/fedora-release
+    OUTPUT_VARIABLE FEDORA_FULL_RELEASE_NAME
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  #message("fedora release found 1: ${FEDORA_FULL_RELEASE_NAME}")
+  IF(FEDORA_FULL_RELEASE_NAME)
+    # replace " " space separator by ";" separator
+    STRING(REGEX REPLACE "[ ]" ";" FEDORA_FULL_RELEASE_NAME ${FEDORA_FULL_RELEASE_NAME})
+    # message("fedora release found 2: ${FEDORA_FULL_RELEASE_NAME}")
+    LIST(GET FEDORA_FULL_RELEASE_NAME 0 ITEM1) # here ITEM1 should contain "Fedora"
+    # message("item1: ${ITEM1}")
+    STRING(COMPARE EQUAL ${ITEM1} "Fedora" IS_FEDORA)
+    IF(IS_FEDORA)
+      LIST(GET FEDORA_FULL_RELEASE_NAME 2 ITEM3) # here ITEM3 should contain the dist number
+      # message("dist number: ${ITEM3}")
+      IF(ITEM3)
+        SET(DIST_SHORT_NAME "fc${ITEM3}")
+      ENDIF()
+    ENDIF()
+  ENDIF()
+ENDIF()
+
+set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Debian package install prefix" FORCE)
 
 set(BUILD_SHARED_LIBS CACHE FORCE "Build ViSP with shared libraries." ON)
 list(APPEND CPACK_GENERATOR RPM)
 
-set(CPACK_PACKAGE_FILE_NAME "libvisp-${VISP_VERSION}-dev")
+SET(CPACK_PACKAGE_NAME "libvisp-devel")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${VISP_VERSION}-${VISP_REVISION}.${DIST_SHORT_NAME}_${CPACK_SYSTEM_NAME}")
 set(CPACK_RPM_PACKAGE_GROUP "Development/Libraries")
-#set(CPACK_RPM_PACKAGE_ARCHITECTURE "i386")
+set(CPACK_RPM_PACKAGE_ARCHITECTURE "${CPACK_SYSTEM_NAME}")
+set(CPACK_RPM_PACKAGE_LICENSE "GPL")
+set(CPACK_RPM_PACKAGE_RELEASE ${VISP_REVISION})
 
-set(CPACK_RPM_PACKAGE_REQUIRES "cmake >= 2.6, libX11-devel >= 1.3, gsl-devel >= 1.13, libxml2-devel >= 2.7.6, libpng-devel >= 2:1.2.44, libjpeg-devel >= 6b-46, Coin2-devel >= 2.5.0, SoQt-devel >= 1.5.0")
+set(CPACK_RPM_PACKAGE_DEPENDS "cmake >= 2.6")
+IF(USE_X11)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libX11-devel >= 1.3")
+ENDIF()
+IF(USE_LAPACK)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, lapack-devel >= 3.2")
+ENDIF()
+IF(USE_GSL)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, gsl-devel >= 1.13")
+ENDIF()
+IF(USE_V4L2)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libv4l-devel >= 0.6.2")
+ENDIF()
+IF(USE_DC1394_2)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libdc1394-devel >= 2.1.2")
+ENDIF()
+IF(USE_XML2)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libxml2-devel >= 2.7.6")
+ENDIF()
+IF(USE_LIBPNG)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libpng-devel >= 2:1.2.44")
+ENDIF()
+IF(USE_LIBJPEG)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, libjpeg-devel >= 6b-46")
+ENDIF()
+IF(USE_COIN)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, Coin2-devel >= 2.5.0")
+ENDIF()
+IF(USE_SOQT)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, SoQt-devel >= 1.5.0")
+ENDIF()
+IF(USE_OPENCV)
+  set(CPACK_RPM_PACKAGE_DEPENDS "${CPACK_RPM_PACKAGE_DEPENDS}, opencv-devel >= 2.1")
+ENDIF()
+#message("CPACK_RPM_PACKAGE_DEPENDS ${CPACK_RPM_PACKAGE_DEPENDS}")
 
-SET(CPACK_RPM_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\r\rViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform\rlibrary that allows prototyping and developing applications in visual tracking\rand visual servoing. \r\rThis package contains headers and library necessary for developing software\rthat uses ViSP. \r\rViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")
+set(CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_DEPENDS}")
+
+SET(CPACK_RPM_PACKAGE_DESCRIPTION "Visual tracking and visual servoing library written in C++ (development files).\r\n ViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform library that allows prototyping and developing applications in visual tracking and visual servoing. This package contains headers and library necessary for developing software that uses ViSP. ViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")
