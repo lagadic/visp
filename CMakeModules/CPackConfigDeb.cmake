@@ -41,12 +41,7 @@
 
 # To install the generated debian package use the gdebi-gtk package 
 # installer on Ubuntu:
-# gdebi-gtk libvisp-2.6.1-dev.deb
-#
-# Since there is no opencv package compatible with ViSP for the moment
-# we desactivate the opencv usage and we activate the soqt usage since 
-# there exist a soqt package
-# cmake -DUSE_OPENCV=OFF -DUSE_SOQT=ON
+# gdebi-gtk libvisp-dev-2.6.1_1_i386.deb
 
 # $ dpkg --print-architecture
 FIND_PROGRAM(DPKG_CMD dpkg)
@@ -66,6 +61,7 @@ set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Debian package install prefix" FOR
 set(BUILD_SHARED_LIBS CACHE FORCE "Build ViSP with shared libraries." ON)
 list(APPEND CPACK_GENERATOR DEB)
 
+SET(CPACK_PACKAGE_NAME "libvisp-dev")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${VISP_VERSION}-${VISP_REVISION}_${CPACK_SYSTEM_NAME}")
 
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "cmake (>=2.6)")
@@ -108,12 +104,10 @@ ENDIF()
 IF(USE_OIS)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libois-dev (>=1.3.0)")
 ENDIF()
-
 IF(USE_OPENCV)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcv-dev (>=2.1), libcvaux-dev (>=2.1), libhighgui-dev (>=2.1)")
 ENDIF()
-#message("CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS}")
 
-#SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\r\rViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform\rlibrary that allows prototyping and developing applications in visual tracking\rand visual servoing. \r\rThis package contains headers and library necessary for developing software\rthat uses ViSP. \r\rViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")
+#message("CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS}")
 
 SET(CPACK_DEBIAN_PACKAGE_DESCRIPTION "Visual tracking and visual servoing library written in C++ (development files).\r\n ViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform library that allows prototyping and developing applications in visual tracking and visual servoing. This package contains headers and library necessary for developing software that uses ViSP. ViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")

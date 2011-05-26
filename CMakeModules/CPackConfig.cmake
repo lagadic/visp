@@ -43,7 +43,7 @@ message(STATUS "Configuring CPack")
 mark_as_advanced(BUILD_PACKAGE)
 
   
-SET(CPACK_PACKAGE_NAME "libvisp-dev")
+SET(CPACK_PACKAGE_NAME "libvisp")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Visual tracking and visual servoing library in C++ (development files)")
 SET(CPACK_PACKAGE_CONTACT "visp@inria.fr")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
