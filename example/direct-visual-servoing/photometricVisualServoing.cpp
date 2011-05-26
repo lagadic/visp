@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:  2457 2010-01-07 10:41:18Z Eric Marchand $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
