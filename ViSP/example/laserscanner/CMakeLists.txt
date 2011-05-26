@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: CMakeLists.txt 2453 2010-01-07 10:01:10Z nmelchio $
+# $Id$
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
