@@ -503,6 +503,17 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
+  if(ierr == 1){// the norm allows to have the two values on two separated lines.
+    do {
+      err = fgets(str, vpMAX_LEN - 1, fd);
+      line++;
+      if (err == NULL) {
+        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
+        fclose (fd);
+      }
+    } while ((str[0] == '#') || (str[0] == '\n'));
+    ierr = sscanf(str, "%d", &h);
+  }
   if (ierr == EOF)
   {
     fclose (fd);
@@ -729,6 +740,17 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
+  if(ierr == 1){// the norm allows to have the two values on two separated lines.
+    do {
+      err = fgets(str, vpMAX_LEN - 1, fd);
+      line++;
+      if (err == NULL) {
+        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
+        fclose (fd);
+      }
+    } while ((str[0] == '#') || (str[0] == '\n'));
+    ierr = sscanf(str, "%d", &h);
+  }
   if (ierr == EOF)
   {
     fclose (fd);
