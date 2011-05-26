@@ -270,6 +270,7 @@ main(int argc, const char ** argv)
   vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
 #ifdef VISP_HAVE_OPENCV
+  double t0 = vpTime::measureTimeMs();
 /////////////////////////
 // Convert a IplImage to a vpImage<vpRGBa>
 ////////////////////////
@@ -305,14 +306,14 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ic);
   filename = opath +  vpIoTools::path("/Klimt_grey_cv.ppm");
   /* Save the the current image */
-    vpImageIo::writePPM(Ic, filename) ;
+  vpImageIo::writePPM(Ic, filename) ;
 
-    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
     
 ///////////////////////////
 // Convert a IplImage to a vpImage<unsigned char>
 ////////////////////////////
-  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   /* Read the color image */
 
@@ -393,7 +394,132 @@ main(int argc, const char ** argv)
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
   if(image!=NULL) cvReleaseImage( &image );
+  double t1 = vpTime::measureTimeMs();
+  std::cout << "Conversion c interface : " << t1 - t0 << " ms" << std::endl;
+  double t2 = vpTime::measureTimeMs();
 
+  /* ------------------------------------------------------------------------ */
+  /*                  conversion for the new c++ interface                    */
+  /* ------------------------------------------------------------------------ */
+
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+  /////////////////////////
+  // Convert a cv::Mat to a vpImage<vpRGBa>
+  ////////////////////////
+  cv::Mat imageMat;
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+  vpCTRACE << "Reading the color image with c++ interface of opencv: "<< std::endl
+           << filename << std::endl;
+  imageMat = cv::imread(filename, 1);// force to a three channel color image.
+  if(imageMat.data == NULL){
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return -1;
+  }
+  vpImageConvert::convert(imageMat, Ic);
+  filename = opath +  vpIoTools::path("/Klimt_color_cvMat.ppm");
+    /* Save the the current image */
+  vpImageIo::write(Ic, filename) ;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    /* Read the pgm image */
+
+  vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
+             << filename << std::endl;
+  imageMat = cv::imread(filename, 0);// forced to grayscale.
+  if(imageMat.data == NULL) {
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(imageMat, Ic);
+  filename = opath +  vpIoTools::path("/Klimt_grey_cvMat.ppm");
+  /* Save the the current image */
+  vpImageIo::write(Ic, filename) ;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  ///////////////////////////
+  // Convert a cv::Mat to a vpImage<unsigned char>
+  ////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the color image */
+
+  vpCTRACE << "Reading the color image with opencv: "<< std::endl
+             << filename << std::endl;
+  imageMat = cv::imread(filename, 1);// force to a three channel color image.
+  if(imageMat.data == NULL){
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return -1;
+  }
+  vpImageConvert::convert(imageMat, Ig);
+  filename = opath +  vpIoTools::path("/Klimt_color_cvMat.pgm");
+  /* Save the the current image */
+  vpImageIo::write(Ig, filename) ;
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+
+  /* Read the pgm image */
+
+  vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
+           << filename << std::endl;
+  imageMat = cv::imread(filename, 0);
+  if(imageMat.data == NULL){
+    vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
+    return (-1);
+  }
+  vpImageConvert::convert(imageMat, Ig);
+  filename = opath +  vpIoTools::path("/Klimt_grey_cvMat.pgm");
+  /* Save the the current image */
+  vpImageIo::write(Ig, filename) ;
+
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  ////////////////////////////////////
+  // Convert a vpImage<vpRGBa> to a cv::Mat
+  ////////////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  /* Read the color image */
+
+  // Load a color image from the disk
+  vpCTRACE << "Load " << filename << std::endl;
+  vpImageIo::read(Ic, filename) ;
+  vpImageConvert::convert(Ic, imageMat);
+  filename = opath +  vpIoTools::path("/Klimt_ipl_color_cvMat.ppm");
+  /* Save the the current image */
+  vpCTRACE << "Write " << filename << std::endl;
+  if(!cv::imwrite(filename, imageMat)){
+    vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
+      return (-1);
+  }
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+  ////////////////////////////////////////
+  // Convert a IplImage to a vpImage<unsigned char>
+  ////////////////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+
+  /* Read the grey image */
+
+  // Load a color image from the disk
+  vpCTRACE << "Load " << filename << std::endl;
+  vpImageIo::read(Ig, filename);
+  vpImageConvert::convert(Ig, imageMat);
+  filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cvMat.pgm");
+  /* Save the the current image */
+
+  vpCTRACE << "Write " << filename << std::endl;
+  if(!cv::imwrite(filename, imageMat)){
+    vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
+      return (-1);
+  }
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+  double t3 = vpTime::measureTimeMs();
+  std::cout << "Conversion c++ interface : " << t3 - t2 << " ms" << std::endl;
+#endif
 #endif
   
   ////////////////////////////////////
