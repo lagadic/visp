@@ -91,17 +91,17 @@ public:
     } ;
 
 public:
-  vpDisplayException::vpDisplayException(const int code, const char * msg)
+  vpDisplayException(const int code, const char * msg)
+   : vpException(code, msg)
+    {
+    }
+  
+  vpDisplayException (const int code, const std::string & msg)
     : vpException(code, msg)
     {
     }
   
-  vpDisplayException::vpDisplayException (const int code, const std::string & msg)
-    : vpException(code, msg)
-    {
-    }
-  
-  vpDisplayException::vpDisplayException (const int code)
+  vpDisplayException (const int code)
     : vpException(code)
   {
   }
