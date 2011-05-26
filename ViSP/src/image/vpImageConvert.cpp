@@ -4,7 +4,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -65,12 +65,12 @@ Convert a vpImage\<vpRGBa\> to a vpImage\<unsigned char\>
 */
 void
 vpImageConvert::convert(const vpImage<unsigned char> &src,
-			vpImage<vpRGBa> & dest)
+      vpImage<vpRGBa> & dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
 
   GreyToRGBa(src.bitmap, (unsigned char *)dest.bitmap,
-	     src.getHeight() * src.getWidth() );
+       src.getHeight() * src.getWidth() );
 }
 
 /*!
@@ -80,12 +80,12 @@ Convert a vpImage\<unsigned char\> to a vpImage\<vpRGBa\>
 */
 void
 vpImageConvert::convert(const vpImage<vpRGBa> &src,
-			vpImage<unsigned char> & dest)
+      vpImage<unsigned char> & dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
 
   RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap,
-	     src.getHeight() * src.getWidth() );
+       src.getHeight() * src.getWidth() );
 }
 
 #ifdef VISP_HAVE_OPENCV
@@ -111,7 +111,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 #include <visp/vpImageConvert.h>
 
 #ifdef VISP_HAVE_OPENCV
-int main() 
+int main()
 {
   vpImage<vpRGBa> Ic; // A color image
   IplImage* Ip;
@@ -250,51 +250,51 @@ vpImageConvert::convert(const IplImage* src,
 
   if (flip == false)
   {
-  	if(widthStep == width){
-  	  if(nChannel == 1 && depth == 8){
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    memcpy(dest.bitmap, src->imageData,
-  	            (size_t)(height*width));
-  	  }
-  	  if(nChannel == 3 && depth == 8){
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    BGRToGrey((unsigned char*)src->imageData,dest.bitmap, (unsigned int)width, (unsigned int)height,false);
-  	  }
-  	}
-  	else{
-  	  if(nChannel == 1 && depth == 8){
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    for (int i =0  ; i < height ; i++){
-  	      memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
-  	            (size_t)width);
-  	    }
-  	  }
-  	  if(nChannel == 3 && depth == 8){
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    for (int i = 0  ; i < height ; i++){
-  	      BGRToGrey((unsigned char*)src->imageData + i*widthStep,
-  	                  dest.bitmap + i*width, (unsigned int)width, 1, false);
-  	    }
-  	  }
-  	}
+    if(widthStep == width){
+      if(nChannel == 1 && depth == 8){
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        memcpy(dest.bitmap, src->imageData,
+                (size_t)(height*width));
+      }
+      if(nChannel == 3 && depth == 8){
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        BGRToGrey((unsigned char*)src->imageData,dest.bitmap, (unsigned int)width, (unsigned int)height,false);
+      }
+    }
+    else{
+      if(nChannel == 1 && depth == 8){
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        for (int i =0  ; i < height ; i++){
+          memcpy(dest.bitmap+i*width, src->imageData + i*widthStep,
+                (size_t)width);
+        }
+      }
+      if(nChannel == 3 && depth == 8){
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        for (int i = 0  ; i < height ; i++){
+          BGRToGrey((unsigned char*)src->imageData + i*widthStep,
+                      dest.bitmap + i*width, (unsigned int)width, 1, false);
+        }
+      }
+    }
   }
-  else 
+  else
   {
-  	  if(nChannel == 1 && depth == 8){
-	    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    for (int i =0  ; i < height ; i++){
-  	      memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
-  	            (size_t)width);
-  	    }
-  	  }
-  	  if(nChannel == 3 && depth == 8){
-  	    dest.resize((unsigned int)height, (unsigned int)width) ;
-  	    //for (int i = 0  ; i < height ; i++){
-  	      BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
-  	                  dest.bitmap /*+ i*width*/, (unsigned int)width, (unsigned int)height/*1*/, true);
-  	    //}
-  	  }
+      if(nChannel == 1 && depth == 8){
+      unsigned char* beginOutput = (unsigned char*)dest.bitmap;
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        for (int i =0  ; i < height ; i++){
+          memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
+                (size_t)width);
+        }
+      }
+      if(nChannel == 3 && depth == 8){
+        dest.resize((unsigned int)height, (unsigned int)width) ;
+        //for (int i = 0  ; i < height ; i++){
+          BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
+                      dest.bitmap /*+ i*width*/, (unsigned int)width, (unsigned int)height/*1*/, true);
+        //}
+      }
   }
 }
 
@@ -460,6 +460,285 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
   }
 }
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+/*!
+  Convert a cv::Mat to a vpImage\<vpRGBa\>
+
+  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
+  the general OpenCV documentation, or
+  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
+  for the specific Mat structure documentation.
+
+  Similarily to the convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
+  method, only Mat with a depth equal to 8 and a channel between 1 and 3 are
+  converted.
+
+  \warning This function is only available if OpenCV (version 2.1.0 or greater)
+  was detected during the configuration step.
+
+  \param src : Source image in OpenCV format.
+  \param dest : Destination image in ViSP format.
+  \param flip : Set to true to vertically flip the converted image.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
+#include <visp/vpRGBa.h>
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+int main()
+{
+  vpImage<vpRGBa> Ic; // A color image
+  cv::Mat Ip;
+
+  // Read an image on a disk with openCV library
+  Ip = cv::imread("image.pgm", 1);// second parameter > 0 for a RGB encoding.
+  // Convert the grayscale cv::Mat into vpImage<vpRGBa>
+  vpImageConvert::convert(Ip, Ic);
+
+  // ...
+}
+#else
+int main() {}
+#endif
+  \endcode
+*/
+void
+vpImageConvert::convert(const cv::Mat& src,
+          vpImage<vpRGBa>& dest, const bool flip)
+{
+  if(src.type() == CV_8UC3){
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    vpRGBa rgbaVal;
+    rgbaVal.A = 0;
+    for(unsigned int i=0; i<dest.getRows(); ++i){
+      for(unsigned int j=0; j<dest.getCols(); ++j){
+        cv::Vec3b tmp = src.at<cv::Vec3b>((int)i, (int)j);
+        rgbaVal.R = tmp[2];
+        rgbaVal.G = tmp[1];
+        rgbaVal.B = tmp[0];
+        if(flip){
+          dest[dest.getRows()-i-1][j] = rgbaVal;
+        }else{
+          dest[i][j] = rgbaVal;
+        }
+      }
+    }
+  }else if(src.type() == CV_8UC1){
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    vpRGBa rgbaVal;
+    for(unsigned int i=0; i<dest.getRows(); ++i){
+      for(unsigned int j=0; j<dest.getCols(); ++j){
+        rgbaVal = src.at<unsigned char>((int)i, (int)j);
+        if(flip){
+          dest[dest.getRows()-i-1][j] = rgbaVal;
+        }else{
+          dest[i][j] = rgbaVal;
+        }
+      }
+    }
+  }
+}
+
+/*!
+  Convert a cv::Mat to a vpImage\<unsigned char\>
+
+  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
+  the general OpenCV documentation, or
+  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
+  for the specific Mat structure documentation.
+
+  Similarily to the convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
+  method, only Mat with a depth equal to 8 and a channel between 1 and 3 are
+  converted.
+
+  \warning This function is only available if OpenCV was detected during
+  the configuration step.
+
+  \param src : Source image in OpenCV format.
+  \param dest : Destination image in ViSP format.
+  \param flip : Set to true to vertically flip the converted image.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+int main()
+{
+  vpImage<unsigned char> Ig; // A grayscale image
+  cv::Mat Ip;
+
+  // Read an image on a disk with openCV library
+  Ip = cv::imread("image.pgm", 0);// second parameter = 0 for a gray level.
+  // Convert the grayscale cv::Mat into vpImage<unsigned char>
+  vpImageConvert::convert(Ip, Ig);
+
+  // ...
+}
+#else
+int main() {}
+#endif
+  \endcode
+*/
+void
+vpImageConvert::convert(const cv::Mat& src,
+          vpImage<unsigned char>& dest, const bool flip)
+{
+  if(src.type() == CV_8UC1){
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    if(src.isContinuous() && !flip){
+      memcpy(dest.bitmap, src.data, (size_t)(src.rows*src.cols));
+    }
+    else{
+      if(flip){
+        for(unsigned int i=0; i<dest.getRows(); ++i){
+          memcpy(dest.bitmap+i*dest.getCols(), src.data+(dest.getRows()-i-1)*src.step1(), (size_t)src.step);
+        }
+      }else{
+        for(unsigned int i=0; i<dest.getRows(); ++i){
+          memcpy(dest.bitmap+i*dest.getCols(), src.data+i*src.step1(), (size_t)src.step);
+        }
+      }
+    }
+  }else if(src.type() == CV_8UC3){
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    if(src.isContinuous() && !flip){
+      BGRToGrey((unsigned char*)src.data, (unsigned char*)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows, flip);
+    }
+    else{
+      if(flip){
+        for(unsigned int i=0; i<dest.getRows(); ++i){
+          BGRToGrey((unsigned char*)src.data+i*src.step1(),
+                    (unsigned char*)dest.bitmap+(dest.getRows()-i-1)*dest.getCols(),
+                    (unsigned int)src.step/3, 1, false);
+        }
+      }else{
+        for(unsigned int i=0; i<dest.getRows(); ++i){
+          BGRToGrey((unsigned char*)src.data+i*src.step1(),
+                    (unsigned char*)dest.bitmap+i*dest.getCols(),
+                    (unsigned int)src.step/3, 1, false);
+        }
+      }
+    }
+  }
+}
+
+
+/*!
+  Convert a vpImage\<unsigned char\> to a cv::Mat
+
+  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
+  the general OpenCV documentation, or
+  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
+  for the specific Mat structure documentation.
+
+  \warning This function is only available if OpenCV version 2.1.0 or greater
+  was detected during the configuration step.
+
+  \param src : source image (vpRGBa format)
+  \param dest : destination image (BGR format)
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+int main()
+{
+  vpImage<unsigned char> Ig; // A greyscale image
+  cv::Mat Ip;
+
+  // Read an image on a disk
+  vpImageIo::readPGM(Ig, "image.pgm");
+  // Convert the vpImage<unsigned char> in to color cv::Mat.
+  vpImageConvert::convert(Ig, Ip);
+  // Treatments on cv::Mat Ip
+  //...
+  // Save the cv::Mat on the disk
+  cv::imwrite("image.pgm", Ip);
+}
+#else
+int main() {}
+#endif
+  \endcode
+*/
+void
+vpImageConvert::convert(const vpImage<vpRGBa> & src,
+          cv::Mat& dest)
+{
+  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_8UC4, (void*)src.bitmap);
+
+  dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC3);
+  cv::Mat alpha((int)src.getRows(), (int)src.getCols(), CV_8UC1);
+
+  cv::Mat out[] = {dest, alpha};
+  int from_to[] = { 0,2,  1,1,  2,0,  3,3 };
+  cv::mixChannels(&vpToMat, 1, out, 2, from_to, 4);
+}
+
+/*!
+  Convert a vpImage\<unsigned char\> to a cv::Mat
+
+  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
+  the general OpenCV documentation, or
+  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
+  for the specific Mat structure documentation.
+
+  \warning This function is only available if OpenCV version 2.1.0 or greater
+  was detected during the configuration step.
+
+  \param src : source image
+  \param dest : destination image
+  \param copyData : if true, the image is copied and modification in one object
+  will not modified the other.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageConvert.h>
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+int main()
+{
+  vpImage<unsigned char> Ig; // A greyscale image
+  cv::Mat Ip;
+
+  // Read an image on a disk
+  vpImageIo::readPGM(Ig, "image.pgm");
+  // Convert the vpImage<unsigned char> in to greyscale cv::Mat
+  vpImageConvert::convert(Ig, Ip);
+  // Treatments on cv::MatIp
+  //...
+  // Save the cv::Mat on the disk
+  cv::imwrite("image.pgm", Ip);
+
+}
+#else
+int main() {}
+#endif
+  \endcode
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> & src,
+          cv::Mat& dest, const bool copyData)
+{
+  if(copyData){
+    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void*)src.bitmap);
+    dest = tmpMap.clone();
+  }else{
+    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void*)src.bitmap);
+  }
+}
+
+#endif
 #endif
 
 #define vpSAT(c) \
@@ -467,11 +746,11 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
 /*!
   Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
   Destination rgba memory area has to be allocated before.
-  
+
   \sa YUV422ToRGBa()
 */
-void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba, 
-				unsigned int width, unsigned int height)
+void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
+        unsigned int width, unsigned int height)
 {
   unsigned char *s;
   unsigned char *d;
@@ -526,8 +805,8 @@ void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
 
   \sa YUV422ToRGB()
 */
-void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb, 
-			       unsigned int width, unsigned int height)
+void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
+             unsigned int width, unsigned int height)
 {
   unsigned char *s;
   unsigned char *d;
@@ -580,7 +859,7 @@ void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
   \sa YUV422ToGrey()
 */
 void vpImageConvert::YUYVToGrey(unsigned char* yuyv, unsigned char* grey,
-				unsigned int size)
+        unsigned int size)
 {
   unsigned int i=0,j=0;
 
@@ -600,8 +879,8 @@ yuv411 : u y1 y2 v y3 y4
 
 */
 void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
-				  unsigned char* rgba,
-				  unsigned int size)
+          unsigned char* rgba,
+          unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGBa()" << std::endl;
@@ -723,14 +1002,14 @@ void vpImageConvert::YUV411ToRGBa(unsigned char* yuv,
 }
 
 /*!
-  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB32 images. 
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB32 images.
   Destination rgba memory area has to be allocated before.
 
   \sa YUYVToRGBa()
 */
 void vpImageConvert::YUV422ToRGBa(unsigned char* yuv,
-				  unsigned char* rgba,
-				  unsigned int size)
+          unsigned char* rgba,
+          unsigned int size)
 {
 
 #if 1
@@ -811,8 +1090,8 @@ yuv411 : u y1 y2 v y3 y4
 
 */
 void vpImageConvert::YUV411ToGrey(unsigned char* yuv,
-				  unsigned char* grey,
-				  unsigned int size)
+          unsigned char* grey,
+          unsigned int size)
 {
 
 
@@ -833,56 +1112,56 @@ void vpImageConvert::YUV411ToGrey(unsigned char* yuv,
 
 /*!
 
-  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB images. 
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into RGB images.
   Destination rgb memory area has to be allocated before.
 
   \sa YUYVToRGB()
 
 */
 void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
-				 unsigned char* rgb,
-				 unsigned int size)
+         unsigned char* rgb,
+         unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
   register int Y0, Y1;
   for( unsigned int i = size / 2; i; i-- ) {
-		U   = (int)((*yuv++ - 128) * 0.354);
-		U5  = 5*U;
-		Y0  = *yuv++;
-		V   = (int)((*yuv++ - 128) * 0.707);
-		V2  = 2*V;
-		Y1  = *yuv++;
-		UV  = - U - V;
+    U   = (int)((*yuv++ - 128) * 0.354);
+    U5  = 5*U;
+    Y0  = *yuv++;
+    V   = (int)((*yuv++ - 128) * 0.707);
+    V2  = 2*V;
+    Y1  = *yuv++;
+    UV  = - U - V;
 
-		//---
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
   }
 
@@ -913,15 +1192,15 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv,
 
 /*!
 
-  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into Grey. 
+  Convert YUV 4:2:2 (u01 y0 v01 y1 u23 y2 v23 y3 ...) images into Grey.
   Destination grey memory area has to be allocated before.
-  
+
   \sa YUYVToGrey()
-  
+
 */
 void vpImageConvert::YUV422ToGrey(unsigned char* yuv,
-				  unsigned char* grey,
-				  unsigned int size)
+          unsigned char* grey,
+          unsigned int size)
 {
  unsigned int i=0,j=0;
 
@@ -940,8 +1219,8 @@ yuv411 : u y1 y2 v y3 y4
 
 */
 void vpImageConvert::YUV411ToRGB(unsigned char* yuv,
-				 unsigned char* rgb,
-				 unsigned int size)
+         unsigned char* rgb,
+         unsigned int size)
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGB()" << std::endl;
@@ -1065,8 +1344,8 @@ void vpImageConvert::YUV411ToRGB(unsigned char* yuv,
 
 */
 void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
-				 unsigned char* rgba,
-				 unsigned int width, unsigned int height)
+         unsigned char* rgba,
+         unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1076,87 +1355,87 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
   unsigned char* iV = yuv + 5*size/4;
   for(unsigned int i = 0; i<height/2; i++)
   {
-	for(unsigned int j = 0; j < width/2 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv;
-		yuv = yuv+width-1;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv-width+1;
+  for(unsigned int j = 0; j < width/2 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv;
+    yuv = yuv+width-1;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv-width+1;
 
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba + 4*width-7;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba + 4*width-7;
 
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba -4*width+1;
-	  }
-	yuv+=width;
-	rgba+=4*width;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba -4*width+1;
+    }
+  yuv+=width;
+  rgba+=4*width;
   }
 }
 /*!
@@ -1166,8 +1445,8 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv,
 
 */
 void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
-				 unsigned char* rgb,
-				 unsigned int width, unsigned int height)
+         unsigned char* rgb,
+         unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1177,83 +1456,83 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
   unsigned char* iV = yuv + 5*size/4;
   for(unsigned int i = 0; i<height/2; i++)
   {
-	for(unsigned int j = 0; j < width/2 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv;
-		yuv = yuv+width-1;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv-width+1;
+  for(unsigned int j = 0; j < width/2 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv;
+    yuv = yuv+width-1;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv-width+1;
 
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb + 3*width-5;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb + 3*width-5;
 
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb -3*width+1;
-	  }
-	yuv+=width;
-	rgb+=3*width;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb -3*width+1;
+    }
+  yuv+=width;
+  rgb+=3*width;
   }
 }
 
@@ -1264,8 +1543,8 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
 
 */
 void vpImageConvert::YUV420ToGrey(unsigned char* yuv,
-				 unsigned char* grey,
-				 unsigned int size)
+         unsigned char* grey,
+         unsigned int size)
 {
   for(unsigned int i=0 ; i < size ; i++)
   {
@@ -1380,8 +1659,8 @@ void vpImageConvert::YUV444ToGrey(unsigned char* yuv,
 
 */
 void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
-				 unsigned char* rgba,
-				 unsigned int width, unsigned int height)
+         unsigned char* rgba,
+         unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYV12ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1391,87 +1670,87 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
   unsigned char* iU = yuv + 5*size/4;
   for(unsigned int i = 0; i<height/2; i++)
   {
-	for(unsigned int j = 0; j < width/2 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv;
-		yuv = yuv+width-1;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv-width+1;
+  for(unsigned int j = 0; j < width/2 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv;
+    yuv = yuv+width-1;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv-width+1;
 
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba + 4*width-7;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba + 4*width-7;
 
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba -4*width+1;
-	  }
-	yuv+=width;
-	rgba+=4*width;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba -4*width+1;
+    }
+  yuv+=width;
+  rgba+=4*width;
   }
 }
 /*!
@@ -1481,8 +1760,8 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv,
 
 */
 void vpImageConvert::YV12ToRGB(unsigned char* yuv,
-				 unsigned char* rgb,
-				 unsigned int height, unsigned int width)
+         unsigned char* rgb,
+         unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYV12ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1492,83 +1771,83 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
   unsigned char* iU = yuv + 5*size/4;
   for(unsigned int i = 0; i<height/2; i++)
   {
-	for(unsigned int j = 0; j < width/2 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv;
-		yuv = yuv+width-1;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv-width+1;
+  for(unsigned int j = 0; j < width/2 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv;
+    yuv = yuv+width-1;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv-width+1;
 
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb + 3*width-5;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb + 3*width-5;
 
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb -3*width+1;
-	  }
-	yuv+=width;
-	rgb+=3*width;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb -3*width+1;
+    }
+  yuv+=width;
+  rgb+=3*width;
   }
 }
 
@@ -1579,8 +1858,8 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv,
 
 */
 void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
-				 unsigned char* rgba,
-				 unsigned int width, unsigned int height)
+         unsigned char* rgba,
+         unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGBa()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1590,280 +1869,280 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
   unsigned char* iU = yuv + 17*size/16;
   for(unsigned int i = 0; i<height/4; i++)
   {
-	for(unsigned int j = 0; j < width/4 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv++;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv+width-3;
-		Y4  = *yuv++;
-		Y5  = *yuv++;
-		Y6  = *yuv++;
-		Y7  = *yuv;
-		yuv = yuv+width-3;
-		Y8  = *yuv++;
-		Y9  = *yuv++;
-		Y10  = *yuv++;
-		Y11  = *yuv;
-		yuv = yuv+width-3;
-		Y12  = *yuv++;
-		Y13  = *yuv++;
-		Y14  = *yuv++;
-		Y15  = *yuv;
-		yuv = yuv-3*width+1;
-
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
-
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
-
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
-
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba + 4*width-15;
-
-		R = Y4 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y4 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y4 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+  for(unsigned int j = 0; j < width/4 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv++;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv+width-3;
+    Y4  = *yuv++;
+    Y5  = *yuv++;
+    Y6  = *yuv++;
+    Y7  = *yuv;
+    yuv = yuv+width-3;
+    Y8  = *yuv++;
+    Y9  = *yuv++;
+    Y10  = *yuv++;
+    Y11  = *yuv;
+    yuv = yuv+width-3;
+    Y12  = *yuv++;
+    Y13  = *yuv++;
+    Y14  = *yuv++;
+    Y15  = *yuv;
+    yuv = yuv-3*width+1;
+
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
+
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
+
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
+
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba + 4*width-15;
+
+    R = Y4 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y4 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y4 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y5 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y5 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y5 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y5 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y5 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y5 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y6 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y6 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y6 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y6 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y6 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y6 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y7 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y7 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y7 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y7 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y7 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y7 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba + 4*width-15;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba + 4*width-15;
 
-		R = Y8 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    R = Y8 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y8 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y8 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y8 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y8 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y9 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y9 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y9 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y9 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y9 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y9 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y10 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y10 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y10 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y10 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y10 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y10 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y11 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y11 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y11 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y11 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y11 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y11 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba + 4*width-15;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba + 4*width-15;
 
-		R = Y12 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    R = Y12 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y12 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y12 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y12 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y12 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y13 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y13 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y13 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y13 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y13 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y13 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y14 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y14 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y14 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y14 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y14 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y14 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba++ = 0;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba++ = 0;
 
-		//---
-		R = Y15 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y15 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y15 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y15 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y15 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y15 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgba++ = (unsigned char)R;
-		*rgba++ = (unsigned char)G;
-		*rgba++ = (unsigned char)B;
-		*rgba = 0;
-		rgba = rgba -12*width+1;
-	  }
-	yuv+=3*width;
-	rgba+=12*width;
+    *rgba++ = (unsigned char)R;
+    *rgba++ = (unsigned char)G;
+    *rgba++ = (unsigned char)B;
+    *rgba = 0;
+    rgba = rgba -12*width+1;
+    }
+  yuv+=3*width;
+  rgba+=12*width;
   }
 }
 /*!
@@ -1873,8 +2152,8 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv,
 
 */
 void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
-				 unsigned char* rgb,
-				 unsigned int height, unsigned int width)
+         unsigned char* rgb,
+         unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGB()" << std::endl;
   register int U, V, R, G, B, V2, U5, UV;
@@ -1884,264 +2163,264 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
   unsigned char* iU = yuv + 17*size/16;
   for(unsigned int i = 0; i<height/4; i++)
   {
-	for(unsigned int j = 0; j < width/4 ; j++)
-	  {
-		U   = (int)((*iU++ - 128) * 0.354);
-		U5  = 5*U;
-		V   = (int)((*iV++ - 128) * 0.707);
-		V2  = 2*V;
-		UV  = - U - V;
-		Y0  = *yuv++;
-		Y1  = *yuv++;
-		Y2  = *yuv++;
-		Y3  = *yuv;
-		yuv = yuv+width-3;
-		Y4  = *yuv++;
-		Y5  = *yuv++;
-		Y6  = *yuv++;
-		Y7  = *yuv;
-		yuv = yuv+width-3;
-		Y8  = *yuv++;
-		Y9  = *yuv++;
-		Y10  = *yuv++;
-		Y11  = *yuv;
-		yuv = yuv+width-3;
-		Y12  = *yuv++;
-		Y13  = *yuv++;
-		Y14  = *yuv++;
-		Y15  = *yuv;
-		yuv = yuv-3*width+1;
-
-		// Original equations
-		// R = Y           + 1.402 V
-		// G = Y - 0.344 U - 0.714 V
-		// B = Y + 1.772 U
-		R = Y0 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y0 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y0 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
-
-		//---
-		R = Y1 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y1 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y1 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
-
-		//---
-		R = Y2 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y2 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y2 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
-
-		//---
-		R = Y3 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y3 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y3 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb + 3*width-11;
-
-		R = Y4 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
-
-		G = Y4 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
-
-		B = Y4 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
-
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
-
-		//---
-		R = Y5 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+  for(unsigned int j = 0; j < width/4 ; j++)
+    {
+    U   = (int)((*iU++ - 128) * 0.354);
+    U5  = 5*U;
+    V   = (int)((*iV++ - 128) * 0.707);
+    V2  = 2*V;
+    UV  = - U - V;
+    Y0  = *yuv++;
+    Y1  = *yuv++;
+    Y2  = *yuv++;
+    Y3  = *yuv;
+    yuv = yuv+width-3;
+    Y4  = *yuv++;
+    Y5  = *yuv++;
+    Y6  = *yuv++;
+    Y7  = *yuv;
+    yuv = yuv+width-3;
+    Y8  = *yuv++;
+    Y9  = *yuv++;
+    Y10  = *yuv++;
+    Y11  = *yuv;
+    yuv = yuv+width-3;
+    Y12  = *yuv++;
+    Y13  = *yuv++;
+    Y14  = *yuv++;
+    Y15  = *yuv;
+    yuv = yuv-3*width+1;
+
+    // Original equations
+    // R = Y           + 1.402 V
+    // G = Y - 0.344 U - 0.714 V
+    // B = Y + 1.772 U
+    R = Y0 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y0 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y0 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+
+    //---
+    R = Y1 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y1 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y1 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+
+    //---
+    R = Y2 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y2 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y2 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+
+    //---
+    R = Y3 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y3 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y3 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb + 3*width-11;
+
+    R = Y4 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+
+    G = Y4 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+
+    B = Y4 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+
+    //---
+    R = Y5 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y5 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y5 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y5 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y5 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y6 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y6 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y6 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y6 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y6 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y6 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y7 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y7 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y7 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y7 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y7 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y7 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb + 3*width-11;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb + 3*width-11;
 
-		R = Y8 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    R = Y8 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y8 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y8 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y8 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y8 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y9 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y9 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y9 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y9 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y9 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y9 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y10 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y10 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y10 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y10 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y10 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y10 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y11 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y11 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y11 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y11 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y11 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y11 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb = (unsigned char)B;
-		rgb = rgb + 3*width-11;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb = (unsigned char)B;
+    rgb = rgb + 3*width-11;
 
-		R = Y12 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    R = Y12 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y12 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y12 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y12 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y12 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y13 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y13 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y13 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y13 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y13 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y13 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y14 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y14 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y14 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y14 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y14 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y14 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
 
-		//---
-		R = Y15 + V2;
-		if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
+    //---
+    R = Y15 + V2;
+    if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-		G = Y15 + UV;
-		if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
+    G = Y15 + UV;
+    if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-		B = Y15 + U5;
-		if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
+    B = Y15 + U5;
+    if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
-		*rgb++ = (unsigned char)R;
-		*rgb++ = (unsigned char)G;
-		*rgb++ = (unsigned char)B;
-		rgb = rgb -9*width+1;
-	  }
-	yuv+=3*width;
-	rgb+=9*width;
+    *rgb++ = (unsigned char)R;
+    *rgb++ = (unsigned char)G;
+    *rgb++ = (unsigned char)B;
+    rgb = rgb -9*width+1;
+    }
+  yuv+=3*width;
+  rgb+=9*width;
   }
 }
 
@@ -2151,7 +2430,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv,
 
 */
 void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
-			       unsigned int size)
+             unsigned int size)
 {
   unsigned char *pt_input = rgb;
   unsigned char *pt_end = rgb + 3*size;
@@ -2171,7 +2450,7 @@ void vpImageConvert::RGBToRGBa(unsigned char* rgb, unsigned char* rgba,
 
 */
 void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb,
-			       unsigned int size)
+             unsigned int size)
 {
   unsigned char *pt_input = rgba;
   unsigned char *pt_end = rgba + 4*size;
@@ -2191,7 +2470,7 @@ void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb,
 
 */
 void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey,
-			       unsigned int size)
+             unsigned int size)
 {
   unsigned char *pt_input = rgb;
   unsigned char* pt_end = rgb + size*3;
@@ -2212,7 +2491,7 @@ void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey,
 
 */
 void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey,
-				unsigned int size)
+        unsigned int size)
 {
   unsigned char *pt_input = rgba;
   unsigned char* pt_end = rgba + size*4;
@@ -2233,7 +2512,7 @@ void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey,
 */
 void
 vpImageConvert::GreyToRGBa(unsigned char* grey,
-			   unsigned char* rgba, unsigned int size)
+         unsigned char* rgba, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char *pt_end = grey + size;
@@ -2257,7 +2536,7 @@ vpImageConvert::GreyToRGBa(unsigned char* grey,
 */
 void
 vpImageConvert::GreyToRGB(unsigned char* grey,
-			  unsigned char* rgb, unsigned int size)
+        unsigned char* rgb, unsigned int size)
 {
   unsigned char *pt_input = grey;
   unsigned char* pt_end = grey + size;
@@ -2282,7 +2561,7 @@ vpImageConvert::GreyToRGB(unsigned char* grey,
 */
 void
 vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
-			  unsigned int width, unsigned int height, bool flip)
+        unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the
   //step is negative
@@ -2320,7 +2599,7 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
 */
 void
 vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
-			  unsigned int width, unsigned int height, bool flip)
+        unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the
   //step is negative
@@ -2339,8 +2618,8 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
     for( j=0 ; j < width ; j++)
     {
       *grey++ = (unsigned char)( 0.2126 * *(line+2)
-				 + 0.7152 * *(line+1)
-				 + 0.0722 * *(line+0)) ;
+         + 0.7152 * *(line+1)
+         + 0.0722 * *(line+0)) ;
       line+=3;
     }
 
@@ -2355,7 +2634,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
 */
 void
 vpImageConvert::RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
-			  unsigned int width, unsigned int height, bool flip)
+        unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the
   //step is negative
@@ -2390,7 +2669,7 @@ vpImageConvert::RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
 */
 void
 vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
-			  unsigned int width, unsigned int height, bool flip)
+        unsigned int width, unsigned int height, bool flip)
 {
   //if we have to flip the image, we start from the end last scanline so the
   //step is negative
@@ -2465,7 +2744,7 @@ void vpImageConvert::computeYCbCrLUT()
 
 */
 void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
-				unsigned int size)
+        unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -2524,7 +2803,7 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
 
 */
 void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
-				 unsigned int size)
+         unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -2576,12 +2855,12 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
     Byte 3: Chroma blue Cb (Blue Chroma for Pixel 0 and 1)
     Byte 4: Y2 (Luma for Pixel 2)
 
-  - In grey format, each pixel is coded using 8 bytes.  
+  - In grey format, each pixel is coded using 8 bytes.
 
 */
 void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
-				  unsigned char* grey,
-				  unsigned int size)
+          unsigned char* grey,
+          unsigned int size)
 {
  unsigned int i=0,j=0;
 
@@ -2612,7 +2891,7 @@ void vpImageConvert::YCbCrToGrey(unsigned char* yuv,
 
 */
 void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
-				unsigned int size)
+        unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -2669,7 +2948,7 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
 
 */
 void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
-				 unsigned int size)
+         unsigned int size)
 {
   unsigned char *cbv;
   unsigned char *crv;
@@ -2729,14 +3008,14 @@ int main()
 
   // Load a color image from the disk
   vpImageIo::readPPM(Ic,"image.ppm");
-  
+
   // Only R and B Channels are desired.
   vpImage<unsigned char> R, B;
-  
-  // Split Ic color image 
+
+  // Split Ic color image
   // R and B will be resized in split function if needed
   vpImageConvert::split(Ic, &R, NULL, &B, NULL);
-  
+
   // Save the the R Channel.
   vpImageIo::writePGM(R, "RChannel.pgm");
 }
@@ -2808,7 +3087,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
 
 */
 void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
-				  unsigned int size)
+          unsigned int size)
 {
   register int i = (((int)size)<<1)-1;
   register int j = (int)size-1;
