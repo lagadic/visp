@@ -84,9 +84,7 @@ ELSE()
   ENDIF()
 ENDIF()
 
-set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Debian package install prefix" FORCE)
 
-set(BUILD_SHARED_LIBS CACHE FORCE "Build ViSP with shared libraries." ON)
 list(APPEND CPACK_GENERATOR RPM)
 
 SET(CPACK_PACKAGE_NAME "libvisp-devel")

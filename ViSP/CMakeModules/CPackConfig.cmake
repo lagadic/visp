@@ -42,9 +42,9 @@
 message(STATUS "Configuring CPack")
 mark_as_advanced(BUILD_PACKAGE)
 
-  
+
 SET(CPACK_PACKAGE_NAME "libvisp")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Visual tracking and visual servoing library in C++ (development files)")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Visual tracking and visual servoing library in C++ (development files)")
 SET(CPACK_PACKAGE_CONTACT "visp@inria.fr")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
@@ -55,6 +55,18 @@ SET(CPACK_PACKAGE_VERSION_MAJOR ${VISP_VERSION_MAJOR})
 SET(CPACK_PACKAGE_VERSION_MINOR ${VISP_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${VISP_VERSION_PATCH})
 
+SET(CPACK_COMPONENTS_ALL libraries headers)
+SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries")
+SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ Headers")
+SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "ViSP ${VISP_VERSION} libraries")
+SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for use with ViSP ${VISP_VERSION} libraries")
+SET(CPACK_COMPONENT_HEADERS_DEPENDS libraries)
+SET(CPACK_COMPONENT_LIBRARIES_GROUP "Development")
+SET(CPACK_COMPONENT_HEADERS_GROUP "Development")	
+SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you'll ever need to develop software with ViSP")
+SET(CPACK_ALL_INSTALL_TYPES Full Developer)
+SET(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)
+SET(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
 
 # The following components are regex's to match anywhere (unless anchored)
 # in absolute path + filename to find files or directories to be excluded
@@ -73,6 +85,20 @@ if(UNIX AND NOT APPLE AND NOT WIN32) # =linux
   option(BUILD_PACKAGE_DEBIAN "Build debian package" ON)
   option(BUILD_PACKAGE_RPM "Build rpm package" ON)
 endif()
+
+# In ViSP packages we only want to have the libraries and the headers (nor the demo, example, and test)
+# That's why we turn off the demo, example and test building
+SET(BUILD_DEMOS OFF CACHE BOOL "Build ViSP demos." FORCE )
+SET(BUILD_EXAMPLES OFF CACHE BOOL "Build ViSP examples." FORCE)
+SET(BUILD_TESTING OFF CACHE BOOL "Build ViSP tests." FORCE)
+
+
+if(UNIX)
+  set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Package install prefix" FORCE)
+endif()
+
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Build ViSP with shared libraries." FORCE)
+
 
 if(WIN32 AND NOT UNIX)
   include(${VISP_SOURCE_DIR}/CMakeModules/CPackConfigNsis.cmake)
