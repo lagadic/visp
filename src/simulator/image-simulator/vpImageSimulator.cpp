@@ -1156,6 +1156,100 @@ vpImageSimulator::init(const char* file_image,vpColVector* _X)
   initPlan(_X);
 }
 
+/*!
+  Initialise the image thanks to an image \f$ I \f$ and a table of vector containing the 3D coordinates of the image's corners.
+
+  \throw vpException::dimensionError if the _X vector is not of size 4.
+
+  - \f$ X[0] \f$ :Top left corner.
+  - \f$ X[1] \f$ :Top right corner.
+  - \f$ X[2] \f$ :Bottom right corner.
+  - \f$ X[3] \f$ :Bottom left corner.
+
+  \param I : The image which is projected.
+  \param _X : table of the 3D coordinates corresponding to the image corners.
+*/
+void
+vpImageSimulator::init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& _X)
+{
+  if(_X.size() != 4){
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
+  }
+  vpColVector Xvec[4];
+  for(unsigned int i=0; i<4; ++i){
+    Xvec[i].resize(3);
+    Xvec[i][0] = _X[i].get_oX();
+    Xvec[i][1] = _X[i].get_oY();
+    Xvec[i][2] = _X[i].get_oZ();
+  }
+
+  Ig = I;
+  vpImageConvert::convert(I,Ic);
+  initPlan(Xvec);
+}
+/*!
+  Initialise the image thanks to an image \f$ I \f$ and a table of vector containing the 3D coordinates of the image's corners.
+
+  \throw vpException::dimensionError if the _X vector is not of size 4.
+
+  - \f$ X[0] \f$ :Top left corner.
+  - \f$ X[1] \f$ :Top right corner.
+  - \f$ X[2] \f$ :Bottom right corner.
+  - \f$ X[3] \f$ :Bottom left corner.
+
+  \param I : The image which is projected.
+  \param _X : table of the 3D coordinates corresponding to the image corners.
+*/
+void
+vpImageSimulator::init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& _X)
+{
+  if(_X.size() != 4){
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
+  }
+  vpColVector Xvec[4];
+  for(unsigned int i=0; i<4; ++i){
+    Xvec[i].resize(3);
+    Xvec[i][0] = _X[i].get_oX();
+    Xvec[i][1] = _X[i].get_oY();
+    Xvec[i][2] = _X[i].get_oZ();
+  }
+
+  Ic = I;
+  vpImageConvert::convert(I,Ig);
+  initPlan(Xvec);
+}
+/*!
+  Initialise the image thanks to an image whose adress is given by \f$ file_image \f$ and a table of vector containing the 3D coordinates of the image's corners.
+
+  \throw vpException::dimensionError if the _X vector is not of size 4.
+
+  - \f$ X[0] \f$ :Top left corner.
+  - \f$ X[1] \f$ :Top right corner.
+  - \f$ X[2] \f$ :Bottom right corner.
+  - \f$ X[3] \f$ :Bottom left corner.
+
+  \param file_image : The adress of an image file.
+  \param _X : table of the 3D coordinates corresponding to the image corners.
+*/
+void
+vpImageSimulator::init(const char* file_image, const std::vector<vpPoint>& _X)
+{
+  if(_X.size() != 4){
+    throw vpException(vpException::dimensionError, "the vector must contains 4 points to initialise the simulator");
+  }
+  vpColVector Xvec[4];
+  for(unsigned int i=0; i<4; ++i){
+    Xvec[i].resize(3);
+    Xvec[i][0] = _X[i].get_oX();
+    Xvec[i][1] = _X[i].get_oY();
+    Xvec[i][2] = _X[i].get_oZ();
+  }
+
+  vpImageIo::read(Ig,file_image);
+  vpImageIo::read(Ic,file_image);
+  initPlan(Xvec);
+}
+
 bool
 vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)
 {

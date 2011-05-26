@@ -121,6 +121,8 @@
   \endcode
 */
 
+#include <vector>
+
 #include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -206,6 +208,9 @@ class VISP_EXPORT vpImageSimulator
     void init(const vpImage<unsigned char> &I,vpColVector* _X);
     void init(const vpImage<vpRGBa> &I,vpColVector* _X);
     void init(const char* file_image,vpColVector* _X);
+    void init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& _X);
+    void init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& _X);
+    void init(const char* file_image, const std::vector<vpPoint>& _X);
 
     //projection du plan par cMo => creation des deux triangles definissant projection du plan sur plan image (coord en metre)
     void setCameraPosition(const vpHomogeneousMatrix &_cMt);
