@@ -1167,7 +1167,8 @@ vpImageSimulator::init(const char* file_image,vpColVector* _X)
   - \f$ X[3] \f$ :Bottom left corner.
 
   \param I : The image which is projected.
-  \param _X : table of the 3D coordinates corresponding to the image corners.
+  \param _X : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
+  corresponding to the image corners.
 */
 void
 vpImageSimulator::init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& _X)
@@ -1198,7 +1199,8 @@ vpImageSimulator::init(const vpImage<unsigned char> &I, const std::vector<vpPoin
   - \f$ X[3] \f$ :Bottom left corner.
 
   \param I : The image which is projected.
-  \param _X : table of the 3D coordinates corresponding to the image corners.
+  \param _X : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
+  corresponding to the image corners.
 */
 void
 vpImageSimulator::init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& _X)
@@ -1229,7 +1231,8 @@ vpImageSimulator::init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& _X)
   - \f$ X[3] \f$ :Bottom left corner.
 
   \param file_image : The adress of an image file.
-  \param _X : table of the 3D coordinates corresponding to the image corners.
+  \param _X : Vector of the 3D coordinates in the object frame (oX, oY, oZ)
+  corresponding to the image corners.
 */
 void
 vpImageSimulator::init(const char* file_image, const std::vector<vpPoint>& _X)
