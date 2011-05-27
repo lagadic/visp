@@ -318,17 +318,18 @@ ENDIF()
 IF(VISP_HAVE_X11)
   LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayX.cpp)
 ENDIF()
+
 IF(WIN32)
   LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayWin32.cpp)
   LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpWin32Window.cpp)
 ENDIF()
 IF(VISP_HAVE_GDI)
   LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpGDIRenderer.cpp)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayGDI)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayGDI.cpp)
 ENDIF()
 IF(VISP_HAVE_D3D9)
   LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpD3DRenderer.cpp)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayD3D)
+  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayD3D.cpp)
 ENDIF()
 
 SET (SRC_VISUAL_FEATURE
@@ -366,3 +367,4 @@ SET (SRC_ALL
   ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
   )
+  
