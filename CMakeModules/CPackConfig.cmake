@@ -40,7 +40,7 @@
 
 
 message(STATUS "Configuring CPack")
-mark_as_advanced(BUILD_PACKAGE)
+#mark_as_advanced(BUILD_PACKAGE)
 
 
 SET(CPACK_PACKAGE_NAME "libvisp")
