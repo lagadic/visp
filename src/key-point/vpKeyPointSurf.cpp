@@ -234,7 +234,15 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 {
   IplImage* model = NULL;
 
-  vpImageConvert::convert(I,model);
+  if((I.getWidth() % 8) == 0){
+    int height = (int)I.getHeight();
+    int width  = (int)I.getWidth();
+    CvSize size = cvSize(width, height);
+    model = cvCreateImageHeader(size, IPL_DEPTH_8U, 1);
+    model->imageData = (char*)I.bitmap;
+  }else{
+    vpImageConvert::convert(I,model);
+  }
 
   cvExtractSURF( model, 0, &ref_keypoints, &ref_descriptors, storage, params );
   
@@ -250,7 +258,12 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
     referenceImagePointsList[i].set_j(r1->pt.x);
   }
 
-  cvReleaseImage(&model);
+  if((I.getWidth() % 8) == 0){
+    model->imageData = NULL;
+    cvReleaseImageHeader(&model);
+  }else{
+    cvReleaseImage(&model);
+  }
 
   _reference_computed = true;
   return nbPoints;
@@ -345,7 +358,15 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 {
   IplImage* currentImage = NULL;
 
-  vpImageConvert::convert(I,currentImage);
+  if((I.getWidth() % 8) == 0){
+    int height = (int)I.getHeight();
+    int width  = (int)I.getWidth();
+    CvSize size = cvSize(width, height);
+    currentImage = cvCreateImageHeader(size, IPL_DEPTH_8U, 1);
+    currentImage->imageData = (char*)I.bitmap;
+  }else{
+    vpImageConvert::convert(I,currentImage);
+  }
   
   /* we release the memory storage for the current points (it has to be kept 
       allocated for the get descriptor points, ...) */
@@ -356,9 +377,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   storage_cur = cvCreateMemStorage(0);
 
   cvExtractSURF( currentImage, 0, &image_keypoints, &image_descriptors,
-		 storage_cur, params );
-
-  cvReleaseImage(&currentImage);
+     storage_cur, params );
 
   CvSeqReader reader, kreader;
   cvStartReadSeq( ref_keypoints, &kreader );
@@ -421,6 +440,13 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
       indexImagePair.next();
       indexReferencePair.next();
+  }
+
+  if((I.getWidth() % 8) == 0){
+    currentImage->imageData = NULL;
+    cvReleaseImageHeader(&currentImage);
+  }else{
+    cvReleaseImage(&currentImage);
   }
 
   return nbrPair;
