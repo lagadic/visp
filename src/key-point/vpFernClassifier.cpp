@@ -82,7 +82,12 @@ vpFernClassifier::vpFernClassifier(const std::string& _dataFile, const std::stri
 vpFernClassifier::~vpFernClassifier()
 {
   if(curIplImg != NULL){
-    cvReleaseImage(&curIplImg);
+    if(curIplImg->width % 8 == 0){
+      curIplImg->imageData = NULL;
+      cvReleaseImageHeader(&curIplImg);
+    }else{
+      cvReleaseImage(&curIplImg);
+    }
     curIplImg = NULL;
   }  
 }
@@ -475,7 +480,7 @@ vpFernClassifier::load(const std::string& _dataFile, const std::string& /*_objec
 /*!
   \brief record the Ferns classifier in the text file
 
-  \param _objectName : The name of the object to store in the data file
+  \param _objectName : The name of the object to store in the data file.
   \param _dataFile : The name of the data filename (very large text file). It can have any file extension.
 */
 void
@@ -502,7 +507,7 @@ vpFernClassifier::record(const std::string& _objectName, const std::string& _dat
 
 
 /*!
-  Set the current image. This method allows to convert a image from the visp 
+  Set the current image. This method allows to convert a image from the ViSP
   format to the OpenCV one. 
   
   \param _I : the input image.
@@ -512,11 +517,25 @@ vpFernClassifier::setImage(const vpImage<unsigned char>& _I)
 {  
   if(curIplImg != NULL){
     cvResetImageROI(curIplImg);
-    cvReleaseImage(&curIplImg);
+    if((curIplImg->width % 8) == 0){
+      curIplImg->imageData = NULL;
+      cvReleaseImageHeader(&curIplImg);
+    }else{
+      cvReleaseImage(&curIplImg);
+    }
     curIplImg = NULL;
   }
   
-  vpImageConvert::convert(_I, curIplImg);
+  if((_I.getWidth()%8) == 0){
+    curIplImg = cvCreateImageHeader(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
+    if(curIplImg != NULL){
+      curIplImg->imageData = (char*)_I.bitmap;
+    }else{
+      throw vpException(vpException::memoryAllocationError, "Could not create the image in the OpenCV format.");
+    }
+  }else{
+    vpImageConvert::convert(_I, curIplImg);
+  }
   if(curIplImg == NULL){
     std::cout << "!> conversion failed" << std::endl;
     throw vpException(vpException::notInitialized , "conversion failed");
