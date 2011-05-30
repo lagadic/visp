@@ -527,7 +527,7 @@ vpFernClassifier::setImage(const vpImage<unsigned char>& _I)
   }
   
   if((_I.getWidth()%8) == 0){
-    curIplImg = cvCreateImageHeader(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
+    curIplImg = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
     if(curIplImg != NULL){
       curIplImg->imageData = (char*)_I.bitmap;
     }else{
