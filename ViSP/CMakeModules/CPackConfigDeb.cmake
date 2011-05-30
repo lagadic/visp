@@ -41,7 +41,7 @@
 
 # To install the generated debian package use the gdebi-gtk package 
 # installer on Ubuntu:
-# gdebi-gtk libvisp-dev-2.6.1_1_i386.deb
+# gdebi-gtk libvisp-dev-2.6.1-1_i386.deb
 
 # $ dpkg --print-architecture
 FIND_PROGRAM(DPKG_CMD dpkg)
@@ -58,6 +58,7 @@ ENDIF()
 
 list(APPEND CPACK_GENERATOR DEB)
 
+SET(CPACK_PACKAGE_VERSION ${VISP_VERSION}-${VISP_REVISION})
 SET(CPACK_PACKAGE_NAME "libvisp-dev")
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}_${VISP_VERSION}-${VISP_REVISION}_${CPACK_SYSTEM_NAME}")
 
@@ -66,7 +67,7 @@ IF(USE_X11)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libx11-dev (>=2:1.3.2)")
 ENDIF()
 IF(USE_GTK2)
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgtk2.0-dev, libglib2.0-dev, libpango1.0-dev, libatk1.0-dev, libcairo2-dev")
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libgtk2.0-dev (>=2.20.1), libglib2.0-dev (>=2.24.1), libpango1.0-dev (>=1.28.0), libatk1.0-dev (>=1.30.0), libcairo2-dev (>=1.8.10)")
 ENDIF()
 IF(USE_LAPACK)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, liblapack-dev(>=3.2)")
