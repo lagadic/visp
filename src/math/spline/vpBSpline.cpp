@@ -396,6 +396,8 @@ vpImagePoint vpBSpline::computeCurvePoint(double l_u, unsigned int l_i, unsigned
   pt.set_i(ic);
   pt.set_j(jc);
 
+  delete[] N;
+
   return pt;
 }
 
@@ -422,6 +424,8 @@ vpImagePoint vpBSpline::computeCurvePoint(double u)
 
   pt.set_i(ic);
   pt.set_j(jc);
+
+  delete[] N;
 
   return pt;
 }
@@ -469,6 +473,12 @@ vpImagePoint* vpBSpline::computeCurveDers(double l_u, unsigned int l_i, unsigned
     }
   }
 
+
+  for(unsigned int j = 0; j <= l_der; j++)
+    delete[] N[j];
+  delete[] N;
+
+
   return derivate;
 }
 
@@ -510,6 +520,10 @@ vpImagePoint* vpBSpline::computeCurveDers(double u, unsigned int der)
       derivate[k].set_j( derivate[k].get_j() + N[k][j].value*(controlPoints[N[0][0].i-p+j]).get_j());
     }
   }
+
+  for(unsigned int j = 0; j <= der; j++)
+    delete[] N[j];
+  delete[] N;
 
   return derivate;
 }
