@@ -1705,7 +1705,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 
 #if defined (VISP_HAVE_LAPACK)
     svdLapack(w,v);
-#elif defined (VISP_HAVE_OPENCV)
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Require opencv >= 2.1.0
     svdOpenCV(w,v);
 #elif defined (VISP_HAVE_GSL)  /* be careful of the copy below */
     svdGsl(w,v) ;

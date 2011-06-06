@@ -406,7 +406,7 @@ public:
 #ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector& w, vpMatrix& v);
 #endif
-#ifdef VISP_HAVE_OPENCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Require opencv >= 2.1.0
   void svdOpenCV(vpColVector& w, vpMatrix& v);
 #endif
 #ifdef VISP_HAVE_LAPACK
