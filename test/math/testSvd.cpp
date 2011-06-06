@@ -152,7 +152,7 @@ bool testRandom(double epsilon)
 #endif
 
 bool testSvdOpenCvGSLCoherence(double epsilon){
-#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_GSL)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && defined (VISP_HAVE_GSL) // Require opencv >= 2.1.0
     vpMatrix A;
     vpMatrix vA;
     vpColVector wA;

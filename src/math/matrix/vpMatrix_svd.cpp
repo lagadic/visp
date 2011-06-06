@@ -538,7 +538,7 @@ void vpMatrix::svdFlake(vpColVector &W, vpMatrix &V)
 }
 
 
-#ifdef VISP_HAVE_OPENCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Require opencv >= 2.1.0
 #include "cv.h"
 void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
   int rows = (int)this->getRows();
