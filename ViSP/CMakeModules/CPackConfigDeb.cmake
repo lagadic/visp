@@ -106,7 +106,7 @@ IF(USE_OIS)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libois-dev (>=1.3.0)")
 ENDIF()
 IF(USE_OPENCV)
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcv-dev (>=2.1), libcvaux-dev (>=2.1), libhighgui-dev (>=2.1)")
+  set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libcv-dev (>=2.0), libcvaux-dev (>=2.0), libhighgui-dev (>=2.0)")
 ENDIF()
 
 #message("CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEBIAN_PACKAGE_DEPENDS}")
