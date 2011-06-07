@@ -12,6 +12,7 @@ ViSP 2.6.1 (under development)
      - Introduction of vpAROgre that enables augmented reality applications 
        based on Ogre 3D. Some examples are provided in examples/ogre-simulator
      - Add cylinder's tracking in the model-based tracker.
+     - Reintroduce OpenCV 2.0.0 support lost in ViSP 2.6.0
   - Improvements
      - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now
        possible to select a specific camera with its GUID by using setCamera()
