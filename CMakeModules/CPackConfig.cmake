@@ -95,6 +95,8 @@ SET(BUILD_TESTING OFF CACHE BOOL "Build ViSP tests." FORCE)
 
 if(UNIX)
   set(CMAKE_INSTALL_PREFIX "/usr" CACHE String "Package install prefix" FORCE)
+elseif(WIN32)
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files/ViSP ${VISP_VERSION}" CACHE String "Package install prefix" FORCE)
 endif()
 
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build ViSP with shared libraries." FORCE)
