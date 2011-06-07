@@ -3579,7 +3579,7 @@ vpMatrix::expm()
      _eye.setIdentity();
      vpMatrix exp(*this);
 
-     double f;
+//      double f;
      int e;
      double c = 0.5;
      int q = 6;
@@ -3599,7 +3599,7 @@ vpMatrix::expm()
        }
      }
 
-     f = frexp(nA, &e);
+     /* f = */ frexp(nA, &e);
      //double s = (0 > e+1)?0:e+1;
      double s = e+1;
 

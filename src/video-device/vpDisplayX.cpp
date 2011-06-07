@@ -3203,7 +3203,7 @@ vpDisplayX::getKeyboardEvent(char *string, bool blocking)
 
   bool ret = false;
   KeySym  keysym;
-  int     count;
+//   int     count;
   XComposeStatus compose_status;
   char buffer;
   
@@ -3211,7 +3211,7 @@ vpDisplayX::getKeyboardEvent(char *string, bool blocking)
     // Event testing
     if(blocking){
       XMaskEvent ( display, KeyPressMask ,&event );
-      count = XLookupString ((XKeyEvent *)&event, &buffer, 1,
+      /* count = */ XLookupString ((XKeyEvent *)&event, &buffer, 1,
 			     &keysym, &compose_status);
       //std::cout <<"count: " << count << " get \"" << buffer << "\"" << std::endl;
       sprintf(string, "%c", buffer);
@@ -3220,7 +3220,7 @@ vpDisplayX::getKeyboardEvent(char *string, bool blocking)
     else{
       ret = XCheckMaskEvent(display , KeyPressMask, &event);
       if (ret) {
-	count = XLookupString ((XKeyEvent *)&event, &buffer, 1,
+	/* count = */ XLookupString ((XKeyEvent *)&event, &buffer, 1,
 			       &keysym, &compose_status);
 	sprintf(string, "%c", buffer);
       }

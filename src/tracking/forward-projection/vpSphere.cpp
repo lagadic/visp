@@ -108,7 +108,7 @@ void
 vpSphere::projection(const vpColVector &cP, vpColVector &p)
 {
   double x0, y0, z0;  //variables intermediaires
-  double k0, k1, k2, k3, k4;  //variables intermediaires
+//   double k0, k1, k2, k3, k4;  //variables intermediaires
   double E, A, B; //variables intermediaires
 
   //calcul des parametres M20, M11, M02 de l'ellipse
@@ -122,11 +122,11 @@ vpSphere::projection(const vpColVector &cP, vpColVector &p)
 
   s = r*r - y0*y0 -z0*z0;
 
-  k0 = (r*r - x0*x0 -z0*z0)/s;
-  k1 = (x0*y0)/s;
-  k2 = (x0*z0)/s;
-  k3 = (y0*z0)/s;
-  k4 = (r*r - x0*x0 -y0*y0)/s;
+//   k0 = (r*r - x0*x0 -z0*z0)/s;
+//   k1 = (x0*y0)/s;
+//   k2 = (x0*z0)/s;
+//   k3 = (y0*z0)/s;
+//   k4 = (r*r - x0*x0 -y0*y0)/s;
 
   if ((s = z0*z0 - r*r) < 0.0)
   {

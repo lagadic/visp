@@ -690,7 +690,7 @@ vpHistogram::getValey(unsigned char dist,
   unsigned int mini;                    // current minimum
   vpHistogramPeak peakr, peakl; // Left and right peaks of peak
   vpList<vpHistogramPeak> peaks; // list of histogram peaks
-  unsigned int nbpeaks=0; // Number of peaks in the histogram (ie local maxima)
+//   unsigned int nbpeaks=0; // Number of peaks in the histogram (ie local maxima)
 
   if (peak.getLevel() == 0) {
     valeyl.set(0, 0);
@@ -704,19 +704,19 @@ vpHistogram::getValey(unsigned char dist,
   if (ret >> 1) {
     // If the list of peaks is empty, compute it
     if (peaks.empty()) {
-      nbpeaks = getPeaks(peaks);
+      /* nbpeaks = */ getPeaks(peaks);
     }
 
-    if (1) {
-      //      vpTRACE("nb peaks: %d", nbpeaks);
-      peaks.front();
-      for (unsigned i=0; i < nbpeaks; i ++) {
-	vpHistogramPeak p = peaks.value();
-// 	vpTRACE("peak index %d: pos %d value: %d",
-// 		i, p.getLevel(), p.getValue());
-	peaks.next();
-      }
-    }
+//     if (1) {
+//       //      vpTRACE("nb peaks: %d", nbpeaks);
+//       peaks.front();
+//       for (unsigned i=0; i < nbpeaks; i ++) {
+// 	vpHistogramPeak p = peaks.value();
+// // 	vpTRACE("peak index %d: pos %d value: %d",
+// // 		i, p.getLevel(), p.getValue());
+// 	peaks.next();
+//       }
+//     }
     // Go to the requested peak in the list
     peaks.front();
     unsigned index = 0;
@@ -780,7 +780,7 @@ vpHistogram::getValey(unsigned char dist,
   if (ret << 1) {
     // If the list of peaks is empty, compute it
     if (peaks.empty()) {
-      nbpeaks = getPeaks(peaks);
+      /* nbpeaks = */ getPeaks(peaks);
     }
     // Go to the requested peak in the list
     peaks.front();

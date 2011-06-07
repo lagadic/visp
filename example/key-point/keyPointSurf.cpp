@@ -311,13 +311,13 @@ main(int argc, const char ** argv)
   }
 
   vpKeyPointSurf surf;
-  unsigned int nbrRef;
+//   unsigned int nbrRef;
   unsigned int height, width;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
 
   //Computes the reference points
-  nbrRef = surf.buildReference(Iref, corners[0], height, width);
+  /* nbrRef = */ surf.buildReference(Iref, corners[0], height, width);
 
   unsigned int nbrPair = 0;
 

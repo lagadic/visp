@@ -473,8 +473,8 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 
   vpMeSite  *list_query_pixels ;
   int  max_rank =-1 ;
-  int max_rank1=-1 ;
-  int max_rank2 = -1;
+//   int max_rank1=-1 ;
+//   int max_rank2 = -1;
   double  convolution = 0 ;
   double  max_convolution = 0 ;
   double max = 0 ;
@@ -525,8 +525,8 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 	    max_convolution= convolution;
 	    max = likelihood[n] ;
 	    max_rank = (int)n ;
-	    max_rank2 = max_rank1;
-	    max_rank1 = max_rank;
+// 	    max_rank2 = max_rank1;
+// 	    max_rank1 = max_rank;
 	  }
 	}
       }
@@ -539,8 +539,8 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 	  max_convolution= convolution;
           max = likelihood[n] ;
           max_rank = (int)n ;
-          max_rank2 = max_rank1;
-          max_rank1 = max_rank;
+//           max_rank2 = max_rank1;
+//           max_rank1 = max_rank;
         }
       }
   }
