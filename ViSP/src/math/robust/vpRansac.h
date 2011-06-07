@@ -146,9 +146,9 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 {
 
 
-  bool isplanar;
-  if (s == 4) isplanar = true;
-  else isplanar = false;
+/*   bool isplanar; */
+/*   if (s == 4) isplanar = true; */
+/*   else isplanar = false; */
 
   double eps = 1e-6 ;
   double p = 0.99;    // Desired probability of choosing at least one sample

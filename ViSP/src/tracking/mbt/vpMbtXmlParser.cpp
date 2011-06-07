@@ -279,8 +279,8 @@ void
 vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	int d_height=0 ;
-	int d_width= 0 ;
+// 	int d_height=0 ;
+// 	int d_width= 0 ;
 	double d_u0 = this->cam.get_u0();
 	double d_v0 = this->cam.get_v0();
 	double d_px = this->cam.get_px();
@@ -293,11 +293,11 @@ vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case height:{
-          d_height = xmlReadIntChild(doc, dataNode);
+          /* d_height = */ xmlReadIntChild(doc, dataNode);
           nb++;
           }break;
         case width:{
-          d_width = xmlReadIntChild(doc, dataNode);
+          /* d_width = */ xmlReadIntChild(doc, dataNode);
           nb++;
           }break;
         case u0:{

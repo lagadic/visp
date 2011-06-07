@@ -345,7 +345,7 @@ HLM3D(unsigned int nb_pts,
 {
   unsigned int i,j,k,ii,jj ;
   unsigned int cont_pts;			/* Pour compter le nombre de points dans l'image */
-  unsigned int nl;			/*** Nombre de lignes ***/
+  //unsigned int nl;			/*** Nombre de lignes ***/
   unsigned int nc ;			/*** Nombre de colonnes ***/
   unsigned int  pts_ref[4];		/*** définit lesquels des points de
 				     l'image sont les points de référence***/
@@ -356,12 +356,12 @@ HLM3D(unsigned int nb_pts,
   unsigned int  cont;
   unsigned int  vect;
 
-  int 	 prob;
+  //int 	 prob;
 
   /***** Corps de la fonction	*****/
 
   /* allocation des matrices utilisees uniquement dans la procedure */
-  prob=0;
+  //prob=0;
 
   vpMatrix M(3,3) ;
   vpMatrix Mdp(3,3) ;
@@ -401,7 +401,7 @@ HLM3D(unsigned int nb_pts,
 			     "Not enough point to compute the homography"));
   }
 
-  nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
+  //nl = cont_pts*(cont_pts-1)*(cont_pts-2)/6 ;
   nc = 7  ;
 
   /* Allocation matrice CtC */
@@ -507,7 +507,7 @@ HLM3D(unsigned int nb_pts,
     for (j=i+1; j<nc ;j++) CtC[j][i] = CtC[i][j];
   }
 
-  nl = cont ;   /* nombre de lignes   */
+  //nl = cont ;   /* nombre de lignes   */
   nc = 7 ;      /* nombre de colonnes */
 
   /* Creation de matrice CtC termine */

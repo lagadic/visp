@@ -218,8 +218,8 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 void
 vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
 {
-  unsigned int nbrelmt;
-  nbrelmt = list.nbElement();
+//   unsigned int nbrelmt;
+//   nbrelmt = list.nbElement();
   list.front();
   while(!list.outside())
   {
@@ -254,7 +254,7 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
   else
     list.next() ;
   }
-  nbrelmt = list.nbElement();
+//   nbrelmt = list.nbElement();
 }
 
 
