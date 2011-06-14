@@ -71,7 +71,7 @@ class VISP_EXPORT vpMbtDistanceLine
   private :
     std::string name;
     unsigned int index;
-    vpCameraParameters *cam;
+    vpCameraParameters cam;
     vpMe *me;
     double alpha;
     double wmean;
@@ -110,13 +110,13 @@ class VISP_EXPORT vpMbtDistanceLine
    
      \param cam : The vpCameraParameters used to store the camera parameters.
     */
-    inline void getCameraParameters(vpCameraParameters *cam) {cam = this->cam;}
+    inline void getCameraParameters(vpCameraParameters& cam) {cam = this->cam;}
     
     /*!
      Set the camera paramters.
      \param cam : The camera parameters.
     */
-    inline void setCameraParameters(vpCameraParameters *cam) {this->cam = cam;}
+    inline void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
     
     /*!
      Get the mean weight of the line. The mean weight is computed thanks to the weight of each moving edge.
