@@ -65,7 +65,6 @@ vpMbtDistanceLine::vpMbtDistanceLine()
   line = NULL ;
   meline = NULL ;
   hiddenface = NULL ;
-  cam = NULL ;
   wmean = 1 ;
   nbFeature =0 ;
   Reinit = false;
@@ -263,10 +262,10 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
     vpImagePoint ip1, ip2;
     double rho,theta;
 
-    vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1);
-    vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2);
+    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1);
+    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2);
     //rho theta uv
-    vpMeterPixelConversion::convertLine(*cam,line->getRho(),line->getTheta(),rho,theta);
+    vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
     
     while (theta > M_PI) { theta -= M_PI ; }
     while (theta < -M_PI) { theta += M_PI ; }
@@ -363,9 +362,9 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
     vpImagePoint ip1, ip2;
     double rho,theta;
 
-    vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1);
-    vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2);
-    vpMeterPixelConversion::convertLine(*cam,line->getRho(),line->getTheta(),rho,theta);
+    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1);
+    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2);
+    vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
     
     while (theta > M_PI) { theta -= M_PI ; }
     while (theta < -M_PI) { theta += M_PI ; }
@@ -546,10 +545,10 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
     double co = cos(theta);
     double si = sin(theta);
 
-    double mx = 1.0/cam->get_px() ;
-    double my = 1.0/cam->get_py() ;
-    double xc = cam->get_u0() ;
-    double yc = cam->get_v0() ;
+    double mx = 1.0/cam.get_px() ;
+    double my = 1.0/cam.get_py() ;
+    double xc = cam.get_u0() ;
+    double yc = cam.get_v0() ;
 
     double alpha ;
     vpMatrix H ;

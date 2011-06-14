@@ -1279,7 +1279,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
       if (!already_here){
         l = new vpMbtDistanceLine ;
 
-        l->setCameraParameters(&cam) ;
+        l->setCameraParameters(cam) ;
         l->buildFrom(P1,P2) ;
         l->Lindex_polygon += polygone ;
         l->setMovingEdge(&me) ;
@@ -1355,7 +1355,7 @@ vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double 
       if (!already_here){
         cy = new vpMbtDistanceCylinder ;
 
-        cy->setCameraParameters(&cam);
+        cy->setCameraParameters(cam);
         cy->buildFrom(P1, P2, r);
         cy->setMovingEdge(&me);
         cy->setIndex(ncylinder);

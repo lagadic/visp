@@ -71,7 +71,6 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
   c = NULL ;
   meline1 = NULL ;
   meline2 = NULL ;
-  cam = NULL ;
   wmean1 = 1 ;
   wmean2 = 1 ;
   nbFeaturel1 =0 ;
@@ -195,10 +194,10 @@ vpMbtDistanceCylinder::getCylinderLineExtremity(double &i, double &j,double rho,
 				      vpCircle *circle)
 {
 // This was taken from the code of art-v1. (from the artCylinder class)
-  double px = cam->get_px() ;
-  double py = cam->get_py() ;
-  double u0 = cam->get_u0() ;
-  double v0 = cam->get_v0() ;
+  double px = cam.get_px() ;
+  double py = cam.get_py() ;
+  double u0 = cam.get_u0() ;
+  double v0 = cam.get_v0() ;
 
   double mu11 = circle->p[3];
   double mu02 = circle->p[4];
@@ -276,8 +275,8 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   meline2->init_range = 0;
 
   // Conversion meter to pixels
-  vpMeterPixelConversion::convertLine(*cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(*cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
+  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
 
 	// Determine intersections between circles and limbos
 	double i11,i12,i21,i22,j11,j12,j21,j22;
@@ -390,8 +389,8 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
   double rho2,theta2;
 
   // Conversion meter to pixels
-  vpMeterPixelConversion::convertLine(*cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(*cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
+  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
 
 	// Determine intersections between circles and limbos
 	double i11,i12,i21,i22,j11,j12,j21,j22;
@@ -687,10 +686,10 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
     double co2 = cos(theta2);
     double si2 = sin(theta2);
 
-    double mx = 1.0/cam->get_px() ;
-    double my = 1.0/cam->get_py() ;
-    double xc = cam->get_u0() ;
-    double yc = cam->get_v0() ;
+    double mx = 1.0/cam.get_px() ;
+    double my = 1.0/cam.get_py() ;
+    double xc = cam.get_u0() ;
+    double yc = cam.get_v0() ;
 
     double alpha1 ;
     vpMatrix H1 ;
