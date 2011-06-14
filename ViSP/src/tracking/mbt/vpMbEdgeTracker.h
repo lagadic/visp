@@ -340,6 +340,34 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   */
   std::vector<bool> getScales() const {return scales;}
 
+
+
+  /*!
+    Set the camera parameters.
+
+    \param _cam : the new camera parameters
+  */
+  virtual void setCameraParameters(const vpCameraParameters& _cam) {
+    this->cam = _cam; 
+    cameraInitialised = true;
+
+    for (unsigned int i = 0; i < scales.size(); i += 1){
+      if(scales[i]){
+        lines[i].front() ;
+        while (!lines[i].outside()){
+	  lines[i].value()->setCameraParameters(cam);
+          lines[i].next();
+        }
+     
+        cylinders[i].front();
+        while (!cylinders[i].outside()){
+	  cylinders[i].value()->setCameraParameters(cam);
+          cylinders[i].next();
+        }
+      }
+    }
+  }
+
  protected:
   void computeVVS(const vpImage<unsigned char>& _I);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
