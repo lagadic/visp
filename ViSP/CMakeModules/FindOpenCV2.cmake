@@ -11,6 +11,9 @@
 #  OpenCV_INCLUDE_DIRS
 #  OpenCV_LIBS
 #  OpenCV_LIB_DIR
+#  OpenCV_VERSION_MAJOR
+#  OpenCV_VERSION_MINOR
+#  OpenCV_VERSION_PATCH
 #
 # deprecated:
 #  OPENCV_* uppercase replaced by case sensitive OpenCV_*
@@ -184,6 +187,37 @@ DBG_MSG("OpenCV_LIBS=${OpenCV_LIBS}")
 IF    (OpenCV_CV_LIBRARY)
   GET_FILENAME_COMPONENT(OpenCV_LIB_DIR ${OpenCV_CV_LIBRARY} PATH)
 ENDIF (OpenCV_CV_LIBRARY)
+
+# Now we try to get the OpenCV version if not set previously
+if(NOT OpenCV_VERSION_MAJOR AND NOT OpenCV_VERSION_MINOR AND NOT OpenCV_VERSION_PATCH)
+  # default init if not found
+  SET(OpenCV_VERSION_MAJOR "1")
+  SET(OpenCV_VERSION_MINOR "0")
+  SET(OpenCV_VERSION_PATCH "0")
+
+  # Under UNIX try to use "pkg-config --modversion opencv --silence-errors" 
+  # to get OpenCV version
+  FIND_PROGRAM(PKG_CONFIG_CMD pkg-config)
+  MARK_AS_ADVANCED(PKG_CONFIG_CMD)
+  #message("PKG_CONFIG_CMD ${PKG_CONFIG_CMD}")
+  IF(NOT PKG_CONFIG_CMD)
+    MESSAGE(STATUS "Can not find pkg-config in your path")
+  ELSE()
+    EXECUTE_PROCESS(COMMAND "${PKG_CONFIG_CMD}" --modversion opencv --silence-errors
+      OUTPUT_VARIABLE PKG_OPENCV_VERSION
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+  ENDIF()
+  if(PKG_OPENCV_VERSION)
+    #message("PKG_OPENCV_VERSION ${PKG_OPENCV_VERSION}")
+    string(SUBSTRING ${PKG_OPENCV_VERSION} 0 1 OpenCV_VERSION_MAJOR)
+    string(SUBSTRING ${PKG_OPENCV_VERSION} 2 1 OpenCV_VERSION_MINOR)
+    string(SUBSTRING ${PKG_OPENCV_VERSION} 4 1 OpenCV_VERSION_PATCH)
+    #message("OpenCV_VERSION_MAJOR ${OpenCV_VERSION_MAJOR}")
+    #message("OpenCV_VERSION_MINOR ${OpenCV_VERSION_MINOR}")
+    #message("OpenCV_VERSION_PATCH ${OpenCV_VERSION_PATCH}")
+  endif()
+endif()
 
 MARK_AS_ADVANCED(
   OpenCV_ROOT_DIR
