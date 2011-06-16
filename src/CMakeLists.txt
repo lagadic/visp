@@ -101,7 +101,8 @@ TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
 #----------------------------------------------------------------------
 # install rule for the library
 INSTALL(TARGETS ${VISP_INTERN_LIBS}
-  DESTINATION lib
+  # Destination is either lib or lib64 on Unix 64 bits architectures
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   COMPONENT libraries
   )
