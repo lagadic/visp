@@ -56,6 +56,8 @@
 
 #if defined(VISP_HAVE_OGRE)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class vpAROgreAdvanced : public vpAROgre
 {
 private:
@@ -99,6 +101,8 @@ protected:
     return true;
   }
 };// End of vpAROgreAdvanced class definition
+#endif
+
 #endif
 
 int main()

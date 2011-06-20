@@ -173,6 +173,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
 }
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class vpAROgreExample : public vpAROgre
 {
 public:
@@ -501,6 +503,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   }
 }
 
+#endif
 
 int main(int argc, const char **argv)
 { 
