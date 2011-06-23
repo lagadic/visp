@@ -113,6 +113,17 @@ vpException::getCode (void)
     return this->code;
 }
 
+/*!
+  Overloading of the what() method of std::exception to return the vpException
+  message.
+  
+  \return pointer on the array of  \e char related to the error string.
+*/
+const char* vpException::what () const throw()
+{
+  return (this->message) .c_str();
+}
+
 
 /* ------------------------------------------------------------------------- */
 /* --- MODIFIORS ----------------------------------------------------------- */
