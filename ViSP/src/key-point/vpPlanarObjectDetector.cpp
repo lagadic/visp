@@ -404,7 +404,12 @@ vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts)
   }
   
   if(displayKpts){
-    fern.display(I);
+    for(unsigned int i=0; i<currentImagePoints.size(); ++i){
+      vpImagePoint ip(
+        currentImagePoints[i].get_i() - modelROI.y,
+        currentImagePoints[i].get_j() - modelROI.x);
+      vpDisplay::displayCross(I, ip, 5, vpColor::red);
+    }
   }
 }
 
@@ -422,13 +427,20 @@ vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts)
 
   \param Icurrent : The image where the matched points computed in the
   current image are displayed.
+
+  \param displayKpts : The flag to display keypoints in addition to the surface.
 */
 void 
 vpPlanarObjectDetector::display(vpImage<unsigned char> &Iref,
-		 vpImage<unsigned char> &Icurrent)
+     vpImage<unsigned char> &Icurrent, bool displayKpts)
 {
-  display(Icurrent, false);
-  fern.display(Iref, Icurrent);
+  display(Icurrent, displayKpts);
+
+  if(displayKpts){
+    for(unsigned int i=0; i<refImagePoints.size(); ++i){
+      vpDisplay::displayCross(Iref, refImagePoints[i], 5, vpColor::green);
+    }
+  }
 }
 
 

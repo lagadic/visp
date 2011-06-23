@@ -203,9 +203,9 @@ public:
     
     
     // display
-  void display(vpImage<unsigned char> &I, bool displayKpts = true);
+  void display(vpImage<unsigned char> &I, bool displayKpts = false);
   void display(vpImage<unsigned char> &Iref,
-		 vpImage<unsigned char> &Icurrent);
+     vpImage<unsigned char> &Icurrent, bool displayKpts = false);
   
   /*!
     Return the positions of the detected corners.
