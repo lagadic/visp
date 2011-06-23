@@ -130,6 +130,8 @@ public:
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 				const vpException & art);
 
+  const char* what () const throw();
+
 };
 
 
