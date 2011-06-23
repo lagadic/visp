@@ -70,6 +70,8 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpTime.h>
 #include <iomanip>
+#include <visp/vpV4l2Grabber.h>
+#include <visp/vp1394TwoGrabber.h>
 
 #define GETOPTARGS  "hlcdb:i:sp"
 
@@ -298,6 +300,8 @@ main(int argc, const char** argv)
       std::cout << "problem to initialise the framegrabber" << std::endl;
       exit(-1);
     }
+    
+    
     g.acquire(I);
     // initialise the reference image
     g.acquire(Iref);
@@ -322,13 +326,13 @@ main(int argc, const char** argv)
   // declare a planar object detector
   vpPlanarObjectDetector planar;
 
+  vpImagePoint corners[2];
   if(isLearning){  
     if(opt_display){
       displayRef.init(Iref, 100, 100, "Test vpPlanarObjectDetector reference image") ;
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
     }
-    vpImagePoint corners[2];
     if (opt_display && opt_click_allowed){
       std::cout << "Click on the top left and the bottom right corners to define the reference plane" << std::endl;
       for (int i=0 ; i < 2 ; i++){
@@ -426,14 +430,21 @@ main(int argc, const char** argv)
       planar.getHomography(H);    
       std::cout << " > computed homography:" << std::endl << H << std::endl;
       if(opt_display){
-        planar.display(I, false); 
+        if(isLearning){
+          vpDisplay::display(Iref);
+          vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
+          planar.display(Iref, I, displayPoints);
+          vpDisplay::flush(Iref);
+        }else{
+          planar.display(I, displayPoints);
+        }
       }
     }
     else{
       std::cout << " > reference is not detected in the image" << std::endl;
     }
     if(opt_display){
-      vpDisplay::flush(I);//vpDisplay::getClick(I, true);
+      vpDisplay::flush(I);
       if(vpDisplay::getClick(I, false)){
         break;
       }
