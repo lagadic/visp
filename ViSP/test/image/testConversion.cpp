@@ -396,13 +396,13 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   if(image!=NULL) cvReleaseImage( &image );
   double t1 = vpTime::measureTimeMs();
   std::cout << "Conversion c interface : " << t1 - t0 << " ms" << std::endl;
-  double t2 = vpTime::measureTimeMs();
 
   /* ------------------------------------------------------------------------ */
   /*                  conversion for the new c++ interface                    */
   /* ------------------------------------------------------------------------ */
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
+  double t2 = vpTime::measureTimeMs();
   /////////////////////////
   // Convert a cv::Mat to a vpImage<vpRGBa>
   ////////////////////////
