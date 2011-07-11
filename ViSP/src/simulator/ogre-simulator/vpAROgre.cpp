@@ -452,16 +452,16 @@ void vpAROgre::windowClosed(Ogre::RenderWindow* rw)
 /*!
   Display a frame.
   \param I : Grey level image to show in background.
-  \param cMo : Camera pose as an homogeneous matrix.
+  \param cMw : Camera pose as an homogeneous matrix.
 */
 void vpAROgre::display(const vpImage<unsigned char> &I, 
-		       const vpHomogeneousMatrix &cMo)
+           const vpHomogeneousMatrix &cMw)
 {
   // Update the background to match the situation
   updateBackgroundTexture(I);
 
   // Update the camera parameters to match the grabbed image
-  updateCameraParameters(cMo);
+  updateCameraParameters(cMw);
 
   // Display on Ogre Window
   if(mRoot->renderOneFrame()){
@@ -475,15 +475,15 @@ void vpAROgre::display(const vpImage<unsigned char> &I,
 /*!
   Display a frame.
   \param I : RGBa image to show in background.
-  \param cMo : Camera pose as an homogeneous matrix.
+  \param cMw : Camera pose as an homogeneous matrix.
 */
-void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
+void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
 {
   // Update the background to match the situation
   updateBackgroundTexture(I);
 
   // Update the camera parameters to match the grabbed image
-  updateCameraParameters(cMo);
+  updateCameraParameters(cMw);
 
   // Display on Ogre Window
   if(mRoot->renderOneFrame()){
@@ -526,14 +526,15 @@ void vpAROgre::load(const std::string &name, const std::string &model)
 /*!
   Change position of a ScneneNode.
   \param name : Name of the SceneNode to move.
-  \param position : New position of the node.
+  \param wTo : New position of the node (translation between object frame and
+    world frame).
 */
 void vpAROgre::setPosition(const std::string &name, 
-			   const vpTranslationVector &position)
+         const vpTranslationVector &wTo)
 {
   // Reset the position
   Ogre::SceneNode *node = mSceneMgr->getSceneNode(name);
-  node->setPosition((Ogre::Real)position[0], (Ogre::Real)position[1], (Ogre::Real)position[2]);
+  node->setPosition((Ogre::Real)wTo[0], (Ogre::Real)wTo[1], (Ogre::Real)wTo[2]);
 }
 
 /*!
@@ -550,17 +551,17 @@ vpTranslationVector vpAROgre::getPosition(const std::string &name)const
 /*!
   Set the orientation of a SceneNode.
   \param name : Name of the SceneNode to rotate.
-  \param rotation : The rotation matrix representing the rotation to apply.
+  \param wRo : The rotation matrix representing the rotation to apply.
 */
-void vpAROgre::setRotation(const std::string &name, const vpRotationMatrix &rotation)
+void vpAROgre::setRotation(const std::string &name, const vpRotationMatrix &wRo)
 {
   // Get the node in its original position
   mSceneMgr->getSceneNode(name)->resetOrientation();
   // Apply the new rotation
   Ogre::Matrix3 rotationOgre 
-    = Ogre::Matrix3( (Ogre::Real)rotation[0][0], (Ogre::Real)rotation[0][1], (Ogre::Real)rotation[0][2],
-		     (Ogre::Real)rotation[1][0], (Ogre::Real)rotation[1][1], (Ogre::Real)rotation[1][2],
-		     (Ogre::Real)rotation[2][0], (Ogre::Real)rotation[2][1], (Ogre::Real)rotation[2][2]);
+    = Ogre::Matrix3( (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
+         (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
+         (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
   mSceneMgr->getSceneNode(name)->rotate(q);
 }
@@ -568,16 +569,16 @@ void vpAROgre::setRotation(const std::string &name, const vpRotationMatrix &rota
 /*!
   Add a rotation to a SceneNode.
   \param name : Name of the SceneNode to rotate.
-  \param rotation : The rotation matrix representing the rotation to apply.
+  \param wRo : The rotation matrix representing the rotation to apply.
 */
 void vpAROgre::addRotation(const std::string &name, 
-			   const vpRotationMatrix &rotation)
+         const vpRotationMatrix &wRo)
 {
   // Apply the new rotation 
   Ogre::Matrix3 rotationOgre 
-    = Ogre::Matrix3( (Ogre::Real)rotation[0][0], (Ogre::Real)rotation[0][1], (Ogre::Real)rotation[0][2],
-		     (Ogre::Real)rotation[1][0], (Ogre::Real)rotation[1][1], (Ogre::Real)rotation[1][2],
-		     (Ogre::Real)rotation[2][0], (Ogre::Real)rotation[2][1], (Ogre::Real)rotation[2][2]);
+    = Ogre::Matrix3( (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
+         (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
+         (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
   mSceneMgr->getSceneNode(name)->rotate(q);
 	 
@@ -588,18 +589,18 @@ void vpAROgre::addRotation(const std::string &name,
   Set the position and the orientation of a SceneNode.
   \param name : Name of the SceneNode to rotate.
 
-  \param position : The homogeneous matrix representing the rotation and
+  \param wMo : The homogeneous matrix representing the rotation and
   translation to apply.
 
 */
 void vpAROgre::setPosition(const std::string &name, 
-			   const vpHomogeneousMatrix &position)
+         const vpHomogeneousMatrix &wMo)
 {
   // Extract the position and orientation data
   vpRotationMatrix rotations;
   vpTranslationVector translation;
-  position.extract(rotations);
-  position.extract(translation);
+  wMo.extract(rotations);
+  wMo.extract(translation);
   // Apply them to the node
   setPosition(name, translation);
   setRotation(name, rotations);
@@ -867,14 +868,14 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 /*!
   Update Camera parameters from a pose calculation.
 */
-void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMo)
+void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
 {
   // The matrix is given to Ogre with some changes to fit with the world projection
   Ogre::Matrix4 ModelView 
 //    = Ogre::Matrix4( (Ogre::Real)-cMo[0][0],  (Ogre::Real)-cMo[0][1],  (Ogre::Real)-cMo[0][2],  (Ogre::Real)-cMo[0][3],
-    = Ogre::Matrix4( (Ogre::Real)cMo[0][0],  (Ogre::Real)cMo[0][1],  (Ogre::Real)cMo[0][2],  (Ogre::Real)cMo[0][3],
-		     (Ogre::Real)-cMo[1][0], (Ogre::Real)-cMo[1][1], (Ogre::Real)-cMo[1][2], (Ogre::Real)-cMo[1][3],
-		     (Ogre::Real)-cMo[2][0], (Ogre::Real)-cMo[2][1], (Ogre::Real)-cMo[2][2], (Ogre::Real)-cMo[2][3],
+    = Ogre::Matrix4( (Ogre::Real)cMw[0][0],  (Ogre::Real)cMw[0][1],  (Ogre::Real)cMw[0][2],  (Ogre::Real)cMw[0][3],
+         (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
+         (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
 		     (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)1);
   mCamera->setCustomViewMatrix(true, ModelView);
 
