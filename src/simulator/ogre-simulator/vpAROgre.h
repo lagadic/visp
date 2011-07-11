@@ -132,24 +132,24 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   virtual void windowClosed(Ogre::RenderWindow* rw);
 
   virtual void display(const vpImage<unsigned char> &I, 
-		       const vpHomogeneousMatrix &cMo);
+           const vpHomogeneousMatrix &cMw);
 
   virtual void display(const vpImage<vpRGBa> &I, 
-		       const vpHomogeneousMatrix &cMo);
+           const vpHomogeneousMatrix &cMw);
 
   void setCameraParameters(const vpCameraParameters &cameraP);
 
   void load(const std::string &name, const std::string &model);
 
   void setPosition(const std::string &name,
-		   const vpTranslationVector &position);
-  void setPosition(const std::string &name, const vpHomogeneousMatrix &position);
+       const vpTranslationVector &wTo);
+  void setPosition(const std::string &name, const vpHomogeneousMatrix &wMo);
 
   vpTranslationVector getPosition(const std::string &name)const;
 
-  void setRotation(const std::string &name, const vpRotationMatrix &rotation);
+  void setRotation(const std::string &name, const vpRotationMatrix &wRo);
 
-  void addRotation(const std::string &name, const vpRotationMatrix &rotation);
+  void addRotation(const std::string &name, const vpRotationMatrix &wRo);
 
 
   void setVisibility(const std::string &name, bool isVisible);
