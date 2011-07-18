@@ -229,11 +229,11 @@ bool vpFFMPEG::initStream()
   {
     if (packet->stream_index == (int)videoStream)
     {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,72,2)
       ret = avcodec_decode_video(pCodecCtx, pFrame,
          &frameFinished, packet->data, packet->size);
 #else
-      ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
+      ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec >= 52.72.2 (0.6)
 #endif
       if (frameFinished)
       {
@@ -286,11 +286,11 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
   {
     if (packet->stream_index == (int)videoStream)
     {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,72,2)
       avcodec_decode_video(pCodecCtx, pFrame,
          &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec >= 52.72.2 (0.6)
 #endif
      if (frameFinished)
       {
@@ -331,11 +331,11 @@ bool vpFFMPEG::acquire(vpImage<vpRGBa> &I)
   {
     if (packet->stream_index == (int)videoStream)
     {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,72,2)
       avcodec_decode_video(pCodecCtx, pFrame,
          &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec >= 52.72.2 (0.6)
 #endif
       if (frameFinished)
       {
@@ -383,11 +383,11 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
   {
     if (packet->stream_index == (int)videoStream)
     {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,72,2)
       avcodec_decode_video(pCodecCtx, pFrame,
          &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec >= 52.72.2 (0.6)
 #endif
       if (frameFinished)
       {
@@ -428,11 +428,11 @@ bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
   {
     if (packet->stream_index == (int)videoStream)
     {
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,72,2)
       avcodec_decode_video(pCodecCtx, pFrame,
          &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec >= 52.72.2 (0.6)
 #endif
      if (frameFinished)
       {
