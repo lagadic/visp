@@ -288,25 +288,31 @@ public:
   
   void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
 
-  void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
-  //! Substract two images: dst = this - im2;
-  void sub(vpImage<Type>* im2, vpImage<Type>* dst);
 
   // Returns a new image that's half size of the current image
   void halfSizeImage(vpImage<Type> &res);
-  // Returns a new image that's half size of the current image
-  void halfSizeImage(vpImage<Type>* res);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res);
-  // Returns a new image that's a quarter size of the current image
-  void quarterSizeImage(vpImage<Type>* res);
 
   // Returns a new image that's double size of the current image
   void doubleSizeImage(vpImage<Type> &res);
-  // Returns a new image that's double size of the current image
-  void doubleSizeImage(vpImage<Type>* res);
 
+  void sub(const vpImage<Type> &B, vpImage<Type> &C);
+  void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated void sub(vpImage<Type>* im2, vpImage<Type>* dst);
+  // Returns a new image that's half size of the current image
+  vp_deprecated void halfSizeImage(vpImage<Type>* res);
+  // Returns a new image that's a quarter size of the current image
+  vp_deprecated void quarterSizeImage(vpImage<Type>* res);
+  // Returns a new image that's double size of the current image
+  vp_deprecated void doubleSizeImage(vpImage<Type>* res);
+#endif
 private:
   unsigned int npixels ; //<! number of pixel in the image
   unsigned int width ;   //<! number of columns
@@ -785,69 +791,6 @@ void vpImage<Type>::insert(const vpImage<Type> &src,
 }
 
 /*!
-  Operation C = A - B.
-
-  The Result is placed in the third parameter C and not returned.
-  A new image won't be allocated for every use of the function
-  (Speed gain if used many times with the same result matrix size).
-
-  \sa operator-()
-*/
-template<class Type>
-void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
-			vpImage<Type> &C)
-{
-
-  try
-  {
-    if ((A.getHeight() != C.getHeight())
-	|| (A.getWidth() != C.getWidth()))
-      C.resize(A.getHeight(), A.getWidth());
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
-
-  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
-  {
-    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
-    throw(vpException(vpException::memoryAllocationError,
-		      "vpImage mismatch in vpImage/vpImage substraction ")) ;
-  }
-
-  for (unsigned int i=0;i<A.getWidth()*getHeight();i++)
-  {
-    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
-  }
-}
-
-/*!
-  Returns a new image that's half size of the current image.
-  No filtering is used during the sub sampling.
-  Used for building pyramid of the image.
-  \warning Operator = must be defined for Type.
-
- */
-
-template<class Type>
-void
-vpImage<Type>::halfSizeImage(vpImage<Type>* res)
-{
-  unsigned int r = height/2;
-  unsigned int c = width/2;
-  if(res == NULL)
-    res = new vpImage<Type>(r, c);
-  else if((res->getWidth() != c) || (res->getHeight()!= r))
-    res->resize(r,c);
-  for(unsigned int y = 0; y < r; y++)
-    for(unsigned int x = 0; x < c; x++)
-      (*res)[y][x] = (*this)[y*2][x*2];
-}
-
-/*!
   Returns a new image that's half size of the current image.
   No filtering is used during the sub sampling.
 
@@ -890,27 +833,6 @@ vpImage<Type>::halfSizeImage(vpImage<Type> &res)
 
 /*!
   Returns a new image that's a quarter size of the current image.
-  Used for building a quarter of the image.
-  \warning Operator = must be defined for Type.
- */
-
-template<class Type>
-void
-vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
-{
-  unsigned int r = height/4;
-  unsigned int c = width/4;
-  if(res == NULL)
-    res = new vpImage<Type>(r, c);
-  else if((res->getWidth() != c) || (res->getHeight()!= r))
-    res->resize(r,c);
-  for(unsigned int y = 0; y < r; y++)
-    for(unsigned int x = 0; x < c; x++)
-      (*res)[y][x] = (*this)[y*4][x*4];
-}
-
-/*!
-  Returns a new image that's a quarter size of the current image.
   No filtering is used during the sub sampling.
   Used for building a quarter of the image.
   \warning Operator = must be defined for Type.
@@ -941,53 +863,6 @@ vpImage<Type>::quarterSizeImage(vpImage<Type> &res)
   for(unsigned int i = 0; i < h; i++)
     for(unsigned int j = 0; j < w; j++)
       res[i][j] = (*this)[i<<2][j<<2];
-}
-
-/*!
-  Returns a new image that's double size of the current image.
-  Used (eg. in case of keypoints extraction, we might
-  double size of the image in order to have more keypoints)
-  \warning Operator = must be defined for Type.
- */
-template<class Type>
-void
-vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
-{
-  int h = height*2;
-  int w = width*2;
-
-  if(res == NULL)
-    res = new vpImage<Type>(h, w);
-  else if((res->getWidth() != w) || (res->getHeight()!= h))
-    res->resize(h, w);
-
-  for(int j = 0; j < h; j++)
-    for(int i = 0; i < w; i++)
-      (*res)[j][i] = (*this)[j/2][i/2];
-
-  /*
-    A B C
-    E F G
-    H I J
-    A C H J are pixels from original image
-    B E G I are interpolated pixels
-  */
-
-  //interpolate pixels B and I
-  for(int j = 0; j < h; j += 2)
-    for(int i = 1; i < w - 1; i += 2)
-      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2][i/2 + 1]));
-
-  //interpolate pixels E and G
-  for(int j = 1; j < h - 1; j += 2)
-    for(int i = 0; i < w; i += 2)
-      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2+1][i/2]));
-
-  //interpolate pixel F
-  for(int j = 1; j < h - 1; j += 2)
-    for(int i = 1; i < w - 1; i += 2)
-      (*res)[j][i] = (Type)(0.25 * ((*this)[j/2][i/2] + (*this)[j/2][i/2+1] +
-			     (*this)[j/2+1][i/2] + (*this)[j/2+1][i/2+1]));
 }
 
 /*!
@@ -1065,22 +940,7 @@ vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 				 + (*this)[(i>>1)+1][(j>>1)+1]));
 }
 
-template<class Type>
-void
-vpImage<Type>::sub(vpImage<Type>* im2, vpImage<Type>* dst)
-{
-  if(dst == NULL)
-    dst = new vpImage<Type>(height, width);
-  else if((dst->getHeight()!=height) || (dst->getWidth()!=width))
-    dst->resize(height, width);
-
-  for(unsigned int i  = 0; i < height * width; i++)
-    dst->bitmap[i] = this->bitmap[i] - im2->bitmap[i];
-}
-
-
-
-/*! 
+/*!
 
   Retrieves pixel value from image with sub-pixel accuracy.
 
@@ -1102,6 +962,23 @@ Type vpImage<Type>::getValue(double i, double j) const
 {
 }
 
+/*!
+
+  Retrieves pixel value from an image of unsigned char with sub-pixel accuracy.
+
+  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
+  interpolation. If location is out of bounds, then return value of
+  closest pixel.
+
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Interpolated sub-pixel value from the four neighbours.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
 template<>
 inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
 {
@@ -1140,6 +1017,23 @@ inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
 }
 
 
+/*!
+
+  Retrieves pixel value from an image of double with sub-pixel accuracy.
+
+  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
+  interpolation. If location is out of bounds, then return value of
+  closest pixel.
+
+  \param i : Sub-pixel coordinate along the rows.
+  \param j : Sub-pixel coordinate along the columns.
+
+  \return Interpolated sub-pixel value from the four neighbours.
+
+  \exception vpImageException::notInTheImage : If (i,j) is out
+  of the image.
+
+*/
 template<>
 inline double vpImage<double>::getValue(double i, double j) const
 {
@@ -1217,7 +1111,7 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
 }
 
-/*! 
+/*!
 
   Retrieves pixel value from image with sub-pixel accuracy.
 
@@ -1353,6 +1247,235 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
   return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
 }
 
+/*!
+  Operation C = A - B.
+
+  The result is placed in the third parameter C and not returned.
+  A new image won't be allocated for every use of the function
+  (Speed gain if used many times with the same result matrix size).
+
+  \exception vpException::memoryAllocationError If the images size differ.
+
+  \sa operator-()
+*/
+template<class Type>
+void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
+                               vpImage<Type> &C)
+{
+
+  try
+  {
+    if ((A.getHeight() != C.getHeight())
+  || (A.getWidth() != C.getWidth()))
+      C.resize(A.getHeight(), A.getWidth());
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+
+  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
+  {
+    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
+    throw(vpException(vpException::memoryAllocationError,
+          "vpImage mismatch in vpImage/vpImage substraction ")) ;
+  }
+
+  for (unsigned int i=0;i<A.getWidth()*getHeight();i++)
+  {
+    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
+  }
+}
+/*!
+  Operation C = *this - B.
+
+  The result is placed in the third parameter C and not returned.
+  A new image won't be allocated for every use of the function
+  (Speed gain if used many times with the same result matrix size).
+
+  \exception vpException::memoryAllocationError If the images size differ.
+
+  \sa operator-()
+*/
+template<class Type>
+void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
+{
+
+  try
+  {
+    if ((this->getHeight() != C.getHeight())
+      || (this->getWidth() != C.getWidth()))
+      C.resize(this->getHeight(), this->getWidth());
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+
+  if ( (this->getWidth() != B.getWidth())||(this->getHeight() != B.getHeight()))
+  {
+    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
+    throw(vpException(vpException::memoryAllocationError,
+          "vpImage mismatch in vpImage/vpImage substraction ")) ;
+  }
+
+  for (unsigned int i=0;i<this->getWidth()*this->getHeight();i++)
+  {
+    *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i) ;
+  }
+}
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
+
+  Operation C = *this - B.
+
+  The result is placed in parameter C.
+
+  \sa operator-()
+
+  \exception vpException::memoryAllocationError If images pointer is NULL or if the images size differ.
+*/
+template<class Type>
+void
+vpImage<Type>::sub(vpImage<Type>* B, vpImage<Type>* C)
+{
+  if (B == NULL || C == NULL) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Images are not allocated in vpImage<>::sub()")) ;
+  }
+  if ( (this->getWidth() != B.getWidth())
+    || (this->getHeight() != B.getHeight())
+    || (this->getWidth() != C.getWidth())
+    || (this->getHeight() != C.getHeight()))
+  {
+    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
+    throw(vpException(vpException::memoryAllocationError,
+          "vpImage mismatch in vpImage/vpImage substraction ")) ;
+  }
+
+  for(unsigned int i  = 0; i < height * width; i++)
+    C->bitmap[i] = this->bitmap[i] - B->bitmap[i];
+}
+
+/*!
+  \deprecated This method is deprecated. You should use halfSizeImage(vpImage<Type> &) instead.
+
+  Returns a new image that's half size of the current image.
+  No filtering is used during the sub sampling.
+  Used for building pyramid of the image.
+
+  \warning Operator = must be defined for Type.
+
+  \exception vpException::memoryAllocationError If images pointer is NULL or if the images size differ.
+
+ */
+
+template<class Type>
+void
+vpImage<Type>::halfSizeImage(vpImage<Type>* res)
+{
+  unsigned int r = height/2;
+  unsigned int c = width/2;
+  if(res == NULL) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Images are not allocated in vpImage<>::sub()")) ;
+  }
+  if((res->getWidth() != c) || (res->getHeight()!= r))
+    res->resize(r,c);
+  for(unsigned int y = 0; y < r; y++)
+    for(unsigned int x = 0; x < c; x++)
+      (*res)[y][x] = (*this)[y*2][x*2];
+}
+
+/*!
+  \deprecated This method is deprecated. You should use quarterSizeImage(vpImage<Type> &) instead.
+
+  Returns a new image that's a quarter size of the current image.
+  Used for building a quarter of the image.
+
+  \warning Operator = must be defined for Type.
+
+  \exception vpException::memoryAllocationError If images pointer is NULL or if the images size differ.
+ */
+
+template<class Type>
+void
+vpImage<Type>::quarterSizeImage(vpImage<Type>* res)
+{
+  unsigned int r = height/4;
+  unsigned int c = width/4;
+  if(res == NULL) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Images are not allocated in vpImage<>::sub()")) ;
+  }
+  if((res->getWidth() != c) || (res->getHeight()!= r))
+    res->resize(r,c);
+  for(unsigned int y = 0; y < r; y++)
+    for(unsigned int x = 0; x < c; x++)
+      (*res)[y][x] = (*this)[y*4][x*4];
+}
+
+/*!
+  \deprecated This method is deprecated. You should use doubleSizeImage(vpImage<Type> &) instead.
+
+  Returns a new image that's double size of the current image.
+  Used (eg. in case of keypoints extraction, we might
+  double size of the image in order to have more keypoints)
+
+  \warning Operator = must be defined for Type.
+
+  \exception vpException::memoryAllocationError If images pointer is NULL or if the images size differ.
+ */
+template<class Type>
+void
+vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
+{
+  int h = height*2;
+  int w = width*2;
+
+  if(res == NULL) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Images are not allocated in vpImage<>::sub()")) ;
+  }
+  if((res->getWidth() != w) || (res->getHeight()!= h))
+    res->resize(h, w);
+
+  for(int j = 0; j < h; j++)
+    for(int i = 0; i < w; i++)
+      (*res)[j][i] = (*this)[j/2][i/2];
+
+  /*
+    A B C
+    E F G
+    H I J
+    A C H J are pixels from original image
+    B E G I are interpolated pixels
+  */
+
+  //interpolate pixels B and I
+  for(int j = 0; j < h; j += 2)
+    for(int i = 1; i < w - 1; i += 2)
+      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2][i/2 + 1]));
+
+  //interpolate pixels E and G
+  for(int j = 1; j < h - 1; j += 2)
+    for(int i = 0; i < w; i += 2)
+      (*res)[j][i] = (Type)(0.5 * ((*this)[j/2][i/2] + (*this)[j/2+1][i/2]));
+
+  //interpolate pixel F
+  for(int j = 1; j < h - 1; j += 2)
+    for(int i = 1; i < w - 1; i += 2)
+      (*res)[j][i] = (Type)(0.25 * ((*this)[j/2][i/2] + (*this)[j/2][i/2+1] +
+           (*this)[j/2+1][i/2] + (*this)[j/2+1][i/2+1]));
+}
+
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
 // For template instantiation with Visual Studio
 #if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
