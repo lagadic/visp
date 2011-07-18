@@ -50,8 +50,14 @@
 // ViSP patch version.
 #define VISP_VERSION_PATCH ${VISP_VERSION_PATCH}
 
-// ViSP version.
+// ViSP version with dots "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}".
 #cmakedefine VISP_VERSION ${VISP_VERSION}
+
+// ViSP version as an integer
+#define VP_VERSION_INT(a, b, c) (a<<16 | b<<8 | c)
+#define VISP_VERSION_INT VP_VERSION_INT(VISP_VERSION_MAJOR, \
+                                        VISP_VERSION_MINOR, \
+                                        VISP_VERSION_PATCH)
 
 // ViSP library is either compiled static or shared
 // Used to set declspec(import, export) in headers if required under Windows
@@ -143,8 +149,6 @@
 
 // Defined if ffmpeg library available.
 #cmakedefine VISP_HAVE_FFMPEG
-// Defined if ffmpeg library includes avcode_decode_video2()
-#cmakedefine VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
 
 // Defined if raw1394 and dc1394-1.x libraries available.
 #cmakedefine VISP_HAVE_DC1394_1

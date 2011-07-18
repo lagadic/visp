@@ -55,7 +55,8 @@
 #include <vector>
 
 #ifdef VISP_HAVE_FFMPEG
-// Fix for the following compilation error: 
+
+// Fix for the following compilation error:
 // libavutil/common.h:154: error: UINT64_C was not declared in this scope
 // libavutil/common.h is no more autosufficient for C++ program because
 // stdint.h defines UINT64_C only for C program and not C++ program
@@ -82,10 +83,19 @@
 
 extern "C"
 {
-#include <avcodec.h>
-#include <avformat.h>
-#include <swscale.h>
+#include <avcodec.h> // requested for CodecID enum
+//#include <avformat.h>
+//#include <swscale.h>
 }
+
+struct AVFormatContext;
+struct AVCodecContext;
+struct AVCodec;
+struct AVFrame;
+struct AVFrame;
+struct AVFrame;
+struct AVPacket;
+struct SwsContext;
 
 /*!
   \class vpFFMPEG
@@ -101,9 +111,9 @@ extern "C"
   #include <visp/vpRGBa.h>
   #include <visp/vpFFMPEG.h>
   
-  #ifdef VISP_HAVE_FFMPEG
   int main ()
   {
+  #ifdef VISP_HAVE_FFMPEG
     vpImage<vpRGBa> I; //The image to stores the frames
     vpFFMPEG ffmpeg;
   
@@ -114,11 +124,8 @@ extern "C"
     //Video reading
     int frameIndex = 0;
     ffmpeg.getFrame(I,frameIndex); //Here the first frame (index 0) is read.
-  }
-  
-  #else
-  int main() {}
   #endif
+  }
   \endcode
   
   If you want to open the video as a gray scaled video, you can use the following example.
@@ -128,9 +135,9 @@ extern "C"
   #include <visp/vpImage.h>
   #include <visp/vpFFMPEG.h>
   
-  #ifdef VISP_HAVE_FFMPEG
   int main ()
   {
+  #ifdef VISP_HAVE_FFMPEG
     vpImage<unsigned char> I; //The image to stores the frames
     vpFFMPEG ffmpeg;
   
@@ -141,11 +148,8 @@ extern "C"
     //Video reading
     int frameIndex = 0;
     ffmpeg.getFrame(I,frameIndex); //Here the first frame (index 0) is read.
-  }
-  
-  #else
-  int main() {}
   #endif
+  }
   \endcode
 */
 class VISP_EXPORT vpFFMPEG
@@ -169,7 +173,7 @@ class VISP_EXPORT vpFFMPEG
     AVFrame *pFrame;
     AVFrame *pFrameRGB;
     AVFrame *pFrameGRAY;
-    AVPacket packet;
+    AVPacket *packet;
     SwsContext *img_convert_ctx  ;
     unsigned int videoStream;
     int numBytes ;
