@@ -54,6 +54,13 @@
 
 #ifdef VISP_HAVE_FFMPEG
 
+extern "C"
+{
+//#include <avcodec.h>
+#include <avformat.h>
+#include <swscale.h>
+}
+
 /*!
   Basic constructor.
 */
@@ -70,6 +77,7 @@ vpFFMPEG::vpFFMPEG()
   picture_buf = NULL;
   f = NULL;
   encoderWasOpened = false;
+  packet = new AVPacket;
 }
 
 /*!
@@ -78,6 +86,7 @@ vpFFMPEG::vpFFMPEG()
 vpFFMPEG::~vpFFMPEG()
 {
   closeStream();
+  delete packet;
 }
 
 /*!
@@ -94,7 +103,11 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
   this->color_type = color_type;
   
   av_register_all();
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53,0,0) // libavformat 52.84.0
   if (av_open_input_file (&pFormatCtx, filename, NULL, 0, NULL) != 0)
+#else
+  if (avformat_open_input (&pFormatCtx, filename, NULL, NULL) != 0) // libavformat 53.4.0
+#endif
   {
     vpTRACE("Couldn't open file ");
     return false;
@@ -111,7 +124,11 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
   */
   for (unsigned int i = 0; i < pFormatCtx->nb_streams; i++)
   {
-    if(pFormatCtx->streams[i]->codec->codec_type==CODEC_TYPE_VIDEO)
+#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(51,0,0)
+    if(pFormatCtx->streams[i]->codec->codec_type==CODEC_TYPE_VIDEO) // avutil 50.33.0
+#else
+    if(pFormatCtx->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) // avutil 51.9.1
+#endif
     {
       videoStream = i;
       found_codec= true;
@@ -208,15 +225,15 @@ bool vpFFMPEG::initStream()
   int frame_no = 0 ;
   int frameFinished ;
 
-  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  while (av_read_frame (pFormatCtx, packet) >= 0)
   {
-    if (packet.stream_index == (int)videoStream)
+    if (packet->stream_index == (int)videoStream)
     {
-#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
-      ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+      ret = avcodec_decode_video(pCodecCtx, pFrame,
+         &frameFinished, packet->data, packet->size);
 #else
-      ret = avcodec_decode_video(pCodecCtx, pFrame, 
-				 &frameFinished, packet.data, packet.size);
+      ret = avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
 #endif
       if (frameFinished)
       {
@@ -224,14 +241,14 @@ bool vpFFMPEG::initStream()
         {
           vpTRACE("Unable to decode video picture");
         }
-        index.push_back(packet.dts);
+        index.push_back(packet->dts);
         frame_no++ ;
       }
     }
   }
   
   frameNumber = index.size();
-  av_free_packet(&packet);
+  av_free_packet(packet);
   
   streamWasInitialized = true;
   
@@ -265,17 +282,17 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
 
   int frameFinished ;
 
-  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  while (av_read_frame (pFormatCtx, packet) >= 0)
   {
-    if (packet.stream_index == (int)videoStream)
+    if (packet->stream_index == (int)videoStream)
     {
-#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+      avcodec_decode_video(pCodecCtx, pFrame,
+         &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
-			   packet.data, packet.size);
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
 #endif
-      if (frameFinished)
+     if (frameFinished)
       {
 	if (color_type == vpFFMPEG::COLORED)
           sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);
@@ -288,7 +305,7 @@ bool vpFFMPEG::getFrame(vpImage<vpRGBa> &I, unsigned int frame)
       }
     }
 
-    av_free_packet(&packet);
+    av_free_packet(packet);
     return true;
 }
 
@@ -310,14 +327,15 @@ bool vpFFMPEG::acquire(vpImage<vpRGBa> &I)
     return false;
   }
 
-  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  while (av_read_frame (pFormatCtx, packet) >= 0)
   {
-    if (packet.stream_index == (int)videoStream)
+    if (packet->stream_index == (int)videoStream)
     {
-#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+      avcodec_decode_video(pCodecCtx, pFrame,
+         &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
 #endif
       if (frameFinished)
       {
@@ -331,7 +349,7 @@ bool vpFFMPEG::acquire(vpImage<vpRGBa> &I)
       }
     }
   }
-  av_free_packet(&packet);
+  av_free_packet(packet);
   return true;
 }
 
@@ -361,15 +379,15 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
 
   int frameFinished ;
 
-  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  while (av_read_frame (pFormatCtx, packet) >= 0)
   {
-    if (packet.stream_index == (int)videoStream)
+    if (packet->stream_index == (int)videoStream)
     {
-#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+      avcodec_decode_video(pCodecCtx, pFrame,
+         &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
-			   packet.data, packet.size);
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
 #endif
       if (frameFinished)
       {
@@ -384,7 +402,7 @@ bool vpFFMPEG::getFrame(vpImage<unsigned char> &I, unsigned int frame)
       }
     }
 
-    av_free_packet(&packet);
+    av_free_packet(packet);
     return true;
 }
 
@@ -406,16 +424,17 @@ bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
     return false;
   }
 
-  while (av_read_frame (pFormatCtx, &packet) >= 0)
+  while (av_read_frame (pFormatCtx, packet) >= 0)
   {
-    if (packet.stream_index == (int)videoStream)
+    if (packet->stream_index == (int)videoStream)
     {
-#ifdef VISP_HAVE_FFMPEG_WITH_DECODE_VIDEO2
-      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, &packet);
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52,0,0)
+      avcodec_decode_video(pCodecCtx, pFrame,
+         &frameFinished, packet->data, packet->size);
 #else
-      avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, packet.data, packet.size);
+      avcodec_decode_video2(pCodecCtx, pFrame, &frameFinished, packet); // libavcodec 52.96.0
 #endif
-      if (frameFinished)
+     if (frameFinished)
       {
         if (color_type == vpFFMPEG::COLORED)
 	  sws_scale(img_convert_ctx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrameRGB->data, pFrameRGB->linesize);
@@ -427,7 +446,7 @@ bool vpFFMPEG::acquire(vpImage<unsigned char> &I)
       }
     }
   }
-  av_free_packet(&packet);
+  av_free_packet(packet);
   return true;
 }
 

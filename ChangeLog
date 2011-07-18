@@ -51,6 +51,7 @@ ViSP 2.6.1 (under development)
        vpImageSimulator
      - [12739] Problem initialising a vpMeEllipse
      - [13014] Bug in vpCalibration::calibVVSMulti() jacobian
+     - [13015] vpFFMPEG compatibility issue with ffmpeg-0.8 release
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
