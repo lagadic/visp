@@ -696,9 +696,9 @@ vpCalibration::calibVVSWithDistortion(
         }
         {
           L[i4][6]= 1 + kr2du + k2du*xp02  ;
-          L[i4][7]= k2du*up0*xp0*inv_px ;
+          L[i4][7]= k2du*up0*yp0*inv_py ;
           L[i4][8]= X + k2du*xp02*xp0 ;
-          L[i4][9]= k2du*up0*xp02*inv_py ;
+          L[i4][9]= k2du*up0*yp02*inv_py ;
           L[i4][10] = -(up0)*(r2du) ;
           L[i4][11] = 0 ;
         }

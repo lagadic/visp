@@ -345,29 +345,15 @@ vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
 
 
 /*!
-  Compute the calibration according to the desired method.
+  Compute the calibration according to the desired method using one pose.
 
-  \param method :
-  the different method are
-
-  CALIB_LAGRANGE         Lagrange approach.
-
-  CALIB_VIRTUAL_VS       Virtual visual servoing approach.
-  (results are similar to Lowe appraoch)
-  CALIB_VIRTUAL_VS_DIST  Virtual visual servoing approach with distortion.
-
-  CALIB_LAGRANGE_VIRTUAL_VS Lagrange approach first,
-  than virtual visual servoing approach.
-
-  CALIB_LAGRANGE_VIRTUAL_VS_DIST  Lagrange approach first,
-  than virtual visual servoing approach,
-  with distortion.
+  \param method : Method that will be used to estimate the parameters.
   \param cMo : the homogeneous matrix that defines the pose.
   \param cam : intrinsic camera parameters.
   \param verbose : set at true if information about the residual at each loop
   of the algorithm is hoped.
 
-  \return 0 if the calibration computation managed.
+  \return 0 if the calibration computation succeed.
 */
 int
 vpCalibration::computeCalibration(vpCalibrationMethodType method,
@@ -445,20 +431,16 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 }
 
 /*!
-  Compute the multi-images calibration according to the desired method.
+  Compute the multi-images calibration according to the desired method using many poses.
 
-  \param method : method to use to compute calibration
-  the different method available here are
-  CALIB_VIRTUAL_VS       Virtual visual servoing approach.
-  (results are similar to Lowe appraoch)
-  CALIB_VIRTUAL_VS_DIST  Virtual visual servoing approach with distortion.
+  \param method : Method used to estimate the camera parameters.
   \param nbPose : number of images used to compute multi-images calibration
   \param table_cal : array of vpCalibration.
   \param cam : intrinsic camera parameters.
   \param verbose : set at true if information about the residual at each loop
   of the algorithm is hoped.
 
-  \return 0 if the computation managed.
+  \return 0 if the computation was managed succeed.
 */
 int
 vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,

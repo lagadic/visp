@@ -76,12 +76,15 @@
 class VISP_EXPORT vpCalibration
 {
 public: 
+  /*!
+    Minimization algorithm use to estimate the camera parameters.
+  */
   typedef enum{
-    CALIB_LAGRANGE,
-    CALIB_VIRTUAL_VS,
-    CALIB_VIRTUAL_VS_DIST,
-    CALIB_LAGRANGE_VIRTUAL_VS,
-    CALIB_LAGRANGE_VIRTUAL_VS_DIST,
+    CALIB_LAGRANGE,   /*!< Lagrange approach without estimation of the distorsion. */
+    CALIB_VIRTUAL_VS, /*!< Virtual visual servoing approach without estimation of the distorsion (results are similar to Lowe approach). */
+    CALIB_VIRTUAL_VS_DIST, /*!< Virtual visual servoing approach with estimation of the distortion. */
+    CALIB_LAGRANGE_VIRTUAL_VS, /*!< Lagrange approach first, than virtual visual servoing approach,  without estimation of the distorsion. */
+    CALIB_LAGRANGE_VIRTUAL_VS_DIST, /*!< Lagrange approach first, than virtual visual servoing approach, with estimation of the distortion. */
   } vpCalibrationMethodType ;
 private:
   unsigned int npt ;       //!< number of points used in calibration computation
@@ -165,12 +168,10 @@ public:
   double computeStdDeviation_dist(vpHomogeneousMatrix &cMo,
                           vpCameraParameters &cam);
   void computeStdDeviation(double &deviation, double &deviation_dist);
-  //! Compute the calibration for a given method using one pose
   int computeCalibration(vpCalibrationMethodType method,
 			  vpHomogeneousMatrix &cMo,
         vpCameraParameters &cam,
         bool verbose = false) ;
-  //! Compute the calibration for a given method using many poses
   static int computeCalibrationMulti(vpCalibrationMethodType method,unsigned int nbPose,
         vpCalibration table_cal[],
         vpCameraParameters &cam,
