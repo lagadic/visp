@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <list>
 
 #include <visp/vpKeyPointSurf.h>
 
@@ -52,7 +53,7 @@
 #include <visp/vpImageConvert.h>
 #include <visp/vpImageTools.h>
 #include <visp/vpDisplay.h>
-#include <vector>
+#include <visp/vpDebug.h>
 
 
 // Compare two surf descriptors.
@@ -383,13 +384,10 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   cvStartReadSeq( ref_keypoints, &kreader );
   cvStartReadSeq( ref_descriptors, &reader );
 
-//  matchedPointsReferenceImageList.kill();
-//  matchedPointsReferenceImageList.front();
 
-  vpList<int> indexImagePair;
-  vpList<int> indexReferencePair;
-  indexImagePair.front();
-  indexReferencePair.front();
+  std::list<int> indexImagePair;
+  std::list<int> indexReferencePair;
+
 
   unsigned int nbrPair = 0;
 
@@ -405,17 +403,14 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 						 image_descriptors );
     if( nearest_neighbor >= 0 )
     {
-//      matchedPointsReferenceImageList.addRight(referenceImagePointsList+i);
-      indexReferencePair.addRight(i);
-      indexImagePair.addRight(nearest_neighbor);
+      indexReferencePair.push_back(i);
+      indexImagePair.push_back(nearest_neighbor);
       nbrPair++;
     }
   }
 
-  indexReferencePair.front();
-  indexImagePair.front();
-//   matchedPointsCurrentImageList.kill();
-//   matchedPointsCurrentImageList.front();
+  std::list<int>::const_iterator indexImagePairIter = indexImagePair.begin();
+  std::list<int>::const_iterator indexReferencePairIter = indexReferencePair.begin();
 
   matchedReferencePoints.resize(0);
 
@@ -427,19 +422,18 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   for (unsigned int i = 0; i < nbrPair; i++)
   {
-      int index = indexImagePair.value();
+      int index = *indexImagePairIter;
 
       CvSURFPoint* r1 = (CvSURFPoint*)cvGetSeqElem(image_keypoints, index);
 
       currentImagePointsList[i].set_i(r1->pt.y);
       currentImagePointsList[i].set_j(r1->pt.x);
 
-      matchedReferencePoints[i] = (unsigned int)indexReferencePair.value();
+      matchedReferencePoints[i] = (unsigned int)*indexReferencePairIter;
 
-//      matchedPointsCurrentImageList.addRight(currentImagePointsList+i);
 
-      indexImagePair.next();
-      indexReferencePair.next();
+      ++indexImagePairIter;
+      ++indexReferencePairIter;
   }
 
   if((I.getWidth() % 8) == 0){
@@ -588,7 +582,12 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
   }
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+
+  \deprecated This method is deprecated, you should use
+  matchPoint(std::list<float*> , std::list<int> )
+  instead.
 
   Computes the SURF points given by their descriptor and laplacian and try to match
   them with the points in the reference list. Only the matched points
@@ -603,7 +602,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
 
   \return the list of the pair, the first element contains the index in the reference sequence and the second element contains the index in the list given in parameter.
 */
-vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList)
+vp_deprecated vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList)
 {
 	vpList<int*>* pairPoints = new vpList<int*>;
 
@@ -638,7 +637,44 @@ vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<i
 
   return pairPoints;
 }
- 
+#endif
+
+std::list<int*>* vpKeyPointSurf::matchPoint(std::list<float*> descriptorList, std::list<int> laplacianList)
+{
+  std::list<int*>* pairPoints = new std::list<int*>;
+
+  if(descriptorList.size() != laplacianList.size()){
+    vpTRACE("Error, the two lists have different number of element");
+    return pairPoints;
+  }
+
+  CvSeqReader reader;
+  cvStartReadSeq( ref_descriptors, &reader );
+
+  std::list<float*>::const_iterator descriptorListIter = descriptorList.begin();
+  std::list<int>::const_iterator laplacianListIter = laplacianList.begin();
+  descriptorList.front();
+  int indexList = 0;
+  while(descriptorListIter != descriptorList.end()){
+    float* descriptor = *descriptorListIter;
+
+    int nearest_neighbor = naiveNearestNeighbor( descriptor, *laplacianListIter, ref_keypoints, ref_descriptors);
+
+    if(nearest_neighbor >= 0){
+      int* tab;
+      tab = new int[2];
+      tab[0] = nearest_neighbor;
+      tab[1] = indexList;
+      pairPoints->push_back(tab);
+    }
+    indexList++;
+    ++descriptorListIter;
+    ++laplacianListIter;
+  }
+
+  return pairPoints;
+}
+
 /*!
   Get the descriptor of the nth reference point.
 

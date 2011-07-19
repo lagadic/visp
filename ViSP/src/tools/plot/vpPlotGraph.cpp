@@ -113,8 +113,8 @@ vpPlotGraph::initGraph (unsigned int nbCurve)
   {
     (curveList+i)->color = colors[i%6]; 
     (curveList+i)->curveStyle = line;
-    (curveList+i)->pointListx.kill();
-    (curveList+i)->pointListy.kill();
+    (curveList+i)->pointListx.clear();
+    (curveList+i)->pointListy.clear();
     strcpy((curveList+i)->legend,"");
   }
 }
@@ -600,9 +600,9 @@ vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
 void 
 vpPlotGraph::resetPointList(const unsigned int curveNum)
 {
-  (curveList+curveNum)->pointListx.kill();
-  (curveList+curveNum)->pointListy.kill();
-  (curveList+curveNum)->pointListz.kill();
+  (curveList+curveNum)->pointListx.clear();
+  (curveList+curveNum)->pointListy.clear();
+  (curveList+curveNum)->pointListz.clear();
   (curveList+curveNum)->nbPoint = 0;
   firstPoint = true;
 }
@@ -1189,9 +1189,9 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
 #endif
   
   (curveList+curveNb)->lastPoint = iP;
-  (curveList+curveNb)->pointListx.addRight(x);
-  (curveList+curveNb)->pointListy.addRight(y);
-  (curveList+curveNb)->pointListz.addRight(z);
+  (curveList+curveNb)->pointListx.push_back(x);
+  (curveList+curveNb)->pointListy.push_back(y);
+  (curveList+curveNb)->pointListz.push_back(z);
   (curveList+curveNb)->nbPoint++;
   
   //vpDisplay::flush(I);
@@ -1208,9 +1208,9 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
   
   for (unsigned int i = 0; i < curveNbr; i++)
   {
-    (curveList+i)->pointListx.front();
-    (curveList+i)->pointListy.front();
-    (curveList+i)->pointListz.front();
+    std::list<double>::const_iterator it_ptListx = (curveList+i)->pointListx.begin();
+    std::list<double>::const_iterator it_ptListy = (curveList+i)->pointListy.begin();
+    std::list<double>::const_iterator it_ptListz = (curveList+i)->pointListz.begin();
   
     unsigned int k = 0;
     vpImagePoint iP;
@@ -1218,9 +1218,9 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
     double x,y,z;
     while (k < (curveList+i)->nbPoint)
     {
-      x = (curveList+i)->pointListx.value();
-      y = (curveList+i)->pointListy.value();
-      z = (curveList+i)->pointListz.value();
+      x = *it_ptListx;
+      y = *it_ptListy;
+      z = *it_ptListz;
       pointPlot.setWorldCoordinates(ptXorg+(zoomx_3D*x),ptYorg-(zoomy_3D*y),ptZorg+(zoomz_3D*z));
       pointPlot.track(cMo);
       double u=0.0, v=0.0;
@@ -1231,16 +1231,16 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
       //vpDisplay::displayCross(I,iP,3,vpColor::cyan);
       if (k > 0)
       {
-	if (check3Dline((curveList+i)->lastPoint,iP))
+        if (check3Dline((curveList+i)->lastPoint,iP))
           vpDisplay::displayLine(I,(curveList+i)->lastPoint, iP, (curveList+i)->color);
-	//vpDisplay::displayCross(I,iP,3,vpColor::orange);
+        //vpDisplay::displayCross(I,iP,3,vpColor::orange);
       }
     
       (curveList+i)->lastPoint = iP;
     
-      (curveList+i)->pointListx.next();
-      (curveList+i)->pointListy.next();
-      (curveList+i)->pointListz.next();
+      ++it_ptListx;
+      ++it_ptListy;
+      ++it_ptListz;
       k++;
     }
   }

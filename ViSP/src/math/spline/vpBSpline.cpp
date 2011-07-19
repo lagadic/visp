@@ -40,6 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpBSpline.h>
+#include <visp/vpDebug.h>
 
 /*!
   Basic constructor.

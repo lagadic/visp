@@ -194,46 +194,46 @@ main(int argc, const char ** argv)
   }
 
   vpNurbs Nurbs;
-  vpList<double> knots;
-  knots.addRight(0);
-  knots.addRight(0);
-  knots.addRight(0);
-  knots.addRight(1);
-  knots.addRight(2);
-  knots.addRight(3);
-  knots.addRight(4);
-  knots.addRight(4);
-  knots.addRight(5);
-  knots.addRight(5);
-  knots.addRight(5);
+  std::list<double> knots;
+  knots.push_back(0);
+  knots.push_back(0);
+  knots.push_back(0);
+  knots.push_back(1);
+  knots.push_back(2);
+  knots.push_back(3);
+  knots.push_back(4);
+  knots.push_back(4);
+  knots.push_back(5);
+  knots.push_back(5);
+  knots.push_back(5);
   
-  vpList<vpImagePoint> controlPoints;
-  vpList<double> weights;
+  std::list<vpImagePoint> controlPoints;
+  std::list<double> weights;
   vpImagePoint pt;
   pt.set_ij(50,300);
-  controlPoints.addRight(pt);
-  weights.addRight(1);
+  controlPoints.push_back(pt);
+  weights.push_back(1);
   pt.set_ij(100,130);
-  controlPoints.addRight(pt);
-  weights.addRight(5);
+  controlPoints.push_back(pt);
+  weights.push_back(5);
   pt.set_ij(150,400);
-  controlPoints.addRight(pt);
-  weights.addRight(0.2);
+  controlPoints.push_back(pt);
+  weights.push_back(0.2);
   pt.set_ij(200,370);
-  controlPoints.addRight(pt);
-  weights.addRight(10);
+  controlPoints.push_back(pt);
+  weights.push_back(10);
   pt.set_ij(250,120);
-  controlPoints.addRight(pt);
-  weights.addRight(1);
+  controlPoints.push_back(pt);
+  weights.push_back(1);
   pt.set_ij(300,250);
-  controlPoints.addRight(pt);
-  weights.addRight(2);
+  controlPoints.push_back(pt);
+  weights.push_back(2);
   pt.set_ij(350,200);
-  controlPoints.addRight(pt);
-  weights.addRight(3);
+  controlPoints.push_back(pt);
+  weights.push_back(3);
   pt.set_ij(400,300);
-  controlPoints.addRight(pt);
-  weights.addRight(1);
+  controlPoints.push_back(pt);
+  weights.push_back(1);
   
   Nurbs.set_p(2);
   Nurbs.set_knots(knots);
@@ -244,11 +244,26 @@ main(int argc, const char ** argv)
   std::cout << "p : " << Nurbs.get_p() <<std::endl;
   std::cout << "" <<std::endl;
   std::cout << "The knot vector :" <<std::endl;
-  (Nurbs.get_knots()).display();
+  std::list<double> knots_cur;
+  Nurbs.get_knots(knots_cur);
+  unsigned int i_display=0;
+  for(std::list<double>::const_iterator it=knots_cur.begin(); it!=knots_cur.end(); ++it, ++i_display){
+    std::cout << i_display << " ---> " << *it << std::endl;
+  }
   std::cout << "The control points are :" <<std::endl;
-  (Nurbs.get_controlPoints()).display();
+  std::list<vpImagePoint> controlPoints_cur;
+  Nurbs.get_controlPoints(controlPoints_cur);
+  i_display=0;
+  for(std::list<vpImagePoint>::const_iterator it=controlPoints_cur.begin(); it!=controlPoints_cur.end(); ++it, ++i_display){
+    std::cout << i_display << " ---> " << *it << std::endl;
+  }
   std::cout << "The associated weights are :" <<std::endl;
-  (Nurbs.get_controlPoints()).display();
+  std::list<double> weights_cur;
+  Nurbs.get_weights(weights_cur);
+  i_display=0;
+  for(std::list<double>::const_iterator it=weights_cur.begin(); it!=weights_cur.end(); ++it, ++i_display){
+    std::cout << i_display << " ---> " << *it << std::endl;
+  }
 
   unsigned int i = Nurbs.findSpan(5/2.0);
   std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
@@ -279,13 +294,10 @@ main(int argc, const char ** argv)
       vpDisplay::displayCross(I,pt,4,vpColor::red);
       u+=0.01;
     }
-    controlPoints.front();
-    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
-    {
-      pt = controlPoints.value();
-      vpDisplay::displayCross(I,pt,4,vpColor::green);
-      controlPoints.next();
+    for(std::list<vpImagePoint>::const_iterator it=controlPoints.begin(); it!=controlPoints.end(); ++it){
+      vpDisplay::displayCross(I, *it, 4, vpColor::green);
     }
+
     vpDisplay::flush(I) ;
     vpDisplay::getClick(I);
   }
@@ -316,12 +328,9 @@ main(int argc, const char ** argv)
       vpDisplay::displayCross(I2,pt,4,vpColor::red);
       u+=0.01;
     }
-    controlPoints.front();
-    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
-    {
-      pt = controlPoints.value();
-      vpDisplay::displayCross(I2,pt,4,vpColor::green);
-      controlPoints.next();
+
+    for(std::list<vpImagePoint>::const_iterator it=controlPoints.begin(); it!=controlPoints.end(); ++it){
+      vpDisplay::displayCross(I2, *it, 4, vpColor::green);
     }
     vpDisplay::flush(I2) ;
     vpDisplay::getClick(I2);
@@ -354,13 +363,11 @@ main(int argc, const char ** argv)
       vpDisplay::displayCross(I3,pt,4,vpColor::red);
       u+=0.01;
     }
-    controlPoints.front();
-    for (unsigned int j = 0; j < controlPoints.nbElements(); j++)
-    {
-      pt = controlPoints.value();
-      vpDisplay::displayCross(I3,pt,4,vpColor::green);
-      controlPoints.next();
+
+    for(std::list<vpImagePoint>::const_iterator it=controlPoints.begin(); it!=controlPoints.end(); ++it){
+      vpDisplay::displayCross(I3, *it, 4, vpColor::green);
     }
+
     vpDisplay::flush(I3) ;
     vpDisplay::getClick(I3);
   }

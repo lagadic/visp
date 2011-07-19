@@ -68,8 +68,6 @@
 void
 vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
-
-  unsigned int i ;
   double normI = 0., normJ = 0.;
   double Z0 = 0.;
   double seuil=1.0;
@@ -77,27 +75,21 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
   //  CPoint c3d[npt] ;
 
-
   if (c3d !=NULL) delete [] c3d ;
   c3d = new vpPoint[npt] ;
 
-  vpPoint p0 ;
-  listP.front() ;
-  p0 = listP.value() ;
-
+  vpPoint p0 = listP.front() ;
 
   vpPoint P ;
-  listP.front() ;
-  i=0 ;
-  while (!listP.outside())
+  int i=0;
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
   {
-    P= listP.value() ;
+    P = *it ;
     c3d[i] = P ;
     c3d[i].set_oX(P.get_oX()-p0.get_oX()) ;
     c3d[i].set_oY(P.get_oY()-p0.get_oY()) ;
     c3d[i].set_oZ(P.get_oZ()-p0.get_oZ()) ;
-    i++  ;
-    listP.next() ;
+    ++i;
   }
 
   vpMatrix a ;
@@ -110,14 +102,12 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     throw ;
   }
 
-
-  for (i=0 ; i < npt ; i++)
+  for (unsigned int i=0 ; i < npt ; i++)
   {
     a[i][0]=c3d[i].get_oX();
     a[i][1]=c3d[i].get_oY();
     a[i][2]=c3d[i].get_oZ();
   }
-
 
   //std::cout << a << std::endl ;
   // calcul a^T a
@@ -128,10 +118,8 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   vpMatrix ata1 ;
   ata1 = ata.pseudoInverse(1e-6) ; //InverseByLU() ;
 
-
   vpMatrix b ;
   b = (a*ata1).t() ;
-
 
   if (DEBUG_LEVEL2)
   {
@@ -148,12 +136,11 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   vpColVector eps(npt) ;
   eps =0 ;
 
-
   int cpt = 0 ;
   vpColVector I, J, k ;
   try{
     I.resize(3) ;
-      }
+  }
   catch(...)
   {
     vpERROR_TRACE(" ") ;
@@ -167,7 +154,6 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     vpERROR_TRACE(" ") ;
     throw ;
   }
-
 
   try {
     k.resize(3) ;
@@ -185,7 +171,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
     vpColVector xprim(npt) ;
     vpColVector yprim(npt) ;
-    for (i=0;i<npt;i++)
+    for (unsigned int i=0;i<npt;i++)
     {
       xprim[i]=(1+ eps[i])*c3d[i].get_x() - c3d[0].get_x();
       yprim[i]=(1+ eps[i])*c3d[i].get_y() - c3d[0].get_y();
@@ -207,7 +193,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     k = vpColVector::cross(I,J) ;
     Z0=2*f/(normI+normJ);
     cpt=cpt+1; seuil=0.0;
-    for(i=0;i<npt;i++)
+    for (unsigned int i=0; i<npt; i++)
     {
       double      epsi_1 = eps[i] ;
       eps[i]=(c3d[i].get_oX()*k[0]+c3d[i].get_oY()*k[1]+c3d[i].get_oZ()*k[2])/Z0;
@@ -224,7 +210,6 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   k.normalize();
   J = vpColVector::cross(k,I) ;
   /*matrice de passage*/
-
 
   cMo[0][0]=I[0];
   cMo[0][1]=I[1];
@@ -524,24 +509,18 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   if (c3d !=NULL) delete []c3d ;
   c3d = new vpPoint[npt] ;
 
-
-  vpPoint p0 ;
-  listP.front() ;
-  p0 = listP.value() ;
-
+  vpPoint p0 = listP.front() ;
 
   vpPoint P ;
-  listP.front() ;
   i=0 ;
-  while (!listP.outside())
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
   {
-    P= listP.value() ;
+    P = *it;
     c3d[i] = P ;
     c3d[i].set_oX(P.get_oX()-p0.get_oX()) ;
     c3d[i].set_oY(P.get_oY()-p0.get_oY()) ;
     c3d[i].set_oZ(P.get_oZ()-p0.get_oZ()) ;
     i++  ;
-    listP.next() ;
   }
 
   vpMatrix a ;

@@ -93,10 +93,6 @@ class VISP_EXPORT vpMbtPolygon
     bool isAppearing() const {return isappearing;}
 };
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpMbtPolygon *>;
-#endif
-
 /*!
   \class vpMbtHiddenFaces
 

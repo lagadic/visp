@@ -44,9 +44,10 @@
 #ifndef vpPlotCurve_H
 #define vpPlotCurve_H
 
+#include <list>
+
 #include <visp/vpConfig.h>
 #include <visp/vpColor.h>
-#include <visp/vpList.h>
 #include <visp/vpImage.h>
 
 #include <visp/vpHomogeneousMatrix.h>
@@ -76,9 +77,9 @@ class vpPlotCurve
     //vpList<vpImagePoint> pointList;
     unsigned int nbPoint;
     vpImagePoint lastPoint;
-    vpList<double> pointListx;
-    vpList<double> pointListy;
-    vpList<double> pointListz;
+    std::list<double> pointListx;
+    std::list<double> pointListy;
+    std::list<double> pointListz;
     char legend[256];
     double xmin;
     double xmax;

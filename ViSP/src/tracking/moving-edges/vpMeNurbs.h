@@ -49,6 +49,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <list>
 
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
@@ -70,9 +71,7 @@
 
   The code below shows how to use this class.
 \code
-#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
-#include <visp/vpList.h>
 #include <visp/vpMeNurbs.h>
 #include <visp/vpImagePoint.h>
 
@@ -87,7 +86,7 @@ int main()
       I[i][j] = 255;
     }
   }
-    
+
   // Set the moving-edges tracker parameters
   vpMe me;
   me.setRange(25);
@@ -101,11 +100,11 @@ int main()
   meNurbs.setMe(&me);
 
   // Initialize the location of the edge to track (here a horizontal line
-  vpList<vpImagePoint> ipList; //List of points belonginig to the edge
-  ipList.addRight(vpImagePoint(110,119));
-  ipList.addRight(vpImagePoint(140,119));
-  ipList.addRight(vpImagePoint(160,119));
-  ipList.addRight(vpImagePoint(170,119));
+  std::list<vpImagePoint> ipList; //List of points belonginig to the edge
+  ipList.push_back(vpImagePoint(110,119));
+  ipList.push_back(vpImagePoint(140,119));
+  ipList.push_back(vpImagePoint(160,119));
+  ipList.push_back(vpImagePoint(170,119));
 
   meNurbs.initTracking(I, ipList);
 
@@ -176,12 +175,14 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
       \param th2 : The second threshold;
     */
     void setCannyThreshold(const double th1, const double th2)
-	{this->cannyTh1 = th1;
-	 this->cannyTh2 = th2;}
+    {
+      this->cannyTh1 = th1;
+      this->cannyTh2 = th2;
+    }
     
     void initTracking(const vpImage<unsigned char> &I) ;
     void initTracking(const vpImage<unsigned char> &I,
-		      vpList<vpImagePoint> &ptList) ;
+                      const std::list<vpImagePoint> &ptList) ;
 
     void track(const vpImage<unsigned char>& Im);
 
@@ -198,6 +199,14 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     
     void display(const vpImage<unsigned char>& I, vpColor col) ;
     
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    /*!
+      @name Deprecated functions
+    */
+    vp_deprecated void initTracking(const vpImage<unsigned char> &I,
+                                    vpList<vpImagePoint> &ptList) ;
+#endif
+
   private:
     bool computeFreemanChainElement(const vpImage<unsigned char> &I,
 				   vpImagePoint &iP,

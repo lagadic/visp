@@ -60,6 +60,8 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 #if defined(VISP_HAVE_DC1394_1)
 
 #include <string>
@@ -80,6 +82,9 @@
   \ingroup Framegrabber CameraDriver
 
   \brief Class for firewire ieee1394 video devices using libdc1394-1.x api
+
+  \deprecated This class is deprecated. You shoud use
+  vp1394TwoGrabber class instead.
 
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions
   available on http://sourceforge.net.
@@ -147,8 +152,8 @@ public:
 
 
 public:
-  vp1394Grabber();
-  vp1394Grabber(vpImage<unsigned char> &I);
+  vp_deprecated vp1394Grabber();
+  vp_deprecated vp1394Grabber(vpImage<unsigned char> &I);
   virtual ~vp1394Grabber();
 
   void setCamera(unsigned int camera);
@@ -241,4 +246,4 @@ private:
 
 #endif
 #endif
-
+#endif

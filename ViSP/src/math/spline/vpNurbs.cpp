@@ -767,26 +767,6 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, uns
   
   \param l_crossingPoints : The list of data points which have to be interpolated.
 */
-void vpNurbs::globalCurveInterp(vpList<vpImagePoint> &l_crossingPoints)
-{
-  std::vector<vpImagePoint> v_crossingPoints;
-  l_crossingPoints.front();
-  while(!l_crossingPoints.outside())
-  {
-    v_crossingPoints.push_back(l_crossingPoints.value());
-    l_crossingPoints.next();
-  }
-  globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
-}
-
-
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data points.
-  
-  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
-  
-  \param l_crossingPoints : The list of data points which have to be interpolated.
-*/
 void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -810,6 +790,48 @@ void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
   globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
 }
 
+/*!
+  Method which enables to compute a NURBS curve passing through a set of data points.
+
+  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be interpolated.
+*/
+void vpNurbs::globalCurveInterp(const std::list<vpImagePoint> &l_crossingPoints)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  for(std::list<vpImagePoint>::const_iterator it=l_crossingPoints.begin(); it!=l_crossingPoints.end(); ++it){
+    v_crossingPoints.push_back(*it);
+  }
+  globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
+}
+
+
+/*!
+  Method which enables to compute a NURBS curve passing through a set of data points.
+
+  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be interpolated.
+*/
+void vpNurbs::globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  vpMeSite s = l_crossingPoints.front();
+  vpImagePoint pt(s.ifloat,s.jfloat);
+  vpImagePoint pt_1 = pt;
+  v_crossingPoints.push_back(pt);
+  std::list<vpMeSite>::const_iterator it = l_crossingPoints.begin();
+  ++it;
+  for(; it!=l_crossingPoints.end(); ++it){
+    vpImagePoint pt_tmp(it->ifloat, it->jfloat);
+    if (vpImagePoint::distance(pt_1, pt_tmp) >= 10){
+      v_crossingPoints.push_back(pt_tmp);
+      pt_1 = pt_tmp;
+    }
+  }
+  globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
+}
 
 /*!
   Method which enables to compute a NURBS curve passing through a set of data points.
@@ -960,29 +982,6 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   l_weights.push_back(1.0);
 }
 
-
-/*!
-  Method which enables to compute a NURBS curve approximating a set of data points.
-  
-  The data points are approximated thanks to a least square method.
-  
-  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
-  
-  \param l_crossingPoints : The list of data points which have to be interpolated.
-  \param n : The desired number of control points. The parameter \e n must be under or equal to the number of data points.
-*/
-void vpNurbs::globalCurveApprox(vpList<vpImagePoint> &l_crossingPoints, unsigned int n)
-{
-  std::vector<vpImagePoint> v_crossingPoints;
-  l_crossingPoints.front();
-  while(!l_crossingPoints.outside())
-  {
-    v_crossingPoints.push_back(l_crossingPoints.value());
-    l_crossingPoints.next();
-  }
-  globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
-}
-
 /*!
 
   Method which enables to compute a NURBS curve approximating a set of
@@ -1015,6 +1014,52 @@ void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int
 
 /*!
   Method which enables to compute a NURBS curve approximating a set of data points.
+
+  The data points are approximated thanks to a least square method.
+
+  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be interpolated.
+  \param n : The desired number of control points. The parameter \e n must be under or equal to the number of data points.
+*/
+void vpNurbs::globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints, unsigned int n)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  for(std::list<vpImagePoint>::const_iterator it=l_crossingPoints.begin(); it!=l_crossingPoints.end(); ++it){
+    v_crossingPoints.push_back(*it);
+  }
+  globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
+}
+
+/*!
+
+  Method which enables to compute a NURBS curve approximating a set of
+  data points.
+
+  The data points are approximated thanks to a least square method.
+
+  The result of the method is composed by a knot vector, a set of
+  control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be
+  interpolated.
+
+  \param n : The desired number of control points. This parameter \e n
+  must be under or equal to the number of data points.
+*/
+void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, unsigned int n)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  for(std::list<vpMeSite>::const_iterator it=l_crossingPoints.begin(); it!=l_crossingPoints.end(); ++it){
+    vpImagePoint pt(it->ifloat, it->jfloat);
+    v_crossingPoints.push_back(pt);
+  }
+  globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
+}
+
+
+/*!
+  Method which enables to compute a NURBS curve approximating a set of data points.
   
   The data points are approximated thanks to a least square method.
   
@@ -1024,3 +1069,52 @@ void vpNurbs::globalCurveApprox(unsigned int n)
 {
   globalCurveApprox(crossingPoints, p, n, knots, controlPoints, weights);
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You should use globalCurveInterp(const std::list<vpImagePoint> &) instead.
+
+  Method which enables to compute a NURBS curve passing through a set of data points.
+
+  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be interpolated.
+*/
+void vpNurbs::globalCurveInterp(vpList<vpImagePoint> &l_crossingPoints)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  l_crossingPoints.front();
+  while(!l_crossingPoints.outside())
+  {
+    v_crossingPoints.push_back(l_crossingPoints.value());
+    l_crossingPoints.next();
+  }
+  globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
+}
+
+/*!
+  \deprecated This method is deprecated. You should use globalCurveApprox(const std::list<vpImagePoint> &, unsigned int) instead.
+
+  Method which enables to compute a NURBS curve approximating a set of data points.
+
+  The data points are approximated thanks to a least square method.
+
+  The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
+
+  \param l_crossingPoints : The list of data points which have to be interpolated.
+  \param n : The desired number of control points. The parameter \e n must be under or equal to the number of data points.
+*/
+void vpNurbs::globalCurveApprox(vpList<vpImagePoint> &l_crossingPoints, unsigned int n)
+{
+  std::vector<vpImagePoint> v_crossingPoints;
+  l_crossingPoints.front();
+  while(!l_crossingPoints.outside())
+  {
+    v_crossingPoints.push_back(l_crossingPoints.value());
+    l_crossingPoints.next();
+  }
+  globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
+}
+
+#endif
+

@@ -828,29 +828,6 @@ void vpList<type>::display()
   std::cout<< std::endl << std::endl ;
 }
 
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-#include <visp/vpPoint.h>
-#include <visp/vpMeSite.h>
-#include <visp/vpBasicFeature.h>
-#include <visp/vpForwardProjection.h>
-#include <visp/vpImagePoint.h>
-#include <visp/vpHomogeneousMatrix.h>
-
-template class VISP_EXPORT vpList<int>;
-template class VISP_EXPORT vpList<double>;
-template class VISP_EXPORT vpList<float>;
-template class VISP_EXPORT vpList<unsigned int>;
-template class VISP_EXPORT vpList<vpBasicFeature *>;
-template class VISP_EXPORT vpList<vpForwardProjection *>;
-template class VISP_EXPORT vpList<vpPoint>;
-template class VISP_EXPORT vpList<vpMeSite>;
-template class VISP_EXPORT vpList<vpColVector>;
-template class VISP_EXPORT vpList<vpImagePoint>;
-template class VISP_EXPORT vpList<vpHomogeneousMatrix>;
-#endif
-
-
 #endif  /* #ifndef VP_LIST_H */
 
 

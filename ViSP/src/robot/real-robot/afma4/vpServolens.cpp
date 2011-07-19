@@ -805,7 +805,7 @@ vpServolens::read(char *c, long timeout_s)
 			    "Cannot dial with Servolens.");
   }
 
-//   int n;
+  int n;
   fd_set         readfds; /* list of fds for select to listen to */
   struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
 
@@ -814,7 +814,9 @@ vpServolens::read(char *c, long timeout_s)
 
   if (select(FD_SETSIZE, &readfds, (fd_set *)NULL,
 	     (fd_set *)NULL, &timeout) > 0) {
-    /* n = */ ::read(this->remfd, c, 1); /* read one character at a time */
+    n = ::read(this->remfd, c, 1); /* read one character at a time */
+    if (n != 1)
+      return false;
     *c &= 0x7f;
     //printf("lecture 1 car: %c\n", *c);
     return(true);

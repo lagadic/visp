@@ -126,7 +126,7 @@ vpDot::vpDot(const vpDot& d)  : vpTracker()
 vpDot::~vpDot()
 {
 
-  ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 }
 
 /*!
@@ -247,7 +247,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
       //vpDisplay::flush(I);
     }
 
-    ip_edges_list += ip;
+    ip_edges_list.push_back(ip);
 
     u_cog += u ;
     v_cog += v ;
@@ -390,7 +390,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   double npoint = 0 ;
   this->mean_gray_level = 0 ;
 
-  ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 
   // Initialise the boundig box
   this->u_min = I.getWidth();
@@ -413,7 +413,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	{
 	  u_cog = 0 ;
 	  v_cog = 0 ;
-	  ip_edges_list.kill() ;
+    ip_edges_list.clear() ;
 	 
 	  this->mean_gray_level = 0 ;
 	  if (connexe(I, (unsigned int)(u+k*pas),(unsigned int)(v+l*pas),
@@ -452,7 +452,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= right; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 	
 	this->mean_gray_level = 0 ;
 	if (connexe(I, (unsigned int)u_+k, (unsigned int)(v_),
@@ -467,7 +467,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= botom; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 	
 	this->mean_gray_level = 0 ;
 	
@@ -484,7 +484,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= left; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 	
 	this->mean_gray_level = 0 ;
 
@@ -501,7 +501,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= up; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-	ip_edges_list.kill() ;
+  ip_edges_list.clear() ;
 	
 	this->mean_gray_level = 0 ;
 
@@ -524,20 +524,18 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 
 #endif
-  ip_edges_list.front() ; 
   vpImagePoint ip;
   unsigned int i, j;
-  while (! ip_edges_list.outside()) {
-    ip = ip_edges_list.value(); 
+  std::list<vpImagePoint>::iterator it;
+  for (it = ip_edges_list.begin(); it != ip_edges_list.end(); it ++) {
+    ip = *it;
     i = (unsigned int) ip.get_i();
     j = (unsigned int) ip.get_j();
     I[i][j] = 255 ;
-    ip_edges_list.next() ;
   }
 
   u_cog = u_cog/npoint ;
   v_cog = v_cog/npoint ;
-
 
   u = u_cog ;
   v = v_cog ;

@@ -122,6 +122,7 @@
 */
 
 #include <vector>
+#include <list>
 
 #include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
@@ -131,7 +132,10 @@
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPoint.h>
-#include <visp/vpList.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
+
 
 class VISP_EXPORT vpImageSimulator
 {
@@ -231,11 +235,12 @@ class VISP_EXPORT vpImageSimulator
 		  vpMatrix &zBuffer);
     
     static void getImage(vpImage<unsigned char> &I,
-			 vpList<vpImageSimulator> &list, 
-			 const vpCameraParameters &cam);
-    static void getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
-			 const vpCameraParameters &cam);
-    
+                         std::list<vpImageSimulator> &list,
+                         const vpCameraParameters &cam);
+    static void getImage(vpImage<vpRGBa> &I,
+                         std::list <vpImageSimulator> &list,
+                         const vpCameraParameters &cam);
+
     /*!
       As it can be time consuming to reset all the image to a default baground value, this function enable to reset only the pixel which changed the previous time.
       
@@ -248,6 +253,17 @@ class VISP_EXPORT vpImageSimulator
       cleanPrevImage = clean;
       bgColor = color;
     }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+    vp_deprecated static void getImage(vpImage<unsigned char> &I,
+       vpList<vpImageSimulator> &list,
+       const vpCameraParameters &cam);
+    vp_deprecated static void getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
+       const vpCameraParameters &cam);
+#endif
     
   private:
     void initPlan(vpColVector* _X);
@@ -278,10 +294,6 @@ class VISP_EXPORT vpImageSimulator
     void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, 
 		const vpCameraParameters &cam, vpPoint* pt, vpRect &rect);
 };
-
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpImageSimulator>;
-#endif
 
 VISP_EXPORT inline std::ostream& operator<< (std::ostream &os, const vpImageSimulator& /*ip*/)
 {

@@ -52,7 +52,11 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
+#include <list>
 #include <vector>
 
 #if defined (VISP_HAVE_OPENCV) 
@@ -215,7 +219,7 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     void display(const vpImage<unsigned char> &Iref,
 		 const vpImage<unsigned char> &Icurrent);
     void display(const vpImage<unsigned char> &Icurrent);
-    vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
+    std::list<int*>* matchPoint(std::list<float*> descriptorList, std::list<int> laplacianList);
     float* getDescriptorReferencePoint (const int index);
     int getLaplacianReferencePoint (const int index);
     void getDescriptorParamReferencePoint (const int index, int& size, float& dir);
@@ -262,6 +266,12 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
     */
     vpDescriptorType getDescriptorType () {return descriptorType;} ;
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    /*!
+      @name Deprecated functions
+    */
+    vp_deprecated vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
+#endif
 
   private:
     void init();

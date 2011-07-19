@@ -63,20 +63,7 @@
 	\brief class for windows direct show devices - implementation
 
 	\ingroup libdevice
-*/
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT CComPtr<IGraphBuilder>;
-template class VISP_EXPORT CComPtr<ICaptureGraphBuilder2>;
-template class VISP_EXPORT CComPtr<IBaseFilter>;
-template class VISP_EXPORT CComPtr<ISampleGrabber>;
-template class VISP_EXPORT CComPtr<IBaseFilter>;
-template class VISP_EXPORT CComPtr<IMediaControl>;
-template class VISP_EXPORT CComPtr<IMediaEvent>;
-#endif
-
-/*!
-	\class vpDirectShowGrabberImpl
 	This class uses CComPtr which is the best way to be sure that all the interfaces
 	are released sooner or later.
 	Since this class may be exported, it may be necessary to explicitely instantiate

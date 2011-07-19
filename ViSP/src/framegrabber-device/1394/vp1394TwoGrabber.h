@@ -60,6 +60,8 @@
 #ifndef vp1394TwoGrabber_h
 #define vp1394TwoGrabber_h
 
+#include <list>
+
 #include <visp/vpConfig.h>
 
 #if defined(VISP_HAVE_DC1394_2)
@@ -163,7 +165,9 @@ int main()
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>
-#include <visp/vpList.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
 
 class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
@@ -329,10 +333,10 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getGuid(uint64_t &guid);
   void getColorCoding(vp1394TwoColorCodingType & coding);
   uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
-			       vpList<vp1394TwoColorCodingType> & codings);
+                                   std::list<vp1394TwoColorCodingType> & codings);
   void getFramerate(vp1394TwoFramerateType & fps);
   uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
-			     vpList<vp1394TwoFramerateType> & fps);
+                                 std::list<vp1394TwoFramerateType> & fps);
   void getHeight(unsigned int &height);
   unsigned int getHeight();
   void getNumCameras(unsigned int &ncameras);
@@ -340,7 +344,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   unsigned int getParameterValue(vp1394TwoParametersType param);
   unsigned int getRingBufferSize();
   void getVideoMode(vp1394TwoVideoModeType & videomode);
-  uint32_t getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
+  uint32_t getVideoModeSupported(std::list<vp1394TwoVideoModeType> & videomodes);
   void getWidth(unsigned int &width);
   unsigned int getWidth();
 
@@ -384,13 +388,24 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void close();
   void resetBus();
 
-public:
   static std::string videoMode2string(vp1394TwoVideoModeType videomode);
   static std::string framerate2string(vp1394TwoFramerateType fps);
   static std::string colorCoding2string(vp1394TwoColorCodingType colorcoding);
   static vp1394TwoVideoModeType string2videoMode(std::string videomode);
   static vp1394TwoFramerateType string2framerate(std::string fps);
   static vp1394TwoColorCodingType string2colorCoding(std::string colorcoding);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
+                                   vpList<vp1394TwoColorCodingType> & codings);
+  vp_deprecated uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
+                                 vpList<vp1394TwoFramerateType> & fps);
+  vp_deprecated uint32_t getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
+
+#endif
 
  private:
   void open();

@@ -48,21 +48,18 @@
   \brief interface with the image for feature display
 */
 
+#include <list>
+
 #include <visp/vpConfig.h>
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-#include <visp/vpConfig.h>
-// Meter/pixel conversion
 #include <visp/vpCameraParameters.h>
-
-//Color / image / display
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpForwardProjection.h>
-#include <visp/vpList.h>
 
 /*!
   \class vpProjectionDisplay
@@ -94,7 +91,7 @@ public:
   vpProjectionDisplay() { init() ;}
   vpProjectionDisplay(int select) { init(select) ;}
 private:
-  vpList<vpForwardProjection *> listFp ;
+  std::list<vpForwardProjection *> listFp ;
 public:
   void insert( vpForwardProjection &fp) ;
 

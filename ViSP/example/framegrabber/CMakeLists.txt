@@ -44,7 +44,6 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  grab1394.cpp
   grab1394Two.cpp
   grabDisk.cpp
   grabV4l2.cpp

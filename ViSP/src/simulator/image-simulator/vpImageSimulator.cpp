@@ -591,12 +591,18 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam,
   }
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated  This method is deprecated, you should use:
+  vpImageSimulator::getImage(vpImage<unsigned char> &,
+                             std::list<vpImageSimulator> &,
+                             const vpCameraParameters &) instead.
+
   Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
   
   With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
   
+
   The following example shows how to use the method:
   
   \code
@@ -795,10 +801,15 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
 
 /*!
+  \deprecated This method is deprecated, you should use:
+  vpImageSimulator::getImage(vpImage<vpRGBa> &,
+                             std::list<vpImageSimulator> &,
+                             const vpCameraParameters &) instead.
+
   Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
   
   With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
-  
+
   The following example shows how to use the method:
   
   \code
@@ -996,7 +1007,410 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
   
   delete[] simList;
 }
+#endif
 
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+
+  With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
+
+  The following example shows how to use the method:
+
+  \code
+  #include <list>
+  #include <visp/vpImage.h>
+  #include <visp/vpImageSimulator.h>
+
+  int main()
+  {
+    vpImage<vpRGBa> Icamera(480,640,0);
+    vpImage<vpRGBa> Iimage(60,60);
+
+    // Initialise the image which will be projected into the image Icamera
+    vpRGBa colorb(0,0,255);
+    vpRGBa colorw(255,255,255);
+    vpRGBa colorr(255,0,0);
+    for(int i = 0; i < 60; i++)
+    {
+      for(int j = 0; j < 20; j++)
+        Iimage[i][j] = colorb;
+      for(int j = 20; j < 40; j++)
+        Iimage[i][j] = colorw;
+      for(int j = 40; j < 60; j++)
+        Iimage[i][j] = colorr;
+    }
+
+    // Initialise the 3D coordinates of the Iimage corners
+    vpColVector X[4];
+    for (int i = 0; i < 4; i++) X[i].resize(3);
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+
+    vpImageSimulator sim;
+    sim.init(Iimage, X);
+
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+
+    vpImageSimulator sim2;
+    sim2.init(Iimage, X);
+
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(30),0));
+    sim2.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(-30),0));
+
+    std::list<vpImageSimulator> listSim;
+    listSim.addRight(sim);
+    listSim.addRight(sim2);
+
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(60),vpMath::rad(0),0));
+
+    vpCameraParameters cam(868.0, 869.0, 320, 240);
+
+    vpImageSimulator::getImage(Icamera,listSim,cam);
+
+    return 0;
+  }
+  \endcode
+
+  \param I : The image used to store the result
+  \param list : List of vpImageSimulator to project
+  \param cam : The parameters of the virtual camera
+*/
+void
+vpImageSimulator::getImage(vpImage<unsigned char> &I,
+                           std::list<vpImageSimulator> &list,
+                           const vpCameraParameters &cam)
+{
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+
+  unsigned int nbsimList = list.size();
+
+  if (nbsimList < 1)
+    return;
+
+  vpImageSimulator** simList = new vpImageSimulator* [nbsimList];
+
+  double topFinal = height+1;;
+  double bottomFinal = -1;
+  double leftFinal = width+1;
+  double rightFinal = -1;
+
+  unsigned int unvisible = 0;
+  unsigned int indexSimu=0;
+  for(std::list<vpImageSimulator>::iterator it=list.begin(); it!=list.end(); ++it, ++indexSimu){
+    vpImageSimulator* sim = &(*it);
+    if (sim->visible)
+      simList[indexSimu] = sim;
+    else
+      unvisible++;
+  }
+  nbsimList = nbsimList - unvisible;
+
+   if (nbsimList < 1)
+   {
+     delete[] simList;
+     return;
+   }
+
+
+  for (unsigned int i = 0; i < nbsimList; i++)
+  {
+
+    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+
+    if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
+    if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
+    if (leftFinal > simList[i]->rect.getLeft()) leftFinal = simList[i]->rect.getLeft();
+    if (rightFinal < simList[i]->rect.getRight()) rightFinal = simList[i]->rect.getRight();
+  }
+
+  double zmin = -1;
+  int indice = -1;
+  unsigned char *bitmap = I.bitmap;
+  vpImagePoint ip;
+
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++)
+  {
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++)
+    {
+      zmin = -1;
+      double x=0,y=0;
+      ip.set_ij(i,j);
+      vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+      ip.set_ij(y,x);
+      for (int k = 0; k < (int)nbsimList; k++)
+      {
+  double z = 0;
+  if(simList[k]->getPixelDepth(ip,z))
+  {
+    if (z < zmin || zmin < 0)
+    {
+      zmin = z;
+      indice = k;
+    }
+  }
+      }
+      if (indice >= 0)
+      {
+        if (simList[indice]->colorI == GRAY_SCALED)
+        {
+    unsigned char Ipixelplan = 255;
+          simList[indice]->getPixel(ip,Ipixelplan);
+    *(bitmap+i*width+j)=Ipixelplan;
+        }
+        else if (simList[indice]->colorI == COLORED)
+        {
+    vpRGBa Ipixelplan(255,255,255);
+    simList[indice]->getPixel(ip,Ipixelplan);
+    unsigned char pixelgrey = (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
+    *(bitmap+i*width+j)=pixelgrey;
+        }
+      }
+    }
+  }
+
+  delete[] simList;
+}
+
+
+/*!
+  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+
+  With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
+
+  The following example shows how to use the method:
+
+  \code
+  #include <list>
+  #include <visp/vpImage.h>
+  #include <visp/vpImageSimulator.h>
+
+  int main()
+  {
+    vpImage<vpRGBa> Icamera(480,640,0);
+    vpImage<vpRGBa> Iimage(60,60);
+
+    // Initialise the image which will be projected into the image Icamera
+    vpRGBa colorb(0,0,255);
+    vpRGBa colorw(255,255,255);
+    vpRGBa colorr(255,0,0);
+    for(int i = 0; i < 60; i++)
+    {
+      for(int j = 0; j < 20; j++)
+        Iimage[i][j] = colorb;
+      for(int j = 20; j < 40; j++)
+        Iimage[i][j] = colorw;
+      for(int j = 40; j < 60; j++)
+        Iimage[i][j] = colorr;
+    }
+
+    // Initialise the 3D coordinates of the Iimage corners
+    vpColVector X[4];
+    for (int i = 0; i < 4; i++) X[i].resize(3);
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+
+    vpImageSimulator sim;
+    sim.init(Iimage, X);
+
+    // Top left corner
+    X[0][0] = -1;
+    X[0][1] = -1;
+    X[0][2] = 1;
+
+    // Top right corner
+    X[1][0] = 1;
+    X[1][1] = -1;
+    X[1][2] = 1;
+
+    // Bottom right corner
+    X[2][0] = 1;
+    X[2][1] = 1;
+    X[2][2] = 1;
+
+    //Bottom left corner
+    X[3][0] = -1;
+    X[3][1] = 1;
+    X[3][2] = 1;
+
+    vpImageSimulator sim2;
+    sim2.init(Iimage, X);
+
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(30),0));
+    sim2.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(0),vpMath::rad(-30),0));
+
+    std::list<vpImageSimulator> listSim;
+    listSim.addRight(sim);
+    listSim.addRight(sim2);
+
+    sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(60),vpMath::rad(0),0));
+
+    vpCameraParameters cam(868.0, 869.0, 320, 240);
+
+    vpImageSimulator::getImage(Icamera,listSim,cam);
+
+    return 0;
+  }
+  \endcode
+
+  \param I : The image used to store the result
+  \param list : List of vpImageSimulator to project
+  \param cam : The parameters of the virtual camera
+*/
+void
+vpImageSimulator::getImage(vpImage<vpRGBa> &I,
+                           std::list<vpImageSimulator> &list,
+                           const vpCameraParameters &cam)
+{
+
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
+
+  unsigned int nbsimList = list.size();
+
+  if (nbsimList < 1)
+    return;
+
+  vpImageSimulator** simList = new vpImageSimulator* [nbsimList];
+
+  double topFinal = height+1;;
+  double bottomFinal = -1;
+  double leftFinal = width+1;
+  double rightFinal = -1;
+
+  unsigned int unvisible = 0;
+  unsigned int indexSimu = 0;
+  for(std::list<vpImageSimulator>::iterator it=list.begin(); it!=list.end(); ++it, ++indexSimu){
+    vpImageSimulator* sim = &(*it);
+    if (sim->visible)
+      simList[indexSimu] = sim;
+    else
+      unvisible++;
+  }
+
+  nbsimList = nbsimList - unvisible;
+
+   if (nbsimList < 1)
+   {
+     delete[] simList;
+     return;
+   }
+
+  for (unsigned int i = 0; i < nbsimList; i++)
+  {
+
+    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+
+    if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
+    if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
+    if (leftFinal > simList[i]->rect.getLeft()) leftFinal = simList[i]->rect.getLeft();
+    if (rightFinal < simList[i]->rect.getRight()) rightFinal = simList[i]->rect.getRight();
+  }
+
+  double zmin = -1;
+  int indice = -1;
+  vpRGBa *bitmap = I.bitmap;
+  vpImagePoint ip;
+
+  for (unsigned int i = (unsigned int)topFinal; i < (unsigned int)bottomFinal; i++)
+  {
+    for (unsigned int j = (unsigned int)leftFinal; j < (unsigned int)rightFinal; j++)
+    {
+      zmin = -1;
+      double x=0,y=0;
+      ip.set_ij(i,j);
+      vpPixelMeterConversion::convertPoint(cam,ip, x,y);
+      ip.set_ij(y,x);
+      for (int k = 0; k < (int)nbsimList; k++)
+      {
+  double z = 0;
+  if(simList[k]->getPixelDepth(ip,z))
+  {
+    if (z < zmin || zmin < 0)
+    {
+      zmin = z;
+      indice = k;
+    }
+  }
+      }
+      if (indice >= 0)
+      {
+        if (simList[indice]->colorI == GRAY_SCALED)
+        {
+    unsigned char Ipixelplan = 255;
+          simList[indice]->getPixel(ip,Ipixelplan);
+    vpRGBa pixelcolor;
+    pixelcolor.R = Ipixelplan;
+    pixelcolor.G = Ipixelplan;
+    pixelcolor.B = Ipixelplan;
+    *(bitmap+i*width+j) = pixelcolor;
+        }
+        else if (simList[indice]->colorI == COLORED)
+        {
+    vpRGBa Ipixelplan(255,255,255);
+    simList[indice]->getPixel(ip,Ipixelplan);
+    //unsigned char pixelgrey = 0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B;
+    *(bitmap+i*width+j)=Ipixelplan;
+        }
+      }
+    }
+  }
+
+  delete[] simList;
+}
 
 /*!
   Enable to set the position of the 3D plane relative to the virtual camera.

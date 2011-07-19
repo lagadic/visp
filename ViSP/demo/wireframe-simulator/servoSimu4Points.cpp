@@ -271,7 +271,7 @@ main(int argc, const char ** argv)
   
   task.setLambda(10);
   
-  vpList<vpImageSimulator> list;
+  std::list<vpImageSimulator> list;
   vpImageSimulator imsim;
   
   vpColVector X[4];
@@ -315,7 +315,7 @@ main(int argc, const char ** argv)
     return 1;
   }
   
-  list.addRight(imsim);
+  list.push_back(imsim);
   
   vpWireFrameSimulator sim;
   

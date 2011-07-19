@@ -250,11 +250,10 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     vpMatrix a(nl,3)  ;
     vpMatrix b(nl,6);
     vpPoint P ;
-    listP.front() ;
     i=0 ;
-    while (!listP.outside())
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
     {
-      P= listP.value() ;
+      P = *it ;
       a[k][0]   = -P.get_oX();
       a[k][1]   = 0.0;
       a[k][2]   = P.get_oX()*P.get_x();
@@ -278,7 +277,6 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
       b[k+1][5] =  P.get_y();
 
       k += 2;
-      listP.next() ;
     }
     vpColVector X1(3) ;
     vpColVector X2(6) ;
@@ -289,10 +287,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
       std::cout <<"b " << b << std::endl ;
     }
 
-
     lagrange(a,b,X1,X2);
-
-
 
     if (DEBUG_LEVEL2)
     {
@@ -369,17 +364,15 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     unsigned int k=0;
     unsigned int nl=npt*2;
 
-
     vpMatrix a(nl,3)  ;
     vpMatrix b(nl,9);
     b =0 ;
 
     vpPoint P ;
-    listP.front() ;
     i=0 ;
-    while (!listP.outside())
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
     {
-      P= listP.value() ;
+      P = *it;
       a[k][0]   = -P.get_oX();
       a[k][1]   = 0.0;
       a[k][2]   = P.get_oX()*P.get_x();
@@ -408,13 +401,11 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       b[k+1][4] = -P.get_oZ();
       b[k+1][5] =  P.get_oZ()*P.get_y();
 
-
       b[k+1][6] =  0.0;
       b[k+1][7] = -1.0;
       b[k+1][8] =  P.get_y();
 
       k += 2;
-      listP.next() ;
     }
     vpColVector X1(3) ;
     vpColVector X2(9) ;

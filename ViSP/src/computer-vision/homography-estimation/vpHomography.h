@@ -51,10 +51,13 @@ tools for homography computation.
 #ifndef vpHomography_hh
 #define vpHomography_hh
 
+#include <list>
 #include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPlane.h>
-#include <visp/vpList.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
 
 /*!  
@@ -182,12 +185,6 @@ private:
   vpPlane bP ;
   void init() ;
 
-
-public:
-  vpHomography() ;
-  //vpHomography(bool planar);
-  virtual ~vpHomography() { }
-
 private:
   virtual void resize(int , int ) { ; }
 
@@ -202,83 +199,77 @@ private:
   //! insert a translation vector
   void insert(const vpPlane &bP) ;
 
+  static void HartleyNormalization(unsigned int n,
+                                   double *x, double *y,
+                                   double *xn, double *yn,
+                                   double &xg, double &yg,
+                                   double &coef);
+  static void HartleyDenormalization(vpHomography &aHbn,
+                                     vpHomography &aHb,
+                                     double xg1, double yg1, double coef1,
+                                     double xg2, double yg2, double coef2 ) ;
+
+  static void  initRansac(unsigned int n,
+                          double *xb, double *yb,
+                          double *xa, double *ya,
+                          vpColVector &x
+                          ) ;
+
 public:
+  vpHomography() ;
 
   //! copy constructor
   vpHomography(const vpHomography &aMb) ;
-   //! Construction from Translation and rotation and a plane
+  //! Construction from Translation and rotation and a plane
   vpHomography(const vpHomogeneousMatrix &aMb,
-	       const vpPlane &bP) ;
+               const vpPlane &bP) ;
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpRotationMatrix &aRb,
-	       const vpTranslationVector &atb,
-	       const vpPlane &bP) ;
-   //! Construction from Translation and rotation and a plane
+               const vpTranslationVector &atb,
+               const vpPlane &bP) ;
+  //! Construction from Translation and rotation and a plane
   vpHomography(const vpThetaUVector &tu,
-	       const vpTranslationVector &atb,
-	       const vpPlane &bP) ;
+               const vpTranslationVector &atb,
+               const vpPlane &bP) ;
   //! Construction from Translation and rotation and a plane
   vpHomography(const vpPoseVector &arb,
-	       const vpPlane &bP) ;
+               const vpPlane &bP) ;
+  virtual ~vpHomography() { }
 
   //! Construction from Translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb,
-		 const vpTranslationVector &atb,
-		 const vpPlane &bP) ;
-   //! Construction from Translation and rotation and a plane
+                 const vpTranslationVector &atb,
+                 const vpPlane &bP) ;
+  //! Construction from Translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu,
-		 const vpTranslationVector &atb,
-		 const vpPlane &bP) ;
+                 const vpTranslationVector &atb,
+                 const vpPlane &bP) ;
   //! Construction from Translation and rotation  and a plane
   void buildFrom(const vpPoseVector &arb,
-		 const vpPlane &bP) ;
+                 const vpPlane &bP) ;
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb,
-		 const vpPlane &bP) ;
-
-  //! Load an homography from a file
-  void load(std::ifstream &f) ;
-  //! Save an homography in a file
-  void save(std::ofstream &f) const ;
-
-  //! Print the matrix
-  void print() ;
+                 const vpPlane &bP) ;
 
   //! build the homography from aMb and Rb
   void build() ;
 
- //! build the homography from aMb and Rb
-  static void build(vpHomography &aHb,
-		    const vpHomogeneousMatrix &aMb,
-		    const vpPlane &bP) ;
-
 
   void computeDisplacement(vpRotationMatrix &aRb,
-			   vpTranslationVector &atb,
-			   vpColVector &n) ;
+                           vpTranslationVector &atb,
+                           vpColVector &n) ;
 
   void computeDisplacement(const vpColVector& nd,
-			   vpRotationMatrix &aRb,
-			   vpTranslationVector &atb,
-			   vpColVector &n) ;
+                           vpRotationMatrix &aRb,
+                           vpTranslationVector &atb,
+                           vpColVector &n) ;
 
-  static void computeDisplacement(const vpHomography &aHb,
-				  const vpColVector& nd,
-				  vpRotationMatrix &aRb,
-				  vpTranslationVector &atb,
-				  vpColVector &n) ;
-
-  static void computeDisplacement (const vpHomography &aHb,
-				   vpRotationMatrix &aRb,
-				   vpTranslationVector &atb,
-				   vpColVector &n) ;
-
-  static void computeDisplacement(const vpMatrix H,
-				  const double x,
-				  const double y,
-				  vpList<vpRotationMatrix> & vR,
-				  vpList<vpTranslationVector> & vT,
-				  vpList<vpColVector> & vN) ;
+  //! Load an homography from a file
+  void load(std::ifstream &f) ;
+  //! Print the matrix
+  void print() ;
+  //! Save an homography in a file
+  void save(std::ofstream &f) const ;
 
   //! invert the homography
   vpHomography inverse() const ;
@@ -294,89 +285,102 @@ public:
   // Division by a scalar
   vpHomography operator/(const double &v) const;
 
-private:
-  static void HartleyNormalization(unsigned int n,
-				   double *x, double *y,
-				   double *xn, double *yn,
-				   double &xg, double &yg,
-				   double &coef);
-  static void HartleyDenormalization(vpHomography &aHbn,
-				     vpHomography &aHb,
-				     double xg1, double yg1, double coef1,
-				     double xg2, double yg2, double coef2 ) ;
+  //! build the homography from aMb and Rb
+  static void build(vpHomography &aHb,
+                    const vpHomogeneousMatrix &aMb,
+                    const vpPlane &bP) ;
 
-public:
-  static void HartleyDLT(unsigned int n,
-			 double *xb, double *yb ,
-			 double *xa, double *ya,
-			 vpHomography &aHb) ;
   static void DLT(unsigned int n,
-		  double *xb, double *yb ,
-		  double *xa, double *ya,
-		  vpHomography &aHb) ;
+                  double *xb, double *yb ,
+                  double *xa, double *ya,
+                  vpHomography &aHb) ;
 
+  static void HartleyDLT(unsigned int n,
+                         double *xb, double *yb ,
+                         double *xa, double *ya,
+                         vpHomography &aHb) ;
   static void HLM(unsigned int n,
-		    double *xb, double *yb,
-		    double *xa, double *ya ,
-		    bool isplan,
-		    vpHomography &aHb) ;
+                  double *xb, double *yb,
+                  double *xa, double *ya ,
+                  bool isplan,
+                  vpHomography &aHb) ;
 
-private:
-  static void  initRansac(unsigned int n,
-			  double *xb, double *yb,
-			  double *xa, double *ya,
-			  vpColVector &x
-			  ) ;
-public:
+  static void computeDisplacement(const vpHomography &aHb,
+                                  const vpColVector& nd,
+                                  vpRotationMatrix &aRb,
+                                  vpTranslationVector &atb,
+                                  vpColVector &n) ;
+
+  static void computeDisplacement (const vpHomography &aHb,
+                                   vpRotationMatrix &aRb,
+                                   vpTranslationVector &atb,
+                                   vpColVector &n) ;
+
+  static void computeDisplacement(const vpMatrix &H,
+                                  const double x,
+                                  const double y,
+                                  std::list<vpRotationMatrix> & vR,
+                                  std::list<vpTranslationVector> & vT,
+                                  std::list<vpColVector> & vN) ;
+  static double  computeDisplacement(unsigned int nbpoint,
+                                     vpPoint *c1P,
+                                     vpPoint *c2P,
+                                     vpPlane &oN,
+                                     vpHomogeneousMatrix &c2Mc1,
+                                     vpHomogeneousMatrix &c1Mo,
+                                     int userobust
+                                     ) ;
+  static double computeDisplacement(unsigned int nbpoint,
+                                    vpPoint *c1P,
+                                    vpPoint *c2P,
+                                    vpPlane *oN,
+                                    vpHomogeneousMatrix &c2Mc1,
+                                    vpHomogeneousMatrix &c1Mo,
+                                    int userobust
+                                    ) ;
+  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d);
+  // VVS
+  static double computeRotation(unsigned int nbpoint,
+                                vpPoint *c1P,
+                                vpPoint *c2P,
+                                vpHomogeneousMatrix &c2Mc1,
+                                int userobust
+                                ) ;
+  static void computeTransformation(vpColVector &x,unsigned int *ind, vpColVector &M) ;
+
   static bool degenerateConfiguration(vpColVector &x,unsigned int *ind) ;
   static bool degenerateConfiguration(vpColVector &x,unsigned int *ind, double threshold_area);
 
-  static void computeTransformation(vpColVector &x,unsigned int *ind, vpColVector &M) ;
-  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d);
-
   static bool ransac(unsigned int n,
-		     double *xb, double *yb,
-		     double *xa, double *ya ,
-		     vpHomography &aHb,
-		     int consensus = 1000,
-		     double threshold = 1e-6
-		     ) ;
+                     double *xb, double *yb,
+                     double *xa, double *ya ,
+                     vpHomography &aHb,
+                     int consensus = 1000,
+                     double threshold = 1e-6
+                                        ) ;
 
   static  bool ransac(unsigned int n,
-		      double *xb, double *yb,
-		      double *xa, double *ya ,
-		      vpHomography &aHb,
-		      vpColVector& inliers,
-		      double& residual,
-		      int consensus = 1000,
-		      double epsilon = 1e-6,
-		      double areaThreshold = 0.0);
+                      double *xb, double *yb,
+                      double *xa, double *ya ,
+                      vpHomography &aHb,
+                      vpColVector& inliers,
+                      double& residual,
+                      int consensus = 1000,
+                      double epsilon = 1e-6,
+                      double areaThreshold = 0.0);
 
-  public: // VVS
-  static double computeRotation(unsigned int nbpoint,
-			      vpPoint *c1P,
-			      vpPoint *c2P,
-			      vpHomogeneousMatrix &c2Mc1,
-			      int userobust
-			      ) ;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated static void computeDisplacement(const vpMatrix H,
+                                                const double x,
+                                                const double y,
+                                                vpList<vpRotationMatrix> & vR,
+                                                vpList<vpTranslationVector> & vT,
+                                                vpList<vpColVector> & vN) ;
 
-   static double  computeDisplacement(unsigned int nbpoint,
-				      vpPoint *c1P,
-				      vpPoint *c2P,
-				      vpPlane &oN,
-				      vpHomogeneousMatrix &c2Mc1,
-				      vpHomogeneousMatrix &c1Mo,
-				      int userobust
-				      ) ;
-  static double computeDisplacement(unsigned int nbpoint,
-				    vpPoint *c1P,
-				    vpPoint *c2P,
-				    vpPlane *oN,
-				    vpHomogeneousMatrix &c2Mc1,
-				    vpHomogeneousMatrix &c1Mo,
-				    int userobust
-				    ) ;
-
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 } ;
 
 

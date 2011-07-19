@@ -56,13 +56,11 @@
 #  include <cvaux.hpp>
 #endif
 
-#include <visp/vpList.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpPoint.h>
-#include <visp/vpList.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpHomography.h>

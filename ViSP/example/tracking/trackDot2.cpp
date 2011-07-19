@@ -487,20 +487,17 @@ main(int argc, const char ** argv)
 		  << std::endl;
 
 	if (opt_display) {
-	  // display a red cross (size 10) in the image at the dot center
-	  // of gravity location
-	  //
-	  // WARNING
-	  // in the vpDisplay class member's when pixel coordinates
-	  // are considered the first element is the row index and the second
-	  // is the column index:
-	  //   vpDisplay::displayCross(Image, row index, column index, size, color)
-	  //   therefore u and v are inverted wrt to the vpDot specification
-	  // Alternatively, to avoid this problem another set of member have
-	  // been defined in the vpDisplay class.
-	  // If the method name is postfixe with _uv the specification is :
-	  //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+    if (0) {
+      std::list<vpImagePoint> edges;
+      d.getEdges(edges);
+      std::list<vpImagePoint>::const_iterator it;
+      for(it = edges.begin(); it != edges.end(); ++it) {
+        vpDisplay::displayPoint(I, *it, vpColor::blue);
+      }
+    }
 
+    // display a green cross (size 10) in the image at the dot center
+	  // of gravity location
 	  vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
 	  // flush the X11 buffer
 

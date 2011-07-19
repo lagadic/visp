@@ -51,13 +51,16 @@
 #ifndef vpHistogram_h
 #define vpHistogram_h
 
-#include <visp/vpConfig.h>
-#include <visp/vpList.h>
-#include <visp/vpImage.h>
+#include <list>
 
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
 #include <visp/vpHistogramPeak.h>
 #include <visp/vpHistogramValey.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
 
 /*!
@@ -219,23 +222,23 @@ public:
 
   void     calculate(const vpImage<unsigned char> &I);
   void     smooth(const unsigned int fsize = 3);
-  unsigned getPeaks(vpList<vpHistogramPeak> & peaks);
+  unsigned getPeaks(std::list<vpHistogramPeak> & peaks);
   unsigned getPeaks(unsigned char dist, 
-		    vpHistogramPeak & peak1, 
-		    vpHistogramPeak & peak2);
+                    vpHistogramPeak & peak1,
+                    vpHistogramPeak & peak2);
   bool     getPeaks(unsigned char dist, 
-		    vpHistogramPeak & peakl,
-		    vpHistogramPeak & peakr, 
-		    vpHistogramValey & valey);
-  unsigned getValey(vpList<vpHistogramValey> & valey);
+                    vpHistogramPeak & peakl,
+                    vpHistogramPeak & peakr,
+                    vpHistogramValey & valey);
+  unsigned getValey(std::list<vpHistogramValey> & valey);
   bool     getValey(const vpHistogramPeak & peak1, 
-		    const vpHistogramPeak & peak2,
-		    vpHistogramValey & valey);
+                    const vpHistogramPeak & peak2,
+                    vpHistogramValey & valey);
   unsigned getValey(unsigned char dist,
-		    const vpHistogramPeak & peak, 
-		    vpHistogramValey & valeyl, 
-		    vpHistogramValey & valeyr);
-  unsigned sort(vpList<vpHistogramPeak> & peaks);
+                    const vpHistogramPeak & peak,
+                    vpHistogramValey & valeyl,
+                    vpHistogramValey & valeyr);
+  unsigned sort(std::list<vpHistogramPeak> & peaks);
 
   bool     write(const std::string &filename);
   bool     write(const char *filename);
@@ -278,6 +281,15 @@ public:
     {
       return histogram;
     };
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated unsigned getPeaks(vpList<vpHistogramPeak> & peaks);
+  vp_deprecated unsigned getValey(vpList<vpHistogramValey> & valey);
+  vp_deprecated unsigned sort(vpList<vpHistogramPeak> & peaks);
+#endif
 
 private:
   void init(unsigned size = 256);

@@ -50,16 +50,18 @@
 
 #include <math.h>
 #include <fstream>
+#include <list>
 
 #include <visp/vpConfig.h>
-#include <visp/vpList.h>
-
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
-
 #include <visp/vpTracker.h>
 #include <visp/vpRect.h>
 #include <visp/vpImagePoint.h>
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
 
 /*!
@@ -254,18 +256,19 @@ public :
   inline vpImagePoint getCog() const {
     return cog;
   }
+
   /*!
 
-    Return the list of all the image points on the dot
-    border.
+    Return the list of all the image points inside the dot.
 
-    \param ip_edges_list : The list of all the images points on the dot
+    \param edges_list : The list of all the images points on the dot
     border. This list is update after a call to track().
 
   */
-  void getEdges(vpList<vpImagePoint> &ip_edges_list) { 
-    ip_edges_list = this->ip_edges_list;
+  void getEdges(std::list<vpImagePoint> &edges_list) {
+    edges_list = this->ip_edges_list;
   };
+
   inline double getGamma() {return this->gamma;};
   /*!
 
@@ -310,10 +313,36 @@ public :
 
   void print(std::ostream& os) { os << *this << std::endl ; }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+
+    \deprecated This method is deprecated. You shoud use
+    getEdges(std::list<vpImagePoint> &) instead.
+
+    Return the list of all the image points on the dot
+    border.
+
+    \param edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  vp_deprecated void getEdges(vpList<vpImagePoint> &edges_list) {
+    // convert a vpList in a std::list
+    edges_list.kill();
+    std::list<vpImagePoint>::const_iterator it;
+    for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
+      edges_list += *it;
+    }
+  };
+#endif
+
 private:
 
   //! internal use only
-  vpList<vpImagePoint> ip_edges_list;
+  std::list<vpImagePoint> ip_edges_list;
 
   //! Type of connexity
   vpConnexityType connexity;
@@ -354,7 +383,6 @@ private:
   double nbMaxPoint;
 
 } ;
-
 
 #endif
 

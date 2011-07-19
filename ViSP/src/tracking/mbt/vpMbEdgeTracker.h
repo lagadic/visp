@@ -61,6 +61,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
 
 #if defined(VISP_HAVE_COIN)
 //Inventor includes
@@ -86,24 +87,6 @@
 #  else
 #    include <cv.h>
 #  endif
-#endif
-
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-// These commented lines are not enought to suppress the following warning under Visual
-// C:\...\include\visp/vpMbEdgeTracker.h(140) : warning C4251: 'vpMbEdgeTracker::scales' : class 'std::vector<_Ty,_Ax>' nécessite une interface DLL pour être utilisé(e) par les clients de class 'vpMbEdgeTracker'
-//        with
-//        [
-//            _Ty=bool,
-//            _Ax=std::allocator<bool>
-//        ]
-//template class VISP_EXPORT std::allocator<bool>;
-//template class VISP_EXPORT std::vector<bool>;
-//template class VISP_EXPORT std::vector<bool, std::allocator<bool>>;
-template class VISP_EXPORT std::allocator<vpList<vpMbtDistanceLine *>>;
-template class VISP_EXPORT std::vector<vpList<vpMbtDistanceLine *>>;
-template class VISP_EXPORT std::allocator<const vpImage<unsigned char> *>;
-template class VISP_EXPORT std::vector<const vpImage<unsigned char> *>;
 #endif
 
 /*!
@@ -328,8 +311,8 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   unsigned int getNbPoints(const unsigned int _level=0);
   vpMbtPolygon* getPolygon(const unsigned int _index); 
   unsigned int getNbPolygon();
-  vpList<vpMbtDistanceLine *>* getLline(const unsigned int _level = 0);
-  vpList<vpMbtDistanceCylinder *>* getLcylinder(const unsigned int _level = 0);
+  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level = 0);
+  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int _level = 0);
   
   void setScales(const std::vector<bool>& _scales);
   
@@ -389,6 +372,27 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   void reInitLevel(const unsigned int _lvl);
   void downScale(const unsigned int _scale);
   void upScale(const unsigned int _scale);
+
+  public:
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+
+  /*!
+    \deprecated This method is deprecated. You should use
+    void getLline(std::list<vpMbtDistanceLine *> &, const unsigned int)
+    instead.
+  */
+  vp_deprecated vpList<vpMbtDistanceLine *>* getLline(const unsigned int _level = 0);
+  /*!
+    \deprecated This method is deprecated. You should use
+    void getLcylinder(std::list<vpMbtDistanceCylinder *> &, const unsigned int)
+    instead.
+  */
+  vp_deprecated vpList<vpMbtDistanceCylinder *>* getLcylinder(const unsigned int _level = 0);
+#endif
+
   
 };
 

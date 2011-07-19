@@ -49,7 +49,6 @@
 #include <visp/vpPlotCurve.h>
 
 #include <visp/vpColor.h>
-#include <visp/vpList.h>
 #include <visp/vpImage.h>
 
 #include <visp/vpHomogeneousMatrix.h>

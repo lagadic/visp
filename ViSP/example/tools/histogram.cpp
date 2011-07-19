@@ -274,7 +274,7 @@ main(int argc, const char ** argv)
   std::cout << "Save the smoothed histogram in: " << filename << std::endl;
   h.write(filename);
 
-  vpList<vpHistogramPeak> peaks;
+  std::list<vpHistogramPeak> peaks;
   unsigned int nbpeaks = 0;
 
   // get all the histogram peaks
@@ -283,12 +283,10 @@ main(int argc, const char ** argv)
   vpTRACE("List of peaks");
   vpTRACE("Nb peaks: %d", nbpeaks);
   if (nbpeaks) {
-    peaks.front();
-    while (! peaks.outside() ) {
-      vpHistogramPeak p;
-      p = peaks.value();
+    for(std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it)
+    {
+      vpHistogramPeak p = *it;
       vpTRACE("Peak: gray level: %d value: %d", p.getLevel(), p.getValue());
-      peaks.next();
     }
   }
 
@@ -299,12 +297,10 @@ main(int argc, const char ** argv)
   vpTRACE("Sorted list of peaks");
   vpTRACE("Nb peaks: %d", nbpeaks);
   if (nbpeaks) {
-    peaks.front();
-    while (! peaks.outside() ) {
-      vpHistogramPeak p;
-      p = peaks.value();
+    for(std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it)
+    {
+      vpHistogramPeak p = *it;
       vpTRACE("Peak: gray level: %d value: %d", p.getLevel(), p.getValue());
-      peaks.next();
     }
   }
 

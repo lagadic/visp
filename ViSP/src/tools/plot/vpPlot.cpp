@@ -39,13 +39,16 @@
  *
  *****************************************************************************/
 
+#include <fstream>
+#include <list>
+#include <vector>
+
 #include <visp/vpConfig.h>
 #include <visp/vpPlot.h>
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpPose.h>
-#include <fstream>
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
@@ -106,11 +109,17 @@ vpPlot::~vpPlot()
 /*!
   Function called by the constructor to initialize the window and the basic parameters.
 
+  \exception vpException::dimensionError if the parameter exceed the possible
+  number of graph (4).
+
   \param graphNbr : The number of graph in the window.
 */
 void
 vpPlot::init (unsigned int nbGraph)
 {
+  if(nbGraph > 4){
+    throw vpException(vpException::dimensionError, "Cannot create more than 4 graphs");
+  }
   graphList = new vpPlotGraph[nbGraph];
   graphNbr = nbGraph;
   
@@ -469,13 +478,20 @@ void vpPlot::saveData(const unsigned int graphNum, const char* dataFile)
   double *p = new double[3];
   bool end=false;
 
+  std::vector< std::list<double>::const_iterator > vec_iter_pointListx((graphList+graphNum)->curveNbr);
+  std::vector< std::list<double>::const_iterator > vec_iter_pointListy((graphList+graphNum)->curveNbr);
+  std::vector< std::list<double>::const_iterator > vec_iter_pointListz((graphList+graphNum)->curveNbr);
+
   fichier << (graphList+graphNum)->title << std::endl;
 
   for(ind=0;ind<(graphList+graphNum)->curveNbr;ind++)
   {
-    (graphList+graphNum)->curveList[ind].pointListx.front();
-    (graphList+graphNum)->curveList[ind].pointListy.front();
-    (graphList+graphNum)->curveList[ind].pointListz.front();
+    vec_iter_pointListx[ind] = (graphList+graphNum)->curveList[ind].pointListx.begin();
+    vec_iter_pointListy[ind] = (graphList+graphNum)->curveList[ind].pointListy.begin();
+    vec_iter_pointListz[ind] = (graphList+graphNum)->curveList[ind].pointListz.begin();
+//    (graphList+graphNum)->curveList[ind].pointListx.front();
+//    (graphList+graphNum)->curveList[ind].pointListy.front();
+//    (graphList+graphNum)->curveList[ind].pointListz.front();
   }
 
   while (end == false)
@@ -483,27 +499,43 @@ void vpPlot::saveData(const unsigned int graphNum, const char* dataFile)
     end = true;
     for(ind=0;ind<(graphList+graphNum)->curveNbr;ind++)
     {
-      if (!(graphList+graphNum)->curveList[ind].pointListx.outside() 
-	  && !(graphList+graphNum)->curveList[ind].pointListy.outside()
-	  && !(graphList+graphNum)->curveList[ind].pointListz.outside())
+//      if (!(graphList+graphNum)->curveList[ind].pointListx.outside()
+//          && !(graphList+graphNum)->curveList[ind].pointListy.outside()
+//          && !(graphList+graphNum)->curveList[ind].pointListz.outside())
+      if((vec_iter_pointListx[ind] != (graphList+graphNum)->curveList[ind].pointListx.end())
+        && (vec_iter_pointListy[ind] != (graphList+graphNum)->curveList[ind].pointListy.end())
+        && (vec_iter_pointListz[ind] != (graphList+graphNum)->curveList[ind].pointListz.end()))
       {
-        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
-        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
-	p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+        p[0] = *vec_iter_pointListx[ind];
+        p[1] = *vec_iter_pointListy[ind];
+        p[2] = *vec_iter_pointListz[ind];
+//        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
+//        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
+//        p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+
         fichier << p[0] << "\t" << p[1] << "\t" << p[2] << "\t";
-        (graphList+graphNum)->curveList[ind].pointListx.next();
-        (graphList+graphNum)->curveList[ind].pointListy.next();
-	(graphList+graphNum)->curveList[ind].pointListz.next();
-        if(!(graphList+graphNum)->curveList[ind].pointListx.nextOutside() 
-	   && !(graphList+graphNum)->curveList[ind].pointListy.nextOutside()
-	   && !(graphList+graphNum)->curveList[ind].pointListz.nextOutside()) 
-	  end = false;
+        ++vec_iter_pointListx[ind];
+        ++vec_iter_pointListy[ind];
+        ++vec_iter_pointListz[ind];
+//        (graphList+graphNum)->curveList[ind].pointListx.next();
+//        (graphList+graphNum)->curveList[ind].pointListy.next();
+//        (graphList+graphNum)->curveList[ind].pointListz.next();
+//        if(!(graphList+graphNum)->curveList[ind].pointListx.nextOutside()
+//           && !(graphList+graphNum)->curveList[ind].pointListy.nextOutside()
+//           && !(graphList+graphNum)->curveList[ind].pointListz.nextOutside())
+        if((vec_iter_pointListx[ind] != (graphList+graphNum)->curveList[ind].pointListx.end())
+          && (vec_iter_pointListy[ind] != (graphList+graphNum)->curveList[ind].pointListy.end())
+          && (vec_iter_pointListz[ind] != (graphList+graphNum)->curveList[ind].pointListz.end()))
+          end = false;
       }
       else
       {
-        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
-        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
-	p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+//        p[0] = (graphList+graphNum)->curveList[ind].pointListx.value();
+//        p[1] = (graphList+graphNum)->curveList[ind].pointListy.value();
+//        p[2] = (graphList+graphNum)->curveList[ind].pointListz.value();
+        p[0] = (graphList+graphNum)->curveList[ind].pointListx.back();
+        p[1] = (graphList+graphNum)->curveList[ind].pointListy.back();
+        p[2] = (graphList+graphNum)->curveList[ind].pointListz.back();
         fichier << p[0] << "\t" << p[1] << "\t" << p[2] << "\t";
       }
     }
