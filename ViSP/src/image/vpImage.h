@@ -1325,10 +1325,7 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
   }
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-  \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
-
   Operation C = A - B.
 
   The result is placed in the third parameter C and not returned.
@@ -1369,6 +1366,7 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
   }
 }
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
 
