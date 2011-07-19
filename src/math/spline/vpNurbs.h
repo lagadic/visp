@@ -55,9 +55,7 @@
 #include <visp/vpMath.h>
 #include <visp/vpMeSite.h>
 #include <visp/vpBSpline.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp/vpList.h>
-#endif
+#include <visp/vpList.h>
 
 
 /*!
