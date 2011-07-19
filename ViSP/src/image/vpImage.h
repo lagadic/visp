@@ -717,6 +717,25 @@ void vpImage<Type>::operator=(const Type &x)
 /*!
   Operation  A - B (A is unchanged).
 
+  \code
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpImage<unsigned char> A(288, 384);
+  vpImage<unsigned char> B(288, 384);
+  vpImage<unsigned char> C;
+
+  A = 128;
+  B = 120;
+
+  // operator-() : C = A - B
+  C = A - B;
+
+  return 0;
+}
+  \endcode
+
   \sa sub(const vpImage<Type> &, const vpImage<Type> &, vpImage<Type> &) to
   avoid matrix allocation for each use.
 */
@@ -1248,48 +1267,25 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
 }
 
 /*!
-  Operation C = A - B.
-
-  The result is placed in the third parameter C and not returned.
-  A new image won't be allocated for every use of the function
-  (Speed gain if used many times with the same result matrix size).
-
-  \exception vpException::memoryAllocationError If the images size differ.
-
-  \sa operator-()
-*/
-template<class Type>
-void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
-                               vpImage<Type> &C)
-{
-
-  try
-  {
-    if ((A.getHeight() != C.getHeight())
-  || (A.getWidth() != C.getWidth()))
-      C.resize(A.getHeight(), A.getWidth());
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
-
-  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
-  {
-    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
-    throw(vpException(vpException::memoryAllocationError,
-          "vpImage mismatch in vpImage/vpImage substraction ")) ;
-  }
-
-  for (unsigned int i=0;i<A.getWidth()*getHeight();i++)
-  {
-    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
-  }
-}
-/*!
   Operation C = *this - B.
+
+  \code
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpImage<unsigned char> A(288, 384);
+  vpImage<unsigned char> B(288, 384);
+  vpImage<unsigned char> C;
+
+  A = 128;
+  B = 120;
+
+  A.sub(B, C); // C = A - B
+
+  return 0;
+}
+  \endcode
 
   The result is placed in the third parameter C and not returned.
   A new image won't be allocated for every use of the function
@@ -1330,6 +1326,49 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
+
+  Operation C = A - B.
+
+  The result is placed in the third parameter C and not returned.
+  A new image won't be allocated for every use of the function
+  (Speed gain if used many times with the same result matrix size).
+
+  \exception vpException::memoryAllocationError If the images size differ.
+
+  \sa operator-()
+*/
+template<class Type>
+void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
+                        vpImage<Type> &C)
+{
+
+  try
+  {
+    if ((A.getHeight() != C.getHeight())
+      || (A.getWidth() != C.getWidth()))
+      C.resize(A.getHeight(), A.getWidth());
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+
+  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
+  {
+    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
+    throw(vpException(vpException::memoryAllocationError,
+                      "vpImage mismatch in vpImage/vpImage substraction ")) ;
+  }
+
+  for (unsigned int i=0;i<A.getWidth()*A.getHeight();i++)
+  {
+    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
+  }
+}
 /*!
   \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
 
