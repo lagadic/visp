@@ -41,6 +41,11 @@
 #ifndef vpConfig_h
 #define vpConfig_h
 
+#if defined _MSC_VER && _MSC_VER >= 1200
+    // disable warnings related to inline functions
+    #pragma warning( disable: 4251 )
+#endif
+
 // ViSP major version.
 #define VISP_VERSION_MAJOR ${VISP_VERSION_MAJOR}
 

@@ -248,7 +248,7 @@ vpMeNurbs::~vpMeNurbs()
 void
 vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
 {
-  vpList<vpImagePoint> ptList;
+  std::list<vpImagePoint> ptList;
   vpImagePoint pt;
   vpMouseButton::vpMouseButtonType b;
 
@@ -257,29 +257,32 @@ vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
     if (b == vpMouseButton::button1)
     {
       //std::cout<<pt<<std::endl;
-      ptList.addRight(pt);
+      ptList.push_back(pt);
       vpDisplay::displayCross(I,pt,10,vpColor::green);
       vpDisplay::flush(I);
     }
     if (b == vpMouseButton::button3) break;
   }
-  if (ptList.nbElements() > 3)
+  if (ptList.size() > 3)
     initTracking(I, ptList);
   else
     throw (vpException(vpException::notInitialized,"Not enough points to initialize the Nurbs"));
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-  Initilization of the tracking. The Nurbs is initialized thanks to the
+  \deprecated You should use initTracking(const vpImage<unsigned char> &, const std::list<vpImagePoint> &) instead.
+
+  Initialization of the tracking. The Nurbs is initialized thanks to the
   list of vpImagePoint.
+
 
   \param I : Image in which the edge appears.
   \param ptList  : List of point to initialize the Nurbs.
 */
-void
+vp_deprecated void
 vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
-		       vpList<vpImagePoint> &ptList)
+                        vpList<vpImagePoint> &ptList)
 {
   nurbs.globalCurveInterp(ptList);
 
@@ -288,7 +291,26 @@ vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
   vpMeTracker::initTracking(I) ;
   track(I);
 }
+#endif
 
+/*!
+  Initialization of the tracking. The Nurbs is initialized thanks to the
+  list of vpImagePoint.
+
+  \param I : Image in which the edge appears.
+  \param ptList  : List of point to initialize the Nurbs.
+*/
+void
+vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
+                        const std::list<vpImagePoint> &ptList)
+{
+  nurbs.globalCurveInterp(ptList);
+
+  sample(I);
+
+  vpMeTracker::initTracking(I) ;
+  track(I);
+}
 
 /*!
   Construct a list of vpMeSite moving edges at a particular sampling

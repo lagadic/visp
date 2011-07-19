@@ -59,7 +59,6 @@
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>
-#include <visp/vpList.h>
 
 /*!
   \class vpOpenCVGrabber

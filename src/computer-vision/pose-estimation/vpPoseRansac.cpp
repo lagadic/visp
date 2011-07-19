@@ -337,18 +337,16 @@ vpPose::ransac(const unsigned int n,
  */
 void
 vpPose::ransac(const unsigned int n,
-	       const vpPoint *p,
-	       const unsigned int m,
-	       const vpPoint *P,
-	       const int   numberOfInlierToReachAConsensus,
-	       const double threshold,
-	       unsigned int &ninliers,
-	       vpList<vpPoint> &lPi,
-         vpHomogeneousMatrix &cMo,
-         const int maxNbTrials)
+               const vpPoint *p,
+               const unsigned int m,
+               const vpPoint *P,
+               const int   numberOfInlierToReachAConsensus,
+               const double threshold,
+               unsigned int &ninliers,
+               std::list<vpPoint> &lPi,
+               vpHomogeneousMatrix &cMo,
+               const int maxNbTrials)
 {
-
-
   double *x, *y;
   x = new double [n];
   y = new double [n] ;
@@ -371,20 +369,19 @@ vpPose::ransac(const unsigned int n,
   vpColVector xi,yi,Xi,Yi,Zi ;
 
   ransac(n,x,y,
-	 m,X,Y,Z, numberOfInlierToReachAConsensus,
-	 threshold,
-	 ninliers,
-	 xi,yi,Xi,Yi,Zi,
-   cMo, maxNbTrials) ;
-
+         m,X,Y,Z, numberOfInlierToReachAConsensus,
+         threshold,
+         ninliers,
+         xi,yi,Xi,Yi,Zi,
+         cMo, maxNbTrials) ;
 
   for(unsigned int i=0 ; i < ninliers ; i++)
   {
     vpPoint Pi ;
-    Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
+    Pi.setWorldCoordinates(Xi[i], Yi[i], Zi[i]) ;
     Pi.set_x(xi[i]) ;
     Pi.set_y(yi[i]) ;
-    lPi += Pi ;
+    lPi.push_back(Pi) ;
   }
 
   delete [] x;
@@ -393,8 +390,6 @@ vpPose::ransac(const unsigned int n,
   delete [] Y;
   delete [] Z;
 }
-
-
 
 /*!
   Compute the pose from a list lp of  2D point (x,y)  and  a list lP 3D points
@@ -422,14 +417,214 @@ vpPose::ransac(const unsigned int n,
   cannot be found.
  */
 void
-vpPose::ransac(vpList<vpPoint> &lp,
-	       vpList<vpPoint> &lP,
-	       const int numberOfInlierToReachAConsensus,
-	       const double threshold,
-	       unsigned int &ninliers,
-	       vpList<vpPoint> &lPi,
+vpPose::ransac(std::list<vpPoint> &lp,
+               std::list<vpPoint> &lP,
+               const int numberOfInlierToReachAConsensus,
+               const double threshold,
+               unsigned int &ninliers,
+               std::list<vpPoint> &lPi,
+               vpHomogeneousMatrix &cMo,
+               const int maxNbTrials)
+{
+  unsigned int i;
+  unsigned int n = lp.size() ;
+  unsigned int m = lP.size() ;
+
+  double *x, *y;
+  x = new double [n];
+  y = new double [n];
+
+  vpPoint pin ;
+  i = 0;
+  for (std::list<vpPoint>::const_iterator it = lp.begin(); it != lp.end(); ++it)
+  {
+    pin = *it;
+    x[i] = pin.get_x() ;
+    y[i] = pin.get_y() ;
+    ++ i;
+  }
+
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
+  i = 0;
+  for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lP.end(); ++it)
+  {
+    pin = *it;
+    X[i] = pin.get_oX() ;
+    Y[i] = pin.get_oY() ;
+    Z[i] = pin.get_oZ() ;
+    ++i;
+  }
+
+  vpColVector xi,yi,Xi,Yi,Zi ;
+
+  ransac(n,x,y,
+         m,X,Y,Z, numberOfInlierToReachAConsensus,
+         threshold,
+         ninliers,
+         xi,yi,Xi,Yi,Zi,
+         cMo, maxNbTrials) ;
+
+  for( i=0 ; i < ninliers ; i++)
+  {
+    vpPoint Pi ;
+    Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
+    Pi.set_x(xi[i]) ;
+    Pi.set_y(yi[i]) ;
+    lPi.push_back(Pi);
+  }
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
+
+}
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You should use vpPose::ransac(const unsigned int n,
+         const vpPoint *,
+         const unsigned int ,
+         const vpPoint *,
+         const int,
+         const double,
+         unsigned int &,
+         vpList<vpPoint> &,
+         vpHomogeneousMatrix &,
+         const int)
+
+  Compute the pose from a set of n 2D point (x,y) in p and m 3D points
+  (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
+  the 2D and 3D points are registred (there is nm posibilities)
+
+  At least numberOfInlierToReachAConsensus of true correspondance are required
+  to validate the pose
+
+  The inliers are given in a list of vpPoint
+
+  The pose is returned in cMo.
+
+  \param n : Number of 2d points.
+  \param p : Array (of size n) of 2d points (x and y attributes are used).
+  \param m : Number of 3d points.
+  \param P : Array of size m of 3d points (oX, oY and oZ attributes are used).
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param lPi : List of points (2d and 3d) that are inliers for the best solution.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
+ */
+void
+vpPose::ransac(const unsigned int n,
+         const vpPoint *p,
+         const unsigned int m,
+         const vpPoint *P,
+         const int   numberOfInlierToReachAConsensus,
+         const double threshold,
+         unsigned int &ninliers,
+         vpList<vpPoint> &lPi,
          vpHomogeneousMatrix &cMo,
          const int maxNbTrials)
+{
+
+
+  double *x, *y;
+  x = new double [n];
+  y = new double [n] ;
+  for (unsigned int i=0 ; i < n ; i++)
+  {
+    x[i] = p[i].get_x() ;
+    y[i] = p[i].get_y() ;
+  }
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
+  for (unsigned int i=0 ; i < m ; i++)
+  {
+    X[i] = P[i].get_oX() ;
+    Y[i] = P[i].get_oY() ;
+    Z[i] = P[i].get_oZ() ;
+  }
+
+  vpColVector xi,yi,Xi,Yi,Zi ;
+
+  ransac(n,x,y,
+   m,X,Y,Z, numberOfInlierToReachAConsensus,
+   threshold,
+   ninliers,
+   xi,yi,Xi,Yi,Zi,
+   cMo, maxNbTrials) ;
+
+
+  for(unsigned int i=0 ; i < ninliers ; i++)
+  {
+    vpPoint Pi ;
+    Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
+    Pi.set_x(xi[i]) ;
+    Pi.set_y(yi[i]) ;
+    lPi += Pi ;
+  }
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
+}
+
+/*!
+  \deprecated This method is deprecated. You should use vpPose::ransac(std::list<vpPoint> &,
+               std::list<vpPoint> &,
+               const int,
+               const double,
+               unsigned int &,
+               std::list<vpPoint> &,
+               vpHomogeneousMatrix &,
+               const int) instead.
+
+  Compute the pose from a list lp of  2D point (x,y)  and  a list lP 3D points
+  (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
+  the 2D and 3D points are registred
+
+  At least numberOfInlierToReachAConsensus of true correspondance are required
+  to validate the pose
+
+  The inliers are given in a list of vpPoint lPi.
+
+  The pose is returned in cMo.
+
+  \param lp : List of 2d points (x and y attributes are used).
+  \param lP : List of 3d points (oX, oY and oZ attributes are used).
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param lPi : List of points (2d and 3d) that are inliers for the best solution.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
+ */
+void
+vpPose::ransac(vpList<vpPoint> &lp,
+               vpList<vpPoint> &lP,
+               const int numberOfInlierToReachAConsensus,
+               const double threshold,
+               unsigned int &ninliers,
+               vpList<vpPoint> &lPi,
+               vpHomogeneousMatrix &cMo,
+               const int maxNbTrials)
 {
   unsigned int n = lp.nbElement() ;
   unsigned int m = lP.nbElement() ;
@@ -468,10 +663,10 @@ vpPose::ransac(vpList<vpPoint> &lp,
   vpColVector xi,yi,Xi,Yi,Zi ;
 
   ransac(n,x,y,
-	 m,X,Y,Z, numberOfInlierToReachAConsensus,
-	 threshold,
-	 ninliers,
-	 xi,yi,Xi,Yi,Zi,
+   m,X,Y,Z, numberOfInlierToReachAConsensus,
+   threshold,
+   ninliers,
+   xi,yi,Xi,Yi,Zi,
    cMo, maxNbTrials) ;
 
 
@@ -490,10 +685,9 @@ vpPose::ransac(vpList<vpPoint> &lp,
   delete [] X;
   delete [] Y;
   delete [] Z;
-
 }
 
-
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
 
 /*

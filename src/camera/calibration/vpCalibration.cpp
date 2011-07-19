@@ -62,10 +62,10 @@ int vpCalibration::init()
 {
   npt = 0 ;
 
-  LoX.kill() ;
-  LoY.kill() ;
-  LoZ.kill() ;
-  Lip.kill() ;
+  LoX.clear() ;
+  LoY.clear() ;
+  LoZ.clear() ;
+  Lip.clear() ;
 
   return 0 ;
 }
@@ -90,7 +90,7 @@ vpCalibration::~vpCalibration()
   \param twinCalibration : object to be copied
 */
 void vpCalibration::operator=(vpCalibration& twinCalibration )
-{
+                             {
   npt = twinCalibration.npt ;
   LoX = twinCalibration.LoX ;
   LoY = twinCalibration.LoY ;
@@ -117,10 +117,10 @@ void vpCalibration::operator=(vpCalibration& twinCalibration )
 */
 int vpCalibration::clearPoint()
 {
-  LoX.kill() ;
-  LoY.kill() ;
-  LoZ.kill() ;
-  Lip.kill() ;
+  LoX.clear() ;
+  LoY.clear() ;
+  LoZ.clear() ;
+  Lip.clear() ;
   npt = 0 ;
 
   return 0 ;
@@ -134,11 +134,11 @@ int vpCalibration::clearPoint()
 */
 int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
 {
-  LoX += X ;
-  LoY += Y ;
-  LoZ += Z ;
+  LoX.push_back(X);
+  LoY.push_back(Y);
+  LoZ.push_back(Z);
 
-  Lip += ip;
+  Lip.push_back(ip);
 
   npt++ ;
 
@@ -151,44 +151,45 @@ int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
   \param cMo : computed pose
  */
 void
-vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
+    vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
   vpPose pose ;
-    //  the list of point is cleared (if that's not done before)
+  //  the list of point is cleared (if that's not done before)
   pose.clearPoint() ;
-    // we set the 3D points coordinates (in meter !) in the object/world frame
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front()  ;
+  // we set the 3D points coordinates (in meter !) in the object/world frame
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+
   for (unsigned int i =0 ; i < npt ; i++)
   {
     vpPoint P;
-    P.setWorldCoordinates(LoX.value(),LoY.value(),LoZ.value());
+    P.setWorldCoordinates(*it_LoX, *it_LoY, *it_LoZ);
     double x=0,y=0 ;
-    vpPixelMeterConversion::convertPoint(cam, Lip.value(), x,y)  ;
+    vpPixelMeterConversion::convertPoint(cam, *it_Lip, x,y)  ;
     P.set_x(x) ;
     P.set_y(y) ;
 
     pose.addPoint(P);
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
   }
   vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon
   vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
-    
+
   // compute the initial pose using Lagrange method followed by a non linear
-    // minimisation method
-    // Pose by Lagrange it provides an initialization of the pose
+  // minimisation method
+  // Pose by Lagrange it provides an initialization of the pose
   pose.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
   double residual_lagrange = pose.computeResidual(cMo_lagrange);
- 
+
   // compute the initial pose using Dementhon method followed by a non linear
-    // minimisation method
-    // Pose by Dementhon it provides an initialization of the pose
+  // minimisation method
+  // Pose by Dementhon it provides an initialization of the pose
   pose.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
   double residual_dementhon = pose.computeResidual(cMo_dementhon);
 
@@ -198,10 +199,10 @@ vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &c
   else
     cMo = cMo_dementhon;
   
-    // the pose is now refined using the virtual visual servoing approach
-    // Warning: cMo needs to be initialized otherwise it may diverge
+  // the pose is now refined using the virtual visual servoing approach
+  // Warning: cMo needs to be initialized otherwise it may diverge
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-     
+
 }
 
 /*!
@@ -212,15 +213,15 @@ vpCalibration::computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &c
   \return the standard deviation by point of the error in pixel .
 */
 double
-vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
-				   vpCameraParameters& cam)
+    vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
+                                       vpCameraParameters& cam)
 {
   double residual = 0 ;
 
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
 
   double u0 = cam.get_u0() ;
   double v0 = cam.get_v0() ;
@@ -231,9 +232,9 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
   for (unsigned int i =0 ; i < npt ; i++)
   {
 
-    double oX = LoX.value() ;
-    double oY = LoY.value() ;
-    double oZ = LoZ.value() ;
+    double oX = *it_LoX;
+    double oY = *it_LoY;
+    double oZ = *it_LoZ;
 
     double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
     double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
@@ -242,7 +243,7 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    ip = Lip.value();
+    ip = *it_Lip;
     double u = ip.get_u() ;
     double v = ip.get_v() ;
 
@@ -251,10 +252,10 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
 
     residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
 
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
   }
   this->residual = residual ;
   return sqrt(residual/npt) ;
@@ -267,15 +268,15 @@ vpCalibration::computeStdDeviation(vpHomogeneousMatrix& cMo,
   \return the standard deviation by point of the error in pixel .
 */
 double
-vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
-				      vpCameraParameters& cam)
+    vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
+                                            vpCameraParameters& cam)
 {
   double residual = 0 ;
 
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
 
   double u0 = cam.get_u0() ;
   double v0 = cam.get_v0() ;
@@ -287,13 +288,13 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
   double inv_px = 1/px;
   double inv_py = 1/px;
   vpImagePoint ip;
-      
+
   for (unsigned int i =0 ; i < npt ; i++)
   {
 
-    double oX = LoX.value() ;
-    double oY = LoY.value() ;
-    double oZ = LoZ.value() ;
+    double oX = *it_LoX;
+    double oY = *it_LoY;
+    double oZ = *it_LoZ;
 
     double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
     double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
@@ -302,7 +303,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-    ip = Lip.value();
+    ip = *it_Lip;
     double u = ip.get_u() ;
     double v = ip.get_v() ;
 
@@ -319,13 +320,13 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
     yp = v0 + y*py - kdu*(v-v0)*r2du;
 
     residual += (vpMath::sqr(xp-u) + vpMath::sqr(yp-v))  ;
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
   }
   residual /=2;
- 
+
   this->residual_dist = residual;
   return sqrt(residual/npt) ;
 }
@@ -337,7 +338,7 @@ vpCalibration::computeStdDeviation_dist(vpHomogeneousMatrix& cMo,
   \param deviation_dist : the standard deviation computed for the model with distortion.
 */
 void
-vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
+    vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
 {
   deviation   = computeStdDeviation(cMo,cam);
   deviation_dist = computeStdDeviation_dist(cMo_dist,cam_dist);
@@ -355,11 +356,10 @@ vpCalibration::computeStdDeviation(double &deviation,double &deviation_dist)
 
   \return 0 if the calibration computation succeed.
 */
-int
-vpCalibration::computeCalibration(vpCalibrationMethodType method,
-				  vpHomogeneousMatrix &cMo,
-				  vpCameraParameters &cam,
-				  bool verbose)
+int vpCalibration::computeCalibration(vpCalibrationMethodType method,
+                                      vpHomogeneousMatrix &cMo,
+                                      vpCameraParameters &cam,
+                                      bool verbose)
 {
   try{
     computePose(cam,cMo);
@@ -382,8 +382,8 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     case CALIB_LAGRANGE_VIRTUAL_VS:
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST:
       {
-	if (verbose){std::cout << "start calibration without distortion"<< std::endl;}
-	calibVVS(cam, cMo, verbose);
+        if (verbose){std::cout << "start calibration without distortion"<< std::endl;}
+        calibVVS(cam, cMo, verbose);
       }
       break ;
     default:
@@ -391,10 +391,10 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     }
     this->cMo = cMo;
     this->cMo_dist = cMo;
-      
+
     //Print camera parameters
     if(verbose){
-//       std::cout << "Camera parameters without distortion :" << std::endl;
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -405,8 +405,8 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     case CALIB_VIRTUAL_VS_DIST:
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST:
       {
-	if (verbose){std::cout << "start calibration with distortion"<< std::endl;}
-	calibVVSWithDistortion(cam, cMo, verbose);
+        if (verbose){std::cout << "start calibration with distortion"<< std::endl;}
+        calibVVSWithDistortion(cam, cMo, verbose);
       }
       break ;
     default:
@@ -414,9 +414,9 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
     }
     //Print camera parameters
     if(verbose){
-//       std::cout << "Camera parameters without distortion :" << std::endl;
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
       this->cam.printParameters();
-//       std::cout << "Camera parameters with distortion :" << std::endl;
+      //       std::cout << "Camera parameters with distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -442,24 +442,23 @@ vpCalibration::computeCalibration(vpCalibrationMethodType method,
 
   \return 0 if the computation was managed succeed.
 */
-int
-vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
-				       unsigned int nbPose,
-				       vpCalibration table_cal[],
-				       vpCameraParameters& cam,
-				       bool verbose)
+int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
+                                           unsigned int nbPose,
+                                           vpCalibration table_cal[],
+                                           vpCameraParameters& cam,
+                                           bool verbose)
 {
   try{
-   for(unsigned int i=0;i<nbPose;i++){
+    for(unsigned int i=0;i<nbPose;i++){
       if(table_cal[i].get_npt()>3)
         table_cal[i].computePose(cam,table_cal[i].cMo);
     }
     switch (method) {   
     case CALIB_LAGRANGE :
       if(nbPose > 1){
-	std::cout << "this calibration method is not available in" << std::endl
-		  << "vpCalibration::computeCalibrationMulti()" << std::endl;
-	return -1 ;
+        std::cout << "this calibration method is not available in" << std::endl
+            << "vpCalibration::computeCalibrationMulti()" << std::endl;
+        return -1 ;
       }
       else {
         table_cal[0].calibLagrange(cam,table_cal[0].cMo);
@@ -471,10 +470,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     case CALIB_LAGRANGE_VIRTUAL_VS :
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST :
       if(nbPose > 1){
-	std::cout << "this calibration method is not available in" << std::endl
-		  << "vpCalibration::computeCalibrationMulti()" << std::endl
-		  << "with several images." << std::endl;
-	return -1 ;
+        std::cout << "this calibration method is not available in" << std::endl
+            << "vpCalibration::computeCalibrationMulti()" << std::endl
+            << "with several images." << std::endl;
+        return -1 ;
       }
       else {
 	      table_cal[0].calibLagrange(cam,table_cal[0].cMo);
@@ -491,7 +490,7 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     }
     //Print camera parameters
     if(verbose){
-//       std::cout << "Camera parameters without distortion :" << std::endl;
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
       cam.printParameters();
     }
 
@@ -505,18 +504,18 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     case CALIB_LAGRANGE_VIRTUAL_VS_DIST :
     case CALIB_VIRTUAL_VS_DIST:
       {
-	     if(verbose)
-	       std::cout << "Compute camera parameters with distortion"<<std::endl;
+        if(verbose)
+          std::cout << "Compute camera parameters with distortion"<<std::endl;
 
-	     calibVVSWithDistortionMulti(nbPose, table_cal, cam, verbose);
+        calibVVSWithDistortionMulti(nbPose, table_cal, cam, verbose);
       }
       break ;
     }
     //Print camera parameters
     if(verbose){
-//       std::cout << "Camera parameters without distortion :" << std::endl;
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
       table_cal[0].cam.printParameters();
-//       std::cout << "Camera parameters with distortion:" << std::endl;
+      //       std::cout << "Camera parameters with distortion:" << std::endl;
       cam.printParameters();
       std::cout<<std::endl;
     }
@@ -544,11 +543,10 @@ vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   effector (camera support) with the model with distortion.
   \return 0 if the computation managed.
 */
-int
-vpCalibration::computeCalibrationTsai(unsigned int nbPose,
-                                      vpCalibration table_cal[],
-                                      vpHomogeneousMatrix& eMc,
-                                      vpHomogeneousMatrix& eMc_dist)
+int vpCalibration::computeCalibrationTsai(unsigned int nbPose,
+                                          vpCalibration table_cal[],
+                                          vpHomogeneousMatrix& eMc,
+                                          vpHomogeneousMatrix& eMc_dist)
 {
   vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
   vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
@@ -591,38 +589,37 @@ vpCalibration::computeCalibrationTsai(unsigned int nbPose,
 
   \param filename : name of the file
 */
-int
-vpCalibration::writeData(const char *filename)
+int vpCalibration::writeData(const char *filename)
 {
   std::ofstream f(filename) ;
   vpImagePoint ip;
 
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
 
   f.precision(10);
   f.setf(std::ios::fixed,std::ios::floatfield);
-  f << LoX.nbElement() << std::endl ;
+  f << LoX.size() << std::endl ;
 
-  for (unsigned int i =0 ; i < LoX.nbElement() ; i++)
+  for (unsigned int i =0 ; i < LoX.size() ; i++)
   {
 
-    double oX = LoX.value() ;
-    double oY = LoY.value() ;
-    double oZ = LoZ.value() ;
+    double oX = *it_LoX;
+    double oY = *it_LoY;
+    double oZ = *it_LoZ;
 
-    ip = Lip.value();
+    ip = *it_Lip;
     double u = ip.get_u() ;
     double v = ip.get_v() ;
 
     f << oX <<" " << oY << " " << oZ << " " << u << "  " << v <<std::endl ;
 
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
 
   }
 
@@ -636,8 +633,7 @@ vpCalibration::writeData(const char *filename)
 
   \param filename : name of the file
 */
-int
-vpCalibration::readData(const char* filename)
+int vpCalibration::readData(const char* filename)
 {
   vpImagePoint ip;
   std::ifstream f;
@@ -671,19 +667,18 @@ vpCalibration::readData(const char* filename)
 
   \param filename : name of the file
   \param n : number of points in the calibration grid
-  \param oX : vpList of oX coordinates
-  \param oY : vpList of oY coordinates
-  \param oZ : vpList of oZ coordinates
+  \param oX : List of oX coordinates
+  \param oY : List of oY coordinates
+  \param oZ : List of oZ coordinates
 
   \param verbose : Additionnal printings if true (number of points on
   the calibration grid and their respective coordinates in the object
   frame).
 
-  \return 0 : if success
+  \return 0 if success, -1 if an error occurs.
 */
-int
-vpCalibration::readGrid(const char* filename,unsigned int &n,
-			vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ, bool verbose)
+int vpCalibration::readGrid(const char* filename, unsigned int &n,
+                            std::list<double> &oX, std::list<double> &oY, std::list<double> &oZ, bool verbose)
 {
   try{
     std::ifstream f;
@@ -696,9 +691,11 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
       int no_pt;
       double x,y,z;
 
-      oX.front();
-      oY.front();
-      oZ.front();
+      // clear the list
+      oX.clear();
+      oY.clear();
+      oZ.clear();
+
       for (unsigned int i=0 ; i < n ; i++)
       {
         f >> no_pt >> x >> y >> z ;
@@ -706,9 +703,9 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
           std::cout << no_pt <<std::endl ;
           std::cout << x <<"  "<< y <<"  "<< z <<std::endl ;
         }     
-        oX.addRight(x) ;
-        oY.addRight(y) ;
-        oZ.addRight(z) ;
+        oX.push_back(x) ;
+        oY.push_back(y) ;
+        oZ.push_back(z) ;
       }
 
       f.close() ;
@@ -728,17 +725,12 @@ vpCalibration::readGrid(const char* filename,unsigned int &n,
   \param thickness : Thickness of the displayed data.
 
 */
-int
-vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, 
-			   unsigned int thickness)
+int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
+                               unsigned int thickness)
 {
 
-  Lip.front() ;
-
-  for (unsigned int i =0 ; i < npt ; i++) {
-    vpDisplay::displayCross(I, Lip.value(), 12, color, thickness) ;
-
-    Lip.next() ;
+  for (std::list<vpImagePoint>::const_iterator it = Lip.begin(); it != Lip.end(); ++ it) {
+    vpDisplay::displayCross(I, *it, 12, color, thickness) ;
   }
   return 0 ;
 }
@@ -750,9 +742,8 @@ vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
   \param color : Color of the data.
   \param thickness : Thickness of the displayed data.
 */
-int
-vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, 
-			   unsigned int thickness)
+int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
+                               unsigned int thickness)
 {
   double u0_dist = cam_dist.get_u0() ;
   double v0_dist = cam_dist.get_v0() ;
@@ -761,21 +752,21 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
   double kud_dist = cam_dist.get_kud() ;
   //  double kdu_dist = cam_dist.get_kdu() ;
 
-//   double u0 = cam.get_u0() ;
-//   double v0 = cam.get_v0() ;
-//   double px = cam.get_px() ;
-//   double py = cam.get_py() ;
+  //   double u0 = cam.get_u0() ;
+  //   double v0 = cam.get_v0() ;
+  //   double px = cam.get_px() ;
+  //   double py = cam.get_py() ;
 
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
 
   for (unsigned int i =0 ; i < npt ; i++)
   {
 
-    double oX = LoX.value() ;
-    double oY = LoY.value() ;
-    double oZ = LoZ.value() ;
+    double oX = *it_LoX;
+    double oY = *it_LoY;
+    double oZ = *it_LoZ;
 
     double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
     double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
@@ -784,12 +775,11 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
     double x = cX/cZ ;
     double y = cY/cZ ;
 
-//     double xp = u0 + x*px ;
-//     double yp = v0 + y*py ;
+    //     double xp = u0 + x*px ;
+    //     double yp = v0 + y*py ;
 
-//     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
-// 			    5,col) ;
-
+    //     vpDisplay::displayCross(I,(int)vpMath::round(yp), (int)vpMath::round(xp),
+    // 			    5,col) ;
 
     cX = oX*cMo_dist[0][0]+oY*cMo_dist[0][1]+oZ*cMo_dist[0][2]+cMo_dist[0][3];
     cY = oX*cMo_dist[1][0]+oY*cMo_dist[1][1]+oZ*cMo_dist[1][2]+cMo_dist[1][3];
@@ -807,13 +797,72 @@ vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
     vpDisplay::displayCross(I, ip, 6, color, thickness) ;
     ///////////////////////////////////////
 
-
     //    std::cout << oX << "  " << oY <<  "  " <<oZ << std::endl ;
     //    I.getClick() ;
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
   }
   return 0;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You should use
+  vpCalibration::readGrid(const char*,unsigned int &, vpList<double> &, vpList<double> &, vpList<double> &, bool) instead.
+
+  Read calibration grid coordinates from disk :
+  data are organized as follow oX oY oZ
+
+  \param filename : name of the file
+  \param n : number of points in the calibration grid
+  \param oX : List of oX coordinates
+  \param oY : List of oY coordinates
+  \param oZ : List of oZ coordinates
+
+  \param verbose : Additionnal printings if true (number of points on
+  the calibration grid and their respective coordinates in the object
+  frame).
+
+  \return 0 : if success
+*/
+int vpCalibration::readGrid(const char* filename,unsigned int &n,
+                            vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ, bool verbose)
+{
+  try{
+    std::ifstream f;
+    f.open(filename);
+    if (f != NULL){
+
+      f >> n ;
+      if(verbose)
+        std::cout << "There are "<< n <<" points on the calibration grid " << std::endl ;
+      int no_pt;
+      double x,y,z;
+
+      oX.front();
+      oY.front();
+      oZ.front();
+      for (unsigned int i=0 ; i < n ; i++)
+      {
+        f >> no_pt >> x >> y >> z ;
+        if(verbose){
+          std::cout << no_pt <<std::endl ;
+          std::cout << x <<"  "<< y <<"  "<< z <<std::endl ;
+        }
+        oX.addRight(x) ;
+        oY.addRight(y) ;
+        oZ.addRight(z) ;
+      }
+
+      f.close() ;
+    }
+    else{
+      return -1;
+    }
+  }
+  catch(...){return -1;}
+  return 0 ;
+}
+
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS

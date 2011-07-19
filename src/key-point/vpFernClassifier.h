@@ -58,17 +58,6 @@
 
 #include <visp/vpBasicKeyPoint.h>
 
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-#  ifdef VISP_HAVE_OPENCV
-template class VISP_EXPORT std::allocator<cv::KeyPoint>;
-template class VISP_EXPORT std::vector<cv::KeyPoint>;
-template class VISP_EXPORT std::allocator<cv::Point2f>;
-template class VISP_EXPORT std::vector<cv::Point2f>;
-#  endif
-#endif
-
-
 /*!
   \class vpFernClassifier
 

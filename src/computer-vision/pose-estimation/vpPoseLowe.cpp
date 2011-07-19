@@ -293,10 +293,10 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
 {
   if (DEBUG_LEVEL1)
     std::cout << "begin CCalcuvpPose::PoseLowe(...) " << std::endl;
+  unsigned int i;
   int	n, m;	/* nombre d'elements dans la matrice jac */
   int	lwa;	/* taille du vecteur wa */
   int	ldfjac;	/* taille maximum d'une ligne de jac */
-  unsigned int	i;
   int   info, ipvt[NBR_PAR];
   int	tst_lmder;
   double f[2 * NBPTMAX], sol[NBR_PAR];
@@ -317,25 +317,23 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
   vpRotationMatrix cRo ;
   cMo.extract(cRo) ;
   vpThetaUVector u(cRo) ;
-  for (i=0;i<3;i++)
+  for (unsigned int i=0;i<3;i++)
   {
     sol[i] = cMo[i][3];
     sol[i+3] = u[i];
   }
 
   vpPoint P ;
-  listP.front() ;
-  i=0 ;
-  while (!listP.outside())
+  i=0;
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
   {
-    P= listP.value() ;
+    P = *it;
     XI[i] = P.get_x();//*cam.px + cam.xc ;
     YI[i] = P.get_y() ;//;*cam.py + cam.yc ;
     XO[i] = P.get_oX();
     YO[i] = P.get_oY();
     ZO[i] = P.get_oZ();
-    i++  ;
-    listP.next() ;
+    ++i;
   }
   tst_lmder = lmder1 (&fcn, m, n, sol, f, &jac[0][0], ldfjac, tol, &info,
 		      ipvt, lwa, wa);

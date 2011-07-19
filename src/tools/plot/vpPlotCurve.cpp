@@ -51,25 +51,22 @@
 vpPlotCurve::vpPlotCurve()
 {
   color = vpColor::red;
-  pointListx.front();
-  pointListy.front();
-  pointListz.front();
+  pointListx.clear();
+  pointListy.clear();
+  pointListz.clear();
   nbPoint = 0;
 }
 
 vpPlotCurve::~vpPlotCurve()
 {
-  pointListx.kill();
-  pointListy.kill();
+  pointListx.clear();
+  pointListy.clear();
+  pointListz.clear();
 }
 
 void
 vpPlotCurve::plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double x, const double y)
-{
-  pointListx.end();
-  pointListy.end();
-  pointListz.end();
-  
+{  
   nbPoint++;
   
   if (nbPoint > 1)
@@ -89,30 +86,30 @@ vpPlotCurve::plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double 
   vpDisplay::flushROI(I,vpRect(left,top,width,height));
 #endif
   lastPoint = iP;
-  pointListx.addRight(x);
-  pointListy.addRight(y);
-  pointListz.addRight(0.0);
+  pointListx.push_back(x);
+  pointListy.push_back(y);
+  pointListz.push_back(0.0);
 }
 
 void 
 vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy)
 {
-  pointListx.front();
-  pointListy.front();
+  std::list<double>::const_iterator it_ptListx = pointListx.begin();
+  std::list<double>::const_iterator it_ptListy = pointListy.begin();
   
   unsigned int k = 0;
   vpImagePoint iP;
   while (k < nbPoint)
   {
-    iP.set_ij(yorg-(zoomy*pointListy.value()),xorg+(zoomx*pointListx.value()));
+    iP.set_ij(yorg-(zoomy*(*it_ptListy)),xorg+(zoomx*(*it_ptListx)));
     
     if (k > 0)
       vpDisplay::displayLine(I,lastPoint, iP, color);
     
     lastPoint = iP;
     
-    pointListx.next();
-    pointListy.next();
+    ++it_ptListx;
+    ++it_ptListy;
     k++;
   }
 }

@@ -16,22 +16,21 @@ vpCalibration::calibLagrange(
   vpMatrix A(2*npt,3) ;
   vpMatrix B(2*npt,9) ;
 
-
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
 
   vpImagePoint ip;
 
   for (unsigned int i = 0 ; i < npt ; i++)
   {
 
-    double x0 = LoX.value() ;
-    double y0 = LoY.value() ;
-    double z0 = LoZ.value() ;
+    double x0 = *it_LoX;
+    double y0 = *it_LoY;
+    double z0 = *it_LoZ;
 
-    ip = Lip.value();
+    ip = *it_Lip;
     
     double xi = ip.get_u()  ;
     double yi = ip.get_v()  ;
@@ -61,12 +60,11 @@ vpCalibration::calibLagrange(
     B[2*i+1][7] = -1.0;
     B[2*i+1][8] = yi;
 
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
   }
-
 
   vpMatrix BtB ;              /* compute B^T B  */
   BtB = B.t() * B ;
@@ -193,29 +191,28 @@ vpCalibration::calibVVS(
 
   vpImagePoint ip;
 
-
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
 
   for (unsigned int i =0 ; i < n_points ; i++)
   {
 
-    oX[i]  = LoX.value() ;
-    oY[i]  = LoY.value() ;
-    oZ[i]  = LoZ.value() ;
+    oX[i]  = *it_LoX;
+    oY[i]  = *it_LoY;
+    oZ[i]  = *it_LoZ;
 
-    ip = Lip.value();
+    ip = *it_Lip;
 
     u[i] = ip.get_u()  ;
     v[i] = ip.get_v()  ;
 
 
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++it_LoX;
+    ++it_LoY;
+    ++it_LoZ;
+    ++it_Lip;
   }
 
   //  double lambda = 0.1 ;
@@ -338,12 +335,10 @@ vpCalibration::calibVVS(
 }
 
 void
-vpCalibration::calibVVSMulti(
-  unsigned int nbPose,
-  vpCalibration table_cal[],
-  vpCameraParameters &cam,
-  bool verbose
-)
+vpCalibration::calibVVSMulti(unsigned int nbPose,
+                             vpCalibration table_cal[],
+                             vpCameraParameters &cam,
+                             bool verbose)
 {
   std::cout.precision(10);
   unsigned int nbPoint[256]; //number of points by image
@@ -370,26 +365,25 @@ vpCalibration::calibVVSMulti(
   unsigned int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
   {
-      
-    table_cal[p].LoX.front() ;
-    table_cal[p].LoY.front() ;
-    table_cal[p].LoZ.front() ;
-    table_cal[p].Lip.front()  ;
+    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
+    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
+    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
+    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
     
     for (unsigned int i =0 ; i < nbPoint[p] ; i++)
     {
-      oX[curPoint]  = table_cal[p].LoX.value() ;
-      oY[curPoint]  = table_cal[p].LoY.value() ;
-      oZ[curPoint]  = table_cal[p].LoZ.value() ;
+      oX[curPoint]  = *it_LoX;
+      oY[curPoint]  = *it_LoY;
+      oZ[curPoint]  = *it_LoZ;
     
-      ip = table_cal[p].Lip.value();
+      ip = *it_Lip;
       u[curPoint] = ip.get_u()  ;
       v[curPoint] = ip.get_v()  ;
 
-      table_cal[p].LoX.next() ;
-      table_cal[p].LoY.next() ;
-      table_cal[p].LoZ.next() ;
-      table_cal[p].Lip.next() ;
+      ++ it_LoX;
+      ++ it_LoY;
+      ++ it_LoZ;
+      ++ it_Lip;
  
       curPoint++;
     }
@@ -565,30 +559,27 @@ vpCalibration::calibVVSWithDistortion(
   vpColVector P(4*n_points) ;
   vpColVector Pd(4*n_points) ;
 
-
-  LoX.front() ;
-  LoY.front() ;
-  LoZ.front() ;
-  Lip.front() ;
+  std::list<double>::const_iterator it_LoX = LoX.begin();
+  std::list<double>::const_iterator it_LoY = LoY.begin();
+  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
   
   vpImagePoint ip;
 
   for (unsigned int i =0 ; i < n_points ; i++)
   {
+    oX[i]  = *it_LoX;
+    oY[i]  = *it_LoY;
+    oZ[i]  = *it_LoZ;
 
-    oX[i]  = LoX.value() ;
-    oY[i]  = LoY.value() ;
-    oZ[i]  = LoZ.value() ;
-
-
-    ip = Lip.value();
+    ip = *it_Lip;
     u[i] = ip.get_u();
     v[i] = ip.get_v();
 
-    LoX.next() ;
-    LoY.next() ;
-    LoZ.next() ;
-    Lip.next() ;
+    ++ it_LoX;
+    ++ it_LoY;
+    ++ it_LoZ;
+    ++ it_Lip;
   }
 
   //  double lambda = 0.1 ;
@@ -826,27 +817,25 @@ vpCalibration::calibVVSWithDistortionMulti(
   unsigned int curPoint = 0 ; //current point indice
   for (unsigned int p=0; p<nbPose ; p++)
   {
-    table_cal[p].LoX.front() ;
-    table_cal[p].LoY.front() ;
-    table_cal[p].LoZ.front() ;
-    table_cal[p].Lip.front()  ;
- 
+    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
+    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
+    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
+    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
+
     for (unsigned int i =0 ; i < nbPoint[p] ; i++)
     {
+      oX[curPoint]  = *it_LoX;
+      oY[curPoint]  = *it_LoY;
+      oZ[curPoint]  = *it_LoZ;
 
-      oX[curPoint]  = table_cal[p].LoX.value() ;
-      oY[curPoint]  = table_cal[p].LoY.value() ;
-      oZ[curPoint]  = table_cal[p].LoZ.value() ;
-
-      ip = table_cal[p].Lip.value();
+      ip = *it_Lip;
       u[curPoint] = ip.get_u()  ;
       v[curPoint] = ip.get_v()  ;
 
-
-      table_cal[p].LoX.next() ;
-      table_cal[p].LoY.next() ;
-      table_cal[p].LoZ.next() ;
-      table_cal[p].Lip.next() ;
+      ++ it_LoX;
+      ++ it_LoY;
+      ++ it_LoZ;
+      ++ it_Lip;
       curPoint++;
     }
   }

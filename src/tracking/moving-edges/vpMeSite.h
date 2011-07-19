@@ -120,7 +120,6 @@ public:
   vpMeSite &operator=(const vpMeSite &m) ;
   int operator!=(const vpMeSite  &m) ;
   
-  // Needed in order to use it in vpList
   friend std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

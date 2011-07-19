@@ -92,81 +92,81 @@
 
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
-	   unsigned first, unsigned nimages, unsigned step, double sizePrecision,
-     double grayLevelPrecision, double ellipsoidShapePrecision )
+           unsigned first, unsigned nimages, unsigned step, double sizePrecision,
+           double grayLevelPrecision, double ellipsoidShapePrecision )
 {
   fprintf(stdout, "\n\
-Test auto detection of dots using vpDot2.\n\
-\n\
-SYNOPSIS\n\
-  %s [-i <input image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-n <number of images>] [-s <step>] \n\
-     [-S <size precision>] [-G <gray level precision>]\n\
-     [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n", name);
+          Test auto detection of dots using vpDot2.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-i <input image path>] [-p <personal image path>]\n\
+          [-f <first image>] [-n <number of images>] [-s <step>] \n\
+          [-S <size precision>] [-G <gray level precision>]\n\
+          [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -i <input image path>                                %s\n\
-     Set image input path.\n\
-     From this path read images \n\
-     \"ViSP-images/mire-2/image.%%04d.pgm\"\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
+          OPTIONS:                                               Default\n\
+            -i <input image path>                                %s\n\
+            Set image input path.\n\
+            From this path read images \n\
+            \"ViSP-images/mire-2/image.%%04d.pgm\"\n\
+            Setting the VISP_INPUT_IMAGE_PATH environment\n\
+            variable produces the same behaviour than using\n\
+            this option.\n\
+            \n\
+            -p <personal image path>                             %s\n\
+            Specify a personal sequence containing images \n\
+            to process.\n\
+            By image sequence, we mean one file per image.\n\
+            The following image file formats PNM (PGM P5, PPM P6)\n\
+            are supported. The format is selected by analysing \n\
+            the filename extension.\n\
+            Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+            %%04d is for the image numbering.\n\
+            \n\
+            -f <first image>                                     %u\n\
+            First image number of the sequence.\n\
+            \n\
+            -n <number of images>                                %u\n\
+            Number of images to load from the sequence.\n\
+            \n\
+            -s <step>                                            %u\n\
+            Step between two images.\n\
+            \n\
+            -S <size precision>                                  %f\n\
+            Precision of the size of the dot. \n\
+            It is a double precision float witch value is in ]0,1].\n\
+1 means full precision, the sizes (width, heigth, surface) \n\
+of the dots must the same, whereas values close to 0 \n\
+show a very bad precision.\n\
 \n\
-  -p <personal image path>                             %s\n\
-     Specify a personal sequence containing images \n\
-     to process.\n\
-     By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
-     %%04d is for the image numbering.\n\
- \n\
-  -f <first image>                                     %u\n\
-     First image number of the sequence.\n\
- \n\
-  -n <number of images>                                %u\n\
-     Number of images to load from the sequence.\n\
- \n\
-  -s <step>                                            %u\n\
-     Step between two images.\n\
- \n\
-  -S <size precision>                                  %f\n\
-     Precision of the size of the dot. \n\
-     It is a double precision float witch value is in ]0,1].\n\
-     1 means full precision, the sizes (width, heigth, surface) \n\
-     of the dots must the same, whereas values close to 0 \n\
-     show a very bad precision.\n\
- \n\
-  -G <gray level precision>                            %f\n\
-     Precision of the gray level of the dot. \n\
-     It is a double precision float witch value is in ]0,1].\n\
-     1 means full precision, the gray level must the same in \n\
-     the wall dot, whereas values close to 0 \n\
-     show a very bad precision.\n\
- \n\
-  -E <ellipsoid shape precision>                       %f\n\
-     Precision of the ellipsoid shape of the dot. \n\
-     It is a double precision float witch value is in [0,1].\n\
-     1 means full precision, the shape should be a perfect ellipsoid,\n\
-     whereas values close to 0 show a very bad precision.\n\
-     0 means the shape of dots is not tested \n\
- \n",
-	  ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
-	  grayLevelPrecision, ellipsoidShapePrecision );
+-G <gray level precision>                            %f\n\
+Precision of the gray level of the dot. \n\
+It is a double precision float witch value is in ]0,1].\n\
+1 means full precision, the gray level must the same in \n\
+the wall dot, whereas values close to 0 \n\
+show a very bad precision.\n\
+\n\
+-E <ellipsoid shape precision>                       %f\n\
+Precision of the ellipsoid shape of the dot. \n\
+It is a double precision float witch value is in [0,1].\n\
+1 means full precision, the shape should be a perfect ellipsoid,\n\
+whereas values close to 0 show a very bad precision.\n\
+0 means the shape of dots is not tested \n\
+\n",
+ipath.c_str(),ppath.c_str(), first, nimages, step, sizePrecision,
+grayLevelPrecision, ellipsoidShapePrecision );
 
-fprintf(stdout, "\
-  -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
-\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+  fprintf(stdout, "\
+          -c\n\
+          Disable the mouse click. Useful to automaze the \n\
+          execution of this program without humain intervention.\n\
+          \n\
+          -d \n\
+          Turn off the display.\n\
+          \n\
+          -h\n\
+          Print the help.\n");
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -192,9 +192,9 @@ fprintf(stdout, "\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath,
-        std::string &ppath,unsigned &first, unsigned &nimages,
-        unsigned &step, double &sizePrecision, double &grayLevelPrecision,
-        double &ellipsoidShapePrecision, bool &click_allowed, bool &display)
+                std::string &ppath,unsigned &first, unsigned &nimages,
+                unsigned &step, double &sizePrecision, double &grayLevelPrecision,
+                double &ellipsoidShapePrecision, bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -213,11 +213,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
     case 'E': ellipsoidShapePrecision = atof(optarg);break;
     case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step,
                     sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
-              return false; break;
+      return false; break;
 
     default:
       usage(argv[0], optarg, ipath, ppath, first, nimages, step,
-                    sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
+            sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
       return false; break;
     }
   }
@@ -225,7 +225,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath, first, nimages, step,
-                    sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
+          sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -236,7 +236,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
 
 
 int
-main(int argc, const char ** argv)
+    main(int argc, const char ** argv)
 {
   std::string env_ipath;
   std::string opt_ipath;
@@ -265,8 +265,8 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step,opt_sizePrecision,opt_grayLevelPrecision,
-     opt_ellipsoidShapePrecision, opt_click_allowed, opt_display) == false) {
+                 opt_step,opt_sizePrecision,opt_grayLevelPrecision,
+                 opt_ellipsoidShapePrecision, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -279,26 +279,26 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+          << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
-     opt_step,opt_sizePrecision,opt_grayLevelPrecision, opt_ellipsoidShapePrecision);
+          opt_step,opt_sizePrecision,opt_grayLevelPrecision, opt_ellipsoidShapePrecision);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+        << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl
-	 << "  Use -p <personal image path> option if you want to "<<std::endl
-	 << "  use personal images." << std::endl;
-     exit(-1);
+        << std::endl
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl << std::endl
+        << "  Use -p <personal image path> option if you want to "<<std::endl
+        << "  use personal images." << std::endl;
+    exit(-1);
   }
 
 
@@ -357,12 +357,12 @@ main(int argc, const char ** argv)
     // Note that another error message has been printed from readPGM
     // to give more information about the error
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+        << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option " << std::endl
-	 << "  or your -p " << opt_ppath << " option " <<std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << std::endl;
+        << "  or your -p " << opt_ppath << " option " <<std::endl
+        << "  or VISP_INPUT_IMAGE_PATH environment variable."
+        << std::endl;
     exit(-1);
   }
 
@@ -404,14 +404,14 @@ main(int argc, const char ** argv)
       d.setGrayLevelPrecision(opt_grayLevelPrecision);
 
       std::cout << "Please click on a dot to initialize detection"
-                << std::endl;
+          << std::endl;
 
       d.initTracking(I) ;
       if (opt_display) {
-	vpImagePoint cog;
-	cog = d.getCog();
-	vpDisplay::displayCross(I, cog, 10,vpColor::green) ;
-	vpDisplay::flush(I) ;
+        vpImagePoint cog;
+        cog = d.getCog();
+        vpDisplay::displayCross(I, cog, 10,vpColor::green) ;
+        vpDisplay::flush(I) ;
       }
       d.setSizePrecision(opt_sizePrecision);
       d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
@@ -468,54 +468,31 @@ main(int argc, const char ** argv)
     }
 
     std::cout << "Search dots in image" << filename << std::endl;
-    vpList<vpDot2> * list_d;
-    list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
-//     if(opt_click_allowed){
-//       if( list_d->nbElement() == 0 ) {
-//         std::cout << "Dot auto detection did not work, "
-// 	      << "Please click on a dot to perform a manual detection"
-// 	      << std::endl;
-//
-//         d.initTracking( I );
-//         if (opt_display) {
-//           vpDisplay::displayCross_uv(I,(int)d.get_u(), (int)d.get_v(),
-//                         10,vpColor::green) ;
-//           vpDisplay::flush(I) ;
-//         }
-//         list_d = d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight()) ;
-//       }
-//     }
-    if( list_d->nbElement() == 0 ) {
-    std::cout << "Dot auto detection did not work."
-    << std::endl;
-    exit(-1) ;
+    std::list<vpDot2> list_d;
+    d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), list_d) ;
+
+    if( list_d.size() == 0 ) {
+      std::cout << "Dot auto detection did not work." << std::endl;
+      return(-1) ;
     }
     else {
-      std::cout << std::endl << list_d->nbElement() << " dots are detected" << std::endl;
+      std::cout << std::endl << list_d.size() << " dots are detected" << std::endl;
 
       if (opt_display) {
-	int i=0;
+        int i=0;
         // Parse all founded dots for display
-        list_d->front();
-        while (!list_d->outside()) {
-          vpDot2 tmp_d;
-          tmp_d = list_d->value() ;
-	  vpImagePoint cog;
-	  cog = tmp_d.getCog();
+        for (std::list<vpDot2>::const_iterator it = list_d.begin(); it != list_d.end(); ++ it)
+        {
+          vpImagePoint cog = (*it).getCog();
 
-	  std::cout << "Dot " << i++ << " : " << cog.get_u()
-		    << " " << cog.get_v() << std::endl;
+          std::cout << "Dot " << i++ << " : " << cog.get_u()
+              << " " << cog.get_v() << std::endl;
 
-          list_d->next() ;
-          vpDisplay::displayCross(I, cog, 10, vpColor::red) ;
+          vpDisplay::displayCross(I, cog, 16, vpColor::blue, 3) ;
         }
-        vpDisplay::flush(I) ;
+        vpDisplay::flush(I);
       }
     }
-
-    // free memory allocated for the list of dots found in d.searchDotsInArea()
-    list_d->kill();
-    delete list_d;
 
     // If click is allowed, wait for a mouse click to launch the next iteration
     if (opt_display && opt_click_allowed) {
@@ -535,7 +512,7 @@ main(int argc, const char ** argv)
 }
 #else
 int
-main()
+    main()
 {
   vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 }

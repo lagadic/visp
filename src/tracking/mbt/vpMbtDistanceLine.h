@@ -207,10 +207,6 @@ class VISP_EXPORT vpMbtDistanceLine
 
 } ;
 
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpList<vpMbtDistanceLine *>;
-#endif
-
 #endif
 #endif
 

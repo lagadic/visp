@@ -69,7 +69,7 @@ vpPose::init()
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::Init() " << std::endl ;
   npt = 0 ;
-  listP.kill() ;
+  listP.clear() ;
 
   lambda = 0.25 ;
 
@@ -102,7 +102,7 @@ vpPose::~vpPose()
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::~vpPose() " << std::endl ;
 
-  listP.kill() ;
+  listP.clear() ;
 
   if (DEBUG_LEVEL1)
     std::cout << "end vpPose::~vpPose() " << std::endl ;
@@ -116,7 +116,7 @@ vpPose::clearPoint()
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::ClearPoint() " << std::endl ;
 
-  listP.kill() ;
+  listP.clear() ;
   npt = 0 ;
 
   if (DEBUG_LEVEL1)
@@ -137,7 +137,7 @@ vpPose::addPoint(const vpPoint& newP)
   if (DEBUG_LEVEL1)
     std::cout << "begin vpPose::AddPoint(Dot) " << std::endl ;
 
-  listP+= newP ;
+  listP.push_back(newP);
   npt ++ ;
 
   if (DEBUG_LEVEL1)
@@ -157,7 +157,7 @@ vpPose::setDistanceToPlaneForCoplanarityTest(double d)
   false if not
 */
 bool
-vpPose::coplanaire()
+vpPose::coplanar()
 {
 
   if (npt <2)
@@ -171,19 +171,19 @@ vpPose::coplanaire()
 
   double x1,x2,x3,y1,y2,y3,z1,z2,z3 ;
 
-  listP.front() ;
+  std::list<vpPoint>::const_iterator it = listP.begin();
 
   vpPoint P1,P2, P3 ;
-  P1 = listP.value() ; listP.next() ;
+  P1 = *it;  ++it;
   //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0)) 
   if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon()) 
       && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) 
       && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) 
   { 
-    P1 = listP.value() ; listP.next() ;
+    P1 = *it; ++it;
   }
-  P2 = listP.value() ; listP.next() ;
-  P3 = listP.value() ;
+  P2 = *it; ++it;
+  P3 = *it;
 
   x1 = P1.get_oX() ;
   x2 = P2.get_oX() ;
@@ -206,10 +206,10 @@ vpPose::coplanaire()
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
   
   double dist;
-  listP.front() ;
-  while (!listP.outside())
+
+  for(it=listP.begin(); it != listP.end(); ++it)
   {
-    P1 = listP.value() ;
+    P1 = *it ;
     dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest)
@@ -218,7 +218,6 @@ vpPose::coplanaire()
       //	TRACE(" points are not coplanar ") ;
       return false ;
     }
-    listP.next() ;
   }
 
   vpDEBUG_TRACE(10," points are  coplanar ") ;
@@ -241,19 +240,16 @@ vpPose::computeResidual(vpHomogeneousMatrix &cMo)
 {
 
   double residual = 0 ;
-
-  listP.front() ;
   vpPoint P ;
-  while (!listP.outside())
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
-    P = listP.value() ;
+    P = *it;
     double x = P.get_x() ;
     double y = P.get_y() ;
 
     P.track(cMo) ;
 
     residual += vpMath::sqr(x-P.get_x()) + vpMath::sqr(y-P.get_y())  ;
-    listP.next() ;
   }
   return residual ;
 }
@@ -311,7 +307,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
       }
 
       // test si les point 3D sont coplanaires
-      int  plan = coplanaire() ;
+      int  plan = coplanar() ;
 
       if (plan == 1)
       {
@@ -343,7 +339,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
     {
       // test si les point 3D sont coplanaires
 
-      int  plan = coplanaire() ;
+      int  plan = coplanar() ;
 
       if (plan == 1)
       {
@@ -437,18 +433,14 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 void
 vpPose::printPoint()
 {
-
-  listP.front() ;
-  vpPoint P ;
-  while (!listP.outside())
+  vpPoint P;
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
-    P = listP.value() ;
+    P = *it ;
 
     std::cout << "3D oP " << P.oP.t() ;
     std::cout << "3D cP " << P.cP.t() ;
     std::cout << "2D    " << P.p.t() ;
-
-    listP.next() ;
   }
 }
 
@@ -460,7 +452,7 @@ vpPose::display(vpImage<unsigned char> &I,
 		double size,
 		vpColor col)
 {
-  vpDisplay::displayFrame(I,cMo,cam, size,col);
+  vpDisplay::displayFrame(I, cMo, cam, size, col);
 }
 
 
@@ -484,19 +476,16 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 		     vpCameraParameters &cam,
 		     vpColor col)
 { 
-  listP.front() ;
   vpPoint P ;
   vpImagePoint ip;
-  while (!listP.outside())
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
-    P = listP.value() ;
+    P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
     vpDisplay::displayCross(I, ip, 5, col) ;
     //  std::cout << "3D oP " << P.oP.t() ;
     //  std::cout << "3D cP " << P.cP.t() ;
     //  std::cout << "2D    " << P.p.t() ;
-
-    listP.next() ;
   }
 }
 
@@ -510,19 +499,16 @@ vpPose::displayModel(vpImage<vpRGBa> &I,
 		     vpCameraParameters &cam,
 		     vpColor col)
 { 
-  listP.front() ;
   vpPoint P ;
   vpImagePoint ip;
-  while (!listP.outside())
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
-    P = listP.value() ;
+    P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
     vpDisplay::displayCross(I, ip, 5, col) ;
     //  std::cout << "3D oP " << P.oP.t() ;
     //  std::cout << "3D cP " << P.cP.t() ;
     //  std::cout << "2D    " << P.p.t() ;
-
-    listP.next() ;
   }
 }
 
@@ -623,3 +609,82 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   return lx/s ;
 
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You should use coplanar() instead.
+
+  \brief test the coplanarity of the set of points
+  \return true if points are coplanar
+  false if not
+*/
+bool
+vpPose::coplanaire()
+{
+
+  if (npt <2)
+  {
+    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
+        "Not enough points ")) ;
+  }
+
+  if (npt ==3) return true ;
+
+  double x1,x2,x3,y1,y2,y3,z1,z2,z3 ;
+
+  std::list<vpPoint>::const_iterator it = listP.begin();
+
+  vpPoint P1,P2, P3 ;
+  P1 = *it;  ++it;
+  //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0))
+  if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon())
+      && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon())
+      && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon()))
+  {
+    P1 = *it; ++it;
+  }
+  P2 = *it; ++it;
+  P3 = *it;
+
+  x1 = P1.get_oX() ;
+  x2 = P2.get_oX() ;
+  x3 = P3.get_oX() ;
+
+  y1 = P1.get_oY() ;
+  y2 = P2.get_oY() ;
+  y3 = P3.get_oY() ;
+
+  z1 = P1.get_oZ() ;
+  z2 = P2.get_oZ() ;
+  z3 = P3.get_oZ() ;
+
+  double a =  y1*z2 - y1*z3 - y2*z1 + y2*z3 + y3*z1 - y3*z2 ;
+  double b = -x1*z2 + x1*z3 + x2*z1 - x2*z3 - x3*z1 + x3*z2 ;
+  double c =  x1*y2 - x1*y3 - x2*y1 + x2*y3 + x3*y1 - x3*y2 ;
+  double d = -x1*y2*z3 + x1*y3*z2 +x2*y1*z3 - x2*y3*z1 - x3*y1*z2 + x3*y2*z1 ;
+
+
+  double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
+
+  double dist;
+
+  for(it=listP.begin(); it != listP.end(); ++it)
+  {
+    P1 = *it ;
+    dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
+
+    if (fabs(dist) > distanceToPlaneForCoplanarityTest)
+    {
+      vpDEBUG_TRACE(10," points are not coplanar ") ;
+      //	TRACE(" points are not coplanar ") ;
+      return false ;
+    }
+  }
+
+  vpDEBUG_TRACE(10," points are  coplanar ") ;
+  //  vpTRACE(" points are  coplanar ") ;
+
+  return true ;
+}
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS

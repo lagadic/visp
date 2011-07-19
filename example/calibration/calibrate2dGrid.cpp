@@ -319,7 +319,7 @@ int main(int argc, const char ** argv)
      P[3].setWorldCoordinates(4*Lx,Ly, 0 ) ;
      
   // Calibration grid data
-     vpList<double> LoX,LoY,LoZ; //3D coordinates of the calibration dots
+     std::list<double> LoX,LoY,LoZ; //3D coordinates of the calibration dots
 //   char gridname[FILENAME_MAX] = "./grid2d.dat";
 //   if(vpCalibration::readGrid(gridname,nbpt,LoX,LoY,LoZ)!=0){
 //     std::cout << "Can't read : " << gridname << std::endl;
@@ -330,14 +330,12 @@ int main(int argc, const char ** argv)
 //       exit(-1);
 //     }
 //   }
-     LoX.front();
-     LoY.front();
-     LoZ.front();
+
      for (unsigned int i=0 ; i < sizeX ; i++){
        for(unsigned int j=0 ; j < sizeY ; j++){
-         LoX.addRight(i*Lx) ;
-         LoY.addRight(j*Ly) ;
-         LoZ.addRight(0) ;
+         LoX.push_back(i*Lx) ;
+         LoY.push_back(j*Ly) ;
+         LoZ.push_back(0) ;
        }
      }
   
@@ -835,14 +833,15 @@ int main(int argc, const char ** argv)
 
     // we set the 3D points coordinates (in meter !) in the object/world frame
     //xOy plan
-    LoX.front();
-    LoY.front();
-    LoZ.front();
+    std::list<double>::const_iterator it_LoX = LoX.begin();
+    std::list<double>::const_iterator it_LoY = LoY.begin();
+    std::list<double>::const_iterator it_LoZ = LoZ.begin();
+
     for(unsigned int i = 0 ; i < nbpt ; i++){
-        mP[i].setWorldCoordinates(LoX.value(),LoY.value(),LoZ.value()) ; // (X,Y,Z)
-        LoX.next();
-        LoY.next();
-        LoZ.next();
+        mP[i].setWorldCoordinates(*it_LoX, *it_LoY, *it_LoZ) ; // (X,Y,Z)
+        ++it_LoX;
+        ++it_LoY;
+        ++it_LoZ;
     }
     // pixel-> meter conversion
     vpImagePoint ip;
@@ -855,26 +854,26 @@ int main(int argc, const char ** argv)
       mP[i].projection(_cP,_p) ;
       vpMeterPixelConversion::convertPoint(camTmp,_p[0],_p[1], ip);
       if (10 < ip.get_u() && ip.get_u() < I.getWidth()-10 &&
-	  10 < ip.get_v() && ip.get_v() < I.getHeight()-10) {
+          10 < ip.get_v() && ip.get_v() < I.getHeight()-10) {
         try {
           md[i].initTracking(I, ip, (unsigned int)dotSize);
           vpRect bbox = md[i].getBBox();
-	  cog = md[i].getCog();
+          cog = md[i].getCog();
           if(bbox.getLeft()<5 || bbox.getRight()>(double)I.getWidth()-5 ||
               bbox.getTop()<5 || bbox.getBottom()>(double)I.getHeight()-5||
-	     vpMath::abs(ip.get_u() - cog.get_u()) > 10 ||
-	     vpMath::abs(ip.get_v() - cog.get_v()) > 10)
+              vpMath::abs(ip.get_u() - cog.get_u()) > 10 ||
+              vpMath::abs(ip.get_v() - cog.get_v()) > 10)
             valid[i] = false;
           // u[i]. v[i] are expressed in pixel
           // conversion in meter
-	  double x=0, y=0;
+          double x=0, y=0;
           vpPixelMeterConversion::convertPoint(camTmp, cog, x, y)  ;
           mP[i].set_x(x) ;
           mP[i].set_y(y) ;
           if (opt_display) {
             if(valid[i]){
-	      md[i].display(I,vpColor::red, 2);
-             mP[i].display(I,cMoTmp,camTmp) ;
+              md[i].display(I,vpColor::red, 2);
+              mP[i].display(I,cMoTmp,camTmp) ;
             }
           }
         }
@@ -891,7 +890,7 @@ int main(int argc, const char ** argv)
 
 
     //we put the pose matrix in the current calibration structure
-//     table_cal[niter].cMo = cMo ; //.setIdentity();//
+    //     table_cal[niter].cMo = cMo ; //.setIdentity();//
     if(save == true) {
       table_cal[niter].writeData(filename_out.c_str());
     }

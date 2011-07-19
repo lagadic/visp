@@ -52,6 +52,7 @@
 #include <iostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include <list>
 
 extern "C" {
 #include <visp/vpMy.h>
@@ -94,7 +95,9 @@ int wireframe_Face (Face *fp, Point2i *pp);
 #include <visp/vpImage.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpDisplay.h>
-#include <visp/vpList.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+# include <visp/vpList.h>
+#endif
 #include <visp/vpImagePoint.h>
 #include <visp/vpImageSimulator.h>
 
@@ -230,7 +233,7 @@ class VISP_EXPORT vpWireFrameSimulator
     Bound_scene scene;
     Bound_scene desiredScene;
     Bound_scene camera;
-    vpList<vpImageSimulator> objectImage;
+    std::list<vpImageSimulator> objectImage;
     
     
     vpHomogeneousMatrix fMo;
@@ -251,9 +254,9 @@ class VISP_EXPORT vpWireFrameSimulator
     bool sceneInitialized;
     
     bool displayCameraTrajectory;
-    vpList<vpImagePoint> cameraTrajectory;
-    vpList<vpHomogeneousMatrix> poseList;
-    vpList<vpHomogeneousMatrix> fMoList;
+    std::list<vpImagePoint> cameraTrajectory;
+    std::list<vpHomogeneousMatrix> poseList;
+    std::list<vpHomogeneousMatrix> fMoList;
     unsigned int nbrPtLimit;
     
     
@@ -294,11 +297,11 @@ class VISP_EXPORT vpWireFrameSimulator
     void initScene(const char* obj, const char* desiredObject);
     void initScene(vpSceneObject obj);
     void initScene(const char* obj);
-    
-    void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj);
-    void initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj);
-    void initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj);
-    void initScene(const char* obj, vpList<vpImageSimulator> &imObj);
+
+    void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, const std::list<vpImageSimulator> &imObj);
+    void initScene(const char* obj, const char* desiredObject, const std::list<vpImageSimulator> &imObj);
+    void initScene(vpSceneObject obj, const std::list<vpImageSimulator> &imObj);
+    void initScene(const char* obj, const std::list<vpImageSimulator> &imObj);
     
     /*!
       Set the position of the camera relative to the object.
@@ -519,9 +522,9 @@ class VISP_EXPORT vpWireFrameSimulator
       Delete the history of the main camera position which are displayed in the external views.
     */
     inline void deleteCameraPositionHistory() {
-      cameraTrajectory.kill();
-      poseList.kill();
-      fMoList.kill();}
+      cameraTrajectory.clear();
+      poseList.clear();
+      fMoList.clear();}
       
     /*!
       Set the way to display the history of the main camera trajectory in the main external view. The choice is given between displaying lines and points.
@@ -533,28 +536,25 @@ class VISP_EXPORT vpWireFrameSimulator
     /*!
       Get the homogeneous matrices cMo stored to display the camera trajectory.
       
-      \return Returns the list of the homogeneous matrices cMo.
+      \param cMo_history : The list of the homogeneous matrices cMo.
     */
-    vpList<vpHomogeneousMatrix> get_cMo_History () {
-      vpList<vpHomogeneousMatrix> list_cMo;
-      poseList.front();
-      while (!poseList.outside())
-      {
-	list_cMo.addRight(rotz*poseList.value());
-	poseList.next();
+    void get_cMo_History(std::list<vpHomogeneousMatrix>& cMo_history) {
+      cMo_history.clear();
+      for(std::list<vpHomogeneousMatrix>::const_iterator it=poseList.begin(); it!=poseList.end(); ++it){
+        cMo_history.push_back(rotz*(*it));
       }
-      return list_cMo;}
+    }
     
     /*!
       Get the homogeneous matrices fMo stored to display the camera trajectory.
       
-      \return Returns the list of the homogeneous matrices fMo.
+      \param fMo_history : The list of the homogeneous matrices fMo.
     */
-    vpList<vpHomogeneousMatrix> get_fMo_History () {return fMoList;}
+    void get_fMo_History(std::list<vpHomogeneousMatrix>& fMo_history) {fMo_history = fMoList;}
     
-    void displayTrajectory (vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
+    void displayTrajectory(vpImage<unsigned char> &I, const std::list<vpHomogeneousMatrix> &list_cMo, const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &camMf);
     
-    void displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
+    void displayTrajectory(vpImage<vpRGBa> &I, const std::list<vpHomogeneousMatrix> &list_cMo, const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &camMf);
     
     void getInternalImage(vpImage<vpRGBa> &I);
     void getExternalImage(vpImage<vpRGBa> &I);
@@ -574,6 +574,51 @@ class VISP_EXPORT vpWireFrameSimulator
     vpImagePoint projectCameraTrajectory (vpImage<vpRGBa> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
     vpImagePoint projectCameraTrajectory (vpImage<unsigned char> &I, vpHomogeneousMatrix cMo, vpHomogeneousMatrix fMo, vpHomogeneousMatrix cMf);
 
+  public:
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+
+    /*!
+      \deprecated This method is deprecated. You should use
+      get_fMo_History(std::list<vpHomogeneousMatrix> &) instead.
+
+      Get the homogeneous matrices fMo stored to display the camera trajectory.
+
+      \return Returns the list of the homogeneous matrices fMo.
+    */
+    vp_deprecated vpList<vpHomogeneousMatrix> get_fMo_History () {
+      vpList<vpHomogeneousMatrix> fMoHistory;
+      for(std::list<vpHomogeneousMatrix>::const_iterator iter = fMoList.begin(); iter != fMoList.end(); ++iter){
+        fMoHistory.addRight(*iter);
+      }
+      return fMoHistory;}
+
+    /*!
+      \deprecated This method is deprecated. You should use
+      get_cMo_History(std::list<vpHomogeneousMatrix> &) instead.
+
+      Get the homogeneous matrices cMo stored to display the camera trajectory.
+
+       \return Returns the list of the homogeneous matrices cMo.
+    */
+    vp_deprecated vpList<vpHomogeneousMatrix> get_cMo_History () {
+      vpList<vpHomogeneousMatrix> list_cMo;
+      for(std::list<vpHomogeneousMatrix>::const_iterator it=poseList.begin(); it!=poseList.end(); ++it){
+        list_cMo.addRight(rotz*(*it));
+      }
+      return list_cMo;}
+
+    vp_deprecated void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj);
+    vp_deprecated void initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj);
+    vp_deprecated void initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj);
+    vp_deprecated void initScene(const char* obj, vpList<vpImageSimulator> &imObj);
+
+    vp_deprecated void displayTrajectory(vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
+    vp_deprecated void displayTrajectory(vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
+#endif
 };
 
 #endif

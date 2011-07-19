@@ -50,22 +50,12 @@
 
 
 #include <visp/vpConfig.h>
-#include <visp/vpList.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 
 #include <vector>
 
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT std::allocator<vpImagePoint>;
-template class VISP_EXPORT std::vector<vpImagePoint>;
-template class VISP_EXPORT std::allocator<int>;
-template class VISP_EXPORT std::vector<int>;
-template class VISP_EXPORT std::allocator<unsigned int>;
-template class VISP_EXPORT std::vector<unsigned int>;
-#endif
 
 /*!
   \class vpBasicKeyPoint

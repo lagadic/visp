@@ -1786,7 +1786,7 @@ vpMbEdgeTracker::cleanPyramid(std::vector< const vpImage<unsigned char>* >& _pyr
   }
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   Get the list of the lines tracked for the specified level. Each line contains 
   the list of the vpMeSite. 
@@ -1797,7 +1797,7 @@ vpMbEdgeTracker::cleanPyramid(std::vector< const vpImage<unsigned char>* >& _pyr
   \param _level : Level corresponding to the list to return. 
   \return Pointer to the list of the lines tracked. 
 */
-vpList<vpMbtDistanceLine *>* 
+vp_deprecated vpList<vpMbtDistanceLine *>*
 vpMbEdgeTracker::getLline(const unsigned int _level)
 {
   if(_level > scales.size() || !scales[_level]){
@@ -1821,7 +1821,7 @@ vpMbEdgeTracker::getLline(const unsigned int _level)
   \param _level : Level corresponding to the list to return.
   \return Pointer to the list of the cylinders tracked.
 */
-vpList<vpMbtDistanceCylinder *>*
+vp_deprecated vpList<vpMbtDistanceCylinder *>*
 vpMbEdgeTracker::getLcylinder(const unsigned int _level)
 {
   if(_level > scales.size() || !scales[_level]){
@@ -1833,6 +1833,61 @@ vpMbEdgeTracker::getLcylinder(const unsigned int _level)
 
   return &cylinders[_level];
 }
+#endif
+
+/*!
+  Get the list of the lines tracked for the specified level. Each line contains
+  the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not correspond
+  to an used level.
+
+  \param _level : Level corresponding to the list to return.
+  \param linesList : The list of the lines of the model.
+*/
+void
+vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level)
+{
+  if(_level > scales.size() || !scales[_level]){
+    std::ostringstream oss;
+    oss << _level;
+    std::string errorMsg = "level " + oss.str() + " is not used, cannot get its distance lines.";
+    throw vpException(vpException::dimensionError, errorMsg);
+  }
+
+  linesList.clear();
+  for(lines[_level].front(); !lines[_level].outside(); lines[_level].next()){
+    linesList.push_back(lines[_level].value());
+  }
+}
+
+
+/*!
+  Get the list of the cylinders tracked for the specified level. Each cylinder
+  contains the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not correspond
+  to an used level.
+
+  \param _level : Level corresponding to the list to return.
+  \param cylindersList : The list of the cylinders of the model.
+*/
+void
+vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int _level)
+{
+  if(_level > scales.size() || !scales[_level]){
+    std::ostringstream oss;
+    oss << _level;
+    std::string errorMsg = "level " + oss.str() + " is not used, cannot get its distance lines.";
+    throw vpException(vpException::dimensionError, errorMsg);
+  }
+
+  cylindersList.clear();
+  for(cylinders[_level].front(); !cylinders[_level].outside(); cylinders[_level].next()){
+    cylindersList.push_back(cylinders[_level].value());
+  }
+}
+
 
 /*!
   Modify the camera parameters to have them corresponding to the current scale.

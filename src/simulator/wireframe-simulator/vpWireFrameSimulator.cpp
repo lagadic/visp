@@ -171,8 +171,8 @@ typedef struct
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 void extractFaces(SoVRMLIndexedFaceSet*, indexFaceSet *ifs);
-void ifsToBound (Bound*, vpList<indexFaceSet*> &);
-void destroyIfs(vpList<indexFaceSet*> &);
+void ifsToBound (Bound*, std::list<indexFaceSet*> &);
+void destroyIfs(std::list<indexFaceSet*> &);
   
 
 void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
@@ -223,18 +223,18 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
     child = sceneGraphVRML2->getChild(i);
     if (child->getTypeId() == SoVRMLShape::getClassTypeId())
     {
-      vpList<indexFaceSet*> ifs_list;
+      std::list<indexFaceSet*> ifs_list;
       SoChildList * child2list = child->getChildren();
       for (int j = 0; j < child2list->getLength(); j++)
       {
         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId())
         {
-	  indexFaceSet *ifs = new indexFaceSet;
+          indexFaceSet *ifs = new indexFaceSet;
           SoVRMLIndexedFaceSet * face_set;
           face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
           extractFaces(face_set,ifs);
-	  ifs_list.addRight(ifs);
-	  nbFaces++;
+          ifs_list.push_back(ifs);
+          nbFaces++;
         }
 //         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
 //         {
@@ -298,24 +298,20 @@ extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs)
   }
 }
 
-void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
+void ifsToBound (Bound* bptr, std::list<indexFaceSet*> &ifs_list)
 {
   int nbPt = 0;
-  ifs_list.front();
-  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
-  {
-    indexFaceSet* ifs = ifs_list.value();
-    nbPt += ifs->nbPt;
-    ifs_list.next();
+  for(std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it){
+    nbPt += (*it)->nbPt;
   }
   bptr->point.nbr = nbPt;
   bptr->point.ptr = (Point3f *) malloc ((unsigned int)nbPt * sizeof (Point3f));
   
   ifs_list.front();
   unsigned int iter = 0;
-  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
+  for (std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it)
   {
-    indexFaceSet* ifs = ifs_list.value();
+    indexFaceSet* ifs = *it;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbPt; j++)
     {
       bptr->point.ptr[iter].x = (float)ifs->pt[j].get_oX();
@@ -323,75 +319,68 @@ void ifsToBound (Bound* bptr, vpList<indexFaceSet*> &ifs_list)
       bptr->point.ptr[iter].z = (float)ifs->pt[j].get_oZ();
       iter++;
     }
-    ifs_list.next();
   }
   
   unsigned int nbFace = 0;
   ifs_list.front();
-  vpList<int> indSize;
+  std::list<int> indSize;
   int indice = 0;
-  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
+  for (std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it)
   {
-    indexFaceSet* ifs = ifs_list.value();
+    indexFaceSet* ifs = *it;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++)
     {
       if(ifs->index[j] == -1) 
       {
-	nbFace++;
-	indSize.addRight(indice);
-	indice = 0;
+        nbFace++;
+        indSize.push_back(indice);
+        indice = 0;
       }
       else indice++;
     }
-    ifs_list.next();
   }
   
   bptr->face.nbr = nbFace;
   bptr->face.ptr = (Face *) malloc (nbFace * sizeof (Face));
   
   
-  indSize.front();
-  for (unsigned int i = 0; i < indSize.nbElements(); i++)
+  std::list<int>::const_iterator iter_indSize = indSize.begin();
+  for (unsigned int i = 0; i < indSize.size(); i++)
   {
-    bptr->face.ptr[i].vertex.nbr = indSize.value();
-    bptr->face.ptr[i].vertex.ptr = (Index *) malloc ((unsigned int)indSize.value() * sizeof (Index));
-    indSize.next();
+    bptr->face.ptr[i].vertex.nbr = *iter_indSize;
+    bptr->face.ptr[i].vertex.ptr = (Index *) malloc ((unsigned int)*iter_indSize * sizeof (Index));
+    ++iter_indSize;
   }
   
   int offset = 0;
-  ifs_list.front();
   indice = 0;
-  for (unsigned int i = 0; i < ifs_list.nbElements(); i++)
+  for (std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it)
   {
-    indexFaceSet* ifs = ifs_list.value();
+    indexFaceSet* ifs = *it;
     iter = 0;
     for (unsigned int j = 0; j < (unsigned int)ifs->nbIndex; j++)
     {
       if(ifs->index[j] != -1)
       {
-	bptr->face.ptr[indice].vertex.ptr[iter] = ifs->index[j] + offset;
-	iter++;
+        bptr->face.ptr[indice].vertex.ptr[iter] = ifs->index[j] + offset;
+        iter++;
       }
       else
       {
-	iter = 0;
-	indice++;
+        iter = 0;
+        indice++;
       }
     }
     offset += ifs->nbPt;
   }
 }
 
-void destroyIfs(vpList<indexFaceSet*> &ifs_list)
+void destroyIfs(std::list<indexFaceSet*> &ifs_list)
 {
-  ifs_list.front();
-  while (!ifs_list.outside())
-  {
-    indexFaceSet* ifs = ifs_list.value();
-    delete ifs;
-    ifs_list.next();
+  for(std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it){
+    delete *it;
   }
-  ifs_list.kill();
+  ifs_list.clear();
 }
 #else
 void set_scene_wrl (const char* /*str*/, Bound_scene* /*sc*/, float /*factor*/)
@@ -529,9 +518,9 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   sceneInitialized = false;
 
   displayCameraTrajectory = true;
-  cameraTrajectory.kill();
-  poseList.kill();
-  fMoList.kill();
+  cameraTrajectory.clear();
+  poseList.clear();
+  fMoList.clear();
 
   fMo.setIdentity();
 
@@ -563,7 +552,7 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   rotz.buildFrom(0,0,0,0,0,vpMath::rad(180));
   
   displayImageSimulator = false;
-  objectImage.kill();
+  objectImage.clear();
 }
 
 
@@ -585,9 +574,9 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
   close_clipping();
   close_display ();
 
-  cameraTrajectory.kill();
-  poseList.kill();
-  fMoList.kill();
+  cameraTrajectory.clear();
+  poseList.clear();
+  fMoList.clear();
 }
 
 
@@ -670,8 +659,12 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   displayCamera = true;
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated. You should use
+  initScene(vpSceneObject, vpSceneDesiredObject, const std::list<vpImageSimulator> &)
+  instead.
+
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
   
@@ -685,6 +678,30 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
 */
 void
 vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj, desiredObject);
+  objectImage.clear();
+  for(imObj.front(); !imObj.outside(); imObj.next()){
+    objectImage.push_back(imObj.value());
+  }
+  displayImageSimulator = true;
+}
+#endif
+
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position and at the desired position.
+
+  It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
+
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Type of scene used to display the object at the current position.
+  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, const std::list<vpImageSimulator> &imObj)
 {
   initScene(obj, desiredObject);
   objectImage = imObj;
@@ -749,7 +766,11 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   displayCamera = true;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated. You should use
+  initScene(const char*, const char*, const std::list<vpImageSimulator> &) instead.
+
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
   
@@ -765,10 +786,33 @@ void
 vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj)
 {
   initScene(obj, desiredObject);
+  objectImage.clear();
+  for(imObj.front(); !imObj.outside(); imObj.next()){
+    objectImage.push_back(imObj.value());
+  }
+  displayImageSimulator = true;
+}
+#endif
+
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position and at the desired position.
+
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
+
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Path to the scene file you want to use.
+  \param desiredObject : Path to the scene file you want to use.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, const std::list<vpImageSimulator> &imObj)
+{
+  initScene(obj, desiredObject);
   objectImage = imObj;
   displayImageSimulator = true;
 }
-
 
 /*!
   Initialize the simulator. It enables to choose the type of object which will be used to display the object
@@ -822,7 +866,11 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
   displayCamera = true;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated. You should use
+  initScene(vpSceneObject, const std::list<vpImageSimulator> &) instead.
+
   Initialize the simulator. It enables to choose the type of object which will be used to display the object
   at the current position. The object at the desired position is not displayed.
   
@@ -835,6 +883,29 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
 */
 void
 vpWireFrameSimulator::initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj)
+{
+  initScene(obj);
+  objectImage.clear();
+  for(imObj.front(); !imObj.outside(); imObj.next()){
+    objectImage.push_back(imObj.value());
+  }
+  displayImageSimulator = true;
+}
+#endif
+
+/*!
+  Initialize the simulator. It enables to choose the type of object which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+
+  It exists several default scenes you can use. Use the vpSceneObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
+
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Type of scene used to display the object at the current position.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(vpSceneObject obj, const std::list<vpImageSimulator> &imObj)
 {
   initScene(obj);
   objectImage = imObj;
@@ -884,7 +955,11 @@ vpWireFrameSimulator::initScene(const char* obj)
   displayCamera = true;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated. You should use
+  initScene(const char*, const std::list<vpImageSimulator> &) instead.
+
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position. The object at the desired position is not displayed.
   
@@ -899,11 +974,32 @@ void
 vpWireFrameSimulator::initScene(const char* obj, vpList<vpImageSimulator> &imObj)
 {
   initScene(obj);
+  objectImage.clear();
+  for(imObj.front(); !imObj.outside(); imObj.next()){
+    objectImage.push_back(imObj.value());
+  }
+  displayImageSimulator = true;
+}
+#endif
+
+/*!
+  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
+  at the current position. The object at the desired position is not displayed.
+
+  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
+
+  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
+
+  \param obj : Path to the scene file you want to use.
+  \param imObj : A list of vpImageSimulator instances.
+*/
+void
+vpWireFrameSimulator::initScene(const char* obj, const std::list<vpImageSimulator> &imObj)
+{
+  initScene(obj);
   objectImage = imObj;
   displayImageSimulator = true;
 }
-
-
 
 /*!
   Get the internal view ie the view of the camera.
@@ -943,14 +1039,13 @@ vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
+
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
       imSim->setCameraPosition(rotz*cMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
+
     if (I.display != NULL)
       vpDisplay::display(I);
   }
@@ -1044,14 +1139,13 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
+
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
       imSim->setCameraPosition(rotz*camMf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
+
     if (I.display != NULL)
       vpDisplay::display(I);
   }
@@ -1066,30 +1160,29 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   {
     vpImagePoint iP;
     vpImagePoint iP_1;
-    poseList.end();
-    poseList.addRight(cMo);
-    fMoList.end();
-    fMoList.addRight(fMo);
+    poseList.push_back(cMo);
+    fMoList.push_back(fMo);
   
     int iter = 0;
 
     if (changed || extCamChanged)
     {
-      cameraTrajectory.kill();
-      poseList.front();
-      fMoList.front();
-      while (!poseList.outside() && !fMoList.outside())
+      cameraTrajectory.clear();
+      std::list<vpHomogeneousMatrix>::const_iterator iter_poseList = poseList.begin();
+      std::list<vpHomogeneousMatrix>::const_iterator iter_fMoList = fMoList.begin();
+
+      while ((iter_poseList != poseList.end()) && (iter_fMoList != fMoList.end()))
       {
-        iP = projectCameraTrajectory(I, poseList.value(),fMoList.value());
-        cameraTrajectory.addRight(iP);
-	if (camTrajType == CT_LINE)
-	{
+        iP = projectCameraTrajectory(I, *iter_poseList, *iter_fMoList);
+        cameraTrajectory.push_back(iP);
+        if (camTrajType == CT_LINE)
+        {
           if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
-	}
-	else if (camTrajType == CT_POINT)
-	  vpDisplay::displayPoint(I,iP,camTrajColor);
-        poseList.next();
-        fMoList.next();
+        }
+        else if (camTrajType == CT_POINT)
+          vpDisplay::displayPoint(I,iP,camTrajColor);
+        ++iter_poseList;
+        ++iter_fMoList;
         iter++;
         iP_1 = iP;
       }
@@ -1097,38 +1190,32 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
     }
     else
     {
-      iP = projectCameraTrajectory(I, poseList.value(),fMoList.value());
-      cameraTrajectory.end();
-      cameraTrajectory.addRight(iP);
-      cameraTrajectory.front();
-      while (!cameraTrajectory.outside())
-      {
-	if (camTrajType == CT_LINE)
-	{
-          if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),camTrajColor);
-	}
-	else if (camTrajType == CT_POINT)
-	  vpDisplay::displayPoint(I,cameraTrajectory.value(),camTrajColor);
+      iP = projectCameraTrajectory(I, cMo, fMo);
+      cameraTrajectory.push_back(iP);
+
+      for(std::list<vpImagePoint>::const_iterator it=cameraTrajectory.begin(); it!=cameraTrajectory.end(); ++it){
+        if (camTrajType == CT_LINE)
+        {
+          if (iter != 0) vpDisplay::displayLine(I, iP_1, *it, camTrajColor);
+        }
+        else if (camTrajType == CT_POINT)
+          vpDisplay::displayPoint(I, *it, camTrajColor);
         iter++;
-        iP_1 = cameraTrajectory.value();
-        cameraTrajectory.next();
+        iP_1 = *it;
       }
     }
 
-    if (poseList.nbElement() > nbrPtLimit)
+    if (poseList.size() > nbrPtLimit)
     {
-      poseList.front();
-      poseList.suppress();
+      poseList.pop_front();
     }
-    if (fMoList.nbElement() > nbrPtLimit)
+    if (fMoList.size() > nbrPtLimit)
     {
-      fMoList.front();
-      fMoList.suppress();
+      fMoList.pop_front();
     }
-    if (cameraTrajectory.nbElement() > nbrPtLimit)
+    if (cameraTrajectory.size() > nbrPtLimit)
     {
-      cameraTrajectory.front();
-      cameraTrajectory.suppress();
+      cameraTrajectory.pop_front();
     }
   }
 }
@@ -1181,14 +1268,13 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, vpHomogeneousMatrix c
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
+
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
       imSim->setCameraPosition(rotz*camMf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
+
     if (I.display != NULL)
       vpDisplay::display(I);
   }
@@ -1238,14 +1324,13 @@ vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
-      imSim->setCameraPosition(rotz*cMo);
+
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
+      imSim->setCameraPosition(rotz*camMf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
+
     if (I.display != NULL)
       vpDisplay::display(I);
   }
@@ -1339,13 +1424,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
       imSim->setCameraPosition(rotz*camMf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
     if (I.display != NULL)
       vpDisplay::display(I);
@@ -1361,31 +1443,30 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   {
     vpImagePoint iP;
     vpImagePoint iP_1;
-    poseList.end();
-    poseList.addRight(cMo);
-    fMoList.end();
-    fMoList.addRight(fMo);
+    poseList.push_back(cMo);
+    fMoList.push_back(fMo);
   
     int iter = 0;
 
     if (changed || extCamChanged)
     {
-      cameraTrajectory.kill();
-      poseList.front();
-      fMoList.front();
-      while (!poseList.outside() && !fMoList.outside())
+      cameraTrajectory.clear();
+      std::list<vpHomogeneousMatrix>::const_iterator iter_poseList = poseList.begin();
+      std::list<vpHomogeneousMatrix>::const_iterator iter_fMoList = fMoList.begin();
+
+      while ((iter_poseList!=poseList.end()) && (iter_fMoList!=fMoList.end()) )
       {
-        iP = projectCameraTrajectory(I, poseList.value(),fMoList.value());
-        cameraTrajectory.addRight(iP);
+        iP = projectCameraTrajectory(I, *iter_poseList, *iter_fMoList);
+        cameraTrajectory.push_back(iP);
         //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
         if (camTrajType == CT_LINE)
-	{
+        {
           if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
-	}
-	else if (camTrajType == CT_POINT)
-	  vpDisplay::displayPoint(I,iP,camTrajColor);
-        poseList.next();
-        fMoList.next();
+        }
+        else if (camTrajType == CT_POINT)
+          vpDisplay::displayPoint(I,iP,camTrajColor);
+        ++iter_poseList;
+        ++iter_fMoList;
         iter++;
         iP_1 = iP;
       }
@@ -1393,38 +1474,33 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
     }
     else
     {
-      iP = projectCameraTrajectory(I, poseList.value(),fMoList.value());
-      cameraTrajectory.end();
-      cameraTrajectory.addRight(iP);
-      cameraTrajectory.front();
-      while (!cameraTrajectory.outside())
-      {
-        if (camTrajType == CT_LINE)
-	{
-          if (iter != 0) vpDisplay::displayLine(I,iP_1,cameraTrajectory.value(),camTrajColor);
-	}
-	else if (camTrajType == CT_POINT)
-	  vpDisplay::displayPoint(I,cameraTrajectory.value(),camTrajColor);
+      iP = projectCameraTrajectory(I, cMo,fMo);
+      cameraTrajectory.push_back(iP);
+
+      for(std::list<vpImagePoint>::const_iterator it=cameraTrajectory.begin(); it!=cameraTrajectory.end(); ++it){
+        if (camTrajType == CT_LINE){
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,*it,camTrajColor);
+        }
+        else if(camTrajType == CT_POINT)
+          vpDisplay::displayPoint(I, *it, camTrajColor);
         iter++;
-        iP_1 = cameraTrajectory.value();
-        cameraTrajectory.next();
+        iP_1 = *it;
+        ++it;
       }
+
     }
 
-    if (poseList.nbElement() > nbrPtLimit)
+    if (poseList.size() > nbrPtLimit)
     {
-      poseList.front();
-      poseList.suppress();
+      poseList.pop_front();
     }
-    if (fMoList.nbElement() > nbrPtLimit)
+    if (fMoList.size() > nbrPtLimit)
     {
-      fMoList.front();
-      fMoList.suppress();
+      fMoList.pop_front();
     }
-    if (cameraTrajectory.nbElement() > nbrPtLimit)
+    if (cameraTrajectory.size() > nbrPtLimit)
     {
-      cameraTrajectory.front();
-      cameraTrajectory.suppress();
+      cameraTrajectory.pop_front();
     }
   }
 }
@@ -1477,13 +1553,10 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
   if (displayImageSimulator)
   {
     I = 255;
-    objectImage.front();
-    while(!objectImage.outside())
-    {
-      vpImageSimulator* imSim = &(objectImage.value());
+    for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
+      vpImageSimulator* imSim = &(*it);
       imSim->setCameraPosition(rotz*camMf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
-      objectImage.next();
     }
     if (I.display != NULL)
       vpDisplay::display(I);
@@ -1495,11 +1568,16 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, vpHomogeneousM
     display_scene(w44c,camera, I, camColor);
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated. You should use
+  displayTrajectory(vpImage<unsigned char> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
+  instead.
+
   Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
   
   The two lists must have the same size of homogeneous matrices must have the same size.
-  
+
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
@@ -1534,10 +1612,14 @@ vpWireFrameSimulator::displayTrajectory (vpImage<unsigned char> &I, vpList<vpHom
 }
 
 /*!
+  \deprecated This method is deprecated. You should use
+  displayTrajectory (vpImage<vpRGBa> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
+  instead.
+
   Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
   
   The two lists must have the same size of homogeneous matrices must have the same size.
-  
+
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
@@ -1570,6 +1652,89 @@ vpWireFrameSimulator::displayTrajectory (vpImage<vpRGBa> &I, vpList<vpHomogeneou
     iP_1 = iP;
   }
 }
+#endif
+
+
+/*!
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+
+  The two lists must have the same size of homogeneous matrices must have the same size.
+
+  \param I : The image where the trajectory is displayed.
+  \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
+  \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+*/
+void
+vpWireFrameSimulator::displayTrajectory (vpImage<unsigned char> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
+                                         const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &cMf)
+{
+  if (list_cMo.size() != list_fMo.size())
+    throw(vpException(vpException::dimensionError ,"The two lists must have the same size")) ;
+
+  vpImagePoint iP;
+  vpImagePoint iP_1;
+  int iter = 0;
+
+  std::list<vpHomogeneousMatrix>::const_iterator it_cMo = list_cMo.begin();
+  std::list<vpHomogeneousMatrix>::const_iterator it_fMo = list_fMo.begin();
+
+  while ((it_cMo != list_cMo.end()) && (it_fMo != list_fMo.end()))
+  {
+    iP = projectCameraTrajectory(I, rotz * (*it_cMo), (*it_fMo), rotz * cMf);
+    if (camTrajType == CT_LINE)
+    {
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+    }
+    else if (camTrajType == CT_POINT)
+      vpDisplay::displayPoint(I,iP,camTrajColor);
+    ++it_cMo;
+    ++it_fMo;
+    iter++;
+    iP_1 = iP;
+  }
+}
+
+/*!
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+
+  The two lists must have the same size of homogeneous matrices must have the same size.
+
+  \param I : The image where the trajectory is displayed.
+  \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
+  \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+*/
+void
+vpWireFrameSimulator::displayTrajectory (vpImage<vpRGBa> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
+                                         const std::list<vpHomogeneousMatrix> &list_fMo, const vpHomogeneousMatrix &cMf)
+{
+  if (list_cMo.size() != list_fMo.size())
+    throw(vpException(vpException::dimensionError ,"The two lists must have the same size")) ;
+
+  vpImagePoint iP;
+  vpImagePoint iP_1;
+  int iter = 0;
+
+  std::list<vpHomogeneousMatrix>::const_iterator it_cMo = list_cMo.begin();
+  std::list<vpHomogeneousMatrix>::const_iterator it_fMo = list_fMo.begin();
+
+  while ((it_cMo != list_cMo.end()) && (it_fMo != list_fMo.end()))
+  {
+    iP = projectCameraTrajectory(I, rotz * (*it_cMo), (*it_fMo), rotz * cMf);
+    if (camTrajType == CT_LINE)
+    {
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+    }
+    else if (camTrajType == CT_POINT)
+      vpDisplay::displayPoint(I,iP,camTrajColor);
+    ++it_cMo;
+    ++it_fMo;
+    iter++;
+    iP_1 = iP;
+  }
+}
+
 
 /*!
   Enables to change the external camera position.

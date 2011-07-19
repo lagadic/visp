@@ -48,14 +48,18 @@
 #define vpDot2_hh
 
 #include <vector>
+#include <list>
+
 #include <visp/vpConfig.h>
-#include <visp/vpList.h>
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 #include <visp/vpTracker.h>
 #include <visp/vpColor.h>
 #include <visp/vpImagePoint.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
 
 /*!
   \class vpDot2
@@ -107,17 +111,6 @@ public:
     this->cog = cog; 
   }
   /*!
-    Activates the display of the border of the dot during the tracking.
-
-    \warning To effectively display the dot graphics a call to
-    vpDisplay::flush() is needed.
-
-    \param activate If true, the border of the dot will be painted. false to
-    turn off border painting.
-
-  */
-  void setGraphics(const bool activate) { graphics = activate ; }
-  /*!
 
     Activates the dot's moments computation.
 
@@ -132,9 +125,18 @@ public:
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
-  void setWidth( const double & width );
-  void setHeight( const double & height );
-  void setSurface( const double & surface );
+  void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
+  /*!
+    Activates the display of the border of the dot during the tracking.
+
+    \warning To effectively display the dot graphics a call to
+    vpDisplay::flush() is needed.
+
+    \param activate If true, the border of the dot will be painted. false to
+    turn off border painting.
+
+  */
+  void setGraphics(const bool activate) { graphics = activate ; }
   /*!
 
   Set the color level of the dot to search a dot in an area. This level will be
@@ -170,9 +172,11 @@ public:
       this->gray_level_max = max;
   };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
-  void setSizePrecision( const double & sizePrecision );
-  void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
+  void setHeight( const double & height );
   void setMaxSizeSearchDistancePrecision(const double & maxSizeSearchDistancePrecision);
+  void setSizePrecision( const double & sizePrecision );
+  void setSurface( const double & surface );
+  void setWidth( const double & width );
 
   void initTracking(vpImage<unsigned char>& I, unsigned int size = 0);
   void initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
@@ -183,33 +187,9 @@ public:
 
   void track(vpImage<unsigned char> &I);
   void track(vpImage<unsigned char> &I, vpImagePoint &cog);
+  void display(vpImage<unsigned char>& I, vpColor color = vpColor::red,
+               unsigned int thickness=1);
 
-  /*!
-    Return the location of the dot center of gravity.
-
-    \return The coordinates of the center of gravity.
-  */
-  inline vpImagePoint getCog() const {
-    return cog;
-  }
-
-  /*!
-
-    Return the list of all the image points on the dot
-    border.
-
-    \param ip_edges_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  void getEdges(vpList<vpImagePoint> &ip_edges_list) { 
-    ip_edges_list = this->ip_edges_list;
-  };
-  void getFreemanChain(vpList<unsigned int> &freeman_chain) ;
-
-  double getWidth() const;
-  double getHeight() const;
-  double getSurface() const;
   /*!
 
     Return the dot bounding box.
@@ -221,12 +201,39 @@ public:
     vpRect bbox;
 
     bbox.setRect(this->bbox_u_min,
-		 this->bbox_v_min,
-		 this->bbox_u_max - this->bbox_u_min + 1,
-		 this->bbox_v_max - this->bbox_v_min + 1);
+     this->bbox_v_min,
+     this->bbox_u_max - this->bbox_u_min + 1,
+     this->bbox_v_max - this->bbox_v_min + 1);
 
     return (bbox);
   };
+  /*!
+    Return the location of the dot center of gravity.
+
+    \return The coordinates of the center of gravity.
+  */
+  inline vpImagePoint getCog() const {
+    return cog;
+  }
+
+  double getDistance( const vpDot2& distantDot ) const;
+  /*!
+
+    Return the list of all the image points on the dot
+    border.
+
+    \param edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  void getEdges(std::list<vpImagePoint> &edges_list) {
+    edges_list = this->ip_edges_list;
+  };
+
+  double getEllipsoidShapePrecision() const;
+  void getFreemanChain(std::list<unsigned int> &freeman_chain) ;
+
+  inline double getGamma() {return this->gamma;};
   /*!
     Return the color level of pixels inside the dot.
 
@@ -243,6 +250,10 @@ public:
   inline unsigned int getGrayLevelMax() const {
     return gray_level_max;
   };
+  double getGrayLevelPrecision() const;
+
+  double getHeight() const;
+  double getMaxSizeSearchDistancePrecision() const;
   /*!
 
   \return The mean gray level value of the dot.
@@ -251,55 +262,31 @@ public:
   double getMeanGrayLevel() {
     return (this->mean_gray_level);
   };
-  double getGrayLevelPrecision() const;
   double getSizePrecision() const;
-  double getEllipsoidShapePrecision() const;
-  double getMaxSizeSearchDistancePrecision() const;
-  inline double getGamma() {return this->gamma;};
+  double getSurface() const;
+  double getWidth() const;
 
-  void display(vpImage<unsigned char>& I, vpColor color = vpColor::red,
-		     unsigned int thickness=1);
+  void print(std::ostream& os) { os << *this << std::endl ; }
+  void searchDotsInArea( vpImage<unsigned char>& I,
+                         int area_u, int area_v,
+                         unsigned int area_w, unsigned int area_h, std::list<vpDot2> &niceDots );
 
-  double getDistance( const vpDot2& distantDot ) const;
-
-  vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
-            int area_u, int area_v,
-            unsigned int area_w, unsigned int area_h );
-
-  vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
+  void searchDotsInArea( vpImage<unsigned char>& I, std::list<vpDot2> &niceDots );
 
   static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
 
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
 
-private :
-
-  virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);
-
-  virtual bool hasGoodLevel(const vpImage<unsigned char>& I,
-			    const unsigned int &u,
-			    const unsigned int &v) const;
-  virtual bool hasReverseLevel(vpImage<unsigned char>& I,
-			       const unsigned int &u,
-			       const unsigned int &v) const;
-
-  virtual vpDot2* getInstance();
-
-
-
-public:
   /*!
-    Writes the dot center of gravity coordinates in the frame (i,j) (For more details 
+    Writes the dot center of gravity coordinates in the frame (i,j) (For more details
     about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
-    and returns a reference to the stream. 
+    and returns a reference to the stream.
   */
   friend std::ostream& operator<< (std::ostream& os, vpDot2& d) {
     return (os << "(" << d.getCog() << ")" ) ;
   } ;
 
-  void print(std::ostream& os) { os << *this << std::endl ; }
-
-
+public:
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
 		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
@@ -365,7 +352,50 @@ public:
 		\sa setComputeMoments()
 	      */
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+
+    \deprecated This method is deprecated. You shoud use
+    getEdges(std::list<vpImagePoint> &) instead.
+
+    Return the list of all the image points on the dot
+    border.
+
+    \param edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  vp_deprecated void getEdges(vpList<vpImagePoint> &edges_list) {
+    // convert a vpList in a std::list
+    edges_list.kill();
+    std::list<vpImagePoint>::const_iterator it;
+    for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
+      edges_list += *it;
+    }
+  };
+  vp_deprecated void getFreemanChain(vpList<unsigned int> &freeman_chain) ;
+  vp_deprecated vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I,
+            int area_u, int area_v,
+            unsigned int area_w, unsigned int area_h );
+
+  /* vp_deprecated */ vpList<vpDot2>* searchDotsInArea( vpImage<unsigned char>& I );
+#endif
+
 private:
+  virtual bool isValid(vpImage<unsigned char>& I, const vpDot2& wantedDot);
+
+  virtual bool hasGoodLevel(const vpImage<unsigned char>& I,
+          const unsigned int &u,
+          const unsigned int &v) const;
+  virtual bool hasReverseLevel(vpImage<unsigned char>& I,
+             const unsigned int &u,
+             const unsigned int &v) const;
+
+  virtual vpDot2* getInstance();
+
   void init();
 
   bool computeParameters(const vpImage<unsigned char> &I,
@@ -451,8 +481,8 @@ private:
   vpRect area;
 
   // other
-  vpList<unsigned int> direction_list;
-  vpList<vpImagePoint> ip_edges_list;
+  std::list<unsigned int> direction_list;
+  std::list<vpImagePoint> ip_edges_list;
 
   // flag
   bool compute_moment ; // true moment are computed

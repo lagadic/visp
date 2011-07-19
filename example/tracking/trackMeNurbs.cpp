@@ -281,12 +281,12 @@ main(int argc, const char ** argv)
   else 
   {
     // Create a list of points to automate the test
-    vpList<vpImagePoint> list;
-    list.addRight(vpImagePoint(178,357));
-    list.addRight(vpImagePoint(212,287));
-    list.addRight(vpImagePoint(236,210));
-    list.addRight(vpImagePoint(240, 118));
-    list.addRight(vpImagePoint(210, 40));
+    std::list<vpImagePoint> list;
+    list.push_back(vpImagePoint(178,357));
+    list.push_back(vpImagePoint(212,287));
+    list.push_back(vpImagePoint(236,210));
+    list.push_back(vpImagePoint(240, 118));
+    list.push_back(vpImagePoint(210, 40));
 
     nurbs.initTracking(I, list) ;
   }

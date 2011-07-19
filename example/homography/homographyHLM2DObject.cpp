@@ -239,24 +239,25 @@ main(int argc, const char ** argv)
   std::cout << "-------------------------------" <<std::endl ;
   vpTRACE("test displacement") ;
 
-  vpList<vpRotationMatrix> laRb ;
-  vpList<vpTranslationVector> laTb ;
-  vpList<vpColVector> lnb ;
+  std::list<vpRotationMatrix> laRb ;
+  std::list<vpTranslationVector> laTb ;
+  std::list<vpColVector> lnb ;
 
   vpHomography::computeDisplacement(aHb,bP[0].get_x(),bP[0].get_y(),
-				    laRb, laTb, lnb) ;
+                                    laRb, laTb, lnb) ;
 
-  laRb.front() ;
-  laTb.front() ;
-  lnb.front() ;
+  std::list<vpRotationMatrix>::const_iterator it_laRb = laRb.begin();
+  std::list<vpTranslationVector>::const_iterator it_laTb = laTb.begin();
+  std::list<vpColVector>::const_iterator it_lnb = lnb.begin();
+
   int k =1 ;
-  while (!lnb.outside())
+  while (it_lnb != lnb.end())
   {
     std::cout << "Solution " << k++ << std::endl ;
 
-    aRb = laRb.value() ;
-    aTb = laTb.value() ;
-    n = lnb.value() ;
+    aRb = *it_laRb;
+    aTb = *it_laTb;
+    n = *it_lnb;
     std::cout << "Rotation: aRb" <<std::endl ;
     std::cout << aRb << std::endl ;
     std::cout << "Translation: aTb" <<std::endl;
@@ -264,9 +265,9 @@ main(int argc, const char ** argv)
     std::cout << "Normal to the plane: n" <<std::endl;
     std::cout << (n).t() <<std::endl ;
 
-    laRb.next() ;
-    laTb.next() ;
-    lnb.next() ;
+    ++ it_laRb;
+    ++ it_laTb;
+    ++ it_lnb;
   }
 
 }

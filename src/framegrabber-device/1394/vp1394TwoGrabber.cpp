@@ -544,10 +544,10 @@ vp1394TwoGrabber::getVideoMode(vp1394TwoVideoModeType & videomode)
   \sa setVideoMode(), getVideoMode(), getCamera()
 */
 uint32_t
-vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes)
+vp1394TwoGrabber::getVideoModeSupported(std::list<vp1394TwoVideoModeType> & videomodes)
 {
   // Refresh the list of supported modes
-  videomodes.kill();
+  videomodes.clear();
 
   if (! num_cameras) {
     close();
@@ -569,7 +569,7 @@ vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomo
   // parse the video modes to add in the list
   for (unsigned i=0; i < _videomodes.num; i++) {
     vp1394TwoVideoModeType _mode = (vp1394TwoVideoModeType) _videomodes.modes[i];
-    videomodes.addRight( _mode );
+    videomodes.push_back( _mode );
   }
 
   // return the number of available video modes
@@ -812,7 +812,7 @@ vp1394TwoGrabber::getFramerate(vp1394TwoFramerateType & fps)
 */
 uint32_t
 vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
-                                        vpList<vp1394TwoFramerateType> & fps)
+                                        std::list<vp1394TwoFramerateType> & fps)
 {
   if (! num_cameras) {
     close();
@@ -822,7 +822,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
   }
 
   // Refresh the list of supported framerates
-  fps.kill();
+  fps.clear();
 
   switch (mode) {
       // Framerate not available for:
@@ -855,7 +855,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
         return 0;
 
       for (unsigned int i = 0; i < _fps.num; i ++)
-        fps.addRight((vp1394TwoFramerateType)_fps.framerates[i]);
+        fps.push_back((vp1394TwoFramerateType)_fps.framerates[i]);
 
       return _fps.num;
     }
@@ -1130,7 +1130,7 @@ vp1394TwoGrabber::getColorCoding(vp1394TwoColorCodingType & coding)
 */
 uint32_t
 vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
-    vpList<vp1394TwoColorCodingType> & codings)
+                                          std::list<vp1394TwoColorCodingType> & codings)
 {
   if (! num_cameras) {
     close();
@@ -1140,7 +1140,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
   }
 
   // Refresh the list of supported framerates
-  codings.kill();
+  codings.clear();
 
   if (dc1394_is_video_mode_scalable((dc1394video_mode_t)mode)) {
     // Format 7 video mode
@@ -1158,7 +1158,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
       return 0;
 
     for (unsigned int i = 0; i < _codings.num; i ++)
-      codings.addRight((vp1394TwoColorCodingType)_codings.codings[i]);
+      codings.push_back((vp1394TwoColorCodingType)_codings.codings[i]);
 
     return _codings.num;
   }
@@ -1178,7 +1178,7 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
                                      "Could not query supported color coding") );
     }
-    codings.addRight((vp1394TwoColorCodingType)_coding);
+    codings.push_back((vp1394TwoColorCodingType)_coding);
     return 1;
   }
 }
@@ -3280,6 +3280,223 @@ vp1394TwoGrabber::updateDataStructToCam()
   setParameterValue(vpFEATURE_GAIN, dataCam[camera_id].gain);
   setParameterValue(vpFEATURE_IRIS, dataCam[camera_id].iris);
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+
+  \deprecated This method is deprecated. You should use getVideoModeSupported(std::list<vp1394TwoVideoModeType> &) instead.
+
+  Query the available active camera video modes.
+
+  \param videomodes : The list of supported camera video modes.
+
+  \return The number of supported camera modes, 0 if an error occurs.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't get
+  video modes.
+
+  \sa setVideoMode(), getVideoMode(), getCamera()
+*/
+uint32_t
+vp1394TwoGrabber::getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes)
+{
+  // Refresh the list of supported modes
+  videomodes.kill();
+
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+  dc1394video_modes_t _videomodes;
+
+  // get video modes:
+  if (dc1394_video_get_supported_modes(camera, &_videomodes)!=DC1394_SUCCESS) {
+
+    close();
+    vpERROR_TRACE("Can't get video modes");
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                   "Can't get video modes") );
+  }
+
+  // parse the video modes to add in the list
+  for (unsigned i=0; i < _videomodes.num; i++) {
+    vp1394TwoVideoModeType _mode = (vp1394TwoVideoModeType) _videomodes.modes[i];
+    videomodes.addRight( _mode );
+  }
+
+  // return the number of available video modes
+  return _videomodes.num;
+}
+
+/*!
+  \deprecated This method is deprecated. You should use getFramerateSupported(vp1394TwoVideoModeType, std::list<vp1394TwoFramerateType> &) instead.
+
+  Query the available framerates for the given camera video mode (see
+  file dc1394/control.h). No framerate is associated to the following
+  camera modes :
+
+  - vp1394TwoGrabber::vpVIDEO_MODE_EXIF (format 6),
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 (format 7):
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_1 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_2 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_3 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_4 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_5 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_6 (format 7)
+  - vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_7 (format 7)
+
+  \param mode : Camera video mode.
+
+  \param fps : The list of supported camera framerates for the given camera
+  video mode.
+
+  \return The number of supported framerates, 0 if no framerate is available.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't get
+  the supported framerates.
+
+  \sa setFramerate(), getFramerate(), setCamera()
+*/
+uint32_t
+vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
+                                        vpList<vp1394TwoFramerateType> & fps)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  // Refresh the list of supported framerates
+  fps.kill();
+
+  switch (mode) {
+      // Framerate not available for:
+      //  - vpVIDEO_MODE_EXIF ie Format_6
+      //  - vpVIDEO_MODE_FORMAT7... ie the Format_7
+    case vpVIDEO_MODE_EXIF:
+    case vpVIDEO_MODE_FORMAT7_0:
+    case vpVIDEO_MODE_FORMAT7_1:
+    case vpVIDEO_MODE_FORMAT7_2:
+    case vpVIDEO_MODE_FORMAT7_3:
+    case vpVIDEO_MODE_FORMAT7_4:
+    case vpVIDEO_MODE_FORMAT7_5:
+    case vpVIDEO_MODE_FORMAT7_6:
+    case vpVIDEO_MODE_FORMAT7_7:
+      return 0;
+      break;
+    default:
+    {
+      dc1394framerates_t _fps;
+      if (dc1394_video_get_supported_framerates(camera,
+          (dc1394video_mode_t)mode,
+          &_fps) != DC1394_SUCCESS) {
+        close();
+        vpERROR_TRACE("Could not query supported frametates for mode %d\n",
+                      mode);
+        throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                       "Could not query supported framerates") );
+      }
+      if (_fps.num == 0)
+        return 0;
+
+      for (unsigned int i = 0; i < _fps.num; i ++)
+        fps.addRight((vp1394TwoFramerateType)_fps.framerates[i]);
+
+      return _fps.num;
+    }
+    break;
+  }
+}
+
+/*!
+
+  \deprecated This method is deprecated. You should use
+  getColorCodingSupported(vp1394TwoVideoModeType, std::list<vp1394TwoColorCodingType> &) instead.
+
+  Query the available color codings for the given camera video mode (see
+  file dc1394/control.h).
+
+  \param mode : Camera video mode.
+
+  \param codings : The list of supported color codings for the given camera
+  video mode.
+
+  \return The number of supported color codings, 0 if no color codings
+  is available.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  \exception vpFrameGrabberException::settingError : If we can't get
+  the color codingss.
+
+  \sa setColorCoding(), getColorCoding(), setCamera()
+*/
+uint32_t
+vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
+    vpList<vp1394TwoColorCodingType> & codings)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  // Refresh the list of supported framerates
+  codings.kill();
+
+  if (dc1394_is_video_mode_scalable((dc1394video_mode_t)mode)) {
+    // Format 7 video mode
+    dc1394color_codings_t _codings;
+    if (dc1394_format7_get_color_codings(camera,
+                                         (dc1394video_mode_t)mode,
+                                         &_codings) != DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Could not query supported color codings for mode %d\n",
+                    mode);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                     "Could not query supported color codings") );
+    }
+    if (_codings.num == 0)
+      return 0;
+
+    for (unsigned int i = 0; i < _codings.num; i ++)
+      codings.addRight((vp1394TwoColorCodingType)_codings.codings[i]);
+
+    return _codings.num;
+  }
+  else if (dc1394_is_video_mode_still_image((dc1394video_mode_t)mode)) {
+    // Format 6 video mode
+    return 0;
+  }
+  else  {
+    // Not Format 7 and not Format 6 video modes
+    dc1394color_coding_t _coding;
+    if (dc1394_get_color_coding_from_video_mode(camera,
+        (dc1394video_mode_t)mode,
+        &_coding) != DC1394_SUCCESS) {
+      close();
+      vpERROR_TRACE("Could not query supported color coding for mode %d\n",
+                    mode);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+                                     "Could not query supported color coding") );
+    }
+    codings.addRight((vp1394TwoColorCodingType)_coding);
+    return 1;
+  }
+}
+#endif
 
 #endif
 

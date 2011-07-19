@@ -49,6 +49,7 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #if defined(VISP_HAVE_DC1394_1)
 
 
@@ -141,6 +142,9 @@ const char * vp1394Grabber::strFramerates[NUM_FRAMERATES] = {
 };
 
 /*!
+  \deprecated This class is deprecated. You shoud use
+  vp1394TwoGrabber class instead.
+
   Default constructor. Using this constructor, you have explicitly to call
   open().
 
@@ -206,6 +210,9 @@ vp1394Grabber::vp1394Grabber( )
 }
 
 /*!
+
+  \deprecated This class is deprecated. You shoud use
+  vp1394TwoGrabber class instead.
 
   Constructor which initialize the grabber and call the open() method.
 
@@ -2383,4 +2390,5 @@ void vp1394Grabber::stopIsoTransmission()
 }
 
 
+#endif
 #endif

@@ -65,12 +65,6 @@
 #include <visp/vpPoint.h>
 #include <visp/vpCameraParameters.h>
 
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT std::allocator<vpImagePoint>;
-template class VISP_EXPORT std::vector<vpImagePoint>;
-#endif
-
 class VISP_EXPORT vpPolygon
 {
   protected:

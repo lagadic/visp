@@ -50,7 +50,6 @@
 #include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
 #include <visp/vpColor.h>
-#include <visp/vpList.h>
 #include <visp/vpImage.h>
 
 #include <visp/vpHomogeneousMatrix.h>

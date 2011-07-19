@@ -72,7 +72,7 @@ vpProjectionDisplay::insert( vpForwardProjection &fp)
   //  f = fp.duplicate() ;
   //  f->setDeallocate(vpForwardProjection::vpDisplayForwardProjection) ;
 
-  listFp += &fp ;
+  listFp.push_back(&fp);
 }
 
 void
@@ -107,29 +107,6 @@ vpProjectionDisplay::close()
 {
 
 }
-/*
-
-void
-vpProjectionDisplay::display(const vpHomogeneousMatrix &cextMo,
-			     const vpHomogeneousMatrix &cMo,
-			     const vpCameraParameters &cam,
-			     const vpColor color,
-			     const int select)
-{
-  if (select & vpProjectionDisplay::internalView())
-    for (listFp.front() ; !listFp.outside() ; listFp.next() )
-    {
-      vpForwardProjection *fp = listFp.value() ;
-      fp->display(Icam,cMo,cam,color) ;
-    }
-
-  if (select & vpProjectionDisplay::externalView())
-    for (listFp.front() ; !listFp.outside() ; listFp.next() )
-    {
-      vpForwardProjection *fp = listFp.value() ;
-      fp->display(Iext,cextMo,cam,color) ;
-    }
-}*/
 
 void
 vpProjectionDisplay::display(vpImage<unsigned char> &I,
@@ -140,9 +117,9 @@ vpProjectionDisplay::display(vpImage<unsigned char> &I,
 			     const bool &displayTraj)
 {
 
-    for (listFp.front() ; !listFp.outside() ; listFp.next() )
+  for (std::list<vpForwardProjection *>::const_iterator it = listFp.begin() ; it != listFp.end(); ++it )
     {
-      vpForwardProjection *fp = listFp.value() ;
+      vpForwardProjection *fp = *it ;
       fp->display(I,cextMo,cam, color) ;
     }
 
