@@ -23,6 +23,9 @@ ViSP 2.6.1 (under development)
        vpRobotSimulator, vpFFMPEG, vpBSpline
      - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
+     - When it was possible without braking the backward compatibilty std::list was 
+       introduced instead of vpList. Some of the functions that use vpList are
+       now deprecated. 
   - Build
      - Set the build type by default to release
      - Improve the usage of debug versus release third-party libraries
