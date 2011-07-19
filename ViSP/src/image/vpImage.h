@@ -1349,10 +1349,10 @@ vpImage<Type>::sub(vpImage<Type>* B, vpImage<Type>* C)
     throw(vpException(vpException::memoryAllocationError,
                       "Images are not allocated in vpImage<>::sub()")) ;
   }
-  if ( (this->getWidth() != B.getWidth())
-    || (this->getHeight() != B.getHeight())
-    || (this->getWidth() != C.getWidth())
-    || (this->getHeight() != C.getHeight()))
+  if ( (this->getWidth() != B->getWidth())
+    || (this->getHeight() != B->getHeight())
+    || (this->getWidth() != C->getWidth())
+    || (this->getHeight() != C->getHeight()))
   {
     vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
     throw(vpException(vpException::memoryAllocationError,
