@@ -67,7 +67,6 @@ ENDFOREACH(source)
 # To run these tests automaticaly using the crontab under Unix or the task
 # manager under windows, we have to add the -d option to turn off the display
 # of acquired images
-ADD_TEST(grab1394         grab1394 -d)
 ADD_TEST(grab1394Two      grab1394Two -d)
 ADD_TEST(grabDisk         grabDisk -d)
 ADD_TEST(grabV4l2         grabV4l2 -d)
