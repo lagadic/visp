@@ -245,20 +245,15 @@ vpMbtHiddenFaces::~vpMbtHiddenFaces()
 //  cout << "Deleting Hidden Face struxture "<<endl  ;
   vpMbtPolygon *p ;
 
-  Lpol.front() ;
-  while (!Lpol.outside())
-  {
-    p = Lpol.value() ;
-    if (p!=NULL) 
-    {
+  for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
+    p = *it;
+    if (p!=NULL){
       delete p ;
     }
     p = NULL ;
-
-    Lpol.next() ;
   }
 
-  Lpol.kill() ;
+  Lpol.clear() ;
 }
 
 /*!
@@ -275,7 +270,7 @@ vpMbtHiddenFaces::addPolygon(vpMbtPolygon *p)
   p_new->isvisible = p->isvisible;
   for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];
-  Lpol += p_new ;
+  Lpol.push_back(p_new);
 }
 
 
@@ -292,13 +287,10 @@ vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
   unsigned int nbvisiblepolygone = 0 ;
   vpMbtPolygon *p ;
 
-  Lpol.front();
-  while (!Lpol.outside())
-  {
-    p = Lpol.value();
-
-    if (p->isVisible(cMo)) nbvisiblepolygone++;
-    Lpol.next() ;
+  for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
+    p = *it;
+    if (p->isVisible(cMo))
+      nbvisiblepolygone++;
   }
   return nbvisiblepolygone ;
 }
@@ -314,12 +306,9 @@ bool
 vpMbtHiddenFaces::isVisible(const int index)
 {
   vpMbtPolygon *p ;
-  Lpol.front() ;
-  while (!Lpol.outside())
-  {
-    p = Lpol.value() ;
+  for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
+    p = *it;
     if (p->getIndex() == index) return p->isVisible() ;
-    Lpol.next() ;
   }
   return false ;
 }
@@ -335,12 +324,9 @@ bool
 vpMbtHiddenFaces::isAppearing(const int index)
 {
   vpMbtPolygon *p ;
-  Lpol.front() ;
-  while (!Lpol.outside())
-  {
-    p = Lpol.value() ;
+  for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
+    p = *it;
     if (p->getIndex() == index) return p->isAppearing() ;
-    Lpol.next() ;
   }
   return false ;
 }
@@ -353,20 +339,15 @@ vpMbtHiddenFaces::reset()
 {
   vpMbtPolygon *p ;
 
-  Lpol.front() ;
-  while (!Lpol.outside())
-  {
-    p = Lpol.value() ;
-    if (p!=NULL) 
-    {
+  for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
+    p = *it;
+    if (p!=NULL){
       delete p ;
     }
     p = NULL ;
-
-    Lpol.next() ;
   }
 
-  Lpol.kill() ;  
+  Lpol.clear();
 }
 
 #endif
