@@ -89,7 +89,7 @@
 void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
-Test auto detection of dots using vpDot2.\n\
+Test of ellipse tracking using vpMeEllipse.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-c] [-h]\n", name);
