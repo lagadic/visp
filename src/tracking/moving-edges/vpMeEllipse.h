@@ -50,6 +50,7 @@
 
 #include <math.h>
 
+#include <list>
 
 #include <visp/vpConfig.h>
 
@@ -286,7 +287,7 @@ protected:
   //! Value of sin(e).
   double se;
   //! Stores the value of the \f$ alpha \f$ angle for each vpMeSite.
-  vpList<double> angle;
+  std::list<double> angle;
   //! Surface
   double m00;
   //! Second order central moments
