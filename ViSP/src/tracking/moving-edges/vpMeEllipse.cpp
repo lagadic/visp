@@ -144,7 +144,7 @@ vpMeEllipse::~vpMeEllipse()
   vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << std::endl ;
 
   list.kill();
-  angle.kill();
+  angle.clear();
 
   vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << std::endl ;
 }
@@ -188,8 +188,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   list.front();
   list.kill();
 
-  angle.front();
-  angle.kill();
+  angle.clear();
 
   // sample positions
 
@@ -230,7 +229,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
         vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
       }
       list.addRight(pix);
-      angle.addRight(k);
+      angle.push_back(k);
     }
     k += incr ;
 
@@ -427,19 +426,17 @@ vpMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
   list.front();
-  angle.front();
-  while(!list.outside())
-  {
+  for(std::list<double>::iterator it=angle.begin(); it!=angle.end(); ){
     vpMeSite s = list.value() ;//current reference pixel
     if (s.suppress != 0)
     {
       list.suppress() ;
-      angle.suppress();
+      it = angle.erase(it);
     }
     else
     {
       list.next() ;
-      angle.next();
+      ++it;
     }
   }
 }
@@ -493,7 +490,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
         if (P.suppress ==0)
         {
           list += P ;
-          angle += k;
+          angle.push_back(k);
           if (vpDEBUG_ENABLE(3)) {
             ip.set_i( P.i );
             ip.set_j( P.j );
@@ -529,21 +526,21 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
         if (P.suppress ==0)
         {
-	  list += P ;
-          angle += k;
-	  if (vpDEBUG_ENABLE(3)) {
-	    ip.set_i( P.i );
-	    ip.set_j( P.j );
+          list += P ;
+          angle.push_back(k);
+          if (vpDEBUG_ENABLE(3)) {
+            ip.set_i( P.i );
+            ip.set_j( P.j );
 
-	    vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
-	  }
+            vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+          }
         }
         else {
-	  if (vpDEBUG_ENABLE(3)) {
-	    ip.set_i( P.i );
-	    ip.set_j( P.j );
-	    vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
-	  }
+          if (vpDEBUG_ENABLE(3)) {
+            ip.set_i( P.i );
+            ip.set_j( P.j );
+            vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+          }
         }
       }
     }
@@ -572,12 +569,12 @@ vpMeEllipse::setExtremities()
 
   // Loop through list of sites to track
   list.front();
-  angle.front();
+  std::list<double>::const_iterator itAngle = angle.begin();
 
   while(!list.outside())
   {
     vpMeSite s = list.value() ;//current reference pixel
-    double alpha = angle.value();
+    double alpha = *itAngle;
     if (alpha < alphamin)
     {
       alphamin = alpha;
@@ -592,7 +589,7 @@ vpMeEllipse::setExtremities()
       jmax = s.jfloat ;
     }
     list.next() ;
-    angle.next();
+    ++itAngle;
   }
 
   alpha1 = alphamin;
