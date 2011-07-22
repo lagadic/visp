@@ -222,9 +222,9 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     //! The moving edges parameters. 
     vpMe  me;
     //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
-    std::vector< vpList< vpMbtDistanceLine*> > lines;
+    std::vector< std::list< vpMbtDistanceLine*> > lines;
     //! Vector of the tracked cylinders.
-    std::vector< vpList < vpMbtDistanceCylinder*> > cylinders;
+    std::vector< std::list< vpMbtDistanceCylinder*> > cylinders;
 
     //! Index of the polygon to add, and total number of polygon extracted so far. 
     unsigned int nline;
@@ -336,16 +336,12 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
       if(scales[i]){
-        lines[i].front() ;
-        while (!lines[i].outside()){
-	  lines[i].value()->setCameraParameters(cam);
-          lines[i].next();
+        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+          (*it)->setCameraParameters(cam);
         }
-     
-        cylinders[i].front();
-        while (!cylinders[i].outside()){
-	  cylinders[i].value()->setCameraParameters(cam);
-          cylinders[i].next();
+
+        for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
+          (*it)->setCameraParameters(cam);
         }
       }
     }

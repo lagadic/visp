@@ -51,6 +51,8 @@
 #ifndef vpMbtDistanceLine_HH
 #define vpMbtDistanceLine_HH
 
+#include <list>
+
 #include <visp/vpConfig.h>
 
 #include <visp/vpPoint.h>
@@ -97,7 +99,7 @@ class VISP_EXPORT vpMbtDistanceLine
     //! Pointer to the list of faces
     vpMbtHiddenFaces *hiddenface;
     //! Index of the faces which contain the line
-    vpList<int> Lindex_polygon;
+    std::list<int> Lindex_polygon;
     //! Indicates if the line is visible or not
     bool isvisible;
     
@@ -203,7 +205,7 @@ class VISP_EXPORT vpMbtDistanceLine
   private:
     void project(const vpHomogeneousMatrix &cMo);
     void setFace( vpMbtHiddenFaces *_hiddenface) { hiddenface = _hiddenface ; }
-    void belongToPolygon(int index) { Lindex_polygon += index ; }
+    void belongToPolygon(int index) { Lindex_polygon.push_back(index); }
 
 } ;
 

@@ -51,10 +51,11 @@
 #ifndef vpMbtHiddenFace_HH
 #define vpMbtHiddenFace_HH
 
+#include <list>
+
 #include <visp/vpConfig.h>
 
 #include <visp/vpPoint.h>
-#include <visp/vpList.h>
 
 /*!
   \class vpMbtPolygon
@@ -102,7 +103,7 @@ class VISP_EXPORT vpMbtPolygon
 class VISP_EXPORT vpMbtHiddenFaces
 {
   private:
-    vpList<vpMbtPolygon *> Lpol ;
+  std::list<vpMbtPolygon *> Lpol ;
   public :
     vpMbtHiddenFaces() ;
     ~vpMbtHiddenFaces() ;
@@ -111,8 +112,8 @@ class VISP_EXPORT vpMbtHiddenFaces
     bool isVisible(const int index) ;
     bool isAppearing(const int index);
     void reset();
-    
-    vpList<vpMbtPolygon *>& getPolygon() { return Lpol;}
+
+    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
 } ;
 
 #endif
