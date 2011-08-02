@@ -350,9 +350,9 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   }
 
   // Update the number of features
-  nbFeaturel1 = meline1->list.nbElement();
-  nbFeaturel2 = meline2->list.nbElement();
-  nbFeature = meline1->list.nbElement()+meline2->list.nbElement();
+  nbFeaturel1 = meline1->list.size();
+  nbFeaturel2 = meline2->list.size();
+  nbFeature = meline1->list.size()+meline2->list.size();
 }
 
 
@@ -436,9 +436,9 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
   }
 
   // Update the numbers of features
-  nbFeaturel1 = meline1->list.nbElement();
-  nbFeaturel2 = meline2->list.nbElement();
-  nbFeature = meline1->list.nbElement()+meline2->list.nbElement();
+  nbFeaturel1 = meline1->list.size();
+  nbFeaturel2 = meline2->list.size();
+  nbFeature = meline1->list.size()+meline2->list.size();
 }
 
 
@@ -601,10 +601,8 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meline1 != NULL)
   {
-    meline1->list.front();
-    while (!meline1->list.outside())
-    {
-      vpMeSite pix = meline1->list.value();
+    for(std::list<vpMeSite>::const_iterator it=meline1->list.begin(); it!=meline1->list.end(); ++it){
+      vpMeSite pix = *it;
       if (pix.suppress == 0)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
       if (pix.suppress == 1)
@@ -613,15 +611,12 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
       if (pix.suppress == 4)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
-      meline1->list.next();
     }
   }
   if (meline2 != NULL)
   {
-    meline2->list.front();
-    while (!meline2->list.outside())
-    {
-      vpMeSite pix = meline2->list.value();
+    for(std::list<vpMeSite>::const_iterator it=meline2->list.begin(); it!=meline2->list.end(); ++it){
+      vpMeSite pix = *it;
       if (pix.suppress == 0)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
       if (pix.suppress == 1)
@@ -630,7 +625,6 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
       if (pix.suppress == 4)
         vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
-      meline2->list.next();
     }
   }
 }
@@ -641,11 +635,11 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCylinder::initInteractionMatrixError()
 {
-    L.resize(meline1->list.nbElement()+meline2->list.nbElement(),6) ;
-    error.resize(meline1->list.nbElement()+meline2->list.nbElement()) ;
-    nbFeaturel1 = meline1->list.nbElement();
-    nbFeaturel2 = meline2->list.nbElement();
-    nbFeature = meline1->list.nbElement()+meline2->list.nbElement() ;
+    L.resize(meline1->list.size()+meline2->list.size(),6) ;
+    error.resize(meline1->list.size()+meline2->list.size()) ;
+    nbFeaturel1 = meline1->list.size();
+    nbFeaturel2 = meline2->list.size();
+    nbFeature = meline1->list.size()+meline2->list.size() ;
 }
 
 /*!
@@ -700,12 +694,10 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
 
     double x,y ;
     vpMeSite p ;
-    meline1->list.front() ;
     unsigned int j =0 ;
-    while (!meline1->list.outside())
-    {
-      x = (double)meline1->list.value().j ;
-      y = (double)meline1->list.value().i ;
+    for(std::list<vpMeSite>::const_iterator it=meline1->list.begin(); it!=meline1->list.end(); ++it){
+      x = (double)it->j;
+      y = (double)it->i;
 
       x = (x-xc)*mx ;
       y = (y-yc)*my ;
@@ -720,18 +712,14 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       }
       error[j] = rho1 - ( x*co1 + y*si1) ;
 
-      if (disp) vpDisplay::displayCross(I, meline1->list.value().i, meline1->list.value().j, (unsigned int)(error[j]*100), vpColor::orange,1);
+      if (disp) vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j]*100), vpColor::orange,1);
 
       j++;
-
-      meline1->list.next() ;
     }
 
-    meline2->list.front() ;
-    while (!meline2->list.outside())
-    {
-	    x = (double)meline2->list.value().j ;
-	    y = (double)meline2->list.value().i ;
+    for(std::list<vpMeSite>::const_iterator it=meline2->list.begin(); it!=meline2->list.end(); ++it){
+      x = (double)it->j;
+      y = (double)it->i;
 
 	    x = (x-xc)*mx ;
 	    y = (y-yc)*my ;
@@ -746,11 +734,9 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       }
       error[j] = rho2 - ( x*co2 + y*si2) ;
 
-      if (disp) vpDisplay::displayCross(I,meline2->list.value().i,meline2->list.value().j, (unsigned int)(error[j]*100),vpColor::red,1);
+      if (disp) vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j]*100),vpColor::red,1);
 
       j++;
-
-      meline2->list.next() ;
     }
 }
 

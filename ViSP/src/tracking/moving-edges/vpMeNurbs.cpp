@@ -181,10 +181,10 @@ vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePo
   return index;
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 //Check if the list of vpImagePoint contains a distant point of less tha 4 pixels
 //from the center of the sub image (ie the point (15,15). 
-bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
+vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
 {
   ip_edges_list->front();
   double dist;
@@ -197,6 +197,23 @@ bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
       return true;
     }
     ip_edges_list->next();
+  }
+  return false;
+}
+#endif
+
+//Check if the list of vpImagePoint contains a distant point of less tha 4 pixels
+//from the center of the sub image (ie the point (15,15).
+bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
+{
+  double dist;
+  for(std::list<vpImagePoint>::const_iterator it=ip_edges_list->begin(); it!=ip_edges_list->end(); ++it){
+    vpImagePoint iP = *it;
+    dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15,15));
+    if (dist <= 16)
+    {
+      return true;
+    }
   }
   return false;
 }
@@ -326,8 +343,7 @@ vpMeNurbs::sample(const vpImage<unsigned char>& I)
   double step = 1.0 / (double)me->points_to_track;
 
   // Delete old list
-  list.front();
-  list.kill();
+  list.clear();
 
   vpImagePoint ip;
   double u = 0.0;
@@ -346,7 +362,7 @@ vpMeNurbs::sample(const vpImage<unsigned char>& I)
       pix.init(pt[0].get_i(), pt[0].get_j(), delta) ;
       pix.setDisplay(selectDisplay) ;
 
-      list.addRight(pix);
+      list.push_back(pix);
       pt_1 = pt[0];
     }
     u = u+step;
@@ -364,18 +380,15 @@ vpMeNurbs::sample(const vpImage<unsigned char>& I)
 void
 vpMeNurbs::suppressPoints()
 {
-  // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ){
+    vpMeSite s = *it;//current reference pixel
 
     if (s.suppress != 0)
     {
-      list.suppress() ;
+      it = list.erase(it);
     }
     else
-      list.next() ;
+      ++it;
   }
 }
 
@@ -390,14 +403,14 @@ vpMeNurbs::updateDelta()
   double u = 0.0;
   double d = 1e6;
   double d_1 = 1e6;
-  list.front();
+  std::list<vpMeSite>::iterator it=list.begin();
   
   vpImagePoint Cu;
   vpImagePoint* der = NULL;
   double step = 0.01;
-  while (u < 1 && !list.outside())
+  while (u < 1 && it!=list.end())
   {
-    vpMeSite s = list.value();
+    vpMeSite s = *it;
     vpImagePoint pt(s.i,s.j);
     while (d <= d_1 && u<1)
     {
@@ -410,12 +423,12 @@ vpMeNurbs::updateDelta()
     u-=step;
     if (der != NULL) delete[] der;
     der = nurbs.computeCurveDersPoint(u, 1);
-      vpImagePoint toto(der[0].get_i(),der[0].get_j());
+      //vpImagePoint toto(der[0].get_i(),der[0].get_j());
       //vpDisplay::displayCross(I,toto,4,vpColor::red);
     
     s.alpha = computeDelta(der[1].get_i(),der[1].get_j());
-    list.modify(s);
-    list.next();
+    *it = s;
+    ++it;
     d = 1e6;
     d_1 = 1.5e6;
   }
@@ -452,7 +465,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     vpMeSite P ;
     
     //Init vpMeSite
-    P.init(begin[0].get_i(), begin[0].get_j(), (list.firstValue()).alpha, 0, (list.firstValue()).mask_sign) ;
+    P.init(begin[0].get_i(), begin[0].get_j(), (list.front()).alpha, 0, (list.front()).mask_sign) ;
     P.setDisplay(selectDisplay) ;
 
     //Set the range
@@ -479,13 +492,12 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 
         if (P.suppress ==0)
         {
-	  list.front();
-	  list.addLeft(P) ;
-	  beginPtAdded = true;
-	  pt_max = pt;
-	  if (vpDEBUG_ENABLE(3)) {
-	    vpDisplay::displayCross(I, pt, 5, vpColor::blue) ;
-	  }
+          list.push_front(P) ;
+          beginPtAdded = true;
+          pt_max = pt;
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, pt, 5, vpColor::blue) ;
+          }
         }
         else {
 	  if (vpDEBUG_ENABLE(3)) {
@@ -497,7 +509,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     
     if (!beginPtAdded) beginPtFound++;
 
-    P.init(end[0].get_i(), end[0].get_j(), (list.lastValue()).alpha, 0, (list.lastValue()).mask_sign);
+    P.init(end[0].get_i(), end[0].get_j(), (list.back()).alpha, 0, (list.back()).mask_sign);
     P.setDisplay(selectDisplay);
     
     bool endPtAdded = false;
@@ -518,12 +530,11 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 
         if (P.suppress ==0)
         {
-	  list.end();
-	  list.addRight(P) ;
-	  endPtAdded = true;
-	  if (vpDEBUG_ENABLE(3)) {
-	    vpDisplay::displayCross(I, pt, 5, vpColor::blue) ;
-	  }
+          list.push_back(P) ;
+          endPtAdded = true;
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, pt, 5, vpColor::blue) ;
+          }
         }
         else {
 	  if (vpDEBUG_ENABLE(3)) {
@@ -537,8 +548,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   }
   else
   {
-    list.front();
-    list.suppress();
+    list.pop_front();
   }
   if(begin != NULL) delete[] begin;
   if(end != NULL) delete[] end;
@@ -565,9 +575,9 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
 #endif
 {
 #ifdef VISP_HAVE_OPENCV
-  vpMeSite pt = list.firstValue();
+  vpMeSite pt = list.front();
   vpImagePoint firstPoint(pt.ifloat,pt.jfloat);
-  pt = list.lastValue();
+  pt = list.back();
   vpImagePoint lastPoint(pt.ifloat,pt.jfloat);
   if (beginPtFound >=3 && farFromImageEdge(I, firstPoint))
   {
@@ -608,7 +618,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     
     firstBorder = findFirstBorder(Isub, lastPtInSubIm-topLeft);
     
-    vpList<vpImagePoint> ip_edges_list;
+    std::list<vpImagePoint> ip_edges_list;
     if (firstBorder != vpImagePoint(-1, -1))
     {
       unsigned int dir;
@@ -626,85 +636,74 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       else if (std::fabs(fj-w) <= std::fabs(vpMath::maximum(fj,w))*std::numeric_limits<double>::epsilon()) dir = 6;
       computeFreemanChainElement(Isub, firstBorder , dir);
       unsigned int firstDir = dir;
-      ip_edges_list.addRight( firstBorder );
+      ip_edges_list.push_back( firstBorder );
       vpImagePoint border(firstBorder);
       vpImagePoint dBorder;
       do 
       {
-	computeFreemanParameters(dir, dBorder);
-	border = border + dBorder;	
-	vpDisplay::displayPoint(I, border+topLeft, vpColor::orange) ;
+        computeFreemanParameters(dir, dBorder);
+        border = border + dBorder;
+        vpDisplay::displayPoint(I, border+topLeft, vpColor::orange) ;
 
-	ip_edges_list.addRight( border );
-	
-	computeFreemanChainElement(Isub, border , dir);
+        ip_edges_list.push_back( border );
+
+        computeFreemanChainElement(Isub, border , dir);
       } while( (border != firstBorder || dir != firstDir) && isInImage(Isub,border) );
     }
     
     if (findCenterPoint(&ip_edges_list))
     {
-      list.front();
-      vpMeSite s;
-      while(!list.outside())
-      {
-	s = list.value() ;
-	vpImagePoint iP(s.ifloat,s.jfloat);
-	if (inRectangle(iP,rect))
-	  list.suppress() ;
-	else
-	  break;
+      for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); /*++it*/){
+        vpMeSite s = *it;
+        vpImagePoint iP(s.ifloat,s.jfloat);
+        if (inRectangle(iP,rect))
+          it = list.erase(it) ;
+        else
+          break;
       }
-      
-      list.front();
-      ip_edges_list.front();
+
+      std::list<vpMeSite>::iterator itList=list.begin();
       double convlt;
       double delta = 0;
       int nbr = 0;
-      vpList<vpMeSite> addedPt;
-      while (!ip_edges_list.outside())
-      {
-	s = list.value();
-	vpImagePoint iPtemp = ip_edges_list.value() + topLeft;
-	vpMeSite pix;
-	pix.init(iPtemp.get_i(), iPtemp.get_j(), delta);
-	dist = vpMeSite::sqrDistance(s,pix);
-	if (dist >= vpMath::sqr(me->sample_step)/*25*/)
-	{
-	  bool exist = false;
-	  addedPt.front();
-	  while (!addedPt.outside())
-	  {
-	    dist = vpMeSite::sqrDistance(pix, addedPt.value());
-	    if (dist < vpMath::sqr(me->sample_step)/*25*/)
-	      exist = true;
-	    addedPt.next();
-	  }
-	  if (!exist)
-	  {
-	    findAngle(I, iPtemp, me, delta, convlt);
-	    pix.init(iPtemp.get_i(), iPtemp.get_j(), delta, convlt);
-	    pix.setDisplay(selectDisplay);
-	    list.addLeft(pix);
-	    addedPt.front();
-	    addedPt.lastValue();
-	    addedPt.addRight(pix);
-	    nbr++;
-	    //std::cout << ip_edges_list.value() << std::endl;
-	  }
-	  
-	}
-	ip_edges_list.next();
+      std::list<vpMeSite> addedPt;
+      for(std::list<vpImagePoint>::const_iterator itEdges=ip_edges_list.begin(); itEdges!=ip_edges_list.end(); ++itEdges){
+        vpMeSite s = *itList;
+        vpImagePoint iPtemp = *itEdges + topLeft;
+        vpMeSite pix;
+        pix.init(iPtemp.get_i(), iPtemp.get_j(), delta);
+        dist = vpMeSite::sqrDistance(s,pix);
+        if (dist >= vpMath::sqr(me->sample_step)/*25*/)
+        {
+          bool exist = false;
+          for(std::list<vpMeSite>::const_iterator itAdd=addedPt.begin(); itAdd!=addedPt.end(); ++itAdd){
+            dist = vpMeSite::sqrDistance(pix, *itAdd);
+            if (dist < vpMath::sqr(me->sample_step)/*25*/)
+              exist = true;
+          }
+          if (!exist)
+          {
+            findAngle(I, iPtemp, me, delta, convlt);
+            pix.init(iPtemp.get_i(), iPtemp.get_j(), delta, convlt);
+            pix.setDisplay(selectDisplay);
+            --itList;
+            list.insert(itList, pix);
+            ++itList;
+            addedPt.push_front(pix);
+            nbr++;
+          }
+        }
       }
-      
+
       unsigned int  memory_range = me->range ;
       me->range = 3 ;
-      list.front();
+      std::list<vpMeSite>::iterator itList2=list.begin();
       for (int j = 0; j < nbr; j++)
       {
-	s = list.value();
+        vpMeSite s = *itList2;
         s.track(I,me,false);
-	list.modify(s);
-	list.next();
+        *itList2 = s;
+        ++itList2;
       }
       me->range = memory_range;
     }
@@ -753,7 +752,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     
     firstBorder = findFirstBorder(Isub, lastPtInSubIm-topLeft);
     
-    vpList<vpImagePoint> ip_edges_list;
+    std::list<vpImagePoint> ip_edges_list;
     if (firstBorder != vpImagePoint(-1, -1))
     {
       unsigned int dir;
@@ -773,86 +772,78 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
 
       computeFreemanChainElement(Isub, firstBorder , dir);
       unsigned int firstDir = dir;
-      ip_edges_list.addRight( firstBorder );
+      ip_edges_list.push_back( firstBorder );
       vpImagePoint border(firstBorder);
       vpImagePoint dBorder;
       do 
       {
-	computeFreemanParameters(dir, dBorder);
-	border = border + dBorder;
-	vpDisplay::displayPoint(I, border+topLeft, vpColor::orange) ;
+        computeFreemanParameters(dir, dBorder);
+        border = border + dBorder;
+        vpDisplay::displayPoint(I, border+topLeft, vpColor::orange) ;
 
-	ip_edges_list.addRight( border );
-	
-	computeFreemanChainElement(Isub, border , dir);
+        ip_edges_list.push_back( border );
+
+        computeFreemanChainElement(Isub, border , dir);
       } while( (border != firstBorder || dir != firstDir) && isInImage(Isub,border) );
     }
     
     if (findCenterPoint(&ip_edges_list))
     {
-      list.end();
+//      list.end();
       vpMeSite s;
-      while(!list.outside())
+      while(true)//{//!list.outside())
       {
-	s = list.value() ;
-	vpImagePoint iP(s.ifloat,s.jfloat);
-	if (inRectangle(iP,rect))
-	{
-	  list.suppress() ;
-	  list.end();
-	}
-	else
-	  break;
+        s = list.back();//list.value() ;
+        vpImagePoint iP(s.ifloat,s.jfloat);
+        if (inRectangle(iP,rect))
+        {
+          list.erase(list.end()) ;
+//          list.end();
+        }
+        else
+          break;
       }
-      
-      list.end();
-      ip_edges_list.front();
+
+      std::list<vpMeSite>::iterator itList = list.end();
       double convlt;
       double delta;
       int nbr = 0;
-      vpList<vpMeSite> addedPt;
-      while (!ip_edges_list.outside())
-      {
-	s = list.value();
-	vpImagePoint iPtemp = ip_edges_list.value() + topLeft;
-	vpMeSite pix;
-	pix.init(iPtemp.get_i(), iPtemp.get_j(), 0);
-	dist = vpMeSite::sqrDistance(s,pix);
-	if (dist >= vpMath::sqr(me->sample_step))
-	{
-	  bool exist = false;
-	  addedPt.front();
-	  while (!addedPt.outside())
-	  {
-	    dist = vpMeSite::sqrDistance(pix, addedPt.value());
-	    if (dist < vpMath::sqr(me->sample_step))
-	      exist = true;
-	    addedPt.next();
-	  }
-	  if (!exist)
-	  {
-	    findAngle(I, iPtemp, me, delta, convlt);
-	    pix.init(iPtemp.get_i(), iPtemp.get_j(), delta, convlt);
-	    pix.setDisplay(selectDisplay);
-	    list.addRight(pix);
-	    addedPt.end();
-	    //addedPt.lastValue();
-	    addedPt.addRight(pix);
-	    nbr++;
-	  }
-	}
-	ip_edges_list.next();
+      std::list<vpMeSite> addedPt;
+      for(std::list<vpImagePoint>::const_iterator itEdges=ip_edges_list.begin(); itEdges!=ip_edges_list.end(); ++itEdges){
+        s = *itList;
+        vpImagePoint iPtemp = *itEdges + topLeft;
+        vpMeSite pix;
+        pix.init(iPtemp.get_i(), iPtemp.get_j(), 0);
+        dist = vpMeSite::sqrDistance(s,pix);
+        if (dist >= vpMath::sqr(me->sample_step))
+        {
+          bool exist = false;
+          for(std::list<vpMeSite>::const_iterator itAdd=addedPt.begin(); itAdd!=addedPt.end(); ++itAdd){
+            dist = vpMeSite::sqrDistance(pix, *itAdd);
+            if (dist < vpMath::sqr(me->sample_step))
+              exist = true;
+          }
+          if (!exist)
+          {
+            findAngle(I, iPtemp, me, delta, convlt);
+            pix.init(iPtemp.get_i(), iPtemp.get_j(), delta, convlt);
+            pix.setDisplay(selectDisplay);
+            list.push_back(pix);
+            addedPt.push_back(pix);
+            nbr++;
+          }
+        }
       }
       
       unsigned int  memory_range = me->range ;
       me->range = 3 ;
-      list.end();
+      std::list<vpMeSite>::iterator itList2 = list.end();
       for (int j = 0; j < nbr; j++)
       {
-	s = list.value();
+        vpMeSite s = *itList2;
         s.track(I,me,false);
-	list.modify(s);
-	list.previous();
+        *itList2 = s;
+        --itList2;
       }
       me->range = memory_range;
     }
@@ -905,15 +896,18 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
   
   int n = (int)numberOfSignal();
   
-  list.front();
-  
+//  list.front();
+  std::list<vpMeSite>::iterator it=list.begin();
+  std::list<vpMeSite>::iterator itNext=list.begin();
+  ++itNext;
+
   unsigned int range_tmp = me->range;
   me->range=2;
 
-  while(!list.nextOutside() && n <= me->points_to_track)
+  while(itNext!=list.end() && n <= me->points_to_track)
   {
-    vpMeSite s = list.value() ;//current reference pixel
-    vpMeSite s_next = list.nextValue() ;//current reference pixel
+    vpMeSite s = *it;//current reference pixel
+    vpMeSite s_next = *itNext;//current reference pixel
     
     double d = vpMeSite::sqrDistance(s,s_next);
     if(d > 4 * vpMath::sqr(me->sample_step) && d < 1600)
@@ -967,14 +961,18 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 	    pix.track(I,me,false);
 	    if (pix.suppress == 0)
 	    {
-	      list.addRight(pix);
+        ++it;
+        list.insert(it, pix);
 	      iP_1 = iP[0];
 	    }
 	  }
         }
       }
     }
-    list.next();
+//    list.next();
+    ++it;
+    itNext=it;
+    ++itNext;
   }
   me->range=range_tmp;
   if (iP!=NULL) delete[] iP;
@@ -989,6 +987,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 void
 vpMeNurbs::supressNearPoints()
 {
+#if 0
   // Loop through list of sites to track
   list.front();
   while(!list.nextOutside())
@@ -1006,6 +1005,29 @@ vpMeNurbs::supressNearPoints()
     else
       list.next() ;
   }
+#endif
+  std::list<vpMeSite>::const_iterator it=list.begin();
+  std::list<vpMeSite>::iterator itNext=list.begin();
+  ++itNext;
+  for(;itNext!=list.end();){
+    vpMeSite s = *it;//current reference pixel
+    vpMeSite s_next = *itNext;//current reference pixel
+
+    if(vpMeSite::sqrDistance(s,s_next) < vpMath::sqr(me->sample_step)){
+      s_next.suppress = 4;
+      *itNext = s_next;
+      ++it;
+      ++itNext;
+      if(itNext!=list.end()){
+        ++it;
+        ++itNext;
+      }
+    }
+    else{
+      ++it;
+      ++itNext;
+    }
+  }
 }
 
 
@@ -1019,7 +1041,7 @@ vpMeNurbs::track(const vpImage<unsigned char> &I)
 {
   //Tracking des vpMeSites
   vpMeTracker::track(I);
-  
+
   //Suppress points which are too close to each other
   supressNearPoints();
   

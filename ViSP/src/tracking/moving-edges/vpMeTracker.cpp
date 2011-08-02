@@ -44,6 +44,8 @@
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
+#include <algorithm>
+
 #include <visp/vpMeTracker.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpColor.h>
@@ -110,8 +112,7 @@ vpMeTracker::~vpMeTracker()
 {
   if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::~vpMeTracker() " << std::endl ;
 
-  if(!(list.empty()))
-    list.kill();
+  list.clear();
 
   if (DEBUG_LEVEL1) std::cout << "end vpMeTracker::~vpMeTracker() " << std::endl ;
 }
@@ -129,27 +130,24 @@ vpMeTracker::operator = (vpMeTracker& p)
   return *this;
 }
 
+static bool isSuppressZero(const vpMeSite& P){
+  return (P.suppress == 0);
+}
+
 unsigned int
 vpMeTracker::numberOfSignal()
 {
   unsigned int number_signal=0;
 
   // Loop through all the points tracked from the contour
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite P = list.value();
-    if(P.suppress == 0) number_signal++;
-    list.next();
-  }
-
+  number_signal = static_cast<unsigned int>(std::count_if(list.begin(), list.end(), isSuppressZero));
   return number_signal;
 }
 
 unsigned int
 vpMeTracker::totalNumberOfSignal()
 {
-  return list.nbElement();
+  return list.size();
 
 }
 
@@ -194,23 +192,21 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
   vpImagePoint ip1, ip2;
   
   // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite refp = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite refp = *it;//current reference pixel
 
     d++ ;
     // If element hasn't been suppressed
     if(refp.suppress==0)
     {
       try {
-		refp.track(I,me,false);
+        refp.track(I,me,false);
       }
       catch(...)
       {
-		// EM verifier quel signal est de sortie !!!
-		vpERROR_TRACE("Error caught") ;
-		throw ;
+        // EM verifier quel signal est de sortie !!!
+        vpERROR_TRACE("Error caught") ;
+        throw ;
       }
       if(refp.suppress==0) nGoodElement++;
     }
@@ -222,16 +218,15 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
       a = refp.i_1 - refp.i ;
       b = refp.j_1 - refp.j ;
       if(refp.suppress==0) {
-		ip1.set_i( refp.i );
-		ip1.set_j( refp.j );
-		ip2.set_i( refp.i+a );
-		ip2.set_j( refp.j+b );
-		vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
+        ip1.set_i( refp.i );
+        ip1.set_j( refp.j );
+        ip2.set_i( refp.i+a );
+        ip2.set_j( refp.j+b );
+        vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
       }
     }
 
-    list.modify(refp) ;
-    list.next() ;
+    *it = refp;
   }
 
   /*
@@ -268,11 +263,11 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
   if (DEBUG_LEVEL1)
     std::cout << "begin  vpMeTracker::Track():" << std::endl ;
 
-  if (list.nbElement()==0)
+  if (list.size()==0)
   {
     if (DEBUG_LEVEL1)
     vpERROR_TRACE("Error Tracking: only %d "
-		 "pixels when entered the function ",list.nbElement()) ;
+     "pixels when entered the function ",list.size()) ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "too few pixel to track")) ;
 
@@ -282,10 +277,8 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
   nGoodElement=0;
   //  int d =0;
   // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite s = *it;//current reference pixel
 
     //    d++ ;
     // If element hasn't been suppressed
@@ -322,10 +315,8 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 	}
 
       }
-      list.modify(s) ;
+      *it = s;
     }
-    list.next() ;
-
   }
 
   if (DEBUG_LEVEL1)
@@ -340,15 +331,12 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
   if (DEBUG_LEVEL1)
   {
     std::cout <<"begin vpMeTracker::displayList() " << std::endl ;
-    std::cout<<" There are "<<list.nbElement()<< " sites in the list " << std::endl ;
+    std::cout<<" There are "<<list.size()<< " sites in the list " << std::endl ;
   }
   vpImagePoint ip;
 
-  list.front();
-
-  while (!list.outside())
-  {
-    vpMeSite p = list.value() ;
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite p = *it;
 
     if(p.suppress == 1) {
       ip.set_i( p.i );
@@ -370,11 +358,7 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
       ip.set_j( p.j);
       vpDisplay::displayCross(I, ip, 2, vpColor::red) ; // OK
     }
-
-    list.next() ;
   }
-
-  list.front() ;
 
   if (DEBUG_LEVEL1)
   {
@@ -386,11 +370,8 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
 void
 vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w, unsigned int &index_w)
 {
-
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite P = list.value();
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite P = *it;
 
     if(P.suppress == 0)
     {
@@ -398,9 +379,7 @@ vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w, unsigned in
       index_w++;
     }
 
-    list.modify(P) ;
-    list.next();
-
+    *it = P;
   }
   display(I);
 }

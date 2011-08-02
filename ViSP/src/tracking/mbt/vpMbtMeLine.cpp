@@ -77,7 +77,7 @@ vpMbtMeLine::vpMbtMeLine():vpMeTracker()
 */
 vpMbtMeLine::~vpMbtMeLine()
 {
-  list.kill();
+  list.clear();
 }
 
 /*!
@@ -172,8 +172,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
   double js = PExt[1].jfloat;
 
   // Delete old list
-  list.front();
-  list.kill();
+  list.clear();
 
   // sample positions at i*me->sample_step interval along the
   // line_p, starting at PSiteExt[0]
@@ -198,7 +197,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 	      vpDisplay::displayCross(I, ip, 2, vpColor::blue);
       }
 
-      list.addRight(pix);
+      list.push_back(pix);
     }
     is += stepi;
     js += stepj;
@@ -218,12 +217,8 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 void
 vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
 {
-//   unsigned int nbrelmt;
-//   nbrelmt = list.nbElement();
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ){
+    vpMeSite s = *it;//current reference pixel
 
   if (fabs(sin(theta)) > 0.9) // Vertical line management
   {
@@ -250,11 +245,10 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
   }
 
   if (s.suppress != 0)
-    list.suppress() ;
+    it = list.erase(it);
   else
-    list.next() ;
+    ++it;
   }
-//   nbrelmt = list.nbElement();
 }
 
 
@@ -319,7 +313,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
       if (P.suppress ==0)
       {
-        list += P ;
+        list.push_back(P);
         if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
       }
       else
@@ -347,7 +341,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 			
       if (P.suppress ==0)
       {
-				list += P ;
+        list.push_back(P);
 				if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
       }
       else
@@ -410,7 +404,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
 {
   double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
-  unsigned int n = list.nbElements();//numberOfSignal() ;
+  unsigned int n = list.size();//numberOfSignal() ;
   expecteddensity = d / (double)me->sample_step;
 
   if ((double)n<0.5*expecteddensity && n > 0)
@@ -451,15 +445,12 @@ vpMbtMeLine::updateDelta()
   
   delta = - theta + M_PI/2.0;
   normalizeAngle(delta);
-  
-  list.front() ;
-  for (unsigned int i=0 ; i < list.nbElement() ; i++)
-  {
-    p = list.value() ;
+
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
     p.alpha = delta ;
     p.mask_sign = sign;
-    list.modify(p) ;
-    list.next() ;
+    *it = p;
   }
   delta_1 = delta;
 }
@@ -560,10 +551,8 @@ vpMbtMeLine::setExtremities()
   double jmax = -1 ;
 
   // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite s = *it;//current reference pixel
     if (s.ifloat < imin)
     {
       imin = s.ifloat ;
@@ -575,10 +564,9 @@ vpMbtMeLine::setExtremities()
       imax = s.ifloat ;
       jmax = s.jfloat ;
     }
-    list.next() ;
   }
 
-  if (list.nbElements() != 0)
+  if (list.size() != 0)
   {
     PExt[0].ifloat = imin ;
     PExt[0].jfloat = jmin ;
@@ -588,25 +576,22 @@ vpMbtMeLine::setExtremities()
 
   if (fabs(imin-imax) < 25)
   {
-    list.front();
-    while(!list.outside())
-    {
-      vpMeSite s = list.value() ;//current reference pixel
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      vpMeSite s = *it;//current reference pixel
       if (s.jfloat < jmin)
       {
-	imin = s.ifloat ;
-	jmin = s.jfloat ;
+        imin = s.ifloat ;
+        jmin = s.jfloat ;
       }
 
       if (s.jfloat > jmax)
       {
-	imax = s.ifloat ;
-	jmax = s.jfloat ;
+        imax = s.ifloat ;
+        jmax = s.jfloat ;
       }
-      list.next() ;
     }
 
-    if (list.nbElements() != 0)
+    if (list.size() != 0)
     {
       PExt[0].ifloat = imin ;
       PExt[0].jfloat = jmin ;
@@ -621,10 +606,15 @@ vpMbtMeLine::setExtremities()
 }
 
 
+static bool sortByI(const vpMeSite& s1, const vpMeSite& s2){
+  return (s1.ifloat > s2.ifloat);
+}
+
 void
 vpMbtMeLine::bubbleSortI()
 {
-  unsigned int nbElmt = list.nbElements();
+#if 0
+  unsigned int nbElmt = list.size();
   for (unsigned int pass = 1; pass < nbElmt; pass++)
   {
     list.front();
@@ -638,13 +628,20 @@ vpMbtMeLine::bubbleSortI()
         list.next();
     }
   }
+#endif
+  list.sort(sortByI);
 }
 
+
+static bool sortByJ(const vpMeSite& s1, const vpMeSite& s2){
+  return (s1.jfloat > s2.jfloat);
+}
 
 void
 vpMbtMeLine::bubbleSortJ()
 {
-  unsigned int nbElmt = list.nbElements();
+#if 0
+  unsigned int nbElmt = list.size();
   for(unsigned int pass=1; pass < nbElmt; pass++)
   {
     list.front();
@@ -658,6 +655,8 @@ vpMbtMeLine::bubbleSortJ()
         list.next();
     }
   }
+#endif
+  list.sort(sortByJ);
 }
 
 

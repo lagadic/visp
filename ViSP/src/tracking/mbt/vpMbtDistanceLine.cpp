@@ -335,7 +335,7 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
       Reinit = true;
     }
     
-    nbFeature = meline->list.nbElement();
+    nbFeature = meline->list.size();
   }
 }
 
@@ -385,7 +385,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
     {
       Reinit = true;
     }
-    nbFeature = meline->list.nbElement();
+    nbFeature = meline->list.size();
   }
 }
 
@@ -491,19 +491,16 @@ vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meline != NULL)
   {
-    meline->list.front();
-    while (!meline->list.outside())
-    {
-      vpMeSite pix = meline->list.value();
+    for(std::list<vpMeSite>::const_iterator it=meline->list.begin(); it!=meline->list.end(); ++it){
+      vpMeSite pix = *it;
       if (pix.suppress == 0)
-	vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
+        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
       if (pix.suppress == 1)
-	vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::blue,1);
+        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::blue,1);
       if (pix.suppress == 2)
-	vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
+        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
       if (pix.suppress == 4)
-	vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
-      meline->list.next();
+        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
     }
   }
 }
@@ -516,9 +513,9 @@ vpMbtDistanceLine::initInteractionMatrixError()
 {
   if (isvisible == true)
   {
-    L.resize(meline->list.nbElement(),6) ;
-    error.resize(meline->list.nbElement()) ;
-    nbFeature = meline->list.nbElement() ;
+    L.resize(meline->list.size(),6) ;
+    error.resize(meline->list.size()) ;
+    nbFeature = meline->list.size() ;
   }
   else
     nbFeature = 0 ;
@@ -556,12 +553,10 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 
     double x,y ;
     vpMeSite p ;
-    meline->list.front() ;
     unsigned int j =0 ;
-    while (!meline->list.outside())
-    {
-      x = (double)meline->list.value().j ;
-      y = (double)meline->list.value().i ;
+    for(std::list<vpMeSite>::const_iterator it=meline->list.begin(); it!=meline->list.end(); ++it){
+      x = (double)it->j ;
+      y = (double)it->i ;
 
       x = (x-xc)*mx ;
       y = (y-yc)*my ;
@@ -577,8 +572,6 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
       }
       error[j] = rho - ( x*co + y*si) ;
       j++;
-
-      meline->list.next() ;
     }
   }
 }
@@ -597,12 +590,10 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
     return true;
   }
   if (isvisible){
-  
-    meline->list.front() ;
-    while (!meline->list.outside())
-    {
-      int i = meline->list.value().i ;
-      int j = meline->list.value().j ;
+
+    for(std::list<vpMeSite>::const_iterator it=meline->list.begin(); it!=meline->list.end(); ++it){
+      int i = it->i ;
+      int j = it->j ;
       
       if(i < 0 || j < 0){ //out of image.
         return true;
@@ -612,7 +603,6 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
           ((unsigned int)j > (I.getWidth ()- threshold) ) || (unsigned int)j < threshold ) {
         return true;
       }
-      meline->list.next();
     }
   }
   return false;

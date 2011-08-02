@@ -256,8 +256,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         }
       }
       
+      std::list<vpMeSite>::const_iterator itListLine;
       if (iter == 0 && l->meline != NULL)
-        l->meline->list.front();
+        itListLine = l->meline->list.begin();
       
       for (unsigned int i=0 ; i < l->nbFeature ; i++)
       {
@@ -274,9 +275,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         if (iter == 0)
         {
           factor[n+i] = fac;
-          vpMeSite site = l->meline->list.value();
+          vpMeSite site = *itListLine;
           if (site.suppress != 0) factor[n+i] = 0.2;
-          l->meline->list.next();
+          ++itListLine;
         }
 
         //If pour la premiere extremite des moving edges
@@ -330,9 +331,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       cy->computeInteractionMatrixError(cMo, _I);
       double fac = 0.2;
 
+      std::list<vpMeSite>::const_iterator itCyl1;
+      std::list<vpMeSite>::const_iterator itCyl2;
       if (iter == 0 && (cy->meline1 != NULL || cy->meline2 != NULL)){
-        cy->meline1->list.front();
-        cy->meline2->list.front();
+        itCyl1 = cy->meline1->list.begin();
+        itCyl2 = cy->meline2->list.begin();
       }
 
       for(unsigned int i=0 ; i < cy->nbFeature ; i++){
@@ -350,12 +353,12 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           factor[n+i] = fac;
           vpMeSite site;
           if(i<cy->nbFeaturel1) {
-            site= cy->meline1->list.value();
-            cy->meline1->list.next();
+            site= *itCyl1;
+            ++itCyl1;
           }
           else{
-            site= cy->meline2->list.value();
-            cy->meline2->list.next();
+            site= *itCyl2;
+            ++itCyl2;
           }
           if (site.suppress != 0) factor[n+i] = 0.2;
         }
@@ -583,17 +586,18 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     l = *it;
     {
       double wmean = 0 ;
-      if (l->nbFeature > 0) l->meline->list.front();
+      std::list<vpMeSite>::iterator itListLine;
+      if (l->nbFeature > 0) itListLine = l->meline->list.begin();
       
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
         wmean += w[n+i] ;
-        vpMeSite p = l->meline->list.value() ;
+        vpMeSite p = *itListLine;
         if (w[n+i] < 0.5){
           p.suppress = 4 ;
-          l->meline->list.modify(p) ;
+          *itListLine = p;
         }
 
-        l->meline->list.next();
+        ++itListLine;
       }
       n+= l->nbFeature ;
       
@@ -614,21 +618,23 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
     double wmean = 0 ;
+    std::list<vpMeSite>::iterator itListCyl1;
+    std::list<vpMeSite>::iterator itListCyl2;
     if (cy->nbFeature > 0){
-      cy->meline1->list.front();
-      cy->meline2->list.front();
+      itListCyl1 = cy->meline1->list.begin();
+      itListCyl2 = cy->meline2->list.begin();
     }
 
     wmean = 0;
     for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
       wmean += w[n+i] ;
-      vpMeSite p = cy->meline1->list.value() ;
+      vpMeSite p = *itListCyl1;
       if (w[n+i] < 0.5){
         p.suppress = 4 ;
-        cy->meline1->list.modify(p) ;
+        *itListCyl1 = p;
       }
 
-      cy->meline1->list.next();
+      ++itListCyl1;
     }
 
     if (cy->nbFeaturel1!=0)
@@ -645,13 +651,13 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     wmean = 0;
     for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
       wmean += w[n+i] ;
-      vpMeSite p = cy->meline2->list.value() ;
+      vpMeSite p = *itListCyl2;
       if (w[n+i] < 0.5){
         p.suppress = 4 ;
-        cy->meline2->list.modify(p) ;
+        *itListCyl2 = p;
       }
 
-      cy->meline2->list.next();
+      ++itListCyl2;
     }
 
     if (cy->nbFeaturel2!=0)
@@ -687,13 +693,10 @@ vpMbEdgeTracker::testTracking()
     if (l->isVisible() && l->meline != NULL)
     {
       nbExpectedPoint += (int)l->meline->expecteddensity;
-      l->meline->list.front();
-      while (!l->meline->list.outside())
-      {
-        vpMeSite pix = l->meline->list.value();
+      for(std::list<vpMeSite>::const_iterator it=l->meline->list.begin(); it!=l->meline->list.end(); ++it){
+        vpMeSite pix = *it;
         if (pix.suppress == 0) nbGoodPoint++;
         else nbBadPoint++;
-        l->meline->list.next();
       }
     }
   }    
@@ -705,22 +708,16 @@ vpMbEdgeTracker::testTracking()
     if (cy->meline1 !=NULL && cy->meline2 != NULL)
     {
       nbExpectedPoint += (int)cy->meline1->expecteddensity;
-      cy->meline1->list.front();
-      while (!cy->meline1->list.outside())
-      {
-        vpMeSite pix = cy->meline1->list.value();
+      for(std::list<vpMeSite>::const_iterator it=cy->meline1->list.begin(); it!=cy->meline1->list.end(); ++it){
+        vpMeSite pix = *it;
         if (pix.suppress == 0) nbGoodPoint++;
         else nbBadPoint++;
-        cy->meline1->list.next();
       }
       nbExpectedPoint += (int)cy->meline2->expecteddensity;
-      cy->meline2->list.front();
-      while (!cy->meline2->list.outside())
-      {
-        vpMeSite pix = cy->meline2->list.value();
+      for(std::list<vpMeSite>::const_iterator it=cy->meline2->list.begin(); it!=cy->meline2->list.end(); ++it){
+        vpMeSite pix = *it;
         if (pix.suppress == 0) nbGoodPoint++;
         else nbBadPoint++;
-        cy->meline2->list.next();
       }
     }
   }
@@ -1491,11 +1488,8 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
     l = *it;
     if (l->isVisible() && l->meline != NULL)
     {
-      l->meline->list.front();
-      while (!l->meline->list.outside())
-      {
-        if (l->meline->list.value().suppress == 0) nbGoodPoints++;
-        l->meline->list.next();
+      for(std::list<vpMeSite>::const_iterator it=l->meline->list.begin(); it!=l->meline->list.end(); ++it){
+        if (it->suppress == 0) nbGoodPoints++;
       }
     }
   }
@@ -1505,17 +1499,11 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
     cy = *it;
     if (cy->meline1 != NULL || cy->meline2 != NULL)
     {
-      cy->meline1->list.front();
-      while (!cy->meline1->list.outside())
-      {
-        if (cy->meline1->list.value().suppress == 0) nbGoodPoints++;
-        cy->meline1->list.next();
+      for(std::list<vpMeSite>::const_iterator it=cy->meline1->list.begin(); it!=cy->meline1->list.end(); ++it){
+        if (it->suppress == 0) nbGoodPoints++;
       }
-      cy->meline2->list.front();
-      while (!cy->meline2->list.outside())
-      {
-        if (cy->meline2->list.value().suppress == 0) nbGoodPoints++;
-        cy->meline2->list.next();
+      for(std::list<vpMeSite>::const_iterator it=cy->meline2->list.begin(); it!=cy->meline2->list.end(); ++it){
+        if (it->suppress == 0) nbGoodPoints++;
       }
     }
   }
