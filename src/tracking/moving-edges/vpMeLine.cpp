@@ -136,7 +136,7 @@ vpMeLine::vpMeLine(const vpMeLine &meline):vpMeTracker(meline)
 */
 vpMeLine::~vpMeLine()
 {
-  list.kill();
+  list.clear();
 }
 
 /*!
@@ -177,8 +177,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   double js = PExt[1].jfloat;
 
   // Delete old list
-  list.front();
-  list.kill();
+  list.clear();
 
   // sample positions at i*me->sample_step interval along the
   // line_p, starting at PSiteExt[0]
@@ -195,12 +194,12 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
 
       if(vpDEBUG_ENABLE(3))
       {
-	ip.set_i( is );
-	ip.set_j( js );
-	vpDisplay::displayCross(I, ip, 2, vpColor::blue);
+        ip.set_i( is );
+        ip.set_j( js );
+        vpDisplay::displayCross(I, ip, 2, vpColor::blue);
       }
 
-      list.addRight(pix);
+      list.push_back(pix);
     }
     is += stepi;
     js += stepj;
@@ -225,13 +224,10 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
 void
 vpMeLine::display(const vpImage<unsigned char>&I, vpColor col)
 {
-  list.front();
-
   vpImagePoint ip;
 
-  while (!list.outside())
-  {
-    vpMeSite pix = list.value() ;
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite pix = *it;
     ip.set_i( pix.ifloat );
     ip.set_j( pix.jfloat );
 
@@ -242,7 +238,6 @@ vpMeLine::display(const vpImage<unsigned char>&I, vpColor col)
       vpDisplay::displayCross(I, ip, 5, col);
 
     //vpDisplay::flush(I);
-    list.next() ;
   }
 
   vpImagePoint ip1, ip2;
@@ -348,7 +343,7 @@ vpMeLine::leastSquare()
   unsigned int nos_1 = 0 ;
   double distance = 100;
 
-  if (list.nbElement() <= 2 || numberOfSignal() <= 2)
+  if (list.size() <= 2 || numberOfSignal() <= 2)
   {
     //vpERROR_TRACE("Not enough point") ;
     vpCDEBUG(1) << "Not enough point";
@@ -360,20 +355,17 @@ vpMeLine::leastSquare()
   		       // a i + j + c = 0
   		       // A = (i 1)   B = (-j)
   {
-	nos_1 = numberOfSignal() ;
-	list.front() ;
+  nos_1 = numberOfSignal() ;
 	unsigned int k =0 ;
-	for (i=0 ; i < list.nbElement() ; i++)
-	{
-		p = list.value() ;
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
 		if (p.suppress==0)
 		{
 			A[k][0] = p.ifloat ;
 			A[k][1] = 1 ;
 			B[k] = -p.jfloat ;
 			k++ ;
-		}
-		list.next() ;
+    }
 	}
 
 	while (iter < 4 && distance > 0.05)
@@ -397,21 +389,18 @@ vpMeLine::leastSquare()
 		x_1 = x;
 	}
 
-      list.front() ;
       k =0 ;
-      for (i=0 ; i < list.nbElement() ; i++)
-      {
-	p = list.value() ;
-	if (p.suppress==0)
-	{
-	  if (w[k] < 0.2)
-	  {
-	    p.suppress  = 3 ;
-	    list.modify(p) ;
-	  }
-	  k++ ;
-	}
-	list.next() ;
+      for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+        p = *it;
+        if (p.suppress==0)
+        {
+          if (w[k] < 0.2)
+          {
+            p.suppress  = 3 ;
+            *it = p;
+          }
+          k++ ;
+        }
       }
 
       // mise a jour de l'equation de la droite
@@ -430,20 +419,17 @@ vpMeLine::leastSquare()
   		// i + bj + c = 0
   		// A = (j 1)   B = (-i)
   {
-	nos_1 = numberOfSignal() ;
-	list.front() ;
+  nos_1 = numberOfSignal() ;
 	unsigned int k =0 ;
-	for (i=0 ; i < list.nbElement() ; i++)
-	{
-		p = list.value() ;
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
 		if (p.suppress==0)
 		{
 			A[k][0] = p.jfloat ;
 			A[k][1] = 1 ;
 			B[k] = -p.ifloat ;
 			k++ ;
-		}
-		list.next() ;
+    }
 	}
 
 	while (iter < 4 && distance > 0.05)
@@ -468,21 +454,18 @@ vpMeLine::leastSquare()
 	}
 
 
-	list.front() ;
 	k =0 ;
-	for (i=0 ; i < list.nbElement() ; i++)
-	{
-		p = list.value() ;
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
 		if (p.suppress==0)
 		{
 			if (w[k] < 0.2)
 			{
 				p.suppress  = 3 ;
-				list.modify(p) ;
+        *it = p;
 			}
 			k++ ;
-		}
-		list.next() ;
+    }
 	}
 	a = 1 ;
 	b = x[0] ;
@@ -573,15 +556,13 @@ void
 vpMeLine::suppressPoints()
 {
   // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ){
+    vpMeSite s = *it;//current reference pixel
 
     if (s.suppress != 0)
-      list.suppress() ;
+      it = list.erase(it);
     else
-      list.next() ;
+      ++it;
   }
 }
 
@@ -599,10 +580,8 @@ vpMeLine::setExtremities()
 
 
   // Loop through list of sites to track
-  list.front();
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+    vpMeSite s = *it;//current reference pixel
     if (s.ifloat < imin)
     {
       imin = s.ifloat ;
@@ -614,7 +593,6 @@ vpMeLine::setExtremities()
       imax = s.ifloat ;
       jmax = s.jfloat ;
     }
-    list.next() ;
   }
 
   PExt[0].ifloat = imin ;
@@ -624,22 +602,19 @@ vpMeLine::setExtremities()
 
   if (fabs(imin-imax) < 25)
   {
-    list.front();
-    while(!list.outside())
-    {
-      vpMeSite s = list.value() ;//current reference pixel
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      vpMeSite s = *it;//current reference pixel
       if (s.jfloat < jmin)
       {
-	imin = s.ifloat ;
-	jmin = s.jfloat ;
+        imin = s.ifloat ;
+        jmin = s.jfloat ;
       }
 
       if (s.jfloat > jmax)
       {
-	imax = s.ifloat ;
-	jmax = s.jfloat ;
+        imax = s.ifloat ;
+        jmax = s.jfloat ;
       }
-      list.next() ;
     }
     PExt[0].ifloat = imin ;
     PExt[0].jfloat = jmin ;
@@ -709,20 +684,20 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
       if (P.suppress ==0)
       {
-	list += P ;
-	if (vpDEBUG_ENABLE(3)) {
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
+        list.push_back(P);
+        if (vpDEBUG_ENABLE(3)) {
+          ip.set_i( P.i );
+          ip.set_j( P.j );
 
-	  vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
-	}
+          vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+        }
       }
       else {
-	if (vpDEBUG_ENABLE(3)) {
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
-	}
+        if (vpDEBUG_ENABLE(3)) {
+          ip.set_i( P.i );
+          ip.set_j( P.j );
+          vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+        }
       }
     }
   }
@@ -740,19 +715,19 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
       if (P.suppress ==0)
       {
-	list += P ;
-	if (vpDEBUG_ENABLE(3)) {
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
-	}
+        list.push_back(P);
+        if (vpDEBUG_ENABLE(3)) {
+          ip.set_i( P.i );
+          ip.set_j( P.j );
+          vpDisplay::displayCross(I, ip, 5, vpColor::green) ;
+        }
       }
       else {
-	if (vpDEBUG_ENABLE(3)) {
-	  ip.set_i( P.i );
-	  ip.set_j( P.j );
-	  vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
-	}
+        if (vpDEBUG_ENABLE(3)) {
+          ip.set_i( P.i );
+          ip.set_j( P.j );
+          vpDisplay::displayCross(I, ip, 10, vpColor::blue) ;
+        }
       }
     }
   }
@@ -837,15 +812,12 @@ vpMeLine::updateDelta()
   sign *= -1;
 
   angle_1 = angle;
-  
-  list.front() ;
-  for (unsigned int i=0 ; i < list.nbElement() ; i++)
-  {
-    p = list.value() ;
+
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
     p.alpha = delta ;
     p.mask_sign = sign;
-    list.modify(p) ;
-    list.next() ;
+    *it = p;
   }
   delta_1 = delta;
 }
@@ -917,11 +889,11 @@ vpMeLine::track(const vpImage<unsigned char> &I)
 
     // Remise a jour de delta dans la liste de site me
     if (vpDEBUG_ENABLE(2))
-      {
-	display(I,vpColor::red) ;
-	vpMeTracker::display(I) ;
-	vpDisplay::flush(I) ;
-      }
+    {
+    display(I,vpColor::red) ;
+    vpMeTracker::display(I) ;
+    vpDisplay::flush(I) ;
+    }
 
 
   }

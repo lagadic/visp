@@ -143,7 +143,7 @@ vpMeEllipse::~vpMeEllipse()
 {
   vpCDEBUG(1) << "begin vpMeEllipse::~vpMeEllipse() " << std::endl ;
 
-  list.kill();
+  list.clear();
   angle.clear();
 
   vpCDEBUG(1) << "end vpMeEllipse::~vpMeEllipse() " << std::endl ;
@@ -185,8 +185,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 
 
   // Delete old list
-  list.front();
-  list.kill();
+  list.clear();
 
   angle.clear();
 
@@ -228,7 +227,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
       {
         vpDisplay::displayCross(I,iP11, 5, vpColor::blue);
       }
-      list.addRight(pix);
+      list.push_back(pix);
       angle.push_back(k);
     }
     k += incr ;
@@ -236,7 +235,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   }
   vpMeTracker::initTracking(I) ;
 
-  n_sample = list.nbElements() ;
+  n_sample = list.size() ;
 
   vpCDEBUG(1) << "end vpMeEllipse::sample() : " ;
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
@@ -403,18 +402,15 @@ void
 vpMeEllipse::updateTheta()
 {
   vpMeSite p;
-  list.front();
   double theta;
-  for (unsigned int i=0 ; i < list.nbElement() ; i++)
-  {
-    p = list.value() ;
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    p = *it;
     vpImagePoint iP;
     iP.set_i(p.ifloat);
     iP.set_j(p.jfloat);
     computeTheta(theta, K, iP) ;
     p.alpha = theta ;
-    list.modify(p) ;
-    list.next() ;
+    *it = p;
   }
 }
 
@@ -425,17 +421,17 @@ void
 vpMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
-  list.front();
+  std::list<vpMeSite>::iterator itList = list.begin();
   for(std::list<double>::iterator it=angle.begin(); it!=angle.end(); ){
-    vpMeSite s = list.value() ;//current reference pixel
+    vpMeSite s = *itList;//current reference pixel
     if (s.suppress != 0)
     {
-      list.suppress() ;
+      itList = list.erase(itList) ;
       it = angle.erase(it);
     }
     else
     {
-      list.next() ;
+      ++itList;
       ++it;
     }
   }
@@ -489,7 +485,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
         if (P.suppress ==0)
         {
-          list += P ;
+          list.push_back(P);
           angle.push_back(k);
           if (vpDEBUG_ENABLE(3)) {
             ip.set_i( P.i );
@@ -526,7 +522,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
         if (P.suppress ==0)
         {
-          list += P ;
+          list.push_back(P);
           angle.push_back(k);
           if (vpDEBUG_ENABLE(3)) {
             ip.set_i( P.i );
@@ -568,12 +564,10 @@ vpMeEllipse::setExtremities()
   double jmax = 0;
 
   // Loop through list of sites to track
-  list.front();
   std::list<double>::const_iterator itAngle = angle.begin();
 
-  while(!list.outside())
-  {
-    vpMeSite s = list.value() ;//current reference pixel
+  for(std::list<vpMeSite>::const_iterator itList=list.begin(); itList!=list.end(); ++itList){
+    vpMeSite s = *itList;//current reference pixel
     double alpha = *itAngle;
     if (alpha < alphamin)
     {
@@ -588,7 +582,6 @@ vpMeEllipse::setExtremities()
       imax = s.ifloat ;
       jmax = s.jfloat ;
     }
-    list.next() ;
     ++itAngle;
   }
 
@@ -627,7 +620,7 @@ vpMeEllipse::leastSquare()
   w =1 ;
   unsigned int nos_1 = numberOfSignal() ;
 
-  if (list.nbElement() < 3)
+  if (list.size() < 3)
   {
     vpERROR_TRACE("Not enough point") ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
@@ -639,11 +632,9 @@ vpMeEllipse::leastSquare()
     vpMatrix A(numberOfSignal(),5) ;
     vpColVector x(5);
 
-    list.front() ;
     unsigned int k =0 ;
-    for (i=0 ; i < list.nbElement() ; i++)
-    {
-      p = list.value() ;
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
       if (p.suppress==0)
       {
 
@@ -656,7 +647,6 @@ vpMeEllipse::leastSquare()
         b[k] = - vpMath::sqr(p.ifloat) ;
         k++ ;
       }
-      list.next() ;
     }
 
     while (iter < 4 )
@@ -680,21 +670,18 @@ vpMeEllipse::leastSquare()
       iter++;
     }
 
-    list.front() ;
     k =0 ;
-    for (i=0 ; i < list.nbElement() ; i++)
-    {
-      p = list.value() ;
+    for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
       if (p.suppress==0)
       {
         if (w[k] < thresholdWeight)
         {
           p.suppress  = 3 ;
-          list.modify(p) ;
+          *it = p;
         }
         k++ ;
       }
-      list.next() ;
     }
     for(i = 0; i < 5; i ++)
       K[i] = x[i];
@@ -705,11 +692,9 @@ vpMeEllipse::leastSquare()
     vpMatrix A(numberOfSignal(),3) ;
     vpColVector x(3);
 
-    list.front() ;
     unsigned int k =0 ;
-    for (i=0 ; i < list.nbElement() ; i++)
-    {
-      p = list.value() ;
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
       if (p.suppress==0)
       {
 
@@ -720,7 +705,6 @@ vpMeEllipse::leastSquare()
         b[k] = - vpMath::sqr(p.ifloat) - vpMath::sqr(p.jfloat) ;
         k++ ;
       }
-      list.next() ;
     }
 
     while (iter < 4 )
@@ -744,21 +728,18 @@ vpMeEllipse::leastSquare()
       iter++;
     }
 
-    list.front() ;
     k =0 ;
-    for (i=0 ; i < list.nbElement() ; i++)
-    {
-      p = list.value() ;
+    for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
       if (p.suppress==0)
       {
         if (w[k] < thresholdWeight)
         {
           p.suppress  = 3 ;
-          list.modify(p) ;
+          *it = p;
         }
         k++ ;
       }
-      list.next() ;
     }
     for(i = 0; i < 3; i ++)
       K[i+2] = x[i];

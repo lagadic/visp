@@ -61,12 +61,12 @@
 
 #include <math.h>
 #include <iostream>
+#include <list>
 
 #include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
-#include <visp/vpList.h>
 #include <visp/vpTracker.h>
 
 
@@ -77,7 +77,7 @@ public:
   //! Tracking dependent variables/functions =====================
 
   //! List of tracked points
-  vpList<vpMeSite> list ;
+  std::list<vpMeSite> list ;
   //! Ecm initialisation parameters
   vpMe *me ;
   //! Used for backwards compatibility...could be removed

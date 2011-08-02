@@ -89,6 +89,10 @@
 #  endif
 #endif
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpList.h>
+#endif
+
 /*!
   \class vpMbEdgeTracker
   \ingroup ModelBasedTracking 
