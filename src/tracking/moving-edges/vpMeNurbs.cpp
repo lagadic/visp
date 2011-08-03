@@ -301,7 +301,11 @@ vp_deprecated void
 vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
                         vpList<vpImagePoint> &ptList)
 {
-  nurbs.globalCurveInterp(ptList);
+  std::list<vpImagePoint> listStd;
+  for(ptList.front(); !ptList.outside(); ptList.next()){
+    listStd.push_back(ptList.value());
+  }
+  nurbs.globalCurveInterp(listStd);
 
   sample(I);
   
