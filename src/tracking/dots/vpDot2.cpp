@@ -978,7 +978,246 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
 {
   vpList<vpDot2>* niceDotsVector = new vpList<vpDot2>();
 
-  niceDotsVector = searchDotsInArea( I, 0, 0, I.getWidth(), I.getHeight());
+  // To avoid a warning due to the usage of the following deprecated function
+  // we duplicate the code
+  {
+    // niceDotsVector = searchDotsInArea( I, 0, 0, I.getWidth(), I.getHeight());
+  }
+  {
+    // Fit the input area in the image; we keep only the common part between this
+    // area and the image.
+    int area_u = 0;
+    int area_v = 0;
+    unsigned int area_w = I.getWidth();
+    unsigned int area_h = I.getHeight();
+    setArea(I, area_u, area_v, area_w, area_h);
+
+    // compute the size of the search grid
+    unsigned int gridWidth;
+    unsigned int gridHeight;
+    getGridSize( gridWidth, gridHeight );
+
+    if (graphics) {
+      // Display the area were the dot is search
+      vpDisplay::displayRectangle(I, area, vpColor::blue);
+      //vpDisplay::flush(I);
+    }
+
+    // start the search loop; for all points of the search grid,
+    // test if the pixel belongs to a valid dot.
+    // if it is so eventually add it to the vector of valid dots.
+ //   vpList<vpDot2>* niceDotsVector = new vpList<vpDot2>();
+    vpList<vpDot2>* badDotsVector  = new vpList<vpDot2>();
+
+    vpDot2* dotToTest = NULL;
+    vpDot2 tmpDot;
+
+    unsigned int area_u_min = (unsigned int) area.getLeft();
+    unsigned int area_u_max = (unsigned int) area.getRight();
+    unsigned int area_v_min = (unsigned int) area.getTop();
+    unsigned int area_v_max = (unsigned int) area.getBottom();
+
+    unsigned int u, v;
+    vpImagePoint cogTmpDot;
+
+    for( v=area_v_min ; v<area_v_max ; v=v+gridHeight )
+    {
+      for( u=area_u_min ; u<area_u_max ; u=u+gridWidth )
+      {
+        // if the pixel we're in doesn't have the right color (outside the
+        // graylevel interval), no need to check futher, just get to the
+        // next grid intersection.
+        if( !hasGoodLevel(I, u, v) ) continue;
+
+        // Test if an other germ is inside the bounding box of a dot previoulsy
+        // detected
+        bool good_germ = true;
+        niceDotsVector->front();
+        while( !niceDotsVector->outside() && good_germ == true) {
+          tmpDot = niceDotsVector->value();
+
+          cogTmpDot = tmpDot.getCog();
+          double u0 = cogTmpDot.get_u();
+          double v0 = cogTmpDot.get_v();
+          double half_w = tmpDot.getWidth()  / 2.;
+          double half_h = tmpDot.getHeight() / 2.;
+
+          if ( u >= (u0-half_w) && u <= (u0+half_w) &&
+               v >= (v0-half_h) && v <= (v0+half_h) ) {
+            // Germ is in a previously detected dot
+            good_germ = false;
+          }
+          niceDotsVector->next();
+        }
+
+        if (! good_germ)
+          continue;
+
+        // Compute the right border position for this possible germ
+        unsigned int border_u;
+        unsigned int border_v;
+        if(findFirstBorder(I, u, v, border_u, border_v) == false){
+          // germ is not good.
+          // Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+          u = border_u;
+          v = border_v;
+          continue;
+        }
+
+        badDotsVector->front();
+  #define vpBAD_DOT_VALUE (badDotsVector->value())
+        vpImagePoint cogBadDot;
+
+        std::list<vpImagePoint>::const_iterator it_edges;
+        while( !badDotsVector->outside() && good_germ == true)
+        {
+          if( (double)u >= vpBAD_DOT_VALUE.bbox_u_min
+              && (double)u <= vpBAD_DOT_VALUE.bbox_u_max &&
+              (double)v >= vpBAD_DOT_VALUE.bbox_v_min
+              && (double)v <= vpBAD_DOT_VALUE.bbox_v_max)
+          {
+
+            it_edges = ip_edges_list.begin();
+            while (it_edges != ip_edges_list.end() && good_germ == true)
+            {
+              // Test if the germ belong to a previously detected dot:
+              // - from the germ go right to the border and compare this
+              //   position to the list of pixels of previously detected dots
+              cogBadDot = *it_edges;
+              //if( border_u == cogBadDot.get_u() && v == cogBadDot.get_v()) {
+              if( (std::fabs(border_u - cogBadDot.get_u()) <= vpMath::maximum(std::fabs((double)border_u), std::fabs(cogBadDot.get_u()))*std::numeric_limits<double>::epsilon() )
+                &&
+                    (std::fabs(v - cogBadDot.get_v()) <= vpMath::maximum(std::fabs((double)v), std::fabs(cogBadDot.get_v()))*std::numeric_limits<double>::epsilon() ))
+                {
+                good_germ = false;
+              }
+              ++ it_edges;
+            }
+          }
+          badDotsVector->next();
+        }
+  #undef vpBAD_DOT_VALUE
+
+        if (! good_germ) {
+          // Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+          u = border_u;
+          v = border_v;
+          continue;
+        }
+
+        vpTRACE(4, "Try germ (%d, %d)", u, v);
+
+        vpImagePoint germ;
+        germ.set_u( u );
+        germ.set_v( v );
+
+        // otherwise estimate the width, height and surface of the dot we
+        // created, and test it.
+        if( dotToTest != NULL ) delete dotToTest;
+        dotToTest = getInstance();
+        dotToTest->setCog( germ );
+        dotToTest->setGrayLevelMin ( getGrayLevelMin() );
+        dotToTest->setGrayLevelMax ( getGrayLevelMax() );
+        dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
+        dotToTest->setSizePrecision( getSizePrecision() );
+        dotToTest->setGraphics( graphics );
+        dotToTest->setComputeMoments( true );
+        dotToTest->setArea( area );
+        dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
+
+        // first compute the parameters of the dot.
+        // if for some reasons this caused an error tracking
+        // (dot partially out of the image...), check the next intersection
+        if( dotToTest->computeParameters( I ) == false ) {
+          // Jump all the pixels between v,u and v, dotToTest->getFirstBorder_u()
+          u = border_u;
+          v = border_v;
+          continue;
+        }
+        // if the dot to test is valid,
+        if( dotToTest->isValid( I, *this ) )
+        {
+          vpImagePoint cogDotToTest = dotToTest->getCog();
+          // Compute the distance to the center. The center used here is not the
+          // area center available by area.getCenter(area_center_u,
+          // area_center_v) but the center of the input area which may be
+          // partially outside the image.
+
+          double area_center_u = area_u + area_w/2.0 - 0.5;
+          double area_center_v = area_v + area_h/2.0 - 0.5;
+
+          double thisDiff_u = cogDotToTest.get_u() - area_center_u;
+          double thisDiff_v = cogDotToTest.get_v() - area_center_v;
+          double thisDist = sqrt( thisDiff_u*thisDiff_u + thisDiff_v*thisDiff_v);
+
+          bool stopLoop = false;
+          niceDotsVector->front();
+
+          while( !niceDotsVector->outside() &&  stopLoop == false )
+          {
+            vpDot2 tmpDot = niceDotsVector->value();
+
+            //double epsilon = 0.001; // detecte +sieurs points
+            double epsilon = 3.0;
+            // if the center of the dot is the same than the current
+            // don't add it, test the next point of the grid
+            cogTmpDot = tmpDot.getCog();
+
+            if( fabs( cogTmpDot.get_u() - cogDotToTest.get_u() ) < epsilon &&
+                fabs( cogTmpDot.get_v() - cogDotToTest.get_v() ) < epsilon )
+            {
+              stopLoop = true;
+              // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
+              u = border_u;
+              v = border_v;
+              continue;
+            }
+
+            double otherDiff_u = cogTmpDot.get_u() - area_center_u;
+            double otherDiff_v = cogTmpDot.get_v() - area_center_v;
+            double otherDist = sqrt( otherDiff_u*otherDiff_u +
+                                     otherDiff_v*otherDiff_v );
+
+
+            // if the distance of the curent vector element to the center
+            // is greater than the distance of this dot to the center,
+            // then add this dot before the current vector element.
+            if( otherDist > thisDist )
+            {
+              niceDotsVector->addLeft( *dotToTest );
+              niceDotsVector->next();
+              stopLoop = true;
+              // Jump all the pixels between v,u and v, tmpDot->getFirstBorder_u()
+              u = border_u;
+              v = border_v;
+              continue;
+            }
+            niceDotsVector->next();
+          }
+          vpTRACE(4, "End while (%d, %d)", u, v);
+
+          // if we reached the end of the vector without finding the dot
+          // or inserting it, insert it now.
+          if( niceDotsVector->outside() && stopLoop == false )
+          {
+            niceDotsVector->end();
+            niceDotsVector->addRight( *dotToTest );
+          }
+        }
+        else {
+          // Store bad dots
+          badDotsVector->front();
+          badDotsVector->addRight( *dotToTest );
+        }
+      }
+    }
+    if( dotToTest != NULL ) delete dotToTest;
+
+    delete badDotsVector;
+
+    //return niceDotsVector;
+  }
+
 
   return niceDotsVector;
 
