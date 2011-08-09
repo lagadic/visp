@@ -1274,8 +1274,8 @@ void vpRobotAfma6::setPosition(const char *filename)
 
   \code
   vpRobotAfma6 robot;
-  vpColVector r;
-  robot.getPosition(vpRobot::REFERENCE_FRAME, r);
+  vpColVector position;
+  robot.getPosition(vpRobot::REFERENCE_FRAME, position);
 
   vpTranslationVector ftc; // reference frame to camera frame translations
   vpRxyzVector frc; // reference frame to camera frame rotations
@@ -1290,7 +1290,7 @@ void vpRobotAfma6::setPosition(const char *filename)
   vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
 
   // Create the camera to fix frame pose in terms of a homogenous matrix
-  vpHomogeneousMatrix fMc(fRc, ftc);
+  vpHomogeneousMatrix fMc(ftc, fRc);
   \endcode
 
   \exception vpRobotException::lowLevelError : If the position cannot
