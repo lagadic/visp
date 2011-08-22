@@ -1022,7 +1022,7 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     }
 
     //Si la ligne n'appartient a aucune face elle est tout le temps visible
-    if (l->Lindex_polygon.size() == 0) isvisible = true;
+    if (l->Lindex_polygon.empty()) isvisible = true;
 
     if (isvisible)
     {

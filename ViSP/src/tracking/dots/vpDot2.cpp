@@ -500,7 +500,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
 
     // if the vector is empty, that mean we didn't find any candidate
     // in the area, return an error tracking.
-    if( candidates.size() == 0 )
+    if( candidates.empty() )
     {
       vpERROR_TRACE("No dot was found") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
