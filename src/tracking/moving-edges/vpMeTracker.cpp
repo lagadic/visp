@@ -263,7 +263,7 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
   if (DEBUG_LEVEL1)
     std::cout << "begin  vpMeTracker::Track():" << std::endl ;
 
-  if (list.size()==0)
+  if (list.empty())
   {
     if (DEBUG_LEVEL1)
     vpERROR_TRACE("Error Tracking: only %d "
