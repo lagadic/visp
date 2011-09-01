@@ -42,9 +42,7 @@
 
 
 /*!
-  \file afma6ServoSimuFourPoints2DCamVelocity.cpp
-
-  \example afma6ServoSimuFourPoints2DCamVelocity.cpp
+  \example servoSimuAfma6FourPoints2DCamVelocity.cpp
 
   \brief Simulation of a 2D visual servoing:
 

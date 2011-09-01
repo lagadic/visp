@@ -44,7 +44,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-viper850ServoSimuFourPoints2DCamVelocity.cpp
+servoSimuViper850FourPoints2DCamVelocity.cpp
 )
 
 # rule for binary build
@@ -59,7 +59,7 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(viper850ServoSimuFourPoints2DCamVelocity	viper850ServoSimuFourPoints2DCamVelocity -d -c)
+ADD_TEST(servoSimuViper850FourPoints2DCamVelocity	servoSimuViper850FourPoints2DCamVelocity -d -c)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
