@@ -44,7 +44,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-afma6ServoSimuFourPoints2DCamVelocity.cpp
+servoSimuAfma6FourPoints2DCamVelocity.cpp
 )
 
 # rule for binary build
@@ -59,7 +59,7 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(afma6ServoSimuFourPoints2DCamVelocity	afma6ServoSimuFourPoints2DCamVelocity -d -c)
+ADD_TEST(servoSimuAfma6FourPoints2DCamVelocity servoSimuAfma6FourPoints2DCamVelocity -d -c)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

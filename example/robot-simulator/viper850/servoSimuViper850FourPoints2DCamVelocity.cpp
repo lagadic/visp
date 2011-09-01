@@ -42,9 +42,7 @@
 
 
 /*!
-  \file viper850ServoSimuFourPoints2DCamVelocity.cpp
-
-  \example viper850ServoSimuFourPoints2DCamVelocity.cpp
+  \example servoSimuViper850FourPoints2DCamVelocity.cpp
 
   \brief Simulation of a 2D visual servoing:
 
