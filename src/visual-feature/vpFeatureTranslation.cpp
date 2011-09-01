@@ -433,7 +433,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
   visual feature.
 
   \exception vpFeatureException::badInitializationError : If the
-  desired visual feature \f$ s^* \f$ is not equal to zero in the case of the feature type is cdMc.
+  desired visual feature \f$ s^* \f$ is not equal to zero in the case of the feature type is cdMc or cMcd.
 
   The code below shows how to use this method to manipulate the \f$
   t_z \f$ subset in the case of the cdMc feature type. It can be used also with the cMo feature type. In that case just change vpFeatureTranslation::cdMc by vpFeatureTranslation::cMo during the declaration of the two vpFeatureTranslation features.
@@ -471,7 +471,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
 {
   vpColVector e(0) ;
 
-  if(translation == cdMc)
+  if(translation == cdMc || translation == cMcd)
   {
     if (s_star.get_s().sumSquare() > 1e-6)
     {
