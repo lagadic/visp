@@ -45,7 +45,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   geometric-features/manGeometricFeatures.cpp
-  helloworld/CMake/HelloWorld.cpp
+  hello-world/CMake/HelloWorld.cpp
   image-manipulation/manDisplay.cpp
   image-manipulation/manGrab1394-1.cpp
   image-manipulation/manGrab1394-2.cpp
