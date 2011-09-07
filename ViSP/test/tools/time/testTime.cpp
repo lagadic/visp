@@ -134,6 +134,7 @@ main(int argc, const char ** argv)
   for (int i =0 ; i < 100000; i ++)
     for (int j =0 ; j < 100; j ++)
       v = i * 2 / 3. + j;
+  std::cout << "Computed dummy value: " << v << std::endl;
 
   double t1 = vpTime::measureTimeMs();
   vpTime::wait(t1, 40);
