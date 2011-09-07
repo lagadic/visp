@@ -71,7 +71,7 @@
 
   - The B-Spline basis functions \f$ N_{i,p} \f$ defined as :
   \f[ N_{i,0}(u) = \left\{\begin{array}{cc}
-  1 & \mbox{si } u_i \leq u_{i+1} \\ 0 & sinon
+  1 & \mbox{if } u_i \leq u_{i+1} \\ 0 & else
   \end{array}\right.\f]
 
   \f[ N_{i,p}(u) = \frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)\f]
