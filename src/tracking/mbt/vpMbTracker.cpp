@@ -145,6 +145,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     finitpos.open(s ,std::ios::in) ;
   }else{
     finitpos.open(poseSavingFilename.c_str() ,std::ios::in) ;
+    sprintf(s, "%s", poseSavingFilename.c_str());
   }
   if(finitpos.fail() ){
   	std::cout << "cannot read " << s << std::endl << "cMo set to identity" << std::endl;
