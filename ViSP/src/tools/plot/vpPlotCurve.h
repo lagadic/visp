@@ -72,6 +72,7 @@ class vpPlotCurve
   public:
     vpColor color;
     vpCurveStyle curveStyle; 
+    unsigned int thickness ;
     //vpMarkerStyle markerStyle;
     //char lineStyle[20];
     //vpList<vpImagePoint> pointList;

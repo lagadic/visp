@@ -55,6 +55,7 @@ vpPlotCurve::vpPlotCurve()
   pointListy.clear();
   pointListz.clear();
   nbPoint = 0;
+  thickness = 1 ;
 }
 
 vpPlotCurve::~vpPlotCurve()
@@ -71,7 +72,7 @@ vpPlotCurve::plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double 
   
   if (nbPoint > 1)
   {
-    vpDisplay::displayLine(I,lastPoint, iP, color);
+    vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
   }
 #if( defined VISP_HAVE_X11 || defined VISP_HAVE_GDI )
   double top;
@@ -104,7 +105,7 @@ vpPlotCurve::plotList(vpImage<unsigned char> &I, const double xorg, const double
     iP.set_ij(yorg-(zoomy*(*it_ptListy)),xorg+(zoomx*(*it_ptListx)));
     
     if (k > 0)
-      vpDisplay::displayLine(I,lastPoint, iP, color);
+      vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
     
     lastPoint = iP;
     
