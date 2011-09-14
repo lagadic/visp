@@ -94,21 +94,21 @@
 #include <visp/vpImage.h>
 #include <visp/vpFernClassifier.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Surf key-points only available since OpenCV-1.1.0
+#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Fern classifier only available since OpenCV-2.0.0
 int main()
 {
-  vpImage<unsigned char> Irefrence;
+  vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpFernClassifier fern;
 
-  //First grab the reference image Irefrence
+  //First grab the reference image Ireference
 
-  //Build the reference SURF points.
-  fern.buildReference(Irefrence);
+  //Build the reference points.
+  fern.buildReference(Ireference);
 
   //Then grab another image which represents the current image Icurrent
 
-  //Match points between the reference points and the SURF points computed in the current image.
+  //Match points between the reference points and the points detected in the current image.
   fern.matchPoint(Icurrent);
 
   //Display the matched points
@@ -131,7 +131,7 @@ int main() {}
 #include <visp/vpDisplay.h>
 #include <visp/vpFernClassifier.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Surf key-points only available since OpenCV-1.1.0
+#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Fern classifier only available since OpenCV-2.0.0
 int main()
 {
   vpImage<unsigned char> Ireference;
@@ -140,14 +140,14 @@ int main()
 
   //First grab the reference image Irefrence
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++)
   {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
-  //Build the reference SURF points.
+  //Build the reference points.
   int nbrRef;
   unsigned int height, width;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
@@ -162,7 +162,7 @@ int main()
     vpDisplay::getClick(Icurrent, corners[i]);
   }
 
-  //Match points between the reference points and the SURF points computed in the current image.
+  //Match points between the reference points and the points detected in the current image.
   int nbrMatched;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
