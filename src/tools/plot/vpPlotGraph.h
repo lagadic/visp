@@ -1,3 +1,4 @@
+
 /****************************************************************************
  *
  * $Id$
@@ -165,7 +166,8 @@ class vpPlotGraph
     void setUnitY (const char *unity);
     void setUnitZ (const char *unitz);
     void setLegend (const unsigned int curveNum, const char *legend);
-    
+    void setCurveThickness(const unsigned int curveNum, const unsigned int thickness);
+
     void rescalex(unsigned int side, double extremity);
     void rescaley(unsigned int side, double extremity);
     void rescalez(unsigned int side, double extremity);

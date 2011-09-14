@@ -261,6 +261,12 @@ vpPlotGraph::setLegend (const unsigned int curveNum, const char *legend)
   dispLegend = true;
 }
 
+void 
+vpPlotGraph::setCurveThickness(const unsigned int curveNum, const unsigned int thickness)
+{
+  (curveList+curveNum)->thickness = thickness;
+}
+
 int
 laFonctionSansNom (const double delta)
 {
@@ -1173,7 +1179,7 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   if((curveList+curveNb)->nbPoint)
   {
     if (check3Dline((curveList+curveNb)->lastPoint,iP))
-      vpDisplay::displayLine(I,(curveList+curveNb)->lastPoint, iP, (curveList+curveNb)->color);
+      vpDisplay::displayLine(I,(curveList+curveNb)->lastPoint, iP, (curveList+curveNb)->color, (curveList+curveNb)->thickness);
   }
 #if( defined VISP_HAVE_X11 || defined VISP_HAVE_GDI )
   double top;
