@@ -99,6 +99,52 @@ vpIoTools::getUserName(std::string &username)
   delete [] infoBuf;
 #endif
 }
+/*!
+  Get the user name.
+
+  - Under unix, get the content of the LOGNAME environment variable.  For most
+    purposes (especially in conjunction with crontab), it is more useful to use
+    the environment variable LOGNAME to find out who the user is, rather than
+    the getlogin() function.  This is more flexible precisely because the user
+    can set LOGNAME arbitrarily.
+  - Under windows, uses the GetUserName() function.
+
+  \return The user name.
+
+  \exception vpIoException::cantGetUserName : If this method cannot get the
+  user name.
+*/
+std::string
+vpIoTools::getUserName()
+{
+  std::string username;
+#if defined UNIX
+  // Get the user name.
+  char *_username = NULL;
+  _username = ::getenv("LOGNAME");
+  if (_username == NULL) {
+    vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
+    throw(vpIoException(vpIoException::cantGetUserName,
+			"Cannot get the username")) ;
+  }
+  username = _username;
+#elif defined WIN32
+  int info_buffer_size = 1024;
+  TCHAR  *infoBuf = new TCHAR [info_buffer_size];
+  DWORD  bufCharCount = info_buffer_size;
+  // Get the user name.
+  if( ! GetUserName( infoBuf, &bufCharCount ) ) {
+    delete [] infoBuf;
+    vpERROR_TRACE( "Cannot get the username" );
+    throw(vpIoException(vpIoException::cantGetUserName,
+			"Cannot get the username")) ;
+
+  }
+  username = infoBuf;
+  delete [] infoBuf;
+#endif
+  return username;
+}
 
 /*!
   Get the content of an environment variable.

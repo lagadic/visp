@@ -100,6 +100,7 @@ class VISP_EXPORT vpIoTools
 
 public:
   static void getUserName(std::string &username);
+  static std::string getUserName();
   static std::string getenv(const char *env);
   static std::string getenv(std::string &env);
   static bool checkDirectory(const char *dirname);
