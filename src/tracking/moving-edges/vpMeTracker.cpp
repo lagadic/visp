@@ -55,47 +55,27 @@
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 0
-
-
-
 
 void
 vpMeTracker::init()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpMeTracker::init() " <<  std::endl ;
-
   vpTracker::init()  ;
   p.resize(2) ;
   selectDisplay = vpMeSite::NONE ;
-
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpMeTracker::init() " <<  std::endl ;
 }
 
 vpMeTracker::vpMeTracker()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpMeTracker::vpMeTracker() " <<  std::endl ;
-
   init();
   me = NULL ;
   display_point = false ;
   nGoodElement = 0;
   query_range = 0;
-  seuil = 0;
   init_range = 1;
-
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpMeTracker::vpMeTracker() " << std::endl ;
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpMeTracker::vpMeTracker() " <<  std::endl ;
-
   init();
   
   me = meTracker.me;
@@ -103,30 +83,22 @@ vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
   nGoodElement = meTracker.nGoodElement;
   query_range = meTracker.query_range;
   init_range = meTracker.init_range;
-  seuil = meTracker.seuil;
   display_point = meTracker.display_point;
   selectDisplay = meTracker.selectDisplay;
 }
 
 vpMeTracker::~vpMeTracker()
 {
-  if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::~vpMeTracker() " << std::endl ;
-
   list.clear();
-
-  if (DEBUG_LEVEL1) std::cout << "end vpMeTracker::~vpMeTracker() " << std::endl ;
 }
 
 vpMeTracker&
 vpMeTracker::operator = (vpMeTracker& p)
 {
-  if (DEBUG_LEVEL1) std::cout << "begin vpMeTracker::operator=" << std::endl ;
-
   list = p.list;
   me = p.me;
   selectDisplay = p.selectDisplay ;
 
-  if (DEBUG_LEVEL1) std::cout << "end vpMeTracker::operator=" << std::endl ;
   return *this;
 }
 
@@ -174,14 +146,13 @@ vpMeTracker::outOfImage(vpImagePoint iP, int half, int rows, int cols)
 }
 
 
-//! Virtual function that is called by lower classes vpMeTrackerLine/Circle/Cylinder
+/*!
+  Virtual function that is called by lower classes vpMeEllipse, vpMeLine 
+  and vpMeNurbs.
+*/
 void
 vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpMeTracker::initTracking() " << std::endl ;
-
-
   // Must set range to 0
   unsigned int range_tmp = me->range;
   me->range=init_range;
@@ -249,24 +220,16 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
   */
 
   me->range=range_tmp;
-
-
-  if (DEBUG_LEVEL1)
-  std::cout << "end vpMeTracker::initTracking() " << std::endl ;
-
 }
 
 
 void
 vpMeTracker::track(const vpImage<unsigned char>& I)
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin  vpMeTracker::Track():" << std::endl ;
-
   if (list.empty())
   {
     if (DEBUG_LEVEL1)
-    vpERROR_TRACE("Error Tracking: only %d "
+      vpERROR_TRACE("Error Tracking: only %d "
      "pixels when entered the function ",list.size()) ;
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
 			      "too few pixel to track")) ;
@@ -318,13 +281,15 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
       *it = s;
     }
   }
-
-  if (DEBUG_LEVEL1)
-    std::cout << "end  vpMeTracker::Track()" <<nGoodElement << std::endl ;
-
 }
 
-
+/*!
+  Displays the status of a moving edge site, a sample point:
+  - in red, the sample point is considered as valid, while
+  - in white, the sample point is suppressed due to a bad constrast,
+  - in blue, the sample point is suppressed due to a bad likelihood ratio,
+  - in green, the sample point is an outlier.
+*/
 void
 vpMeTracker::display(const vpImage<unsigned char>& I)
 {
@@ -359,11 +324,6 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
       vpDisplay::displayCross(I, ip, 2, vpColor::red) ; // OK
     }
   }
-
-  if (DEBUG_LEVEL1)
-  {
-    std::cout <<"end vpMeTracker::displayList() " << std::endl ;
-  }
 }
 
 
@@ -386,5 +346,5 @@ vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w, unsigned in
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
-#undef DEBUG_LEVEL3
+
 
