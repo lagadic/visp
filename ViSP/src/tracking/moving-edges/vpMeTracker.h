@@ -74,56 +74,45 @@ class VISP_EXPORT vpMeTracker : public vpTracker
 {
 public:
 
-  //! Tracking dependent variables/functions =====================
+  //! Tracking dependent variables/functions
 
-  //! List of tracked points
+  //! List of tracked moving edges points.
   std::list<vpMeSite> list ;
-  //! Ecm initialisation parameters
+  //! Moving edges initialisation parameters
   vpMe *me ;
   //! Used for backwards compatibility...could be removed
   int nGoodElement;
   int query_range;
   unsigned int init_range;
-  double seuil;
   bool display_point;// if 1 (TRUE) displays the line that is being tracked
 
-  //! Distance variables/functions ==========================================
-
-  //! Constructor/Destructor
+  // Constructor/Destructor
   vpMeTracker() ;
   vpMeTracker(const vpMeTracker& meTracker) ;
   virtual ~vpMeTracker() ;
   void init() ;
-
-  vpMeTracker& operator =(vpMeTracker& f);
-
-  //! Displays the number of elements in the list
-  void displayNumberOfElements() ;
-  void setMe(vpMe *me1) { me = me1 ; }
-  int outOfImage( int i , int j , int half , int rows , int cols) ;
-  int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
+  void initTracking(const vpImage<unsigned char>& I);
 
   unsigned int numberOfSignal() ;
-  unsigned int totalNumberOfSignal() ;
 
-  //! Virtual functions for vpMeTracker
-  //! Feature dependent functions
-
-  //!display contour
+  //! Display contour.
   virtual void display(const vpImage<unsigned char> &I, vpColor col)=0;
+  void display(const vpImage<unsigned char>& I);
+  //! Displays the status of moving edge sites
+  void display(const vpImage<unsigned char>& I, vpColVector &w, unsigned int &index_w);
+  vpMeTracker& operator =(vpMeTracker& f);
+  int outOfImage( int i , int j , int half , int rows , int cols) ;
+  int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
   //!Sample pixels at a given interval
   virtual void sample(const vpImage<unsigned char> &image)=0;
-
-  void initTracking(const vpImage<unsigned char>& I);
-  //!Track sampled pixels
-  void track(const vpImage<unsigned char>& I);
-  //!Displays the status of me site
-  void display(const vpImage<unsigned char>& I);
-  //!Displays the status of me sites
-  void display(const vpImage<unsigned char>& I, vpColVector &w, unsigned int &index_w);
   void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
     selectDisplay = select ;
   }
+  void setMe(vpMe *me) { this->me = me ; }
+  unsigned int totalNumberOfSignal() ;
+
+  //! Track sampled pixels.
+  void track(const vpImage<unsigned char>& I);
 
 protected:
   vpMeSite::vpMeSiteDisplayType selectDisplay ;
