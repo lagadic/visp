@@ -264,6 +264,13 @@ vpKltOpencv::~vpKltOpencv()
 
 }
 
+/*!
+  Set the maximum number of features to track in the image.
+
+  \warning The tracker must be re-initialised using the method initTracking().
+
+  \param input : The new number of maximum features.
+*/
 void vpKltOpencv::setMaxFeatures(const int input) {
   initialized = 0; maxFeatures=input;
 

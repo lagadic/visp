@@ -91,6 +91,50 @@ typedef void (*funcevent)(int);
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
   implemented with OpenCV.
 
+  The following example shows how to use the main functions of the class:
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpKltOpencv.h>
+#include <visp/vpImageConvert.h>
+
+int main()
+{
+#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // KLT only available since OpenCV-1.1.0
+  vpImage<unsigned char> I;
+  IplImage* Icv = NULL;
+  vpKltOpencv klt;
+
+  //First grab the initial image I
+
+  //Convert the image I to the IplImage format.
+  vpImageConvert::convert(I, Icv);
+
+  //Initialise the tracking on the whole image.
+  klt.initTracking(Icv, NULL);
+
+  while(true)
+  {
+    // Grab a new image and convert it to the OpenCV format.
+    vpImageConvert::convert(I, Icv);
+
+    // Track the features on the current image.
+    klt.track(Icv);
+
+    // Display the features tracked at the current iteration.
+    klt.display(I);
+  }
+
+  cvReleaseImage(&Icv);
+#else
+  std::cout << "vpKltOpencv requires ViSP with OpenCV." << std::endl;
+#endif
+  return(0);
+}
+  \endcode
+
 */
 class VISP_EXPORT vpKltOpencv
 {
@@ -162,10 +206,34 @@ class VISP_EXPORT vpKltOpencv
   /* Should be used only before initTracking */
   void setMaxFeatures(const int input);
 
+  /*!
+    Set the window size for the sub-pixel computation.
+
+    \warning The tracker must be re-initialised using the method initTracking().
+
+    \param input : The new number of maximum features.
+  */
   void setWindowSize(const int input) {initialized = 0; win_size=input;}
   void setQuality(double input) {initialized = 0; quality=input;}
+
+  /*!
+    Set the minimal distance between two points during the initialisation.
+
+    \warning The tracker must be re-initialised using the method initTracking().
+
+    \param input : The new minimal distance between two points.
+  */
   void setMinDistance(double input) {initialized = 0; min_distance=input;}
+
+  /*!
+    Set the Harris parameter (The \e k value).
+
+    \warning The tracker must be re-initialised using the method initTracking().
+
+    \param input : The new Harris parameter.
+  */
   void setHarrisFreeParameter(double input) {initialized = 0; harris_free_parameter=input;}
+
   /*!
     Set the size of the averaging block used to track the features. 
     
@@ -176,6 +244,15 @@ class VISP_EXPORT vpKltOpencv
   */
   void setBlockSize(const int input) {initialized = 0; block_size=input;}
   void setUseHarris(const int input) {initialized = 0; use_harris=input;}
+
+  /*!
+    Set the maximal pyramid level. If the level is zero, then no pyramid is
+    computed for the optical flow.
+
+    \warning The tracker must be re-initialised using the method initTracking().
+
+    \param input : The new maximal pyramid level.
+  */
   void setPyramidLevels(const int input) {initialized = 0; pyramid_level=input;}
   void setTrackerId(int tid) {_tid = tid;}
 
