@@ -115,7 +115,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
 
   \param I : Image that is displayed in the background.
 
-  \param bufferedKeys : If true, use of buffered input for the keybord (see
+  \param bufferedKeys : If true, use of buffered input for the keyboard (see
   Ogre documentation). Note that this parameter is only useful if OIS is used.
  
   \exception vpException::ioError : If the required plugins.cfg /
@@ -156,7 +156,7 @@ void vpAROgre::init(vpImage<unsigned char> &I,
 
   \param I : Image that is displayed in the background.
 
-  \param bufferedKeys : If true, use of buffered input for the keybord (see
+  \param bufferedKeys : If true, use of buffered input for the keyboard (see
   Ogre documentation). Note that this parameter is only useful if OIS is used.
  
   \exception vpException::ioError : If the required plugins.cfg /
@@ -193,7 +193,7 @@ void vpAROgre::init(vpImage<vpRGBa> &I,
   file. This file is located in VISP_HAVE_OGRE_RESOURCES_PATH folder
   that is defined in vpConfig.h.
   
-  \param bufferedKeys : If true, use of buffered input for the keybord (see
+  \param bufferedKeys : If true, use of buffered input for the keyboard (see
   Ogre documentation). Note that this parameter is only useful if OIS is used.
  
   \exception vpException::ioError : If the required plugins.cfg /
@@ -349,7 +349,7 @@ vpAROgre::~vpAROgre(void)
 }
 
 /*!
-  Function testing if the programe must stop rendering or not.
+  Function testing if the program must stop rendering or not.
   \param evt : Frame event to process.
   \return False if the program must be stopped.
 */

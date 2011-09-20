@@ -528,10 +528,10 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
   /* The matrix dimension is not known before the affectation loop.
    * It thus should be allocated on the flight, in the loop.
    * The first assumption is that the size has not changed. A double
-   * reallocation (realloc(dim*2)) is done if necessary. In particulary,
+   * reallocation (realloc(dim*2)) is done if necessary. In particular,
    * [log_2(dim)+1] reallocations are done for the first matrix computation.
    * If the allocated size is too large, a correction is done after the loop.
-   * The algotithmic cost is linear in affectation, logarthmic in allocation
+   * The algorithmic cost is linear in affectation, logarithmic in allocation
    * numbers and linear in allocation size.
    */
 
@@ -701,10 +701,10 @@ vpServo::computeError()
     /* The vector dimensions are not known before the affectation loop.
      * They thus should be allocated on the flight, in the loop.
      * The first assumption is that the size has not changed. A double
-     * reallocation (realloc(dim*2)) is done if necessary. In particulary,
+     * reallocation (realloc(dim*2)) is done if necessary. In particular,
      * [log_2(dim)+1] reallocations are done for the first error computation.
      * If the allocated size is too large, a correction is done after the loop.
-     * The algotithmic cost is linear in affectation, logarthmic in allocation
+     * The algorithmic cost is linear in affectation, logarithmic in allocation
      * numbers and linear in allocation size.
      * No assumptions are made concerning size of each vector: they are
      * not said equal, and could be different.
@@ -731,7 +731,7 @@ vpServo::computeError()
     unsigned int cursorSStar = 0;
     unsigned int cursorError = 0;
 
-    /* For each cell of the list, recopy value of s, s_star and error. */
+    /* For each cell of the list, copy value of s, s_star and error. */
     for (featureList.front(),
 	   desiredFeatureList.front(),
 	   featureSelectionList.front() ;
@@ -752,6 +752,7 @@ vpServo::computeError()
 	while (dimVectTmp + cursorS > dimS)
 	  { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
 	for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
+
 
 	/* Get s_star, and store it in the s vector. */
 	vectTmp = desired_s->get_s(select);
