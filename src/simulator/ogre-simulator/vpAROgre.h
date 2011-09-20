@@ -199,7 +199,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
     \warning To be effective, this method must be called before the init() one. 
   
-    \param resourcePath : The new ressource path (must not have a terminate /).
+    \param resourcePath : The new resource path (must not have a terminate /).
   */
   inline void setResourcePath(const char* resourcePath){
     mResourcePath = resourcePath;
@@ -220,7 +220,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
 
   /*!
-    Add optionnal resource location. Since a resource file cannot be always 
+    Add optional resource location. Since a resource file cannot be always
     sufficient to manage multiple location media (depending on the computer and 
     the executable path), this method may be used to add such paths.
     
@@ -236,7 +236,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   /*!
     Set the window position in the screen.
     
-    \throw vpException::notInitialised if the window hasnot been created (using 
+    \throw vpException::notInitialised if the window has not been created (using
     the init() method).
     
     \param win_x : x coordinate of the new top left corner of the window in the 
@@ -322,7 +322,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #endif
 
   // ViSP AR System
-  bool keepOn;                                   /** Has the application recieved a signal to stop(false) or not (true) */
+  bool keepOn;                                   /** Has the application received a signal to stop(false) or not (true) */
   vpImage<vpRGBa> mImageRGBA;                    /** vpImage to store grabbed image */
   vpImage<unsigned char> mImage;                 /** vpImage to store grabbed image */
   Ogre::HardwarePixelBufferSharedPtr mPixelBuffer;   /** Pointer to the pixel buffer */
@@ -335,7 +335,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   
   bool mshowConfigDialog;                         /** if true, shows the dialog window (used to set the display options) */
   
-  std::list<std::string> mOptionnalResourceLocation;  /** Optionnal resource location (used to load mesh and material) */
+  std::list<std::string> mOptionnalResourceLocation;  /** Optional resource location (used to load mesh and material) */
 
 };
 

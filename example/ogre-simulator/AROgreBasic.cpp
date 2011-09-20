@@ -503,7 +503,7 @@ int main(int argc, const char **argv)
   }
   catch(...)
     {
-      // an exception is throwned if an exception from readPGM has been catched
+      // an exception is thrown if an exception from readPGM has been caught
       // here this will result in the end of the program
       // Note that another error message has been printed from readPGM
       // to give more information about the error

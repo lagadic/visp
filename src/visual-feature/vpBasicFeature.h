@@ -95,7 +95,7 @@ class VISP_EXPORT vpBasicFeature
   //int featureLine[8] ;
   //! ensure that all the parameters needed to compute the iteraction matrix are set.
   bool *flags;
-  //!number of parmeters needed to compute the interaction matrix.
+  //!number of parameters needed to compute the interaction matrix.
   int nbParameters;
 
  public:
