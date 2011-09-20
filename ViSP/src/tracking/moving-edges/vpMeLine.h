@@ -119,7 +119,6 @@ int main()
   // Set the moving-edges tracker parameters
   vpMe me;
   me.setRange(25);
-  me.setPointsToTrack(20);
   me.setThreshold(15000);
   me.setSampleStep(10);
 
