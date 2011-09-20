@@ -255,7 +255,7 @@ public:
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
 	        const vpRect& rectangle);
     
-    /* matrching */
+    /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
 	    vpImagePoint &iP, 
