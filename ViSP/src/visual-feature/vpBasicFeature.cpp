@@ -144,23 +144,23 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
 	    const unsigned int select)
 {
 	vpColVector e(0),eLine(1);
-
-	for(unsigned int i=0;i<dim_s;++i)
+	if (dim_s <= 31)
 	{
-		if (dim_s <= 31){
+		for(unsigned int i=0;i<dim_s;++i){
 			if(FEATURE_LINE[i] & select)
 			{
 				eLine[0] = s[i] - s_star[i];
 				e.stackMatrices(eLine);
+				std::cout << "dim_s <= 31"<<std::endl;
 			}
 		}
-		else
-		{
-			eLine[0] = s[i] - s_star[i];
-			e.stackMatrices(eLine);
-		}
 	}
-
+	else
+	{
+		e.resize(dim_s);
+		vpColVector sd = s_star.get_s();
+		e = s - sd;
+	}
 
    return e ;
 }
