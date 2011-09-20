@@ -218,7 +218,9 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   vpDisplay::flush() is needed.
 
   \param I : Image in which the line appears.
-  \param col : Color of the displayed line.
+
+  \param col : Color of the displayed line. Note that a moving edge
+  that is considered as an outlier is displayed in green.
 
  */
 void

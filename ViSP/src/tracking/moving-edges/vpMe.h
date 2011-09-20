@@ -50,15 +50,13 @@
   \class vpMe
   \ingroup TrackingImageME
   
-  \brief Contains predetermined masks for sites, holds moving edges
+  \brief Contains predetermined masks for sites and holds moving edges
   tracking parameters.
-  
-  Andrew Comport added functionality - replaced points_to_track with
-  sample step.
- 
-  \date 4/7/03
+   
 */
 // ====================================================================
+//  Andrew Comport added functionality - replaced points_to_track with
+//  sample step.
 
 #ifndef vpMe_H
 #define vpMe_H
@@ -73,8 +71,8 @@ class VISP_EXPORT vpMe
 {
 public:
   double threshold ;//! Likelihood ratio threshold
-  double mu1; //! Contrast continuity parameter(left boundary)
-  double mu2; //! Contrast continuity parameter(right boundary)
+  double mu1; //! Contrast continuity parameter (left boundary)
+  double mu2; //! Contrast continuity parameter (right boundary)
   double min_samplestep;
   unsigned int anglestep;
   int mask_sign;
@@ -108,17 +106,26 @@ public:
   void initMask() ;// convolution masks - offset computation
   void print( ) ;
 
-  void setThreshold(const double lambda) { threshold = lambda ; }
-  void setPointsToTrack(const int number) { points_to_track = number ; }
-  void setAngleStep(const unsigned int a) { anglestep =a  ; }
-  void setRange(const unsigned int a) { range =a  ; }
-  void setMu1(const double a) { mu1 =a  ; }
-  void setMu2(const double a) { mu2 =a  ; }
+  /*!
+    Set the likelihood threshold.
+   */
+  void setThreshold(const double t) { threshold = t ; }
+  /*! 
+    Set the number of points to track.
+
+    \warning This method is useful only for the vpMeNurbsTracker.  
+   */
+  void setPointsToTrack(const int n) { points_to_track = n; }
+  void setAngleStep(const unsigned int a) { anglestep = a ; }
+  //! Set the seek range on on both sides of the reference pixel.
+  void setRange(const unsigned int r) { range = r  ; }
+  void setMu1(const double mu1) { this->mu1 = mu1  ; }
+  void setMu2(const double mu2) { this->mu2 = mu2  ; }
   void setMaskNumber(const unsigned int a) ;
   void setMaskSign(const int a){mask_sign = a ; }
   void setMaskSize(const unsigned int a) ;
   double getSampleStep() const { return sample_step ; }
-  void setSampleStep(const double a) { sample_step = a ; }
+  void setSampleStep(const double s) { sample_step = s ; }
   void setStrip(const int a) { strip = a ; }
   // in CPixel.convolution() : avoids to get points (In Appariement()
   // and SeekExtremities()) that Get_Sampling_Grid()
