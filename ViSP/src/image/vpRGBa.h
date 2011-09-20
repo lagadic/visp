@@ -137,6 +137,9 @@ public:
   void operator=(const unsigned char &v) ;
   void operator=(const vpRGBa &v) ;
   void operator=(const vpColVector &v) ;
+  bool operator==(const vpRGBa &v);
+  bool operator!=(const vpRGBa &v);
+
   vpColVector operator-(const vpRGBa &v) const;
   vpRGBa operator+(const vpRGBa &v) const;
   vpColVector operator-(const vpColVector &v) const;

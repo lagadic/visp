@@ -102,6 +102,43 @@ vpRGBa::operator=(const vpColVector &v)
 }
 
 /*!
+  Compare two RGBa values.
+
+  \return true if the values are the same, false otherwise.
+*/
+bool vpRGBa::operator==(const vpRGBa &v)
+{
+  if (R != v.R)
+    return false;
+  if (G != v.G)
+    return false;
+  if (B != v.B)
+    return false;
+  if (A != v.A)
+    return false;
+
+  return true ;
+}
+/*!
+  Compare two color pixels.
+
+  \return true if the images are different, false if they are the same.
+*/
+bool vpRGBa::operator!=(const vpRGBa &v)
+{
+  if (R == v.R)
+    return false;
+  if (G == v.G)
+    return false;
+  if (B == v.B)
+    return false;
+  if (A == v.A)
+    return false;
+
+  return true ;
+}
+
+/*!
   Substraction operator : "this" - v.
   \param v : Color to substract to the current object "this".
   \return "this" - v

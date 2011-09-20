@@ -210,11 +210,11 @@ public:
   //         Acces to the image
 
 
-  //! operator[] allows operation like I[i] = x
-  inline Type *operator[]( const unsigned int n)   { return row[n];}
+  //! operator[] allows operation like I[i] = x.
+  inline Type *operator[]( const unsigned int i)   { return row[i];}
 
   //! operator[] allows operation like x = I[i]
-  inline const  Type *operator[](unsigned int n) const { return row[n];}
+  inline const  Type *operator[](unsigned int i) const { return row[i];}
 
   /*!
     Get the value of an image point.
@@ -282,10 +282,12 @@ public:
   vpImage<Type> operator-(const vpImage<Type> &B);
 
   //! Copy operator
-  void operator=(const vpImage<Type> &m) ;
+  void operator=(const vpImage<Type> &I) ;
 
-  void operator=(const Type &x);
-  
+  void operator=(const Type &v);
+  bool operator==(const vpImage<Type> &I);
+  bool operator!=(const vpImage<Type> &I);
+
   void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
 
 
@@ -648,7 +650,7 @@ Type vpImage<Type>::getMinValue() const
   \brief Copy operator
 */
 template<class Type>
-void vpImage<Type>::operator=(const vpImage<Type> &m)
+void vpImage<Type>::operator=(const vpImage<Type> &I)
 {
     /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
   if(bitmap != NULL){
@@ -660,12 +662,12 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
     delete[] row;
     row = NULL ;
   }
-  this->width = m.width;
-  this->height = m.height;
-  this->npixels = m.npixels;
+  this->width = I.width;
+  this->height = I.height;
+  this->npixels = I.npixels;
   try
   {
-    if(m.npixels != 0)
+    if(I.npixels != 0)
     {
       if (bitmap == NULL){  
         bitmap = new  Type[npixels] ;
@@ -686,7 +688,7 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 		          "cannot allocate row ")) ;
       }      
 
-      memcpy(bitmap, m.bitmap, m.npixels*sizeof(Type)) ;
+      memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
 
       for (unsigned int i=0; i<this->height; i++){ 
         row[i] = bitmap + i*this->width;
@@ -702,16 +704,57 @@ void vpImage<Type>::operator=(const vpImage<Type> &m)
 
 
 /*!
-  \brief = operator : set   all the element of the bitmap to a given  value x
-   \f$ A = x <=> A[i][j] = x \f$
+  \brief = operator : Set all the element of the bitmap to a given  value \e v.
+   \f$ A = v <=> A[i][j] = v \f$
 
    \warning = must be defined for \f$ <\f$ Type \f$ > \f$
 */
 template<class Type>
-void vpImage<Type>::operator=(const Type &x)
+void vpImage<Type>::operator=(const Type &v)
 {
   for (unsigned int i=0 ; i < npixels ; i++)
-    bitmap[i] = x ;
+    bitmap[i] = v ;
+}
+
+/*!
+  Compare two images.
+
+  \return true if the images are the same, false otherwise.
+*/
+template<class Type>
+bool vpImage<Type>::operator==(const vpImage<Type> &I)
+{
+	if (this->width != I.getWidth())
+		return false;
+	if (this->height != I.getHeight())
+		return false;
+		
+  for (unsigned int i=0 ; i < npixels ; i++) 
+  {
+    if (bitmap[i] != I.bitmap[i])
+    	return false;
+  }
+  return true ;
+}
+/*!
+  Compare two images.
+
+  \return true if the images are different, false if they are the same.
+*/
+template<class Type>
+bool vpImage<Type>::operator!=(const vpImage<Type> &I)
+{
+  if (this->width != I.getWidth())
+    return true;
+  if (this->height != I.getHeight())
+    return true;
+
+  for (unsigned int i=0 ; i < npixels ; i++)
+  {
+    if (bitmap[i] == I.bitmap[i])
+      return false;
+  }
+  return true ;
 }
 
 /*!
