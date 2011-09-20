@@ -157,9 +157,6 @@ protected:
   //! Flag to indicate wether the last computed homography is correct or not.
   bool isCorrect;
   
-  //! Minimum number of point below which the homography is not considered as good.
-  unsigned int nbMinPoint;
-  
   //! The corners in the reference image
   std::vector<cv::Point2f> ref_corners;
   
@@ -227,20 +224,6 @@ public:
     \param _H : The computed homography.
   */
   inline void getHomography(vpHomography& _H) const { _H = this->homography;}
-  
-  /*!
-    get the minimum number of point to accept the computed homography.
-    
-    \return the minimum of point.
-  */
-  inline unsigned int getNbMinPoint() const { return this->nbMinPoint; }
-
-  /*!
-    Set the minimum number of point to validate the computed homography.
-    
-    \param nb : the new minimum number of point.
-  */
-  inline void setNbMinPoint(const unsigned int nb) { this->nbMinPoint = nb;}
   
   /*!
     Return the number of reference points
