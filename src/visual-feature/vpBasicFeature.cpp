@@ -151,7 +151,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
 			{
 				eLine[0] = s[i] - s_star[i];
 				e.stackMatrices(eLine);
-				std::cout << "dim_s <= 31"<<std::endl;
+				//std::cout << "dim_s <= 31"<<std::endl;
 			}
 		}
 	}
