@@ -56,6 +56,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
 
+class vpHomography;
 class vpRect;
 
 /*!
@@ -274,6 +275,8 @@ class VISP_EXPORT vpImagePoint
   
   
   bool inRectangle( const vpRect &rect );
+
+  vpImagePoint projection(const vpHomography& aHb);
 
  private:
   double i,j;
