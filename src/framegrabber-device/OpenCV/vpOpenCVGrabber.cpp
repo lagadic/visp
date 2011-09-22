@@ -193,6 +193,29 @@ void vpOpenCVGrabber::acquire(vpImage<vpRGBa> &I)
 	vpImageConvert::convert(im, I, flip);
 }
 
+/*!
+  Grab an image direclty in the OpenCV format.
+
+  \return Pointer to the image (must not be freed).
+
+  \exception vpFrameGrabberException::initializationError If the
+  initialization of the grabber was not done previously.
+*/
+IplImage* vpOpenCVGrabber::acquire()
+{
+  IplImage *im;
+
+  if (init==false)
+  {
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+             "Initialization not done") );
+  }
+
+  cvGrabFrame(capture);
+  im = cvRetrieveFrame(capture);
+  return im;
+}
 
 /*!
 	Stop the acquisition of images and free the camera.
