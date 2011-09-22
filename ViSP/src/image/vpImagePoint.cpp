@@ -44,6 +44,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpRect.h>
+#include <visp/vpHomography.h>
 
 /*!
 
@@ -60,4 +61,28 @@ bool vpImagePoint::inRectangle( const vpRect &rect )
 	   this->i >= rect.getTop() &&
 	   this->j <= rect.getRight() &&
 	   this->j >= rect.getLeft());
+}
+
+/*!
+  Project the current image point (in frame b) into the frame a using the
+  homography aHb.
+
+  \param aHb : Homography defining the relation between frame a and frame b.
+  \return The projected image point in the frame a.
+*/
+vpImagePoint
+vpImagePoint::projection(const vpHomography& aHb)
+{
+  vpImagePoint ap;
+
+  double i_a = aHb[0][0] * i + aHb[0][1] * j + aHb[0][2];
+  double j_a = aHb[1][0] * i + aHb[1][1] * j + aHb[1][2];
+  double k_a = aHb[2][0] * i + aHb[2][1] * j + aHb[2][2];
+
+  if(std::fabs(k_a) > std::numeric_limits<double>::epsilon()){
+    ap.set_i(i_a / k_a);
+    ap.set_j(j_a / k_a);
+  }
+
+  return ap;
 }
