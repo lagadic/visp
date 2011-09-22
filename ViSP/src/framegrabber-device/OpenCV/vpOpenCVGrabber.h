@@ -117,6 +117,7 @@ class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 
 		void acquire(vpImage<unsigned char> &I);
 		void acquire(vpImage<vpRGBa> &I);
+    IplImage* acquire();
 
 		void close();
 
