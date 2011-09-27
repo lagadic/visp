@@ -71,11 +71,12 @@
 
   \code
   vpKeyboard keyboard; // Turn on keyboard raw mode
+  int c;
   while (...) {
     ...
     if (keyboard.kbhit()) { // Detect if a key was pressed
       c = keyboard.getchar (); // Get the pressed key
-      if (c == 'q' || c == 'Q')
+      if (c == 'q' || c == 'Q') {
         break; // Quit the while()
       }
     ...
