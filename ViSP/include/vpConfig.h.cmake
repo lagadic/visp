@@ -152,6 +152,9 @@
 // Defined if libpng library available.
 #cmakedefine VISP_HAVE_LIBPNG
 
+// Defined if LibFreenect library available.
+#cmakedefine VISP_HAVE_LIBFREENECT
+
 // Defined if ffmpeg library available.
 #cmakedefine VISP_HAVE_FFMPEG
 
