@@ -43,6 +43,7 @@ Video and image Read/Write:
   libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
   libpng                    : ${VISP_HAVE_LIBPNG_FOUND}
 Misc:
+  Libusb                    : ${VISP_HAVE_LIBUSB_1_FOUND}
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
 Documentation:
