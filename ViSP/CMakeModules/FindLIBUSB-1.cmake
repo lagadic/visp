@@ -1,0 +1,60 @@
+##
+## Copyright Projet Lagadic / IRISA-INRIA Rennes, 2011
+## www: http://www.irisa.fr/lagadic
+##
+## Author: Celine Teuliere
+
+IF(WIN32)
+  FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
+    $ENV{LIBUSB_1_HOME}/include
+    )
+  FIND_LIBRARY(LIBUSB_1_LIBRARY libusb
+    $ENV{LIBUSB_1_HOME}/lib
+    "c:/libusb/lib"
+    )
+ELSE(WIN32) 
+  FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
+    $ENV{LIBUSB_1_HOME}/include/
+    usr/include/libusb-1.0/
+    usr/include/
+    )
+  FIND_LIBRARY(LIBUSB_1_LIBRARY libusb-1.0
+    $ENV{LIBUSB_1_HOME}/lib
+    $ENV{LIBUSB_1_HOME}/build/lib
+    /lib/
+    /lib64/
+    /usr/lib
+    /usr/local/lib
+    )
+ENDIF(WIN32)
+
+## --------------------------------
+
+IF(NOT LIBUSB_1_INCLUDE_DIR)
+  MESSAGE(SEND_ERROR "libusb include dir not found.")
+ENDIF(NOT LIBUSB_1_INCLUDE_DIR)
+
+IF(LIBUSB_1_LIBRARY)
+  SET(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})
+ELSE(LIBUSB_1_LIBRARY)
+  MESSAGE(SEND_ERROR "libusb library not found.")
+ENDIF(LIBUSB_1_LIBRARY)
+
+
+IF(LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIR)
+  SET(LIBUSB_1_INCLUDE_DIR ${LIBUSB_1_INCLUDE_DIR})
+  SET(LIBUSB_1_DIR ${LIBUSB_1_INCLUDE_DIR})
+  SET(LIBUSB_1_FOUND TRUE)
+ELSE(LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIR)
+  SET(LIBUSB_1_FOUND FALSE)
+ENDIF(LIBUSB_1_LIBRARIES AND LIBUSB_1_INCLUDE_DIR)
+
+MARK_AS_ADVANCED(
+  LIBUSB_1_INCLUDE_DIR
+  LIBUSB_1_LIBRARIES
+  LIBUSB_1_LIBRARY
+  )
+
+
+
+

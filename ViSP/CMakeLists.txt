@@ -266,6 +266,27 @@ ELSE ()
   SET(USE_OIS OFF)
 ENDIF ()
 
+FIND_PACKAGE(LIBFREENECT)
+IF(LIBFREENECT_FOUND)
+  OPTION(USE_LIBFREENECT    "Compile ViSP with the Libfreenect library" ON)
+ELSE(LIBFREENECT_FOUND)
+  SET(USE_LIBFREENECT OFF)
+ENDIF(LIBFREENECT_FOUND)
+
+FIND_PACKAGE(GLUT)
+IF(GLUT_FOUND)
+  OPTION(USE_GLUT    "Compile ViSP with the GLUT library" ON)
+ELSE(GLUT_FOUND)
+  SET(USE_GLUT OFF)
+ENDIF(GLUT_FOUND)
+
+FIND_PACKAGE(LIBUSB-1)
+IF(LIBUSB_1_FOUND)
+  OPTION(USE_LIBUSB_1    "Compile ViSP with the LIBUSB-1 library" ON)
+ELSE(LIBUSB_1_FOUND)
+  SET(USE_LIBUSB_1 OFF)
+ENDIF(LIBUSB_1_FOUND)
+
 IF(WIN32 AND USE_COIN)
   FIND_PACKAGE(SOWIN)
   IF (SOWIN_FOUND)
@@ -755,6 +776,47 @@ IF(USE_XML2)
     SET(VISP_HAVE_XML2_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(XML2_FOUND)
 ENDIF(USE_XML2)
+
+
+#---------------------------------------------------------------------
+# Libfreenect
+#---------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
+
+IF(USE_LIBFREENECT)
+  #FIND_PACKAGE(LIBFREENECT)
+  IF(LIBFREENECT_FOUND)
+    SET(VISP_HAVE_LIBFREENECT TRUE)
+    SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
+    MESSAGE(STATUS "LIBFREENECT found")
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES})
+  ELSE(LIBFREENECT_FOUND)
+    MESSAGE(STATUS "LIBFREENECT not found")
+    SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LIBFREENECT_FOUND)
+ENDIF(USE_LIBFREENECT)
+
+#---------------------------------------------------------------------
+# Libusb-1
+#---------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
+
+IF(USE_LIBUSB_1)
+  #FIND_PACKAGE(LIBUSB_1)
+  IF(LIBUSB_1_FOUND)
+    SET(VISP_HAVE_LIBUSB_1 TRUE)
+    SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
+    MESSAGE(STATUS "LIBUSB_1 found")
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBUSB_1_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LIBUSB_1_LIBRARIES})
+  ELSE(LIBUSB_1_FOUND)
+    MESSAGE(STATUS "LIBUSB_1 not found")
+    SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(LIBUSB_1_FOUND)
+ENDIF(USE_LIBUSB_1)
 
 #--------------------------------------------------------------------
 # pthread lib
