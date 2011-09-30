@@ -103,6 +103,10 @@ SET (HEADER_KEY_POINT
   key-point/vpFernClassifier.h
   )
 
+SET (HEADER_KINECTDEVICE
+  kinectdevice/vpKinect.h
+  )
+
 SET (HEADER_LASERSCANNER
   laserscanner/vpScanPoint.h
   laserscanner/vpLaserScan.h
@@ -301,6 +305,7 @@ SET (HEADER_ALL
   ${HEADER_FRAMEGRABBER_DEVICE}
   ${HEADER_IMAGE}
   ${HEADER_KEY_POINT}
+  ${HEADER_KINECTDEVICE}
   ${HEADER_LASERSCANNER}
   ${HEADER_LIGHT}
   ${HEADER_MATH}
