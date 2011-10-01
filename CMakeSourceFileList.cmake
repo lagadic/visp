@@ -117,10 +117,11 @@ IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
 ENDIF()
 
-
-SET (SRC_KINECTDEVICE
-  kinectdevice/vpKinect.cpp
+IF(VISP_HAVE_LIBFREENECT)
+  SET (SRC_KINECTDEVICE
+    kinectdevice/vpKinect.cpp
   )
+ENDIF()
 
 SET (SRC_LASERSCANNER
   laserscanner/sick/vpSickLDMRS.cpp

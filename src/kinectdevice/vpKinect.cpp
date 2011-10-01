@@ -170,4 +170,4 @@ bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB_)
 
 
 
-#endif VISP_HAVE_LIBFREENECT
+#endif // VISP_HAVE_LIBFREENECT
