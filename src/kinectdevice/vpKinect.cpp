@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:  vpKinect.cpp  2011-09-14 13:17:26  cteulier $
+ * $Id$
  *
  *
  * This file is part of the ViSP software.
@@ -48,17 +48,18 @@
 /*!
   Default constructor.
 */
-
-
-vpKinect::vpKinect(freenect_context *_ctx, int _index)
-		: Freenect::FreenectDevice(_ctx, _index), m_new_rgb_frame(false), m_new_depth_frame(false), height(480), width(640)
+vpKinect::vpKinect(freenect_context *ctx, int index)
+		: Freenect::FreenectDevice(ctx, index),
+		  m_new_rgb_frame(false), 
+		  m_new_depth_frame(false), 
+		  height(480), width(640)
 {
-	dmap.resize(height,width);
-	Idmap.resize(height,width);
-	IRGB.resize(height,width);
+	dmap.resize(height, width);
+	Idmap.resize(height, width);
+	IRGB.resize(height, width);
 	//IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
-	IRcam.initPersProjWithDistortion(606.12 ,595.78, 321.5, 235.8, -0.27, -0.27);
-	RGBcam.initPersProjWithoutDistortion(606,595,321,235);//A calibrer
+	IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, -0.27);
+	RGBcam.initPersProjWithoutDistortion(606, 595, 321, 235);// to calibrate
 }
 
 /*!
@@ -67,7 +68,6 @@ vpKinect::vpKinect(freenect_context *_ctx, int _index)
 vpKinect::~vpKinect()
 {
 }
-
 
 void vpKinect::start()
 {
@@ -82,7 +82,7 @@ void vpKinect::stop()
 }
 
 /*!
- * Set tilt angle (in degree)
+  Set tilt angle (in degree).
  */
 void vpKinect::setTiltAngle(float angle)
 {
@@ -91,19 +91,19 @@ void vpKinect::setTiltAngle(float angle)
 
 
 /*!
- * Acquire a new RGB image
-*/
-void vpKinect::VideoCallback(void* _rgb, uint32_t timestamp)
+  Acquire a new RGB image.
+ */
+void vpKinect::VideoCallback(void* rgb, uint32_t /* timestamp */)
 {
 	std::cout << "vpKinect Video callback" << std::endl;
-	Mutex::ScopedLock lock(m_rgb_mutex);
-	uint8_t* rgb = static_cast<uint8_t*>(_rgb);
+	vpMutex::vpScopedLock lock(m_rgb_mutex);
+	uint8_t* rgb_ = static_cast<uint8_t*>(rgb);
 	for (unsigned i = 0; i< height;i++){
 		for (unsigned j = 0 ; j < width ; j++)
 		{
-			IRGB[i][j].R = rgb[3*(width*i +j)+0];
-			IRGB[i][j].G = rgb[3*(width*i +j)+1];
-			IRGB[i][j].B = rgb[3*(width*i +j)+2];
+			IRGB[i][j].R = rgb_[3*(width*i +j)+0];
+			IRGB[i][j].G = rgb_[3*(width*i +j)+1];
+			IRGB[i][j].B = rgb_[3*(width*i +j)+2];
 		}
 	}
 
@@ -111,44 +111,45 @@ void vpKinect::VideoCallback(void* _rgb, uint32_t timestamp)
 }
 
 /*!
- * Acquire a new Depth image
- * Depth value send by the kinect is coded on 11 bits : 10 for the value itself (between 0 and 1023) and one for overflow
- * In this function this value is converted into a metric depth map and stored in dmap.  (range : 0.3 - 5m)
- * The corresponding gray level image Idmap is also updated
- *
+  Acquire a new depth image.
+
+  Depth value send by the kinect is coded on 11 bits : 10 for the
+  value itself (between 0 and 1023) and one for overflow.
+
+  In this function this value is converted into a metric depth map and
+  stored in dmap.  (range : 0.3 - 5m).
+
+  The corresponding gray level image Idmap is also updated.
 */
-void vpKinect::DepthCallback(void* _depth, uint32_t timestamp)
+void vpKinect::DepthCallback(void* depth, uint32_t /* timestamp */)
 {
 	std::cout << "vpKinect Depth callback" << std::endl;
-	Mutex::ScopedLock lock(m_depth_mutex);
-	uint16_t* depth = static_cast<uint16_t*>(_depth);
+	vpMutex::vpScopedLock lock(m_depth_mutex);
+	uint16_t* depth_ = static_cast<uint16_t*>(depth);
 
 	for (unsigned i = 0; i< height;i++){
 		for (unsigned j = 0 ; j < width ; j++)
 		{
-			dmap[i][j] = 0.1236 * tan(depth[width*i +j] / 2842.5 + 1.1863);//formula from http://openkinect.org/wiki/Imaging_Information
-			if(depth[width*i +j]>1023){
+			dmap[i][j] = 0.1236 * tan(depth_[width*i +j] / 2842.5 + 1.1863);//formula from http://openkinect.org/wiki/Imaging_Information
+			if(depth_[width*i +j]>1023){
 				dmap[i][j] = -1;//Depth cannot be computed
 			}
 
-			Idmap[i][j] = (unsigned char)(255*depth[width*i +j]/(float) 1024);
+			Idmap[i][j] = (unsigned char)(255*depth_[width*i +j]/(float) 1024);
 		}
 	}
 	m_new_depth_frame = true;
 }
 
-
-
-
 /*!
- * Get Depth map (float) and corresponding frame (for display)
+  Get Depth map (float) and corresponding frame (for display)
  */
-bool vpKinect::getDepthMap(vpImage<float>& map_,vpImage<unsigned char>& Imap)
+bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 {
-	Mutex::ScopedLock lock(m_depth_mutex);
+	vpMutex::vpScopedLock lock(m_depth_mutex);
 	if (!m_new_depth_frame)
 		return false;
-	map_ = dmap;
+	map = dmap;
 	Imap = Idmap;
 	m_new_depth_frame = false;
 	return true;
@@ -156,18 +157,17 @@ bool vpKinect::getDepthMap(vpImage<float>& map_,vpImage<unsigned char>& Imap)
 
 
 /*!
- * Get RGB image
+  Get RGB image
  */
-bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB_)
+bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB)
 {
-	Mutex::ScopedLock lock(m_rgb_mutex);
+	vpMutex::vpScopedLock lock(m_rgb_mutex);
 	if (!m_new_rgb_frame)
 		return false;
-	IRGB_ = IRGB;
+	IRGB = this->IRGB;
 	m_new_rgb_frame = false;
 	return true;
 }
-
 
 
 #endif // VISP_HAVE_LIBFREENECT

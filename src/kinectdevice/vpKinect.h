@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id:  vpKinect.h  2011-09-14 13:17:26  cteulier $
+ * $Id$
  *
  *
  * This file is part of the ViSP software.
@@ -46,50 +46,63 @@
 #define __VP_KINECT__
 
 #include <visp/vpConfig.h>
-#ifdef VISP_HAVE_LIBFREENECT
+#if defined(VISP_HAVE_LIBFREENECT) && defined(VISP_HAVE_PTHREAD)
 
-#include "libfreenect.hpp"
-#include <pthread.h>
 #include <iostream>
+#include <libfreenect.hpp>
+
+#include <visp/vpMutex.h> // need pthread
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 
-class Mutex {
-public:
-	Mutex() {
-		pthread_mutex_init( &m_mutex, NULL );
-	}
-	void lock() {
-		pthread_mutex_lock( &m_mutex );
-	}
-	void unlock() {
-		pthread_mutex_unlock( &m_mutex );
-	}
+/*!
 
-	class ScopedLock
-	{
-		Mutex & _mutex;
-	public:
-		ScopedLock(Mutex & mutex)
-			: _mutex(mutex)
-		{
-			_mutex.lock();
-		}
-		~ScopedLock()
-		{
-			_mutex.unlock();
-		}
-	};
-private:
-	pthread_mutex_t m_mutex;
-};
+  \class vpKinect
 
+  \ingroup KinectDriver
 
-class vpKinect : public Freenect::FreenectDevice
+  \brief Driver for the Kinect device.
+
+  The following example shows how to use this class to acquire data
+  (depth map and color image) from a Kinect.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpKinect.h>
+
+int main() {
+#ifdef VISP_HAVE_LIBFREENECT
+  // Init Kinect device
+  Freenect::Freenect<vpKinect> freenect;
+  vpKinect * kinect = &freenect.createDevice(0);
+  kinect->start(); // Start acquisition thread
+
+  // Set tilt angle
+  float angle = -5;
+  kinect->setTiltAngle(angle);
+
+  vpImage<unsigned char> I(480,640);
+  vpImage<vpRGBa> Irgb(480,640);
+  vpImage<float> dmap(480,640);
+
+  // Acquisition loop
+  for (int i=0; i<100; i++)
+    {
+      kinect->updateState();
+      kinect->getDepthMap(dmap,I);
+      kinect->getRGB(Irgb);
+    }
+  kinect->stop();//!stop acquisition thread
+#endif
+  return 0;
+}
+  \endcode
+*/
+class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
 public:
-
-	vpKinect(freenect_context *_ctx, int _index);
+	vpKinect(freenect_context *ctx, int index);
 	virtual ~vpKinect();
 
 	void start();
@@ -97,26 +110,34 @@ public:
 
 	void setTiltAngle(float angle);
 
-	bool getDepthMap(vpImage<float>& map_,vpImage<unsigned char>& Imap);
+	bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
 	bool getRGB(vpImage<vpRGBa>& IRGB);
 
 
-	inline void getIRCamParameters(vpCameraParameters &cam)const{cam = IRcam;}
-	inline void getRGBCamParameters(vpCameraParameters &cam)const{cam = RGBcam;}
-	inline void setIRCamParameters(const vpCameraParameters &cam){IRcam = cam;}
-	inline void setRGBCamParameters(const vpCameraParameters &cam){RGBcam = cam;}
+	inline void getIRCamParameters(vpCameraParameters &cam) const {
+	  cam = IRcam;
+	}
+	inline void getRGBCamParameters(vpCameraParameters &cam) const {
+	  cam = RGBcam;
+	}
+	inline void setIRCamParameters(const vpCameraParameters &cam) {
+	  IRcam = cam;
+	}
+	inline void setRGBCamParameters(const vpCameraParameters &cam) {
+	  RGBcam = cam;
+	}
 
 private:
 	//!Instantiation of Freenect virtual functions
 	// Do not call directly even in child
-	void VideoCallback(void* _rgb, uint32_t timestamp);
+	void VideoCallback(void* rgb, uint32_t timestamp);
 
 	// Do not call directly even in child
-	void DepthCallback(void* _depth, uint32_t timestamp);
+	void DepthCallback(void* depth, uint32_t timestamp);
 
 private:
-	Mutex m_rgb_mutex;
-	Mutex m_depth_mutex;
+	vpMutex m_rgb_mutex;
+	vpMutex m_depth_mutex;
 
 	bool m_new_rgb_frame;
 	bool m_new_depth_frame;

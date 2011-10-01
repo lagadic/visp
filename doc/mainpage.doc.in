@@ -361,6 +361,10 @@ scheme, ...</p>
 */
 /*!
   \ingroup Tool 
+  \defgroup Mutex Mutex
+*/
+/*!
+  \ingroup Tool 
   \defgroup plot Drawing of 2D or 3D graphics
 */
 /*!
@@ -419,4 +423,8 @@ scheme, ...</p>
 /*!
   \ingroup Driver
   \defgroup LaserDriver Laser scanner drivers
+*/
+/*!
+  \ingroup Driver
+  \defgroup KinectDriver Kinect driver
 */

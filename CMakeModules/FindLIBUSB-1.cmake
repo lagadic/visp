@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindIRISA.cmake 3057 2011-02-11 13:17:26Z fspindle $
+# $Id$
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
@@ -52,8 +52,8 @@ IF(WIN32)
 ELSE(WIN32) 
   FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
     $ENV{LIBUSB_1_HOME}/include/
-    usr/include/libusb-1.0/
-    usr/include/
+    /usr/include/libusb-1.0/
+    /usr/include
     )
   FIND_LIBRARY(LIBUSB_1_LIBRARY libusb-1.0
     $ENV{LIBUSB_1_HOME}/lib
