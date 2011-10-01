@@ -222,6 +222,7 @@ SET (HEADER_TOOLS
   tools/io/vpParallelPort.h
   tools/io/vpParallelPortException.h
   tools/io/vpParseArgv.h
+  tools/mutex/vpMutex.h
   tools/plot/vpPlot.h
   tools/plot/vpPlotCurve.h
   tools/plot/vpPlotGraph.h
