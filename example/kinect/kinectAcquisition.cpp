@@ -47,6 +47,7 @@
 
 */
 
+#include <iostream>
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_LIBFREENECT
@@ -114,7 +115,7 @@ int main() {
 int
 main()
 {
-  vpTRACE("You should install a vide device (X11, GTK, OpenCV, GDI) to run this example") ;
+  std::cout << "You should install a vide device (X11, GTK, OpenCV, GDI) to run this example" << std::endl;
 }
 #endif
 
@@ -122,7 +123,7 @@ main()
 int
 main()
 {
-  vpTRACE("You should install libfreenect to run this example") ;
+  std::cout << "You should install libfreenect to run this example" << std::endl;
 }
 
 #endif
