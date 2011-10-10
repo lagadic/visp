@@ -214,7 +214,7 @@ main(int argc, const char ** argv)
     vpImageIo::readPNG(I,filename);
     vpTRACE("Read png ok");
     #else
-    vpTRACE("To read jpeg you must have the libpng library");
+    vpTRACE("To read png you must have the libpng library");
     #endif
   }
   
