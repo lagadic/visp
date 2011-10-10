@@ -50,6 +50,9 @@
 
 #include <stdio.h>
 #include <iostream>
+#ifdef WIN32
+#  include <windows.h>
+#endif
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
