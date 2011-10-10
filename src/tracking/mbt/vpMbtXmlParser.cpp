@@ -47,11 +47,13 @@
 
 #ifdef VISP_HAVE_XML2
 
-#include <visp/vpMbtXmlParser.h>
-
-#include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
 #include <iostream>
 #include <map>
+
+#include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
+
+#include <visp/vpMbtXmlParser.h>
+
 
 /*!
   Default constructor. 
@@ -227,7 +229,7 @@ void
 vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	int d_stp = this->m_ecm.sample_step;
+	double d_stp = this->m_ecm.sample_step;
 	int d_nb_sample = this->m_ecm.ntotal_sample;
 	
 	unsigned int nb=0;
