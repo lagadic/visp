@@ -85,7 +85,7 @@ IF(LIBJPEG_LIBRARY AND LIBJPEG_INCLUDE_PATH)
     include(CheckCXXSourceCompiles)
 	
     SET(CMAKE_REQUIRED_LIBRARIES ${LIBJPEG_LIBRARY})
-    SET(CMAKE_REQUIRED_INCLUDES ${LIBJPEG_INCLUDE_DIR})
+    SET(CMAKE_REQUIRED_INCLUDES ${LIBJPEG_INCLUDE_PATH})
     CHECK_CXX_SOURCE_COMPILES("
       #include <stdio.h>  
       #include <jpeglib.h> // Contrib for jpeg image io
