@@ -24,8 +24,6 @@ Robots
   Ptu46                     : ${VISP_HAVE_PTU46_FOUND}
   Viper S850                : ${VISP_HAVE_VIPER850_FOUND}
   Cycab                     : ${VISP_HAVE_CYCAB_FOUND}
-SensorDevices
-  Libfreenect               : ${VISP_HAVE_LIBFREENECT_FOUND}
 Video devices (display)                  
   X11                       : ${VISP_HAVE_X11_FOUND}
   GTK                       : ${VISP_HAVE_GTK_FOUND} 
@@ -38,12 +36,14 @@ Framegrabbers
   Video For Linux Two       : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
+Kinect
+  libfreenect               : ${VISP_HAVE_LIBFREENECT_FOUND}
+  libusb-1.0                : ${VISP_HAVE_LIBUSB_1_FOUND}
 Video and image Read/Write:
   FFMPEG                    : ${VISP_HAVE_FFMPEG_FOUND}
   libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
   libpng                    : ${VISP_HAVE_LIBPNG_FOUND}
 Misc:
-  Libusb                    : ${VISP_HAVE_LIBUSB_1_FOUND}
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
 Documentation:

@@ -89,11 +89,10 @@ int main() {
   // Acquisition loop
   for (int i=0; i<100; i++)
     {
-      kinect->updateState();
       kinect->getDepthMap(dmap,I);
       kinect->getRGB(Irgb);
     }
-  kinect->stop();//!stop acquisition thread
+  kinect->stop(); // Stop acquisition thread
 #endif
   return 0;
 }
@@ -108,10 +107,9 @@ public:
 	void start();
 	void stop();
 
-	void setTiltAngle(float angle);
-
-	bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
-	bool getRGB(vpImage<vpRGBa>& IRGB);
+  bool getDepthMap(vpImage<float>& map);
+  bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
+  bool getRGB(vpImage<vpRGBa>& IRGB);
 
 
 	inline void getIRCamParameters(vpCameraParameters &cam) const {
