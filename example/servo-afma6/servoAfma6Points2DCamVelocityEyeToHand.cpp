@@ -360,9 +360,9 @@ int main()
       v = task.computeControlLaw() ;
 
       // display points trajectory
-      for (std::list<vpImagePoint>::const_iterator it = Lcog.begin(); it != Lcog.end(); ++it)
+      for (std::list<vpImagePoint>::const_iterator it_cog = Lcog.begin(); it_cog != Lcog.end(); ++it_cog)
       {
-        vpDisplay::displayPoint(I, *it, vpColor::red) ;
+        vpDisplay::displayPoint(I, *it_cog, vpColor::red) ;
       }
       vpServoDisplay::display(task,cam,I) ;
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;

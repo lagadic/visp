@@ -261,7 +261,7 @@ main()
 
       // Update loop time in second
       Tv = (double)(t_0 - t_1) / 1000.0; 
-      // std::cout << "Tv: " << Tv << std::endl;
+      std::cout << "Tv: " << Tv << std::endl;
       
       // Update time for next iteration
       t_1 = t_0;

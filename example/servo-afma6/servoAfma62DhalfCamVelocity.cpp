@@ -275,7 +275,6 @@ main()
       double lambda_av =0.05;
       double alpha = 0.05 ;
       double beta =3 ;
-      double erreur= 1;
 
       while(1)
 	{
@@ -370,7 +369,6 @@ main()
 	    }
 
 	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
-	  erreur = task.error.sumSquare();
 	  iter++;
 	}
 
