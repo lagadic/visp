@@ -35,7 +35,7 @@
  * Kinect example.
  *
  * Authors:
- * Céline Teulière
+ * Cï¿½line Teuliï¿½re
  *
  *****************************************************************************/
 
@@ -65,18 +65,25 @@
 
 int main() {
   // Init Kinect
-  Freenect::Freenect<vpKinect> freenect;
-  vpKinect & kinect = freenect.createDevice(0);
-  kinect.start(); // Start acquisition thread
+	Freenect::Freenect freenect;
+	vpKinect& kinect = freenect.createDevice<vpKinect>(0);
+//  Freenect::Freenect<vpKinect> freenect;
+//  vpKinect & kinect = freenect.createDevice(0);
+
+//  kinect.start(MEDIUM); // Start acquisition thread with a depth map resolution of 480x640
+  kinect.start(LOW); // Start acquisition thread with a depth map resolution of 240x320 (default resolution)
+
 
   // Set tilt angle in degrees
   float angle = -5;
   kinect.setTiltDegrees(angle);
 
   // Init display
-  vpImage<unsigned char> I(480,640);
+//  vpImage<unsigned char> I(480,640);//for medium resolution
+//  vpImage<float> dmap(480,640);//for medium resolution
+  vpImage<unsigned char> I(240,320);//for low resolution
+  vpImage<float> dmap(240,320);//for low resolution
   vpImage<vpRGBa> Irgb(480,640);
-  vpImage<float> dmap(480,640);
 
 #if defined VISP_HAVE_X11
   vpDisplayX display;
