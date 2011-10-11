@@ -144,7 +144,6 @@ private:
 	vpMutex m_rgb_mutex;
 	vpMutex m_depth_mutex;
 
-	unsigned height,width;
 	vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
 	vpDMResolution DMres;
 
@@ -153,8 +152,10 @@ private:
 	vpImage<float> dmap;
 	vpImage<vpRGBa> IRGB;
 	bool m_new_rgb_frame;
-	bool m_new_depth_image;
-	bool m_new_depth_map;
+  bool m_new_depth_map;
+  bool m_new_depth_image;
+  unsigned int height;
+  unsigned int width;
 };
 
 
