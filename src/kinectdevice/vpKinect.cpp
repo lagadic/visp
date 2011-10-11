@@ -81,14 +81,6 @@ void vpKinect::stop()
 	this->stopDepth();
 }
 
-/*!
-  Set tilt angle (in degree).
- */
-void vpKinect::setTiltAngle(float angle)
-{
-	this->setTiltDegrees(angle);
-}
-
 
 /*!
   Acquire a new RGB image.
@@ -142,17 +134,30 @@ void vpKinect::DepthCallback(void* depth, uint32_t /* timestamp */)
 }
 
 /*!
-  Get Depth map (float) and corresponding frame (for display)
+  Get metric depth map (float) and corresponding image.
  */
 bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 {
-	vpMutex::vpScopedLock lock(m_depth_mutex);
-	if (!m_new_depth_frame)
-		return false;
-	map = dmap;
-	Imap = Idmap;
-	m_new_depth_frame = false;
-	return true;
+  vpMutex::vpScopedLock lock(m_depth_mutex);
+  if (!m_new_depth_frame)
+    return false;
+  map = dmap;
+  Imap = Idmap;
+  m_new_depth_frame = false;
+  return true;
+}
+
+/*!
+  Get metric depth map (float).
+ */
+bool vpKinect::getDepthMap(vpImage<float>& map)
+{
+  vpMutex::vpScopedLock lock(m_depth_mutex);
+  if (!m_new_depth_frame)
+    return false;
+  map = dmap;
+  m_new_depth_frame = false;
+  return true;
 }
 
 

@@ -55,7 +55,7 @@ ELSE(WIN32)
     /usr/include/libusb-1.0/
     /usr/include
     )
-  FIND_LIBRARY(LIBUSB_1_LIBRARY libusb-1.0
+  FIND_LIBRARY(LIBUSB_1_LIBRARY usb-1.0
     $ENV{LIBUSB_1_HOME}/lib
     $ENV{LIBUSB_1_HOME}/build/lib
     /lib/

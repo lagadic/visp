@@ -282,7 +282,7 @@ ENDIF(GLUT_FOUND)
 
 FIND_PACKAGE(LIBUSB-1)
 IF(LIBUSB_1_FOUND)
-  OPTION(USE_LIBUSB_1    "Compile ViSP with the LIBUSB-1 library" ON)
+  OPTION(USE_LIBUSB_1    "Compile ViSP with the libusb-1.0 library" ON)
 ELSE(LIBUSB_1_FOUND)
   SET(USE_LIBUSB_1 OFF)
 ENDIF(LIBUSB_1_FOUND)
@@ -779,44 +779,41 @@ ENDIF(USE_XML2)
 
 
 #---------------------------------------------------------------------
-# Libfreenect
+# libfreenect
+# Note that this library needs libusb-1.0
 #---------------------------------------------------------------------
 # default initialisation
 SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
-
-IF(USE_LIBFREENECT)
-  #FIND_PACKAGE(LIBFREENECT)
-  IF(LIBFREENECT_FOUND)
-    SET(VISP_HAVE_LIBFREENECT TRUE)
-    SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
-    MESSAGE(STATUS "LIBFREENECT found")
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES})
-  ELSE(LIBFREENECT_FOUND)
-    MESSAGE(STATUS "LIBFREENECT not found")
-    SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(LIBFREENECT_FOUND)
-ENDIF(USE_LIBFREENECT)
-
-#---------------------------------------------------------------------
-# Libusb-1
-#---------------------------------------------------------------------
-# default initialisation
 SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
 
-IF(USE_LIBUSB_1)
-  #FIND_PACKAGE(LIBUSB_1)
-  IF(LIBUSB_1_FOUND)
+IF(USE_LIBFREENECT AND USE_LIBUSB_1)
+  #FIND_PACKAGE(LIBFREENECT)
+  IF(LIBFREENECT_FOUND AND LIBUSB_1_FOUND)
+    SET(VISP_HAVE_LIBFREENECT TRUE)
+    SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
     SET(VISP_HAVE_LIBUSB_1 TRUE)
     SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
-    MESSAGE(STATUS "LIBUSB_1 found")
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBUSB_1_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${LIBUSB_1_LIBRARIES})
-  ELSE(LIBUSB_1_FOUND)
-    MESSAGE(STATUS "LIBUSB_1 not found")
-    SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(LIBUSB_1_FOUND)
-ENDIF(USE_LIBUSB_1)
+    MESSAGE(STATUS "libfreenect found")
+    MESSAGE(STATUS "libusb-1.0 found")
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR} ${LIBUSB_1_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES} ${LIBUSB_1_LIBRARIES})
+  ELSE()
+    IF(NOT LIBFREENECT_FOUND)
+      MESSAGE(STATUS "libfreenect not found")
+      SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
+    ELSE()
+      MESSAGE(STATUS "libfreenect found")
+      SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
+    ENDIF()
+    IF(NOT LIBUSB_1_FOUND)
+      MESSAGE(STATUS "libusb-1.0 not found")
+      SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
+    ELSE()
+      MESSAGE(STATUS "libusb-1.0 found")
+      SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
+    ENDIF()
+  ENDIF()
+ENDIF()
 
 #--------------------------------------------------------------------
 # pthread lib
@@ -1032,7 +1029,7 @@ IF(USE_LIBJPEG)
   #FIND_PACKAGE(JPEG)
   #MESSAGE("test ${JPEG_FOUND}")
   IF(LIBJPEG_FOUND)
-    MESSAGE(STATUS "Libjpeg found")
+    MESSAGE(STATUS "libjpeg found")
     SET(VISP_HAVE_LIBJPEG  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_LIBJPEG_FOUND "yes")  # for ViSP-third-party.txt
 
@@ -1048,7 +1045,7 @@ IF(USE_LIBJPEG)
     ENDIF(VISP_HAVE_QT3_FOUND)
 
   ELSE(LIBJPEG_FOUND)
-    MESSAGE(STATUS "Libjpeg not found")
+    MESSAGE(STATUS "libjpeg not found")
     SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(LIBJPEG_FOUND)
 ENDIF(USE_LIBJPEG)
@@ -1057,7 +1054,7 @@ ENDIF(USE_LIBJPEG)
 IF(USE_LIBPNG)
   #FIND_PACKAGE(LIBPNG)
   IF(LIBPNG_FOUND)
-    MESSAGE(STATUS "Libpng found")
+    MESSAGE(STATUS "libpng found")
     SET(VISP_HAVE_LIBPNG  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_LIBPNG_FOUND "yes")  # for ViSP-third-party.txt
 
@@ -1065,7 +1062,7 @@ IF(USE_LIBPNG)
     LIST(APPEND VISP_EXTERN_LIBS ${LIBPNG_LIBRARIES})
 
   ELSE(LIBPNG_FOUND)
-    MESSAGE(STATUS "Libpng not found")
+    MESSAGE(STATUS "libpng not found")
     SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(LIBPNG_FOUND)
 ENDIF(USE_LIBPNG)

@@ -61,6 +61,7 @@
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpKinect.h>
+#include <visp/vpTime.h>
 
 int main() {
   // Init Kinect
@@ -68,9 +69,9 @@ int main() {
   vpKinect & kinect = freenect.createDevice(0);
   kinect.start(); // Start acquisition thread
 
-  // Set tilt angle
+  // Set tilt angle in degrees
   float angle = -5;
-  kinect.setTiltAngle(angle);
+  kinect.setTiltDegrees(angle);
 
   // Init display
   vpImage<unsigned char> I(480,640);
@@ -97,7 +98,7 @@ int main() {
   // A click to stop acquisition
   while(!vpDisplay::getClick(I,false))
     {
-      kinect.updateState();
+      kinect.getDepthMap(dmap);
       kinect.getDepthMap(dmap,I);
       kinect.getRGB(Irgb);
 
@@ -105,7 +106,7 @@ int main() {
       vpDisplay::flush(I);
       vpDisplay::display(Irgb);
       vpDisplay::flush(Irgb);
-    }
+     }
   kinect.stop(); // Stop acquisition thread
   return 0;
 }
@@ -115,7 +116,7 @@ int main() {
 int
 main()
 {
-  std::cout << "You should install a vide device (X11, GTK, OpenCV, GDI) to run this example" << std::endl;
+  std::cout << "You should install a video device (X11, GTK, OpenCV, GDI) to run this example" << std::endl;
 }
 #endif
 
