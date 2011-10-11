@@ -98,18 +98,25 @@ int main() {
 }
   \endcode
 */
+
+typedef enum{
+	LOW,
+	MEDIUM
+}vpDMResolution;//Depth map resolution
+
+
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
 public:
 	vpKinect(freenect_context *ctx, int index);
 	virtual ~vpKinect();
 
-	void start();
+	void start(vpDMResolution res = LOW);
 	void stop();
 
-  bool getDepthMap(vpImage<float>& map);
-  bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
-  bool getRGB(vpImage<vpRGBa>& IRGB);
+	bool getDepthMap(vpImage<float>& map);
+	bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
+	bool getRGB(vpImage<vpRGBa>& IRGB);
 
 
 	inline void getIRCamParameters(vpCameraParameters &cam) const {
@@ -137,16 +144,17 @@ private:
 	vpMutex m_rgb_mutex;
 	vpMutex m_depth_mutex;
 
-	bool m_new_rgb_frame;
-	bool m_new_depth_frame;
-
 	unsigned height,width;
 	vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
+	vpDMResolution DMres;
 
-	//Acces protected by a mutex
+
+	//Access protected by a mutex:
 	vpImage<float> dmap;
-	vpImage<unsigned char> Idmap;
 	vpImage<vpRGBa> IRGB;
+	bool m_new_rgb_frame;
+	bool m_new_depth_image;
+	bool m_new_depth_map;
 };
 
 
