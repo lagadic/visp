@@ -46,7 +46,8 @@
 #define __VP_KINECT__
 
 #include <visp/vpConfig.h>
-#if defined(VISP_HAVE_LIBFREENECT) && defined(VISP_HAVE_PTHREAD)
+// Note that libfreenect needs libusb-1.0 and libpthread 
+#if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
 
 #include <iostream>
 #include <libfreenect.hpp>
@@ -74,13 +75,20 @@
 int main() {
 #ifdef VISP_HAVE_LIBFREENECT
   // Init Kinect device
+#ifdef VISP_HAVE_LIBFREENECT_OLD
+  // This is the way to initialize Freenect with an old version of libfreenect
+  // package under ubuntu lucid 10.04
   Freenect::Freenect<vpKinect> freenect;
   vpKinect * kinect = &freenect.createDevice(0);
+#else
+  Freenect::Freenect freenect;
+  vpKinect * kinect = &freenect.createDevice<vpKinect>(0);
+#endif
   kinect->start(); // Start acquisition thread
 
   // Set tilt angle
   float angle = -5;
-  kinect->setTiltAngle(angle);
+  kinect->setTiltDegrees(angle);
 
   vpImage<unsigned char> I(480,640);
   vpImage<vpRGBa> Irgb(480,640);
@@ -88,10 +96,10 @@ int main() {
 
   // Acquisition loop
   for (int i=0; i<100; i++)
-    {
-      kinect->getDepthMap(dmap,I);
-      kinect->getRGB(Irgb);
-    }
+  {
+    kinect->getDepthMap(dmap,I);
+    kinect->getRGB(Irgb);
+  }
   kinect->stop(); // Stop acquisition thread
 #endif
   return 0;
@@ -99,67 +107,66 @@ int main() {
   \endcode
 */
 
-typedef enum{
-	LOW,
-	MEDIUM
-}vpDMResolution;//Depth map resolution
-
-
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
-public:
-	vpKinect(freenect_context *ctx, int index);
-	virtual ~vpKinect();
+ public:
+  /*! 
+    Depth map resolution.
+  */
+  typedef enum {
+    DMAP_LOW_RES,   /*!< Depth map has a resolution of 320 by 240. */
+    DMAP_MEDIUM_RES /*!< Depth map has a resolution of 640 by 480. */
+  } vpDMResolution;
 
-	void start(vpDMResolution res = LOW);
-	void stop();
+  vpKinect(freenect_context *ctx, int index);
+  virtual ~vpKinect();
 
-	bool getDepthMap(vpImage<float>& map);
-	bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
-	bool getRGB(vpImage<vpRGBa>& IRGB);
+  void start(vpKinect::vpDMResolution res = DMAP_LOW_RES);
+  void stop();
 
-
-	inline void getIRCamParameters(vpCameraParameters &cam) const {
-	  cam = IRcam;
-	}
-	inline void getRGBCamParameters(vpCameraParameters &cam) const {
-	  cam = RGBcam;
-	}
-	inline void setIRCamParameters(const vpCameraParameters &cam) {
-	  IRcam = cam;
-	}
-	inline void setRGBCamParameters(const vpCameraParameters &cam) {
-	  RGBcam = cam;
-	}
-
-private:
-	//!Instantiation of Freenect virtual functions
-	// Do not call directly even in child
-	void VideoCallback(void* rgb, uint32_t timestamp);
-
-	// Do not call directly even in child
-	void DepthCallback(void* depth, uint32_t timestamp);
-
-private:
-	vpMutex m_rgb_mutex;
-	vpMutex m_depth_mutex;
-
-	vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
-	vpDMResolution DMres;
+  bool getDepthMap(vpImage<float>& map);
+  bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
+  bool getRGB(vpImage<vpRGBa>& IRGB);
 
 
-	//Access protected by a mutex:
-	vpImage<float> dmap;
-	vpImage<vpRGBa> IRGB;
-	bool m_new_rgb_frame;
+  inline void getIRCamParameters(vpCameraParameters &cam) const {
+    cam = IRcam;
+  }
+  inline void getRGBCamParameters(vpCameraParameters &cam) const {
+    cam = RGBcam;
+  }
+  inline void setIRCamParameters(const vpCameraParameters &cam) {
+    IRcam = cam;
+  }
+  inline void setRGBCamParameters(const vpCameraParameters &cam) {
+    RGBcam = cam;
+  }
+
+ private:
+  //!Instantiation of Freenect virtual functions
+  // Do not call directly even in child
+  void VideoCallback(void* rgb, uint32_t timestamp);
+
+  // Do not call directly even in child
+  void DepthCallback(void* depth, uint32_t timestamp);
+
+ private:
+  vpMutex m_rgb_mutex;
+  vpMutex m_depth_mutex;
+
+  vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
+  vpDMResolution DMres;
+
+  //Access protected by a mutex:
+  vpImage<float> dmap;
+  vpImage<vpRGBa> IRGB;
+  bool m_new_rgb_frame;
   bool m_new_depth_map;
   bool m_new_depth_image;
   unsigned int height;
   unsigned int width;
 };
 
-
-
-#endif//ViSP has libfreenect
+#endif
 
 #endif
