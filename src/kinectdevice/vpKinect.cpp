@@ -135,7 +135,7 @@ void vpKinect::DepthCallback(void* depth, uint32_t /* timestamp */)
   for (unsigned i = 0; i< height;i++){
     for (unsigned j = 0 ; j < width ; j++)
     {
-      dmap[i][j] = 0.1236 * tan(depth_[width*i +j] / 2842.5 + 1.1863);//formula from http://openkinect.org/wiki/Imaging_Information
+      dmap[i][j] = 0.1236f * tan(depth_[width*i +j] / 2842.5f + 1.1863f);//formula from http://openkinect.org/wiki/Imaging_Information
       if(depth_[width*i +j]>1023){//Depth cannot be computed
         dmap[i][j] = -1;
       }
