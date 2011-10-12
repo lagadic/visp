@@ -1292,7 +1292,9 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_LIBJPEG \
                          VISP_HAVE_LIBPNG \
                          VISP_HAVE_FFMPEG \
+                         VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBFREENECT \
+                         VISP_HAVE_LIBUSB_1 \
                          VISP_HAVE_ACCESS_TO_NAS \
                          VISP_BUILD_DEPRECATED_FUNCTIONS \
                          WIN32 \

@@ -773,40 +773,57 @@ ENDIF(USE_XML2)
 
 #---------------------------------------------------------------------
 # libfreenect
-# Note that this library needs libusb-1.0
+# Note that this library needs libusb-1.0 and libpthread
 #---------------------------------------------------------------------
-# default initialisation
-SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
+# default initialisation for ViSP-third-party.txt
+SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND "no")
+SET(VISP_HAVE_LIBFREENECT_FOUND "no") 
+SET(VISP_HAVE_LIBUSB_1_FOUND "no") 
 
-IF(USE_LIBFREENECT AND USE_LIBUSB_1)
+IF(USE_LIBFREENECT)
   #FIND_PACKAGE(LIBFREENECT)
-  IF(LIBFREENECT_FOUND AND LIBUSB_1_FOUND)
+  IF(LIBFREENECT_FOUND)
     SET(VISP_HAVE_LIBFREENECT TRUE)
     SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
-    SET(VISP_HAVE_LIBUSB_1 TRUE)
-    SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
+ 
     MESSAGE(STATUS "libfreenect found")
-    MESSAGE(STATUS "libusb-1.0 found")
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR} ${LIBUSB_1_INCLUDE_DIR})
-    LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES} ${LIBUSB_1_LIBRARIES})
+
+    IF(LIBFREENECT_OLD_VERSION)
+      SET(VISP_HAVE_LIBFREENECT_OLD TRUE)
+    ENDIF()
+ 
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES})
   ELSE()
-    IF(NOT LIBFREENECT_FOUND)
-      MESSAGE(STATUS "libfreenect not found")
-      SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
-    ELSE()
-      MESSAGE(STATUS "libfreenect found")
-      SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
-    ENDIF()
-    IF(NOT LIBUSB_1_FOUND)
-      MESSAGE(STATUS "libusb-1.0 not found")
-      SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
-    ELSE()
-      MESSAGE(STATUS "libusb-1.0 found")
-      SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
-    ENDIF()
+    MESSAGE(STATUS "libfreenect not found")
+    SET(VISP_HAVE_LIBFREENECT_FOUND "no")  # for ViSP-third-party.txt
   ENDIF()
 ENDIF()
+
+IF(USE_LIBUSB_1)
+  #FIND_PACKAGE(LIBUSB-1)
+  IF(LIBUSB_1_FOUND)
+    SET(VISP_HAVE_LIBUSB_1 TRUE)
+    SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
+ 
+    MESSAGE(STATUS "libusb-1.0 found")
+ 
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBUSB_1_INCLUDE_DIR})
+    LIST(APPEND VISP_EXTERN_LIBS ${LIBUSB_1_LIBRARIES})
+  ELSE()
+    MESSAGE(STATUS "libusb-1.0 not found")
+    SET(VISP_HAVE_LIBUSB_1_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF()
+ENDIF()
+
+# Check if libfreenect dependencies (ie libusb-1.0 and libpthread) are available
+IF(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)
+  IF(LIBFREENECT_FOUND AND LIBUSB_1_FOUND AND PTHREAD_FOUND)
+    SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES TRUE)
+    SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND "yes")  # for ViSP-third-party.txt
+  ENDIF()
+ENDIF()
+
 
 #--------------------------------------------------------------------
 # pthread lib

@@ -152,8 +152,28 @@
 // Defined if libpng library available.
 #cmakedefine VISP_HAVE_LIBPNG
 
-// Defined if LibFreenect library available.
+// Defined if libfreenect, libusb-1.0 and libpthread libraries available.
+#cmakedefine VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
+
+// Defined if libfreenect library available.
 #cmakedefine VISP_HAVE_LIBFREENECT
+
+// Defined if libfreenect library in an old version package for 
+// ubuntu 10.04 lucid is available.
+// This is a workaround useful to initialise vpKinect depending on the 
+// libfreenect version
+//#ifdef VISP_HAVE_LIBFREENECT_OLD
+//  Freenect::Freenect<vpKinect> freenect;
+//  vpKinect & kinect = freenect.createDevice(0);
+//#else
+//  Freenect::Freenect freenect;
+//  vpKinect & kinect = freenect.createDevice<vpKinect>(0);
+//#endif
+#cmakedefine VISP_HAVE_LIBFREENECT_OLD
+
+
+// Defined if libusb-1.0 library available.
+#cmakedefine VISP_HAVE_LIBUSB_1
 
 // Defined if ffmpeg library available.
 #cmakedefine VISP_HAVE_FFMPEG

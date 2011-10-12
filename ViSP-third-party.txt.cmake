@@ -36,9 +36,11 @@ Framegrabbers
   Video For Linux Two       : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
-Kinect
-  libfreenect               : ${VISP_HAVE_LIBFREENECT_FOUND}
-  libusb-1.0                : ${VISP_HAVE_LIBUSB_1_FOUND}
+Specific devices
+  Kinect                    : ${VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND}
+  \-libfreenect             : ${VISP_HAVE_LIBFREENECT_FOUND}
+  \-libusb-1.0              : ${VISP_HAVE_LIBUSB_1_FOUND}
+  \-pthread                 : ${VISP_HAVE_PTHREAD_FOUND}
 Video and image Read/Write:
   FFMPEG                    : ${VISP_HAVE_FFMPEG_FOUND}
   libjpeg                   : ${VISP_HAVE_LIBJPEG_FOUND}
