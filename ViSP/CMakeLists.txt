@@ -136,9 +136,17 @@ OPTION(BUILD_DEMOS "Build ViSP demos." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
 
+OPTION(MOMENTS_COMBINE_MATRICES "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." OFF)
+
+
 IF(BUILD_DEPRECATED_FUNCTIONS)
   SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE) # for header vpConfig.h
 ENDIF(BUILD_DEPRECATED_FUNCTIONS)
+
+IF(MOMENTS_COMBINE_MATRICES)
+  SET(VISP_MOMENTS_COMBINE_MATRICES TRUE) # for header vpConfig.h
+ENDIF(MOMENTS_COMBINE_MATRICES)
+
 
 IF (UNIX)
   FIND_PACKAGE(DC1394)
@@ -804,7 +812,6 @@ IF(USE_LIBUSB_1)
  
     MESSAGE(STATUS "libusb-1.0 found")
  
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBUSB_1_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_LIBS ${LIBUSB_1_LIBRARIES})
   ELSE()
     MESSAGE(STATUS "libusb-1.0 not found")
