@@ -46,6 +46,8 @@
 // Note that libfreenect needs libusb-1.0 and libpthread 
 #if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
 
+#include <limits>   // numeric_limits
+
 #include <visp/vpKinect.h>
 
 /*!
@@ -186,7 +188,8 @@ bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
     for(unsigned int i = 0; i < h; i++)
       for(unsigned int j = 0; j < w; j++){
         map[i][j] = tempMap[i<<1][j<<1];
-        if (map[i][j] != -1)
+        //if (map[i][j] != -1)
+        if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
           Imap[i][j] = (unsigned char)(255*map[i][j]/5);
         else
           Imap[i][j] = 255;
@@ -199,7 +202,8 @@ bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
     for (unsigned i = 0; i< height;i++)
       for (unsigned j = 0 ; j < width ; j++){
         map[i][j] = tempMap[i][j];
-        if (map[i][j] != -1)
+        //if (map[i][j] != -1)
+	if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
           Imap[i][j] = (unsigned char)(255*map[i][j]/5);
         else
           Imap[i][j] = 255;
