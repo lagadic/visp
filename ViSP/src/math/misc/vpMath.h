@@ -108,7 +108,7 @@ class VISP_EXPORT vpMath
   static inline double fact(unsigned int x) ;
 
   // combinaison
-  static inline double comb(unsigned int n, unsigned int p) ;
+  static inline long double comb(unsigned int n, unsigned int p) ;
 
   //   round x to the nearest integer
   static inline int round(const double x) ;
@@ -191,11 +191,9 @@ class VISP_EXPORT vpMath
 
 //Begining of the inline functions definition
 
-
 /*!
-  Compute factorial.
-
-  \return !x
+  Computes and returns x!
+  \param x : parameter of factorial function.
 */
 double vpMath::fact(unsigned int x)
 {
@@ -204,11 +202,14 @@ double vpMath::fact(unsigned int x)
 }
 
 /*!
-  Combinaison computation.
+  Computes the number of combination of p elements inside n elements.
 
-  \return \f$ !n / (!(n-p) !p) \f$
+  \param n : total number of elements.
+  \param p : requested number of elements.
+
+  \return \f$ n! / ((n-p)! p!) \f$
 */
-double vpMath::comb(unsigned int n, unsigned int p)
+long double vpMath::comb(unsigned int n, unsigned int p)
 {
   if (n == p) return 1;
   return fact(n)/ (fact(n-p) * fact(p));

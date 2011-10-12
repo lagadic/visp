@@ -88,14 +88,14 @@ class VISP_EXPORT vpBasicFeature
   static const unsigned int FEATURE_ALL;
 
  protected:
-  //! state of the visual feature
+  //! State of the visual feature.
   vpColVector s ;
-  //! dimension of the visual feature
+  //! Dimension of the visual feature.
   unsigned int dim_s ;
   //int featureLine[8] ;
-  //! ensure that all the parameters needed to compute the iteraction matrix are set.
+  //! Ensure that all the parameters needed to compute the iteraction matrix are set.
   bool *flags;
-  //!number of parameters needed to compute the interaction matrix.
+  //! Number of parameters needed to compute the interaction matrix.
   int nbParameters;
 
  public:
@@ -107,23 +107,23 @@ class VISP_EXPORT vpBasicFeature
 
   vpBasicFeature() ;
   virtual ~vpBasicFeature() { /*vpTRACE("0x%x", this)*/; }
-  //! read element in the state vector  (usage : x = A[i] )
-  virtual inline double operator[](const unsigned int n) const {  return s[n]; }
+  //! Return element \e i in the state vector  (usage : x = s[i] )
+  virtual inline double operator[](const unsigned int i) const {  return s[i]; }
 
-  //! select all the feature
+  //! Select all the features.
   static  unsigned int selectAll()  { return FEATURE_ALL ; }
 
-  //! get the feature vecror
+  //! Get the feature vector.
   vpColVector get_s(unsigned int select=FEATURE_ALL) const;
 
-  //! get the feature dimension
+  //! Get the feature dimension.
   unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
-  //! compute the interaction matrix from a subset  the possible features
+  //! Compute the interaction matrix from a subset of the possible features.
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
 
   vpColVector error(const vpBasicFeature &s_star,
 			    const unsigned int select= FEATURE_ALL);
-  //! print the name of the feature
+  //! Print the name of the feature.
   virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
 
   virtual vpBasicFeature *duplicate() const = 0 ;

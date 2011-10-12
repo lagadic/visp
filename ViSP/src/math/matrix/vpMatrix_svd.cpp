@@ -53,7 +53,6 @@
 
 #include <iostream>
 
-using namespace std;
 /*---------------------------------------------------------------------
 
 SVD related functions
@@ -565,7 +564,7 @@ extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *
 #include <string.h>
 
 void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
-    int m = (int)this->getCols(), n = (int)this->getRows(), lda = m, ldu = m, ldvt = min(m,n), info, lwork;
+  int m = (int)this->getCols(), n = (int)this->getRows(), lda = m, ldu = m, ldvt = std::min(m,n), info, lwork;
 
     double wkopt;
     double* work;
@@ -588,7 +587,7 @@ void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
     dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
 
     if( info > 0 ) {
-            cout << "The algorithm computing SVD failed to converge." << endl;
+      std::cout << "The algorithm computing SVD failed to converge." << std::endl;
 
     }
 

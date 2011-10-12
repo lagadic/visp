@@ -215,6 +215,10 @@ scheme, ...</p>
 */
 /*!
   \ingroup Tracking
+  \defgroup TrackingMoments Tracking 2D image moments
+*/
+/*!
+  \ingroup Tracking
   \defgroup TrackingImage Tracking in image sequences
 */
 /*!
@@ -233,6 +237,7 @@ scheme, ...</p>
   \ingroup TrackingImage
   \defgroup ModelBasedTracking Model based tracker
 */
+
 /*
  ******************************************
  * Computer vision

@@ -55,6 +55,9 @@ SET (SRC_SUBDIRS
   light
   math
   manual
+  moments/image
+  moments/points
+  moments/polygon
   ogre-simulator
   parse-argv
   pose-estimation
@@ -70,7 +73,7 @@ SET (SRC_SUBDIRS
   tools
   tracking
   video
-  wireframe-simulator
+  wireframe-simulator  
 )
 
 # Build process propagation in the sub directories

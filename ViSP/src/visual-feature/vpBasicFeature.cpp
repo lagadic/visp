@@ -67,7 +67,7 @@ const unsigned int vpBasicFeature::FEATURE_ALL = 0xffff;
 
 /*!
   \file vpBasicFeature.cpp
-  \brief class that defines what is a visual feature
+  \brief Class that defines what is a visual feature.
 */
 
 vpBasicFeature::vpBasicFeature()
@@ -85,7 +85,7 @@ vpBasicFeature::vpBasicFeature()
     flags = NULL;
 }
 
-//! get the feature dimension
+//! Get the feature dimension.
 unsigned int
 vpBasicFeature::getDimension(unsigned int select) const
 {
@@ -100,7 +100,7 @@ vpBasicFeature::getDimension(unsigned int select) const
     return dim ;
 }
 
-//! get the feature vector
+//! Get the feature vector.
 vpColVector
  vpBasicFeature::get_s(const unsigned int select) const
 {
@@ -129,7 +129,7 @@ void vpBasicFeature::resetFlags()
   }
 }
 
-//! set feature flags to true to prevent Warning when re-computing the interaction matrix without having updated the feature
+//! Set feature flags to true to prevent warning when re-computing the interaction matrix without having updated the feature.
 void vpBasicFeature::setFlags()
 {
   if (flags != NULL)
@@ -139,7 +139,7 @@ void vpBasicFeature::setFlags()
     }
 }
 
-//! compute the error between two visual features from a subset of the possible features
+//! Compute the error between two visual features from a subset of the possible features.
 vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
 	    const unsigned int select)
 {
