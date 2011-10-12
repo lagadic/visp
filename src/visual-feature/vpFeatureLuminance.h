@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpFeaturePoint.h 2455 2010-01-07 10:24:57Z nmelchio $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.

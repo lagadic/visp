@@ -206,7 +206,8 @@ class VISP_EXPORT vpWireFrameSimulator
       CIRCLE,
       SPHERE,
       CYLINDER,
-      PLAN
+      PLAN,
+      POINT_CLOUD,
     } vpSceneObject;
     
     /*!

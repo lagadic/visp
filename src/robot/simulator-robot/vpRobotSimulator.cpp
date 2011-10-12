@@ -65,7 +65,10 @@ vpRobotSimulator::vpRobotSimulator():vpWireFrameSimulator(), vpRobot()
   displayType = MODEL_3D;
   displayAllowed = true;
   singularityManagement = true;
-  robotArms = NULL;
+  robotArms = NULL;   
+  
+  constantSamplingTimeMode = false;
+  setVelocityCalled = false;
   
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);

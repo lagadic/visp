@@ -401,105 +401,117 @@ vpSimulatorViper850::setCameraParameters(const vpCameraParameters cam)
 void
 vpSimulatorViper850::updateArticularPosition()
 {
+  double tcur_1 = tcur;// temporary variable used to store the last time since the last command 
+
   while (!robotStop)
   {
     //Get current time
-    tprev = tcur;
+    tprev = tcur_1;
     tcur = vpTime::measureTimeMs();
     
-    computeArticularVelocity();
     
-    double ellapsedTime = tcur - tprev;
-    
-    vpColVector articularCoordinates = get_artCoord();
-    articularCoordinates = get_artCoord();
-    vpColVector articularVelocities = get_artVel();
-    
-    if (jointLimit)
-    {
-      double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1]*1e-3;
-      if (art <= joint_min[jointLimitArt-1] || art >= joint_max[jointLimitArt-1])
-	articularVelocities = 0.0;
-      else
-	jointLimit = false;
-    }
-    
-    articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0]*1e-3;
-    articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1]*1e-3;
-    articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2]*1e-3;
-    articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3]*1e-3;
-    articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4]*1e-3;
-    articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5]*1e-3;
-    
-    int jl = isInJointLimit();
-    
-    if (jl != 0 && jointLimit == false)
-    {
-      if (jl < 0)
-	ellapsedTime = (joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]*1e-3);
-      else
-	ellapsedTime = (joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]*1e-3);
+    if(setVelocityCalled || !constantSamplingTimeMode){
+      setVelocityCalled = false;
+      computeArticularVelocity();
       
-      for (unsigned int i = 0; i < 6; i++)
-	articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i]*1e-3;
-      
-      jointLimit = true;
-      jointLimitArt = (unsigned int)fabs((double)jl);
-    }
-
-    set_artCoord(articularCoordinates);
-    set_artVel(articularVelocities);
-    
-    compute_fMi();
-   
-    if (displayAllowed)
-    {
-      vpDisplay::display(I);
-      vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none);
-      vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none);
-    }
-    
-    if (displayType == MODEL_3D && displayAllowed)
-    {
-      while (get_displayBusy()) vpTime::wait(2);
-      vpSimulatorViper850::getExternalImage(I);
-      set_displayBusy(false);
-    }
-      
-    
-    if (displayType == MODEL_DH && displayAllowed)
-    {
-      vpHomogeneousMatrix fMit[8];
-      get_fMi(fMit);
-    
-    //vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[6],cameraParam,0.2,vpColor::none);
-
-      vpImagePoint iP, iP_1;
-      vpPoint pt;
-      pt.setWorldCoordinates (0,0,0);
-    
-      pt.track(getExternalCameraPosition ());
-      vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
-      pt.track(getExternalCameraPosition ()*fMit[0]);
-      vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
-      vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
-      for (int k = 1; k < 7; k++)
-      {
-        pt.track(getExternalCameraPosition ()*fMit[k-1]);
-        vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
-      
-        pt.track(getExternalCameraPosition ()*fMit[k]);
-        vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
-      
-        vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+      double ellapsedTime = tcur - tprev;
+      if(constantSamplingTimeMode){//if we want a constant velocity, we force the ellapsed time to the given samplingTime
+        ellapsedTime = samplingTime;
       }
-      vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green);
+      
+      vpColVector articularCoordinates = get_artCoord();
+      articularCoordinates = get_artCoord();
+      vpColVector articularVelocities = get_artVel();
+      
+      if (jointLimit)
+      {
+        double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1]*1e-3;
+        if (art <= joint_min[jointLimitArt-1] || art >= joint_max[jointLimitArt-1])
+          articularVelocities = 0.0;
+        else
+          jointLimit = false;
+      }
+      
+      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0]*1e-3;
+      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1]*1e-3;
+      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2]*1e-3;
+      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3]*1e-3;
+      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4]*1e-3;
+      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5]*1e-3;
+      
+      int jl = isInJointLimit();
+      
+      if (jl != 0 && jointLimit == false)
+      {
+        if (jl < 0)
+          ellapsedTime = (joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]*1e-3);
+        else
+          ellapsedTime = (joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]*1e-3);
+        
+        for (unsigned int i = 0; i < 6; i++)
+          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i]*1e-3;
+        
+        jointLimit = true;
+        jointLimitArt = (unsigned int)fabs((double)jl);
+      }
+
+      set_artCoord(articularCoordinates);
+      set_artVel(articularVelocities);
+      
+      compute_fMi();
+     
+      if (displayAllowed)
+      {
+        vpDisplay::display(I);
+        vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none);
+        vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none);
+      }
+      
+      if (displayType == MODEL_3D && displayAllowed)
+      {
+        while (get_displayBusy()) vpTime::wait(2);
+        vpSimulatorViper850::getExternalImage(I);
+        set_displayBusy(false);
+      }
+        
+      
+      if (displayType == MODEL_DH && displayAllowed)
+      {
+        vpHomogeneousMatrix fMit[8];
+        get_fMi(fMit);
+      
+      //vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[6],cameraParam,0.2,vpColor::none);
+
+        vpImagePoint iP, iP_1;
+        vpPoint pt;
+        pt.setWorldCoordinates (0,0,0);
+      
+        pt.track(getExternalCameraPosition ());
+        vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
+        pt.track(getExternalCameraPosition ()*fMit[0]);
+        vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
+        vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+        for (int k = 1; k < 7; k++)
+        {
+          pt.track(getExternalCameraPosition ()*fMit[k-1]);
+          vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
+        
+          pt.track(getExternalCameraPosition ()*fMit[k]);
+          vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
+        
+          vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+        }
+        vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green);
+      }
+      
+      vpDisplay::flush(I);
+      
+      
+      vpTime::wait(tcur,samplingTime);
+      tcur_1 = tcur;
+    }else{
+      vpTime::wait(tcur, 4);
     }
-    
-    vpDisplay::flush(I);
-    
-    
-    vpTime::wait(tcur,samplingTime);
   }
 }
 
@@ -863,6 +875,7 @@ vpSimulatorViper850::setVelocity (const vpRobot::vpControlFrameType frame, const
   
   set_velocity (vel * scale_sat);
   setRobotFrame (frame);
+  setVelocityCalled = true;
 }
 
 
@@ -1226,27 +1239,28 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
         nbSol = getInverseKinematics(fMc2, qdes);
+        setVelocityCalled = true;
         if (nbSol > 0)
         {
           error = qdes - articularCoordinates;
-	  errsqr = error.sumSquare();
-	  //findHighestPositioningSpeed(error);
-	  set_artVel(error);
-	  if (errsqr < 1e-4)
-	  {
-	    set_artCoord (qdes);
-	    error = 0;
-	    set_artVel(error);
-	    set_velocity(error);
-	    break;
-	  }
+          errsqr = error.sumSquare();
+          //findHighestPositioningSpeed(error);
+          set_artVel(error);
+          if (errsqr < 1e-4)
+          {
+            set_artCoord (qdes);
+            error = 0;
+            set_artVel(error);
+            set_velocity(error);
+            break;
+          }
         }
         else
-	{
-	  vpERROR_TRACE ("Positionning error.");
+        {
+          vpERROR_TRACE ("Positionning error.");
           throw vpRobotException (vpRobotException::positionOutOfRangeError,
 			    "Position out of range.");
-	}
+        }
       }while (errsqr > 1e-8 && nbSol > 0);
 
       break ;
@@ -1256,19 +1270,20 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
     {
       do
       {
-	articularCoordinates = get_artCoord();
+        articularCoordinates = get_artCoord();
         error = q - articularCoordinates;
-	errsqr = error.sumSquare();
-	//findHighestPositioningSpeed(error);
-	set_artVel(error);
-	if (errsqr < 1e-4)
-	{
-	  set_artCoord (q);
-	  error = 0;
-	  set_artVel(error);
-	  set_velocity(error);
-	  break;
-	}
+        errsqr = error.sumSquare();
+        //findHighestPositioningSpeed(error);
+        set_artVel(error);
+        setVelocityCalled = true;
+        if (errsqr < 1e-4)
+        {
+          set_artCoord (q);
+          error = 0;
+          set_artVel(error);
+          set_velocity(error);
+          break;
+        }
       }while (errsqr > 1e-8);
       break ;
     }
@@ -1297,17 +1312,18 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
         if (nbSol > 0)
         {
           error = qdes - articularCoordinates;
-	  errsqr = error.sumSquare();
-	  //findHighestPositioningSpeed(error);
-	  set_artVel(error);
-	  if (errsqr < 1e-4)
-	  {
-	    set_artCoord (qdes);
-	    error = 0;
-	    set_artVel(error);
-	    set_velocity(error);
-	    break;
-	  }
+          errsqr = error.sumSquare();
+          //findHighestPositioningSpeed(error);
+          set_artVel(error);
+          setVelocityCalled = true;
+          if (errsqr < 1e-4)
+          {
+            set_artCoord (qdes);
+            error = 0;
+            set_artVel(error);
+            set_velocity(error);
+            break;
+          }
         }
         else
           vpERROR_TRACE ("Positionning error. Position unreachable");

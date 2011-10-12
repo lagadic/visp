@@ -117,7 +117,7 @@ IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
 ENDIF()
 
-IF(VISP_HAVE_LIBFREENECT)
+IF(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
   SET (SRC_KINECTDEVICE
     kinectdevice/vpKinect.cpp
   )
@@ -296,6 +296,19 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbEdgeTracker.cpp
   tracking/mbt/vpMbtXmlParser.cpp
   tracking/mbt/vpMbtDistanceCylinder.cpp
+  tracking/moments/vpMomentObject.cpp
+  tracking/moments/vpMomentAlpha.cpp
+  tracking/moments/vpMomentBasic.cpp
+  tracking/moments/vpMomentCentered.cpp
+  tracking/moments/vpMomentCenteredNormalized.cpp
+  tracking/moments/vpMomentCInvariant.cpp
+  tracking/moments/vpMomentCommon.cpp
+  tracking/moments/vpMoment.cpp
+  tracking/moments/vpMomentDatabase.cpp
+  tracking/moments/vpMomentGravityCenter.cpp
+  tracking/moments/vpMomentGravityCenterNormalized.cpp
+  tracking/moments/vpMomentObject.cpp
+  tracking/moments/vpMomentAreaNormalized.cpp
   )
 
 IF(VISP_HAVE_OPENCV)
@@ -352,6 +365,17 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureVanishingPoint.cpp
   visual-feature/vpFeatureLuminance.cpp
   visual-feature/vpGenericFeature.cpp
+  visual-feature/vpFeatureMoment.cpp
+  visual-feature/vpFeatureMomentDatabase.cpp
+  visual-feature/vpFeatureMomentCommon.cpp
+  visual-feature/vpFeatureMomentAlpha.cpp
+  visual-feature/vpFeatureMomentGravityCenter.cpp
+  visual-feature/vpFeatureMomentBasic.cpp
+  visual-feature/vpFeatureMomentGravityCenterNormalized.cpp
+  visual-feature/vpFeatureMomentCentered.cpp
+  visual-feature/vpFeatureMomentCInvariant.cpp
+  visual-feature/vpFeatureMomentCommon.cpp
+  visual-feature/vpFeatureMomentAreaNormalized.cpp
   )
 
 SET (SRC_ALL
@@ -374,4 +398,4 @@ SET (SRC_ALL
   ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
   )
-  
+ 

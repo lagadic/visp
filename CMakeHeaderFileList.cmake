@@ -257,6 +257,19 @@ SET (HEADER_TRACKING
   tracking/mbt/vpMbEdgeTracker.h
   tracking/mbt/vpMbtXmlParser.h
   tracking/mbt/vpMbtDistanceCylinder.h
+  tracking/moments/vpMomentObject.h
+  tracking/moments/vpMomentAlpha.h
+  tracking/moments/vpMomentBasic.h
+  tracking/moments/vpMomentCentered.h
+  tracking/moments/vpMomentCenteredNormalized.h
+  tracking/moments/vpMomentCInvariant.h
+  tracking/moments/vpMomentCommon.h
+  tracking/moments/vpMoment.h
+  tracking/moments/vpMomentDatabase.h
+  tracking/moments/vpMomentGravityCenter.h
+  tracking/moments/vpMomentGravityCenterNormalized.h
+  tracking/moments/vpMomentObject.h
+  tracking/moments/vpMomentAreaNormalized.h
   )
 
 SET (HEADER_VIDEO
@@ -294,6 +307,18 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureThetaU.h
   visual-feature/vpFeatureTranslation.h
   visual-feature/vpFeatureVanishingPoint.h
+  visual-feature/vpFeatureMoment.h  
+  visual-feature/vpFeatureMomentDatabase.h
+  visual-feature/vpFeatureMomentCommon.h
+  visual-feature/vpFeatureMomentAlpha.h
+  visual-feature/vpFeatureMomentGravityCenter.h
+  visual-feature/vpFeatureMomentBasic.h
+  visual-feature/vpFeatureMomentGravityCenterNormalized.h
+  visual-feature/vpFeatureMomentCentered.h
+  visual-feature/vpFeatureMomentCInvariant.h
+  visual-feature/vpFeatureMomentCommon.h
+  visual-feature/vpFeatureMomentAreaNormalized.h
+
   visual-feature/vpFeatureLuminance.h
   visual-feature/vpGenericFeature.h
   )

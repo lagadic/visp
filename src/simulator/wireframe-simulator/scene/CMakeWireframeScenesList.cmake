@@ -69,6 +69,8 @@ SET(WIREFRAME_SCENES
   plate_8cm.sld
   point.bnd
   point.sld
+  point_cloud.bnd
+  point_cloud.sld
   rectangle.bnd
   rectangle.sld
   road.bnd

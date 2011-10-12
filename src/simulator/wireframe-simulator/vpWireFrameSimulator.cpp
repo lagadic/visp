@@ -629,6 +629,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
     case SPHERE : { strcat(name, "/sphere.bnd"); break; }
     case CYLINDER : { strcat(name, "/cylinder.bnd"); break; }
     case PLAN: { strcat(name, "/plan.bnd"); break; }
+    case POINT_CLOUD: { strcat(name, "/point_cloud.bnd"); break; }
   }
   set_scene(name,&(this->scene),1.0);
 
@@ -851,6 +852,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
     case SPHERE : { strcat(name, "/sphere.bnd"); break; }
     case CYLINDER : { strcat(name, "/cylinder.bnd"); break; }
     case PLAN: { strcat(name, "/plan.bnd"); break; }
+    case POINT_CLOUD: { strcat(name, "/point_cloud.bnd"); break; }
   }
   set_scene(name,&(this->scene),1.0);
 

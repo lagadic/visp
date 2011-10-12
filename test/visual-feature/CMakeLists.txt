@@ -45,6 +45,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   testFeature.cpp
+  testFeatureMoment.cpp
 )
 
 # rule for binary build

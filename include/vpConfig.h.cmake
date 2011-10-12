@@ -242,6 +242,9 @@
 // Defined if dot documentation tool used by Doxygen is found
 #cmakedefine VISP_HAVE_DOT
 
+// Defined if we want to compute interaction matrices by combining other interaction matrices
+#cmakedefine VISP_MOMENTS_COMBINE_MATRICES
+
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
 // We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 

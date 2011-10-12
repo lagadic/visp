@@ -168,6 +168,11 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     vpDisplayRobotType displayType;
     
     bool displayAllowed;
+    //! Flag used to force the sampling time in the thread computing the robot's displacement to a constant value (\e samplingTime). It may be useful if the main thread (computing the features) is very time consumming. False by default.
+    bool constantSamplingTimeMode;
+
+    //! Flag used to specify to the thread managing the robot displacements that the setVelocity() method has been called.
+    bool setVelocityCalled;
     
   public:
     vpRobotSimulator();
@@ -295,6 +300,36 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     
     void getInternalView(vpImage<vpRGBa> &I);
     void getInternalView(vpImage<unsigned char> &I);
+
+
+    /*!
+      Set the flag used to force the sampling time in the thread computing the
+      robot's displacement to a constant value (\e samplingTime). It may be
+      useful if the main thread (computing the features) is very time consuming.
+      False by default.
+
+      \param _constantSamplingTimeMode : The new value of the constantSamplingTimeMode flag.
+    */
+    inline void setConstantSamplingTimeMode(const bool _constantSamplingTimeMode){
+      constantSamplingTimeMode = _constantSamplingTimeMode;
+    }
+    
+    /*!
+      Set the sampling time for the thread which compute the robot displacements
+      
+      \warning Due to hardware limitation, it is not possible to have a very 
+        small sampling time (see vpTime::minTimeForUsleepCall)
+      
+      \param _samplingTime : The new value of the sampling time in ms.
+    */
+    inline void setSamplingTime(const float _samplingTime){
+      if(_samplingTime < static_cast<float>(vpTime::minTimeForUsleepCall)){
+        samplingTime = static_cast<float>(vpTime::minTimeForUsleepCall);
+      }else{
+        samplingTime = _samplingTime;
+      }
+    }
+
 
   protected:
     /*!
