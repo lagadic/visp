@@ -788,10 +788,6 @@ IF(USE_LIBFREENECT)
  
     MESSAGE(STATUS "libfreenect found")
 
-    IF(LIBFREENECT_OLD_VERSION)
-      SET(VISP_HAVE_LIBFREENECT_OLD TRUE)
-    ENDIF()
- 
     LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBFREENECT_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_LIBS ${LIBFREENECT_LIBRARIES})
   ELSE()
@@ -821,6 +817,30 @@ IF(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)
   IF(LIBFREENECT_FOUND AND LIBUSB_1_FOUND AND PTHREAD_FOUND)
     SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES TRUE)
     SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND "yes")  # for ViSP-third-party.txt
+
+    # The material is found. Check if libfreenect is an old version
+    include(CheckCXXSourceCompiles)
+    SET(CMAKE_REQUIRED_LIBRARIES ${LIBFREENECT_LIBRARIES} ${PTHREAD_LIBRARIES} ${LIBUSB_1_LIBRARIES})
+    SET(CMAKE_REQUIRED_INCLUDES ${LIBFREENECT_INCLUDE_DIR} ${PTHREAD_INCLUDE_DIR} ${LIBUSB_1_INCLUDE_DIR})
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <libfreenect.hpp>
+
+      class vpMyKinect : public Freenect::FreenectDevice
+      {
+      };
+
+      int main()
+      {
+        Freenect::Freenect<vpMyKinect> freenect;
+      }
+      " LIBFREENECT_BUILD_TEST)
+    #MESSAGE("LIBFREENECT_BUILD_TEST: ${LIBFREENECT_BUILD_TEST}")
+    IF(LIBFREENECT_BUILD_TEST)
+      SET(VISP_HAVE_LIBFREENECT_OLD TRUE)
+    ELSE()
+      SET(VISP_HAVE_LIBFREENECT_OLD  FALSE)
+    ENDIF()
+
   ENDIF()
 ENDIF()
 
@@ -1046,7 +1066,7 @@ IF(USE_LIBJPEG)
     LIST(APPEND VISP_EXTERN_INCLUDE_DIR ${LIBJPEG_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_LIBS ${LIBJPEG_LIBRARIES})
 
-    # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to 
+    # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
     # handle a compilation error "conflicting declaration 'typedef long int 
     # INT32'"
     IF(VISP_HAVE_QT3_FOUND)
