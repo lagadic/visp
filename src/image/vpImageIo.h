@@ -127,6 +127,8 @@ private:
 			      const std::string mode="w") ;
 
   static vpImageFormatType getFormat(const char *filename) ;
+  static std::string getExtension(const std::string &filename);
+
 public:
 
   static

@@ -29,7 +29,9 @@ ViSP 2.6.1 (under development)
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
      - When it was possible without braking the backward compatibilty std::list was 
        introduced instead of vpList. Some of the functions that use vpList are
-       now deprecated. 
+       now deprecated.
+     - Better detection of image or video file types when used in vpImageIo,
+       vpVideoReader and vpVideoWriter
   - Build
      - Set the build type by default to release
      - Improve the usage of debug versus release third-party libraries
