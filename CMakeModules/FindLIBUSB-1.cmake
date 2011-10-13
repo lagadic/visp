@@ -42,6 +42,7 @@
 
 IF(WIN32)
   FIND_LIBRARY(LIBUSB_1_LIBRARY libusb
+    $ENV{LIBUSB_1_HOME}
     $ENV{LIBUSB_1_HOME}/lib
     "c:/libusb/lib"
     )
