@@ -101,7 +101,6 @@ SET (SRC_IMAGE
   image/vpImageConvert.cpp
   image/vpImageFilter.cpp
   image/vpImageIo.cpp
-  image/vpImageIoPnm.cpp
   image/vpImageTools.cpp
   image/vpRGBa.cpp
   image/vpImagePoint.cpp
