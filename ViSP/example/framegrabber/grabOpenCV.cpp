@@ -212,16 +212,9 @@ main(int argc, const char ** argv)
   // Create the grabber
   vpOpenCVGrabber grabber ;
   try {
-    //test if a camera is connected
-    if(grabber.getDeviceNumber() == 0) {
-      vpCTRACE << "there is no camera detected on your computer." << std::endl ;
-      grabber.close();
-      return true;
-    }
+    // Set the type of device to detect. Here for example we expect to find a firewire camera.
+    grabber.setDeviceType(deviceType);
 
-	// Set the type of device to detect. Here for example we expect to find a firewire camera.
-	grabber.setDeviceType(deviceType);
-	 
     // Initialize the grabber
     grabber.open(I);
 

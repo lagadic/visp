@@ -52,9 +52,6 @@
 #if defined(VISP_HAVE_OPENCV)
 
 #include <highgui.h>
-#ifdef VISP_HAVE_OPENCV_CVCAM
-#  include <cvcam.h>
-#endif
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
@@ -96,12 +93,8 @@ int main()
  */
 class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 {
-	public:
-		
-
 	private:
 
-                static unsigned int nbDevices;
 		CvCapture *capture;
 		int DeviceType;
 		bool flip;
@@ -120,8 +113,6 @@ class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
     IplImage* acquire();
 
 		void close();
-
-		unsigned int getDeviceNumber();
 
 		void getFramerate(double & framerate);
 		void setFramerate(const double framerate);

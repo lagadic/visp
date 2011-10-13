@@ -55,8 +55,6 @@
 #include <visp/vpFrameGrabberException.h>
 #include <visp/vpOpenCVGrabber.h>
 
-unsigned int vpOpenCVGrabber::nbDevices = 0;
-
 
 /*!
 	Basic Constructor.
@@ -73,12 +71,6 @@ vpOpenCVGrabber::vpOpenCVGrabber()
 	capture = NULL;
 	DeviceType = 0;
 	flip = false;
-
-	nbDevices = 1;
-
-#ifdef VISP_HAVE_OPENCV_CVCAM
-	nbDevices = cvcamGetCamerasCount();	//Available only version prior to 1.1 under windows
-#endif
 }
 
 
@@ -98,10 +90,8 @@ vpOpenCVGrabber::~vpOpenCVGrabber( )
 */
 void vpOpenCVGrabber::open()
 {
-	if (nbDevices > 0)
-	{
-		capture = cvCreateCameraCapture(DeviceType);
-	}
+
+  capture = cvCreateCameraCapture(DeviceType);
 	
 	if (capture != NULL)
 	{
@@ -233,19 +223,9 @@ void vpOpenCVGrabber::close()
 
 	\param framerate : The value of the framerate is returned here.
 
-	\exception vpFrameGrabberException::initializationError If no
-	camera was found.
 */
 void vpOpenCVGrabber::getFramerate(double & framerate)
 {
-	if (! nbDevices) 
-	{
-		close();
-		vpERROR_TRACE("No camera found");
-		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-										"No camera found") );
-	}
-
 	framerate = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
 }
 
@@ -255,19 +235,9 @@ void vpOpenCVGrabber::getFramerate(double & framerate)
 
 	\param framerate : The requested value of the capture framerate.
 
-	\exception vpFrameGrabberException::initializationError If no
-	camera was found.
 */
 void vpOpenCVGrabber::setFramerate(const double framerate)
 {
-	if (! nbDevices) 
-	{
-		close();
-		vpERROR_TRACE("No camera found");
-		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-										"No camera found") );
-	}
-
 	cvSetCaptureProperty(capture, CV_CAP_PROP_FPS, framerate);
 }
 
@@ -284,14 +254,6 @@ void vpOpenCVGrabber::setFramerate(const double framerate)
 */
 void vpOpenCVGrabber::setWidth(const unsigned int width)
 {
-	if (! nbDevices)
-	{
-		close();
-		vpERROR_TRACE("No camera found");
-		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-										"No camera found") );
-	}
-
 	if ( cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, width))
 	{
 	  	close();
@@ -315,14 +277,6 @@ void vpOpenCVGrabber::setWidth(const unsigned int width)
 */
 void vpOpenCVGrabber::setHeight(const unsigned int height)
 {
-	if (! nbDevices)
-	{
-		close();
-		vpERROR_TRACE("No camera found");
-		throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-										"No camera found") );
-	}
-
 	if ( cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, height))
 	{
 	  	close();
@@ -333,28 +287,6 @@ void vpOpenCVGrabber::setHeight(const unsigned int height)
 
 	this->height = height;
 }
-
-
-/*!
-	Gets the number of capture devices connected on your computer.
-			
-	\warning This function is consistent only under Windows if cvcam 
-        library is part of OpenCV. If VISP_HAVE_OPENCV_CVCAM macro is defined 
-        in vpConfig.h file, than cvcam library is available.
-
-	\return 1 (always under Unix plaforms), or the number of devices if 
-        cvcam library is avalaible (only under Windows, for OpenCV versions 
-        prior or equal to 1.0.0). 
-*/
-unsigned int vpOpenCVGrabber::getDeviceNumber()
-{
-#ifndef VISP_HAVE_OPENCV_CVCAM
-	vpTRACE("Since OpenCV cvcam library is not available, this function is not consistent.");
-#endif
-	return(nbDevices);	
-
-}
-
 
 /*!
 	Set the expected type of device.
