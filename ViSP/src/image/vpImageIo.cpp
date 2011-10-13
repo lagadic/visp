@@ -188,30 +188,39 @@ vpImageIo::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 
-  size_t PGM = sfilename.find("PGM");
-  size_t pgm = sfilename.find("pgm");
-  size_t PPM = sfilename.find("PPM");
-  size_t ppm = sfilename.find("ppm");
-  size_t JPG = sfilename.find("JPG");
-  size_t jpg = sfilename.find("jpg");
-  size_t JPEG = sfilename.find("JPEG");
-  size_t jpeg = sfilename.find("jpeg");
-  size_t PNG = sfilename.find("PNG");
-  size_t png = sfilename.find("png");
-  
-  size_t size = sfilename.size();
+  std::string ext = vpImageIo::getExtension(sfilename);
 
-  if ((PGM>0 && PGM<size ) || (pgm>0 && pgm<size))
+  if (ext.compare(".PGM") == 0)
     return FORMAT_PGM;
-  else if ((PPM>0 && PPM<size) || ( ppm>0 && ppm<size))
+  else if (ext.compare(".pgm") == 0)
+    return FORMAT_PGM;
+  else if (ext.compare(".PPM") == 0)
     return FORMAT_PPM;
-  else if ((JPG>0 && JPG<size) || ( jpg>0 && jpg<size) || (JPEG>0 && JPEG<size) || ( jpeg>0 && jpeg<size))
-	return FORMAT_JPEG;
-  else if ((PNG>0 && PNG<size) || ( png>0 && png<size))
+  else if (ext.compare(".ppm") == 0)
+    return FORMAT_PPM;
+  else if (ext.compare(".JPG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".JPEG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpeg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".PNG") == 0)
     return FORMAT_PNG;
-  else{ 
+  else if (ext.compare(".png") == 0)
+    return FORMAT_PNG;
+  else
     return FORMAT_UNKNOWN;
-  } 
+}
+
+// return the extension of the file including the dot
+std::string vpImageIo::getExtension(const std::string &filename)
+{
+  // extract the extension
+  size_t dot = filename.find_last_of(".");
+  std::string ext = filename.substr(dot, filename.size()-1);
+  return ext;
 }
 
 

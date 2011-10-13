@@ -302,43 +302,53 @@ vpVideoWriter::getFormat(const char *filename)
 {
   std::string sfilename(filename);
 
-  size_t PGM = sfilename.find(".PGM");
-  size_t pgm = sfilename.find(".pgm");
-  size_t PPM = sfilename.find(".PPM");
-  size_t ppm = sfilename.find(".ppm");
-  size_t JPG = sfilename.find(".JPG");
-  size_t jpg = sfilename.find(".jpg");
-  size_t JPEG = sfilename.find(".JPEG");
-  size_t jpeg = sfilename.find(".jpeg");
-  size_t PNG = sfilename.find(".PNG");
-  size_t png = sfilename.find(".png");
-  size_t AVI = sfilename.find(".AVI");
-  size_t avi = sfilename.find(".avi");
-  size_t MPEG = sfilename.find(".MPEG");
-  size_t mpeg = sfilename.find(".mpeg");
-  size_t MPG = sfilename.find(".MPG");
-  size_t mpg = sfilename.find(".mpg");
-  size_t MOV = sfilename.find(".MOV");
-  size_t mov = sfilename.find(".mov");
-  
-  size_t size = sfilename.size();
+  std::string ext = vpVideoWriter::getExtension(sfilename);
 
-  if ((PGM>0 && PGM<size ) || (pgm>0 && pgm<size))
+  if (ext.compare(".PGM") == 0)
     return FORMAT_PGM;
-  else if ((PPM>0 && PPM<size) || ( ppm>0 && ppm<size))
+  else if (ext.compare(".pgm") == 0)
+    return FORMAT_PGM;
+  else if (ext.compare(".PPM") == 0)
     return FORMAT_PPM;
-  else if ((JPG>0 && JPG<size) || ( jpg>0 && jpg<size) || (JPEG>0 && JPEG<size) || ( jpeg>0 && jpeg<size))
-	return FORMAT_JPEG;
-  else if ((PNG>0 && PNG<size) || ( png>0 && png<size))
+  else if (ext.compare(".ppm") == 0)
+    return FORMAT_PPM;
+  else if (ext.compare(".JPG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".JPEG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpeg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".PNG") == 0)
     return FORMAT_PNG;
-  else if ((AVI>0 && AVI<size) || ( avi>0 && avi<size))
+  else if (ext.compare(".png") == 0)
+    return FORMAT_PNG;
+  else if (ext.compare(".AVI") == 0)
     return FORMAT_AVI;
-  else if ((MPEG>0 && MPEG<size) || ( mpeg>0 && mpeg<size) || (MPG>0 && MPG<size) || (mpg>0 && mpg <size))
+  else if (ext.compare(".avi") == 0)
+    return FORMAT_AVI;
+  else if (ext.compare(".MPEG") == 0)
     return FORMAT_MPEG;
-  else if ((MOV>0 && MOV<size) || ( mov>0 && mov<size))
+  else if (ext.compare(".mpeg") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".MPG") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".mpg") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".MOV") == 0)
     return FORMAT_MOV;
-  else{ 
+  else if (ext.compare(".mov") == 0)
+    return FORMAT_MOV;
+  else
     return FORMAT_UNKNOWN;
-  } 
 }
 
+// return the extension of the file including the dot
+std::string vpVideoWriter::getExtension(const std::string &filename)
+{
+  // extract the extension
+  size_t dot = filename.find_last_of(".");
+  std::string ext = filename.substr(dot, filename.size()-1);
+  return ext;
+}

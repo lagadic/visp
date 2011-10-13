@@ -231,7 +231,7 @@ class VISP_EXPORT vpVideoWriter
     
     private:
       vpVideoFormatType getFormat(const char *filename);
-	
+      static std::string getExtension(const std::string &filename);
 };
 
 #endif

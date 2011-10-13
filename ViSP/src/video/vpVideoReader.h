@@ -207,6 +207,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     
   private:
     vpVideoFormatType getFormat(const char *filename);
+    static std::string getExtension(const std::string &filename);
     void findLastFrameIndex();
 };
 
