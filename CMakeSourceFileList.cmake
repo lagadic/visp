@@ -300,7 +300,6 @@ SET (SRC_TRACKING
   tracking/moments/vpMomentAlpha.cpp
   tracking/moments/vpMomentBasic.cpp
   tracking/moments/vpMomentCentered.cpp
-  tracking/moments/vpMomentCenteredNormalized.cpp
   tracking/moments/vpMomentCInvariant.cpp
   tracking/moments/vpMomentCommon.cpp
   tracking/moments/vpMoment.cpp

@@ -261,7 +261,6 @@ SET (HEADER_TRACKING
   tracking/moments/vpMomentAlpha.h
   tracking/moments/vpMomentBasic.h
   tracking/moments/vpMomentCentered.h
-  tracking/moments/vpMomentCenteredNormalized.h
   tracking/moments/vpMomentCInvariant.h
   tracking/moments/vpMomentCommon.h
   tracking/moments/vpMoment.h

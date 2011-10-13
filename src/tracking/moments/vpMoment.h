@@ -97,7 +97,6 @@ class vpMomentObject;
   - vpMomentCentered
   - vpMomentCInvariant
   - vpMomentSInvariant
-  - vpMomentCenteredNormalized
   - vpMomentAreaNormalized
 */
 class VISP_EXPORT vpMoment{

@@ -38,18 +38,19 @@
  * Filip Novotny
  *
  *****************************************************************************/
-#include <visp/vpMomentObject.h>
+#include <visp/vpConfig.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
+#include <vector>
+#include <limits>
+
+#include <visp/vpMomentObject.h>
 #include <visp/vpFeatureMomentAreaNormalized.h>
 #include <visp/vpFeatureMomentBasic.h>
 #include <visp/vpMomentCentered.h>
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpFeatureMomentCentered.h>
-
 #include <visp/vpFeatureMomentDatabase.h>
-#include <vector>
-#include <limits>
 
 
 /*!
@@ -99,24 +100,17 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
 }
 
 #else
-#include <visp/vpMomentAreaNormalized.h>
 
-#include <visp/vpMomentCentered.h>
-#include <visp/vpMomentCentered.h>
-#include <visp/vpMomentGravityCenter.h>
-
-#include <visp/vpFeatureMomentDatabase.h>
-#include <visp/vpFeatureMomentAreaNormalized.h>
 #include <vector>
 #include <limits>
 
-#define VX 0
-#define VY 1
-#define VZ 2
-#define WX 3
-#define WY 4
-#define WZ 5
-
+#include <visp/vpMomentObject.h>
+#include <visp/vpMomentAreaNormalized.h>
+#include <visp/vpMomentCentered.h>
+#include <visp/vpMomentCentered.h>
+#include <visp/vpMomentGravityCenter.h>
+#include <visp/vpFeatureMomentDatabase.h>
+#include <visp/vpFeatureMomentAreaNormalized.h>
 
 /*!
   Computes interaction matrix for the normalized surface moment. Called internally.
@@ -131,15 +125,14 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
     bool found_moment_surface_normalized;
     bool found_moment_gravity;
 
-
     vpMomentCentered& momentCentered = static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
     vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
     vpMomentObject& momentObject = moment->getObject();
     vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
 
-    if(!found_moment_surface_normalized) throw vpException(vpException::notInitialized,"vpMomentAreaNormalized not found");
-    if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
-    if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
+    if (!found_moment_surface_normalized) throw vpException(vpException::notInitialized,"vpMomentAreaNormalized not found");
+    if (!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
+    if (!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
     interaction_matrices.resize(1);
     interaction_matrices[0].resize(1,6);
     double n11 = momentCentered.get(1,1)/momentObject.get(0,0);
@@ -153,10 +146,9 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
     double Xn = An*Xg;
     double Yn = An*Yg;
 
-
     double Anvx,Anvy,Anvz,Anwx,Anwy;
 
-    if(momentObject.getType()==vpMomentObject::DISCRETE){
+    if (momentObject.getType()==vpMomentObject::DISCRETE) {
         double a = momentCentered.get(2,0)+momentCentered.get(0,2);
 
         double e01 = momentCentered.get(0,1)/a;
@@ -177,15 +169,21 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
 
         Anvz = -An*C+B*Anwx-A*Anwy;
 
-    }else{
+    } else {
         Anvx = A*An/2.;
         Anvy = B*An/2.;
         Anvz = -An*C-(3./2.)*A*Xn-(3./2.)*B*Yn;
 
         Anwx = -(3./2.)*Yn;
-        Anwy = (3./2.)*Xn;
-
+        Anwy =  (3./2.)*Xn;
     }
+
+    int VX = 0;
+    int VY = 1;
+    int VZ = 2;
+    int WX = 3;
+    int WY = 4;
+    int WZ = 5;
 
     interaction_matrices[0][0][VX] = Anvx;
     interaction_matrices[0][0][VY] = Anvy;

@@ -54,7 +54,6 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
     momentBasic(),
     momentGravity(),
     momentCentered(),
-    momentCenteredNormalized(),
     momentGravityNormalized(),
     momentSurfaceNormalized(dstSurface,dstZ),
     momentCInvariant(),
@@ -63,7 +62,6 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
     momentBasic.linkTo(*this);
     momentGravity.linkTo(*this);
     momentCentered.linkTo(*this);
-    momentCenteredNormalized.linkTo(*this);
     momentGravityNormalized.linkTo(*this);
     momentSurfaceNormalized.linkTo(*this);
     momentCInvariant.linkTo(*this);
@@ -74,7 +72,7 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
 Updates all moments in the database with the object and computes all their values.
 This is possible because this particular database knows the link between the moments it contains.
 The order of computation is as follows:
-vpMomentGravityCenter,vpMomentCentered,vpMomentAlpha,vpMomentCInvariant,vpMomentSInvariant,vpMomentCenteredNormalized,vpMomentAreaNormalized,vpMomentGravityCenterNormalized
+vpMomentGravityCenter,vpMomentCentered,vpMomentAlpha,vpMomentCInvariant,vpMomentSInvariant,vpMomentAreaNormalized,vpMomentGravityCenterNormalized
 \param object : Moment object.
 
 Example of using a preconfigured database to compute one of the C-invariants:
@@ -124,7 +122,7 @@ int main()
 \endcode
 */
 void vpMomentCommon::updateAll(vpMomentObject& object){
-    try{
+    try {
         vpMomentDatabase::updateAll(object);
 
         momentGravity.compute();
@@ -132,12 +130,10 @@ void vpMomentCommon::updateAll(vpMomentObject& object){
         momentAlpha.compute();
         momentCInvariant.compute();        
 
-        momentCenteredNormalized.compute();
         momentSurfaceNormalized.compute();
         momentGravityNormalized.compute();
 
-
-    }catch(const char* ex){
+    } catch(const char* ex){
         std::cout << "exception:" << ex <<std::endl;
 
     }
@@ -159,9 +155,8 @@ double vpMomentCommon::getSurface(vpMomentObject& object){
     momentGravity.compute();
     momentCentered.compute();
 
-
     double a;
-    if(object.getType()==vpMomentObject::DISCRETE)
+    if (object.getType()==vpMomentObject::DISCRETE)
         a = momentCentered.get(2,0)+momentCentered.get(0,2);
     else
         a = object.get(0,0);
@@ -196,7 +191,6 @@ Gets the reference 3rd order moments of an object.
 std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object){
     vpMomentDatabase moments;
 
-
     vpMomentGravityCenter momentGravity;momentGravity.linkTo(moments);
     vpMomentCentered momentCentered;momentCentered.linkTo(moments);
 
@@ -205,15 +199,15 @@ std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object){
     momentGravity.compute();
     momentCentered.compute();
 
-
     std::vector<double> mu(4);
     unsigned int idx=0;
-    for(unsigned int i=0;i<4;i++)
-        for(unsigned int j=0;j<4;j++)
-            if(i+j==3){
-                mu[idx] = momentCentered.get(j,i);
-                idx++;
-            }
-
+    for (unsigned int i=0; i<4; i++) {
+      for (unsigned int j=0; j<4; j++) {
+        if (i+j==3){
+          mu[idx] = momentCentered.get(j,i);
+          idx++;
+        }
+      }
+    }
     return mu;
 }

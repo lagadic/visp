@@ -38,14 +38,18 @@
  * Filip Novotny
  *
  *****************************************************************************/
-#include <visp/vpMomentObject.h>
+
+#include <visp/vpConfig.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
+
+#include <vector>
+#include <limits>
+
+#include <visp/vpMomentObject.h>
 #include <visp/vpFeatureMomentGravityCenter.h>
 #include <visp/vpFeatureMomentBasic.h>
 #include <visp/vpFeatureMomentDatabase.h>
-#include <vector>
-#include <limits>
 
 
 /*!
@@ -75,21 +79,17 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
 }
 
 #else
+
+#include <vector>
+#include <limits>
+
+#include <visp/vpMomentObject.h>
 #include <visp/vpMomentDatabase.h>
 #include <visp/vpMomentGravityCenter.h>
 #include <visp/vpMomentCentered.h>
 #include <visp/vpFeatureMomentGravityCenter.h>
 #include <visp/vpMomentObject.h>
 
-#include <vector>
-#include <limits>
-
-#define VX 0
-#define VY 1
-#define VZ 2
-#define WX 3
-#define WY 4
-#define WZ 5
 
 /*!
   Computes interaction matrix for gravity center moment. Called internally.
@@ -138,6 +138,12 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
     double Xgwy = -(1+Xg*Xg+epsilon*n20);
     double Ygwx = 1+Yg*Yg+epsilon*n02;
 
+    int VX = 0;
+    int VY = 1;
+    int VZ = 2;
+    int WX = 3;
+    int WY = 4;
+    int WZ = 5;
 
     interaction_matrices[0][0][VX] = -Zg_inv;
     interaction_matrices[0][0][VY] = 0;
