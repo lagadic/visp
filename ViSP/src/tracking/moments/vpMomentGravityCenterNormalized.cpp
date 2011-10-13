@@ -43,7 +43,6 @@
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentGravityCenter.h>
 #include <visp/vpMomentAreaNormalized.h>
-#include <visp/vpMomentCenteredNormalized.h>
 
 /*!
   Computes normalized gravity center moment.

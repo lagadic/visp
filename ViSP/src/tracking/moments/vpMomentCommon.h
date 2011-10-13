@@ -51,7 +51,6 @@
 #include <visp/vpMomentBasic.h>
 #include <visp/vpMomentGravityCenter.h>
 #include <visp/vpMomentCentered.h>
-#include <visp/vpMomentCenteredNormalized.h>
 #include <visp/vpMomentGravityCenterNormalized.h>
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpMomentCInvariant.h>
@@ -71,7 +70,6 @@ class vpMomentObject;
     - vpMomentGravityCenter
     - vpMomentCentered
     - vpMomentCenteredNormalized
-    - vpMomentGravityCenterNormalized
     - vpMomentAreaNormalized
     - vpMomentCInvariant
     - vpMomentAlpha
@@ -100,7 +98,6 @@ private:
     vpMomentBasic momentBasic;
     vpMomentGravityCenter momentGravity;
     vpMomentCentered momentCentered;
-    vpMomentCenteredNormalized momentCenteredNormalized;
     vpMomentGravityCenterNormalized momentGravityNormalized;
     vpMomentAreaNormalized momentSurfaceNormalized;
     vpMomentCInvariant momentCInvariant;

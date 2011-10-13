@@ -38,15 +38,20 @@
  * Filip Novotny
  *
  *****************************************************************************/
+
+#include <visp/vpConfig.h>
+
+#ifdef VISP_MOMENTS_COMBINE_MATRICES
+
+#include <vector>
+#include <limits>
+
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentGravityCenter.h>
-#ifdef VISP_MOMENTS_COMBINE_MATRICES
 #include <visp/vpFeatureMomentAlpha.h>
 #include <visp/vpMomentCentered.h>
 #include <visp/vpFeatureMomentCentered.h>
 #include <visp/vpFeatureMomentDatabase.h>
-#include <vector>
-#include <limits>
 
 /*!
   Computes interaction matrix for alpha moment. Called internally.
@@ -73,19 +78,15 @@ void vpFeatureMomentAlpha::compute_interaction(){
 
 #else
 
-#include <visp/vpFeatureMomentAlpha.h>
-#include <visp/vpMomentCentered.h>
-#include <visp/vpFeatureMomentCentered.h>
-#include <visp/vpFeatureMomentDatabase.h>
 #include <vector>
 #include <limits>
 
-#define VX 0
-#define VY 1
-#define VZ 2
-#define WX 3
-#define WY 4
-#define WZ 5
+#include <visp/vpMomentObject.h>
+#include <visp/vpMomentGravityCenter.h>
+#include <visp/vpMomentCentered.h>
+#include <visp/vpFeatureMomentAlpha.h>
+#include <visp/vpFeatureMomentCentered.h>
+#include <visp/vpFeatureMomentDatabase.h>
 
 /*!
   Computes interaction matrix for alpha moment. Called internally.
@@ -120,10 +121,10 @@ void vpFeatureMomentAlpha::compute_interaction(){
     double Avx,Avy,Avz,Awx,Awy;
     double beta,gamma;
 
-    if(momentObject.getType()==vpMomentObject::DISCRETE){
+    if (momentObject.getType()==vpMomentObject::DISCRETE){
         beta = 4;
         gamma = 2;
-    }else{
+    } else {
         beta = 5;
         gamma = 1;
     }
@@ -142,6 +143,13 @@ void vpFeatureMomentAlpha::compute_interaction(){
     Avz = B*Awx-A*Awy;
     interaction_matrices.resize(1);
     interaction_matrices[0].resize(1,6);
+
+    int VX = 0;
+    int VY = 1;
+    int VZ = 2;
+    int WX = 3;
+    int WY = 4;
+    int WZ = 5;
 
     interaction_matrices[0][0][VX] = Avx;
     interaction_matrices[0][0][VY] = Avy;

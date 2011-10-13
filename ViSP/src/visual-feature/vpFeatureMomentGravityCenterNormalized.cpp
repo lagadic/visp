@@ -38,18 +38,22 @@
  * Filip Novotny
  *
  *****************************************************************************/
+
+#include <visp/vpConfig.h>
+
+#ifdef VISP_MOMENTS_COMBINE_MATRICES
+
+#include <vector>
+#include <limits>
+
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentCentered.h>
-#ifdef VISP_MOMENTS_COMBINE_MATRICES
-#include <visp/vpFeatureMomentGravityCenterNormalized.h>
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpMomentGravityCenter.h>
 #include <visp/vpFeatureMomentGravityCenter.h>
 #include <visp/vpFeatureMomentAreaNormalized.h>
-
+#include <visp/vpFeatureMomentGravityCenterNormalized.h>
 #include <visp/vpFeatureMomentDatabase.h>
-#include <vector>
-#include <limits>
 
 /*!
   Computes interaction matrix for centered and normalized moment. Called internally.
@@ -87,19 +91,18 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction(){
 }
 
 #else
+
+#include <vector>
+#include <limits>
+
+#include <visp/vpMomentObject.h>
+#include <visp/vpMomentCentered.h>
+#include <visp/vpFeatureMomentDatabase.h>
 #include <visp/vpFeatureMomentGravityCenterNormalized.h>
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpMomentGravityCenter.h>
 
-#include <visp/vpFeatureMomentDatabase.h>
-#include <vector>
-#include <limits>
-#define VX 0
-#define VY 1
-#define VZ 2
-#define WX 3
-#define WY 4
-#define WZ 5
+
 /*!
   Computes interaction matrix for centered and normalized moment. Called internally.
   The moment primitives must be computed before calling this.
@@ -190,6 +193,13 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction(){
 
     Ynvz = -A*Ynwy+(-An+Ynwx)*B;
     Xnvz = -A*An-A*Xnwy+B*Xnwx;
+
+    int VX = 0;
+    int VY = 1;
+    int VZ = 2;
+    int WX = 3;
+    int WY = 4;
+    int WZ = 5;
 
     interaction_matrices[0][0][VX] = Xnvx;
     interaction_matrices[0][0][VY] = Xnvy;
