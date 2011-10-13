@@ -13,7 +13,10 @@ ViSP 2.6.1 (under development)
        based on Ogre 3D. Some examples are provided in examples/ogre-simulator
      - Add cylinder's tracking in the model-based tracker.
      - Reintroduce OpenCV 2.0.0 support lost in ViSP 2.6.0
-     - Support of the Kinect	
+     - Introduction of vpKinect, a wrapper of libfreenect to support the 
+       Kinect device
+     - Introduction of vpMoment and vpFeatureMoment classes to be able to 
+       consider 2D image moments as visual feature in visual servoing
   - Improvements
      - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now
        possible to select a specific camera with its GUID by using setCamera()
@@ -56,6 +59,7 @@ ViSP 2.6.1 (under development)
      - [12739] Problem initialising a vpMeEllipse
      - [13014] Bug in vpCalibration::calibVVSMulti() jacobian
      - [13015] vpFFMPEG compatibility issue with ffmpeg-0.8 release
+     - [13449] "LIBJPEG_BUILD_TEST - Failed" message in CMake for Visual 2010
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
