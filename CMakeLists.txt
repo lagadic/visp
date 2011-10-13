@@ -136,7 +136,9 @@ OPTION(BUILD_DEMOS "Build ViSP demos." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
 
+# Note that it is better to set MOMENTS_COMBINE_MATRICES to OFF
 OPTION(MOMENTS_COMBINE_MATRICES "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." OFF)
+MARK_AS_ADVANCED(MOMENTS_COMBINE_MATRICES)
 
 
 IF(BUILD_DEPRECATED_FUNCTIONS)
