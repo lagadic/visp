@@ -1478,7 +1478,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
   if ( (width != I.getWidth()) || (height != I.getHeight()) )
     I.resize(height,width);
 
-  unsigned char *line;
+  unsigned char *line = NULL;
 
   jpeg_start_decompress(&cinfo);
 
@@ -1517,7 +1517,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
-  delete [] line;
+  if (line != NULL) delete [] line;
   fclose(file);
 }
 
@@ -1598,7 +1598,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   if ( (width != I.getWidth()) || (height != I.getHeight()) )
     I.resize(height,width);
 
-  unsigned char *line;
+  unsigned char *line = NULL;
 
   jpeg_start_decompress(&cinfo);
 
@@ -1637,7 +1637,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
 
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
-  delete [] line;
+  if (line != NULL) delete [] line;
   fclose(file);
 }
 
