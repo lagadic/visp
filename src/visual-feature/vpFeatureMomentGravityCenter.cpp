@@ -116,13 +116,10 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
 
     interaction_matrices[0].resize(1,6);
     interaction_matrices[1].resize(1,6);
-    int delta;
     int epsilon;
-    if(momentObject.getType()==vpMomentObject::DISCRETE){
-        delta=0;
+    if (momentObject.getType()==vpMomentObject::DISCRETE) {
         epsilon=1;
-    }else{
-        delta=1;
+    } else {
         epsilon=4;
     }
     double n11 = momentCentered.get(1,1)/momentObject.get(0,0);
