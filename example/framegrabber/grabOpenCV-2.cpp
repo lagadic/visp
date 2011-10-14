@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: grabOpenCV.cpp 3379 2011-10-13 13:03:37Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
@@ -32,64 +32,22 @@
  *
  *
  * Description:
- * Cameras video capture using OpenCV library.
+ * Acquire images using OpenCV cv::VideoCapture.
  *
  * Authors:
- * Nicolas Melchior
+ * Fabien Spindler
  *
  *****************************************************************************/
 
+#include <visp/vpConfig.h>
+
 /*!
-  \file vpOpenCVGrabber.h
-  \brief class for cameras video capture using OpenCV library.
+  \file grabOpenCV-2.cpp
+
+  \brief Example of framegrabbing using OpenCV cv::VideoCapture class.
+
 */
 
-#ifndef vpOpenCVGrabber_h
-#define vpOpenCVGrabber_h
-
-#include <visp/vpConfig.h>
-
-#if defined(VISP_HAVE_OPENCV)
-
-#include <highgui.h>
-
-#include <visp/vpImage.h>
-#include <visp/vpFrameGrabber.h>
-#include <visp/vpRGBa.h>
-
-/*!
-  \class vpOpenCVGrabber
-
-  \ingroup Framegrabber CameraDriver
-  
-  \brief Class for cameras video capture using OpenCV library.
-  
-  Needs OpenCV available on http://opencv.willowgarage.com/wiki/.
-  
-  The code below shows how to use this class.
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpOpenCVGrabber.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<unsigned char> I; // Create a gray level image container
-  vpOpenCVGrabber g;        // Create a grabber based on OpenCV third party lib
-
-  g.open(I);                           // Open the framegrabber
-  g.acquire(I);                        // Acquire an image
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
-#endif
-}
-  \endcode
-
-  Note that it is also possible to grab images using OpenCV library by using directly
-  cv::VideoCapture OpenCV class. The following code corresponding to grabOpenCV-2.cpp example shows how to acquire an image
-  with cv::VideoCapture, how to transform this image in ViSP format and how to display it.
-\code
 #include <iostream>
 
 #include <visp/vpConfig.h>
@@ -103,8 +61,9 @@ int main()
 #include <visp/vpImageConvert.h>
 #include <visp/vpDisplayOpenCV.h>
 
+
 // usage: binary <device name>
-// device name: 0 is the default to dial with the first camera,
+// device name: 0 is the default to dial with the first camera, 
 //              1 to dial with a second camera attached to the computer
 int main(int argc, char** argv)
 {
@@ -118,10 +77,10 @@ int main(int argc, char** argv)
     return -1;
   cv::Mat frame;
   cap >> frame; // get a new frame from camera
-
+    
   IplImage iplimage = frame;
-  std::cout << "Image size: " << iplimage.width << " "
-            << iplimage.height << std::endl;
+  std::cout << "Image size: " << iplimage.width << " " 
+	    << iplimage.height << std::endl;
 
   //vpImage<vpRGBa> I; // for color images
   vpImage<unsigned char> I; // for gray images
@@ -132,7 +91,7 @@ int main(int argc, char** argv)
     cap >> frame; // get a new frame from camera
     iplimage = frame;
 
-    // Convert the image in ViSP format and display it
+    // Convert the image in ViSP format and display it 
     vpImageConvert::convert(&iplimage, I);
     vpDisplay::display(I);
     vpDisplay::flush(I);
@@ -146,43 +105,7 @@ int main(int argc, char** argv)
 #else
 int main()
 {
-  std::cout << "OpenCV is not available" << std::endl;
+  std::cout << "OpenCV is not available..." << std::endl;
 }
-\endcode
- */
-class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
-{
-	private:
 
-		CvCapture *capture;
-		int DeviceType;
-		bool flip;
-
-	public:
-
-		vpOpenCVGrabber();
-		~vpOpenCVGrabber();
-
-		void open();
-		void open(vpImage<unsigned char> &I);
-		void open(vpImage<vpRGBa> &I);
-
-		void acquire(vpImage<unsigned char> &I);
-		void acquire(vpImage<vpRGBa> &I);
-    IplImage* acquire();
-
-		void close();
-
-		void getFramerate(double & framerate);
-		void setFramerate(const double framerate);
-
-		void setWidth(const unsigned int width);
-		void setHeight(const unsigned int height);
-		
-		void setDeviceType(int type);
-
-		void setFlip(bool flipType);
-};
-
-#endif
 #endif
