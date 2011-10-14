@@ -171,7 +171,6 @@
 //#endif
 #cmakedefine VISP_HAVE_LIBFREENECT_OLD
 
-
 // Defined if libusb-1.0 library available.
 #cmakedefine VISP_HAVE_LIBUSB_1
 
@@ -242,7 +241,8 @@
 // Defined if dot documentation tool used by Doxygen is found
 #cmakedefine VISP_HAVE_DOT
 
-// Defined if we want to compute interaction matrices by combining other interaction matrices
+// Defined if we want to compute interaction matrices by combining 
+// other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
 // Under Windows, for shared libraries (DLL) we need to define export on
