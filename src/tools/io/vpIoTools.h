@@ -45,9 +45,10 @@
 
 /*!
   \file vpIoTools.h
-  \brief io basic tools
+  \brief File and directories basic tools.
 */
 
+#include <stdio.h>
 #include <iostream>
 #include <visp/vpConfig.h>
 
@@ -88,8 +89,15 @@ int main()
   std::ofstream f;
   std::string filename = username + "/file.txt";
   filename = vpIoTools::path(filename); // Under Windows converts the filename string into "username\\file.txt"
+
+  std::cout << "Create: " << filename << std::endl;
   f.open(filename.c_str());
   f.close();
+
+  // Remove the file
+  std::cout << "Remove: " << filename << std::endl;
+  if (vpIoTools::remove(filename) == false)
+    std::cout << "Unable to remove: " << filename << std::endl;
 }
   \endcode
 
@@ -104,14 +112,16 @@ public:
   static std::string getenv(const char *env);
   static std::string getenv(std::string &env);
   static bool checkDirectory(const char *dirname);
-  static bool checkDirectory(const std::string dirname);
+  static bool checkDirectory(const std::string &dirname);
   static void makeDirectory(const char *dirname);
-  static void makeDirectory(const std::string dirname);
+  static void makeDirectory(const std::string &dirname);
   static bool checkFilename(const char *filename);
-  static bool checkFilename(const std::string filename);
+  static bool checkFilename(const std::string &filename);
+  static bool remove(const char *filename);
+  static bool remove(const std::string &filename);
 
   static std::string path(const char * pathname);
-  static std::string path(const std::string& _p);
+  static std::string path(const std::string &pathname);
 } ;
 
 

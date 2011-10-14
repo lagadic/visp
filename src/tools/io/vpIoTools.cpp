@@ -39,6 +39,11 @@
  *
  *****************************************************************************/
 
+/*!
+  \file vpIoTools.cpp
+  \brief File and directories basic tools.
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -69,6 +74,8 @@
 
   \exception vpIoException::cantGetUserName : If this method cannot get the
   user name.
+
+  \sa getUserName()
 */
 void
 vpIoTools::getUserName(std::string &username)
@@ -113,6 +120,8 @@ vpIoTools::getUserName(std::string &username)
 
   \exception vpIoException::cantGetUserName : If this method cannot get the
   user name.
+
+  \sa getUserName(std::string &)
 */
 std::string
 vpIoTools::getUserName()
@@ -179,6 +188,8 @@ int main()
   return 0;
 }
   \endcode
+
+  \sa getenv(std::string &)
 */
 std::string
 vpIoTools::getenv(const char *env)
@@ -237,6 +248,8 @@ int main()
   return 0;
 }
   \endcode
+
+  \sa getenv(const char *)
 */
 std::string
 vpIoTools::getenv(std::string &env)
@@ -256,6 +269,7 @@ vpIoTools::getenv(std::string &env)
   \return false : If dirname string is null, or is not a directory, or
   has no write access.
 
+  \sa checkDirectory(const std::string &)
 */
 bool
 vpIoTools::checkDirectory(const char *dirname )
@@ -305,9 +319,10 @@ vpIoTools::checkDirectory(const char *dirname )
   \return false : If dirname string is null, or is not a directory, or
   has no write access.
 
+  \sa checkDirectory(const char *)
 */
 bool
-vpIoTools::checkDirectory(const std::string dirname )
+vpIoTools::checkDirectory(const std::string &dirname )
 {
   return vpIoTools::checkDirectory(dirname.c_str());
 }
@@ -322,6 +337,8 @@ vpIoTools::checkDirectory(const std::string dirname )
 
   \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
+
+  \sa makeDirectory(const std::string &)
 */
 void
 vpIoTools::makeDirectory(const  char *dirname )
@@ -375,9 +392,11 @@ vpIoTools::makeDirectory(const  char *dirname )
 
   \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
+
+  \sa makeDirectory(const  char *)
 */
 void
-vpIoTools::makeDirectory(const std::string dirname )
+vpIoTools::makeDirectory(const std::string &dirname )
 {
   try {
     vpIoTools::makeDirectory(dirname.c_str());
@@ -400,6 +419,7 @@ vpIoTools::makeDirectory(const std::string dirname )
   \return false : If filename string is null, or is not a filename, or
   has no read access.
 
+  \sa checkFilename(const std::string &)
 */
 bool
 vpIoTools::checkFilename(const char *filename)
@@ -447,11 +467,46 @@ vpIoTools::checkFilename(const char *filename)
   \return false : If filename string is null, or is not a filename, or
   has no read access.
 
+  \sa checkFilename(const char *)
 */
 bool
-vpIoTools::checkFilename(const std::string filename)
+vpIoTools::checkFilename(const std::string &filename)
 {
   return vpIoTools::checkFilename(filename.c_str());
+}
+
+/*!
+
+  Remove a file.
+
+  \param filename : File to remove.
+
+  \return true if the file was removed, false otherwise.
+
+  \sa remove(const std::string &)
+*/
+bool
+vpIoTools::remove(const char *filename)
+{
+  if (remove(filename) != 0)
+    return false;
+  else
+    return true;
+}
+/*!
+
+  Remove a file.
+
+  \param filename : File to remove.
+
+  \return true if the file was removed, false otherwise.
+
+  \sa remove(const char *)
+*/
+bool
+vpIoTools::remove(const std::string &filename)
+{
+  return vpIoTools::remove(filename.c_str());
 }
 
 /*!
@@ -463,9 +518,11 @@ vpIoTools::checkFilename(const std::string filename)
   characters in the \e pathname string into "/" characters.
 
   \return The converted path name.
+
+  \sa path(const std::string &)
 */
 std::string
-vpIoTools::path(const char * pathname)
+vpIoTools::path(const char *pathname)
 {
   std::string path(pathname);
 
@@ -490,9 +547,11 @@ vpIoTools::path(const char * pathname)
   the \e pathname string into "/" characters.
 
   \return The converted path name.
+
+  \sa path(const char *)
 */
 std::string
-vpIoTools::path(const std::string& pathname)
+vpIoTools::path(const std::string &pathname)
 {
   return path(pathname.c_str());
 }
