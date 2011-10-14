@@ -45,13 +45,6 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   imageDiskRW.cpp
-  displaySequence.cpp
-  displayGDI.cpp
-  displayD3D.cpp
-  displayGTK.cpp
-  displayX.cpp
-  displayOpenCV.cpp
-  displayXMulti.cpp
 )
 
 # rule for binary build
