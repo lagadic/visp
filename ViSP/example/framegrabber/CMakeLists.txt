@@ -50,6 +50,7 @@ SET (SOURCE
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
   grabOpenCV.cpp
+  grabOpenCV-2.cpp
 )
 
 # rule for binary build

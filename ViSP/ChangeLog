@@ -40,6 +40,16 @@ ViSP 2.6.1 (under development)
      - vp1394Grabber is deprecated. Use vp1394TwoGrabber instead.
      - Most of the methods that use vpList are deprecated. Use std::list instead
      - vpTwistMatrix deprecated in ViSP-1.6.0 was removed.
+  - Examples:
+    - New example grabOpenCV-2.cpp to show how to use the OpenCV 
+      cv::VideoCapture class. This example shows how to acquire an image
+      with cv::VideoCapture, how to transform this image in ViSP format 
+      and how to display it.
+    - New examples to illustrate the usage of the Ogre simulator through 
+      vpAROgre class.
+    - New example to illustrate the usage of the Kinect through 
+      vpKinect class.
+    - New examples to illustrate the usage of 2D image moments.
   - Bug fixed
      - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
      - [11147] Coin not installed, cannot read VRML files
