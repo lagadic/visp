@@ -148,7 +148,6 @@ SET (HEADER_MATH
   math/transformation/vpRzyzVector.h
   math/transformation/vpThetaUVector.h
   math/transformation/vpTranslationVector.h
-  math/transformation/vpTwistMatrix.h
   math/transformation/vpVelocityTwistMatrix.h
   )
 
