@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: grabOpenCV.cpp 3379 2011-10-13 13:03:37Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
