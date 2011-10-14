@@ -83,7 +83,7 @@
 #include <visp/vpServoDisplay.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpDot2.h>
-#include <visp/vpAdaptativeGain.h>
+#include <visp/vpAdaptiveGain.h>
 #include <visp/vpLinearKalmanFilterInstantiation.h>
 
 
@@ -155,7 +155,7 @@ Set the program options.
 */
 bool getOptions(int argc, const char **argv, KalmanType &kalman,
 		bool &doAdaptativeGain,
-		vpAdaptativeGain &lambda) // gain lambda
+    vpAdaptiveGain &lambda) // gain lambda
 {
   const char *optarg;
   int	c;
@@ -193,7 +193,7 @@ int
 main(int argc, const char ** argv)
 {
   KalmanType opt_kalman = K_NONE;
-  vpAdaptativeGain	lambda; // Gain de la commande
+  vpAdaptiveGain	lambda; // Gain de la commande
   bool doAdaptativeGain = true; // Compute adaptative gain
   lambda.initStandard(4, 0.2, 40);
   int opt_cam_frequency = 60; // 60 Hz

@@ -80,7 +80,7 @@
 #include <visp/vpServoDisplay.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDot2.h>
-#include <visp/vpAdaptativeGain.h>
+#include <visp/vpAdaptiveGain.h>
 #include <visp/vpLinearKalmanFilterInstantiation.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -214,7 +214,7 @@ main()
     task.addFeature(p,pd) ;
 
     // - set the constant gain
-    vpAdaptativeGain	lambda; 
+    vpAdaptiveGain	lambda;
     lambda.initStandard(4, 0.2, 30);
     task.setLambda(lambda) ;
 

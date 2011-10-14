@@ -57,7 +57,7 @@
 #include <visp/vpServoException.h>
 
 #include <visp/vpList.h>
-#include <visp/vpAdaptativeGain.h>
+#include <visp/vpAdaptiveGain.h>
 
 
 /*!
@@ -231,7 +231,7 @@ public:
 		 const double at_infinity,
 		 const double deriv_at_zero)
   { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
-  void setLambda(const vpAdaptativeGain& _l){lambda=_l;}
+  void setLambda(const vpAdaptiveGain& _l){lambda=_l;}
 
   //! create a new ste of  two visual features
   void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
@@ -312,7 +312,7 @@ public:
   vpList<unsigned int> featureSelectionList ;
 
   //! Gain
-  vpAdaptativeGain lambda ;
+  vpAdaptiveGain lambda ;
 
   //! Sign of the interaction +/- 1 (1 for eye-in-hand, -1 for
   //! eye-to-hand configuration)
