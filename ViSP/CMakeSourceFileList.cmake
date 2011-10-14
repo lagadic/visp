@@ -73,27 +73,27 @@ SET (SRC_EXCEPTION
   exceptions/vpException.cpp
   )
 
-SET (SRC_FRAMEGRABBER_DEVICE
-  framegrabber-device/disk/vpDiskGrabber.cpp
+SET (SRC_DEVICE_FRAMEGRABBER
+  device/framegrabber/disk/vpDiskGrabber.cpp
   )
 
 IF(VISP_HAVE_DC1394_1)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/1394/vp1394Grabber.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/1394/vp1394Grabber.cpp)
 ENDIF()
 IF(VISP_HAVE_DC1394_2)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/1394/vp1394TwoGrabber.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/1394/vp1394TwoGrabber.cpp)
 ENDIF()
 IF(VISP_HAVE_V4L2)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/v4l2/vpV4l2Grabber.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/v4l2/vpV4l2Grabber.cpp)
 ENDIF()
 IF(VISP_HAVE_DIRECTSHOW)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowGrabber.cpp)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowGrabberImpl.cpp)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowDevice.cpp)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/directshow/vpDirectShowSampleGrabberI.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowGrabber.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowGrabberImpl.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowDevice.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowSampleGrabberI.cpp)
 ENDIF()
 IF(VISP_HAVE_OPENCV)
-  LIST(APPEND SRC_FRAMEGRABBER_DEVICE framegrabber-device/OpenCV/vpOpenCVGrabber.cpp)
+  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/OpenCV/vpOpenCVGrabber.cpp)
 ENDIF()
 
 SET (SRC_IMAGE
@@ -117,18 +117,18 @@ IF(VISP_HAVE_OPENCV)
 ENDIF()
 
 IF(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
-  SET (SRC_KINECTDEVICE
-    kinectdevice/vpKinect.cpp
+  SET (SRC_DEVICE_KINECT
+    device/kinect/vpKinect.cpp
   )
 ENDIF()
 
-SET (SRC_LASERSCANNER
-  laserscanner/sick/vpSickLDMRS.cpp
+SET (SRC_DEVICE_LASERSCANNER
+  device/laserscanner/sick/vpSickLDMRS.cpp
   )
 
 IF(VISP_HAVE_PARPORT)
-  SET (SRC_LIGHT
-    light/vpRingLight.cpp
+  SET (SRC_DEVICE_LIGHT
+    device/light/vpRingLight.cpp
     )
 ENDIF()
 
@@ -322,31 +322,31 @@ IF(VISP_HAVE_FFMPEG)
   LIST(APPEND SRC_VIDEO video/vpFFMPEG.cpp)
 ENDIF()
 
-SET (SRC_VIDEO_DEVICE
-  video-device/vpDisplay.cpp
+SET (SRC_DEVICE_DISPLAY
+  device/display/vpDisplay.cpp
   )
 
 IF(VISP_HAVE_GTK)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayGTK.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/vpDisplayGTK.cpp)
 ENDIF()
 IF(VISP_HAVE_OPENCV)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayOpenCV.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/vpDisplayOpenCV.cpp)
 ENDIF()
 IF(VISP_HAVE_X11)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/vpDisplayX.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/vpDisplayX.cpp)
 ENDIF()
 
 IF(WIN32)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayWin32.cpp)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpWin32Window.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpDisplayWin32.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpWin32Window.cpp)
 ENDIF()
 IF(VISP_HAVE_GDI)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpGDIRenderer.cpp)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayGDI.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpGDIRenderer.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpDisplayGDI.cpp)
 ENDIF()
 IF(VISP_HAVE_D3D9)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpD3DRenderer.cpp)
-  LIST(APPEND SRC_VIDEO_DEVICE video-device/windows/vpDisplayD3D.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpD3DRenderer.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpDisplayD3D.cpp)
 ENDIF()
 
 SET (SRC_VISUAL_FEATURE
@@ -380,12 +380,13 @@ SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
   ${SRC_EXCEPTION}
-  ${SRC_FRAMEGRABBER_DEVICE}
+  ${SRC_DEVICE_DISPLAY}
+  ${SRC_DEVICE_FRAMEGRABBER}
+  ${SRC_DEVICE_KINECT}
+  ${SRC_DEVICE_LASERSCANNER}
+  ${SRC_DEVICE_LIGHT}
   ${SRC_IMAGE}
   ${SRC_KEY_POINT}
-  ${SRC_KINECTDEVICE}
-  ${SRC_LASERSCANNER}
-  ${SRC_LIGHT}
   ${SRC_MATH}
   ${SRC_ROBOT}
   ${SRC_SERVO}
@@ -393,7 +394,6 @@ SET (SRC_ALL
   ${SRC_TOOLS}
   ${SRC_TRACKING}
   ${SRC_VIDEO}
-  ${SRC_VIDEO_DEVICE}
   ${SRC_VISUAL_FEATURE}
   )
  

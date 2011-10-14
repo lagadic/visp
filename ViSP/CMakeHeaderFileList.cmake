@@ -69,18 +69,18 @@ SET (HEADER_EXCEPTION
   exceptions/vpException.h
   )
 
-SET (HEADER_FRAMEGRABBER_DEVICE
-  framegrabber-device/1394/vp1394Grabber.h
-  framegrabber-device/1394/vp1394TwoGrabber.h
-  framegrabber-device/disk/vpDiskGrabber.h
-  framegrabber-device/generic-framegrabber/vpFrameGrabberException.h
-  framegrabber-device/generic-framegrabber/vpFrameGrabber.h
-  framegrabber-device/v4l2/vpV4l2Grabber.h
-  framegrabber-device/directshow/vpDirectShowGrabber.h
-  framegrabber-device/directshow/vpDirectShowGrabberImpl.h
-  framegrabber-device/directshow/vpDirectShowDevice.h
-  framegrabber-device/directshow/vpDirectShowSampleGrabberI.h
-  framegrabber-device/OpenCV/vpOpenCVGrabber.h
+SET (HEADER_DEVICE_FRAMEGRABBER
+  device/framegrabber/1394/vp1394Grabber.h
+  device/framegrabber/1394/vp1394TwoGrabber.h
+  device/framegrabber/disk/vpDiskGrabber.h
+  device/framegrabber/generic-framegrabber/vpFrameGrabberException.h
+  device/framegrabber/generic-framegrabber/vpFrameGrabber.h
+  device/framegrabber/v4l2/vpV4l2Grabber.h
+  device/framegrabber/directshow/vpDirectShowGrabber.h
+  device/framegrabber/directshow/vpDirectShowGrabberImpl.h
+  device/framegrabber/directshow/vpDirectShowDevice.h
+  device/framegrabber/directshow/vpDirectShowSampleGrabberI.h
+  device/framegrabber/OpenCV/vpOpenCVGrabber.h
   )
 
 SET (HEADER_IMAGE
@@ -103,19 +103,19 @@ SET (HEADER_KEY_POINT
   key-point/vpFernClassifier.h
   )
 
-SET (HEADER_KINECTDEVICE
-  kinectdevice/vpKinect.h
+SET (HEADER_DEVICE_KINECT
+  device/kinect/vpKinect.h
   )
 
-SET (HEADER_LASERSCANNER
-  laserscanner/vpScanPoint.h
-  laserscanner/vpLaserScan.h
-  laserscanner/vpLaserScanner.h
-  laserscanner/sick/vpSickLDMRS.h
+SET (HEADER_DEVICE_LASERSCANNER
+  device/laserscanner/vpScanPoint.h
+  device/laserscanner/vpLaserScan.h
+  device/laserscanner/vpLaserScanner.h
+  device/laserscanner/sick/vpSickLDMRS.h
   )
 
-SET (HEADER_LIGHT
-  light/vpRingLight.h
+SET (HEADER_DEVICE_LIGHT
+  device/light/vpRingLight.h
   )
 
 SET (HEADER_MATH
@@ -277,20 +277,20 @@ SET (HEADER_VIDEO
   video/vpFFMPEG.h
   )
 
-SET (HEADER_VIDEO_DEVICE
-  video-device/vpDisplayException.h
-  video-device/vpDisplayGTK.h
-  video-device/vpDisplayOpenCV.h
-  video-device/vpDisplay.h
-  video-device/vpDisplayX.h
-  video-device/vpMouseButton.h
-  video-device/windows/vpDisplayGDI.h
-  video-device/windows/vpDisplayWin32.h
-  video-device/windows/vpGDIRenderer.h
-  video-device/windows/vpWin32Renderer.h
-  video-device/windows/vpWin32Window.h
-  video-device/windows/vpD3DRenderer.h
-  video-device/windows/vpDisplayD3D.h
+SET (HEADER_DEVICE_DISPLAY
+  device/display/vpDisplayException.h
+  device/display/vpDisplayGTK.h
+  device/display/vpDisplayOpenCV.h
+  device/display/vpDisplay.h
+  device/display/vpDisplayX.h
+  device/display/vpMouseButton.h
+  device/display/windows/vpDisplayGDI.h
+  device/display/windows/vpDisplayWin32.h
+  device/display/windows/vpGDIRenderer.h
+  device/display/windows/vpWin32Renderer.h
+  device/display/windows/vpWin32Window.h
+  device/display/windows/vpD3DRenderer.h
+  device/display/windows/vpDisplayD3D.h
   )
 
 SET (HEADER_VISUAL_FEATURE
@@ -326,13 +326,14 @@ SET (HEADER_ALL
   ${HEADER_CAMERA}
   ${HEADER_COMPUTER_VISION}
   ${HEADER_DATA_STRUCTURE}
+  ${HEADER_DEVICE_DISPLAY}
+  ${HEADER_DEVICE_FRAMEGRABBER}
+  ${HEADER_DEVICE_KINECT}
+  ${HEADER_DEVICE_LASERSCANNER}
+  ${HEADER_DEVICE_LIGHT}
   ${HEADER_EXCEPTION}
-  ${HEADER_FRAMEGRABBER_DEVICE}
   ${HEADER_IMAGE}
   ${HEADER_KEY_POINT}
-  ${HEADER_KINECTDEVICE}
-  ${HEADER_LASERSCANNER}
-  ${HEADER_LIGHT}
   ${HEADER_MATH}
   ${HEADER_ROBOT}
   ${HEADER_SIMULATOR}
@@ -340,6 +341,5 @@ SET (HEADER_ALL
   ${HEADER_TOOLS}
   ${HEADER_TRACKING}
   ${HEADER_VIDEO}
-  ${HEADER_VIDEO_DEVICE}
   ${HEADER_VISUAL_FEATURE}
   )
