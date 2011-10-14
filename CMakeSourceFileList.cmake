@@ -161,7 +161,6 @@ SET (SRC_MATH
   math/transformation/vpRzyzVector.cpp
   math/transformation/vpThetaUVector.cpp
   math/transformation/vpTranslationVector.cpp
-  math/transformation/vpTwistMatrix.cpp
   math/transformation/vpVelocityTwistMatrix.cpp
   )
 
