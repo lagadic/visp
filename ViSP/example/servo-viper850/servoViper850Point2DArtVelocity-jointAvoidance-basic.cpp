@@ -250,7 +250,7 @@ main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
     int iter = 0;
-    double t_0, t_1, Tv;
+    double t_0, t_1 = vpTime::measureTimeMs(), Tv;
     dc1394video_frame_t *frame = NULL;
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
