@@ -38,43 +38,45 @@
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  calibration
-  coin-simulator
-  device
-  direct-visual-servoing
-  homography
-  image
-  key-point
-  math
-  manual
-  moments/image
-  moments/points
-  moments/polygon
-  ogre-simulator
-  parse-argv
-  pose-estimation
-  robot-simulator/afma6
-  robot-simulator/camera
-  robot-simulator/viper850
-  servo-afma4
-  servo-afma6
-  servo-biclops
-  servo-cycab
-  servo-ptu46
-  servo-viper850
-  tools
-  tracking
-  video
-  wireframe-simulator  
+# If you want to add/remove a source, modify here
+SET (SOURCE
+  displaySequence.cpp
+  displayGDI.cpp
+  displayD3D.cpp
+  displayGTK.cpp
+  displayX.cpp
+  displayOpenCV.cpp
+  displayXMulti.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+FOREACH(source ${SOURCE})
+  # Compute the name of the binary to create
+  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  ADD_EXECUTABLE(${binary} ${source})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+
+ENDFOREACH(source)
+
+# Add test
+# To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
+# environment variable to the ViSP test sequences location.
+# To get these sequence download ViSP-images.tar.gz from
+# http://www.irisa.fr/lagadic/visp/visp.html
+ADD_TEST(imageDiskRW imageDiskRW)
+ADD_TEST(displaySequence displaySequence -d)
+ADD_TEST(displayGDI displayGDI -d)
+ADD_TEST(displayD3D displayD3D -d)
+ADD_TEST(displayGTK displayGTK -d)
+ADD_TEST(displayX displayX -d)
+ADD_TEST(displayOpenCV displayOpenCV -d)
+ADD_TEST(displayXMulti displayXMulti -d)
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

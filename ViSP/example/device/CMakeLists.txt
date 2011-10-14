@@ -43,34 +43,11 @@
 #
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
-  calibration
-  coin-simulator
-  device
-  direct-visual-servoing
-  homography
-  image
-  key-point
-  math
-  manual
-  moments/image
-  moments/points
-  moments/polygon
-  ogre-simulator
-  parse-argv
-  pose-estimation
-  robot-simulator/afma6
-  robot-simulator/camera
-  robot-simulator/viper850
-  servo-afma4
-  servo-afma6
-  servo-biclops
-  servo-cycab
-  servo-ptu46
-  servo-viper850
-  tools
-  tracking
-  video
-  wireframe-simulator  
+  display
+  framegrabber
+  kinect
+  laserscanner
+  light
 )
 
 # Build process propagation in the sub directories
