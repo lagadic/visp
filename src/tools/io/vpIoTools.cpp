@@ -510,6 +510,45 @@ vpIoTools::remove(const std::string &filename)
 }
 
 /*!
+
+  Rename an existing file \e oldfilename in \e newfilename.
+
+  \param oldfilename : File to rename.
+  \param newfilename : New file name.
+
+  \return true if the file was renamed, false otherwise.
+
+  \sa rename(const std::string &, const std::string &)
+*/
+bool
+vpIoTools::rename(const char *oldfilename, const char *newfilename)
+{
+  if (::rename(oldfilename, newfilename) != 0)
+    return false;
+  else
+    return true;
+}
+
+/*!
+
+  Rename an existing file \e oldfilename in \e newfilename.
+
+  \param oldfilename : File to rename.
+  \param newfilename : New file name.
+
+  \return true if the file was renamed, false otherwise.
+
+  \sa rename(const char *, const char *)
+*/
+bool
+vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename)
+{
+  return vpIoTools::rename(oldfilename.c_str(), newfilename.c_str());
+}
+
+
+
+/*!
   Converts a path name to the current system's format.
 
   \param pathname : Path name to convert. Path name to convert. Under
@@ -536,7 +575,6 @@ vpIoTools::path(const char *pathname)
 
   return path;
 }
-
 
 /*!
   Converts a path name to the current system's format.

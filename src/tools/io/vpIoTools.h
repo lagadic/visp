@@ -94,10 +94,16 @@ int main()
   f.open(filename.c_str());
   f.close();
 
+  // Rename the file
+  std::string newfilename = username + "/newfile.txt";
+  std::cout << "Rename: " << filename << " in: " << newfilename << std::endl;
+  if (vpIoTools::rename(filename, newfilename) == false)
+    std::cout << "Unable to rename: " << filename << std::endl;
+
   // Remove the file
-  std::cout << "Remove: " << filename << std::endl;
-  if (vpIoTools::remove(filename) == false)
-    std::cout << "Unable to remove: " << filename << std::endl;
+  std::cout << "Remove: " << newfilename << std::endl;
+  if (vpIoTools::remove(newfilename) == false)
+    std::cout << "Unable to remove: " << newfilename << std::endl;
 }
   \endcode
 
@@ -119,6 +125,8 @@ public:
   static bool checkFilename(const std::string &filename);
   static bool remove(const char *filename);
   static bool remove(const std::string &filename);
+  static bool rename(const char *oldfilename, const char *newfilename);
+  static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
   static std::string path(const char * pathname);
   static std::string path(const std::string &pathname);
