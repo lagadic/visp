@@ -39,12 +39,20 @@
  *
  *****************************************************************************/
 /*!
-\file vpAdaptativeGain.cpp
+  \file vpAdaptativeGain.cpp
+
+  \brief Adaptative gain. The content of this file is deprecated. You
+  should better use vpAdaptiveGain.
+
 */
 
 #include <iostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+
+#include <visp/vpConfig.h>
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /* --- VISP --- */
 #include <visp/vpColVector.h>
@@ -61,6 +69,8 @@ const double vpAdaptativeGain::DEFAULT_LAMBDA_PENTE  = 1.666;
 /* -------------------------------------------------------------------------- */
 
 /*!
+  \deprecated This class is deprecated. You shoud use
+  vpAdaptive class instead.
   Basic constructor which initializes the parameters with a default value.
 */
 vpAdaptativeGain::
@@ -342,7 +352,7 @@ operator<< (std::ostream &os, const vpAdaptativeGain& lambda)
   return os;
 }
 
-
+#endif
 
 /*
  * Local variables:

@@ -178,6 +178,7 @@ SET (HEADER_ROBOT
 
 SET (HEADER_SERVO
   servo/vpAdaptativeGain.h
+  servo/vpAdaptiveGain.h
   servo/vpServoData.h
   servo/vpServoDisplay.h
   servo/vpServoException.h

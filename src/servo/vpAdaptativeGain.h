@@ -39,8 +39,10 @@
  *
  *****************************************************************************/
 /*!
-\file vpAdaptativeGain.h
-\brief Adaptative gain
+  \file vpAdaptativeGain.h
+
+  \brief Adaptative gain. The content of this file is deprecated. You
+  should better use vpAdaptiveGain.
 */
 
 #ifndef __VP_ADAPTATIVE_GAIN_H
@@ -51,6 +53,8 @@
 
 #include <visp/vpConfig.h>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 class vpColVector;
 /*!
   \class vpAdaptativeGain
@@ -58,7 +62,10 @@ class vpColVector;
   \ingroup VsTask
   
   \brief Adaptative gain computation.
-  
+
+  \deprecated This class is deprecated. You shoud use
+  vpAdaptive class instead.
+
   The formula used to compute the gain is the following :
   
   \f[ lambda (x) = a * exp (-b*x) + c \f]
@@ -103,7 +110,7 @@ public:  /* Methodes*/
 
     /* --- CONSTRUCTOR -------------------------------------------------------- */
 
-    vpAdaptativeGain (void);
+    vp_deprecated vpAdaptativeGain (void);
 
     /* --- INIT --------------------------------------------------------------- */
     void                        initFromConstant (double lambda);
@@ -170,6 +177,8 @@ public:  /* Methodes*/
     friend std::ostream&        operator<< (std::ostream &os,
 					    const vpAdaptativeGain& lambda);
 };
+
+#endif
 
 #endif /*  __VP_ADAPTATIVE_GAIN_H	*/
 

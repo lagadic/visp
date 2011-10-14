@@ -27,14 +27,19 @@ ViSP 2.6.1 (under development)
        vpRobotSimulator, vpFFMPEG, vpBSpline
      - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
-     - When it was possible without braking the backward compatibilty std::list was 
-       introduced instead of vpList. Some of the functions that use vpList are
-       now deprecated.
+     - When it was possible without braking the backward compatibilty 
+       std::list was introduced instead of vpList. Some of the functions that 
+       use vpList are now deprecated.
      - Better detection of image or video file types when used in vpImageIo,
        vpVideoReader and vpVideoWriter
   - Build
      - Set the build type by default to release
      - Improve the usage of debug versus release third-party libraries
+  - Deprecated
+     - vpAdaptativeGain is deprecated. Use vpAdaptiveGain instead.
+     - vp1394Grabber is deprecated. Use vp1394TwoGrabber instead.
+     - Most of the methods that use vpList are deprecated. Use std::list instead
+     - vpTwistMatrix deprecated in ViSP-1.6.0 was removed.
   - Bug fixed
      - [11110] On OSX vpDisplayOpenCV does not display images since OpenCV 2.1.0
      - [11147] Coin not installed, cannot read VRML files
@@ -88,7 +93,8 @@ ViSP 2.6.0 (released September 23rd, 2010)
       This class aims real time drawing of 2D or 3D graphics under Linux, OSX
       and Windows.
   - Third party library dependencies
-    - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least OpenCV 2.1.
+    - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least 
+      OpenCV 2.1.
     - libplotter is no longer required.
     - Itifg8 is no longer supported.
   - Improvements
