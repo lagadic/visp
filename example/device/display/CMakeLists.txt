@@ -69,7 +69,6 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(imageDiskRW imageDiskRW)
 ADD_TEST(displaySequence displaySequence -d)
 ADD_TEST(displayGDI displayGDI -d)
 ADD_TEST(displayD3D displayD3D -d)

@@ -64,15 +64,3 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 ADD_TEST(imageDiskRW imageDiskRW)
-ADD_TEST(displaySequence displaySequence -d)
-ADD_TEST(displayGDI displayGDI -d)
-ADD_TEST(displayD3D displayD3D -d)
-ADD_TEST(displayGTK displayGTK -d)
-ADD_TEST(displayX displayX -d)
-ADD_TEST(displayOpenCV displayOpenCV -d)
-ADD_TEST(displayXMulti displayXMulti -d)
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
