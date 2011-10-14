@@ -488,7 +488,7 @@ vpIoTools::checkFilename(const std::string &filename)
 bool
 vpIoTools::remove(const char *filename)
 {
-	if (std::remove(filename) != 0)
+	if (::remove(filename) != 0)
     return false;
   else
     return true;
