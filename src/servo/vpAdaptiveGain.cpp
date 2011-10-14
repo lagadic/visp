@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpAdaptiveGain.cpp 3057 2011-02-11 13:17:26Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
