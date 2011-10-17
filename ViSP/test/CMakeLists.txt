@@ -44,8 +44,8 @@
 # If you add/remove a directory, modify here
 SET (SRC_SUBDIRS
   camera
+  device
   feature
-  framegrabber
   homography
   image
   key-point
@@ -56,7 +56,6 @@ SET (SRC_SUBDIRS
   servo-viper
   tools
   tracking
-  video-device
   visual-feature
 )
 
