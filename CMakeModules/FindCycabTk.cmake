@@ -35,17 +35,17 @@
 # Once run this will define: 
 #
 # CycabTk_FOUND
-# CycabTk_INCLUDE_DIR
+# CycabTk_INCLUDE_DIRS
 # CycabTk_LIBRARIES
 #
 # Additional var set when the new version of cycabtk exists (to use)
 # CycabTk_NEW_FOUND
-# CycabTk_NEW_INCLUDE_DIR
+# CycabTk_NEW_INCLUDE_DIRS
 # CycabTk_NEW_LIBRARIES
 #
 # Additional var set when the old version of cycabtk exists (obsolete)
 # CycabTk_OLD_FOUND
-# CycabTk_OLD_INCLUDE_DIR
+# CycabTk_OLD_INCLUDE_DIRS
 # CycabTk_OLD_LIBRARIES
 #
 # Authors:
@@ -77,7 +77,7 @@ FIND_LIBRARY(CycabTk_OLD_LIBRARY
 
 IF(CycabTk_OLD_INCLUDE_DIR AND CycabTk_OLD_LIBRARY)
   SET(CycabTk_OLD_FOUND TRUE)
-  SET(CycabTk_OLD_INCLUDE_DIR ${CycabTk_OLD_INCLUDE_DIR})
+  SET(CycabTk_OLD_INCLUDE_DIRS ${CycabTk_OLD_INCLUDE_DIR})
   SET(CycabTk_OLD_LIBRARIES ${CycabTk_OLD_LIBRARY})
 ELSE(CycabTk_OLD_INCLUDE_DIR AND CycabTk_OLD_LIBRARY)
   SET(CycabTk_OLD_FOUND FALSE)
@@ -118,7 +118,7 @@ IF(USE_CYCAB_WITH_OLD_CYCABTK)
   # either old or new cycabtk is detected
   SET(CycabTk_FOUND TRUE)
   SET(CycabTk_NEW_FOUND FALSE)
-  SET(CycabTk_INCLUDE_DIR ${CycabTk_OLD_INCLUDE_DIR})
+  SET(CycabTk_INCLUDE_DIRS ${CycabTk_OLD_INCLUDE_DIRS})
   SET(CycabTk_LIBRARIES ${CycabTk_OLD_LIBRARIES})
 ELSE(USE_CYCAB_WITH_OLD_CYCABTK)
   IF(CycabTk_NEW_FOUND)
@@ -128,7 +128,7 @@ ELSE(USE_CYCAB_WITH_OLD_CYCABTK)
   ELSE(CycabTk_NEW_FOUND)
     IF(CycabTk_OLD_FOUND)
       SET(CycabTk_FOUND TRUE)
-      SET(CycabTk_INCLUDE_DIR ${CycabTk_OLD_INCLUDE_DIR})
+      SET(CycabTk_INCLUDE_DIRS ${CycabTk_OLD_INCLUDE_DIRS})
       SET(CycabTk_LIBRARIES ${CycabTk_OLD_LIBRARIES})
     ENDIF(CycabTk_OLD_FOUND)
   ENDIF(CycabTk_NEW_FOUND)

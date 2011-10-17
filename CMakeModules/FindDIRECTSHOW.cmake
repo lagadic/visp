@@ -36,7 +36,7 @@
 # Once loaded this will define:
 #
 # DIRECTSHOW_FOUND        - system has DirectShow
-# DIRECTSHOW_INCLUDE_DIR  - include directory for DirectShow
+# DIRECTSHOW_INCLUDE_DIRS - include directory for DirectShow
 # DIRECTSHOW_LIBRARIES    - libraries you need to link to
 #
 # Authors:
@@ -146,13 +146,13 @@ IF(WIN32 AND NOT MINGW)
         ENDIF(NOT DIRECTSHOW_atlbase_INCLUDE_PATH)
       ENDIF(MSVC10)
   IF(DIRECTX_INCLUDE_PATH AND DIRECTSHOW_dshow_INCLUDE_PATH AND DIRECTSHOW_qedit_INCLUDE_PATH AND DIRECTSHOW_atlbase_INCLUDE_PATH)
-    SET(DIRECTSHOW_INCLUDE_DIR ${DIRECTX_INCLUDE_PATH}
-                               ${DIRECTSHOW_dshow_INCLUDE_PATH}
-                               ${DIRECTSHOW_qedit_INCLUDE_PATH}
-                               ${DIRECTSHOW_atlbase_INCLUDE_PATH})
+    SET(DIRECTSHOW_INCLUDE_DIRS ${DIRECTX_INCLUDE_PATH}
+                                ${DIRECTSHOW_dshow_INCLUDE_PATH}
+                                ${DIRECTSHOW_qedit_INCLUDE_PATH}
+                                ${DIRECTSHOW_atlbase_INCLUDE_PATH})
   ENDIF(DIRECTX_INCLUDE_PATH AND DIRECTSHOW_dshow_INCLUDE_PATH AND DIRECTSHOW_qedit_INCLUDE_PATH AND DIRECTSHOW_atlbase_INCLUDE_PATH)
   # if DirectShow include dir found, then find DirectShow libraries
-  IF(DIRECTSHOW_INCLUDE_DIR)
+  IF(DIRECTSHOW_INCLUDE_DIRS)
     IF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY
         NAMES strmiids
@@ -251,10 +251,10 @@ IF(WIN32 AND NOT MINGW)
         SET(DIRECTSHOW_FOUND "YES")
       ENDIF(DIRECTSHOW_quartz_LIBRARY)
     ENDIF(DIRECTSHOW_strmiids_LIBRARY)
-  ENDIF(DIRECTSHOW_INCLUDE_DIR)
+  ENDIF(DIRECTSHOW_INCLUDE_DIRS)
 
   MARK_AS_ADVANCED(
-    DIRECTSHOW_INCLUDE_DIR
+    DIRECTSHOW_INCLUDE_DIRS
     DIRECTSHOW_strmiids_LIBRARY
     DIRECTSHOW_quartz_LIBRARY
     DIRECTX_INCLUDE_PATH

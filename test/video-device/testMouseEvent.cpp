@@ -83,7 +83,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"di:lp:ht:f:n:s:w"
+#define GETOPTARGS	"cdi:lp:ht:f:n:s:w"
 typedef enum {
   vpX11,
   vpGTK,
@@ -117,7 +117,7 @@ to a PGM file.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
-     [-t <type of video device>] [-l] [-w] [-d] [-h]\n						      \
+     [-t <type of video device>] [-l] [-w] [-c] [-d] [-h]\n						      \
  ", name);
   
   std::string display;
@@ -169,6 +169,9 @@ SYNOPSIS\n\
   -l\n\
      Print the list of video-devices available and exit.\n\
 \n\
+  -c\n\
+     Disable mouse click.\n\
+\n\
   -d\n\
      Disable the image display. This can be useful \n\
      for automatic tests using crontab under Unix or \n\
@@ -199,6 +202,7 @@ SYNOPSIS\n\
   \param step : Step between two images.
   \param dtype : Type of video device.
   \param list : Set as true,list the available video-devices.
+  \param click : Set as true, activates the mouse click.
   \param display : Set as true, activates the image display. This is
   the default configuration. When set to false, the display is
   disabled. This can be useful for automatic tests using crontab
@@ -211,7 +215,7 @@ SYNOPSIS\n\
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
 		unsigned &first, unsigned &nimages, unsigned &step,
-		vpDisplayType &dtype, bool &list, bool &display, bool &wait)
+		vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait)
 {
   const char *optarg;
   int	c;
@@ -219,6 +223,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'c': click = false; break;
     case 'd': display = false; break;
     case 't': sDisplayType = optarg;
       // Parse the display type option
@@ -272,12 +277,13 @@ main(int argc, const char ** argv)
   std::string opt_ppath;
   std::string dirname;
   std::string filename;
-  unsigned opt_first = 0;
-  unsigned opt_nimages = 80;
+  unsigned opt_first = 30;
+  unsigned opt_nimages = 10;
   unsigned opt_step = 1;
   vpDisplayType opt_dtype; // Type of display to use
   bool opt_list = false; // To print the list of video devices 
   bool opt_display = true;
+  bool opt_click = true;
   bool opt_click_blocking = false;
 
   // Default display is one available
@@ -302,7 +308,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step, opt_dtype, opt_list, opt_display, 
+		 opt_step, opt_dtype, opt_list, opt_display, opt_click,
 		 opt_click_blocking) == false) {
     exit (-1);
   }
@@ -534,19 +540,21 @@ main(int argc, const char ** argv)
 	vpImagePoint ip;
 	vpMouseButton::vpMouseButtonType button;
 
-	bool pressed = vpDisplay::getClick(I, ip, button, opt_click_blocking);
-	if (pressed) {
-	  switch (button) {
-	  case vpMouseButton::button1:
-	    std::cout << "Left button was pressed." << std::endl;
-	    break;
-	  case vpMouseButton::button2:
-	    std::cout << "Middle button was pressed." << std::endl;
-	    break;
-	  case vpMouseButton::button3:
-	    std::cout << "Right button was pressed. Bye. " << std::endl;
-      delete display;      
-	    return 0; break;
+	if (opt_click) {
+	  bool pressed = vpDisplay::getClick(I, ip, button, opt_click_blocking);
+	  if (pressed) {
+	    switch (button) {
+	    case vpMouseButton::button1:
+	      std::cout << "Left button was pressed." << std::endl;
+	      break;
+	    case vpMouseButton::button2:
+	      std::cout << "Middle button was pressed." << std::endl;
+	      break;
+	    case vpMouseButton::button3:
+	      std::cout << "Right button was pressed. Bye. " << std::endl;
+	      delete display;      
+	      return 0; break;
+	    }
 	  }
 	}
 

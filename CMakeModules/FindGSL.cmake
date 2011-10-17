@@ -40,7 +40,7 @@
 # GSL_LIBRARIES   = full path to the libraries
 #    on Unix/Linux with additional linker flags from "gsl-config --libs"
 # 
-# GSL_INCLUDE_DIR      = where to find headers 
+# GSL_INCLUDE_DIRS      = where to find headers 
 #
 # GSL_LINK_DIRECTORIES = link directories, useful for rpath on Unix
 # GSL_EXE_LINKER_FLAGS = rpath on Unix
@@ -115,7 +115,7 @@ ELSE(WIN32)
       /usr/bin
       /usr/local/bin
       )
-    # MESSAGE("DBG GSL_CONFIG ${GSL_CONFIG}")
+     #MESSAGE("DBG GSL_CONFIG ${GSL_CONFIG}")
     
     IF (GSL_CONFIG) 
       # set INCLUDE_DIRS to prefix+include
@@ -124,7 +124,8 @@ ELSE(WIN32)
 	OUTPUT_VARIABLE GSL_PREFIX)
       SET(GSL_INCLUDE_DIR ${GSL_PREFIX}/include)
       #MESSAGE(STATUS "Using GSL from ${GSL_PREFIX}")
-     
+      #MESSAGE("GSL_INCLUDE_DIR ${GSL_INCLUDE_DIR}")
+    
       ## extract link lib path and name  for rpath  
       EXEC_PROGRAM(${GSL_CONFIG}
 	ARGS --libs
@@ -210,12 +211,12 @@ ELSE(WIN32)
       " GSL_BUILD_TEST) 
     #MESSAGE("GSL_BUILD_TEST: ${GSL_BUILD_TEST}")
     IF(GSL_BUILD_TEST)
-      SET(GSL_INCLUDE_DIR ${GSL_INCLUDE_PATH})
+      SET(GSL_INCLUDE_DIRS ${GSL_INCLUDE_DIR})
       SET(GSL_LIBRARIES ${GSL_LIBRARIES})
       SET(GSL_FOUND TRUE)
     ELSE()
       SET(GSL_FOUND FALSE)
-      #MESSAGE("libgsl library found but not compatible with architecture.")
+      #MESScAGE("libgsl library found but not compatible with architecture.")
     ENDIF()
   ELSE(GSL_INCLUDE_DIR AND GSL_LIBRARIES)
     SET(GSL_FOUND FALSE) 
@@ -223,6 +224,7 @@ ELSE(WIN32)
 
   MARK_AS_ADVANCED(
     GSL_INCLUDE_DIR
+    GSL_INCLUDE_DIRS
     GSL_LIBRARIES
     GSL_LINK_DIRECTORIES
     GSL_CONFIG

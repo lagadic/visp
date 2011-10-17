@@ -76,7 +76,7 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 ENDFOREACH(source)
 
@@ -86,11 +86,11 @@ ADD_TEST(servoSimu3D_cdMc_CamVelocityWithoutVpServo	servoSimu3D_cdMc_CamVelocity
 ADD_TEST(servoSimu3D_cMcd_CamVelocity			servoSimu3D_cMcd_CamVelocity			)	
 ADD_TEST(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocityWithoutVpServo	)	
 ADD_TEST(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
-ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-d	)
-ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-d	)
+ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 ADD_TEST(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
-ADD_TEST(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -d	)
-ADD_TEST(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-d	)
+ADD_TEST(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+ADD_TEST(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 ADD_TEST(servoSimuPoint2DCamVelocity1			servoSimuPoint2DCamVelocity1			)
 ADD_TEST(servoSimuPoint2DCamVelocity2			servoSimuPoint2DCamVelocity2			)
 ADD_TEST(servoSimuPoint2DCamVelocity3			servoSimuPoint2DCamVelocity3			)

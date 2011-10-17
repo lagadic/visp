@@ -67,7 +67,7 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpWireFrameSimulator.h>
 
-#define GETOPTARGS	"dh"
+#define GETOPTARGS	"cdh"
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
 
@@ -87,10 +87,13 @@ Demonstration of the wireframe simulator.\n\
 The goal of this example is to present the basic functionalities of the wire frame simulator.\n\
 \n\
 SYNOPSIS\n\
-  %s [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
+  -c \n\
+     Disable mouse click.\n\
+\n\
   -d \n\
      Turn off the display.\n\
 \n\
@@ -113,13 +116,14 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display)
+bool getOptions(int argc, const char **argv, bool &display, bool &click)
 {
   const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'c': click = false; break;
     case 'd': display = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
@@ -145,9 +149,10 @@ int
 main(int argc, const char ** argv)
 {
   bool opt_display = true;
+  bool opt_click = true;
   
   // Read the command line options
-  if (getOptions(argc, argv, opt_display) == false) {
+  if (getOptions(argc, argv, opt_display, opt_click) == false) {
     exit (-1);
   }
   
@@ -269,12 +274,13 @@ main(int argc, const char ** argv)
   std::cout << std::endl;
   std::cout << "Here are presented the effect of the basic functions of the simulator" << std::endl;
   std::cout << std::endl;
-  std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
   
   if (opt_display)
   {
-    vpDisplay::getClick(Iint);
-
+    if (opt_click) {
+      std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
+     vpDisplay::getClick(Iint);
+    }
     vpDisplay::display(Iint) ;
     vpDisplay::display(Iext1) ;
     vpDisplay::display(Iext2) ;
@@ -305,10 +311,11 @@ main(int argc, const char ** argv)
   }
   
   std::cout << std::endl;
-  std::cout << "Click on the internal view window to continue" << std::endl;
-  
-  vpDisplay::getClick(Iint);
-  
+
+  if (opt_click) {
+    std::cout << "Click on the internal view window to continue" << std::endl; 
+    vpDisplay::getClick(Iint);
+  }
   std::cout << std::endl;
   std::cout << "Now you can move the main external camera. Click inside the corresponding window with one of the three buttons of your mouse and move the pointer." << std::endl;
   std::cout << std::endl;
@@ -317,7 +324,7 @@ main(int argc, const char ** argv)
   /*
     To move the main external camera you need a loop containing the getExternalImage method. This functionnality is only available for the main external camera.
   */
-  if (opt_display)
+  if (opt_display && opt_click)
   {
     while (!vpDisplay::getClick(Iint, false))
     {

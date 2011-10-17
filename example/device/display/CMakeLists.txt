@@ -60,7 +60,7 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 ENDFOREACH(source)
 
@@ -69,13 +69,13 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(displaySequence displaySequence -d)
-ADD_TEST(displayGDI displayGDI -d)
-ADD_TEST(displayD3D displayD3D -d)
-ADD_TEST(displayGTK displayGTK -d)
-ADD_TEST(displayX displayX -d)
-ADD_TEST(displayOpenCV displayOpenCV -d)
-ADD_TEST(displayXMulti displayXMulti -d)
+ADD_TEST(displaySequence displaySequence ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayGDI displayGDI -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayD3D displayD3D -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayGTK displayGTK -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayX displayX -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayOpenCV displayOpenCV -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(displayXMulti displayXMulti -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 
