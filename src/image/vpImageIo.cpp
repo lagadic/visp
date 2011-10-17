@@ -2176,7 +2176,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
     fclose (file);
     vpERROR_TRACE("couldn't read magic number in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pgm file")) ;
+          "error reading png file")) ;
   }
 
   /* check for valid magic number */
@@ -2184,21 +2184,30 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   {
     fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
     fclose (file);
+    throw (vpImageException(vpImageException::ioError,
+          "error reading png file")) ;
   }
 
   /* create a png read struct */
+  //printf("version %s\n", PNG_LIBPNG_VER_STRING);
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (!png_ptr)
+  if (png_ptr == NULL)
   {
+    fprintf (stderr, "error: can't create a png read structure!\n");
     fclose (file);
+    throw (vpImageException(vpImageException::ioError,
+          "error reading png file")) ;
   }
 
   /* create a png info struct */
   png_infop info_ptr = png_create_info_struct (png_ptr);
-  if (!info_ptr)
+  if (info_ptr == NULL)
   {
+    fprintf (stderr, "error: can't create a png info structure!\n");
     fclose (file);
     png_destroy_read_struct (&png_ptr, NULL, NULL);
+    throw (vpImageException(vpImageException::ioError,
+          "error reading png file")) ;
   }
 
   /* initialize the setjmp for returning properly after a libpng error occured */
@@ -2617,7 +2626,7 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
 void
 vpImageIo::writePNG(vpImage<vpRGBa> &I, const std::string filename)
 {
-  vpImageIo::writeJPEG(I, filename.c_str());
+  vpImageIo::writePNG(I, filename.c_str());
 }
 
 
@@ -2670,7 +2679,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 void
 vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
 {
-  vpImageIo::readJPEG(I, filename.c_str());
+  vpImageIo::readPNG(I, filename.c_str());
 }
 
 
@@ -2727,7 +2736,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 void
 vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
 {
-  vpImageIo::readJPEG(I, filename.c_str());
+  vpImageIo::readPNG(I, filename.c_str());
 }
 
 #endif
