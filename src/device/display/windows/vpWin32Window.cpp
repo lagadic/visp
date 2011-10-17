@@ -41,6 +41,7 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
+#include <iostream>
 
 #if ( defined(WIN32) )
 
@@ -277,24 +278,16 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int
   wcex.lpszMenuName = NULL;
   wcex.lpszClassName = g_szClassName;
   wcex.hIconSm  = LoadIcon(NULL, IDI_APPLICATION);
-
-  //we register it only if it is not yet registered
-  if (!registered)
-  {
-    if (!RegisterClassEx(&wcex))
-    {
-      throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
-                               "Can't register the window's class!");
-    }
-    else{ registered = true; }
-  }
+  
+  RegisterClassEx(&wcex);
 
   //creates the window
-  hWnd = CreateWindow(g_szClassName, title, style,
-                      posx, posy, windowW, windowH, NULL, NULL, hInst, NULL);
-
+  hWnd = CreateWindowEx(WS_EX_APPWINDOW,g_szClassName, title, style,
+                      posx, posy, w, h, NULL, NULL, hInst, NULL);
+  std::cout << "hwnd=" << hWnd << std::endl;
   if (hWnd == NULL)
   {
+	  DWORD err= GetLastError();
     throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
                              "Can't create the window!");
   }
