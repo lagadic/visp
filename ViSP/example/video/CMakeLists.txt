@@ -55,7 +55,7 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 ENDFOREACH(source)
 
@@ -64,8 +64,8 @@ ENDFOREACH(source)
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
-ADD_TEST(videoReader videoReader -d -c)
-ADD_TEST(imageSequenceReader imageSequenceReader -d -c)
+ADD_TEST(videoReader videoReader -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(imageSequenceReader imageSequenceReader -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

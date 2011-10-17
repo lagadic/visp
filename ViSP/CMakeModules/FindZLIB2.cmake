@@ -46,17 +46,19 @@
 
 FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
   $ENV{ZLIB_DIR}/include
-  $ENV{ZLIB_INCLUDE_PATH}
+  $ENV{ZLIB_INCLUDE_DIR}
   /usr/include
   /usr/local/include
+  "C:/Program Files/zlib/include"
   )
 
 FIND_LIBRARY(ZLIB_LIBRARY zlib
   $ENV{ZLIB_DIR}/lib
-  $ENV{ZLIB_LIBRARY_PATH}
+  $ENV{ZLIB_LIBRARY_DIR}
   /lib
   /usr/lib
   /usr/local/lib
+  "C:/Program Files/zlib/lib"
   )
 
 ## --------------------------------
@@ -70,6 +72,7 @@ ELSE()
 ENDIF()
 
 MARK_AS_ADVANCED(
+  ZLIB_INCLUDE_DIR
   ZLIB_INCLUDE_DIRS
   ZLIB_LIBRARIES
   ZLIB_LIBRARY

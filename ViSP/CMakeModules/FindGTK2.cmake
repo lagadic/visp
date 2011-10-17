@@ -34,7 +34,7 @@
 # Try to find GTK (and glib).
 # Once run this will define: 
 #
-# GTK2_INCLUDE_DIR   - Directories to include to use GTK
+# GTK2_INCLUDE_DIRS  - Directories to include to use GTK
 # GTK2_LIBRARIES     - Files to link against to use GTK
 # GTK2_FOUND         - If false, don't try to use GTK
 # GTK2_GL_FOUND      - If false, don't try to use GTK's GL features
@@ -213,19 +213,19 @@ IF(UNIX OR WIN32)
     # supporting libraries have also been found.
 
     SET( GTK2_FOUND "YES" )
-    SET( GTK2_INCLUDE_DIR  ${GTK2_gtk_INCLUDE_PATH}
+    SET( GTK2_INCLUDE_DIRS ${GTK2_gtk_INCLUDE_PATH}
                            ${GTK2_glib_INCLUDE_PATH} 
                            ${GTK2_glibconfig_INCLUDE_PATH}
 			   ${GTK2_pango_INCLUDE_PATH}
 			   ${GTK2_atk_INCLUDE_PATH})
     IF(GTK2_cairo_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_cairo_INCLUDE_PATH} )
+      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_cairo_INCLUDE_PATH} )
     ENDIF(GTK2_cairo_INCLUDE_PATH)
     IF(GTK2_gdkpixbuf_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_gdkpixbuf_INCLUDE_PATH} )
+      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkpixbuf_INCLUDE_PATH} )
     ENDIF()
     IF(GTK2_gdkconfig_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIR  ${GTK2_gdkconfig_INCLUDE_PATH} )
+      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkconfig_INCLUDE_PATH} )
     ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
    
     SET( GTK2_LIBRARIES  ${GTK2_gtk_LIBRARY}

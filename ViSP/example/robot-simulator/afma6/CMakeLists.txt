@@ -54,12 +54,12 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(servoSimuAfma6FourPoints2DCamVelocity servoSimuAfma6FourPoints2DCamVelocity -d -c)
+ADD_TEST(servoSimuAfma6FourPoints2DCamVelocity servoSimuAfma6FourPoints2DCamVelocity -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

@@ -74,16 +74,16 @@ ADD_CUSTOM_TARGET(header ALL
 #----------------------------------------------------------------------
 # build rule for the library
 #----------------------------------------------------------------------
-ADD_LIBRARY (${VISP_INTERN_LIBS} 
+ADD_LIBRARY (${VISP_INTERN_LIBRARY} 
   ${SRC_ALL} 
   ${HEADER_ALL} ${VISP_INCLUDE_DIR}/vpConfig.h) 
 
 # create the headers in include/visp before compiling the lib
-ADD_DEPENDENCIES(${VISP_INTERN_LIBS} header)
+ADD_DEPENDENCIES(${VISP_INTERN_LIBRARY} header)
 
 # Append the library version information to the library target
 # properties. 
-SET_TARGET_PROPERTIES(${VISP_INTERN_LIBS} PROPERTIES
+SET_TARGET_PROPERTIES(${VISP_INTERN_LIBRARY} PROPERTIES
   VERSION ${VISP_VERSION}
   SOVERSION ${VISP_VERSION_MAJOR}
   )
@@ -92,15 +92,15 @@ SET_TARGET_PROPERTIES(${VISP_INTERN_LIBS} PROPERTIES
 # needed to create visp-2.dll. Why ? Because for binaries, winmm.lib
 # is considered in the link stage. Probably a CMake bug ! 
 #IF(WIN32 AND BUILD_SHARED_LIBS AND HAVE_LIBWINMM)
-#  TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} "winmm")
+#  TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBRARY} "winmm")
 #ENDIF(WIN32 AND BUILD_SHARED_LIBS AND HAVE_LIBWINMM)
-TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 #----------------------------------------------------------------------
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for the library
-INSTALL(TARGETS ${VISP_INTERN_LIBS}
+INSTALL(TARGETS ${VISP_INTERN_LIBRARY}
   # Destination is either lib or lib64 on Unix 64 bits architectures
   DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE

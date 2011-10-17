@@ -191,7 +191,8 @@ main(int argc, const char ** argv)
 
   /////////////////////////////////////////////////////////////////////
   // Create a grey level image
-  vpImage<vpRGBa> I;
+  //vpImage<vpRGBa> I;
+  vpImage<unsigned char> I;
   
   if (opt_ppath.empty())
   {
@@ -201,20 +202,20 @@ main(int argc, const char ** argv)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::readPGM(I,filename);
     vpTRACE("Read pgm ok");
-    #if defined(VISP_HAVE_LIBJPEG)
+    #if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
     vpImageIo::readJPEG(I,filename);
     vpTRACE("Read jpeg ok");
     #else
-    vpTRACE("To read jpeg you must have the libjpeg library");
+    vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
     #endif
     
-    #if defined(VISP_HAVE_LIBPNG)
+    #if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
     vpImageIo::readPNG(I,filename);
     vpTRACE("Read png ok");
     #else
-    vpTRACE("To read png you must have the libpng library");
+    vpTRACE("To read png you must have the libpng or OpenCV library");
     #endif
   }
   

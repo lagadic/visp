@@ -36,7 +36,7 @@
 # Once run this will define: 
 #
 # LIBPNG_FOUND
-# LIBPNG_INCLUDE_DIR
+# LIBPNG_INCLUDE_DIRS
 # LIBPNG_LIBRARIES
 #
 # Authors:
@@ -46,38 +46,34 @@
 
 
 # detection of the Libpng headers location
-  FIND_PATH(LIBPNG_INCLUDE_DIR 
-    NAMES
+FIND_PATH(LIBPNG_INCLUDE_DIR 
+  NAMES
     png.h
-    PATHS
-    "/usr/include"
-    "/usr/local/include"
+  PATHS
     $ENV{LIBPNG_DIR}/include
     $ENV{LIBPNG_DIR}
-	$ENV{LIBPNG_INCLUDE_PATH}
-    )
-  #MESSAGE("LIBPNG_INCLUDE_DIR=${LIBPNG_INCLUDE_DIR}")
+    $ENV{LIBPNG_INCLUDE_DIR}
+    "/usr/include"
+    "/usr/local/include"
+    "C:/Program Files/libpng/include"
+  )
+#MESSAGE("LIBPNG_INCLUDE_DIR=${LIBPNG_INCLUDE_DIR}")
 
-  # Detection of the Libpng library on Unix
-  FIND_LIBRARY(LIBPNG_LIBRARY
-    NAMES
-    png libpng libpng15
-    PATHS
-    /usr/lib
-    /usr/local/lib
-    /lib
+# Detection of the Libpng library on Unix
+FIND_LIBRARY(LIBPNG_LIBRARY
+  NAMES
+    png15 libpng15 png12 libpng12 png libpng
+  PATHS
     $ENV{LIBPNG_DIR}/lib
     $ENV{LIBPNG_DIR}/Release
     $ENV{LIBPNG_DIR}
-	$ENV{LIBPNG_LIBRARY_PATH}
+    $ENV{LIBPNG_LIBRARY_DIR}
+    /usr/lib
+    /usr/local/lib
+    /lib
+    "C:/Program Files/libpng/lib"
     )
-  #MESSAGE("LIBPNG_LIBRARY=${LIBPNG_LIBRARY}")
-
-
-  MARK_AS_ADVANCED(
-    LIBPNG_LIBRARY
-    LIBPNG_INCLUDE_DIR
-  )
+#MESSAGE("LIBPNG_LIBRARY=${LIBPNG_LIBRARY}")
   
 ## --------------------------------
   
@@ -100,6 +96,7 @@ IF(LIBPNG_LIBRARY AND LIBPNG_INCLUDE_DIR)
       " LIBPNG_BUILD_TEST) 
     #MESSAGE("LIBPNG_BUILD_TEST: ${LIBPNG_BUILD_TEST}")
     IF(LIBPNG_BUILD_TEST)
+      SET(LIBPNG_INCLUDE_DIRS ${LIBPNG_INCLUDE_DIR})
       SET(LIBPNG_LIBRARIES ${LIBPNG_LIBRARY})
       SET(LIBPNG_FOUND TRUE)
     ELSE()
@@ -109,9 +106,14 @@ IF(LIBPNG_LIBRARY AND LIBPNG_INCLUDE_DIR)
 
     
   ELSE(ZLIB_FOUND)
-    MESSAGE("To use the libpng library, the zlib library is required")
+    MESSAGE("To use libpng library, you should also install zlib library")
   ENDIF(ZLIB_FOUND)
 
 ELSE()
   SET(LIBPNG_FOUND FALSE)
 ENDIF()
+
+MARK_AS_ADVANCED(
+  LIBPNG_LIBRARY
+  LIBPNG_INCLUDE_DIR
+)

@@ -56,10 +56,10 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
   # Add test
-  ADD_TEST(${binary} ${binary} -d)
+  ADD_TEST(${binary} ${binary} ${OPTION_TO_DESACTIVE_DISPLAY})
 ENDFOREACH(source)
 
 # customize clean target 

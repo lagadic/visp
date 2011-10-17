@@ -62,20 +62,20 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(mbtTracking mbtTracking -d -c)
-ADD_TEST(trackDot2WithAutoDetection trackDot2WithAutoDetection -d -c)
-ADD_TEST(trackMeCircle              trackMeCircle -d -c)
-ADD_TEST(trackMeEllipse             trackMeEllipse -d -c)
-ADD_TEST(trackMeLine                trackMeLine -d -c)
-ADD_TEST(trackMeNurbs                trackMeLine -d -c)
-ADD_TEST(trackDot                   trackDot -d -c)
-ADD_TEST(trackDot2                  trackDot2 -d -c)
+ADD_TEST(mbtTracking      mbtTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackDot2WithAutoDetection trackDot2WithAutoDetection -d -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackMeCircle    trackMeCircle -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackMeEllipse   trackMeEllipse -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackMeLine      trackMeLine -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackMeNurbs     trackMeLine -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackDot         trackDot -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(trackDot2        trackDot2 -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

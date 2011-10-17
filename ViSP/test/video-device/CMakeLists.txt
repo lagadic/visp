@@ -58,7 +58,7 @@ FOREACH(source ${SOURCE})
 
   # From source compile the binary and add link rules
   ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBS} ${VISP_EXTERN_LIBS})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
 ENDFOREACH(source)
 
@@ -68,11 +68,11 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 
-ADD_TEST(testClick             testClick -d)
-ADD_TEST(testDisplays          testDisplays -d -c)
-ADD_TEST(testMouseEvent        testMouseEvent -d)
-ADD_TEST(testVideoDevice       testVideoDevice -d)
-ADD_TEST(testVideoDeviceDual   testVideoDeviceDual -d)
+ADD_TEST(testClick             testClick -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testDisplays          testDisplays -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testMouseEvent        testMouseEvent -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testVideoDevice       testVideoDevice -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testVideoDeviceDual   testVideoDeviceDual -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
 # customize clean target 
 SET_DIRECTORY_PROPERTIES(PROPERTIES 

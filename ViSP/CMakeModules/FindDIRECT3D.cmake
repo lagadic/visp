@@ -36,7 +36,7 @@
 # Once loaded this will define:
 #
 # DIRECT3D_FOUND        - system has DirectShow
-# DIRECT3D_INCLUDE_DIR  - include directory for DirectShow
+# DIRECT3D_INCLUDE_DIRS - include directory for DirectShow
 # DIRECT3D_LIBRARIES    - libraries you need to link to
 #
 # Authors:
@@ -130,7 +130,7 @@ ENDIF(WIN32 AND NOT MINGW)
 
 #---------------------------------------------------------------------
 IF(DIRECT3D_FOUND)
-
+  SET(DIRECT3D_INCLUDE_DIRS ${DIRECT3D_INCLUDE_DIR})
   SET(DIRECT3D_LIBRARIES
     "${DIRECT3D_d3d9_LIBRARY}"
     "${DIRECT3D_d3dx9_LIBRARY}"

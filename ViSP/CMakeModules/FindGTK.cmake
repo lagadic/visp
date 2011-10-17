@@ -34,7 +34,7 @@
 # Try to find GTK (and glib) and GTKGLArea.
 # Once run this will define: 
 #
-# GTK_INCLUDE_DIR   - Directories to include to use GTK
+# GTK_INCLUDE_DIRS  - Directories to include to use GTK
 # GTK_LIBRARIES     - Files to link against to use GTK
 # GTK_FOUND         - If false, don't try to use GTK
 # GTK_GL_FOUND      - If false, don't try to use GTK's GL features
@@ -177,7 +177,7 @@ IF(UNIX)
     # supporting libraries have also been found.
 
     SET( GTK_FOUND "YES" )
-    SET( GTK_INCLUDE_DIR  ${GTK_gtk_INCLUDE_PATH}
+    SET( GTK_INCLUDE_DIRS  ${GTK_gtk_INCLUDE_PATH}
                            ${GTK_glibconfig_INCLUDE_PATH}
                            ${GTK_glib_INCLUDE_PATH} )
     SET( GTK_LIBRARIES  ${GTK_gtk_LIBRARY}
@@ -197,8 +197,7 @@ IF(UNIX)
   IF(GTK_gtkgl_INCLUDE_PATH)
   IF(GTK_gtkgl_LIBRARY)
     SET( GTK_GL_FOUND "YES" )
-    SET( GTK_INCLUDE_DIR  ${GTK_INCLUDE_DIR}
-                           ${GTK_gtkgl_INCLUDE_PATH} )
+    LIST(APPEND GTK_INCLUDE_DIRS ${GTK_gtkgl_INCLUDE_PATH} )
     SET( GTK_LIBRARIES  ${GTK_gtkgl_LIBRARY} ${GTK_LIBRARIES} )
     MARK_AS_ADVANCED(
       GTK_gtkgl_LIBRARY

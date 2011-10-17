@@ -58,7 +58,7 @@
 
 
 //! List of allowed command line options
-#define GETOPTARGS	"hd"
+#define GETOPTARGS	"cdh"
 
 /*!
 
@@ -74,13 +74,16 @@ void usage(const char *name, const char *badparam)
 test the generic 2D polygons.\n\
 \n\
 SYNOPSIS\n\
-  %s [-d] [-h]\n						      \
+  %s [-c] [-d] [-h]\n						      \
 ", name);
 
   fprintf(stdout, "\n\
 OPTIONS: \n\
+  -c \n\
+     Disable mouse click.\n\
+\n\
   -d \n\
-     turn off display.\n\
+     Turn off display.\n\
 \n\
   -h\n\
      Print the help.\n\n");
@@ -100,13 +103,14 @@ OPTIONS: \n\
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv,
-		bool& opt_display)
+		bool& opt_display, bool& opt_click)
 {
   const char *optarg;
   int	c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
+    case 'c': opt_click = false; break;
     case 'd': opt_display = false; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
@@ -136,10 +140,11 @@ int
 main(int argc, const char** argv)
 {
   bool opt_display = true;
+  bool opt_click = true;
   vpImage<unsigned char> I(480, 640, 255);
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_display) == false) {
+  if (getOptions(argc, argv, opt_display, opt_click) == false) {
     return (-1);
   }
 
@@ -202,35 +207,40 @@ main(int argc, const char** argv)
     vpDisplay::displayCross(I, p3.getCenter(), 5, vpColor::lightBlue);
     vpDisplay::displayCharString(I, vpImagePoint(10, 10), "Click to finish", vpColor::red);
     vpDisplay::flush(I);
-    vpDisplay::getClick(I);
+
+    if (opt_click)
+      vpDisplay::getClick(I);
 
 
     vpDisplay::display(I);
     vpDisplay::displayCharString(I, vpImagePoint(10, 10), "Left click to add a point", vpColor::red);
     vpDisplay::displayCharString(I, vpImagePoint(20, 10), "Right click to build the polygon", vpColor::red);
     vpDisplay::flush(I);
-    vpPolygon p4;
-    p4.initClick(I);
-    p4.display(I, vpColor::green, 1);
-    std::cout << std::endl;
-    std::cout << " Polygon 4 : " << std::endl;
-    std::cout << " area : " << p4.getArea() << std::endl;
-    std::cout << " center : " << p4.getCenter() << std::endl;
-    std::cout << "Click to continue." << std::endl;
-    vpDisplay::flush(I);
-    vpDisplay::getClick(I);
+    if (opt_click) {
+      vpPolygon p4;
+      p4.initClick(I);
+      p4.display(I, vpColor::green, 1);
+      std::cout << std::endl;
+      std::cout << " Polygon 4 : " << std::endl;
+      std::cout << " area : " << p4.getArea() << std::endl;
+      std::cout << " center : " << p4.getCenter() << std::endl;
+      std::cout << "Click to continue." << std::endl;
+      vpDisplay::flush(I);
+      vpDisplay::getClick(I);
     
-    vpRect bbox = p4.getBoundingBox();
-    for(unsigned int i= (unsigned int)floor(bbox.getTop()); i<(unsigned int)ceil(bbox.getBottom()); ++i){
-      for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
-        if(p4.isInside(vpImagePoint(i, j))){
-          vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
-        }
+      vpRect bbox = p4.getBoundingBox();
+      for(unsigned int i= (unsigned int)floor(bbox.getTop()); i<(unsigned int)ceil(bbox.getBottom()); ++i){
+	for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
+	  if(p4.isInside(vpImagePoint(i, j))){
+	    vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
+	  }
+	}
       }
+      vpDisplay::flush(I);
+      std::cout << "Click to finish." << std::endl;
+ 
+      vpDisplay::getClick(I);
     }
-    vpDisplay::flush(I);
-    std::cout << "Click to finish." << std::endl;
-    vpDisplay::getClick(I);
   }
 
   return 0;  
