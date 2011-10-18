@@ -46,8 +46,8 @@
 #include <limits>   // numeric_limits
 #include <math.h>
 
-#include "visp/vpConfig.h"
-#include "visp/vpMath.h"
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
 
 /*!
   \file vpScanPoint.h
@@ -72,7 +72,7 @@
     vertical angle that gives the orientation of the layer.
 
 */
-class VISP_EXPORT vpScanPoint
+class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be added since this class is complete inline
 {
  public:
   /*! Default constructor. */
@@ -194,7 +194,7 @@ int main()
     \endcode
     
    */
-     friend VISP_EXPORT inline std::ostream &operator << (std::ostream &s, 
+     friend inline std::ostream &operator << (std::ostream &s, 
 						   const vpScanPoint &p) {
      s.precision(10);
      s << p.getRadialDist() << " " 
@@ -209,7 +209,7 @@ int main()
      Returns true if sp1 and sp2 are equal; otherwire returns false.
 
    */
-   friend VISP_EXPORT inline bool operator==( const vpScanPoint &sp1, 
+   friend inline bool operator==( const vpScanPoint &sp1, 
 					      const vpScanPoint &sp2 ) {
      //return ( ( sp1.getRadialDist() == sp2.getRadialDist() ) 
      //	      && ( sp1.getHAngle() == sp2.getHAngle() )
@@ -233,7 +233,7 @@ int main()
      Returns true if sp1 and sp2 are different; otherwire returns false.
 
    */
-   friend VISP_EXPORT inline bool operator!=( const vpScanPoint &sp1, 
+   friend inline bool operator!=( const vpScanPoint &sp1, 
 					      const vpScanPoint &sp2 ) {
      //return ( ( sp1.getRadialDist() != sp2.getRadialDist() )
      //     || ( sp1.getHAngle() != sp2.getHAngle() )  
