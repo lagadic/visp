@@ -63,7 +63,7 @@ IF(UNIX)
   # Detection of the Libpng library on Unix
   FIND_LIBRARY(LIBPNG_LIBRARY
     NAMES
-      png15 libpng15 png12 libpng12 png libpng
+      png15 libpng15 png14 libpng14 png12 libpng12 png libpng
     PATHS
       $ENV{LIBPNG_DIR}/lib
       $ENV{LIBPNG_DIR}/Release
@@ -78,7 +78,7 @@ IF(UNIX)
 ELSE(UNIX)
   FIND_LIBRARY(LIBPNG_LIBRARY_RELEASE
     NAMES
-      png15 libpng15 png12 libpng12 png libpng
+      png15 libpng15 png14 libpng14 png12 libpng12 png libpng
     PATHS
       $ENV{LIBPNG_DIR}/lib
       $ENV{LIBPNG_DIR}/Release
@@ -91,7 +91,7 @@ ELSE(UNIX)
     )
   FIND_LIBRARY(LIBPNG_LIBRARY_DEBUG
     NAMES
-      png15d libpng15d png12d libpng12d pngd libpngd
+      png15d libpng15d png14d libpng14d png12d libpng12d pngd libpngd
     PATHS
       $ENV{LIBPNG_DIR}/lib
       $ENV{LIBPNG_DIR}/Debug
