@@ -77,6 +77,7 @@ ViSP 2.6.1 (under development)
      - [13014] Bug in vpCalibration::calibVVSMulti() jacobian
      - [13015] vpFFMPEG compatibility issue with ffmpeg-0.8 release
      - [13449] "LIBJPEG_BUILD_TEST - Failed" message in CMake for Visual 2010
+     - [13467] CreateWindow windows API does not correctly register class.
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
