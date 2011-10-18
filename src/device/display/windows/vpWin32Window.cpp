@@ -284,10 +284,10 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int
   //creates the window
   hWnd = CreateWindowEx(WS_EX_APPWINDOW,g_szClassName, title, style,
                       posx, posy, w, h, NULL, NULL, hInst, NULL);
-  std::cout << "hwnd=" << hWnd << std::endl;
   if (hWnd == NULL)
   {
-	  DWORD err= GetLastError();
+	DWORD err= GetLastError();
+	std::cout << "err=" << err << std::endl;
     throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
                              "Can't create the window!");
   }
