@@ -246,7 +246,7 @@ int main()
   vpImage<unsigned char> I(288, 384); // Image used to define the object
   // ... Initialize the image
 
-  double threshold = 128; // Gray level used to define which part of the image belong to the dense object
+  unsigned char threshold = 128; // Gray level used to define which part of the image belong to the dense object
 
   vpMomentObject obj(3); // Create an image moment object with 3 as maximum order
   obj.fromImage(I, threshold, cam); // Initialize the object from the image

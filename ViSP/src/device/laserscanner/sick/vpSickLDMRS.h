@@ -78,6 +78,7 @@
 
 int main()
 {
+#ifdef UNIX
   std::string ip = "131.254.12.119";
 
   vpSickLDMRS laser;
@@ -99,6 +100,7 @@ int main()
       }
     }
   }
+#endif
 }
   \endcode
 */
