@@ -218,7 +218,7 @@ public :
     about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
     and returns a reference to the stream. 
   */
-  friend std::ostream& operator<< (std::ostream& os, vpDot& d) {
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d) {
     return (os << "(" << d.getCog() << ")" ) ;
   } ;
 

@@ -146,7 +146,7 @@ class VISP_EXPORT vpMomentDatabase{
         vpMoment& get_first(){return *(moments.begin()->second);}
 
         virtual void updateAll(vpMomentObject& object);
-        friend std::ostream & operator<<(std::ostream & os, const vpMomentDatabase& v);
+        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentDatabase& v);
         friend class vpMoment;
 };
 

@@ -174,7 +174,7 @@ public:  /* Methodes*/
 
     /* --- IOSTREAM ----------------------------------------------------------- */
 
-    friend std::ostream&        operator<< (std::ostream &os,
+    friend VISP_EXPORT std::ostream&        operator<< (std::ostream &os,
 					    const vpAdaptativeGain& lambda);
 };
 

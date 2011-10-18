@@ -76,13 +76,13 @@ class VISP_EXPORT vpScanPoint
 {
  public:
   /*! Default constructor. */
-  vpScanPoint() {
+  inline vpScanPoint() {
     this->rDist = 0;
     this->hAngle = 0;
     this->vAngle = 0;
   }
   /*! Copy constructor. */
-  vpScanPoint(const vpScanPoint &scanpoint) {
+  inline vpScanPoint(const vpScanPoint &scanpoint) {
     this->rDist = scanpoint.rDist;
     this->hAngle = scanpoint.hAngle;
     this->vAngle = scanpoint.vAngle;
@@ -93,13 +93,13 @@ class VISP_EXPORT vpScanPoint
     \param hAngle : Horizontal angle in radian.
     \param vAngle : Vertical angle in radian.   
   */
-  vpScanPoint(double rDist, double hAngle, double vAngle) {
+  inline vpScanPoint(double rDist, double hAngle, double vAngle) {
     this->rDist = rDist;
     this->hAngle = hAngle;
     this->vAngle = vAngle;
   }
   /*! Destructor that does nothing. */
-  virtual ~vpScanPoint() {};
+  inline virtual ~vpScanPoint() {};
   /*! 
     Set the polar point coordinates. 
     \param rDist : Radial distance in meter.
@@ -194,7 +194,7 @@ int main()
     \endcode
     
    */
-     friend VISP_EXPORT std::ostream &operator << (std::ostream &s, 
+     friend VISP_EXPORT inline std::ostream &operator << (std::ostream &s, 
 						   const vpScanPoint &p) {
      s.precision(10);
      s << p.getRadialDist() << " " 

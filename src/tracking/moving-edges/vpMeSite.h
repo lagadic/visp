@@ -120,7 +120,7 @@ public:
   vpMeSite &operator=(const vpMeSite &m) ;
   int operator!=(const vpMeSite  &m) ;
   
-  friend std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   void getSign(const vpImage<unsigned char> &I, const int range) ;

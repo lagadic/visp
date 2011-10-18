@@ -216,7 +216,7 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
           */
 	const char* name(){return "vpMomentAlpha";}
 
-  friend std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& v);
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& v);
 	
 
 };

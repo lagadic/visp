@@ -230,7 +230,7 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
           */
         double Sy(){ return values[11]; }
 
-        friend std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& v);
+        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& v);
 };
 
 #endif
