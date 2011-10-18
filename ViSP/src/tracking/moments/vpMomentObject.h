@@ -232,7 +232,7 @@ public:
     \param type : An input type.
   */
   void setType(vpObjectType type){this->type=type;}
-  friend std::ostream & operator<<(std::ostream & os, const vpMomentObject& v);
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& v);
 
 private:
   unsigned int order;

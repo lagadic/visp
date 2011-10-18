@@ -79,7 +79,7 @@ public:
 
 	bool operator==(vpDirectShowDevice& dev);
 
-	friend std::ostream& operator<<(std::ostream& os, vpDirectShowDevice& dev)
+	friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpDirectShowDevice& dev)
 	{
 		return os<<dev.name<<std::endl<<dev.desc<<std::endl<<dev.devPath;
 	}

@@ -125,7 +125,7 @@ class VISP_EXPORT vpMoment{
         void update(vpMomentObject& object);
         virtual void compute()=0;
         virtual const char* name() = 0;
-        friend std::ostream & operator<<(std::ostream & os, const vpMoment& m);
+        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
 
         /*!
         Virtual destructor.

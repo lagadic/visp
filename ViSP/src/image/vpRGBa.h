@@ -156,7 +156,7 @@ public:
   unsigned char B ; //!< Blue component.
   unsigned char A ; //!< Additionnal component.
 
-  friend vpRGBa operator*(const double &x, const vpRGBa  &rgb);
+  friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa  &rgb);
 
 } ;
 

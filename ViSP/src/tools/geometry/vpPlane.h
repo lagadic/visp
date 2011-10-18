@@ -163,7 +163,7 @@ public:
     A,B,C and D correspond to the parameters of the plane.
 
   */
-  friend std::ostream& operator<< (std::ostream& os, vpPlane& p)
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpPlane& p)
   {
     return (os  << "("<<p.getA() << ","<<p.getB()
 	    << ","<<p.getC()<< ","<<p.getD() <<") ") ;

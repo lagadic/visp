@@ -119,7 +119,7 @@ u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
           */
 	const char* name(){return "vpMomentCentered";}
 
-  friend std::ostream & operator<<(std::ostream & os, vpMomentCentered& v);
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, vpMomentCentered& v);
 };
 
 #endif

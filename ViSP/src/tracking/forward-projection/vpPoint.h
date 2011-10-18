@@ -185,7 +185,7 @@ public:
 	       const unsigned int thickness=1) ;
   vpPoint *duplicate() const ;
 
-  friend std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
   vpPoint& operator=(const vpPoint& vpp);
 } ;
 
