@@ -115,23 +115,23 @@ int main()
   // ... update cMo from an image processing
 
   // Apply the perspective projection to update the points coordinates in the camera plane
-  for(int i=0; i<vec_p.size(); ++i)
+  for(unsigned int i=0; i<vec_p.size(); ++i)
     vec_p[i].project(cMo);
 
   std::cout << "Considered points: " << std::endl;
-  for(int i=0; i<vec_p.size(); ++i)
+  for(unsigned int i=0; i<vec_p.size(); ++i)
     std::cout << "point " << i << ": " << vec_p[i].get_x() << ", " << vec_p[i].get_y() << std::endl;
 
   // Define an image moment object from the previous points
-  vpMomentObject obj(4); // use moments up to order 4
+  vpMomentObject obj(5); // use moments up to order 5
   obj.setType(vpMomentObject::DISCRETE); // initialize the object as constituted by discrete points
   obj.fromVector(vec_p); // init the object from the points
 
   std::vector<double> moment = obj.get();
   std::cout << std::endl << "Basic moment available: " << std::endl;
-  for(int j=0; j<obj.getOrder(); ++j) {
-    for(int i=0; i<obj.getOrder(); ++i)
-      std::cout << "m" << i << j << "=" << moment[j*(obj.getOrder()+1) + i] << "  ";
+  for(unsigned int j=0; j<obj.getOrder(); ++j) {
+    for(unsigned int i=0; i<obj.getOrder(); ++i)
+      std::cout << "m" << i << j << "=" << moment[j*obj.getOrder() + i] << "  ";
     std::cout << std::endl;
   }
 
@@ -155,7 +155,7 @@ int main()
   std::cout << "Surface: " << m00 << std::endl;
   std::cout << "Alpha: " << alpha << std::endl;
   std::cout << "Centered moments (mu03, mu12, mu21, mu30): ";
-  for(int i=0; i<mu_3.size(); ++i)
+  for(unsigned int i=0; i<mu_3.size(); ++i)
     std::cout << mu_3[i] << " ";
   std::cout << std::endl;
 
