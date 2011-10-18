@@ -357,12 +357,12 @@ ELSE(OpenCV_FOUND)
   ENDIF(OpenCV_FOUND)
 ENDIF(OpenCV_FOUND)
 
-FIND_PACKAGE(ZLIB)
+FIND_PACKAGE(ZLIB QUIET)
 IF(ZLIB_FOUND)
   OPTION(USE_ZLIB    "Compile ViSP with zlib library" ON)
 ELSE()
   FIND_PACKAGE(ZLIB2)
-  IF(ZLIB_FOUND)
+  IF(ZLIB2_FOUND)
     OPTION(USE_ZLIB    "Compile ViSP with zlib library" ON)
   ELSE()
     SET(USE_ZLIB OFF)
@@ -430,7 +430,7 @@ ENDIF(FFMPEG_FOUND)
 #SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
 #SET(USE_LIBJPEG    ON) # For reading jpeg files
 #SET(USE_LIBPNG     ON) # For reading png files
-SET(USE_ZLIB       ON) # For data compression
+#SET(USE_ZLIB       ON) # For data compression
 #SET(USE_FFMPEG     ON) # For video read and write
 
 IF(BUILD_SHARED_LIBS)
@@ -1066,18 +1066,18 @@ ENDIF(USE_GDI)
 # zlib
 IF(USE_ZLIB)
   #FIND_PACKAGE(ZLIB)
-  IF(ZLIB_FOUND)
+  IF(ZLIB_FOUND OR ZLIB2_FOUND)
     MESSAGE(STATUS "zlib found")
     SET(VISP_HAVE_ZLIB  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_ZLIB_FOUND "yes")  # for ViSP-third-party.txt
 
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
-    LIST(APPEND VISP_EXTERN_LIBRARIES ${ZLIB_LIBRARY})
+    LIST(APPEND VISP_EXTERN_LIBRARIES ${ZLIB_LIBRARIES})
 
-  ELSE(ZLIB_FOUND)
+  ELSE()
     MESSAGE(STATUS "zlib not found")
     SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
-  ENDIF(ZLIB_FOUND)
+  ENDIF()
 ENDIF(USE_ZLIB)
 
 # Libjpeg

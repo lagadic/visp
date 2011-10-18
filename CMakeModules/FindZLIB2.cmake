@@ -37,7 +37,7 @@
 # The detection can be eased by setting ZLIB_HOME environment variable 
 # especially under windows.
 #
-# ZLIB_FOUND
+# ZLIB2_FOUND
 # ZLIB_INCLUDE_DIRS
 # ZLIB_LIBRARIES
 #
@@ -52,30 +52,68 @@ FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
   "C:/Program Files/zlib/include"
   )
 
-FIND_LIBRARY(ZLIB_LIBRARY zlib
-  $ENV{ZLIB_DIR}/lib
-  $ENV{ZLIB_LIBRARY_DIR}
-  /lib
-  /usr/lib
-  /usr/local/lib
-  "C:/Program Files/zlib/lib"
-  )
+IF(UNIX)
+  FIND_LIBRARY(ZLIB_LIBRARY zlib
+    $ENV{ZLIB_DIR}/lib
+    $ENV{ZLIB_LIBRARY_DIR}
+    /lib
+    /usr/lib
+    /usr/local/lib
+    "C:/Program Files/zlib/lib"
+    )
+ELSE(UNIX)
+  FIND_LIBRARY(ZLIB_LIBRARY_RELEASE zlib
+    $ENV{ZLIB_DIR}/lib
+    $ENV{ZLIB_LIBRARY_DIR}
+    /lib
+    /usr/lib
+    /usr/local/lib
+    "C:/Program Files/zlib/lib"
+    )
 
+  FIND_LIBRARY(ZLIB_LIBRARY_DEBUG zlibd
+    $ENV{ZLIB_DIR}/lib
+    $ENV{ZLIB_LIBRARY_DIR}
+    /lib
+    /usr/lib
+    /usr/local/lib
+    "C:/Program Files/zlib/lib"
+    )
+
+ENDIF(UNIX)
 ## --------------------------------
 
-IF(ZLIB_LIBRARY AND ZLIB_INCLUDE_DIR)
-  SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
-  SET(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
-  SET(ZLIB_FOUND TRUE)
-ELSE()
-  SET(ZLIB_FOUND FALSE)
-ENDIF()
+
+IF(UNIX)
+  IF(ZLIB_LIBRARY AND ZLIB_INCLUDE_DIR)
+    SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+    SET(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+    SET(ZLIB2_FOUND TRUE)
+  ELSE()
+    SET(ZLIB2_FOUND FALSE)
+  ENDIF()
+ELSE(UNIX)
+  IF(ZLIB_LIBRARY_RELEASE AND ZLIB_INCLUDE_DIR)
+    SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+    LIST(APPEND ZLIB_LIBRARIES optimized)
+    LIST(APPEND ZLIB_LIBRARIES ${ZLIB_LIBRARY_RELEASE})
+    SET(ZLIB2_FOUND TRUE)
+  ENDIF()
+  IF(ZLIB_LIBRARY_DEBUG AND ZLIB_INCLUDE_DIR)
+    SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+    LIST(APPEND ZLIB_LIBRARIES debug)
+    LIST(APPEND ZLIB_LIBRARIES ${ZLIB_LIBRARY_DEBUG})
+    SET(ZLIB2_FOUND TRUE)
+  ENDIF()
+ENDIF(UNIX)
 
 MARK_AS_ADVANCED(
   ZLIB_INCLUDE_DIR
   ZLIB_INCLUDE_DIRS
   ZLIB_LIBRARIES
   ZLIB_LIBRARY
+  ZLIB_LIBRARY_RELEASE
+  ZLIB_LIBRARY_DEBUG
   )
 
 
