@@ -320,7 +320,12 @@ void removeJointLimits(vpSimulatorAfma6& robot){
 }
 
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
-
+	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
+		std::cout << "Invalid position:" << std::endl;
+		std::cout << cMo << std::endl;
+		std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
+		throw vpException(vpException::divideByZeroError,"invalid position!");
+	}
     A=-pl.getA()/pl.getD();
     B=-pl.getB()/pl.getD();
     C=-pl.getC()/pl.getD();
