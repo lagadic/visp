@@ -470,6 +470,7 @@ ENDIF(UNIX)
 IF(UNIX)
   INCLUDE(TestBigEndian)
   TEST_BIG_ENDIAN(BIGENDIAN)
+  #SET(BIGENDIAN FALSE)
 ENDIF()
 
 IF(BIGENDIAN)
@@ -559,9 +560,9 @@ IF(USE_OGRE)
  
     if (Boost_FOUND)
       # Set up referencing of Boost
-      include_directories(${Boost_INCLUDE_DIR})
-      add_definitions(-DBOOST_ALL_NO_LIB)
-      set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${Boost_LIBRARIES})
+      LIST(APPEND VISP_DEFS "-DBOOST_ALL_NO_LIB")  
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${Boost_INCLUDE_DIR})  
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${Boost_LIBRARIES})
     endif()
   endif()
 
