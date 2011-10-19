@@ -57,6 +57,7 @@ SET (SOURCE
   simulation/manServo4PointsDisplay.cpp
   simulation/manSimu4Dots.cpp
   simulation/manSimu4Points.cpp
+  moments/manServoMomentsSimple.cpp
 )
 
 # rule for binary build
