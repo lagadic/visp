@@ -185,6 +185,7 @@ main(int argc, const char ** argv)
       display[0].init(I, 100, 100,"Points as control points") ;
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
+
     }
     catch(...)
     {
