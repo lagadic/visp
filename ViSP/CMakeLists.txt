@@ -103,6 +103,7 @@ if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake")
+  list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 endif(UNIX)
 
 # Create include directory which will contain all the headers
