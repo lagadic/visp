@@ -6,7 +6,7 @@
                   www: http://www.irisa.fr/lagadic
 
 
-ViSP 2.6.1 (under development)
+ViSP 2.6.1 (released October 20th, 2011)
   - New features
      - Introduction of Lapack support used for the SVD decomposition in vpMatrix
      - Introduction of vpAROgre that enables augmented reality applications 
