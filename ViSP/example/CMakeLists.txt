@@ -55,7 +55,6 @@ SET (SRC_SUBDIRS
   moments/image
   moments/points
   moments/polygon
-  moments/simple
   ogre-simulator
   parse-argv
   pose-estimation

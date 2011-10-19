@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 /*!
-  \example servoMomentSimple.cpp
+  \example manServoMomentsSimple.cpp
   Minimalist example of moment-based visual servoing with polygon and a simple robot
 */
 
