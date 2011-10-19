@@ -254,11 +254,10 @@ void execute(int nbIter){
     robot.getInternalView(Iint);
     vpDisplay::flush(Iint);
     int iter=0;
-    double t=0;
+    
     ///////////////////SIMULATION LOOP/////////////////////////////
     while(iter++<nbIter ){
         vpColVector v ;
-        t = vpTime::measureTimeMs();
         //get the cMo
         cMo = robot.get_cMo();
         //setup the plane in A,B,C style
