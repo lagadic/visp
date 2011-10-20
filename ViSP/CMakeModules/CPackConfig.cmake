@@ -45,7 +45,7 @@ message(STATUS "Configuring CPack")
 
 SET(CPACK_PACKAGE_NAME "libvisp")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Visual tracking and visual servoing library in C++ (development files)")
-SET(CPACK_PACKAGE_CONTACT "visp@inria.fr")
+SET(CPACK_PACKAGE_CONTACT "Fabien Spindler <Fabien.Spindler@inria.fr>")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
@@ -80,11 +80,6 @@ SET(CPACK_SOURCE_IGNORE_FILES
 )
 
 SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${VISP_VERSION}")
-
-if(UNIX AND NOT APPLE AND NOT WIN32) # =linux
-  option(BUILD_PACKAGE_DEBIAN "Build debian package" ON)
-  option(BUILD_PACKAGE_RPM "Build rpm package" ON)
-endif()
 
 # In ViSP packages we only want to have the libraries and the headers (nor the demo, example, and test)
 # That's why we turn off the demo, example and test building

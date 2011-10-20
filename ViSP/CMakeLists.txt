@@ -1757,6 +1757,11 @@ MARK_AS_ADVANCED(DART_ROOT)
 
 option(BUILD_PACKAGE "Configure ViSP packaging" OFF)
 if (BUILD_PACKAGE)
+  if(UNIX AND NOT APPLE AND NOT WIN32) # =linux
+    option(BUILD_PACKAGE_DEBIAN "Build debian package" ON)
+    option(BUILD_PACKAGE_RPM "Build rpm package" ON)
+  endif()
+
   include (${VISP_SOURCE_DIR}/CMakeModules/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
