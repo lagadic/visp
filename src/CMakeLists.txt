@@ -100,12 +100,24 @@ TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 # customize install target 
 #----------------------------------------------------------------------
 # install rule for the library
-INSTALL(TARGETS ${VISP_INTERN_LIBRARY}
-  # Destination is either lib or lib64 on Unix 64 bits architectures
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-  COMPONENT libraries
+# if RPM package is to build, we need EXECUTE rights (see http://www.itk.org/Bug/view.php?id=12253)
+IF(BUILD_PACKAGE_RPM)
+  #message("build rpm")
+  INSTALL(TARGETS ${VISP_INTERN_LIBRARY}
+    # Destination is either lib or lib64 on Unix 64 bits architectures
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    COMPONENT libraries
   )
+else()
+  #message("don't build rpm")
+  INSTALL(TARGETS ${VISP_INTERN_LIBRARY}
+    # Destination is either lib or lib64 on Unix 64 bits architectures
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE 
+    COMPONENT libraries
+  )
+endif()
 # install rule for all the headers
 INSTALL(FILES ${HEADER_ALL}
   DESTINATION include/visp

@@ -135,4 +135,13 @@ ENDIF()
 
 set(CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_DEPENDS}")
 
-SET(CPACK_RPM_PACKAGE_DESCRIPTION "Visual tracking and visual servoing library written in C++ (development files).\r\n ViSP stands for Visual Servoing Platform. ViSP is a complete cross-platform library that allows prototyping and developing applications in visual tracking and visual servoing. This package contains headers and library necessary for developing software that uses ViSP. ViSP web site address is http://www.irisa.fr/lagadic/visp/visp.html")
+SET(CPACK_RPM_PACKAGE_DESCRIPTION "Visual Servoing Platform development files
+ ViSP, standing for Visual Servoing Platform, is unique. This software
+ is a complete cross-platform solution that allows prototyping and
+ developing applications in visual tracking and visual servoing.
+ .
+ ViSP can be useful in robotics, computer vision, augmented reality and
+ computer animation.
+ .
+ This package contains development files (headers and shared library
+ symbolic link).")
