@@ -46,6 +46,7 @@
   \file vpSimulatorViper850.h
   \brief Class which provides a simulator for the robot Viper850..
 */
+#include <string>
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobotSimulator.h>
@@ -204,8 +205,6 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper8
     static const double defaultPositioningVelocity;
     
   private:
-    
-    
     vpColVector q_prev_getdis;
     bool first_time_getdis;
     
@@ -215,7 +214,8 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper8
     vpColVector reposPos;
     
     bool toolCustom;
-    
+    std::string arm_dir;
+
   public:
     vpSimulatorViper850();
     vpSimulatorViper850(bool display);
