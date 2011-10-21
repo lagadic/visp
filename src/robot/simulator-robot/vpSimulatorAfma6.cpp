@@ -41,6 +41,7 @@
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include <string>
 
 #include <visp/vpSimulatorAfma6.h>
 #include <visp/vpTime.h>
@@ -48,6 +49,7 @@
 #include <visp/vpPoint.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpRobotException.h>
+#include <visp/vpIoTools.h>
 
 #if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
@@ -175,10 +177,28 @@ vpSimulatorAfma6::~vpSimulatorAfma6()
 
 /*!
   Method which initialises the parameters linked to the robot caracteristics.
+
+  Set the path to the arm files (*.bnd and *.sln) used by the
+  simulator.  If the path set in vpConfig.h in #define VISP_ROBOT_ARMS_DIR is
+  not valid, the path is set from the VISP_ROBOT_ARMS_DIR environment
+  variable that the user has to set.
 */
 void
 vpSimulatorAfma6::init()
 {
+  // set arm_dir from #define VISP_ROBOT_ARMS_DIR if it exists
+  if (vpIoTools::checkDirectory(VISP_ROBOT_ARMS_DIR) == true) // directory exists
+    arm_dir = VISP_ROBOT_ARMS_DIR;
+  else {
+    try {
+      arm_dir = vpIoTools::getenv("VISP_ROBOT_ARMS_DIR");
+      std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR=" << arm_dir << std::endl;
+    }
+    catch (...) {
+      std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable" << std::endl;
+    }
+  }
+
   this->init(vpAfma6::TOOL_CCMOP);
   toolCustom = false;
 
@@ -280,7 +300,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 	while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
 	char name_arm[FILENAME_MAX];
-	strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+	strcpy(name_arm, arm_dir.c_str());
 	strcat(name_arm,"/afma6_tool_ccmop.bnd");
 	set_scene(name_arm, robotArms+5, 1.0);
 	set_displayBusy(false);
@@ -302,7 +322,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 	while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
 	char name_arm[FILENAME_MAX];
-	strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+	strcpy(name_arm, arm_dir.c_str());
 	strcat(name_arm,"/afma6_tool_gripper.bnd");
 	set_scene(name_arm, robotArms+5, 1.0);
 	set_displayBusy(false);
@@ -324,7 +344,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 	while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
 	char name_arm[FILENAME_MAX];
-	strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+	strcpy(name_arm, arm_dir.c_str());
 	strcat(name_arm,"/afma6_tool_vacuum.bnd");
 	set_scene(name_arm, robotArms+5, 1.0);
 	set_displayBusy(false);
@@ -2146,35 +2166,55 @@ vpSimulatorAfma6::stopMotion()
 
 /*!
   Initialise the display of the robot's arms.
+
+  Set the path to the scene files (*.bnd and *.sln) used by the
+  simulator.  If the path set in vpConfig.h in #define VISP_SCENES_DIR is
+  not valid, the path is set from the VISP_SCENES_DIR environment
+  variable that the user has to set.
 */
 void
 vpSimulatorAfma6::initArms()
 {
+  // set scene_dir from #define VISP_SCENE_DIR if it exists
+  std::string scene_dir;
+  if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
+    scene_dir = VISP_SCENES_DIR;
+  else {
+    try {
+      scene_dir = vpIoTools::getenv("VISP_SCENES_DIR");
+      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir << std::endl;
+    }
+    catch (...) {
+      std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
+    }
+  }
+
   char name_cam[FILENAME_MAX];
-  strcpy(name_cam,VISP_SCENES_DIR);
+
+  strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
   char name_arm[FILENAME_MAX];
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_gate.bnd");
   set_scene(name_arm, robotArms, 1.0);
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_arm1.bnd");
   set_scene(name_arm, robotArms+1, 1.0);
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_arm2.bnd");
   set_scene(name_arm, robotArms+2, 1.0);
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_arm3.bnd");
   set_scene(name_arm, robotArms+3, 1.0);
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_arm4.bnd");
   set_scene(name_arm, robotArms+4, 1.0);
   
   vpAfma6::vpAfma6ToolType tool;
   tool = getToolType();
-  strcpy(name_arm,VISP_ROBOT_ARMS_DIR);
+  strcpy(name_arm, arm_dir.c_str());
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
       strcat(name_arm,"/afma6_tool_ccmop.bnd");

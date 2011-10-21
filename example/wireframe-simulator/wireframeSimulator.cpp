@@ -112,6 +112,7 @@ OPTIONS:                                               Default\n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param display : Display activation.
+  \param click : Activates mouse click.
 
   \return false if the program has to be stopped, true otherwise.
 

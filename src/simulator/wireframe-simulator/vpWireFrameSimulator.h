@@ -53,6 +53,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <list>
+#include <string>
 
 extern "C" {
 #include <visp/vpMy.h>
@@ -289,6 +290,9 @@ class VISP_EXPORT vpWireFrameSimulator
     bool extCamChanged;
     
     vpHomogeneousMatrix rotz;
+
+ private:
+    std::string scene_dir;
   
   public:
     vpWireFrameSimulator();

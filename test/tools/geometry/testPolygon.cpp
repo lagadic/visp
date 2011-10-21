@@ -100,6 +100,7 @@ OPTIONS: \n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param opt_display : optionnal flag to turn off the display.
+  \param opt_click : activates the mouse click.
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv,
