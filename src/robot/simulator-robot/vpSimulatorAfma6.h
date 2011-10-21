@@ -46,6 +46,7 @@
   \file vpSimulatorAfma6.h
   \brief Class which provides a simulator for the robot Afma6.
 */
+#include <string>
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobotSimulator.h>
@@ -179,8 +180,6 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
     static const double defaultPositioningVelocity;
     
   private:
-    
-    
     vpColVector q_prev_getdis;
     bool first_time_getdis;
     
@@ -190,7 +189,8 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotSimulator, public vpAfma6
     vpColVector reposPos;
     
     bool toolCustom;
-    
+    std::string arm_dir;
+ 
   public:
     vpSimulatorAfma6();
     vpSimulatorAfma6(bool display);

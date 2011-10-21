@@ -55,6 +55,7 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPoint.h>
+#include <visp/vpIoTools.h>
 
 #if defined(WIN32)
 #define bcopy(b1,b2,len) (memmove((b2), (b1), (len)), (void) 0) 
@@ -503,10 +504,28 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigne
 /*************************************************************************************************************/
 
 /*!
-  Basic constructor
+  Basic constructor.
+  
+  Set the path to the scene files (*.bnd and *.sln) used by the
+  simulator.  If the path set in vpConfig.h in #define VISP_SCENES_DIR is
+  not valid, the path is set from the VISP_SCENES_DIR environment
+  variable that the user has to set.
 */
 vpWireFrameSimulator::vpWireFrameSimulator()
 {
+  // set scene_dir from #define VISP_SCENE_DIR if it exists
+  if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
+    scene_dir = VISP_SCENES_DIR;
+  else {
+    try {
+      scene_dir = vpIoTools::getenv("VISP_SCENES_DIR");
+      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir << std::endl;
+    }
+    catch (...) {
+      std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
+    }
+  }
+    
   open_display();
   open_clipping();
 
@@ -598,7 +617,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   object = obj;
   this->desiredObject = desiredObject;
 
-  strcpy(name_cam,VISP_SCENES_DIR);
+  strcpy(name_cam, scene_dir.c_str());
   if (desiredObject != D_TOOL) 
   {
     strcat(name_cam,"/camera.bnd");
@@ -610,7 +629,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
     set_scene(name_cam,&(this->camera),1.0);
   }
 
-  strcpy(name,VISP_SCENES_DIR);
+  strcpy(name, scene_dir.c_str());
   switch (obj)
   {
     case THREE_PTS : {strcat(name,"/3pts.bnd"); break; }
@@ -637,11 +656,11 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   {
     case D_STANDARD : { break; }
     case D_CIRCLE : { 
-      strcpy(name,VISP_SCENES_DIR);
+      strcpy(name, scene_dir.c_str());
       strcat(name, "/cercle_sq2.bnd");
       break; }
     case D_TOOL : { 
-      strcpy(name,VISP_SCENES_DIR);
+      strcpy(name, scene_dir.c_str());
       strcat(name, "/tool.bnd");
       break; }
   }
@@ -728,7 +747,7 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   object = THREE_PTS;
   this->desiredObject = D_STANDARD;
   
-  strcpy(name_cam,VISP_SCENES_DIR);
+  strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
 
@@ -831,9 +850,9 @@ vpWireFrameSimulator::initScene(vpSceneObject obj)
 
   object = obj;
 
-  strcpy(name_cam,VISP_SCENES_DIR);
+  strcpy(name_cam, scene_dir.c_str());
 
-  strcpy(name,VISP_SCENES_DIR);
+  strcpy(name, scene_dir.c_str());
   switch (obj)
   {
     case THREE_PTS : {strcat(name,"/3pts.bnd"); break; }
@@ -930,7 +949,7 @@ vpWireFrameSimulator::initScene(const char* obj)
 
   object = THREE_PTS;
   
-  strcpy(name_cam,VISP_SCENES_DIR);
+  strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
 

@@ -38,7 +38,7 @@
 #
 #############################################################################
 
-PROJECT(VISP)
+PROJECT(VISP C CXX)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
@@ -1276,7 +1276,6 @@ IF(CMAKE_MINOR_VERSION LESS 8
 ENDIF(CMAKE_MINOR_VERSION LESS 8 
   AND CMAKE_MAJOR_VERSION GREATER 1)
 
-SET(VISP_SCENES_DIR ${VISP_BINARY_DIR}/data/wireframe-simulator)
 
 #----------------------------------------------------------------------
 # Robot simulators
@@ -1314,9 +1313,6 @@ IF(CMAKE_MINOR_VERSION LESS 8
     )
 ENDIF(CMAKE_MINOR_VERSION LESS 8 
   AND CMAKE_MAJOR_VERSION GREATER 1)
-
-SET(VISP_ROBOT_ARMS_DIR ${VISP_BINARY_DIR}/data/robot-simulator)
-
 
 #----------------------------------------------------------------------
 # Specific hardware : robots
@@ -1568,13 +1564,6 @@ IF(APPLE)
 ENDIF()
 
 #----------------------------------------------------------------------
-# Generate the package dependent file include/visp/vpConfig.h
-#----------------------------------------------------------------------
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
-  ${VISP_INCLUDE_DIR}/vpConfig.h
-)
-
-#----------------------------------------------------------------------
 # Generate the package dependent visp-config shell script for projects which
 # are not using CMake:
 # Usage:
@@ -1602,12 +1591,6 @@ ELSE(UNIX)
     COMPONENT libraries)
 ENDIF (UNIX)
 
-# install rule for vpConfig.h
-INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
-  DESTINATION include/visp
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-  COMPONENT headers
-  )
 #----------------------------------------------------------------------
 # add distclean target
 #----------------------------------------------------------------------
@@ -1660,8 +1643,26 @@ ADD_CUSTOM_TARGET(uninstall
 
 # case 1
 #--------------
+
 set(VISP_ROOT_DIR_CONFIGCMAKE "${VISP_BINARY_DIR}")
 set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${VISP_BINARY_DIR}")
+
+SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/wireframe-simulator)
+SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/robot-simulator)
+
+# Generate the package dependent file include/visp/vpConfig.h
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
+  ${VISP_INCLUDE_DIR}/vpConfig.h
+)
+# install rule for vpConfig.h: 
+# we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
+# here set to ${VISP_BINARY_DIR}
+INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
+  DESTINATION include/visp
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  COMPONENT headers
+  )
+
 CONFIGURE_FILE(
   ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
   ${VISP_BINARY_DIR}/VISPConfig.cmake
@@ -1691,12 +1692,30 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
 
 # case 2
 #--------------
+
 set(VISP_ROOT_DIR_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 IF(UNIX)
   set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/share/visp")
 ELSE()
   set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
+
+SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/wireframe-simulator)
+SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/robot-simulator)
+
+# Generate the package dependent file include/visp/vpConfig.h
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
+  ${VISP_BINARY_DIR}/install/vpConfig.h
+)
+# install rule for vpConfig.h: 
+# we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
+# here set to /usr/share/visp/data
+INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
+  DESTINATION include/visp
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  COMPONENT headers
+  )
+
 CONFIGURE_FILE(
   ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
   ${VISP_BINARY_DIR}/install/VISPConfig.cmake
@@ -1730,6 +1749,22 @@ IF(UNIX)
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
   )
+  foreach(SCENE ${WIREFRAME_SCENES})
+    INSTALL(FILES 
+      "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}"
+      DESTINATION share/visp/data/wireframe-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT libraries
+    )
+  endforeach()
+  foreach(SCENE ${ROBOT_ARMS_SCENES})
+    INSTALL(FILES 
+      "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE}"
+      DESTINATION share/visp/data/robot-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT libraries
+    )
+  endforeach()
 ELSE()
   INSTALL(FILES
     ${VISP_BINARY_DIR}/install/VISPUse.cmake
@@ -1740,6 +1775,22 @@ ELSE()
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
   )
+  foreach(SCENE ${WIREFRAME_SCENES})
+    INSTALL(FILES 
+      "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}"
+      DESTINATION data/wireframe-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT libraries
+    )
+  endforeach()
+  foreach(SCENE ${ROBOT_ARMS_SCENES})
+    INSTALL(FILES 
+      "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE}"
+      DESTINATION data/robot-simulator
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT libraries
+    )
+  endforeach()
 ENDIF()
 
 #----------------------------------------------------------------------
