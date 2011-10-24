@@ -68,10 +68,10 @@ class vpCameraParameters;
   Then there are three ways to initialize a vpMomentObject. Firstly using fromImage() you can considerer
   a dense object \e O defined by a binary image. Secondly, as described in fromVector() you can also define a dense object \e O by a closed contour.
   In these two cases, 2D basic moments are defined by:
-  \f[m_{ij} = \int \int_{O} x^j y^j dx dy\f]
+  \f[m_{ij} = \int \int_{O} x^i y^j dx dy\f]
 
   Lastly, as presented in fromVector() you can consider a discrete set of \e n points. In that last case, the basic moments are defined by
-  \f[m_{ij} = \sum_{k=1}^{n} x_k^j y_k^j \f]
+  \f[m_{ij} = \sum_{k=1}^{n} x_k^i y_k^j \f]
 
   With setType() method you can specify the object type.
 
