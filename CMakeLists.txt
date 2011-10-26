@@ -1001,8 +1001,9 @@ IF(USE_GTK2)
 ENDIF(USE_GTK2)
 
 # gtk-1 library: is search only if gtk-2 was not found
-SET(USE_GTK2 OFF)
+#SET(USE_GTK2 OFF)
 #MESSAGE("USE_GTK1: ${USE_GTK1}")
+IF(NOT USE_GTK2)
 IF(USE_GTK1)
   IF(UNIX)
     #FIND_PACKAGE(GTK)
@@ -1026,6 +1027,7 @@ IF(USE_GTK1)
     ENDIF(USE_GTK2)
   ENDIF(UNIX)
 ENDIF(USE_GTK1)
+ENDIF(NOT USE_GTK2)
 
 # Under Windows, usage of Direct3D9
 IF(USE_DIRECT3D)
