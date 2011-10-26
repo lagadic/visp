@@ -65,6 +65,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_DIR}/lib/glib-2.0/include
     $ENV{GTK2_HOME}/lib/glib-2.0/include
     /usr/lib/glib-2.0/include
+    /usr/lib/i386-linux-gnu/glib-2.0/include
     /usr/lib/x86_64-linux-gnu/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
     "C:/GTK/lib/glib-2.0/include"
