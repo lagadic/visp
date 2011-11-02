@@ -1830,17 +1830,13 @@ IF(BUILD_EXAMPLES)
   SUBDIRS(example)
 ENDIF(BUILD_EXAMPLES)
 IF(BUILD_TESTING)
-
   #
   # Test coverage specific code
   #
-  # set the default value
-  SET(BUILD_TEST_COVERAGE FALSE)
-
   IF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
 
     OPTION(BUILD_TEST_COVERAGE "Enable test coverage." OFF)
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX AND NOT BUILD_SHARED_LIBS AND CMAKE_BUILD_TYPE MATCHES "Debug")
+  ENDIF()
 
   IF(BUILD_TEST_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported
@@ -1848,7 +1844,7 @@ IF(BUILD_TESTING)
     # Because using -fprofile-arcs with shared lib can cause problems like:
     # hidden symbol `__bb_init_func', we add this option only for static
     # library build
-    MESSAGE("Add -ftest-coverage -fprofile-arcs ")
+    MESSAGE(STATUS "Add -ftest-coverage -fprofile-arcs compiler options")
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
   ENDIF(BUILD_TEST_COVERAGE)
 
