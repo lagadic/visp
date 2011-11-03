@@ -79,15 +79,13 @@
   available on http://sourceforge.net.
 
   This class was tested with Marlin F033C and F131B cameras and with
-  Point Grey Dragonfly 2 camera.
+  Point Grey Dragonfly 2, Flea 2 and Flea 3 cameras.
 
   \ingroup libdevice
 
-  This grabber allows single or multi camera acquisition. An example
-  of a single camera acquisition is given in vp1394TwoGrabber(). An
-  example of multi camera acquisition is available in setCamera().
+  This grabber allows single or multi camera acquisition. 
 
-  - Here an example of single capture from the first camera found on the bus:
+  - Here an example of single capture from the first camera found on the bus. An other example is provided in vp1394TwoGrabber():
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
@@ -109,8 +107,48 @@ int main()
 #endif
 }
   \endcode
+  
+  - If more than one camera is connected, it is also possible to select a specific camera by its GUID:
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vp1394TwoGrabber.h>
 
-  - Here an example of multi camera capture:
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I; // Create a gray level image container
+  bool reset = false; // Disable bus reset during construction
+  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+
+  unsigned int ncameras; // Number of cameras on the bus
+  ncameras = g.getNumCameras();
+  std::cout << ncameras << " cameras found:" << std::endl;
+
+  for(int i=0; i< ncameras; i++)
+  {
+    g.setCamera(i);
+    uint64_t guid = g.getGuid();
+    printf("camera %d with guid 0x%lx\n", i, guid);
+  }
+
+  // produce:
+  // 2 cameras found:
+  // camera 0 with guid 0xb09d01009b329c
+  // camera 1 with guid 0xb09d01007e0ee7
+
+  g.setCamera( 0xb09d01009b329c );
+
+  printf("Use camera with GUID: 0x%lx\n", g.getGuid());
+  g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
+  
+  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+#endif
+}
+  \endcode
+
+  - Here an example of multi camera capture.  An other example is available in setCamera():
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
@@ -329,7 +367,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   virtual ~vp1394TwoGrabber();
 
 
+  uint64_t getCamera();
   void getCamera(uint64_t &camera);
+  uint64_t getGuid();
   void getGuid(uint64_t &guid);
   void getColorCoding(vp1394TwoColorCodingType & coding);
   uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
