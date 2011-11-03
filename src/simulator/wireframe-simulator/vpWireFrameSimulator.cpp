@@ -507,7 +507,7 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, vpImage<unsigne
   Basic constructor.
   
   Set the path to the scene files (*.bnd and *.sln) used by the
-  simulator.  If the path set in vpConfig.h in #define VISP_SCENES_DIR is
+  simulator.  If the path set in vpConfig.h in VISP_SCENES_DIR macro is
   not valid, the path is set from the VISP_SCENES_DIR environment
   variable that the user has to set.
 */

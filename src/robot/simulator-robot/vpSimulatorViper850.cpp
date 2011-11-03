@@ -179,7 +179,7 @@ vpSimulatorViper850::~vpSimulatorViper850()
   Method which initialises the parameters linked to the robot caracteristics.
 
   Set the path to the arm files (*.bnd and *.sln) used by the
-  simulator.  If the path set in vpConfig.h in #define VISP_ROBOT_ARMS_DIR is
+  simulator.  If the path set in vpConfig.h in VISP_ROBOT_ARMS_DIR macro is
   not valid, the path is set from the VISP_ROBOT_ARMS_DIR environment
   variable that the user has to set.
 */
@@ -2162,7 +2162,7 @@ vpSimulatorViper850::stopMotion()
   Initialise the display of the robot's arms.
 
   Set the path to the scene files (*.bnd and *.sln) used by the
-  simulator.  If the path set in vpConfig.h in #define VISP_SCENES_DIR is
+  simulator.  If the path set in vpConfig.h in VISP_SCENES_DIR macro is
   not valid, the path is set from the VISP_SCENES_DIR environment
   variable that the user has to set.
 */
