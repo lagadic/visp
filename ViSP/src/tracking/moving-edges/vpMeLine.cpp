@@ -165,9 +165,10 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   double diffsj = PExt[0].jfloat-PExt[1].jfloat;
 
   double length_p = sqrt((vpMath::sqr(diffsi)+vpMath::sqr(diffsj)));
-
+  if(std::fabs(length_p)<=std::numeric_limits<double>::epsilon())
+	  throw(vpTrackingException(vpTrackingException::fatalError,"points too close of each other to define a line")) ;
   // number of samples along line_p
-  n_sample = length_p/(double)me->sample_step;
+  n_sample = length_p/(double)me->sample_step;  
 
   double stepi = diffsi/(double)n_sample;
   double stepj = diffsj/(double)n_sample;
