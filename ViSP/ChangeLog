@@ -6,6 +6,11 @@
                   www: http://www.irisa.fr/lagadic
 
 
+ViSP 2.6.2 (under development)
+  - Bug fixed
+     - [13536] Division by zero in vpMeLine
+	
+----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
   - New features
      - Introduction of Lapack support used for the SVD decomposition in vpMatrix
@@ -78,6 +83,7 @@ ViSP 2.6.1 (released October 20th, 2011)
      - [13015] vpFFMPEG compatibility issue with ffmpeg-0.8 release
      - [13449] "LIBJPEG_BUILD_TEST - Failed" message in CMake for Visual 2010
      - [13467] CreateWindow windows API does not correctly register class.
+	
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
@@ -149,10 +155,12 @@ ViSP 2.6.0 (released September 23rd, 2010)
     - [10928] vpPlane: rayIntersection from 2 points
     - [10985] In vpPlot, 2D curve plotting starts with point (0,0)
 	      and not with the first specified point.
+	
 ----------------------------------------------
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
     - vpMePath has been removed.
+	
 ----------------------------------------------
 ViSP 2.4.4-rc1 (released December 21th, 2009)
   - New Features
@@ -248,6 +256,7 @@ ViSP 2.4.3 (released April 10th, 2009)
 	     loop.
     - [7607] vpDisplayGTK bad window positionning
     - [7638] Memory leak in all vpFeature... classes
+	
 ----------------------------------------------
 ViSP 2.4.3-rc2 (released January 29th, 2009)
   - Deprecated
@@ -310,6 +319,7 @@ ViSP 2.4.3-rc2 (released January 29th, 2009)
     - [6962] vpMeLine : problem of tracking
     - [7034] vpMeLine : Bug when a strip is tracked
     - [7126] problem with vpMatrix::eigenValuesByLU()
+	
 ----------------------------------------------
 ViSP 2.4.2 (released March 27th, 2008)
   - New classes
@@ -393,6 +403,7 @@ ViSP 2.4.2 (released March 27th, 2008)
     - vpRobust::MEstimator()
     - vpRobotAfma6: example usage of getPosition() was updated
     - vpDisplayGDI is included in the doxygen documentation
+	
 ----------------------------------------------
 ViSP 2.4.1 (released May 16th, 2007)
   - New classes
@@ -429,6 +440,7 @@ ViSP 2.4.1 (released May 16th, 2007)
 	- Reference documentation improvement
 	- cfox and std namespace were removed. To use cout you need to call
 	  std::cout, std::endl, std::cin ...
+	
 ----------------------------------------------
 ViSP 2.4.0 (released February 6th, 2007)
   - New Feature
@@ -449,6 +461,7 @@ ViSP 2.4.0 (released February 6th, 2007)
         - memory leaks suppression
 	- works fully under windows
 	- doxygen documentation
+	
 ----------------------------------------------
 ViSP 2.2.0 (released August 25th, 2006)
   - Build
@@ -470,6 +483,7 @@ ViSP 2.2.0 (released August 25th, 2006)
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)
 	- some fixes in vpDisplayGTK
+	
 ----------------------------------------------
 ViSP 2.1.1 (released January 6th, 2006)
    - New examples
