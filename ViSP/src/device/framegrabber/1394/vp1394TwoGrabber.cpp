@@ -257,6 +257,46 @@ int main()
 }
   \endcode
 
+  If more than one camera is connected, it is also possible to select a specific camera by its GUID:
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I; // Create a gray level image container
+  bool reset = false; // Disable bus reset during construction
+  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
+
+  unsigned int ncameras; // Number of cameras on the bus
+  ncameras = g.getNumCameras();
+  std::cout << ncameras << " cameras found:" << std::endl;
+
+  for(int i=0; i< ncameras; i++)
+  {
+    g.setCamera(i);
+    uint64_t guid = g.getGuid();
+    printf("camera %d with guid 0x%lx\n", i, guid);
+  }
+
+  // produce:
+  // 2 cameras found:
+  // camera 0 with guid 0xb09d01009b329c
+  // camera 1 with guid 0xb09d01007e0ee7
+
+  g.setCamera( 0xb09d01009b329c );
+
+  printf("Use camera with GUID: 0x%lx\n", g.getGuid());
+  g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
+  
+  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+#endif
+}
+  \endcode
+  
   Here an example of multi camera capture:
   \code
 #include <visp/vpConfig.h>
@@ -349,6 +389,34 @@ vp1394TwoGrabber::getCamera(uint64_t &camera_id)
 {
   if (num_cameras) {
     camera_id = this->camera_id;
+  }
+  else {
+    close();
+    vpERROR_TRACE("No cameras found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No cameras found") );
+  }
+}
+
+/*!
+
+  Get the active camera identifier on the bus.
+
+  \return The active camera identifier. The value is
+  comprised between 0 (the first camera) and the number of cameras
+  found on the bus returned by getNumCameras() minus 1.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera is found.
+
+  \sa setCamera(), getNumCameras()
+
+*/
+uint64_t
+vp1394TwoGrabber::getCamera()
+{
+  if (num_cameras) {
+    return this->camera_id;
   }
   else {
     close();
@@ -3242,6 +3310,26 @@ vp1394TwoGrabber::getGuid(uint64_t & guid)
   }
 
   guid = camera->guid;
+}
+
+/*!
+
+  Return the actual camera GUID.
+
+  \sa setCamera(), getCamera()
+
+*/
+uint64_t
+vp1394TwoGrabber::getGuid()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  return camera->guid;
 }
 
 
