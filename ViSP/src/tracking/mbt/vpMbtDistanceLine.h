@@ -147,7 +147,7 @@ class VISP_EXPORT vpMbtDistanceLine
       
       \return Return true if the line is visible
     */
-    inline bool isVisible() {return isvisible; }
+    inline bool isVisible() const {return isvisible; }
     
     /*!
       Set the index of the line.
