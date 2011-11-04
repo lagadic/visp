@@ -102,7 +102,7 @@ class VISP_EXPORT vpMatrix
     \sa det()
   */
   typedef enum {
-    LU_DECOMPOSITION,     /*!< LU decomposition method. */
+    LU_DECOMPOSITION     /*!< LU decomposition method. */
   } vpDetMethod;
 
 

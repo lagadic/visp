@@ -302,16 +302,14 @@ main(int argc, const char ** argv)
   L1.setMe(&me) ;
   L1.setDisplay(vpMeSite::RANGE_RESULT) ;
 
-  if (opt_display && opt_click_allowed)
-    L1.initTracking(I) ;
-  else {
-    vpImagePoint ip1, ip2;
-    ip1.set_i( 96 );
-    ip1.set_j( 191 );
-    ip2.set_i( 122 );
-    ip2.set_j( 211 );
-    L1.initTracking(I, ip1, ip2) ;
-  }
+  
+	vpImagePoint ip1, ip2;
+	ip1.set_i( -1 );
+	ip1.set_j( -1 );
+	ip2.set_i( -10 );
+	ip2.set_j( -10 );
+	L1.initTracking(I, ip1, ip2) ;
+  
 
   if (opt_display)
     L1.display(I, vpColor::green) ;
@@ -327,7 +325,7 @@ main(int argc, const char ** argv)
 
   vpCameraParameters cam ;
   vpImage<vpRGBa> Ic ;
-  for (int iter = 1 ; iter < 30 ; iter++)
+  for (int iter = 1 ; iter < 20 ; iter++)
   {
     std::cout <<"----------------------------------------------------------"<<std::endl;
     // set the new image name
@@ -344,12 +342,16 @@ main(int argc, const char ** argv)
     try
     {
       std::cout << "Tracking on image: " << filename << std::endl;
+	  vpDisplay::display(I) ;
+	  vpDisplay::flush(I) ;
       L1.track(I) ;
+	  
+	
     }
     catch(...)
-    {
+    {		
       vpERROR_TRACE("Error in tracking vpMeLine ") ;
-      exit(1) ;
+      L1.initTracking(I) ;
     }
 
     vpTRACE("L1 : %f %f", L1.getRho(), vpMath::deg(L1.getTheta())) ;
@@ -370,7 +372,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 }
-
+ 
 #else
 int
 main()

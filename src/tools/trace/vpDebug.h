@@ -502,8 +502,8 @@ int main()
 
 #else
 
-inline void vpDERROR_TRACE(int /* niv */, const char * /* a */, ...){};
-inline void vpDEBUG_TRACE(int /* niv */, const char * /* a */, ...){};
+inline void vpDERROR_TRACE(int /* niv */, const char * /* a */, ...){}
+inline void vpDEBUG_TRACE(int /* niv */, const char * /* a */, ...){}
 #define vpCDEBUG(niv) if (1) ; else std::cout
 #define vpDEBUG_ENABLE(niv) (0)
 
