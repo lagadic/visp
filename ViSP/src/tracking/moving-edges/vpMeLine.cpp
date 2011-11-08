@@ -957,7 +957,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
     j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
 
     int  end = false ;
-    int incr = 20 ;
+    int incr = 10 ;
 
 
     int i1=0,i2=0,j1=0,j2=0 ;
