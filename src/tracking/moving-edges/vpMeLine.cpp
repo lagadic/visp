@@ -57,7 +57,7 @@
 #include <visp/vpTrackingException.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpMath.h>
-
+#define INCR_MIN 1
 
 static void
 normalizeAngle(double &delta)
@@ -204,7 +204,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
     }
     is += stepi;
     js += stepj;
-
+	  
   }
 
   vpCDEBUG(1) << "end vpMeLine::sample() : ";
@@ -906,6 +906,13 @@ vpMeLine::track(const vpImage<unsigned char> &I)
   vpCDEBUG(1) <<"end vpMeLine::track()"<<std::endl ;
 }
 
+void vpMeLine::update_indices(double rho, double theta,int i,int j,int incr,int& i1,int& i2,int& j1,int& j2){
+	i1 = (int)(i + cos(theta) *incr) ;
+    j1 = (int)(j + sin(theta) *incr) ;
+    
+    i2 = (int)(i - cos(theta) *incr) ;
+    j2 = (int)(j - sin(theta) *incr) ;
+}
 
 /*!
 	
@@ -920,6 +927,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
   //theta = atan2(a,b) ;
   rho = fabs(c);
   theta = atan2(b,a) ;
+
   while (theta >= M_PI)    theta -=M_PI ;
   while (theta < 0)    theta +=M_PI ;
   
@@ -949,38 +957,51 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
     j = vpMath::round((PExt[0].jfloat + PExt[1].jfloat )/2) ;
 
     int  end = false ;
-    int incr = 10 ;
+    int incr = 20 ;
+
 
     int i1=0,i2=0,j1=0,j2=0 ;
     unsigned char v1=0,v2=0 ;
+
+	
+    update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
+    
+	if(i1<0 || i1>=I.getHeight() || i2<0 || i2>=I.getHeight() ||
+		j1<0 || j1>=I.getWidth() || j2<0 || j2>=I.getWidth()){
+			double rho_lim1 = fabs((double)i/cos(theta));
+			double rho_lim2 = fabs((double)j/sin(theta));
+
+			double co_rho_lim1 = fabs(((double)(I.getHeight()-i))/cos(theta));
+			double co_rho_lim2 = fabs(((double)(I.getWidth()-j))/sin(theta));
+
+			double rho_lim = std::min(rho_lim1,rho_lim2);
+			double co_rho_lim = std::min(co_rho_lim1,co_rho_lim2);
+			incr = (int)std::floor(std::min(rho_lim,co_rho_lim));
+			if(incr<INCR_MIN){
+				vpERROR_TRACE("increment is too small") ;
+				throw(vpTrackingException(vpTrackingException::fatalError,
+			      "increment is too small")) ;				
+			}
+			update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
+	}
+
     while (!end)
       {
         end = true;
-        /*i1 = (int)(i + a *incr) ;
-        j1 = (int)(j + b *incr) ;*/
-        i1 = (int)(i + cos(theta) *incr) ;
-        j1 = (int)(j + sin(theta) *incr) ;
-        v1 = I[i1][j1] ;
-
-
-        /*i2 = (int)(i - a *incr) ;
-        j2 = (int)(j - b *incr) ;*/
-        i2 = (int)(i - cos(theta) *incr) ;
-        j2 = (int)(j - sin(theta) *incr) ;
-        v2 = I[i2][j2] ;
-
-
+		v1=I[i1][j1];
+		v2=I[i2][j2];
         if (abs(v1-v2) < 1)
         {
 
-    incr-- ;
-    end = false ;
-    if (incr==1)
-    {
-      std::cout << "In CStraightLine::GetParameters() " ;
-      std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
-    }
+			incr-- ;
+			end = false ;
+			if (incr==1)
+			{
+			  std::cout << "In CStraightLine::GetParameters() " ;
+			  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
+			}
         }
+		update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
       }
 
     if (theta >=0 && theta <= M_PI/2)
