@@ -566,7 +566,7 @@ vpMbtMeLine::setExtremities()
     }
   }
 
-  if (list.size() != 0)
+  if ( ! list.empty() )
   {
     PExt[0].ifloat = imin ;
     PExt[0].jfloat = jmin ;

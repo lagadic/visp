@@ -153,7 +153,8 @@ int main()
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
-	static void update_indices(double theta,int incr,int i,int j,int& i1,int& i2,int& j1,int& j2);
+  static void update_indices(double theta,int incr,int i,int j,int& i1,int& i2,int& j1,int& j2);
+  
 protected:
   vpMeSite PExt[2] ;
 

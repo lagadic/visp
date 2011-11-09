@@ -471,7 +471,7 @@ int
     std::list<vpDot2> list_d;
     d.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), list_d) ;
 
-    if( list_d.size() == 0 ) {
+    if( list_d.empty() ) {
       std::cout << "Dot auto detection did not work." << std::endl;
       return(-1) ;
     }
