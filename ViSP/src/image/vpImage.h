@@ -1557,12 +1557,6 @@ vpImage<Type>::doubleSizeImage(vpImage<Type>* res)
 
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
-// For template instantiation with Visual Studio
-#if defined(VISP_BUILD_SHARED_LIBS) && defined(VISP_USE_MSVC)
-template class VISP_EXPORT vpImage<unsigned char>;
-template class VISP_EXPORT vpImage<vpRGBa>;
-#endif
-
 #endif
 
 

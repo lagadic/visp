@@ -734,8 +734,9 @@ static	void	count ()
 	char	*str;
 
 	mycolumno = 0;
-	for (str = myline; str <= mytext; str++)
-		(*str == '\t') ? mycolumno += 8 - (mycolumno % 8) : mycolumno++;
+  for (str = myline; str <= mytext; str++) {
+    (*str == '\t') ? mycolumno += 8 - (mycolumno % 8u) : mycolumno++;
+  }
 }
 
 /*

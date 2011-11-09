@@ -81,7 +81,7 @@ computeDelta(double &delta, int i1, int j1, int i2, int j2)
 
 static void
 project(double a, double b, double c, 
-	double i, double j, double &ip,double  &jp)
+        double i, double j, double &ip,double  &jp)
 {
   if (fabs(a)>fabs(b))
   {
@@ -90,8 +90,8 @@ project(double a, double b, double c,
   }
   else
   {
-   ip = (vpMath::sqr(b)*i-a*b*j-c*a)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
-   jp = (-c-a*ip)/b;
+    ip = (vpMath::sqr(b)*i-a*b*j-c*a)/(vpMath::sqr(a)+vpMath::sqr(b)) ;
+    jp = (-c-a*ip)/b;
   }
 }
 
@@ -157,7 +157,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   {
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
-			      "sample step = 0")) ;
+                              "sample step = 0")) ;
   }
 
   // i, j portions of the line_p
@@ -351,133 +351,133 @@ vpMeLine::leastSquare()
     //vpERROR_TRACE("Not enough point") ;
     vpCDEBUG(1) << "Not enough point";
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-			      "not enough point")) ;
+                              "not enough point")) ;
   }
 
   if ((fabs(b) >=0.9)) // Construction du systeme Ax=B
-  		       // a i + j + c = 0
-  		       // A = (i 1)   B = (-j)
+    // a i + j + c = 0
+    // A = (i 1)   B = (-j)
   {
-  nos_1 = numberOfSignal() ;
-	unsigned int k =0 ;
-  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-    p = *it;
-		if (p.suppress==0)
-		{
-			A[k][0] = p.ifloat ;
-			A[k][1] = 1 ;
-			B[k] = -p.jfloat ;
-			k++ ;
-    }
-	}
-
-	while (iter < 4 && distance > 0.05)
-	{
-		DA = D*A ;
-		x = DA.pseudoInverse(1e-26) *D*B ;
-
-		vpColVector residu(nos_1);
-		residu = B - A*x;
-      		r.setIteration(iter) ;
-      		r.MEstimator(vpRobust::TUKEY,residu,w) ;
-
-		k = 0;
-		for (i=0 ; i < nos_1 ; i++)
-		{
-			D[k][k] =w[k]  ;
-			k++;
-		}
-		iter++ ;
-		distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
-		x_1 = x;
-	}
-
-      k =0 ;
-      for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-        p = *it;
-        if (p.suppress==0)
-        {
-          if (w[k] < 0.2)
-          {
-            p.suppress  = 3 ;
-            *it = p;
-          }
-          k++ ;
-        }
+    nos_1 = numberOfSignal() ;
+    unsigned int k =0 ;
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
+      if (p.suppress==0)
+      {
+        A[k][0] = p.ifloat ;
+        A[k][1] = 1 ;
+        B[k] = -p.jfloat ;
+        k++ ;
       }
+    }
 
-      // mise a jour de l'equation de la droite
-      a = x[0] ;
-      b = 1 ;
-      c = x[1] ;
+    while (iter < 4 && distance > 0.05)
+    {
+      DA = D*A ;
+      x = DA.pseudoInverse(1e-26) *D*B ;
 
-      double s =sqrt( vpMath::sqr(a)+vpMath::sqr(b)) ;
-      a /= s ;
-      b /= s ;
-      c /= s ;
+      vpColVector residu(nos_1);
+      residu = B - A*x;
+      r.setIteration(iter) ;
+      r.MEstimator(vpRobust::TUKEY,residu,w) ;
+
+      k = 0;
+      for (i=0 ; i < nos_1 ; i++)
+      {
+        D[k][k] =w[k]  ;
+        k++;
+      }
+      iter++ ;
+      distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
+      x_1 = x;
+    }
+
+    k =0 ;
+    for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
+      if (p.suppress==0)
+      {
+        if (w[k] < 0.2)
+        {
+          p.suppress  = 3 ;
+          *it = p;
+        }
+        k++ ;
+      }
+    }
+
+    // mise a jour de l'equation de la droite
+    a = x[0] ;
+    b = 1 ;
+    c = x[1] ;
+
+    double s =sqrt( vpMath::sqr(a)+vpMath::sqr(b)) ;
+    a /= s ;
+    b /= s ;
+    c /= s ;
   }
 
 
   else		// Construction du systeme Ax=B
-  		// i + bj + c = 0
-  		// A = (j 1)   B = (-i)
+    // i + bj + c = 0
+    // A = (j 1)   B = (-i)
   {
-  nos_1 = numberOfSignal() ;
-	unsigned int k =0 ;
-  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-    p = *it;
-		if (p.suppress==0)
-		{
-			A[k][0] = p.jfloat ;
-			A[k][1] = 1 ;
-			B[k] = -p.ifloat ;
-			k++ ;
+    nos_1 = numberOfSignal() ;
+    unsigned int k =0 ;
+    for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
+      if (p.suppress==0)
+      {
+        A[k][0] = p.jfloat ;
+        A[k][1] = 1 ;
+        B[k] = -p.ifloat ;
+        k++ ;
+      }
     }
-	}
 
-	while (iter < 4 && distance > 0.05)
-	{
-		DA = D*A ;
-		x = DA.pseudoInverse(1e-26) *D*B ;
+    while (iter < 4 && distance > 0.05)
+    {
+      DA = D*A ;
+      x = DA.pseudoInverse(1e-26) *D*B ;
 
-		vpColVector residu(nos_1);
-		residu = B - A*x;
-		r.setIteration(iter) ;
-		r.MEstimator(vpRobust::TUKEY,residu,w) ;
-		
-		k = 0;
-		for (i=0 ; i < nos_1 ; i++)
-		{
-			D[k][k] =w[k]  ;
-			k++;
-		}
-		iter++ ;
-		distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
-		x_1 = x;
-	}
+      vpColVector residu(nos_1);
+      residu = B - A*x;
+      r.setIteration(iter) ;
+      r.MEstimator(vpRobust::TUKEY,residu,w) ;
 
-
-	k =0 ;
-  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-    p = *it;
-		if (p.suppress==0)
-		{
-			if (w[k] < 0.2)
-			{
-				p.suppress  = 3 ;
-        *it = p;
-			}
-			k++ ;
+      k = 0;
+      for (i=0 ; i < nos_1 ; i++)
+      {
+        D[k][k] =w[k]  ;
+        k++;
+      }
+      iter++ ;
+      distance = fabs(x[0]-x_1[0])+fabs(x[1]-x_1[1]);
+      x_1 = x;
     }
-	}
-	a = 1 ;
-	b = x[0] ;
-	c = x[1] ;
 
-      double s = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
-      a /= s ;
-      b /= s ;
-      c /= s ;
+
+    k =0 ;
+    for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+      p = *it;
+      if (p.suppress==0)
+      {
+        if (w[k] < 0.2)
+        {
+          p.suppress  = 3 ;
+          *it = p;
+        }
+        k++ ;
+      }
+    }
+    a = 1 ;
+    b = x[0] ;
+    c = x[1] ;
+
+    double s = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
+    a /= s ;
+    b /= s ;
+    c /= s ;
   }
 
   // mise a jour du delta
@@ -499,8 +499,8 @@ vpMeLine::leastSquare()
 */
 void
 vpMeLine::initTracking(const vpImage<unsigned char> &I,
-		       const vpImagePoint &ip1,
-		       const vpImagePoint &ip2)
+                       const vpImagePoint &ip1,
+                       const vpImagePoint &ip2)
 {
   vpCDEBUG(1) <<" begin vpMeLine::initTracking()"<<std::endl ;
 
@@ -649,7 +649,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
-			      "sample step = 0")) ;
+                              "sample step = 0")) ;
   }
 
   // i, j portions of the line_p
@@ -812,7 +812,7 @@ vpMeLine::updateDelta()
   //std::cout << "angle theta : " << theta << std::endl ;
   diff = fabs(angle - angle_1);
   if (diff > 90)
-  sign *= -1;
+    sign *= -1;
 
   angle_1 = angle;
 
@@ -860,7 +860,7 @@ vpMeLine::track(const vpImage<unsigned char> &I)
     catch(...)
     {
       vpERROR_TRACE("Error caught") ;
-	  throw ;
+      throw ;
     }
 
 
@@ -876,7 +876,7 @@ vpMeLine::track(const vpImage<unsigned char> &I)
     catch(...)
     {
       vpERROR_TRACE("Error caught") ;
-	  throw ;
+      throw ;
     }
 
     // suppression des points rejetes par la regression robuste
@@ -893,9 +893,9 @@ vpMeLine::track(const vpImage<unsigned char> &I)
     // Remise a jour de delta dans la liste de site me
     if (vpDEBUG_ENABLE(2))
     {
-    display(I,vpColor::red) ;
-    vpMeTracker::display(I) ;
-    vpDisplay::flush(I) ;
+      display(I,vpColor::red) ;
+      vpMeTracker::display(I) ;
+      vpDisplay::flush(I) ;
     }
 
 
@@ -907,11 +907,11 @@ vpMeLine::track(const vpImage<unsigned char> &I)
 }
 
 void vpMeLine::update_indices(double theta,int i,int j,int incr,int& i1,int& i2,int& j1,int& j2){
-	i1 = (int)(i + cos(theta) *incr) ;
-    j1 = (int)(j + sin(theta) *incr) ;
-    
-    i2 = (int)(i - cos(theta) *incr) ;
-    j2 = (int)(j - sin(theta) *incr) ;
+  i1 = (int)(i + cos(theta) *incr) ;
+  j1 = (int)(j + sin(theta) *incr) ;
+
+  i2 = (int)(i - cos(theta) *incr) ;
+  j2 = (int)(j - sin(theta) *incr) ;
 }
 
 /*!
@@ -932,7 +932,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
   while (theta < 0)    theta +=M_PI ;
   
   if(_useIntensityForRho){
-  
+
     /*  while(theta < -M_PI)	theta += 2*M_PI ;
     while(theta >= M_PI)	theta -= 2*M_PI ;
 
@@ -962,19 +962,18 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 
     int i1=0,i2=0,j1=0,j2=0 ;
     unsigned char v1=0,v2=0 ;
-	int w=(int)I.getWidth();
-	int h=(int)I.getHeight();
 
-	
+    int width_ = (int)I.getWidth();
+    int height_ = (int)I.getHeight();
     update_indices(theta,i,j,incr,i1,i2,j1,j2);
     
-	if(i1<0 || i1>=h || i2<0 || i2>=h ||
-		j1<0 || j1>=w || j2<0 || j2>=w){
+    if(i1<0 || i1>=height_ || i2<0 || i2>=height_ ||
+       j1<0 || j1>=width_ || j2<0 || j2>=width_){
 			double rho_lim1 = fabs((double)i/cos(theta));
 			double rho_lim2 = fabs((double)j/sin(theta));
 
-			double co_rho_lim1 = fabs(((double)(h-i))/cos(theta));
-			double co_rho_lim2 = fabs(((double)(w-j))/sin(theta));
+      double co_rho_lim1 = fabs(((double)(height_-i))/cos(theta));
+      double co_rho_lim2 = fabs(((double)(width_-j))/sin(theta));
 
 			double rho_lim = std::min(rho_lim1,rho_lim2);
 			double co_rho_lim = std::min(co_rho_lim1,co_rho_lim2);
@@ -982,29 +981,33 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 			if(incr<INCR_MIN){
 				vpERROR_TRACE("increment is too small") ;
 				throw(vpTrackingException(vpTrackingException::fatalError,
-			      "increment is too small")) ;				
+                                  "increment is too small")) ;
 			}
 			update_indices(theta,i,j,incr,i1,i2,j1,j2);
-	}
+    }
 
     while (!end)
+    {
+      end = true;
+      unsigned int i1_ = static_cast<unsigned int>(i1);
+      unsigned int j1_ = static_cast<unsigned int>(j1);
+      unsigned int i2_ = static_cast<unsigned int>(i2);
+      unsigned int j2_ = static_cast<unsigned int>(j2);
+      v1=I[i1_][j1_];
+      v2=I[i2_][j2_];
+      if (abs(v1-v2) < 1)
       {
-        end = true;
-	v1=I[(unsigned int)i1][(unsigned int)j1];
-	v2=I[(unsigned int)i2][(unsigned int)j2];
-        if (abs(v1-v2) < 1)
-        {
 
-			incr-- ;
-			end = false ;
-			if (incr==1)
-			{
-			  std::cout << "In CStraightLine::GetParameters() " ;
-			  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
-			}
+        incr-- ;
+        end = false ;
+        if (incr==1)
+        {
+          std::cout << "In CStraightLine::GetParameters() " ;
+          std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
         }
-		update_indices(theta,i,j,incr,i1,i2,j1,j2);
       }
+      update_indices(theta,i,j,incr,i1,i2,j1,j2);
+    }
 
     if (theta >=0 && theta <= M_PI/2)
     {
@@ -1112,7 +1115,7 @@ vpMeLine::getExtremities(vpImagePoint &ip1, vpImagePoint &ip2)
 */
 bool
 vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, 
-		       vpImagePoint &ip)
+                       vpImagePoint &ip)
 {
   double denom = 0;
   double a1 = line1.a;
@@ -1126,50 +1129,50 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
   try{
 
     if (a1 > 0.1)
+    {
+      denom = (-(a2/a1) * b1 + b2);
+
+      //if (denom == 0)
+      if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
       {
-	denom = (-(a2/a1) * b1 + b2);
-
-	//if (denom == 0)
-	if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
-	  {
-	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
-	    return (false);
-	  }
-
-	//if (denom != 0 )
-	if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
-	  {
-	    j = ( (a2/a1)*c1 - c2 ) / denom;
-	    i = (-b1*j - c1) / a1;
-	  }
+        std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+        return (false);
       }
+
+      //if (denom != 0 )
+      if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
+      {
+        j = ( (a2/a1)*c1 - c2 ) / denom;
+        i = (-b1*j - c1) / a1;
+      }
+    }
 
     else
+    {
+      denom = (-(b2/b1) * a1 + a2);
+
+      //if (denom == 0)
+      if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
       {
-	denom = (-(b2/b1) * a1 + a2);
-
-	//if (denom == 0)
-	if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
-	  {
-	    std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
-	    return (false);
-	  }
-
-	//if (denom != 0 )
-	if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
-	  {
-	    i = ( (b2/b1)*c1 - c2 ) / denom;
-	    j = (-a1*i - c1) / b1;
-	  }
+        std::cout << "!!!!!!!!!!!!! Problem : Lines are parallel !!!!!!!!!!!!!" << std::endl;
+        return (false);
       }
+
+      //if (denom != 0 )
+      if (std::fabs(denom) > std::numeric_limits<double>::epsilon())
+      {
+        i = ( (b2/b1)*c1 - c2 ) / denom;
+        j = (-a1*i - c1) / b1;
+      }
+    }
     ip.set_i( i );
     ip.set_j( j );
     
     return (true);
   }
   catch(...)
-    {
-      return (false);
-    }
+  {
+    return (false);
+  }
 }
 

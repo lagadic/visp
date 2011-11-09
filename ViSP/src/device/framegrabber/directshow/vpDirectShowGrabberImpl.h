@@ -66,9 +66,7 @@
 
 	This class uses CComPtr which is the best way to be sure that all the interfaces
 	are released sooner or later.
-	Since this class may be exported, it may be necessary to explicitely instantiate
-	each instance of CComPtr.
-	eg. template class VISP_EXPORT CComPtr<IBaseFilter>;
+
 */
 class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 {

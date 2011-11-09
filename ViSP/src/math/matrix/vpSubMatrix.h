@@ -67,7 +67,7 @@ class VISP_EXPORT vpSubMatrix : public vpMatrix{
 
   private :
       //! Resize method unavailable
-      void resize(const unsigned int /* r */ , const unsigned int /* c */ ){}
+      void resize(const unsigned int /* r */ , const unsigned int /* c */, const bool ){}
       //! Eye method unavailable
       void eye(unsigned int n);
       //! Eye method unavailable
