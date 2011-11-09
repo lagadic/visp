@@ -906,7 +906,7 @@ vpMeLine::track(const vpImage<unsigned char> &I)
   vpCDEBUG(1) <<"end vpMeLine::track()"<<std::endl ;
 }
 
-void vpMeLine::update_indices(double rho, double theta,int i,int j,int incr,int& i1,int& i2,int& j1,int& j2){
+void vpMeLine::update_indices(double theta,int i,int j,int incr,int& i1,int& i2,int& j1,int& j2){
 	i1 = (int)(i + cos(theta) *incr) ;
     j1 = (int)(j + sin(theta) *incr) ;
     
@@ -962,17 +962,19 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 
     int i1=0,i2=0,j1=0,j2=0 ;
     unsigned char v1=0,v2=0 ;
+	int w=(int)I.getWidth();
+	int h=(int)I.getHeight();
 
 	
-    update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
+    update_indices(theta,i,j,incr,i1,i2,j1,j2);
     
-	if(i1<0 || i1>=I.getHeight() || i2<0 || i2>=I.getHeight() ||
-		j1<0 || j1>=I.getWidth() || j2<0 || j2>=I.getWidth()){
+	if(i1<0 || i1>=h || i2<0 || i2>=h ||
+		j1<0 || j1>=w || j2<0 || j2>=w){
 			double rho_lim1 = fabs((double)i/cos(theta));
 			double rho_lim2 = fabs((double)j/sin(theta));
 
-			double co_rho_lim1 = fabs(((double)(I.getHeight()-i))/cos(theta));
-			double co_rho_lim2 = fabs(((double)(I.getWidth()-j))/sin(theta));
+			double co_rho_lim1 = fabs(((double)(h-i))/cos(theta));
+			double co_rho_lim2 = fabs(((double)(w-j))/sin(theta));
 
 			double rho_lim = std::min(rho_lim1,rho_lim2);
 			double co_rho_lim = std::min(co_rho_lim1,co_rho_lim2);
@@ -982,14 +984,14 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 				throw(vpTrackingException(vpTrackingException::fatalError,
 			      "increment is too small")) ;				
 			}
-			update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
+			update_indices(theta,i,j,incr,i1,i2,j1,j2);
 	}
 
     while (!end)
       {
         end = true;
-		v1=I[i1][j1];
-		v2=I[i2][j2];
+	v1=I[(unsigned int)i1][(unsigned int)j1];
+	v2=I[(unsigned int)i2][(unsigned int)j2];
         if (abs(v1-v2) < 1)
         {
 
@@ -1001,7 +1003,7 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
 			  std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
 			}
         }
-		update_indices(rho,theta,i,j,incr,i1,i2,j1,j2);
+		update_indices(theta,i,j,incr,i1,i2,j1,j2);
       }
 
     if (theta >=0 && theta <= M_PI/2)
