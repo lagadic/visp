@@ -50,7 +50,6 @@
 
   Demonstration of the wireframe simulator.
 */
-#include <stdlib.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -66,6 +65,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpWireFrameSimulator.h>
+#include <stdlib.h>
 
 #define GETOPTARGS	"cdh"
 

@@ -121,12 +121,8 @@
   \endcode
 */
 
-#include <vector>
-#include <list>
-
-#include <visp/vpConfig.h>
-#include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpColVector.h>
 #include <visp/vpTriangle.h>
 #include <visp/vpRect.h>
 #include <visp/vpImage.h>
@@ -136,6 +132,8 @@
 #  include <visp/vpList.h>
 #endif
 
+#include <vector>
+#include <list>
 
 class VISP_EXPORT vpImageSimulator
 {

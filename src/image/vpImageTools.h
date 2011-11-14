@@ -51,23 +51,21 @@
 
 */
 
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <string.h>
-
-#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
 #include <visp/vpImageException.h>
-#include <visp/vpImage.h>
 #include <visp/vpMath.h>
 #include <visp/vpRect.h>
 #include <visp/vpCameraParameters.h>
 
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <string.h>
 
 /*!
   \class vpImageTools

@@ -44,17 +44,16 @@
 #ifndef vpMatrix_H
 #define vpMatrix_H
 
-
-#include <iostream>
-#include <math.h>
-
-#include <visp/vpTime.h>
 #include <visp/vpConfig.h>
+#include <visp/vpTime.h>
 
 #ifdef VISP_HAVE_GSL
 #  include <gsl/gsl_math.h>
 #  include <gsl/gsl_eigen.h>
 #endif
+
+#include <iostream>
+#include <math.h>
 
 class vpRowVector;
 class vpColVector;

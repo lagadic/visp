@@ -39,7 +39,6 @@
  *
  *****************************************************************************/
 
-
 #include <visp/vpHomography.h>
 #include <visp/vpMath.h>
 #include <math.h>

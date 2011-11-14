@@ -45,10 +45,10 @@
   \brief Generic kalman filtering implementation.
 */
 
+#include <visp/vpKalmanFilter.h>
+
 #include <math.h>
 #include <stdlib.h>
-
-#include <visp/vpKalmanFilter.h>
 
 /*!
   Initialize the Kalman filter.

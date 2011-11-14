@@ -28,14 +28,14 @@
   \brief Command line argument parsing.
 */
 
+
+
+#include <visp/vpParseArgv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-
-#include <visp/vpParseArgv.h>
-
 
 /*
  * Default table of argument descriptors.  These are normally available

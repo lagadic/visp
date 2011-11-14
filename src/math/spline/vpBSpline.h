@@ -47,11 +47,11 @@
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 */
 
+#include <visp/vpImagePoint.h>
+
 #include <vector>
 #include <list>
 
-#include <visp/vpConfig.h>
-#include <visp/vpImagePoint.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif

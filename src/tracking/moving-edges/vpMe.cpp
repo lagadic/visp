@@ -44,13 +44,13 @@
 	\file vpMe.cpp
 	\brief Moving edges
 */
-#include <stdlib.h>
+
 
 
 #include <visp/vpMe.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
-
+#include <stdlib.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 

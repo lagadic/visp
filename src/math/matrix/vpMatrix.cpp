@@ -54,6 +54,16 @@
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
 
+#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
+#include <visp/vpTranslationVector.h>
+
+// Exception
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+
+// Debug trace
+#include <visp/vpDebug.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -66,18 +76,6 @@
 #include <string>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-
-#include <visp/vpMath.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpTranslationVector.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0

@@ -48,7 +48,6 @@
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 #include <visp/vpRobot.h>

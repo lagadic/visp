@@ -57,7 +57,6 @@ class vpHomogeneousMatrix;
 class vpTranslationVector;
 class vpThetaUVector;
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>

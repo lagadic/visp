@@ -48,11 +48,10 @@
   \brief File and directories basic tools.
 */
 
-#include <stdio.h>
-#include <iostream>
 #include <visp/vpConfig.h>
 
-
+#include <stdio.h>
+#include <iostream>
 
 /*!
   \class vpIoTools

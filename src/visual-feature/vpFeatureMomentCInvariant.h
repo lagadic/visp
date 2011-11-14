@@ -45,7 +45,6 @@
 #ifndef __FEATUREMOMENTCINVARIANT_H__
 #define __FEATUREMOMENTCINVARIANT_H__
 #include <visp/vpFeatureMoment.h>
-#include <visp/vpConfig.h>
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 /*!
   \class vpFeatureMomentCInvariant

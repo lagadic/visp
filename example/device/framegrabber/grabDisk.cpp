@@ -40,10 +40,10 @@
  *
  *****************************************************************************/
 
-#include <stdlib.h>
+
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
-
+#include <stdlib.h>
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 #include <visp/vpDiskGrabber.h>

@@ -48,11 +48,9 @@
 
 */
 
-#include <vector>
-
-#include "visp/vpConfig.h"
 #include "visp/vpScanPoint.h"
 
+#include <vector>
 
 /*!
 

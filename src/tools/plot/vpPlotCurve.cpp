@@ -38,10 +38,10 @@
  * Nicolas Melchior
  *
  *****************************************************************************/
-
+#include <visp/vpConfig.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp/vpConfig.h>
+
 #include <visp/vpPlotCurve.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>

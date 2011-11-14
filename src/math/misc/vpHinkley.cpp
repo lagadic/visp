@@ -48,18 +48,16 @@
 
 */
 
+#include <visp/vpHinkley.h>
+#include <visp/vpDebug.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-
-#include <visp/vpHinkley.h>
-#include <visp/vpDebug.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMath.h>
-
 
 /* VP_DEBUG_MODE fixed by configure:
    1:

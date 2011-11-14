@@ -46,7 +46,7 @@
   \brief Display example.
  
  */
-#include <visp/vpConfig.h>
+
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpColor.h>

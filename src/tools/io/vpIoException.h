@@ -54,13 +54,11 @@
   \brief Error that can be emited by the vpIoTools class and its derivates.
 */
 
-#include <iostream>
-#include <string>
-
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
 
-
+#include <iostream>
+#include <string>
 
 /* ------------------------------------------------------------------------- */
 /* --- CLASS --------------------------------------------------------------- */

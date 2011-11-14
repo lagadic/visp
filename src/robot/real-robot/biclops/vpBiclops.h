@@ -39,32 +39,24 @@
  *
  *****************************************************************************/
 
-
-#include <visp/vpConfig.h>
-
 #ifndef __vpBiclops_H
 #define __vpBiclops_H
-
 
 /* ----------------------------------------------------------------------- */
 /* --- INCLUDES -------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
 
-/* --- GENERAL --- */
-#include <iostream>
-
 /* --- ViSP --- */
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPoseVector.h>
-
 #include <visp/vpMath.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
-
+/* --- GENERAL --- */
+#include <iostream>
 
 /*!
 

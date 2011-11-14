@@ -42,7 +42,6 @@
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpImage.h>

@@ -47,8 +47,6 @@
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
 
 #include <visp/vpTime.h>
 
@@ -57,6 +55,8 @@
 #include <visp/vpParseArgv.h>
 #include <vector>
 #include <algorithm>
+#include <stdlib.h>
+#include <stdio.h>
 // List of allowed command line options
 #define GETOPTARGS	"h"
 

@@ -51,8 +51,6 @@
 #ifndef vpMbtMeLine_HH
 #define vpMbtMeLine_HH
 
-#include <visp/vpConfig.h>
-
 #include <visp/vpPoint.h>
 #include <visp/vpMe.h>
 #include <visp/vpMeTracker.h>

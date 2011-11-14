@@ -50,16 +50,15 @@
 
 */
 
+#include <visp/vpImage.h>
+#include <visp/vpImageException.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
-
-#include <visp/vpConfig.h>
-#include <visp/vpImageException.h>
-#include <visp/vpImage.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpMath.h>
 
 /*!
   \class vpImageFilter

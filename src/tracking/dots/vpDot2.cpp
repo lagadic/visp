@@ -46,10 +46,7 @@
 */
 
 
-#include <math.h>
-#include <iostream>    
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpDisplay.h>
 
@@ -59,7 +56,10 @@
 #include <visp/vpIoTools.h>
 
 #include <visp/vpDot2.h>
-
+#include <math.h>
+#include <iostream>    
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 /******************************************************************************
  *

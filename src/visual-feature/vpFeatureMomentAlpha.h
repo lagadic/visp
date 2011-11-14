@@ -46,7 +46,6 @@
 #ifndef __FEATUREMOMENTALPHA_H__
 #define __FEATUREMOMENTALPHA_H__
 #include <visp/vpFeatureMoment.h>
-#include <visp/vpConfig.h>
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 

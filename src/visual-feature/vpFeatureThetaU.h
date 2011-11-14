@@ -49,7 +49,6 @@
   \brief class that defines the ThetaU visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpBasicFeature.h>

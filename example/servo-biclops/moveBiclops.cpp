@@ -56,14 +56,14 @@
   See http://www.traclabs.com/tracbiclops.htm for more details.
 */
 
-#include <stdlib.h>
+
 
 #include <visp/vpParseArgv.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
 #include <visp/vpTime.h>
-
+#include <stdlib.h>
 #ifdef VISP_HAVE_BICLOPS
 
 #include <visp/vpRobotBiclops.h>

@@ -61,9 +61,8 @@
 #ifndef vpMe_H
 #define vpMe_H
 
-#include <visp/vpConfig.h>
-#include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
 #include <visp/vpImage.h>
 
 

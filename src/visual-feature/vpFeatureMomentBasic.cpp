@@ -39,13 +39,13 @@
  *
  *****************************************************************************/
 
-#include <vector>
-#include <limits>
+
 
 #include <visp/vpMomentObject.h>
 #include <visp/vpFeatureMomentBasic.h>
 #include <visp/vpFeatureMomentDatabase.h>
-
+#include <vector>
+#include <limits>
 /*!
   Default constructor.
   \param moments : Database of moment primitives.

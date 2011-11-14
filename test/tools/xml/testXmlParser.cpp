@@ -58,10 +58,10 @@
   
 */
 
-#include <iostream>
 
 #include <visp/vpConfig.h>
 
+#include <iostream>
 #if defined(VISP_HAVE_XML2)
 
 #include <visp/vpXmlParser.h>

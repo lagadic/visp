@@ -40,18 +40,18 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<math.h>
 
-#include	<visp/vpMy.h>
-#include	<visp/vpArit.h>
-#include	<visp/vpView.h>
+
+
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-
+#include	<visp/vpMy.h>
+#include	<visp/vpArit.h>
+#include	<visp/vpView.h>
+#include	<stdio.h>
+#include	<math.h>
 void set_parallel (View_parameters*, Matrix);
 void set_perspective (View_parameters*, Matrix);
 

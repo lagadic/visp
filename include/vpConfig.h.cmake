@@ -42,8 +42,13 @@
 #define vpConfig_h
 
 #if defined _MSC_VER && _MSC_VER >= 1200
-    // disable warnings related to inline functions
-    #pragma warning( disable: 4251 )
+    #pragma warning( disable: 4251 ) // Disable warnings related to inline functions
+	#pragma warning( disable: 4820 4514 4986 4710 4668 )
+	// 4820 : 'bytes' bytes padding added after construct 'member_name'
+	// 4514 : 'function' : unreferenced inline function has been removed
+	// 4986 undocumented
+	// 4710 : 'function' : function not inlined
+	// 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
 #endif
 
 // ViSP major version.

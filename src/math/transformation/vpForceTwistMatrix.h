@@ -43,7 +43,6 @@
 #ifndef vpForceTwistMatrix_h
 #define vpForceTwistMatrix_h
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>

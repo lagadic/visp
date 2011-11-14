@@ -40,18 +40,19 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<string.h>
 
-#include	<visp/vpMy.h>
-#include	<visp/vpArit.h>
-#include	<visp/vpView.h>
-#include	<visp/vpRfstack.h>
+
+
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+#include	<visp/vpMy.h>
+#include	<visp/vpArit.h>
+#include	<visp/vpView.h>
+#include	<visp/vpRfstack.h>
+#include	<stdio.h>
+#include	<string.h>
 #define	STACKSIZE	32
 
 

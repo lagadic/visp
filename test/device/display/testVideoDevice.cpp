@@ -39,13 +39,13 @@
  *
  *****************************************************************************/
 
-#include <stdlib.h>
-#include <iostream>
-#include <string>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
+#include <stdlib.h>
+#include <iostream>
+#include <string>
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_OPENCV))
 
 #include <visp/vpImage.h>

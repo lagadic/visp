@@ -43,7 +43,9 @@
   \file vpIoTools.cpp
   \brief File and directories basic tools.
 */
-
+#include <visp/vpIoTools.h>
+#include <visp/vpDebug.h>
+#include <visp/vpIoException.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,9 +58,7 @@
 #  include <windows.h>
 #  include <direct.h>
 #endif
-#include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
-#include <visp/vpIoException.h>
+
 
 /*!
   Get the user name.

@@ -39,10 +39,10 @@
  *
  *****************************************************************************/
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-#include <string>
 
+
+#include <visp/vpconfig.h>
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <visp/vpSimulatorAfma6.h>
 #include <visp/vpTime.h>
 #include <visp/vpImagePoint.h>
@@ -50,9 +50,9 @@
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpIoTools.h>
-
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+#include <string>
 const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
 

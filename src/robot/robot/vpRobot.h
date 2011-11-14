@@ -47,7 +47,6 @@
   \brief class that defines a generic virtual robot
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>

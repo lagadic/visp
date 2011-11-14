@@ -52,8 +52,6 @@
 #ifndef vpMbtDistanceCylinder_HH
 #define vpMbtDistanceCylinder_HH
 
-#include <visp/vpConfig.h>
-
 #include <visp/vpPoint.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpLine.h>

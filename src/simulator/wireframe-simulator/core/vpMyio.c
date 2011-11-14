@@ -43,16 +43,15 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
+
 
 #include	<visp/vpMy.h>
 #include	<visp/vpToken.h>
 #include	<visp/vpLex.h>
 
-#include <visp/vpConfig.h>
-
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 

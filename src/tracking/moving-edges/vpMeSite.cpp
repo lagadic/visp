@@ -45,14 +45,14 @@
   \brief Moving edges
 */
 
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
 #include <visp/vpTrackingException.h>
-
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #define DEBUG_LEVEL2 0
 #define DEBUG_LEVEL3 0
 
