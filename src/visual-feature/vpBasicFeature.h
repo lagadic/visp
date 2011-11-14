@@ -50,6 +50,7 @@
   \brief class that defines what is a visual feature
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 

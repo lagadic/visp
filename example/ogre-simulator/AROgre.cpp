@@ -45,10 +45,9 @@
   Example of augmented reality based on Ogre3D.
 */
 
-
+#include <iostream>
 
 #include <visp/vpConfig.h>
-#include <iostream>
 
 #ifdef VISP_HAVE_OGRE
 

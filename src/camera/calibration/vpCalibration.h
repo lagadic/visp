@@ -53,6 +53,9 @@
 #ifndef vpCalibration_h
 #define vpCalibration_h
 
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
@@ -65,7 +68,6 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
-#include <list>
 
 /*!
   \class vpCalibration

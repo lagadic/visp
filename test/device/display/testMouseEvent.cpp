@@ -49,15 +49,15 @@
 
 */
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpIoTools.h>
 
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 

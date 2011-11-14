@@ -46,8 +46,9 @@
   Robotics and Automation, ICRA'08, Pages 81-86, Pasadena, Californie,
   Mai 2008.
 */
+#include <stdlib.h>
 
-
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
 #include <visp/vpImage.h>
@@ -70,7 +71,7 @@
 #include <visp/vpParseArgv.h>
 
 #include <visp/vpImageSimulator.h>
-#include <stdlib.h>
+
 #define  Z             1
 
 #include <visp/vpParseArgv.h>

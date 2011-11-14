@@ -44,6 +44,8 @@
 #ifndef vpFrameGrabber_hh
 #define vpFrameGrabber_hh
 
+
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 

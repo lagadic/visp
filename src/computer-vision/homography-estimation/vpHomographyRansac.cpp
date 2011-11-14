@@ -16,9 +16,11 @@
  * optimized by Tran to improve speed.
  * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-#include <visp/vpHomography.h>
+
 #include <visp/vpColVector.h>
+#include <visp/vpHomography.h>
 #include <visp/vpRansac.h>
+
 
 #define vpEps 1e-6
 

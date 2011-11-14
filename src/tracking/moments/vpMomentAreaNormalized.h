@@ -45,8 +45,9 @@
 #ifndef __MOMENTSURFACENORMALIZED_H__
 #define __MOMENTSURFACENORMALIZED_H__
 
+#include <vector>
+#include <visp/vpConfig.h>
 #include <visp/vpMoment.h>
-
 class vpMomentObject;
 class vpMomentCentered;
 /*!

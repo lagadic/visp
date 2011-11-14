@@ -43,13 +43,14 @@
 /* --- INCLUDE ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
+#include <math.h>
 
-
+#include <visp/vpConfig.h>
 #include <visp/vpBiclops.h>
 #include <visp/vpDebug.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpMath.h>
-#include <math.h>
+
 
 
 /* ------------------------------------------------------------------------ */

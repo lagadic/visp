@@ -48,8 +48,10 @@
   \brief class that defines what is a Keypoint
 */
 
-#include <visp/vpImage.h>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
+#include <visp/vpImage.h>
 #include <visp/vpRect.h>
 
 #include <vector>

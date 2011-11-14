@@ -45,13 +45,13 @@
   \brief Example of KLT tracking using OpenCV library.
 */
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
-
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
 #include <vector>
+
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 

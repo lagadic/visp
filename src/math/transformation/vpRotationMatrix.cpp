@@ -45,7 +45,7 @@
   the particular case of rotation matrix
 */
 
-
+#include <math.h>
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
 
@@ -59,7 +59,7 @@
 
 // Debug trace
 #include <visp/vpDebug.h>
-#include <math.h>
+
 const double vpRotationMatrix::threshold = 1e-6;
 const double vpRotationMatrix::minimum = 0.00001;
 

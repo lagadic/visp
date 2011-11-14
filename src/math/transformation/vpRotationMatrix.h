@@ -48,6 +48,7 @@
   \brief Class that consider the particular case of rotation matrix
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationVector.h>
 #include <visp/vpRxyzVector.h>

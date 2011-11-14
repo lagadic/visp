@@ -39,7 +39,8 @@
  *
  *****************************************************************************/
 
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpMeEllipse.h>
 
@@ -49,8 +50,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpImagePoint.h>
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 /*!
   Computes the \f$ \theta \f$ angle which represents the angle between the tangente to the curve and the i axis.
 

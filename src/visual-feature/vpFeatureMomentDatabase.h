@@ -46,11 +46,10 @@
 
 #ifndef __FEATUREMOMENTDATABASE_H__
 #define __FEATUREMOMENTDATABASE_H__
-
-#include <visp/vpConfig.h>
 #include <map>
 #include <iostream>
 #include <cstring>
+#include <visp/vpConfig.h>
 
 class vpFeatureMoment;
 class vpMomentObject;

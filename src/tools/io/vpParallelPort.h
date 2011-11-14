@@ -48,11 +48,12 @@
   \brief Parallel port management under unix.
 */
 
+#include <iostream>
+
 #include <visp/vpConfig.h>
 
 #ifdef VISP_HAVE_PARPORT
 
-#include <iostream>
 #  include <stdio.h>
 #  include <errno.h>
 #  include <linux/parport.h>

@@ -41,9 +41,9 @@
  *
  *****************************************************************************/
 
-
-#include <visp/vpRzyzVector.h>
 #include <math.h>
+#include <visp/vpRzyzVector.h>
+
 
 /*!
   \file vpRzyzVector.cpp

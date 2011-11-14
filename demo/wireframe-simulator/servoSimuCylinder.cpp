@@ -51,7 +51,7 @@
   Demonstration of the wireframe simulator with a simple visual servoing.
 */
 
-
+#include <stdlib.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -74,7 +74,7 @@
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpWireFrameSimulator.h>
 #include <visp/vpCylinder.h>
-#include <stdlib.h>
+
 #define GETOPTARGS	"dh"
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))

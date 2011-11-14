@@ -44,6 +44,9 @@
 #ifndef vpPlotCurve_H
 #define vpPlotCurve_H
 
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 
@@ -52,8 +55,6 @@
 
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPoint.h>
-
-#include <list>
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 

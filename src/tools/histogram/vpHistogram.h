@@ -51,6 +51,9 @@
 #ifndef vpHistogram_h
 #define vpHistogram_h
 
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpHistogramPeak.h>
 #include <visp/vpHistogramValey.h>
@@ -59,7 +62,6 @@
 #  include <visp/vpList.h>
 #endif
 
-#include <list>
 
 /*!
   \class vpHistogram

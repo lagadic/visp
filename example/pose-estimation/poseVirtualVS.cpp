@@ -62,13 +62,13 @@
   computation.
 */
 
-
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
+#include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
+
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
 #include <visp/vpImage.h>

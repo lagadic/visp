@@ -49,15 +49,16 @@
 */
 
 
-
-
-#include <visp/vpMath.h>
-#include <visp/vpRowVector.h>
 #include <stdio.h>
 #include <iostream>
 
 
 #include <math.h>
+
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
+#include <visp/vpRowVector.h>
+
 
 /*!
   \class vpRotationVector

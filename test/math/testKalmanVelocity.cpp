@@ -45,10 +45,10 @@
   \brief Test some vpLinearKalmanFilterInstantiation functionalities
   with constant velocity state model.
 */
-
-#include <visp/vpLinearKalmanFilterInstantiation.h>
 #include <iostream>
 #include <fstream>
+
+#include <visp/vpLinearKalmanFilterInstantiation.h>
 
 typedef enum {
   Position, // Considered measures are the succesive positions of the target

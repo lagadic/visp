@@ -43,16 +43,17 @@
  *****************************************************************************/
 
 
+#include	<stdio.h>
 
-#include "visp/vpConfig.h"
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
 #include	<visp/vpToken.h>
 #include	<visp/vpLex.h>
 
-#include	<stdio.h>
+#include <visp/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*
  * La procedure "fprintf_Position" ecrit en ascii un positionnement.
  * Entree :

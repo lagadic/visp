@@ -46,11 +46,12 @@
   This file implements the fonctions related with the homography
   estimation using the DLT algorithm
 */
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpHomography.h>
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 void
 vpHomography::HartleyNormalization(unsigned int n,

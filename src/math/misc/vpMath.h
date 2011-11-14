@@ -50,9 +50,8 @@
 #ifndef vpMATH_HH
 #define vpMATH_HH
 
-#include <visp/vpConfig.h>
-
 #include <math.h>
+#include <visp/vpConfig.h>
 
 #ifdef WIN32	// Not defined in Microsoft math.h
 

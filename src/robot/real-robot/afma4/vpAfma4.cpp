@@ -47,6 +47,8 @@
 
 */
 
+
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>

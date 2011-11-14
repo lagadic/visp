@@ -52,12 +52,11 @@
  
  */
 
-
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <visp/vpImage.h>
 #include <visp/vp1394TwoGrabber.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 int main()
 {

@@ -48,12 +48,12 @@
 
 */
 
+#include <iostream>
+#include <string>
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-
-#include <iostream>
-#include <string>
 
 #if defined(VISP_HAVE_DC1394_2)
 

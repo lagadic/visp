@@ -58,14 +58,17 @@
 #ifndef vpMeTracker_HH
 #define vpMeTracker_HH
 
+
+#include <math.h>
+#include <iostream>
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
 #include <visp/vpTracker.h>
 
-#include <math.h>
-#include <iostream>
-#include <list>
 
 class VISP_EXPORT vpMeTracker : public vpTracker
 {

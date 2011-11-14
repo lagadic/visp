@@ -44,7 +44,7 @@
   Minimalist example of moment-based visual servoing with polygon and a simple robot
 */
 
-
+#include <iostream> //some console output
 #include <visp/vpPoint.h> //the basic tracker
 
 #include <vector> //store the polygon
@@ -56,7 +56,7 @@
 #include <visp/vpPlane.h>
 #include <visp/vpException.h>
 #include <limits>
-#include <iostream> //some console output
+
 //this function converts the plane defined by the cMo to 1/Z=Ax+By+C plane form
 void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C){
 	vpPlane pl;

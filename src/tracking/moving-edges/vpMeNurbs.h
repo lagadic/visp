@@ -47,14 +47,15 @@
 #ifndef vpMeNurbs_HH
 #define vpMeNurbs_HH
 
-#include <visp/vpMatrix.h>
-#include <visp/vpMath.h>
-#include <visp/vpMeTracker.h>
-#include <visp/vpNurbs.h>
-
 #include <math.h>
 #include <iostream>
 #include <list>
+
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpMeTracker.h>
+#include <visp/vpNurbs.h>
 
 /*!
   \class vpMeNurbs

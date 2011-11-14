@@ -54,11 +54,11 @@
   position, then in velocity.
 
 */
-
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-#include <stdlib.h>
+
 #ifdef VISP_HAVE_AFMA4
 
 #include <visp/vpParseArgv.h>

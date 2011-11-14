@@ -59,14 +59,14 @@
 
 */
 
-
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <list>
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
 #if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
 #define SAVE 0

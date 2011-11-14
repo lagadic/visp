@@ -47,6 +47,13 @@
 #ifndef vpMeEllipse_HH
 #define vpMeEllipse_HH
 
+
+#include <math.h>
+
+#include <list>
+
+#include <visp/vpConfig.h>
+
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 
@@ -56,9 +63,6 @@
 
 #include <visp/vpImage.h>
 #include <visp/vpColor.h>
-
-#include <math.h>
-#include <list>
 
 /*!
   \class vpMeEllipse 

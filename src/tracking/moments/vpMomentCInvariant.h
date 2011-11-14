@@ -44,10 +44,10 @@
 */
 #ifndef __MOMENTCINVARIANT_H__
 #define __MOMENTCINVARIANT_H__
-
+#include <vector>
+#include <visp/vpConfig.h>
 #include <visp/vpMoment.h>
 #include <visp/vpMomentDatabase.h>
-
 class vpMomentCentered;
 class vpMomentBasic;
 

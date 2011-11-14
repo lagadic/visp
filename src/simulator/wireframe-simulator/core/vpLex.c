@@ -42,12 +42,6 @@
  *****************************************************************************/
 
 
-
-
-#include	<visp/vpMy.h>
-#include	<visp/vpToken.h>
-#include	<visp/vpKeyword.h>
-
 #include	<ctype.h>
 #include	<math.h>
 #include	<stdio.h>
@@ -60,6 +54,13 @@
 
 #include	<stdlib.h>
 #include	<string.h>
+
+#include	<visp/vpMy.h>
+#include	<visp/vpToken.h>
+#include	<visp/vpKeyword.h>
+
+#include <visp/vpConfig.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 

@@ -40,6 +40,12 @@
  *****************************************************************************/
 
 
+#include <math.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
 #include <visp/vpConfig.h>
 #include <visp/vpPolygon.h>
 #include <visp/vpParseArgv.h>
@@ -50,12 +56,6 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 
-
-#include <math.h>
-
-#include <iostream>
-#include <string>
-#include <vector>
 
 //! List of allowed command line options
 #define GETOPTARGS	"cdh"

@@ -49,8 +49,10 @@
 
 */
 
+#include <iostream>
 
 
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpRobotAfma6.h>
@@ -61,7 +63,7 @@
 #include <visp/vpDot.h>
 #include <visp/vpPose.h>
 #include <visp/vpDebug.h>
-#include <iostream>
+
 #if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394_2)
 
 int main()

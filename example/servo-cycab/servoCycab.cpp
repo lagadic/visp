@@ -45,9 +45,6 @@
 
 */
 
-
-
-#include <visp/vpConfig.h>
 #include <iostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
@@ -57,6 +54,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
+#include <visp/vpConfig.h>
+
 using namespace std;
 
 #ifdef VISP_HAVE_CYCAB

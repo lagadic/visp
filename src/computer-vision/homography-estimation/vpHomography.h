@@ -51,13 +51,14 @@ tools for homography computation.
 #ifndef vpHomography_hh
 #define vpHomography_hh
 
+#include <list>
+#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPlane.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
 
-#include <list>
 
 /*!  
 

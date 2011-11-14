@@ -40,10 +40,10 @@
  *
  *****************************************************************************/
 
-
+#include <stdlib.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-#include <stdlib.h>
+
 /*!
   \file grabV4l2.cpp
 

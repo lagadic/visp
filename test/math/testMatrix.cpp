@@ -45,6 +45,10 @@
   Test some vpMatrix functionalities.
 */
 
+
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpMath.h>
@@ -52,10 +56,6 @@
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpGEMM.h>
-
-
-#include <stdlib.h>
-#include <stdio.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"h"

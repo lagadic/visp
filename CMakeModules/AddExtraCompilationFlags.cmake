@@ -40,11 +40,7 @@
 
 MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   include(CheckCXXCompilerFlag)
-  if(UNIX)
-	set(WARNING_ALL "-Wall")
-  else()
-	set(WARNING_ALL "/Wall")
-  endif()
+  set(WARNING_ALL "-Wall")
   CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
   if(WARNING_ALL_ALLOWED)
 #    MESSAGE("Compiler flag ${WARNING_ALL} allowed")

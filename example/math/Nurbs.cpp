@@ -50,9 +50,10 @@
   Describe a curve thanks to a BSpline.
 */
 
-
+#include <cstdlib>
 
 #include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
 #include <visp/vpNurbs.h>
 
@@ -67,7 +68,7 @@
 
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-#include <cstdlib>
+
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9)
 
 // List of allowed command line options

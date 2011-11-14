@@ -47,10 +47,14 @@
 #ifndef vpCircle_hh
 #define vpCircle_hh
 
-#include <visp/vpHomogeneousMatrix.h>
+
 #include <math.h>
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
+
 #include <visp/vpMath.h>
+#include <visp/vpHomogeneousMatrix.h>
+
 #include <visp/vpForwardProjection.h>
 
 /*!

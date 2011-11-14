@@ -44,6 +44,7 @@
  
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpOpenCVGrabber.h>
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vp1394TwoGrabber.h>
@@ -118,7 +119,7 @@ int main()
   // specified in the "resources.cfg" file
   ogre.load("Robot", "robot.mesh");
   ogre.setPosition("Robot", vpTranslationVector(0, 0.05, 0.5));
-  ogre.setScale("Robot", 0.001f,0.001f,0.001f);
+  ogre.setScale("Robot", 0.001,0.001,0.001);
   ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, -M_PI/4, 0)));
 
 

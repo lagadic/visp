@@ -46,19 +46,18 @@
 */
 
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <sstream>
+#include <iomanip>
 
 #include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpHistogram.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sstream>
-#include <iomanip>
 
 // List of allowed command line options
 #define GETOPTARGS	"i:o:h"

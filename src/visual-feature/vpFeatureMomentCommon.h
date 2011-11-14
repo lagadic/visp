@@ -46,6 +46,7 @@
 
 #ifndef __FEATUREMOMENTCOMMON_H__
 #define __FEATUREMOMENTCOMMON_H__
+#include <visp/vpConfig.h>
 #include <visp/vpFeatureMomentAlpha.h>
 #include <visp/vpFeatureMomentGravityCenter.h>
 #include <visp/vpFeatureMomentBasic.h>

@@ -45,6 +45,8 @@
 #ifndef vpRowVector_H
 #define vpRowVector_H
 
+
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 
 class vpMatrix;

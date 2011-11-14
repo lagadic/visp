@@ -39,19 +39,19 @@
  *
  *****************************************************************************/
 
-
+#include <fstream>
+#include <list>
+#include <vector>
 
 #include <visp/vpConfig.h>
-
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 #include <visp/vpPlot.h>
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpPose.h>
-#include <fstream>
-#include <list>
-#include <vector>
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+
 /*!
   This constructor creates a new window where the curves
   will be drawn. The number of graphics in the window must be set.

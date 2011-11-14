@@ -49,13 +49,13 @@
 #ifndef vpRANSAC_HH
 #define vpRANSAC_HH
 
-
+#include <ctime>
 
 #include <visp/vpNoise.h> // random number generation
 #include <visp/vpDebug.h> // debug and trace
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
-#include <ctime>
+
 /*!
   \class vpRansac
   \ingroup Robust

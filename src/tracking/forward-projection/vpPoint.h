@@ -50,6 +50,7 @@ class vpHomography ;
   \brief  class that defines what is a point
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 

@@ -51,14 +51,16 @@
 #ifndef vpMbtDistanceLine_HH
 #define vpMbtDistanceLine_HH
 
+#include <list>
+
+#include <visp/vpConfig.h>
+
 #include <visp/vpPoint.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpLine.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeatureLine.h>
 #include <visp/vpMbtHiddenFace.h>
-
-#include <list>
 
 /*!
   \class vpMbtDistanceLine

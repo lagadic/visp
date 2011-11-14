@@ -50,10 +50,11 @@
   \brief Definition of the list managment class
 */
 
+#include <stdio.h>
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#include <stdio.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

@@ -44,16 +44,16 @@
   \file vpPoseRansac.cpp
   \brief function used to estimate a pose using the Ransac algorithm
 */
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
-#include <visp/vpPose.h>
 #include <visp/vpColVector.h>
+#include <visp/vpPose.h>
 #include <visp/vpRansac.h>
 #include <visp/vpTime.h>
 #include <visp/vpList.h>
 
-#include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 
 #define eps 1e-6
 

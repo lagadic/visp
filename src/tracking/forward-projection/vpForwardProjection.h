@@ -47,6 +47,7 @@
   \brief  class that defines what is a generic geometric feature
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpTracker.h>
 #include <visp/vpColor.h>

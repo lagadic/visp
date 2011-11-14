@@ -59,9 +59,9 @@
 
 #define EPANECHNIKOV 0
 
-#include <visp/vpColVector.h>
 #include <math.h>
-
+#include <visp/vpConfig.h>
+#include <visp/vpColVector.h>
 
 /*!
   \class vpScale

@@ -38,21 +38,19 @@
  * Eric Marchand
  *
  *****************************************************************************/
-
-#include <visp/vpConfig.h>
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp/vpMatrix.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpMath.h>
+#include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
+#include <visp/vpConfig.h>
 
-
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 #include <iostream>
 
 /*---------------------------------------------------------------------

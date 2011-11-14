@@ -52,7 +52,9 @@
  
 */
 
+#include <iostream>
 
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpImageIo.h>
 // For 2D image 
@@ -71,8 +73,6 @@
 #include <visp/vpCylinder.h>
 #include <visp/vpCircle.h>
 #include <visp/vpSphere.h>
-
-#include <iostream>
 
 int main()
 {

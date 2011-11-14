@@ -48,6 +48,7 @@
   \brief class that defines a robot just to show which function you must implement
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpRobot.h>
 
 /*!

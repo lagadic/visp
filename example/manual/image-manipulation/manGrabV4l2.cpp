@@ -52,6 +52,8 @@
  
  */
 
+#include <visp/vpConfig.h>
+
 #include <visp/vpImage.h>
 #include <visp/vpV4l2Grabber.h>
 

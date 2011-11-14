@@ -39,17 +39,19 @@
  *
  *****************************************************************************/
 
+#include <visp/vpConfig.h>
+
+#ifdef VISP_MOMENTS_COMBINE_MATRICES
+
+#include <vector>
+#include <limits>
+
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentGravityCenter.h>
 #include <visp/vpFeatureMomentAlpha.h>
 #include <visp/vpMomentCentered.h>
 #include <visp/vpFeatureMomentCentered.h>
 #include <visp/vpFeatureMomentDatabase.h>
-
-#include <vector>
-#include <limits>
-
-#ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 /*!
   Computes interaction matrix for alpha moment. Called internally.
@@ -75,6 +77,16 @@ void vpFeatureMomentAlpha::compute_interaction(){
 }
 
 #else
+
+#include <vector>
+#include <limits>
+
+#include <visp/vpMomentObject.h>
+#include <visp/vpMomentGravityCenter.h>
+#include <visp/vpMomentCentered.h>
+#include <visp/vpFeatureMomentAlpha.h>
+#include <visp/vpFeatureMomentCentered.h>
+#include <visp/vpFeatureMomentDatabase.h>
 
 /*!
   Computes interaction matrix for alpha moment. Called internally.

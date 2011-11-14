@@ -47,11 +47,21 @@
 #ifndef vpPlot_H
 #define vpPlot_H
 
+#include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
+#include <visp/vpColor.h>
+#include <visp/vpImage.h>
+
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpRect.h>
+
+#include <visp/vpCameraParameters.h>
+#include <visp/vpPoint.h>
 
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
+
 
 /*!
   \class vpPlot

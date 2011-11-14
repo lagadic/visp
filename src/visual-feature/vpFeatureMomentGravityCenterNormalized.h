@@ -44,7 +44,9 @@
 */
 #ifndef __FEATUREMOMENTGRAVITYCENTERNORMALIZED_H__
 #define __FEATUREMOMENTGRAVITYCENTERNORMALIZED_H__
+#include <visp/vpConfig.h>
 #include <visp/vpFeatureMoment.h>
+
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!

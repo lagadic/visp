@@ -39,7 +39,7 @@
  *
  *****************************************************************************/
 
-
+#include <stdlib.h>
 
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
@@ -49,7 +49,7 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vpDebug.h>
 #include <visp/vpTime.h>
-#include <stdlib.h>
+
 /*!
   \example testUndistortImage.cpp
 

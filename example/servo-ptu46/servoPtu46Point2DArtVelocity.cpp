@@ -61,14 +61,14 @@
   point.
 
 */
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
+
 #ifdef UNIX
 #  include <unistd.h>
 #endif
 #include <signal.h>
 
-
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
 
 #if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394) )
 
