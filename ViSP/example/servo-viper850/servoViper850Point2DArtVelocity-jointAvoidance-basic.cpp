@@ -53,9 +53,6 @@
   October 2001.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -63,6 +60,9 @@
 #include <sstream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
 
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 

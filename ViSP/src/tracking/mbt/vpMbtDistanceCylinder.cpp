@@ -42,8 +42,6 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!

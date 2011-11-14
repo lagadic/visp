@@ -48,6 +48,12 @@
 #ifndef vpImage_H
 #define vpImage_H
 
+
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <string.h>
+
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
@@ -55,10 +61,6 @@
 #include <visp/vpImagePoint.h>
 #include <visp/vpRGBa.h>
 
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <string.h>
 
 class vpDisplay;
 

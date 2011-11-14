@@ -52,6 +52,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <visp/vpMath.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
@@ -59,9 +62,6 @@
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpMath.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 /*!
 
   Print the program options.

@@ -41,18 +41,18 @@
  *****************************************************************************/
 
 
+#include	<stdio.h>
 
-
-
-
-#include <visp/vpConfig.h>
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include	<visp/vpMy.h>
 #include	<visp/vpToken.h>
 #include	<visp/vpLex.h>
 #include	<visp/vpSkipio.h>
-#include	<stdio.h>
+
+#include <visp/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+
 /*
  * La procedure "skip_cmd" saute les structures d'une commande
  * jusqu'a reconnaitre le debut d'une nouvelle commande.

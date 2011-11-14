@@ -48,9 +48,11 @@
 #ifndef vpCylinder_hh
 #define vpCylinder_hh
 
-#include <visp/vpHomogeneousMatrix.h>
+
 #include <math.h>
+#include <visp/vpConfig.h>
 #include <visp/vpMath.h>
+#include <visp/vpHomogeneousMatrix.h>
 
 #include <visp/vpForwardProjection.h>
 

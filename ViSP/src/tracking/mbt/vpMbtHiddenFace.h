@@ -51,9 +51,11 @@
 #ifndef vpMbtHiddenFace_HH
 #define vpMbtHiddenFace_HH
 
-#include <visp/vpPoint.h>
-
 #include <list>
+
+#include <visp/vpConfig.h>
+
+#include <visp/vpPoint.h>
 
 /*!
   \class vpMbtPolygon

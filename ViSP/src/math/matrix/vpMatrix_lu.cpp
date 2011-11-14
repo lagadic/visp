@@ -39,12 +39,13 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp/vpMatrix.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #include <visp/vpMath.h>
+#include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 
 // Exception
@@ -54,9 +55,7 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
+#include <visp/vpConfig.h>
 #define TINY 1.0e-20;
 
 

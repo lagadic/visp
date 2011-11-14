@@ -46,10 +46,14 @@
   \ingroup libtools
 */
 
-#include <visp/vpPlane.h>
+
+#ifndef vpPlane_hh
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+
+#include <visp/vpPlane.h>
+
 
 /*!
   Copy operator.
@@ -358,4 +362,6 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
   C = cMo[2][0]*Ao + cMo[2][1]*Bo  + cMo[2][2]*Co;
   D = Do - (cMo[0][3]*A + cMo[1][3]*B  + cMo[2][3]*C);
 }
+
+#endif
 

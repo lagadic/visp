@@ -40,12 +40,12 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-
+#include <visp/vpRobotSimulator.h>
+#include <visp/vpSimulatorViper850.h>
 
 
 #if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
-#include <visp/vpRobotSimulator.h>
-#include <visp/vpSimulatorViper850.h>
+
 
 /*!
   Basic constructor

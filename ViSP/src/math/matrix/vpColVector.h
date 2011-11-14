@@ -44,6 +44,7 @@
 #ifndef vpColVector_H
 #define vpColVector_H
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
 #include <visp/vpRotationVector.h>

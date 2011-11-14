@@ -44,17 +44,17 @@
 #ifndef vpGenericFeature_hh
 #define vpGenericFeature_hh
 
+#include <math.h>
 /*!
   \file vpGenericFeature.h
   \brief class that defines what is a generic feature (used to create new
      feature not implemented in ViSP2
  */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpRGBa.h>
-
-#include <math.h>
 
 /*!
   \class vpGenericFeature

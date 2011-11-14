@@ -48,6 +48,7 @@
 #ifndef vpVideoReader_H
 #define vpVideoReader_H
 
+#include <visp/vpConfig.h>
 #include <visp/vpDiskGrabber.h>
 #include <visp/vpFFMPEG.h>
 

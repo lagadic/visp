@@ -49,8 +49,10 @@
 #ifndef vpMbEdgeTracker_HH
 #define vpMbEdgeTracker_HH
 
-#include <visp/vpPoint.h>
+#include <visp/vpConfig.h>
+
 #include <visp/vpMbTracker.h>
+#include <visp/vpPoint.h>
 #include <visp/vpMe.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpMbtDistanceLine.h>

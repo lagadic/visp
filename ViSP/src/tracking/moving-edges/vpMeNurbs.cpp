@@ -45,9 +45,11 @@
   \brief Moving edges
 */
 
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
-
-
+#include <visp/vpConfig.h>
 #include <visp/vpMeTracker.h>
 #include <visp/vpMe.h>
 #include <visp/vpMeSite.h>
@@ -59,9 +61,7 @@
 #include <visp/vpRect.h>
 #include <visp/vpImageTools.h>
 #include <visp/vpImageConvert.h>
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 #ifdef VISP_HAVE_OPENCV
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 //#    include <opencv2/imgproc/imgproc.hpp>

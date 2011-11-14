@@ -44,9 +44,9 @@
   \brief Test vpImagePoint functionalities.
 
 */
+#include <iostream>
 
 #include <visp/vpImagePoint.h>
-#include <iostream>
 
 int main()
 {

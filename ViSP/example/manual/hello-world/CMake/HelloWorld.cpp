@@ -1,9 +1,9 @@
-
+#include <iostream>
 
 #include <visp/vpDebug.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
-#include <iostream>
+
 
 int main()
 {

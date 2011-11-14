@@ -59,6 +59,7 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpPoint.h>
 #include <visp/vpHomogeneousMatrix.h>

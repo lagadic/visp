@@ -49,11 +49,12 @@
   \brief pixel to meter conversion
 
 */
+#include <visp/vpConfig.h>
 #include <visp/vpCameraParameters.h>
-#include <visp/vpException.h>
-#include <visp/vpMath.h>
-#include <visp/vpDebug.h>
-#include <visp/vpImagePoint.h>
+#include<visp/vpException.h>
+#include<visp/vpMath.h>
+#include<visp/vpDebug.h>
+#include<visp/vpImagePoint.h>
 
 /*!
   \class vpPixelMeterConversion

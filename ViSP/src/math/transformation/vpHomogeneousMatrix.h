@@ -56,14 +56,15 @@ class vpRotationMatrix;
 class vpPoseVector;
 class vpThetaUVector;
 
+#include <fstream>
+
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpPoseVector.h>
-
-#include <fstream>
 
 class vpMatrix;
 class vpRotationMatrix;

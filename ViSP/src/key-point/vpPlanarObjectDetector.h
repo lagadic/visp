@@ -42,6 +42,7 @@
 #ifndef VPPLANAROBJECTDETECTOR_H_
 #define VPPLANAROBJECTDETECTOR_H_
 
+
 #include <visp/vpConfig.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0

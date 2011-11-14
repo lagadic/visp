@@ -57,11 +57,11 @@
   in the camera frame.  The visual feature is a line.
 */
 
-
+#include <stdlib.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-#include <stdlib.h>
+
 #if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>

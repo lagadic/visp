@@ -48,6 +48,11 @@
 #ifndef vpDot_hh
 #define vpDot_hh
 
+#include <math.h>
+#include <fstream>
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpTracker.h>
@@ -58,9 +63,6 @@
 #  include <visp/vpList.h>
 #endif
 
-#include <math.h>
-#include <fstream>
-#include <list>
 
 /*!
   \class vpDot

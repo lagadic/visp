@@ -45,15 +45,15 @@
   Test some vpMath functionalities.
 */
 
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <iostream>
 #include <visp/vpRobust.h>
 #include <string>
 #include <fstream>
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
+
 // List of allowed command line options
 #define GETOPTARGS	"ho:"
 

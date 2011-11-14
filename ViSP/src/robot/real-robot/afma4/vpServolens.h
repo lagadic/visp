@@ -43,8 +43,6 @@
 #ifndef __vpServolens_h
 #define __vpServolens_h
 
-#include <visp/vpConfig.h>
-
 #ifdef UNIX
 
 /*!
@@ -56,8 +54,10 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpImage.h>
+
 
 /*!
 

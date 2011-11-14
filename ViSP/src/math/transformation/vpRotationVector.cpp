@@ -39,9 +39,9 @@
  *
  *****************************************************************************/
 
+#include <math.h>
 #include <visp/vpRotationVector.h>
 
-#include <math.h>
 /*!
   \file vpRotationVector.cpp
   \brief class that consider the case of a generic rotation vector

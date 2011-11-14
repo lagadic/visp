@@ -54,13 +54,12 @@
   robot is controlled first in position, then in velocity.
 
 */
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
 #ifdef UNIX
 #  include <unistd.h>
 #endif
 
-
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 
 #ifdef VISP_HAVE_PTU46
 

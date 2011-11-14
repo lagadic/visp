@@ -60,11 +60,13 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpVelocityTwistMatrix.h>
+
 
 class VISP_EXPORT vpAfma6
 {

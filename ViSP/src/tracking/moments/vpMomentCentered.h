@@ -41,7 +41,8 @@
 
 #ifndef __MOMENTCENTERED_H__
 #define __MOMENTCENTERED_H__
-
+#include <vector>
+#include <visp/vpConfig.h>
 #include <visp/vpMoment.h>
 /*!
   \file vpMomentCentered.h

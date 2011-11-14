@@ -50,6 +50,7 @@
   \brief  Class required to compute the visual servoing control law
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpBasicFeature.h>

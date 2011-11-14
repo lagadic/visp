@@ -60,6 +60,7 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpViper.h>
 
 

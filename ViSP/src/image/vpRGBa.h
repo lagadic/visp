@@ -50,6 +50,7 @@
   images (it define a RGB 32 bits structure, fourth byte is not used)
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 
 

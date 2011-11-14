@@ -48,6 +48,7 @@
 #include <visp/vpFeatureMoment.h>
 #include <visp/vpMomentCommon.h>
 #include <visp/vpMomentObject.h>
+#include <visp/vpConfig.h>
 class vpMomentDatabase;
 /*!
   \class vpFeatureMomentBasic

@@ -51,6 +51,7 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpCameraParameters.h>
 #include<visp/vpException.h>
 #include<visp/vpMath.h>

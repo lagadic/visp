@@ -42,7 +42,6 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
-
 #if ( defined(VISP_HAVE_D3D9) )
 
 #ifndef VPD3DRENDERER_HH

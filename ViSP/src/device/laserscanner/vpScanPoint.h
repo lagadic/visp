@@ -41,12 +41,13 @@
 #ifndef vpScanPoint_h
 #define vpScanPoint_h
 
-#include <visp/vpMath.h>
-
 #include <ostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <math.h>
+
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
 
 /*!
   \file vpScanPoint.h

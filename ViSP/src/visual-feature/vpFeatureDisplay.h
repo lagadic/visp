@@ -49,13 +49,15 @@
   \brief interface with the image for feature display
 */
 
-//Color / image / display
-#include <visp/vpImage.h>
-#include <visp/vpColor.h>
-#include <visp/vpRGBa.h>
+#include <visp/vpConfig.h>
 
 // Meter/pixel conversion
 #include <visp/vpCameraParameters.h>
+
+//Color / image / display
+#include <visp/vpColor.h>
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
 
 /*!
   \class vpFeatureDisplay

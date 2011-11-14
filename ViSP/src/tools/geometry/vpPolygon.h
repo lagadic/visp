@@ -55,14 +55,15 @@
  \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 
+#include <vector>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpRect.h>
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 #include <visp/vpPoint.h>
 #include <visp/vpCameraParameters.h>
-
-#include <vector>
 
 class VISP_EXPORT vpPolygon
 {

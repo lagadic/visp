@@ -47,6 +47,8 @@
   \brief interface with the image for feature display
 */
 
+#include <visp/vpConfig.h>
+
 // Servo
 #include <visp/vpServo.h>
 

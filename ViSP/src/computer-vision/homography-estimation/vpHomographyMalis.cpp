@@ -77,13 +77,14 @@
   Novembre 1998.
   http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
 */
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpHomography.h>
 #include <visp/vpDebug.h>
 #include <visp/vpMatrixException.h>
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 const double eps = 1e-6 ;

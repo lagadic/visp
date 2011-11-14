@@ -41,7 +41,9 @@
  *****************************************************************************/
 
 
-
+#include <math.h>
+#include <float.h>
+#include <string.h>
 
 
 // besoin de la librairie mathematique, en particulier des
@@ -49,9 +51,7 @@
 #include <visp/vpLevenbergMarquartd.h>
 
 #include <visp/vpPose.h>
-#include <math.h>
-#include <float.h>
-#include <string.h>
+
 #define NBR_PAR	6
 #define X3_SIZE	3
 #define MINIMUM 0.000001

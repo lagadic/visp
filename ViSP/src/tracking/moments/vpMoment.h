@@ -46,11 +46,9 @@
 
 #ifndef __MOMENT_H__
 #define __MOMENT_H__
-
-#include <visp/vpConfig.h>
-
 #include <vector>
 #include <iostream>
+#include <visp/vpConfig.h>
 
 class vpMomentDatabase;
 class vpMomentObject;

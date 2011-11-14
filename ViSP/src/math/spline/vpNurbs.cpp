@@ -39,12 +39,12 @@
  *
  *****************************************************************************/
 
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpNurbs.h>
 #include <visp/vpColVector.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 /*
   Compute the distance d = |Pw1-Pw2|
 */

@@ -50,6 +50,7 @@
   to the OpenCV library.
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>

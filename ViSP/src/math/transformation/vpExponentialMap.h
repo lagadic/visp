@@ -50,6 +50,7 @@
 #ifndef vpExponentialMap_h
 #define vpExponentialMap_h
 
+#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpColVector.h>
 

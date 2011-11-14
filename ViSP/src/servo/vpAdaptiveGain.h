@@ -46,8 +46,10 @@
 #ifndef __VP_ADAPTIVE_GAIN_H
 #define __VP_ADAPTIVE_GAIN_H
 
-#include <visp/vpConfig.h>
+
 #include <iostream>
+
+#include <visp/vpConfig.h>
 
 class vpColVector;
 /*!

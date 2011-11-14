@@ -54,6 +54,7 @@
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>

@@ -43,10 +43,10 @@
  *****************************************************************************/
 
 
-#include "visp/vpConfig.h"
+#include	<errno.h>
+#include	<stdio.h>
+#include	<stdlib.h>
 
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
 #include	<visp/vpBound.h>
@@ -54,9 +54,10 @@
 #include	<visp/vpSkipio.h>
 #include	<visp/vpLex.h>
 
-#include	<errno.h>
-#include	<stdio.h>
-#include	<stdlib.h>
+#include <visp/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 void fscanf_Point3f_list (Point3f_list *);
 void fscanf_Face_list (Face_list *);
 

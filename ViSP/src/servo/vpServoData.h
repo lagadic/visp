@@ -47,12 +47,11 @@
   \brief  save data during the task execution
 */
 
-
+#include <iostream>
 
 // Servo
+#include <visp/vpConfig.h>
 #include <visp/vpServo.h>
-
-#include <iostream>
 
 /*!
   \class vpServoData

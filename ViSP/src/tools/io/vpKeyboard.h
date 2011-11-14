@@ -48,11 +48,14 @@
   \brief Keybord management under unix.
 */
 
+#include <iostream>
 #include <visp/vpConfig.h>
+
+
+
 
 #if defined UNIX
 
-#  include <iostream>
 #  include <termios.h>
 #  include <unistd.h>
 #  include <stdlib.h>

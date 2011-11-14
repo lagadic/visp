@@ -44,6 +44,8 @@
 #ifndef vpDisplay_h
 #define vpDisplay_h
 
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 // image
 #include <visp/vpImage.h>
 

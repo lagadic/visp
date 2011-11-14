@@ -46,11 +46,11 @@
   \file vpSimulatorAfma6.h
   \brief Class which provides a simulator for the robot Afma6.
 */
+#include <string>
 
+#include <visp/vpConfig.h>
 #include <visp/vpRobotSimulator.h>
 #include <visp/vpAfma6.h>
-
-#include <string>
 
 #if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 

@@ -46,7 +46,8 @@
 
 #ifndef __MOMENTBASIC_H__
 #define __MOMENTBASIC_H__
-
+#include <vector>
+#include <visp/vpConfig.h>
 #include <visp/vpMoment.h>
 
 /*!

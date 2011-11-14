@@ -45,21 +45,21 @@
  *****************************************************************************/
 
 
-
-
-
-
-#include <visp/vpConfig.h>
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include <visp/vpMy.h>
-#include <visp/vpArit.h>
-#include <visp/vpBound.h>
-#include <visp/vpView.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>  //DBL_EPSILON
 #include <math.h>  //DBL_EPSILON
+
+#include <visp/vpMy.h>
+#include <visp/vpArit.h>
+#include <visp/vpBound.h>
+#include <visp/vpView.h>
+
+#include <visp/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+
 static	void	inter (Byte, Index, Index);
 static	void	point_4D_3D ();
 

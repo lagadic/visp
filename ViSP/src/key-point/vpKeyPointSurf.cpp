@@ -40,6 +40,12 @@
  *****************************************************************************/
 
 
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+#include <list>
+
 #include <visp/vpKeyPointSurf.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Require opencv >= 1.1.0
@@ -49,11 +55,6 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpDebug.h>
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <list>
 
 // Compare two surf descriptors.
 double compareSURFDescriptors( const float* d1, const float* d2,

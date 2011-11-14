@@ -41,14 +41,14 @@
  *****************************************************************************/
 
 
-
+#include	<math.h>
+#include	<stdio.h>
+#include	<string.h>
 
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
 #include	<visp/vpTmstack.h>
-#include	<math.h>
-#include	<stdio.h>
-#include	<string.h>
+
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

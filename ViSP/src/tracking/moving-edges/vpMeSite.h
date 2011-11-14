@@ -50,6 +50,7 @@
 #ifndef vpMeSite_H
 #define vpMeSite_H
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>

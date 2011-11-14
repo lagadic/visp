@@ -44,14 +44,14 @@
 */
 
 
-
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 #include <visp/vpScale.h>
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0

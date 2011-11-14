@@ -45,15 +45,16 @@
   \brief Example of Tsai calibration to estimate extrinsic camera parameters, ie hand-eye homogeneous transformation.
 
 */
+#include <stdio.h>
+#include <sstream>
+#include <iomanip>
 
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpCalibration.h>
 #include <visp/vpExponentialMap.h>
-#include <stdio.h>
-#include <sstream>
-#include <iomanip>
 
 int main()
 {

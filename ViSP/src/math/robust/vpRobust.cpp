@@ -45,18 +45,18 @@
 */
 
 
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 
 #include <visp/vpRobust.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #define vpITMAX 100
 #define vpEPS 3.0e-7

@@ -45,14 +45,14 @@
   \brief Definition of vpRowVector class member
 */
 
-
+#include <string.h>
+#include <stdlib.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpRowVector.h>
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>
-#include <string.h>
-#include <stdlib.h>
+
 //! Copy operator.   Allow operation such as A = v
 vpRowVector & vpRowVector::operator=(const vpRowVector &v)
 {

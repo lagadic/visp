@@ -47,8 +47,10 @@
 
 */
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
-
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>
@@ -58,8 +60,7 @@
 #include <visp/vpTranslationVector.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpViper.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 const unsigned int vpViper::njoint = 6;
 

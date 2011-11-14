@@ -39,6 +39,8 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
+
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageTools.h>
@@ -46,8 +48,6 @@
 #include <visp/vpRect.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpDebug.h>
-
-#include <stdlib.h>
 
 /*!
   \example testCreateSubImage.cpp

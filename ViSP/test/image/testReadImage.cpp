@@ -39,13 +39,14 @@
  *
  *****************************************************************************/
 
+#include <stdlib.h>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpDebug.h>
-
-#include <stdlib.h>
 
 /*!
   \example testReadImage.cpp

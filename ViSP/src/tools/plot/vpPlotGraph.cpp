@@ -38,12 +38,13 @@
  * Nicolas Melchior
  *
  *****************************************************************************/
-#include <visp/vpConfig.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
-
-
+#include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
@@ -53,8 +54,7 @@
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
 vpPlotGraph::vpPlotGraph()

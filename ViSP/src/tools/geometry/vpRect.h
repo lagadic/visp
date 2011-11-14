@@ -77,6 +77,7 @@
 
 */
 
+#include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 
 class VISP_EXPORT vpRect

@@ -47,6 +47,9 @@
   \brief Class that provides tools to compute and manipulate a Non Uniform Rational B-Spline curve.
 */
 
+#include <list>
+
+#include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
@@ -54,7 +57,6 @@
 #include <visp/vpBSpline.h>
 #include <visp/vpList.h>
 
-#include <list>
 
 /*!
   \class vpNurbs

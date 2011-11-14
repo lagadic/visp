@@ -59,7 +59,7 @@
   ViSP to do it), save them as PGM files and precise their names with
   the -p option.
 */
-
+#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>

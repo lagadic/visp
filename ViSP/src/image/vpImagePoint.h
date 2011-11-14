@@ -49,12 +49,12 @@
   for image processing
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpMath.h>
-
 #include <ostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
 
 class vpHomography;
 class vpRect;

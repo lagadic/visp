@@ -45,12 +45,12 @@
 
 */
 
-
+#include <iostream>
 
 #include "visp/vpConfig.h"
 #include "visp/vpRobotCycab.h"
 #include "visp/vpMath.h"
-#include <iostream>
+
 #ifdef VISP_HAVE_CYCAB
 
 int main()

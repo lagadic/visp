@@ -62,13 +62,13 @@
 
 */
 
-
+#include <signal.h>
+#include <stdlib.h>
 
 #include <visp/vpTime.h>
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-#include <signal.h>
-#include <stdlib.h>
+
 #if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394_2) /*|| defined (VISP_HAVE_DC1394_1)*/ || defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD

@@ -46,13 +46,13 @@
   degrees of freedom).
 */
 
+#include <iostream>
 
 
 #include <visp/vpConfig.h>
 #include <visp/vpViper850.h>
 #include <visp/vpDebug.h>
 
-#include <iostream>
 
 int main()
 {

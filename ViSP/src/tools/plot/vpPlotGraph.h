@@ -45,10 +45,12 @@
 #ifndef vpPlotGraph_H
 #define vpPlotGraph_H
 
-#include <visp/vpColor.h>
-#include <visp/vpImage.h>
+#include <visp/vpConfig.h>
 
 #include <visp/vpPlotCurve.h>
+
+#include <visp/vpColor.h>
+#include <visp/vpImage.h>
 
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRect.h>

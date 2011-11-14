@@ -48,17 +48,19 @@
 #ifndef vpIMAGEIO_H
 #define vpIMAGEIO_H
 
-#include <visp/vpImage.h>
-#include <visp/vpDebug.h>
-#include <visp/vpRGBa.h>
-#include <visp/vpImageConvert.h>
-
 #include <stdio.h>
 #include <iostream>
-
 #ifdef WIN32
 #  include <windows.h>
 #endif
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
+
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
+
+#include <visp/vpImageConvert.h>
 
 #if defined(VISP_HAVE_LIBJPEG)
 #include <jpeglib.h>
