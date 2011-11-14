@@ -44,9 +44,7 @@
 */
 #ifndef VPCOMMONMOMENTS_H
 #define VPCOMMONMOMENTS_H
-#include <vector>
 
-#include <visp/vpConfig.h>
 #include <visp/vpMomentDatabase.h>
 #include <visp/vpMomentBasic.h>
 #include <visp/vpMomentGravityCenter.h>
@@ -55,6 +53,8 @@
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpMomentCInvariant.h>
 #include <visp/vpMomentAlpha.h>
+
+#include <vector>
 
 class vpMomentObject;
 

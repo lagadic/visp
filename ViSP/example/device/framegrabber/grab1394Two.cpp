@@ -53,15 +53,15 @@
   vp1394TwoGrabber was tested with MF-033C and F-131B Marlin cameras.
 */
 
+
+
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include <list>
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-
 #if defined(VISP_HAVE_DC1394_2)
 
 #include <visp/vp1394TwoGrabber.h>

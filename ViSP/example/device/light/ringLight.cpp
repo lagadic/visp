@@ -45,12 +45,12 @@
   Shows how to activates the ring light.
 */
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #if defined VISP_HAVE_PARPORT
 #include <stdlib.h>
 #include <stdio.h>

@@ -47,7 +47,6 @@
 #ifndef vpVideoWriter_H
 #define vpVideoWriter_H
 
-#include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpFFMPEG.h>
 

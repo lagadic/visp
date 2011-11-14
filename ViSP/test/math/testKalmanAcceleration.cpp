@@ -45,10 +45,10 @@
   \brief Test some vpLinearKalmanFilterInstantiation functionalities
   with constant acceleration state model.
 */
-#include <iostream>
-#include <fstream>
 
 #include <visp/vpLinearKalmanFilterInstantiation.h>
+#include <iostream>
+#include <fstream>
 
 int
 main()

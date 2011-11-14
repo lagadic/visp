@@ -52,13 +52,13 @@
   Example of command line parsing.
 */
 
-#include <stdio.h>
-#include <sstream>
-#include <iomanip>
+
 
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
-
+#include <stdio.h>
+#include <sstream>
+#include <iomanip>
 
 int
 main(int argc, const char ** argv)

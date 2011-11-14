@@ -47,9 +47,10 @@
 #ifndef __FEATUREMOMENT_H__
 #define __FEATUREMOMENT_H__
 
-#include <vector>
 #include <visp/vpConfig.h>
 #include <visp/vpBasicFeature.h>
+#include <vector>
+
 class vpMomentObject;
 class vpMomentDatabase;
 class vpFeatureMomentDatabase;

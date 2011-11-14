@@ -40,7 +40,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpPose.h
   \brief Tools for pose computation (pose from point only).
@@ -52,9 +51,6 @@
 #ifndef vpPOSE_HH
 #define vpPOSE_HH
 
-#include <math.h>
-#include <list>
-
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpHomography.h>
 #include <visp/vpPoint.h>
@@ -62,6 +58,9 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
+
+#include <math.h>
+#include <list>
 
 /*!
   \class vpPose

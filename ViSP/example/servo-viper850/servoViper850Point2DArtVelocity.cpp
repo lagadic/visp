@@ -51,14 +51,14 @@
 
 */
 
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
 
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 

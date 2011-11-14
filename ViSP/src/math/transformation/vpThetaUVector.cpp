@@ -45,11 +45,11 @@
   rotation
 */
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpThetaUVector.h>
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #define vpDEBUG_LEVEL1 0
 
 const double vpThetaUVector::minimum = 0.0001;

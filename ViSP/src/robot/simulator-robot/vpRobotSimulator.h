@@ -46,14 +46,14 @@
   \file vpRobotSimulator.h
   \brief Basic class used to make robot simulators.
 */
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 
 
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #if defined(WIN32)
 #  include <windows.h>
 #elif defined(VISP_HAVE_PTHREAD)

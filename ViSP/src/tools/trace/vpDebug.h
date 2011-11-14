@@ -51,6 +51,7 @@
 #ifndef __VP_DEBUG_HH
 #define __VP_DEBUG_HH
 
+#include <visp/vpConfig.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <iostream>

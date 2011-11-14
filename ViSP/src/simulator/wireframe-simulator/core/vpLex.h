@@ -43,6 +43,7 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
+#include <stdio.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

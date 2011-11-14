@@ -46,10 +46,10 @@
   write the image and the overlayed features in an image on the disk.
 
 */
-#include <stdlib.h>
+
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
-
+#include <stdlib.h>
 #ifdef VISP_HAVE_OPENCV
 
 #include <visp/vpImage.h>

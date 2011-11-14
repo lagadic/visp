@@ -43,13 +43,13 @@
 
 /*!
   \file vpHomography.cpp
-  \brief D�finition de la classe vpHomography. Class that consider
+  \brief Definition de la classe vpHomography. Class that consider
   the particular case of homography
 */
 
+#include <visp/vpHomography.h>
 #include <visp/vpDebug.h>
 #include <visp/vpMatrix.h>
-#include <visp/vpHomography.h>
 
 // Exception
 #include <visp/vpException.h>

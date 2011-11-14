@@ -38,9 +38,6 @@
  * Filip Novotny
  *
  *****************************************************************************/
-
-#include <limits>
-#include <iostream>
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentDatabase.h>
 #include <visp/vpMomentCommon.h>
@@ -49,6 +46,9 @@
 #include <visp/vpServo.h>
 #include <visp/vpDebug.h>
 #include <visp/vpPlane.h>
+
+#include <limits>
+#include <iostream>
 
 //initialize scene in the interface
 void initScene();

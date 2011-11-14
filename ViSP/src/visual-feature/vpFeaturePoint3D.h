@@ -49,7 +49,6 @@
   \brief class that defines the 3D point visual feature.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>

@@ -49,12 +49,9 @@
 #ifndef vpIMAGECONVERT_H
 #define vpIMAGECONVERT_H
 
-
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
 // image
 #include <visp/vpImage.h>
+#include <visp/vpDebug.h>
 // color
 #include <visp/vpRGBa.h>
 

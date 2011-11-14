@@ -39,14 +39,10 @@
  *
  *****************************************************************************/
 
-#include <vector>
-#include <iostream>
-
-#include <visp/vpConfig.h>
+#include <visp/vpPlanarObjectDetector.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
 
-#include <visp/vpPlanarObjectDetector.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpException.h>
 #include <visp/vpImagePoint.h>
@@ -55,6 +51,8 @@
 #include <visp/vpColor.h>
 #include <visp/vpImageTools.h>
 
+#include <vector>
+#include <iostream>
 
 /*!
 

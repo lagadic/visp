@@ -47,9 +47,6 @@
   pour faire du calcul de pose par difference methode
 */
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
 #include <visp/vpPose.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
@@ -58,6 +55,9 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpMath.h>
+
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #define DEBUG_LEVEL1 0
 /*!

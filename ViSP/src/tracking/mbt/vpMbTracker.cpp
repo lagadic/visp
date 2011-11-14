@@ -46,10 +46,8 @@
   \file vpMbTracker.cpp
   \brief Generic model based tracker
 */
-#include <iostream>
-#include <limits>
 
-#include <visp/vpConfig.h>
+
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
 #include <visp/vpColVector.h>
@@ -67,7 +65,8 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpMbTracker.h>
 #include <visp/vpMatrixException.h>
-
+#include <iostream>
+#include <limits>
 #ifdef VISP_HAVE_COIN
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>

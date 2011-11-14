@@ -51,9 +51,9 @@
 #ifndef vpHistogramPeak_h
 #define vpHistogramPeak_h
 
-#include <ostream>
-
 #include <visp/vpConfig.h>
+
+#include <ostream>
 
 /*!
   \class vpHistogramPeak

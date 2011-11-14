@@ -44,7 +44,7 @@
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-#include <algorithm>
+
 
 #include <visp/vpMeTracker.h>
 #include <visp/vpDisplay.h>
@@ -52,7 +52,7 @@
 
 #include <visp/vpTrackingException.h>
 #include <visp/vpDebug.h>
-
+#include <algorithm>
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 

@@ -39,9 +39,7 @@
  *
  *****************************************************************************/
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-#include <string>
+
 
 #include <visp/vpSimulatorViper850.h>
 #include <visp/vpTime.h>
@@ -49,7 +47,9 @@
 #include <visp/vpPoint.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpIoTools.h>
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+#include <string>
 #if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;

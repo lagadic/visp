@@ -47,8 +47,6 @@
 
 */
 
-
-#include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 #include <visp/vpViper850.h>
 #include <visp/vpMath.h>

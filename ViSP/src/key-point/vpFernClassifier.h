@@ -43,9 +43,9 @@
 #ifndef vpFernClassifier_H
 #define vpFernClassifier_H
 
-#include <string>
-
 #include <visp/vpConfig.h>
+
+#include <string>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1

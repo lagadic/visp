@@ -54,11 +54,10 @@
    \brief error that can be emited by the vpDisplay class and its derivates
  */
 /* Classes standards. */
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
 #include <visp/vpConfig.h>
 #include <visp/vpException.h>
-
+#include <iostream>                /* Classe std::ostream.    */
+#include <string>                  /* Classe string.     */
 
 
 /* ------------------------------------------------------------------------- */

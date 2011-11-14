@@ -41,10 +41,10 @@
  *****************************************************************************/
 
 
-#include <iostream>
+
 #include <visp/vpTime.h>
 #include <visp/vpDebug.h>
-
+#include <iostream>
 
 
 /*!

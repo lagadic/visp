@@ -41,17 +41,19 @@
 #ifndef vpSickLDMRS_h
 #define vpSickLDMRS_h
 
+#include <visp/vpConfig.h>
+
 #ifdef UNIX
 
 #include <arpa/inet.h>
 #include <iostream>
 #include <vector>
 
-#include "visp/vpConfig.h"
-#include "visp/vpScanPoint.h"
-#include "visp/vpLaserScan.h"
-#include "visp/vpLaserScanner.h"
-#include "visp/vpColVector.h"
+
+#include <visp/vpScanPoint.h>
+#include <visp/vpLaserScan.h>
+#include <visp/vpLaserScanner.h>
+#include <visp/vpColVector.h>
 
 /*!
 

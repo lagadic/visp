@@ -46,14 +46,14 @@
   degrees of freedom).
 */
 
-#include <iostream>
+
 
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobotViper850.h>
 #include <visp/vpDebug.h>
 #include <visp/vpCameraParameters.h>
-
+#include <iostream>
 #ifdef VISP_HAVE_VIPER850
 
 int main()

@@ -46,12 +46,8 @@
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#include <limits>
-#include <string>
-#include <sstream>
-#include <float.h>
 
-#include <visp/vpConfig.h>
+
 #include <visp/vpDebug.h>
 #include <visp/vpPose.h>
 #include <visp/vpExponentialMap.h>
@@ -69,6 +65,10 @@
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
 
+#include <limits>
+#include <string>
+#include <sstream>
+#include <float.h>
 
 /*!
   Basic constructor

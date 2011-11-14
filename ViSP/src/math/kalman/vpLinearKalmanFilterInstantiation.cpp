@@ -44,12 +44,12 @@
   \brief Implementation of some specific Kalman filters.
 */
 
-#include <math.h>
-#include <stdlib.h>
-
 #include <visp/vpLinearKalmanFilterInstantiation.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
+
+#include <math.h>
+#include <stdlib.h>
 
 /*!
 

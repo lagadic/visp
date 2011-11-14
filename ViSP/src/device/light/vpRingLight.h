@@ -48,7 +48,7 @@
   \brief Ring light management under unix.
 */
 
-#include <iostream>
+
 
 #include <visp/vpConfig.h>
 
@@ -56,7 +56,7 @@
 
 #  include <visp/vpRingLight.h>
 #  include <visp/vpParallelPort.h>
-
+#include <iostream>
 /*!
 
   \class vpRingLight

@@ -44,12 +44,12 @@
 */
 #ifndef __MOMENTOBJECT_H__
 #define __MOMENTOBJECT_H__
-#include <utility>
-#include <vector>
-#include <visp/vpConfig.h>
+
 #include <visp/vpImage.h>
 #include <visp/vpMoment.h>
 #include <visp/vpPoint.h>
+
+#include <utility>
 
 class vpCameraParameters;
 

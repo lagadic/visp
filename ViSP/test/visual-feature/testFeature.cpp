@@ -39,8 +39,6 @@
  *
  *****************************************************************************/
 
-#include <iostream>
-
 
 #include <visp/vpColVector.h>
 #include <visp/vpTranslationVector.h>
@@ -53,6 +51,8 @@
 #include <visp/vpFeatureThetaU.h>
 #include <visp/vpDot2.h>
 #include <visp/vpCameraParameters.h>
+
+#include <iostream>
 
 /*!
 

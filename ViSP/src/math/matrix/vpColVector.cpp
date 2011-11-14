@@ -46,6 +46,10 @@
   as a set of operations on these vectors
 */
 
+#include <visp/vpColVector.h>
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+#include <visp/vpDebug.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -54,12 +58,6 @@
 #include <limits>   // numeric_limits
 #include <string.h> //EM gcc 4.3
 #include <math.h> //EM gcc 4.3
-
-#include <visp/vpColVector.h>
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-#include <visp/vpDebug.h>
-
 
   //! operator addition of two vectors
 vpColVector

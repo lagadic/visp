@@ -46,13 +46,12 @@
   degrees of freedom).
 */
 
-#include <iostream>
-
-
-#include <visp/vpConfig.h>
 #include <visp/vpRobotAfma6.h>
 #include <visp/vpDebug.h>
 #include <visp/vpCameraParameters.h>
+
+#include <iostream>
+
 
 #ifdef VISP_HAVE_AFMA6
 

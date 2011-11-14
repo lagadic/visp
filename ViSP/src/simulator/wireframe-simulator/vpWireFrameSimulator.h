@@ -47,7 +47,7 @@
   \file vpWireFrameSimulator.h
   \brief Implementation of a wire frame simulator.
 */
-
+#include <visp/vpConfig.h>
 #include <stdio.h>
 #include <iostream>
 #include <cmath>    // std::fabs

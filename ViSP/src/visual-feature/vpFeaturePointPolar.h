@@ -48,7 +48,6 @@
   \brief Class that defines a 2D point visual feature with polar coordinates.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>

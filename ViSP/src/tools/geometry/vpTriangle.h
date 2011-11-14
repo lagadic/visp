@@ -52,7 +52,6 @@
   By default the three coordinates in the \f$ (i,j) \f$ frame (see vpImagePoint class documentation for more details about the frame.) are \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpMatrix.h>
 
