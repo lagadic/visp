@@ -9,6 +9,12 @@
 ViSP 2.6.2 (under development)
   - Bug fixed
      - [13536] Division by zero in vpMeLine
+     - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const 
+	       is missing in vpMbtDistanceLine.h
+     - [13575] ViSP sporadic segmentation fault in vpMeLine
+     - [13625] trackMeNurbs example produce an assertion failed with MSVC: 
+               "list iterator not incrementable"
+     - [13626] testXmlParser produre a Debug assertion failed with MSVC 
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
