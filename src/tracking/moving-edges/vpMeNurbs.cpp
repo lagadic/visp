@@ -976,7 +976,8 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 //    list.next();
     ++it;
     itNext=it;
-    ++itNext;
+    if ( itNext !=list.end() )
+      ++itNext;
   }
   me->range=range_tmp;
   if (iP!=NULL) delete[] iP;
