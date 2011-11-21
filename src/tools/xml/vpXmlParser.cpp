@@ -128,7 +128,7 @@ vpXmlParser::xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node)
   }
   char* dataCh = (char*)xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
   std::string dataStr = dataCh;
-  free(dataCh);
+  xmlFree(dataCh);
   return dataStr;
 }
 
