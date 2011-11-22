@@ -52,7 +52,6 @@
 #ifndef vpCAMERA_H
 #define vpCAMERA_H
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 
 /*!

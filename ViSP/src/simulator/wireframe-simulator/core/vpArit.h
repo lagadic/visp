@@ -38,8 +38,11 @@
  * Jean-Luc CORRE
  *
  *****************************************************************************/
+#ifndef vpArit_h
+#define vpArit_h
 
 #include <visp/vpConfig.h>
+#include <stdio.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -173,38 +176,39 @@ typedef	struct	{
 					IDENTITY_SCALE,\
 					IDENTITY_TRANSLATE	}
 
-extern	void	fprintf_matrix ();
-extern	void	ident_matrix ();
-extern	void	premult_matrix ();
-extern	void	premult3_matrix ();
-extern	void	prescale_matrix ();
-extern	void	pretrans_matrix ();
-extern	void	postleft_matrix (Matrix m, char axis);
-extern	void	postmult_matrix (Matrix a, Matrix b);
-extern	void	postmult3_matrix ();
-extern	void	postscale_matrix ();
-extern	void	posttrans_matrix ();
-extern	void	transpose_matrix ();
+void	fprintf_matrix (FILE *fp, Matrix m);
+void	ident_matrix (Matrix m);
+void	premult_matrix (Matrix a, Matrix b);
+void	premult3_matrix (Matrix a, Matrix b);
+void	prescale_matrix (Matrix m, Vector *vp);
+void	pretrans_matrix (Matrix m, Vector *vp);
+void	postleft_matrix (Matrix m, char axis);
+void	postmult_matrix (Matrix a, Matrix b);
+void	postmult3_matrix (Matrix a, Matrix b);
+void	postscale_matrix (Matrix m, Vector *vp);
+void	posttrans_matrix (Matrix m, Vector *vp);
+void	transpose_matrix (Matrix m);
 
-extern	float	cosin_to_angle (float ca, float sa);
-extern	void	cosin_lut ();
-extern	float	norm_vector ();
-extern	void	point_matrix ();
-extern	void	plane_norme ();
-extern	void	point_3D_3D ();
-extern	void	point_3D_4D (Point3f *p3, int size, Matrix m, Point4f *p4);
-extern	void	rotate_vector (Vector *vp, float a, Vector *axis);
-extern	void	upright_vector ();
+float	cosin_to_angle (float ca, float sa);
+float	norm_vector (Vector *vp);
+void	point_matrix (Point4f *p4, Point3f *p3, Matrix m);
+void	plane_norme (Vector *np, Point3f *ap, Point3f *bp, Point3f *cp);
+void	point_3D_3D (Point3f *ip, int size, Matrix m, Point3f *op);
+void	point_3D_4D (Point3f *p3, int size, Matrix m, Point4f *p4);
+void	rotate_vector (Vector *vp, float a, Vector *axis);
+void	upright_vector (Vector *vp, Vector *up);
 
-extern	void	Matrix_to_Position ();
-extern	void	Matrix_to_Rotate ();
-extern	void	Position_to_Matrix ();
-extern	void	Rotate_to_Matrix ();
-extern	void	Rotaxis_to_Matrix (float a, Vector *axis, Matrix m);
-extern	void	Rotrans_to_Matrix ();
-extern	void	Scale_to_Matrix ();
-extern	void	Translate_to_Matrix ();
+void	Matrix_to_Position (Matrix m, AritPosition *pp);
+void	Matrix_to_Rotate (Matrix m, Vector *vp);
+void	Position_to_Matrix (AritPosition *pp, Matrix m);
+void	Rotate_to_Matrix (Vector *vp, Matrix m);
+void	Rotaxis_to_Matrix (float a, Vector *axis, Matrix m);
+void	Rotrans_to_Matrix (Vector *rp, Vector *tp, Matrix m);
+void	Scale_to_Matrix (Vector *vp, Matrix m);
+void	Translate_to_Matrix (Vector *vp, Matrix m);
 
-extern void fscanf_Point3f (Point3f *pp);
-extern void fscanf_Vector (Vector *vp);
+void fscanf_Point3f (Point3f *pp);
+void fscanf_Vector (Vector *vp);
+
+#endif
 #endif

@@ -41,17 +41,20 @@
  *
  *****************************************************************************/
 
+#ifndef vpVwstack_H
+#define vpVwstack_H
+
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern	void		fprintf_vwstack ();
-extern	View_parameters	*get_vwstack ();
-extern	void		load_vwstack ();
-extern	void		pop_vwstack ();
-extern	void		push_vwstack ();
-extern	void		swap_vwstack ();
-extern	void		add_vwstack (const char* path, ...);
+void		fprintf_vwstack (FILE *fp, char *argv);
+extern	View_parameters	*get_vwstack (void);
+void		load_vwstack (View_parameters *vp);
+void		pop_vwstack (void);
+void		push_vwstack (void);
+void		swap_vwstack (void);
+void		add_vwstack (const char* path, ...);
 
 #endif
-
+#endif

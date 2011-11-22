@@ -44,12 +44,12 @@
   \brief Implementation of some specific Kalman filters.
 */
 
-#include <math.h>
-#include <stdlib.h>
-
 #include <visp/vpLinearKalmanFilterInstantiation.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
+
+#include <math.h>
+#include <stdlib.h>
 
 /*!
 
@@ -157,7 +157,7 @@ int main()
 
   // Does the filtering
   vpColVector vm(2); // Measured velocities
-  while (1) {
+  for ( ; ; ) {
     // Get the two dimentional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;
@@ -488,7 +488,7 @@ int main()
 
   // Does the filtering
   vpColVector vm(2); // Measured velocities
-  while (1) {
+  for ( ; ; ) {
     // Get the two dimentional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;
@@ -710,7 +710,7 @@ int main()
 
   // Does the filtering
   vpColVector vm(2); // Measured velocities
-  while (1) {
+  for ( ; ; ) {
     // Get the two dimentional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;

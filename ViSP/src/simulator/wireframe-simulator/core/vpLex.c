@@ -42,6 +42,12 @@
  *****************************************************************************/
 
 
+
+
+#include	<visp/vpMy.h>
+#include	<visp/vpToken.h>
+#include	<visp/vpKeyword.h>
+
 #include	<ctype.h>
 #include	<math.h>
 #include	<stdio.h>
@@ -54,18 +60,11 @@
 
 #include	<stdlib.h>
 #include	<string.h>
-
-#include	<visp/vpMy.h>
-#include	<visp/vpToken.h>
-#include	<visp/vpKeyword.h>
-
-#include <visp/vpConfig.h>
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 
-static	void	count ();
-static	void	next_source ();
+static	void	count (void);
+static	void	next_source (void);
 
 void lexerr (const char* path, ...);
 
@@ -168,7 +167,7 @@ static	Byte	*scantbl;	/* caracteres suivants des terminaux	*/
  * La procedure "open_lex" alloue et initialise les variables utilisees
  * par l'analyseur lexical "lex".
  */
-void open_lex ()
+void open_lex (void)
 {
 	static	 char	proc_name[] = "open_lex";
 
@@ -232,7 +231,7 @@ void open_lex ()
  * La procedure "close_lex" libere les variables utilisees
  * par l'analyseur lexical "lex".
  */
-void close_lex ()
+void close_lex (void)
 {
 	free ((char *) (chtbl   - 2));	/* voir "open_lex" pour "- 2"	*/
 	free ((char *) (scantbl - 2));
@@ -254,7 +253,7 @@ void close_lex ()
  * Sortie :
  *		Code du symbole terminale analyse.
  */
-int lex ()
+int lex (void)
 {
 lex_loop :
 
@@ -633,7 +632,7 @@ static	char	*topbuf;	/* sommet du buffer d'entree du fichier	*/
 /*
  * La procedure "unlex" recule la tete de lecture devant le dernier jeton.
  */
-void unlex ()
+void unlex (void)
 {
 	mysptr = mytext;
 }
@@ -669,7 +668,7 @@ void open_source (FILE *fd, const char *str)
  * La procedure "close_source" libere les variables utilisees pour la gestion
  * des entrees du programme source.
  */
-void close_source ()
+void close_source (void)
 {
 	free ((char *) source);
 	free ((char *) botbuf);
@@ -678,7 +677,7 @@ void close_source ()
 /*
  * La procedure "next_source" remplit le buffer courant.
  */
-static	void	next_source ()
+static	void	next_source (void)
 {
 	int	size;
 	char	*bot = buf;
@@ -729,7 +728,7 @@ static	int	size_stack = 0;
  * La procedure "count" calcule la distance en espaces entre
  * le premier caractere "*mytext" et le caractere de debut de ligne "*myline".
  */
-static	void	count ()
+static	void	count (void)
 {
 	char	*str;
 
@@ -784,7 +783,7 @@ void lexerr (const char* path, ...)
 /*
  * La procedure "poperr" depile le message d'erreur du sommet de pile.
  */
-void poperr ()
+void poperr (void)
 {
 	static	char	proc_name[] = "poperr";
 

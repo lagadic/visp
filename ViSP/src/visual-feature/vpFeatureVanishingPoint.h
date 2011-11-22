@@ -50,7 +50,6 @@
   point visual feature (Z coordinate in 3D space is infinity)
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>

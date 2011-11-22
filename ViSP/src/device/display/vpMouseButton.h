@@ -43,7 +43,6 @@
 #ifndef vpMouseButton_h
 #define vpMouseButton_h
 
-
 #include <visp/vpConfig.h>
 
 /*!

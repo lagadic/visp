@@ -65,9 +65,6 @@
 class VISP_EXPORT vpSubColVector : public vpColVector {
 
   private :
-      
-      //! Resize method do nothing
-      void resize(const unsigned int /* r */ , const unsigned int /* c */ ){}
       //!Copy constructor
       vpSubColVector(const vpSubColVector& /* m */);      
        

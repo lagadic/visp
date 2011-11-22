@@ -45,18 +45,18 @@
 */
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpDebug.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 
 #include <visp/vpRobust.h>
-
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 #define vpITMAX 100
 #define vpEPS 3.0e-7
@@ -406,9 +406,9 @@ vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
   unsigned int p = 6; //Number of parameters to be estimated.
   unsigned int n = x.getRows();
   double sigma2=0;
-  long double Expectation=0;
-  long double Sum_chi=0;
-  long double chiTmp =0;
+  /* long */ double Expectation=0;
+  /* long */ double Sum_chi=0;
+  /* long*/  double chiTmp =0;
 
   for(unsigned int i=0; i<n; i++)
   {
@@ -456,9 +456,9 @@ vpRobust::simultscale(vpColVector &x)
   unsigned int p = 6; //Number of parameters to be estimated.
   unsigned int n = x.getRows();
   double sigma2=0;
-  long double Expectation=0;
-  long double Sum_chi=0;
-  long double chiTmp =0;
+  /* long */ double Expectation=0;
+  /* long */ double Sum_chi=0;
+  /* long */ double chiTmp =0;
 
   for(unsigned int i=0; i<n; i++)
   {

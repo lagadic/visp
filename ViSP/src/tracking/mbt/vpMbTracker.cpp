@@ -46,10 +46,8 @@
   \file vpMbTracker.cpp
   \brief Generic model based tracker
 */
-#include <iostream>
-#include <limits>
 
-#include <visp/vpConfig.h>
+
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
 #include <visp/vpColVector.h>
@@ -67,7 +65,8 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpMbTracker.h>
 #include <visp/vpMatrixException.h>
-
+#include <iostream>
+#include <limits>
 #ifdef VISP_HAVE_COIN
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>
@@ -198,7 +197,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     // X Y Z
 
     double X,Y,Z ;
-    int i ;
+    
     sprintf(s,"%s.init", _initFile.c_str());
     std::cout << "filename " << s << std::endl ;
     finit.open(s,std::ios::in) ;
@@ -230,11 +229,11 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     }
     catch(...){}
 
-    int n ;
+    unsigned int n ;
     finit >> n ;
     std::cout << "number of points  " << n << std::endl ;
     vpPoint *P = new vpPoint [n]  ;
-    for (i=0 ; i < n ; i++){
+    for (unsigned int i=0 ; i < n ; i++){
       finit >> X ;
       finit >> Y ;
       finit >> Z ;
@@ -248,7 +247,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     while(!isWellInit)
     {
 ////////////////////////////////
-      for(int i=0 ; i< n ; i++)
+      for(unsigned int i=0 ; i< n ; i++)
       {
         std::cout << "Click on point " << i+1 << std::endl ;
         double x=0,y=0;

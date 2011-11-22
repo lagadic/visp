@@ -186,15 +186,15 @@ vpD3DRenderer::~vpD3DRenderer()
   \param n Number whose nearest superior power of 2 we want.
   \return Nearest power of 2 superior to n.
 */
-int vpD3DRenderer::supPowerOf2(int n)
+unsigned int vpD3DRenderer::supPowerOf2(unsigned int n)
 {
-  int i=0;
+  unsigned int i=0;
   while(n>1)
     {
       n>>=1;
       i++;
     }
-  return 1<<(i+1);
+  return static_cast<unsigned int>(1<<(i+1));
 }
 
 /*!
@@ -373,7 +373,8 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
 
       RECT r;
       r.top=0; r.left=0;
-      r.bottom=nbRows; r.right=nbCols;
+      r.bottom=static_cast<signed long>(nbRows);
+      r.right=static_cast<signed long>(nbCols);
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -383,7 +384,7 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa>& im)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>( d3dLRect.Pitch );
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
@@ -419,7 +420,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, 
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
@@ -445,8 +446,10 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char>& im)
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top=0; r.left=0;
-      r.bottom=nbRows; r.right=nbCols;
+      r.top    = 0;
+      r.left   = 0;
+      r.bottom = static_cast<LONG>(nbRows);
+      r.right  = static_cast<LONG>(nbCols);
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -456,7 +459,7 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char>& im)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
@@ -493,7 +496,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoi
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>( d3dLRect.Pitch );
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this texture with the image data (converted to bgra)
@@ -521,8 +524,10 @@ bool vpD3DRenderer::render()
 
   //Texture rectangle to display
   RECT r;
-  r.top=0; r.left=0;
-  r.bottom=nbRows; r.right=nbCols;
+  r.top    = 0;
+  r.left   = 0;
+  r.bottom = static_cast<LONG>(nbRows);
+  r.right  = static_cast<LONG>(nbCols);
 
   //Updates the video memory texture with the content of the system
   //memory texture
@@ -582,7 +587,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint iP,
 	    }
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>( d3dLRect.Pitch );
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //the coordinates are in the locked area base
@@ -630,10 +635,10 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
       //create the pen
       HPEN hPen;
       if (color.id < vpColor::id_unknown)
-		hPen = CreatePen(style, thickness, colorsGDI[color.id]);
+		hPen = CreatePen(style, static_cast<int>(thickness), colorsGDI[color.id]);
       else {
 		COLORREF gdicolor = RGB(color.R, color.G, color.B);
-		hPen = CreatePen(style, thickness, gdicolor);
+		hPen = CreatePen(style, static_cast<int>(thickness), gdicolor);
       }
 
       //we don't use the bkColor
@@ -689,8 +694,8 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
       r.bottom=(LONG)((topLeft.get_i()+height < (int)nbRows) ? topLeft.get_i()+height : nbRows-1);
       r.right=(LONG)((topLeft.get_j()+width < (int)nbCols) ? topLeft.get_j()+width : nbCols-1);
 
-      unsigned int rectW = r.right - r.left;
-      unsigned int rectH = r.bottom - r.top;
+      /* unsigned */ int rectW = r.right - r.left;
+      /* unsigned */ int rectH = r.bottom - r.top;
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -700,32 +705,32 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft,
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      unsigned int x= 0;
-      unsigned int y= 0;
+      /* unsigned */ int x= 0;
+      /* unsigned */ int y= 0;
 
 	  if(fill == false)
 	  {
         //draws the top horizontal line
         if(topLeft.get_i()>=0)
-          for(x; x<rectW ; x++)
+          for(; x<rectW ; x++)
 	         setBufferPixel(buf, pitch, x, y, color);
 
         //draws the right vertical line
         if(topLeft.get_j()+width < nbCols)   
-          for(y; y<rectH ; y++)
+          for(; y<rectH ; y++)
 	         setBufferPixel(buf, pitch, x, y, color);
 
         //draws the bottom horizontal line
         if(topLeft.get_i()+height < nbRows)   
-          for(x; x>0 ; x--)
+          for(; x>0 ; x--)
 	        setBufferPixel(buf, pitch, x, y, color);
 
         //draws the left vertical line
         if(topLeft.get_j()>=0)
-          for(y; y>0 ; y--)
+          for(; y>0 ; y--)
 	        setBufferPixel(buf, pitch, x, y, color);
 	  }
 
@@ -759,10 +764,10 @@ void vpD3DRenderer::clear(const vpColor &color)
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top = 0;
-      r.left = 0;
-      r.bottom = nbRows;
-      r.right = nbCols;
+      r.top    = 0;
+      r.left   = 0;
+      r.bottom = static_cast<LONG>( nbRows );
+      r.right  = static_cast<LONG>( nbCols );
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -772,20 +777,20 @@ void vpD3DRenderer::clear(const vpColor &color)
 		}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
-      long * buf = (long *) d3dLRect.pBits;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
+      long * buf = (long *) ( d3dLRect.pBits );
 
-      long c;
+      unsigned long c;
       if (color.id < vpColor::id_unknown)
-		c = colors[color.id];
+        c = colors[color.id];
       else {
-		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
+        c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
       }
       long * end = (long*)((long)buf + (pitch * nbRows));
 
       //fills the whole image
       while (buf < end)
-		*buf++ = c;
+        *buf++ = static_cast<long>( c );
 
       //unlocks the texture
       if( pd3dText->UnlockRect(0) != D3D_OK)
@@ -834,7 +839,7 @@ void vpD3DRenderer::subDrawCircle(int i, int j,
   \param color The circle's color
 */
 void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       const vpColor &color, bool /*fill*/, unsigned char /*thickness*/)
+			       const vpColor &color, bool /*fill*/, unsigned int /*thickness*/)
 {
   if(radius<1 || vpMath::round(center.get_i()+radius)<0 || vpMath::round(center.get_i()-radius) > (int)nbRows || vpMath::round(center.get_j()+radius)<0 || vpMath::round(center.get_j()-radius) > (int)nbCols)
     return;
@@ -845,18 +850,18 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
       D3DLOCKED_RECT d3dLRect;
 
       RECT rec;
-
-      int rleft = (vpMath::round(center.get_j()-radius) > 0) ? vpMath::round(center.get_j())-radius : 0;
-      int rtop = (vpMath::round(center.get_i()-radius) > 0) ? vpMath::round(center.get_i())-radius : 0;
+      int radius_ = static_cast<int>( radius );
+      int rleft = (vpMath::round(center.get_j()-radius_) > 0) ? vpMath::round(center.get_j())-radius_ : 0;
+      int rtop = (vpMath::round(center.get_i()-radius_) > 0) ? vpMath::round(center.get_i())-radius_ : 0;
 
       rec.top= rtop;
       rec.left= rleft;
-      rec.bottom=(LONG)((vpMath::round(center.get_i()+radius) < (int)nbRows) ? center.get_i()+radius : nbRows-1);
-      rec.right=(LONG)((vpMath::round(center.get_j()+radius) < (int)nbCols) ? center.get_j()+radius : nbCols-1);
+      rec.bottom=(LONG)((vpMath::round(center.get_i()+radius_) < (int)nbRows) ? center.get_i()+radius_ : nbRows-1);
+      rec.right=(LONG)((vpMath::round(center.get_j()+radius_) < (int)nbCols) ? center.get_j()+radius_ : nbCols-1);
 
       //used as maxX and maxY for setBufferPixel
-      int rectW = rec.right - rleft;
-      int rectH = rec.bottom - rtop;
+      unsigned int rectW = static_cast<unsigned int> ( rec.right - rleft );
+      unsigned int rectH = static_cast<unsigned int> ( rec.bottom - rtop );
 
       //locks the texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &rec, 0)!= D3D_OK)
@@ -866,14 +871,14 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
 	    }
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       // Bresenham 's circle algorithm
 
       int x = 0;
-      int y = radius;
-      int p = (3 - (radius<<1));
+      int y = static_cast<int>( radius );
+      int p = (3 - (y<<1));
 
       vpImagePoint ip;
       ip.set_i(center.get_i()-rtop);
@@ -976,10 +981,11 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 
       RECT rec;
       thickness = (thickness<size)? thickness : size;
+      int half_size_ = static_cast<int>( size/2 );
       //if j-size/2 is inferior to 0, use 0
-      int rleft = ( (vpMath::round(ip.get_j()) - (int)(size/2)) < 0 ) ? 0 : vpMath::round(ip.get_j()) - (size/2);
+      int rleft = ( (vpMath::round(ip.get_j()) - half_size_) < 0 ) ? 0 : vpMath::round(ip.get_j()) - half_size_;
       //if j-size/2 is inferior to 0, use 0
-      int rtop  = ( (vpMath::round(ip.get_i()) - (int)(size/2)) < 0 ) ? 0 : vpMath::round(ip.get_i()) - (size/2);
+      int rtop  = ( (vpMath::round(ip.get_i()) - half_size_) < 0 ) ? 0 : vpMath::round(ip.get_i()) - half_size_;
 
       rec.top   = rtop;
       rec.left  = rleft;
@@ -994,23 +1000,24 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
       }
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
-      unsigned int x;         //xpos
+      /* unsigned */ int x;         //xpos
 
       //y-coordinate of the line in the locked rectangle base
-      unsigned int y =( vpMath::round(ip.get_i()) < (int)(size/2) ) ? vpMath::round(ip.get_i()) : (size/2);
 
-      int cpt = 0;   //number of lines
-      int re = thickness;    //remaining "width"
+      /* unsigned */ int y =( vpMath::round(ip.get_i()) < half_size_ ) ? vpMath::round(ip.get_i()) : half_size_;
+
+      /* unsigned */ int cpt = 0;   //number of lines
+      unsigned int re = thickness;    //remaining "width"
 
       //horizontal lines
       //stops when there is enough line for e
       while(re!=0)
       {
 	      //draws a line
-	      for(x=0; x<(unsigned int)(rec.right - rec.left); x++)
+	      for(x=0; x<(rec.right - rec.left); x++)
 	        setBufferPixel(buf, pitch, x, y, color);
 
 	      re--;
@@ -1018,20 +1025,20 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
 
 	      //write alternatively a line at the top and a line at the bottom
 	      //eg : y=4 -> y=5 -> y=3 -> y=6
-	      y += ( (re&1) != 0) ? cpt : -cpt;
+	      y += ( (re&1) != 0u) ? cpt : -cpt;
       }
 
       cpt = 0;
       re = thickness;
 
       //x-coordinate of the line in the locked rectangle base
-      x =( vpMath::round(ip.get_j()) < (int)(size/2) ) ?	vpMath::round(ip.get_j()) : size/2;
+      x = ( vpMath::round(ip.get_j()) < half_size_ ) ?	vpMath::round(ip.get_j()) : half_size_;
 
       //vertical lines
       while(re!=0)
       {
 	      //draws a vertical line
-	      for(y=0; y<(unsigned int)(rec.bottom - rec.top); y++)
+	      for(y=0; y<rec.bottom - rec.top; y++)
 	        setBufferPixel(buf, pitch, x, y, color);
 
 	      re--;
@@ -1063,7 +1070,7 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
   double a = ip2.get_i() - ip1.get_i();
   double b = ip2.get_j() - ip1.get_j();
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
-  int _h = h;
+  int _h = static_cast<int>( h );
 
   //Will contain the texture's surface drawing context
   HDC hDCMem;
@@ -1078,10 +1085,10 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
   //create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen = CreatePen(PS_SOLID, thickness, colorsGDI[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), colorsGDI[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
-    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
   }
 
   //select the pen
@@ -1177,8 +1184,10 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
       D3DLOCKED_RECT d3dLRect;
 
       RECT r;
-      r.top=0; r.left=0;
-      r.bottom=nbRows; r.right=nbCols;
+      r.top    = 0;
+      r.left   = 0;
+      r.bottom = static_cast<LONG>( nbRows );
+      r.right  = static_cast<LONG>( nbCols );
 
       //locks the whole texture to directly access it
       if(pd3dText->LockRect(0, &d3dLRect, &r, 0)!= D3D_OK)
@@ -1188,7 +1197,7 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 	}
 
       //gets the buffer and pitch of the texture
-      unsigned int pitch = d3dLRect.Pitch;
+      unsigned int pitch = static_cast<unsigned int>(d3dLRect.Pitch);
       unsigned char * buf = (unsigned char *) d3dLRect.pBits;
 
       //fills this image with the texture's data

@@ -371,6 +371,9 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method,
 	      calibLagrange(cam, cMo);
       }
       break;
+    case CALIB_VIRTUAL_VS:
+    case CALIB_VIRTUAL_VS_DIST:
+    case CALIB_LAGRANGE_VIRTUAL_VS_DIST:
     default:
       break;
     }
@@ -386,6 +389,7 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method,
         calibVVS(cam, cMo, verbose);
       }
       break ;
+    case CALIB_LAGRANGE:
     default:
       break;
     }
@@ -409,6 +413,9 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method,
         calibVVSWithDistortion(cam, cMo, verbose);
       }
       break ;
+    case CALIB_LAGRANGE:
+    case CALIB_VIRTUAL_VS:
+    case CALIB_LAGRANGE_VIRTUAL_VS:
     default:
       break;
     }

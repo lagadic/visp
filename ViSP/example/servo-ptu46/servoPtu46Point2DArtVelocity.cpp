@@ -61,14 +61,14 @@
   point.
 
 */
-
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
 #ifdef UNIX
 #  include <unistd.h>
 #endif
 #include <signal.h>
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
+
 
 #if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394) )
 
@@ -241,7 +241,7 @@ main()
 #ifdef VISP_HAVE_PTHREAD
     while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
 #else
-      while(1)
+      for ( ; ; )
 #endif
 	{
 	  std::cout << "---------------------------------------------" << iter <<std::endl ;

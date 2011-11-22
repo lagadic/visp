@@ -206,8 +206,8 @@ public:
   vpXmlParser();
   vpXmlParser(const vpXmlParser& _twin);
   virtual ~vpXmlParser();
-  virtual void parse(const std::string& filename);
-  virtual void save(const std::string& filename, const bool append=false);
+  /* virtual */ void parse(const std::string& filename);
+  /* virtual */ void save(const std::string& filename, const bool append=false);
 
   /*!
     Set the map describing the data to parse. This map stores the name of each 

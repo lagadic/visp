@@ -201,7 +201,7 @@ vpDot::setGrayLevelOut()
       throw(vpTrackingException(vpTrackingException::initializationError,
 				"Unable to choose a good \"out\" level")) ;
     }
-    gray_level_out = gray_level_max + 1;
+    gray_level_out = static_cast<unsigned char>(gray_level_max + 1u);
   }
 }
 

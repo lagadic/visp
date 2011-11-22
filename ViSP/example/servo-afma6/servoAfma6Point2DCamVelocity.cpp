@@ -63,11 +63,11 @@
 
 */
 
-#include <stdlib.h>
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-
+#include <stdlib.h>
 #if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>
@@ -184,7 +184,7 @@ main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    while(1) {
+    for ( ; ; ) {
       // Acquire a new image from the camera
       g.acquire(I) ;
 

@@ -1655,7 +1655,7 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
-  return false;
+  //return false; // Never reached after throw()
 }
 /*!
 
@@ -1702,7 +1702,7 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
-  return false;
+  //return false; // Never reached after throw()
 }
 
 /*!
@@ -1774,7 +1774,7 @@ vpDisplayOpenCV::getPointerPosition ( vpImagePoint &ip)
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV not initialized")) ;
   }
-  return false;
+  //return false; // Never reached after throw()
 }
 
 #endif

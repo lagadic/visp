@@ -48,7 +48,6 @@
   \brief Class that defines a 2D point visual feature with polar coordinates.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>
@@ -203,7 +202,7 @@ int main()
     task.addFeature(p[i], pd[i]);
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // ... cMo need here to be estimated from for example a pose estimation.
     // Computes the point coordinates in the camera frame and its 2D
     // coordinates in the image plane

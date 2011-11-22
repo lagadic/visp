@@ -49,7 +49,6 @@
 #ifndef CROBUST_HH
 #define CROBUST_HH
 
-#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 

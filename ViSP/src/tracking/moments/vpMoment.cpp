@@ -44,11 +44,11 @@
   \brief Base class for all 2D moments.
 */
 
-#include <cstring>
+
 #include <visp/vpMomentObject.h>
 #include <visp/vpMoment.h>
 #include <visp/vpMomentDatabase.h>
-
+#include <cstring>
 /*!
   Default constructor
 */

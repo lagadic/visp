@@ -244,7 +244,7 @@ vpWin32Window::~vpWin32Window()
   \param h Initial window's height
 
 */
-void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int h)
+void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned int w, unsigned int h)
 {
   //the window's style
   DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;
@@ -252,15 +252,15 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int
 
   RECT rect;
   rect.left=0;
-  rect.right=w;
+  rect.right=static_cast<int>(w);
   rect.top=0;
-  rect.bottom=h;
+  rect.bottom=static_cast<int>(h);
 
   AdjustWindowRectEx(&rect, style, false, 0);
 
   //the window's required dimensions to have a client area of w*h
-  int windowW = rect.right - rect.left - 4;
-  int windowH = rect.bottom - rect.top - 4;
+  //int windowW = rect.right - rect.left - 4;
+  //int windowH = rect.bottom - rect.top - 4;
 
   //now we register the window's class
   WNDCLASSEX wcex;
@@ -283,7 +283,7 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, int w, int
 
   //creates the window
   hWnd = CreateWindowEx(WS_EX_APPWINDOW,g_szClassName, title, style,
-                      posx, posy, w, h, NULL, NULL, hInst, NULL);
+                      posx, posy, static_cast<int>(w), static_cast<int>(h), NULL, NULL, hInst, NULL);
   if (hWnd == NULL)
   {
 	DWORD err= GetLastError();

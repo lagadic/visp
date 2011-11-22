@@ -46,6 +46,7 @@
   \brief Time management.
 
 */
+#include <visp/vpConfig.h>
 #if defined UNIX
 #  include <unistd.h>
 #elif defined WIN32

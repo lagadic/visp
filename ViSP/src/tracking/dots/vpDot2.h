@@ -47,10 +47,6 @@
 #ifndef vpDot2_hh
 #define vpDot2_hh
 
-#include <vector>
-#include <list>
-
-#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpRect.h>
 #include <visp/vpTracker.h>
@@ -60,6 +56,9 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
+
+#include <vector>
+#include <list>
 
 /*!
   \class vpDot2

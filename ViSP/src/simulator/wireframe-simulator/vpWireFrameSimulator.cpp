@@ -305,7 +305,7 @@ void ifsToBound (Bound* bptr, std::list<indexFaceSet*> &ifs_list)
   for(std::list<indexFaceSet*>::const_iterator it=ifs_list.begin(); it!=ifs_list.end(); ++it){
     nbPt += (*it)->nbPt;
   }
-  bptr->point.nbr = nbPt;
+  bptr->point.nbr = (Index)nbPt;
   bptr->point.ptr = (Point3f *) malloc ((unsigned int)nbPt * sizeof (Point3f));
   
   ifs_list.front();
@@ -341,14 +341,14 @@ void ifsToBound (Bound* bptr, std::list<indexFaceSet*> &ifs_list)
     }
   }
   
-  bptr->face.nbr = nbFace;
+  bptr->face.nbr = (Index)nbFace;
   bptr->face.ptr = (Face *) malloc (nbFace * sizeof (Face));
   
   
   std::list<int>::const_iterator iter_indSize = indSize.begin();
   for (unsigned int i = 0; i < indSize.size(); i++)
   {
-    bptr->face.ptr[i].vertex.nbr = *iter_indSize;
+    bptr->face.ptr[i].vertex.nbr = (Index)*iter_indSize;
     bptr->face.ptr[i].vertex.ptr = (Index *) malloc ((unsigned int)*iter_indSize * sizeof (Index));
     ++iter_indSize;
   }
@@ -363,7 +363,7 @@ void ifsToBound (Bound* bptr, std::list<indexFaceSet*> &ifs_list)
     {
       if(ifs->index[j] != -1)
       {
-        bptr->face.ptr[indice].vertex.ptr[iter] = ifs->index[j] + offset;
+        bptr->face.ptr[indice].vertex.ptr[iter] = (Index)(ifs->index[j] + offset);
         iter++;
       }
       else

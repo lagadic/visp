@@ -57,11 +57,11 @@
   in the camera frame.  The visual feature is a line.
 */
 
-#include <stdlib.h>
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-
+#include <stdlib.h>
 #if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>
@@ -180,7 +180,7 @@ main()
       int iter=0 ;
       vpTRACE("\t loop") ;
       vpColVector v ;
-      while(1)
+      for ( ; ; )
 	{
 	  std::cout << "---------------------------------------------" << iter <<std::endl ;
 

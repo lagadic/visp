@@ -38,19 +38,21 @@
  * Eric Marchand
  *
  *****************************************************************************/
+
+#include <visp/vpConfig.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
-#include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
 #include <visp/vpColVector.h>
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
 
+
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #include <iostream>
 
 /*---------------------------------------------------------------------
@@ -564,37 +566,38 @@ extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *
 #include <string.h>
 
 void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
-  int m = (int)this->getCols(), n = (int)this->getRows(), lda = m, ldu = m, ldvt = std::min(m,n), info, lwork;
+  /* unsigned */ int m = static_cast<int>(this->getCols()), n = static_cast<int>(this->getRows()), lda = m, ldu = m, ldvt = std::min(m,n);
+  int info, lwork;
 
-    double wkopt;
-    double* work;
+  double wkopt;
+  double* work;
 
-    int* iwork = new int[8*std::min(n,m)];
+  int* iwork = new int[8*static_cast<unsigned int>(std::min(n,m))];
 
-    double *s = W.data;
-    double* a = new double[lda*n];
-    memcpy(a,this->data,this->getRows()*this->getCols()*sizeof(double));
-    double* u = V.data;
-    double* vt = this->data;
+  double *s = W.data;
+  double* a = new double[static_cast<unsigned int>(lda*n)];
+  memcpy(a,this->data,this->getRows()*this->getCols()*sizeof(double));
+  double* u = V.data;
+  double* vt = this->data;
 
 
 
-    lwork = -1;
-    dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info );
-    lwork = (int)wkopt;
-    work = new double[lwork];
+  lwork = -1;
+  dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info );
+  lwork = (int)wkopt;
+  work = new double[static_cast<unsigned int>(lwork)];
 
-    dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
+  dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
 
-    if( info > 0 ) {
-      std::cout << "The algorithm computing SVD failed to converge." << std::endl;
+  if( info > 0 ) {
+    std::cout << "The algorithm computing SVD failed to converge." << std::endl;
 
-    }
+  }
 
-    V=V.transpose();
-    delete[] work;
-    delete[] iwork;
-    delete[] a;
+  V=V.transpose();
+  delete[] work;
+  delete[] iwork;
+  delete[] a;
 }
 #endif
 

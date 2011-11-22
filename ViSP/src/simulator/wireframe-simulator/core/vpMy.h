@@ -38,6 +38,8 @@
  * Jean-Luc CORRE
  *
  *****************************************************************************/
+#ifndef vpMy_H
+#define vpMy_H
 
 #include <visp/vpConfig.h>
 
@@ -86,6 +88,7 @@ typedef	unsigned char	Byte;
 typedef	unsigned short	Index;
 typedef	char		Type;
 
-extern void fscanf_float (float *fp);
+void fscanf_float (float *fp);
 
+#endif
 #endif

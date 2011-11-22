@@ -43,9 +43,9 @@
 #ifndef vpLinearKalmanFilterInstantiation_h
 #define vpLinearKalmanFilterInstantiation_h
 
-#include <math.h>
-
 #include <visp/vpKalmanFilter.h>
+
+#include <math.h>
 
 /*!
   \file vpLinearKalmanFilterInstantiation.h

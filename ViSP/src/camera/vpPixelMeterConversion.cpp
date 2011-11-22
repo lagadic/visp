@@ -94,9 +94,10 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 	    for(unsigned int t=0; t<=q; t++) // somme interne
 	    {
 	      m[p][q] +=
-		vpMath::comb(p, r) * vpMath::comb(q, t)
-		* pow(xc, (int)(p-r)) * pow(yc, (int)(q-t))
-		* moment_pixel[r][t];
+		        static_cast<double>(vpMath::comb(p, r))
+          * static_cast<double>(vpMath::comb(q, t))
+		      * pow(xc, (int)(p-r)) * pow(yc, (int)(q-t))
+		      * moment_pixel[r][t];
 
 	    }
 	}

@@ -1,54 +1,51 @@
 /****************************************************************************
- *
- * $Id$
- *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
- * Edition License.
- *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
- * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- * http://www.irisa.fr/lagadic
- *
- * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *
- * Description:
- * Pose computation.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- *
- *****************************************************************************/
+*
+* $Id$
+*
+* This file is part of the ViSP software.
+* Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+* 
+* This software is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* ("GPL") version 2 as published by the Free Software Foundation.
+* See the file LICENSE.txt at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* For using ViSP with software that can not be combined with the GNU
+* GPL, please contact INRIA about acquiring a ViSP Professional 
+* Edition License.
+*
+* See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+* 
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact
+* INRIA at visp@inria.fr
+* 
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Description:
+* Pose computation.
+*
+* Authors:
+* Eric Marchand
+* Francois Chaumette
+*
+*****************************************************************************/
 
 
 /*!
-  \file vpPose.cpp
-  \brief Fichier contenant la classe vpPose (tout ce qui est necessaire
-  pour faire du calcul de pose par difference methode
+\file vpPose.cpp
+\brief Fichier contenant la classe vpPose (tout ce qui est necessaire
+pour faire du calcul de pose par difference methode
 */
-
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 
 #include <visp/vpPose.h>
 #include <visp/vpDebug.h>
@@ -59,15 +56,19 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpMath.h>
 
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #define DEBUG_LEVEL1 0
 /*!
-  \brief   basic initialisation (called by the constructors)
+\brief   basic initialisation (called by the constructors)
 */
 void
 vpPose::init()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::Init() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::Init() " << std::endl ;
+#endif
   npt = 0 ;
   listP.clear() ;
 
@@ -76,85 +77,96 @@ vpPose::init()
   c3d = NULL ;
 
   vvsIterMax = 200 ;
-	
-	distanceToPlaneForCoplanarityTest = 0.001 ;
-	
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::Init() " << std::endl ;
+
+  distanceToPlaneForCoplanarityTest = 0.001 ;
+
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::Init() " << std::endl ;
+#endif
+
 }
 
 vpPose::vpPose()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::vpPose() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::vpPose() " << std::endl ;
+#endif
 
   init() ;
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::vpPose() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::vpPose() " << std::endl ;
+#endif
+
 }
 
 /*!
-  \brief destructor delete the array of point (freed the memory)
+\brief destructor delete the array of point (freed the memory)
 */
 vpPose::~vpPose()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::~vpPose() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::~vpPose() " << std::endl ;
+#endif
 
   listP.clear() ;
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::~vpPose() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::~vpPose() " << std::endl ;
+#endif
 }
 /*!
-  \brief  delete the array of point
+\brief  delete the array of point
 */
 void
 vpPose::clearPoint()
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::ClearPoint() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::ClearPoint() " << std::endl ;
+#endif
 
   listP.clear() ;
   npt = 0 ;
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::ClearPoint() " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::ClearPoint() " << std::endl ;
+#endif
 }
 
 /*!
-  \brief  Add a new point in the array of point.
-  \param  newP : New point to add  in the array of point.
-  \warning Considering a point from the class vpPoint, X, Y, and Z will
-  represent the 3D information and x and y its 2D informations.
-  These 5 fields must be initialized to be used within this library
+\brief  Add a new point in the array of point.
+\param  newP : New point to add  in the array of point.
+\warning Considering a point from the class vpPoint, X, Y, and Z will
+represent the 3D information and x and y its 2D informations.
+These 5 fields must be initialized to be used within this library
 */
 void
 vpPose::addPoint(const vpPoint& newP)
 {
 
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::AddPoint(Dot) " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::AddPoint(Dot) " << std::endl ;
+#endif
 
   listP.push_back(newP);
   npt ++ ;
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
+#endif
 }
 
 
 void 
 vpPose::setDistanceToPlaneForCoplanarityTest(double d)
 {
-	distanceToPlaneForCoplanarityTest = d ;
+  distanceToPlaneForCoplanarityTest = d ;
 }
 
 /*!
-  \brief test the coplanarity of the set of points
-  \return true if points are coplanar
-  false if not
+\brief test the coplanarity of the set of points
+\return true if points are coplanar
+false if not
 */
 bool
 vpPose::coplanar()
@@ -164,7 +176,7 @@ vpPose::coplanar()
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
-			  "Not enough points ")) ;
+      "Not enough points ")) ;
   }
 
   if (npt ==3) return true ;
@@ -177,8 +189,8 @@ vpPose::coplanar()
   P1 = *it;  ++it;
   //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0)) 
   if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon()) 
-      && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) 
-      && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) 
+    && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) 
+    && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) 
   { 
     P1 = *it; ++it;
   }
@@ -204,7 +216,7 @@ vpPose::coplanar()
 
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
-  
+
   double dist;
 
   for(it=listP.begin(); it != listP.end(); ++it)
@@ -227,12 +239,12 @@ vpPose::coplanar()
 }
 
 /*!
-  \brief Compute and return the residual expressed in meter for
-  the pose matrix 'cMo'.
+\brief Compute and return the residual expressed in meter for
+the pose matrix 'cMo'.
 
-  \param cMo : Input pose. The matrix that defines the pose to be tested.
+\param cMo : Input pose. The matrix that defines the pose to be tested.
 
-  \return The value of he residual in meter.
+\return The value of he residual in meter.
 
 */
 double
@@ -257,37 +269,39 @@ vpPose::computeResidual(vpHomogeneousMatrix &cMo)
 
 
 /*!
-  \brief Compute the pose according to the desired method
+\brief Compute the pose according to the desired method
 
-  the different method are
+the different method are
 
-  LAGRANGE         Lagrange approach
-  (test is done to switch between planar and
-  non planar algorithm)
+LAGRANGE         Lagrange approach
+(test is done to switch between planar and
+non planar algorithm)
 
-  DEMENTHON        Dementhon approach
-  (test is done to switch between planar and
-  non planar algorithm)
+DEMENTHON        Dementhon approach
+(test is done to switch between planar and
+non planar algorithm)
 
-  VIRTUAL_VS       Virtual visual servoing approach
+VIRTUAL_VS       Virtual visual servoing approach
 
-  DEMENTHON_VIRTUAL_VS Virtual visual servoing approach initialized using
-  Dementhon approach
+DEMENTHON_VIRTUAL_VS Virtual visual servoing approach initialized using
+Dementhon approach
 
-  LAGRANGE_VIRTUAL_VS  Virtual visual servoing initialized using
-  Lagrange approach
+LAGRANGE_VIRTUAL_VS  Virtual visual servoing initialized using
+Lagrange approach
 
 */
 void
 vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::ComputePose()" << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::ComputePose()" << std::endl ;
+#endif
+
   if (npt <4)
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
-			  "No enough point ")) ;
+      "No enough point ")) ;
   }
 
   switch (methode)
@@ -299,11 +313,11 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 
       if (npt <4)
       {
-	vpERROR_TRACE("Dementhon method cannot be used in that case ") ;
-	vpERROR_TRACE("(at least 4 points are required)") ;
-	vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	throw(vpPoseException(vpPoseException::notEnoughPointError,
-			      "Not enough points ")) ;
+        vpERROR_TRACE("Dementhon method cannot be used in that case ") ;
+        vpERROR_TRACE("(at least 4 points are required)") ;
+        vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+        throw(vpPoseException(vpPoseException::notEnoughPointError,
+          "Not enough points ")) ;
       }
 
       // test si les point 3D sont coplanaires
@@ -311,25 +325,25 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 
       if (plan == 1)
       {
-	try{
-	  poseDementhonPlan(cMo);
-	}
-	catch(...)
-	{
-	  vpERROR_TRACE(" ") ;
-	  throw ;
-	}
+        try{
+          poseDementhonPlan(cMo);
+        }
+        catch(...)
+        {
+          vpERROR_TRACE(" ") ;
+          throw ;
+        }
       }
       else
       {
-	try{
-	  poseDementhonNonPlan(cMo) ;
-	}
-	catch(...)
-	{
-	  vpERROR_TRACE(" ") ;
-	  throw ;
-	}
+        try{
+          poseDementhonNonPlan(cMo) ;
+        }
+        catch(...)
+        {
+          vpERROR_TRACE(" ") ;
+          throw ;
+        }
       }
     }
     break ;
@@ -344,41 +358,41 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
       if (plan == 1)
       {
 
-	if (npt <4)
-	{
-	  vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
-	  vpERROR_TRACE("(at least 4 points are required)") ;
-	  vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointError,
-				"Not enough points ")) ;
-	}
-	try {
-	  poseLagrangePlan(cMo);
-	}
-	catch(...)
-	{
-	  vpERROR_TRACE(" ") ;
-	  throw ;
-	}
+        if (npt <4)
+        {
+          vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
+          vpERROR_TRACE("(at least 4 points are required)") ;
+          vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+          throw(vpPoseException(vpPoseException::notEnoughPointError,
+            "Not enough points ")) ;
+        }
+        try {
+          poseLagrangePlan(cMo);
+        }
+        catch(...)
+        {
+          vpERROR_TRACE(" ") ;
+          throw ;
+        }
       }
       else
       {
-	if (npt <4)
-	{
-	  vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
-	  vpERROR_TRACE("(at least 4 points are required)") ;
-	  vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-	  throw(vpPoseException(vpPoseException::notEnoughPointError,
-				"Not enough points ")) ;
-	}
-	try {
-	  poseLagrangeNonPlan(cMo);
-	}
-	catch(...)
-	{
-	  vpERROR_TRACE(" ") ;
-	  throw ;
-	}
+        if (npt <4)
+        {
+          vpERROR_TRACE("Lagrange method cannot be used in that case ") ;
+          vpERROR_TRACE("(at least 4 points are required)") ;
+          vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+          throw(vpPoseException(vpPoseException::notEnoughPointError,
+            "Not enough points ")) ;
+        }
+        try {
+          poseLagrangeNonPlan(cMo);
+        }
+        catch(...)
+        {
+          vpERROR_TRACE(" ") ;
+          throw ;
+        }
       }
     }
     break;
@@ -398,12 +412,12 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
     {
       try
       {
-		poseVirtualVS(cMo);
+        poseVirtualVS(cMo);
       }
       catch(...)
       {
-		vpERROR_TRACE(" ") ;
-		throw ;
+        vpERROR_TRACE(" ") ;
+        throw ;
       }
     }
     break ;
@@ -413,19 +427,20 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
     {
       try
       {
-		poseLowe(cMo);
+        poseLowe(cMo);
       }
       catch(...)
       {
-		vpERROR_TRACE(" ") ;
-		throw ;
+        vpERROR_TRACE(" ") ;
+        throw ;
       }
     }
     break ;
   }
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::ComputePose()" << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::ComputePose()" << std::endl ;
+#endif
 }
 
 
@@ -447,10 +462,10 @@ vpPose::printPoint()
 
 void
 vpPose::display(vpImage<unsigned char> &I,
-		vpHomogeneousMatrix &cMo,
-		vpCameraParameters &cam,
-		double size,
-		vpColor col)
+                vpHomogeneousMatrix &cMo,
+                vpCameraParameters &cam,
+                double size,
+                vpColor col)
 {
   vpDisplay::displayFrame(I, cMo, cam, size, col);
 }
@@ -458,23 +473,23 @@ vpPose::display(vpImage<unsigned char> &I,
 
 void
 vpPose::display(vpImage<vpRGBa> &I,
-		vpHomogeneousMatrix &cMo,
-		vpCameraParameters &cam,
-		double size,
-		vpColor col)
+                vpHomogeneousMatrix &cMo,
+                vpCameraParameters &cam,
+                double size,
+                vpColor col)
 {
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
 
 /*
-  \brief display the 3D model in image I
-  \warning the 2D coordinate of the point have to be initialized
-  (lispP has to be modified)
+\brief display the 3D model in image I
+\warning the 2D coordinate of the point have to be initialized
+(lispP has to be modified)
 */
 void
 vpPose::displayModel(vpImage<unsigned char> &I,
-		     vpCameraParameters &cam,
-		     vpColor col)
+                     vpCameraParameters &cam,
+                     vpColor col)
 { 
   vpPoint P ;
   vpImagePoint ip;
@@ -490,14 +505,14 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 }
 
 /*
-  \brief display the 3D model in image I
-  \warning the 2D coordinate of the point have to be initialized
-  (lispP has to be modified)
+\brief display the 3D model in image I
+\warning the 2D coordinate of the point have to be initialized
+(lispP has to be modified)
 */
 void
 vpPose::displayModel(vpImage<vpRGBa> &I,
-		     vpCameraParameters &cam,
-		     vpColor col)
+                     vpCameraParameters &cam,
+                     vpColor col)
 { 
   vpPoint P ;
   vpImagePoint ip;
@@ -514,29 +529,29 @@ vpPose::displayModel(vpImage<vpRGBa> &I,
 
 
 /*!
-    \brief Carries out the camera pose the image of a rectangle and
-    the intrinsec parameters, the length on x axis is known but the
-    proprtion of the rectangle are unknown.
+\brief Carries out the camera pose the image of a rectangle and
+the intrinsec parameters, the length on x axis is known but the
+proprtion of the rectangle are unknown.
 
-    This method is taken from "Markerless Tracking using Planar Structures
-    in the Scene" by Gilles Simon. The idea is to compute the homography H
-    giving the image point of the rectangle by associating them with the
-    coordinates (0,0)(1,0)(1,1/s)(0,1/s) (the rectangle is on the Z=0 plane).
-    If K is the intrinsec parameters matrix, we have  s = ||Kh1||/ ||Kh2||. s
-    gives us the proportion of the rectangle
+This method is taken from "Markerless Tracking using Planar Structures
+in the Scene" by Gilles Simon. The idea is to compute the homography H
+giving the image point of the rectangle by associating them with the
+coordinates (0,0)(1,0)(1,1/s)(0,1/s) (the rectangle is on the Z=0 plane).
+If K is the intrinsec parameters matrix, we have  s = ||Kh1||/ ||Kh2||. s
+gives us the proportion of the rectangle
 
-    \param p1,p2,p3,p4: the image of the corners of the rectangle
-    (respectively the image of  (0,0),(lx,0),(lx,lx/s) and (0,lx/s)) (input)
-    \param cam: the camera used (input)
-    \param lx: the rectangle size on the x axis (input)
-    \param cMo: the camera pose (output)
-    \return int : OK if no pb occurs
-  */
+\param p1,p2,p3,p4: the image of the corners of the rectangle
+(respectively the image of  (0,0),(lx,0),(lx,lx/s) and (0,lx/s)) (input)
+\param cam: the camera used (input)
+\param lx: the rectangle size on the x axis (input)
+\param cMo: the camera pose (output)
+\return int : OK if no pb occurs
+*/
 double
 vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
-			  vpPoint &p3,vpPoint &p4,
-			  double lx, vpCameraParameters & cam,
-			  vpHomogeneousMatrix & cMo)
+                          vpPoint &p3,vpPoint &p4,
+                          double lx, vpCameraParameters & cam,
+                          vpHomogeneousMatrix & cMo)
 {
 
   double rectx[4] ;
@@ -612,11 +627,11 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-  \deprecated This method is deprecated. You should use coplanar() instead.
+\deprecated This method is deprecated. You should use coplanar() instead.
 
-  \brief test the coplanarity of the set of points
-  \return true if points are coplanar
-  false if not
+\brief test the coplanarity of the set of points
+\return true if points are coplanar
+false if not
 */
 bool
 vpPose::coplanaire()
@@ -626,7 +641,7 @@ vpPose::coplanaire()
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
-        "Not enough points ")) ;
+      "Not enough points ")) ;
   }
 
   if (npt ==3) return true ;
@@ -639,8 +654,8 @@ vpPose::coplanaire()
   P1 = *it;  ++it;
   //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0))
   if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon())
-      && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon())
-      && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon()))
+    && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon())
+    && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon()))
   {
     P1 = *it; ++it;
   }

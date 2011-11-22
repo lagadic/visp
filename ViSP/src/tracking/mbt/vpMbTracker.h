@@ -46,8 +46,6 @@
 #ifndef vpMbTracker_hh
 #define vpMbTracker_hh
 
-#include <visp/vpConfig.h>
-
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpImagePoint.h>

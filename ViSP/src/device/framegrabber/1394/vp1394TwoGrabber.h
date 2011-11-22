@@ -60,9 +60,9 @@
 #ifndef vp1394TwoGrabber_h
 #define vp1394TwoGrabber_h
 
-#include <list>
-
 #include <visp/vpConfig.h>
+
+#include <list>
 
 #if defined(VISP_HAVE_DC1394_2)
 

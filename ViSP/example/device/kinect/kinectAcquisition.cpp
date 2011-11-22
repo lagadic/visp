@@ -47,9 +47,9 @@
 
 */
 
-#include <iostream>
-#include <visp/vpConfig.h>
 
+#include <visp/vpConfig.h>
+#include <iostream>
 #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))	

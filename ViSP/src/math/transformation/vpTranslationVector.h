@@ -50,7 +50,6 @@
   \brief Class that consider the case of a translation vector.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 
 

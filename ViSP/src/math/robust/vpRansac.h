@@ -49,13 +49,13 @@
 #ifndef vpRANSAC_HH
 #define vpRANSAC_HH
 
-#include <ctime>
+
 
 #include <visp/vpNoise.h> // random number generation
 #include <visp/vpDebug.h> // debug and trace
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
-
+#include <ctime>
 /*!
   \class vpRansac
   \ingroup Robust
@@ -95,7 +95,7 @@ class vpRansac
 public:
   static  bool ransac(unsigned int npts,
 		      vpColVector &x,
-		      int s, double t,
+		      unsigned int s, double t,
 		      vpColVector &model,
 		      vpColVector &inliers,
 		      int consensus = 1000,
@@ -136,7 +136,7 @@ public:
 template <class vpTransformation>
 bool
 vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
-				   int s, double t,
+				   unsigned int s, double t,
 				   vpColVector &M,
 				   vpColVector &inliers,
 				   int consensus,
@@ -183,7 +183,7 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
     while ( degenerate == true)
     {
       // Generate s random indicies in the range 1..npts
-      for  (int i=0 ; i < s ; i++)
+      for  (unsigned int i=0 ; i < s ; i++)
 	ind[i] = (unsigned int)ceil(random()*npts) -1;
 
       // Test that these points are not a degenerate configuration.
@@ -193,13 +193,11 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
       // Safeguard against being stuck in this loop forever
       count = count + 1;
 
-      if (count > maxDataTrials)
-      {
-	delete [] ind;
-	vpERROR_TRACE("Unable to select a nondegenerate data set");
-	throw(vpException(vpException::fatalError,
-			  "Unable to select a nondegenerate data set")) ;
-	return false;
+      if (count > maxDataTrials)      {
+	      delete [] ind;
+	      vpERROR_TRACE("Unable to select a nondegenerate data set");
+	      throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
+	      //return false; //Useless after a throw() function
       }
     }
     // Fit model to this random selection of data points.
@@ -236,7 +234,7 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 
       double fracinliers =  (double)ninliers / (double)npts;
 
-      double pNoOutliers = 1 -  pow(fracinliers,s);
+      double pNoOutliers = 1 -  pow(fracinliers,static_cast<int>(s));
 
       pNoOutliers = vpMath::maximum(eps, pNoOutliers);  // Avoid division by -Inf
       pNoOutliers = vpMath::minimum(1-eps, pNoOutliers);// Avoid division by 0.

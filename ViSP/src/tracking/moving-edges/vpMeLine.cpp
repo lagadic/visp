@@ -45,9 +45,7 @@
   \brief Moving edges
 */
 
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpMeTracker.h>
 #include <visp/vpMe.h>
@@ -57,6 +55,9 @@
 #include <visp/vpTrackingException.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpMath.h>
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #define INCR_MIN 1
 
 static void

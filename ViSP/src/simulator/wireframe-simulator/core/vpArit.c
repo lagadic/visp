@@ -39,13 +39,14 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<math.h>
-#include	<string.h>
-#include	<visp/vpConfig.h>
+
+
 
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
+#include	<stdio.h>
+#include	<math.h>
+#include	<string.h>
 
 #if defined(VISP_USE_MSVC)
 #  ifndef M_PI

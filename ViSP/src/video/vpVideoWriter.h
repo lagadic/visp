@@ -47,7 +47,6 @@
 #ifndef vpVideoWriter_H
 #define vpVideoWriter_H
 
-#include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpFFMPEG.h>
 
@@ -73,9 +72,9 @@
   //Initialize the writer.
   writer.setFileName("./image/image%04d.jpeg");
  
- writer.open(I);
+  writer.open(I);
  
-  while (1)
+  for ( ; ; )
   {
     //Here the code to capture or create an image and stores it in I.
   
@@ -111,7 +110,7 @@
   
   writer.open(I);
  
-  while (1)
+  for ( ; ; )
   {
     //Here the code to capture or create an image and stores it in I.
   

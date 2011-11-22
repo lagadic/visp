@@ -134,7 +134,7 @@ fprintf_vwstack (FILE *fp, char *argv)
  * 		Pointeur sur le point de vue du sommet de la pile.
  */
 View_parameters	*
-get_vwstack ()
+get_vwstack (void)
 {
 	return (sp);
 }
@@ -156,7 +156,7 @@ load_vwstack (View_parameters *vp)
  * de la pile des points de vue.
  */
 void
-pop_vwstack ()
+pop_vwstack (void)
 {
 	static	char	proc_name[] = "pop_vwstack";
 
@@ -172,7 +172,7 @@ pop_vwstack ()
  * de la pile des points de vue.
  */
 void
-push_vwstack ()
+push_vwstack (void)
 {
 	static	char	proc_name[] = "push_vwstack";
 
@@ -189,7 +189,7 @@ push_vwstack ()
  * de la pile des points de vue.
  */
 void
-swap_vwstack ()
+swap_vwstack (void)
 {
 	View_parameters	*vp, tmp;
 

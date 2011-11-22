@@ -39,6 +39,8 @@
  * Jean-Luc CORRE
  *
  *****************************************************************************/
+#ifndef vpToken_H
+#define vpToken_H
 
 #include <visp/vpConfig.h>
 
@@ -94,4 +96,5 @@ extern	Keyword	keyword_tbl[];
 #define	T_VUP		294
 #define	T_WINDOW	295
 
+#endif
 #endif

@@ -50,7 +50,6 @@
   \brief class that defines what is a visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
 
@@ -96,7 +95,7 @@ class VISP_EXPORT vpBasicFeature
   //! Ensure that all the parameters needed to compute the iteraction matrix are set.
   bool *flags;
   //! Number of parameters needed to compute the interaction matrix.
-  int nbParameters;
+  unsigned int nbParameters;
 
  public:
   unsigned int dimension_s() { return dim_s ; }
@@ -120,7 +119,6 @@ class VISP_EXPORT vpBasicFeature
   unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
   //! Compute the interaction matrix from a subset of the possible features.
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
-
   vpColVector error(const vpBasicFeature &s_star,
 			    const unsigned int select= FEATURE_ALL);
   //! Print the name of the feature.

@@ -48,10 +48,8 @@
 #ifndef __VP_ADAPTATIVE_GAIN_H
 #define __VP_ADAPTATIVE_GAIN_H
 
-
-#include <iostream>
-
 #include <visp/vpConfig.h>
+#include <iostream>
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 

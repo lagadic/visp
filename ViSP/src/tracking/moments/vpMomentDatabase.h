@@ -44,11 +44,12 @@
 */
 #ifndef __MOMENTDATABASE_H__
 #define __MOMENTDATABASE_H__
+
+#include <visp/vpImage.h>
+
 #include <map>
 #include <iostream>
 #include <cstring>
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
 
 class vpMoment;
 class vpMomentObject;

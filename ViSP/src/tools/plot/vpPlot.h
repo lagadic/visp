@@ -47,21 +47,11 @@
 #ifndef vpPlot_H
 #define vpPlot_H
 
-#include <visp/vpConfig.h>
 #include <visp/vpPlotGraph.h>
-#include <visp/vpColor.h>
-#include <visp/vpImage.h>
-
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpRect.h>
-
-#include <visp/vpCameraParameters.h>
-#include <visp/vpPoint.h>
 
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
-
 
 /*!
   \class vpPlot
@@ -175,7 +165,7 @@ class VISP_EXPORT vpPlot
     void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
     void plot(const unsigned int graphNum, const double x, const vpColVector vy, const vpColVector vz);
     
-    void navigate ();
+    void navigate (void);
     
     void getPixelValue(const bool block);
     

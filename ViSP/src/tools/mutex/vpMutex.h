@@ -45,6 +45,7 @@
 #define __VP_MUTEX__
 
 #include <visp/vpConfig.h>
+#include <visp/vpException.h>
 #ifdef VISP_HAVE_PTHREAD
 
 #include <pthread.h>
@@ -86,6 +87,13 @@ public:
 	private:
 		vpMutex & _mutex;
 	public:
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    void operator=(const vpScopedLock &){
+      throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+    }
+#endif
+
 		vpScopedLock(vpMutex & mutex)
 			: _mutex(mutex)
 		{

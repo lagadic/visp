@@ -66,7 +66,7 @@ main()
     vpKeyboard keyboard;
 
     std::cout << "Start the keyboard scrutation..." << std::endl;
-    while (1) {
+    for ( ; ; ) {
 
       if (keyboard.kbhit()) {
 	c = keyboard.getchar () ;

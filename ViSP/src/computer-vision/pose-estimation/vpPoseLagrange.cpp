@@ -1,44 +1,44 @@
 /****************************************************************************
- *
- * $Id$
- *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
- * Edition License.
- *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
- * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- * http://www.irisa.fr/lagadic
- *
- * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *
- * Description:
- * Pose computation.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- *
- *****************************************************************************/
+*
+* $Id$
+*
+* This file is part of the ViSP software.
+* Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+* 
+* This software is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* ("GPL") version 2 as published by the Free Software Foundation.
+* See the file LICENSE.txt at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* For using ViSP with software that can not be combined with the GNU
+* GPL, please contact INRIA about acquiring a ViSP Professional 
+* Edition License.
+*
+* See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+* 
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact
+* INRIA at visp@inria.fr
+* 
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Description:
+* Pose computation.
+*
+* Authors:
+* Eric Marchand
+* Francois Chaumette
+*
+*****************************************************************************/
 
 
 #include <visp/vpPose.h>
@@ -56,7 +56,7 @@
 static
 void
 calculTranslation (vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1,
-		   unsigned int nc3, vpColVector &x1, vpColVector &x2)
+                   unsigned int nc3, vpColVector &x1, vpColVector &x2)
 {
 
   try
@@ -67,7 +67,7 @@ calculTranslation (vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1,
     for (i=0 ; i < 3 ; i++)
     {
       for (j=0 ; j < nl ; j++)
-	ct[i][j] = b[j][i+nc3] ;
+        ct[i][j] = b[j][i+nc3] ;
     }
 
     vpMatrix c ;
@@ -84,21 +84,20 @@ calculTranslation (vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1,
     cta = ct*a ;  /* C^T A	*/
     ctb = ct*b ;  /* C^T B	*/
 
-    if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       std::cout <<"ctc " << std::endl << ctc ;
       std::cout <<"cta " << std::endl << cta ;
       std::cout <<"ctb " << std::endl << ctb ;
     }
-
-
+#endif
 
     vpColVector X2(nc3)  ;
     vpMatrix CTB(nc1,nc3) ;
     for (i=0 ; i < nc1 ; i++)
     {
       for (j=0 ; j < nc3 ; j++)
-	CTB[i][j] = ctb[i][j] ;
+        CTB[i][j] = ctb[i][j] ;
     }
 
     for (j=0 ; j < nc3 ; j++)
@@ -107,13 +106,17 @@ calculTranslation (vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1,
     vpColVector sv ;       // C^T A X1 + C^T B X2)
     sv = cta*x1 + CTB*X2 ;// C^T A X1 + C^T B X2)
 
-    if (DEBUG_LEVEL2)
-      std::cout << "sv " << sv.t() ;
+#if (DEBUG_LEVEL2)
+    std::cout << "sv " << sv.t() ;
+#endif
+
     vpColVector X3 ; /* X3 = - (C^T C )^{-1} C^T (A X1 + B X2) */
     X3 = -ctc1*sv ;
 
-    if (DEBUG_LEVEL2)
-      std::cout << "x3 " << X3.t()  ;
+#if (DEBUG_LEVEL2)
+    std::cout << "x3 " << X3.t()  ;
+#endif
+
     for (i=0 ; i < nc1 ; i++)
       x2[i+nc3] = X3[i] ;
   }
@@ -144,8 +147,9 @@ static
 void
 lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 {
-  if (DEBUG_LEVEL1)
-    std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin (CLagrange.cc)Lagrange(...) " << std::endl;
+#endif
 
   try{
     unsigned int i,imin;
@@ -163,11 +167,12 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     if (b.getRows() >= b.getCols()) btb1 = btb.inverseByLU() ;
     else btb1 = btb.pseudoInverse();
 
-    if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
     {
       std::cout << " BTB1 * BTB : " << std::endl << btb1*btb << std::endl;
       std::cout << " BTB * BTB1 : " << std::endl << btb*btb1 << std::endl;
-   }
+    }
+#endif
 
     vpMatrix r ;  // (B^T B)^(-1) B^T A
     r = btb1*bta ;
@@ -177,10 +182,11 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     e += ata ; // calcul E = A^T A - A^T B (B^T B)^(-1) B^T A
 
-    if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
     {
       std::cout << " E :" << std::endl << e << std::endl;
     }
+#endif
 
     //   vpColVector sv ;
     //    vpMatrix v ;
@@ -200,44 +206,46 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     for (i=0;i<x1.getRows();i++)
       if (x1[i] < x1[imin]) imin = i;
 
-    if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
     {
       printf("SV(E) : %.15lf %.15lf %.15lf\n",x1[0],x1[1],x1[2]);
       std::cout << " i_min " << imin << std::endl;
     }
-
+#endif
     for (i=0;i<x1.getRows();i++)
       x1[i] = ata[i][imin];
 
     x2 = - (r*x1) ; // X_2 = - (B^T B)^(-1) B^T A X_1
 
-    if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
     {
       std::cout << " X1 : " <<  x1.t() << std::endl;
       std::cout << " V : " << std::endl << ata << std::endl;
     }
+#endif
   }
   catch(...)
   {
     vpERROR_TRACE(" ") ;
     throw ;
   }
-  if (DEBUG_LEVEL1)
-    std::cout << "end (CLagrange.cc)Lagrange(...) " << std::endl;
-
+#if (DEBUG_LEVEL1)
+  std::cout << "end (CLagrange.cc)Lagrange(...) " << std::endl;
+#endif
 }
 
 //#undef EPS
 
 /*!
-  \brief  Compute the pose using Lagrange approach
+\brief  Compute the pose using Lagrange approach
 */
 void
 vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
 {
 
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::PoseLagrange(...) " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::PoseLagrange(...) " << std::endl ;
+#endif
   try
   {
     double s;
@@ -281,19 +289,22 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     vpColVector X1(3) ;
     vpColVector X2(6) ;
 
-    if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       std::cout <<"a " << a << std::endl ;
       std::cout <<"b " << b << std::endl ;
     }
+#endif
 
     lagrange(a,b,X1,X2);
 
-    if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       std::cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << std::endl ;
       std::cout << "norme X1 " << X1.sumSquare() << std::endl ;;
     }
+#endif
+
     if (X2[5] < 0.0)
     {		/* car Zo > 0	*/
       for (i=0;i<3;i++) X1[i] = -X1[i];
@@ -310,7 +321,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     {
       vpERROR_TRACE( "in vpCalculPose::PosePlan(...) division par zero ") ;
       throw(vpException(vpException::divideByZeroError,
-			"division by zero  ")) ;
+        "division by zero  ")) ;
     }
 
     s = 1.0/sqrt(s);
@@ -344,8 +355,9 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   }
 
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
+#endif
   //  return(OK);
 }
 
@@ -354,9 +366,9 @@ void
 vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 {
 
-  if (DEBUG_LEVEL1)
-    std::cout << "begin CPose::PoseLagrange(...) " << std::endl ;
-
+#if (DEBUG_LEVEL1)
+  std::cout << "begin CPose::PoseLagrange(...) " << std::endl ;
+#endif
   try{
     double s;
     unsigned int i;
@@ -410,11 +422,12 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     vpColVector X1(3) ;
     vpColVector X2(9) ;
 
-    if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       std::cout <<"a " << a << std::endl ;
       std::cout <<"b " << b << std::endl ;
     }
+#endif
 
     lagrange(a,b,X1,X2);
     //  if (err != OK)
@@ -425,11 +438,12 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     }
 
 
-    if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       std::cout << "ax1+bx2 (devrait etre 0) " << (a*X1 + b*X2).t() << std::endl ;
       std::cout << "norme X1 " << X1.sumSquare() << std::endl ;;
     }
+#endif
 
     if (X2[8] < 0.0)
     {		/* car Zo > 0	*/
@@ -447,7 +461,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     {
       vpERROR_TRACE(" division par zero " ) ;
       throw(vpException(vpException::divideByZeroError,
-			"division by zero  ")) ;
+        "division by zero  ")) ;
 
     }
 
@@ -476,8 +490,9 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     throw ;
   }
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
+#endif
 }
 
 
@@ -487,7 +502,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
 
 /*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+* Local variables:
+* c-basic-offset: 2
+* End:
+*/

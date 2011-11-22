@@ -46,14 +46,14 @@
   \file vpRobotSimulator.h
   \brief Basic class used to make robot simulators.
 */
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 
 #include <visp/vpConfig.h>
 
 
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #if defined(WIN32)
 #  include <windows.h>
 #elif defined(VISP_HAVE_PTHREAD)
@@ -109,7 +109,7 @@ class VISP_EXPORT vpRobotSimulator : protected vpWireFrameSimulator, public vpRo
     Bound_scene* robotArms;
     
     /*! Size of the fMi table*/
-    int size_fMi;
+    unsigned int size_fMi;
     /*! Table containing all the homogeneous matrices between the reference frame of the robot and the frames you used to compute the Denavit-Hartenberg representation
     
     If you use a camera at the end of the effector, the last homogeneous matrix has to be the one between the reference frame and the camera frame (fMc)*/

@@ -98,9 +98,13 @@ void vpMomentAlpha::compute(){
                 double r11_k = 1.;
                 for(register unsigned int k=0;k<=i;k++){
                     double r12_i_k = pow(r12,(int)(i-k));
-                    double comb_i_k = vpMath::comb(i,k);
+                    double comb_i_k = static_cast<double>( vpMath::comb(i,k) );
                     for(register unsigned int l=0;l<=j;l++){
-                        rotMu[idx]+=comb_i_k*vpMath::comb(j,l)*r11_k*pow(r21,(int)l)*r12_i_k*pow(r22,(int)(j-l))*momentCentered.get(k+l,(unsigned int)(int)(i+j-k-l));
+                        rotMu[idx]+= static_cast<double>( 
+                          comb_i_k*vpMath::comb(j,l)
+                          *r11_k*pow(r21,(int)l)
+                          *r12_i_k*pow(r22,(int)(j-l))
+                          *momentCentered.get(k+l,(unsigned int)(int)(i+j-k-l)) );
                     }
                     r11_k*=r11;
                 }

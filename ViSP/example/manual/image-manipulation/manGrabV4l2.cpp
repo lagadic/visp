@@ -52,8 +52,6 @@
  
  */
 
-#include <visp/vpConfig.h>
-
 #include <visp/vpImage.h>
 #include <visp/vpV4l2Grabber.h>
 
@@ -69,7 +67,7 @@ int main()
   g.setHeight(576); // Acquired images are 576 height
   g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
   g.open(I);        // Open the grabber
-  while(1)
+  for ( ; ; )
     g.acquire(I);     // Acquire a 768x576 grey image
 #endif
 

@@ -38,6 +38,9 @@
  *
  *****************************************************************************/
 
+#ifndef vpCgiconstants_H
+#define vpCgiconstants_H
+ 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -182,4 +185,5 @@
 	dev.ptr= '\0' ;
 
 
+#endif
 #endif

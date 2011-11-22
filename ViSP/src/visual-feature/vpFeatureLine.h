@@ -48,7 +48,6 @@
   \brief Class that defines 2D line visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 
@@ -143,7 +142,7 @@ int main()
   task.addFeature(s, sd);
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // The new parameters rho and theta must be computed here.
     
     // Update the current line visual feature

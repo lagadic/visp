@@ -102,7 +102,6 @@
 
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>

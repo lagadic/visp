@@ -43,7 +43,9 @@
   \file vpIoTools.cpp
   \brief File and directories basic tools.
 */
-
+#include <visp/vpIoTools.h>
+#include <visp/vpDebug.h>
+#include <visp/vpIoException.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,9 +58,7 @@
 #  include <windows.h>
 #  include <direct.h>
 #endif
-#include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
-#include <visp/vpIoException.h>
+
 
 /*!
   Get the user name.
@@ -91,9 +91,9 @@ vpIoTools::getUserName(std::string &username)
   }
   username = _username;
 #elif defined WIN32
-  int info_buffer_size = 1024;
+  unsigned int info_buffer_size = 1024;
   TCHAR  *infoBuf = new TCHAR [info_buffer_size];
-  DWORD  bufCharCount = info_buffer_size;
+  DWORD  bufCharCount = (DWORD) info_buffer_size;
   // Get the user name.
   if( ! GetUserName( infoBuf, &bufCharCount ) ) {
     delete [] infoBuf;
@@ -138,9 +138,9 @@ vpIoTools::getUserName()
   }
   username = _username;
 #elif defined WIN32
-  int info_buffer_size = 1024;
+  unsigned int info_buffer_size = 1024;
   TCHAR  *infoBuf = new TCHAR [info_buffer_size];
-  DWORD  bufCharCount = info_buffer_size;
+  DWORD  bufCharCount = (DWORD) info_buffer_size;
   // Get the user name.
   if( ! GetUserName( infoBuf, &bufCharCount ) ) {
     delete [] infoBuf;
@@ -192,7 +192,11 @@ int main()
   \sa getenv(std::string &)
 */
 std::string
-vpIoTools::getenv(const char *env)
+vpIoTools::getenv(const char *
+#if defined UNIX
+                  env
+#endif
+                  )
 {
   std::string value;
 #if defined UNIX
@@ -205,13 +209,14 @@ vpIoTools::getenv(const char *env)
 			"Cannot get the environment variable value")) ;
   }
   value = _value;
+
+  return value;
 #elif defined WIN32
 
   vpERROR_TRACE( "Not implemented!" );
   throw(vpIoException(vpException::notImplementedError,
 		      "Not implemented!")) ;
 #endif
-  return value;
 }
 
 /*!

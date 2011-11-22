@@ -45,7 +45,7 @@
   the particular case of rotation matrix
 */
 
-#include <math.h>
+
 #include <visp/vpMath.h>
 #include <visp/vpMatrix.h>
 
@@ -59,7 +59,7 @@
 
 // Debug trace
 #include <visp/vpDebug.h>
-
+#include <math.h>
 const double vpRotationMatrix::threshold = 1e-6;
 const double vpRotationMatrix::minimum = 0.00001;
 
@@ -513,7 +513,7 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 
   for (i=0;i<3;i++) for (j=0;j<3;j++) (*this)[i][j] = R[i][j];
 
-  if (vpDEBUG_LEVEL1)  // test new version wrt old version
+#if (vpDEBUG_LEVEL1)  // test new version wrt old version
   {
     // old version
     vpRotationMatrix R_old; // has to be replaced by (*this) if good version
@@ -563,6 +563,8 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 
   }
   // end test
+#endif
+
   return *this ;
 }
 

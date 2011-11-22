@@ -40,10 +40,14 @@
  *
  *****************************************************************************/
 
+#ifndef vpKeyword_H
+#define vpKeyword_H
+
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 extern Index get_symbol (char *ident, int length);
 
+#endif
 #endif

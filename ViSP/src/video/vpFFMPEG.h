@@ -48,7 +48,6 @@
 #ifndef vpFFMPEG_H
 #define vpFFMPEG_H
 
-#include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <stdlib.h>
 #include <stdio.h>

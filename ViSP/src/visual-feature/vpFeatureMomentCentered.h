@@ -45,7 +45,6 @@
 #ifndef __FEATUREMOMENTCENTERED_H__
 #define __FEATUREMOMENTCENTERED_H__
 #include <visp/vpFeatureMoment.h>
-#include <visp/vpConfig.h>
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
 /*!
@@ -123,6 +122,14 @@ private:
  public:
         vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL);
         void compute_interaction();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        /* Add function due to pure virtual definition in vpBasicFeature.h */
+        vpMatrix interaction(const unsigned int /* select = FEATURE_ALL */){
+          throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+        }
+#endif
+
         vpMatrix 	interaction (unsigned int select_one,unsigned int select_two);
 
         /*!

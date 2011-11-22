@@ -309,6 +309,7 @@ vpCameraParameters::get_K() const
       K[1][2] = v0 ;
       K[2][2] = 1.0 ;
       break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
     default :
       vpERROR_TRACE("\n\t getting K matrix in the case of projection \
           with distortion has no sense");   

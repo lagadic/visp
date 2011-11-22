@@ -65,7 +65,7 @@
 int main()
 {
   double t;
-  while(1) {
+  for ( ; ; ) {
     t = vpTime::measureTimeMs();
     ...
     vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz

@@ -68,7 +68,7 @@ int main()
   laser.setup();
   unsigned long int iter = 0;
  
-  while(1) {
+  for ( ; ; ) {
     double t1 = vpTime::measureTimeMs();
     vpLaserScan laserscan[4];
     if (laser.measure(laserscan) == false)

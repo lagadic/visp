@@ -41,10 +41,10 @@
  *****************************************************************************/
 
 
-#include <iostream>
+
 #include <visp/vpTime.h>
 #include <visp/vpDebug.h>
-
+#include <iostream>
 
 
 /*!
@@ -162,7 +162,7 @@ vpTime::wait(double t0, double t)
     }
 #elif defined WIN32
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      Sleep((long)(timeToWait-vpTime::minTimeForUsleepCall));
+      Sleep((DWORD)(timeToWait-vpTime::minTimeForUsleepCall));
     }
 #endif
     // Blocking loop to have an accurate waiting
@@ -202,7 +202,7 @@ void vpTime::wait(double t)
     }
 #elif defined WIN32
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      Sleep((long )(timeToWait-vpTime::minTimeForUsleepCall));
+      Sleep((DWORD)(timeToWait-vpTime::minTimeForUsleepCall));
     }
 #endif
     // Blocking loop to have an accurate waiting

@@ -71,7 +71,7 @@ vpFeatureVanishingPoint::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //Z not required  (infinity)
     //set_Z(1) ;
@@ -132,7 +132,7 @@ vpFeatureVanishingPoint::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -245,7 +245,7 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 {
   s[0] = _x ;
   s[1] = _y ;
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 

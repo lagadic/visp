@@ -51,23 +51,21 @@
 
 */
 
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <string.h>
-
-#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
 #include <visp/vpImageException.h>
-#include <visp/vpImage.h>
 #include <visp/vpMath.h>
 #include <visp/vpRect.h>
 #include <visp/vpCameraParameters.h>
 
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <string.h>
 
 /*!
   \class vpImageTools
@@ -241,11 +239,11 @@ class vpUndistortInternalType
 public:
   Type *src;
   Type *dst;
-  int width;
-  int height;
+  unsigned int width;
+  unsigned int height;
   vpCameraParameters cam;
-  int nthreads;
-  int threadid;
+  unsigned int nthreads;
+  unsigned int threadid;
 public:
   vpUndistortInternalType() {};
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) {
@@ -266,10 +264,10 @@ template<class Type>
 void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
 {
   vpUndistortInternalType<Type> *undistortSharedData = (vpUndistortInternalType<Type>*)arg;
-  int offset   = undistortSharedData->threadid;
+  int offset   = (int)undistortSharedData->threadid;
   int width    = (int)undistortSharedData->width;
   int height   = (int)undistortSharedData->height;
-  int nthreads = undistortSharedData->nthreads;
+  int nthreads = (int)undistortSharedData->nthreads;
 
   double u0 = undistortSharedData->cam.get_u0();
   double v0 = undistortSharedData->cam.get_v0();
@@ -375,7 +373,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
     return;
   }
 
-  int nthreads = 2;
+  unsigned int nthreads = 2;
   pthread_attr_t attr;
   pthread_t *callThd = new pthread_t [nthreads];
   pthread_attr_init(&attr);
@@ -384,13 +382,13 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   vpUndistortInternalType<Type> *undistortSharedData;
   undistortSharedData = new vpUndistortInternalType<Type> [nthreads];
 
-  for(int i=0;i<nthreads;i++) {
+  for(unsigned int i=0;i<nthreads;i++) {
     // Each thread works on a different set of data.
     //    vpTRACE("create thread %d", i);
     undistortSharedData[i].src      = I.bitmap;
     undistortSharedData[i].dst      = undistI.bitmap;
-    undistortSharedData[i].width    = (int)I.getWidth();
-    undistortSharedData[i].height   = (int)I.getHeight();
+    undistortSharedData[i].width    = I.getWidth();
+    undistortSharedData[i].height   = I.getHeight();
     undistortSharedData[i].cam      = cam;
     undistortSharedData[i].nthreads = nthreads;
     undistortSharedData[i].threadid = i;
@@ -401,7 +399,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   pthread_attr_destroy(&attr);
   /* Wait on the other threads */
 
-  for(int i=0;i<nthreads;i++) {
+  for(unsigned int i=0;i<nthreads;i++) {
     //  vpTRACE("join thread %d", i);
     pthread_join( callThd[i], NULL);
   }

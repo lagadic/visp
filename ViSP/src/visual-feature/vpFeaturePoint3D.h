@@ -49,7 +49,6 @@
   \brief class that defines the 3D point visual feature.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>
@@ -146,7 +145,7 @@ int main()
   task.addFeature(s, s_star); 
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // ... cMo need here to be estimated from for example a pose estimation.
     point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
    

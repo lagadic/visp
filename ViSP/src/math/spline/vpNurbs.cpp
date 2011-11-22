@@ -39,12 +39,12 @@
  *
  *****************************************************************************/
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpNurbs.h>
 #include <visp/vpColVector.h>
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 /*
   Compute the distance d = |Pw1-Pw2|
 */
@@ -290,8 +290,9 @@ vpNurbs::computeCurveDersPoint(double l_u, unsigned int l_i,
     jc = Awders[k][1];
     for(unsigned int j = 1; j <= k; j++)
     {
-      ic = ic - vpMath::comb(k,j)*Awders[k][2]*(CK[k-j].get_i());
-      jc = jc - vpMath::comb(k,j)*Awders[j][2]*(CK[k-j].get_j());
+      double tmpComb = static_cast<double>( vpMath::comb(k,j) );
+      ic = ic - tmpComb*Awders[k][2]*(CK[k-j].get_i());
+      jc = jc - tmpComb*Awders[j][2]*(CK[k-j].get_j());
     }
     CK[k].set_ij(ic/Awders[0][2],jc/Awders[0][2]);
   }

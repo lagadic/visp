@@ -57,15 +57,15 @@
   write in a directory that does no exist
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
-
+#include <stdlib.h>
+#include <stdio.h>
 // List of allowed command line options
 #define GETOPTARGS	"i:o:h"
 

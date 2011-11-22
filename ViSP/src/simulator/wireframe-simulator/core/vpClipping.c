@@ -45,24 +45,31 @@
  *****************************************************************************/
 
 
+
+
+
+
+#include <visp/vpConfig.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include <visp/vpMy.h>
+#include <visp/vpArit.h>
+#include <visp/vpBound.h>
+#include <visp/vpView.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>  //DBL_EPSILON
 #include <math.h>  //DBL_EPSILON
 
-#include <visp/vpMy.h>
-#include <visp/vpArit.h>
-#include <visp/vpBound.h>
-#include <visp/vpView.h>
-
-#include <visp/vpConfig.h>
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-
-static	void	inter (Byte, Index, Index);
-static	void	point_4D_3D ();
-
+void open_clipping (void);
+void close_clipping (void);
+static Index clipping (Byte mask, Index vni, Index *pi, Index *po);
+static Index clipping_Face (Face *fi, Face *fo);
+static Index clipping_Face (Face *fi, Face *fo);
+static	void	inter (Byte mask, Index v0, Index v1);
+static	void	point_4D_3D (Point4f *p4, int size, Byte *cp, Point3f *p3);
+void set_Point4f_code (Point4f *p4, int size, Byte *cp);
+Byte where_is_Point4f (Point4f *p4);
 
 /*
  * Variables utilisees par le decoupage :
@@ -111,7 +118,7 @@ static	Index		*poly_tmp;	/* polygone temporaire	*/
  * La procedure "open_clipping" alloue et initialise les variables utilisees
  * par le mode "clipping".
  */
-void open_clipping ()
+void open_clipping (void)
 {
 	static	char	proc_name[] = "open_clipping";
 
@@ -139,7 +146,7 @@ void open_clipping ()
  * La procedure "close_clipping" libere les variables utilisees par
  * le mode "clipping".
  */
-void close_clipping ()
+void close_clipping (void)
 {
 	free_huge_Bound (&clip);
 	free ((char *) code);
@@ -227,12 +234,12 @@ clipping_Face (Face *fi, Face *fo)
 	Index	*flop = fo->vertex.ptr;	/* polygone resultat	*/
 	Index	vn = fi->vertex.nbr;	/* nombre de sommets	*/
 
-	if ((vn = clipping (IS_ABOVE, vn, fi->vertex.ptr, flip)))
-	if ((vn = clipping (IS_BELOW, vn, flip, flop)))
-	if ((vn = clipping (IS_RIGHT, vn, flop, flip)))
-	if ((vn = clipping (IS_LEFT,  vn, flip, flop)))
-	if ((vn = clipping (IS_BACK,  vn, flop, flip)))
-	if ((vn = clipping (IS_FRONT, vn, flip, flop))) {
+	if ((vn = clipping (IS_ABOVE, vn, fi->vertex.ptr, flip)) != 0)
+	if ((vn = clipping (IS_BELOW, vn, flip, flop)) != 0)
+	if ((vn = clipping (IS_RIGHT, vn, flop, flip)) != 0)
+	if ((vn = clipping (IS_LEFT,  vn, flip, flop)) != 0)
+	if ((vn = clipping (IS_BACK,  vn, flop, flip)) != 0)
+	if ((vn = clipping (IS_FRONT, vn, flip, flop)) != 0) {
 		/* recopie de "fi" dans "fo"	*/
 		/* fo->vertex.ptr == flop	*/
 		fo->vertex.nbr   = vn;
@@ -262,8 +269,6 @@ clipping_Face (Face *fi, Face *fo)
 Bound
 *clipping_Bound (Bound *bp, Matrix m)
 {
-	void		point_4D_3D ();
-	void		set_Point4f_code ();
 	Face	*fi   = bp->face.ptr;		/* 1ere face	*/
 	Face	*fend = fi + bp->face.nbr;	/* borne de "fi"*/
 	Face	*fo   = clip.face.ptr;		/* face clippee	*/
@@ -299,7 +304,7 @@ Bound
 
 	point_4D_3D (point4f, (int) point4f_nbr, code, clip.point.ptr);
 	clip.type	= bp->type;
-	clip.face.nbr	= fo - clip.face.ptr;
+	clip.face.nbr	= (Index)( fo - clip.face.ptr );
 	clip.point.nbr	= point4f_nbr;
 #ifdef	face_normal
 	if (! bp->is_polygonal)
@@ -319,7 +324,6 @@ Bound
 static	void
 inter (Byte mask, Index v0, Index v1)
 {
-	Byte			where_is_Point4f ();
 	Point4f	*p  = point4f + point4f_nbr;
 	Point4f	*p0 = point4f + v0;
 	Point4f	*p1 = point4f + v1;

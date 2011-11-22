@@ -44,8 +44,7 @@
 */
 #ifndef __MOMENTGRAVITYCENTER_H__
 #define __MOMENTGRAVITYCENTER_H__
-#include <vector>
-#include <visp/vpConfig.h>
+
 #include <visp/vpMoment.h>
 #include <visp/vpMomentDatabase.h>
 class vpMomentObject;

@@ -1,59 +1,69 @@
 /****************************************************************************
- *
- * $Id$
- *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
- * Edition License.
- *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
- * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- * http://www.irisa.fr/lagadic
- *
- * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *
- * Description:
- * Matrix manipulation.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*
+* $Id$
+*
+* This file is part of the ViSP software.
+* Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+* 
+* This software is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* ("GPL") version 2 as published by the Free Software Foundation.
+* See the file LICENSE.txt at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* For using ViSP with software that can not be combined with the GNU
+* GPL, please contact INRIA about acquiring a ViSP Professional 
+* Edition License.
+*
+* See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+* 
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact
+* INRIA at visp@inria.fr
+* 
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Description:
+* Matrix manipulation.
+*
+* Authors:
+* Eric Marchand
+*
+*****************************************************************************/
 
 
 
 /*!
-  \file vpMatrix.cpp
-  \brief Definition of the vpMatrix class
+\file vpMatrix.cpp
+\brief Definition of the vpMatrix class
 */
 
 /*
-  \class vpMatrix
+\class vpMatrix
 
-  \brief Provide simple Matrices computation
+\brief Provide simple Matrices computation
 
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+\author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
 
+#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
+#include <visp/vpTranslationVector.h>
+
+// Exception
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+
+// Debug trace
+#include <visp/vpDebug.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -67,18 +77,6 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 
-#include <visp/vpMath.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpTranslationVector.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
-
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
@@ -87,8 +85,8 @@
 vpMatrix subblock(const vpMatrix &, unsigned int, unsigned int);
 
 /*!
-  \brief initialization of the object matrix.
-  Number of columns and rows are zero.
+\brief initialization of the object matrix.
+Number of columns and rows are zero.
 */
 
 void
@@ -106,9 +104,9 @@ vpMatrix::init()
 }
 
 /*!
-  \brief basic constructor of the matrix class
-  Construction of the object matrix.
-  Number of columns and rows are zero.
+\brief basic constructor of the matrix class
+Construction of the object matrix.
+Number of columns and rows are zero.
 */
 vpMatrix::vpMatrix()
 {
@@ -117,12 +115,12 @@ vpMatrix::vpMatrix()
 
 
 /*!
-  Constructor.
+Constructor.
 
-  Initialize a matrix with 0.
+Initialize a matrix with 0.
 
-  \param r : Matrix number of rows.
-  \param c : Matrix number of columns.
+\param r : Matrix number of rows.
+\param c : Matrix number of columns.
 */
 vpMatrix::vpMatrix(unsigned int r, unsigned int c)
 {
@@ -131,11 +129,11 @@ vpMatrix::vpMatrix(unsigned int r, unsigned int c)
 }
 
 /*!
-  \brief submatrix constructor
+\brief submatrix constructor
 */
 vpMatrix::vpMatrix(const vpMatrix &m,
-		   unsigned int r, unsigned int c, 
-		   unsigned int nrows, unsigned int ncols)
+                   unsigned int r, unsigned int c, 
+                   unsigned int nrows, unsigned int ncols)
 {
   init() ;
 
@@ -143,7 +141,7 @@ vpMatrix::vpMatrix(const vpMatrix &m,
   {
     vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
     throw(vpMatrixException(vpMatrixException::subMatrixError,
-			    "\n\t\t SubvpMatrix larger than vpMatrix")) ;
+      "\n\t\t SubvpMatrix larger than vpMatrix")) ;
   }
 
   init(m,r,c,nrows,ncols);
@@ -161,26 +159,26 @@ vpMatrix::vpMatrix(const vpMatrix& m)
 
 
 /*!
-  \brief set the size of the matrix, initialization with a zero matrix
+\brief set the size of the matrix, initialization with a zero matrix
 
-  \param nrows : number of rows
-  \param ncols : number of column
-  \param flagNullify : if true, then the matrix is re-initialized to 0
-  after resize. If false, the initial values from the common part of the
-  matrix (common part between old and new version of the matrix) are kept.
-  Default value is true.
+\param nrows : number of rows
+\param ncols : number of column
+\param flagNullify : if true, then the matrix is re-initialized to 0
+after resize. If false, the initial values from the common part of the
+matrix (common part between old and new version of the matrix) are kept.
+Default value is true.
 
-  \return OK or MEMORY_FAULT if memory cannot be allocated
+\return OK or MEMORY_FAULT if memory cannot be allocated
 */
 
 void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols, 
-		      const bool flagNullify)
+                      const bool flagNullify)
 {
 
   if ((nrows == rowNum) && (ncols == colNum))
   {
     if (flagNullify)
-      { memset(this->data,0,this->dsize*sizeof(double)) ;}
+    { memset(this->data,0,this->dsize*sizeof(double)) ;}
   }
   else
   {
@@ -189,14 +187,14 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     unsigned int rowTmp = 0, colTmp=0;
 
     vpDEBUG_TRACE (25, "Recopy case per case is required iff number of "
-		 "cols has changed (structure of double array is not "
-		 "the same in this case.");
+      "cols has changed (structure of double array is not "
+      "the same in this case.");
     if (recopyNeeded)
-      {
-	copyTmp = new double[this->dsize];
-	memcpy (copyTmp, this ->data, sizeof(double)*this->dsize);
-	rowTmp=this->rowNum; colTmp=this->colNum;
-      }
+    {
+      copyTmp = new double[this->dsize];
+      memcpy (copyTmp, this ->data, sizeof(double)*this->dsize);
+      rowTmp=this->rowNum; colTmp=this->colNum;
+    }
 
     vpDEBUG_TRACE (25, "Reallocation of this->data array.");
     this->dsize = nrows*ncols;
@@ -205,8 +203,8 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     {
       vpERROR_TRACE("\n\t\tMemory allocation error when allocating data") ;
       throw(vpException(vpException::memoryAllocationError,
-			"\n\t\t Memory allocation error when "
-			"allocating data")) ;
+        "\n\t\t Memory allocation error when "
+        "allocating data")) ;
     }
 
     vpDEBUG_TRACE (25, "Reallocation of this->trsize array.");
@@ -216,8 +214,8 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     {
       vpERROR_TRACE("\n\t\tMemory allocation error when allocating rowPtrs") ;
       throw(vpException(vpException::memoryAllocationError,
-			"\n\t\t Memory allocation error when "
-			"allocating rowPtrs")) ;
+        "\n\t\t Memory allocation error when "
+        "allocating rowPtrs")) ;
     }
 
     vpDEBUG_TRACE (25, "Recomputation this->trsize array values.");
@@ -230,28 +228,28 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
 
     vpDEBUG_TRACE (25, "Recopy of this->data array values or nullify.");
     if (flagNullify)
-      { memset(this->data,0,this->dsize*sizeof(double)) ;}
+    { memset(this->data,0,this->dsize*sizeof(double)) ;}
     else
+    {
+      if (recopyNeeded)
       {
-	if (recopyNeeded)
-	  {
-	    vpDEBUG_TRACE (25, "Recopy...");
-	    const unsigned int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
-	    const unsigned int minCol = (this->colNum<colTmp)?this->colNum:colTmp;
-	    for (unsigned int i=0; i<this->rowNum; ++i)
-	      for (unsigned int j=0; j<this->colNum; ++j)
-		{
-		  if ((minRow > i) && (minCol > j))
-		    {
-		      (*this)[i][j] = copyTmp [i*colTmp+j];
-		      vpCDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
-				  << "=" << copyTmp [i*colTmp+j] << std::endl;
-		    }
-		  else {(*this)[i][j] = 0;}
-		}
-	  }
-	else { vpDEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
+        vpDEBUG_TRACE (25, "Recopy...");
+        const unsigned int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
+        const unsigned int minCol = (this->colNum<colTmp)?this->colNum:colTmp;
+        for (unsigned int i=0; i<this->rowNum; ++i)
+          for (unsigned int j=0; j<this->colNum; ++j)
+          {
+            if ((minRow > i) && (minCol > j))
+            {
+              (*this)[i][j] = copyTmp [i*colTmp+j];
+              vpCDEBUG (25) << i << "x" << j << "<- " << i*colTmp+j
+                << "=" << copyTmp [i*colTmp+j] << std::endl;
+            }
+            else {(*this)[i][j] = 0;}
+          }
       }
+      else { vpDEBUG_TRACE (25,"Nothing to do: already done by realloc.");}
+    }
 
     if (copyTmp != NULL) delete [] copyTmp;
   }
@@ -280,7 +278,7 @@ vpMatrix::init(const vpMatrix &m,unsigned int r, unsigned int c, unsigned int nr
 }
 
 /*!
-  \brief Destruction of the matrix  (Memory de-allocation)
+\brief Destruction of the matrix  (Memory de-allocation)
 */
 void
 vpMatrix::kill()
@@ -298,7 +296,7 @@ vpMatrix::kill()
   }
 }
 /*!
-  \brief Destructor (Memory de-allocation)
+\brief Destructor (Memory de-allocation)
 */
 vpMatrix::~vpMatrix()
 {
@@ -307,10 +305,10 @@ vpMatrix::~vpMatrix()
 
 
 /*!
-  \brief Copy operator.
-  Allow operation such as A = B
+\brief Copy operator.
+Allow operation such as A = B
 
-  \param B : matrix to be copied.
+\param B : matrix to be copied.
 */
 vpMatrix &
 vpMatrix::operator=(const vpMatrix &B)
@@ -336,33 +334,33 @@ vpMatrix::operator=(const vpMatrix &B)
 vpMatrix &
 vpMatrix::operator=(double x)
 {
-  
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	{
-// 		*(data+i) = x;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< std::endl;
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j] = x;
-	    
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-	
 
- 
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	{
+  // 		*(data+i) = x;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< std::endl;
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j] = x;
+
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+
+
+
   return *this;
 }
 
 
 /*!
-  \brief Assigment from an array of double
+\brief Assigment from an array of double
 */
 vpMatrix &
 vpMatrix::operator<<( double *x )
@@ -382,56 +380,56 @@ vpMatrix::operator<<( double *x )
 //---------------------------------
 
 /*!
-	operation C = A * B. 
-	
-	The Result is placed in the third parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation C = A * B. 
 
-	\sa operator*()
+The Result is placed in the third parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator*()
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-	try 
-	{
-		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
+  try 
+  {
+    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
 
-	if (A.colNum != B.rowNum)
-	{
-		vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
-		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\tvpMatrix mismatch in "
-			    "vpMatrix/vpMatrix multiply")) ;
-	}
+  if (A.colNum != B.rowNum)
+  {
+    vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpMatrix multiply") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+      "\n\t\tvpMatrix mismatch in "
+      "vpMatrix/vpMatrix multiply")) ;
+  }
 
-	// 5/12/06 some "very" simple optimization to avoid indexation
-	unsigned int BcolNum = B.colNum;
-	unsigned int BrowNum = B.rowNum;
-	unsigned int i,j,k;
-	double **BrowPtrs = B.rowPtrs;
-	for (i=0;i<A.rowNum;i++)
-	{
-		double *rowptri = A.rowPtrs[i];
-		double *ci = C[i];
-		for (j=0;j<BcolNum;j++)
-		{
-			double s = 0;
-			for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
-			ci[j] = s;
-		}
-	}
+  // 5/12/06 some "very" simple optimization to avoid indexation
+  unsigned int BcolNum = B.colNum;
+  unsigned int BrowNum = B.rowNum;
+  unsigned int i,j,k;
+  double **BrowPtrs = B.rowPtrs;
+  for (i=0;i<A.rowNum;i++)
+  {
+    double *rowptri = A.rowPtrs[i];
+    double *ci = C[i];
+    for (j=0;j<BcolNum;j++)
+    {
+      double s = 0;
+      for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
+      ci[j] = s;
+    }
+  }
 }
 
 /*!
-	operation C = A * B (A is unchanged).
-	\sa mult2Matrices() to avoid matrix allocation for each use.
+operation C = A * B (A is unchanged).
+\sa mult2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 {
@@ -442,181 +440,181 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
   return C;
 }
 /*!
-	operation C = A*wA + B*wB 
-	
-	The Result is placed in the third parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation C = A*wA + B*wB 
 
-	\sa operator+()
+The Result is placed in the third parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator+()
 */
 
 void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C){
-	try 
-	{
-		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
+  try 
+  {
+    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
 
-	if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
-	{
-		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
-		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t vpMatrix mismatch in "
-			    "vpMatrix/vpMatrix addition")) ;
-	}
+  if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+  {
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+      "\n\t\t vpMatrix mismatch in "
+      "vpMatrix/vpMatrix addition")) ;
+  }
 
-	double ** ArowPtrs=A.rowPtrs;
-	double ** BrowPtrs=B.rowPtrs;
-	double ** CrowPtrs=C.rowPtrs;
-	
-	for (unsigned int i=0;i<A.rowNum;i++)
-	  for(unsigned int j=0;j<A.colNum;j++)	 
-	     CrowPtrs[i][j] = wB*BrowPtrs[i][j]+wA*ArowPtrs[i][j];
-	
+  double ** ArowPtrs=A.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
+
+  for (unsigned int i=0;i<A.rowNum;i++)
+    for(unsigned int j=0;j<A.colNum;j++)	 
+      CrowPtrs[i][j] = wB*BrowPtrs[i][j]+wA*ArowPtrs[i][j];
+
 }
 
 /*!
-	operation C = A + B. 
-	
-	The Result is placed in the third parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation C = A + B. 
 
-	\sa operator+()
+The Result is placed in the third parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator+()
 */
 void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {  
-	try 
-	{
-		if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
+  try 
+  {
+    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
 
-	if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
-	{
-		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
-		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t vpMatrix mismatch in "
-			    "vpMatrix/vpMatrix addition")) ;
-	}
+  if ((A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+  {
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix addition") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+      "\n\t\t vpMatrix mismatch in "
+      "vpMatrix/vpMatrix addition")) ;
+  }
 
-	double ** ArowPtrs=A.rowPtrs;
-	double ** BrowPtrs=B.rowPtrs;
-	double ** CrowPtrs=C.rowPtrs;
+  double ** ArowPtrs=A.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
 
-// 	double t0,t1;
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<A.dsize;i++)
-// 	{
-// 		*(C.data + i) = *(B.data + i) + *(A.data + i) ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< std::endl;
+  // 	double t0,t1;
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<A.dsize;i++)
+  // 	{
+  // 		*(C.data + i) = *(B.data + i) + *(A.data + i) ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< std::endl;
 
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<A.rowNum;i++)
-	for(unsigned int j=0;j<A.colNum;j++)
-	{
-	 
-	    CrowPtrs[i][j] = BrowPtrs[i][j]+ArowPtrs[i][j];
-	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<A.rowNum;i++)
+    for(unsigned int j=0;j<A.colNum;j++)
+    {
+
+      CrowPtrs[i][j] = BrowPtrs[i][j]+ArowPtrs[i][j];
+    }
+    // 	t1=vpTime::measureTimeMicros();
+    // 	std::cout<< t1-t0<<" ";
+
 
 }
 
 /*!
-	operation C = A + B (A is unchanged).
-	\sa add2Matrices() to avoid matrix allocation for each use.
+operation C = A + B (A is unchanged).
+\sa add2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 {
 
-	vpMatrix C;
-	vpMatrix::add2Matrices(*this,B,C);
-	return C;
+  vpMatrix C;
+  vpMatrix::add2Matrices(*this,B,C);
+  return C;
 }
 
 
 /*!
-	operation C = A - B. 
-	
-	The Result is placed in the third parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation C = A - B. 
 
-	\sa operator-()
+The Result is placed in the third parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator-()
 */
 void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-	try 
-	{
-		if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
+  try 
+  {
+    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
 
-	if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows()))
-	{
-		vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
-		throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t vpMatrix mismatch in "
-			    "vpMatrix/vpMatrix substraction")) ;
-	}
+  if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows()))
+  {
+    vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix/vpMatrix substraction") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+      "\n\t\t vpMatrix mismatch in "
+      "vpMatrix/vpMatrix substraction")) ;
+  }
 
 
 
-	double ** ArowPtrs=A.rowPtrs;
-	double ** BrowPtrs=B.rowPtrs;
-	double ** CrowPtrs=C.rowPtrs;
+  double ** ArowPtrs=A.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
 
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<A.dsize;i++)
-// 	{
-// 		*(C.data + i) = *(A.data + i) - *(B.data + i)   ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< std::endl;
-// 	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<A.rowNum;i++)
-	for(unsigned int j=0;j<A.colNum;j++)
-	{
-	    CrowPtrs[i][j] = ArowPtrs[i][j]-BrowPtrs[i][j];
-	}
-// 	t1=vpTime::measureTimeMicros();
-//	std::cout<< t1-t0<<" ";
-	
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<A.dsize;i++)
+  // 	{
+  // 		*(C.data + i) = *(A.data + i) - *(B.data + i)   ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< std::endl;
+  // 	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<A.rowNum;i++)
+    for(unsigned int j=0;j<A.colNum;j++)
+    {
+      CrowPtrs[i][j] = ArowPtrs[i][j]-BrowPtrs[i][j];
+    }
+    // 	t1=vpTime::measureTimeMicros();
+    //	std::cout<< t1-t0<<" ";
+
 
 }
 
 /*!
-	operation C = A - B (A is unchanged).
-	\sa sub2Matrices() to avoid matrix allocation for each use.
+operation C = A - B (A is unchanged).
+\sa sub2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator-(const vpMatrix &B) const
 {
-	vpMatrix C;
-	vpMatrix::sub2Matrices(*this,B,C);
-	return C;
+  vpMatrix C;
+  vpMatrix::sub2Matrices(*this,B,C);
+  return C;
 }
 
 //! operation A = A + B
@@ -627,31 +625,31 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
   {
     vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix +=  addition") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t vpMatrix mismatch in "
-			    "vpMatrix += addition")) ;
+      "\n\t\t vpMatrix mismatch in "
+      "vpMatrix += addition")) ;
 
   }
 
 
-	double ** BrowPtrs=B.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
 
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	{
-// 		*(data + i) += *(B.data + i) ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< std::endl;
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	    for(unsigned int j=0;j<colNum;j++)	
-	      rowPtrs[i][j] += BrowPtrs[i][j];
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-	
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	{
+  // 		*(data + i) += *(B.data + i) ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< std::endl;
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)	
+      rowPtrs[i][j] += BrowPtrs[i][j];
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+
 
 
 
@@ -667,92 +665,92 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
   {
     vpERROR_TRACE("\n\t\t vpMatrix mismatch in vpMatrix -= substraction") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t vpMatrix mismatch in "
-			    "vpMatrix -= substraction")) ;
+      "\n\t\t vpMatrix mismatch in "
+      "vpMatrix -= substraction")) ;
 
   }
 
-	double ** BrowPtrs=B.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
 
-// 	double t0,t1;
-     
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	{
-// 		*(data + i) -= *(B.data + i) ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< " " ;
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j] -= BrowPtrs[i][j];
-	
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
+  // 	double t0,t1;
+
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	{
+  // 		*(data + i) -= *(B.data + i) ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< " " ;
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j] -= BrowPtrs[i][j];
+
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
 
 
   return *this;
 }
 
 /*!
-	operation C = -A. 
-	
-	The Result is placed in the second parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation C = -A. 
 
-	\sa operator-(void)
+The Result is placed in the second parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator-(void)
 */
 void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 {
-	try 
-	{
-		if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
-	
-	double ** ArowPtrs=A.rowPtrs;
-	double ** CrowPtrs=C.rowPtrs;
-	
-	
-// 	std::cout << "negate" << std::endl;
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<A.dsize;i++)
-// 	{
-// 		*(C.data + i) = -*(A.data + i) ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<< " ";
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<A.rowNum;i++)
-	  for(unsigned int j=0;j<A.colNum;j++)
-	    CrowPtrs[i][j]= -ArowPtrs[i][j];
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
+  try 
+  {
+    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
+
+  double ** ArowPtrs=A.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
+
+
+  // 	std::cout << "negate" << std::endl;
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<A.dsize;i++)
+  // 	{
+  // 		*(C.data + i) = -*(A.data + i) ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<< " ";
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<A.rowNum;i++)
+    for(unsigned int j=0;j<A.colNum;j++)
+      CrowPtrs[i][j]= -ArowPtrs[i][j];
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
 
 }
 
 /*!
-	operation C = -A (A is unchanged).
-	\sa negateMatrix() to avoid matrix allocation for each use.
+operation C = -A (A is unchanged).
+\sa negateMatrix() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator-() const //negate
 {
-	vpMatrix C;
-	vpMatrix::negateMatrix(*this,C);
-	return C;
+  vpMatrix C;
+  vpMatrix::negateMatrix(*this,C);
+  return C;
 }
 
 //!return sum of the Aij^2 (for all i, for all j)
@@ -761,37 +759,37 @@ vpMatrix::sumSquare() const
 {
   double sum=0.0;
   double x ;
-  
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	double *d = data ;
-// 	double *n = data+dsize ;
-// 	while (d < n )
-// 	{
-// 	  x = *d++ ;
-// 	  sum += x*x ;
-// 	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" "<< sum << " ";
-// 	
-	
-	
-// 	sum= 0.0;
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	for(unsigned int j=0;j<colNum;j++)
-	{
-	    x=rowPtrs[i][j];
-	    sum+=x*x;
-	}
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" "<< sum << std::endl;
 
-	
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	double *d = data ;
+  // 	double *n = data+dsize ;
+  // 	while (d < n )
+  // 	{
+  // 	  x = *d++ ;
+  // 	  sum += x*x ;
+  // 	}
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" "<< sum << " ";
+  // 	
 
- 
-  return sum;
+
+  // 	sum= 0.0;
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+    {
+      x=rowPtrs[i][j];
+      sum+=x*x;
+    }
+    // 	t1=vpTime::measureTimeMicros();
+    // 	std::cout<< t1-t0<<" "<< sum << std::endl;
+
+
+
+
+    return sum;
 }
 
 
@@ -800,54 +798,54 @@ vpMatrix::sumSquare() const
 //---------------------------------
 
 /*!
-	operation c = A * b (c and b are vectors). 
-	
-	The Result is placed in the second parameter C and not returned.
-	A new matrix won't be allocated for every use of the function 
-	(Speed gain if used many times with the same result matrix size).
+operation c = A * b (c and b are vectors). 
 
-	\sa operator*(const vpColVector &b) const
+The Result is placed in the second parameter C and not returned.
+A new matrix won't be allocated for every use of the function 
+(Speed gain if used many times with the same result matrix size).
+
+\sa operator*(const vpColVector &b) const
 */
 void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVector &c)
 {
-	if (A.colNum != b.getRows())
-	{
-		vpERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
-		throw(vpMatrixException::incorrectMatrixSizeError) ;
-	}
+  if (A.colNum != b.getRows())
+  {
+    vpERROR_TRACE("vpMatrix mismatch in vpMatrix/vector multiply") ;
+    throw(vpMatrixException::incorrectMatrixSizeError) ;
+  }
 
-	try 
-	{
-		if (A.rowNum != c.rowNum) c.resize(A.rowNum);
-	}
-	catch(vpException me)
-	{
-		vpERROR_TRACE("Error caught") ;
-		std::cout << me << std::endl ;
-		throw ;
-	}
+  try 
+  {
+    if (A.rowNum != c.rowNum) c.resize(A.rowNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw ;
+  }
 
-	c = 0.0;
-	for (unsigned int j=0;j<A.colNum;j++) 
-	{
-		double bj = b[j] ; // optimization em 5/12/2006
-		for (unsigned int i=0;i<A.rowNum;i++) 
-		{
-			c[i]+=A.rowPtrs[i][j] * bj;
-		}
+  c = 0.0;
+  for (unsigned int j=0;j<A.colNum;j++) 
+  {
+    double bj = b[j] ; // optimization em 5/12/2006
+    for (unsigned int i=0;i<A.rowNum;i++) 
+    {
+      c[i]+=A.rowPtrs[i][j] * bj;
     }
+  }
 }
 
 /*!
-	operation c = A * b (A is unchanged, c and b are vectors).
-	\sa multMatrixVector() to avoid matrix allocation for each use.
+operation c = A * b (A is unchanged, c and b are vectors).
+\sa multMatrixVector() to avoid matrix allocation for each use.
 */
 vpColVector
 vpMatrix::operator*(const vpColVector &b) const
 {
-	vpColVector c;
-	vpMatrix::multMatrixVector(*this,b,c);
-	return c;
+  vpColVector c;
+  vpMatrix::multMatrixVector(*this,b,c);
+  return c;
 }
 
 //! operation c = A * b (A is unchanged, c and b are translation vectors)
@@ -868,7 +866,7 @@ vpMatrix::operator*(const vpTranslationVector &b) const
     {
       double bj = b[j] ; // optimization em 5/12/2006
       for (unsigned int i=0;i<3;i++) {
-	c[i]+=rowPtrs[i][j] * bj;
+        c[i]+=rowPtrs[i][j] * bj;
       }
     }
   }
@@ -880,8 +878,8 @@ vpMatrix::operator*(const vpTranslationVector &b) const
 //---------------------------------
 
 /*!
-  \relates vpMatrix
-  \brief multiplication by a scalar  Cij = x*Bij
+\relates vpMatrix
+\brief multiplication by a scalar  Cij = x*Bij
 */
 vpMatrix operator*(const double &x,const vpMatrix &B)
 {
@@ -897,29 +895,29 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
     std::cout << me << std::endl ;
     throw ;
   }
-// 	double t0,t1;
-	
-	unsigned int Brow = B.getRows() ;
-	unsigned int Bcol = B.getCols() ;
-// 	t0=vpTime::measureTimeMicros();
-// 
-// 	for (int i=0;i<Brow; i++)
-// 	{
-// 	    double *ci = C[i] ;
-// 	    double *Bi = B[i] ;
-// 	    for (int j=0 ; j < Bcol;j++)
-// 	    ci[j] = Bi[j]*x;
-// 	 }
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<Brow;i++)
-	  for(unsigned int j=0;j<Bcol;j++)
-	    C[i][j]= B[i][j]*x;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
+  // 	double t0,t1;
+
+  unsigned int Brow = B.getRows() ;
+  unsigned int Bcol = B.getCols() ;
+  // 	t0=vpTime::measureTimeMicros();
+  // 
+  // 	for (int i=0;i<Brow; i++)
+  // 	{
+  // 	    double *ci = C[i] ;
+  // 	    double *Bi = B[i] ;
+  // 	    for (int j=0 ; j < Bcol;j++)
+  // 	    ci[j] = Bi[j]*x;
+  // 	 }
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<Brow;i++)
+    for(unsigned int j=0;j<Bcol;j++)
+      C[i][j]= B[i][j]*x;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
 
 
 
@@ -940,23 +938,23 @@ vpMatrix vpMatrix::operator*(double x) const
     std::cout << me << std::endl ;
     throw ;
   }
-//	double t0,t1;
+  //	double t0,t1;
 
-	double ** CrowPtrs=C.rowPtrs;
-	
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	  *(C.data+i) = *(data+i)*x;
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-// 	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    CrowPtrs[i][j]= rowPtrs[i][j]*x;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
+  double ** CrowPtrs=C.rowPtrs;
+
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	  *(C.data+i) = *(data+i)*x;
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+  // 	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      CrowPtrs[i][j]= rowPtrs[i][j]*x;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
 
   return C;
 }
@@ -984,25 +982,25 @@ vpMatrix  vpMatrix::operator/(double x) const
 
   double  xinv = 1/x ;
 
-  
-//   	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	    *(C.data+i) = *(data+i)*xinv ;
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-// 	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    C[i][j]=rowPtrs[i][j]*xinv;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
-       return C;
- 
+
+  //   	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	    *(C.data+i) = *(data+i)*xinv ;
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+  // 	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      C[i][j]=rowPtrs[i][j]*xinv;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
+  return C;
+
 }
 
 
@@ -1010,23 +1008,23 @@ vpMatrix  vpMatrix::operator/(double x) const
 vpMatrix & vpMatrix::operator+=(double x)
 {
 
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	    *(data+i) += x;
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-// 	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j]+=x;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
-       return *this;
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	    *(data+i) += x;
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+  // 	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j]+=x;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
+  return *this;
 }
 
 
@@ -1034,24 +1032,24 @@ vpMatrix & vpMatrix::operator+=(double x)
 vpMatrix & vpMatrix::operator-=(double x)
 {
 
-  
-// 	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	    *(data+i) -= x;
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-// 	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j]-=x;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
-       return *this;
+
+  // 	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	    *(data+i) -= x;
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+  // 	
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j]-=x;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
+  return *this;
 }
 
 //! Multiply  all the element of the matrix by x : Aij = Aij * x
@@ -1059,14 +1057,14 @@ vpMatrix & vpMatrix::operator*=(double x)
 {
 
 
-//   for (int i=0;i<dsize;i++)
-//     *(data+i) *= x;
-  
+  //   for (int i=0;i<dsize;i++)
+  //     *(data+i) *= x;
+
   for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j]*=x;
- 
-   return *this;
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j]*=x;
+
+  return *this;
 }
 
 //! Divide  all the element of the matrix by x : Aij = Aij / x
@@ -1077,24 +1075,24 @@ vpMatrix & vpMatrix::operator/=(double x)
     throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /=(double x)");
 
   double xinv = 1/x ;
-  
-//   	double t0,t1;
-//      
-// 	t0=vpTime::measureTimeMicros();
-// 	for (int i=0;i<dsize;i++)
-// 	  *(data+i) *= xinv;
-//  
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<" ";
-	
-// 	t0=vpTime::measureTimeMicros();
-	for (unsigned int i=0;i<rowNum;i++)
-	  for(unsigned int j=0;j<colNum;j++)
-	    rowPtrs[i][j]*=xinv;
-// 	t1=vpTime::measureTimeMicros();
-// 	std::cout<< t1-t0<<std::endl;
-	
-       return *this;
+
+  //   	double t0,t1;
+  //      
+  // 	t0=vpTime::measureTimeMicros();
+  // 	for (int i=0;i<dsize;i++)
+  // 	  *(data+i) *= xinv;
+  //  
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<" ";
+
+  // 	t0=vpTime::measureTimeMicros();
+  for (unsigned int i=0;i<rowNum;i++)
+    for(unsigned int j=0;j<colNum;j++)
+      rowPtrs[i][j]*=xinv;
+  // 	t1=vpTime::measureTimeMicros();
+  // 	std::cout<< t1-t0<<std::endl;
+
+  return *this;
 }
 
 //----------------------------------------------------------------
@@ -1103,7 +1101,7 @@ vpMatrix & vpMatrix::operator/=(double x)
 
 
 /*!
-  \brief set the matrix to identity
+\brief set the matrix to identity
 */
 void
 vpMatrix::setIdentity(const double & val)
@@ -1124,12 +1122,12 @@ vpMatrix::setIdentity(const double & val)
 }
 
 /*!
-  \brief set the matrix to identity
+\brief set the matrix to identity
 
-  eye(n) is an n-by-n matrix with ones on the diagonal and zeros
-  elsewhere
+eye(n) is an n-by-n matrix with ones on the diagonal and zeros
+elsewhere
 
-  \sa eye(n) is also a matlab function
+\sa eye(n) is also a matlab function
 */
 void
 vpMatrix::eye(unsigned int n)
@@ -1145,16 +1143,16 @@ vpMatrix::eye(unsigned int n)
   }
 }
 /*!
-  \brief eye(m,n) is an m-by-n matrix with ones on the diagonal and zeros
-  elsewhere
+\brief eye(m,n) is an m-by-n matrix with ones on the diagonal and zeros
+elsewhere
 
-  \sa eye(m,n) is also a matlab function
+\sa eye(m,n) is also a matlab function
 */
 void
 vpMatrix::eye(unsigned int m, unsigned int n)
 {
   try {
-     resize(m,n) ;
+    resize(m,n) ;
   }
   catch(vpException me)
   {
@@ -1173,8 +1171,8 @@ vpMatrix::eye(unsigned int m, unsigned int n)
 
 
 /*!
-  \brief Transpose the matrix C = A^T
-  \return  A^T
+\brief Transpose the matrix C = A^T
+\return  A^T
 */
 vpMatrix vpMatrix::t() const
 {
@@ -1204,20 +1202,20 @@ vpMatrix vpMatrix::t() const
 
 
 /*!
-  \brief Transpose the matrix C = A^T
-  \return  A^T
+\brief Transpose the matrix C = A^T
+\return  A^T
 */
 vpMatrix vpMatrix::transpose()const
 {
-    vpMatrix At ;
-    transpose(At);
-    return At;
+  vpMatrix At ;
+  transpose(At);
+  return At;
 }
 
- void  vpMatrix::transpose(vpMatrix & At )const{
-   
+void  vpMatrix::transpose(vpMatrix & At )const{
+
   try {
-     At.resize(colNum,rowNum);
+    At.resize(colNum,rowNum);
   }
   catch(vpException me)
   {
@@ -1225,67 +1223,67 @@ vpMatrix vpMatrix::transpose()const
     vpCERROR << me << std::endl ;
     throw ;
   }
-  
-    size_t A_step = colNum;
-    double ** AtRowPtrs = At.rowPtrs;
- 
-    for( unsigned int i = 0; i < colNum; i++ )
-    {
-        double * row = AtRowPtrs[i];
-	double * col = rowPtrs[0]+i;
-        for( unsigned int j = 0; j < rowNum; j++, col+=A_step )
-            *(row++)=*col;   
-    }
- }
+
+  size_t A_step = colNum;
+  double ** AtRowPtrs = At.rowPtrs;
+
+  for( unsigned int i = 0; i < colNum; i++ )
+  {
+    double * row = AtRowPtrs[i];
+    double * col = rowPtrs[0]+i;
+    for( unsigned int j = 0; j < rowNum; j++, col+=A_step )
+      *(row++)=*col;   
+  }
+}
 
 
 /*!
- \brief Compute the AtA operation B = A*A^T
- \return  A*A^T
- \sa AAt(vpMatrix &) const
+\brief Compute the AtA operation B = A*A^T
+\return  A*A^T
+\sa AAt(vpMatrix &) const
 */
- vpMatrix vpMatrix::AAt() const
+vpMatrix vpMatrix::AAt() const
 {
- vpMatrix B;
+  vpMatrix B;
 
- AAt(B);
+  AAt(B);
 
- return B;
+  return B;
 }
 
 /*!
- \brief Compute the AtA operation B = A*A^T
-  The Result is placed in the parameter B and not returned.
-  A new matrix won't be allocated for every use of the function
-  (Speed gain if used many times with the same result matrix size).
-  \sa AAt()
+\brief Compute the AtA operation B = A*A^T
+The Result is placed in the parameter B and not returned.
+A new matrix won't be allocated for every use of the function
+(Speed gain if used many times with the same result matrix size).
+\sa AAt()
 */
 void vpMatrix::AAt(vpMatrix &B)const {
-  
-   try {
-       if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
-   }
-   catch(vpException me)
-   {
-       vpERROR_TRACE("Error caught") ;
-       vpCERROR << me << std::endl ;
-       throw ;
-   }
-   
-   // compute A*A^T
+
+  try {
+    if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+
+  // compute A*A^T
   for(unsigned int i=0;i<rowNum;i++){
     for(unsigned int j=i;j<rowNum;j++){
       double *pi = rowPtrs[i];// row i
       double *pj = rowPtrs[j];// row j
-      
+
       // sum (row i .* row j)
       double ssum=0;
       for(unsigned int k=0; k < colNum ;k++) 
-	ssum += *(pi++)* *(pj++);
-      
+        ssum += *(pi++)* *(pj++);
+
       B[i][j]=ssum; //upper triangle
       if(i!=j)
-	B[j][i]=ssum; //lower triangle
+        B[j][i]=ssum; //lower triangle
     }
   }
 }
@@ -1293,160 +1291,160 @@ void vpMatrix::AAt(vpMatrix &B)const {
 
 
 /*!
- \brief Compute the AtA operation B = A^T*A
-  The Result is placed in the parameter B and not returned.
-   A new matrix won't be allocated for every use of the function
-   (Speed gain if used many times with the same result matrix size).
+\brief Compute the AtA operation B = A^T*A
+The Result is placed in the parameter B and not returned.
+A new matrix won't be allocated for every use of the function
+(Speed gain if used many times with the same result matrix size).
 
-   \sa AtA()
+\sa AtA()
 */
 void vpMatrix::AtA(vpMatrix &B) const
 {
-   try {
-       if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
-   }
-   catch(vpException me)
-   {
-       vpERROR_TRACE("Error caught") ;
-       vpCERROR << me << std::endl ;
-       throw ;
-   }
+  try {
+    if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
 
-   unsigned int i,j,k;
-   double s;
-   double *ptr;
-   double *Bi;
-        for (i=0;i<colNum;i++)
-   {
-       Bi = B[i] ;
-       for (j=0;j<i;j++)
-       {
-           ptr=data;
-           s = 0 ;
-           for (k=0;k<rowNum;k++)
-           {
-               s +=(*(ptr+i)) * (*(ptr+j));
-               ptr+=colNum;
-           }
-           *Bi++ = s ;
-           B[j][i] = s;
-       }
-       ptr=data;
-       s = 0 ;
-       for (k=0;k<rowNum;k++)
-       {
-           s +=(*(ptr+i)) * (*(ptr+i));
-           ptr+=colNum;
-       }
-       *Bi = s;
-   }
+  unsigned int i,j,k;
+  double s;
+  double *ptr;
+  double *Bi;
+  for (i=0;i<colNum;i++)
+  {
+    Bi = B[i] ;
+    for (j=0;j<i;j++)
+    {
+      ptr=data;
+      s = 0 ;
+      for (k=0;k<rowNum;k++)
+      {
+        s +=(*(ptr+i)) * (*(ptr+j));
+        ptr+=colNum;
+      }
+      *Bi++ = s ;
+      B[j][i] = s;
+    }
+    ptr=data;
+    s = 0 ;
+    for (k=0;k<rowNum;k++)
+    {
+      s +=(*(ptr+i)) * (*(ptr+i));
+      ptr+=colNum;
+    }
+    *Bi = s;
+  }
 }
 
 
 /*!
- \brief Compute the AtA operation B = A^T*A
- \return  A^T*A
- \sa AtA(vpMatrix &) const
+\brief Compute the AtA operation B = A^T*A
+\return  A^T*A
+\sa AtA(vpMatrix &) const
 */
 vpMatrix vpMatrix::AtA() const
 {
- vpMatrix B;
+  vpMatrix B;
 
- AtA(B);
+  AtA(B);
 
- return B;
+  return B;
 }
 
 
 /*! 
-  \brief Stacks columns of a matrix in a vector 
-  \param out : a vpColVector; 
-  */
+\brief Stacks columns of a matrix in a vector 
+\param out : a vpColVector; 
+*/
 void vpMatrix::stackColumns(vpColVector  &out ){
-   
-    try {
-       if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
+
+  try {
+    if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+
+  double *optr=out.data;
+  for(unsigned int j =0;j<colNum ; j++){
+    for(unsigned int i =0;i<rowNum ; i++){
+      *(optr++)=rowPtrs[i][j];
     }
-    catch(vpException me)
-    {
-       vpERROR_TRACE("Error caught") ;
-       vpCERROR << me << std::endl ;
-       throw ;
-    }
-    
-    double *optr=out.data;
-    for(unsigned int j =0;j<colNum ; j++){
-	 for(unsigned int i =0;i<rowNum ; i++){
-	*(optr++)=rowPtrs[i][j];
-      }
-    }
+  }
 }
 
 /*!
-  \brief Stacks columns of a matrix in a vector 
-  \return a vpColVector; 
+\brief Stacks columns of a matrix in a vector 
+\return a vpColVector; 
 */
 vpColVector vpMatrix::stackColumns(){
-    
-    vpColVector out(colNum*rowNum);
-    stackColumns(out);
-    return out;
+
+  vpColVector out(colNum*rowNum);
+  stackColumns(out);
+  return out;
 }
 
 /*! 
-  \brief Stacks rows of a matrix in a vector
-  \param out :a  vpRowVector; 
+\brief Stacks rows of a matrix in a vector
+\param out :a  vpRowVector; 
 */
 void vpMatrix::stackRows(vpRowVector  &out ){
-  
-    try {
-       if ((out.rowNum != 1) || (out.colNum != colNum*rowNum)) out.resize(rowNum);
-    }
-    catch(vpException me)
-    {
-       vpERROR_TRACE("Error caught") ;
-       vpCERROR << me << std::endl ;
-       throw ;
-    }
-    
-    double *mdata=data;
-    double *optr=out.data;
-    for(unsigned int i =0;i<dsize ; i++){
-	*(optr++)=*(mdata++);
-    }
+
+  try {
+    if ((out.rowNum != 1) || (out.colNum != colNum*rowNum)) out.resize(rowNum);
+  }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("Error caught") ;
+    vpCERROR << me << std::endl ;
+    throw ;
+  }
+
+  double *mdata=data;
+  double *optr=out.data;
+  for(unsigned int i =0;i<dsize ; i++){
+    *(optr++)=*(mdata++);
+  }
 }
 /*! 
-  \brief Stacks rows of a matrix in a vector
-  \return a vpRowVector; 
+\brief Stacks rows of a matrix in a vector
+\return a vpRowVector; 
 */
 vpRowVector vpMatrix::stackRows(){
-    
-    vpRowVector out(colNum*rowNum);
-    stackRows(out );
-    return out; 
+
+  vpRowVector out(colNum*rowNum);
+  stackRows(out );
+  return out; 
 }
 
 
 
 /*!
-  Compute Kronecker product 
-  \param m1 : vpMatrix;
-  \param m2 : vpMatrix;
-  \param out : The kronecker product : \f$ m1 \otimes m2 \f$
-  */
+Compute Kronecker product 
+\param m1 : vpMatrix;
+\param m2 : vpMatrix;
+\param out : The kronecker product : \f$ m1 \otimes m2 \f$
+*/
 void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
   unsigned int r1= m1.getRows();
   unsigned int c1= m1.getCols();
   unsigned int r2= m2.getRows();
   unsigned int c2= m2.getCols();
-    
-  
-   if (r1*r2 !=out.rowNum || c1*c2!= out.colNum )
-   {
-      vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix") ;
-      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Kronecker prodect bad dimension of output vpMatrix"));
-   }
-   
+
+
+  if (r1*r2 !=out.rowNum || c1*c2!= out.colNum )
+  {
+    vpERROR_TRACE("Kronecker prodect bad dimension of output vpMatrix") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Kronecker prodect bad dimension of output vpMatrix"));
+  }
+
   for(unsigned int r =0;r<r1 ; r++){
     for(unsigned int c =0;c<c1 ; c++){
       double alpha = m1[r][c];
@@ -1454,39 +1452,39 @@ void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
       unsigned int roffset= r*r2;
       unsigned int coffset= c*c2;
       for(unsigned int rr =0;rr<r2 ; rr++){
-	for(unsigned int cc =0;cc<c2 ;cc++){
-	  out[roffset+rr][coffset+cc]= alpha* *(m2ptr++);
-	}
+        for(unsigned int cc =0;cc<c2 ;cc++){
+          out[roffset+rr][coffset+cc]= alpha* *(m2ptr++);
+        }
       }
     }
   }
-  
+
 }
 
 /*!
-  Compute Kronecker product 
-  \param m : vpMatrix;
-  \param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$
-  */
+Compute Kronecker product 
+\param m : vpMatrix;
+\param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$
+*/
 void vpMatrix::kron(const vpMatrix  &m , vpMatrix  &out){
   kron(*this,m,out);
 }
 
 /*!
-  Compute Kronecker product 
-  \param m1 : vpMatrix;
-  \param m2 : vpMatrix;
-  \return The kronecker product : \f$ m1 \otimes m2 \f$
-  */
+Compute Kronecker product 
+\param m1 : vpMatrix;
+\param m2 : vpMatrix;
+\return The kronecker product : \f$ m1 \otimes m2 \f$
+*/
 vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
-  
+
   unsigned int r1= m1.getRows();
   unsigned int c1= m1.getCols();
   unsigned int r2= m2.getRows();
   unsigned int c2= m2.getCols();
-  
+
   vpMatrix out(r1*r2,c1*c2);
-  
+
   for(unsigned int r =0;r<r1 ; r++){
     for(unsigned int c =0;c<c1 ; c++){
       double alpha = m1[r][c];
@@ -1494,9 +1492,9 @@ vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
       unsigned int roffset= r*r2;
       unsigned int coffset= c*c2;
       for(unsigned int rr =0;rr<r2 ; rr++){
-	for(unsigned int cc =0;cc<c2 ;cc++){
-	  out[roffset+rr ][coffset+cc]= alpha* *(m2ptr++);
-	}
+        for(unsigned int cc =0;cc<c2 ;cc++){
+          out[roffset+rr ][coffset+cc]= alpha* *(m2ptr++);
+        }
       }
     }
   }
@@ -1505,12 +1503,12 @@ vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
 
 
 /*!
-  Compute Kronecker product 
-  \param m : vpMatrix;
-  \return m1.kron(m2) The kronecker product : \f$ m1 \otimes m2 \f$
-  */
+Compute Kronecker product 
+\param m : vpMatrix;
+\return m1.kron(m2) The kronecker product : \f$ m1 \otimes m2 \f$
+*/
 vpMatrix vpMatrix::kron(const vpMatrix  &m){
-    return kron(*this,m);
+  return kron(*this,m);
 }
 
 
@@ -1518,53 +1516,53 @@ vpMatrix vpMatrix::kron(const vpMatrix  &m){
 
 /*!
 
-  Solve a linear system \f$ A X = B \f$ using Singular Value
-  Decomposition (SVD).
+Solve a linear system \f$ A X = B \f$ using Singular Value
+Decomposition (SVD).
 
-  Non destructive wrt. A and B.
+Non destructive wrt. A and B.
 
-  \param b : Vector\f$ B \f$.
+\param b : Vector\f$ B \f$.
 
-  \param x : Vector \f$ X \f$.
+\param x : Vector \f$ X \f$.
 
-  Here an example:
-  \code
+Here an example:
+\code
 #include <visp/vpColVector.h>
 #include <visp/vpMatrix.h>
 
 int main()
 {
-  vpMatrix A(3,3);
- 
-  A[0][0] = 4.64; 
-  A[0][1] = 0.288; 
-  A[0][2] = -0.384; 
-  
-  A[1][0] = 0.288; 
-  A[1][1] = 7.3296; 
-  A[1][2] = 2.2272; 
-  
-  A[2][0] = -0.384; 
-  A[2][1] = 2.2272; 
-  A[2][2] = 6.0304; 
-  
-  vpColVector X(3), B(3);
-  B[0] = 1;
-  B[1] = 2;
-  B[2] = 3;
+vpMatrix A(3,3);
 
-  A.solveBySVD(B, X);
+A[0][0] = 4.64; 
+A[0][1] = 0.288; 
+A[0][2] = -0.384; 
 
-  // Obtained values of X
-  // X[0] = 0.2468; 
-  // X[1] = 0.120782; 
-  // X[2] = 0.468587; 
+A[1][0] = 0.288; 
+A[1][1] = 7.3296; 
+A[1][2] = 2.2272; 
 
-  std::cout << "X:\n" << X << std::endl;
+A[2][0] = -0.384; 
+A[2][1] = 2.2272; 
+A[2][2] = 6.0304; 
+
+vpColVector X(3), B(3);
+B[0] = 1;
+B[1] = 2;
+B[2] = 3;
+
+A.solveBySVD(B, X);
+
+// Obtained values of X
+// X[0] = 0.2468; 
+// X[1] = 0.120782; 
+// X[2] = 0.468587; 
+
+std::cout << "X:\n" << X << std::endl;
 }
-  \endcode
+\endcode
 
-  \sa solveBySVD(const vpColVector &)
+\sa solveBySVD(const vpColVector &)
 */
 void
 vpMatrix::solveBySVD(const vpColVector &b, vpColVector &x) const
@@ -1575,52 +1573,52 @@ vpMatrix::solveBySVD(const vpColVector &b, vpColVector &x) const
 
 /*!
 
-  Solve a linear system \f$ A X = B \f$ using Singular Value
-  Decomposition (SVD).
+Solve a linear system \f$ A X = B \f$ using Singular Value
+Decomposition (SVD).
 
-  Non destructive wrt. A and B.
+Non destructive wrt. A and B.
 
-  \param B : Vector\f$ B \f$.
+\param B : Vector\f$ B \f$.
 
-  \return Vector \f$ X \f$.
+\return Vector \f$ X \f$.
 
-  Here an example:
-  \code
+Here an example:
+\code
 #include <visp/vpColVector.h>
 #include <visp/vpMatrix.h>
 
 int main()
 {
-  vpMatrix A(3,3);
- 
-  A[0][0] = 4.64; 
-  A[0][1] = 0.288; 
-  A[0][2] = -0.384; 
-  
-  A[1][0] = 0.288; 
-  A[1][1] = 7.3296; 
-  A[1][2] = 2.2272; 
-  
-  A[2][0] = -0.384; 
-  A[2][1] = 2.2272; 
-  A[2][2] = 6.0304; 
-  
-  vpColVector X(3), B(3);
-  B[0] = 1;
-  B[1] = 2;
-  B[2] = 3;
+vpMatrix A(3,3);
 
-  X = A.solveBySVD(B);
-  // Obtained values of X
-  // X[0] = 0.2468; 
-  // X[1] = 0.120782; 
-  // X[2] = 0.468587; 
+A[0][0] = 4.64; 
+A[0][1] = 0.288; 
+A[0][2] = -0.384; 
 
-  std::cout << "X:\n" << X << std::endl;
+A[1][0] = 0.288; 
+A[1][1] = 7.3296; 
+A[1][2] = 2.2272; 
+
+A[2][0] = -0.384; 
+A[2][1] = 2.2272; 
+A[2][2] = 6.0304; 
+
+vpColVector X(3), B(3);
+B[0] = 1;
+B[1] = 2;
+B[2] = 3;
+
+X = A.solveBySVD(B);
+// Obtained values of X
+// X[0] = 0.2468; 
+// X[1] = 0.120782; 
+// X[2] = 0.468587; 
+
+std::cout << "X:\n" << X << std::endl;
 }
-  \endcode
+\endcode
 
-  \sa solveBySVD(const vpColVector &, vpColVector &)
+\sa solveBySVD(const vpColVector &, vpColVector &)
 */
 vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 {
@@ -1632,73 +1630,73 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 
 
 /*!
-  
-  Singular value decomposition (SVD).
- 
-  \f[ M = U \Sigma V^{\top} \f]
 
-  \warning Destructive method wrt. to the matrix \f$ M \f$ to
-  decompose. You should make a COPY of that matrix if needed not to
-  CHANGE.
-  
-  \param w : Vector of singular values. \f$ \Sigma = diag(w) \f$.
-  
-  \param v : Matrix \f$ V \f$.
-  
-  \return Matrix \f$ U \f$.
+Singular value decomposition (SVD).
 
-  \warning If the GNU Scientific Library (GSL) third party library is used to compute the SVD
-  decomposition, the singular values \f$ \Sigma_{i,i} \f$ are ordered in decreasing
-  fashion in \e w. This is not the case, if the GSL is not detected by ViSP. 
+\f[ M = U \Sigma V^{\top} \f]
 
-  Here an example of SVD decomposition of a non square Matrix M.
+\warning Destructive method wrt. to the matrix \f$ M \f$ to
+decompose. You should make a COPY of that matrix if needed not to
+CHANGE.
 
-  \code
+\param w : Vector of singular values. \f$ \Sigma = diag(w) \f$.
+
+\param v : Matrix \f$ V \f$.
+
+\return Matrix \f$ U \f$.
+
+\warning If the GNU Scientific Library (GSL) third party library is used to compute the SVD
+decomposition, the singular values \f$ \Sigma_{i,i} \f$ are ordered in decreasing
+fashion in \e w. This is not the case, if the GSL is not detected by ViSP. 
+
+Here an example of SVD decomposition of a non square Matrix M.
+
+\code
 #include <visp/vpColVector.h>
 #include <visp/vpMatrix.h>
 
 int main()
 {
-  vpMatrix M(3,2);
-  M[0][0] = 1;
-  M[1][0] = 2;
-  M[2][0] = 0.5;
+vpMatrix M(3,2);
+M[0][0] = 1;
+M[1][0] = 2;
+M[2][0] = 0.5;
 
-  M[0][1] = 6;
-  M[1][1] = 8 ;
-  M[2][1] = 9 ;
+M[0][1] = 6;
+M[1][1] = 8 ;
+M[2][1] = 9 ;
 
-  vpMatrix v;
-  vpColVector w;
-  vpMatrix Mrec;
-  vpMatrix Sigma;
+vpMatrix v;
+vpColVector w;
+vpMatrix Mrec;
+vpMatrix Sigma;
 
-  M.svd(w, v); 
-  // Here M is modified and is now equal to U
+M.svd(w, v); 
+// Here M is modified and is now equal to U
 
-  // Construct the diagonal matrix from the singular values
-  Sigma.diag(w);
+// Construct the diagonal matrix from the singular values
+Sigma.diag(w);
 
-  // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * v.t();
+// Reconstruct the initial matrix M using the decomposition
+Mrec =  M * Sigma * v.t();
 
-  // Here, Mrec is obtained equal to the initial value of M
-  // Mrec[0][0] = 1;
-  // Mrec[1][0] = 2;
-  // Mrec[2][0] = 0.5;
-  // Mrec[0][1] = 6;
-  // Mrec[1][1] = 8 ;
-  // Mrec[2][1] = 9 ;
+// Here, Mrec is obtained equal to the initial value of M
+// Mrec[0][0] = 1;
+// Mrec[1][0] = 2;
+// Mrec[2][0] = 0.5;
+// Mrec[0][1] = 6;
+// Mrec[1][1] = 8 ;
+// Mrec[2][1] = 9 ;
 
-  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
 }
-  \endcode
-  
+\endcode
+
 */
 void
 vpMatrix::svd(vpColVector& w, vpMatrix& v)
 {
-  if (DEBUG_LEVEL1 == 0) /* no verification */
+#if (DEBUG_LEVEL1 == 0) /* no verification */
   {
     w.resize( this->getCols() );
     v.resize( this->getCols(), this->getCols() );
@@ -1713,9 +1711,9 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
     svdNr(w,v) ;
 #endif
 
-  //svdNr(w,v) ;
+    //svdNr(w,v) ;
   }
-  else  /* verification of the SVD */
+#else  /* verification of the SVD */
   {
     int pb = 0;
     unsigned int i,j,k,nrows,ncols;
@@ -1730,7 +1728,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 #else
     svdNr(w,v) ;
 #endif
-  //svdNr(w,v) ;
+    //svdNr(w,v) ;
 
     nrows = A.getRows();
     ncols = A.getCols();
@@ -1756,12 +1754,13 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
     }
     //    else printf("SVD ok ;-)\n");  /* It's so good... */
   }
+#endif
 }
 /*!
-  \brief Compute the pseudo inverse of the matrix Ap = A^+
-  \param Ap : The pseudo inverse \f$ A^+ \f$.
-  \param svThreshold : Threshold used to test the singular values.
-  \return Return the rank of the matrix A
+\brief Compute the pseudo inverse of the matrix Ap = A^+
+\param Ap : The pseudo inverse \f$ A^+ \f$.
+\param svThreshold : Threshold used to test the singular values.
+\return Return the rank of the matrix A
 */
 
 unsigned int
@@ -1772,37 +1771,37 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 }
 
 /*!
-  \brief Compute and return the pseudo inverse of a n-by-m matrix : \f$ A^+ \f$
-  \param svThreshold : Threshold used to test the singular values.
+\brief Compute and return the pseudo inverse of a n-by-m matrix : \f$ A^+ \f$
+\param svThreshold : Threshold used to test the singular values.
 
-  \return Pseudo inverse of the matrix.
+\return Pseudo inverse of the matrix.
 
-  Here an example to compute the inverse of a n-by-n matrix. If the
-  matrix is n-by-n it is also possible to use inverseByLU().
+Here an example to compute the inverse of a n-by-n matrix. If the
+matrix is n-by-n it is also possible to use inverseByLU().
 
-  \code
+\code
 #include <visp/vpMatrix.h>
 
 int main()
 {
-  vpMatrix A(4,4);
+vpMatrix A(4,4);
 
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
-  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
-  // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.pseudoInverse();
-  std::cout << "Inverse by pseudo inverse: \n" << A_1 << std::endl;
+// Compute the inverse
+vpMatrix A_1; // A^-1
+A_1 = A.pseudoInverse();
+std::cout << "Inverse by pseudo inverse: \n" << A_1 << std::endl;
 
-  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
 }
-  \endcode
+\endcode
 
-  \sa inverseByLU()
-  
+\sa inverseByLU()
+
 */
 vpMatrix
 vpMatrix::pseudoInverse(double svThreshold) const
@@ -1814,11 +1813,11 @@ vpMatrix::pseudoInverse(double svThreshold) const
 }
 
 /*!
-  \brief Compute the pseudo inverse of the matrix Ap = A^+
-  \param Ap : The pseudo inverse \f$ A^+ \f$.
-  \param sv : Singular values.
-  \param svThreshold : Threshold used to test the singular values.
-  \return Return the rank of the matrix A
+\brief Compute the pseudo inverse of the matrix Ap = A^+
+\param Ap : The pseudo inverse \f$ A^+ \f$.
+\param sv : Singular values.
+\param svThreshold : Threshold used to test the singular values.
+\return Return the rank of the matrix A
 */
 unsigned int
 vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
@@ -1828,42 +1827,42 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 }
 
 /*!
-  \brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
+\brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
 
-  Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
+Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
 
-  A is an m x n matrix,
-  if m >=n the svd works on A other wise it works on A^T
+A is an m x n matrix,
+if m >=n the svd works on A other wise it works on A^T
 
-  Therefore if m>=n we have
+Therefore if m>=n we have
 
-  \f[
-  {\bf A}_{m\times n} = {\bf U}_{m\times m} {\bf S}_{m\times n} {\bf V^\top}_{n\times n}
+\f[
+{\bf A}_{m\times n} = {\bf U}_{m\times m} {\bf S}_{m\times n} {\bf V^\top}_{n\times n}
 \f]
-  \f[
-  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} {\bf A} & | &
-  \mbox{Ker} {\bf A^\top} \end{array} \right] {\bf S}
-  \left[
-  \begin{array}{c} (\mbox{Im} {\bf A^\top})^\top \\   (\mbox{Ker}{\bf A})^\top \end{array}\right]
-  \f]
-  where
-  Im(A) is an m x r matrix (r is the rank of A) and
-  Im(A^T) is an r x n matrix
+\f[
+{\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} {\bf A} & | &
+\mbox{Ker} {\bf A^\top} \end{array} \right] {\bf S}
+\left[
+\begin{array}{c} (\mbox{Im} {\bf A^\top})^\top \\   (\mbox{Ker}{\bf A})^\top \end{array}\right]
+\f]
+where
+Im(A) is an m x r matrix (r is the rank of A) and
+Im(A^T) is an r x n matrix
 
 
-  \param Ap : The pseudo inverse \f$ A^+ \f$.
-  \param sv : Singular values.
-  \param svThreshold : Threshold used to test the singular values.
-  \param imAt : Image A^T
-  \param imA: Image  A
-  \return Return the rank of the matrix A
+\param Ap : The pseudo inverse \f$ A^+ \f$.
+\param sv : Singular values.
+\param svThreshold : Threshold used to test the singular values.
+\param imAt : Image A^T
+\param imA: Image  A
+\return Return the rank of the matrix A
 
 */
 unsigned int 
 vpMatrix::pseudoInverse(vpMatrix &Ap,
-			vpColVector &sv, double svThreshold,
-			vpMatrix &imA,
-			vpMatrix &imAt) const
+                        vpColVector &sv, double svThreshold,
+                        vpMatrix &imA,
+                        vpMatrix &imAt) const
 {
 
   unsigned int i, j, k ;
@@ -1897,7 +1896,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   // compute the highest singular value and the rank of h
   double maxsv = 0 ;
   for (i=0 ; i < ncols ; i++)
-     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+    if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
 
   unsigned int rank = 0 ;
   for (i=0 ; i < ncols ; i++)
@@ -1913,10 +1912,10 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
       a1[i][j] = 0.0;
 
       for (k=0 ; k < ncols ; k++)
-    	 if (fabs(sv[k]) > maxsv*svThreshold)
-  	   {
-	       a1[i][j] += v[i][k]*a[j][k]/sv[k];
-       }
+        if (fabs(sv[k]) > maxsv*svThreshold)
+        {
+          a1[i][j] += v[i][k]*a[j][k]/sv[k];
+        }
     }
   }
   if (nrows_orig >=  ncols_orig) Ap = a1;
@@ -1928,13 +1927,13 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     imAt.resize(ncols_orig,rank) ;
     for (i=0 ; i  < ncols_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imAt[i][j] = v[i][j] ;
+        imAt[i][j] = v[i][j] ;
 
     //  compute dim A
     imA.resize(nrows_orig,rank) ;
     for (i=0 ; i  < nrows_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imA[i][j] = a[i][j] ;
+        imA[i][j] = a[i][j] ;
   }
   else
   {
@@ -1942,16 +1941,16 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     imAt.resize(ncols_orig,rank) ;
     for (i=0 ; i  < ncols_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imAt[i][j] = a[i][j] ;
+        imAt[i][j] = a[i][j] ;
 
     imA.resize(nrows_orig,rank) ;
     for (i=0 ; i  < nrows_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imA[i][j] = v[i][j] ;
+        imA[i][j] = v[i][j] ;
 
   }
 
-  if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
   {
     int pb = 0;
     vpMatrix A, ApA, AAp, AApA, ApAAp ;
@@ -1996,7 +1995,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     //    else printf("Ap OK ;-) \n");
 
   }
-
+#endif
 
   // std::cout << v << std::endl ;
   return rank ;
@@ -2005,44 +2004,44 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
 
 
 /*!
-  \brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
+\brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
 
-  Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
+Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
 
-  A is an m x n matrix,
-  if m >=n the svd works on A other wise it works on A^T
+A is an m x n matrix,
+if m >=n the svd works on A other wise it works on A^T
 
-  Therefore if m>=n we have
+Therefore if m>=n we have
 
-  \f[
-  {\bf A}_{m\times n} = {\bf U}_{m\times m} {\bf S}_{m\times n} {\bf V^\top}_{n\times n}
+\f[
+{\bf A}_{m\times n} = {\bf U}_{m\times m} {\bf S}_{m\times n} {\bf V^\top}_{n\times n}
 \f]
-  \f[
-  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} {\bf A} & | &
-  \mbox{Ker} {\bf A^\top} \end{array} \right] {\bf S}
-  \left[
-  \begin{array}{c} (\mbox{Im} {\bf A^\top})^\top \\   (\mbox{Ker}{\bf A})^\top \end{array}\right]
-  \f]
-  where
-  Im(A) is an m x r matrix (r is the rank of A) and
-  Im(A^T) is an r x n matrix
+\f[
+{\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} {\bf A} & | &
+\mbox{Ker} {\bf A^\top} \end{array} \right] {\bf S}
+\left[
+\begin{array}{c} (\mbox{Im} {\bf A^\top})^\top \\   (\mbox{Ker}{\bf A})^\top \end{array}\right]
+\f]
+where
+Im(A) is an m x r matrix (r is the rank of A) and
+Im(A^T) is an r x n matrix
 
 
-  \param Ap : The pseudo inverse \f$ A^+ \f$.
-  \param sv : Singular values.
-  \param svThreshold : Threshold used to test the singular values.
-  \param imA: Image  A
-  \param imAt : Image A^T
-  \param kerA : null space of A
-  \return Return the rank of the matrix A
+\param Ap : The pseudo inverse \f$ A^+ \f$.
+\param sv : Singular values.
+\param svThreshold : Threshold used to test the singular values.
+\param imA: Image  A
+\param imAt : Image A^T
+\param kerA : null space of A
+\return Return the rank of the matrix A
 
 */
 unsigned int 
 vpMatrix::pseudoInverse(vpMatrix &Ap,
-			vpColVector &sv, double svThreshold,
-			vpMatrix &imA,
-			vpMatrix &imAt,
-			vpMatrix &kerA) const
+                        vpColVector &sv, double svThreshold,
+                        vpMatrix &imA,
+                        vpMatrix &imAt,
+                        vpMatrix &kerA) const
 {
 
   unsigned int i, j, k ;
@@ -2076,7 +2075,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   // compute the highest singular value and the rank of h
   double maxsv = 0 ;
   for (i=0 ; i < ncols ; i++)
-     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+    if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
 
   unsigned int rank = 0 ;
   for (i=0 ; i < ncols ; i++)
@@ -2092,10 +2091,10 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
       a1[i][j] = 0.0;
 
       for (k=0 ; k < ncols ; k++)
-    	 if (fabs(sv[k]) > maxsv*svThreshold)
-  	   {
-	       a1[i][j] += v[i][k]*a[j][k]/sv[k];
-       }
+        if (fabs(sv[k]) > maxsv*svThreshold)
+        {
+          a1[i][j] += v[i][k]*a[j][k]/sv[k];
+        }
     }
   }
   if (nrows_orig >=  ncols_orig) Ap = a1;
@@ -2107,13 +2106,13 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     imAt.resize(ncols_orig,rank) ;
     for (i=0 ; i  < ncols_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imAt[i][j] = v[i][j] ;
+        imAt[i][j] = v[i][j] ;
 
     //  compute dim A
     imA.resize(nrows_orig,rank) ;
     for (i=0 ; i  < nrows_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imA[i][j] = a[i][j] ;
+        imA[i][j] = a[i][j] ;
   }
   else
   {
@@ -2121,12 +2120,12 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     imAt.resize(ncols_orig,rank) ;
     for (i=0 ; i  < ncols_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imAt[i][j] = a[i][j] ;
+        imAt[i][j] = a[i][j] ;
 
     imA.resize(nrows_orig,rank) ;
     for (i=0 ; i  < nrows_orig ; i++)
       for (j=0 ; j < rank ; j++)
-	imA[i][j] = v[i][j] ;
+        imA[i][j] = v[i][j] ;
 
   }
 
@@ -2159,7 +2158,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   }
   kerA = Ker;
 
-  if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
   {
     int pb = 0;
     vpMatrix A, ApA, AAp, AApA, ApAAp ;
@@ -2205,7 +2204,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
     //    else printf("Ap OK ;-) \n");
 
   }
-
+#endif
 
   // std::cout << v << std::endl ;
   return rank ;
@@ -2213,8 +2212,8 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
 
 
 /*!
-  \brief  Return the ith rows of the matrix
-  \warning notice row(1) is the 0th row.
+\brief  Return the ith rows of the matrix
+\warning notice row(1) is the 0th row.
 */
 
 vpRowVector
@@ -2228,8 +2227,8 @@ vpMatrix::row(const unsigned int j)
 
 
 /*!
-  \brief  Return the ith columns of the matrix
-  \warning notice column(1) is the 0th column.
+\brief  Return the ith columns of the matrix
+\warning notice column(1) is the 0th column.
 */
 
 vpColVector
@@ -2245,15 +2244,15 @@ vpMatrix::column(const unsigned int j)
 
 
 /*!
-  \brief Stack matrices. "Stack" two matrices  C = [ A B ]^T
+\brief Stack matrices. "Stack" two matrices  C = [ A B ]^T
 
-  \f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
+\f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
 
-  \param A : Upper matrix.
-  \param B : Lower matrix.
-  \return Stacked matrix C = [ A B ]^T
+\param A : Upper matrix.
+\param B : Lower matrix.
+\return Stacked matrix C = [ A B ]^T
 
-  \warning A and B must have the same number of column.
+\warning A and B must have the same number of column.
 */
 vpMatrix
 vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
@@ -2261,7 +2260,7 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
   vpMatrix C ;
 
   try{
-  	stackMatrices(A,B, C) ;
+    stackMatrices(A,B, C) ;
   }
   catch(vpMatrixException me)
   {
@@ -2273,16 +2272,16 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
 }
 
 /*!
-  \relates vpMatrix
-  \brief stackMatrices. "stack" two matrices  C = [ A B ]^T
+\relates vpMatrix
+\brief stackMatrices. "stack" two matrices  C = [ A B ]^T
 
-  \f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
+\f$ C = \left( \begin{array}{c} A \\ B \end{array}\right)    \f$
 
-  \param  A : Upper matrix.
-  \param  B : Lower matrix.
-  \param  C : Stacked matrix C = [ A B ]^T
+\param  A : Upper matrix.
+\param  B : Lower matrix.
+\param  C : Stacked matrix C = [ A B ]^T
 
-  \warning A and B must have the same number of column
+\warning A and B must have the same number of column
 */
 void
 vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
@@ -2295,31 +2294,31 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     {
       vpERROR_TRACE("\n\t\t incorrect matrices size") ;
       throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			      "\n\t\t incorrect matrices size")) ;
+        "\n\t\t incorrect matrices size")) ;
     }
 
-  try {
-    C.resize(nra+nrb,B.getCols()  ) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
-    throw ;
-  }
-
-  unsigned int i,j ;
-  for (i=0 ; i < nra ; i++)
-    for (j=0 ; j < A.getCols() ; j++)
-      C[i][j] = A[i][j] ;
-
-
-  for (i=0 ; i < nrb ; i++)
-    for (j=0 ; j < B.getCols() ; j++)
+    try {
+      C.resize(nra+nrb,B.getCols()  ) ;
+    }
+    catch(vpException me)
     {
-      C[i+nra][j] = B[i][j] ;
-
+      vpERROR_TRACE("Error caught") ;
+      vpCERROR << me << std::endl ;
+      throw ;
     }
+
+    unsigned int i,j ;
+    for (i=0 ; i < nra ; i++)
+      for (j=0 ; j < A.getCols() ; j++)
+        C[i][j] = A[i][j] ;
+
+
+    for (i=0 ; i < nrb ; i++)
+      for (j=0 ; j < B.getCols() ; j++)
+      {
+        C[i+nra][j] = B[i][j] ;
+
+      }
 
 
 }
@@ -2329,25 +2328,25 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
 
 /*!
-  \brief Insert matrix B in matrix A at the given position.
+\brief Insert matrix B in matrix A at the given position.
 
 
-  \param A : Main matrix.
-  \param B : Matrix to insert.
-  \param r : Index of the row where to add the matrix.
-  \param c : Index of the column where to add the matrix.
-  \return Matrix with B insert in A.
+\param A : Main matrix.
+\param B : Matrix to insert.
+\param r : Index of the row where to add the matrix.
+\param c : Index of the column where to add the matrix.
+\return Matrix with B insert in A.
 
-  \warning Throw exception if the sizes of the matrices do not allow the insertion.
+\warning Throw exception if the sizes of the matrices do not allow the insertion.
 */
 vpMatrix
 vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, 
-		 const unsigned int r, const unsigned int c)
+                 const unsigned int r, const unsigned int c)
 {
   vpMatrix C ;
 
   try{
-  	insert(A,B, C, r, c) ;
+    insert(A,B, C, r, c) ;
   }
   catch(vpMatrixException me)
   {
@@ -2359,43 +2358,43 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B,
 }
 
 /*!
-  \relates vpMatrix
-  Insert matrix B in matrix A at the given position.
+\relates vpMatrix
+Insert matrix B in matrix A at the given position.
 
-  \param A : Main matrix.
-  \param B : Matrix to insert.
-  \param C : Result matrix.
-  \param r : Index of the row where to insert matrix B.
-  \param c : Index of the column where to insert matrix B.
+\param A : Main matrix.
+\param B : Matrix to insert.
+\param C : Result matrix.
+\param r : Index of the row where to insert matrix B.
+\param c : Index of the column where to insert matrix B.
 
-  \warning Throw exception if the sizes of the matrices do not 
-  allow the insertion.
+\warning Throw exception if the sizes of the matrices do not 
+allow the insertion.
 */
 void
 vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, 
-		 const unsigned int r, const unsigned int c)
+                 const unsigned int r, const unsigned int c)
 {
   if( ( (r + B.getRows()) <= A.getRows() ) && 
-      ( (c + B.getCols()) <= A.getRows() ) ){
-    try {
-      C.resize(A.getRows(),A.getCols()  ) ;
-    }
-    catch(vpException me)
-    {
-      vpERROR_TRACE("Error caught") ;
-      vpCERROR << me << std::endl ;
-      throw ;
-    }
-    for(unsigned int i=0; i<A.getCols(); i++){
-      for(unsigned int j=0; j<A.getRows(); j++){
-        if(i >= r && i < (r + B.getRows()) && j >= c && j < (c+B.getCols())){
-          C[i][j] = B[i-r][j-c];
-        }
-        else{
-          C[i][j] = A[i][j];
+    ( (c + B.getCols()) <= A.getRows() ) ){
+      try {
+        C.resize(A.getRows(),A.getCols()  ) ;
+      }
+      catch(vpException me)
+      {
+        vpERROR_TRACE("Error caught") ;
+        vpCERROR << me << std::endl ;
+        throw ;
+      }
+      for(unsigned int i=0; i<A.getCols(); i++){
+        for(unsigned int j=0; j<A.getRows(); j++){
+          if(i >= r && i < (r + B.getRows()) && j >= c && j < (c+B.getCols())){
+            C[i][j] = B[i-r][j-c];
+          }
+          else{
+            C[i][j] = A[i][j];
+          }
         }
       }
-    }
   }
   else{
     throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
@@ -2404,15 +2403,15 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
 }
 
 /*!
-  \brief Juxtapose matrices. "juxtapos" two matrices  C = [ A B ]
+\brief Juxtapose matrices. "juxtapos" two matrices  C = [ A B ]
 
-  \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
+\f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
-  \param A : Left matrix.
-  \param B : Right matrix.
-  \return Juxtaposed matrix C = [ A B ]
+\param A : Left matrix.
+\param B : Right matrix.
+\return Juxtaposed matrix C = [ A B ]
 
-  \warning A and B must have the same number of column
+\warning A and B must have the same number of column
 */
 vpMatrix
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
@@ -2420,7 +2419,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
   vpMatrix C ;
 
   try{
-  juxtaposeMatrices(A,B, C) ;
+    juxtaposeMatrices(A,B, C) ;
   }
   catch(vpMatrixException me)
   {
@@ -2432,16 +2431,16 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 }
 
 /*!
-  \relates vpMatrix
-  \brief juxtaposeMatrices. "juxtapose" two matrices  C = [ A B ]
+\relates vpMatrix
+\brief juxtaposeMatrices. "juxtapose" two matrices  C = [ A B ]
 
-  \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
+\f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
-  \param A : Left matrix.
-  \param B : Right matrix.
-  \param C : Juxtaposed matrix C = [ A B ]
+\param A : Left matrix.
+\param B : Right matrix.
+\param C : Juxtaposed matrix C = [ A B ]
 
-  \warning A and B must have the same number of column
+\warning A and B must have the same number of column
 */
 void
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
@@ -2454,41 +2453,41 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     {
       vpERROR_TRACE("\n\t\t incorrect matrices size") ;
       throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			      "\n\t\t incorrect matrices size")) ;
+        "\n\t\t incorrect matrices size")) ;
     }
 
-  try {
-    C.resize(B.getRows(),nca+ncb) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
-    throw ;
-  }
-
-  unsigned int i,j ;
-  for (i=0 ; i < C.getRows(); i++)
-    for (j=0 ; j < nca ; j++)
-      C[i][j] = A[i][j] ;
-
-
-  for (i=0 ; i < C.getRows() ; i++)
-    for (j=0 ; j < ncb ; j++)
+    try {
+      C.resize(B.getRows(),nca+ncb) ;
+    }
+    catch(vpException me)
     {
-      C[i][nca+j] = B[i][j] ;
+      vpERROR_TRACE("Error caught") ;
+      vpCERROR << me << std::endl ;
+      throw ;
     }
+
+    unsigned int i,j ;
+    for (i=0 ; i < C.getRows(); i++)
+      for (j=0 ; j < nca ; j++)
+        C[i][j] = A[i][j] ;
+
+
+    for (i=0 ; i < C.getRows() ; i++)
+      for (j=0 ; j < ncb ; j++)
+      {
+        C[i][nca+j] = B[i][j] ;
+      }
 }
 
 /*!
 
-  Create a diagonal matrix with the element of a vector.
+Create a diagonal matrix with the element of a vector.
 
-  \param  A : Vector which element will be put in the diagonal.
+\param  A : Vector which element will be put in the diagonal.
 
-  \sa createDiagonalMatrix()
+\sa createDiagonalMatrix()
 
-  \code
+\code
 #include <iostream>
 
 #include <visp/vpColVector.h>
@@ -2496,23 +2495,23 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 
 int main()
 {
-  vpMatrix A;
-  vpColVector v(3);
+vpMatrix A;
+vpColVector v(3);
 
-  v[0] = 1;
-  v[1] = 2;
-  v[2] = 3;
+v[0] = 1;
+v[1] = 2;
+v[2] = 3;
 
-  A.diag(v);
+A.diag(v);
 
-  std::cout << "A:\n" << A << std::endl;
+std::cout << "A:\n" << A << std::endl;
 
-  // A is now equal to:
-  // 1 0 0
-  // 0 2 0
-  // 0 0 3
+// A is now equal to:
+// 1 0 0
+// 0 2 0
+// 0 0 3
 }
-  \endcode
+\endcode
 */
 
 void
@@ -2534,13 +2533,13 @@ vpMatrix::diag(const vpColVector &A)
 }
 /*!
 
-  Create a diagonal matrix with the element of a vector \f$ DA_{ii} = A_i \f$.
+Create a diagonal matrix with the element of a vector \f$ DA_{ii} = A_i \f$.
 
-  \param  A : Vector which element will be put in the diagonal.
+\param  A : Vector which element will be put in the diagonal.
 
-  \param  DA : Diagonal matrix DA[i][i] = A[i]
+\param  DA : Diagonal matrix DA[i][i] = A[i]
 
-  \sa diag()
+\sa diag()
 */
 
 void
@@ -2567,7 +2566,7 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 
 
 /*!
-  \brief std::cout a matrix
+\brief std::cout a matrix
 */
 std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
 {
@@ -2586,26 +2585,26 @@ std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
 
 /*!
 
-  Pretty print a matrix. The data are tabulated.
-  The common widths before and after the decimal point
-  are set with respect to the parameter maxlen.
+Pretty print a matrix. The data are tabulated.
+The common widths before and after the decimal point
+are set with respect to the parameter maxlen.
 
-  \param s
-    Stream used for the printing.
+\param s
+Stream used for the printing.
 
-  \param length
-    The suggested width of each matrix element.
-    The actual width grows in order to accomodate the whole integral part,
-    and shrinks if the whole extent is not needed for all the numbers.
-  \param intro
-    The introduction which is printed before the matrix.
-    Can be set to zero (or omitted), in which case
-    the introduction is not printed.
+\param length
+The suggested width of each matrix element.
+The actual width grows in order to accomodate the whole integral part,
+and shrinks if the whole extent is not needed for all the numbers.
+\param intro
+The introduction which is printed before the matrix.
+Can be set to zero (or omitted), in which case
+the introduction is not printed.
 
-    \return
-    Returns the common total width for all matrix elements
+\return
+Returns the common total width for all matrix elements
 
-  \sa std::ostream &operator <<(ostream &s,const vpMatrix &m)
+\sa std::ostream &operator <<(ostream &s,const vpMatrix &m)
 */
 int
 vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
@@ -2623,7 +2622,7 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
 
   size_type maxBefore=0;  // the length of the integral part
   size_type maxAfter=0;   // number of decimals plus
-                          // one place for the decimal point
+  // one place for the decimal point
   for (unsigned int i=0;i<m;++i) {
     for (unsigned int j=0;j<n;++j){
       oss.str("");
@@ -2691,12 +2690,12 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
 
 
 /*!
-  \brief Print using matlab syntax, to be put in matlab later.
+\brief Print using matlab syntax, to be put in matlab later.
 
-  Print using the following form:
-     [ a,b,c;
-       d,e,f;
-       g,h,i]
+Print using the following form:
+[ a,b,c;
+d,e,f;
+g,h,i]
 */
 std::ostream & vpMatrix::
 matlabPrint(std::ostream & os)
@@ -2706,30 +2705,30 @@ matlabPrint(std::ostream & os)
 
   os << "[ ";
   for (i=0; i < this->getRows(); ++ i)
+  {
+    for (j=0; j < this ->getCols(); ++ j)
     {
-      for (j=0; j < this ->getCols(); ++ j)
-	{
-	  os <<  (*this)[i][j] << ", ";
-	}
-      if (this ->getRows() != i+1) { os << ";" << std::endl; }
-      else { os << "]" << std::endl; }
+      os <<  (*this)[i][j] << ", ";
     }
+    if (this ->getRows() != i+1) { os << ";" << std::endl; }
+    else { os << "]" << std::endl; }
+  }
   return os;
 };
 
 /*!
-  \brief Print to be used as part of a C++ code later.
+\brief Print to be used as part of a C++ code later.
 
-  Print under the following form:
-    vpMatrix A(6,4);
-    A[0][0]  = 1.4;
-    A[0][1] = 0.6; ...
+Print under the following form:
+vpMatrix A(6,4);
+A[0][0]  = 1.4;
+A[0][1] = 0.6; ...
 
-  \param os: the stream to be printed in.
-  \param matrixName: name of the matrix, "A" by default, to be used for
-  the line vpMatrix A(6,7) (see example).
-  \param octet: if false, print using double, if true, print byte per byte
-  each bytes of the double array.
+\param os: the stream to be printed in.
+\param matrixName: name of the matrix, "A" by default, to be used for
+the line vpMatrix A(6,7) (see example).
+\param octet: if false, print using double, if true, print byte per byte
+each bytes of the double array.
 */
 std::ostream & vpMatrix::
 cppPrint(std::ostream & os, const char * matrixName, bool octet)
@@ -2738,46 +2737,46 @@ cppPrint(std::ostream & os, const char * matrixName, bool octet)
   unsigned int i,j;
   const char defaultName [] = "A";
   if (NULL == matrixName)
-    {
-      matrixName = defaultName;
-    }
+  {
+    matrixName = defaultName;
+  }
   os << "vpMatrix " << defaultName
-     << " (" << this ->getRows ()
-     << ", " << this ->getCols () << "); " <<std::endl;
+    << " (" << this ->getRows ()
+    << ", " << this ->getCols () << "); " <<std::endl;
 
   for (i=0; i < this->getRows(); ++ i)
+  {
+    for (j=0; j < this ->getCols(); ++ j)
     {
-      for (j=0; j < this ->getCols(); ++ j)
-	{
- 	  if (! octet)
-	    {
-	      os << defaultName << "[" << i << "][" << j
-		 << "] = " << (*this)[i][j] << "; " << std::endl;
-	    }
-	  else
-	    {
-	      for (unsigned int k = 0; k < sizeof(double); ++ k)
-		{
-		  os << "((unsigned char*)&(" << defaultName
-		     << "[" << i << "][" << j << "]) )[" << k
-		     <<"] = 0x" <<std::hex<<
-		    (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
-		     << "; " << std::endl;
-		}
-	    }
-	}
-      os << std::endl;
+      if (! octet)
+      {
+        os << defaultName << "[" << i << "][" << j
+          << "] = " << (*this)[i][j] << "; " << std::endl;
+      }
+      else
+      {
+        for (unsigned int k = 0; k < sizeof(double); ++ k)
+        {
+          os << "((unsigned char*)&(" << defaultName
+            << "[" << i << "][" << j << "]) )[" << k
+            <<"] = 0x" <<std::hex<<
+            (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
+          << "; " << std::endl;
+        }
+      }
     }
+    os << std::endl;
+  }
   return os;
 };
 
 
 /*!
-  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{x_{ij}^2}} \f$.
+Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{x_{ij}^2}} \f$.
 
-  \return The Euclidean norm if the matrix is initialized, 0 otherwise.
+\return The Euclidean norm if the matrix is initialized, 0 otherwise.
 
-  \sa infinityNorm()
+\sa infinityNorm()
 */
 double
 vpMatrix::euclideanNorm () const
@@ -2787,7 +2786,7 @@ vpMatrix::euclideanNorm () const
   for (unsigned int i=0;i<dsize;i++) {
     x = *(data +i); norm += x*x; 
   }
-    
+
   return sqrt(norm);
 }
 
@@ -2795,13 +2794,13 @@ vpMatrix::euclideanNorm () const
 
 /*!
 
-  Compute and return the infinity norm \f$ {||x||}_{\infty} =
-  max\left(\sum_{j=0}^{n}{\mid x_{ij} \mid}\right) \f$ with \f$i \in
-  \{0, ..., m\}\f$ where \f$(m,n)\f$ is the matrix size.
+Compute and return the infinity norm \f$ {||x||}_{\infty} =
+max\left(\sum_{j=0}^{n}{\mid x_{ij} \mid}\right) \f$ with \f$i \in
+\{0, ..., m\}\f$ where \f$(m,n)\f$ is the matrix size.
 
-  \return The infinity norm if the matrix is initialized, 0 otherwise.
+\return The infinity norm if the matrix is initialized, 0 otherwise.
 
-  \sa euclideanNorm()
+\sa euclideanNorm()
 */
 double
 vpMatrix::infinityNorm () const
@@ -2821,13 +2820,13 @@ vpMatrix::infinityNorm () const
 }
 
 /*!
-  Compute the determinant of the matrix using the LU Decomposition.
+Compute the determinant of the matrix using the LU Decomposition.
 
-  \return The determinant of the matrix if the matrix is square, 0 otherwise.
+\return The determinant of the matrix if the matrix is square, 0 otherwise.
 
-  See the Numerical Recipes in C page 43 for further explanations.
- */
- 
+See the Numerical Recipes in C page 43 for further explanations.
+*/
+
 double vpMatrix::detByLU() const
 {
   double det(0);
@@ -2836,75 +2835,75 @@ double vpMatrix::detByLU() const
   if (rowNum == colNum)
   {
     // create a temporary matrix that will be modified by LUDcmp
-      vpMatrix tmp(*this);
+    vpMatrix tmp(*this);
 
-      // using th LUdcmp based on NR codes
-      // it modified the tmp matrix in a special structure of type :
-      //  b11 b12 b13 b14
-      //  a21 b22 b23 b24
-      //  a21 a32 b33 b34
-      //  a31 a42 a43 b44 
-      
-      unsigned int  * perm = new unsigned int[rowNum];  // stores the permutations
-      int d;   // +- 1 fi the number of column interchange is even or odd
-      tmp.LUDcmp(perm,  d);
-      delete[]perm;
+    // using th LUdcmp based on NR codes
+    // it modified the tmp matrix in a special structure of type :
+    //  b11 b12 b13 b14
+    //  a21 b22 b23 b24
+    //  a21 a32 b33 b34
+    //  a31 a42 a43 b44 
 
-      // compute the determinant that is the product of the eigen values
-      det = (double) d;
-      for(unsigned int i=0;i<rowNum;i++)
-        {
-          det*=tmp[i][i];
-        }
+    unsigned int  * perm = new unsigned int[rowNum];  // stores the permutations
+    int d;   // +- 1 fi the number of column interchange is even or odd
+    tmp.LUDcmp(perm,  d);
+    delete[]perm;
+
+    // compute the determinant that is the product of the eigen values
+    det = (double) d;
+    for(unsigned int i=0;i<rowNum;i++)
+    {
+      det*=tmp[i][i];
+    }
   }
 
   else {
     vpERROR_TRACE("Determinant Computation : ERR Matrix not squared") ;
-      throw(vpMatrixException(vpMatrixException::matrixError,
-            "\n\t\tDeterminant Computation : ERR Matrix not squared")) ;
-    
+    throw(vpMatrixException(vpMatrixException::matrixError,
+      "\n\t\tDeterminant Computation : ERR Matrix not squared")) ;
+
 
   }
- return det ;
+  return det ;
 }
 
 
 
 /*!
-  Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T
+Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T
 
-  Here an example for a robot velocity log :
-  \code
+Here an example for a robot velocity log :
+\code
 vpMatrix Velocities;
 vpColVector v(6);
 for(unsigned int i = 0;i<100;i++)
-	{
-	robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
-	Velocities.stackMatrices(v.t());
-	}
-  \endcode
- */
+{
+robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
+Velocities.stackMatrices(v.t());
+}
+\endcode
+*/
 void vpMatrix::stackMatrices(const vpMatrix &A)
 {
-		if(rowNum == 0)
-			*this = A;
-		else
-			*this = vpMatrix::stackMatrices(*this, A);
+  if(rowNum == 0)
+    *this = A;
+  else
+    *this = vpMatrix::stackMatrices(*this, A);
 }
 
 
 /*!
-  Insert matrix A at the given position in the current matrix.
-  
-  \warning Throw vpMatrixException::incorrectMatrixSizeError if the
-  dimensions of the matrices do not allow the operation.
+Insert matrix A at the given position in the current matrix.
 
-  \param A : The matrix to insert.
-  \param r : The index of the row to begin to insert data.
-  \param c : The index of the column to begin to insert data.
- */
+\warning Throw vpMatrixException::incorrectMatrixSizeError if the
+dimensions of the matrices do not allow the operation.
+
+\param A : The matrix to insert.
+\param r : The index of the row to begin to insert data.
+\param c : The index of the column to begin to insert data.
+*/
 void vpMatrix::insert(const vpMatrix&A, const unsigned int r, 
-		      const unsigned int c)
+                      const unsigned int c)
 {
   if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
     // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
@@ -2922,21 +2921,21 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
 
 
 /*!
-  Compute the eigenvalues of a n-by-n real symmetric matrix.
+Compute the eigenvalues of a n-by-n real symmetric matrix.
 
-  \return The eigenvalues of a n-by-n real symmetric matrix.
+\return The eigenvalues of a n-by-n real symmetric matrix.
 
-  \warning This method is only available if the Gnu Scientific Library
-  (GSL) is detected as a third party library.
+\warning This method is only available if the Gnu Scientific Library
+(GSL) is detected as a third party library.
 
-  \exception vpMatrixException::matrixError If the matrix is not
-  square or if the matrix is not symmetric.
+\exception vpMatrixException::matrixError If the matrix is not
+square or if the matrix is not symmetric.
 
-  \exception vpMatrixException::notImplementedError If the GSL library
-  is not detected
+\exception vpMatrixException::notImplementedError If the GSL library
+is not detected
 
-  Here an example:
-  \code
+Here an example:
+\code
 #include <iostream>
 
 #include <visp/vpColVector.h>
@@ -2944,20 +2943,20 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
 
 int main()
 {
-  vpMatrix A(3,3); // A is a symmetric matrix
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.;
-  A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.;
-  std::cout << "Initial symmetric matrix: \n" << A << std::endl;
+vpMatrix A(3,3); // A is a symmetric matrix
+A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.;
+A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.;
+std::cout << "Initial symmetric matrix: \n" << A << std::endl;
 
-  // Compute the eigen values
-  vpColVector evalue; // Eigenvalues
-  evalue = A.eigenValues();
-  std::cout << "Eigen values: \n" << evalue << std::endl;
+// Compute the eigen values
+vpColVector evalue; // Eigenvalues
+evalue = A.eigenValues();
+std::cout << "Eigen values: \n" << evalue << std::endl;
 }
-  \endcode
+\endcode
 
-  \sa eigenValues(vpColVector &, vpMatrix &)
+\sa eigenValues(vpColVector &, vpMatrix &)
 
 */ 
 vpColVector vpMatrix::eigenValues()
@@ -2965,7 +2964,7 @@ vpColVector vpMatrix::eigenValues()
   if (rowNum != colNum) {
     vpERROR_TRACE("Eigen values computation: ERR Matrix not square") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
-          "\n\t\tEigen values computation: ERR Matrix not square")) ;
+      "\n\t\tEigen values computation: ERR Matrix not square")) ;
   }
 
 #ifdef VISP_HAVE_GSL  /* be careful of the copy below */
@@ -2974,16 +2973,16 @@ vpColVector vpMatrix::eigenValues()
     vpMatrix At_A = (*this).t() - (*this);
     for (unsigned int i=0; i < rowNum; i++) {
       for (unsigned int j=0; j < rowNum; j++) {
-	//if (At_A[i][j] != 0) {
-	if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-	  vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
-	  throw(vpMatrixException(vpMatrixException::matrixError,
-				  "\n\t\tEigen values computation: "
-				  "ERR Matrix not symmetric")) ;
-	}
+        //if (At_A[i][j] != 0) {
+        if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
+          vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
+          throw(vpMatrixException(vpMatrixException::matrixError,
+            "\n\t\tEigen values computation: "
+            "ERR Matrix not symmetric")) ;
+        }
       }
     }
-    
+
 
     vpColVector evalue(rowNum); // Eigen values
 
@@ -2992,21 +2991,21 @@ vpColVector vpMatrix::eigenValues()
 
     gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
-       
+
     unsigned int Atda = m->tda ;
     for (unsigned int i=0 ; i < rowNum ; i++){
       unsigned int k = i*Atda ;
       for (unsigned int j=0 ; j < colNum ; j++)
-	m->data[k+j] = (*this)[i][j] ;
+        m->data[k+j] = (*this)[i][j] ;
     }
     gsl_eigen_symmv (m, eval, evec, w);
-     
+
     gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_ASC);
 
     for (unsigned int i=0; i < rowNum; i++) {
       evalue[i] = gsl_vector_get (eval, i);
     }
-    
+
     gsl_eigen_symmv_free (w);
     gsl_vector_free (eval);
     gsl_matrix_free (m);
@@ -3018,31 +3017,31 @@ vpColVector vpMatrix::eigenValues()
   {
     vpERROR_TRACE("Not implemented since the GSL library is not detected.") ;
     throw(vpMatrixException(vpMatrixException::notImplementedError,
-			    "\n\t\tEigen values Computation: Not implemented "
-			    "since the GSL library is not detected")) ;
+      "\n\t\tEigen values Computation: Not implemented "
+      "since the GSL library is not detected")) ;
   }
 #endif  
 }
 
 /*!
-  Compute the eigenvalues of a n-by-n real symmetric matrix.
-  \return The eigenvalues of a n-by-n real symmetric matrix.
+Compute the eigenvalues of a n-by-n real symmetric matrix.
+\return The eigenvalues of a n-by-n real symmetric matrix.
 
-  \warning This method is only available if the Gnu Scientific Library
-  (GSL) is detected as a third party library.
+\warning This method is only available if the Gnu Scientific Library
+(GSL) is detected as a third party library.
 
-  \param evalue : Eigenvalues of the matrix.
+\param evalue : Eigenvalues of the matrix.
 
-  \param evector : Eigenvector of the matrix.
+\param evector : Eigenvector of the matrix.
 
-  \exception vpMatrixException::matrixError If the matrix is not
-  square or if the matrix is not symmetric.
+\exception vpMatrixException::matrixError If the matrix is not
+square or if the matrix is not symmetric.
 
-  \exception vpMatrixException::notImplementedError If the GSL library
-  is not detected
+\exception vpMatrixException::notImplementedError If the GSL library
+is not detected
 
-  Here an example:
-  \code
+Here an example:
+\code
 #include <iostream>
 
 #include <visp/vpColVector.h>
@@ -3050,32 +3049,32 @@ vpColVector vpMatrix::eigenValues()
 
 int main()
 {
-  vpMatrix A(4,4); // A is a symmetric matrix
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
-  A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.; A[1][3] = 1/5.;
-  A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.; A[2][3] = 1/6.;
-  A[3][0] = 1/4.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
-  std::cout << "Initial symmetric matrix: \n" << A << std::endl;
+vpMatrix A(4,4); // A is a symmetric matrix
+A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+A[1][0] = 1/2.; A[1][1] = 1/3.; A[1][2] = 1/4.; A[1][3] = 1/5.;
+A[2][0] = 1/3.; A[2][1] = 1/4.; A[2][2] = 1/5.; A[2][3] = 1/6.;
+A[3][0] = 1/4.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+std::cout << "Initial symmetric matrix: \n" << A << std::endl;
 
-  vpColVector d; // Eigenvalues
-  vpMatrix    V; // Eigenvectors
+vpColVector d; // Eigenvalues
+vpMatrix    V; // Eigenvectors
 
-  // Compute the eigenvalues and eigenvectors
-  A.eigenValues(d, V);
-  std::cout << "Eigen values: \n" << d << std::endl;
-  std::cout << "Eigen vectors: \n" << V << std::endl;
+// Compute the eigenvalues and eigenvectors
+A.eigenValues(d, V);
+std::cout << "Eigen values: \n" << d << std::endl;
+std::cout << "Eigen vectors: \n" << V << std::endl;
 
-  vpMatrix D;
-  D.diag(d); // Eigenvalues are on the diagonal
+vpMatrix D;
+D.diag(d); // Eigenvalues are on the diagonal
 
-  std::cout << "D: " << D << std::endl;
+std::cout << "D: " << D << std::endl;
 
-  // Verification: A * V = V * D
-  std::cout << "AV-VD = 0 ? \n" << (A*V) - (V*D) << std::endl;
+// Verification: A * V = V * D
+std::cout << "AV-VD = 0 ? \n" << (A*V) - (V*D) << std::endl;
 }
-  \endcode
+\endcode
 
-  \sa eigenValues()
+\sa eigenValues()
 
 */
 #ifdef VISP_HAVE_GSL  /* be careful of the copy below */
@@ -3087,7 +3086,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
   if (rowNum != colNum) {
     vpERROR_TRACE("Eigen values computation: ERR Matrix not square") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
-          "\n\t\tEigen values computation: ERR Matrix not square")) ;
+      "\n\t\tEigen values computation: ERR Matrix not square")) ;
   }
 
 #ifdef VISP_HAVE_GSL  /* be careful of the copy below */
@@ -3096,16 +3095,16 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     vpMatrix At_A = (*this).t() - (*this);
     for (unsigned int i=0; i < rowNum; i++) {
       for (unsigned int j=0; j < rowNum; j++) {
-	//if (At_A[i][j] != 0) {
-	if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-	  vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
-	  throw(vpMatrixException(vpMatrixException::matrixError,
-				  "\n\t\tEigen values computation: "
-				  "ERR Matrix not symmetric")) ;
-	}
+        //if (At_A[i][j] != 0) {
+        if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
+          vpERROR_TRACE("Eigen values computation: ERR Matrix not symmetric") ;
+          throw(vpMatrixException(vpMatrixException::matrixError,
+            "\n\t\tEigen values computation: "
+            "ERR Matrix not symmetric")) ;
+        }
       }
     }
-    
+
     // Resize the output matrices
     evalue.resize(rowNum);
     evector.resize(rowNum, colNum);
@@ -3115,15 +3114,15 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
 
     gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
-       
+
     unsigned int Atda = m->tda ;
     for (unsigned int i=0 ; i < rowNum ; i++){
       unsigned int k = i*Atda ;
       for (unsigned int j=0 ; j < colNum ; j++)
-	m->data[k+j] = (*this)[i][j] ;
+        m->data[k+j] = (*this)[i][j] ;
     }
     gsl_eigen_symmv (m, eval, evec, w);
-     
+
     gsl_eigen_symmv_sort (eval, evec, GSL_EIGEN_SORT_ABS_ASC);
 
     for (unsigned int i=0; i < rowNum; i++) {
@@ -3133,28 +3132,28 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     for (unsigned int i=0; i < rowNum; i++) {
       unsigned int k = i*Atda ;
       for (unsigned int j=0; j < rowNum; j++) {
-	evector[i][j] = evec->data[k+j];
+        evector[i][j] = evec->data[k+j];
       }
     }
 
 
-//        {
-//          int i;
-     
-//          for (i = 0; i < rowNum; i++)
-//            {
-//              double eval_i 
-//                 = gsl_vector_get (eval, i);
-//              gsl_vector_view evec_i 
-//                 = gsl_matrix_column (evec, i);
-     
-//              printf ("eigenvalue = %g\n", eval_i);
-//              printf ("eigenvector = \n");
-//              gsl_vector_fprintf (stdout, 
-//                                  &evec_i.vector, "%g");
-//            }
-//        }
-    
+    //        {
+    //          int i;
+
+    //          for (i = 0; i < rowNum; i++)
+    //            {
+    //              double eval_i 
+    //                 = gsl_vector_get (eval, i);
+    //              gsl_vector_view evec_i 
+    //                 = gsl_matrix_column (evec, i);
+
+    //              printf ("eigenvalue = %g\n", eval_i);
+    //              printf ("eigenvector = \n");
+    //              gsl_vector_fprintf (stdout, 
+    //                                  &evec_i.vector, "%g");
+    //            }
+    //        }
+
     gsl_eigen_symmv_free (w);
     gsl_vector_free (eval);
     gsl_matrix_free (m);
@@ -3164,259 +3163,262 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
   {
     vpERROR_TRACE("Not implemented since the GSL library is not detected.") ;
     throw(vpMatrixException(vpMatrixException::notImplementedError,
-			    "\n\t\tEigen values Computation: Not implemented "
-			    "since the GSL library is not detected")) ;
+      "\n\t\tEigen values Computation: Not implemented "
+      "since the GSL library is not detected")) ;
   }
 #endif  
 }
 
 
 /*!
-  Function to compute the null space (the kernel) of the interaction matrix A which is not full rank.
-  The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(M) ={KerA : A*KerA =0}.
+Function to compute the null space (the kernel) of the interaction matrix A which is not full rank.
+The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(M) ={KerA : A*KerA =0}.
 
-  \param kerA : The matrix to contain the null space (kernel) of A (A*KerA.t()=0) 
-  \param svThreshold : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
+\param kerA : The matrix to contain the null space (kernel) of A (A*KerA.t()=0) 
+\param svThreshold : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
 
-  \return the rank of the matrix.
+\return the rank of the matrix.
 */
 unsigned int 
 vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
 {
- if (DEBUG_LEVEL1)
-   std::cout << "begin Kernel" << std::endl ;
- unsigned int i, j ;
- unsigned int ncaptor = getRows() ;
- unsigned int ddl = getCols() ;
- vpMatrix C ;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin Kernel" << std::endl ;
+#endif
+  unsigned int i, j ;
+  unsigned int ncaptor = getRows() ;
+  unsigned int ddl = getCols() ;
+  vpMatrix C ;
 
- if (ncaptor == 0)
-   std::cout << "Erreur Matrice  non initialise" << std::endl ;
+  if (ncaptor == 0)
+    std::cout << "Erreur Matrice  non initialise" << std::endl ;
 
- if (DEBUG_LEVEL2)
- {
-   std::cout << "Interaction matrix L" << std::endl ;
-   std::cout << *this   ;
-   std::cout << "signaux capteurs : " << ncaptor << std::endl ;
- }
+#if (DEBUG_LEVEL2)
+  {
+    std::cout << "Interaction matrix L" << std::endl ;
+    std::cout << *this   ;
+    std::cout << "signaux capteurs : " << ncaptor << std::endl ;
+  }
+#endif
 
- C.resize(ddl,ncaptor) ;
- unsigned int min ;
+  C.resize(ddl,ncaptor) ;
+  unsigned int min ;
 
- if (ncaptor > ddl) min = ddl ; else min = ncaptor ;
+  if (ncaptor > ddl) min = ddl ; else min = ncaptor ;
 
- // ! the SVDcmp function inthe matrix lib is destructive
+  // ! the SVDcmp function inthe matrix lib is destructive
 
- vpMatrix a1 ;
- vpMatrix a2 ;
+  vpMatrix a1 ;
+  vpMatrix a2 ;
 
- vpColVector sv(ddl) ;   // singular values
- vpMatrix v(ddl,ddl) ;
+  vpColVector sv(ddl) ;   // singular values
+  vpMatrix v(ddl,ddl) ;
 
- if (ncaptor < ddl)
- {
-   a1.resize(ddl,ddl) ;
- }
- else
- {
-   a1.resize(ncaptor,ddl) ;
- }
+  if (ncaptor < ddl)
+  {
+    a1.resize(ddl,ddl) ;
+  }
+  else
+  {
+    a1.resize(ncaptor,ddl) ;
+  }
 
- a2.resize(ncaptor,ddl) ;
+  a2.resize(ncaptor,ddl) ;
 
- for (i=0 ; i < ncaptor ; i++)
-   for (j=0 ; j < ddl ; j++)
-   {
-     a1[i][j] = (*this)[i][j] ;
-     a2[i][j] = (*this)[i][j] ;
-   }
+  for (i=0 ; i < ncaptor ; i++)
+    for (j=0 ; j < ddl ; j++)
+    {
+      a1[i][j] = (*this)[i][j] ;
+      a2[i][j] = (*this)[i][j] ;
+    }
 
 
- if (ncaptor < ddl)
- {
-   for (i=ncaptor ; i < ddl ; i++)
-     for (j=0 ; j < ddl ; j++)
-     {
-       a1[i][j] = 0 ;
-     }
-   a1.svd(sv,v);
- }
- else
- {
-   a1.svd(sv,v);
- }
+    if (ncaptor < ddl)
+    {
+      for (i=ncaptor ; i < ddl ; i++)
+        for (j=0 ; j < ddl ; j++)
+        {
+          a1[i][j] = 0 ;
+        }
+        a1.svd(sv,v);
+    }
+    else
+    {
+      a1.svd(sv,v);
+    }
 
- // compute the highest singular value and the rank of h
+    // compute the highest singular value and the rank of h
 
- double maxsv = 0 ;
- for (i=0 ; i < ddl ; i++)
-   if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+    double maxsv = 0 ;
+    for (i=0 ; i < ddl ; i++)
+      if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
 
- if (DEBUG_LEVEL2)
- {
-   std::cout << "Singular Value : (" ;
-   for (i=0 ; i < ddl ; i++) std::cout << sv[i] << " , " ;
-   std::cout << ")" << std::endl ;
- }
+#if (DEBUG_LEVEL2)
+    {
+      std::cout << "Singular Value : (" ;
+      for (i=0 ; i < ddl ; i++) std::cout << sv[i] << " , " ;
+      std::cout << ")" << std::endl ;
+    }
+#endif
 
- unsigned int rank = 0 ;
- for (i=0 ; i < ddl ; i++)
-   if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
+    unsigned int rank = 0 ;
+    for (i=0 ; i < ddl ; i++)
+      if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
 
- if (DEBUG_LEVEL2)
- /*------------------------------------------------------- */
+#if (DEBUG_LEVEL2)
+    {
 
- for (i = 0 ; i < ddl ; i++)
- {
-   for (j = 0 ; j < ncaptor ; j++)
-   {
-     unsigned int k=0 ;
-     C[i][j] = 0.0;
+      for (i = 0 ; i < ddl ; i++)
+      {
+        for (j = 0 ; j < ncaptor ; j++)
+        {
+          unsigned int k=0 ;
+          C[i][j] = 0.0;
 
-     // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-ndof
-     // sinon on peut observer une perte de range de la matrice
-     // ( d'ou venait ce 0.001 ??? )
-     for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*svThreshold)
-     {
-       C[i][j] += v[i][k]*a1[j][k]/sv[k];
-     }
-   }
- }
+          // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-ndof
+          // sinon on peut observer une perte de range de la matrice
+          // ( d'ou venait ce 0.001 ??? )
+          for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*svThreshold)
+          {
+            C[i][j] += v[i][k]*a1[j][k]/sv[k];
+          }
+        }
+      }
 
- // cout << v << endl ;
- if (DEBUG_LEVEL2)
- {
-   std::cout << C << std::endl ;
- }
+      // cout << v << endl ;
+      std::cout << C << std::endl ;
+    }
+#endif
+    /*------------------------------------------------------- */
+    if (rank != ddl)
+    {
+      // Compute the kernel if wanted
+      if (min < ddl)
+      {
+        vpMatrix ch(ddl,ddl) ;
+        ch = C*a2 ;
+        ch.svd(sv,v) ;
 
- /*------------------------------------------------------- */
- if (rank != ddl)
- {
-   // Compute the kernel if wanted
-   if (min < ddl)
-   {
-     vpMatrix ch(ddl,ddl) ;
-     ch = C*a2 ;
-     ch.svd(sv,v) ;
+      }
+      //   if (noyau == 1)
+      {
+        double maxsv = 0 ;
+        for (i=0 ; i < ddl ; i++)
+          if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
+        unsigned int rank = 0 ;
+        for (i=0 ; i < ddl ; i++)
+          if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
+        vpMatrix cons(ddl,ddl) ;
 
-   }
-   //   if (noyau == 1)
-   {
-     double maxsv = 0 ;
-     for (i=0 ; i < ddl ; i++)
-     if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-       unsigned int rank = 0 ;
-     for (i=0 ; i < ddl ; i++)
-       if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
-         vpMatrix cons(ddl,ddl) ;
+        cons =0 ;
+        for (j = 0 ; j < ddl ; j++)
+        {
+          for (i = 0 ; i < ddl ; i++)
+            // Change Nicolas Mansard 23/4/04
+            // was         if (fabs(sv[i]) < maxsv*seuilvp)
+            if (fabs(sv[i]) <= maxsv*svThreshold)
+            {
+              cons[i][j] = v[j][i];
+            }
+        }
 
-     cons =0 ;
-     for (j = 0 ; j < ddl ; j++)
-     {
-       for (i = 0 ; i < ddl ; i++)
-       // Change Nicolas Mansard 23/4/04
-       // was         if (fabs(sv[i]) < maxsv*seuilvp)
-         if (fabs(sv[i]) <= maxsv*svThreshold)
-         {
-           cons[i][j] = v[j][i];
-         }
-     }
+        vpMatrix Ker(ddl-rank,ddl) ;
+        unsigned int k =0 ;
+        for (j = 0 ; j < ddl ; j++)
+        {
+          //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
 
-     vpMatrix Ker(ddl-rank,ddl) ;
-     unsigned int k =0 ;
-     for (j = 0 ; j < ddl ; j++)
-     {
-   //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
-
-       //if (cons.row(j+1).sumSquare() !=0)
-       if (std::fabs(cons.row(j+1).sumSquare()) > std::numeric_limits<double>::epsilon())
-       {
-         for (i=0 ; i < cons.getCols() ; i++)
-           Ker[k][i] = cons[j][i] ;
-     //  Ker.Row(k+1) = cons.Row(j+1) ;
-         k++;
-       }
-     }
-     kerA = Ker ;
-   }
- }
- if (DEBUG_LEVEL1) std::cout << "end Kernel" << std::endl ;
- return rank ;
+          //if (cons.row(j+1).sumSquare() !=0)
+          if (std::fabs(cons.row(j+1).sumSquare()) > std::numeric_limits<double>::epsilon())
+          {
+            for (i=0 ; i < cons.getCols() ; i++)
+              Ker[k][i] = cons[j][i] ;
+            //  Ker.Row(k+1) = cons.Row(j+1) ;
+            k++;
+          }
+        }
+        kerA = Ker ;
+      }
+    }
+#if (DEBUG_LEVEL1) 
+    std::cout << "end Kernel" << std::endl ;
+#endif
+    return rank ;
 }
 
 /*!
-  Compute the determinant of a n-by-n matrix.
+Compute the determinant of a n-by-n matrix.
 
-  \param method : Method used to compute the determinant. Default LU
-  decomposition methos is faster than the method based on Gaussian
-  elimination.
+\param method : Method used to compute the determinant. Default LU
+decomposition methos is faster than the method based on Gaussian
+elimination.
 
-  \return Determinant of the matrix.
+\return Determinant of the matrix.
 
-  \code
+\code
 #include <iostream>
 
 #include <visp/vpMatrix.h>
 
 int main()
 {
-  vpMatrix A(3,3);
-  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
-  A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
-  A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
-  std::cout << "Initial matrix: \n" << A << std::endl;
+vpMatrix A(3,3);
+A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.;
+A[1][0] = 1/3.; A[1][1] = 1/4.; A[1][2] = 1/5.;
+A[2][0] = 1/6.; A[2][1] = 1/7.; A[2][2] = 1/8.;
+std::cout << "Initial matrix: \n" << A << std::endl;
 
-  // Compute the determinant
-  std:: cout << "Determinant by default method  : " << 
-    A.det() << std::endl;
-  std:: cout << "Determinant by LU decomposition: " << 
-    A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
+// Compute the determinant
+std:: cout << "Determinant by default method  : " << 
+A.det() << std::endl;
+std:: cout << "Determinant by LU decomposition: " << 
+A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
 }
-  \endcode
+\endcode
 */
 double vpMatrix::det(vpDetMethod method) const
 {
   double det = 0;
 
   if ( method == LU_DECOMPOSITION )
-    {
-      det = this->detByLU();
-    }
+  {
+    det = this->detByLU();
+  }
 
   return (det);
 }
 
 
 /*!
-  Save a matrix to a file.
+Save a matrix to a file.
 
-  \param filename : Absolute file name.
-  \param M : Matrix to be saved.
-  \param binary : If true the matrix is saved in a binary file, else a text file.
-  \param Header : Optional line that will be saved at the beginning of the file.
-  
-  \return Returns true if no problem happened.
-  
-  Warning : If you save the matrix as in a text file the precision is
-  less than if you save it in a binary file.
- */
+\param filename : Absolute file name.
+\param M : Matrix to be saved.
+\param binary : If true the matrix is saved in a binary file, else a text file.
+\param Header : Optional line that will be saved at the beginning of the file.
+
+\return Returns true if no problem happened.
+
+Warning : If you save the matrix as in a text file the precision is
+less than if you save it in a binary file.
+*/
 bool
 vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, 
-		     const bool binary, const char *Header)
+                     const bool binary, const char *Header)
 {
   std::fstream file;
-  
+
   if (!binary)
     file.open(filename, std::fstream::out);
   else
     file.open(filename, std::fstream::out|std::fstream::binary);
-  
+
   if(!file)
   {
     file.close();
     return false;
   }
-  
+
   else
   {
     if (!binary)
@@ -3425,10 +3427,10 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
       file << "# ";
       while (Header[i] != '\0')
       {
-	file << Header[i];
-	if (Header[i] == '\n')
-	  file << "# ";
-	i++;
+        file << Header[i];
+        if (Header[i] == '\n')
+          file << "# ";
+        i++;
       }
       file << '\0';
       file << std::endl;
@@ -3448,47 +3450,47 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
       double value;
       for(unsigned int i = 0; i < M.getRows(); i++)
       {
-	for(unsigned int j = 0; j < M.getCols(); j++)
-	{
-	  value = M[i][j];
-	  file.write((char*)&value,sizeof(double));
-	}
+        for(unsigned int j = 0; j < M.getCols(); j++)
+        {
+          value = M[i][j];
+          file.write((char*)&value,sizeof(double));
+        }
       }
     }
   }
-  
+
   file.close();
   return true;
 }
 
 
 /*!
-  Load a matrix to a file.
+Load a matrix to a file.
 
-  \param filename : absolute file name.
-  \param M : matrix to be loaded.
-  \param binary :If true the matrix is loaded from a binary file, else from a text file.
-  \param Header : Header of the file loaded in this parameter.
-  
-  \return Returns true if no problem happened.
- */
+\param filename : absolute file name.
+\param M : matrix to be loaded.
+\param binary :If true the matrix is loaded from a binary file, else from a text file.
+\param Header : Header of the file loaded in this parameter.
+
+\return Returns true if no problem happened.
+*/
 bool
 vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 
-		     char *Header)
+                     char *Header)
 {
   std::fstream file;
-  
+
   if (!binary)
     file.open(filename, std::fstream::in);
   else
     file.open(filename, std::fstream::in|std::fstream::binary);
-  
+
   if(!file)
   {
     file.close();
     return false;
   }
-  
+
   else
   {
     if (!binary)
@@ -3497,12 +3499,12 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
       std::string h;
       while ((c != '\0') && (c != '\n'))
       {
-	file.read(&c,1);
-	h+=c;
+        file.read(&c,1);
+        h+=c;
       }
       if (Header != NULL)
         strncpy(Header, h.c_str(), h.size() + 1);
-      
+
       unsigned int rows, cols;
       file >> rows;
       file >> cols;
@@ -3511,11 +3513,11 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
       double value;
       for(unsigned int i = 0; i < rows; i++)
       {
-	for(unsigned int j = 0; j < cols; j++)
-	{
-	  file >> value;
-	  M[i][j] = value;
-	}
+        for(unsigned int j = 0; j < cols; j++)
+        {
+          file >> value;
+          M[i][j] = value;
+        }
       }
     }
     else
@@ -3524,29 +3526,29 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
       std::string h;
       while ((c != '\0') && (c != '\n'))
       {
-	file.read(&c,1);
-	h+=c;
+        file.read(&c,1);
+        h+=c;
       }
       if (Header != NULL)
         strncpy(Header, h.c_str(), h.size() + 1);
-      
+
       unsigned int rows, cols;
       file.read((char*)&rows,sizeof(unsigned int));
       file.read((char*)&cols,sizeof(unsigned int));
       M.resize(rows,cols);
-      
+
       double value;
       for(unsigned int i = 0; i < rows; i++)
       {
-	for(unsigned int j = 0; j < cols; j++)
-	{
-	  file.read((char*)&value,sizeof(double));
-	  M[i][j] = value;
-	}
+        for(unsigned int j = 0; j < cols; j++)
+        {
+          file.read((char*)&value,sizeof(double));
+          M[i][j] = value;
+        }
       }
     }
   }
-  
+
   file.close();
   return true;
 }
@@ -3554,80 +3556,80 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
 
 /*!
 
-  Compute the exponential matrix of a square matrix.
-  
-  \return Return the exponential matrix.
-  
+Compute the exponential matrix of a square matrix.
+
+\return Return the exponential matrix.
+
 */ 
 vpMatrix
 vpMatrix::expm()
 {
-   if(colNum != rowNum)
-   {
-     vpTRACE("The matrix must be square");
+  if(colNum != rowNum)
+  {
+    vpTRACE("The matrix must be square");
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "The matrix must be square" ));
-   }
-   else
-   {
-     vpMatrix _expE(rowNum, colNum);
-     vpMatrix _expD(rowNum, colNum);
-     vpMatrix _expX(rowNum, colNum);
-     vpMatrix _expcX(rowNum, colNum);
-     vpMatrix _eye(rowNum, colNum);
+      "The matrix must be square" ));
+  }
+  else
+  {
+    vpMatrix _expE(rowNum, colNum);
+    vpMatrix _expD(rowNum, colNum);
+    vpMatrix _expX(rowNum, colNum);
+    vpMatrix _expcX(rowNum, colNum);
+    vpMatrix _eye(rowNum, colNum);
 
-     _eye.setIdentity();
-     vpMatrix exp(*this);
+    _eye.setIdentity();
+    vpMatrix exp(*this);
 
-//      double f;
-     int e;
-     double c = 0.5;
-     int q = 6;
-     int p = 1;
+    //      double f;
+    int e;
+    double c = 0.5;
+    int q = 6;
+    int p = 1;
 
-     double nA = 0;
-     for (unsigned int i = 0; i < rowNum;i++)
-     {
-       double sum = 0;
-       for (unsigned int j=0; j < colNum; j++)
-       {
-         sum += fabs((*this)[i][j]);
-       }
-       if (sum>nA||i==0)
-       {
-         nA=sum;
-       }
-     }
+    double nA = 0;
+    for (unsigned int i = 0; i < rowNum;i++)
+    {
+      double sum = 0;
+      for (unsigned int j=0; j < colNum; j++)
+      {
+        sum += fabs((*this)[i][j]);
+      }
+      if (sum>nA||i==0)
+      {
+        nA=sum;
+      }
+    }
 
-     /* f = */ frexp(nA, &e);
-     //double s = (0 > e+1)?0:e+1;
-     double s = e+1;
+    /* f = */ frexp(nA, &e);
+    //double s = (0 > e+1)?0:e+1;
+    double s = e+1;
 
-     double sca = 1.0 / pow(2.0,s);
-     exp=sca*exp;
-     _expX=*this;
-     _expE=c*exp+_eye;
+    double sca = 1.0 / pow(2.0,s);
+    exp=sca*exp;
+    _expX=*this;
+    _expE=c*exp+_eye;
     _expD=-c*exp+_eye;
-     for (int k=2;k<=q;k++)
-     {
-       c = c * ((double)(q-k+1)) / ((double)(k*(2*q-k+1)));
-       _expcX=exp*_expX;
-       _expX=_expcX;
-       _expcX=c*_expX;
-       _expE=_expE+_expcX;
-       if (p) _expD=_expD+_expcX;
-       else _expD=_expD- _expcX;
-       p = !p;
-     }
-     _expX=_expD.inverseByLU();
-     exp=_expX*_expE;
-     for (int k=1;k<=s;k++)
-     {
-       _expE=exp*exp;
-       exp=_expE;
-     }
-     return exp;
-   }
+    for (int k=2;k<=q;k++)
+    {
+      c = c * ((double)(q-k+1)) / ((double)(k*(2*q-k+1)));
+      _expcX=exp*_expX;
+      _expX=_expcX;
+      _expcX=c*_expX;
+      _expE=_expE+_expcX;
+      if (p) _expD=_expD+_expcX;
+      else _expD=_expD- _expcX;
+      p = !p;
+    }
+    _expX=_expD.inverseByLU();
+    exp=_expX*_expE;
+    for (int k=1;k<=s;k++)
+    {
+      _expE=exp*exp;
+      exp=_expE;
+    }
+    return exp;
+  }
 }
 
 double
@@ -3666,42 +3668,44 @@ vpMatrix::getMaxValue() const
 //Specific functions
 
 /*
-   input:: matrix M(nCols,nRows), nCols > 3, nRows > 3 , nCols == nRows.
+input:: matrix M(nCols,nRows), nCols > 3, nRows > 3 , nCols == nRows.
 
-   output:: the complement matrix of the element (rowNo,colNo).
-   This is the matrix obtained from M after elimenating the row rowNo and column colNo 
+output:: the complement matrix of the element (rowNo,colNo).
+This is the matrix obtained from M after elimenating the row rowNo and column colNo 
 
-   example:
-       1 2 3
-   M = 4 5 6
-       7 8 9
-				     1 3
-   subblock(M, 1, 1) give the matrix 7 9
+example:
+1 2 3
+M = 4 5 6
+7 8 9
+1 3
+subblock(M, 1, 1) give the matrix 7 9
 */
 vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
 {
-vpMatrix M_comp(M.getRows()-1,M.getCols()-1);
+  vpMatrix M_comp(M.getRows()-1,M.getCols()-1);
 
-for ( unsigned int i = 0 ; i < col ; i++)
-    {
+  for ( unsigned int i = 0 ; i < col ; i++)
+  {
     for ( unsigned int j = 0 ; j < row ; j++)
-        M_comp[i][j]=M[i][j];
-     for ( unsigned int j = row+1 ; j < M.getRows() ; j++)
-         M_comp[i][j-1]=M[i][j];
-    }
-for ( unsigned int i = col+1 ; i < M.getCols(); i++)
-    {
+      M_comp[i][j]=M[i][j];
+    for ( unsigned int j = row+1 ; j < M.getRows() ; j++)
+      M_comp[i][j-1]=M[i][j];
+  }
+  for ( unsigned int i = col+1 ; i < M.getCols(); i++)
+  {
     for ( unsigned int j = 0 ; j < row ; j++)
-        M_comp[i-1][j]=M[i][j];
-     for ( unsigned int j = row+1 ; j < M.getRows() ; j++)
-         M_comp[i-1][j-1]=M[i][j];
-    }
-   return M_comp;
+      M_comp[i-1][j]=M[i][j];
+    for ( unsigned int j = row+1 ; j < M.getRows() ; j++)
+      M_comp[i-1][j-1]=M[i][j];
+  }
+  return M_comp;
 }
 
 #undef DEBUG_LEVEL1
+#undef DEBUG_LEVEL2
+
 /*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+* Local variables:
+* c-basic-offset: 2
+* End:
+*/

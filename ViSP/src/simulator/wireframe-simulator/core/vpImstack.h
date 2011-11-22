@@ -40,16 +40,19 @@
  * Jean-Luc CORRE
  *
  *****************************************************************************/
+#ifndef vpImstack_H
+#define vpImstack_H
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern	void			fprintf_imstack ();
-extern	void			load_imstack ();
-extern	void			pop_imstack ();
-extern	void			push_imstack ();
-extern	void			swap_imstack ();
-extern	void			add_imstack ();
+void			fprintf_imstack (void);
+void			load_imstack (void);
+void			pop_imstack (void);
+void			push_imstack (void);
+void			swap_imstack (void);
+void			add_imstack (void);
 
+#endif
 #endif

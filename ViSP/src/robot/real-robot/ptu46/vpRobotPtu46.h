@@ -113,7 +113,7 @@ public:
   vpRobotPtu46 (vpRobotPtu46 * pub);
   virtual ~vpRobotPtu46 (void);
 
-  void init ();
+  void init (void);
 
 
   /* --- STATE ------------------------------------------------------------- */

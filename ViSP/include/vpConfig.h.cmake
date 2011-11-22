@@ -42,8 +42,23 @@
 #define vpConfig_h
 
 #if defined _MSC_VER && _MSC_VER >= 1200
-    // disable warnings related to inline functions
-    #pragma warning( disable: 4251 )
+  #pragma warning( disable: 4100 4127 4251 4514 4668 4710 4820 )
+  #if _MSC_VER >= 1400 // 1400 = MSVC 8 2005
+    #pragma warning( disable: 4548 )
+  #endif
+  #if _MSC_VER > 1500 // 1500 = MSVC 9 2008
+    #pragma warning( disable: 4986 )
+  #endif
+
+  // 4100 : undocumented ("unreferenced formal parameter")
+  // 4127 : conditional expression is constant
+  // 4251 : 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2', ie. disable warnings related to inline functions
+  // 4514 : 'function' : unreferenced inline function has been removed
+  // 4548 : expression before comma has no effect
+  // 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
+  // 4710 : 'function' : function not inlined
+  // 4820 : 'bytes' bytes padding added after construct 'member_name'
+  // 4986 : undocumented
 #endif
 
 // ViSP major version.

@@ -124,7 +124,7 @@ void vpBasicFeature::resetFlags()
 {
   if (flags != NULL)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;
   }
 }
@@ -134,7 +134,7 @@ void vpBasicFeature::setFlags()
 {
   if (flags != NULL)
     {
-	  for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
 	    flags[i] = true;
     }
 }

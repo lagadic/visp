@@ -165,7 +165,7 @@ void *mainLoop (void *_simu)
   vpSimulator *simu = (vpSimulator *)_simu ;
   simu->initMainApplication() ;
 
-  while (1) {
+  for ( ; ; ) {
     int i ;
 
     vpServo task ;

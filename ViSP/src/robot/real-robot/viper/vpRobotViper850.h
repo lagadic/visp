@@ -252,7 +252,7 @@ int main()
   // Initialize the controller to position control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  while (1) {
+  for ( ; ; ) {
     // Apply a velocity in the joint space
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
 

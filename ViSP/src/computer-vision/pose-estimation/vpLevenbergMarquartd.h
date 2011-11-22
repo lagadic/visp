@@ -44,14 +44,14 @@
 #ifndef vpLevenbergMarquartd_h
 #define vpLevenbergMarquartd_h
 
+#include <visp/vpConfig.h>
+#include <visp/vpMath.h>
+
 #include <stdio.h>
 #include <errno.h>
 #include <math.h>
 #include <stdlib.h>
 #include <float.h>
-
-#include <visp/vpConfig.h>
-#include <visp/vpMath.h>
 
 int VISP_EXPORT
 qrsolv (int n, double *r, int ldr, int *ipvt, double *diag,

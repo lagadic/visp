@@ -50,16 +50,15 @@
 
 */
 
+#include <visp/vpImage.h>
+#include <visp/vpImageException.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
+
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
-
-#include <visp/vpConfig.h>
-#include <visp/vpImageException.h>
-#include <visp/vpImage.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpMath.h>
 
 /*!
   \class vpImageFilter
@@ -161,9 +160,9 @@ public:
    \warning filter has to be deallocated
    */
   static void
-  coefficientGaussianDerivative(double *filter, const int t)
+  coefficientGaussianDerivative(double *filter, const unsigned int t)
   {
-    int i;
+    unsigned int i;
     //  double sigma;
           if (filter == NULL)
                   filter = new double[t/2] ;
@@ -172,7 +171,7 @@ public:
 
     for(i=1; i<=(t-1)/2; i++)
     {
-      filter[i] = (i/(s2*sqrt(2*M_PI)))*exp(-(i*i)/(2*s2));
+      filter[i] = (i/(s2*sqrt(2*M_PI)))*exp((i*i)/(-2*s2));
 
     }
 
@@ -185,11 +184,10 @@ public:
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
-   \param filter : coefficients of the filter
-   (to be initialized using vpImageFilter::coefficientGaussianDerivative)
+   \param filter : coefficients of the filter to be initialized using vpImageFilter::coefficientGaussianDerivative().
    \param size : size of the filter
 
-   \sa vpImageFilter::coefficientGaussianDerivative
+   \sa vpImageFilter::coefficientGaussianDerivative()
    */
 
   template<class T>
@@ -218,11 +216,10 @@ public:
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
-   \param filter : coefficients of the filter
-     (to be initialized using vpImageFilter::coefficientGaussianDerivative)
+   \param filter : coefficients of the filter to be initialized using vpImageFilter::coefficientGaussianDerivative().
    \param size : size of the filter
 
-  \sa vpImageFilter::coefficientGaussianDerivative
+  \sa vpImageFilter::coefficientGaussianDerivative()
    */
   template<class T>
   static double

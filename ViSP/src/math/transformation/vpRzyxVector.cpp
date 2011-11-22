@@ -41,9 +41,9 @@
  *
  *****************************************************************************/
 
-#include <math.h>
-#include <visp/vpRzyxVector.h>
 
+#include <visp/vpRzyxVector.h>
+#include <math.h>
 /*!
   \file vpRzyxVector.cpp
   \brief class that consider the case of the  Rzyx angle parameterization for the  rotation :

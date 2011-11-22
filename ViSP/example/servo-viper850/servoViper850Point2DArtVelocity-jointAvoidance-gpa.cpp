@@ -59,14 +59,14 @@
     Trans. on Robotics and Automation, 17(5):719-730, October 2001.
 */
 
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
 
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 
@@ -246,7 +246,7 @@ main()
 
     int iter = 0;
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    while(1) {
+    for ( ; ; ) {
       iter ++;
       // Acquire a new image from the camera
       g.acquire(I) ;

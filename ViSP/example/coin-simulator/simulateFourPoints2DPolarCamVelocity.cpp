@@ -163,7 +163,7 @@ void *mainLoop (void *_simu)
   vpSimulator *simu = (vpSimulator *)_simu ;
   simu->initMainApplication() ;
 
-  while (1) {
+  for ( ; ; ) {
     vpServo task ;
     vpRobotCamera robot ;
 

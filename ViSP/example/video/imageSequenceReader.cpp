@@ -49,7 +49,6 @@
   Reading an image sequence using vpVideoReader class.
  */
 
-#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpParseArgv.h>
