@@ -282,6 +282,7 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
       prop = CODE_XML_OTHER;
       back = SEQUENCE_ERROR;
     }
+    /*
     switch (prop)
     {
     case CODE_XML_CAMERA:
@@ -294,6 +295,13 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
       back = SEQUENCE_ERROR;
       break;
     }
+    */
+    if (prop == CODE_XML_CAMERA){
+      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name, projModel,
+          image_width, image_height, subsampling_width, subsampling_height))
+        nbCamera++;
+    }
+    else back = SEQUENCE_ERROR;
   }
 
   if (nbCamera == 0){
@@ -349,6 +357,7 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
     {
       prop = CODE_XML_OTHER;
     }
+    /*
     switch (prop)
     {
     case CODE_XML_CAMERA:
@@ -360,6 +369,13 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
       break;
     default:
       break;
+    }
+    */
+    if (prop== CODE_XML_CAMERA) {
+      if (SEQUENCE_OK == this->read_camera (doc, node, camera_name, projModel,
+          image_width, image_height,
+          subsampling_width, subsampling_height))
+        nbCamera++;
     }
   }
 
@@ -402,6 +418,7 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
     {
       prop = CODE_XML_OTHER;
     }
+    /*
     switch (prop)
     {
       case CODE_XML_CAMERA:
@@ -413,6 +430,13 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
         break;
       default:
         break;
+    }
+    */
+    if(prop == CODE_XML_CAMERA){
+      if (SEQUENCE_OK == this->read_camera_header(doc, node, camera_name,
+          image_width, image_height,
+          subsampling_width, subsampling_height))
+        return node;
     }
   }
   return NULL;
@@ -507,10 +531,24 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
           projModelFound = true;
       }
       break;
+
+    case CODE_XML_BAD:
+    case CODE_XML_OTHER:
+    case CODE_XML_CAMERA:
+    case CODE_XML_FULL_HEIGHT:
+    case CODE_XML_FULL_WIDTH:
+    case CODE_XML_MODEL_TYPE:
+    case CODE_XML_U0:
+    case CODE_XML_V0:
+    case CODE_XML_PX:
+    case CODE_XML_PY:
+    case CODE_XML_KUD:
+    case CODE_XML_KDU:
     default:
       back = SEQUENCE_ERROR;
       break;
     }
+
   }
   if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
         (abs((int)image_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || image_width == 0) &&
@@ -614,6 +652,19 @@ read_camera_header (xmlDocPtr doc, xmlNodePtr node,
 
       case CODE_XML_MODEL:
         break;
+
+      case CODE_XML_BAD:
+      case CODE_XML_OTHER:
+      case CODE_XML_CAMERA:
+      case CODE_XML_FULL_HEIGHT:
+      case CODE_XML_FULL_WIDTH:
+      case CODE_XML_MODEL_TYPE:
+      case CODE_XML_U0:
+      case CODE_XML_V0:
+      case CODE_XML_PX:
+      case CODE_XML_PY:
+      case CODE_XML_KUD:
+      case CODE_XML_KDU:
       default:
         back = SEQUENCE_ERROR;
         break;
@@ -710,6 +761,17 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
       nb++;
       validation = validation | 0x40;
       break;
+      case CODE_XML_BAD:
+      case CODE_XML_OTHER:
+      case CODE_XML_CAMERA:
+      case CODE_XML_CAMERA_NAME:
+      case CODE_XML_HEIGHT:
+      case CODE_XML_WIDTH:
+      case CODE_XML_SUBSAMPLING_WIDTH:
+      case CODE_XML_SUBSAMPLING_HEIGHT:
+      case CODE_XML_FULL_HEIGHT:
+      case CODE_XML_FULL_WIDTH:
+      case CODE_XML_MODEL:
     default:
       back = SEQUENCE_ERROR;
       break;

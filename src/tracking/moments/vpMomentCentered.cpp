@@ -62,11 +62,11 @@ void vpMomentCentered::compute(){
             values[c]=0;
             for(register unsigned int k=0;k<=i;k++){
                 double Xg_i_k = pow(-momentGravity.get()[0],(int)(i-k));
-                double comb_i_k = vpMath::comb(i,k);
+                double comb_i_k = static_cast<double>( vpMath::comb(i,k) );
                 for(register unsigned int l=0;l<=j;l++){
-                    values[c]+=comb_i_k*vpMath::comb(j,l)
+                    values[c]+= static_cast<double>( comb_i_k*vpMath::comb(j,l)
                       *Xg_i_k
-                      *pow(-momentGravity.get()[1],(int)(j-l))*getObject().get(k,l);
+                      *pow(-momentGravity.get()[1],(int)(j-l))*getObject().get(k,l) );
                 }
             }
         }

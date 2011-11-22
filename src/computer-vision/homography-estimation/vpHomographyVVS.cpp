@@ -51,8 +51,6 @@
 #include <iostream>
 #include <visp/vpExponentialMap.h>
 
-#define DEBUG_LEVEL1 0
-#define DEBUG_LEVEL2 0
 
 const double vpHomography::threshold_rotation = 1e-7;
 const double vpHomography::threshold_displacement = 1e-18;
@@ -739,5 +737,3 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
 
 }
 
-#undef DEBUG_LEVEL1
-#undef DEBUG_LEVEL2

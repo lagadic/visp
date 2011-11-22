@@ -54,14 +54,14 @@
 
 */
 
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
 
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 
@@ -235,7 +235,7 @@ main()
     
     t_1 = vpTime::measureTimeMs();
 
-    while(1) {
+    for ( ; ; ) {
       try {
 	t_0 = vpTime::measureTimeMs(); // t_0: current time
 

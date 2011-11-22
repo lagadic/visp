@@ -41,14 +41,14 @@
  *****************************************************************************/
 
 
-#include	<math.h>
-#include	<stdio.h>
-#include	<string.h>
+
 
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
 #include	<visp/vpTmstack.h>
-
+#include	<math.h>
+#include	<stdio.h>
+#include	<string.h>
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -67,7 +67,7 @@ static	Matrix	*sp		 = stack;		/* sommet 	*/
  *		Pointeur de la matrice au sommet de la pile.
  */
 Matrix	*
-get_tmstack ()
+get_tmstack (void)
 {
 	return (sp);
 }
@@ -90,7 +90,7 @@ load_tmstack (Matrix m)
  * de la pile des matrices de transformation.
  */
 void
-pop_tmstack ()
+pop_tmstack (void)
 {
 	static	char	proc_name[] = "pop_tmstack";
 
@@ -106,7 +106,7 @@ pop_tmstack ()
  * de la pile des matrices de transformation.
  */
 void
-push_tmstack ()
+push_tmstack (void)
 {
 	static	char	proc_name[] = "push_tmstack";
 
@@ -124,7 +124,7 @@ push_tmstack ()
  * de la pile des matrices de transformation.
  */
 void
-swap_tmstack ()
+swap_tmstack (void)
 {
 	Matrix	*mp, tmp;
 

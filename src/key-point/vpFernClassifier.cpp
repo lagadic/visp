@@ -469,7 +469,9 @@ vpFernClassifier::load(const std::string& _dataFile, const std::string& /*_objec
   
   ldetector.read(node["detector"]);
   fernClassifier.read(node["fern-classifier"]);
-  cv::read(node["model-points"], modelPoints);
+  
+  const cv::FileNode node_ = node["model-points"];
+  cv::read(node_, modelPoints);
   
   cv::LDetector d(radius, threshold, nbOctave, nbView, patchSize, dist);
   ldetector = d;

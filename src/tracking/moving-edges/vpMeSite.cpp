@@ -45,16 +45,14 @@
   \brief Moving edges
 */
 
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpMeSite.h>
 #include <visp/vpMe.h>
 #include <visp/vpTrackingException.h>
-
-#define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 0
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -216,8 +214,9 @@ vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
   vpMeSite *list_query_pixels ;
   list_query_pixels =  NULL ;
 
+  unsigned int range_ = static_cast<unsigned int>(range);
   // Size of query list includes the point on the line
-  list_query_pixels = new vpMeSite[2 * range + 1] ;
+  list_query_pixels = new vpMeSite[2 * range_ + 1] ;
 
   // range : +/- the range within which the pixel's
   //correspondent will be sought
@@ -273,13 +272,13 @@ vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
 
 	//First extremity
   k = -range ;
-  int i1 = vpMath::round(ifloat+k*salpha);
-  int j1 = vpMath::round(jfloat+k*calpha);
+  unsigned int i1 = static_cast<unsigned int>(vpMath::round(ifloat+k*salpha));
+  unsigned int j1 = static_cast<unsigned int>(vpMath::round(jfloat+k*calpha));
 
 	//Second extremity
   k = range ;
-  int i2 = vpMath::round(ifloat+k*salpha);
-  int j2 = vpMath::round(jfloat+k*calpha);
+  unsigned int i2 = static_cast<unsigned int>(vpMath::round(ifloat+k*salpha));
+  unsigned int j2 = static_cast<unsigned int>(vpMath::round(jfloat+k*calpha));
 
   // TODO: Here check if i1,j1,i2,j2 > 0 else ?? 
   if (I[i1][j1] > I[i2][j2]) mask_sign = 1 ; else mask_sign = -1 ;

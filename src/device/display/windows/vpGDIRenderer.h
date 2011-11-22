@@ -107,7 +107,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill=false, unsigned char thickness=1);
+		  const vpColor &color, bool fill=false, unsigned int thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
 		const vpColor &color);

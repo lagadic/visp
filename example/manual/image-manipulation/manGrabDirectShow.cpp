@@ -74,7 +74,7 @@ int main()
   g.setImageSize(640,480); // If the camera supports 640x480 image size
   g.setFramerate(30); // If the camera supports 30fps framerate
   
-  while(1)
+  for ( ; ; )
     g.acquire(I); // Acquire an image
 #endif
 

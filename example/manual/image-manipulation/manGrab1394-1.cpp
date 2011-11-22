@@ -78,7 +78,7 @@ int main()
     g.setFramerate(FRAMERATE_30);
   }
   
-  while(1) {
+  for ( ; ; ) {
     for (unsigned int camera=0; camera < ncameras; camera ++) {
       // Acquire successively images from the different cameras
       g.setCamera(camera);

@@ -46,8 +46,7 @@
 
 #ifndef __MOMENTALPHA_H__
 #define __MOMENTALPHA_H__
-#include <vector>
-#include <visp/vpConfig.h>
+
 #include <visp/vpMoment.h>
 
 /*!

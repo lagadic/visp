@@ -41,15 +41,15 @@
  *
  *****************************************************************************/
 
-#include <set>
-#include <limits>
+
 
 #include <visp/vpPolygon.h>
 #include <visp/vpException.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpNoise.h>
-
+#include <set>
+#include <limits>
 /*!
   Basic constructor.
   

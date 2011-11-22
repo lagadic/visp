@@ -60,7 +60,6 @@
 
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpViper.h>
 
 
@@ -94,7 +93,7 @@ class VISP_EXPORT vpViper850: public vpViper
   vpViper850();
   virtual ~vpViper850() {};
 
-  void init ();
+  void init (void);
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   void init(const char *camera_extrinsic_parameters);
 #endif

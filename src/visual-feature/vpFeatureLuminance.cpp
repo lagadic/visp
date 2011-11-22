@@ -32,7 +32,7 @@ vpFeatureLuminance::init()
 {
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default value Z (1 meters)
     Z = 1;
@@ -226,7 +226,7 @@ vpFeatureLuminance::interaction(vpMatrix &L)
 */
 vpMatrix  vpFeatureLuminance::interaction(const unsigned int /* select */)
 {
-  static vpMatrix L  ;
+  /* static */ vpMatrix L  ; // warning C4640: 'L' : construction of local static object is not thread-safe
   interaction(L) ;
   return L ;
 }
@@ -264,7 +264,7 @@ vpColVector
 vpFeatureLuminance::error(const vpBasicFeature &s_star,
 			  const unsigned int /* select */)
 {
-  static vpColVector e ;
+  /* static */ vpColVector e ; // warning C4640: 'e' : construction of local static object is not thread-safe
   
   error(s_star, e) ;
   

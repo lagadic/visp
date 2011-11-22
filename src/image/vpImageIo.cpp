@@ -1935,7 +1935,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   for (unsigned int i = 0; i < height; i++)
     row_ptrs[i] = new png_byte[width];
 
-  unsigned char* input = (unsigned char*)I.bitmap;;
+  unsigned char* input = (unsigned char*)I.bitmap;
 
   for (unsigned int i = 0; i < height; i++)
   {

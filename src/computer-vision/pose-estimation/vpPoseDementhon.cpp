@@ -1,44 +1,44 @@
 /****************************************************************************
- *
- * $Id$
- *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
- * Edition License.
- *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
- * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- * http://www.irisa.fr/lagadic
- *
- * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *
- * Description:
- * Pose computation.
- *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- *
- *****************************************************************************/
+*
+* $Id$
+*
+* This file is part of the ViSP software.
+* Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+* 
+* This software is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* ("GPL") version 2 as published by the Free Software Foundation.
+* See the file LICENSE.txt at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* For using ViSP with software that can not be combined with the GNU
+* GPL, please contact INRIA about acquiring a ViSP Professional 
+* Edition License.
+*
+* See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+* 
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact
+* INRIA at visp@inria.fr
+* 
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Description:
+* Pose computation.
+*
+* Authors:
+* Eric Marchand
+* Francois Chaumette
+*
+*****************************************************************************/
 
 
 
@@ -56,13 +56,13 @@
 */
 
 /*!
-  \brief  Compute the pose using Dementhon approach for non planar objects
-          this is a direct implementation of the algorithm proposed by
-	  Dementhon and Davis in their 1995 paper.
+\brief  Compute the pose using Dementhon approach for non planar objects
+this is a direct implementation of the algorithm proposed by
+Dementhon and Davis in their 1995 paper.
 
-	  D. Dementhon, L. Davis. --
-	  Model-based object pose in 25 lines of codes. --
-	  Int. J. of  Computer Vision, 15:123--141, 1995.
+D. Dementhon, L. Davis. --
+Model-based object pose in 25 lines of codes. --
+Int. J. of  Computer Vision, 15:123--141, 1995.
 */
 
 void
@@ -121,7 +121,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   vpMatrix b ;
   b = (a*ata1).t() ;
 
-  if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
   {
     std::cout << "a" << std::endl <<a<<std::endl ;
     std::cout << "ata" << std::endl <<ata<<std::endl ;
@@ -130,6 +130,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     std::cout<< " b"  << std::endl <<  (a*ata1).t() ;
 
   }
+#endif
 
   // calcul de la premiere solution
 
@@ -187,7 +188,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     {
       vpERROR_TRACE(" normI+normJ = 0, division par zero " ) ;
       throw(vpException(vpException::divideByZeroError,
-			"division by zero  ")) ;
+        "division by zero  ")) ;
     }
 
     k = vpColVector::cross(I,J) ;
@@ -203,7 +204,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     {
       vpERROR_TRACE( " npt = 0, division par zero ");
       throw(vpException(vpException::divideByZeroError,
-			"division by zero  ")) ;
+        "division by zero  ")) ;
     }
     seuil/=npt;
   }
@@ -252,29 +253,30 @@ calculRTheta(double s, double c, double &r, double &theta)
     {
       r = fabs(c);
       if (c >= 0.0)
-	theta = M_PI/2;
+        theta = M_PI/2;
       else
-	theta = -M_PI/2;
+        theta = -M_PI/2;
     }
     else
     {
       r = fabs(s);
       if (s >= 0.0)
-	theta = M_PI/4.0;
+        theta = M_PI/4.0;
       else
-	theta = -M_PI/4.0;
+        theta = -M_PI/4.0;
     }
   }
 }
 
 static
 void calculSolutionDementhon(double xi0, double yi0,
-			     vpColVector &I, vpColVector &J,
-			     vpHomogeneousMatrix &cMo )
+                             vpColVector &I, vpColVector &J,
+                             vpHomogeneousMatrix &cMo )
 {
 
-  if (DEBUG_LEVEL1)
-    std::cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+#endif
 
   double normI, normJ, normk, Z0;
   vpColVector  k(3);
@@ -313,18 +315,20 @@ void calculSolutionDementhon(double xi0, double yi0,
   cMo[2][3]=Z0;
 
 
-  if (DEBUG_LEVEL1)
-    std::cout << "end (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+#if (DEBUG_LEVEL1)
+  std::cout << "end (Dementhon.cc)CalculSolutionDementhon() " << std::endl;
+#endif
 
 }
 
 int
 vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
-			     vpHomogeneousMatrix &cMo)
+                             vpHomogeneousMatrix &cMo)
 {
 
-  if (DEBUG_LEVEL1)
-    std::cout << "begin vpPose::CalculArbreDementhon() " << std::endl;
+#if (DEBUG_LEVEL1)
+  std::cout << "begin vpPose::CalculArbreDementhon() " << std::endl;
+#endif
 
   unsigned int i, k;
   int erreur = 0;
@@ -361,9 +365,9 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 
       if (k != 0)
       { // On ne prend pas le 1er point
-	eps[0][k] = (cMo[2][0]*c3d[i].get_oX() +
-		     cMo[2][1]*c3d[i].get_oY() +
-		     cMo[2][2]*c3d[i].get_oZ())/cMo[2][3];
+        eps[0][k] = (cMo[2][0]*c3d[i].get_oX() +
+          cMo[2][1]*c3d[i].get_oY() +
+          cMo[2][2]*c3d[i].get_oZ())/cMo[2][3];
       }
       k++;
     }
@@ -380,12 +384,13 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
     cpt = 0;
     while ((cpt<20) && (smin_old > 0.01) && (smin <= smin_old))
     {
-      if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
       {
-	std::cout << "cpt " << cpt << std::endl ;
-	std::cout << "smin_old " << smin_old << std::endl ;
-	std::cout << "smin " << smin << std::endl ;
+        std::cout << "cpt " << cpt << std::endl ;
+        std::cout << "smin_old " << smin_old << std::endl ;
+        std::cout << "smin " << smin << std::endl ;
       }
+#endif
 
       smin_old = smin;
       cMo_old = cMo;
@@ -395,14 +400,14 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
 
       for (i=1;i<npt;i++)
       {
-	s = (1.0+eps[cpt][i])*xi[i] - xi[0];
-	I0[0] += b[0][i-1] * s;
-	I0[1] += b[1][i-1] * s;
-	I0[2] += b[2][i-1] * s;
-	s = (1.0+eps[cpt][i])*yi[i] - yi[0];
-	J0[0] += b[0][i-1] * s;
-	J0[1] += b[1][i-1] * s;
-	J0[2] += b[2][i-1] * s;
+        s = (1.0+eps[cpt][i])*xi[i] - xi[0];
+        I0[0] += b[0][i-1] * s;
+        I0[1] += b[1][i-1] * s;
+        I0[2] += b[2][i-1] * s;
+        s = (1.0+eps[cpt][i])*yi[i] - yi[0];
+        J0[0] += b[0][i-1] * s;
+        J0[1] += b[1][i-1] * s;
+        J0[2] += b[2][i-1] * s;
       }
 
       s = -2.0*(vpColVector::dotProd(I0,J0));
@@ -416,93 +421,104 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
       I = I0 + U*r*co ;
       J = J0 + U*r*si ;
 
-      if (DEBUG_LEVEL3)
+#if (DEBUG_LEVEL3)
       {
-	std::cout << "I " << I.t() ;
-	std::cout << "J " << J.t() ;
+        std::cout << "I " << I.t() ;
+        std::cout << "J " << J.t() ;
       }
+#endif
 
       calculSolutionDementhon(xi[0],yi[0],I,J,cMo1);
       s1 =  sqrt(computeResidualDementhon(cMo1)/npt)  ;
-      if (DEBUG_LEVEL3)
-	std::cout << "cMo1 "<< std::endl << cMo1 << std::endl ;
+#if (DEBUG_LEVEL3)
+      std::cout << "cMo1 "<< std::endl << cMo1 << std::endl ;
+#endif
 
       /* 2eme branche	*/
       I = I0 - U*r*co ;
       J = J0 - U*r*si ;
-      if (DEBUG_LEVEL3)
+#if (DEBUG_LEVEL3)
       {
-	std::cout << "I " << I.t() ;
-	std::cout << "J " << J.t() ;
+        std::cout << "I " << I.t() ;
+        std::cout << "J " << J.t() ;
       }
+#endif
 
       calculSolutionDementhon(xi[0],yi[0],I,J,cMo2);
       s2 =  sqrt(computeResidualDementhon(cMo2)/npt)  ;
-      if (DEBUG_LEVEL3)
-	std::cout << "cMo2 "<< std::endl << cMo2 << std::endl ;
+#if (DEBUG_LEVEL3)
+      std::cout << "cMo2 "<< std::endl << cMo2 << std::endl ;
+#endif
 
       cpt ++;
       if (s1 <= s2)
       {
-	smin = s1;
-	k = 0;
-	for(i = 0; i < npt; i++)
-	{
-	  if (k != 0) { // On ne prend pas le 1er point
-	    eps[cpt][k] = (cMo1[2][0]*c3d[i].get_oX() + cMo1[2][1]*c3d[i].get_oY()
-			   + cMo1[2][2]*c3d[i].get_oZ())/cMo1[2][3];
-	  }
-	  k++;
-	}
-	cMo = cMo1 ;
+        smin = s1;
+        k = 0;
+        for(i = 0; i < npt; i++)
+        {
+          if (k != 0) { // On ne prend pas le 1er point
+            eps[cpt][k] = (cMo1[2][0]*c3d[i].get_oX() + cMo1[2][1]*c3d[i].get_oY()
+              + cMo1[2][2]*c3d[i].get_oZ())/cMo1[2][3];
+          }
+          k++;
+        }
+        cMo = cMo1 ;
       }
       else
       {
-	smin = s2;
-	k = 0;
-	for(i = 0; i < npt; i++)
-	{
-	  if (k != 0) { // On ne prend pas le 1er point
-	    eps[cpt][k] = (cMo2[2][0]*c3d[i].get_oX() + cMo2[2][1]*c3d[i].get_oY()
-			   + cMo2[2][2]*c3d[i].get_oZ())/cMo2[2][3];
-	  }
-	  k++;
-	}
-	cMo = cMo2 ;
+        smin = s2;
+        k = 0;
+        for(i = 0; i < npt; i++)
+        {
+          if (k != 0) { // On ne prend pas le 1er point
+            eps[cpt][k] = (cMo2[2][0]*c3d[i].get_oX() + cMo2[2][1]*c3d[i].get_oY()
+              + cMo2[2][2]*c3d[i].get_oZ())/cMo2[2][3];
+          }
+          k++;
+        }
+        cMo = cMo2 ;
       }
 
       if (smin > smin_old)
       {
-	if (DEBUG_LEVEL2) std::cout << "Divergence "  <<  std::endl ;
-	cMo = cMo_old ;
+#if (DEBUG_LEVEL2) 
+        std::cout << "Divergence "  <<  std::endl ;
+#endif
+
+        cMo = cMo_old ;
       }
-      if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
       {
-	std::cout << "s1 = " << s1 << std::endl ;
-	std::cout << "s2 = " << s2 << std::endl ;
-	std::cout << "smin = " << smin << std::endl ;
-	std::cout << "smin_old = " << smin_old << std::endl ;
+        std::cout << "s1 = " << s1 << std::endl ;
+        std::cout << "s2 = " << s2 << std::endl ;
+        std::cout << "smin = " << smin << std::endl ;
+        std::cout << "smin_old = " << smin_old << std::endl ;
       }
+#endif
     }
   }
-  if (DEBUG_LEVEL1)
-    std::cout << "end vpPose::CalculArbreDementhon() return "<< erreur  << std::endl;
+#if (DEBUG_LEVEL1)
+  std::cout << "end vpPose::CalculArbreDementhon() return "<< erreur  << std::endl;
+#endif
 
   return erreur ;
 }
 
 /*!
-  \brief  Compute the pose using Dementhon approach for planar objects
-          this is a direct implementation of the algorithm proposed by
-	  Dementhon in his PhD
+\brief  Compute the pose using Dementhon approach for planar objects
+this is a direct implementation of the algorithm proposed by
+Dementhon in his PhD
 
-  \author Francois Chaumette (simplified by Eric Marchand)
+\author Francois Chaumette (simplified by Eric Marchand)
 */
 
 void
 vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
-{  if (DEBUG_LEVEL1)
-    std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl ;
+{ 
+#if (DEBUG_LEVEL1)
+  std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl ;
+#endif
 
   unsigned int i,j,k ;
 
@@ -553,16 +569,17 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   vpMatrix ata((ata_old.getRows()-1),(ata_old.getCols()-1)) ;
   for (i=0;i<ata.getRows();i++)
-    for (j=0;j<ata.getCols();j++) ata[i][j] = ata_old[i][j];
+  for (j=0;j<ata.getCols();j++) ata[i][j] = ata_old[i][j];
   */
   vpMatrix ata_sav;
   ata_sav = ata;
 
-  if (DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
   {
     std::cout << "a" << std::endl <<a<<std::endl ;
     std::cout << "ata" << std::endl <<ata<<std::endl ;
   }
+#endif
 
   // calcul (a^T a)^-1
   vpMatrix ata1(ata.getRows(),ata.getCols()) ;
@@ -588,120 +605,122 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   for (i = 0; i < nc; i++)
     if (sv[i] < svm) { imin = i; svm = sv[i]; }
 
-  if (DEBUG_LEVEL2)
-  {
-    std::cout << "rang: " << irank << std::endl ;;
-    std::cout <<"imin = " << imin << std::endl ;
-    std::cout << "sv " << sv.t() << std::endl ;
-  }
-
-
-  for (i=0 ; i < ata.getRows() ; i++)
-    for (j=0 ; j < ata.getCols() ; j++)
+#if (DEBUG_LEVEL2)
     {
-      ata1[i][j] = 0.0;
-      for (k=0 ; k < nc ; k++)
-	if (sv[k] > s)
-	  ata1[i][j] += ((v[i][k]*ata[j][k])/sv[k]);
+      std::cout << "rang: " << irank << std::endl ;;
+      std::cout <<"imin = " << imin << std::endl ;
+      std::cout << "sv " << sv.t() << std::endl ;
     }
+#endif
+
+    for (i=0 ; i < ata.getRows() ; i++)
+      for (j=0 ; j < ata.getCols() ; j++)
+      {
+        ata1[i][j] = 0.0;
+        for (k=0 ; k < nc ; k++)
+          if (sv[k] > s)
+            ata1[i][j] += ((v[i][k]*ata[j][k])/sv[k]);
+      }
 
 
 
-  vpMatrix b ;   // b=(at a)^-1*at
-  b = ata1*a.t() ;
+      vpMatrix b ;   // b=(at a)^-1*at
+      b = ata1*a.t() ;
 
-  //calcul de U
-  vpColVector U(3) ;
-  U = ata.column(imin+1) ;
+      //calcul de U
+      vpColVector U(3) ;
+      U = ata.column(imin+1) ;
 
-  if (DEBUG_LEVEL2)
-  {
-    std::cout << "a" << std::endl <<a<<std::endl ;
-    std::cout << "ata" << std::endl <<ata_sav<<std::endl ;
-    std::cout << "ata1" << std::endl <<ata1<<std::endl ;
-    std::cout << "ata1*ata"  << std::endl <<  ata1*ata_sav ;
-    std::cout << "b"  << std::endl <<  b ;
-    std::cout << "U " << U.t()  << std::endl ;
+#if (DEBUG_LEVEL2)
+      {
+        std::cout << "a" << std::endl <<a<<std::endl ;
+        std::cout << "ata" << std::endl <<ata_sav<<std::endl ;
+        std::cout << "ata1" << std::endl <<ata1<<std::endl ;
+        std::cout << "ata1*ata"  << std::endl <<  ata1*ata_sav ;
+        std::cout << "b"  << std::endl <<  b ;
+        std::cout << "U " << U.t()  << std::endl ;
+      }
+#endif
 
-  }
+      vpColVector xi(npt) ;
+      vpColVector yi(npt) ;
+      //calcul de la premiere solution
+      for (i = 0; i < npt; i++)
+      {
+        xi[i] = c3d[i].get_x() ;
+        yi[i] = c3d[i].get_y() ;
 
-  vpColVector xi(npt) ;
-  vpColVector yi(npt) ;
-  //calcul de la premiere solution
-  for (i = 0; i < npt; i++)
-  {
-    xi[i] = c3d[i].get_x() ;
-    yi[i] = c3d[i].get_y() ;
+      }
 
-  }
+      vpColVector I0(3) ; I0 = 0 ;
+      vpColVector J0(3) ; J0 = 0 ;
+      vpColVector I(3) ;
+      vpColVector J(3) ;
 
-  vpColVector I0(3) ; I0 = 0 ;
-  vpColVector J0(3) ; J0 = 0 ;
-  vpColVector I(3) ;
-  vpColVector J(3) ;
+      for (i=1;i<npt;i++)
+      {
+        I0[0] += b[0][i-1] * (xi[i]-xi[0]);
+        I0[1] += b[1][i-1] * (xi[i]-xi[0]);
+        I0[2] += b[2][i-1] * (xi[i]-xi[0]);
 
-  for (i=1;i<npt;i++)
-  {
-    I0[0] += b[0][i-1] * (xi[i]-xi[0]);
-    I0[1] += b[1][i-1] * (xi[i]-xi[0]);
-    I0[2] += b[2][i-1] * (xi[i]-xi[0]);
-
-    J0[0] += b[0][i-1] * (yi[i]-yi[0]);
-    J0[1] += b[1][i-1] * (yi[i]-yi[0]);
-    J0[2] += b[2][i-1] * (yi[i]-yi[0]);
-  }
-
-
-  if (DEBUG_LEVEL2)
-  {
-    std::cout << "I0 "<<I0.t() ;
-    std::cout << "J0 "<<J0.t() ;
-  }
-
-  s = -2.0*vpColVector::dotProd(I0,J0);
-  double c = J0.sumSquare() - I0.sumSquare() ;
-
-  double r,theta,si,co ;
-  calculRTheta(s, c, r, theta);
-  co = cos(theta);
-  si = sin(theta);
-
-  // calcul de la premiere solution
-  I = I0 + U*r*co ;
-  J = J0 + U*r*si ;
-
-  vpHomogeneousMatrix cMo1f ;
-  calculSolutionDementhon(xi[0], yi[0], I, J, cMo1f);
+        J0[0] += b[0][i-1] * (yi[i]-yi[0]);
+        J0[1] += b[1][i-1] * (yi[i]-yi[0]);
+        J0[2] += b[2][i-1] * (yi[i]-yi[0]);
+      }
 
 
-  int erreur1 = calculArbreDementhon(b, U, cMo1f);
+#if (DEBUG_LEVEL2)
+      {
+        std::cout << "I0 "<<I0.t() ;
+        std::cout << "J0 "<<J0.t() ;
+      }
+#endif
 
-  // calcul de la deuxieme solution
-  I = I0 - U*r*co ;
-  J = J0 - U*r*si ;
+      s = -2.0*vpColVector::dotProd(I0,J0);
+      double c = J0.sumSquare() - I0.sumSquare() ;
 
-  vpHomogeneousMatrix cMo2f;
-  calculSolutionDementhon(xi[0], yi[0], I, J, cMo2f);
+      double r,theta,si,co ;
+      calculRTheta(s, c, r, theta);
+      co = cos(theta);
+      si = sin(theta);
 
-  int erreur2 = calculArbreDementhon(b, U, cMo2f);
+      // calcul de la premiere solution
+      I = I0 + U*r*co ;
+      J = J0 + U*r*si ;
 
-  if ((erreur1 == 0) && (erreur2 == -1))   cMo = cMo1f ;
-  if ((erreur1 == -1) && (erreur2 == 0))   cMo = cMo2f ;
-  if ((erreur1 == 0) && (erreur2 == 0))
-  {
-    double s1 =  sqrt(computeResidualDementhon(cMo1f)/npt)  ;
-    double s2 =  sqrt(computeResidualDementhon(cMo2f)/npt)  ;
+      vpHomogeneousMatrix cMo1f ;
+      calculSolutionDementhon(xi[0], yi[0], I, J, cMo1f);
 
-    if (s1<=s2) cMo = cMo1f ; else cMo = cMo2f ;
-  }
 
-  cMo[0][3] -= p0.get_oX()*cMo[0][0]+p0.get_oY()*cMo[0][1]+p0.get_oZ()*cMo[0][2];
-  cMo[1][3] -= p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2];
-  cMo[2][3] -= p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2];
+      int erreur1 = calculArbreDementhon(b, U, cMo1f);
 
-  delete [] c3d ; c3d = NULL ;
-  if (DEBUG_LEVEL1)
-    std::cout << "end CCalculPose::PoseDementhonPlan()" << std::endl ;
+      // calcul de la deuxieme solution
+      I = I0 - U*r*co ;
+      J = J0 - U*r*si ;
+
+      vpHomogeneousMatrix cMo2f;
+      calculSolutionDementhon(xi[0], yi[0], I, J, cMo2f);
+
+      int erreur2 = calculArbreDementhon(b, U, cMo2f);
+
+      if ((erreur1 == 0) && (erreur2 == -1))   cMo = cMo1f ;
+      if ((erreur1 == -1) && (erreur2 == 0))   cMo = cMo2f ;
+      if ((erreur1 == 0) && (erreur2 == 0))
+      {
+        double s1 =  sqrt(computeResidualDementhon(cMo1f)/npt)  ;
+        double s2 =  sqrt(computeResidualDementhon(cMo2f)/npt)  ;
+
+        if (s1<=s2) cMo = cMo1f ; else cMo = cMo2f ;
+      }
+
+      cMo[0][3] -= p0.get_oX()*cMo[0][0]+p0.get_oY()*cMo[0][1]+p0.get_oZ()*cMo[0][2];
+      cMo[1][3] -= p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2];
+      cMo[2][3] -= p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2];
+
+      delete [] c3d ; c3d = NULL ;
+#if (DEBUG_LEVEL1)
+      std::cout << "end CCalculPose::PoseDementhonPlan()" << std::endl ;
+#endif
 }
 
 #undef DMIN
@@ -710,12 +729,12 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
 
 /*!
-  \brief Compute and return the residual expressed in meter for the pose matrix
-  'pose'.
+\brief Compute and return the residual expressed in meter for the pose matrix
+'pose'.
 
-  \param cMo : the matrix that defines the pose to be tested.
+\param cMo : the matrix that defines the pose to be tested.
 
-  \return the value of he residual in meter
+\return the value of he residual in meter
 */
 double vpPose::computeResidualDementhon(vpHomogeneousMatrix &cMo)
 {
@@ -748,7 +767,7 @@ double vpPose::computeResidualDementhon(vpHomogeneousMatrix &cMo)
 
 
 /*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+* Local variables:
+* c-basic-offset: 2
+* End:
+*/

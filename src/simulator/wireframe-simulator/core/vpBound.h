@@ -40,6 +40,9 @@
  *
  *****************************************************************************/
 
+#ifndef vpBound_H
+#define vpBound_H
+ 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -173,4 +176,5 @@ extern void malloc_huge_Bound (Bound *bp);
 extern void free_huge_Bound (Bound *bp);
 extern void fscanf_Bound (Bound *bp);
 
+#endif
 #endif

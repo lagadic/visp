@@ -47,7 +47,6 @@
 #ifndef vpDiskGrabber_hh
 #define vpDiskGrabber_hh
 
-#include <visp/vpConfig.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpFrameGrabber.h>
 #include <visp/vpRGBa.h>

@@ -65,7 +65,7 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const st
     double y_l;
     double y_q_l;
 
-    den = (p+q+2)*(p+q+1)*vpMath::comb(p+q,p);
+    den = static_cast<double>( (p+q+2)*(p+q+1)*vpMath::comb(p+q,p) );
 
     mom = 0.0;
     for (i=1;i<=points.size()-1;i++)
@@ -80,11 +80,13 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const st
         {
             y_q_l=pow(points[i-1].get_y(), (int)(q-l));
 
-          s += vpMath::comb(k+l,l)*vpMath::comb(p+q-k-l,q-l)
+          s += static_cast<double>(
+            vpMath::comb(k+l,l)
+            *vpMath::comb(p+q-k-l,q-l)
             *x_k
             *x_p_k
             *y_l
-            *y_q_l;
+            *y_q_l );
 
             y_l*=points[i].get_y();
 

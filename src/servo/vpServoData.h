@@ -47,11 +47,12 @@
   \brief  save data during the task execution
 */
 
-#include <iostream>
+
 
 // Servo
-#include <visp/vpConfig.h>
 #include <visp/vpServo.h>
+
+#include <iostream>
 
 /*!
   \class vpServoData
@@ -79,7 +80,16 @@ private:
 
 public:
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpServoData(const vpServoData &) {
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+  }      
+  void operator=(const vpServoData &){
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+  }
+#endif
 
+  vpServoData() { ; }
   virtual ~vpServoData() { ; }
 
   //! velocity output in cm and deg

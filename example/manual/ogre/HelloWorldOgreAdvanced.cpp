@@ -44,7 +44,6 @@
  
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpOpenCVGrabber.h>
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vp1394TwoGrabber.h>
@@ -78,9 +77,9 @@ protected:
     Ogre::Entity* robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
     Ogre::SceneNode* RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
-    RobotNode->setPosition(0, 0.05, 0.5);
+    RobotNode->setPosition(0.0, 0.05f, 0.5);
     RobotNode->attachObject(robot);
-    RobotNode->scale(0.001,0.001,0.001);
+    RobotNode->scale(0.001f,0.001f,0.001f);
     RobotNode->pitch(Ogre::Degree(180));
     RobotNode->yaw(Ogre::Degree(-90));
 

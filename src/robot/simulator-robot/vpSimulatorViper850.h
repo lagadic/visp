@@ -46,12 +46,12 @@
   \file vpSimulatorViper850.h
   \brief Class which provides a simulator for the robot Viper850..
 */
-#include <string>
 
-#include <visp/vpConfig.h>
+
+
 #include <visp/vpRobotSimulator.h>
 #include <visp/vpViper850.h>
-
+#include <string>
 #if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 
 /*!
@@ -175,7 +175,7 @@ int main()
   // Initialize the controller to position control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  while (1) {
+  for ( ; ; ) {
     // Apply a velocity in the joint space
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
 
@@ -281,7 +281,7 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotSimulator, public vpViper8
     void findHighestPositioningSpeed(vpColVector &q);
     void init();
     bool singularityTest(const vpColVector q, vpMatrix &J);
-    int isInJointLimit ();
+    int isInJointLimit (void);
     
     void initDisplay();
     void initArms();

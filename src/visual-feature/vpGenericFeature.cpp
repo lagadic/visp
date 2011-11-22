@@ -82,13 +82,14 @@ void vpGenericFeature::init()
 */
 vpGenericFeature::vpGenericFeature()
 {
+  /*
   vpERROR_TRACE("You are not allow to use this constructor ") ;
   vpERROR_TRACE("Please, use  vpGenericFeature::vpGenericFeature(int _dim) "
 	      "constructor") ;
   vpERROR_TRACE("And provide the dimension of the visual feature ") ;
-
   throw(vpException(vpException::cannotUseConstructorError,
 			     "You are not allow to use this constructor ")) ;
+  */
 }
 
 

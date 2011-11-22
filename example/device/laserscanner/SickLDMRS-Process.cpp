@@ -121,7 +121,7 @@ void *laser_display_and_save_loop(void *)
   display->init (map, 10, 10, "Laser scan");
 
   unsigned int iter = 0;
-  while(1) {
+  for ( ; ; ) {
     
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
     vpDisplay::display(map);
@@ -209,7 +209,7 @@ void *laser_acq_loop(void *)
   vpLaserScan laserscan[4];
 
   unsigned int iter = 0;
-  while(1) {
+  for ( ; ; ) {
     double t1 = vpTime::measureTimeMs();
     if (laser.measure(laserscan) == false)
       continue;
@@ -273,7 +273,7 @@ void *camera_acq_and_display_loop(void *)
     uint64_t timestamp;
     uint32_t id;
     double image_timestamp;
-    while (1) {
+    for ( ; ; ) {
       frame = g.dequeue(I, timestamp, id); // Acquire an image
       I.quarterSizeImage(Q);
       image_timestamp = timestamp/1000000. - time_offset;

@@ -49,10 +49,8 @@
 #ifndef vpMbEdgeTracker_HH
 #define vpMbEdgeTracker_HH
 
-#include <visp/vpConfig.h>
-
-#include <visp/vpMbTracker.h>
 #include <visp/vpPoint.h>
+#include <visp/vpMbTracker.h>
 #include <visp/vpMe.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpMbtDistanceLine.h>
@@ -271,8 +269,9 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
   void setMovingEdge(const vpMe &_me);
-  void loadConfigFile(const std::string& _filename);
+  void loadConfigFile(const std::string &filename);
   void loadConfigFile(const char* filename);
+  void loadModel(const std::string &cad_name);
   void loadModel(const char* cad_name);
   void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
   void track(const vpImage<unsigned char> &I);

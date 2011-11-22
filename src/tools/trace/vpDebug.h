@@ -51,6 +51,7 @@
 #ifndef __VP_DEBUG_HH
 #define __VP_DEBUG_HH
 
+#include <visp/vpConfig.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <iostream>
@@ -504,8 +505,9 @@ int main()
 
 inline void vpDERROR_TRACE(int /* niv */, const char * /* a */, ...){}
 inline void vpDEBUG_TRACE(int /* niv */, const char * /* a */, ...){}
-#define vpCDEBUG(niv) if (1) ; else std::cout
-#define vpDEBUG_ENABLE(niv) (0)
+
+#define vpCDEBUG(niv) if(false) std::cout // Warning C4127
+#define vpDEBUG_ENABLE(niv) (false)       // Warning C4127
 
 #endif
 

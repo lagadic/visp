@@ -75,9 +75,7 @@
 */
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string>
+
 
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -87,7 +85,9 @@
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
-
+#include <stdlib.h>
+#include <stdio.h>
+#include <string>
 // List of allowed command line options
 #define GETOPTARGS	"h"
 

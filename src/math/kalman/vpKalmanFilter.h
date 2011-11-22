@@ -43,10 +43,10 @@
 #ifndef vpKalmanFilter_h
 #define vpKalmanFilter_h
 
-#include <math.h>
-
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
+
+#include <math.h>
 
 /*!
   \file vpKalmanFilter.h

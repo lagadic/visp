@@ -49,7 +49,6 @@
   \brief Class that defines 2D ellipse visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 

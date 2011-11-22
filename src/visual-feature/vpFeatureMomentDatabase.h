@@ -46,10 +46,11 @@
 
 #ifndef __FEATUREMOMENTDATABASE_H__
 #define __FEATUREMOMENTDATABASE_H__
+
+#include <visp/vpConfig.h>
 #include <map>
 #include <iostream>
 #include <cstring>
-#include <visp/vpConfig.h>
 
 class vpFeatureMoment;
 class vpMomentObject;
@@ -151,24 +152,25 @@ int main()
 */
 class VISP_EXPORT vpFeatureMomentDatabase{
  private:
-        struct cmp_str {
-                bool operator()(const char *a, const char *b) const{
-                        return std::strcmp(a, b) < 0;
-                }
-        };
-        std::map<const char*,vpFeatureMoment*,cmp_str> FeatureMoments;
-        void add(vpFeatureMoment& FeatureMoment,char* name);
+  struct cmp_str {
+    bool operator()(const char *a, const char *b) const{
+      return std::strcmp(a, b) < 0;
+    }
+    char* operator=(const char *){ return NULL;} // Only to avoid a warning under Visual with /Wall flag
+  };
+  std::map<const char*,vpFeatureMoment*,cmp_str> FeatureMoments;
+  void add(vpFeatureMoment& FeatureMoment,char* name);
  public:
-        /*!
-           virtual destructor.
-        */
-	virtual ~vpFeatureMomentDatabase() {}
-        virtual void updateAll(double A=0.0, double B=0.0, double C=1.0);
+  /*!
+    virtual destructor.
+  */
+  virtual ~vpFeatureMomentDatabase() {}
+  virtual void updateAll(double A=0.0, double B=0.0, double C=1.0);
 
-        vpFeatureMoment& get(const char* type, bool& found);
+  vpFeatureMoment& get(const char* type, bool& found);
 
-        //friend std::ostream & operator<<(ostream & os, const vpFeatureMomentDatabase& v);
-        friend class vpFeatureMoment;
+  //friend std::ostream & operator<<(ostream & os, const vpFeatureMomentDatabase& v);
+  friend class vpFeatureMoment;
 };
 
 #endif

@@ -55,7 +55,6 @@ class vpRzyxVector;
 class vpRxyzVector;
 class vpRzyzVector;
 
-#include <visp/vpConfig.h>
 #include <visp/vpRotationVector.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>

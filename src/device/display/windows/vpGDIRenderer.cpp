@@ -208,7 +208,10 @@ bool vpGDIRenderer::render()
   
 
   //blits it on the window's DC
-  BitBlt(hDCScreen, 0, 0, nbCols, nbRows, hDCMem, 0, 0, SRCCOPY);
+  BitBlt(hDCScreen, 0, 0,
+    static_cast<int>( nbCols ),
+    static_cast<int>( nbRows ),
+    hDCMem, 0, 0, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
   DeleteDC(hDCMem);
@@ -560,7 +563,8 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 	  DeleteObject(hBmp);
 	}
       //create a new BITMAP from this buffer
-      if( (hBmp = CreateBitmap(w,h,1,32,(void*)imBuffer)) == NULL)
+      if( (hBmp = CreateBitmap(static_cast<int>(w),static_cast<int>(h),
+                               1,32,(void*)imBuffer)) == NULL)
 	return false;
     }
 
@@ -583,7 +587,9 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint iP,
 				 unsigned int w, unsigned int h)
 {
-  HBITMAP htmp = CreateBitmap(w,h,1,32,(void*)imBuffer);
+  int w_ = static_cast<int>(w);
+  int h_ = static_cast<int>(h);
+  HBITMAP htmp = CreateBitmap(w_,h_,1,32,(void*)imBuffer);
 
   //get the window's DC
   HDC hDCScreen = GetDC(hWnd);
@@ -595,7 +601,7 @@ bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, con
   SelectObject(hDCMem, bmp);
   SelectObject(hDCMem2, htmp);
 
-  BitBlt(hDCMem,(int)iP.get_u(),(int)iP.get_v(), w, h, hDCMem2, 0, 0,SRCCOPY);
+  BitBlt(hDCMem,(int)iP.get_u(),(int)iP.get_v(),w_,h_, hDCMem2, 0, 0,SRCCOPY);
   LeaveCriticalSection(&CriticalSection);
 
   DeleteDC(hDCMem);
@@ -659,10 +665,10 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
   //create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen = CreatePen(style, thickness, colors[color.id]);
+    hPen = CreatePen(style, static_cast<int>(thickness), colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
-    hPen = CreatePen(style, thickness, gdicolor);
+    hPen = CreatePen(style, static_cast<int>(thickness), gdicolor);
   }
   SetBkMode(hDCMem, TRANSPARENT);
 
@@ -716,12 +722,13 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
 
   //create the pen
   HPEN hPen;
-  COLORREF gdicolor;
+  COLORREF gdicolor = RGB(0,0,0);
+
   if (color.id < vpColor::id_unknown)
-    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), colors[color.id]);
   else {
     gdicolor = RGB(color.R, color.G, color.B);
-    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
   }
 
   //create an hollow or solid brush (depends on boolean fill)
@@ -747,7 +754,9 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft,
   SelectObject(hDCMem, hPen);
 
   //draw the rectangle
-  Rectangle(hDCMem, vpMath::round(topLeft.get_u()), vpMath::round(topLeft.get_v()), vpMath::round(topLeft.get_u())+width, vpMath::round(topLeft.get_v())+height);
+  Rectangle(hDCMem, vpMath::round(topLeft.get_u()), vpMath::round(topLeft.get_v()),
+            vpMath::round(topLeft.get_u())+static_cast<int>(width),
+            vpMath::round(topLeft.get_v())+static_cast<int>(height));
 
   //display the result (flush)
 //  BitBlt(hDCScreen, j, i, width, height, hDCMem, j, i, SRCCOPY);
@@ -783,7 +792,7 @@ void vpGDIRenderer::clear(const vpColor &color)
   \param thickness : Line thickness
 */
 void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
-			       const vpColor &color, bool fill, unsigned char thickness)
+			       const vpColor &color, bool fill, unsigned int thickness)
 {
 
   //get the window's DC
@@ -793,10 +802,10 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   //create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
-    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
   }
 
   //create an hollow brush
@@ -805,10 +814,11 @@ void vpGDIRenderer::drawCircle(const vpImagePoint &center, unsigned int radius,
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
   //computes bounding rectangle
-  int x1 = vpMath::round(center.get_u())-radius;
-  int y1 = vpMath::round(center.get_v())-radius;
-  int x2 = vpMath::round(center.get_u())+radius;
-  int y2 = vpMath::round(center.get_v())+radius;
+  int radius_ = static_cast<int>(radius);
+  int x1 = vpMath::round(center.get_u())-radius_;
+  int y1 = vpMath::round(center.get_v())-radius_;
+  int x2 = vpMath::round(center.get_u())+radius_;
+  int y2 = vpMath::round(center.get_v())+radius_;
 
   //select this bmp in memory
   EnterCriticalSection(&CriticalSection);
@@ -908,7 +918,7 @@ void vpGDIRenderer::drawText(const vpImagePoint &ip, const char * text,
 void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
 			      const vpColor &color, unsigned int thickness)
 {
-  unsigned int half_size = size / 2;
+  /* unsigned */ int half_size = static_cast<int>( size/2 );
 
   // if half_size is equal to zero, nothing is displayed with the code
   // just below. So, if half_size is equal to zero we just draw the
@@ -921,10 +931,10 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size,
     //create the pen
     HPEN hPen;
     if (color.id < vpColor::id_unknown)
-      hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+      hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), colors[color.id]);
     else {
       COLORREF gdicolor = RGB(color.R, color.G, color.B);
-      hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+      hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
     }
 
     //select this bmp in memory
@@ -973,7 +983,6 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
 			      const vpColor &color,
 			      unsigned int w,unsigned int h, unsigned int thickness)
 {
-  int _h = h;
   double a = ip2.get_i() - ip1.get_i() ;
   double b = ip2.get_j() - ip1.get_j() ;
   double lg = sqrt(vpMath::sqr(a)+vpMath::sqr(b)) ;
@@ -991,10 +1000,10 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
   //create the pen
   HPEN hPen;
   if (color.id < vpColor::id_unknown)
-    hPen = CreatePen(PS_SOLID, thickness, colors[color.id]);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), colors[color.id]);
   else {
     COLORREF gdicolor = RGB(color.R, color.G, color.B);
-    hPen = CreatePen(PS_SOLID, thickness, gdicolor);
+    hPen = CreatePen(PS_SOLID, static_cast<int>(thickness), gdicolor);
   }
 
   //select this bmp in memory
@@ -1024,8 +1033,8 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
       //double t = 0 ;
       //while (t<=_l)
 	{
-	  ip4.set_i( ip3.get_i() - b*_h );
-	  ip4.set_j( ip3.get_j() + a*_h );
+	  ip4.set_i( ip3.get_i() - b*h );
+	  ip4.set_j( ip3.get_j() + a*h );
 
 	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
 	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
@@ -1036,8 +1045,8 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
 	//t = 0 ;
 	//while (t>= -_l)
 	{
-	  ip4.set_i( ip3.get_i() + b*_h );
-	  ip4.set_j( ip3.get_j() - a*_h );
+	  ip4.set_i( ip3.get_i() + b*h );
+	  ip4.set_j( ip3.get_j() - a*h );
 
 	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
 	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
@@ -1071,7 +1080,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
   unsigned char * imBuffer = new unsigned char[size];
 
   //gets the hbitmap's bitmap
-  GetBitmapBits(bmp, size, (void *)imBuffer);
+  GetBitmapBits(bmp, static_cast<LONG>(size), (void *)imBuffer);
 
   //resize the destination image as needed
   I.resize(nbRows, nbCols);

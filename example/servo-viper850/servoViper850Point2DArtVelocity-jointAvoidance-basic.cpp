@@ -53,6 +53,9 @@
   October 2001.
 */
 
+#include <visp/vpConfig.h>
+#include <visp/vpDebug.h> // Debug trace
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -60,9 +63,6 @@
 #include <sstream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
 
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 
@@ -254,7 +254,7 @@ main()
     dc1394video_frame_t *frame = NULL;
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    while(1) {
+    for ( ; ; ) {
       iter ++;
       
       t_0 = vpTime::measureTimeMs(); // t_0: current time

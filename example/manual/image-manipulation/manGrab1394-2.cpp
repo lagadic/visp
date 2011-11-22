@@ -52,11 +52,12 @@
  
  */
 
-#include <stdlib.h>
-#include <stdio.h>
+
 
 #include <visp/vpImage.h>
 #include <visp/vp1394TwoGrabber.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int main()
 {
@@ -77,7 +78,7 @@ int main()
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
   }
   
-  while(1) {
+  for ( ; ; ) {
     for (unsigned int camera=0; camera < ncameras; camera ++) {
       // Acquire successively images from the different cameras
       g.setCamera(camera);

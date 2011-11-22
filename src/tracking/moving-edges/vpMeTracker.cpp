@@ -1,50 +1,50 @@
 /****************************************************************************
- *
- * $Id$
- *
- * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
- * 
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
- * See the file LICENSE.txt at the root directory of this source
- * distribution for additional information about the GNU GPL.
- *
- * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
- * Edition License.
- *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
- * This software was developed at:
- * INRIA Rennes - Bretagne Atlantique
- * Campus Universitaire de Beaulieu
- * 35042 Rennes Cedex
- * France
- * http://www.irisa.fr/lagadic
- *
- * If you have questions regarding the use of this file, please contact
- * INRIA at visp@inria.fr
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *
- * Description:
- * Moving edges.
- *
- * Authors:
- * Andrew Comport
- *
- *****************************************************************************/
+*
+* $Id$
+*
+* This file is part of the ViSP software.
+* Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+* 
+* This software is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License
+* ("GPL") version 2 as published by the Free Software Foundation.
+* See the file LICENSE.txt at the root directory of this source
+* distribution for additional information about the GNU GPL.
+*
+* For using ViSP with software that can not be combined with the GNU
+* GPL, please contact INRIA about acquiring a ViSP Professional 
+* Edition License.
+*
+* See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+* 
+* This software was developed at:
+* INRIA Rennes - Bretagne Atlantique
+* Campus Universitaire de Beaulieu
+* 35042 Rennes Cedex
+* France
+* http://www.irisa.fr/lagadic
+*
+* If you have questions regarding the use of this file, please contact
+* INRIA at visp@inria.fr
+* 
+* This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+* WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*
+*
+* Description:
+* Moving edges.
+*
+* Authors:
+* Andrew Comport
+*
+*****************************************************************************/
 
 /*!
-  \file vpMeTracker.cpp
-  \brief Contains abstract elements for a Distance to Feature type feature.
+\file vpMeTracker.cpp
+\brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-#include <algorithm>
+
 
 #include <visp/vpMeTracker.h>
 #include <visp/vpDisplay.h>
@@ -52,6 +52,7 @@
 
 #include <visp/vpTrackingException.h>
 #include <visp/vpDebug.h>
+#include <algorithm>
 
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
@@ -77,7 +78,7 @@ vpMeTracker::vpMeTracker()
 vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
 {
   init();
-  
+
   me = meTracker.me;
   list = meTracker.list;
   nGoodElement = meTracker.nGoodElement;
@@ -127,10 +128,10 @@ int
 vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
 {
   return (! ((i> half+2) &&
-	     (i< rows -(half+2)) &&
-	     (j>half+2) &&
-	     (j<cols-(half+2)))
-	  ) ;
+    (i< rows -(half+2)) &&
+    (j>half+2) &&
+    (j<cols-(half+2)))
+    ) ;
 }
 
 int
@@ -139,16 +140,16 @@ vpMeTracker::outOfImage(vpImagePoint iP, int half, int rows, int cols)
   int i = vpMath::round(iP.get_i());
   int j = vpMath::round(iP.get_j());
   return (! ((i> half+2) &&
-	     (i< rows -(half+2)) &&
-	     (j>half+2) &&
-	     (j<cols-(half+2)))
-	  ) ;
+    (i< rows -(half+2)) &&
+    (j>half+2) &&
+    (j<cols-(half+2)))
+    ) ;
 }
 
 
 /*!
-  Virtual function that is called by lower classes vpMeEllipse, vpMeLine 
-  and vpMeNurbs.
+Virtual function that is called by lower classes vpMeEllipse, vpMeLine 
+and vpMeNurbs.
 */
 void
 vpMeTracker::initTracking(const vpImage<unsigned char>& I)
@@ -161,7 +162,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 
   int d = 0;
   vpImagePoint ip1, ip2;
-  
+
   // Loop through list of sites to track
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
     vpMeSite refp = *it;//current reference pixel
@@ -183,7 +184,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
     }
 
 
-    if(DEBUG_LEVEL2)
+#if (DEBUG_LEVEL2)
     {
       double a,b ;
       a = refp.i_1 - refp.i ;
@@ -196,26 +197,26 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
         vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
       }
     }
-
+#endif
     *it = refp;
   }
 
   /*
   if (res != OK)
   {
-    std::cout<< "In vpMeTracker::initTracking(): " ;
-    switch (res)
-    {
-    case  ERR_TRACKING:
-      std::cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " << std::endl ;
-      break ;
-    case fatalError:
-      std::cout << "vpMeTracker::initTracking:Track return fatalError" << std::endl ;
-      break ;
-    default:
-      std::cout << "vpMeTracker::initTracking:Track return error " << res << std::endl ;
-    }
-    return res ;
+  std::cout<< "In vpMeTracker::initTracking(): " ;
+  switch (res)
+  {
+  case  ERR_TRACKING:
+  std::cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " << std::endl ;
+  break ;
+  case fatalError:
+  std::cout << "vpMeTracker::initTracking:Track return fatalError" << std::endl ;
+  break ;
+  default:
+  std::cout << "vpMeTracker::initTracking:Track return error " << res << std::endl ;
+  }
+  return res ;
   }
   */
 
@@ -228,11 +229,9 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 {
   if (list.empty())
   {
-    if (DEBUG_LEVEL1)
-      vpERROR_TRACE("Error Tracking: only %d "
-     "pixels when entered the function ",list.size()) ;
+    vpDERROR_TRACE(2, "Tracking error: too few pixel to track");
     throw(vpTrackingException(vpTrackingException::notEnoughPointError,
-			      "too few pixel to track")) ;
+      "too few pixel to track")) ;
 
   }
 
@@ -249,33 +248,34 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
     {
 
       try{
-	//	vpERROR_TRACE("%d",d ) ;
-	//	vpERROR_TRACE("range %d",me->range) ;
-	 s.track(I,me,true);
+        //	vpERROR_TRACE("%d",d ) ;
+        //	vpERROR_TRACE("range %d",me->range) ;
+        s.track(I,me,true);
       }
       catch(vpTrackingException)
       {
-	vpERROR_TRACE("catch exception ") ;
-	s.suppress=2 ;
+        vpERROR_TRACE("catch exception ") ;
+        s.suppress=2 ;
       }
 
       if(s.suppress != 2)
       {
-	nGoodElement++;
+        nGoodElement++;
 
-	if(DEBUG_LEVEL2)
-	{
-	  double a,b ;
-	  a = s.i_1 - s.i ;
-	  b = s.j_1 - s.j ;
-	  if(s.suppress==0) {
-	    ip1.set_i( s.i );
-	    ip1.set_j( s.j );
-	    ip2.set_i( s.i+a*5 );
-	    ip2.set_j( s.j+b*5 );
-	    vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
-	  }
-	}
+#if (DEBUG_LEVEL2)
+        {
+          double a,b ;
+          a = s.i_1 - s.i ;
+          b = s.j_1 - s.j ;
+          if(s.suppress==0) {
+            ip1.set_i( s.i );
+            ip1.set_j( s.j );
+            ip2.set_i( s.i+a*5 );
+            ip2.set_j( s.j+b*5 );
+            vpDisplay::displayArrow(I, ip1, ip2, vpColor::green) ;
+          }
+        }
+#endif
 
       }
       *it = s;
@@ -284,20 +284,21 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 }
 
 /*!
-  Displays the status of a moving edge site, a sample point:
-  - in red, the sample point is considered as valid, while
-  - in white, the sample point is suppressed due to a bad constrast,
-  - in blue, the sample point is suppressed due to a bad likelihood ratio,
-  - in green, the sample point is an outlier.
+Displays the status of a moving edge site, a sample point:
+- in red, the sample point is considered as valid, while
+- in white, the sample point is suppressed due to a bad constrast,
+- in blue, the sample point is suppressed due to a bad likelihood ratio,
+- in green, the sample point is an outlier.
 */
 void
 vpMeTracker::display(const vpImage<unsigned char>& I)
 {
-  if (DEBUG_LEVEL1)
+#if (DEBUG_LEVEL1)
   {
     std::cout <<"begin vpMeTracker::displayList() " << std::endl ;
     std::cout<<" There are "<<list.size()<< " sites in the list " << std::endl ;
   }
+#endif
   vpImagePoint ip;
 
   for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){

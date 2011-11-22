@@ -44,18 +44,16 @@
 */
 
 
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
 #include <visp/vpScale.h>
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
-
-#define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
-#define DEBUG_LEVEL3 1
 
 
 
@@ -63,15 +61,16 @@
 //! Constructor
 vpScale::vpScale()
 {
-  if(DEBUG_LEVEL2)
-    std::cout << "vpScale constructor reached" << std::endl;
-
+#if (DEBUG_LEVEL2)
+  std::cout << "vpScale constructor reached" << std::endl;
+#endif
   bandwidth = 0.02;
   dimension = 1;
   kernel_type = EPANECHNIKOV;
 
-  if(DEBUG_LEVEL2)
-    std::cout << "vpScale constructor finished" << std::endl;
+#if (DEBUG_LEVEL2)
+  std::cout << "vpScale constructor finished" << std::endl;
+#endif
 
 }
 
@@ -79,15 +78,17 @@ vpScale::vpScale()
 vpScale::vpScale(double kernel_bandwidth,
 		 int dimension=1, int kernel_type=EPANECHNIKOV)
 {
-  if(DEBUG_LEVEL2)
-    std::cout << "vpScale constructor reached" << std::endl;
+#if (DEBUG_LEVEL2)
+  std::cout << "vpScale constructor reached" << std::endl;
+#endif
 
   bandwidth = kernel_bandwidth;
   dimension = dimension;
   kernel_type = kernel_type;
 
-  if(DEBUG_LEVEL2)
-    std::cout << "vpScale constructor finished" << std::endl;
+#if (DEBUG_LEVEL2)
+  std::cout << "vpScale constructor finished" << std::endl;
+#endif
 
 }
 

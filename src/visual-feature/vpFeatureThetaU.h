@@ -49,7 +49,6 @@
   \brief class that defines the ThetaU visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpBasicFeature.h>
@@ -171,7 +170,7 @@ int main()
   task.addFeature(s); // s* is here considered as zero
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // ... cMcd need here to be initialized from for example a pose estimation.
     
     // Update the current ThetaU visual feature

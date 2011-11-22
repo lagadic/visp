@@ -39,10 +39,10 @@
  *
  *****************************************************************************/
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-#include <string>
 
+
+#include <visp/vpConfig.h>
+#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <visp/vpSimulatorAfma6.h>
 #include <visp/vpTime.h>
 #include <visp/vpImagePoint.h>
@@ -50,9 +50,9 @@
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpRobotException.h>
 #include <visp/vpIoTools.h>
-
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
-
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+#include <string>
 const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
 
@@ -763,6 +763,7 @@ vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateType newState)
     }
     break;
   }
+  case vpRobot::STATE_ACCELERATION_CONTROL:
   default:
     break ;
   }
@@ -828,7 +829,7 @@ int main()
   // Initialize the controller to position control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-  while (1) {
+  for ( ; ; ) {
     // Apply a velocity in the joint space
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qvel);
 
@@ -1069,7 +1070,7 @@ int main()
   // Initialisation of the velocity measurement
   vpColVector q_dot_mes; // Measured velocities
 
-  while (1) {
+  for ( ; ; ) {
     robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
@@ -1154,7 +1155,7 @@ int main()
   // Initialisation of the velocity measurement
   vpColVector q_dot_mes; // Measured velocities
 
-  while (1) {
+  for ( ; ; ) {
      q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]

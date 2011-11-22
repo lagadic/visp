@@ -73,7 +73,7 @@ void vpFeatureMoment::init (){
 
     if (flags == NULL)
 	flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) 
+    for (unsigned int i = 0; i < nbParameters; i++)
 	flags[i] = false;
 }
 
@@ -176,7 +176,7 @@ void vpFeatureMoment::update (double A, double B, double C){
 
         if (flags == NULL)
             flags = new bool[nbParameters];
-        for (int i = 0; i < nbParameters; i++)
+        for (unsigned int i = 0; i < nbParameters; i++)
             flags[i] = false;
     }else
         dim_s = 0;

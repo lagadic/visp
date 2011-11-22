@@ -42,15 +42,14 @@
 \file vpAdaptiveGain.cpp
 */
 
-#include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
 /* --- VISP --- */
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>
 #include <visp/vpAdaptiveGain.h>
 
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 const double vpAdaptiveGain::DEFAULT_LAMBDA_ZERO = 1.666;
 const double vpAdaptiveGain::DEFAULT_LAMBDA_INFINI = 0.1666;

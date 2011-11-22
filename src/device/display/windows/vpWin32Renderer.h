@@ -138,7 +138,7 @@ class VISP_EXPORT vpWin32Renderer
     \param col The circle's color
   */
   virtual void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill, unsigned char thickness) =0;
+		  const vpColor &color, bool fill, unsigned int thickness=1) =0;
 
   /*!
     Draws some text.

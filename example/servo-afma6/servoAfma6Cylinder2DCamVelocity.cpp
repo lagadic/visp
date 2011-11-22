@@ -54,13 +54,13 @@
 
 */
 
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-
+#include <stdlib.h>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 #if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>
@@ -192,7 +192,7 @@ main()
       double lambda_av =0.05;
       double alpha = 0.2 ;
       double beta =3 ;
-      while(1)
+      for ( ; ; )
 	{
 	  std::cout << "---------------------------------------------" << iter <<std::endl ;
 

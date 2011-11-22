@@ -48,7 +48,6 @@
 #include <visp/vpFeatureMoment.h>
 #include <visp/vpMomentCommon.h>
 #include <visp/vpMomentObject.h>
-#include <visp/vpConfig.h>
 class vpMomentDatabase;
 /*!
   \class vpFeatureMomentBasic
@@ -77,6 +76,13 @@ private:
  public:
         vpFeatureMomentBasic(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL);
         void compute_interaction();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        /* Add function due to pure virtual definition in vpBasicFeature.h */
+        vpMatrix interaction(const unsigned int /* select = FEATURE_ALL */){
+          throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+        }
+#endif
 
         vpMatrix interaction (unsigned int select_one,unsigned int select_two);
         /*!

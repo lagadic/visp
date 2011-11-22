@@ -42,6 +42,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpConfig.h>
+
 #if ( defined(VISP_HAVE_D3D9) )
 
 #ifndef VPD3DRENDERER_HH
@@ -82,13 +83,13 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   IDirect3DTexture9 * pd3dVideoText;
 
   //The texture's width.
-  int textWidth;
+  unsigned int textWidth;
 
   //The window's handle.
   HWND hWnd;
 
   //Colors  for overlay drawn with d3d directly.
-  long colors[vpColor::id_unknown];
+  unsigned long colors[vpColor::id_unknown];
 
   //Colors for overlay drawn with GDI.
   COLORREF colorsGDI[vpColor::id_unknown];
@@ -123,7 +124,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill=false, unsigned char thickness=1);
+		  const vpColor &color, bool fill=false, unsigned int thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
 		const vpColor &color);
@@ -169,7 +170,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 			     const vpColor &color,
 			     unsigned int maxX, unsigned int maxY)
     {
-      long c;
+      unsigned long c;
       if (color.id < vpColor::id_unknown)
 		c = colors[color.id];
       else {
@@ -177,7 +178,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 	  }
 
       if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
-	  *(long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
+	  *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
     }
   /*!
     Unsafe useful inline function to set a pixel in a texture buffer.
@@ -192,17 +193,17 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
                              int x, int y,
                              const vpColor &color)
   {
-      long c;
+      unsigned long c;
       if (color.id < vpColor::id_unknown)
 		c = colors[color.id];
       else {
 		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
 	  }
 
-	  *(long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
+	  *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
   }
 
-  int supPowerOf2(int n);
+  unsigned int supPowerOf2(unsigned int n);
 
 };
 #endif

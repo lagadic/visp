@@ -1,10 +1,11 @@
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
 #include <visp/vpCalibration.h>
 #include <visp/vpMath.h>
 #include <visp/vpPose.h>
 #include <visp/vpPixelMeterConversion.h>
+
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+
 #undef MAX
 #undef MIN
  

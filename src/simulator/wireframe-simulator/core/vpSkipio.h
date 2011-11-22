@@ -41,11 +41,15 @@
  *
  *****************************************************************************/
 
+#ifndef vpSkipio_h
+#define vpSkipio_h
+
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern void skip_cmd (/*FILE *f*/);
-extern void skip_keyword (int token, char *err);
+void skip_cmd (void);
+void skip_keyword (int token, char *err);
 
+#endif
 #endif

@@ -40,12 +40,13 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<stdlib.h>
+
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include	<stdio.h>
+#include	<stdlib.h>
 /*
 #include	<suntool/sunview.h>
 */
@@ -80,7 +81,7 @@ static	int	*rename_jlc  = (int *) NULL;
  * La procedure "open_display" alloue et initialise les variables utilisees
  * par le mode "display".
  */
-void open_display ()
+void open_display (void)
 {
   static	char	proc_name[] = "open_display";
 
@@ -97,7 +98,7 @@ void open_display ()
  * La procedure "close_display" libere les variables utilisees par le mode
  * "display".
  */
-void close_display ()
+void close_display (void)
 {
   free ((char *) point2i);
   free ((char *) listpoint2i);
@@ -134,12 +135,8 @@ void point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2)
 	float		ydiv2 = ((float) ysize) / (float)2.0;
 
 	for (; p3 < pend; p3++, p2++) {
-		if (/*p3->z >= -50.0*/1) {	/* point visible	*/
-			p2->x = (int) ((1.0 + p3->x) * xdiv2);
-			p2->y = (int) ((1.0 - p3->y) * ydiv2);
-		}
-		else 			/* point invisible	*/
-			p2->x = p2->y = -1;
+		p2->x = (int) ((1.0 + p3->x) * xdiv2);
+		p2->y = (int) ((1.0 - p3->y) * ydiv2);
 	}
 }
 

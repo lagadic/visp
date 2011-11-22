@@ -46,19 +46,18 @@
 
 */
 
-#include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-
 #include <visp/vpConfig.h>
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /* --- VISP --- */
+#include <visp/vpAdaptativeGain.h>
 #include <visp/vpColVector.h>
 #include <visp/vpDebug.h>
-#include <visp/vpAdaptativeGain.h>
 
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
 
 const double vpAdaptativeGain::DEFAULT_LAMBDA_ZERO = 1.666;
 const double vpAdaptativeGain::DEFAULT_LAMBDA_INFINI = 0.1666;

@@ -91,7 +91,7 @@ vpFeaturePointPolar::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default value Z (1 meters)
     Z = 1;
@@ -167,7 +167,7 @@ vpFeaturePointPolar::set_rhoThetaZ(const double rho,
   set_theta(theta) ;
   set_Z(Z) ;
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 /*! 
@@ -287,7 +287,7 @@ vpFeaturePointPolar::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -551,7 +551,7 @@ vpFeaturePointPolar::buildFrom(const double rho, const double theta,
 			     "Point Z coordinates is null")) ;
   }
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 

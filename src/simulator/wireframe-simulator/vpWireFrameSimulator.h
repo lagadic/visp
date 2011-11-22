@@ -47,7 +47,7 @@
   \file vpWireFrameSimulator.h
   \brief Implementation of a wire frame simulator.
 */
-
+#include <visp/vpConfig.h>
 #include <stdio.h>
 #include <iostream>
 #include <cmath>    // std::fabs
@@ -69,20 +69,20 @@ int close_display();
 int open_clipping();
 int close_clipping();
 int open_keyword (Keyword *kwp);
-int open_lex ();
+int open_lex (void);
 int open_source (FILE *fd, const char *str);
 int malloc_Bound_scene (Bound_scene *bsp, const char *name,Index bn);
 int free_Bound_scene (Bound_scene *bsp);
 int parser (Bound_scene *bsp);
-int close_source ();
-int close_lex ();
-int close_keyword ();
+int close_source (void);
+int close_lex (void);
+int close_keyword (void);
 void add_rfstack (int i);
 void load_rfstack (int i);
 void add_vwstack (const char* path, ... );
 void display_scene(Matrix mat, Bound_scene sc);
-int * get_rfstack ();
-Matrix	* get_tmstack ();
+int * get_rfstack (void);
+Matrix	* get_tmstack (void);
 int View_to_Matrix (View_parameters *vp, Matrix m);
 void postmult_matrix (Matrix a, Matrix b);
 Bound *clipping_Bound (Bound *bp, Matrix m);
@@ -611,8 +611,10 @@ class VISP_EXPORT vpWireFrameSimulator
     */
     vp_deprecated vpList<vpHomogeneousMatrix> get_cMo_History () {
       vpList<vpHomogeneousMatrix> list_cMo;
+      vpHomogeneousMatrix tmp_;
       for(std::list<vpHomogeneousMatrix>::const_iterator it=poseList.begin(); it!=poseList.end(); ++it){
-        list_cMo.addRight(rotz*(*it));
+        tmp_ = (rotz*(*it));
+        list_cMo.addRight(tmp_);
       }
       return list_cMo;}
 

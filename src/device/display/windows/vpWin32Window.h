@@ -121,9 +121,9 @@ private :
   virtual ~vpWin32Window();
 
   //! Returns the displayed image's width
-  int getImageWidth(){ return renderer->getImageWidth(); }
+  unsigned int getImageWidth(){ return renderer->getImageWidth(); }
   //! Returns the displayed image's height
-  int getImageHeight(){ return renderer->getImageHeight(); }
+  unsigned int getImageHeight(){ return renderer->getImageHeight(); }
   //! Returns the window's handle
   HWND getHWnd(){ return hWnd;}
 
@@ -131,7 +131,7 @@ private :
   bool isInitialized(){ return initialized; }
 
   //! Initialize the window
-  void initWindow(const char* title, int posx, int posy, int w, int h);
+  void initWindow(const char* title, int posx, int posy, unsigned int w, unsigned int h);
 
   // Friend classes
   friend class vpDisplayWin32;

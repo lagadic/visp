@@ -40,12 +40,12 @@
  *
  *****************************************************************************/
 
+#include <visp/vpLevenbergMarquartd.h>
+#include <visp/vpMath.h>
+
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <iostream>
-
-#include <visp/vpMath.h>
-#include <visp/vpLevenbergMarquartd.h>
 
 #define	SIGN(x)		((x) < 0 ? -1 : 1)
 #define	SWAP(a,b,c)	{(c) = (a); (a) = (b); (b) = (c);}
@@ -374,7 +374,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     /*
      *	debut d'une iteration.
      */
-    while (1) //iter >= 0)
+    for(;;) //iter >= 0)
     {
       iter++;
 

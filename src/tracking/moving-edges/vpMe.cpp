@@ -44,13 +44,13 @@
 	\file vpMe.cpp
 	\brief Moving edges
 */
-#include <stdlib.h>
+
 
 
 #include <visp/vpMe.h>
 #include <visp/vpColVector.h>
 #include <visp/vpMath.h>
-
+#include <stdlib.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 
@@ -159,7 +159,7 @@ clipping  (point  A, point B,
 
  AB = droite_cartesienne(A,B);
 
- while(1)                               // 2 sorties directes internes
+ for ( ; ; )                               // 2 sorties directes internes
  {
    // CALCULE CODE DE VISIBILITE (Sutherland & Sproul)
    // ================================================

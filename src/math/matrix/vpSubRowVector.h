@@ -67,9 +67,6 @@
 class VISP_EXPORT vpSubRowVector : public vpRowVector {
 
   private :
-      
-      //! Resize method unavaible
-      void resize(const unsigned int /* r */, const unsigned int /* c */ ){}
       //!Copy constructor unavaible
       vpSubRowVector(const vpSubRowVector& /* m */);
        

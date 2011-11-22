@@ -44,17 +44,15 @@
   \brief class for cameras video capture using OpenCV library.
 */
 
-#include <iostream>
-#include <math.h>
-
-#include <visp/vpConfig.h>
+#include <visp/vpOpenCVGrabber.h>
 
 #if defined(VISP_HAVE_OPENCV)
 
 #include <visp/vpImageConvert.h>
 #include <visp/vpFrameGrabberException.h>
-#include <visp/vpOpenCVGrabber.h>
 
+#include <iostream>
+#include <math.h>
 
 /*!
 	Basic Constructor.

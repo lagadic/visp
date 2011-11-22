@@ -85,7 +85,7 @@ vpFeaturePoint::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default value Z (1 meters)
     Z = 1;
@@ -197,7 +197,7 @@ vpFeaturePoint::set_xyZ(const double x,
   set_x(x) ;
   set_y(y) ;
   set_Z(Z) ;
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 
@@ -253,7 +253,7 @@ vpFeaturePoint::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -466,7 +466,7 @@ vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 			     "Point Z coordinates is null")) ;
   }
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 
 }
 

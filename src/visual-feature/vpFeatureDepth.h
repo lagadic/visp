@@ -48,7 +48,6 @@
   \brief Class that defines 3D point visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 
@@ -118,7 +117,7 @@ int main()
   task.addFeature(s); // s* is here considered as zero
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // The new parameters x, y and Z must be computed here.
     
     // Update the current point visual feature

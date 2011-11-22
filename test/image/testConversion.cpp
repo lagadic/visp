@@ -39,8 +39,6 @@
  *
  *****************************************************************************/
 
-#include <stdlib.h>
-
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
@@ -48,6 +46,8 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
 #include <visp/vpTime.h>
+#include <stdlib.h>
+
 /*!
   \example testConversion.cpp
 

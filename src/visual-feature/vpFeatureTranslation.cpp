@@ -82,7 +82,7 @@ vpFeatureTranslation::init()
   s.resize(dim_s) ;
   if (flags == NULL)
     flags = new bool[nbParameters];
-  for (int i = 0; i < nbParameters; i++) flags[i] = false;
+  for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
 }
 
@@ -301,7 +301,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
   L.resize(0,6) ;
 
   if (deallocate == vpBasicFeature::user) {
-    for (int i = 0; i < nbParameters; i++) {
+    for (unsigned int i = 0; i < nbParameters; i++) {
       if (flags[i] == false) {
         switch(i){
         case 0:

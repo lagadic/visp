@@ -40,14 +40,14 @@
  *
  *****************************************************************************/
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpDebug.h>
+
+#include <stdlib.h>
+#include <stdio.h>
 
 /*!
   \example testIoPPM.cpp

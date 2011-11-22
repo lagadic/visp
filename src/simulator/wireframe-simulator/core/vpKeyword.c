@@ -40,26 +40,26 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
+
 
 #include	<visp/vpMy.h>
 #include	<visp/vpToken.h>
 
-#include <visp/vpConfig.h>
-
+#include	<stdio.h>
+#include	<stdlib.h>
+#include	<string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-
-static	void	open_hash ();
-static	void	close_hash ();
-//static	int	hashplw ();
-static	void	insert_keyword ();
+void open_keyword (Keyword *kwp);
+static	void	open_hash (void);
+static	void	close_hash (void);
+static	int hashpjw (char *str);
+static	void insert_keyword (char *str, Index token);
+Index get_symbol (char *ident, int length);
 
 #ifdef	debug
-static	void	delete_keyword ();
-static	char	*get_keyword ();
+static	void	delete_keyword (void);
+static	char	*get_keyword (void);
 #endif	/* debug */
 
 
@@ -94,7 +94,7 @@ void open_keyword (Keyword *kwp)
  * La procedure "close_keyword" libere les variables utilisees
  * par les procedures de gestion des mots cles.
  */
-void close_keyword ()
+void close_keyword (void)
 {
 	close_hash ();
 }
@@ -103,7 +103,7 @@ void close_keyword ()
  * La procedure "open_hash" alloue et initialise la table de codage.
  */
 static	void
-open_hash ()
+open_hash (void)
 {
 	static	 char	proc_name[] = "open_hash";
 
@@ -122,7 +122,7 @@ open_hash ()
  * La procedure "close_hash" libere la table de codage et ses elements.
  */
 static	void
-close_hash ()
+close_hash (void)
 {
 	Bucket	**head = hash_tbl;
 	Bucket **bend = head + PRIME;
@@ -158,7 +158,7 @@ hashpjw (char *str)
 
 	for (; *str != '\0'; str++) {
 		h = (h << 4) + *str;
-		if ((g = h & ~0xfffffff)) {
+		if ((g = h & ~0xfffffff) != 0) {
 			h ^= g >> 24;
 			h ^= g;
 		}
@@ -176,15 +176,15 @@ hashpjw (char *str)
  * token	Valeur du jeton associe au mot cle.
  */
 static	void
-insert_keyword (char *str, int token)
+insert_keyword (char *str, Index token)
 {
 	static	 char	proc_name[] = "insert_keyword";
 
 	Bucket	**head = hash_tbl + hashpjw (str);
 	Bucket	*bp;
-	int	length;
+	Byte	length;
 
-	length = strlen (str);
+	length = (Byte)( strlen(str) ); // Warning! Overflow possible!
 	if ((bp = (Bucket *) malloc (sizeof (Bucket) + length  + 1)) == NULL) {
 		perror (proc_name);
 		exit (1);
@@ -222,7 +222,7 @@ Index get_symbol (char *ident, int length)
 
 		for (; len != 0; idn++, len--) {
 			h = (h << 4) + *idn;
-			if ((g = h & ~0xfffffff)) {
+			if ((g = h & ~0xfffffff) != 0) {
 				h ^= g >> 24;
 				h ^= g;
 			}

@@ -58,11 +58,11 @@
 
 
 
-#include <stdlib.h>
+
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-
+#include <stdlib.h>
 #if (defined (VISP_HAVE_AFMA4) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>
@@ -387,7 +387,7 @@ main(int argc, const char ** argv)
     //   _2 means the value for the previous previous iteration (t=-2)
     //
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    while(1) {
+    for ( ; ; ) {
       t_0 = vpTime::measureTimeMs(); // t_0: current time
       // Temps de la boucle d'asservissement
       Tv = (double)(t_0 - t_1) / 1000.0; //temps d'une iteration en s !

@@ -158,15 +158,16 @@ vpRGBa::operator-(const vpRGBa &v) const
   Addition operator : "this" + v.
   \param v : Color to add to the current object "this".
   \return "this" + v
+  \warning in case of overflow : e.g. 128+128 returns 0 for all 4 channels
 */
 vpRGBa
 vpRGBa::operator+(const vpRGBa &v) const
 {
   vpRGBa n; // new color
-  n.R = R + v.R ;
-  n.G = G + v.G ;
-  n.B = B + v.B ;
-  n.A = A + v.A ;
+  n.R = static_cast<unsigned char>( R + v.R );
+  n.G = static_cast<unsigned char>( G + v.G );
+  n.B = static_cast<unsigned char>( B + v.B );
+  n.A = static_cast<unsigned char>( A + v.A );
   return n;
 }
 

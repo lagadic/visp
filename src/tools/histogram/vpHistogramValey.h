@@ -51,7 +51,6 @@
 #ifndef vpHistogramValey_h
 #define vpHistogramValey_h
 
-#include <visp/vpConfig.h>
 #include <visp/vpHistogramPeak.h>
 
 /*!

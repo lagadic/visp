@@ -293,7 +293,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> & peaks)
     cpt = 0;
   }
   if (prev_slope > 0) {
-    p.set((unsigned char)size-1, histogram[size-1]);
+    p.set((unsigned char)size-1u, histogram[size-1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     peaks.push_back(p);
     nbpeaks ++;
@@ -585,7 +585,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> & valey)
     cpt = 0;
   }
   if (prev_slope < 0) {
-    p.set((unsigned char)size-1, histogram[size-1]);
+    p.set((unsigned char)size-1u, histogram[size-1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     valey.push_back(p);
     nbvaley ++;
@@ -981,7 +981,7 @@ unsigned vpHistogram::getPeaks(vpList<vpHistogramPeak> & peaks)
     cpt = 0;
   }
   if (prev_slope > 0) {
-    p.set((unsigned char)size-1, histogram[size-1]);
+    p.set((unsigned char)size-1u, histogram[size-1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     peaks.addRight(p);
     nbpeaks ++;
@@ -1055,7 +1055,7 @@ unsigned vpHistogram::getValey(vpList<vpHistogramValey> & valey)
     cpt = 0;
   }
   if (prev_slope < 0) {
-    p.set((unsigned char)size-1, histogram[size-1]);
+    p.set((unsigned char)size-1u, histogram[size-1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     valey.addRight(p);
     nbvaley ++;

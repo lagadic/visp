@@ -49,7 +49,6 @@
   \brief class that defines the translation visual feature.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpTranslationVector.h>
@@ -164,7 +163,7 @@ int main()
   task.addFeature(s); // s* is here considered as zero
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // ... cdMc need here to be initialized from for example a pose estimation.
     
     // Update the current 3D translation visual feature
@@ -263,7 +262,7 @@ int main()
   task.addFeature(s, s_star); // s* is here considered as zero
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // ... cMo need here to be computed from for example a pose estimation.
     
     // Update the current 3D translation visual feature

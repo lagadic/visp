@@ -47,16 +47,12 @@
 #ifndef vpMeLine_HH
 #define vpMeLine_HH
 
+#include <visp/vpMatrix.h>
+#include <visp/vpMath.h>
+#include <visp/vpMeTracker.h>
 
 #include <math.h>
 #include <iostream>
-
-
-#include <visp/vpConfig.h>
-#include <visp/vpMath.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpMeTracker.h>
-
 
 /*!
   \class vpMeLine

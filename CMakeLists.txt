@@ -112,10 +112,8 @@ MAKE_DIRECTORY(${VISP_INCLUDE_DIR})
 #-----------------------------------------------------------------------------
 # Add extra compilation flags under UNIX
 #-----------------------------------------------------------------------------
-if(UNIX)
-  include(${VISP_CMAKE_MODULE_PATH}/AddExtraCompilationFlags.cmake)
-  ADD_EXTRA_COMPILATION_FLAGS()
-endif()
+include(${VISP_CMAKE_MODULE_PATH}/AddExtraCompilationFlags.cmake)
+ADD_EXTRA_COMPILATION_FLAGS()
 
 #--------------------------------------------------------------------
 # By default set release configuration
@@ -1527,7 +1525,7 @@ ENDIF(DOXYGEN_FOUND)
 IF(WIN32)
   IF(MSVC80 OR MSVC90 OR MSVC10)
     #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
-    LIST(APPEND VISP_DEFS "-D_CRT_SECURE_NO_DEPRECATE")
+    list(APPEND VISP_DEFS "-D_CRT_SECURE_NO_DEPRECATE")
   ENDIF(MSVC80 OR MSVC90 OR MSVC10)
 ENDIF(WIN32)
 

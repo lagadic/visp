@@ -41,25 +41,25 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
 
-#include	<visp/vpMy.h>
-#include	<visp/vpToken.h>
-#include	<visp/vpLex.h>
-#include	<visp/vpSkipio.h>
+
+
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-
+#include	<visp/vpMy.h>
+#include	<visp/vpToken.h>
+#include	<visp/vpLex.h>
+#include	<visp/vpSkipio.h>
+#include	<stdio.h>
 /*
  * La procedure "skip_cmd" saute les structures d'une commande
  * jusqu'a reconnaitre le debut d'une nouvelle commande.
  * Entree :
  * f		Fichier en sortie.
  */
-void skip_cmd (/*FILE *f*/)
+void skip_cmd (void)
 {
 	int	token;
 
@@ -82,16 +82,17 @@ void skip_keyword (int token, char *err)
 
 	switch (t = lex ()) {
 	case T_IDENT :		/* saute le mot cle inconnu	*/
-		while ((t = lex ())) 
-		switch (t) {
-		case '$'   :	/* nouvelle commande		*/
-		case T_EOF :	/* fin de fichier		*/
-		  lexerr ("start", err, NULL);
-			break;
-		default	:
-			if (t == token) return;
-			break;
-		}
+		while ((t = lex ()) != 0){ 
+		  switch (t) {
+		    case '$'   :	/* nouvelle commande		*/
+		    case T_EOF :	/* fin de fichier		*/
+		      lexerr ("start", err, NULL);
+			    break;
+		    default	:
+			    if (t == token) return;
+			    break;
+		  }
+    }
 		break;
 	default	:
 		if (t == token) return;

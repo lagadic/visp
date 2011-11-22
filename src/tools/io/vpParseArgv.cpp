@@ -28,14 +28,14 @@
   \brief Command line argument parsing.
 */
 
+
+
+#include <visp/vpParseArgv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-
-#include <visp/vpParseArgv.h>
-
 
 /*
  * Default table of argument descriptors.  These are normally available
@@ -302,6 +302,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
       case ARGV_HELP:
          printUsage (argTable, flags);
          return true;
+      case ARGV_END:
       default:
          FPRINTF(stderr, "bad argument type %d in vpArgvInfo",
                  infoPtr->type);
@@ -455,6 +456,12 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 
             break;
          }
+         case ARGV_END:
+         case ARGV_HELP:
+         case ARGV_GENFUNC:
+         case ARGV_FUNC:
+         case ARGV_REST:
+         case ARGV_CONSTANT:
          default: {
             break;
          }

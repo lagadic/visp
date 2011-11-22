@@ -81,7 +81,7 @@ vpFeatureThetaU::init()
   s.resize(dim_s) ;
   if (flags == NULL)
     flags = new bool[nbParameters];
-  for (int i = 0; i < nbParameters; i++) flags[i] = false;
+  for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 }
 
 /*! 
@@ -217,7 +217,7 @@ vpFeatureThetaU::buildFrom(vpThetaUVector &tu)
   s[0] = tu[0] ;
   s[1] = tu[1] ;
   s[2] = tu[2] ;
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 /*!
@@ -416,7 +416,7 @@ vpFeatureThetaU::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {

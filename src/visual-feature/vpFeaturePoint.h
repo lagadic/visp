@@ -48,7 +48,6 @@
   \brief Class that defines 2D point visual feature
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpPoint.h>
@@ -129,7 +128,7 @@ int main()
   task.addFeature(s, sd);
 
   // Control loop
-  while(1) {
+  for ( ; ; ) {
     // The new parameters x and y must be computed here.
     
     // Update the current point visual feature

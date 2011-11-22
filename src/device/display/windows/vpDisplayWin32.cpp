@@ -785,13 +785,13 @@ void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
 void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
                                        const vpImagePoint &bottomRight,
                                        const vpColor &color, bool fill,
-			               unsigned int thickness )
+			                                 unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();
-  double width = bottomRight.get_j() - topLeft.get_j();
-  double height = bottomRight.get_i() - topLeft.get_i();
-  window.renderer->drawRect(topLeft,(int)width,(int)height,color, fill, thickness);
+  unsigned int width = static_cast<unsigned int>( bottomRight.get_j() - topLeft.get_j() );
+  unsigned int height = static_cast<unsigned int>(bottomRight.get_i() - topLeft.get_i() );
+  window.renderer->drawRect(topLeft,width,height,color, fill, thickness);
 }
 
 /*!
@@ -807,15 +807,17 @@ void vpDisplayWin32::displayRectangle( const vpImagePoint &topLeft,
 */
 void vpDisplayWin32::displayRectangle( const vpRect &rectangle,
                                        const vpColor &color, bool fill,
-			               unsigned int thickness )
+			                                 unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();
   vpImagePoint topLeft;
   topLeft.set_i(rectangle.getTop());
   topLeft.set_j(rectangle.getLeft());
-  window.renderer->drawRect(topLeft,(int)rectangle.getWidth(),(int)rectangle.getHeight(),
-			    color, fill, thickness);
+  window.renderer->drawRect(topLeft,
+                            static_cast<unsigned int>( rectangle.getWidth() ),
+                            static_cast<unsigned int>( rectangle.getHeight() ),
+			                      color, fill, thickness);
 }
 
 
@@ -829,10 +831,10 @@ void vpDisplayWin32::displayRectangle( const vpRect &rectangle,
   when \e fill is set to false.
 */
 void vpDisplayWin32::displayCircle(const vpImagePoint &center,
-				   unsigned int radius,
+                                   unsigned int radius,
                                    const vpColor &color,
-				   bool fill,
-				   unsigned int thickness )
+                                   bool fill,
+                                   unsigned int thickness )
 {
   //wait if the window is not initialized
   waitForInit();

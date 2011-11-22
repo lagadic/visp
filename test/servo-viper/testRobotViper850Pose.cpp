@@ -49,7 +49,7 @@
 
 */
 
-#include <iostream>
+
 
 
 #include <visp/vpConfig.h>
@@ -63,7 +63,7 @@
 #include <visp/vpDot.h>
 #include <visp/vpPose.h>
 #include <visp/vpDebug.h>
-
+#include <iostream>
 #if defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394_2)
 
 int main()

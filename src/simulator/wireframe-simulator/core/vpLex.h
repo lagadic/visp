@@ -42,16 +42,21 @@
  *
  *****************************************************************************/
 
+#ifndef vpLex_h
+#define vpLex_h
+
 #include <visp/vpConfig.h>
+#include <stdio.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern int lex();
-extern void unlex ();
-extern void lexerr (const char* path, ...);
-extern int pusherr (char *str);
-extern int popuperr (char *str);
-extern int poperr ();
-extern int lexecho (FILE *f, int token);
+int lex(void);
+void unlex (void);
+void lexerr (const char* path, ...);
+int pusherr (char *str);
+int popuperr (char *str);
+int poperr (void);
+int lexecho (FILE *f, int token);
 
+#endif
 #endif

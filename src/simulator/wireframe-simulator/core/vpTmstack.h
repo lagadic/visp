@@ -41,23 +41,26 @@
  *
  *****************************************************************************/
 
+#ifndef vpTmstack_h
+#define vpTmstack_h
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern	Matrix	*get_tmstack ();
-extern	void	load_tmstack ();
-extern	void	pop_tmstack ();
-extern	void	push_tmstack ();
-extern	void	swap_tmstack ();
+Matrix	*get_tmstack (void);
+void	load_tmstack (Matrix m);
+void	pop_tmstack (void);
+void	push_tmstack (void);
+void	swap_tmstack (void);
 
-extern	void	postmult_tmstack ();
-extern	void	postrotate_tmstack ();
-extern	void	postscale_tmstack ();
-extern	void	posttranslate_tmstack ();
-extern	void	premult_tmstack ();
-extern	void	prerotate_tmstack ();
-extern	void	prescale_tmstack ();
-extern	void	pretranslate_tmstack ();
+void	postmult_tmstack (Matrix m);
+void	postrotate_tmstack (Vector *vp);
+void	postscale_tmstack (Vector *vp);
+void	posttranslate_tmstack (Vector *vp);
+void	premult_tmstack (Matrix m);
+void	prerotate_tmstack (Vector *vp);
+void	prescale_tmstack (Vector *vp);
+void	pretranslate_tmstack (Vector *vp);
 
+#endif
 #endif

@@ -39,7 +39,10 @@
  * Jean-Luc CORRE
  *
  *****************************************************************************/
- 
+
+#ifndef vpView_H
+#define vpView_H
+
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -154,5 +157,5 @@ typedef	struct	{
 } View_parameters;
 
 #endif
-
+#endif
 

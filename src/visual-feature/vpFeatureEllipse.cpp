@@ -89,7 +89,7 @@ vpFeatureEllipse::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default depth values
     A = B = 0;
@@ -114,7 +114,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -356,7 +356,7 @@ vpFeatureEllipse::buildFrom(const double x, const double y,
   this->B = B ;
   this->C = C ;
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for( unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 void
@@ -387,7 +387,7 @@ vpFeatureEllipse::setABC(const double A, const double B, const double C)
   this->A = A ;
   this->B = B ;
   this->C = C ;
-  for( int i = 5; i < nbParameters; i++) flags[i] = true;
+  for( unsigned int i = 5; i < nbParameters; i++) flags[i] = true;
 }
 
 

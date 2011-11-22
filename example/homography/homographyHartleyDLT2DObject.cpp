@@ -54,7 +54,7 @@
 */
 
 
-#include <stdlib.h>
+
 #include <visp/vpMath.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomography.h>
@@ -66,7 +66,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
-
+#include <stdlib.h>
 // List of allowed command line options
 #define GETOPTARGS	"h"
 

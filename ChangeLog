@@ -7,6 +7,8 @@
 
 
 ViSP 2.6.2 (under development)
+  - Improvements
+     - Remove warning detected with Visual C++ /Wall flag
   - Bug fixed
      - [13536] Division by zero in vpMeLine
      - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const 

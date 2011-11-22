@@ -312,16 +312,18 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
   //Creation des buffers
   CvSize Sizeim, SizeI;
   SizeI = cvGetSize(I);
-  if(image != NULL)Sizeim = cvGetSize(image);
-  if(image == NULL ||prev_image == NULL || pyramid==NULL || prev_pyramid ==NULL ||
-     SizeI.width != Sizeim.width || SizeI.height != Sizeim.height){
+  bool b_imOK = true;
+  if(image != NULL){
+    Sizeim = cvGetSize(image);
+    if(SizeI.width != Sizeim.width || SizeI.height != Sizeim.height) b_imOK = false;
+  }
+  if(image == NULL || prev_image == NULL || pyramid==NULL || prev_pyramid ==NULL || !b_imOK){
     reset();
     image = cvCreateImage(cvGetSize(I), 8, 1);image->origin = I->origin;
     prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
     pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
     prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  }
-  else{
+  }else{
     swap_temp = 0;
     countFeatures = 0;
     countPrevFeatures = 0;

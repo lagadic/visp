@@ -410,7 +410,7 @@ main(int argc, const char** argv)
     vpDisplay::getClick(Iref);
   }  
   
-  while(1){
+  for ( ; ; ) {
     // acquire a new image
     if(useSequence){
       iter++;

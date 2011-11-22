@@ -104,7 +104,7 @@ vpFeatureLine::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     A = B = C = D = 0.0 ;
 }
@@ -152,7 +152,7 @@ vpFeatureLine::setABCD(const double A, const double B,
   this->B = B ;
   this->C = C ;
   this->D = D ;
-  for( int i = 2; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 2; i < nbParameters; i++) flags[i] = true;
 }
 
 
@@ -213,7 +213,7 @@ vpFeatureLine::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -473,7 +473,7 @@ void vpFeatureLine::buildFrom(const double rho, const double theta,
   this->B = B ;
   this->C = C ;
   this->D = D ;
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 

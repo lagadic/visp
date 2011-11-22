@@ -49,7 +49,6 @@
   \brief Class that defines what is a generic tracker.
 */
 
-#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpHomogeneousMatrix.h>

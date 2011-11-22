@@ -81,7 +81,7 @@ vpFeaturePoint3D::init()
     s.resize(dim_s) ;
     if (flags == NULL)
       flags = new bool[nbParameters];
-    for (int i = 0; i < nbParameters; i++) flags[i] = false;
+    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 
     //default value XYZ
     s[0] = 0;
@@ -167,7 +167,7 @@ vpFeaturePoint3D::set_XYZ(const double X,
   set_Y(Y) ;
   set_Z(Z) ;
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
 //! Return the \f$X\f$ coordinate in the camera frame of the 3D point.
@@ -267,7 +267,7 @@ vpFeaturePoint3D::interaction(const unsigned int select)
 
   if (deallocate == vpBasicFeature::user)
   {
-    for (int i = 0; i < nbParameters; i++)
+    for (unsigned int i = 0; i < nbParameters; i++)
     {
       if (flags[i] == false)
       {
@@ -520,7 +520,7 @@ vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
 			     "Point Z coordinates is null")) ;
   }
 
-  for( int i = 0; i < nbParameters; i++) flags[i] = true;
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 
 }
 

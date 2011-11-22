@@ -40,18 +40,19 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
-#include	<string.h>
 
-#include	<visp/vpMy.h>
-#include	<visp/vpArit.h>
-#include	<visp/vpView.h>
-#include	<visp/vpRfstack.h>
+
+
 
 #include <visp/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+#include	<visp/vpMy.h>
+#include	<visp/vpArit.h>
+#include	<visp/vpView.h>
+#include	<visp/vpRfstack.h>
+#include	<stdio.h>
+#include	<string.h>
 #define	STACKSIZE	32
 
 
@@ -109,7 +110,7 @@ fprintf_rfstack (FILE *fp)
  * 		Pointeur sur les drapeaux d'elimination du sommet de la pile.
  */
 int	*
-get_rfstack ()
+get_rfstack (void)
 {
 	return (sp);
 }
@@ -121,8 +122,7 @@ get_rfstack ()
  * i		Niveau a charger.
  */
 void
-load_rfstack (i)
-int	i;
+load_rfstack (int i)
 {
 	*sp = i;
 }
@@ -132,7 +132,7 @@ int	i;
  * de la pile des drapeaux d'elimination de faces.
  */
 void
-pop_rfstack ()
+pop_rfstack (void)
 {
 	static	char	proc_name[] = "pop_rfstack";
 
@@ -148,7 +148,7 @@ pop_rfstack ()
  * de la pile des drapeaux d'elimination de faces.
  */
 void
-push_rfstack ()
+push_rfstack (void)
 {
 	static	char	proc_name[] = "push_rfstack";
 
@@ -165,7 +165,7 @@ push_rfstack ()
  * de la pile des drapeaux d'elimination de faces.
  */
 void
-swap_rfstack ()
+swap_rfstack (void)
 {
 	int	*ip, tmp;
 
@@ -178,8 +178,7 @@ swap_rfstack ()
  * de la pile des drapeaux d'elimination de faces.
  */
 void
-add_rfstack (i)
-int	i;
+add_rfstack (int i)
 {
 	*sp |= i;
 }
@@ -189,8 +188,7 @@ int	i;
  * de la pile des drapeaux d'elimination de faces.
  */
 void
-sub_rfstack (i)
-int	i;
+sub_rfstack (int i)
 {
 	*sp &= ~i;
 }

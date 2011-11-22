@@ -41,7 +41,7 @@
  *****************************************************************************/
 
 
-#include	<stdio.h>
+
 
 #include	<visp/vpMy.h>
 #include	<visp/vpArit.h>
@@ -51,13 +51,12 @@
 #include	<visp/vpLex.h>
 #include	<visp/vpSkipio.h>
 
-#include <visp/vpConfig.h>
-
+#include	<stdio.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef	used
-extern	Byte		*get_remove ();
-extern	View_parameters	*get_view_parameters ();
+extern	Byte		*get_remove (void);
+extern	View_parameters	*get_view_parameters (void);
 #endif	/* used	*/
 
 /*
@@ -74,7 +73,7 @@ void parser (Bound_scene *bsp)
 	case '$' :
 		switch (lex ()) {
 		case T_IDENT	:	/* saute la commande inconnue	*/
-			skip_cmd (stderr);
+			skip_cmd (/* stderr */);
 			unlex ();
 			break;
 		case T_EXIT	:
@@ -94,7 +93,7 @@ void parser (Bound_scene *bsp)
 			break;
 		case T_VIEW	:
 			fscanf_View_parameters (get_view_parameters ());
-			set_projection ();
+			set_projection (void);
 			break;
 #endif	/* used	*/
 		default		:

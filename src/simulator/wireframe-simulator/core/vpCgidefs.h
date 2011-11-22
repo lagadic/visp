@@ -38,6 +38,9 @@
  *
  *****************************************************************************/
 
+#ifndef vpCgidefs_H
+#define vpCgidefs_H
+ 
 #include <visp/vpConfig.h>
 #include <visp/vpCgiconstants.h>	/* defines constants   */
 
@@ -519,3 +522,4 @@ Ctextatt       *cgipw_inquire_text_attributes();
 Cflaglist      *cgipw_inquire_aspect_source_flags();
 #endif
 
+#endif

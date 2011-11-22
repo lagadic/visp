@@ -778,9 +778,9 @@ void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
       vpSAT(g);
       vpSAT(b);
 
-      *d++ = r;
-      *d++ = g;
-      *d++ = b;
+      *d++ = static_cast<unsigned char>(r);
+      *d++ = static_cast<unsigned char>(g);
+      *d++ = static_cast<unsigned char>(b);
       *d++ = 0;
 
       r = y2 + cr;
@@ -790,9 +790,9 @@ void vpImageConvert::YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
       vpSAT(g);
       vpSAT(b);
 
-      *d++ = r;
-      *d++ = g;
-      *d++ = b;
+      *d++ = static_cast<unsigned char>(r);
+      *d++ = static_cast<unsigned char>(g);
+      *d++ = static_cast<unsigned char>(b);
       *d++ = 0;
 
     }
@@ -834,9 +834,9 @@ void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
       vpSAT(g);
       vpSAT(b);
 
-      *d++ = r;
-      *d++ = g;
-      *d++ = b;
+      *d++ = static_cast<unsigned char>(r);
+      *d++ = static_cast<unsigned char>(g);
+      *d++ = static_cast<unsigned char>(b);
 
       r = y2 + cr;
       b = y2 + cb;
@@ -845,9 +845,9 @@ void vpImageConvert::YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
       vpSAT(g);
       vpSAT(b);
 
-      *d++ = r;
-      *d++ = g;
-      *d++ = b;
+      *d++ = static_cast<unsigned char>(r);
+      *d++ = static_cast<unsigned char>(g);
+      *d++ = static_cast<unsigned char>(b);
     }
   }
 }
@@ -2757,28 +2757,28 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
 
   int col = 0;
 
-  while (size--) {
-    register int val_r, val_g, val_b;
-    if (!(col++ % 2)) {
-      cbv = pt_ycbcr + 1;
-      crv = pt_ycbcr + 3;
-    }
+	while (size--) {
+		register int val_r, val_g, val_b;
+		if (!(col++ % 2)) {
+			cbv = pt_ycbcr + 1;
+			crv = pt_ycbcr + 3;
+		}
 
-    val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
+		val_r = *pt_ycbcr + vpImageConvert::vpCrr[*crv];
     val_g = *pt_ycbcr + vpImageConvert::vpCgb[*cbv] + vpImageConvert::vpCgr[*crv];
     val_b = *pt_ycbcr + vpImageConvert::vpCbb[*cbv];
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgb++ = (val_r < 0) ? 0 :
-      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
-    *pt_rgb++ = (val_g < 0) ? 0 :
-      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
-    *pt_rgb++ = (val_b < 0) ? 0 :
-      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgb++ = (val_r < 0) ? 0u :
+      ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0u :
+      ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0u :
+      ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
 
     pt_ycbcr += 2;
-  }
+	}
 }
 
 /*!
@@ -2829,12 +2829,12 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba,
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgba++ = (val_r < 0) ? 0 :
-      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
-    *pt_rgba++ = (val_g < 0) ? 0 :
-      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
-    *pt_rgba++ = (val_b < 0) ? 0 :
-      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = (val_r < 0) ? 0u :
+      ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0u :
+      ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0u :
+      ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
     *pt_rgba++ = 0;
 
     pt_ycbcr += 2;
@@ -2917,12 +2917,12 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb,
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgb++ = (val_r < 0) ? 0 :
-      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
-    *pt_rgb++ = (val_g < 0) ? 0 :
-      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
-    *pt_rgb++ = (val_b < 0) ? 0 :
-      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgb++ = (val_r < 0) ? 0u :
+      ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgb++ = (val_g < 0) ? 0u :
+      ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgb++ = (val_b < 0) ? 0u :
+      ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
 
     pt_ycbcr += 2;
   }
@@ -2974,12 +2974,12 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba,
 
     vpDEBUG_TRACE(5, "[%d] R: %d G: %d B: %d\n", size, val_r, val_g, val_b);
 
-    *pt_rgba++ = (val_r < 0) ? 0 :
-      ((val_r > 255) ? 255 : (unsigned char)val_r); // Red component.
-    *pt_rgba++ = (val_g < 0) ? 0 :
-      ((val_g > 255) ? 255 : (unsigned char)val_g); // Green component.
-    *pt_rgba++ = (val_b < 0) ? 0 :
-      ((val_b > 255) ? 255 : (unsigned char)val_b); // Blue component.
+    *pt_rgba++ = (val_r < 0) ? 0u :
+      ((val_r > 255) ? 255u : (unsigned char)val_r); // Red component.
+    *pt_rgba++ = (val_g < 0) ? 0u :
+      ((val_g > 255) ? 255u : (unsigned char)val_g); // Green component.
+    *pt_rgba++ = (val_b < 0) ? 0u :
+      ((val_b > 255) ? 255u : (unsigned char)val_b); // Blue component.
     *pt_rgba++ = 0;
 
     pt_ycbcr += 2;
@@ -3095,7 +3095,7 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
 
   while (i >= 0) {
     y = grey16[i--];
-    grey[j--] = (y + (grey16[i--]<<8))>>8;
+    grey[j--] = static_cast<unsigned char>( (y+(grey16[i--]<<8))>>8 );
   }
 }
 

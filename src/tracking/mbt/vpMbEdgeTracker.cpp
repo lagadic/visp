@@ -46,12 +46,8 @@
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#include <limits>
-#include <string>
-#include <sstream>
-#include <float.h>
 
-#include <visp/vpConfig.h>
+
 #include <visp/vpDebug.h>
 #include <visp/vpPose.h>
 #include <visp/vpExponentialMap.h>
@@ -69,6 +65,10 @@
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
 
+#include <limits>
+#include <string>
+#include <sstream>
+#include <float.h>
 
 /*!
   Basic constructor
@@ -1361,6 +1361,16 @@ vpMbEdgeTracker::loadModel(const char* file)
   vpMbTracker::loadModel(model);
 }
 
+/*!
+  Load a 3D model contained in a file.
+  
+  \param file : Path to the file containing the 3D model description.
+*/
+void
+vpMbEdgeTracker::loadModel(const std::string &file)
+{
+  vpMbTracker::loadModel(file);
+}
 
 /*!
   Add a face to track from its corners (in the object frame). This method is

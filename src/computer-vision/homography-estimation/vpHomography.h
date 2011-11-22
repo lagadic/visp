@@ -51,14 +51,13 @@ tools for homography computation.
 #ifndef vpHomography_hh
 #define vpHomography_hh
 
-#include <list>
-#include <visp/vpConfig.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPlane.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
 
+#include <list>
 
 /*!  
 
@@ -186,8 +185,6 @@ private:
   void init() ;
 
 private:
-  virtual void resize(int , int ) { ; }
-
   //! insert a rotation matrix
   void insert(const vpHomogeneousMatrix &aRb) ;
   //! insert a rotation matrix
