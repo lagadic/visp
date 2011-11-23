@@ -141,6 +141,7 @@ SET (HEADER_MATH
   math/transformation/vpForceTwistMatrix.h
   math/transformation/vpHomogeneousMatrix.h
   math/transformation/vpPoseVector.h
+  math/transformation/vpQuaternion.h
   math/transformation/vpRotationMatrix.h
   math/transformation/vpRotationVector.h
   math/transformation/vpRxyzVector.h
