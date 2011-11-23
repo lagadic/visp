@@ -52,6 +52,24 @@
 #include <fstream>
 #include <list>
 #include <vector>
+
+/*!
+  Default constructor.
+
+  Needs then a call to init().
+
+*/
+vpPlot::vpPlot()
+{
+  graphList = NULL;
+  
+  #if defined VISP_HAVE_X11
+  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
+  #endif
+    
+  margei = 30;
+  margej = 40;
+}
 /*!
   This constructor creates a new window where the curves
   will be drawn. The number of graphics in the window must be set.
@@ -67,19 +85,12 @@
   \param width : Width of the window.
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title. 
-  \note The basic constructor is not available.
 */
 vpPlot::vpPlot(const unsigned int graphNbr, 
 	       const unsigned int height, const unsigned int width, 
 	       const int x, const int y, const char *title)
 {
-  I.init(height,width,255);
-  
   graphList = NULL;
-  
-  display.init(I, x, y, title);
-  
-  vpDisplay::display(I);
   
   #if defined VISP_HAVE_X11
   vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
@@ -88,10 +99,35 @@ vpPlot::vpPlot(const unsigned int graphNbr,
   margei = 30;
   margej = 40;
   
+  init(graphNbr, height, width, x, y, title);
+}
+
+/*!
+  Creates a new window where the curves
+  will be drawn. The number of graphics in the window must be set.
+
+  \warning You can modify the default window size, but this is not advised.
+
+  \param graphNbr : The number of graph in the window.
+  \param height : Height of the window.
+  \param width : Width of the window.
+  \param x,y : The window is set at position x,y (column index, row index).
+  \param title : Window title. 
+*/
+void vpPlot::init(const unsigned int graphNbr, 
+		  const unsigned int height, const unsigned int width, 
+		  const int x, const int y, const char *title)
+{
+  I.init(height,width,255);
+    
+  display.init(I, x, y, title);
+  
+  vpDisplay::display(I);
+    
   factori = height/700.0f;
   factorj = width/700.0f;
     
-  init(graphNbr);
+  initNbGraph(graphNbr);
 }
 
 /*!
@@ -115,7 +151,7 @@ vpPlot::~vpPlot()
   \param graphNbr : The number of graph in the window.
 */
 void
-vpPlot::init (unsigned int nbGraph)
+vpPlot::initNbGraph (unsigned int nbGraph)
 {
   if(nbGraph > 4){
     throw vpException(vpException::dimensionError, "Cannot create more than 4 graphs");

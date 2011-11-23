@@ -142,14 +142,18 @@ class VISP_EXPORT vpPlot
     float factorj;
     
   public:
+    vpPlot();
     vpPlot(const unsigned int nbGraph, 
 	   const unsigned int height=700, 
 	   const unsigned int width=700, 
 	   const int x=-1, const int y=-1, const char *title=NULL);
     ~vpPlot();
-    
+    void init(const unsigned int nbGraph, 
+	      const unsigned int height=700, 
+	      const unsigned int width=700, 
+	      const int x=-1, const int y=-1, const char *title=NULL);
     void initGraph (unsigned int graphNum, unsigned int curveNbr);
-
+    
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
@@ -175,7 +179,7 @@ class VISP_EXPORT vpPlot
     void saveData(const unsigned int graphNum, const char* dataFile);
     
   private:
-    void init (unsigned int nbGraph);
+    void initNbGraph (unsigned int nbGraph);
     void displayGrid();
 };
 #endif
