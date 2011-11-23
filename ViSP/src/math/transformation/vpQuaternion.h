@@ -83,7 +83,7 @@ public:
     vpQuaternion() ;    
     vpQuaternion(const double x, const double y, const double z,const double w) ;    
     vpQuaternion(const vpQuaternion &q);
-	void vpQuaternion(const vpMatrix& R);
+	vpQuaternion(const vpMatrix& R);
     void set(const double x, const double y, const double z,const double w) ;
 
     
