@@ -154,6 +154,7 @@ SET (SRC_MATH
   math/transformation/vpForceTwistMatrix.cpp
   math/transformation/vpHomogeneousMatrix.cpp
   math/transformation/vpPoseVector.cpp
+  math/transformation/vpQuaternion.cpp
   math/transformation/vpRotationMatrix.cpp
   math/transformation/vpRotationVector.cpp
   math/transformation/vpRxyzVector.cpp
