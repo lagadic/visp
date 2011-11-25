@@ -50,6 +50,7 @@
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpDebug.h>
+#include <visp/vpRotationVector.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -132,8 +133,8 @@ vpColVector::vpColVector (vpColVector &m, unsigned int r, unsigned int nrows)
 
 
 vpColVector::vpColVector (const vpRotationVector &v){
-    resize(3);
-    memcpy(data, v.r, 3*sizeof(double)) ;
+    resize(v.size());
+    memcpy(data, v.r, v.size()*sizeof(double)) ;
 }
 
   

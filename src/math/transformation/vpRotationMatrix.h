@@ -49,7 +49,6 @@
 */
 
 #include <visp/vpMatrix.h>
-#include <visp/vpRotationVector.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
 #include <visp/vpRzyzVector.h>
@@ -71,8 +70,7 @@
 */
 class VISP_EXPORT vpRotationMatrix : public vpMatrix
 {
-  friend class vpMatrix;
-  friend class vpRotationVector;
+  friend class vpMatrix;  
   friend class vpRxyzVector;
   friend class vpRzyzVector;
   friend class vpRzyxVector;

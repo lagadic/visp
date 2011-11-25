@@ -69,7 +69,7 @@ class vpMatrix;
 class vpRotationMatrix;
 class vpPoseVector;
 class vpThetaUVector;
-class vpQuaternion;
+class vpQuaternionVector;
 
 /*!
   \class vpHomogeneousMatrix
@@ -124,8 +124,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   vpHomogeneousMatrix(const double tx,const  double ty, const double tz,
 		      const double tux,const  double tuy, const double tuz  ) ;
 
-  vpHomogeneousMatrix(const vpTranslationVector &t,
-						const vpQuaternion& q  ) ;
+  vpHomogeneousMatrix( vpTranslationVector &t,
+						 vpQuaternionVector& q  ) ;
 
   //! Construction from Translation and rotation
   void buildFrom(const vpTranslationVector &t,
@@ -136,8 +136,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from Translation and rotation
   void buildFrom(const vpPoseVector &p) ;
   //! Construction from Translation and quaternion
-  void buildFrom(const vpTranslationVector &t,
-		 const vpQuaternion& q  ) ;
+  void buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) ;
 
   void buildFrom(const double tx,const  double ty, const double tz,
 		 const double tux,const  double tuy, const double tuz  ) ;

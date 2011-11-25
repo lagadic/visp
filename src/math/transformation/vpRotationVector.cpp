@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpRotationVector.h>
-
+#include <algorithm>
 #include <math.h>
 /*!
   \file vpRotationVector.cpp
@@ -63,23 +63,6 @@ vpRotationVector::vpRotationVector(const double phi,
   r[1] = theta ;
   r[2] = psi ;
 }
-/*!  
-  
-  Initialize a rotation vector from 3 angles \f$\varphi,\theta,\psi\f$
-  expressed in radians.
-  
-  \param phi, theta, psi : Respectively the first, the second and the
-  third angle of the rotation vector.
-*/
-void
-vpRotationVector::set(const double phi,
-		      const double theta,
-		      const double psi)
-{
-  r[0] = phi ;
-  r[1] = theta ;
-  r[2] = psi ;
-}
 
 /*!
   Transpose the rotation vector.
@@ -97,6 +80,9 @@ vpRowVector vpRotationVector::t() const
   return v;
 }
 
+const unsigned int vpRotationVector::size() const{
+	return 0;
+}
 /*!
 
   Print the values of the three angles on the output stream. Data are 
@@ -135,6 +121,12 @@ std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
   return s;
 }
 
+
+void vpRotationVector::init(const unsigned int size){
+	this->_size = size;
+	r = new double[this->_size];
+	std::fill(r,r+this->_size,0.);
+}
 
 /*
  * Local variables:

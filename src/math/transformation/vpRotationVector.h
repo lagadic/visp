@@ -93,22 +93,26 @@ int main()
 */
 
 class VISP_EXPORT vpRotationVector
-{
-  friend class vpRotationMatrix;
+{  
   friend class vpColVector;
 protected:
-  double r[3] ;
-
-
+  double *r ;
+  unsigned int _size;
+  void init(const unsigned int size);
 public:
-  //! Constructor that initialize the three angles to zero.
+  //! Constructor that constructs a vector of size 3 initialize three vector values to zero.
   vpRotationVector() { 
-    r[0] = r[1] = r[2] = 0.;
+	init(3);
+  }
+
+  //! Constructor that constructs a vector of size n initialize three vector values to zero.
+  vpRotationVector(const unsigned int n) { 
+	init(n);
   }
   // Constructor from 3 angles (in radian)
   vpRotationVector(const double phi, const double theta, const double psi) ;
 
-  void set(const double phi, const double theta, const double psi) ;
+  //void set(const double phi, const double theta, const double psi) ;
 
   // Transpose of the rotation vector.
   vpRowVector t() const;
@@ -123,6 +127,11 @@ public:
     vector: value = r[i]
   */
   inline const double &operator [](unsigned int n) const { return *(r+n);  }
+
+    
+  /*! Returns the size of the rotation vector
+   */
+  const unsigned int size() const;
 
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpRotationVector &m);
