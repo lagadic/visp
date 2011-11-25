@@ -67,11 +67,11 @@ vpQuaternionVector::vpQuaternionVector(const double x, const double y, const dou
 
 	\param Matrix containing a rotation
 */
-vpQuaternionVector::vpQuaternionVector(const vpMatrix& R){	
+vpQuaternionVector::vpQuaternionVector(const vpMatrix& R)  : vpRotationVector(4) {	
 	buildFrom(R);
 }
     //! copy constructor
-vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q){
+vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(4) {
 	std::copy(q.r,q.r+size(),this->r);
 }
     
