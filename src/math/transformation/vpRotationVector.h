@@ -110,11 +110,7 @@ public:
   vpRotationVector(const unsigned int n) { 
 	init(n);
   }
-  // Constructor from 3 angles (in radian)
-  vpRotationVector(const double phi, const double theta, const double psi) ;
-
-  //void set(const double phi, const double theta, const double psi) ;
-
+  
   // Transpose of the rotation vector.
   vpRowVector t() const;
 

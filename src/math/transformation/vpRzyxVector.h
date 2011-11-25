@@ -170,7 +170,7 @@ public:
     \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
   */
   vpRzyxVector(const double phi, const double theta, const double psi) :
-    vpRotationVector (phi, theta, psi) { ; }
+	vpRotationVector (3) { r[0]=phi;r[1]=theta;r[2]=psi; }
 
   // initialize a Rzyx vector from a rotation matrix
   vpRzyxVector(const vpRotationMatrix& R) ;
