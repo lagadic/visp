@@ -105,6 +105,7 @@ public:
 	init(3);
   }
 
+  
   //! Constructor that constructs a vector of size n initialize three vector values to zero.
   vpRotationVector(const unsigned int n) { 
 	init(n);
@@ -132,6 +133,8 @@ public:
   /*! Returns the size of the rotation vector
    */
   const unsigned int size() const;
+
+  ~vpRotationVector();
 
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpRotationVector &m);

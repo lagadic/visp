@@ -59,6 +59,7 @@ vpRotationVector::vpRotationVector(const double phi,
 				   const double theta,
 				   const double psi)
 {
+  init(3);  
   r[0] = phi ;
   r[1] = theta ;
   r[2] = psi ;
@@ -126,6 +127,10 @@ void vpRotationVector::init(const unsigned int size){
 	this->_size = size;
 	r = new double[this->_size];
 	std::fill(r,r+this->_size,0.);
+}
+
+vpRotationVector::~vpRotationVector(){
+	delete[] r;
 }
 
 /*
