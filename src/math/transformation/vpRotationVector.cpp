@@ -81,8 +81,8 @@ vpRowVector vpRotationVector::t() const
   return v;
 }
 
-const unsigned int vpRotationVector::size() const{
-	return 0;
+unsigned int vpRotationVector::size() {
+	return _size;
 }
 /*!
 
