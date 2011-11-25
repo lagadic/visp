@@ -49,21 +49,6 @@
 */
 
 
-/*! 
-  Constructor from 3 angles \f$\varphi,\theta,\psi\f$ expressed in radians.
-  
-  \param phi, theta, psi : Respectively the first, the second and the
-  third angle of the rotation vector.
-*/
-vpRotationVector::vpRotationVector(const double phi,
-				   const double theta,
-				   const double psi)
-{
-  init(3);  
-  r[0] = phi ;
-  r[1] = theta ;
-  r[2] = psi ;
-}
 
 /*!
   Transpose the rotation vector.
@@ -81,6 +66,10 @@ vpRowVector vpRotationVector::t() const
   return v;
 }
 
+/*!
+	Size of the rotation vector: number of double values describing the rotation.
+	Common sizes are 4 for a quaternion and 3 for angle-based rotation vectors.
+*/
 unsigned int vpRotationVector::size() {
 	return _size;
 }

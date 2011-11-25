@@ -171,7 +171,7 @@ public:
     Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
   */
   vpThetaUVector(const double tux, const double tuy, const double tuz) :
-    vpRotationVector (tux, tuy, tuz) { ; }
+    vpRotationVector (3) { r[0]=tux;r[1]=tuy;r[2]=tuz; }
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;

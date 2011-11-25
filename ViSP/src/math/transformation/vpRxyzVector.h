@@ -171,7 +171,7 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
     \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
   */
   vpRxyzVector(const double phi, const double theta, const double psi) :
-    vpRotationVector (phi, theta, psi) { ; }
+    vpRotationVector (3) { r[0]=phi;r[1]=theta;r[2]=psi; }
 
   // initialize a Rxyz vector from a rotation matrix
   vpRxyzVector(const vpRotationMatrix& R) ;
