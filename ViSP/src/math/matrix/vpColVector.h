@@ -46,7 +46,7 @@
 
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
-#include <visp/vpRotationVector.h>
+#include <visp/vpMath.h>
 
 class vpMatrix;
 class vpRotationVector;

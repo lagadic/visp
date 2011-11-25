@@ -41,11 +41,11 @@
 
 
 
-#ifndef __QUATERNION_H__
-#define __QUATERNION_H__
+#ifndef __QUATERNIONVECTOR_H__
+#define __QUATERNIONVECTOR_H__
 
 /*!
-  \file vpQuaternion.h
+  \file vpQuaternionVector.h
   \brief Class that consider the case of a quaternion and basic operations on it.
 
 
@@ -53,12 +53,12 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
-
+#include <visp/vpRotationVector.h>
 
 /*!
-  \class vpQuaternion
+  \class vpQuaternionVector
 
-  \ingroup TransTransformation
+  \ingroup RotTransformation
   
   \brief defines a quaternion and its basic operations.
 
@@ -69,30 +69,33 @@
 	- substraction
 
   */
-class VISP_EXPORT vpQuaternion
+class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
-private:    
-    void init() ;
+private:        
 	static const double minimum;
 public:
-	double x;
-	double y;
-	double z;
-	double w;
+	//! returns x-component of the quaternion
+	inline double x(){return r[0];}
+	//! returns y-component of the quaternion
+	inline double y(){return r[1];}
+	//! returns z-component of the quaternion
+	inline double z(){return r[2];}
+	//! returns w-component of the quaternion
+	inline double w(){return r[3];}
     
-    vpQuaternion() ;    
-    vpQuaternion(const double x, const double y, const double z,const double w) ;    
-    vpQuaternion(const vpQuaternion &q);
-	vpQuaternion(const vpMatrix& R);
+    vpQuaternionVector() ;    
+    vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
+    vpQuaternionVector(const vpQuaternionVector &q);
+	vpQuaternionVector(const vpMatrix& R);
     void set(const double x, const double y, const double z,const double w) ;
 
     
-    vpQuaternion operator+(const vpQuaternion &q) const ;
-    vpQuaternion operator-(const vpQuaternion &q) const ;
-    vpQuaternion operator-() const ;
-    vpQuaternion operator*(const double l) const;
-	vpQuaternion operator* (const vpQuaternion &rq) const;
-    vpQuaternion &operator=(const vpQuaternion &q);
+    vpQuaternionVector operator+( vpQuaternionVector &q)  ;
+    vpQuaternionVector operator-( vpQuaternionVector &q)  ;
+    vpQuaternionVector operator-()  ;
+    vpQuaternionVector operator*(const double l) ;
+	vpQuaternionVector operator* ( vpQuaternionVector &rq) ;
+    vpQuaternionVector &operator=( vpQuaternionVector &q);
 
 	void buildFrom(const vpMatrix& R);
 

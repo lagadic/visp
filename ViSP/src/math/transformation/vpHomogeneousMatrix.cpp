@@ -49,7 +49,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpQuaternion.h>
+#include <visp/vpQuaternionVector.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -87,7 +87,7 @@ vpHomogeneousMatrix::init()
 
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,const vpQuaternion& q  ) {
+vpHomogeneousMatrix::vpHomogeneousMatrix( vpTranslationVector &t, vpQuaternionVector& q  ) {
 	init();
 	buildFrom(t,q);
 }
@@ -174,11 +174,11 @@ vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
   insert(t) ;
 }
 
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuaternion& q  ) {
-  double a = q.x;
-  double b = q.y;
-  double c = q.z;
-  double d = q.w;
+void vpHomogeneousMatrix::buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) {
+  double a = q.x();
+  double b = q.y();
+  double c = q.z();
+  double d = q.w();
   (*this)[0][0] = a*a+b*b-c*c-d*d;
   (*this)[0][1] = 2*b*c-2*a*d;
   (*this)[0][2] = 2*a*c+2*b*d;
