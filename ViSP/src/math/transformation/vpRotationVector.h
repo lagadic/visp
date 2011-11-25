@@ -132,7 +132,7 @@ public:
     
   /*! Returns the size of the rotation vector
    */
-  const unsigned int size() const;
+  unsigned int size();
 
   ~vpRotationVector();
 

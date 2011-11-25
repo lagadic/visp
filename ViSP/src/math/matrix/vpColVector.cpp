@@ -133,8 +133,8 @@ vpColVector::vpColVector (vpColVector &m, unsigned int r, unsigned int nrows)
 
 
 vpColVector::vpColVector (const vpRotationVector &v){
-    resize(v.size());
-    memcpy(data, v.r, v.size()*sizeof(double)) ;
+    resize(v._size);
+    memcpy(data, v.r, v._size*sizeof(double)) ;
 }
 
   
