@@ -138,6 +138,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from Translation and quaternion
   void buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) ;
 
+
   void buildFrom(const double tx,const  double ty, const double tz,
 		 const double tux,const  double tuy, const double tuz  ) ;
     
@@ -164,6 +165,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void insert(const vpThetaUVector &tu) ;
   //! insert a translation vector
   void insert(const vpTranslationVector &t) ;
+  //! insert a quaternion
+  void insert(vpQuaternionVector &t) ;
 
   //! extract the rotational matrix from the homogeneous  matrix
   void extract( vpRotationMatrix &R) const;
@@ -171,6 +174,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void extract(vpTranslationVector &t) const;
   // extract the rotation as a Theta U vector.
   void extract(vpThetaUVector &tu) const;
+
+  void extract(vpQuaternionVector& q) const;
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;
