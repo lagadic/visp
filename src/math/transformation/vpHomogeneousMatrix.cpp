@@ -88,8 +88,8 @@ vpHomogeneousMatrix::init()
 }
 
 vpHomogeneousMatrix::vpHomogeneousMatrix( vpTranslationVector &t, vpQuaternionVector& q  ) {
-	init();
-	buildFrom(t,q);
+  init();
+  buildFrom(t,q);
 }
 
 /*!
@@ -175,30 +175,8 @@ vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
 }
 
 void vpHomogeneousMatrix::buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) {
-  double a = q.x();
-  double b = q.y();
-  double c = q.z();
-  double d = q.w();
-  (*this)[0][0] = a*a+b*b-c*c-d*d;
-  (*this)[0][1] = 2*b*c-2*a*d;
-  (*this)[0][2] = 2*a*c+2*b*d;
-
-  (*this)[1][0] = 2*a*d+2*b*c;
-  (*this)[1][1] = a*a-b*b+c*c-d*d;
-  (*this)[1][2] = 2*c*d-2*a*b;
-
-  (*this)[2][0] = 2*b*d-2*a*c;
-  (*this)[2][1] = 2*a*b+2*c*d;
-  (*this)[2][2] = a*a-b*b-c*c+d*d;
-
-  (*this)[0][3] = t[0];
-  (*this)[1][3] = t[1];
-  (*this)[2][3] = t[2];
-
-  (*this)[3][0] = 0.;
-  (*this)[3][1] = 0.;
-  (*this)[3][2] = 0.;
-  (*this)[3][3] = 1.;
+  insert(t);
+  insert(q);
 }
 
 void
@@ -347,7 +325,17 @@ vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
   (*this).extract(R);
   tu.buildFrom(R);
 }
-
+/*!
+  \brief Extract the rotation as a quaternion
+*/
+void
+vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
+{
+  
+  vpRotationMatrix R;
+  (*this).extract(R);
+  q.buildFrom(R);
+}
 
 /*!
   \brief insert the rotational component of the homogeneous matrix
@@ -386,6 +374,24 @@ vpHomogeneousMatrix::insert(const vpTranslationVector &T)
   (*this)[2][3] = T[2] ;
 }
 
+void
+vpHomogeneousMatrix::insert(vpQuaternionVector &q){
+  double a = q.x();
+  double b = q.y();
+  double c = q.z();
+  double d = q.w();
+  (*this)[0][0] = a*a+b*b-c*c-d*d;
+  (*this)[0][1] = 2*b*c-2*a*d;
+  (*this)[0][2] = 2*a*c+2*b*d;
+
+  (*this)[1][0] = 2*a*d+2*b*c;
+  (*this)[1][1] = a*a-b*b+c*c-d*d;
+  (*this)[1][2] = 2*c*d-2*a*b;
+
+  (*this)[2][0] = 2*b*d-2*a*c;
+  (*this)[2][1] = 2*a*b+2*c*d;
+  (*this)[2][2] = a*a-b*b-c*c+d*d;
+}
 
 /*!
   \brief invert the homogeneous matrix
