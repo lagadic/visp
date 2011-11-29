@@ -111,10 +111,10 @@ protected:
   //! number of columns
   unsigned int colNum;
 
-public:
+ public:
   //! address of the first element of the data array
   double *data;
-protected:
+ protected:
   //! address of the first element of each rows
   double **rowPtrs;
 
@@ -123,7 +123,7 @@ protected:
   //! Total row space
   unsigned int trsize;
 
-public:
+ public:
   //! Basic constructor
   vpMatrix() ;
   //! Constructor. Initialization of A as an r x c matrix with 0.
@@ -137,20 +137,16 @@ public:
   virtual ~vpMatrix();
 
   //! Initialization of the object matrix
-   void  init() ;
+  void  init() ;
 
   //! Destruction of the matrix  (Memory de-allocation)
   void kill() ;
 
-  //! Initialize an identity matrix n-by-n
+  // Initialize an identity matrix n-by-n
   void eye(unsigned int n) ;
-  //! Initialize an identity matrix m-by-n
+  // Initialize an identity matrix m-by-n
   void eye(unsigned int m, unsigned int n) ;
-
-  //! Set the matrix to identity
   void setIdentity(const double & val=1.0) ;
-
-
 
   //---------------------------------
   // Set/get Matrix size
@@ -162,9 +158,9 @@ public:
   //! Return the number of columns of the matrix
   inline unsigned int getCols() const { return colNum; }
 
-  //! Set the size of the matrix A, initialization with a zero matrix
+  // Set the size of the matrix A, initialization with a zero matrix
   void resize(const unsigned int nrows, const unsigned int ncols, 
-		      const bool nullify = true);
+	      const bool nullify = true);
   
   double getMinValue() const;
   
@@ -180,9 +176,7 @@ public:
   //@{
 
   int print(std::ostream& s, unsigned int lenght, char const* intro=0);
-  //! Affichage pour reinsertion dans matlab
   std::ostream & matlabPrint(std::ostream & os);
-  //! Affichage pour reinsertion dans ViSP
   std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false);
 
   void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
@@ -192,7 +186,7 @@ public:
   static bool loadMatrix(const char *filename, vpMatrix &M, const bool binary = false, char *Header = NULL);
 
   /*!
-    Save a matrix to a file
+    Save a matrix to a file.
 
     \param filename : absolute file name
     \param M : matrix to be saved
@@ -202,12 +196,16 @@ public:
     \return Returns true if no problem appends.
 
     Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
-   */
-  static inline bool saveMatrix(std::string filename, const vpMatrix &M, const bool binary = false, const char *Header = "")
-					  {return vpMatrix::saveMatrix(filename.c_str(), M, binary, Header);}
+  */
+  static inline bool saveMatrix(std::string filename, const vpMatrix &M, 
+				const bool binary = false, 
+				const char *Header = "")
+  {
+    return vpMatrix::saveMatrix(filename.c_str(), M, binary, Header);
+  }
 
   /*!
-    Load a matrix to a file
+    Load a matrix to a file.
 
     \param filename : absolute file name
     \param M : matrix to be loaded
@@ -215,12 +213,12 @@ public:
     \param Header : Header of the file is load in this parameter
 
     \return Returns true if no problem appends.
-   */
-  static inline bool loadMatrix(std::string filename, vpMatrix &M, const bool binary = false, char *Header = NULL)
-					  {return vpMatrix::loadMatrix(filename.c_str(), M, binary, Header);}
-
-
-
+  */
+  static inline bool loadMatrix(std::string filename, vpMatrix &M, 
+				const bool binary = false, char *Header = NULL)
+  {
+    return vpMatrix::loadMatrix(filename.c_str(), M, binary, Header);
+  }
 
   //---------------------------------
   // Copy / assignment
@@ -230,7 +228,7 @@ public:
   //! Copy constructor
   vpMatrix (const vpMatrix& m);
 
-  //! Assignment from an array
+  // Assignment from an array
   vpMatrix &operator<<(double*);
 
   //! Copy operator.   Allow operation such as A = B
@@ -267,23 +265,23 @@ public:
   //---------------------------------
   /** @name Matrix operations  */
   //@{
-  //! operation A = A + B
-   vpMatrix &operator+=(const vpMatrix &B);
-  //! operation A = A - B
-   vpMatrix &operator-=(const vpMatrix &B);
+  // operation A = A + B
+  vpMatrix &operator+=(const vpMatrix &B);
+  // operation A = A - B
+  vpMatrix &operator-=(const vpMatrix &B);
 
-   vpMatrix operator*(const vpMatrix &B) const;
-   vpMatrix operator+(const vpMatrix &B) const;
-   vpMatrix operator-(const vpMatrix &B) const;
-   vpMatrix operator-() const;
+  vpMatrix operator*(const vpMatrix &B) const;
+  vpMatrix operator+(const vpMatrix &B) const;
+  vpMatrix operator-(const vpMatrix &B) const;
+  vpMatrix operator-() const;
 
   //---------------------------------
   // Matrix/vector operations.
   //---------------------------------
 
-    vpColVector operator*(const vpColVector &b) const;
-    //! operation c = A * b (A is unchanged, c and b are translation vectors)
-    vpTranslationVector operator*(const vpTranslationVector  &b) const;
+  vpColVector operator*(const vpColVector &b) const;
+  // operation c = A * b (A is unchanged, c and b are translation vectors)
+  vpTranslationVector operator*(const vpTranslationVector  &b) const;
   //---------------------------------
   // Matrix/real operations.
   //---------------------------------
@@ -303,7 +301,7 @@ public:
   vpMatrix operator/(const double x) const;
 
   //!return sum of the Aij^2 (for all i, for all j)
-   double sumSquare() const;
+  double sumSquare() const;
 
   // return the determinant of the matrix.
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
@@ -330,18 +328,16 @@ public:
   //-------------------------------------------------
   /** @name Transpose, Identity  */
   //@{
-  //! Compute the transpose C = A^T
+  // Compute the transpose C = A^T
   vpMatrix t() const;
 
-  //! Compute the transpose C = A^T
+  // Compute the transpose C = A^T
   vpMatrix transpose()const;
   void  transpose(vpMatrix & C )const;
     
-  //! Compute the AAt operation B = A*A^T
   vpMatrix AAt() const;
   void AAt(vpMatrix &B) const;
    
-  //! Compute the AtA operation B = A^T*A
   vpMatrix AtA() const;
   void AtA(vpMatrix &B) const;
   //@}
@@ -353,29 +349,29 @@ public:
   /** @name Kronecker product  */
   //@{
   
-  //! Stacks columns of a matrix in a vector
+  // Stacks columns of a matrix in a vector
   void stackColumns(vpColVector  &out );
 
-  //! Stacks columns of a matrix in a vector
+  // Stacks columns of a matrix in a vector
   vpColVector stackColumns();
 
-  //! Stacks columns of a matrix in a vector
+  // Stacks columns of a matrix in a vector
   void stackRows(vpRowVector  &out );
 
-  //! Stacks columns of a matrix in a vector
+  // Stacks columns of a matrix in a vector
   vpRowVector stackRows();
   
-  //! Compute Kronecker produtc matrix 
+  // Compute Kronecker product matrix 
   void kron(const vpMatrix  &m1 , vpMatrix  &out);
   
-  //! Compute Kronecker produtc matrix 
+  // Compute Kronecker product matrix 
   vpMatrix kron(const vpMatrix  &m1);
   //@}
   
-  //! Compute Kronecker produtc matrix 
+  // Compute Kronecker product matrix 
   static void kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out);
 
-  //! Compute Kronecker produtc matrix 
+  // Compute Kronecker product matrix 
   static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
 
 
@@ -469,9 +465,9 @@ public:
   static vpMatrix stackMatrices(const vpMatrix &A,const  vpMatrix &B) ;
   //! Stack two Matrices C = [ A B ]^T
   static void stackMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
-  //! Juxtapose to matrices C = [ A B ]
+  // Juxtapose to matrices C = [ A B ]
   static vpMatrix juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B) ;
-  //! Juxtapose to matrices C = [ A B ]
+  // Juxtapose to matrices C = [ A B ]
   static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
 
   // Create a diagonal matrix with the element of a vector DAii = Ai
