@@ -102,79 +102,68 @@ class vpQuaternionVector;
 class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
 {
  public:
-  //! Basic initialisation (identity)
-  void init() ;
-
-  //! Basic initialisation (identity)
-  void setIdentity() ;
-  //! basic constructor
+  //! Basic constructor.
   vpHomogeneousMatrix()   ;
-  //! copy constructor
+  //! Copy constructor.
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M) ;
-  //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpTranslationVector &t,
-                      const vpRotationMatrix &R) ;
-  //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const vpTranslationVector &t,
-                      const vpThetaUVector &tu) ;
-  //! Construction from Translation and rotation
+  //! Construction from translation vector and rotation matrix.
+  vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  //! Construction from translation vector and theta u rotation vector.
+  vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu) ;
+  //! Construction from translation vector and quaternion rotation vector.
+  vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q) ;
+  /*!
+    Construction from translation vector and theta u rotation vector 
+    defined as a pose vector.
+  */
   vpHomogeneousMatrix(const vpPoseVector &p) ;  
 
-  //! Construction from Translation and rotation
-  vpHomogeneousMatrix(const double tx,const  double ty, const double tz,
-		      const double tux,const  double tuy, const double tuz  ) ;
+  //! Construction from translation and rotation defined as a theta u vector.
+  vpHomogeneousMatrix(const double tx, const double ty, const double tz,
+		      const double tux, const double tuy, const double tuz) ;
 
-  vpHomogeneousMatrix( vpTranslationVector &t,
-						 vpQuaternionVector& q  ) ;
+  //! Construction from translation vector and rotation matrix.
+  void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  //! Construction from translation vector and theta u rotation vector.
+  void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu) ;
+  //! Construction from translation vector and quaternion rotation vector.
+  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector& q  ) ;
 
-  //! Construction from Translation and rotation
-  void buildFrom(const vpTranslationVector &t,
-                 const vpRotationMatrix &R) ;
-  //! Construction from Translation and rotation
-  void buildFrom(const vpTranslationVector &t,
-                 const vpThetaUVector &tu) ;
-  //! Construction from Translation and rotation
+  /*!
+    Construction from translation vector and theta u rotation vector 
+    defined as a pose vector.
+  */
   void buildFrom(const vpPoseVector &p) ;
-  //! Construction from Translation and quaternion
-  void buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) ;
 
-
+  //! Construction from translation and rotation defined as a theta u vector.
   void buildFrom(const double tx,const  double ty, const double tz,
 		 const double tux,const  double tuy, const double tuz  ) ;
     
-  //! copy operator from vpHomogeneousMatrix
+  //! Copy operator from vpHomogeneousMatrix.
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
 
-  //! multiply two homogeneous matrices  aMb = aMc*cMb
+  //! Multiply two homogeneous matrices:  aMb = aMc*cMb
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
 
-  //! multiply by a vector ! size 4 !!!
+  //! Multiply by a vector ! size 4 !!!
   vpColVector operator*(vpColVector &v) const;
 
-  //! invert the homogeneous matrix
+  // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;
-  //! invert the homogeneous matrix
+  // Invert the homogeneous matrix.
   void inverse(vpHomogeneousMatrix &Mi) const;
 
-  //! test if the rotational part of the matrix is a rotation matrix
+  // Test if the rotational part of the matrix is a rotation matrix.
   bool isAnHomogeneousMatrix() const  ;
 
-  //! insert a rotation matrix
   void insert(const vpRotationMatrix &R) ;
-  //! insert a theta u vector (transformation into a rotation matrix)
   void insert(const vpThetaUVector &tu) ;
-  //! insert a translation vector
   void insert(const vpTranslationVector &t) ;
-  //! insert a quaternion
-  void insert(vpQuaternionVector &t) ;
+  void insert(const vpQuaternionVector &t) ;
 
-  //! extract the rotational matrix from the homogeneous  matrix
   void extract( vpRotationMatrix &R) const;
-  //! extract the translation vector from the homogeneous  matrix
   void extract(vpTranslationVector &t) const;
-  // extract the rotation as a Theta U vector.
   void extract(vpThetaUVector &tu) const;
-
   void extract(vpQuaternionVector& q) const;
 
   // Load an homogeneous matrix from a file
@@ -184,6 +173,10 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
 
   // Set to identity
   void eye();
+  //! Basic initialisation (identity).
+  void init() ;
+  // Basic initialisation (identity).
+  void setIdentity() ;
 
   //! Print the matrix as a vector [T thetaU]
   void print() ;

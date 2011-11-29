@@ -204,7 +204,7 @@ void vpMatrix::LUBksb(unsigned int *perm, vpColVector& b)
 #endif // doxygen should skip this
 
 /*!
-  Compute the inverse of a n-by-n matrix using the LU decomposition (C = A^-1)
+  Compute the inverse of a n-by-n matrix using the LU decomposition.
 
   \return The inverse matrix.
 

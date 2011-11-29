@@ -42,8 +42,8 @@
 
 /*!
   \file vpHomogeneousMatrix.cpp
-  \brief Définition de la classe vpHomogeneousMatrix. Class that consider
-  the particular case of homogeneous matrix
+  \brief Defines vpHomogeneousMatrix class. Class that consider
+  the particular case of an homogeneous matrix.
 */
 
 #include <visp/vpDebug.h>
@@ -60,9 +60,8 @@
 
 
 /*!
-  \brief initialiaze a 4x4 matrix as identity
+  Initialize a 4x4 momogeneous matrix as identity.
 */
-
 void
 vpHomogeneousMatrix::init()
 {
@@ -87,13 +86,15 @@ vpHomogeneousMatrix::init()
 
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix( vpTranslationVector &t, vpQuaternionVector& q  ) {
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, 
+					 const vpQuaternionVector &q) 
+{
   init();
   buildFrom(t,q);
 }
 
 /*!
-  \brief initialize an homogeneous matrix as Identity
+  Initialize an homogeneous matrix as identity.
 */
 vpHomogeneousMatrix::vpHomogeneousMatrix() : vpMatrix()
 {
@@ -102,15 +103,13 @@ vpHomogeneousMatrix::vpHomogeneousMatrix() : vpMatrix()
 
 
 /*!
-  \brief initialize an homogeneous matrix from another homogeneous matrix
+  Initialize an homogeneous matrix from another homogeneous matrix.
 */
-
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
 {
   init() ;
   *this = M ;
 }
-
 
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
                                          const vpThetaUVector &tu) : vpMatrix()
@@ -174,7 +173,9 @@ vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
   insert(t) ;
 }
 
-void vpHomogeneousMatrix::buildFrom(vpTranslationVector &t, vpQuaternionVector& q  ) {
+void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, 
+				    const vpQuaternionVector &q) 
+{
   insert(t);
   insert(q);
 }
@@ -195,7 +196,7 @@ vpHomogeneousMatrix::buildFrom(const double tx,
 }
 
 /*!
-  \brief affectation of two homogeneous matrix
+  Affectation of two homogeneous matrices.
 
   \param M : *this = M
 */
@@ -216,7 +217,7 @@ vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 }
 
 /*!
-  \brief Allow homogeneous matrix multiplication.
+  Allow homogeneous matrix multiplication.
 
   \code
 #include <visp/vpHomogeneousMatrix.h>
@@ -277,9 +278,9 @@ vpHomogeneousMatrix::operator*(vpColVector &v) const
 /*********************************************************************/
 
 /*!
-  \brief  test if the 3x3 rotational part of the  homogeneous matrix is really a   rotation matrix
+  Test if the 3x3 rotational part of the homogeneous matrix is really
+  a rotation matrix.
 */
-
 bool
 vpHomogeneousMatrix::isAnHomogeneousMatrix() const
 {
@@ -290,8 +291,8 @@ vpHomogeneousMatrix::isAnHomogeneousMatrix() const
 }
 
 /*!
-  \brief extract the rotational component of the homogeneous matrix
-  \param R : rotational component
+  Extract the rotational matrix from the homogeneous matrix.
+  \param R : rotational component as a rotation matrix.
 */
 void
 vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
@@ -304,12 +305,11 @@ vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 }
 
 /*!
-  \brief extract the translational component of the homogeneous matrix
+  Extract the translation vector from the homogeneous matrix. 
 */
 void
 vpHomogeneousMatrix::extract(vpTranslationVector &t) const
 {
-
   t[0] = (*this)[0][3] ;
   t[1] = (*this)[1][3] ;
   t[2] = (*this)[2][3] ;
@@ -325,20 +325,20 @@ vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
   (*this).extract(R);
   tu.buildFrom(R);
 }
+
 /*!
-  \brief Extract the rotation as a quaternion
+  Extract the rotation as a quaternion.
 */
 void
 vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 {
-  
   vpRotationMatrix R;
   (*this).extract(R);
   q.buildFrom(R);
 }
 
 /*!
-  \brief insert the rotational component of the homogeneous matrix
+  Insert the rotational component of the homogeneous matrix.
 */
 void
 vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
@@ -350,9 +350,10 @@ vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
       (*this)[i][j] = R[i][j] ;
 }
 
+/*!  
 
-/*!  \brief insert the rotational component of the homogeneous matrix, insert a
-  theta u vector (transformation into a rotation matrix)
+  Insert the rotational component of the homogeneous matrix from a
+  theta u rotation vector.
 
 */
 void
@@ -362,9 +363,8 @@ vpHomogeneousMatrix::insert(const vpThetaUVector &tu)
   insert(R) ;
 }
 
-
 /*!
-  \brief  insert the translational component in a homogeneous matrix
+  Insert the translational component in a homogeneous matrix.
 */
 void
 vpHomogeneousMatrix::insert(const vpTranslationVector &T)
@@ -374,8 +374,14 @@ vpHomogeneousMatrix::insert(const vpTranslationVector &T)
   (*this)[2][3] = T[2] ;
 }
 
+/*!  
+
+  Insert the rotational component of the homogeneous matrix from a
+  quaternion rotation vector.
+
+*/
 void
-vpHomogeneousMatrix::insert(vpQuaternionVector &q){
+vpHomogeneousMatrix::insert(const vpQuaternionVector &q){
   double a = q.x();
   double b = q.y();
   double c = q.z();
@@ -394,11 +400,18 @@ vpHomogeneousMatrix::insert(vpQuaternionVector &q){
 }
 
 /*!
-  \brief invert the homogeneous matrix
+  Invert the homogeneous matrix
 
-  [R T]^-1 = [R^T  -R^T T]
-
-  \return   [R T]^-1
+  \return \f$\left[\begin{array}{cc}
+  {\bf R} & {\bf t} \\
+  {\bf 0}_{1\times 3} & 1
+  \end{array}
+  \right]^{-1} = \left[\begin{array}{cc}
+  {\bf R}^T & -{\bf R}^T {\bf t} \\
+  {\bf 0}_{1\times 3} & 1
+  \end{array}
+  \right]\f$
+  
 */
 vpHomogeneousMatrix
 vpHomogeneousMatrix::inverse() const
@@ -419,7 +432,7 @@ vpHomogeneousMatrix::inverse() const
 }
 
 /*!
-  Set to transformation to identity.
+  Set transformation to identity.
 */
 void vpHomogeneousMatrix::eye()
 {
@@ -437,11 +450,18 @@ void vpHomogeneousMatrix::eye()
 }
 
 /*!
-  \brief invert the homogeneous matrix
+  Invert the homogeneous matrix.
 
-  [R T]^-1 = [R^T  -R^T T]
+  \param M : The inverted homogenous matrix: \f$\left[\begin{array}{cc}
+  {\bf R} & {\bf t} \\
+  {\bf 0}_{1\times 3} & 1
+  \end{array}
+  \right]^{-1} = \left[\begin{array}{cc}
+  {\bf R}^T & -{\bf R}^T {\bf t} \\
+  {\bf 0}_{1\times 3} & 1
+  \end{array}
+  \right]\f$
 
-  \param M : [R T]^-1
 */
 void
 vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const

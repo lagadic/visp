@@ -159,7 +159,7 @@ vpMatrix::vpMatrix(const vpMatrix& m)
 
 
 /*!
-\brief set the size of the matrix, initialization with a zero matrix
+Set the size of the matrix and initialize all the values to zero.
 
 \param nrows : number of rows
 \param ncols : number of column
@@ -380,9 +380,9 @@ vpMatrix::operator<<( double *x )
 //---------------------------------
 
 /*!
-operation C = A * B. 
+Operation C = A * B. 
 
-The Result is placed in the third parameter C and not returned.
+The result is placed in the third parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -428,7 +428,7 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-operation C = A * B (A is unchanged).
+Operation C = A * B (A is unchanged).
 \sa mult2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator*(const vpMatrix &B) const
@@ -440,9 +440,9 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
   return C;
 }
 /*!
-operation C = A*wA + B*wB 
+Operation C = A*wA + B*wB 
 
-The Result is placed in the third parameter C and not returned.
+The result is placed in the third parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -480,9 +480,9 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
 }
 
 /*!
-operation C = A + B. 
+Operation C = A + B. 
 
-The Result is placed in the third parameter C and not returned.
+The result is placed in the third parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -536,7 +536,7 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-operation C = A + B (A is unchanged).
+Operation C = A + B (A is unchanged).
 \sa add2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator+(const vpMatrix &B) const
@@ -549,9 +549,9 @@ vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 
 
 /*!
-operation C = A - B. 
+Operation C = A - B. 
 
-The Result is placed in the third parameter C and not returned.
+The result is placed in the third parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -607,7 +607,7 @@ void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-operation C = A - B (A is unchanged).
+Operation C = A - B (A is unchanged).
 \sa sub2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator-(const vpMatrix &B) const
@@ -617,7 +617,7 @@ vpMatrix vpMatrix::operator-(const vpMatrix &B) const
   return C;
 }
 
-//! operation A = A + B
+//! Operation A = A + B
 
 vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
 {
@@ -657,7 +657,7 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
   return *this;
 }
 
-//! operation A = A - B
+//! Operation A = A - B
 
 vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 {
@@ -696,9 +696,9 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 }
 
 /*!
-operation C = -A. 
+Operation C = -A. 
 
-The Result is placed in the second parameter C and not returned.
+The result is placed in the second parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -743,7 +743,7 @@ void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 }
 
 /*!
-operation C = -A (A is unchanged).
+Operation C = -A (A is unchanged).
 \sa negateMatrix() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator-() const //negate
@@ -798,9 +798,9 @@ vpMatrix::sumSquare() const
 //---------------------------------
 
 /*!
-operation c = A * b (c and b are vectors). 
+Operation c = A * b (c and b are vectors). 
 
-The Result is placed in the second parameter C and not returned.
+The result is placed in the second parameter C and not returned.
 A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
@@ -837,7 +837,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVe
 }
 
 /*!
-operation c = A * b (A is unchanged, c and b are vectors).
+Operation c = A * b (A is unchanged, c and b are vectors).
 \sa multMatrixVector() to avoid matrix allocation for each use.
 */
 vpColVector
@@ -848,7 +848,7 @@ vpMatrix::operator*(const vpColVector &b) const
   return c;
 }
 
-//! operation c = A * b (A is unchanged, c and b are translation vectors)
+//! Operation c = A * b (A is unchanged, c and b are translation vectors).
 vpTranslationVector
 vpMatrix::operator*(const vpTranslationVector &b) const
 {
@@ -878,8 +878,8 @@ vpMatrix::operator*(const vpTranslationVector &b) const
 //---------------------------------
 
 /*!
-\relates vpMatrix
-\brief multiplication by a scalar  Cij = x*Bij
+  \relates vpMatrix
+  Multiplication by a scalar  Cij = x*Bij.
 */
 vpMatrix operator*(const double &x,const vpMatrix &B)
 {
@@ -1101,19 +1101,17 @@ vpMatrix & vpMatrix::operator/=(double x)
 
 
 /*!
-\brief set the matrix to identity
+  By default set the matrix to identity.
+  More generally set M[i][i] = val.
 */
 void
 vpMatrix::setIdentity(const double & val)
 {
-
   if (rowNum != colNum)
   {
     vpERROR_TRACE("non square matrix") ;
     throw(vpMatrixException(vpMatrixException::matrixError)) ;
   }
-
-
 
   unsigned int i,j;
   for (i=0;i<rowNum;i++)
@@ -1122,12 +1120,11 @@ vpMatrix::setIdentity(const double & val)
 }
 
 /*!
-\brief set the matrix to identity
+  Set an n-by-n matrix to identity.
 
-eye(n) is an n-by-n matrix with ones on the diagonal and zeros
-elsewhere
+  eye(n) is an n-by-n matrix with ones on the diagonal and zeros
+  else where.
 
-\sa eye(n) is also a matlab function
 */
 void
 vpMatrix::eye(unsigned int n)
@@ -1143,10 +1140,11 @@ vpMatrix::eye(unsigned int n)
   }
 }
 /*!
-\brief eye(m,n) is an m-by-n matrix with ones on the diagonal and zeros
-elsewhere
+  Set an m-by-n matrix to identity.
 
-\sa eye(m,n) is also a matlab function
+  eye(m,n) is an m-by-n matrix with ones on the diagonal and zeros
+  else where.
+
 */
 void
 vpMatrix::eye(unsigned int m, unsigned int n)
@@ -1171,8 +1169,7 @@ vpMatrix::eye(unsigned int m, unsigned int n)
 
 
 /*!
-\brief Transpose the matrix C = A^T
-\return  A^T
+  Compute and return the transpose of the matrix.
 */
 vpMatrix vpMatrix::t() const
 {
@@ -1188,8 +1185,6 @@ vpMatrix vpMatrix::t() const
     throw ;
   }
 
-
-
   unsigned int i,j;
   for (i=0;i<rowNum;i++)
   {
@@ -1202,8 +1197,9 @@ vpMatrix vpMatrix::t() const
 
 
 /*!
-\brief Transpose the matrix C = A^T
-\return  A^T
+  Compute and return the transpose of the matrix.
+
+  \sa t()
 */
 vpMatrix vpMatrix::transpose()const
 {
@@ -1212,6 +1208,11 @@ vpMatrix vpMatrix::transpose()const
   return At;
 }
 
+/*!
+  Compute \e At the transpose of the matrix.
+  \param At : Resulting transpose matrix.
+  \sa t()
+*/
 void  vpMatrix::transpose(vpMatrix & At )const{
 
   try {
@@ -1238,9 +1239,9 @@ void  vpMatrix::transpose(vpMatrix & At )const{
 
 
 /*!
-\brief Compute the AtA operation B = A*A^T
-\return  A*A^T
-\sa AAt(vpMatrix &) const
+  Computes the \f$AA^T\f$ operation \f$B = A*A^T\f$
+  \return  \f$A*A^T\f$
+  \sa AAt(vpMatrix &) const
 */
 vpMatrix vpMatrix::AAt() const
 {
@@ -1252,11 +1253,15 @@ vpMatrix vpMatrix::AAt() const
 }
 
 /*!
-\brief Compute the AtA operation B = A*A^T
-The Result is placed in the parameter B and not returned.
-A new matrix won't be allocated for every use of the function
-(Speed gain if used many times with the same result matrix size).
-\sa AAt()
+  Compute the AAt operation such as \f$B = A*A^T\f$.
+
+  The result is placed in the parameter \e B and not returned.
+
+  A new matrix won't be allocated for every use of the function. This
+  results in a speed gain if used many times with the same result
+  matrix size.  
+
+  \sa AAt()
 */
 void vpMatrix::AAt(vpMatrix &B)const {
 
@@ -1291,12 +1296,15 @@ void vpMatrix::AAt(vpMatrix &B)const {
 
 
 /*!
-\brief Compute the AtA operation B = A^T*A
-The Result is placed in the parameter B and not returned.
-A new matrix won't be allocated for every use of the function
-(Speed gain if used many times with the same result matrix size).
+  Compute the AtA operation such as \f$B = A^T*A\f$.
 
-\sa AtA()
+  The result is placed in the parameter \e B and not returned.  
+
+  A new matrix won't be allocated for every use of the function. This
+  results in a speed gain if used many times with the same result matrix
+  size.
+
+  \sa AtA()
 */
 void vpMatrix::AtA(vpMatrix &B) const
 {
@@ -1342,9 +1350,9 @@ void vpMatrix::AtA(vpMatrix &B) const
 
 
 /*!
-\brief Compute the AtA operation B = A^T*A
-\return  A^T*A
-\sa AtA(vpMatrix &) const
+  Compute the AtA operation such as \f$B = A^T*A\f$
+  \return  \f$A^T*A\f$
+  \sa AtA(vpMatrix &) const
 */
 vpMatrix vpMatrix::AtA() const
 {
@@ -1357,8 +1365,8 @@ vpMatrix vpMatrix::AtA() const
 
 
 /*! 
-\brief Stacks columns of a matrix in a vector 
-\param out : a vpColVector; 
+  Stacks columns of a matrix in a vector.
+  \param out : a vpColVector.
 */
 void vpMatrix::stackColumns(vpColVector  &out ){
 
@@ -1381,8 +1389,8 @@ void vpMatrix::stackColumns(vpColVector  &out ){
 }
 
 /*!
-\brief Stacks columns of a matrix in a vector 
-\return a vpColVector; 
+  Stacks columns of a matrix in a vector.
+  \return a vpColVector. 
 */
 vpColVector vpMatrix::stackColumns(){
 
@@ -1392,8 +1400,8 @@ vpColVector vpMatrix::stackColumns(){
 }
 
 /*! 
-\brief Stacks rows of a matrix in a vector
-\param out :a  vpRowVector; 
+  Stacks rows of a matrix in a vector
+  \param out : a vpRowVector.
 */
 void vpMatrix::stackRows(vpRowVector  &out ){
 
@@ -1414,8 +1422,8 @@ void vpMatrix::stackRows(vpRowVector  &out ){
   }
 }
 /*! 
-\brief Stacks rows of a matrix in a vector
-\return a vpRowVector; 
+  Stacks rows of a matrix in a vector.
+ \return a vpRowVector.
 */
 vpRowVector vpMatrix::stackRows(){
 
@@ -1424,13 +1432,11 @@ vpRowVector vpMatrix::stackRows(){
   return out; 
 }
 
-
-
 /*!
-Compute Kronecker product 
-\param m1 : vpMatrix;
-\param m2 : vpMatrix;
-\param out : The kronecker product : \f$ m1 \otimes m2 \f$
+  Compute Kronecker product matrix.
+  \param m1 : vpMatrix;
+  \param m2 : vpMatrix;
+  \param out : The kronecker product : \f$ m1 \otimes m2 \f$
 */
 void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
   unsigned int r1= m1.getRows();
@@ -1462,19 +1468,19 @@ void vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out){
 }
 
 /*!
-Compute Kronecker product 
-\param m : vpMatrix;
-\param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$
+  Compute Kronecker product matrix.
+  \param m : vpMatrix.
+  \param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$.
 */
 void vpMatrix::kron(const vpMatrix  &m , vpMatrix  &out){
   kron(*this,m,out);
 }
 
 /*!
-Compute Kronecker product 
-\param m1 : vpMatrix;
-\param m2 : vpMatrix;
-\return The kronecker product : \f$ m1 \otimes m2 \f$
+  Compute Kronecker product matrix.
+  \param m1 : vpMatrix;
+  \param m2 : vpMatrix;
+  \return The kronecker product : \f$ m1 \otimes m2 \f$
 */
 vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
 
@@ -1503,16 +1509,13 @@ vpMatrix vpMatrix::kron(const vpMatrix  &m1, const vpMatrix  &m2 ){
 
 
 /*!
-Compute Kronecker product 
+Compute Kronecker product matrix.
 \param m : vpMatrix;
 \return m1.kron(m2) The kronecker product : \f$ m1 \otimes m2 \f$
 */
 vpMatrix vpMatrix::kron(const vpMatrix  &m){
   return kron(*this,m);
 }
-
-
-
 
 /*!
 
@@ -1757,7 +1760,7 @@ vpMatrix::svd(vpColVector& w, vpMatrix& v)
 #endif
 }
 /*!
-\brief Compute the pseudo inverse of the matrix Ap = A^+
+\brief Compute the pseudo inverse of the matrix \f$Ap = A^+\f$
 \param Ap : The pseudo inverse \f$ A^+ \f$.
 \param svThreshold : Threshold used to test the singular values.
 \return Return the rank of the matrix A
@@ -1813,7 +1816,7 @@ vpMatrix::pseudoInverse(double svThreshold) const
 }
 
 /*!
-\brief Compute the pseudo inverse of the matrix Ap = A^+
+\brief Compute the pseudo inverse of the matrix \f$Ap = A^+\f$
 \param Ap : The pseudo inverse \f$ A^+ \f$.
 \param sv : Singular values.
 \param svThreshold : Threshold used to test the singular values.
@@ -1827,12 +1830,12 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 }
 
 /*!
-\brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
+\brief Compute the pseudo inverse of the matrix \f$Ap = A^+\f$ along with Ker A, Ker \f$A^T\f$, Im A and Im \f$A^T\f$
 
-Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
+Pseudo inverse, kernel and image are computed using the SVD decomposition.
 
 A is an m x n matrix,
-if m >=n the svd works on A other wise it works on A^T
+if m >=n the svd works on A other wise it works on \f$A^T\f$.
 
 Therefore if m>=n we have
 
@@ -2004,12 +2007,12 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
 
 
 /*!
-\brief Compute the pseudo inverse of the matrix Ap = A^+ along with Ker A, Ker A^T, Im A and Im A^T
+\brief Compute the pseudo inverse of the matrix \f$Ap = A^+\f$ along with Ker A, Ker \f$A^T\f$, Im A and Im \f$A^T\f$
 
-Pseudo Inverse, Kernel and Image are computed using the SVD decomposition
+Pseudo inverse, kernel and image are computed using the SVD decomposition.
 
 A is an m x n matrix,
-if m >=n the svd works on A other wise it works on A^T
+if m >=n the svd works on A other wise it works on \f$A^T\f$.
 
 Therefore if m>=n we have
 
@@ -2403,7 +2406,7 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
 }
 
 /*!
-\brief Juxtapose matrices. "juxtapos" two matrices  C = [ A B ]
+Juxtapose to matrices C = [ A B ].
 
 \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
@@ -2432,7 +2435,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 
 /*!
 \relates vpMatrix
-\brief juxtaposeMatrices. "juxtapose" two matrices  C = [ A B ]
+Juxtapose to matrices C = [ A B ].
 
 \f$ C = \left( \begin{array}{cc} A & B \end{array}\right)    \f$
 
@@ -3465,14 +3468,15 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
 
 
 /*!
-Load a matrix to a file.
+  Load a matrix to a file.
 
-\param filename : absolute file name.
-\param M : matrix to be loaded.
-\param binary :If true the matrix is loaded from a binary file, else from a text file.
-\param Header : Header of the file loaded in this parameter.
+  \param filename : Absolute file name.
+  \param M : Matrix to be loaded.
+  \param binary : If true the matrix is loaded from a binary file, 
+  else from a text file.
+  \param Header : Header of the file loaded in this parameter.
 
-\return Returns true if no problem happened.
+  \return Returns true if no problem happened.
 */
 bool
 vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 

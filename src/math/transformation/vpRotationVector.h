@@ -111,8 +111,7 @@ public:
 	init(n);
   }
   
-  // Transpose of the rotation vector.
-  vpRowVector t() const;
+  ~vpRotationVector();
 
   /*!
     Operator that allows to set the value of an element of the rotation 
@@ -130,7 +129,8 @@ public:
    */
   unsigned int size();
 
-  ~vpRotationVector();
+  // Transpose of the rotation vector.
+  vpRowVector t() const;
 
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
 						const vpRotationVector &m);

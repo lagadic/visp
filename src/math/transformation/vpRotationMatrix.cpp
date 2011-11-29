@@ -478,10 +478,10 @@ vpRotationMatrix::printVector()
 
 /*
   \relates vpRotationMatrix
-  \brief   Transform a vector vpThetaUVector into an rotation matrix
+  Transform a vector vpThetaUVector into a rotation matrix.
 
-  representation Utheta (axes and angle of the rotation) is considered for
-  the rotation vector
+  Representation theta u (angle and axes of the rotation) is considered for
+  the rotation vector.
 
   The rotation is computed using :
   \f[
@@ -569,8 +569,8 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 }
 
 /*!
-  \brief   Transform a vector reprensenting the euler angle
-  into an rotation matrix
+  Transform a vector representing the euler angle
+  into a rotation matrix.
   Rzyz =  Rot(\f$ z,\phi \f$) Rot(\f$ y,\theta \f$) Rot(\f$ z,\psi \f$)
 
 */
@@ -602,8 +602,8 @@ vpRotationMatrix::buildFrom(const vpRzyzVector &v)
 
 /*!
 
-  \brief Transform a vector reprensenting the Rxyz angle into an rotation
-  matrix
+  Transform a vector representing the Rxyz angle into a rotation
+  matrix.
 
   Rxyz(\f$ \phi,\theta, \psi \f$) = Rot(\f$ x, \psi \f$) Rot(\f$ y, \theta \f$
   ) Rot(\f$ z,\phi \f$)
@@ -637,11 +637,11 @@ vpRotationMatrix::buildFrom(const vpRxyzVector &v)
 
 
 /*!
-  \brief   Transform a vector reprensenting the Rzyx angle
-  into an rotation matrix
+  Transform a vector representing the Rzyx angle
+  into a rotation matrix.
 
-   Rxyz(\f$ \phi, \theta , \psi \f$)
-   Rot(\f$ z, \psi \f$) Rot(\f$ y, \theta \f$)Rot(\f$ x, \phi \f$)
+  Rxyz(\f$ \phi, \theta , \psi \f$)
+  Rot(\f$ z, \psi \f$) Rot(\f$ y, \theta \f$)Rot(\f$ x, \phi \f$)
 */
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpRzyxVector &v)
