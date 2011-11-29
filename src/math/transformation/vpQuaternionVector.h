@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.h 3460 2011-11-14 17:11:26Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
@@ -46,8 +46,9 @@
 
 /*!
   \file vpQuaternionVector.h
-  \brief Class that consider the case of a quaternion and basic operations on it.
 
+  \brief Class that consider the case of a quaternion and basic
+   operations on it.
 
 */
 
@@ -61,13 +62,16 @@
 
   \ingroup RotTransformation
   
-  \brief defines a quaternion and its basic operations.
+  \brief Defines a quaternion and its basic operations.
 
-  The class allows to convert between a rotation defined by a quaternion and a homogenous matrix.
+  This class allows to compute a quaternion from a rotation matrix
+  using either vpQuaternionVector(const vpRotationMatrix &) contructor
+  or buildFrom() method.
+
   It also defines common operations on a quaternion such as:
 	- multiplication (scalar and quaternion)
 	- addition
-	- substraction
+	- substraction.
 
   */
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
@@ -75,22 +79,25 @@ class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 private:        
   static const double minimum;
 public:
-  //! returns x-component of the quaternion
-  inline double x(){return r[0];}
-  //! returns y-component of the quaternion
-  inline double y(){return r[1];}
-  //! returns z-component of the quaternion
-  inline double z(){return r[2];}
-  //! returns w-component of the quaternion
-  inline double w(){return r[3];}
     
   vpQuaternionVector() ;    
   vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
   vpQuaternionVector(const vpQuaternionVector &q);
-  vpQuaternionVector(const vpRotationMatrix& R);
+  vpQuaternionVector(const vpRotationMatrix &R);
+
+  void buildFrom(const vpRotationMatrix& R);
+
   void set(const double x, const double y, const double z,const double w) ;
     
-    
+  //! returns x-component of the quaternion
+  inline double x() const {return r[0];}
+  //! returns y-component of the quaternion
+  inline double y() const {return r[1];}
+  //! returns z-component of the quaternion
+  inline double z() const {return r[2];}
+  //! returns w-component of the quaternion
+  inline double w() const {return r[3];}
+
   vpQuaternionVector operator+( vpQuaternionVector &q)  ;
   vpQuaternionVector operator-( vpQuaternionVector &q)  ;
   vpQuaternionVector operator-()  ;
@@ -98,7 +105,6 @@ public:
   vpQuaternionVector operator* ( vpQuaternionVector &rq) ;
   vpQuaternionVector &operator=( vpQuaternionVector &q);
   
-  void buildFrom(const vpRotationMatrix& R);
     
 } ;
 

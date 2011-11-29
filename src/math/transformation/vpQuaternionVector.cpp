@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpTranslationVector.cpp 3057 2011-02-11 13:17:26Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Translation vector.
+ * Quaternion vector.
  *
  * Authors:
  * Filip Novotny
@@ -54,37 +54,46 @@ const double vpQuaternionVector::minimum = 0.0001;
   \file vpQuaternionVector.cpp
   \brief Defines a quaternion and common operations on it.
 */
-
 vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) {  }
-    //! constructor from doubles
-vpQuaternionVector::vpQuaternionVector(const double x, const double y, const double z,const double w) : vpRotationVector(4) {
-  set(x,y,z,w);
+
+//! Constructor from doubles.
+vpQuaternionVector::vpQuaternionVector(const double x, const double y, 
+				       const double z,const double w) 
+  : vpRotationVector(4) 
+{
+  set(x, y, z, w);
 }
 
-/*! \brief constrcuts a quaternion from a matrix.
-  This method assumes the 3x3 upper left submatrix is a rotation matrix.
-  The passed parameter may therefore be a rotation matrix, a homogenous matrix or any kind of other matrix containing a rotation submatrix in it's upper left corner.
+/*! 
+  Constructs a quaternion from a rotation matrix.
 
-  \param R: Matrix containing a rotation
+  \param R: Matrix containing a rotation.
 */
-vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix& R)  : vpRotationVector(4) {	
+vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)  
+  : vpRotationVector(4) 
+{	
   buildFrom(R);
 }
-/*! \brief copy constructor
-  \param q: quaternion to construct from 
- */
-vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(4) {
-  std::copy(q.r,q.r+size(),this->r);
+/*! 
+  Copy constructor.
+  \param q: quaternion to construct from. 
+*/
+vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) 
+  : vpRotationVector(4) 
+{
+  std::copy(q.r, q.r+size(), this->r);
 }
     
-/*! \brief manually change values of a quaternion
-  \param x: x quaternion parameter
-  \param y: y quaternion parameter
-  \param z: z quaternion parameter
-  \param w: w quaternion parameter
-
- */
-void vpQuaternionVector::set(const double x, const double y, const double z,const double w) {
+/*! 
+  Manually change values of a quaternion.
+  \param x: x quaternion parameter.
+  \param y: y quaternion parameter.
+  \param z: z quaternion parameter.
+  \param w: w quaternion parameter.
+*/
+void vpQuaternionVector::set(const double x, const double y, 
+			     const double z,const double w) 
+{
   r[0]=x;
   r[1]=y;
   r[2]=z;
@@ -93,50 +102,63 @@ void vpQuaternionVector::set(const double x, const double y, const double z,cons
 
     
 /*! 
-\brief quaternion addition
-Adds two quaternions. Addition is component-wise.
-\param q: quaternion to add
- */
-vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)  {	
-  return vpQuaternionVector(x()+q.x(),y()+q.y(),z()+q.z(),w()+q.w());
+  Quaternion addition.
+
+  Adds two quaternions. Addition is component-wise.
+
+  \param q: quaternion to add.
+*/
+vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)  
+{	
+  return vpQuaternionVector(x()+q.x(), y()+q.y(), z()+q.z(), w()+q.w());
 }
 /*! 
-\brief quaternion substraction
-Substracts a quaternions from another. Substraction is component-wise.
-\param q: quaternion to substract
- */
-vpQuaternionVector vpQuaternionVector::operator-( vpQuaternionVector &q)  {
-  return vpQuaternionVector(x()-q.x(),y()-q.y(),z()-q.z(),w()-q.w());
+  Quaternion substraction.
+
+  Substracts a quaternion from another. Substraction is component-wise.
+
+  \param q: quaternion to substract.
+*/
+vpQuaternionVector vpQuaternionVector::operator-( vpQuaternionVector &q)  
+{
+  return vpQuaternionVector(x()-q.x(), y()-q.y(), z()-q.z(), w()-q.w());
 }
-//! negate operator. Returns a quaternion defined by (-x,-y,-z-,-w)
-vpQuaternionVector vpQuaternionVector::operator-()  {
-  return vpQuaternionVector(-x(),-y(),-z(),-w());
+
+//! Negate operator. Returns a quaternion defined by (-x,-y,-z-,-w).
+vpQuaternionVector vpQuaternionVector::operator-()  
+{
+  return vpQuaternionVector(-x(), -y(), -z(), -w());
 }
-//! multiplication by scalar. Returns a quaternion defined by (lx,ly,lz,lw)
-vpQuaternionVector vpQuaternionVector::operator*( double l) {
+
+//! Multiplication by scalar. Returns a quaternion defined by (lx,ly,lz,lw).
+vpQuaternionVector vpQuaternionVector::operator*( double l) 
+{
   return vpQuaternionVector(l*x(),l*y(),l*z(),l*w());
 }
 
-//! multiply two quaternions
+//! Multiply two quaternions.
 vpQuaternionVector vpQuaternionVector::operator* ( vpQuaternionVector &rq) {	
   return vpQuaternionVector(w() * rq.x() + x() * rq.w() + y() * rq.z() - z() * rq.y(),
 			    w() * rq.y() + y() * rq.w() + z() * rq.x() - x() * rq.z(),
 			    w() * rq.z() + z() * rq.w() + x() * rq.y() - y() * rq.x(),
 			    w() * rq.w() - x() * rq.x() - y() * rq.y() - z() * rq.z());
 }
-//! Copy operator.   Allow operation such as Q = q
-vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q){
-  std::copy(q.r,q.r+size(),this->r);
+
+//! Copy operator.   Allow operation such as Q = q.
+vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q)
+{
+  std::copy(q.r, q.r+size(), this->r);
 
   return *this;
 } 
-/*! constrcuts a quaternion from a matrix.
-	This method assumes the 3x3 upper left submatrix is a rotation matrix.
-	The passed parameter may therefore be a rotation matrix, a homogenous matrix or any kind of other matrix containing a rotation submatrix in it's upper left corner.
 
-	\param R: Matrix containing a rotation
+/*! 
+  Constructs a quaternion from a rotation matrix.
+  
+  \param R: Rotation matrix.
 */
-void vpQuaternionVector::buildFrom(const vpRotationMatrix& R){
+void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
+{
   double s,c,theta,sinc;
   double axis_x,axis_y,axis_z;
 
@@ -147,13 +169,13 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix& R){
   c = (R[0][0]+R[1][1]+R[2][2]-1.0)/2.0;
   theta=atan2(s,c);  /* theta in [0, PI] since s > 0 */
   
-  if ((s > minimum) || (c > 0.0)){ /* general case */	
+  if ((s > minimum) || (c > 0.0)) { /* general case */	
     sinc = vpMath::sinc(s,theta);
       
     axis_x = (R[2][1]-R[1][2])/(2*sinc);
     axis_y = (R[0][2]-R[2][0])/(2*sinc);
     axis_z = (R[1][0]-R[0][1])/(2*sinc);
-  }else{ /* theta near PI */	
+  } else { /* theta near PI */	
     axis_x = theta*(sqrt((R[0][0]-c)/(1-c)));
     if ((R[2][1]-R[1][2]) < 0) axis_x = -axis_x;
     axis_y = theta*(sqrt((R[1][1]-c)/(1-c)));
@@ -172,10 +194,3 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix& R){
       (axis_z * sinTheta_2)/norm);
 
 }
-
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
