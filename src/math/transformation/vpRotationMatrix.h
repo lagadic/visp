@@ -54,6 +54,7 @@
 #include <visp/vpRzyzVector.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
+#include <visp/vpQuaternionVector.h>
 
 /*!
   \class vpRotationMatrix
@@ -97,6 +98,8 @@ public:
   vpRotationMatrix(const vpRzyxVector &r) ;
   //! Construction from  rotation (theta U parameterization)
   vpRotationMatrix(const double tux, const  double tuy, const double tuz) ;
+
+  vpRotationMatrix(const vpQuaternionVector& q);
 
 
   //! copy operator from vpRotationMatrix
@@ -144,7 +147,8 @@ public:
   vpRotationMatrix buildFrom(const double tux,
 			     const double tuy,
 			     const double tuz) ;
-
+  
+  vpRotationMatrix buildFrom(const vpQuaternionVector& q);
 private:
   static const double threshold;
   static const double minimum; // useful only for debug
