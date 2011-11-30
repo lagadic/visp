@@ -406,6 +406,11 @@ vpRotationMatrix::vpRotationMatrix(const double tux,
   buildFrom(tux, tuy, tuz) ;
 }
 
+//! Construct from rotation in quaternion representation
+vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector& q){
+  init();
+  buildFrom(q);
+}
 
 
 /*!
@@ -683,6 +688,27 @@ vpRotationMatrix::buildFrom(const double tux,
   return *this ;
 }
 
+
+//! Construction from  rotation (as quaternion)
+vpRotationMatrix
+vpRotationMatrix::buildFrom(const vpQuaternionVector& q){
+  double a = q.x();
+  double b = q.y();
+  double c = q.z();
+  double d = q.w();
+  (*this)[0][0] = a*a+b*b-c*c-d*d;
+  (*this)[0][1] = 2*b*c-2*a*d;
+  (*this)[0][2] = 2*a*c+2*b*d;
+
+  (*this)[1][0] = 2*a*d+2*b*c;
+  (*this)[1][1] = a*a-b*b+c*c-d*d;
+  (*this)[1][2] = 2*c*d-2*a*b;
+
+  (*this)[2][0] = 2*b*d-2*a*c;
+  (*this)[2][1] = 2*a*b+2*c*d;
+  (*this)[2][2] = a*a-b*b-c*c+d*d;
+  return *this;
+}
 #undef vpDEBUG_LEVEL1
 
 /*
