@@ -66,7 +66,7 @@
 #  include <visp/vpList.h>
 #endif
 #include <list>
-
+#include <vector>
 /*!
   \class vpCalibration
 
@@ -129,6 +129,9 @@ public:
 
   static void calibrationTsai(unsigned int nbPose, vpHomogeneousMatrix cMo[],
                               vpHomogeneousMatrix rMe[],
+                              vpHomogeneousMatrix &eMc);
+  static void calibrationTsai(std::vector<vpHomogeneousMatrix> &cMo,
+                              std::vector<vpHomogeneousMatrix> & rMe,
                               vpHomogeneousMatrix &eMc);
 
   void computeStdDeviation(double &deviation, double &deviation_dist);
