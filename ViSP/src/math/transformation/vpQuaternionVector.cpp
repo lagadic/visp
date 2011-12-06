@@ -146,9 +146,8 @@ vpQuaternionVector vpQuaternionVector::operator* ( vpQuaternionVector &rq) {
 
 //! Copy operator.   Allow operation such as Q = q.
 vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q)
-{
-  std::copy(q.r, q.r+size(), this->r);
-
+{ 
+  for(unsigned int i=0;i<size();i++) (*this)[i]=q.r[i];
   return *this;
 } 
 
