@@ -303,7 +303,7 @@ main(int argc, const char ** argv)
   std::cout <<"------------------------------------------------------------"<<std::endl;
 
 
-  for (int iter = 1 ; iter < 51 ; iter++) // initially : iter < 1500
+  for (int iter = 1 ; iter < 40 ; iter++)
   {
     //read the image
     reader.getFrame(I,iter);
