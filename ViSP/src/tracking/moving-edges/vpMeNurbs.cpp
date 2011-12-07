@@ -965,19 +965,15 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 	    pix.track(I,me,false);
 	    if (pix.suppress == 0)
 	    {
-        ++it;
-        list.insert(it, pix);
+		  list.insert(it, pix);
 	      iP_1 = iP[0];
 	    }
 	  }
         }
       }
     }
-//    list.next();
     ++it;
-    itNext=it;
-    if ( itNext !=list.end() )
-      ++itNext;
+    ++itNext;
   }
   me->range=range_tmp;
   if (iP!=NULL) delete[] iP;
