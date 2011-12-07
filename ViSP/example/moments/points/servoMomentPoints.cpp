@@ -84,6 +84,21 @@ double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
 
+#if !defined(WIN32) && !defined(VISP_HAVE_PTHREAD)
+// Robot simulator used in this example is not available
+int main()
+{
+  std::cout << "Can't run this example since vpSimulatorAfma6 capability is not available." << std::endl;
+  std::cout << "You should install pthread third-party library." << std::endl;
+}
+// No display available
+#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) && !defined(VISP_HAVE_GTK)
+int main()
+{
+  std::cout << "Can't run this example since no display capability is available." << std::endl;
+  std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
+}
+#else
 int main(){
     //intial pose
     vpHomogeneousMatrix cMo(0.05,0.1,1.5,vpMath::rad(30),vpMath::rad(20),-vpMath::rad(15));
@@ -354,3 +369,5 @@ void paramRobot(){
 
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type){interaction_type=type;}
 double error(){return _error;}
+
+#endif

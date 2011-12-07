@@ -17,6 +17,8 @@ ViSP 2.6.2 (under development)
      - [13625] trackMeNurbs example produce an assertion failed with MSVC: 
                "list iterator not incrementable"
      - [13626] testXmlParser produre a Debug assertion failed with MSVC 
+     - [13678] Cannot build all the examples if no display capability is 
+	       available
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
