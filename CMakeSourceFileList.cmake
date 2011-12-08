@@ -46,12 +46,15 @@
 # If you add/remove a directory, modify here
 SET (SRC_CAMERA
   camera/vpCameraParameters.cpp 
-  camera/vpMeterPixelConversion.cpp 
-  camera/vpPixelMeterConversion.cpp
-  camera/vpXmlParserCamera.cpp
+  camera/vpMeterPixelConversion.cpp  
+  camera/vpPixelMeterConversion.cpp  
   camera/calibration/vpCalibration.cpp
   camera/calibration/vpCalibrationTools.cpp
   )
+
+IF(VISP_HAVE_XML2)
+  LIST(APPEND SRC_CAMERA camera/vpXmlParserCamera.cpp)
+ENDIF()
 
 SET (SRC_COMPUTER_VISION
   computer-vision/homography-estimation/vpHomography.cpp
@@ -175,10 +178,13 @@ SET (SRC_ROBOT
   robot/real-robot/viper/vpViper.cpp
   robot/real-robot/viper/vpViper850.cpp
   robot/simulator-robot/vpRobotCamera.cpp
-  robot/simulator-robot/vpRobotSimulator.cpp
-  robot/simulator-robot/vpSimulatorViper850.cpp
-  robot/simulator-robot/vpSimulatorAfma6.cpp
   )
+
+IF(WIN32 OR VISP_HAVE_PTHREAD)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpRobotSimulator.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorViper850.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorAfma6.cpp)
+ENDIF()
 
 IF(VISP_HAVE_AFMA4)
   LIST(APPEND SRC_ROBOT robot/real-robot/afma4/vpRobotAfma4.cpp)
@@ -212,7 +218,6 @@ SET (SRC_SERVO
   )
 
 SET (SRC_SIMULATOR
-  simulator/coin-simulator/vpProjectionDisplay.cpp
   simulator/image-simulator/vpImageSimulator.cpp
   simulator/wireframe-simulator/vpWireFrameSimulator.cpp
   simulator/wireframe-simulator/core/vpArit.c
@@ -233,7 +238,9 @@ SET (SRC_SIMULATOR
   simulator/wireframe-simulator/core/vpViewio.c
   simulator/wireframe-simulator/core/vpVwstack.c
   )
-
+IF(VISP_HAVE_X11 OR VISP_HAVE_GTK OR VISP_HAVE_GDI)
+  list(APPEND SRC_SIMULATOR simulator/coin-simulator/vpProjectionDisplay.cpp)
+ENDIF()
 IF(VISP_HAVE_COIN_AND_GUI)
   LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpAR.cpp)
   LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpSimulator.cpp)
@@ -254,11 +261,14 @@ SET (SRC_TOOLS
   tools/io/vpIoTools.cpp
   tools/io/vpKeyboard.cpp
   tools/io/vpParseArgv.cpp
-  tools/plot/vpPlot.cpp
-  tools/plot/vpPlotCurve.cpp
-  tools/plot/vpPlotGraph.cpp
   tools/time/vpTime.cpp
   )
+
+IF(VISP_HAVE_X11 OR VISP_HAVE_GDI OR VISP_HAVE_OPENCV) 
+  list(APPEND SRC_TOOLS tools/plot/vpPlot.cpp)
+  list(APPEND SRC_TOOLS tools/plot/vpPlotCurve.cpp)
+  list(APPEND SRC_TOOLS tools/plot/vpPlotGraph.cpp)
+ENDIF()
 IF(VISP_HAVE_XML2)
   LIST(APPEND SRC_TOOLS tools/xml/vpXmlParser.cpp)
 ENDIF()
@@ -294,7 +304,6 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbtHiddenFace.cpp
   tracking/mbt/vpMbtMeLine.cpp
   tracking/mbt/vpMbEdgeTracker.cpp
-  tracking/mbt/vpMbtXmlParser.cpp
   tracking/mbt/vpMbtDistanceCylinder.cpp
   tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
@@ -309,6 +318,10 @@ SET (SRC_TRACKING
   tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAreaNormalized.cpp
   )
+
+IF(VISP_HAVE_XML2)
+  LIST(APPEND SRC_TRACKING tracking/mbt/vpMbtXmlParser.cpp)
+ENDIF()
 
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
