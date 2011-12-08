@@ -357,7 +357,6 @@ ELSE(OpenCV_FOUND)
 ENDIF(OpenCV_FOUND)
 
 FIND_PACKAGE(ZLIB2)
-OPTION(USE_ZLIB    "Compile ViSP with zlib library" ON)
 IF(ZLIB2_FOUND)
   OPTION(USE_ZLIB    "Compile ViSP with zlib library" ON)
 ELSE()
