@@ -80,8 +80,8 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
 */
 vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) 
   : vpRotationVector(4) 
-{
-  std::copy(q.r, q.r+size(), this->r);
+{  
+  for(unsigned int i=0;i<size();i++) (*this)[i]=q.r[i];   
 }
     
 /*! 
