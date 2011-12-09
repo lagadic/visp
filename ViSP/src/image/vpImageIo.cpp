@@ -1478,32 +1478,28 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
   if ( (width != I.getWidth()) || (height != I.getHeight()) )
     I.resize(height,width);
 
-  unsigned char *line = NULL;
-
   jpeg_start_decompress(&cinfo);
 
-  if (cinfo.out_color_space == JCS_RGB)
-  {
-  vpImage<vpRGBa> Ic(height,width);
-    line = new unsigned char[3*width];
+  if (cinfo.out_color_space == JCS_RGB) {
+    vpImage<vpRGBa> Ic(height,width);
+    unsigned char *line = new unsigned char[3*width];
     unsigned char* output = (unsigned char*)Ic.bitmap;
-    while (cinfo.output_scanline<cinfo.output_height)
-    {
+    while (cinfo.output_scanline<cinfo.output_height)	{
       jpeg_read_scanlines(&cinfo,&line,1);
-      for (unsigned int i = 0; i < width; i++)
-      {
-        *(output++) = line[i*3];
-        *(output++) = line[i*3+1];
-        *(output++) = line[i*3+2];
-        *(output++) = 0;
+      for (unsigned int i = 0; i < width; i++) {
+	*(output++) = line[i*3];
+	*(output++) = line[i*3+1];
+	*(output++) = line[i*3+2];
+	*(output++) = 0;
       }
     }
-  vpImageConvert::convert(Ic,I) ;
+    delete [] line;
+    vpImageConvert::convert(Ic,I) ;
   }
 
   else if (cinfo.out_color_space == JCS_GRAYSCALE)
   {
-    line = new unsigned char[width];
+    unsigned char *line = new unsigned char[width];
     unsigned char* output = (unsigned char*)I.bitmap;
     while (cinfo.output_scanline<cinfo.output_height)
     {
@@ -1513,11 +1509,11 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
         *(output++) = line[i];
       }
     }
+    delete [] line;
   }
 
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
-  if (line != NULL) delete [] line;
   fclose(file);
 }
 
@@ -1598,13 +1594,11 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   if ( (width != I.getWidth()) || (height != I.getHeight()) )
     I.resize(height,width);
 
-  unsigned char *line = NULL;
-
   jpeg_start_decompress(&cinfo);
 
   if (cinfo.out_color_space == JCS_RGB)
   {
-    line = new unsigned char[3*width];
+    unsigned char *line = new unsigned char[3*width];
     unsigned char* output = (unsigned char*)I.bitmap;
     while (cinfo.output_scanline<cinfo.output_height)
     {
@@ -1617,12 +1611,13 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
         *(output++) = 0;
       }
     }
+    delete [] line;
   }
 
   else if (cinfo.out_color_space == JCS_GRAYSCALE)
   {
-  vpImage<unsigned char> Ig(height,width);
-    line = new unsigned char[width];
+    vpImage<unsigned char> Ig(height,width);
+    unsigned char *line = new unsigned char[width];
     unsigned char* output = (unsigned char*)Ig.bitmap;
     while (cinfo.output_scanline<cinfo.output_height)
     {
@@ -1632,12 +1627,12 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
         *(output++) = line[i];
       }
     }
-  vpImageConvert::convert(Ig,I) ;
+    delete [] line;
+    vpImageConvert::convert(Ig,I) ;
   }
 
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
-  if (line != NULL) delete [] line;
   fclose(file);
 }
 
