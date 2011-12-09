@@ -201,8 +201,11 @@ vpNurbs::computeCurveDers(double l_u, unsigned int l_i,
     }
   }
   
-  if (N!=NULL) delete[] N;
-
+  if (N!=NULL) {
+    for(unsigned int i = 0; i <= l_der; i++)
+      delete [] N[i];
+    delete[] N;
+  }
   return derivate;
 }
 
