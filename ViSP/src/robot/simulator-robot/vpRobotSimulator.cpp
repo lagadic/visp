@@ -94,7 +94,9 @@ vpRobotSimulator::vpRobotSimulator(bool display):vpWireFrameSimulator(), vpRobot
   singularityManagement = true;
   robotArms = NULL;
   
-  
+  constantSamplingTimeMode = false;
+  setVelocityCalled = false;
+ 
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);
 }
