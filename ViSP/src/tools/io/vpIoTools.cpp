@@ -53,6 +53,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <limits>
+#include <cmath>
 #if defined UNIX
 #  include <unistd.h>
 #elif defined WIN32
@@ -621,7 +623,8 @@ void vpIoTools::loadConfigFile(const std::string &confFile)
 	if(confContent)
 	{
 		std::string line,var,val;
-		int k,c,c2;
+		long unsigned int k;
+		int c;
 		std::string stop[3] = {" ", "\t", "#"};
 		while(std::getline(confContent, line))
 		{
@@ -638,7 +641,8 @@ void vpIoTools::loadConfigFile(const std::string &confFile)
 						c = vpMath::minimum(c,(int)line.find(stop[i],k+1));
 					if(c==-1)
 						c = line.size();
-					val = line.substr(k+1,c-k-1);
+					long unsigned int c_ = (long unsigned int) c;
+					val = line.substr(k+1,c_-k-1);
 					configVars.push_back(var);
 					configValues.push_back(val);
 				}
@@ -739,7 +743,7 @@ bool vpIoTools::readConfigVar(const std::string &var, bool &value)
  */
 bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
 {
-	int v;
+	unsigned int v;
 	bool found = readConfigVar(var,v);
 	value = vpColor::getColor(v);
 	return found;
@@ -781,7 +785,7 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 
  \return true if the parameter could be read.
  */
-bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const int &nCols, const int &nRows)
+bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const unsigned int &nCols, const unsigned int &nRows)
 {
 	bool found = false;
 	for(unsigned int k=0;k<configVars.size() && found==false;++k)
@@ -792,9 +796,9 @@ bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const int
 			// resize or not
 			if(nCols != 0 && nRows != 0)
 				value.resize(nRows, nCols);
-			int i,j,ind=0,ind2;
-			for(i=0;i<value.getRows();++i)
-				for(j=0;j<value.getCols();++j)
+			long unsigned int ind=0,ind2;
+			for(unsigned int i=0;i<value.getRows();++i)
+				for(unsigned int j=0;j<value.getCols();++j)
 				{
 					ind2 = configValues[k].find(",",ind);
 					value[i][j] = atof(configValues[k].substr(ind,ind2-ind).c_str());
@@ -833,7 +837,8 @@ void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond, con
  */
 void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
 {
-	if(val != 0.)
+	//if(val != 0.)
+        if(std::fabs(val) < std::numeric_limits<double>::epsilon())
 	{
 		char valC[256];
 		sprintf(valC, "%.3f", val);

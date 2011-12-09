@@ -182,7 +182,7 @@ public:
 	static bool readConfigVar(const std::string &var, bool &value);
 	static bool readConfigVar(const std::string &var, std::string &value);
 	static bool readConfigVar(const std::string &var, vpColor &value);
-	static bool readConfigVar(const std::string &var, vpMatrix &value, const int &nCols = 0, const int &nRows = 0);
+	static bool readConfigVar(const std::string &var, vpMatrix &value, const unsigned int &nCols = 0, const unsigned int &nRows = 0);
 
 	// construct experiment filename & path
 	/*!
