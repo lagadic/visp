@@ -48,6 +48,7 @@
 #include <visp/vpIoException.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <fstream>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -58,6 +59,12 @@
 #  include <windows.h>
 #  include <direct.h>
 #endif
+
+std::string vpIoTools::baseName = "";
+std::string vpIoTools::baseDir = "";
+std::string vpIoTools::configFile = "";
+std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
+std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 
 /*!
@@ -598,3 +605,282 @@ vpIoTools::path(const std::string &pathname)
 {
   return path(pathname.c_str());
 }
+
+
+/*!
+ Reads the configuration file and parses it.
+
+ \param confFile : path to the file containing the configuration parameters to parse.
+ */
+void vpIoTools::loadConfigFile(const std::string &confFile)
+{
+        configFile = confFile;
+	configVars.clear();configValues.clear();
+	std::ifstream confContent(confFile.c_str(), std::ios::in);
+
+	if(confContent)
+	{
+		std::string line,var,val;
+		int k,c,c2;
+		std::string stop[3] = {" ", "\t", "#"};
+		while(std::getline(confContent, line))
+		{
+			if((line.find("#",0,1) != 0) && (line.size() > 2))
+			{
+				try
+				{
+					// name of the variable
+					k = line.find(" ");
+					var = line.substr(0,k);
+					// look for the end of the actual value
+					c = 200;
+					for(unsigned i=0;i<3;++i)
+						c = vpMath::minimum(c,(int)line.find(stop[i],k+1));
+					if(c==-1)
+						c = line.size();
+					val = line.substr(k+1,c-k-1);
+					configVars.push_back(var);
+					configValues.push_back(val);
+				}
+				catch(...){}
+			}
+		}
+		confContent.close();
+	}
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e double.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, double &value)
+{
+	bool found = false;
+	for(unsigned int k=0;k<configVars.size() && found==false;++k)
+	{
+		if(configVars[k] == var)
+		{
+			value = atof(configValues[k].c_str());
+			found = true;
+		}
+	}
+	if(found == false)
+		std::cout << var << " not found in config file" << std::endl;
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e int.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, int &value)
+{
+	bool found = false;
+	for(unsigned int k=0;k<configVars.size() && found==false;++k)
+	{
+		if(configVars[k] == var)
+		{
+			value = atoi(configValues[k].c_str());
+			found = true;
+		}
+	}
+	if(found == false)
+		std::cout << var << " not found in config file" << std::endl;
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e unsigned int.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
+{
+	int v;
+	bool found = readConfigVar(var,v);
+	value = (unsigned int) v;
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e bool.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, bool &value)
+{
+	int v;
+	bool found = readConfigVar(var,v);
+	value = (v!=0);
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e vpColor.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read. See vpColor.cpp for the color number.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
+{
+	int v;
+	bool found = readConfigVar(var,v);
+	value = vpColor::getColor(v);
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e std::string.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
+{
+	bool found = false;
+	for(unsigned int k=0;k<configVars.size() && found==false;++k)
+	{
+		if(configVars[k] == var)
+		{
+			value = configValues[k];
+			found = true;
+		}
+	}
+	if(found == false)
+		std::cout << var << " not found in config file" << std::endl;
+	return found;
+}
+
+/*!
+ Tries to read the parameter named \e var as a \e vpMatrix.
+ If \e nCols and \e nRows are indicated, will resize the matrix.
+ Otherwise, will try to read as many values as indicated by the dimension of \e value.
+
+ \param var : Name of the parameter in the configuration file.
+ \param value : Value to be read.
+ \param nCols : Column dimension if resized.
+ \param nRows : Row dimension if resized
+
+ \return true if the parameter could be read.
+ */
+bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const int &nCols, const int &nRows)
+{
+	bool found = false;
+	for(unsigned int k=0;k<configVars.size() && found==false;++k)
+	{
+		if(configVars[k] == var)
+		{
+			found = true;
+			// resize or not
+			if(nCols != 0 && nRows != 0)
+				value.resize(nRows, nCols);
+			int i,j,ind=0,ind2;
+			for(i=0;i<value.getRows();++i)
+				for(j=0;j<value.getCols();++j)
+				{
+					ind2 = configValues[k].find(",",ind);
+					value[i][j] = atof(configValues[k].substr(ind,ind2-ind).c_str());
+					ind = ind2+1;
+				}
+		}
+	}
+	if(found == false)
+		std::cout << var << " not found in config file" << std::endl;
+	return found;
+}
+
+// construct experiment filename & path
+
+/*!
+ Augments the prefix of the experiment files by \e strTrue if \e cond is verified, and by \e strFalse otherwise.
+
+ \param strTrue : String to add if \e cond is true
+ \param cond : Condition managing the file name
+ \param strFalse : String to add if \e cond is false (default "")
+ */
+void vpIoTools::addNameElement(const std::string &strTrue, const bool &cond, const std::string &strFalse)
+{
+	if(cond)
+		baseName += "_" + strTrue;
+	else if(strFalse != "")
+		baseName += "_" + strFalse;
+}
+
+/*!
+ Augments the prefix of the experiment files by \e strTrue followed by \e val.
+
+ \param strTrue : String to add
+ \param val : Value to add
+
+ */
+void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
+{
+	if(val != 0.)
+	{
+		char valC[256];
+		sprintf(valC, "%.3f", val);
+		std::string valS(valC);
+		baseName += "_" + strTrue + valS;
+	}
+}
+
+/*!
+ Creates the directory \e baseDir/baseName. If already exists, empties it if \e empty is true.
+ Useful to save the images corresponding to a particular experiment.
+
+ \param empty : Indicates if the new directory has to be emptied
+
+ */
+void vpIoTools::createBaseNamePath(const bool &empty)
+{
+	if(vpIoTools::checkDirectory(baseDir + baseName) == false)
+	{
+		vpIoTools::makeDirectory(baseDir + baseName);
+	std::cout << "creating directory " + baseDir + baseName << std::endl;
+	}
+	else
+          if(empty)
+          {
+                  system(("rm -rf " + baseDir + baseName + "/*").c_str());
+                  std::cout << "emptying directory " + baseDir + baseName << std::endl;
+          }
+}
+
+
+// write configuration file
+/*!
+ Copy the initial configuration file to the experiment directory.
+
+ \param actuallySave : If false, do not copy the file.
+
+ */
+void vpIoTools::saveConfigFile(const bool &actuallySave)
+{
+	if(actuallySave)
+	{
+	  std::string dest = baseDir + "/" + baseName + "_config.txt";
+	  // file copy
+	  system(("cp " + configFile + " " + dest).c_str());
+	}
+}
+
+
+
