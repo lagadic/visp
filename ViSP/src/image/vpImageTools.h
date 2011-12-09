@@ -405,6 +405,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   }
 
   delete [] callThd;
+  delete [] undistortSharedData;
 #else // VISP_HAVE_PTHREAD
   //
   // optimized version without pthreads
