@@ -24,6 +24,7 @@ ViSP 2.6.2 (under development)
 	       available
      - [13679] GDI not detected on Windows 7 (64 bit) with Visual C++ Express 2010
      - [13689] Memory leaks in jpeg reader: vpImageIo::readJPEG()
+     - [13690] Memory leaks in NURBS tracker
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)

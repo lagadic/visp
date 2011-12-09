@@ -947,28 +947,35 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
       
       //if(( u != 1.0 || uend != 1.0)
       if( (std::fabs(u-1.0) > std::fabs(vpMath::maximum(u, 1.0))*std::numeric_limits<double>::epsilon())
-	  || (std::fabs(uend-1.0) > std::fabs(vpMath::maximum(u, 1.0))*std::numeric_limits<double>::epsilon()))
+          || (std::fabs(uend-1.0) > std::fabs(vpMath::maximum(u, 1.0))*std::numeric_limits<double>::epsilon()))
       {
         iP = nurbs.computeCurveDersPoint(u, 1);
-      
+
         while (vpImagePoint::sqrDistance(iP[0],iPend) > vpMath::sqr(me->sample_step) && u < uend)
         {
-	  u+=0.01;
-	  if (iP!=NULL) delete[] iP;
-	  iP = nurbs.computeCurveDersPoint(u, 1);
-	  if ( vpImagePoint::sqrDistance(iP[0],iP_1) > vpMath::sqr(me->sample_step) && !outOfImage(iP[0], 0, rows, cols))
-	  {
-	    double delta = computeDelta(iP[1].get_i(),iP[1].get_j());
-	    vpMeSite pix ; //= list.value();
-	    pix.init(iP[0].get_i(), iP[0].get_j(), delta) ;
-	    pix.setDisplay(selectDisplay) ;
-	    pix.track(I,me,false);
-	    if (pix.suppress == 0)
-	    {
-		  list.insert(it, pix);
-	      iP_1 = iP[0];
-	    }
-	  }
+          u+=0.01;
+          if (iP!=NULL) {
+            delete[] iP;
+            iP = NULL;
+          }
+          iP = nurbs.computeCurveDersPoint(u, 1);
+          if ( vpImagePoint::sqrDistance(iP[0],iP_1) > vpMath::sqr(me->sample_step) && !outOfImage(iP[0], 0, rows, cols))
+          {
+            double delta = computeDelta(iP[1].get_i(),iP[1].get_j());
+            vpMeSite pix ; //= list.value();
+            pix.init(iP[0].get_i(), iP[0].get_j(), delta) ;
+            pix.setDisplay(selectDisplay) ;
+            pix.track(I,me,false);
+            if (pix.suppress == 0)
+            {
+              list.insert(it, pix);
+              iP_1 = iP[0];
+            }
+          }
+        }
+        if (iP!=NULL) {
+          delete[] iP;
+          iP = NULL;
         }
       }
     }
@@ -976,7 +983,6 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
     ++itNext;
   }
   me->range=range_tmp;
-  if (iP!=NULL) delete[] iP;
 }
 
 
