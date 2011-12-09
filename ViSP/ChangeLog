@@ -7,6 +7,9 @@
 
 
 ViSP 2.6.2 (under development)
+  - New features
+     - Introduction of new functionalities in vpIoTools to parse text 
+       config files
   - Improvements
      - Remove warning detected with Visual C++ /Wall flag
   - Bug fixed
