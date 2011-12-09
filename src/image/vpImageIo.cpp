@@ -1480,36 +1480,34 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 
   jpeg_start_decompress(&cinfo);
 
+  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
+  JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)
+                      ((j_common_ptr) &cinfo, JPOOL_IMAGE, rowbytes, 1);
+
   if (cinfo.out_color_space == JCS_RGB) {
     vpImage<vpRGBa> Ic(height,width);
-    unsigned char *line = new unsigned char[3*width];
     unsigned char* output = (unsigned char*)Ic.bitmap;
     while (cinfo.output_scanline<cinfo.output_height)	{
-      jpeg_read_scanlines(&cinfo,&line,1);
+      jpeg_read_scanlines(&cinfo,buffer,1);
       for (unsigned int i = 0; i < width; i++) {
-	*(output++) = line[i*3];
-	*(output++) = line[i*3+1];
-	*(output++) = line[i*3+2];
+        *(output++) = buffer[0][i*3];
+        *(output++) = buffer[0][i*3+1];
+        *(output++) = buffer[0][i*3+2];
 	*(output++) = 0;
       }
     }
-    delete [] line;
     vpImageConvert::convert(Ic,I) ;
   }
 
   else if (cinfo.out_color_space == JCS_GRAYSCALE)
   {
-    unsigned char *line = new unsigned char[width];
-    unsigned char* output = (unsigned char*)I.bitmap;
+    unsigned int row;
     while (cinfo.output_scanline<cinfo.output_height)
     {
-      jpeg_read_scanlines(&cinfo,&line,1);
-      for (unsigned int i = 0; i < width; i++)
-      {
-        *(output++) = line[i];
-      }
+      row = cinfo.output_scanline;
+      jpeg_read_scanlines(&cinfo,buffer,1);
+      memcpy(I[row], buffer[0], rowbytes);
     }
-    delete [] line;
   }
 
   jpeg_finish_decompress(&cinfo);
@@ -1596,38 +1594,37 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
 
   jpeg_start_decompress(&cinfo);
 
+  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
+  JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)
+                      ((j_common_ptr) &cinfo, JPOOL_IMAGE, rowbytes, 1);
+
   if (cinfo.out_color_space == JCS_RGB)
   {
-    unsigned char *line = new unsigned char[3*width];
     unsigned char* output = (unsigned char*)I.bitmap;
     while (cinfo.output_scanline<cinfo.output_height)
     {
-      jpeg_read_scanlines(&cinfo,&line,1);
-      for (unsigned int i = 0; i < width; i++)
-      {
-        *(output++) = line[i*3];
-        *(output++) = line[i*3+1];
-        *(output++) = line[i*3+2];
-        *(output++) = 0;
+      jpeg_read_scanlines(&cinfo,buffer,1);
+      for (unsigned int i = 0; i < width; i++) {
+        *(output++) = buffer[0][i*3];
+        *(output++) = buffer[0][i*3+1];
+        *(output++) = buffer[0][i*3+2];
+	*(output++) = 0;
       }
     }
-    delete [] line;
   }
 
   else if (cinfo.out_color_space == JCS_GRAYSCALE)
   {
     vpImage<unsigned char> Ig(height,width);
-    unsigned char *line = new unsigned char[width];
-    unsigned char* output = (unsigned char*)Ig.bitmap;
+
+    unsigned int row;
     while (cinfo.output_scanline<cinfo.output_height)
     {
-      jpeg_read_scanlines(&cinfo,&line,1);
-      for (unsigned int i = 0; i < width; i++)
-      {
-        *(output++) = line[i];
-      }
+      row = cinfo.output_scanline;
+      jpeg_read_scanlines(&cinfo,buffer,1);
+      memcpy(Ig[row], buffer[0], rowbytes);
     }
-    delete [] line;
+
     vpImageConvert::convert(Ig,I) ;
   }
 
