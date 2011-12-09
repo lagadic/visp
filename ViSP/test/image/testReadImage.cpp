@@ -231,11 +231,11 @@ main(int argc, const char ** argv)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
     vpImageIo::readJPEG(Irgb,filename);
     vpTRACE("Read jpeg ok");
-    vpImageIo::writePPM(Irgb,"jpeg-rgb.ppm");
+    //vpImageIo::writePPM(Irgb,"jpeg-rgb.ppm");
     filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
     vpImageIo::readJPEG(Irgb,filename);
     vpTRACE("Read jpeg ok");
-    vpImageIo::writePPM(Irgb,"jpeg-uchar.ppm");
+    //vpImageIo::writePPM(Irgb,"jpeg-uchar.ppm");
     #else
     vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
     #endif
