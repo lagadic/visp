@@ -52,8 +52,6 @@
 
 //initialize scene in the interface
 void initScene();
-//initialize the moment features
-void initFeatures();
 
 void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
 vpMatrix execute(); //launch the test
@@ -64,17 +62,11 @@ int test(double x,double y,double z,double alpha);
 vpHomogeneousMatrix cMo;
 vpHomogeneousMatrix cdMo;
 
-vpServo task;    //servoing task
 vpServo::vpServoIteractionMatrixType interaction_type; //current or desired
 
 //source and destination objects for moment manipulation
 vpMomentObject src(6);
 vpMomentObject dst(6);
-//moment sets and their corresponding features
-vpMomentCommon *moments;
-vpMomentCommon *momentsDes;
-vpFeatureMomentCommon *featureMoments;
-vpFeatureMomentCommon *featureMomentsDes;
 
 using namespace std;
 
@@ -91,15 +83,8 @@ int main(){
 
         }
     }
-
-    task.kill();
-
-
-    delete moments;
-    delete momentsDes;
-    delete featureMoments;
-    delete featureMomentsDes;
-
+    
+        
     if(sum<0) return -1;
     else return 0;
 }
@@ -184,12 +169,13 @@ void init(vpHomogeneousMatrix& _cMo, vpHomogeneousMatrix& _cdMo)
     cdMo = _cdMo;
     interaction_type = vpServo::CURRENT;
 
-    task.setServo(vpServo::EYEINHAND_CAMERA);
+    
     initScene(); //initialize graphical scene (for interface)
-    initFeatures();//initialize moment features
 }
 
-void initFeatures(){
+vpMatrix execute(){
+  vpServo task;
+  task.setServo(vpServo::EYEINHAND_CAMERA);
     //A,B,C parameters of source and destination plane
     double A; double B; double C;
     double Ad; double Bd; double Cd;
@@ -211,38 +197,32 @@ void initFeatures(){
 
     ///////////////////////////// initializing moments and features /////////////////////////////////
     //don't need to be specific, vpMomentCommon automatically loads Xg,Yg,An,Ci,Cj,Alpha moments
-    moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2]);
-    momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2]);
+    vpMomentCommon moments (vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2]);
+    vpMomentCommon momentsDes(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2]);
     //same thing with common features
-    featureMoments = new vpFeatureMomentCommon(*moments);
-    featureMomentsDes = new vpFeatureMomentCommon(*momentsDes);
+    vpFeatureMomentCommon featureMoments(moments);
+    vpFeatureMomentCommon featureMomentsDes(momentsDes);
 
-    moments->updateAll(src);
-    momentsDes->updateAll(dst);
+    moments.updateAll(src);
+    momentsDes.updateAll(dst);
 
-    featureMoments->updateAll(A,B,C);
-    featureMomentsDes->updateAll(Ad,Bd,Cd);
+    featureMoments.updateAll(A,B,C);
+    featureMomentsDes.updateAll(Ad,Bd,Cd);
 
     //setup the interaction type
     task.setInteractionMatrixType(interaction_type) ;
     //////////////////////////////////add useful features to task//////////////////////////////
-    task.addFeature(featureMoments->getFeatureGravityNormalized(),featureMomentsDes->getFeatureGravityNormalized());
-    task.addFeature(featureMoments->getFeatureAn(),featureMomentsDes->getFeatureAn());
+    task.addFeature(featureMoments.getFeatureGravityNormalized(),featureMomentsDes.getFeatureGravityNormalized());
+    task.addFeature(featureMoments.getFeatureAn(),featureMomentsDes.getFeatureAn());
     //the moments are different in case of a symmetric object
-    task.addFeature(featureMoments->getFeatureCInvariant(),featureMomentsDes->getFeatureCInvariant(),(1 << 10) | (1 << 11));
-    task.addFeature(featureMoments->getFeatureAlpha(),featureMomentsDes->getFeatureAlpha());
+    task.addFeature(featureMoments.getFeatureCInvariant(),featureMomentsDes.getFeatureCInvariant(),(1 << 10) | (1 << 11));
+    task.addFeature(featureMoments.getFeatureAlpha(),featureMomentsDes.getFeatureAlpha());
 
     task.setLambda(0.4) ;
 
-
-
-}
-
-vpMatrix execute(){
     task.computeControlLaw();
     vpMatrix mat = task.computeInteractionMatrix();
-
-
+    task.kill();
     return mat;
 }
 
