@@ -254,5 +254,5 @@ void vpFeatureMoment::compute_interaction (){
 }
 
 vpFeatureMoment::~vpFeatureMoment (){
-
+  delete[] flags;
 }
