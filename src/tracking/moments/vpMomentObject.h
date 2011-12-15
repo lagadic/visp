@@ -36,7 +36,7 @@
  *
  * Authors:
  * Filip Novotny
- *
+ * Manikandan Bakthavatchalam
  *****************************************************************************/
 /*!
   \file vpMomentObject.h
@@ -127,17 +127,23 @@ int main()
   obj.setType(vpMomentObject::DISCRETE); // initialize the object as constituted by discrete points
   obj.fromVector(vec_p); // init the object from the points
 
-  std::vector<double> moment = obj.get();
-  std::cout << std::endl << "Basic moment available: " << std::endl;
-  for(unsigned int j=0; j<obj.getOrder(); ++j) {
-    for(unsigned int i=0; i<obj.getOrder(); ++i)
-      std::cout << "m" << i << j << "=" << moment[j*obj.getOrder() + i] << "  ";
-    std::cout << std::endl;
-  }
+  // --- Access the computed moments by querying the moment object
 
-  std::cout << std::endl << "Basic moment avalaible: ";
+  // 1. Getting a vector of doubles
+  std::vector<double> moment = obj.get();
+  std::cout << std::endl << "Basic moment available (from vector of doubles) " << std::endl;
+  for(unsigned int k=0; k<=obj.getOrder(); k++) {
+		for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++){
+			std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+		}
+		std::cout<<std::endl;
+	}
+
+  // 2. Print the contents of moment object directly
+  std::cout << std::endl << "Basic moment available: ";
   std::cout << obj << std::endl;
 
+  // 3. Directly indexing the moment object
   std::cout << std::endl << "Direct acces to some basic moments: " << std::endl;
   std::cout << "m00: " << obj.get(0, 0) << std::endl;
   std::cout << "m10: " << obj.get(1, 0) << std::endl;
@@ -171,14 +177,15 @@ point 1: 0.3, 0.1
 point 2: 0.2, -0.1
 point 3: -0.2, -0.15
 
-Basic moment available: 
-m00=4  m10=0.1  m20=0.21  m30=0.019  m40=0.0129  
-m01=0.00211  m11=-0.05  m21=0.02  m31=0.003  m41=0.0023  
-m02=0.00057  m12=0  m22=0.0525  m32=-0.0015  m42=0.0026  
-m03=9e-05  m13=0  m23=0  m33=-0.002375  m43=0.000575  
-m04=-4.5e-05  m14=0  m24=0  m34=0  m44=0.00080625  
+Basic moment available (from vector of doubles):
+m00=4   m10=0.1 m20=0.21        m30=0.019       m40=0.0129      m50=0.00211
+m01=-0.05       m11=0.02        m21=0.003       m31=0.0023      m41=0.00057
+m02=0.0525      m12=-0.0015     m22=0.0026      m32=9e-05
+m03=-0.002375   m13=0.000575    m23=-4.5e-05
+m04=0.00080625  m14=-7.125e-05
+m05=-6.59375e-05
 
-Basic moment avalaible: 
+Basic moment available:
 4	0.1	0.21	0.019	0.0129	0.00211	
 -0.05	0.02	0.003	0.0023	0.00057	x	
 0.0525	-0.0015	0.0026	9e-05	x	x	
