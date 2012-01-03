@@ -3,7 +3,7 @@
 # $Id: FindLIBUSB-1.cmake 3376 2011-10-13 12:40:49Z fspindle $
 #
 # This file is part of the ViSP software.
-# Copyright (C) 2005 - 2011 by INRIA. All rights reserved.
+# Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
 # 
 # This software is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
