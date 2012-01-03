@@ -60,7 +60,7 @@
   # Detection of the Libjpeg library on Unix
   FIND_LIBRARY(LIBJPEG_LIBRARY
     NAMES
-    jpeg
+    jpeg libjpeg
     PATHS
     /usr/lib
     /usr/local/lib
@@ -70,7 +70,7 @@
     $ENV{LIBJPEG_DIR}
     "C:/Program Files/GnuWin32/lib"
     )
-  #MESSAGE("LIBJPEG_LIBRARY=${LIBJPEG_LIBRARY}")
+  MESSAGE("LIBJPEG_LIBRARY=${LIBJPEG_LIBRARY}")
 
 
   MARK_AS_ADVANCED(
