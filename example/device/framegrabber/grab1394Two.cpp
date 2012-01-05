@@ -108,31 +108,31 @@ void usage(const char *name, const char *badparam, unsigned int camera,
     fprintf(stderr, "\nERROR: Bad parameter [%s]\n", badparam);
 
   fprintf(stderr, "\n\
-          SYNOPTIQUE\n\
-          %s [-v <video mode>] [-f <framerate>] \n\
-          [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
-          [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
-          [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
-          [-H <format 7 roi height>] [-b <ring buffer size>] \n\
-          [-p <pan control value>] [-R] [-h]\n\
+SYNOPTIQUE\n\
+%s [-v <video mode>] [-f <framerate>] \n\
+   [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
+   [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
+   [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
+   [-H <format 7 roi height>] [-b <ring buffer size>] \n\
+   [-p <pan control value>] [-R] [-h]\n\
           \n\
-          DESCRIPTION\n\
-          Test for firewire camera image acquisition.\n\
+ DESCRIPTION\n\
+ Test for firewire camera image acquisition.\n\
           \n\
-          EXAMPLES\n\
-          If two cameras are connected on the bus:\n\
-          %s -s\n\
-          Indicates the current settings for the first camera found on the bus.\n\
-          %s -i\n\
-          Gives information on the first camera found on the bus.\n\
-          %s -s -m\n\
-          Indicates the current settings for all the cameras found on the bus.\n\
-          %s -i -m\n\
-          Gives information on all the cameras found on the bus.\n\
-          %s -c 1\n\
-          Grab images from camera 1.\n\
-          %s -m\n\
-          Grab images from all the cameras.\n\
+ EXAMPLES\n\
+ If two cameras are connected on the bus:\n\
+ %s -s\n\
+  Indicates the current settings for the first camera found on the bus.\n\
+ %s -i\n\
+  Gives information on the first camera found on the bus.\n\
+ %s -s -m\n\
+  Indicates the current settings for all the cameras found on the bus.\n\
+%s -i -m\n\
+  Gives information on all the cameras found on the bus.\n\
+%s -c 1\n\
+  Grab images from camera 1.\n\
+%s -m\n\
+  Grab images from all the cameras.\n\
           \n\
           If a stereo camera is connected to the bus like the PointGrey Bumblebee,\n\
           you may set the pan control to select the camera view:\n\
