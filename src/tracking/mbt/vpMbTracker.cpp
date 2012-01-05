@@ -65,6 +65,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpMbTracker.h>
 #include <visp/vpMatrixException.h>
+#include <visp/vpIoTools.h>
 #include <iostream>
 #include <limits>
 #ifdef VISP_HAVE_COIN
@@ -118,7 +119,7 @@ vpMbTracker::~vpMbTracker()
   \code
   4 // Number of points in the file (minimum is four)
   0.01 0.01 0.01    //  \
-  ...               //  | coordinates in the object basis 
+  ...               //  | 3D coordinates in the object basis
   0.01 -0.01 -0.01  // /
   \endcode
 
@@ -127,7 +128,10 @@ vpMbTracker::~vpMbTracker()
   \param _displayHelp : Optionnal display of an image ( '_initFile.ppm' ). This 
     image may be used to show where to click. 
 
+  \exception vpException::ioError : The file specified in _initFile doesn't exist.
+
   \sa setPathNamePoseSaving()
+
 */
 void
 vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp)
