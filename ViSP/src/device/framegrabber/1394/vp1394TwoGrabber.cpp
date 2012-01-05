@@ -189,7 +189,7 @@ vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
   initialShutterMode = NULL;
   dataCam = NULL; 
   
-  
+  reset = false;
   initialize(reset);
   
   //  open();
