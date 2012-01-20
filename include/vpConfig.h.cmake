@@ -106,7 +106,7 @@
 #  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}
 #endif
 
-// Defined if GTK library available (either gtk or gtk2).
+// Defined if GTK2 library available
 #cmakedefine VISP_HAVE_GTK
 
 // Defined if GDI (Graphics Device Interface) library available
