@@ -12,6 +12,9 @@ ViSP 2.6.2 (under development)
        config files
   - Improvements
      - Remove warning detected with Visual C++ /Wall flag
+     - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and  
+       doxygen 3rd party libraries detection. If detection fails, we use our
+       own package finder.
   - Bug fixed
      - [13536] Division by zero in vpMeLine
      - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const 
@@ -22,7 +25,8 @@ ViSP 2.6.2 (under development)
      - [13626] testXmlParser produre a Debug assertion failed with MSVC 
      - [13678] Cannot build all the examples if no display capability is 
 	       available
-     - [13679] GDI not detected on Windows 7 (64 bit) with Visual C++ Express 2010
+     - [13679] GDI not detected on Windows 7 (64 bit) with Visual C++ Express 
+	       2010
      - [13689] Memory leaks in jpeg reader: vpImageIo::readJPEG()
      - [13690] Memory leaks in NURBS tracker
 	
