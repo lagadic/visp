@@ -106,6 +106,7 @@ IF(UNIX OR WIN32)
     /opt/gnome/lib/gtk-2.0/include
     "C:/GTK/lib/gtk-2.0/include"
     /sw/lib/gtk-2.0/include
+    /usr/lib/i386-linux-gnu/gtk-2.0/include
   )
 
   FIND_PATH( GTK2_gdkpixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h
