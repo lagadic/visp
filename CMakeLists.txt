@@ -1035,7 +1035,10 @@ IF(USE_LIBJPEG)
     SET(VISP_HAVE_LIBJPEG  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_LIBJPEG_FOUND "yes")  # for ViSP-third-party.txt
 
-    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${JPEG_INCLUDE_DIRS})
+	#message("JPEG_INCLUDE_DIR: ${JPEG_INCLUDE_DIR}")
+ 	# Here we use JPEG_INCLUDE_DIR that is the var name defined in CMake/Modules/FindJPEG.cmake
+	# In FindMyJPEG.cmake, we define both JPEG_INCLUDE_DIR and JPEG_INCLUDE_DIRS
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_LIBRARIES ${JPEG_LIBRARIES})
 
     # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
