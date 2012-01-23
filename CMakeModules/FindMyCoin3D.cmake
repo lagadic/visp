@@ -66,13 +66,6 @@ MACRO(TRY_COMPILE_WITH_COIN COIN3D_LIB COIN3D_INC)
 ENDMACRO(TRY_COMPILE_WITH_COIN)
 
 IF(UNIX OR WIN32) 
-  MARK_AS_ADVANCED(
-    COIN3D_INCLUDE_DIR
-    COIN3D_LIBRARY_RELEASE
-    COIN3D_LIBRARY_DEBUG
-    COIN3D_LIBRARY
-  )
-
   FIND_PATH(COIN3D_INCLUDE_DIR Inventor/nodes/SoSeparator.h
     $ENV{COIN_DIR}/include
     $ENV{COINDIR}/include
@@ -90,7 +83,7 @@ IF(UNIX OR WIN32)
   IF(WIN32)
     # Try first to find Coin3D-3 and only if not found Coin3D-2
     FIND_LIBRARY(COIN3D_LIBRARY_RELEASE
-      NAMES coin3 #only shared libraries under windows
+      NAMES coin3 coin4 #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
       "$ENV{COIN_DIR}/lib"	  
@@ -99,7 +92,7 @@ IF(UNIX OR WIN32)
       )
 
     FIND_LIBRARY(COIN3D_LIBRARY_DEBUG
-      NAMES coin3d #only shared libraries under windows
+      NAMES coin3d coin4d #only shared libraries under windows
       PATHS
       "$ENV{COINDIR}/lib"	  
       "$ENV{COIN_DIR}/lib"	  
@@ -124,6 +117,12 @@ IF(UNIX OR WIN32)
     #MESSAGE("DBG COIN3D_LIBRARY=${COIN3D_LIBRARY}")
   ENDIF(WIN32)
   
+  MARK_AS_ADVANCED(
+    COIN3D_INCLUDE_DIR
+    COIN3D_LIBRARY_RELEASE
+    COIN3D_LIBRARY_DEBUG
+    COIN3D_LIBRARY
+  )
   ## --------------------------------
   
   IF(COIN3D_LIBRARY OR COIN3D_LIBRARY_RELEASE OR COIN3D_LIBRARY_DEBUG AND COIN3D_INCLUDE_DIR)
