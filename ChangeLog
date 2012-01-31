@@ -29,6 +29,8 @@ ViSP 2.6.2 (under development)
 	       2010
      - [13689] Memory leaks in jpeg reader: vpImageIo::readJPEG()
      - [13690] Memory leaks in NURBS tracker
+     - [13843] In vpPolygon, isInside() may produce a segfault and getArea()
+               or getCenter() give bad results 
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
