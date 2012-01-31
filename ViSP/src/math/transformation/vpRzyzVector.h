@@ -128,9 +128,6 @@ int main()
   rzyz[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
   rzyz[2] = vpMath::rad( 90.f); // psi   angle in rad/s around z axis
 
-  // Do the same initialization
-  rzyz.set(vpMath::rad( 45.f), vpMath::rad(-30.f), vpMath::rad( 90.f));
-
   // Construct a rotation matrix from the Euler angles
   vpRotationMatrix R(rzyz);
 

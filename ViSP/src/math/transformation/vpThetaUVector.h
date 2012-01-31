@@ -118,9 +118,6 @@ int main()
   tu[1] = vpMath::rad(-30.f); 
   tu[2] = vpMath::rad( 90.f); 
 
-  // Do the same initialization
-  tu.set(vpMath::rad( 45.f), vpMath::rad(-30.f), vpMath::rad( 90.f));
-
   // Construct a rotation matrix from the theta U angles
   vpRotationMatrix R(tu);
 
