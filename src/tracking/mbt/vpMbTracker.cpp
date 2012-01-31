@@ -390,9 +390,6 @@ void
 vpMbTracker::loadVRMLModel(const std::string& _modelFile)
 {
 #ifdef VISP_HAVE_COIN
-  std::ifstream infile;
-  infile.open (_modelFile.c_str(), std::ifstream::in);
-
   if(!coinUsed){
     SoDB::init();
     coinUsed = true;
