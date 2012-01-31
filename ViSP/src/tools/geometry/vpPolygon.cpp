@@ -257,6 +257,11 @@ vpPolygon::isInside(const vpImagePoint& ip)
     vpImagePoint ip2 = _corners[(i+1)%_corners.size()];
     bool intersection = false;    
 
+    // If the points are the same we continue without trying to found
+    // an intersection
+    if (ip1 == ip2)
+      continue;
+
     try{
       intersection = testIntersectionSegments(ip1, ip2, ip, infPoint );
     }catch(vpException e){
@@ -291,9 +296,13 @@ vpPolygon::updateArea()
     return;
   }
   _area = 0;
-  for(unsigned int i=0; i<(_corners.size()-1); ++i){
-    _area += _corners[i].get_j() * _corners[i+1].get_i() - _corners[i+1].get_j() * _corners[i].get_i();
+
+  for(unsigned int i=0; i<_corners.size(); ++i){
+    int i_p_1 = ( i+1 ) % _corners.size();
+    _area += _corners[i].get_j() * _corners[i_p_1].get_i()
+      - _corners[i_p_1].get_j() * _corners[i].get_i();
   }
+
   _area /= 2;
   if(_area < 0){
     _area = - _area;
@@ -322,6 +331,7 @@ vpPolygon::updateCenter()
   }
   double i_tmp = 0;
   double j_tmp = 0;
+#if 0
   for(unsigned int i=0; i<(_corners.size()-1); ++i){
     i_tmp += (_corners[i].get_i() + _corners[i+1].get_i()) *
              (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
@@ -329,6 +339,18 @@ vpPolygon::updateCenter()
     j_tmp += (_corners[i].get_j() + _corners[i+1].get_j()) *
              (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
   }
+#else
+  for(unsigned int i=0; i<_corners.size(); ++i){
+    int i_p_1 = ( i+1 ) % _corners.size();
+    i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
+             (_corners[i_p_1].get_i() * _corners[i].get_j() 
+	      - _corners[i_p_1].get_j() * _corners[i].get_i());
+
+    j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
+             (_corners[i_p_1].get_i() * _corners[i].get_j() 
+	      - _corners[i_p_1].get_j() * _corners[i].get_i());
+  }
+#endif
 
   if(_area > 0){
     _center.set_i(fabs(i_tmp / (6 * _area)));
