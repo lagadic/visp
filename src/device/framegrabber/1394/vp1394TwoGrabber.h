@@ -138,7 +138,7 @@ int main()
   // camera 0 with guid 0xb09d01009b329c
   // camera 1 with guid 0xb09d01007e0ee7
 
-  g.setCamera( 0xb09d01009b329c );
+  g.setCamera( 0xb09d01009b329cULL );
 
   printf("Use camera with GUID: 0x%lx\n", g.getGuid());
   g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
