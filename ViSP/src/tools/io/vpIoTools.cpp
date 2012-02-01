@@ -491,36 +491,125 @@ vpIoTools::checkFilename(const std::string &filename)
 
 /*!
 
-  Remove a file.
+  Copy a \e src file or directory in \e dst.
 
-  \param filename : File to remove.
+  \param src : Existing file or directory to copy.
+  \param dst : New copied file or directory.
 
-  \return true if the file was removed, false otherwise.
+  \return true if the file or the directory was copied, false otherwise.
+
+  \sa copy(const std::string &, const std::string &)
+
+*/
+bool
+vpIoTools::copy(const char *src, const char *dst)
+{
+  char cmd[FILENAME_MAX];
+  int ret;
+  // Check if we have to consider a file or a directory
+  if ( vpIoTools::checkFilename(src) ) {
+    //std::cout << "copy file: " << src << " in " << dst << std::endl;
+#ifdef UNIX
+    sprintf(cmd, "cp -p %s %s", src, dst);
+#elif WIN32
+	std::string src_ = vpIoTools::path(src);
+	std::string dst_ = vpIoTools::path(dst);
+    sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
+#endif
+    ret = system( cmd );
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
+  }
+  else if ( vpIoTools::checkDirectory(src) ) {
+    //std::cout << "copy directory: " << src << " in " << dst << std::endl;
+#ifdef UNIX
+    sprintf(cmd, "cp -p -r %s %s", src, dst);
+#elif WIN32
+	std::string src_ = vpIoTools::path(src);
+	std::string dst_ = vpIoTools::path(dst);
+    sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
+#endif
+    ret = system( cmd );
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
+  }
+  else {
+    std::cout << "Cannot copy: " << src << " in " << dst << std::endl;
+    return false;
+  }
+}
+/*!
+
+  Copy a \e src file or directory in \e dst.
+
+  \param src : Existing file or directory to copy.
+  \param dst : New copied file or directory.
+
+  \return true if the file or the directory was copied, false otherwise.
+
+  \sa copy(const char *, const char *)
+
+*/
+bool
+vpIoTools::copy(const std::string &src, const std::string &dst)
+{
+  return vpIoTools::copy(src.c_str(), dst.c_str());
+}
+
+/*!
+
+  Remove a file or a directory.
+
+  \param file_or_dir : File or directory to remove.
+
+  \return true if the file or the directory was removed, false otherwise.
 
   \sa remove(const std::string &)
 */
 bool
-vpIoTools::remove(const char *filename)
+vpIoTools::remove(const char *file_or_dir)
 {
-	if (::remove(filename) != 0)
-    return false;
-  else
+  // Check if we have to consider a file or a directory
+  if ( vpIoTools::checkFilename(file_or_dir) ) {
+    //std::cout << "remove file: " << file_or_dir << std::endl;
+    if (::remove(file_or_dir) != 0)
+      return false;
+    else
+      return true;
+  }
+  else if ( vpIoTools::checkDirectory(file_or_dir) ) {
+    //std::cout << "remove directory: " << file_or_dir << std::endl;
+    char cmd[FILENAME_MAX];
+#ifdef UNIX
+    sprintf(cmd, "rm -rf %s", file_or_dir);
+#elif WIN32
+	std::string file_or_dir_ = vpIoTools::path(file_or_dir);
+    sprintf(cmd, "rmdir /S /Q %s", file_or_dir_.c_str());
+#endif
+    int ret = system( cmd );
+    //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
+  }
+  else {
+    std::cout << "Cannot remove: " << file_or_dir << std::endl;
+    return false;
+  }
 }
 /*!
 
-  Remove a file.
+  Remove a file or a directory.
 
-  \param filename : File to remove.
+  \param file_or_dir : File or directory to remove.
 
-  \return true if the file was removed, false otherwise.
+  \return true if the file or the directory was removed, false otherwise.
 
   \sa remove(const char *)
+
 */
 bool
-vpIoTools::remove(const std::string &filename)
+vpIoTools::remove(const std::string &file_or_dir)
 {
-  return vpIoTools::remove(filename.c_str());
+  return vpIoTools::remove(file_or_dir.c_str());
 }
 
 /*!
@@ -848,7 +937,8 @@ void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
 }
 
 /*!
- Creates the directory \e baseDir/baseName. If already exists, empties it if \e empty is true.
+ Creates the directory \e baseDir/baseName. If already exists, empties 
+ it if \e empty is true.
  Useful to save the images corresponding to a particular experiment.
 
  \param empty : Indicates if the new directory has to be emptied
@@ -856,17 +946,16 @@ void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
  */
 void vpIoTools::createBaseNamePath(const bool &empty)
 {
-	if(vpIoTools::checkDirectory(baseDir + baseName) == false)
-	{
-		vpIoTools::makeDirectory(baseDir + baseName);
-	std::cout << "creating directory " + baseDir + baseName << std::endl;
-	}
-	else
-          if(empty)
-          {
-                  system(("rm -rf " + baseDir + baseName + "/*").c_str());
-                  std::cout << "emptying directory " + baseDir + baseName << std::endl;
-          }
+  if(vpIoTools::checkDirectory(baseDir + baseName) == false) {
+    vpIoTools::makeDirectory(baseDir + baseName);
+    std::cout << "creating directory " + baseDir + baseName << std::endl;
+  }
+  else {
+    if(empty) {
+      std::cout << "emptying directory " + baseDir + baseName << std::endl;
+      vpIoTools::remove(baseDir + baseName + "/*");
+    }
+  }
 }
 
 
@@ -879,13 +968,9 @@ void vpIoTools::createBaseNamePath(const bool &empty)
  */
 void vpIoTools::saveConfigFile(const bool &actuallySave)
 {
-	if(actuallySave)
-	{
-	  std::string dest = baseDir + "/" + baseName + "_config.txt";
-	  // file copy
-	  system(("cp " + configFile + " " + dest).c_str());
-	}
+  if(actuallySave) {
+    std::string dest = baseDir + "/" + baseName + "_config.txt";
+    // file copy
+    vpIoTools::copy(configFile, dest);
+  }
 }
-
-
-
