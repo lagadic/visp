@@ -156,72 +156,79 @@ class VISP_EXPORT vpIoTools
 {
 
 public:
-	static void getUserName(std::string &username);
-	static std::string getUserName();
-	static std::string getenv(const char *env);
-	static std::string getenv(std::string &env);
-	static bool checkDirectory(const char *dirname);
-	static bool checkDirectory(const std::string &dirname);
-	static bool checkFilename(const char *filename);
-	static bool checkFilename(const std::string &filename);
+  static void getUserName(std::string &username);
+  static std::string getUserName();
+  static std::string getenv(const char *env);
+  static std::string getenv(std::string &env);
+  static bool checkDirectory(const char *dirname);
+  static bool checkDirectory(const std::string &dirname);
+  static bool checkFilename(const char *filename);
+  static bool checkFilename(const std::string &filename);
+  static bool copy(const char *src, const char *dst);
+  static bool copy(const std::string &src, const std::string &dst);
   static void makeDirectory(const char *dirname);
   static void makeDirectory(const std::string &dirname);
   static bool remove(const char *filename);
-	static bool remove(const std::string &filename);
-	static bool rename(const char *oldfilename, const char *newfilename);
-	static bool rename(const std::string &oldfilename, const std::string &newfilename);
-
-	static std::string path(const char * pathname);
-	static std::string path(const std::string &pathname);
-
-	// read configuration file
-	static void loadConfigFile(const std::string &confFile);
-	static bool readConfigVar(const std::string &var, double &value);
-	static bool readConfigVar(const std::string &var, int &value);
-	static bool readConfigVar(const std::string &var, unsigned int &value);
-	static bool readConfigVar(const std::string &var, bool &value);
-	static bool readConfigVar(const std::string &var, std::string &value);
-	static bool readConfigVar(const std::string &var, vpColor &value);
-	static bool readConfigVar(const std::string &var, vpMatrix &value, const unsigned int &nCols = 0, const unsigned int &nRows = 0);
-
-	// construct experiment filename & path
-	/*!
-	 Sets the base name (prefix) of the experiment files.
-
-	 \param s : Prefix of the experiment files.
-	 */
-	inline static void setBaseName(const std::string &s) {baseName = s;}
-	/*!
-		 Sets the base directory of the experiment files.
-
-		 \param dir : Directory where the data will be saved.
-	 */
-	static inline void setBaseDir(const std::string &dir) {baseDir = dir + "/";}
-	static void addNameElement(const std::string &strTrue, const bool &cond=true, const std::string &strFalse="");
-	static void addNameElement(const std::string &strTrue, const double &val);
-	/*!
-		 Gets the base name (prefix) of the experiment files.
-
-		 \return the base name of the experiment files.
-	 */
-	inline static std::string getBaseName() {return baseName;}
-	/*!
-		 Gets the full path of the experiment files : baseDir/baseName
-
-		 \return the full path of the experiment files.
-	 */
-	inline static std::string getFullName() {return baseDir + baseName;}
-
-	// write files
-	static void saveConfigFile(const bool &actuallySave = true);
-	static void createBaseNamePath(const bool &empty = false);
-
-protected:
-	static std::string baseName;
-	static std::string baseDir;
-	static std::string configFile;
-	static std::vector<std::string> configVars;
-	static std::vector<std::string> configValues;
+  static bool remove(const std::string &filename);
+  static bool rename(const char *oldfilename, const char *newfilename);
+  static bool rename(const std::string &oldfilename, 
+		     const std::string &newfilename);
+  
+  static std::string path(const char * pathname);
+  static std::string path(const std::string &pathname);
+  
+  // read configuration file
+  static void loadConfigFile(const std::string &confFile);
+  static bool readConfigVar(const std::string &var, double &value);
+  static bool readConfigVar(const std::string &var, int &value);
+  static bool readConfigVar(const std::string &var, unsigned int &value);
+  static bool readConfigVar(const std::string &var, bool &value);
+  static bool readConfigVar(const std::string &var, std::string &value);
+  static bool readConfigVar(const std::string &var, vpColor &value);
+  static bool readConfigVar(const std::string &var, vpMatrix &value, 
+			    const unsigned int &nCols = 0, 
+			    const unsigned int &nRows = 0);
+  
+  // construct experiment filename & path
+  /*!
+    Sets the base name (prefix) of the experiment files.
+    
+    \param s : Prefix of the experiment files.
+  */
+  inline static void setBaseName(const std::string &s) {baseName = s;}
+  /*!
+    Sets the base directory of the experiment files.
+    
+    \param dir : Directory where the data will be saved.
+  */
+  static inline void setBaseDir(const std::string &dir) {baseDir = dir + "/";}
+  static void addNameElement(const std::string &strTrue, 
+			     const bool &cond=true, 
+			     const std::string &strFalse="");
+  static void addNameElement(const std::string &strTrue, const double &val);
+  /*!
+    Gets the base name (prefix) of the experiment files.
+    
+    \return the base name of the experiment files.
+  */
+  inline static std::string getBaseName() {return baseName;}
+  /*!
+    Gets the full path of the experiment files : baseDir/baseName
+    
+    \return the full path of the experiment files.
+  */
+  inline static std::string getFullName() {return baseDir + baseName;}
+  
+  // write files
+  static void saveConfigFile(const bool &actuallySave = true);
+  static void createBaseNamePath(const bool &empty = false);
+  
+ protected:
+  static std::string baseName;
+  static std::string baseDir;
+  static std::string configFile;
+  static std::vector<std::string> configVars;
+  static std::vector<std::string> configValues;
 } ;
 
 
