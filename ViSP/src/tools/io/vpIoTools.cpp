@@ -530,7 +530,7 @@ vpIoTools::copy(const char *src, const char *dst)
     sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
 #endif
     ret = system( cmd );
-      if(ret); // to avoid a warning
+    if(ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
   }
@@ -588,7 +588,7 @@ vpIoTools::remove(const char *file_or_dir)
     sprintf(cmd, "rmdir /S /Q %s", file_or_dir_.c_str());
 #endif
     int ret = system( cmd );
-      if(ret); // to avoid a warning
+    if(ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
   }
