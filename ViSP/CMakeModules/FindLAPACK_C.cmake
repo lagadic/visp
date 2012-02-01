@@ -53,6 +53,8 @@ IF(WIN32)
             PATHS
             $ENV{LAPACK_HOME}           
             $ENV{LAPACK_DIR}
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
         )
 
     FIND_LIBRARY(LAPACK_LIBRARY_BLAS_RELEASE
@@ -60,6 +62,8 @@ IF(WIN32)
             PATHS
             $ENV{LAPACK_HOME}                   
             $ENV{LAPACK_DIR}                   
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
         )
     
 	FIND_LIBRARY(LAPACK_LIBRARY_F2C_RELEASE
@@ -67,20 +71,17 @@ IF(WIN32)
             PATHS
             $ENV{LAPACK_HOME}                   
             $ENV{LAPACK_DIR}                   
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
         )
-		
-	FIND_LIBRARY(LAPACK_LIBRARY_TMPG_RELEASE
-            NAMES tmglib 
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-        )
-	
+			
     FIND_LIBRARY(LAPACK_LIBRARY_LAPACK_DEBUG
             NAMES lapackd 
             PATHS
             $ENV{LAPACK_HOME}           
             $ENV{LAPACK_DIR}
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
         )
 
     FIND_LIBRARY(LAPACK_LIBRARY_BLAS_DEBUG
@@ -88,35 +89,30 @@ IF(WIN32)
             PATHS
             $ENV{LAPACK_HOME}                   
             $ENV{LAPACK_DIR}                   
-        )
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
+       )
 		
 	FIND_LIBRARY(LAPACK_LIBRARY_F2C_DEBUG
             NAMES libf2cd 
             PATHS
             $ENV{LAPACK_HOME}                   
             $ENV{LAPACK_DIR}                   
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
         )
-		
-	FIND_LIBRARY(LAPACK_LIBRARY_TMPG_DEBUG
-            NAMES tmglibd 
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-        )
-		 
-    IF((LAPACK_LIBRARY_LAPACK_RELEASE AND LAPACK_LIBRARY_BLAS_RELEASE AND LAPACK_LIBRARY_F2C_RELEASE AND LAPACK_LIBRARY_TMPG_RELEASE))
+				 
+    IF((LAPACK_LIBRARY_LAPACK_RELEASE AND LAPACK_LIBRARY_BLAS_RELEASE AND LAPACK_LIBRARY_F2C_RELEASE))
       LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_LAPACK_RELEASE})
       LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_BLAS_RELEASE})
  	  LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_F2C_RELEASE})
-	  LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_TMPG_RELEASE})
 
       SET(LAPACK_FOUND TRUE)
     ENDIF()
-    IF((LAPACK_LIBRARY_LAPACK_DEBUG AND LAPACK_LIBRARY_BLAS_DEBUG AND LAPACK_LIBRARY_F2C_DEBUG AND LAPACK_LIBRARY_TMPG_DEBUG))
+    IF((LAPACK_LIBRARY_LAPACK_DEBUG AND LAPACK_LIBRARY_BLAS_DEBUG AND LAPACK_LIBRARY_F2C_DEBUG))
       LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_LAPACK_DEBUG})
       LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_BLAS_DEBUG})
 	  LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_F2C_DEBUG})
-	  LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_TMPG_DEBUG})
       SET(LAPACK_FOUND TRUE)
     ENDIF()
 
@@ -127,6 +123,8 @@ ELSE(WIN32)
             PATHS
             $ENV{LAPACK_HOME}
             $ENV{LAPACK_DIR}
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
             /usr/lib
             /usr/lib64
             /usr/local/lib
@@ -138,6 +136,8 @@ ELSE(WIN32)
             PATHS
             $ENV{LAPACK_DIR}
             $ENV{LAPACK_HOME}
+            $ENV{LAPACK_HOME}/lib                   
+            $ENV{LAPACK_DIR}/lib                   
             /usr/lib
             /usr/lib64
             /usr/local/lib
@@ -161,7 +161,5 @@ MARK_AS_ADVANCED(
   LAPACK_LIBRARY_BLAS_DEBUG
   LAPACK_LIBRARY_F2C_DEBUG
   LAPACK_LIBRARY_F2C_RELEASE
-  LAPACK_LIBRARY_TMPG_DEBUG
-  LAPACK_LIBRARY_TMPG_RELEASE
 )
 
