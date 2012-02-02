@@ -113,7 +113,7 @@ INCLUDE("${VISP_ROOT_DIR_CMAKE}/VISPLibraryDepends.cmake")
 SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
 
 # Tells the user project ViSP library name
-SET(VISP_LIBRARIES "@VISP_INTERN_LIBRARY@")
+SET(VISP_LIBRARIES debug "@VISP_INTERN_LIBRARY@@CMAKE_DEBUG_POSTFIX@" optimized "@VISP_INTERN_LIBRARY@")
 
 # Tells the user project libraries name used to build ViSP library
 SET(VISP_EXTERN_LIBRARIES "@VISP_EXTERN_LIBRARIES@")

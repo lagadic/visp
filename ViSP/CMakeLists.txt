@@ -46,7 +46,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 # VISP version number.  An even minor number corresponds to releases.
 SET(VISP_VERSION_MAJOR "2")
 SET(VISP_VERSION_MINOR "6")
-SET(VISP_VERSION_PATCH "1")
+SET(VISP_VERSION_PATCH "2")
 SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 # Package revision number
 SET(VISP_REVISION "1")
@@ -69,6 +69,11 @@ SET(VISP_INTERN_LIBRARY visp-2)
 SET(VISP_EXTERN_LIBRARIES "")
 # the compiler definitions
 SET(VISP_DEFS "")
+
+if(WIN32)
+    # Postfix of .lib and .dll
+    set(CMAKE_DEBUG_POSTFIX "d")
+endif()
 
 # Get the OS
 SET(OS ${CMAKE_SYSTEM_NAME})
