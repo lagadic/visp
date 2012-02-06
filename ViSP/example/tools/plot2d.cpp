@@ -41,9 +41,9 @@
 
 
 /*!
-  \example plot.cpp
+  \example plot2d.cpp
 
-  Plot example.
+  Plot 2D curves example.
 */
 
 #include <visp/vpConfig.h>

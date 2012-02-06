@@ -291,15 +291,15 @@ vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const do
 
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param x : The coordinate of the new points along the x axis and given in the user unit system.
-  \param v : The coordinates of the new points along the y axis and given in the user unit system.
+  \param v_y : y coordinates vector. The coordinates of the new points along the y axis and given in the user unit system.
 */
 void vpPlot::plot(const unsigned int graphNum, 
-		  const double x, const vpColVector v)
+		  const double x, const vpColVector v_y)
 {
-	if((graphList+graphNum)->curveNbr == v.getRows())
+	if((graphList+graphNum)->curveNbr == v_y.getRows())
 	{
-		for(unsigned int i = 0;i < v.getRows();++i)
-			this->plot(graphNum, i, x, v[i]);
+		for(unsigned int i = 0;i < v_y.getRows();++i)
+			this->plot(graphNum, i, x, v_y[i]);
 	}
 	else
 		vpTRACE("error in plot vector : not the right dimension");
@@ -325,15 +325,15 @@ vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const do
 
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param x : The coordinate of the new points along the x axis and given in the user unit system.
-  \param vy : The coordinates of the new points along the y axis and given in the user unit system.
-  \param vz : The coordinates of the new points along the z axis and given in the user unit system.
+  \param v_y : y coordinates vector. The coordinates of the new points along the y axis and given in the user unit system.
+  \param v_z : z coordinates vector. The coordinates of the new points along the z axis and given in the user unit system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector vy, const vpColVector vz)
+void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector v_y, const vpColVector v_z)
 {
-	if((graphList+graphNum)->curveNbr == vy.getRows() && (graphList+graphNum)->curveNbr == vz.getRows())
+	if((graphList+graphNum)->curveNbr == v_y.getRows() && (graphList+graphNum)->curveNbr == v_z.getRows())
 	{
-		for(unsigned int i = 0;i < vy.getRows();++i)
-			this->plot(graphNum, i, x, vy[i], vz[i]);
+		for(unsigned int i = 0;i < v_y.getRows();++i)
+			this->plot(graphNum, i, x, v_y[i], v_z[i]);
 	}
 	else
 		vpTRACE("error in plot vector : not the right dimension");
