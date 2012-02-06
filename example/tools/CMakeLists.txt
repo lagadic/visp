@@ -46,7 +46,8 @@
 SET (SOURCE
   keyboard.cpp
   parallelPort.cpp
-  plot.cpp
+  plot2d.cpp
+  plot3d.cpp
   histogram.cpp
 )
 

@@ -86,7 +86,7 @@ vpPlotGraph::vpPlotGraph()
   dispLegend = false;
   
   epsi = 5;
-  epsj = 5;
+  epsj = 6;
   
   old_iPr = vpImagePoint(-1,-1);
   old_iPz = vpImagePoint(-1,-1);
@@ -395,11 +395,13 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 #endif
                           )
 { 
+  unsigned int offsetx = std::min((unsigned int)strlen(unitx), dWidth);
+
 #if defined VISP_HAVE_X11   
-  vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-10*epsj),unitx, vpColor::black);
+  vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
 #elif defined VISP_HAVE_OPENCV
-  vpDisplay::displayCharString(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-10*epsj),unitx, vpColor::black);
+  vpDisplay::displayCharString(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
 #endif
 }
@@ -419,12 +421,20 @@ vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 void
 vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
-  for (int i = 0; i < (int)curveNbr; i++)
+  unsigned int offsetj = 0;
+  for (int i = 0; i < (int)curveNbr; i++) {
+    unsigned int offset = epsj * strlen((curveList+i)->legend);
+    offsetj = std::max(offset, offsetj);
+  }
+  if (offsetj > dWidth) offsetj = dWidth;
+
+  for (int i = 0; i < (int)curveNbr; i++) {
     vpDisplay::displayCharString(I,
 				 vpImagePoint(dTopLeft.get_i()+i*5*epsi,
-					      dTopLeft.get_j()+dWidth-20*epsj),
+					      dTopLeft.get_j()+dWidth-offsetj),
 				 (curveList+i)->legend, 
 				 (curveList+i)->color);
+  }
 }
 
 void
