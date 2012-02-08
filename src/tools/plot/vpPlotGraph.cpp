@@ -54,6 +54,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 #include <cmath>    // std::fabs
+#include <visp/vpMath.h>
 #include <limits>   // numeric_limits
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 
@@ -395,7 +396,7 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 #endif
                           )
 { 
-  unsigned int offsetx = std::min((unsigned int)strlen(unitx), dWidth);
+	unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)strlen(unitx), dWidth);
 
 #if defined VISP_HAVE_X11   
   vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
@@ -424,7 +425,7 @@ vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
   unsigned int offsetj = 0;
   for (int i = 0; i < (int)curveNbr; i++) {
     unsigned int offset = epsj * strlen((curveList+i)->legend);
-    offsetj = std::max(offset, offsetj);
+	offsetj = vpMath::maximum(offset, offsetj);
   }
   if (offsetj > dWidth) offsetj = dWidth;
 
