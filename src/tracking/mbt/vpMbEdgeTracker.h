@@ -137,6 +137,25 @@ int main()
 }
 \endcode
 
+  For application with large inter-images displacement, multi-scale tracking is also possible, by setting the number of scales used and by activating (or not) them 
+  using a vector of booleans, as presented in the following code:
+
+\code
+  ...
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpCameraParameters cam;
+
+  std::vector< bool > scales(3); //Three scales used
+  scales.push_back(true); //First scale : active
+  scales.push_back(false); //Second scale (/2) : not active
+  scales.push_back(true); //Third scale (/4) : active
+  tracker.setScales(scales); // Set active scales for multi-scale tracking
+
+  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+  ...
+\endcode
+
   The tracker can also be used without display, in that case the initial pose
   must be known (object always at the same initial pose for example) or computed
   using another method:

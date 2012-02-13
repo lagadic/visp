@@ -1567,7 +1567,7 @@ vpMbEdgeTracker::getNbPolygon()
   few points to compute the pose (it could result in a loss of precision). 
   
   \warning This method must be used before the tracker has been initialised (
-  before the call of the init() or the initClick() method). 
+  before the call of the loadConfigFile() or loadModel() methods). 
   
   \warning At least one level must be activated. 
   
