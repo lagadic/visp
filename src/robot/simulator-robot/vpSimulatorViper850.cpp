@@ -308,6 +308,10 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       setCameraParameters(vpCameraParameters(868.0, 869.0, 320, 240));
       break;
     }
+  case vpViper850::TOOL_GENERIC_CAMERA: {
+      std::cout << "The generic camera is not handled in vpSimulatorViper850.cpp" << std::endl;
+      break;
+    }
   }
   
   vpRotationMatrix eRc(erc);
@@ -363,7 +367,11 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
-  default: 
+  case vpViper850::TOOL_GENERIC_CAMERA: {
+      std::cout << "The generic camera is not handled in vpSimulatorViper850.cpp" << std::endl;
+      break;
+    }
+  default:
     vpERROR_TRACE ("This error should not occur!");
     break;
   }
