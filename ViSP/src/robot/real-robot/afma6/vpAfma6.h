@@ -80,6 +80,8 @@ class VISP_EXPORT vpAfma6
   static const char * const CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
   static const char * const CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
   static const char * const CONST_CAMERA_AFMA6_FILENAME;
 #endif
   /*!
@@ -96,13 +98,19 @@ class VISP_EXPORT vpAfma6
     (vpAfma6ToolType::TOOL_VACUUM).
   */
   static const char * const CONST_VACUUM_CAMERA_NAME;
+  /*!
+    Name of the generic camera attached to the robot hand
+    (vpAfma6ToolType::TOOL_GENERIC_CAMERA).
+  */
+  static const char * const CONST_GENERIC_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
   typedef enum
     {
-      TOOL_CCMOP,   /*!< Pneumatic CCMOP gripper. */
-      TOOL_GRIPPER, /*!< Pneumatic gripper with 2 fingers. */
-      TOOL_VACUUM   /*!< Pneumatic vaccum gripper. */
+      TOOL_CCMOP,         /*!< Pneumatic CCMOP gripper. */
+      TOOL_GRIPPER,       /*!< Pneumatic gripper with 2 fingers. */
+      TOOL_VACUUM,        /*!< Pneumatic vaccum gripper. */
+      TOOL_GENERIC_CAMERA /*!< A generic camera. */
     } vpAfma6ToolType;
 
   //! Default tool attached to the robot end effector

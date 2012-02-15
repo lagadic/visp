@@ -271,7 +271,7 @@ vpSimulatorAfma6::initDisplay()
   
   \warning Only perspective projection without distorsion is available!
 
-  \param tool : Tool to use.
+  \param tool : Tool to use. Note that the generic camera is not handled.
 
   \param projModel : Projection model associated to the camera.
 
@@ -297,13 +297,13 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       
       if (robotArms != NULL)
       {
-	while (get_displayBusy()) vpTime::wait(2);
+        while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-	char name_arm[FILENAME_MAX];
-	strcpy(name_arm, arm_dir.c_str());
-	strcat(name_arm,"/afma6_tool_ccmop.bnd");
-	set_scene(name_arm, robotArms+5, 1.0);
-	set_displayBusy(false);
+        char name_arm[FILENAME_MAX];
+        strcpy(name_arm, arm_dir.c_str());
+        strcat(name_arm,"/afma6_tool_ccmop.bnd");
+        set_scene(name_arm, robotArms+5, 1.0);
+        set_displayBusy(false);
       }
       break;
     }
@@ -319,13 +319,13 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       
       if (robotArms != NULL)
       {
-	while (get_displayBusy()) vpTime::wait(2);
+        while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-	char name_arm[FILENAME_MAX];
-	strcpy(name_arm, arm_dir.c_str());
-	strcat(name_arm,"/afma6_tool_gripper.bnd");
-	set_scene(name_arm, robotArms+5, 1.0);
-	set_displayBusy(false);
+        char name_arm[FILENAME_MAX];
+        strcpy(name_arm, arm_dir.c_str());
+        strcat(name_arm,"/afma6_tool_gripper.bnd");
+        set_scene(name_arm, robotArms+5, 1.0);
+        set_displayBusy(false);
       }
       break;
     }
@@ -341,15 +341,18 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       
       if (robotArms != NULL)
       {
-	while (get_displayBusy()) vpTime::wait(2);
+        while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-	char name_arm[FILENAME_MAX];
-	strcpy(name_arm, arm_dir.c_str());
-	strcat(name_arm,"/afma6_tool_vacuum.bnd");
-	set_scene(name_arm, robotArms+5, 1.0);
-	set_displayBusy(false);
+        char name_arm[FILENAME_MAX];
+        strcpy(name_arm, arm_dir.c_str());
+        strcat(name_arm,"/afma6_tool_vacuum.bnd");
+        set_scene(name_arm, robotArms+5, 1.0);
+        set_displayBusy(false);
       }
       break;
+    }
+  case vpAfma6::TOOL_GENERIC_CAMERA: {
+      std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
     }
   }
   
@@ -407,16 +410,8 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
     break;
   }
   case vpAfma6::TOOL_VACUUM: {
-    // Set default intrinsic camera parameters for 640x480 images
-    if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \"" 
-		<< vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl;
-	cam.initPersProjWithoutDistortion(853.4876600807, 856.0339170706, 320, 240);
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-    }
-    break;
+      std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
+      break;
   }
   default: 
     vpERROR_TRACE ("This error should not occur!");
@@ -2227,6 +2222,10 @@ vpSimulatorAfma6::initArms()
     }
   case vpAfma6::TOOL_VACUUM: {
       strcat(name_arm,"/afma6_tool_vacuum.bnd");
+      break;
+    }
+  case vpAfma6::TOOL_GENERIC_CAMERA: {
+      std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
       break;
     }
   }
