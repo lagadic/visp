@@ -75,11 +75,13 @@ int main() {
 #endif
 
   // Set tilt angle in degrees
-  float angle = -5;
-  kinect.setTiltDegrees(angle);
+  if (0) {
+    float angle = -3;
+    kinect.setTiltDegrees(angle);
+  }
 
   // Init display
-#if 0
+#if 1
   kinect.start(vpKinect::DMAP_MEDIUM_RES); // Start acquisition thread with a depth map resolution of 480x640
   vpImage<unsigned char> Idmap(480,640);//for medium resolution
   vpImage<float> dmap(480,640);//for medium resolution
