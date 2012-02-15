@@ -65,10 +65,11 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_DIR}/lib/glib-2.0/include
     $ENV{GTK2_HOME}/lib/glib-2.0/include
     /usr/lib/glib-2.0/include
+    /usr/lib64/glib-2.0/include
     /usr/lib/i386-linux-gnu/glib-2.0/include
     /usr/lib/x86_64-linux-gnu/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
-    "C:/GTK/lib/glib-2.0/include"
+    "C:/GTK/lib/glib-2.0/include"glib
     /sw/lib/glib-2.0/include
   )
 
@@ -103,6 +104,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_DIR}/lib/gtk-2.0/include
     $ENV{GTK2_HOME}/lib/gtk-2.0/include
     /usr/lib/gtk-2.0/include
+    /usr/lib64/gtk-2.0/include
     /opt/gnome/lib/gtk-2.0/include
     "C:/GTK/lib/gtk-2.0/include"
     /sw/lib/gtk-2.0/include
@@ -114,7 +116,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/gdk-pixbuf-2.0
     /usr/include/gdk-pixbuf-2.0
     /usr/include/gtk-2.0
-     "C:/GTK/include/gtk-2.0"
+    "C:/GTK/include/gtk-2.0"
     /sw/include/gtk-2.0
   )
 
