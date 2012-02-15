@@ -47,6 +47,7 @@ SET (SOURCE
   servoViper850FourPoints2DArtVelocityInteractionCurrent.cpp
   servoViper850FourPoints2DArtVelocityInteractionDesired.cpp
   servoViper850FourPoints2DCamVelocityInteractionCurrent.cpp
+  servoViper850FourPointsKinect.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp
   servoViper850Point2DArtVelocity.cpp
