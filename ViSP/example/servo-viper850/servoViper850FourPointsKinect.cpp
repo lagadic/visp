@@ -335,6 +335,7 @@ int main()
         flog.close() ; // Close the log file
         vpTRACE("Error detected while tracking visual features") ;
         robot.stopMotion() ;
+	kinect.stop();
         return(1) ;
       }
 
@@ -407,6 +408,7 @@ int main()
     }
 
     vpTRACE("Display task information " ) ;
+    kinect.stop();
     task.print() ;
     task.kill();
     flog.close() ; // Close the log file
