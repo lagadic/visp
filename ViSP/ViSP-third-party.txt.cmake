@@ -37,6 +37,7 @@ Framegrabbers
   DirectShow                : ${VISP_HAVE_DIRECTSHOW_FOUND}
   OpenCV                    : ${VISP_HAVE_OPENCV_FOUND} 
 Specific devices
+  Yarp                      : ${VISP_HAVE_YARP_FOUND}
   Kinect                    : ${VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND}
   \-libfreenect             : ${VISP_HAVE_LIBFREENECT_FOUND}
   \-libusb-1.0              : ${VISP_HAVE_LIBUSB_1_FOUND}
