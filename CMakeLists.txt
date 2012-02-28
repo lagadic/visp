@@ -280,6 +280,14 @@ ELSE (COIN3D_FOUND AND OPENGL_FOUND)
   SET(USE_COIN OFF)
 ENDIF (COIN3D_FOUND AND OPENGL_FOUND)
 
+FIND_PACKAGE(YARP)
+MARK_AS_ADVANCED(YARP_DIR)
+IF (YARP_FOUND)
+  OPTION(USE_YARP "Compile ViSP with YARP" ON)
+ELSE (YARP_FOUND)
+  SET(USE_YARP OFF)
+ENDIF ()
+
 FIND_PACKAGE(OGRE QUIET)
 MARK_AS_ADVANCED(OGRE_DIR)
 IF (OGRE_FOUND)
@@ -360,6 +368,7 @@ ELSE(XML2_FOUND)
 ENDIF(XML2_FOUND)
 
 FIND_PACKAGE(OpenCV QUIET)
+MARK_AS_ADVANCED(OpenCV_DIR)
 IF(OpenCV_FOUND)
   OPTION(USE_OPENCV    "Compile ViSP with OpenCV >= 2.1 library" ON)
 ELSE(OpenCV_FOUND)
@@ -466,6 +475,7 @@ ENDIF(FFMPEG_FOUND)
 #SET(USE_LIBJPEG    ON) # For reading jpeg files
 #SET(USE_LIBPNG     ON) # For reading png files
 #SET(USE_ZLIB       ON) # For data compression
+#SET(USE_YARP       ON) # For YARP
 #SET(USE_FFMPEG     ON) # For video read and write
 
 IF(BUILD_SHARED_LIBS)
@@ -474,6 +484,26 @@ ENDIF(BUILD_SHARED_LIBS)
 
 
 INCLUDE(CheckLibraryExists)
+
+#--------------------------------------------------------------------
+# yarp lib
+#--------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_YARP "no")  # for ViSP-third-party.txt
+
+IF(USE_YARP)
+  IF(YARP_FOUND)
+    MESSAGE(STATUS "yarp found")
+    SET(VISP_HAVE_YARP TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_YARP_FOUND "yes")  # for ViSP-third-party.txt
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${YARP_INCLUDE_DIRS})
+    LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIBRARIES})
+    LIST(APPEND VISP_DEFS ${YARP_DEFINES})
+  ELSE()
+    MESSAGE(STATUS "yarp not found")
+    SET(VISP_HAVE_YARP_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF()
+ENDIF(USE_YARP)
 
 #---------------------------------------------------------------------
 # Try to determine if Inria's NAS server hosting /udd/ is available 
