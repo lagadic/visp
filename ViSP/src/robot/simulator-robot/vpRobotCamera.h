@@ -88,6 +88,16 @@ public:
   {
     this->delta_t = delta_t;
   }
+  /*!
+    Return the sampling time.
+
+    \return Sampling time used to compute the robot displacement from
+    the velocity applied to the robot during this time.
+  */
+  inline double getSamplingTime()
+  {
+    return(this->delta_t);
+  }
   void setCameraVelocity(const vpColVector &v)   ;
   void setArticularVelocity(const vpColVector &qdot)  ;
   void setVelocity(const vpRobot::vpControlFrameType frame,
