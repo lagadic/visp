@@ -323,8 +323,7 @@ void execute(int nbIter){
         //pilot robot using position control. The displacement is t*v with t=10ms step
         //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
 		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-		double t = vpTime::measureTimeMs();
-		vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
+    vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
 
         //vpTime::wait(t,10);
         _error = task.error.sumSquare();
