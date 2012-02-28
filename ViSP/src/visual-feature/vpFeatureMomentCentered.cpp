@@ -58,12 +58,12 @@
   \param A : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param B : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param C : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param FeatureMoments : Database of features.
+  \param featureMoments : Database of features.
 */
 vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,
                                                  double A, double B, double C,
-                                                 vpFeatureMomentDatabase* FeatureMoments) :
-    vpFeatureMoment(moments,A,B,C,FeatureMoments)
+                                                 vpFeatureMomentDatabase* featureMoments) :
+    vpFeatureMoment(moments,A,B,C,featureMoments)
 
 {
 }
@@ -151,10 +151,10 @@ void vpFeatureMomentCentered::compute_interaction(){
   \param A : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param B : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param C : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param FeatureMoments : Database of features.
+  \param featureMoments : Database of features.
 */
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments) :
-    vpFeatureMoment(moments,A,B,C,FeatureMoments)
+vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments) :
+    vpFeatureMoment(moments,A,B,C,featureMoments)
 
 {
 }

@@ -158,8 +158,8 @@ class VISP_EXPORT vpFeatureMomentDatabase{
     }
     char* operator=(const char *){ return NULL;} // Only to avoid a warning under Visual with /Wall flag
   };
-  std::map<const char*,vpFeatureMoment*,cmp_str> FeatureMoments;
-  void add(vpFeatureMoment& FeatureMoment,char* name);
+  std::map<const char*,vpFeatureMoment*,cmp_str> featureMomentsDataBase;
+  void add(vpFeatureMoment& featureMoment,char* name);
  public:
   /*!
     virtual destructor.

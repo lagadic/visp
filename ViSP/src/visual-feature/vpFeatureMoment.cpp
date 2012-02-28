@@ -220,7 +220,7 @@ vpMatrix vpFeatureMoment::interaction (unsigned int select){
   \return The corresponding feature.
 */
 vpBasicFeature* vpFeatureMoment::duplicate () const {
-    vpFeatureMoment* feat = new vpMomentGenericFeature(moments,A,B,C,featureMoments,moment);
+    vpFeatureMoment* feat = new vpMomentGenericFeature(moments,A,B,C,featureMomentsDataBase,moment);
     feat->interaction_matrices = interaction_matrices;
     feat->dim_s = dim_s;
     feat->nbParameters = nbParameters;    
@@ -238,14 +238,14 @@ vpBasicFeature* vpFeatureMoment::duplicate () const {
 
 /*!
   Links the feature to the feature's database. NB: The feature's database is different from the moment's database.
-  \param FeatureMoments : database in which the moment features are stored.
+  \param featureMoments : database in which the moment features are stored.
   
 */
-void vpFeatureMoment::linkTo(vpFeatureMomentDatabase& FeatureMoments){
+void vpFeatureMoment::linkTo(vpFeatureMomentDatabase& featureMoments){
     std::strcpy(_name,name());
-    this->featureMoments=&FeatureMoments;
+    this->featureMomentsDataBase=&featureMoments;
 
-    FeatureMoments.add(*this,_name);
+    featureMoments.add(*this,_name);
 }
 
 

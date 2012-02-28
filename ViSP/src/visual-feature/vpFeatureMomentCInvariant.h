@@ -87,11 +87,11 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
     \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
     \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
     \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-    \param FeatureMoments : Feature database.
+    \param featureMoments : Feature database.
 
     */
-    vpFeatureMomentCInvariant(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments=NULL) :
-        vpFeatureMoment(moments,A,B,C,FeatureMoments,16){}
+    vpFeatureMomentCInvariant(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL) :
+        vpFeatureMoment(moments,A,B,C,featureMoments,16){}
     void compute_interaction();
         /*!
           associated moment name
@@ -205,11 +205,11 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
     \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
     \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
     \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-    \param FeatureMoments : Feature database.
+    \param featureMoments : Feature database.
 
     */
-    vpFeatureMomentCInvariant(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments=NULL) :
-        vpFeatureMoment(moments,A,B,C,FeatureMoments,16){}
+    vpFeatureMomentCInvariant(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL) :
+        vpFeatureMoment(moments,A,B,C,featureMoments,16){}
     void compute_interaction();
         /*!
           associated moment name
