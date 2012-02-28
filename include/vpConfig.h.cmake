@@ -260,6 +260,8 @@
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
+//Defined if we want to use openmp
+#cmakedefine VISP_HAVE_OPENMP
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
 // We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 

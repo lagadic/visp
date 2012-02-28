@@ -48,6 +48,7 @@ Video and image Read/Write:
 Misc:
   XML2                      : ${VISP_HAVE_XML2_FOUND}
   pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
+  OpenMP                    : ${VISP_HAVE_OPENMP_FOUND}
 Documentation:
   Doxygen                   : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot              : ${VISP_HAVE_DOT_FOUND}
