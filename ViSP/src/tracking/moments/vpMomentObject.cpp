@@ -263,21 +263,24 @@ int main()
 
 void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned char threshold, const vpCameraParameters& cam){
 #ifdef VISP_HAVE_OPENMP	
-	int th_id=0;
+  //int th_id=0;
 	
-	#pragma omp parallel private(th_id) shared(cam,image,threshold)
+  #pragma omp parallel /* private(th_id) */ shared(cam,image,threshold)
 	{		
-		th_id = omp_get_thread_num();		
+    // th_id = omp_get_thread_num();
 		std::vector<double> curvals(order*order); 
 		curvals.assign(order*order,0.);
-		
+    int i_, j_;
+
 		#pragma omp for nowait//automatically organize loop counter between threads
-		for(int i=0;i<image.getCols();i++){
-			for(int j=0;j<image.getRows();j++){
-				if(image[j][i]>threshold){
+    for(int i=0;i<(int)image.getCols();i++){
+      for(int j=0;j<(int)image.getRows();j++){
+        i_ = static_cast<unsigned int>(i);
+        j_ = static_cast<unsigned int>(j);
+        if(image[j_][i_]>threshold){
 					double x=0;
 					double y=0;
-					vpPixelMeterConversion::convertPoint(cam,i,j,x,y);
+          vpPixelMeterConversion::convertPoint(cam,i_,j_,x,y);
 
 					double xval=1.;
 					double yval=1.;
