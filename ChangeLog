@@ -10,6 +10,7 @@ ViSP 2.6.2 (under development)
   - New features
      - Introduction of new functionalities in vpIoTools to parse text 
        config files
+     - Introduction of YARP to ViSP image converters in vpImageConvert
   - Improvements
      - Remove warning detected with Visual C++ /Wall flag
      - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and  
@@ -19,6 +20,7 @@ ViSP 2.6.2 (under development)
        build in debug (libvisp-2d.lib and libvisp-2d.dll). Install stage
        copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll 
        in $CMAKE_INSTALL_PREFIX/bin.
+     - Use OpenMP to optimize the execution of the moments computation
   - Examples:
     - New example plot3d.cpp to show how to plot 3D curves
   - Bug fixed
@@ -37,7 +39,8 @@ ViSP 2.6.2 (under development)
      - [13690] Memory leaks in NURBS tracker
      - [13843] In vpPolygon, isInside() may produce a segfault and getArea()
                or getCenter() give bad results
-     - [13850] visp-config.bat produces a non compatible msvc 2010 output format			   
+     - [13850] visp-config.bat produces a non compatible msvc 2010 output 
+	       format			   
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
