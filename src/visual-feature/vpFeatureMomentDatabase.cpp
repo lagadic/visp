@@ -47,11 +47,11 @@
 
 /*!
   Add a moment and it's corresponding name to the database
-  \param FeatureMoment : database for moment features
+  \param featureMoment : database for moment features
   \param name : the feature's name, usually the string naming it's class. Each name must be unique
 */
-void vpFeatureMomentDatabase::add(vpFeatureMoment& FeatureMoment,char* name){
-    FeatureMoments.insert(std::pair<const char*,vpFeatureMoment*>((const char*)name,&FeatureMoment));
+void vpFeatureMomentDatabase::add(vpFeatureMoment& featureMoment,char* name){
+    featureMomentsDataBase.insert(std::pair<const char*,vpFeatureMoment*>((const char*)name,&featureMoment));
 }
 
 /*!
@@ -62,9 +62,9 @@ void vpFeatureMomentDatabase::add(vpFeatureMoment& FeatureMoment,char* name){
   \return the moment feature corresponding to the type string
 */
 vpFeatureMoment& vpFeatureMomentDatabase::get(const char* type, bool& found){
-  std::map<const char*,vpFeatureMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator it = FeatureMoments.find(type);
+  std::map<const char*,vpFeatureMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator it = featureMomentsDataBase.find(type);
 
-    found = (it!=FeatureMoments.end());
+    found = (it!=featureMomentsDataBase.end());
     return *(it->second);
 }
 
@@ -78,16 +78,16 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C){
   std::map<const char*,vpFeatureMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment*> values;
-  values.reserve(FeatureMoments.size());
-  for(itr = FeatureMoments.begin(); itr != FeatureMoments.end(); itr++){
+  values.reserve(featureMomentsDataBase.size());
+  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
 	values.push_back((*itr).second);
   }
   #pragma omp parallel for shared(A,B,C)
-  for(int i=0;i<values.size();i++){
+  for(int i=0;i<(int)values.size();i++){
 	values[i]->update(A,B,C);
   }
 #else
-	for(itr = FeatureMoments.begin(); itr != FeatureMoments.end(); itr++){
+  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
 		(*itr).second->update(A,B,C);
 	}
 #endif
@@ -98,7 +98,7 @@ std::ostream & operator<<(std::ostream & os, const vpFeatureMomentDatabase& m){
     std::map<const char*,vpMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
     os << "{";
 
-    for(itr = m.FeatureMoments.begin(); itr != m.FeatureMoments.end(); itr++){
+    for(itr = m.featureMoments.begin(); itr != m.featureMoments.end(); itr++){
         os << (*itr).first << ": [" << *((*itr).second) << "],";
     }
     os << "}";

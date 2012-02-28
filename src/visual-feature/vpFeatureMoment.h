@@ -147,7 +147,7 @@ protected:
   vpMoment* moment;
   vpMoment& getMoment(){return *moment;}
   vpMomentDatabase& moments;
-  vpFeatureMomentDatabase* featureMoments;
+  vpFeatureMomentDatabase* featureMomentsDataBase;
   std::vector<vpMatrix> interaction_matrices;
 
   double A;
@@ -161,13 +161,13 @@ public:
   \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
   \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
   \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param FeatureMoments : Feature database
+  \param featureMoments : Feature database
   \param nbmatrices : If you want to create a new vpFeatureMoment implementation, your feature will often have a matrix size of n lines. You can specify the number of lines by this parameter.
   */
-  vpFeatureMoment(vpMomentDatabase& moments,double A=0.0, double B=0.0, double C=0.0,vpFeatureMomentDatabase* FeatureMoments=NULL,unsigned int nbmatrices=1) :
+  vpFeatureMoment(vpMomentDatabase& moments,double A=0.0, double B=0.0, double C=0.0,vpFeatureMomentDatabase* featureMoments=NULL,unsigned int nbmatrices=1) :
       moment(NULL),
         moments(moments),
-        featureMoments(FeatureMoments),
+        featureMomentsDataBase(featureMoments),
         interaction_matrices(nbmatrices),
         A(A),B(B),C(C) {}
       virtual ~vpFeatureMoment();
@@ -219,7 +219,7 @@ Duplication is mostly used internally in ViSP.
 */
 class VISP_EXPORT vpMomentGenericFeature : public vpFeatureMoment{
 public:
-  vpMomentGenericFeature(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments, vpMoment* moment) : vpFeatureMoment(moments,A,B,C,FeatureMoments){this->moment = moment;}
+  vpMomentGenericFeature(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments, vpMoment* moment) : vpFeatureMoment(moments,A,B,C,featureMoments){this->moment = moment;}
   /*!
   No specific moment name.
   */

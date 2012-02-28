@@ -151,10 +151,10 @@ class VISP_EXPORT vpFeatureMomentGravityCenter: public vpFeatureMoment{
         \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param FeatureMoments : Feature database.
+        \param featureMoments : Feature database.
         */
-        vpFeatureMomentGravityCenter(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments=NULL) :
-            vpFeatureMoment(moments,A,B,C,FeatureMoments,2)
+        vpFeatureMomentGravityCenter(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL) :
+            vpFeatureMoment(moments,A,B,C,featureMoments,2)
         {}
         void compute_interaction();
         /*!
@@ -212,10 +212,10 @@ class VISP_EXPORT vpFeatureMomentGravityCenter: public vpFeatureMoment{
         \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param FeatureMoments : Feature database.
+        \param featureMoments : Feature database.
         */
-        vpFeatureMomentGravityCenter(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* FeatureMoments=NULL) :
-            vpFeatureMoment(moments,A,B,C,FeatureMoments,2)
+        vpFeatureMomentGravityCenter(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL) :
+            vpFeatureMoment(moments,A,B,C,featureMoments,2)
         {}
         void compute_interaction();
         /*!
