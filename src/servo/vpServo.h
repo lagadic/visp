@@ -214,7 +214,7 @@ public:
   void set_fJe(vpMatrix &_fJe) { fJe = _fJe ; init_fJe = true ; }
 
 
-  //! set the type of the interaction matrox (current, mean, desired, user)
+  //! Set the type of the interaction matrix (current, mean, desired, user).
   void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
 				const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
 
@@ -254,12 +254,12 @@ public:
   bool testUpdated() ;
 
 
-  //! add a secondary task
+  //! Add a secondary task.
   vpColVector secondaryTask(vpColVector &de2dt) ;
-  //! add a secondary task
+  //! Add a secondary task.
   vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
 
-  //! get the task dimension
+  //! Get the task dimension.
   unsigned int getDimension() ;
 
 
@@ -274,20 +274,23 @@ public:
   vpMatrix L ;
   //! Error \f$(s - s^*)\f$ between the current set of visual features
   //! \f$s\f$ and the desired set of visual features \f$s^*\f$.
+  //! This vector is updated after a call of computeError() or computeControlLaw().
   vpColVector error ;
-  //! Task Jacobian  \f$J_1 = L {^c}V_a {^a}J_e\f$
+  //! Task Jacobian  \f$J_1 = L {^c}V_a {^a}J_e\f$.
   vpMatrix J1 ;
-  //! Pseudo inverse of the Jacobian
+  //! Pseudo inverse \f${J_1}^{+}\f$ of the task Jacobian.
   vpMatrix J1p ;
 
-  //! Current state
+  //! Current state of visual features \f$s\f$.
+  //! This vector is updated after a call of computeError() or computeControlLaw().
   vpColVector s ;
-  //! Desired state
+  //! Desired state of visual features \f$s^*\f$.
+  //! This vector is updated after a call of computeError() or computeControlLaw().
   vpColVector sStar ;
 
-  //! Primary task \f$e_1 = J_1p(s-s*)\f$
+  //! Primary task \f$e_1 = {J_1}^{+}(s-s*)\f$
   vpColVector e1 ;
-  //! Task \f$e = e_1 + (I-J_1p J_1) e_2\f$
+  //! Task \f$e = e_1 + (I-{J_1}^{+} J_1) e_2\f$
   vpColVector e ;
 
 
