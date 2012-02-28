@@ -110,9 +110,9 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
   vpImage<vpRGBa> Ic; // A color image
   IplImage* Ip;
 
@@ -125,8 +125,10 @@ int main()
 
   // Release Ip header and data
   cvReleaseImage(&Ip);
-#endif
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -138,6 +140,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
   int width = src->width;
   int widthStep = src->widthStep;
   int lineStep = (flip) ? 1 : 0;
+
 
   if(nChannel == 3 && depth == 8){
     dest.resize((unsigned int)height, (unsigned int)width);
@@ -213,9 +216,9 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
   vpImage<unsigned char> Ig; // A grayscale image
   IplImage* Ip;
 
@@ -228,8 +231,10 @@ int main()
 
   // Release Ip header and data
   cvReleaseImage(&Ip);
-#endif
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -313,9 +318,9 @@ vpImageConvert::convert(const IplImage* src,
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
   vpImage<vpRGBa> Ic; // A color image
   IplImage* Ip = NULL;
 
@@ -330,8 +335,10 @@ int main()
 
   //Release Ip header and data
   cvReleaseImage(&Ip);
-#endif
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -398,9 +405,9 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#ifdef VISP_HAVE_OPENCV
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
   vpImage<unsigned char> Ig; // A greyscale image
   IplImage* Ip = NULL;
 
@@ -415,8 +422,10 @@ int main()
 
   //Release Ip header and data
   cvReleaseImage(&Ip);
-#endif
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -478,9 +487,9 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
 #include <visp/vpImageConvert.h>
 #include <visp/vpRGBa.h>
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   vpImage<vpRGBa> Ic; // A color image
   cv::Mat Ip;
 
@@ -490,30 +499,17 @@ int main()
   vpImageConvert::convert(Ip, Ic);
 
   // ...
-#endif
 }
+#else
+int main() {}
+#endif
   \endcode
 */
 void
 vpImageConvert::convert(const cv::Mat& src,
           vpImage<vpRGBa>& dest, const bool flip)
 {
-  if(src.type() == CV_8UC4){
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    vpRGBa rgbaVal;
-    for(unsigned int i=0; i<dest.getRows(); ++i)
-      for(unsigned int j=0; j<dest.getCols(); ++j){
-        cv::Vec4b tmp = src.at<cv::Vec4b>((int)i, (int)j);
-        rgbaVal.R = tmp[2];
-        rgbaVal.G = tmp[1];
-        rgbaVal.B = tmp[0];
-	rgbaVal.A = tmp[3];
-        if(flip)
-          dest[dest.getRows()-i-1][j] = rgbaVal;
-        else
-          dest[i][j] = rgbaVal;
-      }
-  }else if(src.type() == CV_8UC3){
+  if(src.type() == CV_8UC3){
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     vpRGBa rgbaVal;
     rgbaVal.A = 0;
@@ -571,9 +567,9 @@ vpImageConvert::convert(const cv::Mat& src,
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   vpImage<unsigned char> Ig; // A grayscale image
   cv::Mat Ip;
 
@@ -583,9 +579,10 @@ int main()
   vpImageConvert::convert(Ip, Ig);
 
   // ...
-#endif
 }
-
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -652,9 +649,9 @@ vpImageConvert::convert(const cv::Mat& src,
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   vpImage<unsigned char> Ig; // A greyscale image
   cv::Mat Ip;
 
@@ -666,9 +663,10 @@ int main()
   //...
   // Save the cv::Mat on the disk
   cv::imwrite("image.pgm", Ip);
-#endif
 }
-
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -707,9 +705,9 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src,
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   vpImage<unsigned char> Ig; // A greyscale image
   cv::Mat Ip;
 
@@ -721,9 +719,11 @@ int main()
   //...
   // Save the cv::Mat on the disk
   cv::imwrite("image.pgm", Ip);
-#endif
-}
 
+}
+#else
+int main() {}
+#endif
   \endcode
 */
 void
@@ -739,285 +739,6 @@ vpImageConvert::convert(const vpImage<unsigned char> & src,
 }
 
 #endif
-#endif
-
-#ifdef VISP_HAVE_YARP
-/*!
-  Convert a vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in ViSP format.
-  \param dest : Destination image in YARP format.
-  \param copyData : Set to true to copy all the image content. If false we only update the image pointer.
-
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  vpImage<unsigned char> I; // A mocochrome image
-  // Read an image on a disk
-  vpImageIo::readPGM(I, "image.pgm");
-  
-  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelMono >();
-  // Convert the vpImage\<unsigned char\> to a yarp::sig::ImageOf\<yarp::sig::PixelMono\>
-  vpImageConvert::convert(I, Iyarp);
-
-  // ...
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const vpImage<unsigned char> & src,
-	yarp::sig::ImageOf< yarp::sig::PixelMono > *dest, const bool copyData)
-{
-  if(copyData)
-  {
-    dest->resize(src.getWidth(),src.getHeight());
-    memcpy(dest->getRawImage(), src.bitmap, src.getHeight()*src.getWidth());
-  }
-  else
-    dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
-}
-
-/*!
-  Convert a yarp::sig::ImageOf\<yarp::sig::PixelMono\> to a vpImage\<unsigned char\>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in YARP format.
-  \param dest : Destination image in ViSP format.
-  \param copyData : Set to true to copy all the image content. If false we only update the image pointer.
-
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-
-#if defined(VISP_HAVE_YARP)
-  #include <yarp/sig/ImageFile.h>
-#endif
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelMono > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelMono >();
-  // Read an image on a disk
-  yarp::sig::file::read(*Iyarp, "image.pgm");
-  
-  // Convert the yarp::sig::ImageOf<yarp::sig::PixelMono> to a vpImage<unsigned char>
-  vpImage<unsigned char> I;
-  vpImageConvert::convert(Iyarp, I);
-
-  // ...
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelMono > *src,
-	vpImage<unsigned char> & dest,const bool copyData )
-{
-  dest.resize(src->height(),src->width());
-  if(copyData)
-    memcpy(dest.bitmap, src->getRawImage(), src->height()*src->width()*sizeof(yarp::sig::PixelMono));
-  else
-    dest.bitmap = src->getRawImage();
-}
-	
-/*!
-  Convert a vpImage\<vpRGBa\> to a yarp::sig::ImageOf\<yarp::sig::PixelRgba>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in ViSP format.
-  \param dest : Destination image in YARP format.
-  \param copyData : Set to true to copy all the image content. If false we only update the image pointer.
-
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpRGBa.h>
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  vpImage<vpRGBa> I; // A color image
-  // Read an image on a disk
-  vpImageIo::read(I,"image.jpg");
-  
-  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelRgba >();
-  // Convert the vpImage<vpRGBa> to a yarp::sig::ImageOf<yarp::sig::PixelRgba>
-  vpImageConvert::convert(I,Iyarp);
-
-  // ...
-#endif
-}
-  \endcode
-*/	
-void vpImageConvert::convert(const vpImage<vpRGBa> & src,
-	yarp::sig::ImageOf< yarp::sig::PixelRgba > *dest, const bool copyData)
-{
-  if(copyData){
-    dest->resize(src.getWidth(),src.getHeight());
-    memcpy(dest->getRawImage(), src.bitmap, src.getHeight()*src.getWidth()*sizeof(vpRGBa));
-  }
-  else
-    dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
-}
-
-/*!
-  Convert a yarp::sig::ImageOf\<yarp::sig::PixelRgba> to a vpImage\<vpRGBa\>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in YARP format.
-  \param dest : Destination image in ViSP format.
-  \param copyData : Set to true to copy all the image content. If false we only update the image pointer.
-  
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpRGBa.h>
-
-#if defined(VISP_HAVE_YARP)
-  #include <yarp/sig/ImageFile.h>
-#endif
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelRgba > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelRgba >();
-  // Read an image on a disk
-  yarp::sig::file::read(*Iyarp,"image.pgm");
-  
-  // Convert the yarp::sig::ImageOf<yarp::sig::PixelRgba> to a vpImage<vpRGBa>
-  vpImage<vpRGBa> I;
-  vpImageConvert::convert(Iyarp,I);
-
-  // ...
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgba > *src,
-	vpImage<vpRGBa> & dest,const bool copyData)
-{
-  dest.resize(src->height(),src->width());
-  if(copyData)
-    memcpy(dest.bitmap, src->getRawImage(),src->height()*src->width()*sizeof(yarp::sig::PixelRgba));
-  else
-    dest.bitmap = (vpRGBa*)src->getRawImage();
-}
-
-/*!
-  Convert a vpImage\<vpRGBa\> to a yarp::sig::ImageOf\<yarp::sig::PixelRgb>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in ViSP format.
-  \param dest : Destination image in YARP format.
-
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpRGBa.h>
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  vpImage<vpRGBa> I; // A color image
-  // Read an image on a disk
-  vpImageIo::read(I,"image.jpg");
-  
-  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelRgb >();
-  // Convert the vpImage<vpRGBa> to a yarp::sig::ImageOf<yarp::sig::PixelRgb>
-  vpImageConvert::convert(I,Iyarp);
-
-  // ...
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const vpImage<vpRGBa> & src,
-	yarp::sig::ImageOf< yarp::sig::PixelRgb > *dest)
-{
-  dest->resize(src.getWidth(),src.getHeight());
-  for(unsigned int i = 0 ; i < src.getRows() ; i++){
-    for(unsigned int j = 0 ; j < src.getWidth() ; j++){
-	dest->pixel(j,i).r = src[i][j].R;
-	dest->pixel(j,i).g = src[i][j].G;
-	dest->pixel(j,i).b = src[i][j].B;
-    }
-  }
-}
-
-/*!
-  Convert a yarp::sig::ImageOf\<yarp::sig::PixelRgb> to a vpImage\<vpRGBa\>
-
-  A yarp::sig::Image is a YARP image class. See http://eris.liralab.it/yarpdoc/df/d15/classyarp_1_1sig_1_1Image.html for
-  the YARP image class documentation.
-
-  \param src : Source image in YARP format.
-  \param dest : Destination image in ViSP format.
-
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpRGBa.h>
-
-#if defined(VISP_HAVE_YARP)
-  #include <yarp/sig/ImageFile.h>
-#endif
-
-int main()
-{
-#if defined(VISP_HAVE_YARP)
-  yarp::sig::ImageOf< yarp::sig::PixelRgb > *Iyarp = new yarp::sig::ImageOf< yarp::sig::PixelRgb >();
-  // Read an image on a disk
-  yarp::sig::file::read(*Iyarp,"image.pgm");
-  
-  // Convert the yarp::sig::ImageOf<yarp::sig::PixelRgb> to a vpImage<vpRGBa>
-  vpImage<vpRGBa> I;
-  vpImageConvert::convert(Iyarp,I);
-
-  // ...
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *src,
-	vpImage<vpRGBa> & dest)
-{
-  dest.resize(src->height(),src->width());
-  for(int i = 0 ; i < src->height() ; i++){
-    for(int j = 0 ; j < src->width() ; j++){
-	dest[i][j].R = src->pixel(j,i).r;
-	dest[i][j].G = src->pixel(j,i).g;
-	dest[i][j].B = src->pixel(j,i).b;
-	dest[i][j].A = 0;
-    }
-  }
-}
-
 #endif
 
 #define vpSAT(c) \

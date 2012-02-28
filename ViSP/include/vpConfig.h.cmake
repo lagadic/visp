@@ -98,9 +98,6 @@
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
 
-// Defined if YARP available.
-#cmakedefine VISP_HAVE_YARP
-
 // Defined if OpenCV available.
 #cmakedefine VISP_HAVE_OPENCV
 
@@ -265,7 +262,6 @@
 
 //Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
-
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
 // We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 

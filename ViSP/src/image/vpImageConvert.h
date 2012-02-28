@@ -59,9 +59,6 @@
 #include <highgui.h> // for opencv
 #endif
 
-#ifdef VISP_HAVE_YARP
-#include <yarp/sig/Image.h>
-#endif
 
 /*!
   \class vpImageConvert
@@ -98,24 +95,6 @@ public:
   static void convert(const vpImage<unsigned char> & src,
           cv::Mat& dest, const bool copyData = true) ;
 #endif
-#endif
-	  
-#ifdef VISP_HAVE_YARP
-  static void convert(const vpImage<unsigned char> & src,
-          yarp::sig::ImageOf< yarp::sig::PixelMono > *dest, const bool copyData = true) ;
-  static void convert(const yarp::sig::ImageOf< yarp::sig::PixelMono > *src,
-	  vpImage<unsigned char> & dest,const bool copyData = true ) ;
-	  
-	  
-  static void convert(const vpImage<vpRGBa> & src,
-          yarp::sig::ImageOf< yarp::sig::PixelRgba > *dest, const bool copyData = true) ;
-  static void convert(const yarp::sig::ImageOf< yarp::sig::PixelRgba > *src,
-	  vpImage<vpRGBa> & dest,const bool copyData = true) ;
-	  
-  static void convert(const vpImage<vpRGBa> & src,
-          yarp::sig::ImageOf< yarp::sig::PixelRgb > *dest) ;
-  static void convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *src,
-	  vpImage<vpRGBa> & dest) ;
 #endif
 
   static void split(const vpImage<vpRGBa> &src,
