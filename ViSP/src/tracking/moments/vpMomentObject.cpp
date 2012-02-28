@@ -43,9 +43,12 @@
 #include <visp/vpMomentObject.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPixelMeterConversion.h>
+#include <visp/vpConfig.h>
 #include <cmath>
 #include <limits>
-
+#ifdef VISP_HAVE_OPENMP
+#include <omp.h>
+#endif
 #include <cassert>
 
 /*!
@@ -257,8 +260,57 @@ int main()
 }
   \endcode
 */
+
 void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned char threshold, const vpCameraParameters& cam){
-  std::vector<double> cache(order*order,0.);
+#ifdef VISP_HAVE_OPENMP	
+	int th_id=0;
+	
+	#pragma omp parallel private(th_id) shared(cam,image,threshold)
+	{		
+		th_id = omp_get_thread_num();		
+		std::vector<double> curvals(order*order); 
+		curvals.assign(order*order,0.);
+		
+		#pragma omp for nowait//automatically organize loop counter between threads
+		for(int i=0;i<image.getCols();i++){
+			for(int j=0;j<image.getRows();j++){
+				if(image[j][i]>threshold){
+					double x=0;
+					double y=0;
+					vpPixelMeterConversion::convertPoint(cam,i,j,x,y);
+
+					double xval=1.;
+					double yval=1.;
+					for(register unsigned int k=0;k<order;k++){						
+						xval=1.;
+						for(register unsigned int l=0;l<order-k;l++){
+							curvals[(k*order+l)]+=(xval*yval);
+							xval*=x;
+						}
+						yval*=y;
+					}					
+				}
+			}
+		}		
+		
+		#pragma omp master //only set this variable in master thread
+		{			
+			values.assign(order*order, 0.);			
+		}
+
+		#pragma omp barrier
+		
+		for(register unsigned int k=0;k<order;k++){		
+			for(register unsigned int l=0;l<order-k;l++){
+				#pragma omp atomic
+				values[k*order+l]+= curvals[k*order+l];
+			}
+		}
+		
+	}		
+	
+#else
+	std::vector<double> cache(order*order,0.);
     values.assign(order*order,0);
     for(register unsigned int i=0;i<image.getCols();i++){
         for(register unsigned int j=0;j<image.getRows();j++){
@@ -275,7 +327,10 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
             }
         }
     }
+#endif
 }
+
+
 
 /*!
   Default constructor.
@@ -289,8 +344,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
   order 0 to 5 included will be computed.
 */
 vpMomentObject::vpMomentObject(unsigned int order) : order(order+1),type(DENSE_FULL_OBJECT){
-    values.resize((order+1)*(order+1));
-    values.assign((order+1)*(order+1),0);
+    values.resize((order+1)*(order+1)*12);
+    values.assign((order+1)*(order+1)*12,0);
 }
 
 /*!

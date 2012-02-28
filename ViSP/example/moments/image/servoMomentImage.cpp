@@ -64,8 +64,10 @@
 #include <visp/vpDebug.h>
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeaturePoint.h>
-#include <visp/vpSimulatorAfma6.h>
+#include <visp/vpRobotCamera.h>
+#include <visp/vpImageSimulator.h>
 #include <visp/vpPlane.h>
+
 
 //setup robot parameters
 void paramRobot();
@@ -131,18 +133,18 @@ vpDisplayGTK displayInt;
 vpHomogeneousMatrix cMo;
 vpHomogeneousMatrix cdMo;
 
-vpSimulatorAfma6 robot(false);//robot used in this simulation
-vpImage<vpRGBa> Iint(240,320, 0);//internal image used for interface display
+vpRobotCamera robot;//robot used in this simulation
+vpImage<vpRGBa> Iint(480,640, 0);//internal image used for interface display
 vpServo task;    //servoing task
 vpCameraParameters cam;//robot camera parameters
 double _error; //current error
 vpImageSimulator imsim;//image simulator used to simulate the perspective-projection camera
 
 //several images used in the simulation
-vpImage<unsigned char> cur_img(240,320, 0);
-vpImage<unsigned char> src_img(240,320, 0);
-vpImage<unsigned char> dst_img(240,320, 0);
-vpImage<vpRGBa> start_img(240,320, 0);
+vpImage<unsigned char> cur_img(480,640, 0);
+vpImage<unsigned char> src_img(480,640, 0);
+vpImage<unsigned char> dst_img(480,640, 0);
+vpImage<vpRGBa> start_img(480,640, 0);
 vpServo::vpServoIteractionMatrixType interaction_type; //current or desired
 //source and destination objects for moment manipulation
 vpMomentObject src(6);
@@ -176,8 +178,8 @@ void initScene(){
     X[3][1] = 0.1;
     X[3][2] = 0;
     //init source and destination images
-    vpImage<unsigned char> tmp_img(240,320,255);
-    vpImage<vpRGBa> tmp_start_img(240,320,vpRGBa(255,0,0));
+    vpImage<unsigned char> tmp_img(480,640,255);
+    vpImage<vpRGBa> tmp_start_img(480,640,vpRGBa(255,0,0));
 
     vpImageSimulator imsim_start;
     imsim_start.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
@@ -267,7 +269,7 @@ void initFeatures(){
     task.addFeature(featureMoments->getFeatureCInvariant(),featureMomentsDes->getFeatureCInvariant(),(1 << 10) | (1 << 11));
     task.addFeature(featureMoments->getFeatureAlpha(),featureMomentsDes->getFeatureAlpha());
 
-    task.setLambda(0.4) ;
+    task.setLambda(1.) ;
 }
 
 void execute(int nbIter){
@@ -279,17 +281,19 @@ void execute(int nbIter){
     vpTRACE("Display task information " ) ;
     task.print() ;
 
-    vpDisplay::display(Iint);
-    robot.getInternalView(Iint);
+    vpDisplay::display(Iint);    
     vpDisplay::flush(Iint);
     int iter=0;
     double t=0;
+	robot.setPosition(cMo);
+	float sampling_time = 0.010f; // Sampling period in seconds
+	robot.setSamplingTime(sampling_time);
     ///////////////////SIMULATION LOOP/////////////////////////////
     while(iter++<nbIter ){
         vpColVector v ;
         t = vpTime::measureTimeMs();
         //get the cMo
-        cMo = robot.get_cMo();
+        robot.getPosition(cMo);
         //setup the plane in A,B,C style
         vpPlane pl;
         double A,B,C;
@@ -310,16 +314,19 @@ void execute(int nbIter){
 
         imsim.getImage(Iint,cam);
         vpDisplay::display(Iint) ;
-        robot.getInternalView(Iint);
+        
         vpDisplay::flush(Iint);
 
         if (iter == 1)
             vpDisplay::getClick(Iint) ;
         v = task.computeControlLaw() ;
         //pilot robot using position control. The displacement is t*v with t=10ms step
-        robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
+        //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
+		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+		double t = vpTime::measureTimeMs();
+		vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
 
-        vpTime::wait(t,10);
+        //vpTime::wait(t,10);
         _error = task.error.sumSquare();
     }
 
@@ -337,25 +344,7 @@ void execute(int nbIter){
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type){interaction_type=type;}
 double error(){return _error;}
 
-void removeJointLimits(vpSimulatorAfma6& robot){
-    vpColVector limMin(6);
-    vpColVector limMax(6);
-    limMin[0] = vpMath::rad(-3600);
-    limMin[1] = vpMath::rad(-3600);
-    limMin[2] = vpMath::rad(-3600);
-    limMin[3] = vpMath::rad(-3600);
-    limMin[4] = vpMath::rad(-3600);
-    limMin[5] = vpMath::rad(-3600);
 
-    limMax[0] = vpMath::rad(3600);
-    limMax[1] = vpMath::rad(3600);
-    limMax[2] = vpMath::rad(3600);
-    limMax[3] = vpMath::rad(3600);
-    limMax[4] = vpMath::rad(3600);
-    limMax[5] = vpMath::rad(3600);
-
-    robot.setJointLimit(limMin,limMax);
-}
 
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
 	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
@@ -370,18 +359,7 @@ void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
 }
 
 void paramRobot(){
-    /*Initialise the robot and especially the camera*/
-    robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
-    robot.setCurrentViewColor(vpColor(150,150,150));
-    robot.setDesiredViewColor(vpColor(200,200,200));
-    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-    removeJointLimits(robot);
-    /*Initialise the position of the object relative to the pose of the robot's camera*/
-    robot.initialiseObjectRelativeToCamera(cMo);
-
-    /*Set the desired position (for the displaypart)*/
-    robot.setDesiredCameraPosition(cdMo);
-    robot.getCameraParameters(cam,Iint);
+	cam = vpCameraParameters(640,480,320,240);
 }
 
 #endif

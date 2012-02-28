@@ -43,6 +43,7 @@
 #include <visp/vpFeatureMoment.h>
 #include <typeinfo>
 #include <iostream>
+#include <visp/vpConfig.h>
 
 /*!
   Add a moment and it's corresponding name to the database
@@ -75,9 +76,21 @@ vpFeatureMoment& vpFeatureMomentDatabase::get(const char* type, bool& found){
 */
 void vpFeatureMomentDatabase::updateAll(double A, double B, double C){
   std::map<const char*,vpFeatureMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
-    for(itr = FeatureMoments.begin(); itr != FeatureMoments.end(); itr++){
-        (*itr).second->update(A,B,C);
-    }
+#ifdef VISP_HAVE_OPENMP
+  std::vector<vpFeatureMoment*> values;
+  values.reserve(FeatureMoments.size());
+  for(itr = FeatureMoments.begin(); itr != FeatureMoments.end(); itr++){
+	values.push_back((*itr).second);
+  }
+  #pragma omp parallel for shared(A,B,C)
+  for(int i=0;i<values.size();i++){
+	values[i]->update(A,B,C);
+  }
+#else
+	for(itr = FeatureMoments.begin(); itr != FeatureMoments.end(); itr++){
+		(*itr).second->update(A,B,C);
+	}
+#endif
 }
 
 /*
