@@ -245,10 +245,7 @@ ENDIF(WIN32)
 
 include(FindOpenMP)
 if(OPENMP_FOUND)
-    OPTION(USE_OPENMP    "Manages the frame grabbing on windows" ON)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    OPTION(USE_OPENMP    "Use OpenMP for optimization" ON)
 else(OPENMP_FOUND)
     SET(USE_OPENMP OFF)
 endif(OPENMP_FOUND)
@@ -518,6 +515,22 @@ ENDIF()
 IF(BIGENDIAN)
   LIST(APPEND VISP_DEFS "-DBIGENDIAN")
 ENDIF(BIGENDIAN)
+
+#--------------------------------------------------------------------
+# OpenMP
+#--------------------------------------------------------------------
+if(USE_OPENMP)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+else()
+  if(OpenMP_C_FLAGS)
+    string(REPLACE ${OpenMP_C_FLAGS} "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+  endif()
+  if(OpenMP_CXX_FLAGS)
+    string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+endif()
 
 #--------------------------------------------------------------------
 # LAPACK lib
