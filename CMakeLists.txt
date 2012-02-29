@@ -497,7 +497,24 @@ IF(USE_YARP)
     SET(VISP_HAVE_YARP TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_YARP_FOUND "yes")  # for ViSP-third-party.txt
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${YARP_INCLUDE_DIRS})
-    LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIBRARIES})
+    #LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIBRARIES})
+    # Work arround to add Yarp libraries and also third party libraries requested by Yarp 
+    list(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
+    foreach(lib ${YARP_LIBRARIES})
+      get_target_property(CONFIGURATION ${lib} IMPORTED_CONFIGURATIONS)
+      get_target_property(YARP_LIB ${lib} "IMPORTED_LOCATION_${CONFIGURATION}") # Get Yarp full absolute library path and name
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIB}) # Append full absolute library path and name
+      # Get 3rd party libraries requested by Yarp 
+      get_target_property(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}") 
+      LIST(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
+    endforeach()
+    # Remove Yarp libraries since they were added previously with full absolute library path and name
+    foreach(lib ${YARP_LIBRARIES})
+	LIST(REMOVE_ITEM YARP_LINK_LIBS ${lib})
+    endforeach()
+    # Add 3rd party libraries requested by Yarp  	
+    LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LINK_LIBS})
+    
     LIST(APPEND VISP_DEFS ${YARP_DEFINES})
   ELSE()
     MESSAGE(STATUS "yarp not found")
