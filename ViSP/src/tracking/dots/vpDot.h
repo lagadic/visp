@@ -61,6 +61,7 @@
 #include <math.h>
 #include <fstream>
 #include <list>
+#include <vector>
 
 /*!
   \class vpDot
@@ -163,14 +164,18 @@ public :
   vpDot& operator =(const vpDot& d) ;
   bool operator ==(const vpDot& d);
   bool operator !=(const vpDot& d);
+  
+  void initTracking(const vpImage<unsigned char> &I) ;
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
+		    unsigned int gray_level_min, unsigned int gray_level_max);
 
-
-  /*!
-    Initialize the dot coordinates with \e cog. 
-  */
-  inline void setCog(const vpImagePoint &cog) {
-    this->cog = cog; 
-  }
+  void track(const vpImage<unsigned char> & I) ;
+  void track(const vpImage<unsigned char> & I, vpImagePoint &ip) ;
+  
+  void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
+               unsigned int thickness=1);
+  
   /*!
 
     Activates the dot's moments computation.
@@ -186,10 +191,11 @@ public :
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
+  
   /*!
     Set the type of connexity: 4 or 8.
   */
-  void setConnexity(vpConnexityType connexity) {this->connexity = connexity; };
+  void setConnexity(vpConnexityType connexityType) {this->connexityType = connexityType; };
   void setMaxDotSize(double percentage) ;
   void setGrayLevelMin( const unsigned int &gray_level_min ) {
     this->gray_level_min = gray_level_min;
@@ -210,24 +216,6 @@ public :
     off the display
   */
   void setGraphics(const bool activate) { graphics = activate ; }
-
-  /*!
-    Writes the dot center of gravity coordinates in the frame (i,j) (For more details 
-    about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
-    and returns a reference to the stream. 
-  */
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d) {
-    return (os << "(" << d.getCog() << ")" ) ;
-  } ;
-
-
-  void initTracking(vpImage<unsigned char> &I) ;
-  void initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip);
-  void initTracking(vpImage<unsigned char> &I, const vpImagePoint &ip,
-		    unsigned int gray_level_min, unsigned int gray_level_max);
-
-  void track(vpImage<unsigned char> & I) ;
-  void track(vpImage<unsigned char> & I, vpImagePoint &ip) ;
 
   /*!
 
@@ -254,18 +242,47 @@ public :
   inline vpImagePoint getCog() const {
     return cog;
   }
+  
+  /*!
+      Return the list of all the image points on the border of the dot.
+      
+      \warning Doesn't return the image points inside the dot anymore. To get those points see getConnexities().
+  */
+  inline std::list<vpImagePoint> getEdges() {
+    return this->ip_edges_list;
+  };
 
   /*!
 
     Return the list of all the image points inside the dot.
 
+    \return The list of all the images points in the dot.
+    This list is updated after a call to track().
+
+  */
+  inline std::list<vpImagePoint> getConnexities() {
+    return this->ip_connexities_list;
+  };
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+
+    \deprecated This method is deprecated since the naming is not representative regarding to its funtionnality.
+    Previously it returned all the points inside the dot. To get the equivalent, use getConnexities().
+    
+    If you rather want to get the points on the dot border use getEdges(). 
+
     \param edges_list : The list of all the images points on the dot
     border. This list is update after a call to track().
 
   */
-  void getEdges(std::list<vpImagePoint> &edges_list) {
+  vp_deprecated void getEdges(std::list<vpImagePoint> &edges_list) {
     edges_list = this->ip_edges_list;
   };
+#endif
 
   inline double getGamma() {return this->gamma;};
   /*!
@@ -307,7 +324,15 @@ public :
   inline unsigned int getHeight() const {
     return (this->v_max - this->v_min + 1);
   };
-
+  
+  /*!
+    Writes the dot center of gravity coordinates in the frame (i,j) (For more details 
+    about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
+    and returns a reference to the stream. 
+  */
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d) {
+    return (os << "(" << d.getCog() << ")" ) ;
+  } ;
 
   void print(std::ostream& os) { os << *this << std::endl ; }
 
@@ -323,27 +348,32 @@ public :
     Return the list of all the image points on the dot
     border.
 
-    \param edges_list : The list of all the images points on the dot
+    \param connexities_list : The list of all the images points on the dot
     border. This list is update after a call to track().
 
   */
-  vp_deprecated void getEdges(vpList<vpImagePoint> &edges_list) {
+  vp_deprecated void getConnexities(vpList<vpImagePoint> &connexities_list) {
     // convert a vpList in a std::list
-    edges_list.kill();
+    connexities_list.kill();
     std::list<vpImagePoint>::const_iterator it;
-    for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
-      edges_list += *it;
+    for (it = ip_connexities_list.begin(); it != ip_connexities_list.end(); ++it) {
+      connexities_list += *it;
     }
   };
 #endif
 
 private:
-
   //! internal use only
+  std::list<vpImagePoint> ip_connexities_list;
+  
+  //! List of border points
   std::list<vpImagePoint> ip_edges_list;
 
-  //! Type of connexity
-  vpConnexityType connexity;
+  /*! Type of connexity
+   
+   \warning In previous version this variable was called connexity
+  */
+  vpConnexityType connexityType;
 
   //! coordinates of the point center of gravity
   vpImagePoint cog;
@@ -354,21 +384,9 @@ private:
   // Flag used to allow display
   bool graphics ;
 
-  enum pixelInDot
-    {
-      in,
-      out
-    } ;
   double maxDotSizePercentage;
   unsigned char gray_level_out;
-  void init() ;
-  void setGrayLevelOut();
-
-  int connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
-	      unsigned int gray_level_min, unsigned int gray_level_max,
-	      double &mean_value, double &u_cog, double &v_cog, double &n);
-  void COG(vpImage<unsigned char> &I,double& u, double& v) ;
-
+  
   double mean_gray_level; // Mean gray level of the dot
   unsigned int gray_level_min; // left threshold for binarisation
   unsigned int gray_level_max; // right threshold for binarisation
@@ -379,7 +397,20 @@ private:
   //! flag : true moment are computed
   bool compute_moment ;
   double nbMaxPoint;
-
+  
+  void init() ;
+  void setGrayLevelOut();
+  bool connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
+	      double &mean_value, double &u_cog, double &v_cog, double &n);
+  bool connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
+	      double &mean_value, double &u_cog, double &v_cog, double &n,std::vector<bool> &checkTab);
+  void COG(const vpImage<unsigned char> &I,double& u, double& v) ;
+  
+//Static Functions
+public:
+  static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
+		      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red, 
+		      unsigned int thickness=1);
 } ;
 
 #endif

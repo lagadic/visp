@@ -191,7 +191,7 @@ vpDot2::~vpDot2(){}
   \param color : The color used for the display.
   \param thickness : Thickness of the displayed cross located at the dot cog.
 */
-void vpDot2::display(vpImage<unsigned char>& I, vpColor color,
+void vpDot2::display(const vpImage<unsigned char>& I, vpColor color,
                      unsigned int thickness)
 {
   vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
@@ -235,7 +235,7 @@ void vpDot2::display(vpImage<unsigned char>& I, vpColor color,
   \sa track()
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
+void vpDot2::initTracking(const vpImage<unsigned char>& I, unsigned int size)
 {
   while ( vpDisplay::getClick(I, cog) != true) ;
 
@@ -296,7 +296,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,unsigned int size)
     This is the default case. To track a non ellipsoid shape use
     setEllipsoidShapePrecision(0).
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I,
+void vpDot2::initTracking(const vpImage<unsigned char>& I,
                           const vpImagePoint &ip, unsigned int size)
 {
   cog = ip ;
@@ -370,7 +370,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
   \sa track(), getCog()
 
 */
-void vpDot2::initTracking(vpImage<unsigned char>& I,
+void vpDot2::initTracking(const vpImage<unsigned char>& I,
                           const vpImagePoint &ip,
                           unsigned int gray_level_min,
                           unsigned int gray_level_max,
@@ -434,7 +434,7 @@ void vpDot2::initTracking(vpImage<unsigned char>& I,
 
 
 */
-void vpDot2::track(vpImage<unsigned char> &I)
+void vpDot2::track(const vpImage<unsigned char> &I)
 {
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
@@ -603,7 +603,7 @@ void vpDot2::track(vpImage<unsigned char> &I)
   \sa track()
 */
 void
-    vpDot2::track(vpImage<unsigned char> &I, vpImagePoint &cog)
+vpDot2::track(const vpImage<unsigned char> &I, vpImagePoint &cog)
 {
   track(I);
 
@@ -866,7 +866,7 @@ void vpDot2::setMaxSizeSearchDistancePrecision( const double & maxSizeSearchDist
 
 */
 void
-    vpDot2::setArea(vpImage<unsigned char> &I)
+vpDot2::setArea(const vpImage<unsigned char> &I)
 {
   setArea(I, 0, 0, I.getWidth(), I.getHeight());
 }
@@ -884,7 +884,7 @@ void
 
 */
 void
-    vpDot2::setArea(vpImage<unsigned char> &I,
+vpDot2::setArea(const vpImage<unsigned char> &I,
                     int u, int v,
                     unsigned int w, unsigned int h)
 {
@@ -974,7 +974,7 @@ void
   \endcode
 
 */
-vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
+vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
 {
   vpList<vpDot2>* niceDotsVector = new vpList<vpDot2>();
 
@@ -1246,7 +1246,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea( vpImage<unsigned char>& I)
   \sa searchDotsInArea(vpImage<unsigned char>& I)
 */
 vpList<vpDot2>*
-vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
+vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
                           int area_u,
                           int area_v,
                           unsigned int area_w,
@@ -1531,7 +1531,7 @@ vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
 
   \sa searchDotsInArea(vpImage<unsigned char>&, int, int, unsigned int, unsigned int, std::list<vpDot2> &)
 */
-void vpDot2::searchDotsInArea( vpImage<unsigned char>& I, std::list<vpDot2> &niceDots)
+void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I, std::list<vpDot2> &niceDots)
 {
   searchDotsInArea( I, 0, 0, I.getWidth(), I.getHeight(), niceDots);
 }
@@ -1557,7 +1557,7 @@ void vpDot2::searchDotsInArea( vpImage<unsigned char>& I, std::list<vpDot2> &nic
 
   \sa searchDotsInArea(vpImage<unsigned char>& I, std::list<vpDot2> &)
 */
-void vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
+void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
                                int area_u,
                                int area_v,
                                unsigned int area_w,
@@ -1808,7 +1808,7 @@ void vpDot2::searchDotsInArea( vpImage<unsigned char>& I,
   \param wantedDot : Wanted dot passed in.
 
 */
-bool vpDot2::isValid( vpImage<unsigned char>& I, const vpDot2& wantedDot )
+bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
 {
   double sizePrecision = wantedDot.getSizePrecision();
   double ellipsoidShapePrecision = wantedDot.getEllipsoidShapePrecision();
@@ -2027,7 +2027,7 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
   \return true if it is so, and false otherwise.
 
 */
-bool vpDot2::hasReverseLevel(vpImage<unsigned char>& I,
+bool vpDot2::hasReverseLevel(const vpImage<unsigned char>& I,
                              const unsigned int &u,
                              const unsigned int &v) const
 {
@@ -2721,7 +2721,7 @@ void vpDot2::updateFreemanPosition( unsigned int& u, unsigned int& v,
   \return true if the pixel of coordinates (posI, posJ) is in the image and
   false otherwise.
 */
-bool vpDot2::isInImage( vpImage<unsigned char> &I) const
+bool vpDot2::isInImage(const vpImage<unsigned char> &I) const
 {
   return isInImage( I, cog);
 }
@@ -2737,7 +2737,7 @@ bool vpDot2::isInImage( vpImage<unsigned char> &I) const
   \return true if the image point \e ip is in the image and false
   otherwise.
 */
-bool vpDot2::isInImage( vpImage<unsigned char> &I,
+bool vpDot2::isInImage(const vpImage<unsigned char> &I,
                         const vpImagePoint &ip) const
 {
   unsigned int height = I.getHeight();
@@ -3027,6 +3027,33 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsign
     vpDisplay::displayCircle(I,cogStar[i],4,vpColor::red,true);
   }
 	vpDisplay::flush(I);
+}
+
+/*!
+
+  Display the dot center of gravity and its list of edges.
+
+  \param I : The image used as background.
+  
+  \param cog : The center of gravity.
+  
+  \param edges_list : The list of edges;
+  
+  \param color : Color used to display the dot.
+  
+  \param thickness : Thickness of the dot.
+*/
+void vpDot2::display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
+		    const std::list<vpImagePoint> &edges_list, vpColor color, 
+		    unsigned int thickness)
+{
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
+  std::list<vpImagePoint>::const_iterator it;
+
+  for (it = edges_list.begin(); it != edges_list.end(); ++it)
+  {
+    vpDisplay::displayPoint(I, *it, color);
+  }
 }
 
 
