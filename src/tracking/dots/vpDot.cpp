@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Fabien Spindler
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -52,6 +53,7 @@
 
 // exception handling
 #include <visp/vpTrackingException.h>
+#include <vector>
 
 /*
   \class vpDot
@@ -59,12 +61,12 @@
 */
 
 /* spiral size for the dot search */
-const unsigned int vpDot::SPIRAL_SEARCH_SIZE = 50;
+const unsigned int vpDot::SPIRAL_SEARCH_SIZE = 350;
 
 /*!
 
   Initialize the tracker with default parameters.
-  - connexity is set to 4 (see setConnexity())
+  - connexityType is set to 4 (see setConnexityType())
   - dot maximal size is set to 25% of the image size (see setMaxDotSize())
 */
 void vpDot::init()
@@ -84,7 +86,7 @@ void vpDot::init()
 
   m00 = m11 = m02 = m20 = m10 = m01 = mu11 = mu02 = mu20 = 0 ;
 
-  connexity = CONNEXITY_4;
+  connexityType = CONNEXITY_4;
 
   u_min = u_max = v_min = v_max = 0;
 
@@ -126,7 +128,7 @@ vpDot::vpDot(const vpDot& d)  : vpTracker()
 vpDot::~vpDot()
 {
 
-  ip_edges_list.clear() ;
+  ip_connexities_list.clear() ;
 }
 
 /*!
@@ -221,33 +223,56 @@ vpDot::setGrayLevelOut()
 
   \sa setGrayLevelOut()
 */
-int
-vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
-	       unsigned int gray_level_min, unsigned int gray_level_max,
+
+bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
 	       double &mean_value, double &u_cog, double &v_cog, double &n)
+{
+  std::vector<bool> checkTab(I.getWidth()*I.getHeight(),false);
+  return connexe(I,u,v,mean_value,u_cog,v_cog,n,checkTab);
+}
+/*!
+  Perform the tracking of a dot by connex components.
+
+  \param mean_value : Threshold to use for the next call to track()
+  and corresponding to the mean value of the dot intensity.
+
+  \warning The content of the image is modified thanks to
+  setGrayLevelOut() called before. This method choose a gray level
+  (default is 0) used to modify the "in" dot level in "out" dot
+  level. This gray level is here needed to stop the recursivity . The
+  pixels of the dot are set to this new gray level "\out\".
+
+  \return vpDot::out if an error occurs, vpDot::in otherwise.
+
+  \sa setGrayLevelOut()
+*/
+
+bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
+	       double &mean_value, double &u_cog, double &v_cog, double &n,std::vector<bool> &checkTab)
 {
 
   unsigned int width = I.getWidth();
   unsigned int height= I.getHeight();
 
   // Test if we are in the image
-  if ( /*(u < 0) || (v < 0) ||*/ (u >= width) || (v >= height) ) {
-    return  vpDot::out ;
+  if ( (u >= width) || (v >= height) )
+  {
+    //std::cout << "out of bound" << std::endl;
+    return false;
   }
+  
+  if(checkTab[u + v*I.getWidth()])
+    return true;
+  
+  vpImagePoint ip;
+  ip.set_u(u);
+  ip.set_v(v);	
+  
   if (I[v][u] >= gray_level_min && I[v][u] <= gray_level_max)
   {
-    vpImagePoint ip;
-    ip.set_u(u);
-    ip.set_v(v);
+    checkTab[v*I.getWidth() + u] = true;
 
-    if (graphics==true)
-    {
-      //      printf("u %d v %d\n", u, v);
-      vpDisplay::displayPoint(I, ip, vpColor::green) ;
-      //vpDisplay::flush(I);
-    }
-
-    ip_edges_list.push_back(ip);
+    ip_connexities_list.push_back(ip);
 
     u_cog += u ;
     v_cog += v ;
@@ -269,13 +294,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
     if (u > this->u_max) this->u_max = u;
     if (v < this->v_min) this->v_min = v;
     if (v > this->v_max) this->v_max = v;
-//     if (graphics==true)
-//     {
-//       vpRect r(this->u_min, this->v_min,
-// 	       this->u_max - this->u_min + 1,
-// 	       this->v_max - this->v_min + 1);
-//       vpDisplay::displayRectangle(I, r, vpColor::white) ;
-//     }
+    
     // Mean value of the dot intensities
     mean_value = (mean_value *(n-1) + I[v][u]) / n;
     if (compute_moment==true)
@@ -287,71 +306,68 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
       m20 += u*u ;
       m02 += v*v ;
     }
-    I[v][u] = this->gray_level_out ;
   }
   else
   {
-    return vpDot::out ;
+    //std::cout << "not in" << std::endl;
+    return false;
   }
-  //  if ( u-1 >= 0)
-  {
-    if (I[v][u-1] >= gray_level_min && I[v][u-1] <= gray_level_max)
-      connexe(I,u-1,v, gray_level_min, gray_level_max, mean_value,
-	      u_cog,v_cog, n) ;
-  }
-
-  if (u+1 < width)
-  {
-    if (I[v][u+1] >= gray_level_min && I[v][u+1] <= gray_level_max)
-      connexe(I,u+1,v,gray_level_min, gray_level_max, mean_value,
-	      u_cog, v_cog, n) ;
-  }
-  //if  (v-1 >= 0)
-  {
-    if (I[v-1][u] >=gray_level_min && I[v-1][u] <= gray_level_max)
-      connexe(I,u, v-1,gray_level_min, gray_level_max, mean_value,
-	      u_cog, v_cog, n) ;
-  }
-  if  (v+1 < height)
-  {
-    if (I[v+1][u] >=gray_level_min && I[v+1][u] <= gray_level_max)
-      connexe(I,u,v+1,gray_level_min, gray_level_max, mean_value,
-	      u_cog, v_cog, n) ;
-  }
-
-  if (connexity == CONNEXITY_8) {
-    //if ( (u-1 >= 0) && (v-1 >= 0) )
+  
+  bool edge = false;
+  
+  if((int)u-1 >= 0)
+    if(!checkTab[u-1 + v*I.getWidth()])
+      if(!connexe(I,u-1,v, mean_value,u_cog,v_cog, n, checkTab))
+	edge = true;
+  
+  if(u+1 < I.getWidth())
+    if(!checkTab[u+1+v*I.getWidth()])
+      if(!connexe(I,u+1,v,mean_value,u_cog, v_cog, n, checkTab))
+	edge = true;
+      
+  if((int)v-1 >= 0)
+    if(!checkTab[u+(v-1)*I.getWidth()])
+      if(!connexe(I,u, v-1,mean_value,u_cog, v_cog, n, checkTab))
+	edge = true;
+      
+  if(v+1 < I.getHeight())
+    if(!checkTab[u+(v+1)*I.getWidth()])
+      if(!connexe(I,u,v+1,mean_value,u_cog, v_cog, n, checkTab))
+	edge = true;
+  
+  if (connexityType == CONNEXITY_8) {
+      if((int)v-1 >= 0 && (int)u-1 >= 0) 
+	if(!checkTab[u-1+(v-1)*I.getWidth()])
+	  if(!connexe(I,u-1,v-1,mean_value,u_cog, v_cog, n, checkTab))
+	    edge = true;
+	  
+      if((int)v-1 >= 0 && u+1 < I.getWidth())
+	if(!checkTab[u+1+(v-1)*I.getWidth()])
+	  if(!connexe(I,u+1,v-1,mean_value,u_cog, v_cog, n, checkTab))
+	    edge = true;
+	  
+      if(v+1 < I.getHeight() && (int)u-1 >= 0)
+	if(!checkTab[u-1+(v+1)*I.getWidth()])
+	  if(!connexe(I,u-1,v+1,mean_value, u_cog, v_cog, n, checkTab))
+	    edge = true;
+	  
+      if(v+1 < I.getHeight() && u+1 < I.getWidth())
+	if(!checkTab[u+1+(v+1)*I.getWidth()])
+	  if(!connexe(I,u+1,v+1,mean_value,u_cog, v_cog, n, checkTab))
+	    edge = true;
+   }
+  
+  if(edge){
+    ip_edges_list.push_back(ip);
+    if (graphics==true)
     {
-
-      if (I[v-1][u-1] >=gray_level_min && I[v-1][u-1] <= gray_level_max)
-	connexe(I,u-1,v-1,gray_level_min, gray_level_max, mean_value,
-		u_cog, v_cog, n) ;
-    }
-
-    if ( (u+1 < width) /*&& (v-1 >= 0 ) */)
-    {
-
-      if (I[v-1][u+1] >=gray_level_min && I[v-1][u+1] <= gray_level_max)
-	connexe(I,u+1,v-1,gray_level_min, gray_level_max, mean_value,
-		u_cog, v_cog, n) ;
-    }
-      if  ( (v+1 < height) /*&& (u-1 >= 0)*/ )
-    {
-
-      if (I[v+1][u-1] >=gray_level_min && I[v+1][u-1] <= gray_level_max)
-	connexe(I,u-1,v+1,gray_level_min, gray_level_max, mean_value,
-		u_cog, v_cog, n) ;
-    }
-    if  ( (v+1 < height) && (u+1 < width) )
-    {
-
-      if (I[v+1][u+1] >=gray_level_min && I[v+1][u+1] <= gray_level_max)
-	connexe(I,u+1,v+1,gray_level_min, gray_level_max, mean_value,
-		u_cog, v_cog, n) ;
+      //      printf("u %d v %d\n", u, v);
+      vpDisplay::displayPoint(I, ip, vpColor::red) ;
+      //vpDisplay::flush(I);
     }
   }
   
-  return vpDot::in ;
+  return true;
 }
 
 /*!
@@ -374,7 +390,7 @@ vpDot::connexe(vpImage<unsigned char>& I, unsigned int u, unsigned int v,
   \sa connexe()
 */
 void
-vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
+vpDot::COG(const vpImage<unsigned char> &I, double& u, double& v)
 {
   // Set the maximal number of points considering the maximal dot size
   // image percentage
@@ -390,8 +406,9 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   double npoint = 0 ;
   this->mean_gray_level = 0 ;
 
-  ip_edges_list.clear() ;
-
+  ip_connexities_list.clear() ;
+  ip_edges_list.clear();
+  
   // Initialise the boundig box
   this->u_min = I.getWidth();
   this->u_max = 0;
@@ -413,7 +430,7 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
 	{
 	  u_cog = 0 ;
 	  v_cog = 0 ;
-    ip_edges_list.clear() ;
+    ip_connexities_list.clear() ;
 	 
 	  this->mean_gray_level = 0 ;
 	  if (connexe(I, (unsigned int)(u+k*pas),(unsigned int)(v+l*pas),
@@ -433,11 +450,10 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 #else
   // If the dot is not found, search around using a spiral
-  if (  connexe(I,(unsigned int)u,(unsigned int)v,
-		gray_level_min, gray_level_max,
-		mean_gray_level, u_cog, v_cog, npoint) == vpDot::out)
+  if (  !connexe(I,(unsigned int)u,(unsigned int)v, mean_gray_level, u_cog, v_cog, npoint) )
   {
-
+    
+    std::cout << "enter spiral" << std::endl;
     bool sol = false ;
 
     unsigned int right = 1;
@@ -452,12 +468,11 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= right; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-  ip_edges_list.clear() ;
+	ip_connexities_list.clear() ;
+	ip_edges_list.clear();
 	
 	this->mean_gray_level = 0 ;
-	if (connexe(I, (unsigned int)u_+k, (unsigned int)(v_),
-		    gray_level_min, gray_level_max, mean_gray_level,
-		    u_cog, v_cog, npoint) != vpDot::out) {
+	if ( connexe(I, (unsigned int)u_+k, (unsigned int)(v_),mean_gray_level, u_cog, v_cog, npoint) ) {
 	  sol = true; u = u_+k; v = v_;
 	}
       }
@@ -467,14 +482,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= botom; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-  ip_edges_list.clear() ;
+	ip_connexities_list.clear() ;
+	ip_edges_list.clear();
 	
 	this->mean_gray_level = 0 ;
 	
-	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_+k),
-		    gray_level_min, gray_level_max, mean_gray_level,
-		    u_cog, v_cog, npoint)
-	    != vpDot::out) {
+	if ( connexe(I, (unsigned int)(u_), (unsigned int)(v_+k),mean_gray_level, u_cog, v_cog, npoint) ) {
 	  sol = true; u = u_; v = v_+k;
 	}
       }
@@ -484,14 +497,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= left; k++) if (sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-  ip_edges_list.clear() ;
+	ip_connexities_list.clear() ;
+	ip_edges_list.clear();
 	
 	this->mean_gray_level = 0 ;
 
-	if (connexe(I, (unsigned int)(u_-k), (unsigned int)(v_),
-		    gray_level_min,  gray_level_max, mean_gray_level,
-		    u_cog, v_cog, npoint)
-	    != vpDot::out) {
+	if ( connexe(I, (unsigned int)(u_-k), (unsigned int)(v_),mean_gray_level,u_cog, v_cog, npoint) ) {
 	  sol = true ; u = u_-k; v = v_;
 	}
       }
@@ -501,14 +512,12 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
       for (k=1; k <= up; k++) if(sol==false) {
 	u_cog = 0 ;
 	v_cog = 0 ;
-  ip_edges_list.clear() ;
+	ip_connexities_list.clear() ;
+	ip_edges_list.clear();
 	
 	this->mean_gray_level = 0 ;
 
-	if (connexe(I, (unsigned int)(u_), (unsigned int)(v_-k),
-		    gray_level_min, gray_level_max, mean_gray_level,
-		    u_cog, v_cog, npoint)
-	    != vpDot::out) {
+	if ( connexe(I, (unsigned int)(u_), (unsigned int)(v_-k),mean_gray_level,u_cog, v_cog, npoint) ) {
 	  sol = true ; u = u_; v = v_-k;
 	}
       }
@@ -524,15 +533,16 @@ vpDot::COG(vpImage<unsigned char> &I, double& u, double& v)
   }
 
 #endif
+/*
   vpImagePoint ip;
   unsigned int i, j;
   std::list<vpImagePoint>::iterator it;
-  for (it = ip_edges_list.begin(); it != ip_edges_list.end(); it ++) {
+  for (it = ip_connexities_list.begin(); it != ip_connexities_list.end(); it ++) {
     ip = *it;
     i = (unsigned int) ip.get_i();
     j = (unsigned int) ip.get_j();
     I[i][j] = 255 ;
-  }
+  }*/
 
   u_cog = u_cog/npoint ;
   v_cog = v_cog/npoint ;
@@ -626,7 +636,7 @@ vpDot::setMaxDotSize(double percentage)
   \sa track(), getCog()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I)
+vpDot::initTracking(const vpImage<unsigned char>& I)
 {
   while (vpDisplay::getClick(I, cog) != true) ;
 
@@ -681,7 +691,7 @@ vpDot::initTracking(vpImage<unsigned char>& I)
   \sa track()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip)
+vpDot::initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip)
 {
 
   cog = ip ;
@@ -740,7 +750,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip)
   \sa track(), getCog()
 */
 void
-vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
+vpDot::initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
 		    unsigned int gray_level_min, unsigned int gray_level_max)
 {
 
@@ -775,7 +785,7 @@ vpDot::initTracking(vpImage<unsigned char>& I, const vpImagePoint &ip,
   \sa getCog()
 */
 void
-vpDot::track(vpImage<unsigned char> &I)
+vpDot::track(const vpImage<unsigned char> &I)
 {
   try{
     setGrayLevelOut();
@@ -816,11 +826,30 @@ vpDot::track(vpImage<unsigned char> &I)
   \param cog [out] : Sub pixel coordinate of the tracked dot.
 */
 void
-vpDot::track(vpImage<unsigned char> &I, vpImagePoint &cog)
+vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &cog)
 {
   track( I ) ;
 
   cog = this->cog;
+}
+
+/*!
+  Display in overlay the dot edges and center of gravity.
+
+  \param I : Image.
+  \param color : The color used for the display.
+  \param thickness : Thickness of the displayed cross located at the dot cog.
+*/
+void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
+                     unsigned int thickness)
+{
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
+  std::list<vpImagePoint>::const_iterator it;
+
+  for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it)
+  {
+    vpDisplay::displayPoint(I, *it, color);
+  }
 }
 
 /*!
@@ -854,6 +883,33 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
   else
   {
     this->grayLevelPrecision = grayLevelPrecision;
+  }
+}
+
+/*!
+
+  Display the dot center of gravity and its list of edges.
+
+  \param I : The image used as background.
+  
+  \param cog : The center of gravity.
+  
+  \param edges_list : The list of edges;
+  
+  \param color : Color used to display the dot.
+  
+  \param thickness : Thickness of the dot.
+*/
+void vpDot::display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
+		    const std::list<vpImagePoint> &edges_list, vpColor color, 
+		    unsigned int thickness)
+{
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
+  std::list<vpImagePoint>::const_iterator it;
+
+  for (it = edges_list.begin(); it != edges_list.end(); ++it)
+  {
+    vpDisplay::displayPoint(I, *it, color);
   }
 }
 
