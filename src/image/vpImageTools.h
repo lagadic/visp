@@ -549,7 +549,7 @@ template<class Type>
 void vpImageTools::flip(vpImage<Type> &I)
 {
     unsigned int height = 0, width = 0;
-    int i = 0;
+    unsigned int i = 0;
     vpImage<Type> Ibuf;
 
     height = I.getHeight();
