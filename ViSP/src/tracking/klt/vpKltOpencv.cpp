@@ -548,7 +548,7 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
   {
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
-    vpDisplay::displayCross(I, ip, 10, color,thickness) ;
+    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
   }
 }
 
@@ -577,7 +577,7 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
   {
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
-    vpDisplay::displayCross(I, ip, 10, color) ;
+    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
     
     char id[10];
     sprintf(id, "%ld", featuresid_list[i]);
