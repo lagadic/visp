@@ -492,7 +492,7 @@ INCLUDE(CheckLibraryExists)
 # yarp lib
 #--------------------------------------------------------------------
 # default initialisation
-SET(VISP_HAVE_YARP "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_YARP_FOUND "no")  # for ViSP-third-party.txt
 
 IF(USE_YARP)
   IF(YARP_FOUND)
@@ -586,10 +586,10 @@ ENDIF(BIGENDIAN)
 # OpenMP
 #--------------------------------------------------------------------
 if(USE_OPENMP)
-  set(VISP_FLAGS "${OpenMP_CXX_FLAGS}")
+  set(VISP_OPENMP_FLAGS "${OpenMP_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 else()
-  set(VISP_FLAGS "")
+  set(VISP_OPENMP_FLAGS "")
   if(OpenMP_CXX_FLAGS)
     string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   endif()
