@@ -58,7 +58,7 @@ IF (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_CFLAGS
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_FLAGS})
+  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_OPENMP_FLAGS})
   LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "${VISP_DEFS}")
   LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I$PREFIX/include")
 
@@ -206,6 +206,15 @@ ELSE(UNIX)
 
 #  MESSAGE(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
 
+  #---------------------------------------------------------------------
+  # Updates VISP_OPENMP_SUPPORT
+  #----------------------------------------------------------------------
+  IF(VISP_OPENMP_FLAGS)
+    SET(VISP_OPENMP_SUPPORT "OpenMP support: Yes")
+  ELSE()
+    SET(VISP_OPENMP_SUPPORT "OpenMP support: No")
+  ENDIF()
+  
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_LIBDIR
   #----------------------------------------------------------------------

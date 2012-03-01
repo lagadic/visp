@@ -57,6 +57,8 @@ set DEFS=${VISP_CONFIG_SCRIPT_DEFS}
 
 set INCLUDE=${VISP_CONFIG_SCRIPT_INC}
 
+set OPENMP_SUPPORT=${VISP_OPENMP_SUPPORT}
+
 set LIBDIR=${VISP_CONFIG_SCRIPT_LIBDIR}
 
 set LIBS_DEBUG=${VISP_CONFIG_SCRIPT_LIBS_DEBUG}
@@ -83,6 +85,10 @@ for %%a in (%*) do (
   )
   if "%%a" == "--include" (
 	echo %INCLUDE%
+	goto END
+  )
+  if "%%a" == "--openmp" (
+	echo %OPENMP_SUPPORT%
 	goto END
   )
   if "%%a" == "--libpath" (
@@ -114,12 +120,13 @@ for %%a in (%*) do (
 echo ViSP %VERSION% (Visual Servoing Platform)
 echo Copyright (C) 1998-2010 Inria. All rights reserved.
 echo.
-echo Usage: %0 [--prefix] [--def] [--include] [--libpath] 
+echo Usage: %0 [--prefix] [--def] [--include] [--openmp] [--libpath] 
 echo [--libs-debug] [--libs-optimized] [--version] [--dumpversion] [--help]
 echo.
 echo  --prefix          Show ViSP installation prefix.
 echo  --def             Print pre-processor definitions.
 echo  --include         Print include directories.
+echo  --openmp          Indicates if OpenMP support has to be turned on/off.
 echo  --libpath         Print library directories.
 echo  --libs-debug      Print library dependencies for debug configuration.
 echo  --libs-optimized  Print library dependencies for optimized configuration.

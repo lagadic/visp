@@ -39,7 +39,7 @@
 #############################################################################
 
 # Add extra build flags to be able to consider especially for OpenMP
-list(APPEND CMAKE_CXX_FLAGS "@VISP_FLAGS@")
+list(APPEND CMAKE_CXX_FLAGS "@VISP_OPENMP_FLAGS@")
 # Remove duplicates compilation flags
 separate_arguments(CMAKE_CXX_FLAGS)
 list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
