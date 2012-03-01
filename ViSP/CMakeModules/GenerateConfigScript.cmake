@@ -58,7 +58,8 @@ IF (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_CFLAGS
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_DEFS}")
+  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_FLAGS})
+  LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "${VISP_DEFS}")
   LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I$PREFIX/include")
 
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIRS})

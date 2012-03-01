@@ -245,7 +245,7 @@ ENDIF(WIN32)
 
 include(FindOpenMP)
 if(OPENMP_FOUND)
-    OPTION(USE_OPENMP    "Use OpenMP for optimization" ON)
+    OPTION(USE_OPENMP    "Add C++ compiler flags for OpenMP parallization" ON)
 else(OPENMP_FOUND)
     SET(USE_OPENMP OFF)
 endif(OPENMP_FOUND)
@@ -567,17 +567,19 @@ ENDIF(BIGENDIAN)
 # OpenMP
 #--------------------------------------------------------------------
 if(USE_OPENMP)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(VISP_FLAGS "${OpenMP_CXX_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-  #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 else()
-  if(OpenMP_C_FLAGS)
-    string(REPLACE ${OpenMP_C_FLAGS} "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-  endif()
+  set(VISP_FLAGS "")
   if(OpenMP_CXX_FLAGS)
     string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   endif()
 endif()
+# Remove duplicates compilation flags
+separate_arguments(CMAKE_CXX_FLAGS)
+list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" FORCE)
 
 #--------------------------------------------------------------------
 # LAPACK lib
@@ -1712,12 +1714,8 @@ CONFIGURE_FILE(
   ${VISP_BINARY_DIR}/VISPUse.cmake
   IMMEDIATE @ONLY)
 
-# Export our build settings and library dependencies for use by the third party
+# Export our library dependencies for use by the third party
 # user projects
-INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
-CMAKE_EXPORT_BUILD_SETTINGS(
-  ${VISP_BINARY_DIR}/VISPBuildSettings.cmake
-  )
 EXPORT_LIBRARY_DEPENDENCIES(
   ${VISP_BINARY_DIR}/VISPLibraryDepends.cmake
   )
