@@ -203,6 +203,7 @@ class VISP_EXPORT vpKltOpencv
 	       vpColor color = vpColor::red);
 
   //Seters
+  
   /* Should be used only before initTracking */
   void setMaxFeatures(const int input);
 
@@ -271,6 +272,14 @@ class VISP_EXPORT vpKltOpencv
 
   //! Get the list of lost feature
   bool *getListOfLostFeature() const { return lostDuringTrack; }
+  //! Get the list of features
+  CvPoint2D32f* getFeatures() const {return features;}
+  //! Get the list of features id
+  long* getFeaturesId() const {return featuresid;}
+  //! Get the list of features
+  CvPoint2D32f* getPrevFeatures() const {return prev_features;}
+  //! Get the list of features id
+  long* getPrevFeaturesId() const {return prev_featuresid;}
   //! Get the current number of features
   int getNbFeatures() const { return countFeatures; }
   //! Get the previous number of features
@@ -282,6 +291,17 @@ class VISP_EXPORT vpKltOpencv
   void getPrevFeature(int index, int &id, float &x, float &y) const;
   void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
+  
+//Static Functions
+public: 
+  static void display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
+		      const int &nbFeatures, vpColor color = vpColor::green, 
+		      unsigned int thickness=1);
+  
+  static void display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
+		      const long *featuresid_list, const int &nbFeatures, 
+		      vpColor color = vpColor::green, unsigned int thickness=1);
+  
 };
 
 #endif

@@ -1102,14 +1102,7 @@ vpMeNurbs::track(const vpImage<unsigned char> &I)
 void
 vpMeNurbs::display(const vpImage<unsigned char>&I, vpColor col)
 {
-  double u = 0.0;
-  vpImagePoint pt;
-  while (u <= 1)
-  {
-    pt = nurbs.computeCurvePoint(u);
-    vpDisplay::displayCross(I,pt,4,col);
-    u+=0.01;
-  }
+  vpMeNurbs::display(I,nurbs,col);
 }
 
 
@@ -1340,5 +1333,27 @@ vpMeNurbs::farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint&
 	  && iP.get_j() < width - 20 
 	  && iP.get_i() > 20 
 	  && iP.get_j() > 20);
+}
+
+/*!
+
+  Display of of a moving nurbs
+  
+  \param I : The image used as background.
+
+  \param n : Nurbs to display
+  
+  \param color : Color used to display the nurbs.
+*/
+void vpMeNurbs::display(const vpImage<unsigned char>& I, vpNurbs &n, vpColor color)
+{
+  double u = 0.0;
+  vpImagePoint pt;
+  while (u <= 1)
+  {
+    pt = n.computeCurvePoint(u);
+    vpDisplay::displayCross(I,pt,4,color);
+    u+=0.01;
+  }
 }
 

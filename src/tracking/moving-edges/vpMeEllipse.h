@@ -135,19 +135,6 @@ int main()
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:
-  /*! Parameters of the ellipse to define the set of points that satisfy the implicit equation :
-   \f[ i^2 + K_0j^2 + 2K_1ij + 2K_2i + 2K_3j + K4 = 0 \f]
-  */
-  vpColVector K ;
-  //! The coordinates of the ellipse center.
-  vpImagePoint iPc;
-  //! \f$ a \f$ is the semiminor axis of the ellipse.
-  double a;
-  //! \f$ b \f$ is the semimajor axis of the ellipse.
-  double b;
-  //! \f$ e \f$ is the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$.
-  double e;
-
   vpMeEllipse() ;
   vpMeEllipse(const vpMeEllipse &meellipse) ;
   virtual ~vpMeEllipse() ;
@@ -248,27 +235,80 @@ public:
   */
   inline double get_mu20() const {return mu20;}
   
-    /*!
-      Set the new threshold for the robust estimation of the parameters of the
-      ellipse equation.
-      If the weight of a point is below this threshold, this one is removed from
-      the list of tracked meSite.
-      Value must be between 0 (never rejected) and 1 (always rejected).
+  /*!
+    Gets the center of the ellipse.
+  */
+  inline vpImagePoint getCenter() const {return iPc; }
+  
+  /*!
+    Gets the semiminor axis of the ellipse.
+  */
+  inline double getA() const {return a; }
+  
+  /*!
+    Gets the semimajor axis of the ellipse.
+  */
+  inline double getB() const {return b; }
+  
+  /*!
+    Gets the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$
+  */
+  inline double getE() const {return e; }
+  
+  /*!
+    Gets the equation parameters of the ellipse
+  */
+  void getEquationParam(double &A, double &B, double &E) { A = a; B = b; E = e; }
+  
+  /*!
+    Gets the smallest \f$ alpha \f$ angle
+  */
+  inline double getSmallestAngle() { return alpha1; }
+  
+  /*!
+    Gets the highest \f$ alpha \f$ angle
+  */
+  inline double getHighestAngle() { return alpha2; }
+  
+	/*!
+		Set the new threshold for the robust estimation of the parameters of the
+		ellipse equation.
+		If the weight of a point is below this threshold, this one is removed from
+		the list of tracked meSite.
+		Value must be between 0 (never rejected) and 1 (always rejected).
 
-      \param threshold : The new value of the threshold.
-    */
-    void setThresholdRobust(const double threshold){
-      if(threshold<0){
-        thresholdWeight = 0;
-      }else if(threshold>1){
-        thresholdWeight = 1;
-      }else{
-        thresholdWeight = threshold;
-      }
-    }
+		\param threshold : The new value of the threshold.
+	*/
+	void setThresholdRobust(const double threshold){
+		if(threshold<0){
+			thresholdWeight = 0;
+		}else if(threshold>1){
+			thresholdWeight = 1;
+		}else{
+			thresholdWeight = threshold;
+		}
+	}
 
 
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+#else
+protected:
+#endif
+  /*! Parameters of the ellipse to define the set of points that satisfy the implicit equation :
+   \f[ i^2 + K_0j^2 + 2K_1ij + 2K_2i + 2K_3j + K4 = 0 \f]
+  */
+  vpColVector K ;
+  //! The coordinates of the ellipse center.
+  vpImagePoint iPc;
+  //! \f$ a \f$ is the semiminor axis of the ellipse.
+  double a;
+  //! \f$ b \f$ is the semimajor axis of the ellipse.
+  double b;
+  //! \f$ e \f$ is the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$.
+  double e;
+	
 protected:
   //! The coordinates of the point corresponding to the smallest \f$ alpha \f$ angle. More things about the \f$ alpha \f$ are given at the beginning of the class description.
   vpImagePoint iP1;
@@ -320,6 +360,13 @@ private:
 		    int ip2, int jp2, double &alpha2) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
+
+//Static Function
+public:	
+  static void display(const vpImage<unsigned char>& I, const vpImagePoint &center,
+		      const double &A, const double &B, const double &E,
+		      const double & smallalpha, const double &highalpha,
+		      vpColor color = vpColor::green);
 
 };
 

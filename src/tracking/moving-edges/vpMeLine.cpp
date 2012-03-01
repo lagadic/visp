@@ -228,62 +228,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
 void
 vpMeLine::display(const vpImage<unsigned char>&I, vpColor col)
 {
-  vpImagePoint ip;
-
-  for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-    vpMeSite pix = *it;
-    ip.set_i( pix.ifloat );
-    ip.set_j( pix.jfloat );
-
-
-    if (pix.suppress==3)
-      vpDisplay::displayCross(I, ip, 5, vpColor::green);
-    else
-      vpDisplay::displayCross(I, ip, 5, col);
-
-    //vpDisplay::flush(I);
-  }
-
-  vpImagePoint ip1, ip2;
-
-  if (fabs(a) < fabs(b)) {
-    double i1, j1, i2, j2;
-    i1 = 0;
-    j1 = (-a*i1 -c) / b;
-    i2 = I.getHeight() - 1.0;
-    j2 = (-a*i2 -c) / b;
-
-    ip1.set_i( i1 );
-    ip1.set_j( j1 );
-    ip2.set_i( i2 );
-    ip2.set_j( j2 );
-    vpDisplay::displayLine(I, ip1, ip2, col);
-    //vpDisplay::flush(I);
-
-  }
-  else {
-    double i1, j1, i2, j2;
-    j1 = 0;
-    i1 = -(b * j1 + c) / a;
-    j2 = I.getWidth() - 1.0;
-    i2 = -(b * j2 + c) / a;
-
-    ip1.set_i( i1 );
-    ip1.set_j( j1 );
-    ip2.set_i( i2 );
-    ip2.set_j( j2 );
-    vpDisplay::displayLine(I, ip1, ip2, col);
-    //vpDisplay::flush(I);
-  }
-
-  ip1.set_i( PExt[0].ifloat );
-  ip1.set_j( PExt[0].jfloat );
-  vpDisplay::displayCross(I, ip1, 10, vpColor::green);
-
-  ip1.set_i( PExt[1].ifloat );
-  ip1.set_j( PExt[1].jfloat );
-  vpDisplay::displayCross(I, ip1, 10, vpColor::green);
-  //vpDisplay::flush(I) ;
+  vpMeLine::display(I,PExt[0],PExt[1],list,a,b,c,col);
 }
 
 
@@ -1175,5 +1120,152 @@ vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2,
   {
     return (false);
   }
+}
+
+/*!
+  Display of a moving line thanks to its equation parameters and its extremities
+  
+  \param I : The image used as background.
+
+  \param PExt1 : First extrimity
+  
+  \param PExt2 : Second extrimity
+  
+  \param A : Parameter a of the line equation a*i + b*j + c = 0
+  
+  \param B : Parameter b of the line equation a*i + b*j + c = 0
+  
+  \param C : Parameter c of the line equation a*i + b*j + c = 0
+  
+  \param color : Color used to display the line.
+  
+  \param thickness : Thickness of the line.
+*/
+void vpMeLine::display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
+		    const double &A, const double &B, const double &C,
+		    vpColor color,  unsigned int thickness)
+{
+  vpImagePoint ip1, ip2;
+
+  if (fabs(A) < fabs(B)) {
+    double i1, j1, i2, j2;
+    i1 = 0;
+    j1 = (-A*i1 -C) / B;
+    i2 = I.getHeight() - 1.0;
+    j2 = (-A*i2 -C) / B;
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, color);
+    //vpDisplay::flush(I);
+
+  }
+  else {
+    double i1, j1, i2, j2;
+    j1 = 0;
+    i1 = -(B * j1 + C) / A;
+    j2 = I.getWidth() - 1.0;
+    i2 = -(B * j2 + C) / A;
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, color);
+    //vpDisplay::flush(I);
+  }
+
+  ip1.set_i( PExt1.ifloat );
+  ip1.set_j( PExt1.jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green,thickness);
+
+  ip1.set_i( PExt2.ifloat );
+  ip1.set_j( PExt2.jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green,thickness);
+}
+
+/*!
+  Display of a moving line thanks to its equation parameters and its extremities with all the site list
+  
+  \param I : The image used as background.
+
+  \param PExt1 : First extrimity
+  
+  \param PExt2 : Second extrimity
+  
+  \param site_list : vpMeSite list
+  
+  \param A : Parameter a of the line equation a*i + b*j + c = 0
+  
+  \param B : Parameter b of the line equation a*i + b*j + c = 0
+  
+  \param C : Parameter c of the line equation a*i + b*j + c = 0
+  
+  \param color : Color used to display the line.
+  
+  \param thickness : Thickness of the line.
+*/
+void vpMeLine::display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
+		    const std::list<vpMeSite> &site_list,
+		    const double &A, const double &B, const double &C,
+		    vpColor color,  unsigned int thickness)
+{
+  vpImagePoint ip;
+  
+  for(std::list<vpMeSite>::const_iterator it=site_list.begin(); it!=site_list.end(); ++it){
+    vpMeSite pix = *it;
+    ip.set_i( pix.ifloat );
+    ip.set_j( pix.jfloat );
+
+
+    if (pix.suppress==3)
+      vpDisplay::displayCross(I, ip, 5, vpColor::green,thickness);
+    else
+      vpDisplay::displayCross(I, ip, 5, color,thickness);
+
+    //vpDisplay::flush(I);
+  }
+  
+  vpImagePoint ip1, ip2;
+
+  if (fabs(A) < fabs(B)) {
+    double i1, j1, i2, j2;
+    i1 = 0;
+    j1 = (-A*i1 -C) / B;
+    i2 = I.getHeight() - 1.0;
+    j2 = (-A*i2 -C) / B;
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, color);
+    //vpDisplay::flush(I);
+
+  }
+  else {
+    double i1, j1, i2, j2;
+    j1 = 0;
+    i1 = -(B * j1 + C) / A;
+    j2 = I.getWidth() - 1.0;
+    i2 = -(B * j2 + C) / A;
+
+    ip1.set_i( i1 );
+    ip1.set_j( j1 );
+    ip2.set_i( i2 );
+    ip2.set_j( j2 );
+    vpDisplay::displayLine(I, ip1, ip2, color);
+    //vpDisplay::flush(I);
+  }
+
+  ip1.set_i( PExt1.ifloat );
+  ip1.set_j( PExt1.jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green,thickness);
+
+  ip1.set_i( PExt2.ifloat );
+  ip1.set_j( PExt2.jfloat );
+  vpDisplay::displayCross(I, ip1, 10, vpColor::green,thickness);
 }
 

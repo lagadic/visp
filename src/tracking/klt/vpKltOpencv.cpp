@@ -79,14 +79,12 @@ void vpKltOpencv::clean()
 void vpKltOpencv::cleanAll()
 {
   clean();
-
   if (features) cvFree(&features);
   if (prev_features) cvFree(&prev_features);
   if (status) cvFree(&status);
   if (lostDuringTrack) cvFree(&lostDuringTrack);
   if (featuresid) cvFree(&featuresid);
   if (prev_featuresid) cvFree(&prev_featuresid);
-
   features = 0;
   prev_features = 0;
   status = 0;
@@ -261,7 +259,6 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
 vpKltOpencv::~vpKltOpencv()
 {
   cleanAll();
-
 }
 
 /*!
@@ -288,8 +285,6 @@ void vpKltOpencv::setMaxFeatures(const int input) {
   lostDuringTrack = (bool*)cvAlloc((unsigned int)maxFeatures*sizeof(bool));
   featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
   prev_featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
-
-  
 }
 
 void vpKltOpencv::initTracking(const IplImage *I, const IplImage *masque)
@@ -401,7 +396,6 @@ void vpKltOpencv::track(const IplImage *I)
 
   if (countFeatures <= 0) return;
 
-
   cvCalcOpticalFlowPyrLK( prev_image, image, prev_pyramid, pyramid,
 			  prev_features, features, countFeatures,
 			  cvSize(win_size, win_size), pyramid_level,
@@ -448,18 +442,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
       throw(vpException(vpException::memoryAllocationError," Memory problem"));
     }
 
-  vpImagePoint ip;
-  for (int i = 0 ; i < countFeatures ; i++)
-    {
-      ip.set_u( vpMath::round(features[i].x ) );
-      ip.set_v( vpMath::round(features[i].y ) );
-      vpDisplay::displayCross(I, ip, 10, color) ;
-      char id[10];
-      sprintf(id, "%ld", featuresid[i]);
-      
-      ip.set_u( vpMath::round( features[i].x + 5 ) );
-      vpDisplay::displayCharString(I, ip, id, vpColor::red);
-    }
+  vpKltOpencv::display(I,features,featuresid,countFeatures,color);  
 }
 
 /*!
@@ -540,6 +523,66 @@ void vpKltOpencv::suppressFeature(int index)
   for (int i=index ; i < countFeatures; i ++) {
     features[i] = features[i+1];
     featuresid[i] = featuresid[i+1];
+  }
+}
+
+/*!
+
+  Display of vpKLTOpenCV features list
+  
+  \param I : The image used as background.
+
+  \param features_list : List of features
+  
+  \param nbFeatures : Number of features
+  
+  \param color : Color used to display the points.
+  
+  \param thickness : Thickness of the points.
+*/
+void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
+		    const int &nbFeatures, vpColor color, unsigned int thickness)
+{
+  vpImagePoint ip;
+  for (int i = 0 ; i < nbFeatures ; i++)
+  {
+    ip.set_u( vpMath::round(features_list[i].x ) );
+    ip.set_v( vpMath::round(features_list[i].y ) );
+    vpDisplay::displayCross(I, ip, 10, color,thickness) ;
+  }
+}
+
+/*!
+
+  Display of vpKLTOpenCV features list with ids
+  
+  \param I : The image used as background.
+
+  \param features_list : List of features
+  
+  \param featuresid_list : List of ids corresponding to the features list
+  
+  \param nbFeatures : Number of features
+  
+  \param color : Color used to display the points.
+  
+  \param thickness : Thickness of the points
+*/
+void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
+		    const long *featuresid_list, const int &nbFeatures, 
+		    vpColor color, unsigned int thickness)
+{
+  vpImagePoint ip;
+  for (int i = 0 ; i < nbFeatures ; i++)
+  {
+    ip.set_u( vpMath::round(features_list[i].x ) );
+    ip.set_v( vpMath::round(features_list[i].y ) );
+    vpDisplay::displayCross(I, ip, 10, color) ;
+    
+    char id[10];
+    sprintf(id, "%ld", featuresid_list[i]);
+    ip.set_u( vpMath::round( features_list[i].x + 5 ) );
+    vpDisplay::displayCharString(I, ip, id, color);
   }
 }
 #endif

@@ -128,11 +128,15 @@ int main()
 
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
 {
-  public:
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+	public:
+	#else
+	private:
+	#endif
     //! The Nurbs which represents the tracked edge.
     vpNurbs nurbs;
     
-  private:
+	private:
     //! Size of the nurbs
     double dist;
     //! Number of control points used to compute the Nurbs.
@@ -196,6 +200,11 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     void supressNearPoints();
     void localReSample(const vpImage<unsigned char> &I);
     
+    /*!
+      Gets the nurbs;
+    */
+    inline vpNurbs getNurbs() const {return nurbs; }
+    
     void display(const vpImage<unsigned char>& I, vpColor col) ;
     
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -219,6 +228,9 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     void computeFreemanParameters( unsigned int element, vpImagePoint &diP);
     
     bool farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint& iP);
+    
+public:
+  static void display(const vpImage<unsigned char>& I, vpNurbs &n, vpColor color = vpColor::green);
 };
 
 #endif

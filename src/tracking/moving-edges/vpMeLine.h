@@ -161,12 +161,18 @@ protected:
 
   //! Flag to specify wether the intensity of the image at the middle point is used to compute the sign of rho or not.
   bool _useIntensityForRho;
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+#else
+protected:
+#endif
+
+  double a; //!< Parameter a of the line equation a*i + b*j + c = 0
+  double b; //!< Parameter b of the line equation a*i + b*j + c = 0
+  double c; //!< Parameter c of the line equation a*i + b*j + c = 0
 
 public:
-  double a; //!< Parameter a of the line equation a*i + b*j + c = 0
-  double b; //!< Parameter a of the line equation a*i + b*j + c = 0
-  double c; //!< Parameter a of the line equation a*i + b*j + c = 0
-
   vpMeLine() ;
   vpMeLine(const vpMeLine &meline);
   virtual ~vpMeLine() ;
@@ -192,6 +198,26 @@ public:
   double getRho() const ;
   double getTheta() const ;
   void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) ;
+  
+  /*!
+    Gets the equation parameters of the line
+  */
+  void getEquationParam(double &A, double &B, double &C) { A = a; B = b; C = c; }
+  
+  /*!
+    Gets parameter a of the line equation a*i + b*j + c = 0
+  */
+  inline double getA() const {return a; }
+  
+  /*!
+    Gets parameter b of the line equation a*i + b*j + c = 0
+  */
+  inline double getB() const {return b; }
+  
+  /*!
+    Gets parameter c of the line equation a*i + b*j + c = 0
+  */
+  inline double getC() const {return c; }
 
   static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
 			   vpImagePoint &ip); 
@@ -208,6 +234,17 @@ public:
   inline void computeRhoSignFromIntensity(const bool useIntensityForRho){
     _useIntensityForRho = useIntensityForRho;
   }
+
+//Static Functions
+public: 
+  static void display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
+		      const double &A, const double &B, const double &C,
+		      vpColor color = vpColor::green,  unsigned int thickness=1);
+  
+  static void display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
+		      const std::list<vpMeSite> &site_list,
+		      const double &A, const double &B, const double &C,
+		      vpColor color = vpColor::green,  unsigned int thickness=1);
  
 };
 
