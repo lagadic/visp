@@ -38,10 +38,13 @@
 #
 #############################################################################
 
-INCLUDE(${CMAKE_ROOT}/Modules/CMakeImportBuildSettings.cmake)
-
-# Import ViSP's build settings:
-CMAKE_IMPORT_BUILD_SETTINGS(${VISP_BUILD_SETTINGS_FILE})
+# Add extra build flags to be able to consider especially for OpenMP
+list(APPEND CMAKE_CXX_FLAGS "@VISP_FLAGS@")
+# Remove duplicates compilation flags
+separate_arguments(CMAKE_CXX_FLAGS)
+list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" FORCE)
 
 # Tell the compiler where to find ViSP's header files
 # and the third party headers we depend on
