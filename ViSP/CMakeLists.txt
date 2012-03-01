@@ -488,6 +488,9 @@ INCLUDE(CheckLibraryExists)
 #--------------------------------------------------------------------
 # yarp lib
 #--------------------------------------------------------------------
+#--------------------------------------------------------------------
+# yarp lib
+#--------------------------------------------------------------------
 # default initialisation
 SET(VISP_HAVE_YARP "no")  # for ViSP-third-party.txt
 
@@ -497,21 +500,37 @@ IF(USE_YARP)
     SET(VISP_HAVE_YARP TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_YARP_FOUND "yes")  # for ViSP-third-party.txt
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${YARP_INCLUDE_DIRS})
-    #LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIBRARIES})
-    # Work arround to add Yarp libraries and also third party libraries requested by Yarp 
-    list(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
-    foreach(lib ${YARP_LIBRARIES})
-      get_target_property(CONFIGURATION ${lib} IMPORTED_CONFIGURATIONS)
-      get_target_property(YARP_LIB ${lib} "IMPORTED_LOCATION_${CONFIGURATION}") # Get Yarp full absolute library path and name
-      LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIB}) # Append full absolute library path and name
-      # Get 3rd party libraries requested by Yarp 
-      get_target_property(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}") 
-      LIST(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
-    endforeach()
-    # Remove Yarp libraries since they were added previously with full absolute library path and name
-    foreach(lib ${YARP_LIBRARIES})
-	LIST(REMOVE_ITEM YARP_LINK_LIBS ${lib})
-    endforeach()
+    
+	# Work arround to add Yarp libraries and also third party libraries requested by Yarp 
+    LIST(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
+    FOREACH(lib ${YARP_LIBRARIES})
+ 	  #MESSAGE("lib: ${lib}")
+      GET_TARGET_PROPERTY(CONFIGURATIONS ${lib} IMPORTED_CONFIGURATIONS)
+	  FOREACH(CONFIGURATION ${CONFIGURATIONS})		
+		GET_TARGET_PROPERTY(YARP_LIB ${lib} "IMPORTED_LOCATION_${CONFIGURATION}") # Get Yarp full absolute library path and name
+		
+	    IF(WIN32)
+		  #Work around when YARP is build as shared libraries
+		  STRING(REGEX REPLACE ".dll$" ".lib" YARP_LIB ${YARP_LIB})
+		  
+          IF(${CONFIGURATION} STREQUAL "RELEASE")
+            LIST(APPEND VISP_EXTERN_LIBRARIES optimized ${YARP_LIB}) # Append full absolute library path and name
+	      ELSEIF(${CONFIGURATION} STREQUAL "DEBUG")
+            LIST(APPEND VISP_EXTERN_LIBRARIES debug ${YARP_LIB}) # Append full absolute library path and name
+	      ENDIF()
+        ELSE()
+ 	      LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIB}) # Append full absolute library path and name
+	    ENDIF()
+        # Get 3rd party libraries requested by Yarp 
+        GET_TARGET_PROPERTY(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}") 
+        LIST(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
+      ENDFOREACH()
+    ENDFOREACH()
+    
+	# Remove Yarp libraries since they were added previously with full absolute library path and name
+    FOREACH(lib ${YARP_LIBRARIES})
+      LIST(REMOVE_ITEM YARP_LINK_LIBS ${lib})
+    ENDFOREACH()
     # Add 3rd party libraries requested by Yarp  	
     LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LINK_LIBS})
     

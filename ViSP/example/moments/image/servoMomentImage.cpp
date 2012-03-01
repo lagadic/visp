@@ -56,6 +56,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpMath.h>
