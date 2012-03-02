@@ -138,11 +138,11 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   void displayImage(const vpImage<vpRGBa> &I);
   void displayImage(const vpImage<unsigned char> &I);
   
-  void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height);
+  void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   void flushDisplay();
-  void flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height);
+  void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   void init(vpImage<unsigned char> &I,
 	    int winx=-1, int winy=-1,

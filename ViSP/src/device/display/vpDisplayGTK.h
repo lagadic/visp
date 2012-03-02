@@ -240,8 +240,8 @@ protected:
   void displayImage(const vpImage<unsigned char> &I) ;
   void displayImage(const unsigned char *I) ;
   
-  void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height);
+  void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, 
 		   const vpImagePoint &ip2,
@@ -261,7 +261,7 @@ protected:
 			unsigned int thickness=1) ;
 
   void flushDisplay() ;
-  void flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height) ;
+  void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) ;
 
   bool getClick(bool blocking=true) ;
   bool getClick(vpImagePoint &ip, bool blocking=true) ;

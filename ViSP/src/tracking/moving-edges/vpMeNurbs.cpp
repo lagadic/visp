@@ -97,7 +97,7 @@ bool outOfImage( vpImagePoint iP , int half , int rows , int cols)
 //highest convolution result. the angle is between 0 an 179.
 //The result gives the angle in RADIAN + pi/2 (to deal with the moving edeg alpha angle)
 //and the corresponding convolution result.
-void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
+void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
 	       vpMe* me, double &angle, double &convlt)
 {
   int Iheight = (int)I.getHeight();
@@ -155,7 +155,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint iP,
 //- the distantce between the point and iP is less than 4 pixels.
 //The function returns the nearest point of iP which respect the hypotheses
 //If no point is found the returned point is (-1,-1)
-vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePoint iP)
+vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePoint &iP)
 {
   double dist = 1e6;
   double dist_1 = 1e6;
@@ -1244,7 +1244,7 @@ bool vpMeNurbs::hasGoodLevel(const vpImage<unsigned char>& I,
   \return true if the image point \e iP is in the image and false
   otherwise.
 */
-bool vpMeNurbs::isInImage(const vpImage<unsigned char>& I, const vpImagePoint iP) const
+bool vpMeNurbs::isInImage(const vpImage<unsigned char>& I, const vpImagePoint &iP) const
 {
   return (iP.get_i() >= 0 
 	  && iP.get_j() >= 0

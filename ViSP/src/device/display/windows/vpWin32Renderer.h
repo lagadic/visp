@@ -84,8 +84,8 @@ class VISP_EXPORT vpWin32Renderer
   */
   virtual void setImg(const vpImage<vpRGBa>& im) =0;
   virtual void setImg(const vpImage<unsigned char>& im) =0;
-  virtual void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height ) =0;
-  virtual void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height ) =0;
+  virtual void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height ) =0;
+  virtual void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height ) =0;
 
   /*!
     Sets the pixel at (x,y).
@@ -93,7 +93,7 @@ class VISP_EXPORT vpWin32Renderer
     \param x The x coordinate of the pixel.
     \param color The color of the pixel.
   */
-  virtual void setPixel(const vpImagePoint iP, const vpColor &color) =0;
+  virtual void setPixel(const vpImagePoint &iP, const vpColor &color) =0;
 
   /*!
     Draws a line.

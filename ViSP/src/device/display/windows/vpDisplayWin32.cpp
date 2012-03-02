@@ -240,7 +240,7 @@ void vpDisplayWin32::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayWin32::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayWin32::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
 	//waits if the window is not initialized
   waitForInit();
@@ -291,7 +291,7 @@ void vpDisplayWin32::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayWin32::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayWin32::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   //waits if the window is not initialized
   waitForInit();
@@ -682,7 +682,7 @@ void vpDisplayWin32::flushDisplay()
   It's necessary to use this function to see the results of any drawing
 
 */
-void vpDisplayWin32::flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height)
+void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   //waits if the window is not initialized
   waitForInit();
