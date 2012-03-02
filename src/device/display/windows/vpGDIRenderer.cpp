@@ -155,7 +155,7 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa>& im)
   Sets the image to display.
   \param im The rgba image to display.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   //converts the image into a HBITMAP
   convertROI(im, bmp, iP, width, height);
@@ -181,7 +181,7 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char>& im)
   Sets the image to display.
   \param im The rgba image to display.
 */
-void vpGDIRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   //converts the image into a HBITMAP
   convertROI(im, bmp, iP, width, height);
@@ -294,7 +294,7 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   \param I The image to convert.
   \param hBmp The destination image.
 */
-void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vpImagePoint iP, const unsigned int width, const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   //get the image's width and height
   unsigned int w = width;
@@ -450,7 +450,7 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   \param I The image to convert.
   \param hBmp The destination image.
 */
-void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, const vpImagePoint iP, const unsigned int width, const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   //get the image's width and height
   unsigned int w = width;
@@ -584,7 +584,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 
   \return the operation succefulness
 */
-bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint iP,
+bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint &iP,
 				 unsigned int w, unsigned int h)
 {
   int w_ = static_cast<int>(w);
@@ -617,7 +617,7 @@ bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, con
   \param ip : The pixel coordinates.
   \param color : the color of the point.
 */
-void vpGDIRenderer::setPixel(const vpImagePoint iP,
+void vpGDIRenderer::setPixel(const vpImagePoint &iP,
 			     const vpColor &color)
 {
   //get the window's DC

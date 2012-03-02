@@ -480,7 +480,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   if (OpenCVinitialized)
   { 
@@ -588,7 +588,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   if (OpenCVinitialized)
   { 
@@ -715,7 +715,7 @@ void vpDisplayOpenCV::flushDisplay()
   It's necessary to use this function to see the results of any drawing.
 
 */
-void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
+void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
   if (OpenCVinitialized)
   {

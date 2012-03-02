@@ -409,8 +409,8 @@ class VISP_EXPORT vpDisplay
   */
   virtual void displayImage(const vpImage<vpRGBa> &I) =0 ;
   
-  virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height) =0 ;
-  virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height) =0 ;
+  virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
+  virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
   
   
   /*!
@@ -423,7 +423,7 @@ class VISP_EXPORT vpDisplay
     Flushes the display.
     It's necessary to use this function to see the results of any drawing.    
   */  
-  virtual void flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height) =0;
+  virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0;
 
   /* Simple interface with the mouse event */
 

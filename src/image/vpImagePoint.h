@@ -258,7 +258,7 @@ class VISP_EXPORT vpImagePoint
 
     \return the distance between the two points.
   */
-  static double distance (const vpImagePoint iP1, const vpImagePoint iP2) {
+  static double distance (const vpImagePoint &iP1, const vpImagePoint &iP2) {
     return(sqrt(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j())));}
     
   /*!

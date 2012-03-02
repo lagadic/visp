@@ -223,7 +223,7 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     bool hasGoodLevel(const vpImage<unsigned char>& I,
 			  const vpImagePoint& iP) const;
 
-    bool isInImage(const vpImage<unsigned char>& I, const vpImagePoint iP) const;
+    bool isInImage(const vpImage<unsigned char>& I, const vpImagePoint &iP) const;
     
     void computeFreemanParameters( unsigned int element, vpImagePoint &diP);
     

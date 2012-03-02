@@ -107,10 +107,10 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setImg(const vpImage<vpRGBa>& im);
   void setImg(const vpImage<unsigned char>& im);
-  void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height );
-  void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint iP, const unsigned int width, const unsigned int height );
+  void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
+  void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
 
-  void setPixel(const vpImagePoint iP, const vpColor &color);
+  void setPixel(const vpImagePoint &iP, const vpColor &color);
 
   void drawLine(const vpImagePoint &ip1, 
 		const vpImagePoint &ip2,
