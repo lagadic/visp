@@ -504,7 +504,7 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   if (GTKinitialized)
   {
@@ -593,7 +593,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   if (GTKinitialized)
   {
@@ -685,7 +685,7 @@ void vpDisplayGTK::flushDisplay()
   Flushes the display buffer.
   It's necessary to use this function to see the results of any drawing.
 */
-void vpDisplayGTK::flushDisplayROI(const vpImagePoint /*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
+void vpDisplayGTK::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
   if (GTKinitialized)
   {

@@ -1911,7 +1911,7 @@ void vpDisplayX::displayImage ( const unsigned char *I )
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   if ( Xinitialise )
   {
@@ -2063,7 +2063,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint iP, const unsigned int width, const unsigned int height )
+void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
 
   if ( Xinitialise )
@@ -2211,7 +2211,7 @@ void vpDisplayX::flushDisplay()
   \param width  : Width of the region of interest
   \param height  : Height of the region of interest
 */
-void vpDisplayX::flushDisplayROI(const vpImagePoint iP, const unsigned int width, const unsigned int height)
+void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   if ( Xinitialise )
   {
