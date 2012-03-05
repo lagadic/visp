@@ -452,8 +452,6 @@ vpDot::COG(const vpImage<unsigned char> &I, double& u, double& v)
   // If the dot is not found, search around using a spiral
   if (  !connexe(I,(unsigned int)u,(unsigned int)v, mean_gray_level, u_cog, v_cog, npoint) )
   {
-    
-    std::cout << "enter spiral" << std::endl;
     bool sol = false ;
 
     unsigned int right = 1;
