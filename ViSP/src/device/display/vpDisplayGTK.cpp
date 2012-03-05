@@ -147,7 +147,7 @@ vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
     strcpy(this->title, title) ;
   }
 
-  GTKinitialized = false ;
+  displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -184,7 +184,7 @@ vpDisplayGTK::vpDisplayGTK()
   title = new char[1] ;
   strcpy(title,"") ;
 
-  GTKinitialized = false ;
+  displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -218,7 +218,7 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
   }
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  GTKinitialized = true ;
+  displayHasBeenInitialized = true ;
 }
 
 /*!  
@@ -245,7 +245,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  GTKinitialized = true ;
+  displayHasBeenInitialized = true ;
 }
 /*!
   Initialize the display size, position and title.
@@ -380,7 +380,7 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
     this->title = new char[strlen(title) + 1] ;
     strcpy(this->title, title) ;
   }
-  GTKinitialized = true ;
+  displayHasBeenInitialized = true ;
   setTitle(title) ;
 }
 
@@ -412,7 +412,7 @@ vpDisplayGTK::setFont(const char * /* font */)
 void
 vpDisplayGTK::setTitle(const char *title)
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if (title != NULL)
       gdk_window_set_title(widget->window,(char *)title);
@@ -436,7 +436,7 @@ vpDisplayGTK::setTitle(const char *title)
 void vpDisplayGTK::setWindowPosition(int winx, int winy)
 {
 
-  if (GTKinitialized)  {
+  if (displayHasBeenInitialized)  {
     gtk_window_move(GTK_WINDOW(widget), winx, winy); 
   }
   else
@@ -462,7 +462,7 @@ void vpDisplayGTK::setWindowPosition(int winx, int winy)
 void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 {
 
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
@@ -506,7 +506,7 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 */
 void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     vpImage<unsigned char> Itemp;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
@@ -547,7 +547,7 @@ void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpIma
 void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 {
 
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
 
     /* Copie de l'image dans le pixmap fond */
@@ -595,7 +595,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 */
 void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     vpImage<vpRGBa> Itemp;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
@@ -657,7 +657,7 @@ void vpDisplayGTK::closeDisplay()
     gdk_window_destroy(widget->window);
     widget = NULL;
   }
-  GTKinitialized = false;
+  displayHasBeenInitialized = false;
 }
 
 
@@ -667,7 +667,7 @@ void vpDisplayGTK::closeDisplay()
 */
 void vpDisplayGTK::flushDisplay()
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     gdk_window_clear(widget->window);
     gdk_flush();
@@ -687,7 +687,7 @@ void vpDisplayGTK::flushDisplay()
 */
 void vpDisplayGTK::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     gdk_window_clear(widget->window);
     gdk_flush();
@@ -722,7 +722,7 @@ void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1,
 				  unsigned int w, unsigned int h,
 				  unsigned int thickness)
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     try{
       double a = ip2.get_i() - ip1.get_i() ;
@@ -786,7 +786,7 @@ void vpDisplayGTK::displayCharString ( const vpImagePoint &ip,
 				       const char *text, 
 				       const vpColor &color )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(gc, col[color.id]);
@@ -826,7 +826,7 @@ void vpDisplayGTK::displayCircle ( const vpImagePoint &center,
 				   bool fill,
 				   unsigned int thickness )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -874,7 +874,7 @@ void vpDisplayGTK::displayCross ( const vpImagePoint &ip,
 				  const vpColor &color,
 				  unsigned int thickness)
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     try{
       double i = ip.get_i();
@@ -920,7 +920,7 @@ void vpDisplayGTK::displayDotLine ( const vpImagePoint &ip1,
 				    unsigned int thickness )
 {
 
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -965,7 +965,7 @@ void vpDisplayGTK::displayLine ( const vpImagePoint &ip1,
 				 const vpColor &color, 
 				 unsigned int thickness )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -1004,7 +1004,7 @@ void vpDisplayGTK::displayLine ( const vpImagePoint &ip1,
 void vpDisplayGTK::displayPoint ( const vpImagePoint &ip,
 				  const vpColor &color )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(gc, col[color.id]);
@@ -1048,7 +1048,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -1106,7 +1106,7 @@ vpDisplayGTK::displayRectangle ( const vpImagePoint &topLeft,
 				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -1167,7 +1167,7 @@ vpDisplayGTK::displayRectangle ( const vpRect &rectangle,
 				 const vpColor &color, bool fill,
 				 unsigned int thickness )
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(gc, col[color.id]);
@@ -1232,7 +1232,7 @@ vpDisplayGTK::getClick(bool blocking)
   bool ret = false;
 
   int cpt =0;
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
 
 //    flushDisplay() ;
     GdkEvent *ev = NULL;
@@ -1283,7 +1283,7 @@ vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
 {
   bool ret = false;
 
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
 
     GdkEvent *ev = NULL;
     double u, v ;
@@ -1339,7 +1339,7 @@ vpDisplayGTK::getClick(vpImagePoint &ip,
 {
   bool ret = false;
 
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
     GdkEvent *ev = NULL;
     double u, v ;
     do {
@@ -1407,7 +1407,7 @@ vpDisplayGTK::getClickUp(vpImagePoint &ip,
 {
   bool ret = false;
 
-  if ( GTKinitialized ) {
+  if ( displayHasBeenInitialized ) {
 
     //flushDisplay() ;
     GdkEvent *ev = NULL;
@@ -1458,7 +1458,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 
   // shoudl certainly be optimized.
   // doesn't work
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
 
     GdkImage *ImageGtk;
@@ -1550,7 +1550,7 @@ vpDisplayGTK::getKeyboardEvent(bool blocking)
   bool ret = false;
 
   int cpt =0;
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
 
     GdkEvent *ev = NULL;
     do {
@@ -1604,7 +1604,7 @@ vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
   bool ret = false;
 
   int cpt =0;
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
 
     GdkEvent *ev = NULL;
     do {
@@ -1652,7 +1652,7 @@ vpDisplayGTK::getPointerMotionEvent ( vpImagePoint &ip)
 {
   bool ret = false;
 
-  if (GTKinitialized) {
+  if (displayHasBeenInitialized) {
     GdkEvent *ev = NULL;
     double u, v ;
     if ((ev = gdk_event_get())){
@@ -1688,7 +1688,7 @@ vpDisplayGTK::getPointerMotionEvent ( vpImagePoint &ip)
 bool
 vpDisplayGTK::getPointerPosition ( vpImagePoint &ip)
 {
-  if (GTKinitialized)
+  if (displayHasBeenInitialized)
   {
     int u,v;
     gdk_window_get_pointer(widget->window, &u, &v, NULL);

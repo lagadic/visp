@@ -152,9 +152,6 @@ int main()
 class VISP_EXPORT vpDisplayX: public vpDisplay
 {
 private:
-  // true if X11 display is ready to use
-  bool Xinitialise ;
-
   int num_Xdisplay ;
   Display 	*display ;
   Window   	window ;
