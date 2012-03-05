@@ -129,7 +129,6 @@ int main()
 */
 vpDisplayX::vpDisplayX ( int x, int y, const char *title )
 {
-  displayHasBeenInitialized = false ;
   windowXPosition = x ;
   windowYPosition = y ;
 
@@ -167,14 +166,13 @@ int main()
 vpDisplayX::vpDisplayX()
 {
   x_color = NULL;
-  displayHasBeenInitialized =false ;
   windowXPosition = windowYPosition = -1 ;
 
   title = NULL ;
   title = new char[1] ;
   strcpy ( title,"" ) ;
 
-  Xinitialise = false ;
+  displayHasBeenInitialized = false ;
   ximage_data_init = false;
 }
 
@@ -197,8 +195,6 @@ vpDisplayX::~vpDisplayX()
 void
 vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 {
-
-  displayHasBeenInitialized =true ;
 
   if (x_color == NULL) {
     // id_unknown = number of predefined colors
@@ -637,7 +633,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
     ximage_data_init = true;
 
   }
-  Xinitialise = true ;
+  displayHasBeenInitialized = true ;
   setTitle ( title ) ;
   XSync ( display, 1 );
 
@@ -656,8 +652,6 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 void
 vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 {
-
-  displayHasBeenInitialized =true ;
 
   XSizeHints  hints;
   windowXPosition = x ;
@@ -1102,7 +1096,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     ximage_data_init = true;
 
   }
-  Xinitialise = true ;
+  displayHasBeenInitialized = true ;
 
   XSync ( display, true );
   setTitle ( title ) ;
@@ -1121,9 +1115,6 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 void vpDisplayX::init ( unsigned int width, unsigned int height,
                         int x, int y, const char *title )
 {
-
-  displayHasBeenInitialized = true ;
-
 
   /* setup X11 ------------------------------------------------------------- */
   this->width  = width;
@@ -1584,7 +1575,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
                                        * (unsigned int)Ximage->bits_per_pixel / 8 );
     ximage_data_init = true;
   }
-  Xinitialise = true ;
+  displayHasBeenInitialized = true ;
 
   XSync ( display, true );
   setTitle ( title ) ;
@@ -1607,7 +1598,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 */
 void vpDisplayX::setFont( const char* font )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 	if (font!=NULL)
 	{
@@ -1639,7 +1630,7 @@ void vpDisplayX::setFont( const char* font )
 void
 vpDisplayX::setTitle ( const char *title )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     XStoreName ( display, window, title );
   }
@@ -1661,7 +1652,7 @@ vpDisplayX::setTitle ( const char *title )
 */
 void vpDisplayX::setWindowPosition(int winx, int winy)
 {
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
     XMoveWindow(display, window, winx, winy);
   }
   else
@@ -1686,7 +1677,7 @@ void vpDisplayX::setWindowPosition(int winx, int winy)
 void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
 {
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     switch ( screen_depth )
     {
@@ -1791,7 +1782,7 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
 void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
 {
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 
     switch ( screen_depth )
@@ -1865,7 +1856,7 @@ void vpDisplayX::displayImage ( const unsigned char *I )
 {
   unsigned char       *dst_32 = NULL;
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 
     dst_32 = ( unsigned char* ) Ximage->data;
@@ -1913,7 +1904,7 @@ void vpDisplayX::displayImage ( const unsigned char *I )
 */
 void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     switch ( screen_depth )
     {
@@ -2066,7 +2057,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
 void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 
     switch ( screen_depth )
@@ -2144,7 +2135,7 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
 */
 void vpDisplayX::closeDisplay()
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( ximage_data_init == true )
       free ( Ximage->data );
@@ -2158,7 +2149,7 @@ void vpDisplayX::closeDisplay()
     XDestroyWindow ( display, window );
     XCloseDisplay ( display );
 
-    Xinitialise = false;
+    displayHasBeenInitialized = false;
     if ( title != NULL )
     {
       delete [] title ;
@@ -2189,7 +2180,7 @@ void vpDisplayX::closeDisplay()
 */
 void vpDisplayX::flushDisplay()
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     XClearWindow ( display, window );
     //XClearArea ( display, window,0,0,100,100,0 );
@@ -2213,7 +2204,7 @@ void vpDisplayX::flushDisplay()
 */
 void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     //XClearWindow ( display, window );
     XClearArea ( display, window,iP.get_u(),iP.get_v(),width,height,0 );
@@ -2234,7 +2225,7 @@ void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int widt
 */
 void vpDisplayX::clearDisplay ( const vpColor &color )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 
     if (color.id < vpColor::id_unknown)
@@ -2275,7 +2266,7 @@ void vpDisplayX::displayArrow ( const vpImagePoint &ip1,
                                 unsigned int w, unsigned int h,
 				unsigned int thickness)
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     try
     {
@@ -2339,7 +2330,7 @@ void vpDisplayX::displayCharString ( const vpImagePoint &ip,
                                      const char *text, 
 				     const vpColor &color )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground ( display, context, x_color[color.id] );
@@ -2378,7 +2369,7 @@ void vpDisplayX::displayCircle ( const vpImagePoint &center,
 				 bool fill,
 				 unsigned int thickness )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
     if (color.id < vpColor::id_unknown)
@@ -2430,7 +2421,7 @@ void vpDisplayX::displayCross ( const vpImagePoint &ip,
 				const vpColor &color,
 				unsigned int thickness)
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     try
     {
@@ -2478,7 +2469,7 @@ void vpDisplayX::displayDotLine ( const vpImagePoint &ip1,
 				  unsigned int thickness )
 {
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -2521,7 +2512,7 @@ void vpDisplayX::displayLine ( const vpImagePoint &ip1,
                                const vpColor &color, 
 			       unsigned int thickness )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
 
@@ -2561,7 +2552,7 @@ void vpDisplayX::displayLine ( const vpImagePoint &ip1,
 void vpDisplayX::displayPoint ( const vpImagePoint &ip,
                                 const vpColor &color )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground ( display, context, x_color[color.id] );
@@ -2605,7 +2596,7 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
                                const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
     if (color.id < vpColor::id_unknown)
@@ -2661,7 +2652,7 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
                                const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
     if (color.id < vpColor::id_unknown)
@@ -2720,7 +2711,7 @@ vpDisplayX::displayRectangle ( const vpRect &rectangle,
                                const vpColor &color, bool fill,
 			       unsigned int thickness )
 {
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
     if ( thickness == 1 ) thickness = 0;
     if (color.id < vpColor::id_unknown)
@@ -2785,7 +2776,7 @@ vpDisplayX::getClick(bool blocking)
 
   bool ret = false;
 
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
@@ -2840,7 +2831,7 @@ vpDisplayX::getClick ( vpImagePoint &ip, bool blocking )
 {
 
   bool ret = false;
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -2903,7 +2894,7 @@ vpDisplayX::getClick ( vpImagePoint &ip,
 {
 
   bool ret = false;
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -2976,7 +2967,7 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
 {
 
   bool ret = false;
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
     unsigned int  modifier ;
@@ -3027,7 +3018,7 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
 void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 {
 
-  if ( Xinitialise )
+  if ( displayHasBeenInitialized )
   {
 
 
@@ -3157,7 +3148,7 @@ vpDisplayX::getKeyboardEvent(bool blocking)
 
   bool ret = false;
 
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
     // Event testing
     if(blocking){
       XMaskEvent ( display, KeyPressMask ,&event );
@@ -3207,7 +3198,7 @@ vpDisplayX::getKeyboardEvent(char *string, bool blocking)
   XComposeStatus compose_status;
   char buffer;
   
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
     // Event testing
     if(blocking){
       XMaskEvent ( display, KeyPressMask ,&event );
@@ -3250,7 +3241,7 @@ vpDisplayX::getPointerMotionEvent ( vpImagePoint &ip)
 {
 
   bool ret = false;
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;
@@ -3294,7 +3285,7 @@ vpDisplayX::getPointerPosition ( vpImagePoint &ip)
 {
 
   bool ret = false;
-  if ( Xinitialise ) {
+  if ( displayHasBeenInitialized ) {
 
     Window  rootwin, childwin ;
     int   root_x, root_y, win_x, win_y ;

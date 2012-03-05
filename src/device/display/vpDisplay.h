@@ -424,6 +424,14 @@ class VISP_EXPORT vpDisplay
     It's necessary to use this function to see the results of any drawing.    
   */  
   virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0;
+	
+	/*!
+    Check if the display has been initialised
+
+    \return 
+			True if the display has been initialised, otherwise False
+  */
+  inline bool isInitialised() { return displayHasBeenInitialized; }
 
   /* Simple interface with the mouse event */
 

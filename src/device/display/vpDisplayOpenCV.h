@@ -144,7 +144,6 @@ class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
 {
 private:
   //! true if OpenCV display is ready to use
-  bool OpenCVinitialized ;
   IplImage* background;
   int window;
   int windowXPosition ; int  windowYPosition ;

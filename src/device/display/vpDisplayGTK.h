@@ -146,7 +146,6 @@ class VISP_EXPORT vpDisplayGTK: public vpDisplay
 {
 private:
   //! true if GTK display is ready to use
-  bool GTKinitialized ;
   GtkWidget *widget;
   GdkPixmap *background;
   GdkGC *gc;

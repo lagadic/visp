@@ -178,7 +178,7 @@ vpDisplayOpenCV::vpDisplayOpenCV()
     title = NULL ;
   }
   font = NULL;
-  OpenCVinitialized = false ;
+  displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -213,7 +213,7 @@ vpDisplayOpenCV::init(vpImage<unsigned char> &I,
   }
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  OpenCVinitialized = true ;
+  displayHasBeenInitialized = true ;
 }
 
 /*!  
@@ -240,7 +240,7 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
 
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
-  OpenCVinitialized = true ;
+  displayHasBeenInitialized = true ;
 }
 
 /*!
@@ -345,7 +345,7 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
   int baseline;
   cvGetTextSize( "A", font, &fontSize, &baseline );
   fontHeight = fontSize.height + baseline;
-  OpenCVinitialized = true ;
+  displayHasBeenInitialized = true ;
 }
 
 
@@ -383,7 +383,7 @@ vpDisplayOpenCV::setTitle(const char * /* title */)
 
   vpTRACE("Not implemented");
 #if 0
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (this->title != NULL) {
       delete [] this->title ;
@@ -416,7 +416,7 @@ vpDisplayOpenCV::setTitle(const char * /* title */)
 */
 void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 {
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     this->windowXPosition = winx;
     this->windowYPosition = winy;
     cvMoveWindow( this->title, winx, winy );
@@ -441,7 +441,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
 */
 void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     vpImage<vpRGBa> Ic;
     vpImageConvert::convert(I,Ic);
@@ -482,7 +482,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 */
 void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   { 
     vpImage<unsigned char> Itemp;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
@@ -553,7 +553,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
 void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 {
 
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     /* Copie de l'image dans le pixmap fond */
 
@@ -590,7 +590,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 */
 void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   { 
     vpImage<vpRGBa> Ic;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Ic);
@@ -686,7 +686,7 @@ void vpDisplayOpenCV::closeDisplay()
     title = NULL ;
   }
 
-  OpenCVinitialized= false;
+  displayHasBeenInitialized= false;
 }
 
 
@@ -697,7 +697,7 @@ void vpDisplayOpenCV::closeDisplay()
 */
 void vpDisplayOpenCV::flushDisplay()
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     cvShowImage(title, background );
     cvWaitKey(5);
@@ -717,7 +717,7 @@ void vpDisplayOpenCV::flushDisplay()
 */
 void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned int /*width*/, const unsigned int /*height*/)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     cvShowImage(title, background );
     cvWaitKey(5);
@@ -752,7 +752,7 @@ void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1,
 				     unsigned int w, unsigned int h,
 				     unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     try{
       double a = ip2.get_i() - ip1.get_i() ;
@@ -816,7 +816,7 @@ void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
                                      const char *text, 
 				     const vpColor &color )
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown) {
       cvPutText( background, text, 
@@ -854,7 +854,7 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
 				    bool  fill ,
 				    unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
@@ -908,7 +908,7 @@ vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
                               const vpColor &color,
 			      unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     vpImagePoint top,bottom,left,right;
     top.set_i(ip.get_i()-size/2);
@@ -956,7 +956,7 @@ vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1,
 				unsigned int thickness)
 {
 
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     vpTRACE("Dot lines are not yet implemented");
     if (color.id < vpColor::id_unknown) {
@@ -998,7 +998,7 @@ vpDisplayOpenCV::displayLine(const vpImagePoint &ip1,
 			     const vpColor &color, 
 			     unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown) {
       cvLine( background, 
@@ -1034,7 +1034,7 @@ vpDisplayOpenCV::displayLine(const vpImagePoint &ip1,
 void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
                                    const vpColor &color)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     displayLine(ip,ip,color,1);
 //     if (color.id < vpColor::id_unknown) {
@@ -1093,7 +1093,7 @@ vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
                                   const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
@@ -1160,7 +1160,7 @@ vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
 				    const vpColor &color, bool fill,
 				    unsigned int thickness )
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
@@ -1227,7 +1227,7 @@ vpDisplayOpenCV::displayRectangle(const vpRect &rectangle,
                                   const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
-  if (OpenCVinitialized)
+  if (displayHasBeenInitialized)
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
@@ -1298,7 +1298,7 @@ bool
 vpDisplayOpenCV::getClick(bool blocking)
 {
   bool ret = false;
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     flushDisplay() ;
     if (blocking){
       lbuttondown = false;
@@ -1351,7 +1351,7 @@ vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
 {
   bool ret = false;
 
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     flushDisplay() ;
 
     double u, v;
@@ -1424,7 +1424,7 @@ vpDisplayOpenCV::getClick(vpImagePoint &ip,
 {
   bool ret = false;
 
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     //flushDisplay() ;
     double u, v;
     if (blocking){
@@ -1500,7 +1500,7 @@ vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
                             bool blocking)
 {
   bool ret = false;
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     //flushDisplay() ;
     double u, v;
     if (blocking){
@@ -1638,7 +1638,7 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
 {
   int key_pressed;
   int delay;
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     flushDisplay() ;
     if (blocking) 
       delay = 0;
@@ -1681,7 +1681,7 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
 {
   int key_pressed;
   int delay;
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     flushDisplay() ;
     if (blocking) 
       delay = 0;
@@ -1722,7 +1722,7 @@ vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint &ip )
 {
   bool ret = false;
 
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     //flushDisplay() ;
     double u, v;
     if (move){
@@ -1756,7 +1756,7 @@ vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint &ip )
 bool
 vpDisplayOpenCV::getPointerPosition ( vpImagePoint &ip)
 {
-  if (OpenCVinitialized) {
+  if (displayHasBeenInitialized) {
     //vpTRACE("Not implemented yet");
     bool moved = getPointerMotionEvent(ip);
     if (!moved)
