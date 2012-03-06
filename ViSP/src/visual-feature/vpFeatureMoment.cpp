@@ -95,7 +95,7 @@ int vpFeatureMoment::getDimension (unsigned int select) const{
 /*!
   Error between two moment features. The error is only computed on selected parts of the feature.
 */
-vpColVector vpFeatureMoment::error (const vpBasicFeature &s_star, unsigned int select) const{
+vpColVector vpFeatureMoment::error (const vpBasicFeature &s_star, unsigned int select){
     vpColVector e(0),stateLine(1);
 
     for(unsigned int i=0;i<dim_s;++i){

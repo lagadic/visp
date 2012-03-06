@@ -46,6 +46,7 @@
 #ifndef __FEATUREMOMENTALPHA_H__
 #define __FEATUREMOMENTALPHA_H__
 #include <visp/vpFeatureMoment.h>
+#include <visp/vpColVector.h>
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 
@@ -168,6 +169,8 @@ class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment{
           Feature name.
           */
         const char* name(){ return "vpFeatureMomentAlpha";}
+
+		vpColVector 	error (const vpBasicFeature &s_star, unsigned int select=FEATURE_ALL);
 };
 #endif
 #endif

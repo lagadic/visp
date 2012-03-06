@@ -148,5 +148,17 @@ void vpFeatureMomentAlpha::compute_interaction(){
     interaction_matrices[0][0][WZ] = -1.;
 }
 
+vpColVector vpFeatureMomentAlpha::error (const vpBasicFeature &s_star, unsigned int select){
+	vpColVector e(0) ;
+	double err = s[0] - s_star[0] ;
 
+    if (err < -M_PI) err += 2*M_PI ;
+    if (err > M_PI) err -= 2*M_PI ;
+
+	vpColVector ecv(1) ;
+    ecv[0] = err ;
+    e =  vpMatrix::stackMatrices(e,ecv) ;
+
+	return e;
+}
 #endif
