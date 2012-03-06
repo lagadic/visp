@@ -1507,8 +1507,6 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
           vpDisplay::displayPoint(I, *it, camTrajColor);
         iter++;
         iP_1 = *it;
-        //++it;
-        cpt++;
       }
     }
 
