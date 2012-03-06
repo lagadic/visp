@@ -85,6 +85,10 @@ vpPlotGraph::vpPlotGraph()
   dispUnit = false;
   dispTitle = false;
   dispLegend = false;
+
+  blockedr = false;
+  blockedz = false;
+  blocked = false;
   
   epsi = 5;
   epsj = 6;
