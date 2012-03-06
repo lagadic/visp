@@ -677,6 +677,7 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   displayObject = true;
   displayDesiredObject = true;
   displayCamera = true;
+  displayImageSimulator = true;
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -1506,9 +1507,9 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
           vpDisplay::displayPoint(I, *it, camTrajColor);
         iter++;
         iP_1 = *it;
-        ++it;
+        //++it;
+        cpt++;
       }
-
     }
 
     if (poseList.size() > nbrPtLimit)
