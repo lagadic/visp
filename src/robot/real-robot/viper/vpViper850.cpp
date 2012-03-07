@@ -84,6 +84,20 @@ const char * const vpViper850::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME
 = "/udd/fspindle/robot/Viper850/current/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf";
 #endif
 
+const char * const vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME
+#ifdef WIN32
+= "Z:/robot/Viper850/current/include/const_eMc_schunk_gripper_without_distortion_Viper850.cnf";
+#else
+= "/udd/fspindle/robot/Viper850/current/include/const_eMc_schunk_gripper_without_distortion_Viper850.cnf";
+#endif
+
+const char * const vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME
+#ifdef WIN32
+= "Z:/robot/Viper850/current/include/const_eMc_schunk_gripper_with_distortion_Viper850.cnf";
+#else
+= "/udd/fspindle/robot/Viper850/current/include/const_eMc_schunk_gripper_with_distortion_Viper850.cnf";
+#endif
+
 const char * const vpViper850::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME
 #ifdef WIN32
 = "Z:/robot/Viper850/current/include/const_eMc_generic_without_distortion_Viper850.cnf";
@@ -111,6 +125,7 @@ const char * const vpViper850::CONST_CAMERA_FILENAME
 
 const char * const vpViper850::CONST_MARLIN_F033C_CAMERA_NAME = "Marlin-F033C-12mm";
 const char * const vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME = "PTGrey-Flea2-6mm";
+const char * const vpViper850::CONST_SCHUNK_GRIPPER_CAMERA_NAME = "Schunk-Gripper-PTGrey-Flea2-6mm";
 const char * const vpViper850::CONST_GENERIC_CAMERA_NAME = "Generic-camera";
 
 const vpViper850::vpToolType vpViper850::defaultTool = vpViper850::TOOL_PTGREY_FLEA2_CAMERA;
@@ -254,6 +269,29 @@ vpViper850::init (vpViper850::vpToolType tool,
     }
     break;
   }
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA: {
+    switch(projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+         CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+    CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME);
+#endif
+      break;
+    case vpCameraParameters::perspectiveProjWithDistortion :
+#ifdef UNIX
+      snprintf(filename_eMc, FILENAME_MAX, "%s",
+         CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME);
+#else // WIN32
+      _snprintf(filename_eMc, FILENAME_MAX, "%s",
+    CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME);
+#endif
+      break;
+    }
+    break;
+  }
   case vpViper850::TOOL_GENERIC_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
@@ -317,7 +355,8 @@ vpViper850::init (vpViper850::vpToolType tool,
       break;
     }
   }
-  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA:
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:  {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
       erc[0] = vpMath::rad(0.15); // rx
@@ -545,15 +584,27 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
     break;
   }
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
-    std::cout << "Get camera parameters for camera \"" 
-	      << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl
-	      << "from the XML file: \"" 
-	      << vpViper850::CONST_CAMERA_FILENAME << "\""<< std::endl;
+    std::cout << "Get camera parameters for camera \""
+        << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl
+        << "from the XML file: \""
+        << vpViper850::CONST_CAMERA_FILENAME << "\""<< std::endl;
     parser.parse(cam,
-		 vpViper850::CONST_CAMERA_FILENAME,
-		 vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME,
-		 projModel,
-		 image_width, image_height);
+     vpViper850::CONST_CAMERA_FILENAME,
+     vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME,
+     projModel,
+     image_width, image_height);
+    break;
+  }
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA: {
+    std::cout << "Get camera parameters for camera \""
+        << vpViper850::CONST_SCHUNK_GRIPPER_CAMERA_NAME << "\"" << std::endl
+        << "from the XML file: \""
+        << vpViper850::CONST_CAMERA_FILENAME << "\""<< std::endl;
+    parser.parse(cam,
+     vpViper850::CONST_CAMERA_FILENAME,
+     vpViper850::CONST_SCHUNK_GRIPPER_CAMERA_NAME,
+     projModel,
+     image_width, image_height);
     break;
   }
   case vpViper850::TOOL_GENERIC_CAMERA: {
@@ -603,7 +654,8 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
-  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
+  case vpViper850::TOOL_PTGREY_FLEA2_CAMERA:
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" 

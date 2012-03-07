@@ -308,8 +308,9 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       setCameraParameters(vpCameraParameters(868.0, 869.0, 320, 240));
       break;
     }
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
   case vpViper850::TOOL_GENERIC_CAMERA: {
-      std::cout << "The generic camera is not handled in vpSimulatorViper850.cpp" << std::endl;
+      std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
       break;
     }
   }
@@ -367,13 +368,11 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
+  case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
   case vpViper850::TOOL_GENERIC_CAMERA: {
-      std::cout << "The generic camera is not handled in vpSimulatorViper850.cpp" << std::endl;
+      std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
       break;
     }
-  default:
-    vpERROR_TRACE ("This error should not occur!");
-    break;
   }
   return;
 }

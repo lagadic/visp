@@ -73,6 +73,8 @@ class VISP_EXPORT vpViper850: public vpViper
   static const char * const CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
   static const char * const CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+  static const char * const CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
   static const char * const CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
   static const char * const CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
   static const char * const CONST_CAMERA_FILENAME;
@@ -82,12 +84,14 @@ class VISP_EXPORT vpViper850: public vpViper
   */
   static const char * const CONST_MARLIN_F033C_CAMERA_NAME;
   static const char * const CONST_PTGREY_FLEA2_CAMERA_NAME;
+  static const char * const CONST_SCHUNK_GRIPPER_CAMERA_NAME;
   static const char * const CONST_GENERIC_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
   typedef enum {
     TOOL_MARLIN_F033C_CAMERA,   /*!< Marlin F033C camera. */
     TOOL_PTGREY_FLEA2_CAMERA,   /*!< Point Grey Flea 2 camera. */
+    TOOL_SCHUNK_GRIPPER_CAMERA, /*!< Camera attached to the Schunk gripper. */
     TOOL_GENERIC_CAMERA         /*!< A generic camera. */
   } vpToolType;
 
