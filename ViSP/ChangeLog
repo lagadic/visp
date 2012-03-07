@@ -40,7 +40,9 @@ ViSP 2.6.2 (under development)
      - [13843] In vpPolygon, isInside() may produce a segfault and getArea()
                or getCenter() give bad results
      - [13850] visp-config.bat produces a non compatible msvc 2010 output 
-	       format			   
+	       format
+     - [13955] vpBasicFeature::error() is not virtual
+     - [13963] Under Windows, vpDisplay::getClickUp() doesn't work
 	
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
