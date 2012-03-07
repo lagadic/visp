@@ -1317,7 +1317,7 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
   vpHomogeneousMatrix mov(0,0,0,0,0,0);
   changed = false;
 
-  if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
+  //if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
   
   if(!blocked) clicked = vpDisplay::getClick(I,iP,b,false);
 
@@ -1351,7 +1351,7 @@ vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
     if (!(blockedr || blockedz))
     {
       blocked = false;
-      while (vpDisplay::getClick(I,trash,b,false)) {};
+      //while (vpDisplay::getClick(I,trash,b,false)) {};
     }
   }
   
