@@ -207,27 +207,27 @@ vpFeatureSegment::error(const vpBasicFeature &s_star,  const unsigned int select
   vpColVector e(0) ;
 
   if (vpFeatureSegment::selectXc() & select ){
-	  vpColVector eXc(1) ;
-	  eXc[0] = Xc;
-      e = vpMatrix::stackMatrices(e,eXc) ;	  
+    vpColVector eXc(1) ;
+    eXc[0] = Xc-s_star[0];
+    e = vpMatrix::stackMatrices(e,eXc) ;	  
   }
 
   if (vpFeatureSegment::selectYc() & select ){
-      vpColVector eYc(1) ;
-	  eYc[0] = Yc;
-      e = vpMatrix::stackMatrices(e,eYc) ;
+    vpColVector eYc(1) ;
+    eYc[0] = Yc - s_star[1];
+    e = vpMatrix::stackMatrices(e,eYc) ;
   }
 
   if (vpFeatureSegment::selectL() & select ){
-      vpColVector eL(1) ;
-	  eL[0] = l;
-      e = vpMatrix::stackMatrices(e,eL) ;
+    vpColVector eL(1) ;
+    eL[0] = l - s_star[2];
+    e = vpMatrix::stackMatrices(e,eL) ;
   }
 
   if (vpFeatureSegment::selectAlpha() & select ){
-      vpColVector eAlpha(1) ;
-	  eAlpha[0] = alpha;
-      e = vpMatrix::stackMatrices(e,eAlpha) ;
+    vpColVector eAlpha(1) ;
+    eAlpha[0] = alpha - s_star[3];
+    e = vpMatrix::stackMatrices(e,eAlpha) ;
   }
   return e ;
 }
