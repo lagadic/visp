@@ -63,7 +63,7 @@
   Shows how to build a task with a segment visual feature.
 
 */
-int main(int argc, const char **argv)
+int main(int argc, const char ** /* argv */)
 {  
   bool opt_display = true;
   if (argc == 2)
