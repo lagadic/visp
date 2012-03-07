@@ -39,6 +39,7 @@
  *
  *****************************************************************************/
 
+#include <visp/vpConfig.h>
 #include <visp/vpMath.h>
 #include <visp/vpFeatureSegment.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -47,6 +48,7 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayX.h>
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
 #include <fstream>
@@ -61,33 +63,34 @@
   Shows how to build a task with a segment visual feature.
 
 */
-int main()
+int main(int argc, const char **argv)
 {  
-  vpCameraParameters cam(640.,480.,320.,240.);
-  vpDisplayGDI disp;
-  #if defined(VISP_HAVE_X11) && ! defined(APPLE)
-    vpDisplayX display; 
-  #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
-  #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
-  #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV display;
-  #endif
-  vpImage<unsigned char> I(480,640,0);
-  #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  disp.init(I);
-  #endif
-      
-  vpHomogeneousMatrix cMo(-.5,-.5,2.,vpMath::rad(50),vpMath::rad(60),vpMath::rad(70));
-  vpHomogeneousMatrix cdMo(0.,0.,1.,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
-  vpPoint p1_cur,p2_cur,p1_dst,p2_dst;
-  
-  p1_cur.setWorldCoordinates(.1,.1,0.);
-  p2_cur.setWorldCoordinates(.3,.2,0.);
+  bool opt_display = true;
+  if (argc == 2)
+    opt_display = false;
 
-  p1_dst.setWorldCoordinates(.1,.1,0.);
-  p2_dst.setWorldCoordinates(.3,.2,0.);
+  vpCameraParameters cam(640.,480.,320.,240.);
+#if defined(VISP_HAVE_X11)
+  vpDisplayX display;
+#elif defined VISP_HAVE_GDI
+  vpDisplayGDI display;
+#endif
+  vpImage<unsigned char> I(480,640,0);
+
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+  if (opt_display)
+    display.init(I);
+#endif
+
+  vpHomogeneousMatrix cMo(-.5, -.5, 2., vpMath::rad(50), vpMath::rad(60), vpMath::rad(70));
+  vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+  vpPoint p1_cur, p2_cur, p1_dst, p2_dst;
+  
+  p1_cur.setWorldCoordinates(.1, .1, 0.);
+  p2_cur.setWorldCoordinates(.3, .2, 0.);
+
+  p1_dst.setWorldCoordinates(.1, .1, 0.);
+  p2_dst.setWorldCoordinates(.3, .2, 0.);
   
   p1_cur.project(cMo);
   p2_cur.project(cMo);
@@ -95,8 +98,8 @@ int main()
   p1_dst.project(cdMo);
   p2_dst.project(cdMo);
   
-  vpFeatureSegment seg_cur(p2_cur,p1_cur);
-  vpFeatureSegment seg_dst(p2_dst,p1_dst);
+  vpFeatureSegment seg_cur(p2_cur, p1_cur);
+  vpFeatureSegment seg_dst(p2_dst, p1_dst);
   seg_cur.print();
   seg_dst.print();
   
@@ -108,11 +111,13 @@ int main()
 
   task.addFeature(seg_cur,seg_dst);  
   
-  #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  seg_cur.display(cam,I,vpColor::red);
-  seg_dst.display(cam,I,vpColor::green);  
-  vpDisplay::flush(I);
-  #endif
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+  if (opt_display) {
+    seg_cur.display(cam,I, vpColor::red);
+    seg_dst.display(cam,I, vpColor::green);
+    vpDisplay::flush(I);
+  }
+#endif
   
   //param robot
   vpRobotCamera robot ;
@@ -126,14 +131,15 @@ int main()
     p1_cur.project(cMo);
     p2_cur.project(cMo);
 
-	#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-    vpDisplay::display(I);
-    seg_cur.display(cam,I,vpColor::darkRed);
-    seg_cur.buildFrom(p2_cur,p1_cur);
-    seg_cur.display(cam,I,vpColor::red);
-    seg_dst.display(cam,I,vpColor::green);
-    vpDisplay::flush(I);
-    #endif
+    seg_cur.buildFrom(p2_cur, p1_cur);
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+    if (opt_display) {
+      vpDisplay::display(I);
+      seg_cur.display(cam, I, vpColor::red);
+      seg_dst.display(cam, I, vpColor::green);
+      vpDisplay::flush(I);
+    }
+#endif
 
     vpColVector v = task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
@@ -142,7 +148,11 @@ int main()
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms    
     iter+=sampling_time;
     
-  }while(task.error.sumSquare()>0.00005);
+  } while(task.error.sumSquare() > 0.00005);
   
+  // A call to kill() is requested here to destroy properly the current
+  // and desired feature lists.
+  task.kill();
+
   std::cout << "final error=" << task.error.sumSquare() << std::endl;  
 }
