@@ -127,30 +127,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_LBUTTONUP:
       {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+        window->clickXUp = GET_X_LPARAM(lParam);
+        window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button1;
+        window->clickButtonUp = vpMouseButton::button1;
         ReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
 
     case WM_MBUTTONUP:
       {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+        window->clickXUp = GET_X_LPARAM(lParam);
+        window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button2;
+        window->clickButtonUp = vpMouseButton::button2;
         ReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
 
     case WM_RBUTTONUP:
       {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+        window->clickXUp = GET_X_LPARAM(lParam);
+        window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button3;
+        window->clickButtonUp = vpMouseButton::button3;
         ReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
