@@ -182,7 +182,7 @@ main(int argc, const char ** argv)
 
   // Create a log filename to save velocities...
   std::string logdirname;
-  logdirname ="/tmp/" + username;
+  logdirname ="C://" + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {

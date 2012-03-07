@@ -93,22 +93,6 @@ int vpFeatureMoment::getDimension (unsigned int select) const{
 
 
 /*!
-  Error between two moment features. The error is only computed on selected parts of the feature.
-*/
-vpColVector vpFeatureMoment::error (const vpBasicFeature &s_star, unsigned int select){
-    vpColVector e(0),stateLine(1);
-
-    for(unsigned int i=0;i<dim_s;++i){
-        if(vpBasicFeature::FEATURE_LINE[i] & select){
-            stateLine[0] = s_star.get_s()[i]-s[i];
-            e.stackMatrices(stateLine);
-        }
-    }
-
-    return e;
-}
-
-/*!
   Outputs the content of the feature: it's corresponding selected moments.
 */
 void vpFeatureMoment::print (unsigned int select) const{

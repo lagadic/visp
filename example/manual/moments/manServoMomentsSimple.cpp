@@ -114,6 +114,7 @@ int main()
 	vpMomentCommon mdb_dst(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst)); //Init classic features
 	vpFeatureMomentCommon fmdb_dst(mdb_dst);
 
+	
 	//update+compute moment primitives from object (for destination)
 	mdb_dst.updateAll(dst);
 	//update+compute features (+interaction matrixes) from plane
@@ -133,6 +134,9 @@ int main()
 	vpFeatureMomentCInvariant::selectC4() | vpFeatureMomentCInvariant::selectC6());
 	task.addFeature(fmdb_cur.getFeatureAlpha(),fmdb_dst.getFeatureAlpha());
 
+	vpBasicFeature *al = new vpFeatureMomentAlpha(mdb_dst,0,0,1.);
+	al->init();
+	al->error(*al);
 	//param robot
 	vpRobotCamera robot ;
 	float sampling_time = 0.010f; // Sampling period in seconds
