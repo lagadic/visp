@@ -92,7 +92,7 @@ int main()
       // and desired feature lists.
       task.kill();
 
-      vpTRACE("End, call destructors...");
+      std::cout << "End, call vpServo destructors..." << std::endl;
     }
     return 0;
   }
