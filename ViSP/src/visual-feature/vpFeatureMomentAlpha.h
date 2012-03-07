@@ -161,16 +161,16 @@ class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment{
     {}
 
     void compute_interaction();
-        /*!
-          Associated moment name.
-          */
-        const char* momentName(){ return "vpMomentAlpha";}
-        /*!
-          Feature name.
-          */
-        const char* name(){ return "vpFeatureMomentAlpha";}
+    /*!
+      Associated moment name.
+      */
+    const char* momentName(){ return "vpMomentAlpha";}
+    /*!
+      Feature name.
+      */
+    const char* name(){ return "vpFeatureMomentAlpha";}
 
-		vpColVector 	error (const vpBasicFeature &s_star, unsigned int select=FEATURE_ALL);
+		vpColVector 	error (const vpBasicFeature &s_star, const unsigned int select=FEATURE_ALL);
 };
 #endif
 #endif

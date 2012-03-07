@@ -320,6 +320,7 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureMomentAreaNormalized.h
 
   visual-feature/vpFeatureLuminance.h
+  visual-feature/vpFeatureSegment.h
   visual-feature/vpGenericFeature.h
   )
 

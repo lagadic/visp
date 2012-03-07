@@ -388,6 +388,8 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureMomentCInvariant.cpp
   visual-feature/vpFeatureMomentCommon.cpp
   visual-feature/vpFeatureMomentAreaNormalized.cpp
+  
+  visual-feature/vpFeatureSegment.cpp
   )
 
 SET (SRC_ALL

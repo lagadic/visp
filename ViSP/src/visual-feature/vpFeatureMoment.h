@@ -177,7 +177,6 @@ public:
       void 	display (const vpCameraParameters &cam, vpImage< unsigned char > &I, vpColor color=vpColor::green, unsigned int thickness=1) const ;
       void 	display (const vpCameraParameters &cam, vpImage< vpRGBa > &I, vpColor color=vpColor::green, unsigned int thickness=1) const ;
 
-      virtual vpColVector 	error (const vpBasicFeature &s_star, unsigned int select=FEATURE_ALL);
       int 	getDimension (unsigned int select=FEATURE_ALL) const;
       void 	init (void);
       vpMatrix 	interaction (const unsigned int select=FEATURE_ALL);        

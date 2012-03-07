@@ -427,7 +427,7 @@ vpFeaturePointPolar::error(const vpBasicFeature &s_star,
 				 const unsigned int select)
 {
   vpColVector e(0) ;
-
+   
   try{
     if (vpFeaturePointPolar::selectRho() & select )
     {

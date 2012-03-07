@@ -46,6 +46,7 @@
 SET (SOURCE
   testFeature.cpp
   testFeatureMoment.cpp
+  testFeatureSegment.cpp
 )
 
 # rule for binary build

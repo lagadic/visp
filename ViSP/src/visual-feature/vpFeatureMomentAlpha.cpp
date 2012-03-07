@@ -148,7 +148,7 @@ void vpFeatureMomentAlpha::compute_interaction(){
     interaction_matrices[0][0][WZ] = -1.;
 }
 
-vpColVector vpFeatureMomentAlpha::error (const vpBasicFeature &s_star, unsigned int /* select */){
+vpColVector vpFeatureMomentAlpha::error (const vpBasicFeature &s_star, const unsigned int /* select */){
 	vpColVector e(0) ;
 	double err = s[0] - s_star[0] ;
 
