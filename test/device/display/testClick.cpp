@@ -414,6 +414,8 @@ main(int argc, const char ** argv)
             case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
             case vpMouseButton::button3: std::cout << "with right button.\n"; break;
           }
+          vpDisplay::getPointerPosition(I,ip);
+          std::cout << "  Pointer poisition : " << ip << std::endl;
           std::cout << "A click to exit...\n";
           vpDisplay::getClick(I) ;
         }
