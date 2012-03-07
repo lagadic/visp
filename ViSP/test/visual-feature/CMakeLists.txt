@@ -59,7 +59,7 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
   # Add test
-  ADD_TEST(${binary} ${binary})
+  ADD_TEST(${binary} ${binary} ${OPTION_TO_DESACTIVE_DISPLAY})
 
 ENDFOREACH(source)
 
