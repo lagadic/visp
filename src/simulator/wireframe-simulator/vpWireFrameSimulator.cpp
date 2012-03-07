@@ -1772,7 +1772,7 @@ vpWireFrameSimulator::navigation(vpImage<vpRGBa> &I, bool &changed)
   vpHomogeneousMatrix mov(0,0,0,0,0,0);
   changed = false;
   
-  if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
+  //if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
 
   if(!blocked)clicked = vpDisplay::getClick(I,trash,b,false);
 
@@ -1866,7 +1866,7 @@ vpWireFrameSimulator::navigation(vpImage<unsigned char> &I, bool &changed)
   vpHomogeneousMatrix mov(0,0,0,0,0,0);
   changed = false;
 
-  if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
+  //if(!blocked) vpDisplay::getClickUp(I,trash, b,false);
   
   if(!blocked)clicked = vpDisplay::getClick(I,trash,b,false);
 
