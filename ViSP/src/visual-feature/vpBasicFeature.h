@@ -81,12 +81,12 @@
 */
 class VISP_EXPORT vpBasicFeature
 {
- public: // Public constantes
+public: // Public constantes
   static const unsigned int FEATURE_LINE [32];
 
   static const unsigned int FEATURE_ALL;
 
- protected:
+protected:
   //! State of the visual feature.
   vpColVector s ;
   //! Dimension of the visual feature.
@@ -97,10 +97,10 @@ class VISP_EXPORT vpBasicFeature
   //! Number of parameters needed to compute the interaction matrix.
   unsigned int nbParameters;
 
- public:
+public:
   unsigned int dimension_s() { return dim_s ; }
 
- public:
+public:
 
   virtual void init() = 0 ;
 
@@ -120,28 +120,28 @@ class VISP_EXPORT vpBasicFeature
   //! Compute the interaction matrix from a subset of the possible features.
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
   virtual vpColVector error(const vpBasicFeature &s_star,
-			    const unsigned int select= FEATURE_ALL);
+                            const unsigned int select= FEATURE_ALL);
   //! Print the name of the feature.
   virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
 
   virtual vpBasicFeature *duplicate() const = 0 ;
 
- public:
+public:
   virtual void display(const vpCameraParameters &cam,
-		       vpImage<unsigned char> &I,
-		       vpColor color=vpColor::green,
-		       unsigned int thickness=1) const = 0;
+                       vpImage<unsigned char> &I,
+                       vpColor color=vpColor::green,
+                       unsigned int thickness=1) const = 0;
   virtual void display(const vpCameraParameters &cam,
                        vpImage<vpRGBa> &I,
                        vpColor color=vpColor::green,
-		       unsigned int thickness=1) const = 0;
+                       unsigned int thickness=1) const = 0;
 
   void setFlags();
 
- protected:
+protected:
   void resetFlags();
   // memory issue (used by the vpServo class)
- public:
+public:
 
   /*!
     \enum vpBasicFeatureDeallocatorType
@@ -149,14 +149,14 @@ class VISP_EXPORT vpBasicFeature
 
   */
   typedef enum
-    {
-      user,
-      vpServo
-    } vpBasicFeatureDeallocatorType;
+  {
+    user,
+    vpServo
+  } vpBasicFeatureDeallocatorType;
 
-  protected:
+protected:
   vpBasicFeatureDeallocatorType deallocate ;
- public:
+public:
   void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
   vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
 } ;
