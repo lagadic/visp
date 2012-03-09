@@ -110,8 +110,7 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
   \param select : Selection of a subset of the possible segment features.
   - To compute the interaction matrix for all the four 
     subset features \f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
-    that case the dimension of the interaction matrix is \f$ [4 \times
-    6] \f$
+    that case the dimension of the interaction matrix is \f$ [4 \times 6] \f$
   - To compute the interaction matrix for only one of the subset
     (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the corresponding functions:
     selectXc(),selectYc(),selectL(),selectAlpha(). In that case the returned
@@ -120,7 +119,7 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
   \return The interaction matrix computed from the segment features.
 
   The code below shows how to compute the interaction matrix associated to 
-  the visual feature \f$s =  (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  the visual feature \f$s\f$ =  (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
   \code
   vpPoint p1, p2;  
 
@@ -421,7 +420,7 @@ vpFeatureSegment::display(const vpCameraParameters & cam ,
   
   Build a segment visual feature from two image points.
 
-  \param P1(\f$X_1,Y_1\f$), P2 : Two image points defining the segment. These points must contain coordinates (x and y) projected on the camera plane.
+  \param P1, P2 : Two image points defining the segment. These points must contain coordinates (x and y) projected on the camera plane.
   
   The parameters \f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
   computed from two two points using the following formulae:
