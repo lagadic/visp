@@ -71,20 +71,16 @@ public:
   void init() ;
   // Basic constructor.
   vpFeatureSegment(vpPoint& P1,vpPoint& P2);
-  	  
+
   //! Destructor. Does nothing.
   ~vpFeatureSegment() { if (flags != NULL) delete [] flags; }
 
-  inline static unsigned int selectXc()  { return FEATURE_LINE[0] ; }
-  inline static unsigned int selectYc()  { return FEATURE_LINE[1] ; }
-  inline static unsigned int selectL()  { return FEATURE_LINE[2] ; }
-  inline static unsigned int selectAlpha()  { return FEATURE_LINE[3] ; }
   // compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL)  ;
   void print(const unsigned int select= FEATURE_ALL) const ;
 
   //! Feature duplication.
@@ -96,11 +92,11 @@ public:
   void display(const vpCameraParameters &cam,
                vpImage<unsigned char> &I,
                vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
                vpImage<vpRGBa> &I,
                vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               unsigned int thickness=1) const ;
 
   /*! 
 
@@ -209,7 +205,7 @@ public:
 
   inline static unsigned int selectAlpha()  { return FEATURE_LINE[3] ; }
   
- private:
+private:
   double l;
   double Xc;
   double Yc;
