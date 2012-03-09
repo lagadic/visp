@@ -61,16 +61,11 @@
   \file vpFeatureSegment.cpp
   \brief class that defines the vpFeatureSegment visual feature
 */
-/*
 
-attributes and members directly related to the vpBasicFeature needs
-other functionalities are useful but not mandatory
-
-*/
 
 /*! 
 
-  Initialise the memory space requested for 3D \f$ \theta u \f$ visual
+  Initialise the memory space requested for segment visual
   feature.
 */
 void
@@ -91,10 +86,10 @@ vpFeatureSegment::init()
 }
 
 /*! 
-  Default constructor that build a visual feature and initialize it to zero.
+  Default constructor that builds a segment visual feature.
 
-  \param r [in] : The rotation representation of the \f$ \theta u\f$
-  visual feature.
+  \param P1 : 3D point representing one extremity of the segment
+  \param P2 : 3D point representing another extremity of the segment
 
 */
 vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
@@ -108,11 +103,54 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
 
 
 /*!
+  Compute and return the interaction matrix \f$ L \f$ associated to a
+  subset of the possible features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
 
-  Compute and return the interaction matrix 
+
+  \param select : Selection of a subset of the possible segment features.
+  - To compute the interaction matrix for all the four 
+    subset features \f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
+    that case the dimension of the interaction matrix is \f$ [4 \times
+    6] \f$
+  - To compute the interaction matrix for only one of the subset
+    (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the corresponding functions:
+    selectXc(),selectYc(),selectL(),selectAlpha(). In that case the returned
+    interaction matrix is of dimension \f$ [1 \times 6] \f$ .
+
+  \return The interaction matrix computed from the segment features.
+
+  The code below shows how to compute the interaction matrix associated to 
+  the visual feature \f$s =  (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  \code
+  vpPoint p1, p2;  
+
+  p1.setWorldCoordinates(.1, .1, 0.);
+  p2.setWorldCoordinates(.3, .2, 0.);
+  
+  vpFeatureSegment seg(p2, p1);
+  
+  vpMatrix L = seg.interaction()
+  \endcode
+
+  The interaction matrix could also be build by:
+  \code
+  vpMatrix L = seg.interaction( vpBasicFeature::FEATURE_ALL );
+  \endcode
+
+  In both cases, L is a 4 by 6 matrix.
+
+  It is also possible to build the interaction matrix associated to
+  one of the possible features. The code below shows how to consider
+  only the \f$\alpha\f$ component.
+
+  \code
+  vpMatrix L_alpha = s.interaction( vpFeatureSegment::selectAlpha() );
+  \endcode
+
+  In that case, L_alpha is a 1 by 6 matrix.
 */
 vpMatrix
-vpFeatureSegment::interaction(const unsigned int select)
+vpFeatureSegment::interaction( const unsigned int select )
 {
 
   vpMatrix L ;
@@ -197,13 +235,29 @@ vpFeatureSegment::interaction(const unsigned int select)
 }
 
 /*!
-   Compute the error \f$ (s-s^*)\f$ between the current and the desired
-  visual features from a subset of the possible features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
-  
+   \brief Compute the error between the current and the desired visual features from a subset of the possible features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+
+  For the angular component \f$\alpha\f$, we define the error as
+  \f$\alpha \ominus \alpha^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
+  substraction.
+
+  \param s_star : Desired 2D segment feature.
+
+  \param select : The error can be computed for a selection of a
+  subset of the possible segment features.
+  - To compute the error for all the three coordinates use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
+    dimension column vector.
+  - To compute the error for only one subfeature (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the
+    corresponding functions: selectXc(),selectYc(),selectL(),selectAlpha(). 
+
+  \return The error between the current and the desired
+  visual feature.
+
 */
 vpColVector
-vpFeatureSegment::error(const vpBasicFeature &s_star,  const unsigned int select)
-{
+vpFeatureSegment::error( const vpBasicFeature &s_star,  const unsigned int select )
+{ 
   vpColVector e(0) ;
 
   if (vpFeatureSegment::selectXc() & select ){
@@ -227,6 +281,8 @@ vpFeatureSegment::error(const vpBasicFeature &s_star,  const unsigned int select
   if (vpFeatureSegment::selectAlpha() & select ){
     vpColVector eAlpha(1) ;
     eAlpha[0] = alpha - s_star[3];
+    while (eAlpha[0] < -M_PI) eAlpha[0] += 2*M_PI ;
+    while (eAlpha[0] > M_PI) eAlpha[0] -= 2*M_PI ;
     e = vpMatrix::stackMatrices(e,eAlpha) ;
   }
   return e ;
@@ -236,9 +292,35 @@ vpFeatureSegment::error(const vpBasicFeature &s_star,  const unsigned int select
   Print to stdout the values of the current visual feature \f$ s \f$.
 
   \param select : Selection of a subset of the possible segement features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+
+  \code
+  vpPoint p1,p2;
+  
+  p1.setWorldCoordinates(.1,.1,0.);
+  p2.setWorldCoordinates(.3,.2,0.);
+
+  p1.setWorldCoordinates(.1,.1,0.);
+  p2.setWorldCoordinates(.3,.2,0.);
+  
+  p1.project(cMo);
+  p2.project(cMo);
+
+  p1.project(cdMo);
+  p2.project(cdMo);
+  
+  vpFeatureSegment seg(p2,p1);  
+  
+  seg.print();
+  \endcode
+
+  produces the following output:
+
+  \code
+  vpFeatureSegment: (Xc = -0.255634;Yc = -0.13311;l = 0.105005;alpha = 92.1305 deg)
+  \endcode
 */
 void
-vpFeatureSegment::print(const unsigned int select) const
+vpFeatureSegment::print( const unsigned int select ) const
 {
   std::cout <<"vpFeatureSegment: (";
   if (vpFeatureSegment::selectXc() & select ) {

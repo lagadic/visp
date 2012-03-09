@@ -101,6 +101,114 @@ public:
                vpImage<vpRGBa> &I,
                vpColor color=vpColor::green, 
 	       unsigned int thickness=1) const ;
+
+  /*! 
+
+    Function used to select the \f$X_c\f$ subfeature.
+
+    This function is to use in conjunction with interaction() in order
+    to compute the interaction matrix associated to \f$X_c\f$ feature.
+
+    See the interaction() method for an usage example.
+
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpPoint p1,p2;
+    ...
+    vpFeatureSegment seg(p2,p1);
+    vpServo task;
+    ...
+    // Add only the rho subset coordinate feature from an image point to the task
+    task.addFeature(seg, vpFeatureSegment::selectXc());
+    \endcode
+
+    \sa selectXc()
+  */
+  inline static unsigned int selectXc()  { return FEATURE_LINE[0] ; }
+
+  /*! 
+
+    Function used to select the \f$Y_c\f$ subfeature.
+
+    This function is to use in conjunction with interaction() in order
+    to compute the interaction matrix associated to \f$Y_c\f$ feature.
+
+    See the interaction() method for an usage example.
+
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpPoint p1,p2;
+    ...
+    vpFeatureSegment seg(p2,p1);
+    vpServo task;
+    ...
+    // Add only the rho subset coordinate feature from an image point to the task
+    task.addFeature(seg, vpFeatureSegment::selectYc());
+    \endcode
+
+    \sa selectYc()
+  */
+
+  inline static unsigned int selectYc()  { return FEATURE_LINE[1] ; }
+
+  /*! 
+
+    Function used to select the \f$l\f$ subfeature.
+
+    This function is to use in conjunction with interaction() in order
+    to compute the interaction matrix associated to \f$l\f$ feature.
+
+    See the interaction() method for an usage example.
+
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpPoint p1,p2;
+    ...
+    vpFeatureSegment seg(p2,p1);
+    vpServo task;
+    ...
+    // Add only the rho subset coordinate feature from an image point to the task
+    task.addFeature(seg, vpFeatureSegment::selectL());
+    \endcode
+
+    \sa selectL()
+  */
+
+  inline static unsigned int selectL()  { return FEATURE_LINE[2] ; }
+
+  /*! 
+
+    Function used to select the \f$\alpha\f$ subfeature.
+
+    This function is to use in conjunction with interaction() in order
+    to compute the interaction matrix associated to \f$\alpha\f$ feature.
+
+    See the interaction() method for an usage example.
+
+    This function is also useful in the vpServo class to indicate that
+    a subset of the visual feature is to use in the control law:
+
+    \code
+    vpPoint p1,p2;
+    ...
+    vpFeatureSegment seg(p2,p1);
+    vpServo task;
+    ...
+    // Add only the rho subset coordinate feature from an image point to the task
+    task.addFeature(seg, vpFeatureSegment::selectAlpha());
+    \endcode
+
+    \sa selectAlpha()
+  */
+
+  inline static unsigned int selectAlpha()  { return FEATURE_LINE[3] ; }
+  
  private:
   double l;
   double Xc;
