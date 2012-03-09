@@ -313,7 +313,7 @@ vpRobotPtu46::get_fJe(vpMatrix &fJe)
 
 /*!
 
-  Set the velocity for a positionning task
+  Set the velocity used for a position control.
 
   \param velocity : Velocity in % of the maximum velocity between [0,100].
 */
@@ -323,7 +323,7 @@ vpRobotPtu46::setPositioningVelocity (const double velocity)
   positioningVelocity = velocity;
 }
 /*!
-  Get the velocity in % for a positionning task.
+  Get the velocity in % used for a position control.
 
   \return Positionning velocity in [0, 100]
 

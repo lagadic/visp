@@ -672,7 +672,7 @@ vpRobotAfma4::get_eJe(vpMatrix &eJe)
 }
 /*!
 
-  Set the maximal velocity percentage to use for a positionning task.
+  Set the maximal velocity percentage to use for a position control.
 
   The default positioning velocity is defined by
   vpRobotAfma4::defaultPositioningVelocity. This method allows to
@@ -705,7 +705,7 @@ vpRobotAfma4::setPositioningVelocity (const double velocity)
 }
 
 /*!
-  Get the maximal velocity percentage used for a positionning task.
+  Get the maximal velocity percentage used for a position control.
 
   \sa setPositioningVelocity()
 */
