@@ -55,7 +55,7 @@
   \return Returns true if the point belongs to the rectangle.
 
 */
-bool vpImagePoint::inRectangle( const vpRect &rect )
+bool vpImagePoint::inRectangle( const vpRect &rect ) const
 {
   return ( this->i <= rect.getBottom() && 
 	   this->i >= rect.getTop() &&
