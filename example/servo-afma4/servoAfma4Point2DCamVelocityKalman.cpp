@@ -106,36 +106,36 @@ typedef enum {
 
 */
 void usage(const char *name, const char *badparam, 
-	   KalmanType &kalman)
+           KalmanType &kalman)
 {
   fprintf(stdout, "\n\
-Tests a control law with the following characteristics:\n\
-- eye-in-hand control\n\
-- camera velocity are computed\n\
-- servo on 1 points.\n\
-- Kalman filtering\n\
-\n\
-SYNOPSIS\n\
-  %s [-K <0|1|2|3>] [-h]\n", name);
+          Tests a control law with the following characteristics:\n\
+          - eye-in-hand control\n\
+          - camera velocity are computed\n\
+          - servo on 1 points.\n\
+          - Kalman filtering\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-K <0|1|2|3>] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -l <%%f>                                               \n\
-      Set the constant gain. By default adaptive gain. \n\
-\n\
-  -K <0|1|2>                                             %d\n\
-     Kalman filtering:\n\
-       0: none\n\
-       1: velocity model\n\
-       2: acceleration model\n\
-\n\
-  -h\n\
-     Print the help.\n", (int) kalman);
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -l <%%f>                                               \n\
+                  Set the constant gain. By default adaptive gain. \n\
+                  \n\
+                  -K <0|1|2>                                             %d\n\
+                  Kalman filtering:\n\
+                  0: none\n\
+                  1: velocity model\n\
+                  2: acceleration model\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n", (int) kalman);
 
-  if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
-    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-  }
+                  if (badparam) {
+                  fprintf(stderr, "ERROR: \n" );
+          fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+}
 
 }
 
@@ -154,8 +154,8 @@ Set the program options.
 
 */
 bool getOptions(int argc, const char **argv, KalmanType &kalman,
-		bool &doAdaptativeGain,
-    vpAdaptiveGain &lambda) // gain lambda
+                bool &doAdaptativeGain,
+                vpAdaptiveGain &lambda) // gain lambda
 {
   const char *optarg;
   int	c;
@@ -225,7 +225,7 @@ main(int argc, const char ** argv)
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -269,12 +269,12 @@ main(int argc, const char ** argv)
       std::cout << "Servo with no target motion compensation (see -K option)\n";
       break;
     case K_VELOCITY:
-       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-		 << "with constant velocity modelization (see -K option)\n";
+      std::cout << "Servo with target motion compensation using a Kalman filter\n"
+                << "with constant velocity modelization (see -K option)\n";
       break;
     case K_ACCELERATION: 
-       std::cout << "Servo with target motion compensation using a Kalman filter\n"
-		 << "with constant acceleration modelization (see -K option)\n";
+      std::cout << "Servo with target motion compensation using a Kalman filter\n"
+                << "with constant acceleration modelization (see -K option)\n";
       break;
     }
     std::cout << "-------------------------------------------------------" << std::endl ;
@@ -298,7 +298,7 @@ main(int argc, const char ** argv)
     double v0 = I.getHeight() / 2.;
 
     vpCameraParameters cam(px, py, u0, v0);
-   
+
     // Sets the current position of the visual feature
     vpFeaturePoint p ;
     vpFeatureBuilder::create(p, cam, dot) ;  
@@ -325,7 +325,7 @@ main(int argc, const char ** argv)
     //--------------------------------------------------------------------------
     //!---------------------------Init Kalman Filter--------------------------
     //--------------------------------------------------------------------------
-	
+
     //!Initialize filter
     vpLinearKalmanFilterInstantiation kalman;
     
@@ -375,9 +375,9 @@ main(int argc, const char ** argv)
     vpColVector err(2), err_0(2), err_1(2);
     vpColVector dedt_filt(2), dedt_mes(2);	
 
- 
+
     t_1 = vpTime::measureTimeMs(); // t_1: time at previous iter 	
- 
+
     Tv_0  = 0;
 
     //
@@ -397,7 +397,7 @@ main(int argc, const char ** argv)
       t_1 = t_0;
 
       vm = robot.getVelocity(vpRobot::CAMERA_FRAME);
-       
+
       // Acquire a new image from the camera
       g.acquire(I) ;
 
@@ -422,7 +422,7 @@ main(int argc, const char ** argv)
       // Update current loop time and previous one
       Tv_1 = Tv_0;
       Tv_0 = Tv;
-		
+
       // Compute the visual servoing skew vector
       v1 = task.computeControlLaw() ;
 
@@ -430,20 +430,20 @@ main(int argc, const char ** argv)
 
       //!terme correctif : de/dt = Delta s / Delta t - L*vc
       if (iter==0){			
-	err_0 = 0;
-	err_1 = 0;
-	dedt_mes = 0;
-	dedt_filt = 0;
+        err_0 = 0;
+        err_1 = 0;
+        dedt_mes = 0;
+        dedt_filt = 0;
       }
       else{				
-	err_1 = err_0;
-	err_0 = err;
+        err_1 = err_0;
+        err_0 = err;
 
-	dedt_mes = (err_0 - err_1)/(Tv_1) - task.J1*vm_0;
+        dedt_mes = (err_0 - err_1)/(Tv_1) - task.J1*vm_0;
       }
       //! pour corriger pb de iter = 1
       if (iter <= 1){
-	dedt_mes = 0;
+        dedt_mes = 0;
       }
 
       //----------------------------------------------------------------------
@@ -452,20 +452,21 @@ main(int argc, const char ** argv)
       // Kalman filtering 
       switch(opt_kalman) {
       case K_NONE: 
- 	dedt_filt = 0;
-	break;
+        dedt_filt = 0;
+        break;
       case K_VELOCITY:
       case K_ACCELERATION: 
-	kalman.filter(dedt_mes);
-	for (unsigned int i=0; i < nsignal; i++) {
-	  dedt_filt[i] = kalman.Xest[i*state_size]; 
-	}
-	break;
+        kalman.filter(dedt_mes);
+        for (unsigned int i=0; i < nsignal; i++) {
+          dedt_filt[i] = kalman.Xest[i*state_size];
+        }
+        break;
       }
- 
-      //! Loi de commande corrigée :
-      v2 = - task.J1p*dedt_filt;
-      //   std::cout << "task.J1p: " <<  task.J1p.t() << std::endl  ;
+
+      //! Modified control law
+      vpMatrix J1p = task.getTaskJacobianPseudoInverse();
+      v2 = - J1p*dedt_filt;
+      //   std::cout << "task J1p: " <<  J1p.t() << std::endl  ;
       //   std::cout << "dedt_filt: " <<  dedt_filt.t() << std::endl  ;
 
       v = v1 + v2;	
@@ -489,7 +490,7 @@ main(int argc, const char ** argv)
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-	   << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
@@ -498,7 +499,7 @@ main(int argc, const char ** argv)
 
       // Save feature error (s-s*) in pixels in the image.
       flog << cog.get_u()-cam.get_u0() << " " 
-	   << cog.get_v()-cam.get_v0() << " "; 
+           << cog.get_v()-cam.get_v0() << " ";
 
       // Save de/dt
       flog << dedt_mes[0] << " " << dedt_mes[1] << " ";

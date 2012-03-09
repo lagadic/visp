@@ -92,25 +92,25 @@
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Demonstration of the wireframe simulator with a simple visual servoing.\n\
-\n\
-The visual servoing consists in bringing the camera at a desired position from the object.\n\
-\n\
-The virtual visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
-\n\
-SYNOPSIS\n\
-  %s [-d] [-h]\n", name);
+          Demonstration of the wireframe simulator with a simple visual servoing.\n\
+          \n\
+          The visual servoing consists in bringing the camera at a desired position from the object.\n\
+          \n\
+          The virtual visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-d] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -d \n\
+                  Turn off the display.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -228,17 +228,17 @@ main(int argc, const char ** argv)
   vpImage<vpRGBa> Iext1(480,640,255);
   vpImage<vpRGBa> Iext2(480,640,255);
 
-  #if defined VISP_HAVE_X11
+#if defined VISP_HAVE_X11
   vpDisplayX display[3];
-  #elif defined VISP_HAVE_OPENCV
+#elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display[3];
-  #elif defined VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
   vpDisplayGDI display[3];
-  #elif defined VISP_HAVE_D3D9
+#elif defined VISP_HAVE_D3D9
   vpDisplayD3D display[3];
-  #elif defined VISP_HAVE_GTK
+#elif defined VISP_HAVE_GTK
   vpDisplayGTK display[3];
-  #endif
+#endif
   
   if (opt_display)
   {
@@ -298,7 +298,7 @@ main(int argc, const char ** argv)
   vpMatrix L(3,6);
   computeInteractionMatrix(sd,sphere,L);
   sd.setInteractionMatrix(L);
-    
+
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
   task.setInteractionMatrixType(vpServo::DESIRED);
   
@@ -355,7 +355,7 @@ main(int argc, const char ** argv)
     //Display the object frame (current and desired position)
     vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
     vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
-  
+
     //Display the object frame the world reference frame and the camera frame
     vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
     vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo(),camera,0.2,vpColor::none);
@@ -422,7 +422,7 @@ main(int argc, const char ** argv)
       //Display the object frame (current and desired position)
       vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
-    
+
       //Display the object frame the world reference frame and the camera frame
       vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
@@ -441,7 +441,7 @@ main(int argc, const char ** argv)
     vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
     vpTRACE("\t\t || s - s* || ") ;
-    std::cout << task.error.sumSquare() <<std::endl ;
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
   task.print() ;

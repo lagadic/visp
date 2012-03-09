@@ -137,7 +137,7 @@ main()
 
     vpRobotAfma6 robot ;
 
-   // Update camera parameters
+    // Update camera parameters
     robot.getCameraParameters (cam, I);
 
     vpTRACE("sets the current position of the visual feature ") ;
@@ -206,27 +206,27 @@ main()
       double gain ;
       if (iter>2)
       {
-	if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
-	  gain = lambda_av ;
-	else
-	  {
-	    gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av;
-	  }
+        if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
+          gain = lambda_av ;
+        else
+        {
+          gain = alpha * exp (-beta * ( task.getError() ).sumSquare() ) +  lambda_av;
+        }
       }
       else gain = lambda_av ;
 
 
-      vpTRACE("%f %f", task.error.sumSquare(),  gain) ;
+      vpTRACE("%f %f", ( task.getError() ).sumSquare(),  gain) ;
       task.setLambda(gain) ;
       vpColVector v ;
       v = task.computeControlLaw() ;
-      std::cout <<"rank " << task.rankJ1 << std::endl ;
+      std::cout <<"rank " << task.getTaskRank() << std::endl ;
       vpServoDisplay::display(task,cam,I) ;
       std::cout << v.t() ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       vpDisplay::flush(I) ;
-      vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
     vpTRACE("Display task information " ) ;

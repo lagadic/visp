@@ -61,7 +61,7 @@
 void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C){
 	vpPlane pl;
 	pl.setABCD(0,0,1.0,0);
-    pl.changeFrame(cMo);
+  pl.changeFrame(cMo);
 
 	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
 		std::cout << "Invalid position:" << std::endl;
@@ -69,34 +69,34 @@ void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C){
 		std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
 		throw vpException(vpException::divideByZeroError,"invalid position!");
 	}
-    A=-pl.getA()/pl.getD();
-    B=-pl.getB()/pl.getD();
-    C=-pl.getC()/pl.getD();
+  A=-pl.getA()/pl.getD();
+  B=-pl.getB()/pl.getD();
+  C=-pl.getC()/pl.getD();
 }
 
 int main()
 {
 	double x[8] = { 1,3, 4,-1 ,-3,-2,-1,1};
-    double y[8] = { 0,1, 4, 4, -2,-2, 1,0};
+  double y[8] = { 0,1, 4, 4, -2,-2, 1,0};
 	double A,B,C,Ad,Bd,Cd;
 	
-    int nbpoints = 8;
+  int nbpoints = 8;
 	std::vector<vpPoint> vec_p,vec_p_d; // vectors that contain the vertices of the contour polygon
 
 	vpHomogeneousMatrix cMo(0.1,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
+  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
 
 	cMoToABC(cMo,A,B,C);
 	cMoToABC(cdMo,Ad,Bd,Cd);
 	// Define source and destination polygons
-    for (int i = 0 ; i < nbpoints ; i++){
-        vpPoint p;
-        p.setWorldCoordinates(x[i],y[i],0.0);
-        p.track(cMo) ;
-        vec_p.push_back(p);
+  for (int i = 0 ; i < nbpoints ; i++){
+    vpPoint p;
+    p.setWorldCoordinates(x[i],y[i],0.0);
+    p.track(cMo) ;
+    vec_p.push_back(p);
 		p.track(cdMo) ;
 		vec_p_d.push_back(p);
-    }
+  }
 
 	vpMomentObject cur(6); // Create a source moment object with 6 as maximum order
 	cur.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
@@ -131,7 +131,7 @@ int main()
 	//the object is NOT symmetric
 	//select C4 and C6
 	task.addFeature(fmdb_cur.getFeatureCInvariant(),fmdb_dst.getFeatureCInvariant(),
-	vpFeatureMomentCInvariant::selectC4() | vpFeatureMomentCInvariant::selectC6());
+                  vpFeatureMomentCInvariant::selectC4() | vpFeatureMomentCInvariant::selectC6());
 	task.addFeature(fmdb_cur.getFeatureAlpha(),fmdb_dst.getFeatureAlpha());
 
 	vpBasicFeature *al = new vpFeatureMomentAlpha(mdb_dst,0,0,1.);
@@ -166,8 +166,8 @@ int main()
 		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 		double t = vpTime::measureTimeMs();
 		vpTime::wait(t, sampling_time * 1000); // Wait 10 ms			
-	}while(task.error.sumSquare()>0.005);
-	std::cout << "final error=" << task.error.sumSquare() << std::endl;
+	}while(( task.getError() ).sumSquare()>0.005);
+	std::cout << "final error=" << ( task.getError() ).sumSquare() << std::endl;
 	
 	return 0;
 }

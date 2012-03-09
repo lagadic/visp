@@ -265,7 +265,7 @@ main(int argc, const char ** argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
       vpTRACE("\t\t || s - s* || ") ;
-      std::cout << task.error.sumSquare() <<std::endl ; ;
+      std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
     }
 
   vpTRACE("Display task information " ) ;

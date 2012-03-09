@@ -148,11 +148,11 @@ int main(int argc, const char ** /* argv */)
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms    
     iter+=sampling_time;
     
-  } while(task.error.sumSquare() > 0.00005);
+  } while(( task.getError() ).sumSquare() > 0.00005);
   
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
   task.kill();
 
-  std::cout << "final error=" << task.error.sumSquare() << std::endl;  
+  std::cout << "final error=" << ( task.getError() ).sumSquare() << std::endl;  
 }

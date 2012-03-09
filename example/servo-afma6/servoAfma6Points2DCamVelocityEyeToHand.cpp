@@ -346,14 +346,14 @@ int main()
           gain = lambda_av ;
         else
         {
-          gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av;
+          gain = alpha * exp (-beta * ( task.getError() ).sumSquare() ) +  lambda_av;
         }
       }
       else gain = lambda_av ;
       if (SAVE==1)
         gain = gain/5 ;
 
-      vpTRACE("%f %f %f %f  %f",alpha, beta, lambda_av, task.error.sumSquare(),  gain) ;
+      vpTRACE("%f %f %f %f  %f",alpha, beta, lambda_av, ( task.getError() ).sumSquare(),  gain) ;
       task.setLambda(gain) ;
 
 
@@ -367,7 +367,7 @@ int main()
       vpServoDisplay::display(task,cam,I) ;
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-      error = task.error.sumSquare() ;
+      error = ( task.getError() ).sumSquare() ;
       std::cout << "|| s - s* || = "<< error<<std::endl ;
 
       if (error>7)

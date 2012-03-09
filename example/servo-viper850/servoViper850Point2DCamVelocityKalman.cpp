@@ -110,7 +110,7 @@ main()
     }
     catch (...) {
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -133,7 +133,7 @@ main()
     vpColVector sigma_state;
     vpColVector sigma_measure(nsignal);
     unsigned int state_size = 0; // Kalman state vector size
-      
+
     kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
     state_size = kalman.getStateSize();
     sigma_state.resize(state_size*nsignal);
@@ -145,7 +145,7 @@ main()
     // Initialize the robot
     vpRobotViper850 robot ;
 
- 
+
     vpImage<unsigned char> I ;
 
     bool reset = false;
@@ -237,94 +237,95 @@ main()
 
     for ( ; ; ) {
       try {
-	t_0 = vpTime::measureTimeMs(); // t_0: current time
+        t_0 = vpTime::measureTimeMs(); // t_0: current time
 
-	// Update loop time in second
-	Tv = (double)(t_0 - t_1) / 1000.0; 
-	
-	// Update time for next iteration
-	t_1 = t_0;
-	
-	vm = robot.getVelocity(vpRobot::CAMERA_FRAME);
- 	
-	// Acquire a new image from the camera
-	frame = g.dequeue(I);
+        // Update loop time in second
+        Tv = (double)(t_0 - t_1) / 1000.0;
 
-	// Display this image
-	vpDisplay::display(I) ;
-	
-	// Achieve the tracking of the dot in the image
-	dot.track(I) ;
-	
-	// Get the dot cog
-	cog = dot.getCog();
+        // Update time for next iteration
+        t_1 = t_0;
 
-	// Display a green cross at the center of gravity position in the image
-	vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
-	
-	// Update the point feature from the dot location
-	vpFeatureBuilder::create(p, cam, dot);
-	
-	// Compute the visual servoing skew vector
-	v1 = task.computeControlLaw() ;
-	
-	// Get the error ||s-s*|| 
-	err = task.error;
+        vm = robot.getVelocity(vpRobot::CAMERA_FRAME);
 
-	//!terme correctif : de/dt = Delta s / Delta t - L*vc
-	if (iter==0){			
-	  err_1 = 0;
-	  dedt_mes = 0;
-	}
-	else{				
-	  err_1 = err;
+        // Acquire a new image from the camera
+        frame = g.dequeue(I);
 
-	  dedt_mes = (err_1 - err)/(Tv) - task.J1*vm;
-	}
-	
-	// Filter de/dt
-	if (iter < 2)
-	  dedt_mes = 0;
-	kalman.filter(dedt_mes);
-	// Get the filtered values
-	for (unsigned int i=0; i < nsignal; i++) {
-	  dedt_filt[i] = kalman.Xest[i*state_size]; 
-	}
-	if (iter < 2)
-	  dedt_filt = 0;
+        // Display this image
+        vpDisplay::display(I) ;
 
-	v2 = - task.J1p*dedt_filt;
-	
-	// Update the robot camera velocity
-	v = v1 + v2;	
- 
-	// Display the current and desired feature points in the image display
-	vpServoDisplay::display(task, cam, I) ;
-	
-	// Apply the computed camera velocities to the robot
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        // Achieve the tracking of the dot in the image
+        dot.track(I) ;
 
-	iter ++;
-	// Synchronize the loop with the image frame rate
-	vpTime::wait(t_0, 1000.*Tloop);
-	// Release the ring buffer used for the last image to start a new acq
-	g.enqueue(frame);
+        // Get the dot cog
+        cog = dot.getCog();
+
+        // Display a green cross at the center of gravity position in the image
+        vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+
+        // Update the point feature from the dot location
+        vpFeatureBuilder::create(p, cam, dot);
+
+        // Compute the visual servoing skew vector
+        v1 = task.computeControlLaw() ;
+
+        // Get the error ||s-s*||
+        err = task.getError();
+
+        //!terme correctif : de/dt = Delta s / Delta t - L*vc
+        if (iter==0){
+          err_1 = 0;
+          dedt_mes = 0;
+        }
+        else{
+          err_1 = err;
+          vpMatrix J1 = task.getTaskJacobian();
+          dedt_mes = (err_1 - err)/(Tv) - J1 *vm;
+        }
+
+        // Filter de/dt
+        if (iter < 2)
+          dedt_mes = 0;
+        kalman.filter(dedt_mes);
+        // Get the filtered values
+        for (unsigned int i=0; i < nsignal; i++) {
+          dedt_filt[i] = kalman.Xest[i*state_size];
+        }
+        if (iter < 2)
+          dedt_filt = 0;
+
+        vpMatrix J1p = task.getTaskJacobianPseudoInverse();
+        v2 = - J1p*dedt_filt;
+
+        // Update the robot camera velocity
+        v = v1 + v2;
+
+        // Display the current and desired feature points in the image display
+        vpServoDisplay::display(task, cam, I) ;
+
+        // Apply the computed camera velocities to the robot
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+        iter ++;
+        // Synchronize the loop with the image frame rate
+        vpTime::wait(t_0, 1000.*Tloop);
+        // Release the ring buffer used for the last image to start a new acq
+        g.enqueue(frame);
       }
       catch(...) {
-	std::cout << "Tracking failed... Stop the robot." << std::endl;
-	v = 0;
-	// Stop robot
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-	// Kill the task
-	task.kill();
-	return 0;
+        std::cout << "Tracking failed... Stop the robot." << std::endl;
+        v = 0;
+        // Stop robot
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        // Kill the task
+        task.kill();
+        return 0;
       }
- 
+
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-	   << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -335,7 +336,7 @@ main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -346,13 +347,12 @@ main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-	   << q[3] << " " << q[4] << " " << q[5] << " ";
+           << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " " // s-s* for point
-	   << std::endl;
+      flog << ( task.getError() ).t() << std::endl; // s-s* for point
 
       // Flush the display
       vpDisplay::flush(I) ;

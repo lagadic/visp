@@ -88,22 +88,22 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 2 1/2 D visual servoing (x,y,log Z, theta U):\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- without display.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
+          Simulation of a 2 1/2 D visual servoing (x,y,log Z, theta U):\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - without display.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -169,8 +169,8 @@ main(int argc, const char ** argv)
   // we give the camera location as a size 6 vector (3 translations in meter
   // and 3 rotation (theta U representation) )
   vpPoseVector c_r_o(0.1,0.2,2,
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
-		     ) ;
+                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
+                     ) ;
 
   // this pose vector is then transformed in a 4x4 homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
@@ -179,7 +179,7 @@ main(int argc, const char ** argv)
   // The vpRobotCamera implements a simple moving that is juste defined
   // by its location cMo
   vpRobotCamera robot ;
- 
+
   // the robot position is set to the defined cMo position
   robot.setPosition(cMo) ;
 
@@ -188,7 +188,7 @@ main(int argc, const char ** argv)
   // It is defined by cdMo
   vpTRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
 
@@ -216,7 +216,7 @@ main(int argc, const char ** argv)
   // .oP : 3D coordinates in scene frame
   // .cP : 3D coordinates in camera frame
   // .p : 2D
-   
+
   //------------------------------------------------------------------
   vpTRACE("\tsets the point coordinates in the world frame "  ) ;
   vpPoint point ;
@@ -233,7 +233,7 @@ main(int argc, const char ** argv)
   pointd.setWorldCoordinates(0,0,0) ;
   pointd.track(cdMo) ;
   
-   // Nevertheless, a vpPoint is not a feature, this is just a "tracker"
+  // Nevertheless, a vpPoint is not a feature, this is just a "tracker"
   // from which the feature are built
   // a feature is juste defined by a vector s, a way to compute the
   // interaction matrix and the error, and if required a (or a vector of)
@@ -274,16 +274,16 @@ main(int argc, const char ** argv)
 
   // This visual has to be regulated to zero
   vpTRACE("3rd feature ThetaU") ;
- 
+
   //------------------------------------------------------------------
   // 3rd feature ThetaU
   // The thetaU feature is defined, tu represents the rotation that the camera
   // has to realized.
   // the complete displacement is then defined by:
   //------------------------------------------------------------------
- vpHomogeneousMatrix cdMc ;
- vpTRACE("\tcompute the rotation that the camera has to realize "  ) ;
- cdMc = cdMo*cMo.inverse() ;
+  vpHomogeneousMatrix cdMc ;
+  vpTRACE("\tcompute the rotation that the camera has to realize "  ) ;
+  cdMc = cdMo*cMo.inverse() ;
 
   // from this displacement, we extract the rotation cdRc represented by
   // the angle theta and the rotation axis u
@@ -329,45 +329,45 @@ main(int argc, const char ** argv)
   int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<200)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
 
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
 
-      if (iter==1) vpTRACE("\t\t update the feature ") ;
-      point.track(cMo) ;
-      vpFeatureBuilder::create(p,point)  ;
+    if (iter==1) vpTRACE("\t\t update the feature ") ;
+    point.track(cMo) ;
+    vpFeatureBuilder::create(p,point)  ;
 
-      cdMc = cdMo*cMo.inverse() ;
-      tu.buildFrom(cdMc) ;
+    cdMc = cdMo*cMo.inverse() ;
+    tu.buildFrom(cdMc) ;
 
-      if (iter==1) vpTRACE("\t\t there is no feature for logZ, we explicitely "
-			   "build the related interaction matrix") ;
-      logZ.set_s(log(point.get_Z()/pointd.get_Z())) ;
-      vpMatrix LlogZ(1,6) ;
-      LlogZ[0][0] = LlogZ[0][1] = LlogZ[0][5] = 0 ;
-      LlogZ[0][2] = -1/p.get_Z() ;
-      LlogZ[0][3] = -p.get_y() ;
-      LlogZ[0][4] =  p.get_x() ;
+    if (iter==1) vpTRACE("\t\t there is no feature for logZ, we explicitely "
+                         "build the related interaction matrix") ;
+    logZ.set_s(log(point.get_Z()/pointd.get_Z())) ;
+    vpMatrix LlogZ(1,6) ;
+    LlogZ[0][0] = LlogZ[0][1] = LlogZ[0][5] = 0 ;
+    LlogZ[0][2] = -1/p.get_Z() ;
+    LlogZ[0][3] = -p.get_y() ;
+    LlogZ[0][4] =  p.get_x() ;
 
-      logZ.setInteractionMatrix(LlogZ) ;
+    logZ.setInteractionMatrix(LlogZ) ;
 
 
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
 
-      if (iter==1) task.print() ;
+    if (iter==1) task.print() ;
 
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     // Note that for vpRobotCamera, camera position cMo, is updated using the
     // exponential map.
 
 
-      std::cout << task.error.sumSquare() <<std::endl ; ;
-    }
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;

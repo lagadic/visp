@@ -184,7 +184,7 @@ int main()
     }
     catch (...) {
       std::cerr << std::endl
-          << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return(-1);
     }
@@ -241,7 +241,7 @@ int main()
     vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
-        << std::endl;
+              << std::endl;
 
     for (i=0 ; i < 4 ; i++) {
       dot[i].initTracking(I) ;
@@ -335,7 +335,7 @@ int main()
         flog.close() ; // Close the log file
         vpTRACE("Error detected while tracking visual features") ;
         robot.stopMotion() ;
-	kinect.stop();
+        kinect.stop();
         return(1) ;
       }
 
@@ -368,7 +368,7 @@ int main()
       // v[0], v[1], v[2] correspond to joint translation velocities in m/s
       // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-          << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -379,7 +379,7 @@ int main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-          << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -390,21 +390,17 @@ int main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-          << q[3] << " " << q[4] << " " << q[5] << " ";
+           << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " " // s-s* for point 1
-          << task.error[2] << " " << task.error[3] << " " // s-s* for point 2
-          << task.error[4] << " " << task.error[5] << " " // s-s* for point 3
-          << task.error[6] << " " << task.error[7]        // s-s* for point 4
-          << std::endl;
+      flog << ( task.getError() ).t() << std::endl;
 
       // Flush the display
       vpDisplay::flush(I) ;
 
-      //	vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+      //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
     vpTRACE("Display task information " ) ;

@@ -110,10 +110,10 @@
 
 */
 void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
-		  vpCameraParameters cam,
-		  vpHomogeneousMatrix &cMo,
-		  vpTranslationVector &cto,
-		  vpRxyzVector &cro, bool init)
+                  vpCameraParameters cam,
+                  vpHomogeneousMatrix &cMo,
+                  vpTranslationVector &cto,
+                  vpRxyzVector &cro, bool init)
 {
   vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon
   vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
@@ -180,7 +180,7 @@ main()
     }
     catch (...) {
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       return(-1);
     }
@@ -196,7 +196,7 @@ main()
     // Load the end-effector to camera frame transformation obtained
     // using a camera intrinsic model with distortion
     vpCameraParameters::vpCameraParametersProjType projModel =
-      vpCameraParameters::perspectiveProjWithDistortion;
+        vpCameraParameters::perspectiveProjWithDistortion;
     robot.init(vpRobotViper850::TOOL_PTGREY_FLEA2_CAMERA, projModel);
 
     vpServo task ;
@@ -232,7 +232,7 @@ main()
     vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
-	      << std::endl;
+              << std::endl;
 
     for (i=0 ; i < 4 ; i++) {
       dot[i].initTracking(I) ;
@@ -248,7 +248,7 @@ main()
 
     cam.printParameters();
 
- 
+
     // Sets the current position of the visual feature
     vpFeaturePoint p[4] ;
     for (i=0 ; i < 4 ; i++)
@@ -312,21 +312,21 @@ main()
       vpDisplay::display(I) ;
 
       try {
-	// For each point...
-	for (i=0 ; i < 4 ; i++) {
-	  // Achieve the tracking of the dot in the image
-	  dot[i].track(I) ;
-	  // Display a green cross at the center of gravity position in the
-	  // image
-	  cog = dot[i].getCog();
- 	  vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
-	}
+        // For each point...
+        for (i=0 ; i < 4 ; i++) {
+          // Achieve the tracking of the dot in the image
+          dot[i].track(I) ;
+          // Display a green cross at the center of gravity position in the
+          // image
+          cog = dot[i].getCog();
+          vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+        }
       }
       catch(...) {
-	flog.close() ; // Close the log file
-	vpTRACE("Error detected while tracking visual features") ;
-	robot.stopMotion() ;
-	return(1) ;
+        flog.close() ; // Close the log file
+        vpTRACE("Error detected while tracking visual features") ;
+        robot.stopMotion() ;
+        return(1) ;
       }
 
       // During the servo, we compute the pose using LOWE method. For the
@@ -335,13 +335,13 @@ main()
       compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
 
       for (i=0 ; i < 4 ; i++) {
-	// Update the point feature from the dot location
-	vpFeatureBuilder::create(p[i], cam, dot[i]);
-	// Set the feature Z coordinate from the pose
-	vpColVector cP;
-	point[i].changeFrame(cMo, cP) ;
+        // Update the point feature from the dot location
+        vpFeatureBuilder::create(p[i], cam, dot[i]);
+        // Set the feature Z coordinate from the pose
+        vpColVector cP;
+        point[i].changeFrame(cMo, cP) ;
 
-	p[i].set_Z(cP[2]);
+        p[i].set_Z(cP[2]);
       }
 
       vpColVector v ;
@@ -358,7 +358,7 @@ main()
       // v[0], v[1], v[2] correspond to joint translation velocities in m/s
       // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-	   << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -369,7 +369,7 @@ main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -380,21 +380,17 @@ main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-	   << q[3] << " " << q[4] << " " << q[5] << " ";
+           << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " " // s-s* for point 1
-	   << task.error[2] << " " << task.error[3] << " " // s-s* for point 2
-	   << task.error[4] << " " << task.error[5] << " " // s-s* for point 3
-	   << task.error[6] << " " << task.error[7]        // s-s* for point 4
-	   << std::endl;
+      flog << task.getError() << std::endl;
 
       // Flush the display
       vpDisplay::flush(I) ;
 
-      //	vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+      //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
     vpTRACE("Display task information " ) ;
@@ -404,11 +400,11 @@ main()
     return 0;
   }
   catch (...)
-    {
-      flog.close() ; // Close the log file
-      vpERROR_TRACE(" Test failed") ;
-      return 0;
-    }
+  {
+    flog.close() ; // Close the log file
+    vpERROR_TRACE(" Test failed") ;
+    return 0;
+  }
 }
 
 #else

@@ -89,7 +89,7 @@
 int
 main()
 {
- try {
+  try {
     vpRobotViper850 robot ;
 
     vpServo task ;
@@ -133,10 +133,10 @@ main()
 
     double rho = 0.25 ;
     for (unsigned int i=0 ; i < 6 ; i++)
-      {
-	Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
-	Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
-      }
+    {
+      Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
+      Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
+    }
     Qmiddle = (Qmin + Qmax) /2.;
     double rho1 = 0.1 ;
     
@@ -144,7 +144,7 @@ main()
       tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
       tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
     }
-   
+
     vpColVector q(6) ;
 
     // Create a window with two graphics
@@ -179,7 +179,7 @@ main()
     plot.setLegend(0, 7, "tQmax");
     plot.setLegend(0, 8, "Qmin");
     plot.setLegend(0, 9, "Qmax");
- 
+
     // Set the curves color
     plot.setColor(0, 0, vpColor::red); 
     plot.setColor(0, 1, vpColor::green); 
@@ -189,7 +189,7 @@ main()
     plot.setColor(0, 5, vpColor::cyan); 
     for (unsigned int i= 6; i < 10; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
-  // Set the curves color
+    // Set the curves color
 
     plot.setColor(1, 0, vpColor::red); 
     plot.setColor(1, 1, vpColor::green); 
@@ -243,7 +243,7 @@ main()
     double lambda = 0.8;
     // set to -1 to suppress the lambda used in the vpServo::computeControlLaw()
     task.setLambda(-1) ; 
- 
+
     // Display task information " ) ;
     task.print() ;
 
@@ -268,7 +268,7 @@ main()
       
       // Acquire a new image from the camera
       frame = g.dequeue(I);
-	
+
       // Display this image
       vpDisplay::display(I) ;
 
@@ -282,7 +282,7 @@ main()
       // Get the measured joint positions of the robot
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
 
-       // Update the point feature from the dot location
+      // Update the point feature from the dot location
       vpFeatureBuilder::create(p, cam, dot);
 
       // Get the jacobian of the robot
@@ -298,7 +298,7 @@ main()
       prim_task = task.computeControlLaw() ;
 
       vpColVector qpre(6);
- 
+
       qpre = q ;
       qpre += -lambda*prim_task*(4*Tloop)  ;
 
@@ -306,54 +306,54 @@ main()
       vpColVector pb(6) ; pb = 0 ;
       unsigned int npb =0 ;
       for (unsigned int i=0 ; i < 6 ;i++) {
-	if (q[i] < tQmin[i])
-	  if (fabs(Qmin[i]-q[i]) > fabs(Qmin[i]-qpre[i])) {
-	    pb[i] = 1 ; npb++ ;
-	    std::cout << "Joint " << i << " near limit " << std::endl ;
-	  }
-	if (q[i]>tQmax[i]) {
-	  if (fabs(Qmax[i]-q[i]) > fabs(Qmax[i]-qpre[i])) {
-	    pb[i] = 1 ; npb++ ;
-	    std::cout << "Joint " << i << " near limit " << std::endl ;
-	  }
-	}
+        if (q[i] < tQmin[i])
+          if (fabs(Qmin[i]-q[i]) > fabs(Qmin[i]-qpre[i])) {
+            pb[i] = 1 ; npb++ ;
+            std::cout << "Joint " << i << " near limit " << std::endl ;
+          }
+        if (q[i]>tQmax[i]) {
+          if (fabs(Qmax[i]-q[i]) > fabs(Qmax[i]-qpre[i])) {
+            pb[i] = 1 ; npb++ ;
+            std::cout << "Joint " << i << " near limit " << std::endl ;
+          }
+        }
       }
 
       vpColVector a0 ;
+      vpMatrix J1 = task.getTaskJacobian();
       vpMatrix kernelJ1;
-
-      task.J1.kernel(kernelJ1);
+      J1.kernel(kernelJ1);
 
       unsigned int dimKernelL = kernelJ1.getCols() ;
       if (npb != 0) {
-	// Build linear system a0*E = S
-	vpMatrix E(npb, dimKernelL) ;
-	vpColVector S(npb) ;
+        // Build linear system a0*E = S
+        vpMatrix E(npb, dimKernelL) ;
+        vpColVector S(npb) ;
 
-	unsigned int k=0 ;
+        unsigned int k=0 ;
 
-	for (unsigned int j=0 ; j < 6 ; j++) // j is the joint
-	  //if (pb[j]==1)	{
-	  if (std::fabs(pb[j]-1) <= std::numeric_limits<double>::epsilon())	{
-	    for (unsigned int i=0 ; i < dimKernelL ; i++)
-	      E[k][i] = kernelJ1[j][i] ;
-	  
-	    S[k] = -prim_task[j]  ;
-	    k++ ;
-	  }
-	vpMatrix Ep ;
-	//vpTRACE("nbp %d", npb);
-	Ep = E.t()*(E*E.t()).pseudoInverse() ;
-	a0 = Ep*S ;
+        for (unsigned int j=0 ; j < 6 ; j++) // j is the joint
+          //if (pb[j]==1)	{
+          if (std::fabs(pb[j]-1) <= std::numeric_limits<double>::epsilon())	{
+            for (unsigned int i=0 ; i < dimKernelL ; i++)
+              E[k][i] = kernelJ1[j][i] ;
 
-	e2 = (kernelJ1*a0) ;
-	//cout << "e2 " << e2.t() ;
+            S[k] = -prim_task[j]  ;
+            k++ ;
+          }
+        vpMatrix Ep ;
+        //vpTRACE("nbp %d", npb);
+        Ep = E.t()*(E*E.t()).pseudoInverse() ;
+        a0 = Ep*S ;
+
+        e2 = (kernelJ1*a0) ;
+        //cout << "e2 " << e2.t() ;
       }
       else {
-	e2 = 0;
+        e2 = 0;
       }
       //  std::cout << "e2: " << e2.t() << std::endl; 
-  
+
       vpColVector v ;
       v = -lambda * (prim_task + e2);
 
@@ -362,23 +362,23 @@ main()
 
       // Apply the computed joint velocities to the robot
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
- 
+
       {
-	// Add the material to plot curves
+        // Add the material to plot curves
 
-	// q normalized between (entre -1 et 1)
-	for (unsigned int i=0 ; i < 6 ; i++) {
-	  data[i] = (q[i] - Qmiddle[i]) ;
-	  data[i] /= (Qmax[i] - Qmin[i]) ;
-	  data[i]*=2 ;
-	}
-	unsigned int joint = 2;
-	data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-	data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-	data[8] = -1 ; data[9] = 1 ;
+        // q normalized between (entre -1 et 1)
+        for (unsigned int i=0 ; i < 6 ; i++) {
+          data[i] = (q[i] - Qmiddle[i]) ;
+          data[i] /= (Qmax[i] - Qmin[i]) ;
+          data[i]*=2 ;
+        }
+        unsigned int joint = 2;
+        data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+        data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+        data[8] = -1 ; data[9] = 1 ;
 
-	plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
-	plot.plot(1, iter, v); // plot joint velocities applied to the robot
+        plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
+        plot.plot(1, iter, v); // plot joint velocities applied to the robot
       }
 
       vpDisplay::flush(I) ;

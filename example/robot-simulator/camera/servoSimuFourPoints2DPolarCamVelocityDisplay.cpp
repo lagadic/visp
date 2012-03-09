@@ -444,20 +444,13 @@ main(int argc, const char ** argv)
 
     std::cout << "v: " << v.t() << std::endl;
 
-    std::cout << "|| s - s* || = "<< task.error.sumSquare() << std::endl;
+    std::cout << "|| s - s* || = "<< ( task.getError() ).sumSquare() << std::endl;
 
     // Save feature error (s-s*) for the 4 feature points. For each feature
     // point, we have 2 errors (along x and y axis).  This error is expressed
     // in meters in the camera frame
-    flog << task.error[0] << " " << task.error[1] << " " // s-s* for point 1
-	 << task.error[2] << " " << task.error[3] << " " // s-s* for point 2
-	 << task.error[4] << " " << task.error[5] << " " // s-s* for point 3
-	 << task.error[6] << " " << task.error[7] << " ";// s-s* for point 4
-    std::cout << "Error (s-s*): "
-	      << task.error[0] << " " << task.error[1] << " " // s-s* for point 1
-	      << task.error[2] << " " << task.error[3] << " " // s-s* for point 2
-	      << task.error[4] << " " << task.error[5] << " " // s-s* for point 3
-	      << task.error[6] << " " << task.error[7] << "\n";// s-s* for point 4
+    flog << ( task.getError() ).t() << " ";// s-s* for point 4
+    std::cout << "Error (s-s*): " << ( task.getError() ).t() << "\n";// s-s*
 
     // Save current visual feature s = (rho,theta)
     for (i = 0 ; i < 4 ; i++) {

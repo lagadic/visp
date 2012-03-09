@@ -271,7 +271,7 @@ main()
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
     vpDisplay::flush(I) ;
     
-	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+	  vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
 	}
 
     vpTRACE("Display task information " ) ;

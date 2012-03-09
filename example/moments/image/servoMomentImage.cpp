@@ -104,16 +104,16 @@ int main()
 #else
 int main()
 {
-    //intial pose
-    vpHomogeneousMatrix cMo(-0.1,-0.1,1.5,-vpMath::rad(20),-vpMath::rad(20),-vpMath::rad(30));
-    //Desired pose
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,-0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
+  //intial pose
+  vpHomogeneousMatrix cMo(-0.1,-0.1,1.5,-vpMath::rad(20),-vpMath::rad(20),-vpMath::rad(30));
+  //Desired pose
+  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,-0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
 
-    //init the simulation
-    init(cMo,cdMo);
+  //init the simulation
+  init(cMo,cdMo);
 
-    execute(1500);
-    return 0;
+  execute(1500);
+  return 0;
 }
 
 
@@ -161,184 +161,184 @@ using namespace std;
 
 
 void initScene(){
-    vpColVector X[4];
-    for (int i = 0; i < 4; i++) X[i].resize(3);
-    X[0][0] = -0.2;
-    X[0][1] = -0.1;
-    X[0][2] = 0;
+  vpColVector X[4];
+  for (int i = 0; i < 4; i++) X[i].resize(3);
+  X[0][0] = -0.2;
+  X[0][1] = -0.1;
+  X[0][2] = 0;
 
-    X[1][0] = 0.2;
-    X[1][1] = -0.1;
-    X[1][2] = 0;
+  X[1][0] = 0.2;
+  X[1][1] = -0.1;
+  X[1][2] = 0;
 
-    X[2][0] = 0.2;
-    X[2][1] = 0.1;
-    X[2][2] = 0;
+  X[2][0] = 0.2;
+  X[2][1] = 0.1;
+  X[2][2] = 0;
 
-    X[3][0] = -0.2;
-    X[3][1] = 0.1;
-    X[3][2] = 0;
-    //init source and destination images
-    vpImage<unsigned char> tmp_img(480,640,255);
-    vpImage<vpRGBa> tmp_start_img(480,640,vpRGBa(255,0,0));
+  X[3][0] = -0.2;
+  X[3][1] = 0.1;
+  X[3][2] = 0;
+  //init source and destination images
+  vpImage<unsigned char> tmp_img(480,640,255);
+  vpImage<vpRGBa> tmp_start_img(480,640,vpRGBa(255,0,0));
 
-    vpImageSimulator imsim_start;
-    imsim_start.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
-    imsim_start.init(tmp_start_img, X);
-    imsim_start.setCameraPosition(cdMo);
-    imsim_start.getImage(start_img,cam);
+  vpImageSimulator imsim_start;
+  imsim_start.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
+  imsim_start.init(tmp_start_img, X);
+  imsim_start.setCameraPosition(cdMo);
+  imsim_start.getImage(start_img,cam);
 
-    imsim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
-    imsim.init(tmp_img, X);
+  imsim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
+  imsim.init(tmp_img, X);
 
-    imsim.setCameraPosition(cMo);
-    imsim.getImage(src_img,cam);
+  imsim.setCameraPosition(cMo);
+  imsim.getImage(src_img,cam);
 
-    src.setType(vpMomentObject::DENSE_FULL_OBJECT);
-    src.fromImage(src_img,128,cam);
+  src.setType(vpMomentObject::DENSE_FULL_OBJECT);
+  src.fromImage(src_img,128,cam);
 
-    dst.setType(vpMomentObject::DENSE_FULL_OBJECT);
-    imsim.setCameraPosition(cdMo);
-    imsim.getImage(dst_img,cam);
-    dst.fromImage(dst_img,128,cam);
+  dst.setType(vpMomentObject::DENSE_FULL_OBJECT);
+  imsim.setCameraPosition(cdMo);
+  imsim.getImage(dst_img,cam);
+  dst.fromImage(dst_img,128,cam);
 
 }
 
 void refreshScene(vpMomentObject &obj){
-    cur_img = 0;
-    imsim.setCameraPosition(cMo);
-    imsim.getImage(cur_img,cam);
-    obj.fromImage(cur_img,128,cam);
+  cur_img = 0;
+  imsim.setCameraPosition(cMo);
+  imsim.getImage(cur_img,cam);
+  obj.fromImage(cur_img,128,cam);
 }
 
 void init(vpHomogeneousMatrix& _cMo, vpHomogeneousMatrix& _cdMo)
 {
-    cMo = _cMo; //init source matrix
-    cdMo = _cdMo; //init destination matrix
+  cMo = _cMo; //init source matrix
+  cdMo = _cdMo; //init destination matrix
 
-    interaction_type = vpServo::CURRENT;//use interaction matrix for current position
+  interaction_type = vpServo::CURRENT;//use interaction matrix for current position
 
-    displayInt.init(Iint,700,0, "Visual servoing with moments") ;
+  displayInt.init(Iint,700,0, "Visual servoing with moments") ;
 
-    paramRobot(); //set up robot parameters
+  paramRobot(); //set up robot parameters
 
-    task.setServo(vpServo::EYEINHAND_CAMERA);
-    initScene(); //initialize graphical scene (for interface)
-    initFeatures();//initialize moment features
+  task.setServo(vpServo::EYEINHAND_CAMERA);
+  initScene(); //initialize graphical scene (for interface)
+  initFeatures();//initialize moment features
 }
 
 void initFeatures(){
-    //A,B,C parameters of source and destination plane
-    double A; double B; double C;
-    double Ad; double Bd; double Cd;
-    //init main object: using moments up to order 5
+  //A,B,C parameters of source and destination plane
+  double A; double B; double C;
+  double Ad; double Bd; double Cd;
+  //init main object: using moments up to order 5
 
-    //Initializing values from regular plane (with ax+by+cz=d convention)
+  //Initializing values from regular plane (with ax+by+cz=d convention)
+  vpPlane pl;
+  pl.setABCD(0,0,1.0,0);
+  pl.changeFrame(cMo);
+  _planeToABC(pl,A,B,C);
+
+  pl.setABCD(0,0,1.0,0);
+  pl.changeFrame(cdMo);
+  _planeToABC(pl,Ad,Bd,Cd);
+
+  //extracting initial position (actually we only care about Zdst)
+  vpTranslationVector vec;
+  cdMo.extract(vec);
+
+  ///////////////////////////// initializing moments and features /////////////////////////////////
+  //don't need to be specific, vpMomentCommon automatically loads Xg,Yg,An,Ci,Cj,Alpha moments
+  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2]);
+  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2]);
+  //same thing with common features
+  featureMoments = new vpFeatureMomentCommon(*moments);
+  featureMomentsDes = new vpFeatureMomentCommon(*momentsDes);
+
+  moments->updateAll(src);
+  momentsDes->updateAll(dst);
+
+  featureMoments->updateAll(A,B,C);
+  featureMomentsDes->updateAll(Ad,Bd,Cd);
+
+  //setup the interaction type
+  task.setInteractionMatrixType(interaction_type) ;
+  //////////////////////////////////add useful features to task//////////////////////////////
+  task.addFeature(featureMoments->getFeatureGravityNormalized(),featureMomentsDes->getFeatureGravityNormalized());
+  task.addFeature(featureMoments->getFeatureAn(),featureMomentsDes->getFeatureAn());
+  //the moments are different in case of a symmetric object
+  task.addFeature(featureMoments->getFeatureCInvariant(),featureMomentsDes->getFeatureCInvariant(),(1 << 10) | (1 << 11));
+  task.addFeature(featureMoments->getFeatureAlpha(),featureMomentsDes->getFeatureAlpha());
+
+  task.setLambda(1.) ;
+}
+
+void execute(int nbIter){
+  //init main object: using moments up to order 6
+  vpMomentObject obj(6);
+  //setting object type (disrete, continuous[form polygon])
+  obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
+
+  vpTRACE("Display task information " ) ;
+  task.print() ;
+
+  vpDisplay::display(Iint);
+  vpDisplay::flush(Iint);
+  int iter=0;
+  double t=0;
+	robot.setPosition(cMo);
+	float sampling_time = 0.010f; // Sampling period in seconds
+	robot.setSamplingTime(sampling_time);
+  ///////////////////SIMULATION LOOP/////////////////////////////
+  while(iter++<nbIter ){
+    vpColVector v ;
+    t = vpTime::measureTimeMs();
+    //get the cMo
+    robot.getPosition(cMo);
+    //setup the plane in A,B,C style
     vpPlane pl;
+    double A,B,C;
     pl.setABCD(0,0,1.0,0);
     pl.changeFrame(cMo);
     _planeToABC(pl,A,B,C);
 
-    pl.setABCD(0,0,1.0,0);
-    pl.changeFrame(cdMo);
-    _planeToABC(pl,Ad,Bd,Cd);
-
-    //extracting initial position (actually we only care about Zdst)
-    vpTranslationVector vec;
-    cdMo.extract(vec);
-
-    ///////////////////////////// initializing moments and features /////////////////////////////////
-    //don't need to be specific, vpMomentCommon automatically loads Xg,Yg,An,Ci,Cj,Alpha moments
-    moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2]);
-    momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2]);
-    //same thing with common features
-    featureMoments = new vpFeatureMomentCommon(*moments);
-    featureMomentsDes = new vpFeatureMomentCommon(*momentsDes);
-
-    moments->updateAll(src);
-    momentsDes->updateAll(dst);
-
+    //track points, draw points and add refresh our object
+    refreshScene(obj);
+    //this is the most important thing to do: update our moments
+    moments->updateAll(obj);
+    //and update our features. Do it in that order. Features need to use the information computed by moments
     featureMoments->updateAll(A,B,C);
-    featureMomentsDes->updateAll(Ad,Bd,Cd);
+    //some graphics again
+    imsim.setCameraPosition(cMo);
 
-    //setup the interaction type
-    task.setInteractionMatrixType(interaction_type) ;
-    //////////////////////////////////add useful features to task//////////////////////////////
-    task.addFeature(featureMoments->getFeatureGravityNormalized(),featureMomentsDes->getFeatureGravityNormalized());
-    task.addFeature(featureMoments->getFeatureAn(),featureMomentsDes->getFeatureAn());
-    //the moments are different in case of a symmetric object
-    task.addFeature(featureMoments->getFeatureCInvariant(),featureMomentsDes->getFeatureCInvariant(),(1 << 10) | (1 << 11));
-    task.addFeature(featureMoments->getFeatureAlpha(),featureMomentsDes->getFeatureAlpha());
+    Iint = start_img;
 
-    task.setLambda(1.) ;
-}
+    imsim.getImage(Iint,cam);
+    vpDisplay::display(Iint) ;
 
-void execute(int nbIter){
-    //init main object: using moments up to order 6
-    vpMomentObject obj(6);
-    //setting object type (disrete, continuous[form polygon])
-    obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
-
-    vpTRACE("Display task information " ) ;
-    task.print() ;
-
-    vpDisplay::display(Iint);    
     vpDisplay::flush(Iint);
-    int iter=0;
-    double t=0;
-	robot.setPosition(cMo);
-	float sampling_time = 0.010f; // Sampling period in seconds
-	robot.setSamplingTime(sampling_time);
-    ///////////////////SIMULATION LOOP/////////////////////////////
-    while(iter++<nbIter ){
-        vpColVector v ;
-        t = vpTime::measureTimeMs();
-        //get the cMo
-        robot.getPosition(cMo);
-        //setup the plane in A,B,C style
-        vpPlane pl;
-        double A,B,C;
-        pl.setABCD(0,0,1.0,0);
-        pl.changeFrame(cMo);
-        _planeToABC(pl,A,B,C);
 
-        //track points, draw points and add refresh our object
-        refreshScene(obj);
-        //this is the most important thing to do: update our moments
-        moments->updateAll(obj);
-        //and update our features. Do it in that order. Features need to use the information computed by moments
-        featureMoments->updateAll(A,B,C);
-        //some graphics again
-        imsim.setCameraPosition(cMo);
-
-        Iint = start_img;
-
-        imsim.getImage(Iint,cam);
-        vpDisplay::display(Iint) ;
-        
-        vpDisplay::flush(Iint);
-
-        if (iter == 1)
-            vpDisplay::getClick(Iint) ;
-        v = task.computeControlLaw() ;
-        //pilot robot using position control. The displacement is t*v with t=10ms step
-        //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
+    if (iter == 1)
+      vpDisplay::getClick(Iint) ;
+    v = task.computeControlLaw() ;
+    //pilot robot using position control. The displacement is t*v with t=10ms step
+    //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
 		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
 
-        //vpTime::wait(t,10);
-        _error = task.error.sumSquare();
-    }
+    //vpTime::wait(t,10);
+    _error = ( task.getError() ).sumSquare();
+  }
 
-    task.kill();
+  task.kill();
 
-    vpTRACE("\n\nClick in the internal view window to end...");
-    vpDisplay::getClick(Iint) ;
+  vpTRACE("\n\nClick in the internal view window to end...");
+  vpDisplay::getClick(Iint) ;
 
-    delete moments;
-    delete momentsDes;
-    delete featureMoments;
-    delete featureMomentsDes;
+  delete moments;
+  delete momentsDes;
+  delete featureMoments;
+  delete featureMomentsDes;
 }
 
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type){interaction_type=type;}
@@ -353,9 +353,9 @@ void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
 		std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
 		throw vpException(vpException::divideByZeroError,"invalid position!");
 	}
-    A=-pl.getA()/pl.getD();
-    B=-pl.getB()/pl.getD();
-    C=-pl.getC()/pl.getD();
+  A=-pl.getA()/pl.getD();
+  B=-pl.getB()/pl.getD();
+  C=-pl.getC()/pl.getD();
 }
 
 void paramRobot(){

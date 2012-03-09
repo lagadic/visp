@@ -106,29 +106,29 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 2D visual servoing on a cylinder:\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- display the camera view.\n\
-\n\
-SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+          Simulation of a 2D visual servoing on a cylinder:\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - display the camera view.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-c] [-d] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
-\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -c\n\
+                  Disable the mouse click. Useful to automaze the \n\
+                  execution of this program without humain intervention.\n\
+                  \n\
+                  -d \n\
+                  Turn off the display.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -213,10 +213,10 @@ main(int argc, const char ** argv)
       vpDisplay::flush(Iext) ;
     }
     catch(...)
-      {
-	vpERROR_TRACE("Error while displaying the image") ;
-	exit(-1);
-      }
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
   }
 
   vpProjectionDisplay externalview ;
@@ -232,20 +232,20 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.2,0.1,2,
-			  vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(20));
+                          vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(20));
 
   robot.setPosition(cMo) ;
 
   vpTRACE("sets the final camera location (for simulation purpose)" ) ;
   vpHomogeneousMatrix cMod(0,0,1,
-			   vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
+                           vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
 
 
 
   vpTRACE("sets the cylinder coordinates in the world frame "  ) ;
   vpCylinder cylinder(0,1,0,  // direction
-		      0,0,0,  // point of the axis
-		      0.1) ;  // radius
+                      0,0,0,  // point of the axis
+                      0.1) ;  // radius
 
   externalview.insert(cylinder) ;
 
@@ -268,10 +268,10 @@ main(int argc, const char ** argv)
   //Build the current line features thanks to the cylinder and especially its paramaters in the image frame
   vpFeatureLine l[2] ;
   for(i=0 ; i < 2 ; i++)
-    {
-      vpFeatureBuilder::create(l[i],cylinder,i)  ;
-      l[i].print() ;
-    }
+  {
+    vpFeatureBuilder::create(l[i],cylinder,i)  ;
+    l[i].print() ;
+  }
 
   vpTRACE("define the task") ;
   vpTRACE("\t we want an eye-in-hand control law") ;
@@ -292,7 +292,7 @@ main(int argc, const char ** argv)
 
   // Set the point of view of the external view
   vpHomogeneousMatrix cextMo(0,0,6,
-			 vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+                             vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
   // Display the initial scene
   vpServoDisplay::display(task,cam,Iint) ;
@@ -319,44 +319,44 @@ main(int argc, const char ** argv)
   vpTRACE("\t loop") ;
   //The first loop is needed to reach the desired position
   do
+  {
+    std::cout << "---------------------------------------------" << iter++ <<std::endl ;
+    vpColVector v ;
+
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t new line position ") ;
+    //retrieve x,y and Z of the vpLine structure
+
+    // Compute the parameters of the cylinder in the camera frame and in the image frame
+    cylinder.track(cMo) ;
+
+    //Build the current line features thanks to the cylinder and especially its paramaters in the image frame
+    for(i=0 ; i < 2 ; i++)
     {
-      std::cout << "---------------------------------------------" << iter++ <<std::endl ;
-      vpColVector v ;
-
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
-      if (iter==1) vpTRACE("\t\t new line position ") ;
-      //retrieve x,y and Z of the vpLine structure
-
-      // Compute the parameters of the cylinder in the camera frame and in the image frame
-      cylinder.track(cMo) ;
-
-      //Build the current line features thanks to the cylinder and especially its paramaters in the image frame
-      for(i=0 ; i < 2 ; i++)
-	{
-	  vpFeatureBuilder::create(l[i],cylinder,i)  ;
-	}
-
-      // Display the current scene
-      if (opt_display) {
-	            vpDisplay::display(Iint) ;
-	            vpDisplay::display(Iext) ;
-	      vpServoDisplay::display(task,cam,Iint) ;
-	      externalview.display(Iext,cextMo, cMo, cam, vpColor::red);
-	      vpDisplay::flush(Iint);
-	      vpDisplay::flush(Iext);
-      }
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpTRACE("\t\t || s - s* || ") ;
-      std::cout << task.error.sumSquare() <<std::endl ;
+      vpFeatureBuilder::create(l[i],cylinder,i)  ;
     }
-  while(task.error.sumSquare() >  1e-9) ;
+
+    // Display the current scene
+    if (opt_display) {
+      vpDisplay::display(Iint) ;
+      vpDisplay::display(Iext) ;
+      vpServoDisplay::display(task,cam,Iint) ;
+      externalview.display(Iext,cextMo, cMo, cam, vpColor::red);
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext);
+    }
+
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    vpTRACE("\t\t || s - s* || ") ;
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+  }
+  while(( task.getError() ).sumSquare() >  1e-9) ;
 
 
   // Second loop is to compute the control law while taking into account the secondary task.
@@ -390,12 +390,12 @@ main(int argc, const char ** argv)
 
     if (opt_display) 
     {
-	            vpDisplay::display(Iint) ;
-	            vpDisplay::display(Iext) ;
-	      vpServoDisplay::display(task,cam,Iint) ;
-	      externalview.display(Iext,cextMo, cMo, cam, vpColor::red);
-	      vpDisplay::flush(Iint);
-	      vpDisplay::flush(Iext);
+      vpDisplay::display(Iint) ;
+      vpDisplay::display(Iext) ;
+      vpServoDisplay::display(task,cam,Iint) ;
+      externalview.display(Iext,cextMo, cMo, cam, vpColor::red);
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext);
     }
 
     v = task.computeControlLaw() ;

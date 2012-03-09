@@ -88,22 +88,22 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of avisual servoing using theta U visual feature:\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- without display.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
+          Simulation of avisual servoing using theta U visual feature:\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - without display.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -165,8 +165,8 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the initial camera location " ) ;
   vpPoseVector c_r_o(0.1,0.2,2,
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
-		     ) ;
+                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
+                     ) ;
 
   vpCTRACE ; std::cout << std::endl ;
   vpHomogeneousMatrix cMo(c_r_o) ;
@@ -176,7 +176,7 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
 
@@ -204,29 +204,29 @@ main(int argc, const char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<200)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+  while(iter++ < 200)
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
 
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
 
-      if (iter==1) vpTRACE("\t\t new rotation to realize ") ;
-      cdMc = cdMo*cMo.inverse() ;
-      tu.buildFrom(cdMc) ;
-
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-      if (iter==1) task.print() ;
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    if (iter==1) vpTRACE("\t\t new rotation to realize ") ;
+    cdMc = cdMo*cMo.inverse() ;
+    tu.buildFrom(cdMc) ;
 
 
-      std::cout << task.error.sumSquare() <<std::endl ; ;
-    }
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+    if (iter==1) task.print() ;
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;

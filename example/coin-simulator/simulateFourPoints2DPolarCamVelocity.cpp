@@ -86,33 +86,33 @@ Print the program options.
 void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
-Simulation Servo 4points.\n\
-\n\
-SYNOPSIS\n\
-  %s [-i <input image path>] [-d] [-h]\n\
-", name);
+          Simulation Servo 4points.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-i <input image path>] [-d] [-h]\n\
+          ", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -i <input image path>                                %s\n\
-     Set image input path.\n\
-     From this path read \"ViSP-images/iv/4points.iv\"\n\
-     cad model.\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment\n\
-     variable produces the same behaviour than using\n\
-     this option.\n\
-\n\
-  -d                                             \n\
-     Disable the image display. This can be useful \n\
-     for automatic tests using crontab under Unix or \n\
-     using the task manager under Windows.\n\
-\n\
-  -h\n\
-     Print the help.\n\n",
-	  ipath.c_str());
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -i <input image path>                                %s\n\
+                  Set image input path.\n\
+                  From this path read \"ViSP-images/iv/4points.iv\"\n\
+                  cad model.\n\
+                  Setting the VISP_INPUT_IMAGE_PATH environment\n\
+                  variable produces the same behaviour than using\n\
+                  this option.\n\
+                  \n\
+                  -d                                             \n\
+                  Disable the image display. This can be useful \n\
+                  for automatic tests using crontab under Unix or \n\
+                  using the task manager under Windows.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n\n",
+                  ipath.c_str());
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+      if (badparam)
+      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -220,7 +220,7 @@ void *mainLoop (void *_simu)
     std::cout << "s: \n";
     for (int i=0; i < 4; i ++) {
       printf("[%d] rho %f theta %f Z %f\n",
-	     i, p[i].get_rho(), p[i].get_theta(), p[i].get_Z()); 
+             i, p[i].get_rho(), p[i].get_theta(), p[i].get_Z());
     }
 
     vpTRACE("sets the desired position of the point ") ;
@@ -248,7 +248,7 @@ void *mainLoop (void *_simu)
     std::cout << "s*: \n";
     for (int i=0; i < 4; i ++) {
       printf("[%d] rho %f theta %f Z %f\n",
-	     i, pd[i].get_rho(), pd[i].get_theta(), pd[i].get_Z()); 
+             i, pd[i].get_rho(), pd[i].get_theta(), pd[i].get_Z());
     }
     
     vpTRACE("define the task") ;
@@ -280,7 +280,7 @@ void *mainLoop (void *_simu)
 
     vpTime::wait(1000); // Sleep 1s
     std::cout << "\nEnter a character to continue or CTRL-C to quit... "
-	      << std::endl ;
+              << std::endl ;
     {    char a ; std::cin >> a ; }
 
 
@@ -297,10 +297,10 @@ void *mainLoop (void *_simu)
 
       robot.getPosition(cMo) ;
       for (int i = 0 ; i < 4 ; i++)
-	{
-	  point[i].track(cMo) ;
-	  vpFeatureBuilder::create(p[i],point[i])  ;
-	}
+      {
+        point[i].track(cMo) ;
+        vpFeatureBuilder::create(p[i],point[i])  ;
+      }
 
       v = task.computeControlLaw() ;
       robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
@@ -377,10 +377,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -388,11 +388,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 

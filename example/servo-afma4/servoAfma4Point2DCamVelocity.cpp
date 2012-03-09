@@ -261,8 +261,7 @@ main()
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " " // s-s* for point
-	   << std::endl;
+      flog << task.getError() << std::endl;
 
       // Flush the display
       vpDisplay::flush(I) ;

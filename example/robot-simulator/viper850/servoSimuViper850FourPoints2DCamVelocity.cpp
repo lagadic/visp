@@ -102,29 +102,29 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Tests a control law with the following characteristics:\n\
-- eye-in-hand control\n\
-- articular velocity are computed\n\
-- servo on 4 points,\n\
-- internal and external camera view displays.\n\
-\n\
-SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+          Tests a control law with the following characteristics:\n\
+          - eye-in-hand control\n\
+          - articular velocity are computed\n\
+          - servo on 4 points,\n\
+          - internal and external camera view displays.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-c] [-d] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
-\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -c\n\
+                  Disable the mouse click. Useful to automaze the \n\
+                  execution of this program without humain intervention.\n\
+                  \n\
+                  -d \n\
+                  Turn off the display.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -203,7 +203,7 @@ main(int argc, const char ** argv)
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
   std::cout << " Eye-in-hand task control, articular velocity are computed" 
-	    << std::endl ;
+            << std::endl ;
   std::cout << " Simulation " << std::endl ;
   std::cout << " task : servo 4 points " << std::endl ;
   std::cout << "----------------------------------------------" << std::endl ;
@@ -212,7 +212,7 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.05,-0.05,0.7,
-			  vpMath::rad(10),  vpMath::rad(10),  vpMath::rad(-30));
+                          vpMath::rad(10),  vpMath::rad(10),  vpMath::rad(-30));
 
 
   vpTRACE("sets the point coordinates in the object frame "  ) ;
@@ -292,62 +292,62 @@ main(int argc, const char ** argv)
   int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<500)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
 
-      //Get the Time at the beginning of the loop
-      double t = vpTime::measureTimeMs();
+    //Get the Time at the beginning of the loop
+    double t = vpTime::measureTimeMs();
 
-      //Get the current pose of the camera
-      cMo = robot.get_cMo();
+    //Get the current pose of the camera
+    cMo = robot.get_cMo();
 
-      if (iter==1) {
-	std::cout <<"Initial robot position with respect to the object frame:\n";
-	cMo.print();
-      }
-
-      if (iter==1) vpTRACE("\t new point position ") ;
-      for (i = 0 ; i < 4 ; i++)
-      {
-	point[i].track(cMo) ;
-	//retrieve x,y and Z of the vpPoint structure
-	try {
-	vpFeatureBuilder::create(p[i],point[i])  ;
-	}
-	catch(...)
-	{
-	  break;
-	}
-      }
-
-      if (opt_display) 
-      {
-	/*Get the internal view and display it*/
-	vpDisplay::display(Iint) ;
-	robot.getInternalView(Iint);	  
-	vpDisplay::flush(Iint);
-      }
-      
-      if (opt_display && opt_click_allowed && iter == 1)
-      {
-        // suppressed for automate test
-        vpTRACE("\n\nClick in the internal view window to continue...");
-        vpDisplay::getClick(Iint) ;
-      }
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpTRACE("\t\t || s - s* || ") ;
-      std::cout << task.error.sumSquare() <<std::endl ;
-      
-      /* The main loop as a duration of 10 ms at minimum*/
-      vpTime::wait(t,10);
+    if (iter==1) {
+      std::cout <<"Initial robot position with respect to the object frame:\n";
+      cMo.print();
     }
+
+    if (iter==1) vpTRACE("\t new point position ") ;
+    for (i = 0 ; i < 4 ; i++)
+    {
+      point[i].track(cMo) ;
+      //retrieve x,y and Z of the vpPoint structure
+      try {
+        vpFeatureBuilder::create(p[i],point[i])  ;
+      }
+      catch(...)
+      {
+        break;
+      }
+    }
+
+    if (opt_display)
+    {
+      /*Get the internal view and display it*/
+      vpDisplay::display(Iint) ;
+      robot.getInternalView(Iint);
+      vpDisplay::flush(Iint);
+    }
+
+    if (opt_display && opt_click_allowed && iter == 1)
+    {
+      // suppressed for automate test
+      vpTRACE("\n\nClick in the internal view window to continue...");
+      vpDisplay::getClick(Iint) ;
+    }
+
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    vpTRACE("\t\t || s - s* || ") ;
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+
+    /* The main loop as a duration of 10 ms at minimum*/
+    vpTime::wait(t,10);
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;
