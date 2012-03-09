@@ -259,9 +259,96 @@ public:
   //! Add a secondary task.
   vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
 
-  //! Get the task dimension.
+  //! Return the task dimension.
   unsigned int getDimension() ;
 
+  /*!
+   Return the error \f$(s - s^*)\f$ between the current set of visual features
+   \f$s\f$ and the desired set of visual features \f$s^*\f$.
+   The error vector is updated after a call of computeError() or computeControlLaw().
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpColVector e = task.getError();          // Get the error vector
+\endcode
+   */
+  inline vpColVector getError() const
+  {
+    return error ;
+  }
+  /*
+    Return the interaction matrix \f$L\f$ used to compute the task jacobian \f$J_1\f$.
+    The interaction matrix is updated after a call to computeInteractionMatrix() or computeControlLaw().
+
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw();    // Compute the velocity corresponding to the visual servoing
+  vpMatrix    L = task.getInteractionMatrix(); // Get the interaction matrix used to compute v
+\endcode
+    \sa getTaskJacobian()
+  */
+  inline vpMatrix getInteractionMatrix()
+  {
+    return L;
+  }
+
+  /*!
+    Return the visual servo type.
+  */
+  inline vpServoType getServoType() const
+  {
+    return servoType;
+  }
+  /*!
+    Return the task jacobian \f$J_1\f$. The task jacobian is updated after a call of computeControlLaw().
+
+    In the general case, the task jacobian is given by \f$J_1 = L {^c}V_a {^a}J_e\f$.
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix   J1 = task.getTaskJacobian();   // Get the task jacobian used to compute v
+\endcode
+    \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
+  */
+  inline vpMatrix getTaskJacobian() const
+  {
+    return J1;
+  }
+  /*!
+    Return the pseudo inverse of the task jacobian \f$J_1\f$. The task jacobian
+    and its pseudo inverse are updated after a call of computeControlLaw().
+
+    \return Pseudo inverse \f${J_1}^{+}\f$ of the task jacobian.
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw();            // Compute the velocity corresponding to the visual servoing
+  vpMatrix  J1p = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v
+\endcode
+
+  \sa getTaskJacobian()
+  */
+  inline vpMatrix getTaskJacobianPseudoInverse() const
+  {
+    return J1p;
+  }
+  /*!
+    Return the rank of the task jacobian. The rank is updated after a call of computeControlLaw().
+
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  double   rank = task.getTaskRank();       // Get the rank of the task jacobian
+\endcode
+  */
+  inline double getTaskRank() const
+  {
+    return rankJ1;
+  }
 
   void print(const vpServo::vpServoPrintType display_level=ALL,
 	     std::ostream &os = std::cout) ;
