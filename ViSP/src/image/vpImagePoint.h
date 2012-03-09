@@ -274,7 +274,7 @@ class VISP_EXPORT vpImagePoint
     return(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j()));}
   
   
-  bool inRectangle( const vpRect &rect );
+  bool inRectangle( const vpRect &rect ) const;
 
   vpImagePoint projection(const vpHomography& aHb);
 
