@@ -8,6 +8,8 @@
 
 ViSP 2.6.2 (under development)
   - New features
+     - New vpFeatureSegment class to consider a segment as a visual
+       servoing feature.
      - Introduction of new functionalities in vpIoTools to parse text 
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
