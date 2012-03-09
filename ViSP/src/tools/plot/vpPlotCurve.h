@@ -89,9 +89,8 @@ class vpPlotCurve
   public:
     vpPlotCurve();
     ~vpPlotCurve();
-    void plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double x, const double y);
-    void plotPoint(vpImage<unsigned char> &I, vpImagePoint iP, const double x, const double y, const double z);
-    void plotList(vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy);
+    void plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const double x, const double y);
+    void plotList(const vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy);
 };
 
 #endif
