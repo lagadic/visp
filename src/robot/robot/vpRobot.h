@@ -98,15 +98,7 @@ public:
 
 private:  /* Membres privees */
     vpRobot::vpRobotStateType   stateRobot;
-    vpRobot::vpControlFrameType   frameRobot;
-public:
-  virtual vpRobotStateType
-  setRobotState (const vpRobot::vpRobotStateType newState);
-  virtual
-  vpRobotStateType     getRobotState (void) { return stateRobot ; }
-
-  vpControlFrameType   setRobotFrame (vpRobot::vpControlFrameType newFrame);
-  vpControlFrameType   getRobotFrame (void) { return frameRobot ; }
+    vpRobot::vpControlFrameType   frameRobot; 
 
 
 protected:
@@ -115,8 +107,6 @@ protected:
   double maxRotationVelocity;
   static const double maxRotationVelocityDefault;// = 0.7;
 
-
-protected:
   //! number of degrees of freedom
   int nDof ;
   //! robot Jacobian expressed in the end-effector frame
@@ -129,49 +119,47 @@ protected:
   int fJeAvailable ;
 
 public:
-  virtual void init() = 0 ;
-
   vpRobot (void);
   virtual ~vpRobot() { ; }
 
   //---------- Jacobian -----------------------------
-  //! get the robot Jacobian expressed in the end-effector frame
+  //! Get the robot Jacobian expressed in the end-effector frame
   virtual void get_eJe(vpMatrix &_eJe)  = 0 ;
-  //! get the robot Jacobian expressed in the robot reference frame
+  //! Get the robot Jacobian expressed in the robot reference (or world) frame.
   virtual void get_fJe(vpMatrix &_fJe)  = 0 ;
 
-
-  //! set to the controller a velocity (frame as to ve specified)
-  virtual void setVelocity(const vpRobot::vpControlFrameType frame,
-			   const vpColVector &vel) = 0 ;
-
-
-  void setMaxTranslationVelocity (const double maxVt);
-  double getMaxTranslationVelocity (void) const ;
-  void setMaxRotationVelocity (const double maxVr);
-  double getMaxRotationVelocity (void) const;
-
-  //---------- POSITION -----------------------------
-
-  //! get a displacement (frame as to ve specified)
-  virtual void getPosition(const vpRobot::vpControlFrameType frame,
-			   vpColVector &q)   = 0 ;
-
-  //! get a displacement (frame as to ve specified)
-  vpColVector getPosition (const vpRobot::vpControlFrameType frame);
-
-  //! set a displacement (frame as to ve specified)
-  virtual void setPosition(const vpRobot::vpControlFrameType frame,
-			   const vpColVector &q)   = 0 ;
-
-
-  //! get a displacement expressed in the camera frame
-  virtual void getCameraDisplacement(vpColVector &v) = 0 ;
-  //! get a displacement expressed  in the articular frame
+  //! Get a displacement expressed in the joint space between two successive position control.
   virtual void getArticularDisplacement(vpColVector  &qdot) = 0 ;
-  //! get a displacement (frame as to ve specified)
+  //! Get a displacement expressed in the camera frame between two successive position control.
+  virtual void getCameraDisplacement(vpColVector &v) = 0 ;
+  //! Get a displacement (frame as to ve specified) between two successive position control.
   virtual void getDisplacement(const vpRobot::vpControlFrameType frame,
-			       vpColVector &q) = 0 ;
+                               vpColVector &q) = 0 ;
+
+  double getMaxTranslationVelocity (void) const ;
+  double getMaxRotationVelocity (void) const;
+  //! Get the robot position (frame has to be specified).
+  virtual void getPosition(const vpRobot::vpControlFrameType frame,
+                           vpColVector &q)   = 0 ;
+
+  //! Return the robot position (frame has to be specified).
+  vpColVector getPosition (const vpRobot::vpControlFrameType frame);
+  vpControlFrameType   getRobotFrame (void) { return frameRobot ; }
+  virtual vpRobotStateType     getRobotState (void) { return stateRobot ; }
+
+  virtual void init() = 0 ;
+
+  void setMaxRotationVelocity (const double maxVr);
+  void setMaxTranslationVelocity (const double maxVt);
+  //! Set a displacement (frame has to be specified) in position control.
+  virtual void setPosition(const vpRobot::vpControlFrameType frame,
+                           const vpColVector &q)   = 0 ;
+  vpControlFrameType   setRobotFrame (vpRobot::vpControlFrameType newFrame);
+  virtual vpRobotStateType setRobotState (const vpRobot::vpRobotStateType newState);
+
+  //! Set the velocity (frame has to be specified) that will be applied to the velocity controller.
+  virtual void setVelocity(const vpRobot::vpControlFrameType frame,
+                           const vpColVector &vel) = 0 ;
 
   /*
     Joint limits stuff

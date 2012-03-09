@@ -106,7 +106,7 @@ vpRobot::getPosition (vpRobot::vpControlFrameType repere)
 
 /*! 
 
-  Set the maximal translation velocity that can be sent to the robot.
+  Set the maximal translation velocity that can be sent to the robot during a velocity control.
 
   \param maxVt : Maximum translation velocity expressed in m/s.
 
@@ -119,7 +119,7 @@ vpRobot::setMaxTranslationVelocity (const double maxVt)
 }
 
 /*!
-  Get the maximal translation velocity that can be sent to the robot.
+  Get the maximal translation velocity that can be sent to the robot during a velocity control.
 
   \return Maximum translation velocity expressed in m/s.
 */
@@ -130,7 +130,7 @@ vpRobot::getMaxTranslationVelocity (void) const
 }
 /*! 
 
-  Set the maximal rotation velocity that can be sent to the robot.
+  Set the maximal rotation velocity that can be sent to the robot  during a velocity control.
 
   \param maxVr : Maximum rotation velocity expressed in rad/s.
 */
@@ -144,7 +144,7 @@ vpRobot::setMaxRotationVelocity (const double maxVr)
 
 /*! 
 
-  Get the maximal rotation velocity that can be sent to the robot.
+  Get the maximal rotation velocity that can be sent to the robot during a velocity control.
 
   \return Maximum rotation velocity expressed in rad/s.
 */
