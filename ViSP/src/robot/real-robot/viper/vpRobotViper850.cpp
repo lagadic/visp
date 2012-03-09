@@ -799,7 +799,7 @@ vpRobotViper850::get_eJe(vpMatrix &eJe)
 
 /*!
 
-  Set the maximal velocity percentage to use for a positionning task.
+  Set the maximal velocity percentage to use for a position control.
 
   The default positioning velocity is defined by
   vpRobotViper850::defaultPositioningVelocity. This method allows to
@@ -841,7 +841,7 @@ vpRobotViper850::setPositioningVelocity (const double velocity)
 }
 
 /*!
-  Get the maximal velocity percentage used for a positionning task.
+  Get the maximal velocity percentage used for a position control.
 
   \sa setPositioningVelocity()
 */
@@ -1250,7 +1250,7 @@ int main()
 
   // Create the camera to fix frame transformation in terms of a
   // homogenous matrix
-  vpHomogeneousMatrix fMc(fRc, ftc);
+  vpHomogeneousMatrix fMc(ftc, fRc);
 #endif
 }
   \endcode
