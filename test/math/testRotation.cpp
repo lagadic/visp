@@ -144,7 +144,7 @@ main(int argc, const char ** argv)
       else std::cout <<" is not a rotation matrix " << std::endl ;
 
       std::cout << R << std::endl ;
-  
+
       std::cout << "From vpRotationMatrix to vpQuaternionVector " << std::endl ;
       vpQuaternionVector q(R);
       std::cout << q <<std::endl ;
@@ -181,26 +181,26 @@ main(int argc, const char ** argv)
       assert(vpMath::abs(u[1]-u2[1])<std::numeric_limits<double>::epsilon()*1e10);
       assert(vpMath::abs(u[2]-u2[2])<std::numeric_limits<double>::epsilon()*1e10);
     }
-	vpRzyzVector rzyz(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
-	std::cout << "Initialization vpRzyzVector " <<std::endl ;
-	std::cout << rzyz << std::endl ;
-	std::cout << "From vpRzyzVector to vpRotationMatrix  " << std::endl ;
-	R.buildFrom(rzyz) ;
-	std::cout << "From vpRotationMatrix to vpRzyzVector " << std::endl ;
-	vpRzyzVector rzyz_final ;
-	rzyz_final.buildFrom(R) ;
-	std::cout << rzyz_final << std::endl ;
+    vpRzyzVector rzyz(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
+    std::cout << "Initialization vpRzyzVector " <<std::endl ;
+    std::cout << rzyz << std::endl ;
+    std::cout << "From vpRzyzVector to vpRotationMatrix  " << std::endl ;
+    R.buildFrom(rzyz) ;
+    std::cout << "From vpRotationMatrix to vpRzyzVector " << std::endl ;
+    vpRzyzVector rzyz_final ;
+    rzyz_final.buildFrom(R) ;
+    std::cout << rzyz_final << std::endl ;
 
 
-	vpRzyxVector rzyx(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
-	std::cout << "Initialization vpRzyxVector " <<std::endl ;
-	std::cout << rzyx << std::endl ;
-	std::cout << "From vpRzyxVector to vpRotationMatrix  " << std::endl ;
-	R.buildFrom(rzyx) ;
-	std::cout << R << std::endl ;
-	std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl ;
-	vpRzyxVector rzyx_final ;
-	rzyx_final.buildFrom(R) ;
-	std::cout << rzyx_final << std::endl ;
+    vpRzyxVector rzyx(vpMath::rad(180), vpMath::rad(120), vpMath::rad(45)) ;
+    std::cout << "Initialization vpRzyxVector " <<std::endl ;
+    std::cout << rzyx << std::endl ;
+    std::cout << "From vpRzyxVector to vpRotationMatrix  " << std::endl ;
+    R.buildFrom(rzyx) ;
+    std::cout << R << std::endl ;
+    std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl ;
+    vpRzyxVector rzyx_final ;
+    rzyx_final.buildFrom(R) ;
+    std::cout << rzyx_final << std::endl ;
   }
 }

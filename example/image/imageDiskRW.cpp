@@ -128,7 +128,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &opath, std::string user)
+                std::string &ipath, std::string &opath, std::string user)
 {
   const char *optarg;
   int	c;
@@ -179,7 +179,7 @@ main(int argc, const char ** argv)
   std::cout << std::endl ;
 
 
-// Get the VISP_IMAGE_PATH environment variable value
+  // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
   if (ptenv != NULL)
     env_ipath = ptenv;
@@ -221,7 +221,7 @@ main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
@@ -233,10 +233,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -244,16 +244,16 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
 
-/////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////
 
 
 
@@ -302,12 +302,12 @@ main(int argc, const char ** argv)
 
   std::cout << "----------------------------------------------------" << std::endl ;
 
- // Let's consider that the image is now a color image (32 bits RGBa)
+  // Let's consider that the image is now a color image (32 bits RGBa)
   vpImage<vpRGBa> Irgba ;
 
   // read write unsigned char ppm image.
 
- // Load a color image from the disk
+  // Load a color image from the disk
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageIo::readPPM(Irgba, filename);
 
@@ -327,7 +327,7 @@ main(int argc, const char ** argv)
     std::cout << e << std::endl ;
   }
 
- // test io error
+  // test io error
   try
   {
     filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
@@ -338,13 +338,5 @@ main(int argc, const char ** argv)
     vpERROR_TRACE("at main level");
     std::cout << e << std::endl ;
   }
-
-
-
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

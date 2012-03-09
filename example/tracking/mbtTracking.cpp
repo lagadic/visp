@@ -204,12 +204,12 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty() ){
     usage(argv[0], NULL);
     std::cerr << std::endl
-   << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-   << std::endl
-   << "  environment variable to specify the location of the " << std::endl
-   << "  image path where test images are located." << std::endl
-         << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl
+              << std::endl;
 
     return (-1);
   }
@@ -288,15 +288,15 @@ main(int argc, const char ** argv)
   
   reader.acquire(I);
 
-    // initialise a  display
+  // initialise a  display
 #if defined VISP_HAVE_X11
-    vpDisplayX display;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
+  vpDisplayGDI display;
 #elif defined VISP_HAVE_D3D
-    vpDisplayD3D display;
+  vpDisplayD3D display;
 #else
-    opt_display = false;
+  opt_display = false;
 #endif
   if (opt_display)
   {
@@ -306,7 +306,7 @@ main(int argc, const char ** argv)
     vpDisplay::display(I) ;
     vpDisplay::flush(I);
   }
- 
+
   vpMbEdgeTracker tracker;
   vpHomogeneousMatrix cMo;
   
@@ -325,11 +325,11 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed)
   {
     while(!vpDisplay::getClick(I,false)){
-    vpDisplay::display(I);
-    vpDisplay::displayCharString(I, 15, 10,
-		 "click after positioning the object",
-		 vpColor::red);
-    vpDisplay::flush(I) ;
+      vpDisplay::display(I);
+      vpDisplay::displayCharString(I, 15, 10,
+                                   "click after positioning the object",
+                                   vpColor::red);
+      vpDisplay::flush(I) ;
     }
   }
 
@@ -358,7 +358,7 @@ main(int argc, const char ** argv)
     tracker.init(I,cMoi);
   }
 
-    //track the model
+  //track the model
   tracker.track(I);
   tracker.getPose(cMo);
   

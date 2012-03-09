@@ -163,8 +163,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
-		unsigned &first, unsigned &nimages, unsigned &step,
-		bool &click_allowed, bool &display)
+                unsigned &first, unsigned &nimages, unsigned &step,
+                bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -225,7 +225,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step, opt_click_allowed, opt_display) == false) {
+                 opt_step, opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -238,10 +238,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-		<< "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-		<< "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-		<< "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -249,14 +249,14 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty() ){
     usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
     std::cerr << std::endl
-	      << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	      << std::endl
-	      << "  environment variable to specify the location of the " << std::endl
-	      << "  image path where test images are located." << std::endl
-	      << "  Use -p <personal image path> option if you want to "<<std::endl
-	      << "  use personal images." << std::endl
-	      << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl
+              << "  Use -p <personal image path> option if you want to "<<std::endl
+              << "  use personal images." << std::endl
+              << std::endl;
 
     exit(-1);
   }
@@ -312,19 +312,19 @@ main(int argc, const char ** argv)
     vpImageIo::readPGM(I, filename) ;
   }
   catch(...)
-    {
-      // an exception is throwned if an exception from readPGM has been catched
-      // here this will result in the end of the program
-      // Note that another error message has been printed from readPGM
-      // to give more information about the error
-      std::cerr << std::endl
-		<< "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filename << std::endl;
-      std::cerr << "  Check your -i " << ipath << " option " << std::endl
-		<< "  or VISP_INPUT_IMAGE_PATH environment variable."
-		<< std::endl;
-      exit(-1);
-    }
+  {
+    // an exception is throwned if an exception from readPGM has been catched
+    // here this will result in the end of the program
+    // Note that another error message has been printed from readPGM
+    // to give more information about the error
+    std::cerr << std::endl
+              << "ERROR:" << std::endl;
+    std::cerr << "  Cannot read " << filename << std::endl;
+    std::cerr << "  Check your -i " << ipath << " option " << std::endl
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
+    exit(-1);
+  }
 
   // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
@@ -348,10 +348,10 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
     catch(...)
-      {
-	vpERROR_TRACE("Error while displaying the image") ;
-	exit(-1);
-      }
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
   }
 
   // by using setGraphics, we request to see the all the pixel of the dot
@@ -389,31 +389,31 @@ main(int argc, const char ** argv)
     }
   }
   catch(...)
-    {
-      vpERROR_TRACE("Cannot initialise the tracking... ") ;
-      exit(-1);
-    }
+  {
+    vpERROR_TRACE("Cannot initialise the tracking... ") ;
+    exit(-1);
+  }
 
   try {
     vpImagePoint cog;
     while (iter < opt_first + opt_nimages*opt_step) {
       // set the new image name
       if (opt_ppath.empty()){
-	s.str("");
-	s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-	filename = dirname + s.str();
+        s.str("");
+        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        filename = dirname + s.str();
       }
       else {
-	sprintf(cfilename, opt_ppath.c_str(), iter) ;
-	filename = cfilename;
+        sprintf(cfilename, opt_ppath.c_str(), iter) ;
+        filename = cfilename;
       }
       // read the image
       std::cout << "read : " << filename << std::endl;
       vpImageIo::readPGM(I, filename);
 
       if (opt_display) {
-	// Display the image
-	vpDisplay::display(I) ;
+        // Display the image
+        vpDisplay::display(I) ;
       }
       std::cout << "Tracking on image: " << filename << std::endl;
 
@@ -422,11 +422,11 @@ main(int argc, const char ** argv)
       d.track(I) ;
 
       std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): "
-		<< std::endl;
+                << std::endl;
       cog = d.getCog();
       std::cout << cog.get_u() << " " << cog.get_v()
-	        << " - "
-	        << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
+                << " - "
+                << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
       std::cout << "Moments: " << std::endl;
@@ -447,10 +447,10 @@ main(int argc, const char ** argv)
 
       if (opt_display) {
         // display a red cross (size 10) in the image at the dot center
-	// of gravity location
-	vpDisplay::displayCross(I, cog, 10, vpColor::red) ;
-	// flush the X11 buffer
-	vpDisplay::flush(I) ;
+        // of gravity location
+        vpDisplay::displayCross(I, cog, 10, vpColor::red) ;
+        // flush the X11 buffer
+        vpDisplay::flush(I) ;
       }
       iter ++;
     }
@@ -475,9 +475,3 @@ main()
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

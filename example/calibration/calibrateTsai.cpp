@@ -107,16 +107,16 @@ int main()
   }
 
   if (0) {
-  for (int i=0 ; i < N ; i++) {
-    vpHomogeneousMatrix wMo;
-    wMo = wMe[i] * eMc * cMo[i];
-    std::cout << std::endl << "wMo[" << i << "] " << std::endl ;
-    std::cout << wMo << std::endl ;  
-    std::cout << "cMo[" << i << "] " << std::endl ;
-    std::cout << cMo[i] << std::endl ;  
-    std::cout << "wMe[" << i << "] " << std::endl ;
-    std::cout << wMe[i] << std::endl ;  
-  }
+    for (int i=0 ; i < N ; i++) {
+      vpHomogeneousMatrix wMo;
+      wMo = wMe[i] * eMc * cMo[i];
+      std::cout << std::endl << "wMo[" << i << "] " << std::endl ;
+      std::cout << wMo << std::endl ;
+      std::cout << "cMo[" << i << "] " << std::endl ;
+      std::cout << cMo[i] << std::endl ;
+      std::cout << "wMe[" << i << "] " << std::endl ;
+      std::cout << wMe[i] << std::endl ;
+    }
   }
 
   // Reset the eMc matrix to eye

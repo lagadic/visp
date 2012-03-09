@@ -141,8 +141,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		vpDisplayType &dtype, bool &list,
-		bool &click_allowed, bool &display )
+                vpDisplayType &dtype, bool &list,
+                bool &click_allowed, bool &display )
 {
   const char *optarg;
   int	c;
@@ -154,16 +154,16 @@ bool getOptions(int argc, const char **argv,
     case 't': sDisplayType = optarg;
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
-	dtype = vpX11;
+        dtype = vpX11;
       }
       else if (sDisplayType.compare("GTK") == 0) {
-	dtype = vpGTK;
+        dtype = vpGTK;
       }
       else if (sDisplayType.compare("GDI") == 0) {
-	dtype = vpGDI;
+        dtype = vpGDI;
       }
       else if (sDisplayType.compare("D3D") == 0) {
-	dtype = vpD3D;
+        dtype = vpD3D;
       }
       else if (sDisplayType.compare("CV") == 0) {
         dtype = vpCV;
@@ -212,7 +212,7 @@ int main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_dtype, opt_list,
-		 opt_click_allowed, opt_display) == false) {
+                 opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -264,7 +264,7 @@ int main(int argc, const char ** argv)
 #else
     std::cout << "  Sorry, X11 video device is not available.\n";
     std::cout << "Use \"" << argv[0]
-	      << " -l\" to print the list of available devices.\n";
+              << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
@@ -276,7 +276,7 @@ int main(int argc, const char ** argv)
 #else
     std::cout << "  Sorry, GTK video device is not available.\n";
     std::cout << "Use \"" << argv[0]
-	      << " -l\" to print the list of available devices.\n";
+              << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
@@ -288,7 +288,7 @@ int main(int argc, const char ** argv)
 #else
     std::cout << "  Sorry, GDI video device is not available.\n";
     std::cout << "Use \"" << argv[0]
-	      << " -l\" to print the list of available devices.\n";
+              << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
@@ -300,7 +300,7 @@ int main(int argc, const char ** argv)
 #else
     std::cout << "  Sorry, D3D video device is not available.\n";
     std::cout << "Use \"" << argv[0]
-	      << " -l\" to print the list of available devices.\n";
+              << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;
@@ -312,7 +312,7 @@ int main(int argc, const char ** argv)
 #else
     std::cout << "  Sorry, OpenCV video device is not available.\n";
     std::cout << "Use \"" << argv[0]
-	      << " -l\" to print the list of available devices.\n";
+              << " -l\" to print the list of available devices.\n";
     return 0;
 #endif
     break;   

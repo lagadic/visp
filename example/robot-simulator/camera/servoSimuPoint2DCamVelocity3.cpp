@@ -98,23 +98,23 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Simulation of a 2D visual servoing on a point:\n\
-          - eye-in-hand control law,\n\
-          - articular velocity are computed,\n\
-          - without display,\n\
-          - only the X coordinate of the point is selected.\n\
+Simulation of a 2D visual servoing on a point:\n\
+- eye-in-hand control law,\n\
+- articular velocity are computed,\n\
+- without display,\n\
+- only the X coordinate of the point is selected.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-h]\n", name);
+SYNOPSIS\n\
+  %s [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
                   \n\
-                  -h\n\
-                  Print the help.\n");
+  -h\n\
+       Print the help.\n");
 
-                  if (badparam)
-                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!

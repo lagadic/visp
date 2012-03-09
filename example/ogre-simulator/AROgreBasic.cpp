@@ -84,7 +84,6 @@
   \param ipath : Input image path.
   \param ppath : Personal image path.
 
-
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
@@ -142,7 +141,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, 
-		std::string &ppath, bool &click_allowed)
+                std::string &ppath, bool &click_allowed)
 {
   const char *optarg;
   int	c;
@@ -177,9 +176,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
   Here to keep dimensions coherency you will need those four dots to be situated at (-7,6,0),(7,6,0),(7,-6,0),(-7,-6,0) (unit = cm) in your real world
 */
 void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, 
-			vpPose * mPose, vpDot2 *md, vpImagePoint *mcog, 
-			vpHomogeneousMatrix *cmo, vpPoint *mP,
-			const bool &opt_click_allowed)
+                        vpPose * mPose, vpDot2 *md, vpImagePoint *mcog,
+                        vpHomogeneousMatrix *cmo, vpPoint *mP,
+                        const bool &opt_click_allowed)
 {
   // ---------------------------------------------------
   //    Code inspired from ViSP example of camera pose
@@ -201,14 +200,14 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
 #endif
 
   for (unsigned int i=0 ; i < 4 ; i++)
-    {
-      if (opt_display) {
-	md[i].setGraphics(true) ;
-      }
-      else {
-	md[i].setGraphics(false) ;
-      }
+  {
+    if (opt_display) {
+      md[i].setGraphics(true) ;
     }
+    else {
+      md[i].setGraphics(false) ;
+    }
+  }
 
   if (opt_display) {
     try{
@@ -222,13 +221,13 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
       vpDisplay::display(I) ;
       //Flush the display
       vpDisplay::flush(I) ;
-		
+
     }
     catch(...)
-      {
-	vpERROR_TRACE("Error while displaying the image") ;
-	return ;
-      }
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      return ;
+    }
   }
 
   std::cout<<"************************************************************************************"<<std::endl;
@@ -255,24 +254,24 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
       // in red on the screen.
       // It uses the overlay image plane.
       // The default of this setting is that it is time consumming
-		
+
       md[i].setGraphics(true) ;
       md[i].setGrayLevelPrecision(0.7);
       md[i].setSizePrecision(0.5);
-	
+
       for(unsigned int j = 0;j<i;j++)
-	md[j].display(I) ;
+        md[j].display(I) ;
 
       // flush the display buffer
       vpDisplay::flush(I);
       try{
-	if (opt_click_allowed) {
-	  md[i].initTracking(I);
-	  //std::cout << "click " << i << " " << md[i] << std::endl;
-	}
-	else {
-	  md[i].initTracking(I, ip[i]);
-	}
+        if (opt_click_allowed) {
+          md[i].initTracking(I);
+          //std::cout << "click " << i << " " << md[i] << std::endl;
+        }
+        else {
+          md[i].initTracking(I, ip[i]);
+        }
       }
       catch(...){
       }
@@ -285,9 +284,9 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
       //    occurs. The threshold can be modified using the
       //    setNbMaxPoint(int) method
       if (opt_display) {
-	md[i].display(I) ;
-	// flush the display buffer        
-	vpDisplay::flush(I) ;
+        md[i].display(I) ;
+        // flush the display buffer
+        vpDisplay::flush(I) ;
       }
     }
   }
@@ -298,27 +297,27 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   }
 	
   if (opt_display)
-    {
-      // display a red cross (size 10) in the image at the dot center
-      // of gravity location
-      //
-      // WARNING
-      // in the vpDisplay class member's when pixel coordinates
-      // are considered the first element is the row index and the second
-      // is the column index:
-      //   vpDisplay::displayCross(Image, row index, column index, size, color)
-      //   therefore u and v are inverted wrt to the vpDot specification
-      // Alternatively, to avoid this problem another set of member have
-      // been defined in the vpDisplay class.
-      // If the method name is postfixe with _uv the specification is :
-      //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+  {
+    // display a red cross (size 10) in the image at the dot center
+    // of gravity location
+    //
+    // WARNING
+    // in the vpDisplay class member's when pixel coordinates
+    // are considered the first element is the row index and the second
+    // is the column index:
+    //   vpDisplay::displayCross(Image, row index, column index, size, color)
+    //   therefore u and v are inverted wrt to the vpDot specification
+    // Alternatively, to avoid this problem another set of member have
+    // been defined in the vpDisplay class.
+    // If the method name is postfixe with _uv the specification is :
+    //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 		
-      for (unsigned int i=0 ; i < 4 ; i++)
-	vpDisplay::displayCross(I, mcog[i], 10, vpColor::red) ;
+    for (unsigned int i=0 ; i < 4 ; i++)
+      vpDisplay::displayCross(I, mcog[i], 10, vpColor::red) ;
 		
-      // flush the X11 buffer
-      vpDisplay::flush(I) ;
-    }
+    // flush the X11 buffer
+    vpDisplay::flush(I) ;
+  }
 	
   // --------------------------------------------------------
   //             Now we will compute the pose
@@ -337,25 +336,25 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
 	
   // pixel-> meter conversion
   for (unsigned int i=0 ; i < 4 ; i++)
-    {
-      // u[i]. v[i] are expressed in pixel
-      // conversion in meter is achieved using
-      // x = (u-u0)/px
-      // y = (v-v0)/py
-      // where px, py, u0, v0 are the intrinsic camera parameters
-      double x=0, y=0;
-      vpPixelMeterConversion::convertPoint(*mcam, mcog[i], x,y)  ;
-      mP[i].set_x(x) ;
-      mP[i].set_y(y) ;
-    }
+  {
+    // u[i]. v[i] are expressed in pixel
+    // conversion in meter is achieved using
+    // x = (u-u0)/px
+    // y = (v-v0)/py
+    // where px, py, u0, v0 are the intrinsic camera parameters
+    double x=0, y=0;
+    vpPixelMeterConversion::convertPoint(*mcam, mcog[i], x,y)  ;
+    mP[i].set_x(x) ;
+    mP[i].set_y(y) ;
+  }
 	
 	
   // The pose structure is build, we put in the point list the set of point
   // here both 2D and 3D world coordinates are known
   for (unsigned int i=0 ; i < 4 ; i++)
-    {
-      mPose->addPoint(mP[i]) ; // and added to the pose computation point list
-    }
+  {
+    mPose->addPoint(mP[i]) ; // and added to the pose computation point list
+  }
 	
   // compute the initial pose using Dementhon method followed by a non linear
   // minimisation method
@@ -411,10 +410,10 @@ int main(int argc, const char **argv)
   if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-		<< "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-		<< "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-		<< "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -422,14 +421,14 @@ int main(int argc, const char **argv)
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty() ){
     usage(argv[0], NULL, ipath, opt_ppath);
     std::cerr << std::endl
-	      << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	      << std::endl
-	      << "  environment variable to specify the location of the " << std::endl
-	      << "  image path where test images are located." << std::endl
-	      << "  Use -p <personal image path> option if you want to "<<std::endl
-	      << "  use personal images." << std::endl
-	      << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl
+              << "  Use -p <personal image path> option if you want to "<<std::endl
+              << "  use personal images." << std::endl
+              << std::endl;
 
     exit(-1);
   }
@@ -493,7 +492,7 @@ int main(int argc, const char **argv)
     vpCameraParameters mcamTmp(592,570,grabber.getWidth()/2,grabber.getHeight()/2);
     // Compute the initial pose of the camera
     computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cmo, mP,
-		       opt_click_allowed);
+                       opt_click_allowed);
     // Close the framegrabber
     grabber.close();
 
@@ -502,19 +501,19 @@ int main(int argc, const char **argv)
     mcam.init(mcamTmp);
   }
   catch(...)
-    {
-      // an exception is thrown if an exception from readPGM has been caught
-      // here this will result in the end of the program
-      // Note that another error message has been printed from readPGM
-      // to give more information about the error
-      std::cerr << std::endl
-		<< "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filename << std::endl;
-      std::cerr << "  Check your -i " << ipath << " option " << std::endl
-		<< "  or VISP_INPUT_IMAGE_PATH environment variable."
-		<< std::endl;
-      exit(-1);
-    }
+  {
+    // an exception is thrown if an exception from readPGM has been caught
+    // here this will result in the end of the program
+    // Note that another error message has been printed from readPGM
+    // to give more information about the error
+    std::cerr << std::endl
+              << "ERROR:" << std::endl;
+    std::cerr << "  Cannot read " << filename << std::endl;
+    std::cerr << "  Check your -i " << ipath << " option " << std::endl
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
+    exit(-1);
+  }
 
   // Create a vpRAOgre object with color background
   vpAROgre ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
@@ -525,69 +524,69 @@ int main(int argc, const char **argv)
   ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI/2, -M_PI/2, 0)));
 
   try
-    {
-      // Rendering loop
-      while(ogre.continueRendering()){
-	// Acquire a frame
-	grabber.acquire(IC);
+  {
+    // Rendering loop
+    while(ogre.continueRendering()){
+      // Acquire a frame
+      grabber.acquire(IC);
 
-	// Convert it to a grey level image for tracking purpose
-	vpImageConvert::convert(IC,I);
+      // Convert it to a grey level image for tracking purpose
+      vpImageConvert::convert(IC,I);
 			
-	// Update pose calculation
-	try{
-	  // kill the point list
-	  mPose.clearPoint() ;
+      // Update pose calculation
+      try{
+        // kill the point list
+        mPose.clearPoint() ;
 				
-	  // track the dot
-	  for (int i=0 ; i < 4 ; i++)
-	    {
-	      // track the point
-	      md[i].track(I, mcog[i]) ;
-	      md[i].setGrayLevelPrecision(0.90);
-	      // pixel->meter conversion
-	      {
-		double x=0, y=0;
-		vpPixelMeterConversion::convertPoint(mcam, mcog[i], x, y)  ;
-		mP[i].set_x(x) ;
-		mP[i].set_y(y) ;
-	      }
-				
-	      // and added to the pose computation point list
-	      mPose.addPoint(mP[i]) ;
-	    }
-	  // the pose structure has been updated
-					
-	  // the pose is now updated using the virtual visual servoing approach
-	  // Dementhon or lagrange is no longuer necessary, pose at the
-	  // previous iteration is sufficient
-	  mPose.computePose(vpPose::VIRTUAL_VS, cmo);
-	}
-	catch(...){
-	  vpERROR_TRACE("Error in tracking loop") ;
-	  return false;
-	}
+        // track the dot
+        for (int i=0 ; i < 4 ; i++)
+        {
+          // track the point
+          md[i].track(I, mcog[i]) ;
+          md[i].setGrayLevelPrecision(0.90);
+          // pixel->meter conversion
+          {
+            double x=0, y=0;
+            vpPixelMeterConversion::convertPoint(mcam, mcog[i], x, y)  ;
+            mP[i].set_x(x) ;
+            mP[i].set_y(y) ;
+          }
 
-	// Display with ogre
-	ogre.display(IC,cmo);
+          // and added to the pose computation point list
+          mPose.addPoint(mP[i]) ;
+        }
+        // the pose structure has been updated
 
-	// Wait so that the video does not go too fast
-	vpTime::wait(15);
+        // the pose is now updated using the virtual visual servoing approach
+        // Dementhon or lagrange is no longuer necessary, pose at the
+        // previous iteration is sufficient
+        mPose.computePose(vpPose::VIRTUAL_VS, cmo);
       }
-      // Close the grabber
-      grabber.close();
+      catch(...){
+        vpERROR_TRACE("Error in tracking loop") ;
+        return false;
+      }
+
+      // Display with ogre
+      ogre.display(IC,cmo);
+
+      // Wait so that the video does not go too fast
+      vpTime::wait(15);
     }
+    // Close the grabber
+    grabber.close();
+  }
   catch (Ogre::Exception& e)
-    {
-      std::cerr << "Exception:\n";
-      std::cerr << e.getFullDescription().c_str() << "\n";
-      return 1;
-    }
+  {
+    std::cerr << "Exception:\n";
+    std::cerr << e.getFullDescription().c_str() << "\n";
+    return 1;
+  }
   catch (...)
-    {
-      std::cerr << "Exception: " << "\n";
-      return 1;
-    }
+  {
+    std::cerr << "Exception: " << "\n";
+    return 1;
+  }
 
   return EXIT_SUCCESS; 
 }

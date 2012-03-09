@@ -248,16 +248,16 @@ main(int argc, const char ** argv)
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(dirname) == false) {
       try {
-	// Create the dirname
-	vpIoTools::makeDirectory(dirname);
+        // Create the dirname
+        vpIoTools::makeDirectory(dirname);
       }
       catch (...) {
-	usage(argv[0], NULL, opt_conf, debugdir, username);
-	std::cerr << std::endl
-	     << "ERROR:" << std::endl;
-	std::cerr << "  Cannot create " << dirname << std::endl;
-	std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
-	exit(-1);
+        usage(argv[0], NULL, opt_conf, debugdir, username);
+        std::cerr << std::endl
+                  << "ERROR:" << std::endl;
+        std::cerr << "  Cannot create " << dirname << std::endl;
+        std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
+        exit(-1);
       }
     }
 
@@ -277,8 +277,8 @@ main(int argc, const char ** argv)
 
 #if defined VISP_HAVE_DC1394_2
     vp1394TwoGrabber g;
-// #elif defined VISP_HAVE_DC1394_1
-//     vp1394Grabber g;
+    // #elif defined VISP_HAVE_DC1394_1
+    //     vp1394Grabber g;
 #elif defined VISP_HAVE_DIRECTSHOW
     vpDirectShowGrabber g;
 #endif
@@ -289,10 +289,10 @@ main(int argc, const char ** argv)
       g.acquire(I) ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught") ;
+      return(-1) ;
+    }
 
     // We open a window using either X11 or GTK or GDI.
     // Its size is automatically defined by the image (I) size
@@ -310,10 +310,10 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught") ;
+      return(-1) ;
+    }
 
 
     vpServo task ;
@@ -328,10 +328,10 @@ main(int argc, const char ** argv)
       vpERROR_TRACE("after dot.initTracking(I) ") ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught") ;
+      return(-1) ;
+    }
 
     vpCameraParameters cam ;
 
@@ -387,48 +387,48 @@ main(int argc, const char ** argv)
 #ifdef VISP_HAVE_PTHREAD
     while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
 #else
-      for ( ; ; )
+    for ( ; ; )
 #endif
-	{
-	  std::cout << "---------------------------------------------" << iter <<std::endl ;
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
 
-	  g.acquire(I) ;
-	  vpDisplay::display(I) ;
+      g.acquire(I) ;
+      vpDisplay::display(I) ;
 
-	  dot.track(I) ;
+      dot.track(I) ;
 
-	  //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-	  //			   10,vpColor::green) ;
+      //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
+      //			   10,vpColor::green) ;
 
 
-	  vpFeatureBuilder::create(p,cam, dot);
+      vpFeatureBuilder::create(p,cam, dot);
 
-	  // get the jacobian
-	  robot.get_eJe(eJe) ;
-	  task.set_eJe(eJe) ;
+      // get the jacobian
+      robot.get_eJe(eJe) ;
+      task.set_eJe(eJe) ;
 
-	  //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
+      //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
 
-	  vpColVector v ;
-	  v = task.computeControlLaw() ;
+      vpColVector v ;
+      v = task.computeControlLaw() ;
 
-	  vpServoDisplay::display(task,cam,I) ;
-    vpDisplay::flush(I) ;
-     
-	  std::cout << v.t() ;
-	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+      vpServoDisplay::display(task,cam,I) ;
+      vpDisplay::flush(I) ;
 
-	  vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      std::cout << v.t() ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-	  {
-	    vpColVector s_minus_sStar(2);
-	    s_minus_sStar = task.s - task.sStar;
-	    fprintf(fd, "%f %f %f %f %f\n",
-		    v[0], v[1],
-		    s_minus_sStar[0], s_minus_sStar[1],
-		    ( task.getError() ).sumSquare());
-	  }
-	}
+      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+
+      {
+        vpColVector s_minus_sStar(2);
+        s_minus_sStar = task.s - task.sStar;
+        fprintf(fd, "%f %f %f %f %f\n",
+                v[0], v[1],
+                s_minus_sStar[0], s_minus_sStar[1],
+                ( task.getError() ).sumSquare());
+      }
+    }
 
     vpTRACE("Display task information " ) ;
     task.print() ;

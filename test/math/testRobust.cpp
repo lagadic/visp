@@ -162,7 +162,7 @@ main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ofilename);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << ofilename << std::endl;
       std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
       exit(-1);
@@ -186,7 +186,7 @@ main(int argc, const char ** argv)
   if (f == NULL) {
     usage(argv[0], NULL, ofilename);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot create the file: " << ofilename << std::endl;
     std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
     exit(-1);
@@ -208,8 +208,3 @@ main(int argc, const char ** argv)
   }
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -133,12 +133,12 @@ bool getOptions(int argc, const char **argv,
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-      case 'i': ipath = optarg; break;
-      case 'o': opath = optarg; break;
-      case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'i': ipath = optarg; break;
+    case 'o': opath = optarg; break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
 
-      default:
-        usage(argv[0], optarg, ipath, opath, user); return false; break;
+    default:
+      usage(argv[0], optarg, ipath, opath, user); return false; break;
     }
   }
 
@@ -205,7 +205,7 @@ int main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl
-          << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << opath << std::endl;
       std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
       exit(-1);
@@ -217,10 +217,10 @@ int main(int argc, const char ** argv)
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-          << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-          << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -228,11 +228,11 @@ int main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_opath, username);
     std::cerr << std::endl
-        << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-        << std::endl
-        << "  environment variable to specify the location of the " << std::endl
-        << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -275,7 +275,7 @@ int main(int argc, const char ** argv)
   double endtime = vpTime::measureTimeMs();
 
   std::cout<<"Time for 100 undistortion (ms): "<< endtime - begintime
-	   << std::endl;
+          << std::endl;
 
   // Write the undistorted image on the disk
 #if defined BW
@@ -289,10 +289,3 @@ int main(int argc, const char ** argv)
 #endif
 
 }
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

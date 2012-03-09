@@ -148,7 +148,7 @@ OPTIONS:                                               \n\
 
 */
 bool getOptions(int argc, const char **argv,
-        bool &isLearning, std::string& dataFile, bool& click_allowed, bool& display, bool& displayPoints, bool& useSequence, std::string& ipath)
+                bool &isLearning, std::string& dataFile, bool& click_allowed, bool& display, bool& displayPoints, bool& useSequence, std::string& ipath)
 {
   const char *optarg;
   int   c;
@@ -209,10 +209,10 @@ main(int argc, const char** argv)
   if (! env_ipath.empty()){
     ipath = env_ipath;
   } 
-    
+
   // Read the command line options
 	if (getOptions(argc, argv,
-         isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, useSequence, opt_ipath) == false) {
+                 isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, useSequence, opt_ipath) == false) {
     exit (-1);
   }
 
@@ -226,10 +226,10 @@ main(int argc, const char** argv)
   if (useSequence && !opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -237,11 +237,11 @@ main(int argc, const char** argv)
   if (useSequence && opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -281,11 +281,11 @@ main(int argc, const char** argv)
     // Note that another error message has been printed from readPGM
     // to give more information about the error
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option " << std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << std::endl;
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
     exit(-1);
   }
 
@@ -355,9 +355,9 @@ main(int argc, const char** argv)
       std::cout << "Click on the image to continue" << std::endl;
       vpDisplay::getClick(Iref);
     }  
-  
+
     vpRect roi(corners[0], corners[1]);
-  
+
     std::cout << "> train the classifier on the selected plane (may take up to several minutes)." << std::endl;
     if(opt_display) {
       vpDisplay::display(Iref);
@@ -384,7 +384,7 @@ main(int argc, const char** argv)
       exit(-1);
     }
   }
-    
+
   if(opt_display){
     display.init(I, 110 + (int)Iref.getWidth(), 100, "Test vpPlanarObjectDetector") ;
     vpDisplay::display(I);
@@ -394,7 +394,7 @@ main(int argc, const char** argv)
   if (opt_display && opt_click_allowed){
     std::cout << "Click on the reference image to continue" << std::endl;
     vpDisplay::displayCharString (Iref, vpImagePoint(15,15), 
-          (char*)"Click on the reference image to continue", vpColor::red);
+                                  (char*)"Click on the reference image to continue", vpColor::red);
     vpDisplay::flush(Iref);
     vpDisplay::getClick(Iref);
   }  

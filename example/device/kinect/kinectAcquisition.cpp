@@ -113,16 +113,16 @@ int main() {
   std::cout << "Click in one image to stop acquisition" << std::endl;
 
   while(!vpDisplay::getClick(Idmap,false) && !vpDisplay::getClick(Irgb,false))
-    {
-      kinect.getDepthMap(dmap);
-      kinect.getDepthMap(dmap, Idmap);
-      kinect.getRGB(Irgb);
+  {
+    kinect.getDepthMap(dmap);
+    kinect.getDepthMap(dmap, Idmap);
+    kinect.getRGB(Irgb);
 
-      vpDisplay::display(Idmap);
-      vpDisplay::flush(Idmap);
-      vpDisplay::display(Irgb);
-      vpDisplay::flush(Irgb);
-     }
+    vpDisplay::display(Idmap);
+    vpDisplay::flush(Idmap);
+    vpDisplay::display(Irgb);
+    vpDisplay::flush(Irgb);
+  }
   std::cout << "Stop acquisition" << std::endl;
   kinect.stop(); // Stop acquisition thread
   return 0;

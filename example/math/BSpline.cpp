@@ -157,7 +157,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_click_allowed,
-		 opt_display) == false) {
+                 opt_display) == false) {
     exit (-1);
   }
 
@@ -250,7 +250,7 @@ main(int argc, const char ** argv)
 
   unsigned int i = bSpline.findSpan(5/2.0);
   std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
- 
+
   vpBasisFunction *N = NULL;
   N = bSpline.computeBasisFuns(5/2.0);
   std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl; 
@@ -299,11 +299,11 @@ main(int argc, const char ** argv)
 int main()
 {
   std::cout << "This example requires a video device. " 
-	    << std::endl
-	    << "You should install X11, GTK, OpenCV, GDI or Direct3D" 
-	    << std::endl
-	    << "to be able to execute this example."
-	    << std::endl;
+            << std::endl
+            << "You should install X11, GTK, OpenCV, GDI or Direct3D"
+            << std::endl
+            << "to be able to execute this example."
+            << std::endl;
   return 0;
 }
 #endif

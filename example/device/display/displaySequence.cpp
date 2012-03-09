@@ -180,8 +180,8 @@ SYNOPSIS\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
-		unsigned &first, unsigned &nimages, unsigned &step,
-		bool &display, bool &wait)
+                unsigned &first, unsigned &nimages, unsigned &step,
+                bool &display, bool &wait)
 {
   const char *optarg;
   int	c;
@@ -241,7 +241,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
-		 opt_step, opt_display, opt_wait) == false) {
+                 opt_step, opt_display, opt_wait) == false) {
     exit (-1);
   }
 
@@ -257,10 +257,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -268,14 +268,14 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty() ){
     usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl
-	 << "  Use -p <personal image path> option if you want to "<<std::endl
-	 << "  use personal images." << std::endl
-         << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl
+              << "  Use -p <personal image path> option if you want to "<<std::endl
+              << "  use personal images." << std::endl
+              << std::endl;
 
     exit(-1);
   }
@@ -290,8 +290,8 @@ main(int argc, const char ** argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-  
-  
+
+
     // Warning :
     // the image sequence is not provided with the ViSP package
     // therefore the program will return you an error :
@@ -303,12 +303,12 @@ main(int argc, const char ** argv)
     //  The sequence is available on the visp www site
     //  http://www.irisa.fr/lagadic/visp/visp.html
     //  in the download section. It is named "ViSP-images.tar.gz"
-  
+
     // Set the path location of the image sequence
     dirname = ipath + vpIoTools::path("/ViSP-images/cube/");
-  
+
     // Build the name of the image file
-  
+
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
@@ -334,12 +334,12 @@ main(int argc, const char ** argv)
     // Note that another error message has been printed from readPGM
     // to give more information about the error
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option, " << std::endl
-	 << "  or your -p " << opt_ppath << " option " <<std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable"
-	 << std::endl;
+              << "  or your -p " << opt_ppath << " option " <<std::endl
+              << "  or VISP_INPUT_IMAGE_PATH environment variable"
+              << std::endl;
     exit(-1);
   }
 
@@ -370,7 +370,7 @@ main(int argc, const char ** argv)
     }
   }
 
-//  double tms_1 = vpTime::measureTimeMs() ;
+  //  double tms_1 = vpTime::measureTimeMs() ;
   unsigned niter=0 ;
   // this is the loop over the image sequence
   while (iter < opt_first + opt_nimages*opt_step) {
@@ -415,9 +415,9 @@ main(int argc, const char ** argv)
     }
     iter += opt_step ;
   }
-//  double tms_2 = vpTime::measureTimeMs() ;
-//  double tms_total = tms_2 - tms_1 ;
-//  std::cout << "Total Time : "<< tms_total<<std::endl;
+  //  double tms_2 = vpTime::measureTimeMs() ;
+  //  double tms_total = tms_2 - tms_1 ;
+  //  std::cout << "Total Time : "<< tms_total<<std::endl;
 
 }
 #else
@@ -428,9 +428,3 @@ main()
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

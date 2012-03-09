@@ -62,14 +62,14 @@ int main()
   ip3.set_i(10.1);
 
   std::cout << "We define ip1 with coordinates: " 
-	    << ip1 << std::endl;
+            << ip1 << std::endl;
 
   
   std::cout << "We define ip2 with coordinates: " 
-	    << ip2 << std::endl;
+            << ip2 << std::endl;
 
   std::cout << "We define ip3 with coordinates: " 
-	    << ip3 << std::endl;
+            << ip3 << std::endl;
 
   if (ip1 == ip2) {
     std::cout << "ip1 == ip2" << std::endl;

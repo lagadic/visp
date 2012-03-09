@@ -126,7 +126,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath,
-		bool &click_allowed, bool &display)
+                bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -180,7 +180,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath,
-		 opt_click_allowed, opt_display) == false) {
+                 opt_click_allowed, opt_display) == false) {
     exit (-1);
   }
 
@@ -193,10 +193,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -204,11 +204,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -248,11 +248,11 @@ main(int argc, const char ** argv)
     // Note that another error message has been printed from readPGM
     // to give more information about the error
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filenameRef << "or" << filenameCur <<std::endl;
     std::cerr << "  Check your -i " << ipath << " option " << std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << std::endl;
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
     exit(-1);
   }
 
@@ -321,10 +321,10 @@ main(int argc, const char ** argv)
 
   unsigned int nbrPair;
   if (opt_display) {
-      // display variable.
-      vpDisplay::display(Icur) ;
-      //Flush the display
-      vpDisplay::flush(Icur) ;
+    // display variable.
+    vpDisplay::display(Icur) ;
+    //Flush the display
+    vpDisplay::flush(Icur) ;
   }
 
   if (opt_click_allowed && opt_display)
@@ -377,9 +377,3 @@ main()
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

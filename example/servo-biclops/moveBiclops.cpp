@@ -148,155 +148,155 @@ main(int argc, const char ** argv)
     exit (-1);
   }
   try {
-  vpRobotBiclops robot(opt_conf.c_str());
-  
-  vpColVector q     (vpBiclops::ndof) ; // desired position
-  vpColVector qdot  (vpBiclops::ndof) ; // desired velocity
-  vpColVector qm    (vpBiclops::ndof) ; // measured position
-  vpColVector qm_dot(vpBiclops::ndof) ; // measured velocity
+    vpRobotBiclops robot(opt_conf.c_str());
 
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    vpColVector q     (vpBiclops::ndof) ; // desired position
+    vpColVector qdot  (vpBiclops::ndof) ; // desired velocity
+    vpColVector qm    (vpBiclops::ndof) ; // measured position
+    vpColVector qm_dot(vpBiclops::ndof) ; // measured velocity
 
-  q = 0;
-  q[0] = vpMath::rad(-10);
-  q[1] = vpMath::rad(-20);
-  vpCTRACE << "Set position in the articular frame: "
-	   << " pan: " << vpMath::deg(q[0]) << " deg"
-	   << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl ;
-  robot.setPositioningVelocity(30.) ;
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    q = 0;
+    q[0] = vpMath::rad(-10);
+    q[1] = vpMath::rad(-20);
+    vpCTRACE << "Set position in the articular frame: "
+             << " pan: " << vpMath::deg(q[0]) << " deg"
+             << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl ;
+    robot.setPositioningVelocity(30.) ;
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
-  q[0] = vpMath::rad(10);
-  q[1] = vpMath::rad(20);
-  vpCTRACE << "Set position in the articular frame: "
-	   << " pan: " << vpMath::deg(q[0]) << " deg"
-	   << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl ;
-  robot.setPositioningVelocity(10) ;
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    vpCTRACE << "---------------------------------------- " << std::endl;
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    q[0] = vpMath::rad(10);
+    q[1] = vpMath::rad(20);
+    vpCTRACE << "Set position in the articular frame: "
+             << " pan: " << vpMath::deg(q[0]) << " deg"
+             << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl ;
+    robot.setPositioningVelocity(10) ;
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
-  vpCTRACE << "Set STATE_VELOCITY_CONTROL" << std::endl;
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    vpCTRACE << "---------------------------------------- " << std::endl;
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0]) << " deg"
-	   << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    vpCTRACE << "Set STATE_VELOCITY_CONTROL" << std::endl;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
-  qdot = 0 ;
-  //  qdot[0] = vpMath::rad(0.1) ;
-  qdot[1] = vpMath::rad(25) ;
-  vpCTRACE << "Set articular frame velocity "
-	   << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-	   << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
- 
-  //waits 5000ms
-  vpTime::wait(5000.0);
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0]) << " deg"
+             << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0]) << " deg"
-	   << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    vpCTRACE << "---------------------------------------- " << std::endl;
+    qdot = 0 ;
+    //  qdot[0] = vpMath::rad(0.1) ;
+    qdot[1] = vpMath::rad(25) ;
+    vpCTRACE << "Set articular frame velocity "
+             << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+             << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
 
+    //waits 5000ms
+    vpTime::wait(5000.0);
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
-  qdot = 0 ;
-  //  qdot[0] = vpMath::rad(0.1) ;
-  qdot[1] = -vpMath::rad(25) ;
-  vpCTRACE << "Set articular frame velocity "
-	   << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-	   << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-  
-  //waits 3000 ms
-  vpTime::wait(3000.0);
-
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0]) << " deg"
-	   << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0]) << " deg"
+             << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
+    vpCTRACE << "---------------------------------------- " << std::endl;
+    qdot = 0 ;
+    //  qdot[0] = vpMath::rad(0.1) ;
+    qdot[1] = -vpMath::rad(25) ;
+    vpCTRACE << "Set articular frame velocity "
+             << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+             << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
+
+    //waits 3000 ms
+    vpTime::wait(3000.0);
+
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0]) << " deg"
+             << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
 
-  qdot = 0 ;
-  //  qdot[0] = vpMath::rad(0.1) ;
-  qdot[1] = vpMath::rad(10) ;
-  vpCTRACE << "Set articular frame velocity "
-	   << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-	   << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
+    vpCTRACE << "---------------------------------------- " << std::endl;
 
-  //waits 2000 ms
-  vpTime::wait(2000.0);
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0]) << " deg"
-	   << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    qdot = 0 ;
+    //  qdot[0] = vpMath::rad(0.1) ;
+    qdot[1] = vpMath::rad(10) ;
+    vpCTRACE << "Set articular frame velocity "
+             << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+             << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
 
-  vpCTRACE << "---------------------------------------- " << std::endl;
+    //waits 2000 ms
+    vpTime::wait(2000.0);
 
-  qdot = 0 ;
-  qdot[0] = vpMath::rad(-5);
-  //qdot[1] = vpMath::rad(-5);
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0]) << " deg"
+             << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
 
-  vpCTRACE << "Set articular frame velocity "
-	   << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-	   << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
+    vpCTRACE << "---------------------------------------- " << std::endl;
 
-  //waits 2000 ms
-  vpTime::wait(2000.0);
+    qdot = 0 ;
+    qdot[0] = vpMath::rad(-5);
+    //qdot[1] = vpMath::rad(-5);
 
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Position in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0]) << " deg"
-	   << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
-  robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
-  vpCTRACE << "Velocity in the articular frame: "
-	   << " pan: " << vpMath::deg(qm[0])
-	   << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
+    vpCTRACE << "Set articular frame velocity "
+             << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+             << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl ;
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
+
+    //waits 2000 ms
+    vpTime::wait(2000.0);
+
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Position in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0]) << " deg"
+             << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl ;
+    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm) ;
+    vpCTRACE << "Velocity in the articular frame: "
+             << " pan: " << vpMath::deg(qm[0])
+             << " tilt: " << vpMath::deg(qm[1]) << std::endl ;
   }
   catch(...) {
 

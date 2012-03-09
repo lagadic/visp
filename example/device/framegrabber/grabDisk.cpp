@@ -160,8 +160,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename,
-		std::string &ext, int &first, unsigned int &nimages,
-		int &step, unsigned int &nzero, bool &display)
+                std::string &ext, int &first, unsigned int &nimages,
+                int &step, unsigned int &nzero, bool &display)
 {
   const char *optarg;
   int	c;
@@ -177,11 +177,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
     case 's': step = atoi(optarg); break;
     case 'z': nzero = (unsigned) atoi(optarg); break;
     case 'h': usage(argv[0], NULL, ipath, basename, ext, first, nimages,
-		    step, nzero); return false; break;
+                    step, nzero); return false; break;
 
     default:
       usage(argv[0], optarg, ipath, basename, ext, first, nimages,
-	    step, nzero);
+            step, nzero);
       return false; break;
     }
   }
@@ -233,7 +233,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first,
-		 opt_nimages, opt_step, opt_nzero, opt_display) == false) {
+                 opt_nimages, opt_step, opt_nzero, opt_display) == false) {
     exit (-1);
   }
 
@@ -246,23 +246,23 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first,
-		 opt_nimages, opt_step, opt_nzero);
+          opt_nimages, opt_step, opt_nzero);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -301,7 +301,7 @@ main(int argc, const char ** argv)
   }
 
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << std::endl;
+            << I.getHeight() << std::endl;
 
   // We open a window using either X11 or GTK.
   // Its size is automatically defined by the image (I) size
@@ -334,21 +334,21 @@ main(int argc, const char ** argv)
   // this is the loop over the image sequence
   try {
     while(cpt ++ < opt_nimages)
-      {
-	double tms = vpTime::measureTimeMs();
-	// read the image and then increment the image counter so that the next
-	// call to acquire(I) will get the next image
-	g.acquire(I) ;
-	if (opt_display) {
-	  // Display the image
-	  vpDisplay::display(I) ;
-	  // Flush the display
-	  vpDisplay::flush(I) ;
-	}
-	// Synchronise the loop to 40 ms
-	vpTime::wait(tms, 40) ;
-
+    {
+      double tms = vpTime::measureTimeMs();
+      // read the image and then increment the image counter so that the next
+      // call to acquire(I) will get the next image
+      g.acquire(I) ;
+      if (opt_display) {
+        // Display the image
+        vpDisplay::display(I) ;
+        // Flush the display
+        vpDisplay::flush(I) ;
       }
+      // Synchronise the loop to 40 ms
+      vpTime::wait(tms, 40) ;
+
+    }
   }
   catch(...) {
     vpERROR_TRACE("Error during the framegrabbing...");
@@ -364,8 +364,3 @@ main()
 
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

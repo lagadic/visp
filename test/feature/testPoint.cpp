@@ -167,7 +167,7 @@ main(int argc, const char ** argv)
 
   vpTRACE("\t X & Y") ;
   L = p.interaction(vpFeaturePoint::selectX() |
-		    vpFeaturePoint::selectY()) ;
+                    vpFeaturePoint::selectY()) ;
   std::cout << L << std::endl ;
 
   vpTRACE("\t selectAll") ;
@@ -178,31 +178,31 @@ main(int argc, const char ** argv)
   vpTRACE("test the error ") ;
 
   try{
-  vpFeaturePoint pd ;
-  pd.set_x(0) ;
-  pd.set_y(0) ;
+    vpFeaturePoint pd ;
+    pd.set_x(0) ;
+    pd.set_y(0) ;
 
-  pd.print() ; std::cout << std::endl ;
-  vpColVector e ;
-  e = p.error(pd) ;
-  std::cout << e << std::endl ;
+    pd.print() ; std::cout << std::endl ;
+    vpColVector e ;
+    e = p.error(pd) ;
+    std::cout << e << std::endl ;
 
-  vpTRACE("test the interaction matrix select") ;
-  vpTRACE("\t only X") ;
-  e = p.error(pd,vpFeaturePoint::selectX()) ;
-  std::cout << e << std::endl ;
+    vpTRACE("test the interaction matrix select") ;
+    vpTRACE("\t only X") ;
+    e = p.error(pd,vpFeaturePoint::selectX()) ;
+    std::cout << e << std::endl ;
 
-  vpTRACE("\t only Y") ;
-  e = p.error(pd,vpFeaturePoint::selectY()) ;
-  std::cout << e << std::endl ;
+    vpTRACE("\t only Y") ;
+    e = p.error(pd,vpFeaturePoint::selectY()) ;
+    std::cout << e << std::endl ;
 
-  vpTRACE("\t X & Y") ;
-  e = p.error(pd,vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
-  std::cout << e << std::endl ;
+    vpTRACE("\t X & Y") ;
+    e = p.error(pd,vpFeaturePoint::selectX() | vpFeaturePoint::selectY()) ;
+    std::cout << e << std::endl ;
 
-  vpTRACE("\t selectAll") ;
-  e = p.error(pd,vpFeaturePoint::selectAll() ) ;
-  std::cout << e << std::endl ;
+    vpTRACE("\t selectAll") ;
+    e = p.error(pd,vpFeaturePoint::selectAll() ) ;
+    std::cout << e << std::endl ;
   }
   catch(vpFeatureException me){ std::cout << me << std::endl ; }
   catch(vpException me){ std::cout << me << std::endl ; }

@@ -169,14 +169,14 @@ main(int argc, const char ** argv)
   double residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose Lagrange "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
@@ -191,21 +191,21 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose Lowe "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
   std::cout <<  cMo << std::endl ;
   std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
-	    << std::endl ;
+            << std::endl ;
 
   cMo.extract(cto);
   cMo.extract(cRo);
@@ -213,14 +213,14 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose Dementhon "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LOWE, cMo) ;
@@ -235,14 +235,14 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose lowe "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
   std::cout <<std::endl << std::endl ;
   std::cout <<"--------------------------------------------------"<<std::endl ;
@@ -253,7 +253,7 @@ main(int argc, const char ** argv)
   vpTRACE("LAGRANGE pose : ") ;
   std::cout << cMo << std::endl ;
   std::cout << "Lagrange residual term: " << pose.computeResidual(cMo)
-	    <<std::endl ;
+            <<std::endl ;
 
   cMo.extract(cto);
   cMo.extract(cRo);
@@ -261,14 +261,14 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose Lagrange "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
@@ -283,21 +283,21 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose VVS "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
   std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
   vpTRACE(  "DEMENTHON pose :" ) ;
   std::cout <<  cMo << std::endl ;
   std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
-	    <<std::endl ;
+            <<std::endl ;
 
   cMo.extract(cto);
   cMo.extract(cRo);
@@ -305,14 +305,14 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose Dementhon "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
 
   std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
@@ -324,13 +324,13 @@ main(int argc, const char ** argv)
   residual = pose.computeResidual(cMo);
 
   std::cout << "\nPose VVS "
-	    << "(residual: " << residual << ")\n "
-	    << "cdto[0] = " << cto[0] << ";\n "
-	    << "cdto[1] = " << cto[1] << ";\n "
-	    << "cdto[2] = " << cto[2] << ";\n "
-	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-	    << std::endl;
+            << "(residual: " << residual << ")\n "
+            << "cdto[0] = " << cto[0] << ";\n "
+            << "cdto[1] = " << cto[1] << ";\n "
+            << "cdto[2] = " << cto[2] << ";\n "
+            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+            << std::endl;
   return 0;
 }

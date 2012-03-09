@@ -213,7 +213,7 @@ main(int argc, const char ** argv)
   vpHomography::HLM(nbpt,xb,yb,xa,ya,false, aHb) ;
 
   vpTRACE("aHb computed using the Malis paralax  algorithm") ;
-    aHb /= aHb[2][2] ;
+  aHb /= aHb[2][2] ;
   std::cout << std::endl << aHb<< std::endl ;
 
 
@@ -240,9 +240,5 @@ main(int argc, const char ** argv)
     std::cout <<") =  (" ;
     p = aHb*bP[i] ;
     std::cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<std::endl ;
-  }
-
-
-
-
+  } 
 }

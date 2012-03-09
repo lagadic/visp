@@ -143,103 +143,103 @@ int
 main(int argc, const char ** argv)
 {
   try
-    {
-      bool control = true; // Turn on the robot control by applying positions
-			   // and velocities to the robot.
-      // Read the command line options
-      if (getOptions(argc, argv, control) == false) {
-	exit (-1);
-      }
-
-      vpRobotAfma4 robot ;
-
-      vpColVector qd(robot.njoint) ;
-      vpColVector q(robot.njoint) ;
-
-      //
-      // Position control in articular
-      //
-      qd[0] = vpMath::rad(10);
-      qd[1] = -0.1;
-      qd[2] = vpMath::rad(20);
-      qd[3] = vpMath::rad(-10);
-
-      std::cout << "Position control: in articular..." << std::endl;
-      std::cout << "  position to reach: " << qd.t() << std::endl;
-      robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-      if (control)
-	robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
-      sleep(1) ;
-
- 
-      robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-      std::cout << "  measured position: " << q.t() ;
-      sleep(1) ;
-
-      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-
-      //
-      // Velocity control in articular
-      //
-      std::cout << "Velocity control: in articular..." << std::endl;
-
-      q = 0 ;
-      q[0] = vpMath::rad(2) ; // rotation arround vertical axis
-      std::cout << "  rotation arround vertical axis: " << q[0] << std::endl; 
-      if (control)
-	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-      sleep(5) ;
-     
-      q = 0 ;
-      q[1] = 0.2 ; // Vertical translation
-      std::cout << "  vertical translation: " << q[1] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-      sleep(5) ;
-
-      q = 0 ;
-      q[1] = -0.2 ; // Vertical translation
-      std::cout << "  vertical translation: " << q[1] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-      sleep(5) ;
-      q = 0 ;
-      q[2] = vpMath::rad(3) ; // pan
-      std::cout << "  pan rotation: " << q[2] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-      sleep(5) ;
-
-      q = 0 ;
-      q[3] = vpMath::rad(2) ; // tilt
-      std::cout << "  tilt rotation: " << q[3] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
-      sleep(5) ;
-
-      //
-      // Velocity control in camera frame
-      //
-      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-      std::cout << "Velocity control: in camera frame..." << std::endl;
-      q.resize(2) ;
-      q = 0.0;
-      q[0] = vpMath::rad(2) ; // rotation arround vertical axis
-      std::cout << "  rx rotation: " << q[0] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-      sleep(5) ;
-
-      q.resize(2) ;
-      q = 0.0;
-      q[1] = vpMath::rad(2) ; // rotation arround vertical axis
-      std::cout << "  ry rotation: " << q[1] << std::endl;
-      if (control)
-	robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-      sleep(5) ;
-
-      std::cout << "The end" << std::endl;
+  {
+    bool control = true; // Turn on the robot control by applying positions
+    // and velocities to the robot.
+    // Read the command line options
+    if (getOptions(argc, argv, control) == false) {
+      exit (-1);
     }
+
+    vpRobotAfma4 robot ;
+
+    vpColVector qd(robot.njoint) ;
+    vpColVector q(robot.njoint) ;
+
+    //
+    // Position control in articular
+    //
+    qd[0] = vpMath::rad(10);
+    qd[1] = -0.1;
+    qd[2] = vpMath::rad(20);
+    qd[3] = vpMath::rad(-10);
+
+    std::cout << "Position control: in articular..." << std::endl;
+    std::cout << "  position to reach: " << qd.t() << std::endl;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    if (control)
+      robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
+    sleep(1) ;
+
+
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    std::cout << "  measured position: " << q.t() ;
+    sleep(1) ;
+
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+
+    //
+    // Velocity control in articular
+    //
+    std::cout << "Velocity control: in articular..." << std::endl;
+
+    q = 0 ;
+    q[0] = vpMath::rad(2) ; // rotation arround vertical axis
+    std::cout << "  rotation arround vertical axis: " << q[0] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+    sleep(5) ;
+
+    q = 0 ;
+    q[1] = 0.2 ; // Vertical translation
+    std::cout << "  vertical translation: " << q[1] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+    sleep(5) ;
+
+    q = 0 ;
+    q[1] = -0.2 ; // Vertical translation
+    std::cout << "  vertical translation: " << q[1] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+    sleep(5) ;
+    q = 0 ;
+    q[2] = vpMath::rad(3) ; // pan
+    std::cout << "  pan rotation: " << q[2] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+    sleep(5) ;
+
+    q = 0 ;
+    q[3] = vpMath::rad(2) ; // tilt
+    std::cout << "  tilt rotation: " << q[3] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
+    sleep(5) ;
+
+    //
+    // Velocity control in camera frame
+    //
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    std::cout << "Velocity control: in camera frame..." << std::endl;
+    q.resize(2) ;
+    q = 0.0;
+    q[0] = vpMath::rad(2) ; // rotation arround vertical axis
+    std::cout << "  rx rotation: " << q[0] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+    sleep(5) ;
+
+    q.resize(2) ;
+    q = 0.0;
+    q[1] = vpMath::rad(2) ; // rotation arround vertical axis
+    std::cout << "  ry rotation: " << q[1] << std::endl;
+    if (control)
+      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
+    sleep(5) ;
+
+    std::cout << "The end" << std::endl;
+  }
   catch (...) {
     vpERROR_TRACE(" Test failed") ;
   }

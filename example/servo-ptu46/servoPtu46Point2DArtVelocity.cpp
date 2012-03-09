@@ -147,10 +147,10 @@ main()
       g.acquire(I) ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught") ;
+      return(-1) ;
+    }
 
 
     vpDisplayX display(I,100,100,"testDisplayX.cpp ") ;
@@ -161,10 +161,10 @@ main()
       vpDisplay::flush(I) ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught") ;
+      return(-1) ;
+    }
 
 
     vpServo task ;
@@ -183,10 +183,10 @@ main()
       vpERROR_TRACE("after dot.initTracking(I) ") ;
     }
     catch(...)
-      {
-		vpERROR_TRACE(" Error caught ") ;
-		return(-1) ;
-      }
+    {
+      vpERROR_TRACE(" Error caught ") ;
+      return(-1) ;
+    }
 
     vpCameraParameters cam ;
 
@@ -241,38 +241,38 @@ main()
 #ifdef VISP_HAVE_PTHREAD
     while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
 #else
-      for ( ; ; )
+    for ( ; ; )
 #endif
-	{
-	  std::cout << "---------------------------------------------" << iter <<std::endl ;
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
 
-	  g.acquire(I) ;
-	  vpDisplay::display(I) ;
+      g.acquire(I) ;
+      vpDisplay::display(I) ;
 
-	  dot.track(I) ;
+      dot.track(I) ;
 
-	  //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-	  //			   10,vpColor::green) ;
+      //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
+      //			   10,vpColor::green) ;
 
 
-	  vpFeatureBuilder::create(p,cam, dot);
+      vpFeatureBuilder::create(p,cam, dot);
 
-	  // get the jacobian
-	  robot.get_eJe(eJe) ;
-	  task.set_eJe(eJe) ;
+      // get the jacobian
+      robot.get_eJe(eJe) ;
+      task.set_eJe(eJe) ;
 
-	  //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
+      //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
 
-	  vpColVector v ;
-	  v = task.computeControlLaw() ;
+      vpColVector v ;
+      v = task.computeControlLaw() ;
 
-	  vpServoDisplay::display(task,cam,I) ;
-	  std::cout << v.t() ;
-	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
-    vpDisplay::flush(I) ;
-    
-	  vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
-	}
+      vpServoDisplay::display(task,cam,I) ;
+      std::cout << v.t() ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+      vpDisplay::flush(I) ;
+
+      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+    }
 
     vpTRACE("Display task information " ) ;
     task.print() ;
@@ -287,6 +287,6 @@ int
 main()
 {
   vpERROR_TRACE("You don't have a ptu-46 head connected to your computer ",
-		"or 1394 framegrabbing capabilities...");
+                "or 1394 framegrabbing capabilities...");
 }
 #endif

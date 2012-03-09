@@ -121,7 +121,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, bool &list,
-		bool &click_allowed, bool &display )
+                bool &click_allowed, bool &display )
 {
   const char *optarg;
   int	c;
@@ -196,7 +196,7 @@ void draw(vpImage<vpRGBa> &I)
   iP2.set_j(340);
   vpDisplay::displayDotLine (I, iP1, iP2, vpColor::blue, 3);
 
-//static void 	displayFrame (const vpImage< vpRGBa > &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, vpColor color)
+  //static void 	displayFrame (const vpImage< vpRGBa > &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, vpColor color)
 
   iP1.set_i(140);
   iP1.set_j(80);
@@ -249,7 +249,7 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_list,
-            opt_click_allowed, opt_display) == false) {
+                   opt_click_allowed, opt_display) == false) {
       exit (-1);
     }
 
@@ -296,100 +296,100 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> Id3d;
 
 #if defined VISP_HAVE_X11
-      vpDisplayX *displayX = NULL;
-      displayX = new vpDisplayX;
-      Ix.init(480, 640, 255);
-      if (opt_display)
-      {
-        displayX->init(Ix, 100, 100,"Display X11") ;
-        vpDisplay::display(Ix) ;
-        draw(Ix);
-        vpDisplay::flush(Ix);
-        if (opt_click_allowed)
-          vpDisplay::getClick(Ix);
-      }
+    vpDisplayX *displayX = NULL;
+    displayX = new vpDisplayX;
+    Ix.init(480, 640, 255);
+    if (opt_display)
+    {
+      displayX->init(Ix, 100, 100,"Display X11") ;
+      vpDisplay::display(Ix) ;
+      draw(Ix);
+      vpDisplay::flush(Ix);
+      if (opt_click_allowed)
+        vpDisplay::getClick(Ix);
+    }
 #endif
 
 #if defined VISP_HAVE_OPENCV
-      vpDisplayOpenCV *displayCv = NULL;
-      displayCv = new vpDisplayOpenCV;
-      Icv.init(480, 640, 255);
-      if (opt_display)
-      {
-        displayCv->init(Icv, 100, 100,"Display OpenCV") ;
-        vpDisplay::display(Icv) ;
-        draw(Icv);
-        vpDisplay::flush(Icv);
+    vpDisplayOpenCV *displayCv = NULL;
+    displayCv = new vpDisplayOpenCV;
+    Icv.init(480, 640, 255);
+    if (opt_display)
+    {
+      displayCv->init(Icv, 100, 100,"Display OpenCV") ;
+      vpDisplay::display(Icv) ;
+      draw(Icv);
+      vpDisplay::flush(Icv);
       if (opt_click_allowed)
         vpDisplay::getClick(Icv);
-      }
+    }
 #endif
 
 #if defined VISP_HAVE_GTK
-      vpDisplayGTK *displayGtk = NULL;
-      displayGtk = new vpDisplayGTK;
-      Igtk.init(480, 640, 255);
-      if (opt_display)
-      {
-        displayGtk->init(Igtk, 100, 100,"Display GTK") ;
-        vpDisplay::display(Igtk) ;
-        draw(Igtk);
-        vpDisplay::flush(Igtk);
-        if (opt_click_allowed)
-          vpDisplay::getClick(Igtk);
-      }
+    vpDisplayGTK *displayGtk = NULL;
+    displayGtk = new vpDisplayGTK;
+    Igtk.init(480, 640, 255);
+    if (opt_display)
+    {
+      displayGtk->init(Igtk, 100, 100,"Display GTK") ;
+      vpDisplay::display(Igtk) ;
+      draw(Igtk);
+      vpDisplay::flush(Igtk);
+      if (opt_click_allowed)
+        vpDisplay::getClick(Igtk);
+    }
 #endif
 
 #if defined VISP_HAVE_GDI
-      vpDisplayGDI *displayGdi = NULL;
-      displayGdi = new vpDisplayGDI;
-      Igdi.init(480, 640, 255);
-      if (opt_display)
-      {
-        displayGdi->init(Igdi, 100, 100,"Display GDI") ;
-        vpDisplay::display(Igdi) ;
-        draw(Igdi);
-        vpDisplay::flush(Igdi);
-        if (opt_click_allowed)
-          vpDisplay::getClick(Igdi);
-      }
+    vpDisplayGDI *displayGdi = NULL;
+    displayGdi = new vpDisplayGDI;
+    Igdi.init(480, 640, 255);
+    if (opt_display)
+    {
+      displayGdi->init(Igdi, 100, 100,"Display GDI") ;
+      vpDisplay::display(Igdi) ;
+      draw(Igdi);
+      vpDisplay::flush(Igdi);
+      if (opt_click_allowed)
+        vpDisplay::getClick(Igdi);
+    }
 #endif
 
 #if defined VISP_HAVE_D3D9
-      vpDisplayD3D *displayD3d = NULL;
-      displayD3d = new vpDisplayD3D;
-      Id3d.init(480, 640, 255);
-      if (opt_display)
-      {
-        displayD3d->init(Id3d, 100, 100,"Display Direct 3D") ;
-        vpDisplay::display(Id3d) ;
-        draw(Id3d);
-        vpDisplay::flush(Id3d);
-        if (opt_click_allowed)
-          vpDisplay::getClick(Id3d);
-      }
+    vpDisplayD3D *displayD3d = NULL;
+    displayD3d = new vpDisplayD3D;
+    Id3d.init(480, 640, 255);
+    if (opt_display)
+    {
+      displayD3d->init(Id3d, 100, 100,"Display Direct 3D") ;
+      vpDisplay::display(Id3d) ;
+      draw(Id3d);
+      vpDisplay::flush(Id3d);
+      if (opt_click_allowed)
+        vpDisplay::getClick(Id3d);
+    }
 #endif
 
 
 
 #if defined VISP_HAVE_X11
-      delete displayX;
+    delete displayX;
 #endif
 
 #if defined VISP_HAVE_GTK
-      delete displayGtk;
+    delete displayGtk;
 #endif
 
 #if defined VISP_HAVE_OPENCV
-      delete displayCv;
+    delete displayCv;
 #endif
 
 #if defined VISP_HAVE_GDI
-      delete displayGdi;
+    delete displayGdi;
 #endif
 
 #if defined VISP_HAVE_D3D9
-      delete displayD3d;
+    delete displayD3d;
 #endif
   }
   catch(...) {
@@ -406,8 +406,3 @@ main()
 }
 
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -88,33 +88,31 @@ Print the program options.
 void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
-          Simulation Servo 4points.\n\
+Simulation Servo 4points.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-i <input image path>] [-d] [-h]\n\
-          ", name);
+SYNOPSIS\n\
+  %s [-i <input image path>] [-d] [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
-                  -i <input image path>                                %s\n\
-                  Set image input path.\n\
-                  From this path read \"ViSP-images/iv/4points.iv\"\n\
-                  cad model.\n\
-                  Setting the VISP_INPUT_IMAGE_PATH environment\n\
-                  variable produces the same behaviour than using\n\
-                  this option.\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -i <input image path>                                %s\n\
+     Set image input path.\n\
+     From this path read \"ViSP-images/iv/4points.iv\"\n\
+     cad model.\n\
+     Setting the VISP_INPUT_IMAGE_PATH environment\n\
+     variable produces the same behaviour than using\n\
+     this option.\n\
                   \n\
-                  -d                                             \n\
-                  Disable the image display. This can be useful \n\
-                  for automatic tests using crontab under Unix or \n\
-                  using the task manager under Windows.\n\
+  -d                                             \n\
+     Disable the image display. This can be useful \n\
+     for automatic tests using crontab under Unix or \n\
+     using the task manager under Windows.\n\
                   \n\
-                  -h\n\
-                  Print the help.\n\n",
-                  ipath.c_str());
+  -h\n\
+     Print the help.\n\n", ipath.c_str());
 
-      if (badparam)
-      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!

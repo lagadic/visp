@@ -111,9 +111,9 @@ int main()
     t1 = vpTime::measureTimeMs();
     // Measures the velocity and the front steering angle from odometry
     cycab->getOdometry(vm, phim, timestamp); // measured values from odometry
-      
+
     printf("State: t=%.1f s  v=%f m/s and phi=%f deg\n\t", 
-	   (timestamp-t0)/1000, vm, vpMath::deg(phim));
+           (timestamp-t0)/1000, vm, vpMath::deg(phim));
 
     // Compute the command to apply to the car
     if (1) {
@@ -133,20 +133,20 @@ int main()
       double sign_v = 0;
       //if (vm != 0.)
       if (std::fabs(vm) > std::numeric_limits<double>::epsilon())
-	sign_v = fabs(vm)/vm;
+        sign_v = fabs(vm)/vm;
       v = vm - MAX_ACC_V*(t1-tprev)/1000*sign_v;
       if (fabs(v) < 0.1) v = 0;
 
-       // Steering decrease to zero
+      // Steering decrease to zero
       double sign_phi = 0;
       //if (phim != 0.) 
       if (std::fabs(phim) > std::numeric_limits<double>::epsilon()) 
-	sign_phi = fabs(phim)/phim;
+        sign_phi = fabs(phim)/phim;
       phi = phim - MAX_VEL_PHI*(t1-tprev)/1000*sign_phi;
       if (fabs(phi) < vpMath::rad(5)) phi = 0;
-           
-//       printf("stop requested: vm %f v %f phim %f phi %f sign_phi %f\n", 
-// 	     vm, v, phim, phi, sign_phi);
+
+      //       printf("stop requested: vm %f v %f phim %f phi %f sign_phi %f\n",
+      // 	     vm, v, phim, phi, sign_phi);
       //v = 0;
       //phi = 0;
     }
@@ -154,7 +154,7 @@ int main()
     // Send the command
     printf("Send : v %f m/s and phi %f deg\n", v, vpMath::deg(phi));
     cycab->setCommand(v, phi);
-            
+
     vpTime::wait(10);
 
     if (end && (!ctrc)) { end = false; ctrc=true;} 
@@ -162,7 +162,7 @@ int main()
   std::cout << "The end" << std::endl;
   return 0;
 }
-		
+
 #else // VISP_HAVE_CYCAB		
 int main()
 {

@@ -49,7 +49,7 @@
   \example manGrab1394-1.cpp
 
   \brief Images grabbing example with the vp1394Grabber class.
- 
+
  */
 
 #include <visp/vpConfig.h>

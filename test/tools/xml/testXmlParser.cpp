@@ -104,7 +104,7 @@ public:
   vpExampleDataParser();
   virtual ~vpExampleDataParser();
   
-    // Data accessors.
+  // Data accessors.
   double getRange() const {return m_range;}
   int getStep() const {return m_step;}
   int getSizeFilter() const {return m_size_filter;}
@@ -175,8 +175,8 @@ vpExampleDataParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
           this->m_size_filter = xmlReadIntChild(doc, dataNode);
           break;
         case name:{
-            this->m_name = xmlReadStringChild(doc, dataNode);
-          }break;
+          this->m_name = xmlReadStringChild(doc, dataNode);
+        }break;
         default:
           vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
           break;
@@ -225,25 +225,25 @@ Print the program options.
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
 {
   fprintf(stdout, "\n\
-Write and read data in a xml file.\n\
-\n\
-SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n						      \
-", name);
+          Write and read data in a xml file.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-o <output image path>] [-h]\n						      \
+          ", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -o <output data path>                               %s\n\
-     Set data output path.\n\
-     From this directory, creates the \"%s\"\n\
-     subdirectory depending on the username, where \n\
-     dataTestXml.xml file is written.\n\
-\n\
-  -h\n\
-     Print the help.\n\n",
-	  opath.c_str(), user.c_str());
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -o <output data path>                               %s\n\
+                  Set data output path.\n\
+                  From this directory, creates the \"%s\"\n\
+                  subdirectory depending on the username, where \n\
+                  dataTestXml.xml file is written.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n\n",
+                  opath.c_str(), user.c_str());
 
-  if (badparam) {
+      if (badparam) {
     fprintf(stderr, "ERROR: \n" );
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
@@ -259,7 +259,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv,
-		std::string &opath, const std::string& user)
+                std::string &opath, const std::string& user)
 {
   const char *optarg;
   int	c;
@@ -335,7 +335,7 @@ int main(int argc, const char** argv)
     catch (...) {
       usage(argv[0], NULL, opath, username);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
@@ -347,7 +347,7 @@ int main(int argc, const char** argv)
   // Write data using a parser.
   {
     vpExampleDataParser parser1;
-  
+
     // Acquire data from measurments or tests.  
     parser1.setRange(3.5);
     parser1.setStep(2);

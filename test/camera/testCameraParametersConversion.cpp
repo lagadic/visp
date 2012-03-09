@@ -153,13 +153,13 @@ main(int argc, const char ** argv)
   vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2);
   if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
     vpTRACE("Error in convertPoint without distortion:\n"
-        "u1 = %f, u2 = %f\n"
-        "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
+            "u1 = %f, u2 = %f\n"
+            "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
     return -1;
   }
   vpTRACE("convertPoint without distortion :\n"
-      "u1 - u2 = %.20f\n"
-      "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
+          "u1 - u2 = %.20f\n"
+          "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
 
   vpPixelMeterConversion::convertPoint(camDist,u1,v1,x1,y1);
   vpMeterPixelConversion::convertPoint(camDist,x1,y1,u2,v2);
@@ -170,7 +170,7 @@ main(int argc, const char ** argv)
     return -1;
   }
   vpTRACE("convertPoint with distortion :\n"
-      "u1 - u2 = %.20f\n"
-      "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
+          "u1 - u2 = %.20f\n"
+          "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
   return 0;
 }

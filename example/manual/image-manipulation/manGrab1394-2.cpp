@@ -49,7 +49,7 @@
   \example manGrab1394-2.cpp
 
   \brief Images grabbing example with the vp1394TwoGrabber class.
- 
+
  */
 
 

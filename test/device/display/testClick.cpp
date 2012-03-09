@@ -162,8 +162,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, vpDisplayType &dtype, bool &list,
-    bool &click_allowed, bool &display )
+                std::string &ipath, vpDisplayType &dtype, bool &list,
+                bool &click_allowed, bool &display )
 {
   const char *optarg;
   int	c;
@@ -176,16 +176,16 @@ bool getOptions(int argc, const char **argv,
     case 't': sDisplayType = optarg;
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
-	dtype = vpX11;
+        dtype = vpX11;
       }
       else if (sDisplayType.compare("GTK") == 0) {
-	dtype = vpGTK;
+        dtype = vpGTK;
       }
       else if (sDisplayType.compare("GDI") == 0) {
-	dtype = vpGDI;
+        dtype = vpGDI;
       }
       else if (sDisplayType.compare("D3D") == 0) {
-	dtype = vpD3D;
+        dtype = vpD3D;
       }
       else if (sDisplayType.compare("CV") == 0) {
         dtype = vpCV;
@@ -250,7 +250,7 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_dtype, opt_list,
-            opt_click_allowed, opt_display) == false) {
+                   opt_click_allowed, opt_display) == false) {
       exit (-1);
     }
 
@@ -294,10 +294,10 @@ main(int argc, const char ** argv)
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl
-	     << "WARNING: " << std::endl;
+                  << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-	     << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	     << "  we skip the environment variable." << std::endl;
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -305,11 +305,11 @@ main(int argc, const char ** argv)
     if (opt_ipath.empty() && env_ipath.empty()){
       usage(argv[0], NULL, ipath, opt_dtype);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	   << std::endl
-	   << "  environment variable to specify the location of the " << std::endl
-	   << "  image path where test images are located." << std::endl << std::endl;
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl << std::endl;
       exit(-1);
     }
 
@@ -325,107 +325,107 @@ main(int argc, const char ** argv)
     vpDisplay *display = NULL;
 
     switch(opt_dtype) {
-      case vpX11:
-        std::cout << "Requested X11 display functionnalities..." << std::endl;
+    case vpX11:
+      std::cout << "Requested X11 display functionnalities..." << std::endl;
 #if defined VISP_HAVE_X11
-        display = new vpDisplayX;
+      display = new vpDisplayX;
 #else
-        std::cout << "  Sorry, X11 video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-	         << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, X11 video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;
-      case vpGTK:
-        std::cout << "Requested GTK display functionnalities..." << std::endl;
+      break;
+    case vpGTK:
+      std::cout << "Requested GTK display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GTK
-        display = new vpDisplayGTK;
+      display = new vpDisplayGTK;
 #else
-        std::cout << "  Sorry, GTK video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-	       << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, GTK video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;
-      case vpGDI:
-        std::cout << "Requested GDI display functionnalities..." << std::endl;
+      break;
+    case vpGDI:
+      std::cout << "Requested GDI display functionnalities..." << std::endl;
 #if defined VISP_HAVE_GDI
-        display = new vpDisplayGDI;
+      display = new vpDisplayGDI;
 #else
-        std::cout << "  Sorry, GDI video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-	        << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, GDI video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;
-      case vpD3D:
-        std::cout << "Requested D3D display functionnalities..." << std::endl;
+      break;
+    case vpD3D:
+      std::cout << "Requested D3D display functionnalities..." << std::endl;
 #if defined VISP_HAVE_D3D9
-        display = new vpDisplayD3D;
+      display = new vpDisplayD3D;
 #else
-        std::cout << "  Sorry, D3D video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-	         << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, D3D video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;
-      case vpCV:
-        std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+      break;
+    case vpCV:
+      std::cout << "Requested OpenCV display functionnalities..." << std::endl;
 #if defined VISP_HAVE_OPENCV
-        display = new vpDisplayOpenCV;
+      display = new vpDisplayOpenCV;
 #else
-        std::cout << "  Sorry, OpenCV video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-            << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, OpenCV video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;   
-      }
+      break;
+    }
 
-      if (opt_display){
+    if (opt_display){
 
-        // We open a window using either X11 or GTK or GDI.
-        // Its size is automatically defined by the image (I) size
-        display->init(I, 100, 100,"Display...") ;
+      // We open a window using either X11 or GTK or GDI.
+      // Its size is automatically defined by the image (I) size
+      display->init(I, 100, 100,"Display...") ;
 
-        // Display the image
-        // The image class has a member that specify a pointer toward
-        // the display that has been initialized in the display declaration
-        // therefore is is no longuer necessary to make a reference to the
-        // display variable.
-        vpDisplay::display(I) ;
-        //Flush the display
-        vpDisplay::flush(I) ;
-        if ( opt_click_allowed ){
-          std::cout << "Click on a pixel to get his coordinates...\n";
-          vpImagePoint ip;
-          vpMouseButton::vpMouseButtonType button;
-          vpDisplay::getClick(I, ip, button);
-          std::cout << "  You click down on pixel (" << ip <<") ";
-          switch(button) {
-            case vpMouseButton::button1: std::cout << "with left button.\n"; break;
-            case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
-            case vpMouseButton::button3: std::cout << "with right button.\n"; break;
-          }
-          vpDisplay::getClickUp(I, ip, button);
-          std::cout << "  You click up on pixel (" << ip <<") ";
-          switch(button) {
-            case vpMouseButton::button1: std::cout << "with left button.\n"; break;
-            case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
-            case vpMouseButton::button3: std::cout << "with right button.\n"; break;
-          }
-          vpDisplay::getPointerPosition(I,ip);
-          std::cout << "  Pointer poisition : " << ip << std::endl;
-          std::cout << "A click to exit...\n";
-          vpDisplay::getClick(I) ;
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(I) ;
+      //Flush the display
+      vpDisplay::flush(I) ;
+      if ( opt_click_allowed ){
+        std::cout << "Click on a pixel to get his coordinates...\n";
+        vpImagePoint ip;
+        vpMouseButton::vpMouseButtonType button;
+        vpDisplay::getClick(I, ip, button);
+        std::cout << "  You click down on pixel (" << ip <<") ";
+        switch(button) {
+        case vpMouseButton::button1: std::cout << "with left button.\n"; break;
+        case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
+        case vpMouseButton::button3: std::cout << "with right button.\n"; break;
         }
+        vpDisplay::getClickUp(I, ip, button);
+        std::cout << "  You click up on pixel (" << ip <<") ";
+        switch(button) {
+        case vpMouseButton::button1: std::cout << "with left button.\n"; break;
+        case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
+        case vpMouseButton::button3: std::cout << "with right button.\n"; break;
+        }
+        vpDisplay::getPointerPosition(I,ip);
+        std::cout << "  Pointer poisition : " << ip << std::endl;
+        std::cout << "A click to exit...\n";
+        vpDisplay::getClick(I) ;
       }
-      delete display;
     }
-    catch(...) {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
+    delete display;
+  }
+  catch(...) {
+    vpERROR_TRACE("Error while displaying the image") ;
+    exit(-1);
+  }
 
 }
 
@@ -437,8 +437,3 @@ main()
 }
 
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

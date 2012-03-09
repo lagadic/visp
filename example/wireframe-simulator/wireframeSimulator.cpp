@@ -168,17 +168,17 @@ main(int argc, const char ** argv)
   /*
     Create a display for each different cameras.
   */
-  #if defined VISP_HAVE_X11
+#if defined VISP_HAVE_X11
   vpDisplayX display[3];
-  #elif defined VISP_HAVE_OPENCV
+#elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display[3];
-  #elif defined VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
   vpDisplayGDI display[3];
-  #elif defined VISP_HAVE_D3D9
+#elif defined VISP_HAVE_D3D9
   vpDisplayD3D display[3];
-  #elif defined VISP_HAVE_GTK
+#elif defined VISP_HAVE_GTK
   vpDisplayGTK display[3];
-  #endif
+#endif
   
   if (opt_display)
   {
@@ -280,7 +280,7 @@ main(int argc, const char ** argv)
   {
     if (opt_click) {
       std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
-     vpDisplay::getClick(Iint);
+      vpDisplay::getClick(Iint);
     }
     vpDisplay::display(Iint) ;
     vpDisplay::display(Iext1) ;

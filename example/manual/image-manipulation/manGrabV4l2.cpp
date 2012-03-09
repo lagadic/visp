@@ -49,7 +49,7 @@
   \example manGrabV4l2.cpp
 
   \brief Images grabbing example with the vpV4l2Grabber class.
- 
+
  */
 
 #include <visp/vpImage.h>

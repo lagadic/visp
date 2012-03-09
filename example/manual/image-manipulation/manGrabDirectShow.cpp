@@ -49,7 +49,7 @@
   \example manGrabDirectShow.cpp
 
   \brief Images grabbing example with the vpDirectShowGrabber class.
- 
+
  */
 
 #include <visp/vpConfig.h>

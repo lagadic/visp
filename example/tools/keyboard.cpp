@@ -69,12 +69,12 @@ main()
     for ( ; ; ) {
 
       if (keyboard.kbhit()) {
-	c = keyboard.getchar () ;
-	printf("You hit key: %d '%c'\n", c, c);
-	if (c == 'q' || c == 'Q') {
-	  printf("You hit key: %d %c we stop the loop\n", c, c);
-	  break ;
-	}
+        c = keyboard.getchar () ;
+        printf("You hit key: %d '%c'\n", c, c);
+        if (c == 'q' || c == 'Q') {
+          printf("You hit key: %d %c we stop the loop\n", c, c);
+          break ;
+        }
       }
 
       // My job is here

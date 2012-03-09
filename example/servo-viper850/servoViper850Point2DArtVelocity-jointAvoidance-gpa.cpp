@@ -93,7 +93,7 @@
 int
 main()
 {
- try {
+  try {
     vpRobotViper850 robot ;
 
     vpServo task ;
@@ -124,10 +124,10 @@ main()
 
     double rho = 0.15 ;
     for (unsigned int i=0 ; i < 6 ; i++)
-      {
-	Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
-	Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
-      }
+    {
+      Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
+      Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
+    }
     Qmiddle = (Qmin + Qmax) /2.;
     double rho1 = 0.1 ;
     
@@ -135,7 +135,7 @@ main()
       tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
       tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
     }
-   
+
     vpColVector q(6) ;
 
     // Create a window with two graphics
@@ -174,7 +174,7 @@ main()
     plot.setLegend(0, 7, "tQmax");
     plot.setLegend(0, 8, "Qmin");
     plot.setLegend(0, 9, "Qmax");
- 
+
     // Set the curves color
     plot.setColor(0, 0, vpColor::red); 
     plot.setColor(0, 1, vpColor::green); 
@@ -187,7 +187,7 @@ main()
 
     // For the second graphic, set the curves legend
     plot.setLegend(1, 0, "h_s");
- 
+
     double beta = 1; 
 
     // Set the amplitude of the control law due to the secondary task
@@ -264,7 +264,7 @@ main()
       // Get the measured joint positions of the robot
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
 
-       // Update the point feature from the dot location
+      // Update the point feature from the dot location
       vpFeatureBuilder::create(p, cam, dot);
 
       // Get the jacobian of the robot
@@ -282,26 +282,26 @@ main()
       vpColVector sec_task(6) ;
       double h_s = 0 ;
       {
-	// joint limit avoidance with secondary task
+        // joint limit avoidance with secondary task
 
-	vpColVector de2dt(6);
-	de2dt = 0 ;
-	e2 = 0 ;
-	for (unsigned int i=0 ; i < 6 ; i++)
-	  {
-	    double S = 0 ;
-	    if (q[i] > tQmax[i]) S = q[i] - tQmax[i] ;
-	    if (q[i] < tQmin[i]) S = q[i] - tQmin[i] ;
-	    double D = (Qmax[i]-Qmin[i]) ;
-	    h_s += vpMath::sqr(S)/D ;
-	    e2[i] = S/D ;
-	  }
-	h_s = beta*h_s/2.0 ; // cost function
-	e2 *= beta ;
-	//	std::cout << e2.t() << std::endl;
- 	std::cout << "Cost function h_s: " << h_s << std::endl;
- 
-	sec_task = task.secondaryTask(e2, de2dt) ;
+        vpColVector de2dt(6);
+        de2dt = 0 ;
+        e2 = 0 ;
+        for (unsigned int i=0 ; i < 6 ; i++)
+        {
+          double S = 0 ;
+          if (q[i] > tQmax[i]) S = q[i] - tQmax[i] ;
+          if (q[i] < tQmin[i]) S = q[i] - tQmin[i] ;
+          double D = (Qmax[i]-Qmin[i]) ;
+          h_s += vpMath::sqr(S)/D ;
+          e2[i] = S/D ;
+        }
+        h_s = beta*h_s/2.0 ; // cost function
+        e2 *= beta ;
+        //	std::cout << e2.t() << std::endl;
+        std::cout << "Cost function h_s: " << h_s << std::endl;
+
+        sec_task = task.secondaryTask(e2, de2dt) ;
       }
 
       vpColVector v ;
@@ -312,22 +312,22 @@ main()
 
       // Apply the computed joint velocities to the robot
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
- 
-      {
-	// Add the material to plot curves
 
-	// q normalized between (entre -1 et 1)
-	for (unsigned int i=0 ; i < 6 ; i++) {
-	  data[i] = (q[i] - Qmiddle[i]) ;
-	  data[i] /= (Qmax[i] - Qmin[i]) ;
-	  data[i]*=2 ;
-	}
-	unsigned int joint = 2;
-	data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-	data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-	data[8] = -1 ; data[9] = 1 ;
-	plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
-	plot.plot(1, 0, iter, h_s); // plot the cost function
+      {
+        // Add the material to plot curves
+
+        // q normalized between (entre -1 et 1)
+        for (unsigned int i=0 ; i < 6 ; i++) {
+          data[i] = (q[i] - Qmiddle[i]) ;
+          data[i] /= (Qmax[i] - Qmin[i]) ;
+          data[i]*=2 ;
+        }
+        unsigned int joint = 2;
+        data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+        data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
+        data[8] = -1 ; data[9] = 1 ;
+        plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
+        plot.plot(1, 0, iter, h_s); // plot the cost function
       }
 
       vpDisplay::flush(I) ;

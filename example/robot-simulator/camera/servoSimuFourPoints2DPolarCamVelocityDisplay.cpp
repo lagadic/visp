@@ -192,7 +192,7 @@ main(int argc, const char ** argv)
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -251,7 +251,7 @@ main(int argc, const char ** argv)
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
   std::cout << " Eye-in-hand task control, articular velocity are computed" 
-	    << std::endl ;
+            << std::endl ;
   std::cout << " Simulation " << std::endl ;
   std::cout << " task : servo 4 points " << std::endl ;
   std::cout << "----------------------------------------------" << std::endl ;
@@ -267,56 +267,56 @@ main(int argc, const char ** argv)
 #if defined(TRANS_Z_PURE)
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0, 0, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0, 0, 2,
-			   vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                           vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 #elif defined(TRANS_X_PURE)
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0.3, 0.3, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0.5, 0.3, 3,
-			   vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                           vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
 #elif defined(ROT_Z_PURE)
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0, 0, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0, 0, 3,
-			   vpMath::rad(0), vpMath::rad(0), vpMath::rad(180));
+                           vpMath::rad(0), vpMath::rad(0), vpMath::rad(180));
 
 #elif defined(ROT_X_PURE)
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0, 0, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0, 0, 3,
-			   vpMath::rad(45), vpMath::rad(0), vpMath::rad(0));
+                           vpMath::rad(45), vpMath::rad(0), vpMath::rad(0));
 
 #elif defined(COMPLEX)
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0.2, 0.2, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0, 0, 2.5,
-			   vpMath::rad(45), vpMath::rad(10), vpMath::rad(30));
+                           vpMath::rad(45), vpMath::rad(10), vpMath::rad(30));
 
 #elif defined(PROBLEM)
   // Bad behavior with an interaction matrix computed from the desired features
   // sets the initial camera location
   vpHomogeneousMatrix cMo(0.2, 0.2, 3,
-			  vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                          vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
   // sets the desired camera location
   vpHomogeneousMatrix cMod(0.4, 0.2, 3,
-			   vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+                           vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
 #endif
   robot.setPosition(cMo) ;
 
   vpHomogeneousMatrix cextMo(0,0,6,
-			     vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+                             vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
 
   // sets the point coordinates in the object frame
@@ -390,7 +390,7 @@ main(int argc, const char ** argv)
   // loop
   while(iter++ < 200) {
     std::cout << "---------------------------------------------" 
-	      << iter <<std::endl ;
+              << iter <<std::endl ;
     vpColVector v ;
 
 
@@ -440,7 +440,7 @@ main(int argc, const char ** argv)
     // v[0], v[1], v[2] correspond to camera translation velocities in m/s
     // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
     flog << v[0] << " " << v[1] << " " << v[2] << " "
-	 << v[3] << " " << v[4] << " " << v[5] << " ";
+         << v[3] << " " << v[4] << " " << v[5] << " ";
 
     std::cout << "v: " << v.t() << std::endl;
 
@@ -468,7 +468,7 @@ main(int argc, const char ** argv)
       ip.set_j( 10 );
 
       vpDisplay::displayCharString(Iint, ip, 
-				   "A click to continue...",vpColor::red);
+                                   "A click to continue...",vpColor::red);
       vpDisplay::getClick(Iint);
       vpDisplay::flush(Iint);
     }

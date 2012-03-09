@@ -100,7 +100,7 @@ main()
     vpRxyzVector drxyz(R); // rotational displacement
 
     std::cout << "Displacement if velocity is applied during 1 s : \n"
-	      << dt << " " << drxyz << std::endl;
+              << dt << " " << drxyz << std::endl;
   }
 
   // Compute the displacement from the velocity applied during 2 seconds
@@ -117,13 +117,13 @@ main()
     vpRxyzVector drxyz(R); // rotational displacement
 
     std::cout << "Displacement if velocity is applied during 2 s : \n"
-	      << dt << " " << drxyz << std::endl;
+              << dt << " " << drxyz << std::endl;
   }
 
   // Compute the velocity from the displacement observed during 2 seconds
   v = vpExponentialMap::inverse(M, 2.f);
 
   std::cout << "Velocity from displacement observed during 2 s: \n"
-	    << v << std::endl;
+            << v << std::endl;
 
 }
