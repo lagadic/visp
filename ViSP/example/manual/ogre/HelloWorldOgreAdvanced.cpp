@@ -41,7 +41,7 @@
   \example HelloWorldOgreAdvanced.cpp
 
   \brief Example that shows how to exploit the vpAROgre class.
- 
+
 */
 
 #include <visp/vpOpenCVGrabber.h>
@@ -65,7 +65,7 @@ private:
 
 public:
   vpAROgreAdvanced(const vpCameraParameters &cam = vpCameraParameters(), 
-		   unsigned int width = 640, unsigned int height = 480)
+                   unsigned int width = 640, unsigned int height = 480)
 		: vpAROgre(cam, width, height)
   {
   }
@@ -150,13 +150,13 @@ int main()
 
   // Rendering loop
   while(ogre.continueRendering()){
-      // Image Acquisition
-      grabber.acquire(I);
-      // Pose computation
-      // ...
-      // cMo updated
-      // Display with vpAROgre
-      ogre.display(I, cMo);
+    // Image Acquisition
+    grabber.acquire(I);
+    // Pose computation
+    // ...
+    // cMo updated
+    // Display with vpAROgre
+    ogre.display(I, cMo);
   }
   // Release video device
   grabber.close();

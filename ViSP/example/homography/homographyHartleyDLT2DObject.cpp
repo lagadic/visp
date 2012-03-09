@@ -235,8 +235,5 @@ main(int argc, const char ** argv)
     std::cout <<") =  (" ;
     p = aHb*bP[i] ;
     std::cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<std::endl ;
-  }
-
-
-
+  } 
 }

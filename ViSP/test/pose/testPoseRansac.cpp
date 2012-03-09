@@ -124,7 +124,7 @@ bool getOptions(int argc, const char **argv)
 
 
 int
-    main(int argc, const char ** argv)
+main(int argc, const char ** argv)
 {
   // Read the command line options
   if (getOptions(argc, argv) == false) {

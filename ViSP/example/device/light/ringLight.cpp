@@ -206,7 +206,7 @@ main(int argc, const char **argv)
     }
   }
   catch(...) {
-      printf("An error occurs...\n");
+    printf("An error occurs...\n");
   }
   return 0;
 }

@@ -77,10 +77,10 @@ int main(int argc, char** argv)
     return -1;
   cv::Mat frame;
   cap >> frame; // get a new frame from camera
-    
+
   IplImage iplimage = frame;
   std::cout << "Image size: " << iplimage.width << " " 
-	    << iplimage.height << std::endl;
+            << iplimage.height << std::endl;
 
   //vpImage<vpRGBa> I; // for color images
   vpImage<unsigned char> I; // for gray images

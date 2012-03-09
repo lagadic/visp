@@ -60,7 +60,7 @@ main()
   std::ofstream flog(filename.c_str());
 
   vpLinearKalmanFilterInstantiation kalman;
- 
+
   vpLinearKalmanFilterInstantiation::vpStateModel model;
   model = vpLinearKalmanFilterInstantiation::stateConstAccWithColoredNoise_MeasureVel;
   kalman.setStateModel(model);
@@ -94,7 +94,7 @@ main()
     std::cout << "-------- iter " << iter << " ------------" << std::endl;
     for (unsigned int signal=0; signal < nsignal; signal ++) {
       velocity_measure[signal] = 3+2*signal 
-	+ 0.3*sin(vpMath::rad(360./niter*iter));
+          + 0.3*sin(vpMath::rad(360./niter*iter));
     }
     std::cout << "measure : " << velocity_measure.t() << std::endl;
 

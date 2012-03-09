@@ -186,7 +186,7 @@ main(int argc, const char ** argv)
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -211,9 +211,9 @@ main(int argc, const char ** argv)
 
   // Sets the initial camera location
   vpPoseVector c_r_o(// Translation tx,ty,tz
-		     0.1, 0.2, 2, 
-		     // ThetaU rotation 
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
+                     0.1, 0.2, 2,
+                     // ThetaU rotation
+                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
   
   // From the camera pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
@@ -223,9 +223,9 @@ main(int argc, const char ** argv)
 
   // Sets the desired camera location
   vpPoseVector cd_r_o(// Translation tx,ty,tz
-		      0, 0, 1, 
-		      // ThetaU rotation 
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ; 
+                      0, 0, 1,
+                      // ThetaU rotation
+                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   // From the camera desired pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
@@ -240,7 +240,7 @@ main(int argc, const char ** argv)
   // Start the visual servoing loop. We stop the servo after 200 iterations
   while(iter++ < 200) {
     std::cout << "-----------------------------------" << iter <<std::endl ;
- 
+
     // get the robot position
     robot.getPosition(cMo) ;
 
@@ -272,7 +272,7 @@ main(int argc, const char ** argv)
 
     // Send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, velocity) ;
-      
+
     // Retrieve the error (s-s*)
     std::cout << cdtc.t() << " " << tu_cdRc.t() << std::endl;
 

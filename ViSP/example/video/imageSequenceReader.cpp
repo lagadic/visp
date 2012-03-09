@@ -135,7 +135,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &ppath, int &first, bool &click_allowed, bool &display)
+                std::string &ipath, std::string &ppath, int &first, bool &click_allowed, bool &display)
 {
   const char *optarg;
   int	c;
@@ -188,7 +188,7 @@ main(int argc, const char ** argv)
   std::cout << std::endl ;
 
 
-// Get the VISP_IMAGE_PATH environment variable value
+  // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
   if (ptenv != NULL)
     env_ipath = ptenv;
@@ -199,7 +199,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_click_allowed,
-		 opt_display) == false) {
+                 opt_display) == false) {
     exit (-1);
   }
 
@@ -212,10 +212,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -223,16 +223,16 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()){
     usage(argv[0], NULL, ipath, opt_ppath);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  video path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  video path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
 
-/////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////
 
 
   // vpImage is a template class you can declare vpImage of ... everything...
@@ -340,12 +340,8 @@ main(int argc, const char ** argv)
 int main()
 {
   std::cout << "Sorry, no display is available. We quit this example." 
-	    << std::endl;
+            << std::endl;
   return 0;
 }
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+

@@ -139,7 +139,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath,
-		bool &click_allowed, bool &display, int &niter)
+                bool &click_allowed, bool &display, int &niter)
 {
   const char *optarg;
   int	c;
@@ -194,7 +194,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
-		 opt_display, opt_niter) == false) {
+                 opt_display, opt_niter) == false) {
     return (-1);
   }
 
@@ -207,10 +207,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -218,11 +218,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_niter);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -258,7 +258,7 @@ main(int argc, const char ** argv)
   sim.init(Itexture, X);
 
 
-    
+
   
   vpCameraParameters cam(870, 870, 160, 120);
 
@@ -278,13 +278,13 @@ main(int argc, const char ** argv)
 
 
   // display the image
-  #if defined VISP_HAVE_X11
+#if defined VISP_HAVE_X11
   vpDisplayX d;
-  #elif defined VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
   vpDisplayGDI d;
-  #elif defined VISP_HAVE_GTK
+#elif defined VISP_HAVE_GTK
   vpDisplayGTK d;
-  #endif
+#endif
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
@@ -322,7 +322,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 #endif  
- 
+
   vpImage<unsigned char> Idiff ;
   Idiff = I ;
 
@@ -331,13 +331,13 @@ main(int argc, const char ** argv)
 
 
   // Affiche de l'image de difference
-  #if defined VISP_HAVE_X11
+#if defined VISP_HAVE_X11
   vpDisplayX d1;
-  #elif defined VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
   vpDisplayGDI d1;
-  #elif defined VISP_HAVE_GTK
+#elif defined VISP_HAVE_GTK
   vpDisplayGTK d1;
-  #endif
+#endif
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
   if (opt_display) {
     d1.init(Idiff, 40+(int)I.getWidth(), 10, "photometric visual servoing : s-s* ") ;
@@ -350,7 +350,7 @@ main(int argc, const char ** argv)
   robot.init();
   robot.setSamplingTime(0.04);
   robot.setPosition(cMo) ;
-    
+
   // ------------------------------------------------------
   // Visual feature, interaction matrix, error
   // s, Ls, Lsd, Lt, Lp, etc
@@ -370,7 +370,7 @@ main(int argc, const char ** argv)
   sId.setCameraParameters(cam) ;
   sId.buildFrom(Id) ;
 
- 
+
   
   // Matrice d'interaction, Hessien, erreur,...
   vpMatrix Lsd;   // matrice d'interaction a la position desiree
@@ -429,73 +429,67 @@ main(int argc, const char ** argv)
   
   double normeError = 0;
   do
-    {
+  {
 
-      std::cout << "--------------------------------------------" << iter++ << std::endl ;
+    std::cout << "--------------------------------------------" << iter++ << std::endl ;
 
 
-      //  Acquire the new image
-      sim.setCameraPosition(cMo) ;
-      sim.getImage(I,cam) ;
+    //  Acquire the new image
+    sim.setCameraPosition(cMo) ;
+    sim.getImage(I,cam) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
-      if (opt_display) {
+    if (opt_display) {
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
-      }
+    }
 #endif
-      vpImageTools::imageDifference(I,Id,Idiff) ;
+    vpImageTools::imageDifference(I,Id,Idiff) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
-      if (opt_display) {
+    if (opt_display) {
       vpDisplay::display(Idiff) ;
       vpDisplay::flush(Idiff) ;
-      }
-#endif
-      // Compute current visual feature
-      sI.buildFrom(I) ;
-
-      
-      // compute current error
-      sI.error(sId,error) ;
-
-
-      
-      normeError = (error.sumSquare());
-      std::cout << "|e| "<<normeError <<std::endl ;
-      
-     
-     // double t = vpTime::measureTimeMs() ;
-
-
-      // ---------- Methode Levenberg Marquardt --------------
-      {
-	if (iter > iterGN)
-	  {
-	    mu = 0.0001 ; 
-	    lambda = lambdaGN;
-	  }
-
-	// Compute the levenberg Marquartd term
-	{
-	  H = ((mu * diagHsd) + Hsd).inverseByLU(); 
-	}
-	//	compute the control law 
-	e = H * Lsd.t() *error ;
-
-	v = - lambda*e;
-      }
-
-      std::cout << "lambda = " << lambda << "  mu = " << mu ;
-      std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
-      
-      // send the robot velocity
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-      robot.getPosition(cMo) ;
-
     }
-  while(normeError > 10000 && iter < opt_niter);
+#endif
+    // Compute current visual feature
+    sI.buildFrom(I) ;
 
+    // compute current error
+    sI.error(sId,error) ;
+
+    normeError = (error.sumSquare());
+    std::cout << "|e| "<<normeError <<std::endl ;
+
+    // double t = vpTime::measureTimeMs() ;
+
+    // ---------- Levenberg Marquardt method --------------
+    {
+      if (iter > iterGN)
+      {
+        mu = 0.0001 ;
+        lambda = lambdaGN;
+      }
+
+      // Compute the levenberg Marquartd term
+      {
+        H = ((mu * diagHsd) + Hsd).inverseByLU();
+      }
+      //	compute the control law
+      e = H * Lsd.t() *error ;
+
+      v = - lambda*e;
+    }
+
+    std::cout << "lambda = " << lambda << "  mu = " << mu ;
+    std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
+
+    // send the robot velocity
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    robot.getPosition(cMo) ;
+
+  }
+  while(normeError > 10000 && iter < opt_niter);
 
   v = 0 ;
   robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
- 
+
 }

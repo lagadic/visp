@@ -41,7 +41,7 @@
   \example HelloWorldOgre.cpp
 
   \brief Example that shows how to exploit the vpAROgre class.
- 
+
 */
 
 #include <visp/vpOpenCVGrabber.h>
@@ -124,14 +124,14 @@ int main()
 
   // Rendering loop, ended with on escape
   while(ogre.continueRendering()){
-      // Image Acquisition
-      // Acquire a new image
-      grabber.acquire(I);
-      //Pose computation
-      // ...
-      // cMo updated
-      // Display the robot at the position specified by cMo with vpAROgre
-      ogre.display(I,cMo);
+    // Image Acquisition
+    // Acquire a new image
+    grabber.acquire(I);
+    //Pose computation
+    // ...
+    // cMo updated
+    // Display the robot at the position specified by cMo with vpAROgre
+    ogre.display(I,cMo);
   }
   // Release video device
   grabber.close();

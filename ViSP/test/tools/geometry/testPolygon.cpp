@@ -104,7 +104,7 @@ OPTIONS: \n\
   \return false if the program has to be stopped, true otherwise.
 */
 bool getOptions(int argc, const char **argv,
-		bool& opt_display, bool& opt_click)
+                bool& opt_display, bool& opt_click)
 {
   const char *optarg;
   int	c;
@@ -228,18 +228,18 @@ main(int argc, const char** argv)
       std::cout << "Click to continue." << std::endl;
       vpDisplay::flush(I);
       vpDisplay::getClick(I);
-    
+
       vpRect bbox = p4.getBoundingBox();
       for(unsigned int i= (unsigned int)floor(bbox.getTop()); i<(unsigned int)ceil(bbox.getBottom()); ++i){
-	for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
-	  if(p4.isInside(vpImagePoint(i, j))){
-	    vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
-	  }
-	}
+        for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
+          if(p4.isInside(vpImagePoint(i, j))){
+            vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
+          }
+        }
       }
       vpDisplay::flush(I);
       std::cout << "Click to finish." << std::endl;
- 
+
       vpDisplay::getClick(I);
     }
   }

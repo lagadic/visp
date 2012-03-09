@@ -179,54 +179,54 @@ Set the program options.
 */
 
 void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
-				  unsigned int &nframes, bool &verbose_info,
-				  bool &verbose_settings,
-				  bool &mediatype_is_set,
-				  unsigned int &mediatypeID,
-				  bool &framerate_is_set,
-				  double &framerate,
-				  bool &display, bool &save, std::string &opath)
+                  unsigned int &nframes, bool &verbose_info,
+                  bool &verbose_settings,
+                  bool &mediatype_is_set,
+                  unsigned int &mediatypeID,
+                  bool &framerate_is_set,
+                  double &framerate,
+                  bool &display, bool &save, std::string &opath)
 {
 	const char *optarg;
 	int	c;
 	/*
-	* Lecture des options.
-	*/
+ * Lecture des options.
+ */
 
 	while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS,&optarg)) > 1) {
 		switch (c) {
-			case 'c':
-				camera = atoi(optarg); break;
-			case 'd':
-				display = false; break;
-			case 'f':
-				framerate_is_set = true;
-				framerate = atoi(optarg); break;
-			case 'i':
-				verbose_info = true; break;
-			case 'm':
-				multi = true; break;
-			case 'n':
-				nframes = atoi(optarg); break;
-			case 'o':
-				save = true;
-				opath = optarg; break;
-			case 's':
-				verbose_settings = true; break;
-			case 't':
-				mediatype_is_set = true;
-				mediatypeID = atoi(optarg); break;
-			default:
-				usage(argv[0], NULL, camera, nframes, opath);
-				break;
+    case 'c':
+      camera = atoi(optarg); break;
+    case 'd':
+      display = false; break;
+    case 'f':
+      framerate_is_set = true;
+      framerate = atoi(optarg); break;
+    case 'i':
+      verbose_info = true; break;
+    case 'm':
+      multi = true; break;
+    case 'n':
+      nframes = atoi(optarg); break;
+    case 'o':
+      save = true;
+      opath = optarg; break;
+    case 's':
+      verbose_settings = true; break;
+    case 't':
+      mediatype_is_set = true;
+      mediatypeID = atoi(optarg); break;
+    default:
+      usage(argv[0], NULL, camera, nframes, opath);
+      break;
 		}
 	}
 
 	if ((c == 1) || (c == -1)) {
-	// standalone param or error
-	usage(argv[0], NULL, camera, nframes, opath);
-	std::cerr << "ERROR: " << std::endl;
-	std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    // standalone param or error
+    usage(argv[0], NULL, camera, nframes, opath);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
 	}
 }
 
@@ -268,10 +268,10 @@ main(int argc, const char ** argv)
 		vpDisplayGTK *d;
 #endif
 		read_options(argc, argv, multi, camera, nframes,
-			verbose_info, verbose_settings,
-			mediatype_is_set, mediatypeID,
-			framerate_is_set, framerate,
-			display, save, opath);
+                 verbose_info, verbose_settings,
+                 mediatype_is_set, mediatypeID,
+                 framerate_is_set, framerate,
+                 display, save, opath);
 
 		// Number of cameras connected on the bus
 		vpDirectShowGrabber *g;
@@ -369,23 +369,23 @@ main(int argc, const char ** argv)
         if (verbose_info){
 					g[i].getFormat(width, height, framerate);
 					std::cout << "----------------------------------------------------------"
-						<< std::endl
-						<< "---- MediaType and framerate currently used by device " << std::endl
-						<< "---- (or camera) " << c <<  std::endl
-						<< "---- Current MediaType : " << g[i].getMediaType() << std::endl
-						<< "---- Current format : " << width <<" x "<< height <<" at "<< framerate << " fps" << std::endl
-						<< "----------------------------------------------------------" << std::endl;
+                    << std::endl
+                    << "---- MediaType and framerate currently used by device " << std::endl
+                    << "---- (or camera) " << c <<  std::endl
+                    << "---- Current MediaType : " << g[i].getMediaType() << std::endl
+                    << "---- Current format : " << width <<" x "<< height <<" at "<< framerate << " fps" << std::endl
+                    << "----------------------------------------------------------" << std::endl;
         }
 				if (verbose_settings) {
 					std::cout << "----------------------------------------------------------"
-						   << std::endl
-						   << "---- MediaTypes supported by device (or camera) "
-               << c << std::endl
-						   << "---- One of the MediaType below can be set using " << std::endl
-						   << "---- option -t <mediatype>."
-						   << std::endl
-						   << "----------------------------------------------------------"
-						   << std::endl;
+                    << std::endl
+                    << "---- MediaTypes supported by device (or camera) "
+                    << c << std::endl
+                    << "---- One of the MediaType below can be set using " << std::endl
+                    << "---- option -t <mediatype>."
+                    << std::endl
+                    << "----------------------------------------------------------"
+                    << std::endl;
 					g[i].getStreamCapabilities();
 				}
 
@@ -403,7 +403,7 @@ main(int argc, const char ** argv)
 			else c = camera;
 
 			std::cout << "Image size for camera " << c << " : width: "
-				<< I[i].getWidth() << " height: " << I[i].getHeight() << std::endl;
+                << I[i].getWidth() << " height: " << I[i].getHeight() << std::endl;
 
 			if (display) {
 				// Initialise the display
@@ -482,8 +482,3 @@ main()
 }
 #endif // defined (VISP_HAVE_DIRECTSHOW) 
 
-/*
-* Local variables:
-* c-basic-offset: 2
-* End:
-*/

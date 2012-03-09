@@ -119,69 +119,69 @@ bool getOptions(int argc, const char **argv)
 
 bool testRandom(double epsilon)
 {
-    vpMatrix L0(6,6);
-    vpMatrix L1(6,6);
-    
-    for (unsigned int i=0 ; i < L0.getRows() ; i++)
-	for  (unsigned int j=0 ; j < L0.getCols() ; j++)
+  vpMatrix L0(6,6);
+  vpMatrix L1(6,6);
+
+  for (unsigned int i=0 ; i < L0.getRows() ; i++)
+    for  (unsigned int j=0 ; j < L0.getCols() ; j++)
 	    L1[i][j] = L0[i][j] = (double)rand()/(double)RAND_MAX;
-	    
+
 	
-    
-    vpColVector W0(L0.getCols()) ;
-    vpMatrix V0(L0.getCols(), L0.getCols()) ;
-    vpColVector W1(L1.getCols()) ;
-    vpMatrix V1(L1.getCols(), L1.getCols()) ;
 
-    L0.svdNr(W0,V0);
-    L1.svdGsl(W1,V1);
+  vpColVector W0(L0.getCols()) ;
+  vpMatrix V0(L0.getCols(), L0.getCols()) ;
+  vpColVector W1(L1.getCols()) ;
+  vpMatrix V1(L1.getCols(), L1.getCols()) ;
 
-    vpColVector _W0 = vpColVector::sort(W0);
-    vpColVector _W1 = vpColVector::sort(W1);
+  L0.svdNr(W0,V0);
+  L1.svdGsl(W1,V1);
 
-    vpColVector diff = _W0-_W1;
-    double error=-1.0;
-    
-    for(unsigned int i=0;i<6;i++)
-	error=std::max(abs(diff[i]),error);
-    
-    return error<epsilon;
-    
+  vpColVector _W0 = vpColVector::sort(W0);
+  vpColVector _W1 = vpColVector::sort(W1);
+
+  vpColVector diff = _W0-_W1;
+  double error=-1.0;
+
+  for(unsigned int i=0;i<6;i++)
+    error=std::max(abs(diff[i]),error);
+
+  return error<epsilon;
+
 }
 
 #endif
 
 bool testSvdOpenCvGSLCoherence(double epsilon){
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && defined (VISP_HAVE_GSL) // Require opencv >= 2.1.0
-    vpMatrix A;
-    vpMatrix vA;
-    vpColVector wA;
-    vpMatrix B;
-    vpMatrix vB;
-    vpColVector wB;
-    A.resize(6,6);
-    B.resize(6,6);
-    vA.resize(6,6);
-    vB.resize(6,6);
-    wA.resize(6);
-    wB.resize(6);
+  vpMatrix A;
+  vpMatrix vA;
+  vpColVector wA;
+  vpMatrix B;
+  vpMatrix vB;
+  vpColVector wB;
+  A.resize(6,6);
+  B.resize(6,6);
+  vA.resize(6,6);
+  vB.resize(6,6);
+  wA.resize(6);
+  wB.resize(6);
 
-    for (unsigned int i=0 ; i < A.getRows() ; i++)
-        for  (unsigned int j=0 ; j < A.getCols() ; j++)
-            B[i][j] = A[i][j] =  (double)rand()/(double)RAND_MAX;
+  for (unsigned int i=0 ; i < A.getRows() ; i++)
+    for  (unsigned int j=0 ; j < A.getCols() ; j++)
+      B[i][j] = A[i][j] =  (double)rand()/(double)RAND_MAX;
 
-    A.svdOpenCV(wA,vA);
-    B.svdGsl(wB,vB);
+  A.svdOpenCV(wA,vA);
+  B.svdGsl(wB,vB);
 
-    bool error=false;
-    for (unsigned int i=0 ; i < A.getRows() ; i++){
-        error = error | (abs(wA[i]-wB[i])>epsilon);
-    }
+  bool error=false;
+  for (unsigned int i=0 ; i < A.getRows() ; i++){
+    error = error | (abs(wA[i]-wB[i])>epsilon);
+  }
 
-    return !error;
+  return !error;
 #else
-    (void)epsilon;
-    return true;
+  (void)epsilon;
+  return true;
 #endif
 }
 
@@ -210,7 +210,7 @@ main(int argc, const char ** argv)
   t = vpTime::measureTimeMs() -t ;
 
   std::cout <<"svdNr Numerical recipes \n time " <<t << std::endl;
-    std::cout << W.t() ;
+  std::cout << W.t() ;
   std::cout << "--------------------------------------"<<std::endl ;
 
 
@@ -220,18 +220,18 @@ main(int argc, const char ** argv)
   L.svdGsl(W,V) ;
   t = vpTime::measureTimeMs() -t ;
   std::cout <<"svdGsl_mod \n time " <<t << std::endl;
-    std::cout << W.t() ;
+  std::cout << W.t() ;
 
   std::cout << "--------------------------------------"<<std::endl ;
   std::cout << "TESTING RANDOM MATRICES:" ;
 
   bool ret = true;
   for(int i=0;i<2000;i++)
-      ret = ret & testRandom(0.00001);  
+    ret = ret & testRandom(0.00001);
   if(ret)
-      std:: cout << "Success"<< std:: endl;
+    std:: cout << "Success"<< std:: endl;
   else
-      std:: cout << "Fail"<< std:: endl;
+    std:: cout << "Fail"<< std:: endl;
 
   std::cout << "--------------------------------------"<<std::endl ;
 #endif
@@ -241,11 +241,11 @@ main(int argc, const char ** argv)
 
   bool ret2 = true;
   for(int i=0;i<1;i++)
-      ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
+    ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
   if(ret2)
-      std:: cout << "Success"<< std:: endl;
+    std:: cout << "Success"<< std:: endl;
   else
-      std:: cout << "Fail"<< std:: endl;
+    std:: cout << "Fail"<< std:: endl;
 
   std::cout << "--------------------------------------"<<std::endl ;
 
@@ -254,9 +254,6 @@ main(int argc, const char ** argv)
   L.svdFlake(W,V) ;
   t = vpTime::measureTimeMs() -t ;
   std::cout <<"svdFlake\n time " <<t << std::endl;
-    std::cout << W.t() ;
-
-
-
+  std::cout << W.t() ;
 }
 

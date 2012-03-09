@@ -49,7 +49,7 @@
   \example manGeometricFeatures.cpp
 
   \brief Geometric features projection example.
- 
+
 */
 
 
@@ -104,7 +104,7 @@ int main()
   line.setWorldCoordinates(1,1,0,0,0,0,1,0); // planes:(X+Y=0)&(Z=0)
   vpCylinder cylinder;
   cylinder.setWorldCoordinates(1,-1,0,0,0,0,0.1); // alpha=1,beta=-1,gamma=0,
-                                                  // X0=0,Y0=0,Z0=0,R=0.1
+  // X0=0,Y0=0,Z0=0,R=0.1
   vpCircle circle;
   circle.setWorldCoordinates(0,0,1,0,0,0,0.1); // plane:(Z=0),X0=0,Y0=0,Z=0,R=0.1
   vpSphere sphere;

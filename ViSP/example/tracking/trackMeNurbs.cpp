@@ -196,10 +196,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -207,11 +207,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 

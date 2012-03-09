@@ -113,7 +113,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &ppath)
+                std::string &ipath, std::string &ppath)
 {
   const char *optarg;
   int	c;
@@ -176,10 +176,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -202,24 +202,24 @@ main(int argc, const char ** argv)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::readPGM(I,filename);
     vpTRACE("Read pgm ok");
-    #if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
     vpImageIo::readJPEG(I,filename);
     vpTRACE("Read jpeg ok");
     filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
     vpImageIo::readJPEG(I,filename);
     vpTRACE("Read jpeg ok");
-    #else
+#else
     vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
-    #endif
+#endif
     
-    #if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
     vpImageIo::readPNG(I,filename);
     vpTRACE("Read png ok");
-    #else
+#else
     vpTRACE("To read png you must have the libpng or OpenCV library");
-    #endif
+#endif
 
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
     vpImageIo::readPPM(Irgb,filename);
@@ -227,7 +227,7 @@ main(int argc, const char ** argv)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::readPGM(Irgb,filename);
     vpTRACE("Read pgm ok");
-    #if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
     vpImageIo::readJPEG(Irgb,filename);
     vpTRACE("Read jpeg ok");
@@ -236,17 +236,17 @@ main(int argc, const char ** argv)
     vpImageIo::readJPEG(Irgb,filename);
     vpTRACE("Read jpeg ok");
     //vpImageIo::writePPM(Irgb,"jpeg-uchar.ppm");
-    #else
+#else
     vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
-    #endif
+#endif
     
-    #if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
     vpImageIo::readPNG(Irgb,filename);
     vpTRACE("Read png ok");
-    #else
+#else
     vpTRACE("To read png you must have the libpng or OpenCV library");
-    #endif
+#endif
 
   }
   
@@ -259,9 +259,3 @@ main(int argc, const char ** argv)
 
   return 0;
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

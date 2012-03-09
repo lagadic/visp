@@ -44,7 +44,7 @@
   \example manDisplay.cpp
 
   \brief Display example.
- 
+
  */
 
 #include <visp/vpImage.h>
@@ -123,8 +123,8 @@ int main()
   ip.set_i( 300 );
   ip.set_j( 160 );  
   vpDisplay::displayCharString(I, ip,
-			       "ViSP is a marvelous software",
-			       vpColor::black) ;
+                               "ViSP is a marvelous software",
+                               vpColor::black) ;
   //Flush the display : without this line nothing will appear on the screen
   vpDisplay::flush(I);
 

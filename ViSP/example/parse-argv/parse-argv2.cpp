@@ -71,15 +71,15 @@ main(int argc, const char ** argv)
   double d_val = 3.1415;
 
   vpParseArgv::vpArgvInfo argTable[] =
-    {
-      {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
-	 "An integer value."},
-      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
-       "A float value."},
-      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
-       "A double value."},
-      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
-    } ;
+  {
+    {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
+     "An integer value."},
+    {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
+     "A float value."},
+    {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
+     "A double value."},
+    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+  } ;
 
   // Read the command line options
   if(vpParseArgv::parse(&argc, argv, argTable, 0)) {

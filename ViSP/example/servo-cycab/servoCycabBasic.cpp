@@ -59,13 +59,13 @@ int main()
     double v = 0.1, phi = vpMath::rad(0);
     double x, y;
     double x_min=2000, x_max=0, y_min=2000, y_max=0;
-        
+
     vpRobotCycab robot;
     
     std::cout << "Send the command v: " << v << " m/s and phi: " 
-	      << vpMath::deg(phi) << " deg" << std::endl;
+              << vpMath::deg(phi) << " deg" << std::endl;
     while (true) {
-    
+
       robot.setCommand(v, phi);
       robot.getJoystickPosition(x, y);
       //std::cout << "x: " << x << " y: " << y << std::endl;
@@ -74,26 +74,26 @@ int main()
       if (x > x_max) x_max = x;
       if (y > y_max) y_max = y;
       std::cout << "x_min: " << x_min << " x_max: " << x_max 
-		<< " y_min: " << y_min << " y_max: " << y_max 
-		<< std::endl;
-    
+                << " y_min: " << y_min << " y_max: " << y_max
+                << std::endl;
+
       usleep(10000);
     }
   }
   catch(...) {
     std::cerr << "An exception was catched" << std::endl;
-   
+
     return 1;
   }
 
   return 0;
 }
-		
+
 #else // VISP_HAVE_CYCAB		
 int main()
 {
   std::cout << "Sorry, you don't have access to the Cycab car-like mobile robot." 
-	    << std::endl;
+            << std::endl;
 }
 #endif // VISP_HAVE_CYCAB
 

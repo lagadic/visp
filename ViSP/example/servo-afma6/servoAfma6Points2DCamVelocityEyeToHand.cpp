@@ -403,7 +403,7 @@ int main()
 
 #else
 int
-    main()
+main()
 {
   vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
 }

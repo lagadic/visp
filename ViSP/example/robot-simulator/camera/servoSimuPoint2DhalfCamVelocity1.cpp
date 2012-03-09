@@ -90,24 +90,24 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Simulation of a 2 1/2 D visual servoing (x,y,Z,theta U):\n\
-          - eye-in-hand control law,\n\
-          - velocity computed in the camera frame,\n\
-          - without display.\n\
+Simulation of a 2 1/2 D visual servoing (x,y,Z,theta U):\n\
+- eye-in-hand control law,\n\
+- velocity computed in the camera frame,\n\
+- without display.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-h]\n", name);
+SYNOPSIS\n\
+  %s [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
                   \n\
-                  -h\n\
-                  Print the help.\n");
+  -h\n\
+     Print the help.\n");
 
-                  if (badparam) {
-                  fprintf(stderr, "ERROR: \n" );
-          fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-}
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!

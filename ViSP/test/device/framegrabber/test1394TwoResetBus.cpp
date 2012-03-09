@@ -81,11 +81,11 @@ main()
     vp1394TwoGrabber g;
     g.resetBus(); // Reset the bus attached to the first camera found
     std::cout << "IEEE1394 bus was reset." << std::endl;
-      
+
     vpImage<unsigned char> I;
     g.acquire(I);    
-//     std::cout << "write /tmp/test.pgm" << std::endl;
-//     vpImageIo::writePGM(I, "/tmp/test.pgm");
+    //     std::cout << "write /tmp/test.pgm" << std::endl;
+    //     vpImageIo::writePGM(I, "/tmp/test.pgm");
   }
   catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
@@ -96,7 +96,7 @@ int
 main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-	  "You should install libdc1394-2 to use this binary.") ;
+          "You should install libdc1394-2 to use this binary.") ;
 }
 
 #endif

@@ -151,6 +151,4 @@ main(int argc, const char ** argv)
     std::cout << me << std::endl ;
   }
 
-
-  vpCTRACE ;
 }

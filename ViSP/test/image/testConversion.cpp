@@ -118,7 +118,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &opath, std::string user)
+                std::string &ipath, std::string &opath, std::string user)
 {
   const char *optarg;
   int	c;
@@ -199,7 +199,7 @@ main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ipath, opt_opath, username);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << opath << std::endl;
       std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
       exit(-1);
@@ -211,10 +211,10 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -222,11 +222,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opt_opath, username);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -271,9 +271,9 @@ main(int argc, const char ** argv)
 
 #ifdef VISP_HAVE_OPENCV
   double t0 = vpTime::measureTimeMs();
-/////////////////////////
-// Convert a IplImage to a vpImage<vpRGBa>
-////////////////////////
+  /////////////////////////
+  // Convert a IplImage to a vpImage<vpRGBa>
+  ////////////////////////
   IplImage* image = NULL; /*!< The image read / acquired */
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
@@ -288,10 +288,10 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ic);
   filename = opath +  vpIoTools::path("/Klimt_color_cv.ppm");
   /* Save the the current image */
-    vpImageIo::writePPM(Ic, filename) ;
+  vpImageIo::writePPM(Ic, filename) ;
 
-    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
-    
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
   /* Read the pgm image */
@@ -309,11 +309,11 @@ main(int argc, const char ** argv)
   vpImageIo::writePPM(Ic, filename) ;
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
-    
-///////////////////////////
-// Convert a IplImage to a vpImage<unsigned char>
-////////////////////////////
-filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+
+  ///////////////////////////
+  // Convert a IplImage to a vpImage<unsigned char>
+  ////////////////////////////
+  filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   /* Read the color image */
 
@@ -327,10 +327,10 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpImageConvert::convert(image, Ig);
   filename = opath +  vpIoTools::path("/Klimt_color_cv.pgm");
   /* Save the the current image */
-    vpImageIo::writePGM(Ig, filename) ;
+  vpImageIo::writePGM(Ig, filename) ;
 
-    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
-    
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
   /* Read the pgm image */
@@ -350,48 +350,48 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-////////////////////////////////////
-// Convert a vpImage<vpRGBa> to a IplImage
-////////////////////////////////////
+  ////////////////////////////////////
+  // Convert a vpImage<vpRGBa> to a IplImage
+  ////////////////////////////////////
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   /* Read the color image */
 
-// Load a color image from the disk
+  // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
   vpImageIo::readPPM(Ic, filename) ;
   vpImageConvert::convert(Ic, image);
   filename = opath +  vpIoTools::path("/Klimt_ipl_color_cv.ppm");
   /* Save the the current image */
-    vpCTRACE << "Write " << filename << std::endl;
-    if((cvSaveImage(filename.c_str(), image)) == 0) {
-      vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
-      if(image!=NULL) cvReleaseImage( &image );
-      return (-1);
-    }
-    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+  vpCTRACE << "Write " << filename << std::endl;
+  if((cvSaveImage(filename.c_str(), image)) == 0) {
+    vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
+    return (-1);
+  }
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-////////////////////////////////////////
-// Convert a IplImage to a vpImage<unsigned char>
-////////////////////////////////////////
+  ////////////////////////////////////////
+  // Convert a IplImage to a vpImage<unsigned char>
+  ////////////////////////////////////////
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
-/* Read the grey image */
+  /* Read the grey image */
 
-// Load a color image from the disk
+  // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
   vpImageIo::readPGM(Ig, filename) ;
   vpImageConvert::convert(Ig, image);
   filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cv.pgm");
   /* Save the the current image */
 
-    vpCTRACE << "Write " << filename << std::endl;
-    if((cvSaveImage(filename.c_str(), image)) == 0) {
-      vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
-      if(image!=NULL) cvReleaseImage( &image );
-      return (-1);
-    }
-    vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+  vpCTRACE << "Write " << filename << std::endl;
+  if((cvSaveImage(filename.c_str(), image)) == 0) {
+    vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
+    if(image!=NULL) cvReleaseImage( &image );
+    return (-1);
+  }
+  vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
   if(image!=NULL) cvReleaseImage( &image );
   double t1 = vpTime::measureTimeMs();
@@ -417,15 +417,15 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   }
   vpImageConvert::convert(imageMat, Ic);
   filename = opath +  vpIoTools::path("/Klimt_color_cvMat.ppm");
-    /* Save the the current image */
+  /* Save the the current image */
   vpImageIo::write(Ic, filename) ;
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-    /* Read the pgm image */
+  /* Read the pgm image */
 
   vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
-             << filename << std::endl;
+           << filename << std::endl;
   imageMat = cv::imread(filename, 0);// forced to grayscale.
   if(imageMat.data == NULL) {
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
@@ -445,7 +445,7 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   /* Read the color image */
 
   vpCTRACE << "Reading the color image with opencv: "<< std::endl
-             << filename << std::endl;
+           << filename << std::endl;
   imageMat = cv::imread(filename, 1);// force to a three channel color image.
   if(imageMat.data == NULL){
     vpCTRACE<<"Cannot read image: "<< std::endl << filename << std::endl;
@@ -492,7 +492,7 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   if(!cv::imwrite(filename, imageMat)){
     vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
     if(image!=NULL) cvReleaseImage( &image );
-      return (-1);
+    return (-1);
   }
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
@@ -514,7 +514,7 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   if(!cv::imwrite(filename, imageMat)){
     vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
     if(image!=NULL) cvReleaseImage( &image );
-      return (-1);
+    return (-1);
   }
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
   double t3 = vpTime::measureTimeMs();
@@ -523,13 +523,13 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 #endif
   
   ////////////////////////////////////
-// Split a vpImage<vpRGBa> to vpImage<unsigned char> 
+  // Split a vpImage<vpRGBa> to vpImage<unsigned char>
   ////////////////////////////////////
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
 
   /* Read the color image */
 
-// Load a color image from the disk
+  // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
   vpImageIo::readPPM(Ic, filename) ;
   vpImage<unsigned char> R,G,B,a;
@@ -541,7 +541,7 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   double endtime = vpTime::measureTimeMs();
   
   std::cout<<"Time for 1000 split (ms): "<< endtime - begintime <<std::endl;
-      
+
   filename = opath +  vpIoTools::path("/Klimt_RChannel.pgm");
   /* Save the the current image */
   vpCTRACE << "Write " << filename << std::endl;
@@ -555,9 +555,3 @@ filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

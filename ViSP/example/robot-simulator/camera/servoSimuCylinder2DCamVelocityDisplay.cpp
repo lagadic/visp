@@ -105,29 +105,29 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Simulation of a 2D visual servoing on a cylinder:\n\
-          - eye-in-hand control law,\n\
-          - velocity computed in the camera frame,\n\
-          - display the camera view.\n\
+Simulation of a 2D visual servoing on a cylinder:\n\
+- eye-in-hand control law,\n\
+- velocity computed in the camera frame,\n\
+- display the camera view.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-c] [-d] [-h]\n", name);
+SYNOPSIS\n\
+  %s [-c] [-d] [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
                   \n\
-                  -c\n\
-                  Disable the mouse click. Useful to automaze the \n\
-                  execution of this program without humain intervention.\n\
+  -c\n\
+     Disable the mouse click. Useful to automaze the \n\
+     execution of this program without humain intervention.\n\
                   \n\
-                  -d \n\
-                  Turn off the display.\n\
+  -d \n\
+     Turn off the display.\n\
                   \n\
-                  -h\n\
-                  Print the help.\n");
+  -h\n\
+     Print the help.\n");
 
-                  if (badparam)
-                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam)
+     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!

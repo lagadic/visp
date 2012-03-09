@@ -195,7 +195,7 @@ main(int argc, const char ** argv)
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -219,9 +219,9 @@ main(int argc, const char ** argv)
 
   // Sets the initial camera location
   vpPoseVector c_r_o(// Translation tx,ty,tz
-		     0.1, 0.2, 2, 
-		     // ThetaU rotation 
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
+                     0.1, 0.2, 2,
+                     // ThetaU rotation
+                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
 
   // From the camera pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
@@ -231,16 +231,16 @@ main(int argc, const char ** argv)
 
   // Sets the desired camera location
   vpPoseVector cd_r_o(// Translation tx,ty,tz
-		      0, 0, 1, 
-		      // ThetaU rotation 
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ; 
+                      0, 0, 1,
+                      // ThetaU rotation
+                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
 
   // From the camera desired pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
   vpHomogeneousMatrix cMcd; // Transformation between current and desired camera frame
   vpRotationMatrix cRcd; // Rotation between current and desired camera frame
- 
+
   // Set the constant gain of the servo
   double lambda = 1;
 
@@ -254,7 +254,7 @@ main(int argc, const char ** argv)
 
     // new displacement to achieve
     cMcd = cMo*cdMo.inverse() ;
-      
+
     // Extract the translation vector ctc* which is the current
     // translational visual feature. 
     vpTranslationVector ctcd;

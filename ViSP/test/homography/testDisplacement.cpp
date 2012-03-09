@@ -247,8 +247,5 @@ main(int argc, const char ** argv)
     H.buildFrom(R,T,p1) ;
     std::cout << "H" <<std::endl <<H << std::endl ;
 
-    vpTRACE(" ") ;
-
-
   }
 }

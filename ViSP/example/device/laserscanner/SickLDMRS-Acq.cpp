@@ -49,8 +49,6 @@
   \warning For the moment, this example is only working on UNIX
   platforms since the Sick LD-MRS driver was not ported to Windows.
 
-  
-
 */
 #include <visp/vpDebug.h>
 #include <visp/vpSickLDMRS.h>
@@ -67,7 +65,7 @@ int main()
   laser.setIpAddress(ip);
   laser.setup();
   unsigned long int iter = 0;
- 
+
   for ( ; ; ) {
     double t1 = vpTime::measureTimeMs();
     vpLaserScan laserscan[4];
@@ -76,7 +74,7 @@ int main()
     
     iter ++;
     std::cout << "iter: " << iter << " time: " 
-	      << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
+              << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
   }
   return 0;
 }
@@ -86,9 +84,9 @@ int main()
 int main()
 { 
   std::cout << "This example is only working on UNIX platforms \n"
-	    << "since the Sick LD-MRS driver was not ported to Windows." 
-	    << std::endl;
- 
+            << "since the Sick LD-MRS driver was not ported to Windows."
+            << std::endl;
+
   return 0;
 }
 #endif // #ifdef UNIX

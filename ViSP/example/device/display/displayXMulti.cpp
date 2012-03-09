@@ -152,8 +152,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &opath, bool &click_allowed,
-		std::string user, bool &display)
+                std::string &ipath, std::string &opath, bool &click_allowed,
+                std::string user, bool &display)
 {
   const char *optarg;
   int	c;
@@ -217,7 +217,7 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_opath,
-		 opt_click_allowed, username, opt_display) == false) {
+                 opt_click_allowed, username, opt_display) == false) {
     exit (-1);
   }
 
@@ -230,7 +230,7 @@ main(int argc, const char ** argv)
   // Append to the output path string, the login name of the user
   std::string odirname = opath +  vpIoTools::path("/") + username;
 
-   // Test if the output path exist. If no try to create it
+  // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(odirname) == false) {
     try {
       // Create the dirname
@@ -239,7 +239,7 @@ main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << odirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
@@ -251,10 +251,10 @@ main(int argc, const char ** argv)
   if (!opt_ipath.empty() && !env_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -262,11 +262,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -282,11 +282,11 @@ main(int argc, const char ** argv)
   catch(...)
   {
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option " << std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << std::endl;
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
     exit(-1);
   }
   try {
@@ -297,11 +297,11 @@ main(int argc, const char ** argv)
   catch(...)
   {
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option " << std::endl
-	 << "  or VISP_INPUT_IMAGE_PATH environment variable."
-	 << std::endl;
+              << "  or VISP_INPUT_IMAGE_PATH environment variable."
+              << std::endl;
     exit(-1);
   }
 
@@ -356,14 +356,14 @@ main(int argc, const char ** argv)
     ip.set_i( 100 );
     ip.set_j( 100 );
     vpDisplay::displayCharString(I1, ip,
-				 "ViSP is a marvelous software",
-				 vpColor::blue) ;
+                                 "ViSP is a marvelous software",
+                                 vpColor::blue) ;
 
     //Flush displays. The displays must be flushed to show the overlay.
     //without this line, nothing will be displayed.
     vpDisplay::flush(I1);
     vpDisplay::flush(I2);
-	
+
     // If click is allowed, wait for a blocking mouse click in the first
     // display, to display a cross at the clicked pixel position
     if (opt_click_allowed) {
@@ -411,9 +411,3 @@ main()
 
 #endif
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

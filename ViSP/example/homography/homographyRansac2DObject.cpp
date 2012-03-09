@@ -214,7 +214,5 @@ main(int argc, const char ** argv)
   vpHomography aHb ;
   vpHomography::ransac(nbpt,xb,yb,xa,ya, aHb) ;
 
-  std::cout << aHb << std::endl ;
-
-
+  std::cout << aHb << std::endl ; 
 }

@@ -123,7 +123,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, bool &display,
-		unsigned &nframes, bool &save, std::string &opath)
+                unsigned &nframes, bool &save, std::string &opath)
 {
   const char *optarg;
   int	c;
@@ -197,13 +197,13 @@ main(int argc, const char ** argv)
     // Create the grabber
     grabber = new vpDirectShowGrabber();
 
-	//test if a camera is connected
-	if(grabber->getDeviceNumber() == 0)
-	{
-		vpCTRACE << "there is no camera detected on your computer." << std::endl ;
-		grabber->close();
-		exit(0);
-	}
+    //test if a camera is connected
+    if(grabber->getDeviceNumber() == 0)
+    {
+      vpCTRACE << "there is no camera detected on your computer." << std::endl ;
+      grabber->close();
+      exit(0);
+    }
     // Initialize the grabber
     grabber->open(I);
 
@@ -212,13 +212,13 @@ main(int argc, const char ** argv)
   }
   catch(...)
   {
-	if (grabber !=NULL) delete grabber;
+    if (grabber !=NULL) delete grabber;
     vpCTRACE << "Cannot acquire an image... " << std::endl ;
     exit(-1);
   }
 
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-       << I.getHeight() << std::endl;
+            << I.getHeight() << std::endl;
 
   // Creates a display
 #if defined VISP_HAVE_GTK
@@ -248,14 +248,14 @@ main(int argc, const char ** argv)
       }
 
       if (save) {
-	char buf[FILENAME_MAX];
-	sprintf(buf, opath.c_str(), i);
-	std::string filename(buf);
-	std::cout << "Write: " << filename << std::endl;
+        char buf[FILENAME_MAX];
+        sprintf(buf, opath.c_str(), i);
+        std::string filename(buf);
+        std::cout << "Write: " << filename << std::endl;
 #ifdef GRAB_COLOR
-	vpImageIo::writePPM(I, filename);
+        vpImageIo::writePPM(I, filename);
 #else
-	vpImageIo::writePGM(I, filename);
+        vpImageIo::writePGM(I, filename);
 #endif
       }
       tend = vpTime::measureTimeMs();

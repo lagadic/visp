@@ -136,56 +136,56 @@ void *laser_display_and_save_loop(void *)
     pthread_mutex_unlock(&shm_mutex);
 #endif
 
-//     std::cout << "laser start timestamp " 
-// 	      << laserscan[0].getStartTimestamp() - time_offset << std::endl;
+    //     std::cout << "laser start timestamp "
+    // 	      << laserscan[0].getStartTimestamp() - time_offset << std::endl;
     
     // Parse the four layers
     for (int layer=0; layer<4; layer++) {
       if (! ((0x1<<layer) & layerToDisplay)) {
-	std::cout << "Layer " << layer+1 << " is not displayed" << std::endl;
-	continue;
+        std::cout << "Layer " << layer+1 << " is not displayed" << std::endl;
+        continue;
       }
       
       std::vector<vpScanPoint> pointsLayer = laserscan[layer].getScanPoints();
-    
+
       if (save) {
-	// Set the scan data filename to store the measures
-	sprintf(filename, "%s/scan%04d-layer%d.txt", 
-		output_path.c_str(), iter, layer+1);
-	fdscan.open(filename);
-	
-	// Write the file header
-	fdscan << "# Scan layer [1 to 4] : " << layer+1 << std::endl
-	       << "# Start timestamp (s) : " 
-	       << laserscan[layer].getStartTimestamp() - time_offset  
-	       << std::endl
-	       << "# End timestamp (s)   : " 
-	       << laserscan[layer].getEndTimestamp() - time_offset
-	       << std::endl
-	       << "# Data : \"radial distance (m)\" \"horizontal angle (rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z (m)\""  
-	       << std::endl;
+        // Set the scan data filename to store the measures
+        sprintf(filename, "%s/scan%04d-layer%d.txt",
+                output_path.c_str(), iter, layer+1);
+        fdscan.open(filename);
+
+        // Write the file header
+        fdscan << "# Scan layer [1 to 4] : " << layer+1 << std::endl
+               << "# Start timestamp (s) : "
+               << laserscan[layer].getStartTimestamp() - time_offset
+               << std::endl
+               << "# End timestamp (s)   : "
+               << laserscan[layer].getEndTimestamp() - time_offset
+               << std::endl
+               << "# Data : \"radial distance (m)\" \"horizontal angle (rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z (m)\""
+               << std::endl;
       }
       
-     
+
       vpImagePoint E; // Beam echo
       double resolution = 5; // 100 pixels = 1 meter - increase this value to see better near info
-//       std::cout << "display layer " << layer << " nb points: " 
-// 		<< pointsLayer.size() << std::endl;
+      //       std::cout << "display layer " << layer << " nb points: "
+      // 		<< pointsLayer.size() << std::endl;
       for (unsigned int i=0; i<pointsLayer.size(); i++) {
-	p = pointsLayer[i];
-	E.set_i(height   - resolution * p.getRadialDist() * cos(p.getHAngle()));
-	E.set_j(width/2. - resolution * p.getRadialDist() * sin(p.getHAngle()));
-	//std::cout << "E: " << E << std::endl;
+        p = pointsLayer[i];
+        E.set_i(height   - resolution * p.getRadialDist() * cos(p.getHAngle()));
+        E.set_j(width/2. - resolution * p.getRadialDist() * sin(p.getHAngle()));
+        //std::cout << "E: " << E << std::endl;
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
-	vpDisplay::displayLine(map, O, E, color[layer]);
+        vpDisplay::displayLine(map, O, E, color[layer]);
 #endif
-	if (save) {
-	  // Save the measures in the file
-	  fdscan << p << std::endl;
-	}
+        if (save) {
+          // Save the measures in the file
+          fdscan << p << std::endl;
+        }
       }
       if (save) {
-	fdscan.close();
+        fdscan.close();
       }
     }
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
@@ -227,7 +227,7 @@ void *laser_acq_loop(void *)
     std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
 
   }
- 
+
   return NULL;
 }
 
@@ -237,13 +237,13 @@ void *camera_acq_and_display_loop(void *)
   try {
     // Initialize the firewire framegrabber
     vp1394TwoGrabber g;       // Create a grabber based on libdc1394-2.x third party lib
-  
+
     // If no camera found return
     if (g.getNumCameras() == 0)
       return NULL;
 
-//     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-//     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+    //     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+    //     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
 
     vpImage<unsigned char> I; // Create a gray level image container
     vpImage<unsigned char> Q; // Create a quarter size gray level image container
@@ -279,10 +279,10 @@ void *camera_acq_and_display_loop(void *)
       image_timestamp = timestamp/1000000. - time_offset;
       std::cout << "camera timestamp: " << image_timestamp << " s " << std::endl;
       if (save) {
-	// Set the image filename 
-	sprintf(filename, "%s/image%04d.png", output_path.c_str(), iter);
-	vpImageIo::write(Q, filename);
-	fdimage_ts << filename << " " << image_timestamp << std::endl;
+        // Set the image filename
+        sprintf(filename, "%s/image%04d.png", output_path.c_str(), iter);
+        vpImageIo::write(Q, filename);
+        fdimage_ts << filename << " " << image_timestamp << std::endl;
       }
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
       vpDisplay::display(Q);
@@ -310,40 +310,40 @@ int main(int argc, const char ** argv)
   output_path = "data";
   // Test if the output path directory exist. If no try to create it
   if (vpIoTools::checkDirectory(output_path) == false) {
-     try {
-       // Create a directory with name "username"
-       vpIoTools::makeDirectory(output_path);
-     }
-     catch (...) {
-       std::cout << "Cannot create " << output_path << " directory" << std::endl;
-       return false;
-     }
+    try {
+      // Create a directory with name "username"
+      vpIoTools::makeDirectory(output_path);
+    }
+    catch (...) {
+      std::cout << "Cannot create " << output_path << " directory" << std::endl;
+      return false;
+    }
   }
 
   // Parse the command line to set the variables
   vpParseArgv::vpArgvInfo argTable[] =
-    {
-      {"-layer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &layerToDisplay,
-       "The layer to display:\n" 
-       "\t\t. 0x1 for layer 1.\n"
-       "\t\t. 0x2 for layer 2.\n"
-       "\t\t. 0x4 for layer 3.\n"
-       "\t\t. 0x8 for layer 4.\n"
-       "\t\tTo display all the layers you should set 0xF value."
-      },
-      {"-save", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &save,
-       "Turn to 1 in order to save data."
-      },
-      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
-       "Display one or more measured layers form a Sick LD-MRS laser scanner."},
-      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
-    } ;
+  {
+    {"-layer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &layerToDisplay,
+     "The layer to display:\n"
+     "\t\t. 0x1 for layer 1.\n"
+     "\t\t. 0x2 for layer 2.\n"
+     "\t\t. 0x4 for layer 3.\n"
+     "\t\t. 0x8 for layer 4.\n"
+     "\t\tTo display all the layers you should set 0xF value."
+    },
+    {"-save", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &save,
+     "Turn to 1 in order to save data."
+    },
+    {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+     "Display one or more measured layers form a Sick LD-MRS laser scanner."},
+    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+  } ;
 
   // Read the command line options
   if(vpParseArgv::parse(&argc, argv, argTable, 
-            vpParseArgv::ARGV_NO_LEFTOVERS |
-            vpParseArgv::ARGV_NO_ABBREV | 
-            vpParseArgv::ARGV_NO_DEFAULTS)) {
+                        vpParseArgv::ARGV_NO_LEFTOVERS |
+                        vpParseArgv::ARGV_NO_ABBREV |
+                        vpParseArgv::ARGV_NO_DEFAULTS)) {
     return (false);
   }
   
@@ -368,8 +368,8 @@ int main(int argc, const char ** argv)
 int main()
 {
   std::cout << "This example is only working on UNIX platforms \n"
-	    << "since the Sick LD-MRS driver was not ported to Windows." 
-	    << std::endl;
+            << "since the Sick LD-MRS driver was not ported to Windows."
+            << std::endl;
   return 0;
 }
 

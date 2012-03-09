@@ -118,14 +118,14 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
     case 'd': {
       value = atoi(optarg);
       if ((value < 0) || (value > 255)) {
-	usage(argv[0], optarg, data);
-	std::cerr << "ERROR: " << std::endl;
-	std::cerr << "  Bad value \"-d " << optarg << "\""
-		  << std::endl << std::endl;
-	return false;
+        usage(argv[0], optarg, data);
+        std::cerr << "ERROR: " << std::endl;
+        std::cerr << "  Bad value \"-d " << optarg << "\""
+                  << std::endl << std::endl;
+        return false;
       }
       else {
-	data = (unsigned char) value;
+        data = (unsigned char) value;
       }
       break;
     }
@@ -182,7 +182,7 @@ main(int argc, const char **argv)
     }
   }
   catch(...) {
-      printf("An error occurs...\n");
+    printf("An error occurs...\n");
   }
   return 0;
 }

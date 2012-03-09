@@ -109,33 +109,33 @@ void usage(const char *name, const char *badparam,
            KalmanType &kalman)
 {
   fprintf(stdout, "\n\
-          Tests a control law with the following characteristics:\n\
-          - eye-in-hand control\n\
-          - camera velocity are computed\n\
-          - servo on 1 points.\n\
-          - Kalman filtering\n\
+Tests a control law with the following characteristics:\n\
+- eye-in-hand control\n\
+- camera velocity are computed\n\
+- servo on 1 points.\n\
+- Kalman filtering\n\
           \n\
-          SYNOPSIS\n\
-          %s [-K <0|1|2|3>] [-h]\n", name);
+SYNOPSIS\n\
+  %s [-K <0|1|2|3>] [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
-                  -l <%%f>                                               \n\
-                  Set the constant gain. By default adaptive gain. \n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -l <%%f>                                               \n\
+     Set the constant gain. By default adaptive gain. \n\
                   \n\
-                  -K <0|1|2>                                             %d\n\
-                  Kalman filtering:\n\
-                  0: none\n\
-                  1: velocity model\n\
-                  2: acceleration model\n\
+  -K <0|1|2>                                             %d\n\
+     Kalman filtering:\n\
+       0: none\n\
+       1: velocity model\n\
+       2: acceleration model\n\
                   \n\
-                  -h\n\
-                  Print the help.\n", (int) kalman);
+  -h\n\
+     Print the help.\n", (int) kalman);
 
-                  if (badparam) {
-                  fprintf(stderr, "ERROR: \n" );
-          fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-}
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 
 }
 

@@ -158,8 +158,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, vpDisplayType &dtype, bool &list,
-		bool &click_allowed, bool &display )
+                std::string &ipath, vpDisplayType &dtype, bool &list,
+                bool &click_allowed, bool &display )
 {
   const char *optarg;
   int	c;
@@ -172,16 +172,16 @@ bool getOptions(int argc, const char **argv,
     case 't': sDisplayType = optarg;
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
-	dtype = vpX11;
+        dtype = vpX11;
       }
       else if (sDisplayType.compare("GTK") == 0) {
-	dtype = vpGTK;
+        dtype = vpGTK;
       }
       else if (sDisplayType.compare("GDI") == 0) {
-	dtype = vpGDI;
+        dtype = vpGDI;
       }
       else if (sDisplayType.compare("D3D") == 0) {
-	dtype = vpD3D;
+        dtype = vpD3D;
       }
       else if (sDisplayType.compare("CV") == 0) {
         dtype = vpCV;
@@ -246,7 +246,7 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_dtype, opt_list,
-            opt_click_allowed, opt_display) == false) {
+                   opt_click_allowed, opt_display) == false) {
       exit (-1);
     }
 
@@ -290,10 +290,10 @@ main(int argc, const char ** argv)
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl
-	    << "WARNING: " << std::endl;
+                  << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-	    << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	    << "  we skip the environment variable." << std::endl;
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -301,11 +301,11 @@ main(int argc, const char ** argv)
     if (opt_ipath.empty() && env_ipath.empty()){
       usage(argv[0], NULL, ipath, opt_dtype);
       std::cerr << std::endl
-	  << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	  << std::endl
-	  << "  environment variable to specify the location of the " << std::endl
-	  << "  image path where test images are located." << std::endl << std::endl;
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl << std::endl;
       exit(-1);
     }
 
@@ -336,7 +336,7 @@ main(int argc, const char ** argv)
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
       std::cout << "Use \"" << argv[0]
-	        << " -l\" to print the list of available devices.\n";
+                << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -347,7 +347,7 @@ main(int argc, const char ** argv)
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
       std::cout << "Use \"" << argv[0]
-	        << " -l\" to print the list of available devices.\n";
+                << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -358,7 +358,7 @@ main(int argc, const char ** argv)
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
       std::cout << "Use \"" << argv[0]
-	        << " -l\" to print the list of available devices.\n";
+                << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
@@ -369,21 +369,21 @@ main(int argc, const char ** argv)
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
       std::cout << "Use \"" << argv[0]
-	        << " -l\" to print the list of available devices.\n";
+                << " -l\" to print the list of available devices.\n";
       return 0;
 #endif
       break;
     case vpCV:
-        std::cout << "Requested OpenCV display functionnalities..." << std::endl;
+      std::cout << "Requested OpenCV display functionnalities..." << std::endl;
 #if defined VISP_HAVE_OPENCV
-        display = new vpDisplayOpenCV;
+      display = new vpDisplayOpenCV;
 #else
-        std::cout << "  Sorry, OpenCV video device is not available.\n";
-        std::cout << "Use \"" << argv[0]
-            << " -l\" to print the list of available devices.\n";
-        return 0;
+      std::cout << "  Sorry, OpenCV video device is not available.\n";
+      std::cout << "Use \"" << argv[0]
+                << " -l\" to print the list of available devices.\n";
+      return 0;
 #endif
-        break;   
+      break;
     }
     if (opt_display){
 
@@ -399,7 +399,7 @@ main(int argc, const char ** argv)
       vpDisplay::display(I) ;
       //Flush the display
       vpDisplay::flush(I) ;
-     std::cout << "A click to continue...\n";
+      std::cout << "A click to continue...\n";
       if ( opt_click_allowed )
         vpDisplay::getClick(I) ;
 
@@ -480,8 +480,4 @@ main()
 }
 
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+

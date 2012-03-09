@@ -49,7 +49,7 @@
   \example manGrabDisk.cpp
 
   \brief Images grabbing example with the vpDiskGrabber class.
- 
+
  */
 
 #include <visp/vpConfig.h>

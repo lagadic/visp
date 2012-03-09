@@ -68,7 +68,7 @@ int main ()
   plot.setLegend(0,1, "y^2+z^2=1 and y(0) = -1");
   plot.setColor(0,0,vpColor::red);
   plot.setColor(0,1,vpColor::green);
-    
+
   double x = 0;
   double y = 1;
   double z = 0 ;
@@ -83,9 +83,9 @@ int main ()
     if (iter < 300) {
       //y*y+z*z = 1
       if (fabs(y) < 1.0)
-	z = sqrt(1.0-y*y);
+        z = sqrt(1.0-y*y);
       else z = 0;
-    
+
       //Add points to the graphic
       plot.plot(0,0, x, y,z*zsign);
       plot.plot(0,1, x, -y,-z*zsign);
@@ -93,10 +93,10 @@ int main ()
       x += dx;
       
       if (fabs(y) >= 1.0 ) 
-	dy = -dy;
+        dy = -dy;
       y += dy;
       if (fabs(y) >= 1.0 ) 
-	zsign = -zsign;
+        zsign = -zsign;
     }
     else {
       // Tip: to allows modifying the point of view with the mouse we

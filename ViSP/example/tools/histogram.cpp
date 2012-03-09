@@ -133,8 +133,8 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv,
-		std::string &ipath, std::string &opath,
-		std::string user)
+                std::string &ipath, std::string &opath,
+                std::string user)
 {
   const char *optarg;
   int	c;
@@ -215,7 +215,7 @@ main(int argc, const char ** argv)
     catch (...) {
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << dirname << std::endl;
       std::cerr << "  Check your -o " << opath << " option " << std::endl;
       exit(-1);
@@ -227,10 +227,10 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-	   << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-	   << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-	   << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -238,11 +238,11 @@ main(int argc, const char ** argv)
   if (opt_ipath.empty() && env_ipath.empty()){
     usage(argv[0], NULL, ipath, opath, username);
     std::cerr << std::endl
-	 << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-	 << std::endl
-	 << "  environment variable to specify the location of the " << std::endl
-	 << "  image path where test images are located." << std::endl << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl << std::endl;
     exit(-1);
   }
 
@@ -313,8 +313,8 @@ main(int argc, const char ** argv)
   }
   else {
     vpTRACE("Bimodal histogram: main peak1: %d-%d second peak2: %d-%d",
-	    peak1.getLevel(), peak1.getValue(),
-	    peak2.getLevel(), peak2.getValue());
+            peak1.getLevel(), peak1.getValue(),
+            peak2.getLevel(), peak2.getValue());
   }
 
   // Get the valey between the two highest peaks
@@ -334,16 +334,16 @@ main(int argc, const char ** argv)
     unsigned ret = h.getValey(distance, peak1, valeyl, valeyr);
     if (ret == 0x00) {
       vpTRACE("No left and right valey for peak %d-%d...",
-	      peak1.getLevel(), peak1.getValue());
+              peak1.getLevel(), peak1.getValue());
     }
     else if (ret == 0x10) {
       vpTRACE("No right valey for peak %d-%d...",
-	      peak1.getLevel(), peak1.getValue());
+              peak1.getLevel(), peak1.getValue());
       vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
     }
     else if (ret == 0x01) {
       vpTRACE("No left valey for peak %d-%d...",
-	      peak1.getLevel(), peak1.getValue());
+              peak1.getLevel(), peak1.getValue());
       vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
     }
     else if (ret == 0x11) {
@@ -356,16 +356,16 @@ main(int argc, const char ** argv)
     unsigned ret = h.getValey(distance, peak2, valeyl, valeyr);
     if (ret == 0x00) {
       vpTRACE("No left and right valey for peak %d-%d...",
-	      peak2.getLevel(), peak2.getValue());
+              peak2.getLevel(), peak2.getValue());
     }
     else if (ret == 0x10) {
       vpTRACE("No right valey for peak %d-%d...",
-	      peak2.getLevel(), peak2.getValue());
+              peak2.getLevel(), peak2.getValue());
       vpTRACE("Left valey: %d-%d", valeyl.getLevel(), valeyl.getValue());
     }
     else if (ret == 0x01) {
       vpTRACE("No left valey for peak %d-%d...",
-	      peak2.getLevel(), peak2.getValue());
+              peak2.getLevel(), peak2.getValue());
       vpTRACE("Right valey: %d-%d", valeyr.getLevel(), valeyr.getValue());
     }
     else if (ret == 0x11) {
@@ -383,9 +383,9 @@ main(int argc, const char ** argv)
   }
   else {
     vpTRACE("Bimodal histogram: valey %d-%d for peakl: %d-%d peakr: %d-%d",
-	    valey.getLevel(), valey.getValue(),
-	    peakl.getLevel(), peakl.getValue(),
-	    peakr.getLevel(), peakr.getValue());
+            valey.getLevel(), valey.getValue(),
+            peakl.getLevel(), peakl.getValue(),
+            peakr.getLevel(), peakr.getValue());
   }
 
 }

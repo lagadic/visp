@@ -232,8 +232,8 @@ SYNOPSIS\n\
 
 */
 bool getOptions(int argc,const char **argv, std::string &ipath, std::string &ppath,
-    double &gray, unsigned &first, unsigned &nimages, unsigned &step,
-    double &lambda, bool &display, bool &click, bool& opt_video, std::string& opt_video_image_path)
+                double &gray, unsigned &first, unsigned &nimages, unsigned &step,
+                double &lambda, bool &display, bool &click, bool& opt_video, std::string& opt_video_image_path)
 {
   const char *optarg;
   int c;
@@ -289,8 +289,8 @@ unsigned int recordImageSequence(const std::string& out_path, const unsigned int
 
 int main(int argc, const char ** argv)
 {
-///////////////////////////////////////////
-//---------PARAMETERS--------------------
+  ///////////////////////////////////////////
+  //---------PARAMETERS--------------------
   
   // set the calibration method
   vpCalibration::vpCalibrationMethodType calibMethod = vpCalibration::CALIB_VIRTUAL_VS_DIST ;
@@ -313,34 +313,34 @@ int main(int argc, const char ** argv)
   const unsigned int nptPose = 4; //number of init dots by image
   vpPoint P[nptPose];
   //plan xOy
-     P[0].setWorldCoordinates(Lx,Ly, 0 ) ;
-     P[1].setWorldCoordinates(Lx,4*Ly, 0 ) ;
-     P[2].setWorldCoordinates(3*Lx,4*Ly, 0 ) ;
-     P[3].setWorldCoordinates(4*Lx,Ly, 0 ) ;
-     
-  // Calibration grid data
-     std::list<double> LoX,LoY,LoZ; //3D coordinates of the calibration dots
-//   char gridname[FILENAME_MAX] = "./grid2d.dat";
-//   if(vpCalibration::readGrid(gridname,nbpt,LoX,LoY,LoZ)!=0){
-//     std::cout << "Can't read : " << gridname << std::endl;
-//     std::cout << "Calibration grid to use : " ;
-//     std::cin >> gridname ;
-//     if(vpCalibration::readGrid(gridname,nbpt,LoX,LoY,LoZ)!=0){
-//       vpCERROR << "Can't read " << gridname << std::endl;
-//       exit(-1);
-//     }
-//   }
+  P[0].setWorldCoordinates(Lx,Ly, 0 ) ;
+  P[1].setWorldCoordinates(Lx,4*Ly, 0 ) ;
+  P[2].setWorldCoordinates(3*Lx,4*Ly, 0 ) ;
+  P[3].setWorldCoordinates(4*Lx,Ly, 0 ) ;
 
-     for (unsigned int i=0 ; i < sizeX ; i++){
-       for(unsigned int j=0 ; j < sizeY ; j++){
-         LoX.push_back(i*Lx) ;
-         LoY.push_back(j*Ly) ;
-         LoZ.push_back(0) ;
-       }
-     }
+  // Calibration grid data
+  std::list<double> LoX,LoY,LoZ; //3D coordinates of the calibration dots
+  //   char gridname[FILENAME_MAX] = "./grid2d.dat";
+  //   if(vpCalibration::readGrid(gridname,nbpt,LoX,LoY,LoZ)!=0){
+  //     std::cout << "Can't read : " << gridname << std::endl;
+  //     std::cout << "Calibration grid to use : " ;
+  //     std::cin >> gridname ;
+  //     if(vpCalibration::readGrid(gridname,nbpt,LoX,LoY,LoZ)!=0){
+  //       vpCERROR << "Can't read " << gridname << std::endl;
+  //       exit(-1);
+  //     }
+  //   }
+
+  for (unsigned int i=0 ; i < sizeX ; i++){
+    for(unsigned int j=0 ; j < sizeY ; j++){
+      LoX.push_back(i*Lx) ;
+      LoY.push_back(j*Ly) ;
+      LoZ.push_back(0) ;
+    }
+  }
   
-//---------------------------------------------------
-///////////////////////////////////////////////////////
+  //---------------------------------------------------
+  ///////////////////////////////////////////////////////
   std::string env_ipath;
   std::string opt_ipath;
   std::string ipath;
@@ -372,7 +372,7 @@ int main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_gray,opt_first, opt_nimages,
-     opt_step, opt_lambda, opt_display, opt_click, opt_video, opt_video_image_path) == false) {
+                 opt_step, opt_lambda, opt_display, opt_click, opt_video, opt_video_image_path) == false) {
     return (-1);
   }
   
@@ -380,31 +380,31 @@ int main(int argc, const char ** argv)
 #if (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DIRECTSHOW) || defined(VISP_HAVE_DC1394_2))
     if(!opt_display){
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "Incompatible options -v and -d." << std::endl;
       return -1;
     }
     if(!opt_click){
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "Incompatible options -v and -c." << std::endl;
       return -1;
     }
     if(!opt_ipath.empty()){
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "Incompatible options -v and -i." << std::endl;
       return -1;
     }
     if(!opt_ppath.empty()){
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "Incompatible options -v and -p." << std::endl;
       return -1;
     }
     if(opt_video_image_path.empty()){
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "output image path empty." << std::endl;
       return -1;
     }
@@ -420,7 +420,7 @@ int main(int argc, const char ** argv)
 #else
     {
       std::cerr << std::endl
-       << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "No framegrabber installed with ViSP. Cannot record images from video stream." << std::endl;
       return -1;
     }
@@ -439,10 +439,10 @@ int main(int argc, const char ** argv)
   if (opt_ipath.empty() && opt_ppath.empty()) {
     if (ipath != env_ipath) {
       std::cout << std::endl
-     << "WARNING: " << std::endl;
+                << "WARNING: " << std::endl;
       std::cout << "  Since -i <visp image path=" << ipath << "> "
-     << "  is different from VISP_INPUT_IMAGE_PATH=" << env_ipath << std::endl
-     << "  we skip the environment variable." << std::endl;
+                << "  is different from VISP_INPUT_IMAGE_PATH=" << env_ipath << std::endl
+                << "  we skip the environment variable." << std::endl;
     }
   }
 
@@ -451,14 +451,14 @@ int main(int argc, const char ** argv)
     usage(argv[0], NULL, ipath, opt_ppath, opt_gray, opt_first, opt_nimages,
           opt_step, opt_lambda);
     std::cerr << std::endl
-   << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-   << std::endl
-   << "  environment variable to specify the location of the " << std::endl
-   << "  image path where test images are located." << std::endl
-   << "  Use -p <personal image path> option if you want to "<<std::endl
-   << "  use personal images." << std::endl
-         << std::endl;
+              << std::endl
+              << "  environment variable to specify the location of the " << std::endl
+              << "  image path where test images are located." << std::endl
+              << "  Use -p <personal image path> option if you want to "<<std::endl
+              << "  use personal images." << std::endl
+              << std::endl;
 
     return(-1);
   }
@@ -473,8 +473,8 @@ int main(int argc, const char ** argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()){
-  
-  
+
+
     // Warning :
     // the image sequence is not provided with the ViSP package
     // therefore the program will return you an error :
@@ -486,12 +486,12 @@ int main(int argc, const char ** argv)
     //  The sequence is available on the visp www site
     //  http://www.irisa.fr/lagadic/visp/visp.html
     //  in the download section. It is named "ViSP-images.tar.gz"
-  
+
     // Set the path location of the image sequence
     dirname = ipath + vpIoTools::path("/ViSP-images/calibration/");
-  
+
     // Build the name of the image file
-  
+
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "grid36-" << std::setw(2) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
@@ -517,12 +517,12 @@ int main(int argc, const char ** argv)
     // Note that another error message has been printed from readPGM
     // to give more information about the error
     std::cerr << std::endl
-   << "ERROR:" << std::endl;
+              << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option, " << std::endl
-   << "  or your -p " << opt_ppath << " option " <<std::endl
-   << "  or VISP_INPUT_IMAGE_PATH environment variable"
-   << std::endl;
+              << "  or your -p " << opt_ppath << " option " <<std::endl
+              << "  or VISP_INPUT_IMAGE_PATH environment variable"
+              << std::endl;
     return(-1);
   }
 
@@ -551,7 +551,7 @@ int main(int argc, const char ** argv)
       std::cout << "read : " << filename << std::endl;
       // read the image
       vpImageIo::readPGM(I, filename);
-    
+
       double px = cam.get_px();
       double py = cam.get_px();
       double u0 = I.getWidth()/2;
@@ -559,188 +559,188 @@ int main(int argc, const char ** argv)
       cam.initPersProjWithoutDistortion(px, py, u0, v0);
       
 #if defined VISP_HAVE_GDI
-    vpDisplayGDI display; 
+      vpDisplayGDI display;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
+      vpDisplayGTK display;
 #elif defined VISP_HAVE_X11
-    vpDisplayX display;
+      vpDisplayX display;
 #elif defined VISP_HAVE_D3D9
-    vpDisplayD3D display;
+      vpDisplayD3D display;
 #endif
       
 
-    if (opt_display) {
-      // Display the image
+      if (opt_display) {
+        // Display the image
 
-    try{
-      // Display size is automatically defined by the image (I) size
-      sprintf(title, "Calibration initialization on image %s", (s.str()).c_str());
-      display.init(I, 100, 100, title) ;
-      // Display the image
-      // The image class has a member that specify a pointer toward
-      // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
-      // display variable.
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
-    }
-    catch(...){
-      vpERROR_TRACE("Error while displaying the image") ;
-      delete [] table_cal;
-      return(-1);
-    }
-    }
-
-
-    // here we track dots on the calibration grid
-    vpDot2 d[nptPose] ;
-    vpImagePoint ip_click[nptPose];
-
-    try{
-      for(unsigned int i=0;i<nptPose;i++) {
-        // by using setGraphics, we request to see the edges of the dot
-        // in red on the screen.
-        // It uses the overlay image plane.
-        // The default of this setting is that it is time consumming
-    
-        d[i].setGraphics(true) ;
-        d[i].setGrayLevelPrecision(opt_gray);
-        d[i].setSizePrecision(sizePrecision);
-            
-        // tracking is initalized
-        // if no other parameters are given to the iniTracking(..) method
-        // a right mouse click on the dot is expected
-        // dot location can also be specified explicitely in the initTracking
-        // method  : d.initTracking(I,u,v)  where u is the column index and v is
-        // the row index
-        if (opt_click) {
-          vpDisplay::display(I);
-          std::printf("click in the dot %d of coordinates\nx=%f y=%f z=%f \n",
-          i+1 ,P[i].get_oX(),P[i].get_oY(),P[i].get_oZ());
-          std::sprintf(comment,"Click in the dot %d",i+1 );
-	  vpImagePoint ip;
-	  ip.set_i( 15 );
-	  ip.set_j( 10 );
-	  
-          vpDisplay::displayCharString(I, ip, &comment[0], vpColor::blue);
-          for(unsigned int j = 0;j<i;j++)
-            d[j].display(I) ;
-        // flush the display buffer
-          vpDisplay::flush(I);
-          try{
-	    d[i].initTracking(I) ;
-          }
-          catch(...){
-          }
+        try{
+          // Display size is automatically defined by the image (I) size
+          sprintf(title, "Calibration initialization on image %s", (s.str()).c_str());
+          display.init(I, 100, 100, title) ;
+          // Display the image
+          // The image class has a member that specify a pointer toward
+          // the display that has been initialized in the display declaration
+          // therefore is is no longuer necessary to make a reference to the
+          // display variable.
+          vpDisplay::display(I) ;
+          vpDisplay::flush(I) ;
         }
-        else{
-          d[i].initTracking(I, ip_click[i]);
-        }  
-        // an expcetion is thrown by the track method if
-        //  - dot is lost
-        //  - the number of pixel is too small
-        //  - too many pixels are detected (this is usual when a "big" specularity
-        //    occurs. The threshold can be modified using the
-        //    setNbMaxPoint(int) method
-        if (opt_display) {
-          d[i].display(I) ;
-        // flush the display buffer        
-        vpDisplay::flush(I) ;
+        catch(...){
+          vpERROR_TRACE("Error while displaying the image") ;
+          delete [] table_cal;
+          return(-1);
         }
       }
-    }
-    catch(vpException e){
-      vpERROR_TRACE("Error while tracking dots") ;
-      vpCTRACE << e;
-      delete [] table_cal;
-      return(-1);
-    }
 
-    // --------------------------------------------------------
-    // Now will compute the pose
-    //
-    // The pose will be contained in an homogeneous matrix cMo
-    vpHomogeneousMatrix cMo ;
 
-    // We need a structure that content both the 3D coordinates of the point
-    // in the object frame and the 2D coordinates of the point expressed in meter
-    // the vpPoint class is ok for that
+      // here we track dots on the calibration grid
+      vpDot2 d[nptPose] ;
+      vpImagePoint ip_click[nptPose];
 
-    //The vpCalibration class mainly contents a list of points (X,Y,Z,u,v)
-    vpCalibration calib; 
-    calib.clearPoint(); 
+      try{
+        for(unsigned int i=0;i<nptPose;i++) {
+          // by using setGraphics, we request to see the edges of the dot
+          // in red on the screen.
+          // It uses the overlay image plane.
+          // The default of this setting is that it is time consumming
 
-    // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
-    vpPose pose ;
-    //  the list of point is cleared (if that's not done before)
-    pose.clearPoint() ;
-    // we set the 3D points coordinates (in meter !) in the object/world frame
-    
+          d[i].setGraphics(true) ;
+          d[i].setGrayLevelPrecision(opt_gray);
+          d[i].setSizePrecision(sizePrecision);
 
-    // pixel-> meter conversion
-    for (unsigned int i=0 ; i < nptPose ; i++){
-      // conversion in meter is achieved using
-      // x = (u-u0)/px
-      // y = (v-v0)/py
-      // where px, py, u0, v0 are the intrinsic camera parameters
-      double x=0, y=0;
-      vpImagePoint cog = d[i].getCog();
-      vpPixelMeterConversion::convertPoint(cam, cog, x, y);
-      P[i].set_x(x) ;
-      P[i].set_y(y) ;
-    }
+          // tracking is initalized
+          // if no other parameters are given to the iniTracking(..) method
+          // a right mouse click on the dot is expected
+          // dot location can also be specified explicitely in the initTracking
+          // method  : d.initTracking(I,u,v)  where u is the column index and v is
+          // the row index
+          if (opt_click) {
+            vpDisplay::display(I);
+            std::printf("click in the dot %d of coordinates\nx=%f y=%f z=%f \n",
+                        i+1 ,P[i].get_oX(),P[i].get_oY(),P[i].get_oZ());
+            std::sprintf(comment,"Click in the dot %d",i+1 );
+            vpImagePoint ip;
+            ip.set_i( 15 );
+            ip.set_j( 10 );
 
-    // The pose structure is build, we put in the point list the set of point
-    // here both 2D and 3D world coordinates are known
-    for (unsigned int i=0 ; i < nptPose ; i++){
-      vpImagePoint cog = d[i].getCog();
-      pose.addPoint(P[i]) ; // and added to the pose computation point list
+            vpDisplay::displayCharString(I, ip, &comment[0], vpColor::blue);
+            for(unsigned int j = 0;j<i;j++)
+              d[j].display(I) ;
+            // flush the display buffer
+            vpDisplay::flush(I);
+            try{
+              d[i].initTracking(I) ;
+            }
+            catch(...){
+            }
+          }
+          else{
+            d[i].initTracking(I, ip_click[i]);
+          }
+          // an expcetion is thrown by the track method if
+          //  - dot is lost
+          //  - the number of pixel is too small
+          //  - too many pixels are detected (this is usual when a "big" specularity
+          //    occurs. The threshold can be modified using the
+          //    setNbMaxPoint(int) method
+          if (opt_display) {
+            d[i].display(I) ;
+            // flush the display buffer
+            vpDisplay::flush(I) ;
+          }
+        }
+      }
+      catch(vpException e){
+        vpERROR_TRACE("Error while tracking dots") ;
+        vpCTRACE << e;
+        delete [] table_cal;
+        return(-1);
+      }
 
-      //and added to the local calibration points list
-      calib.addPoint(P[i].get_oX(),P[i].get_oY(),P[i].get_oZ(), cog);
-    
-    }
-    // compute the initial pose using Lagrange method followed by a non linear
-    // minimisation method
+      // --------------------------------------------------------
+      // Now will compute the pose
+      //
+      // The pose will be contained in an homogeneous matrix cMo
+      vpHomogeneousMatrix cMo ;
 
-    // Pose by Lagrange it provides an initialization of the pose
-    pose.computePose(vpPose::LAGRANGE, cMo) ;
-  
-    // the pose is now refined using the virtual visual servoing approach
-    // Warning: cMo needs to be initialized otherwise it may diverge
-    pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-    //pose.display(I,cMo,cam, 0.05, vpColor::blue) ;
-    vpHomogeneousMatrix cMoTmp = cMo;
-    vpCameraParameters camTmp = cam;
-    //compute local calibration to match the calibration grid with the image
-    try{
-    calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS,cMoTmp,camTmp,false);
-    }
-    catch(...){
-      if(opt_click){
-	vpImagePoint ip;
-        vpDisplay::display(I);    
-	ip.set_i( 15 );
-	ip.set_j( 10 );
-        vpDisplay::displayCharString(I, ip, "Pose computation failed",
-                                     vpColor::red);
-	ip.set_i( 30 );
-	ip.set_j( 10 );
-        vpDisplay::displayCharString(I, ip,
-                                     "A left click to define other dots.",
-                                     vpColor::blue);
-	ip.set_i( 45 );
-	ip.set_j( 10 );
-        vpDisplay::displayCharString(I, ip,
-                                     "A middle click to don't care of this pose.",
-                                     vpColor::blue);
-        vpDisplay::flush(I) ;
-        std::cout << "\nPose computation failed." << std::endl;
-        std::cout << "A left click to define other dots." << std::endl;
-        std::cout << "A middle click to don't care of this pose." << std::endl;
-        vpMouseButton::vpMouseButtonType button;
-        vpDisplay::getClick(I, ip, button) ;
-        switch(button){
+      // We need a structure that content both the 3D coordinates of the point
+      // in the object frame and the 2D coordinates of the point expressed in meter
+      // the vpPoint class is ok for that
+
+      //The vpCalibration class mainly contents a list of points (X,Y,Z,u,v)
+      vpCalibration calib;
+      calib.clearPoint();
+
+      // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
+      vpPose pose ;
+      //  the list of point is cleared (if that's not done before)
+      pose.clearPoint() ;
+      // we set the 3D points coordinates (in meter !) in the object/world frame
+
+
+      // pixel-> meter conversion
+      for (unsigned int i=0 ; i < nptPose ; i++){
+        // conversion in meter is achieved using
+        // x = (u-u0)/px
+        // y = (v-v0)/py
+        // where px, py, u0, v0 are the intrinsic camera parameters
+        double x=0, y=0;
+        vpImagePoint cog = d[i].getCog();
+        vpPixelMeterConversion::convertPoint(cam, cog, x, y);
+        P[i].set_x(x) ;
+        P[i].set_y(y) ;
+      }
+
+      // The pose structure is build, we put in the point list the set of point
+      // here both 2D and 3D world coordinates are known
+      for (unsigned int i=0 ; i < nptPose ; i++){
+        vpImagePoint cog = d[i].getCog();
+        pose.addPoint(P[i]) ; // and added to the pose computation point list
+
+        //and added to the local calibration points list
+        calib.addPoint(P[i].get_oX(),P[i].get_oY(),P[i].get_oZ(), cog);
+
+      }
+      // compute the initial pose using Lagrange method followed by a non linear
+      // minimisation method
+
+      // Pose by Lagrange it provides an initialization of the pose
+      pose.computePose(vpPose::LAGRANGE, cMo) ;
+
+      // the pose is now refined using the virtual visual servoing approach
+      // Warning: cMo needs to be initialized otherwise it may diverge
+      pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+      //pose.display(I,cMo,cam, 0.05, vpColor::blue) ;
+      vpHomogeneousMatrix cMoTmp = cMo;
+      vpCameraParameters camTmp = cam;
+      //compute local calibration to match the calibration grid with the image
+      try{
+        calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS,cMoTmp,camTmp,false);
+      }
+      catch(...){
+        if(opt_click){
+          vpImagePoint ip;
+          vpDisplay::display(I);
+          ip.set_i( 15 );
+          ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip, "Pose computation failed",
+                                       vpColor::red);
+          ip.set_i( 30 );
+          ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip,
+                                       "A left click to define other dots.",
+                                       vpColor::blue);
+          ip.set_i( 45 );
+          ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip,
+                                       "A middle click to don't care of this pose.",
+                                       vpColor::blue);
+          vpDisplay::flush(I) ;
+          std::cout << "\nPose computation failed." << std::endl;
+          std::cout << "A left click to define other dots." << std::endl;
+          std::cout << "A middle click to don't care of this pose." << std::endl;
+          vpMouseButton::vpMouseButtonType button;
+          vpDisplay::getClick(I, ip, button) ;
+          switch(button){
           case 1 :
             std::cout << "Left click has been pressed." << std::endl;
             continue;      
@@ -752,203 +752,203 @@ int main(int argc, const char ** argv)
             iter += opt_step ;
             niter++;
             continue;
+          }
+        }
+        else{
+          iter += opt_step ;
+          niter++;
+          continue;
         }
       }
-      else{
-        iter += opt_step ;
-        niter++;
-        continue;
-      }
-    }
-    if (opt_display) {
-      // display the computed pose
-      vpDisplay::display(I) ;
-      for(unsigned int j = 0;j<nptPose;j++)
-        d[j].display(I) ;
-      pose.display(I,cMoTmp,camTmp, 0.05, vpColor::red) ;
-      vpDisplay::flush(I) ;
-      if(opt_click){
-	vpImagePoint ip;
-	ip.set_i( 15 );
-	ip.set_j( 10 );
-        vpDisplay::displayCharString(I, ip,
-                                     "A left click to display grid.",
-                                     vpColor::blue);
-	ip.set_i( 30 );
-	ip.set_j( 10 );
-        vpDisplay::displayCharString(I, ip,
-                                     "A right click to define other dots.",
-                                     vpColor::blue);
+      if (opt_display) {
+        // display the computed pose
+        vpDisplay::display(I) ;
+        for(unsigned int j = 0;j<nptPose;j++)
+          d[j].display(I) ;
+        pose.display(I,cMoTmp,camTmp, 0.05, vpColor::red) ;
         vpDisplay::flush(I) ;
-        std::cout << "\nA a left click to display grid." << std::endl;
-        std::cout << "A right click to define other dots." << std::endl;
-        vpMouseButton::vpMouseButtonType button;
-        vpDisplay::getClick(I, ip, button) ;
-        switch(button){
-        case 1 :
-          std::cout << "Left click has been pressed." << std::endl;
-          break;
-        case 2 :
-          std::cout << "Middle click has been pressed." << std::endl;
-          continue;
-        case 3 :
-          std::cout << "Right click has been pressed." << std::endl;
-          continue;
+        if(opt_click){
+          vpImagePoint ip;
+          ip.set_i( 15 );
+          ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip,
+                                       "A left click to display grid.",
+                                       vpColor::blue);
+          ip.set_i( 30 );
+          ip.set_j( 10 );
+          vpDisplay::displayCharString(I, ip,
+                                       "A right click to define other dots.",
+                                       vpColor::blue);
+          vpDisplay::flush(I) ;
+          std::cout << "\nA a left click to display grid." << std::endl;
+          std::cout << "A right click to define other dots." << std::endl;
+          vpMouseButton::vpMouseButtonType button;
+          vpDisplay::getClick(I, ip, button) ;
+          switch(button){
+          case 1 :
+            std::cout << "Left click has been pressed." << std::endl;
+            break;
+          case 2 :
+            std::cout << "Middle click has been pressed." << std::endl;
+            continue;
+          case 3 :
+            std::cout << "Right click has been pressed." << std::endl;
+            continue;
+          }
         }
+        vpDisplay::display(I) ;
+        vpDisplay::flush(I) ;
       }
+      dotSize = 0;
+      for(unsigned i =0 ; i<nptPose ;i++){
+        dotSize += d[i].getWidth()+d[i].getHeight();
+      }
+      dotSize /= nptPose;
+
+      //now we detect all dots of the grid
+      vpDot2* md = new vpDot2[nbpt];
+      for(unsigned int i=0;i<nbpt;i++){
+
+        // by using setGraphics, we request to see the contour of the dot
+        // in red on the screen.
+        md[i].setGraphics(false);
+        md[i].setSizePrecision(sizePrecision);
+        md[i].setGrayLevelPrecision(opt_gray);
+      }
+
       vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
-    }
-    dotSize = 0;
-    for(unsigned i =0 ; i<nptPose ;i++){
-      dotSize += d[i].getWidth()+d[i].getHeight();
-    }
-    dotSize /= nptPose;  
-        
-    //now we detect all dots of the grid
-    vpDot2* md = new vpDot2[nbpt];
-    for(unsigned int i=0;i<nbpt;i++){
 
-      // by using setGraphics, we request to see the contour of the dot
-      // in red on the screen.
-      md[i].setGraphics(false);
-      md[i].setSizePrecision(sizePrecision);
-      md[i].setGrayLevelPrecision(opt_gray);
-    }
-    
-    vpDisplay::display(I) ;
+      // --------------------------------------------------------
+      // Now we will compute the calibration
+      //
 
-    // --------------------------------------------------------
-    // Now we will compute the calibration
-    //
+      // We need a structure that content both the 3D coordinates of the point
+      // in the object frame and the 2D coordinates of the point expressed in meter
+      // the vpPoint class is ok for that
+      vpPoint* mP=new vpPoint[nbpt]  ;
 
-    // We need a structure that content both the 3D coordinates of the point
-    // in the object frame and the 2D coordinates of the point expressed in meter
-    // the vpPoint class is ok for that
-    vpPoint* mP=new vpPoint[nbpt]  ;
+      // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
+      //  the list of point is cleared (if that's not done before)
+      table_cal[niter].clearPoint() ;
 
-    // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
-    //  the list of point is cleared (if that's not done before)
-    table_cal[niter].clearPoint() ;
+      // we set the 3D points coordinates (in meter !) in the object/world frame
+      //xOy plan
+      std::list<double>::const_iterator it_LoX = LoX.begin();
+      std::list<double>::const_iterator it_LoY = LoY.begin();
+      std::list<double>::const_iterator it_LoZ = LoZ.begin();
 
-    // we set the 3D points coordinates (in meter !) in the object/world frame
-    //xOy plan
-    std::list<double>::const_iterator it_LoX = LoX.begin();
-    std::list<double>::const_iterator it_LoY = LoY.begin();
-    std::list<double>::const_iterator it_LoZ = LoZ.begin();
-
-    for(unsigned int i = 0 ; i < nbpt ; i++){
+      for(unsigned int i = 0 ; i < nbpt ; i++){
         mP[i].setWorldCoordinates(*it_LoX, *it_LoY, *it_LoZ) ; // (X,Y,Z)
         ++it_LoX;
         ++it_LoY;
         ++it_LoZ;
-    }
-    // pixel-> meter conversion
-    vpImagePoint ip;
-    vpImagePoint cog;
-    bool* valid = new bool[nbpt];
-    for (unsigned int i=0 ; i < nbpt ; i++){
-      vpColVector _cP, _p ;
-      valid[i] = true;
-      mP[i].changeFrame(cMoTmp,_cP) ;
-      mP[i].projection(_cP,_p) ;
-      vpMeterPixelConversion::convertPoint(camTmp,_p[0],_p[1], ip);
-      if (10 < ip.get_u() && ip.get_u() < I.getWidth()-10 &&
-          10 < ip.get_v() && ip.get_v() < I.getHeight()-10) {
-        try {
-          md[i].initTracking(I, ip, (unsigned int)dotSize);
-          vpRect bbox = md[i].getBBox();
-          cog = md[i].getCog();
-          if(bbox.getLeft()<5 || bbox.getRight()>(double)I.getWidth()-5 ||
-              bbox.getTop()<5 || bbox.getBottom()>(double)I.getHeight()-5||
-              vpMath::abs(ip.get_u() - cog.get_u()) > 10 ||
-              vpMath::abs(ip.get_v() - cog.get_v()) > 10)
-            valid[i] = false;
-          // u[i]. v[i] are expressed in pixel
-          // conversion in meter
-          double x=0, y=0;
-          vpPixelMeterConversion::convertPoint(camTmp, cog, x, y)  ;
-          mP[i].set_x(x) ;
-          mP[i].set_y(y) ;
-          if (opt_display) {
-            if(valid[i]){
-              md[i].display(I,vpColor::red, 2);
-              mP[i].display(I,cMoTmp,camTmp) ;
+      }
+      // pixel-> meter conversion
+      vpImagePoint ip;
+      vpImagePoint cog;
+      bool* valid = new bool[nbpt];
+      for (unsigned int i=0 ; i < nbpt ; i++){
+        vpColVector _cP, _p ;
+        valid[i] = true;
+        mP[i].changeFrame(cMoTmp,_cP) ;
+        mP[i].projection(_cP,_p) ;
+        vpMeterPixelConversion::convertPoint(camTmp,_p[0],_p[1], ip);
+        if (10 < ip.get_u() && ip.get_u() < I.getWidth()-10 &&
+            10 < ip.get_v() && ip.get_v() < I.getHeight()-10) {
+          try {
+            md[i].initTracking(I, ip, (unsigned int)dotSize);
+            vpRect bbox = md[i].getBBox();
+            cog = md[i].getCog();
+            if(bbox.getLeft()<5 || bbox.getRight()>(double)I.getWidth()-5 ||
+               bbox.getTop()<5 || bbox.getBottom()>(double)I.getHeight()-5||
+               vpMath::abs(ip.get_u() - cog.get_u()) > 10 ||
+               vpMath::abs(ip.get_v() - cog.get_v()) > 10)
+              valid[i] = false;
+            // u[i]. v[i] are expressed in pixel
+            // conversion in meter
+            double x=0, y=0;
+            vpPixelMeterConversion::convertPoint(camTmp, cog, x, y)  ;
+            mP[i].set_x(x) ;
+            mP[i].set_y(y) ;
+            if (opt_display) {
+              if(valid[i]){
+                md[i].display(I,vpColor::red, 2);
+                mP[i].display(I,cMoTmp,camTmp) ;
+              }
             }
           }
+          catch(...){
+            valid[i] = false;
+          }
         }
-        catch(...){
-          valid[i] = false;
+        else {valid[i] = false;}
+      }
+
+      // The calibration structure is build, we put in the point list the set of point
+      // here both 2D and 3D world coordinates are known
+      // and added to the calibration computation point list.
+
+
+      //we put the pose matrix in the current calibration structure
+      //     table_cal[niter].cMo = cMo ; //.setIdentity();//
+      if(save == true) {
+        table_cal[niter].writeData(filename_out.c_str());
+      }
+      if (opt_click) {
+        sprintf(title, "Extracted 2D data from image %s", (s.str()).c_str());
+        vpDisplay::setTitle(I, title);
+        vpImagePoint ip;
+        ip.set_i( 15 );
+        ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
+                                     "A left click to validate this pose.",
+                                     vpColor::blue);
+        ip.set_i( 30 );
+        ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
+                                     "A right click to retry.",
+                                     vpColor::blue);
+        ip.set_i( 45 );
+        ip.set_j( 10 );
+        vpDisplay::displayCharString(I, ip,
+                                     "A middle click to don't care of this pose.",
+                                     vpColor::blue);
+        vpDisplay::flush(I) ;
+
+        std::cout << "\nA left click to validate this pose." << std::endl;
+        std::cout << "A right click to retry." << std::endl;
+        std::cout << "A middle click to don't care of this pose." << std::endl;
+        vpMouseButton::vpMouseButtonType button;
+        vpDisplay::getClick(I, ip, button) ;
+        switch(button){
+        case 1 : //left
+          std::cout << "\nLeft click has been pressed." << std::endl;
+          break;
+        case 2 : //middle
+          std::cout << "Middle click has been pressed." << std::endl;
+          for (unsigned int i=0 ; i < nbpt ; i++)
+            valid[i]=false;
+          break;
+        case 3 : //right
+          std::cout << "Right click has been pressed." << std::endl;
+          continue;
         }
       }
-      else {valid[i] = false;}
-    }
+      //Add valid points in the calibration structure
+      for (unsigned int i=0 ; i < nbpt ; i++){
+        if(valid[i]){
+          vpImagePoint cog = md[i].getCog();
 
-    // The calibration structure is build, we put in the point list the set of point
-    // here both 2D and 3D world coordinates are known
-    // and added to the calibration computation point list.
-
-
-    //we put the pose matrix in the current calibration structure
-    //     table_cal[niter].cMo = cMo ; //.setIdentity();//
-    if(save == true) {
-      table_cal[niter].writeData(filename_out.c_str());
-    }
-    if (opt_click) {
-      sprintf(title, "Extracted 2D data from image %s", (s.str()).c_str());
-      vpDisplay::setTitle(I, title);
-      vpImagePoint ip;
-      ip.set_i( 15 );
-      ip.set_j( 10 );	
-      vpDisplay::displayCharString(I, ip,
-				   "A left click to validate this pose.",
-				   vpColor::blue);
-      ip.set_i( 30 );
-      ip.set_j( 10 );	
-      vpDisplay::displayCharString(I, ip,
-				   "A right click to retry.",
-				   vpColor::blue);
-      ip.set_i( 45 );
-      ip.set_j( 10 );	
-      vpDisplay::displayCharString(I, ip,
-				   "A middle click to don't care of this pose.",
-				   vpColor::blue);
-      vpDisplay::flush(I) ;
-   
-      std::cout << "\nA left click to validate this pose." << std::endl;
-      std::cout << "A right click to retry." << std::endl;
-      std::cout << "A middle click to don't care of this pose." << std::endl;
-      vpMouseButton::vpMouseButtonType button;
-      vpDisplay::getClick(I, ip, button) ;
-      switch(button){
-      case 1 : //left
-	std::cout << "\nLeft click has been pressed." << std::endl;
-        break;
-      case 2 : //middle
-	std::cout << "Middle click has been pressed." << std::endl;
-	for (unsigned int i=0 ; i < nbpt ; i++)
-	  valid[i]=false;
-        break;
-      case 3 : //right
-	std::cout << "Right click has been pressed." << std::endl;
-        continue;
+          table_cal[niter].addPoint(mP[i].get_oX(),mP[i].get_oY(),mP[i].get_oZ(), cog) ;
+        }
       }
-    }
-    //Add valid points in the calibration structure
-    for (unsigned int i=0 ; i < nbpt ; i++){
-      if(valid[i]){
-	vpImagePoint cog = md[i].getCog();
-
-        table_cal[niter].addPoint(mP[i].get_oX(),mP[i].get_oY(),mP[i].get_oZ(), cog) ;
-      }
-    }
       
-    //we free the memory
-    delete [] mP;
-    delete [] md;
-    delete [] valid;
+      //we free the memory
+      delete [] mP;
+      delete [] md;
+      delete [] valid;
 
-    niter++ ;
+      niter++ ;
     }
     catch(...) {
       return(-1) ;
@@ -959,8 +959,8 @@ int main(int argc, const char ** argv)
   // Calibrate by a non linear method based on virtual visual servoing
   vpCalibration::computeCalibrationMulti(calibMethod,opt_nimages,table_cal,cam,true) ;
 
-   //CALIB_VIRTUAL_VS 1
-   //CALIB_VIRTUAL_VS_DIST  2
+  //CALIB_VIRTUAL_VS 1
+  //CALIB_VIRTUAL_VS_DIST  2
 
   // Compute Tsai calibration for extrinsic parameters estimation
 
@@ -1013,7 +1013,7 @@ int main(int argc, const char ** argv)
 
         try{
           // Display size is automatically defined by the image (I) size
-	  sprintf(title, "Calibration results for image %s", (s.str()).c_str());
+          sprintf(title, "Calibration results for image %s", (s.str()).c_str());
           display.init(I, 100, 100, title) ;
           // Display the image
           // The image class has a member that specify a pointer toward
@@ -1027,15 +1027,15 @@ int main(int argc, const char ** argv)
           delete [] table_cal;
           return(-1);
         }
-	    //Display the data of the calibration (center of the dots)
+        //Display the data of the calibration (center of the dots)
         table_cal[niter].displayData(I, vpColor::red, 3) ;
-	    //Display grid : estimated center of dots using camera parameters
+        //Display grid : estimated center of dots using camera parameters
         table_cal[niter].displayGrid(I, vpColor::yellow, 3) ;
         vpDisplay::flush(I) ;
         if(opt_click){
-	  vpImagePoint ip;
-	  ip.set_i( 15 );
-	  ip.set_j( 10 );
+          vpImagePoint ip;
+          ip.set_i( 15 );
+          ip.set_j( 10 );
           vpDisplay::displayCharString(I, ip, "A click to continue...",
                                        vpColor::blue);
           vpDisplay::flush(I) ;
@@ -1099,11 +1099,11 @@ unsigned int recordImageSequence(const std::string& out_path, const unsigned int
     g.acquire(I);
     vpDisplay::display(I);
     vpDisplay::displayCharString(I, vpImagePoint(15, 10), 
-        "Left click to record the current image.", vpColor::blue);
+                                 "Left click to record the current image.", vpColor::blue);
     vpDisplay::displayCharString(I, vpImagePoint(30, 10), 
-        "Right click to stop the acquisition.", vpColor::blue);
+                                 "Right click to stop the acquisition.", vpColor::blue);
     vpDisplay::flush(I);
-        
+
     vpImagePoint ip;
     vpMouseButton::vpMouseButtonType button;
     if(vpDisplay::getClick(I, ip, button, false)){
@@ -1118,10 +1118,10 @@ unsigned int recordImageSequence(const std::string& out_path, const unsigned int
         }
         catch(...){
           std::cerr << std::endl 
-           << "ERROR." << std::endl 
-           << "Cannot record the image : " << curImgName << std::endl
-           << "Check the path and the permissions." << std::endl;
-           throw vpException(vpException::ioError, "Cannot record image");
+                    << "ERROR." << std::endl
+                    << "Cannot record the image : " << curImgName << std::endl
+                    << "Check the path and the permissions." << std::endl;
+          throw vpException(vpException::ioError, "Cannot record image");
         }
       }
       else if(button == vpMouseButton::button3){
@@ -1146,9 +1146,3 @@ main()
   vpTRACE("X11 or GTK or GDI or D3D functionnality is not available...") ;
 }
 #endif // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)...)
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

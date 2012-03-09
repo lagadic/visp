@@ -170,10 +170,10 @@ OPTIONS:                                                  Default\n\
 
 */
 bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
-		unsigned &scale, bool &display, bool &verbose, 
-		long &niter, char *device, 
-		vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat, 
-		vpImage_type &image_type)
+                unsigned &scale, bool &display, bool &verbose,
+                long &niter, char *device,
+                vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
+                vpImage_type &image_type)
 {
   const char *optarg;
   int	c;
@@ -190,19 +190,19 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
     case 'v': sprintf(device, "%s", optarg); break;
     case 'x': verbose = true; break;
     case 'h': usage(argv[0], NULL, fps, input, scale, niter, 
-		    device, pixelformat, image_type); 
+                    device, pixelformat, image_type);
       return false; break;
 
     default:
       usage(argv[0], optarg, fps, input, scale, niter, 
-	    device, pixelformat, image_type); return false; break;
+            device, pixelformat, image_type); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, fps, input, scale, niter, 
-	  device, pixelformat, image_type);
+          device, pixelformat, image_type);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -236,8 +236,8 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display, 
-		 opt_verbose, opt_iter, opt_device,
-		 opt_pixelformat, opt_image_type) == false) {
+                 opt_verbose, opt_iter, opt_device,
+                 opt_pixelformat, opt_image_type) == false) {
     exit (-1);
   }
 
@@ -268,7 +268,7 @@ main(int argc, const char ** argv)
       // Acquire an image
       g.acquire(Ig) ;
       std::cout << "Grey image size: width : " << Ig.getWidth() <<  " height: "
-		<< Ig.getHeight() << std::endl;
+                << Ig.getHeight() << std::endl;
     }
     else {
       // Open the framegrabber with the specified settings on color images
@@ -276,7 +276,7 @@ main(int argc, const char ** argv)
       // Acquire an image
       g.acquire(Ic) ;
       std::cout << "Color image size: width : " << Ic.getWidth() <<  " height: "
-		<< Ic.getHeight() << std::endl;
+                << Ic.getHeight() << std::endl;
     }
   }
   catch (vpException e) {
@@ -306,16 +306,16 @@ main(int argc, const char ** argv)
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
       if (opt_image_type == grey_image) {
-	display.init(Ig, 100, 100, "V4L2 grey images framegrabbing") ;
-	vpDisplay::display(Ig) ;
-	vpDisplay::flush(Ig) ;
+        display.init(Ig, 100, 100, "V4L2 grey images framegrabbing") ;
+        vpDisplay::display(Ig) ;
+        vpDisplay::flush(Ig) ;
       }
       else {
-	display.init(Ic, 100, 100, "V4L2 color images framegrabbing") ;
-	vpDisplay::display(Ic) ;
-	vpDisplay::flush(Ic) ;
+        display.init(Ic, 100, 100, "V4L2 color images framegrabbing") ;
+        vpDisplay::display(Ic) ;
+        vpDisplay::flush(Ic) ;
       }
-	
+
     }
     catch (vpException e) {
       std::cout << "Exception: " << e.getMessage() << std::endl;
@@ -327,36 +327,36 @@ main(int argc, const char ** argv)
     }
   }
   try {
-  // Acquisition loop
-  long cpt = 1;
-  while(cpt ++ < opt_iter)
-  {
-    // Measure the initial time of an iteration
-    double t = vpTime::measureTimeMs();
-    // Acquire the image
-    if (opt_image_type == grey_image) {
-      g.acquire(Ig) ;
-      if (opt_display) {
-	// Display the image
-	vpDisplay::display(Ig) ;
-	// Flush the display
-	vpDisplay::flush(Ig) ;
+    // Acquisition loop
+    long cpt = 1;
+    while(cpt ++ < opt_iter)
+    {
+      // Measure the initial time of an iteration
+      double t = vpTime::measureTimeMs();
+      // Acquire the image
+      if (opt_image_type == grey_image) {
+        g.acquire(Ig) ;
+        if (opt_display) {
+          // Display the image
+          vpDisplay::display(Ig) ;
+          // Flush the display
+          vpDisplay::flush(Ig) ;
+        }
       }
-    }
-    else {
-      g.acquire(Ic) ;
-      if (opt_display) {
-	// Display the image
-	vpDisplay::display(Ic) ;
-	// Flush the display
-	vpDisplay::flush(Ic) ;
+      else {
+        g.acquire(Ic) ;
+        if (opt_display) {
+          // Display the image
+          vpDisplay::display(Ic) ;
+          // Flush the display
+          vpDisplay::flush(Ic) ;
+        }
       }
+      // Print the iteration duration
+      std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
     }
-    // Print the iteration duration
-    std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
-  }
 
-  g.close();
+    g.close();
   }
   catch (vpException e) {
     std::cout << "Exception: " << e.getMessage() << std::endl;
@@ -379,9 +379,3 @@ main()
 }
 #endif
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

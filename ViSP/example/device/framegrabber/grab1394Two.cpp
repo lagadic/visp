@@ -108,113 +108,111 @@ void usage(const char *name, const char *badparam, unsigned int camera,
     fprintf(stderr, "\nERROR: Bad parameter [%s]\n", badparam);
 
   fprintf(stderr, "\n\
-SYNOPTIQUE\n\
-%s [-v <video mode>] [-f <framerate>] \n\
-   [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
-   [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
-   [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
-   [-H <format 7 roi height>] [-b <ring buffer size>] \n\
-   [-p <pan control value>] [-R] [-h]\n\
+SYNOPSIS\n\
+  %s [-v <video mode>] [-f <framerate>] \n\
+     [-g <color coding>] [-c <camera id>] [-m] [-n <frames>] \n\
+     [-i] [-s] [-d] [-o <filename>] [-L <format 7 roi left position>] \n\
+     [-T <format 7 roi top position>] [-W <format 7 roi width>] \n\
+     [-H <format 7 roi height>] [-b <ring buffer size>] \n\
+     [-p <pan control value>] [-R] [-h]\n\
           \n\
- DESCRIPTION\n\
- Test for firewire camera image acquisition.\n\
+DESCRIPTION\n\
+  Test for firewire camera image acquisition.\n\
           \n\
- EXAMPLES\n\
- If two cameras are connected on the bus:\n\
- %s -s\n\
-  Indicates the current settings for the first camera found on the bus.\n\
- %s -i\n\
-  Gives information on the first camera found on the bus.\n\
- %s -s -m\n\
-  Indicates the current settings for all the cameras found on the bus.\n\
-%s -i -m\n\
-  Gives information on all the cameras found on the bus.\n\
-%s -c 1\n\
-  Grab images from camera 1.\n\
-%s -m\n\
-  Grab images from all the cameras.\n\
+EXAMPLES\n\
+  \n\
+  %s -s\n\
+    Indicates the current settings for the first camera found on the bus.\n\n\
+  %s -i\n\
+    Gives information on the first camera found on the bus.\n\n\
+  %s -s -m\n\
+    Indicates the current settings for all the cameras found on the bus.\n\n\
+  %s -i -m\n\
+    Gives information on all the cameras found on the bus.\n\
+  %s -c 1\n\
+    Grab images from camera 1.\n\n\
+  %s -m\n\
+    Grab images from all the cameras.\n\n\
           \n\
-          If a stereo camera is connected to the bus like the PointGrey Bumblebee,\n\
-          you may set the pan control to select the camera view:\n\
-          %s -p 0\n\
-          Transmit right imge.\n\
-          %s -p 1\n\
-          Transmit left imge.\n\
+  If a stereo camera is connected to the bus like the PointGrey Bumblebee,\n\
+  you may set the pan control to select the camera view:\n\
+  %s -p 0\n\
+     Transmit right imge.\n\
+  %s -p 1\n\
+     Transmit left imge.\n\
           \n\
-          OPTIONS                                                    Default\n\
-          -v [%%u] : Video mode to set for the active camera.\n\
-          Use -s option so see which are the supported \n\
-          video modes. You can select the active \n\
-          camera using -c option.\n\
+OPTIONS                                                    Default\n\
+  -v [%%u] : Video mode to set for the active camera.\n\
+     Use -s option so see which are the supported \n\
+     video modes. You can select the active \n\
+     camera using -c option.\n\
           \n\
-          -f [%%u] : Framerate to set for the active camera.\n\
-          Use -s option so see which are the supported \n\
-          framerates. You can select the active \n\
-          camera using -c option.\n\
+  -f [%%u] : Framerate to set for the active camera.\n\
+     Use -s option so see which are the supported \n\
+     framerates. You can select the active \n\
+     camera using -c option.\n\
           \n\
-          -g [%%u] : Color coding to set for the active camera\n\
-          in format 7 video mode. Use -s option so see if \n\
-          format 7 is supported by the camera and if so, \n\
-          which are the supported color codings. You can \n\
-          select the active camera using -c option.\n\
-          See -t <top>, -l <left>, -w <width>, \n\
-          -h <height> option to set format 7 roi.\n\
+  -g [%%u] : Color coding to set for the active camera\n\
+     in format 7 video mode. Use -s option so see if \n\
+     format 7 is supported by the camera and if so, \n\
+     which are the supported color codings. You can \n\
+     select the active camera using -c option.\n\
+     See -t <top>, -l <left>, -w <width>, \n\
+     -h <height> option to set format 7 roi.\n\
           \n\
-          -L [%%u] : Format 7 region of interest (roi) left         %u\n\
-          position. This option is only used if video\n\
-          mode is format 7.\n\
+  -L [%%u] : Format 7 region of interest (roi) left         %u\n\
+     position. This option is only used if video\n\
+     mode is format 7.\n\
           \n\
-          -T [%%u] : Format 7 region of interest (roi) top          %u\n\
-          position. This option is only used if video\n\
-          mode is format 7.\n\
+  -T [%%u] : Format 7 region of interest (roi) top          %u\n\
+     position. This option is only used if video\n\
+     mode is format 7.\n\
           \n\
-          -W [%%u] : Format 7 region of interest (roi) width.       %u\n\
-          Is set to zero, use the maximum width. This\n\
-          option is only used if video mode is format 7.\n\
+  -W [%%u] : Format 7 region of interest (roi) width.       %u\n\
+     Is set to zero, use the maximum width. This\n\
+     option is only used if video mode is format 7.\n\
           \n\
-          -H [%%u] : Format 7 region of interest (roi) height.      %u\n\
-          Is set to zero, use the maximum height. This\n\
-          option is only used if video mode is format 7.\n\
+  -H [%%u] : Format 7 region of interest (roi) height.      %u\n\
+     Is set to zero, use the maximum height. This\n\
+     option is only used if video mode is format 7.\n\
           \n\
-          -c [%%u] : Active camera identifier.                      %u\n\
-          Zero is for the first camera found on the bus.\n\
+  -c [%%u] : Active camera identifier.                      %u\n\
+     Zero is for the first camera found on the bus.\n\
           \n\
-          -m      : Flag to active multi camera acquisition.       \n\
-          You need at least two cameras connected on \n\
-          the bus.\n\
+  -m      : Flag to active multi camera acquisition.       \n\
+     You need at least two cameras connected on \n\
+     the bus.\n\
           \n\
-          -n [%%u] : Number of frames to acquire.                   %u\n\
+  -n [%%u] : Number of frames to acquire.                   %u\n\
           \n\
-          -i      : Flag to print camera informations.\n\
+  -i      : Flag to print camera informations.\n\
           \n\
-          -s      : Print camera settings capabilities such as \n\
-          video mode and framerates available and exit.\n\
+  -s      : Print camera settings capabilities such as \n\
+     video mode and framerates available and exit.\n\
           \n\
-          -d      : Flag to turn off image display.\n\
+  -d      : Flag to turn off image display.\n\
           \n\
-          -b [%%u] : Ring buffer size used during capture           %u\n\
+  -b [%%u] : Ring buffer size used during capture           %u\n\
           \n\
-          -p [%%u] : Pan control value used to control single or    %u\n\
-          multiple image transmission from stereo vision \n\
-          cameras by setting the PAN register 0x884.\n\
+  -p [%%u] : Pan control value used to control single or    %u\n\
+     multiple image transmission from stereo vision \n\
+     cameras by setting the PAN register 0x884.\n\
           \n\
-          -o [%%s] : Filename for image saving.                     \n\
-          Example: -o %s\n\
-            The first %%d is for the camera id. The second\n\
-            %%04d is for the image numbering. The format is set \n\
-            by the extension of the file (ex .png, .pgm, \n\
-                                          ...) \n\
+  -o [%%s] : Filename for image saving.                     \n\
+     Example: -o %s\n\
+       The first %%d is for the camera id. The second\n\
+       %%04d is for the image numbering. The format is set \n\
+       by the extension of the file (ex .png, .pgm, ...) \n\
             \n\
-            -r      : Reset the bus attached to the first camera found.\n\
-            Bus reset may help to make firewire working if the\n\
-            program was not properly stopped by a CTRL-C.\n\
+  -r      : Reset the bus attached to the first camera found.\n\
+     Bus reset may help to make firewire working if the\n\
+     program was not properly stopped by a CTRL-C.\n\
             \n\
-            -h      : Print this help.\n\
+  -h      : Print this help.\n\
             \n",
             name, name, name, name, name, name, name, name, name,
             roi_left, roi_top, roi_width, roi_height,
             camera, nframes, ringbuffersize, panControl, opath.c_str());
-
 }
 
 /*!
@@ -358,7 +356,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
 
 */
 int
-    main(int argc, const char ** argv)
+main(int argc, const char ** argv)
 {
   try  {
     unsigned int camera = 0;
@@ -472,28 +470,28 @@ int
           g.getGuid(guid);
 
           std::cout << "----------------------------------------------------------"
-              << std::endl
-              << "---- Video modes and framerates supported by camera "
-              << i+offset << " ----" << std::endl
-              << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
-              << "---- * is for the current settings                    ----"
-              << std::endl
-              << "---- between ( ) you have the corresponding option    ----"
-              << std::endl
-              << "---- to use.                                          ----"
-              << std::endl
-              << "----------------------------------------------------------"
-              << std::endl;
+                    << std::endl
+                    << "---- Video modes and framerates supported by camera "
+                    << i+offset << " ----" << std::endl
+                    << "---- with guid 0x" << std::hex << guid << "                       ----" << std::endl
+                    << "---- * is for the current settings                    ----"
+                    << std::endl
+                    << "---- between ( ) you have the corresponding option    ----"
+                    << std::endl
+                    << "---- to use.                                          ----"
+                    << std::endl
+                    << "----------------------------------------------------------"
+                    << std::endl;
 
           for (it_lmode = lmode.begin(); it_lmode != lmode.end(); ++it_lmode) {
             // Parse the list of supported modes
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
             if (curmode == supmode)
               std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
-              << " (-v " << supmode << ")" << std::endl;
+                        << " (-v " << supmode << ")" << std::endl;
             else
               std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
-                  << " (-v " << supmode << ")" << std::endl;
+                        << " (-v " << supmode << ")" << std::endl;
 
             if (g.isVideoModeFormat7(supmode)){
               // Format 7 video mode; no framerate setting, but color
@@ -504,12 +502,12 @@ int
                 supcoding = *it_lcoding;
                 if ( (curmode == supmode) && (supcoding == curcoding) )
                   std::cout << "    * "
-                      << vp1394TwoGrabber::colorCoding2string(supcoding)
-                  << " (-g " << supcoding << ")" << std::endl;
+                            << vp1394TwoGrabber::colorCoding2string(supcoding)
+                            << " (-g " << supcoding << ")" << std::endl;
                 else
                   std::cout << "      "
-                      << vp1394TwoGrabber::colorCoding2string(supcoding)
-                      << " (-g " << supcoding << ")" << std::endl;
+                            << vp1394TwoGrabber::colorCoding2string(supcoding)
+                            << " (-g " << supcoding << ")" << std::endl;
               }
             }
             else {
@@ -520,17 +518,17 @@ int
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
                 if ( (curmode == supmode) && (supfps == curfps) )
                   std::cout << "    * "
-                      << vp1394TwoGrabber::framerate2string(supfps)
-                  << " (-f " << supfps << ")" << std::endl;
+                            << vp1394TwoGrabber::framerate2string(supfps)
+                            << " (-f " << supfps << ")" << std::endl;
                 else
                   std::cout << "      "
-                      << vp1394TwoGrabber::framerate2string(supfps)
-                      << " (-f " << supfps << ")" << std::endl;
+                            << vp1394TwoGrabber::framerate2string(supfps)
+                            << " (-f " << supfps << ")" << std::endl;
               }
             }
           }
           std::cout << "----------------------------------------------------------"
-              << std::endl;
+                    << std::endl;
 
         }
       }
@@ -594,8 +592,8 @@ int
       if (grab_color[i]) {
         g.acquire(Ic[i]);
         std::cout << "Image size for camera " << i+offset << " : width: "
-            << Ic[i].getWidth() << " height: " << Ic[i].getHeight()
-            << std::endl;
+                  << Ic[i].getWidth() << " height: " << Ic[i].getHeight()
+                  << std::endl;
 
 #ifdef VISP_HAVE_X11
         if (display) {
@@ -611,8 +609,8 @@ int
       else {
         g.acquire(Ig[i]);
         std::cout << "Image size for camera " << i+offset << " : width: "
-            << Ig[i].getWidth() << " height: " << Ig[i].getHeight()
-            << std::endl;
+                  << Ig[i].getWidth() << " height: " << Ig[i].getHeight()
+                  << std::endl;
 
 #ifdef VISP_HAVE_X11
         if (display) {
@@ -706,16 +704,10 @@ int
 }
 #else
 int
-    main()
+main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
           "You should install libdc1394-2 to use this example.") ;
 }
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

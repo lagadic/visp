@@ -92,7 +92,7 @@ main()
       g.setCamera(i);
       g.getGuid(guid);
       std::cout << "Detected camera with GUID 0x" 
-		<< std::hex << guid << std::endl;
+                << std::hex << guid << std::endl;
     }
     // If more than one camera connected, use the last one
     if (ncameras > 1) {

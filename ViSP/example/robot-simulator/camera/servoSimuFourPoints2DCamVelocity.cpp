@@ -95,25 +95,25 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Simulation of a 2D visual servoing:\n\
-          - servo on 4 points,\n\
-          - eye-in-hand control law,\n\
-          - articular velocity are computed,\n\
-          - without display.\n\
+Simulation of a 2D visual servoing:\n\
+- servo on 4 points,\n\
+- eye-in-hand control law,\n\
+- articular velocity are computed,\n\
+- without display.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-h]\n", name);
+SYNOPSIS\n\
+  %s [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
                   \n\
-                  -h\n\
-                  Print the help.\n");
+  -h\n\
+     Print the help.\n");
 
-                  if (badparam) {
-                  fprintf(stderr, "ERROR: \n" );
-          fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-}
+  if (badparam) {
+     fprintf(stderr, "ERROR: \n" );
+     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
 /*!
@@ -284,10 +284,3 @@ main(int argc, const char ** argv)
   task.kill();
 }
 
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

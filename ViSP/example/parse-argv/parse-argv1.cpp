@@ -154,7 +154,7 @@ main(int argc, const char ** argv)
   float  f_val = 3.14f;
   double d_val = 3.1415;
 
-    // Read the command line options
+  // Read the command line options
   if (getOptions(argc, argv, i_val, f_val, d_val) == false) {
     return (-1);
   }

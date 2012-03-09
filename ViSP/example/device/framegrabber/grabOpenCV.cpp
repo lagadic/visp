@@ -124,7 +124,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, bool &display,
-		unsigned int &nframes, bool &save, std::string &opath, int &deviceType)
+                unsigned int &nframes, bool &save, std::string &opath, int &deviceType)
 {
   const char *optarg;
   int	c;
@@ -133,13 +133,13 @@ bool getOptions(int argc, const char **argv, bool &display,
     switch (c) {
     case 'd': display = false; break;
     case 'D':
-	if (strcmp( optarg ,"ANY") == 0 ) {deviceType = 0;}
-	else if ( strcmp( optarg ,"MIL") == 0) {deviceType = 100;}
-	else if ( strcmp( optarg ,"USB") == 0) {deviceType = 200;}
-	else if ( strcmp( optarg ,"1394") == 0) {deviceType = 300;}
-	else {std::cout << "Unknown type of device" << std::endl;
+      if (strcmp( optarg ,"ANY") == 0 ) {deviceType = 0;}
+      else if ( strcmp( optarg ,"MIL") == 0) {deviceType = 100;}
+      else if ( strcmp( optarg ,"USB") == 0) {deviceType = 200;}
+      else if ( strcmp( optarg ,"1394") == 0) {deviceType = 300;}
+      else {std::cout << "Unknown type of device" << std::endl;
 	      deviceType = 0;}
-	break;
+      break;
     case 'n':
       nframes = (unsigned int)atoi(optarg); break;
     case 'o':
@@ -224,13 +224,13 @@ main(int argc, const char ** argv)
   catch(...)
   {
     vpCTRACE << "Cannot acquire an image... " 
-	     << "Check if a camera is connected to your computer." 
-	     << std::endl ;
+             << "Check if a camera is connected to your computer."
+             << std::endl ;
     return 0;
   }
 
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-	    << I.getHeight() << std::endl;
+            << I.getHeight() << std::endl;
 
   // Creates a display
   vpDisplayOpenCV display;
@@ -250,17 +250,17 @@ main(int argc, const char ** argv)
       grabber.acquire(I);
 
       if (opt_display) {
-	//Displays the grabbed image
-	vpDisplay::display(I);
+        //Displays the grabbed image
+        vpDisplay::display(I);
         vpDisplay::flush(I);
       }
 
       if (save) {
-	char buf[FILENAME_MAX];
-	sprintf(buf, opath.c_str(), i);
-	std::string filename(buf);
-	std::cout << "Write: " << filename << std::endl;
-	vpImageIo::write(I, filename);
+        char buf[FILENAME_MAX];
+        sprintf(buf, opath.c_str(), i);
+        std::string filename(buf);
+        std::cout << "Write: " << filename << std::endl;
+        vpImageIo::write(I, filename);
       }
       tend = vpTime::measureTimeMs();
       tloop = tend - tbegin;
