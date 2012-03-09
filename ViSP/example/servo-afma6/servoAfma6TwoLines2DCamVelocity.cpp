@@ -237,7 +237,7 @@ main()
 		gain = lambda_av ;
 	      else
 		    {
-		      gain = alpha * exp (-beta * task.error.sumSquare() ) +  lambda_av ;
+		      gain = alpha * exp (-beta * ( task.getError() ).sumSquare() ) +  lambda_av ;
 		    }
 	    }
 	    task.setLambda(gain) ;
@@ -255,7 +255,7 @@ main()
 	      exit(1) ;
 	    }
 
-	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+	  vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
 	  iter++;
 	}
 

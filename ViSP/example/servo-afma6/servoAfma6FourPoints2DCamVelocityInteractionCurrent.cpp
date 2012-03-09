@@ -126,10 +126,10 @@
 
 */
 void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
-		  vpCameraParameters cam,
-		  vpHomogeneousMatrix &cMo,
-		  vpTranslationVector &cto,
-		  vpRxyzVector &cro, bool init)
+                  vpCameraParameters cam,
+                  vpHomogeneousMatrix &cMo,
+                  vpTranslationVector &cto,
+                  vpRxyzVector &cro, bool init)
 {
   vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon
   vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
@@ -142,50 +142,50 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
 
     cog = dot[i].getCog();
     vpPixelMeterConversion::convertPoint(cam, cog, x, y) ; //pixel to meter conversion
-//     std::cout << "point cam: " << i << x << " " << y << std::endl;
+    //     std::cout << "point cam: " << i << x << " " << y << std::endl;
     point[i].set_x(x) ;//projection perspective          p
     point[i].set_y(y) ;
     pose.addPoint(point[i]) ;
-//     std::cout << "point " << i << std::endl;
-//     point[i].print();
+    //     std::cout << "point " << i << std::endl;
+    //     point[i].print();
 
   }
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
     //compute the pose for a given method
-//     cMo_dementhon.extract(cto);
-//     cMo_dementhon.extract(cRo);
-//     cro.buildFrom(cRo);
+    //     cMo_dementhon.extract(cto);
+    //     cMo_dementhon.extract(cRo);
+    //     cro.buildFrom(cRo);
     // Compute and return the residual expressed in meter for the pose matrix
     // 'cMo'
     double residual_dementhon = pose.computeResidual(cMo_dementhon);
 
-//     std::cout << "\nPose Dementhon "
-// 	      << "(residual: " << residual_dementhon << ")\n "
-// 	      << "cdto[0] = " << cto[0] << ";\n "
-// 	      << "cdto[1] = " << cto[1] << ";\n "
-// 	      << "cdto[2] = " << cto[2] << ";\n "
-// 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-// 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-// 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-// 	      << std::endl;
+    //     std::cout << "\nPose Dementhon "
+    // 	      << "(residual: " << residual_dementhon << ")\n "
+    // 	      << "cdto[0] = " << cto[0] << ";\n "
+    // 	      << "cdto[1] = " << cto[1] << ";\n "
+    // 	      << "cdto[2] = " << cto[2] << ";\n "
+    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+    // 	      << std::endl;
 
     pose.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
-//     cMo_lagrange.extract(cto);
-//     cMo_lagrange.extract(cRo);
-//     cro.buildFrom(cRo);
+    //     cMo_lagrange.extract(cto);
+    //     cMo_lagrange.extract(cRo);
+    //     cro.buildFrom(cRo);
     double residual_lagrange = pose.computeResidual(cMo_lagrange);
 
-//     std::cout << "\nPose Lagrange "
-// 	      << "(residual: " << residual_lagrange << ")\n "
-// 	      << "cdto[0] = " << cto[0] << ";\n "
-// 	      << "cdto[1] = " << cto[1] << ";\n "
-// 	      << "cdto[2] = " << cto[2] << ";\n "
-// 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-// 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-// 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-// 	      << std::endl;
+    //     std::cout << "\nPose Lagrange "
+    // 	      << "(residual: " << residual_lagrange << ")\n "
+    // 	      << "cdto[0] = " << cto[0] << ";\n "
+    // 	      << "cdto[1] = " << cto[1] << ";\n "
+    // 	      << "cdto[2] = " << cto[2] << ";\n "
+    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+    // 	      << std::endl;
 
     //   cout << "Lagrange residual term: " << residual_lagrange <<endl ;
 
@@ -195,7 +195,7 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
     else
       cMo = cMo_dementhon;
 
-  //   cout <<"------------------------------------------------------------"<<endl
+    //   cout <<"------------------------------------------------------------"<<endl
   }
   else { // init = false; use of the previous pose to initialise LOWE
     cRo.buildFrom(cro);
@@ -205,20 +205,20 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot,
   cMo.extract(cto);
   cMo.extract(cRo);
   cro.buildFrom(cRo);
-//   double residual_lowe = pose.computeResidual(cMo);
+  //   double residual_lowe = pose.computeResidual(cMo);
 
-//   std::cout << "\nPose LOWE "
-// 	    << "(residual: " << residual_lowe << ")\n "
-// 	    << "cdto[0] = " << cto[0] << ";\n "
-// 	    << "cdto[1] = " << cto[1] << ";\n "
-// 	    << "cdto[2] = " << cto[2] << ";\n "
-// 	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-// 	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-// 	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-// 	    << std::endl;
+  //   std::cout << "\nPose LOWE "
+  // 	    << "(residual: " << residual_lowe << ")\n "
+  // 	    << "cdto[0] = " << cto[0] << ";\n "
+  // 	    << "cdto[1] = " << cto[1] << ";\n "
+  // 	    << "cdto[2] = " << cto[2] << ";\n "
+  // 	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
+  // 	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
+  // 	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
+  // 	    << std::endl;
 
-//   vpTRACE( "LOWE pose :" ) ;
-//   std::cout <<  cMo << std::endl ;
+  //   vpTRACE( "LOWE pose :" ) ;
+  //   std::cout <<  cMo << std::endl ;
 }
 
 int
@@ -248,7 +248,7 @@ main()
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -293,7 +293,7 @@ main()
     vpImagePoint cog;
 
     std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
-	      << std::endl;
+              << std::endl;
     for (i=0 ; i < 4 ; i++) {
       dot[i].initTracking(I) ;
       cog = dot[i].getCog();
@@ -302,7 +302,7 @@ main()
     }
 
     vpCameraParameters::vpCameraParametersProjType
-      projModel = vpCameraParameters::perspectiveProjWithDistortion;
+        projModel = vpCameraParameters::perspectiveProjWithDistortion;
     vpRobotAfma6 robot;
 
     // Load the end-effector to camera frame transformation obtained
@@ -383,13 +383,13 @@ main()
 
       // For each point...
       for (i=0 ; i < 4 ; i++) {
-	// Achieve the tracking of the dot in the image
-	dot[i].track(I) ;
-	// Get the dot cog
-	cog = dot[i].getCog();
-	// Display a green cross at the center of gravity position in the
-	// image
-	vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+        // Achieve the tracking of the dot in the image
+        dot[i].track(I) ;
+        // Get the dot cog
+        cog = dot[i].getCog();
+        // Display a green cross at the center of gravity position in the
+        // image
+        vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
       }
 
       // During the servo, we compute the pose using LOWE method. For the
@@ -398,13 +398,13 @@ main()
       compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
 
       for (i=0 ; i < 4 ; i++) {
-	// Update the point feature from the dot location
-	vpFeatureBuilder::create(p[i], cam, dot[i]);
-	// Set the feature Z coordinate from the pose
-	vpColVector cP;
-	point[i].changeFrame(cMo, cP) ;
+        // Update the point feature from the dot location
+        vpFeatureBuilder::create(p[i], cam, dot[i]);
+        // Set the feature Z coordinate from the pose
+        vpColVector cP;
+        point[i].changeFrame(cMo, cP) ;
 
-	p[i].set_Z(cP[2]);
+        p[i].set_Z(cP[2]);
       }
 
       // Printing on stdout concerning task information
@@ -424,7 +424,7 @@ main()
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-	   << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -435,7 +435,7 @@ main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -446,20 +446,17 @@ main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-	   << q[3] << " " << q[4] << " " << q[5] << " ";
+           << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " "  // s-s* for point 1
-	   << task.error[2] << " " << task.error[3] << " "  // s-s* for point 2
-	   << task.error[4] << " " << task.error[5] << " "  // s-s* for point 3
-	   << task.error[6] << " " << task.error[7] << " "; // s-s* for point 4
+      flog << ( task.getError() ).t()<< " "; // s-s* for points
 
       // Save the current cMo pose: translations in meters, rotations (rx, ry,
       // rz) in radians
       flog << cto[0] << " " << cto[1] << " " << cto[2] << " " // translation
-	   << cro[0] << " " << cro[1] << " " << cro[2] << std::endl; // rot
+           << cro[0] << " " << cro[1] << " " << cro[2] << std::endl; // rot
 
       // Flush the display
       vpDisplay::flush(I) ;

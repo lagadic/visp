@@ -107,7 +107,7 @@ main()
     }
     catch (...) {
       std::cerr << std::endl
-	   << "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -192,46 +192,46 @@ main()
     vpColVector v ;
     for ( ; ; ) {
       try {
-	// Acquire a new image from the camera
-	g.acquire(I) ;
-	
-	// Display this image
-	vpDisplay::display(I) ;
-	
-	// Achieve the tracking of the dot in the image
-	dot.track(I) ;
-	
-	// Get the dot cog
-	cog = dot.getCog();
+        // Acquire a new image from the camera
+        g.acquire(I) ;
 
-	// Display a green cross at the center of gravity position in the image
-	vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
-	
-	// Update the point feature from the dot location
-	vpFeatureBuilder::create(p, cam, dot);
-	
-	// Compute the visual servoing skew vector
-	v = task.computeControlLaw() ;
-	
-	// Display the current and desired feature points in the image display
-	vpServoDisplay::display(task, cam, I) ;
-	
-	// Apply the computed camera velocities to the robot
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        // Display this image
+        vpDisplay::display(I) ;
+
+        // Achieve the tracking of the dot in the image
+        dot.track(I) ;
+
+        // Get the dot cog
+        cog = dot.getCog();
+
+        // Display a green cross at the center of gravity position in the image
+        vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+
+        // Update the point feature from the dot location
+        vpFeatureBuilder::create(p, cam, dot);
+
+        // Compute the visual servoing skew vector
+        v = task.computeControlLaw() ;
+
+        // Display the current and desired feature points in the image display
+        vpServoDisplay::display(task, cam, I) ;
+
+        // Apply the computed camera velocities to the robot
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
       }
       catch(...) {
-	std::cout << "Tracking failed... Stop the robot." << std::endl;
-	v = 0;
-	// Stop robot
-	robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-	return 0;
+        std::cout << "Tracking failed... Stop the robot." << std::endl;
+        v = 0;
+        // Stop robot
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        return 0;
       }
- 
+
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-	   << v[3] << " " << v[4] << " " << v[5] << " ";
+           << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -242,7 +242,7 @@ main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-	   << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -253,13 +253,12 @@ main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-	   << q[3] << " " << q[4] << " " << q[5] << " ";
+           << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " " // s-s* for point
-	   << std::endl;
+      flog << ( task.getError() ).t() << std::endl; // s-s* for point
 
       // Flush the display
       vpDisplay::flush(I) ;

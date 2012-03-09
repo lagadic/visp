@@ -105,29 +105,29 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Tests a control law with the following characteristics:\n\
-- eye-in-hand control\n\
-- articular velocity are computed\n\
-- servo on 4 points,\n\
-- internal and external camera view displays.\n\
-\n\
-SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+          Tests a control law with the following characteristics:\n\
+          - eye-in-hand control\n\
+          - articular velocity are computed\n\
+          - servo on 4 points,\n\
+          - internal and external camera view displays.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-c] [-d] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
-\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  -c\n\
+                  Disable the mouse click. Useful to automaze the \n\
+                  execution of this program without humain intervention.\n\
+                  \n\
+                  -d \n\
+                  Turn off the display.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
@@ -220,7 +220,7 @@ main(int argc, const char ** argv)
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
   std::cout << " Eye-in-hand task control, articular velocity are computed" 
-	    << std::endl ;
+            << std::endl ;
   std::cout << " Simulation " << std::endl ;
   std::cout << " task : servo 4 points " << std::endl ;
   std::cout << "----------------------------------------------" << std::endl ;
@@ -229,12 +229,12 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(-0.1,-0.1,1,
-			  vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+                          vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
   robot.setPosition(cMo) ;
 
   vpHomogeneousMatrix cextMo(0,0,2,
-			     0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+                             0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
 
   vpTRACE("sets the point coordinates in the object frame "  ) ;
@@ -297,59 +297,59 @@ main(int argc, const char ** argv)
   int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<200)
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
+
+
+    if (iter==1)
     {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
-
-
-      if (iter==1)
-	{
-	  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-	  vpTRACE("since q is modified eJe is modified") ;
-	}
-      robot.get_eJe(eJe) ;
-      task.set_eJe(eJe) ;
-
-      robot.getPosition(cMo) ;
-
-      if (iter==1) {
-	std::cout <<"Initial robot position with respect to the object frame:\n";
-	cMo.print();
-      }
-
-      if (iter==1) vpTRACE("\t new point position ") ;
-      for (i = 0 ; i < 4 ; i++)
-	{
-	  point[i].track(cMo) ;
-	  //retrieve x,y and Z of the vpPoint structure
-	  vpFeatureBuilder::create(p[i],point[i])  ;
-
-	}
-
-      if (opt_display) {
-	      vpDisplay::display(Iint) ;
-	      vpDisplay::display(Iext) ;
-	      vpServoDisplay::display(task,cam,Iint) ;
-	      externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
-	      vpDisplay::flush(Iint);
-	      vpDisplay::flush(Iext);
-      }
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-
-      if (iter==1)
-	{
-	  vpTRACE("Display task information " ) ;
-	  task.print() ;
-	}
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpTRACE("\t\t || s - s* || ") ;
-      std::cout << task.error.sumSquare() <<std::endl ;
+      vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+      vpTRACE("since q is modified eJe is modified") ;
     }
+    robot.get_eJe(eJe) ;
+    task.set_eJe(eJe) ;
+
+    robot.getPosition(cMo) ;
+
+    if (iter==1) {
+      std::cout <<"Initial robot position with respect to the object frame:\n";
+      cMo.print();
+    }
+
+    if (iter==1) vpTRACE("\t new point position ") ;
+    for (i = 0 ; i < 4 ; i++)
+    {
+      point[i].track(cMo) ;
+      //retrieve x,y and Z of the vpPoint structure
+      vpFeatureBuilder::create(p[i],point[i])  ;
+
+    }
+
+    if (opt_display) {
+      vpDisplay::display(Iint) ;
+      vpDisplay::display(Iext) ;
+      vpServoDisplay::display(task,cam,Iint) ;
+      externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext);
+    }
+
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+
+    if (iter==1)
+    {
+      vpTRACE("Display task information " ) ;
+      task.print() ;
+    }
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    vpTRACE("\t\t || s - s* || ") ;
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;

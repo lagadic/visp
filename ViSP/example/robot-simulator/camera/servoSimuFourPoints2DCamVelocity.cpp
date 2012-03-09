@@ -95,25 +95,25 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 2D visual servoing:\n\
-- servo on 4 points,\n\
-- eye-in-hand control law,\n\
-- articular velocity are computed,\n\
-- without display.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
+          Simulation of a 2D visual servoing:\n\
+          - servo on 4 points,\n\
+          - eye-in-hand control law,\n\
+          - articular velocity are computed,\n\
+          - without display.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
-    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
-  }
+                  if (badparam) {
+                  fprintf(stderr, "ERROR: \n" );
+          fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+}
 }
 
 /*!
@@ -239,45 +239,45 @@ main(int argc, const char ** argv)
   int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<1500)
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
+
+
+    if (iter==1)
     {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
-
-
-      if (iter==1)
-	{
-	  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-	  vpTRACE("since q is modified eJe is modified") ;
-	}
-      robot.get_eJe(eJe) ;
-      task.set_eJe(eJe) ;
-
-
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
-      if (iter==1) vpTRACE("\t\t new point position ") ;
-      for (i = 0 ; i < 4 ; i++)
-	{
-	  point[i].track(cMo) ;
-	  //retrieve x,y and Z of the vpPoint structure
-	  vpFeatureBuilder::create(p[i],point[i])  ;
-
-	}
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-
-      if (iter==1)
-	{
-	  vpTRACE("Display task information " ) ;
-	  task.print() ;
-	}
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpTRACE("\t\t || s - s* || = %.4f", task.error.sumSquare()) ;
+      vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+      vpTRACE("since q is modified eJe is modified") ;
     }
+    robot.get_eJe(eJe) ;
+    task.set_eJe(eJe) ;
+
+
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t new point position ") ;
+    for (i = 0 ; i < 4 ; i++)
+    {
+      point[i].track(cMo) ;
+      //retrieve x,y and Z of the vpPoint structure
+      vpFeatureBuilder::create(p[i],point[i])  ;
+
+    }
+
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+
+    if (iter==1)
+    {
+      vpTRACE("Display task information " ) ;
+      task.print() ;
+    }
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    vpTRACE("\t\t || s - s* || = %.4f", ( task.getError() ).sumSquare()) ;
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;

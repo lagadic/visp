@@ -136,7 +136,7 @@ int main()
     s_tu.buildFrom(cdMc); // Update ThetaU visual feature
 
     v = task.computeControlLaw(); // Compute camera velocity skew
-    error =  task.error.sumSquare(); // error = s^2 - s_star^2
+    error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
   } while (error > 0.0001); // Stop the task when current and desired visual features are close
 
   // A call to kill() is requested here to destroy properly the current

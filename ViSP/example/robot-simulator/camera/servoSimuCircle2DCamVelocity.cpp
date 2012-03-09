@@ -94,22 +94,22 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 2D visual servoing on a circle:\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- without display.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
+          Simulation of a 2D visual servoing on a circle:\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - without display.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -215,30 +215,30 @@ main(int argc, const char ** argv)
 
   int iter=0 ;
   vpTRACE("\t loop") ;
-  while(iter++<500)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+  while(iter++ < 500)
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
 
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
-      if (iter==1) vpTRACE("\t\t new circle position ") ;
-      //retrieve x,y and Z of the vpCircle structure
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t new circle position ") ;
+    //retrieve x,y and Z of the vpCircle structure
 
-      circle.track(cMo) ;
-      vpFeatureBuilder::create(p,circle);
+    circle.track(cMo) ;
+    vpFeatureBuilder::create(p,circle);
 
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-      //  vpTRACE("computeControlLaw" ) ;
-      std::cout << task.rankJ1 <<std::endl ;
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+    //  vpTRACE("computeControlLaw" ) ;
+    std::cout << task.rankJ1 <<std::endl ;
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
 
-      //  vpTRACE("\t\t || s - s* || ") ;
-      //  std::cout << task.error.sumSquare() <<std::endl ; ;
-    }
+    //  vpTRACE("\t\t || s - s* || ") ;
+    //  std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+  }
 
   vpTRACE("Display task information " ) ;
   task.print() ;

@@ -418,7 +418,7 @@ main(int argc, const char ** argv)
 	  std::cout << v.t() ;
 	  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-	  vpTRACE("\t\t || s - s* || = %f ", task.error.sumSquare()) ;
+	  vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
 
 	  {
 	    vpColVector s_minus_sStar(2);
@@ -426,7 +426,7 @@ main(int argc, const char ** argv)
 	    fprintf(fd, "%f %f %f %f %f\n",
 		    v[0], v[1],
 		    s_minus_sStar[0], s_minus_sStar[1],
-		    task.error.sumSquare());
+		    ( task.getError() ).sumSquare());
 	  }
 	}
 

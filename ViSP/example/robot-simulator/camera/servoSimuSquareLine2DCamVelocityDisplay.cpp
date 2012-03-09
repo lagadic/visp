@@ -101,29 +101,29 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of 2D a visual servoing on a line:\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- display the camera view.\n\
-\n\
-SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+          Simulation of 2D a visual servoing on a line:\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - display the camera view.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-c] [-d] [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
-\n\
-  -d \n\
-     Turn off the display.\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -c\n\
+                  Disable the mouse click. Useful to automaze the \n\
+                  execution of this program without humain intervention.\n\
+                  \n\
+                  -d \n\
+                  Turn off the display.\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -202,10 +202,10 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
     catch(...)
-      {
-	vpERROR_TRACE("Error while displaying the image") ;
-	exit(-1);
-      }
+    {
+      vpERROR_TRACE("Error while displaying the image") ;
+      exit(-1);
+    }
   }
 
   // Set the camera parameters
@@ -219,13 +219,13 @@ main(int argc, const char ** argv)
 
   vpTRACE("sets the initial camera location " ) ;
   vpHomogeneousMatrix cMo(0.2,0.2,1,
-  			  vpMath::rad(45),  vpMath::rad(45),  vpMath::rad(125));
+                          vpMath::rad(45),  vpMath::rad(45),  vpMath::rad(125));
 
   robot.setPosition(cMo) ;
 
   vpTRACE("sets the final camera location (for simulation purpose)" ) ;
   vpHomogeneousMatrix cMod(0,0,1,
-			   vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
+                           vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
 
 
   int nbline = 4;
@@ -243,10 +243,10 @@ main(int argc, const char ** argv)
   vpTRACE("sets the desired position of the visual feature ") ;
   for(int i = 0; i < nbline; i++)
   {
-  line[i].track(cMod) ;
-  line[i].print() ;
+    line[i].track(cMod) ;
+    line[i].print() ;
 
-  vpFeatureBuilder::create(ld[i],line[i])  ;
+    vpFeatureBuilder::create(ld[i],line[i])  ;
   }
 
 
@@ -254,11 +254,11 @@ main(int argc, const char ** argv)
   vpTRACE("sets the current position of the visual feature ") ;
   for(int i = 0; i < nbline; i++)
   {
-  line[i].track(cMo) ;
-  line[i].print() ;
+    line[i].track(cMo) ;
+    line[i].print() ;
 
-  vpFeatureBuilder::create(l[i],line[i])  ;
-  l[i].print() ;
+    vpFeatureBuilder::create(l[i],line[i])  ;
+    l[i].print() ;
   }
 
   vpTRACE("define the task") ;
@@ -273,7 +273,7 @@ main(int argc, const char ** argv)
   vpTRACE("\t we want to see a four lines on four lines.\n") ;
 
   for(int i = 0; i < nbline; i++)
-  task.addFeature(l[i],ld[i]) ;
+    task.addFeature(l[i],ld[i]) ;
 
   vpDisplay::display(I) ;
   vpServoDisplay::display(task,cam,I) ;
@@ -294,36 +294,36 @@ main(int argc, const char ** argv)
   int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<200)
+  {
+    std::cout << "---------------------------------------------" << iter <<std::endl ;
+    vpColVector v ;
+
+    if (iter==1) vpTRACE("\t\t get the robot position ") ;
+    robot.getPosition(cMo) ;
+    if (iter==1) vpTRACE("\t\t new line position ") ;
+    //retrieve x,y and Z of the vpLine structure
+
+    for(int i = 0; i < nbline; i++)
     {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
-
-      if (iter==1) vpTRACE("\t\t get the robot position ") ;
-      robot.getPosition(cMo) ;
-      if (iter==1) vpTRACE("\t\t new line position ") ;
-      //retrieve x,y and Z of the vpLine structure
-
-      for(int i = 0; i < nbline; i++)
-      {
       line[i].track(cMo) ;
       vpFeatureBuilder::create(l[i],line[i]);
-      }
-
-      if (opt_display) {
-	vpDisplay::display(I) ;
-	vpServoDisplay::display(task,cam,I) ;
-        vpDisplay::flush(I) ; 
-      }
-
-      if (iter==1) vpTRACE("\t\t compute the control law ") ;
-      v = task.computeControlLaw() ;
-
-      if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpTRACE("\t\t || s - s* || ") ;
-
     }
+
+    if (opt_display) {
+      vpDisplay::display(I) ;
+      vpServoDisplay::display(task,cam,I) ;
+      vpDisplay::flush(I) ;
+    }
+
+    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    v = task.computeControlLaw() ;
+
+    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    vpTRACE("\t\t || s - s* || ") ;
+
+  }
 
   if (opt_display && opt_click_allowed) {
     std::cout << "\nClick in the camera view window to end..." << std::endl;

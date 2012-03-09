@@ -100,8 +100,8 @@ void vpServoData::save(const vpServo &task)
       velocityFile <<  vpMath::deg(task.q_dot[i]) <<" " ;
     velocityFile << std::endl ;
   }
-  errorFile << task.error.t() ;
-  errorNormFile << task.error.sumSquare() << std::endl ;
+  errorFile << ( task.getError() ).t() ;
+  errorNormFile << ( task.getError() ).sumSquare() << std::endl ;
   vNormFile << task.q_dot.sumSquare() << std::endl ;
 
   sFile <<task.s.t() ;

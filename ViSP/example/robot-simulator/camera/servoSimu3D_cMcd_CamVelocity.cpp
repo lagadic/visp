@@ -87,22 +87,22 @@ Print the program options.
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Simulation of a 3D visual servoing:\n\
-- eye-in-hand control law,\n\
-- velocity computed in the camera frame,\n\
-- without display.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
+          Simulation of a 3D visual servoing:\n\
+          - eye-in-hand control law,\n\
+          - velocity computed in the camera frame,\n\
+          - without display.\n\
+          \n\
+          SYNOPSIS\n\
+          %s [-h]\n", name);
 
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-\n\
-  -h\n\
-     Print the help.\n");
+          fprintf(stdout, "\n\
+                  OPTIONS:                                               Default\n\
+                  \n\
+                  -h\n\
+                  Print the help.\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+                  if (badparam)
+                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
@@ -171,7 +171,7 @@ main(int argc, const char ** argv)
     }
     catch (...) {
       std::cerr << std::endl
-		<< "ERROR:" << std::endl;
+                << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -196,9 +196,9 @@ main(int argc, const char ** argv)
 
   // Sets the initial camera location
   vpPoseVector c_r_o(// Translation tx,ty,tz
-		     0.1, 0.2, 2, 
-		     // ThetaU rotation 
-		     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
+                     0.1, 0.2, 2,
+                     // ThetaU rotation
+                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
 
   // From the camera pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cMo(c_r_o) ;
@@ -208,9 +208,9 @@ main(int argc, const char ** argv)
 
   // Sets the desired camera location
   vpPoseVector cd_r_o(// Translation tx,ty,tz
-		      0, 0, 1, 
-		      // ThetaU rotation 
-		      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ; 
+                      0, 0, 1,
+                      // ThetaU rotation
+                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
 
   // From the camera desired pose build the corresponding homogeneous matrix
   vpHomogeneousMatrix cdMo(cd_r_o) ;
@@ -261,7 +261,7 @@ main(int argc, const char ** argv)
 
     // new displacement to achieve
     cMcd = cMo*cdMo.inverse() ;
-      
+
     // Update the current visual features
     t.buildFrom(cMcd) ;
     tu.buildFrom(cMcd) ;
@@ -276,10 +276,10 @@ main(int argc, const char ** argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
     // Retrieve the error 
-    std::cout << task.error.sumSquare() <<std::endl ; ;
+    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
     
     // Save log
-    flog << v.t() << " " << task.error.t() << std::endl;
+    flog << v.t() << " " << ( task.getError() ).t() << std::endl;
   }
   // Display task information
   task.print() ;
