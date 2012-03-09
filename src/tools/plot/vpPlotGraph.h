@@ -182,10 +182,10 @@ class vpPlotGraph
     
     bool getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP);
     
-    vpHomogeneousMatrix navigation(vpImage<unsigned char> &I, bool &changed);
+    vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed);
     
     void findPose();
-    bool move(vpImage<unsigned char> &I);
+    bool move(const vpImage<unsigned char> &I);
     bool check3Dline(vpImagePoint &iP1, vpImagePoint &iP2);
     bool check3Dpoint(vpImagePoint &iP);
     

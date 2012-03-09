@@ -294,7 +294,7 @@ vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const do
   \param v_y : y coordinates vector. The coordinates of the new points along the y axis and given in the user unit system.
 */
 void vpPlot::plot(const unsigned int graphNum, 
-		  const double x, const vpColVector v_y)
+      const double x, const vpColVector &v_y)
 {
 	if((graphList+graphNum)->curveNbr == v_y.getRows())
 	{
@@ -328,7 +328,7 @@ vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const do
   \param v_y : y coordinates vector. The coordinates of the new points along the y axis and given in the user unit system.
   \param v_z : z coordinates vector. The coordinates of the new points along the z axis and given in the user unit system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector v_y, const vpColVector v_z)
+void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z)
 {
 	if((graphList+graphNum)->curveNbr == v_y.getRows() && (graphList+graphNum)->curveNbr == v_z.getRows())
 	{

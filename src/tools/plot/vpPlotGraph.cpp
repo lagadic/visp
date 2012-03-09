@@ -1291,7 +1291,7 @@ vpPlotGraph::rescalez(unsigned int side, double extremity)
 }
 
 bool
-vpPlotGraph::move(vpImage<unsigned char> &I)
+vpPlotGraph::move(const vpImage<unsigned char> &I)
 {
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I,changed);
@@ -1306,7 +1306,7 @@ vpPlotGraph::move(vpImage<unsigned char> &I)
 }
 
 vpHomogeneousMatrix
-vpPlotGraph::navigation(vpImage<unsigned char> &I, bool &changed)
+vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed)
 {
   vpImagePoint iP;
   vpImagePoint trash;

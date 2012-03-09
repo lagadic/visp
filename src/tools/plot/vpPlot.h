@@ -165,9 +165,9 @@ class VISP_EXPORT vpPlot
     void setThickness (const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness);
 
     void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
-    void plot(const unsigned int graphNum, const double x, const vpColVector v_y);
+    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
     void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
-    void plot(const unsigned int graphNum, const double x, const vpColVector v_y, const vpColVector v_z);
+    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z);
     
     void navigate (void);
     
