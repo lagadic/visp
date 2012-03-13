@@ -478,6 +478,100 @@ vpColVector::sort(const vpColVector &v)
 }
 
 /*!
+  Stack column vectors.
+
+  \param B : Vector to stack to the existing one.
+
+  \code
+  vpColVector A(3);
+  vpColVector B(5);
+  A.stack(B); // A = [A B]T
+  // A is now an 8 dimension column vector
+  \endcode
+
+  \sa stack(const vpColVector &, const vpColVector &)
+  \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
+
+*/
+void vpColVector::stack(const vpColVector &B)
+{
+  *this = vpColVector::stack(*this, B);
+}
+
+/*!
+  Stack column vectors.
+
+  \param A : Initial vector.
+  \param B : Vector to stack at the end of A.
+  \return Stacked vector \f$[A B]^T\f$.
+
+  \code
+  vpColVector A(3);
+  vpColVector B(5);
+  vpColVector C;
+  C = vpColVector::stack(A, B); // C = [A B]T
+  // C is now an 8 dimension column vector
+  \endcode
+
+  \sa stack(const vpColVector &)
+  \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
+*/
+vpColVector vpColVector::stack(const vpColVector &A, const vpColVector &B)
+{
+  vpColVector C;
+  vpColVector::stack(A, B, C);
+  return C;
+}
+
+/*!
+  Stack column vectors.
+
+  \param A : Initial vector.
+  \param B : Vector to stack at the end of A.
+  \param C : Resulting stacked vector \fC = $[A B]^T\f$.
+
+  \code
+  vpColVector A(3);
+  vpColVector B(5);
+  vpColVector C;
+  vpColVector::stack(A, B, C); // C = [A B]T
+  // C is now an 8 dimension column vector
+  \endcode
+
+  \sa stack(const vpColVector &)
+  \sa stack(const vpColVector &, const vpColVector &)
+*/
+void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector &C)
+{
+  unsigned int nrA = A.getRows();
+  unsigned int nrB = B.getRows();
+
+  if (nrA == 0 && nrB == 0) {
+    C.resize(0);
+    return;
+  }
+
+  if (nrB == 0) {
+    C = A;
+    return;
+  }
+
+  if (nrA == 0) {
+    C = B;
+    return;
+  }
+
+  // General case
+  C.resize(nrA + nrB);
+
+  for (unsigned int i=0; i<nrA; i++)
+    C[i] = A[i];
+
+  for (unsigned int i=0; i<nrB; i++)
+    C[nrA+i] = B[i];
+}
+
+/*!
   \brief Compute the mean value of all the element of the vector
 */
 double vpColVector::mean(const vpColVector &v)
