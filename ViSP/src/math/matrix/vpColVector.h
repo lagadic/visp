@@ -133,6 +133,10 @@ public:
 	       const unsigned int &nrows, const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows, const unsigned int &ncols);
 
+  void stack(const vpColVector &B);
+  static vpColVector stack(const vpColVector &A, const vpColVector &B);
+  static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
+
   //! transpose of Vector
   vpRowVector t() const;
 
