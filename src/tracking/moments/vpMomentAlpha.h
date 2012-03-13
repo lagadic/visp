@@ -198,6 +198,7 @@ This moment depends on vpMomentCentered.
 class VISP_EXPORT vpMomentAlpha : public vpMoment {
  private:	
     bool isRef;
+    bool symmetric;
     std::vector<double> ref;
     double alphaRef;
  public:	
