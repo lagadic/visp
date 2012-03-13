@@ -100,10 +100,10 @@ public:
 
   /*! 
 
-    Function used to select the \f$X_c\f$ subfeature.
+    Function used to select the \f$x_c\f$ subfeature.
 
     This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$X_c\f$ feature.
+    to compute the interaction matrix associated to \f$x_c\f$ feature.
 
     See the interaction() method for an usage example.
 
@@ -126,10 +126,10 @@ public:
 
   /*! 
 
-    Function used to select the \f$Y_c\f$ subfeature.
+    Function used to select the \f$y_c\f$ subfeature.
 
     This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$Y_c\f$ feature.
+    to compute the interaction matrix associated to \f$y_c\f$ feature.
 
     See the interaction() method for an usage example.
 
