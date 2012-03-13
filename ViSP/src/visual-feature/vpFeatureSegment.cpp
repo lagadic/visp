@@ -104,22 +104,59 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
 
 /*!
   Compute and return the interaction matrix \f$ L \f$ associated to a
-  subset of the possible features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+
+  The interaction matrix is of the following form:
+  \f[
+  L = \left[
+      \begin{array}{c}
+        L_{x_c} \\
+        L_{y_c} \\
+        L_{l} \\
+        L_{\alpha}
+      \end{array}
+    \right] =
+    \left[
+      \begin{array}{cccccc}
+        -\lambda_2 & 0 & \lambda_2 x_c - \lambda_1 l \frac{cos \alpha}{4} &
+        x_c y_c + l^2 \frac{cos \alpha sin \alpha}{4} &
+        -(1 + {x_{c}}^{2} + l^2 \frac{cos^2\alpha}{4}) &
+        y_c \\
+        0 & -\lambda_2 & \lambda_2 y_c - \lambda_1 l \frac{sin \alpha}{4} &
+        1 + {y_{c}}^{2} + l^2 \frac{sin^2 \alpha}{4} &
+        -x_c y_c-l^2 \frac{cos \alpha sin \alpha}{4} &
+        -x_c \\
+        \lambda_1 cos \alpha & \lambda_1 sin \alpha &
+        \lambda_2 l - \lambda_1 (x_c cos \alpha + y_c sin \alpha) &
+        l (x_c cos \alpha sin \alpha + y_c (1 + sin^2 \alpha)) &
+        -l (x_c (1 + cos^2 \alpha)+y_c cos \alpha sin \alpha) &
+        0 \\
+        -\lambda_1  \frac{sin \alpha}{l} & \lambda_1 \frac{cos \alpha}{l} &
+        \lambda_1 \frac{x_c sin \alpha - y_c cos \alpha}{l} &
+        -x_c sin^2 \alpha + y_c cos \alpha sin \alpha &
+        x_c cos \alpha sin \alpha - y_c cos^2 \alpha &
+        -1
+      \end{array}
+     \right]
+  \f]
+
+  with \f$ \lambda_1 = \frac{Z_1 - Z_2}{Z_1 Z_2}\f$ and \f$ \lambda_2 = \frac{Z_1 + Z_2}{2 Z_1 Z_2}\f$
+  where \f$Z_i\f$ are the depths of the points.
 
 
   \param select : Selection of a subset of the possible segment features.
   - To compute the interaction matrix for all the four 
-    subset features \f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
+    subset features \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
     that case the dimension of the interaction matrix is \f$ [4 \times 6] \f$
   - To compute the interaction matrix for only one of the subset
-    (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the corresponding functions:
+    (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the corresponding functions:
     selectXc(),selectYc(),selectL(),selectAlpha(). In that case the returned
     interaction matrix is of dimension \f$ [1 \times 6] \f$ .
 
   \return The interaction matrix computed from the segment features.
 
   The code below shows how to compute the interaction matrix associated to 
-  the visual feature \f$s\f$ =  (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  the visual feature \f$s\f$ =  (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
   \code
   vpPoint p1, p2;  
 
@@ -222,7 +259,7 @@ vpFeatureSegment::interaction( const unsigned int select )
   if (vpFeatureSegment::selectAlpha() & select ){
     vpMatrix Lalpha(1,6);
       Lalpha[0][0] = -lambda1*sin_a/l ;
-      Lalpha[0][1] = lambda1*cos_a ;
+      Lalpha[0][1] = lambda1*cos_a/l ;
       Lalpha[0][2] = lambda1*(Xc*sin_a-Yc*cos_a)/l;
       Lalpha[0][3] = -Xc*sin_a*sin_a+Yc*cos_a*sin_a;
       Lalpha[0][4] = Xc*cos_a*sin_a - Yc*cos_a*cos_a ;
@@ -234,7 +271,7 @@ vpFeatureSegment::interaction( const unsigned int select )
 }
 
 /*!
-   \brief Compute the error between the current and the desired visual features from a subset of the possible features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+   \brief Compute the error between the current and the desired visual features from a subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
 
   For the angular component \f$\alpha\f$, we define the error as
   \f$\alpha \ominus \alpha^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
@@ -247,7 +284,7 @@ vpFeatureSegment::interaction( const unsigned int select )
   - To compute the error for all the three coordinates use
     vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
     dimension column vector.
-  - To compute the error for only one subfeature (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the
+  - To compute the error for only one subfeature (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the
     corresponding functions: selectXc(),selectYc(),selectL(),selectAlpha(). 
 
   \return The error between the current and the desired
@@ -290,7 +327,7 @@ vpFeatureSegment::error( const vpBasicFeature &s_star,  const unsigned int selec
 /*!
   Print to stdout the values of the current visual feature \f$ s \f$.
 
-  \param select : Selection of a subset of the possible segement features (\f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  \param select : Selection of a subset of the possible segement features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
 
   \code
   vpPoint p1,p2;
@@ -422,10 +459,10 @@ vpFeatureSegment::display(const vpCameraParameters & cam ,
 
   \param P1, P2 : Two image points defining the segment. These points must contain coordinates (x and y) projected on the camera plane.
   
-  The parameters \f$ X_c \f$,\f$ Y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
+  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
   computed from two two points using the following formulae:
-  \f$ X_c = \frac{X_1 + X_2}{2} \f$
-  \f$ Y_c = \frac{Y_1 + Y_2}{2} \f$
+  \f$ x_c = \frac{X_1 + X_2}{2} \f$
+  \f$ y_c = \frac{Y_1 + Y_2}{2} \f$
   \f$ l = \sqrt{{X_1 - X_2}^2 + {Y_1 - Y_2}^2} \f$
   \f$ \alpha = arctan(\frac{Y_1 - Y_2}{X_1 - X_2}) \f$
 */
