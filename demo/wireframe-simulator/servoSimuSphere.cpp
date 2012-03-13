@@ -92,25 +92,25 @@
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-          Demonstration of the wireframe simulator with a simple visual servoing.\n\
+Demonstration of the wireframe simulator with a simple visual servoing.\n\
           \n\
-          The visual servoing consists in bringing the camera at a desired position from the object.\n\
+The visual servoing consists in bringing the camera at a desired position from the object.\n\
           \n\
-          The virtual visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
+The visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
           \n\
-          SYNOPSIS\n\
-          %s [-d] [-h]\n", name);
+SYNOPSIS\n\
+  %s [-d] [-h]\n", name);
 
-          fprintf(stdout, "\n\
-                  OPTIONS:                                               Default\n\
-                  -d \n\
-                  Turn off the display.\n\
-                  \n\
-                  -h\n\
-                  Print the help.\n");
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -d \n\
+     Turn off the display.\n\
+            \n\
+  -h\n\
+     Print the help.\n");
 
-                  if (badparam)
-                  fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 /*!
