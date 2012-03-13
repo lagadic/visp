@@ -2881,8 +2881,8 @@ vpMatrix Velocities;
 vpColVector v(6);
 for(unsigned int i = 0;i<100;i++)
 {
-robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
-Velocities.stackMatrices(v.t());
+  robot.getVelocity(vpRobot::ARTICULAR_FRAME, v);
+  Velocities.stackMatrices(v.t());
 }
 \endcode
 */
