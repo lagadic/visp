@@ -173,15 +173,15 @@ main(int argc, const char ** argv)
   vpImage<vpRGBa> Iext(480,640,255);
 
 #if defined VISP_HAVE_X11
-  vpDisplayX display[3];
+  vpDisplayX display[2];
 #elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV display[3];
+  vpDisplayOpenCV display[2];
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display[3];
+  vpDisplayGDI display[2];
 #elif defined VISP_HAVE_D3D9
-  vpDisplayD3D display[3];
+  vpDisplayD3D display[2];
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display[3];
+  vpDisplayGTK display[2];
 #endif
   
   if (opt_display)
@@ -215,7 +215,7 @@ main(int argc, const char ** argv)
 
   vpHomogeneousMatrix cMo(cMoi);
   
-  //The four point used as visual features
+  // Create a cylinder
   vpCylinder cylinder(0,0,1,0,0,0,0.1);
   
   // Projection of the cylinder
@@ -232,7 +232,7 @@ main(int argc, const char ** argv)
   // Projection of the cylinder
   cylinder.track(cdMo);
 
-  vpFeatureLine ld[4];
+  vpFeatureLine ld[2];
   vpFeatureBuilder::create(ld[0], cylinder, vpCylinder::line1);
   vpFeatureBuilder::create(ld[1], cylinder, vpCylinder::line2);
 
@@ -332,12 +332,10 @@ main(int argc, const char ** argv)
     task.set_eJe(eJe) ;
 
     robot.getPosition(cMo) ;
-    for (int i = 0 ; i < 4 ; i++)
-    {
-      cylinder.track(cMo) ;
-      vpFeatureBuilder::create(l[0], cylinder, vpCylinder::line1);
-      vpFeatureBuilder::create(l[1], cylinder, vpCylinder::line2);
-    }
+
+    cylinder.track(cMo) ;
+    vpFeatureBuilder::create(l[0], cylinder, vpCylinder::line1);
+    vpFeatureBuilder::create(l[1], cylinder, vpCylinder::line2);
 
     v = task.computeControlLaw() ;
     
