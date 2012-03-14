@@ -528,7 +528,7 @@ vpColVector vpColVector::stack(const vpColVector &A, const vpColVector &B)
 
   \param A : Initial vector.
   \param B : Vector to stack at the end of A.
-  \param C : Resulting stacked vector \fC = $[A B]^T\f$.
+  \param C : Resulting stacked vector \f$C = [A B]^T\f$.
 
   \code
   vpColVector A(3);
@@ -652,19 +652,18 @@ vpColVector::median(const vpColVector &v)
 }
 
 /*!
-  \brief Compute the skew symmetric matrix of vector v (matrice de pre-produit
-  vectoriel)
+  Compute the skew symmetric matrix \f$[{\bf v}]_\times\f$ of vector v.
 
   \f[ \mbox{if} \quad  {\bf V} =  \left( \begin{array}{c} x \\ y \\  z
   \end{array}\right), \quad \mbox{then} \qquad
-  skew(\bf V) = \left( \begin{array}{ccc}
+  [{\bf v}]_\times = \left( \begin{array}{ccc}
   0 & -z & y \\
   z & 0 & -x \\
   -y & x & 0
   \end{array}\right)
   \f]
 
-  \param v : vpColVector
+  \param v : Input vector used to compute the skew symmetric matrix.
 */
 vpMatrix
 vpColVector::skew(const vpColVector &v)

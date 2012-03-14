@@ -152,8 +152,8 @@ public:
   inline static vpColVector cross(const vpColVector &a, const vpColVector &b){
                                   return crossProd(a,b);}
   
-  //! compute the skew matrix [a]x
-  static vpMatrix skew(const vpColVector &a);
+  // compute the skew matrix [v]x
+  static vpMatrix skew(const vpColVector &v);
   //! Dot Product
   
   static double dotProd(const vpColVector &a, const vpColVector &b)  ;
