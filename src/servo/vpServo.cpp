@@ -101,8 +101,8 @@ vpServo::~vpServo()
     vpTRACE("--- Begin Warning Warning Warning Warning Warning ---");
     vpTRACE("--- You should explicitly call vpServo.kill()...  ---");
     vpTRACE("--- End Warning Warning Warning Warning Warning   ---");
-//     throw(vpServoException(vpServoException::notKilledProperly,
-// 			   "Task was not killed properly"));
+    //     throw(vpServoException(vpServoException::notKilledProperly,
+    // 			   "Task was not killed properly"));
   }
 }
 
@@ -125,7 +125,7 @@ vpServo::~vpServo()
 
 */
 void
-vpServo::init()
+    vpServo::init()
 {
   // type of visual servoing
   servoType = vpServo::NONE ;
@@ -174,7 +174,7 @@ vpServo::init()
 
 */
 void
-vpServo::kill()
+    vpServo::kill()
 {
   if (taskWasKilled == false) {
     // kill the current and desired feature lists
@@ -182,28 +182,28 @@ vpServo::kill()
     desiredFeatureList.front() ;
 
     while (!featureList.outside()) {
-	vpBasicFeature *s_ptr = NULL;
+      vpBasicFeature *s_ptr = NULL;
 
-	// current list
-	s_ptr=  featureList.value() ;
-	if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
-	  {
-	    delete s_ptr ;
-	    s_ptr = NULL ;
-	  }
-
-	//desired list
-	s_ptr=  desiredFeatureList.value() ;
-	if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
-	  {
-	    //	    s_ptr->print() ;
-	    delete s_ptr ;
-	    s_ptr = NULL ;
-	  }
-
-	desiredFeatureList.next() ;
-	featureList.next() ;
+      // current list
+      s_ptr=  featureList.value() ;
+      if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
+      {
+        delete s_ptr ;
+        s_ptr = NULL ;
       }
+
+      //desired list
+      s_ptr=  desiredFeatureList.value() ;
+      if (s_ptr->getDeallocate() == vpBasicFeature::vpServo)
+      {
+        //	    s_ptr->print() ;
+        delete s_ptr ;
+        s_ptr = NULL ;
+      }
+
+      desiredFeatureList.next() ;
+      featureList.next() ;
+    }
     featureList.kill() ;
     desiredFeatureList.kill() ;
     taskWasKilled = true;
@@ -211,7 +211,7 @@ vpServo::kill()
 }
 
 void
-vpServo::setServo(vpServoType _servoType)
+    vpServo::setServo(vpServoType _servoType)
 {
 
   servoType = _servoType ;
@@ -226,13 +226,13 @@ vpServo::setServo(vpServoType _servoType)
   // when the control is directly compute in the camera frame
   // we relieve the end-user to initialize cVa and aJe
   if (servoType==EYEINHAND_CAMERA)
-    {
-      vpVelocityTwistMatrix _cVe ; set_cVe(_cVe) ;
+  {
+    vpVelocityTwistMatrix _cVe ; set_cVe(_cVe) ;
 
-      vpMatrix _eJe ;
-      _eJe.eye(6) ;
-      set_eJe(_eJe) ;
-    };
+    vpMatrix _eJe ;
+    _eJe.eye(6) ;
+    set_eJe(_eJe) ;
+  };
 
 }
 
@@ -255,193 +255,193 @@ vpServo::setServo(vpServoType _servoType)
   \param os : Output stream.
 */
 void
-vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
+    vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 {
   switch (displayLevel)
+  {
+
+  case vpServo::ALL:
+
     {
 
-    case vpServo::ALL:
+      os << "Visual servoing task: " <<std::endl ;
 
+      os << "Type of control law " <<std::endl ;
+      switch( servoType )
       {
-
-	os << "Visual servoing task: " <<std::endl ;
-
-	os << "Type of control law " <<std::endl ;
-	switch( servoType )
-	  {
-	  case NONE :
-	    os << "Type of task have not been chosen yet ! " << std::endl ;
-	    break ;
-	  case EYEINHAND_CAMERA :
-	    os << "Eye-in-hand configuration " << std::endl ;
-	    os << "Control in the camera frame " << std::endl ;
-	    break ;
-	  case EYEINHAND_L_cVe_eJe :
-	    os << "Eye-in-hand configuration " << std::endl ;
-	    os << "Control in the articular frame " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVe_eJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVf_fVe_eJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVf_fJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
-	    break ;
-	  }
-
-	os << "List of visual features : s" <<std::endl ;
-	for (featureList.front(),
-	       featureSelectionList.front() ;
-	     !featureList.outside() ;
-	     featureList.next(),
-	       featureSelectionList.next()  )
-	  {
-	    vpBasicFeature *s ;
-	    s = featureList.value();
-	    os << "" ;
-	    s->print(featureSelectionList.value()) ;
-	  }
-
-
-	os << "List of desired visual features : s*" <<std::endl ;
-	for (desiredFeatureList.front(),
-	       featureSelectionList.front() ;
-	     !desiredFeatureList.outside() ;
-	     desiredFeatureList.next(),
-	       featureSelectionList.next()  )
-	  {
-	    vpBasicFeature *s ;
-	    s = desiredFeatureList.value();
-	    os << "" ;
-	    s->print(featureSelectionList.value()) ;
-	  }
-
-	os <<"Interaction Matrix Ls "<<std::endl  ;
-	if (interactionMatrixComputed)
-	  {
-	    os << L << std::endl;
-	  }
-	else
-	  {os << "not yet computed "<<std::endl ;}
-
-	os <<"Error vector (s-s*) "<<std::endl  ;
-	if (errorComputed)
-	  {
-	    os << error.t() << std::endl;
-	  }
-	else
-	  {os << "not yet computed "<<std::endl ;}
-
-	os << "Gain : " << lambda <<std::endl ;
-
-	break;
+      case NONE :
+        os << "Type of task have not been chosen yet ! " << std::endl ;
+        break ;
+      case EYEINHAND_CAMERA :
+        os << "Eye-in-hand configuration " << std::endl ;
+        os << "Control in the camera frame " << std::endl ;
+        break ;
+      case EYEINHAND_L_cVe_eJe :
+        os << "Eye-in-hand configuration " << std::endl ;
+        os << "Control in the articular frame " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVe_eJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVf_fVe_eJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVf_fJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
+        break ;
       }
 
-    case vpServo::CONTROLLER:
+      os << "List of visual features : s" <<std::endl ;
+      for (featureList.front(),
+           featureSelectionList.front() ;
+      !featureList.outside() ;
+      featureList.next(),
+      featureSelectionList.next()  )
       {
-	os << "Type of control law " <<std::endl ;
-	switch( servoType )
-	  {
-	  case NONE :
-	    os << "Type of task have not been chosen yet ! " << std::endl ;
-	    break ;
-	  case EYEINHAND_CAMERA :
-	    os << "Eye-in-hand configuration " << std::endl ;
-	    os << "Control in the camera frame " << std::endl ;
-	    break ;
-	  case EYEINHAND_L_cVe_eJe :
-	    os << "Eye-in-hand configuration " << std::endl ;
-	    os << "Control in the articular frame " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVe_eJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVf_fVe_eJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
-	    break ;
-	  case EYETOHAND_L_cVf_fJe :
-	    os << "Eye-to-hand configuration " << std::endl ;
-	    os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
-	    break ;
-	  }
-	break;
-      }
-      
-    case vpServo::FEATURE_CURRENT: 
-      {
-	os << "List of visual features : s" <<std::endl ;
-	for (featureList.front(),
-	       featureSelectionList.front() ;
-	     !featureList.outside() ;
-	     featureList.next(),
-	       featureSelectionList.next()  )
-	  {
-	    vpBasicFeature *s ;
-	    s = featureList.value();
-	    os << "" ;
-	    s->print(featureSelectionList.value()) ;
-	  }
-
-	break;
-      }
-    case vpServo::FEATURE_DESIRED: 
-      {
-	os << "List of desired visual features : s*" <<std::endl ;
-	for (desiredFeatureList.front(),
-	       featureSelectionList.front() ;
-	     !desiredFeatureList.outside() ;
-	     desiredFeatureList.next(),
-	       featureSelectionList.next()  )
-	  {
-	    vpBasicFeature *s ;
-	    s = desiredFeatureList.value();
-	    os << "" ;
-	    s->print(featureSelectionList.value()) ;
-	  }
-	break;
-      }
-   case vpServo::GAIN: 
-      {
-	os << "Gain : " << lambda <<std::endl ;
-	break;
-      }
-   case vpServo::INTERACTION_MATRIX: 
-      {
-	os <<"Interaction Matrix Ls "<<std::endl  ;
-	if (interactionMatrixComputed)
-	  {
-	    os << L << std::endl;
-	  }
-	else
-	  {os << "not yet computed "<<std::endl ;}
-	break;
+        vpBasicFeature *s ;
+        s = featureList.value();
+        os << "" ;
+        s->print(featureSelectionList.value()) ;
       }
 
-    case vpServo::ERROR_VECTOR:
-    case vpServo::MINIMUM:
 
+      os << "List of desired visual features : s*" <<std::endl ;
+      for (desiredFeatureList.front(),
+           featureSelectionList.front() ;
+      !desiredFeatureList.outside() ;
+      desiredFeatureList.next(),
+      featureSelectionList.next()  )
       {
-	os <<"Error vector (s-s*) "<<std::endl  ;
-	if (errorComputed)
-	  {  os << error.t() << std::endl;  }
-	else
-	  {os << "not yet computed "<<std::endl ;}
-
-	break;
+        vpBasicFeature *s ;
+        s = desiredFeatureList.value();
+        os << "" ;
+        s->print(featureSelectionList.value()) ;
       }
+
+      os <<"Interaction Matrix Ls "<<std::endl  ;
+      if (interactionMatrixComputed)
+      {
+        os << L << std::endl;
+      }
+      else
+      {os << "not yet computed "<<std::endl ;}
+
+      os <<"Error vector (s-s*) "<<std::endl  ;
+      if (errorComputed)
+      {
+        os << error.t() << std::endl;
+      }
+      else
+      {os << "not yet computed "<<std::endl ;}
+
+      os << "Gain : " << lambda <<std::endl ;
+
+      break;
     }
+
+  case vpServo::CONTROLLER:
+    {
+      os << "Type of control law " <<std::endl ;
+      switch( servoType )
+      {
+      case NONE :
+        os << "Type of task have not been chosen yet ! " << std::endl ;
+        break ;
+      case EYEINHAND_CAMERA :
+        os << "Eye-in-hand configuration " << std::endl ;
+        os << "Control in the camera frame " << std::endl ;
+        break ;
+      case EYEINHAND_L_cVe_eJe :
+        os << "Eye-in-hand configuration " << std::endl ;
+        os << "Control in the articular frame " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVe_eJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVe_eJe q_dot " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVf_fVe_eJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVe_fVe_eJe q_dot " << std::endl ;
+        break ;
+      case EYETOHAND_L_cVf_fJe :
+        os << "Eye-to-hand configuration " << std::endl ;
+        os << "s_dot = _L_cVf_fJe q_dot " << std::endl ;
+        break ;
+      }
+      break;
+    }
+
+  case vpServo::FEATURE_CURRENT:
+    {
+      os << "List of visual features : s" <<std::endl ;
+      for (featureList.front(),
+           featureSelectionList.front() ;
+      !featureList.outside() ;
+      featureList.next(),
+      featureSelectionList.next()  )
+      {
+        vpBasicFeature *s ;
+        s = featureList.value();
+        os << "" ;
+        s->print(featureSelectionList.value()) ;
+      }
+
+      break;
+    }
+  case vpServo::FEATURE_DESIRED:
+    {
+      os << "List of desired visual features : s*" <<std::endl ;
+      for (desiredFeatureList.front(),
+           featureSelectionList.front() ;
+      !desiredFeatureList.outside() ;
+      desiredFeatureList.next(),
+      featureSelectionList.next()  )
+      {
+        vpBasicFeature *s ;
+        s = desiredFeatureList.value();
+        os << "" ;
+        s->print(featureSelectionList.value()) ;
+      }
+      break;
+    }
+  case vpServo::GAIN:
+    {
+      os << "Gain : " << lambda <<std::endl ;
+      break;
+    }
+  case vpServo::INTERACTION_MATRIX:
+    {
+      os <<"Interaction Matrix Ls "<<std::endl  ;
+      if (interactionMatrixComputed)
+      {
+        os << L << std::endl;
+      }
+      else
+      {os << "not yet computed "<<std::endl ;}
+      break;
+    }
+
+  case vpServo::ERROR_VECTOR:
+  case vpServo::MINIMUM:
+
+    {
+      os <<"Error vector (s-s*) "<<std::endl  ;
+      if (errorComputed)
+      {  os << error.t() << std::endl;  }
+      else
+      {os << "not yet computed "<<std::endl ;}
+
+      break;
+    }
+  }
 }
 
 //! create a new set of 2 features in the task
 void
-vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int select)
+    vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int select)
 {
   featureList += &s ;
   desiredFeatureList += &s_star ;
@@ -453,7 +453,7 @@ vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int sele
   (the desired feature is then null)
 */
 void
-vpServo::addFeature(vpBasicFeature& s, unsigned int select)
+    vpServo::addFeature(vpBasicFeature& s, unsigned int select)
 {
   featureList += &s ;
 
@@ -483,7 +483,7 @@ vpServo::addFeature(vpBasicFeature& s, unsigned int select)
 
 //! get the task dimension
 unsigned int
-vpServo::getDimension()
+    vpServo::getDimension()
 {
 
   featureList.front() ;
@@ -491,22 +491,22 @@ vpServo::getDimension()
 
   dim_task  =0 ;
   while (!featureList.outside())
-    {
-      vpBasicFeature *s_ptr = NULL;
-      s_ptr=  featureList.value() ;
-      unsigned int select = (unsigned int)featureSelectionList.value() ;
+  {
+    vpBasicFeature *s_ptr = NULL;
+    s_ptr=  featureList.value() ;
+    unsigned int select = (unsigned int)featureSelectionList.value() ;
 
-      dim_task += (unsigned int)s_ptr->getDimension(select) ;
+    dim_task += (unsigned int)s_ptr->getDimension(select) ;
 
-      featureSelectionList.next() ;
-      featureList.next() ;
-    }
+    featureSelectionList.next() ;
+    featureList.next() ;
+  }
 
   return dim_task ;
 }
 
 void
-vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &_interactionMatrixType, const vpServoInversionType &_interactionMatrixInversion)
+    vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &_interactionMatrixType, const vpServoInversionType &_interactionMatrixInversion)
 {
   interactionMatrixType = _interactionMatrixType ;
   inversionType = _interactionMatrixInversion ;
@@ -514,16 +514,16 @@ vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &_interactio
 
 
 static void
-computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureList,
-				   /*const*/ vpList<unsigned int> & featureSelectionList,
-				   vpMatrix & L)
+    computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureList,
+                                                 /*const*/ vpList<unsigned int> & featureSelectionList,
+                                                           vpMatrix & L)
 {
   if (featureList.empty())
-    {
-      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
-      throw(vpServoException(vpServoException::noFeatureError,
-			     "feature list empty, cannot compute Ls")) ;
-    }
+  {
+    vpERROR_TRACE("feature list empty, cannot compute Ls") ;
+    throw(vpServoException(vpServoException::noFeatureError,
+                           "feature list empty, cannot compute Ls")) ;
+  }
 
   /* The matrix dimension is not known before the affectation loop.
    * It thus should be allocated on the flight, in the loop.
@@ -552,27 +552,27 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
   unsigned int cursorL = 0;
 
   for (featureList.front() ,featureSelectionList.front() ;
-       !featureList.outside();
-       featureSelectionList.next(),featureList.next() )
-    {
-      vpBasicFeature * sPTR = featureList.value() ;
-      const unsigned int select = featureSelectionList.value() ;
+  !featureList.outside();
+  featureSelectionList.next(),featureList.next() )
+  {
+    vpBasicFeature * sPTR = featureList.value() ;
+    const unsigned int select = featureSelectionList.value() ;
 
-      /* Get s. */
-      matrixTmp = sPTR->interaction(select);
-      rowMatrixTmp = matrixTmp .getRows();
-      colMatrixTmp = matrixTmp .getCols();
+    /* Get s. */
+    matrixTmp = sPTR->interaction(select);
+    rowMatrixTmp = matrixTmp .getRows();
+    colMatrixTmp = matrixTmp .getCols();
 
-      /* Check the matrix L size, and realloc if needed. */
-      while (rowMatrixTmp + cursorL > rowL)
-	{ rowL *= 2; L .resize (rowL,colL,false); vpDEBUG_TRACE(15,"Realloc!"); }
+    /* Check the matrix L size, and realloc if needed. */
+    while (rowMatrixTmp + cursorL > rowL)
+    { rowL *= 2; L .resize (rowL,colL,false); vpDEBUG_TRACE(15,"Realloc!"); }
 
-      /* Copy the temporarily matrix into L. */
-      for (unsigned int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
-	for (unsigned int j = 0; j <  colMatrixTmp; ++j)
-	  { L[cursorL][j] = matrixTmp[k][j]; }
+    /* Copy the temporarily matrix into L. */
+    for (unsigned int k = 0; k < rowMatrixTmp; ++k, ++cursorL)
+      for (unsigned int j = 0; j <  colMatrixTmp; ++j)
+      { L[cursorL][j] = matrixTmp[k][j]; }
 
-    }
+  }
 
   L.resize (cursorL,colL,false);
 
@@ -587,85 +587,85 @@ computeInteractionMatrixFromList  (/*const*/ vpList<vpBasicFeature *> & featureL
   \return Ls
 */
 vpMatrix
-vpServo::computeInteractionMatrix()
+    vpServo::computeInteractionMatrix()
 {
 
   try {
 
     switch (interactionMatrixType)
+    {
+    case CURRENT:
       {
-      case CURRENT:
-	{
-	  try
-	    {
-	      computeInteractionMatrixFromList(this ->featureList,
-					       this ->featureSelectionList,
-					       L);
-	      dim_task = L.getRows() ;
-	      interactionMatrixComputed = true ;
-	    }
+        try
+        {
+          computeInteractionMatrixFromList(this ->featureList,
+                                           this ->featureSelectionList,
+                                           L);
+          dim_task = L.getRows() ;
+          interactionMatrixComputed = true ;
+        }
 
-	  catch(vpException me)
-	    {
-	      vpERROR_TRACE("Error caught") ;
-	      throw ;
-	    }
-	}
-	break ;
-      case DESIRED:
-	{
-	  try
-	    {
-              if (interactionMatrixComputed == false || forceInteractionMatrixComputation == true)
-              {
-	        computeInteractionMatrixFromList(this ->desiredFeatureList,
-		  			      this ->featureSelectionList, L);
-
-	        dim_task = L.getRows() ;
-	        interactionMatrixComputed = true ;
-              }
-
-	    }
-	  catch(vpException me)
-	    {
-	      vpERROR_TRACE("Error caught") ;
-	      throw ;
-	    }
-	}
-	break ;
-      case MEAN:
-	{
-	  vpMatrix Lstar (L.getRows(), L.getCols());
-	  try
-	    {
-	      computeInteractionMatrixFromList(this ->featureList,
-					      this ->featureSelectionList, L);
-	      computeInteractionMatrixFromList(this ->desiredFeatureList,
-					      this ->featureSelectionList, Lstar);
-	    }
-	  catch(vpException me)
-	    {
-	      vpERROR_TRACE("Error caught") ;
-	      throw ;
-	    }
-	  L = (L+Lstar)/2;
-
-	  dim_task = L.getRows() ;
-	  interactionMatrixComputed = true ;
-	}
-	break ;
-      case USER_DEFINED:
-	// dim_task = L.getRows() ;
-	interactionMatrixComputed = false ;
-	break;
+        catch(vpException me)
+        {
+          vpERROR_TRACE("Error caught") ;
+          throw ;
+        }
       }
+      break ;
+    case DESIRED:
+      {
+        try
+        {
+          if (interactionMatrixComputed == false || forceInteractionMatrixComputation == true)
+          {
+            computeInteractionMatrixFromList(this ->desiredFeatureList,
+                                             this ->featureSelectionList, L);
+
+            dim_task = L.getRows() ;
+            interactionMatrixComputed = true ;
+          }
+
+        }
+        catch(vpException me)
+        {
+          vpERROR_TRACE("Error caught") ;
+          throw ;
+        }
+      }
+      break ;
+    case MEAN:
+      {
+        vpMatrix Lstar (L.getRows(), L.getCols());
+        try
+        {
+          computeInteractionMatrixFromList(this ->featureList,
+                                           this ->featureSelectionList, L);
+          computeInteractionMatrixFromList(this ->desiredFeatureList,
+                                           this ->featureSelectionList, Lstar);
+        }
+        catch(vpException me)
+        {
+          vpERROR_TRACE("Error caught") ;
+          throw ;
+        }
+        L = (L+Lstar)/2;
+
+        dim_task = L.getRows() ;
+        interactionMatrixComputed = true ;
+      }
+      break ;
+    case USER_DEFINED:
+      // dim_task = L.getRows() ;
+      interactionMatrixComputed = false ;
+      break;
+    }
 
   }
   catch(vpException me)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
   return L ;
 }
 
@@ -679,20 +679,20 @@ vpServo::computeInteractionMatrix()
 
 */
 vpColVector
-vpServo::computeError()
+    vpServo::computeError()
 {
   if (featureList.empty())
-    {
-      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
-      throw(vpServoException(vpServoException::noFeatureError,
-			     "feature list empty, cannot compute Ls")) ;
-    }
+  {
+    vpERROR_TRACE("feature list empty, cannot compute Ls") ;
+    throw(vpServoException(vpServoException::noFeatureError,
+                           "feature list empty, cannot compute Ls")) ;
+  }
   if (desiredFeatureList.empty())
-    {
-      vpERROR_TRACE("feature list empty, cannot compute Ls") ;
-      throw(vpServoException(vpServoException::noFeatureError,
-			     "feature list empty, cannot compute Ls")) ;
-    }
+  {
+    vpERROR_TRACE("feature list empty, cannot compute Ls") ;
+    throw(vpServoException(vpServoException::noFeatureError,
+                           "feature list empty, cannot compute Ls")) ;
+  }
 
   try {
     vpBasicFeature *current_s ;
@@ -733,43 +733,43 @@ vpServo::computeError()
 
     /* For each cell of the list, copy value of s, s_star and error. */
     for (featureList.front(),
-	   desiredFeatureList.front(),
-	   featureSelectionList.front() ;
+         desiredFeatureList.front(),
+         featureSelectionList.front() ;
 
-	 !featureList.outside() ;
+    !featureList.outside() ;
 
-	 featureList.next(),
-	   desiredFeatureList.next(),
-	   featureSelectionList.next() )
-      {
-	current_s  = featureList.value() ;
-	desired_s  = desiredFeatureList.value() ;
-	unsigned int select = featureSelectionList.value() ;
+    featureList.next(),
+    desiredFeatureList.next(),
+    featureSelectionList.next() )
+    {
+      current_s  = featureList.value() ;
+      desired_s  = desiredFeatureList.value() ;
+      unsigned int select = featureSelectionList.value() ;
 
-	/* Get s, and store it in the s vector. */
-	vectTmp = current_s->get_s(select);
-	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorS > dimS)
-	  { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
-	for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
+      /* Get s, and store it in the s vector. */
+      vectTmp = current_s->get_s(select);
+      dimVectTmp = vectTmp .getRows();
+      while (dimVectTmp + cursorS > dimS)
+      { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
+      for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }
 
 
-	/* Get s_star, and store it in the s vector. */
-	vectTmp = desired_s->get_s(select);
-	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorSStar > dimSStar)
-	  { dimSStar *= 2; sStar .resize (dimSStar,false);  }
-	for (unsigned int k = 0; k <  dimVectTmp; ++k)
-	  { sStar[cursorSStar++] = vectTmp[k]; }
+      /* Get s_star, and store it in the s vector. */
+      vectTmp = desired_s->get_s(select);
+      dimVectTmp = vectTmp .getRows();
+      while (dimVectTmp + cursorSStar > dimSStar)
+      { dimSStar *= 2; sStar .resize (dimSStar,false);  }
+      for (unsigned int k = 0; k <  dimVectTmp; ++k)
+      { sStar[cursorSStar++] = vectTmp[k]; }
 
-	/* Get error, and store it in the s vector. */
-	vectTmp = current_s->error(*desired_s, select) ;
-	dimVectTmp = vectTmp .getRows();
-	while (dimVectTmp + cursorError > dimError)
-	  { dimError *= 2; error .resize (dimError,false);  }
-	for (unsigned int k = 0; k <  dimVectTmp; ++k)
-	  { error[cursorError++] = vectTmp[k]; }
-      }
+      /* Get error, and store it in the s vector. */
+      vectTmp = current_s->error(*desired_s, select) ;
+      dimVectTmp = vectTmp .getRows();
+      while (dimVectTmp + cursorError > dimError)
+      { dimError *= 2; error .resize (dimError,false);  }
+      for (unsigned int k = 0; k <  dimVectTmp; ++k)
+      { error[cursorError++] = vectTmp[k]; }
+    }
 
     /* If too much memory has been allocated, realloc. */
     s .resize(cursorS,false);
@@ -781,84 +781,84 @@ vpServo::computeError()
     errorComputed = true ;
   }
   catch(vpException me)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
+  {
+    vpERROR_TRACE("Error caught") ;
+    throw ;
+  }
   catch(...)
-    {
-      throw ;
-    }
+  {
+    throw ;
+  }
   return error ;
 }
 
 bool
-vpServo::testInitialization()
+    vpServo::testInitialization()
 {
   switch (servoType)
-    {
-    case NONE:
-      vpERROR_TRACE("No control law have been yet defined") ;
-      throw(vpServoException(vpServoException::servoError,
-			     "No control law have been yet defined")) ;
-      break ;
-    case EYEINHAND_CAMERA:
-      return true ;
-      break ;
-    case EYEINHAND_L_cVe_eJe:
-    case  EYETOHAND_L_cVe_eJe:
-      if (!init_cVe) vpERROR_TRACE("cVe not initialized") ;
-      if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
-      return (init_cVe && init_eJe) ;
-      break ;
-    case  EYETOHAND_L_cVf_fVe_eJe:
-      if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
-      if (!init_fJe) vpERROR_TRACE("fVe not initialized") ;
-      if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
-      return (init_cVf && init_fVe && init_eJe) ;
-      break ;
+  {
+  case NONE:
+    vpERROR_TRACE("No control law have been yet defined") ;
+    throw(vpServoException(vpServoException::servoError,
+                           "No control law have been yet defined")) ;
+    break ;
+  case EYEINHAND_CAMERA:
+    return true ;
+    break ;
+  case EYEINHAND_L_cVe_eJe:
+  case  EYETOHAND_L_cVe_eJe:
+    if (!init_cVe) vpERROR_TRACE("cVe not initialized") ;
+    if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
+    return (init_cVe && init_eJe) ;
+    break ;
+  case  EYETOHAND_L_cVf_fVe_eJe:
+    if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
+    if (!init_fJe) vpERROR_TRACE("fVe not initialized") ;
+    if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
+    return (init_cVf && init_fVe && init_eJe) ;
+    break ;
 
-    case EYETOHAND_L_cVf_fJe    :
-      if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
-      if (!init_fJe) vpERROR_TRACE("fJe not initialized") ;
-      return (init_cVf && init_fJe) ;
-      break ;
-    }
+  case EYETOHAND_L_cVf_fJe    :
+    if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
+    if (!init_fJe) vpERROR_TRACE("fJe not initialized") ;
+    return (init_cVf && init_fJe) ;
+    break ;
+  }
 
   return false ;
 }
 bool
-vpServo::testUpdated()
+    vpServo::testUpdated()
 {
   switch (servoType)
-    {
-    case NONE:
-      vpERROR_TRACE("No control law have been yet defined") ;
-      throw(vpServoException(vpServoException::servoError,
-			     "No control law have been yet defined")) ;
-      break ;
-    case EYEINHAND_CAMERA:
-      return true ;
-    case EYEINHAND_L_cVe_eJe:
-      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
-      return (init_eJe) ;
-      break ;
-    case  EYETOHAND_L_cVe_eJe:
-      if (!init_cVe) vpERROR_TRACE("cVe not updated") ;
-      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
-      return (init_cVe && init_eJe) ;
-      break ;
-    case  EYETOHAND_L_cVf_fVe_eJe:
-      if (!init_fVe) vpERROR_TRACE("fVe not updated") ;
-      if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
-      return (init_fVe && init_eJe) ;
-      break ;
+  {
+  case NONE:
+    vpERROR_TRACE("No control law have been yet defined") ;
+    throw(vpServoException(vpServoException::servoError,
+                           "No control law have been yet defined")) ;
+    break ;
+  case EYEINHAND_CAMERA:
+    return true ;
+  case EYEINHAND_L_cVe_eJe:
+    if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
+    return (init_eJe) ;
+    break ;
+  case  EYETOHAND_L_cVe_eJe:
+    if (!init_cVe) vpERROR_TRACE("cVe not updated") ;
+    if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
+    return (init_cVe && init_eJe) ;
+    break ;
+  case  EYETOHAND_L_cVf_fVe_eJe:
+    if (!init_fVe) vpERROR_TRACE("fVe not updated") ;
+    if (!init_eJe) vpERROR_TRACE("eJe not updated") ;
+    return (init_fVe && init_eJe) ;
+    break ;
 
-    case EYETOHAND_L_cVf_fJe    :
-      if (!init_fJe) vpERROR_TRACE("fJe not updated") ;
-      return (init_fJe) ;
-      break ;
-    }
+  case EYETOHAND_L_cVf_fJe    :
+    if (!init_fJe) vpERROR_TRACE("fJe not updated") ;
+    return (init_fJe) ;
+    break ;
+  }
 
   return false ;
 }
@@ -880,105 +880,108 @@ vpServo::testUpdated()
   or eye-to-hand (see vpServo::setServo method)
 */
 vpColVector
-vpServo::computeControlLaw()
+    vpServo::computeControlLaw()
 {
   static int iteration =0;
 
   try
-    {
-      vpVelocityTwistMatrix cVa ; // Twist transformation matrix
-      vpMatrix aJe ;      // Jacobian
+  {
+    vpVelocityTwistMatrix cVa ; // Twist transformation matrix
+    vpMatrix aJe ;      // Jacobian
 
-      if (iteration==0)
-	{
-	  if (testInitialization() == true)
+    if (iteration==0)
+    {
+      if (testInitialization() == true)
 	    {
 	    }
-	  else
+      else
 	    {
 	      vpERROR_TRACE("All the matrices are not correctly initialized") ;
 	      throw(vpServoException(vpServoException::servoError,
-				     "Cannot compute control law "
-				     "All the matrices are not correctly"
-				     "initialized")) ;
+                               "Cannot compute control law "
+                               "All the matrices are not correctly"
+                               "initialized")) ;
 	    }
-	}
-      if (testUpdated() == true)
-	{
-	  //  os << " Init OK " << std::endl ;
-	}
-      else
-	{
-	  vpERROR_TRACE("All the matrices are not correctly updated") ;
-	}
+    }
+    if (testUpdated() == true)
+    {
+      //  os << " Init OK " << std::endl ;
+    }
+    else
+    {
+      vpERROR_TRACE("All the matrices are not correctly updated") ;
+    }
 
-      // test if all the required initialization have been done
-      switch (servoType)
-	{
-	case NONE :
-	  vpERROR_TRACE("No control law have been yet defined") ;
-	  throw(vpServoException(vpServoException::servoError,
-				 "No control law have been yet defined")) ;
-	  break ;
-	case EYEINHAND_CAMERA:
-	case EYEINHAND_L_cVe_eJe:
-	case EYETOHAND_L_cVe_eJe:
+    // test if all the required initialization have been done
+    switch (servoType)
+    {
+    case NONE :
+      vpERROR_TRACE("No control law have been yet defined") ;
+      throw(vpServoException(vpServoException::servoError,
+                             "No control law have been yet defined")) ;
+      break ;
+    case EYEINHAND_CAMERA:
+    case EYEINHAND_L_cVe_eJe:
+    case EYETOHAND_L_cVe_eJe:
 
-	  cVa = cVe ;
-	  aJe = eJe ;
+      cVa = cVe ;
+      aJe = eJe ;
 
-	  init_cVe = false ;
-	  init_eJe = false ;
-	  break ;
-	case  EYETOHAND_L_cVf_fVe_eJe:
-	  cVa = cVf*fVe ;
-	  aJe = eJe ;
-	  init_fVe = false ;
-	  init_eJe = false ;
-	  break ;
-	case EYETOHAND_L_cVf_fJe    :
-	  cVa = cVf ;
-	  aJe = fJe ;
-	  init_fJe = false ;
-	  break ;
-	}
+      init_cVe = false ;
+      init_eJe = false ;
+      break ;
+    case  EYETOHAND_L_cVf_fVe_eJe:
+      cVa = cVf*fVe ;
+      aJe = eJe ;
+      init_fVe = false ;
+      init_eJe = false ;
+      break ;
+    case EYETOHAND_L_cVf_fJe    :
+      cVa = cVf ;
+      aJe = fJe ;
+      init_fJe = false ;
+      break ;
+    }
 
-      computeInteractionMatrix() ;
-      computeError() ;
+    computeInteractionMatrix() ;
+    computeError() ;
 
-      // compute  task Jacobian
-      J1 = L*cVa*aJe ;
+    // compute  task Jacobian
+    J1 = L*cVa*aJe ;
 
-      // handle the eye-in-hand eye-to-hand case
-      J1 *= signInteractionMatrix ;
+    // handle the eye-in-hand eye-to-hand case
+    J1 *= signInteractionMatrix ;
 
-      // pseudo inverse of the task Jacobian
-      // and rank of the task Jacobian
-      // the image of J1 is also computed to allows the computation
-      // of the projection operator
-      vpMatrix imJ1t, imJ1 ;
-      bool imageComputed = false ;
+    // pseudo inverse of the task Jacobian
+    // and rank of the task Jacobian
+    // the image of J1 is also computed to allows the computation
+    // of the projection operator
+    vpMatrix imJ1t, imJ1 ;
+    bool imageComputed = false ;
 
-      if (inversionType==PSEUDO_INVERSE)
-	{
-	  vpColVector sv ;
-	  rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t) ;
+    if (inversionType==PSEUDO_INVERSE)
+    {
+      vpColVector sv ;
+      rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t) ;
 
-	  imageComputed = true ;
-	}
-      else
-	J1p = J1.t() ;
+      imageComputed = true ;
+    }
+    else
+      J1p = J1.t() ;
 
-      if (rankJ1 == L.getCols())
-	{
-	  /* if no degrees of freedom remains (rank J1 = ndof)
+    if (rankJ1 == L.getCols())
+    {
+      /* if no degrees of freedom remains (rank J1 = ndof)
 	     WpW = I, multiply by WpW is useless
 	  */
-	  e1 = J1p*error ;// primary task
-	}
-      else
-	{
-	  if (imageComputed!=true)
+      e1 = J1p*error ;// primary task
+
+      WpW.resize(J1.getCols(), J1.getCols()) ;
+      WpW.setIdentity() ;
+    }
+    else
+    {
+      if (imageComputed!=true)
 	    {
 	      vpMatrix Jtmp ;
 	      vpColVector sv ;
@@ -987,34 +990,40 @@ vpServo::computeControlLaw()
 	      rankJ1 = J1.pseudoInverse(Jtmp,sv, 1e-6, imJ1, imJ1t) ;
 	      imageComputed = true ;
 	    }
-	  WpW = imJ1t*imJ1t.t() ;
+      WpW = imJ1t*imJ1t.t() ;
 
 #ifdef DEBUG
-	  std::cout << "rank J1 " << rankJ1 <<std::endl ;
-	  std::cout << "imJ1t"<<std::endl  << imJ1t ;
-	  std::cout << "imJ1"<<std::endl  << imJ1 ;
+      std::cout << "rank J1 " << rankJ1 <<std::endl ;
+      std::cout << "imJ1t"<<std::endl  << imJ1t ;
+      std::cout << "imJ1"<<std::endl  << imJ1 ;
 
-	  std::cout << "WpW" <<std::endl <<WpW  ;
-	  std::cout << "J1" <<std::endl <<J1  ;
-	  std::cout << "J1p" <<std::endl <<J1p  ;
+      std::cout << "WpW" <<std::endl <<WpW  ;
+      std::cout << "J1" <<std::endl <<J1  ;
+      std::cout << "J1p" <<std::endl <<J1p  ;
 #endif
-	  e1 = WpW*J1p*error ;
-	}
-      e = - lambda(e1) * e1 ;
+      e1 = WpW*J1p*error ;
+    }
+    e = - lambda(e1) * e1 ;
 
-    }
+    vpMatrix I ;
+
+    I.resize(J1.getCols(),J1.getCols()) ;
+    I.setIdentity() ;
+
+    I_WpW = (I - WpW) ;
+  }
   catch(vpMatrixException me)
-    {
-      vpERROR_TRACE("Caught a matrix related error") ;
-      std::cout << me << std::endl ;
-      throw me;
-    }
+  {
+    vpERROR_TRACE("Caught a matrix related error") ;
+    std::cout << me << std::endl ;
+    throw me;
+  }
   catch(vpException me)
-    {
-      vpERROR_TRACE("Error caught") ;
-      std::cout << me << std::endl ;
-      throw me ;
-    }
+  {
+    vpERROR_TRACE("Error caught") ;
+    std::cout << me << std::endl ;
+    throw me ;
+  }
 
   iteration++ ;
   return e ;
@@ -1022,8 +1031,8 @@ vpServo::computeControlLaw()
 
 
 /*!
-  Compute the secondary task according to the projection operator,
-  see equation (7) of the IEEE RA magazine, dec 2005 paper.
+  Compute the secondary task according to the projection operator.
+  See equation (7) of the IEEE RA magazine, dec 2005 paper.
 
   \warning computeControlLaw() must be call prior to this function.
 
@@ -1035,41 +1044,43 @@ vpServo::computeControlLaw()
   \f[
   -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
   \f]
-  which is computed using the vpServo::computeControlLaw method
+  which is computed using the computeControlLaw() method.
 
-  \warning the projection operator \f$ \bf W^+W \f$ is computed in
-  vpServo::computeControlLaw which must be called prior to this function.
+  \warning The projection operator \f$ \bf W^+W \f$ is computed in
+  computeControlLaw() which must be called prior to this function.
 
-  \sa vpServo::computeControlLaw
+  \sa computeControlLaw()
 */
 vpColVector
-vpServo::secondaryTask(vpColVector &de2dt)
+    vpServo::secondaryTask(vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
-    {
-      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
-      throw(vpServoException(vpServoException::noDofFree,
-			     "no degree of freedom is free, cannot use secondary task")) ;
-    }
+  {
+    vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+    throw(vpServoException(vpServoException::noDofFree,
+                           "no degree of freedom is free, cannot use secondary task")) ;
+  }
   else
-    {
-      vpColVector sec ;
-      vpMatrix I ;
+  {
+    vpColVector sec ;
+#if 0
+    // computed in computeControlLaw()
+    vpMatrix I ;
 
-      I.resize(J1.getCols(),J1.getCols()) ;
-      I.setIdentity() ;
-      I_WpW = (I - WpW) ;
+    I.resize(J1.getCols(),J1.getCols()) ;
+    I.setIdentity() ;
+    I_WpW = (I - WpW) ;
+#endif
+    //    std::cout << "I-WpW" << std::endl << I_WpW <<std::endl ;
+    sec = I_WpW*de2dt ;
 
-      //    std::cout << "I-WpW" << std::endl << I_WpW <<std::endl ;
-      sec = I_WpW*de2dt ;
-
-      return sec ;
-    }
+    return sec ;
+  }
 }
 
 /*!
   Compute the secondary task according to the projection operator.
-  see equation (7) of the IEEE RA magazine, dec 2005 paper.
+  See equation (7) of the IEEE RA magazine, dec 2005 paper.
 
   \warning computeControlLaw() must be call prior to this function.
 
@@ -1081,38 +1092,41 @@ vpServo::secondaryTask(vpColVector &de2dt)
   \f[
   -\lambda {\bf W^+W\widehat J_s^+(s-s^*)}
   \f]
-  which is computed using the vpServo::computeControlLaw method
+  which is computed using computeControlLaw() method
 
-  \warning the projection operator \f$ \bf W^+W \f$ is computed in
-  vpServo::computeControlLaw which must be called prior to this function.
+  \warning The projection operator \f$ \bf W^+W \f$ is computed in
+  computeControlLaw() which must be called prior to this function.
 
-  \sa vpServo::computeControlLaw
+  \sa computeControlLaw()
 */
 vpColVector
-vpServo::secondaryTask(vpColVector &e2, vpColVector &de2dt)
+    vpServo::secondaryTask(vpColVector &e2, vpColVector &de2dt)
 {
   if (rankJ1 == L.getCols())
-    {
-      vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
-      throw(vpServoException(vpServoException::noDofFree,
-			     "no degree of freedom is free, cannot use secondary task")) ;
-    }
+  {
+    vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
+    throw(vpServoException(vpServoException::noDofFree,
+                           "no degree of freedom is free, cannot use secondary task")) ;
+  }
   else
-    {
-      vpColVector sec ;
-      vpMatrix I ;
+  {
+    vpColVector sec ;
+#if 0
+    // computed in computeControlLaw()
+    vpMatrix I ;
 
-      I.resize(J1.getCols(),J1.getCols()) ;
-      I.setIdentity() ;
+    I.resize(J1.getCols(),J1.getCols()) ;
+    I.setIdentity() ;
 
-      I_WpW = (I - WpW) ;
+    I_WpW = (I - WpW) ;
+#endif
 
-      // To be coherent with the primary task the gain must be the same between
-      // primary and secondary task.
-      sec = -lambda(e1) *I_WpW*e2 + I_WpW *de2dt ;
+    // To be coherent with the primary task the gain must be the same between
+    // primary and secondary task.
+    sec = -lambda(e1) *I_WpW*e2 + I_WpW *de2dt ;
 
-      return sec ;
-    }
+    return sec ;
+  }
 }
 
 
