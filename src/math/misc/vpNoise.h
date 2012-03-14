@@ -66,9 +66,7 @@
 
   The algorithms and notations used are described in
   Random Number Generation and Monte Carlo Methods
-  James E. Gentle
-
-  Springer 1998
+  James E. Gentle, Springer 1998
 
  */
 class VISP_EXPORT vpUniRand
@@ -112,10 +110,25 @@ public:
   \ingroup Random
   \brief Class for generating random number with normal probability density.
 
-  The algorithms and notations used are described in
-
-  Random Number Generation and Monte Carlo Methods
+  The algorithms and notations used are described in "Random Number Generation and Monte Carlo Methods",
   James E. Gentle, Springer 1998
+
+  The code below shows how to use the random generator.
+
+  \code
+#include <iostream>
+
+#include <visp/vpNoise.h>
+
+int main()
+{
+  for(int i=0; i< 10; i++) {
+    vpGaussRand noise(0.5, 0);
+    std::cout << "noise " << i << ": " << noise() << std::endl;
+  }
+  return 0;
+}
+  \endcode
  */
 class vpGaussRand : public vpUniRand
 {
