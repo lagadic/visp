@@ -295,6 +295,22 @@ public:
   }
 
   /*!
+    Return the projection operator \f${\bf I}-{\bf W}^+{\bf W}\f$. This operator is updated
+    after a call of computeControlLaw().
+
+\code
+  vpServo task;
+  ...
+  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix I_WpW = task.getI_WpW();          // Get the projection operator
+\endcode
+    \sa getWpW()
+  */
+  inline vpMatrix getI_WpW() const
+  {
+    return I_WpW;
+  }
+  /*!
     Return the visual servo type.
   */
   inline vpServoType getServoType() const
@@ -349,6 +365,23 @@ public:
   {
     return rankJ1;
   }
+  /*!
+    Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is updated
+    after a call of computeControlLaw().
+
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix  WpW = task.getWpW();            // Get the projection operator
+\endcode
+    \sa getI_WpW()
+  */
+  inline vpMatrix getWpW() const
+  {
+    return WpW;
+  }
+
 
   void print(const vpServo::vpServoPrintType display_level=ALL,
 	     std::ostream &os = std::cout) ;
