@@ -122,8 +122,8 @@ public:
 
 int main()
 {
+  vpGaussRand noise(0.5, 0);
   for(int i=0; i< 10; i++) {
-    vpGaussRand noise(0.5, 0);
     std::cout << "noise " << i << ": " << noise() << std::endl;
   }
   return 0;
