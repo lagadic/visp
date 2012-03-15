@@ -332,7 +332,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
       sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11
       vpDisplay::displayCharString(I,vpImagePoint(yorg + 3*epsi,x),valeur, vpColor::black);
-#elif defined VISP_HAVE_OPENCV
+#elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV)
       vpDisplay::displayCharString(I,vpImagePoint(yorg + epsi,x),valeur, vpColor::black);
 #endif
     }
@@ -364,7 +364,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11    
     vpDisplay::displayCharString(I,vpImagePoint(y+epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
-#elif defined VISP_HAVE_OPENCV
+#elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV)
     vpDisplay::displayCharString(I,vpImagePoint(y-epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
 #endif
   }
@@ -373,7 +373,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11   
     vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
-#elif defined VISP_HAVE_OPENCV
+#elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV)
     vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
 #endif
   }
@@ -405,7 +405,7 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 #if defined VISP_HAVE_X11   
   vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
-#elif defined VISP_HAVE_OPENCV
+#elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV)
   vpDisplay::displayCharString(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
   vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
 #endif
