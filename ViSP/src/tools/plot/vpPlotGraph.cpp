@@ -342,7 +342,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11
     vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-6*epsj),valeur, vpColor::black);
-#elif defined VISP_HAVE_OPENCV
+#elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV)
     vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-10*epsj),valeur, vpColor::black);
 #endif
   }
