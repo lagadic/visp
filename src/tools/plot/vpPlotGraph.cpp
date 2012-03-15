@@ -395,7 +395,7 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
 
 void
 vpPlotGraph::displayUnit (vpImage<unsigned char> &
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined (VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
                           I
 #endif
                           )
