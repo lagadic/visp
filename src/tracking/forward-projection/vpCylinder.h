@@ -58,70 +58,141 @@
   \class vpCylinder
   \ingroup TrackingFeature GeometryFeature
   \brief Class that defines what is a cylinder.
+
+  A cylinder may be represented by the equation:
+  \f$ (X - X_0)^2 + (Y - Y_0)^2 + (Z - Z_0)^2 - (A \; X + B \; Y + C \; Z)^2 - R^2 = 0 \f$
+  with
+
+  \f$
+  \left\{ \begin{array}{l}
+  A^2 + B^2 + C^2 = 1  \\
+  A \; X_0 + B \; Y_0 + C \; Z_0 = 0
+  \end{array} \right.
+  \f$
+
+  where \f$R\f$ is the radius of the cylinder, \f$A, B, C\f$ are the coordinates of
+  its direction vector and \f$X_0, Y_0, Z_0\f$ are the coordinates
+  of the nearest point belonging to the cylinder axis from the projection center.
+
+  Setting the cylinder parameters is achieved throw the constructors with parameters
+  or the setWorldCoordinates() methods.
+
+  Considering the set of parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
+  expressed in the world frame, cylinder coordinates expressed in the camera
+  frame are obtained using changeFrame().
+
+  The projection of a cylinder on the image plane is (for
+  non-degenerated cases) a set of two straight lines with equation:
+
+  \f$
+  \left\{ \begin{array}{lll}
+  x \;\cos\theta_1 + x \;\sin\theta_1 - \rho_1 = 0 \\
+  y \;\cos\theta_2 + y \;\sin\theta_2 - \rho_2 = 0
+  \end{array} \right.
+  \f$
+
+  The projection is achieved using projection() methods. The methods getRho1(), getTheta1() and
+  getRho2(), getTheta2() allow to access to the projected line parameters.
 */
 class VISP_EXPORT vpCylinder : public vpForwardProjection
 {
 public:
-  void init() ;
+  typedef enum
+  {
+    line1,
+    line2
+  } vpLineCylinderType;
+
   vpCylinder() ;
+  vpCylinder(const vpColVector& oP) ;
+  vpCylinder(const double A, const double B,
+             const double C,
+             const double X0, const double Y0,
+             const double Z0,
+             const double R) ;
   virtual ~vpCylinder() ;
 
-public:
-  typedef enum
-    {
-      line1,
-      line2
-    } vpLineCylinderType;
-
-  vpCylinder(const vpColVector& oP) ;
-  vpCylinder(const double A, const double B1,
-	     const double C,
-	     const double X0, const double Y0,
-	     const double Z0,
-	     const double R) ;
-
-
-  void setWorldCoordinates(const vpColVector& oP) ;
-  void setWorldCoordinates(const double A, const double B1,
-			   const double C,
-			   const double X0, const double Y0,
-			   const double Z0,
-			   const double R) ;
-
-  double getRho1()  const  { return p[0] ; }
-  double getTheta1() const  { return p[1] ; }
-
-  double getRho2()  const  { return p[2] ; }
-  double getTheta2() const { return p[3] ; }
-
-  double getA() const { return cP[0] ; }
-  double getB()  const{ return cP[1] ; }
-  double getC() const { return cP[2] ; }
-
-  double getX() const { return cP[3] ; }
-  double getY() const { return cP[4] ; }
-  double getZ()  const{ return cP[5] ; }
-
-  double getR() const { return cP[6] ; }
-
-
-  void projection() ;
-  void projection(const vpColVector &cP, vpColVector &p) ;
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
   void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
-
   void display(const vpImage<unsigned char> &I,
-	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green,
-	       const unsigned int thickness=1) ;
+               const vpCameraParameters &cam,
+               const vpColor color=vpColor::green,
+               const unsigned int thickness=1) ;
   void display(const vpImage<unsigned char> &I,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green,
-	       const unsigned int thickness=1) ;
+               const vpHomogeneousMatrix &cMo,
+               const vpCameraParameters &cam,
+               const vpColor color=vpColor::green,
+               const unsigned int thickness=1) ;
 
   vpCylinder *duplicate() const ;
+
+  /*!
+    Return the \f$\rho_1\f$ parameter of the line corresponding to the
+    projection of the cylinder in the image plane.
+    \sa getTheta1()
+    */
+  double getRho1()   const { return p[0] ; }
+  /*!
+    Return the \f$\theta_1\f$ parameter of the line corresponding to the
+    projection of the cylinder in the image plane.
+    \sa getRho1()
+    */
+  double getTheta1() const { return p[1] ; }
+
+  /*!
+    Return the \f$\rho_2\f$ parameter of the line corresponding to the
+    projection of the cylinder in the image plane.
+    \sa getTheta2()
+    */
+  double getRho2()   const { return p[2] ; }
+  /*!
+    Return the \f$\theta_2\f$ parameter of the line corresponding to the
+    projection of the cylinder in the image plane.
+    \sa getRho2()
+    */
+  double getTheta2() const { return p[3] ; }
+
+  /*!
+    Return cylinder \f$A\f$ parameter expressed in the camera frame.
+  */
+  double getA() const { return cP[0] ; }
+  /*!
+    Return cylinder \f$B\f$ parameter expressed in the camera frame.
+  */
+  double getB() const { return cP[1] ; }
+  /*!
+    Return cylinder \f$C\f$ parameter expressed in the camera frame.
+  */
+  double getC() const { return cP[2] ; }
+  /*!
+    Return cylinder \f$X_0\f$ parameter expressed in the camera frame.
+  */
+  double getX() const { return cP[3] ; }
+  /*!
+    Return cylinder \f$Y_0\f$ parameter expressed in the camera frame.
+  */
+  double getY() const { return cP[4] ; }
+  /*!
+    Return cylinder \f$Z_0\f$ parameter expressed in the camera frame.
+  */
+  double getZ() const { return cP[5] ; }
+  /*!
+    Return cylinder \f$R\f$ parameter corresponding to the cylinder radius.
+  */
+  double getR() const { return cP[6] ; }
+
+  void init() ;
+
+  void projection() ;
+  void projection(const vpColVector &cP, vpColVector &p) ;
+
+  void setWorldCoordinates(const vpColVector& oP) ;
+  void setWorldCoordinates(const double A, const double B,
+                           const double C,
+                           const double X0, const double Y0,
+                           const double Z0,
+                           const double R) ;
 } ;
 
 

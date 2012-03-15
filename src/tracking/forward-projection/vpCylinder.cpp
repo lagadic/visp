@@ -54,18 +54,44 @@ vpCylinder::init()
   p.resize(4) ;
 }
 
+/*!
+  Set the cylinder parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
+  expressed in the world frame.
+
+  \param oP : Vector of parameters \f$^{o}{\bf P}\f$.
+
+  \code
+  vpCylinder cylinder;
+  double A, B, C, X0, Y0, Z0, R;
+  ...
+  vpColVector oP(7);
+  oP[0] = A;
+  ...
+  oP[3] = X0;
+  ...
+  oP[6] = R;
+  cylinder.setWorldCoordinates(oP);
+  \endcode
+*/
 void
 vpCylinder::setWorldCoordinates(const vpColVector& oP)
 {
   this->oP = oP ;
 }
 
+/*!
+  Set the cylinder parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
+  expressed in the world frame.
+
+  \param A,B,C,X0,Y0,Z0,R : Cylinder parameters \f$^{o}{\bf P}\f$.
+
+*/
 void
 vpCylinder::setWorldCoordinates(const double A, const double B,
-			       const double C,
-			       const double X0, const double Y0,
-			       const double Z0,
-			       const double R)
+                                const double C,
+                                const double X0, const double Y0,
+                                const double Z0,
+                                const double R)
 {
   oP[0] = A ;
   oP[1] = B ;
@@ -77,37 +103,88 @@ vpCylinder::setWorldCoordinates(const double A, const double B,
 }
 
 
-
+/*!
+  Default constructor.
+*/
 vpCylinder::vpCylinder()
 {
   init() ;
 }
 
+/*!
+  Create and initialize a cylinder with parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
+  expressed in the world frame.
 
+  \param oP : Vector of parameters \f$^{o}{\bf P}\f$.
+
+  \code
+  vpCylinder cylinder;
+  double A, B, C, X0, Y0, Z0, R;
+  ...
+  vpColVector oP(7);
+  oP[0] = A;
+  ...
+  oP[3] = X0;
+  ...
+  oP[6] = R;
+  vpCylinder cylinder(oP);
+  \endcode
+  \sa setWorldCoordinates(const vpColVector&)
+*/
 vpCylinder::vpCylinder(const vpColVector& oP)
 {
   init() ;
   setWorldCoordinates(oP) ;
 }
 
+/*!
+  Create and initialize a cylinder with parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
+  expressed in the world frame.
+
+  \param A,B,C,X0,Y0,Z0,R : Cylinder parameters \f$^{o}{\bf P}\f$.
+
+  \sa setWorldCoordinates(const double,const double,const double,const double,const double,const double,const double)
+*/
 vpCylinder::vpCylinder(const double A, const double B,
-	   const double C,
-	   const double X0, const double Y0,
-	   const double Z0,
-	   const double R)
+                       const double C,
+                       const double X0, const double Y0,
+                       const double Z0,
+                       const double R)
 {
   init() ;
   setWorldCoordinates(A,  B,   C,
-		      X0, Y0, Z0,
-		      R) ;
+                      X0, Y0, Z0,
+                      R) ;
 }
 
+/*!
+  Default constructor.
+  */
 vpCylinder::~vpCylinder()
 {
 }
 
 
-//! perspective projection of the cylinder
+/*!
+  Perspective projection of the cylinder.
+
+  From the parameters of the cylinder in the camera frame, compute the perspective
+  projection of the cylinder in the image plane.
+
+  \code
+  vpCylinder cylinder;
+  vpColVector oP(7);
+  // Initialize oP[] with A,B,C,X0,X0,Z0,R parameters
+  cylinder.setWorldCoordinates(oP); // Set the cylinder world frame parameters
+
+  vpHomogeneousMatrix cMo;          // Camera to world frame transformation
+  cylinder.changeFrame(cMo);        // Update internal cP parameters
+
+  cylinder.projection();            // Compute the perspective projection
+  \endcode
+
+  \sa projection(const vpColVector &, vpColVector &)
+  */
 void
 vpCylinder::projection()
 {
@@ -115,7 +192,31 @@ vpCylinder::projection()
 }
 
 
-//! perspective projection of the cylinder
+/*!
+  Perspective projection of the cylinder.
+
+  From the parameters of the cylinder in the camera frame \f$c{\bf P}\f$, compute the perspective
+  projection of the cylinder in the image plane.
+
+  \param cP [in] : Cylinder parameters in the camera frame.
+  \param p [out] : Parameters of the cylinder in the image plane obtained by perspective projection.
+
+  \code
+  vpCylinder cylinder;
+  vpColVector oP(7);
+  // Initialize oP[] with A,B,C,X0,X0,Z0,R parameters
+  cylinder.setWorldCoordinates(oP); // Set the cylinder world frame parameters
+
+  vpHomogeneousMatrix cMo;          // Camera to world frame transformation
+  vpColVector cP(7);                // Parameters of the cylinder in the camera frame
+  cylinder.changeFrame(cMo, cP);    // Update cP parameters
+
+  vpColVector p(4);                 // Parameters of the cylinder in the image plane
+  cylinder.projection(cP, p);       // Compute the perspective projection and update p
+  \endcode
+
+  \sa projection()
+  */
 void
 vpCylinder::projection(const vpColVector &cP, vpColVector &p)
 {
@@ -124,7 +225,6 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   double co, si, e, x0, y0, z0;
   double A,B,C, X0, Y0, Z0, R ;
   double s, a, b, c;
-
 
   A = cP[0] ;
   B = cP[1] ;
@@ -143,7 +243,6 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   x0 = C*Y0 - B*Z0;
   y0 = A*Z0 - C*X0;
   z0 = B*X0 - A*Y0;
-
 
   // rho1 / theta1
   co = R*a/s-x0;
@@ -166,17 +265,32 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
   while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
 
-//  std::cout << p.t() << std::endl ;
+  //  std::cout << p.t() << std::endl ;
 }
 
-//! perspective projection of the cylinder
+/*!
+  From the cylinder parameters \f$^{o}{\bf P}\f$ expressed in the world frame, compute
+  the cylinder internal parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
+
+  \param cMo : Camera to world frame transformation.
+
+  \sa changeFrame(const vpHomogeneousMatrix &, vpColVector &)
+ */
 void
 vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo,cP) ;
 }
 
-//! perspective projection of the cylinder
+/*!
+  From the cylinder parameters \f$^{o}{\bf P}\f$ expressed in the world frame, compute
+  the cylinder parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
+
+  \param cMo : Camera to world frame transformation.
+  \param cP [out] : Parameters \f$^{c}${\bf P}\f$ expressed in the camera frame.
+
+  \sa changeFrame(const vpHomogeneousMatrix &)
+*/
 void
 vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 {
@@ -207,11 +321,10 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   cP[1] = b ;
   cP[2] = c ;
 
-
   X2 = cMo[0][3] + cMo[0][0]*oX0 + cMo[0][1]*oY0 + cMo[0][2]*oZ0;
   Y2 = cMo[1][3] + cMo[1][0]*oX0 + cMo[1][1]*oY0 + cMo[1][2]*oZ0;
   Z2 = cMo[2][3] + cMo[2][0]*oX0 + cMo[2][1]*oY0 + cMo[2][2]*oZ0;
- // set point coordinates  in camera frame
+  // set point coordinates  in camera frame
   cP[3] = X2 ;
   cP[4] = Y2 ;
   cP[5] = Z2 ;
@@ -275,29 +388,34 @@ vpCylinder *vpCylinder::duplicate() const
   return feature ;
 }
 
+/*!
+  Display the projection of the cylinder in the image as two lines.
+*/
 void
 vpCylinder::display(const vpImage<unsigned char> &I,
-		    const vpHomogeneousMatrix &cMo,
-		    const vpCameraParameters &cam,
-		    const vpColor color,
-		    const unsigned int thickness)
+                    const vpHomogeneousMatrix &cMo,
+                    const vpCameraParameters &cam,
+                    const vpColor color,
+                    const unsigned int thickness)
 {
 
   vpColVector _cP(7), _p(4) ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayCylinder(_p[0],_p[1], _p[2], _p[3],
-				    cam, I, color, thickness) ;
+                                    cam, I, color, thickness) ;
 
 }
 
-
+/*!
+  Display the projection of the cylinder in the image as two lines.
+*/
 void
 vpCylinder::display(const vpImage<unsigned char> &I,
-		    const vpCameraParameters &cam,
-		    const vpColor color,
-		    const unsigned int thickness)
+                    const vpCameraParameters &cam,
+                    const vpColor color,
+                    const unsigned int thickness)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], 
-				    cam, I, color, thickness) ;
+                                    cam, I, color, thickness) ;
 }
