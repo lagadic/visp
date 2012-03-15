@@ -74,7 +74,7 @@ vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, 
   {
     vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
   }
-#if( defined VISP_HAVE_X11 || defined VISP_HAVE_GDI )
+#if( defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) )
   double top;
   double left;
   double width;
