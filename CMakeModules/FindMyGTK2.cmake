@@ -109,6 +109,7 @@ IF(UNIX OR WIN32)
     "C:/GTK/lib/gtk-2.0/include"
     /sw/lib/gtk-2.0/include
     /usr/lib/i386-linux-gnu/gtk-2.0/include
+    /usr/lib/x86_64-linux-gnu/gtk-2.0/include
   )
 
   FIND_PATH( GTK2_gdkpixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h
@@ -212,6 +213,7 @@ IF(UNIX OR WIN32)
   IF(GTK2_gtk_LIBRARY)
   IF(GTK2_glib_LIBRARY)
   IF(GTK2_pango_INCLUDE_PATH)
+  IF(GTK2_gdkconfig_INCLUDE_PATH)
     IF(GTK2_atk_INCLUDE_PATH)
     # Assume that if gtk and glib were found, the other
     # supporting libraries have also been found.
@@ -221,7 +223,8 @@ IF(UNIX OR WIN32)
                            ${GTK2_glib_INCLUDE_PATH} 
                            ${GTK2_glibconfig_INCLUDE_PATH}
 			   ${GTK2_pango_INCLUDE_PATH}
-			   ${GTK2_atk_INCLUDE_PATH})
+			   ${GTK2_atk_INCLUDE_PATH}
+                           ${GTK2_gdkconfig_INCLUDE_PATH})
     IF(GTK2_cairo_INCLUDE_PATH)
       LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_cairo_INCLUDE_PATH} )
     ENDIF(GTK2_cairo_INCLUDE_PATH)
@@ -247,7 +250,9 @@ IF(UNIX OR WIN32)
  ELSE(GTK2_atk_INCLUDE_PATH)
    MESSAGE("Can not find atk")
  ENDIF(GTK2_atk_INCLUDE_PATH)
-
+  ELSE(GTK2_gdkconfig_INCLUDE_PATH)
+       #MESSAGE("Can not find gdkconfig include")
+  ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
   ELSE(GTK2_pango_INCLUDE_PATH)
        #MESSAGE("Can not find pango includes")
   ENDIF(GTK2_pango_INCLUDE_PATH)
