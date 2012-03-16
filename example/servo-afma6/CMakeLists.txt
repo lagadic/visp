@@ -57,6 +57,7 @@ SET (SOURCE
   servoAfma62DhalfCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp
+  servoAfma6Segment2DCamVelocity.cpp
 )
 
 # rule for binary build

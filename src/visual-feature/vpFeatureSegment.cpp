@@ -73,7 +73,7 @@ vpFeatureSegment::init()
 {
   //feature dimension
   dim_s = 4 ;
-  nbParameters = 4;
+  nbParameters = 6;
 
   // memory allocation
   s.resize(dim_s) ;
@@ -86,13 +86,23 @@ vpFeatureSegment::init()
 }
 
 /*! 
+  Default constructor that builds an empty segment visual feature.
+*/
+vpFeatureSegment::vpFeatureSegment():
+  vpBasicFeature()
+{
+  init();
+  buildFrom(0.,0.,1.,0.,0.,1.);
+}
+
+/*!
   Default constructor that builds a segment visual feature.
 
   \param P1 : 3D point representing one extremity of the segment
   \param P2 : 3D point representing another extremity of the segment
 
 */
-vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
+vpFeatureSegment::vpFeatureSegment(vpPoint& P1, vpPoint& P2):
   vpBasicFeature()  
 { 
   init();
@@ -149,8 +159,8 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
     subset features \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
     that case the dimension of the interaction matrix is \f$ [4 \times 6] \f$
   - To compute the interaction matrix for only one of the subset
-    (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the corresponding functions:
-    selectXc(),selectYc(),selectL(),selectAlpha(). In that case the returned
+    (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the following functions:
+    selectXc(),selectYc(),selectL(),selectAlpha(). In that case, the returned
     interaction matrix is of dimension \f$ [1 \times 6] \f$ .
 
   \return The interaction matrix computed from the segment features.
@@ -183,7 +193,7 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1,vpPoint& P2):
   vpMatrix L_alpha = s.interaction( vpFeatureSegment::selectAlpha() );
   \endcode
 
-  In that case, L_alpha is a 1 by 6 matrix.
+  In that case, \f$L_alpha\f$ is a 1 by 6 matrix.
 */
 vpMatrix
 vpFeatureSegment::interaction( const unsigned int select )
@@ -208,8 +218,14 @@ vpFeatureSegment::interaction( const unsigned int select )
         case 2:
           vpTRACE("Warning !!!  The interaction matrix is computed but l was not set yet");
         break;
-		case 3:
+	case 3:
           vpTRACE("Warning !!!  The interaction matrix is computed but alpha was not set yet");
+        break;
+	case 4:
+          vpTRACE("Warning !!!  The interaction matrix is computed but z1 was not set yet");
+        break;
+	case 5:
+          vpTRACE("Warning !!!  The interaction matrix is computed but z2 was not set yet");
         break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
@@ -271,7 +287,7 @@ vpFeatureSegment::interaction( const unsigned int select )
 }
 
 /*!
-   \brief Compute the error between the current and the desired visual features from a subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+   \brief Computes the error between the current and the desired visual features from a subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
 
   For the angular component \f$\alpha\f$, we define the error as
   \f$\alpha \ominus \alpha^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
@@ -285,14 +301,14 @@ vpFeatureSegment::interaction( const unsigned int select )
     vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
     dimension column vector.
   - To compute the error for only one subfeature (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the
-    corresponding functions: selectXc(),selectYc(),selectL(),selectAlpha(). 
+    following functions: selectXc(),selectYc(),selectL(),selectAlpha().
 
   \return The error between the current and the desired
   visual feature.
 
 */
 vpColVector
-vpFeatureSegment::error( const vpBasicFeature &s_star,  const unsigned int select )
+vpFeatureSegment::error( const vpBasicFeature &s_star, const unsigned int select )
 { 
   vpColVector e(0) ;
 
@@ -455,7 +471,7 @@ vpFeatureSegment::display(const vpCameraParameters & cam ,
 
 /*!  
   
-  Build a segment visual feature from two image points.
+  Build a segment visual feature from two points.
 
   \param P1, P2 : Two image points defining the segment. These points must contain coordinates (x and y) projected on the camera plane.
   
@@ -466,22 +482,130 @@ vpFeatureSegment::display(const vpCameraParameters & cam ,
   \f$ l = \sqrt{{X_1 - X_2}^2 + {Y_1 - Y_2}^2} \f$
   \f$ \alpha = arctan(\frac{Y_1 - Y_2}{X_1 - X_2}) \f$
 */
-void vpFeatureSegment::buildFrom(vpPoint& P1,vpPoint& P2){
-  Xc = ((P1.get_x()+P2.get_x())/2.);
-  Yc = ((P1.get_y()+P2.get_y())/2.);
-  z1 = (P1.get_Z());
-  z2 = (P2.get_Z());
-  l = (sqrt( (P1.get_x()-P2.get_x())*(P1.get_x()-P2.get_x()) + (P1.get_y()-P2.get_y())*(P1.get_y()-P2.get_y())) );
-  alpha = atan2(P1.get_y()-P2.get_y(),P1.get_x()-P2.get_x());// + M_PI;
+void vpFeatureSegment::buildFrom(vpPoint& P1, vpPoint& P2){
+  buildFrom(P1.get_x(),P1.get_y(),P1.get_Z(),P2.get_x(),P2.get_y(),P2.get_Z());
+}
+
+/*!
+
+  Build a segment visual feature from two image points and their Z coordinates.
+
+  \param x1 : x image coordinate of the first point
+  \param y1 : y image coordinate of the first point
+  \param Z1 : Z image coordinate of the first point
+
+  \param x2 : x image coordinate of the second point
+  \param y2 : y image coordinate of the second point
+  \param Z2 : Z image coordinate of the second point
+
+  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
+  computed from two two points using the following formulae:
+  \f$ x_c = \frac{x_1 + x_2}{2} \f$
+  \f$ y_c = \frac{y_1 + y_2}{2} \f$
+  \f$ l = \sqrt{{x_1 - x_2}^2 + {y_1 - y_2}^2} \f$
+  \f$ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f$
+*/
+void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2){
+  setXc((x1+x2)/2.);
+  setYc((y1+y2)/2.);
+  setZ1(Z1);
+  setZ2(Z2);
+  setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  setAlpha(atan2(y1-y2,x1-x2));
+}
+
+/*!
+
+  Build a segment visual feature from two image points and their Z coordinates.
+
+  \param x1 : x image coordinate of the first point
+  \param y1 : y image coordinate of the first point
+
+  \param x2 : x image coordinate of the second point
+  \param y2 : y image coordinate of the second point
+
+  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
+  computed from two two points using the following formulae:
+  \f$ x_c = \frac{x_1 + x_2}{2} \f$
+  \f$ y_c = \frac{y_1 + y_2}{2} \f$
+  \f$ l = \sqrt{{x_1 - x_2}^2 + {y_1 - y_2}^2} \f$
+  \f$ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f$
+*/
+void vpFeatureSegment::buildFrom(const double x1, const double y1, const double x2, const double y2){
+  setXc((x1+x2)/2.);
+  setYc((y1+y2)/2.);
+  setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  setAlpha(atan2(y1-y2,x1-x2));
+}
+
+/*!
+
+  Set the value of \f$ x_c \f$ which represents the x coordinate of the segment center
+  in the image plane. It is one parameter of the visual feature \f$ s \f$.
+
+  \param val : \f$ x_c \f$ value to set.
+*/
+void vpFeatureSegment::setXc(const double val){
+  s[0] = Xc = val;
+  flags[0] = true;
+}
+/*!
+
+  Set the value of \f$ y_c \f$ which represents the y coordinate of the segment center
+  in the image plane. It is one parameter of the visual feature \f$ s \f$.
+
+  \param val : \f$ y_c \f$ value to set.
+*/
+void vpFeatureSegment::setYc(const double val){
+  s[1] = Yc = val;
+  flags[1] = true;
+}
+/*!
+
+  Set the value of \f$ l \f$ which represents the length of the segment
+  in the image plane. It is one parameter of the visual feature \f$ s \f$.
+
+  \param val : \f$ l \f$ value to set.
+*/
+void vpFeatureSegment::setL(const double val){
+  s[2] = l = val;
+  flags[2] = true;
+}
+/*!
+
+  Set the value of \f$ \alpha \f$ which represents the orientation of the segment
+  in the image plane. It is one parameter of the visual feature \f$ s \f$.
+
+  \param val : \f$ \alpha \f$ value to set.
+*/
+void vpFeatureSegment::setAlpha(const double val){
+  s[3] = alpha = val;
   cos_a = cos(alpha);
   sin_a = sin(alpha);
+  flags[3] = true;
+}
 
-  s[0] = Xc;
-  s[1] = Yc;
-  s[2] = l;
-  s[3] = alpha;
+/*!
 
-  flags[0] = flags[1] = flags[2] = flags[3 ] = true;
+  Set the value of \f$ Z_1 \f$ which represents the z coordinate of the first segment point
+  in the image plane.
+
+  \param val : \f$ Z_1 \f$ value to set.
+*/
+void vpFeatureSegment::setZ1(const double val){
+  z1 = val;
+  flags[4] = true;
+}
+/*!
+
+  Set the value of \f$ Z_2 \f$ which represents the y coordinate of the second segment point
+  in the image plane.
+
+  \param val : \f$ Z_2 \f$ value to set.
+*/
+void vpFeatureSegment::setZ2(const double val){
+  z2 = val;
+  flags[5] = true;
 }
 
 /*

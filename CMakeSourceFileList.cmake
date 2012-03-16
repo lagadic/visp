@@ -285,6 +285,7 @@ SET (SRC_TRACKING
   tracking/feature-builder/vpFeatureBuilderPoint3D.cpp
   tracking/feature-builder/vpFeatureBuilderPoint.cpp
   tracking/feature-builder/vpFeatureBuilderPointPolar.cpp
+  tracking/feature-builder/vpFeatureBuilderSegment.cpp
   tracking/feature-builder/vpFeatureBuilderVanishingPoint.cpp
   tracking/forward-projection/vpCircle.cpp
   tracking/forward-projection/vpCylinder.cpp
