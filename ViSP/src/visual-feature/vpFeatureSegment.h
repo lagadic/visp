@@ -58,45 +58,90 @@
   \ingroup VsFeature3
 
   \brief Class that defines a Segment visual feature. The segment is 
-  described as angle and [...]
+  described as angle, length and center
 
 */
 class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
-  
-
-public:
-  // Basic construction.
-  void init() ;
+  //empty constructor
+  vpFeatureSegment();
   // Basic constructor.
   vpFeatureSegment(vpPoint& P1,vpPoint& P2);
 
+  // Basic construction.
+  void init() ;
+
+
   //! Destructor. Does nothing.
   ~vpFeatureSegment() { if (flags != NULL) delete [] flags; }
+  //! change values of the sengment
+  void buildFrom(vpPoint& P1,vpPoint& P2);
 
-  // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  //! change values of the sengment
+  void buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2);
+
+  void buildFrom(const double x1, const double y1, const double x2, const double y2);
+  void display(const vpCameraParameters &cam,
+               vpImage<unsigned char> &I,
+               vpColor color=vpColor::green,
+               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam,
+               vpImage<vpRGBa> &I,
+               vpColor color=vpColor::green,
+               unsigned int thickness=1) const ;
+  //! Feature duplication.
+  vpFeatureSegment *duplicate() const ;
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
                     const unsigned int select = FEATURE_ALL)  ;
+
+  /*!
+      Get the value of \f$ x_c \f$ which represents the x coordinate of the segment center in the image plane.
+
+      \return The value of \f$ x_c \f$.
+    */
+    inline double getXc(){ return Xc ;}
+    /*!
+        Get the value of \f$ y_c \f$ which represents the y coordinate of the segment center in the image plane.
+
+        \return The value of \f$ y_c \f$.
+    */
+    inline double getYc(){ return Yc ;}
+    /*!
+        Get the value of \f$ l \f$ which represents the length of the segment.
+
+        \return The value of \f$ l \f$.
+    */
+    inline double getL(){ return l ;}
+    /*!
+        Get the value of \f$ \alpha \f$ which represents the orientation of the segment.
+
+        \return The value of \f$ \alpha \f$.
+    */
+    inline double getAlpha(){ return alpha ;}
+
+    /*!
+      Get the value of \f$ Z_1 \f$ which represents the z-coordinate of the first segment point.
+
+      \return The value of \f$ Z_1 \f$.
+    */
+    inline double getZ1(){ return z1 ;}
+
+    /*!
+      Get the value of \f$ Z_2 \f$ which represents the z-coordinate of the first second point.
+
+      \return The value of \f$ Z_2 \f$.
+    */
+    inline double getZ2(){ return z2 ;}
+
+  // compute the interaction matrix from a subset a the possible features
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
   void print(const unsigned int select= FEATURE_ALL) const ;
 
-  //! Feature duplication.
-  vpFeatureSegment *duplicate() const ;
 
-  //! change values of the sengment
-  void buildFrom(vpPoint& P1,vpPoint& P2);
-public:
-  void display(const vpCameraParameters &cam,
-               vpImage<unsigned char> &I,
-               vpColor color=vpColor::green, 
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green, 
-               unsigned int thickness=1) const ;
 
   /*! 
 
@@ -120,7 +165,7 @@ public:
     task.addFeature(seg, vpFeatureSegment::selectXc());
     \endcode
 
-    \sa selectXc()
+    \sa selectYc(), selectL(), selectAlpha()
   */
   inline static unsigned int selectXc()  { return FEATURE_LINE[0] ; }
 
@@ -146,7 +191,7 @@ public:
     task.addFeature(seg, vpFeatureSegment::selectYc());
     \endcode
 
-    \sa selectYc()
+    \sa selectXc(), selectL(), selectAlpha()
   */
 
   inline static unsigned int selectYc()  { return FEATURE_LINE[1] ; }
@@ -173,7 +218,7 @@ public:
     task.addFeature(seg, vpFeatureSegment::selectL());
     \endcode
 
-    \sa selectL()
+    \sa selectXc(), selectYc(), selectAlpha()
   */
 
   inline static unsigned int selectL()  { return FEATURE_LINE[2] ; }
@@ -200,11 +245,22 @@ public:
     task.addFeature(seg, vpFeatureSegment::selectAlpha());
     \endcode
 
-    \sa selectAlpha()
+    \sa selectXc(), selectYc(), selectL()
   */
 
   inline static unsigned int selectAlpha()  { return FEATURE_LINE[3] ; }
   
+
+  inline void setXc(const double val);
+  inline void setYc(const double val);
+  inline void setL(const double val);
+  inline void setAlpha(const double val);
+
+  inline void setZ1(const double val);
+  inline void setZ2(const double val);
+
+
+
 private:
   double l;
   double Xc;

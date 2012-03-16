@@ -69,6 +69,7 @@
 #include <visp/vpFeatureThetaU.h>
 #include <visp/vpFeatureTranslation.h>
 #include <visp/vpFeatureVanishingPoint.h>
+#include <visp/vpFeatureSegment.h>
 
 // others
 #include <visp/vpImagePoint.h>
@@ -102,6 +103,12 @@ public:
 		     const vpCameraParameters &goodCam,
 		     const vpCameraParameters &wrongCam,
 		     const vpPoint &p) ;
+
+  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const double Z1, const vpDot &d2, const double Z2 ) ;
+  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const double Z1, const vpDot2 &d2, const double Z2) ;
+
+  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2 ) ;
+  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2) ;
 
   // create vpFeaturePointPolar feature
   static void create(vpFeaturePointPolar &s, 
