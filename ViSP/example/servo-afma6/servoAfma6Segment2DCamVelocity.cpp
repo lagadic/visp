@@ -42,25 +42,13 @@
  *****************************************************************************/
 
 /*!
-  \file servoAfma6SegmentCamVelocity.cpp
-
-  \brief Example of eye-in-hand control law. We control here a real robot, the
-  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
-  computed in camera frame. 
-  The visual feature is the segment between two points.
-*/
-
-
-
-/*!
-  \example servoAfma6SegmentCamVelocity.cpp
+  \example servoAfma6Segment2DCamVelocity.cpp
 
   Example of eye-in-hand control law. We control here a real robot, the Afma6
   robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
   in camera frame. The visual feature is the segment between two points.
 
 */
-
 
 
 #include <visp/vpConfig.h>
