@@ -562,8 +562,9 @@ int main()
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 
@@ -785,8 +786,9 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 
@@ -853,8 +855,9 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 

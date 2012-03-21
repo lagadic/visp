@@ -506,14 +506,14 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   The code below shows how to compute the inverse geometric model:
 
   \code
-#include <vips/vpConfig.h>
+#include <visp/vpConfig.h>
 #include <visp/vpColVector.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRobotAfma6.h>
 
 int main()
 {
-#ifdef(VISP_HAVE_AFMA6)
+#ifdef VISP_HAVE_AFMA6
   vpColVector q1(6), q2(6);
   vpHomogeneousMatrix fMc;
 
@@ -1212,8 +1212,9 @@ int main()
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
@@ -1427,11 +1428,12 @@ int main()
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
@@ -1474,11 +1476,12 @@ int main()
   vpCameraParameters cam ;
   // Get the intrinsic camera parameters depending on the image size
   try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+    robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters" << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
   }
+  std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
