@@ -120,7 +120,9 @@ int main()
   // parameters of the camera named "myCamera" for the image sizes 640x480,
   // for the projection model projModel. The size of the image is optional
   // if camera parameters are given only for one image size.
-  p.parse(cam,"myXmlFile.xml","myCamera",projModel,640,480);
+  if (p.parse(cam, "myXmlFile.xml", "myCamera", projModel,640,480) != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot found myCamera" << std::endl;
+  }
 
   // cout the parameters
   cam.printParameters();
@@ -170,7 +172,9 @@ int main()
   // Create a XML parser
   vpXmlParserCamera p;
   // Save the camera parameters in an XML file.
-  p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240);
+  if (p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot save camera parameters" << std::endl;
+  }
 #endif
 }
   \endcode
