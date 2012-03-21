@@ -287,7 +287,7 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo)
   the cylinder parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
 
   \param cMo : Camera to world frame transformation.
-  \param cP [out] : Parameters \f$^{c}${\bf P}\f$ expressed in the camera frame.
+  \param cP [out] : Parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
 
   \sa changeFrame(const vpHomogeneousMatrix &)
 */
