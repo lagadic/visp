@@ -522,7 +522,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
       robust_lines.setThreshold(2/cam.get_px());
       robust_cylinders.setThreshold(2/cam.get_px());
-      robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
+			if(nberrors_lines > 0)
+				robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
       if(nberrors_cylinders > 0){
        robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
       }
@@ -531,7 +532,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     {
       robust_lines.setIteration(iter);
       robust_cylinders.setIteration(iter);
-      robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
+			if(nberrors_lines > 0)
+				robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
       if(nberrors_cylinders > 0){
         robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
       }
