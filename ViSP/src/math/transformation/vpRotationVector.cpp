@@ -57,11 +57,10 @@
  */
 vpRowVector vpRotationVector::t() const
 {
-  vpRowVector v(3);
+  vpRowVector v(_size);
 
-  v[0] = r[0];
-  v[1] = r[1];
-  v[2] = r[2];
+  for (unsigned int i=0; i< _size; i++)
+    v[i] = r[i];
 
   return v;
 }
@@ -70,7 +69,7 @@ vpRowVector vpRotationVector::t() const
 	Size of the rotation vector: number of double values describing the rotation.
 	Common sizes are 4 for a quaternion and 3 for angle-based rotation vectors.
 */
-unsigned int vpRotationVector::size() {
+unsigned int vpRotationVector::size() const {
 	return _size;
 }
 /*!
@@ -103,7 +102,7 @@ std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 {
   s.precision(10) ;
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i < m.size(); i++)
     s <<  m.r[i] << "\n";
 
   s << std::endl;

@@ -127,7 +127,7 @@ public:
     
   /*! Returns the size of the rotation vector
    */
-  unsigned int size();
+  unsigned int size() const;
 
   // Transpose of the rotation vector.
   vpRowVector t() const;
