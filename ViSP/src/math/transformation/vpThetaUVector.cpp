@@ -145,7 +145,8 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
   c = (R[0][0]+R[1][1]+R[2][2]-1.0)/2.0;
   theta=atan2(s,c);  /* theta in [0, PI] since s > 0 */
 
-  if ((s > minimum) || (c > 0.0)) /* general case */
+  // General case when theta != pi. If theta=pi, c=-1
+  if ( (1+c) > minimum) // Since -1 <= c <= 1, no fabs(1+c) is required
   {
     sinc = vpMath::sinc(s,theta);
 
@@ -155,11 +156,24 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
   }
   else /* theta near PI */
   {
-    r[0] = theta*(sqrt((R[0][0]-c)/(1-c)));
+    if ( (R[0][0]-c) < std::numeric_limits<double>::epsilon() )
+      r[0] = 0.;
+    else
+      r[0] = theta*(sqrt((R[0][0]-c)/(1-c)));
     if ((R[2][1]-R[1][2]) < 0) r[0] = -r[0];
-    r[1] = theta*(sqrt((R[1][1]-c)/(1-c)));
+
+    if ( (R[1][1]-c) < std::numeric_limits<double>::epsilon() )
+      r[1] = 0.;
+    else
+      r[1] = theta*(sqrt((R[1][1]-c)/(1-c)));
+
     if ((R[0][2]-R[2][0]) < 0) r[1] = -r[1];
-    r[2] = theta*(sqrt((R[2][2]-c)/(1-c)));
+
+    if ( (R[2][2]-c) < std::numeric_limits<double>::epsilon() )
+      r[2] = 0.;
+    else
+      r[2] = theta*(sqrt((R[2][2]-c)/(1-c)));
+
     if ((R[1][0]-R[0][1]) < 0) r[2] = -r[2];
   }
 
