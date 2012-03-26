@@ -158,38 +158,13 @@ vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q)
 */
 void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
 {
-  double s,c,theta,sinc;
-  double axis_x,axis_y,axis_z;
+  vpThetaUVector tu(R);
+  vpColVector u;
+  double theta;
+  tu.extract(theta, u);
 
-  s = (R[1][0]-R[0][1])*(R[1][0]-R[0][1])
-      + (R[2][0]-R[0][2])*(R[2][0]-R[0][2])
-      + (R[2][1]-R[1][2])*(R[2][1]-R[1][2]);
-  s = sqrt(s)/2.0;
-  c = (R[0][0]+R[1][1]+R[2][2]-1.0)/2.0;
-  theta=atan2(s,c);  /* theta in [0, PI] since s > 0 */
-  
-  if ((s > minimum) || (c > 0.0)) { /* general case */	
-    sinc = vpMath::sinc(s,theta);
-      
-    axis_x = (R[2][1]-R[1][2])/(2*sinc);
-    axis_y = (R[0][2]-R[2][0])/(2*sinc);
-    axis_z = (R[1][0]-R[0][1])/(2*sinc);
-  } else { /* theta near PI */	
-    axis_x = theta*(sqrt((R[0][0]-c)/(1-c)));
-    if ((R[2][1]-R[1][2]) < 0) axis_x = -axis_x;
-    axis_y = theta*(sqrt((R[1][1]-c)/(1-c)));
-    if ((R[0][2]-R[2][0]) < 0) axis_y = -axis_y;
-    axis_z = theta*(sqrt((R[2][2]-c)/(1-c)));
-    if ((R[1][0]-R[0][1]) < 0) axis_z = -axis_z;
-  }
-	
   theta *= 0.5;
-  double norm = sqrt(axis_x*axis_x+axis_y*axis_y+axis_z*axis_z);	
-  if(fabs(norm)<minimum) norm = 1.;
-  double sinTheta_2 = sin(theta);
-  set(cos(theta),
-      (axis_x * sinTheta_2)/norm,
-      (axis_y * sinTheta_2)/norm,
-      (axis_z * sinTheta_2)/norm);
 
+  double sinTheta_2 = sin(theta);
+  set( cos(theta), u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2);
 }
