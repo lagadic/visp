@@ -10,53 +10,55 @@ ViSP 2.6.2 (under development)
   - New features
      - New vpFeatureSegment class to consider a segment as a visual
        servoing feature.
-     - Introduction of new functionalities in vpIoTools to parse text 
+     - Introduction of new functionalities in vpIoTools to parse text
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
   - Improvements
      - Remove warning detected with Visual C++ /Wall flag
-     - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and  
+     - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and
        doxygen 3rd party libraries detection. If detection fails, we use our
        own package finder.
      - Under Windows, changes done to add "d" suffix to the library name when
        build in debug (libvisp-2d.lib and libvisp-2d.dll). Install stage
-       copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll 
+       copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll
        in $CMAKE_INSTALL_PREFIX/bin.
      - Use OpenMP to optimize the execution of the moments computation
   - Examples:
     - New example plot3d.cpp to show how to plot 3D curves
   - Bug fixed
      - [13536] Division by zero in vpMeLine
-     - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const 
+     - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const
 	       is missing in vpMbtDistanceLine.h
      - [13575] ViSP sporadic segmentation fault in vpMeLine
-     - [13625] trackMeNurbs example produce an assertion failed with MSVC: 
+     - [13625] trackMeNurbs example produce an assertion failed with MSVC:
                "list iterator not incrementable"
-     - [13626] testXmlParser produre a Debug assertion failed with MSVC 
-     - [13678] Cannot build all the examples if no display capability is 
+     - [13626] testXmlParser produre a Debug assertion failed with MSVC
+     - [13678] Cannot build all the examples if no display capability is
 	       available
-     - [13679] GDI not detected on Windows 7 (64 bit) with Visual C++ Express 
+     - [13679] GDI not detected on Windows 7 (64 bit) with Visual C++ Express
 	       2010
      - [13689] Memory leaks in jpeg reader: vpImageIo::readJPEG()
      - [13690] Memory leaks in NURBS tracker
      - [13843] In vpPolygon, isInside() may produce a segfault and getArea()
                or getCenter() give bad results
-     - [13850] visp-config.bat produces a non compatible msvc 2010 output 
+     - [13850] visp-config.bat produces a non compatible msvc 2010 output
 	       format
      - [13955] vpBasicFeature::error() is not virtual
      - [13963] Under Windows, vpDisplay::getClickUp() doesn't work
-	
+     - [14081] Error in vpThetaUVector when angles are near 180 deg +/- epsilon
+     - [14082] Segmentation fault in model based tracking when tracking only cylinders
+
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
   - New features
      - Introduction of Lapack support used for the SVD decomposition in vpMatrix
-     - Introduction of vpAROgre that enables augmented reality applications 
+     - Introduction of vpAROgre that enables augmented reality applications
        based on Ogre 3D. Some examples are provided in examples/ogre-simulator
      - Add cylinder's tracking in the model-based tracker.
      - Reintroduce OpenCV 2.0.0 support lost in ViSP 2.6.0
-     - Introduction of vpKinect, a wrapper of libfreenect to support the 
+     - Introduction of vpKinect, a wrapper of libfreenect to support the
        Kinect device
-     - Introduction of vpMoment and vpFeatureMoment classes to be able to 
+     - Introduction of vpMoment and vpFeatureMoment classes to be able to
        consider 2D image moments as visual feature in visual servoing
   - Improvements
      - For firewire cameras framegrabbing with vp1394TwoGrabber, it is now
@@ -64,12 +66,12 @@ ViSP 2.6.1 (released October 20th, 2011)
      - All the specific Xml parser (vpMbtXmlParser, vpXmlParserCamera)
        inherit now from vpXmlParser
      - Memory leaks suppression in vpWireFrameSimulator, vpMe, vpXmlParser,
-       vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance, 
+       vpMbtXmlParser, vpXmlParserCamera, vpMbTracker, vpFeatureLuminance,
        vpRobotSimulator, vpFFMPEG, vpBSpline
      - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
-     - When it was possible without braking the backward compatibilty 
-       std::list was introduced instead of vpList. Some of the functions that 
+     - When it was possible without braking the backward compatibilty
+       std::list was introduced instead of vpList. Some of the functions that
        use vpList are now deprecated.
      - Better detection of image or video file types when used in vpImageIo,
        vpVideoReader and vpVideoWriter
@@ -82,13 +84,13 @@ ViSP 2.6.1 (released October 20th, 2011)
      - Most of the methods that use vpList are deprecated. Use std::list instead
      - vpTwistMatrix deprecated in ViSP-1.6.0 was removed.
   - Examples:
-    - New example grabOpenCV-2.cpp to show how to use the OpenCV 
+    - New example grabOpenCV-2.cpp to show how to use the OpenCV
       cv::VideoCapture class. This example shows how to acquire an image
-      with cv::VideoCapture, how to transform this image in ViSP format 
+      with cv::VideoCapture, how to transform this image in ViSP format
       and how to display it.
-    - New examples to illustrate the usage of the Ogre simulator through 
+    - New examples to illustrate the usage of the Ogre simulator through
       vpAROgre class.
-    - New example to illustrate the usage of the Kinect through 
+    - New example to illustrate the usage of the Kinect through
       vpKinect class.
     - New examples to illustrate the usage of 2D image moments.
   - Bug fixed
@@ -98,7 +100,7 @@ ViSP 2.6.1 (released October 20th, 2011)
        with vpRGBa type
      - [11529] ViSP / OpenCV(2.2.0) incompatibility
      - [11563] segfault in vpVideoReader
-     - [11617] selecting a subset of features is not taken into account in 
+     - [11617] selecting a subset of features is not taken into account in
        vpServo
      - [11916] Build issues with GTK2 on ubuntu 10.10 (fatal error:
        gdk-pixbuf/gdk-pixbuf.h)
@@ -110,16 +112,16 @@ ViSP 2.6.1 (released October 20th, 2011)
        grab images from an usb webcam
      - [12329] Bad font problem when opening vpPlot example
      - [12334] Under windows, link errors when some 3rd party libs are not
-       build in the same build configuration as ViSP 
+       build in the same build configuration as ViSP
      - [12499] servoSimu4Points: World point disposition does not match camera
-     - [12591] Seg fault when using setCleanPreviousImage() from 
+     - [12591] Seg fault when using setCleanPreviousImage() from
        vpImageSimulator
      - [12739] Problem initialising a vpMeEllipse
      - [13014] Bug in vpCalibration::calibVVSMulti() jacobian
      - [13015] vpFFMPEG compatibility issue with ffmpeg-0.8 release
      - [13449] "LIBJPEG_BUILD_TEST - Failed" message in CMake for Visual 2010
      - [13467] CreateWindow windows API does not correctly register class.
-	
+
 ----------------------------------------------
 ViSP 2.6.0 (released September 23rd, 2010)
   - License:
@@ -146,7 +148,7 @@ ViSP 2.6.0 (released September 23rd, 2010)
       This class aims real time drawing of 2D or 3D graphics under Linux, OSX
       and Windows.
   - Third party library dependencies
-    - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least 
+    - OpenCV 1.1 and 2.0 are no more supported. ViSP requires at least
       OpenCV 2.1.
     - libplotter is no longer required.
     - Itifg8 is no longer supported.
@@ -191,12 +193,12 @@ ViSP 2.6.0 (released September 23rd, 2010)
     - [10928] vpPlane: rayIntersection from 2 points
     - [10985] In vpPlot, 2D curve plotting starts with point (0,0)
 	      and not with the first specified point.
-	
+
 ----------------------------------------------
 ViSP 2.4.4 (released January 8th, 2010)
   - Features removed
     - vpMePath has been removed.
-	
+
 ----------------------------------------------
 ViSP 2.4.4-rc1 (released December 21th, 2009)
   - New Features
@@ -292,7 +294,7 @@ ViSP 2.4.3 (released April 10th, 2009)
 	     loop.
     - [7607] vpDisplayGTK bad window positionning
     - [7638] Memory leak in all vpFeature... classes
-	
+
 ----------------------------------------------
 ViSP 2.4.3-rc2 (released January 29th, 2009)
   - Deprecated
@@ -355,7 +357,7 @@ ViSP 2.4.3-rc2 (released January 29th, 2009)
     - [6962] vpMeLine : problem of tracking
     - [7034] vpMeLine : Bug when a strip is tracked
     - [7126] problem with vpMatrix::eigenValuesByLU()
-	
+
 ----------------------------------------------
 ViSP 2.4.2 (released March 27th, 2008)
   - New classes
@@ -439,7 +441,7 @@ ViSP 2.4.2 (released March 27th, 2008)
     - vpRobust::MEstimator()
     - vpRobotAfma6: example usage of getPosition() was updated
     - vpDisplayGDI is included in the doxygen documentation
-	
+
 ----------------------------------------------
 ViSP 2.4.1 (released May 16th, 2007)
   - New classes
@@ -476,7 +478,7 @@ ViSP 2.4.1 (released May 16th, 2007)
 	- Reference documentation improvement
 	- cfox and std namespace were removed. To use cout you need to call
 	  std::cout, std::endl, std::cin ...
-	
+
 ----------------------------------------------
 ViSP 2.4.0 (released February 6th, 2007)
   - New Feature
@@ -497,7 +499,7 @@ ViSP 2.4.0 (released February 6th, 2007)
         - memory leaks suppression
 	- works fully under windows
 	- doxygen documentation
-	
+
 ----------------------------------------------
 ViSP 2.2.0 (released August 25th, 2006)
   - Build
@@ -519,7 +521,7 @@ ViSP 2.2.0 (released August 25th, 2006)
 	- vp1394Grabber settings (format, mode, framerate, shutter, gain)
 	- vpDot (Moment computation)
 	- some fixes in vpDisplayGTK
-	
+
 ----------------------------------------------
 ViSP 2.1.1 (released January 6th, 2006)
    - New examples
