@@ -67,7 +67,7 @@ vpQuaternionVector::vpQuaternionVector(const double x, const double y,
 /*! 
   Constructs a quaternion from a rotation matrix.
 
-  \param R: Matrix containing a rotation.
+  \param R : Matrix containing a rotation.
 */
 vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)  
   : vpRotationVector(4) 
@@ -76,7 +76,7 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
 }
 /*! 
   Copy constructor.
-  \param q: quaternion to construct from. 
+  \param q : quaternion to construct from.
 */
 vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) 
   : vpRotationVector(4) 
@@ -86,10 +86,10 @@ vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q)
     
 /*! 
   Manually change values of a quaternion.
-  \param x: x quaternion parameter.
-  \param y: y quaternion parameter.
-  \param z: z quaternion parameter.
-  \param w: w quaternion parameter.
+  \param x : x quaternion parameter.
+  \param y : y quaternion parameter.
+  \param z : z quaternion parameter.
+  \param w : w quaternion parameter.
 */
 void vpQuaternionVector::set(const double x, const double y, 
 			     const double z,const double w) 
@@ -106,7 +106,7 @@ void vpQuaternionVector::set(const double x, const double y,
 
   Adds two quaternions. Addition is component-wise.
 
-  \param q: quaternion to add.
+  \param q : quaternion to add.
 */
 vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)  
 {	
@@ -117,7 +117,7 @@ vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)
 
   Substracts a quaternion from another. Substraction is component-wise.
 
-  \param q: quaternion to substract.
+  \param q : quaternion to substract.
 */
 vpQuaternionVector vpQuaternionVector::operator-( vpQuaternionVector &q)  
 {
@@ -154,7 +154,7 @@ vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q)
 /*! 
   Constructs a quaternion from a rotation matrix.
   
-  \param R: Rotation matrix.
+  \param R : Rotation matrix.
 */
 void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
 {

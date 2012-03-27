@@ -64,6 +64,8 @@
   
   \brief Defines a quaternion and its basic operations.
 
+  A quaternion is defined by four values: \f${\bf q} = (x, y, z, w)\f$.
+
   This class allows to compute a quaternion from a rotation matrix
   using either vpQuaternionVector(const vpRotationMatrix &) contructor
   or buildFrom() method.
@@ -89,13 +91,13 @@ public:
 
   void set(const double x, const double y, const double z,const double w) ;
     
-  //! returns x-component of the quaternion
+  //! Returns x-component of the quaternion.
   inline double x() const {return r[0];}
-  //! returns y-component of the quaternion
+  //! Returns y-component of the quaternion.
   inline double y() const {return r[1];}
-  //! returns z-component of the quaternion
+  //! Returns z-component of the quaternion.
   inline double z() const {return r[2];}
-  //! returns w-component of the quaternion
+  //! Returns w-component of the quaternion.
   inline double w() const {return r[3];}
 
   vpQuaternionVector operator+( vpQuaternionVector &q)  ;
@@ -103,9 +105,7 @@ public:
   vpQuaternionVector operator-()  ;
   vpQuaternionVector operator*(const double l) ;
   vpQuaternionVector operator* ( vpQuaternionVector &rq) ;
-  vpQuaternionVector &operator=( vpQuaternionVector &q);
-  
-    
+  vpQuaternionVector &operator=( vpQuaternionVector &q); 
 } ;
 
 #endif

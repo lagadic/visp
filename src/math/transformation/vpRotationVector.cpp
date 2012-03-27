@@ -51,10 +51,9 @@
 
 
 /*!
-  Transpose the rotation vector.
+  Return the transpose of the rotation vector.
 
-  \return Return \f$[r[Ø] r[1] r[2]]\f$.
- */
+*/
 vpRowVector vpRotationVector::t() const
 {
   vpRowVector v(_size);
