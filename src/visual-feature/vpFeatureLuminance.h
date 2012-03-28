@@ -141,9 +141,9 @@ public:
   void      interaction(vpMatrix &L);
 
   vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL)  ;
   void error(const vpBasicFeature &s_star,
-	     vpColVector &e)  ;
+             vpColVector &e)  ;
 
   void print(const unsigned int select = FEATURE_ALL ) const ;
 
@@ -151,16 +151,14 @@ public:
 
 
   void display(const vpCameraParameters &cam,
-	       vpImage<unsigned char> &I,
-	       vpColor color=vpColor::green, unsigned int thickness=1) const ;
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green, unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green, unsigned int thickness=1) const ;
-
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green, unsigned int thickness=1) const ;
 
   //! Compute the error between a visual features and zero
   vpColVector error(const unsigned int select = FEATURE_ALL)  ;
-
 } ;
 
 

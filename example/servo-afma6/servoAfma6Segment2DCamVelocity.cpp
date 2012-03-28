@@ -156,7 +156,10 @@ main()
       *i = vpDot(ip);
       vpDisplay::displayCross(I, ip, 10, vpColor::green) ;
     }
-    vpFeatureBuilder::create(seg_d, cam, dot_d[0], 1.,dot_d[1], 1.);
+    vpFeatureBuilder::create(seg_d, cam, dot_d[0], dot_d[1]);
+    seg_d.setZ1( 1. );
+    seg_d.setZ2( 1. );
+
     seg_d.display(cam,I);
     vpDisplay::flush(I);
     // define the task
@@ -166,7 +169,7 @@ main()
     task.setInteractionMatrixType(vpServo::DESIRED); 
 
     // - we want to see both segments
-    task.addFeature(seg,seg_d) ;
+    task.addFeature(seg, seg_d) ;
 
     // - set the constant gain
     task.setLambda(0.8) ;
@@ -191,7 +194,7 @@ main()
       }
 
       // Update the segment feature from the dot locations
-      vpFeatureBuilder::create(seg, cam,dot[0],dot[1]);
+      vpFeatureBuilder::create(seg, cam, dot[0], dot[1]);
       
       vpColVector v ;
       // Compute the visual servoing skew vector

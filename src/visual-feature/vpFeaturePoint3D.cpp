@@ -586,9 +586,9 @@ vpFeaturePoint3D *vpFeaturePoint3D::duplicate() const
 */
 void
 vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
-			  vpImage<unsigned char> &/* I */,
-			  vpColor /* color */,
-			  unsigned int /* thickness */) const
+                          const vpImage<unsigned char> &/* I */,
+                          const vpColor &/* color */,
+                          unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 
@@ -607,9 +607,9 @@ vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
  */
 void
 vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
-                          vpImage<vpRGBa> &/* I */,
-                          vpColor /* color */,
-			  unsigned int /* thickness */) const
+                          const vpImage<vpRGBa> &/* I */,
+                          const vpColor &/* color */,
+                          unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 

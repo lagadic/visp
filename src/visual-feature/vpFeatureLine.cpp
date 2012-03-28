@@ -506,10 +506,10 @@ vpFeatureLine *vpFeatureLine::duplicate() const
 
 */
 void
-vpFeatureLine::display( const vpCameraParameters &cam,
-			vpImage<unsigned char> &I,
-			vpColor color, 
-			unsigned int thickness) const
+vpFeatureLine::display(const vpCameraParameters &cam,
+                       const vpImage<unsigned char> &I,
+                       const vpColor &color,
+                       unsigned int thickness) const
 {
   try{
     double rho,theta ;
@@ -537,10 +537,10 @@ vpFeatureLine::display( const vpCameraParameters &cam,
 
  */
 void
-vpFeatureLine::display( const vpCameraParameters &cam,
-                        vpImage<vpRGBa> &I,
-                        vpColor color, 
-			unsigned int thickness) const
+vpFeatureLine::display(const vpCameraParameters &cam,
+                       const vpImage<vpRGBa> &I,
+                       const vpColor &color,
+                       unsigned int thickness) const
 {
   try{
     double rho,theta ;

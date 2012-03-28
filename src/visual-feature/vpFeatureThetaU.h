@@ -372,7 +372,7 @@ public:
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL)  ;
   void print(const unsigned int select= FEATURE_ALL) const ;
 
   //! Feature duplication.
@@ -380,13 +380,13 @@ public:
 
 public:
   void display(const vpCameraParameters &cam,
-               vpImage<unsigned char> &I,
-               vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
 
  private:
   vpFeatureThetaURotationRepresentationType rotation;

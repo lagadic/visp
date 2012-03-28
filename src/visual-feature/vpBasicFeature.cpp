@@ -85,7 +85,7 @@ vpBasicFeature::vpBasicFeature()
     flags = NULL;
 }
 
-//! Get the feature dimension.
+//! Get the feature vector dimension.
 unsigned int
 vpBasicFeature::getDimension(unsigned int select) const
 {
@@ -100,7 +100,7 @@ vpBasicFeature::getDimension(unsigned int select) const
     return dim ;
 }
 
-//! Get the feature vector.
+//! Get the feature vector  \f$\bf s\f$.
 vpColVector
  vpBasicFeature::get_s(const unsigned int select) const
 {

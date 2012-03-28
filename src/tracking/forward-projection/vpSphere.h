@@ -92,24 +92,20 @@ public:
 
   double getR() const { return cP[3] ; }
 
-
-
   void projection() ;
   void projection(const vpColVector &cP, vpColVector &p) ;
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
   void changeFrame(const vpHomogeneousMatrix &cMo) ;
 
-
   void display(const vpImage<unsigned char> &I,
-	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green,
-	       const unsigned int thickness=1) ;
+               const vpCameraParameters &cam,
+               const vpColor &color=vpColor::green,
+               const unsigned int thickness=1) ;
   void display(const vpImage<unsigned char> &I,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor color=vpColor::green,
-	       const unsigned int thickness=1) ;
-
+               const vpHomogeneousMatrix &cMo,
+               const vpCameraParameters &cam,
+               const vpColor &color=vpColor::green,
+               const unsigned int thickness=1) ;
 
   vpSphere *duplicate() const ;
 } ;

@@ -108,7 +108,9 @@ void vpFeatureMoment::print (unsigned int select) const{
 /*!
   Not implemented since visual representation of a moment doesn't often make sense.
 */
-void vpFeatureMoment::display (const vpCameraParameters &cam, vpImage< unsigned char > &I, vpColor color, unsigned int thickness) const{
+void vpFeatureMoment::display (const vpCameraParameters &cam, const vpImage< unsigned char > &I,
+                               const vpColor &color, unsigned int thickness) const
+{
 	//visual representation of a moment doesn't often make sense
     (void)cam;
     (void)I;
@@ -119,7 +121,9 @@ void vpFeatureMoment::display (const vpCameraParameters &cam, vpImage< unsigned 
 /*!
   Not implemented since visual representation of a moment doesn't often make sense.
 */    
-void vpFeatureMoment::display (const vpCameraParameters &cam, vpImage< vpRGBa > &I, vpColor color, unsigned int thickness) const    {
+void vpFeatureMoment::display (const vpCameraParameters &cam, const vpImage< vpRGBa > &I,
+                               const vpColor &color, unsigned int thickness) const
+{
     (void)cam;
     (void)I;
     (void)color;
@@ -203,7 +207,8 @@ vpMatrix vpFeatureMoment::interaction (unsigned int select){
   
   \return The corresponding feature.
 */
-vpBasicFeature* vpFeatureMoment::duplicate () const {
+vpBasicFeature* vpFeatureMoment::duplicate () const
+{
     vpFeatureMoment* feat = new vpMomentGenericFeature(moments,A,B,C,featureMomentsDataBase,moment);
     feat->interaction_matrices = interaction_matrices;
     feat->dim_s = dim_s;

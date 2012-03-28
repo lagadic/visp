@@ -261,9 +261,9 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 */
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-				 vpImage<unsigned char> &I,
-				 vpColor color, 
-				 unsigned int thickness) const
+                                 const vpImage<unsigned char> &I,
+                                 const vpColor &color,
+                                 unsigned int thickness) const
 {
   try{
     double x,y ;
@@ -291,9 +291,9 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
 */
 void
 vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-                                 vpImage<vpRGBa> &I,
-                                 vpColor color, 
-				 unsigned int thickness) const
+                                 const vpImage<vpRGBa> &I,
+                                 const vpColor &color,
+                                 unsigned int thickness) const
 {
   try{
     double x,y ;

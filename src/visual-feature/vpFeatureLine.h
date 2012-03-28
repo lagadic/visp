@@ -64,7 +64,7 @@
   composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$,
   the polar coordinates of a line.
 
-  In this class, the equation line in the image plan is given by :
+  In this class, the equation of the line in the image plane is given by :
   \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f] Here
   \f$ x \f$ and \f$ y \f$ are the coordinates of a point belonging to
   the line and they are given in meter. The following image shows the
@@ -281,7 +281,7 @@ public:
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
   vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL)  ;
 
   //vpColVector error(const int select = FEATURE_ALL)  ;
 
@@ -292,13 +292,13 @@ public:
 
 public:
   void display(const vpCameraParameters &cam,
-	       vpImage<unsigned char> &I,
-	       vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
 
 } ;
 

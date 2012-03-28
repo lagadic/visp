@@ -4,7 +4,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -67,10 +67,10 @@
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
-				    const vpCameraParameters &cam,
-				    const vpImage<unsigned char> &I,
-				    vpColor color, 
-				    unsigned int thickness)
+                                    const vpCameraParameters &cam,
+                                    const vpImage<unsigned char> &I,
+                                    const vpColor &color,
+                                    unsigned int thickness)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
@@ -93,10 +93,10 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
-				   const vpCameraParameters &cam,
-				   const vpImage<unsigned char> &I,
-				   vpColor color, 
-				   unsigned int thickness )
+                                   const vpCameraParameters &cam,
+                                   const vpImage<unsigned char> &I,
+                                   const vpColor &color,
+                                   unsigned int thickness )
 {
 
 
@@ -120,16 +120,16 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     vpImagePoint ip1, ip2;
 
     if (fabs(a) < fabs(b)) {
-        ip1.set_ij(0, (-c)/b);
-        double h = I.getHeight() - 1;
-        ip2.set_ij(h, (-c - a*h)/b);
-	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+      ip1.set_ij(0, (-c)/b);
+      double h = I.getHeight() - 1;
+      ip2.set_ij(h, (-c - a*h)/b);
+      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
     else {
-        ip1.set_ij((-c)/a, 0);
-        double w = I.getWidth()-1;
-        ip2.set_ij((-c - b*w)/a, w);
-	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+      ip1.set_ij((-c)/a, 0);
+      double w = I.getWidth()-1;
+      ip2.set_ij((-c - b*w)/a, w);
+      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
   }
   catch(...)
@@ -147,11 +147,11 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
-				       double rho2,double theta2,
-				       const vpCameraParameters &cam,
-				       const vpImage<unsigned char> &I,
-				       vpColor color, 
-				       unsigned int thickness)
+                                       double rho2,double theta2,
+                                       const vpCameraParameters &cam,
+                                       const vpImage<unsigned char> &I,
+                                       const vpColor &color,
+                                       unsigned int thickness)
 {
   try
   {
@@ -172,11 +172,11 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayEllipse(double x,double y,
-				      double mu20, double mu11, double mu02,
-				      const vpCameraParameters &cam,
-				      const vpImage<unsigned char> &I,
-				      vpColor color, 
-				      unsigned int thickness)
+                                      double mu20, double mu11, double mu02,
+                                      const vpCameraParameters &cam,
+                                      const vpImage<unsigned char> &I,
+                                      const vpColor &color,
+                                      unsigned int thickness)
 {
 
 
@@ -210,24 +210,24 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
 
       for( i = 0; i < number_of_points+2 ; i++)
       {
-	double    x1 = a *cos(k) ; // equation of an ellipse
-	double    y1 = b *sin(k) ; // equation of an ellipse
-	double    x11 = x + ce *x1 - se *y1 ;
-	double    y11 = y + se *x1 + ce *y1 ;
+        double    x1 = a *cos(k) ; // equation of an ellipse
+        double    y1 = b *sin(k) ; // equation of an ellipse
+        double    x11 = x + ce *x1 - se *y1 ;
+        double    y11 = y + se *x1 + ce *y1 ;
 
-	vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
+        vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
 
-	if (i > 1) {
-	  ip2.set_u( x2 );
-	  ip2.set_v( y2 );
+        if (i > 1) {
+          ip2.set_u( x2 );
+          ip2.set_v( y2 );
 
-	  vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
-	}
+          vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
+        }
 
-	ip2 = ip1;
-	y2 = y1 ;
-	x2 = x1 ;
-	k += incr ;
+        ip2 = ip1;
+        y2 = y1 ;
+        x2 = x1 ;
+        k += incr ;
       } // end for loop
     }
     //    vpDisplay::getClick(I) ;
@@ -248,10 +248,10 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayPoint(double x,double y,
-				    const vpCameraParameters &cam,
-				    const vpImage<vpRGBa> &I,
-				    vpColor color, 
-				    unsigned int thickness)
+                                    const vpCameraParameters &cam,
+                                    const vpImage<vpRGBa> &I,
+                                    const vpColor &color,
+                                    unsigned int thickness)
 {
   try{
     vpImagePoint ip; // pixel coordinates in float
@@ -275,10 +275,10 @@ void vpFeatureDisplay::displayPoint(double x,double y,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayLine(double rho,double theta,
-				   const vpCameraParameters &cam,
-				   const vpImage<vpRGBa> &I,
-				   vpColor color, 
-				   unsigned int thickness )
+                                   const vpCameraParameters &cam,
+                                   const vpImage<vpRGBa> &I,
+                                   const vpColor &color,
+                                   unsigned int thickness )
 {
 
 
@@ -302,16 +302,16 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
     vpImagePoint ip1, ip2;
 
     if (fabs(a) < fabs(b)) {
-        ip1.set_ij(0, (-c)/b);
-        double h = I.getHeight() - 1;
-        ip2.set_ij(h, (-c - a*h)/b);
-	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+      ip1.set_ij(0, (-c)/b);
+      double h = I.getHeight() - 1;
+      ip2.set_ij(h, (-c - a*h)/b);
+      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
     else {
-        ip1.set_ij((-c)/a, 0);
-        double w = I.getWidth()-1;
-        ip2.set_ij((-c - b*w)/a, w);
-	vpDisplay::displayLine(I, ip1, ip2, color, thickness);
+      ip1.set_ij((-c)/a, 0);
+      double w = I.getWidth()-1;
+      ip2.set_ij((-c - b*w)/a, w);
+      vpDisplay::displayLine(I, ip1, ip2, color, thickness);
     }
   }
   catch(...)
@@ -329,11 +329,11 @@ void vpFeatureDisplay::displayLine(double rho,double theta,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
-				       double rho2, double theta2,
-				       const vpCameraParameters &cam,
-				       const vpImage<vpRGBa> &I,
-				       vpColor color, 
-				       unsigned int thickness)
+                                       double rho2, double theta2,
+                                       const vpCameraParameters &cam,
+                                       const vpImage<vpRGBa> &I,
+                                       const vpColor &color,
+                                       unsigned int thickness)
 {
   try
   {
@@ -355,11 +355,11 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
   \param thickness : Thickness of the feature representation.
 */
 void vpFeatureDisplay::displayEllipse(double x, double y,
-				      double mu20, double mu11, double mu02,
-				      const vpCameraParameters &cam,
-				      const vpImage<vpRGBa> &I,
-				      vpColor color, 
-				      unsigned int thickness)
+                                      double mu20, double mu11, double mu02,
+                                      const vpCameraParameters &cam,
+                                      const vpImage<vpRGBa> &I,
+                                      const vpColor &color,
+                                      unsigned int thickness)
 {
 
 
@@ -392,22 +392,22 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
 
       for( i = 0; i < number_of_points+2 ; i++)
       {
-	double    x1 = a *cos(k) ; // equation of an ellipse
-	double    y1 = b *sin(k) ; // equation of an ellipse
-	double    x11 = x + ce *x1 - se *y1 ;
-	double    y11 = y + se *x1 + ce *y1 ;
+        double    x1 = a *cos(k) ; // equation of an ellipse
+        double    y1 = b *sin(k) ; // equation of an ellipse
+        double    x11 = x + ce *x1 - se *y1 ;
+        double    y11 = y + se *x1 + ce *y1 ;
 
-	vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
+        vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
 
-	if (i > 1) {
-	  ip2.set_u( x2 );
-	  ip2.set_v( y2 );
+        if (i > 1) {
+          ip2.set_u( x2 );
+          ip2.set_v( y2 );
 
-	  vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
-	}
+          vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
+        }
 
-	ip2 = ip1;
-	k += incr ;
+        ip2 = ip1;
+        k += incr ;
       } // end for loop
     }
     //    vpDisplay::getClick(I) ;

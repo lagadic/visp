@@ -143,12 +143,12 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, co
   \param L2 : The second vpLine.
 */
 void
-vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2 )
+vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2)
 {
   vpFeatureLine l1,l2 ;
   vpFeatureBuilder::create (l1,L1) ;
   vpFeatureBuilder::create (l2,L2) ;
 
-  vpFeatureBuilder::create (s   , l1  ,l2)  ;
+  vpFeatureBuilder::create (s, l1, l2)  ;
 
 }

@@ -174,8 +174,10 @@ public:
 
       virtual void 	compute_interaction (void);
       vpBasicFeature* duplicate ()  const;
-      void 	display (const vpCameraParameters &cam, vpImage< unsigned char > &I, vpColor color=vpColor::green, unsigned int thickness=1) const ;
-      void 	display (const vpCameraParameters &cam, vpImage< vpRGBa > &I, vpColor color=vpColor::green, unsigned int thickness=1) const ;
+      void 	display (const vpCameraParameters &cam, const vpImage< unsigned char > &I,
+                     const vpColor &color=vpColor::green, unsigned int thickness=1) const ;
+      void 	display (const vpCameraParameters &cam, const vpImage< vpRGBa > &I,
+                     const vpColor &color=vpColor::green, unsigned int thickness=1) const ;
 
       int 	getDimension (unsigned int select=FEATURE_ALL) const;
       void 	init (void);
@@ -183,7 +185,8 @@ public:
       void linkTo(vpFeatureMomentDatabase& featureMoments);
 
       /*!
-      Name of the moment corresponding to the feature. This allows to locate the moment associated with the feature in the provided database.
+      Name of the moment corresponding to the feature. This allows to locate the moment
+      associated with the feature in the provided database.
       */
       virtual const char* momentName() = 0;
       /*!

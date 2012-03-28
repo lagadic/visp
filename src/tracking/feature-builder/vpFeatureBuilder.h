@@ -36,9 +36,12 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
  *
  *****************************************************************************/
 
+#ifndef vpFeatureBuilder_H
+#define vpFeatureBuilder_H
 
 /*!
   \file vpFeatureBuilder.h
@@ -79,8 +82,6 @@
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpMeterPixelConversion.h>
 
-#ifndef vpFeatureBuilder_H
-#define vpFeatureBuilder_H
 
 /*!
   \class vpFeatureBuilder
@@ -93,22 +94,22 @@ class VISP_EXPORT vpFeatureBuilder
 public:
   // create vpFeaturePoint feature
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot &d) ;
+                     const vpDot &d) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpDot2 &d) ;
+                     const vpDot2 &d) ;
   static void create(vpFeaturePoint &s, const vpCameraParameters &cam,
-		      const vpImagePoint &t) ;
+                     const vpImagePoint &t) ;
   static void create(vpFeaturePoint &s, const vpPoint &p) ;
   static void create(vpFeaturePoint &s,
-		     const vpCameraParameters &goodCam,
-		     const vpCameraParameters &wrongCam,
-		     const vpPoint &p) ;
+                     const vpCameraParameters &goodCam,
+                     const vpCameraParameters &wrongCam,
+                     const vpPoint &p) ;
 
-  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const double Z1, const vpDot &d2, const double Z2 ) ;
-  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const double Z1, const vpDot2 &d2, const double Z2) ;
-
-  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2 ) ;
-  static void create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2) ;
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2 ) ;
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2) ;
+  static void create(vpFeatureSegment &s, const vpCameraParameters &cam,
+                     const vpImagePoint &ip1, const vpImagePoint &ip2);
+  static void create(vpFeatureSegment &s, vpPoint& P1, vpPoint& P2);
 
   // create vpFeaturePointPolar feature
   static void create(vpFeaturePointPolar &s, 
@@ -134,8 +135,8 @@ public:
   static void create(vpFeatureLine &s, const vpCylinder &c, const int line) ;
 
   static  void create(vpFeatureLine &s,
-		      const vpCameraParameters &cam,
-		      const vpMeLine &mel) ;
+                      const vpCameraParameters &cam,
+                      const vpMeLine &mel) ;
 
   //! create vpFeatureEllipse feature
   static void create(vpFeatureEllipse &s, const vpCircle &c) ;

@@ -65,7 +65,7 @@
   x \f$ and \f$ y \f$.
 
   In this class \f$ x \f$ and \f$ y \f$ are the 2D coordinates in the
-  image plan and are given in meter. \f$ Z \f$ which is the 3D
+  image plane and are given in meter. \f$ Z \f$ which is the 3D
   coordinate representing the depth is also a parameter of the
   point. It is needed during the computation of the interaction matrix
   \f$ L \f$.
@@ -262,7 +262,7 @@ public:
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
   vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL)  ;
 
   void print(const unsigned int select = FEATURE_ALL ) const ;
 
@@ -270,13 +270,13 @@ public:
 
 
   void display(const vpCameraParameters &cam,
-	       vpImage<unsigned char> &I,
-	       vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green, 
-	       unsigned int thickness=1) const ;
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
 
 
   /*!

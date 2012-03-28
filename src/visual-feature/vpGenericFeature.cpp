@@ -741,9 +741,9 @@ vpGenericFeature *vpGenericFeature::duplicate() const
 */
 void
 vpGenericFeature::display(const vpCameraParameters &/* cam */,
-			  vpImage<unsigned char> &/* I */,
-			  vpColor /* color */,
-			  unsigned int /* thickness */) const
+                          const vpImage<unsigned char> &/* I */,
+                          const vpColor &/* color */,
+                          unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 
@@ -760,9 +760,9 @@ vpGenericFeature::display(const vpCameraParameters &/* cam */,
  */
 void
 vpGenericFeature::display(const vpCameraParameters &/* cam */,
-                          vpImage<vpRGBa> &/* I */,
-                          vpColor /* color */,
-			  unsigned int /* thickness */) const
+                          const vpImage<vpRGBa> &/* I */,
+                          const vpColor &/* color */,
+                          unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 
