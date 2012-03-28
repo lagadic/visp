@@ -855,27 +855,23 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
   cleanPyramid(Ipyramid);
 }
 
-
 /*!
- Initialize the tracking thanks to the initial pose of the camera.
+ Initialize the tracking.
  
  \param I : The image.
- \param _cMo : The initial pose used to initialize the tracking.
 */
-void
-vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
+void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 {
-  this->cMo = _cMo;
-  bool a = false;
+	bool a = false;
   
   initPyramid(I, Ipyramid);
-  visibleFace(_cMo, a);
+  visibleFace(cMo, a);
   unsigned int i=scales.size();
   do {
     i--;
     if(scales[i]){
       downScale(i);
-      initMovingEdge(*Ipyramid[i], _cMo);
+      initMovingEdge(*Ipyramid[i], cMo);
       upScale(i);
     }
   } while(i != 0);
@@ -1474,7 +1470,7 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& _I, const char* _cad_
 {
   resetTracker();
   loadModel(_cad_name);
-  init(_I, _cMo);
+  initFromPose(_I, _cMo);
 }
 
 /*!
@@ -1739,6 +1735,19 @@ vpMbEdgeTracker::getLcylinder(const unsigned int _level)
   }
 
   return c;
+}
+
+/*!
+ Initialize the tracking thanks to the initial pose of the camera.
+ 
+ \param I : The image.
+ \param _cMo : The initial pose used to initialize the tracking.
+*/
+void
+vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
+{
+  this->cMo = _cMo;
+  init(I);
 }
 #endif
 

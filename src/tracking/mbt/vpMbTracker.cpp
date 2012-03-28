@@ -38,6 +38,7 @@
  *
  * Authors:
  * Romain Tallonneau
+ * Aurelien Yol
  * Eric Marchand
  *
  *****************************************************************************/
@@ -138,14 +139,23 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
+	
+	std::string ext = ".init";
+	std::string str_pose = "";
+	unsigned int pos =  _initFile.rfind(ext);
 
   // Load the last poses from files
   std::fstream finitpos ;
   std::fstream finit ;
   char s[FILENAME_MAX];
   if(poseSavingFilename.empty()){
-    sprintf(s, "%s.0.pos", _initFile.c_str());
-    finitpos.open(s ,std::ios::in) ;
+		if( pos == _initFile.size()-ext.size() && pos != 0)
+			str_pose = _initFile.substr(0,pos) + ".0.pos";
+		else
+			str_pose =  _initFile + ".0.pos";
+		
+    finitpos.open(str_pose.c_str() ,std::ios::in) ;
+		sprintf(s, "%s", str_pose.c_str());
   }else{
     finitpos.open(poseSavingFilename.c_str() ,std::ios::in) ;
     sprintf(s, "%s", poseSavingFilename.c_str());
@@ -202,7 +212,11 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 
     double X,Y,Z ;
     
-    sprintf(s,"%s.init", _initFile.c_str());
+    if( pos == _initFile.size()-ext.size() && pos != 0)
+			sprintf(s,"%s", _initFile.c_str());
+		else
+			sprintf(s,"%s.init", _initFile.c_str());
+	
     std::cout << "filename " << s << std::endl ;
     finit.open(s,std::ios::in) ;
     if (finit.fail()){
@@ -210,7 +224,13 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 	    throw vpException(vpException::ioError, "cannot read init file");
     }
 
-    sprintf(s, "%s.ppm", _initFile.c_str());
+		std::string dispF;
+		if( pos == _initFile.size()-ext.size() && pos != 0)
+			dispF = _initFile.substr(0,pos) + ".ppm";
+		else
+			dispF = _initFile + ".ppm";
+    
+		sprintf(s, "%s", dispF.c_str());
 
     vpImage<vpRGBa> Iref ;
     //Display window creation and initialistation
@@ -306,27 +326,337 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       }
     }
 ////////////////////////////////////
-
     vpDisplay::displayFrame(_I, cMo, cam, 0.05, vpColor::red);
 
     delete [] P;
 
-	//save the pose into file
-  if(poseSavingFilename.empty()){
-    sprintf(s,"%s.0.pos", _initFile.c_str());
-	  finitpos.open(s, std::ios::out) ;
-	}else{
-  	finitpos.open(poseSavingFilename.c_str(), std::ios::out) ;
+		//save the pose into file
+		if(poseSavingFilename.empty())
+			savePose(str_pose);
+		else
+			savePose(poseSavingFilename);
 	}
-	init_pos.buildFrom(cMo);
-	finitpos << init_pos;
-	finitpos.close();
-  }
 
   std::cout <<"cMo : "<<std::endl << cMo <<std::endl;
 
-  init(_I, cMo);
+  init(_I);
+}
 
+/*!
+  Initialise the tracking by clicking on the image points corresponding to the 
+  3D points (object frame) in the list points3D_list. 
+  
+  \param _I : Input image
+  \param points3D_list : List of the 3D points (object frame).
+  \param displayFile : Path to the image used to display the help. 
+*/
+void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile)
+{
+  vpDisplay::display(_I) ;
+  vpDisplay::flush(_I) ;
+
+	vpPose pose ;
+	vpPoint *P = new vpPoint [points3D_list.size()]  ;
+	for (unsigned int i=0 ; i < points3D_list.size() ; i++)
+		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ; 
+  
+	vpImage<vpRGBa> Iref ;
+	//Display window creation and initialistation
+	#if defined VISP_HAVE_X11
+		vpDisplayX d;
+	#elif defined VISP_HAVE_GDI
+		vpDisplayGDI d;
+	#elif defined VISP_HAVE_OPENCV
+		vpDisplayOpenCV d;
+	#endif
+			
+	if(displayFile != ""){	
+		try{
+			std::cout << displayFile.c_str() << std::endl;
+			vpImageIo::readPPM(Iref,displayFile.c_str()) ;
+			#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+				d.init(Iref,10,500, "Where to initialize...")  ;
+				vpDisplay::display(Iref) ;
+				vpDisplay::flush(Iref);
+			#endif
+		}
+		catch(...){}
+	}
+	
+	vpImagePoint ip;
+	bool isWellInit = false;
+	while(!isWellInit)
+	{
+		for(unsigned int i=0 ; i< points3D_list.size() ; i++)
+		{
+			std::cout << "Click on point " << i+1 << std::endl ;
+			double x=0,y=0;
+			vpDisplay::getClick(_I, ip) ;
+			vpDisplay::displayCross(_I, ip, 5,vpColor::green) ;
+			vpDisplay::flush(_I) ;
+			vpPixelMeterConversion::convertPoint(cam, ip, x, y);
+			P[i].set_x(x);
+			P[i].set_y(y);
+
+			std::cout << "Click on point " << ip << std::endl;
+
+			vpDisplay::displayPoint (_I, ip, vpColor::green); //display target point
+			pose.addPoint(P[i]) ; // and added to the pose computation point list
+		}
+		vpDisplay::flush(_I) ;
+
+		vpHomogeneousMatrix cMo1, cMo2;
+		pose.computePose(vpPose::LAGRANGE, cMo1) ;
+		double d1 = pose.computeResidual(cMo1);
+		pose.computePose(vpPose::DEMENTHON, cMo2) ;
+		double d2 = pose.computeResidual(cMo2);
+
+		if(d1 < d2){
+			cMo = cMo1;
+		}
+		else{
+			cMo = cMo2;
+		}
+		pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+		display(_I, cMo, cam, vpColor::green);
+		vpDisplay::displayCharString(_I, 15, 10,
+				"left click to validate, right click to re initialize object",
+				vpColor::red);
+
+		vpDisplay::flush(_I) ;
+
+		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+		while (!vpDisplay::getClick(_I, ip, button)) ;
+
+
+		if (button == vpMouseButton::button1)
+		{
+			isWellInit = true;
+		}
+		else
+		{
+			pose.clearPoint() ;
+			vpDisplay::display(_I) ;
+			vpDisplay::flush(_I) ;
+		}
+	}
+
+	vpDisplay::displayFrame(_I, cMo, cam, 0.05, vpColor::red);
+
+	delete [] P;
+
+  init(_I);
+}
+
+/*!
+  Initialise the tracking by reading the 3D points (object frame) and the image points
+  in _initFile. The structure of this file is (without the comments):
+  \code
+  4 // Number of 3D points in the file (minimum is four)
+  0.01 0.01 0.01    //  \
+  ...               //  | 3D coordinates in meters in the object frame
+  0.01 -0.01 -0.01  // /
+  4 // Number of image points in the file (has to be the same as the number of 3D points)
+  100 200    //  \
+  ...        //  | 2D coordinates in pixel in the image
+  50 10  		//  /
+  \endcode
+  
+  \param _I : Input image
+  \param _initFile : Path to the file containing all the points.
+*/
+void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile )
+{
+	char s[FILENAME_MAX];
+	std::fstream finit ;
+	
+	std::string ext = ".init";
+	unsigned int pos =  _initFile.rfind(ext);
+	
+	if( pos == _initFile.size()-ext.size() && pos != 0)
+		sprintf(s,"%s", _initFile.c_str());
+	else
+		sprintf(s,"%s.init", _initFile.c_str());
+	
+	std::cout << "filename " << s << std::endl ;
+	finit.open(s,std::ios::in) ;
+	if (finit.fail()){
+		std::cout << "cannot read " << s << std::endl;
+		throw vpException(vpException::ioError, "cannot read init file");
+	}
+    
+	unsigned int size;
+	double X, Y, Z;
+	finit >> size ;
+  std::cout << "number of points  " << size << std::endl ;
+	vpPoint *P = new vpPoint [size]; 
+	vpPose pose ;
+	
+	for(unsigned int i=0 ; i< size ; i++)
+	{
+		finit >> X ;
+		finit >> Y ;
+		finit >> Z ;
+		P[i].setWorldCoordinates(X,Y,Z) ;
+	}
+	
+	unsigned int size2;
+	double x, y;
+	vpImagePoint ip;
+	finit >> size2 ;
+	if(size != size2)
+		vpERROR_TRACE( "vpMbTracker::initFromPoints(), Number of 2D points different to the number of 3D points." );
+	
+	for(unsigned int i=0 ; i< size ; i++)
+	{
+		finit >> x;
+		finit >> y;
+		ip = vpImagePoint(x,y);
+		vpPixelMeterConversion::convertPoint(cam, ip, x, y);
+		P[i].set_x(x);
+		P[i].set_y(y);
+		pose.addPoint(P[i]);
+	}
+
+	vpHomogeneousMatrix cMo1, cMo2;
+	pose.computePose(vpPose::LAGRANGE, cMo1) ;
+	double d1 = pose.computeResidual(cMo1);
+	pose.computePose(vpPose::DEMENTHON, cMo2) ;
+	double d2 = pose.computeResidual(cMo2);
+
+	if(d1 < d2)
+		cMo = cMo1;
+	else
+		cMo = cMo2;
+	
+	pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+	delete [] P;
+
+  init(_I);
+}
+
+/*!
+  Initialise the tracking with the list of image points (points2D_list) and
+  the list of corresponding 3D points (object frame) (points3D_list).
+  
+  \param _I : Input image
+  \param points2D_list : List of image points.
+  \param points3D_list : List of 3D points (object frame). 
+*/
+void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list )
+{
+	if(points2D_list.size() != points3D_list.size())
+		vpERROR_TRACE( "vpMbTracker::initFromPoints(), Number of 2D points different to the number of 3D points." );
+	
+	unsigned int size = points3D_list.size();
+	vpPoint *P = new vpPoint [size]; 
+	vpPose pose ;
+	
+	for(unsigned int i=0 ; i< size ; i++)
+	{
+		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ;
+		double x=0,y=0;
+		vpPixelMeterConversion::convertPoint(cam, points2D_list[i], x, y);
+		P[i].set_x(x);
+		P[i].set_y(y);
+		pose.addPoint(P[i]);
+	}
+
+	vpHomogeneousMatrix cMo1, cMo2;
+	pose.computePose(vpPose::LAGRANGE, cMo1) ;
+	double d1 = pose.computeResidual(cMo1);
+	pose.computePose(vpPose::DEMENTHON, cMo2) ;
+	double d2 = pose.computeResidual(cMo2);
+
+	if(d1 < d2)
+		cMo = cMo1;
+	else
+		cMo = cMo2;
+	
+	pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+	delete [] P;
+
+  init(_I);
+}
+
+/*!
+  Initialise the tracking thanks to the pose in vpPoseVector format, and read in the file _initFile.
+  The structure of this file is (without the comments):
+  \code
+  // The six value of the pose vector
+  0.0000    //  \
+  0.0000    //  | 
+  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  0.0000    //  |
+  0.0000    //  | 
+  0.0000    //  /
+  \endcode
+  
+  Where the three firsts lines refer to the translation and the three last to the rotation in thetaU parametrisation (see vpThetaUVector).
+  \param _I : Input image
+  \param _initFile : Path to the file containing the pose. 
+*/
+void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile)
+{
+	char s[FILENAME_MAX];
+	std::fstream finit ;
+	vpPoseVector init_pos;
+	
+	std::string ext = ".pos";
+	unsigned int pos =  _initFile.rfind(ext);
+	
+	if( pos == _initFile.size()-ext.size() && pos != 0)
+		sprintf(s,"%s", _initFile.c_str());
+	else
+		sprintf(s,"%s.pos", _initFile.c_str());
+	
+	std::cout << "filename " << s << std::endl ;
+	finit.open(s,std::ios::in) ;
+	if (finit.fail()){
+		std::cout << "cannot read " << s << std::endl;
+		throw vpException(vpException::ioError, "cannot read init file");
+	}
+	
+	for (unsigned int i = 0; i < 6; i += 1){
+		finit >> init_pos[i];
+	}
+	
+	cMo.buildFrom(init_pos);
+	init(_I);
+}
+
+/*!
+  Initialise the tracking thanks to the pose.
+  
+  \param _I : Input image
+  \param _cMo : Pose matrix. 
+*/
+void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo)
+{
+	cMo = _cMo;
+	init(_I);
+}
+
+/*!
+  Save the pose in the given filename
+  
+  \param filename : Path to the file used to save the pose. 
+*/
+void vpMbTracker::savePose(const std::string &filename)
+{
+	vpPoseVector init_pos;
+	std::fstream finitpos ;
+	char s[FILENAME_MAX];
+	
+	sprintf(s,"%s", filename.c_str());
+	finitpos.open(s, std::ios::out) ;
+		
+	init_pos.buildFrom(cMo);
+	finitpos << init_pos;
+	finitpos.close();
 }
 
 /*!

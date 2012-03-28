@@ -355,7 +355,7 @@ main(int argc, const char ** argv)
   else
   {
     vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
-    tracker.init(I,cMoi);
+    tracker.initFromPose(I, cMoi);
   }
 
   //track the model

@@ -1177,6 +1177,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
   vpDisplay::flush(I) ;
 
 }
+#endif // Deprecated
 
 /*!
 
@@ -1257,6 +1258,4 @@ void vpMeEllipse::display(const vpImage<unsigned char>& I, const vpImagePoint &c
     vpDisplay::displayLine(I,center, iP11, vpColor::red, 3) ;
     vpDisplay::displayLine(I,center, iP22, vpColor::blue, 3) ;
 }
-
-#endif
 

@@ -292,7 +292,11 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
   void loadConfigFile(const char* filename);
   void loadModel(const std::string &cad_name);
   void loadModel(const char* cad_name);
-  void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
+
+private:
+	void init(const vpImage<unsigned char>& I);
+	
+public:
   void track(const vpImage<unsigned char> &I);
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
@@ -409,6 +413,13 @@ class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
     instead.
   */
   vp_deprecated vpList<vpMbtDistanceCylinder *>* getLcylinder(const unsigned int _level = 0);
+  
+  /*!
+    \deprecated This method is deprecated. You should use
+    void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo)
+    instead.
+  */
+  vp_deprecated void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
 #endif
 
   
