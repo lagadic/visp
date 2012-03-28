@@ -88,6 +88,87 @@ vpImageConvert::convert(const vpImage<vpRGBa> &src,
        src.getHeight() * src.getWidth() );
 }
 
+
+/*!
+Convert a vpImage\<float\> to a vpImage\<unsigend char\> by renormalizing between 0 and 255.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<float> &src,
+          vpImage<unsigned char> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+  int max_xy = src.getWidth()*src.getHeight();
+  float min, max;
+
+  src.getMinMaxValue(min,max);
+  
+  for (int i = 0; i < max_xy; i++) {
+    float val = 255. * (src.bitmap[i] - min) / (max - min);
+    if(val < 0)
+      dest.bitmap[i] = 0;
+    else if(val > 255)
+      dest.bitmap[i] = 255;
+    else
+      dest.bitmap[i] = (int)val;
+  }
+}
+
+/*!
+Convert a vpImage\<unsigned char\> to a vpImage\<float\> by basic casting.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> &src,
+          vpImage<float> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+  for (unsigned int i = 0; i < src.getHeight()*src.getWidth(); i++)
+    dest.bitmap[i] = (float)src.bitmap[i];
+}
+
+/*!
+Convert a vpImage\<double\> to a vpImage\<unsigend char\> by renormalizing between 0 and 255.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<double> &src,
+          vpImage<unsigned char> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+  int max_xy = src.getWidth()*src.getHeight();
+  double min, max;
+
+  src.getMinMaxValue(min,max);
+  
+  for (int i = 0; i < max_xy; i++) {
+    double val = 255. * (src.bitmap[i] - min) / (max - min);
+    if(val < 0)
+      dest.bitmap[i] = 0;
+    else if(val > 255)
+      dest.bitmap[i] = 255;
+    else
+      dest.bitmap[i] = (int)val;
+  }
+}
+
+/*!
+Convert a vpImage\<unsigned char\> to a vpImage\<double\> by basic casting.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> &src,
+          vpImage<double> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+  for (unsigned int i = 0; i < src.getHeight()*src.getWidth(); i++)
+    dest.bitmap[i] = (double)src.bitmap[i];
+}
+
 #ifdef VISP_HAVE_OPENCV
 /*!
   Convert a IplImage to a vpImage\<vpRGBa\>
