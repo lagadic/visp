@@ -36,6 +36,7 @@
  *
  * Authors:
  * Romain Tallonneau
+ * Aurélien Yol
  *
  *****************************************************************************/
 
@@ -112,17 +113,26 @@ protected:
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
-  virtual void initClick(const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false);
-
+	
+	// Intializer
+	
+  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
+	virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
+	
+	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
+	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
+	
+	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
+	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
+	
   /* PURE VIRTUAL METHODS */
 
-  /*!
-    Initialise the tracking using the known pose cMo. 
+	/*!
+    Initialise the tracking.
 
     \param _I : Input image.
-    \param _c0Mo : Initial pose between the camera and the object. 
   */
-  virtual void init(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix& _c0Mo)=0;
+  virtual void init(const vpImage<unsigned char>& _I)=0;
 
   /*!
     Test the quality of the tracking.
@@ -201,6 +211,8 @@ public:
   inline void setPoseSavingFilename(const std::string& filename){
     poseSavingFilename = filename;
   }
+  
+  void savePose(const std::string &filename);
 
 protected:
   virtual void loadVRMLModel(const std::string& _modelFile);
@@ -236,6 +248,22 @@ protected:
   */
   virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
   
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+
+  /*!
+    \deprecated This method is deprecated. You should use
+    void initFromPose(const vpImage<unsigned char>&, const vpHomogeneousMatrix&) instead.
+
+    Initialise the tracking using the known pose cMo. 
+
+    \param _I : Input image.
+    \param _c0Mo : Initial pose between the camera and the object. 
+  */
+  vp_deprecated virtual void init(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix& _c0Mo)=0;
+#endif
 };
 
 
