@@ -186,6 +186,8 @@ public:
   Type getMaxValue() const ;
   // Return the minumum value within the bitmap
   Type getMinValue() const ;
+  //Look for the minumum and the maximum value within the bitmap
+  void getMinMaxValue(Type &min, Type &max) const;
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
@@ -642,6 +644,24 @@ Type vpImage<Type>::getMinValue() const
   for (unsigned int i=0 ; i < npixels ; i++)
     if (bitmap[i]<m) m = bitmap[i] ;
   return m ;
+}
+
+
+/*!
+  \brief Look for the minimum and the maximum value within the bitmap
+
+  \sa getMaxValue()
+  \sa getMinValue()
+*/
+template<class Type>
+void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
+{
+  min = max =  bitmap[0];
+  for (unsigned int i=0 ; i < npixels ; i++)
+  {
+    if (bitmap[i]<min) min = bitmap[i] ;
+    if (bitmap[i]>max) max = bitmap[i] ;
+  }
 }
 
 /*!
