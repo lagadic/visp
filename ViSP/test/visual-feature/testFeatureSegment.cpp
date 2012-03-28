@@ -41,6 +41,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMath.h>
+#include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeatureSegment.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPoint.h>
@@ -98,8 +99,9 @@ int main(int argc, const char ** /* argv */)
   p1_dst.project(cdMo);
   p2_dst.project(cdMo);
   
-  vpFeatureSegment seg_cur(p2_cur, p1_cur);
-  vpFeatureSegment seg_dst(p2_dst, p1_dst);
+  vpFeatureSegment seg_cur, seg_dst;
+  vpFeatureBuilder::create(seg_cur, p2_cur, p1_cur);
+  vpFeatureBuilder::create(seg_dst, p2_dst, p1_dst);
   seg_cur.print();
   seg_dst.print();
   
@@ -131,7 +133,7 @@ int main(int argc, const char ** /* argv */)
     p1_cur.project(cMo);
     p2_cur.project(cMo);
 
-    seg_cur.buildFrom(p2_cur, p1_cur);
+    vpFeatureBuilder::create(seg_cur, p2_cur, p1_cur);
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
     if (opt_display) {
       vpDisplay::display(I);

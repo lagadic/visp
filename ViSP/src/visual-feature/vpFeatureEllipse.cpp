@@ -416,9 +416,9 @@ vpFeatureEllipse::setMu(const double mu20, const double mu11,
 */
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
-			  vpImage<unsigned char> &I,
-			  vpColor color, 
-			  unsigned int thickness ) const
+                          const vpImage<unsigned char> &I,
+                          const vpColor &color,
+                          unsigned int thickness ) const
 {
   try{
       double x = s[0] ;
@@ -450,9 +450,9 @@ vpFeatureEllipse::display(const vpCameraParameters &cam,
 */
 void
 vpFeatureEllipse::display(const vpCameraParameters &cam,
-                          vpImage<vpRGBa> &I,
-                          vpColor color, 
-			  unsigned int thickness ) const
+                          const vpImage<vpRGBa> &I,
+                          const vpColor &color,
+                          unsigned int thickness ) const
 {
   try{
     double x = s[0] ;

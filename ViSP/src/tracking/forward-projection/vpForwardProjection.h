@@ -176,9 +176,9 @@ public:
     \param thickness : Thickness of the feature representation.
   */
   virtual void display(const vpImage<unsigned char> &I,
-		       const vpCameraParameters &cam,
-		       const vpColor color=vpColor::green,
-		       const unsigned int thickness=1) =0;
+                       const vpCameraParameters &cam,
+                       const vpColor &color=vpColor::green,
+                       const unsigned int thickness=1) =0;
 
   /*!
 
@@ -200,10 +200,10 @@ public:
     \param thickness : Thickness of the feature representation.
    */
   virtual void display(const vpImage<unsigned char> &I,
-		       const vpHomogeneousMatrix &cMo,
-		       const vpCameraParameters &cam,
-		       const vpColor color=vpColor::green,
-		       const unsigned int thickness=1) =0;
+                       const vpHomogeneousMatrix &cMo,
+                       const vpCameraParameters &cam,
+                       const vpColor &color=vpColor::green,
+                       const unsigned int thickness=1) =0;
 
   virtual void print() const ;
 

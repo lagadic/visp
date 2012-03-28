@@ -222,13 +222,13 @@ public:
 
 public:
   void display(const vpCameraParameters &cam,
-	       vpImage<unsigned char> &I,
-	       vpColor color=vpColor::green,
-	       unsigned int thickness=1) const ;
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
   void display(const vpCameraParameters &cam,
-               vpImage<vpRGBa> &I,
-               vpColor color=vpColor::green,
-	       unsigned int thickness=1) const ;
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
 
 
 } ;

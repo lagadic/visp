@@ -69,15 +69,11 @@ vpPoint::vpPoint()
   init() ;
 }
 
-
-
-
-
 //! set the point world coordinates
 void
 vpPoint::setWorldCoordinates(const double ox,
-			     const double oy,
-			     const double oz)
+                             const double oy,
+                             const double oz)
 {
   oP[0] = ox ;
   oP[1] = oy ;
@@ -126,7 +122,12 @@ vpPoint::getWorldCoordinates(void)
 
 
 
-//! perspective projection of a point
+/*!
+  Compute the perspective projection of a point _cP.
+
+  \param _cP : Three dimension vector that corresponds to the coordinates of the point in the camera frame.
+  \param _p : Coordinates of the point in the image plane obtained by perspective projection.
+*/
 void
 vpPoint::projection(const vpColVector &_cP, vpColVector &_p)
 {
@@ -137,7 +138,14 @@ vpPoint::projection(const vpColVector &_cP, vpColVector &_p)
   _p[2] = 1 ;
 }
 
-//! Compute the new 3D coordinates of the point in the new camera frame.
+/*!
+  From the 3D coordinates of the point in the object frame set using for example
+  setWorldCoordinates() or set_oX(), set_oY(), set_oZ(), compute the 3D coordinates
+  of the point in the camera frame.
+
+  \param cMo : Transformation from camera to object frame.
+  \param _cP : 3D coordinates of the point in the camera frame.
+*/
 void
 vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 {
@@ -156,13 +164,20 @@ vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
   _cP[3] *=d ; ;
 }
 
-/*! \brief change frame
- */
+/*!
+  From the coordinates of the point in camera frame b and the transformation between
+  camera frame a and camera frame b computes the coordinates of the point in camera frame a.
+
+  \param aMb : 3D transformation between camera frame a and b.
+  \param bP : 3D coordinates of the point in camera frame bP.
+
+  \return A point with 3D coordinates in the camera frame a. The coordinates in the world or object
+  frame are set to the same coordinates than the one in the camera frame.
+*/
 const vpPoint
 operator*(const vpHomogeneousMatrix &aMb, const vpPoint& bP)
 {
   vpPoint aP ;
-
 
   vpColVector v(4),v1(4) ;
 
@@ -189,12 +204,18 @@ operator*(const vpHomogeneousMatrix &aMb, const vpPoint& bP)
   aP.set_oZ(v1[2]) ;
   aP.set_oW(v1[3]) ;
  
-
   return aP ;
 }
 
-/*! \brief change frame
- */
+/*!
+  From the coordinates of the point in image plane b and the homography between image
+  a and b computes the coordinates of the point in image plane a.
+
+  \param aHb : Homography between image a and b.
+  \param bP : 2D coordinates of the point in the image plane b.
+
+  \return A point with 2D coordinates in the image plane a.
+*/
 const vpPoint
 operator*(const vpHomography &aHb, const vpPoint& bP)
 {
@@ -209,33 +230,30 @@ operator*(const vpHomography &aHb, const vpPoint& bP)
   v1[1] = aHb[1][0]*v[0] + aHb[1][1]*v[1]+ aHb[1][2]*v[2] ;
   v1[2] = aHb[2][0]*v[0] + aHb[2][1]*v[1]+ aHb[2][2]*v[2] ;
 
-
   //  v1 = M*v ;
   aP.set_x(v1[0]) ;
   aP.set_y(v1[1]) ;
   aP.set_w(v1[2]) ;
 
-
   return aP ;
 }
 
-
-
-
-//! for memory issue (used by the vpServo class only)
+//! For memory issue (used by the vpServo class only).
 vpPoint *vpPoint::duplicate() const
 {
   vpPoint *feature = new vpPoint(*this) ;
   return feature ;
 }
 
-
+/*!
+  Display the point in the image.
+*/
 void
 vpPoint::display(const vpImage<unsigned char> &I,
-		 const vpHomogeneousMatrix &cMo,
-		 const vpCameraParameters &cam,
-		 const vpColor color,
-		 const unsigned int thickness)
+                 const vpHomogeneousMatrix &cMo,
+                 const vpCameraParameters &cam,
+                 const vpColor &color,
+                 const unsigned int thickness)
 {
 
   vpColVector _cP, _p ;
@@ -246,17 +264,18 @@ vpPoint::display(const vpImage<unsigned char> &I,
 
   vpPoint::projection(_cP,_p) ;
   vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
-
 }
 
+/*!
+  Display the point in the image.
+*/
 void
 vpPoint::display(const vpImage<vpRGBa> &I,
-		 const vpHomogeneousMatrix &cMo,
-		 const vpCameraParameters &cam,
-		 const vpColor color,
-		 const unsigned int thickness)
+                 const vpHomogeneousMatrix &cMo,
+                 const vpCameraParameters &cam,
+                 const vpColor &color,
+                 const unsigned int thickness)
 {
-
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
 
@@ -265,7 +284,6 @@ vpPoint::display(const vpImage<vpRGBa> &I,
 
   vpPoint::projection(_cP,_p) ;
   vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
-
 }
 
 std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
@@ -284,11 +302,14 @@ vpPoint::operator=(const vpPoint&  vpp )
   return *this;
 }
 
+/*!
+  Display the point in the image.
+*/
 void
 vpPoint::display(const vpImage<unsigned char> &I,
-		 const vpCameraParameters &cam,
-		 const vpColor color,
-		 const unsigned int thickness)
+                 const vpCameraParameters &cam,
+                 const vpColor &color,
+                 const unsigned int thickness)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness) ;
 }

@@ -483,9 +483,9 @@ vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
 */
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
-			vpImage<unsigned char> &I,
-			vpColor color, 
-			unsigned int thickness) const
+                        const vpImage<unsigned char> &I,
+                        const vpColor &color,
+                        unsigned int thickness) const
 {
   try{
     double x,y ;
@@ -514,9 +514,9 @@ vpFeaturePoint::display(const vpCameraParameters &cam,
 */
 void
 vpFeaturePoint::display(const vpCameraParameters &cam,
-                        vpImage<vpRGBa> &I,
-                        vpColor color, 
-			unsigned int thickness) const
+                        const vpImage<vpRGBa> &I,
+                        const vpColor &color,
+                        unsigned int thickness) const
 {
   try{
     double x,y ;

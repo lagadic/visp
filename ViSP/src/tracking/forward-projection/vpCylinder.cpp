@@ -395,7 +395,7 @@ void
 vpCylinder::display(const vpImage<unsigned char> &I,
                     const vpHomogeneousMatrix &cMo,
                     const vpCameraParameters &cam,
-                    const vpColor color,
+                    const vpColor &color,
                     const unsigned int thickness)
 {
 
@@ -413,7 +413,7 @@ vpCylinder::display(const vpImage<unsigned char> &I,
 void
 vpCylinder::display(const vpImage<unsigned char> &I,
                     const vpCameraParameters &cam,
-                    const vpColor color,
+                    const vpColor &color,
                     const unsigned int thickness)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], 

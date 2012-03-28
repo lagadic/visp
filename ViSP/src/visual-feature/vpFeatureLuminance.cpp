@@ -303,8 +303,9 @@ vpFeatureLuminance::print(const unsigned int /* select */) const
  */
 void
 vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
-			    vpImage<unsigned char> & /* I */,
-			    vpColor /* color */,  unsigned int /* thickness */) const
+                            const vpImage<unsigned char> & /* I */,
+                            const vpColor &/* color */,
+                            unsigned int /* thickness */) const
 {
  static int firsttime =0 ;
 
@@ -324,8 +325,9 @@ vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
  */
 void
 vpFeatureLuminance::display(const vpCameraParameters & /* cam */,
-			    vpImage<vpRGBa> & /* I */,
-			    vpColor /* color */, unsigned int /* thickness */) const
+                            const vpImage<vpRGBa> & /* I */,
+                            const vpColor &/* color */,
+                            unsigned int /* thickness */) const
 {
   static int firsttime =0 ;
 

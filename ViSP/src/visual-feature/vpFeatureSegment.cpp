@@ -36,6 +36,7 @@
  *
  * Authors:
  * Filip Novotny
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -51,7 +52,6 @@
 // Exception
 #include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
-#include <visp/vpFeatureException.h>
 
 // Debug trace
 #include <visp/vpDebug.h>
@@ -80,9 +80,6 @@ vpFeatureSegment::init()
   if (flags == NULL)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
-
-  
-
 }
 
 /*! 
@@ -92,33 +89,15 @@ vpFeatureSegment::vpFeatureSegment():
   vpBasicFeature()
 {
   init();
-  buildFrom(0.,0.,1.,0.,0.,1.);
 }
-
-/*!
-  Default constructor that builds a segment visual feature.
-
-  \param P1 : 3D point representing one extremity of the segment
-  \param P2 : 3D point representing another extremity of the segment
-
-*/
-vpFeatureSegment::vpFeatureSegment(vpPoint& P1, vpPoint& P2):
-  vpBasicFeature()  
-{ 
-  init();
-  buildFrom(P1,P2);
-}
-
-
-
 
 /*!
   Compute and return the interaction matrix \f$ L \f$ associated to a
-  subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  subset of the possible features (\f$ x_c \f$, \f$ y_c \f$, \f$ l \f$, \f$ \alpha \f$).
 
   The interaction matrix is of the following form:
   \f[
-  L = \left[
+  {\bf L} = \left[
       \begin{array}{c}
         L_{x_c} \\
         L_{y_c} \\
@@ -128,23 +107,23 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1, vpPoint& P2):
     \right] =
     \left[
       \begin{array}{cccccc}
-        -\lambda_2 & 0 & \lambda_2 x_c - \lambda_1 l \frac{cos \alpha}{4} &
-        x_c y_c + l^2 \frac{cos \alpha sin \alpha}{4} &
-        -(1 + {x_{c}}^{2} + l^2 \frac{cos^2\alpha}{4}) &
+        -\lambda_2 & 0 & \lambda_2 x_c - \lambda_1 l \frac{\cos \alpha}{4} &
+        x_c y_c + l^2 \frac{\cos \alpha \sin \alpha}{4} &
+        -(1 + {x_{c}}^{2} + l^2 \frac{\cos^2\alpha}{4}) &
         y_c \\
-        0 & -\lambda_2 & \lambda_2 y_c - \lambda_1 l \frac{sin \alpha}{4} &
-        1 + {y_{c}}^{2} + l^2 \frac{sin^2 \alpha}{4} &
-        -x_c y_c-l^2 \frac{cos \alpha sin \alpha}{4} &
+        0 & -\lambda_2 & \lambda_2 y_c - \lambda_1 l \frac{\sin \alpha}{4} &
+        1 + {y_{c}}^{2} + l^2 \frac{\sin^2 \alpha}{4} &
+        -x_c y_c-l^2 \frac{\cos \alpha \sin \alpha}{4} &
         -x_c \\
-        \lambda_1 cos \alpha & \lambda_1 sin \alpha &
-        \lambda_2 l - \lambda_1 (x_c cos \alpha + y_c sin \alpha) &
-        l (x_c cos \alpha sin \alpha + y_c (1 + sin^2 \alpha)) &
-        -l (x_c (1 + cos^2 \alpha)+y_c cos \alpha sin \alpha) &
+        \lambda_1 \cos \alpha & \lambda_1 \sin \alpha &
+        \lambda_2 l - \lambda_1 (x_c \cos \alpha + y_c \sin \alpha) &
+        l (x_c \cos \alpha \sin \alpha + y_c (1 + \sin^2 \alpha)) &
+        -l (x_c (1 + \cos^2 \alpha)+y_c \cos \alpha \sin \alpha) &
         0 \\
-        -\lambda_1  \frac{sin \alpha}{l} & \lambda_1 \frac{cos \alpha}{l} &
-        \lambda_1 \frac{x_c sin \alpha - y_c cos \alpha}{l} &
-        -x_c sin^2 \alpha + y_c cos \alpha sin \alpha &
-        x_c cos \alpha sin \alpha - y_c cos^2 \alpha &
+        -\lambda_1  \frac{\sin \alpha}{l} & \lambda_1 \frac{\cos \alpha}{l} &
+        \lambda_1 \frac{x_c \sin \alpha - y_c \cos \alpha}{l} &
+        -x_c \sin^2 \alpha + y_c \cos \alpha \sin \alpha &
+        x_c \cos \alpha \sin \alpha - y_c \cos^2 \alpha &
         -1
       \end{array}
      \right]
@@ -156,44 +135,57 @@ vpFeatureSegment::vpFeatureSegment(vpPoint& P1, vpPoint& P2):
 
   \param select : Selection of a subset of the possible segment features.
   - To compute the interaction matrix for all the four 
-    subset features \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
-    that case the dimension of the interaction matrix is \f$ [4 \times 6] \f$
+    subset features \f$ x_c \f$, \f$ y_c \f$, \f$ l \f$, \f$ \alpha \f$ use vpBasicFeature::FEATURE_ALL. In
+    that case the dimension of the interaction matrix is \f$ [4 \times 6] \f$.
   - To compute the interaction matrix for only one of the subset
-    (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the following functions:
-    selectXc(),selectYc(),selectL(),selectAlpha(). In that case, the returned
+    (\f$ x_c \f$, \f$ y_c \f$, \f$ l \f$, \f$ \alpha \f$) use one of the following functions:
+    selectXc(), selectYc(), selectL(), selectAlpha(). In that case, the returned
     interaction matrix is of dimension \f$ [1 \times 6] \f$ .
 
   \return The interaction matrix computed from the segment features.
 
   The code below shows how to compute the interaction matrix associated to 
-  the visual feature \f$s\f$ =  (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  the visual feature \f$s = (x_c, y_c, l, \alpha)\f$.
   \code
-  vpPoint p1, p2;  
+#include <visp/vpFeatureSegment.h>
+#include <visp/vpPoint.h>
 
+int main()
+{
+  // Define two 3D points in the object frame
+  vpPoint p1, p2;
   p1.setWorldCoordinates(.1, .1, 0.);
   p2.setWorldCoordinates(.3, .2, 0.);
-  
-  vpFeatureSegment seg(p2, p1);
-  
-  vpMatrix L = seg.interaction()
+
+  // Define the camera pose wrt the object
+  vpHomogeneousMatrix cMo (0, 0, 1, 0, 0, 0); // Z=1 meter
+  // Compute the coordinates of the points in the camera frame
+  p1.changeFrame(cMo);
+  p2.changeFrame(cMo);
+  // Compute the coordinates of the points in the image plane by perspective projection
+  p1.project();
+  p2.project();
+
+  // Build the segment visual feature
+  vpFeatureSegment s;
+  s.buildFrom(p1.get_x(), p1.get_y(), p1.get_Z(), p2.get_x(), p2.get_y(), p2.get_Z());
+
+  // Compute the interaction matrix
+  vpMatrix L = s.interaction( vpBasicFeature::FEATURE_ALL );
+}
   \endcode
 
-  The interaction matrix could also be build by:
-  \code
-  vpMatrix L = seg.interaction( vpBasicFeature::FEATURE_ALL );
-  \endcode
-
-  In both cases, L is a 4 by 6 matrix.
+  In this case, L is a 4 by 6 matrix.
 
   It is also possible to build the interaction matrix associated to
-  one of the possible features. The code below shows how to consider
-  only the \f$\alpha\f$ component.
+  one of the possible features. The code below shows how to modify the previous code to consider as
+  visual feature \f$s = (l, \alpha)\f$.
 
   \code
-  vpMatrix L_alpha = s.interaction( vpFeatureSegment::selectAlpha() );
+  vpMatrix L = s.interaction( vpFeatureSegment::selectL() | vpFeatureSegment::selectAlpha() );
   \endcode
 
-  In that case, \f$L_alpha\f$ is a 1 by 6 matrix.
+  In that case, L is a 2 by 6 matrix.
 */
 vpMatrix
 vpFeatureSegment::interaction( const unsigned int select )
@@ -210,7 +202,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       {
         switch(i){
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but Xc was not set yet");
+          vpTRACE("Warning !!!  The interaction matrix is computed but xc was not set yet");
         break;
         case 1:
           vpTRACE("Warning !!!  The interaction matrix is computed but Yc was not set yet");
@@ -222,10 +214,10 @@ vpFeatureSegment::interaction( const unsigned int select )
           vpTRACE("Warning !!!  The interaction matrix is computed but alpha was not set yet");
         break;
 	case 4:
-          vpTRACE("Warning !!!  The interaction matrix is computed but z1 was not set yet");
+          vpTRACE("Warning !!!  The interaction matrix is computed but Z1 was not set yet");
         break;
 	case 5:
-          vpTRACE("Warning !!!  The interaction matrix is computed but z2 was not set yet");
+          vpTRACE("Warning !!!  The interaction matrix is computed but Z2 was not set yet");
         break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
@@ -235,39 +227,39 @@ vpFeatureSegment::interaction( const unsigned int select )
   }
 
   //This version is a simplification
-  double lambda1 = (z1-z2)/(z1*z2);
-  double lambda2 = (z1+z2)/(2*z1*z2);
+  double lambda1 = (Z1-Z2)/(Z1*Z2);
+  double lambda2 = (Z1+Z2)/(2*Z1*Z2);
   
 
   if (vpFeatureSegment::selectXc() & select ){
-      vpMatrix LXc(1,6);
-      LXc[0][0] = -lambda2 ;
-      LXc[0][1] = 0. ;
-      LXc[0][2] = lambda2*Xc - lambda1*l*cos_a/4.;
-      LXc[0][3] = Xc*Yc + l*l*cos_a*sin_a/4. ;
-      LXc[0][4] = -(1+Xc*Xc+l*l*cos_a*cos_a/4.) ;
-      LXc[0][5] = Yc ;
-    L = vpMatrix::stackMatrices(L,LXc) ;
+      vpMatrix Lxc(1,6);
+      Lxc[0][0] = -lambda2 ;
+      Lxc[0][1] = 0. ;
+      Lxc[0][2] = lambda2*xc - lambda1*l*cos_a/4.;
+      Lxc[0][3] = xc*xc + l*l*cos_a*sin_a/4. ;
+      Lxc[0][4] = -(1+xc*xc+l*l*cos_a*cos_a/4.) ;
+      Lxc[0][5] = yc ;
+    L = vpMatrix::stackMatrices(L,Lxc) ;
   }
 
   if (vpFeatureSegment::selectYc() & select ){
-    vpMatrix LYc(1,6);
-      LYc[0][0] = 0. ;
-      LYc[0][1] = -lambda2 ;
-      LYc[0][2] = lambda2*Yc - lambda1*l*sin_a/4.;
-      LYc[0][3] = 1+Yc*Yc+l*l*sin_a*sin_a/4. ;
-      LYc[0][4] = -Xc*Yc-l*l*cos_a*sin_a/4. ;
-      LYc[0][5] = -Xc ;
-    L = vpMatrix::stackMatrices(L,LYc) ;
+    vpMatrix Lyc(1,6);
+      Lyc[0][0] = 0. ;
+      Lyc[0][1] = -lambda2 ;
+      Lyc[0][2] = lambda2*yc - lambda1*l*sin_a/4.;
+      Lyc[0][3] = 1+yc*yc+l*l*sin_a*sin_a/4. ;
+      Lyc[0][4] = -xc*yc-l*l*cos_a*sin_a/4. ;
+      Lyc[0][5] = -xc ;
+    L = vpMatrix::stackMatrices(L,Lyc) ;
   }
 
   if (vpFeatureSegment::selectL() & select ){
     vpMatrix Ll(1,6);
       Ll[0][0] = lambda1*cos_a ;
       Ll[0][1] = lambda1*sin_a ;
-      Ll[0][2] = lambda2*l-lambda1*(Xc*cos_a+Yc*sin_a);
-      Ll[0][3] = l*(Xc*cos_a*sin_a + Yc*(1+sin_a*sin_a)) ;
-      Ll[0][4] = -l*(Xc*(1+cos_a*cos_a)+Yc*cos_a*sin_a) ;
+      Ll[0][2] = lambda2*l-lambda1*(xc*cos_a+yc*sin_a);
+      Ll[0][3] = l*(xc*cos_a*sin_a + yc*(1+sin_a*sin_a)) ;
+      Ll[0][4] = -l*(xc*(1+cos_a*cos_a)+yc*cos_a*sin_a) ;
       Ll[0][5] = 0 ;
     L = vpMatrix::stackMatrices(L,Ll) ;
   }
@@ -276,9 +268,9 @@ vpFeatureSegment::interaction( const unsigned int select )
     vpMatrix Lalpha(1,6);
       Lalpha[0][0] = -lambda1*sin_a/l ;
       Lalpha[0][1] = lambda1*cos_a/l ;
-      Lalpha[0][2] = lambda1*(Xc*sin_a-Yc*cos_a)/l;
-      Lalpha[0][3] = -Xc*sin_a*sin_a+Yc*cos_a*sin_a;
-      Lalpha[0][4] = Xc*cos_a*sin_a - Yc*cos_a*cos_a ;
+      Lalpha[0][2] = lambda1*(xc*sin_a-yc*cos_a)/l;
+      Lalpha[0][3] = -xc*sin_a*sin_a+yc*cos_a*sin_a;
+      Lalpha[0][4] = xc*cos_a*sin_a - yc*cos_a*cos_a ;
       Lalpha[0][5] = -1 ;
     L = vpMatrix::stackMatrices(L,Lalpha) ;
   }
@@ -287,7 +279,8 @@ vpFeatureSegment::interaction( const unsigned int select )
 }
 
 /*!
-   \brief Computes the error between the current and the desired visual features from a subset of the possible features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
+  Computes the error between the current and the desired visual features from a subset
+  of the possible features (\f$x_c\f$, \f$y_c\f$, \f$l\f$, \f$\alpha\f$).
 
   For the angular component \f$\alpha\f$, we define the error as
   \f$\alpha \ominus \alpha^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
@@ -297,11 +290,11 @@ vpFeatureSegment::interaction( const unsigned int select )
 
   \param select : The error can be computed for a selection of a
   subset of the possible segment features.
-  - To compute the error for all the three coordinates use
-    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
+  - To compute the error for all the four parameters use
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 4
     dimension column vector.
-  - To compute the error for only one subfeature (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$) use one of the
-    following functions: selectXc(),selectYc(),selectL(),selectAlpha().
+  - To compute the error for only one subfeature (\f$x_c\f$, \f$y_c\f$, \f$l\f$, \f$\alpha\f$) use one of the
+    following functions: selectXc(), selectYc(), selectL(), selectAlpha().
 
   \return The error between the current and the desired
   visual feature.
@@ -313,15 +306,15 @@ vpFeatureSegment::error( const vpBasicFeature &s_star, const unsigned int select
   vpColVector e(0) ;
 
   if (vpFeatureSegment::selectXc() & select ){
-    vpColVector eXc(1) ;
-    eXc[0] = Xc-s_star[0];
-    e = vpMatrix::stackMatrices(e,eXc) ;	  
+    vpColVector exc(1) ;
+    exc[0] = xc-s_star[0];
+    e = vpMatrix::stackMatrices(e,exc) ;
   }
 
   if (vpFeatureSegment::selectYc() & select ){
-    vpColVector eYc(1) ;
-    eYc[0] = Yc - s_star[1];
-    e = vpMatrix::stackMatrices(e,eYc) ;
+    vpColVector eyc(1) ;
+    eyc[0] = yc - s_star[1];
+    e = vpMatrix::stackMatrices(e,eyc) ;
   }
 
   if (vpFeatureSegment::selectL() & select ){
@@ -345,30 +338,25 @@ vpFeatureSegment::error( const vpBasicFeature &s_star, const unsigned int select
 
   \param select : Selection of a subset of the possible segement features (\f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$).
 
-  \code
-  vpPoint p1,p2;
-  
-  p1.setWorldCoordinates(.1,.1,0.);
-  p2.setWorldCoordinates(.3,.2,0.);
-
-  p1.setWorldCoordinates(.1,.1,0.);
-  p2.setWorldCoordinates(.3,.2,0.);
-  
-  p1.project(cMo);
-  p2.project(cMo);
-
-  p1.project(cdMo);
-  p2.project(cdMo);
-  
-  vpFeatureSegment seg(p2,p1);  
-  
-  seg.print();
+  \code  
+  s.print();
   \endcode
 
   produces the following output:
 
   \code
-  vpFeatureSegment: (Xc = -0.255634;Yc = -0.13311;l = 0.105005;alpha = 92.1305 deg)
+  vpFeatureSegment: (xc = -0.255634; yc = -0.13311; l = 0.105005; alpha = 92.1305 deg)
+  \endcode
+
+  while
+  \code
+  s.print( vpFeatureSegment::selectL() | vpFeatureSegment::selectAlpha() );
+  \endcode
+
+  produces the following output:
+
+  \code
+  vpFeatureSegment: (l = 0.105005; alpha = 92.1305 deg)
   \endcode
 */
 void
@@ -376,13 +364,13 @@ vpFeatureSegment::print( const unsigned int select ) const
 {
   std::cout <<"vpFeatureSegment: (";
   if (vpFeatureSegment::selectXc() & select ) {
-    std::cout << "Xc = " << s[0] << ";";
+    std::cout << "xc = " << s[0] << "; ";
   }
   if (vpFeatureSegment::selectYc() & select ) {
-    std::cout << "Yc = " << s[1] << ";";
+    std::cout << "yc = " << s[1] << "; ";
   }
   if (vpFeatureSegment::selectL() & select ) {
-    std::cout << "l = " << s[2] << ";";
+    std::cout << "l = " << s[2] << "; ";
   }
   if (vpFeatureSegment::selectAlpha() & select ) {
     std::cout << "alpha = " << vpMath::deg(s[3]) << " deg";
@@ -415,28 +403,28 @@ vpFeatureSegment *vpFeatureSegment::duplicate() const
 
   \param cam : Camera parameters.
   \param I : Image.
-  \param color : Color to use for the display
+  \param color : Color to use for the segment.
   \param thickness : Thickness of the feature representation.
 
 */
 void
 vpFeatureSegment::display(const vpCameraParameters &cam ,
-       vpImage<unsigned char> & I ,
-       vpColor  color ,
-       unsigned int  thickness ) const
+                          const vpImage<unsigned char> & I,
+                          const vpColor &color,
+                          unsigned int  thickness ) const
 {
-  double X1 = Xc - (l/2.)*cos_a;
-  double X2 = Xc + (l/2.)*cos_a;
+  double x1 = xc - (l/2.)*cos_a;
+  double x2 = xc + (l/2.)*cos_a;
 
-  double Y1 = Yc - (l/2.)*sin_a;
-  double Y2 = Yc + (l/2.)*sin_a;
+  double y1 = yc - (l/2.)*sin_a;
+  double y2 = yc + (l/2.)*sin_a;
   vpImagePoint ip1,ip2;
 
-  vpMeterPixelConversion::convertPoint(cam,X1,Y1,ip1);
-  vpMeterPixelConversion::convertPoint(cam,X2,Y2,ip2);
+  vpMeterPixelConversion::convertPoint(cam, x1, y1, ip1);
+  vpMeterPixelConversion::convertPoint(cam, x2, y2, ip2);
   vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  vpDisplay::displayCircle(I,ip1,5,vpColor::cyan,true);
-  vpDisplay::displayCircle(I,ip2,5,vpColor::yellow,true);
+  vpDisplay::displayCircle(I, ip1, 5, color, true);
+  vpDisplay::displayCircle(I, ip2, 5, vpColor::yellow, true);
 }
 
 /*!
@@ -446,170 +434,56 @@ vpFeatureSegment::display(const vpCameraParameters &cam ,
 
   \param cam : Camera parameters.
   \param I : Image.
-  \param color : Color to use for the display
+  \param color : Color to use for the segment.
   \param thickness : Thickness of the feature representation.
 */
 void
 vpFeatureSegment::display(const vpCameraParameters & cam ,
-      vpImage<vpRGBa> & I ,
-      vpColor color ,
-      unsigned int thickness ) const
+                          const vpImage<vpRGBa> & I,
+                          const vpColor &color,
+                          unsigned int thickness ) const
 {
-  double X1 = Xc - (l/2.)*cos_a;
-  double X2 = Xc + (l/2.)*cos_a;
+  double x1 = xc - (l/2.)*cos_a;
+  double x2 = xc + (l/2.)*cos_a;
 
-  double Y1 = Yc - (l/2.)*sin_a;
-  double Y2 = Yc + (l/2.)*sin_a;
+  double y1 = yc - (l/2.)*sin_a;
+  double y2 = yc + (l/2.)*sin_a;
   vpImagePoint ip1,ip2;
 
-  vpMeterPixelConversion::convertPoint(cam,X1,Y1,ip1);
-  vpMeterPixelConversion::convertPoint(cam,X2,Y2,ip2);
+  vpMeterPixelConversion::convertPoint(cam, x1, y1, ip1);
+  vpMeterPixelConversion::convertPoint(cam, x2, y2, ip2);
   vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  vpDisplay::displayCircle(I,ip1,5,vpColor::cyan,true);
-  vpDisplay::displayCircle(I,ip2,5,vpColor::yellow,true);
+  vpDisplay::displayCircle(I, ip1, 5,vpColor::cyan, true);
+  vpDisplay::displayCircle(I, ip2, 5,vpColor::yellow, true);
 } 
 
-/*!  
-  
-  Build a segment visual feature from two points.
-
-  \param P1, P2 : Two image points defining the segment. These points must contain coordinates (x and y) projected on the camera plane.
-  
-  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
-  computed from two two points using the following formulae:
-  \f$ x_c = \frac{X_1 + X_2}{2} \f$
-  \f$ y_c = \frac{Y_1 + Y_2}{2} \f$
-  \f$ l = \sqrt{{X_1 - X_2}^2 + {Y_1 - Y_2}^2} \f$
-  \f$ \alpha = arctan(\frac{Y_1 - Y_2}{X_1 - X_2}) \f$
-*/
-void vpFeatureSegment::buildFrom(vpPoint& P1, vpPoint& P2){
-  buildFrom(P1.get_x(),P1.get_y(),P1.get_Z(),P2.get_x(),P2.get_y(),P2.get_Z());
-}
-
 /*!
 
-  Build a segment visual feature from two image points and their Z coordinates.
+  Build a segment visual feature from two points and their Z coordinates.
 
-  \param x1 : x image coordinate of the first point
-  \param y1 : y image coordinate of the first point
-  \param Z1 : Z image coordinate of the first point
+  \param x1, y1 : coordinates of the first point in the image plane.
+  \param Z1 : depth of the first point in the camera frame.
 
-  \param x2 : x image coordinate of the second point
-  \param y2 : y image coordinate of the second point
-  \param Z2 : Z image coordinate of the second point
+  \param x2, y2 : coordinates of the second point in the image plane.
+  \param Z2 : depth of the second point in the camera frame.
 
-  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
-  computed from two two points using the following formulae:
-  \f$ x_c = \frac{x_1 + x_2}{2} \f$
-  \f$ y_c = \frac{y_1 + y_2}{2} \f$
-  \f$ l = \sqrt{{x_1 - x_2}^2 + {y_1 - y_2}^2} \f$
-  \f$ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f$
+  The parameters \f$ x_c \f$, \f$ y_c \f$, \f$ l \f$, \f$ \alpha \f$ are
+  computed from the two points using the following formulae:
+  \f[ x_c = \frac{x_1 + x_2}{2} \f]
+  \f[ y_c = \frac{y_1 + y_2}{2} \f]
+  \f[ l = \sqrt{{x_1 - x_2}^2 + {y_1 - y_2}^2} \f]
+  \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f]
 */
-void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2){
+void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1,
+                                 const double x2, const double y2, const double Z2)
+{
   setXc((x1+x2)/2.);
   setYc((y1+y2)/2.);
+  setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  setAlpha(atan2(y1-y2,x1-x2));
+
   setZ1(Z1);
   setZ2(Z2);
-  setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
-  setAlpha(atan2(y1-y2,x1-x2));
 }
 
-/*!
 
-  Build a segment visual feature from two image points and their Z coordinates.
-
-  \param x1 : x image coordinate of the first point
-  \param y1 : y image coordinate of the first point
-
-  \param x2 : x image coordinate of the second point
-  \param y2 : y image coordinate of the second point
-
-  The parameters \f$ x_c \f$,\f$ y_c \f$,\f$ l \f$,\f$ \alpha \f$ are
-  computed from two two points using the following formulae:
-  \f$ x_c = \frac{x_1 + x_2}{2} \f$
-  \f$ y_c = \frac{y_1 + y_2}{2} \f$
-  \f$ l = \sqrt{{x_1 - x_2}^2 + {y_1 - y_2}^2} \f$
-  \f$ \alpha = arctan(\frac{y_1 - y_2}{x_1 - x_2}) \f$
-*/
-void vpFeatureSegment::buildFrom(const double x1, const double y1, const double x2, const double y2){
-  setXc((x1+x2)/2.);
-  setYc((y1+y2)/2.);
-  setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
-  setAlpha(atan2(y1-y2,x1-x2));
-}
-
-/*!
-
-  Set the value of \f$ x_c \f$ which represents the x coordinate of the segment center
-  in the image plane. It is one parameter of the visual feature \f$ s \f$.
-
-  \param val : \f$ x_c \f$ value to set.
-*/
-void vpFeatureSegment::setXc(const double val){
-  s[0] = Xc = val;
-  flags[0] = true;
-}
-/*!
-
-  Set the value of \f$ y_c \f$ which represents the y coordinate of the segment center
-  in the image plane. It is one parameter of the visual feature \f$ s \f$.
-
-  \param val : \f$ y_c \f$ value to set.
-*/
-void vpFeatureSegment::setYc(const double val){
-  s[1] = Yc = val;
-  flags[1] = true;
-}
-/*!
-
-  Set the value of \f$ l \f$ which represents the length of the segment
-  in the image plane. It is one parameter of the visual feature \f$ s \f$.
-
-  \param val : \f$ l \f$ value to set.
-*/
-void vpFeatureSegment::setL(const double val){
-  s[2] = l = val;
-  flags[2] = true;
-}
-/*!
-
-  Set the value of \f$ \alpha \f$ which represents the orientation of the segment
-  in the image plane. It is one parameter of the visual feature \f$ s \f$.
-
-  \param val : \f$ \alpha \f$ value to set.
-*/
-void vpFeatureSegment::setAlpha(const double val){
-  s[3] = alpha = val;
-  cos_a = cos(alpha);
-  sin_a = sin(alpha);
-  flags[3] = true;
-}
-
-/*!
-
-  Set the value of \f$ Z_1 \f$ which represents the z coordinate of the first segment point
-  in the image plane.
-
-  \param val : \f$ Z_1 \f$ value to set.
-*/
-void vpFeatureSegment::setZ1(const double val){
-  z1 = val;
-  flags[4] = true;
-}
-/*!
-
-  Set the value of \f$ Z_2 \f$ which represents the y coordinate of the second segment point
-  in the image plane.
-
-  \param val : \f$ Z_2 \f$ value to set.
-*/
-void vpFeatureSegment::setZ2(const double val){
-  z2 = val;
-  flags[5] = true;
-}
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

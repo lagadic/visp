@@ -36,107 +36,107 @@
  *
  * Authors:
  * Filip Novotny
+ * Fabien Spindler
  *
  *****************************************************************************/
 
 
 /*!
   \file vpFeatureBuilderSegment.cpp
-  \brief  Segment creation out of dots
+  \brief  Segment creation out of dots.
 */
 
 #include <visp/vpFeatureBuilder.h>
-
-
 #include <visp/vpMath.h>
 
 
-
 /*!
-  Initialize a segment feature out of vpDots, depth coordinates and camera parameters.
+  Initialize a segment feature out of vpDots and camera parameters.
 
-  \param seg : Visual feature to initialize.
+  \param s : Visual feature to initialize.
   \param cam : The parameters of the camera used to acquire the image containing the point.
-  \param d1 : The vpDot describing the first point of the segment.
-  \param Z1 : The depth coordinate of the first point.
-
-  \param d2 : The vpDot describing the first point of the segment.
-  \param Z2 : The depth coordinate of the second point.
+  \param d1 : The dot corresponding to the first point of the segment.
+  \param d2 : The dot corresponding to the second point of the segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const double Z1, const vpDot &d2, const double Z2 ) {
-  double x1=0, y1=0, x2=0, y2=0;
-
-
-  vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
-  vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
-
-  seg.buildFrom(x1, y1, Z1, x2, y2, Z2);
-}
-
-/*!
-  Initialize a segment feature out of vpDots, depth coordinates and camera parameters.
-
-  \param seg : Visual feature to initialize.
-  \param cam : The parameters of the camera used to acquire the image containing the point.
-  \param d1 : The vpDot2 describing the first point of the segment.
-  \param Z1 : The depth coordinate of the first point.
-
-  \param d2 : The vpDot describing the first point of the segment.
-  \param Z2 : The depth2 coordinate of the second point.
-
-*/
-void vpFeatureBuilder::create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const double Z1, const vpDot2 &d2, const double Z2) {
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam,
+                              const vpDot &d1, const vpDot &d2 )
+{
   double x1=0, y1=0, x2=0, y2=0;
 
   vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
   vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
 
-  seg.buildFrom(x1, y1, Z1, x2, y2, Z2);
+  s.setYc((x1+x2)/2.);
+  s.setYc((y1+y2)/2.);
+  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
 /*!
   Initialize a segment feature out of vpDots and camera parameters.
 
-  \param seg : Visual feature to initialize.
+  \param s : Visual feature to initialize.
   \param cam : The parameters of the camera used to acquire the image containing the point.
-  \param d1 : The vpDot describing the first point of the segment.
-
-  \param d2 : The vpDot describing the first point of the segment.
+  \param d1 : The dot corresponding to the first point of the segment.
+  \param d2 : The dot corresponding to the second point of the segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2 ) {
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam,
+                              const vpDot2 &d1, const vpDot2 &d2)
+{
   double x1=0, y1=0, x2=0, y2=0;
-
 
   vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
   vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
 
-  seg.buildFrom(x1, y1, x2, y2);
+  s.setYc((x1+x2)/2.);
+  s.setYc((y1+y2)/2.);
+  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
 /*!
-  Initialize a segment feature out of vpDots and camera parameters.
+  Initialize a segment feature out of image points and camera parameters.
 
-  \param seg : Visual feature to initialize.
+  \param s : Visual feature to initialize.
   \param cam : The parameters of the camera used to acquire the image containing the point.
-  \param d1 : The vpDot2 describing the first point of the segment.
-
-  \param d2 : The vpDot describing the first point of the segment.
+  \param ip1 : The image point corresponding to the first point of the segment.
+  \param ip2 : The image point corresponding to the second point of the segment.
 
 */
-void vpFeatureBuilder::create(vpFeatureSegment &seg, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2) {
+void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam,
+                              const vpImagePoint &ip1, const vpImagePoint &ip2)
+{
   double x1=0, y1=0, x2=0, y2=0;
 
-  vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
-  vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
+  vpPixelMeterConversion::convertPoint(cam, ip1, x1, y1) ;
+  vpPixelMeterConversion::convertPoint(cam, ip2, x2, y2) ;
 
-  seg.buildFrom(x1, y1, x2, y2);
+  s.setYc((x1+x2)/2.);
+  s.setYc((y1+y2)/2.);
+  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
+/*!
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+  Build a segment visual feature from two points.
+
+  \param s : Visual feature to initialize.
+  \param P1, P2 : Two points defining the segment. These points must contain the 3D coordinates
+  in the camera frame (cP) and the projected coordinates in the image plane (p).
+
+*/
+void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint& P1, vpPoint& P2)
+{
+  double x1 = P1.get_x();
+  double y1 = P1.get_y();
+  double x2 = P2.get_x();
+  double y2 = P2.get_y();
+
+  double Z1 = P1.cP[2]/P1.cP[3];
+  double Z2 = P2.cP[2]/P2.cP[3];
+
+  s.buildFrom(x1, y1, Z1, x2, y2, Z2);
+}
