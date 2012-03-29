@@ -262,7 +262,7 @@ protected:
     \param _I : Input image.
     \param _c0Mo : Initial pose between the camera and the object. 
   */
-  vp_deprecated virtual void init(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix& _c0Mo)=0;
+  /* vp_deprecated */ virtual void init(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix& _c0Mo)=0;
 #endif
 };
 
