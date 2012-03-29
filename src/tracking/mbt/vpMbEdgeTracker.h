@@ -180,7 +180,7 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
-  tracker.init(I, cMo); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+  tracker.initFromPose(I, cMo); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
 
   while(true){
     // acquire a new image
