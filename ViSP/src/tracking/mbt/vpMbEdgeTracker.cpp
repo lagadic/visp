@@ -1743,7 +1743,7 @@ vpMbEdgeTracker::getLcylinder(const unsigned int _level)
  \param I : The image.
  \param _cMo : The initial pose used to initialize the tracking.
 */
-void
+vp_deprecated void
 vpMbEdgeTracker::init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &_cMo)
 {
   this->cMo = _cMo;
