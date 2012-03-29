@@ -427,18 +427,18 @@ void
 vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
   unsigned int offsetj = 0;
-  for (int i = 0; i < (int)curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; i++) {
     unsigned int offset = epsj * strlen((curveList+i)->legend);
-	offsetj = vpMath::maximum(offset, offsetj);
+    offsetj = vpMath::maximum(offset, offsetj);
   }
   if (offsetj > dWidth) offsetj = dWidth;
 
-  for (int i = 0; i < (int)curveNbr; i++) {
+  for (unsigned int i = 0; i < curveNbr; i++) {
     vpDisplay::displayCharString(I,
-				 vpImagePoint(dTopLeft.get_i()+i*5*epsi,
-					      dTopLeft.get_j()+dWidth-offsetj),
-				 (curveList+i)->legend, 
-				 (curveList+i)->color);
+                                 vpImagePoint(dTopLeft.get_i()+i*5*epsi,
+                                              dTopLeft.get_j()+dWidth-offsetj),
+                                 (curveList+i)->legend,
+                                 (curveList+i)->color);
   }
 }
 

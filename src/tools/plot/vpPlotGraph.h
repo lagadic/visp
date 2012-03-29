@@ -135,8 +135,8 @@ class vpPlotGraph
     bool blockedz;
     bool blocked;
     
-    int epsi;
-    int epsj;
+    unsigned int epsi;
+    unsigned int epsj;
     
     bool dispUnit;
     bool dispTitle;
