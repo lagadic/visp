@@ -99,13 +99,13 @@ vpImageConvert::convert(const vpImage<float> &src,
           vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
-  int max_xy = src.getWidth()*src.getHeight();
+  unsigned int max_xy = src.getWidth()*src.getHeight();
   float min, max;
 
   src.getMinMaxValue(min,max);
   
-  for (int i = 0; i < max_xy; i++) {
-    float val = 255. * (src.bitmap[i] - min) / (max - min);
+  for (unsigned int i = 0; i < max_xy; i++) {
+    float val = 255.f * (src.bitmap[i] - min) / (max - min);
     if(val < 0)
       dest.bitmap[i] = 0;
     else if(val > 255)
@@ -139,12 +139,12 @@ vpImageConvert::convert(const vpImage<double> &src,
           vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
-  int max_xy = src.getWidth()*src.getHeight();
+  unsigned int max_xy = src.getWidth()*src.getHeight();
   double min, max;
 
   src.getMinMaxValue(min,max);
   
-  for (int i = 0; i < max_xy; i++) {
+  for (unsigned int i = 0; i < max_xy; i++) {
     double val = 255. * (src.bitmap[i] - min) / (max - min);
     if(val < 0)
       dest.bitmap[i] = 0;

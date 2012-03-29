@@ -298,7 +298,7 @@ vpPolygon::updateArea()
   _area = 0;
 
   for(unsigned int i=0; i<_corners.size(); ++i){
-    int i_p_1 = ( i+1 ) % _corners.size();
+    unsigned int i_p_1 = ( i+1 ) % _corners.size();
     _area += _corners[i].get_j() * _corners[i_p_1].get_i()
       - _corners[i_p_1].get_j() * _corners[i].get_i();
   }
@@ -341,7 +341,7 @@ vpPolygon::updateCenter()
   }
 #else
   for(unsigned int i=0; i<_corners.size(); ++i){
-    int i_p_1 = ( i+1 ) % _corners.size();
+    unsigned int i_p_1 = ( i+1 ) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
              (_corners[i_p_1].get_i() * _corners[i].get_j() 
 	      - _corners[i_p_1].get_j() * _corners[i].get_i());

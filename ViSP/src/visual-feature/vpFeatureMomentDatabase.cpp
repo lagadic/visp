@@ -74,17 +74,20 @@ vpFeatureMoment& vpFeatureMomentDatabase::get(const char* type, bool& found){
   \param B : second plane coefficient for a plane equation of the following type Ax+By+C=1/Z
   \param C : third plane coefficient for a plane equation of the following type Ax+By+C=1/Z  
 */
-void vpFeatureMomentDatabase::updateAll(double A, double B, double C){
+void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
+{
   std::map<const char*,vpFeatureMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment*> values;
   values.reserve(featureMomentsDataBase.size());
   for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
-	values.push_back((*itr).second);
+    values.push_back((*itr).second);
   }
+  unsigned int i_;
   #pragma omp parallel for shared(A,B,C)
   for(int i=0;i<(int)values.size();i++){
-	values[i]->update(A,B,C);
+    i_ = static_cast<unsigned int>(i);
+    values[i_]->update(A,B,C);
   }
 #else
   for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){

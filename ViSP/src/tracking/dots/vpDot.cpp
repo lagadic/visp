@@ -315,7 +315,8 @@ bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int 
   
   bool edge = false;
   
-  if((int)u-1 >= 0)
+  //if((int)u-1 >= 0)
+  if(u >= 1)
     if(!checkTab[u-1 + v*I.getWidth()])
       if(!connexe(I,u-1,v, mean_value,u_cog,v_cog, n, checkTab))
 	edge = true;
@@ -325,7 +326,7 @@ bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int 
       if(!connexe(I,u+1,v,mean_value,u_cog, v_cog, n, checkTab))
 	edge = true;
       
-  if((int)v-1 >= 0)
+  if(v >= 1)
     if(!checkTab[u+(v-1)*I.getWidth()])
       if(!connexe(I,u, v-1,mean_value,u_cog, v_cog, n, checkTab))
 	edge = true;
@@ -336,25 +337,25 @@ bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int 
 	edge = true;
   
   if (connexityType == CONNEXITY_8) {
-      if((int)v-1 >= 0 && (int)u-1 >= 0) 
-	if(!checkTab[u-1+(v-1)*I.getWidth()])
-	  if(!connexe(I,u-1,v-1,mean_value,u_cog, v_cog, n, checkTab))
-	    edge = true;
+    if(v >= 1 && u >= 1)
+      if(!checkTab[u-1+(v-1)*I.getWidth()])
+        if(!connexe(I,u-1,v-1,mean_value,u_cog, v_cog, n, checkTab))
+          edge = true;
 	  
-      if((int)v-1 >= 0 && u+1 < I.getWidth())
-	if(!checkTab[u+1+(v-1)*I.getWidth()])
-	  if(!connexe(I,u+1,v-1,mean_value,u_cog, v_cog, n, checkTab))
-	    edge = true;
+    if(v >= 1 && u+1 < I.getWidth())
+      if(!checkTab[u+1+(v-1)*I.getWidth()])
+        if(!connexe(I,u+1,v-1,mean_value,u_cog, v_cog, n, checkTab))
+          edge = true;
 	  
-      if(v+1 < I.getHeight() && (int)u-1 >= 0)
-	if(!checkTab[u-1+(v+1)*I.getWidth()])
-	  if(!connexe(I,u-1,v+1,mean_value, u_cog, v_cog, n, checkTab))
-	    edge = true;
+    if(v+1 < I.getHeight() && u >= 1)
+      if(!checkTab[u-1+(v+1)*I.getWidth()])
+        if(!connexe(I,u-1,v+1,mean_value, u_cog, v_cog, n, checkTab))
+          edge = true;
 	  
-      if(v+1 < I.getHeight() && u+1 < I.getWidth())
-	if(!checkTab[u+1+(v+1)*I.getWidth()])
-	  if(!connexe(I,u+1,v+1,mean_value,u_cog, v_cog, n, checkTab))
-	    edge = true;
+    if(v+1 < I.getHeight() && u+1 < I.getWidth())
+      if(!checkTab[u+1+(v+1)*I.getWidth()])
+        if(!connexe(I,u+1,v+1,mean_value,u_cog, v_cog, n, checkTab))
+          edge = true;
    }
   
   if(edge){

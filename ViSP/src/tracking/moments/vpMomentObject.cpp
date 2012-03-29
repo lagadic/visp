@@ -267,7 +267,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
   {        
     std::vector<double> curvals(order*order); 
     curvals.assign(order*order,0.);
-    int i_, j_;
+    unsigned int i_, j_;
 
     #pragma omp for nowait//automatically organize loop counter between threads
     for(int i=0;i<(int)image.getCols();i++){
