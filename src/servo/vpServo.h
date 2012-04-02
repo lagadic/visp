@@ -196,6 +196,28 @@ public:
   vpServo(vpServoType _servoType) ;
   //! destructor
   virtual ~vpServo() ;
+
+  /*!
+    Return the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
+  */
+  vpVelocityTwistMatrix get_cVe() const { return cVe; }
+  /*!
+    Return the velocity twist matrix used to transform a velocity skew vector from robot fixed frame (also called world or base frame) into the camera frame.
+  */
+  vpVelocityTwistMatrix get_cVf() const { return cVf; }
+  /*!
+    Return the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
+  */
+  vpVelocityTwistMatrix set_fVe() const { return fVe; }
+  /*!
+    Return the robot jacobian expressed in the end-effector frame.
+  */
+  vpMatrix get_eJe() const { return eJe; }
+  /*!
+    Return the robot jacobian expressed in the robot fixed frame (also called world or base frame).
+  */
+  vpMatrix get_fJe() const { return fJe; }
+
   //! destruction (memory deallocation if required)
   void kill() ;
 
