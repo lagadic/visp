@@ -201,6 +201,8 @@ vpCylinder::projection()
   \param cP [in] : Cylinder parameters in the camera frame.
   \param p [out] : Parameters of the cylinder in the image plane obtained by perspective projection.
 
+  \exception vpException::fatalError : The camera is inside the cylinder.
+
   \code
   vpCylinder cylinder;
   vpColVector oP(7);
@@ -224,7 +226,7 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
 
   double co, si, e, x0, y0, z0;
   double A,B,C, X0, Y0, Z0, R ;
-  double s, a, b, c;
+  double s, a, b, c, zero;
 
   A = cP[0] ;
   B = cP[1] ;
@@ -233,37 +235,42 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   Y0 = cP[4] ;
   Z0 = cP[5] ;
   R= cP[6] ;
+  zero = A*X0 + B*Y0 + C*Z0;  // should be zero for a good reprensetation of the cylinder
 
-  s = X0*X0 + Y0*Y0 + Z0*Z0 - R*R
-    - ( A*X0 + B*Y0 + C*Z0) * (A*X0 + B*Y0 + C*Z0);
-  s = sqrt(s);
-  a = (1-A*A)*X0 - A*B*Y0 - A*C*Z0;
-  b = - A*B*X0 + (1-B*B)*Y0 - B*C*Z0;
-  c = - A*C*X0  - B*C*Y0  + (1-C*C)*Z0;
+  s = X0*X0 + Y0*Y0 + Z0*Z0 - R*R - zero*zero;
+  if (s < 0) 
+    {
+      printf("The camera is inside the cylinder!\n");
+      throw vpException(vpException::fatalError, "The camera is inside the cylinder!");
+    }
+  s = 1.0/sqrt(s);
+  a = X0 - A*zero; //(1-A*A)*X0 - A*B*Y0 - A*C*Z0;
+  b = Y0 - B*zero; // - A*B*X0 + (1-B*B)*Y0 - B*C*Z0;
+  c = Z0 - C*zero; //- A*C*X0  - B*C*Y0  + (1-C*C)*Z0;
   x0 = C*Y0 - B*Z0;
   y0 = A*Z0 - C*X0;
   z0 = B*X0 - A*Y0;
 
   // rho1 / theta1
-  co = R*a/s-x0;
-  si = R*b/s-y0;
+  co = R*a*s-x0;
+  si = R*b*s-y0;
   e = sqrt(co*co + si*si);
-  p[0]  =  -(R*c/s-z0)/e ;  // rho1
-  p[1] =  atan2(si,co) ; // theta 1
+  p[0] = -(R*c*s-z0)/e ;  // rho1
+  p[1] = atan2(si,co) ; // theta 1
 
-  while (p[1] > M_PI/2)  { p[1] -= M_PI ; p[0] *= -1 ; }
-  while (p[1] < -M_PI/2) { p[1] += M_PI ; p[0] *= -1 ; }
+  //  while (p[1] > M_PI/2)  { p[1] -= M_PI ; p[0] *= -1 ; }
+  //  while (p[1] < -M_PI/2) { p[1] += M_PI ; p[0] *= -1 ; }
 
   // rho2 / theta2
-  co = R*a/s+x0;
-  si = R*b/s+y0;
+  co = R*a*s+x0;
+  si = R*b*s+y0;
   e = sqrt(co*co + si*si);
-  p[2]  =  -( R*c/s+z0 )/e ; //rho2
+  p[2]  =  -( R*c*s+z0 )/e ; //rho2
   p[3]  =  atan2( si,co ) ;  //theta2
 
 
-  while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
-  while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
+  //  while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
+  //  while (p[3] < -M_PI/2) { p[3] += M_PI ; p[2] *= -1 ; }
 
   //  std::cout << p.t() << std::endl ;
 }
@@ -306,8 +313,6 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   oY0 = oP[4] ;
   oZ0 = oP[5] ;
 
-  //calc_scene-3d /udd/marchand/simu/C++/Lib_Simu/sp_mire.c
-
   X1 = cMo[0][0]*oA + cMo[0][1]*oB  + cMo[0][2]*oC ;
   Y1 = cMo[1][0]*oA + cMo[1][1]*oB  + cMo[1][2]*oC ;
   Z1 = cMo[2][0]*oA + cMo[2][1]*oB  + cMo[2][2]*oC ;
@@ -324,11 +329,14 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   X2 = cMo[0][3] + cMo[0][0]*oX0 + cMo[0][1]*oY0 + cMo[0][2]*oZ0;
   Y2 = cMo[1][3] + cMo[1][0]*oX0 + cMo[1][1]*oY0 + cMo[1][2]*oZ0;
   Z2 = cMo[2][3] + cMo[2][0]*oX0 + cMo[2][1]*oY0 + cMo[2][2]*oZ0;
-  // set point coordinates  in camera frame
-  cP[3] = X2 ;
-  cP[4] = Y2 ;
-  cP[5] = Z2 ;
-  /*
+
+  // adding the constraint X0 is the nearest point to the origin (A^T . X0 = 0)
+  // using the projection operator (I - AA^T) orthogonal to A
+  cP[3] =  (1-a*a)*X2 - a*b*Y2 - a*c*Z2;
+  cP[4] = -a*b*X2 + (1-b*b)*Y2 - b*c*Z2;
+  cP[5] = -a*c*X2 - b*c*Y2 + (1-c*c)*Z2;
+
+  /*  old version for the same onstraint
   if ( fabs(a) > 0.25 )
   {
     double xx, yy, zz, xx1, yy1;
