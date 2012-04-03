@@ -233,6 +233,8 @@ vpLine::projection()
   \param p : The vector which contains the 2D line features expressed
   in the image plane. \f[ p = \left[\begin{array}{c} \rho \\ \theta
   \end{array}\right] \f]
+
+  \exception vpException::fatalError : Degenerate case, the image of the straight line is a point.
 */
 void
 vpLine::projection(const vpColVector &cP, vpColVector &p)
@@ -255,16 +257,19 @@ vpLine::projection(const vpColVector &cP, vpColVector &p)
   D2=cP[7] ;
 
   double a, b, c, s;
-  a = A1*D2 - A2*D1;
-  b = B1*D2 - B2*D1;
-  c = C1*D2 - C2*D1;
-  s = sqrt( a*a+b*b );
+  a = A2*D1 - A1*D2;
+  b = B2*D1 - B1*D2;
+  c = C2*D1 - C1*D2;
+  s = a*a+b*b;
+  if (s <= 1e-8) // seuil pas terrible
+    {
+      printf("Degenerate case: the image of the straight line is a point!\n");
+      throw vpException(vpException::fatalError, "Degenerate case: the image of the straight line is a point!");
+    }
+  s = 1.0/sqrt(s);
 
-  double rho = -c/s ;
+  double rho = -c*s ;
   double theta = atan2( b, a);
-
-  //while (theta > M_PI/2) { theta -= M_PI ; rho *= -1 ; }
-  //while (theta < -M_PI/2) { theta += M_PI ; rho *= -1 ; }
 
   if (p.getRows() != 2)
     p.resize(2);
@@ -356,12 +361,19 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
   line.changeFrame(cMo, cP);
   \endcode
 */
+
 void
 vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 {
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
   double A1, A2, B1, B2, C1, C2, D1, D2;
+
+  // in case of verification
+  // double x,y,z,ap1,ap2,bp1,bp2,cp1,cp2,dp1,dp2;
+
+  if (cP.getRows() != 8)
+    cP.resize(8);
 
   a1=oP[0] ;
   b1=oP[1] ;
@@ -383,117 +395,97 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   C2 = cMo[2][0]*a2 + cMo[2][1]*b2  + cMo[2][2]*c2;
   D2 = d2 - (cMo[0][3]*A2 + cMo[1][3]*B2  + cMo[2][3]*C2);
 
-
-  if (fabs(D2) < 1e-8)
-  {
-    //swap the two plane
-    vpMath::swap(A1,A2) ;
-    vpMath::swap(B1,B2) ;
-    vpMath::swap(C1,C2) ;
-    vpMath::swap(D1,D2) ;
-  }
+  // in case of verification
+  // ap1 = A1; bp1 = B1; cp1 = C1; dp1 = D1;
+  // ap2 = A2; bp2 = B2; cp2 = C2; dp2 = D2;
 
   //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
   //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
+  // Adding constraints on the straight line to have a unique representation
 
-  if ((fabs(D1) > 1e-8) || (fabs(D2) > 1e-8))
+  // direction of the straight line = N1 x N2
+  a2 = B1*C2 - C1*B2;
+  b2 = C1*A2 - A1*C2;
+  c2 = A1*B2 - B1*A2;
+
+  // Constraint D1 = 0 (the origin belongs to P1)
+  a1 = A2*D1 - A1*D2;
+  b1 = B2*D1 - B1*D2;
+  c1 = C2*D1 - C1*D2;
+
+  if (fabs(D2) < fabs(D1))  // to be sure that D2 <> 0
   {
-    // Rajout des quatre contraintes sur la droite
-
-    // Calcul du plan P1 passant par l'origine avec les contraintes
-    // Contrainte d1 = 0
-    double alpha1 ;
-    double beta1  ;
-    double gamma1 ;
-
-    {
-      alpha1 = D2*A1 - D1*A2 ;
-      beta1  = D2*B1 - D1*B2 ;
-      gamma1 = D2*C1 - D1*C2 ;
-    }
-
-    // Contrainte a1^2 + b1^2 + c1^2 = 1
-    double s1 = sqrt (alpha1*alpha1 + beta1*beta1 + gamma1*gamma1);
-    A1 =  alpha1/s1 ;
-    B1 =  beta1/s1 ;
-    C1 =  gamma1/s1 ;
-    D1 = 0 ;
-
-    //   vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-
-    //std::cout <<"--> "<< A1 << "  " << B1 << "  " << C1<< "  " << D1 <<std::endl ;
-
-    // ajout de la contrainte a1 a2 + b1 b2 + c1 c2 = 0
-    double x1,y1 ;
-    if (fabs(A1) > 0.01)
-    {
-
-      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
-      x1 = A1*B2 - B1*A2;
-      y1 = A1*C2 - C1*A2;
-      A2 = -(B1*x1+C1*y1);
-      B2= ((A1*A1+C1*C1)*x1-B1*C1*y1)/A1;
-      C2 = (-B1*C1*x1+ (A1*A1+B1*B1)*y1)/A1;
-    }
-    else if (fabs(B1) > 0.01){
-
-      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
-
-      x1 = A1*B2 - B1*A2;
-      y1 = C1*B2 - B1*C2;
-      A2 = -((B1*B1+C1*C1)*x1-A1*C1*y1)/B1;
-      B2= A1*x1+C1*y1;
-      C2 = -(-A1*C1*x1+(A1*A1+B1*B1)*y1)/B1;
-    }
-    else {
-
-      //    vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-      //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
-
-      x1 = A1*C2 - C1*A2;
-      y1 = B1*C2 - C1*B2;
-      A2= (-(B1*B1+C1*C1)*x1+A1*B1*y1)/C1;
-      B2 = (A1*B1*x1-(A1*A1+C1*C1)*y1)/C1;
-      C2 = A1*x1+B1*y1;
-    }
-    // Contrainte de normalisation
-    //   vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
-
-    double s2 = sqrt (A2*A2 +  B2*B2 + C2*C2);
-    A2 = A2/s2;
-    B2 = B2/s2;
-    C2 = C2/s2;
-    D2 = D2/s2;
-  }
-  else
-  {
-    // Cas degenere D1 = D2 = 0
+    A2 = A1;
+    B2 = B1;
+    C2 = C1;
+    D2 = D1;
   }
 
-  if (cP.getRows() != 8)
-    cP.resize(8);
+  // Constraint A1^2 + B1^2 + C1^2 = 1
+  d1 = 1.0/sqrt(a1*a1 + b1*b1 + c1*c1);
+  cP[0] = A1 = a1*d1 ;
+  cP[1] = B1 = b1*d1 ;
+  cP[2] = C1 = c1*d1 ;
+  cP[3] = D1 = 0 ;
 
-  cP[0] =  A1;
-  cP[1] =  B1;
-  cP[2] =  C1;
-  cP[3] =  D1;
+  // Constraint A1 A2 + B1 B2 + C1 C2 = 0 (P2 orthogonal to P1)
+  // N2_new = (N1 x N2) x N1_new
+  a1 = b2*C1 - c2*B1;
+  b1 = c2*A1 - a2*C1;
+  c1 = a2*B1 - b2*A1;
+
+  // Constraint A2^2 + B2^2 + C2^2 = 1
+  d1 = 1.0/sqrt(a1*a1 + b1*b1 + c1*c1);
+  a1 *= d1 ;
+  b1 *= d1 ;
+  c1 *= d1 ;
+
+  // D2_new = D2 / (N2^T . N2_new)
+  D2 /= (A2*a1 + B2*b1 + C2*c1);
+  A2 = a1;
+  B2 = b1;
+  C2 = c1;
+
+  // Constraint D2 < 0
+  if (D2 > 0)
+  {
+    A2 = -A2;
+    B2 = -B2;
+    C2 = -C2;
+    D2 = -D2;
+  }
+  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
+  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
   cP[4] =  A2;
   cP[5] =  B2;
   cP[6] =  C2;
   cP[7] =  D2;
 
-  if (D2 < 0)
-  {
-    cP[4] *= -1 ;
-    cP[5] *= -1 ;
-    cP[6] *= -1 ;
-    cP[7] *= -1 ;
-  }
+  // in case of verification
+  /* 
+  x = -A2*D2;
+  y = -B2*D2;
+  z = -C2*D2;
+  d1 = ap1*x+bp1*y+cp1*z+dp1;
+  d2 = ap2*x+bp2*y+cp2*z+dp2;
+  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
+    {
+      printf("PB in VPline: P1 : 0 = %lf, P2: 0 = %lf\n",d1,d2);
+      exit(-1);
+    }
+  d1 = A1*x+B1*y+C1*z+D1;
+  d2 = A2*x+B2*y+C2*z+D2; 
+  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
+    {
+      printf("PB in VPline: Pn1 : 0 = %lf, Pn2: 0 = %lf\n",d1,d2);
+      exit(-1);
+    }
+  */
+
 }
+
 
 
 /*!
@@ -513,9 +505,9 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   \param thickness : Thickness of the feature representation.
 */
 void vpLine::display(const vpImage<unsigned char> &I,
-                     const vpCameraParameters &cam,
-                     const vpColor &color,
-                     const unsigned int thickness)
+		     const vpCameraParameters &cam,
+				 const vpColor &color,
+		     const unsigned int thickness)
 {
   vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color, thickness) ;
 }
@@ -543,16 +535,16 @@ void vpLine::display(const vpImage<unsigned char> &I,
 */
 // non destructive wrt. cP and p
 void vpLine::display(const vpImage<unsigned char> &I,
-                     const vpHomogeneousMatrix &cMo,
-                     const vpCameraParameters &cam,
-                     const vpColor &color,
-                     const unsigned int thickness)
+		     const vpHomogeneousMatrix &cMo,
+		     const vpCameraParameters &cam,
+				 const vpColor &color,
+		     const unsigned int thickness)
 {
   vpColVector _cP, _p ;
   changeFrame(cMo,_cP) ;
   projection(_cP,_p) ;
   vpFeatureDisplay::displayLine(_p[0],_p[1],
-				cam, I, color, thickness) ;
+                                cam, I, color, thickness) ;
 
 }
 
