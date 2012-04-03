@@ -37,13 +37,15 @@
  *
  * Authors:
  * Filip Novotny
- *
+ * Manikandan.B
  *****************************************************************************/
 
 /*!
   \example servoMomentImage.cpp
   Example of moment-based visual servoing with Images
 */
+
+#define PRINT_CONDITION_NUMBER
 
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
@@ -68,7 +70,8 @@
 #include <visp/vpRobotCamera.h>
 #include <visp/vpImageSimulator.h>
 #include <visp/vpPlane.h>
-
+#include <visp/vpPoseVector.h>
+#include <visp/vpPlot.h>
 
 //setup robot parameters
 void paramRobot();
@@ -86,6 +89,7 @@ void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
 double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
+void init_visp_plot(vpPlot& );
 
 #if !defined(WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available
@@ -197,6 +201,7 @@ void initScene(){
   src.setType(vpMomentObject::DENSE_FULL_OBJECT);
   src.fromImage(src_img,128,cam);
 
+
   dst.setType(vpMomentObject::DENSE_FULL_OBJECT);
   imsim.setCameraPosition(cdMo);
   imsim.getImage(dst_img,cam);
@@ -270,10 +275,14 @@ void initFeatures(){
   task.addFeature(featureMoments->getFeatureCInvariant(),featureMomentsDes->getFeatureCInvariant(),(1 << 10) | (1 << 11));
   task.addFeature(featureMoments->getFeatureAlpha(),featureMomentsDes->getFeatureAlpha());
 
-  task.setLambda(1.) ;
+  task.setLambda(1.);
 }
 
 void execute(int nbIter){
+
+  vpPlot ViSP_plot;
+  init_visp_plot(ViSP_plot);		// Initialize plot object
+
   //init main object: using moments up to order 6
   vpMomentObject obj(6);
   //setting object type (disrete, continuous[form polygon])
@@ -286,20 +295,27 @@ void execute(int nbIter){
   vpDisplay::flush(Iint);
   int iter=0;
   double t=0;
-	robot.setPosition(cMo);
-	float sampling_time = 0.010f; // Sampling period in seconds
-	robot.setSamplingTime(sampling_time);
+  robot.setPosition(cMo);
+  float sampling_time = 0.010f; // Sampling period in seconds
+  robot.setSamplingTime(sampling_time);
+
+  // For plotting
+  vpPoseVector currentpose;
+  vpColVector err_features;
+
   ///////////////////SIMULATION LOOP/////////////////////////////
   while(iter++<nbIter ){
+
     vpColVector v ;
     t = vpTime::measureTimeMs();
     //get the cMo
     robot.getPosition(cMo);
+    currentpose.buildFrom(cMo);	// For plot
     //setup the plane in A,B,C style
     vpPlane pl;
     double A,B,C;
     pl.setABCD(0,0,1.0,0);
-    pl.changeFrame(cMo);
+	pl.changeFrame(cMo);
     _planeToABC(pl,A,B,C);
 
     //track points, draw points and add refresh our object
@@ -323,11 +339,31 @@ void execute(int nbIter){
     v = task.computeControlLaw() ;
     //pilot robot using position control. The displacement is t*v with t=10ms step
     //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
-		robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    err_features = task.error;
+	std::cout<<" || s - s* || = "<<task.error.sumSquare()<<std::endl;
+
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
 
-    //vpTime::wait(t,10);
-    _error = ( task.getError() ).sumSquare();
+    ViSP_plot.plot(0,iter, v);
+	ViSP_plot.plot(1,iter,currentpose);			// Plot the velocities
+	ViSP_plot.plot(2, iter,err_features);		//cMo as translations and theta_u
+
+	_error = ( task.getError() ).sumSquare();
+
+	#if defined(PRINT_CONDITION_NUMBER)
+		/*
+		 * Condition number of interaction matrix
+		 */
+		vpMatrix Linteraction = task.L;
+		vpMatrix tmpry,U;
+		vpColVector singularvals;
+		Linteraction.svd(singularvals, tmpry);
+		double condno = static_cast<double>(singularvals.getMaxValue()/singularvals.getMinValue());
+		std::cout<<"Condition Number: "<<condno<<std::endl;
+	#endif
+
   }
 
   task.kill();
@@ -362,4 +398,51 @@ void paramRobot(){
 	cam = vpCameraParameters(640,480,320,240);
 }
 
+void
+init_visp_plot(vpPlot& ViSP_plot) {
+	/* -------------------------------------
+	 * Initialize ViSP Plotting
+	 * -------------------------------------
+	 */
+	const unsigned int NbGraphs = 3;								// No. of graphs
+	const unsigned int NbCurves_in_graph[NbGraphs] = {6,6,6};		// Curves in each graph
+
+	ViSP_plot.init(NbGraphs , 800, 800, 10, 10, "Visual Servoing results...");
+
+	vpColor Colors[6] = {\
+	// Colour for s1, s2, s3,  in 1st plot
+	vpColor::red, vpColor::green, vpColor::blue, \
+	vpColor::orange, vpColor::cyan,vpColor::purple
+	};
+
+	for (unsigned int p = 0; p<NbGraphs; p++) {
+		ViSP_plot.initGraph(p,NbCurves_in_graph[p]);
+		for (unsigned int c = 0; c<NbCurves_in_graph[p]; c++)
+			ViSP_plot.setColor(p,c,Colors[c]);
+	}
+
+	ViSP_plot.setTitle(0,"Robot velocities");
+	ViSP_plot.setLegend(0, 0, "v_x");
+	ViSP_plot.setLegend(0, 1, "v_y");
+	ViSP_plot.setLegend(0, 2, "v_z");
+	ViSP_plot.setLegend(0, 3, "w_x");
+	ViSP_plot.setLegend(0, 4, "w_y");
+	ViSP_plot.setLegend(0, 5, "w_z");
+
+	ViSP_plot.setTitle(1,"Camera pose cMo");
+	ViSP_plot.setLegend(1, 0, "tx");
+	ViSP_plot.setLegend(1, 1, "ty");
+	ViSP_plot.setLegend(1, 2, "tz");
+	ViSP_plot.setLegend(1, 3, "tu_x");
+	ViSP_plot.setLegend(1, 4, "tu_y");
+	ViSP_plot.setLegend(1, 5, "tu_z");
+
+	ViSP_plot.setTitle(2,"Error in visual features: ");
+	ViSP_plot.setLegend(2, 0, "x_n");
+	ViSP_plot.setLegend(2, 1, "y_n");
+	ViSP_plot.setLegend(2, 2, "a_n");
+	ViSP_plot.setLegend(2, 3, "sx");
+	ViSP_plot.setLegend(2, 4, "sy");
+	ViSP_plot.setLegend(2, 5, "alpha");
+}
 #endif
