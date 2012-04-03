@@ -147,6 +147,10 @@ public:
   static
   void write(vpImage<vpRGBa> &I, const std::string filename) ;
 
+ static
+  void readPFM(vpImage<float> &I, const char *filename) ;
+
+
   static
   void readPGM(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -186,6 +190,11 @@ public:
   static
   void readPNG(vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
+
+  static
+  void writePFM(const vpImage<float> &I, const char *filename) ;
+ 
+
 
   static
   void writePGM(const vpImage<unsigned char> &I, const char *filename) ;

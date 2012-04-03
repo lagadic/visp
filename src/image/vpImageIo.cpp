@@ -450,6 +450,63 @@ vpImageIo::write(vpImage<vpRGBa> &I, const std::string filename)
   write(I,filename.c_str());
 }
 //--------------------------------------------------------------------------
+// PFM
+//--------------------------------------------------------------------------
+
+/*!
+  Write the content of the image bitmap in the file which name is given by \e
+  filename. This function is built like portable gray pixmap (eg PGM P5) file.
+  but considers float image data.
+
+  \param I : Image to save as a (PFM P8) file.
+  \param filename : Name of the file containing the image.
+*/
+
+void
+vpImageIo::writePFM(const vpImage<float> &I,
+        const char *filename)
+{
+
+  FILE* fd;
+
+  // Test the filename
+  if (filename == '\0')   {
+     vpERROR_TRACE("no filename\n");
+    throw (vpImageException(vpImageException::ioError,
+           "no filename")) ;
+  }
+
+  fd = fopen(filename, "wb");
+
+  if (fd == NULL) {
+     vpERROR_TRACE("couldn't write to file \"%s\"\n",  filename);
+    throw (vpImageException(vpImageException::ioError,
+           "cannot write file")) ;
+  }
+
+  // Write the head
+  fprintf(fd, "P8\n");					// Magic number
+  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
+  fprintf(fd, "255\n");					// Max level
+
+  // Write the bitmap
+  size_t ierr;
+  size_t nbyte = I.getWidth()*I.getHeight();
+
+  ierr = fwrite(I.bitmap, sizeof(float), nbyte, fd) ;
+  if (ierr != nbyte) {
+    fclose(fd);
+    vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
+      nbyte, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+           "cannot write file")) ;
+  }
+
+  fflush(fd);
+  fclose(fd);
+
+}
+//--------------------------------------------------------------------------
 // PGM
 //--------------------------------------------------------------------------
 
@@ -584,6 +641,167 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
   fclose(fd);
 
 }
+
+/*!
+  Read a PGM P5 file and initialize a scalar image.
+
+  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
+  memory for the corresponding image, and set the bitmap whith the content of
+  the file.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+
+*/
+
+void
+vpImageIo::readPFM(vpImage<float> &I, const char *filename)
+{
+  FILE* fd = NULL; // File descriptor
+  int   ierr;
+  int   line;
+  int   is255;
+  char* err ;
+  char  str[vpMAX_LEN];
+  unsigned int   w, h;
+
+  // Test the filename
+  if (filename == '\0')
+  {
+    vpERROR_TRACE("no filename") ;
+    throw (vpImageException(vpImageException::ioError,
+          " no filename")) ;
+
+  }
+
+  // Open the filename
+  fd = fopen(filename, "rb");
+  if (fd == NULL)
+  {
+    vpERROR_TRACE("couldn't read file \"%s\"", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "couldn't read file")) ;
+  }
+
+  // Read the first line with magic number P5
+  line = 0;
+
+  err = fgets(str, vpMAX_LEN - 1, fd);
+  line++;
+  if (err == NULL)
+  {
+    fclose (fd);
+    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",  line, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "couldn't read file")) ;
+  }
+
+  if (strlen(str) < 3)
+  {
+    fclose (fd);
+    vpERROR_TRACE("\"%s\" is not a PGM file\n", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "this is not a pfm file")) ;
+  }
+
+  str[2] = '\0';
+  if (strcmp(str, "P8") != 0)
+  {
+    fclose (fd);
+    vpERROR_TRACE("\"%s\" is not a PFM file\n", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "this is not a pgm file")) ;
+  }
+
+  // Jump the possible comment, or empty line and read the following line
+  do {
+    err = fgets(str, vpMAX_LEN - 1, fd);
+    line++;
+    if (err == NULL) {
+      fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
+      fclose (fd);
+    }
+  } while ((str[0] == '#') || (str[0] == '\n'));
+
+  // Extract image size
+  ierr = sscanf(str, "%d %d", &w, &h);
+  if(ierr == 1){// the norm allows to have the two values on two separated lines.
+    do {
+      err = fgets(str, vpMAX_LEN - 1, fd);
+      line++;
+      if (err == NULL) {
+        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
+        fclose (fd);
+      }
+    } while ((str[0] == '#') || (str[0] == '\n'));
+    ierr = sscanf(str, "%d", &h);
+  }
+  if (ierr == EOF)
+  {
+    fclose (fd);
+    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "couldn't read file")) ;
+  }
+
+  if ((h != I.getHeight())||( w != I.getWidth()))
+  {
+
+    try
+    {
+      I.resize(h,w) ;
+    }
+    catch(...)
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
+  }
+
+  // Read 255
+  err = fgets(str, vpMAX_LEN - 1, fd);
+  line++;
+  if (err == NULL) {
+    fclose (fd);
+    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "couldn't read file")) ;
+  }
+
+  ierr = sscanf(str, "%d", &is255);
+  if (ierr == EOF) {
+    fclose (fd);
+    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "couldn't read file")) ;
+  }
+
+  if (is255 != 255)
+  {
+    fclose (fd);
+    vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "error reading pfm file")) ;
+  }
+
+  unsigned int nbyte = I.getHeight()*I.getWidth();
+  if (fread (I.bitmap, sizeof(float), nbyte, fd ) != nbyte)
+  {
+    fclose (fd);
+    vpERROR_TRACE("couldn't read %d bytes in file \"%s\"\n", nbyte, filename) ;
+    throw (vpImageException(vpImageException::ioError,
+          "error reading pfm file")) ;
+  }
+
+  fclose (fd);
+
+
+}
+
 
 
 /*!
