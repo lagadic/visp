@@ -43,7 +43,7 @@
 /*!
   \example kinectAcquisition.cpp
 
-  \brief Example that shows how to acquire depth map and RGB images from a kinect device.
+  \brief Example that shows how to acquire depth map and RGB images from a kinect device, and show the warped RGB frame
 
 */
 
@@ -90,24 +90,27 @@ int main() {
   vpImage<unsigned char> Idmap(240,320);//for low resolution
   vpImage<float> dmap(240,320);//for low resolution
 #endif
-  vpImage<vpRGBa> Irgb(480,640);
+  vpImage<vpRGBa> Irgb(480,640),Iwarped(480,640);
 
 #if defined VISP_HAVE_X11
-  vpDisplayX display;
-  vpDisplayX displayRgb;
+  vpDisplayX display, displayRgb, displayRgbWarped;
 #elif defined VISP_HAVE_GTK
   vpDisplayGTK display;
   vpDisplayGTK displayRgb;
+  vpDisplayGTK displayRgbWarped;
 #elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display;
   vpDisplayOpenCV displayRgb;
+  vpDisplayOpenCV displayRgbWarped;
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
   vpDisplayGDI displayRgb;
+  vpDisplayGDI displayRgbWarped;
 #endif
 
   display.init(Idmap, 100, 200,"Depth map");
   displayRgb.init(Irgb, 900, 200,"Color Image");
+  displayRgbWarped.init(Iwarped,900,700,"Warped Color Image");
 
   // A click to stop acquisition
   std::cout << "Click in one image to stop acquisition" << std::endl;
@@ -118,11 +121,16 @@ int main() {
     kinect.getDepthMap(dmap, Idmap);
     kinect.getRGB(Irgb);
 
-    vpDisplay::display(Idmap);
-    vpDisplay::flush(Idmap);
-    vpDisplay::display(Irgb);
-    vpDisplay::flush(Irgb);
-  }
+      vpDisplay::display(Idmap);
+      vpDisplay::flush(Idmap);
+      vpDisplay::display(Irgb);
+      vpDisplay::flush(Irgb);
+
+      //Warped RGB image:
+      kinect.warpRGBFrame(Irgb,dmap, Iwarped);
+	  vpDisplay::display(Iwarped);
+	  vpDisplay::flush(Iwarped);
+     }
   std::cout << "Stop acquisition" << std::endl;
   kinect.stop(); // Stop acquisition thread
   return 0;
