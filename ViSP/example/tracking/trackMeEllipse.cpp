@@ -313,7 +313,7 @@ main(int argc, const char ** argv)
     E1.display(I, vpColor::green) ;
   }
 
-  vpERROR_TRACE("sample step %f ",E1.me->sample_step) ;
+  vpERROR_TRACE("sample step %f ",E1.getMe()->getSampleStep()) ;
   E1.track(I) ;
   if (opt_display && opt_click_allowed) {
     std::cout << "A click to continue..." << std::endl;

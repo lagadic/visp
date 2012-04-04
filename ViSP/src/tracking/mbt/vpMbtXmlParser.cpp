@@ -228,8 +228,8 @@ void
 vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	double d_stp = this->m_ecm.sample_step;
-	int d_nb_sample = this->m_ecm.ntotal_sample;
+	double d_stp = this->m_ecm.getSampleStep();
+	int d_nb_sample = this->m_ecm.getNbTotalSample();
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -254,12 +254,12 @@ vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
   }
 
   if(nb == 2){
-	  this->m_ecm.sample_step = d_stp;
-	  this->m_ecm.ntotal_sample = d_nb_sample;
+	  this->m_ecm.setSampleStep(d_stp);
+	  this->m_ecm.setNbTotalSample(d_nb_sample);
 
 	  std::cout <<"**** sample:\n";
-	  std::cout <<"sample_step "<< this->m_ecm.sample_step<<std::endl;
-	  std::cout <<"n_total_sample "<< this->m_ecm.ntotal_sample<<std::endl;
+	  std::cout <<"sample_step "<< this->m_ecm.getSampleStep()<<std::endl;
+	  std::cout <<"n_total_sample "<< this->m_ecm.getNbTotalSample()<<std::endl;
   }
 	else{
 		std::cout <<"ERROR in 'sample' field:\n";
@@ -405,7 +405,7 @@ void
 vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	unsigned int m_range_tracking = this->m_ecm.range;
+	unsigned int m_range_tracking = this->m_ecm.getRange();
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -426,9 +426,9 @@ vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
   }
 
   if(nb == 1){
-	  this->m_ecm.range = m_range_tracking;
+	  this->m_ecm.setRange(m_range_tracking);
 	  std::cout <<"**** range:\n";
-	  std::cout <<"tracking "<< this->m_ecm.range<<std::endl;
+	  std::cout <<"tracking "<< this->m_ecm.getRange()<<std::endl;
   }
 	else{
 		std::cout <<"ERROR in 'range' field:\n";
@@ -450,9 +450,9 @@ void
 vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
-	double d_edge_threshold = this->m_ecm.threshold;
-	double d_mu1 = this->m_ecm.mu1;
-	double d_mu2 = this->m_ecm.mu2;
+	double d_edge_threshold = this->m_ecm.getThreshold();
+	double d_mu1 = this->m_ecm.getMu1();
+	double d_mu2 = this->m_ecm.getMu2();
 	
 	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -481,14 +481,14 @@ vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
   }
 
   if(nb == 3){
-	  this->m_ecm.mu1 = d_mu1;
-	  this->m_ecm.mu2 = d_mu2;
-	  this->m_ecm.threshold = d_edge_threshold;
+	  this->m_ecm.setMu1(d_mu1);
+	  this->m_ecm.setMu2(d_mu2);
+	  this->m_ecm.setThreshold(d_edge_threshold);
 
 	  std::cout <<"**** contrast:\n";
-	  std::cout <<"mu1 " << this->m_ecm.mu1<<std::endl;
-	  std::cout <<"mu2 " << this->m_ecm.mu2<<std::endl;
-	  std::cout <<"threshold " << this->m_ecm.threshold<<std::endl;
+	  std::cout <<"mu1 " << this->m_ecm.getMu1()<<std::endl;
+	  std::cout <<"mu2 " << this->m_ecm.getMu2()<<std::endl;
+	  std::cout <<"threshold " << this->m_ecm.getThreshold()<<std::endl;
   }
 	else{
 		std::cout <<"ERROR in 'contrast' field:\n";

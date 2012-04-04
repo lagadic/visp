@@ -115,7 +115,7 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
     
     double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
-    expecteddensity = d / (double)me->sample_step;
+    expecteddensity = d / (double)me->getSampleStep();
       
     delta = - theta + M_PI/2.0;
     normalizeAngle(delta);
@@ -147,8 +147,8 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
   int cols = (int)I.getWidth() ;
   double n_sample;
 
-  //if (me->sample_step==0)
-  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
+  //if (me->getSampleStep==0)
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
@@ -162,7 +162,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
   double length_p = sqrt((vpMath::sqr(diffsi)+vpMath::sqr(diffsj)));
 
   // number of samples along line_p
-  n_sample = length_p/(double)me->sample_step;
+  n_sample = length_p/(double)me->getSampleStep();
 
   double stepi = diffsi/(double)n_sample;
   double stepj = diffsj/(double)n_sample;
@@ -174,7 +174,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
   // Delete old list
   list.clear();
 
-  // sample positions at i*me->sample_step interval along the
+  // sample positions at i*me->getSampleStep() interval along the
   // line_p, starting at PSiteExt[0]
 
   vpImagePoint ip;
@@ -224,7 +224,7 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
   {
     if ((s.i < imin) ||(s.i > imax)) 
     {
-      s.suppress = 1;
+      s.setState(vpMeSite::CONSTRAST);
     }
   }
 
@@ -232,7 +232,7 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
   {
     if ((s.j < jmin) || (s.j > jmax))
     {
-      s.suppress = 1;
+      s.setState(vpMeSite::CONSTRAST);
     }
   }
 
@@ -240,11 +240,11 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & /*I*/)
   {
     if ((s.i < imin) ||(s.i > imax) || (s.j < jmin) || (s.j > jmax) ) 
     {
-      s.suppress = 1;
+      s.setState(vpMeSite::CONSTRAST);
     }
   }
 
-  if (s.suppress != 0)
+  if (s.getState() != vpMeSite::NO_SUPPRESSION)
     it = list.erase(it);
   else
     ++it;
@@ -266,8 +266,8 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   int cols = (int)I.getWidth() ;
   double n_sample;
 
-  //if (me->sample_step==0)
-  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
+  //if (me->getSampleStep()==0)
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
 
     vpERROR_TRACE("function called with sample step = 0") ;
@@ -286,15 +286,15 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double length_p = sqrt(s); /*(vpMath::sqr(diffsi)+vpMath::sqr(diffsj))*/
 
   // number of samples along line_p
-  n_sample = length_p/(double)me->sample_step;
-  double sample = (double)me->sample_step;
+  n_sample = length_p/(double)me->getSampleStep();
+  double sample = (double)me->getSampleStep();
 
   vpMeSite P ;
   P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
-  unsigned int  memory_range = me->range ;
-  me->range = 1 ;
+  unsigned int  memory_range = me->getRange() ;
+  me->setRange(1);
 
   for (int i=0 ; i < 3 ; i++)
   {
@@ -311,7 +311,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
     {
       P.track(I,me,false) ;
 
-      if (P.suppress ==0)
+      if (P.getState() == vpMeSite::NO_SUPPRESSION)
       {
         list.push_back(P);
         if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
@@ -339,7 +339,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
     {
       P.track(I,me,false) ;
 			
-      if (P.suppress ==0)
+      if (P.getState() == vpMeSite::NO_SUPPRESSION)
       {
         list.push_back(P);
 				if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 5, vpColor::green) ;
@@ -349,7 +349,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
     }
   }
 	
-  me->range = memory_range ;
+  me->setRange(memory_range);
 	
   vpCDEBUG(1) <<"end vpMeLine::sample() : " ;
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
@@ -371,7 +371,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
   double d = sqrt(vpMath::sqr(PExt[0].ifloat-PExt[1].ifloat)+vpMath::sqr(PExt[0].jfloat-PExt[1].jfloat)) ;
 
   unsigned int n = numberOfSignal() ;
-  double expecteddensity = d / (double)me->sample_step;
+  double expecteddensity = d / (double)me->getSampleStep();
 
   if ((double)n<0.5*expecteddensity && n > 0)
   {
@@ -405,7 +405,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
   double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
   unsigned int n = list.size();//numberOfSignal() ;
-  expecteddensity = d / (double)me->sample_step;
+  expecteddensity = d / (double)me->getSampleStep();
 
   if ((double)n<0.5*expecteddensity && n > 0)
   {
@@ -670,7 +670,7 @@ vpMbtMeLine::findSignal(const vpImage<unsigned char>& I, const vpMe *me, double 
   
   vpMeSite  *list_query_pixels;
 //  double  convolution = 0;
-  unsigned int range  = me->range;
+  unsigned int range  = me->getRange();
   
   list_query_pixels = pix.getQueryList(I, (int)range);
   

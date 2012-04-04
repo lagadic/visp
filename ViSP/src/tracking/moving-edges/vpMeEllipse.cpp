@@ -167,8 +167,8 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 
   double n_sample;
 
-  //if (me->sample_step==0)
-  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
+  //if (me->getSampleStep()==0)
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
     std::cout << "In vpMeEllipse::sample: " ;
     std::cout << "function called with sample step = 0" ;
@@ -179,7 +179,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   vpImagePoint iP11;
   j = i = 0.0 ;
 
-  double incr = vpMath::rad(me->sample_step) ; // angle increment en degree
+  double incr = vpMath::rad(me->getSampleStep()) ; // angle increment en degree
   vpColor col = vpColor::red ;
   getParameters() ;
 
@@ -221,7 +221,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
       vpMeSite pix ;
       pix.init((int)iP11.get_i(), (int)iP11.get_j(), theta) ;
       pix.setDisplay(selectDisplay) ;
-      pix.suppress = 0 ;
+      pix.setState(vpMeSite::NO_SUPPRESSION);
 
       if(vpDEBUG_ENABLE(3))
       {
@@ -257,7 +257,7 @@ void
 vpMeEllipse::reSample(const vpImage<unsigned char>  &I)
 {
   unsigned int n = numberOfSignal() ;
-  double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->sample_step);
+  double expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->getSampleStep());
   if ((double)n<0.9*expecteddensity){
     sample(I) ;
   }
@@ -424,7 +424,7 @@ vpMeEllipse::suppressPoints()
   std::list<vpMeSite>::iterator itList = list.begin();
   for(std::list<double>::iterator it=angle.begin(); it!=angle.end(); ){
     vpMeSite s = *itList;//current reference pixel
-    if (s.suppress != 0)
+    if (s.getState() != vpMeSite::NO_SUPPRESSION)
     {
       itList = list.erase(itList) ;
       it = angle.erase(it);
@@ -452,14 +452,14 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
   vpImagePoint ip;
 
-  unsigned int  memory_range = me->range ;
-  me->range = 2 ;
+  unsigned int  memory_range = me->getRange() ;
+  me->setRange(2);
 
-  double  memory_mu1 = me->mu1 ;
-  me->mu1 = 0.5 ;
+  double  memory_mu1 = me->getMu1();
+  me->setMu1(0.5);
 
-  double  memory_mu2 = me->mu2 ;
-  me->mu2 = 0.5 ;
+  double  memory_mu2 = me->getMu2();
+  me->setMu2(0.5);
 
   double incr = vpMath::rad(2.0) ;
 
@@ -483,7 +483,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
       {
         P.track(I,me,false) ;
 
-        if (P.suppress ==0)
+        if (P.getState() == vpMeSite::NO_SUPPRESSION)
         {
           list.push_back(P);
           angle.push_back(k);
@@ -520,7 +520,7 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
       {
         P.track(I,me,false) ;
 
-        if (P.suppress ==0)
+        if (P.getState() == vpMeSite::NO_SUPPRESSION)
         {
           list.push_back(P);
           angle.push_back(k);
@@ -544,9 +544,9 @@ vpMeEllipse::seekExtremities(const vpImage<unsigned char>  &I)
 
   suppressPoints() ;
 
-  me->range = memory_range ;
-  me->mu1 = memory_mu1 ;
-  me->mu2 = memory_mu2 ;
+  me->setRange(memory_range);
+  me->setMu1(memory_mu1);
+  me->setMu2(memory_mu2);
 }
 
 
@@ -635,7 +635,7 @@ vpMeEllipse::leastSquare()
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
 
         A[k][0] = vpMath::sqr(p.jfloat) ;
@@ -673,11 +673,12 @@ vpMeEllipse::leastSquare()
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < thresholdWeight)
         {
-          p.suppress  = 3 ;
+          p.setState(vpMeSite::M_ESTIMATOR);
+          
           *it = p;
         }
         k++ ;
@@ -695,7 +696,7 @@ vpMeEllipse::leastSquare()
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
 
         A[k][0] = 2* p.ifloat ;
@@ -731,11 +732,12 @@ vpMeEllipse::leastSquare()
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < thresholdWeight)
         {
-          p.suppress  = 3 ;
+          p.setState(vpMeSite::M_ESTIMATOR);
+      
           *it = p;
         }
         k++ ;

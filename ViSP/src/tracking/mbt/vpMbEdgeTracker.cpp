@@ -258,7 +258,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       
       std::list<vpMeSite>::const_iterator itListLine;
       if (iter == 0 && l->meline != NULL)
-        itListLine = l->meline->list.begin();
+        itListLine = l->meline->getMeList().begin();
       
       for (unsigned int i=0 ; i < l->nbFeature ; i++)
       {
@@ -276,7 +276,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         {
           factor[n+i] = fac;
           vpMeSite site = *itListLine;
-          if (site.suppress != 0) factor[n+i] = 0.2;
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
           ++itListLine;
         }
 
@@ -334,8 +334,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       std::list<vpMeSite>::const_iterator itCyl1;
       std::list<vpMeSite>::const_iterator itCyl2;
       if (iter == 0 && (cy->meline1 != NULL || cy->meline2 != NULL)){
-        itCyl1 = cy->meline1->list.begin();
-        itCyl2 = cy->meline2->list.begin();
+        itCyl1 = cy->meline1->getMeList().begin();
+        itCyl2 = cy->meline2->getMeList().begin();
       }
 
       for(unsigned int i=0 ; i < cy->nbFeature ; i++){
@@ -360,7 +360,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
             site= *itCyl2;
             ++itCyl2;
           }
-          if (site.suppress != 0) factor[n+i] = 0.2;
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
         }
 
         //If pour la premiere extremite des moving edges
@@ -589,13 +589,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     {
       double wmean = 0 ;
       std::list<vpMeSite>::iterator itListLine;
-      if (l->nbFeature > 0) itListLine = l->meline->list.begin();
+      if (l->nbFeature > 0) itListLine = l->meline->getMeList().begin();
       
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
         wmean += w[n+i] ;
         vpMeSite p = *itListLine;
         if (w[n+i] < 0.5){
-          p.suppress = 4 ;
+          p.setState(vpMeSite::M_ESTIMATOR);
+          
           *itListLine = p;
         }
 
@@ -623,8 +624,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     std::list<vpMeSite>::iterator itListCyl1;
     std::list<vpMeSite>::iterator itListCyl2;
     if (cy->nbFeature > 0){
-      itListCyl1 = cy->meline1->list.begin();
-      itListCyl2 = cy->meline2->list.begin();
+      itListCyl1 = cy->meline1->getMeList().begin();
+      itListCyl2 = cy->meline2->getMeList().begin();
     }
 
     wmean = 0;
@@ -632,7 +633,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       wmean += w[n+i] ;
       vpMeSite p = *itListCyl1;
       if (w[n+i] < 0.5){
-        p.suppress = 4 ;
+        p.setState(vpMeSite::M_ESTIMATOR);
+          
         *itListCyl1 = p;
       }
 
@@ -655,7 +657,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       wmean += w[n+i] ;
       vpMeSite p = *itListCyl2;
       if (w[n+i] < 0.5){
-        p.suppress = 4 ;
+        p.setState(vpMeSite::M_ESTIMATOR);
+        
         *itListCyl2 = p;
       }
 
@@ -695,9 +698,9 @@ vpMbEdgeTracker::testTracking()
     if (l->isVisible() && l->meline != NULL)
     {
       nbExpectedPoint += (int)l->meline->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=l->meline->list.begin(); it!=l->meline->list.end(); ++it){
+      for(std::list<vpMeSite>::const_iterator it=l->meline->getMeList().begin(); it!=l->meline->getMeList().end(); ++it){
         vpMeSite pix = *it;
-        if (pix.suppress == 0) nbGoodPoint++;
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
     }
@@ -710,15 +713,15 @@ vpMbEdgeTracker::testTracking()
     if (cy->meline1 !=NULL && cy->meline2 != NULL)
     {
       nbExpectedPoint += (int)cy->meline1->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=cy->meline1->list.begin(); it!=cy->meline1->list.end(); ++it){
+      for(std::list<vpMeSite>::const_iterator it=cy->meline1->getMeList().begin(); it!=cy->meline1->getMeList().end(); ++it){
         vpMeSite pix = *it;
-        if (pix.suppress == 0) nbGoodPoint++;
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
       nbExpectedPoint += (int)cy->meline2->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=cy->meline2->list.begin(); it!=cy->meline2->list.end(); ++it){
+      for(std::list<vpMeSite>::const_iterator it=cy->meline2->getMeList().begin(); it!=cy->meline2->getMeList().end(); ++it){
         vpMeSite pix = *it;
-        if (pix.suppress == 0) nbGoodPoint++;
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
     }
@@ -1496,8 +1499,8 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
     l = *it;
     if (l->isVisible() && l->meline != NULL)
     {
-      for(std::list<vpMeSite>::const_iterator it=l->meline->list.begin(); it!=l->meline->list.end(); ++it){
-        if (it->suppress == 0) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator it=l->meline->getMeList().begin(); it!=l->meline->getMeList().end(); ++it){
+        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
     }
   }
@@ -1507,11 +1510,11 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
     cy = *it;
     if (cy->meline1 != NULL || cy->meline2 != NULL)
     {
-      for(std::list<vpMeSite>::const_iterator it=cy->meline1->list.begin(); it!=cy->meline1->list.end(); ++it){
-        if (it->suppress == 0) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator it=cy->meline1->getMeList().begin(); it!=cy->meline1->getMeList().end(); ++it){
+        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
-      for(std::list<vpMeSite>::const_iterator it=cy->meline2->list.begin(); it!=cy->meline2->list.end(); ++it){
-        if (it->suppress == 0) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator it=cy->meline2->getMeList().begin(); it!=cy->meline2->getMeList().end(); ++it){
+        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
     }
   }

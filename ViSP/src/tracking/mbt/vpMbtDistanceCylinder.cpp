@@ -273,8 +273,8 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   meline2->setMe(me) ;
 
 //    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
-  meline1->init_range = 0;
-  meline2->init_range = 0;
+  meline1->setInitRange(0);
+  meline2->setInitRange(0);
 
   // Conversion meter to pixels
   vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
@@ -352,9 +352,9 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   }
 
   // Update the number of features
-  nbFeaturel1 = meline1->list.size();
-  nbFeaturel2 = meline2->list.size();
-  nbFeature = meline1->list.size()+meline2->list.size();
+  nbFeaturel1 = meline1->getMeList().size();
+  nbFeaturel2 = meline2->getMeList().size();
+  nbFeature = meline1->getMeList().size()+meline2->getMeList().size();
 }
 
 
@@ -438,9 +438,9 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
   }
 
   // Update the numbers of features
-  nbFeaturel1 = meline1->list.size();
-  nbFeaturel2 = meline2->list.size();
-  nbFeature = meline1->list.size()+meline2->list.size();
+  nbFeaturel1 = meline1->getMeList().size();
+  nbFeaturel2 = meline2->getMeList().size();
+  nbFeature = meline1->getMeList().size()+meline2->getMeList().size();
 }
 
 
@@ -603,31 +603,11 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meline1 != NULL)
   {
-    for(std::list<vpMeSite>::const_iterator it=meline1->list.begin(); it!=meline1->list.end(); ++it){
-      vpMeSite pix = *it;
-      if (pix.suppress == 0)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
-      if (pix.suppress == 1)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::blue,1);
-      if (pix.suppress == 2)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
-      if (pix.suppress == 4)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
-    }
+    meline1->display(I);
   }
   if (meline2 != NULL)
   {
-    for(std::list<vpMeSite>::const_iterator it=meline2->list.begin(); it!=meline2->list.end(); ++it){
-      vpMeSite pix = *it;
-      if (pix.suppress == 0)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::green,1);
-      if (pix.suppress == 1)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::blue,1);
-      if (pix.suppress == 2)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::purple,1);
-      if (pix.suppress == 4)
-        vpDisplay::displayCross(I,vpImagePoint(pix.ifloat,pix.jfloat),3,vpColor::red,1);
-    }
+    meline2->display(I);
   }
 }
 
@@ -637,11 +617,11 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCylinder::initInteractionMatrixError()
 {
-    L.resize(meline1->list.size()+meline2->list.size(),6) ;
-    error.resize(meline1->list.size()+meline2->list.size()) ;
-    nbFeaturel1 = meline1->list.size();
-    nbFeaturel2 = meline2->list.size();
-    nbFeature = meline1->list.size()+meline2->list.size() ;
+    L.resize(meline1->getMeList().size()+meline2->getMeList().size(),6) ;
+    error.resize(meline1->getMeList().size()+meline2->getMeList().size()) ;
+    nbFeaturel1 = meline1->getMeList().size();
+    nbFeaturel2 = meline2->getMeList().size();
+    nbFeature = meline1->getMeList().size()+meline2->getMeList().size() ;
 }
 
 /*!
@@ -697,7 +677,7 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
     double x,y ;
     vpMeSite p ;
     unsigned int j =0 ;
-    for(std::list<vpMeSite>::const_iterator it=meline1->list.begin(); it!=meline1->list.end(); ++it){
+    for(std::list<vpMeSite>::const_iterator it=meline1->getMeList().begin(); it!=meline1->getMeList().end(); ++it){
       x = (double)it->j;
       y = (double)it->i;
 
@@ -719,7 +699,7 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       j++;
     }
 
-    for(std::list<vpMeSite>::const_iterator it=meline2->list.begin(); it!=meline2->list.end(); ++it){
+    for(std::list<vpMeSite>::const_iterator it=meline2->getMeList().begin(); it!=meline2->getMeList().end(); ++it){
       x = (double)it->j;
       y = (double)it->i;
 

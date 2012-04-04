@@ -111,14 +111,14 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
     int index_mask;
     half = (me->getMaskSize() - 1) >> 1 ;
 
-    if(outOfImage( iP , (int)half + me->strip , Iheight, Iwidth))
+    if(outOfImage( iP , (int)half + me->getStrip() , Iheight, Iwidth))
     {
       conv = 0.0 ;
     }
     else
     {
-      if (me->anglestep !=0)
-        index_mask = (int)(i/(double)me->anglestep);
+      if (me->getAngleStep() !=0)
+        index_mask = (int)(i/(double)me->getAngleStep());
       else
 	throw (vpException(vpException::divideByZeroError,"angle step = 0"));
 
@@ -132,7 +132,7 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
         ihalfa = ihalf+a ;
         for( b = 0 ; b < me->getMaskSize() ; b++ )
         {
-	  conv += me->mask[index_mask][a][b] *
+	  conv += me->getMask()[index_mask][a][b] *
 	  I(ihalfa,jhalf+b) ;
         }
       }
@@ -344,7 +344,7 @@ vpMeNurbs::sample(const vpImage<unsigned char>& I)
 {
   int rows = (int)I.getHeight() ;
   int cols = (int)I.getWidth() ;
-  double step = 1.0 / (double)me->points_to_track;
+  double step = 1.0 / (double)me->getPointsToTrack();
 
   // Delete old list
   list.clear();
@@ -360,7 +360,7 @@ vpMeNurbs::sample(const vpImage<unsigned char>& I)
     double delta = computeDelta(pt[1].get_i(),pt[1].get_j());
 
     // If point is in the image, add to the sample list
-    if(!outOfImage(pt[0], 0, rows, cols) && vpImagePoint::sqrDistance(pt[0],pt_1) >= vpMath::sqr(me->sample_step))
+    if(!outOfImage(pt[0], 0, rows, cols) && vpImagePoint::sqrDistance(pt[0],pt_1) >= vpMath::sqr(me->getSampleStep()))
     {
       vpMeSite pix ; //= list.value();
       pix.init(pt[0].get_i(), pt[0].get_j(), delta) ;
@@ -387,7 +387,7 @@ vpMeNurbs::suppressPoints()
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ){
     vpMeSite s = *it;//current reference pixel
 
-    if (s.suppress != 0)
+    if (s.getState() != vpMeSite::NO_SUPPRESSION)
     {
       it = list.erase(it);
     }
@@ -461,8 +461,8 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 
   //Check if the two extremities are not to close to eachother.
   double d = vpImagePoint::distance(begin[0],end[0]);
-  double threshold = 3*me->sample_step;
-  double sample = me->sample_step;
+  double threshold = 3*me->getSampleStep();
+  double sample = me->getSampleStep();
   vpImagePoint pt;
   if ( d > threshold /*|| (list.firstValue()).mask_sign != (list.lastValue()).mask_sign*/)
   {
@@ -473,8 +473,8 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     P.setDisplay(selectDisplay) ;
 
     //Set the range
-    unsigned int  memory_range = me->range ;
-    me->range = 2 ;
+    unsigned int  memory_range = me->getRange() ;
+    me->setRange(2);
     
     //Point at the beginning of the list
     bool beginPtAdded = false;
@@ -494,7 +494,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
       {
         P.track(I,me,false);
 
-        if (P.suppress ==0)
+        if (P.getState() == vpMeSite::NO_SUPPRESSION)
         {
           list.push_front(P) ;
           beginPtAdded = true;
@@ -532,7 +532,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
       {
         P.track(I,me,false);
 
-        if (P.suppress ==0)
+        if (P.getState() == vpMeSite::NO_SUPPRESSION)
         {
           list.push_back(P) ;
           endPtAdded = true;
@@ -548,7 +548,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
       }
     }
     if (!endPtAdded) endPtFound++;
-    me->range = memory_range ;
+    me->setRange(memory_range);
   }
   else
   {
@@ -677,12 +677,12 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         vpMeSite pix;
         pix.init(iPtemp.get_i(), iPtemp.get_j(), delta);
         dist = vpMeSite::sqrDistance(s,pix);
-        if (dist >= vpMath::sqr(me->sample_step)/*25*/)
+        if (dist >= vpMath::sqr(me->getSampleStep())/*25*/)
         {
           bool exist = false;
           for(std::list<vpMeSite>::const_iterator itAdd=addedPt.begin(); itAdd!=addedPt.end(); ++itAdd){
             dist = vpMeSite::sqrDistance(pix, *itAdd);
-            if (dist < vpMath::sqr(me->sample_step)/*25*/)
+            if (dist < vpMath::sqr(me->getSampleStep())/*25*/)
               exist = true;
           }
           if (!exist)
@@ -699,8 +699,8 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         }
       }
 
-      unsigned int  memory_range = me->range ;
-      me->range = 3 ;
+      unsigned int  memory_range = me->getRange();
+      me->setRange(3);
       std::list<vpMeSite>::iterator itList2=list.begin();
       for (int j = 0; j < nbr; j++)
       {
@@ -709,7 +709,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         *itList2 = s;
         ++itList2;
       }
-      me->range = memory_range;
+      me->setRange(memory_range);
     }
     
     if (begin != NULL) delete[] begin;
@@ -819,12 +819,12 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         vpMeSite pix;
         pix.init(iPtemp.get_i(), iPtemp.get_j(), 0);
         dist = vpMeSite::sqrDistance(s,pix);
-        if (dist >= vpMath::sqr(me->sample_step))
+        if (dist >= vpMath::sqr(me->getSampleStep()))
         {
           bool exist = false;
           for(std::list<vpMeSite>::const_iterator itAdd=addedPt.begin(); itAdd!=addedPt.end(); ++itAdd){
             dist = vpMeSite::sqrDistance(pix, *itAdd);
-            if (dist < vpMath::sqr(me->sample_step))
+            if (dist < vpMath::sqr(me->getSampleStep()))
               exist = true;
           }
           if (!exist)
@@ -839,8 +839,8 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         }
       }
       
-      unsigned int  memory_range = me->range ;
-      me->range = 3 ;
+      unsigned int  memory_range = me->getRange();
+      me->setRange(3);
       std::list<vpMeSite>::iterator itList2 = list.end();
       for (int j = 0; j < nbr; j++)
       {
@@ -849,7 +849,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
         *itList2 = s;
         --itList2;
       }
-      me->range = memory_range;
+      me->setRange(memory_range);
     }
     
     if (end != NULL) delete[] end;
@@ -875,7 +875,7 @@ void
 vpMeNurbs::reSample(const vpImage<unsigned char> &I)
 {
   unsigned int n = numberOfSignal();
-  double nbPt = floor(dist / me->sample_step);
+  double nbPt = floor(dist / me->getSampleStep());
 
   if ((double)n < 0.7*nbPt)
   {
@@ -905,16 +905,16 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
   std::list<vpMeSite>::iterator itNext=list.begin();
   ++itNext;
 
-  unsigned int range_tmp = me->range;
-  me->range=2;
+  unsigned int range_tmp = me->getRange();
+  me->setRange(2);
 
-  while(itNext!=list.end() && n <= me->points_to_track)
+  while(itNext!=list.end() && n <= me->getPointsToTrack())
   {
     vpMeSite s = *it;//current reference pixel
     vpMeSite s_next = *itNext;//current reference pixel
     
     double d = vpMeSite::sqrDistance(s,s_next);
-    if(d > 4 * vpMath::sqr(me->sample_step) && d < 1600)
+    if(d > 4 * vpMath::sqr(me->getSampleStep()) && d < 1600)
     {
       vpImagePoint iP0(s.ifloat,s.jfloat);
       vpImagePoint iPend(s_next.ifloat,s_next.jfloat);
@@ -951,7 +951,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
       {
         iP = nurbs.computeCurveDersPoint(u, 1);
 
-        while (vpImagePoint::sqrDistance(iP[0],iPend) > vpMath::sqr(me->sample_step) && u < uend)
+        while (vpImagePoint::sqrDistance(iP[0],iPend) > vpMath::sqr(me->getSampleStep()) && u < uend)
         {
           u+=0.01;
           if (iP!=NULL) {
@@ -959,14 +959,14 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
             iP = NULL;
           }
           iP = nurbs.computeCurveDersPoint(u, 1);
-          if ( vpImagePoint::sqrDistance(iP[0],iP_1) > vpMath::sqr(me->sample_step) && !outOfImage(iP[0], 0, rows, cols))
+          if ( vpImagePoint::sqrDistance(iP[0],iP_1) > vpMath::sqr(me->getSampleStep()) && !outOfImage(iP[0], 0, rows, cols))
           {
             double delta = computeDelta(iP[1].get_i(),iP[1].get_j());
             vpMeSite pix ; //= list.value();
             pix.init(iP[0].get_i(), iP[0].get_j(), delta) ;
             pix.setDisplay(selectDisplay) ;
             pix.track(I,me,false);
-            if (pix.suppress == 0)
+            if (pix.getState() == vpMeSite::NO_SUPPRESSION)
             {
               list.insert(it, pix);
               iP_1 = iP[0];
@@ -982,7 +982,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
     ++it;
     ++itNext;
   }
-  me->range=range_tmp;
+  me->setRange(range_tmp);
 }
 
 
@@ -1002,9 +1002,10 @@ vpMeNurbs::supressNearPoints()
     vpMeSite s = list.value() ;//current reference pixel
     vpMeSite s_next = list.nextValue() ;//current reference pixel
     
-    if(vpMeSite::sqrDistance(s,s_next) < vpMath::sqr(me->sample_step))
+    if(vpMeSite::sqrDistance(s,s_next) < vpMath::sqr(me->getSampleStep()))
     {
-      s_next.suppress = 4;
+      s_next.setState(vpMeSite::TOO_NEAR);
+          
       list.next();
       list.modify(s_next);
       if (!list.nextOutside()) list.next();
@@ -1020,8 +1021,9 @@ vpMeNurbs::supressNearPoints()
     vpMeSite s = *it;//current reference pixel
     vpMeSite s_next = *itNext;//current reference pixel
 
-    if(vpMeSite::sqrDistance(s,s_next) < vpMath::sqr(me->sample_step)){
-      s_next.suppress = 4;
+    if(vpMeSite::sqrDistance(s,s_next) < vpMath::sqr(me->getSampleStep())){
+      s_next.setState(vpMeSite::TOO_NEAR);
+          
       *itNext = s_next;
       ++it;
       ++itNext;

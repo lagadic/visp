@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Andrew Comport
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -68,7 +69,11 @@
 
 class VISP_EXPORT vpMe
 {
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
+#else
+private:
+#endif
   double threshold ;//! Likelihood ratio threshold
   double mu1; //! Contrast continuity parameter (left boundary)
   double mu2; //! Contrast continuity parameter (right boundary)
@@ -83,18 +88,15 @@ public:
   unsigned int mask_size;
   //! the number of convolution masks available for tracking ; defines resolution. \warning Should not be public, use setMaskNumber() and getMaskNumber() instead (kept public for compatibility reasons).
   unsigned int n_mask;
-
   //strip: defines a "security strip" such that Seek_Extremities()
   //cannot return a new extremity which is too close to the
   //frame borders which may cause Get_Sampling_Grid to refuse
   //the that extremity
   int strip;
-  double aberration;
-  double init_aberration;
   //int graph ;
-  //! Array of matrices defining the different masks (one for every angle step).
-  vpMatrix *mask ;
+  vpMatrix *mask ; //! Array of matrices defining the different masks (one for every angle step).
 
+public:
   vpMe() ;
   vpMe(const vpMe &me) ;
   virtual ~vpMe() ;
@@ -103,60 +105,235 @@ public:
 
 
   void initMask() ;// convolution masks - offset computation
+  void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }
   void print( ) ;
-
+  
   /*!
-    Set the likelihood threshold.
-   */
-  void setThreshold(const double t) { threshold = t ; }
-  /*! 
-    Set the number of points to track.
+    Get the matrix of the mask.
 
-    \warning This method is useful only for the vpMeNurbsTracker.  
-   */
-  void setPointsToTrack(const int n) { points_to_track = n; }
-  void setAngleStep(const unsigned int a) { anglestep = a ; }
-  //! Set the seek range on on both sides of the reference pixel.
-  void setRange(const unsigned int r) { range = r  ; }
-  void setMu1(const double mu1) { this->mu1 = mu1  ; }
-  void setMu2(const double mu2) { this->mu2 = mu2  ; }
-  void setMaskNumber(const unsigned int a) ;
-  void setMaskSign(const int a){mask_sign = a ; }
-  void setMaskSize(const unsigned int a) ;
-  double getSampleStep() const { return sample_step ; }
-  void setSampleStep(const double s) { sample_step = s ; }
-  void setStrip(const int a) { strip = a ; }
-  // in CPixel.convolution() : avoids to get points (In Appariement()
-  // and SeekExtremities()) that Get_Sampling_Grid()
-  // would reject since too close to the frame borders ;
-  void setMinSamplestep(const double a) { min_samplestep = a ; }
-  //sets the minimum samplestep in pixels ;
-
-  /*!
-    Return the actual mask size. The mask size defines the size of the
-    convolution mask used to detect an edge.
-
-    \return the current mask size.
+    \return the value of mask.
   */
-  unsigned int getMaskSize() const {
-    return mask_size;
-  }
+  inline vpMatrix* getMask() const { return mask; }
 
   /*!
-    Return the number of mask. The number of mask determines the precision of
+    Set the number of mask applied to determine the object contour. The number of mask determines the precision of
+    the normal of the edge for every sample. If precision is 2deg, then there
+    are 360/2 = 180 masks.
+
+    \param a : the number of mask.
+  */
+  void setMaskNumber(const unsigned int &a) ;
+  
+  /*!
+    Return the number of mask  applied to determine the object contour. The number of mask determines the precision of
     the normal of the edge for every sample. If precision is 2deg, then there
     are 360/2 = 180 masks.
 
     \return the current number of mask.
   */
-  unsigned int getMaskNumber() const{
-    return n_mask;
-  }
+  inline unsigned int getMaskNumber() const { return n_mask; }
+  
+  /*!
+    Set the mask sign.
+    
+    \param a : new mask sign.
+  */
+  void setMaskSign(const int &a){ mask_sign = a ; }
+  
+  /*!
+    Return the mask sign.
 
-  void setAberration( double a) { aberration = a ; }
-  void setInitAberration(double a ) { init_aberration = a ; }
-  void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }
+    \return Value of mask_sign.
+  */
+  inline int getMaskSign() const { return mask_sign; }
+  
+  /*!
+    Set the mask size (in pixel) used to compute the image gradient and determine the object contour. 
+    The mask size defines the size of the convolution mask used to detect an edge.
+    
+    \param a : new mask size.
+  */
+  void setMaskSize(const unsigned int &a);
+  
+  /*!
+    Return the actual mask size (in pixel) used to compute the image gradient and determine the object contour. 
+    The mask size defines the size of the convolution mask used to detect an edge.
 
+    \return the current mask size.
+  */
+  inline unsigned int getMaskSize() const { return mask_size; }
+  
+  /*!
+    Set the minimum image contrast allowed to detect a contour.
+    
+    \param mu1 : new mu1.
+  */
+  void setMu1(const double &mu1) { this->mu1 = mu1  ; }
+  
+  /*!
+    Get the minimum image contrast allowed to detect a contour.
+
+    \return Value of mu1.
+  */
+  inline double getMu1() const { return mu1; }
+  
+  /*!
+    Set the maximum image contrast allowed to detect a contour.
+    
+    \param mu1 : new mu2.
+  */
+  void setMu2(const double &mu2) { this->mu2 = mu2  ; }
+  
+  /*!
+    Get the maximum image contrast allowed to detect a contour.
+
+    \return Value of mu2.
+  */
+  inline double getMu2() const { return mu2; }
+  
+  /*!
+    Set how many discretizied points are used to track the feature.
+    
+    \param nb : new total number of sample.
+  */
+  void setNbTotalSample(const int &nb) { ntotal_sample = nb; }
+  
+  /*!
+    Get how many discretizied points are used to track the feature.
+
+    \return Value of ntotal_sample.
+  */
+  inline int getNbTotalSample() const { return ntotal_sample; }
+  
+  /*! 
+    Set the number of points to track.
+    
+    \param n : new number of points to track.
+    
+    \warning This method is useful only for the vpMeNurbsTracker.  
+  */
+  void setPointsToTrack(const int &n) { points_to_track = n; }
+  
+  /*!
+    Return the number of points to track.
+
+    \return Value of points_to_track.
+  */
+  inline int getPointsToTrack() const { return points_to_track ; }
+  
+  /*!
+    Set the seek range on both sides of the reference pixel.
+    
+    \param r : new range.
+  */
+  void setRange(const unsigned int &r) { range = r  ; }
+  
+  /*!
+    Return the seek range on both sides of the reference pixel.
+
+    \return Value of range.
+  */
+  inline unsigned int getRange() const { return range; }
+  
+  /*!
+    Set the angle step.
+    
+    \param a : new angle step.
+  */
+  void setAngleStep(const unsigned int &a) { anglestep = a ; }
+  
+  /*!
+    Return the angle step.
+
+    \return Value of anglestep.
+  */
+  inline unsigned int getAngleStep() const { return anglestep; }
+  
+  /*!
+    Set the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
+    
+    \param min : new minimum sample step.
+  */
+  void setMinSampleStep(const double &min) { min_samplestep = min ; }
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    \deprecated Use setMinSampleStep() instead.
+  */
+  vp_deprecated void setMinSamplestep(const double &min) { min_samplestep = min ; } //Little mistake in the method name "step" should be "Step" 
+  #endif
+  
+  /*!
+    Get the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
+
+    \return Value of min_samplestep.
+  */
+  inline double getMinSampleStep() const { return min_samplestep; }
+  
+  /*!
+    Set the minimum distance in pixel between two discretized points.
+    
+    \param s : new sample_step.
+  */
+  void setSampleStep(const double &s) { sample_step = s ; }
+  
+  /*!
+    Get the minimum distance in pixel between two discretized points.
+
+    \return Value of sample_step.
+  */
+  inline double getSampleStep() const { return sample_step ; }
+  
+  /*!
+    Set the number of pixels that are ignored around the image borders.
+    
+    \param a : new strip.
+  */
+  void setStrip(const int &a) { strip = a ; }
+  
+  /*!
+    Get the number of pixels that are ignored around the image borders.
+
+    \return the value of strip.
+  */
+  inline int getStrip() const { return strip; }
+  
+  /*!
+    Set the likelihood threshold used to determined if the moving edge is valid or not.
+    
+    \param t : new threshold.
+  */
+  void setThreshold(const double &t) { threshold = t ; }
+  
+  /*!
+    Return the likelihood threshold used to determined if the moving edge is valid or not.
+
+    \return Value of threshold.
+  */
+  inline double getThreshold() const { return threshold; }
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public: 
+  double aberration;
+  double init_aberration;
+  
+  /*!
+    \deprecated since it wasn't used.
+    
+    Set aberration value.
+    
+    \param a : new value.
+  */
+  vp_deprecated void setAberration(const double &a) { aberration = a ; }
+  
+  /*!
+    \deprecated since it wasn't used.
+   
+    Set initial aberration value.
+    
+    \param a : new value.
+  */
+  vp_deprecated void setInitAberration(const double &a) { init_aberration = a ; }
+#endif
 };
 
 
