@@ -89,7 +89,6 @@ void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
 double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
-void init_visp_plot(vpPlot& );
 
 #if !defined(WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available
@@ -106,6 +105,8 @@ int main()
   std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
 }
 #else
+void init_visp_plot(vpPlot& );
+
 int main()
 {
   //intial pose
