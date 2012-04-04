@@ -54,7 +54,10 @@
 
 #include <visp/vpMutex.h> // need pthread
 #include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpPixelMeterConversion.h>
+#include <visp/vpMeterPixelConversion.h>
 
 /*!
 
@@ -148,6 +151,8 @@ class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
     RGBcam = cam;
   }
 
+  void warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> & Idepth, vpImage<vpRGBa> & IrgbWarped);//warp the RGB image into the Depth camera frame
+
  private:
   //!Instantiation of Freenect virtual functions
   // Do not call directly even in child
@@ -161,6 +166,8 @@ class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
   vpMutex m_depth_mutex;
 
   vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
+  vpHomogeneousMatrix rgbMir;//Transformation from IRcam coordinate frame to RGBcam coordinate frame.
+  vpHomogeneousMatrix irMrgb;//Transformation from RGBcam coordinate frame to IRcam coordinate frame .
   vpDMResolution DMres;
 
   //Access protected by a mutex:

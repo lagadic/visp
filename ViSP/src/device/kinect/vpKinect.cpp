@@ -62,6 +62,9 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
 {
   dmap.resize(height, width);
   IRGB.resize(height, width);
+  vpPoseVector r(-0.0266,-0.0047,-0.0055,0.0320578,0.0169041,-0.0076519 );//!Those are the parameters found for our Kinect device. Note that they can differ from one device to another.
+  rgbMir.buildFrom(r);
+  irMrgb = rgbMir.inverse();
 }
 
 /*!
@@ -69,26 +72,44 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
 */
 vpKinect::~vpKinect()
 {
+
 }
 
 void vpKinect::start(vpKinect::vpDMResolution res)
 {
-  DMres = res;
-  RGBcam.initPersProjWithoutDistortion(606, 595, 321, 235);// to calibrate
-  if (DMres == DMAP_LOW_RES){
-    std::cout << "vpKinect::start LOW depth map resolution 240x320" << std::endl;
-    //		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2, IRcam.get_u0()/2, IRcam.get_v0()/2);
-    //IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
-    IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, -0.27);
-  }
-  else
-  {
-    std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
-    //IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
-    IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, -0.27);
-    //		Idmap.resize(height, width);
+    DMres = res;
+  //!Calibration parameters are the parameters found for our Kinect device. Note that they can differ from one device to another.
+	if (DMres == DMAP_LOW_RES){
+		std::cout << "vpKinect::start LOW depth map resolution 240x320" << std::endl;
+		//		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2, IRcam.get_u0()/2, IRcam.get_v0()/2);
+		//IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
+		IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
+		height = 240;
+		width = 320;
+	}
+	else
+	{
+		std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
+		height = 480;
+		width = 640;
+		//IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
+		IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
+		//		Idmap.resize(height, width);
 
-  }
+	}
+
+#ifdef VISP_HAVE_ACCESS_TO_NAS
+  	vpXmlParserCamera cameraParser;
+  	char cameraXmlFile[FILENAME_MAX];
+  	sprintf(cameraXmlFile, "/udd/fspindle/Viper850/Viper850-code/include/const_camera.xml");//!Todo
+  	cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width, height);
+#else
+//  RGBcam.initPersProjWithoutDistortion(525.53, 524.94, 309.9, 282.8);//old
+//  RGBcam.initPersProjWithDistortion(536.76, 537.25, 313.45, 273.27,0.04,-0.04);//old
+//  RGBcam.initPersProjWithoutDistortion(512.0559503505,511.9352058050,310.6693938678,267.0673901049);//new
+  	RGBcam.initPersProjWithDistortion(522.5431816996,522.7191431808,311.4001982614,267.4283562142,0.0477365207,-0.0462326418);//new
+#endif
+
   this->startVideo();
   this->startDepth();
 }
@@ -105,7 +126,7 @@ void vpKinect::stop()
 */
 void vpKinect::VideoCallback(void* rgb, uint32_t /* timestamp */)
 {
-  //	std::cout << "vpKinect Video callback" << std::endl;
+//  	std::cout << "vpKinect Video callback" << std::endl;
   vpMutex::vpScopedLock lock(m_rgb_mutex);
   uint8_t* rgb_ = static_cast<uint8_t*>(rgb);
   for (unsigned i = 0; i< height;i++){
@@ -132,6 +153,7 @@ void vpKinect::VideoCallback(void* rgb, uint32_t /* timestamp */)
 */
 void vpKinect::DepthCallback(void* depth, uint32_t /* timestamp */)
 {
+//	std::cout << "vpKinect Depth callback" << std::endl;
   vpMutex::vpScopedLock lock(m_depth_mutex);
   uint16_t* depth_ = static_cast<uint16_t*>(depth);
   for (unsigned i = 0; i< height;i++){
@@ -156,7 +178,7 @@ bool vpKinect::getDepthMap(vpImage<float>& map)
   vpMutex::vpScopedLock lock(m_depth_mutex);
   if (!m_new_depth_map)
     return false;
-  map = dmap;
+  map = this->dmap;
   m_new_depth_map = false;
   return true;
 }
@@ -167,50 +189,51 @@ bool vpKinect::getDepthMap(vpImage<float>& map)
  */
 bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 {
-  vpImage<float> tempMap;
-  m_depth_mutex.lock();
-  if (!m_new_depth_map && !m_new_depth_image)
-  {
-    m_depth_mutex.unlock();
-    return false;
-  }
-  tempMap = dmap;
+	//	vpMutex::vpScopedLock lock(m_depth_mutex);
+	vpImage<float> tempMap;
+	m_depth_mutex.lock();
+	if (!m_new_depth_map && !m_new_depth_image)
+	{
+		m_depth_mutex.unlock();
+		return false;
+	}
+	tempMap = dmap;
 
-  m_new_depth_map = false;
-  m_new_depth_image = false;
-  m_depth_mutex.unlock();
+	m_new_depth_map = false;
+	m_new_depth_image = false;
+	m_depth_mutex.unlock();
 
-  if (DMres == DMAP_LOW_RES){
-    unsigned int h = height/2;
-    unsigned int w = width/2;
-    if ((Imap.getHeight()!=320 )||(map.getHeight()!=320))
-      vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
-    for(unsigned int i = 0; i < h; i++)
-      for(unsigned int j = 0; j < w; j++){
-        map[i][j] = tempMap[i<<1][j<<1];
-        //if (map[i][j] != -1)
-        if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
-          Imap[i][j] = (unsigned char)(255*map[i][j]/5);
-        else
-          Imap[i][j] = 255;
-      }
-  }
-  else
-  {
-    if ((Imap.getHeight()!=480 )||(map.getHeight()!=480))
-      vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
-    for (unsigned i = 0; i< height;i++)
-      for (unsigned j = 0 ; j < width ; j++){
-        map[i][j] = tempMap[i][j];
-        //if (map[i][j] != -1)
-	if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
-          Imap[i][j] = (unsigned char)(255*map[i][j]/5);
-        else
-          Imap[i][j] = 255;
-      }
-  }
+	if (DMres == DMAP_LOW_RES){
+		unsigned int h = height/2;
+		unsigned int w = width/2;
+		if ((Imap.getHeight()!=240 )||(map.getHeight()!=240))
+		  vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
+		for(unsigned int i = 0; i < h; i++)
+		  for(unsigned int j = 0; j < w; j++){
+			map[i][j] = tempMap[i<<1][j<<1];
+			//if (map[i][j] != -1)
+			if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
+			  Imap[i][j] = (unsigned char)(255*map[i][j]/5);
+			else
+			  Imap[i][j] = 255;
+		  }
+	}
+	else
+	{
+		if ((Imap.getHeight()!=480 )||(map.getHeight()!=480))
+		  vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
+		for (unsigned i = 0; i< height;i++)
+		  for (unsigned j = 0 ; j < width ; j++){
+			map[i][j] = tempMap[i][j];
+			//if (map[i][j] != -1)
+			if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
+				Imap[i][j] = (unsigned char)(255*map[i][j]/5);
+			else
+				Imap[i][j] = 255;
+		  }
+	}
 
-  return true;
+	return true;
 }
 
 
@@ -226,6 +249,63 @@ bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB)
   m_new_rgb_frame = false;
   return true;
 }
+
+/*!
+  Warp the RGB frame to the depth camera frame. The size of the resulting IrgbWarped frame is the same as the size of the depth map Idepth
+*/
+void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> & Idepth, vpImage<vpRGBa> & IrgbWarped)
+{
+	if ((Idepth.getHeight()!=height )||(Idepth.getWidth()!=width)){
+		std::cout <<"Size error : "<<std::endl;
+	      vpERROR_TRACE(1, "Idepth image size does not match vpKinect DM resolution");
+	}
+	else{
+		if((IrgbWarped.getHeight()!=height )||(IrgbWarped.getWidth()!=width))
+			IrgbWarped.resize(height, width);
+		IrgbWarped=0;
+		double x1, y1, x2, y2, Z1, Z2;
+		vpImagePoint imgPoint(0,0);
+		double u, v;
+		vpColVector P1(4),P2(4);
+
+//		std::cout <<"rgbMir : "<<rgbMir<<std::endl;
+
+		for (unsigned i = 0; i< height;i++)
+			for (unsigned j = 0 ; j < width ; j++){
+			  //! Compute metric coordinates in the ir camera Frame :
+			  vpPixelMeterConversion::convertPoint(IRcam, j, i, x1, y1);
+			  Z1 = Idepth[i][j];
+			  if (Z1!=-1){
+				  P1[0]=x1*Z1;
+				  P1[1]=y1*Z1;
+				  P1[2]=Z1;
+				  P1[3]=1;
+
+				  //! Change frame :
+				  P2 = rgbMir*P1;
+				  Z2 = P2[2];
+				  if (Z2!= 0){
+					  x2 = P2[0]/P2[2];
+					  y2 = P2[1]/P2[2];
+				  }
+				  else
+					  std::cout<<"Z2 = 0 !!"<<std::endl;
+
+				  //! compute pixel coordinates of the corresponding point in the depth image
+				  vpMeterPixelConversion::convertPoint(RGBcam, x2, y2, u, v);
+
+				  //!Fill warped image value
+				  if (((int)u>=0)&&((int)u<width)&&((int)v>=0)&&((int)v<height)){
+					  IrgbWarped[i][j] = Irgb[(int)v][(int)u];
+				  }
+				  else
+					  IrgbWarped[i][j] = 0;
+			  }
+		 }
+	}
+}
+
+
 
 
 #endif // VISP_HAVE_LIBFREENECT
