@@ -731,7 +731,7 @@ void vpIoTools::loadConfigFile(const std::string &confFile)
 		  for(unsigned i=0;i<3;++i)
 		    c = vpMath::minimum(c,(int)line.find(stop[i],k+1));
 		  if(c==-1)
-		    c = line.size();
+                    c = (int)line.size();
 		  long unsigned int c_ = (long unsigned int) c;
 		  val = line.substr(k+1,c_-k-1);
 		  configVars.push_back(var);

@@ -202,7 +202,7 @@ main(int argc, const char ** argv)
   vpTRACE("Display task information " ) ;
   task.print() ;
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++ < 200)
   {

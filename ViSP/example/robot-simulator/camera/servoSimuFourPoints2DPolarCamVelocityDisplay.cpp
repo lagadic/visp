@@ -386,7 +386,7 @@ main(int argc, const char ** argv)
   std::cout << "\nDisplay task information: " << std::endl;
   task.print() ;
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   // loop
   while(iter++ < 200) {
     std::cout << "---------------------------------------------" 

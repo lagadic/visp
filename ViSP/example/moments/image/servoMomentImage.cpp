@@ -84,7 +84,7 @@ void initScene();
 void initFeatures();
 
 void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
-void execute(int nbIter); //launch the simulation
+void execute(unsigned int nbIter); //launch the simulation
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
 double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
@@ -278,7 +278,7 @@ void initFeatures(){
   task.setLambda(1.);
 }
 
-void execute(int nbIter){
+void execute(unsigned int nbIter){
 
   vpPlot ViSP_plot;
   init_visp_plot(ViSP_plot);		// Initialize plot object
@@ -293,7 +293,7 @@ void execute(int nbIter){
 
   vpDisplay::display(Iint);
   vpDisplay::flush(Iint);
-  int iter=0;
+  unsigned int iter=0;
   double t=0;
   robot.setPosition(cMo);
   float sampling_time = 0.010f; // Sampling period in seconds

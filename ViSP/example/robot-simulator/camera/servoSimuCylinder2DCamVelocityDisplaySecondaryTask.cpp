@@ -315,7 +315,7 @@ main(int argc, const char ** argv)
   vpTRACE("Display task information " ) ;
   task.print() ;
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   vpTRACE("\t loop") ;
   //The first loop is needed to reach the desired position
   do
@@ -373,7 +373,7 @@ main(int argc, const char ** argv)
   iter = 0;
   double rapport = 0;
   double vitesse = 0.5;
-  int tempo = 800;
+  unsigned int tempo = 800;
 
   while(iter < tempo)
   {
@@ -400,7 +400,7 @@ main(int argc, const char ** argv)
 
     v = task.computeControlLaw() ;
 
-    if ( iter%tempo < 200  &&  iter%tempo >= 0)
+    if ( iter%tempo < 200  /*&&  iter%tempo >= 0*/)
     {
       e2 = 0;
       e1[0] = fabs(vitesse)  ;

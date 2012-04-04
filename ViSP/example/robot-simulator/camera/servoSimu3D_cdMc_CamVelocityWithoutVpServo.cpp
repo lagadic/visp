@@ -236,7 +236,7 @@ main(int argc, const char ** argv)
   // Set the constant gain of the servo
   double lambda = 1;
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   // Start the visual servoing loop. We stop the servo after 200 iterations
   while(iter++ < 200) {
     std::cout << "-----------------------------------" << iter <<std::endl ;

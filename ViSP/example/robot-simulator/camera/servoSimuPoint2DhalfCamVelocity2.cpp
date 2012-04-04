@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
   //------------------------------------------------------------------
   // An now the closed loop
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<200)
   {

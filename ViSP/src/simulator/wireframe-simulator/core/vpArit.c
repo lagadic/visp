@@ -296,7 +296,7 @@ posttrans_matrix (Matrix m, Vector *vp)
 void
 transpose_matrix (Matrix m)
 {
-	int	i, j;
+        unsigned int	i, j;
 	float	t;
 
 	for (i = 0; i < 4; i++)

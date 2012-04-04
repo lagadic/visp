@@ -261,7 +261,7 @@ void *mainLoop (void *_simu)
 
 
     char name[FILENAME_MAX];
-    int iter=0 ;
+    unsigned int iter=0 ;
     vpTRACE("\t loop") ;
     while(iter++ < 100) {
       double t = vpTime::measureTimeMs();

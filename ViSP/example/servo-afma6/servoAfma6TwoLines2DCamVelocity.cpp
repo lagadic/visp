@@ -199,7 +199,7 @@ main()
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
-    int iter=0 ;
+    unsigned int iter=0 ;
     vpTRACE("\t loop") ;
     vpColVector v ;
 

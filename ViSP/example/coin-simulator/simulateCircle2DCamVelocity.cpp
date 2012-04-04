@@ -259,7 +259,7 @@ void *mainLoop (void *_simu)
     {    int a ; std::cin >> a ; }
 
 
-    int iter=0 ;
+    unsigned int iter=0 ;
     vpTRACE("\t loop") ;
     int itermax ;
     if (pos==2) itermax = 75 ; else itermax = 100 ;
