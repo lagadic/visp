@@ -36,6 +36,7 @@
  *
  * Authors:
  * Andrew Comport
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -69,51 +70,109 @@
 
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
-
+#else
+protected:
+#endif
   //! Tracking dependent variables/functions
-
   //! List of tracked moving edges points.
   std::list<vpMeSite> list ;
   //! Moving edges initialisation parameters
   vpMe *me ;
-  //! Used for backwards compatibility...could be removed
-  int nGoodElement;
-  int query_range;
   unsigned int init_range;
-  bool display_point;// if 1 (TRUE) displays the line that is being tracked
+  int nGoodElement;
+  
+protected:
+  vpMeSite::vpMeSiteDisplayType selectDisplay ;
 
+public:
   // Constructor/Destructor
   vpMeTracker() ;
   vpMeTracker(const vpMeTracker& meTracker) ;
   virtual ~vpMeTracker() ;
+  
   void init() ;
   void initTracking(const vpImage<unsigned char>& I);
-
-  unsigned int numberOfSignal() ;
-
-  //! Display contour.
-  virtual void display(const vpImage<unsigned char> &I, vpColor col)=0;
-  void display(const vpImage<unsigned char>& I);
-  //! Displays the status of moving edge sites
-  void display(const vpImage<unsigned char>& I, vpColVector &w, unsigned int &index_w);
-  vpMeTracker& operator =(vpMeTracker& f);
-  int outOfImage( int i , int j , int half , int rows , int cols) ;
-  int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
-  //!Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image)=0;
-  void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
-    selectDisplay = select ;
-  }
-  void setMe(vpMe *me) { this->me = me ; }
-  unsigned int totalNumberOfSignal() ;
-
+  
   //! Track sampled pixels.
   void track(const vpImage<unsigned char>& I);
 
-protected:
-  vpMeSite::vpMeSiteDisplayType selectDisplay ;
-
+  unsigned int numberOfSignal() ;
+  unsigned int totalNumberOfSignal() ;
+  
+  virtual void  display(const vpImage<unsigned char> &I, vpColor col)=0;
+  virtual void  display(const vpImage<unsigned char>& I);
+  void          display(const vpImage<unsigned char>& I, vpColVector &w, unsigned int &index_w);
+  
+  void setDisplay(vpMeSite::vpMeSiteDisplayType select)  { 
+    selectDisplay = select ;
+  }
+  
+  vpMeTracker& operator =(vpMeTracker& f);
+  
+  int outOfImage( int i , int j , int half , int rows , int cols) ;
+  int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
+  
+  //!Sample pixels at a given interval
+  virtual void sample(const vpImage<unsigned char> &image)=0;
+  
+  
+  /*!
+    Set the initial range.
+  
+    \param range : initial range.
+  */
+  void setInitRange(const unsigned int &r) { init_range = r; }
+  
+  /*!
+    Return the initial range.
+  
+    \return Value of init_range.
+  */
+  inline unsigned int getInitRange() { return init_range; }
+  
+  /*!
+    Set the moving edges initialisation parameters
+  
+    \param me : Moving Edges.
+  */
+  void setMe(vpMe *me) { this->me = me ; }
+  
+  /*!
+    Return the moving edges initialisation parameters
+  
+    \return Moving Edges.
+  */
+  inline vpMe* getMe(){ return me; }
+  
+  /*!
+    Set the list of moving edges
+  
+    \param l : list of Moving Edges.
+  */
+  void setMeList(const std::list<vpMeSite> &l) { list = l; }
+ 
+  /*!
+    Return the list of moving edges
+  
+    \return List of Moving Edges.
+  */
+  inline std::list<vpMeSite>& getMeList() { return list; }
+  inline std::list<vpMeSite> getMeList() const { return list; }
+  
+  /*!
+    Return the number of points that has not been suppressed.
+  
+    \return Number of good points.
+  */
+  inline int getNbPoints() const { return nGoodElement; }
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+  int query_range;
+  bool display_point;// if 1 (TRUE) displays the line that is being tracked
+#endif
 };
 
 

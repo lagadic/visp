@@ -69,10 +69,13 @@ vpMeTracker::vpMeTracker()
 {
   init();
   me = NULL ;
-  display_point = false ;
   nGoodElement = 0;
-  query_range = 0;
   init_range = 1;
+  
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  query_range = 0;
+  display_point = false ;
+  #endif
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
@@ -82,10 +85,13 @@ vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
   me = meTracker.me;
   list = meTracker.list;
   nGoodElement = meTracker.nGoodElement;
-  query_range = meTracker.query_range;
   init_range = meTracker.init_range;
-  display_point = meTracker.display_point;
   selectDisplay = meTracker.selectDisplay;
+  
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  display_point = meTracker.display_point;
+  query_range = meTracker.query_range;
+  #endif
 }
 
 vpMeTracker::~vpMeTracker()
@@ -104,7 +110,7 @@ vpMeTracker::operator = (vpMeTracker& p)
 }
 
 static bool isSuppressZero(const vpMeSite& P){
-  return (P.suppress == 0);
+  return (P.getState() == vpMeSite::NO_SUPPRESSION);
 }
 
 unsigned int
@@ -155,8 +161,8 @@ void
 vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 {
   // Must set range to 0
-  unsigned int range_tmp = me->range;
-  me->range=init_range;
+  unsigned int range_tmp = me->getRange();
+  me->setRange(init_range);
 
   nGoodElement=0;
 
@@ -169,7 +175,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 
     d++ ;
     // If element hasn't been suppressed
-    if(refp.suppress==0)
+    if(refp.getState() == vpMeSite::NO_SUPPRESSION)
     {
       try {
         refp.track(I,me,false);
@@ -180,7 +186,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
         vpERROR_TRACE("Error caught") ;
         throw ;
       }
-      if(refp.suppress==0) nGoodElement++;
+      if(refp.getState() == vpMeSite::NO_SUPPRESSION) nGoodElement++;
     }
 
 
@@ -189,7 +195,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
       double a,b ;
       a = refp.i_1 - refp.i ;
       b = refp.j_1 - refp.j ;
-      if(refp.suppress==0) {
+      if(refp.getState() == vpMeSite::NO_SUPPRESSION) {
         ip1.set_i( refp.i );
         ip1.set_j( refp.j );
         ip2.set_i( refp.i+a );
@@ -220,7 +226,7 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
   }
   */
 
-  me->range=range_tmp;
+  me->setRange(range_tmp);
 }
 
 
@@ -244,7 +250,7 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 
     //    d++ ;
     // If element hasn't been suppressed
-    if(s.suppress==0)
+    if(s.getState() == vpMeSite::NO_SUPPRESSION)
     {
 
       try{
@@ -255,10 +261,10 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
       catch(vpTrackingException)
       {
         vpERROR_TRACE("catch exception ") ;
-        s.suppress=2 ;
+        s.setState(vpMeSite::THRESHOLD);
       }
 
-      if(s.suppress != 2)
+      if(s.getState() != vpMeSite::THRESHOLD)
       {
         nGoodElement++;
 
@@ -267,7 +273,7 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
           double a,b ;
           a = s.i_1 - s.i ;
           b = s.j_1 - s.j ;
-          if(s.suppress==0) {
+          if(s.getState() == vpMeSite::NO_SUPPRESSION) {
             ip1.set_i( s.i );
             ip1.set_j( s.j );
             ip2.set_i( s.i+a*5 );
@@ -284,11 +290,16 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 }
 
 /*!
-Displays the status of a moving edge site, a sample point:
-- in red, the sample point is considered as valid, while
-- in white, the sample point is suppressed due to a bad constrast,
-- in blue, the sample point is suppressed due to a bad likelihood ratio,
-- in green, the sample point is an outlier.
+  Display the moving edge sites with a color corresponding to their state.
+  
+  - If green : The vpMeSite is a good point.
+  - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+  - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+  - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
+  - If cyan : The point is removed because it's too close to another.
+  - Yellow otherwise
+  
+  \param I : The image.
 */
 void
 vpMeTracker::display(const vpImage<unsigned char>& I)
@@ -299,42 +310,25 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
     std::cout<<" There are "<<list.size()<< " sites in the list " << std::endl ;
   }
 #endif
-  vpImagePoint ip;
-
   for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
     vpMeSite p = *it;
-
-    if(p.suppress == 1) {
-      ip.set_i( p.i );
-      ip.set_j( p.j);
-      vpDisplay::displayCross(I, ip, 2, vpColor::white) ; // Contrast
-    }
-    else if(p.suppress == 2) {
-      ip.set_i( p.i );
-      ip.set_j( p.j);
-      vpDisplay::displayCross(I, ip, 2,vpColor::blue) ; // Threshold
-    }
-    else if(p.suppress == 3) {
-      ip.set_i( p.i );
-      ip.set_j( p.j);
-      vpDisplay::displayCross(I, ip, 3, vpColor::green) ; // M-estimator
-    }
-    else if(p.suppress == 0) {
-      ip.set_i( p.i );
-      ip.set_j( p.j);
-      vpDisplay::displayCross(I, ip, 2, vpColor::red) ; // OK
-    }
+    p.display(I);
   }
 }
 
-
+/*! Displays the status of moving edge sites
+ 
+  \param I : The image.
+  \param w : vector
+  \param index_w : index
+*/
 void
 vpMeTracker::display(const vpImage<unsigned char>& I,vpColVector &w, unsigned int &index_w)
 {
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
     vpMeSite P = *it;
 
-    if(P.suppress == 0)
+    if(P.getState() == vpMeSite::NO_SUPPRESSION)
     {
       P.weight = w[index_w];
       index_w++;

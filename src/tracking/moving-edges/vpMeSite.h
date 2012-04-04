@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Andrew Comport
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -83,27 +84,34 @@ public:
       RANGE_RESULT
     } vpMeSiteDisplayType;
 
+  typedef enum
+  {
+    NO_SUPPRESSION = 0,
+    CONSTRAST = 1,
+    THRESHOLD = 2,
+    M_ESTIMATOR = 3,
+    TOO_NEAR = 4,
+    UNKNOW = 5
+  } vpMeSiteState;
+  
 public:
   int i,j ;
   int i_1, j_1 ;
   double ifloat, jfloat ;
   unsigned char v ;
   int mask_sign ;
-
   // Angle of tangent at site
   double alpha;
-
   // Convolution of Site in previous image
   double convlt ;
  // Convolution of Site in previous image
   double normGradient ;
-
-  //! Flag to indicate whether point is rejected or not
-  //! 1 = contrast, 2 = threshold, 3 = M-estimator, 0 = nosupp
-  int suppress;
-
   // Uncertainty of point given as a probability between 0 and 1
   double weight;
+  
+private:
+  vpMeSiteDisplayType selectDisplay ;
+  vpMeSiteState state;
 
 public:
   void init() ;
@@ -115,15 +123,9 @@ public:
   vpMeSite(double ip, double jp) ;
   vpMeSite (const vpMeSite &mesite) ;
   virtual ~vpMeSite() {} ;
-
-  vpMeSite &operator=(const vpMeSite &m) ;
-  int operator!=(const vpMeSite  &m) ;
   
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
+  void display(const vpImage<unsigned char>& I);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void getSign(const vpImage<unsigned char> &I, const int range) ;
-#endif
   double convolution(const vpImage<unsigned char>& ima, const vpMe *me) ;
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range) ;
@@ -134,7 +136,35 @@ public:
   void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select ; }
   
   /*!
+    Set the state of the site
 
+    \param flag : flag corresponding to vpMeSiteState
+    
+    \sa vpMeSiteState
+  */
+  void setState(const vpMeSiteState &flag){ 
+    state = flag; 
+    
+    #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    suppress = (int)flag;
+    #endif
+  }
+  
+  /*!
+    Get the state of the site
+
+    \return flag corresponding to vpMeSiteState
+  */
+  inline vpMeSiteState getState() const { return state; }
+  
+//Opérators
+  vpMeSite &operator=(const vpMeSite &m) ;
+  int operator!=(const vpMeSite  &m) ;
+  
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
+  
+//Static functions 
+  /*!
     Compute the distance \f$ |S1 - S2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
 
     \param S1 : First site
@@ -146,7 +176,6 @@ public:
     return(sqrt(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat)));}
     
   /*!
-
     Compute the distance \f$ |S1 - S2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
 
     \param S1 : First site
@@ -156,9 +185,18 @@ public:
   */
   static double sqrDistance (const vpMeSite S1, const vpMeSite S2) {
     return(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat));}
-
-private:
-  vpMeSiteDisplayType selectDisplay ;
+    
+  static void display(const vpImage<unsigned char>& I, const double &i, const double &j, const vpMeSiteState &state = NO_SUPPRESSION);
+  
+//Deprecated 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+  //! Flag to indicate whether point is rejected or not
+  //! 1 = contrast, 2 = threshold, 3 = M-estimator, 0 = nosupp
+  int suppress;
+  
+  vp_deprecated void getSign(const vpImage<unsigned char> &I, const int range) ;
+#endif
 } ;
 
 #endif

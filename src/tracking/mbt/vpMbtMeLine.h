@@ -83,6 +83,7 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);
     void updateParameters(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta);
     void display(const vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
+    void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
     
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$

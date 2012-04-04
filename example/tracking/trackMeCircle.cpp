@@ -317,7 +317,7 @@ main(int argc, const char ** argv)
     vpDisplay::flush(I);
   }
 
-  vpTRACE("sample step %f ",E1.me->sample_step) ;
+  vpTRACE("sample step %f ",E1.getMe()->getSampleStep()) ;
   std::cout << "Tracking on image: " << filename << std::endl;
   E1.track(I) ;
   if (opt_display) {

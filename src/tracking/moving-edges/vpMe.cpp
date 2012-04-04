@@ -403,9 +403,11 @@ vpMe::print( )
   std::cout<<" Sample step......................"<<sample_step<<" pixels"<<std::endl ;
   std::cout<<" Strip............................"<<strip<<" pixels  "<<std::endl ;
   std::cout<<" Min_Samplestep..................."<<min_samplestep<<" pixels  "<<std::endl ;
+  
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   std::cout<<" Aberration......................."<<aberration<< std::endl ;
   std::cout<<" init_aberration.................."<<init_aberration<<std::endl ;
-
+  #endif
 }
 
 vpMe::vpMe()
@@ -424,8 +426,12 @@ vpMe::vpMe()
   anglestep = (180 / n_mask) ;
   strip = 2 ;
   min_samplestep = 4 ;
+  
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   aberration = 2.0 ;
   init_aberration = 5.0 ;
+  #endif
+  
   initMask() ;
 }
 
@@ -456,8 +462,12 @@ vpMe& vpMe::operator=(const vpMe &me)
   ntotal_sample = me.ntotal_sample;
   points_to_track = me.points_to_track;
   strip = me.strip ;
+  
+  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   aberration = me.aberration ;
   init_aberration = me.init_aberration;
+  #endif
+  
   initMask() ;
   return *this;
 }
@@ -472,23 +482,16 @@ vpMe::~vpMe()
 }
 
 
-
-/*!
-  Set the number of oriented masks used to perform the convolution.
-*/
 void
-vpMe::setMaskNumber(const unsigned int n)
+vpMe::setMaskNumber(const unsigned int &n)
 {
   n_mask = n ;
   anglestep = 180 / n_mask ;
   initMask() ;
 }
 
-/*!
-  Set the size of the oriented masks used to perform the convolution.
-*/
 void
-vpMe::setMaskSize(const unsigned int s)
+vpMe::setMaskSize(const unsigned int &s)
 {
   mask_size = s  ;
   initMask() ;

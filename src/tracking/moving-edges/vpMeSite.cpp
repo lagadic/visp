@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Andrew Comport
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -53,6 +54,7 @@
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include "vpMeSite.h"
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -73,7 +75,6 @@ vpMeSite::init()
   // Site components
   alpha =  0.0 ;
   convlt = 0.0 ;
-  suppress = 0;
   weight=-1;
 
   selectDisplay = NONE ;
@@ -87,9 +88,15 @@ vpMeSite::init()
   i_1 = 0 ;
   j_1 = 0 ;
 
-  mask_sign =1 ;
+  mask_sign = 1 ;
 
   normGradient = 0;
+  
+  state = NO_SUPPRESSION;
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  suppress = 0;
+#endif
 }
 
 vpMeSite::vpMeSite()
@@ -185,10 +192,14 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
   alpha = m.alpha;
   convlt = m.convlt;
   normGradient = m.normGradient;
-  suppress = m.suppress;
   weight = m.weight;
   selectDisplay = m.selectDisplay;
-
+  state = m.state;
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  suppress = m.suppress;
+#endif
+  
   return *this ;
 }
 
@@ -298,7 +309,7 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
   unsigned int msize = me->getMaskSize();
   half = (static_cast<int>(msize) - 1) >> 1 ;
 
-  if(horsImage( i , j , half + me->strip , height_, width_))
+  if(horsImage( i , j , half + me->getStrip() , height_, width_))
   {
     conv = 0.0 ;
     i = 0 ; j = 0 ;
@@ -320,7 +331,7 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
       thetadeg= 0 ;
     }
 
-    index_mask = (unsigned int)(thetadeg/(double)me->anglestep);
+    index_mask = (unsigned int)(thetadeg/(double)me->getAngleStep());
 
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int j_ = static_cast<unsigned int>(j);
@@ -335,7 +346,7 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
       ihalfa = ihalf+a ;
       for(unsigned int b = 0 ; b < msize ; b++ )
       {
-        conv += mask_sign* me->mask[index_mask][a][b] *
+        conv += mask_sign* me->getMask()[index_mask][a][b] *
             //	  I(i-half+a,j-half+b) ;
             I(ihalfa,jhalf+b) ;
       }
@@ -369,18 +380,18 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   //   double max = 0 ;
   //   double contraste = 0;
   //   //  vpDisplay::display(I) ;
-  //   //  vpERROR_TRACE("getclcik %d",me->range) ;
+  //   //  vpERROR_TRACE("getclcik %d",me->getRange()) ;
   //   //  vpDisplay::getClick(I) ;
   //
   //   // range = +/- range of pixels within which the correspondent
   //   // of the current pixel will be sought
-  //   int range  = me->range ;
+  //   int range  = me->getRange() ;
   //
   //   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  << std::endl ;
   //   list_query_pixels = getQueryList(I, range) ;
   //
-  //   double  contraste_max = 1 + me->mu2 ;
-  //   double  contraste_min = 1 - me->mu1 ;
+  //   double  contraste_max = 1 + me->getMu2();
+  //   double  contraste_min = 1 - me->getMu1();
   //
   //   // array in which likelihood ratios will be stored
   //   double  *likelihood= new double[ 2 * range + 1 ] ;
@@ -390,7 +401,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   //   i_1 = i ;
   //   j_1 = j ;
   //   double threshold;
-  //   threshold = me->threshold ;
+  //   threshold = me->getThreshold();
   //
   //   //    std::cout <<"---------------------"<<std::endl ;
   //   for(int n = 0 ; n < 2 * range + 1 ; n++)
@@ -496,13 +507,13 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 
   // range = +/- range of pixels within which the correspondent
   // of the current pixel will be sought
-  unsigned int range  = me->range ;
+  unsigned int range  = me->getRange() ;
 
   //  std::cout << i << "  " << j<<"  " << range << "  " << suppress  << std::endl ;
   list_query_pixels = getQueryList(I, (int)range) ;
 
-  double  contraste_max = 1 + me->mu2 ;
-  double  contraste_min = 1 - me->mu1 ;
+  double  contraste_max = 1 + me->getMu2();
+  double  contraste_min = 1 - me->getMu1();
 
   // array in which likelihood ratios will be stored
   double  *likelihood= new double[ 2 * range + 1 ] ;
@@ -512,7 +523,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   i_1 = i ;
   j_1 = j ;
   double threshold;
-  threshold = me->threshold ;
+  threshold = me->getThreshold() ;
   double diff = 1e6;
 
   //    std::cout <<"---------------------"<<std::endl ;
@@ -591,9 +602,9 @@ vpMeSite::track(const vpImage<unsigned char>& I,
     normGradient = 0 ;
     //if(contraste != 0)
     if(std::fabs(contraste) > std::numeric_limits<double>::epsilon())
-      suppress = 1; // contrast suppression
+      state = CONSTRAST; // contrast suppression
     else
-      suppress = 2; // threshold suppression
+      state = THRESHOLD; // threshold suppression
 
     delete []list_query_pixels ;
     delete []likelihood; // modif portage
@@ -608,8 +619,66 @@ int vpMeSite::operator!=(const vpMeSite &m)
 
 std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS)
 {
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   return (os << "Alpha: " << vpMeS.alpha
           << "  Convolution: " << vpMeS.convlt
           << "  Flag: " << vpMeS.suppress
           << "  Weight: " << vpMeS.weight );
+#endif
+  
+  return (os << "Alpha: " << vpMeS.alpha
+          << "  Convolution: " << vpMeS.convlt
+          << "  Weight: " << vpMeS.weight );
 }
+
+void vpMeSite::display(const vpImage<unsigned char>& I)
+{
+    vpMeSite::display(I,ifloat,jfloat,state);
+}
+
+//Static functions
+
+/*!
+    Display the moving edge site with a color corresponding to their state.
+    
+    - If green : The vpMeSite is a good point.
+    - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+    - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+    - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
+    - If cyan : The point is removed because it's too close to another.
+    - Yellow otherwise
+    
+    \param I : The image.
+    \param i : Pixel i of the site
+    \param j : Pixel j of the site
+    \param state : state of the site
+*/
+void vpMeSite::display(const vpImage<unsigned char>& I, const double &i, const double &j,const vpMeSiteState &state)
+{
+  switch(state)
+  {
+    case NO_SUPPRESSION:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::green,1);
+      break;
+      
+    case CONSTRAST:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::blue,1);
+      break;
+      
+    case THRESHOLD:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::purple,1);
+      break;
+      
+    case M_ESTIMATOR:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::red,1);
+      break;
+      
+    case TOO_NEAR:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::cyan,1);
+      
+    default:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::yellow,1);
+  }
+}
+
+

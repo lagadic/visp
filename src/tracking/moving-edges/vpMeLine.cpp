@@ -154,7 +154,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   int cols = (int)I.getWidth() ;
   double n_sample;
 
-  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
     vpERROR_TRACE("function called with sample step = 0") ;
     throw(vpTrackingException(vpTrackingException::fatalError,
@@ -169,7 +169,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   if(std::fabs(length_p)<=std::numeric_limits<double>::epsilon())
 	  throw(vpTrackingException(vpTrackingException::fatalError,"points too close of each other to define a line")) ;
   // number of samples along line_p
-  n_sample = length_p/(double)me->sample_step;  
+  n_sample = length_p/(double)me->getSampleStep();  
 
   double stepi = diffsi/(double)n_sample;
   double stepj = diffsj/(double)n_sample;
@@ -181,7 +181,7 @@ vpMeLine::sample(const vpImage<unsigned char>& I)
   // Delete old list
   list.clear();
 
-  // sample positions at i*me->sample_step interval along the
+  // sample positions at i*me->getSampleStep() interval along the
   // line_p, starting at PSiteExt[0]
 
   vpImagePoint ip;
@@ -308,7 +308,7 @@ vpMeLine::leastSquare()
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         A[k][0] = p.ifloat ;
         A[k][1] = 1 ;
@@ -341,11 +341,12 @@ vpMeLine::leastSquare()
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < 0.2)
         {
-          p.suppress  = 3 ;
+          p.setState(vpMeSite::M_ESTIMATOR);
+          
           *it = p;
         }
         k++ ;
@@ -372,7 +373,7 @@ vpMeLine::leastSquare()
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         A[k][0] = p.jfloat ;
         A[k][1] = 1 ;
@@ -406,11 +407,12 @@ vpMeLine::leastSquare()
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
       p = *it;
-      if (p.suppress==0)
+      if (p.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < 0.2)
         {
-          p.suppress  = 3 ;
+          p.setState(vpMeSite::M_ESTIMATOR);
+          
           *it = p;
         }
         k++ ;
@@ -508,7 +510,7 @@ vpMeLine::suppressPoints()
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ){
     vpMeSite s = *it;//current reference pixel
 
-    if (s.suppress != 0)
+    if (s.getState() != vpMeSite::NO_SUPPRESSION)
       it = list.erase(it);
     else
       ++it;
@@ -589,8 +591,8 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   int cols = (int)I.getWidth() ;
   double n_sample;
 
-  //if (me->sample_step==0)
-  if (std::fabs(me->sample_step) <= std::numeric_limits<double>::epsilon())
+  //if (me->getSampleStep()==0)
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
 
     vpERROR_TRACE("function called with sample step = 0") ;
@@ -610,15 +612,15 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double length_p = sqrt((vpMath::sqr(diffsi)+vpMath::sqr(diffsj)));
 
   // number of samples along line_p
-  n_sample = length_p/(double)me->sample_step;
-  double sample = (double)me->sample_step;
+  n_sample = length_p/(double)me->getSampleStep();
+  double sample = (double)me->getSampleStep();
 
   vpMeSite P ;
   P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
   P.setDisplay(selectDisplay) ;
 
-  unsigned int  memory_range = me->range ;
-  me->range = 1 ;
+  unsigned int  memory_range = me->getRange() ;
+  me->setRange(1);
 
   vpImagePoint ip;
 
@@ -631,7 +633,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     {
       P.track(I,me,false) ;
 
-      if (P.suppress ==0)
+      if (P.getState() == vpMeSite::NO_SUPPRESSION)
       {
         list.push_back(P);
         if (vpDEBUG_ENABLE(3)) {
@@ -662,7 +664,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     {
       P.track(I,me,false) ;
 
-      if (P.suppress ==0)
+      if (P.getState() == vpMeSite::NO_SUPPRESSION)
       {
         list.push_back(P);
         if (vpDEBUG_ENABLE(3)) {
@@ -681,7 +683,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
     }
   }
 
-  me->range = memory_range ;
+  me->setRange(memory_range);
 
   vpCDEBUG(1) <<"end vpMeLine::sample() : " ;
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
@@ -717,7 +719,7 @@ vpMeLine::reSample(const vpImage<unsigned char> &I)
   double d = sqrt(vpMath::sqr(i1-i2)+vpMath::sqr(j1-j2)) ;
 
   unsigned int n = numberOfSignal() ;
-  double expecteddensity = d / (double)me->sample_step;
+  double expecteddensity = d / (double)me->getSampleStep();
 
   if ((double)n<0.9*expecteddensity)
   {
@@ -1220,7 +1222,7 @@ void vpMeLine::display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, co
     ip.set_j( pix.jfloat );
 
 
-    if (pix.suppress==3)
+    if (pix.getState() == vpMeSite::M_ESTIMATOR)
       vpDisplay::displayCross(I, ip, 5, vpColor::green,thickness);
     else
       vpDisplay::displayCross(I, ip, 5, color,thickness);
