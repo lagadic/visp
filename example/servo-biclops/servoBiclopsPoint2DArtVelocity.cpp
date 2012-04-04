@@ -382,7 +382,7 @@ main(int argc, const char ** argv)
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
-    int iter=0 ;
+    unsigned int iter=0 ;
     vpTRACE("\t loop") ;
 #ifdef VISP_HAVE_PTHREAD
     while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )

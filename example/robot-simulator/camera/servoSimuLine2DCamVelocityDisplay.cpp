@@ -292,7 +292,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   vpTRACE("\t loop") ;
   while(iter++<200)
   {

@@ -178,7 +178,7 @@ main()
     task.setLambda(0.01) ;
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-    int iter=0 ;
+    unsigned int iter=0 ;
     double lambda_av =0.01;
     double alpha = 0.1 ; //1 ;
     double beta =3 ; //3 ;

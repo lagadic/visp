@@ -77,7 +77,7 @@ void initScene();
 void initFeatures();
 
 void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
-void execute(int nbIter); //launch the simulation
+void execute(unsigned int nbIter); //launch the simulation
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
 double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
@@ -250,7 +250,7 @@ void initFeatures(){
   task.setLambda(0.4) ;
 }
 
-void execute(int nbIter){
+void execute(unsigned int nbIter){
   //init main object: using moments up to order 5
   vpMomentObject obj(6);
   //setting object type (disrete, continuous[form polygon])
@@ -262,7 +262,7 @@ void execute(int nbIter){
   vpDisplay::display(Iint);
   robot.getInternalView(Iint);
   vpDisplay::flush(Iint);
-  int iter=0;
+  unsigned int iter=0;
   double t=0;
   ///////////////////SIMULATION LOOP/////////////////////////////
   while(iter++<nbIter ){

@@ -248,7 +248,7 @@ main(int argc, const char ** argv)
   // Display task information
   task.print() ;
 
-  int iter=0 ;
+  unsigned int iter=0 ;
   // Start the visual servoing loop. We stop the servo after 200 iterations
   while(iter++ < 200) {
     std::cout << "-----------------------------------" << iter <<std::endl ;

@@ -245,7 +245,7 @@ int main()
 
     //-------------------------------------------------------------
     double error =1 ;
-    int iter=0 ;
+    unsigned int iter=0 ;
     vpTRACE("\t loop") ;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
     vpColVector v ; // computed robot velocity
