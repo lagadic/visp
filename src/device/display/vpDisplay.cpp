@@ -2385,6 +2385,11 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I, bool blocking )
     {
       return ( I.display )->getClick(blocking) ;
     }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
+    }
   }
   catch ( ... )
   {
@@ -2422,6 +2427,11 @@ bool vpDisplay::getClick ( const vpImage<unsigned char> &I,
     if ( I.display != NULL )
     {
       return ( I.display )->getClick ( ip, blocking ) ;
+    }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
     }
   }
   catch ( ... )
@@ -2464,6 +2474,11 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
     {
       return ( I.display )->getClick ( ip, button, blocking ) ;
     }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
+    }
   }
   catch ( ... )
   {
@@ -2505,6 +2520,11 @@ vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
     if ( I.display != NULL )
     {
       return ( I.display )->getClickUp ( ip, button, blocking ) ;
+    }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
     }
   }
   catch ( ... )
@@ -2795,6 +2815,11 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I, bool blocking )
     {
       return ( I.display )->getClick(blocking) ;
     }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
+    }
   }
   catch ( ... )
   {
@@ -2831,6 +2856,11 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
     if ( I.display != NULL )
     {
       return ( I.display )->getClick ( ip, blocking ) ;
+    }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
     }
   }
   catch ( ... )
@@ -2872,6 +2902,11 @@ bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
     {
       return ( I.display )->getClick ( ip, button, blocking ) ;
     }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
+    }
   }
   catch ( ... )
   {
@@ -2912,6 +2947,11 @@ vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
     if ( I.display != NULL )
     {
       return ( I.display )->getClickUp ( ip, button, blocking ) ;
+    }
+    else {
+      vpERROR_TRACE ( "Display not initialized " ) ;
+      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
+                                 "Display not initialized" ) ) ;
     }
   }
   catch ( ... )
