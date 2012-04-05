@@ -133,7 +133,51 @@ public:
   void track(const vpImage<unsigned char>& im,
 	     const vpMe *me,
 	     const  bool test_contraste=true);
+  
+  /*!
+    Set the angle of tangent at site
+
+    \param a : new value of alpha
+  */
+  void setAlpha(const double &a) { alpha = a; }
+  
+  /*!
+    Get the angle of tangent at site
+
+    \return value of alpha
+  */
+  inline double getAlpha() const { return alpha; }
+  
+  
   void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select ; }
+  
+  /*!
+    Get the i coordinate (integer)
+
+    \return value of i
+  */
+  inline int get_i() const { return i; }
+  
+  /*!
+    Get the j coordinate (f)
+
+    \return value of j
+  */
+  inline int get_j() const { return j; }
+  
+  /*!
+    Get the i coordinate (double)
+
+    \return value of i
+  */
+  inline double get_ifloat() const { return ifloat; }
+  
+  /*!
+    Get the j coordinate (double)
+
+    \return value of j
+  */
+  inline double get_jfloat() const { return jfloat; }
   
   /*!
     Set the state of the site
@@ -157,9 +201,23 @@ public:
   */
   inline vpMeSiteState getState() const { return state; }
   
+  /*!
+    Set the weight of the site
+
+    \param w : new value of weight
+  */
+  void setWeight(const double &w) { weight = w; }
+  
+  /*!
+    Get the weight of the site
+
+    \return value of weight
+  */
+  inline double getWeight() const { return weight; }
+  
 //Opérators
   vpMeSite &operator=(const vpMeSite &m) ;
-  int operator!=(const vpMeSite  &m) ;
+  int       operator!=(const vpMeSite  &m) ;
   
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS);
   
