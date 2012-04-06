@@ -157,7 +157,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   void setScale(const std::string &name, const float factorx, const float factory, const float factorz);
 
   bool continueRendering(void);
-  
+
+  void getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo);
   /*!
     Set the width of the grabbed image. 
   

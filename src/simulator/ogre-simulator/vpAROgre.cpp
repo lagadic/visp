@@ -328,6 +328,14 @@ void vpAROgre::init(bool
   mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, bufferedKeys ));
   if ( !bufferedKeys ) mKeyboard->setEventCallback ( this);
 #endif
+
+  // Initialise a render to texture to be able to retrieve a screenshot
+  Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual("rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
+                                                                               mWindow->getWidth(),mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
+  Ogre::RenderTexture* RTarget = Texture->getBuffer()->getRenderTarget();
+  Ogre::Viewport* Viewport = RTarget->addViewport(mCamera);
+  RTarget->getViewport(0)->setClearEveryFrame(true);
+  RTarget->getViewport(0)->setOverlaysEnabled(false);
 }
 
 /*!
@@ -878,6 +886,34 @@ void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
          (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
 		     (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)1);
   mCamera->setCustomViewMatrix(true, ModelView);
+
+}
+
+/*!
+  Get the result of the rendering loop.
+
+  \param I : The image on which to copy the result of the rendering loop.
+  \param cMo : The desired camera pose.
+*/
+void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo)
+{
+    updateCameraParameters(cMo);
+    Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("rtf");
+    Ogre::RenderTexture* RTarget = dynTexPtr->getBuffer()->getRenderTarget();
+    mWindow->update();
+    RTarget->update();
+    Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
+    mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
+    const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
+    dynTexPtr->getBuffer()->blitToMemory(pixelBox);
+    Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
+    if(I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()){
+            I.resize(mWindow->getHeight(), mWindow->getWidth());
+    }
+    memcpy(I.bitmap, pDest, mWindow->getHeight()*mWindow->getWidth()*sizeof(vpRGBa));
+
+    // Unlock the pixel buffer
+    mPixelBuffer->unlock();
 
 }
 
