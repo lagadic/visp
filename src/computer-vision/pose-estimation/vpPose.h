@@ -101,6 +101,10 @@ private:
   int vvsIterMax ; //! define the maximum number of iteration in VVS
   //! variable used in the Dementhon approach
   vpPoint *c3d ;
+  //! Flag used to specify if the covariance matrix has to be computed or not.
+  bool computeCovariance;
+  //! Covariance matrix
+  vpMatrix covarianceMatrix;
 
 protected:
   double computeResidualDementhon(vpHomogeneousMatrix &cMo) ;
@@ -154,6 +158,27 @@ public:
   void setDistanceToPlaneForCoplanarityTest(double d) ;
   void setLambda(double a) { lambda = a ; }
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
+  
+  /*!
+    Set if the covaraince matrix has to be computed in the Virtual Visual Servoing approach.
+
+    \param flag : True if the covariance has to be computed, false otherwise.
+  */
+  void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
+  
+  /*!
+    Get the covariance matrix computed in the Virtual Visual Servoing approach.
+    
+    \warning The compute covariance flag has to be true if you want to compute the covariance matrix.
+    
+    \sa setCovarianceComputation
+  */
+  vpMatrix getCovarianceMatrix() const { 
+    if(!computeCovariance)
+      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
+    
+    return covarianceMatrix; 
+  }
 
   static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
   static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;

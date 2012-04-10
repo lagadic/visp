@@ -80,7 +80,8 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
     vpMatrix L(2*nb,6) ;
     vpColVector err(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
-
+    vpColVector v ;
+    
     vpPoint P;
     std::list<vpPoint> lP ;
 
@@ -138,7 +139,6 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       L.pseudoInverse(Lp,1e-16) ;
 
       // compute the VVS control law
-      vpColVector v ;
       v = -lambda*Lp*err ;
 
       //std::cout << "r=" << r <<std::endl ;
@@ -147,6 +147,9 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
       if (iter++>vvsIterMax) break ;
     }
+    
+    if(computeCovariance)
+      covarianceMatrix = vpMatrix::computeCovarianceMatrix(L,v,-lambda*err);
   }
 
   catch(...)
@@ -170,7 +173,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 void
 vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
 {
-  try{
+	try{
 
     double  residu_1 = 1e8 ;
     double r =1e8-1;
@@ -185,6 +188,7 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
     vpMatrix L(2*nb,6) ;
     vpColVector error(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
+    vpColVector v ;
 
     listP.front() ;
     vpPoint P;
@@ -209,7 +213,6 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
     while((int)((residu_1 - r)*1e12) !=0)
     {
       residu_1 = r ;
-      vpColVector error ; // error vector
 
       // Compute the interaction matrix and the error
       vpPoint P ;
@@ -265,12 +268,14 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
       (W*L).pseudoInverse(Lp,1e-6) ;
 
       // compute the VVS control law
-      vpColVector v ;
       v = -lambda*Lp*W*error ;
 
       cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
       if (iter++>vvsIterMax) break ;
-    }    
+    }
+    
+    if(computeCovariance)
+      covarianceMatrix = vpMatrix::computeCovarianceMatrix(L,v,-lambda*error, W*W); // Remark: W*W = W*W.t() since the matrix is diagonale, but using W*W is more efficient.
   }
   catch(...)
   {

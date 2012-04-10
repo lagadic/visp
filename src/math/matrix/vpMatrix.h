@@ -259,6 +259,9 @@ protected:
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void negateMatrix(const vpMatrix &A, vpMatrix &C);
   static void multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVector &c);
+  
+  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b);
+  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const vpMatrix &w);
 
   //---------------------------------
   // Matrix operations.

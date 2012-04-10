@@ -560,6 +560,10 @@ main(int argc, const char** argv)
     pose.display(I,cMo,cam, 0.05, vpColor::red) ;
     vpDisplay::flush(I) ;
   }
+  
+  // Covariance Matrix Computation
+  // Uncomment if you want to compute the covariance matrix.
+  // pose.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work. 
 
   unsigned niter = 0;
   // this is the loop over the image sequence
@@ -623,6 +627,12 @@ main(int argc, const char** argv)
 
         vpDisplay::flush(I) ;
       }
+      
+      // Covariance Matrix Display
+      // Uncomment if you want to print the covariance matrix. 
+      // Make sure pose.setCovarianceComputation(true) has been called (uncomment below).
+      // std::cout << pose.getCovarianceMatrix() << std::endl << std::endl;
+      
       niter++ ;
     }
     catch(...){

@@ -142,6 +142,7 @@ SET (SRC_MATH
   math/matrix/vpMatrix.cpp
   math/matrix/vpMatrix_lu.cpp
   math/matrix/vpMatrix_svd.cpp
+  math/matrix/vpMatrix_covariance.cpp
   math/matrix/vpRowVector.cpp
   math/matrix/vpSubMatrix.cpp
   math/matrix/vpSubColVector.cpp

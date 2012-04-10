@@ -79,6 +79,8 @@ vpPose::init()
   vvsIterMax = 200 ;
 
   distanceToPlaneForCoplanarityTest = 0.001 ;
+  
+  computeCovariance = false;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::Init() " << std::endl ;
