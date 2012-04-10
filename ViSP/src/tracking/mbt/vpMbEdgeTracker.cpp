@@ -83,6 +83,7 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
   displayMe = false;
+  computeCovariance = false;
 
   lines.resize(1);
   cylinders.resize(1);
@@ -476,6 +477,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector error_lines(nberrors_lines);
   vpColVector error_cylinders(nberrors_cylinders);
 
+  vpColVector error_vec;
+  vpColVector W_true;
+  vpMatrix L_true;
+  
   while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
   {
     unsigned int n = 0 ;
@@ -556,8 +561,13 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     double den=0;
     double wi;
     double eri;
+    
+    L_true = L;
+    W_true = vpColVector(nerror);
+    
     for(unsigned int i=0; i<nerror; i++){
       wi = w[i]*factor[i];
+      W_true[i] = wi*wi;
       eri = error[i];
       num += wi*vpMath::sqr(eri);
       den += wi;
@@ -582,7 +592,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     iter++;
   }
-
+  
+  vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
+  D.diag(W_true);
+  
+  if(computeCovariance){
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*error,D);
+  }
+  
   unsigned int n =0 ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;

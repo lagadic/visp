@@ -109,6 +109,10 @@ protected:
   bool coinUsed;
   //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method. 
   std::string poseSavingFilename;
+  //! Flag used to specify if the covariance matrix has to be computed or not.
+  bool computeCovariance;
+  //! Covariance matrix
+  vpMatrix covarianceMatrix;
 
 public:
   vpMbTracker();
@@ -182,6 +186,13 @@ public:
     \param _cam : the new camera parameters
   */
   virtual void setCameraParameters(const vpCameraParameters& _cam) {this->cam = _cam; cameraInitialised = true;}
+  
+  /*!
+    Set if the covaraince matrix has to be computed.
+
+    \param flag : True if the covariance has to be computed, false otherwise
+  */
+  virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
   /*!
     Get the camera parameters.
@@ -189,6 +200,16 @@ public:
     \param _cam : copy of the camera parameters used by the tracker.
   */
   virtual void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
+  
+  /*!
+    Get the covariance matrix.
+  */
+  virtual vpMatrix getCovarianceMatrix() const { 
+    if(!computeCovariance)
+      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
+    
+    return covarianceMatrix; 
+  }
 
   /*!
     Get the current pose between the object and the camera.

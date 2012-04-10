@@ -37,6 +37,7 @@
  * Authors:
  * Nicolas Melchior
  * Romain Tallonneau
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -365,6 +366,9 @@ main(int argc, const char ** argv)
   if (opt_display)
     vpDisplay::flush(I);
 
+  // Uncomment if you want to compute the covariance matrix.
+  // tracker.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work.  
+  
   int iter  = 0;
   while (iter < 200)
   {
@@ -378,13 +382,18 @@ main(int argc, const char ** argv)
       // track the object
       tracker.track(I);
       tracker.getPose(cMo);
-      // display the 3D model
+      // display the 3D model  
       if (opt_display)
       {
         tracker.display(I, cMo, cam, vpColor::darkRed, 1);
         // display the frame
         vpDisplay::displayFrame (I, cMo, cam, 0.05, vpColor::blue);
       }
+      
+      // Uncomment if you want to print the covariance matrix. 
+      // Make sure tracker.setCovarianceComputation(true) has been called (uncomment below).
+      // std::cout << tracker.getCovarianceMatrix() << std::endl << std::endl;
+      
     }
     catch(...)
     {
