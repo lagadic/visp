@@ -293,6 +293,7 @@ SET (HEADER_DEVICE_DISPLAY
   device/display/windows/vpWin32Window.h
   device/display/windows/vpD3DRenderer.h
   device/display/windows/vpDisplayD3D.h
+  device/display/windows/vpWin32API.h
   )
 
 SET (HEADER_VISUAL_FEATURE

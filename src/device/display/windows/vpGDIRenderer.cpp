@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-
+#define GDI_ROBUST
 #if ( defined(VISP_HAVE_GDI) )
 
 
@@ -126,6 +126,7 @@ vpGDIRenderer::~vpGDIRenderer()
 */
 bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 {
+  timelost = 0.;
   hWnd = hWindow;
   nbCols = width;
   nbRows = height;
@@ -214,7 +215,8 @@ bool vpGDIRenderer::render()
     hDCMem, 0, 0, SRCCOPY);
 
   LeaveCriticalSection(&CriticalSection);
-  DeleteDC(hDCMem);
+  //DeleteDC(hDCMem);
+  DeleteObject(hDCMem);
 
   EndPaint(hWnd, &ps);
 
@@ -657,13 +659,67 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
 			     const vpColor &color,
 			     unsigned int thickness, int style)
 {
+HDC hDCScreen,hDCMem;
+HPEN hPen;
+#ifdef GDI_ROBUST
+  double start = vpTime::measureTimeMs();  
+  while(vpTime::measureTimeMs()-start<1000){
+    hDCScreen = GetDC(hWnd);
+    if(!hDCScreen) continue;
+    hDCMem = CreateCompatibleDC(hDCScreen);
+    if(!hDCMem){
+      ReleaseDC(hWnd, hDCScreen);
+      continue;
+    }
 
+    //create the pen    
+    if (color.id < vpColor::id_unknown)
+      hPen = CreatePen(style, static_cast<int>(thickness), colors[color.id]);
+    else {
+      COLORREF gdicolor = RGB(color.R, color.G, color.B);
+      hPen = CreatePen(style, static_cast<int>(thickness), gdicolor);
+    }
+    if(!hPen){
+      DeleteDC(hDCMem);
+      ReleaseDC(hWnd, hDCScreen);
+      continue;
+    }
+    if(!SetBkMode(hDCMem, TRANSPARENT)){
+      DeleteObject(hPen);
+      DeleteDC(hDCMem);
+      ReleaseDC(hWnd, hDCScreen);
+      continue;
+    }
+
+    //select this bmp in memory
+    EnterCriticalSection(&CriticalSection);
+
+    if(!SelectObject(hDCMem, bmp)){
+      LeaveCriticalSection(&CriticalSection);
+      DeleteObject(hPen);
+      DeleteDC(hDCMem);
+      ReleaseDC(hWnd, hDCScreen);
+      continue;
+    }
+
+    //select the pen
+    if(!SelectObject(hDCMem, hPen)){
+      LeaveCriticalSection(&CriticalSection);
+      DeleteObject(hPen);
+      DeleteDC(hDCMem);
+      ReleaseDC(hWnd, hDCScreen);
+      continue;
+    }
+    break;
+  }
+  timelost+=(vpTime::measureTimeMs()-start);
+#else
   //get the window's DC
-  HDC hDCScreen = GetDC(hWnd);
-  HDC hDCMem = CreateCompatibleDC(hDCScreen);
+  hDCScreen = GetDC(hWnd);
+  hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  HPEN hPen;
+  hPen;
   if (color.id < vpColor::id_unknown)
     hPen = CreatePen(style, static_cast<int>(thickness), colors[color.id]);
   else {
@@ -678,7 +734,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
 
   //select the pen
   SelectObject(hDCMem, hPen);
-
+#endif
   //move to the starting point
   MoveToEx(hDCMem, vpMath::round(ip1.get_u()), vpMath::round(ip1.get_v()), NULL);
   //Draw the line

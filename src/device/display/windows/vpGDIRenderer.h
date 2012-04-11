@@ -75,6 +75,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   CRITICAL_SECTION CriticalSection;
 
  public:
+  double timelost;
   vpGDIRenderer();
   virtual ~vpGDIRenderer();
 

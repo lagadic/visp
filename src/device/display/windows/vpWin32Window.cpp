@@ -39,9 +39,10 @@
  * Anthony Saunier
  *
  *****************************************************************************/
-
+#define MAX_SEM_COUNT 2147483647
 #include <visp/vpConfig.h>
 #include <iostream>
+#include <visp/vpWin32API.h>
 
 #if ( defined(WIN32) )
 
@@ -74,7 +75,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     if (!window->isInitialized())
     {
       window->initialized = true;
-      ReleaseSemaphore(window->semaInit,1,NULL);
+      vpReleaseSemaphore(window->semaInit,1,NULL);      
     }
   }
 
@@ -82,15 +83,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   {
     case vpWM_DISPLAY:
       //redraw the whole window
-      InvalidateRect(window->getHWnd(), NULL, true);
+      InvalidateRect(window->getHWnd(), NULL, TRUE);
       UpdateWindow(window->getHWnd());
       break;
 
     case vpWM_DISPLAY_ROI:
 	{
-      //redraw the whole window
-	  RECT* rect = (RECT *)wParam;
-      InvalidateRect(window->getHWnd(), rect, true);
+      RECT rect;
+      typedef struct _half_rect_t{
+        unsigned short left_top;
+        unsigned short right_bottom;
+      } half_rect_t;
+
+      half_rect_t hr1;
+      half_rect_t hr2;
+                  
+      hr1 = *((half_rect_t*)(&wParam));
+      hr2 = *((half_rect_t*)(&lParam));
+
+      rect.left = hr1.left_top;
+      rect.right = hr1.right_bottom;
+
+      rect.top = hr2.left_top;
+      rect.bottom = hr2.right_bottom;
+
+      InvalidateRect(window->getHWnd(), &rect, TRUE);
       UpdateWindow(window->getHWnd());
 	}
       break;
@@ -101,7 +118,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickY = GET_Y_LPARAM(lParam);
 
         window->clickButton = vpMouseButton::button1;
-        ReleaseSemaphore(window->semaClick,1,NULL);
+        vpReleaseSemaphore(window->semaClick,1,NULL);
       }
       break;
 
@@ -111,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickY = GET_Y_LPARAM(lParam);
 
         window->clickButton = vpMouseButton::button2;
-        ReleaseSemaphore(window->semaClick,1,NULL);
+        vpReleaseSemaphore(window->semaClick,1,NULL);
       }
       break;
 
@@ -121,7 +138,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickY = GET_Y_LPARAM(lParam);
 
         window->clickButton = vpMouseButton::button3;
-        ReleaseSemaphore(window->semaClick,1,NULL);
+        vpReleaseSemaphore(window->semaClick,1,NULL);
        }
       break;
 
@@ -131,7 +148,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickYUp = GET_Y_LPARAM(lParam);
 
         window->clickButtonUp = vpMouseButton::button1;
-        ReleaseSemaphore(window->semaClickUp,1,NULL);
+        vpReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
 
@@ -141,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickYUp = GET_Y_LPARAM(lParam);
 
         window->clickButtonUp = vpMouseButton::button2;
-        ReleaseSemaphore(window->semaClickUp,1,NULL);
+        vpReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
 
@@ -151,14 +168,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         window->clickYUp = GET_Y_LPARAM(lParam);
 
         window->clickButtonUp = vpMouseButton::button3;
-        ReleaseSemaphore(window->semaClickUp,1,NULL);
+        vpReleaseSemaphore(window->semaClickUp,1,NULL);
       }
       break;
     case WM_MOUSEMOVE:
-      {
+      {        
         window->coordX = GET_X_LPARAM(lParam);
-        window->coordY = GET_Y_LPARAM(lParam);
-		ReleaseSemaphore(window->semaMove,1,NULL);
+        window->coordY = GET_Y_LPARAM(lParam);        
+		    vpReleaseSemaphore(window->semaMove,1,NULL);        
       }
       break;
 
@@ -169,7 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       {
 	GetKeyNameText(lParam, window->lpString, 10); // 10 is the size of lpString
 	//window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
-	ReleaseSemaphore(window->semaKey,1,NULL);
+	vpReleaseSemaphore(window->semaKey,1,NULL);
 	break;
       }
 
@@ -213,10 +230,10 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   
   //creates the semaphores
   semaInit = CreateSemaphore(NULL,0,1,NULL);
-  semaClick = CreateSemaphore(NULL,0,1,NULL);
-  semaClickUp = CreateSemaphore(NULL,0,1,NULL);
-  semaKey = CreateSemaphore(NULL,0,1,NULL);
-  semaMove = CreateSemaphore(NULL,0,1,NULL);
+  semaClick = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
+  semaClickUp = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
+  semaKey = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
+  semaMove = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
 
 }
 
@@ -305,12 +322,20 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
   MSG msg;
 
   //starts the message loop
-  while (GetMessage(&msg, NULL, 0, 0))
+  while (true)
   {
-    if (!TranslateAccelerator(msg.hwnd, NULL, &msg))
-    {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
+    BOOL val = GetMessage(&msg, NULL, 0, 0);
+    if(val==-1){
+      std::cout << "GetMessage error:" << GetLastError() << std::endl;
+      break;
+    }else if(val==0){      
+      break;
+    }else{
+      if (!TranslateAccelerator(msg.hwnd, NULL, &msg))
+      {        
+        TranslateMessage(&msg);        
+        DispatchMessage(&msg);
+      }
     }
   }
 }
