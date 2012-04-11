@@ -40,7 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-
+#define FLUSH_ROI
 #if ( defined(WIN32) )
 
 #include <visp/vpDisplayWin32.h>
@@ -686,14 +686,34 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, const unsigned int 
 {
   //waits if the window is not initialized
   waitForInit();
+  
+  /*
+  Under windows, flushing an ROI takes more time than
+  flushing the whole image.
+  Therefore, we update the maximum area even when asked to update a region.
+  */
+#ifdef FLUSH_ROI
+  typedef struct _half_rect_t{
+    unsigned short left_top;
+    unsigned short right_bottom;
+  } half_rect_t;
 
-  roi.left = (LONG)iP.get_u();
-  roi.top = (LONG)iP.get_v();
-  roi.right = (LONG)(iP.get_u()+width-1);
-  roi.bottom = (LONG)(iP.get_v()+height-1);
+  half_rect_t hr1;
+  half_rect_t hr2;
+
+  hr1.left_top = (unsigned short)iP.get_u();
+  hr1.right_bottom = (unsigned short)(iP.get_u()+width-1);
+
+  hr2.left_top = (unsigned short)iP.get_v();
+  hr2.right_bottom = (unsigned short)(iP.get_v()+height-1);
+
   //sends a message to the window
-  WPARAM wp=(WPARAM)&roi;
-  PostMessage(window.getHWnd(), vpWM_DISPLAY_ROI, wp,0);
+  WPARAM wp=*((WPARAM*)(&hr1));
+  LPARAM lp=*((WPARAM*)(&hr2));
+  PostMessage(window.getHWnd(), vpWM_DISPLAY_ROI, wp,lp);
+#else
+  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
+#endif
 }
 
 

@@ -95,7 +95,7 @@ int main ()
 
   //Plot the cosinus and sinus functions
   double i = 0;
-  while(i <= 2*M_PI)
+  while(i <= 20*2*M_PI)
   {
     double co = cos(i); 
     double si = sin(i);
@@ -105,7 +105,7 @@ int main ()
   }
   
   vpDisplay::getClick(plot.I);
-
+  
   //Save the datas as text files
   plot.saveData(0, "dataCos.txt");
   plot.saveData(0, "dataSin.txt");

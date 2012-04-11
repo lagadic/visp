@@ -38,6 +38,8 @@
  * Nicolas Melchior
  *
  *****************************************************************************/
+#define FLUSH_ON_PLOT
+
 #include <visp/vpConfig.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -580,8 +582,9 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   }
   
   (curveList+curveNb)->plotPoint(I, iP, x, y);
-#if (!defined VISP_HAVE_X11 && !defined VISP_HAVE_GDI)
+#if (!defined VISP_HAVE_X11 && defined FLUSH_ON_PLOT)
   vpDisplay::flushROI(I,graphZone);
+  //vpDisplay::flush(I);
 #endif
 }
 
@@ -1219,8 +1222,8 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   (curveList+curveNb)->pointListz.push_back(z);
   (curveList+curveNb)->nbPoint++;
   
-  //vpDisplay::flush(I);
-#if( !defined VISP_HAVE_X11  && !defined VISP_HAVE_GDI )
+  
+#if( !defined VISP_HAVE_X11 && defined FLUSH_ON_PLOT)  
   vpDisplay::flushROI(I,graphZone);
 #endif
 }
