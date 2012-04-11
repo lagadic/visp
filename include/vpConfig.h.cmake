@@ -245,6 +245,10 @@
 // communicate with Irisa's Cycab car-like robot (to use).  
 #cmakedefine VISP_HAVE_CYCABTK
 
+// Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found. 
+// These libraries are used to control Pioneer mobile robots.  
+#cmakedefine VISP_HAVE_PIONEER
+
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 

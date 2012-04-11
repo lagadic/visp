@@ -455,6 +455,28 @@ ELSE(FFMPEG_FOUND)
   SET(USE_FFMPEG OFF)
 ENDIF(FFMPEG_FOUND)
 
+# To control Pioneer mobile robots, under UNIX we need Aria, pthread, rt and dl 3rd party libraries
+find_package(ARIA)
+if(ARIA_FOUND)
+  OPTION(USE_ARIA    "Compile ViSP with Aria library to control Pioneer mobile robots" ON)
+else()
+  SET(USE_ARIA OFF)
+endif()
+
+find_package(RT)
+if(RT_FOUND)
+  OPTION(USE_RT    "Compile ViSP with rt library" ON)
+else()
+  SET(USE_RT OFF)
+endif()
+find_package(DL)
+if(DL_FOUND)
+  OPTION(USE_DL    "Compile ViSP with dl library" ON)
+else()
+  SET(USE_DL OFF)
+endif()
+
+
 # Set other options to default value
 #SET(USE_X11        ON) # For Linux/OSX display
 #SET(USE_XML2       ON) # For the Xml Parser (vpCameraParameters)
@@ -1530,6 +1552,34 @@ IF(USE_CYCAB)
     SET(VISP_HAVE_CYCAB_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(CycabTk_FOUND)
 ENDIF(USE_CYCAB)
+
+# libraries for Pioneer mobile robots
+if(USE_ARIA)
+  if(UNIX)
+    # Under Unix we need Aria, pthread, dl and rt libraries
+    if(ARIA_FOUND AND PTHREAD_FOUND AND RT_FOUND AND DL_FOUND)
+      message(STATUS "Aria found")
+      SET(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_PIONEER_FOUND "yes")  # for ViSP-third-party.txt
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${ARIA_INCLUDE_DIRS})
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${PTHREAD_INCLUDE_DIRS})
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${ARIA_LIBRARIES})
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${PTHREAD_LIBRARIES})
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${RT_LIBRARIES})
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${DL_LIBRARIES})
+    endif()
+  else(UNIX)
+    if(ARIA_FOUND)
+      message(STATUS "Aria found")
+      SET(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_PIONEER_FOUND "yes")  # for ViSP-third-party.txt
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${ARIA_INCLUDE_DIRS})
+      LIST(APPEND VISP_EXTERN_LIBRARIES ${ARIA_LIBRARIES})
+    else()
+      message(STATUS "Aria not found")
+    endif()
+  endif(UNIX)
+endif()
 
 
 #----------------------------------------------------------------------
