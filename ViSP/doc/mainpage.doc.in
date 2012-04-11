@@ -352,6 +352,10 @@ scheme, ...</p>
   \ingroup RealRobot
   \defgroup Cycab Cycab car-like mobile robot
 */
+/*!
+  \ingroup RealRobot
+  \defgroup Pioneer Pioneer mobile robot
+*/
 /*
  ******************************************
  * Tools
