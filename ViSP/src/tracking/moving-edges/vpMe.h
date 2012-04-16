@@ -180,7 +180,7 @@ public:
   /*!
     Set the maximum image contrast allowed to detect a contour.
     
-    \param mu1 : new mu2.
+    \param mu2 : new mu2.
   */
   void setMu2(const double &mu2) { this->mu2 = mu2  ; }
   
