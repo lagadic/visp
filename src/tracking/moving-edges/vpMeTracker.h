@@ -121,7 +121,7 @@ public:
   /*!
     Set the initial range.
   
-    \param range : initial range.
+    \param r : initial range.
   */
   void setInitRange(const unsigned int &r) { init_range = r; }
   
