@@ -83,7 +83,7 @@ void vpMomentAlpha::compute(){
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
-  double alpha = 0.5 * atan2(2 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
+  double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
 
   unsigned int order = 4;
   std::vector<double> rotMu(4);
@@ -139,10 +139,10 @@ void vpMomentAlpha::compute(){
       if (sum < 1e4 * std::numeric_limits<double>::epsilon())
         signChange = false;
       if (signChange)
-        alpha = alpha + 3.14;
+        alpha = alpha + M_PI;
     }
   }
-  values[0] = alpha;
+  values[0] = alpha; 
 }
 
 /*!
