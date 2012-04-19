@@ -140,7 +140,9 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
-	
+	vpImagePoint ip;
+  vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+  
 	std::string ext = ".init";
 	std::string str_pose = "";
 	unsigned int pos =  _initFile.rfind(ext);
@@ -172,29 +174,28 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 
     finitpos.close();
     last_cMo.buildFrom(init_pos) ;
+    
+    std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
+
+    vpDisplay::display(_I);
+    display(_I, last_cMo, cam, vpColor::green);
+    vpDisplay::displayFrame(_I, last_cMo, cam, 0.05, vpColor::green);
+    vpDisplay::flush(_I);
+
+    std::cout << "No modification : left click " << std::endl;
+    std::cout << "Modify initial pose : right click " << std::endl ;
+
+    vpDisplay::displayCharString(_I, 15, 10,
+              "left click to validate, right click to modify initial pose",
+              vpColor::red);
+
+    vpDisplay::flush(_I) ;
+
+    while (!vpDisplay::getClick(_I, ip, button)) ;
   }
-  std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
-
-  vpDisplay::display(_I);
-  display(_I, last_cMo, cam, vpColor::green);
-  vpDisplay::displayFrame(_I, last_cMo, cam, 0.05, vpColor::green);
-  vpDisplay::flush(_I);
-
-  std::cout << "No modification : left click " << std::endl;
-  std::cout << "Modify initial pose : right click " << std::endl ;
-
-  vpDisplay::displayCharString(_I, 15, 10,
-			       "left click to validate, right click to modify initial pose",
-			       vpColor::red);
-
-  vpDisplay::flush(_I) ;
-
-  vpImagePoint ip;
-  vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-  while (!vpDisplay::getClick(_I, ip, button)) ;
 
 
-  if (button == vpMouseButton::button1){
+  if (!finitpos.fail() && button == vpMouseButton::button1){
     cMo = last_cMo ;
   }
   else
