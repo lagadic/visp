@@ -227,6 +227,8 @@ public :
      const double u0, const double v0, const double kud,const double kdu) ;
   
   inline double get_px() const { return px; }
+  inline double get_px_inverse() const {return inv_px; }
+  inline double get_py_inverse() const {return inv_py; }
   inline double get_py() const { return py; }
   inline double get_u0() const { return u0; }
   inline double get_v0() const { return v0; }
