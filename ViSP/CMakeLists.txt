@@ -212,7 +212,7 @@ IF (UNIX)
 
   FIND_PACKAGE(CycabTk)
   IF(CycabTk_FOUND)
-    OPTION(USE_CYCAB "Compile ViSP for Cycab car-like mobile robot at Irisa" ON)
+    OPTION(USE_CYCAB "Compile ViSP for Cycab car-like mobile robot at Irisa" OFF)
   ELSE(CycabTk_FOUND)
     SET(USE_CYCAB OFF)
   ENDIF(CycabTk_FOUND)
