@@ -1022,24 +1022,18 @@ vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 
 /*!
 
-  Retrieves pixel value from image with sub-pixel accuracy.
+  \warning This generic method is not implemented. You should rather use the
+  instantiated methods for double, unsigned char and vpRGBa images.
 
-  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation. If location is out of bounds, then return value of
-  closest pixel.
-
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
-
-  \return Interpolated sub-pixel value from the four neighbours.
-
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
+  \sa vpImage<double>::getValue(double, double)
+  \sa vpImage<unsigned char>::getValue(double, double)
+  \sa vpImage<vpRGBa>::getValue(double, double)
 
 */
 template<class Type>
-Type vpImage<Type>::getValue(double i, double j) const
+Type vpImage<Type>::getValue(double /* i */, double /* j */) const
 {
+  vpTRACE("Not implemented");
 }
 
 /*!
@@ -1193,23 +1187,18 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 
 /*!
 
-  Retrieves pixel value from image with sub-pixel accuracy.
+  \warning This generic method is not implemented. You should rather use the
+  instantiated methods for double, unsigned char and vpRGBa images.
 
-  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation. If location is out of bounds, then return value of
-  closest pixel.
-
-  \param ip : An image point.
-
-  \return Interpolated sub-pixel value from the four neighbours.
-
-  \exception vpImageException::notInTheImage : If the image point \e ip is out
-  of the image.
+  \sa vpImage<double>::getValue(vpImagePoint &)
+  \sa vpImage<unsigned char>::getValue(vpImagePoint &)
+  \sa vpImage<vpRGBa>::getValue(vpImagePoint &)
 
 */
 template<class Type>
-Type vpImage<Type>::getValue(vpImagePoint &ip) const
+Type vpImage<Type>::getValue(vpImagePoint & /* ip */) const
 {
+  vpTRACE("Not implemented");
 }
 
 template<>
