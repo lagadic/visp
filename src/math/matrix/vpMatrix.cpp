@@ -2388,8 +2388,8 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
         vpCERROR << me << std::endl ;
         throw ;
       }
-      for(unsigned int i=0; i<A.getCols(); i++){
-        for(unsigned int j=0; j<A.getRows(); j++){
+      for(unsigned int i=0; i<A.getRows(); i++){
+        for(unsigned int j=0; j<A.getCols(); j++){
           if(i >= r && i < (r + B.getRows()) && j >= c && j < (c+B.getCols())){
             C[i][j] = B[i-r][j-c];
           }
@@ -2910,8 +2910,8 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
 {
   if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
     // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
-    for(unsigned int i=r; i<(r+A.getCols()); i++){
-      for(unsigned int j=c; j<(c+A.getRows()); j++){
+    for(unsigned int i=r; i<(r+A.getRows()); i++){
+      for(unsigned int j=c; j<(c+A.getCols()); j++){
         (*this)[i][j] = A[i-r][j-c];
       }
     }
