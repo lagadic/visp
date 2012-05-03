@@ -267,6 +267,8 @@ main(int argc, const char ** argv)
     FILE *fd = fopen(filename, "w");
 
     vpRobotBiclops robot(opt_conf.c_str()) ;
+    robot.setDenavitHartenbergModel(vpBiclops::DH1);
+
     {
       vpColVector q(2); q=0;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
