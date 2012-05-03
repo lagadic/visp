@@ -177,6 +177,19 @@ class VISP_EXPORT vpRzyzVector : public vpRotationVector
   // Affectation of two vectors.
   vpRzyzVector &operator=(const vpRzyzVector &m);
 
+  /*!
+    Construction from 3 angles (in radian).
+    \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
+    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+    \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
+  */
+  void buildFrom(const double phi, const double theta, const double psi)
+  {
+    r[0] = phi ;
+    r[1] = theta ;
+    r[2] = psi ;
+  }
+
   // convert a rotation matrix into Rzyz vector
   vpRzyzVector buildFrom(const vpRotationMatrix& R) ;
 
