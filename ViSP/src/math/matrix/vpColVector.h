@@ -189,6 +189,17 @@ public:
     for (unsigned int i=0; i < rowNum; i++)
       (*this)[i] *= deg2rad;
   }
+
+  /*!
+
+    Return the size of the vector in term of number of rows.
+
+  */
+  inline unsigned int size() const
+  {
+    return getRows();
+  }
+
 };
 
 
