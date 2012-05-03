@@ -149,6 +149,8 @@ public:
 
   virtual void init() = 0 ;
 
+  static vpColVector saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose=false);
+
   void setMaxRotationVelocity (const double maxVr);
   void setMaxTranslationVelocity (const double maxVt);
   //! Set a displacement (frame has to be specified) in position control.

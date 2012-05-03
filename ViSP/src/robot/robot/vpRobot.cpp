@@ -40,6 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpRobot.h>
+#include <visp/vpRobotException.h>
 #include <visp/vpDebug.h>
 
 
@@ -56,6 +57,86 @@ vpRobot::vpRobot (void)
   maxRotationVelocity (maxRotationVelocityDefault)
 {
   stateRobot = vpRobot::STATE_STOP ;
+}
+
+/*!
+  Saturate velocities.
+
+  \param v_in : Vector of input velocities to saturate. Translation velocities should
+  be expressed in m/s while rotation velocities in rad/s.
+
+  \param v_max : Vector of maximal allowed velocities. Maximal translation velocities
+  should be expressed in m/s while maximal rotation velocities in rad/s.
+
+  \param verbose : Print a message indicating which axis causes the saturation.
+
+  \return Saturated velocities.
+
+  \exception vpRobotException::dimensionError : If the input vectors have different dimensions.
+
+  The code below shows how to use this static method in order to saturate a velocity skew vector.
+
+  \code
+#include <iostream>
+
+#include <visp/vpRobot.h>
+
+int main()
+{
+  // Set a velocity skew vector
+  vpColVector v(6);
+  v[0] = 0.1;               // vx in m/s
+  v[1] = 0.2;               // vy
+  v[2] = 0.3;               // vz
+  v[3] = vpMath::rad(10);   // wx in rad/s
+  v[4] = vpMath::rad(-10);  // wy
+  v[5] = vpMath::rad(20);   // wz
+
+  // Set the maximal allowed velocities
+  vpColVector v_max(6);
+  for (int i=0; i<3; i++)
+    v_max[i] = 0.3;             // in translation (m/s)
+  for (int i=3; i<6; i++)
+    v_max[i] = vpMath::rad(10); // in rotation (rad/s)
+
+  // Compute the saturated velocity skew vector
+  vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
+
+  std::cout << "v    : " << v.t() << std::endl;
+  std::cout << "v max: " << v_max.t() << std::endl;
+  std::cout << "v sat: " << v_sat.t() << std::endl;
+
+  return 0;
+}
+  \endcode
+  */
+vpColVector
+vpRobot::saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose)
+{
+  unsigned int size = v_in.size();
+  if (size != v_max.size())
+    throw vpRobotException (vpRobotException::dimensionError, "Velocity vectors should have the same dimension");
+
+  double scale = 1;  // global scale factor to saturate all the axis
+  for (unsigned int i = 0; i < size; i++)
+  {
+    double v_i = fabs(v_in[i]);
+    double v_max_i = fabs(v_max[i]);
+    if ( v_i > v_max_i ) // Test if we should saturate the axis
+    {
+      double scale_i = v_max_i/v_i;
+      if (scale_i < scale)
+        scale = scale_i;
+
+      if (verbose)
+        std::cout << "Excess velocity " << v_in[i] << " axis nr. " << i << std::endl;
+    }
+  }
+
+  vpColVector v_sat(size);
+  v_sat = v_in * scale;
+
+  return v_sat;
 }
 
 
