@@ -1452,84 +1452,51 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
 */
 void
 vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & vel)
+                           const vpColVector & vel)
 {
-
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
-    {
-      vpERROR_TRACE ("Cannot send a velocity to the robot "
-		     "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot send a velocity to the robot "
-			      "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    }
-
-  vpColVector vel_sat(6);
-
-  double scale_trans_sat = 1;
-  double scale_rot_sat   = 1;
-  double scale_sat       = 1;
-  double vel_trans_max = getMaxTranslationVelocity();
-  double vel_rot_max   = getMaxRotationVelocity(); 
-
-  double vel_abs; // Absolute value
-
-  for (unsigned int i = 0 ; i < 3; ++ i) {
-    vel_abs = fabs (vel[i]);
-    if (vel_abs > vel_trans_max) {
-      vel_trans_max = vel_abs;
-      vpERROR_TRACE ("Excess velocity %g m/s in TRANSLATION "
-		     "(axis nr. %d).", vel[i], i+1);
-    }
-
-    vel_abs = fabs (vel[i+3]);
-    if (vel_abs > vel_rot_max) {
-      vel_rot_max = vel_abs;
-      vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
-		     "(axis nr. %d).", vel[i+3], i+4);
-    }
+  {
+    vpERROR_TRACE ("Cannot send a velocity to the robot "
+                   "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException (vpRobotException::wrongStateError,
+                            "Cannot send a velocity to the robot "
+                            "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
 
-  if (vel_trans_max > getMaxTranslationVelocity())                     
-    scale_trans_sat = getMaxTranslationVelocity() / vel_trans_max;
-  
-  if (vel_rot_max > getMaxRotationVelocity())
-    scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
- 
-  if ( (scale_trans_sat < 1) || (scale_rot_sat < 1) ) {
-    if (scale_trans_sat < scale_rot_sat)  
-      scale_sat = scale_trans_sat;                    
-    else                        
-      scale_sat = scale_rot_sat;
-  }
+  vpColVector vel_max(6);
 
-  vel_sat = vel * scale_sat;
+  for (int i=0; i<3; i++)
+    vel_max[i] = getMaxTranslationVelocity();
+  for (int i=3; i<6; i++)
+    vel_max[i] = getMaxRotationVelocity();
+
+  vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
   InitTry;
 
   switch(frame) {
-  case vpRobot::CAMERA_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM) );
-    break ;
-  }
-  case vpRobot::ARTICULAR_FRAME : {
-    //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
-    Try( PrimitiveMOVESPEED_Afma6(vel_sat.data) );
-    break ;
-  }
-  case vpRobot::REFERENCE_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPFIX) );
-    break ;
-  }
-  case vpRobot::MIXT_FRAME : {
-    Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPMIX) );
-    break ;
-  }
-  default: {
-    vpERROR_TRACE ("Error in spec of vpRobot. "
-		   "Case not taken in account.");
-    return;
-  }
+    case vpRobot::CAMERA_FRAME : {
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM) );
+        break ;
+      }
+    case vpRobot::ARTICULAR_FRAME : {
+        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
+        Try( PrimitiveMOVESPEED_Afma6(vel_sat.data) );
+        break ;
+      }
+    case vpRobot::REFERENCE_FRAME : {
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPFIX) );
+        break ;
+      }
+    case vpRobot::MIXT_FRAME : {
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPMIX) );
+        break ;
+      }
+    default: {
+        vpERROR_TRACE ("Error in spec of vpRobot. "
+                       "Case not taken in account.");
+        return;
+      }
   }
 
   Catch();
@@ -1538,19 +1505,19 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
       Int32 axisInJoint[njoint];
       PrimitiveSTATUS_Afma6(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (unsigned int i=0; i < njoint; i ++) {
-	if (axisInJoint[i])
-	  std::cout << "\nWarning: Velocity control stopped: axis "
-		    << i+1 << " on joint limit!" <<std::endl;
+        if (axisInJoint[i])
+          std::cout << "\nWarning: Velocity control stopped: axis "
+                    << i+1 << " on joint limit!" <<std::endl;
       }
     }
     else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != NULL) {
-	// The statement is in TryString, but we need to check the validity
-	printf(" Error sentence %s\n", TryString); // Print the TryString
+        // The statement is in TryString, but we need to check the validity
+        printf(" Error sentence %s\n", TryString); // Print the TryString
       }
       else {
-	printf("\n");
+        printf("\n");
       }
     }
   }

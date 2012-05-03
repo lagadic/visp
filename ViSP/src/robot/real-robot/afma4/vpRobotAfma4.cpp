@@ -1144,66 +1144,66 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
 */
 void
 vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & vel)
+                           const vpColVector & vel)
 {
 
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ())
-    {
-      vpERROR_TRACE ("Cannot send a velocity to the robot "
-		     "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot send a velocity to the robot "
-			      "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
-    }
+  {
+    vpERROR_TRACE ("Cannot send a velocity to the robot "
+                   "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+    throw vpRobotException (vpRobotException::wrongStateError,
+                            "Cannot send a velocity to the robot "
+                            "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+  }
 
   // Check the dimension of the velocity vector to see if it is
   // compatible with the requested frame
   switch(frame) {
-  case vpRobot::CAMERA_FRAME : {
-    //if (vel.getRows() != 2) {
-      if (vel.getRows() != 6) {
-	vpERROR_TRACE ("Bad dimension of the velocity vector in camera frame");
-	throw vpRobotException (vpRobotException::wrongStateError,
-				"Bad dimension of the velocity vector "
-				"in camera frame");
-    }
-    break ;
-  }
-  case vpRobot::ARTICULAR_FRAME : {
-    if (vel.getRows() != this->njoint) {
-	vpERROR_TRACE ("Bad dimension of the articular velocity vector");
-	throw vpRobotException (vpRobotException::wrongStateError,
-				"Bad dimension of the articular "
-				"velocity vector ");
-    }
-    break ;
-  }
-  case vpRobot::REFERENCE_FRAME : {
-    vpERROR_TRACE ("Cannot send a velocity to the robot "
-		   "in the reference frame: "
-		   "functionality not implemented");
-    throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot send a velocity to the robot "
-			    "in the reference frame:"
-			    "functionality not implemented");
-    break ;
-  }
-  case vpRobot::MIXT_FRAME : {
-    vpERROR_TRACE ("Cannot send a velocity to the robot "
-		   "in the mixt frame: "
-		   "functionality not implemented");
-    throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot send a velocity to the robot "
-			    "in the mixt frame:"
-			    "functionality not implemented");
-    break ;
-  }
-  default: {
-      vpERROR_TRACE ("Error in spec of vpRobot. "
-		     "Case not taken in account.");
-      throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot send a velocity to the robot ");
-  }
+    case vpRobot::CAMERA_FRAME : {
+        //if (vel.getRows() != 2) {
+        if (vel.getRows() != 6) {
+          vpERROR_TRACE ("Bad dimension of the velocity vector in camera frame");
+          throw vpRobotException (vpRobotException::wrongStateError,
+                                  "Bad dimension of the velocity vector "
+                                  "in camera frame");
+        }
+        break ;
+      }
+    case vpRobot::ARTICULAR_FRAME : {
+        if (vel.getRows() != this->njoint) {
+          vpERROR_TRACE ("Bad dimension of the articular velocity vector");
+          throw vpRobotException (vpRobotException::wrongStateError,
+                                  "Bad dimension of the articular "
+                                  "velocity vector ");
+        }
+        break ;
+      }
+    case vpRobot::REFERENCE_FRAME : {
+        vpERROR_TRACE ("Cannot send a velocity to the robot "
+                       "in the reference frame: "
+                       "functionality not implemented");
+        throw vpRobotException (vpRobotException::wrongStateError,
+                                "Cannot send a velocity to the robot "
+                                "in the reference frame:"
+                                "functionality not implemented");
+        break ;
+      }
+    case vpRobot::MIXT_FRAME : {
+        vpERROR_TRACE ("Cannot send a velocity to the robot "
+                       "in the mixt frame: "
+                       "functionality not implemented");
+        throw vpRobotException (vpRobotException::wrongStateError,
+                                "Cannot send a velocity to the robot "
+                                "in the mixt frame:"
+                                "functionality not implemented");
+        break ;
+      }
+    default: {
+        vpERROR_TRACE ("Error in spec of vpRobot. "
+                       "Case not taken in account.");
+        throw vpRobotException (vpRobotException::wrongStateError,
+                                "Cannot send a velocity to the robot ");
+      }
   }
 
 
@@ -1211,29 +1211,15 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
   // Velocities saturation with normalization
   //
   vpColVector joint_vel(this->njoint);
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
 
   // Case of the camera frame where we control only 2 dof
   if (frame == vpRobot::CAMERA_FRAME) {
-    vpColVector velocity( vel.getRows() );
-    double max = getMaxRotationVelocity();
-    // Determine if we need to saturate the rotation velocities
-    for (unsigned int i = 0 ; i < 2; ++ i) { // rx and ry of the camera
-      if (fabs (vel[i]) > max) {
-	norm = true;
-	max = fabs (vel[i]);
-	vpERROR_TRACE ("Excess velocity %g: ROTATION "
-		       "(axe nr.%d).", vel[i], i);
-      }
-    }
-    // Rotations velocities normalisation
-    if (norm == true) {
-      max = getMaxRotationVelocity() / max;
-      velocity = vel * max;
-    }
-    else {
-      velocity = vel;
-    }
+    vpColVector vel_max(2);
+
+    for (int i=0; i<2; i++)
+      vel_max[i] = getMaxRotationVelocity();
+
+    vpColVector velocity = vpRobot::saturateVelocities(vel, vel_max, true);
 
 #if 0 // ok 
     vpMatrix eJe(4,6);
@@ -1262,55 +1248,21 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
     eVc.buildFrom(this->_eMc);
     joint_vel = eJe_inverse * eVc * velocity;
 
-//     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1], 
-// 	   joint_vel[2], joint_vel[3]);
+    //     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1],
+    // 	   joint_vel[2], joint_vel[3]);
   }
 
   // Case of the joint control where we control all the joints
   else if (frame == vpRobot::ARTICULAR_FRAME) {
 
-    // Manage the rotations: joint 0,2,3
-    double max = getMaxRotationVelocity();
-    // Determine if we need to saturate
-    if (fabs (vel[0]) > max) {
-      norm = true;
-      max = fabs (vel[0]);
-      vpERROR_TRACE ("Excess velocity %g: ROTATION "
-		     "(axe nr.%d).", vel[0], 0);
-    }
+    vpColVector vel_max(4);
 
-    for (unsigned int i = 2 ; i < 4; ++ i) { // joint 2 and 3
-      if (fabs (vel[i]) > max) {
-	norm = true;
-	max = fabs (vel[i]);
-	vpERROR_TRACE ("Excess velocity %g: ROTATION "
-		       "(axe nr.%d).", vel[i], i);
-      }
-    }
-    // Rotations velocities normalisation
-    if (norm == true) {
-      max = getMaxRotationVelocity() / max;
-      joint_vel = vel * max;
-     
-    }
-    else {
-      joint_vel = vel;
-    }
+    vel_max[0] = getMaxRotationVelocity();
+    vel_max[1] = getMaxTranslationVelocity();
+    vel_max[2] = getMaxRotationVelocity();
+    vel_max[3] = getMaxRotationVelocity();
 
-    // Manage the translation: joint 1
-    max = getMaxTranslationVelocity();
-    if (fabs (vel[1]) > max) {
-      norm = true;
-      max = fabs (vel[1]);
-      vpERROR_TRACE ("Excess velocity %g: TRANSLATION "
-		     "(axe nr.%d).", vel[1], 1);
-    }
-
-    // Translations velocities normalisation
-    if (norm == true)  {
-      max = getMaxTranslationVelocity() * max;
-      joint_vel = vel * max;
-    }
+    joint_vel = vpRobot::saturateVelocities(vel, vel_max, true);
   }
 
   InitTry;
@@ -1324,19 +1276,19 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
       UInt32 axisInJoint[njoint];
       PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (unsigned int i=0; i < njoint; i ++) {
-	if (axisInJoint[i])
-	  std::cout << "\nWarning: Velocity control stopped: axis "
-		    << i+1 << " on joint limit!" <<std::endl;
+        if (axisInJoint[i])
+          std::cout << "\nWarning: Velocity control stopped: axis "
+                    << i+1 << " on joint limit!" <<std::endl;
       }
     }
     else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != NULL) {
-	// The statement is in TryString, but we need to check the validity
-	printf(" Error sentence %s\n", TryString); // Print the TryString
+        // The statement is in TryString, but we need to check the validity
+        printf(" Error sentence %s\n", TryString); // Print the TryString
       }
       else {
-	printf("\n");
+        printf("\n");
       }
     }
   }
