@@ -65,8 +65,8 @@ public:
     */
   vpPioneer() : vpUnicycle()
   {
-    set_cMe_();
-    set_eJe_();
+    set_cMe();
+    set_eJe();
   }
 
   /*!
@@ -79,7 +79,7 @@ private:
     Set the transformation between the camera frame and the mobile platform
     frame located at point E.
     */
-  void set_cMe_()
+  void set_cMe()
   {
     // Position of the camera in the mobile platform frame
     double l = 0.13; // distance between the camera frame and the mobile robot frame
