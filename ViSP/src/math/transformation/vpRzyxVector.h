@@ -178,6 +178,19 @@ public:
   // Affectation of two vectors.
   vpRzyxVector &operator=(const vpRzyxVector &m);
 
+  /*!
+    Construction from 3 angles (in radian).
+    \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
+    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+    \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
+  */
+  void buildFrom(const double phi, const double theta, const double psi)
+  {
+    r[0] = phi ;
+    r[1] = theta ;
+    r[2] = psi ;
+  }
+
   // convert a rotation matrix into Rzyx vector
   vpRzyxVector buildFrom(const vpRotationMatrix& R) ;
 
