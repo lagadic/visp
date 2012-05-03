@@ -1430,114 +1430,78 @@ int main()
 */
 void
 vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & vel)
+                              const vpColVector & vel)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
     vpERROR_TRACE ("Cannot send a velocity to the robot "
-		   "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+                   "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
     throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot send a velocity to the robot "
-			    "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
+                            "Cannot send a velocity to the robot "
+                            "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
   
   vpColVector vel_sat(6);
 
-  double scale_trans_sat = 1;
-  double scale_rot_sat   = 1;
-  double scale_sat       = 1;
-  double vel_trans_max = getMaxTranslationVelocity();
-  double vel_rot_max   = getMaxRotationVelocity(); 
-
-  double vel_abs; // Absolute value
-
   // Velocity saturation
   switch(frame) {
     // saturation in cartesian space
-  case vpRobot::CAMERA_FRAME :
-  case vpRobot::REFERENCE_FRAME :  
-  case vpRobot::MIXT_FRAME : {
-    for (unsigned int i = 0 ; i < 3; ++ i) {
-      vel_abs = fabs (vel[i]);
-      if (vel_abs > vel_trans_max) {
-	vel_trans_max = vel_abs;
-	vpERROR_TRACE ("Excess velocity %g m/s in TRANSLATION "
-		       "(axis nr. %d).", vel[i], i+1);
-      }
-      
-      vel_abs = fabs (vel[i+3]);
-      if (vel_abs > vel_rot_max) {
-	vel_rot_max = vel_abs;
-	vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
-		       "(axis nr. %d).", vel[i+3], i+4);
-      }
-    }
-    
-    if (vel_trans_max > getMaxTranslationVelocity())                     
-      scale_trans_sat = getMaxTranslationVelocity() / vel_trans_max;
-    
-    if (vel_rot_max > getMaxRotationVelocity())
-      scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
-    
-    if ( (scale_trans_sat < 1) || (scale_rot_sat < 1) ) {
-      if (scale_trans_sat < scale_rot_sat)  
-	scale_sat = scale_trans_sat;                    
-      else                        
-	scale_sat = scale_rot_sat;
-    }
-    break;
-  }
-    // saturation in joint space
-  case vpRobot::ARTICULAR_FRAME : {
-    for (unsigned int i = 0 ; i < 6; ++ i) {
-      vel_abs = fabs (vel[i]);
-      if (vel_abs > vel_rot_max) {
-	vel_rot_max = vel_abs;
-	vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
-		       "(axis nr. %d).", vel[i], i+1);
-      }
-    }
-    if (vel_rot_max > getMaxRotationVelocity())
-      scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
-    if ( scale_rot_sat < 1 ) {
-      scale_sat = scale_rot_sat;
-    }
+    case vpRobot::CAMERA_FRAME :
+    case vpRobot::REFERENCE_FRAME :
+    case vpRobot::MIXT_FRAME : {
+        vpColVector vel_max(6);
 
+        for (int i=0; i<3; i++)
+          vel_max[i] = getMaxTranslationVelocity();
+        for (int i=3; i<6; i++)
+          vel_max[i] = getMaxRotationVelocity();
+
+        vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
+
+        break;
+      }
+      // saturation in joint space
+    case vpRobot::ARTICULAR_FRAME : {
+        vpColVector vel_max(6);
+
+        for (int i=0; i<6; i++)
+          vel_max[i] = getMaxRotationVelocity();
+
+        vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
+      }
   }
-  }
-  vel_sat = vel * scale_sat;
 
   InitTry;
 
   switch(frame) {
-  case vpRobot::CAMERA_FRAME : {
-    // Send velocities in m/s and rad/s
-    // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
-    Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM) );
-    break ;
-  }
-  case vpRobot::ARTICULAR_FRAME : {
-    // Convert all the velocities from rad/s into deg/s
-    vel_sat.rad2deg();
-    //std::cout << "Vitesse appliquee: " << vel_sat.t();
-    //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
-    Try( PrimitiveMOVESPEED_Viper850(vel_sat.data) );
-    break ;
-  }
-  case vpRobot::REFERENCE_FRAME : {
-    // Send velocities in m/s and rad/s
-   std::cout << "Vitesse ref appliquee: " << vel_sat.t();
-    Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPFIX) );
-    break ;
-  }
-  case vpRobot::MIXT_FRAME : {
-    //Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPMIX) );
-    break ;
-  }
-  default: {
-    vpERROR_TRACE ("Error in spec of vpRobot. "
-		   "Case not taken in account.");
-    return;
-  }
+    case vpRobot::CAMERA_FRAME : {
+        // Send velocities in m/s and rad/s
+        // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
+        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM) );
+        break ;
+      }
+    case vpRobot::ARTICULAR_FRAME : {
+        // Convert all the velocities from rad/s into deg/s
+        vel_sat.rad2deg();
+        //std::cout << "Vitesse appliquee: " << vel_sat.t();
+        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
+        Try( PrimitiveMOVESPEED_Viper850(vel_sat.data) );
+        break ;
+      }
+    case vpRobot::REFERENCE_FRAME : {
+        // Send velocities in m/s and rad/s
+        std::cout << "Vitesse ref appliquee: " << vel_sat.t();
+        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPFIX) );
+        break ;
+      }
+    case vpRobot::MIXT_FRAME : {
+        //Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPMIX) );
+        break ;
+      }
+    default: {
+        vpERROR_TRACE ("Error in spec of vpRobot. "
+                       "Case not taken in account.");
+        return;
+      }
   }
 
   Catch();
@@ -1546,19 +1510,19 @@ vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
       UInt32 axisInJoint[njoint];
       PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, axisInJoint, NULL);
       for (unsigned int i=0; i < njoint; i ++) {
-	if (axisInJoint[i])
-	  std::cout << "\nWarning: Velocity control stopped: axis "
-		    << i+1 << " on joint limit!" <<std::endl;
+        if (axisInJoint[i])
+          std::cout << "\nWarning: Velocity control stopped: axis "
+                    << i+1 << " on joint limit!" <<std::endl;
       }
     }
     else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != NULL) {
-	// The statement is in TryString, but we need to check the validity
-	printf(" Error sentence %s\n", TryString); // Print the TryString
+        // The statement is in TryString, but we need to check the validity
+        printf(" Error sentence %s\n", TryString); // Print the TryString
       }
       else {
-	printf("\n");
+        printf("\n");
       }
     }
   }
