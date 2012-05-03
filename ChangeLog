@@ -16,6 +16,8 @@ ViSP 2.6.2 (under development)
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
   - Improvements
+     - Introduce a new Denavit Hartenberg representation of the Biclops head
+       in vpBiclops.
      - Compatibility with OpenCV 2.4.0
      - Remove warning detected with Visual C++ /Wall flag
      - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and
@@ -27,7 +29,8 @@ ViSP 2.6.2 (under development)
        in $CMAKE_INSTALL_PREFIX/bin.
      - Use OpenMP to optimize the execution of the moments computation
   - Examples:
-    - New example plot3d.cpp to show how to plot 3D curves
+     - New example plot3d.cpp to show how to plot 3D curves
+     - New example movePioneer.cpp to show how to control the pioneer.
   - Bug fixed
      - [13536] Division by zero in vpMeLine
      - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const
