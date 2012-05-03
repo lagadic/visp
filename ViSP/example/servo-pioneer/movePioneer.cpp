@@ -56,7 +56,7 @@ int main()
 #else
 
 /*!
-  \example servoPioneer.cpp example showing how to connect and send
+  \example movePioneer.cpp example showing how to connect and send
   direct basic motion commands to a Pioneer mobile robot.
 
   WARNING: this program does no sensing or avoiding of obstacles, the robot WILL
@@ -131,13 +131,6 @@ int main(int argc, char **argv)
   ArLog::log(ArLog::Normal, "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
     robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
   robot.unlock();
-
-  
-  ArLog::log(ArLog::Normal, "simpleMotionCommands: Ending robot thread...");
-  robot.stopRunning();
-
-  // wait for the thread to stop
-  robot.waitForRunExit();
 
   // exit
   ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
