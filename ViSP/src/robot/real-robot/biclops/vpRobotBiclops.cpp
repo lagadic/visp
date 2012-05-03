@@ -673,7 +673,7 @@ void
 vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
-  vpBiclops::get_cMe(cMe) ;
+  cMe = vpBiclops::get_cMe() ;
 
   cVe.buildFrom(cMe) ;
 }
@@ -690,7 +690,7 @@ vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe)
 void
 vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe)
 {
-  vpBiclops::get_cMe(cMe) ;
+  cMe = vpBiclops::get_cMe() ;
 }
 
 
@@ -1386,8 +1386,8 @@ vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame,
     d.resize(6);
     vpHomogeneousMatrix fMc_current;
     vpHomogeneousMatrix fMc_previous;
-    fMc_current  = vpBiclops::computeMGD(q_current);
-    fMc_previous = vpBiclops::computeMGD(q_previous);
+    fMc_current  = vpBiclops::get_fMc(q_current);
+    fMc_previous = vpBiclops::get_fMc(q_previous);
     vpHomogeneousMatrix c_previousMc_current;
     // fMc_c = fMc_p * c_pMc_c
     // => c_pMc_c = (fMc_p)^-1 * fMc_c
