@@ -119,6 +119,15 @@ public:
   //! normalise the vector
   vpRowVector &normalize(vpRowVector &x) const ;
 
+  /*!
+
+    Return the size of the vector in term of number of columns.
+
+  */
+  inline unsigned int size() const
+  {
+    return getCols();
+  }
 
 };
 
