@@ -49,11 +49,24 @@
 /*!
   Default constructor that initializes Aria.
   */
-vpRobotPioneer::vpRobotPioneer() : ArRobot()
+vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
 {
   isInitialized = false;
 
   Aria::init();
+}
+
+/*!
+  Destructor.
+  */
+vpRobotPioneer::~vpRobotPioneer()
+{
+  std::cout << "Ending robot thread..." << std::endl;
+  stopRunning();
+
+  // wait for the thread to stop
+  waitForRunExit();
+
 }
 
 /*!
@@ -69,6 +82,10 @@ vpRobotPioneer::vpRobotPioneer() : ArRobot()
     independently.
   - If the frame is vpRobot::REFERENCE_FRAME, first value is the translation velocity in m/s.
     Second value is the rotational velocity in rad/s.
+
+  Note that to secure the usage of the robot, velocities are saturated to the maximum allowed
+  which can be obtained by getMaxTranslationVelocity() and getMaxRotationVelocity(). To change
+  the default values, use setMaxTranslationVelocity() and setMaxRotationVelocity().
 
   \exception vpRobotException::dimensionError : Velocity vector is not a 2 dimension vector.
   \exception vpRobotException::wrongStateError : If the specified control frame is not supported.
@@ -86,23 +103,34 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
           "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   } */
 
-  if (vel.getRows() != 2)
+  if (vel.size() != 2)
   {
     throw(vpRobotException(vpRobotException::dimensionError, "Velocity vector is not a 2 dimension vector"));
   }
 
+  vpColVector vel_max(2);
+  vpColVector vel_sat;
+
   if (frame == vpRobot::REFERENCE_FRAME)
   {
+    vel_max[0] = getMaxTranslationVelocity();
+    vel_max[1] = getMaxRotationVelocity();
+
+    vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
     this->lock();
-    this->setVel(vel[0]*1000.); // convert velocity in mm/s
-    this->setRotVel( vpMath::deg(vel[1]) ); // convert velocity in deg/s
+    this->setVel(vel_sat[0]*1000.); // convert velocity in mm/s
+    this->setRotVel( vpMath::deg(vel_sat[1]) ); // convert velocity in deg/s
     this->unlock();
   }
   else if (frame == vpRobot::ARTICULAR_FRAME)
   {
+    vel_max[0] = getMaxTranslationVelocity();
+    vel_max[1] = getMaxTranslationVelocity();
+
+    vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
     this->lock();
     //std::cout << "v: " << (vel*1000).t() << " mm/s" << std::endl;
-    this->setVel2(vel[0]*1000., vel[1]*1000.); // convert velocity in mm/s
+    this->setVel2(vel_sat[0]*1000., vel_sat[1]*1000.); // convert velocity in mm/s
     this->unlock();
   }
   else

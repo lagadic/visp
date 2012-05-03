@@ -43,6 +43,7 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpRobot.h>
+#include <visp/vpPioneer.h>
 
 #ifdef VISP_HAVE_PIONEER
 
@@ -60,7 +61,7 @@
   It inherits from the Aria ArRobot class. For more information see ArRobot documentation.
 
 */
-class VISP_EXPORT vpRobotPioneer: public vpRobot, public ArRobot
+class VISP_EXPORT vpRobotPioneer: public vpRobot, public vpPioneer, public ArRobot
 {
 private: /* Not allowed functions. */
 
@@ -71,14 +72,25 @@ private: /* Not allowed functions. */
 
 public:
   vpRobotPioneer();
-  //virtual ~vpRobotPioneer ();
+  virtual ~vpRobotPioneer();
 
-  //---------- Jacobian -----------------------------
   /*!
-    Get the robot Jacobian expressed in the end-effector frame.
-    \warning Not implemented.
+    Get the robot Jacobian expressed at point E, the point located at the
+    middle between the two wheels.
+
+    \param eJe : Robot jacobian such as \f$(v_x, w_z) = {^e}{\bf J}e \; {\bf v}\f$ with
+    \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
+    of the mobile robot, \f$\bf v\f$ the six dimention velocity skew, and where
+
+    \sa get_eJe()
+
   */
-  void get_eJe(vpMatrix & /*eJe*/) {} ;
+  void get_eJe(vpMatrix & eJe)
+  {
+    eJe = vpUnicycle::get_eJe();
+  }
+
+private: // Set as private since not implemented
   /*!
     Get the robot Jacobian expressed in the robot reference (or world) frame.
     \warning Not implemented.
@@ -101,30 +113,32 @@ public:
   */
   void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector &/*q*/) {};
 
+public:
   void getVelocity (const vpRobot::vpControlFrameType frame, vpColVector & velocity);
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
+private: // Set as private since not implemented
   /*!
     Get the robot position (frame has to be specified).
     \warning Not implemented.
   */
   void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector &/*q*/) {};
 
+public:
   void init();
 
+private: // Set as private since not implemented
   /*!
     Set a displacement (frame has to be specified) in position control.
     \warning Not implemented.
   */
   void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector &/*q*/) {};
 
-  /*!
-    Set the velocity (frame has to be specified) that will be applied to the velocity controller.
-    \warning Not implemented.
-  */
-  void setVelocity(const vpRobot::vpControlFrameType /*frame*/, const vpColVector &/*vel*/);
+public:
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
 
-private:
+
+protected:
   bool isInitialized;
 };
 
