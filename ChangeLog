@@ -3,7 +3,7 @@
                      Resume of the change log
 
      Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005-2012
-                  www: http://www.irisa.fr/lagadic
+                    http://www.irisa.fr/lagadic
 
 
 ViSP 2.6.2 (under development)
@@ -16,6 +16,7 @@ ViSP 2.6.2 (under development)
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
   - Improvements
+     - Compatibility with OpenCV 2.4.0
      - Remove warning detected with Visual C++ /Wall flag
      - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and
        doxygen 3rd party libraries detection. If detection fails, we use our
