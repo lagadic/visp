@@ -75,7 +75,7 @@ const float vpPtu46::h    = 0.068f; /*<! Vertical offset from last joint to
   \param q : Articular position for pan and tilt axis.
 
   \param fMc : Homogeneous matrix corresponding to the direct geometric model
-  of the camera. Discribes the transformation between the robot reference frame
+  of the camera. Describes the transformation between the robot reference frame
   (called fixed) and the camera frame.
 
 */
@@ -126,7 +126,7 @@ vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
   \param q : Articular position for pan and tilt axis.
 
   \return fMc, the homogeneous matrix corresponding to the direct geometric
-  model of the camera. Discribes the transformation between the robot reference
+  model of the camera. Describes the transformation between the robot reference
   frame (called fixed) and the camera frame.
 
 */
