@@ -49,6 +49,7 @@
 #include <limits>   // numeric_limits
 
 #include <visp/vpKinect.h>
+#include <visp/vpXmlParserCamera.h>
 
 /*!
   Default constructor.
@@ -263,15 +264,15 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 		if((IrgbWarped.getHeight()!=height )||(IrgbWarped.getWidth()!=width))
 			IrgbWarped.resize(height, width);
 		IrgbWarped=0;
-		double x1, y1, x2, y2, Z1, Z2;
+    double x1=0., y1=0., x2=0., y2=0., Z1, Z2;
 		vpImagePoint imgPoint(0,0);
-		double u, v;
+    double u=0., v=0.;
 		vpColVector P1(4),P2(4);
 
 //		std::cout <<"rgbMir : "<<rgbMir<<std::endl;
 
-		for (unsigned i = 0; i< height;i++)
-			for (unsigned j = 0 ; j < width ; j++){
+    for (unsigned int i = 0; i< height;i++)
+      for (unsigned int j = 0 ; j < width ; j++){
 			  //! Compute metric coordinates in the ir camera Frame :
 			  vpPixelMeterConversion::convertPoint(IRcam, j, i, x1, y1);
 			  Z1 = Idepth[i][j];
@@ -294,9 +295,11 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 				  //! compute pixel coordinates of the corresponding point in the depth image
 				  vpMeterPixelConversion::convertPoint(RGBcam, x2, y2, u, v);
 
-				  //!Fill warped image value
-				  if (((int)u>=0)&&((int)u<width)&&((int)v>=0)&&((int)v<height)){
-					  IrgbWarped[i][j] = Irgb[(int)v][(int)u];
+          unsigned int u_ = (unsigned int)u;
+          unsigned int v_ = (unsigned int)v;
+          //!Fill warped image value
+          if ((u_<width)&&(v_<height)){
+            IrgbWarped[i][j] = Irgb[v_][u_];
 				  }
 				  else
 					  IrgbWarped[i][j] = 0;
