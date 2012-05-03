@@ -44,7 +44,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  servoPioneer.cpp
+  movePioneer.cpp
 )
 
 # rule for binary build
