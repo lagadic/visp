@@ -901,7 +901,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 
 /*!
   Load the xml configuration file.
-  Write the parameters in the corresponding objects (Ecm, camera).
+  From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
 
   \param _filename : full name of the xml file.
 */
@@ -913,8 +913,8 @@ vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
 
 /*!
   Load the xml configuration file.
-  Write the parameters in the corresponding objects (Ecm, camera).
-  
+  From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
+
   \throw vpException::ioError if the file has not been properly parsed (file not
   found or wrong format for the data). 
 
@@ -1368,9 +1368,12 @@ vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisiblelin
 
 
 /*!
-  Load a 3D model contained in a file.
+  Load a 3D model contained in a file. This file is either a vrml or a cao file.
   
-  \param file : Path to the file containing the 3D model description.
+  \param file : Full name the file containing the 3D model description.
+  The extension of this file is either .wrl or .cao.
+
+  \sa vpMbTracker::loadModel()
 */
 void
 vpMbEdgeTracker::loadModel(const char* file)
@@ -1382,7 +1385,10 @@ vpMbEdgeTracker::loadModel(const char* file)
 /*!
   Load a 3D model contained in a file.
   
-  \param file : Path to the file containing the 3D model description.
+  \param file : Full name the file containing the 3D model description.
+  The extension of this file is either .wrl or .cao.
+
+  \sa vpMbTracker::loadModel()
 */
 void
 vpMbEdgeTracker::loadModel(const std::string &file)

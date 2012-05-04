@@ -662,7 +662,7 @@ void vpMbTracker::savePose(const std::string &filename)
 }
 
 /*!
-  Load a 3D model from the file in parameter. This file mst either be a vrml 
+  Load a 3D model from the file in parameter. This file must either be a vrml
   file (.wrl) or a CAO file (.cao). CAO format is described in the 
   loadCAOModel() method. 
 
