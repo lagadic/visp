@@ -2467,6 +2467,12 @@ vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I,
                                  (unsigned char *) I.bitmap, size);
       break;
 
+    case DC1394_COLOR_CODING_MONO16:
+    case DC1394_COLOR_CODING_RAW16:
+      vpImageConvert::MONO16ToRGBa((unsigned char *) frame->image,
+                                 (unsigned char *) I.bitmap, size);
+      break;
+
     case DC1394_COLOR_CODING_YUV411:
       vpImageConvert::YUV411ToRGBa( (unsigned char *) frame->image,
                                     (unsigned char *) I.bitmap, size);
