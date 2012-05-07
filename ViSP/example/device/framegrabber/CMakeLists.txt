@@ -45,6 +45,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   grab1394Two.cpp
+  grab1394CMU.cpp
   grabDisk.cpp
   grabV4l2.cpp
   grabDirectShow.cpp
@@ -74,8 +75,3 @@ ENDFOREACH(source)
 #ADD_TEST(grabDirectShow   grabDirectShow ${OPTION_TO_DESACTIVE_DISPLAY})
 #ADD_TEST(grabDirectShowMulti   grabDirectShowMulti ${OPTION_TO_DESACTIVE_DISPLAY})
 #ADD_TEST(grabOpenCV       grabOpenCV ${OPTION_TO_DESACTIVE_DISPLAY})
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
