@@ -253,6 +253,8 @@ public:
       unsigned int size);
   static void MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
         unsigned int size);
+  static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
+        unsigned int size);
   
 private:
   static void computeYCbCrLUT();

@@ -3459,6 +3459,34 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey,
   }
 }
 
+/*!
+
+  Converts a MONO16 grey scale image (each pixel is coded by two bytes) into a
+  grey image where each pixels are coded on one byte.
+
+  \param grey16 : Input image to convert (two bytes per pixel).
+  \param rgba   : Output image.
+  \param size : The image size or the number of pixels.
+
+*/
+void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
+          unsigned int size)
+{
+  register int i = (((int)size)<<1)-1;
+  register int j = (int)(size*4-1);
+  register int y;
+  register unsigned char v;
+
+  while (i >= 0) {
+    y = grey16[i--];
+    v = static_cast<unsigned char>( (y+(grey16[i--]<<8))>>8 );
+    rgba[j--] = 0;
+    rgba[j--] = v;
+    rgba[j--] = v;
+    rgba[j--] = v;
+  }
+}
+
 /*
  * Local variables:
  * c-basic-offset: 2
