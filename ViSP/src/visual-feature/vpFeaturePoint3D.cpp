@@ -476,6 +476,8 @@ vpFeaturePoint3D::buildFrom(const vpPoint &p)
 			     "Point Z coordinates is null")) ;
   }
 
+  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
+
 }
 
 /*!  
