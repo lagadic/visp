@@ -211,6 +211,9 @@
 // in more recent releases.
 #cmakedefine VISP_HAVE_DC1394_2_FIND_CAMERAS
 
+// Defined if CMU 1394 Digital Camera SDK available.
+#cmakedefine VISP_HAVE_CMU1394
+
 // Defined if Video For Linux Two available.
 #cmakedefine VISP_HAVE_V4L2
 

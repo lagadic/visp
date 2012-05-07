@@ -72,6 +72,7 @@ SET (HEADER_EXCEPTION
 SET (HEADER_DEVICE_FRAMEGRABBER
   device/framegrabber/1394/vp1394Grabber.h
   device/framegrabber/1394/vp1394TwoGrabber.h
+  device/framegrabber/1394/vp1394CMUGrabber.h
   device/framegrabber/disk/vpDiskGrabber.h
   device/framegrabber/generic-framegrabber/vpFrameGrabberException.h
   device/framegrabber/generic-framegrabber/vpFrameGrabber.h
