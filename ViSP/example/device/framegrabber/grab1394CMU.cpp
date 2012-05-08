@@ -159,13 +159,10 @@ bool getOptions(int argc, const char **argv, bool &display,
   Video capture example based on CMU 1394 Digital Camera SDK using vp1394CMUGrabber class.
   Display the images using the GDI or OpenCV display.
 */
+#if defined(VISP_HAVE_CMU1394)
 int
 main(int argc, const char ** argv)
 {
-#if !defined(VISP_HAVE_CMU1394)
-  std::cout << "This example requires CMU 1394 Digital Camera SDK. " << std::endl;
-  return 0;
-#else
   bool opt_display = true;
   unsigned nframes = 50;
   bool save = false;
@@ -229,6 +226,8 @@ main(int argc, const char ** argv)
 	      //Displays the grabbed rgba image
 	      vpDisplay::display(I);
         vpDisplay::flush(I);
+        if (vpDisplay::getClick(I, false)) // A click to exit
+          break;
       }
 #endif
 
@@ -257,5 +256,12 @@ main(int argc, const char ** argv)
     std::cout << "Failure: exit" << std::endl;
     return(-1);
   }
-#endif
 }
+#else
+int main()
+{
+  std::cout << "This example requires CMU 1394 Digital Camera SDK. " << std::endl;
+  return 0;
+}
+#endif
+
