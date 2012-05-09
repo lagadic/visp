@@ -45,6 +45,8 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   movePioneer.cpp
+  servoPioneerPoint2DDepth.cpp
+  servoPioneerPoint2DDepthWithoutVpServo.cpp
 )
 
 # rule for binary build
