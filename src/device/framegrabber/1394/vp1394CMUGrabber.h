@@ -148,7 +148,7 @@ int main()
   // Setting camera parameters manually
   g.selectCamera(0);
   g.setControl(0, 2000);
-  g.setFPS(3);          // 15 FPS
+  g.setFramerate(3);    // 15 FPS
   g.setVideoMode(0, 5); // 640x480 - MONO
 
   g.open(I);
@@ -303,7 +303,7 @@ public:
   void setControl(unsigned short gain , unsigned short shutter) ;
 
   // Set the frame rate. Call it before open the grabber.
-  void setFPS ( unsigned long fps );
+  void setFramerate(unsigned long fps);
 
   // Set the video format and mode. Call it before open the grabber.
   void setVideoMode(unsigned long format , unsigned long mode );
