@@ -10,8 +10,8 @@ ViSP 2.6.2 (under development)
   - New features
      - New vp1394CMUGrabber class that allows firewire frame acquisition 
        under Windows using CMU 1394 Digital Camera 3rd party library.
-	   Thanks to Lucas Lopes Lemos and Guillaume Laurent from FEMTO-ST, 
-	   AS2M departement, Besançon, France for this contribution.
+       Thanks to Lucas Lopes Lemos and Guillaume Laurent from FEMTO-ST, 
+       AS2M departement, Besancon, France for this contribution.
      - New vpRobotPioneer class to control Pioneer mobile robots using
        Aria 3rd party library.
      - New vpFeatureSegment class to consider a segment as a visual
@@ -34,7 +34,9 @@ ViSP 2.6.2 (under development)
      - Use OpenMP to optimize the execution of the moments computation
   - Examples:
      - New example plot3d.cpp to show how to plot 3D curves
-     - New example movePioneer.cpp to show how to control the pioneer.
+     - New example movePioneer.cpp, servoPioneerPoint2DDepth.cpp and
+       servoPioneerPoint2DDepthWithoutVpServo.cpp to show how to control the 
+       pioneer mobile robot.
      - New example grab1394CMU.cpp to show how to acquire images with
 	   the CMU 1394 library.
   - Bug fixed
