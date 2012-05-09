@@ -61,12 +61,13 @@ vpRobotPioneer::vpRobotPioneer() : vpPioneer(), ArRobot()
   */
 vpRobotPioneer::~vpRobotPioneer()
 {
+#if 0
   std::cout << "Ending robot thread..." << std::endl;
   stopRunning();
 
   // wait for the thread to stop
   waitForRunExit();
-
+#endif
 }
 
 /*!

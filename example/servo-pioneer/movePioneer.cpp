@@ -132,6 +132,12 @@ int main(int argc, char **argv)
     robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
   robot.unlock();
 
+  std::cout << "Ending robot thread..." << std::endl;
+  robot.stopRunning();
+
+  // wait for the thread to stop
+  robot.waitForRunExit();
+
   // exit
   ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
   return 0;
