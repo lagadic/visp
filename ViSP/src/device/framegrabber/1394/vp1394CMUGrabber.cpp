@@ -655,7 +655,7 @@ vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
 
  */
 void 
-vp1394CMUGrabber::setFPS ( unsigned long fps )
+vp1394CMUGrabber::setFramerate(unsigned long fps)
 {
   _fps = fps;
 }
