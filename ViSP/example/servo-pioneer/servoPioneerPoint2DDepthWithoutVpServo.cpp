@@ -163,6 +163,7 @@ int main(int argc, char **argv)
   vpDot2 dot;
   dot.setGraphics(true);
   dot.setComputeMoments(true);
+  dot.setEllipsoidShapePrecision(0.);
   dot.initTracking(I);
   vpDisplay::flush(I);
 
