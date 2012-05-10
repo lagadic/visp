@@ -90,11 +90,11 @@
   The value of Z is estimated from the surface of the blob that is proportional to the depth Z.
 
   */
+#if defined(VISP_HAVE_PIONEER)
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-#if defined(VISP_HAVE_PIONEER)
   vpImage<unsigned char> I; // Create a gray level image container
   double depth = 1.;
   double lambda = 0.6;
@@ -264,5 +264,11 @@ int main(int argc, char **argv)
 
 #endif
 #endif
-#endif
 }
+#else
+int main()
+{
+  std::cout << "ViSP is not able to control the Pioneer robot" << std::endl;
+  return 0;
+}
+#endif
