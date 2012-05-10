@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindLIBUSB-1.cmake 3376 2011-10-13 12:40:49Z fspindle $
+# $Id$
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
