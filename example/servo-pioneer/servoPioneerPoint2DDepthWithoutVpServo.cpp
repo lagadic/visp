@@ -98,7 +98,6 @@ int main(int argc, char **argv)
   vpImage<unsigned char> I; // Create a gray level image container
   double depth = 1.;
   double lambda = 0.6;
-  double l = 0.13; // Position of the camera with respect of the mobile platform frame
   double coef = 1./6.77; // Scale parameter used to estimate the depth Z of the blob from its surface
 
   vpRobotPioneer robot;
