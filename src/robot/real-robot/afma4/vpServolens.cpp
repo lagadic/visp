@@ -51,6 +51,7 @@
 
 #ifdef UNIX
 
+#include <unistd.h>
 #include <termios.h>
 #include <stdio.h>
 #include <sys/types.h>
