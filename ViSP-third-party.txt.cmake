@@ -36,8 +36,8 @@ Framegrabbers
   Firewire libdc1394-2.x      : ${VISP_HAVE_DC1394_2_FOUND}
   Video For Linux Two         : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                  : ${VISP_HAVE_DIRECTSHOW_FOUND}
-  CMU 1394 Digital Camera SDK : ${VISP_HAVE_DIRECTSHOW_FOUND}
-  OpenCV                      : ${VISP_HAVE_CMU1394_FOUND} 
+  CMU 1394 Digital Camera SDK : ${VISP_HAVE_CMU1394_FOUND}
+  OpenCV                      : ${VISP_HAVE_OPENCV_FOUND} 
 Specific devices
   Yarp                        : ${VISP_HAVE_YARP_FOUND}
   Kinect                      : ${VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND}

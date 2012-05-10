@@ -1020,6 +1020,7 @@ SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_CMU1394_FOUND "no")  # for ViSP-third-party.txt
 
 # open CV
 IF(USE_OPENCV)
