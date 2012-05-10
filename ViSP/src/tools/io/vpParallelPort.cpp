@@ -48,6 +48,7 @@
 #  include <sys/stat.h>
 #  include <fcntl.h>
 #  include <sys/ioctl.h>
+#  include <unistd.h>
 
 #  include <visp/vpParallelPort.h>
 

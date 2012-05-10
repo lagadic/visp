@@ -802,7 +802,7 @@ bool vpIoTools::readConfigVar(const std::string &var, int &value)
 */
 bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
 {
-  int v;
+  int v = 0;
   bool found = readConfigVar(var,v);
   value = (unsigned int) v;
   return found;
@@ -818,7 +818,7 @@ bool vpIoTools::readConfigVar(const std::string &var, unsigned int &value)
 */
 bool vpIoTools::readConfigVar(const std::string &var, bool &value)
 {
-  int v;
+  int v = 0;
   bool found = readConfigVar(var,v);
   value = (v!=0);
   return found;
@@ -834,7 +834,7 @@ bool vpIoTools::readConfigVar(const std::string &var, bool &value)
 */
 bool vpIoTools::readConfigVar(const std::string &var, vpColor &value)
 {
-  unsigned int v;
+  unsigned int v = 0;
   bool found = readConfigVar(var,v);
   value = vpColor::getColor(v);
   return found;
