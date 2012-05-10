@@ -78,7 +78,8 @@
   and vice versa.
 
   The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
-  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0).
+  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0). See
+  setEllipsoidShapePrecision() for more details.
 
   track() and searchDotsInArea() are the most important features
   of this class.
