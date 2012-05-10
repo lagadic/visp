@@ -45,7 +45,7 @@
   \brief Track a dot.
 */
 
-
+//#define DEBUG
 
 
 #include <visp/vpDisplay.h>
@@ -666,6 +666,8 @@ double vpDot2::getSizePrecision() const
   Return the precision of the ellipsoid shape of the dot. It is a double
   precision float witch value is in [0,1]. 1 means full precision, whereas
   values close to 0 show a very bad precision.
+
+  \sa setEllipsoidShapePrecision()
 */
 double vpDot2::getEllipsoidShapePrecision() const
 {
@@ -810,6 +812,26 @@ void vpDot2::setSizePrecision( const double & sizePrecision )
   - Values lower or equal to 0 are brought back to 0.
   - Values higher than  1 are brought back to 1.
   To track a non ellipsoid shape use setEllipsoidShapePrecision(0).
+
+  The following example show how to track a blob with a hight constaint on an ellipsoid shape.
+  The tracking will fail if the shape is not ellipsoid.
+  \code
+  vpDot2 dot;
+  dot.setEllipsoidShapePrecision(0.9); // to track a blob with a hight constraint attendee on a circle shape
+  ...
+  dot.track();
+  \endcode
+
+  This other example shows how to remove any constraint on the shape. Here the tracker will be able to track
+  any shape, including square or rectangular shapes.
+  \code
+  vpDot2 dot;
+  dot.setEllipsoidShapePrecision(0.); // to track a blob without any constraint on the shape
+  ...
+  dot.track();
+  \endcode
+
+  \sa getEllipsoidShapePrecision()
 */
 void vpDot2::setEllipsoidShapePrecision(const double & ellipsoidShapePrecision) {
 
@@ -1935,23 +1957,27 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         ip.set_v( v );
 
         vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
-#ifdef VP_DEBUG
-#if VP_DEBUG_MODE == 3
-        vpDisplay::flush(I);
-#endif
-#endif
       }
+#ifdef DEBUG
+      vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
+      vpDisplay::flush(I);
+#endif
     }
 
     // to be able to track small dots, maximize the ellipsoid radius for the
     // inner test
     a1 += 2.0;
     a2 += 2.0;
-    
+
     double outCoef =  2-ellipsoidShapePrecision;           //1.6;
     for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 ) {
       u = (unsigned int) (cog_u + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
       v = (unsigned int) (cog_v + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
+#ifdef DEBUG
+      //vpDisplay::displayRectangle(I, area, vpColor::yellow);
+      vpDisplay::displayCross( I, v, u, 7, vpColor::purple ) ;
+      vpDisplay::flush(I);
+#endif
       // If outside the area, continue
       if ((double)u < area.getLeft() || (double)u > area.getRight()
         || (double)v < area.getTop() || (double)v > area.getBottom()) {
@@ -1967,11 +1993,6 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         ip.set_v( v );
 
         vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
-#ifdef VP_DEBUG
-#if VP_DEBUG_MODE == 3
-        vpDisplay::flush(I);
-#endif
-#endif
       }
     }
   }
@@ -2253,6 +2274,10 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
       vpDisplay::displayPoint(I, ip, vpColor::red) ;
       //vpDisplay::flush(I);
     }
+#ifdef DEBUG
+    vpDisplay::displayPoint(I, border_v, border_u, vpColor::red);
+    vpDisplay::flush(I);
+#endif
     // Determine the increments for the parameters
     computeFreemanParameters(border_u, border_v, dir, du, dv,
                              dS, // surface
@@ -2391,6 +2416,10 @@ bool
   border_u = u;
   border_v = v;
   double epsilon =0.001;
+
+#ifdef DEBUG
+  std::cout << "gray level: " << gray_level_min << " " << gray_level_max << std::endl;
+#endif
   while( hasGoodLevel( I, border_u+1, border_v ) &&
          border_u < area.getRight()/*I.getWidth()*/ )  {
     // if the width of this dot was initialised and we already crossed the dot
@@ -2400,6 +2429,10 @@ bool
       vpDEBUG_TRACE(3, "The found dot (%d, %d, %d) has a greater width than the required one", u, v, border_u);
       return false;
     }
+#ifdef DEBUG
+    vpDisplay::displayPoint(I, border_v, border_u+1, vpColor::green);
+    vpDisplay::flush(I);
+#endif
 
     border_u++;
   }
