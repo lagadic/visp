@@ -771,7 +771,7 @@ vpRobust::erf(double x)
 double
 vpRobust::gammp(double a, double x)
 {
-  double gamser=0.,gammcf,gln;
+  double gamser=0.,gammcf=0.,gln;
 
   if (x < 0.0 || a <= 0.0)
     std::cout << "Invalid arguments in routine GAMMP";

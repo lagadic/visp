@@ -64,11 +64,17 @@
   Shows how to build a task with a segment visual feature.
 
 */
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
 int main(int argc, const char ** /* argv */)
+#else
+int main()
+#endif
 {  
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
   bool opt_display = true;
   if (argc == 2)
     opt_display = false;
+#endif
 
   vpCameraParameters cam(640.,480.,320.,240.);
 #if defined(VISP_HAVE_X11)
