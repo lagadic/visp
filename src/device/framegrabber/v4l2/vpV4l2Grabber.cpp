@@ -1241,7 +1241,7 @@ vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
   /* wait for the next frame */
  again:
 
-  tv.tv_sec  = 1;
+  tv.tv_sec  = 30;
   tv.tv_usec = 0;
   FD_ZERO(&rdset);
   FD_SET(static_cast<unsigned int>(fd), &rdset);
