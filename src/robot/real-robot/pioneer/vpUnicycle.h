@@ -50,7 +50,7 @@
 
   \class vpUnicycle
 
-  \ingroup Pioneer RobotDriver
+  \ingroup Pioneer
 
   \brief Generic functions for unicycle mobile robots.
 

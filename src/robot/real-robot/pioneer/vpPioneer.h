@@ -48,13 +48,13 @@
 
 /*!
 
-  \class vpUnicycle
+  \class vpPioneer
 
-  \ingroup Pioneer RobotDriver
+  \ingroup Pioneer
 
-  \brief Generic functions for unicycle mobile robots.
+  \brief Generic functions for Pioneer mobile robots.
 
-  This class provides common features for unicycle mobile robots.
+  This class provides common features for Pioneer mobile robots.
 
 */
 class VISP_EXPORT vpPioneer: public vpUnicycle

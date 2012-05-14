@@ -199,6 +199,10 @@ scheme, ...</p>
   \ingroup ImageProcessing
   \defgroup Histogram Image histogram
 */
+/*!
+  \ingroup Image
+  \defgroup ImageSimulator Image simulator
+*/
 
 
 /*

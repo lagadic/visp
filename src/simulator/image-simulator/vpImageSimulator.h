@@ -47,6 +47,8 @@
 /*!
   \class vpImageSimulator
 
+  \ingroup ImageSimulator
+
   \brief Class which enables to project an image in the 3D space and get the view of a virtual camera.
   
   The image is represented by a rectangular image whose corners coordinates are known in the 3D frame linked to the 3D rectangle.

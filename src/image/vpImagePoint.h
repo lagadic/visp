@@ -61,7 +61,7 @@ class vpRect;
 
 /*!
   \class vpImagePoint
-  \ingroup TrackingFeature GeometryFeature
+  \ingroup ImageTool
 
   \brief Class that defines a 2D point in an image. This class is
   useful for image processing and stores only the <B>2D coordinates
