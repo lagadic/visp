@@ -48,6 +48,7 @@
   \brief class that defines what is a Keypoint
 */
 
+#include <visp/vpColor.h>
 #include <visp/vpImage.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpRect.h>
@@ -78,7 +79,7 @@ class VISP_EXPORT vpBasicKeyPoint
    virtual unsigned int buildReference(const vpImage<unsigned char> &I) =0;
 
    virtual unsigned int buildReference(const vpImage<unsigned char> &I,
-            vpImagePoint &iP,
+            const vpImagePoint &iP,
             const unsigned int height, const unsigned int width) =0;
 
    virtual unsigned int buildReference(const vpImage<unsigned char> &I,
@@ -87,16 +88,17 @@ class VISP_EXPORT vpBasicKeyPoint
    virtual unsigned int matchPoint(const vpImage<unsigned char> &I) =0;
 
    virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
-        vpImagePoint &iP,
+        const vpImagePoint &iP,
         const unsigned int height, const unsigned int width) =0;
 
    virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
         const vpRect& rectangle) =0;
 
    virtual void display(const vpImage<unsigned char> &Iref,
-      const vpImage<unsigned char> &Icurrent) =0;
+                        const vpImage<unsigned char> &Icurrent, unsigned int size=3) =0;
 
-   virtual void display(const vpImage<unsigned char> &Icurrent) =0;
+   virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size=3,
+                        const vpColor &color=vpColor::green) =0;
 
    /*!
     Indicate wether the reference has been built or not.

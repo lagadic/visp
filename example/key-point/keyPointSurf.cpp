@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
   if (opt_display) {
     try{
       // Display size is automatically defined by the image (I) size
-      display[1].init(Icur, 100, 100,"Display current image") ;
+      display[1].init(Icur, 100+Iref.getWidth(), 100,"Display current image") ;
       vpDisplay::display(Icur) ;
       vpDisplay::flush(Icur) ;
     }
@@ -358,8 +358,8 @@ main(int argc, const char ** argv)
     if (opt_display)
     {
       // Display the matched features
-      surf.display(Iref,Icur);
-
+      surf.display(Iref, Icur, 7);
+      vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::red);
       vpDisplay::flush(Iref) ;
       vpDisplay::flush(Icur) ;
     }

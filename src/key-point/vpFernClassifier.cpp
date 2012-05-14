@@ -211,7 +211,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
 */
 unsigned int 
 vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, 
-	      vpImagePoint &_iP, 
+	      const vpImagePoint &_iP,
 	      const unsigned int _height, const unsigned int _width)
 {
   if((_iP.get_i()+_height) >= _I.getHeight()
@@ -361,7 +361,7 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 */
 unsigned int 
 vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, 
-	  vpImagePoint &_iP, 
+	  const vpImagePoint &_iP,
 	  const unsigned int _height, const unsigned int _width)
 {
   if((_iP.get_i()+_height) >= _I.getHeight()
@@ -418,14 +418,16 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
 
   \param _Icurrent : The image where the matched points computed in the
   current image are displayed.
+
+  \param size : Size in pixels of the cross that is used to display matched points.
 */
 void 
 vpFernClassifier::display(const vpImage<unsigned char> &_Iref, 
-	const vpImage<unsigned char> &_Icurrent)
+                          const vpImage<unsigned char> &_Icurrent, unsigned int size)
 {
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++){
-      vpDisplay::displayCross (_Iref, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
-      vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], 3, vpColor::green);
+      vpDisplay::displayCross (_Iref, referenceImagePointsList[matchedReferencePoints[i]], size, vpColor::red);
+      vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], size, vpColor::green);
   }
 
 }
@@ -436,12 +438,17 @@ vpFernClassifier::display(const vpImage<unsigned char> &_Iref,
   current image. They are displayed in the image Icurrent.
   
   \param _Icurrent : the gray scaled image for the display
+
+  \param size : Size in pixels of the cross that is used to display matched points.
+
+  \param color : Color used to display the matched points.
 */
 void 
-vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent)
+vpFernClassifier::display(const vpImage<unsigned char> &_Icurrent, unsigned int size,
+                          const vpColor &color)
 {    
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++){
-      vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], 3, vpColor::green);
+      vpDisplay::displayCross (_Icurrent, currentImagePointsList[i], size, color);
   }
 }
 
