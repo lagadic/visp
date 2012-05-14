@@ -42,7 +42,7 @@
 #include <visp/vpConfig.h>
 
 /*!
-  \file grabOpenCV-2.cpp
+  \example grabOpenCV-2.cpp
 
   \brief Example of framegrabbing using OpenCV cv::VideoCapture class.
 
@@ -73,6 +73,8 @@ int main(int argc, char** argv)
 
   std::cout << "Use device: " << device << std::endl;
   cv::VideoCapture cap(device); // open the default camera
+  cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
   if(!cap.isOpened())  // check if we succeeded
     return -1;
   cv::Mat frame;
