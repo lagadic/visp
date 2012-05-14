@@ -268,8 +268,7 @@ main(int argc, const char ** argv)
   if (opt_display) {
     try{
       // Display size is automatically defined by the image (I) size
-      display[0].init(Iref, 100, 100,"Refrence image") ;
-      display[1].init(Icur, 100, 100,"Current image") ;
+      display[0].init(Iref, 100, 100, "Reference image") ;
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
@@ -299,6 +298,8 @@ main(int argc, const char ** argv)
       vpDisplay::getClick(Iref, corners[i]);
     }
 
+    vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::red);
+    vpDisplay::flush(Iref);
     unsigned int height, width;
     height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
     width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
@@ -321,6 +322,7 @@ main(int argc, const char ** argv)
 
   unsigned int nbrPair;
   if (opt_display) {
+    display[1].init(Icur, 100+Iref.getWidth(), 100, "Current image") ;
     // display variable.
     vpDisplay::display(Icur) ;
     //Flush the display
@@ -336,7 +338,8 @@ main(int argc, const char ** argv)
     {
       vpDisplay::getClick(Icur, corners[i]);
     }
-
+    vpDisplay::displayRectangle(Icur, corners[0], corners[1], vpColor::green);
+    vpDisplay::flush(Icur);
     unsigned int height, width;
     height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
     width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
