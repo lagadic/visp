@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -58,7 +58,7 @@
 #include <visp/vpVelocityTwistMatrix.h>
 
 /*!
-  \example servoPioneerPoint2DDepth.cpp
+  \example servoPioneerPoint2DDepthWithoutVpServo.cpp
 
   Example that shows how to control the Pioneer mobile robot by IBVS visual servoing with respect to a blob.
   The current visual features that are used are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
