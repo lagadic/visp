@@ -324,7 +324,7 @@ main(int argc, const char** argv)
 
   if(isLearning){  
     if(opt_display){
-      displayRef.init(Iref, 100, 100, "Test vpFernClassifier reference image") ;
+      displayRef.init(Iref, 100, 100, "Reference image") ;
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
     }
@@ -397,17 +397,17 @@ main(int argc, const char** argv)
   
   
   if(opt_display){
-    display.init(I, 110 + (int)Iref.getWidth(), 100, "Test vpFernClassifier current image") ;
+    display.init(I, 110 + (int)Iref.getWidth(), 100, "Current image") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }
 
   if (opt_display && opt_click_allowed){
-    std::cout << "Click on the reference image to continue" << std::endl;
-    vpDisplay::displayCharString (Iref, vpImagePoint(15,15), 
-                                  (char*)"Click on the reference image to continue", vpColor::red);
-    vpDisplay::flush(Iref);
-    vpDisplay::getClick(Iref);
+    std::cout << "Click on the current image to continue" << std::endl;
+    vpDisplay::displayCharString (I, vpImagePoint(15,15),
+                                  (char*)"Click on the current image to continue", vpColor::red);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I);
   }  
   
   for ( ; ; ) {
@@ -429,7 +429,8 @@ main(int argc, const char** argv)
     
     if(opt_display){
       vpDisplay::display(I);
-      vpDisplay::display(Iref);
+      if(isLearning)
+        vpDisplay::display(Iref);
     }
     
     double t0 = vpTime::measureTimeMs (); 
@@ -449,9 +450,10 @@ main(int argc, const char** argv)
     std::cout << "matching " << nbpts << " points : " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
     
     if(opt_display){
-      fern.display(Iref, I);
+      fern.display(Iref, I, 7);
       vpDisplay::flush(I);
-      vpDisplay::flush(Iref);
+      if(isLearning)
+        vpDisplay::flush(Iref);
       if(vpDisplay::getClick(I, false)){
         break;
       }

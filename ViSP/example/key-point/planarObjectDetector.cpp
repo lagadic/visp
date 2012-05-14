@@ -329,7 +329,7 @@ main(int argc, const char** argv)
   vpImagePoint corners[2];
   if(isLearning){  
     if(opt_display){
-      displayRef.init(Iref, 100, 100, "Test vpPlanarObjectDetector reference image") ;
+      displayRef.init(Iref, 100, 100, "Reference image") ;
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
     }
@@ -386,7 +386,7 @@ main(int argc, const char** argv)
   }
 
   if(opt_display){
-    display.init(I, 110 + (int)Iref.getWidth(), 100, "Test vpPlanarObjectDetector") ;
+    display.init(I, 110 + (int)Iref.getWidth(), 100, "Current image") ;
     vpDisplay::display(I);
     vpDisplay::flush(I);
   }

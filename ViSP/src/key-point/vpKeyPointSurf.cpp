@@ -205,6 +205,10 @@ vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
 */
 void vpKeyPointSurf::init()
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
+  cv::initModule_nonfree();
+#endif
+
   storage = cvCreateMemStorage(0);
   params = cvSURFParams(hessianThreshold, descriptorType);
 }
@@ -288,7 +292,7 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
   \return the number of reference points.
 */
 unsigned int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
-				    vpImagePoint &iP,
+				    const vpImagePoint &iP,
 				    const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
@@ -465,7 +469,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   \return the number of point which have been matched.
 */
 unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
-			       vpImagePoint &iP,
+			       const vpImagePoint &iP,
 			       const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
@@ -537,9 +541,12 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 
   \param Icurrent : The image where the matched points computed in the
   current image are displayed.
+
+  \param size : Size in pixels of the cross that is used to display matched points.
+
 */
 void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
-			     const vpImage<unsigned char> &Icurrent)
+                             const vpImage<unsigned char> &Icurrent, unsigned int size)
 {
 //  matchedPointsCurrentImageList.front();
 //  matchedPointsReferenceImageList.front();
@@ -553,8 +560,8 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
 
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++)
   {
-      vpDisplay::displayCross (Ireference, referenceImagePointsList[matchedReferencePoints[i]], 3, vpColor::red);
-      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
+      vpDisplay::displayCross (Ireference, referenceImagePointsList[matchedReferencePoints[i]], size, vpColor::red);
+      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], size, vpColor::green);
 //       matchedPointsReferenceImageList.next();
 //       matchedPointsCurrentImageList.next();
   }
@@ -568,8 +575,12 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Ireference,
 
   \param Icurrent : The image where the matched points computed in the
   current image are displayed.
+
+  \param size : Size in pixels of the cross that is used to display matched points.
+
+  \param color : Color used to display the matched points.
 */
-void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
+void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent, unsigned int size, const vpColor &color)
 {
 //   matchedPointsCurrentImageList.front();
 //
@@ -577,7 +588,7 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent)
 //
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++)
   {
-      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], 3, vpColor::green);
+      vpDisplay::displayCross (Icurrent, currentImagePointsList[i], size, color);
   }
 }
 

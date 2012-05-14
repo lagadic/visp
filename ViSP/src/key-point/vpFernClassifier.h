@@ -254,7 +254,7 @@ public:
     /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
-	        vpImagePoint &iP, 
+                const vpImagePoint &iP,
 	        const unsigned int height, const unsigned int width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
 	        const vpRect& rectangle);
@@ -262,15 +262,16 @@ public:
     /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
-	    vpImagePoint &iP, 
+            const vpImagePoint &iP,
 	    const unsigned int height, const unsigned int width);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
 	    const vpRect& rectangle);
 
     /* display */
   virtual void display(const vpImage<unsigned char> &Iref, 
-	  const vpImage<unsigned char> &Icurrent);
-  virtual void display(const vpImage<unsigned char> &Icurrent);
+                       const vpImage<unsigned char> &Icurrent, unsigned int size=3);
+  virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size=3,
+                       const vpColor &color=vpColor::green);
   
     /* io methods */
   void load(const std::string& _dataFile, const std::string& /*_objectName*/);

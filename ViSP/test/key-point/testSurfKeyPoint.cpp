@@ -360,7 +360,7 @@ main(int argc, const char ** argv)
 
   if (opt_display)
   {
-    surf.display(Iref, Icur);
+    surf.display(Iref, Icur, 7);
     vpDisplay::flush(Iref) ;
     vpDisplay::flush(Icur) ;
     if (opt_click_allowed)

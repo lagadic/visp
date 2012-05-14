@@ -184,7 +184,7 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I)
 */
 unsigned int
 vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
-		       vpImagePoint &_iP,
+		       const vpImagePoint &_iP,
 		       unsigned int _height, unsigned int _width)
 {
   unsigned int res = fern.buildReference(_I, _iP, _height, _width);
@@ -337,7 +337,7 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 */
 bool 
 vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
-	   vpImagePoint &iP, const unsigned int height, const unsigned int width)
+           const vpImagePoint &iP, const unsigned int height, const unsigned int width)
 {
   if((iP.get_i()+height) >= I.getHeight()
      || (iP.get_j()+width) >= I.getWidth()) {

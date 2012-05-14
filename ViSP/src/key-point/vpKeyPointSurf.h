@@ -60,9 +60,11 @@
 
 #if defined (VISP_HAVE_OPENCV) 
 
+
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
 #  include <opencv2/features2d/features2d.hpp>
 #  include <opencv2/legacy/compat.hpp>
+#  include <opencv2/nonfree/nonfree.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #  include <opencv2/features2d/features2d.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x010100) // Require opencv >= 1.1.0
@@ -210,17 +212,18 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
     unsigned int buildReference(const vpImage<unsigned char> &I);
     unsigned int buildReference(const vpImage<unsigned char> &I,
-		       vpImagePoint &iP,
+                       const vpImagePoint &iP,
 		       const unsigned int height, const unsigned int width);
     unsigned int buildReference(const vpImage<unsigned char> &I,
 		       const vpRect& rectangle);
     unsigned int matchPoint(const vpImage<unsigned char> &I);
     unsigned int matchPoint(const vpImage<unsigned char> &I,
-		   vpImagePoint &iP, const unsigned int height, const unsigned int width);
+                   const vpImagePoint &iP, const unsigned int height, const unsigned int width);
     unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect& rectangle);
     void display(const vpImage<unsigned char> &Iref,
-		 const vpImage<unsigned char> &Icurrent);
-    void display(const vpImage<unsigned char> &Icurrent);
+                 const vpImage<unsigned char> &Icurrent, unsigned int size=3);
+    void display(const vpImage<unsigned char> &Icurrent, unsigned int size=3,
+                 const vpColor &color=vpColor::green);
     std::list<int*>* matchPoint(std::list<float*> descriptorList, std::list<int> laplacianList);
     float* getDescriptorReferencePoint (const int index);
     int getLaplacianReferencePoint (const int index);
