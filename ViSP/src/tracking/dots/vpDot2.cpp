@@ -89,6 +89,7 @@ void
   sizePrecision = 0.65;
   ellipsoidShapePrecision = 0.65;
   maxSizeSearchDistancePrecision = 0.65;
+  setEllipsoidBadPointsPercentage();
   m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
@@ -149,6 +150,7 @@ void vpDot2::operator=(const vpDot2& twinDot )
   sizePrecision = twinDot.sizePrecision;
   ellipsoidShapePrecision = twinDot.ellipsoidShapePrecision ;
   maxSizeSearchDistancePrecision = twinDot.maxSizeSearchDistancePrecision;
+  allowedBadPointsPercentage_ = twinDot.allowedBadPointsPercentage_;
   area = twinDot.area;
 
   m00 = twinDot.m00;
@@ -1840,64 +1842,95 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First, check the width, height and surface of the dot. Those parameters
   // must be the same.
   //
-  //if (   (wantedDot.getWidth()   != 0) 
-  //  && (wantedDot.getHeight()  != 0) 
-  //  && (wantedDot.getSurface() != 0) ) 
-  if (   (std::fabs(wantedDot.getWidth()) > std::numeric_limits<double>::epsilon()) 
+  //if (   (wantedDot.getWidth()   != 0)
+  //  && (wantedDot.getHeight()  != 0)
+  //  && (wantedDot.getSurface() != 0) )
+  if (   (std::fabs(wantedDot.getWidth()) > std::numeric_limits<double>::epsilon())
     &&
         (std::fabs(wantedDot.getHeight())  > std::numeric_limits<double>::epsilon())
     &&
         (std::fabs(wantedDot.getSurface()) > std::numeric_limits<double>::epsilon()) )
     // if (sizePrecision!=0){
     if (std::fabs(sizePrecision) > std::numeric_limits<double>::epsilon()){
-    //     std::cout << "test size precision......................\n";
-    //     std::cout << "wanted dot: " << "w=" << wantedDot.getWidth()
-    // 	      << " h=" << wantedDot.getHeight()
-    // 	      << " s=" << wantedDot.getSurface()
-    // 	      << " precision=" << sizePrecision
-    // 	      << " epsilon=" << epsilon << std::endl;
-    //     std::cout << "dot found: " << "w=" << getWidth()
-    // 	      << " h=" << getHeight()
-    // 	      << " s=" << getSurface() << std::endl;
+#ifdef DEBUG
+         std::cout << "test size precision......................\n";
+         std::cout << "wanted dot: " << "w=" << wantedDot.getWidth()
+              << " h=" << wantedDot.getHeight()
+              << " s=" << wantedDot.getSurface()
+              << " precision=" << sizePrecision
+              << " epsilon=" << epsilon << std::endl;
+         std::cout << "dot found: " << "w=" << getWidth()
+              << " h=" << getHeight()
+              << " s=" << getSurface() << std::endl;
+#endif
     if( ( wantedDot.getWidth()*sizePrecision-epsilon < getWidth() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad width < for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad width > for dot (%g, %g)\n", cog.get_u(), cog.get_v());
+#endif
       return false;
     }
 
     if( ( getWidth() < wantedDot.getWidth()/(sizePrecision+epsilon ) )== false )
     {
-      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad width %g > %g for dot (%g, %g)\n",
+             getWidth(), wantedDot.getWidth()/(sizePrecision+epsilon),
+                                               cog.get_u(), cog.get_v());
+#endif
       return false;
     }
 
     if( ( wantedDot.getHeight()*sizePrecision-epsilon < getHeight() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad height < for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad height %g > %g for dot (%g, %g)\n",
+             wantedDot.getHeight()*sizePrecision-epsilon, getHeight(),
+             cog.get_u(), cog.get_v());
+#endif
       return false;
     }
 
     if( ( getHeight() < wantedDot.getHeight()/(sizePrecision+epsilon )) == false )
     {
-      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad height %g > %g for dot (%g, %g)\n",
+             getHeight(), wantedDot.getHeight()/(sizePrecision+epsilon),
+                                                 cog.get_u(), cog.get_v());
+#endif
       return false;
     }
 
     if( ( wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon < getSurface() ) == false )
     {
-      vpDEBUG_TRACE(3, "Bad surface < for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad surface %g > %g for dot (%g, %g)\n",
+             wantedDot.getSurface()*(sizePrecision*sizePrecision)-epsilon,
+             getSurface(),
+             cog.get_u(), cog.get_v());
+#endif
       return false;
     }
 
     if( ( getSurface() < wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon )) == false )
     {
-      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)", 
+      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
                     cog.get_u(), cog.get_v());
+#ifdef DEBUG
+      printf("Bad surface %g < %g for dot (%g, %g)\n",
+             getSurface(), wantedDot.getSurface()/(sizePrecision*sizePrecision+epsilon),
+                                                   cog.get_u(), cog.get_v());
+#endif
       return false;
     }
   }
@@ -1906,6 +1939,11 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
   // First check there is a white (>level) elipse within dot
   // Then check the dot is surrounded by a black elipse.
   //
+  int nb_point_to_test = 20; // Nb points to test on inner and outside ellipsoid
+  int nb_bad_points = 0;
+  int nb_max_bad_points = (int)(nb_point_to_test*allowedBadPointsPercentage_);
+  double step_angle = 2*M_PI / nb_point_to_test;
+
   //  if (ellipsoidShapePrecision != 0 && compute_moment) {
   if (std::fabs(ellipsoidShapePrecision) > std::numeric_limits<double>::epsilon() && compute_moment) {
     //       std::cout << "test shape precision......................\n";
@@ -1943,14 +1981,19 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
     double cog_v = this->cog.get_v();
 
     vpImagePoint ip;
-
-    for( double theta = 0. ; theta<2*M_PI ; theta+= 0.4 ) {
+    nb_bad_points = 0;
+    for( double theta = 0. ; theta<2*M_PI ; theta+= step_angle ) {
       u = (unsigned int) (cog_u + innerCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
       v = (unsigned int) (cog_v + innerCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
-      if( ! this->hasGoodLevel( I, u, v ) ) {
+      if( ! this->hasGoodLevel( I, u, v) ) {
         // 	vpTRACE("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
         // 		u, v, cog_u, cog_v);
-        return false;
+#ifdef DEBUG
+        printf("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
+               u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
+#endif
+        //return false;
+        nb_bad_points ++;
       }
       if (graphics) {
         ip.set_u( u );
@@ -1963,14 +2006,22 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
       vpDisplay::flush(I);
 #endif
     }
-
+    if (nb_bad_points > nb_max_bad_points)
+    {
+#ifdef DEBUG
+        printf("Inner ellipse has %d bad points. Max allowed is %d\n",
+               nb_bad_points, nb_max_bad_points);
+#endif
+      return false;
+    }
     // to be able to track small dots, maximize the ellipsoid radius for the
     // inner test
     a1 += 2.0;
     a2 += 2.0;
 
     double outCoef =  2-ellipsoidShapePrecision;           //1.6;
-    for( double theta=0. ; theta<2*M_PI ; theta+= 0.3 ) {
+    nb_bad_points = 0;
+    for( double theta=0. ; theta<2*M_PI ; theta+= step_angle ) {
       u = (unsigned int) (cog_u + outCoef*(a1*cos(alpha)*cos(theta)-a2*sin(alpha)*sin(theta)));
       v = (unsigned int) (cog_v + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
 #ifdef DEBUG
@@ -1986,7 +2037,12 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
       if( ! this->hasReverseLevel( I, u, v ) ) {
         // 	vpTRACE("Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
         // 		u, v, cog_u, cog_v);
-        return false;
+#ifdef DEBUG
+        printf("Outside cercle pixel (%d, %d) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
+               u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
+#endif
+        nb_bad_points ++;
+        //return false;
       }
       if (graphics) {
         ip.set_u( u );
@@ -1996,9 +2052,18 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
       }
     }
   }
+  if (nb_bad_points > nb_max_bad_points)
+  {
+#ifdef DEBUG
+      printf("Outside ellipse has %d bad points. Max allowed is %d\n",
+             nb_bad_points, nb_max_bad_points);
+#endif
+    return false;
+  }
 
   return true;
 }
+
 
 
 /*!

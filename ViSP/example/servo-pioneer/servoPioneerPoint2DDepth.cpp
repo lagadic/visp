@@ -163,7 +163,9 @@ int main(int argc, char **argv)
   vpDot2 dot;
   dot.setGraphics(true);
   dot.setComputeMoments(true);
-  dot.setEllipsoidShapePrecision(0.);
+  dot.setEllipsoidShapePrecision(0.);  // to track a blob without any constraint on the shape
+  dot.setGrayLevelPrecision(0.9);  // to set the blob gray level bounds for binarisation
+  dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner and outside points with bad gray level
   dot.initTracking(I);
   vpDisplay::flush(I);
 

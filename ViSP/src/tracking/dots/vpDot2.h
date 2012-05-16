@@ -65,21 +65,37 @@
 
   \ingroup TrackingImageBasic
 
-  \brief This tracker is meant to track a dot (connex pixels with same
+  \brief This tracker is meant to track a blob (connex pixels with same
   gray level) on a vpImage.
 
   The underground algorithm is based on a binarisation of the image
-  and then a contour detection using the Freeman chain coding to
-  determine the dot characteristics (location, moments, size...).
+  and then on a contour detection using the Freeman chain coding to
+  determine the blob characteristics (location, moments, size...).
 
-  The center of gravity of a vpDot2 zone has to be of the right color
-  level. You can specify these color levels by setGrayLevelMin() and
-  setGrayLevelMax(). This allows to track white objects on a black background
-  and vice versa.
+  The binarisation is done using gray level minimum and maximum values
+  that define the admissible gray levels of the blob. You can specify these
+  levels by setGrayLevelMin() and setGrayLevelMax(). These levels are also
+  set automatically by setGrayLevelPrecision(). The algorithm allows
+  to track white objects on a black background and vice versa.
 
-  The geometry of a vpDot2 zone is by default ellipsoid. If you want to track a
-  non ellipsoid shape, you have to call setEllipsoidShapePrecision(0). See
-  setEllipsoidShapePrecision() for more details.
+  When a blob is found, some tests are done to see if it is valid:
+  - A blob is considered by default as ellipsoid. The found blob could
+  be rejected if the shape is not ellipsoid. To determine if the shape
+  is ellipsoid the algorithm consider an inner and outside ellipse.
+  Sampled points on these two ellipses should have the right gray levels.
+  Along the inner ellipse the sampled points shoud have gray levels
+  that are in the gray level minimum and maximum bounds, while
+  on the outside ellipse, the gray levels should be out of the gray level
+  bounds. To set the percentage of the sample points which should have the right
+  levels use setEllipsoidBadPointsPercentage(). The distance between the
+  inner ellpsoid and the blob contour, as well the distance between the
+  blob contour and the outside ellipse is fixed by setEllipsoidShapePrecision().
+  If you want to track a non ellipsoid shape, and turn off this validation test,
+  you have to call setEllipsoidShapePrecision(0).
+  - The width, height and surface of the blob are compared to the
+  corresponding values of the previous blob. If they differ to much
+  the blob could be rejected. To set the admissible distance you can
+  use setSizePrecision().
 
   track() and searchDotsInArea() are the most important features
   of this class.
@@ -125,6 +141,29 @@ public:
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
+
+  /*!
+    Set the percentage of sampled points that are considered non conform
+    in terms of the gray level on the inner and the ouside ellipses.
+    Points located on the inner ellipse should have the same gray level
+    than the blob, while points located on the outside ellipse should
+    have a different gray level.
+
+    \param percentage : Percentage of points sampled with bad gray level
+    on the inner and outside ellipses that are admissible. 0 means
+    that all the points should have a right level, while a value of 1
+    means that all the points can have a bad gray level.
+    */
+  void setEllipsoidBadPointsPercentage(const double &percentage=0.0)
+  {
+    if (percentage < 0.)
+      allowedBadPointsPercentage_ = 0.;
+    else if (percentage > 1.)
+      allowedBadPointsPercentage_ = 1.;
+    else
+      allowedBadPointsPercentage_ = percentage;
+  }
+
   void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
   /*!
     Activates the display of the border of the dot during the tracking.
@@ -229,6 +268,16 @@ public:
   void getEdges(std::list<vpImagePoint> &edges_list) {
     edges_list = this->ip_edges_list;
   };
+  /*!
+    Get the percentage of sampled points that are considered non conform
+    in terms of the gray level on the inner and the ouside ellipses.
+
+    \sa setEllipsoidBadPointsPercentage()
+    */
+  double getEllipsoidBadPointsPercentage()
+  {
+    return allowedBadPointsPercentage_;
+  }
 
   double getEllipsoidShapePrecision() const;
   void getFreemanChain(std::list<unsigned int> &freeman_chain) ;
@@ -477,6 +526,7 @@ private:
   double sizePrecision ;
   double ellipsoidShapePrecision;
   double maxSizeSearchDistancePrecision;
+  double allowedBadPointsPercentage_;
   // Area where the dot is to search
   vpRect area;
 
