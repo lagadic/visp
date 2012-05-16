@@ -63,6 +63,7 @@ class vpTranslationVector;
 class vpColVector;
 class vpTranslationVector;
 class vpRowVector;
+class vpVelocityTwistMatrix;
 
 
 
@@ -254,6 +255,7 @@ protected:
   //---------------------------------
 
   static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpVelocityTwistMatrix &B, vpVelocityTwistMatrix &C);
   static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C);
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
@@ -274,6 +276,7 @@ protected:
   vpMatrix &operator-=(const vpMatrix &B);
 
   vpMatrix operator*(const vpMatrix &B) const;
+  vpVelocityTwistMatrix operator*(const vpVelocityTwistMatrix &B) const;
   vpMatrix operator+(const vpMatrix &B) const;
   vpMatrix operator-(const vpMatrix &B) const;
   vpMatrix operator-() const;
