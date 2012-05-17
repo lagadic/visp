@@ -57,7 +57,6 @@
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
 #include <visp/vpTranslationVector.h>
-#include <visp/vpVelocityTwistMatrix.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -381,17 +380,17 @@ vpMatrix::operator<<( double *x )
 //---------------------------------
 
 /*!
-Operation C = A * B.
+Operation C = A * B. 
 
 The result is placed in the third parameter C and not returned.
-A new matrix won't be allocated for every use of the function
+A new matrix won't be allocated for every use of the function 
 (Speed gain if used many times with the same result matrix size).
 
 \sa operator*()
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  try
+  try 
   {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
@@ -427,53 +426,6 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     }
   }
 }
-/*!
-Operation C = A * B.
-
-The result is placed in the third parameter C and not returned.
-A new matrix won't be allocated for every use of the function
-(Speed gain if used many times with the same result matrix size).
-
-\sa operator*()
-*/
-void vpMatrix::mult2Matrices(const vpMatrix &A, const vpVelocityTwistMatrix &B, vpVelocityTwistMatrix &C)
-{
-  try
-  {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
-
-  if (A.colNum != B.rowNum)
-  {
-    vpERROR_TRACE("\n\t\tvpMatrix mismatch in vpMatrix/vpVelocityTwistMatrix multiply") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-      "\n\t\tvpMatrix mismatch in "
-      "vpMatrix/vpVelocityTwistMatrix multiply")) ;
-  }
-
-  // 5/12/06 some "very" simple optimization to avoid indexation
-  unsigned int BcolNum = B.colNum;
-  unsigned int BrowNum = B.rowNum;
-  unsigned int i,j,k;
-  double **BrowPtrs = B.rowPtrs;
-  for (i=0;i<A.rowNum;i++)
-  {
-    double *rowptri = A.rowPtrs[i];
-    double *ci = C[i];
-    for (j=0;j<BcolNum;j++)
-    {
-      double s = 0;
-      for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
-      ci[j] = s;
-    }
-  }
-}
 
 /*!
 Operation C = A * B (A is unchanged).
@@ -482,18 +434,6 @@ Operation C = A * B (A is unchanged).
 vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 {
   vpMatrix C;
-
-  vpMatrix::mult2Matrices(*this,B,C);
-
-  return C;
-}
-/*!
-Operation C = A * B (A is unchanged).
-
-*/
-vpVelocityTwistMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &B) const
-{
-  vpVelocityTwistMatrix C;
 
   vpMatrix::mult2Matrices(*this,B,C);
 
