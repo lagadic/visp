@@ -1607,6 +1607,10 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
     //vpDisplay::flush(I);
   }
 
+#ifdef DEBUG
+  vpDisplay::displayRectangle(I, area, vpColor::blue);
+  vpDisplay::flush(I);
+#endif
   // start the search loop; for all points of the search grid,
   // test if the pixel belongs to a valid dot.
   // if it is so eventually add it to the vector of valid dots.
