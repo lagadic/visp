@@ -79,30 +79,28 @@ vpKinect::~vpKinect()
 void vpKinect::start(vpKinect::vpDMResolution res)
 {
     DMres = res;
+	height = 480;
+	width = 640;
   //!Calibration parameters are the parameters found for our Kinect device. Note that they can differ from one device to another.
 	if (DMres == DMAP_LOW_RES){
 		std::cout << "vpKinect::start LOW depth map resolution 240x320" << std::endl;
 		//		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2, IRcam.get_u0()/2, IRcam.get_v0()/2);
 		//IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
 		IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
-		height = 240;
-		width = 320;
 	}
 	else
 	{
 		std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
-		height = 480;
-		width = 640;
+
 		//IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
 		IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
 		//		Idmap.resize(height, width);
-
 	}
 
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   	vpXmlParserCamera cameraParser;
   	char cameraXmlFile[FILENAME_MAX];
-  	sprintf(cameraXmlFile, "/udd/fspindle/Viper850/Viper850-code/include/const_camera.xml");//!Todo
+  	sprintf(cameraXmlFile, "/udd/fspindle/Viper850/Viper850-code/include/const_camera.xml");
   	cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width, height);
 #else
 //  RGBcam.initPersProjWithoutDistortion(525.53, 524.94, 309.9, 282.8);//old
@@ -257,7 +255,6 @@ bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB)
 void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> & Idepth, vpImage<vpRGBa> & IrgbWarped)
 {
 	if ((Idepth.getHeight()!=height )||(Idepth.getWidth()!=width)){
-		std::cout <<"Size error : "<<std::endl;
 	      vpERROR_TRACE(1, "Idepth image size does not match vpKinect DM resolution");
 	}
 	else{
