@@ -329,6 +329,13 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpGenericFeature.h
   )
 
+SET (HEADER_NETWORK
+  network/vpNetwork.h
+  network/vpServer.h
+  network/vpClient.h
+  network/vpRequest.h
+  )
+
 SET (HEADER_ALL 
   ${HEADER_CAMERA}
   ${HEADER_COMPUTER_VISION}
@@ -349,4 +356,5 @@ SET (HEADER_ALL
   ${HEADER_TRACKING}
   ${HEADER_VIDEO}
   ${HEADER_VISUAL_FEATURE}
+  ${HEADER_NETWORK}
   )

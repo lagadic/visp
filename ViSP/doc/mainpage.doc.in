@@ -378,6 +378,10 @@ scheme, ...</p>
 */
 /*!
   \ingroup Tool 
+  \defgroup Network Network
+*/
+/*!
+  \ingroup Tool 
   \defgroup plot Drawing of 2D or 3D graphics
 */
 /*!

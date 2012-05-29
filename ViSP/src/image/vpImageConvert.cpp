@@ -47,6 +47,7 @@
 */
 
 
+#include <sstream>
 
 // image
 #include <visp/vpImageConvert.h>
@@ -1100,6 +1101,107 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *sr
 }
 
 #endif
+
+#if defined(VISP_HAVE_LIBJPEG)
+
+/*!
+  Convert a vpImage\<unsigned char> to a JPEG compressed buffer
+
+  \param src : Source image in ViSP format.
+  \param dest : Destination buffer in JPEG format.
+  \param destSize : Size of the destination buffer.
+  \param quality : purcentage of the quality of the compressed image.
+*/
+void vpImageConvert::convertToJPEGBuffer(const vpImage<unsigned char> &src, 
+                                  unsigned char **dest, long unsigned int &destSize, unsigned int quality)
+{
+  struct jpeg_compress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_compress(&cinfo);
+  
+  *dest = NULL;
+  destSize = 0;
+  
+  jpeg_mem_dest(&cinfo, dest, &destSize);
+
+  unsigned int width = src.getWidth();
+  unsigned int height = src.getHeight();
+
+  cinfo.image_width = width;
+  cinfo.image_height = height;
+  cinfo.input_components = 1;
+  cinfo.in_color_space = JCS_GRAYSCALE;
+  jpeg_set_defaults(&cinfo);
+  jpeg_set_quality(&cinfo, quality, TRUE);
+
+  jpeg_start_compress(&cinfo,TRUE);
+
+  unsigned char *line;
+  line = new unsigned char[width];
+  unsigned char* input = (unsigned char*)src.bitmap;
+  while (cinfo.next_scanline < cinfo.image_height)
+  {
+    for (unsigned int i = 0; i < width; i++)
+    {
+      line[i] = *(input);
+    input++;
+    }
+  jpeg_write_scanlines(&cinfo, &line, 1);
+  }
+
+  jpeg_finish_compress(&cinfo);
+  jpeg_destroy_compress(&cinfo);
+  delete [] line;
+}
+  
+/*!
+  Decompress a JPEG buffer in a vpImage\<unsigned char>
+
+  \param src : Source buffer in JPEG format.
+  \param srcSize : Size of the source buffer.
+  \param dest : Destination image in ViSP format.
+*/
+void vpImageConvert::convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
+                                  vpImage<unsigned char> &dest)
+{
+  struct jpeg_decompress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+
+  cinfo.err = jpeg_std_error(&jerr);
+  jpeg_create_decompress(&cinfo);
+
+  jpeg_mem_src(&cinfo, src, srcSize);
+  jpeg_read_header(&cinfo, TRUE);
+
+  unsigned int width = cinfo.image_width;
+  unsigned int height = cinfo.image_height;
+
+  if ( (width != dest.getWidth()) || (height != dest.getHeight()) )
+    dest.resize(height,width);
+
+  jpeg_start_decompress(&cinfo);
+
+  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
+  JSAMPARRAY buf = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, rowbytes, 1);
+
+  if (cinfo.out_color_space == JCS_GRAYSCALE)
+  {
+    unsigned int row;
+    while (cinfo.output_scanline<cinfo.output_height)
+    {
+      row = cinfo.output_scanline;
+      jpeg_read_scanlines(&cinfo,buf,1);
+      memcpy(dest[row], buf[0], rowbytes);
+    }
+  }
+
+  jpeg_finish_decompress(&cinfo);
+  jpeg_destroy_decompress(&cinfo);
+}
+#endif // defined(VISP_HAVE_LIBJPEG)
+
 
 #define vpSAT(c) \
         if (c & (~255)) { if (c < 0) c = 0; else c = 255; }

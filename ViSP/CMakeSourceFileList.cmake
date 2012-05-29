@@ -401,6 +401,13 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureSegment.cpp
   )
 
+SET (SRC_NETWORK
+  network/vpNetwork.cpp
+  network/vpServer.cpp
+  network/vpClient.cpp
+  network/vpRequest.cpp
+  )
+
 SET (SRC_ALL
   ${SRC_CAMERA}
   ${SRC_COMPUTER_VISION}
@@ -420,5 +427,6 @@ SET (SRC_ALL
   ${SRC_TRACKING}
   ${SRC_VIDEO}
   ${SRC_VISUAL_FEATURE}
+  ${SRC_NETWORK}
   )
  
