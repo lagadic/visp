@@ -287,13 +287,12 @@ int vpNetwork::receive(T* object, const int &sizeOfObject)
     for(unsigned int i=0; i<receptor_list.size(); i++){
       if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
-      
-      if(numbytes == 0)
-      {
-        std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-        receptor_list.erase(receptor_list.begin()+i);
-        return 0;
-      }
+        if(numbytes <= 0)
+        {
+          std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
+          receptor_list.erase(receptor_list.begin()+i);
+          return numbytes;
+        }
         
         break;
       }
@@ -356,11 +355,11 @@ int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &si
     if(FD_ISSET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
       numbytes = recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
       
-      if(numbytes == 0)
+      if(numbytes <= 0)
       {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr) << std::endl;
         receptor_list.erase(receptor_list.begin()+receptorEmitting);
-        return 0;
+        return numbytes;
       }
     }
   }
@@ -398,8 +397,8 @@ int vpNetwork::send(T* object, const int &sizeOfObject)
   }
   
   int flags = 0;
-#ifndef APPLE
-  flags = MSG_NOSIGNAL;
+#if ! defined(APPLE) && ! defined(WIN32)
+  flags = MSG_NOSIGNAL; // Only for Linux
 #endif
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
                 flags, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
@@ -436,8 +435,8 @@ int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
   }
   
   int flags = 0;
-#ifndef APPLE
-  flags = MSG_NOSIGNAL;
+#if ! defined(APPLE) && ! defined(WIN32)
+  flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
