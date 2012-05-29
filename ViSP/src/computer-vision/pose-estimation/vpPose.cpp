@@ -81,6 +81,8 @@ vpPose::init()
   distanceToPlaneForCoplanarityTest = 0.001 ;
   
   computeCovariance = false;
+  
+  ransacMaxTrials = 1000;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::Init() " << std::endl ;
@@ -398,6 +400,9 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
       }
     }
     break;
+  case RANSAC:
+    poseRansac(cMo);
+    break;
   case LOWE :
   case VIRTUAL_VS:
     break ;
@@ -407,6 +412,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
   {
   case LAGRANGE :
   case DEMENTHON :
+  case RANSAC :
     break ;
   case VIRTUAL_VS:
   case LAGRANGE_VIRTUAL_VS:
@@ -626,82 +632,3 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   return lx/s ;
 
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-\deprecated This method is deprecated. You should use coplanar() instead.
-
-\brief test the coplanarity of the set of points
-\return true if points are coplanar
-false if not
-*/
-bool
-vpPose::coplanaire()
-{
-
-  if (npt <2)
-  {
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
-    throw(vpPoseException(vpPoseException::notEnoughPointError,
-      "Not enough points ")) ;
-  }
-
-  if (npt ==3) return true ;
-
-  double x1,x2,x3,y1,y2,y3,z1,z2,z3 ;
-
-  std::list<vpPoint>::const_iterator it = listP.begin();
-
-  vpPoint P1,P2, P3 ;
-  P1 = *it;  ++it;
-  //if ((P1.get_oX() ==0) && (P1.get_oY() ==0) && (P1.get_oZ() ==0))
-  if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon())
-    && (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon())
-    && (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon()))
-  {
-    P1 = *it; ++it;
-  }
-  P2 = *it; ++it;
-  P3 = *it;
-
-  x1 = P1.get_oX() ;
-  x2 = P2.get_oX() ;
-  x3 = P3.get_oX() ;
-
-  y1 = P1.get_oY() ;
-  y2 = P2.get_oY() ;
-  y3 = P3.get_oY() ;
-
-  z1 = P1.get_oZ() ;
-  z2 = P2.get_oZ() ;
-  z3 = P3.get_oZ() ;
-
-  double a =  y1*z2 - y1*z3 - y2*z1 + y2*z3 + y3*z1 - y3*z2 ;
-  double b = -x1*z2 + x1*z3 + x2*z1 - x2*z3 - x3*z1 + x3*z2 ;
-  double c =  x1*y2 - x1*y3 - x2*y1 + x2*y3 + x3*y1 - x3*y2 ;
-  double d = -x1*y2*z3 + x1*y3*z2 +x2*y1*z3 - x2*y3*z1 - x3*y1*z2 + x3*y2*z1 ;
-
-
-  double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
-
-  double dist;
-
-  for(it=listP.begin(); it != listP.end(); ++it)
-  {
-    P1 = *it ;
-    dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
-
-    if (fabs(dist) > distanceToPlaneForCoplanarityTest)
-    {
-      vpDEBUG_TRACE(10," points are not coplanar ") ;
-      //	TRACE(" points are not coplanar ") ;
-      return false ;
-    }
-  }
-
-  vpDEBUG_TRACE(10," points are  coplanar ") ;
-  //  vpTRACE(" points are  coplanar ") ;
-
-  return true ;
-}
-#endif // VISP_BUILD_DEPRECATED_FUNCTIONS

@@ -143,12 +143,14 @@ public:
     vpImage<vpRGBa> & dest) ;
 #endif
     
-#ifdef VISP_HAVE_LIBJPEG    
+#ifdef VISP_HAVE_LIBJPEG
+#if JPEG_LIB_VERSION > 62
   static void convertToJPEGBuffer(const vpImage<unsigned char> &src, 
                                   unsigned char **dest, long unsigned int &destSize, unsigned int quality = 100);  
   
   static void convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
                                   vpImage<unsigned char> &dest); 
+#endif
 #endif
 
   static void split(const vpImage<vpRGBa> &src,
