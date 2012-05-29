@@ -59,7 +59,8 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
     m_new_rgb_frame(false), 
     m_new_depth_map(false),
     m_new_depth_image(false),
-    height(480), width(640)
+    height(480), width(640),
+    hd(240), wd(320)
 {
   dmap.resize(height, width);
   IRGB.resize(height, width);
@@ -87,6 +88,8 @@ void vpKinect::start(vpKinect::vpDMResolution res)
 		//		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2, IRcam.get_u0()/2, IRcam.get_v0()/2);
 		//IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
 		IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
+		hd = 240;
+		wd = 320;
 	}
 	else
 	{
@@ -95,6 +98,8 @@ void vpKinect::start(vpKinect::vpDMResolution res)
 		//IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
 		IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
 		//		Idmap.resize(height, width);
+		hd = 480;
+		wd = 640;
 	}
 
 #ifdef VISP_HAVE_ACCESS_TO_NAS
@@ -202,13 +207,11 @@ bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 	m_new_depth_image = false;
 	m_depth_mutex.unlock();
 
+	if ((Imap.getHeight()!=hd )||(map.getHeight()!=hd))
+	  vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
 	if (DMres == DMAP_LOW_RES){
-		unsigned int h = height/2;
-		unsigned int w = width/2;
-		if ((Imap.getHeight()!=240 )||(map.getHeight()!=240))
-		  vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
-		for(unsigned int i = 0; i < h; i++)
-		  for(unsigned int j = 0; j < w; j++){
+		for(unsigned int i = 0; i < hd; i++)
+		  for(unsigned int j = 0; j < wd; j++){
 			map[i][j] = tempMap[i<<1][j<<1];
 			//if (map[i][j] != -1)
 			if (fabs(map[i][j] + 1.f) > std::numeric_limits<float>::epsilon())
@@ -219,8 +222,6 @@ bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 	}
 	else
 	{
-		if ((Imap.getHeight()!=480 )||(map.getHeight()!=480))
-		  vpERROR_TRACE(1, "Image size does not match vpKinect DM resolution");
 		for (unsigned i = 0; i< height;i++)
 		  for (unsigned j = 0 ; j < width ; j++){
 			map[i][j] = tempMap[i][j];
@@ -254,22 +255,22 @@ bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB)
 */
 void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> & Idepth, vpImage<vpRGBa> & IrgbWarped)
 {
-	if ((Idepth.getHeight()!=height )||(Idepth.getWidth()!=width)){
+	if ((Idepth.getHeight()!=hd )||(Idepth.getWidth()!=wd)){
 	      vpERROR_TRACE(1, "Idepth image size does not match vpKinect DM resolution");
 	}
 	else{
-		if((IrgbWarped.getHeight()!=height )||(IrgbWarped.getWidth()!=width))
-			IrgbWarped.resize(height, width);
+		if((IrgbWarped.getHeight()!=hd )||(IrgbWarped.getWidth()!=wd))
+			IrgbWarped.resize(hd, wd);
 		IrgbWarped=0;
-    double x1=0., y1=0., x2=0., y2=0., Z1, Z2;
+		double x1=0., y1=0., x2=0., y2=0., Z1, Z2;
 		vpImagePoint imgPoint(0,0);
-    double u=0., v=0.;
+		double u=0., v=0.;
 		vpColVector P1(4),P2(4);
 
 //		std::cout <<"rgbMir : "<<rgbMir<<std::endl;
 
-    for (unsigned int i = 0; i< height;i++)
-      for (unsigned int j = 0 ; j < width ; j++){
+		for (unsigned int i = 0; i< hd;i++)
+		  for (unsigned int j = 0 ; j < wd ; j++){
 			  //! Compute metric coordinates in the ir camera Frame :
 			  vpPixelMeterConversion::convertPoint(IRcam, j, i, x1, y1);
 			  Z1 = Idepth[i][j];
@@ -292,16 +293,16 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 				  //! compute pixel coordinates of the corresponding point in the depth image
 				  vpMeterPixelConversion::convertPoint(RGBcam, x2, y2, u, v);
 
-          unsigned int u_ = (unsigned int)u;
-          unsigned int v_ = (unsigned int)v;
-          //!Fill warped image value
-          if ((u_<width)&&(v_<height)){
-            IrgbWarped[i][j] = Irgb[v_][u_];
+				  unsigned int u_ = (unsigned int)u;
+				  unsigned int v_ = (unsigned int)v;
+				  //!Fill warped image value
+				  if ((u_<width)&&(v_<height)){
+					IrgbWarped[i][j] = Irgb[v_][u_];
 				  }
 				  else
 					  IrgbWarped[i][j] = 0;
 			  }
-		 }
+		  }
 	}
 }
 
