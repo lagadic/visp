@@ -50,17 +50,31 @@
 #define vpIMAGECONVERT_H
 
 // image
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDebug.h>
 // color
 #include <visp/vpRGBa.h>
 
 #ifdef VISP_HAVE_OPENCV
-#include <highgui.h> // for opencv
+#  include <highgui.h> // for opencv
 #endif
 
 #ifdef VISP_HAVE_YARP
-#include <yarp/sig/Image.h>
+#  include <yarp/sig/Image.h>
+#endif
+
+#ifdef WIN32
+#  include <windows.h>
+#endif
+
+#if defined(VISP_HAVE_LIBJPEG)
+#  include <jpeglib.h>
+#  include <jerror.h>
+#endif
+
+#if defined(VISP_HAVE_LIBPNG)
+#  include <png.h>
 #endif
 
 /*!
@@ -127,6 +141,14 @@ public:
           yarp::sig::ImageOf< yarp::sig::PixelRgb > *dest) ;
   static void convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *src,
     vpImage<vpRGBa> & dest) ;
+#endif
+    
+#ifdef VISP_HAVE_LIBJPEG    
+  static void convertToJPEGBuffer(const vpImage<unsigned char> &src, 
+                                  unsigned char **dest, long unsigned int &destSize, unsigned int quality = 100);  
+  
+  static void convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
+                                  vpImage<unsigned char> &dest); 
 #endif
 
   static void split(const vpImage<vpRGBa> &src,
