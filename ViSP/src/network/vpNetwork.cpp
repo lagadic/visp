@@ -210,8 +210,8 @@ int vpNetwork::sendRequestTo(vpRequest &req, const int &dest)
   message += end;
   
   int flags = 0;
-#ifndef APPLE
-  flags = MSG_NOSIGNAL;
+#if ! defined(APPLE) && ! defined(WIN32)
+  flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
   int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
