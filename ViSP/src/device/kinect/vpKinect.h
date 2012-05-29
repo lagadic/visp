@@ -169,6 +169,8 @@ class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
   vpHomogeneousMatrix rgbMir;//Transformation from IRcam coordinate frame to RGBcam coordinate frame.
   vpHomogeneousMatrix irMrgb;//Transformation from RGBcam coordinate frame to IRcam coordinate frame .
   vpDMResolution DMres;
+  unsigned int hd;//height of the depth map
+  unsigned int wd;//width of the depth map
 
   //Access protected by a mutex:
   vpImage<float> dmap;
@@ -176,8 +178,9 @@ class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
   bool m_new_rgb_frame;
   bool m_new_depth_map;
   bool m_new_depth_image;
-  unsigned int height;
-  unsigned int width;
+  unsigned int height;//height of the rgb image
+  unsigned int width;//width of the rgb image
+
 };
 
 #endif
