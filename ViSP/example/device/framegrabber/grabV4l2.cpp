@@ -55,16 +55,17 @@
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
-#include <visp/vpV4l2Grabber.h>
-#include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpV4l2Grabber.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"df:i:hn:p:s:t:v:x"
+#define GETOPTARGS	"df:i:hn:o:p:s:t:v:x"
 
 typedef enum {
   grey_image = 0, // for ViSP unsigned char grey images
@@ -84,12 +85,13 @@ typedef enum {
   \param device : Video device name.
   \param pixelformat : Pixel format.
   \param image_type : 0 for unsigned char, 1 for vpRGBa images
+  \param opath : Image filename when saving.
 
 */
 void usage(const char *name, const char *badparam, unsigned fps, 
 	   unsigned input, unsigned scale, long niter, char *device, 
 	   vpV4l2Grabber::vpV4l2PixelFormatType pixelformat, 
-	   const vpImage_type &image_type)
+     const vpImage_type &image_type, const std::string &opath)
 {
   fprintf(stdout, "\n\
 Grab grey level images using the Video For Linux Two framegrabber. \n\
@@ -98,7 +100,7 @@ Display these images using X11 or GTK.\n\
 SYNOPSIS\n\
   %s [-v <video device>] [-f <fps=25|50>] \n\
      [-i <input=0|1|2|3> [-s <scale=1|2|4>] [-p <pixel format>]\n\
-     [-n <niter>] [-t <image type>] [-x] [-d] [-h]\n", name);
+     [-n <niter>] [-t <image type>] [-o <filename>] [-x] [-d] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
@@ -141,10 +143,15 @@ OPTIONS:                                                  Default\n\
   -x \n\
      Activates the extra verbose mode.\n\
 \n\
+  -o [%%s] : Filename for image saving.                     \n\
+     Example: -o %s\n\
+     The %%d is for the image numbering. The format is set \n\
+     by the extension of the file (ex .png, .pgm, ...) \n\
+                    \n\
   -h \n\
      Print the help.\n\n",
 	  device, fps, input, pixelformat, 
-	  vpV4l2Grabber::V4L2_MAX_FORMAT-1, image_type, scale, niter);
+    vpV4l2Grabber::V4L2_MAX_FORMAT-1, image_type, scale, niter, opath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -165,6 +172,8 @@ OPTIONS:                                                  Default\n\
   \param device : Video device name.
   \param pixelformat : Pixel format.
   \param image_type : 0 for unsigned char, 1 for vpRGBa images
+  \param save : Image saving activation.
+  \param opath : Image filename when saving.
 
   \return false if the program has to be stopped, true otherwise.
 
@@ -173,7 +182,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
                 unsigned &scale, bool &display, bool &verbose,
                 long &niter, char *device,
                 vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
-                vpImage_type &image_type)
+                vpImage_type &image_type, bool &save, std::string &opath)
 {
   const char *optarg;
   int	c;
@@ -184,25 +193,28 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
     case 'f': fps = (unsigned) atoi(optarg); break;
     case 'i': input = (unsigned) atoi(optarg); break;
     case 'n': niter = atol(optarg); break;
+    case 'o':
+      save = true;
+      opath = optarg; break;
     case 'p': pixelformat = (vpV4l2Grabber::vpV4l2PixelFormatType) atoi(optarg); break;
     case 's': scale = (unsigned) atoi(optarg); break;
     case 't': image_type = (vpImage_type) atoi(optarg); break;
     case 'v': sprintf(device, "%s", optarg); break;
     case 'x': verbose = true; break;
     case 'h': usage(argv[0], NULL, fps, input, scale, niter, 
-                    device, pixelformat, image_type);
+                    device, pixelformat, image_type, opath);
       return false; break;
 
     default:
       usage(argv[0], optarg, fps, input, scale, niter, 
-            device, pixelformat, image_type); return false; break;
+            device, pixelformat, image_type, opath); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, fps, input, scale, niter, 
-          device, pixelformat, image_type);
+          device, pixelformat, image_type, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -231,13 +243,17 @@ main(int argc, const char ** argv)
   bool opt_verbose = false;
   bool opt_display = true;
   char opt_device[20];
+  bool opt_save = false;
   sprintf(opt_device, "/dev/video0");
+  // Default output path for image saving
+  std::string opt_opath = "/tmp/I%04d.ppm";
+
   vpImage_type opt_image_type = color_image;
 
   // Read the command line options
   if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display, 
                  opt_verbose, opt_iter, opt_device,
-                 opt_pixelformat, opt_image_type) == false) {
+                 opt_pixelformat, opt_image_type, opt_save, opt_opath) == false) {
     exit (-1);
   }
 
@@ -352,6 +368,20 @@ main(int argc, const char ** argv)
           vpDisplay::flush(Ic) ;
         }
       }
+
+      if (opt_save) {
+        char buf[FILENAME_MAX];
+        sprintf(buf, opt_opath.c_str(), cpt);
+        std::string filename(buf);
+        std::cout << "Write: " << filename << std::endl;
+        if (opt_image_type == grey_image) {
+          vpImageIo::write(Ig, filename);
+        }
+        else {
+          vpImageIo::write(Ic, filename);
+        }
+      }
+
       // Print the iteration duration
       std::cout << "time: " << vpTime::measureTimeMs() - t << " (ms)" << std::endl;
     }
