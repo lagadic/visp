@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: CMakeLists.txt 3530 2012-01-03 10:52:12Z fspindle $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -31,34 +31,30 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP configuration file. 
 #
 # Authors:
-# Fabien Spindler
+# Aurelien Yol
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  camera
-  device
-  feature
-  homography
-  image
-  key-point
-  math
-  network
-  pose
-  servo-afma4
-  servo-afma6
-  servo-viper
-  tools
-  tracking
-  visual-feature
+# If you want to add/remove a source, modify here
+SET (SOURCE
+  testClient.cpp
+  testServer.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+FOREACH(source ${SOURCE})
+  # Compute the name of the binary to create
+  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  ADD_EXECUTABLE(${binary} ${source})
+  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+ENDFOREACH(source)
+

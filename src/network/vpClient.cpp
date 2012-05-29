@@ -94,7 +94,7 @@ bool vpClient::connectToHostname(const std::string &hostname, const int &port_se
 	 server->h_length );
   serv.receptorAddress.sin_port = htons( port_serv );
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
-  
+
   return connectServer(serv);
 }
 
@@ -197,6 +197,19 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   }
   
   receptor_list.push_back(serv);
+
+#ifdef SO_NOSIGPIPE
+  // Mac OS X does not have the MSG_NOSIGNAL flag. It does have this
+  // connections based version, however.
+  if (serv.socketFileDescriptorReceptor > 0) {
+    int set_option = 1;
+    if (0 == setsockopt(serv.socketFileDescriptorReceptor, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
+    } else {
+      std::cout << "Failed to set socket signal option" << std::endl;
+    }
+  }
+#endif // SO_NOSIGPIPE
+
   std::cout << "Connected!" << std::endl;
   return true;
 }

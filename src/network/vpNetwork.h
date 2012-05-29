@@ -63,6 +63,7 @@
 #  pragma comment(lib, "ws2_32.lib")
 #endif
 
+
 /*!
   \class vpNetwork
   
@@ -396,8 +397,12 @@ int vpNetwork::send(T* object, const int &sizeOfObject)
     return 0;
   }
   
+  int flags = 0;
+#ifndef APPLE
+  flags = MSG_NOSIGNAL;
+#endif
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
-         MSG_NOSIGNAL, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
+                flags, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
 }
 
 /*!
@@ -430,8 +435,13 @@ int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
     return 0;
   }
   
+  int flags = 0;
+#ifndef APPLE
+  flags = MSG_NOSIGNAL;
+#endif
+
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
-         MSG_NOSIGNAL, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+                flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 }
 
 #endif

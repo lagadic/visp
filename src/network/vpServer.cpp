@@ -74,7 +74,7 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
     vpERROR_TRACE( "vpServer::vpServer(const int &port_serv), cannot open socket." );
   }
   emitter.emitterAdress.sin_family = AF_INET;
-  emitter.emitterAdress.sin_addr.s_addr = inet_addr("127.0.0.1");;
+  emitter.emitterAdress.sin_addr.s_addr = INADDR_ANY; //inet_addr("127.0.0.1");;
   emitter.emitterAdress.sin_port = htons( port_serv ); 
   
   adress = inet_ntoa(emitter.emitterAdress.sin_addr);
@@ -130,7 +130,7 @@ vpServer::~vpServer()
 */
 bool vpServer::start()
 {  
-  int serverStructLength = sizeof(emitter);
+  int serverStructLength = sizeof(emitter.emitterAdress);
   int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, serverStructLength );
   
   if( bindResult < 0 )
@@ -146,7 +146,18 @@ bool vpServer::start()
     return false;
   }
   
-  
+#ifdef SO_NOSIGPIPE
+  // Mac OS X does not have the MSG_NOSIGNAL flag. It does have this
+  // connections based version, however.
+  if (emitter.socketFileDescriptorEmitter > 0) {
+    int set_option = 1;
+    if (0 == setsockopt(emitter.socketFileDescriptorEmitter, SOL_SOCKET, SO_NOSIGPIPE, &set_option, sizeof(set_option))) {
+    } else {
+      std::cout << "Failed to set socket signal option" << std::endl;
+    }
+  }
+#endif // SO_NOSIGPIPE
+
   listen( emitter.socketFileDescriptorEmitter, max_clients );
   std::cout << "Server ready" << std::endl;
   

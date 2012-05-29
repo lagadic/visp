@@ -209,8 +209,13 @@ int vpNetwork::sendRequestTo(vpRequest &req, const int &dest)
   
   message += end;
   
-  int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), MSG_NOSIGNAL, 
-         (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+  int flags = 0;
+#ifndef APPLE
+  flags = MSG_NOSIGNAL;
+#endif
+
+  int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
+                     (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
   
   return value;
 }
@@ -584,7 +589,7 @@ int vpNetwork::_handleFirstRequest()
 */
 void vpNetwork::_receiveRequest()
 {
-  while(_receiveRequestOnce() > 0);
+  while(_receiveRequestOnce() > 0) {};
 }
 
 /*!
@@ -605,7 +610,7 @@ void vpNetwork::_receiveRequest()
 */
 void vpNetwork::_receiveRequestFrom(const int &receptorEmitting)
 {
-  while(_receiveRequestOnceFrom(receptorEmitting) > 0);
+  while(_receiveRequestOnceFrom(receptorEmitting) > 0) {};
 }
 
 /*!
