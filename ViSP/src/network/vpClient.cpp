@@ -134,7 +134,7 @@ bool vpClient::connectToIP(const std::string &ip, const int &port_serv)
   \param index : Index of the server.
 */
 void vpClient::deconnect(const int &index)
-{
+{   
   if(index < (int)receptor_list.size() && index >= 0)
   {
 #ifdef UNIX
@@ -142,6 +142,7 @@ void vpClient::deconnect(const int &index)
 #else // WIN32
     shutdown( receptor_list[index].socketFileDescriptorReceptor, SD_BOTH );
 #endif
+    receptor_list.erase(receptor_list.begin()+index);
   }
 }
 
@@ -150,12 +151,15 @@ void vpClient::deconnect(const int &index)
 */
 void vpClient::stop()
 {
-  for(unsigned int i = 0 ; i < receptor_list.size() ; i++)
+  for(unsigned int i = 0 ; i < receptor_list.size() ; i++){
 #ifdef UNIX
     shutdown( receptor_list[i].socketFileDescriptorReceptor, SHUT_RDWR );
 #else // WIN32
     shutdown( receptor_list[i].socketFileDescriptorReceptor, SD_BOTH );
 #endif
+    receptor_list.erase(receptor_list.begin()+i);
+    i--;
+  }
 }
 
 /*!

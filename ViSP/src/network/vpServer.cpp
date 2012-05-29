@@ -185,6 +185,15 @@ bool vpServer::checkForConnections()
   
   socketMax = emitter.socketFileDescriptorEmitter;
   FD_SET(emitter.socketFileDescriptorEmitter,&readFileDescriptor);
+
+  for(unsigned int i=0; i<receptor_list.size(); i++){
+    FD_SET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
+
+    if(i == 0)
+      socketMax = receptor_list[i].socketFileDescriptorReceptor;
+   
+    if(socketMax < receptor_list[i].socketFileDescriptorReceptor) socketMax = receptor_list[i].socketFileDescriptorReceptor; 
+  }
   
   int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   if(value == -1){
@@ -207,6 +216,21 @@ bool vpServer::checkForConnections()
       receptor_list.push_back(client);
       
       return true;
+    }
+    else{
+      for(unsigned int i=0; i<receptor_list.size(); i++){
+        if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
+          char deco;
+          int numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+      
+          if(numbytes == 0)
+          {
+            std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
+            receptor_list.erase(receptor_list.begin()+i);
+            return 0;
+          }
+        }
+      }
     }
   }
   
