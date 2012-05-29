@@ -167,9 +167,9 @@ bool vpServer::start()
 }
 
 /*!
-  Check if new client has connected the server
+  Check if a client has connected or deconnected the server
   
-  \return True if the server has a new client, false if no client OR server not started yet.
+  \return True if a client connected or deconnected, false otherwise OR server not started yet.
 */
 bool vpServer::checkForConnections()
 {
