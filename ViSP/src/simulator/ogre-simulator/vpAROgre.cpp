@@ -333,7 +333,7 @@ void vpAROgre::init(bool
   Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual("rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
                                                                                mWindow->getWidth(),mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
   Ogre::RenderTexture* RTarget = Texture->getBuffer()->getRenderTarget();
-  Ogre::Viewport* Viewport = RTarget->addViewport(mCamera);
+  /*Ogre::Viewport* Viewport =*/ RTarget->addViewport(mCamera);
   RTarget->getViewport(0)->setClearEveryFrame(true);
   RTarget->getViewport(0)->setOverlaysEnabled(false);
 }

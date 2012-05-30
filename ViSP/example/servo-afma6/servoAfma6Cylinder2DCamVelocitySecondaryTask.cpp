@@ -290,7 +290,7 @@ main()
         v = task.computeControlLaw() ;
 
         //Compute the new control law corresponding to the secondary task
-        if ( iter%tempo < 400  &&  iter%tempo >= 0)
+        if ( iter%tempo < 400  /*&&  iter%tempo >= 0*/)
         {
           e2 = 0;
           e1[0] = fabs(vitesse)  ;
