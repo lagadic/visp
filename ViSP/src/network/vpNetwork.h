@@ -352,7 +352,7 @@ int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &si
   FD_SET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
     
   int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
-  int numbytes;
+  int numbytes = 0;
   
   if(value == -1){
     if(verboseMode)
