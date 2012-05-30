@@ -51,6 +51,8 @@ vpNetwork::vpNetwork()
   
   tv_sec = 0;
   tv_usec = 10;
+  
+  verboseMode = false;
 
 #ifdef WIN32
   //Enable the sockets to be used
@@ -193,7 +195,8 @@ int vpNetwork::sendRequestTo(vpRequest &req, const int &dest)
 {
   if(receptor_list.size() == 0 || dest > (int)receptor_list.size()-1)
   {
-    vpTRACE( "Cannot Send !" );
+    if(verboseMode)
+      vpTRACE( "Cannot Send Request! Bad Index" );
     return 0;
   }
   
@@ -515,7 +518,8 @@ int vpNetwork::_handleFirstRequest()
   
   if(indEnd < indStart)
   {
-    vpTRACE("Incorrect message");
+    if(verboseMode)
+      vpTRACE("Incorrect message");
     currentMessageReceived.erase(indStart,indEnd+end.size());
     return -1;
   }
@@ -523,7 +527,8 @@ int vpNetwork::_handleFirstRequest()
   int indStart2 = currentMessageReceived.find(beginning,indStart+1);
   if(indStart2 != -1 && indStart2 < indEnd)
   {
-    vpTRACE("Incorrect message");
+    if(verboseMode)
+      vpTRACE("Incorrect message");
     currentMessageReceived.erase(indStart,indStart2);
     return -1;
   }
@@ -550,7 +555,8 @@ int vpNetwork::_handleFirstRequest()
   
   if(!hasBeenFound){
     //currentMessageReceived.erase(indStart,indEnd+end.size());
-    vpTRACE("No request correponds to the received message");
+    if(verboseMode)
+      vpTRACE("No request correponds to the received message");
     return -1;
   }
   
@@ -635,7 +641,8 @@ int vpNetwork::_receiveRequestOnce()
 {
   if(receptor_list.size() == 0)
   {
-    vpTRACE( "vpNetwork::recvMessagesOnce(), No Client connected" );
+    if(verboseMode)
+      vpTRACE( "No Receptor!" );
     return -1;
   }
   
@@ -656,7 +663,8 @@ int vpNetwork::_receiveRequestOnce()
   int numbytes = 0;
   
   if(value == -1){
-    vpERROR_TRACE( "vpNetwork::recvMessagesOnce(), select()" );
+    if(verboseMode)
+      vpERROR_TRACE( "Select error" );
     return -1;
   }
   else if(value == 0){
@@ -712,7 +720,8 @@ int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
 {
   if(receptor_list.size() == 0 || receptorEmitting > (int)receptor_list.size()-1 )
   {
-    vpTRACE( "vpNetwork::recvMessagesOnce()" );
+    if(verboseMode)
+      vpTRACE( "No receptor at the specified index!" );
     return -1;
   }
   
@@ -727,7 +736,8 @@ int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
   int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
   if(value == -1){
-    vpERROR_TRACE( "vpNetwork::recvMessagesOnce(), select()" );
+    if(verboseMode)
+      vpERROR_TRACE( "Select error" );
     return -1;
   }
   else if(value == 0){
