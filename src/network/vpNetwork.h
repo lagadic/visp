@@ -273,7 +273,7 @@ int vpNetwork::receive(T* object, const int &sizeOfObject)
   }
 
   int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
-  int numbytes;
+  int numbytes = 0;
   
   if(value == -1){
     vpERROR_TRACE( "vpNetwork::receive(), select()" );

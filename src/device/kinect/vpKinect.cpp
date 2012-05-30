@@ -56,11 +56,11 @@
 */
 vpKinect::vpKinect(freenect_context *ctx, int index)
   : Freenect::FreenectDevice(ctx, index),
-    m_new_rgb_frame(false), 
+    hd(240), wd(320),
+    m_new_rgb_frame(false),
     m_new_depth_map(false),
     m_new_depth_image(false),
-    height(480), width(640),
-    hd(240), wd(320)
+    height(480), width(640)
 {
   dmap.resize(height, width);
   IRGB.resize(height, width);
