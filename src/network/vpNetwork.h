@@ -124,6 +124,7 @@ protected:
   long                    tv_sec;
   long                    tv_usec;
   
+  bool                    verboseMode;
   
 private:
   
@@ -224,6 +225,13 @@ public:
     \param usec : new value in micro second.
   */
   void              setTimeoutUSec(const long &usec){ tv_usec = usec; }
+  
+  /*!
+    Set the verbose mode.
+    
+    \param mode : Change the verbose mode. True to turn on, False to turn off.
+  */
+  void              setVerbose(const bool &mode){ verboseMode = mode; }
 };
 
 //######## Definition of Template Functions ########
@@ -254,7 +262,8 @@ int vpNetwork::receive(T* object, const int &sizeOfObject)
 {
   if(receptor_list.size() == 0)
   {
-    vpTRACE( "No receptor" );
+    if(verboseMode)
+      vpTRACE( "No receptor" );
     return -1;
   }
   
@@ -276,7 +285,8 @@ int vpNetwork::receive(T* object, const int &sizeOfObject)
   int numbytes = 0;
   
   if(value == -1){
-    vpERROR_TRACE( "vpNetwork::receive(), select()" );
+    if(verboseMode)
+      vpERROR_TRACE( "Select error" );
     return -1;
   }
   else if(value == 0){
@@ -328,7 +338,8 @@ int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &si
 {
   if(receptor_list.size() == 0 || receptorEmitting > (int)receptor_list.size()-1 )
   {
-    vpTRACE( "Cannot Send !" );
+    if(verboseMode)
+      vpTRACE( "No receptor at the specified index" );
     return -1;
   }
   
@@ -344,7 +355,8 @@ int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &si
   int numbytes;
   
   if(value == -1){
-    vpERROR_TRACE( "vpNetwork::recv(), select()" );
+    if(verboseMode)
+      vpERROR_TRACE( "Select error" );
     return -1;
   }
   else if(value == 0){
@@ -392,7 +404,8 @@ int vpNetwork::send(T* object, const int &sizeOfObject)
 {
   if(receptor_list.size() == 0)
   {
-    vpTRACE( "No receptor !" );
+    if(verboseMode)
+      vpTRACE( "No receptor !" );
     return 0;
   }
   
@@ -430,7 +443,8 @@ int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
 {
   if(receptor_list.size() == 0 || dest > (int)receptor_list.size()-1 )
   {
-    vpTRACE( "Cannot Send !" );
+    if(verboseMode)
+      vpTRACE( "No receptor at the specified index." );
     return 0;
   }
   
