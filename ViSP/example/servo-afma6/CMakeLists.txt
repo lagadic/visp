@@ -70,10 +70,5 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
   # Add test
-  ADD_TEST(${binary} ${binary})
+#  ADD_TEST(${binary} ${binary})
 ENDFOREACH(source)
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
