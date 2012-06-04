@@ -42,8 +42,8 @@
   \file vpFeatureMomentAreaNormalized.h
   \brief Implementation of the interaction matrix computation for vpMomentAreaNormalized.
 */
-#ifndef __FEATUREMOMENTSURFACENORMALIZED_H__
-#define __FEATUREMOMENTSURFACENORMALIZED_H__
+#ifndef __FEATUREMOMENTAREANORMALIZED_H__
+#define __FEATUREMOMENTAREANORMALIZED_H__
 #include <visp/vpFeatureMoment.h>
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 class vpMomentDatabase;
