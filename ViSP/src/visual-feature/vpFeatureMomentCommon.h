@@ -55,6 +55,7 @@
 #include <visp/vpFeatureMomentCommon.h>
 #include <visp/vpFeatureMomentAreaNormalized.h>
 #include <visp/vpFeatureMomentDatabase.h>
+#include <visp/vpFeatureMomentArea.h>
 
 class vpMomentDatabase;
 class vpServo;
@@ -227,6 +228,7 @@ private:
     vpFeatureMomentAlpha featureAlpha;
     vpFeatureMomentCentered featureCentered;
     vpFeatureMomentBasic featureMomentBasic;
+    vpFeatureMomentArea feature_moment_area;
 
 public:
     vpFeatureMomentCommon(vpMomentDatabase& moments,double A=0.0,double B=0.0,double C=1.0);
@@ -257,7 +259,10 @@ public:
         Returns normalized gravity center.
     */
     vpFeatureMomentGravityCenterNormalized& getFeatureGravityNormalized(){ return featureGravityNormalized;}
-
+    /*!
+	Returns the area
+	*/
+	vpFeatureMomentArea& getFeatureArea(){ return feature_moment_area;}
 };
 
 
