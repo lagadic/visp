@@ -57,7 +57,8 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
     momentGravityNormalized(),
     momentSurfaceNormalized(dstSurface,dstZ),
     momentCInvariant(),
-    momentAlpha(ref,refAlpha)
+    momentAlpha(ref,refAlpha),
+	momentArea()
 {
     momentBasic.linkTo(*this);
     momentGravity.linkTo(*this);
@@ -65,7 +66,8 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
     momentGravityNormalized.linkTo(*this);
     momentSurfaceNormalized.linkTo(*this);
     momentCInvariant.linkTo(*this);
-    momentAlpha.linkTo(*this);    
+    momentAlpha.linkTo(*this);
+    momentArea.linkTo(*this);
 }
 
 /*!
@@ -132,6 +134,7 @@ void vpMomentCommon::updateAll(vpMomentObject& object){
 
         momentSurfaceNormalized.compute();
         momentGravityNormalized.compute();
+        momentArea.compute();
 
     } catch(const char* ex){
         std::cout << "exception:" << ex <<std::endl;
