@@ -274,6 +274,7 @@ SET (HEADER_TRACKING
   tracking/moments/vpMomentGravityCenterNormalized.h
   tracking/moments/vpMomentObject.h
   tracking/moments/vpMomentAreaNormalized.h
+  tracking/moments/vpMomentArea.h
   )
 
 SET (HEADER_VIDEO
@@ -323,6 +324,7 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureMomentCInvariant.h
   visual-feature/vpFeatureMomentCommon.h
   visual-feature/vpFeatureMomentAreaNormalized.h
+  visual-feature/vpFeatureMomentArea.h
 
   visual-feature/vpFeatureLuminance.h
   visual-feature/vpFeatureSegment.h
