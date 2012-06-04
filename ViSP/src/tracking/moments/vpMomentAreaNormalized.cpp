@@ -51,11 +51,15 @@
 void vpMomentAreaNormalized::compute(){
     bool found_moment_centered;        
     
+    /* getMoments() returns a reference to a vpMomentDatabase. (a protected member inherited from vpMoment)
+      .get() 		is a member function of vpMomentDatabase that returns a specific moment which is linked to it*/
     vpMomentCentered& momentCentered = static_cast<vpMomentCentered&>(getMoments().get("vpMomentCentered",found_moment_centered));
 
     if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
 
     double a;
+    /* getObject() returns a reference to the vpMomentObject from which
+     * the moment values are calculated. (public member of vpMoment)*/
     if(getObject().getType()==vpMomentObject::DISCRETE)
         a = momentCentered.get(2,0)+momentCentered.get(0,2);
     else
