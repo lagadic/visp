@@ -56,8 +56,8 @@ vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase& moments,double A,
     featureCInvariant(moments,A,B,C),
     featureAlpha(moments,A,B,C),
     featureCentered(moments,A,B,C),
-    featureMomentBasic(moments,A,B,C)
-
+    featureMomentBasic(moments,A,B,C),
+	feature_moment_area(moments,A,B,C)
 
 {
     featureGravity.linkTo(*this);
@@ -67,7 +67,7 @@ vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase& moments,double A,
     featureAlpha.linkTo(*this);
     featureMomentBasic.linkTo(*this);
     featureCentered.linkTo(*this);
-
+    feature_moment_area.linkTo(*this);
 }
 
 /*!
@@ -84,5 +84,6 @@ void vpFeatureMomentCommon::updateAll(double A,double B,double C){
     featureGravityNormalized.update(A,B,C);
     featureCInvariant.update(A,B,C);    
     featureAlpha.update(A,B,C);
+    feature_moment_area.update(A,B,C);
 }
 
