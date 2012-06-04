@@ -58,7 +58,11 @@ class vpBasicFeature;
   Initialize common parameters for moment features.
 */
 void vpFeatureMoment::init (){
-//feature dimension
+	//feature dimension
+	/*
+	 * The dimension of the visual feature is set according to the size of the vpMoment associated to it.
+	 * This partly explains why vpFeatureMomentBasic cannot be used directly as a visual feature.
+	 */
     if(this->moment!=NULL)
         dim_s = this->moment->get().size();
     else
