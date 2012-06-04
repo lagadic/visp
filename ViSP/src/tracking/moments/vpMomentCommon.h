@@ -53,6 +53,7 @@
 #include <visp/vpMomentAreaNormalized.h>
 #include <visp/vpMomentCInvariant.h>
 #include <visp/vpMomentAlpha.h>
+#include <visp/vpMomentArea.h>
 
 #include <vector>
 
@@ -102,7 +103,7 @@ private:
     vpMomentAreaNormalized momentSurfaceNormalized;
     vpMomentCInvariant momentCInvariant;
     vpMomentAlpha momentAlpha;
-
+    vpMomentArea momentArea;
 public:
     vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ=1.0);
 
