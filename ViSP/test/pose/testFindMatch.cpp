@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: testPoseRansac.cpp 3619 2012-03-09 17:28:57Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -54,9 +54,9 @@
 
 
 /*!
-  \example testPoseRansac.cpp
+  \example testFindMatch.cpp
 
-  Compute the pose of a 3D object using the Ransac method.
+  Find Matches using Ransac.
 
 */
 
@@ -64,53 +64,48 @@ int
 main()
 {
   {
-    std::cout << "Pose computation with matched points" << std::endl;
-//     int size = 4;
-    int size = 8;
-    vpPoint P[size]  ;  //  Point to be tracked
+    std::cout << "Find Matches using Ransac" << std::endl;
+    unsigned int nb3D = 4;
+    unsigned int nb2D = 8;
+    std::vector<vpPoint> P(nb3D);
+    std::vector<vpPoint> p(nb2D);
 
     P[0].setWorldCoordinates(-L,-L, 0 ) ;
     P[1].setWorldCoordinates(L,-L, 0 ) ;
     P[2].setWorldCoordinates(L,L, 0 ) ;
     P[3].setWorldCoordinates(-L,L, 0 ) ;
-    
-    double L2 = L*2.0;
-    P[4].setWorldCoordinates(-L2,-L2, 0 ) ;
-    P[5].setWorldCoordinates(L2,-L2, 0 ) ;
-    P[6].setWorldCoordinates(L2,L2, 0 ) ;
-    P[7].setWorldCoordinates(-L2,L2, 0 ) ;
-    
     //P[4].setWorldCoordinates(-0,0, L ) ; //ERREUR DANS LAGRANGE ET DEMENTHON
 
-    vpHomogeneousMatrix cMo_ref(0,0.2,1,0,0,0) ;
-    for(int i=0 ; i < size ; i++)
-    {      
-      P[i].project(cMo_ref) ;
-      P[i].print() ;
-      std::cout << std::endl;
+    vpHomogeneousMatrix cMo_ref(0,0.2,1,vpMath::rad(0),0,0) ;
+    
+    for(unsigned int i=0 ; i < nb3D ; i++)
+    {
+      vpPoint pt = P[i];
+      pt.project(cMo_ref);
+      p[i].set_x(pt.get_x());
+      p[i].set_y(pt.get_y());
     }
 
-    //Introduce an error
-    double error = 0.01;
-    P[3].set_y(P[3].get_y() + 2*error);
-    P[6].set_x(P[6].get_x() + error);
+    p[4].set_x(0.02) ;
+    p[4].set_y(0.05) ;
     
+    p[5].set_x(0.02) ;
+    p[5].set_y(-0.05) ;
     
-    vpPose pose;
-    for(int i=0 ; i < size ; i++)
-      pose.addPoint(P[i]);
+    p[6].set_x(0.07) ;
+    p[6].set_y(-0.05) ;
     
-    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)size / 100.0);
-    double threshold = 0.01;
-    
-    pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
-    pose.setRansacThreshold(threshold);
+    p[7].set_x(0.24) ;
+    p[7].set_y(0.07) ;
+
+    unsigned int ninliers ;
+    std::vector<vpPoint> inliers;
+    double threshold = 1e-6;
+    unsigned int nbInlierToReachConsensus = 4;
     
     vpHomogeneousMatrix cMo ;
-    //vpPose::ransac(lp,lP, 5, 1e-6, ninliers, lPi, cMo) ;
-    pose.computePose(vpPose::RANSAC, cMo);
     
-    std::vector<vpPoint> inliers = pose.getRansacInliers();
+    vpPose::findMatch(p,P,nbInlierToReachConsensus,threshold,ninliers,inliers,cMo);
     
     std::cout << "Inliers: " << std::endl;
     for (unsigned int i = 0; i < inliers.size() ; i++)
@@ -118,7 +113,7 @@ main()
       inliers[i].print() ;
       std::cout << std::endl;
     }
-
+    
     std::cout << "cMo :\n" << vpPoseVector(cMo).t() << std::endl << std::endl;
 
   }

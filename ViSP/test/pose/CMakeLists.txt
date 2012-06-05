@@ -46,6 +46,7 @@
 SET (SOURCE
   testPose.cpp
   testPoseRansac.cpp
+  testFindMatch.cpp
 )
 
 # rule for binary build
