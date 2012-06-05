@@ -37,8 +37,7 @@
  * the RANSAC algorithm to achieve this task
  *
  * Authors:
- * Eric Marchand
- * Fabien Spindler
+ * Aurelien Yol
  *
  *****************************************************************************/
 
