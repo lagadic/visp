@@ -58,6 +58,204 @@
 
 #define eps 1e-6
 
+
+/*! 
+  Compute the pose using the Ransac approach. 
+ 
+  \param cMo : Computed pose
+*/
+void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
+{  
+  srand(0);
+  std::vector<unsigned int> best_consensus;
+  std::vector<unsigned int> cur_consensus;
+  std::vector<unsigned int> cur_outliers;
+  std::vector<unsigned int> cur_randoms;
+  unsigned int size = listP.size();
+  int nbTrials = 0;
+  unsigned int nbMinRandom = 4 ;
+  unsigned int nbInliers = 0;
+  
+  bool foundSolution = false;
+  
+  while (nbTrials < ransacMaxTrials && nbInliers < (unsigned)ransacNbInlierConsensus)
+  { 
+    cur_outliers.clear();
+    cur_randoms.clear();
+    
+    std::vector<bool> usedPt(size, false);
+    
+    vpPose poseMin ;
+    for(unsigned int i = 0; i < nbMinRandom; i++)
+    {
+      int r = rand()%size;
+      while(usedPt[r] ) r = rand()%size;
+      usedPt[r] = true;        
+      
+      std::list<vpPoint>::const_iterator iter = listP.begin();
+      std::advance(iter, r);
+      vpPoint pt = *iter;
+      
+      bool degenerate = false;
+      for(std::list<vpPoint>::const_iterator it = poseMin.listP.begin(); it != poseMin.listP.end(); ++it){
+          vpPoint ptdeg = *it;
+          if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
+              ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
+            degenerate = true;
+            break;
+          }
+      }
+      
+      if(!degenerate){
+        poseMin.addPoint(pt) ;
+        cur_randoms.push_back(r);
+      }
+      else
+        i--;
+    }
+    
+    poseMin.computePose(vpPose::DEMENTHON,cMo) ;
+    double r = poseMin.computeResidual(cMo) ;
+    r = sqrt(r)/(double)nbMinRandom;
+    
+    if (r < ransacThreshold)
+    {
+      unsigned int nbInliersCur = 0;
+      //std::cout << "Résultat : " << r << " / " << vpPoseVector(cMo).sumSquare()<< std::endl ;
+      int iter = 0;
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      { 
+        vpPoint pt = *it;
+        vpPoint p(pt) ;
+        p.track(cMo) ;
+
+        double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y()) ;
+        double error = sqrt(d) ;
+        if(error < ransacThreshold){ // the point is considered an inlier if the error is below the threshold
+          nbInliersCur++;
+          cur_consensus.push_back(iter);
+        }    
+        else
+          cur_outliers.push_back(iter);
+        
+        iter++;
+      }
+      //std::cout << "Nombre d'inliers " << nbInliersCur << "/" << nbInliers << std::endl ;
+      
+      if(nbInliersCur > nbInliers)
+      {
+        foundSolution = true;
+        best_consensus = cur_consensus;
+        nbInliers = nbInliersCur;
+      }
+      
+      nbTrials++;
+      cur_consensus.clear();
+      
+      if(nbTrials >= ransacMaxTrials){
+        vpERROR_TRACE("Ransac reached the maximum number of trials");
+        foundSolution = true;
+      }
+    }
+  }
+    
+  if(foundSolution){
+    //std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
+    
+    //Display the random picked points
+    /*
+    std::cout << "Randoms : "; 
+    for(unsigned int i = 0 ; i < cur_randoms.size() ; i++)
+      std::cout << cur_randoms[i] << " ";
+    std::cout << std::endl;
+    */
+    
+    //Display the outliers
+    /*
+    std::cout << "Outliers : "; 
+    for(unsigned int i = 0 ; i < cur_outliers.size() ; i++)
+      std::cout << cur_outliers[i] << " ";
+    std::cout << std::endl;
+    */
+    
+    if(nbInliers >= (unsigned)ransacNbInlierConsensus)
+    {    
+      vpPose pose ;
+      for(unsigned i = 0 ; i < best_consensus.size(); i++)
+      {
+        std::list<vpPoint>::const_iterator iter = listP.begin();
+        std::advance(iter, best_consensus[i]);
+        vpPoint pt = *iter;
+      
+        pose.addPoint(pt) ;
+        ransacInliers.push_back(pt);
+      }
+        
+      pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS,cMo) ;
+      //std::cout << "Residue finale "<< pose.computeResidual(cMo)  << std::endl ;
+    }
+  }
+}
+
+/*!
+  Match a vector p2D of  2D point (x,y)  and  a vector p3D of 3D points
+  (X,Y,Z) using the Ransac algorithm.
+
+  At least numberOfInlierToReachAConsensus of true correspondance are required
+  to validate the pose
+
+  The inliers are given in a vector of vpPoint listInliers.
+
+  The pose is returned in cMo.
+
+  \param p2D : Vector of 2d points (x and y attributes are used).
+  \param p3D : Vector of 3d points (oX, oY and oZ attributes are used).
+  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
+  to consider a trial as correct.
+  \param threshold : The maximum error allowed between the 2d points and the
+  reprojection of its associated 3d points by the current pose (in meter).
+  \param ninliers : Number of inliers found for the best solution.
+  \param listInliers : Vector of points (2d and 3d) that are inliers for the best solution.
+  \param cMo : The computed pose (best solution).
+  \param maxNbTrials : Maximum number of trials before considering a solution
+  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
+  cannot be found.
+*/
+void vpPose::findMatch(std::vector<vpPoint> &p2D, 
+            std::vector<vpPoint> &p3D, 
+            const int &numberOfInlierToReachAConsensus, 
+            const double &threshold,
+            unsigned int &ninliers,
+            std::vector<vpPoint> &listInliers,
+            vpHomogeneousMatrix &cMo,
+            const int &maxNbTrials )
+{
+  vpPose pose;
+  
+  int nbPts = 0;
+  for(unsigned int i = 0 ; i < p2D.size() ; i++)
+  {
+    for(unsigned int j = 0 ; j < p3D.size() ; j++)
+    {
+      vpPoint pt;
+      pt.set_x(p2D[i].get_x());
+      pt.set_y(p2D[i].get_y());
+      pt.setWorldCoordinates(p3D[j].getWorldCoordinates());
+      pose.addPoint(pt);
+      nbPts++;
+    }
+  }
+  
+  pose.setRansacMaxTrials(maxNbTrials);
+  pose.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus);
+  pose.setRansacThreshold(threshold);
+  pose.computePose(vpPose::RANSAC, cMo);
+  ninliers = pose.getRansacNbInliers();
+  listInliers = pose.getRansacInliers();
+}
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
 /*
 \brief
 
@@ -80,12 +278,11 @@ vpPose::degenerateConfiguration(vpColVector &x, unsigned int *ind)
       unsigned int indi =  5*ind[i] ;
       unsigned int indj =  5*ind[j] ;
 
-      if ((fabs(x[indi] - x[indj]) < 1e-6) &&
-	  (fabs(x[indi+1] - x[indj+1]) < 1e-6))
-      {	  return true ;	}
-      if ((fabs(x[indi+2] - x[indj+2]) < 1e-6) &&
-	  (fabs(x[indi+3] - x[indj+3]) < 1e-6) &&
-	  (fabs(x[indi+4] - x[indj+4]) < 1e-6))	{ return true ;  }
+      if ((fabs(x[indi] - x[indj]) < 1e-6) && (fabs(x[indi+1] - x[indj+1]) < 1e-6))
+      { return true ; }
+      
+      if ((fabs(x[indi+2] - x[indj+2]) < 1e-6) && (fabs(x[indi+3] - x[indj+3]) < 1e-6) && (fabs(x[indi+4] - x[indj+4]) < 1e-6)) 
+      { return true ;  }
     }
 
   return false ;
@@ -182,32 +379,30 @@ vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
   return 0 ;
 }
 
-/*! compute the pose using the Ransac approach 
- 
-  \param cMo : Computed pose
-*/
-void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
+void
+vpPose::initRansac(const unsigned int n,
+       const double *x, const double *y,
+       const unsigned int m,
+       const double *X, const double *Y, const double *Z,
+       vpColVector &data)
 {
-  std::vector<vpPoint> p2D;
-  std::vector<vpPoint> p3D;
-  
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+  data.resize(5*n*m) ;
+  unsigned int k =0 ;
+  for (unsigned int i=0 ; i < n ; i++)
   {
-    vpPoint pt = *it;
-    
-    vpPoint pt2D;
-    pt2D.set_x(pt.get_x());
-    pt2D.set_y(pt.get_y());
-    p2D.push_back(pt2D);
-    
-    vpPoint pt3D;
-    pt3D.setWorldCoordinates(pt.get_oX(),pt.get_oY(),pt.get_oZ());
-    p3D.push_back(pt3D);
+    for (unsigned int j=0 ; j < m ; j++)
+    {
+      data[k] = x[i] ;
+      data[k+1] = y[i] ;
+      data[k+2] = X[j] ;
+      data[k+3] = Y[j] ;
+      data[k+4] = Z[j] ;
+
+      k+=5 ;
+    }
   }
-  
-  unsigned int nbInliers;
-  vpPose::ransac(p2D,p3D,ransacNbInlierConsensus,ransacThreshold,nbInliers, ransacInliers,cMo,ransacMaxTrials);
 }
+
 
 /*!
   Compute the pose from a set of n 2D point (x,y) and m 3D points
@@ -245,54 +440,70 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
  */
 void
 vpPose::ransac(const unsigned int n,
-	       const double *x, const double *y,
-	       const unsigned int m,
-	       const double *X, const double *Y, const double *Z,
-	       const int  numberOfInlierToReachAConsensus,
-	       const double threshold,
-	       unsigned int &ninliers,
-	       vpColVector &xi,  vpColVector &yi,
-	       vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
+         const double *x, const double *y,
+         const unsigned int m,
+         const double *X, const double *Y, const double *Z,
+         const int  numberOfInlierToReachAConsensus,
+         const double threshold,
+         unsigned int &ninliers,
+         vpColVector &xi,  vpColVector &yi,
+         vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
          vpHomogeneousMatrix &cMo,
          const int maxNbTrials)
 {
-  if(n != m)
-    vpERROR_TRACE("Different number of 2D points from 3D points");
-  else{
-    std::vector<vpPoint> p2D;
-    std::vector<vpPoint> p3D;
-    
-    for (unsigned int i = 0 ; i < n ; i++)
+
+
+  double tms = vpTime::measureTimeMs() ;
+  vpColVector data ;
+  unsigned int i;
+  vpPose::initRansac(n,x,y,m,X,Y,Z, data) ;
+
+  vpColVector M(16) ;
+  vpColVector inliers(n*m) ;
+  vpRansac<vpPose>::ransac(n*m,data,4,
+         threshold, M,inliers,
+         numberOfInlierToReachAConsensus, 0.0, maxNbTrials) ;
+
+
+  // we count the number of inliers
+  ninliers = 0 ;
+  for(i=0 ; i < n*m ; i++)
+  {
+    //if (inliers[i]==1)
+    if (std::fabs(inliers[i]-1) <= std::fabs(vpMath::maximum(inliers[i], 1.)) * std::numeric_limits<double>::epsilon())
     {
-      vpPoint pt2D;
-      pt2D.set_x(x[i]);
-      pt2D.set_y(y[i]);
-      p2D.push_back(pt2D);
-      
-      vpPoint pt3D;
-      pt3D.setWorldCoordinates(X[i], Y[i], Z[i]);
-      p3D.push_back(pt3D);
-    }
-    
-    std::vector<vpPoint> listInliers;
-    
-    vpPose::ransac(p2D,p3D,numberOfInlierToReachAConsensus,
-                  threshold,ninliers,listInliers,cMo,maxNbTrials);
-    
-    xi = vpColVector(listInliers.size());
-    yi = vpColVector(listInliers.size());
-    Xi = vpColVector(listInliers.size());
-    Yi = vpColVector(listInliers.size());
-    Zi = vpColVector(listInliers.size());
-    for(unsigned int i = 0 ; i < listInliers.size() ; i++){
-      xi[i] = listInliers[i].get_x();
-      yi[i] = listInliers[i].get_y();
-      
-      Xi[i] = listInliers[i].get_oX();
-      Yi[i] = listInliers[i].get_oY();
-      Zi[i] = listInliers[i].get_oZ();
+      ninliers++ ;
     }
   }
+
+  xi.resize(ninliers) ;
+  yi.resize(ninliers) ;
+  Xi.resize(ninliers) ;
+  Yi.resize(ninliers) ;
+  Zi.resize(ninliers) ;
+
+  unsigned int k =0 ;
+  for(i=0 ; i < n*m ; i++)
+  {
+    //if (inliers[i]==1)
+    if (std::fabs(inliers[i]-1) <= std::fabs(vpMath::maximum(inliers[i], 1.)) * std::numeric_limits<double>::epsilon())
+    {
+      xi[k] = data[5*i] ;
+      yi[k] = data[5*i+1] ;
+      Xi[k] = data[5*i+2] ;
+      Yi[k] = data[5*i+3] ;
+      Zi[k] = data[5*i+4] ;
+      k++ ;
+    }
+  }
+
+  for (i=0 ; i <16 ; i++)
+  {
+      cMo.data[i] = M[i];
+  }
+
+  std::cout << vpTime::measureTimeMs() - tms << "ms" << std::endl ;
+
 }
 
 /*!
@@ -334,29 +545,48 @@ vpPose::ransac(const unsigned int n,
                vpHomogeneousMatrix &cMo,
                const int maxNbTrials)
 {
-  if(n != m)
-    vpERROR_TRACE("Different number of 2D points from 3D points");
-  else{
-    std::vector<vpPoint> p2D;
-    std::vector<vpPoint> p3D;
-    
-    for (unsigned int i = 0 ; i < n ; i++)
-    {
-      vpPoint pt2D = p[i];
-      p2D.push_back(pt2D);
-      
-      vpPoint pt3D = P[i];
-      p3D.push_back(pt3D);
-    }
-    
-    std::vector<vpPoint> listInliers;
-    
-    vpPose::ransac(p2D,p3D,numberOfInlierToReachAConsensus,
-                  threshold,ninliers,listInliers,cMo,maxNbTrials);
-    
-    for(unsigned int i = 0 ; i < listInliers.size() ; i++)
-      lPi.push_back(listInliers[i]);
+  double *x, *y;
+  x = new double [n];
+  y = new double [n] ;
+  for (unsigned int i=0 ; i < n ; i++)
+  {
+    x[i] = p[i].get_x() ;
+    y[i] = p[i].get_y() ;
   }
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
+  for (unsigned int i=0 ; i < m ; i++)
+  {
+    X[i] = P[i].get_oX() ;
+    Y[i] = P[i].get_oY() ;
+    Z[i] = P[i].get_oZ() ;
+  }
+
+  vpColVector xi,yi,Xi,Yi,Zi ;
+
+  ransac(n,x,y,
+         m,X,Y,Z, numberOfInlierToReachAConsensus,
+         threshold,
+         ninliers,
+         xi,yi,Xi,Yi,Zi,
+         cMo, maxNbTrials) ;
+
+  for(unsigned int i=0 ; i < ninliers ; i++)
+  {
+    vpPoint Pi ;
+    Pi.setWorldCoordinates(Xi[i], Yi[i], Zi[i]) ;
+    Pi.set_x(xi[i]) ;
+    Pi.set_y(yi[i]) ;
+    lPi.push_back(Pi) ;
+  }
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
 }
 
 /*!
@@ -394,183 +624,64 @@ vpPose::ransac(std::list<vpPoint> &lp,
                vpHomogeneousMatrix &cMo,
                const int maxNbTrials)
 {
-  if(lp.size() != lP.size())
-    vpERROR_TRACE("Different number of 2D points from 3D points");
-  else{
-    std::vector<vpPoint> p2D;
-    std::vector<vpPoint> p3D;
-    
-    for (std::list<vpPoint>::const_iterator it = lp.begin(); it != lp.end(); ++it)
-    {
-      vpPoint pt = *it;
-      p2D.push_back(pt);
-    }
-    
-    for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lP.end(); ++it)
-    {
-      vpPoint pt = *it;
-      p3D.push_back(pt);
-    }
-    
-    std::vector<vpPoint> listInliers;
-    
-    vpPose::ransac(p2D,p3D,numberOfInlierToReachAConsensus,
-                  threshold,ninliers,listInliers,cMo,maxNbTrials);
-    
-    for(unsigned int i = 0 ; i < listInliers.size() ; i++)
-      lPi.push_back(listInliers[i]);
+  unsigned int i;
+  unsigned int n = lp.size() ;
+  unsigned int m = lP.size() ;
+
+  double *x, *y;
+  x = new double [n];
+  y = new double [n];
+
+  vpPoint pin ;
+  i = 0;
+  for (std::list<vpPoint>::const_iterator it = lp.begin(); it != lp.end(); ++it)
+  {
+    pin = *it;
+    x[i] = pin.get_x() ;
+    y[i] = pin.get_y() ;
+    ++ i;
   }
-}
 
-/*!
-  Compute the pose from a vector p2D of  2D point (x,y)  and  a vector p3D of 3D points
-  (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
-  the 2D and 3D points are registred
-
-  At least numberOfInlierToReachAConsensus of true correspondance are required
-  to validate the pose
-
-  The inliers are given in a list of vpPoint listInliers.
-
-  The pose is returned in cMo.
-
-  \param p2D : Vector of 2d points (x and y attributes are used).
-  \param p3D : Vector of 3d points (oX, oY and oZ attributes are used).
-  \param numberOfInlierToReachAConsensus : The minimum number of inlier to have
-  to consider a trial as correct.
-  \param threshold : The maximum error allowed between the 2d points and the
-  reprojection of its associated 3d points by the current pose (in meter).
-  \param ninliers : Number of inliers found for the best solution.
-  \param listInliers : Vector of points (2d and 3d) that are inliers for the best solution.
-  \param cMo : The computed pose (best solution).
-  \param maxNbTrials : Maximum number of trials before considering a solution
-  fitting the required \e numberOfInlierToReachAConsensus and \e threshold
-  cannot be found.
-*/
-void vpPose::ransac(std::vector<vpPoint> &p2D, 
-            std::vector<vpPoint> &p3D, 
-            const int &numberOfInlierToReachAConsensus, 
-            const double &threshold,
-            unsigned int &ninliers,
-            std::vector<vpPoint> &listInliers,
-            vpHomogeneousMatrix &cMo,
-            const int &maxNbTrials )
-{
-  if(p2D.size() != p3D.size())
-    vpERROR_TRACE("Number of 2D points different from number of 3D points");
-  else{
-    //Init Points
-    std::vector<vpPoint> points;
-    for(unsigned int i = 0 ; i < p2D.size() ; i++){
-      vpPoint pt;
-      pt.set_x(p2D[i].get_x());
-      pt.set_y(p2D[i].get_y());
-      pt.setWorldCoordinates(p3D[i].get_oX(),p3D[i].get_oY(),p3D[i].get_oZ()) ;
-      points.push_back(pt);
-    }
-    
-    srand(0);
-    std::vector<unsigned int> best_consensus;
-    std::vector<unsigned int> cur_consensus;
-    std::vector<unsigned int> cur_outliers;
-    std::vector<unsigned int> cur_randoms;
-    unsigned int size = points.size();
-    int nbTrials = 0;
-    unsigned int nbMinRandom = 4 ;
-    ninliers = 0;
-    
-    bool foundSolution = false;
-    
-    std::cout << "Error : " << threshold << std::endl;
-    
-    while (nbTrials < maxNbTrials && ninliers < (unsigned)numberOfInlierToReachAConsensus)
-    { 
-      cur_outliers.clear();
-      cur_randoms.clear();
-      
-      std::vector<bool> usedPt(size, false);
-      
-      vpPose poseMin ;
-      for(unsigned int i = 0; i < nbMinRandom; i++)
-      {
-        int r = rand()%size;
-        while(usedPt[r] ) r = rand()%size;
-        usedPt[r] = true;
-        poseMin.addPoint(points[r]) ;
-        cur_randoms.push_back(r);
-      }
-      poseMin.computePose(vpPose::DEMENTHON,cMo) ;
-
-      double r = poseMin.computeResidual(cMo) ;
-      r = sqrt(r)/(double)nbMinRandom;
-      
-      if (r < threshold)
-      {
-        unsigned int nbInliersCur = 0;
-        //std::cout << "Résultat : " << r << " / " << vpPoseVector(cMo).sumSquare()<< std::endl ;
-        for (unsigned int i=0 ; i < size ; i++) 
-        { 
-          vpPoint p(points[i]) ;
-          p.track(cMo) ;
-
-          double d = vpMath::sqr(p.get_x() - points[i].get_x()) + vpMath::sqr(p.get_y() - points[i].get_y()) ;
-          double error = sqrt(d) ;
-          if(error < threshold){ // the point is considered an inlier if the error is below the threshold
-            nbInliersCur++;
-            cur_consensus.push_back(i);
-          }    
-          else
-            cur_outliers.push_back(i);
-        }
-      // std::cout << "Nombre d'inliers " << nbInliersCur << "/" << ninliers << std::endl ;
-        
-        if(nbInliersCur > ninliers)
-        {
-          foundSolution = true;
-          best_consensus = cur_consensus;
-          ninliers = nbInliersCur;
-        }
-        
-        nbTrials++;
-        cur_consensus.clear();
-        
-        if(nbTrials >= maxNbTrials){
-          vpERROR_TRACE("Ransac reached the maximum number of trials");
-          foundSolution = true;
-        }
-      }
-    }
-    
-    if(foundSolution){
-      std::cout << "Nombre d'inliers " << ninliers << std::endl ;
-      
-      //Display the random picked points
-      std::cout << "Randoms : "; 
-      for(unsigned int i = 0 ; i < cur_randoms.size() ; i++)
-        std::cout << cur_randoms[i] << " ";
-      std::cout << std::endl;
-      
-      //Display the outliers
-      std::cout << "Outliers : "; 
-      for(unsigned int i = 0 ; i < cur_outliers.size() ; i++)
-        std::cout << cur_outliers[i] << " ";
-      std::cout << std::endl;
-      
-      if(ninliers >= (unsigned)numberOfInlierToReachAConsensus)
-      {    
-        vpPose pose ;
-        for(unsigned i = 0 ; i < best_consensus.size(); i++)
-        {
-          pose.addPoint(points[best_consensus[i]]) ;
-          listInliers.push_back(points[best_consensus[i]]);
-        }
-          
-        pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS,cMo) ;
-        std::cout << "Residue finale "<< pose.computeResidual(cMo)  << std::endl ;
-      }
-    }
+  double *X, *Y, *Z;
+  X = new double [m];
+  Y = new double [m];
+  Z = new double [m];
+  i = 0;
+  for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lP.end(); ++it)
+  {
+    pin = *it;
+    X[i] = pin.get_oX() ;
+    Y[i] = pin.get_oY() ;
+    Z[i] = pin.get_oZ() ;
+    ++i;
   }
+
+  vpColVector xi,yi,Xi,Yi,Zi ;
+
+  ransac(n,x,y,
+         m,X,Y,Z, numberOfInlierToReachAConsensus,
+         threshold,
+         ninliers,
+         xi,yi,Xi,Yi,Zi,
+         cMo, maxNbTrials) ;
+
+  for( i=0 ; i < ninliers ; i++)
+  {
+    vpPoint Pi ;
+    Pi.setWorldCoordinates(Xi[i],Yi[i], Zi[i]) ;
+    Pi.set_x(xi[i]) ;
+    Pi.set_y(yi[i]) ;
+    lPi.push_back(Pi);
+  }
+
+  delete [] x;
+  delete [] y;
+  delete [] X;
+  delete [] Y;
+  delete [] Z;
+
 }
+#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*
  * Local variables:

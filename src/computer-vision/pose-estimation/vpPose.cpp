@@ -326,9 +326,9 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 
       // test si les point 3D sont coplanaires
       int  plan = coplanar() ;
-
       if (plan == 1)
       {
+        //std::cout << "Plan" << std::endl;
         try{
           poseDementhonPlan(cMo);
         }
@@ -337,9 +337,11 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
           vpERROR_TRACE(" ") ;
           throw ;
         }
+        //std::cout << "Fin Plan" << std::endl;
       }
       else
       {
+        //std::cout << "No Plan" << std::endl;
         try{
           poseDementhonNonPlan(cMo) ;
         }
@@ -348,6 +350,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
           vpERROR_TRACE(" ") ;
           throw ;
         }
+        //std::cout << "Fin No Plan" << std::endl;
       }
     }
     break ;
@@ -401,7 +404,22 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
     }
     break;
   case RANSAC:
-    poseRansac(cMo);
+    if (npt <4)
+    {
+      vpERROR_TRACE("Ransac method cannot be used in that case ") ;
+      vpERROR_TRACE("(at least 4 points are required)") ;
+      vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
+      throw(vpPoseException(vpPoseException::notEnoughPointError,
+        "Not enough points ")) ;
+    }
+    try {
+      poseRansac(cMo);
+    }
+    catch(...)
+    {
+      vpERROR_TRACE(" ") ;
+      throw ;
+    }
     break;
   case LOWE :
   case VIRTUAL_VS:

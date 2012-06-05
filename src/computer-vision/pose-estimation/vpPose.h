@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Francois Chaumette
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -171,7 +172,7 @@ public:
   void setRansacNbInliersToReachConsensus(const int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t){ ransacThreshold = t; }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
-  int getRansacNbInliers(){ return ransacInliers.size(); }
+  int  getRansacNbInliers(){ return ransacInliers.size(); }
   std::vector<vpPoint> getRansacInliers(){ return ransacInliers; }
   
   /*!
@@ -194,10 +195,7 @@ public:
     
     return covarianceMatrix; 
   }
-
-  static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
-  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind) ;
+  
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
                       vpCameraParameters &cam, double size,
                       vpColor col=vpColor::none) ;
@@ -208,35 +206,8 @@ public:
                                   vpPoint &p3,vpPoint &p4,
                                   double lx, vpCameraParameters & cam,
                                   vpHomogeneousMatrix & cMo) ;
-  static void ransac(const unsigned int n,
-                     const double *x, const double *y,
-                     const unsigned int m,
-                     const double *X, const double *Y, const double *Z,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     vpColVector &xi,  vpColVector &yi,
-                     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
-  static void ransac(const unsigned int n,
-                     const vpPoint *p,
-                     const unsigned int m,
-                     const vpPoint *P,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     std::list<vpPoint> &Pi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
-
-  static void ransac(std::list<vpPoint> &p,
-                     std::list<vpPoint> &P,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     std::list<vpPoint> &lPi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
                      
-  static void ransac(std::vector<vpPoint> &p2D, 
+  static void findMatch(std::vector<vpPoint> &p2D, 
                      std::vector<vpPoint> &p3D, 
                      const int &numberOfInlierToReachAConsensus, 
                      const double &threshold,
@@ -250,11 +221,47 @@ private:
   /*!
     @name Deprecated functions
   */
-  vp_deprecated static void initRansac(const unsigned int n,
+  static void initRansac(const unsigned int n,
         const double *x, const double *y,
         const unsigned int m,
         const double *X, const double *Y, const double *Z,
         vpColVector &data) ;
+
+public:
+  static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
+  
+  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
+  
+  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind) ;
+  
+  static void ransac(const unsigned int n,
+                     const double *x, const double *y,
+                     const unsigned int m,
+                     const double *X, const double *Y, const double *Z,
+                     const int numberOfInlierToReachAConsensus,
+                     const double threshold,
+                     unsigned int &ninliers,
+                     vpColVector &xi,  vpColVector &yi,
+                     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
+                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
+                     
+  vp_deprecated static void ransac(const unsigned int n,
+                     const vpPoint *p,
+                     const unsigned int m,
+                     const vpPoint *P,
+                     const int numberOfInlierToReachAConsensus,
+                     const double threshold,
+                     unsigned int &ninliers,
+                     std::list<vpPoint> &Pi,
+                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
+
+  vp_deprecated static void ransac(std::list<vpPoint> &p,
+                     std::list<vpPoint> &P,
+                     const int numberOfInlierToReachAConsensus,
+                     const double threshold,
+                     unsigned int &ninliers,
+                     std::list<vpPoint> &lPi,
+                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
 #endif
 } ;
 
