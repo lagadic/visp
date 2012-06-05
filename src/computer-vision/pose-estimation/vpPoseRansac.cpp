@@ -36,6 +36,7 @@
  *
  * Authors:
  * Eric Marchand
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -50,6 +51,7 @@
 #include <visp/vpRansac.h>
 #include <visp/vpTime.h>
 #include <visp/vpList.h>
+#include <visp/vpPoseException.h>
 
 #include <iostream>
 #include <cmath>    // std::fabs
@@ -246,12 +248,23 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D,
     }
   }
   
-  pose.setRansacMaxTrials(maxNbTrials);
-  pose.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus);
-  pose.setRansacThreshold(threshold);
-  pose.computePose(vpPose::RANSAC, cMo);
-  ninliers = pose.getRansacNbInliers();
-  listInliers = pose.getRansacInliers();
+  if (pose.listP.size() < 4)
+  {
+    vpERROR_TRACE("Ransac method cannot be used in that case ") ;
+    vpERROR_TRACE("(at least 4 points are required)") ;
+    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",pose.listP.size()) ;
+    throw(vpPoseException(vpPoseException::notEnoughPointError,
+      "Not enough points ")) ;
+  }
+  else
+  {
+    pose.setRansacMaxTrials(maxNbTrials);
+    pose.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus);
+    pose.setRansacThreshold(threshold);
+    pose.computePose(vpPose::RANSAC, cMo);
+    ninliers = pose.getRansacNbInliers();
+    listInliers = pose.getRansacInliers();
+  }
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
