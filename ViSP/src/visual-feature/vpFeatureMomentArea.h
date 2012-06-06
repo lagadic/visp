@@ -50,7 +50,7 @@ class vpMomentDatabase;
 
 /*!
   \class vpFeatureMomentArea
-  <Documentation yet to be added>
+
 */
 
 class VISP_EXPORT vpFeatureMomentArea : public vpFeatureMoment{
