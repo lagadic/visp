@@ -99,6 +99,7 @@ int main(int argc, char **argv)
   }
   
   std::cout << "Robot connected" << std::endl;
+  robot.useSonar(false); // disable the sonar device usage
 
   // Robot velocities
   vpColVector v(2), v_mes(2);
