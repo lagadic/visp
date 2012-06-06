@@ -67,9 +67,23 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
   vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
 
-  s.setXc((x1+x2)/2.);
-  s.setYc((y1+y2)/2.);
-  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  double xc = (x1+x2)/2.;
+  double yc = (y1+y2)/2.;
+  double l = sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+
+  if (s.isNormalized())
+  {
+    s.setXc( xc/l );
+    s.setYc( yc/l );
+    s.setL (  1/l );
+  }
+  else
+  {
+    s.setXc( xc );
+    s.setYc( yc );
+    s.setL ( l  );
+  }
+
   s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
@@ -90,9 +104,23 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertPoint(cam, d1.getCog(), x1, y1) ;
   vpPixelMeterConversion::convertPoint(cam, d2.getCog(), x2, y2) ;
 
-  s.setXc((x1+x2)/2.);
-  s.setYc((y1+y2)/2.);
-  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  double xc = (x1+x2)/2.;
+  double yc = (y1+y2)/2.;
+  double l = sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+
+  if (s.isNormalized())
+  {
+    s.setXc( xc/l );
+    s.setYc( yc/l );
+    s.setL (  1/l );
+  }
+  else
+  {
+    s.setXc( xc );
+    s.setYc( yc );
+    s.setL ( l  );
+  }
+
   s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
@@ -113,9 +141,23 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
   vpPixelMeterConversion::convertPoint(cam, ip1, x1, y1) ;
   vpPixelMeterConversion::convertPoint(cam, ip2, x2, y2) ;
 
-  s.setXc((x1+x2)/2.);
-  s.setYc((y1+y2)/2.);
-  s.setL(sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) );
+  double xc = (x1+x2)/2.;
+  double yc = (y1+y2)/2.;
+  double l = sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+
+  if (s.isNormalized())
+  {
+    s.setXc( xc/l );
+    s.setYc( yc/l );
+    s.setL (  1/l );
+  }
+  else
+  {
+    s.setXc( xc );
+    s.setYc( yc );
+    s.setL ( l  );
+  }
+
   s.setAlpha(atan2(y1-y2,x1-x2));
 }
 
