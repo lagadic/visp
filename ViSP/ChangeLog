@@ -12,10 +12,11 @@ ViSP 2.6.2 (under development)
        under Windows using CMU 1394 Digital Camera 3rd party library.
        Thanks to Lucas Lopes Lemos and Guillaume Laurent from FEMTO-ST, 
        AS2M departement, Besancon, France for this contribution.
-     - New vpRobotPioneer class to control Pioneer mobile robots using
-       Aria 3rd party library.
+     - New vpPioneer, vpPioneerPan, vpRobotPioneer classes to control Pioneer 
+       mobile robots using Aria 3rd party library.
      - New vpFeatureSegment class to consider a segment as a visual
-       servoing feature.
+       servoing feature. Normalized and non normalized features are considered.
+     - New vpFeatureMomentArea class to consider moment area as a visual feature.
      - Introduction of new functionalities in vpIoTools to parse text
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
@@ -34,11 +35,13 @@ ViSP 2.6.2 (under development)
      - Use OpenMP to optimize the execution of the moments computation
   - Examples:
      - New example plot3d.cpp to show how to plot 3D curves
-     - New example movePioneer.cpp, servoPioneerPoint2DDepth.cpp and
-       servoPioneerPoint2DDepthWithoutVpServo.cpp to show how to control the 
-       pioneer mobile robot.
+     - New example movePioneer.cpp to illustrate Pioneer velocity control.
+     - New example sonarPioneerReader.cpp to illustrate Pioneer sonar device usage.
+     - New examples servoPioneerPoint2DDepth.cpp,
+       servoPioneerPoint2DDepthWithoutVpServo.cpp and servoPioneerPanSegment3D.cpp
+       to show how to control the pioneer mobile robot by IBVS.
      - New example grab1394CMU.cpp to show how to acquire images with
-	   the CMU 1394 library.
+       the CMU 1394 library.
   - Bug fixed
      - [13536] Division by zero in vpMeLine
      - [13548] ViSP-2.6.1 produces several warnings with g++ 4.4.3, a const
