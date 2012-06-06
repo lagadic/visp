@@ -58,7 +58,8 @@
   \brief Interface for Pioneer mobile robots based on Aria 3rd party library.
 
   This class provides a position and speed control interface for Pioneer mobile robots.
-  It inherits from the Aria ArRobot class. For more information see ArRobot documentation.
+  It inherits from the Aria ArRobot class. For more information about the model of the robot,
+  see vpPioneer documentation.
 
 */
 class VISP_EXPORT vpRobotPioneer: public vpRobot, public vpPioneer, public ArRobot
