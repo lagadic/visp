@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -41,6 +41,10 @@
 #include <iostream>
 
 #include <visp/vpConfig.h>
+#if defined(VISP_HAVE_OPENCV)
+#include "cv.h"
+#include "highgui.h"
+#endif
 
 #include <visp/vpRobotPioneer.h>
 #include <visp/vpCameraParameters.h>
@@ -52,11 +56,13 @@
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
+#include <visp/vpImageConvert.h>
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vp1394CMUGrabber.h>
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpServo.h>
 #include <visp/vpVelocityTwistMatrix.h>
+
 
 /*!
   \example servoPioneerPoint2DDepth.cpp
@@ -72,30 +78,16 @@
   and vx the translational velocity of the mobile platform at point M located at the middle
   between the two wheels.
 
-
-   y
-
-  /|\
-   |
-   ----> x          C ----> z
-  M                   |
-                      |
-                     \|/
-                    x
-
-  The distance between the camera frame C and the mobile robot reference frame M is fixed in the code by
-  l = 0.13 meters. Depending on the setup this value should be modified.
-
   The feature x allows to control wy, while log(Z/Z*) allows to control vz.
   The value of x is measured thanks to a blob tracker.
   The value of Z is estimated from the surface of the blob that is proportional to the depth Z.
 
   */
-#if defined(VISP_HAVE_PIONEER)
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_PIONEER)
   vpImage<unsigned char> I; // Create a gray level image container
   double depth = 1.;
   double lambda = 0.6;
@@ -127,7 +119,18 @@ int main(int argc, char **argv)
   std::cout << "Robot connected" << std::endl;
 
   // Create the camera framegrabber
-#if defined(VISP_HAVE_V4L2)
+#if defined(VISP_HAVE_OPENCV)
+  int device = 1;
+  std::cout << "Use device: " << device << std::endl;
+  cv::VideoCapture g(device); // open the default camera
+  g.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+  g.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+  if(!g.isOpened())  // check if we succeeded
+    return -1;
+  cv::Mat frame;
+  g >> frame; // get a new frame from camera
+  vpImageConvert::convert(frame, I);
+#elif defined(VISP_HAVE_V4L2)
   // Create a grabber based on v4l2 third party lib (for usb cameras under Linux)
   vpV4l2Grabber g;
   g.setScale(1);
@@ -148,7 +151,12 @@ int main(int argc, char **argv)
 #endif
 
   // Acquire an image from the grabber
+#if defined(VISP_HAVE_OPENCV)
+  g >> frame; // get a new frame from camera
+  vpImageConvert::convert(frame, I);
+#else
   g.acquire(I);
+#endif
 
   // Create an image viewer
 #if defined(VISP_HAVE_X11)
@@ -224,7 +232,12 @@ int main(int argc, char **argv)
     while(1)
     {
       // Acquire a new image
-      g.acquire(I);
+#if defined(VISP_HAVE_OPENCV)
+        g >> frame; // get a new frame from camera
+        vpImageConvert::convert(frame, I);
+#else
+        g.acquire(I);
+#endif
       // Set the image as background of the viewer
       vpDisplay::display(I);
 
@@ -277,11 +290,5 @@ int main(int argc, char **argv)
 
 #endif
 #endif
-}
-#else
-int main()
-{
-  std::cout << "ViSP is not able to control the Pioneer robot" << std::endl;
-  return 0;
-}
 #endif
+}
