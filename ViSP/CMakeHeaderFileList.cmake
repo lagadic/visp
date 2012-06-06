@@ -168,6 +168,7 @@ SET (HEADER_ROBOT
   robot/real-robot/cycab/vpRobotCycab.h
   robot/real-robot/pioneer/vpUnicycle.h
   robot/real-robot/pioneer/vpPioneer.h
+  robot/real-robot/pioneer/vpPioneerPan.h
   robot/real-robot/pioneer/vpRobotPioneer.h
   robot/real-robot/ptu46/vpPtu46.h
   robot/real-robot/ptu46/vpRobotPtu46.h
