@@ -137,6 +137,13 @@ private: // Set as private since not implemented
 public:
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
 
+  /*!
+    Enable or disable sonar device usage.
+    */
+  void useSonar(bool usage)
+  {
+    this->comInt(ArCommands::SONAR, usage);
+  }
 
 protected:
   bool isInitialized;
