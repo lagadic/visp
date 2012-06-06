@@ -72,8 +72,8 @@ public:
   virtual ~vpUnicycle() {};
 
   /*!
-    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and the unicycle
-    mobile platform frame located at point E.
+    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame
+    and the mobile robot end effector frame.
     */
   vpHomogeneousMatrix get_cMe() const
   {
@@ -83,8 +83,8 @@ public:
   /*!
 
     Return the twist transformation from camera frame to the mobile robot
-    frame located at point E.  This transformation allows to compute a velocity expressed
-    in the mobile robot frame into the camera frame.
+    end effector frame.  This transformation allows to compute a velocity expressed
+    in the end effector frame into the camera frame.
   */
   vpVelocityTwistMatrix get_cVe() const
   {
@@ -96,8 +96,8 @@ public:
   /*!
 
     Return the twist transformation from camera frame to the mobile robot
-    frame located at point E.  This transformation allows to compute a velocity expressed
-    in the mobile robot frame into the camera frame.
+    end effector frame.  This transformation allows to compute a velocity expressed
+    in the end effector frame into the camera frame.
 
     \sa get_cVe()
   */
@@ -107,12 +107,10 @@ public:
   }
 
   /*!
-    Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed at point E, the point located at the
-    middle between the two wheels.
+    Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
 
-    \return The robot jacobian such as \f$(v_x, w_z) = {^e}{\bf J}_e \; {\bf v}\f$ with
-    \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
-    of the mobile robot and \f$\bf v\f$ the six dimention velocity skew.
+    \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{q}\f$ with
+    \f${\bf q}\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
   vpMatrix get_eJe() const
   {
@@ -120,8 +118,7 @@ public:
   }
 
   /*!
-    Set the transformation between the camera frame and the mobile platform
-    frame located at point E.
+    Set the transformation between the camera frame and the end effector frame.
     */
   void set_cMe(const vpHomogeneousMatrix &cMe)
   {
@@ -129,12 +126,10 @@ public:
   }
 
   /*!
-    Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed at point E, the point located at the
-    middle between the two wheels.
+    Set the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
 
-    \return The robot jacobian such as \f$(v_x, w_z) = {^e}{\bf J}_e \; {\bf v}\f$ with
-    \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
-    of the mobile robot and \f$\bf v\f$ the six dimention velocity skew.
+    \param eJe : The robot jacobian to set such as \f${\bf v} = {^e}{\bf J}_e \; \dot{q}\f$ with
+    \f${\bf q}\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
   void set_eJe(const vpMatrix &eJe)
   {
