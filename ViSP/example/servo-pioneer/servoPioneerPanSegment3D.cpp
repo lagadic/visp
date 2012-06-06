@@ -77,18 +77,6 @@
   velocity of the mobile platform at point M located at the middle between the two wheels, the head pan
   velocity respectively.
 
-
-   y
-
-  /|\
-   |
-   ----> x          C ----> z
-  M                   |
-                      |
-                     \|/
-                    x
-
-
   The depth of the points is estimated from the surface of the blob.
 
   */
@@ -98,7 +86,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpImage<unsigned char> I; // Create a gray level image container
-  double lambda = 0.15;
+  double lambda = 0.05;
   // Scale parameter used to estimate the depth Z of the blob from its surface
   double coef = 0.9/14.85;  // At 0.9m, the blob has a surface of 14.85
   double L = 0.21; // 3D horizontal segment length
@@ -121,7 +109,8 @@ int main(int argc, char **argv)
   vpColVector q(2);
 
   q=0;
-  //q[0] = vpMath::rad(0);
+  q[0] = vpMath::rad(63);
+  q[1] = vpMath::rad(12); // introduce a tilt angle to compensate camera sphere tilt so that the camera is parallel to the plane
 
   biclops.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   biclops.setPosition( vpRobot::ARTICULAR_FRAME, q );

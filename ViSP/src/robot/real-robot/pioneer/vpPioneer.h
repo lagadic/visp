@@ -58,7 +58,10 @@
   This robot has two control velocities \f$(v_x, w_z)\f$, the translational and
   rotational velocities of the mobile platform respectively.
 
+  The figure below shows the position of the frames that are used to model the robot.
   The end effector frame is here located at the middle point between the two wheels.
+
+  \image html pioneer.png
 
 */
 class VISP_EXPORT vpPioneer: public vpUnicycle
