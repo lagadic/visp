@@ -146,6 +146,7 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
   - Sets the robot in asynchronous mode by starting a low level thread. The robot will be stopped
     if there is no connection to the robot at any given point.
   - Enables the motors on the robot, if it is connected.
+
   */
 void vpRobotPioneer::init()
 {
@@ -157,7 +158,6 @@ void vpRobotPioneer::init()
     this->runAsync(true);
     this->lock();
     this->enableMotors();
-    //  this->comInt(ArCommands::SONAR, 0);
     this->unlock();
 
     isInitialized = true;
