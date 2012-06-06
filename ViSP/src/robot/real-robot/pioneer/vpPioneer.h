@@ -55,6 +55,10 @@
   \brief Generic functions for Pioneer mobile robots.
 
   This class provides common features for Pioneer mobile robots.
+  This robot has two control velocities \f$(v_x, w_z)\f$, the translational and
+  rotational velocities of the mobile platform respectively.
+
+  The end effector frame is here located at the middle point between the two wheels.
 
 */
 class VISP_EXPORT vpPioneer: public vpUnicycle
@@ -77,7 +81,7 @@ public:
 private:
   /*!
     Set the transformation between the camera frame and the mobile platform
-    frame located at point E.
+    end effector frame.
     */
   void set_cMe()
   {
@@ -91,13 +95,13 @@ private:
   }
 
   /*!
-    Set the robot jacobian expressed at point E, the point located at the
+    Set the robot jacobian at the end effector frame, the point located at the
     middle between the two wheels.
 
-    Considering \f$(v_x, w_z) = {^e}{\bf J}_e \; {\bf v}\f$ with
+    Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z]\f$ with
     \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
-    of the mobile robot and \f$\bf v\f$ the six dimention velocity skew expressed at point E,
-    the robot jacobian is given by:
+    of the mobile robot and \f$\bf v\f$ the six dimention velocity skew expressed at the
+    end effector frame, the robot jacobian is given by:
 
     \f[
     {^e}{\bf J}_e = \left(\begin{array}{cc}
