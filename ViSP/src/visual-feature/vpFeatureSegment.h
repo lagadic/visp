@@ -59,16 +59,25 @@
   \class vpFeatureSegment
   \ingroup VsFeature2
 
-  \brief Class that defines a 2D segment visual feature \f${\bf s} = (x_c, y_c, l, \alpha)\f$, where
-  \f$(x_c,y_c)\f$ are the coordinates of the segment center, \f$ l \f$ the segment length
-  and \f$ \alpha \f$ the orientation of the segment with respect to the \f$ x \f$ axis.
+  \brief Class that defines a 2D segment visual features.
+  This class allow to consider two sets of visual features:
+  - the non normalised features \f${\bf s} = (x_c, y_c, l, \alpha)\f$ where \f$(x_c,y_c)\f$
+    are the coordinates of the segment center, \f$ l \f$ the segment length
+    and \f$ \alpha \f$ the orientation of the segment with respect to the \f$ x \f$ axis.
+  - or the normalized features \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$ with \f$x_n = x_c/l\f$,
+    \f$y_n = y_c/l\f$ and \f$l_n = 1/l\f$.
+
+
+
+  The selection of the feature set is done either during construction using vpFeatureSegment(bool),
+  or by setNormalized(bool).
 
 */
 class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
   //empty constructor
-  vpFeatureSegment();
+  vpFeatureSegment(bool normalized=false);
 
   //! Destructor. Does nothing.
   ~vpFeatureSegment() { if (flags != NULL) delete [] flags; }
@@ -91,23 +100,27 @@ public:
                     const unsigned int select = FEATURE_ALL)  ;
 
   /*!
-      Get the value of \f$ x_c \f$ which represents the x coordinate of the segment center in the image plane.
+      Get the x coordinate of the segment center in the image plane.
 
-      \return The value of \f$ x_c \f$.
-    */
-  inline double getXc() const { return s[0] ;}
+      \return If normalized features are used, return \f$ x_n = x_c / l \f$. Otherwise return \f$ x_c \f$.
+   */
+  inline double getXc() const { return s[0] ; }
+
   /*!
-        Get the value of \f$ y_c \f$ which represents the y coordinate of the segment center in the image plane.
+      Get the y coordinate of the segment center in the image plane.
 
-        \return The value of \f$ y_c \f$.
+      \return If normalized features are used, return \f$ y_n = y_c / l \f$. Otherwise return \f$ y_c \f$.
     */
-  inline double getYc() const { return s[1] ;}
+  inline double getYc() const { return s[1] ; }
+
   /*!
-        Get the value of \f$ l \f$ which represents the length of the segment.
+      Get the length of the segment.
 
-        \return The value of \f$ l \f$.
+      \return If normalized features are used, return \f$ l_n = 1 / l \f$. Otherwise return \f$ l \f$.
+
     */
-  inline double getL() const { return s[2] ;}
+  inline double getL() const { return s[2] ; }
+
   /*!
         Get the value of \f$ \alpha \f$ which represents the orientation of the segment.
 
@@ -119,17 +132,17 @@ public:
       Get the value of \f$ Z_1 \f$ which represents the Z coordinate in the camera frame
       of the 3D point that corresponds to the segment first point.
 
-      \return The value of \f$ Z_1 \f$.
+      \return The value of the depth \f$ Z_1 \f$.
     */
-  inline double getZ1() const { return Z1 ;}
+  inline double getZ1() const { return Z1_ ;}
 
   /*!
       Get the value of \f$ Z_2 \f$ which represents the Z coordinate in the camera frame
       of the 3D point that corresponds to the segment second point.
 
-      \return The value of \f$ Z_2 \f$.
+      \return The value of the depth \f$ Z_2 \f$.
     */
-  inline double getZ2() const { return Z2 ;}
+  inline double getZ2() const { return Z2_ ;}
 
   // Basic construction.
   void init() ;
@@ -139,14 +152,17 @@ public:
 
   void print(const unsigned int select= FEATURE_ALL) const ;
 
-
+  /*!
+    Indicates if the normalized features are considered.
+    */
+  bool isNormalized() { return normalized_; };
 
   /*!
 
-    Function used to select the \f$x_c\f$ subfeature.
+    Function used to select the \f$x_c\f$ or \f$x_n\f$ subfeature.
 
     This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$x_c\f$ feature.
+    to compute the interaction matrix associated to \f$x_c\f$ or \f$x_n\f$ feature.
 
     See the interaction() method for an usage example.
 
@@ -167,10 +183,10 @@ public:
 
   /*!
 
-    Function used to select the \f$y_c\f$ subfeature.
+    Function used to select the \f$y_c\f$ or \f$y_n\f$ subfeature.
 
     This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$y_c\f$ feature.
+    to compute the interaction matrix associated to \f$y_c\f$ or \f$y_n\f$ feature.
 
     See the interaction() method for an usage example.
 
@@ -192,10 +208,10 @@ public:
 
   /*!
 
-    Function used to select the \f$l\f$ subfeature.
+    Function used to select the \f$l\f$ or \f$l_n\f$ subfeature.
 
     This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$l\f$ feature.
+    to compute the interaction matrix associated to \f$l\f$ or \f$l_n\f$ feature.
 
     See the interaction() method for an usage example.
 
@@ -241,36 +257,44 @@ public:
   inline static unsigned int selectAlpha() { return FEATURE_LINE[3] ; }
   
   /*!
+    Set the king of feature to consider.
+    \param normalized : If true, use normalized features \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$.
+    If false, use non normalized features \f${\bf s} = (x_c, y_c, l_c, \alpha)\f$.
+    */
+  void setNormalized(bool normalized) { normalized_ = normalized; };
+  /*!
 
-    Set the value of \f$ x_c \f$ which represents the x coordinate of the segment center
-    in the image plane. It is one parameter of the visual feature \f$ s \f$.
+    Set the value of the x coordinate of the segment center
+    in the image plane.  It is one parameter of the visual feature \f$ s \f$.
 
-    \param val : \f$ x_c \f$ value to set.
+    \param val : Value to set, that is either equal to \f$ x_n = x_c/l \f$ when normalized features
+    are considered, or equal to \f$ x_c \f$ otherwise.
   */
   inline void setXc(const double val){
-    s[0] = xc = val;
+    s[0] = xc_ = val;
     flags[0] = true;
   }
   /*!
 
-    Set the value of \f$ y_c \f$ which represents the y coordinate of the segment center
-    in the image plane. It is one parameter of the visual feature \f$ s \f$.
+    Set the value of the y coordinate of the segment center
+    in the image plane.  It is one parameter of the visual feature \f$ s \f$.
 
-    \param val : \f$ y_c \f$ value to set.
+    \param val : Value to set, that is either equal to \f$ y_n = y_c/l \f$ when normalized features
+    are considered, or equal to \f$ y_c \f$ otherwise.
   */
   inline void setYc(const double val){
-    s[1] = yc = val;
+    s[1] = yc_ = val;
     flags[1] = true;
   }
   /*!
 
-    Set the value of \f$ l \f$ which represents the length of the segment
-    in the image plane. It is one parameter of the visual feature \f$ s \f$.
+    Set the value of the segment lenght in the image plane. It is one parameter of the visual feature \f$ s \f$.
 
-    \param val : \f$ l \f$ value to set.
+    \param val : Value to set, that is either equal to \f$l_n= 1/l \f$ when normalized features
+    are considered, or equal to \f$ l \f$ otherwise.
   */
   inline void setL(const double val){
-    s[2] = l = val;
+    s[2] = l_ = val;
     flags[2] = true;
   }
   /*!
@@ -281,9 +305,9 @@ public:
     \param val : \f$ \alpha \f$ value to set.
   */
   inline void setAlpha(const double val){
-    s[3] = alpha = val;
-    cos_a = cos(val);
-    sin_a = sin(val);
+    s[3] = alpha_ = val;
+    cos_a_ = cos(val);
+    sin_a_ = sin(val);
     flags[3] = true;
   }
 
@@ -300,21 +324,21 @@ public:
   */
   inline void setZ1(const double val)
   {
-    Z1 = val;
+    Z1_ = val;
 
-    if (Z1 < 0)
+    if (Z1_ < 0)
     {
       vpERROR_TRACE("Point is behind the camera ") ;
-      std::cout <<"Z1 = " << Z1 << std::endl ;
+      std::cout <<"Z1 = " << Z1_ << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
              "Point Z1 is behind the camera ")) ;
     }
 
-    if (fabs(Z1) < 1e-6)
+    if (fabs(Z1_) < 1e-6)
     {
       vpERROR_TRACE("Point Z1 coordinates is null ") ;
-      std::cout <<"Z1 = " << Z1 << std::endl ;
+      std::cout <<"Z1 = " << Z1_ << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
              "Point Z1 coordinates is null")) ;
@@ -336,21 +360,21 @@ public:
   */
   inline void setZ2(const double val)
   {
-    Z2 = val;
+    Z2_ = val;
 
-    if (Z2 < 0)
+    if (Z2_ < 0)
     {
       vpERROR_TRACE("Point Z2 is behind the camera ") ;
-      std::cout <<"Z2 = " << Z2 << std::endl ;
+      std::cout <<"Z2 = " << Z2_ << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
              "Point Z2 is behind the camera ")) ;
     }
 
-    if (fabs(Z2) < 1e-6)
+    if (fabs(Z2_) < 1e-6)
     {
       vpERROR_TRACE("Point Z2 coordinates is null ") ;
-      std::cout <<"Z2 = " << Z2 << std::endl ;
+      std::cout <<"Z2 = " << Z2_ << std::endl ;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
              "Point Z2 coordinates is null")) ;
@@ -361,14 +385,15 @@ public:
 
 
 private:
-  double xc;
-  double yc;
-  double l;
-  double alpha;
-  double Z1;
-  double Z2;
-  double cos_a;
-  double sin_a;
+  double xc_;
+  double yc_;
+  double l_;
+  double alpha_;
+  double Z1_;
+  double Z2_;
+  double cos_a_;
+  double sin_a_;
+  bool normalized_;
 } ;
 
 #endif
