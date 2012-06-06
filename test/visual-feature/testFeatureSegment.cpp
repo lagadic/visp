@@ -39,23 +39,27 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
-#include <visp/vpMath.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeatureSegment.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpPoint.h>
-#include <visp/vpServo.h> //visual servoing task
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <numeric>
+
+#include <visp/vpConfig.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureSegment.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpMath.h>
+#include <visp/vpPlot.h>
+#include <visp/vpPoint.h>
+#include <visp/vpRobotCamera.h>
+#include <visp/vpServo.h> //visual servoing task
+
+#define USE_PLOTTER
 
 /*!
 
@@ -89,27 +93,37 @@ int main()
     display.init(I);
 #endif
 
-  vpHomogeneousMatrix cMo(-.5, -.5, 2., vpMath::rad(50), vpMath::rad(60), vpMath::rad(70));
+  vpHomogeneousMatrix cMo (0., 0.5, 3., vpMath::rad(10), vpMath::rad(20), vpMath::rad(90));
   vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
-  vpPoint p1_cur, p2_cur, p1_dst, p2_dst;
-  
-  p1_cur.setWorldCoordinates(.1, .1, 0.);
-  p2_cur.setWorldCoordinates(.3, .2, 0.);
 
-  p1_dst.setWorldCoordinates(.1, .1, 0.);
-  p2_dst.setWorldCoordinates(.3, .2, 0.);
-  
-  p1_cur.project(cMo);
-  p2_cur.project(cMo);
+  vpPoint P[4]; // 4 points in the object frame
+  P[0].setWorldCoordinates( .1,  .1, 0.);
+  P[1].setWorldCoordinates(-.1,  .1, 0.);
+  P[2].setWorldCoordinates(-.1, -.1, 0.);
+  P[3].setWorldCoordinates( .1, -.1, 0.);
 
-  p1_dst.project(cdMo);
-  p2_dst.project(cdMo);
+  vpPoint Pd[4]; // 4 points in the desired camera frame
+  for (int i=0; i<4; i++) {
+    Pd[i] = P[i];
+    Pd[i].project(cdMo);
+  }
+  vpPoint Pc[4]; // 4 points in the current camera frame
+  for (int i=0; i<4; i++) {
+    Pc[i] = P[i];
+    Pc[i].project(cMo);
+  }
   
-  vpFeatureSegment seg_cur, seg_dst;
-  vpFeatureBuilder::create(seg_cur, p2_cur, p1_cur);
-  vpFeatureBuilder::create(seg_dst, p2_dst, p1_dst);
-  seg_cur.print();
-  seg_dst.print();
+  bool normalized = true;
+  vpFeatureSegment seg_cur[2], seg_des[2]; // Current and desired features
+  for (int i=0; i <2; i++)
+  {
+    seg_cur[i].setNormalized(normalized);
+    seg_des[i].setNormalized(normalized);
+    vpFeatureBuilder::create(seg_cur[i], Pc[i*2], Pc[i*2+1]);
+    vpFeatureBuilder::create(seg_des[i], Pd[i*2], Pd[i*2+1]);
+    seg_cur[i].print();
+    seg_des[i].print();
+  }
   
   //define visual servoing task
   vpServo task;
@@ -117,44 +131,67 @@ int main()
   task.setInteractionMatrixType(vpServo::CURRENT);
   task.setLambda(1) ;
 
-  task.addFeature(seg_cur,seg_dst);  
+  for (int i=0; i <2; i++)
+    task.addFeature(seg_cur[i], seg_des[i]);
   
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   if (opt_display) {
-    seg_cur.display(cam,I, vpColor::red);
-    seg_dst.display(cam,I, vpColor::green);
-    vpDisplay::flush(I);
+    vpDisplay::display(I);
+    for (int i=0; i <2; i++) {
+      seg_cur[i].display(cam, I, vpColor::red);
+      seg_des[i].display(cam, I, vpColor::green);
+      vpDisplay::flush(I);
+    }
   }
 #endif
   
+#ifdef USE_PLOTTER
+  //Create a window (700 by 700) at position (100, 200) with two graphics
+  vpPlot graph(2, 500, 500, 700, 10, "Curves...");
+
+  //The first graphic contains 3 curve and the second graphic contains 3 curves
+  graph.initGraph(0,6);
+  graph.initGraph(1,8);
+  graph.setTitle(0, "Velocities");
+  graph.setTitle(1, "Error s-s*");
+#endif
   //param robot
   vpRobotCamera robot ;
   float sampling_time = 0.010f ; // Sampling period in seconds
   robot.setSamplingTime(sampling_time) ;
   robot.setPosition(cMo) ;
-  float iter=0.;
+  int iter=0;
 
   do{
+    double t = vpTime::measureTimeMs();
     robot.getPosition(cMo);
-    p1_cur.project(cMo);
-    p2_cur.project(cMo);
+    for (int i=0; i <4; i++)
+      Pc[i].project(cMo);
 
-    vpFeatureBuilder::create(seg_cur, p2_cur, p1_cur);
+    for (int i=0; i <2; i++)
+      vpFeatureBuilder::create(seg_cur[i], Pc[i*2], Pc[i*2+1]);
+
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
     if (opt_display) {
       vpDisplay::display(I);
-      seg_cur.display(cam, I, vpColor::red);
-      seg_dst.display(cam, I, vpColor::green);
-      vpDisplay::flush(I);
+      for (int i=0; i <2; i++) {
+        seg_cur[i].display(cam, I, vpColor::red);
+        seg_des[i].display(cam, I, vpColor::green);
+        vpDisplay::flush(I);
+      }
     }
 #endif
 
     vpColVector v = task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     
-    double t = vpTime::measureTimeMs();
+#ifdef USE_PLOTTER
+      graph.plot(0, iter, v); // plot velocities applied to the robot
+      graph.plot(1, iter, task.getError()); // plot error vector
+#endif
+
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms    
-    iter+=sampling_time;
+    iter ++;
     
   } while(( task.getError() ).sumSquare() > 0.00005);
   
