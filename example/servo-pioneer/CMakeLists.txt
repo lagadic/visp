@@ -47,6 +47,8 @@ SET (SOURCE
   movePioneer.cpp
   servoPioneerPoint2DDepth.cpp
   servoPioneerPoint2DDepthWithoutVpServo.cpp
+  servoPioneerPanSegment3D.cpp
+  sonarPioneerReader.cpp
 )
 
 # rule for binary build
