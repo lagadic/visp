@@ -42,7 +42,7 @@
 
 #include <visp/vpConfig.h>
 
-#include <visp/vpRobotPioneer.h>
+#include <visp/vpRobotPioneer.h> // Include before vpDisplayX to avoid build issues
 #include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayX.h>
