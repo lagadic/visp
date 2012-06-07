@@ -41,10 +41,6 @@
 #include <iostream>
 
 #include <visp/vpConfig.h>
-#if defined(VISP_HAVE_OPENCV)
-#include "cv.h"
-#include "highgui.h"
-#endif
 
 #include <visp/vpRobotPioneer.h>
 #include <visp/vpCameraParameters.h>
@@ -60,6 +56,7 @@
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vp1394CMUGrabber.h>
 #include <visp/vpV4l2Grabber.h>
+#include <visp/vpOpenCVGrabber.h>
 #include <visp/vpServo.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
