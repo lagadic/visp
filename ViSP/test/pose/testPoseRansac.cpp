@@ -62,11 +62,9 @@
 int
 main()
 {
-  {
     std::cout << "Pose computation with matched points" << std::endl;
-//     int size = 4;
     int size = 8;
-    vpPoint P[size]  ;  //  Point to be tracked
+    vpPoint *P = new vpPoint [size]  ;  //  Point to be tracked
 
     P[0].setWorldCoordinates(-L,-L, 0 ) ;
     P[1].setWorldCoordinates(L,-L, 0 ) ;
@@ -94,7 +92,6 @@ main()
     P[3].set_y(P[3].get_y() + 2*error);
     P[6].set_x(P[6].get_x() + error);
     
-    
     vpPose pose;
     for(int i=0 ; i < size ; i++)
       pose.addPoint(P[i]);
@@ -120,5 +117,5 @@ main()
 
     std::cout << "cMo :\n" << vpPoseVector(cMo).t() << std::endl << std::endl;
 
-  }
+    delete [] P;
 }
