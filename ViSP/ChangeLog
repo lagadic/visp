@@ -20,6 +20,7 @@ ViSP 2.6.2 (under development)
      - Introduction of new functionalities in vpIoTools to parse text
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
+     - New vpClient and vpServer for a multiclients TCP network.
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
@@ -33,6 +34,13 @@ ViSP 2.6.2 (under development)
        copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll
        in $CMAKE_INSTALL_PREFIX/bin.
      - Use OpenMP to optimize the execution of the moments computation
+     - Possibility to compute the covariance matrix during pose computation 
+       (vpPose) and MBT Tracking (vpMbTracker).
+     - All initClick() now have a non-blocking equivalent as initFromPoints,
+       or initFromPose, etc.
+     - Most of the classes that had a display() method now have the equivalent 
+       display in static function (display's externalisation).
+     - Ransac is now improved for either pose computation or point matching.
   - Examples:
      - New example plot3d.cpp to show how to plot 3D curves
      - New example movePioneer.cpp to illustrate Pioneer velocity control.
