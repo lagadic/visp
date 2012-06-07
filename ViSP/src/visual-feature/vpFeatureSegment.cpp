@@ -241,39 +241,36 @@ vpFeatureSegment::interaction( const unsigned int select )
   if (normalized_)
   {
     // here var xc_ contains xc/l, yc contains yc/l and l contains 1/l
-    double lambda = -lambda1 * l_;
-    double Zn_inv = lambda2 * l_;
-    double lc = cos_a_ / l_;
-    double ls = sin_a_ / l_;
-    double xnalpha = xc_*cos_a_+yc_*sin_a_;
-    double lnc = cos_a_ *  l_;
-    double lns = sin_a_ *  l_;
+    double xn = xc_;
+    double yn = yc_;
+    double ln = l_;
+    double lambda = -lambda1 * ln;
+    double Zn_inv = lambda2 * ln;
+    double lc = cos_a_ / ln;
+    double ls = sin_a_ / ln;
+    double xnalpha = xn*cos_a_+yn*sin_a_;
+    double lnc = cos_a_ *  ln;
+    double lns = sin_a_ *  ln;
 
     if (vpFeatureSegment::selectXc() & select ){
       vpMatrix Lxn(1,6);
-      Lxn[0][0] = -Zn_inv +  lambda * xc_ * cos_a_;
-      Lxn[0][1] = lambda * xc_ * sin_a_ ;
-      //Lxn[0][2] = l_ * lambda * (lc /4. - xc_*xnalpha); // orig FC
-      Lxn[0][2] = lambda / l_ * (cos_a_ /4. - xc_*xnalpha);
-      //Lxn[0][3] = l_*(lc*ls/4. - xc_*xnalpha*sin_a_); // orig FC
-      Lxn[0][3] = l_* lc*ls/4. - xc_*xnalpha*sin_a_/l_;
-      //Lxn[0][4] = -l_*(1.+lc*lc/4. - xc_*xnalpha*cos_a_) ; // orig FC
-      Lxn[0][4] = -l_*(1.+lc*lc/4. - xc_*xnalpha*cos_a_/l_/l_) ;
-      Lxn[0][5] = yc_ ;
+      Lxn[0][0] = -Zn_inv +  lambda * xn * cos_a_;
+      Lxn[0][1] = lambda * xn * sin_a_ ;
+      Lxn[0][2] = lambda1 * (xn*xnalpha - cos_a_ /4.);
+      Lxn[0][3] = sin_a_*cos_a_/4/ln - xn*xnalpha*sin_a_/ln;
+      Lxn[0][4] = -ln*(1.+lc*lc/4.) + xn*xnalpha*cos_a_/ln ;
+      Lxn[0][5] = yn ;
       L = vpMatrix::stackMatrices(L, Lxn) ;
     }
 
     if (vpFeatureSegment::selectYc() & select ){
       vpMatrix Lyn(1,6);
-      Lyn[0][0] = lambda*yc_*cos_a_ ;
-      Lyn[0][1] = -Zn_inv + lambda*yc_*sin_a_ ;
-      //Lyn[0][2] = lambda * l_*(ls/4.-yc_*xnalpha); // orig FC
-      Lyn[0][2] = lambda / l_*(sin_a_/4.-yc_*xnalpha);
-      //Lyn[0][3] = l_*(1+ls*ls/4.-yc_*xnalpha*sin_a_) ; // orig FC
-      Lyn[0][3] = l_*(1+ls*ls/4.-yc_*xnalpha*sin_a_/l_/l_) ;
-      //Lyn[0][4] = l_*(yc_*xnalpha*cos_a_-lc*ls/4.) ;  // orig FC
-      Lyn[0][4] = yc_*xnalpha*cos_a_/l_ - lc*ls/4.*l_;
-      Lyn[0][5] = -xc_ ;
+      Lyn[0][0] = lambda*yn*cos_a_ ;
+      Lyn[0][1] = -Zn_inv + lambda*yn*sin_a_ ;
+      Lyn[0][2] = lambda1 * (yn*xnalpha - sin_a_/4.);
+      Lyn[0][3] = ln*(1+ls*ls/4.)-yn*xnalpha*sin_a_/ln ;
+      Lyn[0][4] = -sin_a_*cos_a_/4/ln + yn*xnalpha*cos_a_/ln;
+      Lyn[0][5] = -xn ;
       L = vpMatrix::stackMatrices(L, Lyn) ;
     }
 
@@ -282,8 +279,8 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lln[0][0] = lambda * lnc ;
       Lln[0][1] = lambda * lns ;
       Lln[0][2] = -(Zn_inv + lambda*xnalpha);
-      Lln[0][3] = -yc_-xnalpha*sin_a_ ;
-      Lln[0][4] = xc_ + xnalpha*cos_a_ ;
+      Lln[0][3] = -yn-xnalpha*sin_a_ ;
+      Lln[0][4] = xn + xnalpha*cos_a_ ;
       Lln[0][5] = 0 ;
       L = vpMatrix::stackMatrices(L, Lln) ;
     }
