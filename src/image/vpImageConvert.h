@@ -144,7 +144,7 @@ public:
 #endif
     
 #ifdef VISP_HAVE_LIBJPEG
-#if JPEG_LIB_VERSION > 62
+#if JPEG_LIB_VERSION > 70
   static void convertToJPEGBuffer(const vpImage<unsigned char> &src, 
                                   unsigned char **dest, long unsigned int &destSize, unsigned int quality = 100);  
   
