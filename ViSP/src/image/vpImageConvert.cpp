@@ -1103,7 +1103,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *sr
 #endif
 
 #if defined(VISP_HAVE_LIBJPEG)
-#if JPEG_LIB_VERSION > 62
+#if JPEG_LIB_VERSION > 70
 /*!
   Convert a vpImage\<unsigned char> to a JPEG compressed buffer
 
