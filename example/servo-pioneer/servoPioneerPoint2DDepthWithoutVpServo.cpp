@@ -58,6 +58,14 @@
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
+#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_PIONEER)
+#  define TEST_COULD_BE_ACHIEVED
+#endif
+#endif
+#endif
+
 /*!
   \example servoPioneerPoint2DDepthWithoutVpServo.cpp
 
@@ -77,11 +85,9 @@
   The value of Z is estimated from the surface of the blob that is proportional to the depth Z.
 
   */
+#ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-#if defined(VISP_HAVE_PIONEER)
   vpImage<unsigned char> I; // Create a gray level image container
   double depth = 1.;
   double lambda = 0.6;
@@ -271,8 +277,10 @@ int main(int argc, char **argv)
 
   // wait for the thread to stop
   robot.waitForRunExit();
-
-#endif
-#endif
-#endif
 }
+#else
+int main()
+{
+  std::cout << "You don't have the right 3rd party libraries to run this example..." << std::endl;
+}
+#endif
