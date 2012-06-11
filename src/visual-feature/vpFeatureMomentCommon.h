@@ -66,33 +66,34 @@ class vpServo;
 
   \brief This class allows to access common vpFeatureMoments in a pre-filled database.
 
-    It is a vpMomentDatabase filled with the following moments:
-    - vpFeatureMomentGravityCenter
-    - vpFeatureMomentGravityCenterNormalized
-    - vpFeatureMomentAreaNormalized
-    - vpFeatureMomentCInvariant
-    - vpFeatureMomentAlpha
-    - vpFeatureMomentCentered
-    - vpFeatureMomentBasic
+  It is a vpMomentDatabase filled with the following moments:
+  - vpFeatureMomentGravityCenter
+  - vpFeatureMomentGravityCenterNormalized
+  - vpFeatureMomentAreaNormalized
+  - vpFeatureMomentCInvariant
+  - vpFeatureMomentAlpha
+  - vpFeatureMomentCentered
+  - vpFeatureMomentBasic
 
-    There is no need to do the linkTo operations manually nor is it necessary to care about the order of feature computation.
 
-    This class has an vpMomentCommon::updateAll method capable of updating the plane parameters AND computing interaction matrices inside the features.
+  There is no need to do the linkTo operations manually nor is it necessary to care about the order of feature computation.
 
-    The moment features computed by this class are classical moments
-    features used in moment-based visual servoing.  For more
-    information see: [1] "Point-based and region-based image moments
-    for visual servoing of planar objects" by Omar Tahri and Francois
-    Chaumette.
+  This class has an vpMomentCommon::updateAll method capable of updating the plane parameters AND computing interaction matrices inside the features.
 
-    To initialize this feature set, the user needs to supply a vpMomentDatabase containing at least the contents of vpMomentCommon.
+  The moment features computed by this class are classical moments
+  features used in moment-based visual servoing.  For more
+  information see: [1] "Point-based and region-based image moments
+  for visual servoing of planar objects" by Omar Tahri and Francois
+  Chaumette.
 
-    The features can be retrieved like from a normal vpFeatureMomentDatabase. However, some shortcuts to retrieve the features are provided.
+  To initialize this feature set, the user needs to supply a vpMomentDatabase containing at least the contents of vpMomentCommon.
 
-    \attention Make sure your object is at least of order 6 when using this pre-filled database.
+  The features can be retrieved like from a normal vpFeatureMomentDatabase. However, some shortcuts to retrieve the features are provided.
 
-    The following code demonstrates the construction of a 6x6 interaction matrix as described in [1].
-    \code
+  \attention Make sure your object is at least of order 6 when using this pre-filled database.
+
+  The following code demonstrates the construction of a 6x6 interaction matrix as described in [1].
+  \code
 
 #include <visp/vpMomentObject.h>
 #include <visp/vpMomentCommon.h>
