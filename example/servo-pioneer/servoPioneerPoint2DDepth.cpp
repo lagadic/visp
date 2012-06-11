@@ -82,7 +82,7 @@
   */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || (defined(VISP_HAVE_OPENCV)  && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
   vpImage<unsigned char> I; // Create a gray level image container
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   std::cout << "Robot connected" << std::endl;
 
   // Create the camera framegrabber
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   int device = 1;
   std::cout << "Use device: " << device << std::endl;
   cv::VideoCapture g(device); // open the default camera
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 #endif
 
   // Acquire an image from the grabber
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   g >> frame; // get a new frame from camera
   vpImageConvert::convert(frame, I);
 #else
@@ -229,7 +229,7 @@ int main(int argc, char **argv)
     while(1)
     {
       // Acquire a new image
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
         g >> frame; // get a new frame from camera
         vpImageConvert::convert(frame, I);
 #else
