@@ -54,12 +54,11 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
 #include <visp/vpPlot.h>
 #include <visp/vpPoint.h>
 #include <visp/vpRobotCamera.h>
 #include <visp/vpServo.h> //visual servoing task
-
-#define USE_PLOTTER
 
 /*!
 
@@ -68,32 +67,64 @@
   Shows how to build a task with a segment visual feature.
 
 */
-#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-int main(int argc, const char ** /* argv */)
-#else
-int main()
-#endif
+int main(int argc, const char **argv)
 {  
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-  bool opt_display = true;
-  if (argc == 2)
-    opt_display = false;
+  int opt_display = 1;
+  int opt_curves = 1;
 #endif
+  int opt_normalized = 1;
+
+  // Parse the command line to set the variables
+  vpParseArgv::vpArgvInfo argTable[] =
+    {
+ #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+      {"-d", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_display,
+       "Disable display and graphics viewer."},
+ #endif
+      {"-normalized", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &opt_normalized,
+       "1 to use normalized features, 0 for non normalized."},
+      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+       "Print the help."},
+      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+    } ;
+
+  // Read the command line options
+  if(vpParseArgv::parse(&argc, argv, argTable,
+            vpParseArgv::ARGV_NO_LEFTOVERS |
+            vpParseArgv::ARGV_NO_ABBREV |
+            vpParseArgv::ARGV_NO_DEFAULTS)) {
+    return (false);
+  }
+  opt_curves = opt_display;
+
+  std::cout << "Used options: " << std::endl;
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+  std::cout << " - display   : " << opt_display << std::endl;
+  std::cout << " - curves    : " << opt_curves << std::endl;
+#endif
+  std::cout << " - normalized: " << opt_normalized << std::endl;
 
   vpCameraParameters cam(640.,480.,320.,240.);
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+  vpDisplay *display = NULL;
+  if (opt_display) {
 #if defined(VISP_HAVE_X11)
-  vpDisplayX display;
+    display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
+    display = new vpDisplayGDI;
+#endif
+  }
 #endif
   vpImage<unsigned char> I(480,640,0);
 
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
   if (opt_display)
-    display.init(I);
+    display->init(I);
 #endif
 
-  vpHomogeneousMatrix cMo (0., 0.5, 3., vpMath::rad(10), vpMath::rad(20), vpMath::rad(90));
+  vpHomogeneousMatrix cMo (-0.5, 0.5, 4., vpMath::rad(10), vpMath::rad(20), vpMath::rad(90));
   vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
   vpPoint P[4]; // 4 points in the object frame
@@ -113,12 +144,11 @@ int main()
     Pc[i].project(cMo);
   }
   
-  bool normalized = true;
   vpFeatureSegment seg_cur[2], seg_des[2]; // Current and desired features
   for (int i=0; i <2; i++)
   {
-    seg_cur[i].setNormalized(normalized);
-    seg_des[i].setNormalized(normalized);
+    seg_cur[i].setNormalized(opt_normalized);
+    seg_des[i].setNormalized(opt_normalized);
     vpFeatureBuilder::create(seg_cur[i], Pc[i*2], Pc[i*2+1]);
     vpFeatureBuilder::create(seg_des[i], Pd[i*2], Pd[i*2+1]);
     seg_cur[i].print();
@@ -145,16 +175,19 @@ int main()
   }
 #endif
   
-#ifdef USE_PLOTTER
-  //Create a window (700 by 700) at position (100, 200) with two graphics
-  vpPlot graph(2, 500, 500, 700, 10, "Curves...");
+  vpPlot *graph = NULL;
+  if (opt_curves)
+  {
+    //Create a window (700 by 700) at position (100, 200) with two graphics
+    graph = new vpPlot(2, 500, 500, 700, 10, "Curves...");
 
-  //The first graphic contains 3 curve and the second graphic contains 3 curves
-  graph.initGraph(0,6);
-  graph.initGraph(1,8);
-  graph.setTitle(0, "Velocities");
-  graph.setTitle(1, "Error s-s*");
-#endif
+    //The first graphic contains 3 curve and the second graphic contains 3 curves
+    graph->initGraph(0,6);
+    graph->initGraph(1,8);
+    graph->setTitle(0, "Velocities");
+    graph->setTitle(1, "Error s-s*");
+  }
+
   //param robot
   vpRobotCamera robot ;
   float sampling_time = 0.010f ; // Sampling period in seconds
@@ -185,19 +218,27 @@ int main()
     vpColVector v = task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     
-#ifdef USE_PLOTTER
-      graph.plot(0, iter, v); // plot velocities applied to the robot
-      graph.plot(1, iter, task.getError()); // plot error vector
-#endif
+    if (opt_curves)
+    {
+      graph->plot(0, iter, v); // plot velocities applied to the robot
+      graph->plot(1, iter, task.getError()); // plot error vector
+    }
 
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms    
     iter ++;
     
-  } while(( task.getError() ).sumSquare() > 0.00005);
+  } while(( task.getError() ).sumSquare() > 0.0005);
   
   // A call to kill() is requested here to destroy properly the current
   // and desired feature lists.
   task.kill();
+
+  if (graph != NULL)
+    delete graph;
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+  if (opt_display && display != NULL)
+    delete display;
+#endif
 
   std::cout << "final error=" << ( task.getError() ).sumSquare() << std::endl;  
 }
