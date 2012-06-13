@@ -124,13 +124,7 @@ class VISP_EXPORT vpPlot
     vpImage<unsigned char> I;
   
   private:
-    #if defined VISP_HAVE_X11
-    vpDisplayX display;
-    #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
-    #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV display;
-    #endif
+    vpDisplay *display;
     
     unsigned int graphNbr;
     vpPlotGraph* graphList;
