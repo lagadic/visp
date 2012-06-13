@@ -59,11 +59,10 @@ FOREACH(source ${SOURCE})
   TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
   # Add test
-  ADD_TEST(${binary} ${binary} ${OPTION_TO_DESACTIVE_DISPLAY})
 
 ENDFOREACH(source)
 
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
+ADD_TEST(testFeature testFeature ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testFeatureMoment testFeatureMoment)
+ADD_TEST(testFeatureSegment testFeatureSegment ${OPTION_TO_DESACTIVE_DISPLAY} -normalized 0)
+ADD_TEST(testFeatureSegment-norm testFeatureSegment ${OPTION_TO_DESACTIVE_DISPLAY} -normalized 1)
