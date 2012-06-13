@@ -67,7 +67,7 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
 
   \param argv: Array of command line argument strings.
 
-  \param argTable: Array of command-specific argument.descriptions.
+  \param argTable: Array of command-specific argument descriptions.
 
   \param flags: This parameter is to set with vpParseArgv::vpArgvFlags
   values or combinations of these values using the OR operator
