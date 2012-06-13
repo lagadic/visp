@@ -62,10 +62,7 @@
 vpPlot::vpPlot()
 {
   graphList = NULL;
-  
-  #if defined VISP_HAVE_X11
-  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
-  #endif
+  display = NULL;
     
   margei = 30;
   margej = 40;
@@ -91,11 +88,8 @@ vpPlot::vpPlot(const unsigned int graphNbr,
 	       const int x, const int y, const char *title)
 {
   graphList = NULL;
-  
-  #if defined VISP_HAVE_X11
-  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
-  #endif
-    
+  display = NULL;
+      
   margei = 30;
   margej = 40;
   
@@ -120,8 +114,20 @@ void vpPlot::init(const unsigned int graphNbr,
 {
   I.init(height,width,255);
     
-  display.init(I, x, y, title);
+#if defined VISP_HAVE_X11
+  display = new vpDisplayX;
+#elif defined VISP_HAVE_GDI
+  display = vpDisplayGDI;
+#elif defined VISP_HAVE_OPENCV
+  display = vpDisplayOpenCV;
+#endif
+
+  display->init(I, x, y, title);
   
+#if defined VISP_HAVE_X11
+  vpDisplay::setFont(I,"-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*");
+#endif
+
   vpDisplay::display(I);
     
   factori = height/700.0f;
@@ -139,6 +145,11 @@ vpPlot::~vpPlot()
   {
     delete[] graphList;
     graphList = NULL;
+  }
+  if (display != NULL)
+  {
+    delete display;
+    display = NULL;
   }
 }
 
