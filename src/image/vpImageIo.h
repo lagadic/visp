@@ -139,13 +139,13 @@ public:
   void read(vpImage<vpRGBa> &I, const std::string filename) ;
   
   static
-  void write(vpImage<unsigned char> &I, const char *filename) ;
+  void write(const vpImage<unsigned char> &I, const char *filename) ;
   static
-  void write(vpImage<unsigned char> &I, const std::string filename) ;
+  void write(const vpImage<unsigned char> &I, const std::string filename) ;
   static
-  void write(vpImage<vpRGBa> &I, const char *filename) ;
+  void write(const vpImage<vpRGBa> &I, const char *filename) ;
   static
-  void write(vpImage<vpRGBa> &I, const std::string filename) ;
+  void write(const vpImage<vpRGBa> &I, const std::string filename) ;
 
  static
   void readPFM(vpImage<float> &I, const char *filename) ;
@@ -220,32 +220,26 @@ public:
 
 #if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
   static
-  void writeJPEG(vpImage<unsigned char> &I, const char *filename) ;
+  void writeJPEG(const vpImage<unsigned char> &I, const char *filename) ;
   static
-  void writeJPEG(vpImage<unsigned char> &I, const std::string filename) ;
+  void writeJPEG(const pImage<unsigned char> &I, const std::string filename) ;
   static
-  void writeJPEG(vpImage<vpRGBa> &I, const char *filename) ;
+  void writeJPEG(const vpImage<vpRGBa> &I, const char *filename) ;
   static
-  void writeJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
+  void writeJPEG(const vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
 #if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
   static
-  void writePNG(vpImage<unsigned char> &I, const char *filename) ;
+  void writePNG(const vpImage<unsigned char> &I, const char *filename) ;
   static
-  void writePNG(vpImage<unsigned char> &I, const std::string filename) ;
+  void writePNG(const vpImage<unsigned char> &I, const std::string filename) ;
   static
-  void writePNG(vpImage<vpRGBa> &I, const char *filename) ;
+  void writePNG(const vpImage<vpRGBa> &I, const char *filename) ;
   static
-  void writePNG(vpImage<vpRGBa> &I, const std::string filename) ;
+  void writePNG(const vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
   } ;
 #endif
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

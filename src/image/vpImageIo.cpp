@@ -352,7 +352,7 @@ vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
 {
   switch(getFormat(filename)){
   case FORMAT_PGM :
@@ -392,7 +392,7 @@ vpImageIo::write(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(vpImage<unsigned char> &I, const std::string filename)
+vpImageIo::write(const vpImage<unsigned char> &I, const std::string filename)
 {
   write(I,filename.c_str());
 }
@@ -405,7 +405,7 @@ vpImageIo::write(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
 {
   switch(getFormat(filename)){
   case FORMAT_PGM :
@@ -445,7 +445,7 @@ vpImageIo::write(vpImage<vpRGBa> &I, const char *filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(vpImage<vpRGBa> &I, const std::string filename)
+vpImageIo::write(const vpImage<vpRGBa> &I, const std::string filename)
 {
   write(I,filename.c_str());
 }
@@ -1494,7 +1494,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1559,7 +1559,7 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<unsigned char> &I, const std::string filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::writeJPEG(I, filename.c_str());
 }
@@ -1573,7 +1573,7 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1640,7 +1640,7 @@ vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const std::string filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writeJPEG(I, filename.c_str());
 }
@@ -1886,7 +1886,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
@@ -1905,7 +1905,7 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<unsigned char> &I, const std::string filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::writeJPEG(I, filename.c_str());
 }
@@ -1919,7 +1919,7 @@ vpImageIo::writeJPEG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
@@ -1938,7 +1938,7 @@ vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(vpImage<vpRGBa> &I, const std::string filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writeJPEG(I, filename.c_str());
 }
@@ -2074,7 +2074,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
 {
   FILE *file;
 
@@ -2198,7 +2198,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<unsigned char> &I, const std::string filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::writePNG(I, filename.c_str());
 }
@@ -2212,7 +2212,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
 {
   FILE *file;
 
@@ -2338,7 +2338,7 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<vpRGBa> &I, const std::string filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writePNG(I, filename.c_str());
 }
@@ -2782,7 +2782,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
@@ -2801,7 +2801,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<unsigned char> &I, const std::string filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
 {
   vpImageIo::writeJPEG(I, filename.c_str());
 }
@@ -2815,7 +2815,7 @@ vpImageIo::writePNG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
 {
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
@@ -2834,7 +2834,7 @@ vpImageIo::writePNG(vpImage<vpRGBa> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(vpImage<vpRGBa> &I, const std::string filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
 {
   vpImageIo::writePNG(I, filename.c_str());
 }
