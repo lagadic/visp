@@ -222,7 +222,7 @@ public:
   static
   void writeJPEG(const vpImage<unsigned char> &I, const char *filename) ;
   static
-  void writeJPEG(const pImage<unsigned char> &I, const std::string filename) ;
+  void writeJPEG(const vpImage<unsigned char> &I, const std::string filename) ;
   static
   void writeJPEG(const vpImage<vpRGBa> &I, const char *filename) ;
   static
