@@ -49,9 +49,7 @@
 
 #include <visp/vpPlotGraph.h>
 
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplay.h>
 
 /*!
   \class vpPlot

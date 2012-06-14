@@ -45,6 +45,9 @@
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
 #include <visp/vpPlot.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -117,9 +120,9 @@ void vpPlot::init(const unsigned int graphNbr,
 #if defined VISP_HAVE_X11
   display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
-  display = vpDisplayGDI;
+  display = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
-  display = vpDisplayOpenCV;
+  display = new vpDisplayOpenCV;
 #endif
 
   display->init(I, x, y, title);
