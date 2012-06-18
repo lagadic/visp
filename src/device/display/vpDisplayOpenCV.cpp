@@ -380,8 +380,11 @@ vpDisplayOpenCV::setFont(const char * /* font */)
 void
 vpDisplayOpenCV::setTitle(const char * /* title */)
 {
-
-  vpTRACE("Not implemented");
+  static bool warn_displayed = false;
+  if (! warn_displayed) {
+    vpTRACE("Not implemented");
+    warn_displayed = true;
+  }
 #if 0
   if (displayHasBeenInitialized)
   {
@@ -736,7 +739,11 @@ void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned
 */
 void vpDisplayOpenCV::clearDisplay(const vpColor & /* color */)
 {
-  vpTRACE("Not implemented") ;
+  static bool warn_displayed = false;
+  if (! warn_displayed) {
+    vpTRACE("Not implemented");
+    warn_displayed = true;
+  }
 }
 
 /*!
