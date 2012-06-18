@@ -62,6 +62,7 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #  include <opencv2/imgproc/imgproc.hpp>
 #  include <opencv2/video/tracking.hpp>
+#  include <opencv2/legacy/legacy.hpp>
 #else
 #  ifndef _EiC
 #    include "cv.h"

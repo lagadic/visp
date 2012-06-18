@@ -8,11 +8,11 @@
 
 ViSP 2.6.2 (under development)
   - New features
-     - New vp1394CMUGrabber class that allows firewire frame acquisition 
+     - New vp1394CMUGrabber class that allows firewire frame acquisition
        under Windows using CMU 1394 Digital Camera 3rd party library.
-       Thanks to Lucas Lopes Lemos and Guillaume Laurent from FEMTO-ST, 
+       Thanks to Lucas Lopes Lemos and Guillaume Laurent from FEMTO-ST,
        AS2M departement, Besancon, France for this contribution.
-     - New vpPioneer, vpPioneerPan, vpRobotPioneer classes to control Pioneer 
+     - New vpPioneer, vpPioneerPan, vpRobotPioneer classes to control Pioneer
        mobile robots using Aria 3rd party library.
      - New vpFeatureSegment class to consider a segment as a visual
        servoing feature. Normalized and non normalized features are considered.
@@ -24,7 +24,7 @@ ViSP 2.6.2 (under development)
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
-     - Compatibility with OpenCV 2.4.0
+     - Compatibility with OpenCV 2.4.0 and OpenCV 2.4.1
      - Remove warning detected with Visual C++ /Wall flag
      - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and
        doxygen 3rd party libraries detection. If detection fails, we use our
@@ -34,11 +34,11 @@ ViSP 2.6.2 (under development)
        copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll
        in $CMAKE_INSTALL_PREFIX/bin.
      - Use OpenMP to optimize the execution of the moments computation
-     - Possibility to compute the covariance matrix during pose computation 
+     - Possibility to compute the covariance matrix during pose estimation
        (vpPose) and MBT Tracking (vpMbTracker).
      - All initClick() now have a non-blocking equivalent as initFromPoints,
        or initFromPose, etc.
-     - Most of the classes that had a display() method now have the equivalent 
+     - Most of the classes that had a display() method now have the equivalent
        display in static function (display's externalisation).
      - Ransac is now improved for either pose computation or point matching.
   - Examples:
