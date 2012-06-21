@@ -267,7 +267,7 @@ main(int argc, const char ** argv)
     FILE *fd = fopen(filename, "w");
 
     vpRobotBiclops robot(opt_conf.c_str()) ;
-    robot.setDenavitHartenbergModel(vpBiclops::DH1);
+    robot.setDenavitHartenbergModel(vpBiclops::DH2);
 
     {
       vpColVector q(2); q=0;
@@ -337,18 +337,18 @@ main(int argc, const char ** argv)
 
     vpCameraParameters cam ;
 
-    vpTRACE("sets the current position of the visual feature ") ;
+    // sets the current position of the visual feature
     vpFeaturePoint p ;
     vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
 
     p.set_Z(1) ;
-    vpTRACE("sets the desired position of the visual feature ") ;
+    // sets the desired position of the visual feature
     vpFeaturePoint pd ;
     pd.buildFrom(0,0,1) ;
 
-    vpTRACE("define the task") ;
-    vpTRACE("\t we want an eye-in-hand control law") ;
-    vpTRACE("\t articular velocity are computed") ;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - articular velocity are computed
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
@@ -364,23 +364,20 @@ main(int argc, const char ** argv)
 
     std::cout << "Click in the image to start the servoing..." << std::endl;
     vpDisplay::getClick(I) ;
-    vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+
+    // Set the Jacobian (expressed in the end-effector frame)
     vpMatrix eJe ;
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-
-    vpTRACE("\t we want to see a point on a point..") ;
-    std::cout << std::endl ;
+    // we want to see a point on a point
     task.addFeature(p,pd) ;
 
-    vpTRACE("\t set the gain") ;
-    task.setLambda(0.1) ;
+    // set the gain
+    task.setLambda(0.2) ;
 
-
-    vpTRACE("Display task information " ) ;
+    // Display task information
     task.print() ;
-
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
 
@@ -417,10 +414,10 @@ main(int argc, const char ** argv)
       vpServoDisplay::display(task,cam,I) ;
       vpDisplay::flush(I) ;
 
-      std::cout << v.t() ;
+      std::cout << "v: " << v.t() ;
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
 
-      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() << std::endl;
 
       {
         vpColVector s_minus_sStar(2);
@@ -432,7 +429,7 @@ main(int argc, const char ** argv)
       }
     }
 
-    vpTRACE("Display task information " ) ;
+    std::cout << "Display task information " << std::endl;
     task.print() ;
     task.kill();
 
