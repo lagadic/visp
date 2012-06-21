@@ -24,7 +24,7 @@ ViSP 2.6.2 (under development)
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
-     - Compatibility with OpenCV 2.4.0 and OpenCV 2.4.1
+     - Compatibility with g++ 4.7 and OpenCV 2.3.1, 2.4.0, 2.4.1
      - Remove warning detected with Visual C++ /Wall flag
      - Use CMake native package finder for zlib, png, jpeg, coin3d, gtk2 and
        doxygen 3rd party libraries detection. If detection fails, we use our

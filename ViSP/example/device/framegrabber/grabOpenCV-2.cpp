@@ -54,12 +54,10 @@
 
 #if defined(VISP_HAVE_OPENCV)
 
-#include "cv.h"
-#include "highgui.h"
-
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpImage.h>
 #include <visp/vpImageConvert.h>
-#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpOpenCVGrabber.h>
 
 
 // usage: binary <device name>

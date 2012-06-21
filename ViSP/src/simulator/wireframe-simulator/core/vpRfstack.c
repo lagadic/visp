@@ -56,7 +56,7 @@
 #define	STACKSIZE	32
 
 
-static	int	stack[STACKSIZE] = {DEFAULT_REMOVE};	/* pile		*/
+static	int	stack[STACKSIZE] = {vpDEFAULT_REMOVE};	/* pile		*/
 static	int	*sp		 = stack;		/* sommet 	*/
 
 

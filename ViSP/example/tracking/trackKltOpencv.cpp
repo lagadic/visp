@@ -69,8 +69,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdf:i:n:p:s:h"
 
-//int gsl_warnings_off;
-
 /*!
   \example trackKltOpencv.cpp
 
