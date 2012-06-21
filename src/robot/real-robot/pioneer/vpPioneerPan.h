@@ -137,7 +137,7 @@ private:
   {
     // Position of the camera in the pan frame
     double cx = 0;
-    double cy = -0.13;
+    double cy = -0.065; //-0.13;
     double cz = 0;
     vpTranslationVector etc(cx, cy, cz);
     vpRotationMatrix eRc;
