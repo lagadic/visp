@@ -161,10 +161,15 @@ vpRobotBiclopsController::init(const char *configfile)
   if ((axisMask & Biclops::VergeMask) != 0)
     vergeAxis = biclops.GetAxis(Biclops::Verge);
 
-
+#ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
+  if (!panAxis -> GetHomedState() || !tiltAxis -> GetHomedState()) {
+    vpDEBUG_TRACE(12, "Biclops is not homed");
+  }
+#else // old API
   if (!panAxis -> IsAlreadyHomed() || !tiltAxis -> IsAlreadyHomed()) {
     vpDEBUG_TRACE(12, "Biclops is not homed");
   }
+#endif
 
   //Execute the homing sequence for all axes.
   vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
@@ -219,6 +224,29 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
   axisList.push_back(panAxis);
   axisList.push_back(tiltAxis);
 
+#ifdef  VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
+  // Get the currently defined (default) motion profiles.
+  PMDAxisControl::Profile panProfile,tiltProfile;
+  panAxis->GetProfile(panProfile);
+  tiltAxis->GetProfile(tiltProfile);
+
+  // Set a position to move to by modifying the respective profiles.
+  // NOTE: profile values are in revolutions, so here we convert
+  // from degrees (divide by 360) for readability.
+  panProfile.pos = PMDUtils::RadsToRevs(q[0]);
+  panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit
+          * percentVelocity / 100.);
+
+  tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
+  tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit
+          * percentVelocity / 100.);
+
+  // Inform the controller of the new desired position.
+  panAxis->SetProfile(panProfile);
+  tiltAxis->SetProfile(tiltProfile);
+
+#else // old API
+
   PMDAxisControl::CountsProfile desired_profile;
 
   // Set a position to move to by modifying the respective profiles.
@@ -249,6 +277,7 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
   vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << std::endl;
 
   tiltAxis -> SetProfile(desired_profile);
+#endif
 
   // Coordinate motion
   PMDUtils::Coordinate(axisList);
@@ -275,9 +304,29 @@ vpRobotBiclopsController::setVelocity(const vpColVector & q_dot)
 			    "Bad dimension for velocity vector.");
   }
 
+
+#ifdef  VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
+  // Get the currently defined (default) motion profiles.
+  PMDAxisControl::Profile panProfile, tiltProfile;
+  panAxis->GetProfile(panProfile);
+  tiltAxis->GetProfile(tiltProfile);
+
+  // Set a position to move to by modifying the respective profiles.
+  // NOTE: profile values are in revolutions, so here we convert
+  // from degrees (divide by 360) for readability.
+  panProfile.vel  = PMDUtils::RadsToRevs(q_dot[0]);
+  tiltProfile.vel = PMDUtils::RadsToRevs(q_dot[1]);
+
+  // Inform the controller of the new desired position.
+  panAxis->SetProfile(panProfile);
+  tiltAxis->SetProfile(tiltProfile);
+
   panAxis  -> SetProfileMode(PMDVelocityContouringProfile);
   tiltAxis -> SetProfileMode(PMDVelocityContouringProfile);
-
+#else // old API
+  panAxis  -> SetProfileMode(PMDVelocityContouringProfile);
+  tiltAxis -> SetProfileMode(PMDVelocityContouringProfile);
+\
   PMDAxisControl::CountsProfile desired_profile;
 
   // Set a position to move to by modifying the respective profiles.
@@ -295,7 +344,7 @@ vpRobotBiclopsController::setVelocity(const vpColVector & q_dot)
 
   tiltAxis -> ProfileToCounts(tiltProfile, desired_profile);
   tiltAxis -> SetProfile(desired_profile);
-
+#endif
   // Coordinate motion
   biclops.Move(Biclops::PanMask + Biclops::TiltMask, 0); //
 }
