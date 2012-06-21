@@ -52,6 +52,7 @@
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020101
 #  include <opencv2/core/core.hpp>
+#  include <opencv2/highgui/highgui.hpp>
 #else
 #  include <cv.h>
 #  include <highgui.h>

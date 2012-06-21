@@ -63,10 +63,11 @@
 #  include <opencv2/imgproc/imgproc.hpp>
 #  include <opencv2/video/tracking.hpp>
 #  include <opencv2/legacy/legacy.hpp>
+#  include <opencv2/highgui/highgui.hpp>
 #else
 #  ifndef _EiC
-#    include "cv.h"
-#    include "highgui.h"
+#    include <cv.h>
+#    include <highgui.h>
 #    include <stdio.h>
 #    include <ctype.h>
 #    endif

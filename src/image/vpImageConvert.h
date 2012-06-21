@@ -57,7 +57,14 @@
 #include <visp/vpRGBa.h>
 
 #ifdef VISP_HAVE_OPENCV
-#  include <highgui.h> // for opencv
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#    include <opencv2/core/core.hpp>
+#    include <opencv2/legacy/legacy.hpp>
+#    include <opencv2/highgui/highgui.hpp>
+#    include <opencv2/highgui/highgui_c.h>
+#  else
+#    include <highgui.h>
+#  endif
 #endif
 
 #ifdef VISP_HAVE_YARP

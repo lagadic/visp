@@ -60,7 +60,7 @@
 #define	STACKSIZE	4
 
 
-static	View_parameters	stack[STACKSIZE]= { DEFAULT_VIEW };
+static	View_parameters	stack[STACKSIZE]= { vpDEFAULT_VIEW };
 static	View_parameters	*sp		= stack;
 
 /*

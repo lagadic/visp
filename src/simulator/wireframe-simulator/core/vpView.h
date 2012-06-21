@@ -81,35 +81,35 @@
 #define	IS_BACK		0x10
 #define	IS_FRONT	0x20
 
-#define	DEFAULT_REMOVE	IS_INSIDE
+#define	vpDEFAULT_REMOVE	IS_INSIDE
 
 #define	PARALLEL	0
 #define	PERSPECTIVE	1
 
-#define	DEFAULT_EYE	{ 0.0, 0.0, 1.0	}
-#define	DEFAULT_TARGET	{ 0.0, 0.0, 0.0	}
-#define	DEFAULT_FOCAL	1.0
-#define	DEFAULT_ANGLE	45.0
-#define	DEFAULT_TWIST	0.0
-#define	DEFAULT_SPEED	0.0
-#define	DEFAULT_CAMERA	{ DEFAULT_EYE,	DEFAULT_TARGET,\
-			  DEFAULT_FOCAL,DEFAULT_ANGLE, DEFAULT_TWIST,\
-			  DEFAULT_SPEED }
+#define	vpDEFAULT_EYE	{ 0.0, 0.0, 1.0	}
+#define	vpDEFAULT_TARGET	{ 0.0, 0.0, 0.0	}
+#define	vpDEFAULT_FOCAL	1.0
+#define	vpDEFAULT_ANGLE	45.0
+#define	vpDEFAULT_TWIST	0.0
+#define	vpDEFAULT_SPEED	0.0
+#define	vpDEFAULT_CAMERA	{ vpDEFAULT_EYE,	vpDEFAULT_TARGET,\
+			  vpDEFAULT_FOCAL,vpDEFAULT_ANGLE, vpDEFAULT_TWIST,\
+			  vpDEFAULT_SPEED }
 
-#define	DEFAULT_COP	{ 0.0, 0.0, 1.0	}
-#define	DEFAULT_VRP	{ 0.0, 0.0, 0.0	}
-#define	DEFAULT_VPN	{ 0.0, 0.0,-1.0	}
-#define	DEFAULT_VUP	{ 0.0, 1.0, 0.0	}
-#define	DEFAULT_VWD	{-1.0, 1.0,-1.0, 1.0 }
-#define	DEFAULT_DEPTH	{ 0.0, 1.0	}
-#define	DEFAULT_TYPE	PERSPECTIVE
+#define	vpDEFAULT_COP	{ 0.0, 0.0, 1.0	}
+#define	vpDEFAULT_VRP	{ 0.0, 0.0, 0.0	}
+#define	vpDEFAULT_VPN	{ 0.0, 0.0,-1.0	}
+#define	vpDEFAULT_VUP	{ 0.0, 1.0, 0.0	}
+#define	vpDEFAULT_VWD	{-1.0, 1.0,-1.0, 1.0 }
+#define	vpDEFAULT_DEPTH	{ 0.0, 1.0	}
+#define	vpDEFAULT_TYPE	PERSPECTIVE
 
-#define	DEFAULT_VIEW	{ DEFAULT_TYPE,\
-			  DEFAULT_COP, DEFAULT_VRP,\
-			  DEFAULT_VPN, DEFAULT_VUP,\
-			  DEFAULT_VWD, DEFAULT_DEPTH }
+#define	vpDEFAULT_VIEW	{ vpDEFAULT_TYPE,\
+			  vpDEFAULT_COP, vpDEFAULT_VRP,\
+			  vpDEFAULT_VPN, vpDEFAULT_VUP,\
+			  vpDEFAULT_VWD, vpDEFAULT_DEPTH }
 
-#define	DEFAULT_WC	{ 1.0, 0.0, 0.0, 0.0,\
+#define	vpDEFAULT_WC	{ 1.0, 0.0, 0.0, 0.0,\
 			  0.0, 1.0, 0.0, 0.0,\
 			  0.0, 0.0, 1.0, 0.0,\
 			  0.0, 0.0, 0.0, 1.0 }

@@ -51,7 +51,11 @@
 
 #if defined(VISP_HAVE_OPENCV)
 
-#include <highgui.h>
+#if VISP_HAVE_OPENCV_VERSION >= 0x020101
+#    include <opencv2/highgui/highgui.hpp>
+#else
+#  include <highgui.h>
+#endif
 
 #include <visp/vpImage.h>
 #include <visp/vpFrameGrabber.h>
