@@ -228,6 +228,7 @@
 
 // Defined if Biclops pan-tilt head available.
 #cmakedefine VISP_HAVE_BICLOPS
+#cmakedefine VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
