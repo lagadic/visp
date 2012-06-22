@@ -513,8 +513,14 @@ int vpNetwork::_handleFirstRequest()
     if(currentMessageReceived.size() != 0)
       currentMessageReceived.clear();
     
+    if(verboseMode)
+      vpTRACE("Incorrect message");
+    
     return -1;
   }
+  
+  if(indStart == -1 || indSep == -1 || indEnd == -1)
+    return -1;
   
   if(indEnd < indStart)
   {
