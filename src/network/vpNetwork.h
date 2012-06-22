@@ -153,7 +153,7 @@ public:
     \return Id of the request.
   */
   std::string       getRequestIdFromIndex(const int &ind){ 
-                        if(ind > (int)request_list.size() || ind < 0)
+                        if(ind >= (int)request_list.size() || ind < 0)
                           return "";
                         return request_list[ind]->getId(); 
                     }
