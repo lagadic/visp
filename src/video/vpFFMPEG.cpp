@@ -113,7 +113,11 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
     return false;
   }
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53,3,0) // libavformat 53.3.0
   if (av_find_stream_info (pFormatCtx) < 0)
+#else // libavformat 52.84.0
+  if (avformat_find_stream_info (pFormatCtx, NULL) < 0)
+#endif
       return false;
   
   videoStream = 0;
@@ -147,7 +151,11 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
       return false;		// Codec not found
     }
     
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,5,0) // libavcodec 53.5.0
     if (avcodec_open (pCodecCtx, pCodec) < 0)
+#else
+    if (avcodec_open2 (pCodecCtx, pCodec, NULL) < 0)
+#endif
     {
       vpTRACE("Could not open codec");
       return false;		// Could not open codec
@@ -586,7 +594,11 @@ void vpFFMPEG::closeStream()
     avcodec_close(pCodecCtx);
 
     // Close the video file
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53,17,0) // libavformat 53.17.0
     av_close_input_file(pFormatCtx);
+#else
+    avformat_close_input(&pFormatCtx);
+#endif
   }
   streamWasOpen = false;
   
@@ -638,7 +650,11 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned in
     return false;
   }
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,5,0) // libavcodev 53.5.0
   pCodecCtx = avcodec_alloc_context();
+#else
+  pCodecCtx = avcodec_alloc_context3(NULL);
+#endif
   pFrame = avcodec_alloc_frame();
   pFrameRGB = avcodec_alloc_frame();
 
@@ -656,7 +672,11 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned in
   pCodecCtx->pix_fmt = PIX_FMT_YUV420P;
 
   /* open it */
-  if (avcodec_open(pCodecCtx, pCodec) < 0) {
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,5,0) // libavcodev 53.5.0
+  if (avcodec_open (pCodecCtx, pCodec) < 0) {
+#else
+  if (avcodec_open2 (pCodecCtx, pCodec, NULL) < 0) {
+#endif
     fprintf(stderr, "could not open codec\n");
     exit(1);
   }
