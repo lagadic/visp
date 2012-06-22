@@ -508,7 +508,7 @@ int vpNetwork::_handleFirstRequest()
   int indSep = currentMessageReceived.find(separator);
   int indEnd = currentMessageReceived.find(end);
   
-  if (indStart == -1 || indSep == -1 || indEnd == -1)
+  if (indStart == -1 && indSep == -1 && indEnd == -1)
   {
     if(currentMessageReceived.size() != 0)
       currentMessageReceived.clear();
