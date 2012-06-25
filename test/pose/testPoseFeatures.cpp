@@ -56,7 +56,7 @@
 #include <limits> 
 
 /*!
-  \example poseFeatures.cpp
+  \example testPoseFeatures.cpp
 
   Compute the pose from different features.
 

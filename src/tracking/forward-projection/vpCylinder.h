@@ -99,8 +99,8 @@ class VISP_EXPORT vpCylinder : public vpForwardProjection
 public:
   typedef enum
   {
-    line1,
-    line2
+    line1, /*!< First limb of the cylinder. */
+    line2  /*!< Second limb of the cylinder. */
   } vpLineCylinderType;
 
   vpCylinder() ;

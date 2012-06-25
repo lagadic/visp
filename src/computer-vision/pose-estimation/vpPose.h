@@ -69,6 +69,7 @@
   \ingroup Pose
   \brief Class used for pose computation from N points (pose from point only).
 
+  \note It is also possible to estimate a pose from other features using vpPoseFeatures class.
 
   \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
 
