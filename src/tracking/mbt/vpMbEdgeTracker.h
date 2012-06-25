@@ -325,6 +325,7 @@ public:
     \param threshold1 : The new value of the threshold. 
   */
   void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
+  double getFirstThreshold() { return percentageGdPt;}
 
 
   /*!

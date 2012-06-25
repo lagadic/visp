@@ -743,12 +743,13 @@ vpMbEdgeTracker::testTracking()
       }
     }
   }
-  
+
   if (nbGoodPoint < percentageGdPt *(nbGoodPoint+nbBadPoint) || nbExpectedPoint < 2)
   {
     std::cout << "nbGoodPoint :" << nbGoodPoint << std::endl;
     std::cout << "nbBadPoint :" << nbBadPoint << std::endl;
     std::cout << "nbExpectedPoint :" << nbExpectedPoint << std::endl;
+    std::cout << "percentageGdPt: " << percentageGdPt << std::endl;
     throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
   }      
 }
