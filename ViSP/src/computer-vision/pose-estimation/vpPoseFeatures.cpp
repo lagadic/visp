@@ -1,7 +1,7 @@
 #include <visp/vpPoseFeatures.h>
 
 /*!
-  constructor
+  Default constructor.
 */
 vpPoseFeatures::vpPoseFeatures()
 {
@@ -14,7 +14,7 @@ vpPoseFeatures::vpPoseFeatures()
 }
 
 /*!
-  destructor delete the array of features and projections
+  Destructor that deletes the array of features and projections.
 */
 vpPoseFeatures::~vpPoseFeatures()
 { 
@@ -52,9 +52,9 @@ vpPoseFeatures::~vpPoseFeatures()
 }
 
 /*!
-  Add a point feature to the list of features to be considered in the pose computation
+  Add a point feature to the list of features to be considered in the pose computation.
 
-  \param p : Point projection expressed as a vpPoint
+  \param p : Point projection expressed as a vpPoint.
 */
 void vpPoseFeatures::addFeaturePoint(const vpPoint &p)
 {
@@ -69,9 +69,9 @@ void vpPoseFeatures::addFeaturePoint(const vpPoint &p)
 }
 
 /*!
-  Add a point 3D feature to the list of features to be considered in the pose computation
+  Add a point 3D feature to the list of features to be considered in the pose computation.
 
-  \param p : Projection expressed as a vpPoint
+  \param p : Projection expressed as a vpPoint.
 */
 void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
 {  
@@ -86,9 +86,9 @@ void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
 }
 
 /*!
-  Add a vanishing point feature to the list of features to be considered in the pose computation
+  Add a vanishing point feature to the list of features to be considered in the pose computation.
 
-  \param p : Projection expressed as a vpPoint
+  \param p : Projection expressed as a vpPoint.
 */
 void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
 {  
@@ -103,7 +103,7 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
 }
 
 /*!
-  Add a vanishing point feature to the list of features to be considered in the pose computation
+  Add a vanishing point feature to the list of features to be considered in the pose computation.
 
   \param l1 : First line used to create the feature.
   \param l2 : Second line used to create the feature.
@@ -122,9 +122,9 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1, const vpLine &l2
 }
 
 /*!
-  Add an ellipse feature to the list of features to be considered in the pose computation
+  Add an ellipse feature to the list of features to be considered in the pose computation.
 
-  \param s : Ellipse projection expressed as a vpSphere
+  \param s : Ellipse projection expressed as a vpSphere.
 */
 void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
 {  
@@ -139,9 +139,9 @@ void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
 }
 
 /*!
-  Add an ellipse feature to the list of features to be considered in the pose computation
+  Add an ellipse feature to the list of features to be considered in the pose computation.
 
-  \param c : Ellipse projection expressed as a vpCircle
+  \param c : Ellipse projection expressed as a vpCircle.
 */
 void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
 {  
@@ -156,9 +156,9 @@ void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
 }
   
 /*!
-  Add a line feature to the list of features to be considered in the pose computation
+  Add a line feature to the list of features to be considered in the pose computation.
 
-  \param l : Line projection expressed as a vpLine
+  \param l : Line projection expressed as a vpLine.
 */
 void vpPoseFeatures::addFeatureLine(const vpLine &l)
 {  
@@ -173,10 +173,11 @@ void vpPoseFeatures::addFeatureLine(const vpLine &l)
 }
 
 /*!
-  Add a line feature to the list of features to be considered in the pose computation
+  Add a line feature to the list of features to be considered in the pose computation.
 
-  \param c : Line projection expressed as a vpCylinder
-  \param line : Integer id from the line to use in vpCylinder
+  \param c : Line projection expressed as a vpCylinder.
+  \param line : Integer id that indicates which limb of the cylinder is to consider.
+  It can be vpCylinder::line1 or vpCylinder::line2.
 */
 void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
 {    
@@ -192,10 +193,10 @@ void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
 }
 
 /*!
-  Add a segment feature to the list of features to be considered in the pose computation
+  Add a segment feature to the list of features to be considered in the pose computation.
 
-  \param P1 : First extremity projection
-  \param P2 : Second extremity projection
+  \param P1 : First extremity projection.
+  \param P2 : Second extremity projection.
 */
 void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
 {    
@@ -334,17 +335,24 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
 
 
 /*!
-\brief Compute the pose according to the desired method
+  Compute the pose according to the desired method (virtual visual servoing, or robust virtual visual servoing approach).
 
-the different method are
+  \param cMo : Computed pose.
 
-VIRTUAL_VS       Virtual visual servoing approach
+  \param type : Method to use for the pose computation.
 
-VIRTUAL_VS_ROBUST    Robust Virtual visual servoing approach
+  - The virtual visual servoing approach is described in:
+  E. Marchand, F. Chaumette. Virtual Visual Servoing: a framework for real-time
+  augmented reality. In EUROGRAPHICS 2002 Conference Proceeding, G. Drettakis,
+  H.-P. Seidel (eds.), Computer Graphics Forum, Volume 21(3), Pages 289-298,
+  Sarrebruck, Germany, 2002.
 
-\param cMo : computed pose
+  - The robust virtual visual servoing approach is described in:
+  A.I. Comport, E. Marchand, M. Pressigout, F. Chaumette. Real-time
+  markerless tracking for augmented reality: the virtual visual servoing
+  framework. IEEE Trans. on Visualization and Computer Graphics,
+  12(4):615-628, July 2006.
 
-\param type : method to use for the pose computation
 */
 void vpPoseFeatures::computePose(vpHomogeneousMatrix & cMo, const vpPoseFeaturesMethodType &type)
 {
@@ -362,16 +370,16 @@ void vpPoseFeatures::computePose(vpHomogeneousMatrix & cMo, const vpPoseFeatures
 }
 
 /*!
-\brief Compute the pose thanks to the virtual visual servoing approach
+  Compute the pose thanks to the virtual visual servoing approach.
 
-  This approach is described in
+  This approach is described in:
 
   E. Marchand, F. Chaumette. Virtual Visual Servoing: a framework for real-time
   augmented reality. In EUROGRAPHICS 2002 Conference Proceeding, G. Drettakis,
   H.-P. Seidel (eds.), Computer Graphics Forum, Volume 21(3), Pages 289-298,
   Sarrebruck, Allemagne, 2002.
   
-\param cMo : computed pose
+  \param cMo : Computed pose.
 */
 void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix & cMo)
 {
@@ -431,16 +439,16 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix & cMo)
 
 
 /*!
-\brief Compute the pose thanks to the robust virtual visual servoing approach
+  Compute the pose thanks to the robust virtual visual servoing approach
 
-  This approach is described in
+  This approach is described in:
 
   A.I. Comport, E. Marchand, M. Pressigout, F. Chaumette. Real-time
   markerless tracking for augmented reality: the virtual visual servoing
   framework. IEEE Trans. on Visualization and Computer Graphics,
-  12(4):615-628, Juillet 2006.
+  12(4):615-628, July 2006.
   
-\param cMo : computed pose
+  \param cMo : Computed pose.
 */
 void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
 {

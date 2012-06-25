@@ -68,9 +68,10 @@
 #include <vector>
 #include <iostream>
 
-
+#define VISP_HAVE_C11_COMPATIBILITY
 #ifdef VISP_HAVE_C11_COMPATIBILITY
 #include <tuple>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 //#################################################
 //##  Call a function with a tuple as parameters
@@ -291,14 +292,18 @@ void buildCurrentFeatureObjectWithTuple( objType *obj, featureType &feature,
 {
   vpCurrentFeatureBuilderObjectWithTuple<sizeof...(ArgsTuple)>::buildCurrentFeatureObjectWithTuple( obj, feature, cMo, f, t );
 }
-#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 //#################################################
 //##  Call that will be used in our vpPoseFeatures
 //##  to store the specific features.
 //#################################################
-
-class vpSpecificFeature
+/*!
+  \class vpSpecificFeature
+  \ingroup Pose
+  \brief Class used to define specific features that could be considered in pose estimation from visual features implemented in vpPoseFeatures.
+*/
+class VISP_EXPORT vpSpecificFeature
 {
 public: 
   vpSpecificFeature(){}
@@ -314,8 +319,13 @@ public:
 //##  Template for all kind of specific features
 //#################################################
 
+/*!
+  \class vpSpecificFeatureTemplate
+  \ingroup Pose
+  \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
+*/
 template< typename featureType, typename RetType, typename ...Args >
-class vpSpecificFeatureTemplate : public vpSpecificFeature
+class VISP_EXPORT vpSpecificFeatureTemplate : public vpSpecificFeature
 {
 private:
   featureType desiredFeature;
@@ -358,8 +368,13 @@ public:
 //##  Object Mode
 //#################################################
 
+/*!
+  \class vpSpecificFeatureTemplateObject
+  \ingroup Pose
+  \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
+*/
 template< typename ObjectType, typename featureType, typename RetType, typename ...Args >
-class vpSpecificFeatureTemplateObject : public vpSpecificFeature
+class VISP_EXPORT vpSpecificFeatureTemplateObject : public vpSpecificFeature
 {
 private:
   featureType desiredFeature;
@@ -399,21 +414,28 @@ public:
 };
 #endif //VISP_HAVE_C11_COMPATIBILITY
 
-//######################################
-//#
-//######################################
+/*!
+  \class vpPoseFeatures
+  \ingroup Pose
 
+  This class allows to estimate a pose by virtual visual servoing from visual features. The features that are considered are points, segments, lines, ellipses.
+  If the compiler is compatible with C++ 11, it is possible to introduce specific features that are not directly implemented in ViSP.
+  */
 class VISP_EXPORT vpPoseFeatures
 {
 public:
+  /*!
+    Method that will be used to estimate the pose from visual features.
+    */
   typedef enum
     {
-      VIRTUAL_VS       ,
-			ROBUST_VIRTUAL_VS
+      VIRTUAL_VS,        /*!< Virtual visual servoing approach. */
+      ROBUST_VIRTUAL_VS  /*!< Robust virtual visual servoing approach. */
     } vpPoseFeaturesMethodType;
 		
 private:
   
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   template<typename FeatureType, typename FirstParamType>
   struct vpDuo{
     FeatureType    *desiredFeature;
@@ -426,7 +448,8 @@ private:
     FirstParamType  firstParam;
     SecondParamType secondParam;
   };
-  
+#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   unsigned int                        maxSize;
   unsigned int                        totalSize;
   unsigned int                        vvsIterMax;
@@ -492,11 +515,9 @@ public:
 	void computePose(vpHomogeneousMatrix & cMo, const vpPoseFeaturesMethodType &type = VIRTUAL_VS);
   
   /*!
-    Get the covariance matrix computed in the Virtual Visual Servoing approach.
+    Get the covariance matrix of the pose parameters computed by virtual visual servoing.
     
-    \warning The compute covariance flag has to be true if you want to compute the covariance matrix.
-    
-    \sa setCovarianceComputation
+    \warning By default, the covariance matrix is not computed. To enable the computation, use setCovarianceComputation().
   */
   vpMatrix getCovarianceMatrix() const { 
     if(!computeCovariance)
@@ -506,44 +527,44 @@ public:
   }
   
   /*!
-  Get the lambda from the command law : v = -lambda L+ (s - s*)
+    Get the gain that is used to compute the pose with the control law \f${\bf v} = -\lambda {\bf L}^+ ({\bf s} - {\bf s}^*)\f$.
 
-  \return value of lambda
+    \return Value of \f$\lambda\f$, the gain of the control law.
   */
   double getLambda(){ return lambda; }
   
   /*!
-  Get the maximum number of iteration in computePoseVVS and computePoseRobustVVS
+    Get the maximum number of iterations of the virtual visual servoing (VVS) scheme implemented in computePose().
 
-  \return value of vvsIterMax
+    \return Maximum number of iterations used during VVS minimization.
   */
   double getVVSIterMax(){ return vvsIterMax; }
   
   /*!
-    Set if the covaraince matrix has to be computed in the Virtual Visual Servoing approach.
+    Enable or disable covariance computation of the pose parameters.
 
     \param flag : True if the covariance has to be computed, false otherwise.
   */
   void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
   
   /*!
-  Set the lambda from the command law : v = -lambda L+ (s - s*)
+    Set the gain used in the virtual visual servoing scheme : \f${\bf v} = -\lambda {\bf L}^+ ({\bf s} - {\bf s}^*)\f$.
 
-  \param val : value of lambda
+    \param val : Value of the gain \f$\lambda\f$.
   */
   void setLambda(const double &val){ lambda = val; }
   
   /*!
-  Set the maximum number of iteration in computePoseVVS and computePoseRobustVVS
+    Set the maximum number of iterations used in computePose().
 
-  \param val : maximum iteration value
+    \param val : Maximum number of iteration used in the VVS scheme.
   */
   void setVVSIterMax(const int &val){ vvsIterMax = val; }
   
   /*!
-   Turn the verbose mode ON / OFF
+   Turn the verbose mode ON / OFF.
    
-   \param mode : new verbose state. True to turn ON, false otherwise
+   \param mode : new verbose state. True to turn ON, false otherwise.
   */
   void setVerbose(const bool &mode){ verbose = mode; }
  
