@@ -41,7 +41,8 @@
 MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   include(CheckCXXCompilerFlag)
   if(UNIX)
-	set(WARNING_ALL "-Wall")
+
+    set(WARNING_ALL "-Wall")
     CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
     if(WARNING_ALL_ALLOWED)
 #     MESSAGE("Compiler flag ${WARNING_ALL} allowed")
@@ -86,7 +87,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
 #     MESSAGE("Compiler flag ${WARNING_SIGN_CONVERSION} not allowed")
     endif()
 	
-	if(ACTIVATE_WARNING_ALL)
+    if(ACTIVATE_WARNING_ALL)
       list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
     else()
       string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -101,7 +102,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
       list(APPEND CMAKE_C_FLAGS ${WARNING_STRICT_OVERFLOW})
     else()
       string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-      string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+      string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
     endif()
     if(ACTIVATE_WARNING_FLOAT_EQUAL)
       list(APPEND CMAKE_CXX_FLAGS ${WARNING_FLOAT_EQUAL})
@@ -113,6 +114,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     else()
       string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
+
 
   else(UNIX) 
     # Add specific compilation flags for Windows Visual
@@ -139,6 +141,27 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
 
 
   endif(UNIX)
+
+  # C++ 11 Compatibility
+  set(C11_COMPATIBILITY "-std=c++0x")
+  CHECK_CXX_COMPILER_FLAG(${C11_COMPATIBILITY} C11_ALLOWED)
+  if(C11_ALLOWED)
+    #MESSAGE("Compiler flag ${C11_COMPATIBILITY} allowed")
+    set(ACTIVATE_CXX11 "ON" CACHE BOOL "activate -std=c++0x flag")
+  else()
+    #SET(USE_CXX11 OFF)
+    #MESSAGE("Compiler flag ${C11_COMPATIBILITY} not allowed")
+  endif()
+
+  if(ACTIVATE_CXX11)
+    list(APPEND CMAKE_CXX_FLAGS ${C11_COMPATIBILITY})
+    #MESSAGE("You're using ${C11_COMPATIBILITY}")
+    set(VISP_HAVE_C11_COMPATIBILITY TRUE)
+  else()
+    string(REPLACE ${C11_COMPATIBILITY} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(VISP_HAVE_C11_COMPATIBILITY FALSE)
+    #MESSAGE("You're not using ${C11_COMPATIBILITY}")
+  endif()
 
   # Remove duplicates compilation flags
   separate_arguments(CMAKE_CXX_FLAGS)

@@ -65,6 +65,7 @@ SET (SRC_COMPUTER_VISION
   computer-vision/homography-estimation/vpHomographyRansac.cpp
   computer-vision/pose-estimation/vpLevenbergMarquartd.cpp
   computer-vision/pose-estimation/vpPose.cpp
+  computer-vision/pose-estimation/vpPoseFeatures.cpp
   computer-vision/pose-estimation/vpPoseDementhon.cpp
   computer-vision/pose-estimation/vpPoseLagrange.cpp
   computer-vision/pose-estimation/vpPoseLowe.cpp

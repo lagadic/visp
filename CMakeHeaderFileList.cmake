@@ -59,6 +59,7 @@ SET (HEADER_COMPUTER_VISION
   computer-vision/pose-estimation/vpLevenbergMarquartd.h
   computer-vision/pose-estimation/vpPoseException.h
   computer-vision/pose-estimation/vpPose.h
+  computer-vision/pose-estimation/vpPoseFeatures.h
   )
 
 SET (HEADER_DATA_STRUCTURE
