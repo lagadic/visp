@@ -1214,10 +1214,12 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
 
   // Case of the camera frame where we control only 2 dof
   if (frame == vpRobot::CAMERA_FRAME) {
-    vpColVector vel_max(2);
+    vpColVector vel_max(6);
 
-    for (int i=0; i<2; i++)
-      vel_max[i] = getMaxRotationVelocity();
+    for (int i=0; i<3; i++) {
+      vel_max[i]   = getMaxTranslationVelocity();
+      vel_max[i+3] = getMaxRotationVelocity();
+    }
 
     vpColVector velocity = vpRobot::saturateVelocities(vel, vel_max, true);
 
