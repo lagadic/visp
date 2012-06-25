@@ -68,7 +68,6 @@
 #include <vector>
 #include <iostream>
 
-#define VISP_HAVE_C11_COMPATIBILITY
 #ifdef VISP_HAVE_C11_COMPATIBILITY
 #include <tuple>
 
