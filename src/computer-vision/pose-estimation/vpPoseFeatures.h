@@ -68,7 +68,7 @@
 #include <vector>
 #include <iostream>
 
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
 #include <tuple>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -411,7 +411,7 @@ public:
   }
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#endif //VISP_HAVE_C11_COMPATIBILITY
+#endif //VISP_HAVE_CPP11_COMPATIBILITY
 
 /*!
   \class vpPoseFeatures
@@ -475,7 +475,7 @@ private:
 	//vpFeatureSegment
   std::vector<vpTrio<vpFeatureSegment,vpPoint,vpPoint> >        featureSegment_DuoPoints_list;
   
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   //Specific features
   std::vector<vpPoseSpecificFeature*>                               featureSpecific_list;
 #endif
@@ -502,7 +502,7 @@ public:
   void addFeatureSegment(vpPoint &, vpPoint&);
 
   
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   template<typename RetType, typename ...ArgsFunc, typename ...Args>
 	void addSpecificFeature(RetType (*fct_ptr)(ArgsFunc ...), Args &&...args);
   
@@ -575,7 +575,7 @@ private:
 	void computePoseRobustVVS(vpHomogeneousMatrix & cMo);
 };
 
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
 /*!
   Add a specific feature for the pose computation.
   
@@ -614,7 +614,7 @@ int main()
   vpFeatureLine fl;
   void (*ptr)(vpFeaturePoint&, const vpPoint&) = &vpFeatureBuilder::create;
   
-#ifdef VISP_HAVE_C11_COMPATIBILITY  
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY  
   pose.addSpecificFeature(ptr, fp, pts[0]);
   pose.addSpecificFeature(&vp_createPoint, fp, pts[1]);
   pose.addSpecificFeature(&vp_createTwoPoint, fp, pts[2], pts[3]);
@@ -692,7 +692,7 @@ int main()
   void (vp_createClass::*ptrClassTwoPoint)(vpFeaturePoint&, const vpPoint&, const vpPoint&) = &vp_createClass::vp_createTwoPoint;
   void (vp_createClass::*ptrClassLine)(vpFeatureLine &, const vpLine &) = &vp_createClass::vp_createLine;
   
-#ifdef VISP_HAVE_C11_COMPATIBILITY  
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY  
   pose.addSpecificFeature(&cpClass, ptrClassPoint, fp, pts[0]);
   pose.addSpecificFeature(&cpClass, ptrClassTwoPoint, fp, pts[1], pts[2]);
   pose.addSpecificFeature(&cpClass, ptrClassLine, fl, line);

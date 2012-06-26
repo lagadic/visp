@@ -257,6 +257,13 @@ else(OPENMP_FOUND)
     SET(USE_OPENMP OFF)
 endif(OPENMP_FOUND)
 
+include(FindCPP11)
+if(CPP11_FOUND)
+    OPTION(USE_CPP11    "Add C++ compiler flags for C++11 support" OFF)
+else()
+    SET(USE_CPP11 OFF)
+endif()
+
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 FIND_PACKAGE(LAPACK_C)
@@ -623,6 +630,20 @@ else()
     string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   endif()
 endif()
+
+#--------------------------------------------------------------------
+# C++11
+#--------------------------------------------------------------------
+if(USE_CPP11)
+  set(VISP_CPP11_FLAGS "${CPP11_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP11_CXX_FLAGS}")
+else()
+  set(VISP_CPP11_FLAGS "")
+  if(CPP11_CXX_FLAGS)
+    string(REPLACE ${CPP11_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  endif()
+endif()
+
 # Remove duplicates compilation flags
 separate_arguments(CMAKE_CXX_FLAGS)
 list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
@@ -1344,6 +1365,17 @@ IF(USE_OPENMP)
     SET(VISP_HAVE_OPENMP_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(OPENMP_FOUND)
 ENDIF(USE_OPENMP)
+
+IF(USE_CPP11)
+  IF(CPP11_FOUND)
+    MESSAGE(STATUS "C++11 found")
+    SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "yes")  # for ViSP-third-party.txt
+  ELSE(CPP11_FOUND)
+    MESSAGE(STATUS "C++11 not found")
+    SET(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "no")  # for ViSP-third-party.txt
+  ENDIF(CPP11_FOUND)
+ENDIF()
 
 
 #----------------------------------------------------------------------

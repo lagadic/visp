@@ -45,7 +45,7 @@ vpPoseFeatures::~vpPoseFeatures()
   for(int i = featureSegment_DuoPoints_list.size()-1 ; i >= 0 ; i--)
     delete featureSegment_DuoPoints_list[i].desiredFeature; 
   
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   for(int i = featureSpecific_list.size()-1 ; i >= 0 ; i--)
     delete featureSpecific_list[i]; 
 #endif
@@ -322,7 +322,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       L.stackMatrices(fs.interaction());
     }
 
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
     //--------------Specific Feature--------------
     if( i < featureSpecific_list.size() ){
       featureSpecific_list[i]->createCurrent(cMo);
