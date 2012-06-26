@@ -291,22 +291,21 @@ void buildCurrentFeatureObjectWithTuple( objType *obj, featureType &feature,
 {
   vpCurrentFeatureBuilderObjectWithTuple<sizeof...(ArgsTuple)>::buildCurrentFeatureObjectWithTuple( obj, feature, cMo, f, t );
 }
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 //#################################################
 //##  Call that will be used in our vpPoseFeatures
 //##  to store the specific features.
 //#################################################
 /*!
-  \class vpSpecificFeature
+  \class vpPoseSpecificFeature
   \ingroup Pose
   \brief Class used to define specific features that could be considered in pose estimation from visual features implemented in vpPoseFeatures.
 */
-class VISP_EXPORT vpSpecificFeature
+class VISP_EXPORT vpPoseSpecificFeature
 {
 public: 
-  vpSpecificFeature(){}
-  virtual ~vpSpecificFeature(){};
+  vpPoseSpecificFeature(){}
+  virtual ~vpPoseSpecificFeature(){};
   
   virtual vpColVector error() = 0;
   virtual vpMatrix currentInteraction() = 0;
@@ -319,12 +318,12 @@ public:
 //#################################################
 
 /*!
-  \class vpSpecificFeatureTemplate
+  \class vpPoseSpecificFeatureTemplate
   \ingroup Pose
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename featureType, typename RetType, typename ...Args >
-class VISP_EXPORT vpSpecificFeatureTemplate : public vpSpecificFeature
+class VISP_EXPORT vpPoseSpecificFeatureTemplate : public vpPoseSpecificFeature
 {
 private:
   featureType desiredFeature;
@@ -333,13 +332,13 @@ private:
   RetType (*func_ptr)(Args...);
   
 public:  
-  vpSpecificFeatureTemplate(RetType (*f_ptr)(Args...), Args &&...args)
+  vpPoseSpecificFeatureTemplate(RetType (*f_ptr)(Args...), Args &&...args)
   {
     func_ptr = f_ptr; //std::move(f_ptr);
     tuple = new std::tuple<Args...>(args...);
   }
   
-  virtual ~vpSpecificFeatureTemplate()
+  virtual ~vpPoseSpecificFeatureTemplate()
   {
     delete tuple;
   };
@@ -368,12 +367,12 @@ public:
 //#################################################
 
 /*!
-  \class vpSpecificFeatureTemplateObject
+  \class vpPoseSpecificFeatureTemplateObject
   \ingroup Pose
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename ObjectType, typename featureType, typename RetType, typename ...Args >
-class VISP_EXPORT vpSpecificFeatureTemplateObject : public vpSpecificFeature
+class VISP_EXPORT vpPoseSpecificFeatureTemplateObject : public vpPoseSpecificFeature
 {
 private:
   featureType desiredFeature;
@@ -383,14 +382,14 @@ private:
   ObjectType* obj;
   
 public:  
-  vpSpecificFeatureTemplateObject(ObjectType *o, RetType (ObjectType::*f_ptr)(Args...), Args &&...args)
+  vpPoseSpecificFeatureTemplateObject(ObjectType *o, RetType (ObjectType::*f_ptr)(Args...), Args &&...args)
   {
     func_ptr = f_ptr; //std::move(f_ptr);
     tuple = new std::tuple<Args...>(args...);
     obj = o;
   }
   
-  virtual ~vpSpecificFeatureTemplateObject()
+  virtual ~vpPoseSpecificFeatureTemplateObject()
   {
     delete tuple;
   };
@@ -411,6 +410,7 @@ public:
     buildCurrentFeatureObjectWithTuple(obj, currentFeature, cMo, func_ptr, *tuple);
   }
 };
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #endif //VISP_HAVE_C11_COMPATIBILITY
 
 /*!
@@ -477,7 +477,7 @@ private:
   
 #ifdef VISP_HAVE_C11_COMPATIBILITY
   //Specific features
-  std::vector<vpSpecificFeature*>                               featureSpecific_list;
+  std::vector<vpPoseSpecificFeature*>                               featureSpecific_list;
 #endif
   
 public:
@@ -576,13 +576,64 @@ private:
 };
 
 #ifdef VISP_HAVE_C11_COMPATIBILITY
+/*!
+  Add a specific feature for the pose computation.
+  
+  \param fct_ptr : pointer on the function used to create the feature.
+  \param args : List of function parameters; 
+                First argument supposed to be derived from vpBasicFeature (redefine interaction() and error() functions), 
+                others are supposed to be derived from vpForwardProjection (redefine track() function)
+  
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpPoseFeatures.h>
+
+void vp_createPoint(vpFeaturePoint &fp,const vpPoint &p){
+  vpFeatureBuilder::create(fp,p);
+}
+
+void vp_createTwoPoint(vpFeaturePoint &fp,const vpPoint &p, const vpPoint&p2){
+  vpFeatureBuilder::create(fp,p);
+  vpFeatureBuilder::create(fp,p2);
+}
+
+void vp_createLine(vpFeatureLine &fp,const vpLine &l){
+  vpFeatureBuilder::create(fp,l);
+}
+
+int main()
+{
+  vpPoseFeatures pose;
+  
+  vpPoint pts[4];
+  vpLine line;
+  
+  //... Projection of the points and line 
+
+  vpFeaturePoint fp;
+  vpFeatureLine fl;
+  void (*ptr)(vpFeaturePoint&, const vpPoint&) = &vpFeatureBuilder::create;
+  
+#ifdef VISP_HAVE_C11_COMPATIBILITY  
+  pose.addSpecificFeature(ptr, fp, pts[0]);
+  pose.addSpecificFeature(&vp_createPoint, fp, pts[1]);
+  pose.addSpecificFeature(&vp_createTwoPoint, fp, pts[2], pts[3]);
+  pose.addSpecificFeature(&vp_createLine, fl, line);
+#endif
+  
+  //... Pose Computation
+
+  return 0;
+}
+  \endcode
+*/
 template< typename RetType, typename ...ArgsFunc, typename ...Args>
 void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc ...), Args &&...args)
 {
   typedef typename std::tuple_element<0, std::tuple<Args...> >::type featureTypeReference;
   typedef typename std::remove_reference<featureTypeReference>::type featureType; 
   featureSpecific_list.push_back(
-    new vpSpecificFeatureTemplate< featureType, RetType, ArgsFunc... >(fct_ptr,std::forward<ArgsFunc>(args)...)
+    new vpPoseSpecificFeatureTemplate< featureType, RetType, ArgsFunc... >(fct_ptr,std::forward<ArgsFunc>(args)...)
   );
   
   featureSpecific_list.back()->createDesired();
@@ -592,13 +643,74 @@ void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc ...), Args &
     maxSize = featureSpecific_list.size();
 }
 
+/*!
+  Add a specific feature for the pose computation.
+  
+  \param obj : object used to call the function defined by fct_ptr.
+  \param fct_ptr : pointer on the function used to create the feature.
+  \param args : List of function parameters; 
+                First argument supposed to be derived from vpBasicFeature (redefine interaction() and error() functions), 
+                others are supposed to be derived from vpForwardProjection (redefine track() function)
+  
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpPoseFeatures.h>
+
+class vp_createClass{
+public:
+  vp_createClass(){}
+  
+  int vp_createPoint(vpFeaturePoint &fp,const vpPoint &p){
+    vpFeatureBuilder::create(fp,p);
+    return 2;
+  }
+  
+  void vp_createTwoPoint(vpFeaturePoint &fp,const vpPoint &p, const vpPoint &p2){
+    vpFeatureBuilder::create(fp,p);
+    vpFeatureBuilder::create(fp,p2);
+  }
+  
+  void vp_createLine(vpFeatureLine &fp,const vpLine &l){
+    vpFeatureBuilder::create(fp,l);
+  }
+};
+
+int main()
+{
+  vpPoseFeatures pose;
+  
+  vpPoint pts[3];
+  vpLine line;
+  
+  //... Projection of the points and line 
+
+  vpFeaturePoint fp;
+  vpFeatureLine fl;
+  
+  vp_createClass cpClass;
+  int (vp_createClass::*ptrClassPoint)(vpFeaturePoint&, const vpPoint&) = &vp_createClass::vp_createPoint;
+  void (vp_createClass::*ptrClassTwoPoint)(vpFeaturePoint&, const vpPoint&, const vpPoint&) = &vp_createClass::vp_createTwoPoint;
+  void (vp_createClass::*ptrClassLine)(vpFeatureLine &, const vpLine &) = &vp_createClass::vp_createLine;
+  
+#ifdef VISP_HAVE_C11_COMPATIBILITY  
+  pose.addSpecificFeature(&cpClass, ptrClassPoint, fp, pts[0]);
+  pose.addSpecificFeature(&cpClass, ptrClassTwoPoint, fp, pts[1], pts[2]);
+  pose.addSpecificFeature(&cpClass, ptrClassLine, fl, line);
+#endif
+  
+  //... Pose Computation
+
+  return 0;
+}
+  \endcode
+*/
 template< typename ObjType, typename RetType, typename ...ArgsFunc, typename ...Args>
 void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc ...), Args &&...args)
 {
   typedef typename std::tuple_element<0, std::tuple<Args...> >::type featureTypeReference;
   typedef typename std::remove_reference<featureTypeReference>::type featureType; 
   featureSpecific_list.push_back(
-    new vpSpecificFeatureTemplateObject< ObjType, featureType, RetType, ArgsFunc... >(obj, fct_ptr,std::forward<ArgsFunc>(args)...)
+    new vpPoseSpecificFeatureTemplateObject< ObjType, featureType, RetType, ArgsFunc... >(obj, fct_ptr,std::forward<ArgsFunc>(args)...)
   );
   
   featureSpecific_list.back()->createDesired();
