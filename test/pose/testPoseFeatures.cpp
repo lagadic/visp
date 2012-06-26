@@ -197,16 +197,16 @@ int main()
             << covariance[4][4] << " "
             << covariance[5][5] << " " << std::endl;
   
-  bool result = true;
+  int result = 0; // Ok
   for(unsigned int i = 0 ; i < 6 ; i++){
     if(fabs(vpPoseVector(cMo2)[i] - vpPoseVector(cMo)[i]) > 1e-4){
       std::cout << "Bad pose estimation" << std::endl;
-      result = false;
+      result = -1;
       break;
     }
   }
   
-  if(result)
+  if (result == 0)
     std::cout << "Pose well estimed" << std::endl;
   
   return result;
