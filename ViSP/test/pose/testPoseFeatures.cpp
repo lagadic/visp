@@ -62,7 +62,7 @@
 
 */
 
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
 class vp_createPointClass{
 public:
   double value;
@@ -161,7 +161,7 @@ int main()
   
   pose.addFeatureEllipse(circle);
 
-#ifdef VISP_HAVE_C11_COMPATIBILITY
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;

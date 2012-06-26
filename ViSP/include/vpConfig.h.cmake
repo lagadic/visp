@@ -275,7 +275,7 @@
 #cmakedefine VISP_HAVE_OPENMP
 
 //Defined if we want to use c++ 11
-#cmakedefine VISP_HAVE_C11_COMPATIBILITY
+#cmakedefine VISP_HAVE_CPP11_COMPATIBILITY
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
