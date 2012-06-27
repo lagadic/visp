@@ -96,10 +96,10 @@ int main(int argc, const char **argv)
             vpParseArgv::ARGV_NO_DEFAULTS)) {
     return (false);
   }
-  opt_curves = opt_display;
 
   std::cout << "Used options: " << std::endl;
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
+  opt_curves = opt_display;
   std::cout << " - display   : " << opt_display << std::endl;
   std::cout << " - curves    : " << opt_curves << std::endl;
 #endif
@@ -175,6 +175,7 @@ int main(int argc, const char **argv)
   }
 #endif
   
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
   vpPlot *graph = NULL;
   if (opt_curves)
   {
@@ -187,6 +188,7 @@ int main(int argc, const char **argv)
     graph->setTitle(0, "Velocities");
     graph->setTitle(1, "Error s-s*");
   }
+#endif
 
   //param robot
   vpRobotCamera robot ;
@@ -218,11 +220,13 @@ int main(int argc, const char **argv)
     vpColVector v = task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
     if (opt_curves)
     {
       graph->plot(0, iter, v); // plot velocities applied to the robot
       graph->plot(1, iter, task.getError()); // plot error vector
     }
+#endif
 
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms    
     iter ++;
@@ -233,8 +237,10 @@ int main(int argc, const char **argv)
   // and desired feature lists.
   task.kill();
 
+#if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
   if (graph != NULL)
     delete graph;
+#endif
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
   if (opt_display && display != NULL)
     delete display;
