@@ -65,12 +65,12 @@
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 class vp_createPointClass{
 public:
-  double value;
+  int value;
   
   vp_createPointClass() : value(0){}
   
   int vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
-    value += 1.0;
+    value += 1;
     vpFeatureBuilder::create(fp,v);
     return value;
   }
