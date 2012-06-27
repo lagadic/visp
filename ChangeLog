@@ -21,6 +21,7 @@ ViSP 2.6.2 (under development)
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
      - New vpClient and vpServer for a multiclients TCP network.
+     - New vpPoseFeatures class for pose computation from any features.
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
