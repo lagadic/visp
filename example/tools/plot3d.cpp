@@ -56,6 +56,9 @@ int main ()
   //Create a window with one graphic
   vpPlot plot(1);
 
+  // Change the default font
+  //plot.setFont("-misc-fixed-bold-r-semicondensed--0-0-75-75-c-0-iso8859-10");
+
   //The graphic contains 2 curves
   plot.initGraph(0,2);
   

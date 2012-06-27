@@ -58,6 +58,9 @@ int main ()
 {
   vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
+  // Change the default font
+  //  plot.setFont("-misc-fixed-bold-r-semicondensed--0-0-75-75-c-0-iso8859-10");
+
   //Initialize the number of curve for each graphic
   plot.initGraph(0,1);
   plot.initGraph(1,1);
