@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpColor.h 3530 2012-01-03 10:52:12Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.

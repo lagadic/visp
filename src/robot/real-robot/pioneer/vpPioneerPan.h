@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpPioneer.h 3731 2012-05-14 17:35:14Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.

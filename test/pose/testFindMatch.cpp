@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoseRansac.cpp 3619 2012-03-09 17:28:57Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
