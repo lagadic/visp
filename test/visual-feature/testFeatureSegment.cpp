@@ -73,7 +73,7 @@ int main(int argc, const char **argv)
   int opt_display = 1;
   int opt_curves = 1;
 #endif
-  int opt_normalized = 1;
+  bool opt_normalized = true;
 
   // Parse the command line to set the variables
   vpParseArgv::vpArgvInfo argTable[] =
