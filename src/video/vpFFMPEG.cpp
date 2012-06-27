@@ -113,9 +113,9 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
     return false;
   }
 
-#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53,3,0) // libavformat 53.3.0
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(53,21,0) // libavformat 53.21.0
   if (av_find_stream_info (pFormatCtx) < 0)
-#else // libavformat 52.84.0
+#else 
   if (avformat_find_stream_info (pFormatCtx, NULL) < 0)
 #endif
       return false;
@@ -151,7 +151,7 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
       return false;		// Codec not found
     }
     
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,5,0) // libavcodec 53.5.0
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,35,0) // libavcodec 53.35.0
     if (avcodec_open (pCodecCtx, pCodec) < 0)
 #else
     if (avcodec_open2 (pCodecCtx, pCodec, NULL) < 0)
@@ -672,7 +672,7 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned in
   pCodecCtx->pix_fmt = PIX_FMT_YUV420P;
 
   /* open it */
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,5,0) // libavcodev 53.5.0
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(53,35,0) // libavcodev 53.35.0
   if (avcodec_open (pCodecCtx, pCodec) < 0) {
 #else
   if (avcodec_open2 (pCodecCtx, pCodec, NULL) < 0) {
