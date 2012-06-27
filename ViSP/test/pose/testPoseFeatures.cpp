@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testPoseRansac.cpp 3765 2012-06-05 14:41:33Z ayol $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -32,9 +32,7 @@
  *
  *
  * Description:
- * Compute the pose of a 3D object using the Dementhon method. Assuming that
- * the correspondance between 2D points and 3D points is not done, we use
- * the RANSAC algorithm to achieve this task
+ * Compute the pose from visual features by virtual visual servoing.
  *
  * Authors:
  * Aurelien Yol
