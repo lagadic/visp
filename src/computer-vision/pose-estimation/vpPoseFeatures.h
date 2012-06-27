@@ -584,6 +584,8 @@ private:
                 First argument supposed to be derived from vpBasicFeature (redefine interaction() and error() functions), 
                 others are supposed to be derived from vpForwardProjection (redefine track() function)
   
+  \warning This function is only available with C++11. It has to be activated with USE_CPP11 option from CMake.
+  
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpPoseFeatures.h>
@@ -651,6 +653,8 @@ void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc ...), Args &
   \param args : List of function parameters; 
                 First argument supposed to be derived from vpBasicFeature (redefine interaction() and error() functions), 
                 others are supposed to be derived from vpForwardProjection (redefine track() function)
+  
+  \warning This function is only available with C++11. It has to be activated with USE_CPP11 option from CMake.
   
   \code
 #include <visp/vpConfig.h>
