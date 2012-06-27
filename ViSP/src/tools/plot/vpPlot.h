@@ -149,6 +149,16 @@ class VISP_EXPORT vpPlot
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
     void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
+    /*!
+      Set the font of the characters. The display should be initialized before.
+
+      To know which font are available, on Unix you can use xselfonts or xlsfonts utilities.
+      */
+    void setFont(const char *font)
+    {
+      if (display->isInitialised())
+        vpDisplay::setFont(I, font);
+    }
     void setTitle (const unsigned int graphNum, const char *title);
     void setUnitX (const unsigned int graphNum, const char *unitx);
     void setUnitY (const unsigned int graphNum, const char *unity);
