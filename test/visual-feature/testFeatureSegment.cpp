@@ -185,8 +185,8 @@ int main(int argc, const char **argv)
     //The first graphic contains 3 curve and the second graphic contains 3 curves
     graph->initGraph(0,6);
     graph->initGraph(1,8);
-    graph->setTitle(0, "Velocities");
-    graph->setTitle(1, "Error s-s*");
+//     graph->setTitle(0, "Velocities");
+//     graph->setTitle(1, "Error s-s*");
   }
 #endif
 
