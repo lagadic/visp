@@ -20,8 +20,10 @@ ViSP 2.6.2 (under development)
      - Introduction of new functionalities in vpIoTools to parse text
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
-     - New vpClient and vpServer for a multiclients TCP network.
-     - New vpPoseFeatures class for pose computation from any features.
+     - New vpClient and vpServer classes for a multiclients TCP network.
+     - New vpPoseFeatures class for pose computation from any visual features.
+       To be able to consider other user defined features the compiler should
+       be compatible with C++ 11 standart.
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
@@ -34,11 +36,11 @@ ViSP 2.6.2 (under development)
        build in debug (libvisp-2d.lib and libvisp-2d.dll). Install stage
        copy libvisp-2[d].lib in $CMAKE_INSTALL_PREFIX/lib and libvisp-2[d].dll
        in $CMAKE_INSTALL_PREFIX/bin.
-     - Use OpenMP to optimize the execution of the moments computation
+     - Use OpenMP to optimize the execution of the moments computation.
      - Possibility to compute the covariance matrix during pose estimation
-       (vpPose) and MBT Tracking (vpMbTracker).
-     - All initClick() now have a non-blocking equivalent as initFromPoints,
-       or initFromPose, etc.
+       (vpPose and vpPoseFeatures) and model-based tracking (vpMbTracker).
+     - All initClick() now have a non-blocking equivalent as initFromPoints(),
+       or initFromPose(), etc.
      - Most of the classes that had a display() method now have the equivalent
        display in static function (display's externalisation).
      - Ransac is now improved for either pose computation or point matching.
