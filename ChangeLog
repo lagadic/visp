@@ -6,7 +6,7 @@
                     http://www.irisa.fr/lagadic
 
 
-ViSP 2.6.2 (under development)
+ViSP 2.6.2 (released June 29, 2012)
   - New features
      - New vp1394CMUGrabber class that allows firewire frame acquisition
        under Windows using CMU 1394 Digital Camera 3rd party library.
