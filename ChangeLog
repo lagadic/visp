@@ -6,6 +6,11 @@
                     http://www.irisa.fr/lagadic
 
 
+ViSP 2.6.3 (under development version)
+  - New features
+  - Improvements
+  - Bug fixed
+----------------------------------------------
 ViSP 2.6.2 (released June 29, 2012)
   - New features
      - New vp1394CMUGrabber class that allows firewire frame acquisition
