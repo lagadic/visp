@@ -142,6 +142,9 @@ int main()
 
   // Save the parameters in a new file "myXmlFileWithNoise.xml"
   p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
+
+  // Clean up memory allocated by the xml library
+  vpXmlParser::cleanup();
 #endif
 }
   \endcode
@@ -175,6 +178,9 @@ int main()
   if (p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
     std::cout << "Cannot save camera parameters" << std::endl;
   }
+
+  // Clean up memory allocated by the xml library
+  vpXmlParser::cleanup();
 #endif
 }
   \endcode

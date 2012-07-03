@@ -904,6 +904,9 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   Load the xml configuration file.
   From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
 
+  \warning To clean up memory allocated by the xml library, the user has to call
+  vpXmlParser::cleanup() before the exit().
+
   \param _filename : full name of the xml file.
 */
 void 
@@ -914,12 +917,17 @@ vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
 
 /*!
   Load the xml configuration file.
-  From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
+  From the configuration file parameters initialize the corresponding objects (Ecm, camera).
+
+  \warning To clean up memory allocated by the xml library, the user has to call
+  vpXmlParser::cleanup() before the exit().
 
   \throw vpException::ioError if the file has not been properly parsed (file not
   found or wrong format for the data). 
 
   \param filename : full name of the xml file.
+
+  \sa vpXmlParser::cleanup()
 */
 void
 vpMbEdgeTracker::loadConfigFile(const char* filename)

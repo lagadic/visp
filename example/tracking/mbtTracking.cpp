@@ -404,6 +404,10 @@ main(int argc, const char ** argv)
     iter++;
   }
   reader.close();
+
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+
   return 0;
 }
 

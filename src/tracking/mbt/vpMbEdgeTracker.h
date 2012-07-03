@@ -55,6 +55,7 @@
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtDistanceCylinder.h>
+#include <visp/vpXmlParser.h>
 
 #include <iostream>
 #include <fstream>
@@ -111,6 +112,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpException.h>
 
 int main()
 {
@@ -119,19 +121,22 @@ int main()
   vpHomogeneousMatrix cMo; // Pose computed using the tracker.
   vpCameraParameters cam;
 
-  //acquire an image
+  // Acquire an image
 
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model the 3d party library coin is required, if coin is not installed .cao file can be used.
-  tracker.initClick(I, "cube"); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+  tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
+  tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
+  tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
 
   while(true){
-    // acquire a new image
-    tracker.track(I); // track the object on this image
-    tracker.getPose(cMo); // get the pose
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1);// display the model at the computed pose.
+    // Acquire a new image
+    tracker.track(I);     // Track the object on this image
+    tracker.getPose(cMo); // Get the pose
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
   }
+
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 
   return 0;
 }
@@ -154,6 +159,8 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 \endcode
 
   The tracker can also be used without display, in that case the initial pose
@@ -188,6 +195,9 @@ int main()
     tracker.getPose(cMo); // get the pose
   }
 
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
+
   return 0;
 }
 \endcode
@@ -221,6 +231,8 @@ int main()
     // Get the pose using any method
     tracker.display(I, cMo, cam, vpColor::darkRed, 1);// display the model at the given pose.
   }
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+  vpXmlParser::cleanup();
 
   return 0;
 }

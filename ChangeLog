@@ -10,6 +10,7 @@ ViSP 2.6.3 (under development version)
   - New features
   - Improvements
   - Bug fixed
+     - [14474] Fix race condition in vpXmlParser.
      - [14481] testFeatureSegment can lead to an exception.
 
 ----------------------------------------------

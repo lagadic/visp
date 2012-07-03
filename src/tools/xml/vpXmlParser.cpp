@@ -64,13 +64,22 @@ vpXmlParser::vpXmlParser()
 }
 
 /*!
-  Basic destructor.
-  Call function of the libXml to clean its memory.
+  Basic destructor that does nothing.
+
+  \warning As stated in http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser
+  to clean up memory allocated by the xml2 library itself, the user should call
+  xmlCleanupParser() only when the process has finished using the xml2 library.
+  In case of doubt abstain from calling this function or do it just before calling exit()
+  to avoid leak reports from valgrind ! That's why
+  in ViSP the destructor doesn't call xmlCleanupParser(). Rather we provide the static
+  function vpXmlParser::cleanup() that calls xmlCleanupParser() that could be called
+  just before exit().
   
+  \sa cleanup()
 */
 vpXmlParser::~vpXmlParser()
 {
-  xmlCleanupParser();
+  //xmlCleanupParser();
 }
 
 /*!
