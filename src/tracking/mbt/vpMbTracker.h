@@ -128,6 +128,7 @@ public:
 	
 	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
 	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
 	
   /* PURE VIRTUAL METHODS */
 
