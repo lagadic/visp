@@ -264,7 +264,10 @@ public:
 	Returns the area
 	*/
 	vpFeatureMomentArea& getFeatureArea(){ return feature_moment_area;}
+	/*!
+		Returns gravity center
+	*/
+	vpFeatureMomentGravityCenter& getFeatureGravityCenter(){ return featureGravity;}
 };
-
 
 #endif
