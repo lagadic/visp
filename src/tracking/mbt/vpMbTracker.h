@@ -222,6 +222,15 @@ public:
   inline void getPose(vpHomogeneousMatrix& _cMo) const {_cMo = this->cMo;}
   
   /*!
+    Get the current pose between the object and the camera.
+    cMo is the matrix which can be used to express 
+    coordinates from the object frame to camera frame.
+
+    \return the current pose
+  */
+  inline vpHomogeneousMatrix getPose() const {return this->cMo;}
+  
+  /*!
     Set the filename used to save the initial pose computed using the 
     initClick() method. It is also used to read a previous pose in the same method. 
     If the file is not set then, the initClick() method will create a .0.pos 
