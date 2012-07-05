@@ -100,9 +100,9 @@
   This class realise the tracking of an object or a scene given its 3D model. A
   video example can be found in the \e http://www.irisa.fr/lagadic/visp/computer-vision.html
   webpage.
-  The tracker requires the knowledge of the 3D model (given either in a vrml
-  file or in a cao file (see the loadCAOModel() method for more details)).
-  It may also use an wml file used to tune the behavior of the tracker and an
+  The tracker requires the knowledge of the 3D model that could be provided in a vrml
+  or in a cao file. The cao format is described in loadCAOModel().
+  It may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 
   The following code shows the simplest way to use the tracker.
