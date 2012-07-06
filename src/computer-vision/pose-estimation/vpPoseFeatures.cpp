@@ -58,37 +58,58 @@ vpPoseFeatures::vpPoseFeatures()
 */
 vpPoseFeatures::~vpPoseFeatures()
 { 
+  clear();
+}
+
+/*!
+ Clear all the features
+*/
+void vpPoseFeatures::clear()
+{ 
   for(int i = featurePoint_Point_list.size()-1 ; i >= 0 ; i--)
     delete featurePoint_Point_list[i].desiredFeature;
+  featurePoint_Point_list.clear();
   
   for(int i = featurePoint3D_Point_list.size()-1 ; i >= 0 ; i--)
     delete featurePoint3D_Point_list[i].desiredFeature;
+  featurePoint3D_Point_list.clear();
   
   for(int i = featureVanishingPoint_Point_list.size()-1 ; i >= 0 ; i--)
     delete featureVanishingPoint_Point_list[i].desiredFeature;
+  featureVanishingPoint_Point_list.clear();
   
   for(int i = featureVanishingPoint_DuoLine_list.size()-1 ; i >= 0 ; i--)
     delete featureVanishingPoint_DuoLine_list[i].desiredFeature;
+  featureVanishingPoint_DuoLine_list.clear();
   
   for(int i = featureEllipse_Sphere_list.size()-1 ; i >= 0 ; i--)
     delete featureEllipse_Sphere_list[i].desiredFeature;
+  featureEllipse_Sphere_list.clear();
   
   for(int i = featureEllipse_Circle_list.size()-1 ; i >= 0 ; i--)
     delete featureEllipse_Circle_list[i].desiredFeature;
+  featureEllipse_Circle_list.clear();
   
   for(int i = featureLine_Line_list.size()-1 ; i >= 0 ; i--)
     delete featureLine_Line_list[i].desiredFeature;
+  featureLine_Line_list.clear();
   
   for(int i = featureLine_DuoLineInt_List.size()-1 ; i >= 0 ; i--)
     delete featureLine_DuoLineInt_List[i].desiredFeature;
+  featureLine_DuoLineInt_List.clear();
   
   for(int i = featureSegment_DuoPoints_list.size()-1 ; i >= 0 ; i--)
     delete featureSegment_DuoPoints_list[i].desiredFeature; 
+  featureSegment_DuoPoints_list.clear();
   
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   for(int i = featureSpecific_list.size()-1 ; i >= 0 ; i--)
     delete featureSpecific_list[i]; 
+  featureSpecific_list.clear();
 #endif
+    
+    maxSize = 0;
+    totalSize = 0;
 }
 
 /*!

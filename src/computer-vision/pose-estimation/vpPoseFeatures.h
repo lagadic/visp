@@ -510,6 +510,8 @@ public:
   void addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc ...), Args &&...args);
 #endif
 	
+  void clear();
+  
 	// ! Pose computation
 	void computePose(vpHomogeneousMatrix & cMo, const vpPoseFeaturesMethodType &type = VIRTUAL_VS);
   
