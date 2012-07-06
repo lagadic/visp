@@ -646,7 +646,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const vpHomogen
   Initialise the tracking thanks to the pose vector.
   
   \param _I : Input image
-  \param _cMo : Pose vector. 
+  \param cPo : Pose vector. 
 */
 void vpMbTracker::initFromPose (const vpImage<unsigned char>& _I, const vpPoseVector &cPo)
 {
