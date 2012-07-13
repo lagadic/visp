@@ -70,7 +70,7 @@
   The segment consists in two horizontal dots. The current visual features that are used are
   \f${\bf s} = (x_n, l_n, \alpha)\f$. The desired one are \f${\bf s^*} = (0, l_n*, 0)\f$, with:
   - \f$x_n\f$ the normalized abscisse of the point corresponding to segment
-  - \f$l_n\f$ the normalized segment lenght
+  - \f$l_n\f$ the normalized segment length
   - \f$\alpha\f$ the segment orientation.
 
   The degrees of freedom that are controlled are \f$(v_x, w_z, \dot{q})\f$, the translational and rotational

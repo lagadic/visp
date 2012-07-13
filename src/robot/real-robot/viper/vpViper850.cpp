@@ -204,7 +204,7 @@ vpViper850::init (const char *camera_extrinsic_parameters)
 
   Set the constant parameters related to the robot kinematics and to
   the end-effector to camera transformation (\f$^e{\bf M}c\f$)
-  correponding to the camera extrinsic parameters. These last
+  corresponding to the camera extrinsic parameters. These last
   parameters depend on the camera and projection model in use.
 
   \param tool : Camera in use.
