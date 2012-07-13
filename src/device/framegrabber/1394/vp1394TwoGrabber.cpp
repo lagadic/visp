@@ -53,6 +53,7 @@
  * Interface with libdc1394 2.x
  */
 #if defined(VISP_HAVE_DC1394_2)
+#include <unistd.h>
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpFrameGrabberException.h>
