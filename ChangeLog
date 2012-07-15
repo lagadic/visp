@@ -6,15 +6,7 @@
                     http://www.irisa.fr/lagadic
 
 
-ViSP 2.6.3 (under development version)
-  - New features
-  - Improvements
-  - Bug fixed
-     - [14474] Fix race condition in vpXmlParser.
-     - [14481] testFeatureSegment can lead to an exception.
-
-----------------------------------------------
-ViSP 2.6.2 (released June 29, 2012)
+ViSP 2.6.2 (released July 15, 2012)
   - New features
      - New vp1394CMUGrabber class that allows firewire frame acquisition
        under Windows using CMU 1394 Digital Camera 3rd party library.
@@ -82,7 +74,12 @@ ViSP 2.6.2 (released June 29, 2012)
      - [13955] vpBasicFeature::error() is not virtual
      - [13963] Under Windows, vpDisplay::getClickUp() doesn't work
      - [14081] Error in vpThetaUVector when angles are near 180 deg +/- epsilon
-     - [14082] Segmentation fault in model based tracking when tracking only cylinders
+     - [14082] Segmentation fault in model based tracking when tracking only
+               cylinders
+     - [14474] Fix race condition in vpXmlParser.
+     - [14481] testFeatureSegment can lead to an exception.
+     - [14587] Ogre media directory OGRE_MEDIA_DIR not set in Ubuntu 12.04
+     - [14588] vpConfig.h doesn't match with the install directory
 
 ----------------------------------------------
 ViSP 2.6.1 (released October 20th, 2011)
