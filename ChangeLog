@@ -6,6 +6,13 @@
                     http://www.irisa.fr/lagadic
 
 
+ViSP 2.6.3 (under development)
+  - New features
+  - Improvements
+  - Examples
+  - Bug fixed
+
+----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)
   - New features
      - New vp1394CMUGrabber class that allows firewire frame acquisition
@@ -16,7 +23,8 @@ ViSP 2.6.2 (released July 15, 2012)
        mobile robots using Aria 3rd party library.
      - New vpFeatureSegment class to consider a segment as a visual
        servoing feature. Normalized and non normalized features are considered.
-     - New vpFeatureMomentArea class to consider moment area as a visual feature.
+     - New vpFeatureMomentArea class to consider moment area as a visual
+       feature.
      - Introduction of new functionalities in vpIoTools to parse text
        config files
      - Introduction of YARP to ViSP image converters in vpImageConvert
@@ -44,12 +52,14 @@ ViSP 2.6.2 (released July 15, 2012)
      - Most of the classes that had a display() method now have the equivalent
        display in static function (display's externalisation).
      - Ransac is now improved for either pose computation or point matching.
-  - Examples:
+  - Examples
      - New example plot3d.cpp to show how to plot 3D curves
      - New example movePioneer.cpp to illustrate Pioneer velocity control.
-     - New example sonarPioneerReader.cpp to illustrate Pioneer sonar device usage.
+     - New example sonarPioneerReader.cpp to illustrate Pioneer sonar device
+       usage.
      - New examples servoPioneerPoint2DDepth.cpp,
-       servoPioneerPoint2DDepthWithoutVpServo.cpp and servoPioneerPanSegment3D.cpp
+       servoPioneerPoint2DDepthWithoutVpServo.cpp and
+       servoPioneerPanSegment3D.cpp
        to show how to control the pioneer mobile robot by IBVS.
      - New example grab1394CMU.cpp to show how to acquire images with
        the CMU 1394 library.
