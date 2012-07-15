@@ -1327,6 +1327,7 @@ SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
 IF(USE_DC1394_1 OR USE_DC1394_2)
