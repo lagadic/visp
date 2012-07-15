@@ -73,7 +73,7 @@ int main(int argc, const char **argv)
   int opt_display = 1;
   int opt_curves = 1;
 #endif
-  bool opt_normalized = true;
+  int opt_normalized = 1;
 
   // Parse the command line to set the variables
   vpParseArgv::vpArgvInfo argTable[] =
@@ -147,8 +147,14 @@ int main(int argc, const char **argv)
   vpFeatureSegment seg_cur[2], seg_des[2]; // Current and desired features
   for (int i=0; i <2; i++)
   {
-    seg_cur[i].setNormalized(opt_normalized);
-    seg_des[i].setNormalized(opt_normalized);
+    if (opt_normalized) {
+      seg_cur[i].setNormalized(true);
+      seg_des[i].setNormalized(true);
+    }
+    else {
+      seg_cur[i].setNormalized(false);
+      seg_des[i].setNormalized(false);
+    }
     vpFeatureBuilder::create(seg_cur[i], Pc[i*2], Pc[i*2+1]);
     vpFeatureBuilder::create(seg_des[i], Pd[i*2], Pd[i*2+1]);
     seg_cur[i].print();

@@ -643,6 +643,18 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const vpHomogen
 }
 
 /*!
+  Initialise the tracking thanks to the pose vector.
+  
+  \param _I : Input image
+  \param cPo : Pose vector. 
+*/
+void vpMbTracker::initFromPose (const vpImage<unsigned char>& _I, const vpPoseVector &cPo)
+{
+  vpHomogeneousMatrix _cMo(cPo);
+  initFromPose(_I, _cMo);
+}
+
+/*!
   Save the pose in the given filename
   
   \param filename : Path to the file used to save the pose. 

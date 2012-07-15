@@ -128,6 +128,7 @@ public:
 	
 	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
 	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
 	
   /* PURE VIRTUAL METHODS */
 
@@ -219,6 +220,15 @@ public:
     \param _cMo : the pose
   */
   inline void getPose(vpHomogeneousMatrix& _cMo) const {_cMo = this->cMo;}
+  
+  /*!
+    Get the current pose between the object and the camera.
+    cMo is the matrix which can be used to express 
+    coordinates from the object frame to camera frame.
+
+    \return the current pose
+  */
+  inline vpHomogeneousMatrix getPose() const {return this->cMo;}
   
   /*!
     Set the filename used to save the initial pose computed using the 

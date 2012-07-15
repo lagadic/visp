@@ -195,11 +195,11 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
 
   // get the message body
   uint16_t msgtype = ntohs(ushortptr[7]);
-  uint32_t msgLenght = ntohl(uintptr[2]);
+  uint32_t msgLength = ntohl(uintptr[2]);
 
-  ssize_t len = recv(socket_fd, body, msgLenght, MSG_WAITALL);
-  if (len != (ssize_t)msgLenght){
-    printf("Error, wrong msg lenght: %d of %d bytes.\n", (int)len, msgLenght);
+  ssize_t len = recv(socket_fd, body, msgLength, MSG_WAITALL);
+  if (len != (ssize_t)msgLength){
+    printf("Error, wrong msg length: %d of %d bytes.\n", (int)len, msgLength);
     return false;
   }
 

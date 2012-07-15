@@ -198,7 +198,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal lenght
+  nsignal ++; // Signal length
 
   if (nsignal == 1) mean = signal;
 
@@ -256,7 +256,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal lenght
+  nsignal ++; // Signal length
 
   if (nsignal == 1) mean = signal;
 
@@ -313,7 +313,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal lenght
+  nsignal ++; // Signal length
 
   if (nsignal == 1) mean = signal;
 

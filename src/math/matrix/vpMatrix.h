@@ -175,7 +175,7 @@ protected:
   /** @name Printing  */
   //@{
 
-  int print(std::ostream& s, unsigned int lenght, char const* intro=0);
+  int print(std::ostream& s, unsigned int length, char const* intro=0);
   std::ostream & matlabPrint(std::ostream & os);
   std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false);
 

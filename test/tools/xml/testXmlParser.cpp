@@ -371,6 +371,9 @@ int main(int argc, const char** argv)
     std::cout << "name : " << parser2.getName() << std::endl;
   }
 
+  // Clean up memory allocated by the xml library
+  vpXmlParser::cleanup();
+
   return 0;  
 }
 

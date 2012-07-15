@@ -733,11 +733,19 @@ IF(USE_OGRE)
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OGRE_SAMPLES_INCLUDEPATH})
   endif()
 
-  #message("OGRE_MEDIA_DIR: ${OGRE_MEDIA_DIR}")
+  # if OGRE_MEDIA_DIR is empty, try to find the path by searching for plugins.cfg
+  # Introduced since Ubuntu 12.04
+  if(NOT OGRE_MEDIA_DIR)
+    FIND_PATH(OGRE_MEDIA_DIR ../plugins.cfg
+      $ENV{OGRE_MEDIA_DIR}
+      /usr/share/OGRE-1.7.4/media	
+    )
+  endif()
+
   #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
   #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
   SET(VISP_HAVE_OGRE_FOUND "yes")   # for ViSP-third-party.txt
-  SET(VISP_HAVE_OGRE TRUE)           # for header vpConfig.h
+  SET(VISP_HAVE_OGRE TRUE)          # for header vpConfig.h
 
   # Try to search for an existing plugins.cfg file
   # Here we cannot use OGRE_PLUGIN_DIR_REL or OGRE_PLUGIN_DIR_DBG where
@@ -755,7 +763,55 @@ IF(USE_OGRE)
   # If no plugins.cfg file is found, we create one with absolute path
   IF(NOT VISP_HAVE_OGRE_PLUGINS_PATH)
     include(${VISP_CMAKE_MODULE_PATH}/OgreTools.cmake)
+    # case 1: normal case
+    #--------------
     CREATE_OGRE_PLUGIN_CONFIG_FILE()
+
+    # case 2: install or packaging case
+    #--------------
+    IF(UNIX)
+      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/share/visp/data/ogre-simulator")
+    ELSE()
+      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
+    ENDIF()
+
+    # install rule for plugins.cfg:
+    IF(UNIX)
+      if(OGRE_PLUGIN_DIR_REL)
+        INSTALL(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
+          DESTINATION share/visp/data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+          )
+      endif()
+      if(OGRE_PLUGIN_DIR_DBG)
+        INSTALL(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
+          DESTINATION share/visp/data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+          )
+      endif()
+
+    ELSE()
+      if(OGRE_PLUGIN_DIR_REL)
+        INSTALL(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
+          DESTINATION data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+        )
+      endif()
+      if(OGRE_PLUGIN_DIR_DBG)
+        INSTALL(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
+          DESTINATION data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+        )
+      endif()
+    ENDIF()
   ENDIF()  
 
   # Try to search for an existing resources.cfg file
@@ -767,11 +823,38 @@ IF(USE_OGRE)
 
   IF(NOT VISP_HAVE_OGRE_RESOURCES_PATH)
     # we create a resources.cfg file for vpAROgre.cpp
+    # case 1: normal case
+    #--------------
     SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
     CONFIGURE_FILE(
       ${VISP_CMAKE_MODULE_PATH}/resources.cfg.in
       ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
       IMMEDIATE @ONLY)
+
+    # case 2: install or packaging case
+    #--------------
+    IF(UNIX)
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/share/visp/data/ogre-simulator")
+    ELSE()
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
+    ENDIF()
+
+    # install rule for resources.cfg:
+    IF(UNIX)
+      INSTALL(FILES
+        ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+        DESTINATION share/visp/data/ogre-simulator
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+        COMPONENT libraries
+      )
+    ELSE()
+      INSTALL(FILES
+        ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+        DESTINATION data/ogre-simulator
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+        COMPONENT libraries
+      )
+    ENDIF()
   ENDIF()
   
   MARK_AS_ADVANCED(VISP_HAVE_OGRE_PLUGINS_PATH)
@@ -1821,19 +1904,11 @@ set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${VISP_BINARY_DIR}")
 
 SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/wireframe-simulator)
 SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/robot-simulator)
-
+    
 # Generate the package dependent file include/visp/vpConfig.h
 CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_INCLUDE_DIR}/vpConfig.h
 )
-# install rule for vpConfig.h: 
-# we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
-# here set to ${VISP_BINARY_DIR}
-INSTALL(FILES ${VISP_BINARY_DIR}/include/visp/vpConfig.h
-  DESTINATION include/visp
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-  COMPONENT headers
-  )
 
 CONFIGURE_FILE(
   ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
@@ -1870,19 +1945,19 @@ ENDIF()
 
 SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/wireframe-simulator)
 SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/robot-simulator)
+# Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
+if(VISP_INSTALL_DIR_OGRE_RESOURCES)
+  SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/ogre-simulator)
+endif()
+# Only if plugins.cfg created by hand, we change the path to plugins.cfg in install/vpConfig.h
+if(VISP_INSTALL_DIR_OGRE_RESOURCES)
+  SET(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_ROOT_DIR_CMAKE_CONFIGCMAKE}/data/ogre-simulator)
+endif()
 
 # Generate the package dependent file include/visp/vpConfig.h
 CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_BINARY_DIR}/install/vpConfig.h
 )
-# install rule for vpConfig.h: 
-# we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
-# here set to /usr/share/visp/data
-INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
-  DESTINATION include/visp
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-  COMPONENT headers
-  )
 
 CONFIGURE_FILE(
   ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
@@ -1905,7 +1980,17 @@ EXPORT_LIBRARY_DEPENDENCIES(
   ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
   )
 
+# Install vpConfig.h that may differ from the one in include/visp
+INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
+  DESTINATION include/visp
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+  COMPONENT headers
+  )
+
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
+# install rule for vpConfig.h:
+# we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
+# here set to /usr/share/visp/data
 IF(UNIX)
   INSTALL(FILES
     ${VISP_BINARY_DIR}/install/VISPUse.cmake

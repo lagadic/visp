@@ -162,7 +162,7 @@ class VISP_EXPORT vpHinkley
  private:
   double dmin2;
   double alpha;
-  int    nsignal;	// Signal lenght
+  int    nsignal;	// Signal length
   double mean;	// Signal mean value
   double Sk;
   double Mk;

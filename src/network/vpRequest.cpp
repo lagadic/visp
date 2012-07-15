@@ -74,7 +74,7 @@ void vpRequest::addParameter(std::string &params)
 
 /*!
   Add messages as parameters of the request.
-  Each message correponds to one parameter.
+  Each message corresponds to one parameter.
   
   \sa vpNetwork::addParameterObject()
   

@@ -562,7 +562,7 @@ int vpNetwork::_handleFirstRequest()
   if(!hasBeenFound){
     //currentMessageReceived.erase(indStart,indEnd+end.size());
     if(verboseMode)
-      vpTRACE("No request correponds to the received message");
+      vpTRACE("No request corresponds to the received message");
     return -1;
   }
   

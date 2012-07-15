@@ -288,7 +288,7 @@ public:
   }
   /*!
 
-    Set the value of the segment lenght in the image plane. It is one parameter of the visual feature \f$ s \f$.
+    Set the value of the segment length in the image plane. It is one parameter of the visual feature \f$ s \f$.
 
     \param val : Value to set, that is either equal to \f$l_n= 1/l \f$ when normalized features
     are considered, or equal to \f$ l \f$ otherwise.

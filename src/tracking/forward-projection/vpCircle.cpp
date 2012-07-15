@@ -54,12 +54,32 @@ vpCircle::init()
   p.resize(5) ;
 }
 
+/*! 
+  Set the world coordinates of the circle from the intersection of a plane and a sphere.  
+  We mean here the coordinates of the circle in the object frame
+ 
+  \param oP : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
+              oP[3], oP[4], oP[5] correspond to X, Y, Z the coordinates of the center of the sphere.
+              oP[6] corresponds to the radius of the sphere.
+*/
 void
 vpCircle::setWorldCoordinates(const vpColVector& oP)
 {
   this->oP = oP ;
 }
 
+/*! 
+  Set the world coordinates of the circle from the intersection of a plane and a sphere. 
+  We mean here the coordinates of the circle in the object frame
+ 
+  \param A : A from the plane equation Ax + By + Cz = 0.
+  \param B : A from the plane equation Ax + By + Cz = 0.
+  \param C : A from the plane equation Ax + By + Cz = 0.
+  \param X0 : X Coordinate of the center of the sphere.
+  \param Y0 : Y Coordinate of the center of the sphere.
+  \param Z0 : Z Coordinate of the center of the sphere.
+  \param R : Radius of the sphere.
+*/
 void
 vpCircle::setWorldCoordinates(const double A, const double B,
 			       const double C,
@@ -83,13 +103,34 @@ vpCircle::vpCircle()
   init() ;
 }
 
-
+/*! 
+  Construct the circle from the intersection of a plane and a sphere.  
+ 
+  \param oP : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
+              oP[3], oP[4], oP[5] correspond to X, Y, Z the coordinates of the center of the sphere.
+              oP[6] corresponds to the radius of the sphere.
+              
+  \sa setWorldCoordinates()
+*/
 vpCircle::vpCircle(const vpColVector& oP)
 {
   init() ;
   setWorldCoordinates(oP) ;
 }
 
+/*! 
+  Construct the circle from the intersection of a plane and a sphere. 
+ 
+  \param A : A from the plane equation Ax + By + Cz = 0.
+  \param B : A from the plane equation Ax + By + Cz = 0.
+  \param C : A from the plane equation Ax + By + Cz = 0.
+  \param X0 : X Coordinate of the center of the sphere.
+  \param Y0 : Y Coordinate of the center of the sphere.
+  \param Z0 : Z Coordinate of the center of the sphere.
+  \param R : Radius of the sphere.
+  
+  \sa setWorldCoordinates()
+*/
 vpCircle::vpCircle(const double A, const double B,
 		   const double C,
 		   const double X0, const double Y0,

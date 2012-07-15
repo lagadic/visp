@@ -72,7 +72,7 @@
   This class can be useful to manage external data parameters (for example for 
   configuration of an experiment, ...).
 
-  \warning This class is only available if libxml2 is installed and detcted by ViSP.
+  \warning This class is only available if libxml2 is installed and detected by ViSP.
 
   In order to use this class, you have to create a new class inheriting from this one.
   In the child class, you have to implement the methods:
@@ -206,6 +206,22 @@ public:
   vpXmlParser();
   vpXmlParser(const vpXmlParser& _twin);
   virtual ~vpXmlParser();
+
+  /*!
+  As stated in http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser
+  to clean up memory allocated by the xml2 library itself, the user should call
+  xmlCleanupParser() only when the process has finished using the xml2 library.
+  In case of doubt abstain from calling this function or do it just before calling exit()
+  to avoid leak reports from valgrind ! That's why
+  in ViSP the destructor doesn't call xmlCleanupParser(). Rather we provide the static
+  function vpXmlParser::cleanup() that calls xmlCleanupParser() that could be called
+  just before exit().
+    */
+  static void cleanup()
+  {
+    xmlCleanupParser();
+  }
+
   /* virtual */ void parse(const std::string& filename);
   /* virtual */ void save(const std::string& filename, const bool append=false);
 

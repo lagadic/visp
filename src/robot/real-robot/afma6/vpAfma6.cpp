@@ -231,7 +231,7 @@ vpAfma6::init (const char * paramAfma6,
 /*!
 
   Get the constant parameters related to the robot kinematics and to
-  the end-effector to camera transformation (eMc) correponding to the
+  the end-effector to camera transformation (eMc) corresponding to the
   camera extrinsic parameters. These last parameters depend on the
   camera and projection model in use.
 

@@ -50,7 +50,6 @@
 #include <visp/vpDebug.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpRobotException.h>
-#include <visp/vpXmlParserCamera.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
