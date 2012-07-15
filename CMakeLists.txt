@@ -733,6 +733,15 @@ IF(USE_OGRE)
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OGRE_SAMPLES_INCLUDEPATH})
   endif()
 
+  # if OGRE_MEDIA_DIR is empty, try to find the path by searching for plugins.cfg
+  # Introduced since Ubuntu 12.04
+  if(NOT OGRE_MEDIA_DIR)
+    FIND_PATH(OGRE_MEDIA_DIR ../plugins.cfg
+      $ENV{OGRE_MEDIA_DIR}
+      /usr/share/OGRE-1.7.4/media	
+    )
+  endif()
+
   #message("OGRE_MEDIA_DIR: ${OGRE_MEDIA_DIR}")
   #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
   #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
