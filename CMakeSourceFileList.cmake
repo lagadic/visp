@@ -314,7 +314,6 @@ SET (SRC_TRACKING
   tracking/mbt/vpMbtMeLine.cpp
   tracking/mbt/vpMbEdgeTracker.cpp
   tracking/mbt/vpMbtDistanceCylinder.cpp
-  tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
   tracking/moments/vpMomentBasic.cpp
   tracking/moments/vpMomentCentered.cpp
@@ -397,7 +396,6 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureMomentGravityCenterNormalized.cpp
   visual-feature/vpFeatureMomentCentered.cpp
   visual-feature/vpFeatureMomentCInvariant.cpp
-  visual-feature/vpFeatureMomentCommon.cpp
   visual-feature/vpFeatureMomentAreaNormalized.cpp
   visual-feature/vpFeatureMomentArea.cpp
   visual-feature/vpFeatureSegment.cpp
