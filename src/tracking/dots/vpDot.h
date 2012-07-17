@@ -177,6 +177,13 @@ public :
                unsigned int thickness=1);
   
   /*!
+    Initialize the dot coordinates with \e cog.
+  */
+  inline void setCog(const vpImagePoint &cog) {
+    this->cog = cog;
+  }
+
+  /*!
 
     Activates the dot's moments computation.
 
