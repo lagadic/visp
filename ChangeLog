@@ -9,8 +9,10 @@
 ViSP 2.6.3 (under development)
   - New features
   - Improvements
+    - MinGW supported.
   - Examples
   - Bug fixed
+    - [14646] ViSP doesn't built on Windows with MinGW
 
 ----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)

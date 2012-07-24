@@ -42,7 +42,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(WIN32) && !defined(UNIX) )
 #ifndef vpWin32Window_HH
 #define vpWin32Window_HH
 

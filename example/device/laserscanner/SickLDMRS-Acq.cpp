@@ -55,7 +55,7 @@
 #include <visp/vpParseArgv.h>
 
 
-#ifdef UNIX
+#if ( defined(UNIX) && ( ! defined(WIN32) ) )
 
 int main()
 {

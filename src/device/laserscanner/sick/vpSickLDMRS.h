@@ -43,7 +43,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef UNIX
+#if ( defined(WIN32) && !defined(UNIX) )
 
 #include <arpa/inet.h>
 #include <iostream>

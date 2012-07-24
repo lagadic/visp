@@ -44,7 +44,7 @@
 #include <iostream>
 #include <visp/vpWin32API.h>
 
-#if ( defined(WIN32) )
+#if ( defined(WIN32) && !defined(UNIX) )
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

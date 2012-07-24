@@ -183,10 +183,10 @@ main(int argc, const char ** argv)
     ipath = env_ipath;
 
   // Set the default output path
-#ifdef UNIX
+#ifdef WIN32
+  opt_opath = "C:/temp";
+#else
   opt_opath = "/tmp";
-#elif WIN32
-  opt_opath = "C:\\temp";
 #endif
 
   // Get the user login name

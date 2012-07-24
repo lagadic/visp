@@ -50,6 +50,7 @@
 
 int main()
 {
+#if (! (defined(WIN32) && defined(UNIX)) )
   std::string servername = "localhost";
   unsigned int port = 35000;
 
@@ -71,6 +72,9 @@ int main()
     else
       std::cout << "Received : " << val << std::endl;
   }
-  
+#else
+  std::cout << "This example is not working on Unix and Win32 platforms like MinGW..." << std::endl;
+#endif
+
   return 0;
 }

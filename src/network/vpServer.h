@@ -47,6 +47,8 @@
 #include <visp/vpException.h>
 #include <visp/vpNetwork.h>
 
+#if (! (defined(WIN32) && defined(UNIX)) )
+
 /*!
   \class vpServer
 
@@ -218,4 +220,5 @@ public:
   void          setMaxNumberOfClients(unsigned int &l){ max_clients = l; }
 };
 
+#endif // #if (! (defined(WIN32) && defined(UNIX)) )
 #endif

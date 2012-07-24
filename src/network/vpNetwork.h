@@ -45,6 +45,8 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRequest.h>
 
+#if (! (defined(WIN32) && defined(UNIX)) )
+
 #include <vector>
 #include <stdio.h>
 #include <string.h>
@@ -457,4 +459,5 @@ int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
                 flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 }
 
+#endif // #if (! (defined(WIN32) && defined(UNIX)) )
 #endif

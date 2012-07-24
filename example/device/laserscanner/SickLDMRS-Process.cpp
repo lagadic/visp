@@ -73,8 +73,8 @@
 #include <visp/vpParseArgv.h>
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpIoTools.h>
-
-#if defined(UNIX) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)) 
+ 
+#if ( defined(UNIX) && ( ! defined(WIN32) ) ) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)) 
 
 static int save = 0;
 static int layerToDisplay = 0xF; // 0xF = 1111 => all the layers are selected

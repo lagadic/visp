@@ -49,7 +49,7 @@
 
 */
 
-#ifdef UNIX
+#if ( defined(WIN32) && !defined(UNIX) )
 
 #include <unistd.h>
 #include <termios.h>

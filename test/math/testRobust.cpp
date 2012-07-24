@@ -141,10 +141,10 @@ main(int argc, const char ** argv)
   std::string username;
 
   // Set the default output filename
-#ifdef UNIX
-  ofilename = "/tmp";
-#elif WIN32
+#ifdef WIN32
   ofilename = "C:/temp";
+#else
+  ofilename = "/tmp";
 #endif
 
   // Get the user login name

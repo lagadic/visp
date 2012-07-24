@@ -41,6 +41,8 @@
 
 #include <visp/vpServer.h>
 
+#if (! (defined(WIN32) && defined(UNIX)) )
+
 /*!
   Construct a server on the machine launching it.
 */
@@ -244,3 +246,5 @@ void vpServer::print()
 {
   vpNetwork::print("Client");
 }
+
+#endif // #if (! (defined(WIN32) && defined(UNIX)) )

@@ -41,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(WIN32) && !defined(UNIX) )
 
 #ifndef vpDisplayWin32_hh
 #define vpDisplayWin32_hh

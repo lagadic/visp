@@ -41,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 #define FLUSH_ROI
-#if ( defined(WIN32) )
+#if ( defined(WIN32) && !defined(UNIX) )
 
 #include <visp/vpDisplayWin32.h>
 #include <visp/vpDisplayException.h>

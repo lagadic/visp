@@ -596,9 +596,11 @@ IF(WIN32 AND NOT CYGWIN)
     #MESSAGE("have winmm.lib")
     LIST(APPEND VISP_EXTERN_LIBRARIES "winmm.lib")
   ENDIF(HAVE_LIBWINMM)
-  IF(MSVC) #check if MSVC is the compiler and set VISP_USE_MSVC accordingly
+  if(MSVC) #check if MSVC is the compiler and set VISP_USE_MSVC accordingly
     SET(VISP_USE_MSVC TRUE)
-  ENDIF(MSVC)
+  elseif(MINGW)
+    set(UNIX TRUE)
+  endif()
 ENDIF(WIN32 AND NOT CYGWIN)
 
 IF(UNIX)

@@ -89,7 +89,7 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 void
 vpIoTools::getUserName(std::string &username)
 {
-#if defined UNIX
+#if defined UNIX 
   // Get the user name.
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
@@ -377,7 +377,7 @@ vpIoTools::makeDirectory(const  char *dirname )
   if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
   {
-#if defined UNIX
+#if ( defined(UNIX) && !defined(WIN32) )
     if ( mkdir( _dirname.c_str(), (mode_t)0755 ) != 0 )
 #elif defined WIN32
     if ( _mkdir( _dirname.c_str()) != 0 )

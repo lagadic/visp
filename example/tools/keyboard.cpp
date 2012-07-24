@@ -48,7 +48,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if defined UNIX
+#if ( defined(UNIX) && ( ! defined(WIN32) ) )
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>
