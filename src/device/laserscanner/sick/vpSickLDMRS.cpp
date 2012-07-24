@@ -39,7 +39,7 @@
  *
  *****************************************************************************/
 
-#if ( defined(WIN32) && !defined(UNIX) )
+#if ( defined(UNIX) && !defined(WIN32) )
 
 #include <visp/vpSickLDMRS.h>
 #include <visp/vpMath.h>

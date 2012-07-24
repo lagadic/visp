@@ -41,7 +41,7 @@
 
 
 
-#if ( defined(WIN32) && !defined(UNIX) )
+#if ( defined(UNIX) && !defined(WIN32) )
 #  include <stdio.h>
 #  include <visp/vpKeyboard.h>
 
