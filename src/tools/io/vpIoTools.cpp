@@ -89,7 +89,18 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 void
 vpIoTools::getUserName(std::string &username)
 {
-#if defined UNIX 
+  // With MinGW, UNIX and WIN32 are defined 
+#if defined(UNIX) && defined(WIN32)  
+  // Get the user name.
+  char *_username = NULL;
+  _username = ::getenv("USERNAME");
+  if (_username == NULL) {
+    vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
+    throw(vpIoException(vpIoException::cantGetUserName,
+			"Cannot get the username")) ;
+  }
+  username = _username;
+#elif defined UNIX 
   // Get the user name.
   char *_username = NULL;
   _username = ::getenv("LOGNAME");
