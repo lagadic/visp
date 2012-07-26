@@ -548,18 +548,19 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   (camera support) with the camera model without distortion.
   \param eMc_dist : output: estimated pose of the camera in relation to the
   effector (camera support) with the model with distortion.
-  \return 0 if the computation managed.
+  \return 0 if the computation managed, -1 if less than three poses are provides as input.
 */
 int vpCalibration::computeCalibrationTsai(unsigned int nbPose,
                                           vpCalibration table_cal[],
                                           vpHomogeneousMatrix& eMc,
                                           vpHomogeneousMatrix& eMc_dist)
 {
-  vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
-  vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
-  vpHomogeneousMatrix* table_rMe = new vpHomogeneousMatrix[nbPose];
   try{
     if (nbPose > 2){
+      vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
+      vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
+      vpHomogeneousMatrix* table_rMe = new vpHomogeneousMatrix[nbPose];
+
       for(unsigned int i=0;i<nbPose;i++){
         table_cMo[i] = table_cal[i].cMo;
         table_cMo_dist[i] = table_cal[i].cMo_dist;
@@ -567,23 +568,19 @@ int vpCalibration::computeCalibrationTsai(unsigned int nbPose,
       }
       calibrationTsai(nbPose,table_cMo,table_rMe,eMc);
       calibrationTsai(nbPose,table_cMo_dist,table_rMe,eMc_dist);
+
       delete [] table_cMo;
       delete [] table_cMo_dist;
       delete [] table_rMe;
+
       return 0;
     }
     else{
       vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
-      delete [] table_cMo;
-      delete [] table_cMo_dist;
-      delete [] table_rMe;
       return -1;
     }
   }
   catch(...){
-    delete [] table_cMo;
-    delete [] table_cMo_dist;
-    delete [] table_rMe;
     throw;
   }
 }
