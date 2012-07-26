@@ -478,6 +478,28 @@ vpColVector::sort(const vpColVector &v)
 }
 
 /*!
+  Stack column vector with new element.
+
+  \param b : Element to stack to the existing one.
+
+  \code
+  vpColVector A(3);
+  double b = 3;
+  A.stack(b); // A = [A b]T
+  // A is now an 4 dimension column vector
+  \endcode
+
+  \sa stack(const vpColVector &, const vpColVector &)
+  \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
+
+*/
+void vpColVector::stack(const double &b)
+{
+  this->resize(rowNum+1,false);
+  (*this)[rowNum-1] = b;
+}
+
+/*!
   Stack column vectors.
 
   \param B : Vector to stack to the existing one.
@@ -489,6 +511,7 @@ vpColVector::sort(const vpColVector &v)
   // A is now an 8 dimension column vector
   \endcode
 
+  \sa stack(const vpColVector &, const double &)
   \sa stack(const vpColVector &, const vpColVector &)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
