@@ -41,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) )
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 
 #ifndef vpWin32Renderer_HH
 #define vpWin32Renderer_HH

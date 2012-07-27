@@ -49,7 +49,6 @@
 #include <visp/vpNetwork.h>
 #include <visp/vpTime.h>
 
-#if (! (defined(WIN32) && defined(UNIX)) )
 
 /*!
   \class vpClient
@@ -217,5 +216,4 @@ public:
   void          stop();
 };
 
-#endif // #if (! (defined(WIN32) && defined(UNIX)) )
 #endif

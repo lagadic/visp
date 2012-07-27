@@ -119,7 +119,7 @@ OPTIONS:                                               Default\n\
      The following image file formats PNM (PGM P5, PPM P6)\n\
      are supported. The format is selected by analysing \n\
      the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     Example : \"C:/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
      %%04d is for the image numbering.\n\
  \n\
   -f <first image>                                     %u\n\

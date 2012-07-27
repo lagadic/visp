@@ -85,7 +85,7 @@ double vpTime::minTimeForUsleepCall = 4; /*! This time is in
 double
 vpTime::measureTimeMs()
 {
-#if ( defined(WIN32) && !defined(UNIX) )
+#if defined(WIN32)
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
   if(frequency.QuadPart == 0){
@@ -111,7 +111,7 @@ vpTime::measureTimeMs()
 double
 vpTime::measureTimeMicros()
 {
-#if ( defined(WIN32) && !defined(UNIX) )
+#if defined(WIN32)
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
   if(frequency.QuadPart == 0){

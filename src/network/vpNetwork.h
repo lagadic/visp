@@ -45,8 +45,6 @@
 #include <visp/vpConfig.h>
 #include <visp/vpRequest.h>
 
-#if (! (defined(WIN32) && defined(UNIX)) )
-
 #include <vector>
 #include <stdio.h>
 #include <string.h>
@@ -62,7 +60,7 @@
 #  include<io.h>
 //#  include<winsock.h>
 #  include<winsock2.h>
-#  pragma comment(lib, "ws2_32.lib")
+//#  pragma comment(lib, "ws2_32.lib") // Done by CMake in main CMakeLists.txt
 #endif
 
 
@@ -459,5 +457,4 @@ int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
                 flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 }
 
-#endif // #if (! (defined(WIN32) && defined(UNIX)) )
 #endif

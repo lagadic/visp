@@ -39,7 +39,6 @@
  *
  *****************************************************************************/
 
-#if (! (defined(WIN32) && defined(UNIX)) )
 
 #include <visp/vpNetwork.h>
 
@@ -773,9 +772,6 @@ int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
   
   return numbytes;
 }
-
-#endif // #if (! (defined(WIN32) && defined(UNIX)) )
-
 
 
 

@@ -50,7 +50,6 @@
 
 int main()
 {
-#if (! (defined(WIN32) && defined(UNIX)) )
   int port = 35000;
   vpServer serv(port); //Launch the server on localhost
   serv.start();
@@ -75,8 +74,6 @@ int main()
         std::cout << "Sending : " << val << std::endl;
     }
   }
-#else
-  std::cout << "This example is not working on Unix and Win32 platforms like MinGW..." << std::endl;
-#endif
+
   return 0;
 }

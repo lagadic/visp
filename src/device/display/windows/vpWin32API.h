@@ -41,12 +41,13 @@
 
 #include <visp/vpConfig.h>
 #include <windows.h>
+#include <string>
 
-#if ( defined(VISP_HAVE_GDI) )
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 #ifndef vpWin32API_HH
 #define vpWin32API_HH
 
-DWORD vpProcessErrors(BOOL err);
+DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
 void vpPrepareImageWithPen(CRITICAL_SECTION* CriticalSection, HWND hWnd,HBITMAP bmp,COLORREF color,unsigned int thickness, int style, HDC& hDCScreen,HDC& hDCMem,HPEN& hPen);
 void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection);

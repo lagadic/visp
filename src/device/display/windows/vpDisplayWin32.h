@@ -41,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) && !defined(UNIX) )
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 
 #ifndef vpDisplayWin32_hh
 #define vpDisplayWin32_hh

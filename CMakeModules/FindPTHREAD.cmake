@@ -43,26 +43,25 @@
 #
 #############################################################################
 
-#IF(NOT UNIX AND NOT WIN32)
-#  SET(PTHREAD_FOUND FALSE)
-#ELSE(NOT UNIX AND NOT WIN32)
   
   FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
-    /usr/include
-    "$ENV{PTHREAD_INCLUDE_DIR}"
     "$ENV{PTHREAD_HOME}/include"
-	)
-  #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")  
+    "$ENV{PTHREAD_DIR}/include"
+    /usr/include
+    "C:/MinGW/include"
+  )
+  #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
   
   # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
   FIND_LIBRARY(PTHREAD_LIBRARY
     NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
     PATHS
+    "$ENV{PTHREAD_HOME}/lib"
+    "$ENV{PTHREAD_DIR}/lib"
     /usr/lib
     /usr/local/lib
     /lib    
-    "$ENV{PTHREAD_LIBRARY_DIR}"
-    "$ENV{PTHREAD_HOME}/lib"
+    "C:/MinGW/lib"
     )
 
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
@@ -91,5 +90,3 @@
     PTHREAD_LIBRARY
   )
   #MESSAGE(STATUS "PTHREAD_FOUND : ${PTHREAD_FOUND}")
-
-#ENDIF(NOT UNIX AND NOT WIN32)

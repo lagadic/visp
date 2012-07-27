@@ -598,8 +598,20 @@ IF(WIN32 AND NOT CYGWIN)
   ENDIF(HAVE_LIBWINMM)
   if(MSVC) #check if MSVC is the compiler and set VISP_USE_MSVC accordingly
     SET(VISP_USE_MSVC TRUE)
-  elseif(MINGW)
-    set(UNIX TRUE)
+  endif()
+  # Add library ws2_32.a or ws2_32.lib for vpNetwork class
+  if(MINGW)
+    CHECK_LIBRARY_EXISTS("ws2_32.a" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
+    if(HAVE_LIBWS2_32)
+      #message("have ws2_32.a")
+      list(APPEND VISP_EXTERN_LIBRARIES "ws2_32.a")
+    endif()
+  else() # pure WIN32
+    CHECK_LIBRARY_EXISTS("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
+    if(HAVE_LIBWS2_32)
+      #message("have ws2_32.lib")
+      list(APPEND VISP_EXTERN_LIBRARIES "ws2_32.lib")
+    endif() 
   endif()
 ENDIF(WIN32 AND NOT CYGWIN)
 

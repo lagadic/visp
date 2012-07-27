@@ -41,7 +41,6 @@
 
 #include <visp/vpClient.h>
 
-#if (! (defined(WIN32) && defined(UNIX)) )
 
 vpClient::vpClient() :  vpNetwork()
 {}
@@ -218,5 +217,3 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   std::cout << "Connected!" << std::endl;
   return true;
 }
-
-#endif // #if (! (defined(WIN32) && defined(UNIX)) )

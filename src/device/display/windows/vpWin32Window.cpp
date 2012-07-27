@@ -39,12 +39,13 @@
  * Anthony Saunier
  *
  *****************************************************************************/
-#define MAX_SEM_COUNT 2147483647
 #include <visp/vpConfig.h>
 #include <iostream>
 #include <visp/vpWin32API.h>
 
-#if ( defined(WIN32) && !defined(UNIX) )
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
+
+#define MAX_SEM_COUNT 2147483647
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

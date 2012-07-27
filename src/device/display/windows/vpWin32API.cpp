@@ -44,8 +44,8 @@
 #include <visp/vpTime.h>
 #include <iostream>
 
-#if ( defined(VISP_HAVE_GDI) )
-DWORD vpProcessErrors(char* api_name){
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
+DWORD vpProcessErrors(const std::string &api_name){
   LPVOID lpMsgBuf;
   DWORD err = GetLastError();
   

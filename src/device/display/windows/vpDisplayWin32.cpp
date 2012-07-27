@@ -40,9 +40,9 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-#define FLUSH_ROI
-#if ( defined(WIN32) && !defined(UNIX) )
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 
+#define FLUSH_ROI
 #include <visp/vpDisplayWin32.h>
 #include <visp/vpDisplayException.h>
 #include <string>
@@ -328,14 +328,15 @@ bool vpDisplayWin32::getClick( bool blocking)
 
   //waits for a button to be pressed
   if(blocking){ 
-    WaitForSingleObject(window.semaClick, NULL);
-    WaitForSingleObject(window.semaClickUp, NULL); //to erase previous events 
+    WaitForSingleObject(window.semaClick, 0);
+    WaitForSingleObject(window.semaClickUp, 0); //to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
   }
-  else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
-  
+  else {
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
+  }
+
   return ret; 
 }
 
@@ -367,13 +368,14 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
 //   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
   if(blocking){
-    WaitForSingleObject(window.semaClick, NULL);
-    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, 0);
+    WaitForSingleObject(window.semaClickUp, 0);//to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;  
   }  
-  else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+  else {
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
+  }
   
   u = window.clickX;
   v = window.clickY;
@@ -414,13 +416,13 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip,
 //   PostMessage(window.getHWnd(), vpWM_GETCLICK, 0,0);
   //waits for a click
   if(blocking){
-    WaitForSingleObject(window.semaClick, NULL);
-    WaitForSingleObject(window.semaClickUp, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClick, 0);
+    WaitForSingleObject(window.semaClickUp, 0);//to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
   }
   else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, NULL));
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
   
   u = window.clickX;
   v = window.clickY;
@@ -467,13 +469,13 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip,
 
   //waits for a click release
   if(blocking){
-    WaitForSingleObject(window.semaClickUp, NULL);
-    WaitForSingleObject(window.semaClick, NULL);//to erase previous events
+    WaitForSingleObject(window.semaClickUp, 0);
+    WaitForSingleObject(window.semaClick, 0);//to erase previous events
     WaitForSingleObject(window.semaClickUp, INFINITE);
     ret = true;
   }
   else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, NULL));
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, 0));
   
   u = window.clickXUp;
   v = window.clickYUp;
@@ -507,13 +509,13 @@ bool vpDisplayWin32::getKeyboardEvent( bool blocking )
   bool ret = false ;
   //waits for a keyboard event
   if(blocking){
-    WaitForSingleObject(window.semaKey, NULL); // key down
-    WaitForSingleObject(window.semaKey, NULL); // key up
+    WaitForSingleObject(window.semaKey, 0); // key down
+    WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;  
   }  
   else
-    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, NULL));
+    ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   
   return ret;
 }
@@ -544,13 +546,13 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
   bool ret = false ;
   //waits for a keyboard event
   if(blocking){
-    WaitForSingleObject(window.semaKey, NULL); // key down
-    WaitForSingleObject(window.semaKey, NULL); // key up
+    WaitForSingleObject(window.semaKey, 0); // key down
+    WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;  
   }  
   else {
-     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, NULL));
+     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   }
   //  printf("key: %ud\n", window.key);
   sprintf(string, "%s", window.lpString);
@@ -575,7 +577,7 @@ vpDisplayWin32::getPointerMotionEvent (vpImagePoint &ip)
 
   bool ret = false;
 
-  ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaMove, NULL));
+  ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaMove, 0));
   if (ret)
   {
     double u, v;
@@ -962,4 +964,3 @@ void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
 }
 
 #endif
-

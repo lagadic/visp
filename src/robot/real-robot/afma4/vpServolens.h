@@ -45,7 +45,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) && !defined(UNIX) )
+#if defined(UNIX)
 
 /*!
 
