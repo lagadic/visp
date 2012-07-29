@@ -539,7 +539,7 @@ public:
 
     \return Maximum number of iterations used during VVS minimization.
   */
-  double getVVSIterMax(){ return vvsIterMax; }
+  unsigned int getVVSIterMax(){ return vvsIterMax; }
   
   /*!
     Enable or disable covariance computation of the pose parameters.
@@ -560,7 +560,7 @@ public:
 
     \param val : Maximum number of iteration used in the VVS scheme.
   */
-  void setVVSIterMax(const int &val){ vvsIterMax = val; }
+  void setVVSIterMax(const unsigned int &val){ vvsIterMax = val; }
   
   /*!
    Turn the verbose mode ON / OFF.

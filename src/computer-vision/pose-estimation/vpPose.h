@@ -110,7 +110,7 @@ private:
   //! Covariance matrix
   vpMatrix covarianceMatrix;
   
-  int ransacNbInlierConsensus;
+  unsigned int ransacNbInlierConsensus;
   int ransacMaxTrials;
   std::vector<vpPoint> ransacInliers;
   double ransacThreshold;
@@ -170,10 +170,10 @@ public:
   void setLambda(double a) { lambda = a ; }
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
   
-  void setRansacNbInliersToReachConsensus(const int &nbC){ ransacNbInlierConsensus = nbC; }
+  void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t){ ransacThreshold = t; }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
-  int  getRansacNbInliers(){ return ransacInliers.size(); }
+  unsigned int getRansacNbInliers(){ return ransacInliers.size(); }
   std::vector<vpPoint> getRansacInliers(){ return ransacInliers; }
   
   /*!
@@ -210,7 +210,7 @@ public:
                      
   static void findMatch(std::vector<vpPoint> &p2D, 
                      std::vector<vpPoint> &p3D, 
-                     const int &numberOfInlierToReachAConsensus, 
+                     const unsigned int &numberOfInlierToReachAConsensus,
                      const double &threshold,
                      unsigned int &ninliers,
                      std::vector<vpPoint> &listInliers,

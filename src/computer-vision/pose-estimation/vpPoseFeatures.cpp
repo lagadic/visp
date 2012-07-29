@@ -66,45 +66,45 @@ vpPoseFeatures::~vpPoseFeatures()
 */
 void vpPoseFeatures::clear()
 { 
-  for(int i = featurePoint_Point_list.size()-1 ; i >= 0 ; i--)
-    delete featurePoint_Point_list[i].desiredFeature;
+  for(int i = (int)featurePoint_Point_list.size()-1 ; i >= 0 ; i--)
+    delete featurePoint_Point_list[(unsigned int)i].desiredFeature;
   featurePoint_Point_list.clear();
   
-  for(int i = featurePoint3D_Point_list.size()-1 ; i >= 0 ; i--)
-    delete featurePoint3D_Point_list[i].desiredFeature;
+  for(int i = (int)featurePoint3D_Point_list.size()-1 ; i >= 0 ; i--)
+    delete featurePoint3D_Point_list[(unsigned int)i].desiredFeature;
   featurePoint3D_Point_list.clear();
   
-  for(int i = featureVanishingPoint_Point_list.size()-1 ; i >= 0 ; i--)
-    delete featureVanishingPoint_Point_list[i].desiredFeature;
+  for(int i = (int)featureVanishingPoint_Point_list.size()-1 ; i >= 0 ; i--)
+    delete featureVanishingPoint_Point_list[(unsigned int)i].desiredFeature;
   featureVanishingPoint_Point_list.clear();
   
-  for(int i = featureVanishingPoint_DuoLine_list.size()-1 ; i >= 0 ; i--)
-    delete featureVanishingPoint_DuoLine_list[i].desiredFeature;
+  for(int i = (int)featureVanishingPoint_DuoLine_list.size()-1 ; i >= 0 ; i--)
+    delete featureVanishingPoint_DuoLine_list[(unsigned int)i].desiredFeature;
   featureVanishingPoint_DuoLine_list.clear();
   
-  for(int i = featureEllipse_Sphere_list.size()-1 ; i >= 0 ; i--)
-    delete featureEllipse_Sphere_list[i].desiredFeature;
+  for(int i = (int)featureEllipse_Sphere_list.size()-1 ; i >= 0 ; i--)
+    delete featureEllipse_Sphere_list[(unsigned int)i].desiredFeature;
   featureEllipse_Sphere_list.clear();
   
-  for(int i = featureEllipse_Circle_list.size()-1 ; i >= 0 ; i--)
-    delete featureEllipse_Circle_list[i].desiredFeature;
+  for(int i = (int)featureEllipse_Circle_list.size()-1 ; i >= 0 ; i--)
+    delete featureEllipse_Circle_list[(unsigned int)i].desiredFeature;
   featureEllipse_Circle_list.clear();
   
-  for(int i = featureLine_Line_list.size()-1 ; i >= 0 ; i--)
-    delete featureLine_Line_list[i].desiredFeature;
+  for(int i = (int)featureLine_Line_list.size()-1 ; i >= 0 ; i--)
+    delete featureLine_Line_list[(unsigned int)i].desiredFeature;
   featureLine_Line_list.clear();
   
-  for(int i = featureLine_DuoLineInt_List.size()-1 ; i >= 0 ; i--)
-    delete featureLine_DuoLineInt_List[i].desiredFeature;
+  for(int i = (int)featureLine_DuoLineInt_List.size()-1 ; i >= 0 ; i--)
+    delete featureLine_DuoLineInt_List[(unsigned int)i].desiredFeature;
   featureLine_DuoLineInt_List.clear();
   
-  for(int i = featureSegment_DuoPoints_list.size()-1 ; i >= 0 ; i--)
-    delete featureSegment_DuoPoints_list[i].desiredFeature; 
+  for(int i = (int)featureSegment_DuoPoints_list.size()-1 ; i >= 0 ; i--)
+    delete featureSegment_DuoPoints_list[(unsigned int)i].desiredFeature;
   featureSegment_DuoPoints_list.clear();
   
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  for(int i = featureSpecific_list.size()-1 ; i >= 0 ; i--)
-    delete featureSpecific_list[i]; 
+  for(int i = (int)featureSpecific_list.size()-1 ; i >= 0 ; i--)
+    delete featureSpecific_list[(unsigned int)i];
   featureSpecific_list.clear();
 #endif
     
@@ -468,7 +468,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix & cMo)
 
       // compute the pseudo inverse of the interaction matrix
       vpMatrix Lp ;
-      int rank = L.pseudoInverse(Lp,1e-16) ;
+      unsigned int rank = L.pseudoInverse(Lp,1e-16) ;
       
       if(rank < 6){
         if(verbose)
@@ -562,7 +562,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
       vpMatrix Lp ;
       vpMatrix LRank;
       (W*L).pseudoInverse(Lp,1e-6) ;
-      int rank = L.pseudoInverse(LRank,1e-6) ;
+      unsigned int rank = L.pseudoInverse(LRank,1e-6) ;
       
       if(rank < 6){
         if(verbose)

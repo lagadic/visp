@@ -90,8 +90,8 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     vpPose poseMin ;
     for(unsigned int i = 0; i < nbMinRandom; i++)
     {
-      int r = rand()%size;
-      while(usedPt[r] ) r = rand()%size;
+      unsigned int r = (unsigned int)rand()%size;
+      while(usedPt[r] ) r = (unsigned int)rand()%size;
       usedPt[r] = true;        
       
       std::list<vpPoint>::const_iterator iter = listP.begin();
@@ -124,7 +124,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     {
       unsigned int nbInliersCur = 0;
       //std::cout << "Résultat : " << r << " / " << vpPoseVector(cMo).sumSquare()<< std::endl ;
-      int iter = 0;
+      unsigned int iter = 0;
       for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       { 
         vpPoint pt = *it;
@@ -225,7 +225,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
 */
 void vpPose::findMatch(std::vector<vpPoint> &p2D, 
             std::vector<vpPoint> &p3D, 
-            const int &numberOfInlierToReachAConsensus, 
+            const unsigned int &numberOfInlierToReachAConsensus,
             const double &threshold,
             unsigned int &ninliers,
             std::vector<vpPoint> &listInliers,

@@ -121,7 +121,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, bool &display,
-                unsigned &nframes, bool &save, std::string &opath)
+                unsigned int &nframes, bool &save, std::string &opath)
 {
   const char *optarg;
   int	c;
@@ -130,7 +130,7 @@ bool getOptions(int argc, const char **argv, bool &display,
     switch (c) {
     case 'd': display = false; break;
     case 'n':
-      nframes = atoi(optarg); break;
+      nframes = (unsigned int)atoi(optarg); break;
     case 'o':
       save = true;
       opath = optarg; break;

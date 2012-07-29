@@ -40,7 +40,7 @@
 
 MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   include(CheckCXXCompilerFlag)
-  if(UNIX)
+  #if(UNIX) Not only UNIX but also WIN32 for MinGW
 
     set(WARNING_ALL "-Wall")
     CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
@@ -115,7 +115,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
       string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
 
-  else(UNIX) 
+  if(WIN32)
     # Add specific compilation flags for Windows Visual
 	
     set(WARNING_ALL "/Wall")
@@ -139,7 +139,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     endif()
 
 
-  endif(UNIX)
+  endif()
 
   # Remove duplicates compilation flags
   separate_arguments(CMAKE_CXX_FLAGS)
