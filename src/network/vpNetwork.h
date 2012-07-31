@@ -51,7 +51,7 @@
 #include <iostream>
 
 #ifdef UNIX
-#  include <unistd.h>
+#  include <unistd.h> 
 #  include <sys/socket.h>
 #  include <netinet/in.h>
 #  include <arpa/inet.h>
@@ -64,7 +64,7 @@
 #endif
 
 
-/*!
+/*! 
   \class vpNetwork
   
   \ingroup Network
@@ -85,10 +85,11 @@ class VISP_EXPORT vpNetwork
 protected:
 
   struct vpReceptor{
-    int                   socketFileDescriptorReceptor;
 #ifdef UNIX
+    int                   socketFileDescriptorReceptor;
     socklen_t             receptorAddressSize;
 #else
+    SOCKET                socketFileDescriptorReceptor;
     int                   receptorAddressSize;
 #endif
     struct sockaddr_in    receptorAddress;
@@ -97,7 +98,11 @@ protected:
   
   struct vpEmitter{
     struct sockaddr_in    emitterAdress;
+#ifdef UNIX
     int                   socketFileDescriptorEmitter;
+#else
+    SOCKET                socketFileDescriptorEmitter;
+#endif
   };
   
   //######## PARAMETERS ########
@@ -107,9 +112,13 @@ protected:
   vpEmitter               emitter;
   std::vector<vpReceptor> receptor_list;
   fd_set                  readFileDescriptor;
+#ifdef UNIX
   int                     socketMax;
+#else
+  SOCKET                  socketMax;
+#endif
   
-  //Message Handling
+  //Message Handling 
   std::vector<vpRequest*> request_list;
   
   unsigned int            max_size_message;
@@ -132,9 +141,9 @@ private:
   int               _handleFirstRequest();
   
   void              _receiveRequest();
-  void              _receiveRequestFrom(const int &receptorEmitting);
+  void              _receiveRequestFrom(const unsigned int &receptorEmitting);
   int               _receiveRequestOnce();
-  int               _receiveRequestOnceFrom(const int &receptorEmitting);
+  int               _receiveRequestOnceFrom(const unsigned int &receptorEmitting);
   
 public:
 
@@ -155,7 +164,7 @@ public:
   std::string       getRequestIdFromIndex(const int &ind){ 
                         if(ind >= (int)request_list.size() || ind < 0)
                           return "";
-                        return request_list[ind]->getId(); 
+                        return request_list[(unsigned)ind]->getId(); 
                     }
   
   /*!
@@ -170,32 +179,32 @@ public:
   virtual void      print(const char *id = "");
   
   template<typename T>
-  int               receive(T* object, const int &sizeOfObject = sizeof(T));
+  int               receive(T* object, const unsigned int &sizeOfObject = sizeof(T));
   template<typename T>
-  int               receiveFrom(T* object, const int &receptorEmitting, const int &sizeOfObject = sizeof(T));
+  int               receiveFrom(T* object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject = sizeof(T));
   
   std::vector<int>  receiveRequest();
-  std::vector<int>  receiveRequestFrom(const int &receptorEmitting);
+  std::vector<int>  receiveRequestFrom(const unsigned int &receptorEmitting);
   int               receiveRequestOnce();
-  int               receiveRequestOnceFrom(const int &receptorEmitting);
+  int               receiveRequestOnceFrom(const unsigned int &receptorEmitting);
   
   std::vector<int>  receiveAndDecodeRequest();
-  std::vector<int>  receiveAndDecodeRequestFrom(const int &receptorEmitting);
+  std::vector<int>  receiveAndDecodeRequestFrom(const unsigned int &receptorEmitting);
   int               receiveAndDecodeRequestOnce();
-  int               receiveAndDecodeRequestOnceFrom(const int &receptorEmitting);
+  int               receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting);
   
   void              removeDecodingRequest(const char *);
   
   template<typename T>
-  int               send(T* object, const int &sizeOfObject = sizeof(T));
+  int               send(T* object, const int unsigned &sizeOfObject = sizeof(T));
   template<typename T>
-  int               sendTo(T* object, const int &dest, const int &sizeOfObject = sizeof(T));
+  int               sendTo(T* object, const unsigned int &dest, const unsigned int &sizeOfObject = sizeof(T));
   
   int               sendRequest(vpRequest &req);
-  int               sendRequestTo(vpRequest &req, const int &dest);
+  int               sendRequestTo(vpRequest &req, const unsigned int &dest);
   
   int               sendAndEncodeRequest(vpRequest &req);
-  int               sendAndEncodeRequestTo(vpRequest &req, const int &dest);
+  int               sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest);
   
   /*!
     Change the maximum size that the emitter can receive (in request mode).
@@ -258,7 +267,7 @@ public:
   \return the number of bytes received, or -1 if an error occured.
 */
 template<typename T>
-int vpNetwork::receive(T* object, const int &sizeOfObject)
+int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
 {
   if(receptor_list.size() == 0)
   {
@@ -334,7 +343,7 @@ int vpNetwork::receive(T* object, const int &sizeOfObject)
   \return the number of bytes received, or -1 if an error occured.
 */
 template<typename T>
-int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &sizeOfObject)
+int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject)
 {
   if(receptor_list.size() == 0 || receptorEmitting > (int)receptor_list.size()-1 )
   {
@@ -400,7 +409,7 @@ int vpNetwork::receiveFrom(T* object, const int &receptorEmitting, const int &si
   \return The number of bytes sent, or -1 if an error happened.
 */
 template<typename T>
-int vpNetwork::send(T* object, const int &sizeOfObject)
+int vpNetwork::send(T* object, const unsigned int &sizeOfObject)
 {
   if(receptor_list.size() == 0)
   {
@@ -439,7 +448,7 @@ int vpNetwork::send(T* object, const int &sizeOfObject)
   \return The number of bytes sent, or -1 if an error happened.
 */
 template<typename T>
-int vpNetwork::sendTo(T* object, const int &dest, const int &sizeOfObject)
+int vpNetwork::sendTo(T* object, const unsigned int &dest, const unsigned int &sizeOfObject)
 {
   if(receptor_list.size() == 0 || dest > (int)receptor_list.size()-1 )
   {

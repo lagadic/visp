@@ -63,7 +63,7 @@ vpClient::~vpClient()
   
   \return True if the connection has been etablished, false otherwise.
 */
-bool vpClient::connectToHostname(const std::string &hostname, const int &port_serv)
+bool vpClient::connectToHostname(const std::string &hostname, const unsigned int &port_serv)
 {
   // get server host information from hostname
   struct hostent *server = gethostbyname( hostname.c_str() );
@@ -82,7 +82,11 @@ bool vpClient::connectToHostname(const std::string &hostname, const int &port_se
   
   serv.socketFileDescriptorReceptor = socket( AF_INET, SOCK_STREAM, 0 );
 
+#ifdef UNIX
   if ( serv.socketFileDescriptorReceptor < 0){
+#else
+  if ( serv.socketFileDescriptorReceptor == INVALID_SOCKET){
+#endif 
     vpERROR_TRACE( "ERROR opening socket",
 			     "vpClient::connectToHostname()" );
     return false;
@@ -90,9 +94,8 @@ bool vpClient::connectToHostname(const std::string &hostname, const int &port_se
   
   memset((char *) &serv.receptorAddress, '\0', sizeof(serv.receptorAddress));
   serv.receptorAddress.sin_family = AF_INET;
-  memmove( (char *) &serv.receptorAddress.sin_addr.s_addr, (char *) server->h_addr,
-	 server->h_length );
-  serv.receptorAddress.sin_port = htons( port_serv );
+  memmove( (char *) &serv.receptorAddress.sin_addr.s_addr, (char *) server->h_addr, (unsigned)server->h_length );
+  serv.receptorAddress.sin_port = htons( (unsigned short)port_serv );
   serv.receptorIP = inet_ntoa(*(in_addr *)server->h_addr);
 
   return connectServer(serv);
@@ -108,13 +111,17 @@ bool vpClient::connectToHostname(const std::string &hostname, const int &port_se
   
   \return True if the connection has been etablished, false otherwise.
 */
-bool vpClient::connectToIP(const std::string &ip, const int &port_serv)
+bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
 {
   vpNetwork::vpReceptor serv;
   
   serv.socketFileDescriptorReceptor = socket( AF_INET, SOCK_STREAM, 0 );
 
+#ifdef UNIX
   if ( serv.socketFileDescriptorReceptor < 0){
+#else
+  if ( serv.socketFileDescriptorReceptor == INVALID_SOCKET){
+#endif
     vpERROR_TRACE( "ERROR opening socket",
 			     "vpClient::connectToIP()" );
     return false;
@@ -123,7 +130,7 @@ bool vpClient::connectToIP(const std::string &ip, const int &port_serv)
   memset((char *) &serv.receptorAddress, '\0', sizeof(serv.receptorAddress));
   serv.receptorAddress.sin_family = AF_INET;
   serv.receptorAddress.sin_addr.s_addr = inet_addr(ip.c_str());
-  serv.receptorAddress.sin_port = htons( port_serv );
+  serv.receptorAddress.sin_port = htons( (unsigned short)port_serv );
   
   return connectServer(serv);
 }
@@ -133,17 +140,17 @@ bool vpClient::connectToIP(const std::string &ip, const int &port_serv)
   
   \param index : Index of the server.
 */
-void vpClient::deconnect(const int &index)
+void vpClient::deconnect(const unsigned int &index)
 {   
-  if(index < (int)receptor_list.size() && index >= 0)
+  if(index < receptor_list.size())
   {
 #ifdef UNIX
     shutdown( receptor_list[index].socketFileDescriptorReceptor, SHUT_RDWR );
 #else // WIN32
     shutdown( receptor_list[index].socketFileDescriptorReceptor, SD_BOTH );
 #endif
-    receptor_list.erase(receptor_list.begin()+index);
-  }
+    receptor_list.erase(receptor_list.begin()+(int)index);
+  }  
 }
 
 /*!
@@ -157,7 +164,7 @@ void vpClient::stop()
 #else // WIN32
     shutdown( receptor_list[i].socketFileDescriptorReceptor, SD_BOTH );
 #endif
-    receptor_list.erase(receptor_list.begin()+i);
+    receptor_list.erase(receptor_list.begin()+(int)i);
     i--;
   }
 }

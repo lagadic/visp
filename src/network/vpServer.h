@@ -206,7 +206,7 @@ public:
   */
   unsigned int  getNumberOfClients(){ return receptor_list.size(); }
   
-  virtual void  print();
+  void          print();
   
   bool          start();
   

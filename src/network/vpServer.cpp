@@ -50,7 +50,11 @@ vpServer::vpServer( ) : vpNetwork(), started(false)
 {
   int protocol = 0;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
+#else
+  if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
+#endif
   {
     vpERROR_TRACE( "vpServer::vpServer(), cannot open socket." );
   }
@@ -71,13 +75,17 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
 {
   int protocol = 0;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
+#else
+  if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
+#endif
   {
     vpERROR_TRACE( "vpServer::vpServer(const int &port_serv), cannot open socket." );
   }
   emitter.emitterAdress.sin_family = AF_INET;
   emitter.emitterAdress.sin_addr.s_addr = INADDR_ANY; //inet_addr("127.0.0.1");;
-  emitter.emitterAdress.sin_port = htons( port_serv ); 
+  emitter.emitterAdress.sin_port = htons( (unsigned short)port_serv ); 
   
   adress = inet_ntoa(emitter.emitterAdress.sin_addr);
   port = port_serv;
@@ -93,13 +101,17 @@ vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNe
 {
   int protocol = 0;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
+#ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
+#else
+  if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
+#endif
   {
     vpERROR_TRACE( "vpServer::vpServer(const std::string &adress_serv,const int &port_serv), cannot open socket." );
   }
   emitter.emitterAdress.sin_family = AF_INET;
   emitter.emitterAdress.sin_addr.s_addr = inet_addr(adress_serv.c_str());
-  emitter.emitterAdress.sin_port = htons( port_serv );
+  emitter.emitterAdress.sin_port = htons( (unsigned short)port_serv );
   
   adress = adress_serv;
   port = port_serv;
@@ -113,14 +125,14 @@ vpServer::~vpServer()
 #ifdef UNIX
   close( emitter.socketFileDescriptorEmitter );
 #else //Win32
-  closesocket( emitter.socketFileDescriptorEmitter );
+  closesocket( (unsigned)emitter.socketFileDescriptorEmitter );
 #endif
 
   for(unsigned int i = 0 ; i < receptor_list.size() ; i++)
 #ifdef UNIX
     close( receptor_list[i].socketFileDescriptorReceptor );
 #else //Win32
-    closesocket( receptor_list[i].socketFileDescriptorReceptor );
+    closesocket( (unsigned)receptor_list[i].socketFileDescriptorReceptor );
 #endif
      
 }
@@ -133,7 +145,12 @@ vpServer::~vpServer()
 bool vpServer::start()
 {  
   int serverStructLength = sizeof(emitter.emitterAdress);
-  int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, serverStructLength );
+#ifdef UNIX
+  int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, (unsigned)serverStructLength );
+#else //Win32
+  int bindResult = bind( (unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, serverStructLength );
+#endif
+  
   
   if( bindResult < 0 )
   {
@@ -160,7 +177,12 @@ bool vpServer::start()
   }
 #endif // SO_NOSIGPIPE
 
-  listen( emitter.socketFileDescriptorEmitter, max_clients );
+#ifdef UNIX
+  listen( emitter.socketFileDescriptorEmitter, (int)max_clients );
+#else //Win32
+  listen( (unsigned)emitter.socketFileDescriptorEmitter, (int)max_clients );
+#endif
+  
   std::cout << "Server ready" << std::endl;
   
   started = true;
@@ -186,10 +208,10 @@ bool vpServer::checkForConnections()
   FD_ZERO(&readFileDescriptor);         
   
   socketMax = emitter.socketFileDescriptorEmitter;
-  FD_SET(emitter.socketFileDescriptorEmitter,&readFileDescriptor);
+  FD_SET((unsigned)emitter.socketFileDescriptorEmitter,&readFileDescriptor);
 
   for(unsigned int i=0; i<receptor_list.size(); i++){
-    FD_SET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
+    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
 
     if(i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
@@ -197,7 +219,7 @@ bool vpServer::checkForConnections()
     if(socketMax < receptor_list[i].socketFileDescriptorReceptor) socketMax = receptor_list[i].socketFileDescriptorReceptor; 
   }
   
-  int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   if(value == -1){
     //vpERROR_TRACE( "vpServer::run(), select()" );
     return false;
@@ -209,7 +231,12 @@ bool vpServer::checkForConnections()
     if(FD_ISSET(emitter.socketFileDescriptorEmitter,&readFileDescriptor)){
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
+#ifdef UNIX
       client.socketFileDescriptorReceptor = accept(emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
+#else //Win32
+      client.socketFileDescriptorReceptor = accept((unsigned)emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
+#endif
+      
       if((client.socketFileDescriptorReceptor) == -1)
         vpERROR_TRACE( "vpServer::run(), accept()" );
       
@@ -223,12 +250,17 @@ bool vpServer::checkForConnections()
       for(unsigned int i=0; i<receptor_list.size(); i++){
         if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
           char deco;
+#ifdef UNIX
           int numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+#else //Win32
+          int numbytes = recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+#endif
+          
       
           if(numbytes == 0)
           {
             std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-            receptor_list.erase(receptor_list.begin()+i);
+            receptor_list.erase(receptor_list.begin()+(int)i);
             return 0;
           }
         }

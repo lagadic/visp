@@ -111,7 +111,7 @@ void vpNetwork::removeDecodingRequest(const char *id)
   {
     if(request_list[i]->getId() == id)
     {
-      request_list.erase(request_list.begin()+i);
+      request_list.erase(request_list.begin()+(int)i);
       break;
     }
   }
@@ -151,9 +151,9 @@ int vpNetwork::getReceptorIndex(const char *name)
   
   std::string ip = inet_ntoa(*(in_addr *)server->h_addr);
   
-  for(unsigned int i = 0 ; i < receptor_list.size() ; i++)
+  for(int i = 0 ; i < (int)receptor_list.size() ; i++)
   {
-    if(receptor_list[i].receptorIP == ip)
+    if(receptor_list[(unsigned)i].receptorIP == ip)
       return i;
   }
   
@@ -192,9 +192,11 @@ int vpNetwork::sendRequest(vpRequest &req)
   
   \return The number of bytes that have been sent, -1 if an error occured.
 */
-int vpNetwork::sendRequestTo(vpRequest &req, const int &dest)
+int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
-  if(receptor_list.size() == 0 || dest > (int)receptor_list.size()-1)
+  int size = (int)receptor_list.size();
+  int sizeMinusOne = (int)receptor_list.size()-1;
+  if(size == 0 || dest > (unsigned)sizeMinusOne)
   {
     if(verboseMode)
       vpTRACE( "Cannot Send Request! Bad Index" );
@@ -218,8 +220,13 @@ int vpNetwork::sendRequestTo(vpRequest &req, const int &dest)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
+#ifdef UNIX
   int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
                      (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+#else
+  int value = sendto((unsigned)receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), (int)message.size(), flags,
+                     (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+#endif
   
   return value;
 }
@@ -257,7 +264,7 @@ int vpNetwork::sendAndEncodeRequest(vpRequest &req)
   
   \return The number of bytes that have been sent, -1 if an error occured.
 */
-int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const int &dest)
+int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 {
   req.encode();
   return sendRequestTo(req,dest);
@@ -299,7 +306,7 @@ std::vector<int> vpNetwork::receiveRequest()
   
   \param receptorEmitting : Index of the receptor emitting the message
 */
-std::vector<int> vpNetwork::receiveRequestFrom(const int &receptorEmitting)
+std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
 {
   _receiveRequestFrom(receptorEmitting);
   return _handleRequests();
@@ -349,7 +356,7 @@ int vpNetwork::receiveRequestOnce()
   
   \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::receiveRequestOnceFrom(const int &receptorEmitting)
+int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   _receiveRequestOnceFrom(receptorEmitting);
   return _handleFirstRequest();
@@ -374,7 +381,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
   std::vector<int> res = receiveRequest();
   for(unsigned int i = 0 ; i < res.size() ; i++)
     if(res[i] != -1)
-      request_list[res[i]]->decode();
+      request_list[(unsigned)res[i]]->decode();
     
   return res;
 }
@@ -395,12 +402,12 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
   
   \param receptorEmitting : Index of the receptor emitting the message
 */
-std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const int &receptorEmitting)
+std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &receptorEmitting)
 {
   std::vector<int> res = receiveRequestFrom(receptorEmitting);
   for(unsigned int i = 0 ; i < res.size() ; i++)
     if(res[i] != -1)
-      request_list[res[i]]->decode();
+      request_list[(unsigned)res[i]]->decode();
   
     return res;
 }
@@ -428,7 +435,7 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 {
   int res = receiveRequestOnce();
   if(res != -1)
-    request_list[res]->decode();
+    request_list[(unsigned)res]->decode();
   
   return res;
 }
@@ -454,11 +461,11 @@ int vpNetwork::receiveAndDecodeRequestOnce()
   
   \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::receiveAndDecodeRequestOnceFrom(const int &receptorEmitting)
+int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   int res = receiveRequestOnceFrom(receptorEmitting);
   if(res != -1)
-    request_list[res]->decode();
+    request_list[(unsigned)res]->decode();
   
   return res;
 }
@@ -505,11 +512,11 @@ std::vector<int> vpNetwork::_handleRequests()
 */
 int vpNetwork::_handleFirstRequest()
 {
-  int indStart = currentMessageReceived.find(beginning);
-  int indSep = currentMessageReceived.find(separator);
-  int indEnd = currentMessageReceived.find(end);
+  size_t indStart = currentMessageReceived.find(beginning);
+  size_t indSep = currentMessageReceived.find(separator);
+  size_t indEnd = currentMessageReceived.find(end);
   
-  if (indStart == -1 && indSep == -1 && indEnd == -1)
+  if (indStart == std::string::npos && indSep == std::string::npos && indEnd == std::string::npos)
   {
     if(currentMessageReceived.size() != 0)
       currentMessageReceived.clear();
@@ -520,31 +527,31 @@ int vpNetwork::_handleFirstRequest()
     return -1;
   }
   
-  if(indStart == -1 || indSep == -1 || indEnd == -1)
+  if(indStart == std::string::npos || indSep == std::string::npos || indEnd == std::string::npos)
     return -1;
   
   if(indEnd < indStart)
   {
     if(verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase(indStart,indEnd+end.size());
+    currentMessageReceived.erase((unsigned)indStart,indEnd+end.size());
     return -1;
   }
   
-  int indStart2 = currentMessageReceived.find(beginning,indStart+1);
-  if(indStart2 != -1 && indStart2 < indEnd)
+  size_t indStart2 = currentMessageReceived.find(beginning,indStart+1);
+  if(indStart2 != std::string::npos && indStart2 < indEnd)
   {
     if(verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase(indStart,indStart2);
+    currentMessageReceived.erase((unsigned)indStart,(unsigned)indStart2);
     return -1;
   }
   
-  int deb = indStart + beginning.size();
-  std::string id = currentMessageReceived.substr(deb, indSep - deb);
+  size_t deb = indStart + beginning.size();
+  std::string id = currentMessageReceived.substr((unsigned)deb, indSep - deb);
   
   deb = indSep+separator.size();
-  std::string params = currentMessageReceived.substr(deb, indEnd - deb);
+  std::string params = currentMessageReceived.substr((unsigned)deb, (unsigned)(indEnd - deb));
   
 //   std::cout << "Handling : " << currentMessageReceived.substr(indStart, indEnd+end.size() - indStart) << std::endl;
    
@@ -555,7 +562,7 @@ int vpNetwork::_handleFirstRequest()
     if(id == request_list[i]->getId()){
         hasBeenFound = true;
         request_list[i]->clear();
-        indRequest = i;
+        indRequest = (int)i;
         break;
     }
   }
@@ -567,20 +574,20 @@ int vpNetwork::_handleFirstRequest()
     return -1;
   }
   
-  int indDebParam = indSep + separator.size();
-  int indEndParam = currentMessageReceived.find(param_sep,indDebParam);
+  size_t indDebParam = indSep + separator.size();
+  size_t indEndParam = currentMessageReceived.find(param_sep,indDebParam);
   
   std::string param;
-  while(indEndParam != -1)
+  while(indEndParam != std::string::npos)
   {
-    param = currentMessageReceived.substr(indDebParam, indEndParam - indDebParam);
-    request_list[indRequest]->addParameter(param);
+    param = currentMessageReceived.substr((unsigned)indDebParam,(unsigned)(indEndParam - indDebParam));
+    request_list[(unsigned)indRequest]->addParameter(param);
     indDebParam = indEndParam+param_sep.size();
     indEndParam = currentMessageReceived.find(param_sep,indDebParam);
   }
   
-  param = currentMessageReceived.substr(indDebParam, indEnd - indDebParam);
-  request_list[indRequest]->addParameter(param);
+  param = currentMessageReceived.substr((unsigned)indDebParam, indEnd - indDebParam);
+  request_list[(unsigned)indRequest]->addParameter(param);
   currentMessageReceived.erase(indStart,indEnd+end.size());
   
   return indRequest;
@@ -621,7 +628,7 @@ void vpNetwork::_receiveRequest()
   
   \param receptorEmitting : Index of the receptor emitting the message
 */
-void vpNetwork::_receiveRequestFrom(const int &receptorEmitting)
+void vpNetwork::_receiveRequestFrom(const unsigned int &receptorEmitting)
 {
   while(_receiveRequestOnceFrom(receptorEmitting) > 0) {};
 }
@@ -662,11 +669,11 @@ int vpNetwork::_receiveRequestOnce()
     if(i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
     
-    FD_SET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor); 
+    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor); 
     if(socketMax < receptor_list[i].socketFileDescriptorReceptor) socketMax = receptor_list[i].socketFileDescriptorReceptor; 
   }
 
-  int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
   
   if(value == -1){
@@ -682,16 +689,21 @@ int vpNetwork::_receiveRequestOnce()
     for(unsigned int i=0; i<receptor_list.size(); i++){
       if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
         char *buf = new char [max_size_message];
+#ifdef UNIX
         numbytes=recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
+#else
+        numbytes=recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+#endif
+        
         
         if(numbytes <= 0)
         {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-          receptor_list.erase(receptor_list.begin()+i);
+          receptor_list.erase(receptor_list.begin()+(int)i);
           return numbytes;
         }
         else if(numbytes > 0){
-          std::string returnVal(buf, numbytes);              
+          std::string returnVal(buf, (unsigned)numbytes);              
           currentMessageReceived.append(returnVal);
         }
         delete [] buf;
@@ -723,9 +735,11 @@ int vpNetwork::_receiveRequestOnce()
   
   \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
+int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
-  if(receptor_list.size() == 0 || receptorEmitting > (int)receptor_list.size()-1 )
+  int size = (int)receptor_list.size();
+  int sizeMinusOne = (int)receptor_list.size()-1;
+  if(size == 0 || receptorEmitting > (unsigned)sizeMinusOne )
   {
     if(verboseMode)
       vpTRACE( "No receptor at the specified index!" );
@@ -738,9 +752,9 @@ int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
   FD_ZERO(&readFileDescriptor);        
   
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
-  FD_SET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
+  FD_SET((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
 
-  int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
   if(value == -1){
     if(verboseMode)
@@ -754,16 +768,19 @@ int vpNetwork::_receiveRequestOnceFrom(const int &receptorEmitting)
   else{
     if(FD_ISSET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
       char *buf = new char [max_size_message];
+#ifdef UNIX
       numbytes=recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
-      
+#else
+      numbytes=recv((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+#endif
       if(numbytes <= 0)
       {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr) << std::endl;
-        receptor_list.erase(receptor_list.begin()+receptorEmitting);
+        receptor_list.erase(receptor_list.begin()+(int)receptorEmitting);
         return numbytes;
       }
       else if(numbytes > 0){
-        std::string returnVal(buf, numbytes);              
+        std::string returnVal(buf, (unsigned)numbytes);              
         currentMessageReceived.append(returnVal);
       }
       delete [] buf;
