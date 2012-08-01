@@ -40,7 +40,7 @@
 
 MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   include(CheckCXXCompilerFlag)
-  #if(UNIX) Not only UNIX but also WIN32 for MinGW
+  if(CMAKE_COMPILER_IS_GNUCXX OR MINGW) #Not only UNIX but also WIN32 for MinGW
 
     set(WARNING_ALL "-Wall")
     CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
@@ -115,9 +115,9 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
       string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
 
-  if(WIN32)
+  elseif(MSVC)
     # Add specific compilation flags for Windows Visual
-	
+  
     set(WARNING_ALL "/Wall")
     CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
     if(WARNING_ALL_ALLOWED)
@@ -126,7 +126,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     else()
       #MESSAGE("Compiler flag ${WARNING_ALL} not allowed")
     endif()
-	
+  
     if(ACTIVATE_WARNING_ALL)
       list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
     else()
@@ -134,7 +134,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     endif()
     if(MSVC80 OR MSVC90 OR MSVC10)
       # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want 
-	# your catch(...) blocks to catch structured exceptions.
+  # your catch(...) blocks to catch structured exceptions.
       list(APPEND CMAKE_CXX_FLAGS "/EHa") 
     endif()
 
