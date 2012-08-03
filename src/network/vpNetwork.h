@@ -290,7 +290,7 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
     if(socketMax < receptor_list[i].socketFileDescriptorReceptor) socketMax = receptor_list[i].socketFileDescriptorReceptor; 
   }
 
-  int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
   
   if(value == -1){
@@ -305,11 +305,15 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
   else{
     for(unsigned int i=0; i<receptor_list.size(); i++){
       if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
+#ifdef UNIX
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
+#else
+        numbytes = recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
+#endif
         if(numbytes <= 0)
         {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-          receptor_list.erase(receptor_list.begin()+i);
+          receptor_list.erase(receptor_list.begin()+(int)i);
           return numbytes;
         }
         
@@ -360,7 +364,7 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
     
-  int value = select(socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
   
   if(value == -1){
@@ -374,12 +378,15 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
   }
   else{
     if(FD_ISSET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
+#ifdef UNIX
       numbytes = recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
-      
+#else
+      numbytes = recv((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
+#endif
       if(numbytes <= 0)
       {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr) << std::endl;
-        receptor_list.erase(receptor_list.begin()+receptorEmitting);
+        receptor_list.erase(receptor_list.begin()+(int)receptorEmitting);
         return numbytes;
       }
     }
@@ -422,8 +429,15 @@ int vpNetwork::send(T* object, const unsigned int &sizeOfObject)
 #if ! defined(APPLE) && ! defined(WIN32)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
+
+#ifdef UNIX
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
                 flags, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
+#else
+  return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char*)(void*)object, (int)sizeOfObject, 
+                flags, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
+#endif
+  
 }
 
 /*!
@@ -462,8 +476,13 @@ int vpNetwork::sendTo(T* object, const unsigned int &dest, const unsigned int &s
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
+#ifdef UNIX
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
                 flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+#else
+  return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char*)(void*)object, (int)sizeOfObject, 
+                flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+#endif
 }
 
 #endif

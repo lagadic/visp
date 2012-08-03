@@ -237,7 +237,11 @@ bool vpServer::checkForConnections()
       client.socketFileDescriptorReceptor = accept((unsigned)emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
 #endif
       
+#ifdef UNIX
       if((client.socketFileDescriptorReceptor) == -1)
+#else
+      if((client.socketFileDescriptorReceptor) == INVALID_SOCKET)
+#endif
         vpERROR_TRACE( "vpServer::run(), accept()" );
       
       client.receptorIP = inet_ntoa(client.receptorAddress.sin_addr);
