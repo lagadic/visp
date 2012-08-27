@@ -47,6 +47,7 @@
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImage.h>
+#include <visp/vpIoTools.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpTime.h>
 
@@ -174,8 +175,8 @@ void sonarPrinter(void)
       double j = -y * scale + half_size; // obstacle position
       double i = -x * scale + half_size;
 
-//      printf("%d x: %.1f y: %.1f th: %.1f d: %d\n", sensor, reading->getSensorX(),
-//             reading->getSensorY(), reading->getSensorTh(), reading->getRange());
+      //      printf("%d x: %.1f y: %.1f th: %.1f d: %d\n", sensor, reading->getSensorX(),
+      //             reading->getSensorY(), reading->getSensorTh(), reading->getRange());
 
 #if defined(VISP_HAVE_X11) || defined (VISP_HAVE_GDI)
       if (isInitialized && range != sonar.getMaxRange())
@@ -270,17 +271,44 @@ int main(int argc, char **argv)
     std::cout << "Battery=" << robot->getBatteryVoltage() << std::endl;
 
 #if defined(VISP_HAVE_X11) || defined (VISP_HAVE_GDI)
-  if (isInitialized) {
-    // A mouse click to exit
-    if (vpDisplay::getClick(I, false) == true) {
-      {
-        vpImage<vpRGBa> C;
-        vpDisplay::getImage(I, C);
-        vpImageIo::write(C, "/tmp/sonar.png");
+    if (isInitialized) {
+      // A mouse click to exit
+      // Before exiting save the last sonar image
+      if (vpDisplay::getClick(I, false) == true) {
+        {
+          // Set the default output path
+          std::string opath;
+#ifdef UNIX
+          opath = "/tmp";
+#elif WIN32
+          opath = "C:\\temp";
+#endif
+          std::string username = vpIoTools::getUserName();
+
+          // Append to the output path string, the login name of the user
+          opath +=  vpIoTools::path("/") + username;
+
+          // Test if the output path exist. If no try to create it
+          if (vpIoTools::checkDirectory(opath) == false) {
+            try {
+              // Create the dirname
+              vpIoTools::makeDirectory(opath);
+            }
+            catch (...) {
+              std::cerr << std::endl
+                        << "ERROR:" << std::endl;
+              std::cerr << "  Cannot create " << opath << std::endl;
+              exit(-1);
+            }
+          }
+          std::string filename = opath + "/sonar.png";
+          vpImage<vpRGBa> C;
+          vpDisplay::getImage(I, C);
+          vpImageIo::write(C, filename);
+        }
+        break;
       }
-      break;
     }
-  }
 #endif
 
     vpTime::wait(t, 40);
