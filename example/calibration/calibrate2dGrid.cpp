@@ -77,6 +77,7 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpMouseButton.h>
+#include <visp/vpXmlParserCamera.h>
 
 #include <visp/vpPose.h>
 #include <visp/vpDot.h>
@@ -252,7 +253,6 @@ bool getOptions(int argc,const char **argv, std::string &ipath, std::string &ppa
     case 'v': opt_video = true; opt_video_image_path = optarg; break;
     case 'h': usage(argv[0], NULL, ipath, ppath,gray, first, nimages, step, lambda);
       return false; break;
-
     default:
       usage(argv[0], optarg, ipath, ppath, gray,first, nimages, step, lambda);
       return false; break;
@@ -292,8 +292,6 @@ int main(int argc, const char ** argv)
   ///////////////////////////////////////////
   //---------PARAMETERS--------------------
   
-  // set the calibration method
-  vpCalibration::vpCalibrationMethodType calibMethod = vpCalibration::CALIB_VIRTUAL_VS_DIST ;
   // set the camera intrinsic parameters
   // see more details about the model in vpCameraParameters
   double px = 600 ;
@@ -532,6 +530,24 @@ int main(int argc, const char ** argv)
   table_cal = new vpCalibration[opt_nimages];
   unsigned int niter = 0;
   char title[100];
+  
+  
+  
+#if defined VISP_HAVE_GDI
+    vpDisplayGDI display;
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK display;
+#elif defined VISP_HAVE_X11
+    vpDisplayX display;
+#elif defined VISP_HAVE_D3D9
+    vpDisplayD3D display;
+#endif
+   
+  if (opt_display) {
+    // Display size is automatically defined by the image (I) size
+    sprintf(title, "Calibration initialization on image %s", (s.str()).c_str());
+    display.init(I, 100, 100, title) ;
+  }
 
   while (iter < opt_first + opt_nimages*opt_step) {
     try {
@@ -558,24 +574,13 @@ int main(int argc, const char ** argv)
       double v0 = I.getHeight()/2;
       cam.initPersProjWithoutDistortion(px, py, u0, v0);
       
-#if defined VISP_HAVE_GDI
-      vpDisplayGDI display;
-#elif defined VISP_HAVE_GTK
-      vpDisplayGTK display;
-#elif defined VISP_HAVE_X11
-      vpDisplayX display;
-#elif defined VISP_HAVE_D3D9
-      vpDisplayD3D display;
-#endif
-      
 
       if (opt_display) {
         // Display the image
 
         try{
-          // Display size is automatically defined by the image (I) size
           sprintf(title, "Calibration initialization on image %s", (s.str()).c_str());
-          display.init(I, 100, 100, title) ;
+          vpDisplay::setTitle(I,title);
           // Display the image
           // The image class has a member that specify a pointer toward
           // the display that has been initialized in the display declaration
@@ -956,12 +961,22 @@ int main(int argc, const char ** argv)
     iter += opt_step ;
   }
   vpCalibration::setLambda(opt_lambda);
+ 
   // Calibrate by a non linear method based on virtual visual servoing
-  vpCalibration::computeCalibrationMulti(calibMethod,opt_nimages,table_cal,cam,true) ;
-
-  //CALIB_VIRTUAL_VS 1
-  //CALIB_VIRTUAL_VS_DIST  2
-
+  vpCameraParameters cam2;
+  int resultCalib = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS,opt_nimages,table_cal,cam2,false) ;
+  if(resultCalib == 0)
+    std::cout << cam2 << std::endl;
+  else
+    std::cout << "Calibration without distortion failed." << std::endl;
+    
+  int resultCalibDist = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST,opt_nimages,table_cal,cam,false) ;
+  if(resultCalibDist == 0)
+    std::cout << cam << std::endl;
+  else
+    std::cout << "Calibration with distortion failed." << std::endl;
+  
+ 
   // Compute Tsai calibration for extrinsic parameters estimation
 
   iter = opt_first;
@@ -997,16 +1012,6 @@ int main(int argc, const char ** argv)
       else{
         std::cout << "This image has not been used!" << std::endl;
       }       
-#if defined VISP_HAVE_GDI
-      vpDisplayGDI display;
-#elif defined VISP_HAVE_GTK
-      vpDisplayGTK display;
-#elif defined VISP_HAVE_X11  
-      vpDisplayX display;
-
-#elif defined VISP_HAVE_D3D9
-      vpDisplayD3D display;
-#endif
 
       if (opt_display) {
         // Display the image
@@ -1014,7 +1019,7 @@ int main(int argc, const char ** argv)
         try{
           // Display size is automatically defined by the image (I) size
           sprintf(title, "Calibration results for image %s", (s.str()).c_str());
-          display.init(I, 100, 100, title) ;
+          vpDisplay::setTitle(I,title);
           // Display the image
           // The image class has a member that specify a pointer toward
           // the display that has been initialized in the display declaration
@@ -1052,7 +1057,29 @@ int main(int argc, const char ** argv)
     iter += opt_step ;
   }
 
-
+#ifdef VISP_HAVE_XML2
+  vpXmlParserCamera xml;
+  
+  if(resultCalib == 0){
+    int resultSaving = xml.save(cam2,"calibrate2dGrid.xml","Camera",px,py);
+    if(resultSaving == vpXmlParserCamera::SEQUENCE_OK)
+      std::cout << "Camera parameters without distortion successfully saved in calibrate2dGrid.xml" << std::endl;
+    else
+      std::cout << "Failed to save the camera parameters without distortion in calibrate2dGrid.xml" << std::endl;
+  }
+  
+  if(resultCalibDist == 0){
+    int resultSavingDist =  xml.save(cam,"calibrate2dGrid.xml","Camera",px,py);
+    
+    if(resultSavingDist == vpXmlParserCamera::SEQUENCE_OK )
+      std::cout << "Camera parameters with distortion successfully saved in calibrate2dGrid.xml" << std::endl;
+    else
+      std::cout << "Failed to save the camera parameters with distortion in calibrate2dGrid.xml" << std::endl;
+  }
+  
+  vpXmlParser::cleanup();
+#endif 
+  
   delete [] table_cal;
   return(0);
 }
