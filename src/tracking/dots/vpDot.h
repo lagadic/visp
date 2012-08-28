@@ -271,26 +271,6 @@ public :
     return this->ip_connexities_list;
   };
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-
-    \deprecated This method is deprecated since the naming is not representative regarding to its funtionnality.
-    Previously it returned all the points inside the dot. To get the equivalent, use getConnexities().
-    
-    If you rather want to get the points on the dot border use getEdges(). 
-
-    \param edges_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  vp_deprecated void getEdges(std::list<vpImagePoint> &edges_list) {
-    edges_list = this->ip_edges_list;
-  };
-#endif
-
   inline double getGamma() {return this->gamma;};
   /*!
 
@@ -343,32 +323,6 @@ public :
 
   void print(std::ostream& os) { os << *this << std::endl ; }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-
-    \deprecated This method is deprecated. You shoud use
-    getEdges(std::list<vpImagePoint> &) instead.
-
-    Return the list of all the image points on the dot
-    border.
-
-    \param connexities_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  vp_deprecated void getConnexities(vpList<vpImagePoint> &connexities_list) {
-    // convert a vpList in a std::list
-    connexities_list.kill();
-    std::list<vpImagePoint>::const_iterator it;
-    for (it = ip_connexities_list.begin(); it != ip_connexities_list.end(); ++it) {
-      connexities_list += *it;
-    }
-  };
-#endif
-
 private:
   //! internal use only
   std::list<vpImagePoint> ip_connexities_list;
@@ -418,6 +372,45 @@ public:
   static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
 		      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red, 
 		      unsigned int thickness=1);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+
+    \deprecated This method is deprecated since the naming is not representative regarding to its funtionnality. \n
+    Previously it returned all the points inside the dot. To get the equivalent, use getConnexities(). \n \n
+    If you rather want to get the points on the dot border use getEdges(). 
+
+    \param edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  vp_deprecated void getEdges(std::list<vpImagePoint> &edges_list) {
+    edges_list = this->ip_edges_list;
+  };
+  
+  /*!
+
+    \deprecated This method is deprecated. You shoud use
+    getEdges(std::list<vpImagePoint> &) instead.\n \n
+    Return the list of all the image points on the dot
+    border.
+
+    \param connexities_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  vp_deprecated void getConnexities(vpList<vpImagePoint> &connexities_list) {
+    // convert a vpList in a std::list
+    connexities_list.kill();
+    std::list<vpImagePoint>::const_iterator it;
+    for (it = ip_connexities_list.begin(); it != ip_connexities_list.end(); ++it) {
+      connexities_list += *it;
+    }
+  };
+#endif
 } ;
 
 #endif

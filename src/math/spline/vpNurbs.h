@@ -157,8 +157,7 @@ public:
       @name Deprecated functions
     */
   /*!
-      \deprecated This method is deprecated. You should use get_weights(std::list<double> &) const instead.
-
+      \deprecated This method is deprecated. You should use get_weights(std::list<double> &) const instead. \n \n
       Gets all the weights relative to the control points.
 
       \return list : A list containing weights relative to the control points.
@@ -169,8 +168,7 @@ public:
     return list; }
 
   /*!
-      \deprecated This method is deprecated. You should use set_weights(const std::list<double>&) instead.
-
+      \deprecated This method is deprecated. You should use set_weights(const std::list<double>&) instead.\n \n
       Sets all the knots.
 
       \param list : A list containing the value of the knots.

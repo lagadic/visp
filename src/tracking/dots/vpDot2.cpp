@@ -946,8 +946,7 @@ void
 /*!
 
   \deprecated This method is deprecated. You should use
-  searchDotsInArea(vpImage<unsigned char>&,  std::list<vpDot2> &) instead.
-
+  searchDotsInArea(vpImage<unsigned char>&,  std::list<vpDot2> &) instead.\n \n
   Look for a list of dot matching this dot parameters within the entire
   image.
 
@@ -1250,8 +1249,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
 /*!
 
   \deprecated This method is deprecated. You should use
-  searchDotsInArea(vpImage<unsigned char>&, int, int, unsigned int, unsigned int, std::list<vpDot2> &) instead.
-
+  searchDotsInArea(vpImage<unsigned char>&, int, int, unsigned int, unsigned int, std::list<vpDot2> &) instead.\n \n
   Look for a list of dot matching this dot parameters within a rectangle
   search area in the image. The rectangle upper-left coordinates are given by
   (\e area_u, \e area_v). The size of the rectangle is given by \e area_w and
@@ -2154,8 +2152,7 @@ vpDot2* vpDot2::getInstance()
 /*!
 
   \deprecated This method is deprecated. You shoud use
-  getFreemanChain(std::list<unsigned int> &) instead.
-
+  getFreemanChain(std::list<unsigned int> &) instead.\n \n
   Returns the list of Freeman chain code used to turn around the dot
   counterclockwise.
 

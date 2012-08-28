@@ -588,8 +588,7 @@ class VISP_EXPORT vpWireFrameSimulator
 
     /*!
       \deprecated This method is deprecated. You should use
-      get_fMo_History(std::list<vpHomogeneousMatrix> &) instead.
-
+      get_fMo_History(std::list<vpHomogeneousMatrix> &) instead. \n \n
       Get the homogeneous matrices fMo stored to display the camera trajectory.
 
       \return Returns the list of the homogeneous matrices fMo.
@@ -603,8 +602,7 @@ class VISP_EXPORT vpWireFrameSimulator
 
     /*!
       \deprecated This method is deprecated. You should use
-      get_cMo_History(std::list<vpHomogeneousMatrix> &) instead.
-
+      get_cMo_History(std::list<vpHomogeneousMatrix> &) instead. \n \n
       Get the homogeneous matrices cMo stored to display the camera trajectory.
 
        \return Returns the list of the homogeneous matrices cMo.

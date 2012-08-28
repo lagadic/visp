@@ -301,9 +301,8 @@ vpPose::degenerateConfiguration(vpColVector &x, unsigned int *ind)
   return false ;
 }
 /*!
-  Fit model to this random selection of data points.
-
-  We chose the Dementhon algorithm to compute the pose
+  \deprecated Fit model to this random selection of data points. \n \n
+  We chose the Dementhon algorithm to compute the pose.
 */
 void
 vpPose::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
@@ -348,9 +347,8 @@ vpPose::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 
 
 /*!
-  Evaluate distances between points and model.
-
-  this function can certainly be optimized...
+  \deprecated Evaluate distances between points and model. \n \n
+  This function can certainly be optimized...
 */
 
 double
@@ -418,16 +416,14 @@ vpPose::initRansac(const unsigned int n,
 
 
 /*!
+  \deprecated
   Compute the pose from a set of n 2D point (x,y) and m 3D points
   (X,Y,Z) using the Ransac algorithm. It is not assumed that
-  the 2D and 3D points are registred (there is nm posibilities)
-
+  the 2D and 3D points are registred (there is nm posibilities). \n \n
   At least numberOfInlierToReachAConsensus of true correspondance are required
-  to validate the pose
-
-  The inliers are given in xi, yi, Xi, Yi, Zi
-
-  The pose is returned in cMo.
+  to validate the pose. \n \n
+  The inliers are given in xi, yi, Xi, Yi, Zi. \n
+  The pose is returned in cMo. 
 
   \param n : Number of 2d points.
   \param x : Array (of size \e n) of the x coordinates of the 2d points.
@@ -520,16 +516,14 @@ vpPose::ransac(const unsigned int n,
 }
 
 /*!
+  \deprecated
   Compute the pose from a set of n 2D point (x,y) in p and m 3D points
   (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
-  the 2D and 3D points are registred (there is nm posibilities)
-
+  the 2D and 3D points are registred (there is nm posibilities). \n \n
   At least numberOfInlierToReachAConsensus of true correspondance are required
-  to validate the pose
-
-  The inliers are given in a list of vpPoint
-
-  The pose is returned in cMo.
+  to validate the pose. \n \n
+  The inliers are given in a list of vpPoint. \n
+  The pose is returned in cMo. 
 
   \param n : Number of 2d points.
   \param p : Array (of size n) of 2d points (x and y attributes are used).
@@ -603,16 +597,14 @@ vpPose::ransac(const unsigned int n,
 }
 
 /*!
+  \deprecated
   Compute the pose from a list lp of  2D point (x,y)  and  a list lP 3D points
   (X,Y,Z) in P using the Ransac algorithm. It is not assumed that
-  the 2D and 3D points are registred
-
+  the 2D and 3D points are registred. \n \n
   At least numberOfInlierToReachAConsensus of true correspondance are required
-  to validate the pose
-
-  The inliers are given in a list of vpPoint lPi.
-
-  The pose is returned in cMo.
+  to validate the pose. \n \n
+  The inliers are given in a list of vpPoint lPi. \n
+  The pose is returned in cMo. 
 
   \param lp : List of 2d points (x and y attributes are used).
   \param lP : List of 3d points (oX, oY and oZ attributes are used).

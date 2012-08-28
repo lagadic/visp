@@ -408,8 +408,7 @@ public:
   /*!
 
     \deprecated This method is deprecated. You shoud use
-    getEdges(std::list<vpImagePoint> &) instead.
-
+    getEdges(std::list<vpImagePoint> &) instead.\n \n
     Return the list of all the image points on the dot
     border.
 

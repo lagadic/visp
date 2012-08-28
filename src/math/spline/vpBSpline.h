@@ -229,8 +229,7 @@ class VISP_EXPORT vpBSpline
     @name Deprecated functions
   */
   /*!
-    \deprecated This method is deprecated. You should use get_controlPoints(std::list<vpImagePoint> &) const instead.
-
+    \deprecated This method is deprecated. You should use get_controlPoints(std::list<vpImagePoint> &) const instead. \n \n
     Gets all the control points.
 
     \return list : A vpList containing the coordinates of the control points
@@ -241,8 +240,7 @@ class VISP_EXPORT vpBSpline
     return list; }
 
   /*!
-    \deprecated This method is deprecated. You should use get_knots(std::list<double> &) const instead.
-
+    \deprecated This method is deprecated. You should use get_knots(std::list<double> &) const instead. \n \n
     Gets all the knots.
 
     \return list : A vpList containing the value of the knots.
@@ -253,8 +251,7 @@ class VISP_EXPORT vpBSpline
     return list; }
 
   /*!
-    \deprecated This method is deprecated. You should use get_crossingPoints(std::list<vpImagePoint> &) const instead.
-
+    \deprecated This method is deprecated. You should use get_crossingPoints(std::list<vpImagePoint> &) const instead. \n \n
     Gets all the crossing points (used in the interpolation method)
 
     \return list : A vpList containing the coordinates of the crossing points
@@ -265,8 +262,7 @@ class VISP_EXPORT vpBSpline
     return list; }
 
   /*!
-    \deprecated This method is deprecated. You should use set_controlPoints(const std::list<vpImagePoint> &) instead.
-
+    \deprecated This method is deprecated. You should use set_controlPoints(const std::list<vpImagePoint> &) instead. \n \n
     Sets all the control points.
 
     \param list : A vpList containing the coordinates of the control points
@@ -282,8 +278,7 @@ class VISP_EXPORT vpBSpline
   }
 
   /*!
-    \deprecated This method is deprecated. You should use set_knots(const std::list<double> &) instead.
-
+    \deprecated This method is deprecated. You should use set_knots(const std::list<double> &) instead. \n \n
     Sets all the knots.
 
     \param list : A vpList containing the value of the knots.
@@ -299,8 +294,7 @@ class VISP_EXPORT vpBSpline
   }
 
  /*!
-    \deprecated This method is deprecated. You should use set_crossingPoints(const std::list<vpImagePoint> &) instead.
-
+    \deprecated This method is deprecated. You should use set_crossingPoints(const std::list<vpImagePoint> &) instead. \n \n
     Sets all the crossing points (used in the interpolation method)
 
     \param list : A vpList containing the coordinates of the crossing points

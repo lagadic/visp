@@ -255,12 +255,6 @@ public:
     \param min : new minimum sample step.
   */
   void setMinSampleStep(const double &min) { min_samplestep = min ; }
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    \deprecated Use setMinSampleStep() instead.
-  */
-  vp_deprecated void setMinSamplestep(const double &min) { min_samplestep = min ; } //Little mistake in the method name "step" should be "Step" 
-  #endif
   
   /*!
     Get the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
@@ -312,13 +306,19 @@ public:
   inline double getThreshold() const { return threshold; }
   
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated Attributes
+  */
 public: 
   double aberration;
   double init_aberration;
   
   /*!
-    \deprecated since it wasn't used.
-    
+    @name Deprecated Functions
+  */
+  
+  /*!
+    \deprecated since it wasn't used.\n \n
     Set aberration value.
     
     \param a : new value.
@@ -326,13 +326,17 @@ public:
   vp_deprecated void setAberration(const double &a) { aberration = a ; }
   
   /*!
-    \deprecated since it wasn't used.
-   
+    \deprecated since it wasn't used. \n \n
     Set initial aberration value.
     
     \param a : new value.
   */
   vp_deprecated void setInitAberration(const double &a) { init_aberration = a ; }
+  
+  /*!
+    \deprecated Use setMinSampleStep() instead.
+  */
+  vp_deprecated void setMinSamplestep(const double &min) { min_samplestep = min ; } //Little mistake in the method name "step" should be "Step" 
 #endif
 };
 
