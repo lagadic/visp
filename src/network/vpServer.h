@@ -47,7 +47,6 @@
 #include <visp/vpException.h>
 #include <visp/vpNetwork.h>
 
-#if (! (defined(WIN32) && defined(UNIX)) )
 
 /*!
   \class vpServer
@@ -60,7 +59,8 @@
   on one computer to another program on another computer.
 
   Exemple of server's code, receiving and sending basic message.
-  It corresponds to the client used in the first exemple of vpClient class' documentation.
+  It corresponds to the client used in the first exemple of vpClient class' 
+  documentation.
   
   \code
 #include <visp/vpServer.h>
@@ -220,5 +220,4 @@ public:
   void          setMaxNumberOfClients(unsigned int &l){ max_clients = l; }
 };
 
-#endif // #if (! (defined(WIN32) && defined(UNIX)) )
 #endif
