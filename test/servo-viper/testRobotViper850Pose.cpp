@@ -55,6 +55,8 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
 #include <visp/vpRobotViper850.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -80,7 +82,13 @@ int main()
     g.acquire(I);
 
     // Create an image viewer for the image
-    vpDisplayX display(I);
+#ifdef VISP_HAVE_X11
+    vpDisplayX display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_GTK)
+    vpDisplayGTK display(I,100,100,"Current image") ;
+#endif
 
     // Display the image
     vpDisplay::display(I) ;

@@ -87,6 +87,8 @@
 #include <visp/vpDot.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
 
 int
 main()
@@ -137,7 +139,13 @@ main()
 
     g.acquire(I) ;
 
-    vpDisplayX display(I, 100, 100,"Current image") ;
+#ifdef VISP_HAVE_X11
+    vpDisplayX display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_GTK)
+    vpDisplayGTK display(I,100,100,"Current image") ;
+#endif
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;

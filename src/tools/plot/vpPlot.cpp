@@ -43,11 +43,13 @@
 
 #include <visp/vpConfig.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
 #include <visp/vpPlot.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -123,6 +125,10 @@ void vpPlot::init(const unsigned int graphNbr,
   display = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
   display = new vpDisplayOpenCV;
+#elif defined VISP_HAVE_GTK
+  display = new vpDisplayGTK;
+#elif defined VISP_HAVE_D3D9
+  display = new vpDisplayD3D;
 #endif
 
   display->init(I, x, y, title);

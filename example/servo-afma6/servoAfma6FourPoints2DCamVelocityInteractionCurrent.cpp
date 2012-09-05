@@ -77,6 +77,8 @@
 #include <visp/vpImagePoint.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
 
 #include <visp/vpMath.h>
 #include <visp/vpTranslationVector.h>
@@ -271,7 +273,13 @@ main()
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
     g.open(I) ;
 
+#ifdef VISP_HAVE_X11
     vpDisplayX display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I,100,100,"Current image") ;
+#elif defined(VISP_HAVE_GTK)
+    vpDisplayGTK display(I,100,100,"Current image") ;
+#endif
 
     g.acquire(I) ;
 

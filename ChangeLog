@@ -17,6 +17,7 @@ ViSP 2.6.3 (under development)
     - [14646] ViSP doesn't build on Windows with MinGW
     - [14651] Build error arround vpMatrix::pseudoInverse() with OpenCV 2.1.0
     - [14661] Build error when GDI is not detected or turned off
+    - [14818] Build error when only GTK display device is available
 
 ----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)

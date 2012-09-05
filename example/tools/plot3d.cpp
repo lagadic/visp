@@ -111,5 +111,7 @@ int main ()
   }
   
   return 0;
+#else
+  std::cout << "Plot functionalities are not avalaible since no display is available." << std::endl;
 #endif
 }

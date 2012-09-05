@@ -84,6 +84,8 @@
 #include <visp/vpLinearKalmanFilterInstantiation.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
 
 int
 main()
@@ -172,7 +174,13 @@ main()
     default: break;
     }
 
-    vpDisplayX display(I, (int)(100+I.getWidth()+30), 200,"Current image") ;
+#ifdef VISP_HAVE_X11
+    vpDisplayX display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+#elif defined(VISP_HAVE_GTK)
+    vpDisplayGTK display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+#endif
 
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
