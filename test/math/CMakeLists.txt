@@ -49,10 +49,11 @@ SET (SOURCE
   testKalmanVelocity.cpp
   testMatrix.cpp
   testMatrixException.cpp
+  testMatrixInverse.cpp
   testRobust.cpp
   testRotation.cpp
   testSvd.cpp
-  testTwistMatrix.cpp
+  testTwistMatrix.cpp  
 )
 
 # rule for binary build

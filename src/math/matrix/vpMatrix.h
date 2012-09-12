@@ -395,6 +395,27 @@ protected:
   //@}
 
   //-------------------------------------------------
+  //QR decomposition
+  //-------------------------------------------------
+#ifdef VISP_HAVE_LAPACK
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpMatrix inverseByQRLapack() const;
+#endif
+  // inverse matrix A using the QR decomposition
+  vpMatrix inverseByQR() const;
+
+#endif
+  //-------------------------------------------------
+  //Cholesky decomposition
+  //-------------------------------------------------
+  // inverse matrix A using the Cholesky decomposition
+#ifdef VISP_HAVE_LAPACK
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpMatrix inverseByCholeskyLapack() const;
+#endif
+  vpMatrix inverseByCholesky() const;
+#endif
+  //-------------------------------------------------
   // SVD decomposition
   //-------------------------------------------------
 

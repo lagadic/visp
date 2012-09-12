@@ -144,7 +144,9 @@ SET (SRC_MATH
   math/kalman/vpLinearKalmanFilterInstantiation.cpp
   math/matrix/vpColVector.cpp
   math/matrix/vpMatrix.cpp
+  math/matrix/vpMatrix_cholesky.cpp
   math/matrix/vpMatrix_lu.cpp
+  math/matrix/vpMatrix_qr.cpp
   math/matrix/vpMatrix_svd.cpp
   math/matrix/vpMatrix_covariance.cpp
   math/matrix/vpRowVector.cpp
