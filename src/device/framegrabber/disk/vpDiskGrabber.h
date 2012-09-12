@@ -131,11 +131,14 @@ public:
 
   void open(vpImage<unsigned char> &I) ;
   void open(vpImage<vpRGBa> &I) ;
+  void open(vpImage<float> &I) ;
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<float> &I) ;
   void acquire(vpImage<unsigned char> &I, long image_number);
   void acquire(vpImage<vpRGBa> &I, long image_number);
+  void acquire(vpImage<float> &I, long image_number) ;
 
   void close();
 

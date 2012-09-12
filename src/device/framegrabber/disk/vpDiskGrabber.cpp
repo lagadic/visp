@@ -119,7 +119,7 @@ vpDiskGrabber::open(vpImage<unsigned char> &I)
 void
 vpDiskGrabber::open(vpImage<vpRGBa> &I)
 {
-  // Fisrt we save the image number, so that it can be reaffected after the
+  // First we save the image number, so that it can be reaffected after the
   // acquisition. That means that the first image is readed twice
   long first_number = getImageNumber();
   vpDEBUG_TRACE(2, "first %ld", first_number);
@@ -134,6 +134,28 @@ vpDiskGrabber::open(vpImage<vpRGBa> &I)
   init = true;
 }
 
+/*!
+  Read the fist image of the sequence.
+  The image number is not incremented.
+
+*/
+void
+vpDiskGrabber::open(vpImage<float> &I)
+{
+  // First we save the image number, so that it can be reaffected after the
+  // acquisition. That means that the first image is readed twice
+  long first_number = getImageNumber();
+  vpDEBUG_TRACE(2, "first %ld", first_number);
+
+  acquire(I);
+
+  setImageNumber(first_number);
+
+  width = I.getWidth();
+  height = I.getHeight();
+
+  init = true;
+}
 
 /*!
   Acquire an image: read a pgm image from the disk.
@@ -191,6 +213,34 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 }
 
 /*!
+  Acquire an image: read a pfm image from the disk.
+  After this call, the image number is incremented considering the step.
+
+  \param I the read image
+ */
+void
+vpDiskGrabber::acquire(vpImage<float> &I)
+{
+
+  char name[FILENAME_MAX] ;
+
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+
+  image_number += image_step ;
+
+  vpDEBUG_TRACE(2, "load: %s\n", name);
+
+  vpImageIo::readPFM(I, name) ;
+
+  width = I.getWidth();
+  height = I.getHeight();
+
+}
+
+/*!
   Acquire an image: read a pgm image from the disk.
   After this call, the image number is incremented considering the step.
 
@@ -237,6 +287,34 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long image_number)
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
   vpImageIo::read(I, name) ;
+
+  width = I.getWidth();
+  height = I.getHeight();
+
+}
+
+
+/*!
+  Acquire an image: read a pfm image from the disk.
+  After this call, the image number is incremented considering the step.
+
+  \param I the read image
+  \param image_number The index of the desired image.
+ */
+void
+vpDiskGrabber::acquire(vpImage<float> &I, long image_number)
+{
+
+  char name[FILENAME_MAX] ;
+
+  if(useGenericName)
+    sprintf(name,genericName,image_number) ;
+  else
+    sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
+
+  vpDEBUG_TRACE(2, "load: %s\n", name);
+
+  vpImageIo::readPFM(I, name) ;
 
   width = I.getWidth();
   height = I.getHeight();
