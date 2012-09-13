@@ -78,7 +78,7 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const{
 
 
   for(unsigned int i=0;i<A.getRows();i++)
-    for(unsigned int j=0;j<A.getRows();j++)
+    for(unsigned int j=0;j<A.getCols();j++)
       if(i>j) A[i][j] = A[j][i];
 
 
