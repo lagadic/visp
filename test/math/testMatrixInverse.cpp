@@ -69,7 +69,7 @@
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test qr inversions.\n\
+Test matrix inversions.\n\
 \n\
 SYNOPSIS\n\
   %s [-n number-matrices][-i][-p][-f plot-filename][-c number-of-cols][-h]\n", name);
@@ -78,7 +78,7 @@ SYNOPSIS\n\
 OPTIONS:\n\
   Default:\n\
   number of matrices to use in the test\n\
-  \-n\n\
+  -n\n\
   number of test iterations\n\
   -i\n\
   Plot results to file\n\
@@ -151,7 +151,7 @@ bool getOptions(int argc, const char **argv, int& nb_matrices,int& nb_iterations
   return true;
 }
 
-void writeTime(char *name, double time){
+void writeTime(const char *name, double time){
   std::cout << name << " time=" << time << " ms." << std::endl;
 }
 
