@@ -65,37 +65,57 @@
 
   Print the program options.
 
-*/
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+
+ */
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test matrix inversions.\n\
+Test matrix inversions\n\
+using LU, QR and Cholesky methods as well as Pseudo-inverse.\n\
+Outputs a comparison of these methods.\n\
 \n\
 SYNOPSIS\n\
-  %s [-n number-matrices][-i][-p][-f plot-filename][-c number-of-cols][-h]\n", name);
+  %s [-n <number of matrices>] [-f <plot filename>]\n\
+     [-r <number of rows>] [-c <number of columns>]\n\
+     [-i <number of iterations>] [-p] [-h]\n", name);
 
   fprintf(stdout, "\n\
-OPTIONS:\n\
-  Default:\n\
-  number of matrices to use in the test\n\
-  -n\n\
-  number of test iterations\n\
-  -i\n\
-  Plot results to file\n\
-  -p\n\
-  plot filename\n\
-  -f\n\
-  Number of rows.\n\
-  -r\n\
-  Number of columns.\n\
-  -c\n\
-  Verbose.\n\
-  -v\n\
-  Print the help.\n\
-  -h\n");
+OPTIONS:                                               Default\n\
+  -n <number of matrices>                               \n\
+     Number of matrices inverted during each test loop.\n\
+\n\
+  -i <number of iterations>                               \n\
+     Number of iterations of the test.\n\
+\n\
+  -f <plot filename>                               \n\
+     Set output path for plot output.\n\
+     The plot logs the times of \n\
+     the different inversion methods: \n\
+     QR,LU,Cholesky and Pseudo-inverse.\n\
+\n\
+  -r <number of rows>\n\
+     Number of rows of the automatically generated matrices  \n\
+     we test on.\n\
+\n\
+  -c <number of columns>\n\
+     Number of colums of the automatically generated matrices  \n\
+     we test on.\n\
+\n\
+  -p                                             \n\
+     Plot into filename in the gnuplot format. \n\
+     If this option is used, tests results will be logged \n\
+     into a filename specified with -f.\n\
+\n\
+  -h\n\
+     Print the help.\n\n");
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
+
 }
 /*!
 
