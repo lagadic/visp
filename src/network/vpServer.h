@@ -173,9 +173,9 @@ private:
   
 public:
   
-                vpServer();
-                vpServer(const int &port);
-                vpServer(const std::string &adress_serv,const int &port_serv);
+  vpServer();
+  vpServer(const int &port);
+  vpServer(const std::string &adress_serv,const int &port_serv);
   
   virtual       ~vpServer();
   
