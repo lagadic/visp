@@ -92,14 +92,14 @@ public:
      \code
 u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
      \endcode
-      To have a better reading of the moments you can picture them as a triangular matrix:
-      \code
-        u00 u10 u20 u30
-        u01 u11 u21 x
-        u02 u12  x  x
-        u30 x    x  x
-      \endcode
-      The moments of the same order are on each of the matrix reverse diagonals.
+     To have a better reading of the moments you can picture them as a triangular matrix:
+     \code
+u00 u10 u20 u30
+u01 u11 u21 x
+u02 u12  x  x
+u30 x    x  x
+     \endcode
+     The moments of the same order are on each of the matrix reverse diagonals.
      To access for example to the centered moment \f$\mu_{12}\f$, you should use this kind of code:
      \code
   vpMomentCentered mc;
@@ -108,10 +108,8 @@ u00 u10 u20 u01 u11 u21 u02 u12 u12 u30 u03
   double mu12;
   mu12 = mc.get()[2*(obj.getOrder()+1)+1]; // i=1 and j=2
   mu12 = mc.get(1,2); // the same
-
-
-\endcode
-          */
+    \endcode
+  */
   std::vector<double>& get(){return vpMoment::get();}
   /*!
           Moment name.
