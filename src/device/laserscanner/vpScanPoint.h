@@ -173,7 +173,7 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
     The following code
     \code
 #include <iostream>
-#include "visp/vpScanPoint.h"
+#include <visp/vpScanPoint.h>
 
 int main()
 {
