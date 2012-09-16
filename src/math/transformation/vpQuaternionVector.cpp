@@ -166,5 +166,5 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
   theta *= 0.5;
 
   double sinTheta_2 = sin(theta);
-  set( cos(theta), u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2);
+  set( u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2, cos(theta) );
 }

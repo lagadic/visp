@@ -692,10 +692,10 @@ vpRotationMatrix::buildFrom(const double tux,
 //! Construction from  rotation (as quaternion)
 vpRotationMatrix
 vpRotationMatrix::buildFrom(const vpQuaternionVector& q){
-  double a = q.x();
-  double b = q.y();
-  double c = q.z();
-  double d = q.w();
+  double a = q.w();
+  double b = q.x();
+  double c = q.y();
+  double d = q.z();
   (*this)[0][0] = a*a+b*b-c*c-d*d;
   (*this)[0][1] = 2*b*c-2*a*d;
   (*this)[0][2] = 2*a*c+2*b*d;
