@@ -100,14 +100,13 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       
       bool degenerate = false;
       for(std::list<vpPoint>::const_iterator it = poseMin.listP.begin(); it != poseMin.listP.end(); ++it){
-          vpPoint ptdeg = *it;
-          if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
-              ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
-            degenerate = true;
-            break;
-          }
+        vpPoint ptdeg = *it;
+        if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
+            ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
+          degenerate = true;
+          break;
+        }
       }
-      
       if(!degenerate){
         poseMin.addPoint(pt) ;
         cur_randoms.push_back(r);
@@ -118,12 +117,12 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     
     poseMin.computePose(vpPose::DEMENTHON,cMo) ;
     double r = poseMin.computeResidual(cMo) ;
+
     r = sqrt(r)/(double)nbMinRandom;
-    
+
     if (r < ransacThreshold)
     {
       unsigned int nbInliersCur = 0;
-      //std::cout << "Résultat : " << r << " / " << vpPoseVector(cMo).sumSquare()<< std::endl ;
       unsigned int iter = 0;
       for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       { 
@@ -133,17 +132,40 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
 
         double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y()) ;
         double error = sqrt(d) ;
-        if(error < ransacThreshold){ // the point is considered an inlier if the error is below the threshold
-          nbInliersCur++;
-          cur_consensus.push_back(iter);
+        if(error < ransacThreshold){
+          // the point is considered as inlier if the error is below the threshold
+          // But, we need also to check if it is not a degenerate point
+          bool degenerate = false;
+
+          for(unsigned int it_inlier_index = 0; it_inlier_index< cur_consensus.size(); it_inlier_index++){
+            std::list<vpPoint>::const_iterator it_point = listP.begin();
+            std::advance(it_point, cur_consensus[it_inlier_index]);
+            vpPoint pt = *it_point;
+
+            vpPoint ptdeg = *it;
+            if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
+                ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
+              degenerate = true;
+              break;
+            }
+          }
+
+          if(!degenerate){
+
+            nbInliersCur++;
+            cur_consensus.push_back(iter);
+            cur_randoms.push_back(r);
+          }
+          else {
+            cur_outliers.push_back(iter);
+          }
         }    
         else
           cur_outliers.push_back(iter);
         
         iter++;
       }
-      //std::cout << "Nombre d'inliers " << nbInliersCur << "/" << nbInliers << std::endl ;
-      
+
       if(nbInliersCur > nbInliers)
       {
         foundSolution = true;
@@ -194,7 +216,6 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       }
         
       pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS,cMo) ;
-      //std::cout << "Residue finale "<< pose.computeResidual(cMo)  << std::endl ;
     }
   }
 }
