@@ -295,6 +295,8 @@ main(int argc, const char ** argv)
     }
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "You don't have lapack installed" << std::endl;
 #endif
 }
