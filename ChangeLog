@@ -18,6 +18,9 @@ ViSP 2.6.3 (under development)
     - [14651] Build error arround vpMatrix::pseudoInverse() with OpenCV 2.1.0
     - [14661] Build error when GDI is not detected or turned off
     - [14818] Build error when only GTK display device is available
+    - [14862] Lagrange pose estimation cannot handle planar objects with 
+              points in plane oX=d or oY=d
+    - [14863] vpPose::poseRansac() can fail during Lagrange pose estimation
 
 ----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)
