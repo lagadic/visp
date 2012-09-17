@@ -299,5 +299,6 @@ main(int argc, const char ** argv)
   (void)argv;
   std::cout << "You don't have lapack installed" << std::endl;
 #endif
+  return 0;
 }
 
