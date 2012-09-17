@@ -169,13 +169,19 @@ vpPose::setDistanceToPlaneForCoplanarityTest(double d)
 
 /*!
 \brief test the coplanarity of the set of points
+
+\param coplanar_plane_type:
+   1: if plane x=cst
+   2: if plane y=cst
+   3: if plane z=cst
+   0: any other plane
 \return true if points are coplanar
 false if not
 */
 bool
-vpPose::coplanar()
+vpPose::coplanar(int &coplanar_plane_type)
 {
-
+  coplanar_plane_type = 0;
   if (npt <2)
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
@@ -218,6 +224,16 @@ vpPose::coplanar()
   double c =  x1*y2 - x1*y3 - x2*y1 + x2*y3 + x3*y1 - x3*y2 ;
   double d = -x1*y2*z3 + x1*y3*z2 +x2*y1*z3 - x2*y3*z1 - x3*y1*z2 + x3*y2*z1 ;
 
+  if (std::fabs(b) <= std::numeric_limits<double>::epsilon()
+      && std::fabs(c) <= std::numeric_limits<double>::epsilon() ) {
+    coplanar_plane_type = 1; // ax=d
+  } else if (std::fabs(a) <= std::numeric_limits<double>::epsilon()
+             && std::fabs(c) <= std::numeric_limits<double>::epsilon() ) {
+    coplanar_plane_type = 2; // by=d
+  } else if (std::fabs(a) <= std::numeric_limits<double>::epsilon()
+             && std::fabs(b) <= std::numeric_limits<double>::epsilon() ) {
+    coplanar_plane_type = 3; // cz=d
+  }
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
 
@@ -325,7 +341,8 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
       }
 
       // test si les point 3D sont coplanaires
-      int  plan = coplanar() ;
+      int coplanar_plane_type = 0;
+      int plan = coplanar(coplanar_plane_type) ;
       if (plan == 1)
       {
         //std::cout << "Plan" << std::endl;
@@ -359,8 +376,8 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
   case LAGRANGE_LOWE :
     {
       // test si les point 3D sont coplanaires
-
-      int  plan = coplanar() ;
+      int coplanar_plane_type;
+      int  plan = coplanar(coplanar_plane_type) ;
 
       if (plan == 1)
       {
@@ -374,7 +391,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
             "Not enough points ")) ;
         }
         try {
-          poseLagrangePlan(cMo);
+          poseLagrangePlan(cMo, coplanar_plane_type);
         }
         catch(...)
         {

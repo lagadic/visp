@@ -139,7 +139,7 @@ public:
   //! compute the residual (in meter)
   double computeResidual() ;
   //! test the coplanarity of the points
-  bool coplanar() ;
+  bool coplanar(int &coplanar_plane_type) ;
   void displayModel(vpImage<unsigned char> &I,
                     vpCameraParameters &cam,
                     vpColor col=vpColor::none) ;
@@ -153,7 +153,7 @@ public:
   //! compute the pose using Dementhon approach (non planar object)
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo) ;
   //! compute the pose using Lagrange approach (planar object)
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo) ;
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type=0) ;
   //! compute the pose using Lagrange approach (non planar object)
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo) ;
   //! compute the pose using the Lowe approach (i.e., using the

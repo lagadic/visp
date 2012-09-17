@@ -237,10 +237,15 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 //#undef EPS
 
 /*!
-\brief  Compute the pose using Lagrange approach
+\brief  Compute the pose using Lagrange approach.
+\param coplanar_plane_type:
+   1: if plane x=cst
+   2: if plane y=cst
+   3: if plane z=cst
+   0: any other plane
 */
 void
-vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
+vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type)
 {
 
 #if (DEBUG_LEVEL1)
@@ -259,32 +264,104 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     vpMatrix b(nl,6);
     vpPoint P ;
     i=0 ;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+
+
     {
-      P = *it ;
-      a[k][0]   = -P.get_oX();
-      a[k][1]   = 0.0;
-      a[k][2]   = P.get_oX()*P.get_x();
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      {
+        std::cout << "P: " << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oY() << std::endl;
+      }
 
-      a[k+1][0] = 0.0;
-      a[k+1][1] = -P.get_oX();
-      a[k+1][2] = P.get_oX()*P.get_y();
+    }
+    if (coplanar_plane_type == 1) { // plane ax=d
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      {
+        P = *it ;
+        a[k][0]   = -P.get_oY();
+        a[k][1]   = 0.0;
+        a[k][2]   = P.get_oY()*P.get_x();
 
-      b[k][0]   = -P.get_oY();
-      b[k][1]   = 0.0;
-      b[k][2]   = P.get_oY()*P.get_x();
-      b[k][3]   =  -1.0;
-      b[k][4]   =  0.0;
-      b[k][5]   =  P.get_x();
+        a[k+1][0] = 0.0;
+        a[k+1][1] = -P.get_oY();
+        a[k+1][2] = P.get_oY()*P.get_y();
 
-      b[k+1][0] =  0.0;
-      b[k+1][1] = -P.get_oY();
-      b[k+1][2] =  P.get_oY()*P.get_y();
-      b[k+1][3] =  0.0;
-      b[k+1][4] = -1.0;
-      b[k+1][5] =  P.get_y();
+        b[k][0]   = -P.get_oZ();
+        b[k][1]   = 0.0;
+        b[k][2]   = P.get_oZ()*P.get_x();
+        b[k][3]   =  -1.0;
+        b[k][4]   =  0.0;
+        b[k][5]   =  P.get_x();
 
-      k += 2;
+        b[k+1][0] =  0.0;
+        b[k+1][1] = -P.get_oZ();
+        b[k+1][2] =  P.get_oZ()*P.get_y();
+        b[k+1][3] =  0.0;
+        b[k+1][4] = -1.0;
+        b[k+1][5] =  P.get_y();
+
+        k += 2;
+      }
+
+    }
+    else if (coplanar_plane_type == 2) {  // plane by=d
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      {
+        P = *it ;
+        a[k][0]   = -P.get_oX();
+        a[k][1]   = 0.0;
+        a[k][2]   = P.get_oX()*P.get_x();
+
+        a[k+1][0] = 0.0;
+        a[k+1][1] = -P.get_oX();
+        a[k+1][2] = P.get_oX()*P.get_y();
+
+        b[k][0]   = -P.get_oZ();
+        b[k][1]   = 0.0;
+        b[k][2]   = P.get_oZ()*P.get_x();
+        b[k][3]   =  -1.0;
+        b[k][4]   =  0.0;
+        b[k][5]   =  P.get_x();
+
+        b[k+1][0] =  0.0;
+        b[k+1][1] = -P.get_oZ();
+        b[k+1][2] =  P.get_oZ()*P.get_y();
+        b[k+1][3] =  0.0;
+        b[k+1][4] = -1.0;
+        b[k+1][5] =  P.get_y();
+
+        k += 2;
+      }
+
+    }
+    else { // plane cz=d or any other
+
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      {
+        P = *it ;
+        a[k][0]   = -P.get_oX();
+        a[k][1]   = 0.0;
+        a[k][2]   = P.get_oX()*P.get_x();
+
+        a[k+1][0] = 0.0;
+        a[k+1][1] = -P.get_oX();
+        a[k+1][2] = P.get_oX()*P.get_y();
+
+        b[k][0]   = -P.get_oY();
+        b[k][1]   = 0.0;
+        b[k][2]   = P.get_oY()*P.get_x();
+        b[k][3]   =  -1.0;
+        b[k][4]   =  0.0;
+        b[k][5]   =  P.get_x();
+
+        b[k+1][0] =  0.0;
+        b[k+1][1] = -P.get_oY();
+        b[k+1][2] =  P.get_oY()*P.get_y();
+        b[k+1][3] =  0.0;
+        b[k+1][4] = -1.0;
+        b[k+1][5] =  P.get_y();
+
+        k += 2;
+      }
     }
     vpColVector X1(3) ;
     vpColVector X2(6) ;
@@ -337,15 +414,43 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
       //    return err ;
     }
 
-    cMo[0][2] = (X1[1]*X2[2])-(X1[2]*X2[1]);
-    cMo[1][2] = (X1[2]*X2[0])-(X1[0]*X2[2]);
-    cMo[2][2] = (X1[0]*X2[1])-(X1[1]*X2[0]);
+    if (coplanar_plane_type == 1) { // plane ax=d
+      cMo[0][0] = (X1[1]*X2[2])-(X1[2]*X2[1]);
+      cMo[1][0] = (X1[2]*X2[0])-(X1[0]*X2[2]);
+      cMo[2][0] = (X1[0]*X2[1])-(X1[1]*X2[0]);
 
-    for (i=0;i<3;i++)
-    { /* calcul de la matrice de passage	*/
-      cMo[i][0] = X1[i];
-      cMo[i][1] = X2[i];
-      cMo[i][3] = X2[i+3];
+      for (i=0;i<3;i++)
+      { /* calcul de la matrice de passage	*/
+        cMo[i][1] = X1[i];
+        cMo[i][2] = X2[i];
+        cMo[i][3] = X2[i+3];
+      }
+
+    }
+    else if (coplanar_plane_type == 2) {  // plane by=d
+      cMo[0][1] = (X1[1]*X2[2])-(X1[2]*X2[1]);
+      cMo[1][1] = (X1[2]*X2[0])-(X1[0]*X2[2]);
+      cMo[2][1] = (X1[0]*X2[1])-(X1[1]*X2[0]);
+
+      for (i=0;i<3;i++)
+      { /* calcul de la matrice de passage	*/
+        cMo[i][0] = X1[i];
+        cMo[i][2] = X2[i];
+        cMo[i][3] = X2[i+3];
+      }
+    }
+    else { // plane cz=d or any other
+
+      cMo[0][2] = (X1[1]*X2[2])-(X1[2]*X2[1]);
+      cMo[1][2] = (X1[2]*X2[0])-(X1[0]*X2[2]);
+      cMo[2][2] = (X1[0]*X2[1])-(X1[1]*X2[0]);
+
+      for (i=0;i<3;i++)
+      { /* calcul de la matrice de passage	*/
+        cMo[i][0] = X1[i];
+        cMo[i][1] = X2[i];
+        cMo[i][3] = X2[i+3];
+      }
     }
   }
   catch(...)
