@@ -388,7 +388,13 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
 
     if (s<1e-10)
     {
-      vpERROR_TRACE( "in vpCalculPose::PosePlan(...) division par zero ") ;
+      std::cout << "Points that produce an error: " << std::endl;
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+      {
+        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() << " "
+                  << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oZ() << std::endl;
+      }
+      vpERROR_TRACE( "division par zero ") ;
       throw(vpException(vpException::divideByZeroError,
         "division by zero  ")) ;
     }
