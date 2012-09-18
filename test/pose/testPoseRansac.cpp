@@ -71,15 +71,15 @@ main()
     P[2].setWorldCoordinates(L,L, 0 ) ;
     P[3].setWorldCoordinates(-L,L, 0 ) ;
     
-    double L2 = L*2.0;
-    P[4].setWorldCoordinates(-L2,-L2, 0 ) ;
-    P[5].setWorldCoordinates(L2,-L2, 0 ) ;
-    P[6].setWorldCoordinates(L2,L2, 0 ) ;
-    P[7].setWorldCoordinates(-L2,L2, 0 ) ;
+    double L2 = L*3.0;
+    P[4].setWorldCoordinates(0,-L2, 0 ) ;
+    P[5].setWorldCoordinates(L2,0, 0 ) ;
+    P[6].setWorldCoordinates(0,L2, 0 ) ;
+    P[7].setWorldCoordinates(-L2,0, 0 ) ;
     
-    //P[4].setWorldCoordinates(-0,0, L ) ; //ERREUR DANS LAGRANGE ET DEMENTHON
+    // P[4].setWorldCoordinates(-0,0, L ) ;
 
-    vpHomogeneousMatrix cMo_ref(0,0.2,1,0,0,0) ;
+    vpHomogeneousMatrix cMo_ref(0, 0.2, 1, 0, 0, 0) ;
     for(int i=0 ; i < size ; i++)
     {      
       P[i].project(cMo_ref) ;

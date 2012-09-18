@@ -121,6 +121,44 @@ bool getOptions(int argc, const char **argv)
   return true;
 }
 
+// print the resulting estimated pose
+void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend)
+{
+  vpPoseVector cpo = vpPoseVector(cMo);
+
+  std::cout << std::endl << legend << "\n "
+            << "tx  = " << cpo[0] << "\n "
+            << "ty  = " << cpo[1] << "\n "
+            << "tz  = " << cpo[2] << "\n "
+            << "tux = vpMath::rad(" << vpMath::deg(cpo[3]) << ")\n "
+            << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
+            << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
+            << std::endl;
+}
+
+// test if pose is well estimated
+int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const std::string &legend)
+{
+  vpPoseVector pose_ref = vpPoseVector(cMo_ref);
+  vpPoseVector pose_est = vpPoseVector(cMo_est);
+
+  int fail = 0;
+
+  // Test done on the 3D pose
+  for(int i=0; i<6; i++) {
+    if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+      fail = 1;
+  }
+  std::cout << "Based on 3D parameters " << legend << " is " << (fail ? "badly" : "well") << " estimated" << std::endl;
+
+  // Test done on the residual
+  double r = pose.computeResidual(cMo_est);
+  r = sqrt(r)/pose.listP.size();
+  //std::cout << "Residual on each point (meter): " << r << std::endl;
+  fail = (r > 0.1) ? 1 : 0;
+  std::cout << "Based on 2D residual (" << r << ") " << legend << " is " << (fail ? "badly" : "well") << " estimated" << std::endl;
+  return fail;
+}
 
 int
 main(int argc, const char ** argv)
@@ -130,207 +168,92 @@ main(int argc, const char ** argv)
     exit (-1);
   }
 
-
-  vpPoint P[4]  ;  //  Point to be tracked
+  vpPoint P[5]  ;  //  Point to be tracked
   vpPose pose ;
   pose.clearPoint() ;
-
 
   P[0].setWorldCoordinates(-L,-L, 0 ) ;
   P[1].setWorldCoordinates(L,-L, 0 ) ;
   P[2].setWorldCoordinates(L,L, 0 ) ;
-  P[3].setWorldCoordinates(-L,L, 0 ) ;
+  P[3].setWorldCoordinates(-2*L, 3*L, 0 ) ;
+  P[4].setWorldCoordinates(-L,L, 0.01 ) ;
+  //P[3].setWorldCoordinates(-L,L, 0 ) ;
 
-  vpRotationMatrix cRo;
-  vpTranslationVector cto;
-  vpRxyzVector cro;
-  vpHomogeneousMatrix cMo_ref(0.1,0.2,1,vpMath::rad(10),0,vpMath::rad(10)) ;
-  int i ;
-  for(i=0 ; i < 4 ; i++)
+  int test_fail = 0, fail = 0;
+  vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0,vpMath::rad(10));
+  vpHomogeneousMatrix cMo_ref(cpo_ref) ;
+  vpHomogeneousMatrix cMo ; // will contain the estimated pose
+
+  for(int i=0 ; i < 5 ; i++) {
     P[i].project(cMo_ref) ;
-
-
-  for (i=0 ; i < 4 ; i++)
-  {
+    //P[i].print();
     pose.addPoint(P[i]) ; // and added to the pose computation class
   }
 
   // Let's go ...
-  vpHomogeneousMatrix cMo ;
+  print_pose(cMo_ref, std::string("Reference pose"));  // print the reference pose
 
   std::cout <<"-------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::LAGRANGE, cMo) ;
-  vpTRACE("LAGRANGE pose : ") ;
-  std::cout << cMo << std::endl ;
-  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo) <<std::endl ;
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  double residual = pose.computeResidual(cMo);
 
-  std::cout << "\nPose Lagrange "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
-
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LOWE, cMo) ;
-  vpTRACE( "LOWE pose :" ) ;
-  std::cout <<  cMo << std::endl ;
-  std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
-
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
-
-  std::cout << "\nPose Lowe "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
+  print_pose(cMo, std::string("Pose estimated by Lagrange"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
+  test_fail |= fail;
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::DEMENTHON, cMo) ;
-  vpTRACE(  "DEMENTHON pose :" ) ;
-  std::cout <<  cMo << std::endl ;
-  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
-            << std::endl ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
-
-  std::cout << "\nPose Dementhon "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
+  print_pose(cMo, std::string("Pose estimated by Dementhon"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
+  test_fail |= fail;
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LOWE, cMo) ;
-  std::cout << "Lowe residual term: " <<pose.computeResidual(cMo) <<std::endl ;
-  //  vpTRACE(  "Pose LOWE"  ) ;
-  //  std::cout <<  cMo << std::endl ;
-  //  std::cout << "residu Lowe " << pose.computeResidual(cMo) <<std::endl ;
+  pose.setRansacNbInliersToReachConsensus(4);
+  pose.setRansacThreshold(0.01);
+  pose.computePose(vpPose::RANSAC, cMo) ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
-
-  std::cout << "\nPose lowe "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
-
-  std::cout <<std::endl << std::endl ;
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  std::cout << "Virtual Visual servoing " << std::endl ;
+  print_pose(cMo, std::string("Pose estimated by Ransac"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
+  test_fail |= fail;
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LAGRANGE, cMo) ;
-  vpTRACE("LAGRANGE pose : ") ;
-  std::cout << cMo << std::endl ;
-  std::cout << "Lagrange residual term: " << pose.computeResidual(cMo)
-            <<std::endl ;
+  pose.computePose(vpPose::LAGRANGE_LOWE, cMo) ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
+  print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
+  test_fail |= fail;
 
-  std::cout << "\nPose Lagrange "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
+  std::cout <<"--------------------------------------------------"<<std::endl ;
+  pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
 
+  print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
+  test_fail |= fail;
+
+  // Now Virtual Visual servoing
 
   std::cout <<"--------------------------------------------------"<<std::endl ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-  vpTRACE( "VIRTUAL_VS pose :" ) ;
-  std::cout <<  cMo << std::endl ;
-  std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
-
-  std::cout << "\nPose VVS "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
+  print_pose(cMo, std::string("Pose estimated by VVS"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
+  test_fail |= fail;
 
   std::cout <<"-------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::DEMENTHON, cMo) ;
-  vpTRACE(  "DEMENTHON pose :" ) ;
-  std::cout <<  cMo << std::endl ;
-  std::cout << "Dementhon residual term: " << pose.computeResidual(cMo)
-            <<std::endl ;
+  pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo) ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
-
-  std::cout << "\nPose Dementhon "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
+  print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
+  test_fail |= fail;
 
   std::cout <<"-------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-  std::cout << "vvs residual term: " <<pose.computeResidual(cMo) <<std::endl ;
+  pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo) ;
 
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  residual = pose.computeResidual(cMo);
+  print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
+  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
+  test_fail |= fail;
 
-  std::cout << "\nPose VVS "
-            << "(residual: " << residual << ")\n "
-            << "cdto[0] = " << cto[0] << ";\n "
-            << "cdto[1] = " << cto[1] << ";\n "
-            << "cdto[2] = " << cto[2] << ";\n "
-            << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-            << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-            << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-            << std::endl;
-  return 0;
+  std::cout << "\nGlobal pose estimation test " << (test_fail ? "fail" : "is ok") << std::endl;
+
+  return test_fail;
 }

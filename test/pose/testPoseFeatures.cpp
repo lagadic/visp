@@ -87,10 +87,11 @@ int main()
 {
   vpImage<unsigned char> I(600,600);
   
-  vpHomogeneousMatrix cMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(60));
-  
-  std::cout << "cMo used for the projection : " << std::endl;
-  std::cout << vpPoseVector(cMo).t() << std::endl;
+  vpHomogeneousMatrix cMo_ref(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(60));
+  vpPoseVector pose_ref = vpPoseVector(cMo_ref);
+
+  std::cout << "Reference pose used to create the visual features : " << std::endl;
+  std::cout << pose_ref.t() << std::endl;
   
   vpPoseFeatures pose;
   
@@ -129,21 +130,21 @@ int main()
   vpCircle circle;
   circle.setWorldCoordinates(0.0, 0.0, 1.0 , 0.0, 0.0, 0.0, 0.25);
   
-  pts[0].project(cMo);
-  pts[1].project(cMo);
-  pts[2].project(cMo);
+  pts[0].project(cMo_ref);
+  pts[1].project(cMo_ref);
+  pts[2].project(cMo_ref);
   
-  pts[3].project(cMo);
-  pts[4].project(cMo);
+  pts[3].project(cMo_ref);
+  pts[4].project(cMo_ref);
   
-  pts[5].project(cMo);
+  pts[5].project(cMo_ref);
   
-  line.project(cMo);
+  line.project(cMo_ref);
   
-  l1.project(cMo);
-  l2.project(cMo);
+  l1.project(cMo_ref);
+  l2.project(cMo_ref);
   
-  circle.project(cMo);
+  circle.project(cMo_ref);
   
   pose.addFeaturePoint(pts[0]);
 //   pose.addFeaturePoint(pts[1]);
@@ -176,17 +177,20 @@ int main()
   pose.setVVSIterMax(200);
   pose.setCovarianceComputation(true);
   
-  vpHomogeneousMatrix cMo2(0.4, 0.3, 1.5, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
-  std::cout << "cMo used as initialisation of the pose computation : " << std::endl;
-  std::cout << vpPoseVector(cMo2).t() << std::endl;
+  vpHomogeneousMatrix cMo_est(0.4, 0.3, 1.5, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+  vpPoseVector pose_est = vpPoseVector(cMo_est);
+  std::cout << "\nPose used as initialisation of the pose computation : " << std::endl;
+  std::cout << pose_est.t() << std::endl;
   
-  pose.computePose(cMo2);
-//   pose.computePose(cMo2, vpPoseFeatures::ROBUST_VIRTUAL_VS);
+  pose.computePose(cMo_est);
+//   pose.computePose(cMo_est, vpPoseFeatures::ROBUST_VIRTUAL_VS);
   
-  std::cout << "Resulting cMo : " << std::endl;
-  std::cout << vpPoseVector(cMo2).t() << std::endl;
+
+  std::cout << "\nEstimated pose from visual features : " << std::endl;
+  pose_est.buildFrom(cMo_est);
+  std::cout << pose_est.t() << std::endl;
   
-  std::cout << "Resulting covariance (Diag): " << std::endl;
+  std::cout << "\nResulting covariance (Diag): " << std::endl;
   vpMatrix covariance = pose.getCovarianceMatrix();
   std::cout << covariance[0][0] << " " 
             << covariance[1][1] << " " 
@@ -195,17 +199,13 @@ int main()
             << covariance[4][4] << " "
             << covariance[5][5] << " " << std::endl;
   
-  int result = 0; // Ok
-  for(unsigned int i = 0 ; i < 6 ; i++){
-    if(fabs(vpPoseVector(cMo2)[i] - vpPoseVector(cMo)[i]) > 1e-4){
-      std::cout << "Bad pose estimation" << std::endl;
-      result = -1;
-      break;
-    }
+  int test_fail = 0;
+  for(int i=0; i<6; i++) {
+    if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+      test_fail = 1;
   }
-  
-  if (result == 0)
-    std::cout << "Pose well estimed" << std::endl;
-  
-  return result;
+
+  std::cout << "\nPose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
+
+  return test_fail;
 }
