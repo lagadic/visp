@@ -151,10 +151,8 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
           }
 
           if(!degenerate){
-
             nbInliersCur++;
             cur_consensus.push_back(iter);
-            cur_randoms.push_back(r);
           }
           else {
             cur_outliers.push_back(iter);
