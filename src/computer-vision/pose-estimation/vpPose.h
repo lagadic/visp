@@ -116,7 +116,7 @@ private:
   double ransacThreshold;
 
 protected:
-  double computeResidualDementhon(vpHomogeneousMatrix &cMo) ;
+  double computeResidualDementhon(const vpHomogeneousMatrix &cMo) ;
 
   // method used in poseDementhonPlan()
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo) ;
@@ -135,9 +135,7 @@ public:
   void computePose(vpPoseMethodType methode, vpHomogeneousMatrix &cMo) ;
   //! compute the residual (i.e., the quality of the result)
   //! compute the residual (in meter for pose M)
-  double computeResidual(vpHomogeneousMatrix &cMo) ;
-  //! compute the residual (in meter)
-  double computeResidual() ;
+  double computeResidual(const vpHomogeneousMatrix &cMo) const ;
   //! test the coplanarity of the points
   bool coplanar(int &coplanar_plane_type) ;
   void displayModel(vpImage<unsigned char> &I,
@@ -231,7 +229,7 @@ private:
 public:
   static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
   
-  static double computeResidual(vpColVector &x,  vpColVector &M, vpColVector &d) ;
+  static double computeResidual(const vpColVector &x,  const vpColVector &M, vpColVector &d) ;
   
   static bool degenerateConfiguration(vpColVector &x, unsigned int *ind) ;
   

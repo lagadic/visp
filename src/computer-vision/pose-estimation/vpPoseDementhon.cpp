@@ -736,7 +736,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
 \return the value of he residual in meter
 */
-double vpPose::computeResidualDementhon(vpHomogeneousMatrix &cMo)
+double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
   unsigned int i ;
   double residual = 0 ;

@@ -83,6 +83,8 @@ vpPose::init()
   computeCovariance = false;
   
   ransacMaxTrials = 1000;
+  ransacThreshold = 0.0001;
+  ransacNbInlierConsensus = 4;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::Init() " << std::endl ;
@@ -268,7 +270,7 @@ the pose matrix 'cMo'.
 
 */
 double
-vpPose::computeResidual(vpHomogeneousMatrix &cMo)
+vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
 
   double residual = 0 ;
