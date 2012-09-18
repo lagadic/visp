@@ -97,7 +97,7 @@ main()
       pose.addPoint(P[i]);
     
     unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)size / 100.0);
-    double threshold = 0.01;
+    double threshold = 0.001;
     
     pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
     pose.setRansacThreshold(threshold);
@@ -115,7 +115,20 @@ main()
       std::cout << std::endl;
     }
 
-    std::cout << "cMo :\n" << vpPoseVector(cMo).t() << std::endl << std::endl;
+    vpPoseVector pose_ref = vpPoseVector(cMo_ref);
+    vpPoseVector pose_est = vpPoseVector(cMo);
 
+    std::cout << std::endl;
+    std::cout << "reference cMo :\n" << pose_ref.t() << std::endl << std::endl;
+    std::cout << "estimated cMo :\n" << pose_est.t() << std::endl << std::endl;
+
+    int test_fail = 0;
+    for(int i=0; i<6; i++) {
+      if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+        test_fail = 1;
+    }
+
+    std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
     delete [] P;
+    return test_fail;
 }
