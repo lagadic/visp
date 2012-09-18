@@ -344,8 +344,8 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
 
       // test si les point 3D sont coplanaires
       int coplanar_plane_type = 0;
-      int plan = coplanar(coplanar_plane_type) ;
-      if (plan == 1)
+      bool plan = coplanar(coplanar_plane_type) ;
+      if (plan == true)
       {
         //std::cout << "Plan" << std::endl;
         try{
@@ -379,9 +379,9 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
     {
       // test si les point 3D sont coplanaires
       int coplanar_plane_type;
-      int  plan = coplanar(coplanar_plane_type) ;
+      bool plan = coplanar(coplanar_plane_type) ;
 
-      if (plan == 1)
+      if (plan == true && coplanar_plane_type > 0) // only plane oX=d, oY=d or oZ=d
       {
 
         if (npt <4)
