@@ -265,14 +265,6 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
     vpPoint P ;
     i=0 ;
 
-
-    {
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
-      {
-        std::cout << "P: " << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oY() << std::endl;
-      }
-
-    }
     if (coplanar_plane_type == 1) { // plane ax=d
       for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       {
