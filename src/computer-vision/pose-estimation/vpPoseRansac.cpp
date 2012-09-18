@@ -77,7 +77,10 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
   int nbTrials = 0;
   unsigned int nbMinRandom = 4 ;
   unsigned int nbInliers = 0;
-  
+
+  vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
+  double r, r_lagrange, r_dementhon;
+
   bool foundSolution = false;
   
   while (nbTrials < ransacMaxTrials && nbInliers < (unsigned)ransacNbInlierConsensus)
@@ -114,10 +117,20 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       else
         i--;
     }
-    
-    poseMin.computePose(vpPose::DEMENTHON,cMo) ;
-    double r = poseMin.computeResidual(cMo) ;
 
+    poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
+    r_lagrange = poseMin.computeResidual(cMo_lagrange) ;
+    poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
+    r_dementhon = poseMin.computeResidual(cMo_dementhon) ;
+
+    if (r_lagrange < r_dementhon) {
+      r = r_lagrange;
+      cMo = cMo_lagrange;
+    }
+    else {
+      r = r_dementhon;
+      cMo = cMo_dementhon;
+    }
     r = sqrt(r)/(double)nbMinRandom;
 
     if (r < ransacThreshold)
@@ -213,7 +226,19 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
         ransacInliers.push_back(pt);
       }
         
-      pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS,cMo) ;
+      pose.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
+      r_lagrange = pose.computeResidual(cMo_lagrange) ;
+      pose.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
+      r_dementhon = pose.computeResidual(cMo_dementhon) ;
+
+      if (r_lagrange < r_dementhon) {
+        cMo = cMo_lagrange;
+      }
+      else {
+        cMo = cMo_dementhon;
+      }
+
+      pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
     }
   }
 }
@@ -371,7 +396,7 @@ vpPose::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 */
 
 double
-vpPose::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
+vpPose::computeResidual(const vpColVector &x, const vpColVector &M, vpColVector &d)
 {
 
   unsigned int i ;
