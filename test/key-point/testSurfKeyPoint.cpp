@@ -322,7 +322,7 @@ main(int argc, const char ** argv)
 
   unsigned int nbrPair;
   if (opt_display) {
-    display[1].init(Icur, 100+Iref.getWidth(), 100, "Current image") ;
+    display[1].init(Icur, (int)(100+Iref.getWidth()), 100, "Current image") ;
     // display variable.
     vpDisplay::display(Icur) ;
     //Flush the display

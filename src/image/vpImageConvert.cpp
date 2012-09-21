@@ -1113,7 +1113,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *sr
   \param quality : purcentage of the quality of the compressed image.
 */
 void vpImageConvert::convertToJPEGBuffer(const vpImage<unsigned char> &src, 
-                                  unsigned char **dest, long unsigned int &destSize, unsigned int quality)
+                                         unsigned char **dest, long unsigned int &destSize, int quality)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1164,7 +1164,7 @@ void vpImageConvert::convertToJPEGBuffer(const vpImage<unsigned char> &src,
   \param dest : Destination image in ViSP format.
 */
 void vpImageConvert::convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
-                                  vpImage<unsigned char> &dest)
+                                         vpImage<unsigned char> &dest)
 {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;

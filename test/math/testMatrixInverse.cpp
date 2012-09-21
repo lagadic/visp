@@ -124,7 +124,10 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, int& nb_matrices,int& nb_iterations,bool& use_plot_file,std::string& plotfile,int& nbrows,int& nbcols,bool& verbose)
+bool getOptions(int argc, const char **argv,
+                unsigned int& nb_matrices, unsigned int& nb_iterations,
+                bool& use_plot_file, std::string& plotfile,
+                unsigned int& nbrows, unsigned int& nbcols, bool& verbose)
 {
   const char *optarg;
   int	c;
@@ -133,10 +136,10 @@ bool getOptions(int argc, const char **argv, int& nb_matrices,int& nb_iterations
     switch (c) {
     case 'h': usage(argv[0], NULL); return false; break;
     case 'n':
-      nb_matrices = atoi(optarg);
+      nb_matrices = (unsigned int)atoi(optarg);
       break;
     case 'i':
-      nb_iterations = atoi(optarg);
+      nb_iterations = (unsigned int)atoi(optarg);
       break;
     case 'f':
       plotfile = optarg;
@@ -146,10 +149,10 @@ bool getOptions(int argc, const char **argv, int& nb_matrices,int& nb_iterations
       use_plot_file = true;
       break;
     case 'r':
-      nbrows = atoi(optarg);
+      nbrows = (unsigned int)atoi(optarg);
       break;
     case 'c':
-      nbcols = atoi(optarg);
+      nbcols = (unsigned int)atoi(optarg);
       break;
     case 'v':
       verbose = true;
@@ -192,10 +195,10 @@ int
 main(int argc, const char ** argv)
 {
 #ifdef VISP_HAVE_LAPACK
-  int nb_matrices=1000;
-  int nb_iterations=10;
-  int nb_rows = 6;
-  int nb_cols = 6;
+  unsigned int nb_matrices=1000;
+  unsigned int nb_iterations=10;
+  unsigned int nb_rows = 6;
+  unsigned int nb_cols = 6;
   bool verbose = false;
   std::string plotfile("plot.txt");
   bool use_plot_file=false;
@@ -211,14 +214,14 @@ main(int argc, const char ** argv)
     of.open(plotfile.c_str());
   }
 
-  for(int iter=0;iter<nb_iterations;iter++){
+  for(unsigned int iter=0;iter<nb_iterations;iter++){
     std::vector<vpMatrix> benchQR;
     std::vector<vpMatrix> benchLU;
     std::vector<vpMatrix> benchCholesky;
     std::vector<vpMatrix> benchPseudoInverse;
     if(verbose)
       std::cout << "********* generating matrices for iteration " << iter << "." << std::endl;
-    for(int i=0;i<nb_matrices;i++){
+    for(unsigned int i=0;i<nb_matrices;i++){
       vpMatrix cur;
       double det=0.;
       //don't put singular matrices in the benchmark
@@ -236,7 +239,7 @@ main(int argc, const char ** argv)
     if(verbose)
       std::cout << "\t Inverting " << benchCholesky[0].AtA().getRows() << "x" << benchCholesky[0].AtA().getCols() << " matrix using cholesky decomposition." << std::endl;
     t = vpTime::measureTimeMs() ;
-    for(int i=0;i<nb_matrices;i++){
+    for(unsigned int i=0;i<nb_matrices;i++){
       benchCholesky[i]=benchCholesky[i].AtA().inverseByCholesky()*benchCholesky[i].transpose();
     }
     chol_time = vpTime::measureTimeMs() - t ;
@@ -244,14 +247,14 @@ main(int argc, const char ** argv)
     if(verbose)
       std::cout << "\t Inverting " << benchLU[0].AtA().getRows() << "x" << benchLU[0].AtA().getCols() << " matrix using LU decomposition." << std::endl;
     t = vpTime::measureTimeMs() ;
-    for(int i=0;i<nb_matrices;i++)
+    for(unsigned int i=0;i<nb_matrices;i++)
       benchLU[i] = benchLU[i].AtA().inverseByLU()*benchLU[i].transpose();
     lu_time = vpTime::measureTimeMs() -t ;
 
     if(verbose)
       std::cout << "\t Inverting " << benchQR[0].AtA().getRows() << "x" << benchQR[0].AtA().getCols() << " matrix using QR decomposition." << std::endl;
     t = vpTime::measureTimeMs() ;
-    for(int i=0;i<nb_matrices;i++){
+    for(unsigned int i=0;i<nb_matrices;i++){
       benchQR[i]=benchQR[i].AtA().inverseByQR()*benchQR[i].transpose();
     }
     qr_time = vpTime::measureTimeMs() - t ;
@@ -259,7 +262,7 @@ main(int argc, const char ** argv)
     if(verbose)
       std::cout << "\t Inverting " << benchPseudoInverse[0].AtA().getRows() << "x" << benchPseudoInverse[0].AtA().getCols() << " matrix while computing pseudo-inverse." << std::endl;
     t = vpTime::measureTimeMs() ;
-    for(int i=0;i<nb_matrices;i++){
+    for(unsigned int i=0;i<nb_matrices;i++){
       benchPseudoInverse[i]=benchPseudoInverse[i].pseudoInverse();
     }
     pi_time = vpTime::measureTimeMs() - t ;
@@ -271,7 +274,7 @@ main(int argc, const char ** argv)
     double avg_err_qr_chol=0.;
     double avg_err_pi_chol=0.;
 
-    for(int i=0;i<nb_matrices;i++){
+    for(unsigned int i=0;i<nb_matrices;i++){
       avg_err_lu_qr+= (benchQR[i]-benchLU[i]).euclideanNorm();
       avg_err_lu_pi+= (benchPseudoInverse[i]-benchLU[i]).euclideanNorm();
       avg_err_qr_pi+= (benchPseudoInverse[i]-benchQR[i]).euclideanNorm();

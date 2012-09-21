@@ -274,8 +274,9 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 			  //! Compute metric coordinates in the ir camera Frame :
 			  vpPixelMeterConversion::convertPoint(IRcam, j, i, x1, y1);
 			  Z1 = Idepth[i][j];
-			  if (Z1!=-1){
-				  P1[0]=x1*Z1;
+              //if (Z1!=-1){
+              if (std::fabs(Z1+1) <= std::numeric_limits<double>::epsilon()){
+                  P1[0]=x1*Z1;
 				  P1[1]=y1*Z1;
 				  P1[2]=Z1;
 				  P1[3]=1;
@@ -283,8 +284,9 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 				  //! Change frame :
 				  P2 = rgbMir*P1;
 				  Z2 = P2[2];
-				  if (Z2!= 0){
-					  x2 = P2[0]/P2[2];
+                  //if (Z2!= 0){
+                  if (std::fabs(Z2) > std::numeric_limits<double>::epsilon()){
+                      x2 = P2[0]/P2[2];
 					  y2 = P2[1]/P2[2];
 				  }
 				  else

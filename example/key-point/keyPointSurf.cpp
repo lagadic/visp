@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
   if (opt_display) {
     try{
       // Display size is automatically defined by the image (I) size
-      display[1].init(Icur, 100+Iref.getWidth(), 100,"Display current image") ;
+      display[1].init(Icur, (int)(100+Iref.getWidth()), 100,"Display current image") ;
       vpDisplay::display(Icur) ;
       vpDisplay::flush(Icur) ;
     }
