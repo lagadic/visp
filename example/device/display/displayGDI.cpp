@@ -125,6 +125,9 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n",
 	  ipath.c_str(), opath.c_str(), user.c_str());
 
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+
 }
 
 /*!
