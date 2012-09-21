@@ -177,7 +177,7 @@ void writeTime(const char *name, double time){
 
 
 
-vpMatrix makeRandomMatrix(int nbrows,int nbcols){
+vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols){
   vpMatrix A;
   A.resize(nbrows,nbcols);
 

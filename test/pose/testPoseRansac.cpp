@@ -123,7 +123,7 @@ main()
     std::cout << "estimated cMo :\n" << pose_est.t() << std::endl << std::endl;
 
     int test_fail = 0;
-    for(int i=0; i<6; i++) {
+    for(unsigned int i=0; i<6; i++) {
       if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
         test_fail = 1;
     }

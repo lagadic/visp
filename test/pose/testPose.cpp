@@ -145,7 +145,7 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
   int fail = 0;
 
   // Test done on the 3D pose
-  for(int i=0; i<6; i++) {
+  for(unsigned int i=0; i<6; i++) {
     if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
       fail = 1;
   }
