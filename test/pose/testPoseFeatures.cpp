@@ -60,6 +60,7 @@
 
 */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 class vp_createPointClass{
 public:
@@ -81,6 +82,7 @@ void vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
 void vp_createLine(vpFeatureLine &fp,const vpLine &v){
   vpFeatureBuilder::create(fp,v);
 }
+#endif
 #endif
 
 int main()
