@@ -389,19 +389,18 @@ protected:
   //! solve AX = B using the LU Decomposition
   void LUBksb(unsigned int* perm, vpColVector& b);
 
-  //lapack implementation of inverse by Cholesky
-  vpMatrix inverseByCholeskyLapack() const;
-
-  //lapack implementation of inverse by QR
-  vpMatrix inverseByQRLapack() const;
 #endif // doxygen should skip this
   // inverse matrix A using the LU decomposition 
   vpMatrix inverseByLU() const;
 #if defined(VISP_HAVE_LAPACK)
   // inverse matrix A using the Cholesky decomposition (only for real symmetric matrices)
   vpMatrix inverseByCholesky() const;
+  //lapack implementation of inverse by Cholesky
+  vpMatrix inverseByCholeskyLapack() const;
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
+  //lapack implementation of inverse by QR
+  vpMatrix inverseByQRLapack() const;
 #endif
   //! Compute the pseudo inverse of the matrix using the SVD.
   vpMatrix pseudoInverse(double svThreshold=1e-6)  const;

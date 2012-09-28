@@ -237,8 +237,10 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 //#undef EPS
 
 /*!
-\brief  Compute the pose using Lagrange approach.
-\param coplanar_plane_type:
+\brief  Compute the pose of a planar object using Lagrange approach.
+
+\param cMo : Estimated pose. No initialisation is requested to estimate cMo.
+\param coplanar_plane_type : Type of coplanar plane:
    1: if plane x=cst
    2: if plane y=cst
    3: if plane z=cst
