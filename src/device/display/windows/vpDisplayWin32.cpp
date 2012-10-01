@@ -710,8 +710,13 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, const unsigned int 
   hr2.right_bottom = (unsigned short)(iP.get_v()+height-1);
 
   //sends a message to the window
+#  if 1 // new version FS
+  WPARAM wp = (hr1.left_top << sizeof(unsigned short)) + hr1.right_bottom;
+  LPARAM lp = (hr2.left_top << sizeof(unsigned short)) + hr2.right_bottom;
+#  else // produce warnings with MinGW
   WPARAM wp=*((WPARAM*)(&hr1));
   LPARAM lp=*((WPARAM*)(&hr2));
+#  endif
   PostMessage(window.getHWnd(), vpWM_DISPLAY_ROI, wp,lp);
 #else
   PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
