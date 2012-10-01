@@ -89,10 +89,10 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   // gets the image's height.
   unsigned int getImageHeight(){ return nbRows; }
 
-  void setImg(const vpImage<vpRGBa>& im);
-  void setImg(const vpImage<unsigned char>& im);
-  void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
-  void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
+  void setImg(const vpImage<vpRGBa>& I);
+  void setImg(const vpImage<unsigned char>& I);
+  void setImgROI(const vpImage<vpRGBa>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
+  void setImgROI(const vpImage<unsigned char>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
@@ -128,7 +128,7 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 		    unsigned int w, unsigned int h);
   //updates the renderer hbitmaps.
-  bool updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint &iP,
+  bool updateBitmapROI(unsigned char * imBuffer, const vpImagePoint &iP,
 		    unsigned int w, unsigned int h);
 
 
@@ -139,10 +139,10 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
   void convert(const vpImage<unsigned char> &I, HBITMAP& hBmp);
 
   //converts a vpImage<vpRGBa> into a HBITMAP .
-  void convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   //converst a vpImage<unsigned char> into a HBITMAP .
-  void convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
 };
 #endif

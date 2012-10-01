@@ -659,7 +659,7 @@ void vpDisplayWin32::setTitle(const char *windowtitle)
   \param fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const char *fontname)
+void vpDisplayWin32::setFont(const char * /* fontname */)
 {
 	vpERROR_TRACE("Not yet implemented" ) ;
 }

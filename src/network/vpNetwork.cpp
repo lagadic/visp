@@ -555,7 +555,7 @@ int vpNetwork::_handleFirstRequest()
   
 //   std::cout << "Handling : " << currentMessageReceived.substr(indStart, indEnd+end.size() - indStart) << std::endl;
    
-  int indRequest;
+  int indRequest = 0;
   bool hasBeenFound = false;
   for(unsigned int i = 0 ; i < request_list.size() ; i++)
   {

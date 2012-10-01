@@ -141,54 +141,58 @@ bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 
 /*!
   Sets the image to display.
-  \param im The rgba image to display.
+  \param I : The rgba image to display.
 */
-void vpGDIRenderer::setImg(const vpImage<vpRGBa>& im)
+void vpGDIRenderer::setImg(const vpImage<vpRGBa>& I)
 {
   //converts the image into a HBITMAP
-  convert(im, bmp);
+  convert(I, bmp);
   //updates the size of the image
-  nbCols=im.getWidth();
-  nbRows=im.getHeight();
+  nbCols=I.getWidth();
+  nbRows=I.getHeight();
 }
 
 /*!
   Sets the image to display.
-  \param im The rgba image to display.
+  \param I : The rgba image to display.
+  \param iP : Top left coordinates of the ROI.
+  \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   //converts the image into a HBITMAP
-  convertROI(im, bmp, iP, width, height);
+  convertROI(I, iP, width, height);
   //updates the size of the image
-  nbCols=im.getWidth();
-  nbRows=im.getHeight();
+  nbCols=I.getWidth();
+  nbRows=I.getHeight();
 }
 
 /*!
   Sets the image to display.
-  \param im The grayscale image to display.
+  \param I : The grayscale image to display.
 */
-void vpGDIRenderer::setImg(const vpImage<unsigned char>& im)
+void vpGDIRenderer::setImg(const vpImage<unsigned char>& I)
 {
   //converts the image into a HBITMAP
-  convert(im, bmp);
+  convert(I, bmp);
   //updates the size of the image
-  nbCols=im.getWidth();
-  nbRows=im.getHeight();
+  nbCols=I.getWidth();
+  nbRows=I.getHeight();
 }
 
 /*!
   Sets the image to display.
-  \param im The rgba image to display.
+  \param I : The rgba image to display.
+  \param iP : Top left coordinates of the ROI.
+  \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height )
 {
   //converts the image into a HBITMAP
-  convertROI(im, bmp, iP, width, height);
+  convertROI(I, iP, width, height);
   //updates the size of the image
-  nbCols=im.getWidth();
-  nbRows=im.getHeight();
+  nbCols=I.getWidth();
+  nbRows=I.getHeight();
 }
 
 /*!
@@ -293,10 +297,11 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
 
 /*!
   Converts the image form ViSP in GDI's image format (bgra with padding).
-  \param I The image to convert.
-  \param hBmp The destination image.
+  \param I : The image to convert.
+  \param iP : Top left coordinates of the ROI.
+  \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   //get the image's width and height
   unsigned int w = width;
@@ -372,7 +377,7 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, HBITMAP& hBmp, const vp
   }
 
   //updates the bitmap's pixel data
-  updateBitmapROI(hBmp,imBuffer,iP, newW, h);
+  updateBitmapROI(imBuffer,iP, newW, h);
 
   //we don't need this buffer anymore
   delete [] imBuffer;
@@ -450,9 +455,10 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
 /*!
   Converts the image form ViSP in GDI's image format (bgra with padding).
   \param I The image to convert.
-  \param hBmp The destination image.
+  \param iP : Top left coordinates of the ROI.
+  \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height)
 {
   //get the image's width and height
   unsigned int w = width;
@@ -528,7 +534,7 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, HBITMAP& hBmp, c
   }
 
   //updates the bitmap's pixel data
-  updateBitmapROI(hBmp,imBuffer,iP, newW, h);
+  updateBitmapROI(imBuffer,iP, newW, h);
 
   //we don't need this buffer anymore
   delete [] imBuffer;
@@ -578,7 +584,6 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 /*!
   Updates the bitmap to display.
   Contains a critical section.
-  \param hBmp The bitmap to update
   \param imBuffer The new pixel data
   \param iP The topleft corner of the roi 
   \param w The roi's width
@@ -586,7 +591,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
 
   \return the operation succefulness
 */
-bool vpGDIRenderer::updateBitmapROI(HBITMAP& hBmp, unsigned char * imBuffer, const vpImagePoint &iP,
+bool vpGDIRenderer::updateBitmapROI(unsigned char * imBuffer, const vpImagePoint &iP,
 				 unsigned int w, unsigned int h)
 {
   int w_ = static_cast<int>(w);
@@ -659,8 +664,8 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
 			     const vpColor &color,
 			     unsigned int thickness, int style)
 {
-HDC hDCScreen,hDCMem;
-HPEN hPen;
+  HDC hDCScreen= NULL, hDCMem = NULL;
+  HPEN hPen = NULL;
 #ifdef GDI_ROBUST
   double start = vpTime::measureTimeMs();  
   while(vpTime::measureTimeMs()-start<1000){
@@ -719,7 +724,6 @@ HPEN hPen;
   hDCMem = CreateCompatibleDC(hDCScreen);
 
   //create the pen
-  hPen;
   if (color.id < vpColor::id_unknown)
     hPen = CreatePen(style, static_cast<int>(thickness), colors[color.id]);
   else {

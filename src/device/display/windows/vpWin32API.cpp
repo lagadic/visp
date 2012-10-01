@@ -94,7 +94,7 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
   
   HGDIOBJ ret = SelectObject(hDCMem,h);  
   if(ret==NULL){
-    DWORD err = vpProcessErrors("SelectObject");
+    vpProcessErrors("SelectObject");
         
     double ms = vpTime::measureTimeMs();
 
@@ -102,8 +102,6 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
       DeleteObject(h);
       DeleteDC(hDCMem);
       ReleaseDC(hWnd, hDC);
-
-
     }
   }    
 }
