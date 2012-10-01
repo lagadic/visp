@@ -358,7 +358,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
   vpDisplay::flush(_I) ;
 
 	vpPose pose ;
-	vpPoint *P = new vpPoint [points3D_list.size()]  ;
+  vpPoint *P = NULL; P = new vpPoint [points3D_list.size()]  ;
 	for (unsigned int i=0 ; i < points3D_list.size() ; i++)
 		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ; 
   
