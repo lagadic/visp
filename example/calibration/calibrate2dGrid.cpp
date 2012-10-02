@@ -1061,7 +1061,7 @@ int main(int argc, const char ** argv)
   vpXmlParserCamera xml;
   
   if(resultCalib == 0){
-    int resultSaving = xml.save(cam2,"calibrate2dGrid.xml","Camera",px,py);
+    int resultSaving = xml.save(cam2, "calibrate2dGrid.xml", "Camera", I.getWidth(), I.getHeight());
     if(resultSaving == vpXmlParserCamera::SEQUENCE_OK)
       std::cout << "Camera parameters without distortion successfully saved in calibrate2dGrid.xml" << std::endl;
     else
@@ -1069,7 +1069,8 @@ int main(int argc, const char ** argv)
   }
   
   if(resultCalibDist == 0){
-    int resultSavingDist =  xml.save(cam,"calibrate2dGrid.xml","Camera",px,py);
+    int resultSavingDist =  xml.save(cam, "calibrate2dGrid.xml", "Camera", I.getWidth(), I.getHeight());
+
     
     if(resultSavingDist == vpXmlParserCamera::SEQUENCE_OK )
       std::cout << "Camera parameters with distortion successfully saved in calibrate2dGrid.xml" << std::endl;
