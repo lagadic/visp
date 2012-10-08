@@ -23,6 +23,7 @@ Robots
   Biclops                     : ${VISP_HAVE_BICLOPS_FOUND}
   Ptu46                       : ${VISP_HAVE_PTU46_FOUND}
   Pioneer                     : ${VISP_HAVE_PIONEER_FOUND}
+  Viper S650                  : ${VISP_HAVE_VIPER650_FOUND}
   Viper S850                  : ${VISP_HAVE_VIPER850_FOUND}
   Cycab                       : ${VISP_HAVE_CYCAB_FOUND}
 Video devices (display)                  

@@ -8,6 +8,8 @@
 
 ViSP 2.6.3 (under development)
   - New features
+    - New vpViper650 and vpRobotViper650 classes to interface Inria's new 
+      Adept Viper s650 robot.
   - Improvements
     - MinGW is now supported but since MinGW currently doesn't support tls
       __declspec(thread) with vpDisplayGDI it is possible to open only

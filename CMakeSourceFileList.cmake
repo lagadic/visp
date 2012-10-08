@@ -183,6 +183,7 @@ SET (SRC_ROBOT
   robot/real-robot/biclops/vpBiclops.cpp
   robot/real-robot/ptu46/vpPtu46.cpp
   robot/real-robot/viper/vpViper.cpp
+  robot/real-robot/viper/vpViper650.cpp
   robot/real-robot/viper/vpViper850.cpp
   robot/simulator-robot/vpRobotCamera.cpp
   )
@@ -214,6 +215,9 @@ IF(VISP_HAVE_PTU46)
 ENDIF()
 IF(VISP_HAVE_PIONEER)
   LIST(APPEND SRC_ROBOT robot/real-robot/pioneer/vpRobotPioneer.cpp)
+ENDIF()
+IF(VISP_HAVE_VIPER650)
+  LIST(APPEND SRC_ROBOT robot/real-robot/viper/vpRobotViper650.cpp)
 ENDIF()
 IF(VISP_HAVE_VIPER850)
   LIST(APPEND SRC_ROBOT robot/real-robot/viper/vpRobotViper850.cpp)

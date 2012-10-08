@@ -233,6 +233,9 @@
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
 
+// Defined if Irisa's Viper S650 robot available.
+#cmakedefine VISP_HAVE_VIPER650
+
 // Defined if Irisa's Viper S850 robot available.
 #cmakedefine VISP_HAVE_VIPER850
 

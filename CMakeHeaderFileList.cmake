@@ -174,7 +174,9 @@ SET (HEADER_ROBOT
   robot/real-robot/ptu46/vpPtu46.h
   robot/real-robot/ptu46/vpRobotPtu46.h
   robot/real-robot/viper/vpViper.h
+  robot/real-robot/viper/vpViper650.h
   robot/real-robot/viper/vpViper850.h
+  robot/real-robot/viper/vpRobotViper650.h
   robot/real-robot/viper/vpRobotViper850.h
   robot/simulator-robot/vpRobotCamera.h
   robot/simulator-robot/vpRobotSimulator.h

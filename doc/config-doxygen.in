@@ -1268,8 +1268,8 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_VERSION=0x111111 \
                          VISP_HAVE_OGRE \
-			             VISP_HAVE_OGRE_PLUGINS_PATH \
-			             VISP_HAVE_OGRE_RESOURCES_PATH \
+			                   VISP_HAVE_OGRE_PLUGINS_PATH \
+			                   VISP_HAVE_OGRE_RESOURCES_PATH \
                          VISP_HAVE_OIS \
                          VISP_HAVE_COIN_AND_GUI \
                          VISP_HAVE_COIN \
@@ -1287,6 +1287,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_AFMA6 \
                          VISP_HAVE_BICLOPS \
                          VISP_HAVE_PTU46 \
+                         VISP_HAVE_VIPER650 \
                          VISP_HAVE_VIPER850 \
                          VISP_HAVE_CYCABTK \
                          VISP_HAVE_PIONEER \

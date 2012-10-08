@@ -67,6 +67,7 @@ SET (SRC_SUBDIRS
   servo-cycab
   servo-pioneer
   servo-ptu46
+  servo-viper650
   servo-viper850
   tools
   tracking
