@@ -1476,25 +1476,25 @@ vpRobotViper850::setVelocity (const vpRobot::vpControlFrameType frame,
     case vpRobot::CAMERA_FRAME : {
         // Send velocities in m/s and rad/s
         // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
-        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM) );
+        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPCAM_VIPER850) );
         break ;
       }
     case vpRobot::ARTICULAR_FRAME : {
         // Convert all the velocities from rad/s into deg/s
         vel_sat.rad2deg();
         //std::cout << "Vitesse appliquee: " << vel_sat.t();
-        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
+        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART_VIPER850) );
         Try( PrimitiveMOVESPEED_Viper850(vel_sat.data) );
         break ;
       }
     case vpRobot::REFERENCE_FRAME : {
         // Send velocities in m/s and rad/s
         std::cout << "Vitesse ref appliquee: " << vel_sat.t();
-        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPFIX) );
+        Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPFIX_VIPER850) );
         break ;
       }
     case vpRobot::MIXT_FRAME : {
-        //Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPMIX) );
+        //Try( PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPMIX_VIPER850) );
         break ;
       }
     default: {

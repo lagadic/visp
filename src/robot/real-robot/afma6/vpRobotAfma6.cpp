@@ -1476,20 +1476,20 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 
   switch(frame) {
     case vpRobot::CAMERA_FRAME : {
-        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM) );
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPCAM_AFMA6) );
         break ;
       }
     case vpRobot::ARTICULAR_FRAME : {
-        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART) );
+        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART_AFMA6) );
         Try( PrimitiveMOVESPEED_Afma6(vel_sat.data) );
         break ;
       }
     case vpRobot::REFERENCE_FRAME : {
-        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPFIX) );
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPFIX_AFMA6) );
         break ;
       }
     case vpRobot::MIXT_FRAME : {
-        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPMIX) );
+        Try( PrimitiveMOVESPEED_CART_Afma6(vel_sat.data, REPMIX_AFMA6) );
         break ;
       }
     default: {
