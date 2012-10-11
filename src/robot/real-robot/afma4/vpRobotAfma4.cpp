@@ -1404,14 +1404,14 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
   vpColVector q_cur(4);
   vpHomogeneousMatrix fMc_cur;
   vpHomogeneousMatrix cMc; // camera displacement
+  double time_cur;
 
   InitTry;
 
-  // Get the actual time
-  double time_cur = vpTime::measureTimeSecond();
-
   // Get the current joint position
   Try( PrimitiveACQ_POS_Afma4(q, &timestamp) );
+  time_cur = timestamp;
+
   for (unsigned int i=0; i < this->njoint; i ++) {
     q_cur[i] = q[i];
   }
@@ -1433,8 +1433,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
     }
 
     case vpRobot::ARTICULAR_FRAME: {
-      velocity = (q_cur - q_prev_getvel)
-	/ (time_cur - time_prev_getvel);
+      velocity = (q_cur - q_prev_getvel) / (time_cur - time_prev_getvel);
       break ;
     }
 
