@@ -287,6 +287,7 @@ public:  /* Methode publiques */
 
   double getPositioningVelocity (void);
   bool getPowerState();
+  double getTime() const;
 
   void getVelocity (const vpRobot::vpControlFrameType frame,
                     vpColVector & velocity);

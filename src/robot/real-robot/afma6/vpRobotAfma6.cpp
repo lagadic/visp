@@ -1377,6 +1377,16 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   return;
 }
 /*!
+  Returns the robot controller current time (in second) since last robot power on.
+*/
+double vpRobotAfma6::getTime() const
+{
+  double timestamp;
+  PrimitiveACQ_TIME_Afma6(&timestamp);
+  return timestamp;
+}
+
+/*!
 
   Get the current position of the robot.
 
