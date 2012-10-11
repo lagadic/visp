@@ -1674,7 +1674,6 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
     }
 
     case vpRobot::ARTICULAR_FRAME: {
-      std::cout << "delta t: " << time_cur - time_prev_getvel << std::endl;
       velocity = (q_cur - q_prev_getvel) / (time_cur - time_prev_getvel);
       break ;
     }
