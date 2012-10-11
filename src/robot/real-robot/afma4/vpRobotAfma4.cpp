@@ -418,7 +418,7 @@ vpRobotAfma4::powerOn(void)
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
   bool firsttime = true;
-  int nitermax = 10;
+  unsigned int nitermax = 10;
 
   for (unsigned int i=0; i<nitermax; i++) {
     Try( PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
