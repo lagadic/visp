@@ -57,6 +57,7 @@ vpRobot::vpRobot (void)
   maxRotationVelocity (maxRotationVelocityDefault)
 {
   stateRobot = vpRobot::STATE_STOP ;
+  verbose_ = true;
 }
 
 /*!

@@ -129,7 +129,7 @@ int main()
 #endif
 }
   \endcode
- 
+
   You can get the intrinsic camera parameters of an image
   acquired by the camera attached to the robot, with:
 
@@ -332,73 +332,86 @@ private: /* Attributs prives. */
 
 public:  /* Methode publiques */
 
-  vpRobotViper650 (void);
+  vpRobotViper650 (bool verbose=true);
   virtual ~vpRobotViper650 (void);
 
-  void init (void);
-  void init (vpViper650::vpToolType tool,
-             vpCameraParameters::vpCameraParametersProjType
-	     projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+  // Force/Torque control
+  void biasForceTorqueSensor();
 
-  // State
-  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  void getArticularDisplacement(vpColVector &displacement);
+  void getCameraDisplacement(vpColVector &displacement);
+
   /*!
-    \return The control mode indicating if the robot is in automatic, 
+    \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
   vpControlModeType getControlMode() {
     return controlMode;
   }
 
-  // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame,
-		   const vpColVector &position) ;
-  void setPosition (const vpRobot::vpControlFrameType frame,
-		    const double pos1, const double pos2, const double pos3,
-		    const double pos4, const double pos5, const double pos6) ;
-  void setPosition(const char *filename) ;
-  void setPositioningVelocity (const double velocity);
-
-  void getPosition (const vpRobot::vpControlFrameType frame,
-		    vpColVector &position);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-		    vpPoseVector &position);
-
-  double getPositioningVelocity (void);
-
-  // Velocity control
-  void setVelocity (const vpRobot::vpControlFrameType frame,
-		    const vpColVector & velocity);
-
-
-  void getVelocity (const vpRobot::vpControlFrameType frame,
-		    vpColVector & velocity);
-
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
-
-  // Force/Torque control
-  void biasForceTorqueSensor();
+  void getDisplacement(vpRobot::vpControlFrameType frame,
+                       vpColVector &displacement);
   void getForceTorque(vpColVector &H);
 
-public:
+  void getPosition (const vpRobot::vpControlFrameType frame,
+                    vpColVector &position);
+  void getPosition (const vpRobot::vpControlFrameType frame,
+                    vpColVector &position,
+                    double &timestamp);
+  void getPosition (const vpRobot::vpControlFrameType frame,
+                    vpPoseVector &position);
+  void getPosition (const vpRobot::vpControlFrameType frame,
+                    vpPoseVector &position,
+                    double &timestamp);
+
+  double getPositioningVelocity (void);
+  bool getPowerState();
+
+  double getTime () const;
+  void getVelocity (const vpRobot::vpControlFrameType frame,
+                    vpColVector & velocity);
+  void getVelocity (const vpRobot::vpControlFrameType frame,
+                    vpColVector & velocity, double &timestamp);
+
+  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+  vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
+
   void get_cMe(vpHomogeneousMatrix &cMe) ;
   void get_cVe(vpVelocityTwistMatrix &cVe) ;
   void get_eJe(vpMatrix &eJe)  ;
   void get_fJe(vpMatrix &fJe)  ;
 
-  void stopMotion() ;
-  void powerOn() ;
-  void powerOff() ;
-  bool getPowerState();
+  void init (void);
+  void init (vpViper650::vpToolType tool,
+             vpCameraParameters::vpCameraParametersProjType
+             projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   void move(const char *filename) ;
+
+  void powerOn() ;
+  void powerOff() ;
+
   static bool readPosFile(const char *filename, vpColVector &q)  ;
   static bool savePosFile(const char *filename, const vpColVector &q)  ;
 
-  void getCameraDisplacement(vpColVector &displacement);
-  void getArticularDisplacement(vpColVector &displacement);
-  void getDisplacement(vpRobot::vpControlFrameType frame, 
-		       vpColVector &displacement);
+  // Position control
+  void setPosition(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &position) ;
+  void setPosition (const vpRobot::vpControlFrameType frame,
+                    const double pos1, const double pos2, const double pos3,
+                    const double pos4, const double pos5, const double pos6) ;
+  void setPosition(const char *filename) ;
+  void setPositioningVelocity (const double velocity);
+
+  // State
+  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  // Velocity control
+  void setVelocity (const vpRobot::vpControlFrameType frame,
+                    const vpColVector & velocity);
+
+  void stopMotion() ;
+
+
 };
 
 #endif

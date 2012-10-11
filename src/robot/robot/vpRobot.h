@@ -162,6 +162,7 @@ public:
   //! Set the velocity (frame has to be specified) that will be applied to the velocity controller.
   virtual void setVelocity(const vpRobot::vpControlFrameType frame,
                            const vpColVector &vel) = 0 ;
+  inline void setVerbose(bool verbose) { verbose_ = verbose; };
 
   /*
     Joint limits stuff
@@ -170,8 +171,9 @@ private:
   int areJointLimitsAvailable ;
   double *qmin;
   double *qmax ;
-public:
-  //  virtual void getJointLimits() ;
+
+protected:
+  bool verbose_;
 } ;
 
 #endif

@@ -85,7 +85,7 @@ extern "C" {
   - in the joint space (vpRobot::ARTICULAR_FRAME), 
   - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
   - in the camera frame (vpRobot::CAMERA_FRAME),
- 
+
   Mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
   in the reference frame and rotations in the camera frame is not implemented.
 
@@ -228,39 +228,30 @@ public:  /* Constantes */
 
 public:  /* Methode publiques */
 
-  vpRobotAfma4 (void);
+  vpRobotAfma4 (bool verbose=true);
   virtual ~vpRobotAfma4 (void);
 
-  void init (void);
-
-  /* --- ETAT ------------------------------------------------------------- */
-
-  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
-
-  /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame,
-		   const vpColVector &position) ;
-  void setPosition (const vpRobot::vpControlFrameType frame,
-		    const double q1, const double q2,
-		    const double q4, const double q5) ;
-  void setPosition(const char *filename) ;
-  void setPositioningVelocity (const double velocity);
-
+  void getArticularDisplacement(vpColVector &displacement);
+  void getCameraDisplacement(vpColVector &displacement);
+  void getDisplacement(vpRobot::vpControlFrameType frame,
+                       vpColVector &displacement);
   void getPosition (const vpRobot::vpControlFrameType frame,
-		    vpColVector &position);
+                    vpColVector &position);
+  void getPosition (const vpRobot::vpControlFrameType frame,
+                    vpColVector &position, double &timestamp);
 
   double getPositioningVelocity (void);
+  bool getPowerState();
 
-  /* --- VITESSE ---------------------------------------------------------- */
-
-  void setVelocity (const vpRobot::vpControlFrameType frame,
-		    const vpColVector & velocity);
-
+  double getTime() const;
 
   void getVelocity (const vpRobot::vpControlFrameType frame,
-		    vpColVector & velocity);
+                    vpColVector & velocity);
+  void getVelocity (const vpRobot::vpControlFrameType frame,
+                    vpColVector & velocity, double &timestamp);
 
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+  vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
 
   void get_cMe(vpHomogeneousMatrix &cMe) ;
   void get_cVe(vpVelocityTwistMatrix &cVe) ;
@@ -268,28 +259,39 @@ public:  /* Methode publiques */
   void get_eJe(vpMatrix &eJe)  ;
   void get_fJe(vpMatrix &fJe)  ;
 
-  void stopMotion() ;
-  void powerOn() ;
-  void powerOff() ;
-  bool getPowerState();
+  void init (void);
 
   void move(const char *filename) ;
+
+  void powerOn() ;
+  void powerOff() ;
+
   static bool readPosFile(const char *filename, vpColVector &q)  ;
   static bool savePosFile(const char *filename, const vpColVector &q)  ;
 
-  void getCameraDisplacement(vpColVector &displacement);
-  void getArticularDisplacement(vpColVector &displacement);
-  void getDisplacement(vpRobot::vpControlFrameType frame, 
-		       vpColVector &displacement);
+  /* --- POSITIONNEMENT --------------------------------------------------- */
+  void setPosition(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &position) ;
+  void setPosition (const vpRobot::vpControlFrameType frame,
+                    const double q1, const double q2,
+                    const double q4, const double q5) ;
+  void setPosition(const char *filename) ;
+  void setPositioningVelocity (const double velocity);
+
+  /* --- ETAT ------------------------------------------------------------- */
+
+  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+
+  /* --- VITESSE ---------------------------------------------------------- */
+
+  void setVelocity (const vpRobot::vpControlFrameType frame,
+                    const vpColVector & velocity);
+
+  void stopMotion() ;
+
+
 
 };
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif
 #endif /* #ifndef vpRobotAfma4_h */

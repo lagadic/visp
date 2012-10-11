@@ -85,20 +85,20 @@ void emergencyStopViper650(int signo)
   std::cout << "Stop the Viper650 application by signal ("
 	    << signo << "): " << (char)7 ;
   switch(signo)
-    {
-    case SIGINT:
-      std::cout << "SIGINT (stop by ^C) " << std::endl ; break ;
-    case SIGBUS:
-      std::cout <<"SIGBUS (stop due to a bus error) " << std::endl ; break ;
-    case SIGSEGV:
-      std::cout <<"SIGSEGV (stop due to a segmentation fault) " << std::endl ; break ;
-    case SIGKILL:
-      std::cout <<"SIGKILL (stop by CTRL \\) " << std::endl ; break ;
-    case SIGQUIT:
-      std::cout <<"SIGQUIT " << std::endl ; break ;
-    default :
+  {
+  case SIGINT:
+    std::cout << "SIGINT (stop by ^C) " << std::endl ; break ;
+  case SIGBUS:
+    std::cout <<"SIGBUS (stop due to a bus error) " << std::endl ; break ;
+  case SIGSEGV:
+    std::cout <<"SIGSEGV (stop due to a segmentation fault) " << std::endl ; break ;
+  case SIGKILL:
+    std::cout <<"SIGKILL (stop by CTRL \\) " << std::endl ; break ;
+  case SIGQUIT:
+    std::cout <<"SIGQUIT " << std::endl ; break ;
+  default :
       std::cout << signo << std::endl ;
-    }
+}
   //std::cout << "Emergency stop called\n";
   //  PrimitiveESTOP_Viper650();
   PrimitiveSTOP_Viper650();
@@ -172,7 +172,7 @@ int main()
   vpCameraParameters::vpCameraParametersProjType)
 
 */
-vpRobotViper650::vpRobotViper650 (void)
+vpRobotViper650::vpRobotViper650 (bool verbose)
   :
   vpViper650 (),
   vpRobot ()
@@ -203,7 +203,9 @@ vpRobotViper650::vpRobotViper650 (void)
   signal(SIGKILL, emergencyStopViper650);
   signal(SIGQUIT, emergencyStopViper650);
 
-  std::cout << "Open communication with MotionBlox.\n";
+  setVerbose(verbose);
+  if (verbose_)
+    std::cout << "Open communication with MotionBlox.\n";
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP) ;
@@ -244,7 +246,7 @@ vpRobotViper650::vpRobotViper650 (void)
   vpCameraParameters::vpCameraParametersProjType)
 */
 void
-vpRobotViper650::init (void)
+    vpRobotViper650::init (void)
 {
   InitTry;
 
@@ -259,9 +261,8 @@ vpRobotViper650::init (void)
   q_prev_getdis = 0;
   first_time_getdis = true;
 
-
   // Initialize the firewire connection
-  Try( InitializeConnection() );
+  Try( InitializeConnection(verbose_) );
 
   // Connect to the servoboard using the servo board GUID
   Try( InitializeNode_Viper650() );
@@ -275,47 +276,48 @@ vpRobotViper650::init (void)
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
   Try( PrimitiveSTATUS_Viper650(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
-			     &HIPowerStatus));
+                                &HIPowerStatus));
   CAL_Wait(0.1);
 
   // Print the robot status
-  std::cout << "Robot status: ";
-  switch(EStopStatus) {
-  case ESTOP_AUTO: 
-    controlMode = AUTO;
-     if (HIPowerStatus == 0)
-      std::cout << "Power is OFF" << std::endl;
-    else
-      std::cout << "Power is ON" << std::endl;
-    break;
+  if (verbose_) {
+    std::cout << "Robot status: ";
+    switch(EStopStatus) {
+    case ESTOP_AUTO:
+      controlMode = AUTO;
+      if (HIPowerStatus == 0)
+        std::cout << "Power is OFF" << std::endl;
+      else
+        std::cout << "Power is ON" << std::endl;
+      break;
 
-  case ESTOP_MANUAL: 
-    controlMode = MANUAL;
-    if (HIPowerStatus == 0)
-      std::cout << "Power is OFF" << std::endl;
-    else
-      std::cout << "Power is ON" << std::endl;
-    break;
-  case ESTOP_ACTIVATED: 
-    controlMode = ESTOP;
-    std::cout << "Emergency stop is activated" << std::endl;
-    break;
-  default: 
-    std::cout << "Sorry there is an error on the emergency chain." << std::endl;
-    std::cout << "You have to call Adept for maintenance..." << std::endl;
-    // Free allocated ressources
+    case ESTOP_MANUAL:
+      controlMode = MANUAL;
+      if (HIPowerStatus == 0)
+        std::cout << "Power is OFF" << std::endl;
+      else
+        std::cout << "Power is ON" << std::endl;
+      break;
+    case ESTOP_ACTIVATED:
+      controlMode = ESTOP;
+      std::cout << "Emergency stop is activated" << std::endl;
+      break;
+    default:
+      std::cout << "Sorry there is an error on the emergency chain." << std::endl;
+      std::cout << "You have to call Adept for maintenance..." << std::endl;
+      // Free allocated ressources
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
-
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Viper650(joint_min.data, joint_max.data) );
   // Convert units from degrees to radians
   joint_min.deg2rad();
   joint_max.deg2rad();
 
-//   for (unsigned int i=0; i < njoint; i++) {
-//     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
-//   }
+  //   for (unsigned int i=0; i < njoint; i++) {
+  //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
+  //   }
 
   // If an error occur in the low level controller, goto here
   //CatchPrint();
@@ -324,7 +326,7 @@ vpRobotViper650::init (void)
   // Test if an error occurs
   if (TryStt == -20001)
     printf("No connection detected. Check if the robot is powered on \n"
-	   "and if the firewire link exist between the MotionBlox and this computer.\n");
+           "and if the firewire link exist between the MotionBlox and this computer.\n");
   else if (TryStt == -675)
     printf(" Timeout enabling power...\n");
 
@@ -336,7 +338,7 @@ vpRobotViper650::init (void)
 
     std::cout << "Cannot open connexion with the motionblox..." << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
-  			  "Cannot open connexion with the motionblox");
+                            "Cannot open connexion with the motionblox");
   }
   return ;
 }
@@ -398,8 +400,8 @@ int main()
   \sa vpCameraParameters, init()
 */
 void
-vpRobotViper650::init (vpViper650::vpToolType tool,
-		       vpCameraParameters::vpCameraParametersProjType projModel)
+    vpRobotViper650::init (vpViper650::vpToolType tool,
+                           vpCameraParameters::vpCameraParametersProjType projModel)
 {
 
   InitTry;
@@ -408,7 +410,7 @@ vpRobotViper650::init (vpViper650::vpToolType tool,
   // - camera extrinsic parameters relative to eMc
   vpViper650::init(tool, projModel);
 
- // Set the camera constant (eMc pose) in the MotionBlox
+  // Set the camera constant (eMc pose) in the MotionBlox
   double eMc_pose[6];
   for (unsigned int i=0; i < 3; i ++) {
     eMc_pose[i] = etc[i];   // translation in meters
@@ -423,9 +425,9 @@ vpRobotViper650::init (vpViper650::vpToolType tool,
   joint_min.deg2rad();
   joint_max.deg2rad();
 
-//   for (unsigned int i=0; i < njoint; i++) {
-//     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
-//   }
+  //   for (unsigned int i=0; i < njoint; i++) {
+  //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
+  //   }
 
   setToolType(tool);
 
@@ -452,15 +454,15 @@ vpRobotViper650::~vpRobotViper650 (void)
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   Try( PrimitiveSTATUS_Viper650(NULL, NULL, NULL, NULL, NULL, NULL,
-			     &HIPowerStatus));
+                                &HIPowerStatus));
   CAL_Wait(0.1);
 
-//   if (HIPowerStatus == 1) {
-//     fprintf(stdout, "Power OFF the robot\n");
-//     fflush(stdout);
+  //   if (HIPowerStatus == 1) {
+  //     fprintf(stdout, "Power OFF the robot\n");
+  //     fflush(stdout);
 
-//     Try( PrimitivePOWEROFF_Viper650() );
-//   }
+  //     Try( PrimitivePOWEROFF_Viper650() );
+  //   }
 
   // Free allocated ressources
   ShutDownConnection();
@@ -481,36 +483,36 @@ Change the robot state.
 \param newState : New requested robot state.
 */
 vpRobot::vpRobotStateType
-vpRobotViper650::setRobotState(vpRobot::vpRobotStateType newState)
+    vpRobotViper650::setRobotState(vpRobot::vpRobotStateType newState)
 {
   InitTry;
 
   switch (newState) {
   case vpRobot::STATE_STOP: {
-    // Start primitive STOP only if the current state is Velocity
-    if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState ()) {
-      Try( PrimitiveSTOP_Viper650() );
+      // Start primitive STOP only if the current state is Velocity
+      if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState ()) {
+        Try( PrimitiveSTOP_Viper650() );
+      }
+      break;
     }
-    break;
-  }
   case vpRobot::STATE_POSITION_CONTROL: {
-    if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState ()) {
-      std::cout << "Change the control mode from velocity to position control.\n";
-      Try( PrimitiveSTOP_Viper650() );
+      if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState ()) {
+        std::cout << "Change the control mode from velocity to position control.\n";
+        Try( PrimitiveSTOP_Viper650() );
+      }
+      else {
+        //std::cout << "Change the control mode from stop to position control.\n";
+      }
+      this->powerOn();
+      break;
     }
-    else {
-      //std::cout << "Change the control mode from stop to position control.\n";
-    }
-    this->powerOn();
-    break;
-  }
   case vpRobot::STATE_VELOCITY_CONTROL: {
-    if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
-      std::cout << "Change the control mode from stop to velocity control.\n";
+      if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
+        std::cout << "Change the control mode from stop to velocity control.\n";
+      }
+      this->powerOn();
+      break;
     }
-    this->powerOn();
-    break;
-  }
   default:
     break ;
   }
@@ -533,7 +535,7 @@ vpRobotViper650::setRobotState(vpRobot::vpRobotStateType newState)
   controller returns an error during robot stopping.
 */
 void
-vpRobotViper650::stopMotion(void)
+    vpRobotViper650::stopMotion(void)
 {
   if (getRobotState() != vpRobot::STATE_VELOCITY_CONTROL)
     return;
@@ -546,7 +548,7 @@ vpRobotViper650::stopMotion(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot stop robot motion");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot stop robot motion.");
+                            "Cannot stop robot motion.");
   }
 }
 
@@ -560,7 +562,7 @@ vpRobotViper650::stopMotion(void)
   \sa powerOff(), getPowerState()
 */
 void
-vpRobotViper650::powerOn(void)
+    vpRobotViper650::powerOn(void)
 {
   InitTry;
 
@@ -572,22 +574,27 @@ vpRobotViper650::powerOn(void)
 
   for (unsigned int i=0; i<nitermax; i++) {
     Try( PrimitiveSTATUS_Viper650(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
-				  &HIPowerStatus));
-    switch(EStopStatus) {
-    case ESTOP_AUTO: controlMode = AUTO; break;
-    case ESTOP_MANUAL: controlMode = MANUAL; break;
-    case ESTOP_ACTIVATED:
+                                  &HIPowerStatus));
+    if (EStopStatus == ESTOP_AUTO) {
+      controlMode = AUTO;
+      break; // exit for loop
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
+      controlMode = MANUAL;
+      break; // exit for loop
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       controlMode = ESTOP;
       if (firsttime) {
-	std::cout << "Emergency stop is activated! \n"
-		  << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
-	firsttime = false;
+        std::cout << "Emergency stop is activated! \n"
+            << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
+        firsttime = false;
       }
       fprintf(stdout, "Remaining time %ds  \r", nitermax-i);
       fflush(stdout);
       CAL_Wait(1);
-      break;
-    default: 
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated ressources
@@ -596,14 +603,15 @@ vpRobotViper650::powerOn(void)
     }
   }
 
-  std::cout << std::endl;
+  if (EStopStatus == ESTOP_ACTIVATED)
+    std::cout << std::endl;
 
   if (EStopStatus == ESTOP_ACTIVATED) {
     std::cout << "Sorry, cannot power on the robot." << std::endl;
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power on the robot.");
+                            "Cannot power on the robot.");
   }
-    
+
   if (HIPowerStatus == 0) {
     fprintf(stdout, "Power ON the Viper650 robot\n");
     fflush(stdout);
@@ -615,7 +623,7 @@ vpRobotViper650::powerOn(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot power on the robot");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power off the robot.");
+                            "Cannot power off the robot.");
   }
 }
 
@@ -629,14 +637,14 @@ vpRobotViper650::powerOn(void)
   \sa powerOn(), getPowerState()
 */
 void
-vpRobotViper650::powerOff(void)
+    vpRobotViper650::powerOff(void)
 {
   InitTry;
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   Try( PrimitiveSTATUS_Viper650(NULL, NULL, NULL, NULL, NULL, NULL,
-			     &HIPowerStatus));
+                                &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -650,7 +658,7 @@ vpRobotViper650::powerOff(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot power off the robot");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power off the robot.");
+                            "Cannot power off the robot.");
   }
 }
 
@@ -666,14 +674,14 @@ vpRobotViper650::powerOff(void)
   \sa powerOn(), powerOff()
 */
 bool
-vpRobotViper650::getPowerState(void)
+    vpRobotViper650::getPowerState(void)
 {
   InitTry;
   bool status = false;
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   Try( PrimitiveSTATUS_Viper650(NULL, NULL, NULL, NULL, NULL, NULL,
-			     &HIPowerStatus));
+                                &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -684,7 +692,7 @@ vpRobotViper650::getPowerState(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get the power status");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot get the power status.");
+                            "Cannot get the power status.");
   }
   return status;
 }
@@ -699,7 +707,7 @@ vpRobotViper650::getPowerState(void)
 
 */
 void
-vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe)
+    vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe)
 {
   vpHomogeneousMatrix cMe ;
   vpViper650::get_cMe(cMe) ;
@@ -719,7 +727,7 @@ vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe)
 
 */
 void
-vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe)
+    vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe)
 {
   vpViper650::get_cMe(cMe) ;
 }
@@ -737,13 +745,14 @@ vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe)
 
 */
 void
-vpRobotViper650::get_eJe(vpMatrix &eJe)
+    vpRobotViper650::get_eJe(vpMatrix &eJe)
 {
 
   double position[6];
+  double timestamp;
 
   InitTry;
-  Try( PrimitiveACQ_POS_J_Viper650(position) );
+  Try( PrimitiveACQ_POS_J_Viper650(position, &timestamp) );
   CatchPrint();
 
   vpColVector q(6);
@@ -751,14 +760,14 @@ vpRobotViper650::get_eJe(vpMatrix &eJe)
     q[i] = vpMath::rad(position[i]);
 
   try
-    {
-      vpViper650::get_eJe(q, eJe) ;
-    }
+  {
+    vpViper650::get_eJe(q, eJe) ;
+  }
   catch(...)
-    {
-      vpERROR_TRACE("catch exception ") ;
-      throw ;
-    }
+  {
+    vpERROR_TRACE("catch exception ") ;
+    throw ;
+  }
 }
 /*!
 
@@ -772,14 +781,15 @@ vpRobotViper650::get_eJe(vpMatrix &eJe)
   reference frame.
 */
 
-  void
-  vpRobotViper650::get_fJe(vpMatrix &fJe)
+void
+    vpRobotViper650::get_fJe(vpMatrix &fJe)
 {
 
   double position[6];
+  double timestamp;
 
   InitTry;
-  Try( PrimitiveACQ_POS_Viper650(position) );
+  Try( PrimitiveACQ_POS_Viper650(position, &timestamp) );
   CatchPrint();
 
   vpColVector q(6);
@@ -787,14 +797,14 @@ vpRobotViper650::get_eJe(vpMatrix &eJe)
     q[i] = position[i];
 
   try
-    {
-      vpViper650::get_fJe(q, fJe) ;
-    }
+  {
+    vpViper650::get_fJe(q, fJe) ;
+  }
   catch(...)
-    {
-      vpERROR_TRACE("Error caught");
-      throw ;
-    }
+  {
+    vpERROR_TRACE("Error caught");
+    throw ;
+  }
 }
 
 /*!
@@ -835,7 +845,7 @@ int main()
   \sa getPositioningVelocity()
 */
 void
-vpRobotViper650::setPositioningVelocity (const double velocity)
+    vpRobotViper650::setPositioningVelocity (const double velocity)
 {
   positioningVelocity = velocity;
 }
@@ -846,7 +856,7 @@ vpRobotViper650::setPositioningVelocity (const double velocity)
   \sa setPositioningVelocity()
 */
 double
-vpRobotViper650::getPositioningVelocity (void)
+    vpRobotViper650::getPositioningVelocity (void)
 {
   return positioningVelocity;
 }
@@ -930,100 +940,101 @@ int main()
 
 */
 void
-vpRobotViper650::setPosition (const vpRobot::vpControlFrameType frame,
-			      const vpColVector & position )
+    vpRobotViper650::setPosition (const vpRobot::vpControlFrameType frame,
+                                  const vpColVector & position )
 {
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState ())
-    {
-      vpERROR_TRACE ("Robot was not in position-based control\n"
-		     "Modification of the robot state");
-      setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-    }
+  {
+    vpERROR_TRACE ("Robot was not in position-based control\n"
+                   "Modification of the robot state");
+    setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+  }
 
   vpColVector destination(njoint);
   int error = 0;
+  double timestamp;
 
   InitTry;
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
-    vpColVector q(njoint);
-    Try( PrimitiveACQ_POS_Viper650(q.data) );
+      vpColVector q(njoint);
+      Try( PrimitiveACQ_POS_Viper650(q.data, &timestamp) );
 
-    // Convert degrees into rad
-    q.deg2rad();
+      // Convert degrees into rad
+      q.deg2rad();
 
-    // Get fMc from the inverse kinematics
-    vpHomogeneousMatrix fMc;
-    vpViper650::get_fMc(q, fMc);
+      // Get fMc from the inverse kinematics
+      vpHomogeneousMatrix fMc;
+      vpViper650::get_fMc(q, fMc);
 
-    // Set cMc from the input position
-    vpTranslationVector txyz;
-    vpRxyzVector rxyz;
-    for (unsigned int i=0; i < 3; i++) {
-      txyz[i] = position[i];
-      rxyz[i] = position[i+3];
+      // Set cMc from the input position
+      vpTranslationVector txyz;
+      vpRxyzVector rxyz;
+      for (unsigned int i=0; i < 3; i++) {
+        txyz[i] = position[i];
+        rxyz[i] = position[i+3];
+      }
+
+      // Compute cMc2
+      vpRotationMatrix cRc2(rxyz);
+      vpHomogeneousMatrix cMc2(txyz, cRc2);
+
+      // Compute the new position to reach: fMc*cMc2
+      vpHomogeneousMatrix fMc2 = fMc * cMc2;
+
+      // Compute the corresponding joint position from the inverse kinematics
+      unsigned int solution = this->getInverseKinematics(fMc2, q);
+      if (solution) { // Position is reachable
+        destination = q;
+        // convert rad to deg requested for the low level controller
+        destination.rad2deg();
+        Try( PrimitiveMOVE_J_Viper650(destination.data, positioningVelocity) );
+        Try( WaitState_Viper650(ETAT_ATTENTE_AFMA6, 1000) );
+      }
+      else {
+        // Cartesian position is out of range
+        error = -1;
+      }
+
+      break ;
     }
-
-    // Compute cMc2
-    vpRotationMatrix cRc2(rxyz);
-    vpHomogeneousMatrix cMc2(txyz, cRc2);
-
-    // Compute the new position to reach: fMc*cMc2
-    vpHomogeneousMatrix fMc2 = fMc * cMc2;
-
-    // Compute the corresponding joint position from the inverse kinematics
-    unsigned int solution = this->getInverseKinematics(fMc2, q);
-    if (solution) { // Position is reachable
-      destination = q;
+  case vpRobot::ARTICULAR_FRAME: {
+      destination = position;
       // convert rad to deg requested for the low level controller
       destination.rad2deg();
+
+      //std::cout << "Joint destination (deg): " << destination.t() << std::endl;
       Try( PrimitiveMOVE_J_Viper650(destination.data, positioningVelocity) );
       Try( WaitState_Viper650(ETAT_ATTENTE_AFMA6, 1000) );
+      break ;
+
     }
-    else {
-      // Cartesian position is out of range
-      error = -1;
-    }
-
-    break ;
-  }
-  case vpRobot::ARTICULAR_FRAME: {
-    destination = position;
-    // convert rad to deg requested for the low level controller
-    destination.rad2deg();
-
-    //std::cout << "Joint destination (deg): " << destination.t() << std::endl;
-    Try( PrimitiveMOVE_J_Viper650(destination.data, positioningVelocity) );
-    Try( WaitState_Viper650(ETAT_ATTENTE_AFMA6, 1000) );
-    break ;
-
-  }
   case vpRobot::REFERENCE_FRAME: {
-    // Convert angles from Rxyz representation to Rzyz representation
-    vpRxyzVector rxyz(position[3],position[4],position[5]);
-    vpRotationMatrix R(rxyz);
-    vpRzyzVector rzyz(R);
+      // Convert angles from Rxyz representation to Rzyz representation
+      vpRxyzVector rxyz(position[3],position[4],position[5]);
+      vpRotationMatrix R(rxyz);
+      vpRzyzVector rzyz(R);
 
-    for (unsigned int i=0; i <3; i++) {
-      destination[i] = position[i];
-      destination[i+3] = vpMath::deg(rzyz[i]); // convert also angles in deg
+      for (unsigned int i=0; i <3; i++) {
+        destination[i] = position[i];
+        destination[i+3] = vpMath::deg(rzyz[i]); // convert also angles in deg
+      }
+      int configuration = 0; // keep the actual configuration
+
+      //std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
+      Try( PrimitiveMOVE_C_Viper650(destination.data, configuration,
+                                    positioningVelocity) );
+      Try( WaitState_Viper650(ETAT_ATTENTE_AFMA6, 1000) );
+
+      break ;
     }
-    int configuration = 0; // keep the actual configuration
-
-    //std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
-    Try( PrimitiveMOVE_C_Viper650(destination.data, configuration,
-				  positioningVelocity) );
-    Try( WaitState_Viper650(ETAT_ATTENTE_AFMA6, 1000) );
-
-    break ;
-  }
   case vpRobot::MIXT_FRAME:
     {
       vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
       throw vpRobotException (vpRobotException::lowLevelError,
-			      "Positionning error: "
-			      "Mixt frame not implemented.");
+                              "Positionning error: "
+                              "Mixt frame not implemented.");
       break ;
     }
   }
@@ -1041,12 +1052,12 @@ vpRobotViper650::setPosition (const vpRobot::vpControlFrameType frame,
   else if (TryStt < 0)
     std::cout << " : Unknown error (see Fabien).\n";
   else if (error == -1)
-     std::cout << "Position out of range.\n";
+    std::cout << "Position out of range.\n";
 
   if (TryStt < 0 || error < 0) {
-     vpERROR_TRACE ("Positionning error.");
-     throw vpRobotException (vpRobotException::positionOutOfRangeError,
- 			    "Position out of range.");
+    vpERROR_TRACE ("Positionning error.");
+    throw vpRobotException (vpRobotException::positionOutOfRangeError,
+                            "Position out of range.");
   }
 
   return ;
@@ -1118,12 +1129,12 @@ int main()
   \sa setPosition()
 */
 void vpRobotViper650::setPosition (const vpRobot::vpControlFrameType frame,
-				   const double pos1,
-				   const double pos2,
-				   const double pos3,
-				   const double pos4,
-				   const double pos5,
-				   const double pos6)
+                                   const double pos1,
+                                   const double pos2,
+                                   const double pos3,
+                                   const double pos4,
+                                   const double pos5,
+                                   const double pos6)
 {
   try{
     vpColVector position(6) ;
@@ -1137,10 +1148,10 @@ void vpRobotViper650::setPosition (const vpRobot::vpControlFrameType frame,
     setPosition(frame, position) ;
   }
   catch(...)
-    {
-      vpERROR_TRACE("Error caught");
-      throw ;
-    }
+  {
+    vpERROR_TRACE("Error caught");
+    throw ;
+  }
 }
 
 /*!
@@ -1192,7 +1203,7 @@ void vpRobotViper650::setPosition(const char *filename)
   if (ret == false) {
     vpERROR_TRACE ("Bad position in \"%s\"", filename);
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Bad position in filename.");
+                            "Bad position in filename.");
   }
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
   this->setPosition(vpRobot::ARTICULAR_FRAME, q);
@@ -1220,6 +1231,8 @@ void vpRobotViper650::setPosition(const char *filename)
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
   below show how to convert this position into a vpHomogenousMatrix:
 
+  \param timestamp : Time in second since last robot power on.
+
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpRobotViper650.h>
@@ -1233,9 +1246,10 @@ int main()
 {
 #ifdef VISP_HAVE_VIPER650
   vpRobotViper650 robot;
+  double timestamp;
 
   vpColVector position;
-  robot.getPosition(vpRobot::REFERENCE_FRAME, position);
+  robot.getPosition(vpRobot::REFERENCE_FRAME, position, timestamp);
 
   vpTranslationVector ftc; // reference frame to camera frame translations
   vpRxyzVector frc; // reference frame to camera frame rotations
@@ -1263,9 +1277,9 @@ int main()
   vpColVector & r)
 
 */
-void
-vpRobotViper650::getPosition (const vpRobot::vpControlFrameType frame,
-			      vpColVector & position)
+void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame,
+                                  vpColVector &position,
+                                  double &timestamp)
 {
 
   InitTry;
@@ -1274,75 +1288,92 @@ vpRobotViper650::getPosition (const vpRobot::vpControlFrameType frame,
 
   switch (frame) {
   case vpRobot::CAMERA_FRAME : {
-    position = 0;
-    return;
-  }
+      position = 0;
+      return;
+    }
   case vpRobot::ARTICULAR_FRAME : {
-    Try( PrimitiveACQ_POS_J_Viper650(position.data) );
-    //vpCTRACE << "Get joint position (deg)" << position.t() << std::endl;
-    position.deg2rad();
+      Try( PrimitiveACQ_POS_J_Viper650(position.data, &timestamp) );
+      //vpCTRACE << "Get joint position (deg)" << position.t() << std::endl;
+      position.deg2rad();
 
-    return;
-  }
+      return;
+    }
   case vpRobot::REFERENCE_FRAME : {
-    Try( PrimitiveACQ_POS_C_Viper650(position.data) );
-    //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
-    // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
-    // Convert Euler Rzyz angles from deg to rad
-    for (unsigned int i=3; i <6; i++)
-      position[i] = vpMath::rad(position[i]);
-    // Convert Rzyz angles into Rxyz representation
-    vpRzyzVector rzyz(position[3], position[4], position[5]);
-    vpRotationMatrix R(rzyz);
-    vpRxyzVector rxyz(R);
+      Try( PrimitiveACQ_POS_C_Viper650(position.data, &timestamp) );
+      //    vpCTRACE << "Get cartesian position " << position.t() << std::endl;
+      // 1=tx, 2=ty, 3=tz in meters; 4=Rz 5=Ry 6=Rz in deg
+      // Convert Euler Rzyz angles from deg to rad
+      for (unsigned int i=3; i <6; i++)
+        position[i] = vpMath::rad(position[i]);
+      // Convert Rzyz angles into Rxyz representation
+      vpRzyzVector rzyz(position[3], position[4], position[5]);
+      vpRotationMatrix R(rzyz);
+      vpRxyzVector rxyz(R);
 
-    // Update the position using Rxyz representation
-    for (unsigned int i=0; i <3; i++)
-      position[i+3] = rxyz[i];
-//     vpCTRACE << "Cartesian position Rxyz (deg)" 
-// 	     << position[0] << " " << position[1] << " " << position[2] << " "  
-// 	     << vpMath::deg(position[3]) << " "
-// 	     << vpMath::deg(position[4]) << " "
-// 	     << vpMath::deg(position[5]) << std::endl;
+      // Update the position using Rxyz representation
+      for (unsigned int i=0; i <3; i++)
+        position[i+3] = rxyz[i];
+      //     vpCTRACE << "Cartesian position Rxyz (deg)"
+      // 	     << position[0] << " " << position[1] << " " << position[2] << " "
+      // 	     << vpMath::deg(position[3]) << " "
+      // 	     << vpMath::deg(position[4]) << " "
+      // 	     << vpMath::deg(position[5]) << std::endl;
 
-    break ;
-  }
+      break ;
+    }
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
-    throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position in mixt frame: "
-			    "not implemented");
-    break ;
-  }
+      vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
+      throw vpRobotException (vpRobotException::lowLevelError,
+                              "Cannot get position in mixt frame: "
+                              "not implemented");
+      break ;
+    }
   }
 
   CatchPrint();
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get position.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position.");
+                            "Cannot get position.");
   }
 
   return;
 }
+
 /*!
 
   Get the current position of the robot.
 
-  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &)
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &).
+
+  The difference is here that the timestamp is not used.
+
+*/
+void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame,
+                                  vpColVector &position)
+{
+  double timestamp;
+  getPosition(frame, position, timestamp);
+}
+
+/*!
+
+  Get the current position of the robot.
+
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &)
 
   The difference is here that the position is returned using a ThetaU
-  representation.
+  representation for the rotation.
 
-  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &)
+  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &)
 */
-void 
-vpRobotViper650::getPosition (const vpRobot::vpControlFrameType frame,
-                            vpPoseVector &position)
+void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame,
+                                  vpPoseVector &position,
+                                  double &timestamp)
 {
   vpColVector posRxyz;
   //recupere  position en Rxyz
-  this->getPosition(frame,posRxyz);
+  this->getPosition(frame, posRxyz, timestamp);
   vpRxyzVector RxyzVect;
   for (unsigned int j=0;j<3;j++)
     RxyzVect[j]=posRxyz[j+3];
@@ -1355,6 +1386,32 @@ vpRobotViper650::getPosition (const vpRobot::vpControlFrameType frame,
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
   }
+}
+
+/*!
+
+  Get the current position of the robot.
+
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &, double &).
+
+  The difference is here that the timestamp is not returned.
+
+*/
+void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame,
+                                  vpPoseVector &position)
+{
+  double timestamp;
+  getPosition(frame, position, timestamp);
+}
+
+/*!
+  Returns the robot controller current time (in second) since last robot power on.
+*/
+double vpRobotViper650::getTime() const
+{
+  double timestamp;
+  PrimitiveACQ_TIME_Viper650(&timestamp);
+  return timestamp;
 }
 
 /*!
@@ -1430,8 +1487,8 @@ int main()
   \endcode
 */
 void
-vpRobotViper650::setVelocity (const vpRobot::vpControlFrameType frame,
-                              const vpColVector & vel)
+    vpRobotViper650::setVelocity (const vpRobot::vpControlFrameType frame,
+                                  const vpColVector & vel)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
     vpERROR_TRACE ("Cannot send a velocity to the robot "
@@ -1446,63 +1503,63 @@ vpRobotViper650::setVelocity (const vpRobot::vpControlFrameType frame,
   // Velocity saturation
   switch(frame) {
     // saturation in cartesian space
-    case vpRobot::CAMERA_FRAME :
-    case vpRobot::REFERENCE_FRAME :
-    case vpRobot::MIXT_FRAME : {
-        vpColVector vel_max(6);
+  case vpRobot::CAMERA_FRAME :
+  case vpRobot::REFERENCE_FRAME :
+  case vpRobot::MIXT_FRAME : {
+      vpColVector vel_max(6);
 
-        for (int i=0; i<3; i++)
-          vel_max[i] = getMaxTranslationVelocity();
-        for (int i=3; i<6; i++)
-          vel_max[i] = getMaxRotationVelocity();
+      for (int i=0; i<3; i++)
+        vel_max[i] = getMaxTranslationVelocity();
+      for (int i=3; i<6; i++)
+        vel_max[i] = getMaxRotationVelocity();
 
-        vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
+      vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
 
-        break;
-      }
-      // saturation in joint space
-    case vpRobot::ARTICULAR_FRAME : {
-        vpColVector vel_max(6);
+      break;
+    }
+    // saturation in joint space
+  case vpRobot::ARTICULAR_FRAME : {
+      vpColVector vel_max(6);
 
-        for (int i=0; i<6; i++)
-          vel_max[i] = getMaxRotationVelocity();
+      for (int i=0; i<6; i++)
+        vel_max[i] = getMaxRotationVelocity();
 
-        vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
-      }
+      vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
+    }
   }
 
   InitTry;
 
   switch(frame) {
-    case vpRobot::CAMERA_FRAME : {
-        // Send velocities in m/s and rad/s
-        // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
-        Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPCAM_VIPER650) );
-        break ;
-      }
-    case vpRobot::ARTICULAR_FRAME : {
-        // Convert all the velocities from rad/s into deg/s
-        vel_sat.rad2deg();
-        //std::cout << "Vitesse appliquee: " << vel_sat.t();
-        //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART_VIPER650) );
-        Try( PrimitiveMOVESPEED_Viper650(vel_sat.data) );
-        break ;
-      }
-    case vpRobot::REFERENCE_FRAME : {
-        // Send velocities in m/s and rad/s
-        std::cout << "Vitesse ref appliquee: " << vel_sat.t();
-        Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPFIX_VIPER650) );
-        break ;
-      }
-    case vpRobot::MIXT_FRAME : {
-        //Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPMIX_VIPER650) );
-        break ;
-      }
-    default: {
-        vpERROR_TRACE ("Error in spec of vpRobot. "
-                       "Case not taken in account.");
-        return;
-      }
+  case vpRobot::CAMERA_FRAME : {
+      // Send velocities in m/s and rad/s
+      // std::cout << "Vitesse cam appliquee: " << vel_sat.t();
+      Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPCAM_VIPER650) );
+      break ;
+    }
+  case vpRobot::ARTICULAR_FRAME : {
+      // Convert all the velocities from rad/s into deg/s
+      vel_sat.rad2deg();
+      //std::cout << "Vitesse appliquee: " << vel_sat.t();
+      //Try( PrimitiveMOVESPEED_CART(vel_sat.data, REPART_VIPER650) );
+      Try( PrimitiveMOVESPEED_Viper650(vel_sat.data) );
+      break ;
+    }
+  case vpRobot::REFERENCE_FRAME : {
+      // Send velocities in m/s and rad/s
+      std::cout << "Vitesse ref appliquee: " << vel_sat.t();
+      Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPFIX_VIPER650) );
+      break ;
+    }
+  case vpRobot::MIXT_FRAME : {
+      //Try( PrimitiveMOVESPEED_CART_Viper650(vel_sat.data, REPMIX_VIPER650) );
+      break ;
+    }
+  default: {
+      vpERROR_TRACE ("Error in spec of vpRobot. "
+                     "Case not taken in account.");
+      return;
+    }
   }
 
   Catch();
@@ -1513,7 +1570,7 @@ vpRobotViper650::setVelocity (const vpRobot::vpControlFrameType frame,
       for (unsigned int i=0; i < njoint; i ++) {
         if (axisInJoint[i])
           std::cout << "\nWarning: Velocity control stopped: axis "
-                    << i+1 << " on joint limit!" <<std::endl;
+              << i+1 << " on joint limit!" <<std::endl;
       }
     }
     else {
@@ -1549,6 +1606,8 @@ vpRobotViper650::setVelocity (const vpRobot::vpControlFrameType frame,
 
   \param velocity : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
+
+  \param timestamp : Time in second since last robot power on.
 
   \warning In camera frame, reference frame and mixt frame, the representation
   of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y, \dot
@@ -1595,11 +1654,9 @@ int main()
 }
   \endcode
 */
-void
-vpRobotViper650::getVelocity (const vpRobot::vpControlFrameType frame,
-			   vpColVector & velocity)
+void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame,
+                                  vpColVector & velocity, double &timestamp)
 {
-
   velocity.resize (6);
   velocity = 0;
 
@@ -1613,7 +1670,7 @@ vpRobotViper650::getVelocity (const vpRobot::vpControlFrameType frame,
   double time_cur = vpTime::measureTimeSecond();
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS_J_Viper650(q_cur.data) );
+  Try( PrimitiveACQ_POS_J_Viper650(q_cur.data, &timestamp) );
   q_cur.deg2rad();
 
   // Get the camera pose from the direct kinematics
@@ -1623,57 +1680,56 @@ vpRobotViper650::getVelocity (const vpRobot::vpControlFrameType frame,
 
     switch (frame) {
     case vpRobot::CAMERA_FRAME: {
-      // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
+        // Compute the displacement of the camera since the previous call
+        cMc = fMc_prev_getvel.inverse() * fMc_cur;
 
-      // Compute the velocity of the camera from this displacement
-      velocity = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+        // Compute the velocity of the camera from this displacement
+        velocity = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
 
-      break ;
-    }
-
-    case vpRobot::ARTICULAR_FRAME: {
-      velocity = (q_cur - q_prev_getvel)
-	/ (time_cur - time_prev_getvel);
-      break ;
-    }
-
-    case vpRobot::REFERENCE_FRAME: {
-      // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
-
-      // Compute the velocity of the camera from this displacement
-      vpColVector v;
-      v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
-
-      // Express this velocity in the reference frame
-      vpVelocityTwistMatrix fVc(fMc_cur);
-      velocity = fVc * v;
-
-      break ;
-    }
-
-    case vpRobot::MIXT_FRAME: {
-      // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
-
-      // Compute the ThetaU representation for the rotation
-      vpRotationMatrix cRc;
-      cMc.extract(cRc);
-      vpThetaUVector thetaU;
-      thetaU.buildFrom(cRc);
-
-      for (unsigned int i=0; i < 3; i++) {
-	// Compute the translation displacement in the reference frame
-	velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
-	// Update the rotation displacement in the camera frame
-	velocity[i+3] = thetaU[i];
+        break ;
       }
 
-      // Compute the velocity
-      velocity /= (time_cur - time_prev_getvel);
-      break ;
-    }
+    case vpRobot::ARTICULAR_FRAME: {
+        velocity = (q_cur - q_prev_getvel) / (time_cur - time_prev_getvel);
+        break ;
+      }
+
+    case vpRobot::REFERENCE_FRAME: {
+        // Compute the displacement of the camera since the previous call
+        cMc = fMc_prev_getvel.inverse() * fMc_cur;
+
+        // Compute the velocity of the camera from this displacement
+        vpColVector v;
+        v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+
+        // Express this velocity in the reference frame
+        vpVelocityTwistMatrix fVc(fMc_cur);
+        velocity = fVc * v;
+
+        break ;
+      }
+
+    case vpRobot::MIXT_FRAME: {
+        // Compute the displacement of the camera since the previous call
+        cMc = fMc_prev_getvel.inverse() * fMc_cur;
+
+        // Compute the ThetaU representation for the rotation
+        vpRotationMatrix cRc;
+        cMc.extract(cRc);
+        vpThetaUVector thetaU;
+        thetaU.buildFrom(cRc);
+
+        for (unsigned int i=0; i < 3; i++) {
+          // Compute the translation displacement in the reference frame
+          velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
+          // Update the rotation displacement in the camera frame
+          velocity[i+3] = thetaU[i];
+        }
+
+        // Compute the velocity
+        velocity /= (time_cur - time_prev_getvel);
+        break ;
+      }
     }
   }
   else {
@@ -1694,18 +1750,32 @@ vpRobotViper650::getVelocity (const vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get velocity.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get velocity.");
+                            "Cannot get velocity.");
   }
 }
 
+/*!
 
+  Get robot velocities.
 
+  The behavior is the same than getVelocity(const vpRobot::vpControlFrameType, vpColVector &, double &)
+  except that the timestamp is not returned.
+
+  */
+void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame,
+                                  vpColVector & velocity)
+{
+  double timestamp;
+  getVelocity(frame, velocity, timestamp);
+}
 
 /*!
 
   Get the robot velocities.
 
   \param frame : Frame in wich velocities are mesured.
+
+  \param timestamp : Time in second since last robot power on.
 
   \return Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1739,8 +1809,9 @@ int main()
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
   // q_dot_mes is resized to 6, the number of joint
 
+  double timestamp;
   while (1) {
-     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
+     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME, timestamp);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
   }
@@ -1748,11 +1819,27 @@ int main()
 }
   \endcode
 */
-vpColVector
-vpRobotViper650::getVelocity (vpRobot::vpControlFrameType frame)
+vpColVector vpRobotViper650::getVelocity (vpRobot::vpControlFrameType frame, double &timestamp)
 {
   vpColVector velocity;
-  getVelocity (frame, velocity);
+  getVelocity (frame, velocity, timestamp);
+
+  return velocity;
+}
+
+/*!
+
+  Get robot velocities.
+
+  The behavior is the same than getVelocity(const vpRobot::vpControlFrameType, double &)
+  except that the timestamp is not returned.
+
+  */
+vpColVector vpRobotViper650::getVelocity (vpRobot::vpControlFrameType frame)
+{
+  vpColVector velocity;
+  double timestamp;
+  getVelocity (frame, velocity, timestamp);
 
   return velocity;
 }
@@ -1822,8 +1909,7 @@ int main()
 \sa savePosFile()
 */
 
-bool
-vpRobotViper650::readPosFile(const char *filename, vpColVector &q)
+bool vpRobotViper650::readPosFile(const char *filename, vpColVector &q)
 {
 
   FILE * fd ;
@@ -1840,12 +1926,12 @@ vpRobotViper650::readPosFile(const char *filename, vpColVector &q)
     // Saut des lignes commencant par #
     if (fgets (line, FILENAME_MAX, fd) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
-	// La ligne n'est pas un commentaire
-	if ( strncmp (line, head, sizeof(head)-1) == 0) {
-	  sortie = true; 	// Position robot trouvee.
-	}
-// 	else
-// 	  return (false); // fin fichier sans position robot.
+        // La ligne n'est pas un commentaire
+        if ( strncmp (line, head, sizeof(head)-1) == 0) {
+          sortie = true; 	// Position robot trouvee.
+        }
+        // 	else
+        // 	  return (false); // fin fichier sans position robot.
       }
     }
     else {
@@ -1858,9 +1944,9 @@ vpRobotViper650::readPosFile(const char *filename, vpColVector &q)
   // Lecture des positions
   q.resize(njoint);
   sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
-	 dummy,
-	 &q[0], &q[1], &q[2],
-	 &q[3], &q[4], &q[5]);
+         dummy,
+         &q[0], &q[1], &q[2],
+         &q[3], &q[4], &q[5]);
 
   // converts rotations from degrees into radians
   q.deg2rad();
@@ -1893,7 +1979,7 @@ vpRobotViper650::readPosFile(const char *filename, vpColVector &q)
 */
 
 bool
-vpRobotViper650::savePosFile(const char *filename, const vpColVector &q)
+    vpRobotViper650::savePosFile(const char *filename, const vpColVector &q)
 {
 
   FILE * fd ;
@@ -1909,14 +1995,14 @@ vpRobotViper650::savePosFile(const char *filename, const vpColVector &q)
 #\n\
 #\n\n");
 
-  // Save positions in mm and deg
-  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
-	  vpMath::deg(q[0]),
-	  vpMath::deg(q[1]),
-	  vpMath::deg(q[2]),
-	  vpMath::deg(q[3]),
-	  vpMath::deg(q[4]),
-	  vpMath::deg(q[5]));
+          // Save positions in mm and deg
+          fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
+                  vpMath::deg(q[0]),
+                  vpMath::deg(q[1]),
+                  vpMath::deg(q[2]),
+                  vpMath::deg(q[3]),
+                  vpMath::deg(q[4]),
+                  vpMath::deg(q[5]));
 
   fclose(fd) ;
   return (true);
@@ -1933,7 +2019,7 @@ vpRobotViper650::savePosFile(const char *filename, const vpColVector &q)
 
 */
 void
-vpRobotViper650::move(const char *filename)
+    vpRobotViper650::move(const char *filename)
 {
   vpColVector q;
 
@@ -1962,7 +2048,7 @@ vpRobotViper650::move(const char *filename)
 
 */
 void
-vpRobotViper650::getCameraDisplacement(vpColVector &displacement)
+    vpRobotViper650::getCameraDisplacement(vpColVector &displacement)
 {
   getDisplacement(vpRobot::CAMERA_FRAME, displacement);
 }
@@ -1978,7 +2064,7 @@ vpRobotViper650::getCameraDisplacement(vpColVector &displacement)
 
 */
 void
-vpRobotViper650::getArticularDisplacement(vpColVector  &displacement)
+    vpRobotViper650::getArticularDisplacement(vpColVector  &displacement)
 {
   getDisplacement(vpRobot::ARTICULAR_FRAME, displacement);
 }
@@ -2004,19 +2090,20 @@ vpRobotViper650::getArticularDisplacement(vpColVector  &displacement)
 
 */
 void
-vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame,
-				 vpColVector &displacement)
+    vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame,
+                                     vpColVector &displacement)
 {
   displacement.resize (6);
   displacement = 0;
 
   double q[6];
   vpColVector q_cur(6);
+  double timestamp;
 
   InitTry;
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS_Viper650(q) );
+  Try( PrimitiveACQ_POS_Viper650(q, &timestamp) );
   for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
@@ -2024,27 +2111,27 @@ vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame,
   if ( ! first_time_getdis ) {
     switch (frame) {
     case vpRobot::CAMERA_FRAME: {
-      std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
-      return;
-      break ;
-    }
+        std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
+        return;
+        break ;
+      }
 
     case vpRobot::ARTICULAR_FRAME: {
-      displacement = q_cur - q_prev_getdis;
-      break ;
-    }
+        displacement = q_cur - q_prev_getdis;
+        break ;
+      }
 
     case vpRobot::REFERENCE_FRAME: {
-      std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
-      return;
-      break ;
-    }
+        std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
+        return;
+        break ;
+      }
 
     case vpRobot::MIXT_FRAME: {
-      std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
-      return;
-      break ;
-    }
+        std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
+        return;
+        break ;
+      }
     }
   }
   else {
@@ -2058,7 +2145,7 @@ vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get velocity.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get velocity.");
+                            "Cannot get velocity.");
   }
 }
 
@@ -2076,7 +2163,7 @@ vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame,
 
 */
 void
-vpRobotViper650::biasForceTorqueSensor()
+    vpRobotViper650::biasForceTorqueSensor()
 {
   InitTry;
 
@@ -2089,7 +2176,7 @@ vpRobotViper650::biasForceTorqueSensor()
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot bias the force/torque sensor.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot bias the force/torque sensor.");
+                            "Cannot bias the force/torque sensor.");
   }
 }
 
@@ -2133,7 +2220,7 @@ int main()
 
 */
 void
-vpRobotViper650::getForceTorque(vpColVector &H)
+    vpRobotViper650::getForceTorque(vpColVector &H)
 {
   InitTry;
 
@@ -2145,7 +2232,7 @@ vpRobotViper650::getForceTorque(vpColVector &H)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get the force/torque measures.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get force/torque measures.");
+                            "Cannot get force/torque measures.");
   }
 }
 

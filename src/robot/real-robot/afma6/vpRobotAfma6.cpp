@@ -153,7 +153,7 @@ void emergencyStopAfma6(int signo)
   vpCameraParameters::vpCameraParametersProjType)
 
 */
-vpRobotAfma6::vpRobotAfma6 (void)
+vpRobotAfma6::vpRobotAfma6 (bool verbose)
   :
   vpAfma6 (),
   vpRobot ()
@@ -184,7 +184,9 @@ vpRobotAfma6::vpRobotAfma6 (void)
   signal(SIGKILL, emergencyStopAfma6);
   signal(SIGQUIT, emergencyStopAfma6);
 
-  std::cout << "Open communication with MotionBlox.\n";
+  setVerbose(verbose);
+  if (verbose_)
+    std::cout << "Open communication with MotionBlox.\n";
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP) ;
@@ -193,7 +195,7 @@ vpRobotAfma6::vpRobotAfma6 (void)
     //  vpERROR_TRACE("Error caught") ;
     throw ;
   }
-  positioningVelocity  = defaultPositioningVelocity ;
+  positioningVelocity = defaultPositioningVelocity ;
 
   vpRobotAfma6::robotAlreadyCreated = true;
 
@@ -240,9 +242,8 @@ vpRobotAfma6::init (void)
   q_prev_getdis = 0;
   first_time_getdis = true;
 
-
   // Initialize the firewire connection
-  Try( InitializeConnection() );
+  Try( InitializeConnection(verbose_) );
 
   // Connect to the servoboard using the servo board GUID
   Try( InitializeNode_Afma6() );
@@ -260,25 +261,26 @@ vpRobotAfma6::init (void)
   CAL_Wait(0.1);
 
   // Print the robot status
-  std::cout << "Robot status: ";
-  switch(EStopStatus) {
-  case ESTOP_AUTO: 
-  case ESTOP_MANUAL: 
-    if (HIPowerStatus == 0)
-      std::cout << "Power is OFF" << std::endl;
-    else
-      std::cout << "Power is ON" << std::endl;
-    break;
-  case ESTOP_ACTIVATED: 
-    std::cout << "Emergency stop is activated" << std::endl;
-    break;
-  default: 
-    std::cout << "Sorry there is an error on the emergency chain." << std::endl;
-    std::cout << "You have to call Adept for maintenance..." << std::endl;
-    // Free allocated ressources
+  if (verbose_) {
+    std::cout << "Robot status: ";
+    switch(EStopStatus) {
+    case ESTOP_AUTO:
+    case ESTOP_MANUAL:
+      if (HIPowerStatus == 0)
+        std::cout << "Power is OFF" << std::endl;
+      else
+        std::cout << "Power is ON" << std::endl;
+      break;
+    case ESTOP_ACTIVATED:
+      std::cout << "Emergency stop is activated" << std::endl;
+      break;
+    default:
+      std::cout << "Sorry there is an error on the emergency chain." << std::endl;
+      std::cout << "You have to call Adept for maintenance..." << std::endl;
+      // Free allocated ressources
+    }
+    std::cout << std::endl;
   }
-  std::cout << std::endl;
-
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Afma6(_joint_min, _joint_max) );
 //   for (unsigned int i=0; i < njoint; i++) {
@@ -514,22 +516,25 @@ vpRobotAfma6::powerOn(void)
   unsigned int nitermax = 10;
 
   for (unsigned int i=0; i<nitermax; i++) {
-    Try( PrimitiveSTATUS_Afma6(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
-			       &HIPowerStatus));
-    switch(EStopStatus) {
-    case ESTOP_AUTO: break;
-    case ESTOP_MANUAL: break;
-    case ESTOP_ACTIVATED:
+    Try( PrimitiveSTATUS_Afma6(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
+                                  &HIPowerStatus));
+    if (EStopStatus == ESTOP_AUTO) {
+      break; // exit for loop
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
+      break; // exit for loop
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       if (firsttime) {
-	std::cout << "Emergency stop is activated! \n"
-		  << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
-	firsttime = false;
+        std::cout << "Emergency stop is activated! \n"
+            << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
+        firsttime = false;
       }
       fprintf(stdout, "Remaining time %ds  \r", nitermax-i);
       fflush(stdout);
       CAL_Wait(1);
-      break;
-    default: 
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated ressources
@@ -538,7 +543,8 @@ vpRobotAfma6::powerOn(void)
     }
   }
 
-  std::cout << std::endl;
+  if (EStopStatus == ESTOP_ACTIVATED)
+    std::cout << std::endl;
 
   if (EStopStatus == ESTOP_ACTIVATED) {
     std::cout << "Sorry, cannot power on the robot." << std::endl;
@@ -681,9 +687,10 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
 {
 
   double position[6];
+  double timestamp;
 
   InitTry;
-  Try( PrimitiveACQ_POS_Afma6(position) );
+  Try( PrimitiveACQ_POS_Afma6(position, &timestamp) );
   CatchPrint();
 
   vpColVector q(6);
@@ -728,9 +735,10 @@ vpRobotAfma6::get_eJe(vpMatrix &eJe)
 {
 
   double position[6];
+  double timestamp;
 
   InitTry;
-  Try( PrimitiveACQ_POS_Afma6(position) );
+  Try( PrimitiveACQ_POS_Afma6(position, &timestamp) );
   CatchPrint();
 
   vpColVector q(6);
@@ -986,12 +994,13 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
 
   double _destination[6];
   int error = 0;
+  double timestamp;
 
   InitTry;
   switch(frame) {
   case vpRobot::CAMERA_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS_Afma6(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q, &timestamp) );
 
     vpColVector q(njoint);
     for (unsigned int i=0; i < njoint; i++)
@@ -1272,6 +1281,8 @@ void vpRobotAfma6::setPosition(const char *filename)
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
   below show how to convert this position into a vpHomogenousMatrix:
 
+  \param timestamp : Time in second since last robot power on.
+
   \code
   vpRobotAfma6 robot;
   vpColVector position;
@@ -1302,7 +1313,7 @@ void vpRobotAfma6::setPosition(const char *filename)
 */
 void
 vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
-			   vpColVector & position)
+                           vpColVector & position, double &timestamp)
 {
 
   InitTry;
@@ -1316,7 +1327,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::ARTICULAR_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS_Afma6(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q, &timestamp) );
     for (unsigned int i=0; i < njoint; i ++) {
       position[i] = _q[i];
     }
@@ -1325,7 +1336,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   }
   case vpRobot::REFERENCE_FRAME : {
     double _q[njoint];
-    Try( PrimitiveACQ_POS_Afma6(_q) );
+    Try( PrimitiveACQ_POS_Afma6(_q, &timestamp) );
 
     vpColVector q(njoint);
     for (unsigned int i=0; i < njoint; i++)
@@ -1368,20 +1379,34 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
 /*!
 
   Get the current position of the robot.
+
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &).
+
+  The difference is here that the timestamp is not used.
+
+*/
+void vpRobotAfma6::getPosition(const vpRobot::vpControlFrameType frame,
+                               vpColVector &position)
+{
+  double timestamp;
+  getPosition(frame, position, timestamp);
+}
+
+/*!
+
+  Get the current position of the robot.
   Similar as :
    void getPosition (const vpRobot::vpControlFrameType frame,   vpColVector &position)
   as the difference the position is returned using a ThetaU representation.
 
- 
-
 */
 void 
 vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,   
-                            vpPoseVector &position)
+                            vpPoseVector &position, double &timestamp)
 {
   vpColVector posRxyz;
   //recupere  position en Rxyz
-  this->getPosition(frame,posRxyz);
+  this->getPosition(frame, posRxyz, timestamp);
   vpRxyzVector RxyzVect;
   for(unsigned int j=0;j<3;j++)
     RxyzVect[j]=posRxyz[j+3];
@@ -1394,6 +1419,22 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
   }
+}
+
+/*!
+
+  Get the current position of the robot.
+
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &, double &).
+
+  The difference is here that the timestamp is not used.
+
+*/
+void vpRobotAfma6::getPosition(const vpRobot::vpControlFrameType frame,
+                               vpPoseVector &position)
+{
+  double timestamp;
+  getPosition(frame, position, timestamp);
 }
 
 /*!
@@ -1544,6 +1585,8 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
   \param velocity : Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
 
+  \param timestamp : Time in second since last robot power on.
+
   \warning In camera frame, reference frame and mixt frame, the representation
   of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y, \dot
   z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
@@ -1574,8 +1617,9 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
   robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes); // q_dot_mes =0
   // q_dot_mes is resized to 6, the number of joint
 
+  double timestamp;
   while (1) {
-     robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes);
+     robot.getVelocity(vpRobot::ARTICULAR_FRAME, q_dot_mes, timestamp);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
   }
@@ -1583,18 +1627,15 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 */
 void
 vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
-			   vpColVector & velocity)
+                           vpColVector & velocity, double &timestamp)
 {
-
   velocity.resize (6);
   velocity = 0;
-
 
   double q[6];
   vpColVector q_cur(6);
   vpHomogeneousMatrix fMc_cur;
   vpHomogeneousMatrix cMc; // camera displacement
-
 
   InitTry;
 
@@ -1602,7 +1643,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   double time_cur = vpTime::measureTimeSecond();
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS_Afma6(q) );
+  Try( PrimitiveACQ_POS_Afma6(q, &timestamp) );
   for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
@@ -1624,8 +1665,7 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
     }
 
     case vpRobot::ARTICULAR_FRAME: {
-      velocity = (q_cur - q_prev_getvel)
-	/ (time_cur - time_prev_getvel);
+      velocity = (q_cur - q_prev_getvel) / (time_cur - time_prev_getvel);
       break ;
     }
 
@@ -1655,10 +1695,10 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
       thetaU.buildFrom(cRc);
 
       for (unsigned int i=0; i < 3; i++) {
-	// Compute the translation displacement in the reference frame
-	velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
-	// Update the rotation displacement in the camera frame
-	velocity[i+3] = thetaU[i];
+        // Compute the translation displacement in the reference frame
+        velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
+        // Update the rotation displacement in the camera frame
+        velocity[i+3] = thetaU[i];
       }
 
       // Compute the velocity
@@ -1689,7 +1729,20 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   }
 }
 
+/*!
 
+  Get robot velocities.
+
+  The behavior is the same than getVelocity(const vpRobot::vpControlFrameType, vpColVector &, double &)
+  except that the timestamp is not returned.
+
+  */
+void vpRobotAfma6::getVelocity(const vpRobot::vpControlFrameType frame,
+                               vpColVector & velocity)
+{
+  double timestamp;
+  getVelocity(frame, velocity, timestamp);
+}
 
 
 /*!
@@ -1697,6 +1750,8 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   Get the robot velocities.
 
   \param frame : Frame in wich velocities are mesured.
+
+  \param timestamp : Time in second since last robot power on.
 
   \return Measured velocities. Translations are expressed in m/s
   and rotations in rad/s.
@@ -1723,18 +1778,36 @@ vpRobotAfma6::getVelocity (const vpRobot::vpControlFrameType frame,
   // q_dot_mes is resized to 6, the number of joint
 
   vpColVector q_dot_mes; // Measured velocities
+  double timestamp;
   while (1) {
-     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
+     q_dot_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME, timestamp);
      vpTime::wait(40); // wait 40 ms
      // here q_dot_mes is equal to [0.1, 0.2, 0.3, M_PI/8, M_PI/4, M_PI/16]
   }
   \endcode
 */
 vpColVector
-vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
+vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame, double &timestamp)
 {
   vpColVector velocity;
-  getVelocity (frame, velocity);
+  getVelocity (frame, velocity, timestamp);
+
+  return velocity;
+}
+
+/*!
+
+  Get robot velocities.
+
+  The behavior is the same than getVelocity(const vpRobot::vpControlFrameType, double &)
+  except that the timestamp is not returned.
+
+  */
+vpColVector vpRobotAfma6::getVelocity (vpRobot::vpControlFrameType frame)
+{
+  vpColVector velocity;
+  double timestamp;
+  getVelocity (frame, velocity, timestamp);
 
   return velocity;
 }
@@ -2032,7 +2105,7 @@ vpRobotAfma6::getArticularDisplacement(vpColVector  &displacement)
 */
 void
 vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
-			      vpColVector &displacement)
+                              vpColVector &displacement)
 {
   displacement.resize (6);
   displacement = 0;
@@ -2040,11 +2113,12 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
   double q[6];
   vpColVector q_cur(6);
   vpHomogeneousMatrix fMc_cur, c_prevMc_cur;  
+  double timestamp;
 
   InitTry;
 
   // Get the current joint position
-  Try( PrimitiveACQ_POS_Afma6(q) );
+  Try( PrimitiveACQ_POS_Afma6(q, &timestamp) );
   for (unsigned int i=0; i < njoint; i ++) {
     q_cur[i] = q[i];
   }
