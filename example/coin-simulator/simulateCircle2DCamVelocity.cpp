@@ -261,7 +261,7 @@ void *mainLoop (void *_simu)
 
     unsigned int iter=0 ;
     vpTRACE("\t loop") ;
-    int itermax ;
+    unsigned int itermax ;
     if (pos==2) itermax = 75 ; else itermax = 100 ;
     char name[FILENAME_MAX] ;
     while(iter++<itermax)
