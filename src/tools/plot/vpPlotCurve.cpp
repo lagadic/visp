@@ -39,8 +39,8 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp/vpPlotCurve.h>
 #include <visp/vpDisplayOpenCV.h>
@@ -49,7 +49,7 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayD3D.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
 vpPlotCurve::vpPlotCurve()
 {
   color = vpColor::red;
@@ -76,7 +76,7 @@ vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, 
   {
     vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
   }
-#if( defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+#if defined (VISP_HAVE_DISPLAY)
   double top;
   double left;
   double width;

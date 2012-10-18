@@ -47,9 +47,9 @@
 #ifndef vpPlot_H
 #define vpPlot_H
 
-#include <visp/vpPlotGraph.h>
-
+#include <visp/vpConfig.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpPlotGraph.h>
 
 /*!
   \class vpPlot
@@ -69,10 +69,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpPlot.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
-
 int main ()
 {
+#if defined(VISP_HAVE_DISPLAY)
   //Create a window (700 by 700) at position (100, 200) with two graphics
   vpPlot A(2, 700, 700, 100, 200, "Curves...");
 
@@ -109,12 +108,12 @@ int main ()
     }
 
   return 0;
-}
 #endif
+}
   \endcode
 */
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
 
 class VISP_EXPORT vpPlot
 {

@@ -43,7 +43,7 @@
 
 #include <visp/vpConfig.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+#if defined(VISP_HAVE_DISPLAY)
 #include <visp/vpPlot.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
@@ -320,6 +320,7 @@ void vpPlot::plot(const unsigned int graphNum,
 	else
 		vpTRACE("error in plot vector : not the right dimension");
 }
+
 
 /*!
   This function enables you to add a new point in the curve. This point is drawn with the parameters of the curve.

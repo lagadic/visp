@@ -52,10 +52,9 @@
 #include <visp/vpPlot.h>
 #include <visp/vpMath.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
-
 int main ()
 {
+#if defined(VISP_HAVE_DISPLAY)
   vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
   // Change the default font
@@ -112,12 +111,9 @@ int main ()
   //Save the datas as text files
   plot.saveData(0, "dataCos.txt");
   plot.saveData(0, "dataSin.txt");
-}
-
 #else
-int main()
-{
   std::cout << "Plot functionalities are not avalaible since no display is available." << std::endl;
+#endif
+
   return 0;
 }
-#endif

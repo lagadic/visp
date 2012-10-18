@@ -118,6 +118,11 @@
 // Defined if Direct3D9 library available
 #cmakedefine VISP_HAVE_D3D9
 
+// Defined if one of the display device is available
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
+#  define VISP_HAVE_DISPLAY
+#endif
+
 // Defined if GSL library available (-lgsl -lgslcblas).
 #cmakedefine VISP_HAVE_GSL
 

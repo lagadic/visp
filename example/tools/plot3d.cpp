@@ -52,7 +52,7 @@
 
 int main ()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) 
+#if defined(VISP_HAVE_DISPLAY)
   //Create a window with one graphic
   vpPlot plot(1);
 
