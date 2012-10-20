@@ -63,6 +63,33 @@
 
   \image html pioneer.png
 
+  The robot jacobian at the end effector frame, the point located at the
+  middle between the two wheels is given by:
+
+  \f[
+  {^e}{\bf J}_e = \left(\begin{array}{cc}
+  1  &   0   \\
+  0  &   0   \\
+  0  &   0   \\
+  0  &   0   \\
+  0  &   0   \\
+  0  &   1   \\
+  \end{array}
+  \right)
+  \f]
+
+  Considering \f$(v_x, w_z)\f$, it is possible to compute \f$\bf v\f$ the six
+  dimention velocity skew expressed at the end effector frame by:
+
+  \f[
+  {\bf v} = {^e}{\bf J}_e \;
+  \left(\begin{array}{c}
+  v_x \\
+  w_z \\
+  \end{array}
+  \right)
+  \f].
+
 */
 class VISP_EXPORT vpPioneer: public vpUnicycle
 {
