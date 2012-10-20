@@ -103,44 +103,8 @@ class VISP_EXPORT vpLinearKalmanFilterInstantiation : public vpKalmanFilter
  
   /*! @name Generic linear filter initializer */
   //@{
-  /*!
-    Set the Kalman state model. Depending on the state model, we set
-    the state vector size and the measure vector size. 
+  inline void setStateModel(vpStateModel model);
 
-    The example below shows how to use this method and then to get the
-    size of the state and measure vectors.
-
-    \code
-#include <visp/vpLinearKalmanFilterInstantiation.h>
-
-int main()
-{
-  vpLinearKalmanFilterInstantiation kalman;
-
-  kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
-  std::cout << "State vector size: " << kalman.getStateSize() << std::endl; // Value is 2
-  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl; // Value is 1
-}  
-    \endcode
-  */
-  inline void setStateModel(vpStateModel model) {
-    this->model = model;
-    switch(model) {
-    case stateConstVel_MeasurePos:
-    case stateConstVelWithColoredNoise_MeasureVel:
-      size_state = 2;
-      size_measure = 1;
-      break;
-    case stateConstAccWithColoredNoise_MeasureVel:
-      size_state = 3;
-      size_measure = 1;
-      break;
-    case unknown:
-      size_state = 0;
-      size_measure = 0;
-      break;
-    }
-  }
   void initFilter(unsigned int nsignal, vpColVector &sigma_state,
 		  vpColVector &sigma_measure, double rho, double dt);
   //@}
@@ -171,6 +135,44 @@ int main()
 
 } ;
 
+/*!
+  Set the Kalman state model. Depending on the state model, we set
+  the state vector size and the measure vector size.
+
+  The example below shows how to use this method and then to get the
+  size of the state and measure vectors.
+
+  \code
+#include <visp/vpLinearKalmanFilterInstantiation.h>
+
+int main()
+{
+  vpLinearKalmanFilterInstantiation kalman;
+
+  kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
+  std::cout << "State vector size: " << kalman.getStateSize() << std::endl; // Value is 2
+  std::cout << "Measure vector size: " << kalman.getMeasureSize() << std::endl; // Value is 1
+}
+  \endcode
+*/
+void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel model) {
+  this->model = model;
+  switch(model) {
+  case stateConstVel_MeasurePos:
+  case stateConstVelWithColoredNoise_MeasureVel:
+    size_state = 2;
+    size_measure = 1;
+    break;
+  case stateConstAccWithColoredNoise_MeasureVel:
+    size_state = 3;
+    size_measure = 1;
+    break;
+  case unknown:
+    size_state = 0;
+    size_measure = 0;
+    break;
+  }
+}
 
 
 #endif
