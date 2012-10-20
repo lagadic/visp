@@ -338,9 +338,6 @@ public:  /* Methode publiques */
   // Force/Torque control
   void biasForceTorqueSensor();
 
-  void getArticularDisplacement(vpColVector &displacement);
-  void getCameraDisplacement(vpColVector &displacement);
-
   /*!
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
@@ -411,7 +408,9 @@ public:  /* Methode publiques */
 
   void stopMotion() ;
 
-
+private:
+  void getArticularDisplacement(vpColVector &displacement);
+  void getCameraDisplacement(vpColVector &displacement);
 };
 
 #endif

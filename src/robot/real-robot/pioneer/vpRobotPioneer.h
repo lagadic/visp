@@ -99,16 +99,6 @@ private: // Set as private since not implemented
   void get_fJe(vpMatrix & /*fJe*/) {} ;
 
   /*!
-    Get a displacement expressed in the joint space between two successive position control.
-    \warning Not implemented.
-  */
-  void getArticularDisplacement(vpColVector  & /*qdot*/) {};
-  /*!
-    Get a displacement expressed in the camera frame between two successive position control.
-    \warning Not implemented.
-  */
-  void getCameraDisplacement(vpColVector & /*v*/) {};
-  /*!
     Get a displacement (frame as to ve specified) between two successive position control.
     \warning Not implemented.
   */

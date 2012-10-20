@@ -270,9 +270,6 @@ public:  /* Methode publiques */
 
   void closeGripper() ;
 
-  void getArticularDisplacement(vpColVector &displacement);
-
-  void getCameraDisplacement(vpColVector &displacement);
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
 
@@ -340,6 +337,10 @@ public:  /* Methode publiques */
                     const vpColVector & velocity);
 
   void stopMotion() ;
+
+private:
+  void getArticularDisplacement(vpColVector &displacement);
+  void getCameraDisplacement(vpColVector &displacement);
 };
 
 

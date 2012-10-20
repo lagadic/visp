@@ -56,7 +56,7 @@
 /*!
   \class vpRobotCamera
 
-  \ingroup RealRobotSimu
+  \ingroup RobotSimuWithoutVisu
 
   \brief Class that defines the simplest robot: a free flying camera.
 
@@ -111,15 +111,11 @@ public:
   void setPosition(const vpRobot::vpControlFrameType /* frame */,
 		   const vpColVector & /* q */)  { ; }
 
-
   void setPosition(const vpHomogeneousMatrix &_cMo) ;
   void setPosition(const vpColVector & /* q */) { ;}
 
-  void getCameraDisplacement(vpColVector &v)  ;
-  void getArticularDisplacement(vpColVector &qdot) ;
   void getDisplacement(const vpRobot::vpControlFrameType repere,
 		       vpColVector &q) ;
-
 } ;
 
 #endif

@@ -231,8 +231,6 @@ public:  /* Methode publiques */
   vpRobotAfma4 (bool verbose=true);
   virtual ~vpRobotAfma4 (void);
 
-  void getArticularDisplacement(vpColVector &displacement);
-  void getCameraDisplacement(vpColVector &displacement);
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
   void getPosition (const vpRobot::vpControlFrameType frame,
@@ -289,8 +287,9 @@ public:  /* Methode publiques */
 
   void stopMotion() ;
 
-
-
+private:
+  void getArticularDisplacement(vpColVector &displacement);
+  void getCameraDisplacement(vpColVector &displacement);
 };
 
 #endif
