@@ -44,6 +44,7 @@
 #include <visp/vpMomentDatabase.h>
 #include <cmath>
 
+
 /*!
   Computes the normalized area \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$.
   Depends on vpMomentCentered.

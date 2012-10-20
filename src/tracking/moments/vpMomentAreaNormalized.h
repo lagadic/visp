@@ -49,6 +49,7 @@
 
 class vpMomentObject;
 class vpMomentCentered;
+
 /*!
   \class vpMomentAreaNormalized
 
@@ -56,26 +57,26 @@ class vpMomentCentered;
 
   \brief Class handling the normalized surface moment that is invariant in scale and used to estimate depth.
 
-    This moment depends on vpMomentCentered.
+  This moment depends on vpMomentCentered.
 
-    The idea behind vpMomentAreaNormalized is described in:
+  The idea behind vpMomentAreaNormalized is described in:
 
-    [1] Point-based and region-based image moments for visual servoing of planar objects by Omar Tahri and Francois Chaumette.
+  [1] Point-based and region-based image moments for visual servoing of planar objects by Omar Tahri and Francois Chaumette.
 
-    During a visual servoing process, a vpMomentAreaNormalized will converge towards the desired depth when the current surface will converge to the destination surface.
-    It is defined as follows: \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the destination surface.
-    Consequently, the vpMomentAreaNormalized needs to have information about the desired depth \e Z* and the desired surface \e a*.
+  During a visual servoing process, a vpMomentAreaNormalized will converge towards the desired depth when the current surface will converge to the destination surface.
+  It is defined as follows: \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the destination surface.
+  Consequently, the vpMomentAreaNormalized needs to have information about the desired depth \e Z* and the desired surface \e a*.
 
-    \warning About the order of the object.
-    The surface (refered to as \e a in the above paragraph) depends of the nature of the object.
-    - In case of a continuous object (when vpMomentObject::getType() is vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON) \f$a=m_{00}\f$.
-    - In case of a discrete object (when vpMomentObject::getType() is vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
+  \warning About the order of the object.
+  The surface (refered to as \e a in the above paragraph) depends of the nature of the object.
+  - In case of a continuous object (when vpMomentObject::getType() is vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON) \f$a=m_{00}\f$.
+  - In case of a discrete object (when vpMomentObject::getType() is vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
 
-    Therefore, a vpMomentObject has to be of minimum order 2 in order to compute a vpMomentAreaNormalized moment in the discrete case
-    and of minimum order 0 in continous cases.
+  Therefore, a vpMomentObject has to be of minimum order 2 in order to compute a vpMomentAreaNormalized moment in the discrete case
+  and of minimum order 0 in continous cases.
 
-    This example shows a computation in the discrete case.
-    \code
+  This example shows a computation in the discrete case.
+  \code
 #include <visp/vpMomentObject.h>
 #include <visp/vpPoint.h>
 #include <visp/vpMomentGravityCenter.h>
@@ -124,11 +125,11 @@ int main()
 
   return 0;
 }
-    \endcode
+  \endcode
     This code produces the following output:
-    \code
+  \code
 An:1.41421
-    \endcode
+  \endcode
 */
 class VISP_EXPORT vpMomentAreaNormalized : public vpMoment {
  private:

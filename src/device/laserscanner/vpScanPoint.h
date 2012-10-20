@@ -158,51 +158,8 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
     return ( rDist * cos(this->hAngle) * sin(this->vAngle) );
   }
    
-  /*!
+  friend inline std::ostream &operator << (std::ostream &s, const vpScanPoint &p);
 
-    Print the values of the scan point on the output stream. Data are
-    separated by a white space. Data that are print are first the
-    polar coordinates, than the cartesian coordinates:
-    - the radial distance in meter
-    - the horizontal angle in radian
-    - the vertical angle in radian
-    - the cartesian X coordinate
-    - the cartesian Y coordinate
-    - the cartesian Z coordinate
-    
-    The following code
-    \code
-#include <iostream>
-#include <visp/vpScanPoint.h>
-
-int main()
-{
-  vpScanPoint p;
-  double radialDistance = 3; // 3 meters
-  double horizontalAngle = 1.12; // 1.12 radian
-  double verticalAngle = 0; // 0 radian for a horizontal layer
-  
-  p.setPolar(radialDistance, horizontalAngle, verticalAngle);
-
-  std::cout << p << std::endl;
-}
-   \endcode
-    whill produce the prints 
-    \code
-"3 1.12 0 1.307047339 2.700301327 0"
-    \endcode
-    
-   */
-     friend inline std::ostream &operator << (std::ostream &s, 
-						   const vpScanPoint &p) {
-     s.precision(10);
-     s << p.getRadialDist() << " " 
-       << p.getHAngle() << " " 
-       << p.getVAngle() << " "
-       << p.getX() << " " 
-       << p.getY() << " " << p.getZ();
-     return s;
-   }
    /*!
      
      Returns true if sp1 and sp2 are equal; otherwire returns false.
@@ -255,5 +212,51 @@ int main()
    double hAngle;
    double vAngle;
 };
+
+/*!
+
+  Print the values of the scan point on the output stream. Data are
+  separated by a white space. Data that are print are first the
+  polar coordinates, than the cartesian coordinates:
+  - the radial distance in meter
+  - the horizontal angle in radian
+  - the vertical angle in radian
+  - the cartesian X coordinate
+  - the cartesian Y coordinate
+  - the cartesian Z coordinate
+
+  The following code
+
+  \code
+#include <iostream>
+#include <visp/vpScanPoint.h>
+
+int main()
+{
+vpScanPoint p;
+double radialDistance = 3; // 3 meters
+double horizontalAngle = 1.12; // 1.12 radian
+double verticalAngle = 0; // 0 radian for a horizontal layer
+
+p.setPolar(radialDistance, horizontalAngle, verticalAngle);
+
+std::cout << p << std::endl;
+}
+  \endcode
+  will produce the prints
+  \code
+"3 1.12 0 1.307047339 2.700301327 0"
+  \endcode
+
+ */
+ friend inline std::ostream &operator << (std::ostream &s, const vpScanPoint &p) {
+   s.precision(10);
+   s << p.getRadialDist() << " "
+     << p.getHAngle() << " "
+     << p.getVAngle() << " "
+     << p.getX() << " "
+     << p.getY() << " " << p.getZ();
+   return s;
+ }
 
 #endif
