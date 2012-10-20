@@ -293,7 +293,6 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lxc[0][0] = -lambda2 ;
       Lxc[0][1] = 0. ;
       Lxc[0][2] = lambda2*xc_ - lambda1*l_*cos_a_/4.;
-      //Lxc[0][3] = xc_*xc_ + l_*l_*cos_a_*sin_a_/4. ; // orig bug
       Lxc[0][3] = xc_*yc_ + l_*l_*cos_a_*sin_a_/4. ;
       Lxc[0][4] = -(1+xc_*xc_+l_*l_*cos_a_*cos_a_/4.) ;
       Lxc[0][5] = yc_ ;
