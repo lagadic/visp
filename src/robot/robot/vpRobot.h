@@ -63,43 +63,33 @@ public:
   /*!
     Robot control states.
   */
-  typedef enum 
-    {
-      STATE_STOP,  /*!< Stops robot motion especially in velocity and
-		     acceleration control. */
-      STATE_VELOCITY_CONTROL, //!< Initialize the velocity controller.
-      STATE_POSITION_CONTROL, //!< Initialize the position controller.
-      STATE_ACCELERATION_CONTROL //!< Initialize the acceleration controller.
-    } vpRobotStateType ;
-
-    /** \brief valeur utilisee par default pour l'etat du robot a
-     * la construction. */
-  static const vpRobot::vpRobotStateType
-  defaultEtatRobot = vpRobot::STATE_STOP;
+  typedef enum
+  {
+    STATE_STOP,  /*!< Stops robot motion especially in velocity and
+         acceleration control. */
+    STATE_VELOCITY_CONTROL, //!< Initialize the velocity controller.
+    STATE_POSITION_CONTROL, //!< Initialize the position controller.
+    STATE_ACCELERATION_CONTROL //!< Initialize the acceleration controller.
+  } vpRobotStateType ;
 
   /*!
-    Robot control frames. 
+    Robot control frames.
   */
-  typedef enum 
-    {
-      
-      REFERENCE_FRAME, /*!< Corresponds to a fixed reference frame
-	attached to the robot structure. */
-      ARTICULAR_FRAME, /*!< Corresponds to the joint space. */
-      CAMERA_FRAME,    /*!< Corresponds to a frame attached to the
-	camera mounted on the robot end-effector. */
-      MIXT_FRAME /*!< Corresponds to a "virtual" frame where
-	translations are expressed in the reference frame, and
-	rotations in the camera frame.*/      
-    } vpControlFrameType ;
-
-    static const vpRobot::vpControlFrameType
-    defaultFrameRobot = vpRobot::CAMERA_FRAME ;
+  typedef enum
+  {
+    REFERENCE_FRAME, /*!< Corresponds to a fixed reference frame
+  attached to the robot structure. */
+    ARTICULAR_FRAME, /*!< Corresponds to the joint space. */
+    CAMERA_FRAME,    /*!< Corresponds to a frame attached to the
+  camera mounted on the robot end-effector. */
+    MIXT_FRAME /*!< Corresponds to a "virtual" frame where
+  translations are expressed in the reference frame, and
+  rotations in the camera frame.*/
+  } vpControlFrameType ;
 
 private:  /* Membres privees */
-    vpRobot::vpRobotStateType   stateRobot;
-    vpRobot::vpControlFrameType   frameRobot; 
-
+  vpRobot::vpRobotStateType   stateRobot;
+  vpRobot::vpControlFrameType   frameRobot;
 
 protected:
   double maxTranslationVelocity;
@@ -118,6 +108,12 @@ protected:
   //! is the robot Jacobian expressed in the robot reference frame available
   int fJeAvailable ;
 
+  int areJointLimitsAvailable ;
+  double *qmin;
+  double *qmax ;
+
+  bool verbose_;
+
 public:
   vpRobot (void);
   virtual ~vpRobot() { ; }
@@ -128,10 +124,6 @@ public:
   //! Get the robot Jacobian expressed in the robot reference (or world) frame.
   virtual void get_fJe(vpMatrix &_fJe)  = 0 ;
 
-  //! Get a displacement expressed in the joint space between two successive position control.
-  virtual void getArticularDisplacement(vpColVector  &qdot) = 0 ;
-  //! Get a displacement expressed in the camera frame between two successive position control.
-  virtual void getCameraDisplacement(vpColVector &v) = 0 ;
   //! Get a displacement (frame as to ve specified) between two successive position control.
   virtual void getDisplacement(const vpRobot::vpControlFrameType frame,
                                vpColVector &q) = 0 ;
@@ -163,23 +155,6 @@ public:
   virtual void setVelocity(const vpRobot::vpControlFrameType frame,
                            const vpColVector &vel) = 0 ;
   inline void setVerbose(bool verbose) { verbose_ = verbose; };
-
-  /*
-    Joint limits stuff
-  */
-private:
-  int areJointLimitsAvailable ;
-  double *qmin;
-  double *qmax ;
-
-protected:
-  bool verbose_;
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
