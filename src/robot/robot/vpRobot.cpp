@@ -56,6 +56,7 @@ vpRobot::vpRobot (void)
   maxTranslationVelocity (maxTranslationVelocityDefault),
   maxRotationVelocity (maxRotationVelocityDefault)
 {
+  frameRobot = vpRobot::CAMERA_FRAME;
   stateRobot = vpRobot::STATE_STOP ;
   verbose_ = true;
 }
