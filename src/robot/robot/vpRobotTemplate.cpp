@@ -160,18 +160,6 @@ vpRobotTemplate::setPosition( const vpRobot::vpControlFrameType/*frame*/,
 {
   std::cout << "Not implemented ! " << std::endl;
 }
-//! get a displacement expressed in the camera frame
-void
-vpRobotTemplate::getCameraDisplacement(vpColVector &/* v */)
-{
-  std::cout << "Not implemented ! " << std::endl;
-}
-//! get a displacement expressed  in the articular frame
-void
-vpRobotTemplate::getArticularDisplacement(vpColVector &/* qdot */)
-{
-  std::cout << "Not implemented ! " << std::endl;
-}
 //! get a displacement (frame as to ve specified)
 void
 vpRobotTemplate::getDisplacement(const vpRobot::vpControlFrameType /* frame */,

@@ -93,10 +93,6 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame,
                    const vpColVector &q) ;
 
-  //! get a displacement expressed in the camera frame
-  void getCameraDisplacement(vpColVector &v) ;
-  //! get a displacement expressed  in the articular frame
-  void getArticularDisplacement(vpColVector &qdot) ;
   //! get a displacement (frame as to be specified)
   void getDisplacement(const vpRobot::vpControlFrameType frame,
                        vpColVector &q) ;

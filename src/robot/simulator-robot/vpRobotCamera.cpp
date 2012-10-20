@@ -311,28 +311,6 @@ vpRobotCamera::getPosition(const vpRobot::vpControlFrameType /* frame */,
 }
 
 /*!
-  Get a displacement expressed in the camera frame.
-
-  \warning Not implemented.
-*/
-void
-vpRobotCamera::getCameraDisplacement(vpColVector & /* v */)
-{
-  std::cout << "Not implemented ! " << std::endl;
-}
-
-/*!
-  Get a displacement expressed  in the articular frame.
-
-  \warning Not implemented.
-*/
-void
-vpRobotCamera::getArticularDisplacement(vpColVector & /* qdot */)
-{
-  std::cout << "Not implemented ! " << std::endl;
-}
-
-/*!
   Get a displacement depending on the control frame type.
 
   \warning Not implemented.
