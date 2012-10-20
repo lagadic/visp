@@ -43,6 +43,7 @@
 
 #include <visp/vpRxyzVector.h>
 #include <visp/vpTranslationVector.h>
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpUnicycle.h>
 
 
@@ -64,6 +65,35 @@
 
   \image html pioneer-pan.png
 
+  Considering
+  \f[{\bf v} = {^e}{\bf J}_e \;
+  \left(\begin{array}{c}
+  v_x \\
+  w_z \\
+  \dot{q_1} \\
+  \end{array}
+  \right)
+  \f]
+  with
+  \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
+  of the mobile platform, \f$\dot{q_1}\f$ the joint velocity of the pan head and \f$\bf v\f$
+  the six dimention velocity skew expressed at point E in frame E,
+  the robot jacobian is given by:
+
+  \f[
+  {^e}{\bf J}_e = \left(\begin{array}{ccc}
+  c_1  & -c_1*p_y - s_1*p_x & 0   \\
+  0  & 0 & 0 \\
+  s_1  & -s_1*p_y + c_1*p_x & 0   \\
+  0  & 0 & 0  \\
+  0  & -1 & 1   \\
+  0  & 0 & 0  \\
+  \end{array}
+  \right)
+  \f]
+
+  with \f$p_x, p_y\f$ the position of the head base frame in the mobile platform frame
+  located at the middle point between the two weels.
 
 */
 class VISP_EXPORT vpPioneerPan: public vpUnicycle
@@ -74,9 +104,11 @@ public:
     */
   vpPioneerPan() : vpUnicycle()
   {
-    set_mtp();
+    double q = 0; // Initial position of the pan axis
+    set_mMp();
+    set_pMe( q );
     set_cMe();
-    set_eJe(0.);
+    set_eJe( q );
   }
 
   /*!
@@ -111,8 +143,8 @@ public:
   */
   void set_eJe(double q_pan)
   {
-    double px = mtp_[0];
-    double py = mtp_[1];
+    double px = mMp_[0][3];
+    double py = mMp_[1][3];
     double c1 = cos(q_pan);
     double s1 = sin(q_pan);
 
@@ -129,7 +161,7 @@ public:
     eJe_[4][2] = 1;
   }
 
-private:
+protected:
   /*!
     Set the transformation between the camera frame and the pan head end effector frame.
     */
@@ -158,16 +190,44 @@ private:
     Set the transformation between the mobile platform frame
     located at the middle point between the two weels and the base frame of the pan head.
     */
-  void set_mtp()
+  void set_mMp()
   {
     // Position of the pan head in the mobile platform frame
     double px = 0.1; // distance between the pan frame and the robot frame
     double py = 0;
     double pz = 0.27;
-    mtp_.set(px, py, pz);
+    vpTranslationVector mtp;
+    mtp.set(px, py, pz);
+
+    vpRotationMatrix mRp; // set to Identity
+    mRp[1][1] = mRp[2][2] = -1.;
+
+    mMp_.insert(mtp);
+    mMp_.insert(mRp);
   }
 
-  vpTranslationVector mtp_;
+  /*!
+    Set the transformation between the pan head reference frame and the
+    end-effector frame.
+
+    \param q : Position in rad of the pan axis.
+
+    */
+  void set_pMe(const double q)
+  {
+    vpRotationMatrix pRe;
+    pRe[0][0] = cos(q);
+    pRe[0][2] = pRe[1][0] = sin(q);
+    pRe[1][1] = pRe[2][2] = 0.;
+    pRe[2][1] = 1.;
+    pRe[1][2] = - pRe[0][0];
+
+    pMe_.insert(pRe);
+  }
+
+protected:
+  vpHomogeneousMatrix mMp_; // constant
+  vpHomogeneousMatrix pMe_; // depends on q pan
 
 };
 
