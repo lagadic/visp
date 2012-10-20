@@ -249,7 +249,7 @@ std::cout << p << std::endl;
   \endcode
 
  */
- friend inline std::ostream &operator << (std::ostream &s, const vpScanPoint &p) {
+inline std::ostream &operator << (std::ostream &s, const vpScanPoint &p) {
    s.precision(10);
    s << p.getRadialDist() << " "
      << p.getHAngle() << " "
