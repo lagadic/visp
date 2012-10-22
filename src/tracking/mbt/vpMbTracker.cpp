@@ -808,7 +808,6 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
 #endif
 }
 
-
 /*!
   Load a 3D model contained in a .cao file.
   
@@ -839,6 +838,7 @@ void
 vpMbTracker::loadCAOModel(const std::string& _modelFile)
 {
   std::ifstream file_id;
+  file_id.exceptions ( std::ifstream::failbit | std::ifstream::eofbit );
   file_id.open (_modelFile.c_str(), std::ifstream::in);
   if(file_id.fail()) {
     std::cout << "cannot read CAO model file: " << _modelFile << std::endl;
@@ -846,172 +846,180 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
   }
 
 
-  char c;
-  // Extraction of the version (remove empty line and commented ones (comment 
-  // line begin with the #)).
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-  file_id.unget();
+  try{
+    char c;
+    // Extraction of the version (remove empty line and commented ones (comment
+    // line begin with the #)).
+    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+    file_id.unget();
 
-  int caoVersion;
-  file_id.get(c);
-  if(c=='V'){
-    file_id >> caoVersion;
-  }
-  else{
-    std::cout <<"in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...";
-    throw vpException(vpException::badValue, 
-      "in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...");
-  }
-
-  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n') ;
-  file_id.unget();
-
-  //Read the points
-  unsigned int caoNbrPoint;
-  file_id >> caoNbrPoint;
-  std::cout << "> " << caoNbrPoint << " points" << std::endl;
-  vpPoint *caoPoints = NULL;
-  if (caoNbrPoint > 0)
-    caoPoints = new vpPoint[caoNbrPoint];
-
-  double x ; // 3D coordinates
-  double y ;
-  double z ;
-
-  int i ;    // image coordinate (used for matching)
-  int j ;
-
-
-  for(unsigned int k=0; k < caoNbrPoint; k++){
-    file_id >> x ;
-    file_id >> y ;
-    file_id >> z ;
-    if (caoVersion == 2){
-      file_id >> i ;
-      file_id >> j ;
-    }
-
-    if(k != caoNbrPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-      file_id.ignore(256,'\n');
-    }
-    caoPoints[k].setWorldCoordinates(x, y, z) ;
-  }
-
-  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-  file_id.unget();
-
-  //Read the lines
-  unsigned int caoNbrLine;
-  file_id >> caoNbrLine;
-  unsigned int *caoLinePoints = NULL;
-  std::cout << "> " << caoNbrLine << " lines" << std::endl;
-  if (caoNbrLine > 0)
-    caoLinePoints = new unsigned int[2*caoNbrLine];
-
-  unsigned int index1, index2;
-
-  for(unsigned int k=0; k < caoNbrLine ; k++){
-    file_id >> index1 ;
-    file_id >> index2 ;
-
-    caoLinePoints[2*k] = index1;
-    caoLinePoints[2*k+1] = index2;
-    
-    if(index1 < caoNbrPoint && index2 < caoNbrPoint){
-      std::vector<vpPoint> extremities;
-      extremities.push_back(caoPoints[index1]);
-      extremities.push_back(caoPoints[index2]);
-      initFaceFromCorners(extremities, k);
+    int caoVersion;
+    file_id.get(c);
+    if(c=='V'){
+      file_id >> caoVersion;
     }
     else{
-      vpTRACE(" line %d has wrong coordinates.", k);
+      std::cout <<"in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...";
+      throw vpException(vpException::badValue,
+        "in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...");
+    }
+
+    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n') ;
+    file_id.unget();
+
+    //Read the points
+    unsigned int caoNbrPoint;
+    file_id >> caoNbrPoint;
+    std::cout << "> " << caoNbrPoint << " points" << std::endl;
+    vpPoint *caoPoints = NULL;
+    if (caoNbrPoint > 0)
+      caoPoints = new vpPoint[caoNbrPoint];
+
+    double x ; // 3D coordinates
+    double y ;
+    double z ;
+
+    int i ;    // image coordinate (used for matching)
+    int j ;
+
+
+    for(unsigned int k=0; k < caoNbrPoint; k++){
+      file_id >> x ;
+      file_id >> y ;
+      file_id >> z ;
+      if (caoVersion == 2){
+        file_id >> i ;
+        file_id >> j ;
+      }
+
+      if(k != caoNbrPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
+        file_id.ignore(256,'\n');
+      }
+      caoPoints[k].setWorldCoordinates(x, y, z) ;
+    }
+
+    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+    file_id.unget();
+
+    //Read the lines
+    unsigned int caoNbrLine;
+    file_id >> caoNbrLine;
+    unsigned int *caoLinePoints = NULL;
+    std::cout << "> " << caoNbrLine << " lines" << std::endl;
+    if (caoNbrLine > 0)
+      caoLinePoints = new unsigned int[2*caoNbrLine];
+
+    unsigned int index1, index2;
+
+    for(unsigned int k=0; k < caoNbrLine ; k++){
+      file_id >> index1 ;
+      file_id >> index2 ;
+
+      caoLinePoints[2*k] = index1;
+      caoLinePoints[2*k+1] = index2;
+
+      if(index1 < caoNbrPoint && index2 < caoNbrPoint){
+        std::vector<vpPoint> extremities;
+        extremities.push_back(caoPoints[index1]);
+        extremities.push_back(caoPoints[index2]);
+        initFaceFromCorners(extremities, k);
+      }
+      else{
+        vpTRACE(" line %d has wrong coordinates.", k);
+      }
+
+      if(k != caoNbrLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
+        file_id.ignore(256,'\n');
+      }
+    }
+
+    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+    file_id.unget();
+
+
+      /* Load polygon from the lines extracted earlier
+          (the first point of the line is used)*/
+    unsigned int caoNbrPolygonLine;
+    file_id >> caoNbrPolygonLine;
+    std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
+    unsigned int index;
+    for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
+      unsigned int nbLinePol;
+      file_id >> nbLinePol;
+      std::vector<vpPoint> corners;
+      for(unsigned int i = 0; i < nbLinePol; i++){
+        file_id >> index;
+        corners.push_back(caoPoints[caoLinePoints[2*index]]);
+      }
+      if(k != caoNbrPolygonLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
+        file_id.ignore(256,'\n');
+      }
+      initFaceFromCorners(corners, k);
+    }
+
+    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+    file_id.unget();
+
+      /* Extract the polygon using the point coordinates (top of the file) */
+    unsigned int caoNbrPolygonPoint;
+    file_id >> caoNbrPolygonPoint;
+    std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
+    for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
+      int nbPointPol;
+      file_id >> nbPointPol;
+      std::vector<vpPoint> corners;
+      for(int i = 0; i < nbPointPol; i++){
+        file_id >> index;
+        corners.push_back(caoPoints[index]);
+      }
+      if(k != caoNbrPolygonPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
+        file_id.ignore(256,'\n');
+      }
+      initFaceFromCorners(corners, k);
+    }
+
+    unsigned int caoNbCylinder;
+    try{
+      while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
+      while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
+      file_id.unget();
+
+      if(file_id.eof()){// check if not at the end of the file (for old style files)
+        delete[] caoPoints;
+        delete[] caoLinePoints;
+        return ;
+      }
+
+      /* Extract the cylinders */
+
+
+      file_id >> caoNbCylinder;
+      std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
+      for(unsigned int k=0; k<caoNbCylinder; ++k){
+        double radius;
+        unsigned int indexP1, indexP2;
+        file_id >> indexP1;
+        file_id >> indexP2;
+        file_id >> radius;
+        initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
+      }
+
+    }catch(...){
+      std::cerr << "Cannot get the number of cylinders. Defaulting to zero." << std::endl;
+      caoNbCylinder = 0;
     }
     
-    if(k != caoNbrLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-      file_id.ignore(256,'\n');
-    }
-  }
-
-  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-  file_id.unget();
-
-
-    /* Load polygon from the lines extracted earlier 
-        (the first point of the line is used)*/
-  unsigned int caoNbrPolygonLine;
-  file_id >> caoNbrPolygonLine;
-  std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
-  unsigned int index;
-  for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
-    unsigned int nbLinePol;
-    file_id >> nbLinePol;
-    std::vector<vpPoint> corners;
-    for(unsigned int i = 0; i < nbLinePol; i++){
-      file_id >> index;
-      corners.push_back(caoPoints[caoLinePoints[2*index]]);
-    }
-    if(k != caoNbrPolygonLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).       
-      file_id.ignore(256,'\n');
-    }
-    initFaceFromCorners(corners, k);
-  }
-
-  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-  file_id.unget();
-    
-    /* Extract the polygon using the point coordinates (top of the file) */
-  unsigned int caoNbrPolygonPoint;
-  file_id >> caoNbrPolygonPoint;
-  std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
-  for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
-    int nbPointPol;
-    file_id >> nbPointPol;
-    std::vector<vpPoint> corners;
-    for(int i = 0; i < nbPointPol; i++){
-      file_id >> index;
-      corners.push_back(caoPoints[index]);
-    }
-    if(k != caoNbrPolygonPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-      file_id.ignore(256,'\n');
-    }
-    initFaceFromCorners(corners, k);
-  }
-
-
-  while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-  while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-  file_id.unget();
-
-  if(file_id.eof()){// check if not at the end of the file (for old style files)
     delete[] caoPoints;
     delete[] caoLinePoints;
-    return ;
+  }catch(std::ifstream::failure e){
+    std::cerr << "Cannot read line!" << std::endl;
+    throw vpException(vpException::ioError, "cannot read line");
   }
 
-    /* Extract the cylinders */
-  try{
-    unsigned int caoNbCylinder;
-    file_id >> caoNbCylinder;
-    std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
-    for(unsigned int k=0; k<caoNbCylinder; ++k){
-      double radius;
-      unsigned int indexP1, indexP2;
-      file_id >> indexP1;
-      file_id >> indexP2;
-      file_id >> radius;
-      initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
-    }
-
-  }catch(...){
-    std::cerr << "Cannot get the number of cylinder" << std::endl;
-  }
-  
-  delete[] caoPoints;
-  delete[] caoLinePoints;
 }
 
 
