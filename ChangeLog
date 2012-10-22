@@ -23,6 +23,7 @@ ViSP 2.6.3 (under development)
     - [14862] Lagrange pose estimation cannot handle planar objects with 
               points in plane oX=d or oY=d
     - [14863] vpPose::poseRansac() can fail during Lagrange pose estimation
+    - [14993] Segfault in mbtTracker example when only the cube is tracked
 
 ----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)
