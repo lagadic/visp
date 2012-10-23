@@ -110,7 +110,7 @@ public:
     Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
 
     \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf q}\f$ with
-    \f$\dot{\bf q} = (v_x, w_z)\f\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
+    \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
   vpMatrix get_eJe() const
   {
