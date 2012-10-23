@@ -39,21 +39,12 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-/*!
-  \file servoSimuFourPoints2DCamVelocityDisplay.cpp
-  \brief Simulation of a 2D visual servoing:
-  - servo on 4 points with cartesian coordinates,
-  - eye-in-hand control law,
-  - camera velocities are computed,
-  - display internal camera view and an external view.
-
-  Interaction matrix is computed as the mean of the current and desired
-  interaction matrix.
-
-*/
 
 /*!
   \example servoSimuFourPoints2DCamVelocityDisplay.cpp
+
+  \brief Simulation of a 2D visual servoing:
+
   Simulation of a 2D visual servoing:
   - servo on 4 points with cartesian coordinates,
   - eye-in-hand control law,
@@ -65,7 +56,6 @@
 
 */
 
-#include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
@@ -73,23 +63,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
-
-#include <visp/vpServoDisplay.h>
-#include <visp/vpProjectionDisplay.h>
-
-#include <visp/vpImage.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpCameraParameters.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpMath.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpProjectionDisplay.h>
+#include <visp/vpServo.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpSimulatorCamera.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
@@ -213,7 +200,7 @@ main(int argc, const char ** argv)
 
   int i ;
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
 
   std::cout << std::endl ;
@@ -226,105 +213,100 @@ main(int argc, const char ** argv)
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
-
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpHomogeneousMatrix cMo(-0.1,-0.1,1,
                           vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
-  robot.setPosition(cMo) ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
   vpHomogeneousMatrix cextMo(0,0,2,
                              0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
-
-  vpTRACE("sets the point coordinates in the object frame "  ) ;
+  // sets the point coordinates in the object frame
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-0.1,-0.1,0) ;
   point[1].setWorldCoordinates(0.1,-0.1,0) ;
   point[2].setWorldCoordinates(0.1,0.1,0) ;
   point[3].setWorldCoordinates(-0.1,0.1,0) ;
 
-
   for (i = 0 ; i < 4 ; i++)
     externalview.insert(point[i]) ;
 
-  vpTRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  // computes  the point coordinates in the camera frame and its 2D coordinates
   for (i = 0 ; i < 4 ; i++)
     point[i].track(cMo) ;
 
-  vpTRACE("sets the desired position of the point ") ;
+  // sets the desired position of the point
   vpFeaturePoint p[4] ;
   for (i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
-
-  vpTRACE("sets the desired position of the feature point s*") ;
+  // sets the desired position of the feature point s*
   vpFeaturePoint pd[4] ;
 
-  pd[0].buildFrom(-0.1,-0.1,1) ;
-  pd[1].buildFrom(0.1,-0.1,1) ;
-  pd[2].buildFrom(0.1,0.1,1) ;
-  pd[3].buildFrom(-0.1,0.1,1) ;
+  pd[0].buildFrom(-0.1,-0.1, 1) ;
+  pd[1].buildFrom( 0.1,-0.1, 1) ;
+  pd[2].buildFrom( 0.1, 0.1, 1) ;
+  pd[3].buildFrom(-0.1, 0.1, 1) ;
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t articular velocity are computed") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - articular velocity are computed
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
   task.setInteractionMatrixType(vpServo::MEAN) ;
 
-
-  vpTRACE("Set the position of the camera in the end-effector frame ") ;
+  // Set the position of the camera in the end-effector frame ") ;
   vpHomogeneousMatrix cMe ;
   vpVelocityTwistMatrix cVe(cMe) ;
   task.set_cVe(cVe) ;
 
-  vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
+  // Set the Jacobian (expressed in the end-effector frame)
   vpMatrix eJe ;
   robot.get_eJe(eJe) ;
   task.set_eJe(eJe) ;
 
-  vpTRACE("\t we want to see a point on a point..") ;
+  // we want to see a point on a point
   for (i = 0 ; i < 4 ; i++)
     task.addFeature(p[i],pd[i]) ;
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information " ) ;
   task.print() ;
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++<200)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
     vpColVector v ;
 
-
-    if (iter==1)
-    {
-      vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-      vpTRACE("since q is modified eJe is modified") ;
-    }
+    // Set the Jacobian (expressed in the end-effector frame)
+    // since q is modified eJe is modified
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    robot.getPosition(cMo) ;
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
-    if (iter==1) {
-      std::cout <<"Initial robot position with respect to the object frame:\n";
-      cMo.print();
-    }
-
-    if (iter==1) vpTRACE("\t new point position ") ;
+    // update new point position and corresponding features
     for (i = 0 ; i < 4 ; i++)
     {
       point[i].track(cMo) ;
       //retrieve x,y and Z of the vpPoint structure
       vpFeatureBuilder::create(p[i],point[i])  ;
-
     }
+    // since vpServo::MEAN interaction matrix is used, we need also to update the desired features at each iteration
+    pd[0].buildFrom(-0.1,-0.1, 1) ;
+    pd[1].buildFrom( 0.1,-0.1, 1) ;
+    pd[2].buildFrom( 0.1, 0.1, 1) ;
+    pd[3].buildFrom(-0.1, 0.1, 1) ;
 
     if (opt_display) {
       vpDisplay::display(Iint) ;
@@ -335,33 +317,25 @@ main(int argc, const char ** argv)
       vpDisplay::flush(Iext);
     }
 
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    // compute the control law
     v = task.computeControlLaw() ;
 
-    if (iter==1)
-    {
-      vpTRACE("Display task information " ) ;
-      task.print() ;
-    }
-
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || ") ;
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
-
 
   std::cout <<"Final robot position with respect to the object frame:\n";
   cMo.print();
 
   if (opt_display && opt_click_allowed) {
     // suppressed for automate test
-    vpTRACE("\n\nClick in the internal view window to end...");
+    std::cout << "\n\nClick in the internal view window to end..." << std::endl;
     vpDisplay::getClick(Iint) ;
   }
 }
@@ -369,7 +343,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  std::cout << "You do not have X11, GTK or GDI display functionalities..." << std::endl;
 }
 
 #endif

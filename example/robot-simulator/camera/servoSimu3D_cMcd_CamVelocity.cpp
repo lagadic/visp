@@ -58,21 +58,18 @@
 
 */
 
-
-
-
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeatureThetaU.h>
-#include <visp/vpFeatureTranslation.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpFeatureTranslation.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
@@ -183,7 +180,7 @@ main(int argc, const char ** argv)
   std::ofstream flog(logfilename.c_str());
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
@@ -204,7 +201,9 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cMo(c_r_o) ;
 
   // Set the robot initial position
-  robot.setPosition(cMo) ;
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo; // Compute the position of the object in the world frame
 
   // Sets the desired camera location
   vpPoseVector cd_r_o(// Translation tx,ty,tz
@@ -257,7 +256,9 @@ main(int argc, const char ** argv)
     vpColVector v ;
 
     // get the robot position
-    robot.getPosition(cMo) ;
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
     // new displacement to achieve
     cMcd = cMo*cdMo.inverse() ;
@@ -276,8 +277,8 @@ main(int argc, const char ** argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
     // Retrieve the error 
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
-    
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+
     // Save log
     flog << v.t() << " " << ( task.getError() ).t() << std::endl;
   }

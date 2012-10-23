@@ -41,8 +41,6 @@
  *****************************************************************************/
 
 /*!
-  \file servoSimuSquareLine2DCamVelocityDisplay.cpp
-
   \example servoSimuSquareLine2DCamVelocityDisplay.cpp
 
   \brief Servo four lines:
@@ -60,32 +58,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeatureLine.h>
-#include <visp/vpLine.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
-
-
-#include <visp/vpServoDisplay.h>
-
-#include <visp/vpImage.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpCameraParameters.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureLine.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpLine.h>
+#include <visp/vpMath.h>
 #include <visp/vpParseArgv.h>
-
+#include <visp/vpRobotCamera.h>
+#include <visp/vpServo.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpSimulatorCamera.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
@@ -215,22 +202,25 @@ main(int argc, const char ** argv)
   vpCameraParameters cam(px,py,u0,v0);
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpHomogeneousMatrix cMo(0.2,0.2,1,
                           vpMath::rad(45),  vpMath::rad(45),  vpMath::rad(125));
 
-  robot.setPosition(cMo) ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
-  vpTRACE("sets the final camera location (for simulation purpose)" ) ;
+  // sets the final camera location (for simulation purpose)
   vpHomogeneousMatrix cMod(0,0,1,
                            vpMath::rad(0),  vpMath::rad(0),  vpMath::rad(0));
 
 
   int nbline = 4;
 
-  vpTRACE("sets the line coordinates (2 planes) in the world frame "  ) ;
+  // sets the line coordinates (2 planes) in the world frame
   vpLine line[4] ;
   line[0].setWorldCoordinates(1,0,0,0.05,0,0,1,0);
   line[1].setWorldCoordinates(0,1,0,0.05,0,0,1,0);
@@ -240,7 +230,7 @@ main(int argc, const char ** argv)
   vpFeatureLine ld[4] ;
   vpFeatureLine l[4] ;
 
-  vpTRACE("sets the desired position of the visual feature ") ;
+  // sets the desired position of the visual feature
   for(int i = 0; i < nbline; i++)
   {
     line[i].track(cMod) ;
@@ -249,9 +239,8 @@ main(int argc, const char ** argv)
     vpFeatureBuilder::create(ld[i],line[i])  ;
   }
 
-
-  vpTRACE("project : computes  the line coordinates in the camera frame and its 2D coordinates"  ) ;
-  vpTRACE("sets the current position of the visual feature ") ;
+  // computes  the line coordinates in the camera frame and its 2D coordinates
+  // sets the current position of the visual feature
   for(int i = 0; i < nbline; i++)
   {
     line[i].track(cMo) ;
@@ -261,17 +250,16 @@ main(int argc, const char ** argv)
     l[i].print() ;
   }
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - robot is controlled in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
   task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
   //It could be also interesting to test the following tasks
   //task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
   //task.setInteractionMatrixType(vpServo::MEAN, vpServo::PSEUDO_INVERSE);
 
-  vpTRACE("\t we want to see a four lines on four lines.\n") ;
-
+  // we want to see a four lines on four lines
   for(int i = 0; i < nbline; i++)
     task.addFeature(l[i],ld[i]) ;
 
@@ -279,11 +267,10 @@ main(int argc, const char ** argv)
   vpServoDisplay::display(task,cam,I) ;
   vpDisplay::flush(I) ; 
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   if (opt_display && opt_click_allowed) {
@@ -292,17 +279,18 @@ main(int argc, const char ** argv)
   }
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++<200)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
     vpColVector v ;
 
-    if (iter==1) vpTRACE("\t\t get the robot position ") ;
-    robot.getPosition(cMo) ;
-    if (iter==1) vpTRACE("\t\t new line position ") ;
-    //retrieve x,y and Z of the vpLine structure
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
+    // new line position: retrieve x,y and Z of the vpLine structure
     for(int i = 0; i < nbline; i++)
     {
       line[i].track(cMo) ;
@@ -315,13 +303,13 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
 
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    // compute the control law
     v = task.computeControlLaw() ;
 
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || ") ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
 
   }
 
@@ -330,7 +318,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
 }

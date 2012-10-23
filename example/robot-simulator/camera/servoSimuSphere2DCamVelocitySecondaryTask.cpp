@@ -40,15 +40,6 @@
  *
  *****************************************************************************/
 
-/*!
-  \file servoSimuSphere2DCamVelocitySecondaryTask.cpp
-  \brief Servo a sphere:
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - without display,
-  - a secondary task is the added.
-
-*/
 
 /*!
   \example servoSimuSphere2DCamVelocitySecondaryTask.cpp
@@ -60,27 +51,19 @@
 
 */
 
-
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeatureEllipse.h>
-#include <visp/vpSphere.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
-
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureEllipse.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpRobotCamera.h>
+#include <visp/vpServo.h>
+#include <visp/vpSphere.h>
+#include <visp/vpSimulatorCamera.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
@@ -159,7 +142,7 @@ main(int argc, const char ** argv)
   }
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
@@ -170,64 +153,64 @@ main(int argc, const char ** argv)
   std::cout << std::endl ;
 
 
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpHomogeneousMatrix cMo ;
   cMo[0][3] = 0.1 ;
   cMo[1][3] = 0.2 ;
   cMo[2][3] = 2 ;
-  robot.setPosition(cMo) ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
   vpHomogeneousMatrix cMod ;
   cMod[0][3] = 0 ;
   cMod[1][3] = 0 ;
   cMod[2][3] = 1 ;
 
-
-
-  vpTRACE("sets the sphere coordinates in the world frame "  ) ;
+  // sets the sphere coordinates in the world frame
   vpSphere sphere ;
   sphere.setWorldCoordinates(0,0,0,0.1) ;
 
-  vpTRACE("sets the desired position of the visual feature ") ;
+  // sets the desired position of the visual feature
   vpFeatureEllipse pd ;
   sphere.track(cMod) ;
   vpFeatureBuilder::create(pd,sphere)  ;
 
-  vpTRACE("project : computes  the sphere coordinates in the camera frame and its 2D coordinates"  ) ;
-
-  vpTRACE("sets the current position of the visual feature ") ;
+  // computes  the sphere coordinates in the camera frame and its 2D coordinates
+  // sets the current position of the visual feature
   vpFeatureEllipse p ;
   sphere.track(cMo) ;
   vpFeatureBuilder::create(p,sphere)  ;
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - robot is controlled in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-  vpTRACE("\t we want to see a sphere on a sphere..") ;
+  // we want to see a sphere on a sphere
   std::cout << std::endl ;
   task.addFeature(p,pd) ;
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   // exit(1) ;
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++ < 500)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
     vpColVector v ;
 
-    if (iter==1) vpTRACE("\t\t get the robot position ") ;
-    robot.getPosition(cMo) ;
-    if (iter==1) vpTRACE("\t\t new sphere position ") ;
-    //retrieve x,y and Z of the vpSphere structure
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
+    // new sphere position: retrieve x,y and Z of the vpSphere structure
     sphere.track(cMo) ;
     vpFeatureBuilder::create(p,sphere);
 
@@ -236,27 +219,23 @@ main(int argc, const char ** argv)
     de2dt[5] = 0.01 ; // should be ok
     de2dt[0] = 0.01 ;  // should generate a motion on (I-WpW)de2dt[4]
 
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
-
+    // compute the control law
     v = task.computeControlLaw() ;
 
-    std::cout << "de2dt :"<< de2dt.t() ;
+    std::cout << "de2dt :"<< de2dt.t() << std::endl;
     vpColVector sec ;
     sec = task.secondaryTask(de2dt) ;
-    std::cout << " (I-WpW)de2dt :"<< sec.t() ;
+    std::cout << "(I-WpW)de2dt :"<< sec.t() << std::endl;
 
     if (iter>20)  v += sec ;
 
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    std::cout << "\t || s - s* || " ;
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
-
-
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
 }

@@ -39,17 +39,10 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-/*!
-  \file servoSimuCylinder2DCamVelocityDisplay.cpp
-  \brief Servo a cylinder:
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - display the camera view.
-
-*/
 
 /*!
   \example servoSimuCylinder2DCamVelocityDisplay.cpp
+  \brief Servo a cylinder:
   Servo a cylinder:
   - eye-in-hand control law,
   - velocity computed in the camera frame,
@@ -65,31 +58,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeatureLine.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpCylinder.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-
-// Debug trace
-#include <visp/vpDebug.h>
-
-
-#include <visp/vpServoDisplay.h>
-
-#include <visp/vpImage.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpCameraParameters.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeatureLine.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpMath.h>
 #include <visp/vpParseArgv.h>
+#include <visp/vpProjectionDisplay.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
+#include <visp/vpServoDisplay.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
@@ -217,26 +200,26 @@ main(int argc, const char ** argv)
   vpCameraParameters cam(px,py,u0,v0);
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpHomogeneousMatrix cMo(-0.2,0.1,2,
                           vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(20));
 
-  robot.setPosition(cMo) ;
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo; // Compute the position of the object in the world frame
 
-  vpTRACE("sets the final camera location (for simulation purpose)" ) ;
+  // sets the final camera location (for simulation purpose)
   vpHomogeneousMatrix cMod(0,0,1,
                            vpMath::rad(-60),  vpMath::rad(0),  vpMath::rad(0));
 
-
-
-  vpTRACE("sets the cylinder coordinates in the world frame "  ) ;
+  // sets the cylinder coordinates in the world frame
   vpCylinder cylinder(0,1,0,  // direction
                       0,0,0,  // point of the axis
                       0.1) ;  // radius
 
-  vpTRACE("sets the desired position of the visual feature ") ;
+  // sets the desired position of the visual feature
   cylinder.track(cMod) ;
   cylinder.print() ;
 
@@ -245,9 +228,8 @@ main(int argc, const char ** argv)
   for(i=0 ; i < 2 ; i++)
     vpFeatureBuilder::create(ld[i],cylinder,i)  ;
 
-
-  vpTRACE("project : computes  the cylinder coordinates in the camera frame and its 2D coordinates"  ) ;
-  vpTRACE("sets the current position of the visual feature ") ;
+  // computes  the cylinder coordinates in the camera frame and its 2D coordinates
+  // sets the current position of the visual feature
   cylinder.track(cMo) ;
   cylinder.print() ;
 
@@ -258,9 +240,9 @@ main(int argc, const char ** argv)
     l[i].print() ;
   }
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - robot is controlled in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
   // task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE) ;
   //  it can also be interesting to test these possibilities
@@ -269,15 +251,14 @@ main(int argc, const char ** argv)
   //task.setInteractionMatrixType(vpServo::DESIRED,  vpServo::TRANSPOSE) ;
   // task.setInteractionMatrixType(vpServo::CURRENT,  vpServo::TRANSPOSE) ;
 
-  vpTRACE("\t we want to see  2 lines on 2 lines.") ;
-
+  // - we want to see 2 lines on 2 lines
   task.addFeature(l[0],ld[0]) ;
   task.addFeature(l[1],ld[1]) ;
 
   vpServoDisplay::display(task,cam,I) ;
   vpDisplay::flush(I) ;
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   if (opt_display && opt_click_allowed) {
@@ -285,25 +266,26 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 
-  vpTRACE("\t set the gain") ;
+  // - set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   do
   {
     std::cout << "---------------------------------------------" << iter++ <<std::endl ;
     vpColVector v ;
 
-    if (iter==1) vpTRACE("\t\t get the robot position ") ;
-    robot.getPosition(cMo) ;
-    if (iter==1) vpTRACE("\t\t new line position ") ;
-    //retrieve x,y and Z of the vpLine structure
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
+    // new line position
+    // retrieve x,y and Z of the vpLine structure
     cylinder.track(cMo) ;
     //    cylinder.print() ;
     for(i=0 ; i < 2 ; i++)
@@ -318,14 +300,13 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
 
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    // compute the control law
     v = task.computeControlLaw() ;
 
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || ") ;
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
 
     //   vpDisplay::getClick(I) ;
   }
@@ -336,7 +317,7 @@ main(int argc, const char ** argv)
     vpDisplay::getClick(I) ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
 }

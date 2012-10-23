@@ -41,14 +41,6 @@
  *
  *****************************************************************************/
 
-/*!
-  \file servoSimuPoint2DhalfCamVelocity3.cpp
-  \brief Simulation of a 2 1/2 D visual servoing (x,y, t,theta u_z)
-  - (x,y, t,theta u_z) features
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - no display.
-*/
 
 /*!
   \example servoSimuPoint2DhalfCamVelocity3.cpp
@@ -60,20 +52,20 @@
 */
 
 
+#include <stdlib.h>
+#include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpPoint.h>
+#include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeaturePoint.h>
 #include <visp/vpFeatureThetaU.h>
 #include <visp/vpGenericFeature.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMath.h>
 #include <visp/vpParseArgv.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <visp/vpPoint.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
@@ -161,13 +153,11 @@ main(int argc, const char ** argv)
   // The camera location is given by an homogenous matrix cMo that
   // describes the position of the camera in the scene frame.
 
-
   vpServo task ;
   
-
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   // we give the camera location as a size 6 vector (3 translations in meter
-  // and 3 rotation (theta U representation) )
+  // and 3 rotation (theta U representation)
   vpPoseVector c_r_o(0.1,0.2,2,
                      vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
                      ) ;
@@ -176,22 +166,22 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cMo(c_r_o) ;
   
   // We define a robot
-  // The vpRobotCamera implements a simple moving that is juste defined
+  // The vpSimulatorCamera implements a simple moving that is juste defined
   // by its location cMo
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
-  // the robot position is set to the defined cMo position
-  robot.setPosition(cMo) ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
   // Now that the current camera position has been defined,
   // let us defined the defined camera location.
   // It is defined by cdMo
-  vpTRACE("sets the desired camera location " ) ;
+  // sets the desired camera location " ) ;
   vpPoseVector cd_r_o(0,0,1,
                       vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
-
-
 
   //----------------------------------------------------------------------
   // A 2 1/2 D visual servoing can be defined by
@@ -210,7 +200,6 @@ main(int argc, const char ** argv)
   //------------------------------------------------------------------
   // First feature (x,y)
   //------------------------------------------------------------------
-  vpTRACE("1st feature (x,y)");
   // Let oP be this ... point,
   // a vpPoint class has three main member
   // .oP : 3D coordinates in scene frame
@@ -218,13 +207,13 @@ main(int argc, const char ** argv)
   // .p : 2D
 
   //------------------------------------------------------------------
-  vpTRACE("\tsets the point coordinates in the world frame "  ) ;
+  // sets the point coordinates in the world frame
   vpPoint P ;
   // defined point coordinates in the scene frame : oP
   P.setWorldCoordinates(0,0,0) ;
   // computes  the P coordinates in the camera frame and its
   // 2D coordinates cP and then p
-  vpTRACE("\tproject : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  // computes the point coordinates in the camera frame and its 2D coordinates
   P.track(cMo) ;
 
   // We also defined (again by forward projection) the desired position
@@ -249,9 +238,7 @@ main(int argc, const char ** argv)
   vpFeatureBuilder::create(p,P)  ;
   vpFeatureBuilder::create(pd,Pd)  ;
 
-
   // This visual has to be regulated to zero
-  vpTRACE("2nd feature ThetaUz and 3rd feature t") ;
 
   //------------------------------------------------------------------
   // 2nd feature ThetaUz and 3rd feature t
@@ -260,7 +247,7 @@ main(int argc, const char ** argv)
   // the complete displacement is then defined by:
   //------------------------------------------------------------------
   vpHomogeneousMatrix cdMc ;
-  vpTRACE("\tcompute the rotation that the camera has to realize "  ) ;
+  // compute the rotation that the camera has to achieve
   cdMc = cdMo*cMo.inverse() ;
 
   // from this displacement, we extract the rotation cdRc represented by
@@ -273,17 +260,16 @@ main(int argc, const char ** argv)
   
   // This visual has to be regulated to zero
 
-  vpTRACE("\tsets the desired rotation (always zero !) ") ;
-  vpTRACE("\tsince s is the rotation that the camera has to realize ") ;
-
+  // sets the desired rotation (always zero !)
+  // since s is the rotation that the camera has to achieve
 
   //------------------------------------------------------------------
   // Let us now the task itself
   //------------------------------------------------------------------
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - robot is controlled in the camera frame
   //  we choose to control the robot in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
   // Interaction matrix is computed with the current value of s
@@ -300,26 +286,27 @@ main(int argc, const char ** argv)
   // some features such as vpFeatureThetaU MUST be regulated to zero
   // (otherwise, it will results in an error at exectution level)
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information " ) ;
   task.print() ;
   //------------------------------------------------------------------
   // An now the closed loop
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++<200)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
     vpColVector v ;
 
-    if (iter==1) vpTRACE("\t\t get the robot position ") ;
-    robot.getPosition(cMo) ;
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
-    if (iter==1) vpTRACE("\t\t update the feature ") ;
+    // update the feature
     P.track(cMo) ;
     vpFeatureBuilder::create(p,P)  ;
 
@@ -327,27 +314,19 @@ main(int argc, const char ** argv)
     tuz.buildFrom(cdMc) ;
     t.buildFrom(cdMc) ;
 
-
-
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
-    // compute v = -lambda L^+(s-sd)
+    // compute the control law: v = -lambda L^+(s-sd)
     v = task.computeControlLaw() ;
 
-    if (iter==1) task.print() ;
-
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-    // Note that for vpRobotCamera, camera position cMo, is updated using the
-    // exponential map.
 
-
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
-  vpTRACE("Final camera location " ) ;
-  std::cout << cMo << std::endl ;
+  // Final camera location
+  std::cout << "Final camera location: \n" << cMo << std::endl ;
 }
 

@@ -76,18 +76,18 @@
 
 
 
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpThetaUVector.h>
-#include <visp/vpTranslationVector.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpSimulatorCamera.h>
+#include <visp/vpThetaUVector.h>
+#include <visp/vpTranslationVector.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
@@ -197,7 +197,7 @@ main(int argc, const char ** argv)
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
@@ -219,7 +219,9 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cMo(c_r_o) ;
 
   // Set the robot initial position
-  robot.setPosition(cMo) ;
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo; // Compute the position of the object in the world frame
 
   // Sets the desired camera location
   vpPoseVector cd_r_o(// Translation tx,ty,tz
@@ -242,10 +244,13 @@ main(int argc, const char ** argv)
     std::cout << "-----------------------------------" << iter <<std::endl ;
 
     // get the robot position
-    robot.getPosition(cMo) ;
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
     // new displacement to achieve
     cdMc = cdMo*cMo.inverse() ;
+
     // Extract the translation vector c*tc which is the current
     // translational visual feature. 
     vpTranslationVector cdtc;
@@ -274,7 +279,7 @@ main(int argc, const char ** argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, velocity) ;
 
     // Retrieve the error (s-s*)
-    std::cout << cdtc.t() << " " << tu_cdRc.t() << std::endl;
+    std::cout << "|| s - s* || = " << cdtc.t() << " " << tu_cdRc.t() << std::endl;
 
     // Save log
     flog << velocity.t() << " " << cdtc.t() << " " << tu_cdRc.t() << std::endl;

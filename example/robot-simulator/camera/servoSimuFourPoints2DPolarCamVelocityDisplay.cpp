@@ -42,8 +42,6 @@
 
 
 /*!
-  \file servoSimuFourPoints2DPolarCamVelocityDisplay.cpp
-
   \example servoSimuFourPoints2DPolarCamVelocityDisplay.cpp
 
   \brief Simulation of a 2D visual servoing:
@@ -67,26 +65,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeaturePointPolar.h>
-
-#include <visp/vpServoDisplay.h>
-#include <visp/vpProjectionDisplay.h>
-#include <visp/vpMeterPixelConversion.h>
-
-#include <visp/vpImage.h>
-#include <visp/vpImagePoint.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpParseArgv.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeaturePointPolar.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpMeterPixelConversion.h>
+#include <visp/vpProjectionDisplay.h>
+#include <visp/vpServo.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpSimulatorCamera.h>
+#include <visp/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
@@ -182,7 +177,11 @@ main(int argc, const char ** argv)
 
   // Create a log filename to save velocities...
   std::string logdirname;
-  logdirname ="C://" + username;
+#ifdef WIN32
+  logdirname ="C:/temp/" + username;
+#else
+  logdirname ="/tmp/" + username;
+#endif
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
@@ -244,7 +243,7 @@ main(int argc, const char ** argv)
 
   int i ;
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
 
   std::cout << std::endl ;
@@ -313,7 +312,10 @@ main(int argc, const char ** argv)
                            vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
 #endif
-  robot.setPosition(cMo) ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
   vpHomogeneousMatrix cextMo(0,0,6,
                              vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
@@ -399,12 +401,10 @@ main(int argc, const char ** argv)
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    robot.getPosition(cMo) ;
-
-    if (iter==1) {
-      std::cout <<"Initial robot position with respect to the object frame:\n";
-      cMo.print();
-    }
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
     // Compute new point position
     for (i = 0 ; i < 4 ; i++) {
@@ -450,7 +450,7 @@ main(int argc, const char ** argv)
     // point, we have 2 errors (along x and y axis).  This error is expressed
     // in meters in the camera frame
     flog << ( task.getError() ).t() << " ";// s-s* for point 4
-    std::cout << "Error (s-s*): " << ( task.getError() ).t() << "\n";// s-s*
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
 
     // Save current visual feature s = (rho,theta)
     for (i = 0 ; i < 4 ; i++) {
@@ -467,10 +467,11 @@ main(int argc, const char ** argv)
       ip.set_i( 10 );
       ip.set_j( 10 );
 
+      std::cout << "\nClick in the internal camera view to continue..." << std::endl;
       vpDisplay::displayCharString(Iint, ip, 
                                    "A click to continue...",vpColor::red);
-      vpDisplay::getClick(Iint);
       vpDisplay::flush(Iint);
+      vpDisplay::getClick(Iint);
     }
 
   }

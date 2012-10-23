@@ -40,15 +40,6 @@
  *
  *****************************************************************************/
 
-/*!
-  \file servoSimuPoint2DhalfCamVelocity1.cpp
-  \brief Simulation of a 2 1/2 D visual servoing (x,y,Z,theta U):
-  - (x,y,Z,theta U) features,
-  - eye-in-hand control law,
-  - velocity computed in the camera frame,
-  - no display.
-
-*/
 
 /*!
   \example servoSimuPoint2DhalfCamVelocity1.cpp
@@ -61,21 +52,20 @@
 */
 
 
-
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpPoint.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpFeatureThetaU.h>
-#include <visp/vpFeaturePoint3D.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpFeatureThetaU.h>
+#include <visp/vpGenericFeature.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpPoint.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
@@ -155,7 +145,7 @@ main(int argc, const char ** argv)
   }
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
   std::cout << std::endl ;
   std::cout << "-------------------------------------------------------" << std::endl ;
@@ -164,99 +154,91 @@ main(int argc, const char ** argv)
   std::cout << "-------------------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
-
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpPoseVector c_r_o(0.1,0.2,2,
                      vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
                      ) ;
 
-  vpCTRACE ; std::cout << std::endl ;
   vpHomogeneousMatrix cMo(c_r_o) ;
-  vpCTRACE ; std::cout << std::endl ;
-  robot.setPosition(cMo) ;
-  vpCTRACE ; std::cout << std::endl ;
+  // Compute the position of the object in the world frame
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc) ;
+  wMo = wMc * cMo;
 
-  vpTRACE("sets the desired camera location " ) ;
+  // sets the desired camera location
   vpPoseVector cd_r_o(0,0,1,
                       vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
   vpHomogeneousMatrix cdMo(cd_r_o) ;
 
-
-  vpTRACE("\tsets the point coordinates in the world frame "  ) ;
+  // sets the point coordinates in the world frame
   vpPoint point ;
   point.setWorldCoordinates(0,0,0) ;
-  vpTRACE("\tproject : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  // computes the point coordinates in the camera frame and its 2D coordinates
   point.track(cMo) ;
 
   vpPoint pointd ;
   pointd.setWorldCoordinates(0,0,0) ;
   pointd.track(cdMo) ;
   //------------------------------------------------------------------
-  vpTRACE("1st feature (x,y)");
-
-
-  vpTRACE("\t want to it at (0,0)") ;
+  // 1st feature (x,y)
+  // want to it at (0,0)
   vpFeaturePoint p ;
   vpFeatureBuilder::create(p,point)  ;
-
 
   vpFeaturePoint pd ;
   vpFeatureBuilder::create(pd,pointd)  ;
 
-
   //------------------------------------------------------------------
-  vpTRACE("2nd feature (Z)") ;
-  vpTRACE("\tnot necessary to project twice (reuse p)") ;
+  // 2nd feature (Z)
+  // not necessary to project twice (reuse p)
   vpFeaturePoint3D Z ;
   vpFeatureBuilder::create(Z,point)  ;  //retrieve x,y and Z of the vpPoint structure
 
-  vpTRACE("\twant to see it one meter away (here again use pd)") ;
+  // want to see it one meter away (here again use pd)
   vpFeaturePoint3D Zd ;
   vpFeatureBuilder::create(Zd,pointd)  ;  //retrieve x,y and Z of the vpPoint structure
 
-
   //------------------------------------------------------------------
-  vpTRACE("3rd feature ThetaU") ;
-  vpTRACE("\tcompute the rotation that the camera has to realize "  ) ;
+  // 3rd feature ThetaU
+  // compute the rotation that the camera has to achieve
   vpHomogeneousMatrix cdMc ;
   cdMc = cdMo*cMo.inverse() ;
 
   vpFeatureThetaU tu(vpFeatureThetaU::cdRc) ;
   tu.buildFrom(cdMc) ;
 
-  vpTRACE("\tsets the desired rotation (always zero !) ") ;
-  vpTRACE("\tsince s is the rotation that the camera has to realize ") ;
-
+  // sets the desired rotation (always zero !)
+  // since s is the rotation that the camera has to achieve
 
   //------------------------------------------------------------------
-
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t robot is controlled in the camera frame") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - robot is controlled in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
   task.addFeature(p,pd) ;
   task.addFeature(Z,Zd,vpFeaturePoint3D::selectZ()) ;
   task.addFeature(tu) ;
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(1) ;
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++<200)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
     vpColVector v ;
 
-    if (iter==1) vpTRACE("\t\t get the robot position ") ;
-    robot.getPosition(cMo) ;
+    // get the robot position
+    robot.getPosition(wMc) ;
+    // Compute the position of the camera wrt the object frame
+    cMo = wMc.inverse() * wMo;
 
-    if (iter==1) vpTRACE("\t\t update the feature ") ;
+    // update the feature
     point.track(cMo) ;
     vpFeatureBuilder::create(p,point)  ;
     vpFeatureBuilder::create(Z,point)  ;
@@ -264,22 +246,17 @@ main(int argc, const char ** argv)
     cdMc = cdMo*cMo.inverse() ;
     tu.buildFrom(cdMc) ;
 
-
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    // compute the control law
     v = task.computeControlLaw() ;
-    if (iter==1) task.print() ;
-
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller ") ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ; ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
-  vpTRACE("Final camera location " ) ;
-  std::cout << cMo << std::endl ;
+  std::cout << "Final camera location:\n " << cMo << std::endl ;
 }
 
