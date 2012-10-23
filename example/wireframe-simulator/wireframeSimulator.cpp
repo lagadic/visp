@@ -40,36 +40,30 @@
  *****************************************************************************/
 
 /*!
-  \file wireframeSimulator.cpp
-
-  \brief Demonstration of the wireframe simulator.
-*/
-
-/*!
   \example wireframeSimulator.cpp
 
   Demonstration of the wireframe simulator.
 */
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
+#include <stdlib.h>
+
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpCameraParameters.h>
-
-#include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpParseArgv.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
 #include <visp/vpWireFrameSimulator.h>
-#include <stdlib.h>
 
 #define GETOPTARGS	"cdh"
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+#ifdef VISP_HAVE_DISPLAY
 
 /*!
 
