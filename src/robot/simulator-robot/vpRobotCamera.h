@@ -48,10 +48,10 @@
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
-#include <visp/vpRobot.h>
 #include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpMatrix.h>
+#include <visp/vpRobotSimulator.h>
 
 /*!
   \class vpRobotCamera
@@ -60,62 +60,78 @@
 
   \brief Class that defines the simplest robot: a free flying camera.
 
+  This free flying camera has 6 dof; 3 in translation and 3 in rotation.
+  It evolves as a gentry robot with respect to a world frame. This class
+  is similar to vpSimulatorCamera class except that here the position of the robot
+  is provided as the transformation from camera frame to world frame; cMw. Since
+  the position of the camera frame evolves, this representation is less intuitive
+  than the one implemented in vpSimulatorCamera where the transformation from world
+  to camera frame is considered; wMc.
+
+  \note We recommend to use vpSimulatorCamera rather than vpRobotCamera.
+
+  For this particular simulated robot, the end-effector and camera frame are confused.
+  That means that the cMe transformation is equal to identity.
+
+  The robot jacobian expressed in the end-effector frame
+  \f$ {^e}{\bf J}_e \f$ is also set to identity (see get_eJe()).
+
+  The following code shows how to control this robot in position and velocity.
+  \code
+#include <visp/vpRobotCamera.h>
+
+int main()
+{
+  vpHomogeneousMatrix cMw;
+  vpRobotCamera robot;
+
+  robot.getPosition(cMw); // Position of the camera in the world frame
+  std::cout << "Default position of the camera in the world frame cMw:\n" << cMw << std::endl;
+
+  cMw[2][3] = 1.; // World frame is 1 meter along z axis in front of the camera frame
+  robot.setPosition(cMw); // Set the new position of the camera wrt the world frame
+  std::cout << "New position of the camera wrt the world frame cMw:\n" << cMw << std::endl;
+
+  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+  robot.setMaxTranslationVelocity(1.); // vx, vy and vz max set to 1 m/s
+  robot.setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
+
+  vpColVector v(6);
+  v = 0;
+  v[2] = 1.; // set v_z to 1 m/s
+  robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+  // The robot has moved from 0.1 meters along the z axis
+  robot.getPosition(cMw); // Position of the camera wrt the world frame
+  std::cout << "New position of the camera cMw:\n" << cMw << std::endl;
+}
+  \endcode
 
 */
-class VISP_EXPORT vpRobotCamera : public vpRobot
+class VISP_EXPORT vpRobotCamera : public vpRobotSimulator
 {
-
-private:
-  //! robot / camera location in the world frame
-  vpHomogeneousMatrix cMo ;
-  double delta_t; // sampling time
+protected:
+  vpHomogeneousMatrix cMw_; // camera to world
 
 public:
   vpRobotCamera() ;
   virtual ~vpRobotCamera() ;
 
+  void get_cVe(vpVelocityTwistMatrix &cVe);
+  void get_eJe(vpMatrix &eJe)    ;
+
+  void getPosition(vpHomogeneousMatrix &cMw) const   ;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+
+  void setPosition(const vpHomogeneousMatrix &cMw) ;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)  ;
+
+private:
   void init() ;
-  void get_eJe(vpMatrix &_eJe)    ;
-  void get_fJe(vpMatrix &_fJe)    ;
 
-  /*!
-    Set the sampling time.
-
-    \param delta_t : Sampling time used to compute the robot displacement from
-    the velocity applied to the robot during this time.
-  */
-  inline void setSamplingTime(const double &delta_t)
-  {
-    this->delta_t = delta_t;
-  }
-  /*!
-    Return the sampling time.
-
-    \return Sampling time used to compute the robot displacement from
-    the velocity applied to the robot during this time.
-  */
-  inline double getSamplingTime()
-  {
-    return(this->delta_t);
-  }
-  void setCameraVelocity(const vpColVector &v)   ;
-  void setArticularVelocity(const vpColVector &qdot)  ;
-  void setVelocity(const vpRobot::vpControlFrameType frame,
-		   const  vpColVector &vel)  ;
-
-  void getPosition(vpColVector &q)    ;
-  void getPosition(vpHomogeneousMatrix &cMo) const   ;
-  void getArticularPosition(vpColVector &q)  const  ;
-  void getPosition(const vpRobot::vpControlFrameType frame,
-		   vpColVector &q)  ;
-  void setPosition(const vpRobot::vpControlFrameType /* frame */,
-		   const vpColVector & /* q */)  { ; }
-
-  void setPosition(const vpHomogeneousMatrix &_cMo) ;
-  void setPosition(const vpColVector & /* q */) { ;}
-
-  void getDisplacement(const vpRobot::vpControlFrameType repere,
-		       vpColVector &q) ;
+  // Non implemented virtual pure functions
+  void get_fJe(vpMatrix & /*_fJe */) {};
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) {};
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) {};
 } ;
 
 #endif
