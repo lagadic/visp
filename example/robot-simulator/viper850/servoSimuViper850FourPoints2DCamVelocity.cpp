@@ -69,24 +69,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpServo.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpSimulatorViper850.h>
-
-#include <visp/vpMeterPixelConversion.h>
-
-#include <visp/vpImage.h>
-#include <visp/vpImagePoint.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpParseArgv.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpImagePoint.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpMeterPixelConversion.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorViper850.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
@@ -198,7 +195,6 @@ main(int argc, const char ** argv)
   int i;
   vpServo task;
 
-
   std::cout << std::endl ;
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
@@ -209,29 +205,28 @@ main(int argc, const char ** argv)
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << std::endl ;
 
-
-  vpTRACE("sets the initial camera location " ) ;
+  // sets the initial camera location
   vpHomogeneousMatrix cMo(-0.05,-0.05,0.7,
                           vpMath::rad(10),  vpMath::rad(10),  vpMath::rad(-30));
 
 
-  vpTRACE("sets the point coordinates in the object frame "  ) ;
+  // sets the point coordinates in the object frame
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-0.045,-0.045,0) ;
   point[3].setWorldCoordinates(-0.045,0.045,0) ;
   point[2].setWorldCoordinates(0.045,0.045,0) ;
   point[1].setWorldCoordinates(0.045,-0.045,0) ;
 
-  vpTRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
+  // computes the point coordinates in the camera frame and its 2D coordinates
   for (i = 0 ; i < 4 ; i++)
     point[i].track(cMo) ;
 
-  vpTRACE("sets the desired position of the point ") ;
+  // sets the desired position of the point
   vpFeaturePoint p[4] ;
   for (i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
   
-  vpTRACE("sets the desired position of the feature point s*") ;
+  // sets the desired position of the feature point s*
   vpFeaturePoint pd[4] ;
   
   //Desired pose
@@ -244,36 +239,36 @@ main(int argc, const char ** argv)
   for (int i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(pd[i], point[i]);
 
-  vpTRACE("define the task") ;
-  vpTRACE("\t we want an eye-in-hand control law") ;
-  vpTRACE("\t articular velocity are computed") ;
+  // define the task
+  // - we want an eye-in-hand control law
+  // - articular velocity are computed
   task.setServo(vpServo::EYEINHAND_CAMERA);
   task.setInteractionMatrixType(vpServo::DESIRED) ;
 
-  vpTRACE("\t we want to see a point on a point..") ;
+  // - we want to see a point on a point
   for (i = 0 ; i < 4 ; i++)
     task.addFeature(p[i],pd[i]) ;
 
-  vpTRACE("\t set the gain") ;
+  // set the gain
   task.setLambda(0.8) ;
   
-  /*Declaration of the robot*/
+  // Declaration of the robot
   vpSimulatorViper850 robot(opt_display);
   
-  /*Initialise the robot and especially the camera*/
+  // Initialise the robot and especially the camera
   robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA,vpCameraParameters::perspectiveProjWithoutDistortion);
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
   
-  /*Initialise the object for the display part*/
+  // Initialise the object for the display part
   robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
   
-  /*Initialise the position of the object relative to the pose of the robot's camera*/
+  // Initialise the position of the object relative to the pose of the robot's camera
   robot.initialiseObjectRelativeToCamera(cMo);
   
-  /*Set the desired position (for the displaypart)*/
+  // Set the desired position (for the display part)
   robot.setDesiredCameraPosition(cdMo);
   
-  /*Get the internal robot's camera parameters*/
+  // Get the internal robot's camera parameters
   vpCameraParameters cam;
   robot.getCameraParameters(cam,Iint);
   
@@ -285,12 +280,11 @@ main(int argc, const char ** argv)
     vpDisplay::flush(Iint);
   }
 
-
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
 
   unsigned int iter=0 ;
-  vpTRACE("\t loop") ;
+  // loop
   while(iter++<500)
   {
     std::cout << "---------------------------------------------" << iter <<std::endl ;
@@ -307,7 +301,7 @@ main(int argc, const char ** argv)
       cMo.print();
     }
 
-    if (iter==1) vpTRACE("\t new point position ") ;
+    // new point position
     for (i = 0 ; i < 4 ; i++)
     {
       point[i].track(cMo) ;
@@ -323,7 +317,7 @@ main(int argc, const char ** argv)
 
     if (opt_display)
     {
-      /*Get the internal view and display it*/
+      // Get the internal view and display it
       vpDisplay::display(Iint) ;
       robot.getInternalView(Iint);
       vpDisplay::flush(Iint);
@@ -332,27 +326,25 @@ main(int argc, const char ** argv)
     if (opt_display && opt_click_allowed && iter == 1)
     {
       // suppressed for automate test
-      vpTRACE("\n\nClick in the internal view window to continue...");
+      std::cout << "Click in the internal view window to continue..." << std::endl;
       vpDisplay::getClick(Iint) ;
     }
 
-    if (iter==1) vpTRACE("\t\t compute the control law ") ;
+    // compute the control law
     v = task.computeControlLaw() ;
 
-    if (iter==1) vpTRACE("\t\t send the camera velocity to the controller ") ;
+    // send the camera velocity to the controller
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    vpTRACE("\t\t || s - s* || ") ;
-    std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+    std::cout << "|| s - s* || " << ( task.getError() ).sumSquare() <<std::endl ;
 
-    /* The main loop as a duration of 10 ms at minimum*/
+    // The main loop has a duration of 10 ms at minimum
     vpTime::wait(t,10);
   }
 
-  vpTRACE("Display task information " ) ;
+  // Display task information
   task.print() ;
   task.kill();
-
 
   std::cout <<"Final robot position with respect to the object frame:\n";
   cMo.print();
@@ -360,7 +352,7 @@ main(int argc, const char ** argv)
   if (opt_display && opt_click_allowed) 
   {
     // suppressed for automate test
-    vpTRACE("\n\nClick in the internal view window to end...");
+    std::cout << "Click in the internal view window to end..." << std::endl;
     vpDisplay::getClick(Iint) ;
   }
 }
