@@ -109,8 +109,8 @@ public:
   /*!
     Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
 
-    \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{q}\f$ with
-    \f${\bf q}\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
+    \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf q}\f$ with
+    \f$\dot{\bf q} = (v_x, w_z)\f\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
   vpMatrix get_eJe() const
   {
@@ -128,8 +128,8 @@ public:
   /*!
     Set the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
 
-    \param eJe : The robot jacobian to set such as \f${\bf v} = {^e}{\bf J}_e \; \dot{q}\f$ with
-    \f${\bf q}\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
+    \param eJe : The robot jacobian to set such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf q}\f$ with
+    \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
   void set_eJe(const vpMatrix &eJe)
   {
