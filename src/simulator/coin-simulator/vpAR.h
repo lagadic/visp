@@ -76,7 +76,7 @@
 /*!
   \class vpAR
 
-  \ingroup VisuRobotSimu
+  \ingroup RobotSimuWithViz
   
   \brief Implementation of an augmented reality viewer.
 

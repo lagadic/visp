@@ -89,7 +89,7 @@
 /*!
   \class vpSimulator
 
-  \ingroup VisuRobotSimu
+  \ingroup RobotSimuWithViz
   
   \brief Implementation of a simulator based on Coin3d (www.coin3d.org).
 

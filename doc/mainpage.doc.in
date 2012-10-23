@@ -321,11 +321,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup RobotSimu
-  \defgroup VisuRobotSimu Simulation with 3D visualization
+  \defgroup RobotSimuWithVisu Simulation with 3D visualization
 */
 /*!
   \ingroup RobotSimu
-  \defgroup RealRobotSimu Simulation of industrial robots
+  \defgroup RobotSimuWithoutVisu Simulation without visualization.
 */
 
 /*!
