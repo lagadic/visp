@@ -59,7 +59,7 @@ const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 /*!
   Basic constructor
 */
-vpSimulatorAfma6::vpSimulatorAfma6():vpRobotSimulator(), vpAfma6()
+vpSimulatorAfma6::vpSimulatorAfma6():vpRobotWireFrameSimulator(), vpAfma6()
 {
   init();
   initDisplay();
@@ -101,7 +101,7 @@ vpSimulatorAfma6::vpSimulatorAfma6():vpRobotSimulator(), vpAfma6()
 /*!
   Constructor used to enable or disable the external view of the robot.
 */
-vpSimulatorAfma6::vpSimulatorAfma6(bool disp):vpRobotSimulator(disp)
+vpSimulatorAfma6::vpSimulatorAfma6(bool disp):vpRobotWireFrameSimulator(disp)
 {
   init();
   initDisplay();
@@ -484,9 +484,9 @@ vpSimulatorAfma6::updateArticularPosition()
     
       computeArticularVelocity();
     
-      double ellapsedTime = tcur - tprev;
+      double ellapsedTime = (tcur - tprev) * 1e-3;
       if(constantSamplingTimeMode){//if we want a constant velocity, we force the ellapsed time to the given samplingTime
-        ellapsedTime = samplingTime;
+        ellapsedTime = getSamplingTime(); // in second
       }
     
       vpColVector articularCoordinates = get_artCoord();
@@ -495,31 +495,31 @@ vpSimulatorAfma6::updateArticularPosition()
     
       if (jointLimit)
       {
-        double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1]*1e-3;
+        double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1];
         if (art <= _joint_min[jointLimitArt-1] || art >= _joint_max[jointLimitArt-1])
           articularVelocities = 0.0;
         else
           jointLimit = false;
       }
     
-      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0]*1e-3;
-      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1]*1e-3;
-      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2]*1e-3;
-      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3]*1e-3;
-      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4]*1e-3;
-      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5]*1e-3;
+      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0];
+      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1];
+      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2];
+      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3];
+      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4];
+      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5];
       
       int jl = isInJointLimit();
       
       if (jl != 0 && jointLimit == false)
       {
         if (jl < 0)
-          ellapsedTime = (_joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]*1e-3);
+          ellapsedTime = (_joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]);
         else
-          ellapsedTime = (_joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]*1e-3);
+          ellapsedTime = (_joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]);
       
         for (unsigned int i = 0; i < 6; i++)
-          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i]*1e-3;
+          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i];
       
         jointLimit = true;
         jointLimitArt = (unsigned int)fabs((double)jl);
@@ -577,10 +577,10 @@ vpSimulatorAfma6::updateArticularPosition()
       vpDisplay::flush(I);
     
       
-      vpTime::wait(tcur,samplingTime);
+      vpTime::wait( tcur, 1000*getSamplingTime() );
       tcur_1 = tcur;
     }else{
-      vpTime::wait(tcur, 4);
+      vpTime::wait(tcur, vpTime::minTimeForUsleepCall);
     }
   }
 }
@@ -710,7 +710,7 @@ vpSimulatorAfma6::compute_fMi()
 //   get_cMe(cMe);
 //   cMe = cMe.inverse();
 //   fMit[7] = fMit[6] * cMe;
-  get_fMc(q,fMit[7]);
+  vpAfma6::get_fMc(q,fMit[7]);
   
   #if defined(WIN32)
   WaitForSingleObject(mutex_fMi,INFINITE);
@@ -1622,7 +1622,7 @@ vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVect
     case vpRobot::REFERENCE_FRAME:
     {
       vpHomogeneousMatrix fMc;
-      get_fMc (get_artCoord(), fMc);
+      vpAfma6::get_fMc (get_artCoord(), fMc);
       
       vpRotationMatrix fRc;
       fMc.extract(fRc);

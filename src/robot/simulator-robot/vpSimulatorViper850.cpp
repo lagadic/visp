@@ -58,7 +58,7 @@ const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 /*!
   Basic constructor
 */
-vpSimulatorViper850::vpSimulatorViper850():vpRobotSimulator(), vpViper850()
+vpSimulatorViper850::vpSimulatorViper850():vpRobotWireFrameSimulator(), vpViper850()
 {
   init();
   initDisplay();
@@ -100,7 +100,7 @@ vpSimulatorViper850::vpSimulatorViper850():vpRobotSimulator(), vpViper850()
 /*!
   Constructor used to enable or disable the external view of the robot.
 */
-vpSimulatorViper850::vpSimulatorViper850(bool disp):vpRobotSimulator(disp)
+vpSimulatorViper850::vpSimulatorViper850(bool disp):vpRobotWireFrameSimulator(disp)
 {
   init();
   initDisplay();
@@ -441,9 +441,9 @@ vpSimulatorViper850::updateArticularPosition()
       setVelocityCalled = false;
       computeArticularVelocity();
       
-      double ellapsedTime = tcur - tprev;
+      double ellapsedTime = (tcur - tprev) * 1e-3;
       if(constantSamplingTimeMode){//if we want a constant velocity, we force the ellapsed time to the given samplingTime
-        ellapsedTime = samplingTime;
+        ellapsedTime = getSamplingTime(); // in second
       }
       
       vpColVector articularCoordinates = get_artCoord();
@@ -452,31 +452,31 @@ vpSimulatorViper850::updateArticularPosition()
       
       if (jointLimit)
       {
-        double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1]*1e-3;
+        double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1];
         if (art <= joint_min[jointLimitArt-1] || art >= joint_max[jointLimitArt-1])
           articularVelocities = 0.0;
         else
           jointLimit = false;
       }
       
-      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0]*1e-3;
-      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1]*1e-3;
-      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2]*1e-3;
-      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3]*1e-3;
-      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4]*1e-3;
-      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5]*1e-3;
+      articularCoordinates[0] = articularCoordinates[0] + ellapsedTime*articularVelocities[0];
+      articularCoordinates[1] = articularCoordinates[1] + ellapsedTime*articularVelocities[1];
+      articularCoordinates[2] = articularCoordinates[2] + ellapsedTime*articularVelocities[2];
+      articularCoordinates[3] = articularCoordinates[3] + ellapsedTime*articularVelocities[3];
+      articularCoordinates[4] = articularCoordinates[4] + ellapsedTime*articularVelocities[4];
+      articularCoordinates[5] = articularCoordinates[5] + ellapsedTime*articularVelocities[5];
       
       int jl = isInJointLimit();
       
       if (jl != 0 && jointLimit == false)
       {
         if (jl < 0)
-          ellapsedTime = (joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]*1e-3);
+          ellapsedTime = (joint_min[(unsigned int)(-jl-1)] - articularCoordinates[(unsigned int)(-jl-1)])/(articularVelocities[(unsigned int)(-jl-1)]);
         else
-          ellapsedTime = (joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]*1e-3);
+          ellapsedTime = (joint_max[(unsigned int)(jl-1)] - articularCoordinates[(unsigned int)(jl-1)])/(articularVelocities[(unsigned int)(jl-1)]);
         
         for (unsigned int i = 0; i < 6; i++)
-          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i]*1e-3;
+          articularCoordinates[i] = articularCoordinates[i] + ellapsedTime*articularVelocities[i];
         
         jointLimit = true;
         jointLimitArt = (unsigned int)fabs((double)jl);
@@ -534,10 +534,10 @@ vpSimulatorViper850::updateArticularPosition()
       vpDisplay::flush(I);
       
       
-      vpTime::wait(tcur,samplingTime);
+      vpTime::wait( tcur, 1000 * getSamplingTime() );
       tcur_1 = tcur;
     }else{
-      vpTime::wait(tcur, 4);
+      vpTime::wait(tcur, vpTime::minTimeForUsleepCall);
     }
   }
 }
@@ -678,7 +678,7 @@ vpSimulatorViper850::compute_fMi()
   get_cMe(cMe);
   cMe = cMe.inverse();
 //   fMit[7] = fMit[6] * cMe;
-  get_fMc(q,fMit[7]);
+  vpViper::get_fMc(q,fMit[7]);
   
   #if defined(WIN32)
   WaitForSingleObject(mutex_fMi,INFINITE);
@@ -1590,7 +1590,7 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     case vpRobot::REFERENCE_FRAME:
     {
       vpHomogeneousMatrix fMc;
-      get_fMc (get_artCoord(), fMc);
+      vpViper::get_fMc (get_artCoord(), fMc);
       
       vpRotationMatrix fRc;
       fMc.extract(fRc);
@@ -1602,7 +1602,7 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
       for (unsigned int i=0; i <3; i++)
       {
         q[i] = txyz[i];
-	q[i+3] = rxyz[i];
+        q[i+3] = rxyz[i];
       }
       break ;
     }
@@ -2133,7 +2133,7 @@ vpSimulatorViper850::get_fJe(vpMatrix &fJe)
 {
   try
   {
-    vpColVector articularCoordinates = get_artCoord(); 
+    vpColVector articularCoordinates = get_artCoord();
     vpViper850::get_fJe(articularCoordinates, fJe) ;
   }
   catch(...)
