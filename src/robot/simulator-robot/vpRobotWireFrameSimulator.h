@@ -347,7 +347,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       artCoordTmp = artCoord;
       ReleaseMutex(mutex_artCoord);
       return artCoordTmp;}
-    void set_artCoord(const vpColVector &coord) const {
+    void set_artCoord(const vpColVector &coord) {
       WaitForSingleObject(mutex_artCoord,INFINITE);
       artCoord = coord;
       ReleaseMutex(mutex_artCoord);}
@@ -357,7 +357,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       vpColVector artVelTmp (artVel);
       ReleaseMutex(mutex_artVel);
       return artVelTmp;}
-    void set_artVel(const vpColVector &vel) const {
+    void set_artVel(const vpColVector &vel) {
       WaitForSingleObject(mutex_artVel,INFINITE);
       artVel = vel;
       ReleaseMutex(mutex_artVel);}
