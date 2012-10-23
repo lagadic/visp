@@ -345,9 +345,8 @@ main(int argc, const char ** argv)
     vpDisplay::flush(Idiff) ;
   }
 #endif
-  // create the robot (here the INRIA Rennes Afma6)
+  // create the robot (here a simulated free flying camera)
   vpRobotCamera robot ;
-  robot.init();
   robot.setSamplingTime(0.04);
   robot.setPosition(cMo) ;
 
