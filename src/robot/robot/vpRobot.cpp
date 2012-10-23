@@ -165,20 +165,13 @@ vpRobot::setRobotFrame (vpRobot::vpControlFrameType newFrame)
 }
 
 /*!
-  Recupere la position actuelle du robot.
-  Recupere la position actuelle du robot et renvoie le resultat
-  Le repere de travail dans lequel est exprime le resultat est celui
-  donne par la variable \a repere.
-  INPUT:
-    - repere: repere de travail dans lequel est exprime le resultat.
-  OUTPUT:
-    - Position actuelle du robot.
+  Return the current robot position in the specified frame.
 */
 vpColVector
-vpRobot::getPosition (vpRobot::vpControlFrameType repere)
+vpRobot::getPosition (vpRobot::vpControlFrameType frame)
 {
   vpColVector r;
-  this ->getPosition (repere, r);
+  this ->getPosition (frame, r);
 
   return r;
 }
@@ -191,13 +184,13 @@ vpRobot::getPosition (vpRobot::vpControlFrameType repere)
 
   Set the maximal translation velocity that can be sent to the robot during a velocity control.
 
-  \param maxVt : Maximum translation velocity expressed in m/s.
+  \param v_max : Maximum translation velocity expressed in m/s.
 
 */
 void
-vpRobot::setMaxTranslationVelocity (const double maxVt)
+vpRobot::setMaxTranslationVelocity (const double v_max)
 {
-  this ->maxTranslationVelocity = maxVt;
+  this ->maxTranslationVelocity = v_max;
   return;
 }
 
@@ -215,13 +208,13 @@ vpRobot::getMaxTranslationVelocity (void) const
 
   Set the maximal rotation velocity that can be sent to the robot  during a velocity control.
 
-  \param maxVr : Maximum rotation velocity expressed in rad/s.
+  \param w_max : Maximum rotation velocity expressed in rad/s.
 */
 
 void
-vpRobot::setMaxRotationVelocity (const double maxVr)
+vpRobot::setMaxRotationVelocity (const double w_max)
 {
-  this ->maxRotationVelocity = maxVr;
+  this ->maxRotationVelocity = w_max;
   return;
 }
 

@@ -134,10 +134,9 @@ public:
   virtual void getPosition(const vpRobot::vpControlFrameType frame,
                            vpColVector &q)   = 0 ;
 
-  //! Return the robot position (frame has to be specified).
+  // Return the robot position (frame has to be specified).
   vpColVector getPosition (const vpRobot::vpControlFrameType frame);
-  vpControlFrameType   getRobotFrame (void) { return frameRobot ; }
-  virtual vpRobotStateType     getRobotState (void) { return stateRobot ; }
+  virtual vpRobotStateType getRobotState (void) { return stateRobot ; }
 
   virtual void init() = 0 ;
 
@@ -148,13 +147,16 @@ public:
   //! Set a displacement (frame has to be specified) in position control.
   virtual void setPosition(const vpRobot::vpControlFrameType frame,
                            const vpColVector &q)   = 0 ;
-  vpControlFrameType   setRobotFrame (vpRobot::vpControlFrameType newFrame);
   virtual vpRobotStateType setRobotState (const vpRobot::vpRobotStateType newState);
 
   //! Set the velocity (frame has to be specified) that will be applied to the velocity controller.
   virtual void setVelocity(const vpRobot::vpControlFrameType frame,
                            const vpColVector &vel) = 0 ;
   inline void setVerbose(bool verbose) { verbose_ = verbose; };
+
+protected:
+  vpControlFrameType setRobotFrame (vpRobot::vpControlFrameType newFrame);
+  vpControlFrameType getRobotFrame (void) { return frameRobot ; }
 } ;
 
 #endif
