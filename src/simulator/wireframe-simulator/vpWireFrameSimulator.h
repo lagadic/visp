@@ -555,7 +555,7 @@ public:
       
       \param fMo : The pose between the object and the fixed world frame.
     */
-  void set_fMo(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;this->cMo = fMc.inverse()*fMo;}
+  void set_fMo(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;/*this->cMo = fMc.inverse()*fMo;*/}
 
 protected:
   void display_scene(Matrix mat, Bound_scene &sc, const vpImage<vpRGBa> &I, const vpColor &color);
