@@ -190,8 +190,12 @@ SET (SRC_ROBOT
 
 IF(WIN32 OR VISP_HAVE_PTHREAD)
   list(APPEND SRC_ROBOT robot/simulator-robot/vpRobotSimulator.cpp)
-  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorViper850.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpRobotWireFrameSimulator.cpp)
   list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorAfma6.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorCamera.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorPioneer.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorPioneerPan.cpp)
+  list(APPEND SRC_ROBOT robot/simulator-robot/vpSimulatorViper850.cpp)
 ENDIF()
 
 IF(VISP_HAVE_AFMA4)
