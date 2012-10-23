@@ -187,7 +187,7 @@ main(int argc, const char ** argv)
     try{
       // Display size is automatically defined by the image (Iint) and (Iext) size
       displayInt.init(Iint, 100, 100,"Internal view") ;
-      displayExt.init(Iext, 130+Iint.getWidth(), 100, "External view") ;
+      displayExt.init(Iext, (int)(130+Iint.getWidth()), 100, "External view") ;
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration

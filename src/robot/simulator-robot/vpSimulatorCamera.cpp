@@ -225,9 +225,9 @@ vpSimulatorCamera::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::CAMERA_FRAME: {
       vpColVector v_max(6);
 
-      for (int i=0; i<3; i++)
+      for (unsigned int i=0; i<3; i++)
         v_max[i] = getMaxTranslationVelocity();
-      for (int i=3; i<6; i++)
+      for (unsigned int i=3; i<6; i++)
         v_max[i] = getMaxRotationVelocity();
 
       vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
