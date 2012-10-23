@@ -182,8 +182,6 @@ protected:
     eMc.buildFrom(etc, eRc);
 
     cMe_ = eMc.inverse();
-
-    std::cout << "cMe de pan: \n" << cMe_ << std::endl;
   }
 
   /*!
