@@ -8,19 +8,25 @@
 
 ViSP 2.6.3 (under development)
   - New features
-    - New vpViper650 and vpRobotViper650 classes to interface Inria's new 
+    - New vpViper650 and vpRobotViper650 classes to interface Inria's new
       Adept Viper s650 robot.
+    - New robot simulators; vpSimulatorCamera, vpSimulatorPioneer,
+      vpSimulatorPioneerPan
   - Improvements
     - MinGW is now supported but since MinGW currently doesn't support tls
       __declspec(thread) with vpDisplayGDI it is possible to open only
       one display.
+    - To better organise the code, robot simulators inherit from
+      vpRobotSimulator class. Introduction of a new vpRobotWireFrameSimulator
+      class as a base class of robot simulated using the wireframe display
+      capabilities.
   - Examples
   - Bug fixed
     - [14646] ViSP doesn't build on Windows with MinGW
     - [14651] Build error arround vpMatrix::pseudoInverse() with OpenCV 2.1.0
     - [14661] Build error when GDI is not detected or turned off
     - [14818] Build error when only GTK display device is available
-    - [14862] Lagrange pose estimation cannot handle planar objects with 
+    - [14862] Lagrange pose estimation cannot handle planar objects with
               points in plane oX=d or oY=d
     - [14863] vpPose::poseRansac() can fail during Lagrange pose estimation
     - [14993] Segfault in mbtTracker example when only the cube is tracked
