@@ -40,44 +40,37 @@
  *****************************************************************************/
 
 /*!
-  \file servoSimuCylinder.cpp
-
-  \brief Demonstration of the wireframe simulator with a simple visual servoing.
-*/
-
-/*!
   \example servoSimuCylinder.cpp
 
   Demonstration of the wireframe simulator with a simple visual servoing.
 */
 
 
+#include <stdlib.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpCylinder.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
 #include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpRobotCamera.h>
+#include <visp/vpServo.h>
+#include <visp/vpTime.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpWireFrameSimulator.h>
-#include <visp/vpCylinder.h>
-#include <stdlib.h>
+
 #define GETOPTARGS	"dh"
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+#ifdef VISP_HAVE_DISPLAY
 
 /*!
 
@@ -210,10 +203,16 @@ main(int argc, const char ** argv)
   float sampling_time = 0.040f; // Sampling period in second
   robot.setSamplingTime(sampling_time);
 
-  //cMo initial
-  vpPoseVector cMoi(0,0.1,0.3,vpMath::rad(35),vpMath::rad(25),vpMath::rad(75));
-
-  vpHomogeneousMatrix cMo(cMoi);
+  // Set initial position of the object in the camera frame
+  vpHomogeneousMatrix cMo(0,0.1,0.3,vpMath::rad(35),vpMath::rad(25),vpMath::rad(75));
+  // Set desired position of the object in the camera frame
+  vpHomogeneousMatrix cdMo(0.0,0.0,0.5,vpMath::rad(90),vpMath::rad(0),vpMath::rad(0));
+  // Set initial position of the object in the world frame
+  vpHomogeneousMatrix wMo(0.0,0.0,0,0,0,0);
+  // Position of the camera in the world frame
+  vpHomogeneousMatrix wMc, cMw;
+  wMc = wMo * cMo.inverse();
+  cMw = wMc.inverse();
   
   // Create a cylinder
   vpCylinder cylinder(0,0,1,0,0,0,0.1);
@@ -225,10 +224,7 @@ main(int argc, const char ** argv)
   vpFeatureLine l[2];
   vpFeatureBuilder::create(l[0], cylinder, vpCylinder::line1);
   vpFeatureBuilder::create(l[1], cylinder, vpCylinder::line2);
-  
-  //cMo desired
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,0.5,vpMath::rad(90),vpMath::rad(0),vpMath::rad(0)));
-  
+    
   // Projection of the cylinder
   cylinder.track(cdMo);
 
@@ -252,24 +248,21 @@ main(int argc, const char ** argv)
   
   task.setLambda(1);
   
-  
   vpWireFrameSimulator sim;
   
-  //Set the scene
+  // Set the scene
   sim.initScene(vpWireFrameSimulator::CYLINDER, vpWireFrameSimulator::D_STANDARD);
   
-  //Set the initial and the desired position of the camera.
-  sim.setCameraPositionRelObj(cMoi) ;
-  sim.setDesiredCameraPosition(cdMo);
-  
-  //Set the External camera position
+  // Initialize simulator frames
+  sim.set_fMo( wMo );  // Position of the object in the world reference frame
+  sim.setCameraPositionRelObj(cMo) ; // initial position of the camera
+  sim.setDesiredCameraPosition(cdMo); // desired position of the camera
+
+  // Set the External camera position
   vpHomogeneousMatrix camMf(vpHomogeneousMatrix(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0));
   sim.setExternalCameraPosition(camMf);
-  
-  //Move the object in the world reference frame
-  sim.set_fMo(vpHomogeneousMatrix(0.0,0.0,0.0,0,0,0));
-  
-  //Set the parameters of the cameras (internal and external)
+    
+  // Set the parameters of the cameras (internal and external)
   vpCameraParameters camera(1000,1000,320,240);
   sim.setInternalCameraParameters(camera);
   sim.setExternalCameraParameters(camera);
@@ -300,7 +293,7 @@ main(int argc, const char ** argv)
     while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext,false)){};
   }
   
-  robot.setPosition(sim.get_cMo());
+  robot.setPosition( cMw );
 
   //Print the task
   task.print();
@@ -331,7 +324,8 @@ main(int argc, const char ** argv)
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    robot.getPosition(cMo) ;
+    robot.getPosition(cMw) ;
+    cMo = cMw * wMo;
 
     cylinder.track(cMo) ;
     vpFeatureBuilder::create(l[0], cylinder, vpCylinder::line1);
@@ -382,22 +376,9 @@ main(int argc, const char ** argv)
     
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
 
-    //Get the camera position
-    robot.getPosition(cMo) ;
-    
-    //Compute the movement of the object around the world reference frame.
-    vpHomogeneousMatrix a(0.0,0.0,0.0,vpMath::rad(0*iter),0,0);
-    vpHomogeneousMatrix b(0,0.0,0.0,vpMath::rad(0*iter),0,0);
-    vpHomogeneousMatrix c(0,0.0,0.0,0,vpMath::rad(0*iter),0);
-
-    vpHomogeneousMatrix cMf = cMo*sim.get_fMo().inverse(); //The camera position in the world frame
-
-    sim.set_fMo(b*c*a);  //Move the object in the simulator
-
-    //Indicates to the task the movement of the object
-    cMo = cMf*b*c*a;
-    robot.setPosition(cMo);
-    sim.setCameraPositionRelObj(cMo);
+    // Update the simulator frames
+    sim.set_fMo( wMo ); // This line is not really requested since the object doesn't move
+    sim.setCameraPositionRelObj( cMo );
 
     if (opt_display)
     {
@@ -412,7 +393,6 @@ main(int argc, const char ** argv)
       //Display the object frame the world reference frame and the camera frame
       vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
-
       vpDisplay::displayFrame(Iext,sim.getExternalCameraPosition(),camera,0.2,vpColor::none);;
 
       vpDisplay::flush(Iint);
@@ -421,8 +401,7 @@ main(int argc, const char ** argv)
 
     vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
-    vpTRACE("\t\t || s - s* || ") ;
-    std::cout << (task.getError() ).sumSquare() <<std::endl ;
+    std::cout << "|| s - s* || = " << (task.getError() ).sumSquare() <<std::endl ;
   }
 
   task.print() ;

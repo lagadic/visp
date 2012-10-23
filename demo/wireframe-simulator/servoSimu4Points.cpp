@@ -40,42 +40,36 @@
  *****************************************************************************/
 
 /*!
-  \file servoSimu4Points.cpp
-
-  \brief Demonstration of the wireframe simulator with a simple visual servoing.
-*/
-
-/*!
   \example servoSimu4Points.cpp
 
   Demonstration of the wireframe simulator with a simple visual servoing.
 */
 
+#include <stdlib.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayD3D.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
 #include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpParseArgv.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
+#include <visp/vpTime.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpWireFrameSimulator.h>
-#include <stdlib.h>
+
 #define GETOPTARGS	"dh"
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+#ifdef VISP_HAVE_DISPLAY
 
 /*!
 
@@ -221,15 +215,25 @@ main(int argc, const char ** argv)
   }
 
   vpServo task;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
   float sampling_time = 0.040f; // Sampling period in second
   robot.setSamplingTime(sampling_time);
 
-  //cMo initial
-  vpPoseVector cMoi(0,0.1,2.0,vpMath::rad(35),vpMath::rad(25),0);
+  // Since the task gain lambda is very high, we need to increase default max velocities
+  robot.setMaxTranslationVelocity(10);
+  robot.setMaxRotationVelocity(vpMath::rad(180));
 
-  vpHomogeneousMatrix cMo(cMoi);
-  
+  // Set initial position of the object in the camera frame
+  vpHomogeneousMatrix cMo(0,0.1,2.0,vpMath::rad(35),vpMath::rad(25),0);
+  // Set desired position of the object in the camera frame
+  vpHomogeneousMatrix cdMo(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
+  // Set initial position of the object in the world frame
+  vpHomogeneousMatrix wMo(0.0,0.0,0.2,0,0,0);
+  // Position of the camera in the world frame
+  vpHomogeneousMatrix wMc, cMw;
+  wMc = wMo * cMo.inverse();
+  cMw = wMc.inverse();
+
   //The four point used as visual features
   vpPoint point[4] ;
   point[0].setWorldCoordinates(-0.1,-0.1,0) ;
@@ -246,9 +250,6 @@ main(int argc, const char ** argv)
   for (int i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i], point[i]);
   
-  //cMo desired
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
-  
   // Projection of the points
   for (int i = 0 ; i < 4 ; i++)
     point[i].track(cdMo);
@@ -260,7 +261,7 @@ main(int argc, const char ** argv)
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
   task.setInteractionMatrixType(vpServo::DESIRED);
   
-  vpHomogeneousMatrix cMe;
+  vpHomogeneousMatrix cMe; // Identity
   vpVelocityTwistMatrix cVe(cMe);
   task.set_cVe(cVe);
 
@@ -321,28 +322,21 @@ main(int argc, const char ** argv)
   
   vpWireFrameSimulator sim;
   
-  //Set the scene
+  // Set the scene
   sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD,list);
+
+  // Initialize simulator frames
+  sim.set_fMo( wMo );  // Position of the object in the world reference frame
+  sim.setCameraPositionRelObj(cMo) ; // initial position of the camera
+  sim.setDesiredCameraPosition(cdMo); // desired position of the camera
   
-  //Set the initial and the desired position of the camera.
-  sim.setCameraPositionRelObj(cMoi) ;
-  sim.setDesiredCameraPosition(cdMo);
-  
-  //Set the External camera position
+  // Set the External camera position
   vpHomogeneousMatrix camMf(vpHomogeneousMatrix(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0));
   sim.setExternalCameraPosition(camMf);
   
-  //Move the object in the world reference frame
-  sim.set_fMo(vpHomogeneousMatrix(0.0,0.0,0.2,0,0,0));
-  
   //Computes the position of a camera which is fixed in the object frame
-  vpHomogeneousMatrix camoMf;
-  vpHomogeneousMatrix temp(vpHomogeneousMatrix(0,0.0,1.5,0,vpMath::rad(140),0)*(sim.get_fMo().inverse()));
-  vpTranslationVector T;
-  vpRotationMatrix R;
-  temp.extract(T);
-  temp.extract(R);
-  camoMf.buildFrom(T,R);
+  vpHomogeneousMatrix camoMf(0,0.0,1.5,0,vpMath::rad(140),0);
+  camoMf = camoMf*(sim.get_fMo().inverse());
   
   //Set the parameters of the cameras (internal and external)
   vpCameraParameters camera(1000,1000,320,240);
@@ -358,7 +352,7 @@ main(int argc, const char ** argv)
     //Get the internal and external views
     sim.getInternalImage(Iint);
     sim.getExternalImage(Iext1);
-    sim.getExternalImage(Iext2,camoMf);
+    sim.getExternalImage(Iext2, camoMf);
 
     //Display the object frame (current and desired position)
     vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
@@ -381,7 +375,7 @@ main(int argc, const char ** argv)
     while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext1,false) && !vpDisplay::getClick(Iext2,false)){};
   }
 
-  robot.setPosition(sim.get_cMo());
+  robot.setPosition( wMc );
   //Print the task
   task.print() ;
 
@@ -402,7 +396,8 @@ main(int argc, const char ** argv)
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    robot.getPosition(cMo) ;
+    robot.getPosition(wMc) ;
+    cMo = wMc.inverse() * wMo;
     for (int i = 0 ; i < 4 ; i++)
     {
       point[i].track(cMo) ;
@@ -411,31 +406,21 @@ main(int argc, const char ** argv)
 
     v = task.computeControlLaw() ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-    //Get the camera position
-    robot.getPosition(cMo) ;
     
     //Compute the movement of the object around the world reference frame.
-    vpHomogeneousMatrix a(0.0,0.0,0.2,vpMath::rad(0*iter),0,0);
-    vpHomogeneousMatrix b(0,0.0,0.0,vpMath::rad(1.5*iter),0,0);
-    vpHomogeneousMatrix c(0,0.0,0.0,0,vpMath::rad(2.5*iter),0);
+    vpHomogeneousMatrix a(0, 0, 0.2, 0, 0, 0);
+    vpHomogeneousMatrix b(0, 0, 0,   vpMath::rad(1.5*iter), 0, 0);
+    vpHomogeneousMatrix c(0, 0, 0,   0, vpMath::rad(2.5*iter), 0);
 
-    vpHomogeneousMatrix cMf = cMo*sim.get_fMo().inverse(); //The camera position in the world frame
+    // Move the object in the world frame
+    wMo = b*c*a;
 
-    sim.set_fMo(b*c*a);  //Move the object in the simulator
-
-    //Indicates to the task the movement of the object
-    cMo = cMf*b*c*a;
-    robot.setPosition(cMo);
+    sim.set_fMo( wMo );  //Move the object in the simulator
     sim.setCameraPositionRelObj(cMo);
 
     //Compute the position of the external view which is fixed in the object frame
-    vpHomogeneousMatrix temp(vpHomogeneousMatrix(0,0.0,1.5,0,vpMath::rad(150),0)*(sim.get_fMo().inverse()));
-    vpTranslationVector T;
-    vpRotationMatrix R;
-    temp.extract(T);
-    temp.extract(R);
-    camoMf.buildFrom(T,R);
+    camoMf.buildFrom(0,0.0,1.5,0,vpMath::rad(150),0);
+    camoMf = camoMf*(sim.get_fMo().inverse());
 
     if (opt_display)
     {
@@ -448,10 +433,9 @@ main(int argc, const char ** argv)
       vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
 
-      //Display the object frame the world reference frame and the camera frame
+      //Display the camera frame, the object frame the world reference frame
       vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
-
       vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition(),camera,0.2,vpColor::none);
 
       //Display the world reference frame and the object frame
@@ -465,8 +449,7 @@ main(int argc, const char ** argv)
 
     vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
 
-    //vpTRACE("\t\t || s - s* || ") ;
-    //std::cout << ( task.getError() ).sumSquare() <<std::endl ;
+    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
   }
 
   task.print() ;
