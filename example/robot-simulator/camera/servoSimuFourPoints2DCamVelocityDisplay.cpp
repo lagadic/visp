@@ -202,7 +202,6 @@ main(int argc, const char ** argv)
   vpServo task ;
   vpSimulatorCamera robot ;
 
-
   std::cout << std::endl ;
   std::cout << "----------------------------------------------" << std::endl ;
   std::cout << " Test program for vpServo "  <<std::endl ;
@@ -340,8 +339,9 @@ main(int argc, const char ** argv)
   }
 }
 #else
-int
-main()
+#include <iostream.h>
+
+int main()
 {
   std::cout << "You do not have X11, GTK or GDI display functionalities..." << std::endl;
 }

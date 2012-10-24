@@ -443,10 +443,11 @@ main(int argc, const char ** argv)
 }
 
 #else
-int
-main()
+#include <iostream.h>
+
+int main()
 {
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  std::cout << "You do not have X11, GTK or GDI display functionalities..." << std::endl;
 }
 
 #endif
