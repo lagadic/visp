@@ -339,7 +339,7 @@ main(int argc, const char ** argv)
   }
 }
 #else
-#include <iostream.h>
+#include <iostream>
 
 int main()
 {
