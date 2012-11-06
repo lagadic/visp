@@ -186,7 +186,7 @@ public:
       FEATURE_DESIRED,    /*!< Print the desired features \f$s^*\f$. */
       GAIN,               /*!< Print the gain \f$\lambda\f$. */
       INTERACTION_MATRIX, /*!< Print the interaction matrix. */
-      MINIMUM             /*!< Same as vpServoPrintType::ERROR. */
+      MINIMUM             /*!< Same as vpServoPrintType::ERROR_VECTOR. */
     } vpServoPrintType;
 
 public:
