@@ -59,9 +59,8 @@
   instance of the class open a window which contains between 1 and 4
   graphics. Each one contains a desired number of curves.
 
-  \warning This class is only available if display functionalities (X11, GDI or OpenCV)
-  are present. In visp/vpConfig.h header file, you should have one of the macros defines:
-  VISP_HAVE_X11, or VISP_HAVE_GDI, or VISP_HAVE_OPENCV. 
+  \warning This class is only available if one of the display functionalities (X11, GDI, GTK, OpenCV or Direct3D)
+  is available. In visp/vpConfig.h header file, you should have VISP_HAVE_DISPLAY define.
 
   The example below shows how to use the vpPlot class.
 
