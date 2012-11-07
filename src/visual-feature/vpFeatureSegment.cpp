@@ -240,7 +240,7 @@ vpFeatureSegment::interaction( const unsigned int select )
   
   if (normalized_)
   {
-    // here var xc_ contains xc/l, yc contains yc/l and l contains 1/l
+    // here var xc_ contains xc/l, yc_ contains yc/l and l_ contains 1/l
     double xn = xc_;
     double yn = yc_;
     double ln = l_;
@@ -284,7 +284,17 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lln[0][5] = 0 ;
       L = vpMatrix::stackMatrices(L, Lln) ;
     }
-
+    if (vpFeatureSegment::selectAlpha() & select ){
+      // We recall that xc_ contains xc/l, yc_ contains yc/l and l_ contains 1/l
+      vpMatrix Lalpha(1,6);
+        Lalpha[0][0] = -lambda1*sin_a_*l_ ;
+        Lalpha[0][1] = lambda1*cos_a_*l_ ;
+        Lalpha[0][2] = lambda1*(xc_*sin_a_-yc_*cos_a_);
+        Lalpha[0][3] = (-xc_*sin_a_*sin_a_+yc_*cos_a_*sin_a_)/l_;
+        Lalpha[0][4] = (xc_*cos_a_*sin_a_ - yc_*cos_a_*cos_a_)/l_ ;
+        Lalpha[0][5] = -1 ;
+      L = vpMatrix::stackMatrices(L,Lalpha) ;
+    }
   }
   else
   {
@@ -320,16 +330,16 @@ vpFeatureSegment::interaction( const unsigned int select )
       Ll[0][5] = 0 ;
       L = vpMatrix::stackMatrices(L,Ll) ;
     }
-  }
-  if (vpFeatureSegment::selectAlpha() & select ){
-    vpMatrix Lalpha(1,6);
-      Lalpha[0][0] = -lambda1*sin_a_/l_ ;
-      Lalpha[0][1] = lambda1*cos_a_/l_ ;
-      Lalpha[0][2] = lambda1*(xc_*sin_a_-yc_*cos_a_)/l_;
-      Lalpha[0][3] = -xc_*sin_a_*sin_a_+yc_*cos_a_*sin_a_;
-      Lalpha[0][4] = xc_*cos_a_*sin_a_ - yc_*cos_a_*cos_a_ ;
-      Lalpha[0][5] = -1 ;
-    L = vpMatrix::stackMatrices(L,Lalpha) ;
+    if (vpFeatureSegment::selectAlpha() & select ){
+      vpMatrix Lalpha(1,6);
+        Lalpha[0][0] = -lambda1*sin_a_/l_ ;
+        Lalpha[0][1] = lambda1*cos_a_/l_ ;
+        Lalpha[0][2] = lambda1*(xc_*sin_a_-yc_*cos_a_)/l_;
+        Lalpha[0][3] = -xc_*sin_a_*sin_a_+yc_*cos_a_*sin_a_;
+        Lalpha[0][4] = xc_*cos_a_*sin_a_ - yc_*cos_a_*cos_a_ ;
+        Lalpha[0][5] = -1 ;
+      L = vpMatrix::stackMatrices(L,Lalpha) ;
+    }
   }
 
   return L ;
