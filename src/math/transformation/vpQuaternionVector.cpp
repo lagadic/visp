@@ -168,3 +168,22 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
   double sinTheta_2 = sin(theta);
   set( u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2, cos(theta) );
 }
+
+/*!
+  Constructs a quaternion from a rotation matrix.
+
+  \param R : Rotation matrix.
+*/
+void vpQuaternionVector::buildFromOld(const vpRotationMatrix &R)
+{
+  vpThetaUVector tu(R);
+  vpColVector u;
+  double theta;
+  tu.extract(theta, u);
+
+  theta *= 0.5;
+
+  double sinTheta_2 = sin(theta);
+  set( cos(theta), u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2);
+
+}

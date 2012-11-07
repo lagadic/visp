@@ -427,10 +427,12 @@ main(int argc, const char ** argv)
   int iterGN = 90 ; // swicth to Gauss Newton after iterGN iterations
   
   double normeError = 0;
+  double tott = 0.;
+  double startt = vpTime::measureTimeMs();
   do
   {
-
-    std::cout << "--------------------------------------------" << iter++ << std::endl ;
+    iter++;
+    //std::cout << "--------------------------------------------" << iter << std::endl ;
 
 
     //  Acquire the new image
@@ -456,7 +458,7 @@ main(int argc, const char ** argv)
     sI.error(sId,error) ;
 
     normeError = (error.sumSquare());
-    std::cout << "|e| "<<normeError <<std::endl ;
+    //std::cout << "|e| "<<normeError <<std::endl ;
 
     // double t = vpTime::measureTimeMs() ;
 
@@ -470,7 +472,9 @@ main(int argc, const char ** argv)
 
       // Compute the levenberg Marquartd term
       {
-        H = ((mu * diagHsd) + Hsd).inverseByLU();
+        double t = vpTime::measureTimeMs();
+        H = ((mu * diagHsd) + Hsd).inverseByCholesky();
+        tott+=(vpTime::measureTimeMs()-t);
       }
       //	compute the control law
       e = H * Lsd.t() *error ;
@@ -478,8 +482,8 @@ main(int argc, const char ** argv)
       v = - lambda*e;
     }
 
-    std::cout << "lambda = " << lambda << "  mu = " << mu ;
-    std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
+    //std::cout << "lambda = " << lambda << "  mu = " << mu ;
+    //std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
 
     // send the robot velocity
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
@@ -487,6 +491,11 @@ main(int argc, const char ** argv)
 
   }
   while(normeError > 10000 && iter < opt_niter);
+
+  std::cout << "nb iter: " << iter << "." << std::endl;
+  std::cout << "time spent inverting matrices: " << tott << " ms." << std::endl;
+  std::cout << "total time: " << vpTime::measureTimeMs()-startt  << " ms." << std::endl;
+  std::cout << "% of time spent inverting matrices: " << tott*100/(vpTime::measureTimeMs()-startt) << " %." << std::endl;
 
   v = 0 ;
   robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;

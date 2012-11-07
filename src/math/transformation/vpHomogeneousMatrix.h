@@ -129,6 +129,9 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from translation vector and quaternion rotation vector.
   void buildFrom(const vpTranslationVector &t, const vpQuaternionVector& q  ) ;
 
+  void buildFromOld(const vpTranslationVector &t,
+                                      const vpQuaternionVector &q);
+
   /*!
     Construction from translation vector and theta u rotation vector 
     defined as a pose vector.
@@ -165,6 +168,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void extract(vpTranslationVector &t) const;
   void extract(vpThetaUVector &tu) const;
   void extract(vpQuaternionVector& q) const;
+  void extractOld(vpQuaternionVector &q) const;
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;

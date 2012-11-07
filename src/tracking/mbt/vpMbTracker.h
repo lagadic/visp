@@ -178,6 +178,19 @@ public:
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
   virtual void display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
+  
+/*!
+    Display the 3D model at a given position using the given camera parameters 
+    on a color (RGBa) image.
+
+    \param _I : The image.
+    \param _cMo : Pose used to project the 3D model into the image.
+    \param _cam : The camera parameters.
+    \param _col : The desired color.
+    \param _l : The thickness of the lines.
+  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
+  */
+  virtual void display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
 
   /*  ACCESSORS */
 
