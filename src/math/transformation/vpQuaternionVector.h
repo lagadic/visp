@@ -88,7 +88,6 @@ public:
   vpQuaternionVector(const vpRotationMatrix &R);
 
   void buildFrom(const vpRotationMatrix& R);
-  void buildFromOld(const vpRotationMatrix &R);
 
   void set(const double x, const double y, const double z,const double w) ;
     

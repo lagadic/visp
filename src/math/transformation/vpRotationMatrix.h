@@ -149,7 +149,6 @@ public:
 			     const double tuz) ;
   
   vpRotationMatrix buildFrom(const vpQuaternionVector& q);
-  vpRotationMatrix buildFromOld(const vpQuaternionVector& q);
 private:
   static const double threshold;
   static const double minimum; // useful only for debug

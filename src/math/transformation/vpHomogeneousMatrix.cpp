@@ -180,15 +180,6 @@ void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
   insert(q);
 }
 
-void vpHomogeneousMatrix::buildFromOld(const vpTranslationVector &t,
-                                    const vpQuaternionVector &q)
-{
-  insert(t);
-  vpRotationMatrix R;
-  R.buildFromOld(q);
-  insert(R);
-}
-
 void
 vpHomogeneousMatrix::buildFrom(const double tx,
 			       const double ty,
@@ -345,18 +336,6 @@ vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
   (*this).extract(R);
   q.buildFrom(R);
 }
-
-/*!
-  Extract the rotation as a quaternion.
-*/
-void
-vpHomogeneousMatrix::extractOld(vpQuaternionVector &q) const
-{
-  vpRotationMatrix R;
-  (*this).extract(R);
-  q.buildFromOld(R);
-}
-
 
 /*!
   Insert the rotational component of the homogeneous matrix.

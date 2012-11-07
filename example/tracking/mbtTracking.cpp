@@ -336,8 +336,6 @@ main(int argc, const char ** argv)
 
   // Load the 3D model (either a vrml file or a .cao file)
   try{
-    std::cout << "loading model:" << modelFile << std::endl;
-
     tracker.loadModel(modelFile.c_str());
   }
   catch(...)
@@ -350,7 +348,6 @@ main(int argc, const char ** argv)
   //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
   if (opt_display && opt_click_allowed)
   {
-    std::cout << "init click..." << std::endl;
     tracker.initClick(I, initFile.c_str(), true);
     tracker.getPose(cMo);
     // display the 3D model at the given pose
