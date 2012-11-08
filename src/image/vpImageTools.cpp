@@ -162,6 +162,38 @@ void vpImageTools::imageDifference(vpImage<unsigned char> &I1,
     }
 }
 
+/*!
+  Compute the difference between the two images I1 and I2 for
+  WARNING: This is NOT for visualization
+  If you want to visualize difference images during servo, please use
+  vpImageTools::imageDifference(..,..,..) function.
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Idiff : The result of the difference.
+*/
+
+void vpImageTools::imageDifferenceAbsolute(vpImage<unsigned char> &I1,
+				   vpImage<unsigned char> &I2,
+				   vpImage<unsigned char> &Idiff)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
+  {
+    throw (vpException(vpException::dimensionError, "The two images have not the same size"));
+  }
+
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+    Idiff.resize(I1.getHeight(), I1.getWidth());
+
+  unsigned int n = I1.getHeight() * I1.getWidth() ;
+  int diff ;
+  for (unsigned int b = 0; b < n ; b++)
+    {
+      diff = I1.bitmap[b] - I2.bitmap[b];
+      Idiff.bitmap[b] = diff;
+    }
+}
+
 /*
  * Local variables:
  * c-basic-offset: 2

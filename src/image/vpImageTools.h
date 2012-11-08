@@ -115,6 +115,10 @@ public:
   static void imageDifference(vpImage<unsigned char> &I1, 
 			      vpImage<unsigned char> &I2,
 			      vpImage<unsigned char> &Idiff) ;
+
+  static void imageDifferenceAbsolute(vpImage<unsigned char> &I1,
+  				   vpImage<unsigned char> &I2,
+  				   vpImage<unsigned char> &Idiff);
 } ;
 
 /*!
