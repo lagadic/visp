@@ -89,6 +89,7 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   interp = SIMPLE;
   bgColor = vpColor::white;
   cleanPrevImage = false;
+  setBackgroundTexture = false;
 }
 
 
@@ -132,6 +133,7 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   interp = text.interp;
   bgColor = text.bgColor;
   cleanPrevImage = text.cleanPrevImage;
+  setBackgroundTexture = false;
   
   setCameraPosition(text.cMt);
 }
@@ -179,8 +181,7 @@ vpImageSimulator::operator=(const vpImageSimulator& sim)
 }
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
-  
+  Get the view of the virtual camera. Be careful, the image I is modified. The projected image is not added as an overlay!
   \param I : The image used to store the result.
   \param cam : The parameters of the virtual camera.
 */
@@ -189,17 +190,25 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 			   const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
-  if (cleanPrevImage)
-  {
-    unsigned char col = (unsigned char)(0.2126 * bgColor.R + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
-    for (unsigned int i = 0; i < I.getHeight(); i++)
+  if (setBackgroundTexture)
+      // The Ig has been set to a previously defined background texture
+      I = Ig;
+  else
     {
-      for (unsigned int j = 0; j < I.getWidth(); j++)
-      {
-	I[i][j] = col;
-      }
+      if (cleanPrevImage)
+        {
+          unsigned char col = (unsigned char) (0.2126 * bgColor.R
+              + 0.7152 * bgColor.G + 0.0722 * bgColor.B);
+          for (unsigned int i = 0; i < I.getHeight(); i++)
+            {
+              for (unsigned int j = 0; j < I.getWidth(); j++)
+                {
+                  I[i][j] = col;
+                }
+            }
+        }
     }
-  }
+
   if(visible)
   {
     getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
@@ -247,16 +256,16 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay! In this method you specify directly the image which is projected.
-  
+  Get the view of the virtual camera. Be careful, the image I is modified. The projected image is not added as an overlay! In this method you specify directly the image which is projected.
+
   \param I : The image used to store the result.
   \param Isrc : The image which is projected into \f$ I \f$.
   \param cam : The parameters of the virtual camera.
 */
 void
-vpImageSimulator::getImage(vpImage<unsigned char> &I, 
-			   vpImage<unsigned char> &Isrc, 
-			   const vpCameraParameters &cam)
+vpImageSimulator::getImage(vpImage<unsigned char> &I,
+			  vpImage<unsigned char> &Isrc,
+			  const vpCameraParameters &cam)
 {
   int nb_point_dessine = 0;
   if (cleanPrevImage)
@@ -273,16 +282,16 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   if(visible)
   {
     getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
-    
+
     double top = rect.getTop();
     double bottom = rect.getBottom();
     double left = rect.getLeft();
     double right= rect.getRight();
-    
+
     unsigned char *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    
+
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
@@ -303,7 +312,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 }
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+  Get the view of the virtual camera. Be careful, the image I is modified. The projected image is not added as an overlay!
   
   To take into account the projection of several images, a matrix \f$ zBuffer \f$ is given as argument. This matrix contains the z coordinates of all the pixel of the image \f$ I \f$ in the camera frame. During the projection, the pixels are updated if there is no other plan between the camera and the projected image. The matrix \f$ zBuffer \f$ is updated in this case.
   
@@ -384,7 +393,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 }
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
+  Get the view of the virtual camera. Be careful, the image I is modified. The projected image is not added as an overlay!
   
   \param I : The image used to store the result.
   \param cam : The parameters of the virtual camera.
@@ -1010,8 +1019,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
 #endif
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified. The projected image is not added as an overlay!
-
+  Get the view of the virtual camera. Be careful, the image I is modified. The projected image is not added as an overlay!
   With this method, a list of image is projected into the image. Thus, you have to initialise a list of vpImageSimulator. Then you store them into a vpList. And finally with this method you project them into the image \f$ I \f$. The depth of the 3D scene is managed such as an image in foreground hides an image background.
 
   The following example shows how to use the method:
