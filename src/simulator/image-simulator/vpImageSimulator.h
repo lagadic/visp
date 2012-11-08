@@ -196,7 +196,7 @@ class VISP_EXPORT vpImageSimulator
 
     vpRect rect;
     bool cleanPrevImage;
-    bool setBackgroundTexture;	// This is the flag to set the background to a texture
+    bool setBackgroundTexture;	// flag set when the background is to a texture using setBackGroundTexture()
     vpColor bgColor;
     
     vpColVector focal;
@@ -255,7 +255,13 @@ class VISP_EXPORT vpImageSimulator
       bgColor = color;
     }
 
-    inline void setBackGroundTexture(vpImage<unsigned char>& Iback) {
+    /*!
+     This function is to set the background to a texture instead of default black
+     The corresponding flag is set
+     \param Iback: Image/Texture for the background
+     */
+    inline void
+    setBackGroundTexture(vpImage<unsigned char>& Iback) {
     	setBackgroundTexture = true;
     	Ig = Iback;
     }
