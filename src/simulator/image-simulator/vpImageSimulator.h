@@ -196,6 +196,7 @@ class VISP_EXPORT vpImageSimulator
 
     vpRect rect;
     bool cleanPrevImage;
+    bool setBackgroundTexture;	// This is the flag to set the background to a texture
     vpColor bgColor;
     
     vpColVector focal;
@@ -252,6 +253,11 @@ class VISP_EXPORT vpImageSimulator
     void setCleanPreviousImage(const bool &clean, const vpColor &color = vpColor::white) {
       cleanPrevImage = clean;
       bgColor = color;
+    }
+
+    inline void setBackGroundTexture(vpImage<unsigned char>& Iback) {
+    	setBackgroundTexture = true;
+    	Ig = Iback;
     }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
