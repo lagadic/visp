@@ -2720,6 +2720,35 @@ matlabPrint(std::ostream & os)
 };
 
 /*!
+\brief Print using MAPLE matrix input format.
+
+Print using the following way so that this output can be directly copied into MAPLE:
+([
+[0.939846, 0.0300754, 0.340272, ],
+[0.0300788, 0.984961, -0.170136, ],
+[-0.340272, 0.170136, 0.924807, ],
+])
+*/
+std::ostream & vpMatrix::
+maplePrint(std::ostream & os)
+{
+  unsigned int i,j;
+
+  os << "([ " << std::endl;
+  for (i=0; i < this->getRows(); ++ i)
+  { os << "[";
+    for (j=0; j < this->getCols(); ++ j)
+    {
+      os <<  (*this)[i][j] << ", ";
+    }
+    os << "]," << std::endl;
+  }
+   os << "])" << std::endl;
+  return os;
+};
+
+
+/*!
 \brief Print to be used as part of a C++ code later.
 
 Print under the following form:
