@@ -140,8 +140,8 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
   \param I2 : The second image.
   \param Idiff : The result of the difference.
 */
-void vpImageTools::imageDifference(vpImage<unsigned char> &I1, 
-				   vpImage<unsigned char> &I2,
+void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
+				   const vpImage<unsigned char> &I2,
 				   vpImage<unsigned char> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
@@ -163,8 +163,8 @@ void vpImageTools::imageDifference(vpImage<unsigned char> &I1,
 }
 
 /*!
-  Compute the difference between the two images I1 and I2 for
-  WARNING: This is NOT for visualization
+  Compute the difference between the two images I1 and I2
+  \WARNING: This is NOT for visualization
   If you want to visualize difference images during servo, please use
   vpImageTools::imageDifference(..,..,..) function.
 
@@ -173,13 +173,14 @@ void vpImageTools::imageDifference(vpImage<unsigned char> &I1,
   \param Idiff : The result of the difference.
 */
 
-void vpImageTools::imageDifferenceAbsolute(vpImage<unsigned char> &I1,
-				   vpImage<unsigned char> &I2,
+void
+vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
+				   const vpImage<unsigned char> &I2,
 				   vpImage<unsigned char> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
   {
-    throw (vpException(vpException::dimensionError, "The two images have not the same size"));
+    throw (vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
