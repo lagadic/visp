@@ -261,7 +261,7 @@ class VISP_EXPORT vpImageSimulator
      \param Iback: Image/Texture for the background
      */
     inline void
-    setBackGroundTexture(vpImage<unsigned char>& Iback) {
+    setBackGroundTexture(const vpImage<unsigned char>& Iback) {
     	setBackgroundTexture = true;
     	Ig = Iback;
     }
