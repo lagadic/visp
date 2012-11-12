@@ -20,6 +20,7 @@ ViSP 2.6.3 (under development)
       vpRobotSimulator class. Introduction of a new vpRobotWireFrameSimulator
       class as a base class of robot simulated using the wireframe display
       capabilities.
+    - VRML Loader now reads Transform nodes, and hierarchical scenes.
   - Examples
   - Bug fixed
     - [14646] ViSP doesn't build on Windows with MinGW
