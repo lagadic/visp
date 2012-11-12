@@ -105,9 +105,9 @@ vpSimulatorPioneerPan::~vpSimulatorPioneerPan()
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
-  The jacobian expression is given in vpPioneer class.
+  The jacobian expression is given in vpPioneerPan class.
 
-  \param eJe : A 6 by 2 matrix representing the robot jacobian \f$ {^e}{\bf
+  \param eJe : A 6 by 3 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
 void
@@ -119,7 +119,7 @@ vpSimulatorPioneerPan::get_eJe(vpMatrix &eJe)
 /*!
   Send to the controller a velocity.
 
-  \param frame : Control frame type. Only vpRobot::REFERENCE_FRAME is implemented.
+  \param frame : Control frame type. Only vpRobot::ARTICULAR_FRAME is implemented.
 
   \param v : Velocity vector \f$(v_x, w_z, \dot q)\f$ to apply to the robot.
 
@@ -157,28 +157,34 @@ vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame,
 
       vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
 
-      theta_ += delta_t_ * v_sat[1];
       xm_ += delta_t_ * v_sat[0] * cos(theta_);
       ym_ += delta_t_ * v_sat[0] * sin(theta_);
+      theta_ += delta_t_ * v_sat[1];
       q_pan_ += delta_t_ * v_sat[2];
 
       vpRotationMatrix wRm(0, 0, theta_);
       vpTranslationVector wtm(xm_, ym_, 0);
       wMm_.buildFrom(wtm, wRm);
 
+      // Update the end effector pose
       set_pMe(q_pan_);
 
+      // Update the camera pose
       wMc_ = wMm_ * mMp_ * pMe_ * cMe_.inverse();
+
+      // Update the jacobian
+      set_eJe(q_pan_);
 
       break ;
       }
-  case vpRobot::CAMERA_FRAME:
-    vpERROR_TRACE ("Cannot set a velocity in the camera frame: "
-                   "functionality not implemented");
-    throw vpRobotException (vpRobotException::wrongStateError,
-                            "Cannot set a velocity in the camera frame:"
-                            "functionality not implemented");
-    break ;
+  case vpRobot::CAMERA_FRAME: {
+      vpERROR_TRACE ("Cannot set a velocity in the camera frame: "
+                     "functionality not implemented");
+      throw vpRobotException (vpRobotException::wrongStateError,
+                              "Cannot set a velocity in the camera frame:"
+                              "functionality not implemented");
+      break ;
+    }
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE ("Cannot set a velocity in the reference frame: "
                    "functionality not implemented");
