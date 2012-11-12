@@ -326,6 +326,8 @@ SET (SRC_TRACKING
   tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtXmlParser.cpp
   tracking/mbt/edge/vpMbtDistanceCylinder.cpp
+  tracking/mbt/klt/vpMbtKltHiddenFace.cpp
+  tracking/mbt/klt/vpMbKltTracker.cpp
 
   tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
@@ -344,6 +346,7 @@ SET (SRC_TRACKING
 
 IF(VISP_HAVE_XML2)
   LIST(APPEND SRC_TRACKING tracking/mbt/edge/vpMbtXmlParser.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltXmlParser.cpp)
 ENDIF()
 
 IF(VISP_HAVE_OPENCV)

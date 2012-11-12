@@ -271,6 +271,9 @@ SET (HEADER_TRACKING
   tracking/mbt/edge/vpMbEdgeTracker.h
   tracking/mbt/edge/vpMbtXmlParser.h
   tracking/mbt/edge/vpMbtDistanceCylinder.h
+  tracking/mbt/klt/vpMbtKltHiddenFace.h
+  tracking/mbt/klt/vpMbKltTracker.h
+  tracking/mbt/klt/vpMbtKltXmlParser.h
 
   tracking/moments/vpMomentObject.h
   tracking/moments/vpMomentAlpha.h
