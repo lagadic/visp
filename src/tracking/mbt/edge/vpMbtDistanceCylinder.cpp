@@ -44,8 +44,6 @@
 
 #include <visp/vpConfig.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /*!
  \file vpMbtDistanceCylinder.cpp
  \brief Make the complete tracking of an object by using its CAD model.
@@ -121,7 +119,7 @@ vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
   
   \param _p1 : The first extremity on the axis.
   \param _p2 : The second extremity on the axis.
-  \param _p3 : A point of the cylinder to determine a radius.
+  \param r : Radius of the cylinder.
 */
 void
 vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r)
@@ -721,6 +719,4 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       j++;
     }
 }
-
-#endif
 

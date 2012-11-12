@@ -46,8 +46,6 @@
  * \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
 */
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef vpMbtXmlParser_HH
 #define vpMbtXmlParser_HH
 
@@ -127,8 +125,6 @@ protected:
   void init();
 
 };
-
-#endif
 
 #endif
 

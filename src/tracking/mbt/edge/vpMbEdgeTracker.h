@@ -286,35 +286,73 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     
     //! Current scale level used. This attribute must not be modified outsied of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
     unsigned int scaleLevel;
-  
- public:
+
+public:
   
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker();
+
+protected:
+  void init(const vpImage<unsigned char>& I);
+  
+public:
+  
+  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  
+  double getFirstThreshold() { return percentageGdPt;}
+  
+  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level = 0);
+  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int _level = 0);
   
   /*!
-    Set the value of the gain used to compute the control law.
+    Get the moving edge parameters.
     
-    \param lambda : the desired value for the gain.
+    \return an instance of the moving edge parameters used by the tracker.
   */
-  inline void setLambda(const double lambda) {this->lambda = lambda;}
+  inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
   
-  void setMovingEdge(const vpMe &_me);
+  unsigned int getNbPoints(const unsigned int _level=0);
+  unsigned int getNbPolygon();
+  vpMbtPolygon* getPolygon(const unsigned int _index); 
+  
+  /*!
+    Return the scales levels used for the tracking. 
+    
+    \return The scales levels used for the tracking. 
+  */
+  std::vector<bool> getScales() const {return scales;}
+  
   void loadConfigFile(const std::string &filename);
   void loadConfigFile(const char* filename);
   void loadModel(const std::string &cad_name);
-  void loadModel(const char* cad_name);
-
-protected:
-	void init(const vpImage<unsigned char>& I);
-	
-public:
-  void track(const vpImage<unsigned char> &I);
-  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
-  void resetTracker();
+  void loadModel(const char* cad_name);  
+  
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo);
-   
+  void resetTracker();
+  
+  /*!
+    Set the camera parameters.
+
+    \param _cam : the new camera parameters
+  */
+  virtual void setCameraParameters(const vpCameraParameters& _cam) {
+    this->cam = _cam; 
+    cameraInitialised = true;
+
+    for (unsigned int i = 0; i < scales.size(); i += 1){
+      if(scales[i]){
+        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+          (*it)->setCameraParameters(cam);
+        }
+
+        for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
+          (*it)->setCameraParameters(cam);
+        }
+      }
+    }
+  }
+  
   /*!
     Enable to display the points along the line with a color corresponding to their state.
     
@@ -337,76 +375,41 @@ public:
     \param threshold1 : The new value of the threshold. 
   */
   void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
-  double getFirstThreshold() { return percentageGdPt;}
-
-
+  
   /*!
-    Get the moving edge parameters.
+    Set the value of the gain used to compute the control law.
     
-    \return an instance of the moving edge parameters used by the tracker.
+    \param lambda : the desired value for the gain.
   */
-  inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
+  inline void setLambda(const double lambda) {this->lambda = lambda;}
   
-  unsigned int getNbPoints(const unsigned int _level=0);
-  vpMbtPolygon* getPolygon(const unsigned int _index); 
-  unsigned int getNbPolygon();
-  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level = 0);
-  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int _level = 0);
-  
+  void setMovingEdge(const vpMe &_me);
   void setScales(const std::vector<bool>& _scales);
-  
-  /*!
-    Return the scales levels used for the tracking. 
-    
-    \return The scales levels used for the tracking. 
-  */
-  std::vector<bool> getScales() const {return scales;}
 
 
+  void track(const vpImage<unsigned char> &I);
 
-  /*!
-    Set the camera parameters.
-
-    \param _cam : the new camera parameters
-  */
-  virtual void setCameraParameters(const vpCameraParameters& _cam) {
-    this->cam = _cam; 
-    cameraInitialised = true;
-
-    for (unsigned int i = 0; i < scales.size(); i += 1){
-      if(scales[i]){
-        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
-          (*it)->setCameraParameters(cam);
-        }
-
-        for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
-          (*it)->setCameraParameters(cam);
-        }
-      }
-    }
-  }
-
- protected:
+protected:
+  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
+  void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
+  void addPolygon(vpMbtPolygon &p) ;
+  void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void computeVVS(const vpImage<unsigned char>& _I);
+  void downScale(const unsigned int _scale);
+  virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0);
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
+  void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
+  void reInitLevel(const unsigned int _lvl);
+  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
+  void removeCylinder(const std::string& name);
+  void removeLine(const std::string& name);
+  void testTracking();
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
+  void upScale(const unsigned int _scale); 
   void visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline) ;
-  void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
-  void addPolygon(vpMbtPolygon &p) ;
-  void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
-  void removeLine(const std::string& name);
-  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
-  void removeCylinder(const std::string& name);
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
-  virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0);
-  
-  void testTracking();
-  void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
-  void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
-  void reInitLevel(const unsigned int _lvl);
-  void downScale(const unsigned int _scale);
-  void upScale(const unsigned int _scale);  
+   
 };
 
 #endif

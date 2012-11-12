@@ -42,8 +42,6 @@
  *
  *****************************************************************************/
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /*!
  \file vpMbtDistanceCylinder.h
  \brief Make the complete tracking of an object by using its CAD model.
@@ -111,55 +109,20 @@ class VISP_EXPORT vpMbtDistanceCylinder
     vpMbtDistanceCylinder() ;
     ~vpMbtDistanceCylinder() ;
 
+    void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r);
+    
+    void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
+    
+    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void displayMovingEdges(const vpImage<unsigned char> &I);
+    
     /*!
      Get the camera paramters.
    
      \param cam : The vpCameraParameters used to store the camera parameters.
     */
     inline void getCameraParameters(vpCameraParameters& cam) {cam = this->cam;}
-    
-    /*!
-     Set the camera paramters.
-     \param cam : The camera parameters.
-    */
-    inline void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
-    
-    /*!
-     Get the mean weight of the first line. The mean weight is computed thanks to the weight of each moving edge.
-     Those weights are computed by the robust estimation method used during the virtual visual servoing.
-   
-     \return The mean weight of the first line.
-    */
-    inline double getMeanWeight1() const {return wmean1;}
-
-    /*!
-     Set the mean weight of the first line.
-
-     \param wmean : The mean weight of the first line.
-    */
-    inline void setMeanWeight1(const double wmean) {this->wmean1 = wmean;}
-
-    /*!
-     Get the mean weight of the second line. The mean weight is computed thanks to the weight of each moving edge.
-     Those weights are computed by the robust estimation method used during the virtual visual servoing.
-
-     \return The mean weight of the second line.
-    */
-    inline double getMeanWeight2() const {return wmean2;}
-    
-    /*!
-     Set the mean weight of the second line.
-   
-     \param wmean : The mean weight of the second line.
-    */
-    inline void setMeanWeight2(const double wmean) {this->wmean2 = wmean;}
-    
-    /*!
-      Set the index of the cylinder.
-      
-      \param i : The index number
-    */
-    inline void setIndex(const unsigned int i) {index = i;}
     
     /*!
       Get the index of the cylinder.
@@ -169,11 +132,62 @@ class VISP_EXPORT vpMbtDistanceCylinder
     inline unsigned int getIndex() {return index ;}
     
     /*!
+     Get the mean weight of the first line. The mean weight is computed thanks to the weight of each moving edge.
+     Those weights are computed by the robust estimation method used during the virtual visual servoing.
+   
+     \return The mean weight of the first line.
+    */
+    inline double getMeanWeight1() const {return wmean1;}
+    
+    /*!
+     Get the mean weight of the second line. The mean weight is computed thanks to the weight of each moving edge.
+     Those weights are computed by the robust estimation method used during the virtual visual servoing.
+
+     \return The mean weight of the second line.
+    */
+    inline double getMeanWeight2() const {return wmean2;}
+    
+    /*!
       Get the name of the cylinder.
       
       \return Return the name of the cylinder
     */
     inline std::string getName() const {return name;}
+    
+    void initInteractionMatrixError();
+    
+    void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    
+    void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    
+    /*!
+     Set the camera paramters.
+     \param cam : The camera parameters.
+    */
+    inline void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
+    
+    /*!
+      Set the index of the cylinder.
+      
+      \param i : The index number
+    */
+    inline void setIndex(const unsigned int i) {index = i;}
+
+    /*!
+     Set the mean weight of the first line.
+
+     \param wmean : The mean weight of the first line.
+    */
+    inline void setMeanWeight1(const double wmean) {this->wmean1 = wmean;}
+
+    /*!
+     Set the mean weight of the second line.
+   
+     \param wmean : The mean weight of the second line.
+    */
+    inline void setMeanWeight2(const double wmean) {this->wmean2 = wmean;}
+    
+    void setMovingEdge(vpMe *Me);
     
     /*!
       Set the name of the cylinder.
@@ -189,29 +203,15 @@ class VISP_EXPORT vpMbtDistanceCylinder
     */
     inline void setName(const char* name) {this->name = name;}
 
-    void setMovingEdge(vpMe *Me);
     
-    void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r);
-    
-    void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
-    void initInteractionMatrixError();
-    void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
-    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
-    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
-    void displayMovingEdges(const vpImage<unsigned char> &I);
-
-    void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
-
   private:
+    void getCylinderLineExtremity(double &i, double &j,double rho, double theta, vpCircle *circle);
     void project(const vpHomogeneousMatrix &cMo);
-
-	  void getCylinderLineExtremity(double &i, double &j,double rho, double theta, vpCircle *circle);
-
 } ;
 
-#endif
 #endif
 

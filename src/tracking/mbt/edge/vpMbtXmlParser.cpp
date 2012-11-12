@@ -41,7 +41,6 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 
 #ifdef VISP_HAVE_XML2
@@ -106,7 +105,7 @@ vpMbtXmlParser::init()
   Parse the file in parameters.
   This method is deprecated, use parse() instead.
   
-  \paran filename : File to parse.
+  \param filename : File to parse.
 */
 void
 vpMbtXmlParser::parse(const char * filename)
@@ -118,7 +117,7 @@ vpMbtXmlParser::parse(const char * filename)
 /*!
   Write info to file.
   
-  \waning Useless, so not yet implemented => Throw exception.
+  \warning Useless, so not yet implemented => Throw exception.
 */
 void 
 vpMbtXmlParser::writeMainClass(xmlNodePtr /*node*/)
@@ -496,9 +495,6 @@ vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
     throw vpException(vpException::fatalError, "Bad number of data to extract contrast informations.");
 	}
 }
-
-
-#endif
 
 #endif
 

@@ -118,55 +118,7 @@ protected:
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
-	
-	// Intializer
-	
-  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
-	virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
-	
-	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
-	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
-	
-	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
-	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
-  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
-	
-  /* PURE VIRTUAL METHODS */
-
-	/*!
-    Initialise the tracking.
-
-    \param _I : Input image.
-  */
-  virtual void init(const vpImage<unsigned char>& _I)=0;
-
-  /*!
-    Test the quality of the tracking.
-
-    \throw vpException if the test fail.
-  */
-  virtual void testTracking() = 0;
-
-  /*!
-    Load a config file to parameterise the behavior of the tracker.
-    
-    Pure virtual method to adapt to each tracker.
-    
-    \param _configFile : the (xml) config file to parse
-  */
-  virtual void loadConfigFile(const std::string& _configFile)=0;
-
-  /*!
-    Track the object in the given image
-
-    \param _I : The current image.
-  */
-  virtual void track(const vpImage<unsigned char>& _I)=0;
-
-  /* GENERIC METHODS */
-
-  virtual void loadModel(const std::string& _modelFile);
-
+  
   /*!
     Display the 3D model at a given position using the given camera parameters 
     on a grey level image.
@@ -192,21 +144,27 @@ public:
   */
   virtual void display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
 
-  /*  ACCESSORS */
+	
+	// Intializer
+	
+  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
+	virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
+	
+	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
+	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
+	
+	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
+	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
+	
+  /* PURE VIRTUAL METHODS */
 
-  /*!
-    Set the camera parameters.
+	/*!
+    Initialise the tracking.
 
-    \param _cam : the new camera parameters
+    \param _I : Input image.
   */
-  virtual void setCameraParameters(const vpCameraParameters& _cam) {this->cam = _cam; cameraInitialised = true;}
-  
-  /*!
-    Set if the covaraince matrix has to be computed.
-
-    \param flag : True if the covariance has to be computed, false otherwise
-  */
-  virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
+  virtual void init(const vpImage<unsigned char>& _I)=0;
 
   /*!
     Get the camera parameters.
@@ -242,6 +200,35 @@ public:
     \return the current pose
   */
   inline vpHomogeneousMatrix getPose() const {return this->cMo;}
+
+  /*!
+    Load a config file to parameterise the behavior of the tracker.
+    
+    Pure virtual method to adapt to each tracker.
+    
+    \param _configFile : the (xml) config file to parse
+  */
+  virtual void loadConfigFile(const std::string& _configFile)=0;
+
+  virtual void loadModel(const std::string& _modelFile);
+
+  void savePose(const std::string &filename);
+  
+  /*!
+    Set the camera parameters.
+
+    \param _cam : the new camera parameters
+  */
+  virtual void setCameraParameters(const vpCameraParameters& _cam) {this->cam = _cam; cameraInitialised = true;}
+  
+  /*!
+    Set if the covaraince matrix has to be computed.
+
+    \param flag : True if the covariance has to be computed, false otherwise
+  */
+  virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
+
+  
   
   /*!
     Set the filename used to save the initial pose computed using the 
@@ -256,22 +243,32 @@ public:
     poseSavingFilename = filename;
   }
   
-  void savePose(const std::string &filename);
+  /*!
+    Test the quality of the tracking.
+
+    \throw vpException if the test fail.
+  */
+  virtual void testTracking() = 0;
+  
+  /*!
+    Track the object in the given image
+
+    \param _I : The current image.
+  */
+  virtual void track(const vpImage<unsigned char>& _I)=0;
 
 protected:
-  virtual void loadVRMLModel(const std::string& _modelFile);
-  virtual void loadCAOModel(const std::string& _modelFile);
-
   void computeJTR(const vpMatrix& _J, const vpColVector& _R, vpMatrix& _JTR);
- 
+  
 #ifdef VISP_HAVE_COIN
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
   virtual void extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace);
   virtual void extractLines(SoVRMLIndexedLineSet* _line_set);
   virtual void extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform);
 #endif
+  
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
-
+  
   /*!
     Add a face to track from its corners (in the object frame). This method is
     called from the loadModel() one to add a face of the object to track. 
@@ -292,6 +289,9 @@ protected:
     \param _indexCylinder : Index of the cylinder.
   */
   virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
+  
+  virtual void loadVRMLModel(const std::string& _modelFile);
+  virtual void loadCAOModel(const std::string& _modelFile);
 };
 
 

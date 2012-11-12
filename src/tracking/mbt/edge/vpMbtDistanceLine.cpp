@@ -41,7 +41,6 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  \file vpMbtDistanceLine.cpp
@@ -596,5 +595,3 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
   }
   return false;
 }
-
-#endif

@@ -42,8 +42,6 @@
  *
  *****************************************************************************/
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 /*!
  \file vpMbtHiddenFace.h
  \brief Make the complete tracking of an object by using its CAD model.
@@ -111,7 +109,7 @@ public:
   /*!
     Set the index of the face.
 
-    \param _index : the new index of the face.
+    \param i : the new index of the face.
   */
   virtual inline void     setIndex(const int i ) { index = i ; } 
   virtual        void     setNbPoint(const unsigned int nb)  ;
@@ -133,14 +131,16 @@ class VISP_EXPORT vpMbtHiddenFaces
                   ~vpMbtHiddenFaces() ;
                 
     void          addPolygon(vpMbtPolygon *p)  ;
-    unsigned int  setVisible(const vpHomogeneousMatrix &cMo) ;
+    
+    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
+    
     bool          isVisible(const int index) ;
     bool          isAppearing(const int index);
+    
     void          reset();   
-
-    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
+    
+    unsigned int  setVisible(const vpHomogeneousMatrix &cMo) ;
 } ;
 
-#endif
 #endif
 

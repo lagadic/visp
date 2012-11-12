@@ -42,7 +42,6 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
  \file vpMbtHiddenFace.cpp
  \brief Make the complete tracking of an object by using its CAD model.
@@ -383,5 +382,4 @@ vpMbtHiddenFaces::reset()
   Lpol.clear();
 }
 
-#endif
 
