@@ -38,6 +38,7 @@
  * Nicolas Melchior
  * Romain Tallonneau
  * Eric Marchand
+ * Aurelien Yol
  *
  *****************************************************************************/
 
@@ -51,8 +52,11 @@
 #ifndef vpMbtHiddenFace_HH
 #define vpMbtHiddenFace_HH
 
-#include <visp/vpPoint.h>
+#include <visp/vpMeterPixelConversion.h>
+#include <visp/vpPixelMeterConversion.h>
 
+#include <visp/vpPoint.h>
+#include <vector>
 #include <list>
 
 /*!
@@ -63,33 +67,54 @@
  */
 class VISP_EXPORT vpMbtPolygon
 {
-  public:
-    //! Index of the polygon. Cannot be unsigned int because deafult value is -1.
-    int index;
-    //! Number of points used to define the polygon.
-    unsigned int nbpt;
-    bool isvisible;
-    bool isappearing;
+public:
+  //! Index of the polygon. Cannot be unsigned int because deafult value is -1.
+  int index;
+  //! Number of points used to define the polygon.
+  unsigned int nbpt;
+  //! flag to specify whether the face is visible or not
+  bool isvisible;
+  //! flag to specify whether the face is appearing or not
+  bool isappearing;
+  //! corners in the object frame
+  vpPoint *p;
     
-  private:
-    double angle_1;
-    int negative;
-    
-  public: 
-    vpPoint *p ;
-    vpMbtPolygon() ;
-    ~vpMbtPolygon() ;
-    void setIndex(const int i ) { index = i ; } 
-    void setNbPoint(const unsigned int nb)  ;
-    unsigned int getNbPoint() const {return nbpt ;  }
-    void addPoint(const unsigned int n, const vpPoint &P) ; 
+public: 
+                           vpMbtPolygon() ;
+                          ~vpMbtPolygon() ;
+                                    
+            void          addPoint(const unsigned int n, const vpPoint &P) ;               
+          
+            void          changeFrame(const vpHomogeneousMatrix &cMo) ;
+            
+            vpPoint &     getPoint(const unsigned int _index);
+            
+  /*!
+    Get the index of the face.
 
-    int getIndex() const {return index ;}
-    void changeFrame(const vpHomogeneousMatrix &cMo) ;
-    bool isVisible(const vpHomogeneousMatrix &cMo) ;
-    bool isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
-    bool isVisible() const {return isvisible;}
-    bool isAppearing() const {return isappearing;}
+    \return index : the index of the face.
+  */
+  inline    int           getIndex() const {return index ;}
+            
+  /*!
+    Return the number of corners.
+
+    \return number of corner of the face
+  */
+  inline    unsigned int  getNbPoint() const {return nbpt ;}              
+          
+  inline    bool          isAppearing() const {return isappearing;}
+            bool          isVisible(const vpHomogeneousMatrix &cMo) ;
+  virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
+            bool          isVisible() const {return isvisible;}
+  
+  /*!
+    Set the index of the face.
+
+    \param _index : the new index of the face.
+  */
+  virtual inline void     setIndex(const int i ) { index = i ; } 
+  virtual        void     setNbPoint(const unsigned int nb)  ;
 };
 
 /*!
@@ -102,14 +127,16 @@ class VISP_EXPORT vpMbtHiddenFaces
 {
   private:
   std::list<vpMbtPolygon *> Lpol ;
+  
   public :
-    vpMbtHiddenFaces() ;
-    ~vpMbtHiddenFaces() ;
-    void addPolygon(vpMbtPolygon *p)  ;
-    unsigned int setVisible(const vpHomogeneousMatrix &cMo) ;
-    bool isVisible(const int index) ;
-    bool isAppearing(const int index);
-    void reset();
+                    vpMbtHiddenFaces() ;
+                  ~vpMbtHiddenFaces() ;
+                
+    void          addPolygon(vpMbtPolygon *p)  ;
+    unsigned int  setVisible(const vpHomogeneousMatrix &cMo) ;
+    bool          isVisible(const int index) ;
+    bool          isAppearing(const int index);
+    void          reset();   
 
     std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
 } ;

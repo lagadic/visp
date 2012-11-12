@@ -240,7 +240,7 @@ int main()
 
 */
 
-class VISP_EXPORT vpMbEdgeTracker: public vpMbTracker
+class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
 {
   protected :
     

@@ -219,7 +219,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   double count = 0;
   
   /*** First phase ***/
-
   while ( reloop == true && iter<10)
   {
     if(iter==0)
@@ -592,7 +591,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     iter++;
   }
-  
+        
   vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
   D.diag(W_true);
   
@@ -763,7 +762,7 @@ vpMbEdgeTracker::testTracking()
  */
 void
 vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
-{
+{ 
   initPyramid(I, Ipyramid);
   
 //  for (int lvl = ((int)scales.size()-1); lvl >= 0; lvl -= 1)
@@ -871,7 +870,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
       }
     }
   } while(lvl != 0);
-
+  
   cleanPyramid(Ipyramid);
 }
 
@@ -911,7 +910,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 void 
 vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
 {
-  loadConfigFile(_filename.c_str());
+  vpMbEdgeTracker::loadConfigFile(_filename.c_str());
 }
 
 /*!

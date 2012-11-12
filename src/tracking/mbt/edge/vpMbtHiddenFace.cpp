@@ -38,6 +38,7 @@
  * Nicolas Melchior
  * Romain Tallonneau
  * Eric Marchand
+ * Aurelien Yol
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
@@ -57,8 +58,6 @@ vpMbtPolygon::vpMbtPolygon()
   nbpt = 0 ;
   p = NULL ;
   isappearing = false;
-  negative = 0;
-  angle_1 = -1e6;
 }
 
 /*!
@@ -66,12 +65,27 @@ vpMbtPolygon::vpMbtPolygon()
 */
 vpMbtPolygon::~vpMbtPolygon()
 {
-//  cout << "Deleting Polygon "  << index  <<  endl ;
-  if (p!=NULL)
+  if (p !=NULL)
   {
     delete[] p;
     p = NULL;
   }
+}
+
+/*!
+  Get a reference to a corner.
+
+  \throw vpException::dimensionError if the _index is out of range.
+
+  \param _index : the index of the corner
+*/
+vpPoint &
+vpMbtPolygon::getPoint(const unsigned int _index)
+{
+  if(_index >= nbpt){
+    throw vpException(vpException::dimensionError, "index out of range");
+  }
+  return p[_index];
 }
 
 /*!
@@ -128,6 +142,14 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo) ;
   
+  for (unsigned int i = 0 ; i < nbpt ; i++){
+    if(p[i].get_Z() < 0){
+      isappearing = false;
+      isvisible = false ;
+      return false ;
+    }
+  }
+  
   if(nbpt <= 2){
     /* a line is allways visible */
     isvisible = true;
@@ -151,28 +173,25 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo)
 
   double angle = p[0].get_X()*facenormal[0] +  p[0].get_Y()*facenormal[1]  +  p[0].get_Z()*facenormal[2]  ;
   
-  double diff = angle - angle_1;
-  if (diff < 0) negative++;
-  else negative =0;
-
-  if(angle < -0.00001 )
+  if(angle < -0.0001 )
   {
     isvisible = true;
     isappearing = false;
+    
     return  true ;
   }
   else
   {
-    if (angle < 0.0000001 )//&& negative >=1)
+    if (angle < 0.0000001 ){
       isappearing = true;
-    else
+    }
+    else {
       isappearing = false;
+    }
     isvisible = false ;
     return false ;
   }
 }
-
-
 
 /*!
   Check if the polygon is visible in the image and if the angle between the normal 
@@ -187,12 +206,13 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo)
 bool 
 vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
 {
-  changeFrame(cMo) ;
-  
+  //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
   if(nbpt <= 2){
     /* a line is allways visible */
     return  true ;
   }
+
+  changeFrame(cMo);
 
   vpColVector e1(3) ;
   vpColVector e2(3) ;
@@ -205,26 +225,36 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
   e2[0] = p[2].get_X() - p[1].get_X() ;
   e2[1] = p[2].get_Y() - p[1].get_Y() ;
   e2[2] = p[2].get_Z() - p[1].get_Z() ;
-
+ 
+  e1.normalize();
+  e2.normalize();
+  
   facenormal = vpColVector::crossProd(e1,e2) ;
-
-  vpColVector n_plan(3);
-  n_plan[0] = 0;
-  n_plan[1] = 0;
-  n_plan[2] = 1;
+  facenormal.normalize();
+ 
+  vpColVector e4(3) ;
+  vpPoint pt;
+  for (unsigned int i = 0; i < nbpt; i += 1){
+    pt.set_X(pt.get_X() + p[i].get_X());
+    pt.set_Y(pt.get_Y() + p[i].get_Y());
+    pt.set_Z(pt.get_Z() + p[i].get_Z());
+  }
+  e4[0] = -pt.get_X()/(double)nbpt; e4[1] = -pt.get_Y()/(double)nbpt; e4[2] = -pt.get_Z()/(double)nbpt; 
+  e4.normalize();
   
-  vpColVector n_cam(3);
-  n_cam = facenormal;
+  double angle2 = vpColVector::dotProd (e4, facenormal);
+  double my_angle = acos(angle2);
   
-  double angle = p[0].get_X()*facenormal[0] +  p[0].get_Y()*facenormal[1]  +  p[0].get_Z()*facenormal[2]  ;
+//   std::cout << angle2 << "/" << vpMath::deg(my_angle) << std::endl;
   
-  double n_cam_dot_n_plan = vpColVector::dotProd (n_cam, n_plan);
-  double cos_angle = n_cam_dot_n_plan * (1 / ( n_cam.euclideanNorm() * n_plan.euclideanNorm() ));
-  double my_angle = acos(cos_angle);
-  
-  if(angle < 0 && ( my_angle > static_cast<double>(M_PI - alpha) || my_angle < static_cast<double>(-M_PI + alpha) ) ){
+  if( my_angle < alpha ){
+    isvisible = true;
+    isappearing = false;
     return true;
-  }  
+  }
+  
+  isvisible = false;
+  isappearing = false;
   return false;
 }
 
@@ -233,8 +263,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
   Basic constructor.
 */
 vpMbtHiddenFaces::vpMbtHiddenFaces()
-{
-}
+{}
 
 
 /*!
@@ -287,10 +316,14 @@ vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
   unsigned int nbvisiblepolygone = 0 ;
   vpMbtPolygon *p ;
 
+  unsigned int indice = 0;
   for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
     p = *it;
-    if (p->isVisible(cMo))
+    if (p->isVisible(cMo)){
       nbvisiblepolygone++;
+    }
+    
+    indice++;
   }
   return nbvisiblepolygone ;
 }
