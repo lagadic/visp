@@ -143,19 +143,19 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case ecm:{
-          this->lecture_ecm (doc, dataNode);
+          this->read_ecm (doc, dataNode);
           nb++;
           }break;
         case sample:{
-          this->lecture_sample (doc, dataNode);
+          this->read_sample (doc, dataNode);
           nb++;
           }break;
         case camera:{
-          this->lecture_camera (doc, dataNode);
+          this->read_camera (doc, dataNode);
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -179,7 +179,7 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the ecm informations.
 */
 void 
-vpMbtXmlParser::lecture_ecm (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
 	unsigned int nb=0;
@@ -189,19 +189,19 @@ vpMbtXmlParser::lecture_ecm (xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case mask:{
-          this->lecture_mask (doc, dataNode);
+          this->read_mask (doc, dataNode);
           nb++;
           }break;
         case range:{
-          this->lecture_range (doc, dataNode);
+          this->read_range (doc, dataNode);
           nb++;
           }break;
         case contrast:{
-          this->lecture_contrast (doc, dataNode);
+          this->read_contrast (doc, dataNode);
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_ecm : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_ecm : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -224,7 +224,7 @@ vpMbtXmlParser::lecture_ecm (xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the sample informations.
 */
 void 
-vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
 	double d_stp = this->m_ecm.getSampleStep();
@@ -245,7 +245,7 @@ vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -276,7 +276,7 @@ vpMbtXmlParser::lecture_sample (xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the camera informations.
 */
 void 
-vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
 // 	int d_height=0 ;
@@ -317,7 +317,7 @@ vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -349,7 +349,7 @@ vpMbtXmlParser::lecture_camera (xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the mask informations.
 */
 void 
-vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
   unsigned int d_size = this->m_ecm.getMaskSize();
@@ -370,7 +370,7 @@ vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_mask : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_mask : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -401,7 +401,7 @@ vpMbtXmlParser::lecture_mask (xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the range informations.
 */
 void 
-vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
 	unsigned int m_range_tracking = this->m_ecm.getRange();
@@ -417,7 +417,7 @@ vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_range : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_range : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }
@@ -446,7 +446,7 @@ vpMbtXmlParser::lecture_range (xmlDocPtr doc, xmlNodePtr node)
   \param node : Pointer to the node of the contrast informations.
 */
 void
-vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
+vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
 {
     // current data values.
 	double d_edge_threshold = this->m_ecm.getThreshold();
@@ -472,7 +472,7 @@ vpMbtXmlParser::lecture_contrast (xmlDocPtr doc, xmlNodePtr node)
           nb++;
           }break;
         default:{
-//          vpTRACE("unknown tag in lecture_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
+//          vpTRACE("unknown tag in read_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
         }
       }

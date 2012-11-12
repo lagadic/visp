@@ -106,20 +106,20 @@ public:
 	vpMbtXmlParser();
 	virtual ~vpMbtXmlParser();
 
+  void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
+  void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
+  
 	void parse(const char * filename);
 
-	void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-	void writeMainClass(xmlNodePtr node);
-
-	void lecture_ecm (xmlDocPtr doc, xmlNodePtr node);
-	void lecture_sample (xmlDocPtr doc, xmlNodePtr node);
-	void lecture_camera (xmlDocPtr doc, xmlNodePtr node);
-	void lecture_mask (xmlDocPtr doc, xmlNodePtr node);
-	void lecture_range (xmlDocPtr doc, xmlNodePtr node);
-	void lecture_contrast (xmlDocPtr doc, xmlNodePtr node);
+  void readMainClass(xmlDocPtr doc, xmlNodePtr node);
+	void read_ecm (xmlDocPtr doc, xmlNodePtr node);
+	void read_sample (xmlDocPtr doc, xmlNodePtr node);
+	void read_camera (xmlDocPtr doc, xmlNodePtr node);
+	void read_mask (xmlDocPtr doc, xmlNodePtr node);
+	void read_range (xmlDocPtr doc, xmlNodePtr node);
+	void read_contrast (xmlDocPtr doc, xmlNodePtr node);
 	
-	void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
-	void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
+  void writeMainClass(xmlNodePtr node);
 	
 protected:
   void init();
