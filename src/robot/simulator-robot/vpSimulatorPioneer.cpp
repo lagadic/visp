@@ -147,14 +147,13 @@ vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
 
       vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
 
-      theta_ += delta_t_ * v_sat[1];
       xm_ += delta_t_ * v_sat[0] * cos(theta_);
       ym_ += delta_t_ * v_sat[0] * sin(theta_);
+      theta_ += delta_t_ * v_sat[1];
 
-      vpRotationMatrix wRm(0, 0, theta_);
-      vpTranslationVector wtm(xm_, ym_, 0);
-      wMe_.buildFrom(wtm, wRm);
-
+      vpRotationMatrix wRe(0, 0, theta_);
+      vpTranslationVector wte(xm_, ym_, 0);
+      wMe_.buildFrom(wte, wRe);
       wMc_ = wMe_ * cMe_.inverse();
 
       break ;
