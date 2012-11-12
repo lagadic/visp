@@ -305,7 +305,7 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
   void loadModel(const std::string &cad_name);
   void loadModel(const char* cad_name);
 
-private:
+protected:
 	void init(const vpImage<unsigned char>& I);
 	
 public:
@@ -406,36 +406,7 @@ public:
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);
   void downScale(const unsigned int _scale);
-  void upScale(const unsigned int _scale);
-
-  public:
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-
-  /*!
-    \deprecated This method is deprecated. You should use
-    void getLline(std::list<vpMbtDistanceLine *> &, const unsigned int)
-    instead.
-  */
-  vp_deprecated vpList<vpMbtDistanceLine *>* getLline(const unsigned int _level = 0);
-  /*!
-    \deprecated This method is deprecated. You should use
-    void getLcylinder(std::list<vpMbtDistanceCylinder *> &, const unsigned int)
-    instead.
-  */
-  vp_deprecated vpList<vpMbtDistanceCylinder *>* getLcylinder(const unsigned int _level = 0);
-  
-  /*!
-    \deprecated This method is deprecated. You should use
-    void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo)
-    instead.
-  */
-  vp_deprecated void init(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo) ;
-#endif
-
-  
+  void upScale(const unsigned int _scale);  
 };
 
 #endif

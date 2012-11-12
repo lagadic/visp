@@ -1091,6 +1091,8 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
   the initFaceFromCorners() method implemented in the child class. 
 
   \param _face_set : Pointer to the face in the vrml format. 
+  \param transform : Transformation matrix applied to the face.
+  \param indexFace : Face index.
 */
 void
 vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace)
@@ -1144,6 +1146,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &
   method is called otherwise the extractFaces() is used.
 
   \param _face_set : Pointer to the cylinder in the vrml format.
+  \param transform : Transformation matrix applied to the cylinder.
 */
 void
 vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform)

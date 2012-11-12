@@ -292,23 +292,6 @@ protected:
     \param _indexCylinder : Index of the cylinder.
   */
   virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
-  
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-
-  /*!
-    \deprecated This method is deprecated. You should use
-    void initFromPose(const vpImage<unsigned char>&, const vpHomogeneousMatrix&) instead.
-
-    Initialise the tracking using the known pose cMo. 
-
-    \param _I : Input image.
-    \param _c0Mo : Initial pose between the camera and the object. 
-  */
-  /* vp_deprecated */ virtual void init(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix& _c0Mo)=0;
-#endif
 };
 
 
