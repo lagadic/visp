@@ -318,12 +318,16 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeSite.cpp
   tracking/moving-edges/vpMeTracker.cpp
   tracking/moving-edges/vpMeNurbs.cpp
+
   tracking/mbt/vpMbTracker.cpp
-  tracking/mbt/vpMbtDistanceLine.cpp
-  tracking/mbt/vpMbtHiddenFace.cpp
-  tracking/mbt/vpMbtMeLine.cpp
-  tracking/mbt/vpMbEdgeTracker.cpp
-  tracking/mbt/vpMbtDistanceCylinder.cpp
+  tracking/mbt/edge/vpMbtDistanceLine.cpp
+  tracking/mbt/edge/vpMbtHiddenFace.cpp
+  tracking/mbt/edge/vpMbtMeLine.cpp
+  tracking/mbt/edge/vpMbEdgeTracker.cpp
+  tracking/mbt/edge/vpMbtXmlParser.cpp
+  tracking/mbt/edge/vpMbtDistanceCylinder.cpp
+
+  tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
   tracking/moments/vpMomentBasic.cpp
   tracking/moments/vpMomentCentered.cpp
@@ -339,7 +343,7 @@ SET (SRC_TRACKING
   )
 
 IF(VISP_HAVE_XML2)
-  LIST(APPEND SRC_TRACKING tracking/mbt/vpMbtXmlParser.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/edge/vpMbtXmlParser.cpp)
 ENDIF()
 
 IF(VISP_HAVE_OPENCV)
@@ -369,13 +373,13 @@ IF(VISP_HAVE_X11)
   LIST(APPEND SRC_DEVICE_DISPLAY device/display/vpDisplayX.cpp)
 ENDIF()
 
-IF(VISP_HAVE_GDI OR VISP_HAVE_D3D9)
+IF(WIN32)
   LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpDisplayWin32.cpp)
-  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpWin32API.cpp)
   LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpWin32Window.cpp)
 ENDIF()
 IF(VISP_HAVE_GDI)
   LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpGDIRenderer.cpp)
+  LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpWin32API.cpp)
   LIST(APPEND SRC_DEVICE_DISPLAY device/display/windows/vpDisplayGDI.cpp)
 ENDIF()
 IF(VISP_HAVE_D3D9)
@@ -406,6 +410,7 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureMomentGravityCenterNormalized.cpp
   visual-feature/vpFeatureMomentCentered.cpp
   visual-feature/vpFeatureMomentCInvariant.cpp
+  visual-feature/vpFeatureMomentCommon.cpp
   visual-feature/vpFeatureMomentAreaNormalized.cpp
   visual-feature/vpFeatureMomentArea.cpp
   visual-feature/vpFeatureSegment.cpp

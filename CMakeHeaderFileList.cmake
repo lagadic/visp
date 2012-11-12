@@ -263,13 +263,15 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeSite.h
   tracking/moving-edges/vpMeTracker.h
   tracking/moving-edges/vpMeNurbs.h
+
   tracking/mbt/vpMbTracker.h
-  tracking/mbt/vpMbtDistanceLine.h
-  tracking/mbt/vpMbtHiddenFace.h
-  tracking/mbt/vpMbtMeLine.h
-  tracking/mbt/vpMbEdgeTracker.h
-  tracking/mbt/vpMbtXmlParser.h
-  tracking/mbt/vpMbtDistanceCylinder.h
+  tracking/mbt/edge/vpMbtDistanceLine.h
+  tracking/mbt/edge/vpMbtHiddenFace.h
+  tracking/mbt/edge/vpMbtMeLine.h
+  tracking/mbt/edge/vpMbEdgeTracker.h
+  tracking/mbt/edge/vpMbtXmlParser.h
+  tracking/mbt/edge/vpMbtDistanceCylinder.h
+
   tracking/moments/vpMomentObject.h
   tracking/moments/vpMomentAlpha.h
   tracking/moments/vpMomentBasic.h
