@@ -12,6 +12,7 @@ ViSP 2.6.3 (under development)
       Adept Viper s650 robot.
     - New robot simulators; vpSimulatorCamera, vpSimulatorPioneer,
       vpSimulatorPioneerPan
+    - MBT Tracker via KLT points.
   - Improvements
     - MinGW is now supported but since MinGW currently doesn't support tls
       __declspec(thread) with vpDisplayGDI it is possible to open only
