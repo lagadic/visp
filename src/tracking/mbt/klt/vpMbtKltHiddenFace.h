@@ -148,8 +148,6 @@ public:
   inline  bool        hasEnoughPoints() const {return enoughPoints;}
   
           void        init(const std::map<int, vpImagePoint>& _iPI0, const std::vector<vpImagePoint>& _roi);
-  
-          void        ransac();
           
           void        removeOutliers(const vpColVector& weight, const double &threshold_outlier);
   
