@@ -82,6 +82,7 @@
 #include <Inventor/actions/SoGetPrimitiveCountAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>
 #include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/VRMLnodes/SoVRMLTransform.h>
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
 #endif
 
@@ -753,9 +754,10 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
     sceneGraph = SoDB::readAll(&in);
     if (sceneGraph == NULL) { /*return -1;*/ }
     sceneGraph->ref();
-
+    
     SoToVRML2Action tovrml2;
     tovrml2.apply(sceneGraph);
+    
     sceneGraphVRML2 =tovrml2.getVRML2SceneGraph();
     sceneGraphVRML2->ref();
     sceneGraph->unref();
@@ -769,37 +771,9 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
 
   in.closeFile();
 
-  int nbShapes = sceneGraphVRML2->getNumChildren();
-
-  SoNode * child;
-
-  for (int i = 0; i < nbShapes; i++)
-  {
-    child = sceneGraphVRML2->getChild(i);
-    if (child->getTypeId() == SoVRMLShape::getClassTypeId())
-    {
-      SoChildList * child2list = child->getChildren();
-      for (int j = 0; j < child2list->getLength(); j++)
-      {
-        if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId())
-        {
-          SoVRMLIndexedFaceSet * face_set;
-          face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
-          if(!strncmp(face_set->getName().getString(),"cyl",3)){
-            extractCylinders(face_set);
-          }else{
-            extractFaces(face_set);
-          }
-        }
-        if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
-        {
-          SoVRMLIndexedLineSet * line_set;
-          line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
-          extractLines(line_set);
-        }
-      }
-    }
-  }
+  vpHomogeneousMatrix transform;
+  unsigned int indexFace = 0;
+  extractGroup(sceneGraphVRML2, transform, indexFace);
   
   sceneGraphVRML2->unref();
 #else
@@ -1027,13 +1001,99 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
 
 #ifdef VISP_HAVE_COIN
 /*!
+  Extract a VRML object Group. 
+  
+  \param sceneGraphVRML2 : Current node (either Transform, or Group node).
+  \param transform : Transformation matrix for this group.
+  \param indexFace : Index of the face.
+*/
+void
+vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace)
+{ 
+  vpHomogeneousMatrix transformCur;
+  SoVRMLTransform *sceneGraphVRML2Trasnform = dynamic_cast<SoVRMLTransform *>(sceneGraphVRML2);
+  if(sceneGraphVRML2Trasnform){
+    float rx, ry, rz, rw;
+    sceneGraphVRML2Trasnform->rotation.getValue().getValue(rx,ry,rz,rw);
+    vpRotationMatrix rotMat(vpQuaternionVector(rx,ry,rz,rw));
+//     std::cout << "Rotation: " << rx << " " << ry << " " << rz << " " << rw << std::endl;
+    
+    float tx, ty, tz;
+    tx = sceneGraphVRML2Trasnform->translation.getValue()[0];
+    ty = sceneGraphVRML2Trasnform->translation.getValue()[1];
+    tz = sceneGraphVRML2Trasnform->translation.getValue()[2];
+    vpTranslationVector transVec(tx,ty,tz);
+//     std::cout << "Translation: " << tx << " " << ty << " " << tz << std::endl;
+    
+    float sx, sy, sz;
+    sx = sceneGraphVRML2Trasnform->scale.getValue()[0];
+    sy = sceneGraphVRML2Trasnform->scale.getValue()[1];
+    sz = sceneGraphVRML2Trasnform->scale.getValue()[2];
+//     std::cout << "Scale: " << sx << " " << sy << " " << sz << std::endl;
+    
+    for(unsigned int i = 0 ; i < 3 ; i++)
+      rotMat[0][i] *= sx;
+    for(unsigned int i = 0 ; i < 3 ; i++)
+      rotMat[1][i] *= sy;
+    for(unsigned int i = 0 ; i < 3 ; i++)
+      rotMat[2][i] *= sz;
+    
+    transformCur = vpHomogeneousMatrix(transVec,rotMat);
+    transform = transform * transformCur;
+  }
+  
+  int nbShapes = sceneGraphVRML2->getNumChildren();
+//   std::cout << sceneGraphVRML2->getTypeId().getName().getString() << std::endl;
+//   std::cout << "Nb object in VRML : " << nbShapes << std::endl;
+  
+  SoNode * child;
+  
+  for (int i = 0; i < nbShapes; i++)
+  {
+    vpHomogeneousMatrix transform_recursive(transform);
+    child = sceneGraphVRML2->getChild(i);
+    
+    if (child->getTypeId() == SoVRMLGroup::getClassTypeId()){
+      extractGroup((SoVRMLGroup*)child, transform_recursive, indexFace);
+    }
+    
+    if (child->getTypeId() == SoVRMLTransform::getClassTypeId()){
+      extractGroup((SoVRMLTransform*)child, transform_recursive, indexFace);
+    }
+    
+    if (child->getTypeId() == SoVRMLShape::getClassTypeId()){
+      SoChildList * child2list = child->getChildren();
+      for (int j = 0; j < child2list->getLength(); j++)
+      {
+        if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId())
+        {
+          SoVRMLIndexedFaceSet * face_set;
+          face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
+          if(!strncmp(face_set->getName().getString(),"cyl",3)){
+            extractCylinders(face_set, transform);
+          }else{
+            extractFaces(face_set, transform, indexFace);
+          }
+        }
+        if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
+        {
+          SoVRMLIndexedLineSet * line_set;
+          line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
+          extractLines(line_set);
+        }
+      }
+    }
+  }
+}
+
+/*!
   Extract a face of the object to track from the VMRL model. This method calls
   the initFaceFromCorners() method implemented in the child class. 
 
   \param _face_set : Pointer to the face in the vrml format. 
 */
 void
-vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
+vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -1041,11 +1101,10 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
 //  SoMFInt32 indexList = _face_set->coordIndex;
 //  int indexListSize = indexList.getNum();
   int indexListSize = _face_set->coordIndex.getNum();
-  SbVec3f point(0,0,0);
+  
+  vpColVector pointTransformed(4);
   vpPoint pt;
   SoVRMLCoordinate *coord;
-  
-  unsigned int indexFace = 0;
   
   for (int i = 0; i < indexListSize; i++)
   {
@@ -1061,11 +1120,15 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
     else
     {
       coord = (SoVRMLCoordinate *)(_face_set->coord.getValue());
-      int index = _face_set->coordIndex[i];
-      point[0]=coord->point[index].getValue()[0];
-      point[1]=coord->point[index].getValue()[1];
-      point[2]=coord->point[index].getValue()[2];
-      pt.setWorldCoordinates(point[0],point[1],point[2]);
+      int index = _face_set->coordIndex[i];      
+      pointTransformed[0]=coord->point[index].getValue()[0];
+      pointTransformed[1]=coord->point[index].getValue()[1];
+      pointTransformed[2]=coord->point[index].getValue()[2];
+      pointTransformed[3] = 1.0;
+      
+      pointTransformed = transform * pointTransformed;
+      
+      pt.setWorldCoordinates(pointTransformed[0],pointTransformed[1],pointTransformed[2]);
       corners.push_back(pt);
     }
   }
@@ -1083,7 +1146,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set)
   \param _face_set : Pointer to the cylinder in the vrml format.
 */
 void
-vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set)
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform)
 {
   std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
   SoVRMLCoordinate* coords = (SoVRMLCoordinate *)_face_set->coord.getValue();
@@ -1096,17 +1159,20 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set)
   }
   corners_c1.resize(indexListSize / 2);
   corners_c2.resize(indexListSize / 2);
-  SbVec3f point(0,0,0);
+  vpColVector pointTransformed(4);
   vpPoint pt;
 
 
   // extract all points and fill the two sets.
-  for(int i=0; i<coords->point.getNum(); ++i){
-    point[0]=coords->point[i].getValue()[0];
-    point[1]=coords->point[i].getValue()[1];
-    point[2]=coords->point[i].getValue()[2];
-
-    pt.setWorldCoordinates(point[0], point[1], point[2]);
+  for(int i=0; i<coords->point.getNum(); ++i){   
+    pointTransformed[0]=coords->point[i].getValue()[0];
+    pointTransformed[1]=coords->point[i].getValue()[1];
+    pointTransformed[2]=coords->point[i].getValue()[2];
+    pointTransformed[3] = 1.0;
+    
+    pointTransformed = transform * pointTransformed;
+    
+    pt.setWorldCoordinates(pointTransformed[0],pointTransformed[1],pointTransformed[2]);
 
     if(i < (int)corners_c1.size()){
       corners_c1[(unsigned int)i] = pt;

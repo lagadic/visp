@@ -58,6 +58,7 @@
 
 #ifdef VISP_HAVE_COIN
 //Inventor includes
+# include <Inventor/VRMLnodes/SoVRMLGroup.h>
 # include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 # include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
 #endif
@@ -264,9 +265,10 @@ protected:
   void computeJTR(const vpMatrix& _J, const vpColVector& _R, vpMatrix& _JTR);
  
 #ifdef VISP_HAVE_COIN
-  virtual void extractFaces(SoVRMLIndexedFaceSet* _face_set);
+  virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
+  virtual void extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace);
   virtual void extractLines(SoVRMLIndexedLineSet* _line_set);
-  virtual void extractCylinders(SoVRMLIndexedFaceSet* _face_set);
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform);
 #endif
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
 
