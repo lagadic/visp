@@ -171,8 +171,8 @@ public:
 // Static Functions
 //###################
 private:
-  static bool         isInside(const std::vector<vpImagePoint>& roi, const unsigned int i, const unsigned int j);
-  static bool         intersect(const vpImagePoint& p1, const vpImagePoint& p2, const unsigned int i, const unsigned int j, const unsigned int i_test, const unsigned int j_test);
+  static bool         isInside(const std::vector<vpImagePoint>& roi, const double i, const double  j);
+  static bool         intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  i, const double  j, const double  i_test, const double  j_test);
   
 public:
   static bool         roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);

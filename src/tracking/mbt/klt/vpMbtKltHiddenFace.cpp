@@ -36,7 +36,11 @@
  *
  *****************************************************************************/
 
+
+#include <limits.h>
+
 #include <visp/vpMbtKltHiddenFace.h>
+
 
 /*!
   Basic constructor.
@@ -172,7 +176,7 @@ vpMbtKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
     int id(iter->first);
-    float i_cur(iter->second.get_i()), j_cur(iter->second.get_j());
+    double i_cur(iter->second.get_i()), j_cur(iter->second.get_j());
     
     double x_cur(0), y_cur(0);
     vpPixelMeterConversion::convertPoint(cam, j_cur, i_cur, x_cur, y_cur);
@@ -332,9 +336,11 @@ vpMbtKltPolygon::getImagePoint(const unsigned int _index)
 void                
 vpMbtKltPolygon::getMinMaxRoi(unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max)
 {
-  i_min = std::numeric_limits<unsigned int>::max();
+  // i_min = std::numeric_limits<unsigned int>::max(); // create an error under Windows. To fix it we have to add #undef max
+  i_min = UINT_MAX;
   i_max = 0;
-  j_min = std::numeric_limits<unsigned int>::max();
+  // j_min = std::numeric_limits<unsigned int>::max();
+  j_min = UINT_MAX;
   j_max = 0;
   for (unsigned int i = 0; i < roi.size(); i += 1){
     if(i_min > static_cast<unsigned int>(roi[i].get_i()))
@@ -571,7 +577,7 @@ vpMbtKltPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vect
   return true;
 }
 
-bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const unsigned int i_test, const unsigned int j_test, const unsigned int i, const unsigned int j)
+bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double i_test, const double j_test, const double i, const double j)
 {
   /* denominator */
   double dx = p2.get_j() - p1.get_j();
@@ -580,7 +586,7 @@ bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, 
   double ey = i - i_test;
 
 
-  int den = dx * ey - dy * ex ;
+  int den = (int)(dx * ey - dy * ex) ;
   double t = 0, u = 0;
   if(den != 0){
     t = -( p1.get_j() * ey - j_test*ey - ex * p1.get_i() + ex * i_test ) / den;
@@ -592,10 +598,10 @@ bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, 
   return ( t >=0 && t < 1 && u >= 0 && u < 1);
 }
 
-bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const unsigned int i, const unsigned int j)
+bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const double i, const double j)
 {
-  unsigned int i_test = 1000000;
-  unsigned int j_test = 1000000;
+  double i_test = 1000000.;
+  double j_test = 1000000.;
   unsigned int nbInter = 0;
   bool computeAgain = true;
 
