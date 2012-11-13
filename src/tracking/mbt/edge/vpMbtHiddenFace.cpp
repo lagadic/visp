@@ -137,17 +137,18 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \return Return true if the polygon is visible.
 */
 bool
-vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo)
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
 {
   changeFrame(cMo) ;
   
-  for (unsigned int i = 0 ; i < nbpt ; i++){
-    if(p[i].get_Z() < 0){
-      isappearing = false;
-      isvisible = false ;
-      return false ;
+  if(depthTest)
+    for (unsigned int i = 0 ; i < nbpt ; i++){
+      if(p[i].get_Z() < 0){
+        isappearing = false;
+        isvisible = false ;
+        return false ;
+      }
     }
-  }
   
   if(nbpt <= 2){
     /* a line is allways visible */
@@ -261,7 +262,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
 /*!
   Basic constructor.
 */
-vpMbtHiddenFaces::vpMbtHiddenFaces()
+vpMbtHiddenFaces::vpMbtHiddenFaces(): depthTest(false)
 {}
 
 
@@ -318,7 +319,7 @@ vpMbtHiddenFaces::setVisible(const vpHomogeneousMatrix &cMo)
   unsigned int indice = 0;
   for(std::list<vpMbtPolygon*>::const_iterator it=Lpol.begin(); it!=Lpol.end(); ++it){
     p = *it;
-    if (p->isVisible(cMo)){
+    if (p->isVisible(cMo, depthTest)){
       nbvisiblepolygone++;
     }
     

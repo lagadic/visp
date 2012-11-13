@@ -102,7 +102,7 @@ public:
   inline    unsigned int  getNbPoint() const {return nbpt ;}              
           
   inline    bool          isAppearing() const {return isappearing;}
-            bool          isVisible(const vpHomogeneousMatrix &cMo) ;
+            bool          isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
             bool          isVisible() const {return isvisible;}
   
@@ -125,6 +125,8 @@ class VISP_EXPORT vpMbtHiddenFaces
 {
   private:
   std::list<vpMbtPolygon *> Lpol ;
+  //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
+  bool depthTest;
   
   public :
                     vpMbtHiddenFaces() ;
@@ -133,12 +135,24 @@ class VISP_EXPORT vpMbtHiddenFaces
     void          addPolygon(vpMbtPolygon *p)  ;
     
     std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
+    /*!
+      Get the depthTest value.
+
+      \return true if all the points of a polygon has to be in front of the camera, false otherwise.
+    */
+    bool          getDepthTest(){return depthTest;}
     
     bool          isVisible(const int index) ;
     bool          isAppearing(const int index);
     
     void          reset();   
     
+    /*!
+      Set the depthTest value.
+
+      \param d : New value.
+    */
+    void          setDepthTest(const bool &d){depthTest = d;} 
     unsigned int  setVisible(const vpHomogeneousMatrix &cMo) ;
 } ;
 
