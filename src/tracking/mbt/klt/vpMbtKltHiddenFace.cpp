@@ -41,6 +41,7 @@
 
 #include <visp/vpMbtKltHiddenFace.h>
 
+#ifdef VISP_HAVE_OPENCV
 
 /*!
   Basic constructor.
@@ -757,3 +758,5 @@ vpMbtKltHiddenFaces::setVisible(const vpImage<unsigned char>& _I, const vpHomoge
   
   return n;
 }
+
+#endif // VISP_HAVE_OPENCV

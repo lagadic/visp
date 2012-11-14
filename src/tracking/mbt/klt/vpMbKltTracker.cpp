@@ -38,6 +38,8 @@
 
 #include <visp/vpMbKltTracker.h>
 
+#ifdef VISP_HAVE_OPENCV
+
 vpMbKltTracker::vpMbKltTracker()
 {
   cur = NULL;
@@ -504,3 +506,5 @@ vpMbKltTracker::testTracking()
           "test tracking failed (too few points to realise a good tracking).");
   }
 }
+
+#endif //VISP_HAVE_OPENCV

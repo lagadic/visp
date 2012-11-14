@@ -38,6 +38,8 @@
 
 #include <visp/vpMbEdgeKltTracker.h>
 
+#ifdef VISP_HAVE_OPENCV
+
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
 {
   compute_interaction = true;
@@ -572,3 +574,5 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix
   vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
 }
+
+#endif //VISP_HAVE_OPENCV

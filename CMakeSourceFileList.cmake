@@ -320,15 +320,13 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
 
   tracking/mbt/vpMbTracker.cpp
+  tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/edge/vpMbtDistanceLine.cpp
+  tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtHiddenFace.cpp
   tracking/mbt/edge/vpMbtMeLine.cpp
-  tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtXmlParser.cpp
-  tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp
-  tracking/mbt/klt/vpMbtKltHiddenFace.cpp
-  tracking/mbt/klt/vpMbKltTracker.cpp
 
   tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
@@ -352,6 +350,9 @@ ENDIF()
 
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltHiddenFace.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
+
 ENDIF()
 
 SET (SRC_VIDEO

@@ -39,6 +39,10 @@
 #ifndef vpMbEdgeKltTracker_HH
 #define vpMbEdgeKltTracker_HH
 
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_OPENCV
+
 #include <visp/vpRobust.h>
 #include <visp/vpSubMatrix.h>
 #include <visp/vpSubColVector.h>
@@ -50,6 +54,13 @@
 #include <visp/vpPoseVector.h>
 #include <visp/vpMbKltTracker.h>
 
+/*!
+  \class vpMbEdgeKltTracker
+  
+  \warning This class is only available if OpenCV is installed, and used. 
+
+  \ingroup ModelBasedTracking
+*/
 class VISP_EXPORT vpMbEdgeKltTracker: public vpMbKltTracker, public vpMbEdgeTracker
 {
 private:
@@ -131,3 +142,5 @@ protected:
 };
 
 #endif
+
+#endif //VISP_HAVE_OPENCV

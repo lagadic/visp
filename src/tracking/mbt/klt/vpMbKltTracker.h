@@ -39,13 +39,16 @@
 #ifndef vpMbKltTracker_h
 #define vpMbKltTracker_h
 
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_OPENCV
+
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 #   include <opencv2/imgproc/imgproc.hpp>
 #else
 #   include <cv.h>
 #endif
 
-#include <visp/vpConfig.h>
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpMbtKltHiddenFace.h>
@@ -61,6 +64,8 @@
 
 /*!
   \class vpMbKltTracker
+  
+  \warning This class is only available if OpenCV is installed, and used. 
 
   \ingroup ModelBasedTracking
 */
@@ -187,3 +192,4 @@ protected:
 };
 
 #endif
+#endif // VISP_HAVE_OPENCV

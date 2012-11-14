@@ -39,6 +39,10 @@
 #ifndef vpMbtKltHiddenFace_h
 #define vpMbtKltHiddenFace_h
 
+#include <visp/vpConfig.h>
+
+#ifdef VISP_HAVE_OPENCV
+
 #include <visp/vpMbtHiddenFace.h>
 #include <visp/vpPlane.h>
 #include <visp/vpDisplay.h>
@@ -49,7 +53,9 @@
 
 /*!
   \class vpMbtKltPolygon
-
+  
+  \warning This class is only available if OpenCV is installed, and used.
+  
   \ingroup ModelBasedTracking
 */
 class VISP_EXPORT vpMbtKltPolygon: public vpMbtPolygon
@@ -181,6 +187,8 @@ public:
 /*!
   \class vpMbtKltHiddenFaces
 
+  \warning This class is only available if OpenCV is installed, and used.
+  
   \ingroup ModelBasedTracking
 */
 class VISP_EXPORT vpMbtKltHiddenFaces
@@ -230,3 +238,5 @@ class VISP_EXPORT vpMbtKltHiddenFaces
 } ;
 
 #endif
+
+#endif // VISP_HAVE_OPENCV
