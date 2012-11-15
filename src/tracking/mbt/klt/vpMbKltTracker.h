@@ -43,12 +43,6 @@
 
 #ifdef VISP_HAVE_OPENCV
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-#   include <opencv2/imgproc/imgproc.hpp>
-#else
-#   include <cv.h>
-#endif
-
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpMbtKltHiddenFace.h>

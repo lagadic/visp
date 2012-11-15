@@ -45,8 +45,8 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   compute_interaction = true;
   
   lambda = 0.8;
-  thresholdKLT = 5.0/686;
-  thresholdMBT = 2.0/686;
+  thresholdKLT = 5.0;
+  thresholdMBT = 2.0;
   maxIter = 200;
   vpMbKltTracker::setMaxIter(30);
 }
@@ -260,9 +260,9 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
   vpMatrix J_mbt(nbrow,6), J_klt(2*nbInfos,6);
   vpColVector R_mbt(nbrow), R_klt(2*nbInfos);
   
-  vpColVector w, wglobal;  // weight from MEstimator
+  vpColVector w;  // weight from MEstimator
   vpColVector v;  // "speed" for VVS
-  vpRobust robust_mbt(0), robust_klt(0), robust(0);
+  vpRobust robust_mbt(0), robust_klt(0);
   vpHomography H;
 
   vpMatrix JTJ, JTR;
@@ -303,10 +303,6 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       w.resize(nbrow + 2*nbInfos);
       w=1;
       
-//       wglobal.resize(nbrow + 2*nbInfos);
-//       wglobal=1;
-//       robust.resize(nbrow + 2*nbInfos);
-      
       w_mbt.resize(nbrow);
       w_mbt = 1;
       robust_mbt.resize(nbrow);
@@ -324,7 +320,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       residuMBT /= R_mbt.getRows();
       
       robust_mbt.setIteration(iter);
-      robust_mbt.setThreshold(thresholdMBT);
+      robust_mbt.setThreshold(thresholdMBT/cam.get_px());
       robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
       J.stackMatrices(J_mbt);
       R.stackMatrices(R_mbt);
@@ -337,23 +333,16 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       residuKLT /= R_klt.getRows();
       
       robust_klt.setIteration(iter);
-      robust_klt.setThreshold(thresholdKLT);
+      robust_klt.setThreshold(thresholdKLT/cam.get_px());
       robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
       J.stackMatrices(J_klt);
       R.stackMatrices(R_klt);
     }    
-    
-//     robust.setIteration(iter);
-//     robust.setThreshold(thresholdKLT);
-//     if(2*nbInfos + nbrow > 0){
-//       robust.MEstimator( vpRobust::TUKEY, R, wglobal);
-//     } 
 
     unsigned int cpt = 0;
     while(cpt< (nbrow+2*nbInfos)){
       if(cpt<(unsigned)nbrow){
         w[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT) ;
-//         w_mbt[cpt] *= wglobal[cpt];
       }
       else
         w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
@@ -385,11 +374,6 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     
     iter++;
   }
-  
-//   std::cout << "Residu : " << residuKLT << " / " << residuMBT << std::endl;
-  
-//   vpMbEdgeTracker::setPose(cMo);
-//   vpMbKltTracker::setPose(cMo);
 }
 
 /*!

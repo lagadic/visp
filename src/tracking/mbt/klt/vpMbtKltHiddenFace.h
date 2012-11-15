@@ -43,10 +43,10 @@
 
 #ifdef VISP_HAVE_OPENCV
 
+#include <visp/vpKltOpencv.h>
 #include <visp/vpMbtHiddenFace.h>
 #include <visp/vpPlane.h>
 #include <visp/vpDisplay.h>
-#include <visp/vpKltOpencv.h>
 #include <visp/vpGEMM.h>
 #include <visp/vpHomography.h>
 #include <visp/vpPlot.h>
