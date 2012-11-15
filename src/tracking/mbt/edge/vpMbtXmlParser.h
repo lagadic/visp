@@ -118,6 +118,9 @@ public:
 	void read_mask (xmlDocPtr doc, xmlNodePtr node);
 	void read_range (xmlDocPtr doc, xmlNodePtr node);
 	void read_contrast (xmlDocPtr doc, xmlNodePtr node);
+  
+  void setCameraParameters(const vpCameraParameters &_cam){ cam = _cam; }
+  void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }
 	
   void writeMainClass(xmlNodePtr node);
 	

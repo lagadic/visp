@@ -933,18 +933,23 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
   
+  xmlp.setCameraParameters(cam);
+  xmlp.setMovingEdge(me);
+  
   try{
+    std::cout << " *********** Parsing XML for MbEdge Tracker ************ " << std::endl;
     xmlp.parse(filename);
   }
   catch(...){
     vpERROR_TRACE("Can't open XML file \"%s\"\n ",filename);
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
-
+  
   vpCameraParameters camera;
   vpMe meParser;
   xmlp.getCameraParameters(camera);
   xmlp.getMe(meParser);
+  
   setCameraParameters(camera);
   setMovingEdge(meParser);
 #else

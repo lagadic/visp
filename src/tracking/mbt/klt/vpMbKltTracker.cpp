@@ -183,6 +183,7 @@ void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace)
 {  
   vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
+  polygon->setCameraParameters(cam);
   polygon->setNbPoint(_corners.size());
   polygon->setIndex((int)_indexFace);
   for(unsigned int j = 0; j < _corners.size(); j++) {
@@ -387,7 +388,21 @@ vpMbKltTracker::loadConfigFile(const char* filename)
 #ifdef VISP_HAVE_XML2
   vpMbtKltXmlParser xmlp;
   
+  xmlp.setMaxFeatures(10000);
+  xmlp.setWindowSize(5);
+  xmlp.setQuality(0.01);
+  xmlp.setMinDistance(5);
+  xmlp.setHarrisParam(0.01);
+  xmlp.setBlockSize(3);
+  xmlp.setPyramidLevels(3);
+  xmlp.setMaskBorder(maskBorder);
+  xmlp.setThresholdOutliers(threshold_outlier);
+  xmlp.setAngleAppear(vpMath::deg(angleAppears));
+  xmlp.setAngleDesappear(vpMath::deg(angleDesappears));
+  
   try{
+    std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
+    
     xmlp.parse(filename);
   }
   catch(...){

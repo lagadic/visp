@@ -667,6 +667,7 @@ vpMbtKltHiddenFaces::addPolygon(vpMbtKltPolygon *p)
   p_new->index = p->index;
   p_new->setNbPoint(p->nbpt);
   p_new->isvisible = p->isvisible;
+  p_new->setCameraParameters(p->getCameraParameters());
   for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];
   

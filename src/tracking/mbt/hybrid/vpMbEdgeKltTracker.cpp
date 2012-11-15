@@ -103,7 +103,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
 void 
 vpMbEdgeKltTracker::loadConfigFile(const std::string& _filename)
 {
-  loadConfigFile(_filename.c_str());
+  vpMbEdgeKltTracker::loadConfigFile(_filename.c_str());
 }
 
 /*!
@@ -539,7 +539,18 @@ void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
   vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
-  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+//   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel); // Not used because, it would display twice the edges
+  
+  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+    if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
+    {
+      vpMbKltTracker::faces[i]->changeFrame(_cMo);      
+      if(vpMbKltTracker::faces[i]->hasEnoughPoints())
+        vpMbKltTracker::faces[i]->displayPrimitive(_I);
+//       if(facesTracker[i].hasEnoughPoints())
+//         faces[i]->displayNormal(_I);
+    }
+  }
 }
 
 /*!
@@ -556,7 +567,18 @@ void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
   vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
-  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+//   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);// Not used because, it would display twice the edges
+  
+  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+    if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
+    {
+      vpMbKltTracker::faces[i]->changeFrame(_cMo);      
+      if(vpMbKltTracker::faces[i]->hasEnoughPoints())
+        vpMbKltTracker::faces[i]->displayPrimitive(_I);
+//       if(facesTracker[i].hasEnoughPoints())
+//         faces[i]->displayNormal(_I);
+    }
+  }
 }
 
 #endif //VISP_HAVE_OPENCV

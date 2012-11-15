@@ -135,8 +135,10 @@ vpMbtXmlParser::writeMainClass(xmlNodePtr /*node*/)
 void
 vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-    // current data values.
-	unsigned int nb=0;
+	bool ecm_node = false;
+  bool sample_node = false;
+  bool camera_node = false;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -144,15 +146,15 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case ecm:{
           this->read_ecm (doc, dataNode);
-          nb++;
+          ecm_node = true;
           }break;
         case sample:{
           this->read_sample (doc, dataNode);
-          nb++;
+          sample_node = true;
           }break;
         case camera:{
           this->read_camera (doc, dataNode);
-          nb++;
+          camera_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -161,12 +163,15 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
-
-  if(nb != 3){
-		std::cout <<"ERROR in 'ECM' field:\n";
-		std::cout << "it must contain 3 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract ECM informations.");
-	}
+  
+  if(!ecm_node)
+    std::cout << "WARNING: ECM Node not specified, default values used" << std::endl;
+  
+  if(!sample_node)
+    std::cout << "WARNING: SAMPLE Node not specified, default values used" << std::endl;
+  
+  if(!camera_node)
+    std::cout << "WARNING: CAMERA Node not specified, default values used" << std::endl;
 }
 
 
@@ -181,8 +186,10 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
 {
-    // current data values.
-	unsigned int nb=0;
+  bool mask_node = false;
+  bool range_node = false;
+  bool contrast_node = false;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -190,15 +197,15 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case mask:{
           this->read_mask (doc, dataNode);
-          nb++;
+          mask_node = true;
           }break;
         case range:{
           this->read_range (doc, dataNode);
-          nb++;
+          range_node = true;
           }break;
         case contrast:{
           this->read_contrast (doc, dataNode);
-          nb++;
+          contrast_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_ecm : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -207,12 +214,15 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
-
-  if(nb != 3){
-		std::cout <<"ERROR in 'ECM' field:\n";
-		std::cout << "it must contain 3 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract ECM informations.");
-	}
+  
+  if(!mask_node)
+    std::cout << "WARNING: In ECM Node, MASK Node not specified, default values used" << std::endl;
+  
+  if(!range_node)
+    std::cout << "WARNING: In ECM Node, RANGE Node not specified, default values used" << std::endl;
+  
+  if(!contrast_node)
+    std::cout << "WARNING: In ECM Node, CONTRAST Node not specified, default values used" << std::endl;
 }
 
 /*!
@@ -226,11 +236,13 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool step_node = false;
+  bool nb_sample_node = false;
+  
     // current data values.
 	double d_stp = this->m_ecm.getSampleStep();
 	int d_nb_sample = this->m_ecm.getNbTotalSample();
 	
-	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -238,11 +250,11 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case step:{
           d_stp = xmlReadIntChild(doc, dataNode);
-          nb++;
+          step_node = true;
           }break;
         case nb_sample:{
           d_nb_sample = xmlReadIntChild(doc, dataNode);
-          nb++;
+          nb_sample_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -251,20 +263,19 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
+  
+  this->m_ecm.setSampleStep(d_stp);
+  this->m_ecm.setNbTotalSample(d_nb_sample);
 
-  if(nb == 2){
-	  this->m_ecm.setSampleStep(d_stp);
-	  this->m_ecm.setNbTotalSample(d_nb_sample);
-
-	  std::cout <<"**** sample:\n";
-	  std::cout <<"sample_step "<< this->m_ecm.getSampleStep()<<std::endl;
-	  std::cout <<"n_total_sample "<< this->m_ecm.getNbTotalSample()<<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'sample' field:\n";
-		std::cout << "it must contain 2 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract sample informations.");
-	}
+  if(!step_node)
+    std::cout << "WARNING: In SAMPLE Node, STEP Node not specified, default value used : " << this->m_ecm.getSampleStep() << std::endl;
+  else
+    std::cout <<"sample : sample_step "<< this->m_ecm.getSampleStep()<<std::endl;
+  
+  if(!nb_sample_node)
+    std::cout << "WARNING: In SAMPLE Node, NB_SAMPLE Node not specified, default value used : " << this->m_ecm.getNbTotalSample() << std::endl;
+  else
+    std::cout <<"sample : n_total_sample "<< this->m_ecm.getNbTotalSample()<<std::endl;
 }
 
 /*!
@@ -278,6 +289,13 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool height_node = false;
+  bool width_node = false;
+  bool u0_node = false;
+  bool v0_node = false;
+  bool px_node = false;
+  bool py_node = false;
+  
     // current data values.
 // 	int d_height=0 ;
 // 	int d_width= 0 ;
@@ -286,7 +304,6 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 	double d_px = this->cam.get_px();
 	double d_py = this->cam.get_py();
 	
-	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -294,27 +311,27 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case height:{
           /* d_height = */ xmlReadIntChild(doc, dataNode);
-          nb++;
+          height_node = true;
           }break;
         case width:{
           /* d_width = */ xmlReadIntChild(doc, dataNode);
-          nb++;
+          width_node = true;
           }break;
         case u0:{
           d_u0 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          u0_node = true;
           }break;
         case v0:{
           d_v0 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          v0_node = true;
           }break;
         case px:{
           d_px = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          px_node = true;
           }break;
         case py:{
           d_py = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          py_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -323,21 +340,34 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
+  
+  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
 
-  if(nb == 6){
-	  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
-
-	  std::cout <<"**** camera: \n"<<nb <<std::endl;
-	  std::cout << "u0 "<< this->cam.get_u0() <<std::endl;
-	  std::cout << "v0 "<< this->cam.get_v0() <<std::endl;
-	  std::cout << "px "<< this->cam.get_px() <<std::endl;
-	  std::cout << "py "<< this->cam.get_py() <<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'camera' field:\n";
-		std::cout << "it must contain  6 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract camera informations.");
-	}
+  if(!height_node)
+    std::cout << "WARNING: In CAMERA Node, HEIGHT Node not specified, default value used" << std::endl;
+  
+  if(!width_node)
+    std::cout << "WARNING: In CAMERA Node, WIDTH Node not specified, default value used" << std::endl;
+  
+  if(!u0_node)
+    std::cout << "WARNING: In CAMERA Node, u0 Node not specified, default value used : " << this->cam.get_u0() << std::endl;
+  else
+    std::cout << "camera : u0 "<< this->cam.get_u0() <<std::endl;
+  
+  if(!v0_node)
+    std::cout << "WARNING: In CAMERA Node, v0 Node not specified, default value used : " << this->cam.get_v0() << std::endl;
+  else
+    std::cout << "camera : v0 "<< this->cam.get_v0() <<std::endl;
+  
+  if(!px_node)
+    std::cout << "WARNING: In CAMERA Node, px Node not specified, default value used : " << this->cam.get_px() << std::endl;
+  else
+    std::cout << "camera : px "<< this->cam.get_px() <<std::endl;
+  
+  if(!py_node)
+    std::cout << "WARNING: In CAMERA Node, py Node not specified, default value used : " << this->cam.get_py() << std::endl;
+  else
+    std::cout << "camera : py "<< this->cam.get_py() <<std::endl;
 }
 
 /*!
@@ -351,11 +381,13 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool size_node = false;
+  bool nb_mask_node = false;
+  
     // current data values.
   unsigned int d_size = this->m_ecm.getMaskSize();
   unsigned int d_nb_mask = this->m_ecm.getMaskNumber();
-	
-	unsigned int nb=0;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -363,11 +395,11 @@ vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case size:{
           d_size = xmlReadUnsignedIntChild(doc, dataNode);
-          nb++;
+          size_node = true;
           }break;
         case nb_mask:{
           d_nb_mask = xmlReadUnsignedIntChild(doc, dataNode);
-          nb++;
+          nb_mask_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_mask : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -377,19 +409,18 @@ vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  if(nb == 2){
-	  this->m_ecm.setMaskSize(d_size) ;
-	  this->m_ecm.setMaskNumber(d_nb_mask);
-	
-	  std::cout << "**** mask:\n";
-    std::cout << "size "<< this->m_ecm.getMaskSize() <<std::endl;
-    std::cout << "nb_mask "<< this->m_ecm.getMaskNumber() <<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'mask' field:\n";
-		std::cout << "it must contain  2 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract mask informations.");
-	}
+  this->m_ecm.setMaskSize(d_size) ;
+  this->m_ecm.setMaskNumber(d_nb_mask);
+  
+  if(!size_node)
+    std::cout << "WARNING: In MASK Node, SIZE Node not specified, default value used : " << this->m_ecm.getMaskSize() << std::endl;
+  else
+    std::cout << "ecm : mask : size "<< this->m_ecm.getMaskSize() <<std::endl;
+  
+  if(!nb_mask_node)
+    std::cout << "WARNING: In MASK Node, NB_MASK Node not specified, default value used : " << this->m_ecm.getMaskNumber() << std::endl;
+  else
+    std::cout << "ecm : mask : nb_mask "<< this->m_ecm.getMaskNumber() <<std::endl; 
 }
 
 /*!
@@ -403,10 +434,11 @@ vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool tracking_node = false;
+  
     // current data values.
 	unsigned int m_range_tracking = this->m_ecm.getRange();
 	
-	unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -414,7 +446,7 @@ vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case tracking:{
           m_range_tracking = xmlReadUnsignedIntChild(doc, dataNode);
-          nb++;
+          tracking_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_range : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -424,16 +456,12 @@ vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  if(nb == 1){
-	  this->m_ecm.setRange(m_range_tracking);
-	  std::cout <<"**** range:\n";
-	  std::cout <<"tracking "<< this->m_ecm.getRange()<<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'range' field:\n";
-		std::cout << "it must contain  1 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract range informations.");
-	}
+  this->m_ecm.setRange(m_range_tracking);
+  
+  if(!tracking_node)
+    std::cout << "WARNING: In RANGE Node, TRACKING Node not specified, default value used : " << this->m_ecm.getRange() << std::endl;
+  else
+    std::cout <<"ecm : range : tracking "<< this->m_ecm.getRange()<<std::endl;  
 }
 
 
@@ -448,12 +476,15 @@ vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
 void
 vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool edge_threshold_node = false;
+  bool mu1_node = false;
+  bool mu2_node = false;
+  
     // current data values.
 	double d_edge_threshold = this->m_ecm.getThreshold();
 	double d_mu1 = this->m_ecm.getMu1();
 	double d_mu2 = this->m_ecm.getMu2();
-	
-	unsigned int nb=0;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -461,15 +492,15 @@ vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case edge_threshold:{
           d_edge_threshold = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          edge_threshold_node = true;
           }break;
         case mu1:{
           d_mu1 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          mu1_node = true;
           }break;
         case mu2:{
           d_mu2 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          mu2_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -479,21 +510,24 @@ vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  if(nb == 3){
-	  this->m_ecm.setMu1(d_mu1);
-	  this->m_ecm.setMu2(d_mu2);
-	  this->m_ecm.setThreshold(d_edge_threshold);
-
-	  std::cout <<"**** contrast:\n";
-	  std::cout <<"mu1 " << this->m_ecm.getMu1()<<std::endl;
-	  std::cout <<"mu2 " << this->m_ecm.getMu2()<<std::endl;
-	  std::cout <<"threshold " << this->m_ecm.getThreshold()<<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'contrast' field:\n";
-		std::cout << "it must contain  3 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract contrast informations.");
-	}
+  this->m_ecm.setMu1(d_mu1);
+  this->m_ecm.setMu2(d_mu2);
+  this->m_ecm.setThreshold(d_edge_threshold);
+  
+  if(!edge_threshold_node)
+    std::cout << "WARNING: In CONTRAST Node, EDGE_THRESHOLD Node not specified, default value used : " << this->m_ecm.getThreshold() << std::endl;
+  else
+    std::cout <<"ecm : contrast : threshold " << this->m_ecm.getThreshold()<<std::endl;
+  
+  if(!mu1_node)
+    std::cout << "WARNING: In CONTRAST Node, mu1 Node not specified, default value used : " << this->m_ecm.getMu1() << std::endl;
+  else
+    std::cout <<"ecm : contrast : mu1 " << this->m_ecm.getMu1()<<std::endl;
+  
+  if(!mu2_node)
+    std::cout << "WARNING: In CONTRAST Node, mu2 Node not specified, default value used : " << this->m_ecm.getMu2() << std::endl;
+  else
+    std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<std::endl;
 }
 
 #endif

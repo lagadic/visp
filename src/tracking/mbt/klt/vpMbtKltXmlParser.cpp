@@ -132,8 +132,9 @@ vpMbtKltXmlParser::writeMainClass(xmlNodePtr /*node*/)
 void
 vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-    // current data values.
-	unsigned int nb=0;
+  bool klt_node = false;
+  bool camera_node = false;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -141,11 +142,11 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case klt:{
           this->read_klt(doc, dataNode);
-          nb++;
+          klt_node = true;
           }break;
         case camera:{
           this->read_camera(doc, dataNode);
-          nb++;
+          camera_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -155,11 +156,11 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  if(nb != 2){
-		std::cout <<"ERROR in 'CONF' field:\n";
-		std::cout << "it must contain 2 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract CONF informations.");
-	}
+  if(!klt_node)
+    std::cout << "WARNING: KLT Node not specified, default values used" << std::endl;
+  
+  if(!camera_node)
+    std::cout << "WARNING: CAMERA Node not specified, default values used" << std::endl;
 }
 
 /*!
@@ -173,7 +174,18 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
 {
-	unsigned int nb=0;
+	bool mask_border_node = false;
+  bool threshold_outlier_node = false;
+  bool max_features_node = false;
+  bool window_size_node = false;
+  bool quality_node = false;
+  bool min_distance_node = false;
+  bool harris_node = false;
+  bool size_block_node = false;
+  bool pyramid_lvl_node = false;
+  bool angle_appear_node = false;
+  bool angle_desappear_node = false;
+  
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -181,47 +193,47 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case mask_border:{
           maskBorder = xmlReadIntChild(doc, dataNode);
-          nb++;
+          mask_border_node = true;
           }break;
         case threshold_outlier:{
           threshold = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          threshold_outlier_node = true;
           }break;
         case max_features:{
           maxFeatures = xmlReadIntChild(doc, dataNode);
-          nb++;
+          max_features_node = true;
           }break;
         case window_size:{
           winSize = xmlReadIntChild(doc, dataNode);
-          nb++;
+          window_size_node = true;
           }break;
         case quality:{
           qualityValue = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          quality_node = true;
           }break;
         case min_distance:{
           minDist = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          min_distance_node = true;
           }break;
         case harris:{
           harrisParam = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          harris_node = true;
           }break;
         case size_block:{
           blockSize = xmlReadIntChild(doc, dataNode);
-          nb++;
+          size_block_node = true;
           }break;
         case pyramid_lvl:{
           pyramidLevels = xmlReadIntChild(doc, dataNode);
-          nb++;
+          pyramid_lvl_node = true;
           }break; 
         case angle_appear:{
           angleAppear = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          angle_appear_node = true;
           }break;
         case angle_desappear:{
           angleDesappear = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          angle_desappear_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -230,26 +242,61 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
-
-  if(nb == 11){
-	  std::cout <<"**** KLT: \n"<< nb <<std::endl;
-	  std::cout << "Mask Border "<< maskBorder <<std::endl;
-    std::cout << "Threshold Outlier "<< threshold <<std::endl;
-	  std::cout << "Max Features "<< maxFeatures <<std::endl;
-	  std::cout << "Windows Size "<< winSize <<std::endl;
-	  std::cout << "Quality "<< qualityValue <<std::endl;
-    std::cout << "Min Distance "<< minDist <<std::endl;
-    std::cout << "Harris Parameter "<< harrisParam <<std::endl;
-    std::cout << "Block Size "<< blockSize <<std::endl;
-    std::cout << "Pyramid Levels "<< pyramidLevels <<std::endl;
-    std::cout << "Angle Appear "<< angleAppear <<std::endl;
-    std::cout << "Angle Desappear "<< angleDesappear <<std::endl;
-  }
-	else{
-		std::cout <<"ERROR in 'KLT' field:\n";
-		std::cout << "it must contain  11 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract camera informations.");
-	}
+  
+  if(!mask_border_node)
+    std::cout << "WARNING: In KLT Node, MASK_BORDER Node not specified, default value used : " << maskBorder << std::endl;
+  else
+    std::cout << "klt : Mask Border : "<< maskBorder <<std::endl;
+  
+  if(!threshold_outlier_node)
+    std::cout << "WARNING: In KLT Node, THRESHOLD_OUTLIER Node not specified, default value used : " << threshold << std::endl;
+  else
+    std::cout << "klt : Threshold Outlier : "<< threshold <<std::endl;
+  
+  if(!max_features_node)
+    std::cout << "WARNING: In KLT Node, MAX_FEATURES Node not specified, default value used : " << maxFeatures << std::endl;
+  else
+    std::cout << "klt : Max Features : "<< maxFeatures <<std::endl;
+  
+  if(!window_size_node)
+    std::cout << "WARNING: In KLT Node, WINDOW_SIZE Node not specified, default value used : " << winSize << std::endl;
+  else
+    std::cout << "klt : Windows Size : "<< winSize <<std::endl;
+  
+  if(!quality_node)
+    std::cout << "WARNING: In KLT Node, QUALITY Node not specified, default value used : " << qualityValue << std::endl;
+  else
+    std::cout << "klt : Quality : "<< qualityValue <<std::endl;
+  
+  if(!min_distance_node)
+    std::cout << "WARNING: In KLT Node, MIN_DISTANCE Node not specified, default value used : " << minDist << std::endl;
+  else
+    std::cout << "klt : Min Distance : "<< minDist <<std::endl;
+  
+  if(!harris_node)
+    std::cout << "WARNING: In KLT Node, HARRIS Node not specified, default value used : " << harrisParam << std::endl;
+  else
+    std::cout << "klt : Harris Parameter : "<< harrisParam <<std::endl;
+  
+  if(!size_block_node)
+    std::cout << "WARNING: In KLT Node, SIZE_BLOCK Node not specified, default value used : " << blockSize << std::endl;
+  else
+    std::cout << "klt : Block Size : "<< blockSize <<std::endl;
+  
+  if(!pyramid_lvl_node)
+    std::cout << "WARNING: In KLT Node, PYRAMID_LVL Node not specified, default value used : " << pyramidLevels << std::endl;
+  else
+    std::cout << "klt : Pyramid Levels : "<< pyramidLevels <<std::endl;
+  
+  if(!angle_appear_node)
+    std::cout << "WARNING: In KLT Node, ANGLE_APPEAR Node not specified, default value used : " << angleAppear << std::endl;
+  else
+    std::cout << "klt : Angle Appear "<< angleAppear <<std::endl;
+  
+  if(!angle_desappear_node)
+    std::cout << "WARNING: In KLT Node, ANGLE_DESAPPEAR Node not specified, default value used : " << angleDesappear << std::endl;
+  else
+    std::cout << "klt : Angle Desappear : "<< angleDesappear <<std::endl;
 }
 
 /*!
@@ -263,6 +310,13 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
 void 
 vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 {
+  bool height_node = false;
+  bool width_node = false;
+  bool u0_node = false;
+  bool v0_node = false;
+  bool px_node = false;
+  bool py_node = false;
+  
     // current data values.
 //  int d_height=0 ;
 //  int d_width= 0 ;
@@ -271,7 +325,6 @@ vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
   double d_px = this->cam.get_px();
   double d_py = this->cam.get_py();
   
-  unsigned int nb=0;
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
       std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
@@ -279,27 +332,27 @@ vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
         switch (iter_data->second){
         case height:{
           /* d_height = */ xmlReadIntChild(doc, dataNode);
-          nb++;
+          height_node = true;
           }break;
         case width:{
           /* d_width = */ xmlReadIntChild(doc, dataNode);
-          nb++;
+          width_node = true;
           }break;
         case u0:{
           d_u0 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          u0_node = true;
           }break;
         case v0:{
           d_v0 = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          v0_node = true;
           }break;
         case px:{
           d_px = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          px_node = true;
           }break;
         case py:{
           d_py = xmlReadDoubleChild(doc, dataNode);
-          nb++;
+          py_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -308,21 +361,34 @@ vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
       }
     }
   }
+  
+  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
 
-  if(nb == 6){
-    this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
-
-    std::cout <<"**** camera: \n"<<nb <<std::endl;
-    std::cout << "u0 "<< this->cam.get_u0() <<std::endl;
-    std::cout << "v0 "<< this->cam.get_v0() <<std::endl;
-    std::cout << "px "<< this->cam.get_px() <<std::endl;
-    std::cout << "py "<< this->cam.get_py() <<std::endl;
-  }
-  else{
-    std::cout <<"ERROR in 'camera' field:\n";
-    std::cout << "it must contain  6 parameters\n";
-    throw vpException(vpException::fatalError, "Bad number of data to extract camera informations.");
-  }
+  if(!height_node)
+    std::cout << "WARNING: In CAMERA Node, HEIGHT Node not specified, default value used" << std::endl;
+  
+  if(!width_node)
+    std::cout << "WARNING: In CAMERA Node, WIDTH Node not specified, default value used" << std::endl;
+  
+  if(!u0_node)
+    std::cout << "WARNING: In CAMERA Node, u0 Node not specified, default value used : " << this->cam.get_u0() << std::endl;
+  else
+    std::cout << "camera : u0 "<< this->cam.get_u0() <<std::endl;
+  
+  if(!v0_node)
+    std::cout << "WARNING: In CAMERA Node, v0 Node not specified, default value used : " << this->cam.get_v0() << std::endl;
+  else
+    std::cout << "camera : v0 "<< this->cam.get_v0() <<std::endl;
+  
+  if(!px_node)
+    std::cout << "WARNING: In CAMERA Node, px Node not specified, default value used : " << this->cam.get_px() << std::endl;
+  else
+    std::cout << "camera : px "<< this->cam.get_px() <<std::endl;
+  
+  if(!py_node)
+    std::cout << "WARNING: In CAMERA Node, py Node not specified, default value used : " << this->cam.get_py() << std::endl;
+  else
+    std::cout << "camera : py "<< this->cam.get_py() <<std::endl;
 }
 
 

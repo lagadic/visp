@@ -211,6 +211,90 @@ public:
   void read_klt(xmlDocPtr doc, xmlNodePtr node);
   void read_camera (xmlDocPtr doc, xmlNodePtr node);
   
+  /*!
+    Set the angle to determine if a face appeared.
+
+    \param aappear : New angleAppear
+  */
+  inline void setAngleAppear(const double &aappear) {angleAppear = aappear;}
+  
+  /*!
+    Set the angle to determine if a face desappeared.
+
+    \param adesappear : New angleDesappear
+  */
+  inline void setAngleDesappear(const double &adesappear) {angleDesappear = adesappear;}
+  
+  /*!
+    Set the size of a block.
+
+    \param bs : New blockSize
+  */
+  inline void setBlockSize(const unsigned int &bs) {blockSize = bs;}
+  
+  /*!
+    Set the camera parameters.
+
+    \param _cam : New cam
+  */
+  void setCameraParameters(const vpCameraParameters& _cam) {cam = _cam;}
+  
+  /*!
+    Set the Harris free parameter.
+
+    \param hp : New harrisParam
+  */
+  inline void setHarrisParam(const double &hp) {harrisParam = hp;}
+  
+  /*!
+    Set the Border of the mask.
+
+    \param mn = new maskBorder
+  */
+  inline void setMaskBorder(const unsigned int &mb) {maskBorder = mb;}
+  
+  /*!
+    Set the maximum number of features for the KLT.
+
+    \param mF : New maxFeatures
+  */
+  inline void setMaxFeatures(const unsigned int &mF) {maxFeatures = mF;}
+  
+  /*!
+    Set the minimum distance between KLT points.
+
+    \param mD : New minDist
+  */
+  inline void setMinDistance(const double &mD) {minDist = mD;}
+  
+  /*!
+    Set the number of pyramid levels
+
+    \param pL : New pyramidLevels
+  */
+  inline void setPyramidLevels(const unsigned int &pL) {pyramidLevels = pL;} 
+  
+  /*!
+    Set the quality of the KLT.
+
+    \param q : New quality
+  */
+  inline void setQuality(const double &q) {qualityValue = q;}
+  
+  /*!
+    Set the threshold used to remove outliers.
+
+    \param t : New threshold
+  */
+  inline void setThresholdOutliers(const double &t) {threshold = t;}
+  
+  /*!
+    Set the size of the window used in the KLT tracker.
+
+    \param w : New winSize
+  */
+  inline void setWindowSize(const unsigned int &w) {winSize = w;}
+  
   void writeMainClass(xmlNodePtr node);
 	
 protected:
