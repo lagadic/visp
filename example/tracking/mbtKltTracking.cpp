@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Example of Hybrid Tracking of MBT and MBT KTL.
+ * Example of MBT KLT Tracking.
  *
  * Authors:
  * Aurelien Yol
@@ -40,9 +40,9 @@
  *****************************************************************************/
 
 /*!
-  \example mbtEdgeKltTracking.cpp
+  \example mbtKltTracking.cpp
 
-  \brief Example of Hybrid Tracking of MBT and MBT KTL on an image sequence containing a cube.
+  \brief Example of MBT KLT Tracking on an image sequence containing a cube.
 */
 
 #include <visp/vpConfig.h>
@@ -56,7 +56,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
 
-#include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpMbKltTracker.h>
 
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
@@ -293,14 +293,11 @@ main(int argc, const char ** argv)
     vpDisplay::flush(I);
   }
 
-  vpMbEdgeKltTracker tracker;
+  vpMbKltTracker tracker;
   vpHomogeneousMatrix cMo;
   
   // Load tracker config file (camera parameters and moving edge settings)
   tracker.loadConfigFile(configFile.c_str());
-
-  // Display the moving edges, see documentation for the significations of the colour
-  tracker.setDisplayMovingEdges(displayMovingEdge);
 
   // initialise an instance of vpCameraParameters with the parameters from the tracker
   vpCameraParameters cam;

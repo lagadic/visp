@@ -46,6 +46,7 @@
 SET (SOURCE
   mbtEdgeTracking.cpp
   mbtEdgeKltTracking.cpp
+  mbtKltTracking.cpp
   trackDot2WithAutoDetection.cpp
   trackMeCircle.cpp
   trackMeEllipse.cpp
