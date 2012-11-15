@@ -45,6 +45,7 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   mbtEdgeTracking.cpp
+  mbtEdgeKltTracking.cpp
   trackDot2WithAutoDetection.cpp
   trackMeCircle.cpp
   trackMeEllipse.cpp
