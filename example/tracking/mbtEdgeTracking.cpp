@@ -42,7 +42,7 @@
  *****************************************************************************/
 
 /*!
-  \example mbtTracking.cpp
+  \example mbtEdgeTracking.cpp
 
   \brief Example of model based tracking on an image sequence containing a cube.
 */
