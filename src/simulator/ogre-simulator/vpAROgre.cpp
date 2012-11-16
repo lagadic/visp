@@ -311,15 +311,17 @@ void vpAROgre::init(bool
   // Initialise OIS
   Ogre::LogManager::getSingletonPtr()->logMessage("*** Initializing OIS ***");
   OIS::ParamList pl;
-#endif
+
   size_t windowHnd = 0;
   std::ostringstream windowHndStr;
-
   // Initialise window
   mWindow->getCustomAttribute("WINDOW", &windowHnd);
   windowHndStr << windowHnd;
-#ifdef VISP_HAVE_OIS
   pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+  // Let the user use the keyboard elsewhere
+#if defined (UNIX)
+  pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
+#endif
 
   mInputManager = OIS::InputManager::createInputSystem( pl );
 
