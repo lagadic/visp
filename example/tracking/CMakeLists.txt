@@ -70,7 +70,9 @@ FOREACH(source ${SOURCE})
 ENDFOREACH(source)
 
 # Add test
-ADD_TEST(mbtTracking      mbtTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(mbtEdgeTracking    mbtEdgeTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(mbtEdgeKltTracking mbtEdgeKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(mbtKltTracking     mbtKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(trackDot2WithAutoDetection trackDot2WithAutoDetection -c ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(trackMeCircle    trackMeCircle -c ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(trackMeEllipse   trackMeEllipse -c ${OPTION_TO_DESACTIVE_DISPLAY})
