@@ -179,7 +179,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
 
     vpDisplay::display(_I);
-    display(_I, last_cMo, cam, vpColor::green);
+    display(_I, last_cMo, cam, vpColor::green, 1, true);
     vpDisplay::displayFrame(_I, last_cMo, cam, 0.05, vpColor::green);
     vpDisplay::flush(_I);
 
@@ -306,7 +306,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       }
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-      display(_I, cMo, cam, vpColor::green);
+      display(_I, cMo, cam, vpColor::green, 1, true);
       vpDisplay::displayCharString(_I, 15, 10,
 				 "left click to validate, right click to re initialize object",
 				 vpColor::red);
@@ -422,7 +422,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
 		}
 		pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-		display(_I, cMo, cam, vpColor::green);
+		display(_I, cMo, cam, vpColor::green, 1, true);
 		vpDisplay::displayCharString(_I, 15, 10,
 				"left click to validate, right click to re initialize object",
 				vpColor::red);
