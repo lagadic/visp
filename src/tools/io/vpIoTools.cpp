@@ -61,6 +61,9 @@
 #  include <windows.h>
 #  include <direct.h>
 #endif
+#ifndef WIN32
+#  include <wordexp.h>
+#endif
 
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
@@ -677,6 +680,9 @@ vpIoTools::path(const char *pathname)
 #else
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '\\')	path[i] = '/';
+  wordexp_t exp_result;
+  wordexp(path.c_str(), &exp_result, 0);
+  path = std::string(exp_result.we_wordv[0]);
 #endif
 
   return path;
@@ -708,9 +714,9 @@ vpIoTools::path(const std::string &pathname)
  */
 void vpIoTools::loadConfigFile(const std::string &confFile)
 {
-  configFile = confFile;
+  configFile = path(confFile);
   configVars.clear();configValues.clear();
-  std::ifstream confContent(confFile.c_str(), std::ios::in);
+  std::ifstream confContent(configFile.c_str(), std::ios::in);
 
   if(confContent)
     {
