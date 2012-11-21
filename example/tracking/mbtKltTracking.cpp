@@ -47,17 +47,16 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
-
+#include <visp/vpDisplayD3D.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
-
 #include <visp/vpMbKltTracker.h>
-
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
