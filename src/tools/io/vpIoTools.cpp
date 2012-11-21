@@ -683,6 +683,7 @@ vpIoTools::path(const char *pathname)
   wordexp_t exp_result;
   wordexp(path.c_str(), &exp_result, 0);
   path = std::string(exp_result.we_wordv[0]);
+  wordfree(&exp_result);
 #endif
 
   return path;
