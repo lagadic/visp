@@ -61,8 +61,8 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
-#if (defined VISP_HAVE_XML2)
-#if (defined VISP_HAVE_OPENCV)
+#if defined (VISP_HAVE_XML2) && defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY)
+
 
 #define GETOPTARGS  "x:m:i:n:dchtf"
 
@@ -279,14 +279,18 @@ main(int argc, const char ** argv)
   vpDisplayX display;
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
-#elif defined VISP_HAVE_D3D
+#elif defined VISP_HAVE_OPENCV
+  vpDisplayOpenCV display;
+#elif defined VISP_HAVE_D3D9
   vpDisplayD3D display;
+#elif defined VISP_HAVE_GTK
+  vpDisplayGTK display;
 #else
   opt_display = false;
 #endif
   if (opt_display)
   {
-#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GDI) || (defined VISP_HAVE_D3D)
+#if (defined VISP_HAVE_DISPLAY)
     display.init(I, 100, 100, "Test tracking") ;
 #endif
     vpDisplay::display(I) ;
@@ -397,9 +401,9 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "Libxml2 and OpenCV are required." << std::endl;
+  std::cout << "libxml2, OpenCV and display are required." << std::endl;
   return 0;
+  
 }
 
-#endif
 #endif
