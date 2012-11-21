@@ -255,10 +255,18 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
   double residu_1 = -1;
   unsigned int iter = 0;
 
-  vpMatrix J(nbrow,6);     // interaction matrix
-  vpColVector R;  // residu
-  vpMatrix J_mbt(nbrow,6), J_klt(2*nbInfos,6);
-  vpColVector R_mbt(nbrow), R_klt(2*nbInfos);
+  vpMatrix J, J_mbt, J_klt;     // interaction matrix
+  vpColVector R, R_mbt, R_klt;  // residu
+  
+  if(nbrow != 0){
+    J_mbt.resize(nbrow,6);
+    R_mbt.resize(nbrow);
+  }
+  
+  if(nbInfos > 3){
+    J_klt.resize(2*nbInfos,6);
+    R_klt.resize(2*nbInfos);
+  }
   
   vpColVector w;  // weight from MEstimator
   vpColVector v;  // "speed" for VVS
