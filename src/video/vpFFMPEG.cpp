@@ -78,6 +78,8 @@ vpFFMPEG::vpFFMPEG()
   f = NULL;
   encoderWasOpened = false;
   packet = new AVPacket;
+
+  pFormatCtx = NULL;
 }
 
 /*!
