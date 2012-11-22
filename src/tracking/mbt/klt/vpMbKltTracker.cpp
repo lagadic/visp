@@ -74,8 +74,7 @@ vpMbKltTracker::vpMbKltTracker()
 vpMbKltTracker::~vpMbKltTracker()
 {
   if(cur != NULL){
-    cur->imageData = NULL;
-    cvReleaseImageHeader(&cur);
+    cvReleaseImage(&cur);
     cur = NULL;
   }
 }
