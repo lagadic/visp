@@ -255,15 +255,17 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
   double residu_1 = -1;
   unsigned int iter = 0;
 
-  vpMatrix J, J_mbt, J_klt;     // interaction matrix
-  vpColVector R, R_mbt, R_klt;  // residu
+  vpMatrix *J;
+  vpMatrix J_mbt, J_klt;     // interaction matrix
+  vpColVector *R;
+  vpColVector R_mbt, R_klt;  // residu
   
   if(nbrow != 0){
     J_mbt.resize(nbrow,6);
     R_mbt.resize(nbrow);
   }
   
-  if(nbInfos > 3){
+  if(nbInfos != 0){
     J_klt.resize(2*nbInfos,6);
     R_klt.resize(2*nbInfos);
   }
@@ -288,8 +290,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
   double residuKLT = 0;
   
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){   
-    J.init(); 
-    R.init();
+    J = new vpMatrix(); 
+    R = new vpColVector();
     
     if(nbrow >= 4)
       trackSecondLoop(J_mbt,R_mbt,cMo,lvl);
@@ -320,7 +322,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       robust_klt.resize(2*nbInfos);
     }
 
-      /* robust */
+      /* robust */   
     if(nbrow > 3){
       residuMBT = 0;
       for(unsigned int i = 0; i < R_mbt.getRows(); i++)
@@ -330,10 +332,10 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       robust_mbt.setIteration(iter);
       robust_mbt.setThreshold(thresholdMBT/cam.get_px());
       robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
-      J.stackMatrices(J_mbt);
-      R.stackMatrices(R_mbt);
+      J->stackMatrices(J_mbt);
+      R->stackMatrices(R_mbt);
     }
-
+    
     if(nbInfos > 3){
       residuKLT = 0;
       for(unsigned int i = 0; i < R_klt.getRows(); i++)
@@ -343,9 +345,10 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       robust_klt.setIteration(iter);
       robust_klt.setThreshold(thresholdKLT/cam.get_px());
       robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
-      J.stackMatrices(J_klt);
-      R.stackMatrices(R_klt);
-    }    
+      
+      J->stackMatrices(J_klt);
+      R->stackMatrices(R_klt);
+    }
 
     unsigned int cpt = 0;
     while(cpt< (nbrow+2*nbInfos)){
@@ -361,26 +364,29 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     residu = 0;    
     double num = 0;
     double den = 0;
-    for (unsigned int i = 0; i < static_cast<unsigned int>(R.getRows()); i++){
-      num += w[i]*vpMath::sqr(R[i]);
+    for (unsigned int i = 0; i < static_cast<unsigned int>(R->getRows()); i++){
+      num += w[i]*vpMath::sqr((*R)[i]);
       den += w[i];
-      R[i] *= w[i];
+      (*R)[i] *= w[i];
       if(compute_interaction){
         for (unsigned int j = 0; j < 6; j += 1){
-          J[i][j] *= w[i];
+          (*J)[i][j] *= w[i];
         }
       }
     }
 
     residu = sqrt(num/den);
 
-    JTJ = J.AtA();
-    computeJTR(J, R, JTR);
+    JTJ = J->AtA();
+    computeJTR(*J, *R, JTR);
     v = -lambda * JTJ.pseudoInverse() * JTR;
     cMo = vpExponentialMap::direct(v).inverse() * cMo;
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
     
     iter++;
+    
+    delete J;
+    delete R;
   }
 }
 
