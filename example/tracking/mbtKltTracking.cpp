@@ -233,7 +233,7 @@ main(int argc, const char ** argv)
 #ifdef VISP_HAVE_COIN
         modelFile = opt_ipath + vpIoTools::path(modelFileWrl);
 #else
-        std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
+        std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
         modelFile = opt_ipath + vpIoTools::path(modelFileCao);
 #endif
       }
@@ -246,7 +246,7 @@ main(int argc, const char ** argv)
 #ifdef VISP_HAVE_COIN
         modelFile = env_ipath + vpIoTools::path(modelFileWrl);
 #else
-        std::cerr << "Coin is not detected in ViSP. USe the .cao model instead." << std::endl;
+        std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
         modelFile = env_ipath + vpIoTools::path(modelFileCao);
 #endif
       }
