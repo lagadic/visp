@@ -276,6 +276,48 @@ vpIoTools::getenv(std::string &env)
 }
 
 /*!
+  Extract major, minor and patch from a version given as "x.x.x".
+  Ex: If version is "1.2.1", major will be 1, minor 2 and patch 1.
+
+  \param version : String to extract the values.
+  \param major : Extracted major.
+  \param minor : Extracted minor.
+  \param patch : Extracted patch.
+*/
+void 
+vpIoTools::getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch)
+{
+  if(version.size() == 0){
+    major = 0;
+    minor = 0;
+    patch = 0;
+  }
+  else{  
+    size_t major_pos = version.find('.');
+    std::string major_str = version.substr(0, major_pos);
+    major = (unsigned)atoi(major_str.c_str());
+    
+    if(major_pos != std::string::npos){
+      size_t minor_pos = version.find('.', major_pos+1);
+      std::string minor_str = version.substr(major_pos+1, (minor_pos - (major_pos+1)));
+      minor = (unsigned)atoi(minor_str.c_str());
+      
+      if(minor_pos != std::string::npos){
+        std::string patch_str = version.substr(minor_pos+1);
+        patch = (unsigned)atoi(patch_str.c_str());
+      }
+      else{
+        patch = 0;
+      }
+    }
+    else{
+      minor = 0;
+      patch = 0;
+    }
+  }
+}
+
+/*!
 
   Check if a directory exists.
 

@@ -108,7 +108,13 @@ vpMbTracker::~vpMbTracker()
 {
 #ifdef VISP_HAVE_COIN
   if(coinUsed){
-//    SoDB::finish();
+    std::string version = COIN_VERSION;
+    unsigned int major, minor, patch;
+    vpIoTools::getVersion(version, major, minor, patch);
+    
+    if( (major << 16 | minor << 8 | patch) >= (3 << 16 | 1 << 8 | 3) )
+      SoDB::finish();
+    
     coinUsed = false;
   }
 #endif
