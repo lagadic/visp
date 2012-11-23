@@ -169,7 +169,7 @@ protected:
   {
     // Position of the camera in the pan frame
     double cx = 0;
-    double cy = -0.065; //-0.13;
+    double cy = -0.065; // distance between camera and tilt axis
     double cz = 0;
     vpTranslationVector etc(cx, cy, cz);
     vpRotationMatrix eRc;
@@ -191,7 +191,7 @@ protected:
   void set_mMp()
   {
     // Position of the pan head in the mobile platform frame
-    double px = 0.1; // distance between the pan frame and the robot frame
+    double px = 0.103; // distance between the pan frame and the robot frame
     double py = 0;
     double pz = 0.27;
     vpTranslationVector mtp;
