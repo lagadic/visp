@@ -142,29 +142,7 @@ public:
     \param _l : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
-  virtual void display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
-
-	
-	// Intializer
-	
-  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
-	virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
-	
-	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
-	virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
-	
-	virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
-	virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
-  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
-	
-  /* PURE VIRTUAL METHODS */
-
-	/*!
-    Initialise the tracking.
-
-    \param _I : Input image.
-  */
-  virtual void init(const vpImage<unsigned char>& _I)=0;
+  virtual void display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;	
 
   /*!
     Get the camera parameters.
@@ -200,6 +178,27 @@ public:
     \return the current pose
   */
   inline vpHomogeneousMatrix getPose() const {return this->cMo;}
+
+  /* PURE VIRTUAL METHODS */
+
+  /*!
+    Initialise the tracking.
+
+    \param _I : Input image.
+  */
+  virtual void init(const vpImage<unsigned char>& _I)=0;
+
+  // Intializer
+
+  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
+  virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
+
+  virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
+  virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
+
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
+  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
 
   /*!
     Load a config file to parameterise the behavior of the tracker.
@@ -242,7 +241,7 @@ public:
   inline void setPoseSavingFilename(const std::string& filename){
     poseSavingFilename = filename;
   }
-  
+
   /*!
     Test the quality of the tracking.
 
@@ -270,16 +269,6 @@ protected:
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
   
   /*!
-    Add a face to track from its corners (in the object frame). This method is
-    called from the loadModel() one to add a face of the object to track. 
-    The initialisation of the face depends on the primitive to track.
-    
-    \param _corners : The vector of corners representing the face.
-    \param _indexFace : The index of the face.
-  */
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1)=0;
-
-  /*!
     Add a cylinder to track from two points on the axis (defining the length of
     the cylinder) and its radius.
 
@@ -289,6 +278,16 @@ protected:
     \param _indexCylinder : Index of the cylinder.
   */
   virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
+
+  /*!
+    Add a face to track from its corners (in the object frame). This method is
+    called from the loadModel() one to add a face of the object to track. 
+    The initialisation of the face depends on the primitive to track.
+    
+    \param _corners : The vector of corners representing the face.
+    \param _indexFace : The index of the face.
+  */
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1)=0;
   
   virtual void loadVRMLModel(const std::string& _modelFile);
   virtual void loadCAOModel(const std::string& _modelFile);

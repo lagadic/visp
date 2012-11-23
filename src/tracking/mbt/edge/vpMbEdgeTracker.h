@@ -291,11 +291,6 @@ public:
   
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker();
-
-protected:
-  void init(const vpImage<unsigned char>& I);
-  
-public:
   
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
@@ -396,6 +391,7 @@ protected:
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void computeVVS(const vpImage<unsigned char>& _I);
   void downScale(const unsigned int _scale);
+  void init(const vpImage<unsigned char>& I);
   virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0);
   virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;

@@ -79,9 +79,7 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     
     void display(const vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
     void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
-    
-    void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
-        
+            
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
    
@@ -103,6 +101,8 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     */
     inline double get_c() const { return this->c;}
     
+    void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
+
     void track(const vpImage<unsigned char> &I);
     
     void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);

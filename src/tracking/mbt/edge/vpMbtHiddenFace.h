@@ -85,9 +85,7 @@ public:
           
             void          changeFrame(const vpHomogeneousMatrix &cMo) ;
             
-            vpPoint &     getPoint(const unsigned int _index);
-            
-  /*!
+   /*!
     Get the index of the face.
 
     \return index : the index of the face.
@@ -101,6 +99,8 @@ public:
   */
   inline    unsigned int  getNbPoint() const {return nbpt ;}              
           
+  vpPoint &     getPoint(const unsigned int _index);
+
   inline    bool          isAppearing() const {return isappearing;}
             bool          isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
@@ -134,7 +134,6 @@ class VISP_EXPORT vpMbtHiddenFaces
                 
     void          addPolygon(vpMbtPolygon *p)  ;
     
-    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
     /*!
       Get the depthTest value.
 
@@ -142,9 +141,10 @@ class VISP_EXPORT vpMbtHiddenFaces
     */
     bool          getDepthTest(){return depthTest;}
     
-    bool          isVisible(const int index) ;
+    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
     bool          isAppearing(const int index);
-    
+    bool          isVisible(const int index) ;
+
     void          reset();   
     
     /*!
