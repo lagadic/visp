@@ -164,7 +164,7 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
 
 /*!
   Compute the difference between the two images I1 and I2
-  \WARNING: This is NOT for visualization
+  \warning : This is NOT for visualization
   If you want to visualize difference images during servo, please use
   vpImageTools::imageDifference(..,..,..) function.
 

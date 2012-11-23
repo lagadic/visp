@@ -133,6 +133,7 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   Check if the polygon is visible in the image. To do that, the polygon is projected into the image thanks to the camera pose.
   
   \param cMo : The pose of the camera.
+  \param depthTest : True if a face has to be entirely visible (in front of the camera). False if it can be partially visible.
   
   \return Return true if the polygon is visible.
 */
