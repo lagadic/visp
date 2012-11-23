@@ -961,7 +961,6 @@ vpColVector
 
     if (inversionType==PSEUDO_INVERSE)
     {
-      vpColVector sv ;
       rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t) ;
 
       imageComputed = true ;
@@ -984,10 +983,9 @@ vpColVector
       if (imageComputed!=true)
 	    {
 	      vpMatrix Jtmp ;
-	      vpColVector sv ;
 	      // image of J1 is computed to allows the computation
 	      // of the projection operator
-	      rankJ1 = J1.pseudoInverse(Jtmp,sv, 1e-6, imJ1, imJ1t) ;
+        rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t) ;
 	      imageComputed = true ;
 	    }
       WpW = imJ1t*imJ1t.t() ;

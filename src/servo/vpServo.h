@@ -387,6 +387,17 @@ public:
   {
     return rankJ1;
   }
+
+  /*!
+    Get task singular values.
+
+    \return Singular values that relies on the task jacobian pseudo inverse.
+    */
+  inline vpColVector getTaskSingularValues()
+  {
+    return sv;
+  }
+
   /*!
     Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is updated
     after a call of computeControlLaw().
@@ -511,6 +522,8 @@ protected:
   vpMatrix WpW ;
   //! projection operators I-WpW
   vpMatrix I_WpW ;
+
+  vpColVector sv ; // singular values from the pseudo inverse
 } ;
 
 
