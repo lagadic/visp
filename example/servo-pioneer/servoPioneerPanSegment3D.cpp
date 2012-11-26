@@ -62,6 +62,7 @@
 
 #define USE_REAL_ROBOT
 #define USE_PLOTTER
+#undef VISP_HAVE_V4L2 // To use a firewire camera
 
 /*!
   \example servoPioneerPanSegment3D.cpp
@@ -86,15 +87,18 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpImage<unsigned char> I; // Create a gray level image container
-  double lambda = 0.05;
+  double lambda = 0.1;
   // Scale parameter used to estimate the depth Z of the blob from its surface
-  double coef = 0.9/14.85;  // At 0.9m, the blob has a surface of 14.85
+  //double coef = 0.9/14.85;  // At 0.9m, the blob has a surface of 14.85 (Logitec sphere)
+  double coef = 1.2/13.0;  // At 1m, the blob has a surface of 11.3 (AVT Pike 032C)
   double L = 0.21; // 3D horizontal segment length
-  double Z_d = 1.; // Desired distance along Z between camera and segment
+  double Z_d = 0.8; // Desired distance along Z between camera and segment
+  bool save = false;
+  bool normalized = true; // segment normilized features are used
 
   // Warning: To have a non singular task of rank 3, Y_d should be different from 0 so that
   // the optical axis doesn't intersect the horizontal segment
-  double Y_d = .18;   // Desired distance along Y between camera and segment.
+  double Y_d = -.11;   // Desired distance along Y between camera and segment.
   vpColVector qm(2); // Measured head position
   qm = 0;
   double qm_pan = 0; // Measured pan position (tilt is not handled in that example)
@@ -109,8 +113,8 @@ int main(int argc, char **argv)
   vpColVector q(2);
 
   q=0;
-  q[0] = vpMath::rad(63);
-  q[1] = vpMath::rad(12); // introduce a tilt angle to compensate camera sphere tilt so that the camera is parallel to the plane
+//  q[0] = vpMath::rad(63);
+//  q[1] = vpMath::rad(12); // introduce a tilt angle to compensate camera sphere tilt so that the camera is parallel to the plane
 
   biclops.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   biclops.setPosition( vpRobot::ARTICULAR_FRAME, q );
@@ -147,10 +151,19 @@ int main(int argc, char **argv)
 
   pioneer.useSonar(false); // disable the sonar device usage
 
+  // Wait 3 sec to be sure that the low level Aria thread used to control
+  // the robot is started. Without this delay we experienced a delay (arround 2.2 sec)
+  // between the velocity send to the robot and the velocity that is really applied
+  // to the wheels.
+  sleep(3);
+
   std::cout << "Pioneer robot connected" << std::endl;
 #endif
 
   vpPioneerPan robot_pan; // Generic robot that computes the velocities for the pioneer and the biclops head
+
+  // Camera parameters. In this experiment we don't need a precise calibration of the camera
+  vpCameraParameters cam;
 
   // Create the camera framegrabber
 #if defined(VISP_HAVE_V4L2)
@@ -160,17 +173,23 @@ int main(int argc, char **argv)
   g.setInput(0);
   g.setDevice("/dev/video1");
   g.open(I);
+  // Logitec sphere parameters
+  cam.initPersProjWithoutDistortion(558, 555, 312, 210);
 #elif defined(VISP_HAVE_DC1394_2)
   // Create a grabber based on libdc1394-2.x third party lib (for firewire cameras under Linux)
   vp1394TwoGrabber g(false);
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+  // AVT Pike 032C parameters
+  cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #elif defined(VISP_HAVE_CMU1394)
   // Create a grabber based on CMU 1394 third party lib (for firewire cameras under windows)
   vp1394CMUGrabber g;
   g.setVideoMode(0, 5); // 640x480 MONO8
   g.setFramerate(4);    // 30 Hz
   g.open(I);
+  // AVT Pike 032C parameters
+  cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
 
   // Acquire an image from the grabber
@@ -197,10 +216,6 @@ int main(int argc, char **argv)
     dot[i].initTracking(I);
     vpDisplay::flush(I);
   }
-
-  // Camera parameters. In this experiment we don't need a precise calibration of the camera
-  vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(558, 555, 312, 210);
 
   vpServo task;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
@@ -246,7 +261,6 @@ int main(int argc, char **argv)
   }
 
   // Use here a feature segment builder
-  bool normalized = true; // segment normilized features are used
   vpFeatureSegment s_segment(normalized), s_segment_d(normalized); // From the segment feature we use only alpha
   vpFeatureBuilder::create(s_segment, cam, dot[0], dot[1]);
   s_segment.setZ1(Z[0]);
@@ -356,6 +370,10 @@ int main(int argc, char **argv)
       vpColVector v_biclops(2); // qdot pan and tilt
       v_biclops[0] = v[2];
       v_biclops[1] = 0;
+
+      std::cout << "Send velocity to the pionner: " << v_pioneer[0] << " m/s "
+                << vpMath::deg(v_pioneer[1]) << " deg/s" << std::endl;
+      std::cout << "Send velocity to the biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
 
       pioneer.setVelocity(vpRobot::REFERENCE_FRAME, v_pioneer);
       biclops.setVelocity(vpRobot::ARTICULAR_FRAME, v_biclops) ;

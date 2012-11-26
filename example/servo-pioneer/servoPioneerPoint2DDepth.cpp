@@ -68,6 +68,9 @@
 #endif
 #endif
 
+#undef VISP_HAVE_OPENCV // To use a firewire camera
+#undef VISP_HAVE_V4L2 // To use a firewire camera
+
 /*!
   \example servoPioneerPoint2DDepth.cpp
 
@@ -118,10 +121,19 @@ int main(int argc, char **argv)
     return false;
   }
 
+  // Wait 3 sec to be sure that the low level Aria thread used to control
+  // the robot is started. Without this delay we experienced a delay (arround 2.2 sec)
+  // between the velocity send to the robot and the velocity that is really applied
+  // to the wheels.
+  sleep(3);
+
   std::cout << "Robot connected" << std::endl;
 
+  // Camera parameters. In this experiment we don't need a precise calibration of the camera
+  vpCameraParameters cam;
+
   // Create the camera framegrabber
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   int device = 1;
   std::cout << "Use device: " << device << std::endl;
   cv::VideoCapture g(device); // open the default camera
@@ -132,6 +144,9 @@ int main(int argc, char **argv)
   cv::Mat frame;
   g >> frame; // get a new frame from camera
   vpImageConvert::convert(frame, I);
+
+  // Logitec sphere parameters
+  cam.initPersProjWithoutDistortion(558, 555, 312, 210);
 #elif defined(VISP_HAVE_V4L2)
   // Create a grabber based on v4l2 third party lib (for usb cameras under Linux)
   vpV4l2Grabber g;
@@ -139,21 +154,27 @@ int main(int argc, char **argv)
   g.setInput(0);
   g.setDevice("/dev/video1");
   g.open(I);
+  // Logitec sphere parameters
+  cam.initPersProjWithoutDistortion(558, 555, 312, 210);
 #elif defined(VISP_HAVE_DC1394_2)
   // Create a grabber based on libdc1394-2.x third party lib (for firewire cameras under Linux)
   vp1394TwoGrabber g(false);
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+  // AVT Pike 032C parameters
+  cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #elif defined(VISP_HAVE_CMU1394)
   // Create a grabber based on CMU 1394 third party lib (for firewire cameras under windows)
   vp1394CMUGrabber g;
   g.setVideoMode(0, 5); // 640x480 MONO8
   g.setFramerate(4);    // 30 Hz
   g.open(I);
+  // AVT Pike 032C parameters
+  cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
 
   // Acquire an image from the grabber
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   g >> frame; // get a new frame from camera
   vpImageConvert::convert(frame, I);
 #else
@@ -178,10 +199,6 @@ int main(int argc, char **argv)
   dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner and outside points with bad gray level
   dot.initTracking(I);
   vpDisplay::flush(I);
-
-  // Camera parameters. In this experiment we don't need a precise calibration of the camera
-  vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(800, 800, I.getWidth() / 2., I.getHeight() / 2.);
 
   vpServo task;
   task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
@@ -262,7 +279,8 @@ int main(int argc, char **argv)
       // Compute the control law. Velocities are computed in the mobile robot reference frame
       v = task.computeControlLaw() ;
 
-      std::cout << "v: " << v.t() << std::endl;
+      std::cout << "Send velocity to the pionner: " << v[0] << " m/s "
+                << vpMath::deg(v[1]) << " deg/s" << std::endl;
 
       // Send the velocity to the robot
       robot.setVelocity(vpRobot::REFERENCE_FRAME, v);
