@@ -92,6 +92,9 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   lines[0].clear();
   cylinders[0].clear();
   Ipyramid.resize(0);
+  
+  angleAppears = vpMath::rad(95);
+  angleDisappears = vpMath::rad(95);
 }
 
 /*!
@@ -935,6 +938,8 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
   
   xmlp.setCameraParameters(cam);
   xmlp.setMovingEdge(me);
+  xmlp.setAngleAppear(vpMath::deg(angleAppears));
+  xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   
   try{
     std::cout << " *********** Parsing XML for MbEdge Tracker ************ " << std::endl;
@@ -952,6 +957,8 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
   
   setCameraParameters(camera);
   setMovingEdge(meParser);
+  angleAppears = vpMath::rad(xmlp.getAngleAppear());
+  angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
 #else
 	vpTRACE("You need the libXML2 to read the config file %s", filename);
 #endif

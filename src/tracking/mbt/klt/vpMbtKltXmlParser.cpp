@@ -87,8 +87,9 @@ vpMbtKltXmlParser::init()
   nodeMap["harris"] = harris;
   nodeMap["size_block"] = size_block;
   nodeMap["pyramid_lvl"] = pyramid_lvl;
+  nodeMap["face"] = face;
   nodeMap["angle_appear"] = angle_appear;
-  nodeMap["angle_desappear"] = angle_desappear;
+  nodeMap["angle_disappear"] = angle_disappear;
   nodeMap["camera"] = camera;
   nodeMap["height"] = height;
   nodeMap["width"] = width;
@@ -134,6 +135,7 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
   bool klt_node = false;
   bool camera_node = false;
+  bool face_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -148,6 +150,10 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           this->read_camera(doc, dataNode);
           camera_node = true;
           }break;
+        case face:{
+          this->read_face(doc, dataNode);
+          face_node = true;
+          }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
@@ -161,6 +167,55 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   
   if(!camera_node)
     std::cout << "WARNING: CAMERA Node not specified, default values used" << std::endl;
+  
+  if(!face_node)
+    std::cout << "WARNING: FACE Node not specified, default values used" << std::endl;
+}
+
+/*!
+  Read face informations.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the camera informations.
+*/
+void 
+vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
+{
+  bool angle_appear_node = false;
+  bool angle_disappear_node = false;
+  
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case angle_appear:{
+          angleAppear = xmlReadDoubleChild(doc, dataNode);
+          angle_appear_node = true;
+          }break;
+        case angle_disappear:{
+          angleDisappear = xmlReadDoubleChild(doc, dataNode);
+          angle_disappear_node = true;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+  
+  if(!angle_appear_node)
+    std::cout << "WARNING: In FACE Node, ANGLE_APPEAR Node not specified, default value used : " << angleAppear << std::endl;
+  else
+    std::cout << "face : Angle Appear "<< angleAppear <<std::endl;
+  
+  if(!angle_disappear_node)
+    std::cout << "WARNING: In FACE Node, ANGLE_DESAPPEAR Node not specified, default value used : " << angleDisappear << std::endl;
+  else
+    std::cout << "face : Angle Disappear : "<< angleDisappear <<std::endl;
 }
 
 /*!
@@ -183,8 +238,6 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
   bool harris_node = false;
   bool size_block_node = false;
   bool pyramid_lvl_node = false;
-  bool angle_appear_node = false;
-  bool angle_desappear_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -227,14 +280,6 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
           pyramidLevels = xmlReadIntChild(doc, dataNode);
           pyramid_lvl_node = true;
           }break; 
-        case angle_appear:{
-          angleAppear = xmlReadDoubleChild(doc, dataNode);
-          angle_appear_node = true;
-          }break;
-        case angle_desappear:{
-          angleDesappear = xmlReadDoubleChild(doc, dataNode);
-          angle_desappear_node = true;
-          }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
@@ -287,16 +332,6 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "WARNING: In KLT Node, PYRAMID_LVL Node not specified, default value used : " << pyramidLevels << std::endl;
   else
     std::cout << "klt : Pyramid Levels : "<< pyramidLevels <<std::endl;
-  
-  if(!angle_appear_node)
-    std::cout << "WARNING: In KLT Node, ANGLE_APPEAR Node not specified, default value used : " << angleAppear << std::endl;
-  else
-    std::cout << "klt : Angle Appear "<< angleAppear <<std::endl;
-  
-  if(!angle_desappear_node)
-    std::cout << "WARNING: In KLT Node, ANGLE_DESAPPEAR Node not specified, default value used : " << angleDesappear << std::endl;
-  else
-    std::cout << "klt : Angle Desappear : "<< angleDesappear <<std::endl;
 }
 
 /*!

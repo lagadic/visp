@@ -58,7 +58,7 @@ vpMbKltTracker::vpMbKltTracker()
   tracker.setPyramidLevels(3);
   
   angleAppears = vpMath::rad(90);
-  angleDesappears = vpMath::rad(90);
+  angleDisappears = vpMath::rad(90);
   
   maskBorder = 10;
   threshold_outlier = 0.5;
@@ -238,7 +238,7 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w)
   }
   
   bool reInitialisation = false;
-  faces.setVisible(_I, cMo, angleAppears, angleDesappears, reInitialisation);
+  faces.setVisible(_I, cMo, angleAppears, angleDisappears, reInitialisation);
 
   if(reInitialisation)
     return true;
@@ -397,7 +397,7 @@ vpMbKltTracker::loadConfigFile(const char* filename)
   xmlp.setMaskBorder(maskBorder);
   xmlp.setThresholdOutliers(threshold_outlier);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
-  xmlp.setAngleDesappear(vpMath::deg(angleDesappears));
+  xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   
   try{
     std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
@@ -423,7 +423,7 @@ vpMbKltTracker::loadConfigFile(const char* filename)
   maskBorder = xmlp.getMaskBorder();
   threshold_outlier = xmlp.getThresholdOutliers();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
-  angleDesappears = vpMath::rad(xmlp.getAngleDesappear());
+  angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
   
 #else
   vpTRACE("You need the libXML2 to read the config file %s", filename);

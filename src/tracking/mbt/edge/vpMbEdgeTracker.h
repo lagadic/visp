@@ -286,6 +286,13 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     
     //! Current scale level used. This attribute must not be modified outsied of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
     unsigned int scaleLevel;
+    
+    //! Angle used to detect a face apparition
+    double angleAppears;
+  
+    //! Angle used to detect a face disparition
+    double angleDisappears;
+  
 
 public:
   

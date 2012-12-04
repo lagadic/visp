@@ -87,8 +87,8 @@ protected:
   unsigned int pyramidLevels;
   //! Angle to determine if a face appeared
   double angleAppear;
-  //! Angle to determine if a face desappeared
-  double angleDesappear;
+  //! Angle to determine if a face disappeared
+  double angleDisappear;
   //! Camera parameters.
   vpCameraParameters cam;
     
@@ -104,8 +104,9 @@ protected:
     harris,
     size_block,
     pyramid_lvl,
+    face,
     angle_appear,
-    angle_desappear,
+    angle_disappear,
     camera,
     height,
     width,
@@ -129,11 +130,11 @@ public:
   inline double getAngleAppear() const {return angleAppear;}
   
   /*!
-    Get the angle to determine if a face desappeared.
+    Get the angle to determine if a face disappeared.
 
-    \return angleDesappear
+    \return angleDisappear
   */
-  inline double getAngleDesappear() const {return angleDesappear;}
+  inline double getAngleDisappear() const {return angleDisappear;}
   
   /*!
     Get the size of a block.
@@ -208,8 +209,9 @@ public:
   void parse(const char * filename);
   
   void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-  void read_klt(xmlDocPtr doc, xmlNodePtr node);
   void read_camera (xmlDocPtr doc, xmlNodePtr node);
+  void read_klt(xmlDocPtr doc, xmlNodePtr node);
+  void read_face(xmlDocPtr doc, xmlNodePtr node);
   
   /*!
     Set the angle to determine if a face appeared.
@@ -219,11 +221,11 @@ public:
   inline void setAngleAppear(const double &aappear) {angleAppear = aappear;}
   
   /*!
-    Set the angle to determine if a face desappeared.
+    Set the angle to determine if a face disappeared.
 
-    \param adesappear : New angleDesappear
+    \param adisappear : New angleDisappear
   */
-  inline void setAngleDesappear(const double &adesappear) {angleDesappear = adesappear;}
+  inline void setAngleDisappear(const double &adisappear) {angleDisappear = adisappear;}
   
   /*!
     Set the size of a block.

@@ -75,6 +75,10 @@ protected:
   vpMe m_ecm;
   //! Camera parameters.
   vpCameraParameters cam;
+  //! Angle to determine if a face appeared
+  double angleAppear;
+  //! Angle to determine if a face disappeared
+  double angleDisappear;
     
   typedef enum{
     conf,
@@ -91,6 +95,9 @@ protected:
     sample,
     step,
     nb_sample,
+    face,
+    angle_appear,
+    angle_disappear,
     camera,
     height,
     width,
@@ -106,6 +113,20 @@ public:
 	vpMbtXmlParser();
 	virtual ~vpMbtXmlParser();
 
+  /*!
+    Get the angle to determine if a face appeared.
+
+    \return angleAppear
+  */
+  inline double getAngleAppear() const {return angleAppear;}
+  
+  /*!
+    Get the angle to determine if a face disappeared.
+
+    \return angleDisappear
+  */
+  inline double getAngleDisappear() const {return angleDisappear;}
+  
   void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
   void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
   
@@ -118,6 +139,21 @@ public:
 	void read_mask (xmlDocPtr doc, xmlNodePtr node);
 	void read_range (xmlDocPtr doc, xmlNodePtr node);
 	void read_contrast (xmlDocPtr doc, xmlNodePtr node);
+  void read_face(xmlDocPtr doc, xmlNodePtr node);
+  
+  /*!
+    Set the angle to determine if a face appeared.
+
+    \param aappear : New angleAppear
+  */
+  inline void setAngleAppear(const double &aappear) {angleAppear = aappear;}
+  
+  /*!
+    Set the angle to determine if a face disappeared.
+
+    \param adisappear : New angleDisappear
+  */
+  inline void setAngleDisappear(const double &adisappear) {angleDisappear = adisappear;}
   
   void setCameraParameters(const vpCameraParameters &_cam){ cam = _cam; }
   void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }

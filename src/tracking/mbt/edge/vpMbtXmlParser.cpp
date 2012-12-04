@@ -91,6 +91,9 @@ vpMbtXmlParser::init()
   nodeMap["sample"] = sample;
   nodeMap["step"] = step;
   nodeMap["nb_sample"] = nb_sample;
+  nodeMap["face"] = face;
+  nodeMap["angle_appear"] = angle_appear;
+  nodeMap["angle_disappear"] = angle_disappear;
   nodeMap["camera"] = camera;
   nodeMap["height"] = height;
   nodeMap["width"] = width;
@@ -138,6 +141,7 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 	bool ecm_node = false;
   bool sample_node = false;
   bool camera_node = false;
+  bool face_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -156,6 +160,10 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           this->read_camera (doc, dataNode);
           camera_node = true;
           }break;
+        case face:{
+          this->read_face(doc, dataNode);
+          face_node = true;
+          }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
@@ -172,6 +180,9 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   
   if(!camera_node)
     std::cout << "WARNING: CAMERA Node not specified, default values used" << std::endl;
+  
+  if(!face_node)
+    std::cout << "WARNING: FACE Node not specified, default values used" << std::endl;
 }
 
 
@@ -368,6 +379,52 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
     std::cout << "WARNING: In CAMERA Node, py Node not specified, default value used : " << this->cam.get_py() << std::endl;
   else
     std::cout << "camera : py "<< this->cam.get_py() <<std::endl;
+}
+
+/*!
+  Read face informations.
+  
+  \throw vpException::fatalError if there was an unexpected number of data. 
+  
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the camera informations.
+*/
+void 
+vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
+{
+  bool angle_appear_node = false;
+  bool angle_disappear_node = false;
+  
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case angle_appear:{
+          angleAppear = xmlReadDoubleChild(doc, dataNode);
+          angle_appear_node = true;
+          }break;
+        case angle_disappear:{
+          angleDisappear = xmlReadDoubleChild(doc, dataNode);
+          angle_disappear_node = true;
+          }break;
+        default:{
+//          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+  
+  if(!angle_appear_node)
+    std::cout << "WARNING: In FACE Node, ANGLE_APPEAR Node not specified, default value used : " << angleAppear << std::endl;
+  else
+    std::cout << "face : Angle Appear "<< angleAppear <<std::endl;
+  
+  if(!angle_disappear_node)
+    std::cout << "WARNING: In FACE Node, ANGLE_DESAPPEAR Node not specified, default value used : " << angleDisappear << std::endl;
+  else
+    std::cout << "face : Angle Disappear : "<< angleDisappear <<std::endl;
 }
 
 /*!

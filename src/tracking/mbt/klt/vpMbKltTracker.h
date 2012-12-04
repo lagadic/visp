@@ -73,7 +73,7 @@ private:
   //! Angle used to detect a face apparition
   double angleAppears;
   //! Angle used to detect a face disparition
-  double angleDesappears;
+  double angleDisappears;
   //! If true, compute the interaction matrix at each iteration of the minimisation. Otherwise, compute it only on the first iteration.
   bool compute_interaction;
   //! Flag to specify whether the init method is called the first or not (specific calls to realise in this case).
