@@ -594,11 +594,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     iter++;
   }
-        
-  vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
-  D.diag(W_true);
   
   if(computeCovariance){
+    vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
+    D.diag(W_true);
     covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*error,D);
   }
   

@@ -45,6 +45,7 @@ vpMbKltTracker::vpMbKltTracker()
   cur = NULL;
   compute_interaction = true;
   firstInitialisation = true;
+  computeCovariance = false;
 
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);
@@ -259,6 +260,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   vpColVector R;  // residu
   vpColVector v;  // "speed" for VVS
   vpHomography H;
+  vpColVector w_true;
   vpRobust robust(2*nbInfos);
 
   vpMatrix JTJ, JTR;
@@ -268,6 +270,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   unsigned int iter = 0;
 
   R.resize(2*nbInfos);
+  w_true.resize(2*nbInfos);
   J.resize(2*nbInfos, 6, 0);
   
   while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ){
@@ -297,16 +300,19 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     robust.setIteration(iter);
     robust.setThreshold(2/cam.get_px());
     robust.MEstimator( vpRobust::TUKEY, R, w);
+    
+    vpColVector weighted_R = R;
 
     normRes_1 = normRes;
     normRes = 0;
-    for (unsigned int i = 0; i < static_cast<unsigned int>(R.getRows()); i += 1){
-      R[i] *= w[i];
-      normRes += R[i];
+    for (unsigned int i = 0; i < static_cast<unsigned int>(weighted_R.getRows()); i += 1){
+      w_true = w[i] * w[i];
+      weighted_R[i] *= w[i];
+      normRes += weighted_R[i];
     }
 
     if((iter == 0) || compute_interaction){
-      for(unsigned int i=0; i<static_cast<unsigned int>(R.getRows()); i++){
+      for(unsigned int i=0; i<static_cast<unsigned int>(weighted_R.getRows()); i++){
         for(unsigned int j=0; j<6; j++){
           J[i][j] *= w[i];
         }
@@ -314,12 +320,18 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     }
     
     JTJ = J.AtA();
-    computeJTR(J, R, JTR);
+    computeJTR(J, weighted_R, JTR);
     v = -lambda * JTJ.pseudoInverse(1e-16) * JTR;
     
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
     
     iter++;
+  }
+  
+  if(computeCovariance){
+    vpMatrix D;
+    D.diag(w_true);
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J,v,-lambda*R,D);
   }
   
   cMo = ctTc0 * c0Mo;
