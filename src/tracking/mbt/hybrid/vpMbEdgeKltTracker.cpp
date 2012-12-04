@@ -43,6 +43,7 @@
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
 {
   compute_interaction = true;
+  computeCovariance = false;
   
   lambda = 0.8;
   thresholdKLT = 5.0;
@@ -259,6 +260,9 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
   vpMatrix J_mbt, J_klt;     // interaction matrix
   vpColVector *R;
   vpColVector R_mbt, R_klt;  // residu
+  vpMatrix J_true;
+  vpColVector R_true;
+  vpColVector w_true;
   
   if(nbrow != 0){
     J_mbt.resize(nbrow,6);
@@ -320,6 +324,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       w_klt.resize(2*nbInfos);
       w_klt = 1;
       robust_klt.resize(2*nbInfos);
+      
+      w_true.resize(nbrow + 2*nbInfos);
     }
 
       /* robust */   
@@ -359,6 +365,11 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
         w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
       cpt++;
     }
+    
+    if(computeCovariance){
+      R_true = (*R);
+      J_true = (*J);
+    }
 
     residu_1 = residu;
     residu = 0;    
@@ -367,6 +378,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     for (unsigned int i = 0; i < static_cast<unsigned int>(R->getRows()); i++){
       num += w[i]*vpMath::sqr((*R)[i]);
       den += w[i];
+      
+      w_true[i] = w[i]*w[i];
       (*R)[i] *= w[i];
       if(compute_interaction){
         for (unsigned int j = 0; j < 6; j += 1){
@@ -387,6 +400,12 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     
     delete J;
     delete R;
+  }
+  
+  if(computeCovariance){
+    vpMatrix D;
+    D.diag(w_true);
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*R_true,D);
   }
 }
 
