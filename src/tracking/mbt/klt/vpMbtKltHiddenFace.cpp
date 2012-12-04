@@ -679,7 +679,7 @@ vpMbtKltHiddenFaces::addPolygon(vpMbtKltPolygon *p)
   
   \param _I : Image used to check if the region of interest is inside the image.
   \param cMo : The pose of the camera
-  \param changed : True if a face appeared, desappeared or too many points have been lost. False otherwise
+  \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   \param angle : Angle used to test the apparition and disparition of a face
   
   \return Return the number of visible polygons
@@ -695,7 +695,7 @@ vpMbtKltHiddenFaces::setVisible(const vpImage<unsigned char>& _I, const vpHomoge
   
   \param _I : Image used to check if the region of interest is inside the image.
   \param cMo : The pose of the camera
-  \param changed : True if a face appeared, desappeared or too many points have been lost. False otherwise
+  \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   \param angleAppears : Angle used to test the apparition of a face
   \param angleDesappears : Angle used to test the disparition of a face
   
