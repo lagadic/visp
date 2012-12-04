@@ -425,11 +425,9 @@ vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMa
   {
     p1->changeFrame(cMo) ;
     p2->changeFrame(cMo) ;
-    line->changeFrame(cMo) ;
 
     p1->projection() ;
     p2->projection() ;
-    line->projection() ;
 
     vpImagePoint ip1, ip2;
 
@@ -458,11 +456,9 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &c
   {
     p1->changeFrame(cMo) ;
     p2->changeFrame(cMo) ;
-    line->changeFrame(cMo) ;
 
     p1->projection() ;
     p2->projection() ;
-    line->projection() ;
 
     vpImagePoint ip1, ip2;
 
