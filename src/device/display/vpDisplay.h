@@ -313,34 +313,6 @@ class VISP_EXPORT vpDisplay
   */
   virtual ~vpDisplay() {;} ;
 
-  /*!  
-    Set the font used to display a text in overlay. The display is
-    performed using displayCharString().
-
-    \param font : The expected font name. The available fonts are given by
-    the "xlsfonts" binary. To choose a font you can also use the
-    "xfontsel" binary.
-
-    \note Under UNIX, to know all the available fonts, use the
-    "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
-
-    \sa displayCharString()
-  */
-  virtual void setFont(const char *font) =0;
-  /*!
-    Set the window title.
-    \param title : Window title.
-  */
-  virtual void setTitle(const char *title) =0;
-  /*!
-    Set the window position in the screen.
-    
-    \param winx, winy : Position of the upper-left window's border in
-    the screen.
-
-  */  
-  virtual void setWindowPosition(int winx, int winy) = 0 ;
-
   /*!
     Set the window backgroud to \e color.
     \param color : Background color.
@@ -350,39 +322,6 @@ class VISP_EXPORT vpDisplay
     Close the window.
   */
   virtual void closeDisplay() =0;
-
-  /*!
-    Initialize the display (size, position and title) of a gray level image.
-    
-    \param I : Image to be displayed (not that image has to be initialized)
-    \param x, y : The window is set at position x,y (column index, row index).
-    \param title : Window title.
-  */
-  virtual void init(vpImage<unsigned char> &I,
-		    int x=-1, int y=-1,
-		    const char *title=NULL) =0 ;
-  /*!  
-    Initialize the display (size, position and title) of a color
-    image in RGBa format.
-    
-    \param I : Image to be displayed (not that image has to be initialized)
-    \param x, y : The window is set at position x,y (column index, row index).
-    \param title : Window title.
-  */
-  virtual void init(vpImage<vpRGBa> &I,
-		    int x=-1, int y=-1,
-		    const char *title=NULL) =0 ;
-
-  /*!
-    Initialize the display size, position and title.
-    
-    \param width, height : Width and height of the window.
-    \param x, y : The window is set at position x,y (column index, row index).
-    \param title : Window title.
-  */
-  virtual void init(unsigned int width, unsigned int height,
-		    int x=-1, int y=-1 ,
-		    const char *title=NULL) =0;
 
   /*!
     Display the gray level image \e I (8bits).
@@ -425,13 +364,6 @@ class VISP_EXPORT vpDisplay
   */  
   virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0;
 	
-	/*!
-    Check if the display has been initialised
-
-    \return 
-			True if the display has been initialised, otherwise False
-  */
-  inline bool isInitialised() { return displayHasBeenInitialized; }
 
   /* Simple interface with the mouse event */
 
@@ -577,29 +509,89 @@ class VISP_EXPORT vpDisplay
   virtual bool getPointerPosition (vpImagePoint &ip) =0;
 
   /*!
-    Return the display width.
-    \sa getHeight()
-  */
-  inline  unsigned int getWidth() const  { return width ; }
-  /*!
     Return the display height.
     \sa getWidth()
   */
   inline  unsigned int getHeight() const { return height ; }
+  /*!
+    Return the display width.
+    \sa getHeight()
+  */
+  inline  unsigned int getWidth() const  { return width ; }
 
+  /*!
+    Initialize the display (size, position and title) of a gray level image.
+
+    \param I : Image to be displayed (not that image has to be initialized)
+    \param x, y : The window is set at position x,y (column index, row index).
+    \param title : Window title.
+  */
+  virtual void init(vpImage<unsigned char> &I,
+                    int x=-1, int y=-1,
+                    const char *title=NULL) =0 ;
+  /*!
+    Initialize the display (size, position and title) of a color
+    image in RGBa format.
+
+    \param I : Image to be displayed (not that image has to be initialized)
+    \param x, y : The window is set at position x,y (column index, row index).
+    \param title : Window title.
+  */
+  virtual void init(vpImage<vpRGBa> &I,
+                    int x=-1, int y=-1,
+                    const char *title=NULL) =0 ;
+
+  /*!
+    Initialize the display size, position and title.
+
+    \param width, height : Width and height of the window.
+    \param x, y : The window is set at position x,y (column index, row index).
+    \param title : Window title.
+  */
+  virtual void init(unsigned int width, unsigned int height,
+                    int x=-1, int y=-1 ,
+                    const char *title=NULL) =0;
+
+  /*!
+    Check if the display has been initialised
+
+    \return True if the display has been initialised, otherwise False
+  */
+  inline bool isInitialised() { return displayHasBeenInitialized; }
+
+  /*!
+    Set the font used to display a text in overlay. The display is
+    performed using displayCharString().
+
+    \param font : The expected font name. The available fonts are given by
+    the "xlsfonts" binary. To choose a font you can also use the
+    "xfontsel" binary.
+
+    \note Under UNIX, to know all the available fonts, use the
+    "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
+
+    \sa displayCharString()
+  */
+  virtual void setFont(const char *font) =0;
+  /*!
+    Set the window title.
+    \param title : Window title.
+  */
+  virtual void setTitle(const char *title) =0;
+  /*!
+    Set the window position in the screen.
+
+    \param winx, winy : Position of the upper-left window's border in
+    the screen.
+
+  */
+  virtual void setWindowPosition(int winx, int winy) = 0 ;
 
   /*!
     @name Display functionalities on gray level images.
   */
-  static void setFont(const vpImage<unsigned char> &I, const char *font);
-  static void setTitle(const vpImage<unsigned char> &I, 
-		       const char *windowtitle);
-  static void setWindowPosition(const vpImage<unsigned char> &I, 
-				int winx, int winy);
-  static void setBackground(const vpImage<unsigned char> &I, const vpColor &color);
   static void close(const vpImage<unsigned char> &I) ;
   static void display(const vpImage<unsigned char> &I) ;
-  static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
   static void displayArrow(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
 			   const vpColor &color=vpColor::white,
@@ -610,6 +602,10 @@ class VISP_EXPORT vpDisplay
 			   const vpColor &color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
+  static void displayCamera(const vpImage<unsigned char> &I,
+                           const vpHomogeneousMatrix &cMo,
+                           const vpCameraParameters &cam,
+                           double size, const vpColor &color)  ;
   static void displayCharString(const vpImage<unsigned char> &I,
 				const vpImagePoint &ip, const char *string,
 				const vpColor &color) ;
@@ -648,10 +644,6 @@ class VISP_EXPORT vpDisplay
 			   const vpCameraParameters &cam,
 			   double size, const vpColor &color,
 			   unsigned int thickness=1)  ;
-  static void displayCamera(const vpImage<unsigned char> &I,
-			   const vpHomogeneousMatrix &cMo,
-			   const vpCameraParameters &cam,
-			   double size, const vpColor &color)  ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
@@ -697,6 +689,7 @@ class VISP_EXPORT vpDisplay
 			       unsigned int width, unsigned int height,
 			       const vpColor &color, 
 			       unsigned int thickness=1);
+  static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
 
   static void flush(const vpImage<unsigned char> &I) ;
   static void flushROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
@@ -722,19 +715,19 @@ class VISP_EXPORT vpDisplay
 				     vpImagePoint &ip);
   static bool getPointerPosition (const vpImage<unsigned char> &I, 
 				     vpImagePoint &ip);
+  static void setBackground(const vpImage<unsigned char> &I, const vpColor &color);
+  static void setFont(const vpImage<unsigned char> &I, const char *font);
+  static void setTitle(const vpImage<unsigned char> &I,
+                       const char *windowtitle);
+  static void setWindowPosition(const vpImage<unsigned char> &I,
+                                int winx, int winy);
 
   /*!
     @name Display functionalities on color images.
   */
-  static void setFont(const vpImage<vpRGBa> &I, const char *font);
-  static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
-  static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
-  static void setBackground(const vpImage<vpRGBa> &I, const vpColor &color);
-
   static void close(const vpImage<vpRGBa> &I) ;
 
   static void display(const vpImage<vpRGBa> &I) ;
-  static void displayROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
   static void displayArrow(const vpImage<vpRGBa> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
 			   const vpColor &color=vpColor::white,
@@ -745,6 +738,10 @@ class VISP_EXPORT vpDisplay
 			   const vpColor &color=vpColor::white,
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
+  static void displayCamera(const vpImage<vpRGBa> &I,
+                           const vpHomogeneousMatrix &cMo,
+                           const vpCameraParameters &cam,
+                           double size, const vpColor &color)  ;
   static void displayCharString(const vpImage<vpRGBa> &I,
 				const vpImagePoint &ip, const char *string,
 				const vpColor &color) ;
@@ -783,10 +780,6 @@ class VISP_EXPORT vpDisplay
 			   const vpCameraParameters &cam,
 			   double size, const vpColor &color, 
 			   unsigned int thickness=1)  ;
-  static void displayCamera(const vpImage<vpRGBa> &I,
-			   const vpHomogeneousMatrix &cMo,
-			   const vpCameraParameters &cam,
-			   double size, const vpColor &color)  ;
   static void displayLine(const vpImage<vpRGBa> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
@@ -833,6 +826,7 @@ class VISP_EXPORT vpDisplay
 			       unsigned int width, unsigned int height,
 			       const vpColor &color, 
 			       unsigned int thickness=1);
+  static void displayROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
 
   static void flush(const vpImage<vpRGBa> &I) ;
   static void flushROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
@@ -855,6 +849,11 @@ class VISP_EXPORT vpDisplay
 			       char *string, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip);
   static bool getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip);
+
+  static void setBackground(const vpImage<vpRGBa> &I, const vpColor &color);
+  static void setFont(const vpImage<vpRGBa> &I, const char *font);
+  static void setTitle(const vpImage<vpRGBa> &I, const char *windowtitle);
+  static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
 
  private:
   //! get the window pixmap and put it in vpRGBa image
