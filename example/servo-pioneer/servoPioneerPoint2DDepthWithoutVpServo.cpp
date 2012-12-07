@@ -123,7 +123,7 @@ int main(int argc, char **argv)
   // the robot is started. Without this delay we experienced a delay (arround 2.2 sec)
   // between the velocity send to the robot and the velocity that is really applied
   // to the wheels.
-  sleep(3);
+  vpTime::sleepMs(3000);
 
   std::cout << "Robot connected" << std::endl;
 
