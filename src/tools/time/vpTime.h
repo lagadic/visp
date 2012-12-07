@@ -83,6 +83,7 @@ public:
   static double measureTimeSecond() ;
   static double measureTimeMs() ;
   static double measureTimeMicros() ;
+  static void sleepMs(double t);
   static int  wait(double t0, double t) ;
   static void wait(double t) ;
 } ;

@@ -227,5 +227,19 @@ double  vpTime::measureTimeSecond()
   return vpTime::measureTimeMs()/1000.0 ;
 }
 
+/*!
+  Sleep t miliseconds from now.
+
+  \param t : Time to sleep in ms.
+
+*/
+void vpTime::sleepMs(double t)
+{
+#if defined UNIX
+   usleep((unsigned long )(t*1000);
+#elif defined WIN32
+   Sleep((DWORD)(t));
+#endif
+}
 
 
