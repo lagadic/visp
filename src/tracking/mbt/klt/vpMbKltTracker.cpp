@@ -471,7 +471,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMat
         vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
       }
       
-      if(faces[i]->hasEnoughPoints())
+      if(displayFeatures && faces[i]->hasEnoughPoints())
         faces[i]->displayPrimitive(_I);
       
 //       if(facesTracker[i].hasEnoughPoints())
@@ -504,7 +504,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_c
         vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
       }
       
-      if(faces[i]->hasEnoughPoints())
+      if(displayFeatures && faces[i]->hasEnoughPoints())
         faces[i]->displayPrimitive(_I);
       
 //       if(facesTracker[i].hasEnoughPoints())

@@ -156,7 +156,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
 {
   post_tracking_mbt(w_mbt,lvl);
   
-//   if (displayMe)
+  if (displayFeatures)
   {
     if(lvl == 0){
       vpMbtDistanceLine* l;
@@ -574,14 +574,16 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneou
   vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
 //   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel); // Not used because, it would display twice the edges
   
-  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-    if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
-    {
-      vpMbKltTracker::faces[i]->changeFrame(_cMo);      
-      if(vpMbKltTracker::faces[i]->hasEnoughPoints())
-        vpMbKltTracker::faces[i]->displayPrimitive(_I);
-//       if(facesTracker[i].hasEnoughPoints())
-//         faces[i]->displayNormal(_I);
+  if(displayFeatures){
+    for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+      if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
+      {
+        vpMbKltTracker::faces[i]->changeFrame(_cMo);      
+        if(vpMbKltTracker::faces[i]->hasEnoughPoints())
+          vpMbKltTracker::faces[i]->displayPrimitive(_I);
+  //       if(facesTracker[i].hasEnoughPoints())
+  //         faces[i]->displayNormal(_I);
+      }
     }
   }
 }
@@ -602,14 +604,16 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix
   vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
 //   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);// Not used because, it would display twice the edges
   
-  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-    if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
-    {
-      vpMbKltTracker::faces[i]->changeFrame(_cMo);      
-      if(vpMbKltTracker::faces[i]->hasEnoughPoints())
-        vpMbKltTracker::faces[i]->displayPrimitive(_I);
-//       if(facesTracker[i].hasEnoughPoints())
-//         faces[i]->displayNormal(_I);
+  if(displayFeatures){
+    for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+      if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
+      {
+        vpMbKltTracker::faces[i]->changeFrame(_cMo);      
+        if(vpMbKltTracker::faces[i]->hasEnoughPoints())
+          vpMbKltTracker::faces[i]->displayPrimitive(_I);
+  //       if(facesTracker[i].hasEnoughPoints())
+  //         faces[i]->displayNormal(_I);
+      }
     }
   }
 }

@@ -109,7 +109,7 @@ OPTIONS:                                               \n\
      click (a .ppm picture).\
 \n\
   -t \n\
-     Turn off the display of the the moving edges. \n\
+     Turn off the display of the the moving edges and Klt points. \n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -126,7 +126,7 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display, bool& cao3DModel)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel)
 {
   const char *optarg;
   int   c;
@@ -137,7 +137,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'x': configFile = optarg; break;
     case 'm': modelFile = optarg; break;
     case 'n': initFile = optarg; break;
-    case 't': displayMovingEdge = false; break;
+    case 't': displayFeatures = false; break;
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
@@ -172,7 +172,7 @@ main(int argc, const char ** argv)
   std::string modelFile;
   std::string opt_initFile;
   std::string initFile;
-  bool displayMovingEdge = true;
+  bool displayFeatures = true;
   bool opt_click_allowed = true;
   bool opt_display = true;
   bool cao3DModel = false;
@@ -188,7 +188,7 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display, cao3DModel)) {
+  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel)) {
     return (-1);
   }
 
@@ -302,8 +302,8 @@ main(int argc, const char ** argv)
   // Load tracker config file (camera parameters and moving edge settings)
   tracker.loadConfigFile(configFile.c_str());
 
-  // Display the moving edges, see documentation for the significations of the colour
-  tracker.setDisplayMovingEdges(displayMovingEdge);
+  // Display the moving edges, and the Klt points
+  tracker.setDisplayFeatures(displayFeatures);
 
   // initialise an instance of vpCameraParameters with the parameters from the tracker
   vpCameraParameters cam;

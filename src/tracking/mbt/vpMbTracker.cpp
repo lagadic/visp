@@ -98,6 +98,7 @@ vpMbTracker::vpMbTracker()
   cameraInitialised = false;
   coinUsed = false;
   computeCovariance = false;
+  displayFeatures = false;
 }
 
 /*!

@@ -82,7 +82,6 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   lambda = 1;
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
-  displayMe = false;
   computeCovariance = false;
 
   lines.resize(1);
@@ -822,7 +821,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
         }
         
-        if (displayMe)
+        if (displayFeatures)
         {
           if(lvl == 0){
             for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){

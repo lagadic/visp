@@ -114,6 +114,8 @@ protected:
   bool computeCovariance;
   //! Covariance matrix
   vpMatrix covarianceMatrix;
+  //! If true, the features are displayed. 
+  bool displayFeatures;
 
 public:
   vpMbTracker();
@@ -227,7 +229,12 @@ public:
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
-  
+  /*!
+    Enable to display the features.
+    
+    \param displayF : set it to true to display the features.
+  */
+  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
   
   /*!
     Set the filename used to save the initial pose computed using the 

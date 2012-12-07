@@ -272,9 +272,6 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     //! Number of polygon (face) currently visible. 
     unsigned int nbvisiblepolygone;
     
-    //! If true, the moving edges are displayed during the track() method. 
-    bool displayMe;
-    
     //! Percentage of good points over total number of points below which tracking is supposed to have failed.
     double percentageGdPt;
     
@@ -365,7 +362,7 @@ public:
     
     \param displayMe : set it to true to display the points.
   */
-  void setDisplayMovingEdges(const bool displayMe) {this->displayMe = displayMe;}
+  void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
   
   /*!
     Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
