@@ -236,7 +236,7 @@ double  vpTime::measureTimeSecond()
 void vpTime::sleepMs(double t)
 {
 #if defined UNIX
-   usleep((unsigned long )(t*1000);
+   usleep((unsigned long )(t*1000));
 #elif defined WIN32
    Sleep((DWORD)(t));
 #endif
