@@ -15,6 +15,8 @@ ViSP 2.6.3 (under development)
     - New MBT Tracker via KLT points.
     - New Hybrid Tracker MBT Edge + MBT KLT.
   - Improvements
+    - In vp1394TwoGrabber that allows to grab images from firewire cameras,
+      cameras are powered off when the grabber is closed.
     - MinGW is now supported but since MinGW currently doesn't support tls
       __declspec(thread) with vpDisplayGDI it is possible to open only
       one display.

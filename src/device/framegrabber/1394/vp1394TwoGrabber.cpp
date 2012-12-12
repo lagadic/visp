@@ -1679,6 +1679,8 @@ vp1394TwoGrabber::close()
                                             "Unable to reset the initial mode"));
             }
           }
+          if (dc1394_camera_set_power(camera, DC1394_OFF) != DC1394_SUCCESS)
+            std::cout << "Unable to turn camera off" << std::endl;
         }
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
         dc1394_camera_free(cameras[i]);
