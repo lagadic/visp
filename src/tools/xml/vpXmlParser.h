@@ -76,8 +76,8 @@
 
   In order to use this class, you have to create a new class inheriting from this one.
   In the child class, you have to implement the methods:
-  - writeMainClass 
-  - readMainClass
+  - writeMainClass()
+  - readMainClass()
   
   These two methods depends on the data to parse, and must not be directly called
   (they are called from the parse() and the save() methods). 
