@@ -887,6 +887,12 @@ IF(USE_OIS AND USE_OGRE)
   SET(VISP_HAVE_OIS TRUE)           # for header vpConfig.h
   LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OIS_INCLUDE_DIR})
   LIST(APPEND VISP_EXTERN_LIBRARIES ${OIS_LIBRARIES})   
+  IF(APPLE)
+    # With Ogre 1.7.4 and 1.8.1 to be able to link with libOIS.a, Cocoa framework is requested.
+    # This is a work arround since it should come with FindOGRE.cmake
+    LIST(APPEND VISP_EXTERN_LIBRARIES "-framework Cocoa")
+  ENDIF(APPLE)
+
 ENDIF(USE_OIS AND USE_OGRE)
 
 IF(USE_COIN)
