@@ -44,9 +44,10 @@
   \example servoViper850FourPoints2DArtVelocityInteractionDesired.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
-  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
-  computed in articular.  Visual features are the image coordinates of 4 vdot
-  points.
+  Viper S850 robot (arm with 6 degrees of freedom). The velocities resulting
+  from visual servo are here joint velocities. Visual features are the image
+  coordinates of 4 points. The target is made of 4 dots arranged as a 10cm by 10cm
+  square.
 
 */
 
@@ -176,6 +177,7 @@ main()
               << std::endl;
 
     for (i=0 ; i < 4 ; i++) {
+      dot[i].setGraphics(true) ;
       dot[i].initTracking(I) ;
       cog = dot[i].getCog();
       vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
@@ -320,7 +322,7 @@ main()
       //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
-    vpTRACE("Display task information " ) ;
+    std::cout << "Display task information: " << std::endl;
     task.print() ;
     task.kill();
     flog.close() ; // Close the log file

@@ -291,7 +291,7 @@ main()
 
     flog.close() ; // Close the log file
 
-    vpTRACE("Display task information " ) ;
+    std::cout << "Display task information: " << std::endl;
     task.print() ;
     task.kill();
     return 0;

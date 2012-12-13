@@ -44,9 +44,11 @@
   \example servoViper850FourPoints2DCamVelocityInteractionCurrent.cpp
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
-  Viper850 robot (cartesian robot, with 6 degrees of freedom). The velocity is
-  computed in articular.  Visual features are the image coordinates of 4 dot
-  points.
+  Viper S850 robot (arm with 6 degrees of freedom). The velocity is
+  computed in camera frame. The inverse jacobian that converts cartesian velocities
+  in joint velocities is implemented in the robot low level controller.
+  Visual features are the image coordinates of 4 points. The target is made of 4 dots
+  arranged as a 10cm by 10cm square.
 
 */
 
@@ -242,6 +244,7 @@ main()
               << std::endl;
 
     for (i=0 ; i < 4 ; i++) {
+      dot[i].setGraphics(true) ;
       dot[i].initTracking(I) ;
       cog = dot[i].getCog();
       vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
@@ -271,7 +274,7 @@ main()
 
     // Initialise a desired pose to compute s*, the desired 2D point features
     vpHomogeneousMatrix cMo;
-    vpTranslationVector cto(0, 0, 0.5); // tz = 0.7 meter
+    vpTranslationVector cto(0, 0, 0.5); // tz = 0.5 meter
     vpRxyzVector cro(vpMath::rad(10), vpMath::rad(30), vpMath::rad(20));
     vpRotationMatrix cRo(cro); // Build the rotation matrix
     cMo.buildFrom(cto, cRo); // Build the homogeneous matrix
@@ -400,7 +403,7 @@ main()
       //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
-    vpTRACE("Display task information " ) ;
+    std::cout << "Display task information: " << std::endl;
     task.print() ;
     task.kill();
     flog.close() ; // Close the log file

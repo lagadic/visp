@@ -410,8 +410,8 @@ int main()
       //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
     }
 
-    vpTRACE("Display task information " ) ;
     kinect.stop();
+    std::cout << "Display task information: " << std::endl;
     task.print() ;
     task.kill();
     flog.close() ; // Close the log file
