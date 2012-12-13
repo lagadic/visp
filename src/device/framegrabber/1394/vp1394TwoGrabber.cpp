@@ -215,7 +215,6 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
   close();
 }
 
-
 /*!
 
   If multiples cameras are connected on the bus, select the camero to dial

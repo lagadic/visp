@@ -365,17 +365,34 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   vp1394TwoGrabber(bool reset=true);
   virtual ~vp1394TwoGrabber();
 
+  void acquire(vpImage<unsigned char> &I);
+  void acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
+  void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
+
+  void close();
+
+  static std::string colorCoding2string(vp1394TwoColorCodingType colorcoding);
+
+  dc1394video_frame_t *dequeue();
+  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I);
+  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
+  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I);
+  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
+  void enqueue(dc1394video_frame_t *frame);
+
+  static std::string framerate2string(vp1394TwoFramerateType fps);
 
   uint64_t getCamera();
   void getCamera(uint64_t &camera);
-  uint64_t getGuid();
-  void getGuid(uint64_t &guid);
   void getColorCoding(vp1394TwoColorCodingType & coding);
   uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
                                    std::list<vp1394TwoColorCodingType> & codings);
   void getFramerate(vp1394TwoFramerateType & fps);
   uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
                                  std::list<vp1394TwoFramerateType> & fps);
+  uint64_t getGuid();
+  void getGuid(uint64_t &guid);
   void getHeight(unsigned int &height);
   unsigned int getHeight();
   void getNumCameras(unsigned int &ncameras);
@@ -395,6 +412,13 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   bool isVideoModeSupported(vp1394TwoVideoModeType videomode) ;
   bool isVideoModeFormat7(vp1394TwoVideoModeType videomode);
 
+  void open(vpImage<unsigned char> &I);
+  void open(vpImage<vpRGBa> &I);
+
+  void printCameraInfo();
+
+  void resetBus();
+
   void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
   void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);
@@ -407,32 +431,11 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void setRingBufferSize(unsigned int size);
   void setVideoMode(vp1394TwoVideoModeType videomode);
 
-  void open(vpImage<unsigned char> &I);
-  void open(vpImage<vpRGBa> &I);
-
-  void printCameraInfo();
-
-
-  dc1394video_frame_t *dequeue();
-  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I);
-  dc1394video_frame_t *dequeue(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
-  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I);
-  dc1394video_frame_t *dequeue(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
-  void enqueue(dc1394video_frame_t *frame);
-
-  void acquire(vpImage<unsigned char> &I);
-  void acquire(vpImage<unsigned char> &I, uint64_t &timestamp, uint32_t &id);
-  void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<vpRGBa> &I, uint64_t &timestamp, uint32_t &id);
-  void close();
-  void resetBus();
-
-  static std::string videoMode2string(vp1394TwoVideoModeType videomode);
-  static std::string framerate2string(vp1394TwoFramerateType fps);
-  static std::string colorCoding2string(vp1394TwoColorCodingType colorcoding);
   static vp1394TwoVideoModeType string2videoMode(std::string videomode);
   static vp1394TwoFramerateType string2framerate(std::string fps);
   static vp1394TwoColorCodingType string2colorCoding(std::string colorcoding);
+
+  static std::string videoMode2string(vp1394TwoVideoModeType videomode);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
