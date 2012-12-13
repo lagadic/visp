@@ -45,6 +45,8 @@
 # If you want to add/remove a source, modify here
 SET (SOURCE
   servoViper650Point2DCamVelocity.cpp
+  servoViper650FourPoints2DArtVelocityInteractionCurrent.cpp
+  servoViper650FourPoints2DCamVelocityInteractionCurrent.cpp
 )
 
 # rule for binary build
