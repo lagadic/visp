@@ -70,7 +70,7 @@
 #include <OgreFrameListener.h>
 
 #ifdef VISP_HAVE_OIS
-#  include <OIS/OIS.h>
+#  include <OIS.h>
 #endif
 
 /*!
