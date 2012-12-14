@@ -1349,7 +1349,6 @@ SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
 IF(USE_DC1394_1 OR USE_DC1394_2)
@@ -1461,6 +1460,13 @@ IF(USE_DIRECTSHOW)
   ENDIF(DIRECTSHOW_FOUND)
 ENDIF(USE_DIRECTSHOW)
 
+#----------------------------------------------------------------------
+# Specific compiler options
+#----------------------------------------------------------------------
+# default initialisation
+SET(VISP_HAVE_OPENMP_FOUND "no")
+SET(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "no")
+
 IF(USE_OPENMP)
   IF(OPENMP_FOUND)
     MESSAGE(STATUS "OpenMP found")
@@ -1568,6 +1574,7 @@ SET(VISP_HAVE_AFMA4_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_BICLOPS_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_PTU46_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_PIONEER_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_VIPER650_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_CYCAB_FOUND "no")  # for ViSP-third-party.txt
