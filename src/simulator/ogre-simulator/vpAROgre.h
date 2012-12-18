@@ -91,10 +91,10 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #ifdef VISP_HAVE_OIS
 			   , public OIS::KeyListener
 #endif
-{
- public:	
+{ 
+ public:	   
   vpAROgre(const vpCameraParameters &cam = vpCameraParameters(), 
-	   unsigned int width = 640, unsigned int height = 480,
+	   unsigned int width = 0, unsigned int height = 0,
 	   const char* resourcePath = 
 #ifdef VISP_HAVE_OGRE_RESOURCES_PATH
 	   VISP_HAVE_OGRE_RESOURCES_PATH,
@@ -109,117 +109,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #endif
 	   );
 	
-  virtual void init(vpImage<unsigned char> &I, bool bufferedKeys=false);
-  virtual void init(vpImage<vpRGBa> &I, bool bufferedKeys=false);
-
   virtual ~vpAROgre(void);
-
-  virtual bool customframeStarted(const Ogre::FrameEvent& evt);
-
-  virtual bool customframeEnded(const Ogre::FrameEvent& evt);
-	
-#ifdef VISP_HAVE_OIS
-  /**
-   * Default event handler
-   */
-  virtual bool keyPressed( const OIS::KeyEvent & /*e*/) { return true; }
-  /**
-   * Default event handler
-   */
-  virtual bool keyReleased( const OIS::KeyEvent & /*e*/) {  return true; }
-#endif
-
-  virtual void windowClosed(Ogre::RenderWindow* rw);
-
-  virtual void display(const vpImage<unsigned char> &I, 
-           const vpHomogeneousMatrix &cMw);
-
-  virtual void display(const vpImage<vpRGBa> &I, 
-           const vpHomogeneousMatrix &cMw);
-
-  void setCameraParameters(const vpCameraParameters &cameraP);
-
-  void load(const std::string &name, const std::string &model);
-
-  void setPosition(const std::string &name,
-       const vpTranslationVector &wTo);
-  void setPosition(const std::string &name, const vpHomogeneousMatrix &wMo);
-
-  vpTranslationVector getPosition(const std::string &name)const;
-
-  void setRotation(const std::string &name, const vpRotationMatrix &wRo);
-
-  void addRotation(const std::string &name, const vpRotationMatrix &wRo);
-
-
-  void setVisibility(const std::string &name, bool isVisible);
-
-  void setScale(const std::string &name, const float factorx, const float factory, const float factorz);
-
-  bool continueRendering(void);
-
-  void getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo);
-  /*!
-    Set the width of the grabbed image. 
   
-    \warning To be effective, this method must be called before the init() one. 
-  
-    \param width : Width of the grabbed image.
-  */
-  inline void setImageWidth(const unsigned int width){
-    mWidth =width;
-  }
-  
-  /*!
-    Set the height of the grabbed image. 
-  
-    \warning To be effective, this method must be called before the init() one. 
-  
-    \param height : Height of the grabbed image.
-  */
-  inline void setImageHeight(const unsigned int height){
-    mHeight = height;
-  }
-  
-  /*!
-    Enable/Disable the apparition of the config dialog on startup.
-  
-    \warning To be effective, this method must be called before the init() one. 
-  
-    \param showConfigDialog : if true, shows the dialog window (used to set the 
-    display options)
-  */
-  inline void setShowConfigDialog(const bool showConfigDialog){
-    mshowConfigDialog = showConfigDialog;
-  }
-
-  /*!
-    Set the resource path used to locate the resource.cfg file.
-  
-    By default, this path is set to VISP_HAVE_OGRE_RESOURCES_PATH defined in vpConfig.h
-
-    \warning To be effective, this method must be called before the init() one. 
-  
-    \param resourcePath : The new resource path (must not have a terminate /).
-  */
-  inline void setResourcePath(const char* resourcePath){
-    mResourcePath = resourcePath;
-  }
-
-  /*!
-    Set the plugins path used to locate the plugins.cfg file.
-  
-    By default, this path is set to VISP_HAVE_OGRE_PLUGINS_PATH defined in vpConfig.h
-
-    \warning To be effective, this method must be called before the init() one. 
-  
-    \param pluginsPath : The new plugins path (must not have a terminate /).
-  */
-  inline void setPluginsPath(const char* pluginsPath){
-    mPluginsPath = pluginsPath;
-  }
-
-
   /*!
     Add optional resource location. Since a resource file cannot be always
     sufficient to manage multiple location media (depending on the computer and 
@@ -234,6 +125,116 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mOptionnalResourceLocation.push_back(resourceLocation);
   }
   
+  void addRotation(const std::string &name, const vpRotationMatrix &wRo);
+  
+  bool continueRendering(void);
+  
+  virtual bool customframeStarted(const Ogre::FrameEvent& evt);
+
+  virtual bool customframeEnded(const Ogre::FrameEvent& evt);
+  
+  virtual void display(const vpImage<unsigned char> &I, 
+           const vpHomogeneousMatrix &cMw);
+
+  virtual void display(const vpImage<vpRGBa> &I, 
+           const vpHomogeneousMatrix &cMw);
+  
+  inline Ogre::Camera* getCamera(){ return mCamera; }
+  
+  vpTranslationVector getPosition(const std::string &name)const;
+  
+  void getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo);
+  
+  inline Ogre::SceneManager* getSceneManager(){ return mSceneMgr; }
+  
+  virtual void init(vpImage<unsigned char> &I, bool bufferedKeys=false, bool hidden=false);
+  virtual void init(vpImage<vpRGBa> &I, bool bufferedKeys=false, bool hidden=false);
+  
+  /*!
+    Test if the window is hidden or not.
+  
+    \warning True if the window is hidden, false otherwise. 
+  */
+  bool isWindowHidden(){ return windowHidden; }
+  
+#ifdef VISP_HAVE_OIS
+  /**
+   * Default event handler
+   */
+  virtual bool keyPressed( const OIS::KeyEvent & /*e*/) { return true; }
+  /**
+   * Default event handler
+   */
+  virtual bool keyReleased( const OIS::KeyEvent & /*e*/) {  return true; }
+#endif
+
+  void load(const std::string &name, const std::string &model);
+
+  bool renderOneFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMw);
+  
+  bool renderOneFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw);
+  
+  void setCameraParameters(const vpCameraParameters &cameraP);
+  
+  /*!
+    Set the plugins path used to locate the plugins.cfg file.
+  
+    By default, this path is set to VISP_HAVE_OGRE_PLUGINS_PATH defined in vpConfig.h
+
+    \warning To be effective, this method must be called before the init() one. 
+  
+    \param pluginsPath : The new plugins path (must not have a terminate /).
+  */
+  inline void setPluginsPath(const char* pluginsPath){
+    mPluginsPath = pluginsPath;
+  }
+  
+  void setPosition(const std::string &name,
+       const vpTranslationVector &wTo);
+  void setPosition(const std::string &name, const vpHomogeneousMatrix &wMo);
+  
+  /*!
+    Set the resource path used to locate the resource.cfg file.
+  
+    By default, this path is set to VISP_HAVE_OGRE_RESOURCES_PATH defined in vpConfig.h
+
+    \warning To be effective, this method must be called before the init() one. 
+  
+    \param resourcePath : The new resource path (must not have a terminate /).
+  */
+  inline void setResourcePath(const char* resourcePath){
+    mResourcePath = resourcePath;
+  }
+  
+  void setRotation(const std::string &name, const vpRotationMatrix &wRo);
+  
+  void setScale(const std::string &name, const float factorx, const float factory, const float factorz);
+  
+  /*!
+    Enable/Disable the apparition of the config dialog on startup.
+  
+    \warning To be effective, this method must be called before the init() one. 
+  
+    \param showConfigDialog : if true, shows the dialog window (used to set the 
+    display options)
+  */
+  inline void setShowConfigDialog(const bool showConfigDialog){
+    mshowConfigDialog = showConfigDialog;
+  }
+  
+  void setVisibility(const std::string &name, bool isVisible);
+  
+  /*!
+    Set the name of the window.
+    
+    \warning Has to be called before initialisation.
+    
+    \param n : Name of the window.
+  */
+  inline void setWindowName(const Ogre::String &n){
+    name = n;
+  }
+
   /*!
     Set the window position in the screen.
     
@@ -252,9 +253,11 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mWindow->reposition(static_cast<int>(win_x), static_cast<int>(win_y));
   }
   
+  virtual void windowClosed(Ogre::RenderWindow* rw);
+  
  protected:
 
-  virtual void init(bool bufferedKeys=false);
+  virtual void init(bool bufferedKeys=false, bool hidden=false);
   virtual void createCamera(void);
 
   /**
@@ -285,6 +288,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     \return Always true.
   */
   virtual bool destroyScene(void) {return true;};
+  
+  virtual void updateCameraParameters (const vpHomogeneousMatrix &cMo);
 
   virtual void updateCameraProjection(void);
 
@@ -292,7 +297,6 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
   virtual void updateBackgroundTexture(const vpImage<vpRGBa> &I);
 
-  virtual void updateCameraParameters (const vpHomogeneousMatrix &cMo);
 
  private:
 
@@ -307,7 +311,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 
  protected:
   // Attributes
-
+  Ogre::String name;                            /**Name of th Window*/
+  
   // OGRE 3D System
   Ogre::Root*	    mRoot;                         /** Application's root */
   Ogre::Camera*	    mCamera;                   /** Camera */
@@ -323,13 +328,16 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
 #endif
 
   // ViSP AR System
-  bool keepOn;                                   /** Has the application received a signal to stop(false) or not (true) */
-  vpImage<vpRGBa> mImageRGBA;                    /** vpImage to store grabbed image */
-  vpImage<unsigned char> mImage;                 /** vpImage to store grabbed image */
-  Ogre::HardwarePixelBufferSharedPtr mPixelBuffer;   /** Pointer to the pixel buffer */
-  Ogre::Rectangle2D* mBackground;                /** Background image */
-  unsigned int mHeight;                                   /** Height of the acquired image */
-  unsigned int mWidth;                                    /** Width of the acquired image */
+  bool keepOn;                                            /** Has the application received a signal to stop(false) or not (true) */
+  vpImage<vpRGBa> mImageRGBA;                             /** vpImage to store grabbed image */
+  vpImage<unsigned char> mImage;                          /** vpImage to store grabbed image */
+  Ogre::HardwarePixelBufferSharedPtr mPixelBuffer;        /** Pointer to the pixel buffer */
+  Ogre::Rectangle2D* mBackground;                         /** Background image */
+  unsigned int mBackgroundHeight;                         /** Height of the acquired image */
+  unsigned int mBackgroundWidth;                          /** Width of the acquired image */
+  unsigned int mWindowHeight;                             /** Height of the window */
+  unsigned int mWindowWidth;                              /** Width of the window */
+  bool windowHidden;                                     /** Is window hidden */
 
   // Camera calculations
   vpCameraParameters mcam;                       /** The intrinsic camera parameters */
