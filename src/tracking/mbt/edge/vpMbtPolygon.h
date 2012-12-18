@@ -43,7 +43,7 @@
  *****************************************************************************/
 
 /*!
- \file vpMbtHiddenFace.h
+ \file vpMbtPolygon.h
  \brief Make the complete tracking of an object by using its CAD model.
 */
 

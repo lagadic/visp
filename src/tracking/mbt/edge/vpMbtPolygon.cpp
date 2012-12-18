@@ -46,7 +46,7 @@
 
 #include <visp/vpConfig.h>
 /*!
- \file vpMbtHiddenFace.cpp
+ \file vpMbtPolygon.cpp
  \brief Make the complete tracking of an object by using its CAD model.
 */
 
