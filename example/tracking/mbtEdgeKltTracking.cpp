@@ -60,10 +60,10 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
-#if defined (VISP_HAVE_XML2) && defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY)
+#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY)
 
 
-#define GETOPTARGS  "x:m:i:n:dchtf"
+#define GETOPTARGS  "x:m:i:n:dchtfo"
 
 
 void usage(const char *name, const char *badparam)
@@ -118,6 +118,9 @@ OPTIONS:                                               \n\
      Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
 \n\
+  -o\n\
+     Use Ogre3D for visibility tests\n\
+\n\
   -h \n\
      Print the help.\n\n");
 
@@ -126,7 +129,7 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel, bool &useOgre)
 {
   const char *optarg;
   int   c;
@@ -141,6 +144,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
+    case 'o' : useOgre = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -176,6 +180,7 @@ main(int argc, const char ** argv)
   bool opt_click_allowed = true;
   bool opt_display = true;
   bool cao3DModel = false;
+  bool useOgre = false;
   
   // Get the VISP_IMAGE_PATH environment variable value
   char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
@@ -188,7 +193,7 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel)) {
+  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel, useOgre)) {
     return (-1);
   }
 
@@ -300,10 +305,15 @@ main(int argc, const char ** argv)
   vpHomogeneousMatrix cMo;
   
   // Load tracker config file (camera parameters and moving edge settings)
+#if defined (VISP_HAVE_XML2)
   tracker.loadConfigFile(configFile.c_str());
-
+#endif
+  
   // Display the moving edges, and the Klt points
   tracker.setDisplayFeatures(displayFeatures);
+  
+  //Tells if the tracker has to use Ogre3D for visibility tests
+  tracker.setOgreVisibilityTest(useOgre);
 
   // initialise an instance of vpCameraParameters with the parameters from the tracker
   vpCameraParameters cam;
@@ -403,7 +413,7 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "libxml2, OpenCV and display are required." << std::endl;
+  std::cout << "OpenCV and display are required." << std::endl;
   return 0;
 }
 
