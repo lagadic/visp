@@ -61,7 +61,7 @@
 
  */
 template<class PolygonType = vpMbtPolygon>
-class VISP_EXPORT vpMbHiddenFaces
+class vpMbHiddenFaces
 {
   private:
   std::vector<PolygonType *> Lpol ;
