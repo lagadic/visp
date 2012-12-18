@@ -67,8 +67,6 @@
 class VISP_EXPORT vpMbtKltXmlParser: public vpXmlParser
 {
 protected:
-  //! Threshold used to remove outliers
-  double threshold;
   //! Border of the mask used on Klt points
   unsigned int maskBorder;
   //! Maximum of Klt features
@@ -96,7 +94,6 @@ protected:
     conf,
     klt,
     mask_border,
-    threshold_outlier,
     max_features,
     window_size,
     quality,
@@ -193,13 +190,6 @@ public:
   inline double getQuality() const {return qualityValue;}
   
   /*!
-    Get the threshold used to remove outliers.
-
-    \return threshold
-  */
-  inline double getThresholdOutliers() const {return threshold;}
-  
-  /*!
     Get the size of the window used in the KLT tracker.
 
     \return winSize
@@ -282,13 +272,6 @@ public:
     \param q : New quality
   */
   inline void setQuality(const double &q) {qualityValue = q;}
-  
-  /*!
-    Set the threshold used to remove outliers.
-
-    \param t : New threshold
-  */
-  inline void setThresholdOutliers(const double &t) {threshold = t;}
   
   /*!
     Set the size of the window used in the KLT tracker.

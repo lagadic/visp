@@ -79,7 +79,6 @@ vpMbtKltXmlParser::init()
   nodeMap["conf"] = conf;
   nodeMap["klt"] = klt;
   nodeMap["mask_border"] = mask_border;
-  nodeMap["threshold_outlier"] = threshold_outlier;
   nodeMap["max_features"] = max_features;
   nodeMap["window_size"] = window_size;
   nodeMap["quality"] = quality;
@@ -230,7 +229,6 @@ void
 vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
 {
 	bool mask_border_node = false;
-  bool threshold_outlier_node = false;
   bool max_features_node = false;
   bool window_size_node = false;
   bool quality_node = false;
@@ -247,10 +245,6 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
         case mask_border:{
           maskBorder = xmlReadIntChild(doc, dataNode);
           mask_border_node = true;
-          }break;
-        case threshold_outlier:{
-          threshold = xmlReadDoubleChild(doc, dataNode);
-          threshold_outlier_node = true;
           }break;
         case max_features:{
           maxFeatures = xmlReadIntChild(doc, dataNode);
@@ -292,11 +286,6 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "WARNING: In KLT Node, MASK_BORDER Node not specified, default value used : " << maskBorder << std::endl;
   else
     std::cout << "klt : Mask Border : "<< maskBorder <<std::endl;
-  
-  if(!threshold_outlier_node)
-    std::cout << "WARNING: In KLT Node, THRESHOLD_OUTLIER Node not specified, default value used : " << threshold << std::endl;
-  else
-    std::cout << "klt : Threshold Outlier : "<< threshold <<std::endl;
   
   if(!max_features_node)
     std::cout << "WARNING: In KLT Node, MAX_FEATURES Node not specified, default value used : " << maxFeatures << std::endl;
