@@ -267,8 +267,10 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     
     //! Index of the polygon to add, and total number of polygon extracted so far. Cannot be unsigned because the default index of a polygon is -1.
     int index_polygon;
+    
     //! Set of faces describing the object. 
-    vpMbtHiddenFaces faces;
+    vpMbHiddenFaces<vpMbtPolygon> *faces;
+    
     //! Number of polygon (face) currently visible. 
     unsigned int nbvisiblepolygone;
     
@@ -284,13 +286,15 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     //! Current scale level used. This attribute must not be modified outsied of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
     unsigned int scaleLevel;
     
+    //! Use Ogre3d for visibility tests
+    bool useOgre;
+  
     //! Angle used to detect a face apparition
     double angleAppears;
   
     //! Angle used to detect a face disparition
     double angleDisappears;
   
-
 public:
   
   vpMbEdgeTracker(); 
@@ -383,6 +387,16 @@ public:
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
   void setMovingEdge(const vpMe &_me);
+  
+  /*!
+    Use Ogre3D for visibility tests
+    
+    \warning This function has to be called before the initialisation of the tracker.
+    
+    \param v : True to use it, False otherwise
+  */
+  virtual inline void setOgreVisibilityTest(const bool &v) { useOgre = v; }
+  
   void setScales(const std::vector<bool>& _scales);
 
 
@@ -408,8 +422,8 @@ protected:
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
   void upScale(const unsigned int _scale); 
-  void visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline) ;
-   
+  void visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ;
+  void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
 };
 
 #endif

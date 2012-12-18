@@ -64,6 +64,7 @@
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
+#include <visp/vpMbtPolygon.h>
 
 #include <limits>
 #include <string>
@@ -91,6 +92,13 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   lines[0].clear();
   cylinders[0].clear();
   Ipyramid.resize(0);
+  
+  faces = new vpMbHiddenFaces<vpMbtPolygon>();
+  
+#ifdef VISP_HAVE_OGRE
+  faces->getOgreContext()->setWindowName("MBT Edge");
+  useOgre = false;
+#endif
   
   angleAppears = vpMath::rad(95);
   angleDisappears = vpMath::rad(95);
@@ -850,7 +858,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         
         // Looking for new visible face
         bool newvisibleface = false ;
-        visibleFace(cMo, newvisibleface) ;
+        visibleFace(I, cMo, newvisibleface) ;
         initMovingEdge(I,cMo) ;
 
         // Reinit the moving edge for the lines which need it.
@@ -883,9 +891,17 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 {
 	bool a = false;
+
+#ifdef VISP_HAVE_OGRE 
+  if(useOgre){
+    if(!faces->isOgreInitialised())
+      faces->initOgre(cam);
+  }
+#endif
+  
   
   initPyramid(I, Ipyramid);
-  visibleFace(cMo, a);
+  visibleFace(I, cMo, a);
   unsigned int i=scales.size();
   do {
     i--;
@@ -994,6 +1010,11 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
       break ; //displaying model on one scale only
     }
   }
+  
+#ifdef VISP_HAVE_OGRE
+  if(useOgre)
+    faces->displayOgre(_cMo);
+#endif
 }
 
 /*!
@@ -1027,6 +1048,11 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_c
       break ; //displaying model on one scale only
     }
   }
+  
+#ifdef VISP_HAVE_OGRE
+  if(useOgre)
+    faces->displayOgre(_cMo);
+#endif
 }
 
 
@@ -1221,7 +1247,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
            (samePoint(*(l->p1),P2) && samePoint(*(l->p2),P1)) ){
           already_here = true ;
           l->Lindex_polygon.push_back(polygone);
-          l->hiddenface = &faces ;
+          l->hiddenface = faces ;
         }
       }
 
@@ -1232,7 +1258,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
         l->buildFrom(P1,P2) ;
         l->Lindex_polygon.push_back(polygone);
         l->setMovingEdge(&me) ;
-        l->hiddenface = &faces ;
+        l->hiddenface = faces ;
         l->setIndex(nline) ;
         l->setName(name);
         nline +=1 ;
@@ -1343,7 +1369,7 @@ void
 vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 {
   p.setIndex(index_polygon) ;
-  faces.addPolygon(&p) ;
+  faces->addPolygon(&p) ;
 
   unsigned int nbpt = p.getNbPoint() ;
   if(nbpt > 0){
@@ -1362,15 +1388,63 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   \warning If in one iteration one face appears and one disappears, then the 
   function will not detect the new face. 
   
-  \param cMo : The pose of the camera used to project the 3D model into the image.
+  \param _cMo : The pose of the camera used to project the 3D model into the image.
   \param newvisibleline : This parameter is set to true if a new face appeared.
 */
 void
-vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &cMo, bool &newvisibleline)
+vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
 {
   unsigned int n ;
 
-  n = faces.setVisible(cMo) ;
+  if(!useOgre)
+    n = faces->setVisible(_cMo) ;
+  else{
+#ifdef VISP_HAVE_OGRE   
+    bool changed = false;
+    n = faces->setVisibleOgre(_cMo, vpMath::rad(70), vpMath::rad(70), changed);
+#else
+    n = faces->setVisible(_cMo) ;
+#endif
+  } 
+  
+//  cout << "visible face " << n << endl ;
+  if (n > nbvisiblepolygone)
+  {
+    //cout << "une nouvelle face est visible " << endl ;
+    newvisibleline = true ;
+  }
+  else
+    newvisibleline = false ;
+
+  nbvisiblepolygone= n ;
+}
+
+/*!
+  Detect the visible faces in the image and says if a new one appeared.
+  
+  \warning If in one iteration one face appears and one disappears, then the 
+  function will not detect the new face. 
+  
+  \param _I : Image to test if a face is entirely in the image.
+  \param _cMo : The pose of the camera used to project the 3D model into the image.
+  \param newvisibleline : This parameter is set to true if a new face appeared.
+*/
+void
+vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
+{
+  unsigned int n ;
+
+  if(!useOgre)
+    n = faces->setVisible(_cMo) ;
+  else{
+#ifdef VISP_HAVE_OGRE   
+    bool changed = false;
+    n = faces->setVisibleOgre(_I, cam, _cMo, vpMath::rad(70), vpMath::rad(70), changed);
+#else
+    n = faces->setVisible(_cMo) ;
+#endif
+  } 
+  
 //  cout << "visible face " << n << endl ;
   if (n > nbvisiblepolygone)
   {
@@ -1485,7 +1559,7 @@ vpMbEdgeTracker::resetTracker()
     }
   }
   
-  faces.reset();
+  faces->reset();
   
   index_polygon =0;
   compute_interaction=1;
@@ -1575,12 +1649,11 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
 vpMbtPolygon* 
 vpMbEdgeTracker::getPolygon(const unsigned int _index)
 {
-  if(_index >= static_cast<unsigned int>(faces.getPolygon().size()) ){
+  if(_index >= static_cast<unsigned int>(faces->size()) ){
     throw vpException(vpException::dimensionError, "index out of range");
   }
-  std::list<vpMbtPolygon*>::const_iterator it = faces.getPolygon().begin();
-  std::advance(it, _index);
-  return *it;
+  
+  return (*faces)[_index];
 }
 
 /*!
@@ -1591,7 +1664,7 @@ vpMbEdgeTracker::getPolygon(const unsigned int _index)
 unsigned int 
 vpMbEdgeTracker::getNbPolygon() 
 {
-  return static_cast<unsigned int>(faces.getPolygon().size());
+  return static_cast<unsigned int>(faces->size());
 }
 
 /*!

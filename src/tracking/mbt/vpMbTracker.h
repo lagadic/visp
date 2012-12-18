@@ -55,8 +55,15 @@
 #include <visp/vpRGBa.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpPoint.h>
+#include <visp/vpMbtPolygon.h>
+#include <visp/vpMbHiddenFaces.h>
 
 #ifdef VISP_HAVE_COIN
+//Work arround to avoid type redefinition int8_t with Coin
+// #if defined(WIN32) && defined(VISP_HAVE_OGRE) && (_MSC_VER >= 1600) // Visual Studio 2010
+//   #define HAVE_INT8_T 1
+// #endif
+
 //Inventor includes
 # include <Inventor/VRMLnodes/SoVRMLGroup.h>
 # include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>

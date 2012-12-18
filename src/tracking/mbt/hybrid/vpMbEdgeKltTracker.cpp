@@ -46,10 +46,14 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   computeCovariance = false;
   
   lambda = 0.8;
-  thresholdKLT = 5.0;
+  thresholdKLT = 2.0;
   thresholdMBT = 2.0;
   maxIter = 200;
   vpMbKltTracker::setMaxIter(30);
+  
+#ifdef VISP_HAVE_OGRE
+  vpMbKltTracker::faces->getOgreContext()->setWindowName("MBT Hybrid");
+#endif
 }
 
 /*!
@@ -154,7 +158,9 @@ vpMbEdgeKltTracker::loadModel(const std::string& _modelFile)
 bool
 vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl)
 {
-  post_tracking_mbt(w_mbt,lvl);
+  bool reInit = vpMbKltTracker::postTracking(_I, w_klt);
+  
+  postTrackingMbt(w_mbt,lvl);
   
   if (displayFeatures)
   {
@@ -170,12 +176,24 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
   }
   
   vpMbEdgeTracker::updateMovingEdge(_I);
-  bool useless = false ;
-  vpMbEdgeTracker::visibleFace(cMo, useless) ;
+  
+//   bool useless = false ;
+//   vpMbEdgeTracker::visibleFace(_I, cMo, useless) ;
+  unsigned int n = 0;
+  for(unsigned int i = 0; i < vpMbKltTracker::faces->size() ; i++){
+      if((*vpMbKltTracker::faces)[i]->isVisible()){
+        (*vpMbEdgeTracker::faces)[i]->isvisible = true;
+        n++;
+      }
+      else
+        (*vpMbEdgeTracker::faces)[i]->isvisible = false;
+  }
+  vpMbEdgeTracker::nbvisiblepolygone = n;
+  
   vpMbEdgeTracker::initMovingEdge(_I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(_I, cMo);
   
-  return vpMbKltTracker::postTracking(_I, w_klt);
+  return reInit;
 }
 
 /*!
@@ -189,7 +207,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
   \param _lvl : Optional parameter to specify the level to track.
 */
 void
-vpMbEdgeKltTracker::post_tracking_mbt(vpColVector &w, const unsigned int _lvl)
+vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int _lvl)
 {
 
   if(_lvl  >= scales.size() || !scales[_lvl]){
@@ -302,13 +320,13 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
-      for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-        if(vpMbKltTracker::faces[i]->getIsTracked() && vpMbKltTracker::faces[i]->hasEnoughPoints()){
-          vpSubColVector subR(R_klt, shift, 2*vpMbKltTracker::faces[i]->getNbPointsCur());
-          vpSubMatrix subJ(J_klt, shift, 0, 2*vpMbKltTracker::faces[i]->getNbPointsCur(), 6);
-          vpMbKltTracker::faces[i]->computeHomography(ctTc0, H);
-          vpMbKltTracker::faces[i]->computeInteractionMatrixAndResidu(subR, subJ);
-          shift += 2*vpMbKltTracker::faces[i]->getNbPointsCur();
+      for (unsigned int i = 0; i < vpMbKltTracker::faces->size(); i += 1){
+        if((*vpMbKltTracker::faces)[i]->isVisible() && (*vpMbKltTracker::faces)[i]->hasEnoughPoints()){
+          vpSubColVector subR(R_klt, shift, 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur());
+          vpSubMatrix subJ(J_klt, shift, 0, 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur(), 6);
+          (*vpMbKltTracker::faces)[i]->computeHomography(ctTc0, H);
+          (*vpMbKltTracker::faces)[i]->computeInteractionMatrixAndResidu(subR, subJ);
+          shift += 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur();
         }
       }
     }
@@ -439,8 +457,10 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& _I)
   vpColVector w_mbt;
   computeVVS(_I, nbInfos, w_mbt, w_klt);
   
-  if(postTracking(_I, w_mbt, w_klt))
-    init(_I);
+  if(postTracking(_I, w_mbt, w_klt)){
+    vpMbEdgeTracker::init(_I);
+    vpMbKltTracker::reinit(_I);
+  }
 }
 
 int 
@@ -571,21 +591,7 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, co
 void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
-  vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
-//   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel); // Not used because, it would display twice the edges
-  
-  if(displayFeatures){
-    for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-      if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
-      {
-        vpMbKltTracker::faces[i]->changeFrame(_cMo);      
-        if(vpMbKltTracker::faces[i]->hasEnoughPoints())
-          vpMbKltTracker::faces[i]->displayPrimitive(_I);
-  //       if(facesTracker[i].hasEnoughPoints())
-  //         faces[i]->displayNormal(_I);
-      }
-    }
-  }
+  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
 }
 
 /*!
@@ -601,21 +607,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneou
 void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
-  vpMbEdgeTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
-//   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);// Not used because, it would display twice the edges
-  
-  if(displayFeatures){
-    for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-      if(displayFullModel || vpMbKltTracker::faces[i]->getIsTracked())
-      {
-        vpMbKltTracker::faces[i]->changeFrame(_cMo);      
-        if(vpMbKltTracker::faces[i]->hasEnoughPoints())
-          vpMbKltTracker::faces[i]->displayPrimitive(_I);
-  //       if(facesTracker[i].hasEnoughPoints())
-  //         faces[i]->displayNormal(_I);
-      }
-    }
-  }
+  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
 }
 
 #endif //VISP_HAVE_OPENCV

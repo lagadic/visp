@@ -45,7 +45,7 @@
 
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
-#include <visp/vpMbtKltHiddenFace.h>
+#include <visp/vpMbtKltPolygon.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpDisplayX.h>
@@ -55,6 +55,7 @@
 #include <visp/vpSubColVector.h>
 #include <visp/vpSubMatrix.h>
 #include <visp/vpExponentialMap.h>
+#include <visp/vpMbtKltPolygon.h>
 
 /*!
   \class vpMbKltTracker
@@ -86,16 +87,18 @@ private:
   unsigned int  maxIter;
   //! Threshold below which the weight associated to a point to consider this one as an outlier.
   double threshold_outlier;
+  //! Percentage of good points, according to the initial number, that must have the tracker.
+  double percentGood;
+  //! Use Ogre3d for visibility tests
+  bool useOgre;
   
 protected:
   //! The estimated displacement of the pose between the current instant and the initial position.
   vpHomogeneousMatrix ctTc0;
   //! Points tracker.
   vpKltOpencv tracker;
-  //! Map of the points in the initial image with their unique identifier as a key.
-  std::map<int, vpImagePoint> iPI0;
-  //! Each face currently tracked.
-  vpMbtKltHiddenFaces faces;
+  //! Set of faces describing the object. 
+  vpMbHiddenFaces<vpMbtKltPolygon> *faces;
   
 public:
   
@@ -107,24 +110,20 @@ public:
 
 protected:
   virtual void            init(const vpImage<unsigned char>& _I);
+  virtual void            reinit(const vpImage<unsigned char>& _I);
   
 public:
   virtual void            loadConfigFile(const std::string& _configFile);
           void            loadConfigFile(const char* filename);
           
           /*!
-            Get the threshold for the acceptation of a point.
-
-            \return threshold_outlier : Threshold for the weight below which a point is rejected.
+            Get the current list of KLT points.
+            
+            \return the list of KLT points through vpKltOpencv.
           */
-  inline  double          getThresholdAcceptation() { return threshold_outlier;}
+  inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
   
-          /*!
-            Get the erosion of the mask used on the Model faces.
-
-            \return The erosion.
-          */
-  inline  unsigned int    getMaskBorder() { return maskBorder; }
+          std::vector<vpImagePoint> getKltImagePoints();
           
           /*!
             Get the value of the gain used to compute the control law.
@@ -134,11 +133,32 @@ public:
   inline  double          getLambda() {return lambda;}
   
           /*!
+            Get the erosion of the mask used on the Model faces.
+
+            \return The erosion.
+          */
+  inline  unsigned int    getMaskBorder() { return maskBorder; }
+  
+          /*!
             Get the maximum iteration of the virtual visual servoing stage.
             
             \return the number of iteration
           */
   inline  unsigned int    getMaxIter() {return maxIter;}
+  
+          /*!
+            Get the current number of klt points.
+            
+            \return the number of features
+          */
+  inline  int             getNbKltPoints() {return tracker.getNbFeatures();}
+       
+          /*!
+            Get the threshold for the acceptation of a point.
+
+            \return threshold_outlier : Threshold for the weight below which a point is rejected.
+          */
+  inline  double          getThresholdAcceptation() { return threshold_outlier;}
   
           void            setCameraParameters(const vpCameraParameters& _cam);
           
@@ -162,6 +182,15 @@ public:
             \param max : the desired number of iteration
           */
   inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
+  
+          /*!
+            Use Ogre3D for visibility tests
+            
+            \warning This function has to be called before the initialisation of the tracker.
+            
+            \param v : True to use it, False otherwise
+          */
+  virtual inline  void    setOgreVisibilityTest(const bool &v) { useOgre = v; }
   
           void            setPose(const vpHomogeneousMatrix &_cMo);
           

@@ -97,7 +97,7 @@ public:
           */
   inline  unsigned int getMaxIter() {return maxIter;}
 
-  void    loadConfigFile(const char* filename);
+          void    loadConfigFile(const char* filename);
   virtual void    loadConfigFile(const std::string& _configFile);
   virtual void    loadModel(const std::string& _modelFile);
 
@@ -117,24 +117,33 @@ public:
           */
   inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
 
-  void    setPose(const vpHomogeneousMatrix &_cMo) ;
+          void    setPose(const vpHomogeneousMatrix &_cMo) ;
+          
+          /*!
+            Use Ogre3D for visibility tests
+            
+            \warning This function has to be called before the initialisation of the tracker.
+            
+            \param v : True to use it, False otherwise
+          */
+  virtual inline  void    setOgreVisibilityTest(const bool &v) { vpMbKltTracker::setOgreVisibilityTest(v); }
 
   virtual void    testTracking(){};
   virtual void    track(const vpImage<unsigned char>& _I);
 
 protected:
-  void    computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
+          void    computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
 
   virtual void    init(const vpImage<unsigned char>& _I);
   virtual void    initCylinder(const vpPoint& , const vpPoint , const double , const unsigned int ){};
   virtual void    initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
-  int     initMbtTracking(const unsigned int _level=0);
+          int     initMbtTracking(const unsigned int _level=0);
 
-  bool    postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
-  void    post_tracking_mbt(vpColVector &_w, const unsigned int _level=0);
+          bool    postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
+          void    postTrackingMbt(vpColVector &_w, const unsigned int _level=0);
 
-  int     trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl = 0);
-  void    trackSecondLoop(vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl=0);
+          int     trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl = 0);
+          void    trackSecondLoop(vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl=0);
 };
 
 #endif
