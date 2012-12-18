@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMbEdgeTracker.h 2807 2010-09-14 10:14:54Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.

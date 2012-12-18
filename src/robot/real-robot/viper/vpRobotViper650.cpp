@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpRobotViper650.cpp 3697 2012-05-03 08:41:33Z fspindle $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.

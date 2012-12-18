@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMbtHiddenFace.cpp 4003 2012-11-23 16:48:31Z ayol $
+ * $Id$
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
