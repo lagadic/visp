@@ -37,9 +37,7 @@
  *****************************************************************************/
 
 
-#include <limits.h>
-
-#include <visp/vpMbtKltHiddenFace.h>
+#include <visp/vpMbtKltPolygon.h>
 
 #ifdef VISP_HAVE_OPENCV
 
@@ -56,6 +54,8 @@ vpMbtKltPolygon::vpMbtKltPolygon()
   nbPointsCur = 0;
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
+  
+  isvisible = false;
 }
 
 /*!
@@ -70,28 +70,25 @@ vpMbtKltPolygon::~vpMbtKltPolygon()
   map detected in the image, are parsed in order to extract the id of the points
   that are indeed in the face.
 
-  \param _iPI0 : The map of detected points.
-  \param _roi : The roi describing the face.
+  \param _tracker : ViSP OpenCV KLT Tracker.
 */
 void
-vpMbtKltPolygon::init(const std::map<int, vpImagePoint>& _iPI0, const std::vector<vpImagePoint>& _roi)
+vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
 {
-  roi = _roi;
-
-  if( _roi.size() < 3){
-    return;
-  }
-
   // extract ids of the points in the face
   nbPointsInit = 0;
   nbPointsCur = 0;
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
-  std::map<int, vpImagePoint>::const_iterator iter = _iPI0.begin();
-  for( ; iter != _iPI0.end(); iter++){
-    if(isInside(_roi, iter->second.get_i(), iter->second.get_j())){
-      initPoints[iter->first] = vpImagePoint(iter->second.get_i(), iter->second.get_j());
-      curPoints[iter->first] = vpImagePoint(iter->second.get_i(), iter->second.get_j());
+  
+  for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
+    int id;
+    float x_tmp, y_tmp;
+    _tracker.getFeature(i, id, x_tmp, y_tmp);
+    
+    if(isInside(getRoi(cam), y_tmp, x_tmp)){
+      initPoints[id] = vpImagePoint(y_tmp, x_tmp);
+      curPoints[id] = vpImagePoint(y_tmp, x_tmp);
       nbPointsInit++;
       nbPointsCur++;
     }
@@ -106,28 +103,6 @@ vpMbtKltPolygon::init(const std::map<int, vpImagePoint>& _iPI0, const std::vecto
   N.normalize();
   N_cur = N;
   invd0 = 1.0 / d0;
-}
-
-/*!
-  Project the 3D corner points into the image thanks to the pose of the camera.
-  
-  \param cMo : The pose of the camera.
-*/
-void
-vpMbtKltPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
-{
-  vpMbtPolygon::changeFrame(cMo);
-  
-  roi.clear();
-  roi.resize(nbpt);
-  
-  for(unsigned int i = 0 ; i < roi.size() ; i++){
-    double u = 0;
-    double v = 0;
-    vpMeterPixelConversion::convertPoint(cam, p[i].get_x(), p[i].get_y(), u, v);
-    roi[i].set_u(u);
-    roi[i].set_v(v);
-  }
 }
 
 /*!
@@ -321,51 +296,6 @@ vpMbtKltPolygon::isTrackedFeature(const int _id)
 }
 
 /*!
-  Get the reference of a corner (vpImagePoint format)
-
-  \param _index : the index of the corner
-*/
-vpImagePoint &
-vpMbtKltPolygon::getImagePoint(const unsigned int _index)
-{
-  if(_index >= roi.size()){
-    throw vpException(vpException::dimensionError, "index out of range");
-  }
-  return roi[_index];
-}
-
-void                
-vpMbtKltPolygon::getMinMaxRoi(unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max)
-{
-  // i_min = std::numeric_limits<unsigned int>::max(); // create an error under Windows. To fix it we have to add #undef max
-  i_min = UINT_MAX;
-  i_max = 0;
-  // j_min = std::numeric_limits<unsigned int>::max();
-  j_min = UINT_MAX;
-  j_max = 0;
-  for (unsigned int i = 0; i < roi.size(); i += 1){
-    if(i_min > static_cast<unsigned int>(roi[i].get_i()))
-      i_min = static_cast<unsigned int>(roi[i].get_i());
-    
-    if(roi[i].get_i() < 0)
-      i_min = 1;
-    
-    if((roi[i].get_i() > 0) && (i_max < static_cast<unsigned int>(roi[i].get_i())))
-      i_max = static_cast<unsigned int>(roi[i].get_i());
-    
-    
-    if(j_min > static_cast<unsigned int>(roi[i].get_j()))
-      j_min = static_cast<unsigned int>(roi[i].get_j());
-    
-    if(roi[i].get_j() < 0)
-      j_min = 1;//border
-      
-    if((roi[i].get_j() > 0) && j_max < static_cast<unsigned int>(roi[i].get_j()))
-      j_max = static_cast<unsigned int>(roi[i].get_j());
-  }
-}
-
-/*!
   Modification of all the pixels that are in the roi to the value of _nb (
   default is 255).
 
@@ -378,7 +308,8 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned int _nb, unsigned int _shi
 {
   int width = _mask->width;
   unsigned int i_min, i_max, j_min, j_max;
-  getMinMaxRoi(i_min,i_max,j_min,j_max);
+  std::vector<vpImagePoint> roi = getRoi(cam);
+  vpMbtKltPolygon::getMinMaxRoi(roi, i_min,i_max,j_min,j_max);
 
   /* check image boundaries */
   if(i_min > static_cast<unsigned int>(_mask->height)){ //underflow
@@ -508,75 +439,9 @@ vpMbtKltPolygon::displayPrimitive(const vpImage<vpRGBa>& _I)
   }
 }
 
-/*!
-  Display the normal of the face
-  
-  \param _I : The image where to display.
-*/
-void
-vpMbtKltPolygon::displayNormal(const vpImage<unsigned char>& _I)
-{
-  vpPoint center;
-  double X, Y, Z; X = Y = Z = 0;
-  unsigned int size = 4;
-  
-  for(unsigned int i = 0 ; i < size ; i++){
-    X += p[i].get_X(); Y += p[i].get_Y(); Z += p[i].get_Z();
-  }
-  X /= (double)size; Y /= (double)size; Z /= (double)size;
-  
-  center.set_X(X);
-  center.set_Y(Y);
-  center.set_Z(Z);
-  
-  vpPoint extrem = center;
-  vpPoint extrem2 = center;
-  
-  if(N.getRows() == 3){    
-  vpColVector normalN = N;
-  normalN /= 15.0;
-  extrem.set_X(extrem.get_X()+normalN[0]);
-  extrem.set_Y(extrem.get_Y()+normalN[1]);
-  extrem.set_Z(extrem.get_Z()+normalN[2]);
-  
-  vpColVector normalN_cur = N_cur;
-  normalN_cur /= 15.0;
-  extrem2.set_X(extrem2.get_X()+normalN_cur[0]);
-  extrem2.set_Y(extrem2.get_Y()+normalN_cur[1]);
-  extrem2.set_Z(extrem2.get_Z()+normalN_cur[2]);
-  
-  vpImagePoint ip, ip2, ip3;
-  vpMeterPixelConversion::convertPoint(cam,center.get_X()/center.get_Z(),center.get_Y()/center.get_Z(),ip);
-  vpMeterPixelConversion::convertPoint(cam,extrem.get_X()/extrem.get_Z(),extrem.get_Y()/extrem.get_Z(),ip2);
-  vpMeterPixelConversion::convertPoint(cam,extrem2.get_X()/extrem2.get_Z(),extrem2.get_Y()/extrem2.get_Z(),ip3);
-
-  vpDisplay::displayArrow(_I, ip, ip2, vpColor::orange, 4, 6, 2);
-  vpDisplay::displayArrow(_I, ip, ip3, vpColor::cyan, 4, 6, 2);
-  }
-}
-
 //###################################
 //      Static functions
 //###################################
-
-/*!
-  Static method to check whether the region defined by the vector of image point
-  is contained entirely in the image.
-
-  \param I : The image used for its size.
-  \param corners : The vector of points defining a region
-*/
-bool
-vpMbtKltPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners)
-{
-  for(unsigned int i=0; i<corners.size(); ++i){
-    if((corners[i].get_i() < 0) || (corners[i].get_j() < 0) ||
-       (corners[i].get_i() > I.getHeight()) || (corners[i].get_j() > I.getWidth())){
-      return false;
-    }
-  }
-  return true;
-}
 
 bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double i_test, const double j_test, const double i, const double j)
 {
@@ -627,137 +492,6 @@ bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const doubl
     }
   }
   return ((nbInter%2) == 1);
-}
-
-//###############################################
-//            vpMbtKltHiddenFace
-//###############################################
-
-
-/*!
-  Basic constructor.
-*/
-vpMbtKltHiddenFaces::vpMbtKltHiddenFaces() : percentGood(0.5)
-{}
-
-
-/*!
-  Basic destructor.
-*/
-vpMbtKltHiddenFaces::~vpMbtKltHiddenFaces()
-{
-  for(unsigned int i = 0 ; i < Lpol.size() ; i++){
-    if (Lpol[i]!=NULL){
-      delete Lpol[i] ;
-    }
-    Lpol[i] = NULL ;
-  }
-  Lpol.resize(0);
-}
-
-/*!
-  Add a polygon to the list of polygons.
-  
-  \param p : The polygon to add.
-*/
-void
-vpMbtKltHiddenFaces::addPolygon(vpMbtKltPolygon *p)
-{
-  vpMbtKltPolygon *p_new = new vpMbtKltPolygon;
-  p_new->index = p->index;
-  p_new->setNbPoint(p->nbpt);
-  p_new->isvisible = p->isvisible;
-  p_new->setCameraParameters(p->getCameraParameters());
-  for(unsigned int i = 0; i < p->nbpt; i++)
-    p_new->p[i]= p->p[i];
-  
-  Lpol.push_back(p_new);
-}
-
-/*!
-  Compute the number of visible polygons.
-  
-  \param _I : Image used to check if the region of interest is inside the image.
-  \param cMo : The pose of the camera
-  \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
-  \param angle : Angle used to test the apparition and disparition of a face
-  
-  \return Return the number of visible polygons
-*/
-unsigned int
-vpMbtKltHiddenFaces::setVisible(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed)
-{
-  return setVisible(_I, cMo, angle, angle, changed);
-}
-
-/*!
-  Compute the number of visible polygons.
-  
-  \param _I : Image used to check if the region of interest is inside the image.
-  \param cMo : The pose of the camera
-  \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDesappears : Angle used to test the disparition of a face
-  
-  \return Return the number of visible polygons
-*/
-unsigned int
-vpMbtKltHiddenFaces::setVisible(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDesappears, bool &changed)
-{
-  unsigned int n = 0;
-  changed = false;
-  unsigned int initialNumber = 0;
-  unsigned int currentNumber = 0;
-  for (unsigned int i = 0; i < Lpol.size(); i += 1){
-    if(Lpol[i]->getIsTracked()){
-        // test if the face is still visible
-      if(!Lpol[i]->isVisible(cMo, angleDesappears)){
-//         std::cout << "Face " << i << " disappears" << std::endl;
-        changed = true;
-        Lpol[i]->setIsTracked(false);
-      }
-      else n++;
-        // test if too many points have disappear
-      initialNumber += Lpol[i]->getInitialNumberPoint();
-      currentNumber += Lpol[i]->getNbPointsCur();
-      
-//       if(!facesTracker[i].hasEnoughPoints()){
-//         std::cout << "[vpMbKltTracker] Not enough point in face" << i << std::endl;
-//         reInitialisation = true;
-//       }
-    }
-    else{
-      if(Lpol[i]->isVisible(cMo, angleAppears)){
-        std::vector<vpImagePoint> roi;
-        roi.resize(0);
-        vpHomogeneousMatrix cMf;
-        Lpol[i]->changeFrame(cMo);
-        for (unsigned int j = 0; j < Lpol[i]->getNbPoint(); j += 1){
-          vpImagePoint ip;
-          vpPoint tmp = Lpol[i]->getPoint(j);
-          vpMeterPixelConversion::convertPoint(Lpol[i]->getCameraParameters(), tmp.get_x(), tmp.get_y(), ip);
-          roi.push_back(ip);
-        }
-        
-        if(!vpMbtKltPolygon::roiInsideImage(_I, roi)){
-          Lpol[i]->setIsTracked(false);
-        }
-        else{
-//           std::cout << "Face " << i << " appears" << std::endl;
-          changed = true;
-          n++;
-        }
-      }
-    }
-  }
-  
-  double value = percentGood * (double)initialNumber;
-  if((double)currentNumber < value){
-//     std::cout << "Too many point disappear" << std::endl;
-    changed = true;
-  }
-  
-  return n;
 }
 
 #endif // VISP_HAVE_OPENCV

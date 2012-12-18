@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpMbtHiddenFace.h 4004 2012-11-23 17:34:44Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -47,15 +47,14 @@
  \brief Make the complete tracking of an object by using its CAD model.
 */
 
-#ifndef vpMbtHiddenFace_HH
-#define vpMbtHiddenFace_HH
+#ifndef vpMbtPolygon_HH
+#define vpMbtPolygon_HH
 
+#include <visp/vpPoint.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 
-#include <visp/vpPoint.h>
 #include <vector>
-#include <list>
 
 /*!
   \class vpMbtPolygon
@@ -99,7 +98,9 @@ public:
   */
   inline    unsigned int  getNbPoint() const {return nbpt ;}              
           
-  vpPoint &     getPoint(const unsigned int _index);
+            vpPoint &     getPoint(const unsigned int _index);
+  
+  std::vector<vpImagePoint> getRoi(const vpCameraParameters &_cam);
 
   inline    bool          isAppearing() const {return isappearing;}
             bool          isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
@@ -113,48 +114,11 @@ public:
   */
   virtual inline void     setIndex(const int i ) { index = i ; } 
   virtual        void     setNbPoint(const unsigned int nb)  ;
-};
-
-/*!
-  \class vpMbtHiddenFaces
-
-  \ingroup ModelBasedTracking
-
- */
-class VISP_EXPORT vpMbtHiddenFaces
-{
-  private:
-  std::list<vpMbtPolygon *> Lpol ;
-  //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
-  bool depthTest;
   
-  public :
-                    vpMbtHiddenFaces() ;
-                  ~vpMbtHiddenFaces() ;
-                
-    void          addPolygon(vpMbtPolygon *p)  ;
-    
-    /*!
-      Get the depthTest value.
-
-      \return true if all the points of a polygon has to be in front of the camera, false otherwise.
-    */
-    bool          getDepthTest(){return depthTest;}
-    
-    std::list<vpMbtPolygon *>& getPolygon() {return Lpol;}
-    bool          isAppearing(const int index);
-    bool          isVisible(const int index) ;
-
-    void          reset();   
-    
-    /*!
-      Set the depthTest value.
-
-      \param d : New value.
-    */
-    void          setDepthTest(const bool &d){depthTest = d;} 
-    unsigned int  setVisible(const vpHomogeneousMatrix &cMo) ;
-} ;
+public:
+  static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max);
+  static   bool           roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
+};
 
 #endif
 

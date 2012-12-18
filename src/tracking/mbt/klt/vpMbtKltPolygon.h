@@ -43,8 +43,8 @@
 
 #ifdef VISP_HAVE_OPENCV
 
+#include <visp/vpMbtPolygon.h>
 #include <visp/vpKltOpencv.h>
-#include <visp/vpMbtHiddenFace.h>
 #include <visp/vpPlane.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpGEMM.h>
@@ -61,8 +61,6 @@
 class VISP_EXPORT vpMbtKltPolygon: public vpMbtPolygon
 {
 private:
-  //! flag to specify whether the face is tracked or not
-  bool isTracked;
   //! the homography in meter
   vpMatrix H; 
   //! normal to the initial plane
@@ -89,8 +87,6 @@ private:
   double dt;
   //! distance between the plane and the camera at the initial position
   double d0;
-  //! corners of the face in the image
-  std::vector<vpImagePoint> roi;
   //! Camera parameters
   vpCameraParameters cam;
   
@@ -98,20 +94,15 @@ private:
   
   double              compute_1_over_Z(const double x, const double y);
   void                computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& cHc0);
-  void                getMinMaxRoi(unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max);
   bool                isTrackedFeature(const int id);
   
 public:
                       vpMbtKltPolygon();
   virtual             ~vpMbtKltPolygon();
   
-  void                changeFrame(const vpHomogeneousMatrix &cMo) ;
-  
   unsigned int        computeNbDetectedCurrent(const vpKltOpencv& _tracker);
   void                computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& cHc0);
   void                computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J);
-  
-  void                displayNormal(const vpImage<unsigned char>& _I);
   
   void                displayPrimitive(const vpImage<unsigned char>& _I);
   void                displayPrimitive(const vpImage<vpRGBa>& _I);
@@ -123,6 +114,8 @@ public:
   */
   inline vpCameraParameters& getCameraParameters(){ return cam; }
   
+  inline vpColVector  getCurrentNormal() const {return N_cur; }
+  
   vpImagePoint&       getImagePoint(const unsigned int _index);
   /*!
     Get the number of point that was belonging to the face at the initialisation
@@ -130,13 +123,6 @@ public:
     \return the number of initial point
   */
   inline unsigned int getInitialNumberPoint() const { return nbPointsInit;}
-  
-  /*!
-    return true of the face is tracked
-
-    \return : true if the face is tracked.
-  */
-  virtual inline bool getIsTracked() const {return this->isTracked;}
   
   /*!
     get the number of points detected in the last image.
@@ -148,12 +134,9 @@ public:
   */
   inline unsigned int getNbPointsCur() const {return nbPointsCur;}
   
-  inline vpColVector  getCurrentNormal() const {return N_cur; }
-  
-  
   inline  bool        hasEnoughPoints() const {return enoughPoints;}
   
-          void        init(const std::map<int, vpImagePoint>& _iPI0, const std::vector<vpImagePoint>& _roi);
+          void        init(const vpKltOpencv& _tracker);
           
           void        removeOutliers(const vpColVector& weight, const double &threshold_outlier);
   
@@ -164,13 +147,6 @@ public:
   */
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; } 
   
-  /*!
-    specify whether this face is tracked or not
-
-    \param _isTracked : the new value of the flag.
-  */
-  virtual inline void setIsTracked(const bool _isTracked) {this->isTracked = _isTracked;}
-  
   void                updateMask(IplImage* _mask, unsigned int _nb = 255, unsigned int _shiftBorder = 0);
   
 //###################
@@ -179,63 +155,7 @@ public:
 private:
   static bool         isInside(const std::vector<vpImagePoint>& roi, const double i, const double  j);
   static bool         intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  i, const double  j, const double  i_test, const double  j_test);
-  
-public:
-  static bool         roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
 };
-
-/*!
-  \class vpMbtKltHiddenFaces
-
-  \warning This class is only available if OpenCV is installed, and used.
-  
-  \ingroup ModelBasedTracking
-*/
-class VISP_EXPORT vpMbtKltHiddenFaces
-{
-  private:
-  //! List of faces
-  std::vector<vpMbtKltPolygon *> Lpol ;
-  //! Percentage of good points that must have a face according to its initial number of point
-  double percentGood;
-  
-  public :
-                                 vpMbtKltHiddenFaces() ;
-                                ~vpMbtKltHiddenFaces() ;
-                                
-  void                           addPolygon(vpMbtKltPolygon *p)  ;
-  
-  /*!
-   Get the list of polygons.
-    
-    \return Mbt Klt polygons list.
-  */
-  std::vector<vpMbtKltPolygon*>& getPolygon() {return Lpol;}
-  
-  /*!
-    Check if the polygon at position i in the list is visible.
-    
-    \param i : TPosition in the list.
-    
-    \return Return true if the polygon is visible.
-  */
-  bool                           isVisible(const int i){ return Lpol[i]->isVisible(); }
-  
-  //! operator[] as modifier.
-  inline vpMbtKltPolygon*        operator[](const unsigned int i)   { return Lpol[i];}
-  //! operator[] as reader.
-  inline const vpMbtKltPolygon*  operator[](const unsigned int i) const { return Lpol[i];}
-  
-  unsigned int                   setVisible(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed) ;
-  unsigned int                   setVisible(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDesappears, bool &changed) ;
-  
-  /*!
-   Get the number of polygons.
-    
-    \return Size of the list.
-  */
-  inline unsigned int            size(){ return Lpol.size(); }
-} ;
 
 #endif
 
