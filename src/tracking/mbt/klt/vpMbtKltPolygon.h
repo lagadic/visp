@@ -54,6 +54,8 @@
 /*!
   \class vpMbtKltPolygon
   
+  \brief Implementation of a polygon of the model containing points of interest. It is used by the model-based tracker KLT, and hybrid.
+  
   \warning This class is only available if OpenCV is installed, and used.
   
   \ingroup ModelBasedTracking

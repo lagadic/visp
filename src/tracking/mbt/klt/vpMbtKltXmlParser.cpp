@@ -39,8 +39,6 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 
 #ifdef VISP_HAVE_XML2
 
@@ -102,7 +100,7 @@ vpMbtKltXmlParser::init()
   Parse the file in parameters.
   This method is deprecated, use parse() instead.
   
-  \paran filename : File to parse.
+  \param filename : File to parse.
 */
 void
 vpMbtKltXmlParser::parse(const char * filename)
@@ -114,7 +112,7 @@ vpMbtKltXmlParser::parse(const char * filename)
 /*!
   Write info to file.
   
-  \waning Useless, so not yet implemented => Throw exception.
+  \warning Useless, so not yet implemented => Throw exception.
 */
 void 
 vpMbtKltXmlParser::writeMainClass(xmlNodePtr /*node*/)
@@ -415,8 +413,6 @@ vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
     std::cout << "camera : py "<< this->cam.get_py() <<std::endl;
 }
 
-
-#endif
 
 #endif
 

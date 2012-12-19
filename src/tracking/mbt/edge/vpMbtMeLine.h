@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Make the complete tracking of an object by using its CAD model
+ * Implementation of a line used by the model-based tracker.
  *
  * Authors:
  * Nicolas Melchior
@@ -43,7 +43,7 @@
 
 /*!
  \file vpMbtMeLine.h
- \brief Make the complete tracking of an object by using its CAD model.
+ \brief Implementation of a line used by the model-based tracker.
 */
 
 #ifndef vpMbtMeLine_HH
@@ -55,7 +55,7 @@
 
 /*!
   \class vpMbtMeLine
-
+  \brief Implementation of a line used by the model-based tracker.
   \ingroup ModelBasedTracking
 
  */

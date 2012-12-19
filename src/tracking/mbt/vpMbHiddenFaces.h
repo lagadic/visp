@@ -57,6 +57,8 @@
 
 /*!
   \class vpMbHiddenFaces
+  
+  \brief Implementation of the polygons management for the model-based trackers.
 
   \ingroup ModelBasedTracking
 

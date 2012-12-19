@@ -43,8 +43,6 @@
  * \file vpMbtKltXmlParser.h
  * \brief Parse an Xml file to extract configuration parameters of a Mbt Klt object.
 */
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #ifndef vpMbtKltXmlParser_HH
 #define vpMbtKltXmlParser_HH
 
@@ -59,11 +57,12 @@
 
 /*!
   \class vpMbtKltXmlParser
+  \brief Parse an Xml file to extract configuration parameters of a Mbt Klt object.
   \ingroup ModelBasedTracking
 
   Data parser for the KLT model based tracker.
 
- */
+*/
 class VISP_EXPORT vpMbtKltXmlParser: public vpXmlParser
 {
 protected:
@@ -241,7 +240,7 @@ public:
   /*!
     Set the Border of the mask.
 
-    \param mn = new maskBorder
+    \param mb = new maskBorder
   */
   inline void setMaskBorder(const unsigned int &mb) {maskBorder = mb;}
   
@@ -291,6 +290,5 @@ protected:
 
 #endif
 
-#endif
 
 

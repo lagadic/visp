@@ -63,6 +63,7 @@
 
 /*!
   \class vpMbtXmlParser
+  \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
   \ingroup ModelBasedTracking
 
   Data parser for the model based tracker.

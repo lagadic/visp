@@ -57,6 +57,8 @@
 /*!
   \class vpMbEdgeKltTracker
   
+  \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
+  
   \warning This class is only available if OpenCV is installed, and used.
 
   \ingroup ModelBasedTracking

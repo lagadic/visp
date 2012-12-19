@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Make the complete tracking of an object by using its CAD model
+ * Manage the line of a polygon used in the model-based tracker.
  *
  * Authors:
  * Nicolas Melchior
@@ -43,7 +43,7 @@
 
 /*!
  \file vpMbtDistanceLine.h
- \brief Make the complete tracking of an object by using its CAD model.
+ \brief Manage the line of a polygon used in the model-based tracker.
 */
 
 #ifndef vpMbtDistanceLine_HH
@@ -60,6 +60,8 @@
 
 /*!
   \class vpMbtDistanceLine
+  
+  \brief Manage the line of a polygon used in the model-based tracker.
 
   \ingroup ModelBasedTracking
 

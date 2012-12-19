@@ -415,6 +415,7 @@ public:
 
 /*!
   \class vpPoseFeatures
+  \brief Tools for pose computation from any feature.
   \ingroup Pose
 
   This class allows to estimate a pose by virtual visual servoing from visual features. The features that are considered are points, segments, lines, ellipses.

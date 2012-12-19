@@ -31,8 +31,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Make the complete tracking of an object by using its CAD model. Cylinder
- * tracking.
+ * Manage a cylinder used in the model-based tracker.
  *
  * Authors:
  * Nicolas Melchior
@@ -44,7 +43,7 @@
 
 /*!
  \file vpMbtDistanceCylinder.h
- \brief Make the complete tracking of an object by using its CAD model.
+ \brief Manage a cylinder used in the model-based tracker.
 */
 
 #ifndef vpMbtDistanceCylinder_HH
@@ -58,6 +57,13 @@
 #include <visp/vpCylinder.h>
 #include <visp/vpCircle.h>
 
+/*!
+  \class vpMbtDistanceCylinder
+  
+  \brief Manage a cylinder used in the model-based tracker.
+
+  \ingroup ModelBasedTracking
+*/
 class VISP_EXPORT vpMbtDistanceCylinder
 {
   private :

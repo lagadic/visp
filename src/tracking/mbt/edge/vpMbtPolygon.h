@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Make the complete tracking of an object by using its CAD model
+ * Implements a polygon of the model used by the model-based tracker.
  *
  * Authors:
  * Nicolas Melchior
@@ -58,6 +58,8 @@
 
 /*!
   \class vpMbtPolygon
+  
+  \brief Implementation of a polygon of the model used by the model-based tracker.
 
   \ingroup ModelBasedTracking
 
