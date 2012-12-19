@@ -388,14 +388,7 @@ public:
   
   void setMovingEdge(const vpMe &_me);
   
-  /*!
-    Use Ogre3D for visibility tests
-    
-    \warning This function has to be called before the initialisation of the tracker.
-    
-    \param v : True to use it, False otherwise
-  */
-  virtual inline void setOgreVisibilityTest(const bool &v) { useOgre = v; }
+  virtual void setOgreVisibilityTest(const bool &v);
   
   void setScales(const std::vector<bool>& _scales);
 

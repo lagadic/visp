@@ -109,7 +109,6 @@ vpMbKltTracker::init(const vpImage<unsigned char>& _I)
     faces->setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
     
 #else
-    vpTRACE("Warning, ViSP doesn't have Ogre3D");
     faces->setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
@@ -190,7 +189,25 @@ void vpMbKltTracker::setPose(const vpHomogeneousMatrix &_cMo)
 {
   cMo = _cMo;
 }
-          
+   
+/*!
+  Use Ogre3D for visibility tests
+  
+  \warning This function has to be called before the initialisation of the tracker.
+  
+  \param v : True to use it, False otherwise
+*/
+void    
+vpMbKltTracker::setOgreVisibilityTest(const bool &v) 
+{
+  useOgre = v; 
+  if(useOgre){
+#ifndef VISP_HAVE_OGRE     
+    useOgre = false;
+    std::cout << "WARNING: ViSP dosen't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
+#endif
+  }
+}
           
 /*!
   Initialise a new face from the coordinates given in parameter.

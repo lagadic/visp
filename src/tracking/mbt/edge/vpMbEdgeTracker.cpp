@@ -162,6 +162,24 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &_me)
   }
 }
 
+/*!
+  Use Ogre3D for visibility tests
+  
+  \warning This function has to be called before the initialisation of the tracker.
+  
+  \param v : True to use it, False otherwise
+*/
+void    
+vpMbEdgeTracker::setOgreVisibilityTest(const bool &v) 
+{
+  useOgre = v; 
+  if(useOgre){
+#ifndef VISP_HAVE_OGRE     
+    useOgre = false;
+    std::cout << "WARNING: ViSP dosen't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
+#endif
+  }
+}
 
 /*!
   Compute the visual servoing loop to get the pose of the feature set.
