@@ -1430,7 +1430,11 @@ vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleli
   \param newvisibleline : This parameter is set to true if a new face appeared.
 */
 void
-vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
+vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &
+                             #ifdef VISP_HAVE_OGRE
+                             _I
+                             #endif
+                             , const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
 {
   unsigned int n ;
 
