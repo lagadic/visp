@@ -227,13 +227,13 @@ bool vpServer::checkForConnections()
     return false;
   }
   else{
-    if(FD_ISSET(emitter.socketFileDescriptorEmitter,&readFileDescriptor)){
+    if(FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter,&readFileDescriptor)){
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
 #ifdef UNIX
       client.socketFileDescriptorReceptor = accept(emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
 #else //Win32
-      client.socketFileDescriptorReceptor = accept((unsigned)emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
+      client.socketFileDescriptorReceptor = accept((unsigned int)emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
 #endif
       
 #ifdef UNIX
@@ -251,12 +251,12 @@ bool vpServer::checkForConnections()
     }
     else{
       for(unsigned int i=0; i<receptor_list.size(); i++){
-        if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
+        if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
           char deco;
 #ifdef UNIX
           int numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else //Win32
-          int numbytes = recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+          int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #endif
           
       

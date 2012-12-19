@@ -687,12 +687,12 @@ int vpNetwork::_receiveRequestOnce()
   }
   else{
     for(unsigned int i=0; i<receptor_list.size(); i++){
-      if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
+      if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
         char *buf = new char [max_size_message];
 #ifdef UNIX
         numbytes=recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
-        numbytes=recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+        numbytes=recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
 #endif
         
         
@@ -703,7 +703,7 @@ int vpNetwork::_receiveRequestOnce()
           return numbytes;
         }
         else if(numbytes > 0){
-          std::string returnVal(buf, (unsigned)numbytes);              
+          std::string returnVal(buf, (unsigned int)numbytes);
           currentMessageReceived.append(returnVal);
         }
         delete [] buf;
@@ -752,7 +752,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   FD_ZERO(&readFileDescriptor);        
   
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
-  FD_SET((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
+  FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
 
   int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
@@ -766,12 +766,12 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
     return 0;
   }
   else{
-    if(FD_ISSET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
+    if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
       char *buf = new char [max_size_message];
 #ifdef UNIX
       numbytes=recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
-      numbytes=recv((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+      numbytes=recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
 #endif
       if(numbytes <= 0)
       {
@@ -780,7 +780,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
         return numbytes;
       }
       else if(numbytes > 0){
-        std::string returnVal(buf, (unsigned)numbytes);              
+        std::string returnVal(buf, (unsigned int)numbytes);
         currentMessageReceived.append(returnVal);
       }
       delete [] buf;

@@ -137,12 +137,12 @@ protected:
   virtual void    init(const vpImage<unsigned char>& _I);
   virtual void    initCylinder(const vpPoint& , const vpPoint , const double , const unsigned int ){};
   virtual void    initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
-          int     initMbtTracking(const unsigned int _level=0);
+  unsigned int    initMbtTracking(const unsigned int _level=0);
 
           bool    postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
           void    postTrackingMbt(vpColVector &_w, const unsigned int _level=0);
 
-          int     trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl = 0);
+  unsigned int    trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl = 0);
           void    trackSecondLoop(vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl=0);
 };
 

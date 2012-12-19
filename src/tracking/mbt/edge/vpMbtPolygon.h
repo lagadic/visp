@@ -44,7 +44,7 @@
 
 /*!
  \file vpMbtPolygon.h
- \brief Make the complete tracking of an object by using its CAD model.
+ \brief Implements a polygon of the model used by the model-based tracker.
 */
 
 #ifndef vpMbtPolygon_HH
@@ -116,7 +116,7 @@ public:
   virtual        void     setNbPoint(const unsigned int nb)  ;
   
 public:
-  static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max);
+  static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max);
   static   bool           roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
 };
 

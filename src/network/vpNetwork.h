@@ -282,7 +282,7 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
   FD_ZERO(&readFileDescriptor);        
   
   for(unsigned int i=0; i<receptor_list.size(); i++){
-    FD_SET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
+    FD_SET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
 
     if(i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
@@ -304,11 +304,11 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
   }
   else{
     for(unsigned int i=0; i<receptor_list.size(); i++){
-      if(FD_ISSET(receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
+      if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
 #ifdef UNIX
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
 #else
-        numbytes = recv((unsigned)receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
+        numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
 #endif
         if(numbytes <= 0)
         {
@@ -362,7 +362,7 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
   FD_ZERO(&readFileDescriptor);
   
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
-  FD_SET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
+  FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
     
   int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
   int numbytes = 0;
@@ -377,11 +377,11 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
     return 0;
   }
   else{
-    if(FD_ISSET(receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
+    if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
 #ifdef UNIX
       numbytes = recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
 #else
-      numbytes = recv((unsigned)receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
+      numbytes = recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
 #endif
       if(numbytes <= 0)
       {

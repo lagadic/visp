@@ -126,7 +126,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& _I)
   vpImageConvert::convert(_I,cur);
   
   // mask
-  IplImage* mask = cvCreateImage(cvSize(_I.getWidth(), _I.getHeight()), IPL_DEPTH_8U, 1);
+  IplImage* mask = cvCreateImage(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
   
   for (unsigned int i = 0; i < faces->size(); i += 1){
@@ -159,7 +159,7 @@ vpMbKltTracker::getKltImagePoints()
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){
     int id;
     float x_tmp, y_tmp;
-    tracker.getFeature(i, id, x_tmp, y_tmp);
+    tracker.getFeature((int)i, id, x_tmp, y_tmp);
     kltPoints.push_back(vpImagePoint(y_tmp, x_tmp));
   }
   
@@ -480,13 +480,13 @@ vpMbKltTracker::loadConfigFile(const char* filename)
   xmlp.getCameraParameters(camera);
   setCameraParameters(camera); 
   
-  tracker.setMaxFeatures(xmlp.getMaxFeatures());
-  tracker.setWindowSize(xmlp.getWindowSize());
+  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getWindowSize());
   tracker.setQuality(xmlp.getQuality());
   tracker.setMinDistance(xmlp.getMinDistance());
   tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
-  tracker.setBlockSize(xmlp.getBlockSize());
-  tracker.setPyramidLevels(xmlp.getPyramidLevels());
+  tracker.setBlockSize((int)xmlp.getBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
   maskBorder = xmlp.getMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());

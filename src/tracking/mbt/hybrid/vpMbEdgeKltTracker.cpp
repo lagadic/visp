@@ -77,7 +77,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& _I)
   vpMbKltTracker::init(_I);
 }
 
-int 
+unsigned int
 vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
 {
   vpMbtDistanceLine *l ;
@@ -86,7 +86,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
 
-  int nbrow  = 0;
+  unsigned int nbrow  = 0;
   for(std::list<vpMbtDistanceLine*>::iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
     l = *it;
     nbrow += l->nbFeature ;
@@ -261,7 +261,7 @@ void
 vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl)
 {
   vpColVector factor;
-  int nbrow = trackFirstLoop(_I, factor, lvl);
+  unsigned int nbrow = trackFirstLoop(_I, factor, lvl);
   
   if(nbrow < 4 && nbInfos < 4){
     vpERROR_TRACE("\n\t\t Error-> not enough data") ;
@@ -463,7 +463,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& _I)
   }
 }
 
-int 
+unsigned int
 vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl)
 {
   vpMbtDistanceLine *l ;
@@ -472,7 +472,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
 
-  int nbrow  = initMbtTracking(_lvl);
+  unsigned int nbrow  = initMbtTracking(_lvl);
   
   if (nbrow==0){
 //     vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
@@ -491,7 +491,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
     double fac = 1;
     for(std::list<int>::const_iterator it = l->Lindex_polygon.begin(); it!=l->Lindex_polygon.end(); ++it){
       int index = *it;
-      if (l->hiddenface->isAppearing(index)) {
+      if (l->hiddenface->isAppearing((unsigned int)index)) {
         fac = 0.2;
         break;
       }

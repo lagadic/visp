@@ -84,7 +84,7 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
     int id;
     float x_tmp, y_tmp;
-    _tracker.getFeature(i, id, x_tmp, y_tmp);
+    _tracker.getFeature((int)i, id, x_tmp, y_tmp);
     
     if(isInside(getRoi(cam), y_tmp, x_tmp)){
       initPoints[id] = vpImagePoint(y_tmp, x_tmp);
@@ -121,7 +121,7 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
   curPoints = std::map<int, vpImagePoint>();
   
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++){
-    _tracker.getFeature(i, id, x, y);
+    _tracker.getFeature((int)i, id, x, y);
     if(isTrackedFeature(id)){
       curPoints[id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
       nbPointsCur++;
@@ -307,31 +307,35 @@ void
 vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned int _nb, unsigned int _shiftBorder)
 {
   int width = _mask->width;
-  unsigned int i_min, i_max, j_min, j_max;
+  int i_min, i_max, j_min, j_max;
   std::vector<vpImagePoint> roi = getRoi(cam);
-  vpMbtKltPolygon::getMinMaxRoi(roi, i_min,i_max,j_min,j_max);
+  vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
   /* check image boundaries */
-  if(i_min > static_cast<unsigned int>(_mask->height)){ //underflow
+  if(i_min > _mask->height){ //underflow
     i_min = 0;
   }
-  if(i_max > static_cast<unsigned int>(_mask->height)){
+  if(i_max > _mask->height){
     i_max = _mask->height;
   }
-  if(j_min > static_cast<unsigned int>(_mask->width)){ //underflow
+  if(j_min > _mask->width){ //underflow
     j_min = 0;
   }
-  if(j_max > static_cast<unsigned int>(_mask->width)){
+  if(j_max > _mask->width){
     j_max = _mask->width;
   }
-
+  double shiftBorder_d = (double) _shiftBorder;
   char* ptrData = _mask->imageData + i_min*width+j_min;
-  for(unsigned int i=i_min; i< i_max; i++){
-    for(unsigned int j=j_min; j< j_max; j++){
+  for(int i=i_min; i< i_max; i++){
+    double i_d = (double) i;
+    for(int j=j_min; j< j_max; j++){
+      double j_d = (double) j;
       if(_shiftBorder != 0){
-        if( isInside(roi, i, j) &&
-            isInside(roi, i+_shiftBorder, j+_shiftBorder) && isInside(roi, i-_shiftBorder, j+_shiftBorder) &&
-            isInside(roi, i+_shiftBorder, j-_shiftBorder) && isInside(roi, i-_shiftBorder, j-_shiftBorder) ){
+        if( vpMbtKltPolygon::isInside(roi, i_d, j_d)
+            && vpMbtKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
+            && vpMbtKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
           *(ptrData++) = _nb;
         }
         else{
@@ -339,7 +343,7 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned int _nb, unsigned int _shi
         }
       }
       else{
-        if(isInside(roi, i, j)){
+        if(vpMbtKltPolygon::isInside(roi, i, j)){
           *(ptrData++) = _nb;
         }
         else{

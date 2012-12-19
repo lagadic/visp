@@ -47,7 +47,7 @@
 #include <visp/vpConfig.h>
 /*!
  \file vpMbtPolygon.cpp
- \brief Make the complete tracking of an object by using its CAD model.
+ \brief Implements a polygon of the model used by the model-based tracker.
 */
 
 #include <visp/vpMbtPolygon.h>
@@ -282,34 +282,37 @@ vpMbtPolygon::getRoi(const vpCameraParameters &_cam)
 //###################################
 
 void                
-vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &roi, unsigned int & i_min, unsigned int &i_max, unsigned int &j_min, unsigned int &j_max)
+vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max)
 {
-  // i_min = std::numeric_limits<unsigned int>::max(); // create an error under Windows. To fix it we have to add #undef max
-  i_min = UINT_MAX;
-  i_max = 0;
-  // j_min = std::numeric_limits<unsigned int>::max();
-  j_min = UINT_MAX;
-  j_max = 0;
+  // i_min_d = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
+  double i_min_d = (double) INT_MAX;
+  double i_max_d = 0;
+  double j_min_d = (double) INT_MAX;
+  double j_max_d = 0;
+
   for (unsigned int i = 0; i < roi.size(); i += 1){
-    if(i_min > static_cast<unsigned int>(roi[i].get_i()))
-      i_min = static_cast<unsigned int>(roi[i].get_i());
+    if(i_min_d > roi[i].get_i())
+      i_min_d = roi[i].get_i();
     
     if(roi[i].get_i() < 0)
-      i_min = 1;
+      i_min_d = 1;
     
-    if((roi[i].get_i() > 0) && (i_max < static_cast<unsigned int>(roi[i].get_i())))
-      i_max = static_cast<unsigned int>(roi[i].get_i());
+    if((roi[i].get_i() > 0) && (i_max_d < roi[i].get_i()))
+      i_max_d = roi[i].get_i();
     
-    
-    if(j_min > static_cast<unsigned int>(roi[i].get_j()))
-      j_min = static_cast<unsigned int>(roi[i].get_j());
+    if(j_min_d > roi[i].get_j())
+      j_min_d = roi[i].get_j();
     
     if(roi[i].get_j() < 0)
-      j_min = 1;//border
+      j_min_d = 1;//border
       
-    if((roi[i].get_j() > 0) && j_max < static_cast<unsigned int>(roi[i].get_j()))
-      j_max = static_cast<unsigned int>(roi[i].get_j());
+    if((roi[i].get_j() > 0) && j_max_d < roi[i].get_j())
+      j_max_d = roi[i].get_j();
   }
+  i_min = static_cast<int> (i_min_d);
+  i_max = static_cast<int> (i_max_d);
+  j_min = static_cast<int> (j_min_d);
+  j_max = static_cast<int> (j_max_d);
 }
 
 /*!

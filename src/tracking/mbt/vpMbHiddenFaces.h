@@ -120,7 +120,7 @@ class vpMbHiddenFaces
     vpAROgre*     getOgreContext(){return ogre;}
 #endif
 
-    bool          isAppearing(const int i){ return Lpol[i]->isAppearing(); }
+    bool          isAppearing(const unsigned int i){ return Lpol[i]->isAppearing(); }
     
     
 #ifdef VISP_HAVE_OGRE
@@ -139,7 +139,7 @@ class vpMbHiddenFaces
     
     \return Return true if the polygon is visible.
   */
-    bool          isVisible(const int i){ return Lpol[i]->isVisible(); }
+    bool          isVisible(const unsigned int i){ return Lpol[i]->isVisible(); }
     
 #ifdef VISP_HAVE_OGRE
     bool          isVisibleOgre(const vpTranslationVector &cameraPos, const unsigned int &index);

@@ -253,7 +253,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       {
         for(std::list<int>::const_iterator it = l->Lindex_polygon.begin(); it!=l->Lindex_polygon.end(); ++it){
           int index = *it;
-          if (l->hiddenface->isAppearing(index))
+          if (l->hiddenface->isAppearing((unsigned int)index))
           {
             fac = 0.2;
             break;
@@ -1078,7 +1078,7 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       if (index ==-1) isvisible =true ;
       else
       {
-        if (l->hiddenface->isVisible(index)) isvisible = true ;
+        if (l->hiddenface->isVisible((unsigned int)index)) isvisible = true ;
       }
     }
 

@@ -243,15 +243,15 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
       if(iter_data != nodeMap.end()){
         switch (iter_data->second){
         case mask_border:{
-          maskBorder = xmlReadIntChild(doc, dataNode);
+          maskBorder = xmlReadUnsignedIntChild(doc, dataNode);
           mask_border_node = true;
           }break;
         case max_features:{
-          maxFeatures = xmlReadIntChild(doc, dataNode);
+          maxFeatures = xmlReadUnsignedIntChild(doc, dataNode);
           max_features_node = true;
           }break;
         case window_size:{
-          winSize = xmlReadIntChild(doc, dataNode);
+          winSize = xmlReadUnsignedIntChild(doc, dataNode);
           window_size_node = true;
           }break;
         case quality:{
@@ -267,11 +267,11 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
           harris_node = true;
           }break;
         case size_block:{
-          blockSize = xmlReadIntChild(doc, dataNode);
+          blockSize = xmlReadUnsignedIntChild(doc, dataNode);
           size_block_node = true;
           }break;
         case pyramid_lvl:{
-          pyramidLevels = xmlReadIntChild(doc, dataNode);
+          pyramidLevels = xmlReadUnsignedIntChild(doc, dataNode);
           pyramid_lvl_node = true;
           }break; 
         default:{

@@ -190,7 +190,7 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
      */
     width = pCodecCtx->width ;
     height = pCodecCtx->height ;
-    buffer = (uint8_t *) malloc (sizeof (uint8_t) * (size_t)numBytes);
+    buffer = (uint8_t *) malloc ((unsigned int)(sizeof (uint8_t)) * (unsigned int)numBytes);
   }
   else
   {
