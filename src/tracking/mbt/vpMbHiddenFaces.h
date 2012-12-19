@@ -39,6 +39,7 @@
  * Aurélien Yol
  *
  *****************************************************************************/
+#pragma once
 
 #ifndef vpMbHiddenFaces_HH
 #define vpMbHiddenFaces_HH
