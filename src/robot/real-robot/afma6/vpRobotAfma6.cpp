@@ -104,7 +104,7 @@ void emergencyStopAfma6(int signo)
   PrimitiveSTOP_Afma6();
   std::cout << "Robot was stopped\n";
 
-  // Free allocated ressources
+  // Free allocated resources
   //  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
   fprintf(stdout, "Application ");
@@ -277,7 +277,7 @@ vpRobotAfma6::init (void)
     default:
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
-      // Free allocated ressources
+      // Free allocated resources
     }
     std::cout << std::endl;
   }
@@ -301,7 +301,7 @@ vpRobotAfma6::init (void)
   if (TryStt < 0) {
     // Power off the robot
     PrimitivePOWEROFF_Afma6();
-    // Free allocated ressources
+    // Free allocated resources
     ShutDownConnection();
 
     std::cout << "Cannot open connexion with the motionblox..." << std::endl;
@@ -390,7 +390,7 @@ vpRobotAfma6::init (vpAfma6::vpAfma6ToolType tool,
 
   Destructor.
 
-  Free allocated ressources.
+  Free allocated resources.
 */
 vpRobotAfma6::~vpRobotAfma6 (void)
 {
@@ -411,7 +411,7 @@ vpRobotAfma6::~vpRobotAfma6 (void)
 //     Try( PrimitivePOWEROFF_Afma6() );
 //   }
 
-  // Free allocated ressources
+  // Free allocated resources
   ShutDownConnection();
 
   vpRobotAfma6::robotAlreadyCreated = false;
@@ -537,7 +537,7 @@ vpRobotAfma6::powerOn(void)
     else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
-      // Free allocated ressources
+      // Free allocated resources
       ShutDownConnection();
       exit(0);
     }

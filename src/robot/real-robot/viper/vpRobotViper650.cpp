@@ -104,7 +104,7 @@ void emergencyStopViper650(int signo)
   PrimitiveSTOP_Viper650();
   std::cout << "Robot was stopped\n";
 
-  // Free allocated ressources
+  // Free allocated resources
   //  ShutDownConnection(); // Some times cannot exit here when Ctrl-C
 
   fprintf(stdout, "Application ");
@@ -305,7 +305,7 @@ void
     default:
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
-      // Free allocated ressources
+      // Free allocated resources
     }
     std::cout << std::endl;
   }
@@ -333,7 +333,7 @@ void
   if (TryStt < 0) {
     // Power off the robot
     PrimitivePOWEROFF_Viper650();
-    // Free allocated ressources
+    // Free allocated resources
     ShutDownConnection();
 
     std::cout << "Cannot open connexion with the motionblox..." << std::endl;
@@ -443,7 +443,7 @@ void
 
   Destructor.
 
-  Free allocated ressources.
+  Free allocated resources.
 */
 vpRobotViper650::~vpRobotViper650 (void)
 {
@@ -464,7 +464,7 @@ vpRobotViper650::~vpRobotViper650 (void)
   //     Try( PrimitivePOWEROFF_Viper650() );
   //   }
 
-  // Free allocated ressources
+  // Free allocated resources
   ShutDownConnection();
 
   vpRobotViper650::robotAlreadyCreated = false;
@@ -597,7 +597,7 @@ void
     else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
-      // Free allocated ressources
+      // Free allocated resources
       ShutDownConnection();
       exit(0);
     }

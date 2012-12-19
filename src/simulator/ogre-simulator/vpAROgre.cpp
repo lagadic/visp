@@ -292,7 +292,7 @@ void vpAROgre::init(bool
 									 archName, typeName, secName);
 	}
     }
-    std::cout << "##################### add ressources" << std::endl;
+    std::cout << "##################### add resources" << std::endl;
   //Add optionnal resources (given by the user).
   for(std::list<std::string>::const_iterator iter = mOptionnalResourceLocation.begin(); iter != mOptionnalResourceLocation.end(); ++iter){
     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(*iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
