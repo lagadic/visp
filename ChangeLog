@@ -12,8 +12,9 @@ ViSP 2.6.3 (under development)
       Adept Viper s650 robot.
     - New robot simulators; vpSimulatorCamera, vpSimulatorPioneer,
       vpSimulatorPioneerPan
-    - New MBT Tracker via KLT points.
-    - New Hybrid Tracker MBT Edge + MBT KLT.
+    - New model-based tracker using KLT points: vpMbKltTracker.
+    - New hybrid model-based tracker using moving edges and KLT points:
+      vpMbEdgeKltTracker
   - Improvements
     - In vp1394TwoGrabber that allows to grab images from firewire cameras,
       cameras are powered off when the grabber is closed.
@@ -24,8 +25,14 @@ ViSP 2.6.3 (under development)
       vpRobotSimulator class. Introduction of a new vpRobotWireFrameSimulator
       class as a base class of robot simulated using the wireframe display
       capabilities.
-    - VRML Loader now reads Transform nodes, and hierarchical scenes.
+    - VRML loader (based on Coin3D) now reads transform nodes and hierarchical
+      scenes.
+    - If Ogre3D is used, model-based trackers use now RayCasting to improve
+      faces visibility test.
   - Examples
+    - New model-based tracker examples to show how to use the KLT and hybrid
+      tracker. See in example/tracking mbtEdgeKltTracking.cpp and
+      mbtKltTracking.cpp
   - Bug fixed
     - [14646] ViSP doesn't build on Windows with MinGW
     - [14651] Build error arround vpMatrix::pseudoInverse() with OpenCV 2.1.0
