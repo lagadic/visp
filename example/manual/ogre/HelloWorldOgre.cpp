@@ -114,7 +114,7 @@ int main()
   //  Here we use a mesh included in
   //  the installation files : a robot.
   // -----------------------------------
-  // Here we load the "robot.mesh" model that is found thanks to the ressources locations 
+  // Here we load the "robot.mesh" model that is found thanks to the resources locations
   // specified in the "resources.cfg" file
   ogre.load("Robot", "robot.mesh");
   ogre.setPosition("Robot", vpTranslationVector(0, 0.05, 0.5));
