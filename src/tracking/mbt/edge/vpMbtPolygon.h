@@ -80,7 +80,7 @@ public:
     
 public: 
                            vpMbtPolygon() ;
-                          ~vpMbtPolygon() ;
+            virtual       ~vpMbtPolygon() ;
                                     
             void          addPoint(const unsigned int n, const vpPoint &P) ;               
           
