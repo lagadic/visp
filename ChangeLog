@@ -16,6 +16,15 @@ ViSP 2.6.3 (under development)
     - New hybrid model-based tracker using moving edges and KLT points:
       vpMbEdgeKltTracker
   - Improvements
+    - To respect Debian guidelines, remove duplicate ABI version.
+      Library name was set to libvisp.a or libvisp.so.2.6.3 rather than 
+      libvisp-2.a or libvisp-2.so.2.6.3
+    - Fix typos detected by lintian
+    - Add support for multiarch. Multiarch is the ability for a library 
+      to be installed concurrently for differents architectures (such as 
+      i386 and amd64 for instance). In practice, the changes removes the 
+      assumption made that libraries are installed in $INSTALL_PREFIX/lib and
+      binaries in $INSTALL_PREFIX/bin.
     - In vp1394TwoGrabber that allows to grab images from firewire cameras,
       cameras are powered off when the grabber is closed.
     - MinGW is now supported but since MinGW currently doesn't support tls
