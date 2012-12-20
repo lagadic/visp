@@ -89,7 +89,7 @@ SET_TARGET_PROPERTIES(${VISP_INTERN_LIBRARY} PROPERTIES
   )
 
 # Link with external libs especially under windows for winmm.lib
-# needed to create visp-2.dll. Why ? Because for binaries, winmm.lib
+# needed to create visp.dll. Why ? Because for binaries, winmm.lib
 # is considered in the link stage. Probably a CMake bug ! 
 #IF(WIN32 AND BUILD_SHARED_LIBS AND HAVE_LIBWINMM)
 #  TARGET_LINK_LIBRARIES(${VISP_INTERN_LIBRARY} "winmm")

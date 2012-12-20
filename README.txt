@@ -1,4 +1,4 @@
-                            ViSP-2.6.1
+                            ViSP-2.6.3
                      Visual Servoing Platform
 
       Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
@@ -186,19 +186,19 @@ HOWTO:
 
 7. Use ViSP with autoconf (autotools):
    -----------------------------------
-   Copy the M4 macro file `macro/have_visp2.m4` in your project. 
+   Copy the M4 macro file `macro/have_visp.m4` in your project. 
 
-   cp macro/have_visp2.m4 <your project home dir>/macro
+   cp macro/have_visp.m4 <your project home dir>/macro
    
    This macro check if <visp install prefix>/bin/visp-config shell script
    is available (see below how to use ViSP with a common Makefile).
 
    In your configure.ac project file add lines like:
 
-   AC_HAVE_VISP2_IFELSE(have_visp2=yes,have_visp2=no)
-   if test "x$have_visp2" = "xyes"; then
-     CXXFLAGS="$CXXFLAGS $ac_visp2_cflags "
-     LIBS="$LIBS $ac_visp2_libs "
+   AC_HAVE_VISP_IFELSE(have_visp=yes,have_visp=no)
+   if test "x$have_visp" = "xyes"; then
+     CXXFLAGS="$CXXFLAGS $ac_visp_cflags "
+     LIBS="$LIBS $ac_visp_libs "
    fi
 
    cd <your project home dir>

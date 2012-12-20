@@ -31,8 +31,8 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# This file generates the ViSP-2 library config shell script: "visp2-config"
-# from visp2-config.in (in VISP_SOURCE_DIR).
+# This file generates the ViSP-2 library config shell script: "visp-config"
+# from visp-config.in (in VISP_SOURCE_DIR).
 #
 # Authors:
 # Fabien Spindler
