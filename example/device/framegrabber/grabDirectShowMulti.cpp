@@ -130,7 +130,7 @@ OPTIONS                                                    Default\n\
      Number of frames to acquire.\n\
 \n\
   -i      \n\
-     Flag to print camera informations.\n\
+     Flag to print camera information.\n\
 \n\
   -s      \n\
      Print camera settings capabilities such as MediaType \n\
@@ -163,7 +163,7 @@ Set the program options.
 \param camera : Active camera identifier.
 \param nframes : Number of frames to acquire.
 
-\param verbose_info : Camera informations printing.
+\param verbose_info : Camera information printing.
 \param verbose_settings : Camera settings printing.
 
 \param mediatype_is_set : New mediatype setting.

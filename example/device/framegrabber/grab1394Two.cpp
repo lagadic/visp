@@ -185,7 +185,7 @@ OPTIONS                                                    Default\n\
           \n\
   -n [%%u] : Number of frames to acquire.                   %u\n\
           \n\
-  -i      : Flag to print camera informations.\n\
+  -i      : Flag to print camera information.\n\
           \n\
   -s      : Print camera settings capabilities such as \n\
      video mode and framerates available and exit.\n\
@@ -225,7 +225,7 @@ OPTIONS                                                    Default\n\
   \param camera : Active camera identifier.
   \param nframes : Number of frames to acquire.
 
-  \param verbose_info : Camera informations printing.
+  \param verbose_info : Camera information printing.
   \param verbose_settings : Camera settings printing.
 
   \param videomode_is_set : New video mode setting.

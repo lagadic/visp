@@ -132,7 +132,7 @@ void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
   
   - cextMf which is the displacement between one external camera frame and the world frame.
   
-  The following picture summarize all the previous informations.
+  The following picture summarize all the previous information.
   
   \image html vpWireFrameSimulator.jpeg
   \image latex vpWireFrameSimulator.ps

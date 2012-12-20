@@ -698,7 +698,7 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
  * wa		Vecteur de travail de taille "n".
  *
  * DESCRIPTION	:
- * La procedure complete la solution du probleme, si on fournit les informations
+ * La procedure complete la solution du probleme, si on fournit les information
  * necessaires de  la factorisation qr, avec pivotage des colonnes.
  * Soit une matrice "a" de taille "m" x "n" donnee, une matrice diagonale "d" de
  * taille "n" x "n" et un vecteur "b" de taille "m", le probleme est la determination
@@ -960,7 +960,7 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
  *		final calcule.
  *		La colonne j de p est la colonne ipvt (j) (voir ci apres) de
  *		la matrice identite. La partie trapesoidale inferieure de fjac
- *		contient les informations genere durant le calcul de r.
+ *		contient les information genere durant le calcul de r.
  * info		Information de l'execution de la procedure. Lorsque la procedure
  *		a termine son execution, "info" est inialisee a la valeur
  *		(negative) de iflag. sinon elle prend les valeurs suivantes :
@@ -1570,7 +1570,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
  *		     final calcule.
  *		La colonne j de p est la colonne ipvt (j) (voir ci apres) de
  *		la matrice identite. La partie trapesoidale inferieure de fjac
- *		contient les informations genere durant le calcul de r.
+ *		contient les information genere durant le calcul de r.
  * info		Information de l'executionde la procedure. Lorsque la procedure
  *		a termine son execution, "info" est inialisee a la valeur
  *		(negative) de iflag. sinon elle prend les valeurs suivantes :

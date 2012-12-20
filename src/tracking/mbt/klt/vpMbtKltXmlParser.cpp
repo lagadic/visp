@@ -170,12 +170,12 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read face informations.
+  Read face information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the camera informations.
+  \param node : Pointer to the node of the camera information.
 */
 void 
 vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
@@ -216,12 +216,12 @@ vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read klt informations.
+  Read klt information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the camera informations.
+  \param node : Pointer to the node of the camera information.
 */
 void 
 vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
@@ -322,12 +322,12 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read camera informations.
+  Read camera information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the camera informations.
+  \param node : Pointer to the node of the camera information.
 */
 void 
 vpMbtKltXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)

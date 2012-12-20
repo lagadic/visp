@@ -91,7 +91,7 @@
   - track() : Tracking on the current image
   - testTracking() : Test the tracking. This method throws exception if the 
     tracking failed. 
-  - display() : Display the model and eventually other informations.
+  - display() : Display the model and eventually other information.
 
   In addition, two flags are declared in this class and may have to be 
   initialised in the child class : 

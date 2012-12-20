@@ -143,7 +143,7 @@ vpPose::clearPoint()
 \brief  Add a new point in the array of point.
 \param  newP : New point to add  in the array of point.
 \warning Considering a point from the class vpPoint, X, Y, and Z will
-represent the 3D information and x and y its 2D informations.
+represent the 3D information and x and y its 2D information.
 These 5 fields must be initialized to be used within this library
 */
 void

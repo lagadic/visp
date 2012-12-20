@@ -187,12 +187,12 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 
 
 /*!
-  Read ecm informations.
+  Read ecm information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the ecm informations.
+  \param node : Pointer to the node of the ecm information.
 */
 void 
 vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
@@ -237,12 +237,12 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read sample informations.
+  Read sample information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the sample informations.
+  \param node : Pointer to the node of the sample information.
 */
 void 
 vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
@@ -290,12 +290,12 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read camera informations.
+  Read camera information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the camera informations.
+  \param node : Pointer to the node of the camera information.
 */
 void 
 vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
@@ -382,12 +382,12 @@ vpMbtXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read face informations.
+  Read face information.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the camera informations.
+  \param node : Pointer to the node of the camera information.
 */
 void 
 vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
@@ -428,12 +428,12 @@ vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read mask informations for the vpMeSite.
+  Read mask information for the vpMeSite.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the mask informations.
+  \param node : Pointer to the node of the mask information.
 */
 void 
 vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
@@ -481,12 +481,12 @@ vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Read range informations for the vpMeSite.
+  Read range information for the vpMeSite.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the range informations.
+  \param node : Pointer to the node of the range information.
 */
 void 
 vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
@@ -523,12 +523,12 @@ vpMbtXmlParser::read_range (xmlDocPtr doc, xmlNodePtr node)
 
 
 /*!
-  Read the contrast informations from the xml file.
+  Read the contrast information from the xml file.
   
   \throw vpException::fatalError if there was an unexpected number of data. 
   
   \param doc : Pointer to the document.
-  \param node : Pointer to the node of the contrast informations.
+  \param node : Pointer to the node of the contrast information.
 */
 void
 vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)

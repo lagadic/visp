@@ -239,7 +239,7 @@ void
 
 /*!
 
-  Prints on \e os stream informations about the task:
+  Prints on \e os stream information about the task:
 
   \param displayLevel : If vpServo::ALL prints
   - Type of control law (eye-in-hand, eye-to-hand)

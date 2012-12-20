@@ -222,7 +222,7 @@ public:
     return (this->pixelformat);
   }
   /*!
-    Activates the verbose mode to print additionnal informations on stdout.
+    Activates the verbose mode to print additional information on stdout.
     \param verbose : If true activates the verbose mode.
   */
   void setVerboseMode(bool verbose) {
