@@ -290,7 +290,7 @@
 // We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 
 // compilation.
 #if defined (WIN32) && defined(VISP_BUILD_SHARED_LIBS) 
-#  ifdef visp_2_EXPORTS 
+#  ifdef visp_EXPORTS 
 #    define VISP_EXPORT __declspec(dllexport)
 #  else  
 #    define VISP_EXPORT __declspec(dllimport)
