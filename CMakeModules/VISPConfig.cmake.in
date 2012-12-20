@@ -74,7 +74,7 @@ SET(VISP_VERSION_MINOR  "@VISP_VERSION_MINOR@")
 SET(VISP_VERSION_PATCH  "@VISP_VERSION_PATCH@")
 
 # Tells the user project where to find ViSP headers
-SET(VISP_INCLUDE_DIRS "${VISP_ROOT_DIR}/include" CACHE FILEPATH "Location of ViSP includes")
+SET(VISP_INCLUDE_DIRS "${VISP_ROOT_DIR}/@CMAKE_INSTALL_INCLUDEDIR@" CACHE FILEPATH "Location of ViSP includes")
 #MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
 
 # Get ViSP specific definitions
@@ -92,7 +92,7 @@ ENDFOREACH(val ${VISP_EXTERN_INCLUDE_DIRS})
 #MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
 
 # Tells the user project where to find ViSP library
-SET(VISP_LIBRARY_DIRS "${VISP_ROOT_DIR}/lib" CACHE FILEPATH "Location of ViSP library")
+SET(VISP_LIBRARY_DIRS "${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@" CACHE FILEPATH "Location of ViSP library")
 
 # Tells the user project where to find third party libraries used to
 # compile ViSP

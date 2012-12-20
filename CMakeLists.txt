@@ -51,16 +51,16 @@ SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PAT
 # Package revision number
 SET(VISP_REVISION "1")
 
-SET(VISP_INCLUDE_DIR "${VISP_BINARY_DIR}/include/visp")
+# the include directory we depend on
+SET(VISP_INTERN_INCLUDE_DIR ${VISP_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
+SET(VISP_INCLUDE_DIR "${VISP_INTERN_INCLUDE_DIR}/visp")
 SET(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 # The location in which to install VISP libraries.
-SET(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/lib)
+SET(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 # The location in which to install some VISP binaries.
-SET(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/bin)
+SET(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
-# the include directory we depend on
-SET(VISP_INTERN_INCLUDE_DIR ${VISP_BINARY_DIR}/include)
 # the third party include directories we depend on
 SET(VISP_EXTERN_INCLUDE_DIRS "")
 # the internal visp libs we depend on
@@ -786,7 +786,7 @@ IF(USE_OGRE)
     # case 2: install or packaging case
     #--------------
     IF(UNIX)
-      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/share/visp/data/ogre-simulator")
+      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator")
     ELSE()
       set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
     ENDIF()
@@ -796,7 +796,7 @@ IF(USE_OGRE)
       if(OGRE_PLUGIN_DIR_REL)
         INSTALL(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
-          DESTINATION share/visp/data/ogre-simulator
+          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT libraries
           )
@@ -804,7 +804,7 @@ IF(USE_OGRE)
       if(OGRE_PLUGIN_DIR_DBG)
         INSTALL(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
-          DESTINATION share/visp/data/ogre-simulator
+          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT libraries
           )
@@ -850,7 +850,7 @@ IF(USE_OGRE)
     # case 2: install or packaging case
     #--------------
     IF(UNIX)
-      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/share/visp/data/ogre-simulator")
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator")
     ELSE()
       set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
     ENDIF()
@@ -859,7 +859,7 @@ IF(USE_OGRE)
     IF(UNIX)
       INSTALL(FILES
         ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
-        DESTINATION share/visp/data/ogre-simulator
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT libraries
       )
@@ -1892,14 +1892,14 @@ INCLUDE(${VISP_CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 # install rule for visp-config shell script
 IF (UNIX)
   INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
     OWNER_WRITE
     COMPONENT libraries)
 ELSE(UNIX)
   INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config.bat
-    DESTINATION bin
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
     OWNER_WRITE
@@ -1998,7 +1998,7 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
 
 set(VISP_ROOT_DIR_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 IF(UNIX)
-  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/share/visp")
+  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp")
 ELSE()
   set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
@@ -2042,7 +2042,7 @@ EXPORT_LIBRARY_DEPENDENCIES(
 
 # Install vpConfig.h that may differ from the one in include/visp
 INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
-  DESTINATION include/visp
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
   COMPONENT headers
   )
@@ -2058,14 +2058,14 @@ IF(UNIX)
     ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
     ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
     ${VISP_BINARY_DIR}/ViSP-third-party.txt
-    DESTINATION share/visp
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
   )
   foreach(SCENE ${WIREFRAME_SCENES})
     INSTALL(FILES 
       "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}"
-      DESTINATION share/visp/data/wireframe-simulator
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/wireframe-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT libraries
     )
@@ -2073,7 +2073,7 @@ IF(UNIX)
   foreach(SCENE ${ROBOT_ARMS_SCENES})
     INSTALL(FILES 
       "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE}"
-      DESTINATION share/visp/data/robot-simulator
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/robot-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT libraries
     )
