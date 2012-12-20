@@ -64,7 +64,7 @@ SET(VISP_INTERN_INCLUDE_DIR ${VISP_BINARY_DIR}/include)
 # the third party include directories we depend on
 SET(VISP_EXTERN_INCLUDE_DIRS "")
 # the internal visp libs we depend on
-SET(VISP_INTERN_LIBRARY visp-2)
+SET(VISP_INTERN_LIBRARY visp)
 # the third party libraries we depend on
 SET(VISP_EXTERN_LIBRARIES "")
 # the compiler definitions
