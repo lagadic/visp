@@ -2047,6 +2047,16 @@ INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
   COMPONENT headers
   )
 
+# Install visp-config.1 man page
+if(UNIX)
+  INSTALL(FILES
+    ${VISP_SOURCE_DIR}/doc/man/man1/visp-config.1.gz
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+    COMPONENT libraries
+  )
+endif()
+
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
 # install rule for vpConfig.h:
 # we need to adapt VISP_SCENES_DIR and VISP_ROBOT_ARMS_DIR
