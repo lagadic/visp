@@ -46,6 +46,14 @@
 class vpMomentObject;
 class vpMomentCentered;		// Required for discrete case of vpMomentObject
 
+/*!
+  \class vpMomentArea
+
+  \ingroup TrackingMoments
+
+  \brief Class handling the surface moment.
+
+*/
 class VISP_EXPORT vpMomentArea : public vpMoment {
  public:
         vpMomentArea();

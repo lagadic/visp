@@ -54,7 +54,7 @@
 
 /*!
   \class vpLinearKalmanFilterInstantiation
-  This class provides an implementation of some specific linear Kalman filters.
+  \brief This class provides an implementation of some specific linear Kalman filters.
 */
 class VISP_EXPORT vpLinearKalmanFilterInstantiation : public vpKalmanFilter
 {

@@ -63,13 +63,14 @@
 /* --------------------------------------------------------------------- */
 
 
-/* \class vpException
-   \brief error that can be emited by the vp class and its derivates
+/*!
+   \class vpException
+   \brief error that can be emited by ViSP classes.
 
-    This class inherites from the standard std::exception contained in the C++
-    STL.
-    It is therefore possible to catch vpException with any other derivative of
-    std::exception in the same catch.
+   This class inherites from the standard std::exception contained in the C++
+   STL.
+   It is therefore possible to catch vpException with any other derivative of
+   std::exception in the same catch.
  */
 class VISP_EXPORT vpException : public std::exception
 {

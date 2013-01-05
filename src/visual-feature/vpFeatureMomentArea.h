@@ -51,6 +51,10 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentArea
 
+  \ingroup VsFeature2
+
+  \brief Surface moment feature. Computes the interaction matrix associated with vpMomentArea.
+
 */
 
 class VISP_EXPORT vpFeatureMomentArea : public vpFeatureMoment{
