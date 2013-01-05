@@ -3,7 +3,7 @@
  * $Id: servoMomentPolygon.cpp 3323 2011-09-13 15:23:56Z fnovotny $
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2012 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
