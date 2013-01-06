@@ -39,13 +39,15 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
-#include <windows.h>
-#include <string>
-
-#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 #ifndef vpWin32API_HH
 #define vpWin32API_HH
+
+#include <visp/vpConfig.h>
+
+#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
+
+#include <windows.h>
+#include <string>
 
 DWORD vpProcessErrors(const std::string &api_name);
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h);
