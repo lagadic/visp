@@ -57,3 +57,4 @@ Documentation:
   Doxygen                     : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot                : ${VISP_HAVE_DOT_FOUND}
 ViSP built with C++11 features: ${VISP_HAVE_CPP11_COMPATIBILITY_FOUND}
+
