@@ -1,2 +1,0 @@
-To avoid lintian "manpage-not-compressed-with-max-compression" error, compress visp-config.1 using
-gzip -9 visp-config.1

@@ -723,11 +723,11 @@ IF(USE_OGRE)
 	# search names with "lib". This is the workaround.
 	set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES} "")
     endif ()
-    set(Boost_ADDITIONAL_VERSIONS "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40" "1.39.0" "1.39" "1.38.0" "1.38" "1.37.0" "1.37" )
+    set(Boost_ADDITIONAL_VERSIONS "1.53.0" "1.52.0" "1.51.0" "1.50.0" "1.49.0" "1.48.0" "1.47.0" "1.46.0" "1.45.0" "1.44.0" "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40" "1.39.0" "1.39" "1.38.0" "1.38" "1.37.0" "1.37" )
     # Components that need linking (NB does not include header-only components like bind)
     set(OGRE_BOOST_COMPONENTS thread date_time)
     find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
-    mark_as_advanced(Boost_LIB_DIAGNOSTIC_DEFINITIONS)
+    mark_as_advanced(Boost_LIB_DIAGNOSTIC_DEFINITIONS Boost_DIR)
     if (NOT Boost_FOUND)
       # Try again with the other type of libs
       set(Boost_USE_STATIC_LIBS NOT ${Boost_USE_STATIC_LIBS})
@@ -2047,14 +2047,25 @@ INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
   COMPONENT headers
   )
 
-# Install visp-config.1 man page
+# Create and install visp-config.1.gz man page
 if(UNIX)
+  FIND_PROGRAM(GZIP gzip)
+  file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    COMMAND ${GZIP} -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
+  )
+  ADD_CUSTOM_TARGET(man ALL
+    DEPENDS ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+  )
   INSTALL(FILES
-    ${VISP_SOURCE_DIR}/doc/man/man1/visp-config.1.gz
+    ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
   )
+  MARK_AS_ADVANCED(GZIP)
 endif()
 
 # Install the packaging files for use by FIND_PACKAGE(VISP) in user projects
