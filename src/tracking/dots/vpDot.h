@@ -369,9 +369,12 @@ private:
   
 //Static Functions
 public:
-  static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
-		      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red, 
-		      unsigned int thickness=1);
+  static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog,
+                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
+                      unsigned int thickness=1);
+  static void display(const vpImage<vpRGBa>& I,const vpImagePoint &cog,
+                      const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
+                      unsigned int thickness=1);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
@@ -415,10 +418,5 @@ public:
 
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 

@@ -296,14 +296,20 @@ class VISP_EXPORT vpKltOpencv
   
 //Static Functions
 public: 
-  static void display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
-		      const int &nbFeatures, vpColor color = vpColor::green, 
-		      unsigned int thickness=1);
-  
-  static void display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
-		      const long *featuresid_list, const int &nbFeatures, 
-		      vpColor color = vpColor::green, unsigned int thickness=1);
-  
+  static void display(const vpImage<unsigned char>& I, const CvPoint2D32f* features_list,
+                      const int &nbFeatures, vpColor color = vpColor::green,
+                      unsigned int thickness=1);
+  static void display(const vpImage<vpRGBa>& I, const CvPoint2D32f* features_list,
+                      const int &nbFeatures, vpColor color = vpColor::green,
+                      unsigned int thickness=1);
+
+  static void display(const vpImage<unsigned char>& I, const CvPoint2D32f* features_list,
+                      const long *featuresid_list, const int &nbFeatures,
+                      vpColor color = vpColor::green, unsigned int thickness=1);
+  static void display(const vpImage<vpRGBa>& I, const CvPoint2D32f* features_list,
+                      const long *featuresid_list, const int &nbFeatures,
+                      vpColor color = vpColor::green, unsigned int thickness=1);
+
 };
 
 #endif

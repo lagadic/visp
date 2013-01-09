@@ -900,8 +900,8 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
   \param thickness : Thickness of the dot.
 */
 void vpDot::display(const vpImage<unsigned char>& I,const vpImagePoint &cog, 
-		    const std::list<vpImagePoint> &edges_list, vpColor color, 
-		    unsigned int thickness)
+                    const std::list<vpImagePoint> &edges_list, vpColor color,
+                    unsigned int thickness)
 {
   vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
@@ -912,11 +912,32 @@ void vpDot::display(const vpImage<unsigned char>& I,const vpImagePoint &cog,
   }
 }
 
+/*!
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+  Display the dot center of gravity and its list of edges.
+
+  \param I : The image used as background.
+
+  \param cog : The center of gravity.
+
+  \param edges_list : The list of edges;
+
+  \param color : Color used to display the dot.
+
+  \param thickness : Thickness of the dot.
+*/
+void vpDot::display(const vpImage<vpRGBa>& I,const vpImagePoint &cog,
+                    const std::list<vpImagePoint> &edges_list, vpColor color,
+                    unsigned int thickness)
+{
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
+  std::list<vpImagePoint>::const_iterator it;
+
+  for (it = edges_list.begin(); it != edges_list.end(); ++it)
+  {
+    vpDisplay::displayPoint(I, *it, color);
+  }
+}
+
 
 

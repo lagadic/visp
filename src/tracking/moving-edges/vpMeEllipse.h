@@ -364,15 +364,14 @@ private:
 //Static Function
 public:	
   static void display(const vpImage<unsigned char>& I, const vpImagePoint &center,
-		      const double &A, const double &B, const double &E,
-		      const double & smallalpha, const double &highalpha,
-		      vpColor color = vpColor::green);
+                      const double &A, const double &B, const double &E,
+                      const double & smallalpha, const double &highalpha,
+                      vpColor color = vpColor::green);
+  static void display(const vpImage<vpRGBa>& I, const vpImagePoint &center,
+                      const double &A, const double &B, const double &E,
+                      const double & smallalpha, const double &highalpha,
+                      vpColor color = vpColor::green);
 
 };
 
-
-
-
 #endif
-
-

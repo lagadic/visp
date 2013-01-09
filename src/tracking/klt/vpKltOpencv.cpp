@@ -528,20 +528,45 @@ void vpKltOpencv::suppressFeature(int index)
 
 /*!
 
-  Display of vpKLTOpenCV features list
-  
+  Display features list.
+
   \param I : The image used as background.
 
   \param features_list : List of features
-  
+
   \param nbFeatures : Number of features
-  
+
   \param color : Color used to display the points.
-  
+
   \param thickness : Thickness of the points.
 */
-void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
-		    const int &nbFeatures, vpColor color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list,
+                          const int &nbFeatures, vpColor color, unsigned int thickness)
+{
+  vpImagePoint ip;
+  for (int i = 0 ; i < nbFeatures ; i++)
+  {
+    ip.set_u( vpMath::round(features_list[i].x ) );
+    ip.set_v( vpMath::round(features_list[i].y ) );
+    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
+  }
+}
+/*!
+
+  Display features list.
+
+  \param I : The image used as background.
+
+  \param features_list : List of features
+
+  \param nbFeatures : Number of features
+
+  \param color : Color used to display the points.
+
+  \param thickness : Thickness of the points.
+*/
+void vpKltOpencv::display(const vpImage<vpRGBa>& I,const CvPoint2D32f* features_list,
+                          const int &nbFeatures, vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0 ; i < nbFeatures ; i++)
@@ -554,23 +579,23 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
 
 /*!
 
-  Display of vpKLTOpenCV features list with ids
-  
+  Display features list with ids.
+
   \param I : The image used as background.
 
   \param features_list : List of features
-  
+
   \param featuresid_list : List of ids corresponding to the features list
-  
+
   \param nbFeatures : Number of features
-  
+
   \param color : Color used to display the points.
-  
+
   \param thickness : Thickness of the points
 */
-void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list, 
-		    const long *featuresid_list, const int &nbFeatures, 
-		    vpColor color, unsigned int thickness)
+void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* features_list,
+                          const long *featuresid_list, const int &nbFeatures,
+                          vpColor color, unsigned int thickness)
 {
   vpImagePoint ip;
   for (int i = 0 ; i < nbFeatures ; i++)
@@ -578,11 +603,46 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
     vpDisplay::displayCross(I, ip, 10, color, thickness) ;
-    
+
     char id[10];
     sprintf(id, "%ld", featuresid_list[i]);
     ip.set_u( vpMath::round( features_list[i].x + 5 ) );
     vpDisplay::displayCharString(I, ip, id, color);
   }
 }
+
+/*!
+
+  Display features list with ids.
+
+  \param I : The image used as background.
+
+  \param features_list : List of features
+
+  \param featuresid_list : List of ids corresponding to the features list
+
+  \param nbFeatures : Number of features
+
+  \param color : Color used to display the points.
+
+  \param thickness : Thickness of the points
+*/
+void vpKltOpencv::display(const vpImage<vpRGBa>& I,const CvPoint2D32f* features_list,
+                          const long *featuresid_list, const int &nbFeatures,
+                          vpColor color, unsigned int thickness)
+{
+  vpImagePoint ip;
+  for (int i = 0 ; i < nbFeatures ; i++)
+  {
+    ip.set_u( vpMath::round(features_list[i].x ) );
+    ip.set_v( vpMath::round(features_list[i].y ) );
+    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
+
+    char id[10];
+    sprintf(id, "%ld", featuresid_list[i]);
+    ip.set_u( vpMath::round( features_list[i].x + 5 ) );
+    vpDisplay::displayCharString(I, ip, id, color);
+  }
+}
+
 #endif

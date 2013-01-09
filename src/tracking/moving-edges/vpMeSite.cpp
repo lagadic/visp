@@ -640,45 +640,86 @@ void vpMeSite::display(const vpImage<unsigned char>& I)
 
 /*!
     Display the moving edge site with a color corresponding to their state.
-    
+
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
     - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
     - If cyan : The point is removed because it's too close to another.
     - Yellow otherwise
-    
+
     \param I : The image.
     \param i : Pixel i of the site
     \param j : Pixel j of the site
     \param state : state of the site
 */
-void vpMeSite::display(const vpImage<unsigned char>& I, const double &i, const double &j,const vpMeSiteState &state)
+void vpMeSite::display(const vpImage<unsigned char>& I, const double &i, const double &j, const vpMeSiteState &state)
 {
   switch(state)
   {
     case NO_SUPPRESSION:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::green,1);
       break;
-      
+
     case CONSTRAST:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::blue,1);
       break;
-      
+
     case THRESHOLD:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::purple,1);
       break;
-      
+
     case M_ESTIMATOR:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::red,1);
       break;
-      
+
     case TOO_NEAR:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::cyan,1);
-      
+
     default:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::yellow,1);
   }
 }
 
+/*!
+    Display the moving edge site with a color corresponding to their state.
 
+    - If green : The vpMeSite is a good point.
+    - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+    - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+    - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
+    - If cyan : The point is removed because it's too close to another.
+    - Yellow otherwise
+
+    \param I : The image.
+    \param i : Pixel i of the site
+    \param j : Pixel j of the site
+    \param state : state of the site
+*/
+void vpMeSite::display(const vpImage<vpRGBa>& I, const double &i, const double &j, const vpMeSiteState &state)
+{
+  switch(state)
+  {
+    case NO_SUPPRESSION:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::green,1);
+      break;
+
+    case CONSTRAST:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::blue,1);
+      break;
+
+    case THRESHOLD:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::purple,1);
+      break;
+
+    case M_ESTIMATOR:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::red,1);
+      break;
+
+    case TOO_NEAR:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::cyan,1);
+
+    default:
+      vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::yellow,1);
+  }
+}

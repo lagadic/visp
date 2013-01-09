@@ -47,8 +47,6 @@
 */
 
 #include <visp/vpFeatureBuilder.h>
-
-
 #include <visp/vpMath.h>
 
 

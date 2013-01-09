@@ -45,9 +45,6 @@
   \brief Moving edges
 */
 
-
-
-
 #include <visp/vpMeTracker.h>
 #include <visp/vpMe.h>
 #include <visp/vpMeSite.h>
@@ -1339,15 +1336,37 @@ vpMeNurbs::farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint&
 
 /*!
 
-  Display of of a moving nurbs
-  
+  Display of a moving nurbs.
+
   \param I : The image used as background.
 
   \param n : Nurbs to display
-  
+
   \param color : Color used to display the nurbs.
 */
 void vpMeNurbs::display(const vpImage<unsigned char>& I, vpNurbs &n, vpColor color)
+{
+  double u = 0.0;
+  vpImagePoint pt;
+  while (u <= 1)
+  {
+    pt = n.computeCurvePoint(u);
+    vpDisplay::displayCross(I,pt,4,color);
+    u+=0.01;
+  }
+}
+
+/*!
+
+  Display of a moving nurbs.
+
+  \param I : The image used as background.
+
+  \param n : Nurbs to display
+
+  \param color : Color used to display the nurbs.
+*/
+void vpMeNurbs::display(const vpImage<vpRGBa>& I, vpNurbs &n, vpColor color)
 {
   double u = 0.0;
   vpImagePoint pt;

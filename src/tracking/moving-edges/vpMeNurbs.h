@@ -230,7 +230,8 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     bool farFromImageEdge(const vpImage<unsigned char>& I, const vpImagePoint& iP);
     
 public:
-  static void display(const vpImage<unsigned char>& I, vpNurbs &n, vpColor color = vpColor::green);
+    static void display(const vpImage<unsigned char>& I, vpNurbs &n, vpColor color = vpColor::green);
+    static void display(const vpImage<vpRGBa>& I, vpNurbs &n, vpColor color = vpColor::green);
 };
 
 #endif

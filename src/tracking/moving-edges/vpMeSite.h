@@ -244,8 +244,11 @@ public:
   static double sqrDistance (const vpMeSite S1, const vpMeSite S2) {
     return(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat));}
     
-  static void display(const vpImage<unsigned char>& I, const double &i, const double &j, const vpMeSiteState &state = NO_SUPPRESSION);
-  
+  static void display(const vpImage<unsigned char>& I, const double &i, const double &j,
+                      const vpMeSiteState &state = NO_SUPPRESSION);
+  static void display(const vpImage<vpRGBa>& I, const double &i, const double &j,
+                      const vpMeSiteState &state = NO_SUPPRESSION);
+
 //Deprecated 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
