@@ -31,7 +31,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# This file generates the ViSP-2 library config shell script: "visp-config"
+# This file generates the ViSP library config shell script: "visp-config"
 # from visp-config.in (in VISP_SOURCE_DIR).
 #
 # Authors:
@@ -46,7 +46,6 @@ IF (UNIX)
   # for Unix platforms: Linux, OSX
   #
   ####################################################################### 
-
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
   
