@@ -47,6 +47,8 @@
 #ifndef vpVideoWriter_H
 #define vpVideoWriter_H
 
+#include <string>
+
 #include <visp/vpImageIo.h>
 #include <visp/vpFFMPEG.h>
 
@@ -178,56 +180,58 @@ class VISP_EXPORT vpVideoWriter
     vpVideoWriter();
     ~vpVideoWriter();
     
+    void close();
+
+    /*!
+      Gets the current frame index.
+
+      \return Returns the current frame index.
+    */
+    inline unsigned int getCurrentFrameIndex() const {return frameCount;}
+
+    void open (vpImage< vpRGBa > &I);
+    void open (vpImage< unsigned char > &I);
+    /*!
+      Reset the frame counter and sets it to the first image index.
+
+      By default the first frame index is set to 0.
+    */
+    inline void resetFrameCounter() {frameCount = firstFrame;}
+
+    void saveFrame (vpImage< vpRGBa > &I);
+    void saveFrame (vpImage< unsigned char > &I);
+
+#ifdef VISP_HAVE_FFMPEG
+    /*!
+      Sets the bit rate of the video when writing.
+
+      \param bit_rate : the expected bit rate.
+
+      By default the bit rate is set to 500 000.
+    */
+    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
+
+    /*!
+      Sets the codec used to encode the video.
+
+      \param codec : the expected codec.
+
+      By default the codec is set to CODEC_ID_MPEG1VIDEO. But you can use one of the CodecID proposed by ffmpeg such as : CODEC_ID_MPEG2VIDEO, CODEC_ID_MPEG2VIDEO_XVMC, CODEC_ID_MPEG4, CODEC_ID_H264, ... (More CodecID can be found in the ffmpeg documentation).
+
+      Of course to use the codec it must be installed on your computer.
+    */
+    inline void setCodec(const CodecID codec) {this->codec = codec;}
+#endif
+
+    void setFileName(const char *filename);
+    void setFileName(const std::string &filename);
     /*!
       Enables to set the first frame index.
       
       \param firstFrame : The first frame index.
     */
     inline void setFirstFrameIndex(const unsigned int firstFrame) {this->firstFrame = firstFrame;}
-    
-    /*!
-      Reset the frame counter and sets it to the first image index.
-      
-      By default the first frame index is set to 0.
-    */
-    inline void resetFrameCounter() {frameCount = firstFrame;}
-    
-    /*!
-      Gets the current frame index.
-      
-      \return Returns the current frame index.
-    */
-    inline unsigned int getCurrentFrameIndex() const {return frameCount;}
-    
-    #ifdef VISP_HAVE_FFMPEG
-    /*!
-      Sets the bit rate of the video when writing.
-      
-      \param bit_rate : the expected bit rate.
-      
-      By default the bit rate is set to 500 000.
-    */
-    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
-    
-    /*!
-      Sets the codec used to encode the video.
-      
-      \param codec : the expected codec.
-      
-      By default the codec is set to CODEC_ID_MPEG1VIDEO. But you can use one of the CodecID proposed by ffmpeg such as : CODEC_ID_MPEG2VIDEO, CODEC_ID_MPEG2VIDEO_XVMC, CODEC_ID_MPEG4, CODEC_ID_H264, ... (More CodecID can be found in the ffmpeg documentation).
-      
-      Of course to use the codec it must be installed on your computer.
-    */
-    inline void setCodec(const CodecID codec) {this->codec = codec;}
-    #endif
-    
-    void setFileName(const char *filename);
-    void open (vpImage< vpRGBa > &I);
-    void open (vpImage< unsigned char > &I);
-    void saveFrame (vpImage< vpRGBa > &I);
-    void saveFrame (vpImage< unsigned char > &I);
-    void close();
-    
+               
     private:
       vpVideoFormatType getFormat(const char *filename);
       static std::string getExtension(const std::string &filename);

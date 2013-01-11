@@ -110,6 +110,19 @@ void vpVideoReader::setFileName(const char *filename)
   initFileName = true;
 }
 
+/*!
+  It enables to set the path and the name of the file(s) which as/have to be read.
+
+  If you want to read a video file, \f$ filename \f$ corresponds to the path to the file (example : /local/video.mpeg).
+
+  If you want to read a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to read different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
+
+  \param filename : Path to a video file or file name template of a image sequence.
+*/
+void vpVideoReader::setFileName(const std::string &filename)
+{
+  setFileName(filename.c_str());
+}
 
 /*!
   Sets all the parameters needed to read the video or the image sequence.

@@ -99,6 +99,17 @@ void vpVideoWriter::setFileName(const char *filename)
   initFileName = true;
 }
 
+/*!
+  It enables to set the path and the name of the files which will be saved.
+
+  If you want to write a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to write different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
+
+  \param filename : filename template of an image sequence.
+*/
+void vpVideoWriter::setFileName(const std::string &filename)
+{
+  setFileName(filename.c_str());
+}
 
 /*!
   Sets all the parameters needed to write the video or the image sequence.

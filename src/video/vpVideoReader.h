@@ -48,6 +48,8 @@
 #ifndef vpVideoReader_H
 #define vpVideoReader_H
 
+#include <string>
+
 #include <visp/vpDiskGrabber.h>
 #include <visp/vpFFMPEG.h>
 
@@ -161,48 +163,47 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     vpVideoReader();
     ~vpVideoReader();
     
+    void acquire(vpImage< vpRGBa > &I);
+    void acquire(vpImage< unsigned char > &I);
+    void close(){;}
+
+    bool getFrame(vpImage<vpRGBa> &I, long frame);
+    bool getFrame(vpImage<unsigned char> &I, long frame);
+    /*!
+      Get the current frame index. This index is updated at each call of the
+      acquire method. It can be used to detect the end of a file (comparison
+      with getLastFrameIndex()).
+
+      \return Returns the current frame index.
+    */
+    inline long getFrameIndex() const { return frameCount;}
+
+    /*!
+      Gets the last frame index.
+
+      \return Returns the last frame index.
+    */
+    inline long getLastFrameIndex() const {return lastFrame;}
+    void open (vpImage< vpRGBa > &I);
+    void open (vpImage< unsigned char > &I);
+
+    /*!
+      Reset the frame counter and sets it to the first image index.
+
+      By default the first frame index is set to 0.
+
+      This method is useful if you use the class like a frame grabber (ie with theacquire method).
+    */
+    inline void resetFrameCounter() {frameCount = firstFrame;}
+    void setFileName(const char *filename);
+    void setFileName(const std::string &filename);
     /*!
       Enables to set the first frame index if you want to use the class like a grabber (ie with the
       acquire method).
       
       \param firstFrame : The first frame index.
     */
-    inline void setFirstFrameIndex(const long firstFrame) {this->firstFrame = firstFrame;}
-    
-    /*!
-      Reset the frame counter and sets it to the first image index.
-      
-      By default the first frame index is set to 0.
-      
-      This method is useful if you use the class like a frame grabber (ie with theacquire method).
-    */
-    inline void resetFrameCounter() {frameCount = firstFrame;}
-    
-    /*!
-      Gets the last frame index.
-      
-      \return Returns the last frame index.
-    */
-    inline long getLastFrameIndex() const {return lastFrame;}
-    
-    void setFileName(const char *filename);
-    void open (vpImage< vpRGBa > &I);
-    void open (vpImage< unsigned char > &I);
-    void acquire(vpImage< vpRGBa > &I);
-    void acquire(vpImage< unsigned char > &I);
-    bool getFrame(vpImage<vpRGBa> &I, long frame);
-    bool getFrame(vpImage<unsigned char> &I, long frame);
-    void close(){;}
-    
-    /*!
-      Get the current frame index. This index is updated at each call of the 
-      acquire method. It can be used to detect the end of a file (comparison 
-      with getLastFrameIndex()).
-      
-      \return Returns the current frame index.
-    */
-    inline long getFrameIndex() const { return frameCount;}
-    
+    inline void setFirstFrameIndex(const long firstFrame) {this->firstFrame = firstFrame;}    
     
   private:
     vpVideoFormatType getFormat(const char *filename);
