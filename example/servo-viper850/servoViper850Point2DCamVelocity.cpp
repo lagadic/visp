@@ -270,7 +270,6 @@ main()
 
       // Flush the display
       vpDisplay::flush(I) ;
-
     }
 
     flog.close() ; // Close the log file

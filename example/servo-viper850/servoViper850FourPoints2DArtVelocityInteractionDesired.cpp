@@ -63,26 +63,22 @@
 #if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
 
 #include <visp/vp1394TwoGrabber.h>
-#include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
+#include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpPoint.h>
-#include <visp/vpServo.h>
+#include <visp/vpDot2.h>
 #include <visp/vpFeatureBuilder.h>
+#include <visp/vpFeaturePoint.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpImage.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpMath.h>
+#include <visp/vpPoint.h>
+#include <visp/vpPose.h>
 #include <visp/vpRobotViper850.h>
-
-// Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
+#include <visp/vpServo.h>
 #include <visp/vpServoDisplay.h>
-
-#include <visp/vpDot.h>
 
 int
 main()
@@ -319,7 +315,7 @@ main()
       // Flush the display
       vpDisplay::flush(I) ;
 
-      //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      // std::cout << "|| s - s* || = "  << ( task.getError() ).sumSquare() << std::endl;
     }
 
     std::cout << "Display task information: " << std::endl;
@@ -341,7 +337,6 @@ int
 main()
 {
   vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
-
 }
 
 #endif

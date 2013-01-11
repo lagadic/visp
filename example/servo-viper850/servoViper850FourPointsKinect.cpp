@@ -407,7 +407,7 @@ int main()
       // Flush the display
       vpDisplay::flush(I) ;
 
-      //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      // std::cout << "|| s - s* || = "  << ( task.getError() ).sumSquare() << std::endl;
     }
 
     kinect.stop();
@@ -429,7 +429,6 @@ int main()
 int main()
 {
   vpERROR_TRACE("You do not have a Viper robot or a kinect connected to your computer...");
-
 }
 
 #endif

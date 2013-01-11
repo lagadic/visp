@@ -286,7 +286,7 @@ main()
 
       vpDisplay::flush(I) ;
 
-      //      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      // std::cout << "|| s - s* || = "  << ( task.getError() ).sumSquare() << std::endl;
     }
 
     flog.close() ; // Close the log file
