@@ -51,6 +51,19 @@ SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PAT
 # Package revision number
 SET(VISP_REVISION "1")
 
+# where are user-specific cmake modules
+set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
+
+find_file(GNU_INSTALL_DIRS_FROM_CMAKE ${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
+mark_as_advanced(GNU_INSTALL_DIRS_FROM_CMAKE)
+if(GNU_INSTALL_DIRS_FROM_CMAKE)
+  include(${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
+else()
+  include(${VISP_CMAKE_MODULE_PATH}/GNUInstallDirs.cmake)
+endif()
+
+list(APPEND CMAKE_MODULE_PATH ${VISP_CMAKE_MODULE_PATH})
+
 # the include directory we depend on
 SET(VISP_INTERN_INCLUDE_DIR ${VISP_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 SET(VISP_INCLUDE_DIR "${VISP_INTERN_INCLUDE_DIR}/visp")
@@ -77,19 +90,6 @@ endif()
 
 # Get the OS
 SET(OS ${CMAKE_SYSTEM_NAME})
-
-# where are user-specific cmake modules
-set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
-
-find_file(GNU_INSTALL_DIRS_FROM_CMAKE ${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
-mark_as_advanced(GNU_INSTALL_DIRS_FROM_CMAKE)
-if(GNU_INSTALL_DIRS_FROM_CMAKE)
-  include(${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
-else()
-  include(${VISP_CMAKE_MODULE_PATH}/GNUInstallDirs.cmake)
-endif() 
-
-list(APPEND CMAKE_MODULE_PATH ${VISP_CMAKE_MODULE_PATH})
 
 SET(OGRE_HOME $ENV{OGRE_HOME})
 if(OGRE_HOME)
