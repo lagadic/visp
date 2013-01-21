@@ -81,6 +81,7 @@ unsigned int
 vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
 {
   vpMbtDistanceLine *l ;
+  vpMbtDistanceCylinder *cy ;
 
   if(_lvl  >= scales.size() || !scales[_lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
@@ -91,6 +92,12 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
     l = *it;
     nbrow += l->nbFeature ;
     l->initInteractionMatrixError() ;
+  }
+  
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+    cy = *it;
+    nbrow += cy->nbFeature ;
+    cy->initInteractionMatrixError() ;
   }
   
   return nbrow;  
@@ -172,6 +179,12 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
           l->displayMovingEdges(_I);
         }
       }
+      
+      vpMbtDistanceCylinder *cy ;
+      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
+        cy = *it;
+        cy->displayMovingEdges(_I);
+      }
     }
   }
   
@@ -246,6 +259,69 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int _lvl)
         l->Reinit = true;
     }
   }
+  
+  // Same thing with cylinders as with lines
+  vpMbtDistanceCylinder *cy ;
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+    cy = *it;
+    double wmean = 0 ;
+    std::list<vpMeSite>::iterator itListCyl1;
+    std::list<vpMeSite>::iterator itListCyl2;
+    if (cy->nbFeature > 0){
+      itListCyl1 = cy->meline1->getMeList().begin();
+      itListCyl2 = cy->meline2->getMeList().begin();
+    }
+
+    wmean = 0;
+    for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
+      wmean += w[n+i] ;
+      vpMeSite p = *itListCyl1;
+      if (w[n+i] < 0.5){
+        p.setState(vpMeSite::M_ESTIMATOR);
+          
+        *itListCyl1 = p;
+      }
+
+      ++itListCyl1;
+    }
+
+    if (cy->nbFeaturel1!=0)
+      wmean /= cy->nbFeaturel1 ;
+    else
+      wmean = 1;
+
+    cy->setMeanWeight1(wmean);
+
+    if (wmean < 0.8){
+      cy->Reinit = true;
+    }
+
+    wmean = 0;
+    for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
+      wmean += w[n+i] ;
+      vpMeSite p = *itListCyl2;
+      if (w[n+i] < 0.5){
+        p.setState(vpMeSite::M_ESTIMATOR);
+        
+        *itListCyl2 = p;
+      }
+
+      ++itListCyl2;
+    }
+
+    if (cy->nbFeaturel2!=0)
+      wmean /= cy->nbFeaturel2 ;
+    else
+      wmean = 1;
+
+    cy->setMeanWeight2(wmean);
+
+    if (wmean < 0.8){
+      cy->Reinit = true;
+    }
+
+    n+= cy->nbFeature ;
+  }
 }
 
 /*!
@@ -316,7 +392,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     R = new vpColVector();
     
     if(nbrow >= 4)
-      trackSecondLoop(J_mbt,R_mbt,cMo,lvl);
+      trackSecondLoop(_I,J_mbt,R_mbt,cMo,lvl);
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
@@ -443,10 +519,8 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& _I)
   
   vpMbKltTracker::preTracking(_I,nbInfos,nbFaceUsed);
   
-  if(nbInfos >= 4){
+  if(nbInfos >= 4)
     vpMbKltTracker::computeVVS(nbInfos, w_klt);
-//     setPose(vpMbKltTracker::getPose());
-  }
   else{
     nbInfos = 0;
     std::cout << "[ERROR] Unable to init with KLT" << std::endl;
@@ -467,6 +541,7 @@ unsigned int
 vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl)
 {
   vpMbtDistanceLine *l ;
+  vpMbtDistanceCylinder *cy ;
 
   if(_lvl  >= scales.size() || !scales[_lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
@@ -514,13 +589,43 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
     n+= l->nbFeature ;
   }
   
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+    cy = *it;
+    cy->computeInteractionMatrixError(cMo, _I);
+    double fac = 1.0;
+
+    std::list<vpMeSite>::const_iterator itCyl1;
+    std::list<vpMeSite>::const_iterator itCyl2;
+    if ((cy->meline1 != NULL || cy->meline2 != NULL)){
+      itCyl1 = cy->meline1->getMeList().begin();
+      itCyl2 = cy->meline2->getMeList().begin();
+    }
+
+    for(unsigned int i=0 ; i < cy->nbFeature ; i++){
+      factor[n+i] = fac;
+      vpMeSite site;
+      if(i<cy->nbFeaturel1) {
+        site= *itCyl1;
+        ++itCyl1;
+      }
+      else{
+        site= *itCyl2;
+        ++itCyl2;
+      }
+      if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+    }
+
+    n+= cy->nbFeature ;
+  }
+  
   return nbrow;
 }
 
 void 
-vpMbEdgeKltTracker::trackSecondLoop(vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl)
+vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& _I,  vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl)
 {
   vpMbtDistanceLine* l;
+  vpMbtDistanceCylinder *cy ;
   
   unsigned int n = 0 ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
@@ -530,10 +635,22 @@ vpMbEdgeKltTracker::trackSecondLoop(vpMatrix &_L, vpColVector &_error, vpHomogen
       for (unsigned int j=0; j < 6 ; j++){
         _L[n+i][j] = l->L[i][j];
         _error[n+i] = l->error[i];
-//         error_lines[nlines+i] = error[n+i];
       }
     }
     n+= l->nbFeature;
+  }
+  
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+    cy = *it;
+    cy->computeInteractionMatrixError(_cMo, _I) ;
+    for(unsigned int i=0 ; i < cy->nbFeature ; i++){
+      for(unsigned int j=0; j < 6 ; j++){
+        _L[n+i][j] = cy->L[i][j];
+        _error[n+i] = cy->error[i];
+      }
+    }
+
+    n+= cy->nbFeature ;
   }
 }
 
@@ -579,6 +696,21 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, co
 }
 
 /*!
+  Add a cylinder to track from tow points on the axis (defining the length of
+  the cylinder) and its radius.
+
+  \param _p1 : First point on the axis.
+  \param _p2 : Second point on the axis.
+  \param _radius : Radius of the cylinder.
+  \param _indexCylinder : Index of the cylinder.
+*/
+void    
+vpMbEdgeKltTracker::initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder)
+{
+  vpMbEdgeTracker::initCylinder(_p1, _p2, _radius, _indexCylinder);
+}
+
+/*!
   Display the 3D model at a given position using the given camera parameters
 
   \param _I : The image .
@@ -592,6 +724,15 @@ void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
+        (*it)->display(_I, _cMo, cam, _col, _l);
+      }
+      break ; //displaying model on one scale only
+    }
+  }
 }
 
 /*!
@@ -608,6 +749,15 @@ void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
   vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+  
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
+        (*it)->display(_I, _cMo, cam, _col, _l);
+      }
+      break ; //displaying model on one scale only
+    }
+  }
 }
 
 #endif //VISP_HAVE_OPENCV

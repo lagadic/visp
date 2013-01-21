@@ -63,7 +63,7 @@
 #if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY)
 
 
-#define GETOPTARGS  "x:m:i:n:dchtfo"
+#define GETOPTARGS  "x:m:i:n:dchtfCo"
 
 
 void usage(const char *name, const char *badparam)
@@ -74,7 +74,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f]",
+  [-t] [-c] [-d] [-h] [-f] [-C]",
   name );
 
   fprintf(stdout, "\n\
@@ -103,6 +103,11 @@ OPTIONS:                                               \n\
      website. However, the .cao model allows to use the 3d model based tracker \n\
      without Coin.\n\
 \n\
+  -C                                  \n\
+     Track only the cube (not the cylinder). In this case the models files are\n\
+     cube.cao or cube.wrl instead of cube_and_cylinder.cao and \n\
+     cube_and_cylinder.wrl.\n\
+\n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
      This base name is also used for the optionnal picture specifying where to \n\
@@ -129,7 +134,7 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel, bool &useOgre)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel, bool& trackCylinder, bool &useOgre)
 {
   const char *optarg;
   int   c;
@@ -144,6 +149,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
+    case 'C': trackCylinder = false; break;
     case 'o' : useOgre = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
@@ -180,6 +186,7 @@ main(int argc, const char ** argv)
   bool opt_click_allowed = true;
   bool opt_display = true;
   bool cao3DModel = false;
+  bool trackCylinder = true;
   bool useOgre = false;
   
   // Get the VISP_IMAGE_PATH environment variable value
@@ -193,7 +200,7 @@ main(int argc, const char ** argv)
 
 
   // Read the command line options
-  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel, useOgre)) {
+  if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre)) {
     return (-1);
   }
 
@@ -226,9 +233,16 @@ main(int argc, const char ** argv)
   
   if (!opt_modelFile.empty()){
     modelFile = opt_modelFile;
-  }else{
-    std::string modelFileCao = "/ViSP-images/mbt/cube.cao";
-    std::string modelFileWrl = "/ViSP-images/mbt/cube.wrl";
+  }else{    
+    std::string modelFileCao;
+    std::string modelFileWrl;
+    if(trackCylinder){
+      modelFileCao = "/ViSP-images/mbt/cube_and_cylinder.cao";
+      modelFileWrl = "/ViSP-images/mbt/cube_and_cylinder.wrl";
+    }else{
+      modelFileCao = "/ViSP-images/mbt/cube.cao";
+      modelFileWrl = "/ViSP-images/mbt/cube.wrl";
+    }
 
     if(!opt_ipath.empty()){
       if(cao3DModel){

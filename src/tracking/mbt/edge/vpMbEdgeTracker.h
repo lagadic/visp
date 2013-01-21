@@ -110,20 +110,30 @@
 \code
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpException.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
   vpMbEdgeTracker tracker; // Create a model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker. 
   vpCameraParameters cam;
-
+  
   // Acquire an image
+  vpImageIo::readPGM(I, "cube.pgm");
+  
+#if defined VISP_HAVE_X11
+  vpDisplayX display;
+  display.init(I,100,100,"Mbt Edge Tracker");
+#endif
 
+#if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+#endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
   tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
   tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
@@ -132,7 +142,10 @@ int main()
     // Acquire a new image
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
+    
+    vpDisplay::display(I);
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
 
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
@@ -172,29 +185,29 @@ int main()
 #include <visp/vpImage.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpImageIo.h>
 
 int main()
 {
   vpMbEdgeTracker tracker; // Create a model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
-  vpCameraParameters cam;
-
+  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker. 
+  
   //acquire an image
+  vpImageIo::readPGM(I, "cube.pgm"); // Example of acquisition
 
-  // Get the cMo from a known pose or a 'client' in a server/client configuration
-
+#if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
-  tracker.initFromPose(I, cMo); // initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+#endif
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
 
   while(true){
     // acquire a new image
     tracker.track(I); // track the object on this image
-    tracker.getPose(cMo); // get the pose
+    tracker.getPose(cMo); // get the pose 
   }
-
+  
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
 
@@ -208,29 +221,40 @@ int main()
 \code
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpCameraParameters.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
   vpMbEdgeTracker tracker; // Create a model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+  vpHomogeneousMatrix cMo; // Pose used to display the model. 
   vpCameraParameters cam;
+  
+  // Acquire an image
+  vpImageIo::readPGM(I, "cube.pgm");
+  
+#if defined VISP_HAVE_X11
+  vpDisplayX display;
+  display.init(I,100,100,"Mbt Edge Klt Tracker");
+#endif
 
-  //acquire an image
-
-  // Get the cMo from a known pose or a 'server' in a server/client configuration
-
+#if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+#endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.loadModel("cube.wrl"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
 
   while(true){
     // acquire a new image
     // Get the pose using any method
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1);// display the model at the given pose.
+    vpDisplay::display(I);
+    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
+    vpDisplay::flush(I);
   }
+  
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
 

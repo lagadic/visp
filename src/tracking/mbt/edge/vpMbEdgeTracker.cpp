@@ -357,7 +357,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
       cy = *it;
       cy->computeInteractionMatrixError(cMo, _I);
-      double fac = 0.2;
+      double fac = 1.0;
 
       std::list<vpMeSite>::const_iterator itCyl1;
       std::list<vpMeSite>::const_iterator itCyl2;
