@@ -397,7 +397,7 @@ main(int argc, const char ** argv)
       // display the 3D model  
       if (opt_display)
       {
-        tracker.display(I, cMo, cam, vpColor::darkRed, 1);
+        tracker.display(I, cMo, cam, vpColor::darkRed, true);
         // display the frame
         vpDisplay::displayFrame (I, cMo, cam, 0.05, vpColor::blue);
       }
