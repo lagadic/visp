@@ -86,6 +86,8 @@ vpMbKltTracker::~vpMbKltTracker()
     cvReleaseImage(&cur);
     cur = NULL;
   }
+  
+  delete faces;
 }
 
 void 

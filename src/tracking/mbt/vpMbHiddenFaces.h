@@ -206,6 +206,10 @@ vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
     Lpol[i] = NULL ;
   }
   Lpol.resize(0);
+  
+#ifdef VISP_HAVE_OGRE
+  delete ogre;
+#endif
 }
 
 /*!

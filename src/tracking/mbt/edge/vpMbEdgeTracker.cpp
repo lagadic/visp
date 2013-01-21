@@ -135,6 +135,8 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
     }
   }
   cleanPyramid(Ipyramid);
+  
+  delete faces;
 }
 
 /*! 
