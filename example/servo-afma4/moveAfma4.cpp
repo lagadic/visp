@@ -55,6 +55,7 @@
 
 */
 
+#include <unistd.h>
 
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
