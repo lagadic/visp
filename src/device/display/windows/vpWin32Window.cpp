@@ -265,7 +265,7 @@ vpWin32Window::~vpWin32Window()
 void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned int w, unsigned int h)
 {
   //the window's style
-  DWORD style = WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX |WS_MAXIMIZEBOX;
+  DWORD style = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
   const char g_szClassName[] = "ViSPWindowClass";
 
   RECT rect;
@@ -273,12 +273,6 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
   rect.right=static_cast<int>(w);
   rect.top=0;
   rect.bottom=static_cast<int>(h);
-
-  AdjustWindowRectEx(&rect, style, false, 0);
-
-  //the window's required dimensions to have a client area of w*h
-  //int windowW = rect.right - rect.left - 4;
-  //int windowH = rect.bottom - rect.top - 4;
 
   //now we register the window's class
   WNDCLASSEX wcex;
@@ -292,23 +286,27 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
   wcex.hInstance  = hInst;
   wcex.hIcon   = LoadIcon(NULL, IDI_APPLICATION);
   wcex.hCursor  = LoadCursor(NULL, IDC_ARROW);
-  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+  wcex.hbrBackground =(HBRUSH)(COLOR_WINDOW+1);
   wcex.lpszMenuName = NULL;
   wcex.lpszClassName = g_szClassName;
   wcex.hIconSm  = LoadIcon(NULL, IDI_APPLICATION);
   
   RegisterClassEx(&wcex);
 
+  AdjustWindowRectEx(&rect, style, false, style);
+  // std::cout << "win client size  (orig)(w,h): " << rect.left << " " << rect.top << " " << rect.right << " " << rect.bottom << std::endl;
+
   //creates the window
-  hWnd = CreateWindowEx(WS_EX_APPWINDOW,g_szClassName, title, style,
-                      posx, posy, static_cast<int>(w), static_cast<int>(h), NULL, NULL, hInst, NULL);
+  hWnd = CreateWindowEx(WS_EX_APPWINDOW, g_szClassName, title, style,
+                        posx, posy, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, hInst, NULL);
   if (hWnd == NULL)
   {
-	DWORD err= GetLastError();
-	std::cout << "err=" << err << std::endl;
+	  DWORD err= GetLastError();
+	  std::cout << "err CreateWindowEx=" << err << std::endl;
     throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
                              "Can't create the window!");
   }
+  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);     
 
   //needed if we want to access it from the callback method (message handler)
   window = this;
@@ -318,6 +316,7 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
 
   //displays the window
   ShowWindow(hWnd, SW_SHOWDEFAULT);
+  //ShowWindow(hWnd, SW_SHOW);
   UpdateWindow(hWnd);
 
   MSG msg;

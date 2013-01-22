@@ -53,7 +53,8 @@ ViSP 2.7.0 (under development)
     - [14993] Segfault in mbtTracker example when only the cube is tracked
     - [15049] In vpFeatureSegment, bad interaction matrix associated to
               alpha angle
-    - [15110] segfault in ffmpeg video reader
+    - [15110] Segfault in ffmpeg video reader
+	- [15291] Under Windows, the end of an image is not displayed
 
 ----------------------------------------------
 ViSP 2.6.2 (released July 15, 2012)
