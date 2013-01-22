@@ -144,7 +144,6 @@ SET (SRC_MATH
   math/kalman/vpLinearKalmanFilterInstantiation.cpp
   math/matrix/vpColVector.cpp
   math/matrix/vpMatrix.cpp
-  math/matrix/vpMatrix_cholesky.cpp
   math/matrix/vpMatrix_lu.cpp
   math/matrix/vpMatrix_qr.cpp
   math/matrix/vpMatrix_svd.cpp
@@ -174,6 +173,10 @@ SET (SRC_MATH
   math/transformation/vpTranslationVector.cpp
   math/transformation/vpVelocityTwistMatrix.cpp
   )
+
+IF(VISP_HAVE_LAPACK)
+  LIST(APPEND SRC_MATH math/matrix/vpMatrix_cholesky.cpp)
+ENDIF()
 
 SET (SRC_ROBOT
   robot/robot/vpRobot.cpp
