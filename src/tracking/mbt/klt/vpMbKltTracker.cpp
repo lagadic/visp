@@ -67,11 +67,9 @@ vpMbKltTracker::vpMbKltTracker()
   
   lambda = 0.8;
   maxIter = 200;
-  
-  faces = new vpMbHiddenFaces<vpMbtKltPolygon>();
 
 #ifdef VISP_HAVE_OGRE
-  faces->getOgreContext()->setWindowName("MBT KLT");
+  faces.getOgreContext()->setWindowName("MBT KLT");
 #endif
   
   useOgre = false;
@@ -87,8 +85,6 @@ vpMbKltTracker::~vpMbKltTracker()
     cvReleaseImage(&cur);
     cur = NULL;
   }
-  
-  delete faces;
 }
 
 void 
@@ -103,16 +99,16 @@ vpMbKltTracker::init(const vpImage<unsigned char>& _I)
   
  bool reInitialisation = false;
   if(!useOgre)
-    faces->setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
   else{
 #ifdef VISP_HAVE_OGRE   
-    if(!faces->isOgreInitialised())
-      faces->initOgre(cam);
+    if(!faces.isOgreInitialised())
+      faces.initOgre(cam);
     
-    faces->setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
     
 #else
-    faces->setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
   
@@ -131,16 +127,16 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& _I)
   IplImage* mask = cvCreateImage(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
   
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if((*faces)[i]->isVisible())
-        (*faces)[i]->updateMask(mask, 255 - i*15, maskBorder);
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(faces[i]->isVisible())
+        faces[i]->updateMask(mask, 255 - i*15, maskBorder);
   }
   
   tracker.initTracking(cur, mask);
   
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if((*faces)[i]->isVisible()){
-      (*faces)[i]->init(tracker);
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(faces[i]->isVisible()){
+      faces[i]->init(tracker);
     }
   }
 
@@ -176,8 +172,8 @@ vpMbKltTracker::getKltImagePoints()
 void
 vpMbKltTracker::setCameraParameters(const vpCameraParameters& _cam)
 {
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    (*faces)[i]->setCameraParameters(_cam);
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    faces[i]->setCameraParameters(_cam);
   }
   this->cam = _cam;
   this->cameraInitialised = true;
@@ -228,8 +224,8 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const 
   for(unsigned int j = 0; j < _corners.size(); j++) {
     polygon->addPoint(j, _corners[j]);
   }
-  faces->addPolygon(polygon);
-  faces->getPolygon().back()->setCameraParameters(cam);
+  faces.addPolygon(polygon);
+  faces.getPolygon().back()->setCameraParameters(cam);
 
   delete polygon;
   polygon = NULL;
@@ -250,13 +246,13 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& _I, unsigned int &nbIn
   
   nbInfos = 0;  
   nbFaceUsed = 0;
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if((*faces)[i]->isVisible()){
-      (*faces)[i]->computeNbDetectedCurrent(tracker);
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(faces[i]->isVisible()){
+      faces[i]->computeNbDetectedCurrent(tracker);
           
-//       (*faces)[i]->ransac();
-      if((*faces)[i]->hasEnoughPoints()){
-        nbInfos += (*faces)[i]->getNbPointsCur();
+//       faces[i]->ransac();
+      if(faces[i]->hasEnoughPoints()){
+        nbInfos += faces[i]->getNbPointsCur();
         nbFaceUsed++;
       }
     }
@@ -276,15 +272,15 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w)
   unsigned int initialNumber = 0;
   unsigned int currentNumber = 0;
   unsigned int shift = 0;
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if((*faces)[i]->isVisible()){
-      initialNumber += (*faces)[i]->getInitialNumberPoint();
-      if((*faces)[i]->hasEnoughPoints()){    
-        vpSubColVector sub_w(w, shift, 2*(*faces)[i]->getNbPointsCur());
-        (*faces)[i]->removeOutliers(sub_w, threshold_outlier);
-        shift += 2*(*faces)[i]->getNbPointsCur();
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(faces[i]->isVisible()){
+      initialNumber += faces[i]->getInitialNumberPoint();
+      if(faces[i]->hasEnoughPoints()){    
+        vpSubColVector sub_w(w, shift, 2*faces[i]->getNbPointsCur());
+        faces[i]->removeOutliers(sub_w, threshold_outlier);
+        shift += 2*faces[i]->getNbPointsCur();
         
-        currentNumber += (*faces)[i]->getNbPointsCur();
+        currentNumber += faces[i]->getNbPointsCur();
       }
 //       else{
 //         reInitialisation = true;
@@ -301,12 +297,12 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w)
     }
     else{
       if(!useOgre)
-        faces->setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
       else{
 #ifdef VISP_HAVE_OGRE    
-        faces->setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #else
-        faces->setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
       }
     }
@@ -348,19 +344,19 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ){
     
     unsigned int shift = 0;
-    for (unsigned int i = 0; i < faces->size(); i += 1){
-      if((*faces)[i]->isVisible() && (*faces)[i]->hasEnoughPoints()){
-        vpSubColVector subR(R, shift, 2*(*faces)[i]->getNbPointsCur());
-        vpSubMatrix subJ(J, shift, 0, 2*(*faces)[i]->getNbPointsCur(), 6);
+    for (unsigned int i = 0; i < faces.size(); i += 1){
+      if(faces[i]->isVisible() && faces[i]->hasEnoughPoints()){
+        vpSubColVector subR(R, shift, 2*faces[i]->getNbPointsCur());
+        vpSubMatrix subJ(J, shift, 0, 2*faces[i]->getNbPointsCur(), 6);
         try{
-          (*faces)[i]->computeHomography(ctTc0, H);
-          (*faces)[i]->computeInteractionMatrixAndResidu(subR, subJ);
+          faces[i]->computeHomography(ctTc0, H);
+          faces[i]->computeInteractionMatrixAndResidu(subR, subJ);
         }catch(...){
           std::cerr << "exception while tracking face " << i << std::endl;
           throw ;
         }
 
-        shift += 2*(*faces)[i]->getNbPointsCur();
+        shift += 2*faces[i]->getNbPointsCur();
       }
     }
 
@@ -528,29 +524,29 @@ vpMbKltTracker::loadConfigFile(const char* filename)
 void
 vpMbKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if(displayFullModel || (*faces)[i]->isVisible())
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(displayFullModel || faces[i]->isVisible())
     {
-      (*faces)[i]->changeFrame(_cMo);
-      std::vector<vpImagePoint> roi = (*faces)[i]->getRoi(_cam);
-      for (unsigned int j = 0; j < (*faces)[i]->getNbPoint(); j += 1){
+      faces[i]->changeFrame(_cMo);
+      std::vector<vpImagePoint> roi = faces[i]->getRoi(_cam);
+      for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
         vpImagePoint ip1, ip2;
         ip1 = roi[j];
-        ip2 = roi[(j+1)%(*faces)[i]->getNbPoint()];
+        ip2 = roi[(j+1)%faces[i]->getNbPoint()];
         vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
       }
       
-      if(displayFeatures && (*faces)[i]->hasEnoughPoints())
-        (*faces)[i]->displayPrimitive(_I);
+      if(displayFeatures && faces[i]->hasEnoughPoints())
+        faces[i]->displayPrimitive(_I);
       
 //       if(facesTracker[i].hasEnoughPoints())
-//         (*faces)[i]->displayNormal(_I);
+//         faces[i]->displayNormal(_I);
     }
   }
 
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces->displayOgre(_cMo);
+    faces.displayOgre(_cMo);
 #endif
 }
 
@@ -567,29 +563,29 @@ vpMbKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMat
 void
 vpMbKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
 {
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if(displayFullModel || (*faces)[i]->isVisible())
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(displayFullModel || faces[i]->isVisible())
     {
-      (*faces)[i]->changeFrame(_cMo);
-      std::vector<vpImagePoint> roi = (*faces)[i]->getRoi(_cam);
-      for (unsigned int j = 0; j < (*faces)[i]->getNbPoint(); j += 1){
+      faces[i]->changeFrame(_cMo);
+      std::vector<vpImagePoint> roi = faces[i]->getRoi(_cam);
+      for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
         vpImagePoint ip1, ip2;
         ip1 = roi[j];
-        ip2 = roi[(j+1)%(*faces)[i]->getNbPoint()];
+        ip2 = roi[(j+1)%faces[i]->getNbPoint()];
         vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
       }
       
-      if(displayFeatures && (*faces)[i]->hasEnoughPoints())
-        (*faces)[i]->displayPrimitive(_I);
+      if(displayFeatures && faces[i]->hasEnoughPoints())
+        faces[i]->displayPrimitive(_I);
       
 //       if(facesTracker[i].hasEnoughPoints())
-//         (*faces)[i]->displayNormal(_I);
+//         faces[i]->displayNormal(_I);
     }
   }
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces->displayOgre(_cMo);
+    faces.displayOgre(_cMo);
 #endif
 }
 
@@ -605,9 +601,9 @@ void
 vpMbKltTracker::testTracking()
 {
   unsigned int nbTotalPoints = 0;
-  for (unsigned int i = 0; i < faces->size(); i += 1){
-    if((*faces)[i]->isVisible()){
-      nbTotalPoints += (*faces)[i]->getNbPointsCur();
+  for (unsigned int i = 0; i < faces.size(); i += 1){
+    if(faces[i]->isVisible()){
+      nbTotalPoints += faces[i]->getNbPointsCur();
     }
   }
 

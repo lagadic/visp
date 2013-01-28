@@ -243,7 +243,7 @@ protected:
   //! Points tracker.
   vpKltOpencv tracker;
   //! Set of faces describing the object. 
-  vpMbHiddenFaces<vpMbtKltPolygon> *faces;
+  vpMbHiddenFaces<vpMbtKltPolygon> faces;
   
 public:
   

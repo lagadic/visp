@@ -93,10 +93,8 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   cylinders[0].clear();
   Ipyramid.resize(0);
   
-  faces = new vpMbHiddenFaces<vpMbtPolygon>();
-  
 #ifdef VISP_HAVE_OGRE
-  faces->getOgreContext()->setWindowName("MBT Edge");
+  faces.getOgreContext()->setWindowName("MBT Edge");
 #endif
   useOgre = false;
   
@@ -135,8 +133,6 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
     }
   }
   cleanPyramid(Ipyramid);
-  
-  delete faces;
 }
 
 /*! 
@@ -914,8 +910,8 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 
 #ifdef VISP_HAVE_OGRE 
   if(useOgre){
-    if(!faces->isOgreInitialised())
-      faces->initOgre(cam);
+    if(!faces.isOgreInitialised())
+      faces.initOgre(cam);
   }
 #endif
   
@@ -1033,7 +1029,7 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces->displayOgre(_cMo);
+    faces.displayOgre(_cMo);
 #endif
 }
 
@@ -1071,7 +1067,7 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &_c
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces->displayOgre(_cMo);
+    faces.displayOgre(_cMo);
 #endif
 }
 
@@ -1267,7 +1263,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
            (samePoint(*(l->p1),P2) && samePoint(*(l->p2),P1)) ){
           already_here = true ;
           l->Lindex_polygon.push_back(polygone);
-          l->hiddenface = faces ;
+          l->hiddenface = &faces ;
         }
       }
 
@@ -1278,7 +1274,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
         l->buildFrom(P1,P2) ;
         l->Lindex_polygon.push_back(polygone);
         l->setMovingEdge(&me) ;
-        l->hiddenface = faces ;
+        l->hiddenface = &faces ;
         l->setIndex(nline) ;
         l->setName(name);
         nline +=1 ;
@@ -1389,7 +1385,7 @@ void
 vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 {
   p.setIndex(index_polygon) ;
-  faces->addPolygon(&p) ;
+  faces.addPolygon(&p) ;
 
   unsigned int nbpt = p.getNbPoint() ;
   if(nbpt > 0){
@@ -1417,13 +1413,13 @@ vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleli
   unsigned int n ;
 
   if(!useOgre)
-    n = faces->setVisible(_cMo) ;
+    n = faces.setVisible(_cMo) ;
   else{
 #ifdef VISP_HAVE_OGRE   
     bool changed = false;
-    n = faces->setVisibleOgre(_cMo, vpMath::rad(70), vpMath::rad(70), changed);
+    n = faces.setVisibleOgre(_cMo, vpMath::rad(70), vpMath::rad(70), changed);
 #else
-    n = faces->setVisible(_cMo) ;
+    n = faces.setVisible(_cMo) ;
 #endif
   } 
   
@@ -1459,13 +1455,13 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &
   unsigned int n ;
 
   if(!useOgre)
-    n = faces->setVisible(_cMo) ;
+    n = faces.setVisible(_cMo) ;
   else{
 #ifdef VISP_HAVE_OGRE   
     bool changed = false;
-    n = faces->setVisibleOgre(_I, cam, _cMo, vpMath::rad(70), vpMath::rad(70), changed);
+    n = faces.setVisibleOgre(_I, cam, _cMo, vpMath::rad(70), vpMath::rad(70), changed);
 #else
-    n = faces->setVisible(_cMo) ;
+    n = faces.setVisible(_cMo) ;
 #endif
   } 
   
@@ -1583,7 +1579,7 @@ vpMbEdgeTracker::resetTracker()
     }
   }
   
-  faces->reset();
+  faces.reset();
   
   index_polygon =0;
   compute_interaction=1;
@@ -1673,11 +1669,11 @@ vpMbEdgeTracker::getNbPoints(const unsigned int _level)
 vpMbtPolygon* 
 vpMbEdgeTracker::getPolygon(const unsigned int _index)
 {
-  if(_index >= static_cast<unsigned int>(faces->size()) ){
+  if(_index >= static_cast<unsigned int>(faces.size()) ){
     throw vpException(vpException::dimensionError, "index out of range");
   }
   
-  return (*faces)[_index];
+  return faces[_index];
 }
 
 /*!
@@ -1688,7 +1684,7 @@ vpMbEdgeTracker::getPolygon(const unsigned int _index)
 unsigned int 
 vpMbEdgeTracker::getNbPolygon() 
 {
-  return static_cast<unsigned int>(faces->size());
+  return static_cast<unsigned int>(faces.size());
 }
 
 /*!

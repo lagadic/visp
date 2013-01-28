@@ -52,7 +52,7 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   vpMbKltTracker::setMaxIter(30);
   
 #ifdef VISP_HAVE_OGRE
-  vpMbKltTracker::faces->getOgreContext()->setWindowName("MBT Hybrid");
+  vpMbKltTracker::faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif
 }
 
@@ -193,13 +193,13 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
 //   bool useless = false ;
 //   vpMbEdgeTracker::visibleFace(_I, cMo, useless) ;
   unsigned int n = 0;
-  for(unsigned int i = 0; i < vpMbKltTracker::faces->size() ; i++){
-      if((*vpMbKltTracker::faces)[i]->isVisible()){
-        (*vpMbEdgeTracker::faces)[i]->isvisible = true;
+  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+      if(vpMbKltTracker::faces[i]->isVisible()){
+        vpMbEdgeTracker::faces[i]->isvisible = true;
         n++;
       }
       else
-        (*vpMbEdgeTracker::faces)[i]->isvisible = false;
+        vpMbEdgeTracker::faces[i]->isvisible = false;
   }
   vpMbEdgeTracker::nbvisiblepolygone = n;
   
@@ -396,13 +396,13 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
-      for (unsigned int i = 0; i < vpMbKltTracker::faces->size(); i += 1){
-        if((*vpMbKltTracker::faces)[i]->isVisible() && (*vpMbKltTracker::faces)[i]->hasEnoughPoints()){
-          vpSubColVector subR(R_klt, shift, 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur());
-          vpSubMatrix subJ(J_klt, shift, 0, 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur(), 6);
-          (*vpMbKltTracker::faces)[i]->computeHomography(ctTc0, H);
-          (*vpMbKltTracker::faces)[i]->computeInteractionMatrixAndResidu(subR, subJ);
-          shift += 2*(*vpMbKltTracker::faces)[i]->getNbPointsCur();
+      for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+        if(vpMbKltTracker::faces[i]->isVisible() && vpMbKltTracker::faces[i]->hasEnoughPoints()){
+          vpSubColVector subR(R_klt, shift, 2*vpMbKltTracker::faces[i]->getNbPointsCur());
+          vpSubMatrix subJ(J_klt, shift, 0, 2*vpMbKltTracker::faces[i]->getNbPointsCur(), 6);
+          vpMbKltTracker::faces[i]->computeHomography(ctTc0, H);
+          vpMbKltTracker::faces[i]->computeInteractionMatrixAndResidu(subR, subJ);
+          shift += 2*vpMbKltTracker::faces[i]->getNbPointsCur();
         }
       }
     }

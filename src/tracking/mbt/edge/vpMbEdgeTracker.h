@@ -293,7 +293,7 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     int index_polygon;
     
     //! Set of faces describing the object. 
-    vpMbHiddenFaces<vpMbtPolygon> *faces;
+    vpMbHiddenFaces<vpMbtPolygon> faces;
     
     //! Number of polygon (face) currently visible. 
     unsigned int nbvisiblepolygone;
