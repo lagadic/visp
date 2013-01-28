@@ -97,8 +97,8 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   
 #ifdef VISP_HAVE_OGRE
   faces->getOgreContext()->setWindowName("MBT Edge");
-  useOgre = false;
 #endif
+  useOgre = false;
   
   angleAppears = vpMath::rad(95);
   angleDisappears = vpMath::rad(95);

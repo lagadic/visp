@@ -72,8 +72,9 @@ vpMbKltTracker::vpMbKltTracker()
 
 #ifdef VISP_HAVE_OGRE
   faces->getOgreContext()->setWindowName("MBT KLT");
-  useOgre = false;
 #endif
+  
+  useOgre = false;
 }
 
 /*!
