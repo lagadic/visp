@@ -305,6 +305,8 @@ public:
           */
   inline  double          getThresholdAcceptation() { return threshold_outlier;}
   
+          void            resetTracker();
+  
           void            setCameraParameters(const vpCameraParameters& _cam);
           
           /*!
@@ -329,8 +331,6 @@ public:
   inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
   
   virtual void    setOgreVisibilityTest(const bool &v);
-  
-          void            setPose(const vpHomogeneousMatrix &_cMo);
           
           /*!
             Set the threshold for the acceptation of a point.

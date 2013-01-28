@@ -77,6 +77,17 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& _I)
   vpMbKltTracker::init(_I);
 }
 
+/*!
+  Reset the tracker. The model is removed and the pose is set to identity.
+  The tracker needs to be initialized with a new model and a new pose. 
+*/
+void    
+vpMbEdgeKltTracker::resetTracker()
+{
+  vpMbEdgeTracker::resetTracker();
+  vpMbKltTracker::resetTracker();
+}
+
 unsigned int
 vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
 {
@@ -667,19 +678,6 @@ vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& _cam)
   
   vpMbEdgeTracker::setCameraParameters(_cam);
   vpMbKltTracker::setCameraParameters(_cam);
-}
-
-/*!
-  set the current pose.
-
-  \param _cMo : the current pose.
-*/
-void   
-vpMbEdgeKltTracker::setPose(const vpHomogeneousMatrix &_cMo) 
-{ 
-  cMo = _cMo ;
-  vpMbKltTracker::setPose(cMo);
-//   vpMbEdgeTracker::setPose(cMo);
 }
 
 /*!

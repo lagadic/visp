@@ -144,6 +144,52 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& _I)
 }
 
 /*!
+  Reset the tracker. The model is removed and the pose is set to identity.
+  The tracker needs to be initialized with a new model and a new pose. 
+*/
+void            
+vpMbKltTracker::resetTracker()
+{
+  cMo.setIdentity();
+  
+  if(cur != NULL){
+    cvReleaseImage(&cur);
+    cur = NULL;
+  }
+  
+  compute_interaction = true;
+  firstInitialisation = true;
+  computeCovariance = false;
+
+  tracker.setTrackerId(1);
+  tracker.setUseHarris(1);
+  
+  tracker.setMaxFeatures(10000);
+  tracker.setWindowSize(5);
+  tracker.setQuality(0.01);
+  tracker.setMinDistance(5);
+  tracker.setHarrisFreeParameter(0.01);
+  tracker.setBlockSize(3);
+  tracker.setPyramidLevels(3);
+  
+  angleAppears = vpMath::rad(65);
+  angleDisappears = vpMath::rad(75);
+  
+  maskBorder = 5;
+  threshold_outlier = 0.5;
+  percentGood = 0.7;
+  
+  lambda = 0.8;
+  maxIter = 200;
+  
+  faces.reset();
+  
+#ifdef VISP_HAVE_OGRE
+  useOgre = false;
+#endif
+}
+
+/*!
   Get the current list of KLT points.
   
   \warning Contrary to getKltPoints which returns a pointer on CvPoint2D32f. This function convert and copy the openCV KLT points into vpImagePoints.
@@ -177,16 +223,6 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& _cam)
   }
   this->cam = _cam;
   this->cameraInitialised = true;
-}
-
-/*!
-  set the current pose.
-
-  \param _cMo : the current pose.
-*/
-void vpMbKltTracker::setPose(const vpHomogeneousMatrix &_cMo)
-{
-  cMo = _cMo;
 }
    
 /*!

@@ -209,7 +209,7 @@ int main()
 */
 class VISP_EXPORT vpMbEdgeKltTracker: public vpMbKltTracker, public vpMbEdgeTracker
 {
-private:
+protected:
   //! If true, compute the interaction matrix at each iteration of the minimisation. Otherwise, compute it only on the first iteration.
   bool compute_interaction;
   //! The gain of the virtual visual servoing stage.
@@ -246,6 +246,8 @@ public:
           void    loadConfigFile(const char* filename);
   virtual void    loadConfigFile(const std::string& _configFile);
   virtual void    loadModel(const std::string& _modelFile);
+  
+          void    resetTracker();
 
   virtual void    setCameraParameters(const vpCameraParameters& _cam);
 
@@ -262,8 +264,6 @@ public:
             \param max : the desired number of iteration
           */
   inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
-
-          void    setPose(const vpHomogeneousMatrix &_cMo) ;
           
           /*!
             Use Ogre3D for visibility tests
