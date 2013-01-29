@@ -70,6 +70,8 @@ class vpMbHiddenFaces
   std::vector<PolygonType *> Lpol ;
   //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
   bool depthTest;
+  //! Number of visible polygon
+  unsigned int nbVisiblePolygon;
   
 #ifdef VISP_HAVE_OGRE
   vpImage<vpRGBa> ogreBackground;
@@ -101,7 +103,7 @@ class vpMbHiddenFaces
 
       \return Mbt Klt polygons list.
     */
-    const std::vector<PolygonType*>& getPolygon() const {return Lpol;}
+    std::vector<PolygonType*>& getPolygon() {return Lpol;}
 
 #ifdef VISP_HAVE_OGRE
   void            initOgre(vpCameraParameters _cam = vpCameraParameters());
@@ -113,6 +115,13 @@ class vpMbHiddenFaces
       \return true if all the points of a polygon has to be in front of the camera, false otherwise.
     */
     bool          getDepthTest(){return depthTest;}
+    
+    /*!
+      get the number of visible polygons.
+
+      \return number of visible polygons.
+    */
+    unsigned int getNbVisiblePolygon(){return nbVisiblePolygon;}
 
 #ifdef VISP_HAVE_OGRE
     /*!
@@ -182,7 +191,7 @@ class vpMbHiddenFaces
   Basic constructor.
 */
 template<class PolygonType>
-vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): depthTest(false)
+vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): depthTest(false), nbVisiblePolygon(0)
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
@@ -241,14 +250,14 @@ template<class PolygonType>
 unsigned int
 vpMbHiddenFaces<PolygonType>::setVisible(const vpHomogeneousMatrix &_cMo)
 {
-  unsigned int nbvisiblepolygone = 0 ;
+  nbVisiblePolygon = 0 ;
   
   for(unsigned int i = 0 ; i < Lpol.size() ; i++){
     if (Lpol[i]->isVisible(_cMo, depthTest)){
-      nbvisiblepolygone++;
+      nbVisiblePolygon++;
     }
   }
-  return nbvisiblepolygone ;
+  return nbVisiblePolygon ;
 }
 
 /*!
@@ -258,6 +267,7 @@ template<class PolygonType>
 void
 vpMbHiddenFaces<PolygonType>::reset()
 {
+  nbVisiblePolygon = 0;
   for(unsigned int i = 0 ; i < Lpol.size() ; i++){
     if (Lpol[i]!=NULL){
       delete Lpol[i] ;
@@ -289,7 +299,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam
                                               )
 {  
-  unsigned int n = 0;
+  nbVisiblePolygon = 0;
   changed = false;
   
   vpTranslationVector cameraPos;
@@ -335,7 +345,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
         Lpol[i]->isvisible = false;
       }
       else {
-        n++;
+        nbVisiblePolygon++;
         Lpol[i]->isvisible = true;
       }
     }
@@ -361,14 +371,14 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
 //         std::cout << "Face " << i << " appears" << std::endl;
         Lpol[i]->isvisible = true;
         changed = true;
-        n++;
+        nbVisiblePolygon++;
       }
       else
         Lpol[i]->isvisible = false;
     }
   }
   
-  return n;
+  return nbVisiblePolygon;
 }
 
 /*!

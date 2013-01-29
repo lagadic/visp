@@ -229,7 +229,7 @@ public:
   virtual void    display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   virtual void    display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   /*! Return a reference to the faces structure. */
-  const vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() const { return vpMbKltTracker::faces;}
+  vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
 
   /*!
             Get the value of the gain used to compute the control law.

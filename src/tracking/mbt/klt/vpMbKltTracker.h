@@ -262,7 +262,7 @@ public:
           void            loadConfigFile(const char* filename);
           
           /*! Return a reference to the faces structure. */
-          const vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() const { return faces;}
+          vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
 
           /*!
             Get the current list of KLT points.
