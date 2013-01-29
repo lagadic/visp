@@ -220,6 +220,11 @@ public:
 
   virtual void loadModel(const std::string& _modelFile);
 
+  /*!
+    Reset the tracker.
+  */
+  virtual void resetTracker() = 0;
+
   void savePose(const std::string &filename);
   
   /*!

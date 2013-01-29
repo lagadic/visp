@@ -261,6 +261,9 @@ public:
   virtual void            loadConfigFile(const std::string& _configFile);
           void            loadConfigFile(const char* filename);
           
+          /*! Return a reference to the faces structure. */
+          const vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() const { return faces;}
+
           /*!
             Get the current list of KLT points.
             

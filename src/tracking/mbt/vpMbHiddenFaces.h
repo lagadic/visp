@@ -96,12 +96,12 @@ class vpMbHiddenFaces
     void          displayOgre(const vpHomogeneousMatrix &_cMo);
 #endif   
  
-  /*!
-   Get the list of polygons.
-    
-    \return Mbt Klt polygons list.
-  */
-  std::vector<PolygonType*>& getPolygon() {return Lpol;}
+    /*!
+     Get the list of polygons.
+
+      \return Mbt Klt polygons list.
+    */
+    const std::vector<PolygonType*>& getPolygon() const {return Lpol;}
 
 #ifdef VISP_HAVE_OGRE
   void            initOgre(vpCameraParameters _cam = vpCameraParameters());

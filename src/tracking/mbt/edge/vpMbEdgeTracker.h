@@ -327,6 +327,8 @@ public:
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
   
+  /*! Return a reference to the faces structure. */
+  const vpMbHiddenFaces<vpMbtPolygon> & getFaces() const { return faces;}
   double getFirstThreshold() { return percentageGdPt;}
   
   void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level = 0);
