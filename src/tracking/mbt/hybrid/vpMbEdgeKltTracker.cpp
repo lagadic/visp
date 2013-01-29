@@ -73,8 +73,32 @@ vpMbEdgeKltTracker::~vpMbEdgeKltTracker()
 void 
 vpMbEdgeKltTracker::init(const vpImage<unsigned char>& _I)
 {
-  vpMbEdgeTracker::init(_I);
   vpMbKltTracker::init(_I);
+  
+  initPyramid(_I, Ipyramid);
+  
+  unsigned int n = 0;
+  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+      if(vpMbKltTracker::faces[i]->isVisible()){
+        vpMbEdgeTracker::faces[i]->isvisible = true;
+        n++;
+      }
+      else
+        vpMbEdgeTracker::faces[i]->isvisible = false;
+  }
+  vpMbEdgeTracker::nbvisiblepolygone = n;
+  
+  unsigned int i=scales.size();
+  do {
+    i--;
+    if(scales[i]){
+      downScale(i);
+      initMovingEdge(*Ipyramid[i], cMo);
+      upScale(i);
+    }
+  } while(i != 0);
+  
+  cleanPyramid(Ipyramid);
 }
 
 /*!
