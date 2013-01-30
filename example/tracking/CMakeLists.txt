@@ -55,8 +55,6 @@ SET (SOURCE
   trackDot.cpp
   trackDot2.cpp
   trackKltOpencv.cpp
-  reinitTracking.cpp
-  writeSequence.cpp
 )
 
 # rule for binary build
