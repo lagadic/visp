@@ -281,7 +281,7 @@ vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneous
     faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
   else{
 #ifdef VISP_HAVE_OGRE    
-    faces.setVisibleOgre(_I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
 #else
     faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
 #endif
