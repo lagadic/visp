@@ -55,13 +55,14 @@
 
 */
 
-#include <unistd.h>
-
 #include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-#include <stdlib.h>
+
 #ifdef VISP_HAVE_AFMA4
 
+#include <unistd.h>
+#include <stdlib.h>
+
+#include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpRobotAfma4.h>
 
