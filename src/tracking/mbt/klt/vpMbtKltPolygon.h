@@ -77,6 +77,8 @@ private:
   std::map<int, vpImagePoint> initPoints;
   //! Current points and their ID
   std::map<int, vpImagePoint> curPoints;
+  //! Current points indexes and their ID
+  std::map<int, int> curPointsInd;
   //! number of points detected
   unsigned int nbPointsCur;
   //! initial number of points
@@ -117,6 +119,10 @@ public:
   inline vpCameraParameters& getCameraParameters(){ return cam; }
   
   inline vpColVector  getCurrentNormal() const {return N_cur; }
+  
+  inline std::map<int, vpImagePoint>& getCurrentPoints() {return curPoints; }
+  
+  inline std::map<int, int>& getCurrentPointsInd() {return curPointsInd; }
   
   vpImagePoint&       getImagePoint(const unsigned int _index);
   /*!

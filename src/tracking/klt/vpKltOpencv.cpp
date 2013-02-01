@@ -446,11 +446,39 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 }
 
 /*!
+  Update the current image, delete the previous one and clean the pyramids,
+  in order to rebuild them during the next call to track().
+  
+  \param I : Current image
+*/
+void 
+vpKltOpencv::updateImage(const IplImage *I)
+{
+  cvCopy(I, image, 0);
+  
+  if (prev_image) cvReleaseImage(&prev_image);
+  if (pyramid) cvReleaseImage(&pyramid);
+  if (prev_pyramid) cvReleaseImage(&prev_pyramid);
+  
+  prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  
+  flags = 0; // Set to 0 to force the pyramid computation during the next track()
+}
+
+
+/*!
 
   Get the 'index'th feature image coordinates.  Beware that
   getFeature(i,...) may not represent the same feature before and
   after a tracking iteration (if a feature is lost, features are
   shifted in the array).
+  
+  \param index : index of feature
+  \param id : id of the feature
+  \param x : x coordinate
+  \param y : y coordinate
 
 */
 void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
@@ -464,6 +492,27 @@ void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
   x = features[index].x;
   y = features[index].y;
   id = featuresid[index];
+}
+
+/*!
+
+  Update the 'index'th feature image coordinates.  Beware that
+  setFeature(i,...) may not represent the same feature before and
+  after a tracking iteration (if a feature is lost, features are
+  shifted in the array).
+
+*/
+void vpKltOpencv::setFeature(const int &index, const int &id, const float &x, const float &y)
+{
+  if (index >= countFeatures)
+  {
+    vpERROR_TRACE(" Memory problem ");
+    throw(vpException(vpException::memoryAllocationError," Memory problem"));
+  }
+
+  features[index].x = x;
+  features[index].y = y;
+  featuresid[index] = id;
 }
 
 /*!

@@ -278,6 +278,8 @@ public:
 
   virtual void    testTracking(){};
   virtual void    track(const vpImage<unsigned char>& _I);
+  
+  virtual void    updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
 protected:
           void    computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);

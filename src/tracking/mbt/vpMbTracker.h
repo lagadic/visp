@@ -274,6 +274,13 @@ public:
     \param _I : The current image.
   */
   virtual void track(const vpImage<unsigned char>& _I)=0;
+  
+  /*!
+    Update the pose used in entry of the track() method.
+    
+    \warning This function has to be called after the initialisation of the tracker.
+  */
+  virtual void updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) = 0;
 
 protected:
   void computeJTR(const vpMatrix& _J, const vpColVector& _R, vpMatrix& _JTR);

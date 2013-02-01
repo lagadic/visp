@@ -102,6 +102,57 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& _I)
 }
 
 /*!
+  Update the pose used in entry of the track() method.
+  
+  \warning This function has to be called after the initialisation of the tracker.
+  
+  \param I : image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void           
+vpMbEdgeKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
+{
+  // TO DO
+  
+  vpMbKltTracker::updatePose(I, cdMo);
+  
+  vpMbtDistanceLine *l;
+  lines[scaleLevel].front() ;
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+    l = *it;
+    if(l->meline != NULL){
+      delete l->meline;
+      l->meline = NULL;
+    }
+  }
+  
+  initPyramid(I, Ipyramid);
+  
+  unsigned int n = 0;
+  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+      if(vpMbKltTracker::faces[i]->isVisible()){
+        vpMbEdgeTracker::faces[i]->isvisible = true;
+        n++;
+      }
+      else
+        vpMbEdgeTracker::faces[i]->isvisible = false;
+  }
+  vpMbEdgeTracker::nbvisiblepolygone = n;
+  
+  unsigned int i=scales.size();
+  do {
+    i--;
+    if(scales[i]){
+      downScale(i);
+      initMovingEdge(*Ipyramid[i], cMo);
+      upScale(i);
+    }
+  } while(i != 0);
+  
+  cleanPyramid(Ipyramid);
+}
+
+/*!
   Reset the tracker. The model is removed and the pose is set to identity.
   The tracker needs to be initialized with a new model and a new pose. 
 */

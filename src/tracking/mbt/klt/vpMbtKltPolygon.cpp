@@ -54,6 +54,7 @@ vpMbtKltPolygon::vpMbtKltPolygon()
   nbPointsCur = 0;
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
+  curPointsInd = std::map<int, int>();
   
   isvisible = false;
 }
@@ -80,6 +81,7 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
   nbPointsCur = 0;
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
+  curPointsInd = std::map<int, int>();
   
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
     int id;
@@ -89,6 +91,7 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
     if(isInside(getRoi(cam), y_tmp, x_tmp)){
       initPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[id] = vpImagePoint(y_tmp, x_tmp);
+      curPointsInd[id] = i;
       nbPointsInit++;
       nbPointsCur++;
     }
@@ -119,11 +122,13 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
   float x, y;
   nbPointsCur = 0;
   curPoints = std::map<int, vpImagePoint>();
+  curPointsInd = std::map<int, int>();
   
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++){
     _tracker.getFeature((int)i, id, x, y);
     if(isTrackedFeature(id)){
       curPoints[id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
+      curPointsInd[id] = i;
       nbPointsCur++;
     }
   }
@@ -366,6 +371,7 @@ void
 vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_outlier)
 {
   std::map<int, vpImagePoint> tmp;
+  std::map<int, int> tmp2;
   unsigned int nbSupp = 0;
   unsigned int k = 0;
   
@@ -375,6 +381,7 @@ vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_o
     if(_w[k] > threshold_outlier && _w[k+1] > threshold_outlier){
 //     if(_w[k] > threshold_outlier || _w[k+1] > threshold_outlier){
       tmp[iter->first] = vpImagePoint(iter->second.get_i(), iter->second.get_j());
+      tmp2[iter->first] = curPointsInd[iter->first];
       nbPointsCur++;
     }
     else{
@@ -387,7 +394,10 @@ vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_o
   
   if(nbSupp != 0){
     curPoints = std::map<int, vpImagePoint>();
+    curPointsInd = std::map<int, int>();
+    
     curPoints = tmp;
+    curPointsInd = tmp2;
     if(nbPointsCur >= minNbPoint) enoughPoints = true;
     else enoughPoints = false; 
   }

@@ -273,6 +273,8 @@ public:
   
           std::vector<vpImagePoint> getKltImagePoints();
           
+          std::map<int, vpImagePoint> getKltImagePointsWithId();
+          
           /*!
             Get the value of the gain used to compute the control law.
             
@@ -344,6 +346,8 @@ public:
   
   virtual void            testTracking();
   virtual void            track(const vpImage<unsigned char>& _I);
+  
+  virtual void            updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);

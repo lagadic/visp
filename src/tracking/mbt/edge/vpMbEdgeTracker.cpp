@@ -919,6 +919,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   initPyramid(I, Ipyramid);
   visibleFace(I, cMo, a);
   unsigned int i=scales.size();
+  
   do {
     i--;
     if(scales[i]){
@@ -929,6 +930,33 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   } while(i != 0);
   
   cleanPyramid(Ipyramid);
+}
+
+/*!
+  Update the pose used in entry of the track() method.
+  
+  \warning This function has to be called after the initialisation of the tracker.
+  
+  \param I : image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void           
+vpMbEdgeTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
+{
+  // TO DO
+  cMo = cdMo;
+  
+  vpMbtDistanceLine *l;
+  lines[scaleLevel].front() ;
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+    l = *it;
+    if(l->meline != NULL){
+      delete l->meline;
+      l->meline = NULL;
+    }
+  }
+  
+  init(I);
 }
 
 /*!
@@ -1106,7 +1134,7 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       l->setVisible(true) ;
       if (l->meline==NULL)
       {
-        //cout << "init me line "<< l->getIndex() <<endl ;
+//         std::cout << "init me line "<< l->getIndex() << std::endl ;
         l->initMovingEdge(I, _cMo) ;
       }
     }

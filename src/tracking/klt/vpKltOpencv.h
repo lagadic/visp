@@ -205,6 +205,7 @@ class VISP_EXPORT vpKltOpencv
 	       vpColor color = vpColor::red);
 
   //Seters
+  void setFeature(const int &index, const int &id, const float &x, const float &y);
   
   /* Should be used only before initTracking */
   void setMaxFeatures(const int input);
@@ -293,6 +294,8 @@ class VISP_EXPORT vpKltOpencv
   void getPrevFeature(int index, int &id, float &x, float &y) const;
   void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
+  
+  void updateImage(const IplImage *I);
   
 //Static Functions
 public: 

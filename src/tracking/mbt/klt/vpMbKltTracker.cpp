@@ -211,6 +211,27 @@ vpMbKltTracker::getKltImagePoints()
 }
 
 /*!
+  Get the current list of KLT points and their id.
+  
+  \warning Contrary to getKltPoints which returns a pointer on CvPoint2D32f. This function convert and copy the openCV KLT points into vpImagePoints.
+  
+  \return the list of KLT points and their id through vpKltOpencv.
+*/
+std::map<int, vpImagePoint> 
+vpMbKltTracker::getKltImagePointsWithId()
+{
+  std::map<int, vpImagePoint> kltPoints;
+  for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){
+    int id;
+    float x_tmp, y_tmp;
+    tracker.getFeature((int)i, id, x_tmp, y_tmp);
+    kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
+  }
+  
+  return kltPoints;
+}
+
+/*!
   Set the camera parameters
 
   \param _cam : the new camera parameters
@@ -243,6 +264,92 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
 #endif
   }
 }
+
+/*!
+  Update the pose used in entry of the track() method.
+  
+  \warning This function has to be called after the initialisation of the tracker.
+  
+  \param I : image corresponding to the desired pose.
+  \param cdMo : Pose to affect.
+*/
+void           
+vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
+{
+  bool reInitialisation = false;
+  if(!useOgre)
+    faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+  else{
+#ifdef VISP_HAVE_OGRE    
+    faces.setVisibleOgre(_I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+#else
+    faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+#endif
+  }
+  
+  if(reInitialisation){
+    std::cout << "WARNING: Visibility changed, must reinitialise to update pose" << std::endl;
+    cMo = cdMo;
+    reinit(I);
+  }
+  else{
+    vpHomogeneousMatrix cdMc = cdMo * cMo.inverse();
+    vpHomogeneousMatrix cMcd = cdMc.inverse();
+    
+    vpRotationMatrix cdRc;
+    vpTranslationVector cdtc;
+    
+    cdMc.extract(cdRc);
+    cdMc.extract(cdtc);
+    
+    for (unsigned int i = 0; i < faces.size(); i += 1)
+      if(faces[i]->isVisible() && faces[i]->hasEnoughPoints()){  
+        //Get the normal to the face at the current state cMo
+        vpPlane plan(faces[i]->p[0], faces[i]->p[1], faces[i]->p[2]);
+        plan.changeFrame(cMcd);
+        
+        vpColVector Nc = plan.getNormal(); 
+        Nc.normalize();
+        
+        float invDc = 1.0 / plan.getD();
+        
+        //Create the homography
+        vpHomography cdHc;
+        vpGEMM(cdtc, Nc, -invDc, cdRc, 1.0, cdHc, VP_GEMM_B_T);
+        cdHc /= cdHc[2][2];
+        
+        //Create the 2D homography
+        vpMatrix cdGc = cam.get_K() * cdHc * cam.get_K().inverseByQR();
+        
+        //Points displacement
+        std::map<int, vpImagePoint>::const_iterator iter = faces[i]->getCurrentPoints().begin();
+        for( ; iter != faces[i]->getCurrentPoints().end(); iter++){
+          vpColVector cdp(3);
+          cdp[0] = iter->second.get_j(); cdp[1] = iter->second.get_i(); cdp[2] = 1.0;
+          
+          double p_mu_t_2 = cdp[0] * cdGc[2][0] + cdp[1] * cdGc[2][1] + cdGc[2][2];
+
+          if( fabs(p_mu_t_2) < std::numeric_limits<double>::epsilon()){
+            cdp[0] = 0.0;
+            cdp[1] = 0.0;
+            throw vpException(vpException::divideByZeroError, "the depth of the point is calculated to zero");
+          }
+
+          cdp[0] = (cdp[0] * cdGc[0][0] + cdp[1] * cdGc[0][1] + cdGc[0][2]) / p_mu_t_2;
+          cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
+          
+          //Set value to the KLT tracker
+          tracker.setFeature((faces[i]->getCurrentPointsInd())[iter->first], iter->first, (float)cdp[0], (float)cdp[1]);
+        }
+      }
+    
+    IplImage* icv = NULL;
+    vpImageConvert::convert(I,icv);
+    tracker.updateImage(icv);
+    
+    cMo = cdMo;
+  }
+}
           
 /*!
   Initialise a new face from the coordinates given in parameter.
@@ -252,19 +359,21 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
 */
 void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace)
-{  
-  vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
-//   polygon->setCameraParameters(cam);
-  polygon->setNbPoint(_corners.size());
-  polygon->setIndex((int)_indexFace);
-  for(unsigned int j = 0; j < _corners.size(); j++) {
-    polygon->addPoint(j, _corners[j]);
-  }
-  faces.addPolygon(polygon);
-  faces.getPolygon().back()->setCameraParameters(cam);
+{     
+  if( _corners.size() > 2){ // This tracker can't handle lignes
+    vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
+  //   polygon->setCameraParameters(cam);
+    polygon->setNbPoint(_corners.size());
+    polygon->setIndex((int)_indexFace);
+    for(unsigned int j = 0; j < _corners.size(); j++) {
+      polygon->addPoint(j, _corners[j]);
+    }
+    faces.addPolygon(polygon);
+    faces.getPolygon().back()->setCameraParameters(cam);
 
-  delete polygon;
-  polygon = NULL;
+    delete polygon;
+    polygon = NULL;
+  }
 }
 
 /*!
@@ -285,7 +394,6 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& _I, unsigned int &nbIn
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(faces[i]->isVisible()){
       faces[i]->computeNbDetectedCurrent(tracker);
-          
 //       faces[i]->ransac();
       if(faces[i]->hasEnoughPoints()){
         nbInfos += faces[i]->getNbPointsCur();
