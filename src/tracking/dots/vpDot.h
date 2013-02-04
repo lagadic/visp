@@ -161,68 +161,8 @@ public :
   vpDot(const vpDot& d) ;
   virtual ~vpDot() ;
 
-  vpDot& operator =(const vpDot& d) ;
-  bool operator ==(const vpDot& d);
-  bool operator !=(const vpDot& d);
-  
-  void initTracking(const vpImage<unsigned char> &I) ;
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
-		    unsigned int gray_level_min, unsigned int gray_level_max);
-
-  void track(const vpImage<unsigned char> & I) ;
-  void track(const vpImage<unsigned char> & I, vpImagePoint &ip) ;
-  
   void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
                unsigned int thickness=1);
-  
-  /*!
-    Initialize the dot coordinates with \e cog.
-  */
-  inline void setCog(const vpImagePoint &cog) {
-    this->cog = cog;
-  }
-
-  /*!
-
-    Activates the dot's moments computation.
-
-    \param activate true, if you want to compute the moments. If false, moments
-    are not computed.
-
-    Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
-    vpDot::m20, vpDot::m02.
-
-    The coordinates of the region's centroid (u, v) can be computed from the
-    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
-
-  */
-  void setComputeMoments(const bool activate) { compute_moment = activate; }
-  
-  /*!
-    Set the type of connexity: 4 or 8.
-  */
-  void setConnexity(vpConnexityType connexityType) {this->connexityType = connexityType; };
-  void setMaxDotSize(double percentage) ;
-  void setGrayLevelMin( const unsigned int &gray_level_min ) {
-    this->gray_level_min = gray_level_min;
-  };
-  void setGrayLevelMax( const unsigned int &gray_level_max ) {
-    this->gray_level_max = gray_level_max;
-  };
-  void setGrayLevelPrecision( const double & grayLevelPrecision );
-
-
-  /*!
-    Activates the display of all the pixels of the dot during the tracking.
-
-    \warning To effectively display the dot graphics a call to
-    vpDisplay::flush() is needed.
-
-    \param activate true to activate the display of dot pixels, false to turn
-    off the display
-  */
-  void setGraphics(const bool activate) { graphics = activate ; }
 
   /*!
 
@@ -235,9 +175,9 @@ public :
     vpRect bbox;
 
     bbox.setRect(this->u_min,
-		 this->v_min,
-		 this->u_max - this->u_min + 1,
-		 this->v_max - this->v_min + 1);
+     this->v_min,
+     this->u_max - this->u_min + 1,
+     this->v_max - this->v_min + 1);
 
     return (bbox);
   };
@@ -249,10 +189,10 @@ public :
   inline vpImagePoint getCog() const {
     return cog;
   }
-  
+
   /*!
       Return the list of all the image points on the border of the dot.
-      
+
       \warning Doesn't return the image points inside the dot anymore. To get those points see getConnexities().
   */
   inline std::list<vpImagePoint> getEdges() {
@@ -311,17 +251,76 @@ public :
   inline unsigned int getHeight() const {
     return (this->v_max - this->v_min + 1);
   };
-  
+
+  void initTracking(const vpImage<unsigned char> &I) ;
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
+		    unsigned int gray_level_min, unsigned int gray_level_max);
+
+  vpDot& operator =(const vpDot& d) ;
+  bool operator ==(const vpDot& d);
+  bool operator !=(const vpDot& d);
   /*!
-    Writes the dot center of gravity coordinates in the frame (i,j) (For more details 
+    Writes the dot center of gravity coordinates in the frame (i,j) (For more details
     about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
-    and returns a reference to the stream. 
+    and returns a reference to the stream.
   */
   friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d) {
     return (os << "(" << d.getCog() << ")" ) ;
   } ;
 
   void print(std::ostream& os) { os << *this << std::endl ; }
+
+  /*!
+    Initialize the dot coordinates with \e cog.
+  */
+  inline void setCog(const vpImagePoint &cog) {
+    this->cog = cog;
+  }
+
+  /*!
+
+    Activates the dot's moments computation.
+
+    \param activate true, if you want to compute the moments. If false, moments
+    are not computed.
+
+    Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
+    vpDot::m20, vpDot::m02.
+
+    The coordinates of the region's centroid (u, v) can be computed from the
+    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
+
+  */
+  void setComputeMoments(const bool activate) { compute_moment = activate; }
+  
+  /*!
+    Set the type of connexity: 4 or 8.
+  */
+  void setConnexity(vpConnexityType connexityType) {this->connexityType = connexityType; };
+  void setMaxDotSize(double percentage) ;
+  void setGrayLevelMin( const unsigned int &gray_level_min ) {
+    this->gray_level_min = gray_level_min;
+  };
+  void setGrayLevelMax( const unsigned int &gray_level_max ) {
+    this->gray_level_max = gray_level_max;
+  };
+  void setGrayLevelPrecision( const double & grayLevelPrecision );
+
+
+  /*!
+    Activates the display of all the pixels of the dot during the tracking.
+
+    \warning To effectively display the dot graphics a call to
+    vpDisplay::flush() is needed.
+
+    \param activate true to activate the display of dot pixels, false to turn
+    off the display
+  */
+  void setGraphics(const bool activate) { graphics = activate ; }
+
+  void track(const vpImage<unsigned char> & I) ;
+  void track(const vpImage<unsigned char> & I, vpImagePoint &ip) ;
 
 private:
   //! internal use only

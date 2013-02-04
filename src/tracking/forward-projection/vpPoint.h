@@ -113,14 +113,7 @@ public:
                const unsigned int thickness=1) ;
   vpPoint *duplicate() const ;
 
-  //! Basic construction.
-  void init() ;
-
-  /*
-    \section Get coordinates
-  */
-
-  //@{
+  // Get coordinates
   //! Get the point X coordinate in the camera frame.
   double get_X()  const { return cP[0] ; }
   //! Get the point Y coordinate in the camera frame.
@@ -153,14 +146,32 @@ public:
   //! Get the point world coordinates. We mean here the coordinates of the point in the object frame.
   void getWorldCoordinates(vpColVector &_oP) ;
   vpColVector getWorldCoordinates(void) ;
-  //@}
 
-  /*
-    \section Set coordinates
+  //! Basic construction.
+  void init() ;
+
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
+  vpPoint& operator=(const vpPoint& vpp);
+
+  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
+  void projection(const vpColVector &_cP, vpColVector &_p) ;
+
+  /*!
+    Perspective projection of the point.
+
+    Projection onto the //image plane of the point. Update the object
+    attribute p (2D //homogeneous coordinates) according to object
+    attribute cP (current //3D coordinates in the camera frame).
+
   */
+  inline void projection() {
+    double d = 1/cP[2] ;
+    p[0] = cP[0]*d ;
+    p[1] = cP[1]*d ;
+    p[2] = 1 ;
+  }
 
-  //@{
-
+  // Set coordinates
   //! Set the point X coordinate in the camera frame.
   inline void set_X(const double X) { cP[0] = X ; }
   //! Set the point Y coordinate in the camera frame.
@@ -192,38 +203,9 @@ public:
                            const double oz) ;
   //! Set the point world coordinates. We mean here the coordinates of the point in the object frame.
   void setWorldCoordinates(const vpColVector &_oP) ;
-  //@}
-
-  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
-  void projection(const vpColVector &_cP, vpColVector &_p) ;
-
-  /*! 
-    Perspective projection of the point. 
-    
-    Projection onto the //image plane of the point. Update the object
-    attribute p (2D //homogeneous coordinates) according to object
-    attribute cP (current //3D coordinates in the camera frame).
-
-  */
-  inline void projection() {
-    double d = 1/cP[2] ;
-    p[0] = cP[0]*d ;
-    p[1] = cP[1]*d ;
-    p[2] = 1 ;
-  }
-
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
-  vpPoint& operator=(const vpPoint& vpp);
 } ;
-
 
 const vpPoint VISP_EXPORT operator*(const vpHomogeneousMatrix &M, const vpPoint& p) ;
 const vpPoint VISP_EXPORT operator*(const vpHomography &H, const vpPoint& p) ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

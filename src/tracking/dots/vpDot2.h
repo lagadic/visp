@@ -118,8 +118,120 @@ public:
   vpDot2(const vpImagePoint &ip) ;
   vpDot2(const vpDot2& twinDot );
   virtual ~vpDot2();
+
+  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
+
+  void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
+               unsigned int thickness=1);
+
+  /*!
+
+    Return the dot bounding box.
+
+    \sa getWidth(), getHeight()
+
+  */
+  inline vpRect getBBox() {
+    vpRect bbox;
+
+    bbox.setRect(this->bbox_u_min,
+     this->bbox_v_min,
+     this->bbox_u_max - this->bbox_u_min + 1,
+     this->bbox_v_max - this->bbox_v_min + 1);
+
+    return (bbox);
+  };
+  /*!
+    Return the location of the dot center of gravity.
+
+    \return The coordinates of the center of gravity.
+  */
+  inline vpImagePoint getCog() const {
+    return cog;
+  }
+
+  double getDistance( const vpDot2& distantDot ) const;
+  /*!
+
+    Return the list of all the image points on the dot
+    border.
+
+    \param edges_list : The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  void getEdges(std::list<vpImagePoint> &edges_list) {
+    edges_list = this->ip_edges_list;
+  };
+  /*!
+    Get the percentage of sampled points that are considered non conform
+    in terms of the gray level on the inner and the ouside ellipses.
+
+    \sa setEllipsoidBadPointsPercentage()
+    */
+  double getEllipsoidBadPointsPercentage()
+  {
+    return allowedBadPointsPercentage_;
+  }
+
+  double getEllipsoidShapePrecision() const;
+  void getFreemanChain(std::list<unsigned int> &freeman_chain) ;
+
+  inline double getGamma() {return this->gamma;};
+  /*!
+    Return the color level of pixels inside the dot.
+
+    \sa getGrayLevelMax()
+  */
+  inline unsigned int getGrayLevelMin() const {
+    return gray_level_min;
+  };
+  /*!
+    Return the color level of pixels inside the dot.
+
+    \sa getGrayLevelMin()
+  */
+  inline unsigned int getGrayLevelMax() const {
+    return gray_level_max;
+  };
+  double getGrayLevelPrecision() const;
+
+  double getHeight() const;
+  double getMaxSizeSearchDistancePrecision() const;
+  /*!
+  \return The mean gray level value of the dot.
+  */
+  double getMeanGrayLevel() {
+    return (this->mean_gray_level);
+  };
+  double getSizePrecision() const;
+  double getSurface() const;
+  double getWidth() const;
+
+  void initTracking(const vpImage<unsigned char>& I, unsigned int size = 0);
+  void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
+        unsigned int size = 0);
+  void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
+        unsigned int gray_level_min, unsigned int gray_level_max,
+        unsigned int size = 0 );
+
   void operator=(const vpDot2& twinDot );
-  
+  /*!
+    Writes the dot center of gravity coordinates in the frame (i,j) (For more details
+    about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
+    and returns a reference to the stream.
+  */
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot2& d) {
+    return (os << "(" << d.getCog() << ")" ) ;
+  } ;
+
+  void print(std::ostream& os) { os << *this << std::endl ; }
+  void searchDotsInArea(const vpImage<unsigned char>& I,
+                         int area_u, int area_v,
+                         unsigned int area_w, unsigned int area_h, std::list<vpDot2> &niceDots );
+
+  void searchDotsInArea(const vpImage<unsigned char>& I, std::list<vpDot2> &niceDots );
+
   /*!
     Initialize the dot coordinates with \e cog. 
   */
@@ -217,123 +329,11 @@ public:
   void setSurface( const double & surface );
   void setWidth( const double & width );
 
-  void initTracking(const vpImage<unsigned char>& I, unsigned int size = 0);
-  void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
-		    unsigned int size = 0);
-  void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
-		    unsigned int gray_level_min, unsigned int gray_level_max,
-		    unsigned int size = 0 );
-
   void track(const vpImage<unsigned char> &I);
   void track(const vpImage<unsigned char> &I, vpImagePoint &cog);
-  void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
-               unsigned int thickness=1);
 
-  /*!
-
-    Return the dot bounding box.
-
-    \sa getWidth(), getHeight()
-
-  */
-  inline vpRect getBBox() {
-    vpRect bbox;
-
-    bbox.setRect(this->bbox_u_min,
-     this->bbox_v_min,
-     this->bbox_u_max - this->bbox_u_min + 1,
-     this->bbox_v_max - this->bbox_v_min + 1);
-
-    return (bbox);
-  };
-  /*!
-    Return the location of the dot center of gravity.
-
-    \return The coordinates of the center of gravity.
-  */
-  inline vpImagePoint getCog() const {
-    return cog;
-  }
-
-  double getDistance( const vpDot2& distantDot ) const;
-  /*!
-
-    Return the list of all the image points on the dot
-    border.
-
-    \param edges_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  void getEdges(std::list<vpImagePoint> &edges_list) {
-    edges_list = this->ip_edges_list;
-  };
-  /*!
-    Get the percentage of sampled points that are considered non conform
-    in terms of the gray level on the inner and the ouside ellipses.
-
-    \sa setEllipsoidBadPointsPercentage()
-    */
-  double getEllipsoidBadPointsPercentage()
-  {
-    return allowedBadPointsPercentage_;
-  }
-
-  double getEllipsoidShapePrecision() const;
-  void getFreemanChain(std::list<unsigned int> &freeman_chain) ;
-
-  inline double getGamma() {return this->gamma;};
-  /*!
-    Return the color level of pixels inside the dot.
-
-    \sa getGrayLevelMax()
-  */
-  inline unsigned int getGrayLevelMin() const {
-    return gray_level_min;
-  };
-  /*!
-    Return the color level of pixels inside the dot.
-
-    \sa getGrayLevelMin()
-  */
-  inline unsigned int getGrayLevelMax() const {
-    return gray_level_max;
-  };
-  double getGrayLevelPrecision() const;
-
-  double getHeight() const;
-  double getMaxSizeSearchDistancePrecision() const;
-  /*!
-
-  \return The mean gray level value of the dot.
-
-  */
-  double getMeanGrayLevel() {
-    return (this->mean_gray_level);
-  };
-  double getSizePrecision() const;
-  double getSurface() const;
-  double getWidth() const;
-
-  void print(std::ostream& os) { os << *this << std::endl ; }
-  void searchDotsInArea(const vpImage<unsigned char>& I,
-                         int area_u, int area_v,
-                         unsigned int area_w, unsigned int area_h, std::list<vpDot2> &niceDots );
-
-  void searchDotsInArea(const vpImage<unsigned char>& I, std::list<vpDot2> &niceDots );
-
-  static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
-
-  static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I, std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
-
-  /*!
-    Writes the dot center of gravity coordinates in the frame (i,j) (For more details
-    about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
-    and returns a reference to the stream.
-  */
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot2& d) {
-    return (os << "(" << d.getCog() << ")" ) ;
-  } ;
+  static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
+                              std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
 
 public:
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
