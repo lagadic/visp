@@ -86,9 +86,9 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
-  -D [%%s] \n\
-     Type of device to detect.                          1394\n\
-     It can be ANY, MIL, USB, 1394. \n\
+  -D [%%s]                                               ANY\n\
+     Type of device to detect.                           \n\
+     It can be ANY, MIL, VFW, V4L, V4L2, DC1394, CMU1394, DSHOW. \n\
 \n\
   -n [%%u]                                               %u\n\
      Number of frames to acquire.               \n\
@@ -133,10 +133,14 @@ bool getOptions(int argc, const char **argv, bool &display,
     switch (c) {
     case 'd': display = false; break;
     case 'D':
-      if (strcmp( optarg ,"ANY") == 0 ) {deviceType = 0;}
-      else if ( strcmp( optarg ,"MIL") == 0) {deviceType = 100;}
-      else if ( strcmp( optarg ,"USB") == 0) {deviceType = 200;}
-      else if ( strcmp( optarg ,"1394") == 0) {deviceType = 300;}
+      if (strcmp( optarg ,"ANY") == 0 ) {deviceType = CV_CAP_ANY;}
+      else if ( strcmp( optarg ,"MIL") == 0) {deviceType = CV_CAP_MIL;}
+      else if ( strcmp( optarg ,"VFW") == 0) {deviceType = CV_CAP_VFW;}
+      else if ( strcmp( optarg ,"V4L") == 0) {deviceType = CV_CAP_V4L;}
+      else if ( strcmp( optarg ,"V4L2") == 0) {deviceType = CV_CAP_V4L2;}
+      else if ( strcmp( optarg ,"DC1394") == 0) {deviceType = CV_CAP_DC1394;}
+      else if ( strcmp( optarg ,"CMU1394") == 0) {deviceType = CV_CAP_CMU1394;}
+      else if ( strcmp( optarg ,"DSHOW") == 0) {deviceType = CV_CAP_DSHOW;}
       else {std::cout << "Unknown type of device" << std::endl;
 	      deviceType = 0;}
       break;
@@ -178,7 +182,7 @@ main(int argc, const char ** argv)
   bool opt_display = true;
   unsigned nframes = 50;
   bool save = false;
-  int deviceType = CV_CAP_DC1394;
+  int deviceType = CV_CAP_ANY;
 
   // Declare an image. It size is not defined yet. It will be defined when the
   // image will acquired the first time.
