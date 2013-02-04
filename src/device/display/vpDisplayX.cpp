@@ -2669,21 +2669,22 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
     XSetLineAttributes ( display, context, thickness,
                          LineSolid, CapButt, JoinBevel );
 
-    unsigned int width  = (unsigned int)vpMath::round( bottomRight.get_u() - topLeft.get_u() );
-    unsigned int height = (unsigned int)vpMath::round( bottomRight.get_v() - topLeft.get_v() );
+    unsigned int width  = (unsigned int)vpMath::round( std::fabs(bottomRight.get_u() - topLeft.get_u()) );
+    unsigned int height = (unsigned int)vpMath::round( std::fabs(bottomRight.get_v() - topLeft.get_v()) );
     if ( fill == false )
     {    
+
       XDrawRectangle ( display, pixmap, context, 
-		       vpMath::round( topLeft.get_u() ),
-		       vpMath::round( topLeft.get_v() ),
-		       width-1, height-1 );
+                       vpMath::round( topLeft.get_u() < bottomRight.get_u() ? topLeft.get_u() : bottomRight.get_u() ),
+                       vpMath::round( topLeft.get_v() < bottomRight.get_v() ? topLeft.get_v() : bottomRight.get_v() ),
+                       width > 0 ? width-1 : 1, height > 0 ? height : 1 );
     }
     else
     {  
       XFillRectangle ( display, pixmap, context, 
-		       vpMath::round( topLeft.get_u() ),
-		       vpMath::round( topLeft.get_v() ),
-		       width, height );
+                       vpMath::round( topLeft.get_u() < bottomRight.get_u() ? topLeft.get_u() : bottomRight.get_u() ),
+                       vpMath::round( topLeft.get_v() < bottomRight.get_v() ? topLeft.get_v() : bottomRight.get_v() ),
+                       width, height );
     }
   }
   else
