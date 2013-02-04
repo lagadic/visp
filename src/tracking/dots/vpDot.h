@@ -75,6 +75,42 @@
   and a connex component segmentation to determine the dot
   characteristics (location, moments, size...).
 
+  The following sample code shows how to grab images from a firewire camera,
+  track a blob and display the tracking results.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDot.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
+  vpImage<unsigned char> I; // Create a gray level image container
+  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
+  g.acquire(I); // Acquire an image
+
+  vpDisplayX d(I, 0, 0, "Camera view");
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+
+  vpDot blob;
+  blob.initTracking(I);
+  blob.setGraphics(true);
+
+  while(1) {
+    g.acquire(I); // Acquire an image
+    vpDisplay::display(I);
+    blob.track(I);
+
+    vpDisplay::flush(I);
+  }
+#endif
+}
+  \endcode
+
   \sa vpDot2
 */
 class VISP_EXPORT vpDot : public vpTracker
