@@ -82,10 +82,10 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
 {
   // Get resources.cfg path
   mResourcePath = resourcePath;
-  std::cout << "mResourcePath: " << mResourcePath<< std::endl;
+  //std::cout << "mResourcePath: " << mResourcePath<< std::endl;
   // Get plugins.cfg path
   mPluginsPath = pluginsPath;
-  std::cout << "mPluginsPath: " << mPluginsPath<< std::endl;
+  //std::cout << "mPluginsPath: " << mPluginsPath<< std::endl;
   // Set intrinsic camera parameters
   mcam = cam;
   // When created no reason to stop displaying
@@ -97,7 +97,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
   mshowConfigDialog = true;
   mOptionnalResourceLocation.clear();
   
-  name = "Visp - Augmented Reality";
+  name = "ViSP - Augmented Reality";
 }
 
 /*!
