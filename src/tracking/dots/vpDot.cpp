@@ -76,6 +76,7 @@ void vpDot::init()
 
   compute_moment = false ;
   graphics = false ;
+  thickness = 1;
   maxDotSizePercentage = 0.25 ; // 25 % of the image size
   
   mean_gray_level = 0;
@@ -116,11 +117,8 @@ vpDot::vpDot(const vpImagePoint &ip) : vpTracker()
  */
 vpDot::vpDot(const vpDot& d)  : vpTracker()
 {
-
   *this = d ;
-
 }
-
 
 /*!
   \brief Destructor.
@@ -140,6 +138,7 @@ vpDot::operator=(const vpDot& d)
   cog = d.getCog();
 
   graphics = d.graphics ;
+  thickness = d.thickness;
   mean_gray_level = d.mean_gray_level ;
   gray_level_min = d.gray_level_min ;
   gray_level_max = d.gray_level_max ;
@@ -362,8 +361,11 @@ bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int 
     ip_edges_list.push_back(ip);
     if (graphics==true)
     {
-      //      printf("u %d v %d\n", u, v);
-      vpDisplay::displayPoint(I, ip, vpColor::red) ;
+      vpImagePoint ip_(ip);
+      for(unsigned int t=0; t<thickness; t++) {
+        ip_.set_u(ip.get_u() + t);
+        vpDisplay::displayPoint(I, ip_, vpColor::red) ;
+      }
       //vpDisplay::flush(I);
     }
   }
@@ -582,7 +584,7 @@ vpDot::COG(const vpImage<unsigned char> &I, double& u, double& v)
 
    throw(vpTrackingException(vpTrackingException::featureLostError,
 			      "Dot to big")) ;
-  }
+  }  
 }
 
 /*!
@@ -802,6 +804,12 @@ vpDot::track(const vpImage<unsigned char> &I)
       mu02 = m02 - v*m01;
       mu20 = m20 - u*m10;
     }
+
+    if (graphics) {
+      // display a red cross at the center of gravity's location in the image.
+      vpDisplay::displayCross(I, this->cog, 3*thickness+8, vpColor::red, thickness);
+    }
+
   }
   catch(...)
   {

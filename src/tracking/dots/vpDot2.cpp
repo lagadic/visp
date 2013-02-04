@@ -71,8 +71,7 @@
   Initialize the tracker with default parameters.
 
 */
-void 
-    vpDot2::init()
+void vpDot2::init()
 {
   cog.set_u(0);
   cog.set_v(0);
@@ -99,6 +98,7 @@ void
 
   compute_moment = false ;
   graphics = false;
+  thickness = 1;
 }
 
 /*!
@@ -170,6 +170,7 @@ void vpDot2::operator=(const vpDot2& twinDot )
 
   compute_moment = twinDot.compute_moment;
   graphics = twinDot.graphics;
+  thickness = twinDot.thickness;
 
   direction_list = twinDot.direction_list;
   ip_edges_list =  twinDot.ip_edges_list;
@@ -581,7 +582,7 @@ void vpDot2::track(const vpImage<unsigned char> &I)
   if (graphics) {
     // display a red cross at the center of gravity's location in the image.
 
-    vpDisplay::displayCross(I, this->cog, 15, vpColor::red);
+    vpDisplay::displayCross(I, this->cog, 3*thickness+8, vpColor::red, thickness);
     //vpDisplay::flush(I);
   }
 }
@@ -1022,7 +1023,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
 
     if (graphics) {
       // Display the area were the dot is search
-      vpDisplay::displayRectangle(I, area, vpColor::blue);
+      vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
       //vpDisplay::flush(I);
     }
 
@@ -1144,6 +1145,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
         dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
         dotToTest->setSizePrecision( getSizePrecision() );
         dotToTest->setGraphics( graphics );
+        dotToTest->setGraphicsThickness( thickness );
         dotToTest->setComputeMoments( true );
         dotToTest->setArea( area );
         dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
@@ -1286,7 +1288,7 @@ vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle(I, area, vpColor::blue);
+    vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
     //vpDisplay::flush(I);
   }
 
@@ -1408,6 +1410,7 @@ vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
       dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
       dotToTest->setSizePrecision( getSizePrecision() );
       dotToTest->setGraphics( graphics );
+      dotToTest->setGraphicsThickness( thickness );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
       dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
@@ -1601,7 +1604,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle(I, area, vpColor::blue);
+    vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
     //vpDisplay::flush(I);
   }
 
@@ -1723,6 +1726,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
       dotToTest->setGrayLevelPrecision( getGrayLevelPrecision() );
       dotToTest->setSizePrecision( getSizePrecision() );
       dotToTest->setGraphics( graphics );
+      dotToTest->setGraphicsThickness( thickness );
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
       dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
@@ -1998,13 +2002,14 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         nb_bad_points ++;
       }
       if (graphics) {
-        ip.set_u( u );
-        ip.set_v( v );
-
-        vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
+        for (unsigned int t=0; t< thickness; t++) {
+          ip.set_u( u + t );
+          ip.set_v( v );
+          vpDisplay::displayPoint( I, ip, vpColor::green ) ;
+        }
       }
 #ifdef DEBUG
-      vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
+      vpDisplay::displayPoint( I, ip, vpColor::green ) ;
       vpDisplay::flush(I);
 #endif
     }
@@ -2047,10 +2052,12 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         //return false;
       }
       if (graphics) {
-        ip.set_u( u );
-        ip.set_v( v );
+        for(unsigned int t=0; t<thickness; t++) {
+          ip.set_u( u + t);
+          ip.set_v( v );
 
-        vpDisplay::displayCross( I, ip, 1, vpColor::green ) ;
+          vpDisplay::displayPoint( I, ip, vpColor::green ) ;
+        }
       }
     }
   }
@@ -2334,10 +2341,12 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
   do {
     // if it was asked, show the border
     if (graphics) {
-      ip.set_u ( border_u );
-      ip.set_v ( border_v );
+      for(unsigned int t=0; t<thickness; t++) {
+        ip.set_u ( border_u + t);
+        ip.set_v ( border_v );
       
-      vpDisplay::displayPoint(I, ip, vpColor::red) ;
+        vpDisplay::displayPoint(I, ip, vpColor::red) ;
+      }
       //vpDisplay::flush(I);
     }
 #ifdef DEBUG
@@ -3023,8 +3032,8 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 			for(i=0;i<n;++i)
 			{
 				cog.set_uv(Cogs[i][0], Cogs[i][1]);
-				dot[i].setGraphics(true);
-				dot[i].setCog(cog);
+        dot[i].setGraphics(true);
+        dot[i].setCog(cog);
 				if(trackDot)
 				{
 					dot[i].initTracking(I,cog);
@@ -3065,8 +3074,8 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 		{
 			if(trackDot)
 			{
-				dot[i].setGraphics(true);
-				dot[i].initTracking(I);
+        dot[i].setGraphics(true);
+        dot[i].initTracking(I);
 				cog = dot[i].getCog();
 			}
 			else

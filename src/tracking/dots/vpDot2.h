@@ -315,6 +315,8 @@ public:
   void setEllipsoidShapePrecision(const double & ellipsoidShapePrecision);
   /*!
     Activates the display of the border of the dot during the tracking.
+    The default thickness of the overlayed drawings can be modified using
+    setGraphicsThickness().
 
     \warning To effectively display the dot graphics a call to
     vpDisplay::flush() is needed.
@@ -322,8 +324,15 @@ public:
     \param activate If true, the border of the dot will be painted. false to
     turn off border painting.
 
+    \sa setGraphicsThickness()
   */
   void setGraphics(const bool activate) { graphics = activate ; }
+  /*!
+    Modify the default thickness that is set to 1 of the drawings in overlay when setGraphics() is enabled.
+
+    \sa setGraphics()
+    */
+  void setGraphicsThickness(unsigned int thickness) {this->thickness = thickness;};
   /*!
 
   Set the color level of the dot to search a dot in an area. This level will be
@@ -572,6 +581,8 @@ private:
   // flag
   bool compute_moment ; // true moment are computed
   bool graphics ; // true for graphic overlay display
+
+  unsigned int thickness; // Graphics thickness
 
   // Bounding box
   int bbox_u_min, bbox_u_max, bbox_v_min, bbox_v_max;

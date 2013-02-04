@@ -343,17 +343,26 @@ public :
   };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
 
-
   /*!
     Activates the display of all the pixels of the dot during the tracking.
+    The default thickness of the overlayed drawings can be modified using
+    setGraphicsThickness().
 
     \warning To effectively display the dot graphics a call to
     vpDisplay::flush() is needed.
 
     \param activate true to activate the display of dot pixels, false to turn
-    off the display
+    off the display.
+
+    \sa setGraphicsThickness()
   */
   void setGraphics(const bool activate) { graphics = activate ; }
+  /*!
+    Modify the default thickness that is set to 1 of the drawings in overlay when setGraphics() is enabled.
+
+    \sa setGraphics()
+    */
+  void setGraphicsThickness(unsigned int thickness) {this->thickness = thickness;};
 
   void track(const vpImage<unsigned char> & I) ;
   void track(const vpImage<unsigned char> & I, vpImagePoint &ip) ;
@@ -379,6 +388,8 @@ private:
 
   // Flag used to allow display
   bool graphics ;
+
+  unsigned int thickness; // Graphics thickness
 
   double maxDotSizePercentage;
   unsigned char gray_level_out;
