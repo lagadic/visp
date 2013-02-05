@@ -132,33 +132,35 @@ public:
     Display the 3D model at a given position using the given camera parameters 
     on a grey level image.
 
-    \param _I : The image.
-    \param _cMo : Pose used to project the 3D model into the image.
-    \param _cam : The camera parameters.
-    \param _col : The desired color.
-    \param _l : The thickness of the lines.
+    \param I : The image.
+    \param cMo : Pose used to project the 3D model into the image.
+    \param cam : The camera parameters.
+    \param col : The desired color.
+    \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
-  virtual void display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;
+  virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false)=0;
   /*!
     Display the 3D model at a given position using the given camera parameters 
     on a color (RGBa) image.
 
-    \param _I : The image.
-    \param _cMo : Pose used to project the 3D model into the image.
-    \param _cam : The camera parameters.
-    \param _col : The desired color.
-    \param _l : The thickness of the lines.
+    \param I : The image.
+    \param cMo : Pose used to project the 3D model into the image.
+    \param cam : The camera parameters.
+    \param col : The desired color.
+    \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
-  virtual void display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& _col , const unsigned int _l=1, const bool displayFullModel = false)=0;	
+  virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false)=0;
 
   /*!
     Get the camera parameters.
 
-    \param _cam : copy of the camera parameters used by the tracker.
+    \param cam : copy of the camera parameters used by the tracker.
   */
-  virtual void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
+  virtual void getCameraParameters(vpCameraParameters& cam) const { cam = this->cam;}
   
   /*!
     Get the covariance matrix.
@@ -175,9 +177,9 @@ public:
     cMo is the matrix which can be used to express 
     coordinates from the object frame to camera frame.
 
-    \param _cMo : the pose
+    \param cMo : the pose
   */
-  inline void getPose(vpHomogeneousMatrix& _cMo) const {_cMo = this->cMo;}
+  inline void getPose(vpHomogeneousMatrix& cMo) const {cMo = this->cMo;}
   
   /*!
     Get the current pose between the object and the camera.
@@ -193,32 +195,33 @@ public:
   /*!
     Initialise the tracking.
 
-    \param _I : Input image.
+    \param I : Input image.
   */
-  virtual void init(const vpImage<unsigned char>& _I)=0;
+  virtual void init(const vpImage<unsigned char>& I)=0;
 
   // Intializer
 
-  virtual void initClick( const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp = false );
-  virtual void initClick( const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "" );
+  virtual void initClick( const vpImage<unsigned char>& I, const std::string& initFile, const bool displayHelp = false );
+  virtual void initClick( const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
+                          const std::string &displayFile = "" );
 
-  virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile );
-  virtual void initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
+  virtual void initFromPoints( const vpImage<unsigned char>& I, const std::string& initFile );
+  virtual void initFromPoints( const vpImage<unsigned char>& I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list );
 
-  virtual void initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile);
-  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo);
-  virtual void initFromPose(const vpImage<unsigned char>& _I, const vpPoseVector &cPo);
+  virtual void initFromPose(const vpImage<unsigned char>& I, const std::string &initFile);
+  virtual void initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo);
+  virtual void initFromPose(const vpImage<unsigned char>& I, const vpPoseVector &cPo);
 
   /*!
     Load a config file to parameterise the behavior of the tracker.
     
     Pure virtual method to adapt to each tracker.
     
-    \param _configFile : the (xml) config file to parse
+    \param configFile : the (xml) config file to parse
   */
-  virtual void loadConfigFile(const std::string& _configFile)=0;
+  virtual void loadConfigFile(const std::string& configFile)=0;
 
-  virtual void loadModel(const std::string& _modelFile);
+  virtual void loadModel(const std::string& modelFile);
 
   /*!
     Reset the tracker.
@@ -230,9 +233,9 @@ public:
   /*!
     Set the camera parameters.
 
-    \param _cam : the new camera parameters
+    \param cam : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& _cam) {this->cam = _cam; cameraInitialised = true;}
+  virtual void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam; cameraInitialised = true;}
   
   /*!
     Set if the covaraince matrix has to be computed.
@@ -271,9 +274,9 @@ public:
   /*!
     Track the object in the given image
 
-    \param _I : The current image.
+    \param I : The current image.
   */
-  virtual void track(const vpImage<unsigned char>& _I)=0;
+  virtual void track(const vpImage<unsigned char>& I)=0;
   
   /*!
     Update the pose used in entry of the track() method.
@@ -283,13 +286,13 @@ public:
   virtual void updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) = 0;
 
 protected:
-  void computeJTR(const vpMatrix& _J, const vpColVector& _R, vpMatrix& _JTR);
+  void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
-  virtual void extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace);
-  virtual void extractLines(SoVRMLIndexedLineSet* _line_set);
-  virtual void extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform);
+  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace);
+  virtual void extractLines(SoVRMLIndexedLineSet* line_set);
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform);
 #endif
   
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
@@ -298,25 +301,25 @@ protected:
     Add a cylinder to track from two points on the axis (defining the length of
     the cylinder) and its radius.
 
-    \param _p1 : First point on the axis.
-    \param _p2 : Second point on the axis.
-    \param _radius : Radius of the cylinder.
-    \param _indexCylinder : Index of the cylinder.
+    \param p1 : First point on the axis.
+    \param p2 : Second point on the axis.
+    \param radius : Radius of the cylinder.
+    \param indexCylinder : Index of the cylinder.
   */
-  virtual void initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder=0)=0;
+  virtual void initCylinder(const vpPoint& p1, const vpPoint p2, const double radius, const unsigned int indexCylinder=0)=0;
 
   /*!
     Add a face to track from its corners (in the object frame). This method is
     called from the loadModel() one to add a face of the object to track. 
     The initialisation of the face depends on the primitive to track.
     
-    \param _corners : The vector of corners representing the face.
-    \param _indexFace : The index of the face.
+    \param corners : The vector of corners representing the face.
+    \param indexFace : The index of the face.
   */
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1)=0;
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1)=0;
   
-  virtual void loadVRMLModel(const std::string& _modelFile);
-  virtual void loadCAOModel(const std::string& _modelFile);
+  virtual void loadVRMLModel(const std::string& modelFile);
+  virtual void loadCAOModel(const std::string& modelFile);
 };
 
 

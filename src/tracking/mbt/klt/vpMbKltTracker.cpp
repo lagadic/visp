@@ -88,7 +88,7 @@ vpMbKltTracker::~vpMbKltTracker()
 }
 
 void 
-vpMbKltTracker::init(const vpImage<unsigned char>& _I)
+vpMbKltTracker::init(const vpImage<unsigned char>& I)
 {
   if(!modelInitialised){
     throw vpException(vpException::fatalError, "model not initialised");
@@ -99,32 +99,32 @@ vpMbKltTracker::init(const vpImage<unsigned char>& _I)
   
  bool reInitialisation = false;
   if(!useOgre)
-    faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
   else{
 #ifdef VISP_HAVE_OGRE   
     if(!faces.isOgreInitialised())
       faces.initOgre(cam);
     
-    faces.setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
     
 #else
-    faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+    faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
   }
   
-  reinit(_I);
+  reinit(I);
 }
 
 void 
-vpMbKltTracker::reinit(const vpImage<unsigned char>& _I)
+vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
 {  
   c0Mo = cMo;
   ctTc0.setIdentity();
 
-  vpImageConvert::convert(_I,cur);
+  vpImageConvert::convert(I, cur);
   
   // mask
-  IplImage* mask = cvCreateImage(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
+  IplImage* mask = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
   
   for (unsigned int i = 0; i < faces.size(); i += 1){
@@ -232,17 +232,17 @@ vpMbKltTracker::getKltImagePointsWithId()
 }
 
 /*!
-  Set the camera parameters
+  Set the camera parameters.
 
-  \param _cam : the new camera parameters
+  \param cam : the new camera parameters.
 */
 void
-vpMbKltTracker::setCameraParameters(const vpCameraParameters& _cam)
+vpMbKltTracker::setCameraParameters(const vpCameraParameters& cam)
 {
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    faces[i]->setCameraParameters(_cam);
+    faces[i]->setCameraParameters(cam);
   }
-  this->cam = _cam;
+  this->cam = cam;
   this->cameraInitialised = true;
 }
    
@@ -354,19 +354,19 @@ vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneous
 /*!
   Initialise a new face from the coordinates given in parameter.
 
-  \param _corners : Coordinates of the corners of the face in the object frame.
-  \param _indexFace : index of the face (depends on the vrml file organisation).
+  \param corners : Coordinates of the corners of the face in the object frame.
+  \param indexFace : index of the face (depends on the vrml file organisation).
 */
 void
-vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace)
+vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
 {     
-  if( _corners.size() > 2){ // This tracker can't handle lignes
+  if( corners.size() > 2){ // This tracker can't handle lignes
     vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
   //   polygon->setCameraParameters(cam);
-    polygon->setNbPoint(_corners.size());
-    polygon->setIndex((int)_indexFace);
-    for(unsigned int j = 0; j < _corners.size(); j++) {
-      polygon->addPoint(j, _corners[j]);
+    polygon->setNbPoint(corners.size());
+    polygon->setIndex((int)indexFace);
+    for(unsigned int j = 0; j < corners.size(); j++) {
+      polygon->addPoint(j, corners[j]);
     }
     faces.addPolygon(polygon);
     faces.getPolygon().back()->setCameraParameters(cam);
@@ -379,14 +379,14 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const 
 /*!
   Realise the pre tracking operations
 
-  \param _I : The input image.
+  \param I : The input image.
   \param nbInfos : Size of the features.
   \param nbFaceUsed : Number of face used for the tracking.
 */
 void
-vpMbKltTracker::preTracking(const vpImage<unsigned char>& _I, unsigned int &nbInfos, unsigned int &nbFaceUsed)
+vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed)
 {
-  vpImageConvert::convert(_I,cur);
+  vpImageConvert::convert(I, cur);
   tracker.track(cur);
   
   nbInfos = 0;  
@@ -407,7 +407,7 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& _I, unsigned int &nbIn
   Realise the post tracking operations. Mostly visibility tests
 */
 bool
-vpMbKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w)
+vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 {
   // # For a better Post Tracking, tracker should reinitialise if so faces don't have enough points but are visible.
   // # Here we are not doing it for more spee performance.
@@ -441,12 +441,12 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w)
     }
     else{
       if(!useOgre)
-        faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
       else{
 #ifdef VISP_HAVE_OGRE    
-        faces.setVisibleOgre(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #else
-        faces.setVisible(_I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
 #endif
       }
     }
@@ -558,15 +558,15 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 
   \throw vpException : if the tracking is supposed to have failed
 
-  \param _I : the input image
+  \param I : the input image
 */
 void
-vpMbKltTracker::track(const vpImage<unsigned char>& _I)
+vpMbKltTracker::track(const vpImage<unsigned char>& I)
 {
   
   unsigned int nbInfos;
   unsigned int nbFaceUsed;
-  preTracking(_I, nbInfos, nbFaceUsed);
+  preTracking(I, nbInfos, nbFaceUsed);
   
   if(nbInfos < 4 || nbFaceUsed == 0){
     vpERROR_TRACE("\n\t\t Error-> not enough data") ;
@@ -576,8 +576,8 @@ vpMbKltTracker::track(const vpImage<unsigned char>& _I)
   vpColVector w;
   computeVVS(nbInfos, w);  
 
-  if(postTracking(_I, w))
-    reinit(_I);
+  if(postTracking(I, w))
+    reinit(I);
 }
 
 /*!
@@ -587,12 +587,12 @@ vpMbKltTracker::track(const vpImage<unsigned char>& _I)
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
 
-  \param _filename : full name of the xml file.
+  \param configFile : full name of the xml file.
 */
 void 
-vpMbKltTracker::loadConfigFile(const std::string& _filename)
+vpMbKltTracker::loadConfigFile(const std::string& configFile)
 {
-  vpMbKltTracker::loadConfigFile(_filename.c_str());
+  vpMbKltTracker::loadConfigFile(configFile.c_str());
 }
 
 /*!
@@ -605,12 +605,12 @@ vpMbKltTracker::loadConfigFile(const std::string& _filename)
   \throw vpException::ioError if the file has not been properly parsed (file not
   found or wrong format for the data). 
 
-  \param filename : full name of the xml file.
+  \param configFile : full name of the xml file.
 
   \sa vpXmlParser::cleanup()
 */
 void
-vpMbKltTracker::loadConfigFile(const char* filename)
+vpMbKltTracker::loadConfigFile(const char* configFile)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtKltXmlParser xmlp;
@@ -629,10 +629,10 @@ vpMbKltTracker::loadConfigFile(const char* filename)
   try{
     std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
     
-    xmlp.parse(filename);
+    xmlp.parse(configFile);
   }
   catch(...){
-    vpERROR_TRACE("Can't open XML file \"%s\"\n ",filename);
+    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
 
@@ -658,78 +658,80 @@ vpMbKltTracker::loadConfigFile(const char* filename)
 /*!
   Display the 3D model at a given position using the given camera parameters
 
-  \param _I : The image .
-  \param _cMo : Pose used to project the 3D model into the image.
-  \param _cam : The camera parameters.
-  \param _col : The desired color.
-  \param _l : The thickness of the lines.
+  \param I : The image.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the lines.
   \param displayFullModel : Boolean to say if all the model has to be displayed.
 */
 void
-vpMbKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
+vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+                        const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
-      faces[i]->changeFrame(_cMo);
-      std::vector<vpImagePoint> roi = faces[i]->getRoi(_cam);
+      faces[i]->changeFrame(cMo);
+      std::vector<vpImagePoint> roi = faces[i]->getRoi(cam);
       for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
         vpImagePoint ip1, ip2;
         ip1 = roi[j];
         ip2 = roi[(j+1)%faces[i]->getNbPoint()];
-        vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
+        vpDisplay::displayLine (I, ip1, ip2, col, thickness);
       }
       
       if(displayFeatures && faces[i]->hasEnoughPoints())
-        faces[i]->displayPrimitive(_I);
+        faces[i]->displayPrimitive(I);
       
 //       if(facesTracker[i].hasEnoughPoints())
-//         faces[i]->displayNormal(_I);
+//         faces[i]->displayNormal(I);
     }
   }
 
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(_cMo);
+    faces.displayOgre(cMo);
 #endif
 }
 
 /*!
   Display the 3D model at a given position using the given camera parameters
 
-  \param _I : The color image .
-  \param _cMo : Pose used to project the 3D model into the image.
-  \param _cam : The camera parameters.
-  \param _col : The desired color.
-  \param _l : The thickness of the lines.
+  \param I : The color image.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the lines.
   \param displayFullModel : Boolean to say if all the model has to be displayed.
 */
 void
-vpMbKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
+vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+                        const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
-      faces[i]->changeFrame(_cMo);
-      std::vector<vpImagePoint> roi = faces[i]->getRoi(_cam);
+      faces[i]->changeFrame(cMo);
+      std::vector<vpImagePoint> roi = faces[i]->getRoi(cam);
       for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
         vpImagePoint ip1, ip2;
         ip1 = roi[j];
         ip2 = roi[(j+1)%faces[i]->getNbPoint()];
-        vpDisplay::displayLine (_I, ip1, ip2, _col, _l);
+        vpDisplay::displayLine (I, ip1, ip2, col, thickness);
       }
       
       if(displayFeatures && faces[i]->hasEnoughPoints())
-        faces[i]->displayPrimitive(_I);
+        faces[i]->displayPrimitive(I);
       
 //       if(facesTracker[i].hasEnoughPoints())
-//         faces[i]->displayNormal(_I);
+//         faces[i]->displayNormal(I);
     }
   }
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(_cMo);
+    faces.displayOgre(cMo);
 #endif
 }
 

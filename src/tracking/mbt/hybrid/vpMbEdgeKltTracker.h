@@ -226,8 +226,10 @@ public:
   vpMbEdgeKltTracker();
   virtual         ~vpMbEdgeKltTracker();
 
-  virtual void    display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
-  virtual void    display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  virtual void    display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+  virtual void    display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
 
@@ -245,13 +247,13 @@ public:
           */
   inline  unsigned int getMaxIter() {return maxIter;}
 
-          void    loadConfigFile(const char* filename);
-  virtual void    loadConfigFile(const std::string& _configFile);
-  virtual void    loadModel(const std::string& _modelFile);
+          void    loadConfigFile(const char* configFile);
+  virtual void    loadConfigFile(const std::string& configFile);
+  virtual void    loadModel(const std::string& modelFile);
   
           void    resetTracker();
 
-  virtual void    setCameraParameters(const vpCameraParameters& _cam);
+  virtual void    setCameraParameters(const vpCameraParameters& cam);
 
   /*!
             Set the value of the gain used to compute the control law.
@@ -277,23 +279,26 @@ public:
   virtual inline  void    setOgreVisibilityTest(const bool &v) { vpMbKltTracker::setOgreVisibilityTest(v); }
 
   virtual void    testTracking(){};
-  virtual void    track(const vpImage<unsigned char>& _I);
+  virtual void    track(const vpImage<unsigned char>& I);
   
   virtual void    updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
 protected:
-          void    computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
+          void    computeVVS(const vpImage<unsigned char>& I, const unsigned int &nbInfos, vpColVector &w_mbt,
+                             vpColVector &w_klt, const unsigned int lvl=0);
 
-  virtual void    init(const vpImage<unsigned char>& _I);
+  virtual void    init(const vpImage<unsigned char>& I);
   virtual void    initCylinder(const vpPoint& , const vpPoint , const double , const unsigned int );
-  virtual void    initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
-  unsigned int    initMbtTracking(const unsigned int _level=0);
+  virtual void    initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
+  unsigned int    initMbtTracking(const unsigned int level=0);
 
-          bool    postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
-          void    postTrackingMbt(vpColVector &_w, const unsigned int _level=0);
+          bool    postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
+                               const unsigned int lvl=0);
+          void    postTrackingMbt(vpColVector &w, const unsigned int level=0);
 
-  unsigned int    trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl = 0);
-          void    trackSecondLoop(const vpImage<unsigned char>& _I, vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl=0);
+  unsigned int    trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
+          void    trackSecondLoop(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &_error,
+                                  vpHomogeneousMatrix& cMo, const unsigned int lvl=0);
 };
 
 #endif

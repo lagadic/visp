@@ -250,16 +250,19 @@ public:
             vpMbKltTracker();
   virtual   ~vpMbKltTracker();
   
-  virtual void            display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
-  virtual void            display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters &_cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  virtual void            display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
+                                  const bool displayFullModel = false);
+  virtual void            display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                                  const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
 
 protected:
-  virtual void            init(const vpImage<unsigned char>& _I);
-  virtual void            reinit(const vpImage<unsigned char>& _I);
+  virtual void            init(const vpImage<unsigned char>& I);
+  virtual void            reinit(const vpImage<unsigned char>& I);
   
 public:
-  virtual void            loadConfigFile(const std::string& _configFile);
-          void            loadConfigFile(const char* filename);
+  virtual void            loadConfigFile(const std::string& configFile);
+          void            loadConfigFile(const char* configFile);
           
           /*! Return a reference to the faces structure. */
           vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
@@ -312,7 +315,7 @@ public:
   
           void            resetTracker();
   
-          void            setCameraParameters(const vpCameraParameters& _cam);
+          void            setCameraParameters(const vpCameraParameters& cam);
           
           /*!
             Set the value of the gain used to compute the control law.
@@ -340,23 +343,23 @@ public:
           /*!
             Set the threshold for the acceptation of a point.
 
-            \param _th : Threshold for the weight below which a point is rejected.
+            \param th : Threshold for the weight below which a point is rejected.
           */
-  inline  void            setThresholdAcceptation(const double _th) {threshold_outlier = _th;}
+  inline  void            setThresholdAcceptation(const double th) {threshold_outlier = th;}
   
   virtual void            testTracking();
-  virtual void            track(const vpImage<unsigned char>& _I);
+  virtual void            track(const vpImage<unsigned char>& I);
   
   virtual void            updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
-  virtual void            initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
+  virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
   virtual void            initCylinder(const vpPoint& , const vpPoint , const double , const unsigned int ){};
   
-          void            preTracking(const vpImage<unsigned char>& _I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
-          bool            postTracking(const vpImage<unsigned char>& _I, vpColVector &w);
+          void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
+          bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);
 };
 
 #endif

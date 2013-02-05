@@ -68,14 +68,14 @@ vpMbEdgeKltTracker::~vpMbEdgeKltTracker()
   Initialisation of the tracker using a known initial pose.
   The 3D model must first have been loaded.
 
-  \param _I : Input image.
+  \param I : Input image.
 */
 void 
-vpMbEdgeKltTracker::init(const vpImage<unsigned char>& _I)
+vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
 {
-  vpMbKltTracker::init(_I);
+  vpMbKltTracker::init(I);
   
-  initPyramid(_I, Ipyramid);
+  initPyramid(I, Ipyramid);
   
   unsigned int n = 0;
   for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
@@ -164,23 +164,23 @@ vpMbEdgeKltTracker::resetTracker()
 }
 
 unsigned int
-vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
+vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 {
   vpMbtDistanceLine *l ;
   vpMbtDistanceCylinder *cy ;
 
-  if(_lvl  >= scales.size() || !scales[_lvl]){
-    throw vpException(vpException::dimensionError, "_lvl not used.");
+  if(lvl  >= scales.size() || !scales[lvl]){
+    throw vpException(vpException::dimensionError, "lvl not used.");
   }
 
   unsigned int nbrow  = 0;
-  for(std::list<vpMbtDistanceLine*>::iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
     nbrow += l->nbFeature ;
     l->initInteractionMatrixError() ;
   }
   
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
     nbrow += cy->nbFeature ;
     cy->initInteractionMatrixError() ;
@@ -196,12 +196,12 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int _lvl)
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
 
-  \param _filename : full name of the xml file.
+  \param configFile : full name of the xml file.
 */
 void 
-vpMbEdgeKltTracker::loadConfigFile(const std::string& _filename)
+vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
 {
-  vpMbEdgeKltTracker::loadConfigFile(_filename.c_str());
+  vpMbEdgeKltTracker::loadConfigFile(configFile.c_str());
 }
 
 /*!
@@ -214,18 +214,18 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& _filename)
   \throw vpException::ioError if the file has not been properly parsed (file not
   found or wrong format for the data). 
 
-  \param filename : full name of the xml file.
+  \param configFile : full name of the xml file.
 
   \sa vpXmlParser::cleanup()
 */
 void
-vpMbEdgeKltTracker::loadConfigFile(const char* filename)
+vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
 {
 #ifdef VISP_HAVE_XML2
-  vpMbEdgeTracker::loadConfigFile(filename);
-  vpMbKltTracker::loadConfigFile(filename);
+  vpMbEdgeTracker::loadConfigFile(configFile);
+  vpMbKltTracker::loadConfigFile(configFile);
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", filename);
+  vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif
 }
 
@@ -237,21 +237,22 @@ vpMbEdgeKltTracker::loadConfigFile(const char* filename)
   \throw vpException::ioError if the file cannot be open, or if its extension is
   not wrl or cao. 
 
-  \param _modelFile : the file containing the model.
+  \param modelFile : the file containing the model.
 */
 void
-vpMbEdgeKltTracker::loadModel(const std::string& _modelFile)
+vpMbEdgeKltTracker::loadModel(const std::string& modelFile)
 {
-  vpMbTracker::loadModel(_modelFile);
+  vpMbTracker::loadModel(modelFile);
 }
 
 /*!
   Realise the post tracking operations. Mostly visibility tests
 */
 bool
-vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl)
+vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
+                                 const unsigned int lvl)
 {
-  bool reInit = vpMbKltTracker::postTracking(_I, w_klt);
+  bool reInit = vpMbKltTracker::postTracking(I, w_klt);
   
   postTrackingMbt(w_mbt,lvl);
   
@@ -262,19 +263,19 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
         l = *it;
         if (l->isVisible()){
-          l->displayMovingEdges(_I);
+          l->displayMovingEdges(I);
         }
       }
       
       vpMbtDistanceCylinder *cy ;
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
         cy = *it;
-        cy->displayMovingEdges(_I);
+        cy->displayMovingEdges(I);
       }
     }
   }
   
-  vpMbEdgeTracker::updateMovingEdge(_I);
+  vpMbEdgeTracker::updateMovingEdge(I);
   
 //   bool useless = false ;
 //   vpMbEdgeTracker::visibleFace(_I, cMo, useless) ;
@@ -289,8 +290,8 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
   }
   vpMbEdgeTracker::nbvisiblepolygone = n;
   
-  vpMbEdgeTracker::initMovingEdge(_I, cMo) ;
-  vpMbEdgeTracker::reinitMovingEdge(_I, cMo);
+  vpMbEdgeTracker::initMovingEdge(I, cMo) ;
+  vpMbEdgeTracker::reinitMovingEdge(I, cMo);
   
   return reInit;
 }
@@ -300,21 +301,21 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& _I, vpColVector &
   weight associated to a site (to eventually remove an outlier) and eventually
   set a flag to re-initialise the line.
 
-  \warning _level parameter not yet implemented.
+  \warning level parameter not yet implemented.
 
   \param w : Vector of weight associated to the residu.
-  \param _lvl : Optional parameter to specify the level to track.
+  \param lvl : Optional parameter to specify the level to track.
 */
 void
-vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int _lvl)
+vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 {
 
-  if(_lvl  >= scales.size() || !scales[_lvl]){
+  if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
   unsigned int n =0 ;
   vpMbtDistanceLine* l;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
     {
       double wmean = 0 ;
@@ -348,7 +349,7 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int _lvl)
   
   // Same thing with cylinders as with lines
   vpMbtDistanceCylinder *cy ;
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
     double wmean = 0 ;
     std::list<vpMeSite>::iterator itListCyl1;
@@ -413,17 +414,17 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int _lvl)
 /*!
   Realise the VVS loop for the tracking
 
-  \param _I : current image.
+  \param I : current image.
   \param nbInfos : Size of the features.
   \param w_mbt : weight vector for MBT.
   \param w_klt : weight vector for KLT.
   \param lvl : level of the pyramid.
 */
 void
-vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl)
+vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned int &nbInfos, vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl)
 {
   vpColVector factor;
-  unsigned int nbrow = trackFirstLoop(_I, factor, lvl);
+  unsigned int nbrow = trackFirstLoop(I, factor, lvl);
   
   if(nbrow < 4 && nbInfos < 4){
     vpERROR_TRACE("\n\t\t Error-> not enough data") ;
@@ -478,7 +479,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
     R = new vpColVector();
     
     if(nbrow >= 4)
-      trackSecondLoop(_I,J_mbt,R_mbt,cMo,lvl);
+      trackSecondLoop(I,J_mbt,R_mbt,cMo,lvl);
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
@@ -590,20 +591,20 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned 
 }
 
 /*!
-  Realise the tracking of the object in the image
+  Realise the tracking of the object in the image.
 
-  \throw vpException : if the tracking is supposed to have failed
+  \throw vpException : if the tracking is supposed to have failed.
 
-  \param _I : the input image
+  \param I : the input image.
 */
 void
-vpMbEdgeKltTracker::track(const vpImage<unsigned char>& _I)
+vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
 { 
   unsigned int nbInfos;
   unsigned int nbFaceUsed;
   vpColVector w_klt;
   
-  vpMbKltTracker::preTracking(_I,nbInfos,nbFaceUsed);
+  vpMbKltTracker::preTracking(I, nbInfos, nbFaceUsed);
   
   if(nbInfos >= 4)
     vpMbKltTracker::computeVVS(nbInfos, w_klt);
@@ -612,28 +613,28 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& _I)
     std::cout << "[ERROR] Unable to init with KLT" << std::endl;
   }
   
-  vpMbEdgeTracker::trackMovingEdge(_I);
+  vpMbEdgeTracker::trackMovingEdge(I);
  
   vpColVector w_mbt;
-  computeVVS(_I, nbInfos, w_mbt, w_klt);
+  computeVVS(I, nbInfos, w_mbt, w_klt);
   
-  if(postTracking(_I, w_mbt, w_klt)){
-    vpMbEdgeTracker::init(_I);
-    vpMbKltTracker::reinit(_I);
+  if(postTracking(I, w_mbt, w_klt)){
+    vpMbEdgeTracker::init(I);
+    vpMbKltTracker::reinit(I);
   }
 }
 
 unsigned int
-vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector &factor, const unsigned int _lvl)
+vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl)
 {
   vpMbtDistanceLine *l ;
   vpMbtDistanceCylinder *cy ;
 
-  if(_lvl  >= scales.size() || !scales[_lvl]){
+  if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
 
-  unsigned int nbrow  = initMbtTracking(_lvl);
+  unsigned int nbrow  = initMbtTracking(lvl);
   
   if (nbrow==0){
 //     vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
@@ -645,7 +646,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
   factor = 1;
     
   unsigned int n = 0;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
     l->computeInteractionMatrixError(cMo);
     
@@ -656,7 +657,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
         fac = 0.2;
         break;
       }
-      if(l->closeToImageBorder(_I, 10)){
+      if(l->closeToImageBorder(I, 10)){
         fac = 0.1;
         break;
       }
@@ -675,9 +676,9 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
     n+= l->nbFeature ;
   }
   
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
-    cy->computeInteractionMatrixError(cMo, _I);
+    cy->computeInteractionMatrixError(cMo, I);
     double fac = 1.0;
 
     std::list<vpMeSite>::const_iterator itCyl1;
@@ -708,31 +709,32 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& _I, vpColVector
 }
 
 void 
-vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& _I,  vpMatrix &_L, vpColVector &_error, vpHomogeneousMatrix& _cMo, const unsigned int _lvl)
+vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &L, vpColVector &error,
+                                    vpHomogeneousMatrix& cMo, const unsigned int lvl)
 {
   vpMbtDistanceLine* l;
   vpMbtDistanceCylinder *cy ;
   
   unsigned int n = 0 ;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[_lvl].begin(); it!=lines[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
-    l->computeInteractionMatrixError(_cMo) ;
+    l->computeInteractionMatrixError(cMo) ;
     for (unsigned int i=0 ; i < l->nbFeature ; i++){
       for (unsigned int j=0; j < 6 ; j++){
-        _L[n+i][j] = l->L[i][j];
-        _error[n+i] = l->error[i];
+        L[n+i][j] = l->L[i][j];
+        error[n+i] = l->error[i];
       }
     }
     n+= l->nbFeature;
   }
   
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[_lvl].begin(); it!=cylinders[_lvl].end(); ++it){
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
-    cy->computeInteractionMatrixError(_cMo, _I) ;
+    cy->computeInteractionMatrixError(cMo, I) ;
     for(unsigned int i=0 ; i < cy->nbFeature ; i++){
       for(unsigned int j=0; j < 6 ; j++){
-        _L[n+i][j] = cy->L[i][j];
-        _error[n+i] = cy->error[i];
+        L[n+i][j] = cy->L[i][j];
+        error[n+i] = cy->error[i];
       }
     }
 
@@ -743,29 +745,29 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& _I,  vpMatrix 
 /*!
   Set the camera parameters
 
-  \param _cam : the new camera parameters
+  \param cam : the new camera parameters
 */
 void
-vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& _cam)
+vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& cam)
 {
-  cam = _cam;
+  this->cam = cam;
   cameraInitialised = true;
   
-  vpMbEdgeTracker::setCameraParameters(_cam);
-  vpMbKltTracker::setCameraParameters(_cam);
+  vpMbEdgeTracker::setCameraParameters(cam);
+  vpMbKltTracker::setCameraParameters(cam);
 }
 
 /*!
   Initialise a new face from the coordinates given in parameter.
 
-  \param _corners : Coordinates of the corners of the face in the object frame.
-  \param _indexFace : index of the face (depends on the vrml file organisation).
+  \param corners : Coordinates of the corners of the face in the object frame.
+  \param indexFace : index of the face (depends on the vrml file organisation).
 */
 void
-vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace)
+vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
 {
-  vpMbEdgeTracker::initFaceFromCorners(_corners, _indexFace);
-  vpMbKltTracker::initFaceFromCorners(_corners, _indexFace);
+  vpMbEdgeTracker::initFaceFromCorners(corners, indexFace);
+  vpMbKltTracker::initFaceFromCorners(corners, indexFace);
 }
 
 /*!
@@ -786,22 +788,23 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& _p1, const vpPoint _p2, const do
 /*!
   Display the 3D model at a given position using the given camera parameters
 
-  \param _I : The image .
-  \param _cMo : Pose used to project the 3D model into the image.
-  \param _cam : The camera parameters.
-  \param _col : The desired color.
-  \param _l : The thickness of the lines.
+  \param I : The image.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the lines.
   \param displayFullModel : boolean to say if all the model has to be displayed.
 */
 void
-vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
+vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+                            const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
-  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+  vpMbKltTracker::display(I, cMo, cam, col, thickness, displayFullModel);
   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(_I, _cMo, cam, _col, _l);
+        (*it)->display(I, cMo, cam, col, thickness);
       }
       break ; //displaying model on one scale only
     }
@@ -811,22 +814,23 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& _I, const vpHomogeneou
 /*!
   Display the 3D model at a given position using the given camera parameters
 
-  \param _I : The color image .
-  \param _cMo : Pose used to project the 3D model into the image.
-  \param _cam : The camera parameters.
-  \param _col : The desired color.
-  \param _l : The thickness of the lines.
+  \param I : The color image.
+  \param cMo : Pose used to project the 3D model into the image.
+  \param cam : The camera parameters.
+  \param col : The desired color.
+  \param thickness : The thickness of the lines.
   \param displayFullModel : boolean to say if all the model has to be displayed.
 */
 void
-vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& _I, const vpHomogeneousMatrix &_cMo, const vpCameraParameters & _cam, const vpColor& _col , const unsigned int _l, const bool displayFullModel)
+vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+                            const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
-  vpMbKltTracker::display(_I, _cMo, _cam, _col, _l, displayFullModel);
+  vpMbKltTracker::display(I, cMo, cam, col, thickness, displayFullModel);
   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(_I, _cMo, cam, _col, _l);
+        (*it)->display(I, cMo, cam, col, thickness);
       }
       break ; //displaying model on one scale only
     }

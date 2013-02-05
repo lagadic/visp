@@ -324,26 +324,28 @@ public:
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker();
   
-  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor& col , const unsigned int l=1, const bool displayFullModel = false);
+  void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
   double getFirstThreshold() { return percentageGdPt;}
   
-  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int _level = 0);
-  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int _level = 0);
+  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0);
+  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level = 0);
   
   /*!
     Get the moving edge parameters.
     
     \return an instance of the moving edge parameters used by the tracker.
   */
-  inline void getMovingEdge(vpMe &_me ) { _me = this->me;}
+  inline void getMovingEdge(vpMe &me ) { me = this->me;}
   
-  unsigned int getNbPoints(const unsigned int _level=0);
+  unsigned int getNbPoints(const unsigned int level=0);
   unsigned int getNbPolygon();
-  vpMbtPolygon* getPolygon(const unsigned int _index); 
+  vpMbtPolygon* getPolygon(const unsigned int index);
   
   /*!
     Return the scales levels used for the tracking. 
@@ -357,16 +359,16 @@ public:
   void loadModel(const std::string &cad_name);
   void loadModel(const char* cad_name);  
   
-  void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& _cMo);
+  void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
   void resetTracker();
   
   /*!
     Set the camera parameters.
 
-    \param _cam : the new camera parameters
+    \param cam : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& _cam) {
-    this->cam = _cam; 
+  virtual void setCameraParameters(const vpCameraParameters& cam) {
+    this->cam = cam;
     cameraInitialised = true;
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
@@ -412,11 +414,11 @@ public:
   */
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
-  void setMovingEdge(const vpMe &_me);
+  void setMovingEdge(const vpMe &me);
   
   virtual void setOgreVisibilityTest(const bool &v);
   
-  void setScales(const std::vector<bool>& _scales);
+  void setScales(const std::vector<bool>& scales);
 
 
   void track(const vpImage<unsigned char> &I);

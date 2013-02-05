@@ -124,7 +124,7 @@ vpMbTracker::~vpMbTracker()
 
 /*!
   Initialise the tracking by clicking on the image points corresponding to the 
-  3D points (object frame) in the file _initFile. The structure of this file
+  3D points (object frame) in the file initFile. The structure of this file
   is (without the comments):
   \code
   4 // Number of points in the file (minimum is four)
@@ -133,18 +133,18 @@ vpMbTracker::~vpMbTracker()
   0.01 -0.01 -0.01  // /
   \endcode
 
-  \param _I : Input image
-  \param _initFile : File containing the points where to click
-  \param _displayHelp : Optionnal display of an image ( '_initFile.ppm' ). This 
+  \param I : Input image
+  \param initFile : File containing the points where to click
+  \param displayHelp : Optionnal display of an image ( 'initFile.ppm' ). This
     image may be used to show where to click. 
 
-  \exception vpException::ioError : The file specified in _initFile doesn't exist.
+  \exception vpException::ioError : The file specified in initFile doesn't exist.
 
   \sa setPathNamePoseSaving()
 
 */
 void
-vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _initFile, const bool _displayHelp)
+vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initFile, const bool displayHelp)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -153,17 +153,17 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
   
 	std::string ext = ".init";
 	std::string str_pose = "";
-	unsigned int pos =  _initFile.rfind(ext);
+  unsigned int pos =  initFile.rfind(ext);
 
   // Load the last poses from files
   std::fstream finitpos ;
   std::fstream finit ;
   char s[FILENAME_MAX];
   if(poseSavingFilename.empty()){
-		if( pos == _initFile.size()-ext.size() && pos != 0)
-			str_pose = _initFile.substr(0,pos) + ".0.pos";
+    if( pos == initFile.size()-ext.size() && pos != 0)
+      str_pose = initFile.substr(0,pos) + ".0.pos";
 		else
-			str_pose =  _initFile + ".0.pos";
+      str_pose =  initFile + ".0.pos";
 		
     finitpos.open(str_pose.c_str() ,std::ios::in) ;
 		sprintf(s, "%s", str_pose.c_str());
@@ -185,21 +185,21 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     
     std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
 
-    vpDisplay::display(_I);
-    display(_I, last_cMo, cam, vpColor::green, 1, true);
-    vpDisplay::displayFrame(_I, last_cMo, cam, 0.05, vpColor::green);
-    vpDisplay::flush(_I);
+    vpDisplay::display(I);
+    display(I, last_cMo, cam, vpColor::green, 1, true);
+    vpDisplay::displayFrame(I, last_cMo, cam, 0.05, vpColor::green);
+    vpDisplay::flush(I);
 
     std::cout << "No modification : left click " << std::endl;
     std::cout << "Modify initial pose : right click " << std::endl ;
 
-    vpDisplay::displayCharString(_I, 15, 10,
+    vpDisplay::displayCharString(I, 15, 10,
               "left click to validate, right click to modify initial pose",
               vpColor::red);
 
-    vpDisplay::flush(_I) ;
+    vpDisplay::flush(I) ;
 
-    while (!vpDisplay::getClick(_I, ip, button)) ;
+    while (!vpDisplay::getClick(I, ip, button)) ;
   }
 
 
@@ -208,8 +208,8 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
   }
   else
   {
-    vpDisplay::display(_I) ;
-    vpDisplay::flush(_I) ;
+    vpDisplay::display(I) ;
+    vpDisplay::flush(I) ;
 
     vpPose pose ;
 
@@ -222,10 +222,10 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 
     double X,Y,Z ;
     
-    if( pos == _initFile.size()-ext.size() && pos != 0)
-			sprintf(s,"%s", _initFile.c_str());
+    if( pos == initFile.size()-ext.size() && pos != 0)
+      sprintf(s,"%s", initFile.c_str());
 		else
-			sprintf(s,"%s.init", _initFile.c_str());
+      sprintf(s,"%s.init", initFile.c_str());
 	
     std::cout << "filename " << s << std::endl ;
     finit.open(s,std::ios::in) ;
@@ -235,10 +235,10 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     }
 
 		std::string dispF;
-		if( pos == _initFile.size()-ext.size() && pos != 0)
-			dispF = _initFile.substr(0,pos) + ".ppm";
+    if( pos == initFile.size()-ext.size() && pos != 0)
+      dispF = initFile.substr(0,pos) + ".ppm";
 		else
-			dispF = _initFile + ".ppm";
+      dispF = initFile + ".ppm";
     
 		sprintf(s, "%s", dispF.c_str());
 
@@ -252,7 +252,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
     vpDisplayOpenCV d;
 #endif
     try{
-      if(_displayHelp){
+      if(displayHelp){
         vpImageIo::readPPM(Iref,s) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
         d.init(Iref,10,500, "Where to initialize...")  ;
@@ -285,19 +285,19 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       {
         std::cout << "Click on point " << i+1 << std::endl ;
         double x=0,y=0;
-        vpDisplay::getClick(_I, ip) ;
-        vpDisplay::displayCross(_I, ip, 5,vpColor::green) ;
-        vpDisplay::flush(_I) ;
+        vpDisplay::getClick(I, ip) ;
+        vpDisplay::displayCross(I, ip, 5,vpColor::green) ;
+        vpDisplay::flush(I) ;
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
         P[i].set_x(x);
         P[i].set_y(y);
 
         std::cout << "click sur point " << ip << std::endl;
 
-        vpDisplay::displayPoint (_I, ip, vpColor::green); //display target point
+        vpDisplay::displayPoint (I, ip, vpColor::green); //display target point
         pose.addPoint(P[i]) ; // and added to the pose computation point list
       }
-      vpDisplay::flush(_I) ;
+      vpDisplay::flush(I) ;
 
       vpHomogeneousMatrix cMo1, cMo2;
       pose.computePose(vpPose::LAGRANGE, cMo1) ;
@@ -313,15 +313,15 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       }
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-      display(_I, cMo, cam, vpColor::green, 1, true);
-      vpDisplay::displayCharString(_I, 15, 10,
+      display(I, cMo, cam, vpColor::green, 1, true);
+      vpDisplay::displayCharString(I, 15, 10,
 				 "left click to validate, right click to re initialize object",
 				 vpColor::red);
 
-      vpDisplay::flush(_I) ;
+      vpDisplay::flush(I) ;
 
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-      while (!vpDisplay::getClick(_I, ip, button)) ;
+      while (!vpDisplay::getClick(I, ip, button)) ;
 
 
       if (button == vpMouseButton::button1)
@@ -331,12 +331,12 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
       else
       {
         pose.clearPoint() ;
-        vpDisplay::display(_I) ;
-        vpDisplay::flush(_I) ;
+        vpDisplay::display(I) ;
+        vpDisplay::flush(I) ;
       }
     }
 ////////////////////////////////////
-    vpDisplay::displayFrame(_I, cMo, cam, 0.05, vpColor::red);
+    vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
 
     delete [] P;
 
@@ -349,21 +349,22 @@ vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::string& _ini
 
   std::cout <<"cMo : "<<std::endl << cMo <<std::endl;
 
-  init(_I);
+  init(I);
 }
 
 /*!
   Initialise the tracking by clicking on the image points corresponding to the 
   3D points (object frame) in the list points3D_list. 
   
-  \param _I : Input image
+  \param I : Input image
   \param points3D_list : List of the 3D points (object frame).
   \param displayFile : Path to the image used to display the help. 
 */
-void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<vpPoint> &points3D_list, const std::string &displayFile)
+void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
+                            const std::string &displayFile)
 {
-  vpDisplay::display(_I) ;
-  vpDisplay::flush(_I) ;
+  vpDisplay::display(I) ;
+  vpDisplay::flush(I) ;
 
 	vpPose pose ;
   vpPoint *P = NULL; P = new vpPoint [points3D_list.size()]  ;
@@ -401,19 +402,19 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
 		{
 			std::cout << "Click on point " << i+1 << std::endl ;
 			double x=0,y=0;
-			vpDisplay::getClick(_I, ip) ;
-			vpDisplay::displayCross(_I, ip, 5,vpColor::green) ;
-			vpDisplay::flush(_I) ;
+      vpDisplay::getClick(I, ip) ;
+      vpDisplay::displayCross(I, ip, 5,vpColor::green) ;
+      vpDisplay::flush(I) ;
 			vpPixelMeterConversion::convertPoint(cam, ip, x, y);
 			P[i].set_x(x);
 			P[i].set_y(y);
 
 			std::cout << "Click on point " << ip << std::endl;
 
-			vpDisplay::displayPoint (_I, ip, vpColor::green); //display target point
+      vpDisplay::displayPoint (I, ip, vpColor::green); //display target point
 			pose.addPoint(P[i]) ; // and added to the pose computation point list
 		}
-		vpDisplay::flush(_I) ;
+    vpDisplay::flush(I) ;
 
 		vpHomogeneousMatrix cMo1, cMo2;
 		pose.computePose(vpPose::LAGRANGE, cMo1) ;
@@ -429,15 +430,15 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
 		}
 		pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
-		display(_I, cMo, cam, vpColor::green, 1, true);
-		vpDisplay::displayCharString(_I, 15, 10,
+    display(I, cMo, cam, vpColor::green, 1, true);
+    vpDisplay::displayCharString(I, 15, 10,
 				"left click to validate, right click to re initialize object",
 				vpColor::red);
 
-		vpDisplay::flush(_I) ;
+    vpDisplay::flush(I) ;
 
 		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-		while (!vpDisplay::getClick(_I, ip, button)) ;
+    while (!vpDisplay::getClick(I, ip, button)) ;
 
 
 		if (button == vpMouseButton::button1)
@@ -447,21 +448,21 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
 		else
 		{
 			pose.clearPoint() ;
-			vpDisplay::display(_I) ;
-			vpDisplay::flush(_I) ;
+      vpDisplay::display(I) ;
+      vpDisplay::flush(I) ;
 		}
 	}
 
-	vpDisplay::displayFrame(_I, cMo, cam, 0.05, vpColor::red);
+  vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
 
 	delete [] P;
 
-  init(_I);
+  init(I);
 }
 
 /*!
   Initialise the tracking by reading the 3D points (object frame) and the image points
-  in _initFile. The structure of this file is (without the comments):
+  in initFile. The structure of this file is (without the comments):
   \code
   4 // Number of 3D points in the file (minimum is four)
   0.01 0.01 0.01    //  \
@@ -473,21 +474,21 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& _I, const std::vector<
   50 10  		//  /
   \endcode
   
-  \param _I : Input image
-  \param _initFile : Path to the file containing all the points.
+  \param I : Input image
+  \param initFile : Path to the file containing all the points.
 */
-void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::string& _initFile )
+void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::string& initFile )
 {
 	char s[FILENAME_MAX];
 	std::fstream finit ;
 	
 	std::string ext = ".init";
-	unsigned int pos =  _initFile.rfind(ext);
+  unsigned int pos =  initFile.rfind(ext);
 	
-	if( pos == _initFile.size()-ext.size() && pos != 0)
-		sprintf(s,"%s", _initFile.c_str());
+  if( pos == initFile.size()-ext.size() && pos != 0)
+    sprintf(s,"%s", initFile.c_str());
 	else
-		sprintf(s,"%s.init", _initFile.c_str());
+    sprintf(s,"%s.init", initFile.c_str());
 	
 	std::cout << "filename " << s << std::endl ;
 	finit.open(s,std::ios::in) ;
@@ -544,18 +545,19 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::s
 
 	delete [] P;
 
-  init(_I);
+  init(I);
 }
 
 /*!
   Initialise the tracking with the list of image points (points2D_list) and
   the list of corresponding 3D points (object frame) (points3D_list).
   
-  \param _I : Input image
+  \param I : Input image
   \param points2D_list : List of image points.
   \param points3D_list : List of 3D points (object frame). 
 */
-void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list )
+void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::vector<vpImagePoint> &points2D_list,
+                                  const std::vector<vpPoint> &points3D_list )
 {
 	if(points2D_list.size() != points3D_list.size())
 		vpERROR_TRACE( "vpMbTracker::initFromPoints(), Number of 2D points different to the number of 3D points." );
@@ -589,11 +591,11 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::v
 
 	delete [] P;
 
-  init(_I);
+  init(I);
 }
 
 /*!
-  Initialise the tracking thanks to the pose in vpPoseVector format, and read in the file _initFile.
+  Initialise the tracking thanks to the pose in vpPoseVector format, and read in the file initFile.
   The structure of this file is (without the comments):
   \code
   // The six value of the pose vector
@@ -606,22 +608,22 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& _I, const std::v
   \endcode
   
   Where the three firsts lines refer to the translation and the three last to the rotation in thetaU parametrisation (see vpThetaUVector).
-  \param _I : Input image
-  \param _initFile : Path to the file containing the pose. 
+  \param I : Input image
+  \param initFile : Path to the file containing the pose.
 */
-void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const std::string &_initFile)
+void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::string &initFile)
 {
 	char s[FILENAME_MAX];
 	std::fstream finit ;
 	vpPoseVector init_pos;
 	
 	std::string ext = ".pos";
-	unsigned int pos =  _initFile.rfind(ext);
+  unsigned int pos =  initFile.rfind(ext);
 	
-	if( pos == _initFile.size()-ext.size() && pos != 0)
-		sprintf(s,"%s", _initFile.c_str());
+  if( pos == initFile.size()-ext.size() && pos != 0)
+    sprintf(s,"%s", initFile.c_str());
 	else
-		sprintf(s,"%s.pos", _initFile.c_str());
+    sprintf(s,"%s.pos", initFile.c_str());
 	
 	std::cout << "filename " << s << std::endl ;
 	finit.open(s,std::ios::in) ;
@@ -635,31 +637,31 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const std::stri
 	}
 	
 	cMo.buildFrom(init_pos);
-	init(_I);
+  init(I);
 }
 
 /*!
   Initialise the tracking thanks to the pose.
   
-  \param _I : Input image
-  \param _cMo : Pose matrix. 
+  \param I : Input image
+  \param cMo : Pose matrix.
 */
-void vpMbTracker::initFromPose(const vpImage<unsigned char>& _I, const vpHomogeneousMatrix &_cMo)
+void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo)
 {
-	cMo = _cMo;
-	init(_I);
+  this->cMo = cMo;
+  init(I);
 }
 
 /*!
   Initialise the tracking thanks to the pose vector.
   
-  \param _I : Input image
+  \param I : Input image
   \param cPo : Pose vector. 
 */
-void vpMbTracker::initFromPose (const vpImage<unsigned char>& _I, const vpPoseVector &cPo)
+void vpMbTracker::initFromPose (const vpImage<unsigned char>& I, const vpPoseVector &cPo)
 {
   vpHomogeneousMatrix _cMo(cPo);
-  initFromPose(_I, _cMo);
+  initFromPose(I, _cMo);
 }
 
 /*!
@@ -689,22 +691,22 @@ void vpMbTracker::savePose(const std::string &filename)
   \throw vpException::ioError if the file cannot be open, or if its extension is
   not wrl or cao. 
 
-  \param _modelFile : the file containing the model.
+  \param modelFile : the file containing the model.
 */
 void
-vpMbTracker::loadModel(const std::string& _modelFile)
+vpMbTracker::loadModel(const std::string& modelFile)
 {
   std::string::const_iterator it;
   
-  if(vpIoTools::checkFilename(_modelFile)){
-    it = _modelFile.end();
+  if(vpIoTools::checkFilename(modelFile)){
+    it = modelFile.end();
     if((*(it-1) == 'o' && *(it-2) == 'a' && *(it-3) == 'c' && *(it-4) == '.') || 
        (*(it-1) == 'O' && *(it-2) == 'A' && *(it-3) == 'C' && *(it-4) == '.') ){
-      loadCAOModel(_modelFile);
+      loadCAOModel(modelFile);
     }
     else if((*(it-1) == 'l' && *(it-2) == 'r' && *(it-3) == 'w' && *(it-4) == '.') ||
             (*(it-1) == 'L' && *(it-2) == 'R' && *(it-3) == 'W' && *(it-4) == '.') ){
-      loadVRMLModel(_modelFile);
+      loadVRMLModel(modelFile);
     }
     else{
       throw vpException(vpException::ioError, "file cannot be open");
@@ -715,7 +717,7 @@ vpMbTracker::loadModel(const std::string& _modelFile)
   }
   
   this->modelInitialised = true;
-  this->modelFileName = _modelFile;
+  this->modelFileName = modelFile;
 }
 
 
@@ -736,10 +738,10 @@ geometry DEF cyl_cylinder1 IndexedFaceSet
 
   \throw vpException::fatalError if the file cannot be open. 
   
-  \param _modelFile : The full name of the file containing the 3D model.
+  \param modelFile : The full name of the file containing the 3D model.
 */
 void 
-vpMbTracker::loadVRMLModel(const std::string& _modelFile)
+vpMbTracker::loadVRMLModel(const std::string& modelFile)
 {
 #ifdef VISP_HAVE_COIN
   if(!coinUsed){
@@ -747,7 +749,7 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
     coinUsed = true;
   }
   SoInput in;
-  SbBool ok = in.openFile(_modelFile.c_str());
+  SbBool ok = in.openFile(modelFile.c_str());
   SoSeparator  *sceneGraph;
   SoVRMLGroup  *sceneGraphVRML2;
 
@@ -813,31 +815,30 @@ vpMbTracker::loadVRMLModel(const std::string& _modelFile)
   6 7 0.05 // Index of the limits points on the axis (used to know the 'height' of the cylinder) and radius of the cyclinder (in m.)
   \endcode
   
-  \param _modelFile : Full name of the .CAO file containing the model.
+  \param modelFile : Full name of the .CAO file containing the model.
 */
 void 
-vpMbTracker::loadCAOModel(const std::string& _modelFile)
+vpMbTracker::loadCAOModel(const std::string& modelFile)
 {
-  std::ifstream file_id;
-  file_id.exceptions ( std::ifstream::failbit | std::ifstream::eofbit );
-  file_id.open (_modelFile.c_str(), std::ifstream::in);
-  if(file_id.fail()) {
-    std::cout << "cannot read CAO model file: " << _modelFile << std::endl;
+  std::ifstream fileId;
+  fileId.exceptions ( std::ifstream::failbit | std::ifstream::eofbit );
+  fileId.open (modelFile.c_str(), std::ifstream::in);
+  if(fileId.fail()) {
+    std::cout << "cannot read CAO model file: " << modelFile << std::endl;
     throw vpException(vpException::ioError, "cannot read CAO model file");
   }
-
 
   try{
     char c;
     // Extraction of the version (remove empty line and commented ones (comment
     // line begin with the #)).
-    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-    file_id.unget();
+    while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n');
+    fileId.unget();
 
     int caoVersion;
-    file_id.get(c);
+    fileId.get(c);
     if(c=='V'){
-      file_id >> caoVersion;
+      fileId >> caoVersion;
     }
     else{
       std::cout <<"in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...";
@@ -845,13 +846,13 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
         "in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...");
     }
 
-    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n') ;
-    file_id.unget();
+    while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n') ;
+    fileId.unget();
 
     //Read the points
     unsigned int caoNbrPoint;
-    file_id >> caoNbrPoint;
+    fileId >> caoNbrPoint;
     std::cout << "> " << caoNbrPoint << " points" << std::endl;
     vpPoint *caoPoints = NULL;
     if (caoNbrPoint > 0)
@@ -866,27 +867,27 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
 
 
     for(unsigned int k=0; k < caoNbrPoint; k++){
-      file_id >> x ;
-      file_id >> y ;
-      file_id >> z ;
+      fileId >> x ;
+      fileId >> y ;
+      fileId >> z ;
       if (caoVersion == 2){
-        file_id >> i ;
-        file_id >> j ;
+        fileId >> i ;
+        fileId >> j ;
       }
 
       if(k != caoNbrPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        file_id.ignore(256,'\n');
+        fileId.ignore(256,'\n');
       }
       caoPoints[k].setWorldCoordinates(x, y, z) ;
     }
 
-    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-    file_id.unget();
+    while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n');
+    fileId.unget();
 
     //Read the lines
     unsigned int caoNbrLine;
-    file_id >> caoNbrLine;
+    fileId >> caoNbrLine;
     unsigned int *caoLinePoints = NULL;
     std::cout << "> " << caoNbrLine << " lines" << std::endl;
     if (caoNbrLine > 0)
@@ -895,8 +896,8 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
     unsigned int index1, index2;
 
     for(unsigned int k=0; k < caoNbrLine ; k++){
-      file_id >> index1 ;
-      file_id >> index2 ;
+      fileId >> index1 ;
+      fileId >> index2 ;
 
       caoLinePoints[2*k] = index1;
       caoLinePoints[2*k+1] = index2;
@@ -912,64 +913,64 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
       }
 
       if(k != caoNbrLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        file_id.ignore(256,'\n');
+        fileId.ignore(256,'\n');
       }
     }
 
-    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-    file_id.unget();
+    while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n');
+    fileId.unget();
 
 
       /* Load polygon from the lines extracted earlier
           (the first point of the line is used)*/
     unsigned int caoNbrPolygonLine;
-    file_id >> caoNbrPolygonLine;
+    fileId >> caoNbrPolygonLine;
     std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
     unsigned int index;
     for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
       unsigned int nbLinePol;
-      file_id >> nbLinePol;
+      fileId >> nbLinePol;
       std::vector<vpPoint> corners;
       for(unsigned int i = 0; i < nbLinePol; i++){
-        file_id >> index;
+        fileId >> index;
         corners.push_back(caoPoints[caoLinePoints[2*index]]);
       }
       if(k != caoNbrPolygonLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        file_id.ignore(256,'\n');
+        fileId.ignore(256,'\n');
       }
       initFaceFromCorners(corners, k);
     }
 
-    while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-    while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-    file_id.unget();
+    while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n');
+    fileId.unget();
 
       /* Extract the polygon using the point coordinates (top of the file) */
     unsigned int caoNbrPolygonPoint;
-    file_id >> caoNbrPolygonPoint;
+    fileId >> caoNbrPolygonPoint;
     std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
     for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
       int nbPointPol;
-      file_id >> nbPointPol;
+      fileId >> nbPointPol;
       std::vector<vpPoint> corners;
       for(int i = 0; i < nbPointPol; i++){
-        file_id >> index;
+        fileId >> index;
         corners.push_back(caoPoints[index]);
       }
       if(k != caoNbrPolygonPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        file_id.ignore(256,'\n');
+        fileId.ignore(256,'\n');
       }
       initFaceFromCorners(corners, k);
     }
 
     unsigned int caoNbCylinder;
     try{
-      while( (file_id.get(c)!=NULL)&&(c!='\n')) ;
-      while( (file_id.get(c)!=NULL)&&(c == '#')) file_id.ignore(256,'\n');
-      file_id.unget();
+      while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+      while( (fileId.get(c)!=NULL)&&(c == '#')) fileId.ignore(256,'\n');
+      fileId.unget();
 
-      if(file_id.eof()){// check if not at the end of the file (for old style files)
+      if(fileId.eof()){// check if not at the end of the file (for old style files)
         delete[] caoPoints;
         delete[] caoLinePoints;
         return ;
@@ -978,14 +979,14 @@ vpMbTracker::loadCAOModel(const std::string& _modelFile)
       /* Extract the cylinders */
 
 
-      file_id >> caoNbCylinder;
+      fileId >> caoNbCylinder;
       std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
       for(unsigned int k=0; k<caoNbCylinder; ++k){
         double radius;
         unsigned int indexP1, indexP2;
-        file_id >> indexP1;
-        file_id >> indexP2;
-        file_id >> radius;
+        fileId >> indexP1;
+        fileId >> indexP2;
+        fileId >> radius;
         initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
       }
 
@@ -1097,19 +1098,19 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
   Extract a face of the object to track from the VMRL model. This method calls
   the initFaceFromCorners() method implemented in the child class. 
 
-  \param _face_set : Pointer to the face in the vrml format. 
+  \param face_set : Pointer to the face in the vrml format.
   \param transform : Transformation matrix applied to the face.
   \param indexFace : Face index.
 */
 void
-vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace)
+vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
 
 //  SoMFInt32 indexList = _face_set->coordIndex;
 //  int indexListSize = indexList.getNum();
-  int indexListSize = _face_set->coordIndex.getNum();
+  int indexListSize = face_set->coordIndex.getNum();
   
   vpColVector pointTransformed(4);
   vpPoint pt;
@@ -1117,7 +1118,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &
   
   for (int i = 0; i < indexListSize; i++)
   {
-    if (_face_set->coordIndex[i] == -1)
+    if (face_set->coordIndex[i] == -1)
     {
       if(corners.size() > 1)
       {
@@ -1128,8 +1129,8 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &
     }
     else
     {
-      coord = (SoVRMLCoordinate *)(_face_set->coord.getValue());
-      int index = _face_set->coordIndex[i];      
+      coord = (SoVRMLCoordinate *)(face_set->coord.getValue());
+      int index = face_set->coordIndex[i];
       pointTransformed[0]=coord->point[index].getValue()[0];
       pointTransformed[1]=coord->point[index].getValue()[1];
       pointTransformed[2]=coord->point[index].getValue()[2];
@@ -1152,14 +1153,14 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &
   this data type. the object name is used, if it begins with "cyl" then this
   method is called otherwise the extractFaces() is used.
 
-  \param _face_set : Pointer to the cylinder in the vrml format.
+  \param face_set : Pointer to the cylinder in the vrml format.
   \param transform : Transformation matrix applied to the cylinder.
 */
 void
-vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatrix &transform)
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform)
 {
   std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
-  SoVRMLCoordinate* coords = (SoVRMLCoordinate *)_face_set->coord.getValue();
+  SoVRMLCoordinate* coords = (SoVRMLCoordinate *)face_set->coord.getValue();
 
   unsigned int indexListSize = (unsigned int)coords->point.getNum();
 
@@ -1219,13 +1220,13 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* _face_set, vpHomogeneousMatr
 
   \throw vpException::dimensionError if the set is empty.
 
-  \param _pts : Set of point to extract the center of gravity.
+  \param pts : Set of point to extract the center of gravity.
   \return Center of gravity of the set.
 */
 vpPoint
-vpMbTracker::getGravityCenter(const std::vector<vpPoint>& _pts)
+vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
 {
-  if(_pts.empty()){
+  if(pts.empty()){
     std::cout << "Cannot extract center of gravity of empty set." << std::endl;
     throw vpException(vpException::dimensionError, "Cannot extract center of gravity of empty set.");
   }
@@ -1234,13 +1235,13 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& _pts)
   double oZ = 0;
   vpPoint G;
 
-  for(unsigned int i=0; i<_pts.size(); ++i){
-    oX += _pts[i].get_oX();
-    oY += _pts[i].get_oY();
-    oZ += _pts[i].get_oZ();
+  for(unsigned int i=0; i<pts.size(); ++i){
+    oX += pts[i].get_oX();
+    oY += pts[i].get_oY();
+    oZ += pts[i].get_oZ();
   }
 
-  G.setWorldCoordinates(oX/_pts.size(), oY/_pts.size(), oZ/_pts.size());
+  G.setWorldCoordinates(oX/pts.size(), oY/pts.size(), oZ/pts.size());
   return G;
 }
 
@@ -1249,15 +1250,15 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& _pts)
   Extract a line of the object to track from the VMRL model. This method calls
   the initFaceFromCorners() method implemented in the child class. 
 
-  \param _line_set : Pointer to the line in the vrml format. 
+  \param line_set : Pointer to the line in the vrml format.
 */
 void
-vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
+vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
 
-  int indexListSize = _line_set->coordIndex.getNum();
+  int indexListSize = line_set->coordIndex.getNum();
 
   SbVec3f point(0,0,0);
   vpPoint pt;
@@ -1267,7 +1268,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
 
   for (int i = 0; i < indexListSize; i++)
   {
-    if (_line_set->coordIndex[i] == -1)
+    if (line_set->coordIndex[i] == -1)
     {
       if(corners.size() > 1)
       {
@@ -1278,8 +1279,8 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
     }
     else
     {
-      coord = (SoVRMLCoordinate *)(_line_set->coord.getValue());
-      int index = _line_set->coordIndex[i];
+      coord = (SoVRMLCoordinate *)(line_set->coord.getValue());
+      int index = line_set->coordIndex[i];
       point[0]=coord->point[index].getValue()[0];
       point[1]=coord->point[index].getValue()[1];
       point[2]=coord->point[index].getValue()[2];
@@ -1301,28 +1302,28 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* _line_set)
   
   \warning The JTR matrix is resized.
   
-  \param _interaction : The interaction matrix (size Nx6).
-  \param _error : The residu vector (size Nx1).
-  \param _JTR : The resulting JTR matrix (size 6x1).
+  \param interaction : The interaction matrix (size Nx6).
+  \param error : The residu vector (size Nx1).
+  \param JTR : The resulting JTR matrix (size 6x1).
   
 */
 void 
-vpMbTracker::computeJTR(const vpMatrix& _interaction, const vpColVector& _error, vpMatrix& _JTR)
+vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpMatrix& JTR)
 {
-  if(_interaction.getRows() != _error.getRows() || _interaction.getCols() != 6 ){
+  if(interaction.getRows() != error.getRows() || interaction.getCols() != 6 ){
     throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
               "Incorrect matrices size in computeJTR.");
   }
 
-  _JTR.resize(6, 1);
-  const unsigned int N = _interaction.getRows();
+  JTR.resize(6, 1);
+  const unsigned int N = interaction.getRows();
 
   for (unsigned int i = 0; i < 6; i += 1){
     double ssum = 0;
     for (unsigned int j = 0; j < N; j += 1){
-      ssum += _interaction[j][i] * _error[j];
+      ssum += interaction[j][i] * error[j];
     }
-    _JTR[i][0] = ssum;
+    JTR[i][0] = ssum;
   }
 }
 
