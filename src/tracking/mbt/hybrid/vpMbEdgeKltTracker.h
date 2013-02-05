@@ -94,7 +94,7 @@ int main()
   
 #if defined VISP_HAVE_X11
   vpDisplayX display;
-  display.init(I,100,100,"Mbt Edge Klt Tracker");
+  display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
 
 #if defined VISP_HAVE_XML2
@@ -106,10 +106,10 @@ int main()
 
   while(true){
     // Acquire a new image
+    vpDisplay::display(I);
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
     
-    vpDisplay::display(I);
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
@@ -183,7 +183,7 @@ int main()
   
 #if defined VISP_HAVE_X11
   vpDisplayX display;
-  display.init(I,100,100,"Mbt Edge Klt Tracker");
+  display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
 
 #if defined VISP_HAVE_XML2
