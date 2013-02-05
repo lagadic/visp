@@ -250,8 +250,8 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
     <py>686.24</py>
   </camera>
   <face>
-    <angle_appear>60</angle_appear>
-    <angle_disappear>65</angle_disappear>
+    <angle_appear>65</angle_appear>
+    <angle_disappear>85</angle_disappear>
   </face>
   <klt>
     <threshold_outlier>0.6</threshold_outlier>
