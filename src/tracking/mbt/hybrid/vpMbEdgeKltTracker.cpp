@@ -189,13 +189,15 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 }
 
 /*!
-  Load the xml configuration file.
-  From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
+  Load the xml configuration file. An example of such a file is provided in loadConfigFile(const char*) documentation.
+  From the configuration file initialize the parameters corresponding to the objects: moving-edges, KLT, camera.
 
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
 
   \param configFile : full name of the xml file.
+
+  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
 */
 void 
 vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
@@ -205,7 +207,7 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
 
 /*!
   Load the xml configuration file.
-  From the configuration file parameters initialize the corresponding objects (Ecm, camera).
+  From the configuration file initialize the parameters corresponding to the objects: moving-edges, KLT, camera.
 
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
@@ -215,7 +217,55 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
 
   \param configFile : full name of the xml file.
 
-  \sa vpXmlParser::cleanup()
+  The XML configuration file has the following form:
+  \code
+<?xml version="1.0"?>
+<conf>
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>10</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>7000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+  </ecm>
+  <sample>
+    <step>4</step>
+    <nb_sample>250</nb_sample>
+  </sample>
+  <camera>
+    <width>640</width>
+    <height>480</height>
+    <u0>320</u0>
+    <v0>240</v0>
+    <px>686.24</px>
+    <py>686.24</py>
+  </camera>
+  <face>
+    <angle_appear>60</angle_appear>
+    <angle_disappear>65</angle_disappear>
+  </face>
+  <klt>
+    <threshold_outlier>0.6</threshold_outlier>
+    <mask_border>10</mask_border>
+    <max_features>10000</max_features>
+    <window_size>5</window_size>
+    <quality>0.02</quality>
+    <min_distance>10</min_distance>
+    <harris>0.02</harris>
+    <size_block>3</size_block>
+    <pyramid_lvl>3</pyramid_lvl>
+  </klt>
+</conf>
+  \endcode
+
+  \sa loadConfigFile(const std::string&), vpXmlParser::cleanup()
 */
 void
 vpMbEdgeKltTracker::loadConfigFile(const char* configFile)

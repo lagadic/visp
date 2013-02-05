@@ -960,23 +960,25 @@ vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMa
 }
 
 /*!
-  Load the xml configuration file.
-  From the configuration file parameters write initialize the corresponding objects (Ecm, camera).
+  Load the xml configuration file. An example of such a file is provided in loadConfigFile(const char*) documentation.
+  From the configuration file initialize the parameters corresponding to the objects: moving-edges, camera and visibility angles.
 
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
 
-  \param _filename : full name of the xml file.
+  \param configFile : full name of the xml file.
+
+  \sa loadConfigFile(const char*), vpXmlParser::cleanup()
 */
 void 
-vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
+vpMbEdgeTracker::loadConfigFile(const std::string& configFile)
 {
-  vpMbEdgeTracker::loadConfigFile(_filename.c_str());
+  vpMbEdgeTracker::loadConfigFile(configFile.c_str());
 }
 
 /*!
   Load the xml configuration file.
-  From the configuration file parameters initialize the corresponding objects (Ecm, camera).
+  From the configuration file initialize the parameters corresponding to the objects: moving-edges, camera and visibility angles.
 
   \warning To clean up memory allocated by the xml library, the user has to call
   vpXmlParser::cleanup() before the exit().
@@ -984,12 +986,45 @@ vpMbEdgeTracker::loadConfigFile(const std::string& _filename)
   \throw vpException::ioError if the file has not been properly parsed (file not
   found or wrong format for the data). 
 
-  \param filename : full name of the xml file.
+  \param configFile : full name of the xml file.
 
-  \sa vpXmlParser::cleanup()
+  The XML configuration file has the following form:
+  \code
+<?xml version="1.0"?>
+<conf>
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>7</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>5000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+  </ecm>
+  <sample>
+    <step>4</step>
+    <nb_sample>250</nb_sample>
+  </sample>
+  <camera>
+    <width>640</width>
+    <height>480</height>
+    <u0>320</u0>
+    <v0>240</v0>
+    <px>686.24</px>
+    <py>686.24</py>
+  </camera>
+</conf>
+  \endcode
+
+  \sa loadConfigFile(const std::string&), vpXmlParser::cleanup()
 */
 void
-vpMbEdgeTracker::loadConfigFile(const char* filename)
+vpMbEdgeTracker::loadConfigFile(const char* configFile)
 {
 #ifdef VISP_HAVE_XML2
   vpMbtXmlParser xmlp;
@@ -1001,10 +1036,10 @@ vpMbEdgeTracker::loadConfigFile(const char* filename)
   
   try{
     std::cout << " *********** Parsing XML for MbEdge Tracker ************ " << std::endl;
-    xmlp.parse(filename);
+    xmlp.parse(configFile);
   }
   catch(...){
-    vpERROR_TRACE("Can't open XML file \"%s\"\n ",filename);
+    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
     throw vpException(vpException::ioError, "problem to parse configuration file.");
   }
   

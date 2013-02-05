@@ -354,8 +354,8 @@ public:
   */
   std::vector<bool> getScales() const {return scales;}
   
-  void loadConfigFile(const std::string &filename);
-  void loadConfigFile(const char* filename);
+  void loadConfigFile(const std::string &configFile);
+  void loadConfigFile(const char* configFile);
   void loadModel(const std::string &cad_name);
   void loadModel(const char* cad_name);  
   
