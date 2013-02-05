@@ -144,11 +144,9 @@ class VISP_EXPORT vpKltOpencv
   int initialized; //Is the tracker ready ?
 
   int maxFeatures; //Maximum number of features to track (Default 50)
-  int countFeatures; //Currently tracked features
-  int countPrevFeatures; //Previously tracked features
   int globalcountFeatures; //Keep over time for ID
 
-  int flags; //Flags for tracking (internal)
+  
 
   int win_size; //Size of search window for tracker (default 10)
   double quality; //Multiplier for the maxmin eigenvalue; specifies minimal accepted quality of image corners (default 0.01)
@@ -165,11 +163,19 @@ class VISP_EXPORT vpKltOpencv
   IplImage *prev_pyramid; //Gaussian pyramid data for the previous iteration
   IplImage *swap_temp; //Internal
 
+  int countFeatures; //Currently tracked features
+  int countPrevFeatures; //Previously tracked features
+  
   CvPoint2D32f *features; //List of features
   CvPoint2D32f *prev_features; //List of features for previous iteration
   
   long *featuresid; //Array of ids for features
   long *prev_featuresid; //Array of ids for previous features
+  
+  int flags; //Flags for tracking (internal)
+  
+  bool initial_guess; //Bool to precise if the next call to track() uses an initial guess
+  
   bool *lostDuringTrack; // Result of the tracker for every feature : 1 = lost, 0 = still present
   char *status; //Result of the tracker for every features : 0 = lost, 1 = found
 
@@ -205,7 +211,7 @@ class VISP_EXPORT vpKltOpencv
 	       vpColor color = vpColor::red);
 
   //Seters
-  void setFeature(const int &index, const int &id, const float &x, const float &y);
+  void setInitialGuess(CvPoint2D32f **guess_pts);
   
   /* Should be used only before initTracking */
   void setMaxFeatures(const int input);
@@ -294,8 +300,6 @@ class VISP_EXPORT vpKltOpencv
   void getPrevFeature(int index, int &id, float &x, float &y) const;
   void addFeature(const int &id, const float &x, const float &y);
   void suppressFeature(int index);
-  
-  void updateImage(const IplImage *I);
   
 //Static Functions
 public: 

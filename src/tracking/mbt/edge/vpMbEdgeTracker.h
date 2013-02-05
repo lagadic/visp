@@ -418,12 +418,11 @@ public:
   
   virtual void setOgreVisibilityTest(const bool &v);
   
-  void setScales(const std::vector<bool>& scales);
-
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+  
+  void setScales(const std::vector<bool>& _scales);
 
   void track(const vpImage<unsigned char> &I);
-  
-  virtual void updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
 protected:
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");

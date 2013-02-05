@@ -252,6 +252,17 @@ public:
   void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
   
   /*!
+    Set the pose to be used in entry of the next call to the track() function.
+    This pose will be just used once.
+    
+    \warning This function has to be called after the initialisation of the tracker.
+    
+    \param I : image corresponding to the desired pose.
+    \param cdMo : Pose to affect.
+  */
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) = 0;
+  
+  /*!
     Set the filename used to save the initial pose computed using the 
     initClick() method. It is also used to read a previous pose in the same method. 
     If the file is not set then, the initClick() method will create a .0.pos 
@@ -277,13 +288,6 @@ public:
     \param I : The current image.
   */
   virtual void track(const vpImage<unsigned char>& I)=0;
-  
-  /*!
-    Update the pose used in entry of the track() method.
-    
-    \warning This function has to be called after the initialisation of the tracker.
-  */
-  virtual void updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) = 0;
 
 protected:
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);

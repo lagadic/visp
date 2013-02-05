@@ -933,7 +933,8 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 }
 
 /*!
-  Update the pose used in entry of the track() method.
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
   
   \warning This function has to be called after the initialisation of the tracker.
   
@@ -941,9 +942,8 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   \param cdMo : Pose to affect.
 */
 void           
-vpMbEdgeTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
+vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  // TO DO
   cMo = cdMo;
   
   vpMbtDistanceLine *l;

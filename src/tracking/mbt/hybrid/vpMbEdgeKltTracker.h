@@ -277,11 +277,11 @@ public:
             \param v : True to use it, False otherwise
           */
   virtual inline  void    setOgreVisibilityTest(const bool &v) { vpMbKltTracker::setOgreVisibilityTest(v); }
+  
+  virtual void    setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
   virtual void    testTracking(){};
   virtual void    track(const vpImage<unsigned char>& I);
-  
-  virtual void    updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
 protected:
           void    computeVVS(const vpImage<unsigned char>& I, const unsigned int &nbInfos, vpColVector &w_mbt,

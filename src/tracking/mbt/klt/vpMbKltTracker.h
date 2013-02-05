@@ -338,8 +338,10 @@ public:
           */
   inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
   
-  virtual void    setOgreVisibilityTest(const bool &v);
-          
+  virtual void            setOgreVisibilityTest(const bool &v);
+  
+  virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+  
           /*!
             Set the threshold for the acceptation of a point.
 
@@ -349,8 +351,6 @@ public:
   
   virtual void            testTracking();
   virtual void            track(const vpImage<unsigned char>& I);
-  
-  virtual void            updatePose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);

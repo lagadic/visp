@@ -133,6 +133,7 @@ vpKltOpencv::vpKltOpencv()
   OnNewFeature = 0;
   OnMeasureFeature = 0;
   IsFeatureValid = 0;
+  initial_guess = false;
 
   features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(features[0]));
   prev_features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(prev_features[0]));
@@ -380,20 +381,24 @@ void vpKltOpencv::track(const IplImage *I)
 		      "Bad Image format")) ;
   }
 
-  // Save current features as previous features
-  countPrevFeatures = countFeatures;
-  for (int boucle=0; boucle<countFeatures;boucle++)  {
-    prev_featuresid[boucle] = featuresid[boucle];
-  }
-
-  CvPoint2D32f *swap_features = 0;
+  
 
   CV_SWAP(prev_image, image, swap_temp);
   CV_SWAP(prev_pyramid, pyramid, swap_temp);
-  CV_SWAP(prev_features, features, swap_features);
-
+  
   cvCopy(I, image, 0);
-
+  
+  if(!initial_guess){
+    // Save current features as previous features
+    countPrevFeatures = countFeatures;
+    for (int boucle=0; boucle<countFeatures;boucle++)  {
+      prev_featuresid[boucle] = featuresid[boucle];
+    }
+    
+    CvPoint2D32f *swap_features = 0;
+    CV_SWAP(prev_features, features, swap_features);
+  }
+  
   if (countFeatures <= 0) return;
 
   cvCalcOpticalFlowPyrLK( prev_image, image, prev_pyramid, pyramid,
@@ -402,7 +407,13 @@ void vpKltOpencv::track(const IplImage *I)
 			  status, 0, cvTermCriteria(CV_TERMCRIT_ITER
 						    |CV_TERMCRIT_EPS,20,0.03),
 			  flags );
-  flags |= CV_LKFLOW_PYR_A_READY;
+  
+  if(!initial_guess)
+    flags |= CV_LKFLOW_PYR_A_READY;
+  else{
+    flags = CV_LKFLOW_PYR_A_READY;
+    initial_guess = false;
+  }
 
   int i,k;
   for (i = k = 0; i < countFeatures ; i++)  {
@@ -446,29 +457,6 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
 }
 
 /*!
-  Update the current image, delete the previous one and clean the pyramids,
-  in order to rebuild them during the next call to track().
-  
-  \param I : Current image
-*/
-void 
-vpKltOpencv::updateImage(const IplImage *I)
-{
-  cvCopy(I, image, 0);
-  
-  if (prev_image) cvReleaseImage(&prev_image);
-  if (pyramid) cvReleaseImage(&pyramid);
-  if (prev_pyramid) cvReleaseImage(&prev_pyramid);
-  
-  prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
-  
-  flags = 0; // Set to 0 to force the pyramid computation during the next track()
-}
-
-
-/*!
 
   Get the 'index'th feature image coordinates.  Beware that
   getFeature(i,...) may not represent the same feature before and
@@ -494,25 +482,31 @@ void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
   id = featuresid[index];
 }
 
+
 /*!
-
-  Update the 'index'th feature image coordinates.  Beware that
-  setFeature(i,...) may not represent the same feature before and
-  after a tracking iteration (if a feature is lost, features are
-  shifted in the array).
-
+  Set the points that will be used as initial guess during the next call to track().
+  
+  \warning Those points will be used just one time (next track()).
+  
+  \param guess_pts : Reference on an array of CvPoint2D32f allocated with cvAlloc().
 */
-void vpKltOpencv::setFeature(const int &index, const int &id, const float &x, const float &y)
+void 
+vpKltOpencv::setInitialGuess(CvPoint2D32f **guess_pts)
 {
-  if (index >= countFeatures)
-  {
-    vpERROR_TRACE(" Memory problem ");
-    throw(vpException(vpException::memoryAllocationError," Memory problem"));
+  // Save current features as previous features
+  countPrevFeatures = countFeatures;
+  for (int boucle=0; boucle<countFeatures;boucle++)  {
+    prev_featuresid[boucle] = featuresid[boucle];
   }
-
-  features[index].x = x;
-  features[index].y = y;
-  featuresid[index] = id;
+  
+  CvPoint2D32f *swap_features = NULL;
+  CV_SWAP(prev_features, *guess_pts, swap_features);
+  
+  CV_SWAP(features, prev_features, swap_features);
+  
+  flags |= CV_LKFLOW_INITIAL_GUESSES;
+  
+  initial_guess = true;
 }
 
 /*!

@@ -63,7 +63,7 @@ vpMbKltTracker::vpMbKltTracker()
   
   maskBorder = 5;
   threshold_outlier = 0.5;
-  percentGood = 0.7;
+  percentGood = 0.6;
   
   lambda = 0.8;
   maxIter = 200;
@@ -266,7 +266,8 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
 }
 
 /*!
-  Update the pose used in entry of the track() method.
+  Set the pose to be used in entry of the next call to the track() function.
+  This pose will be just used once.
   
   \warning This function has to be called after the initialisation of the tracker.
   
@@ -274,7 +275,7 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
   \param cdMo : Pose to affect.
 */
 void           
-vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
+vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
   bool reInitialisation = false;
   if(!useOgre)
@@ -302,7 +303,10 @@ vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneous
     cdMc.extract(cdRc);
     cdMc.extract(cdtc);
     
-    for (unsigned int i = 0; i < faces.size(); i += 1)
+    CvPoint2D32f* initial_guess = NULL;
+    initial_guess = (CvPoint2D32f*)cvAlloc((unsigned int)tracker.getMaxFeatures()*sizeof(initial_guess[0]));
+       
+    for (unsigned int i = 0; i < faces.size(); i += 1){
       if(faces[i]->isVisible() && faces[i]->hasEnoughPoints()){  
         //Get the normal to the face at the current state cMo
         vpPlane plan(faces[i]->p[0], faces[i]->p[1], faces[i]->p[2]);
@@ -339,13 +343,16 @@ vpMbKltTracker::updatePose( const vpImage<unsigned char> &I, const vpHomogeneous
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
           
           //Set value to the KLT tracker
-          tracker.setFeature((faces[i]->getCurrentPointsInd())[iter->first], iter->first, (float)cdp[0], (float)cdp[1]);
+          initial_guess[(faces[i]->getCurrentPointsInd())[iter->first]].x = (float)cdp[0];
+          initial_guess[(faces[i]->getCurrentPointsInd())[iter->first]].y = (float)cdp[1];
         }
       }
+    }  
     
-    IplImage* icv = NULL;
-    vpImageConvert::convert(I,icv);
-    tracker.updateImage(icv);
+    tracker.setInitialGuess(&initial_guess);
+    
+    if(initial_guess) cvFree(&initial_guess);
+    initial_guess = NULL;
     
     cMo = cdMo;
   }
