@@ -329,6 +329,12 @@ public:
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   
+  /*! Return the angle used to test polygons apparition. */
+  virtual inline double getAngleAppear() { return angleAppears; }   
+  
+  /*! Return the angle used to test polygons disparition. */
+  virtual inline double getAngleDisappear() { return angleDisappears; } 
+  
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
   double getFirstThreshold() { return percentageGdPt;}
@@ -361,6 +367,24 @@ public:
   
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
   void resetTracker();
+  
+  /*! 
+    Set the angle used to test polygons apparition. 
+    
+    \warning This angle will only be used when setOgreVisibilityTest(true) is called.
+    
+    \param a : new angle
+  */
+  virtual inline  void setAngleAppear(const double &a) { angleAppears = a; }   
+  
+  /*! 
+    Set the angle used to test polygons disparition. 
+    
+    \warning This angle will only be used when setOgreVisibilityTest(true) is called.
+    
+    \param a : new angle
+  */
+  virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; } 
   
   /*!
     Set the camera parameters.

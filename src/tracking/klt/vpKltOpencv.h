@@ -279,22 +279,34 @@ class VISP_EXPORT vpKltOpencv
   //Is a feature valid (e.g. : test if not too close to borders) -> event(id_tracker, x, y)
   void setIsFeatureValid(funccheck input) {IsFeatureValid = input;}
 
-  //! Get the list of lost feature
-  bool *getListOfLostFeature() const { return lostDuringTrack; }
+  //! Get the block size
+  int getBlockSize() const {return block_size;}
   //! Get the list of features
   CvPoint2D32f* getFeatures() const {return features;}
   //! Get the list of features id
   long* getFeaturesId() const {return featuresid;}
-  //! Get the list of features
-  CvPoint2D32f* getPrevFeatures() const {return prev_features;}
-  //! Get the list of features id
-  long* getPrevFeaturesId() const {return prev_featuresid;}
+  //! Get Harris free parameter
+  double getHarrisFreeParameter() const {return harris_free_parameter;}
+  //! Get the list of lost feature
+  bool *getListOfLostFeature() const { return lostDuringTrack; }
+  //! Get Max number of features
+  int getMaxFeatures() const {return maxFeatures;}
+  //! Get Min Distance
+  double getMinDistance() const {return min_distance;}
   //! Get the current number of features
   int getNbFeatures() const { return countFeatures; }
   //! Get the previous number of features
   int getNbPrevFeatures() const { return countPrevFeatures; }
+  //! Get the list of features
+  CvPoint2D32f* getPrevFeatures() const {return prev_features;}
+  //! Get the list of features id
+  long* getPrevFeaturesId() const {return prev_featuresid;}
+  //! Get the number of pyramid levels
+  int getPyramidLevels() const {return pyramid_level;}
+  //! Get the quality of the tracker
+  double getQuality() const {return quality;}
   //! Get Max number of features
-  int getMaxFeatures() const {return maxFeatures;}
+  int getWindowSize() const {return win_size;}
 
   void getFeature(int index, int &id, float &x, float &y) const;
   void getPrevFeature(int index, int &id, float &x, float &y) const;

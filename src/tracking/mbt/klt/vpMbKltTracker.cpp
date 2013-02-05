@@ -235,6 +235,22 @@ vpMbKltTracker::getKltImagePointsWithId()
 }
 
 /*!
+  Set the new value of the klt tracker.
+
+  \param t : Klt tracker containing the new values.
+*/
+void            
+vpMbKltTracker::setKltOpencv(const vpKltOpencv& t){
+  tracker.setMaxFeatures(t.getMaxFeatures());
+  tracker.setWindowSize(t.getWindowSize());
+  tracker.setQuality(t.getQuality());
+  tracker.setMinDistance(t.getMinDistance());
+  tracker.setHarrisFreeParameter(t.getHarrisFreeParameter());
+  tracker.setBlockSize(t.getBlockSize());
+  tracker.setPyramidLevels(t.getPyramidLevels());
+}
+
+/*!
   Set the camera parameters.
 
   \param cam : the new camera parameters.
@@ -640,7 +656,6 @@ vpMbKltTracker::loadConfigFile(const std::string& configFile)
     <angle_disappear>85</angle_disappear>
   </face>
   <klt>
-    <threshold_outlier>0.6</threshold_outlier>
     <mask_border>10</mask_border>
     <max_features>10000</max_features>
     <window_size>5</window_size>

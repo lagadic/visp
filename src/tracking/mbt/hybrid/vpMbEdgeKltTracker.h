@@ -230,6 +230,13 @@ public:
                           const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   virtual void    display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                           const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+  
+  /*! Return the angle used to test polygons apparition. */
+  virtual inline  double  getAngleAppear() { return vpMbKltTracker::getAngleAppear(); }   
+  
+          /*! Return the angle used to test polygons disparition. */
+  virtual inline  double  getAngleDisappear() { return vpMbKltTracker::getAngleDisappear(); } 
+  
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
 
@@ -252,6 +259,20 @@ public:
   virtual void    loadModel(const std::string& modelFile);
   
           void    resetTracker();
+          
+          /*! 
+            Set the angle used to test polygons apparition. 
+            
+            \param a : new angle
+          */
+  virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); }   
+  
+          /*! 
+            Set the angle used to test polygons disparition. 
+            
+            \param a : new angle
+          */
+  virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); } 
 
   virtual void    setCameraParameters(const vpCameraParameters& cam);
 

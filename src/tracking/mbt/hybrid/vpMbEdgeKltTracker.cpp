@@ -254,7 +254,6 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
     <angle_disappear>85</angle_disappear>
   </face>
   <klt>
-    <threshold_outlier>0.6</threshold_outlier>
     <mask_border>10</mask_border>
     <max_features>10000</max_features>
     <window_size>5</window_size>

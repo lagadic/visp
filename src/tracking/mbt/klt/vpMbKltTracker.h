@@ -266,6 +266,12 @@ public:
   virtual void            loadConfigFile(const std::string& configFile);
           void            loadConfigFile(const char* configFile);
           
+          /*! Return the angle used to test polygons apparition. */
+  virtual inline  double  getAngleAppear() { return angleAppears; }   
+  
+          /*! Return the angle used to test polygons disparition. */
+  virtual inline  double  getAngleDisappear() { return angleDisappears; } 
+    
           /*! Return a reference to the faces structure. */
           vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
 
@@ -279,6 +285,13 @@ public:
           std::vector<vpImagePoint> getKltImagePoints();
           
           std::map<int, vpImagePoint> getKltImagePointsWithId();
+          
+          /*!
+            Get the klt tracker at the current state.
+            
+            \return klt tracker.
+          */
+  inline  vpKltOpencv     getKltOpencv() { return tracker; }
           
           /*!
             Get the value of the gain used to compute the control law.
@@ -316,8 +329,24 @@ public:
   inline  double          getThresholdAcceptation() { return threshold_outlier;}
   
           void            resetTracker();
+          
+          /*! 
+            Set the angle used to test polygons apparition. 
+            
+            \param a : new angle
+          */
+  virtual inline  void    setAngleAppear(const double &a) { angleAppears = a; }   
+  
+          /*! 
+            Set the angle used to test polygons disparition. 
+            
+            \param a : new angle
+          */
+  virtual inline  void    setAngleDisappear(const double &a) { angleDisappears = a; } 
   
           void            setCameraParameters(const vpCameraParameters& cam);
+          
+          void            setKltOpencv(const vpKltOpencv& t);
           
           /*!
             Set the value of the gain used to compute the control law.
