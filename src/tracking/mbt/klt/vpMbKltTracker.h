@@ -244,6 +244,8 @@ protected:
   vpKltOpencv tracker;
   //! Set of faces describing the object. 
   vpMbHiddenFaces<vpMbtKltPolygon> faces;
+  //! First track() called
+  bool firstTrack;
   
 public:
   

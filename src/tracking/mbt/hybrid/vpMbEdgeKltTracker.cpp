@@ -113,42 +113,44 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
 void           
 vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  vpMbKltTracker::setPose(I, cdMo);
-  
-  vpMbtDistanceLine *l;
-  lines[scaleLevel].front() ;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-    l = *it;
-    if(l->meline != NULL){
-      delete l->meline;
-      l->meline = NULL;
-    }
-  }
-  
-  initPyramid(I, Ipyramid);
-  
-  unsigned int n = 0;
-  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-      if(vpMbKltTracker::faces[i]->isVisible()){
-        vpMbEdgeTracker::faces[i]->isvisible = true;
-        n++;
+  if(firstTrack){
+    vpMbKltTracker::setPose(I, cdMo);
+    
+    vpMbtDistanceLine *l;
+    lines[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+      l = *it;
+      if(l->meline != NULL){
+        delete l->meline;
+        l->meline = NULL;
       }
-      else
-        vpMbEdgeTracker::faces[i]->isvisible = false;
-  }
-  vpMbEdgeTracker::nbvisiblepolygone = n;
-  
-  unsigned int i=scales.size();
-  do {
-    i--;
-    if(scales[i]){
-      downScale(i);
-      initMovingEdge(*Ipyramid[i], cMo);
-      upScale(i);
     }
-  } while(i != 0);
-  
-  cleanPyramid(Ipyramid);
+    
+    initPyramid(I, Ipyramid);
+    
+    unsigned int n = 0;
+    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+        if(vpMbKltTracker::faces[i]->isVisible()){
+          vpMbEdgeTracker::faces[i]->isvisible = true;
+          n++;
+        }
+        else
+          vpMbEdgeTracker::faces[i]->isvisible = false;
+    }
+    vpMbEdgeTracker::nbvisiblepolygone = n;
+    
+    unsigned int i=scales.size();
+    do {
+      i--;
+      if(scales[i]){
+        downScale(i);
+        initMovingEdge(*Ipyramid[i], cMo);
+        upScale(i);
+      }
+    } while(i != 0);
+    
+    cleanPyramid(Ipyramid);
+  }
 }
 
 /*!
