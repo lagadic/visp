@@ -49,7 +49,7 @@
 
 #include <visp/vpConfig.h>
 #include <iostream>
-#ifdef VISP_HAVE_OGRE
+#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
 
 #if defined(VISP_HAVE_X11) && ! defined(APPLE)
 // produce an error on OSX: ‘typedef int Cursor’
@@ -61,6 +61,7 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpPose.h>
 #include <visp/vpPoint.h>
 #include <visp/vpImagePoint.h>
@@ -197,6 +198,8 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   vpDisplayGDI display;
 #elif defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display;
+#elif defined VISP_HAVE_D3D9
+  vpDisplayD3D display;
 #endif
 
   for (unsigned int i=0 ; i < 4 ; i++)
@@ -590,7 +593,7 @@ int main(int argc, const char **argv)
 
   return EXIT_SUCCESS; 
 }
-#else // VISP_HAVE_OGRE
+#else // VISP_HAVE_OGRE && VISP_HAVE_DISPLAY
 int
 main()
 {  
