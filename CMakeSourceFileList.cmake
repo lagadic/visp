@@ -328,8 +328,6 @@ SET (SRC_TRACKING
   tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtPolygon.cpp
   tracking/mbt/edge/vpMbtMeLine.cpp
-  tracking/mbt/edge/vpMbtXmlParser.cpp
-  tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp
 
   tracking/moments/vpMomentObject.cpp
   tracking/moments/vpMomentAlpha.cpp
@@ -353,9 +351,9 @@ ENDIF()
 
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
   LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltPolygon.cpp)
   LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
-
 ENDIF()
 
 SET (SRC_VIDEO
