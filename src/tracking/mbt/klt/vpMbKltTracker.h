@@ -211,7 +211,7 @@ int main()
 */
 class VISP_EXPORT vpMbKltTracker: virtual public vpMbTracker
 {
-private:
+protected:
   //! Temporary OpenCV image for fast conversion.
   IplImage* cur;
   //! Initial pose.
@@ -236,8 +236,6 @@ private:
   double percentGood;
   //! Use Ogre3d for visibility tests
   bool useOgre;
-  
-protected:
   //! The estimated displacement of the pose between the current instant and the initial position.
   vpHomogeneousMatrix ctTc0;
   //! Points tracker.
@@ -360,7 +358,7 @@ public:
 
             \param  e : The desired erosion.
           */
-          void            setMaskBorder(unsigned int &e){ maskBorder = e; }
+          void            setMaskBorder(const unsigned int &e){ maskBorder = e; }
   
           /*!
             Set the maximum iteration of the virtual visual servoing stage.
