@@ -6,7 +6,7 @@
                     http://www.irisa.fr/lagadic
 
 
-ViSP 2.7.0 (under development)
+ViSP 2.7.0 (released February 6, 2013)
   - New features
     - New vpViper650 and vpRobotViper650 classes to interface Inria's new
       Adept Viper s650 robot.
@@ -16,9 +16,10 @@ ViSP 2.7.0 (under development)
     - New hybrid model-based tracker using moving edges and KLT points:
       vpMbEdgeKltTracker
   - Improvements
+    - Add visp-config.1 man page.
     - To respect Debian guidelines, remove duplicate ABI version.
-      Library name was set to libvisp.a or libvisp.so.2.6.3 rather than
-      libvisp-2.a or libvisp-2.so.2.6.3
+      Library name was set to libvisp.a or libvisp.so.2.7.0 rather than
+      libvisp-2.a or libvisp-2.so.2.7.0
     - Fix typos detected by lintian
     - Add support for multiarch. Multiarch is the ability for a library
       to be installed concurrently for differents architectures (such as
