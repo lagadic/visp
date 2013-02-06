@@ -87,11 +87,11 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
     int id;
     float x_tmp, y_tmp;
     _tracker.getFeature((int)i, id, x_tmp, y_tmp);
-    
+
     if(isInside(getRoi(cam), y_tmp, x_tmp)){
       initPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[id] = vpImagePoint(y_tmp, x_tmp);
-      curPointsInd[id] = i;
+      curPointsInd[id] = (int)i;
       nbPointsInit++;
       nbPointsCur++;
     }
@@ -128,7 +128,7 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
     _tracker.getFeature((int)i, id, x, y);
     if(isTrackedFeature(id)){
       curPoints[id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
-      curPointsInd[id] = i;
+      curPointsInd[id] = (int)i;
       nbPointsCur++;
     }
   }

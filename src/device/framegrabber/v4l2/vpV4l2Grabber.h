@@ -341,7 +341,7 @@ private:
 
   bool		verbose;
   unsigned	nbuffers;
-  int           field;
+  unsigned int field;
   bool		streaming;
 
   unsigned      input;

@@ -1518,9 +1518,9 @@ vpRobotAfma6::setVelocity (const vpRobot::vpControlFrameType frame,
 
   vpColVector vel_max(6);
 
-  for (int i=0; i<3; i++)
+  for (unsigned int i=0; i<3; i++)
     vel_max[i] = getMaxTranslationVelocity();
-  for (int i=3; i<6; i++)
+  for (unsigned int i=3; i<6; i++)
     vel_max[i] = getMaxRotationVelocity();
 
   vpColVector vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);

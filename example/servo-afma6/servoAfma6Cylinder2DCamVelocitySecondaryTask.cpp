@@ -270,7 +270,7 @@ main()
     iter = 0;
     double rapport = 0;
     double vitesse = 0.02;
-    int tempo = 1200;
+    unsigned int tempo = 1200;
 
     for ( ; ; )
     {

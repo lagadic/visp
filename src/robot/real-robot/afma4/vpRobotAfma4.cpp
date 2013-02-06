@@ -1254,7 +1254,7 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
   if (frame == vpRobot::CAMERA_FRAME) {
     vpColVector vel_max(6);
 
-    for (int i=0; i<3; i++) {
+    for (unsigned int i=0; i<3; i++) {
       vel_max[i]   = getMaxTranslationVelocity();
       vel_max[i+3] = getMaxRotationVelocity();
     }

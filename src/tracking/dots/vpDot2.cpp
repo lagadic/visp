@@ -2341,7 +2341,7 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I,
   do {
     // if it was asked, show the border
     if (graphics) {
-      for(unsigned int t=0; t<thickness; t++) {
+      for(int t=0; t< (int)thickness; t++) {
         ip.set_u ( border_u + t);
         ip.set_v ( border_v );
       
