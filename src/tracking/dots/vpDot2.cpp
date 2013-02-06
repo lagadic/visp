@@ -1023,7 +1023,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
 
     if (graphics) {
       // Display the area were the dot is search
-      vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
+      vpDisplay::displayRectangle(I, area, vpColor::blue, false, thickness);
       //vpDisplay::flush(I);
     }
 
@@ -1288,7 +1288,7 @@ vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
+    vpDisplay::displayRectangle(I, area, vpColor::blue, false, thickness);
     //vpDisplay::flush(I);
   }
 
@@ -1604,7 +1604,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
 
   if (graphics) {
     // Display the area were the dot is search
-    vpDisplay::displayRectangle(I, area, vpColor::blue, thickness);
+    vpDisplay::displayRectangle(I, area, vpColor::blue, false, thickness);
     //vpDisplay::flush(I);
   }
 
