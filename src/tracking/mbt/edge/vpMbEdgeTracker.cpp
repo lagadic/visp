@@ -1053,7 +1053,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
 #else
-	vpTRACE("You need the libXML2 to read the config file %s", filename);
+  vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif
 }
 
