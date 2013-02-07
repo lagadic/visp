@@ -343,7 +343,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
           cdHc /= cdHc[2][2];
           
           //Create the 2D homography
-          vpMatrix cdGc = cam.get_K() * cdHc * cam.get_K().inverseByQR();
+          vpMatrix cdGc = cam.get_K() * cdHc * cam.get_K_inverse();
           
           //Points displacement
           std::map<int, vpImagePoint>::const_iterator iter = faces[i]->getCurrentPoints().begin();
