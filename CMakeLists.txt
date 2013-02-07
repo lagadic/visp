@@ -755,6 +755,8 @@ IF(USE_OGRE)
     FIND_PATH(OGRE_MEDIA_DIR ../plugins.cfg
       $ENV{OGRE_MEDIA_DIR}
       /usr/share/OGRE-1.7.4/media	
+      /usr/share/OGRE-1.8.0/media	
+      /usr/share/OGRE-1.8.1/media	
     )
   endif()
 
