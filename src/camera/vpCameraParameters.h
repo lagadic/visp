@@ -240,6 +240,7 @@ public :
   } 
   
   vpMatrix get_K() const;
+  vpMatrix get_K_inverse() const;
 
   void printParameters() ;
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
