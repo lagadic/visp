@@ -418,7 +418,9 @@ main(int argc, const char ** argv)
   reader.close();
 
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
+#ifdef VISP_HAVE_XML2
   vpXmlParser::cleanup();
+#endif
 
   return 0;
 }
