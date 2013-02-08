@@ -260,19 +260,27 @@ public:
   
           void    resetTracker();
           
-          /*! 
-            Set the angle used to test polygons apparition. 
-            
-            \param a : new angle
+          /*!
+            Set the angle used to test polygons apparition.
+            If the angle between the normal of the polygon and the line going
+            from the camera to the polygon center has a value lower than
+            this parameter, the polygon is considered as appearing.
+            The polygon will then be tracked.
+
+            \param a : new angle in radian.
           */
-  virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); }   
+  virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); }
   
-          /*! 
-            Set the angle used to test polygons disparition. 
-            
-            \param a : new angle
+          /*!
+            Set the angle used to test polygons disparition.
+            If the angle between the normal of the polygon and the line going
+            from the camera to the polygon center has a value greater than
+            this parameter, the polygon is considered as disappearing.
+            The tracking of the polygon will then be stopped.
+
+            \param a : new angle in radian.
           */
-  virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); } 
+  virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); }
 
   virtual void    setCameraParameters(const vpCameraParameters& cam);
 

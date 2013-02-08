@@ -368,23 +368,33 @@ public:
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
   void resetTracker();
   
-  /*! 
-    Set the angle used to test polygons apparition. 
-    
-    \warning This angle will only be used when setOgreVisibilityTest(true) is called.
-    
-    \param a : new angle
+  /*!
+    Set the angle used to test polygons apparition.
+    If the angle between the normal of the polygon and the line going
+    from the camera to the polygon center has a value lower than
+    this parameter, the polygon is considered as appearing.
+    The polygon will then be tracked.
+
+    \warning This angle will only be used when setOgreVisibilityTest(true)
+    is called.
+
+    \param a : new angle in radian.
   */
   virtual inline  void setAngleAppear(const double &a) { angleAppears = a; }   
   
-  /*! 
-    Set the angle used to test polygons disparition. 
-    
-    \warning This angle will only be used when setOgreVisibilityTest(true) is called.
-    
-    \param a : new angle
+  /*!
+    Set the angle used to test polygons disparition.
+    If the angle between the normal of the polygon and the line going
+    from the camera to the polygon center has a value greater than
+    this parameter, the polygon is considered as disappearing.
+    The tracking of the polygon will then be stopped.
+
+    \warning This angle will only be used when setOgreVisibilityTest(true)
+    is called.
+
+    \param a : new angle in radian.
   */
-  virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; } 
+  virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; }
   
   /*!
     Set the camera parameters.
