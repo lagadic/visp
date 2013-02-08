@@ -235,7 +235,10 @@ public:
 
     \param cam : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam; cameraInitialised = true;}
+  virtual void setCameraParameters(const vpCameraParameters& cam) {
+    this->cam = cam;
+    cameraInitialised = true;
+  }
   
   /*!
     Set if the covaraince matrix has to be computed.
