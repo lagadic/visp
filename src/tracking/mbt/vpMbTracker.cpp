@@ -112,10 +112,12 @@ vpMbTracker::~vpMbTracker()
     std::string version = COIN_VERSION;
     unsigned int major, minor, patch;
     vpIoTools::getVersion(version, major, minor, patch);
-    
-    if( (major << 16 | minor << 8 | patch) >= (3 << 16 | 1 << 8 | 3) )
+
+    if ( (major << 16 | minor << 8 | patch) >= (2 << 16 | 4 << 8 | 0) )
       SoDB::finish();
-    
+    else if ( (major << 16 | minor << 8 | patch) >= (2 << 16 | 0 << 8 | 0) )
+       SoDB::cleanup();
+   
     coinUsed = false;
   }
 #endif
