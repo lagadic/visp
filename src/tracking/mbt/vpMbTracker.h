@@ -96,7 +96,6 @@
   In addition, two flags are declared in this class and may have to be 
   initialised in the child class : 
   - modelInitialised : flag to ensure that the model has been loaded.
-  - cameraInitialised : flag to ensure that camera parameters have been 
   initialised (either by loading them from a configuration file or by setting 
   them with the setCameraParameters() method).
 */
@@ -110,9 +109,7 @@ protected:
   //! The name of the file containing the model (it is used to create a file name.0.pos used to store the compute pose in the initClick method).
   std::string modelFileName;
   //! Flag used to ensure that the CAD model is loaded before the initialisation.
-  bool modelInitialised;
-  //! Flag used to ensure that the camera is set before the initialisation.
-  bool cameraInitialised;    
+  bool modelInitialised;   
   //! Flag used to specify that the Coin library has been loaded in order to load a vrml model (used to free the memory).
   bool coinUsed;
   //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method. 
@@ -235,10 +232,7 @@ public:
 
     \param cam : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& cam) {
-    this->cam = cam;
-    cameraInitialised = true;
-  }
+  virtual void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
   
   /*!
     Set if the covaraince matrix has to be computed.

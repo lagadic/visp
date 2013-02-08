@@ -403,7 +403,6 @@ public:
   */
   virtual void setCameraParameters(const vpCameraParameters& cam) {
     this->cam = cam;
-    cameraInitialised = true;
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
       if(scales[i]){

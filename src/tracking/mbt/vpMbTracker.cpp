@@ -95,7 +95,6 @@
 vpMbTracker::vpMbTracker()
 {
   modelInitialised = false;
-  cameraInitialised = false;
   coinUsed = false;
   computeCovariance = false;
   displayFeatures = false;

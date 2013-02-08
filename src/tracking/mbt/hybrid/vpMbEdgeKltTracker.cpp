@@ -801,7 +801,6 @@ void
 vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& cam)
 {
   this->cam = cam;
-  cameraInitialised = true;
   
   vpMbEdgeTracker::setCameraParameters(cam);
   vpMbKltTracker::setCameraParameters(cam);

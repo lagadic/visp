@@ -94,9 +94,6 @@ vpMbKltTracker::init(const vpImage<unsigned char>& I)
   if(!modelInitialised){
     throw vpException(vpException::fatalError, "model not initialised");
   }
-  if(!cameraInitialised){
-    throw vpException(vpException::fatalError, "camera not initialised");
-  }
   
  bool reInitialisation = false;
   if(!useOgre)
@@ -262,7 +259,6 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& cam)
     faces[i]->setCameraParameters(cam);
   }
   this->cam = cam;
-  this->cameraInitialised = true;
 }
    
 /*!
