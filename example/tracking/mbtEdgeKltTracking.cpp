@@ -317,23 +317,52 @@ main(int argc, const char ** argv)
 
   vpMbEdgeKltTracker tracker;
   vpHomogeneousMatrix cMo;
-  
-  // Load tracker config file (camera parameters and moving edge settings)
+  vpCameraParameters cam;
+
+  // Initialise the tracker: camera parameters, moving edge and KLT settings
 #if defined (VISP_HAVE_XML2)
+  // From the xml file
   tracker.loadConfigFile(configFile.c_str());
+#else
+  // By setting the parameters:
+  cam.initPersProjWithoutDistortion(547, 542, 338, 234);
+
+  vpMe me;
+  me.setMaskSize(5);
+  me.setMaskNumber(180);
+  me.setRange(7);
+  me.setThreshold(5000);
+  me.setMu1(0.5);
+  me.setMu2(0.5);
+  me.setMinSampleStep(4);
+  me.setNbTotalSample(250);
+
+  vpKltOpencv klt;
+  klt.setMaxFeatures(10000);
+  klt.setWindowSize(5);
+  klt.setQuality(0.01);
+  klt.setMinDistance(5);
+  klt.setHarrisFreeParameter(0.01);
+  klt.setBlockSize(3);
+  klt.setPyramidLevels(3);
+
+  tracker.setCameraParameters(cam);
+  tracker.setMovingEdge(me);
+  tracker.setKltOpencv(klt);
+  tracker.setAngleAppear( vpMath::rad(65) );
+  tracker.setAngleDisappear( vpMath::rad(75) );
+  tracker.setMaskBorder(5);
 #endif
   
   // Display the moving edges, and the Klt points
   tracker.setDisplayFeatures(displayFeatures);
   
-  //Tells if the tracker has to use Ogre3D for visibility tests
+  // Tells if the tracker has to use Ogre3D for visibility tests
   tracker.setOgreVisibilityTest(useOgre);
 
-  // initialise an instance of vpCameraParameters with the parameters from the tracker
-  vpCameraParameters cam;
+  // Retrieve the camera parameters from the tracker
   tracker.getCameraParameters(cam);
 
-  
   // Loop to position the cube
   if (opt_display && opt_click_allowed)
   {
