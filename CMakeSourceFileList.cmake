@@ -398,27 +398,26 @@ SET (SRC_VISUAL_FEATURE
   visual-feature/vpFeatureDisplay.cpp
   visual-feature/vpFeatureEllipse.cpp
   visual-feature/vpFeatureLine.cpp
+  visual-feature/vpFeatureLuminance.cpp
+  visual-feature/vpFeatureMoment.cpp
+  visual-feature/vpFeatureMomentAlpha.cpp
+  visual-feature/vpFeatureMomentArea.cpp
+  visual-feature/vpFeatureMomentAreaNormalized.cpp
+  visual-feature/vpFeatureMomentBasic.cpp
+  visual-feature/vpFeatureMomentCentered.cpp
+  visual-feature/vpFeatureMomentCInvariant.cpp
+  visual-feature/vpFeatureMomentCommon.cpp
+  visual-feature/vpFeatureMomentDatabase.cpp
+  visual-feature/vpFeatureMomentGravityCenter.cpp
+  visual-feature/vpFeatureMomentGravityCenterNormalized.cpp
   visual-feature/vpFeaturePoint3D.cpp
   visual-feature/vpFeaturePoint.cpp
   visual-feature/vpFeaturePointPolar.cpp
   visual-feature/vpFeatureThetaU.cpp
   visual-feature/vpFeatureTranslation.cpp
   visual-feature/vpFeatureVanishingPoint.cpp
-  visual-feature/vpFeatureLuminance.cpp
-  visual-feature/vpGenericFeature.cpp
-  visual-feature/vpFeatureMoment.cpp
-  visual-feature/vpFeatureMomentDatabase.cpp
-  visual-feature/vpFeatureMomentCommon.cpp
-  visual-feature/vpFeatureMomentAlpha.cpp
-  visual-feature/vpFeatureMomentGravityCenter.cpp
-  visual-feature/vpFeatureMomentBasic.cpp
-  visual-feature/vpFeatureMomentGravityCenterNormalized.cpp
-  visual-feature/vpFeatureMomentCentered.cpp
-  visual-feature/vpFeatureMomentCInvariant.cpp
-  visual-feature/vpFeatureMomentCommon.cpp
-  visual-feature/vpFeatureMomentAreaNormalized.cpp
-  visual-feature/vpFeatureMomentArea.cpp
   visual-feature/vpFeatureSegment.cpp
+  visual-feature/vpGenericFeature.cpp
   )
 
 SET (SRC_NETWORK
