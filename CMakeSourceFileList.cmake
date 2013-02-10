@@ -323,25 +323,24 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
 
   tracking/mbt/vpMbTracker.cpp
+  tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/edge/vpMbtDistanceLine.cpp
-  tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtPolygon.cpp
   tracking/mbt/edge/vpMbtMeLine.cpp
 
-  tracking/moments/vpMomentObject.cpp
+  tracking/moments/vpMoment.cpp
   tracking/moments/vpMomentAlpha.cpp
+  tracking/moments/vpMomentArea.cpp
+  tracking/moments/vpMomentAreaNormalized.cpp
   tracking/moments/vpMomentBasic.cpp
   tracking/moments/vpMomentCentered.cpp
   tracking/moments/vpMomentCInvariant.cpp
   tracking/moments/vpMomentCommon.cpp
-  tracking/moments/vpMoment.cpp
   tracking/moments/vpMomentDatabase.cpp
   tracking/moments/vpMomentGravityCenter.cpp
   tracking/moments/vpMomentGravityCenterNormalized.cpp
   tracking/moments/vpMomentObject.cpp
-  tracking/moments/vpMomentAreaNormalized.cpp
-  tracking/moments/vpMomentArea.cpp
   )
 
 IF(VISP_HAVE_XML2)
