@@ -6,7 +6,7 @@
                     http://www.irisa.fr/lagadic
 
 
-ViSP 2.7.0 (released February 6, 2013)
+ViSP 2.7.0 (released February 11th, 2013)
   - New features
     - New vpViper650 and vpRobotViper650 classes to interface Inria's new
       Adept Viper s650 robot.
