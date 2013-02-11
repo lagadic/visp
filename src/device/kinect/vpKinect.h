@@ -76,7 +76,7 @@
 #include <visp/vpKinect.h>
 
 int main() {
-#ifdef VISP_HAVE_LIBFREENECT
+#ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
   // Init Kinect device
 #ifdef VISP_HAVE_LIBFREENECT_OLD
   // This is the way to initialize Freenect with an old version of libfreenect
