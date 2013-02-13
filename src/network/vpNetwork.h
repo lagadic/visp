@@ -176,7 +176,7 @@ public:
   */
   unsigned int      getMaxSizeReceivedMessage(){ return max_size_message; }
   
-  virtual void      print(const char *id = "");
+  void      print(const char *id = "");
   
   template<typename T>
   int               receive(T* object, const unsigned int &sizeOfObject = sizeof(T));

@@ -512,7 +512,6 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     
     unsigned int iwidth = Ic.getWidth();
 
-    input = input;
     output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
     
     unsigned int i = 0;
@@ -618,7 +617,6 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     
     unsigned int iwidth = Ic.getWidth();
 
-    input = input;
     output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
     
     unsigned int i = 0;
