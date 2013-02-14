@@ -104,6 +104,9 @@
 // Defined if OpenCV available.
 #cmakedefine VISP_HAVE_OPENCV
 
+// Defined if OpenCV_nonfree available.
+#cmakedefine VISP_HAVE_OPENCV_NONFREE
+
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
 #  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}

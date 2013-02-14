@@ -1147,7 +1147,7 @@ vpMeNurbs::computeFreemanChainElement(const vpImage<unsigned char> &I,
         iPtemp = iP + diP;
 
 	if ( hasGoodLevel( I, iPtemp )) {
-	  element = element;      // keep same dir
+	  //element = element;      // keep same dir
 	}
 	else {
 	  computeFreemanParameters((element + 7) %8, diP);

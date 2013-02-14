@@ -83,8 +83,8 @@ vpScale::vpScale(double kernel_bandwidth,
 #endif
 
   bandwidth = kernel_bandwidth;
-  dimension = dimension;
-  kernel_type = kernel_type;
+  this->dimension = dimension;
+  this->kernel_type = kernel_type;
 
 #if (DEBUG_LEVEL2)
   std::cout << "vpScale constructor finished" << std::endl;

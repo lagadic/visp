@@ -39,6 +39,7 @@ ViSP 2.7.0 (released February 11th, 2013)
       scenes.
     - If Ogre3D is used, model-based trackers use now RayCasting to improve
       faces visibility test.
+    - Compatibility with iOS 6 and Fedora 18
   - Examples
     - New model-based tracker examples to show how to use the KLT and hybrid
       tracker. See in example/tracking mbtEdgeKltTracking.cpp and

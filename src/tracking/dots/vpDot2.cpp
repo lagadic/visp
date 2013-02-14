@@ -2562,7 +2562,7 @@ bool
         updateFreemanPosition( _u, _v, element ); // same direction
 
         if ( hasGoodLevel( I, _u, _v )) {
-          element = element;      // keep same dir
+          //element = element;      // keep same dir
         }
         else {
           unsigned int _u = u;
