@@ -42,6 +42,7 @@
 
 #include <visp/vpKeyPointSurf.h>
 
+#if defined (VISP_HAVE_OPENCV_NONFREE)
 #if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Require opencv >= 1.1.0
 
 #include <visp/vpImageConvert.h>
@@ -772,11 +773,5 @@ void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& siz
 
 
 #endif
-
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
+#endif
 

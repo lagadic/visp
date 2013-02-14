@@ -58,7 +58,7 @@
 #include <list>
 #include <vector>
 
-#if defined (VISP_HAVE_OPENCV) 
+#if defined (VISP_HAVE_OPENCV_NONFREE)
 
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
@@ -310,9 +310,4 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
 

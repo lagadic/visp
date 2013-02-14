@@ -117,8 +117,10 @@ SET (SRC_KEY_POINT
   key-point/vpBasicKeyPoint.cpp
   )
 
-IF(VISP_HAVE_OPENCV)
+IF(VISP_HAVE_OPENCV_NONFREE)
   LIST(APPEND SRC_KEY_POINT key-point/vpKeyPointSurf.cpp)
+ENDIF()
+IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_KEY_POINT key-point/vpPlanarObjectDetector.cpp)
   LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
 ENDIF()

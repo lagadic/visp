@@ -1170,6 +1170,15 @@ IF(USE_OPENCV)
     #MESSAGE("OpenCV_LIB_DIR = ${OpenCV_LIB_DIR}")
     SET(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}*65536 + ${OpenCV_VERSION_MINOR}*256 + ${OpenCV_VERSION_PATCH})") # for ViSP-third-party.txt
     #MESSAGE("VISP_HAVE_OPENCV_VERSION = ${VISP_HAVE_OPENCV_VERSION}")
+
+    # additional check to see if opencv_nonfree module is available
+    #message("OpenCV_NONFREE_FOUND: ${OPENCV_NONFREE_FOUND}")
+    if(OPENCV_NONFREE_FOUND)
+      message(STATUS "OpenCV nonfree found")
+      set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
+    else()
+      message(STATUS "OpenCV nonfree not found")
+    endif()
   ELSE(OpenCV_FOUND)
     MESSAGE(STATUS "OpenCV not found")
     SET(VISP_HAVE_OPENCV_FOUND "no")    # for ViSP-third-party.txt
