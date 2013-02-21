@@ -6,6 +6,16 @@
                     http://www.irisa.fr/lagadic
 
 
+ViSP 2.7.1 (under development)
+  - New features
+  - Improvements
+    . vpV4l2Grabber does no more require a call to open(I).
+    . An exceptions is throwned when moving-edges are not initialized
+      (vpMeTracker, vpMeLine, vpMeEllipse)
+  - Examples
+  - Bug fixed
+
+----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features
     - New vpViper650 and vpRobotViper650 classes to interface Inria's new

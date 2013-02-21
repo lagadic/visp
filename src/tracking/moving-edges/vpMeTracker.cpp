@@ -154,12 +154,20 @@ vpMeTracker::outOfImage(vpImagePoint iP, int half, int rows, int cols)
 
 
 /*!
-Virtual function that is called by lower classes vpMeEllipse, vpMeLine 
-and vpMeNurbs.
+  Virtual function that is called by lower classes vpMeEllipse, vpMeLine
+  and vpMeNurbs.
+
+  \exception vpTrackingException::initializationError : Moving edges not initialized.
 */
 void
 vpMeTracker::initTracking(const vpImage<unsigned char>& I)
 {
+  if (!me) {
+    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
+    throw(vpTrackingException(vpTrackingException::initializationError,
+      "Moving edges not initialized")) ;
+  }
+
   // Must set range to 0
   unsigned int range_tmp = me->getRange();
   me->setRange(init_range);
@@ -229,10 +237,23 @@ vpMeTracker::initTracking(const vpImage<unsigned char>& I)
   me->setRange(range_tmp);
 }
 
+/*!
+  Track moving-edges.
 
+  \param I : Image.
+
+  \exception vpTrackingException::initializationError : Moving edges not initialized.
+
+*/
 void
 vpMeTracker::track(const vpImage<unsigned char>& I)
 {
+  if (!me) {
+    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
+    throw(vpTrackingException(vpTrackingException::initializationError,
+      "Moving edges not initialized")) ;
+  }
+
   if (list.empty())
   {
     vpDERROR_TRACE(2, "Tracking error: too few pixel to track");

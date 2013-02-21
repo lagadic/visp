@@ -146,10 +146,19 @@ vpMeLine::~vpMeLine()
   step between the two extremities of the line.
 
   \param I : Image in which the line appears.
+
+  \exception vpTrackingException::initializationError : Moving edges not initialized.
+
 */
 void
 vpMeLine::sample(const vpImage<unsigned char>& I)
 {
+  if (!me) {
+    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
+    throw(vpTrackingException(vpTrackingException::initializationError,
+      "Moving edges not initialized")) ;
+  }
+
   int rows = (int)I.getHeight() ;
   int cols = (int)I.getWidth() ;
   double n_sample;
@@ -246,8 +255,12 @@ vpMeLine::initTracking(const vpImage<unsigned char> &I)
 
   std::cout << "Click on the line first point..." <<std::endl ;
   while (vpDisplay::getClick(I, ip1)!=true) ;
+  vpDisplay::displayCross(I, ip1, 7, vpColor::red);
+  vpDisplay::flush(I);
   std::cout << "Click on the line second point..." <<std::endl ;
   while (vpDisplay::getClick(I, ip2)!=true) ;
+  vpDisplay::displayCross(I, ip2, 7, vpColor::red);
+  vpDisplay::flush(I);
 
   try
   {
@@ -581,11 +594,19 @@ vpMeLine::setExtremities()
   line.
 
   \param I : Image in which the line appears.
+
+  \exception vpTrackingException::initializationError : Moving edges not initialized.
 */
 void
 vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 {
   vpCDEBUG(1) <<"begin vpMeLine::sample() : "<<std::endl ;
+
+  if (!me) {
+    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
+    throw(vpTrackingException(vpTrackingException::initializationError,
+      "Moving edges not initialized")) ;
+  }
 
   int rows = (int)I.getHeight() ;
   int cols = (int)I.getWidth() ;
@@ -704,8 +725,13 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 void
 vpMeLine::reSample(const vpImage<unsigned char> &I)
 {
-
   double i1,j1,i2,j2 ;
+
+  if (!me) {
+    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
+    throw(vpTrackingException(vpTrackingException::initializationError,
+      "Moving edges not initialized")) ;
+  }
 
   project(a,b,c,PExt[0].ifloat,PExt[0].jfloat,i1,j1) ;
   project(a,b,c,PExt[1].ifloat,PExt[1].jfloat,i2,j2) ;
