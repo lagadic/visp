@@ -648,9 +648,11 @@ int main(int argc, const char **argv)
 
   try
   {
+      double t0 = vpTime::measureTimeMs();
+
     // Rendering loop
     while(ogre.continueRendering()){
-      // Acquire a frame
+     // Acquire a frame
       grabber.acquire(IC);
 
       // Convert it to a grey level image for tracking purpose
@@ -694,7 +696,9 @@ int main(int argc, const char **argv)
       ogre.display(IC,cmo);
 
       // Wait so that the video does not go too fast
-      vpTime::wait(15);
+      double t1 = vpTime::measureTimeMs();
+      std::cout << "\r> " << 1000 / (t1 - t0) << " fps" ;
+      t0 = t1;
     }
     // Close the grabber
     grabber.close();
