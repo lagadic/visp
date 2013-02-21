@@ -609,6 +609,10 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 void
 vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
 {
+  if (init==false)
+  {
+    open(I);
+  }
 
   if (init==false)
   {
@@ -686,6 +690,10 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 void
 vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
 {
+  if (init==false)
+  {
+    open(I);
+  }
 
   if (init==false)
   {
