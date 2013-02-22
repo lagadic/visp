@@ -446,9 +446,14 @@ main(int argc, const char ** argv)
   }
   reader.close();
 
-  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
-#ifdef VISP_HAVE_XML2
+#if defined (VISP_HAVE_XML2)
+  // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
+
+#ifdef VISP_HAVE_COIN
+  // Cleanup memory allocated by Coin library used to load a vrml model in vpMbEdgeKltTracker::loadModel()
+  SoDB::finish();
 #endif
 
   return 0;

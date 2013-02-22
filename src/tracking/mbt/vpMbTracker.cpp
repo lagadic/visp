@@ -95,31 +95,15 @@
 vpMbTracker::vpMbTracker()
 {
   modelInitialised = false;
-  coinUsed = false;
   computeCovariance = false;
   displayFeatures = false;
 }
 
 /*!
-  Basic destructor.
-
+  Basic destructor that doest nothing.
 */
 vpMbTracker::~vpMbTracker()
 {
-#ifdef VISP_HAVE_COIN
-  if(coinUsed){
-    std::string version = COIN_VERSION;
-    unsigned int major, minor, patch;
-    vpIoTools::getVersion(version, major, minor, patch);
-
-    if ( (major << 16 | minor << 8 | patch) >= (2 << 16 | 4 << 8 | 0) )
-      SoDB::finish();
-    else if ( (major << 16 | minor << 8 | patch) >= (2 << 16 | 0 << 8 | 0) )
-       SoDB::cleanup();
-   
-    coinUsed = false;
-  }
-#endif
 }
 
 
@@ -689,6 +673,19 @@ void vpMbTracker::savePose(const std::string &filename)
   file (.wrl) or a CAO file (.cao). CAO format is described in the 
   loadCAOModel() method. 
 
+  \warning When this class is called to load a vrml model, remember that you
+  have to call Call SoDD::finish() before ending the program.
+  \code
+int main()
+{
+    ...
+#ifdef VISP_HAVE_COIN
+  SoDB::finish();
+#endif
+}
+  \endcode
+
+
   \throw vpException::ioError if the file cannot be open, or if its extension is
   not wrl or cao. 
 
@@ -726,6 +723,18 @@ vpMbTracker::loadModel(const std::string& modelFile)
   Load the 3D model of the object from a vrml file. Only LineSet and FaceSet are
   extracted from the vrml file. 
 
+  \warning When this class is called, remember that you have to call Call
+  SoDD::finish() before ending the program.
+  \code
+int main()
+{
+    ...
+#ifdef VISP_HAVE_COIN
+  SoDB::finish();
+#endif
+}
+  \endcode
+
   \warning The cylinders extracted using this method do not use the Cylinder
   keyword of vrml since vrml exporter such as Blender or AC3D consider a
   cylinder as an IndexedFaceSet. To test whether an indexedFaceSet is a cylinder
@@ -736,7 +745,6 @@ geometry DEF cyl_cylinder1 IndexedFaceSet
   \endcode
   defines a cylinder named cyl_cylinder1.
 
-
   \throw vpException::fatalError if the file cannot be open. 
   
   \param modelFile : The full name of the file containing the 3D model.
@@ -745,10 +753,8 @@ void
 vpMbTracker::loadVRMLModel(const std::string& modelFile)
 {
 #ifdef VISP_HAVE_COIN
-  if(!coinUsed){
-    SoDB::init();
-    coinUsed = true;
-  }
+  SoDB::init(); // Call SoDD::finish() before ending the program.
+
   SoInput in;
   SbBool ok = in.openFile(modelFile.c_str());
   SoSeparator  *sceneGraph;

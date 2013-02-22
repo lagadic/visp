@@ -110,9 +110,7 @@ protected:
   std::string modelFileName;
   //! Flag used to ensure that the CAD model is loaded before the initialisation.
   bool modelInitialised;   
-  //! Flag used to specify that the Coin library has been loaded in order to load a vrml model (used to free the memory).
-  bool coinUsed;
-  //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method. 
+  //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method.
   std::string poseSavingFilename;
   //! Flag used to specify if the covariance matrix has to be computed or not.
   bool computeCovariance;
