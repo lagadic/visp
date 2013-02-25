@@ -52,7 +52,7 @@
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator():vpWireFrameSimulator(), vpRobotSimulator()
 {
-  setSamplingTime(10);
+  setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480,640);
   I = 255;

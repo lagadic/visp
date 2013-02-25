@@ -14,8 +14,9 @@ ViSP 2.7.1 (under development)
       (vpMeTracker, vpMeLine, vpMeEllipse)
   - Examples
   - Bug fixed
-    . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init() and
-      SoDB::finish() usage
+    . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
+      and SoDB::finish() usage
+    . [15410] Robot wireframe simulator hangs
 
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
