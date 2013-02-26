@@ -17,6 +17,7 @@ ViSP 2.7.1 (under development)
     . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
       and SoDB::finish() usage
     . [15410] Robot wireframe simulator hangs
+    . [15422] Build issues with ffmpeg 1.0.1 third party
 
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)

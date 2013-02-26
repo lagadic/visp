@@ -82,7 +82,7 @@
 
 extern "C"
 {
-#include <avcodec.h> // requested for CodecID enum
+#include <libavcodec/avcodec.h> // requested for CodecID enum
 //#include <avformat.h>
 //#include <swscale.h>
 }

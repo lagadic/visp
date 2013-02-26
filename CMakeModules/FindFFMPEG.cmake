@@ -46,20 +46,6 @@
 # detection of the FFMPEG headers location
   FIND_PATH(FFMPEG_INCLUDE_DIR_AVCODEC
     NAMES
-      avcodec.h
-    PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
-    PATH_SUFFIXES
-      ffmpeg
-      libavcodec
-      ffmpeg/libavcodec
-  )
-
-  FIND_PATH(FFMPEG_INCLUDE_DIR
-    NAMES
       libavcodec/avcodec.h
     PATHS
     "/usr/include"
@@ -72,7 +58,7 @@
 
   FIND_PATH(FFMPEG_INCLUDE_DIR_AVFORMAT
     NAMES
-      avformat.h
+      libavformat/avformat.h
     PATHS
     "/usr/include"
     "/usr/local/include"
@@ -80,27 +66,23 @@
     $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
       ffmpeg
-      libavformat
-      ffmpeg/libavformat
-      )
+  )
 
   FIND_PATH(FFMPEG_INCLUDE_DIR_AVUTIL
     NAMES
-      avutil.h
+      libavutil/avutil.h
     PATHS
     "/usr/include"
     "/usr/local/include"
     $ENV{FFMPEG_DIR}/include
     $ENV{FFMPEG_DIR}
     PATH_SUFFIXES
-      libavutil
       ffmpeg
-      ffmpeg/libavutil
   )
 
   FIND_PATH(FFMPEG_INCLUDE_DIR_SWSCALE
     NAMES
-      swscale.h
+      libswscale/swscale.h
     PATHS
     "/usr/include"
     "/usr/local/include"
@@ -109,7 +91,6 @@
     PATH_SUFFIXES
       libswscale
       ffmpeg
-      ffmpeg/libswscale
   )
 
   # Detection of the FFMPEG library on Unix
@@ -188,10 +169,9 @@
     # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
   endif()
 
-IF(FFMPEG_INCLUDE_DIR AND FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_INCLUDE_DIR_AVFORMAT AND FFMPEG_INCLUDE_DIR_AVUTIL AND FFMPEG_INCLUDE_DIR_SWSCALE AND FFMPEG_SWSCALE_LIBRARY AND FFMPEG_AVFORMAT_LIBRARY AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_LIBRARIES AND BZIP2_LIBRARIES)
+IF(FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_INCLUDE_DIR_AVFORMAT AND FFMPEG_INCLUDE_DIR_AVUTIL AND FFMPEG_INCLUDE_DIR_SWSCALE AND FFMPEG_SWSCALE_LIBRARY AND FFMPEG_AVFORMAT_LIBRARY AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_LIBRARIES AND BZIP2_LIBRARIES)
   SET(FFMPEG_FOUND TRUE)
   SET(FFMPEG_INCLUDE_DIRS
-    ${FFMPEG_INCLUDE_DIR}
     ${FFMPEG_INCLUDE_DIR_AVCODEC}
     ${FFMPEG_INCLUDE_DIR_AVFORMAT}
     ${FFMPEG_INCLUDE_DIR_AVUTIL}
@@ -214,7 +194,6 @@ ENDIF ()
 
 MARK_AS_ADVANCED(
   BZIP2_DIR
-  FFMPEG_INCLUDE_DIR
   FFMPEG_INCLUDE_DIR_AVCODEC
   FFMPEG_INCLUDE_DIR_AVFORMAT
   FFMPEG_INCLUDE_DIR_AVUTIL
