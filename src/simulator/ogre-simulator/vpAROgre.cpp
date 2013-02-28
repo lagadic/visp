@@ -1028,7 +1028,19 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo)
     if(I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()){
             I.resize(mWindow->getHeight(), mWindow->getWidth());
     }
+#if 1 // if texture in BGRa format
+    for(unsigned int i=0; i<I.getHeight(); i++){
+      for(unsigned int j=0; j<I.getWidth(); j++){
+	// Color Image	
+	I[i][j].B = *pDest++; // Blue component
+	I[i][j].G = *pDest++; // Green component
+	I[i][j].R = *pDest++; // Red component
+	*pDest++;             // Alpha component
+      }
+    }
+#else // if texture in RGBa format which is the format of the input image
     memcpy(I.bitmap, pDest, 640*480*sizeof(vpRGBa));
+#endif
 
     // Unlock the pixel buffer
     mPixelBuffer->unlock();
