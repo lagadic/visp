@@ -1020,14 +1020,14 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo)
     Ogre::RenderTexture* RTarget = dynTexPtr->getBuffer()->getRenderTarget();
     mWindow->update();
     RTarget->update();
+    if(I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()){
+       I.resize(mWindow->getHeight(), mWindow->getWidth());
+    }
     Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
     mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
     const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
     dynTexPtr->getBuffer()->blitToMemory(pixelBox);
     Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
-    if(I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()){
-            I.resize(mWindow->getHeight(), mWindow->getWidth());
-    }
 #if 1 // if texture in BGRa format
     for(unsigned int i=0; i<I.getHeight(); i++){
       for(unsigned int j=0; j<I.getWidth(); j++){
@@ -1035,11 +1035,11 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo)
 	I[i][j].B = *pDest++; // Blue component
 	I[i][j].G = *pDest++; // Green component
 	I[i][j].R = *pDest++; // Red component
-	*pDest++;             // Alpha component
+	I[i][j].A = *pDest++; // Alpha component
       }
     }
 #else // if texture in RGBa format which is the format of the input image
-    memcpy(I.bitmap, pDest, 640*480*sizeof(vpRGBa));
+    memcpy(I.bitmap, pDest, I.getHeight()*I.getWidth()*sizeof(vpRGBa));
 #endif
 
     // Unlock the pixel buffer
