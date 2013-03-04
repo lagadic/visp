@@ -325,10 +325,10 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
     }
   }
   
-  vpMbEdgeTracker::updateMovingEdge(I);
+  if(reInit)
+    return true;
   
-//   bool useless = false ;
-//   vpMbEdgeTracker::visibleFace(_I, cMo, useless) ;
+  vpMbEdgeTracker::updateMovingEdge(I);
   unsigned int n = 0;
   for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
       if(vpMbKltTracker::faces[i]->isVisible()){
@@ -343,7 +343,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
   
-  return reInit;
+  return false;
 }
 
 /*!
@@ -669,8 +669,32 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
   computeVVS(I, nbInfos, w_mbt, w_klt);
   
   if(postTracking(I, w_mbt, w_klt)){
-    vpMbEdgeTracker::init(I);
     vpMbKltTracker::reinit(I);
+    
+    initPyramid(I, Ipyramid);
+  
+    unsigned int n = 0;
+    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+        if(vpMbKltTracker::faces[i]->isVisible()){
+          vpMbEdgeTracker::faces[i]->isvisible = true;
+          n++;
+        }
+        else
+          vpMbEdgeTracker::faces[i]->isvisible = false;
+    }
+    vpMbEdgeTracker::nbvisiblepolygone = n;
+    
+    unsigned int i=scales.size();
+    do {
+      i--;
+      if(scales[i]){
+        downScale(i);
+        initMovingEdge(*Ipyramid[i], cMo);
+        upScale(i);
+      }
+    } while(i != 0);
+    
+    cleanPyramid(Ipyramid);
   }
 }
 
