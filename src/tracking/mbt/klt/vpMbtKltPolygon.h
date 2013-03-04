@@ -36,8 +36,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpMbtKltHiddenFace_h
-#define vpMbtKltHiddenFace_h
+#ifndef vpMbtKltPolygon_h
+#define vpMbtKltPolygon_h
 
 #include <visp/vpConfig.h>
 
