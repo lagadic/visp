@@ -98,6 +98,8 @@ vpPlotGraph::vpPlotGraph()
   
   old_iPr = vpImagePoint(-1,-1);
   old_iPz = vpImagePoint(-1,-1);
+
+  gridThickness = 1;
 }
 
 vpPlotGraph::~vpPlotGraph()
@@ -322,9 +324,9 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
   {
     double x = xorg+(zoomx*t);
     if(gridy)
-      vpDisplay::displayDotLine(I,vpImagePoint(dTopLeft.get_i(),x), vpImagePoint(dTopLeft.get_i()+dHeight,x), gridColor);
+      vpDisplay::displayDotLine(I,vpImagePoint(dTopLeft.get_i(),x), vpImagePoint(dTopLeft.get_i()+dHeight,x), gridColor, gridThickness);
     else
-      vpDisplay::displayDotLine(I,vpImagePoint(yorg,x), vpImagePoint(yorg-3,x), vpColor::black);    
+      vpDisplay::displayDotLine(I,vpImagePoint(yorg,x), vpImagePoint(yorg-3,x), vpColor::black, gridThickness);
     
     if (t+xdelt <= xmax+1e-10)
     {
@@ -355,9 +357,9 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
   {
     double y = yorg-(zoomy*t);
     if(gridx)
-      vpDisplay::displayDotLine(I,vpImagePoint(y,dTopLeft.get_j()), vpImagePoint(y,dTopLeft.get_j()+dWidth), gridColor);
+      vpDisplay::displayDotLine(I,vpImagePoint(y,dTopLeft.get_j()), vpImagePoint(y,dTopLeft.get_j()+dWidth), gridColor, gridThickness);
     else
-      vpDisplay::displayDotLine(I,vpImagePoint(y,xorg), vpImagePoint(y,xorg+3), vpColor::black);
+      vpDisplay::displayDotLine(I,vpImagePoint(y,xorg), vpImagePoint(y,xorg+3), vpColor::black, gridThickness);
       
     double ttemp;
     if (power!=0)
@@ -381,10 +383,10 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
 #endif
   }
 
-//Ligne horizontal
-  vpDisplay::displayArrow(I,vpImagePoint(yorg,dTopLeft.get_j()), vpImagePoint(yorg,dTopLeft.get_j()+dWidth), vpColor::black);
-//Ligne vertical
-  vpDisplay::displayArrow(I, vpImagePoint(dTopLeft.get_i()+dHeight,xorg), vpImagePoint(dTopLeft.get_i(),xorg), vpColor::black);
+  //Ligne horizontal
+  vpDisplay::displayArrow(I,vpImagePoint(yorg,dTopLeft.get_j()), vpImagePoint(yorg,dTopLeft.get_j()+dWidth), vpColor::black, 4*gridThickness, 2*gridThickness, gridThickness);
+  //Ligne verticale
+  vpDisplay::displayArrow(I, vpImagePoint(dTopLeft.get_i()+dHeight,xorg), vpImagePoint(dTopLeft.get_i(),xorg), vpColor::black, 4*gridThickness, 2*gridThickness, gridThickness);
   
   if (dispUnit)
     displayUnit(I);
@@ -1084,7 +1086,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
 //Ligne horizontal
   if (check3Dline(iP[0],iP[1]))
   {
-    vpDisplay::displayArrow(I,iP[0],iP[1], vpColor::black);
+    vpDisplay::displayArrow(I,iP[0],iP[1], vpColor::black, gridThickness);
     if (dispUnit)
     {
       vpImagePoint iPunit(iP[1].get_i(),iP[1].get_j()-10*epsj);
@@ -1094,7 +1096,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   }
   if (check3Dline(iP[3],iP[2]))
   {
-    vpDisplay::displayArrow(I,iP[3],iP[2], vpColor::black);
+    vpDisplay::displayArrow(I,iP[3],iP[2], vpColor::black, gridThickness);
     if (dispUnit)
     {
       vpImagePoint iPunit(iP[2].get_i(),iP[2].get_j()-10*epsj);
@@ -1104,7 +1106,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
   }
   if (check3Dline(iP[4],iP[5]))
   {
-    vpDisplay::displayArrow(I,iP[4],iP[5], vpColor::black);
+    vpDisplay::displayArrow(I,iP[4],iP[5], vpColor::black, gridThickness);
     if (dispUnit)
     {
       vpImagePoint iPunit(iP[5].get_i(),iP[5].get_j()-10*epsj);

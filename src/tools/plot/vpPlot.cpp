@@ -508,6 +508,31 @@ vpPlot::setThickness (const unsigned int graphNum, const unsigned int curveNum, 
 }
 
 /*!
+This function enables you to choose the thickness used to draw all the curves belonging to a given graphic.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param thickness : The thickness you want to use
+*/
+void
+vpPlot::setGraphThickness (const unsigned int graphNum, const unsigned int thickness)
+{
+  for (unsigned int curveNum=0; curveNum < (graphList+graphNum)->curveNbr; curveNum++)
+    (graphList+graphNum)->setCurveThickness(curveNum, thickness);
+}
+
+/*!
+  This function enables you to choose the thickness used to draw the grid and the axis of a given graphic.
+
+  \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param thickness : The thickness you want to use
+*/
+void
+vpPlot::setGridThickness (const unsigned int graphNum, const unsigned int thickness)
+{
+  (graphList+graphNum)->setGridThickness(thickness);
+}
+
+/*!
   This method enables to erase the list of points stored for the curve number \f$ curveNum \f$ contained in the  graphic number  \f$ graphNum \f$.
   
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.

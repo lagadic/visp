@@ -138,7 +138,8 @@ class VISP_EXPORT vpPlot
 	   const unsigned int width=700, 
 	   const int x=-1, const int y=-1, const char *title=NULL);
     ~vpPlot();
-    void init(const unsigned int nbGraph, 
+    void getPixelValue(const bool block);
+    void init(const unsigned int nbGraph,
 	      const unsigned int height=700, 
 	      const unsigned int width=700, 
 	      const int x=-1, const int y=-1, const char *title=NULL);
@@ -146,37 +147,36 @@ class VISP_EXPORT vpPlot
     
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
     void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
+    void navigate (void);
+
+    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
+    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
+    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
+    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z);
+
+    void resetPointList (const unsigned int graphNum);
+    void resetPointList (const unsigned int graphNum, const unsigned int curveNum);
+
+    void saveData(const unsigned int graphNum, const char* dataFile);
     void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
+    void setGraphThickness (const unsigned int graphNum, const unsigned int thickness);
+    void setGridThickness (const unsigned int graphNum, const unsigned int thickness);
     /*!
       Set the font of the characters. The display should be initialized before.
 
-      To know which font are available, on Unix you can use xselfonts or xlsfonts utilities.
+      To know which font are available, on Unix you can use xfontsel or xlsfonts utilities.
       */
     void setFont(const char *font)
     {
       if (display->isInitialised())
         vpDisplay::setFont(I, font);
     }
+    void setLegend (const unsigned int graphNum, const unsigned int curveNum, const char *legend);
     void setTitle (const unsigned int graphNum, const char *title);
     void setUnitX (const unsigned int graphNum, const char *unitx);
     void setUnitY (const unsigned int graphNum, const char *unity);
     void setUnitZ (const unsigned int graphNum, const char *unitz);
-    void setLegend (const unsigned int graphNum, const unsigned int curveNum, const char *legend);
     void setThickness (const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness);
-
-    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
-    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
-    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
-    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z);
-    
-    void navigate (void);
-    
-    void getPixelValue(const bool block);
-    
-    void resetPointList (const unsigned int graphNum);
-    void resetPointList (const unsigned int graphNum, const unsigned int curveNum);
-    
-    void saveData(const unsigned int graphNum, const char* dataFile);
     
   private:
     void initNbGraph (unsigned int nbGraph);
