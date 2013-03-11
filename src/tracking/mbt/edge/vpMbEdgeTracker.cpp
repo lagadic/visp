@@ -1522,7 +1522,7 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &
   else{
 #ifdef VISP_HAVE_OGRE   
     bool changed = false;
-    n = faces.setVisibleOgre(_I, cam, _cMo, vpMath::rad(70), vpMath::rad(70), changed);
+    n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
 #else
     n = faces.setVisible(_cMo) ;
 #endif
