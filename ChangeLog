@@ -18,6 +18,7 @@ ViSP 2.7.1 (under development)
       and SoDB::finish() usage
     . [15410] Robot wireframe simulator hangs
     . [15422] Build issues with ffmpeg 1.0.1 third party
+    . [15475] Segfault in cv::Mat(BGR) to vpImage(grey) conversion
 
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)

@@ -698,15 +698,15 @@ vpImageConvert::convert(const cv::Mat& src,
     else{
       if(flip){
         for(unsigned int i=0; i<dest.getRows(); ++i){
-          BGRToGrey((unsigned char*)src.data+i*src.step1(),
+          BGRToGrey((unsigned char*)src.data+i*src.step[0],
                     (unsigned char*)dest.bitmap+(dest.getRows()-i-1)*dest.getCols(),
-                    (unsigned int)src.step/3, 1, false);
+                    (unsigned int)dest.getCols(), 1, false);
         }
       }else{
         for(unsigned int i=0; i<dest.getRows(); ++i){
-          BGRToGrey((unsigned char*)src.data+i*src.step1(),
+          BGRToGrey((unsigned char*)src.data+i*src.step[0],
                     (unsigned char*)dest.bitmap+i*dest.getCols(),
-                    (unsigned int)src.step/3, 1, false);
+                    (unsigned int)dest.getCols(), 1, false);
         }
       }
     }
