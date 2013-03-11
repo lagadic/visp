@@ -100,8 +100,10 @@ vpMbKltTracker::init(const vpImage<unsigned char>& I)
     faces.setVisible(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
   else{
 #ifdef VISP_HAVE_OGRE   
-    if(!faces.isOgreInitialised())
+    if(!faces.isOgreInitialised()){
+      faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
       faces.initOgre(cam);
+    }
     
     faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);
     

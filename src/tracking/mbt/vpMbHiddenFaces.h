@@ -74,7 +74,7 @@ class vpMbHiddenFaces
   unsigned int nbVisiblePolygon;
   
 #ifdef VISP_HAVE_OGRE
-  vpImage<vpRGBa> ogreBackground;
+  vpImage<unsigned char> ogreBackground;
   bool ogreInitialised;
   vpAROgre *ogre;
   std::vector< Ogre::ManualObject* > lOgrePolygons;
@@ -162,7 +162,20 @@ class vpMbHiddenFaces
     //! operator[] as reader.
     inline const PolygonType*  operator[](const unsigned int i) const { return Lpol[i];}
 
-    void          reset();   
+    void          reset();  
+    
+#ifdef VISP_HAVE_OGRE
+    /*!
+      Set the background size (by default it is 640x480). 
+      The background size has to match with the size of the image that you are using for the traking.
+      
+      \warning This function has to be called before initOgre().
+      
+      \param h : Height of the background
+      \param w : Width of the background
+    */
+    void          setBackgroundSizeOgre(const unsigned int &h, const unsigned int &w) { ogreBackground.resize(h,w); }
+#endif
     
     /*!
       Set the depthTest value.
@@ -197,7 +210,7 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): depthTest(false), nbVisiblePoly
   ogreInitialised = false;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
-  ogreBackground = vpImage<vpRGBa>(480, 640);
+  ogreBackground = vpImage<unsigned char>(480, 640);
 #endif
 }
 

@@ -911,6 +911,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 #ifdef VISP_HAVE_OGRE 
   if(useOgre){
     if(!faces.isOgreInitialised())
+      faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
       faces.initOgre(cam);
   }
 #endif
