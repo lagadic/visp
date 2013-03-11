@@ -739,11 +739,9 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
         ip2 = roi[(j+1)%faces[i]->getNbPoint()];
         vpDisplay::displayLine (I, ip1, ip2, col, thickness);
       }
-      
-      if(displayFeatures && faces[i]->hasEnoughPoints())
+    }
+    if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
         faces[i]->displayPrimitive(I);
-      
-//       if(facesTracker[i].hasEnoughPoints())
 //         faces[i]->displayNormal(I);
     }
   }
@@ -780,10 +778,9 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
         vpDisplay::displayLine (I, ip1, ip2, col, thickness);
       }
       
-      if(displayFeatures && faces[i]->hasEnoughPoints())
+    }
+    if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
         faces[i]->displayPrimitive(I);
-      
-//       if(facesTracker[i].hasEnoughPoints())
 //         faces[i]->displayNormal(I);
     }
   }
