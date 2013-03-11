@@ -52,7 +52,7 @@
 #if defined(VISP_HAVE_OPENCV)
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020101
-#    include <opencv2/highgui/highgui.hpp>
+#  include <opencv2/highgui/highgui.hpp>
 #else
 #  include <highgui.h>
 #endif
