@@ -1462,7 +1462,10 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 }
 
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated This method is deprecated since it is no more used since ViSP 2.7.0. \n
+  
   Detect the visible faces in the image and says if a new one appeared.
   
   \warning If in one iteration one face appears and one disappears, then the 
@@ -1498,6 +1501,7 @@ vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleli
 
   nbvisiblepolygone= n ;
 }
+#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*!
   Detect the visible faces in the image and says if a new one appeared.

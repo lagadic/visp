@@ -477,8 +477,14 @@ protected:
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
   void upScale(const unsigned int _scale); 
-  void visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ;
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated void visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
+#endif
 };
 
 #endif
