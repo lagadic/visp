@@ -337,9 +337,6 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
     {
       bool testDisappear = false;
       
-      if(testRoi)
-       testDisappear = (!vpMbtPolygon::roiInsideImage(_I, roi));
-      
       if(!testDisappear){
         if(useOgre)
 #ifdef VISP_HAVE_OGRE

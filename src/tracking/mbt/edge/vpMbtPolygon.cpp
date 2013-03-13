@@ -325,12 +325,17 @@ vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, in
 bool
 vpMbtPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners)
 {
+  double nbPolyIn = 0;
   for(unsigned int i=0; i<corners.size(); ++i){
-    if((corners[i].get_i() < 0) || (corners[i].get_j() < 0) ||
-       (corners[i].get_i() > I.getHeight()) || (corners[i].get_j() > I.getWidth())){
-      return false;
+    if((corners[i].get_i() >= 0) && (corners[i].get_j() >= 0) &&
+       (corners[i].get_i() < I.getHeight()) && (corners[i].get_j() < I.getWidth())){
+      nbPolyIn++;;
     }
   }
+  
+  if(nbPolyIn < 3 && nbPolyIn < 0.7 * corners.size())
+    return false;
+  
   return true;
 }
 
