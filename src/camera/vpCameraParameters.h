@@ -49,9 +49,10 @@
 
 */
 
-#ifndef vpCAMERA_H
-#define vpCAMERA_H
+#ifndef vpCameraParameters_H
+#define vpCameraParameters_H
 
+#include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 
 /*!
@@ -268,9 +269,3 @@ private:
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
