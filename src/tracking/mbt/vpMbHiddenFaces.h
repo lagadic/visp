@@ -466,12 +466,9 @@ vpMbHiddenFaces<PolygonType>::initOgre(vpCameraParameters _cam)
     for(unsigned int i = 0; i < Lpol[n]->nbpt; i++){
       manual->position( (Ogre::Real)Lpol[n]->p[i].get_oX(), (Ogre::Real)Lpol[n]->p[i].get_oY(), (Ogre::Real)Lpol[n]->p[i].get_oZ());
       manual->colour(1.0, 1.0, 1.0);
+      manual->index(i);
     }
     
-    manual->index(0);
-    manual->index(1);
-    manual->index(2);
-    manual->index(3);
     manual->index(0);
     manual->end();
     
@@ -581,19 +578,30 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
   Ogre::RaySceneQueryResult::iterator it = result.begin();
   
   bool visible = false;
-  if(it != result.end()){
-//     std::cout << it->movable->getName() << "/";
-    
+  double distance, distancePrev;
+  if(it != result.end()){    
     if(it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) //Test if the ogreBackground is intersect in first
       it++;
     
     if(it != result.end()){
-//       std::cout << it->movable->getName() << " / ";
+      distance = it->distance;
+      distancePrev = distance;
       if(it->movable->getName() == Ogre::StringConverter::toString(index)){
         visible = true;
       }
     }
-//     std::cout << std::endl;
+    
+    if(!visible && it != result.end()){
+      it++;
+      while(!visible && it != result.end() && distance == distancePrev){
+        distancePrev = distance;
+        distance = it->distance;
+        if(it->movable->getName() == Ogre::StringConverter::toString(index)){
+          visible = true;
+        }
+        it++;
+      }
+    }
   }
   
   if(visible){
