@@ -277,6 +277,28 @@ vpMbtPolygon::getRoi(const vpCameraParameters &_cam)
   return roi;
 }
 
+/*!
+  Static method to check the number of points of a region defined by the vector of image point that are inside the image.
+
+  \param I : The image used for its size.
+  \param corners : The vector of points defining a region
+*/
+unsigned int 
+vpMbtPolygon::getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCameraParameters &_cam)
+{
+  unsigned int nbPolyIn = 0;
+  for (unsigned int i = 0; i < nbpt; i ++){
+    if(p[i].get_Z() > 0){
+      vpImagePoint ip;
+      vpMeterPixelConversion::convertPoint(_cam, p[i].get_x(), p[i].get_y(), ip);
+      if((ip.get_i() >= 0) && (ip.get_j() >= 0) && (ip.get_i() < I.getHeight()) && (ip.get_j() < I.getWidth()))
+        nbPolyIn++;
+    }
+  }
+  
+  return nbPolyIn;
+}
+
 //###################################
 //      Static functions
 //###################################
@@ -329,7 +351,7 @@ vpMbtPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<
   for(unsigned int i=0; i<corners.size(); ++i){
     if((corners[i].get_i() >= 0) && (corners[i].get_j() >= 0) &&
        (corners[i].get_i() < I.getHeight()) && (corners[i].get_j() < I.getWidth())){
-      nbPolyIn++;;
+      nbPolyIn++;
     }
   }
   

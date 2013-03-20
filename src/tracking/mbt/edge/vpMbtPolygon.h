@@ -98,7 +98,9 @@ public:
 
     \return number of corner of the face
   */
-  inline    unsigned int  getNbPoint() const {return nbpt ;}              
+  inline    unsigned int  getNbPoint() const {return nbpt ;}     
+  
+            unsigned int  getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCameraParameters &_cam);
           
             vpPoint &     getPoint(const unsigned int _index);
   

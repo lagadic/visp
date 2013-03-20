@@ -337,6 +337,11 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
     {
       bool testDisappear = false;
       
+      if(testRoi){
+       if(Lpol[i]->getNbCornerInsideImage(_I, _cam) == 0)
+          testDisappear = true;
+      }
+      
       if(!testDisappear){
         if(useOgre)
 #ifdef VISP_HAVE_OGRE
