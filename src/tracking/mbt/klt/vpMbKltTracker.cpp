@@ -333,7 +333,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
           vpColVector Nc = plan.getNormal(); 
           Nc.normalize();
           
-          float invDc = 1.0f / plan.getD();
+          double invDc = 1.0 / plan.getD();
           
           //Create the homography
           vpHomography cdHc;
