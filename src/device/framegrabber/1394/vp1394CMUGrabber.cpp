@@ -329,9 +329,7 @@ vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
   unsigned int size;
 
   if(init == false){
-    close();
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                   "Initialization not done") );
+    open(I);
   }
 
   camera->AcquireImageEx(TRUE,&dropped);
@@ -398,9 +396,7 @@ vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
   unsigned int size;
 
   if(init == false){
-    close();
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                   "Initialization not done") );
+    open(I);
   }
 
   camera->AcquireImageEx(TRUE,&dropped);
