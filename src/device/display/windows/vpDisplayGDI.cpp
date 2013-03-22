@@ -58,6 +58,24 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
 
 /*!
 
+  \brief Constructor : Initialize a display.
+
+  \param winx, winy The window is set at position x,y (column index, row index).
+  \param _title  Window's title.
+
+*/
+vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *_title)
+  : vpDisplayWin32(new vpGDIRenderer())
+{
+  windowXPosition = winx;
+  windowYPosition = winy;
+
+  if (_title != NULL)
+    strcpy(this->title, _title);
+}
+
+/*!
+
   \brief Constructor : Initialize a display to visualize a RGBa image
   (32 bits).
 

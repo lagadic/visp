@@ -58,8 +58,24 @@
 */
 vpDisplay::vpDisplay()
 {
-  title = NULL ;
+  displayHasBeenInitialized = false;
+  windowXPosition = 0;
+  windowYPosition = 0;
+
+  title = new char[1024];
+  strcpy (title, "" );
+}
+/*!
+  Destructor that desallocates memory.
+*/
+vpDisplay::~vpDisplay()
+{
   displayHasBeenInitialized = false ;
+
+  if (title != NULL) {
+    delete [] title;
+    title = NULL;
+  }
 }
 
 /*!

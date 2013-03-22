@@ -57,8 +57,8 @@ const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 */
 void vpCreateWindow(threadParam * param)
 {
-  char* title = param->title;
-  (param->vpDisp)->window.initWindow(title, param->x, param->y,
+  //char* title = param->title;
+  (param->vpDisp)->window.initWindow(param->title, param->x, param->y,
 				     param->w, param->h);
   delete param;
 }
@@ -149,23 +149,18 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
 			  int x, int y,
 			  const char *title)
 {
-
-
-  if (this->title != NULL)//delete apr�s init du thread.... ou destructeur
-    {
-      delete [] this->title;
-      this->title = NULL;
-    }
-
-  if (title != NULL) {
-    this->title = new char[strlen(title) + 1] ;
+  if (title != NULL)
     strcpy(this->title, title) ;
-  }
+
+  if (x != -1)
+    windowXPosition = x;
+  if (y != -1)
+    windowYPosition = y;
 
   //we prepare the window's thread creation
   threadParam * param = new threadParam;
-  param->x = x;
-  param->y = y;
+  param->x = windowXPosition;
+  param->y = windowYPosition;
   param->w = width;
   param->h = height;
   param->vpDisp = this;
@@ -950,10 +945,6 @@ void vpDisplayWin32::closeDisplay()
     }
     displayHasBeenInitialized = false ;
 	window.initialized = false ;
-  }
-  if (this->title != NULL) {
-    delete [] this->title;
-    this->title = NULL;
   }
 }
 

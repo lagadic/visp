@@ -83,7 +83,6 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
                            const char *title) : vpDisplay()
 {
   col = NULL;
-  title = NULL ;
   widget = NULL ;
   init(I, x, y, title) ;
 }
@@ -100,10 +99,9 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
                            int x,
                            int y,
-                           const char *title)
+                           const char *title) : vpDisplay()
 {
   col = NULL;
-  title = NULL ;
   widget = NULL ;
   init(I, x, y, title) ;
 }
@@ -132,22 +130,16 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
+vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title) : vpDisplay()
 {
   windowXPosition = x ;
   windowYPosition = y ;
 
   col = NULL;
-  title = NULL ;
   widget = NULL ;
 
   if (title != NULL)
-  {
-    this->title = new char[strlen(title) + 1] ; // Modif Fabien le 19/04/02
     strcpy(this->title, title) ;
-  }
-
-  displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -169,22 +161,10 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK()
+vpDisplayGTK::vpDisplayGTK() : vpDisplay()
 {
-  windowXPosition = windowYPosition = -1 ;
-
   col = NULL;
-  title = NULL ;
   widget = NULL ;
-  if (title != NULL)
-  {
-    delete [] title ;
-    title = NULL ;
-  }
-  title = new char[1] ;
-  strcpy(title,"") ;
-
-  displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -208,15 +188,20 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
                    int x,
                    int y,
                    const char *title)
-{
-
+{  
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
     vpERROR_TRACE("Image not initialized " ) ;
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "Image not initialized")) ;
   }
-  init (I.getWidth(), I.getHeight(), x, y, title) ;
+
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
+
+  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title) ;
   I.display = this ;
   displayHasBeenInitialized = true ;
 }
@@ -243,7 +228,12 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
                              "Image not initialized")) ;
   }
 
-  init (I.getWidth(), I.getHeight(), x, y, title) ;
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
+
+  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title) ;
   I.display = this ;
   displayHasBeenInitialized = true ;
 }
@@ -276,7 +266,12 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
 
   gtk_window_set_default_size(GTK_WINDOW(widget), (gint)width, (gint)height);
 
-  gtk_window_move(GTK_WINDOW(widget), x, y); 
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
+
+  gtk_window_move(GTK_WINDOW(widget), windowXPosition, windowYPosition);
 
   gtk_widget_show(widget);
 
@@ -371,17 +366,10 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   Police2 = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
 
   if (title != NULL)
-  {
-    if (this->title != NULL)
-    {
-      delete [] this->title ;
-      this->title = NULL ;
-    }
-    this->title = new char[strlen(title) + 1] ;
     strcpy(this->title, title) ;
-  }
+
   displayHasBeenInitialized = true ;
-  setTitle(title) ;
+  setTitle(this->title) ;
 }
 
 
@@ -644,11 +632,6 @@ void vpDisplayGTK::closeDisplay()
   if (col != NULL)
   {
     delete [] col ; col = NULL ;
-  }
-  if (title != NULL)
-  {
-    delete [] title ;
-    title = NULL ;
   }
 
   if (widget != NULL)

@@ -156,7 +156,6 @@ private:
 
   GdkFont *Police1,*Police2;
   guchar  *vectgtk;
-  int windowXPosition ; int  windowYPosition ;
   GdkColor **col ;
   int ncol, nrow ;
 

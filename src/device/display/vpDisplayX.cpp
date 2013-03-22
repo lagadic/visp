@@ -98,10 +98,9 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
 vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int x,
                          int y,
-                         const char *title )
+                         const char *title ) : vpDisplay()
 {
   x_color = NULL;
-  title = NULL ;
   init ( I, x, y, title ) ;
 }
 
@@ -127,19 +126,15 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX ( int x, int y, const char *title )
+vpDisplayX::vpDisplayX ( int x, int y, const char *title )  : vpDisplay()
 {
   windowXPosition = x ;
   windowYPosition = y ;
 
   this->x_color = NULL;
-  this->title = NULL ;
 
-  if ( title != NULL )
-  {
-    this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
-    strcpy ( this->title, title ) ;
-  }
+  if (title != NULL)
+    strcpy (this->title, title);
 
   ximage_data_init = false;
 }
@@ -163,16 +158,9 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX()
+vpDisplayX::vpDisplayX() : vpDisplay()
 {
   x_color = NULL;
-  windowXPosition = windowYPosition = -1 ;
-
-  title = NULL ;
-  title = new char[1] ;
-  strcpy ( title,"" ) ;
-
-  displayHasBeenInitialized = false ;
   ximage_data_init = false;
 }
 
@@ -202,22 +190,13 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   }
 
   XSizeHints  hints;
-  windowXPosition = x ;
-  windowYPosition = y ;
-  {
-    if ( this->title != NULL )
-    {
-      //   vpTRACE(" ") ;
-      delete [] this->title ;
-      this->title = NULL ;
-    }
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
 
-    if ( title != NULL )
-    {
-      this->title = new char[strlen ( title ) + 1] ;
-      strcpy ( this->title, title ) ;
-    }
-  }
+  if ( title != NULL )
+    strcpy ( this->title, title ) ;
 
   // Positionnement de la fenetre dans l'�cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
@@ -230,7 +209,6 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
     hints.x = windowXPosition;
     hints.y = windowYPosition;
   }
-
 
   // setup X11 --------------------------------------------------
   width  = I.getWidth();
@@ -590,7 +568,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
     }
   }
 
-  XSetStandardProperties ( display, window, title, title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -634,7 +612,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 
   }
   displayHasBeenInitialized = true ;
-  setTitle ( title ) ;
+  setTitle ( this->title ) ;
   XSync ( display, 1 );
 
   I.display = this ;
@@ -654,27 +632,18 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 {
 
   XSizeHints  hints;
-  windowXPosition = x ;
-  windowYPosition = y ;
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
 
   if (x_color == NULL) {
     // id_unknown = number of predefined colors
     x_color= new unsigned long [vpColor::id_unknown]; 
   }
 
-  {
-    if ( this->title != NULL )
-    {
-      delete [] this->title ;
-      this->title = NULL ;
-    }
-
-    if ( title != NULL )
-    {
-      this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
-      strcpy ( this->title, title ) ;
-    }
-  }
+  if ( title != NULL )
+    strcpy ( this->title, title ) ;
 
   // Positionnement de la fenetre dans l'�cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
@@ -687,7 +656,6 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     hints.x = windowXPosition;
     hints.y = windowYPosition;
   }
-
 
   // setup X11 --------------------------------------------------
   width = I.getWidth();
@@ -1051,7 +1019,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     }
   }
 
-  XSetStandardProperties ( display, window, title, title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -1099,7 +1067,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
   displayHasBeenInitialized = true ;
 
   XSync ( display, true );
-  setTitle ( title ) ;
+  setTitle ( this->title ) ;
 
   I.display = this ;
 }
@@ -1122,8 +1090,10 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
 
   XSizeHints  hints;
 
-  windowXPosition = x ;
-  windowYPosition = y ;
+  if (x != -1)
+    windowXPosition = x ;
+  if (y != -1)
+    windowYPosition = y ;
   // Positionnement de la fenetre dans l'�cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
@@ -1136,21 +1106,8 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
     hints.y = windowYPosition;
   }
 
-
-  {
-    if ( this->title != NULL )
-    {
-      delete [] this->title ;
-      this->title = NULL ;
-    }
-
-    if ( title != NULL )
-    {
-      this->title = new char[strlen ( title ) + 1] ; // Modif Fabien le 19/04/02
-      strcpy ( this->title, title ) ;
-    }
-  }
-
+  if ( title != NULL )
+    strcpy ( this->title, title ) ;
 
   if ( ( display = XOpenDisplay ( NULL ) ) == NULL )
   {
@@ -1532,8 +1489,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
     }
   }
 
-
-  XSetStandardProperties ( display, window, title, title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -1578,7 +1534,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
   displayHasBeenInitialized = true ;
 
   XSync ( display, true );
-  setTitle ( title ) ;
+  setTitle ( this->title ) ;
 
 }
 
@@ -2150,24 +2106,10 @@ void vpDisplayX::closeDisplay()
     XCloseDisplay ( display );
 
     displayHasBeenInitialized = false;
-    if ( title != NULL )
-    {
-      delete [] title ;
-      title = NULL ;
-    }
 
     if (x_color != NULL) {
       delete [] x_color;
       x_color = NULL;
-    }
-
-  }
-  else
-  {
-    if ( title != NULL )
-    {
-      delete [] title ;
-      title = NULL ;
     }
   }
 }

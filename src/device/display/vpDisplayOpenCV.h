@@ -146,9 +146,6 @@ class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
 private:
   //! true if OpenCV display is ready to use
   IplImage* background;
-  int window;
-  int windowXPosition ; int  windowYPosition ;
-  static int count; 
   CvScalar *col ;
   CvScalar cvcolor;
   CvFont *font;

@@ -57,6 +57,24 @@ vpDisplayD3D::vpDisplayD3D(): vpDisplayWin32(new vpD3DRenderer()){}
 
 /*!
 
+  \brief Constructor : Initialize a display.
+
+  \param winx, winy The window is set at position x,y (column index, row index).
+  \param _title  Window's title.
+
+*/
+vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *_title)
+  : vpDisplayWin32(new vpD3DRenderer())
+{
+  windowXPosition = winx;
+  windowYPosition = winy;
+
+  if (_title != NULL)
+    strcpy(this->title, _title);
+}
+
+/*!
+
 \brief Constructor : initialize a display to visualize a RGBa image
 (32 bits).
 

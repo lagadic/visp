@@ -308,10 +308,7 @@ class VISP_EXPORT vpDisplay
 				unsigned int thickness=1)=0 ;
 
  public:
-  /*!
-    Destructor.
-  */
-  virtual ~vpDisplay() {;} ;
+  virtual ~vpDisplay();
 
   /*!
     Set the window backgroud to \e color.
