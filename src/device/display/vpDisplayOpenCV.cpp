@@ -237,6 +237,8 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
+  \exception vpDisplayException::notInitializedError If OpenCV was not build
+  with an available display device suach as Gtk, Cocoa, Carbon, Qt.
 */
 void
 vpDisplayOpenCV::init(unsigned int width, unsigned int height,
@@ -256,7 +258,11 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
     strcpy(this->title, title) ;
 
   /* Create the window*/
-  cvNamedWindow( this->title, flags );
+  if (cvNamedWindow( this->title, flags ) < 0) {
+    vpERROR_TRACE("OpenCV was not built with a display device");
+    throw(vpDisplayException(vpDisplayException::notInitializedError,
+                             "OpenCV was not built with a display device")) ;
+  }
   cvMoveWindow( this->title, this->windowXPosition, this->windowYPosition );
   move = false;
   lbuttondown = false;
@@ -628,9 +634,11 @@ void vpDisplayOpenCV::closeDisplay()
     font = NULL ;
   }
 
-  cvDestroyWindow( this->title );
+  if (displayHasBeenInitialized) {
+    cvDestroyWindow( this->title );
 
-  displayHasBeenInitialized= false;
+    displayHasBeenInitialized= false;
+  }
 }
 
 
