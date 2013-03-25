@@ -200,7 +200,8 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
 
 /*!
   Check if the polygon is visible in the image and if the angle between the normal 
-  to the face and the normal to the camera plane is below the given threshold. 
+  to the face and the line vector going from the optical center to the cog of the face is below
+  the given threshold.
   To do that, the polygon is projected into the image thanks to the camera pose.
   
   \param cMo : The pose of the camera.
