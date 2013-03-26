@@ -143,7 +143,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   
   vpTranslationVector getPosition(const std::string &name)const;
   
-  void getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo);
+  void getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo);
   
   inline Ogre::SceneManager* getSceneManager(){ return mSceneMgr; }
   

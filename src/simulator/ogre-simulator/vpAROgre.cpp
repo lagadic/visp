@@ -1013,7 +1013,7 @@ void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
   \param I : The image on which to copy the result of the rendering loop.
   \param cMo : The desired camera pose.
 */
-void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo)
+void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
 {
     updateCameraParameters(cMo);
     Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("rtf");
