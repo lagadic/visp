@@ -155,47 +155,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
       }
     }
   
-  if(nbpt <= 2){
-    /* a line is allways visible */
-    isvisible = true;
-    isappearing = false;
-    return  true ;
-  }
-
-  vpColVector e1(3) ;
-  vpColVector e2(3) ;
-  vpColVector facenormal(3) ;
-
-  e1[0] = p[1].get_X() - p[0].get_X() ;
-  e1[1] = p[1].get_Y() - p[0].get_Y() ;
-  e1[2] = p[1].get_Z() - p[0].get_Z() ;
-
-  e2[0] = p[2].get_X() - p[1].get_X() ;
-  e2[1] = p[2].get_Y() - p[1].get_Y() ;
-  e2[2] = p[2].get_Z() - p[1].get_Z() ;
-
-  facenormal = vpColVector::crossProd(e1,e2) ;
-
-  double angle = p[0].get_X()*facenormal[0] +  p[0].get_Y()*facenormal[1]  +  p[0].get_Z()*facenormal[2]  ;
-  
-  if(angle < -0.0001 )
-  {
-    isvisible = true;
-    isappearing = false;
-    
-    return  true ;
-  }
-  else
-  {
-    if (angle < 0.0000001 ){
-      isappearing = true;
-    }
-    else {
-      isappearing = false;
-    }
-    isvisible = false ;
-    return false ;
-  }
+  return isVisible(cMo, vpMath::rad(89));
 }
 
 /*!
@@ -205,7 +165,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
   To do that, the polygon is projected into the image thanks to the camera pose.
   
   \param cMo : The pose of the camera.
-  \param alpha : maximum angle to detect if the face is visible (in rad)
+  \param alpha : Maximum angle to detect if the face is visible (in rad).
   
   \return Return true if the polygon is visible.
 */
@@ -250,20 +210,25 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
   e4[0] = -pt.get_X()/(double)nbpt; e4[1] = -pt.get_Y()/(double)nbpt; e4[2] = -pt.get_Z()/(double)nbpt; 
   e4.normalize();
   
-  double angle2 = vpColVector::dotProd (e4, facenormal);
-  double my_angle = acos(angle2);
+  double cos_angle = vpColVector::dotProd (e4, facenormal);
+  double angle = acos(cos_angle);
   
-//   std::cout << angle2 << "/" << vpMath::deg(my_angle) << std::endl;
+//   std::cout << cos_angle << "/" << vpMath::deg(angle) << std::endl;
   
-  if( my_angle < alpha ){
+  if( angle < alpha ){
     isvisible = true;
     isappearing = false;
     return true;
   }
-  
-  isvisible = false;
-  isappearing = false;
-  return false;
+
+  if (angle < alpha+vpMath::rad(1) ){
+      isappearing = true;
+  }
+  else {
+      isappearing = false;
+  }
+  isvisible = false ;
+  return false ;
 }
 
 std::vector<vpImagePoint> 
