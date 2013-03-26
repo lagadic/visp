@@ -283,7 +283,7 @@ main(int argc, const char ** argv)
   if (opt_display) {
     // For this grey level image, open a X11 display at position 100,100
     // in the screen, and with title "X11 display"
-    display.init(I, 100, 100, "X11 display") ;
+    display.init(I, 100, 100, "OpenCV display") ;
 
     // Display the image
     vpDisplay::display(I) ;
@@ -386,9 +386,9 @@ main(int argc, const char ** argv)
   vpDisplayOpenCV displayRGBa;
 
   if (opt_display) {
-    // For this color image, open a X11 display at position 100,100
-    // in the screen, and with title "X11 color display"
-    displayRGBa.init(Irgba, 100, 100, "X11 color display");
+    // For this color image, open a display at position 100,100
+    // in the screen, and with title "OpenCV color display"
+    displayRGBa.init(Irgba, 100, 100, "OpenCV color display");
 
     // Display the color image
     vpDisplay::display(Irgba) ;
@@ -430,7 +430,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11 functionalities to display images...");
+  vpERROR_TRACE("You do not have OpenCV functionalities to display images...");
 }
 
 #endif
