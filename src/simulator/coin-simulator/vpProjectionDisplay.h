@@ -90,39 +90,28 @@ public:
 
   vpProjectionDisplay() { init() ;}
   vpProjectionDisplay(int select) { init(select) ;}
+
+  void insert( vpForwardProjection &fp) ;
+  void display(vpImage<unsigned char> &I,
+               const vpHomogeneousMatrix &cextMo,
+               const vpHomogeneousMatrix &cMo,
+               const vpCameraParameters &cam,
+               const vpColor &color,
+               const bool &displayTraj = false,
+               const unsigned int thickness=1);
+  void displayCamera(vpImage<unsigned char> &I,
+                     const vpHomogeneousMatrix &cextMo,
+                     const vpHomogeneousMatrix &cMo,
+                     const vpCameraParameters &cam,
+                     const unsigned int thickness=1) ;
+
 private:
   std::list<vpForwardProjection *> listFp ;
-public:
-  void insert( vpForwardProjection &fp) ;
-
-public:
-/*
-  void display(const vpHomogeneousMatrix &cextMo,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor color,
-	       const int select) ;
-*/
-  void display(vpImage<unsigned char> &I,
-	       const vpHomogeneousMatrix &cextMo,
-	       const vpHomogeneousMatrix &cMo,
-	       const vpCameraParameters &cam,
-	       const vpColor color,
-	       const bool &displayTraj = false);
-
-
-private:
   vpPoint o ;
   vpPoint x ;
   vpPoint y ;
   vpPoint z ;
   vpMatrix traj;
-
-public:
-  void displayCamera(vpImage<unsigned char> &I,
-		     const vpHomogeneousMatrix &cextMo,
-		     const vpHomogeneousMatrix &cMo,
-		     const vpCameraParameters &cam) ;
 } ;
 
 
