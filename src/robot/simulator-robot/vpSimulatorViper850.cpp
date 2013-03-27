@@ -543,11 +543,14 @@ vpSimulatorViper850::updateArticularPosition()
 }
 
 /*!
-  Compute the pose between the robot reference frame and the frames used used to compute the Denavit-Hartenberg representation. The last element of the table corresponds to the pose between the reference frame and the camera frame.
+  Compute the pose between the robot reference frame and the frames used to compute the Denavit-Hartenberg
+  representation. The last element of the table corresponds to the pose between the reference frame and
+  the camera frame.
   
-  To compute the diferent homogeneous matrices, this function needs the articular coordinates as input.
+  To compute the different homogeneous matrices, this function needs the articular coordinates as input.
   
-  Finally the output is a table of 8 elements : \f$ fM1 \f$,\f$ fM2 \f$,\f$ fM3 \f$,\f$ fM4 \f$,\f$ fM5 \f$,\f$ fM6 = fMw \f$,\f$ fM7 = fMe \f$ and \f$ fMc \f$ - where w is for wrist and e for effector-.
+  Finally the output is a table of 8 elements : \f$ fM1 \f$,\f$ fM2 \f$,\f$ fM3 \f$,\f$ fM4 \f$,\f$ fM5 \f$,
+  \f$ fM6 = fMw \f$,\f$ fM7 = fMe \f$ and \f$ fMc \f$ - where w is for wrist and e for effector-.
 */
 void 
 vpSimulatorViper850::compute_fMi()
