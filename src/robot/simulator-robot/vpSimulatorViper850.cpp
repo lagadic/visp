@@ -2317,9 +2317,15 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
 }
 
 /*!
-  This method enables to initialise the articular coordinates of the robot in order to position the camera relative to the object.
+  This method enables to initialise the joint coordinates of the robot in order to
+  position the camera relative to the object.
   
-  Before using this method it is advised to set the position of the object thanks to the set_fMo() method.
+  Before using this method it is advised to set the position of the object thanks
+  to the set_fMo() method.
+
+  In other terms, set the world to camera transformation
+  \f${^f}{\bf M}_c = {^f}{\bf M}_o \; ({^c}{\bf M}{_o})^{-1}\f$, and from the inverse kinematics
+  set the joint positions \f${\bf q}\f$ that corresponds to the \f${^f}{\bf M}_c\f$ transformation.
   
   \param cMo : the desired pose of the camera.
 */
@@ -2339,15 +2345,21 @@ vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   if (nbSol == 0)
     vpERROR_TRACE ("Positionning error. Position unreachable");
   
+  std::cout << "articularCoordinates: " << articularCoordinates.t() << std::endl;
   set_artCoord(articularCoordinates);
   
   compute_fMi();
 }
 
 /*!
-  This method enables to initialise the pose between the object and the reference frame, in order to position the object relative to the camera.
+  This method enables to initialise the pose between the object and the reference frame,
+  in order to position the object relative to the camera.
   
   Before using this method it is advised to set the articular coordinates of the robot.
+
+  In other terms, set the world to object transformation
+  \f${^f}{\bf M}_o = {^f}{\bf M}_c \; {^c}{\bf M}_o\f$ where \f$ {^f}{\bf M}_c = f({\bf q})\f$
+  with \f${\bf q}\f$ the robot joint position
   
   \param cMo : the desired pose of the camera.
 */

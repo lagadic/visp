@@ -100,7 +100,7 @@ public:
   */
   inline    unsigned int  getNbPoint() const {return nbpt ;}     
   
-            unsigned int  getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCameraParameters &_cam);
+            unsigned int  getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCameraParameters &cam);
           
             vpPoint &     getPoint(const unsigned int _index);
   
