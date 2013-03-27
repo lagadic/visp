@@ -166,6 +166,7 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
     return true;
   } 
 
+  std::cout << "joint " << joint << " with val: " << vpMath::deg(q) << " not in limits: " << vpMath::deg(joint_min[joint]) << " " << vpMath::deg(joint_max[joint]) << std::endl;
   return false;
 }
 
@@ -251,7 +252,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   double pz = fMw[2][3];
 
   // Compute q1
-  double a_2 = px*px+py*py; 
+  double a_2 = px*px+py*py;
   //if (a_2 == 0) {// singularity
   if (std::fabs(a_2) <= std::numeric_limits<double>::epsilon()) {// singularity
     c1[0] = cos(q[0]);
@@ -273,50 +274,53 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
     if (convertJointPositionInLimits(0, q_sol[i][0], q1_mod) == true) {
       q_sol[i][0] = q1_mod;
       for(unsigned int j=1;j<4;j++) {
-	c1[i+j] = c1[i];
-	s1[i+j] = s1[i];
-	q_sol[i+j][0] = q_sol[i][0];
+        c1[i+j] = c1[i];
+        s1[i+j] = s1[i];
+        q_sol[i+j][0] = q_sol[i][0];
       }
     }
     else {
-      for(unsigned int j=1;j<4;j++) 
-	ok[i+j] = false;
+      for(unsigned int j=1;j<4;j++)
+        ok[i+j] = false;
     }
   }
-
-//   std::cout << "ok apres q1: ";
-//   for (unsigned int i=0; i< 8; i++)
-//     std::cout << ok[i] << " ";
-//   std::cout << std::endl;
 
   // Compute q3
   double K, q3_mod;
   for(unsigned int i=0; i<8; i+=4) {
     if(ok[i] == true) {
       K = (px*px+py*py+pz*pz+a1*a1-a2*a2-a3*a3+d1*d1-d4*d4
-	   - 2*(a1*c1[i]*px + a1*s1[i]*py + d1*pz)) / (2*a2);
-      q_sol[i][2]   = atan2(a3, d4) + atan2(K, sqrt(d4*d4+a3*a3-K*K));
-      q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4*d4+a3*a3-K*K));
+           - 2*(a1*c1[i]*px + a1*s1[i]*py + d1*pz)) / (2*a2);
+      double d4_a3_K = d4*d4+a3*a3-K*K;
 
       for (unsigned int j=0; j<4; j+=2) {
-	if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
-	  for(unsigned int k=0; k<2; k++) {
-	    q_sol[i+j+k][2] = q3_mod;
-	    c3[i+j+k] = cos(q3_mod);
-	    s3[i+j+k] = sin(q3_mod);
-	  }
-	}
-	else {
-	  for(unsigned int k=0; k<2; k++) 
-	    ok[i+j+k] = false;
-	}
+        if (d4_a3_K < 0) {
+          for(unsigned int k=0; k<2; k++)
+            ok[i+j+k] = false;
+          break;
+        }
+
+        q_sol[i][2]   = atan2(a3, d4) + atan2(K,  sqrt(d4_a3_K));
+        q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4_a3_K));
+
+        if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
+          for(unsigned int k=0; k<2; k++) {
+            q_sol[i+j+k][2] = q3_mod;
+            c3[i+j+k] = cos(q3_mod);
+            s3[i+j+k] = sin(q3_mod);
+          }
+        }
+        else {
+          for(unsigned int k=0; k<2; k++)
+            ok[i+j+k] = false;
+        }
       }
     }
   }
-//   std::cout << "ok apres q3: ";
-//   for (unsigned int i=0; i< 8; i++)
-//     std::cout << ok[i] << " ";
-//   std::cout << std::endl;
+  //   std::cout << "ok apres q3: ";
+  //   for (unsigned int i=0; i< 8; i++)
+  //     std::cout << ok[i] << " ";
+  //   std::cout << std::endl;
 
   // Compute q2
   double q23[8], q2_mod;
@@ -324,113 +328,113 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
     if (ok[i] == true) {
       // Compute q23 = q2+q3
       c23[i] = (-(a3-a2*c3[i])*(c1[i]*px+s1[i]*py-a1)-(d1-pz)*(d4+a2*s3[i]))
-	/ ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
+          / ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
       s23[i] = ((d4+a2*s3[i])*(c1[i]*px+s1[i]*py-a1)-(d1-pz)*(a3-a2*c3[i]))
-	/ ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
+          / ( (c1[i]*px+s1[i]*py-a1)*(c1[i]*px+s1[i]*py-a1) +(d1-pz)*(d1-pz) );
       q23[i] = atan2(s23[i],c23[i]);
       //std::cout << i << " c23 = " << c23[i] << " s23 = " << s23[i] << std::endl;
       // q2 = q23 - q3
       q_sol[i][1] = q23[i] - q_sol[i][2];
 
       if (convertJointPositionInLimits(1, q_sol[i][1], q2_mod) == true) {
-	for(unsigned int j=0; j<2; j++) {
-	  q_sol[i+j][1] = q2_mod;
-	  c23[i+j] = c23[i];
-	  s23[i+j] = s23[i];
-	}
+        for(unsigned int j=0; j<2; j++) {
+          q_sol[i+j][1] = q2_mod;
+          c23[i+j] = c23[i];
+          s23[i+j] = s23[i];
+        }
       }
       else {
-	for(unsigned int j=0; j<2; j++)
-	  ok[i+j] = false;
+        for(unsigned int j=0; j<2; j++)
+          ok[i+j] = false;
       }
     }
   }
-//   std::cout << "ok apres q2: ";
-//   for (unsigned int i=0; i< 8; i++)
-//     std::cout << ok[i] << " ";
-//   std::cout << std::endl;
+  //   std::cout << "ok apres q2: ";
+  //   for (unsigned int i=0; i< 8; i++)
+  //     std::cout << ok[i] << " ";
+  //   std::cout << std::endl;
 
   // Compute q4 as long as s5 != 0
   double r13 = fMw[0][2];
   double r23 = fMw[1][2];
   double r33 = fMw[2][2];
   double s4s5, c4s5, q4_mod, q5_mod;
-  for (unsigned int i=0; i<8; i+=2) { 
+  for (unsigned int i=0; i<8; i+=2) {
     if (ok[i] == true) {
       s4s5 = -s1[i]*r13+c1[i]*r23;
       c4s5 =  c1[i]*c23[i]*r13+s1[i]*c23[i]*r23-s23[i]*r33;
       if (fabs(s4s5) < vpMath::rad(0.5) && fabs(c4s5) < vpMath::rad(0.5)) {
-	// s5 = 0
-	c5[i] = c1[i]*s23[i]*r13+s1[i]*s23[i]*r23+c23[i]*r33;
-	//std::cout << "Singularity: s5 near 0: ";
-	if (c5[i] > 0.)
-	  q_sol[i][4] = 0.0;
-	else 
-	  q_sol[i][4] = M_PI;
-	
-	if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod) == true) {
-	  for(unsigned int j=0; j<2; j++) {
-	    q_sol[i+j][3] = q[3]; // keep current q4
-	    q_sol[i+j][4] = q5_mod;
-	    c4[i] = cos(q_sol[i+j][3]);
-	    s4[i] = sin(q_sol[i+j][3]);
-	  }
-	}
-	else {
-	  for(unsigned int j=0; j<2; j++)
-	    ok[i+j] = false;
-	}
+        // s5 = 0
+        c5[i] = c1[i]*s23[i]*r13+s1[i]*s23[i]*r23+c23[i]*r33;
+        //std::cout << "Singularity: s5 near 0: ";
+        if (c5[i] > 0.)
+          q_sol[i][4] = 0.0;
+        else
+          q_sol[i][4] = M_PI;
+
+        if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod) == true) {
+          for(unsigned int j=0; j<2; j++) {
+            q_sol[i+j][3] = q[3]; // keep current q4
+            q_sol[i+j][4] = q5_mod;
+            c4[i] = cos(q_sol[i+j][3]);
+            s4[i] = sin(q_sol[i+j][3]);
+          }
+        }
+        else {
+          for(unsigned int j=0; j<2; j++)
+            ok[i+j] = false;
+        }
       }
       else {
-	// s5 != 0
-	//if (c4s5 == 0) {
-	if (std::fabs(c4s5) <= std::numeric_limits<double>::epsilon()) {
-	  // c4 = 0
-	  //  vpTRACE("c4 = 0");
-	  // q_sol[i][3] = q[3]; // keep current position
-	  q_sol[i][3] = atan2(s4s5, c4s5);
-	}
-	else {
-	  q_sol[i][3] = atan2(s4s5, c4s5);
-	}
-	if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod) == true) {
-	  q_sol[i][3] = q4_mod;
-	  c4[i] = cos(q4_mod);
-	  s4[i] = sin(q4_mod);
-	}
-	else {
-	  ok[i] = false;
-	}
-	if (q_sol[i][3] > 0.) 
-	  q_sol[i+1][3] = q_sol[i][3] + M_PI;
-	else
-	  q_sol[i+1][3] = q_sol[i][3] - M_PI;
-	if (convertJointPositionInLimits(3, q_sol[i+1][3], q4_mod) == true) {
-	  q_sol[i+1][3] = q4_mod;
-	  c4[i+1] = cos(q4_mod);
-	  s4[i+1] = sin(q4_mod);
-	}
-	else {
-	  ok[i+1] = false;
-	}
-	
-	// Compute q5
-	for (unsigned int j=0; j<2; j++) { 
-	  if (ok[i+j] == true) {
-	    c5[i+j] = c1[i+j]*s23[i+j]*r13+s1[i+j]*s23[i+j]*r23+c23[i+j]*r33;
-	    s5[i+j] = (c1[i+j]*c23[i+j]*c4[i+j]-s1[i+j]*s4[i+j])*r13
-	      +(s1[i+j]*c23[i+j]*c4[i+j]+c1[i+j]*s4[i+j])*r23-s23[i+j]*c4[i+j]*r33;
-	    
-	    q_sol[i+j][4] = atan2(s5[i+j], c5[i+j]);
-	    if (convertJointPositionInLimits(4, q_sol[i+j][4], q5_mod) == true) {
-	      q_sol[i+j][4] = q5_mod;
-	    }
-	    else {
-	      
-	      ok[i+j] = false;
-	    }
-	  }
-	}
+        // s5 != 0
+        //if (c4s5 == 0) {
+        if (std::fabs(c4s5) <= std::numeric_limits<double>::epsilon()) {
+          // c4 = 0
+          //  vpTRACE("c4 = 0");
+          // q_sol[i][3] = q[3]; // keep current position
+          q_sol[i][3] = atan2(s4s5, c4s5);
+        }
+        else {
+          q_sol[i][3] = atan2(s4s5, c4s5);
+        }
+        if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod) == true) {
+          q_sol[i][3] = q4_mod;
+          c4[i] = cos(q4_mod);
+          s4[i] = sin(q4_mod);
+        }
+        else {
+          ok[i] = false;
+        }
+        if (q_sol[i][3] > 0.)
+          q_sol[i+1][3] = q_sol[i][3] + M_PI;
+        else
+          q_sol[i+1][3] = q_sol[i][3] - M_PI;
+        if (convertJointPositionInLimits(3, q_sol[i+1][3], q4_mod) == true) {
+          q_sol[i+1][3] = q4_mod;
+          c4[i+1] = cos(q4_mod);
+          s4[i+1] = sin(q4_mod);
+        }
+        else {
+          ok[i+1] = false;
+        }
+
+        // Compute q5
+        for (unsigned int j=0; j<2; j++) {
+          if (ok[i+j] == true) {
+            c5[i+j] = c1[i+j]*s23[i+j]*r13+s1[i+j]*s23[i+j]*r23+c23[i+j]*r33;
+            s5[i+j] = (c1[i+j]*c23[i+j]*c4[i+j]-s1[i+j]*s4[i+j])*r13
+                +(s1[i+j]*c23[i+j]*c4[i+j]+c1[i+j]*s4[i+j])*r23-s23[i+j]*c4[i+j]*r33;
+
+            q_sol[i+j][4] = atan2(s5[i+j], c5[i+j]);
+            if (convertJointPositionInLimits(4, q_sol[i+j][4], q5_mod) == true) {
+              q_sol[i+j][4] = q5_mod;
+            }
+            else {
+
+              ok[i+j] = false;
+            }
+          }
+        }
       }
     }
   }
@@ -441,14 +445,14 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   double r22 = fMw[1][1];
   double r32 = fMw[2][1];
   double q6_mod;
-  for (unsigned int i=0; i<8; i++) { 
-    c6[i] = -(c1[i]*c23[i]*s4[i]+s1[i]*c4[i])*r12 
-      +(c1[i]*c4[i]-s1[i]*c23[i]*s4[i])*r22+s23[i]*s4[i]*r32;
+  for (unsigned int i=0; i<8; i++) {
+    c6[i] = -(c1[i]*c23[i]*s4[i]+s1[i]*c4[i])*r12
+        +(c1[i]*c4[i]-s1[i]*c23[i]*s4[i])*r22+s23[i]*s4[i]*r32;
     s6[i] = -(c1[i]*c23[i]*c4[i]*c5[i]-c1[i]*s23[i]*s5[i]
-	      -s1[i]*s4[i]*c5[i])*r12
-      -(s1[i]*c23[i]*c4[i]*c5[i]-s1[i]*s23[i]*s5[i]+c1[i]*s4[i]*c5[i])*r22
-      +(c23[i]*s5[i]+s23[i]*c4[i]*c5[i])*r32;
- 
+              -s1[i]*s4[i]*c5[i])*r12
+        -(s1[i]*c23[i]*c4[i]*c5[i]-s1[i]*s23[i]*s5[i]+c1[i]*s4[i]*c5[i])*r22
+        +(c23[i]*s5[i]+s23[i]*c4[i]*c5[i])*r32;
+
     q_sol[i][5] = atan2(s6[i], c6[i]);
     if (convertJointPositionInLimits(5, q_sol[i][5], q6_mod) == true) {
       q_sol[i][5] = q6_mod;
@@ -469,22 +473,22 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
       //      dist[i] = vpColVector::distance(q, q_sol[i]);
       vpColVector weight(6);
       weight = 1;
-      weight[0] = 8; 
-      weight[1] = weight[2] = 4; 
+      weight[0] = 8;
+      weight[1] = weight[2] = 4;
       dist[i] = 0;
       for (unsigned int j=0; j< 6; j++) {
-	double rought_dist = q[j]- q_sol[i][j];
-	double modulo_dist = rought_dist; 
-	if (rought_dist > 0) {
-	  if (fabs(rought_dist - 2*M_PI) < fabs(rought_dist))
-	    modulo_dist = rought_dist - 2*M_PI;
-	}
-	else {
-	  if (fabs(rought_dist + 2*M_PI) < fabs(rought_dist))
-	    modulo_dist = rought_dist + 2*M_PI;
-	}
-	//std::cout << "dist " << i << ": " << rought_dist << " modulo: " << modulo_dist << std::endl;
-	dist[i] += weight[j]*vpMath::sqr(modulo_dist);
+        double rought_dist = q[j]- q_sol[i][j];
+        double modulo_dist = rought_dist;
+        if (rought_dist > 0) {
+          if (fabs(rought_dist - 2*M_PI) < fabs(rought_dist))
+            modulo_dist = rought_dist - 2*M_PI;
+        }
+        else {
+          if (fabs(rought_dist + 2*M_PI) < fabs(rought_dist))
+            modulo_dist = rought_dist + 2*M_PI;
+        }
+        //std::cout << "dist " << i << ": " << rought_dist << " modulo: " << modulo_dist << std::endl;
+        dist[i] += weight[j]*vpMath::sqr(modulo_dist);
       }
     }
     //  std::cout << "sol " << i << " [" << ok[i] << "] dist: " << dist[i] << " q: " << q_sol[i].t() << std::endl;
@@ -492,14 +496,14 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   //std::cout << "dist: " << dist.t() << std::endl;
   if (nbsol) {
     for (unsigned int i=0; i<8; i++) {
-      if (ok[i] == true) 
-	if (dist[i] < dist[sol]) sol = i;
+      if (ok[i] == true)
+        if (dist[i] < dist[sol]) sol = i;
     }
     // Update the inverse kinematics solution
     q = q_sol[sol];
 
-//     std::cout << "Nearest solution (" << sol << ") with distance (" 
-// 	      << dist[sol] << "): " << q_sol[sol].t() << std::endl;
+    //     std::cout << "Nearest solution (" << sol << ") with distance ("
+    // 	      << dist[sol] << "): " << q_sol[sol].t() << std::endl;
   }
   return nbsol;
 
