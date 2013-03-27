@@ -170,7 +170,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
   \return Return true if the polygon is visible.
 */
 bool 
-vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
   if(nbpt <= 2){
@@ -221,11 +221,20 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha)
     return true;
   }
 
+  if(modulo && (M_PI - angle) < alpha){
+    isvisible = true;
+    isappearing = false;
+    return true;
+  }
+
   if (angle < alpha+vpMath::rad(1) ){
-      isappearing = true;
+    isappearing = true;
+  }
+  else if (modulo && (M_PI - angle) < alpha+vpMath::rad(1) ){
+    isappearing = true;
   }
   else {
-      isappearing = false;
+    isappearing = false;
   }
   isvisible = false ;
   return false ;

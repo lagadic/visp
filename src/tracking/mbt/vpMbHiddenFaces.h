@@ -345,7 +345,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
       if(!testDisappear){
         if(useOgre)
 #ifdef VISP_HAVE_OGRE
-          testDisappear = ((!Lpol[i]->isVisible(_cMo, angleDisappears)) || !isVisibleOgre(cameraPos,i));
+          testDisappear = ((!Lpol[i]->isVisible(_cMo, angleDisappears, true)) || !isVisibleOgre(cameraPos,i));
 #else
           testDisappear = (!Lpol[i]->isVisible(_cMo, angleDisappears));
 #endif
@@ -374,7 +374,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
       if(testAppear){
         if(useOgre)
 #ifdef VISP_HAVE_OGRE
-          testAppear = ((Lpol[i]->isVisible(_cMo, angleAppears)) && isVisibleOgre(cameraPos,i));
+          testAppear = ((Lpol[i]->isVisible(_cMo, angleAppears, true)) && isVisibleOgre(cameraPos,i));
 #else
           testAppear = (Lpol[i]->isVisible(_cMo, angleAppears));
 #endif
@@ -462,7 +462,7 @@ vpMbHiddenFaces<PolygonType>::initOgre(vpCameraParameters _cam)
 {
   ogreInitialised = true;
   ogre->setCameraParameters(_cam);
-  ogre->init(ogreBackground, false, true);  
+  ogre->init(ogreBackground, false, true);
   
   for(unsigned int n = 0 ; n < Lpol.size(); n++){
     Ogre::ManualObject* manual = ogre->getSceneManager()->createManualObject(Ogre::StringConverter::toString(n));
@@ -584,31 +584,35 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
   
   bool visible = false;
   double distance, distancePrev;
-  if(it != result.end()){    
+  if(it != result.end()){
     if(it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) //Test if the ogreBackground is intersect in first
       it++;
-    
+
     if(it != result.end()){
       distance = it->distance;
       distancePrev = distance;
       if(it->movable->getName() == Ogre::StringConverter::toString(index)){
         visible = true;
       }
-    }
-    
-    if(!visible && it != result.end()){
-      it++;
-      while(!visible && it != result.end() && distance == distancePrev){
-        distancePrev = distance;
-        distance = it->distance;
-        if(it->movable->getName() == Ogre::StringConverter::toString(index)){
-          visible = true;
-        }
+      else{
         it++;
+        while(!visible && it != result.end()){
+          distance = it->distance;
+          if(distance == distancePrev){
+            if(it->movable->getName() == Ogre::StringConverter::toString(index)){
+              visible = true;
+              break;
+            }
+            it++;
+            distancePrev = distance;
+          }
+          else
+            break;
+        }
       }
     }
   }
-  
+
   if(visible){
     lOgrePolygons[index]->setVisible(true);
     Lpol[index]->isvisible = true;

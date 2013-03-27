@@ -108,7 +108,7 @@ public:
 
   inline    bool          isAppearing() const {return isappearing;}
             bool          isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
-  virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha) ;
+  virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false) ;
             bool          isVisible() const {return isvisible;}
   
   /*!

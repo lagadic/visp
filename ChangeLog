@@ -12,6 +12,8 @@ ViSP 2.7.1 (under development)
     . vpV4l2Grabber does no more require a call to open(I).
     . An exceptions is throwned when moving-edges are not initialized
       (vpMeTracker, vpMeLine, vpMeEllipse)
+    . In model-based trackers, improve face visibility test using Ogre ray 
+      tracing when faces are concave or not oriented counter clockwise. 
   - Examples
   - Bug fixed
     . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
