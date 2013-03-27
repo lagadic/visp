@@ -166,7 +166,6 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
     return true;
   } 
 
-  std::cout << "joint " << joint << " with val: " << vpMath::deg(q) << " not in limits: " << vpMath::deg(joint_min[joint]) << " " << vpMath::deg(joint_max[joint]) << std::endl;
   return false;
 }
 
@@ -293,26 +292,26 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
            - 2*(a1*c1[i]*px + a1*s1[i]*py + d1*pz)) / (2*a2);
       double d4_a3_K = d4*d4+a3*a3-K*K;
 
+      q_sol[i][2]   = atan2(a3, d4) + atan2(K,  sqrt(d4_a3_K));
+      q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4_a3_K));
+
       for (unsigned int j=0; j<4; j+=2) {
         if (d4_a3_K < 0) {
           for(unsigned int k=0; k<2; k++)
             ok[i+j+k] = false;
-          break;
-        }
-
-        q_sol[i][2]   = atan2(a3, d4) + atan2(K,  sqrt(d4_a3_K));
-        q_sol[i+2][2] = atan2(a3, d4) + atan2(K, -sqrt(d4_a3_K));
-
-        if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
-          for(unsigned int k=0; k<2; k++) {
-            q_sol[i+j+k][2] = q3_mod;
-            c3[i+j+k] = cos(q3_mod);
-            s3[i+j+k] = sin(q3_mod);
-          }
         }
         else {
-          for(unsigned int k=0; k<2; k++)
-            ok[i+j+k] = false;
+          if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
+            for(unsigned int k=0; k<2; k++) {
+              q_sol[i+j+k][2] = q3_mod;
+              c3[i+j+k] = cos(q3_mod);
+              s3[i+j+k] = sin(q3_mod);
+            }
+          }
+          else {
+            for(unsigned int k=0; k<2; k++)
+              ok[i+j+k] = false;
+          }
         }
       }
     }
