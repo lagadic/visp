@@ -172,6 +172,8 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
     //! Flag used to specify to the thread managing the robot displacements that the setVelocity() method has been called.
     bool setVelocityCalled;
+
+    bool verbose_;
     
   public:
     vpRobotWireFrameSimulator();
@@ -301,6 +303,14 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*! Set the parameter which enable or disable the singularity mangement */
     void setSingularityManagement (const bool sm) {singularityManagement = sm;}
               
+    /*!
+      Activates extra printings when the robot reaches joint limits...
+      */
+    void setVerbose(bool verbose)
+    {
+      this->verbose_ = verbose;
+    }
+
     /*!
       Set the pose between the object and the fixed world frame.
       

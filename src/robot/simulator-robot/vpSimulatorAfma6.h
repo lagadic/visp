@@ -217,7 +217,7 @@ public:
     void get_fJe(vpMatrix &fJe);
 
     void init (vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraParametersProjType projModel=vpCameraParameters::perspectiveProjWithoutDistortion);
-    void initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo);
+    bool initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo);
     void initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo);
 
     void move(const char *filename) ;

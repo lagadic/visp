@@ -70,11 +70,15 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator():vpWireFrameSimulator(), v
   constantSamplingTimeMode = false;
   setVelocityCalled = false;
   
+  verbose_ = false;
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);
 }
 
-
+/*!
+  Default constructor.
+  \param display : When true, enables the display of the external view.
+  */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display) : vpWireFrameSimulator(), vpRobotSimulator()
 {
   setSamplingTime(0.010);

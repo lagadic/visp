@@ -100,8 +100,11 @@ vpSimulatorAfma6::vpSimulatorAfma6():vpRobotWireFrameSimulator(), vpAfma6()
 
 /*!
   Constructor used to enable or disable the external view of the robot.
+
+  \param display : When true, enables the display of the external view.
+
 */
-vpSimulatorAfma6::vpSimulatorAfma6(bool disp):vpRobotWireFrameSimulator(disp)
+vpSimulatorAfma6::vpSimulatorAfma6(bool display):vpRobotWireFrameSimulator(display)
 {
   init();
   initDisplay();
@@ -496,8 +499,15 @@ vpSimulatorAfma6::updateArticularPosition()
       if (jointLimit)
       {
         double art = articularCoordinates[jointLimitArt-1] + ellapsedTime*articularVelocities[jointLimitArt-1];
-        if (art <= _joint_min[jointLimitArt-1] || art >= _joint_max[jointLimitArt-1])
+        if (art <= _joint_min[jointLimitArt-1] || art >= _joint_max[jointLimitArt-1]) {
+          if (verbose_) {
+            std::cout << "Joint " << jointLimitArt-1
+                    << " reaches a limit: " << vpMath::deg(_joint_min[jointLimitArt-1]) << " < "
+                    << vpMath::deg(art) << " < " << vpMath::deg(_joint_max[jointLimitArt-1]) << std::endl;
+          }
+
           articularVelocities = 0.0;
+        }
         else
           jointLimit = false;
       }
@@ -2336,11 +2346,15 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
   set the joint positions \f${\bf q}\f$ that corresponds to the \f${^f}{\bf M}_c\f$ transformation.
 
   \param cMo : the desired pose of the camera.
+
+  \return false if the robot kinematics is not able to reach the cMo position.
+
 */
-void 
+bool
 vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
 {
   vpColVector stop(6);
+  bool status = true;
   stop = 0;
   set_artVel(stop);
   set_velocity(stop);
@@ -2350,12 +2364,19 @@ vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   vpColVector articularCoordinates = get_artCoord();
   int nbSol = getInverseKinematics(fMc, articularCoordinates);
   
-  if (nbSol == 0)
+  if (nbSol == 0) {
+    status = false;
     vpERROR_TRACE ("Positionning error. Position unreachable");
+  }
   
+  if (verbose_)
+    std::cout << "Used joint coordinates (rad): " << articularCoordinates.t() << std::endl;
+
   set_artCoord(articularCoordinates);
   
   compute_fMi();
+
+  return status;
 }
 
 /*!
