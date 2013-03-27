@@ -231,7 +231,7 @@ vpKeyPointSurf::~vpKeyPointSurf()
   Build the list of reference points. The computation of the points is
   made all over the image I.
 
-  \param I : The gray scaled image where the refrence points are computed.
+  \param I : The gray scaled image where the reference points are computed.
 
   \return the number of reference points.
 */
@@ -282,7 +282,7 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
   by its top left corner, its height and its width. The parameters of
   this rectangle must be given in pixel.
 
-  \param I : The gray scaled image where the refrence points are computed.
+  \param I : The gray scaled image where the reference points are computed.
 
   \param iP : The top left corner of the rectangle.
 
@@ -330,7 +330,7 @@ unsigned int  vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I,
   made only on a part of the image. This part is a rectangle. The
   parameters of this rectangle must be given in pixel.
 
-  \param I : The gray scaled image where the refrence points are computed.
+  \param I : The gray scaled image where the reference points are computed.
 
   \param rectangle : The rectangle which defines the interesting part
   of the image.
@@ -531,13 +531,13 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I,
 /*!
 
   This function displays the matched reference points and the matched
-  points computed in the current image. The refrence points are
+  points computed in the current image. The reference points are
   displayed in the image Ireference and the matched points coming from
   the current image are displayed in the image Icurrent. It is
   possible to set Ireference and Icurrent with the same image when
   calling the method.
 
-  \param Ireference : The image where the matched refrence points are
+  \param Ireference : The image where the matched reference points are
   displayed.
 
   \param Icurrent : The image where the matched points computed in the
@@ -695,7 +695,7 @@ float* vpKeyPointSurf::getDescriptorReferencePoint (const int index)
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+    throw(vpException(vpException::fatalError,"Index of the reference point out of range"));
   }
 
 	float* descriptor = NULL;
@@ -723,7 +723,7 @@ int vpKeyPointSurf::getLaplacianReferencePoint (const int index)
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+    throw(vpException(vpException::fatalError,"Index of the reference point out of range"));
   }
 
 	CvSeqReader reader;
@@ -754,7 +754,7 @@ void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& siz
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0){
     vpTRACE("Index of the reference point out of range");
-    throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+    throw(vpException(vpException::fatalError,"Index of the reference point out of range"));
   }
 
   CvSeqReader reader;

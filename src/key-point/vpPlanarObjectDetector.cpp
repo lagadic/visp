@@ -420,7 +420,7 @@ vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts)
   possible to set Ireference and Icurrent with the same image when
   calling the method.
 
-  \param Iref : The image where the matched refrence points are
+  \param Iref : The image where the matched reference points are
   displayed.
 
   \param Icurrent : The image where the matched points computed in the

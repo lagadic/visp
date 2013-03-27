@@ -2353,7 +2353,7 @@ vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
 }
 
 /*!
-  This method enables to initialise the pose between the object and the refrence frame, in order to position the object relative to the camera.
+  This method enables to initialise the pose between the object and the reference frame, in order to position the object relative to the camera.
   
   Before using this method it is advised to set the articular coordinates of the robot.
   

@@ -113,7 +113,7 @@ int main()
   fern.matchPoint(Icurrent);
 
   //Display the matched points
-  fern.display(Irefrence, Icurrent);
+  fern.display(Ireference, Icurrent);
 
   return (0);
 }
@@ -139,7 +139,7 @@ int main()
   vpImage<unsigned char> Icurrent;
   vpFernClassifier fern;
 
-  //First grab the reference image Irefrence
+  //First grab the reference image Ireference
 
   //Select a part of the image by clicking on two points which define a rectangle
   vpImagePoint corners[2];

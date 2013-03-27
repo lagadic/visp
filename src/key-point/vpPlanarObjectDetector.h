@@ -98,7 +98,7 @@ int main()
   vpImage<unsigned char> Icurrent;
   vpPlanarObjectDetector planar;
 
-  //First grab the reference image Irefrence
+  //First grab the reference image Ireference
 
   //Select a part of the image by clincking on two points which define a rectangle
   vpImagePoint corners[2];

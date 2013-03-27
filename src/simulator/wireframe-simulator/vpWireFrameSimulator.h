@@ -194,9 +194,9 @@ public:
   {
     THREE_PTS,
     CUBE,
-    PLATE,
-    SMALL_PLATE,
-    RECTANGLE,
+    PLATE, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.1,-0.1,0), (0.1,-0.1,0), (0.1,0.1,0), (0.1,0.1,0). Each point is represented by a circle with 2cm radius.
+    SMALL_PLATE, //!< 4 points at coordinates (-0.03,-0.03,0), (0.03,-0.03,0), (0.03,0.03,0), (0.03,0.03,0). Each point is represented by a circle with 1cm radius.
+    RECTANGLE, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.07,-0.05,0), (0.07,0.05,0), (0.07,-0.05,0), (-0.07,-0.05,0). Each point is represented by a circle with 2cm radius.
     SQUARE_10CM,
     DIAMOND,
     TRAPEZOID,

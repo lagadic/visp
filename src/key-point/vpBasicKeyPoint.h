@@ -127,7 +127,7 @@ class VISP_EXPORT vpBasicKeyPoint
      if (index >= referenceImagePointsList.size())
      {
        vpTRACE("Index of the reference point out of range");
-       throw(vpException(vpException::fatalError,"Index of the refrence point out of range"));
+       throw(vpException(vpException::fatalError,"Index of the reference point out of range"));
      }
 
      referencePoint.set_ij(referenceImagePointsList[index].get_i(), referenceImagePointsList[index].get_j());
@@ -227,7 +227,7 @@ class VISP_EXPORT vpBasicKeyPoint
 
   protected:
     /*!
-      List of the points which define the refrence.
+      List of the points which define the reference.
     */
     std::vector<vpImagePoint> referenceImagePointsList;
 

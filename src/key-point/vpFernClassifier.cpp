@@ -175,7 +175,7 @@ vpFernClassifier::train()
   \warning thie method can take up to several minutes depending on the 
   parameters of the classifier and on the size of the image.
 
-  \param _I : The gray scaled image where the refrence points are computed.
+  \param _I : The gray scaled image where the reference points are computed.
 
   \return the number of reference points.
 */
@@ -202,7 +202,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
   \warning the method can take up to several minutes depending on the 
   parameters of the classifier and on the size of the image.
 
-  \param _I : The gray scaled image where the refrence points are computed.
+  \param _I : The gray scaled image where the reference points are computed.
   \param _iP : The top left corner of the rectangle.
   \param _height : height of the rectangle (in pixel).
   \param _width : width of the rectangle (in pixel).
@@ -250,7 +250,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
   \warning the method can take up to several minutes depending on the 
   parameters of the classifier and on the size of the image.
 
-  \param _I : The gray scaled image where the refrence points are computed.
+  \param _I : The gray scaled image where the reference points are computed.
   \param _rectangle : The rectangle which defines the interesting part
   of the image.
 
@@ -413,7 +413,7 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
   possible to set Ireference and Icurrent with the same image when
   calling the method.
 
-  \param _Iref : The image where the matched refrence points are
+  \param _Iref : The image where the matched reference points are
   displayed.
 
   \param _Icurrent : The image where the matched points computed in the

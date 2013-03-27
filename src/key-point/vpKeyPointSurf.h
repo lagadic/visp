@@ -90,7 +90,7 @@
   2006.
 
   If you use this class the first things you have to do is to create
-  the reference thanks to a refrence image which contains the
+  the reference thanks to a reference image which contains the
   interesting object to detect. Then you have to grab other images
   containing the object. After calling the specific method to match
   points you can access to the lists of matched points thanks to the
@@ -108,14 +108,14 @@
 #if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Surf key-points only available since OpenCV-1.1.0
 int main()
 {
-  vpImage<unsigned char> Irefrence;
+  vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
-  //First grab the reference image Irefrence
+  //First grab the reference image Ireference
 
   //Build the reference SURF points.
-  surf.buildReference(Irefrence);
+  surf.buildReference(Ireference);
 
   //Then grab another image which represents the current image Icurrent
 
@@ -123,7 +123,7 @@ int main()
   surf.matchPoint(Icurrent);
 
   //Display the matched points
-  surf.display(Irefrence, Icurrent);
+  surf.display(Ireference, Icurrent);
 
   return (0);
 }
@@ -149,7 +149,7 @@ int main()
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
-  //First grab the reference image Irefrence
+  //First grab the reference image Ireference
 
   //Select a part of the image by clincking on two points which define a rectangle
   vpImagePoint corners[2];

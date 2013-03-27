@@ -232,7 +232,7 @@ main(int argc, const char ** argv)
   sim.setCameraPositionRelObj(cMo) ;
   sim.setDesiredCameraPosition(cdMo);
   /*
-    Set the main external camera's position relative to the world refrence frame.
+    Set the main external camera's position relative to the world reference frame.
     More information about the different frames are given in the html documentation.
   */
   vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0,0,4.5,vpMath::rad(0),vpMath::rad(-30),0));

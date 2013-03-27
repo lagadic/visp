@@ -1592,14 +1592,14 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpHomoge
   displayTrajectory(vpImage<unsigned char> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
   instead.
 
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
   
   The two lists must have the same size of homogeneous matrices must have the same size.
 
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
 */
 void
 vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix cMf)
@@ -1634,14 +1634,14 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, vpList
   displayTrajectory (vpImage<vpRGBa> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
   instead.
 
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
   
   The two lists must have the same size of homogeneous matrices must have the same size.
 
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
 */
 void
 vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix cMf)
@@ -1674,14 +1674,14 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, vpList<vpHomo
 
 
 /*!
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
 
   The two lists must have the same size of homogeneous matrices must have the same size.
 
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
 */
 void
 vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
@@ -1714,14 +1714,14 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, const 
 }
 
 /*!
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world refrence frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
+  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
 
   The two lists must have the same size of homogeneous matrices must have the same size.
 
   \param I : The image where the trajectory is displayed.
   \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
   \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world refrence frame.
+  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
 */
 void
 vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, const std::list<vpHomogeneousMatrix> &list_cMo,
