@@ -543,8 +543,8 @@ vpSimulatorAfma6::updateArticularPosition()
       if (displayAllowed)
       {
         vpDisplay::display(I);
-        vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none);
-        vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none);
+        vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none, thickness_);
+        vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none, thickness_);
       }
     
       if (displayType == MODEL_3D && displayAllowed)
@@ -570,7 +570,7 @@ vpSimulatorAfma6::updateArticularPosition()
         vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
         pt.track(getExternalCameraPosition ()*fMit[0]);
         vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
-        vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+        vpDisplay::displayLine(I,iP_1,iP,vpColor::green, thickness_);
         for (unsigned int k = 1; k < 7; k++)
         {
           pt.track(getExternalCameraPosition ()*fMit[k-1]);
@@ -579,9 +579,9 @@ vpSimulatorAfma6::updateArticularPosition()
           pt.track(getExternalCameraPosition ()*fMit[k]);
           vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
         
-          vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+          vpDisplay::displayLine(I,iP_1,iP,vpColor::green, thickness_);
         }
-        vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green);
+        vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green, thickness_);
       }
     
       vpDisplay::flush(I);
@@ -1308,7 +1308,7 @@ vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,const vpCo
       {
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
-        nbSol = getInverseKinematics(fMc2, qdes);
+        nbSol = getInverseKinematics(fMc2, qdes, true, verbose_);
         setVelocityCalled = true;
         if (nbSol > 0)
         {
@@ -1378,7 +1378,7 @@ vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,const vpCo
       {
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
-        nbSol = getInverseKinematics(fMc, qdes);
+        nbSol = getInverseKinematics(fMc, qdes, true, verbose_);
         setVelocityCalled = true;
         if (nbSol > 0)
         {
@@ -2362,7 +2362,7 @@ vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   fMc = fMo * cMo.inverse();
   
   vpColVector articularCoordinates = get_artCoord();
-  int nbSol = getInverseKinematics(fMc, articularCoordinates);
+  int nbSol = getInverseKinematics(fMc, articularCoordinates, true, verbose_);
   
   if (nbSol == 0) {
     status = false;

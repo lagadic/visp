@@ -54,7 +54,6 @@
 
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 
-
 /*!
   Basic constructor
 */
@@ -498,8 +497,8 @@ vpSimulatorViper850::updateArticularPosition()
       if (displayAllowed)
       {
         vpDisplay::display(I);
-        vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none);
-        vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none);
+        vpDisplay::displayFrame(I,getExternalCameraPosition (),cameraParam,0.2,vpColor::none, thickness_);
+        vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[7],cameraParam,0.1,vpColor::none, thickness_);
       }
       
       if (displayType == MODEL_3D && displayAllowed)
@@ -525,7 +524,7 @@ vpSimulatorViper850::updateArticularPosition()
         vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);
         pt.track(getExternalCameraPosition ()*fMit[0]);
         vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
-        vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+        vpDisplay::displayLine(I, iP_1, iP, vpColor::green, thickness_);
         for (int k = 1; k < 7; k++)
         {
           pt.track(getExternalCameraPosition ()*fMit[k-1]);
@@ -534,13 +533,12 @@ vpSimulatorViper850::updateArticularPosition()
           pt.track(getExternalCameraPosition ()*fMit[k]);
           vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP);
         
-          vpDisplay::displayLine(I,iP_1,iP,vpColor::green);
+          vpDisplay::displayLine(I,iP_1,iP,vpColor::green, thickness_);
         }
-        vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green);
+        vpDisplay::displayCamera(I,getExternalCameraPosition ()*fMit[7],cameraParam,0.1,vpColor::green, thickness_);
       }
       
-      vpDisplay::flush(I);
-      
+      vpDisplay::flush(I);      
       
       vpTime::wait( tcur, 1000 * getSamplingTime() );
       tcur_1 = tcur;
@@ -1277,7 +1275,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
       {
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
-        nbSol = getInverseKinematics(fMc2, qdes);
+        nbSol = getInverseKinematics(fMc2, qdes, verbose_);
         setVelocityCalled = true;
         if (nbSol > 0)
         {
@@ -1347,7 +1345,7 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
       {
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
-        nbSol = getInverseKinematics(fMc, qdes);
+        nbSol = getInverseKinematics(fMc, qdes, verbose_);
         if (nbSol > 0)
         {
           error = qdes - articularCoordinates;
@@ -2354,7 +2352,7 @@ vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   fMc = fMo * cMo.inverse();
   
   vpColVector articularCoordinates = get_artCoord();
-  unsigned int nbSol = getInverseKinematics(fMc, articularCoordinates);
+  unsigned int nbSol = getInverseKinematics(fMc, articularCoordinates, verbose_);
   
   if (nbSol == 0) {
     status = false;

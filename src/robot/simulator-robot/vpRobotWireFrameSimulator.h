@@ -282,6 +282,13 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     {
       this->vpWireFrameSimulator::setExternalCameraPosition(camMf);
     }
+    /*!
+      Specify the thickness of the graphics drawings.
+      */
+    void setGraphicsThickness(unsigned int thickness)
+    {
+      this->thickness_ = thickness;
+    }
 
     /*!
       Set the sampling time.
