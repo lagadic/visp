@@ -437,12 +437,12 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpImage<v
           Point2i *pt = listpoint2i;
           for (int i = 1; i < fp->vertex.nbr; i++)
           {
-            vpDisplay::displayLine(I,vpImagePoint((pt)->y,(pt)->x),vpImagePoint((pt+1)->y,(pt+1)->x),color,1);
+            vpDisplay::displayLine(I,vpImagePoint((pt)->y,(pt)->x),vpImagePoint((pt+1)->y,(pt+1)->x),color,thickness_);
             pt++;
           }
           if (fp->vertex.nbr > 2)
           {
-            vpDisplay::displayLine(I,vpImagePoint((listpoint2i)->y,(listpoint2i)->x),vpImagePoint((pt)->y,(pt)->x),color,1);
+            vpDisplay::displayLine(I,vpImagePoint((listpoint2i)->y,(listpoint2i)->x),vpImagePoint((pt)->y,(pt)->x),color,thickness_);
           }
         }
       }
@@ -486,12 +486,12 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpImage<u
           Point2i *pt = listpoint2i;
           for (int i = 1; i < fp->vertex.nbr; i++)
           {
-            vpDisplay::displayLine(I,vpImagePoint((pt)->y,(pt)->x),vpImagePoint((pt+1)->y,(pt+1)->x),color,1);
+            vpDisplay::displayLine(I,vpImagePoint((pt)->y,(pt)->x),vpImagePoint((pt+1)->y,(pt+1)->x),color,thickness_);
             pt++;
           }
           if (fp->vertex.nbr > 2)
           {
-            vpDisplay::displayLine(I,vpImagePoint((listpoint2i)->y,(listpoint2i)->x),vpImagePoint((pt)->y,(pt)->x),color,1);
+            vpDisplay::displayLine(I,vpImagePoint((listpoint2i)->y,(listpoint2i)->x),vpImagePoint((pt)->y,(pt)->x),color,thickness_);
           }
         }
       }
@@ -570,6 +570,8 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   
   displayImageSimulator = false;
   objectImage.clear();
+
+  thickness_ = 1;
 }
 
 
@@ -1197,7 +1199,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
         cameraTrajectory.push_back(iP);
         if (camTrajType == CT_LINE)
         {
-          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor, thickness_);
         }
         else if (camTrajType == CT_POINT)
           vpDisplay::displayPoint(I,iP,camTrajColor);
@@ -1216,7 +1218,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
       for(std::list<vpImagePoint>::const_iterator it=cameraTrajectory.begin(); it!=cameraTrajectory.end(); ++it){
         if (camTrajType == CT_LINE)
         {
-          if (iter != 0) vpDisplay::displayLine(I, iP_1, *it, camTrajColor);
+          if (iter != 0) vpDisplay::displayLine(I, iP_1, *it, camTrajColor, thickness_);
         }
         else if (camTrajType == CT_POINT)
           vpDisplay::displayPoint(I, *it, camTrajColor);
@@ -1481,7 +1483,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
         //vpDisplay::displayPoint(I,cameraTrajectory.value(),vpColor::green);
         if (camTrajType == CT_LINE)
         {
-          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor, thickness_);
         }
         else if (camTrajType == CT_POINT)
           vpDisplay::displayPoint(I,iP,camTrajColor);
@@ -1499,7 +1501,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
 
       for(std::list<vpImagePoint>::const_iterator it=cameraTrajectory.begin(); it!=cameraTrajectory.end(); ++it){
         if (camTrajType == CT_LINE){
-          if (iter != 0) vpDisplay::displayLine(I,iP_1,*it,camTrajColor);
+          if (iter != 0) vpDisplay::displayLine(I,iP_1,*it,camTrajColor, thickness_);
         }
         else if(camTrajType == CT_POINT)
           vpDisplay::displayPoint(I, *it, camTrajColor);
@@ -1618,7 +1620,7 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, vpList
     iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_fMo.value(), rotz * cMf);
     if (camTrajType == CT_LINE)
     {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor, thickness_);
     }
     else if (camTrajType == CT_POINT)
       vpDisplay::displayPoint(I,iP,camTrajColor);
@@ -1660,7 +1662,7 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, vpList<vpHomo
     iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_fMo.value(), rotz * cMf);
     if (camTrajType == CT_LINE)
     {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor,thickness_);
     }
     else if (camTrajType == CT_POINT)
       vpDisplay::displayPoint(I,iP,camTrajColor);
@@ -1702,7 +1704,7 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, const 
     iP = projectCameraTrajectory(I, rotz * (*it_cMo), (*it_fMo), rotz * cMf);
     if (camTrajType == CT_LINE)
     {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor,thickness_);
     }
     else if (camTrajType == CT_POINT)
       vpDisplay::displayPoint(I,iP,camTrajColor);
@@ -1742,7 +1744,7 @@ vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, const std::li
     iP = projectCameraTrajectory(I, rotz * (*it_cMo), (*it_fMo), rotz * cMf);
     if (camTrajType == CT_LINE)
     {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor);
+      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor,thickness_);
     }
     else if (camTrajType == CT_POINT)
       vpDisplay::displayPoint(I,iP,camTrajColor);

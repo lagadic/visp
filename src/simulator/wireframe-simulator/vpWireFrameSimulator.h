@@ -288,6 +288,8 @@ protected:
 
   vpHomogeneousMatrix rotz;
 
+  unsigned int thickness_;
+
 private:
   std::string scene_dir;
   
@@ -531,6 +533,14 @@ public:
     this->camMf2.buildFrom(0,0,T[2],0,0,0);
     f2Mf = camMf2.inverse()*this->camMf;
     extCamChanged = true;
+  }
+
+  /*!
+    Specify the thickness of the graphics drawings.
+    */
+  void setGraphicsThickness(unsigned int thickness)
+  {
+    this->thickness_ = thickness;
   }
 
   /*!
