@@ -242,7 +242,11 @@ class VISP_EXPORT vpFFMPEG
     bool getFrame(vpImage<vpRGBa> &I, unsigned int frameNumber);
     bool getFrame(vpImage<unsigned char> &I, unsigned int frameNumber);
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
     bool openEncoder(const char *filename, unsigned int width, unsigned int height, CodecID codec = CODEC_ID_MPEG1VIDEO);
+#else
+    bool openEncoder(const char *filename, unsigned int width, unsigned int height, AVCodecID codec = AV_CODEC_ID_MPEG1VIDEO);
+#endif
     bool saveFrame(vpImage<vpRGBa> &I);
     bool saveFrame(vpImage<unsigned char> &I);
     bool endWrite();

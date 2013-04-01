@@ -640,13 +640,19 @@ void vpFFMPEG::closeStream()
   \param height : Height of the image which will be saved.
   \param codec : Type of codec used to encode the video.
   
-  By default codec is set to CODEC_ID_MPEG1VIDEO. But you can use one of the CodecID proposed by ffmpeg such as : CODEC_ID_MPEG2VIDEO, CODEC_ID_MPEG2VIDEO_XVMC, CODEC_ID_MPEG4, CODEC_ID_H264, ... (More CodecID can be found in the ffmpeg documentation).
+  By default codec is set to AV_CODEC_ID_MPEG1VIDEO. But if installed, you can use one of the
+  AVCodecID proposed by ffmpeg such as : AV_CODEC_ID_MPEG2VIDEO, AV_CODEC_ID_MPEG2VIDEO_XVMC,
+  AV_CODEC_ID_MPEG4, AV_CODEC_ID_H264, ... (More AVCodecID can be found in the ffmpeg documentation).
   
   Of course to use the codec it must be installed on your computer.
   
   \return It returns true if the paramters could be initialized. Else it returns false.
 */
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
 bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned int height, CodecID codec)
+#else
+bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned int height, AVCodecID codec)
+#endif
 {
   av_register_all();
 

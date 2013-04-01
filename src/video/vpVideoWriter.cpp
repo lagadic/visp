@@ -59,7 +59,11 @@ vpVideoWriter::vpVideoWriter()
   
   #ifdef VISP_HAVE_FFMPEG
   ffmpeg = NULL;
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
   codec = CODEC_ID_MPEG1VIDEO;
+#else
+  codec = AV_CODEC_ID_MPEG1VIDEO;
+#endif
   bit_rate = 500000;
   #endif
 }
