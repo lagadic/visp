@@ -600,9 +600,10 @@ class VISP_EXPORT vpDisplay
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayCamera(const vpImage<unsigned char> &I,
-                           const vpHomogeneousMatrix &cMo,
-                           const vpCameraParameters &cam,
-                           double size, const vpColor &color)  ;
+                            const vpHomogeneousMatrix &cMo,
+                            const vpCameraParameters &cam,
+                            double size, const vpColor &color,
+                            unsigned int thickness)  ;
   static void displayCharString(const vpImage<unsigned char> &I,
 				const vpImagePoint &ip, const char *string,
 				const vpColor &color) ;
@@ -736,9 +737,10 @@ class VISP_EXPORT vpDisplay
 			   unsigned int w=4, unsigned int h=2,
 			   unsigned int thickness=1) ;
   static void displayCamera(const vpImage<vpRGBa> &I,
-                           const vpHomogeneousMatrix &cMo,
-                           const vpCameraParameters &cam,
-                           double size, const vpColor &color)  ;
+                            const vpHomogeneousMatrix &cMo,
+                            const vpCameraParameters &cam,
+                            double size, const vpColor &color,
+                            unsigned int thickness)  ;
   static void displayCharString(const vpImage<vpRGBa> &I,
 				const vpImagePoint &ip, const char *string,
 				const vpColor &color) ;

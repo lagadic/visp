@@ -492,14 +492,16 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
   \param size : Size of the object camera.
 
   \param color : Color used to display the camera in the image.
+
+  \param thickness : Thickness of the graphics drawing.
   
 */
 void
 vpDisplay::displayCamera ( const vpImage<unsigned char> &I,
-                          const vpHomogeneousMatrix &cMo,
-                          const vpCameraParameters &cam,
-                          double size, 
-			  const vpColor &color)
+                           const vpHomogeneousMatrix &cMo,
+                           const vpCameraParameters &cam,
+                           double size, const vpColor &color,
+                           unsigned int thickness)
 {
   // used by display
   double halfSize = size/2.0;
@@ -520,8 +522,8 @@ vpDisplay::displayCamera ( const vpImage<unsigned char> &I,
   {
     vpMeterPixelConversion::convertPoint ( cam, pt[i].p[0], pt[i].p[1], ip_1);
     vpMeterPixelConversion::convertPoint ( cam, pt[(i+1)%4].p[0], pt[(i+1)%4].p[1], ip);
-    vpDisplay::displayLine ( I, ip_1, ip, color, 1);
-    vpDisplay::displayLine ( I, ip0, ip_1, color, 1);
+    vpDisplay::displayLine ( I, ip_1, ip, color, thickness);
+    vpDisplay::displayLine ( I, ip0, ip_1, color, thickness);
   }
 }
 
@@ -542,13 +544,16 @@ vpDisplay::displayCamera ( const vpImage<unsigned char> &I,
   \param size : Size of the object camera.
 
   \param color : Color used to display the camera in the image.
+
+  \param thickness : Thickness of the graphics drawing.
   
 */
 void
 vpDisplay::displayCamera( const vpImage<vpRGBa> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, const vpColor &color)
+                          double size, const vpColor &color,
+                          unsigned int thickness)
 {
   // used by display
   double halfSize = size/2.0;
@@ -569,8 +574,8 @@ vpDisplay::displayCamera( const vpImage<vpRGBa> &I,
   {
     vpMeterPixelConversion::convertPoint ( cam, pt[i].p[0], pt[i].p[1], ip_1);
     vpMeterPixelConversion::convertPoint ( cam, pt[(i+1)%4].p[0], pt[(i+1)%4].p[1], ip);
-    vpDisplay::displayLine ( I, ip_1, ip, color, 1);
-    vpDisplay::displayLine ( I, ip0, ip_1, color, 1);
+    vpDisplay::displayLine ( I, ip_1, ip, color, thickness);
+    vpDisplay::displayLine ( I, ip0, ip_1, color, thickness);
   }
 }
 
