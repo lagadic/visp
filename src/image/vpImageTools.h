@@ -209,12 +209,12 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 
   Binarise an image.
 
-  - Pixels whose walues are less than \e threshold1 are set to \e value1
+  - Pixels whose values are less than \e threshold1 are set to \e value1
 
-  - Pixels whose walues are greater then or equal to \e threshold1 and
+  - Pixels whose values are greater then or equal to \e threshold1 and
     less then or equal to \e threshold2 are set to \e value2
 
-  - Pixels whose walues are greater than \e threshold2 are set to \e value3
+  - Pixels whose values are greater than \e threshold2 are set to \e value3
 
 */
 template<class Type>
