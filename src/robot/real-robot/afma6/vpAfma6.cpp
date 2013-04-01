@@ -500,6 +500,8 @@ vpAfma6::getForwardKinematics(const vpColVector & q)
   \param nearest : true to return the nearest solution to q. false to
   return the farest.
 
+  \param verbose : Activates printings when no solution is found.
+
   \return The number of solutions (1 or 2) of the inverse geometric
   model. O, if no solution can be found.
 
@@ -553,7 +555,7 @@ int main()
 */
 int
 vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
-                              vpColVector & q, const bool &nearest)
+                              vpColVector & q, const bool &nearest, const bool &verbose)
 {
   vpHomogeneousMatrix fMe;
   double q_[2][6],d[2],t;
@@ -649,8 +651,15 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
     ok[j] = 1;
     // test is position is reachable
     for (unsigned int i=0;i<6;i++) {
-      if (q_[j][i] < this->_joint_min[i] || q_[j][i] > this->_joint_max[i])
+      if (q_[j][i] < this->_joint_min[i] || q_[j][i] > this->_joint_max[i]) {
+        if (verbose) {
+          if (i < 3)
+            std::cout << "Joint " << i << " not in limits: " << this->_joint_min[i] << " < " << q_[j][i] << " < " << this->_joint_max[i] << std::endl;
+          else
+            std::cout << "Joint " << i << " not in limits: " << vpMath::deg(this->_joint_min[i]) << " < " << vpMath::deg(q_[j][i]) << " < " << vpMath::deg(this->_joint_max[i]) << std::endl;
+        }
         ok[j] = 0;
+      }
     }
   }
   if (ok[0] == 0)

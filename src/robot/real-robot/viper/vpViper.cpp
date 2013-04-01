@@ -148,7 +148,7 @@ vpViper::getForwardKinematics(const vpColVector & q)
   \return true if the joint position is in the joint limits. false otherwise. 
  */
 bool 
-vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod)
+vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose)
 {
   double eps = 0.01;
   if (q >= joint_min[joint]-eps && q <= joint_max[joint]+eps ) {
@@ -165,6 +165,12 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
   if (q_mod >= joint_min[joint]-eps && q_mod <= joint_max[joint]+eps ) {
     return true;
   } 
+
+  if (verbose) {
+    std::cout << "Joint " << joint << " not in limits: "
+              << this->joint_min[joint] << " < " << q << " < " << this->joint_max[joint] << std::endl;
+
+  }
 
   return false;
 }
@@ -184,6 +190,8 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
   current joint positions expressed in radians. In output, the
   solution of the inverse kinematics, ie. the joint positions
   corresponding to \f$^f{\bf M}_w \f$.
+
+  \return Add printings if no solution was found.
 
   \return The number of solutions (1 to 8) of the inverse geometric
   model. O, if no solution can be found.
@@ -218,7 +226,7 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
 
 */
 unsigned int
-vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q)
+vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose)
 {
   vpColVector q_sol[8];
 
@@ -270,7 +278,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   double q1_mod;
   for(unsigned int i=0;i<8;i+=4) {
     q_sol[i][0] = atan2(s1[i],c1[i]);
-    if (convertJointPositionInLimits(0, q_sol[i][0], q1_mod) == true) {
+    if (convertJointPositionInLimits(0, q_sol[i][0], q1_mod, verbose) == true) {
       q_sol[i][0] = q1_mod;
       for(unsigned int j=1;j<4;j++) {
         c1[i+j] = c1[i];
@@ -301,7 +309,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
             ok[i+j+k] = false;
         }
         else {
-          if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod) == true) {
+          if (convertJointPositionInLimits(2, q_sol[i+j][2], q3_mod, verbose) == true) {
             for(unsigned int k=0; k<2; k++) {
               q_sol[i+j+k][2] = q3_mod;
               c3[i+j+k] = cos(q3_mod);
@@ -335,7 +343,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
       // q2 = q23 - q3
       q_sol[i][1] = q23[i] - q_sol[i][2];
 
-      if (convertJointPositionInLimits(1, q_sol[i][1], q2_mod) == true) {
+      if (convertJointPositionInLimits(1, q_sol[i][1], q2_mod, verbose) == true) {
         for(unsigned int j=0; j<2; j++) {
           q_sol[i+j][1] = q2_mod;
           c23[i+j] = c23[i];
@@ -371,7 +379,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
         else
           q_sol[i][4] = M_PI;
 
-        if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod) == true) {
+        if (convertJointPositionInLimits(4, q_sol[i][4], q5_mod, verbose) == true) {
           for(unsigned int j=0; j<2; j++) {
             q_sol[i+j][3] = q[3]; // keep current q4
             q_sol[i+j][4] = q5_mod;
@@ -396,7 +404,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
         else {
           q_sol[i][3] = atan2(s4s5, c4s5);
         }
-        if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod) == true) {
+        if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod, verbose) == true) {
           q_sol[i][3] = q4_mod;
           c4[i] = cos(q4_mod);
           s4[i] = sin(q4_mod);
@@ -408,7 +416,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
           q_sol[i+1][3] = q_sol[i][3] + M_PI;
         else
           q_sol[i+1][3] = q_sol[i][3] - M_PI;
-        if (convertJointPositionInLimits(3, q_sol[i+1][3], q4_mod) == true) {
+        if (convertJointPositionInLimits(3, q_sol[i+1][3], q4_mod, verbose) == true) {
           q_sol[i+1][3] = q4_mod;
           c4[i+1] = cos(q4_mod);
           s4[i+1] = sin(q4_mod);
@@ -425,7 +433,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
                 +(s1[i+j]*c23[i+j]*c4[i+j]+c1[i+j]*s4[i+j])*r23-s23[i+j]*c4[i+j]*r33;
 
             q_sol[i+j][4] = atan2(s5[i+j], c5[i+j]);
-            if (convertJointPositionInLimits(4, q_sol[i+j][4], q5_mod) == true) {
+            if (convertJointPositionInLimits(4, q_sol[i+j][4], q5_mod, verbose) == true) {
               q_sol[i+j][4] = q5_mod;
             }
             else {
@@ -453,7 +461,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
         +(c23[i]*s5[i]+s23[i]*c4[i]*c5[i])*r32;
 
     q_sol[i][5] = atan2(s6[i], c6[i]);
-    if (convertJointPositionInLimits(5, q_sol[i][5], q6_mod) == true) {
+    if (convertJointPositionInLimits(5, q_sol[i][5], q6_mod, verbose) == true) {
       q_sol[i][5] = q6_mod;
     }
     else {
@@ -524,6 +532,8 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   solution of the inverse kinematics, ie. the joint positions
   corresponding to \f$^f{\bf M}_c \f$.
 
+  \return Add printings if no solution was found.
+
   \return The number of solutions (1 to 8) of the inverse geometric
   model. O, if no solution can be found.
 
@@ -559,7 +569,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
 
 */
 unsigned int
-vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
+vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose)
 {
   vpHomogeneousMatrix fMw;
   vpHomogeneousMatrix wMe;
@@ -568,7 +578,7 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q)
   this->get_eMc(eMc);
   fMw = fMc * eMc.inverse() * wMe.inverse();
   
-  return (getInverseKinematicsWrist(fMw,q));
+  return (getInverseKinematicsWrist(fMw, q, verbose));
 }
 
 /*!

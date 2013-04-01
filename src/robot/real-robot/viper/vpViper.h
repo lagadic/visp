@@ -115,8 +115,8 @@ class VISP_EXPORT vpViper
   virtual ~vpViper() {};
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
-  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q);
-  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q);
+  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose=false);
+  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose=false);
   vpHomogeneousMatrix get_fMc (const vpColVector & q);
   void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw);
   void get_wMe(vpHomogeneousMatrix & wMe);
@@ -138,7 +138,7 @@ class VISP_EXPORT vpViper
   double getCoupl56();
 
  private:
-  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod);
+  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false);
 
  public:
   static const unsigned int njoint; ///< Number of joint.

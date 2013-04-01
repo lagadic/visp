@@ -129,7 +129,7 @@ class VISP_EXPORT vpAfma6
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
   int getInverseKinematics(const vpHomogeneousMatrix & fMc,
-			   vpColVector & q, const bool &nearest=true);
+         vpColVector & q, const bool &nearest=true, const bool &verbose=false);
   vpHomogeneousMatrix get_fMc (const vpColVector & q);
   void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe);
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
