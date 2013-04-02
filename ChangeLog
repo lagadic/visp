@@ -12,8 +12,8 @@ ViSP 2.7.1 (under development)
     . vpV4l2Grabber does no more require a call to open(I).
     . An exceptions is throwned when moving-edges are not initialized
       (vpMeTracker, vpMeLine, vpMeEllipse)
-    . In model-based trackers, improve face visibility test using Ogre ray 
-      tracing when faces are concave or not oriented counter clockwise. 
+    . In model-based trackers, improve face visibility test using Ogre ray
+      tracing when faces are concave or not oriented counter clockwise.
   - Examples
   - Bug fixed
     . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
@@ -21,7 +21,9 @@ ViSP 2.7.1 (under development)
     . [15410] Robot wireframe simulator hangs
     . [15422] Build issues with ffmpeg 1.0.1 third party
     . [15475] Segfault in cv::Mat(BGR) to vpImage(grey) conversion
-    - [15522] Visibility tests issues in Model-Based Tracker using Ogre3D
+    . [15522] Visibility tests issues in Model-Based Tracker using Ogre3D
+    . [15566] Bad mask orientation when using model-based tracker with 
+      cylinders
 
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)

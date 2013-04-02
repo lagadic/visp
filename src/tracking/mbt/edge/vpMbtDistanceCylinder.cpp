@@ -301,6 +301,18 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
   
 	// Initialize the tracking
+  while (theta1 > M_PI) { theta1 -= M_PI ; }
+  while (theta1 < -M_PI) { theta1 += M_PI ; }
+
+  if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
+  else theta1 = M_PI/2.0 - theta1;
+
+  while (theta2 > M_PI) { theta2 -= M_PI ; }
+  while (theta2 < -M_PI) { theta2 += M_PI ; }
+
+  if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
+  else theta2 = M_PI/2.0 - theta2;
+
   try
   {
     meline1->initTracking(I,ip11,ip12,rho1,theta1);
@@ -415,6 +427,19 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
 
   if (ip21.get_j()<ip22.get_j()) { meline2->jmin = (int)ip21.get_j()-marge ; meline2->jmax = (int)ip22.get_j()+marge ; } else{ meline2->jmin = (int)ip22.get_j()-marge ; meline2->jmax = (int)ip21.get_j()+marge ; }
   if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
+
+  // Initialize the tracking
+  while (theta1 > M_PI) { theta1 -= M_PI ; }
+  while (theta1 < -M_PI) { theta1 += M_PI ; }
+
+  if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
+  else theta1 = M_PI/2.0 - theta1;
+
+  while (theta2 > M_PI) { theta2 -= M_PI ; }
+  while (theta2 < -M_PI) { theta2 += M_PI ; }
+
+  if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
+  else theta2 = M_PI/2.0 - theta2;
 
   try 
   {
