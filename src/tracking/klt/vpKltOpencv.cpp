@@ -445,7 +445,7 @@ void vpKltOpencv::track(const IplImage *I)
 }
 
 void vpKltOpencv::display(const vpImage<unsigned char> &I,
-			  vpColor color)
+                          vpColor color, unsigned int thickness)
 {
   if ((features == 0) || (I.bitmap==0) || (!initialized))
     {
@@ -453,7 +453,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
       throw(vpException(vpException::memoryAllocationError," Memory problem"));
     }
 
-  vpKltOpencv::display(I,features,featuresid,countFeatures,color);  
+  vpKltOpencv::display(I, features, featuresid, countFeatures, color, thickness);
 }
 
 /*!
@@ -591,7 +591,7 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
   {
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
-    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
+    vpDisplay::displayCross(I, ip, 10+thickness, color, thickness) ;
   }
 }
 /*!
@@ -616,7 +616,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa>& I,const CvPoint2D32f* features_
   {
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
-    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
+    vpDisplay::displayCross(I, ip, 10+thickness, color, thickness) ;
   }
 }
 
@@ -645,7 +645,7 @@ void vpKltOpencv::display(const vpImage<unsigned char>& I,const CvPoint2D32f* fe
   {
     ip.set_u( vpMath::round(features_list[i].x ) );
     ip.set_v( vpMath::round(features_list[i].y ) );
-    vpDisplay::displayCross(I, ip, 10, color, thickness) ;
+    vpDisplay::displayCross(I, ip, 10+thickness, color, thickness) ;
 
     char id[10];
     sprintf(id, "%ld", featuresid_list[i]);
