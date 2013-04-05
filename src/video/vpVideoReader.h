@@ -167,6 +167,14 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     void acquire(vpImage< unsigned char > &I);
     void close(){;}
 
+    /*!
+      \return true if the end of the sequence is reached.
+    */
+    inline bool end() {
+      if (frameCount > lastFrame )
+        return true;
+      return false;
+    }
     bool getFrame(vpImage<vpRGBa> &I, long frame);
     bool getFrame(vpImage<unsigned char> &I, long frame);
     /*!
