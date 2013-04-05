@@ -258,7 +258,9 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 
 
 /*!
-  Grabs the kth image in the stack of frames and increments the frame counter in order to grab the next image (k+1) during the next use of the method.
+  Grabs the current (k) image in the stack of frames and increments the frame counter
+  in order to grab the next image (k+1) during the next use of the method. If open()
+  was not called priviously, this method opens the video reader.
   
   This method enables to use the class as frame grabber.
   
@@ -266,10 +268,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 */
 void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 {
-  if (!isOpen)
-  {
-    vpERROR_TRACE("Use the open method before");
-    throw (vpException(vpException::notInitialized,"file not yet opened"));
+  if (!isOpen) {
+    open(I);
   }
   
   //getFrame(I,frameCount);
@@ -293,13 +293,10 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 */
 void vpVideoReader::acquire(vpImage< unsigned char > &I)
 {
-  if (!isOpen)
-  {
-    vpERROR_TRACE("Use the open method before");
-    throw (vpException(vpException::notInitialized,"file not yet opened"));
+  if (!isOpen) {
+    open(I);
   }
   
-  //getFrame(I,frameCount);
   if (imSequence != NULL)
     imSequence->acquire(I);
   #ifdef VISP_HAVE_FFMPEG
