@@ -202,6 +202,10 @@ class VISP_EXPORT vpKltOpencv
 
   void addFeature(const int &id, const float &x, const float &y);
 
+  //Draw the tracked features on the given image
+  void display(const vpImage<unsigned char> &I,
+               vpColor color = vpColor::red, unsigned int thickness=1);
+
   //! Get the block size
   int getBlockSize() const {return block_size;}
   void getFeature(int index, int &id, float &x, float &y) const;
@@ -235,10 +239,6 @@ class VISP_EXPORT vpKltOpencv
 
   //Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
-
-  //Draw the tracked features on the given image
-  void display(const vpImage<unsigned char> &I,
-               vpColor color = vpColor::red, unsigned int thickness=1);
 
   //Track !
   void track(const IplImage *I);
