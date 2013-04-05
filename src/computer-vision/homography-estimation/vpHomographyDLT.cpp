@@ -150,6 +150,10 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
   At least 4 correspondant points couples are needed.
 
   \sa DLT()
+
+  \exception vpMatrixException::rankDeficient : When the rank of the matrix
+  that should be 8 is deficient.
+
 */
 void
 vpHomography::HartleyDLT(unsigned int n,
@@ -259,6 +263,8 @@ vpHomography::HartleyDLT(unsigned int n,
   <b>h</b> is the column of <b>V</b> associated with the smalest singular value of <b>A
   </b>
 
+  \exception vpMatrixException::rankDeficient : When the rank of the matrix
+  that should be 8 is deficient.
 */
 void vpHomography::DLT(unsigned int n,
 		       double *xb, double *yb,
@@ -330,7 +336,7 @@ void vpHomography::DLT(unsigned int n,
     for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
-      vpTRACE(" le rang est de : %d, shoud be 8", rank);
+      vpTRACE(" Rank is : %d, shoud be 8", rank);
       throw(vpMatrixException(vpMatrixException::rankDeficient,
 			      "\n\t\t Matrix rank is deficient")) ;
     }
