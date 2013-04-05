@@ -88,7 +88,8 @@ public:
       incorrectMatrixSizeError,
       forbiddenOperatorError,
       subMatrixError,
-      matrixError
+      matrixError,
+      rankDeficient
     } ;
 
 public:

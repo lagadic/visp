@@ -48,6 +48,7 @@
 */
 
 #include <visp/vpHomography.h>
+#include <visp/vpMatrixException.h>
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
@@ -330,7 +331,8 @@ void vpHomography::DLT(unsigned int n,
     if(rank <7)
     {
       vpTRACE(" le rang est de : %d, shoud be 8", rank);
-      throw ;
+      throw(vpMatrixException(vpMatrixException::rankDeficient,
+			      "\n\t\t Matrix rank is deficient")) ;
     }
     //h = is the column of V associated with the smallest singular value of A
 
@@ -352,9 +354,16 @@ void vpHomography::DLT(unsigned int n,
     }
 
   }
-  catch(...)
+  catch(vpMatrixException me)
   {
-    vpTRACE(" ") ;
-    throw ;
+    vpTRACE("Matrix Exception ") ;
+    throw(me) ;
   }
+  catch(vpException me)
+  {
+    vpERROR_TRACE("caught another error") ;
+    std::cout <<std::endl << me << std::endl ;
+    throw(me) ;
+  }
+
 }
