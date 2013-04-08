@@ -132,7 +132,7 @@ int main() {}
 #endif
   \endcode
 
-  It is also possible to create the refernece thanks to only a part of the
+  It is also possible to create the reference thanks to only a part of the
   reference image (not the whole image) and find points to match in only a
   part of the current image. The small following example shows how to this
 
