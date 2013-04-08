@@ -14,6 +14,7 @@ ViSP 2.7.1 (under development)
       (vpMeTracker, vpMeLine, vpMeEllipse)
     . In model-based trackers, improve face visibility test using Ogre ray
       tracing when faces are concave or not oriented counter clockwise.
+    . ViSP can now be used with pkg-config
   - Examples
   - Bug fixed
     . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
@@ -24,7 +25,7 @@ ViSP 2.7.1 (under development)
     . [15522] Visibility tests issues in Model-Based Tracker using Ogre3D
     . [15566] Bad mask orientation when using model-based tracker with 
       cylinders
-
+    . [15587] visp-config conflicts with multiarch support on Debian.
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features

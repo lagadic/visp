@@ -1903,26 +1903,6 @@ ENDIF()
 INCLUDE(${VISP_CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
 
 #----------------------------------------------------------------------
-# customize install target
-#----------------------------------------------------------------------
-# install rule for visp-config shell script
-IF (UNIX)
-  INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-    OWNER_WRITE
-    COMPONENT libraries)
-ELSE(UNIX)
-  INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config.bat
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-    OWNER_WRITE
-    COMPONENT libraries)
-ENDIF (UNIX)
-
-#----------------------------------------------------------------------
 # add distclean target
 #----------------------------------------------------------------------
 INCLUDE(${VISP_CMAKE_MODULE_PATH}/TargetDistclean.cmake)

@@ -31,8 +31,12 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# This file generates the ViSP library config shell script: "visp-config"
-# from visp-config.in (in VISP_SOURCE_DIR).
+# This file generates the ViSP library config shell scripts: 
+# - visp-config in <build dir>/bin from visp-config.in
+# - visp-config in <build dir>/install from visp-config.install.in
+#   When make install, this file is copied in <install dir>/bin
+# - visp.pc in <build dir>/install from visp.pc.in
+#   When make install, this file is copied in <install dir>/lib/pkgconfig
 #
 # Authors:
 # Fabien Spindler
@@ -48,33 +52,38 @@ IF (UNIX)
   ####################################################################### 
   SET(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
   SET(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
+
+  SET(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.install.in")
+  SET(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/install/visp-config")
   
+  SET(FILE_VISP_CONFIG_PC_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp.pc.in")
+  SET(FILE_VISP_CONFIG_PC_INSTALL    "${VISP_BINARY_DIR}/install/visp.pc")
+
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_PREFIX
   #----------------------------------------------------------------------
   SET(VISP_CONFIG_SCRIPT_PREFIX "${CMAKE_INSTALL_PREFIX}")
  
   #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_SCRIPT_CFLAGS
+  # Updates VISP_CONFIG_CFLAGS
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_OPENMP_FLAGS})
-  LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "${VISP_DEFS}")
-  LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR}")
+  SET(VISP_CONFIG_CFLAGS ${VISP_OPENMP_FLAGS})
+  LIST(APPEND VISP_CONFIG_CFLAGS "${VISP_DEFS}")
 
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIRS})
-    LIST(APPEND VISP_CONFIG_SCRIPT_CFLAGS "-I${INCDIR}")
+    LIST(APPEND VISP_CONFIG_CFLAGS "-I${INCDIR}")
   ENDFOREACH(INCDIR)
 
   # Suppress twins
-  LIST(REMOVE_DUPLICATES VISP_CONFIG_SCRIPT_CFLAGS)
+  LIST(REMOVE_DUPLICATES VISP_CONFIG_CFLAGS)
 
   # Format the string to suppress CMake separators ";"
-  SET(VISP_CONFIG_SCRIPT_CFLAGS_REFORMATED "")
-  FOREACH(element ${VISP_CONFIG_SCRIPT_CFLAGS})
-    SET(VISP_CONFIG_SCRIPT_CFLAGS_REFORMATED "${VISP_CONFIG_SCRIPT_CFLAGS_REFORMATED} ${element}")
+  SET(VISP_CONFIG_CFLAGS_REFORMATED "")
+  FOREACH(element ${VISP_CONFIG_CFLAGS})
+    SET(VISP_CONFIG_CFLAGS_REFORMATED "${VISP_CONFIG_CFLAGS_REFORMATED} ${element}")
   ENDFOREACH(element)
-  SET(VISP_CONFIG_SCRIPT_CFLAGS ${VISP_CONFIG_SCRIPT_CFLAGS_REFORMATED})
-#  MESSAGE(": ${VISP_CONFIG_SCRIPT_CFLAGS}")
+  SET(VISP_CONFIG_CFLAGS ${VISP_CONFIG_CFLAGS_REFORMATED})
+#  MESSAGE(": ${VISP_CONFIG_CFLAGS}")
 
 
   IF(BUILD_TEST_COVERAGE)
@@ -83,12 +92,12 @@ IF (UNIX)
     # Because using -fprofile-arcs with shared lib can cause problems like:
     # hidden symbol `__bb_init_func', we add this option only for static 
     # library build
-    SET(VISP_CONFIG_SCRIPT_CFLAGS "${VISP_CONFIG_SCRIPT_CFLAGS} -ftest-coverage -fprofile-arcs")
+    SET(VISP_CONFIG_CFLAGS "${VISP_CONFIG_CFLAGS} -ftest-coverage -fprofile-arcs")
   ENDIF(BUILD_TEST_COVERAGE)
 
 
   #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_SCRIPT_EXTERN_LIBS
+  # Updates VISP_CONFIG_LIBS
   #
   # add "-l" to library names
   # skip *.so, *.a, *.dylib, -framework*, -l*
@@ -104,7 +113,7 @@ IF (UNIX)
   #MESSAGE("VISP_CONFIG_SCRIPT_TMP_LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
   # convert semicolon-separated vector to space-separated string 
   FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
-     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
+     SET(VISP_CONFIG_LIBS "${VISP_CONFIG_LIBS} ${val}")
   ENDFOREACH(val)
 
   # Manage the libs	
@@ -137,16 +146,25 @@ IF (UNIX)
   ENDFOREACH(lib)
 
   FOREACH(val ${TMP_LIBS})
-     SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS "${VISP_CONFIG_SCRIPT_EXTERN_LIBS} ${val}")
+     SET(VISP_CONFIG_LIBS "${VISP_CONFIG_LIBS} ${val}")
   ENDFOREACH(val)
 
-  #MESSAGE("EXTERN LIBS : ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
+  #MESSAGE("EXTERN LIBS : ${VISP_CONFIG_LIBS}")
  
+  #---------------------------------------------------------------------
+  # Updates the <build dir>/bin/visp-config shell script
+  # Updates VISP_CONFIG_LIBS_SCRIPT (for visp-config)
+  # Updates VISP_CONFIG_CFLAGS_SCRIPT (for visp-config)
+  #----------------------------------------------------------------------
+
+  # prepend with ViSP own include dir
+  set(VISP_CONFIG_CFLAGS_SCRIPT "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR} ${VISP_CONFIG_CFLAGS}")
+
   # prepend with ViSP own lib dir
-  SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-L$PREFIX/${CMAKE_INSTALL_LIBDIR} -l${VISP_INTERN_LIBRARY} ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
+  SET(VISP_CONFIG_LIBS_SCRIPT  "-L$PREFIX/${CMAKE_INSTALL_LIBDIR} -l${VISP_INTERN_LIBRARY} ${VISP_CONFIG_LIBS}")
   IF(UNIX)
     IF(NOT APPLE)
-      SET(VISP_CONFIG_SCRIPT_EXTERN_LIBS  "-Wl,-rpath,$PREFIX/${CMAKE_INSTALL_LIBDIR} ${VISP_CONFIG_SCRIPT_EXTERN_LIBS}")
+      SET(VISP_CONFIG_LIBS_SCRIPT "-Wl,-rpath,$PREFIX/${CMAKE_INSTALL_LIBDIR} ${VISP_CONFIG_LIBS_SCRIPT}")
     ENDIF(NOT APPLE)
   ENDIF(UNIX)
 
@@ -158,10 +176,34 @@ IF (UNIX)
     SET(VISP_ECHO_NO_NEWLINE_OPTION "-n")
   ENDIF(APPLE)
 
-  #---------------------------------------------------------------------
-  # Updates the visp-config shell script
-  #----------------------------------------------------------------------
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
+
+  #---------------------------------------------------------------------
+  # Updates the <build dir>/install/visp-config shell script
+  #----------------------------------------------------------------------
+
+  CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_INSTALL_IN} ${FILE_VISP_CONFIG_SCRIPT_INSTALL})
+
+  #---------------------------------------------------------------------
+  # Updates the <build dir>/install/visp.pc pkg-config file
+  # Updates VISP_CONFIG_CFLAGS_PC (for libvisp.pc used by pkg-config)
+  # Updates VISP_CONFIG_LIBS_PC (for libvisp.pc used by pkg-config)
+  #----------------------------------------------------------------------
+  set(exec_prefix "\${prefix}")
+  set(includedir  "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(libdir  "\${prefix}/${CMAKE_INSTALL_LIBDIR}")
+ 
+  # prepend with ViSP own include dir
+  set(VISP_CONFIG_CFLAGS_PC "-I\${includedir} ${VISP_CONFIG_CFLAGS}")
+
+  # prepend with ViSP own lib dir
+  SET(VISP_CONFIG_LIBS_PC  "-L\${libdir} -l${VISP_INTERN_LIBRARY} ${VISP_CONFIG_LIBS}")
+  IF(UNIX)
+    IF(NOT APPLE)
+      SET(VISP_CONFIG_LIBS_PC "-Wl,-rpath,\${libdir} ${VISP_CONFIG_LIBS_PC}")
+    ENDIF(NOT APPLE)
+  ENDIF(UNIX)
+  CONFIGURE_FILE(${FILE_VISP_CONFIG_PC_INSTALL_IN} ${FILE_VISP_CONFIG_PC_INSTALL})
 
 ELSE(UNIX)
   #######################################################################
@@ -308,4 +350,36 @@ ELSE(UNIX)
   #----------------------------------------------------------------------
   CONFIGURE_FILE(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
 ENDIF(UNIX)
+
+#----------------------------------------------------------------------
+# customize install target
+#----------------------------------------------------------------------
+# install rule for visp-config shell script
+IF (UNIX)
+  INSTALL(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE
+    COMPONENT libraries)
+ELSE(UNIX)
+  INSTALL(FILES ${BINARY_OUTPUT_PATH}/visp-config.bat
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE
+    COMPONENT libraries)
+ENDIF (UNIX)
+# install rule for visp.pc pkg-config file
+IF (UNIX)
+  INSTALL(FILES ${FILE_VISP_CONFIG_PC_INSTALL}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+    OWNER_WRITE
+    COMPONENT libraries)
+ELSE(UNIX)
+  # not implemented yet
+ENDIF (UNIX)
+
 
