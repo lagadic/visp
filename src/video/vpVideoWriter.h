@@ -106,9 +106,9 @@ int main()
   writer.setBitRate(1000000);
   //Set up the codec to use
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-  writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
-#else
   writer.setCodec(CODEC_ID_MPEG2VIDEO);
+#else
+  writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
 #endif
   writer.setFileName("./test.mpeg");
 
