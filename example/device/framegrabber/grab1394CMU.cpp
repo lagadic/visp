@@ -192,8 +192,15 @@ main(int argc, const char ** argv)
 
   // Create the grabber
   vp1394CMUGrabber g;
-
-  g.open(I);
+  unsigned short gain_min, gain_max;
+  g.getGainMinMax(gain_min, gain_max);
+  std::cout << "Gain range [" <<  gain_min << ", " << gain_max << "]" << std::endl;
+  unsigned short shutter_min, shutter_max;
+  g.getShutterMinMax(shutter_min, shutter_max);
+  std::cout << "Shutter range [" <<  shutter_min << ", " << shutter_max << "]" << std::endl;
+  g.setFramerate(4); // 30 fps
+  std::cout << "Actual framerate: " << g.getFramerate() << std::endl;
+  g.setVideoMode(0,0);
 	g.acquire(I);
 
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "

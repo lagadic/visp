@@ -99,11 +99,13 @@ int main()
   vpImage<unsigned char> I;
   vp1394CMUGrabber g;
 
-  g.open(I);
+  g.setFramerate(4); // 30 fps
+  g.setAutoShutter();
+  g.setAutoGain();
   g.acquire(I);
 
   vpDisplayOpenCV d(I);
-    vpDisplay::display(I);
+  vpDisplay::display(I);
 
   for(;;)
   {
@@ -125,7 +127,6 @@ int main()
   \code
 #include <iostream>
 
-#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vp1394CMUGrabber.h>
@@ -147,11 +148,11 @@ int main()
 
   // Setting camera parameters manually
   g.selectCamera(0);
-  g.setControl(0, 2000);
+  g.setGain(0);
+  g.setShutter(2000);
   g.setFramerate(3);    // 15 FPS
   g.setVideoMode(0, 5); // 640x480 - MONO
 
-  g.open(I);
   g.acquire(I);
 
   // Display camera description
@@ -222,12 +223,6 @@ public:
   // Destructor.
   virtual ~vp1394CMUGrabber();
 
-  // Initialization of the grabber using a greyscale image.
-  void open(vpImage<unsigned char> &I);
-
-  // Initialization of the grabber using a color image.
-  void open(vpImage<vpRGBa> &I);
-
   // Acquire one frame in a greyscale image.
   void acquire(vpImage<unsigned char> &I);
 
@@ -243,8 +238,17 @@ public:
   // Display camera model on the standard output. Call it after open the grabber.
   void displayCameraModel();
 
+  // Get the video framerate
+  int getFramerate();
+
+  // Get the gain min and max values. 
+  void getGainMinMax(unsigned short &min, unsigned short &max);
+
   // Get the number of connected cameras.
   int getNumberOfConnectedCameras() const ;
+
+  // Get the shutter min and max values. 
+  void getShutterMinMax(unsigned short &min, unsigned short &max);
 
   //! Get the video color coding format.
   vpColorCodingType getVideoColorCoding() const
@@ -293,20 +297,37 @@ public:
     }
 
     return color;
-
   }
+
+  // Initialization of the grabber using a greyscale image.
+  void open(vpImage<unsigned char> &I);
+
+  // Initialization of the grabber using a color image.
+  void open(vpImage<vpRGBa> &I);
 
   // Select the camera on the bus. Call it before open the grabber.
   void selectCamera(int cam_id);
 
+  // Enable auto gain
+  void setAutoGain();
+
+  // Enable auto shutter
+  void setAutoShutter();
+
   // Set the gain and the shutter values. Call it before open the grabber
-  void setControl(unsigned short gain , unsigned short shutter) ;
+  void setControl(unsigned short gain, unsigned short shutter);
 
   // Set the frame rate. Call it before open the grabber.
   void setFramerate(unsigned long fps);
 
+  // Set the shutter value. Call it before open the grabber
+  void setShutter(unsigned short shutter);
+
+  // Set the gain value. Call it before open the grabber
+  void setGain(unsigned short gain);
+
   // Set the video format and mode. Call it before open the grabber.
-  void setVideoMode(unsigned long format , unsigned long mode );
+  void setVideoMode(unsigned long format, unsigned long mode );
 
 private :
 

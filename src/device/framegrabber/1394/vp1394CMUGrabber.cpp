@@ -67,7 +67,6 @@ vp1394CMUGrabber::vp1394CMUGrabber()
   index = 0;   // If a camera was not selected the first one (index = 0) will be used
   _format = _mode = _fps = -1;
   _modeauto=true;
-
 }
 
 /*!
@@ -77,8 +76,10 @@ vp1394CMUGrabber::~vp1394CMUGrabber( )
 {
   close();
   // delete camera instance
-  delete camera;
-
+  if (camera) {
+    delete camera;
+    camera = NULL;
+  }
 }
 
 /*!
@@ -120,154 +121,67 @@ vp1394CMUGrabber::selectCamera(int cam_id)
 void 
 vp1394CMUGrabber::initCamera()
 {
-  int camerror;
-  unsigned long width, height;
-
-
-  if (camera->CheckLink() != CAM_SUCCESS)
+  if (init == false) 
   {
-    vpERROR_TRACE("C1394Camera error: Found no cameras on the 1394 bus");
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The is no detected camera") );
-  }
+    int camerror;
 
-  camerror = camera->InitCamera();
-  if ( camerror != CAM_SUCCESS )
-  {
-    switch (camerror)
+    if (camera->CheckLink() != CAM_SUCCESS)
     {
-      case CAM_ERROR_NOT_INITIALIZED:
-        vpERROR_TRACE("vp1394CMUGrabber error: No camera selected",index);
-        throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The is no selected camera") );
-        break;
-      case CAM_ERROR_BUSY:
-        vpERROR_TRACE("vp1394CMUGrabber error: The camera %i is busy",index);
-        throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The required camera is in use by other application") );
-        break;
-      case CAM_ERROR:
-        vpERROR_TRACE("vp1394CMUGrabber error: General I/O error when selecting camera number %i",index);
-        throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"Resolve camera can not be used") );
-        break;
+      vpERROR_TRACE("C1394Camera error: Found no cameras on the 1394 bus");
+      throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The is no detected camera") );
     }
-    close();
-  }
 
-  if (camera->Has1394b())
-    camera->Set1394b(TRUE);
-
-  // Set format and mode
-  if ((_format != -1) && (_mode != -1))
-  {
-    if (!camera->HasVideoMode(_format, _mode))
+    camerror = camera->InitCamera();
+    if ( camerror != CAM_SUCCESS )
     {
+      switch (camerror)
+      {
+        case CAM_ERROR_NOT_INITIALIZED:
+          vpERROR_TRACE("vp1394CMUGrabber error: No camera selected",index);
+          throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The is no selected camera") );
+          break;
+        case CAM_ERROR_BUSY:
+          vpERROR_TRACE("vp1394CMUGrabber error: The camera %i is busy",index);
+          throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"The required camera is in use by other application") );
+          break;
+        case CAM_ERROR:
+          vpERROR_TRACE("vp1394CMUGrabber error: General I/O error when selecting camera number %i",index);
+          throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"Resolve camera can not be used") );
+          break;
+      }
       close();
-      vpERROR_TRACE("vp1394CMUGrabber error: The image format is not supported by the IEEE 1394 camera number %i",index);
-      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Video mode not supported") );
     }
 
-    if (camera->SetVideoFormat(_format) != CAM_SUCCESS)
-    {
-      close();
-      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video format of IEEE 1394 camera number %i",index);
-      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video format") );
-    }
+    if (camera->Has1394b())
+      camera->Set1394b(TRUE);
 
-    if (camera->SetVideoMode(_mode) != CAM_SUCCESS)
-    {
-      close();
-      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video mode of IEEE 1394 camera number %i",index);
-      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video mode") );
-    }
-  }
-  else {
-    // Get the current format and mode
+    // Get the current settings
     _format = camera->GetVideoFormat();
     _mode = camera->GetVideoMode();
-  }
+    _color = getVideoColorCoding();
+    //std::cout << "format: " << _format << std::endl;
+    //std::cout << "mode: " << _mode << std::endl;
+    //std::cout << "color coding: " << _color << std::endl;
 
-  // Update the color coding
-  _color = getVideoColorCoding();
-  //std::cout << "color coding: " << _color << std::endl;
+    // Set trigger off
+    camera->GetCameraControlTrigger()->SetOnOff(false);
 
-  // Set fps
-  if (_fps!=-1)
-  {
-    if (!camera->HasVideoFrameRate(_format,_mode,_fps))
+    unsigned long w, h;
+    camera->GetVideoFrameDimensions(&w, &h);
+    this->width = w;
+    this->height = h;
+    
+    // start acquisition
+    if (camera->StartImageAcquisition() != CAM_SUCCESS)
     {
       close();
-      vpERROR_TRACE("vp1394CMUGrabber error: The frame rate is not supported by the IEEE 1394 camera number %i for the selected image format",index);
-      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"The frame rate is not supported") );
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition from IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                     "Error while starting image acquisition") );
     }
 
-    if (camera->SetVideoFrameRate(_fps) != CAM_SUCCESS)
-    {
-      close();
-      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video frame rate of IEEE 1394 camera number %i",index);
-      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video frame rate") );
-    }
+    init = true;
   }
-
-  // Set shutter and gain
-  if ( _modeauto == false )
-  {
-    unsigned short min,max;
-    C1394CameraControl *Control;
-
-    Control = camera->GetCameraControl(FEATURE_GAIN);
-    Control->Inquire();
-    Control->GetRange(&min,&max);
-
-    if (_gain<min)
-    {
-      _gain = min;
-      std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be less than " << _gain << std::endl;
-    } else
-      if (_gain>max)
-      {
-        _gain = max;
-        std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be greater than " << _gain << std::endl;
-      }
-
-    Control->SetAutoMode(false);
-    if(Control->SetValue(_gain) != CAM_SUCCESS)
-    {
-      std::cout << "vp1394CMUGrabber warning: Can't set gain register value of IEEE 1394 camera number " << index << std::endl;
-    }
-
-    Control = camera->GetCameraControl(FEATURE_SHUTTER);
-    Control->Inquire();
-    Control->GetRange(&min,&max);
-
-    if (_shutter<min)
-    {
-      _shutter = min;
-      std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be less than " << _shutter << std::endl;
-    }
-    else if (_shutter>max)
-    {
-      _shutter = max;
-      std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be greater than " << _shutter << std::endl;
-    }
-    Control->SetAutoMode(false);
-    if(Control->SetValue(_shutter) != CAM_SUCCESS)
-    {
-      std::cout << "vp1394CMUGrabber warning: Can't set exposure time register value of IEEE 1394 camera number " << index << std::endl;
-    }
-  }
-  else
-  {
-    camera->GetCameraControl(FEATURE_SHUTTER)->SetAutoMode(true);
-    camera->GetCameraControl(FEATURE_GAIN)->SetAutoMode(true);
-  }
-
-  // Set trigger off
-  camera->GetCameraControlTrigger()->SetOnOff(false);
-
-
-  camera->GetVideoFrameDimensions(&width,&height);
-  this->height = height;
-  this->width = width;
-
-  init = true;
 
 } // end camera init
 
@@ -280,16 +194,7 @@ void
 vp1394CMUGrabber::open(vpImage<unsigned char> &I)
 {
   initCamera();
-  I.init(height,width);
-
-  // start acquisition
-  if (camera->StartImageAcquisition() != CAM_SUCCESS)
-  {
-    close();
-    vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition from IEEE 1394 camera number %i",index);
-    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                   "Error while strating image acquisition") );
-  }
+  I.resize(this->height, this->width);
 }
 
 /*!
@@ -300,16 +205,7 @@ void
 vp1394CMUGrabber::open(vpImage<vpRGBa> &I)
 {
   initCamera();
-  I.init(this->height,this->width);
-
-  // start acquisition
-  if (camera->StartImageAcquisition() != CAM_SUCCESS)
-  {
-    close();
-    vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition from IEEE 1394 camera number %i",index);
-    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                   "Error while strating image acquisition") );
-  }
+  I.resize(this->height, this->width);
 }
 
 /*!
@@ -328,14 +224,12 @@ vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
   int dropped;
   unsigned int size;
 
-  if(init == false){
-    open(I);
-  }
+  open(I);
 
   camera->AcquireImageEx(TRUE,&dropped);
   rawdata = camera->GetRawData(&length);
 
-  size = I.getWidth() * I.getHeight();
+  size = I.getSize();
   switch(_color) {
     case vp1394CMUGrabber::MONO8:
       memcpy(I.bitmap, (unsigned char *) rawdata, size);
@@ -395,9 +289,7 @@ vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
   int dropped;
   unsigned int size;
 
-  if(init == false){
-    open(I);
-  }
+  open(I);
 
   camera->AcquireImageEx(TRUE,&dropped);
   rawdata = camera->GetRawData(&length);
@@ -446,78 +338,29 @@ void
 vp1394CMUGrabber::close()
 {
   // stop acquisition
-  camera->StopImageAcquisition();
-
-  if (camera->StopImageAcquisition() != CAM_SUCCESS)
-  {
-    throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
-                                   "vp1394CMUGrabber error: Can't stop image acquisition from IEEE 1394 camera") );
+  if (camera->IsAcquiring()) {
+    // stop acquisition
+    if (camera->StopImageAcquisition() != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition from IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                      "Error while stopping image acquisition") );
+    }
   }
 
   init = false;
-
 }
 
 /*!
- Set the gain and the shutter values. This method has to be called before open().
+  Set the gain and the shutter values.
+  \sa setGain(), setShutter()
  */
 void
 vp1394CMUGrabber::setControl(unsigned short gain, unsigned short shutter)
 {
-  /*
-  unsigned short min,max;
-  C1394CameraControl *Control;
-
-  if ( modeauto == false )
-  {
-    Control = camera->GetCameraControl(FEATURE_GAIN);
-    Control->Inquire();
-    Control->GetRange(&min,&max);
-
-    if (gain<min)
-    {
-      gain = min;
-      std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be less than " << gain << std::endl;
-    } else
-    if (gain>max)
-    {
-      gain = max;
-      std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be greater than " << gain << std::endl;
-    }
-
-    Control->SetAutoMode(false);
-    if(Control->SetValue(gain) != CAM_SUCCESS)
-    {
-      std::cout << "vp1394CMUGrabber warning: Can't set gain register value of IEEE 1394 camera number " << index << std::endl;
-    }
-
-    Control = camera->GetCameraControl(FEATURE_SHUTTER);
-    Control->Inquire();
-    Control->GetRange(&min,&max);
-
-    if (shutter<min)
-    {
-      shutter = min;
-      std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be less than " << shutter << std::endl;
-    }
-    else if (shutter>max)
-    {
-      shutter = max;
-      std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be greater than " << shutter << std::endl;
-    }
-    Control->SetAutoMode(false);
-    if(Control->SetValue(shutter) != CAM_SUCCESS)
-    {
-      std::cout << "vp1394CMUGrabber warning: Can't set exposure time register value of IEEE 1394 camera number " << index << std::endl;
-    }
-  }
-  else
-  {
-    camera->GetCameraControl(FEATURE_SHUTTER)->SetAutoMode(true);
-    camera->GetCameraControl(FEATURE_GAIN)->SetAutoMode(true);
-  } */
-  _shutter=shutter;
-  _gain=gain;
+  setShutter(shutter);
+  setGain(gain);
 }
 
 /*!
@@ -528,18 +371,126 @@ vp1394CMUGrabber::getNumberOfConnectedCameras() const
 {
   int n_cam = camera->RefreshCameraList();
 
-  /*if( n_cam >= 0 )
-  {
-    std::cout << "vp1394CMUGrabber: Found " << n_cam << " Camera";
-
-    if( n_cam > 1 ) std::cout << "s."  << std::endl;
-    else std::cout << "."  << std::endl;
-  }
-  else {
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,"vp1394CMUGrabber: Found no cameras on the 1394 bus(es)"));
-  }*/
-
   return n_cam;
+}
+
+/*! 
+   Get the gain min and max values. 
+
+   \sa setAutoGain(), setGain()
+   */
+void vp1394CMUGrabber::getGainMinMax(unsigned short &min, unsigned short &max)
+{
+  initCamera();
+
+  C1394CameraControl *Control;
+  Control = camera->GetCameraControl(FEATURE_GAIN);
+  Control->Inquire();
+  Control->GetRange(&min, &max);
+}
+/*! 
+   Enable auto gain. 
+
+   \sa setGain()
+   */
+void vp1394CMUGrabber::setAutoGain()
+{
+  initCamera();
+  camera->GetCameraControl(FEATURE_GAIN)->SetAutoMode(true);
+}
+/*! 
+   Disable auto gain and set the gain to the requested value. 
+
+   \sa setAutoGain()
+   */
+void vp1394CMUGrabber::setGain(unsigned short gain)
+{
+  initCamera();
+  _gain = gain;
+
+  unsigned short min,max;
+  C1394CameraControl *Control;
+
+  Control = camera->GetCameraControl(FEATURE_GAIN);
+  Control->Inquire();
+  Control->GetRange(&min,&max);
+
+  if (_gain < min)
+  {
+    _gain = min;
+    std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be less than " << _gain << std::endl;
+  } 
+  else if (_gain > max)
+  {
+    _gain = max;
+    std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be greater than " << _gain << std::endl;
+  }
+  
+  Control->SetAutoMode(false);
+  if(Control->SetValue(_gain) != CAM_SUCCESS)
+  {
+    std::cout << "vp1394CMUGrabber warning: Can't set gain register value of IEEE 1394 camera number " << index << std::endl;
+  }
+}
+
+/*! 
+   Get the shutter min and max values. 
+
+   \sa setAutoShutter(), setShutter()
+   */
+void vp1394CMUGrabber::getShutterMinMax(unsigned short &min, unsigned short &max)
+{
+  initCamera();
+
+  C1394CameraControl *Control;
+  Control = camera->GetCameraControl(FEATURE_SHUTTER);
+  Control->Inquire();
+  Control->GetRange(&min, &max);
+}
+
+/*! 
+   Enable auto shutter. 
+
+   \sa setShutter()
+   */
+void vp1394CMUGrabber::setAutoShutter()
+{
+  initCamera();
+  camera->GetCameraControl(FEATURE_SHUTTER)->SetAutoMode(true);
+}
+/*! 
+   Disable auto shutter and set the shutter to the requested value. 
+
+   \sa setAutoShutter()
+   */
+void vp1394CMUGrabber::setShutter(unsigned short shutter)
+{
+  initCamera();
+
+  _shutter = shutter;
+
+  unsigned short min,max;
+  C1394CameraControl *Control;
+
+  Control = camera->GetCameraControl(FEATURE_SHUTTER);
+  Control->Inquire();
+  Control->GetRange(&min,&max);
+
+  if (_shutter < min)
+  {
+    _shutter = min;
+    std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be less than " << _shutter << std::endl;
+  }
+  else if (_shutter > max)
+  {
+    _shutter = max;
+    std::cout << "vp1394CMUGrabber warning: Desired exposure time register value of IEEE 1394 camera number " << index << " can't be greater than " << _shutter << std::endl;
+  }
+  Control->SetAutoMode(false);
+  if(Control->SetValue(_shutter) != CAM_SUCCESS)
+  {
+    std::cout << "vp1394CMUGrabber warning: Can't set exposure time register value of IEEE 1394 camera number " << index << std::endl;
+  }
 }
 
 /*!
@@ -549,7 +500,6 @@ void
 vp1394CMUGrabber::displayCameraDescription(int cam_id)
 {
   char buf[512];
-
 
   if( camera->GetNumberCameras() > cam_id )
   {
@@ -626,14 +576,70 @@ vp1394CMUGrabber::displayCameraModel()
 void 
 vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
 {
+  initCamera();
+
   _format = format ;
   _mode = mode ;
+
+  // Set format and mode
+  if ((_format != -1) && (_mode != -1))
+  {
+    if (!camera->HasVideoMode(_format, _mode))
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: The image format is not supported by the IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Video mode not supported") );
+    }
+
+    if (camera->IsAcquiring()) {
+      // stop acquisition
+      if (camera->StopImageAcquisition() != CAM_SUCCESS)
+      {
+        close();
+        vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition from IEEE 1394 camera number %i",index);
+        throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                       "Error while stopping image acquisition") );
+      }
+    }
+
+    if (camera->SetVideoFormat(_format) != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video format of IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video format") );
+    }
+
+    if (camera->SetVideoMode(_mode) != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video mode of IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video mode") );
+    }
+    
+    // start acquisition
+    if (camera->StartImageAcquisition() != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition from IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                     "Error while starting image acquisition") );
+    }
+
+    // Update Image dimension
+    unsigned long w, h;
+    camera->GetVideoFrameDimensions(&w, &h);
+    this->width = w;
+    this->height = h;
+
+    // Update the color coding
+    _color = getVideoColorCoding();
+  }
 }
 
 /*!
   Set camera framerate rate. This method has to be called before open().
 
-  \param fps : Value form 0 to 7 used to select a specific camera framerate.
+  \param fps : Value between 0 to 7 used to select a specific camera framerate.
   See the following table for the correspondances between the input
   value and the framerate.
 
@@ -649,11 +655,79 @@ vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
   <TR><TD>   7   </TD>  <TD>    240 fps </TD></TR>
   </TABLE>
 
+  \sa getFramerate()
  */
 void 
 vp1394CMUGrabber::setFramerate(unsigned long fps)
 {
+  initCamera();
+
   _fps = fps;
+ 
+  // Set fps
+  if (_fps!=-1)
+  {
+    if (!camera->HasVideoFrameRate(_format,_mode,_fps))
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: The frame rate is not supported by the IEEE 1394 camera number %i for the selected image format",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"The frame rate is not supported") );
+    }
+
+    if (camera->IsAcquiring()) {
+      // stop acquisition
+      if (camera->StopImageAcquisition() != CAM_SUCCESS)
+      {
+        close();
+        vpERROR_TRACE("vp1394CMUGrabber error: Can't stop image acquisition from IEEE 1394 camera number %i",index);
+        throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                       "Error while stopping image acquisition") );
+      }
+    }
+    if (camera->SetVideoFrameRate(_fps) != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't set video frame rate of IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video frame rate") );
+    }
+    // start acquisition
+    if (camera->StartImageAcquisition() != CAM_SUCCESS)
+    {
+      close();
+      vpERROR_TRACE("vp1394CMUGrabber error: Can't start image acquisition from IEEE 1394 camera number %i",index);
+      throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
+                                     "Error while starting image acquisition") );
+    }
+
+  }
+}
+/*!
+  Get the video framerate.
+  
+  \return Value between 0 to 7 corresponding to a specific camera framerate.
+  See the following table for the correspondances between the returned
+  value and the framerate.
+
+  <TABLE BORDER="1">
+  <TR><TH> Value </TH>  <TH> Frame rate </TH></TR>
+  <TR><TD>   0   </TD>  <TD>  1.875 fps </TD></TR>
+  <TR><TD>   1   </TD>  <TD>   3.75 fps </TD></TR>
+  <TR><TD>   2   </TD>  <TD>    7.5 fps </TD></TR>
+  <TR><TD>   3   </TD>  <TD>     15 fps </TD></TR>
+  <TR><TD>   4   </TD>  <TD>     30 fps </TD></TR>
+  <TR><TD>   5   </TD>  <TD>     60 fps </TD></TR>
+  <TR><TD>   6   </TD>  <TD>    120 fps </TD></TR>
+  <TR><TD>   7   </TD>  <TD>    240 fps </TD></TR>
+  </TABLE>
+
+  \sa setFramerate()
+*/
+int
+vp1394CMUGrabber::getFramerate()
+{
+  initCamera();
+  int fps = camera->GetVideoFrameRate();
+  return fps;
 }
 
 #endif
