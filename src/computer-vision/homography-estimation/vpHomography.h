@@ -196,6 +196,12 @@ private:
   //! insert a translation vector
   void insert(const vpPlane &bP) ;
 
+  static void  initRansac(unsigned int n,
+                          double *xb, double *yb,
+                          double *xa, double *ya,
+                          vpColVector &x) ;
+
+public:
   static void HartleyNormalization(unsigned int n,
                                    double *x, double *y,
                                    double *xn, double *yn,
@@ -206,13 +212,7 @@ private:
                                      double xg1, double yg1, double coef1,
                                      double xg2, double yg2, double coef2 ) ;
 
-  static void  initRansac(unsigned int n,
-                          double *xb, double *yb,
-                          double *xa, double *ya,
-                          vpColVector &x
-                          ) ;
 
-public:
   vpHomography() ;
 
   //! copy constructor
