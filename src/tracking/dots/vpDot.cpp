@@ -874,7 +874,7 @@ void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
   \f$Imax=255*\big((\frac{I}{255})^{{\gamma}^{-1}}+(1-grayLevelPrecision)\big)^{\gamma}\f$
   with \f$\gamma=1.5\f$ .
 
-  \sa setWidth(), setHeight(), setSurface(), setInLevel(), setOutLevel()
+  \sa setWidth(), setHeight(), setGrayLevelMin(), setGrayLevelMax()
 */
 void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
 {
