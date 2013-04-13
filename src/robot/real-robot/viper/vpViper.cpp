@@ -191,6 +191,8 @@ vpViper::convertJointPositionInLimits(unsigned int joint, const double &q, doubl
   solution of the inverse kinematics, ie. the joint positions
   corresponding to \f$^f{\bf M}_w \f$.
 
+  \param verbose : Add extra printings.
+
   \return Add printings if no solution was found.
 
   \return The number of solutions (1 to 8) of the inverse geometric
@@ -531,6 +533,8 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
   current joint positions expressed in radians. In output, the
   solution of the inverse kinematics, ie. the joint positions
   corresponding to \f$^f{\bf M}_c \f$.
+
+  \param verbose : Add extra printings.
 
   \return Add printings if no solution was found.
 
