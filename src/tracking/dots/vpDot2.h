@@ -145,6 +145,55 @@ int main()
 }
   \endcode
 
+  This other example shows firstly how to detect in the first image all the blobs that
+  match some characteristics in terms of size, area, gray level. Secondly, it shows how to track
+  all the dots that are detected.
+  \code
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDot2.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
+  vpImage<unsigned char> I; // Create a gray level image container
+  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
+  g.acquire(I); // Acquire an image
+
+  vpDisplayX d(I, 0, 0, "Camera view");
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+
+  vpDot2 blob;
+  // Set dot characteristics for the auto detection
+  blob.setWidth(24);
+  blob.setHeight(23);
+  blob.setArea(412);
+  blob.setGrayLevelMin(160);
+  blob.setGrayLevelMax(255);
+  blob.setGrayLevelPrecision(0.8);
+  blob.setSizePrecision(0.65);
+  blob.setEllipsoidShapePrecision(0.65);
+
+  std::list<vpDot2> auto_detected_blob_list;
+  std::list<vpDot2>::iterator it;
+  blob.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), auto_detected_blob_list);
+
+  while(1) {
+    g.acquire(I); // Acquire an image
+    vpDisplay::display(I);
+
+    for(it=auto_detected_blob_list.begin(); it != auto_detected_blob_list.end(); ++it) {
+      (*it).setGraphics(true);
+      (*it).track(I);
+    }
+
+    vpDisplay::flush(I);
+  }
+#endif
+}
+\endcode
+
   \sa vpDot
 */
 class VISP_EXPORT vpDot2 : public vpTracker
@@ -160,6 +209,7 @@ public:
   void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
                unsigned int thickness=1);
 
+  double getArea() const;
   /*!
 
     Return the dot bounding box.
@@ -268,6 +318,7 @@ public:
 
   void searchDotsInArea(const vpImage<unsigned char>& I, std::list<vpDot2> &niceDots );
 
+  void setArea( const double & area );
   /*!
     Initialize the dot coordinates with \e cog. 
   */
@@ -335,12 +386,12 @@ public:
   void setGraphicsThickness(unsigned int thickness) {this->thickness = thickness;};
   /*!
 
-  Set the color level of the dot to search a dot in an area. This level will be
+  Set the color level of the dot to search a dot in a region of interest. This level will be
   used to know if a pixel in the image belongs to the dot or not. Only pixels
   with higher level can belong to the dot.  If the level is lower than the
   minimum level for a dot, set the level to MIN_IN_LEVEL.
 
-  \param min : Color level of a dot to search in an area.
+  \param min : Color level of a dot to search in a region of interest.
 
   \sa setGrayLevelMax(), setGrayLevelPrecision()
 
@@ -355,9 +406,9 @@ public:
   /*!
 
   Set the color level of pixels surrounding the dot. This is meant to be used
-  to search a dot in an area.
+  to search a dot in a region of interest.
 
-  \param max : Intensity level of a dot to search in an area.
+  \param max : Intensity level of a dot to search in a region of interest.
 
   \sa  setGrayLevelMin(), setGrayLevelPrecision()
   */
