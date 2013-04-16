@@ -138,6 +138,8 @@ OPTION(BUILD_SHARED_LIBS "Build ViSP shared libraries (.dll/.so) instead of stat
 OPTION(BUILD_EXAMPLES "Build ViSP examples." ON)
 # Build demos as an option.
 OPTION(BUILD_DEMOS "Build ViSP demos." ON)
+# Build demos as an option.
+OPTION(BUILD_TUTORIAL "Build ViSP tutorial." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
 
@@ -2151,12 +2153,16 @@ endif(BUILD_PACKAGE)
 # Propagation in sub dirs
 #----------------------------------------------------------------------
 SUBDIRS(src)
-IF(BUILD_DEMOS)
-  SUBDIRS(demo)
-ENDIF(BUILD_DEMOS)
-IF(BUILD_EXAMPLES)
-  SUBDIRS(example)
-ENDIF(BUILD_EXAMPLES)
+if(BUILD_DEMOS)
+  subdirs(demo)
+endif()
+if(BUILD_EXAMPLES)
+  subdirs(example)
+endif()
+if(BUILD_TUTORIAL)
+  subdirs(tutorial)
+endif()
+
 IF(BUILD_TESTING)
   #
   # Test coverage specific code

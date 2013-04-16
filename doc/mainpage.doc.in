@@ -1,7 +1,9 @@
 /*! 
 
 \mainpage Online documentation for ViSP @VISP_VERSION@
- 
+
+\tableofcontents
+
 \section intro_sec Introduction
 
 <p>ViSP is a modular C++ library that allows fast development of visual
@@ -38,6 +40,13 @@ href="http://www.irisa.fr/lagadic/visp/libraries.html" target="_parent">http://w
 <p>ViSP full installation procedure using CMake is explained in the getting started documents available from <a
 href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http://www.irisa.fr/lagadic/visp/publication.html</a>.</p>
  
+\section Tutorial_sec Tutorial
+
+<p>Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
+- \ref tutorial-getting-started
+- \ref tutorial-tracking
+
+
 \section Examples_sec Using ViSP
 
 <p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project implementation.</p>
@@ -48,9 +57,30 @@ image, compute a camera pose, estimate an homography, servo a real
 robot or a simulated one using a 2D, 2D half or 3D visual servoing
 scheme, ...</p>
 
+\section Howto_sec How to help ?
+
+<p>ViSP ibrary is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a> by <a href="http://team.inria.fr/lagadic/welcome-eng.html">Lagadic team</a>. If you enjoy using ViSP, you may contribute to the project in different ways. This will motivate us to continue the efforts.
+
+- You can help VISP to be more widely known, by displaying a <a href="http://www.irisa.fr/lagadic/visp/documentation/visp-flyers.pdf">ViSP flyer</a> at work, in your lab or school.
+- You can report bugs, propose patches or new functionalities, using ViSP <a href="https://gforge.inria.fr/forum/?group_id=397">forums</a>, <a href="https://gforge.inria.fr/mail/?group_id=397">ViSP users mailing list</a>, or <a href="https://gforge.inria.fr/tracker/?atid=1867&group_id=397&func=browse">trackers</a>.
+- You can write new tutorials, new documentations or simply improve the existing documentation.
+- If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address :
+    <em>Inria Rennes Breatgne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 */
 
 
+/*
+ ******************************************
+ * Tutorial list
+ ******************************************
+ */
+/*!
+  \defgroup Tutorial Tutorials
+
+Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
+- \ref tutorial-getting-started
+- \ref tutorial-tracking
+*/
 
 /*
  ******************************************

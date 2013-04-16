@@ -1,0 +1,121 @@
+/**
+
+\page tutorial-tracking Tutorial: Tracking capabilities
+\tableofcontents
+
+\section tracking Tracking capabilities
+
+\subsection tracking_blob Blob
+\subsubsection tracking_blob_tracking Blob tracking
+
+With ViSP you can track a blob using either vpDot or vpDot2 classes.
+
+\include tutorial-blob-tracker.cpp
+
+The videos show the result of the tracking on two different objects:
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/2Jv7OYBuPgI?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/Kr2DJotfsiA?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+Here after we explain the new lines that are introduced.
+
+First an instance of the blob tracker is created. 
+\code
+  vpDot2 d;
+\endcode
+
+Then we are modifying some default settings to allow drawings in overlay the countour pixels and the position of the center of gravity with a thickness of 2 pixels.
+\code
+  blob.setGraphics(true);
+  blob.setGraphicsThickness(2);
+\endcode
+
+Then we are waiting for a user initialisation throw a mouse click event in the blob to track. 
+\code
+  blob.initTracking(I);
+\endcode
+
+The tracker is now initialized. The tracking can be performed on new images:
+
+\code
+  blob.track(I);
+\endcode
+
+\subsubsection tracking_blob_auto Blob auto detection and tracking
+
+The following example shows how to detect blobs in the first image and then track all the detected blobs. This functionality is only available with vpDot2 class.
+
+\include tutorial-blob-auto-tracker.cpp
+
+  Here is a screenshot of the resulting program :
+
+  <img src="img-blob-auto-detection.png" border="1" width="320" height="240">
+
+  And here is the detailled explanation of the source :
+
+  First we create an instance of the tracker.
+\code
+   vpDot2 blob;
+\endcode
+  Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image.
+
+\code
+  if (learn) {
+    // Learn the characteristics of the blob to auto detect
+    blob.setGraphics(true);
+    blob.setGraphicsThickness(1);
+    blob.initTracking(I);
+    blob.track(I);
+    std::cout << "Blob characteristics: " << std::endl;
+    std::cout << " width : " << blob.getWidth() << std::endl;
+    std::cout << " height: " << blob.getHeight() << std::endl;
+    std::cout << " area: " << blob.getArea() << std::endl;
+    std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
+    std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
+    std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
+    std::cout << " sizePrecision: " << blob.getSizePrecision() << std::endl;
+    std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
+  }
+\endcode
+  If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
+\code
+  else {
+    // Set blob characteristics for the auto detection
+    blob.setWidth(50);
+    blob.setHeight(50);
+    blob.setArea(1700);
+    blob.setGrayLevelMin(0);
+    blob.setGrayLevelMax(30);
+    blob.setGrayLevelPrecision(0.8);
+    blob.setSizePrecision(0.65);
+    blob.setEllipsoidShapePrecision(0.65);
+  }
+\endcode
+
+Once the blob characteristics are known, to search similar blobs in the image is simply done by:
+\code
+  std::list<vpDot2> blob_list;
+  blob.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), auto_detected_blob_list);
+\endcode
+Here \c blob_list contains the list of the blobs that are detected in the image  \c I. When learning is enabled, the blob that is tracked is not in the list of auto detected blobs. We add it to the end of the list:
+
+\code
+  if (learn) {
+    // The blob that is tracked by initTracking() is not in the list of auto detected blobs
+    // We add it:
+    blob_list.push_back(blob);
+  }
+\endcode
+
+Finally, when a new image is available we do the tracking of all the blobs:
+\code
+    for(std::list<vpDot2>::iterator it=blob_list.begin(); it != blob_list.end(); ++it) {
+      (*it).setGraphics(true);
+      (*it).setGraphicsThickness(3);
+      (*it).track(I);
+    }
+\endcode
+
+*/

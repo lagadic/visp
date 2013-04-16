@@ -1,0 +1,133 @@
+/**
+  \page tutorial-getting-started Tutorial: Getting started
+  \tableofcontents
+
+  \section image Working with images
+
+  \subsection image_started Getting started
+  Let's start to write our first program to see how to read an image,
+  open a display to view the image, draw in overlay a red rectangle
+  and finaly save the image.
+
+  \include tutorial-image-viewer.cpp
+
+  Here is a screenshot of the resulting program :
+
+  \image html img-lena-viewer.png
+
+  And here is the detailled explanation of the source, line by line :
+\code
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGDI.h>
+\endcode
+  Include headers for image viewers. The first one more for unix-like systems requires that \e libX11 is available. The second one dedicated to windows systems requires that the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio is available. Other viewers are also available (vpDisplayOpenCV, vpDisplayGTK).
+
+\code
+#include <visp/vpImage.h>
+\endcode
+  Include the main header file of the vpImage class.
+\code
+#include <visp/vpImageIo.h>
+\endcode
+  Include the header file that allows to read or write an image from the disk using vpImageIo class.
+\code
+#include <visp/vpImagePoint.h>
+\endcode
+  Include the header that defines an image point in vpImagePoint.
+
+\code
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+\endcode
+  To be cross-platform we use these protections to be sure that a viewer that will use libX11 or GDI is available.
+
+\code
+  vpImage<vpRGBa> I;
+\endcode
+  Creation of a color image instance. Each pixel is coded as RGBa.
+\code
+  vpImageIo::read(I, "lena.ppm");
+\endcode
+  The image \c I is initialized by reading an image file from the disk.
+  Here, <tt>lena.ppm</tt> must be in the same directory than the current program.
+
+\code
+#ifdef UNIX
+  vpDisplayX d(I);
+#elif WIN32
+  vpDisplayGDI d(I);
+#endif
+  vpDisplay::setTitle(I, "Lena");
+\endcode
+  Depending on the operating system, create an instance of an image display window for image \c I. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. The title of the display is then set to \e Lena.  
+
+\code
+  vpDisplay::display(I);
+
+  vpDisplay::displayRectangle(I, vpImagePoint(90,90), 70, 90, vpColor::red, false, 2);
+  vpDisplay::flush(I);
+\endcode
+  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finaly, we flush the display to see the image and the drawings.
+
+
+\code
+  vpImage<vpRGBa> O;
+  vpDisplay::getImage(I, O);
+\endcode
+  We create a new color image instance \c O that is initialized with the image \c I and the overlay content.
+
+\code
+#ifdef VISP_HAVE_LIBJPEG
+  vpImageIo::write(I, "lena-out.jpg");
+  vpImageIo::write(O, "lena-out-with-orverlay.jpg");
+#endif  
+\endcode
+  If JPEG capabilities are available (\e libjpeg package is installed), firstly we write the content of image \c I to the disk and secondly we write image \c O that contains the drawings in overlay. 
+
+\code
+  vpDisplay::getClick(I);
+\endcode
+  Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
+
+  \subsection image_grabbing Image frame grabbing
+
+The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 are available.
+
+\include tutorial-grabber-1394.cpp
+
+Here after we explain the new lines that are introduced.
+
+First an instance of the frame grabber is created. 
+\code
+   vp1394TwoGrabber g;
+\endcode
+
+Note that once the grabber is created, you can specify some settings such as the camera framerate, the firewire transmission speed, the image size and color coding. For a more complete list of settings see vp1394TwoGrabber class. 
+\code
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800);
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+\endcode
+
+Then the grabber is initialized using:
+\code
+  g.open(I);
+\endcode
+From now the color image \c I is also initialized with the size corresponding to the grabber settings. Image acquisition is simply done by:
+
+\code
+  g.acquire(I);
+\endcode
+
+Note here that we are waiting for a non blocking mouse event to break the while loop before ending the program.
+\code
+  if (vpDisplay::getClick(I, false)) break;
+\endcode
+
+In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp. 
+
+If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
+
+It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
+
+You are now ready to see the next tutorial \ref tutorial-tracking.
+*/

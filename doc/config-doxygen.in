@@ -566,6 +566,7 @@ WARN_LOGFILE           = warning.log
 
 INPUT                  = "@VISP_SOURCE_DIR@/src" \
                          "@VISP_SOURCE_DIR@/example" \
+                         "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/test" \
                          "@VISP_SOURCE_DIR@/doc"
@@ -628,6 +629,7 @@ EXCLUDE_SYMBOLS        =
 # the \include command).
 
 EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
+                         "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/test"
 
