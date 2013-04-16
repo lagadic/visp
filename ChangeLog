@@ -10,16 +10,17 @@ ViSP 2.7.1 (under development)
   - New features
   - Improvements
     . vpV4l2Grabber and vp1394CMUGrabber does no more require a call to open(I).
-	. In vp1394CMUGrabber new getters/setters for the framerate, shutter, gain.
-	  It is now possible to change the settings in the acquisition loop.
+    . In vp1394CMUGrabber new getters/setters for the framerate, shutter, gain.
+      It is now possible to change the settings in the acquisition loop.
     . An exceptions is throwned when moving-edges are not initialized
       (vpMeTracker, vpMeLine, vpMeEllipse)
     . In model-based trackers, improve face visibility test using Ogre ray
       tracing when faces are concave or not oriented counter clockwise.
     . ViSP can now be used with pkg-config
   - Examples
+    . Introduction of tutorials
   - Bug fixed
-    . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
+    . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
       and SoDB::finish() usage
     . [15410] Robot wireframe simulator hangs
     . [15422] Build issues with ffmpeg 1.0.1 third party
