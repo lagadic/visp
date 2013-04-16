@@ -2160,7 +2160,7 @@ if(BUILD_EXAMPLES)
   subdirs(example)
 endif()
 if(BUILD_TUTORIAL)
-  subdirs(tutorial)
+  #subdirs(tutorial)
 endif()
 
 IF(BUILD_TESTING)
