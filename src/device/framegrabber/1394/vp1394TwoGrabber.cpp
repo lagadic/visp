@@ -2831,10 +2831,11 @@ vp1394TwoGrabber::printCameraInfo()
 
   dc1394featureset_t features;
 #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-  if (dc1394_feature_get_all(camera, &features) != DC1394_SUCCESS) {
+  if (dc1394_feature_get_all(camera, &features) != DC1394_SUCCESS)
 #elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
-  if (dc1394_get_camera_feature_set(camera, &features) != DC1394_SUCCESS) {
+  if (dc1394_get_camera_feature_set(camera, &features) != DC1394_SUCCESS)
 #endif
+  {
     close();
     vpERROR_TRACE("unable to get feature set for camera %d\n", camera_id);
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,

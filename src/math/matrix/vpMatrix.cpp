@@ -201,6 +201,7 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     this->data = (double*)realloc(this->data, this->dsize*sizeof(double));
     if ((NULL == this->data) && (0 != this->dsize))
     {
+      if (copyTmp != NULL) delete [] copyTmp;
       vpERROR_TRACE("\n\t\tMemory allocation error when allocating data") ;
       throw(vpException(vpException::memoryAllocationError,
         "\n\t\t Memory allocation error when "
@@ -212,6 +213,7 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     this->rowPtrs = (double**)realloc (this->rowPtrs, this->trsize*sizeof(double*));
     if ((NULL == this->rowPtrs) && (0 != this->dsize))
     {
+      if (copyTmp != NULL) delete [] copyTmp;
       vpERROR_TRACE("\n\t\tMemory allocation error when allocating rowPtrs") ;
       throw(vpException(vpException::memoryAllocationError,
         "\n\t\t Memory allocation error when "

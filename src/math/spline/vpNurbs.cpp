@@ -627,7 +627,11 @@ vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, doubl
     first--;
     last++;
   }
-  if (t == 0) return t;
+  if (t == 0) {
+    delete[] tempP;
+    delete[] tempW;
+    return t;
+  }
   for(unsigned int k = l_r+1; k <= m; k++) l_knots[k-t] = l_knots[k];
   j = (unsigned int)fout;
   i = j;

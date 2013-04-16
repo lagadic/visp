@@ -430,7 +430,6 @@ vpViper850::parseConfigFile (const char * filename)
   {
     vpERROR_TRACE ("Impossible to read the config file %s.",
                    filename);
-    fclose(fdtask);
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the config file.");
   }

@@ -128,6 +128,9 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 
   if (m < n)
   {
+    delete[] w;
+    delete[] a;
+    delete[] v;
     vpERROR_TRACE("\n\t\tSVDcmp: You must augment A with extra zero rows") ;
     throw(vpMatrixException(vpMatrixException::matrixError,
 			    "\n\t\tSVDcmp: You must augment A with "

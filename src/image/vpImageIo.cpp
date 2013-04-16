@@ -2098,13 +2098,19 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   if (!png_ptr)
   {
     fclose (file);
+    vpERROR_TRACE("Error during png_create_write_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG write error")) ;
   }
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr)
   {
     fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
+    png_destroy_write_struct (&png_ptr, NULL);
+    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG write error")) ;
   }
 
   /* initialize the setjmp for returning properly after a libpng error occured */
@@ -2161,6 +2167,10 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   {
     fclose (file);
     png_destroy_write_struct (&png_ptr, &info_ptr);
+    for(unsigned int j = 0; j < height; j++)
+      delete[] row_ptrs[j];
+
+    delete[] row_ptrs;
     vpERROR_TRACE("Error during write image\n");
     throw (vpImageException(vpImageException::ioError,
            "PNG write error")) ;
@@ -2172,6 +2182,10 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   {
     fclose (file);
     png_destroy_write_struct (&png_ptr, &info_ptr);
+    for(unsigned int j = 0; j < height; j++)
+      delete[] row_ptrs[j];
+
+    delete[] row_ptrs;
     vpERROR_TRACE("Error during write end\n");
     throw (vpImageException(vpImageException::ioError,
            "PNG write error")) ;
@@ -2180,9 +2194,9 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   png_write_end(png_ptr, NULL);
 
   for(unsigned int j = 0; j < height; j++)
-    delete[] /*(png_byte)*/row_ptrs[j];
+    delete[] row_ptrs[j];
 
-  delete[] (png_bytep)row_ptrs;
+  delete[] row_ptrs;
 
   png_destroy_write_struct (&png_ptr, &info_ptr);
 
@@ -2236,13 +2250,19 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   if (!png_ptr)
   {
     fclose (file);
+    vpERROR_TRACE("Error during png_create_write_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG write error")) ;
   }
 
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr)
   {
     fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
+    png_destroy_write_struct (&png_ptr, NULL);
+    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG write error")) ;
   }
 
   /* initialize the setjmp for returning properly after a libpng error occured */
@@ -2301,6 +2321,10 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   {
     fclose (file);
     png_destroy_write_struct (&png_ptr, &info_ptr);
+    for(unsigned int j = 0; j < height; j++)
+      delete[] row_ptrs[j];
+
+    delete[] row_ptrs;
     vpERROR_TRACE("Error during write image\n");
     throw (vpImageException(vpImageException::ioError,
            "PNG write error")) ;
@@ -2312,6 +2336,10 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   {
     fclose (file);
     png_destroy_write_struct (&png_ptr, &info_ptr);
+    for(unsigned int j = 0; j < height; j++)
+      delete[] row_ptrs[j];
+
+    delete[] row_ptrs;
     vpERROR_TRACE("Error during write end\n");
     throw (vpImageException(vpImageException::ioError,
            "PNG write error")) ;
@@ -2320,9 +2348,9 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   png_write_end(png_ptr, NULL);
 
   for(unsigned int j = 0; j < height; j++)
-    delete[] /*(png_byte)*/row_ptrs[j];
+    delete[] row_ptrs[j];
 
-  delete[] (png_bytep)row_ptrs;
+  delete[] row_ptrs;
 
   png_destroy_write_struct (&png_ptr, &info_ptr);
 
@@ -2611,8 +2639,10 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   /* check for valid magic number */
   if (png_sig_cmp (magic,0, sizeof (magic)))
   {
-    fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
     fclose (file);
+    vpERROR_TRACE("error: \"%s\" is not a valid PNG image!\n",filename);
+    throw (vpImageException(vpImageException::ioError,
+           "PNG read error")) ;
   }
 
   /* create a png read struct */
@@ -2620,6 +2650,9 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   if (!png_ptr)
   {
     fclose (file);
+    vpERROR_TRACE("Error during png_create_read_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG read error")) ;
   }
 
   /* create a png info struct */
@@ -2628,6 +2661,9 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   {
     fclose (file);
     png_destroy_read_struct (&png_ptr, NULL, NULL);
+    vpERROR_TRACE("Error during png_create_info_struct()\n");
+    throw (vpImageException(vpImageException::ioError,
+           "PNG read error")) ;
   }
 
   /* initialize the setjmp for returning properly after a libpng error occured */
