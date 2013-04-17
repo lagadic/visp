@@ -1,6 +1,7 @@
 /*! \example tutorial-grabber-opencv-bis.cpp */
-#include <visp/vpImageConvert.h>
+#include <stdlib.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpImageConvert.h>
 
 // usage: binary <device name>
 // device name: 0 is the default to dial with the first camera,
@@ -11,7 +12,7 @@ int main(int argc, char** argv)
   if (argc > 1)
     device = atoi(argv[1]);
 
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   std::cout << "Use device: " << device << std::endl;
   cv::VideoCapture cap(device); // open the default camera
   if(!cap.isOpened()) { // check if we succeeded

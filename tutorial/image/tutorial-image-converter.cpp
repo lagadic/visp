@@ -4,7 +4,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   cv::Mat A;
   A = cv::imread("lena.bmp", CV_LOAD_IMAGE_GRAYSCALE);
 

@@ -10,11 +10,16 @@ int main(int argc, char** argv )
     return -1;
   }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpImage<vpRGBa> I;
 
   try {
     vpImageIo::read(I, argv[1]);
+  }
+  catch(...) {
+    std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
+  }
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 
 #ifdef UNIX
     vpDisplayX d(I);
@@ -26,9 +31,5 @@ int main(int argc, char** argv )
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
-  }
-  catch(...) {
-    std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
-  }
 #endif
 }
