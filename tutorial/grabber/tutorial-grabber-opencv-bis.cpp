@@ -7,10 +7,11 @@
 // 1 to dial with a second camera attached to the computer
 int main(int argc, char** argv)
 {
-#if defined(VISP_HAVE_OPENCV)
   int device = 0;
   if (argc > 1)
     device = atoi(argv[1]);
+
+#if defined(VISP_HAVE_OPENCV)
   std::cout << "Use device: " << device << std::endl;
   cv::VideoCapture cap(device); // open the default camera
   if(!cap.isOpened()) { // check if we succeeded

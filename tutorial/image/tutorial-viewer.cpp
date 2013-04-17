@@ -5,13 +5,13 @@
 
 int main(int argc, char** argv )
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-  vpImage<vpRGBa> I;
-
   if(argc != 2) {
     printf( "Usage: viewer <image name.[pgm,ppm,jpeg,png]>\n" );
     return -1;
   }
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+  vpImage<vpRGBa> I;
 
   try {
     vpImageIo::read(I, argv[1]);
