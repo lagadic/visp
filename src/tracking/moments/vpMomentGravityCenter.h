@@ -120,12 +120,12 @@ class VISP_EXPORT vpMomentGravityCenter : public vpMoment {
           Shortcut function to retrieve \f$x_g\f$.
           \return The first gravity center coordinate.
           */
-        double getXg(){ return values[0]; }
+        double getXg() const { return values[0]; }
         /*!
           Shortcut function to retrieve \f$y_g\f$.
           \return The second gravity center coordinate.
           */
-        double getYg(){ return values[1]; }
+        double getYg() const { return values[1]; }
         /*!
           The class's string name.
           */
