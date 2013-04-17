@@ -103,9 +103,6 @@ FOREACH(val ${VISP_EXTERN_LINK_DIR})
 ENDFOREACH(val ${VISP_EXTERN_LINK_DIR})
 #MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
 
-# Tell the user project where to find ViSP dependencies
-#INCLUDE("${VISP_ROOT_DIR_CMAKE}/VISPLibraryDepends.cmake")
-
 # export source dir for doxygen eventually
 SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
 

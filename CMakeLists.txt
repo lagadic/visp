@@ -1979,12 +1979,6 @@ CONFIGURE_FILE(
   ${VISP_BINARY_DIR}/VISPUse.cmake
   IMMEDIATE @ONLY)
 
-# Export our library dependencies for use by the third party
-# user projects
-EXPORT_LIBRARY_DEPENDENCIES(
-  ${VISP_BINARY_DIR}/VISPLibraryDepends.cmake
-  )
-
 # Generate the package dependent file include/visp/vpConfig.h
 CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
   ${VISP_BINARY_DIR}/ViSP-third-party.txt
@@ -2034,9 +2028,6 @@ INCLUDE(${CMAKE_ROOT}/Modules/CMakeExportBuildSettings.cmake)
 CMAKE_EXPORT_BUILD_SETTINGS(
   ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
   )
-EXPORT_LIBRARY_DEPENDENCIES(
-  ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
-  )
 
 # Install vpConfig.h that may differ from the one in include/visp
 INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
@@ -2075,7 +2066,6 @@ IF(UNIX)
     ${VISP_BINARY_DIR}/install/VISPUse.cmake
     ${VISP_BINARY_DIR}/install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
-    ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
     ${VISP_BINARY_DIR}/ViSP-third-party.txt
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
@@ -2102,7 +2092,6 @@ ELSE()
     ${VISP_BINARY_DIR}/install/VISPUse.cmake
     ${VISP_BINARY_DIR}/install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
-    ${VISP_BINARY_DIR}/install/VISPLibraryDepends.cmake
     DESTINATION .
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
