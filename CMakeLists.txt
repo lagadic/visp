@@ -2160,6 +2160,7 @@ if(BUILD_EXAMPLES)
   subdirs(example)
 endif()
 if(BUILD_TUTORIAL)
+  set(VISP_DIR ${PROJECT_BINARY_DIR})
   subdirs(tutorial)
 endif()
 
