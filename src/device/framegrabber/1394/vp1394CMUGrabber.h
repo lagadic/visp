@@ -80,50 +80,14 @@
           * Exposure time register value. Real exposure time depends on device capacities.
           * Gain register value. Real gain depends on device capacities.
 
-  The examples below show how to use this class.
+  This first example available in tutorial-grabber-CMU1394.cpp shows how to grab
+  and display images from a firewire camera under Windows.
 
-  Example 1:
-  \code
-#include <iostream>
+  \include tutorial-grabber-CMU1394.cpp
 
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vp1394CMUGrabber.h>
+  This other example shows how to consider more than one firewire camera, and how
+  to grab and display images from the first camera found on the bus.
 
-int main()
-{
-#if defined(VISP_HAVE_CMU1394)
-  std::cout << "ViSP Image acquisition example" <<std::endl;
-
-  vpImage<unsigned char> I;
-  vp1394CMUGrabber g;
-
-  g.setFramerate(4); // 30 fps
-  g.setAutoShutter();
-  g.setAutoGain();
-  g.acquire(I);
-
-  vpDisplayOpenCV d(I);
-  vpDisplay::display(I);
-
-  for(;;)
-  {
-    g.acquire(I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) // a click to exit
-        break;
-  }
-
-  g.close();
-#endif
-  std::cout << "ViSP exiting..." <<std::endl;
-  return 0;
-}
-  \endcode
-
-  Example 2:
   \code
 #include <iostream>
 

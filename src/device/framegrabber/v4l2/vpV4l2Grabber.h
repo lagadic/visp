@@ -100,7 +100,12 @@
   - /etc/modules.conf
   - or /etc/modprobe.conf
 
-  The example below shows how to use this grabber.
+  This first example available in tutorial-grabber-v4l2.cpp shows how to grab
+  and display images from an usb camera.
+  \include tutorial-grabber-v4l2.cpp
+
+  This other example shows how to use this grabber with an analogic camera
+  attached to a bttv PCI card.
   \code
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>

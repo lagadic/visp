@@ -7,15 +7,15 @@
   \subsection image_started Getting started
   Let's start to write our first program to see how to read an image,
   open a display to view the image, draw in overlay a red rectangle
-  and finaly save the image.
+  and finally save the image.
 
   \include tutorial-image-viewer.cpp
 
-  Here is a screenshot of the resulting program :
+  Here is a screen shot of the resulting program :
 
   \image html img-lena-viewer.png
 
-  And here is the detailled explanation of the source, line by line :
+  And here is the detailed explanation of the source, line by line :
 \code
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
@@ -66,7 +66,7 @@
   vpDisplay::displayRectangle(I, vpImagePoint(90,90), 70, 90, vpColor::red, false, 2);
   vpDisplay::flush(I);
 \endcode
-  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finaly, we flush the display to see the image and the drawings.
+  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finally, we flush the display to see the image and the drawings.
 
 
 \code
@@ -78,7 +78,7 @@
 \code
 #ifdef VISP_HAVE_LIBJPEG
   vpImageIo::write(I, "lena-out.jpg");
-  vpImageIo::write(O, "lena-out-with-orverlay.jpg");
+  vpImageIo::write(O, "lena-out-with-overlay.jpg");
 #endif  
 \endcode
   If JPEG capabilities are available (\e libjpeg package is installed), firstly we write the content of image \c I to the disk and secondly we write image \c O that contains the drawings in overlay. 

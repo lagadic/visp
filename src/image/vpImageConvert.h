@@ -89,7 +89,12 @@
 
   \ingroup ImageConversion
 
-  \brief Convert image types.
+  Convert image types.
+
+  The following example available in tutorial-image-converter.cpp shows how to
+  convert an OpenCV cv::Mat image into a vpImage:
+
+  \include tutorial-image-converter.cpp
 
 */
 class VISP_EXPORT vpImageConvert

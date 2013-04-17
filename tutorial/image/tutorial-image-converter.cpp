@@ -1,6 +1,7 @@
 /*! \example tutorial-image-converter.cpp */
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h>
+
 int main()
 {
 #ifdef VISP_HAVE_OPENCV

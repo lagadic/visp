@@ -163,6 +163,9 @@ int main()
   delete d;
 }
   \endcode
+
+  Other examples are available in tutorial-image-viewer.cpp and
+  tutorial-viewer.cpp.
 */
 class VISP_EXPORT vpDisplay
 {

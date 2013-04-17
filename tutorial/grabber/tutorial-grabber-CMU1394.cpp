@@ -15,14 +15,15 @@ int main()
   g.setFramerate(4); // 30 fps
   g.open(I);
   g.acquire(I);
-  std::cout << I.getWidth() << " " << I.getHeight() << std::endl;
+  std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
   vpDisplayGDI d(I);
 
   while(1) {
     g.acquire(I);
     vpDisplay::display(I);
     vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) break;
+    if (vpDisplay::getClick(I, false)) // A click to exit
+      break;
   }
 #endif
 }

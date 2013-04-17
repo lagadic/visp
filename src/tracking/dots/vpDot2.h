@@ -109,90 +109,18 @@
     is used when there was a problem performing basic tracking of the dot, but
     can also be used to find a certain type of dots in the full image.
 
-  The following sample code shows how to grab images from a firewire camera,
-  track a blob and display the tracking results.
+  The following sample code available in tutorial-blob-tracker.cpp shows how to
+  grab images from a firewire camera, track a blob and display the tracking
+  results.
 
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDot2.h>
-#include <visp/vpImage.h>
+  \include tutorial-blob-tracker.cpp
 
-int main()
-{
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
-  vpImage<unsigned char> I; // Create a gray level image container
-  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
-  g.acquire(I); // Acquire an image
+  This other example available in tutorial-blob-auto-tracker.cpp shows firstly
+  how to detect in the first image all the blobs that match some characteristics
+  in terms of size, area, gray level. Secondly, it shows how to track all the
+  dots that are detected.
 
-  vpDisplayX d(I, 0, 0, "Camera view");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-
-  vpDot2 blob;
-  blob.initTracking(I);
-  blob.setGraphics(true);
-
-  while(1) {
-    g.acquire(I); // Acquire an image
-    vpDisplay::display(I);
-    blob.track(I);
-
-    vpDisplay::flush(I);
-  }
-#endif
-}
-  \endcode
-
-  This other example shows firstly how to detect in the first image all the blobs that
-  match some characteristics in terms of size, area, gray level. Secondly, it shows how to track
-  all the dots that are detected.
-  \code
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDot2.h>
-
-int main()
-{
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
-  vpImage<unsigned char> I; // Create a gray level image container
-  vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
-  g.acquire(I); // Acquire an image
-
-  vpDisplayX d(I, 0, 0, "Camera view");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-
-  vpDot2 blob;
-  // Set dot characteristics for the auto detection
-  blob.setWidth(24);
-  blob.setHeight(23);
-  blob.setArea(412);
-  blob.setGrayLevelMin(160);
-  blob.setGrayLevelMax(255);
-  blob.setGrayLevelPrecision(0.8);
-  blob.setSizePrecision(0.65);
-  blob.setEllipsoidShapePrecision(0.65);
-
-  std::list<vpDot2> auto_detected_blob_list;
-  std::list<vpDot2>::iterator it;
-  blob.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), auto_detected_blob_list);
-
-  while(1) {
-    g.acquire(I); // Acquire an image
-    vpDisplay::display(I);
-
-    for(it=auto_detected_blob_list.begin(); it != auto_detected_blob_list.end(); ++it) {
-      (*it).setGraphics(true);
-      (*it).track(I);
-    }
-
-    vpDisplay::flush(I);
-  }
-#endif
-}
-\endcode
+  \include tutorial-blob-auto-tracker.cpp
 
   \sa vpDot
 */

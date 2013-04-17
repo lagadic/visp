@@ -70,87 +70,20 @@
   
   Needs OpenCV available on http://opencv.willowgarage.com/wiki/.
   
-  The code below shows how to use this class.
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpOpenCVGrabber.h>
+  The code below available in tutorial-grabber-opencv.cpp shows how to grab and
+  display images using OpenCV wrappers impremented in ViSP.
+  \include tutorial-grabber-opencv.cpp
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<unsigned char> I; // Create a gray level image container
-  vpOpenCVGrabber g;        // Create a grabber based on OpenCV third party lib
+  Note that it is also possible to grab images using OpenCV library by using
+  directly OpenCV cv::VideoCapture class. The following code corresponding to
+  tutorial-grabber-opencv-bis.cpp shows how to grab images in a cv::Mat structure
+  and then convert OpenCV images in ViSP images.
+  \include tutorial-grabber-opencv-bis.cpp
 
-  g.open(I);                           // Open the framegrabber
-  g.acquire(I);                        // Acquire an image
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
-#endif
-}
-  \endcode
+  An other example very close to the previous one available in grabOpenCV-2.cpp
+  shows how to grab images in OpenCV IplImage structure and then how to convert
+  OpenCV images in ViSP images.
 
-  Note that it is also possible to grab images using OpenCV library by using directly
-  cv::VideoCapture OpenCV class. The following code corresponding to grabOpenCV-2.cpp example shows how to acquire an image
-  with cv::VideoCapture, how to transform this image in ViSP format and how to display it.
-\code
-#include <iostream>
-
-#include <visp/vpConfig.h>
-
-#if defined(VISP_HAVE_OPENCV)
-
-#include <visp/vpImage.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpOpenCVGrabber.h>
-
-// usage: binary <device name>
-// device name: 0 is the default to dial with the first camera,
-//              1 to dial with a second camera attached to the computer
-int main(int argc, char** argv)
-{
-  int device = 0;
-  if (argc > 1)
-    device = atoi(argv[1]);
-
-  std::cout << "Use device: " << device << std::endl;
-  cv::VideoCapture cap(device); // open the default camera
-  if(!cap.isOpened())  // check if we succeeded
-    return -1;
-  cv::Mat frame;
-  cap >> frame; // get a new frame from camera
-
-  IplImage iplimage = frame;
-  std::cout << "Image size: " << iplimage.width << " "
-            << iplimage.height << std::endl;
-
-  //vpImage<vpRGBa> I; // for color images
-  vpImage<unsigned char> I; // for gray images
-  vpImageConvert::convert(&iplimage, I);
-  vpDisplayOpenCV d(I);
-
-  for(;;) {
-    cap >> frame; // get a new frame from camera
-    iplimage = frame;
-
-    // Convert the image in ViSP format and display it
-    vpImageConvert::convert(&iplimage, I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) // a click to exit
-      break;
-  }
-  // the camera will be deinitialized automatically in VideoCapture destructor
-  return 0;
-}
-
-#else
-int main()
-{
-  std::cout << "OpenCV is not available" << std::endl;
-}
-\endcode
  */
 class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 {

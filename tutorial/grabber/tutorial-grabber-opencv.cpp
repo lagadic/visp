@@ -10,14 +10,15 @@ int main()
   vpOpenCVGrabber g;
   g.open(I);
   g.acquire(I);
-  std::cout << I.getWidth() << " " << I.getHeight() << std::endl;
+  std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
   vpDisplayOpenCV d(I);
 
   while(1) {
     g.acquire(I);
     vpDisplay::display(I);
     vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) break;
+    if (vpDisplay::getClick(I, false))
+      break;
   }
 #endif
 }

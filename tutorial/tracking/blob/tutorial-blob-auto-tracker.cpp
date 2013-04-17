@@ -7,7 +7,7 @@
 int main()
 {
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-  bool learn = true;
+  bool learn = false;
   vpImage<unsigned char> I; // Create a gray level image container
 
   vpImageIo::read(I, "./target.pgm");
@@ -70,12 +70,9 @@ int main()
 
     vpDisplay::flush(I);
 
-    if (vpDisplay::getClick(I, false)) {
-      vpImage<vpRGBa> Ic;
-      vpDisplay::getImage(I, Ic);
-      vpImageIo::write(Ic, "output.png");
+    if (vpDisplay::getClick(I, false))
       break;
-    }
+
     vpTime::wait(40);
   }
 #endif

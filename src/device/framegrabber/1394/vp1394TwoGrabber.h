@@ -85,28 +85,11 @@
 
   This grabber allows single or multi camera acquisition. 
 
-  - Here an example of single capture from the first camera found on the bus. An other example is provided in vp1394TwoGrabber():
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vp1394TwoGrabber.h>
-
-int main()
-{
-#if defined(VISP_HAVE_DC1394_2)
-  vpImage<unsigned char> I; // Create a gray level image container
-  bool reset = true; // Enable bus reset during construction (default)
-  vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
-
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-
-  g.acquire(I);                        // Acquire an image
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
-#endif
-}
-  \endcode
+  - Here you will find an example of single capture from the first camera found
+    on the bus. This example is available in tutorial-grabber-1394.cpp. An other
+    example that shows how to use format 7 and the auto-shutter is provided in
+    vp1394TwoGrabber() constructor:
+    \include tutorial-grabber-1394.cpp
   
   - If more than one camera is connected, it is also possible to select a specific camera by its GUID:
   \code

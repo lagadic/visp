@@ -26,7 +26,7 @@ First an instance of the blob tracker is created.
   vpDot2 d;
 \endcode
 
-Then we are modifying some default settings to allow drawings in overlay the countour pixels and the position of the center of gravity with a thickness of 2 pixels.
+Then we are modifying some default settings to allow drawings in overlay the contours pixels and the position of the center of gravity with a thickness of 2 pixels.
 \code
   blob.setGraphics(true);
   blob.setGraphicsThickness(2);
@@ -49,11 +49,11 @@ The following example shows how to detect blobs in the first image and then trac
 
 \include tutorial-blob-auto-tracker.cpp
 
-  Here is a screenshot of the resulting program :
+  Here is a screen shot of the resulting program :
 
   <img src="img-blob-auto-detection.png" border="1" width="320" height="240">
 
-  And here is the detailled explanation of the source :
+  And here is the detailed explanation of the source :
 
   First we create an instance of the tracker.
 \code

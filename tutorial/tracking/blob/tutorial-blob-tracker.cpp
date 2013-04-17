@@ -36,11 +36,8 @@ int main()
   while(1) {
     g.acquire(I); // Acquire an image
     vpDisplay::display(I);
-
     blob.track(I);
-
     vpDisplay::flush(I);
-
     if (vpDisplay::getClick(I, false))
       break;
   }

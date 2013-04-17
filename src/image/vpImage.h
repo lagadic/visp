@@ -86,6 +86,11 @@ class vpDisplay;
   if i is the ith rows and j the jth columns the value of this pixel
   is given by I[i][j] (that is equivalent to row[i][j]).
 
+  <h3>Example</h3>
+  The following example available in tutorial-image-manipulation.cpp shows how
+  to create gray level and color images and how to access to the pixels.
+  \include tutorial-image-manipulation.cpp
+
   <h3>Important remark</h3> To provide high-performance access there
   is no verification to ensure that 0 \f$\le\f$ i < height and 0
   \f$\le\f$ j < width. Since the memory allocated in the bitmap array

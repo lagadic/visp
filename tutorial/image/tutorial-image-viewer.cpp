@@ -25,7 +25,7 @@ int main()
   vpDisplay::getImage(I, O);
 #ifdef VISP_HAVE_LIBJPEG
   vpImageIo::write(I, "lena-out.jpg");
-  vpImageIo::write(O, "lena-out-with-orverlay.jpg");
+  vpImageIo::write(O, "lena-out-with-overlay.jpg");
 #endif
 
   vpDisplay::getClick(I);

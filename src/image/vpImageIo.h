@@ -99,6 +99,10 @@ int main()
   vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format 
 }
   \endcode
+
+  This other example available in tutorial-image-reader.cpp shows how to read/write
+  jpeg images. It supposes that \c libjpeg is installed.
+  \include tutorial-image-reader.cpp
 */
 
 class VISP_EXPORT vpImageIo
