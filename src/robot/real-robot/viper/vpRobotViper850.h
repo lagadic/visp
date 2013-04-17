@@ -340,6 +340,9 @@ public:  /* Methode publiques */
 
   void closeGripper();
 
+  void disableJoint6Limits();
+  void enableJoint6Limits();
+
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
   /*!

@@ -272,6 +272,9 @@ void
 
   Try( PrimitiveRESET_Viper850() );
 
+  // Enable the joint limits on axis 6
+  Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper850(0) );
+
   // Update the eMc matrix in the low level controller
   init(vpViper850::defaultTool);
 
@@ -2290,6 +2293,45 @@ void vpRobotViper850::closeGripper()
   }
 }
 
+/*!
+  Enable the joint limits on axis number 6. This is the default.
+
+  \sa disbleJoint6Limits()
+*/
+void vpRobotViper850::enableJoint6Limits()
+{
+  InitTry;
+  Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper850(0) );
+  std::cout << "Enable joint limits on axis 6..." << std::endl;
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot enable joint limits on axis 6");
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot enable joint limits on axis 6.");
+  }
+}
+
+/*!
+  \warning Each call to this function should be done carefully.
+
+  Disable the joint limits on axis number 6. When joint 6 is outside the limits,
+  a call to this function allows to bring the robot to a position inside the limits.
+  Don't forget then to call enableJoint6Limits() to reduce the working space for joint 6.
+
+  \sa enableJoint6Limits()
+*/
+void vpRobotViper850::disableJoint6Limits()
+{
+  InitTry;
+  Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper850(1) );
+  std::cout << "Warning: Disable joint limits on axis 6..." << std::endl;
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot disable joint limits on axis 6");
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot disable joint limits on axis 6.");
+  }
+}
 
 #endif
 

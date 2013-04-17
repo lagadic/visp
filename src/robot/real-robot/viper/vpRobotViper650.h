@@ -338,6 +338,9 @@ public:  /* Methode publiques */
   // Force/Torque control
   void biasForceTorqueSensor();
 
+  void disableJoint6Limits();
+  void enableJoint6Limits();
+
   /*!
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
