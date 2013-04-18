@@ -657,7 +657,7 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
     case D_STANDARD : { break; }
     case D_CIRCLE : { 
       strcpy(name, scene_dir.c_str());
-      strcat(name, "/cercle_sq2.bnd");
+      strcat(name, "/circle_sq2.bnd");
       break; }
     case D_TOOL : { 
       strcpy(name, scene_dir.c_str());
