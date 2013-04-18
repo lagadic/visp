@@ -65,7 +65,7 @@
   The following example available in tutorial-grabber-video.cpp shows how this
   class is really easy to use. It enables to read a video file named video.mpeg.
   \include tutorial-grabber-video.cpp
-  
+
   As shown in the next example, this class allows also to access to a specific
   frame. But be careful, for video files, the getFrame() method is not precise
   and returns the nearest intra key frame from the expected frame. You can use

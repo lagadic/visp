@@ -70,6 +70,9 @@
 
   \brief Class that defines generic functionnalities for display.
 
+  The \ref tutorial-getting-started is a good starting point to know
+  how to use this class to display an image in a window.
+
   The example below shows how to use this class.
 
   \code

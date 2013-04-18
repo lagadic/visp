@@ -86,10 +86,11 @@
   This grabber allows single or multi camera acquisition. 
 
   - Here you will find an example of single capture from the first camera found
-    on the bus. This example is available in tutorial-grabber-1394.cpp. An other
-    example that shows how to use format 7 and the auto-shutter is provided in
-    vp1394TwoGrabber() constructor:
+    on the bus. This example is available in tutorial-grabber-1394.cpp:
     \include tutorial-grabber-1394.cpp
+    A line by line explanation of this example is provided in \ref tutorial-getting-started
+    section \ref image_grabbing. An other example that shows how to use format 7
+    and the auto-shutter is provided in vp1394TwoGrabber() constructor:
   
   - If more than one camera is connected, it is also possible to select a specific camera by its GUID:
   \code

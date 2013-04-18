@@ -91,52 +91,15 @@ typedef void (*funcevent)(int);
   \ingroup TrackingImagePoint
 
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
-  implemented with OpenCV.
+  implemented in OpenCV.
 
-  The following example shows how to use the main functions of the class:
+  The following example available in tutorial-klt-tracker.cpp shows how to use
+  the main functions of the class.
 
-  \code
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpKltOpencv.h>
-#include <visp/vpImageConvert.h>
+  \include tutorial-klt-tracker.cpp
 
-int main()
-{
-#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // KLT only available since OpenCV-1.1.0
-  vpImage<unsigned char> I;
-  IplImage* Icv = NULL;
-  vpKltOpencv klt;
-
-  //First grab the initial image I
-
-  //Convert the image I to the IplImage format.
-  vpImageConvert::convert(I, Icv);
-
-  //Initialise the tracking on the whole image.
-  klt.initTracking(Icv, NULL);
-
-  while(true)
-  {
-    // Grab a new image and convert it to the OpenCV format.
-    vpImageConvert::convert(I, Icv);
-
-    // Track the features on the current image.
-    klt.track(Icv);
-
-    // Display the features tracked at the current iteration.
-    klt.display(I);
-  }
-
-  cvReleaseImage(&Icv);
-#else
-  std::cout << "vpKltOpencv requires ViSP with OpenCV." << std::endl;
-#endif
-  return(0);
-}
-  \endcode
-
+  A line by line explanation is provided in \ref tutorial-tracking in section
+  \ref tracking_keypoint_klt.
 */
 class VISP_EXPORT vpKltOpencv
 {
