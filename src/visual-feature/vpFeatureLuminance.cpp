@@ -149,8 +149,8 @@ vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
 	  for (unsigned int j = bord ; j < nbc-bord; j++)
 	    {	double x=0,y=0;
 	      vpPixelMeterConversion::convertPoint(cam,
-						   i, j,
-						   y, x)  ;
+						   j,i,
+						   x,y)  ;
 	    
 	      pixInfo[l].x = x;
 	      pixInfo[l].y = y;
