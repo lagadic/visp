@@ -192,23 +192,23 @@ public:
     */
   typedef enum
   {
-    THREE_PTS,
-    CUBE,
+    THREE_PTS, //!< A 40cm by 40cm plate with 3 points at coordinates (0,0,0), (0.1,0,0), (0,0.1,0). Each point is represented by a circle with 2cm radius.
+    CUBE, //!< A 12.5cm size cube.
     PLATE, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.1,-0.1,0), (0.1,-0.1,0), (0.1,0.1,0), (0.1,0.1,0). Each point is represented by a circle with 2cm radius.
     SMALL_PLATE, //!< 4 points at coordinates (-0.03,-0.03,0), (0.03,-0.03,0), (0.03,0.03,0), (0.03,0.03,0). Each point is represented by a circle with 1cm radius.
     RECTANGLE, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.07,-0.05,0), (0.07,0.05,0), (0.07,-0.05,0), (-0.07,-0.05,0). Each point is represented by a circle with 2cm radius.
-    SQUARE_10CM,
-    DIAMOND,
-    TRAPEZOID,
-    THREE_LINES,
-    ROAD,
-    TIRE,
-    PIPE,
-    CIRCLE,
-    SPHERE,
-    CYLINDER,
-    PLAN,
-    POINT_CLOUD,
+    SQUARE_10CM, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.05,0.05,0), (0.05,0.05,0), (0.05,-0.05,0), (-0.05,-0.05,0). Each point is represented by a circle with 2cm radius.
+    DIAMOND, //!< A 40cm by 40cm plate with 4 points at coordinates (0,-0.1,0), (0.1,0,0), (0,0.1,0), (-0.1,0,0). Each point is represented by a circle with 2cm radius.
+    TRAPEZOID, //!< A 40cm by 40cm plate with 4 points at coordinates (-0.025,-0.05,0), (-0.075,0.05,0), (0.075,0.05,0), (0.025,-0.05,0). Each point is represented by a circle with 2cm radius.
+    THREE_LINES, //!< Three parallel lines with equation y=-5, y=0, y=5.
+    ROAD, //!< Three parallel lines representing a road.
+    TIRE, //!< A tire represented by 2 circles with radius 10cm and 15cm.
+    PIPE, //!< A pipe represented by a cylinder of 25 cm length and 15cm radius.
+    CIRCLE, //!< A 10cm radius circle.
+    SPHERE, //!< A 15cm radius sphere.
+    CYLINDER, //!< A cylinder of 80cm length and 10cm radius.
+    PLAN, //!< A plane represented by a 56cm by 56cm plate with a grid of 49 squares inside.
+    POINT_CLOUD, //!< A plate with 8 points at coordinates (0.05,0,0), (0.15,0.05,0), (0.2,0.2,0), (-0.05,0.2,0), (-0.15,-0.1,0), (-0.1,-0.1,0), (-0.05,0.05,0) and (0.5,0,0). ach point is represented by a circle with 2cm radius.
   } vpSceneObject;
 
   /*!
@@ -219,9 +219,9 @@ public:
     */
   typedef enum
   {
-    D_STANDARD,
-    D_CIRCLE,
-    D_TOOL
+    D_STANDARD, //!<  The object displayed at the desired position is the same than the scene object defined in vpSceneObject.
+    D_CIRCLE, //!<  The object displayed at the desired position is a circle.
+    D_TOOL //!< A cylindrical tool is attached to the camera.
   } vpSceneDesiredObject;
 
   typedef enum

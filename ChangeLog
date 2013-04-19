@@ -26,10 +26,11 @@ ViSP 2.7.1 (under development)
     . [15422] Build issues with ffmpeg 1.0.1 third party
     . [15475] Segfault in cv::Mat(BGR) to vpImage(grey) conversion
     . [15522] Visibility tests issues in Model-Based Tracker using Ogre3D
-    . [15566] Bad mask orientation when using model-based tracker with 
+    . [15566] Bad mask orientation when using model-based tracker with
       cylinders
     . [15587] visp-config conflicts with multiarch support on Debian
     . [15623] Possible ViSP-2.7.0 bugs detected by cppcheck
+    . [15644] crash with vpRobotWireFrameSimulator::initScene()
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features

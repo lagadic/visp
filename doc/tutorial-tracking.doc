@@ -166,7 +166,7 @@ Returns the first image of the video in the gray level ViSP image container \c I
   vpImageConvert::convert(I, cvI);
 \endcode
 
-Then we convert \c I into \cvI, an image in OpenCV IplImage format that will be used by the tracker.
+Then we convert \c I into \c cvI, an image in OpenCV IplImage format that will be used by the tracker.
 
 \code
   vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
