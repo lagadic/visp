@@ -852,6 +852,8 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj)
   object = obj;
 
   strcpy(name_cam, scene_dir.c_str());
+  strcat(name_cam,"/camera.bnd");
+  set_scene(name_cam,&camera,cameraFactor);
 
   strcpy(name, scene_dir.c_str());
   switch (obj)
@@ -886,6 +888,9 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj)
   sceneInitialized = true;
   displayObject = true;
   displayCamera = true;
+
+  displayDesiredObject = false;
+  displayImageSimulator = false;
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
