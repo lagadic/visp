@@ -219,9 +219,9 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     vpHomogeneousMatrix get_fMo() const {return fMo;}
 
     /* Display functions */
-    void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject);
+    void initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject);
     void initScene(const char* obj, const char* desiredObject);
-    void initScene (vpSceneObject obj);
+    void initScene (const vpSceneObject &obj);
     void initScene(const char* obj);
 
     /*!

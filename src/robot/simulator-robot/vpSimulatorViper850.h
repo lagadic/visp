@@ -246,16 +246,16 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public
     void get_fJe(vpMatrix &fJe);
 
     void init (vpViper850::vpToolType tool, vpCameraParameters::vpCameraParametersProjType projModel=vpCameraParameters::perspectiveProjWithoutDistortion);
-    bool initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo);
-    void initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo);
+    bool initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo);
+    void initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo);
 
     void move(const char *filename) ;
 
     static bool readPosFile(const char *filename, vpColVector &q);
     static bool savePosFile(const char *filename, const vpColVector &q);
 
-    void setCameraParameters(const vpCameraParameters cam) ;
-    void setJointLimit(vpColVector limitMin, vpColVector limitMax);
+    void setCameraParameters(const vpCameraParameters &cam) ;
+    void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
     void setPosition(const vpRobot::vpControlFrameType frame,const vpColVector &q);
     void setPosition (const vpRobot::vpControlFrameType frame,
                       const double pos1,

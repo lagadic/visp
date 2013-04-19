@@ -416,7 +416,7 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
   \param cam : The desired camera parameters.
 */
 void
-vpSimulatorViper850::setCameraParameters(const vpCameraParameters cam) 
+vpSimulatorViper850::setCameraParameters(const vpCameraParameters &cam)
 {
   px_int = cam.get_px();
   py_int = cam.get_py();
@@ -1664,7 +1664,7 @@ vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,
   \param limitMax : The maximum joint limits are given in a vector of size 6. All the value must be in radian.
 */
 void 
-vpSimulatorViper850::setJointLimit(vpColVector limitMin, vpColVector limitMax)
+vpSimulatorViper850::setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax)
 {
   if (limitMin.getRows() != 6 || limitMax.getRows() != 6)
   {
@@ -2341,7 +2341,7 @@ vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I)
   \return false if the robot kinematics is not able to reach the cMo position.
 */
 bool
-vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
+vpSimulatorViper850::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo)
 {
   vpColVector stop(6);
   bool status = true;
@@ -2382,7 +2382,7 @@ vpSimulatorViper850::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   \param cMo : the desired pose of the camera.
 */
 void 
-vpSimulatorViper850::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
+vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo)
 {
   vpColVector stop(6);
   stop = 0;

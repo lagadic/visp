@@ -460,7 +460,7 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
   \param cam : The desired camera parameters.
 */
 void
-vpSimulatorAfma6::setCameraParameters(const vpCameraParameters cam) 
+vpSimulatorAfma6::setCameraParameters(const vpCameraParameters &cam)
 {
   px_int = cam.get_px();
   py_int = cam.get_py();
@@ -1697,7 +1697,7 @@ vpSimulatorAfma6::getPosition (const vpRobot::vpControlFrameType frame,
   \param limitMax : The maximum joint limits are given in a vector of size 6. The three first values have to be given in meter and the others in radian.
 */
 void 
-vpSimulatorAfma6::setJointLimit(vpColVector limitMin, vpColVector limitMax)
+vpSimulatorAfma6::setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax)
 {
   if (limitMin.getRows() != 6 || limitMax.getRows() != 6)
   {
@@ -2351,7 +2351,7 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
 
 */
 bool
-vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
+vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo)
 {
   vpColVector stop(6);
   bool status = true;
@@ -2392,7 +2392,7 @@ vpSimulatorAfma6::initialiseCameraRelativeToObject(vpHomogeneousMatrix cMo)
   \param cMo : the desired pose of the camera.
 */
 void 
-vpSimulatorAfma6::initialiseObjectRelativeToCamera(vpHomogeneousMatrix cMo)
+vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo)
 {
   vpColVector stop(6);
   stop = 0;
