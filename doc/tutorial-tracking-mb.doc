@@ -1,0 +1,364 @@
+/**
+
+\page tutorial-tracking-mb Tutorial: Model-based tracking
+\tableofcontents
+
+With ViSP it is possible to track an object using its cad model. Considered objects should be modeled by lines or cylinders. The model of the object could be defined in vrml format, or in cao format.
+
+The model-based tracker can consider moving-edges behind the lines of the model (see section \ref tracking_mb_edges). It can also consider keypoints that are detected and tracked on each visible face of the model (see section \ref tracking_mb_klt). The tracker can also handle moving-edges and keypoints in an hybrid scheme (see section \ref tracking_mb_hybrid).
+
+While the \ref tracking_mb_edges is appropriate to track untextured object, the \ref tracking_mb_klt is more designed to exploit textured objects with edges that are not really visible. The \ref tracking_mb_hybrid is appropriate to track textured objects with visible edges.
+
+In the following sections, we consider the tracking of a tea box modeled in cao format. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. 
+
+\section tracking_mb_edges Model-based edges tracker
+
+The following example that comes from tutorial-mb-edge-tracker.cpp allows to track the tea box using vpMbEdgeTracker class.
+
+\include tutorial-mb-edge-tracker.cpp
+
+The video below shows the result of the tea box model-based edges tracking. 
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+Hereafter is the description of the new lines introduced in this example.
+
+\code
+#include <visp/vpMbEdgeTracker.h>
+\endcode
+
+Here we include the header of the vpMbEdgeTracker class that allows to track an object from its cad model by using the moving-edges. The tracker will use image \c I and the intrinsic camera parameters \c cam as input. 
+
+\code
+  vpImage<unsigned char> I;
+  vpCameraParameters cam;
+\endcode
+
+As output, it will estimate \c cMo, the pose of the object in the camera frame.
+
+\code
+  vpHomogeneousMatrix cMo;
+\endcode
+
+Once the input image \c teabox.pgm is loaded in \c I, a window is created and initialized with image \c I. Then we create an instance of the tracker.
+
+\code
+  vpMbKltTracker tracker;
+\endcode
+
+There are then two different ways to initialize the tracker.
+
+- The first one, if libxml2 is available, is to read the settings from \c teabox.xml input file. 
+\code
+  tracker.loadConfigFile("teabox.xml");
+\endcode
+The content of the xml file is the following:
+\code
+<?xml version="1.0"?>
+<conf>
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>8</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>10000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+  </ecm>
+  <sample>
+    <step>4</step>
+    <nb_sample>250</nb_sample>
+  </sample>
+  <camera>
+    <u0>325.66776</u0> 
+    <v0>243.69727</v0> 
+    <px>839.21470</px> 
+    <py>839.44555</py> 
+  </camera>
+</conf>
+\endcode
+
+- The second one consists in initializing the parameters directly in the source code: 
+\code
+  vpMe me;
+  me.setMaskSize(5);
+  me.setMaskNumber(180);
+  me.setRange(8);
+  me.setThreshold(10000);
+  me.setMu1(0.5);
+  me.setMu2(0.5);
+  me.setSampleStep(4);
+  me.setNbTotalSample(250);
+  tracker.setMovingEdge(me);
+  cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+  tracker.setCameraParameters(cam);
+\endcode
+
+The display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
+\code
+  tracker.setDisplayFeatures(true);
+\endcode
+
+An important setting concerns the visibility test that is used to determine if a face is visible. Note that moving-edges are tracked only on visible faces. Two different visibility tests are implemented; with or without Ogre ray tracing. With the next line, we disable Ogre visibility test.
+
+\code
+  tracker.setOgreVisibilityTest(false);
+\endcode
+
+As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is then used to determine if the face is visible.
+
+\image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
+
+- When Ogre visibility test is disabled, the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Faces are considered as visible if  \f$ \alpha < 90\f$ degrees. When only moving-edges are used (nor keypoints) and when the object to track is simple like a single box, we suggest as here to disable Ogre visibility test. It will help the tracker to detect as soon as possible new faces when only one face is currently tracked.  
+- When Ogre visibility test is enabled, the algorithm used to compute the normal of the face uses Ogre and allows to consider convex and concave shapes. It is not mandatory to orientate the face counter clockwise. Two additional parameters need then to be introduced; the angle to determine if a face is appearing, and the angle to determine if the face is disappearing.
+\code
+  tracker.setOgreVisibilityTest(true);
+  tracker.setAngleAppear(70);
+  tracker.setAngleDisappear(80);
+\endcode
+It is also possible to introduce these two parameters in the xml file. It should be modified by adding the following lines:
+\code
+<conf>
+  ...
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+  </face>
+\endcode
+Here the face is considered as appearing if \f$ \alpha < 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
+
+Now we are ready to load the cad model of the object in cao format with:
+\code
+  tracker.loadModel("teabox.cao");
+\endcode
+The file \c teabox.cao describes first the vertexes of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_face). The next figure gives the index of the vertices that are defined in \c teabox.cao.
+
+\image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
+
+Four vertices with their 3D coordinates are then used to initialise the tracker:
+\code
+  tracker.initClick(I, "teabox.init");
+\endcode
+The content of \c teabox.init file is provided hereafter:
+
+\includelineno teabox.init
+
+We give now the signification of each line of this file:
+- line 1: Number of 3D points that should be defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
+- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.  
+- line 3: 3D coordinates of vertex 3.
+- line 4: 3D coordinates of vertex 2.
+- line 5: 3D coordinates of vertex 5.
+
+Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates defined in \c teabox.init and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is computed that is than used to initialize the tracker.
+
+Next, in the infinite while loop, after displaying the next image, we track the object on a new image \c I.
+
+\code
+    tracker.track(I);
+\endcode
+
+The result of the tracking is a pose \c cMo that could be obtained by:
+\code
+    tracker.getPose(cMo);
+\endcode
+
+Next lines are used first to retrieve the camera parameters used by the tracker, then to display the visible part of the cad model using red lines with 2 as thickness, and finally to display the object frame at the estimated position \c cMo. Each axis of the frame are 0.025 meters long. Using vpColor::none indicates that x-axis is displayed in red, y-axis in green, while z-axis in blue. The thickness of the axis is 3.
+
+\code
+    tracker.getCameraParameters(cam);
+    tracker.display(I, cMo, cam, vpColor::red, 2);
+    vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+\endcode
+
+The last lines are here to free the memory allocated by libxml2 or Coin 3rd party libraries:
+
+\code
+#ifdef VISP_HAVE_XML2
+  vpXmlParser::cleanup();
+#endif
+#ifdef VISP_HAVE_COIN
+  SoDB::finish();
+#endif
+\endcode
+
+
+
+\section tracking_mb_klt Model-based KLT tracker
+
+The following example that comes from tutorial-mb-klt-tracker.cpp allows to track the tea box using vpMbKltTracker class.
+
+\include tutorial-mb-klt-tracker.cpp
+
+The video below shows the result of the tea box model-based KLT tracking where keypoints are used as input features. 
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+This example is very similar to the one presented in \ref tracking_mb_edges except that here we use vpMbKltTracker class to track the tea box.
+
+As previously, there are two different ways to initialize the tracker.
+- The first one, if libxml2 is available, consists in reading the settings from an xml file.
+\code
+  tracker.loadConfigFile("teabox.xml");
+\endcode
+The \c teabox.xml file used here contains the following:
+\code
+<?xml version="1.0"?>
+<conf>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+  </face>
+  <klt>
+    <mask_border>5</mask_border> 
+    <max_features>300</max_features> 
+    <window_size>5</window_size> 
+    <quality>0.015</quality> 
+    <min_distance>8</min_distance> 
+    <harris>0.01</harris>
+    <size_block>3</size_block> 
+    <pyramid_lvl>3</pyramid_lvl> 
+  </klt>
+  <camera>
+    <u0>325.66776</u0> 
+    <v0>243.69727</v0> 
+    <px>839.21470</px> 
+    <py>839.44555</py> 
+  </camera>
+</conf>
+\endcode
+- The second one consists in initializing the parameters directly in the source code: 
+\code
+  tracker.setAngleAppear(70);
+  tracker.setAngleDisappear(80);
+  tracker.setMaskBorder(5);
+  vpKltOpencv klt_settings;
+  klt_settings.setMaxFeatures(300);
+  klt_settings.setWindowSize(5);
+  klt_settings.setQuality(0.015);
+  klt_settings.setMinDistance(8);
+  klt_settings.setHarrisFreeParameter(0.01);
+  klt_settings.setBlockSize(3);
+  klt_settings.setPyramidLevels(3);
+  tracker.setKltOpencv(klt_settings);
+  cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+  tracker.setCameraParameters(cam);
+\endcode
+
+Note also that in this example we model the tea box with triangles:
+\code
+  tracker.loadModel("teabox-triangle.cao");
+\endcode
+The file \c teabox-triangle.cao describes first the vertexes of the box, then the triangular faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_triangle).
+
+Note that this is the only tracker for which lines of the model are not necessary edges of the object.
+
+
+\section tracking_mb_hybrid Model-based hybrid tracker
+
+The following example that comes from tutorial-mb-hybrid-tracker.cpp allows to track the tea box using vpMbEdgeKltTracker class.
+
+\include tutorial-mb-hybrid-tracker.cpp
+
+The video below shows the result of the tea box model-based hybrid tracking where moving-edges and keypoints are used as input features. 
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+The source code is very similar to the one described in \ref tracking_mb_edges and \ref tracking_mb_klt. It doesn't require additional line by line explanation.
+We provide just hereafter the content of the \c teabox.xml file:
+\code
+<?xml version="1.0"?>
+<conf>
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>8</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>10000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+  </ecm>
+  <sample>
+    <step>4</step>
+    <nb_sample>250</nb_sample>
+  </sample>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+  </face>
+  <klt>
+    <mask_border>5</mask_border> 
+    <max_features>300</max_features> 
+    <window_size>5</window_size> 
+    <quality>0.015</quality> 
+    <min_distance>8</min_distance> 
+    <harris>0.01</harris>
+    <size_block>3</size_block> 
+    <pyramid_lvl>3</pyramid_lvl> 
+  </klt>
+  <camera>
+    <u0>325.66776</u0> 
+    <v0>243.69727</v0> 
+    <px>839.21470</px> 
+    <py>839.44555</py> 
+  </camera>
+</conf>
+\endcode
+
+
+\section tracking_mb_cao CAD model in cao format
+
+cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
+
+\subsection tracking_mb_cao_face teabox.cao example
+
+The content of the file teabox.cao used in the \ref tracking_mb_edges and \ref tracking_mb_hybrid examples is given here:
+
+\includelineno teabox.cao
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
+
+We make the choice to describe the faces of the box from the 3D points that correspond to the vertices. We provide now a line by line description of the file:
+- line 1: Header of the \c .cao file
+- line 2: The model is defined by 8 3D points. Here the 8 points correspond to the 8 vertices of the tea box presented in the previous figure. Thus, next 8 lines define the 3D points coordinates.
+- line 3: 3D point with coordinate (0,0,0) corresponding to vertex 0 of the tea box. This point is also the origin of the frame in which all the 3D points are defined.
+- line 4: 3D point with coordinate (0,0,-0.08) corresponding to vertex 1.
+- line 5 to 10: The other 3D points corresponding to vertices 2 to 7 respectively.
+- line 11: Number of single lines of the model. Sometimes, it could be useful to track a single line that doesn't lead to a face. 
+- line 12: Deprecated parameter that should always be set to 0. 
+- line 13: The number of faces defined by a set of points. Here our tea box has 6 faces. Thus, next 6 lines describe each face from the 3D points defined previously line 3 to 10.
+- line 14: First face defined by 4 points, respectively vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, than 2 and 3. This fixes the orientation of the normal of the face going outside the object.
+- line 15: Second face also defined by 4 points, respectively vertices 1,6,5,2 to have a counter clockwise orientation.
+- line 16 to 19: The four other faces of the box.
+- line 20: Number of cylinders describing the model. Since we model a simple box, the number of cylinders is 0.
+
+\subsection tracking_mb_cao_triangle teabox-triangle.cao example
+
+The content of the file teabox-triangle.cao used in the \ref tracking_mb_klt example is given here:
+
+\includelineno teabox-triangle.cao
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao-triangle.jpg Index of the vertices used to model the tea box in cao format with triangles.
+
+Until line 12, the content of this file is similar to the one described in 
+\ref tracking_mb_cao_face. Line 13 we specify that the model contains 12 faces. Each face is then described as a triangle.
+
+
+*/

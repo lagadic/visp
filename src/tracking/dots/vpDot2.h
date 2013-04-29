@@ -115,7 +115,7 @@
 
   \include tutorial-blob-tracker.cpp
   A line by line explanation of the previous example is provided in
-  \ref tutorial-tracking in section \ref tracking_blob_auto.
+  \ref tutorial-tracking-blob.
 
   This other example available in tutorial-blob-auto-tracker.cpp shows firstly
   how to detect in the first image all the blobs that match some characteristics
@@ -123,8 +123,8 @@
   dots that are detected.
 
   \include tutorial-blob-auto-tracker.cpp
-  A line by line explanation of this last example is provided in
-  \ref tutorial-tracking in section \ref tracking_blob_tracking.
+  A line by line explanation of this last example is also provided in
+  \ref tutorial-tracking-blob, section \ref tracking_blob_tracking.
 
   \sa vpDot
 */

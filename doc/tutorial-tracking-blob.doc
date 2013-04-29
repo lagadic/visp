@@ -1,12 +1,9 @@
 /**
 
-\page tutorial-tracking Tutorial: Tracking capabilities
+\page tutorial-tracking-blob Tutorial: Blob tracking
 \tableofcontents
 
-\section tracking Tracking capabilities
-
-\subsection tracking_blob Blob
-\subsubsection tracking_blob_tracking Blob tracking
+\section tracking_blob_tracking Blob tracking
 
 With ViSP you can track a blob using either vpDot or vpDot2 classes.
 
@@ -43,7 +40,7 @@ The tracker is now initialized. The tracking can be performed on new images:
   blob.track(I);
 \endcode
 
-\subsubsection tracking_blob_auto Blob auto detection and tracking
+\section tracking_blob_auto Blob auto detection and tracking
 
 The following example shows how to detect blobs in the first image and then track all the detected blobs. This functionality is only available with vpDot2 class.
 
@@ -118,99 +115,6 @@ Finally, when a new image is available we do the tracking of all the blobs:
     }
 \endcode
 
-\subsection tracking_keypoint Keypoint
-\subsubsection tracking_keypoint_klt KLT tracker
-
-With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi feature tracker. The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to this end. This class is a wrapper over the OpenCV KLT tracker implementation.
-
-\include tutorial-klt-tracker.cpp
-
-The video show the result of the tracking:
-
-\htmlonly
-<iframe width="420" height="315" src="http://www.youtube.com/embed/ZYOG4kJPtaM?rel=0" frameborder="0" allowfullscreen></iframe>
-\endhtmlonly
-
-And here is the line by line explanation of the source : 
-
-\code
-#include <visp/vpImageConvert.h>
-#include <visp/vpKltOpencv.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpVideoReader.h>
-\endcode
-
-We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV IplImage structure used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation. We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
-
-\code
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && defined(VISP_HAVE_FFMPEG)
-\endcode
-
-We use the previous macro to ensure that OpenCV at least version 1.1.0 requested by the tracker and the image viewer, and ffmpeg requested to read the video stream are available.
-
-\code
-  vpVideoReader reader;
-  reader.setFileName("video-postcard.mpeg");
-\endcode
-
-The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file \c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
-
-\code
-  vpImage<unsigned char> I;
-  reader.acquire(I);
-\endcode
-Returns the first image of the video in the gray level ViSP image container \c I.
-
-\code
-  IplImage * cvI = NULL;
-  vpImageConvert::convert(I, cvI);
-\endcode
-
-Then we convert \c I into \c cvI, an image in OpenCV IplImage format that will be used by the tracker.
-
-\code
-  vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-\endcode
-Create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
- 
-\code
-  vpKltOpencv tracker;
-
-  tracker.setMaxFeatures(200);
-  tracker.setWindowSize(10);
-  tracker.setQuality(0.01);
-  tracker.setMinDistance(15);
-  tracker.setHarrisFreeParameter(0.04);
-  tracker.setBlockSize(9);
-  tracker.setUseHarris(1);
-  tracker.setPyramidLevels(3);
-
-  tracker.initTracking(cvI);
-\endcode
- 
-Create an instance of the tracker, set parameters of the Harris keypoint detector and finally initialize the tracker on \c cvI image.
-
-\code
-  while ( ! reader.end() )
-  {
-    reader.acquire(I);
-    vpImageConvert::convert(I, cvI);
-    vpDisplay::display(I);
-    
-    tracker.track(cvI);
-    tracker.display(I, vpColor::red);
-    
-    vpDisplay::flush(I);
-  }
-\endcode
-
-Until the end of the video is not reached, we get \c I the next image in ViSP format, display and convert it in IplImage format. Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
-
-\code
-  vpDisplay::getClick(I);
-\endcode
-We are waiting a mouse click event on image \c I to end the program.
+You are now ready to see the next \ref tutorial-tracking-keypoint.
 
 */

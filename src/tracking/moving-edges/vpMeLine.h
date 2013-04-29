@@ -93,6 +93,13 @@
   The angle \f$\theta\f$ is computed thanks to the direction of the
   arrow. The arrow points to the side of the line which is darker.
 
+  The example below available in tutorial-me-line-tracker.cpp and described
+  in \ref tutorial-tracking-me shows how to use this class.
+
+  \include tutorial-me-line-tracker.cpp
+*/
+
+/*
   The code below shows how to use this class.
 \code
 #include <visp/vpConfig.h>

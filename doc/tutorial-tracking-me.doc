@@ -1,0 +1,142 @@
+/**
+
+\page tutorial-tracking-me Tutorial: Moving-edges tracking
+\tableofcontents
+
+\section tracking_me_line Line tracking
+
+With ViSP you can track a line using moving edges. The following example code available in tutorial-me-line-tracker.cpp shows how to use ViSP vpMeLine class to this end.
+
+\include tutorial-me-line-tracker.cpp
+
+The video shows the result of the tracking:
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/uQspOFH-W6Y?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+Here after we explain line by line the program.
+
+Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix. That is allowed by including the grabber headers.
+
+\code
+#include <visp/vp1394CMUGrabber.h>
+#include <visp/vp1394TwoGrabber.h>
+#include <visp/vpV4l2Grabber.h>
+\endcode
+
+To display these images we then include the headers of the viewers.
+
+\code
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayX.h>
+\endcode
+
+The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under unix-like systems. 
+
+Finally, to track a line with the moving edges, we include the header of the vpMeLine class.
+
+\code
+#include <visp/vpMeLine.h>
+\endcode
+ 
+In the main() function, The source code is build only if one of the grabbers and one of the viewers is available.
+
+\code
+#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+\endcode
+
+Here we create a gray level image container \c I that will contain the images acquired by our camera.
+
+\code
+vpImage<unsigned char> I;
+\endcode
+
+Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed, secondly for a firewire camera under Windows if CMU1394 3rd party is installed, and lastly for an usb camera under Unix if none of the previous 3rd party are installed, and if libv4l is installed. The \ref tutorial-getting-started section \ref image_grabbing gives more details concerning the framegrabbing.
+
+\code
+#if defined(VISP_HAVE_DC1394_2)
+  vp1394TwoGrabber g(false);
+#elif defined(VISP_HAVE_CMU1394)
+  vp1394CMUGrabber g;
+#elif defined(VISP_HAVE_V4L2)
+  vpV4l2Grabber g;     
+#endif
+\endcode
+
+We then open the connection with the grabber and acquire an image in \c I.
+\code
+  g.open(I);
+  g.acquire(I);
+\endcode
+
+To be able to display image \c I and the tracking results in overlay in a window, we create a display instance.
+\code
+#if defined UNIX
+  vpDisplayX d(I, 0, 0, "Camera view");
+#else
+  vpDisplayGDI d(I, 0, 0, "Camera view");
+#endif
+\endcode
+
+Then we display the image in the window created previously.
+\code
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+\endcode
+
+We then initialise the moving edges parameters used later by the tracker. From the previous position of a moving edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the contour we keep a space of 10 pixels.
+\code
+  vpMe me;
+  me.setRange(25);
+  me.setThreshold(15000);
+  me.setSampleStep(10);
+\endcode
+
+We then, create an instance of the vpMeTracker class that will track our line.
+We initialise the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track. 
+\code
+  vpMeLine line;
+  line.setMe(&me);
+  line.setDisplay(vpMeSite::RANGE_RESULT);
+  line.initTracking(I);
+\endcode
+
+Once the tracker is initialized, we enter in a while loop where we succesively acquire a new image, display it, track the line, display the tracking results and finally flush the overlay drawings in the viewer.
+\code
+  while(1) {
+    g.acquire(I); 
+    vpDisplay::display(I);
+    line.track(I);
+    line.display(I, vpColor::red);
+    vpDisplay::flush(I);
+  }
+\endcode
+
+
+\section tracking_me_ellipse Ellipse tracking
+
+With ViSP you can also track an ellipse using moving edges. The following example code available in tutorial-me-ellipse-tracker.cpp shows how to use ViSP vpMeEllipse class to this end.
+
+\include tutorial-me-ellipse-tracker.cpp
+
+The video shows the result of the tracking:
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/IK-VgFyK_Tc?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+This example is very similar to the one presented in \ref tracking_me_line. It differs only in the name of the class and its header that is used to allow ellipse tracking:
+
+\code
+  vpMeEllipse ellipse;
+  ellipse.setMe(&me);
+  ellipse.setDisplay(vpMeSite::RANGE_RESULT);
+  ellipse.initTracking(I);
+\endcode
+
+Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse to track. 
+
+You are now ready to see the next \ref tutorial-tracking-mb.
+
+*/

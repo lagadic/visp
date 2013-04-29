@@ -73,7 +73,7 @@
   It may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 
-  The following code shows the simplest way to use the tracker.
+  The following code shows the simplest way to use the tracker. The \ref tutorial-tracking-mb is also a good starting point to use this class.
   
 \code
 #include <visp/vpMbKltTracker.h>

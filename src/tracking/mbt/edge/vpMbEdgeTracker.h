@@ -97,9 +97,9 @@
   \ingroup ModelBasedTracking 
   \brief Make the complete tracking of an object by using its CAD model.
 
-  This class realise the tracking of an object or a scene given its 3D model. A
-  video example can be found in the \e http://www.irisa.fr/lagadic/visp/computer-vision.html
-  webpage.
+  This class allows to track an object or a scene given its 3D model. A
+  video can be found in the \e http://www.irisa.fr/lagadic/visp/computer-vision.html  webpage. The \ref tutorial-tracking-mb is also a good starting point to use this class.
+
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
   It may also use an xml file used to tune the behavior of the tracker and an

@@ -64,14 +64,15 @@
   \ingroup ModelBasedTracking
   \warning This class is only available if OpenCV is installed, and used.
   
-  \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
+  \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT 
+  tracker.
   
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
   It may also use an xml file used to tune the behavior of the tracker and an
   init file used to compute the pose at the very first image.
 
-  The following code shows the simplest way to use the tracker.
+  The following code shows the simplest way to use the tracker. The \ref tutorial-tracking-mb is also a good starting point to use this class.
   
 \code
 #include <visp/vpMbEdgeKltTracker.h>

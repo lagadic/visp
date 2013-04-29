@@ -9,7 +9,8 @@
 ViSP 2.7.1 (under development)
   - New features
   - Improvements
-    . vpV4l2Grabber and vp1394CMUGrabber does no more require a call to open(I).
+    . vpV4l2Grabber and vp1394CMUGrabber does no more require a call to
+      open(I).
     . In vp1394CMUGrabber new getters/setters for the framerate, shutter, gain.
       It is now possible to change the settings in the acquisition loop.
     . An exceptions is throwned when moving-edges are not initialized

@@ -6,4 +6,7 @@ subdirs(grabber)
 subdirs(image)
 subdirs(tracking/blob)
 subdirs(tracking/keypoint)
-
+subdirs(tracking/model-based/edges)
+subdirs(tracking/model-based/hybrid)
+subdirs(tracking/model-based/keypoint)
+subdirs(tracking/moving-edges)

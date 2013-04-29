@@ -90,6 +90,13 @@
   \image html vpMeEllipse2.gif
   \image latex vpMeEllipse2.ps  width=10cm
 
+  The example below available in tutorial-me-ellipse-tracker.cpp and described
+  in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to use this class.
+
+  \include tutorial-me-ellipse-tracker.cpp
+
+  */
+/*
   The code below shows how to use this class.
 \code
 #include <visp/vpConfig.h>

@@ -98,8 +98,7 @@ typedef void (*funcevent)(int);
 
   \include tutorial-klt-tracker.cpp
 
-  A line by line explanation is provided in \ref tutorial-tracking in section
-  \ref tracking_keypoint_klt.
+  A line by line explanation is provided in \ref tutorial-tracking-keypoint.
 */
 class VISP_EXPORT vpKltOpencv
 {

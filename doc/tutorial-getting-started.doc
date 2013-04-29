@@ -4,7 +4,7 @@
 
   \section image Working with images
 
-  \subsection image_started Getting started
+
   Let's start to write our first program to see how to read an image,
   open a display to view the image, draw in overlay a red rectangle
   and finally save the image.
@@ -88,7 +88,9 @@
 \endcode
   Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
 
-  \subsection image_grabbing Image frame grabbing
+
+  \section image_grabbing Image frame grabbing
+
 
 The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 are available.
 
@@ -129,5 +131,5 @@ If you want to grab images from an usb camera under Unix, you may use vpV4l2Grab
 
 It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
 
-You are now ready to see the next tutorial \ref tutorial-tracking.
+You are now ready to see the next tutorial \ref tutorial-tracking-blob.
 */
