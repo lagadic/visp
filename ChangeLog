@@ -32,6 +32,8 @@ ViSP 2.7.1 (under development)
     . [15587] visp-config conflicts with multiarch support on Debian
     . [15623] Possible ViSP-2.7.0 bugs detected by cppcheck
     . [15644] crash with vpRobotWireFrameSimulator::initScene()
+    . [15679] vpDot and vpDot2 copy operator are incomplete
+    . [15680] Bad pixel to meter conversion in vpFeatureLuminance
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features

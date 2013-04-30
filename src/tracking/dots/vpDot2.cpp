@@ -136,15 +136,15 @@ vpDot2::vpDot2(const vpDot2& twinDot ) : vpTracker()
   = operator.
 */
 void vpDot2::operator=(const vpDot2& twinDot )
-                      {
+{
   cog = twinDot.cog;
 
   width    = twinDot.width;
   height   = twinDot.height;
   surface  = twinDot.surface;
-  mean_gray_level = twinDot.mean_gray_level;
   gray_level_min = twinDot.gray_level_min;
   gray_level_max = twinDot.gray_level_max;
+  mean_gray_level = twinDot.mean_gray_level;
   grayLevelPrecision = twinDot.grayLevelPrecision;
   gamma = twinDot.gamma; ;
   sizePrecision = twinDot.sizePrecision;
@@ -153,12 +153,12 @@ void vpDot2::operator=(const vpDot2& twinDot )
   allowedBadPointsPercentage_ = twinDot.allowedBadPointsPercentage_;
   area = twinDot.area;
 
-  m00 = twinDot.m00;
-  m01 = twinDot.m01;
-  m11 = twinDot.m11;
-  m10 = twinDot.m10;
-  m02 = twinDot.m02;
-  m20 = twinDot.m20;
+  direction_list = twinDot.direction_list;
+  ip_edges_list =  twinDot.ip_edges_list;
+
+  compute_moment = twinDot.compute_moment;
+  graphics = twinDot.graphics;
+  thickness = twinDot.thickness;
 
   bbox_u_min = twinDot.bbox_u_min;
   bbox_u_max = twinDot.bbox_u_max;
@@ -168,12 +168,16 @@ void vpDot2::operator=(const vpDot2& twinDot )
   firstBorder_u = twinDot.firstBorder_u;
   firstBorder_v = twinDot.firstBorder_v;
 
-  compute_moment = twinDot.compute_moment;
-  graphics = twinDot.graphics;
-  thickness = twinDot.thickness;
+  m00 = twinDot.m00;
+  m01 = twinDot.m01;
+  m11 = twinDot.m11;
+  m10 = twinDot.m10;
+  m02 = twinDot.m02;
+  m20 = twinDot.m20;
 
-  direction_list = twinDot.direction_list;
-  ip_edges_list =  twinDot.ip_edges_list;
+  mu11 = twinDot.mu11;
+  mu20 = twinDot.mu20;
+  mu02 = twinDot.mu02;
 }
 
 /*!

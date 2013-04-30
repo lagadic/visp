@@ -135,36 +135,38 @@ vpDot::~vpDot()
 vpDot&
 vpDot::operator=(const vpDot& d)
 {
+  ip_edges_list = d.ip_edges_list;
+  ip_connexities_list = d.ip_connexities_list;
+  connexityType = d.connexityType;
   cog = d.getCog();
-
-  graphics = d.graphics ;
-  thickness = d.thickness;
-  mean_gray_level = d.mean_gray_level ;
-  gray_level_min = d.gray_level_min ;
-  gray_level_max = d.gray_level_max ;
-  grayLevelPrecision = d.grayLevelPrecision;
-  compute_moment = d.compute_moment ;
-
-  maxDotSizePercentage = d.maxDotSizePercentage;
-
-  m00 = d.m00;
-  m01 = d.m01;
-  m10 = d.m10;
-  m02 = d.m02;
-  m20 = d.m20;
-  mu11 = d.mu11;
-  mu20 = d.mu20;
-  mu02 = d.mu02;
 
   u_min = d.u_min;
   v_min = d.v_min;
   u_max = d.u_max;
   v_max = d.v_max;
 
+  graphics = d.graphics ;
+  thickness = d.thickness;
+  maxDotSizePercentage = d.maxDotSizePercentage;
   gray_level_out = d.gray_level_out;
+  mean_gray_level = d.mean_gray_level ;
+  gray_level_min = d.gray_level_min ;
+  gray_level_max = d.gray_level_max ;
+  grayLevelPrecision = d.grayLevelPrecision;
   gamma = d.gamma;
-
+  compute_moment = d.compute_moment ;
   nbMaxPoint = d.nbMaxPoint;
+
+  m00 = d.m00;
+  m01 = d.m01;
+  m10 = d.m10;
+  m11 = d.m11;
+  m02 = d.m02;
+  m20 = d.m20;
+
+  mu11 = d.mu11;
+  mu20 = d.mu20;
+  mu02 = d.mu02;
 
   return *this ;
 }
