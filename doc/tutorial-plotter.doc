@@ -1,0 +1,91 @@
+/**
+
+\page tutorial-plotter Tutorial: Real-time curves plotter tool
+\tableofcontents
+
+This tutorial focuses on real-time curves drawing. It shows how to modify tutorial-ibvs-4pts.cpp introduced in \ref tutorial-ibvs to draw the evolution of the visual features error and the camera velocity skew vector during an image-based visual servoing.
+
+The modified code also available in tutorial-ibvs-4pts-plotter.cpp is the following.
+
+
+\include tutorial-ibvs-4pts-plotter.cpp
+
+The last image of the drawing is the following:
+
+\image html img-ibvs-plotter.jpg Last image produced by the plotter.
+
+Now we describe the new lines that were introduced:
+
+\code
+#include <visp/vpPlot.h>
+\endcode
+
+Include the header of the vpPlot class that allows curves drawing.
+
+\code
+#ifdef VISP_HAVE_DISPLAY
+  vpPlot plotter(2, 250*2, 500, 100, 200, "Real time curves plotter");
+\endcode
+
+Since the plotter opens a windows to display the graphics, the usage of vpPlot class is only possible if ViSP is build with a 3rd party that allows display capabilities; either libx11, GDI, OpenCV or GTK. If this is the case, we create an instance of the vpPlot class. The window that is created will contain two graphics. The windows size will be 500 by 500 pixels. The window position will be (100, 200), and the title "Real time curves plotter".
+
+\code
+  plotter.setTitle(0, "Visual features error");
+  plotter.setTitle(1, "Camera velocities");
+\endcode
+
+To differentiate the graphics we associate a title to each of them. The first graphic (the one with index 0) will be designed to draw the evolution of the visual features error, while the second (index 1) will be designed to draw the camera velocities.
+
+\code
+  plotter.initGraph(0, 8);
+  plotter.initGraph(1, 6);
+\endcode
+
+Here we initialize the first graphic to be able to plot 8 curves. We recall that we have 4 points, each point has 2 visual features (x and y), that is why there are 8 curves to plot. The second graphic is designed to plot 6 curves corresponding to the camera velocities (3 translation velocities in m/s and 3 rotation velocities in rad/s).
+
+\code
+  plotter.setLegend(0, 0, "x1");
+  plotter.setLegend(0, 1, "y1");
+  plotter.setLegend(0, 2, "x2");
+  plotter.setLegend(0, 3, "y2");
+  plotter.setLegend(0, 4, "x3");
+  plotter.setLegend(0, 5, "y3");
+  plotter.setLegend(0, 6, "x4");
+  plotter.setLegend(0, 7, "y4");
+
+  plotter.setLegend(1, 0, "v_x");
+  plotter.setLegend(1, 1, "v_y");
+  plotter.setLegend(1, 2, "v_z");
+  plotter.setLegend(1, 3, "w_x");
+  plotter.setLegend(1, 4, "w_y");
+  plotter.setLegend(1, 5, "w_z");
+#endif
+\endcode
+
+The previous lines allow to associate a legend to each curve.
+ 
+\code
+#ifdef VISP_HAVE_DISPLAY
+    plotter.plot(0, iter, task.getError());
+    plotter.plot(1, iter, v);
+#endif
+\endcode
+
+Once the plotter is initialized, in the servo loop we add at each iteration the corresponding values of the visual features error \f${\bf e}(t) = {\bf s}-{\bf s}^*\f$, and the camera velocities \f${\bf v}_c\f$.
+
+\code
+#ifdef VISP_HAVE_DISPLAY
+  plotter.saveData(0, "error.dat");
+  plotter.saveData(1, "vc.dat");
+#endif
+\endcode
+
+At the end of the servo loop, we save the data that were plotted in two separate files, one for each graphic. The first line of each text file is the graphic title. Then the coordinates along x,y and z are given in separated columns for each data. 
+
+\code
+  vpDisplay::getClick(plotter.I);
+\endcode
+
+Before exiting the program we wait for a human mouse click in the plotter window.
+ 
+*/

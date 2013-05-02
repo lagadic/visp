@@ -70,6 +70,8 @@
   destructor ~vpServo() launch an exception
   vpServoException::notKilledProperly.
 
+  To learn how to use this class, we suggest first to follow the \ref tutorial-ibvs.
+
   The example below shows how to build a position-based visual servo
   from 3D visual features \f$s=({^{c^*}}t_c,\theta u)\f$. In that
   case, we have \f$s^* = 0\f$. Let us denote \f$\theta u\f$ the angle/axis

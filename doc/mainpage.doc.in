@@ -7,9 +7,9 @@
 \section intro_sec Introduction
 
 <p>ViSP is a modular C++ library that allows fast development of visual
-servoing applications. ViSP is developed and maintained by the INRIA
+servoing applications. ViSP is developed and maintained by the Inria
 <a href="http://www.irisa.fr/lagadic" target="_parent">Lagadic</a> team located at <a
-href="http://www.inria.fr/rennes" target="_parent">INRIA Rennes</a>.</p>
+href="http://www.inria.fr/rennes" target="_parent">Inria Rennes</a>.</p>
 
 <p>ViSP official site is <a
 href="http://www.irisa.fr/lagadic/visp/visp.html" target="_parent">http://www.irisa.fr/lagadic/visp/visp.html</a></p>
@@ -43,11 +43,13 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 \section Tutorial_sec Tutorials
 
 <p>Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-- \ref tutorial-getting-started
-- \ref tutorial-tracking-blob
-- \ref tutorial-tracking-keypoint
-- \ref tutorial-tracking-me
-- \ref tutorial-tracking-mb
+- \ref tutorial-getting-started <br>This first tutorial introduces image read/write, display and framegrabbing.
+- \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
+- \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
+- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
+- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
+- \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
 
 \section Examples_sec Using ViSP
@@ -62,13 +64,17 @@ scheme, ...</p>
 
 \section Howto_sec How to help ?
 
-<p>ViSP ibrary is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a> by <a href="http://team.inria.fr/lagadic/welcome-eng.html">Lagadic team</a>. If you enjoy using ViSP, you may contribute to the project in different ways. This will motivate us to continue the efforts.
+<p>ViSP library is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a> by <a href="http://team.inria.fr/lagadic/welcome-eng.html">Lagadic team</a>. If you enjoy using ViSP, you may contribute to the project in different ways. This will motivate us to continue the efforts.
 
 - You can help VISP to be more widely known, by displaying a <a href="http://www.irisa.fr/lagadic/visp/documentation/visp-flyers.pdf">ViSP flyer</a> at work, in your lab or school.
-- You can report bugs, propose patches or new functionalities, using ViSP <a href="https://gforge.inria.fr/forum/?group_id=397">forums</a>, <a href="https://gforge.inria.fr/mail/?group_id=397">ViSP users mailing list</a>, or <a href="https://gforge.inria.fr/tracker/?atid=1867&group_id=397&func=browse">trackers</a>.
+- You can submit a <a href="https://gforge.inria.fr/tracker/?atid=1867&group_id=397&func=browse">bug report using the tracker</a>.
+- You can submit <a href="https://gforge.inria.fr/tracker/?func=browse&group_id=397&atid=1660">patches or new functionalities here</a>.
 - You can write new tutorials, new documentations or simply improve the existing documentation.
-- If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address :
-    <em>Inria Rennes Breatgne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
+- If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
+
+<p>You can also ask for help using either <a href="https://gforge.inria.fr/forum/?group_id=397">the french or the english forum</a>, or <a href="https://gforge.inria.fr/mail/?group_id=397">ViSP users mailing list</a>. 
+
+<p>You can also contact ViSP authors using <a href="mailto:visp@inria.fr?subject=ViSP">visp&#64;inria.fr</a>.
 */
 
 
@@ -81,17 +87,19 @@ scheme, ...</p>
   \defgroup Tutorial ViSP tutorials
 
 Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-- \ref tutorial-getting-started
-- \ref tutorial-tracking-blob
-- \ref tutorial-tracking-keypoint
-- \ref tutorial-tracking-me
-- \ref tutorial-tracking-mb
+- \ref tutorial-getting-started <br>This first tutorial introduces image read/write, display and framegrabbing.
+- \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
+- \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
+- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
+- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
+- \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
 */
 
 /*
  ******************************************
- * ViSP calabilities
+ * ViSP capabilities
  ******************************************
  */
 /*!

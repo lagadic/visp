@@ -1,0 +1,168 @@
+/**
+
+\page tutorial-ibvs Tutorial: Image-based visual servo
+\tableofcontents
+
+\section ibvs_intro Introduction
+
+The aim of all vision-based control schemes is to minimize an
+error \f${\bf e}(t)\f$, which is typically defined by \f${\bf e}(t) = {\bf s}[{\bf m}(t), {\bf a}]-{\bf s}^*\f$.
+
+Traditional image-based control schemes use the
+image-plane coordinates of a set of points  to define the set
+of visual features \f$\bf s\f$. The image measurements \f$\bf m\f$ are usually the pixel coordinates of the set of image points (but this is not the only possible choice), 
+and the camera intrinsic parameters \f$\bf a\f$ are used to go from image measurements expressed in pixels to the features.
+
+For a 3D point with coordinates \f${\bf X} = (X,Y,Z)\f$ in the camera frame, which projects in the image as a 2D point with coordinates \f${\bf x} = (x,y)\f$ we have:
+
+\f[ 
+\left\{\begin{array}{l}
+x = X/Z = (u - u_0)/p_x\\
+y = Y/Z = (v - v_0)/p_y
+\end{array}\right.
+\f]
+
+where \f${\bf m}=(u,v)\f$ gives the coordinates of the image point
+expressed in pixel units, and \f${\bf a}=(u_0,v_0, p_x,p_y)\f$ is the set of
+camera intrinsic parameters: \f$u_0\f$ and \f$v_0\f$ are the coordinates of
+the principal point, while \f$p_x\f$ and \f$p_y\f$ are the ratio between the focal length and the size of a pixel. 
+
+Let the spatial velocity of the camera be denoted by \f$ {\bf v}_c = (v_c, \omega_c)\f$, with \f$ v_c \f$ the instantaneous linear velocity of the
+origin of the camera frame and \f$ \omega_c \f$ the instantaneous angular
+velocity of the camera frame. The relationship between  \f$ \dot{\bf x} \f$, the time variation of the feature \f$\bf s = x\f$, and the camera velocity  \f$ {\bf v}_c \f$ is given by
+
+\f[ \dot{\bf s} = {\bf L_x} {\bf v}_c\f]
+
+where the interaction matrix \f$ {\bf L_x}\f$ is given by
+
+  \f[ {\bf L_x} =  
+  \left[\begin{array}{cccccc}
+  -1/Z & 0 & x/Z & xy & -(1+x^2) & y \\
+  0 & -1/Z & y/Z & 1+y^2 & -xy & -x
+  \end{array}\right]\f]
+
+
+Considering \f$ {\bf v}_c \f$ as the input to the robot
+controller, and if we would like for instance to try to ensure an exponential decoupled decrease of the error, we obtain
+
+ \f[ {\bf v}_c = -\lambda {\bf L}_{\bf x}^{+} {\bf e} \f]
+
+\section ibvs_simple IBVS simulation
+
+The following example available in tutorial-ibvs-4pts.cpp shows how to use ViSP to implement an IBVS simulation using 4 points as visual features.
+
+\include tutorial-ibvs-4pts.cpp
+
+Now we give a line by line description of the source:
+
+\code
+#include <visp/vpFeatureBuilder.h>
+\endcode
+
+Include a kind of common header for all the classes that implement visual features, especially in our case vpFeaturePoint that will allow us to handle \f${\bf x} = (x,y)\f$ described in the \ref ibvs_intro.
+
+\code
+#include <visp/vpServo.h>
+\endcode
+
+Include the header of the vpServo class that implements the control law \f[ {\bf v}_c = -\lambda {\bf L}_{\bf x}^{+} {\bf e} \f] described in the \ref ibvs_intro.
+
+\code
+#include <visp/vpSimulatorCamera.h>
+\endcode
+
+Include the header of the vpSimulatorCamera class that allows to simulate a 6 dof free flying camera.
+
+Then in the main() function, we define the desired and initial position of the camera as two homogeneous matrices; \c cdMo refers to \f${^c}^*{\bf M}_o\f$ and \c cMo  to \f${^c}{\bf M}_o\f$.
+
+\code
+  vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
+  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+\endcode
+
+Then we define four 3D points that represent the corners of a 20cm by 20cm square.
+\code
+  vpPoint point[4] ;
+  point[0].setWorldCoordinates(-0.1,-0.1, 0);
+  point[1].setWorldCoordinates( 0.1,-0.1, 0);
+  point[2].setWorldCoordinates( 0.1, 0.1, 0);
+  point[3].setWorldCoordinates(-0.1, 0.1, 0);
+\endcode
+
+The instantiation of the visual servo task is done with the next lines. We initialize the task as an eye in hand visual servo. Resulting velocities computed by the controller are those that should be applied in the camera frame: \f$ {\bf v}_c \f$. The interaction matrix will be computed from the current visual features. Thus they need to be updated at each iteration of the control loop. Finally, the constant gain  \f$ \lambda\f$ is set to 0.5.
+\code
+  vpServo task ;
+  task.setServo(vpServo::EYEINHAND_CAMERA);
+  task.setInteractionMatrixType(vpServo::CURRENT);
+  task.setLambda(0.5);
+\endcode
+
+It is now time to define four visual features as points in the image-plane. To this end we instantiate the vpFeaturePoint class. The current point feature \f${\bf s}\f$ is implemented in \c p[i]. The desired point feature \f${\bf s}^*\f$ is implemented in \c pd[i]. 
+\code
+  vpFeaturePoint p[4], pd[4] ;
+\endcode
+
+Each feature is obtained by computing the position of the 3D points in the corresponding camera frame, and then by applying the perspective projection. Once current and desired features are created, they are added to the visual servo task.
+\code
+  for (int i = 0 ; i < 4 ; i++) {
+    point[i].track(cdMo);
+    vpFeatureBuilder::create(pd[i], point[i]);
+    point[i].track(cMo);
+    vpFeatureBuilder::create(p[i], point[i]);
+    task.addFeature(p[i], pd[i]);
+  }
+\endcode
+
+For the simulation we need first to create two homogeneous transformations \c wMc and \c wMo, respectively to define the position of the camera, and the position of the object in the world frame. 
+
+\code
+  vpHomogeneousMatrix wMc, wMo;
+\endcode
+
+Secondly. we create an instance of our free flying camera. Here we also specify the sampling time to 0.040 seconds. When a velocity is applied to the camera, this time will be used by the exponential map to determine the next position of the camera. 
+
+\code
+  vpSimulatorCamera robot;
+  robot.setSamplingTime(0.040);
+\endcode
+
+Finally, from the initial position \c wMc of the camera and the position of the object previously fixed in the camera frame \c cMo, we compute the position of the object in the world frame \c wMo. Since in our simulation the object is static, \c wMo will remain unchanged.
+
+\code
+  robot.getPosition(wMc);
+  wMo = wMc * cMo;
+\endcode
+
+Now we can enter in the visual servo loop. When a velocity is applied to our free flying camera, the position of the camera frame \c wMc will evolve wrt the world frame. From this position we compute the position of object in the new camera frame.
+\code
+    robot.getPosition(wMc);
+    cMo = wMc.inverse() * wMo;
+\endcode
+
+The current visual features are then updated by projecting the 3D points in the image-plane associated to the new camera location \c cMo.
+\code
+   for (int i = 0 ; i < 4 ; i++) {
+      point[i].track(cMo);
+      vpFeatureBuilder::create(p[i], point[i]);
+    }
+\endcode
+
+Finally, the velocity skew \f$ {\bf v}_c \f$ is computed.
+\code
+   vpColVector v = task.computeControlLaw();
+\endcode
+
+This 6-dimension velocity vector is then applied to the camera.
+
+\code
+   robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+\endcode
+
+Before exiting the program, we free all the memory by killing the task. 
+\code
+  task.kill();
+\endcode
+
+The next \ref tutorial-plotter shows how to modify the previous example to plot the visual servo behavior.
+
+*/

@@ -82,7 +82,7 @@
 
   The code below shows how to create a eye-in hand visual servoing
   task using a 2D point feature \f$(x,y)\f$ that correspond to the 2D
-  coordinates of a point in image plan. To control six degrees
+  coordinates of a point in the image plane. To control six degrees
   of freedom, at least four other features must be considered like two
   other point features for example. First we create a current
   (\f$s\f$) 2D point feature. Then we set the task to use the
@@ -178,6 +178,9 @@ int main()
   s.error(s_star);
 }
   \endcode
+
+  An other fully explained example is given in the \ref tutorial-ibvs.
+
 */
 
 

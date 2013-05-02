@@ -1,0 +1,203 @@
+/*! \example tutorial-ibvs-4pts-image-tracking.cpp */
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageSimulator.h>
+#include <visp/vpServo.h>
+#include <visp/vpServoDisplay.h>
+#include <visp/vpSimulatorCamera.h>
+
+/*!
+  Given an image of a target, this class provided virtual
+  framegrabbing capabilities in order to retrieve an image of a
+  virtual camera depending on its 3D position.
+*/
+class vpVirtualGrabber
+{
+public:
+  /*!
+    Initialize the grabber with a target.
+    \param filename : File name corresponding to an image of a target.
+    \param cam : Intrinsic camera parameters.
+    */
+  vpVirtualGrabber(const std::string &filename, const vpCameraParameters &cam)
+  {
+    double l = .1; // the target is a square 2*l by 2*l
+    // Initialise the 3D coordinates of the target corners
+    for (int i = 0; i < 4; i++) X_[i].resize(3);
+    // Top left corner
+    X_[0][0] = -l;
+    X_[0][1] = -l;
+    X_[0][2] = 0;
+
+    // Top right corner
+    X_[1][0] = l;
+    X_[1][1] = -l;
+    X_[1][2] = 0;
+
+    // Bottom right corner
+    X_[2][0] = l;
+    X_[2][1] = l;
+    X_[2][2] = 0;
+
+    //Bottom left corner
+    X_[3][0] = -l;
+    X_[3][1] = l;
+    X_[3][2] = 0;
+
+    vpImageIo::read(target_, filename);
+
+    // Initialize the image simulator
+    cam_ = cam;
+    sim_.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION);
+    sim_.init(target_, X_);
+  }
+
+  /*!
+
+    Compute the image of the virtual camera from its position with
+    respect to the object.
+
+    \param I : Image provided by the virtual camera.
+    \param cMo : Pose of the camera with respect to the object frame.
+  */
+  void acquire(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
+  {
+    sim_.setCleanPreviousImage(true);
+    sim_.setCameraPosition(cMo);
+    sim_.getImage(I, cam_);
+  }
+
+private:
+  vpColVector X_[4]; // 3D coordinates of the target corners
+  vpImageSimulator sim_;
+  vpImage<unsigned char> target_; // image of the target
+  vpCameraParameters cam_;
+};
+
+
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness)
+{
+  static std::vector<vpImagePoint> traj[4];
+  for (unsigned int i=0; i<4; i++) {
+    traj[i].push_back(dot[i].getCog());
+  }
+  for (unsigned int i=0; i<4; i++) {
+    for (unsigned int j=1; j<traj[i].size(); j++) {
+      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green, thickness);
+    }
+  }
+}
+
+
+int main()
+{
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+
+  vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
+  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+
+  // Image used for the image processing
+  vpImage<unsigned char> I(480, 640, 255);
+
+  // Parameters of our camera
+  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+
+  // Define the target as 4 points
+  std::vector<vpPoint> point(4) ;
+  point[0].setWorldCoordinates(-0.1,-0.1, 0);
+  point[1].setWorldCoordinates( 0.1,-0.1, 0);
+  point[2].setWorldCoordinates( 0.1, 0.1, 0);
+  point[3].setWorldCoordinates(-0.1, 0.1, 0);
+
+  vpServo task ;
+  task.setServo(vpServo::EYEINHAND_CAMERA);
+  task.setInteractionMatrixType(vpServo::CURRENT);
+  task.setLambda(0.5);
+
+  vpVirtualGrabber g("./target_square.pgm", cam);
+
+  g.acquire(I, cMo);
+
+  // Display the current image in which we will do the tracking
+#if defined(VISP_HAVE_X11)
+  vpDisplayX d(I, 0, 0, "Current camera view");
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d(I, 0, 0, "Current camera view");
+#endif
+
+  vpDisplay::display(I);
+  vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
+  vpDisplay::flush(I);
+
+  std::vector<vpDot2> dot(4);
+  vpFeaturePoint p[4], pd[4];
+  unsigned int thickness = 3; // 3 in video
+
+  for (int i = 0 ; i < 4 ; i++) {
+    // Compute the desired features
+    point[i].track(cdMo);
+    vpFeatureBuilder::create(pd[i], point[i]);
+
+    // Compute the current features at the initial position
+    dot[i].setGraphics(true);
+    dot[i].setGraphicsThickness(thickness);
+    dot[i].initTracking(I);
+    vpDisplay::flush(I);
+    vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
+  }
+
+  for (int i = 0 ; i < 4 ; i++) {
+    // Set the feature Z coordinate from the pose
+    vpColVector cP;
+    point[i].changeFrame(cMo, cP) ;
+    p[i].set_Z(cP[2]);
+
+    task.addFeature(p[i], pd[i]);
+  }
+
+  vpHomogeneousMatrix wMc, wMo;
+  vpSimulatorCamera robot;
+  robot.setSamplingTime(0.040);
+  robot.getPosition(wMc);
+  wMo = wMc * cMo;
+
+  for (; ; ) {
+    // From the camera position in the world frame we retrieve the object position
+    robot.getPosition(wMc);
+    cMo = wMc.inverse() * wMo;
+
+    // Update the scene from the new camera position
+    g.acquire(I, cMo);
+
+    vpDisplay::display(I);
+
+    for (int i = 0 ; i < 4 ; i++) {
+      dot[i].track(I);
+      vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
+    }
+
+    for (int i = 0 ; i < 4 ; i++) {
+      // Set the feature Z coordinate from the pose
+      vpColVector cP;
+      point[i].changeFrame(cMo, cP) ;
+      p[i].set_Z(cP[2]);
+    }
+
+    vpColVector v = task.computeControlLaw();
+
+    display_trajectory(I, dot, thickness);
+    vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red, thickness+2) ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+
+    vpDisplay::flush(I);
+    if (vpDisplay::getClick(I, false))
+      break;
+
+    vpTime::wait( robot.getSamplingTime() * 1000);
+  }
+  task.kill();
+#endif
+}
+
