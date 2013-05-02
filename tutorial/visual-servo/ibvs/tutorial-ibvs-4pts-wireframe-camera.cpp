@@ -114,7 +114,7 @@ int main()
     sim.getExternalImage(Iext);
 
     display_trajectory(Iint, point, cMo, cam);
-    int thickness = 5;
+    //int thickness = 5;
     //    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red, thickness) ;
     //    externalview.display(Iext, cextMo, cMo, cam, vpColor::red, true, 3) ;
     vpDisplay::flush(Iint);
