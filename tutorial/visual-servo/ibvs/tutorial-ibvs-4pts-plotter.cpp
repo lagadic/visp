@@ -81,9 +81,9 @@ int main()
 #ifdef VISP_HAVE_DISPLAY
   plotter.saveData(0, "error.dat");
   plotter.saveData(1, "vc.dat");
-#endif
 
   vpDisplay::getClick(plotter.I);
+#endif
 }
 
 
