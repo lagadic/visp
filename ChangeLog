@@ -34,6 +34,8 @@ ViSP 2.7.1 (under development)
     . [15644] crash with vpRobotWireFrameSimulator::initScene()
     . [15679] vpDot and vpDot2 copy operator are incomplete
     . [15680] Bad pixel to meter conversion in vpFeatureLuminance
+    . [15697] False positive exception in vpDisplay when vpDisplay::close()
+      is used
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features

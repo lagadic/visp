@@ -593,7 +593,7 @@ class VISP_EXPORT vpDisplay
   /*!
     @name Display functionalities on gray level images.
   */
-  static void close(const vpImage<unsigned char> &I) ;
+  static void close(vpImage<unsigned char> &I) ;
   static void display(const vpImage<unsigned char> &I) ;
   static void displayArrow(const vpImage<unsigned char> &I,
 			   const vpImagePoint &ip1, const vpImagePoint &ip2,
@@ -729,7 +729,7 @@ class VISP_EXPORT vpDisplay
   /*!
     @name Display functionalities on color images.
   */
-  static void close(const vpImage<vpRGBa> &I) ;
+  static void close(vpImage<vpRGBa> &I) ;
 
   static void display(const vpImage<vpRGBa> &I) ;
   static void displayArrow(const vpImage<vpRGBa> &I,

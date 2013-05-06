@@ -2019,7 +2019,7 @@ void vpDisplay::flushROI ( const vpImage<unsigned char> &I, const vpRect &roi )
 /*!
   Close the display attached to I.
 */
-void vpDisplay::close ( const vpImage<unsigned char> &I )
+void vpDisplay::close ( vpImage<unsigned char> &I )
 {
 
   try
@@ -2027,6 +2027,7 @@ void vpDisplay::close ( const vpImage<unsigned char> &I )
     if ( I.display != NULL )
     {
       ( I.display )->closeDisplay() ;
+      I.display = NULL;
     }
   }
   catch ( ... )
@@ -2364,7 +2365,7 @@ void vpDisplay::flushROI ( const vpImage<vpRGBa> &I, const vpRect &roi )
 /*!
   Close the display attached to I.
 */
-void vpDisplay::close ( const vpImage<vpRGBa> &I )
+void vpDisplay::close ( vpImage<vpRGBa> &I )
 {
 
   try
@@ -2372,6 +2373,7 @@ void vpDisplay::close ( const vpImage<vpRGBa> &I )
     if ( I.display != NULL )
     {
       ( I.display )->closeDisplay() ;
+      I.display = NULL;
     }
   }
   catch ( ... )
