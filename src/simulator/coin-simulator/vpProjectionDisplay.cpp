@@ -46,7 +46,7 @@
 */
 
 #include <visp/vpConfig.h>
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if defined (VISP_HAVE_DISPLAY)
 
 // Meter/pixel conversion
 #include <visp/vpCameraParameters.h>

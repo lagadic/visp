@@ -261,7 +261,7 @@ SET (SRC_SIMULATOR
   simulator/wireframe-simulator/core/vpViewio.c
   simulator/wireframe-simulator/core/vpVwstack.c
   )
-IF(VISP_HAVE_X11 OR VISP_HAVE_GTK OR VISP_HAVE_GDI)
+IF(VISP_HAVE_X11 OR VISP_HAVE_GDI OR VISP_HAVE_OPENCV OR VISP_HAVE_D3D9 OR VISP_HAVE_GTK)
   list(APPEND SRC_SIMULATOR simulator/coin-simulator/vpProjectionDisplay.cpp)
 ENDIF()
 IF(VISP_HAVE_COIN_AND_GUI)

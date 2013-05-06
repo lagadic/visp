@@ -49,7 +49,7 @@
 */
 
 #include <visp/vpConfig.h>
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if defined (VISP_HAVE_DISPLAY)
 
 #include <visp/vpCameraParameters.h>
 #include <visp/vpColor.h>
@@ -57,6 +57,8 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpForwardProjection.h>
 
 #include <list>
@@ -80,6 +82,12 @@ private:
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI dIcam ;
   vpDisplayGDI dIext ;
+#elif defined VISP_HAVE_OPENCV
+  vpDisplayOpenCV dIcam ;
+  vpDisplayOpenCV dIext ;
+#elif defined(VISP_HAVE_D3D9)
+  vpDisplayD3D dIcam ;
+  vpDisplayD3D dIext ;
 #endif
 public:
   void init() ;
