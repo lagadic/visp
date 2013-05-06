@@ -40,6 +40,7 @@
  *
  *****************************************************************************/
 #include <visp/vpConfig.h>
+#include <visp/vpDisplay.h>
 
 #if ( defined(VISP_HAVE_GDI) )
 

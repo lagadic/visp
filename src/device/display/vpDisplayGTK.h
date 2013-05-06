@@ -44,10 +44,10 @@
 #define vpDisplayGTK_h
 
 #include <visp/vpConfig.h>
+#include <visp/vpDisplay.h>
 #if ( defined(VISP_HAVE_GTK) )
 
 #include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkrgb.h>

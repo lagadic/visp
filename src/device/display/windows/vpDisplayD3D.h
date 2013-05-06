@@ -41,7 +41,8 @@
  *****************************************************************************/
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_D3D9) ) 
+#include <visp/vpDisplay.h>
+#if ( defined(VISP_HAVE_D3D9) )
 
 #ifndef VPDISPLAYD3D_HH
 #define VPDISPLAYD3D_HH

@@ -43,6 +43,7 @@
 #define vpDisplayX_h
 
 #include <visp/vpConfig.h>
+#include <visp/vpDisplay.h>
 #ifdef VISP_HAVE_X11
 
 //namespace X11name
@@ -56,7 +57,6 @@
 //using namespace X11name ;
 
 #include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
 #include <visp/vpRect.h>
 
 

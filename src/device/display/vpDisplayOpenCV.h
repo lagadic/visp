@@ -44,11 +44,11 @@
 #define vpDisplayOpenCV_h
 
 #include <visp/vpConfig.h>
+#include <visp/vpDisplay.h>
 #if ( defined(VISP_HAVE_OPENCV) )
 
 #include <visp/vpImage.h>
 #include <visp/vpImageConvert.h>
-#include <visp/vpDisplay.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020101
 #  include <opencv2/core/core.hpp>
