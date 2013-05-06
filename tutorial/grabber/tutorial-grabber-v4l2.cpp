@@ -5,7 +5,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_V4L2)
+#ifdef VISP_HAVE_V4L2
   vpImage<unsigned char> I;
 
   vpV4l2Grabber g;
