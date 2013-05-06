@@ -40,10 +40,10 @@ Finally, to track a line with the moving edges, we include the header of the vpM
 #include <visp/vpMeLine.h>
 \endcode
  
-In the main() function, The source code is build only if one of the grabbers and one of the viewers is available.
+In the main() function, The source code is build only if one of the grabbers is available.
 
 \code
-#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) 
 \endcode
 
 Here we create a gray level image container \c I that will contain the images acquired by our camera.
@@ -72,10 +72,12 @@ We then open the connection with the grabber and acquire an image in \c I.
 
 To be able to display image \c I and the tracking results in overlay in a window, we create a display instance.
 \code
-#if defined UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
-#else
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 \endcode
 

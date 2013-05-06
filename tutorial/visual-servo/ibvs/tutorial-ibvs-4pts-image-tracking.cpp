@@ -93,8 +93,6 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
   vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
@@ -125,6 +123,8 @@ int main()
   vpDisplayX d(I, 0, 0, "Current camera view");
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Current camera view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   vpDisplay::display(I);
@@ -198,6 +198,5 @@ int main()
     vpTime::wait( robot.getSamplingTime() * 1000);
   }
   task.kill();
-#endif
 }
 

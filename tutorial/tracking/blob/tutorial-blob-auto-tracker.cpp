@@ -6,16 +6,17 @@
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   bool learn = false;
   vpImage<unsigned char> I; // Create a gray level image container
 
   vpImageIo::read(I, "./target.pgm");
 
-#if defined UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
-#else
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -30,7 +31,9 @@ int main()
     std::cout << "Blob characteristics: " << std::endl;
     std::cout << " width : " << blob.getWidth() << std::endl;
     std::cout << " height: " << blob.getHeight() << std::endl;
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
     std::cout << " area: " << blob.getArea() << std::endl;
+#endif
     std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
     std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
     std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
@@ -41,7 +44,9 @@ int main()
     // Set blob characteristics for the auto detection
     blob.setWidth(50);
     blob.setHeight(50);
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
     blob.setArea(1700);
+#endif
     blob.setGrayLevelMin(0);
     blob.setGrayLevelMax(30);
     blob.setGrayLevelPrecision(0.8);
@@ -58,6 +63,7 @@ int main()
     blob_list.push_back(blob);
   }
   std::cout << "Number of auto detected blob: " << blob_list.size() << std::endl;
+  std::cout << "A click to exit..." << std::endl;
 
   while(1) {
     vpDisplay::display(I);
@@ -75,5 +81,4 @@ int main()
 
     vpTime::wait(40);
   }
-#endif
 }

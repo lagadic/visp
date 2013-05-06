@@ -5,7 +5,7 @@
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
+#ifdef VISP_HAVE_DC1394_2
   vpImage<unsigned char> I; // Create a gray level image container
   bool reset = true; // Enable bus reset during construction (default)
   vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
@@ -15,7 +15,12 @@ int main()
   g.open(I);
   g.acquire(I);
   std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+
+#ifdef VISP_HAVE_X11
   vpDisplayX d(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
 
   while(1) {
     g.acquire(I);

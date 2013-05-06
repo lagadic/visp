@@ -12,7 +12,11 @@ int main()
   g.open(I);
   g.acquire(I);
   std::cout << I.getWidth() << " " << I.getHeight() << std::endl;
+#ifdef VISP_HAVE_X11
   vpDisplayX d(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
   vpDisplay::setTitle(I, "Video grabber");
   while(1) {
     g.acquire(I);

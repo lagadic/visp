@@ -58,7 +58,6 @@ int main()
   robot.getPosition(wMc);
   wMo = wMc * cMo;
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   // We open two displays, one for the internal camera view, the other one for
   // the external view, using either X11, or GDI.
   vpImage<unsigned char> Iint(480, 640, 0) ;
@@ -69,6 +68,8 @@ int main()
 #elif  defined VISP_HAVE_GDI
   vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
   vpDisplayGDI displayExt(Iext, 670, 0, "External view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   // Parameters of our camera
@@ -77,7 +78,9 @@ int main()
                              0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
   vpWireFrameSimulator sim;
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
   sim.setGraphicsThickness(3);
+#endif
   // Set the type of scene to use
   sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
   // Set the initial pose of the camera
@@ -89,7 +92,6 @@ int main()
   // Set the camera parameters
   sim.setInternalCameraParameters(cam);
   sim.setExternalCameraParameters(cam);
-#endif
 
   while(1) {
     robot.getPosition(wMc);

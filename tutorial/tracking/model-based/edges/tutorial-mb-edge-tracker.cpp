@@ -6,20 +6,19 @@
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpImage<unsigned char> I;
   vpCameraParameters cam;
   vpHomogeneousMatrix cMo;
 
   vpImageIo::readPGM(I, "teabox.pgm");
 
-#ifdef UNIX
-  vpDisplayX display;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX display(I,100,100,"Model-based edge tracker");;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI display(I,100,100,"Model-based edge tracker");;
 #else
-  vpDisplayGDI display;
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
-
-  display.init(I,100,100,"Model-based edge tracker");
 
   vpMbEdgeTracker tracker;
 #ifdef VISP_HAVE_XML2
@@ -61,7 +60,5 @@ int main()
 #endif
 #ifdef VISP_HAVE_COIN
   SoDB::finish();
-#endif
-
 #endif
 }

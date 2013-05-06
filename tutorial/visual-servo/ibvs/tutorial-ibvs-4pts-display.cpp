@@ -57,26 +57,30 @@ int main()
   robot.getPosition(wMc);
   wMo = wMc * cMo;
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   // We open two displays, one for the internal camera view, the other one for
   // the external view, using either X11, or GDI.
   vpImage<unsigned char> Iint(480, 640, 255) ;
   vpImage<unsigned char> Iext(480, 640, 255) ;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX displayInt(Iint, 0, 0, "Internal view");
   vpDisplayX displayExt(Iext, 670, 0, "External view");
-#elif  defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
   vpDisplayGDI displayExt(Iext, 670, 0, "External view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
+
+
+#if defined(VISP_HAVE_DISPLAY)
   vpProjectionDisplay externalview;
+  for (int i = 0 ; i < 4 ; i++)
+    externalview.insert(point[i]) ;
+#endif
   // Parameters of our camera
   vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
   vpHomogeneousMatrix cextMo(0,0,3,
                              0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
-  for (int i = 0 ; i < 4 ; i++)
-    externalview.insert(point[i]) ;
-#endif
 
   while(1) {
     robot.getPosition(wMc);
@@ -88,20 +92,21 @@ int main()
     vpColVector v = task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     vpDisplay::display(Iint) ;
     vpDisplay::display(Iext) ;
     display_trajectory(Iint, point, cMo, cam);
     int thickness = 5;
-    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red, thickness) ;
-    externalview.display(Iext, cextMo, cMo, cam, vpColor::red, true, 3) ;
+    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red, thickness);
+#if defined(VISP_HAVE_DISPLAY)
+    externalview.display(Iext, cextMo, cMo, cam, vpColor::red, true);
+#endif
     vpDisplay::flush(Iint);
     vpDisplay::flush(Iext);
 
     // A click to exit
     if (vpDisplay::getClick(Iint, false) || vpDisplay::getClick(Iext, false))
       break;
-#endif
+
     vpTime::wait( robot.getSamplingTime() * 1000);
   }
   task.kill();

@@ -192,7 +192,7 @@ The last lines are here to free the memory allocated by libxml2 or Coin 3rd part
 
 \section tracking_mb_klt Model-based KLT tracker
 
-The following example that comes from tutorial-mb-klt-tracker.cpp allows to track the tea box using vpMbKltTracker class.
+The following example that comes from tutorial-mb-klt-tracker.cpp allows to track the tea box using vpMbKltTracker class. Here the features that are used to track the model are keypoints detected on each face of the model and tracked using Kanade-Lucas-Tomasi feature tracker implemented in OpenCV.
 
 \include tutorial-mb-klt-tracker.cpp
 
@@ -201,7 +201,11 @@ The video below shows the result of the tea box model-based KLT tracking where k
 <iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-This example is very similar to the one presented in \ref tracking_mb_edges except that here we use vpMbKltTracker class to track the tea box.
+This example is very similar to the one presented in \ref tracking_mb_edges except that here we use vpMbKltTracker class to track the tea box. This class is only usable if OpenCV is available. That is why we start the main() function by:
+
+\code
+#ifdef VISP_HAVE_OPENCV
+\endcode
 
 As previously, there are two different ways to initialize the tracker.
 - The first one, if libxml2 is available, consists in reading the settings from an xml file.
@@ -263,7 +267,7 @@ Note that this is the only tracker for which lines of the model are not necessar
 
 \section tracking_mb_hybrid Model-based hybrid tracker
 
-The following example that comes from tutorial-mb-hybrid-tracker.cpp allows to track the tea box using vpMbEdgeKltTracker class.
+The following example that comes from tutorial-mb-hybrid-tracker.cpp allows to track the tea box using vpMbEdgeKltTracker class. Here the features that are used to track the model are the moving-edges behind the lines of the model and keypoints detected on each face of the model and tracked using Kanade-Lucas-Tomasi feature tracker implemented in OpenCV.
 
 \include tutorial-mb-hybrid-tracker.cpp
 
@@ -272,7 +276,13 @@ The video below shows the result of the tea box model-based hybrid tracking wher
 <iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-The source code is very similar to the one described in \ref tracking_mb_edges and \ref tracking_mb_klt. It doesn't require additional line by line explanation.
+The source code is very similar to the one described in \ref tracking_mb_edges and \ref tracking_mb_klt except that here we use vpMbEdgeKltTracker class to track the tea box. Note that this class is only usable if OpenCV is available. That is why we start the main() function by:
+
+\code
+#ifdef VISP_HAVE_OPENCV
+\endcode
+
+This example doesn't require additional line by line explanation.
 We provide just hereafter the content of the \c teabox.xml file:
 \code
 <?xml version="1.0"?>

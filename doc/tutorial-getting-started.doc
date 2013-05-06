@@ -5,7 +5,8 @@
   \section image Working with images
 
 
-  Let's start to write our first program to see how to read an image,
+  Let's start to write our first program also available in tutorial-image-viewer.cpp 
+  to see how to read an image,
   open a display to view the image, draw in overlay a red rectangle
   and finally save the image.
 
@@ -36,11 +37,6 @@
   Include the header that defines an image point in vpImagePoint.
 
 \code
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-\endcode
-  To be cross-platform we use these protections to be sure that a viewer that will use libX11 or GDI is available.
-
-\code
   vpImage<vpRGBa> I;
 \endcode
   Creation of a color image instance. Each pixel is coded as RGBa.
@@ -51,14 +47,21 @@
   Here, <tt>lena.ppm</tt> must be in the same directory than the current program.
 
 \code
-#ifdef UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I);
-#elif WIN32
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
+\endcode
+
+  To be cross-platform we use VISP_HAVE_X11 and VISP_HAVE_GDI macro to be sure that the viewer that will use either libX11 or GDI is available. If available, create an instance of an image display window for image \c I. Behind the construction of the display, we create the link between the image \c I and the display \c d. Note that an image can only have one display.
+\code
   vpDisplay::setTitle(I, "Lena");
 \endcode
-  Depending on the operating system, create an instance of an image display window for image \c I. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. The title of the display is then set to \e Lena.  
+
+ The title of the display is then set to \e Lena.  
 
 \code
   vpDisplay::display(I);
@@ -66,8 +69,7 @@
   vpDisplay::displayRectangle(I, vpImagePoint(90,90), 70, 90, vpColor::red, false, 2);
   vpDisplay::flush(I);
 \endcode
-  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finally, we flush the display to see the image and the drawings.
-
+  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finally, we flush the display to see the image and the drawings. Note here that if no display is available, all the vpDisplay static functions are without effect.
 
 \code
   vpImage<vpRGBa> O;

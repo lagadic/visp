@@ -8,7 +8,7 @@
 
 int main()
 {
-#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2))
 
   vpImage<unsigned char> I; 
 
@@ -22,10 +22,12 @@ int main()
   g.open(I);
   g.acquire(I);
 
-#if defined UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
-#else
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   vpDisplay::display(I);

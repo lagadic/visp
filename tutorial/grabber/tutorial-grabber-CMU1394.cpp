@@ -5,7 +5,7 @@
 
 int main()
 {
-#if defined(VISP_HAVE_CMU1394) && defined(VISP_HAVE_GDI)
+#ifdef VISP_HAVE_CMU1394
   vpImage<unsigned char> I;
 
   vp1394CMUGrabber g;
@@ -16,7 +16,12 @@ int main()
   g.open(I);
   g.acquire(I);
   std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+
+#ifdef VISP_HAVE_GDI
   vpDisplayGDI d(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
 
   while(1) {
     g.acquire(I);

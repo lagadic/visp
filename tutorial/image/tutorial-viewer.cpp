@@ -19,17 +19,16 @@ int main(int argc, char** argv )
     std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
   }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-
-#ifdef UNIX
-    vpDisplayX d(I);
+#if defined(VISP_HAVE_X11)
+  vpDisplayX d(I);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d(I);
 #else
-    vpDisplayGDI d(I);
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
-    vpDisplay::setTitle(I, "My image");
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    std::cout << "A click to quit..." << std::endl;
-    vpDisplay::getClick(I);
-#endif
+  vpDisplay::setTitle(I, "My image");
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+  std::cout << "A click to quit..." << std::endl;
+  vpDisplay::getClick(I);
 }

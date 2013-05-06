@@ -23,7 +23,10 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 
 #if defined(VISP_HAVE_OGRE)
 void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &background,
-                           const vpHomogeneousMatrix &cMo, vpImage<unsigned char> &I)
+                         #if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
+                           const
+                         #endif
+                           vpHomogeneousMatrix &cMo, vpImage<unsigned char> &I)
 {
   static vpImage<vpRGBa> Irender; // Image from ogre scene rendering
   ogre.display(background, cMo);
@@ -37,7 +40,7 @@ void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &backgro
 
 int main()
 {
-#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_OGRE)
   unsigned int thickness = 3;
 
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
@@ -101,6 +104,8 @@ int main()
   vpDisplayX d(I, 0, 0, "Camera view at desired position");
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view at desired position");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   vpDisplay::display(I);

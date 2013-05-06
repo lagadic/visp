@@ -26,8 +26,7 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
 
 int main()
 {
-#if defined(VISP_HAVE_PTHREAD) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-
+#if defined(VISP_HAVE_PTHREAD)
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
   vpHomogeneousMatrix cMo(-0.15, 0.1, 1., vpMath::rad(-10), vpMath::rad(10), vpMath::rad(50));
 
@@ -78,8 +77,9 @@ int main()
 
   vpSimulatorAfma6 robot(true);
   robot.setVerbose(true);
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
   robot.setGraphicsThickness(3);
-
+#endif
   // Get the default joint limits
   vpColVector qmin = robot.getJointMin();
   vpColVector qmax = robot.getJointMax();
@@ -94,15 +94,22 @@ int main()
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
   robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
   robot.set_fMo(wMo);
-  if (robot.initialiseCameraRelativeToObject(cMo) == false)
+  bool ret = true;
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
+  ret =
+#endif
+  robot.initialiseCameraRelativeToObject(cMo);
+  if (ret == false)
     return 0; // Not able to set the position
   robot.setDesiredCameraPosition(cdMo);
 
   vpImage<unsigned char> Iint(480, 640, 255);
-#ifdef UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX displayInt(Iint, 700, 0, "Internal view");
-#else
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI displayInt(Iint, 700, 0, "Internal view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);

@@ -1,19 +1,20 @@
 /*! \example tutorial-image-viewer.cpp */
-#include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImagePoint.h>
 
 int main()
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpImage<vpRGBa> I;
   vpImageIo::read(I, "lena.jpg");
 
-#ifdef UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I);
-#elif WIN32
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
   vpDisplay::setTitle(I, "Lena");
   vpDisplay::display(I);
@@ -29,5 +30,4 @@ int main()
 #endif
 
   vpDisplay::getClick(I);
-#endif
 }
