@@ -49,7 +49,8 @@
 
 #include <visp/vpConfig.h>
 #include <iostream>
-#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
+//#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
 
 #if defined(VISP_HAVE_X11) && ! defined(APPLE)
 // produce an error on OSX: ‘typedef int Cursor’

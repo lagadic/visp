@@ -50,7 +50,8 @@
 #include <visp/vpConfig.h>
 #include <iostream>
 
-#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
+//#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
 
 #if defined(VISP_HAVE_X11) && ! defined(APPLE)
 // produce an error on OSX: ‘typedef int Cursor’
@@ -324,7 +325,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
   // declaration as ‘typedef XID Cursor’. That's why it should not be
   // used on APPLE platforms
-  vpDisplayX display; 
+  vpDisplayX display;
 #elif defined VISP_HAVE_GTK
   vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
