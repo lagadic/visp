@@ -40,7 +40,7 @@ void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &backgro
 
 int main()
 {
-#if defined(VISP_HAVE_OGRE) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   unsigned int thickness = 3;
 
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
