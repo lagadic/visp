@@ -87,12 +87,14 @@
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_DC1394_2)
   vpImage<unsigned char> I; // Create a gray level image container
   vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
   g.acquire(I); // Acquire an image
 
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
+#endif
   vpDisplay::display(I);
   vpDisplay::flush(I);
 

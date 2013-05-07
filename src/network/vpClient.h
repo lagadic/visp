@@ -110,9 +110,7 @@ int main(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_V4L2)
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-  
+#if defined(VISP_HAVE_V4L2)  
   std::string servername = "localhost";
   unsigned int port = 35000;
   
@@ -125,9 +123,9 @@ int main(int argc, char **argv)
   g.open(I);
 
   // Create an image viewer
-#ifdef UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, -1, -1, "Camera frame");
-#else //Win32
+#elif defined(VISP_HAVE_GDI) //Win32
   vpDisplayGDI d(I, -1, -1, "Camera frame");
 #endif
 
@@ -154,7 +152,6 @@ int main(int argc, char **argv)
   }
 
   return 0;
-#endif
 #endif
 }
   \endcode

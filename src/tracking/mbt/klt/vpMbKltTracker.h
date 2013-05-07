@@ -86,6 +86,7 @@
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbKltTracker tracker; // Create a model based tracker via KLT points.
   vpImage<unsigned char> I;
   vpHomogeneousMatrix cMo; // Pose computed using the tracker. 
@@ -116,10 +117,13 @@ int main()
     vpDisplay::flush(I);
   }
 
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode  
 
@@ -136,6 +140,7 @@ int main()
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbKltTracker tracker; // Create a model based tracker via Klt Points.
   vpImage<unsigned char> I;
   vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker. 
@@ -155,10 +160,13 @@ int main()
     tracker.getPose(cMo); // get the pose 
   }
   
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode
 
@@ -175,6 +183,7 @@ int main()
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbKltTracker tracker; // Create a model based tracker via Klt Points.
   vpImage<unsigned char> I;
   vpHomogeneousMatrix cMo; // Pose used to display the model. 
@@ -202,10 +211,13 @@ int main()
     vpDisplay::flush(I);
   }
   
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode
 */

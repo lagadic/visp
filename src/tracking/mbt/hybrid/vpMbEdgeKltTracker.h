@@ -85,14 +85,15 @@
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
   vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose computed using the tracker. 
+  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
   vpCameraParameters cam;
-  
+
   // Acquire an image
   vpImageIo::readPGM(I, "cube.pgm");
-  
+
 #if defined VISP_HAVE_X11
   vpDisplayX display;
   display.init(I,100,100,"Mb Hybrid Tracker");
@@ -110,15 +111,18 @@ int main()
     vpDisplay::display(I);
     tracker.track(I);     // Track the object on this image
     tracker.getPose(cMo); // Get the pose
-    
+
     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
     vpDisplay::flush(I);
   }
 
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode  
 
@@ -135,6 +139,7 @@ int main()
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
   vpImage<unsigned char> I;
   vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker. 
@@ -154,10 +159,13 @@ int main()
     tracker.getPose(cMo); // get the pose 
   }
   
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode
 
@@ -174,6 +182,7 @@ int main()
 
 int main()
 {
+#if defined VISP_HAVE_OPENCV
   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
   vpImage<unsigned char> I;
   vpHomogeneousMatrix cMo; // Pose used to display the model. 
@@ -201,10 +210,13 @@ int main()
     vpDisplay::flush(I);
   }
   
+#endif
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
+#endif
 }
 \endcode
 */

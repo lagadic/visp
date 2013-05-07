@@ -98,7 +98,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);

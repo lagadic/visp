@@ -93,6 +93,7 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 
 int main()
 {
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
   vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
@@ -198,5 +199,6 @@ int main()
     vpTime::wait( robot.getSamplingTime() * 1000);
   }
   task.kill();
+#endif
 }
 

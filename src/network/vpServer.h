@@ -115,9 +115,9 @@ int main(int argc,const char** argv)
   vpServer serv(port);
   serv.start();
 
-#ifdef UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
-#else //Win32
+#elif defined(VISP_HAVE_GDI) //Win32
   vpDisplayGDI display;
 #endif
 
@@ -138,8 +138,10 @@ int main(int argc,const char** argv)
         
       if(id == reqImage.getId())
       {
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
         if (! display.isInitialised() )
           display.init(I, -1, -1, "Remote display");
+#endif
         
         vpDisplay::display(I) ;
         vpDisplay::flush(I);

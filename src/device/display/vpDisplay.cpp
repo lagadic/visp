@@ -287,7 +287,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -308,7 +310,9 @@ int main()
   // Wait for a click in the display window
   vpDisplay::getClick(I);
 
+#ifdef VISP_HAVE_DISPLAY
   delete d;
+#endif
 }
   \endcode
   
@@ -2245,7 +2249,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -2266,7 +2272,9 @@ int main()
   // Wait for a click in the display window
   vpDisplay::getClick(I);
 
+#ifdef VISP_HAVE_DISPLAY
   delete d;
+#endif
 }
   \endcode
 
@@ -2579,7 +2587,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -2607,7 +2617,9 @@ int main()
     vpTime::wait(5); // wait 5 ms
   } while(cpt_event < 5);
 
+#ifdef VISP_HAVE_DISPLAY
   delete d;
+#endif
 }
 \endcode
 */
@@ -2682,7 +2694,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -2710,7 +2724,9 @@ int main()
     vpTime::wait(5); // wait 5 ms
   } while(cpt_event < 5);
 
+#ifdef VISP_HAVE_DISPLAY
   delete d;
+#endif
 }
 \endcode
 */
@@ -2987,7 +3003,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);
@@ -3014,7 +3032,9 @@ int main()
     vpTime::wait(5); // wait 5 ms
   } while(cpt_event < 5);
 
+#ifdef VISP_HAVE_DISPLAY
   delete d;
+#endif
 }
 \endcode
 */
@@ -3089,7 +3109,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Set the display background with image I content
   vpDisplay::display(I);

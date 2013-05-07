@@ -114,7 +114,9 @@ int main()
 
   // Initialize the display with the image I. Display and image are
   // now link together.
+#ifdef VISP_HAVE_DISPLAY
   d->init(I);
+#endif
 
   // Specify the window location
   vpDisplay::setWindowPosition(I, 400, 100);
