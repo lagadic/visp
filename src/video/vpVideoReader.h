@@ -182,6 +182,8 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     }
     bool getFrame(vpImage<vpRGBa> &I, long frame);
     bool getFrame(vpImage<unsigned char> &I, long frame);
+    double getFramerate() const;
+
     /*!
       Get the current frame index. This index is updated at each call of the
       acquire method. It can be used to detect the end of a file (comparison

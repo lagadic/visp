@@ -102,55 +102,48 @@ struct SwsContext;
   \class vpFFMPEG
   \ingroup Video
   
-  \brief This class interfaces the FFmpeg library to enable the reading of video files.
+  \brief This class interfaces the FFmpeg library to enable video stream reading or writing.
   
-  Here an example which explains how to use the class.
+  Here an example which explains how to use the class to read a video stream.
   \code
-  #include <visp/vpConfig.h>
+#include <visp/vpFFMPEG.h>
 
-  #include <visp/vpImage.h>
-  #include <visp/vpRGBa.h>
-  #include <visp/vpFFMPEG.h>
-  
-  int main ()
-  {
-  #ifdef VISP_HAVE_FFMPEG
-    vpImage<vpRGBa> I; //The image to stores the frames
-    vpFFMPEG ffmpeg;
-  
-    //Initialization
-    ffmpeg.openStream("video.mpeg",vpFFMPEG::COLORED);
-    ffmepg.initStream();
-  
-    //Video reading
-    int frameIndex = 0;
-    ffmpeg.getFrame(I,frameIndex); //Here the first frame (index 0) is read.
-  #endif
-  }
+int main ()
+{
+#ifdef VISP_HAVE_FFMPEG
+  vpImage<vpRGBa> I; // The image to stores the frames
+  vpFFMPEG ffmpeg;
+  // Initialization
+  ffmpeg.openStream("video.mpeg", vpFFMPEG::COLORED);
+  ffmpeg.initStream();
+  std::cout << "framerate: " << ffmpeg.getFramerate() << "Hz" << std::endl;
+  std::cout << "image size: " << ffmpeg.getWidth() << " " << ffmpeg.getHeight() << std::endl;
+  // Video reading
+  int frameIndex = 0;
+  ffmpeg.getFrame(I,frameIndex); // Here the first frame (index 0) is read.
+#endif
+}
   \endcode
   
   If you want to open the video as a gray scaled video, you can use the following example.
   \code
-  #include <visp/vpConfig.h>
+#include <visp/vpFFMPEG.h>
 
-  #include <visp/vpImage.h>
-  #include <visp/vpFFMPEG.h>
-  
-  int main ()
-  {
-  #ifdef VISP_HAVE_FFMPEG
-    vpImage<unsigned char> I; //The image to stores the frames
-    vpFFMPEG ffmpeg;
-  
-    //Initialization
-    ffmpeg.openStream("video.mpeg",vpFFMPEG::GRAY_SCALED);
-    ffmepg.initStream();
-  
-    //Video reading
-    int frameIndex = 0;
-    ffmpeg.getFrame(I,frameIndex); //Here the first frame (index 0) is read.
-  #endif
-  }
+int main ()
+{
+#ifdef VISP_HAVE_FFMPEG
+  vpImage<unsigned char> I; // The image to stores the frames
+  vpFFMPEG ffmpeg;
+  // Initialization
+  ffmpeg.openStream("video.mpeg", vpFFMPEG::GRAY_SCALED);
+  ffmpeg.initStream();
+  std::cout << "framerate: " << ffmpeg.getFramerate() << "Hz" << std::endl;
+  std::cout << "image size: " << ffmpeg.getWidth() << " " << ffmpeg.getHeight() << std::endl;
+  // Video reading
+  int frameIndex = 0;
+  ffmpeg.getFrame(I,frameIndex); // Here the first frame (index 0) is read.
+#endif
+}
   \endcode
 */
 class VISP_EXPORT vpFFMPEG
@@ -199,58 +192,76 @@ class VISP_EXPORT vpFFMPEG
     unsigned int bit_rate;
     //!Indicates if the openEncoder method was executed
     bool encoderWasOpened;
+    double framerate_stream; // input stream
+    int framerate_encoder; // output stream
 
   public:
     vpFFMPEG();
     ~vpFFMPEG();
   
-    /*!
-      Gets the video's width.
+    bool acquire(vpImage<vpRGBa> &I);
+    bool acquire(vpImage<unsigned char> &I);
 
-      \return The value of the video's width.
-    */
-    inline int getWidth() const {return width;}
-    
-    /*!
-      Gets the video's height.
+    void closeStream();
 
-      \return The value of the video's height.
-    */
-    inline int getHeight() const {return height;}
-    
+    bool endWrite();
+
+    bool getFrame(vpImage<vpRGBa> &I, unsigned int frameNumber);
+    bool getFrame(vpImage<unsigned char> &I, unsigned int frameNumber);
     /*!
       Gets the video's frame number.
 
       \return The value of the video's frame number.
     */
     inline unsigned long getFrameNumber() const {return frameNumber;}
-    
     /*!
-      Sets the bit rate of the video when writing.
-      
-      \param bit_rate : the expected bit rate.
+      Return the framerate used to encode the video. The video stream need
+      to be opened before calling this function.
+
+      \exception vpException::ioError : If the video stream was not opened priviously.
+      */
+    inline double getFramerate() const {
+      if (streamWasOpen)
+        return framerate_stream;
+      throw vpException(vpException::ioError, "Video stream not opened.");
+    }
+    /*!
+      Gets the video's height.
+
+      \return The value of the video's height.
     */
-    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
+    inline int getHeight() const {return height;}
+    /*!
+      Gets the video's width.
 
-    bool openStream(const char *filename,vpFFMPEGColorType color_type);
+      \return The value of the video's width.
+    */
+    inline int getWidth() const {return width;}
+
     bool initStream();
-    void closeStream();
-
-    bool acquire(vpImage<vpRGBa> &I);
-    bool acquire(vpImage<unsigned char> &I);
-
-    bool getFrame(vpImage<vpRGBa> &I, unsigned int frameNumber);
-    bool getFrame(vpImage<unsigned char> &I, unsigned int frameNumber);
 
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
     bool openEncoder(const char *filename, unsigned int width, unsigned int height, CodecID codec = CODEC_ID_MPEG1VIDEO);
 #else
     bool openEncoder(const char *filename, unsigned int width, unsigned int height, AVCodecID codec = AV_CODEC_ID_MPEG1VIDEO);
 #endif
+    bool openStream(const char *filename,vpFFMPEGColorType color_type);
+
     bool saveFrame(vpImage<vpRGBa> &I);
     bool saveFrame(vpImage<unsigned char> &I);
-    bool endWrite();
-  
+    /*!
+     Sets the bit rate of the video when encoding.
+
+     \param bit_rate : the expected bit rate.
+    */
+    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
+    /*!
+     Sets the framerate of the video when encoding.
+
+     \param framerate : the expected framerate.
+    */
+    inline void setFramerate(const int framerate) {framerate_encoder = framerate;}
+
   private:
     void copyBitmap(vpImage<vpRGBa> &I);
     void copyBitmap(vpImage<unsigned char> &I);

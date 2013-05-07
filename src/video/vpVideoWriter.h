@@ -102,9 +102,11 @@ int main()
 
   vpVideoWriter writer;
 
-  //Set up the bit rate
+  // Set up the framerate to 30Hz. Default is 25Hz.
+  writer.setFramerate(30);
+  // Set up the bit rate
   writer.setBitRate(1000000);
-  //Set up the codec to use
+  // Set up the codec to use
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
   writer.setCodec(CODEC_ID_MPEG2VIDEO);
 #else
@@ -116,9 +118,9 @@ int main()
 
   for ( ; ; )
   {
-    //Here the code to capture or create an image and store it in I.
+    // Here the code to capture or create an image and store it in I.
 
-    //Save the image
+    // Save the image
     writer.saveFrame(I);
   }
 
@@ -144,6 +146,7 @@ class VISP_EXPORT vpVideoWriter
 #endif
     //!The bite rate
     unsigned int bit_rate;
+    int framerate;
 #endif
     //!Types of available formats
     typedef enum
@@ -207,7 +210,7 @@ class VISP_EXPORT vpVideoWriter
 
 #ifdef VISP_HAVE_FFMPEG
     /*!
-      Sets the bit rate of the video when writing.
+      Sets the bit rate of the video when encoding.
 
       \param bit_rate : the expected bit rate.
 
@@ -241,7 +244,19 @@ class VISP_EXPORT vpVideoWriter
       \param firstFrame : The first frame index.
     */
     inline void setFirstFrameIndex(const unsigned int firstFrame) {this->firstFrame = firstFrame;}
-               
+#ifdef VISP_HAVE_FFMPEG
+    /*!
+      Sets the framerate in Hz of the video when encoding.
+
+      \param framerate : the expected framerate.
+
+      By default the framerate is set to 25Hz.
+    */
+    inline void setFramerate(const int framerate) {
+      this->framerate = framerate;
+    }
+#endif
+
     private:
       vpVideoFormatType getFormat(const char *filename);
       static std::string getExtension(const std::string &filename);

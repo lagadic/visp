@@ -69,6 +69,8 @@ vpFFMPEG::vpFFMPEG()
   frameNumber = 0;
   width = -1;
   height = -1;
+  framerate_stream = -1;
+  framerate_encoder = 25;
   buffer = NULL;
   streamWasOpen = false;
   streamWasInitialized = false;
@@ -93,6 +95,8 @@ vpFFMPEG::~vpFFMPEG()
 
 /*!
   Allocates and initializes the parameters depending on the video and the desired color type.
+  One the stream is opened, it is possible to get the video encoding framerate getFramerate(),
+  and the dimension of the images using getWidth() and getHeight().
   
   \param filename : Path to the video which has to be read.
   \param color_type : Desired color map used to open the video.
@@ -137,6 +141,9 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
 #endif
     {
       videoStream = i;
+      std::cout << "rate: " << pFormatCtx->streams[i]->r_frame_rate.num << " " << pFormatCtx->streams[i]->r_frame_rate.den << std::endl;
+      framerate_stream =  pFormatCtx->streams[i]->r_frame_rate.num;
+      framerate_stream /= pFormatCtx->streams[i]->r_frame_rate.den;
       found_codec= true;
       break;
     }
@@ -679,7 +686,7 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int width, unsigned in
   this->width = (int)width;
   this->height = (int)height;
   /* frames per second */
-  pCodecCtx->time_base= (AVRational){1,25};
+  pCodecCtx->time_base= (AVRational){1,framerate_encoder};
   pCodecCtx->gop_size = 10; /* emit one intra frame every ten frames */
   pCodecCtx->max_b_frames=1;
   pCodecCtx->pix_fmt = PIX_FMT_YUV420P;

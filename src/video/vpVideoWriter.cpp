@@ -190,6 +190,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
+    ffmpeg->setFramerate(framerate);
     ffmpeg->setBitRate(bit_rate);
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec))
       throw (vpException(vpException::ioError ,"Could not open the video"));

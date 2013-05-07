@@ -10,8 +10,10 @@ int main()
   vpVideoReader g;
   g.setFileName("./video.mpg");
   g.open(I);
-  g.acquire(I);
-  std::cout << I.getWidth() << " " << I.getHeight() << std::endl;
+
+  std::cout << "video framerate: " << g.getFramerate() << "Hz" << std::endl;
+  std::cout << "video dimension: " << I.getWidth() << " " << I.getHeight() << std::endl;
+
 #ifdef VISP_HAVE_X11
   vpDisplayX d(I);
 #else

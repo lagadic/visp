@@ -490,3 +490,19 @@ vpVideoReader::findLastFrameIndex()
     lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
   #endif
 }
+
+/*!
+  Return the framerate in Hz used to encode the video stream.
+
+  If the video is a sequence of images, return -1.
+  */
+double vpVideoReader::getFramerate() const
+{
+  double framerate = -1.;
+
+#ifdef VISP_HAVE_FFMPEG
+  if (ffmpeg != NULL)
+    framerate = ffmpeg->getFramerate();
+#endif
+  return framerate;
+}
