@@ -760,6 +760,7 @@ IF(USE_OGRE)
       /usr/share/OGRE-1.7.4/media	
       /usr/share/OGRE-1.8.0/media	
       /usr/share/OGRE-1.8.1/media	
+      /usr/share/OGRE-1.9.0/media	
     )
   endif()
 
