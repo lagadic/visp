@@ -11,7 +11,7 @@ endif(VISP_FOUND)
 add_executable(tutorial-mb-klt-tracker tutorial-mb-klt-tracker.cpp)
 
 # copy the data
-get_target_property(target_location tutorial-mb-klt-tracker-image LOCATION)
+get_target_property(target_location tutorial-mb-klt-tracker LOCATION)
 get_filename_component(target_location "${target_location}" PATH)
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.pgm" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.xml" )
@@ -20,7 +20,7 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox-triangle.cao" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.init" )
 foreach(data ${data2copy})
   add_custom_command(
-    TARGET tutorial-mb-klt-tracker-image
+    TARGET tutorial-mb-klt-tracker
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${data}" "${target_location}"
   )
