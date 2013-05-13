@@ -50,7 +50,7 @@ int main()
   cam.initPersProjWithoutDistortion(839, 839, 325, 243);
   tracker.setCameraParameters(cam);
 #endif
-  tracker.setDisplayFeatures(false);
+  tracker.setDisplayFeatures(true);
   tracker.setOgreVisibilityTest(true);
   tracker.loadModel("teabox.cao");
   tracker.initClick(I, "teabox.init");
