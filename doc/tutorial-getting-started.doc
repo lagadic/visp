@@ -105,7 +105,7 @@ make
 
 \section image_output Run the executable
 
-By now you sould have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
+By now you should have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
 
 \code
 ./tutorial_viewer lena.ppm

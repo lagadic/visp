@@ -5,7 +5,7 @@
 
 \section simu_image_intro Introduction
 
-The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a given camera position. For axample, this capability can then be used during the simulation of a visual-servo as described in \ref tutorial-ibvs to introduce an image processing. 
+The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a given camera position. For example, this capability can then be used during the simulation of a visual-servo as described in \ref tutorial-ibvs to introduce an image processing. 
 
 \section simu_image_projection Image projection
 
@@ -18,7 +18,7 @@ This is done by the following code also available in tutorial-image-simulator.cp
 
 The result of this program is shown in the next image.
 
-\image html img-simu-image-target-square.png Resulting projection of the planar image at a given camera postion.
+\image html img-simu-image-target-square.png Resulting projection of the planar image at a given camera position.
 
 The provide hereafter the explanation of the new lines that were introduced.
 
@@ -43,7 +43,7 @@ Since the previous image corresponds to a 20cm by 20cm target, we initialize the
   X[0][2] =  0;   X[1][2] =  0;   X[2][2] = 0;   X[3][2] =  0;
 \endcode
 
-Then we create an instance of the image \c I that will contain the rendered imagefrom a given camera position.
+Then we create an instance of the image \c I that will contain the rendered image from a given camera position.
 \code
   vpImage<unsigned char> I(480, 640);
 \endcode

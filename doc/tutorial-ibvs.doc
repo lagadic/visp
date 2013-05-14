@@ -180,7 +180,7 @@ The result of this program is visible in the next videos. The first one shows th
 
 We explain now the new lines that were introduced.
 
-First, we add the headers of the classes that are used to introduce the viewers and some display functionalities. vpProjectionDisplay is the class that allows to handle the external view from a given camera position, while vpServoDisplay allows to display in overlay the position of the current and desired features in the internal camera view.
+First, we add the headers of the classes that are used to introduce the viewers and some display functionality. vpProjectionDisplay is the class that allows to handle the external view from a given camera position, while vpServoDisplay allows to display in overlay the position of the current and desired features in the internal camera view.
 
 \code
 #include <visp/vpDisplayX.h>
@@ -189,7 +189,7 @@ First, we add the headers of the classes that are used to introduce the viewers 
 #include <visp/vpServoDisplay.h>
 \endcode
 
-Secondly, we introduce the function display_trajectory() that allows to display the trajectory of the current features in the image. From the 3D coordinates of the points given in the object frame, we compute their respective position in the camera frame, then we apply the perspective projection before retrieving their positions in sub-pixels in the image thanks to the camera parameters. The succesive sub-pixel positions are stored in a vector named \c traj and displayed as a green trajectory.
+Secondly, we introduce the function display_trajectory() that allows to display the trajectory of the current features in the image. From the 3D coordinates of the points given in the object frame, we compute their respective position in the camera frame, then we apply the perspective projection before retrieving their positions in sub-pixels in the image thanks to the camera parameters. The successive sub-pixel positions are stored in a vector named \c traj and displayed as a green trajectory.
 
 \code
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
@@ -228,7 +228,7 @@ We enter then in the main() where we create two images that will be displayed in
 #endif
 \endcode
 
-We create an instance of the vpProjectionDisplay class. This class is only available if at least one of the display (X11, GDI, OpenCV, GTK, D3D9) is installed. That is why we use VISP_HAVE_DISPLAY macro. We then insert the points used to define the target. Later, the 3D coodinates of these points defined in the object frame will be used and projected in \c Iext.
+We create an instance of the vpProjectionDisplay class. This class is only available if at least one of the display (X11, GDI, OpenCV, GTK, D3D9) is installed. That is why we use VISP_HAVE_DISPLAY macro. We then insert the points used to define the target. Later, the 3D coordinates of these points defined in the object frame will be used and projected in \c Iext.
 \code
 #if defined(VISP_HAVE_DISPLAY)
   vpProjectionDisplay externalview;
