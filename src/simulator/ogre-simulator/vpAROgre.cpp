@@ -354,6 +354,7 @@ void vpAROgre::init(bool
     it++;
   }
   
+  // With Ogre version >= 1.8.1 we hide the window
   if( hidden && ((OGRE_VERSION_MAJOR << 16 | OGRE_VERSION_MINOR << 8 | OGRE_VERSION_PATCH) >= (1 << 16 | 8 << 8 | 1)) ){
     misc["hidden"] = "true";
     windowHidden = true;
