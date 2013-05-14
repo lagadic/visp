@@ -1,7 +1,7 @@
 /*! \example tutorial-viewer.cpp */
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTk.h>
+#include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpImageIo.h>
