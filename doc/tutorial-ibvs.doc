@@ -364,7 +364,7 @@ The current visual features are computed using a vpDot2 blob tracker. Once four 
   }
 \endcode
 
-Then in the visual servo loop, at each iteration we get a new image of the target.
+In the visual servo loop, at each iteration we get a new image of the target.
 
 \code
     g.acquire(I, cMo);
