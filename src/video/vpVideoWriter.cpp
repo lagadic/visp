@@ -65,6 +65,7 @@ vpVideoWriter::vpVideoWriter()
   codec = AV_CODEC_ID_MPEG1VIDEO;
 #endif
   bit_rate = 500000;
+  framerate = 25;
   #endif
 }
 
@@ -142,6 +143,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
+    ffmpeg->setFramerate(framerate);
     ffmpeg->setBitRate(bit_rate);
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec))
       throw (vpException(vpException::ioError ,"Could not open the video"));
