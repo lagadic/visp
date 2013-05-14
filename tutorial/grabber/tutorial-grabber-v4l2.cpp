@@ -10,8 +10,9 @@ int main()
 
   vpV4l2Grabber g;
   g.open(I);
-  g.acquire(I);
-  std::cout << I.getWidth() << " " << I.getHeight() << std::endl;
+
+  std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+
 #ifdef VISP_HAVE_X11
   vpDisplayX d(I);
 #else

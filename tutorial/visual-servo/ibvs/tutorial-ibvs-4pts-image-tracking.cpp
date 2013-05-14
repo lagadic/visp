@@ -23,28 +23,13 @@ public:
     */
   vpVirtualGrabber(const std::string &filename, const vpCameraParameters &cam)
   {
-    double l = .1; // the target is a square 2*l by 2*l
+    // The target is a square 20cm by 2cm square
     // Initialise the 3D coordinates of the target corners
     for (int i = 0; i < 4; i++) X_[i].resize(3);
-    // Top left corner
-    X_[0][0] = -l;
-    X_[0][1] = -l;
-    X_[0][2] = 0;
-
-    // Top right corner
-    X_[1][0] = l;
-    X_[1][1] = -l;
-    X_[1][2] = 0;
-
-    // Bottom right corner
-    X_[2][0] = l;
-    X_[2][1] = l;
-    X_[2][2] = 0;
-
-    //Bottom left corner
-    X_[3][0] = -l;
-    X_[3][1] = l;
-    X_[3][2] = 0;
+    // Top left      Top right        Bottom right    Bottom left
+    X_[0][0] = -0.1; X_[1][0] =  0.1; X_[2][0] = 0.1; X_[3][0] = -0.1;
+    X_[0][1] = -0.1; X_[1][1] = -0.1; X_[2][1] = 0.1; X_[3][1] =  0.1;
+    X_[0][2] =  0;   X_[1][2] =  0;   X_[2][2] = 0;   X_[3][2] =  0;
 
     vpImageIo::read(target_, filename);
 
@@ -77,7 +62,7 @@ private:
 };
 
 
-void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness)
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot)
 {
   static std::vector<vpImagePoint> traj[4];
   for (unsigned int i=0; i<4; i++) {
@@ -85,7 +70,7 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
   }
   for (unsigned int i=0; i<4; i++) {
     for (unsigned int j=1; j<traj[i].size(); j++) {
-      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green, thickness);
+      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green);
     }
   }
 }
@@ -97,13 +82,9 @@ int main()
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
   vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
-  // Image used for the image processing
   vpImage<unsigned char> I(480, 640, 255);
-
-  // Parameters of our camera
   vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
 
-  // Define the target as 4 points
   std::vector<vpPoint> point(4) ;
   point[0].setWorldCoordinates(-0.1,-0.1, 0);
   point[1].setWorldCoordinates( 0.1,-0.1, 0);
@@ -116,10 +97,8 @@ int main()
   task.setLambda(0.5);
 
   vpVirtualGrabber g("./target_square.pgm", cam);
-
   g.acquire(I, cMo);
 
-  // Display the current image in which we will do the tracking
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Current camera view");
 #elif defined(VISP_HAVE_GDI)
@@ -129,31 +108,22 @@ int main()
 #endif
 
   vpDisplay::display(I);
-  vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
+  vpDisplay::displayCharString(I, 10, 10,
+                               "Click in the 4 dots to initialise the tracking and start the servo",
+                               vpColor::red);
   vpDisplay::flush(I);
 
-  std::vector<vpDot2> dot(4);
   vpFeaturePoint p[4], pd[4];
-  unsigned int thickness = 3; // 3 in video
+  std::vector<vpDot2> dot(4);
 
   for (int i = 0 ; i < 4 ; i++) {
-    // Compute the desired features
     point[i].track(cdMo);
     vpFeatureBuilder::create(pd[i], point[i]);
 
-    // Compute the current features at the initial position
     dot[i].setGraphics(true);
-    dot[i].setGraphicsThickness(thickness);
     dot[i].initTracking(I);
     vpDisplay::flush(I);
     vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
-  }
-
-  for (int i = 0 ; i < 4 ; i++) {
-    // Set the feature Z coordinate from the pose
-    vpColVector cP;
-    point[i].changeFrame(cMo, cP) ;
-    p[i].set_Z(cP[2]);
 
     task.addFeature(p[i], pd[i]);
   }
@@ -165,11 +135,9 @@ int main()
   wMo = wMc * cMo;
 
   for (; ; ) {
-    // From the camera position in the world frame we retrieve the object position
     robot.getPosition(wMc);
     cMo = wMc.inverse() * wMo;
 
-    // Update the scene from the new camera position
     g.acquire(I, cMo);
 
     vpDisplay::display(I);
@@ -177,10 +145,7 @@ int main()
     for (int i = 0 ; i < 4 ; i++) {
       dot[i].track(I);
       vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
-    }
 
-    for (int i = 0 ; i < 4 ; i++) {
-      // Set the feature Z coordinate from the pose
       vpColVector cP;
       point[i].changeFrame(cMo, cP) ;
       p[i].set_Z(cP[2]);
@@ -188,8 +153,8 @@ int main()
 
     vpColVector v = task.computeControlLaw();
 
-    display_trajectory(I, dot, thickness);
-    vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red, thickness+2) ;
+    display_trajectory(I, dot);
+    vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red) ;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
     vpDisplay::flush(I);

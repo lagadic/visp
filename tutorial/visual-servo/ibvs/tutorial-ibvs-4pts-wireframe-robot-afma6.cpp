@@ -77,9 +77,7 @@ int main()
 
   vpSimulatorAfma6 robot(true);
   robot.setVerbose(true);
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
-  robot.setGraphicsThickness(3);
-#endif
+
   // Get the default joint limits
   vpColVector qmin = robot.getJointMin();
   vpColVector qmax = robot.getJointMax();

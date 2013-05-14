@@ -56,7 +56,7 @@ The following example shows how to detect blobs in the first image and then trac
 \code
    vpDot2 blob;
 \endcode
-  Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image. Note here, that vpDot2::getArea() is only available if ViSP version is greater then 2.7.0.
+  Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image.
 
 \code
   if (learn) {
@@ -68,9 +68,7 @@ The following example shows how to detect blobs in the first image and then trac
     std::cout << "Blob characteristics: " << std::endl;
     std::cout << " width : " << blob.getWidth() << std::endl;
     std::cout << " height: " << blob.getHeight() << std::endl;
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
     std::cout << " area: " << blob.getArea() << std::endl;
-#endif
     std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
     std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
     std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
@@ -78,7 +76,7 @@ The following example shows how to detect blobs in the first image and then trac
     std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
   }
 \endcode
-  If you have a precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
+  If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
 \code
   else {
     // Set blob characteristics for the auto detection

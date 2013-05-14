@@ -1,12 +1,15 @@
 /*! \example tutorial-viewer.cpp */
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayGTk.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpImageIo.h>
 
 int main(int argc, char** argv )
 {
   if(argc != 2) {
-    printf( "Usage: viewer <image name.[pgm,ppm,jpeg,png]>\n" );
+    printf( "Usage: %s <image name.[pgm,ppm,jpeg,png]>\n", argv[0] );
     return -1;
   }
 
@@ -21,8 +24,14 @@ int main(int argc, char** argv )
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I);
+#elif defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV d(I);
+#elif defined(VISP_HAVE_GTK)
+  vpDisplayGTK d(I);
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_D3D9)
+  vpDisplayD3d d(I);
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif

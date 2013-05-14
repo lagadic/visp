@@ -20,11 +20,13 @@ int main()
   std::cout << "No image viewer is available..." << std::endl;
 #endif
   vpDisplay::setTitle(I, "Video grabber");
-  while(1) {
+  while (! g.end() ) {
+    double t = vpTime::measureTimeMs();
     g.acquire(I);
     vpDisplay::display(I);
     vpDisplay::flush(I);
     if (vpDisplay::getClick(I, false)) break;
+    vpTime::wait(t, 1000. / g.getFramerate());
   }
 #endif
 }

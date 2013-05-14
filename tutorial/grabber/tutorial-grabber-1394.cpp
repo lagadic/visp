@@ -13,7 +13,7 @@ int main()
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
   g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
   g.open(I);
-  g.acquire(I);
+
   std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_X11

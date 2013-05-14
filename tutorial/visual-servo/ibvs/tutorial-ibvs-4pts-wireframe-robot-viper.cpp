@@ -78,9 +78,6 @@ int main()
 
   vpSimulatorViper850 robot(true);
   robot.setVerbose(true);
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
-  robot.setGraphicsThickness(3);
-#endif
 
   // Enlarge the default joint limits
   vpColVector qmin = robot.getJointMin();

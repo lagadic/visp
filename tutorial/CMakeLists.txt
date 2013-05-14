@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 
 subdirs(grabber)
 subdirs(image)
+subdirs(simulator/image)
 subdirs(tracking/blob)
 subdirs(tracking/keypoint)
 subdirs(tracking/model-based/edges)

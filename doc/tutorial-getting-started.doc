@@ -1,137 +1,121 @@
+
 /**
   \page tutorial-getting-started Tutorial: Getting started
   \tableofcontents
 
-  \section image Working with images
 
+  \note We assume that you have successfully installed ViSP as described in the previous \ref tutorial-install-ubuntu.
 
-  Let's start to write our first program also available in tutorial-image-viewer.cpp 
-  to see how to read an image,
-  open a display to view the image, draw in overlay a red rectangle
-  and finally save the image.
+The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
-  \include tutorial-image-viewer.cpp
+\section image_code Create a program using ViSP
+Let's start to write our first program to see how to read an image and
+  open a  window to display the image. This simple program is provided in tutorial-viewer.cpp example and given below:
 
-  Here is a screen shot of the resulting program :
+\include tutorial-viewer.cpp
 
-  \image html img-lena-viewer.png
-
-  And here is the detailed explanation of the source, line by line :
+Here is the detailed explanation of the source, line by line :
 \code
-#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayGTk.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 \endcode
-  Include headers for image viewers. The first one more for unix-like systems requires that \e libX11 is available. The second one dedicated to windows systems requires that the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio is available. Other viewers are also available (vpDisplayOpenCV, vpDisplayGTK).
+  Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
 
-\code
-#include <visp/vpImage.h>
-\endcode
-  Include the main header file of the vpImage class.
 \code
 #include <visp/vpImageIo.h>
 \endcode
-  Include the header file that allows to read or write an image from the disk using vpImageIo class.
-\code
-#include <visp/vpImagePoint.h>
-\endcode
-  Include the header that defines an image point in vpImagePoint.
+Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
 
 \code
-  vpImage<vpRGBa> I;
+vpImage<vpRGBa> I;
 \endcode
-  Creation of a color image instance. Each pixel is coded as RGBa.
+Create an instance of a color image where each pixel is coded in RGBa.
+
 \code
-  vpImageIo::read(I, "lena.ppm");
+try {
+  vpImageIo::read(I, argv[1]);
+}
+catch(...) {
+  std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
+}
 \endcode
-  The image \c I is initialized by reading an image file from the disk.
-  Here, <tt>lena.ppm</tt> must be in the same directory than the current program.
+The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
 
 \code
 #if defined(VISP_HAVE_X11)
-  vpDisplayX d(I);
+vpDisplayX d(I);
+#elif defined(VISP_HAVE_OPENCV)
+vpDisplayOpenCV d(I);
+#elif defined(VISP_HAVE_GTK)
+vpDisplayGTK d(I);
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
+vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_D3D9)
+vpDisplayD3d d(I);
 #else
-  std::cout << "No image viewer is available..." << std::endl;
+std::cout << "No image viewer is available..." << std::endl;
 #endif
 \endcode
+Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
 
-  To be cross-platform we use VISP_HAVE_X11 and VISP_HAVE_GDI macro to be sure that the viewer that will use either libX11 or GDI is available. If available, create an instance of an image display window for image \c I. Behind the construction of the display, we create the link between the image \c I and the display \c d. Note that an image can only have one display.
 \code
-  vpDisplay::setTitle(I, "Lena");
+ vpDisplay::setTitle(I, "My image");
 \endcode
-
- The title of the display is then set to \e Lena.  
+The title of the display is then set to \c "My image".  
 
 \code
   vpDisplay::display(I);
-
-  vpDisplay::displayRectangle(I, vpImagePoint(90,90), 70, 90, vpColor::red, false, 2);
   vpDisplay::flush(I);
 \endcode
-  First we display the content of the image \c I, then we draw in overlay a rectangle with (90,90) as upper-left coordinates, with 70 as width, and 90 as height. The \c false parameters indicates that the rectangle is not filled. Lines are 2 pixels wide. Finally, we flush the display to see the image and the drawings. Note here that if no display is available, all the vpDisplay static functions are without effect.
-
-\code
-  vpImage<vpRGBa> O;
-  vpDisplay::getImage(I, O);
-\endcode
-  We create a new color image instance \c O that is initialized with the image \c I and the overlay content.
-
-\code
-#ifdef VISP_HAVE_LIBJPEG
-  vpImageIo::write(I, "lena-out.jpg");
-  vpImageIo::write(O, "lena-out-with-overlay.jpg");
-#endif  
-\endcode
-  If JPEG capabilities are available (\e libjpeg package is installed), firstly we write the content of image \c I to the disk and secondly we write image \c O that contains the drawings in overlay. 
+  First we display the content of the image \c I, then we flush the display to render the image.
 
 \code
   vpDisplay::getClick(I);
 \endcode
   Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
 
+\section image_cmake Create a CMake file
 
-  \section image_grabbing Image frame grabbing
-
-
-The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 are available.
-
-\include tutorial-grabber-1394.cpp
-
-Here after we explain the new lines that are introduced.
-
-First an instance of the frame grabber is created. 
-\code
-   vp1394TwoGrabber g;
-\endcode
-
-Note that once the grabber is created, you can specify some settings such as the camera framerate, the firewire transmission speed, the image size and color coding. For a more complete list of settings see vp1394TwoGrabber class. 
-\code
-  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800);
-  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
-\endcode
-
-Then the grabber is initialized using:
-\code
-  g.open(I);
-\endcode
-From now the color image \c I is also initialized with the size corresponding to the grabber settings. Image acquisition is simply done by:
+Now you have to create your CMakeLists.txt file. It should look like this:
 
 \code
-  g.acquire(I);
+project(tutorial-image)
+
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED)
+if(VISP_FOUND)
+  include(${VISP_USE_FILE})
+endif(VISP_FOUND)
+
+add_executable(tutorial-viewer tutorial-viewer.cpp)
 \endcode
 
-Note here that we are waiting for a non blocking mouse event to break the while loop before ending the program.
+\section image_build Generate the executable
+
+Proceed as with any other project using CMake:
+
 \code
-  if (vpDisplay::getClick(I, false)) break;
+cmake .
+make
 \endcode
 
-In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp. 
+\section image_output Run the executable
 
-If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
+By now you sould have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
 
-It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
+\code
+./tutorial_viewer lena.ppm
+\endcode
 
-You are now ready to see the next tutorial \ref tutorial-tracking-blob.
+
+Here is a screen shot of the resulting output window :
+
+  \image html img-lena.png
+
+
+You are now ready to see the next \ref tutorial-grabber.
 */

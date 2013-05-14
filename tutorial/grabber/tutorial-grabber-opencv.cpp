@@ -9,7 +9,7 @@ int main()
 
   vpOpenCVGrabber g;
   g.open(I);
-  g.acquire(I);
+
   std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
   vpDisplayOpenCV d(I);
 

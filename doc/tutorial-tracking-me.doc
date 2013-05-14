@@ -40,10 +40,10 @@ Finally, to track a line with the moving edges, we include the header of the vpM
 #include <visp/vpMeLine.h>
 \endcode
  
-In the main() function, The source code is build only if one of the grabbers is available.
+In the main() function, The source code is build only if one of the grabbers and one of the viewers is available.
 
 \code
-#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) 
+#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 \endcode
 
 Here we create a gray level image container \c I that will contain the images acquired by our camera.
@@ -52,7 +52,7 @@ Here we create a gray level image container \c I that will contain the images ac
 vpImage<unsigned char> I;
 \endcode
 
-Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed, secondly for a firewire camera under Windows if CMU1394 3rd party is installed, and lastly for an usb camera under Unix if none of the previous 3rd party are installed, and if libv4l is installed. The \ref tutorial-getting-started section \ref image_grabbing gives more details concerning the framegrabbing.
+Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed, secondly for a firewire camera under Windows if CMU1394 3rd party is installed, and lastly for an usb camera under Unix if none of the previous 3rd party are installed, and if libv4l is installed. The \ref tutorial-grabber gives more details concerning the framegrabbing.
 
 \code
 #if defined(VISP_HAVE_DC1394_2)
@@ -72,12 +72,10 @@ We then open the connection with the grabber and acquire an image in \c I.
 
 To be able to display image \c I and the tracking results in overlay in a window, we create a display instance.
 \code
-#if defined(VISP_HAVE_X11)
+#if defined UNIX
   vpDisplayX d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I, 0, 0, "Camera view");
 #else
-  std::cout << "No image viewer is available..." << std::endl;
+  vpDisplayGDI d(I, 0, 0, "Camera view");
 #endif
 \endcode
 

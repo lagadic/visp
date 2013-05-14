@@ -1,16 +1,15 @@
 /*! \example tutorial-ibvs-4pts-display.cpp */
+#include <visp/vpFeatureBuilder.h>
+#include <visp/vpServo.h>
+#include <visp/vpSimulatorCamera.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpFeatureBuilder.h>
 #include <visp/vpProjectionDisplay.h>
-#include <visp/vpServo.h>
 #include <visp/vpServoDisplay.h>
-#include <visp/vpSimulatorCamera.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
 {
-  int thickness = 3;
   static std::vector<vpImagePoint> traj[4];
   vpImagePoint cog;
   for (unsigned int i=0; i<4; i++) {
@@ -21,7 +20,7 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
   }
   for (unsigned int i=0; i<4; i++) {
     for (unsigned int j=1; j<traj[i].size(); j++) {
-      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green, thickness);
+      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green);
     }
   }
 }
@@ -29,7 +28,8 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
 int main()
 {
   vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+  vpHomogeneousMatrix cMo(0.15, -0.1, 1.,
+                          vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
   std::vector<vpPoint> point(4) ;
   point[0].setWorldCoordinates(-0.1,-0.1, 0);
@@ -57,8 +57,6 @@ int main()
   robot.getPosition(wMc);
   wMo = wMc * cMo;
 
-  // We open two displays, one for the internal camera view, the other one for
-  // the external view, using either X11, or GDI.
   vpImage<unsigned char> Iint(480, 640, 255) ;
   vpImage<unsigned char> Iext(480, 640, 255) ;
 #if defined(VISP_HAVE_X11)
@@ -77,10 +75,8 @@ int main()
   for (int i = 0 ; i < 4 ; i++)
     externalview.insert(point[i]) ;
 #endif
-  // Parameters of our camera
   vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
-  vpHomogeneousMatrix cextMo(0,0,3,
-                             0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+  vpHomogeneousMatrix cextMo(0,0,3, 0,0,0);
 
   while(1) {
     robot.getPosition(wMc);
@@ -95,8 +91,8 @@ int main()
     vpDisplay::display(Iint) ;
     vpDisplay::display(Iext) ;
     display_trajectory(Iint, point, cMo, cam);
-    int thickness = 5;
-    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red, thickness);
+
+    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red);
 #if defined(VISP_HAVE_DISPLAY)
     externalview.display(Iext, cextMo, cMo, cam, vpColor::red, true);
 #endif
@@ -111,4 +107,3 @@ int main()
   }
   task.kill();
 }
-

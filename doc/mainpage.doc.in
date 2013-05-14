@@ -43,11 +43,14 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 \section Tutorial_sec Tutorials
 
 <p>Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-- \ref tutorial-getting-started <br>This first tutorial introduces image read/write, display and framegrabbing.
-- \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
+- \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read an display an image.
+- \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
+- \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
@@ -86,11 +89,14 @@ scheme, ...</p>
   \defgroup Tutorial ViSP tutorials
 
 Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-- \ref tutorial-getting-started <br>This first tutorial introduces image read/write, display and framegrabbing.
+- \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read an display an image.
+- \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 

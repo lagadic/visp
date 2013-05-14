@@ -1,0 +1,132 @@
+
+/**
+  \page tutorial-grabber Tutorial: Image frame grabbing
+  \tableofcontents
+
+
+  \section grabber-camera-firewire-unix Images from firewire cameras
+
+
+The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 rd party are available.
+
+\include tutorial-grabber-1394.cpp
+
+Here after we explain the new lines that are introduced.
+
+First an instance of the frame grabber is created. During the creating a bus reset is send. If you don't want to reset the firewire bus, just turn reset to false.
+\code
+   vp1394TwoGrabber g(reset);
+\endcode
+
+Once the grabber is created, we set the camera image size, color coding, and framerate. 
+\code
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
+  g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+\endcode
+
+Note that here you can specify some other settings such as the firewire transmission speed. For a more complete list of settings see vp1394TwoGrabber class. 
+\code
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800);
+\endcode
+
+Then the grabber is initialized using:
+\code
+  g.open(I);
+\endcode
+From now the color image \c I is also initialized with the size corresponding to the grabber settings. 
+
+
+Then we enter in a while loop where image acquisition is simply done by:
+
+\code
+  g.acquire(I);
+\endcode
+
+We are waiting for a non blocking mouse event to break the while loop before ending the program.
+\code
+  if (vpDisplay::getClick(I, false)) break;
+\endcode
+
+In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp. 
+
+
+\section grabber-camera-other Images from other cameras
+
+
+If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
+
+It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
+
+\section grabber-video-stream Images from a video stream
+
+With ViSP it also possible to get images from an input video stream. To this end we exploit ffmpeg 3rd party. The example below available in tutorial-grabber-video.cpp shows how o consider an mpeg video stream:
+
+\include tutorial-grabber-video.cpp
+
+We explain now the new lines that were introduced.
+
+\code
+#include <visp/vpTime.h>
+#include <visp/vpVideoReader.h>
+\endcode
+Include the header of the vpTime class that allows to measure time, and of the vpVideoReader class that allows to read a video stream.
+
+\code
+  vpVideoReader g;
+\endcode
+Create an instance of a video reader.
+
+\code
+  g.setFileName("./video.mpg");
+\endcode
+Set the name of the video stream. Here \c video.mpg refers to a mpeg file located in the same folder than the executable.
+
+The vpVideoReader class can also handle a sequence of images. For example, to read the following images:
+
+\code
+% ls *.png
+image0000.png
+image0001.png
+image0002.png
+image0003.png
+image0004.png
+...
+\endcode
+
+you may use the following
+
+\code
+  g.setFileName("./image%04d.png");
+\endcode
+where you specify that each image number is coded with 4 digits. Here, ffmpeg is no yet mandatory, but rather \c libpng that should be available to read PNG images. Supported image formats are PPM, PGM, PNG and JPEG. In the last case, \c libjpeg should be installed.
+
+Then as for any other grabber, you have to initialize the frame grabber using:
+
+\code
+  g.open(I);
+\endcode
+
+Then we enter in the while loop until the last image was not reached:
+\code
+  while (! g.end() ) {  
+\endcode
+
+To get the next image in the stream, we just use:
+
+\code
+  g.acquire(I);
+\endcode
+
+To synchronize the video decoding with the video framerate, we measure the beginning time of each loop iteration:
+
+\code
+  double t = vpTime::measureTimeMs();
+\endcode
+
+The synchronisation is done by waiting from the beginning of the iteration the corresponding time expressed in milli seconds by using:
+\code
+  vpTime::wait(t, 1000. / g.getFramerate());
+\endcode
+
+You are now ready to see the next \ref tutorial-tracking-blob.
+*/

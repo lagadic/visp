@@ -171,6 +171,10 @@ int main()
   For convenience, there is also the ability to read/write joint
   positions from a position file with readPosFile() and savePosFile()
   methods.
+
+  To know how this class can be used to achieve a visual servoing simulation,
+  you can follow the \ref tutorial-ibvs.
+
 */
 
 

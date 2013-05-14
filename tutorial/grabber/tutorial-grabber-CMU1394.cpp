@@ -14,7 +14,7 @@ int main()
   g.setAutoGain();
   g.setFramerate(4); // 30 fps
   g.open(I);
-  g.acquire(I);
+
   std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
 
 #ifdef VISP_HAVE_GDI

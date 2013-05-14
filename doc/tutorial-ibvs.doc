@@ -47,7 +47,7 @@ controller, and if we would like for instance to try to ensure an exponential de
 
  \f[ {\bf v}_c = -\lambda {\bf L}_{\bf x}^{+} {\bf e} \f]
 
-\section ibvs_simple IBVS simulation
+\section ibvs_basic Basic IBVS simulation
 
 The following example available in tutorial-ibvs-4pts.cpp shows how to use ViSP to implement an IBVS simulation using 4 points as visual features.
 
@@ -163,6 +163,228 @@ Before exiting the program, we free all the memory by killing the task.
   task.kill();
 \endcode
 
-The next \ref tutorial-plotter shows how to modify the previous example to plot the visual servo behavior.
+The next \ref tutorial-plotter shows how to modify the previous example to plot some curves that illustrate the visual servo behavior.
+
+\section ibvs_display IBVS simulation with basic viewers
+
+The previous IBVS simulation can be modified easily to introduce a basic internal and external camera viewer. This is implemented in tutorial-ibvs-4pts-display.cpp and given below:
+
+\include tutorial-ibvs-4pts-display.cpp
+
+The result of this program is visible in the next videos. The first one shows the internal camera view with the straight line trajectory of each point in the image. The second one provides an external view that shows the 3D camera trajectory to reach the desired position.
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/sPNkDfp3UeU?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/ejzZqkyXXHw?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+We explain now the new lines that were introduced.
+
+First, we add the headers of the classes that are used to introduce the viewers and some display functionalities. vpProjectionDisplay is the class that allows to handle the external view from a given camera position, while vpServoDisplay allows to display in overlay the position of the current and desired features in the internal camera view.
+
+\code
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpProjectionDisplay.h>
+#include <visp/vpServoDisplay.h>
+\endcode
+
+Secondly, we introduce the function display_trajectory() that allows to display the trajectory of the current features in the image. From the 3D coordinates of the points given in the object frame, we compute their respective position in the camera frame, then we apply the perspective projection before retrieving their positions in sub-pixels in the image thanks to the camera parameters. The succesive sub-pixel positions are stored in a vector named \c traj and displayed as a green trajectory.
+
+\code
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
+                        const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
+{
+  int thickness = 1;
+  static std::vector<vpImagePoint> traj[4];
+  vpImagePoint cog;
+  for (unsigned int i=0; i<4; i++) {
+    // Project the point at the given camera position
+    point[i].project(cMo);
+    vpMeterPixelConversion::convertPoint(cam, point[i].get_x(), point[i].get_y(), cog);
+    traj[i].push_back(cog);
+  }
+  for (unsigned int i=0; i<4; i++) {
+    for (unsigned int j=1; j<traj[i].size(); j++) {
+      vpDisplay::displayLine(I, traj[i][j-1], traj[i][j], vpColor::green, thickness);
+    }
+  }
+}
+\endcode
+
+We enter then in the main() where we create two images that will be displayed in a window. The first images \c Iint is dedicated to the internal camera view. It shows the content of the images seen by the simulated camera. The second image   \c Iext correspond the images seen by an external camera that observes the simulated camera.
+
+\code
+  vpImage<unsigned char> Iint(480, 640, 255) ;
+  vpImage<unsigned char> Iext(480, 640, 255) ;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX displayInt(Iint, 0, 0, "Internal view");
+  vpDisplayX displayExt(Iext, 670, 0, "External view");
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
+  vpDisplayGDI displayExt(Iext, 670, 0, "External view");
+#else
+  std::cout << "No image viewer is available..." << std::endl;
+#endif
+\endcode
+
+We create an instance of the vpProjectionDisplay class. This class is only available if at least one of the display (X11, GDI, OpenCV, GTK, D3D9) is installed. That is why we use VISP_HAVE_DISPLAY macro. We then insert the points used to define the target. Later, the 3D coodinates of these points defined in the object frame will be used and projected in \c Iext.
+\code
+#if defined(VISP_HAVE_DISPLAY)
+  vpProjectionDisplay externalview;
+  for (int i = 0 ; i < 4 ; i++)
+    externalview.insert(point[i]) ;
+#endif
+\endcode
+
+We initialize the intrinsic camera parameters that are used in display_trajectory() to determine the positions in pixels in the image of the visual features.
+\code
+vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
+\endcode
+
+We also set the position of the external camera that will observe the evolution of the simulated camera during the servo.
+\code
+vpHomogeneousMatrix cextMo(0,0,3, 0,0,0);
+\endcode
+
+Finally, at each iteration of the servo loop we update the viewers:
+
+\code
+    vpDisplay::display(Iint) ;
+    vpDisplay::display(Iext) ;
+    display_trajectory(Iint, point, cMo, cam);
+
+    vpServoDisplay::display(task, cam, Iint, vpColor::green, vpColor::red);
+#if defined(VISP_HAVE_DISPLAY)
+    externalview.display(Iext, cextMo, cMo, cam, vpColor::red, true);
+#endif
+    vpDisplay::flush(Iint);
+    vpDisplay::flush(Iext);
+\endcode
+
+\section ibvs_wireframe IBVS simulation with wireframe viewers
+
+The IBVS simulation presented section \ref ibvs_basic can also be modified to introduce a wireframe internal and external camera viewer. This is implemented in tutorial-ibvs-4pts-wireframe-camera.cpp and given below:
+
+\include tutorial-ibvs-4pts-wireframe-camera.cpp
+
+The result of this program is visible in the next videos. The first one shows the internal wireframe camera view with the straight line trajectory of each point in the image. The second one provides an external wireframe view that shows the 3D camera trajectory to reach the desired position.
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/riv3LBg6FYY?rel=0" frameborder="0" allowfullscreen></iframe>
+<iframe width="420" height="315" src="http://www.youtube.com/embed/EnfUz5p9QNs?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+We explain now the new lines that were introduced.
+
+First we include the header of the wireframe simulator.
+\code
+#include <visp/vpWireFrameSimulator.h>
+\endcode
+
+Then in the main(), we create an instance of the simulator. First we initialize the object in the scene. We recall that the target is a 20cm by 20cm square. This is exactly an object handled by the simulator and defined as a vpWireFrameSimulator::PLATE. By vpWireFrameSimulator::D_STANDARD we indicate that the object displayed at the desired position is also a PLATE. Secondly we initialize the camera position wrt to the object using \c cMo, and also the desired camera position, the one the camera has to reach at the end of the servo, using \c cdMo. Next we initialize the position of a static external camera that will observe the simulated camera during the servoing using \c cextMo. All these poses are define wrt the object frame. Finally, we set the intrinsic camera parameters used for the internal and external viewers.
+
+\code
+  vpWireFrameSimulator sim;
+  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+  sim.setCameraPositionRelObj(cMo);
+  sim.setDesiredCameraPosition(cdMo);
+  sim.setExternalCameraPosition(cextMo);
+  sim.setInternalCameraParameters(cam);
+  sim.setExternalCameraParameters(cam);
+\endcode
+
+At each iteration of the servo loop, we update the wireframe simulator with the new camera position.
+
+\code
+sim.setCameraPositionRelObj(cMo);
+\endcode
+
+Then we update the drawings in the internal and external viewers associated to their respective images.
+
+\code
+    sim.getInternalImage(Iint);
+    sim.getExternalImage(Iext);
+\endcode
+
+Note here that the same kind of simulation could be achieved on a Viper arm or a gantry robot. The programs that does the simulation are provided in tutorial-ibvs-4pts-wireframe-robot-viper.cpp and in tutorial-ibvs-4pts-wireframe-robot-afma6.cpp.
+
+The next video illustrate the behavior of the same IBVS implemented in tutorial-ibvs-4pts-wireframe-robot-viper.cpp on a Viper arm. 
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/g0B5ug0ooYo?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+\section ibvs_tracking IBVS simulation with image processing
+
+\note In this section we assume that you are familiar with:
+- the blob tracker presented in \ref tutorial-tracking-blob
+- image projection capabilities described in \ref tutorial-simu-image.
+
+The IBVS simulation presented section \ref ibvs_basic can be modified to introduce an image processing that allows to track the point features using a blob tracker. This is implemented in tutorial-ibvs-4pts-image-tracking.cpp. The code is given below:
+
+\include tutorial-ibvs-4pts-image-tracking.cpp
+
+The result of this program is visible in the next video. 
+
+\htmlonly
+<iframe width="420" height="315" src="http://www.youtube.com/embed/gn3tfoOxwKo?rel=0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+We explain now the new lines that were introduced.
+
+First we create a white image in which the target will be projected prior to the image processing.
+\code
+  vpImage<unsigned char> I(480, 640, 255);
+\endcode
+
+Since we will have to convert pixel coordinates to visual features expressed in meter, we need to initialize intrinsic camera parameters.
+
+\code
+  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+\endcode
+
+To retrieve the simulated image that depends on the simulated camera position we create an instance of a virtual grabber. Its goal is to project the image of the target \c ./target_square.pgm to a given camera position \c cMo, and then to retrieve the corresponding image \c I. Note here that the cog of the blobs in the .pgm file define a 20cm by 20cm square.
+\code
+  vpVirtualGrabber g("./target_square.pgm", cam);
+
+  g.acquire(I, cMo);
+\endcode
+
+The current visual features are computed using a vpDot2 blob tracker. Once four trackers are instantiated, we are waiting for a mouse click in each blob to initialize the tracker. Then we compute the current visual features \f$(x,y) \f$ from the camera parameters and the cog position of each blob.
+
+\code
+  for (int i = 0 ; i < 4 ; i++) {
+    ...
+    dot[i].setGraphics(true);
+    dot[i].initTracking(I);
+    vpDisplay::flush(I);
+    vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
+    ...
+  }
+\endcode
+
+Then in the visual servo loop, at each iteration we get a new image of the target.
+
+\code
+    g.acquire(I, cMo);
+\endcode
+
+We track each blob and update the values of the current visual features as previously.
+\code
+    for (int i = 0 ; i < 4 ; i++) {
+      dot[i].track(I);
+      vpFeatureBuilder::create(p[i], cam, dot[i].getCog());    
+\endcode
+
+As described in the \ref ibvs_intro, since the interaction matrix \f$\bf L_x \f$
+depends on \f$(x,y)\f$ but also on \f$Z\f$ the depth of the feature, we need to update \f$Z\f$. This is done by projecting each 3D point of the target in the camera frame using:
+
+\code
+      vpColVector cP;
+      point[i].changeFrame(cMo, cP) ;
+      p[i].set_Z(cP[2]);
+    }
+\endcode
 
 */
