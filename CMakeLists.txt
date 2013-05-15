@@ -2067,7 +2067,6 @@ IF(UNIX)
     ${VISP_BINARY_DIR}/install/VISPUse.cmake
     ${VISP_BINARY_DIR}/install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/install/VISPBuildSettings.cmake
-    ${VISP_BINARY_DIR}/ViSP-third-party.txt
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries
