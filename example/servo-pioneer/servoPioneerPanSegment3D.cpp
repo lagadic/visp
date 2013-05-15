@@ -93,7 +93,6 @@ int main(int argc, char **argv)
   double coef = 1.2/13.0;  // At 1m, the blob has a surface of 11.3 (AVT Pike 032C)
   double L = 0.21; // 3D horizontal segment length
   double Z_d = 0.8; // Desired distance along Z between camera and segment
-  bool save = false;
   bool normalized = true; // segment normilized features are used
 
   // Warning: To have a non singular task of rank 3, Y_d should be different from 0 so that
