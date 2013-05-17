@@ -428,14 +428,18 @@ main(int argc, const char ** argv)
                 << " - "
                 << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
-      std::cout << "w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
-      std::cout << "Moments: " << std::endl;
-      std::cout << "m00: " << d.m00 << std::endl;
-      std::cout << "m11: " << d.m11 << std::endl;
-      std::cout << "m02: " << d.m02 << std::endl;
-      std::cout << "m20: " << d.m20 << std::endl;
-      std::cout << "m10: " << d.m10 << std::endl;
-      std::cout << "m01: " << d.m01 << std::endl << std::endl;
+      std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
+      std::cout << "Moments:" << std::endl;
+      std::cout << "  m00: " << d.m00 << std::endl;
+      std::cout << "  m10: " << d.m10 << std::endl;
+      std::cout << "  m01: " << d.m01 << std::endl;
+      std::cout << "  m11: " << d.m11 << std::endl;
+      std::cout << "  m02: " << d.m02 << std::endl;
+      std::cout << "  m20: " << d.m20 << std::endl;
+      std::cout << "Centered moments:" << std::endl;
+      std::cout << "  mu11: " << d.mu11 << std::endl;
+      std::cout << "  mu02: " << d.mu02 << std::endl;
+      std::cout << "  mu20: " << d.mu20 << std::endl;
 
       if (0) {
         std::list<vpImagePoint> edges = d.getEdges();
