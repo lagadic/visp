@@ -1,4 +1,4 @@
-project(tutorial-visual-servo)
+project(tutorial-visual-servo-ibvs)
 
 cmake_minimum_required(VERSION 2.6)
 
