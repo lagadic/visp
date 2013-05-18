@@ -48,7 +48,6 @@ $RM doc/config-doxygen warning.log cmake_uninstall.cmake
 $RM include/visp/vpConfig.h
 $RM VISPBuildSettings.cmake
 $RM VISPConfig.cmake
-$RM VISPLibraryDepends.cmake
 $RM VISPUse.cmake
 $RM bin/visp-config
 
