@@ -367,6 +367,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
   static std::string framerate2string(vp1394TwoFramerateType fps);
 
+  void getAutoGain(unsigned int &minvalue, unsigned int &maxvalue);
+  void getAutoShutter(unsigned int &minvalue, unsigned int &maxvalue);
+
   uint64_t getCamera();
   void getCamera(uint64_t &camera);
   void getColorCoding(vp1394TwoColorCodingType & coding);
@@ -403,6 +406,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
   void resetBus();
 
+  void setAutoGain();
+  void setAutoGain(unsigned int minvalue, unsigned int maxvalue);
+  void setAutoShutter();
   void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
   void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);

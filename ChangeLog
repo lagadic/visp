@@ -18,6 +18,8 @@ ViSP 2.7.1 (under development)
     . In model-based trackers, improve face visibility test using Ogre ray
       tracing when faces are concave or not oriented counter clockwise.
     . ViSP can now be used with pkg-config
+    . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
+      on. Also new getter to get the auto shutter and auto gain min/max values.
   - Examples
     . Introduction of tutorials
   - Bug fixed
@@ -36,6 +38,7 @@ ViSP 2.7.1 (under development)
     . [15680] Bad pixel to meter conversion in vpFeatureLuminance
     . [15697] False positive exception in vpDisplay when vpDisplay::close()
       is used
+    . [15730] ViSP-third-party.txt is installed in a wrong location
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features

@@ -1777,6 +1777,70 @@ vp1394TwoGrabber::getRingBufferSize()
 }
 
 /*!
+  Enable auto shutter. It is also possible to set auto shutter min
+  and max exposure time, but only for AVT cameras. In that case
+  use setAutoShutter(unsigned int, unsigned int).
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoShutter(); // Enable auto shutter
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the auto shutter.
+
+  \sa setAutoShutter(unsigned int, unsigned int), getAutoShutter()
+*/
+void
+vp1394TwoGrabber::setAutoShutter()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set shutter on. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot set shutter on") );
+  }
+
+  if (dc1394_feature_set_mode(camera,
+            DC1394_FEATURE_SHUTTER,
+            DC1394_FEATURE_MODE_AUTO)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set auto shutter. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot set auto shutter") );
+  }
+}
+/*!
   Set auto shutter. If available set min and max exposure time.
   
   \warning Setting min and max exposure time feature is only available
@@ -1813,35 +1877,13 @@ int main()
 
   \exception vpFrameGrabberException::settingError : If we can't set
   the auto shutter.
+
+  \sa setAutoShutter(), getAutoShutter()
 */
 void
 vp1394TwoGrabber::setAutoShutter(unsigned int minvalue, unsigned int maxvalue)
 {
-  if (! num_cameras) {
-    close();
-    vpERROR_TRACE("No camera found");
-    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
-                                   "No camera found") );
-  }
-  
-  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON) 
-      != DC1394_SUCCESS) {
-    //       vpERROR_TRACE("Cannot set shutter on. \n");
-    close();
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Cannot set shutter on") );
-  }
-   
-   
-  if (dc1394_feature_set_mode(camera,
-			      DC1394_FEATURE_SHUTTER,
-			      DC1394_FEATURE_MODE_AUTO)
-      != DC1394_SUCCESS) {
-    //       vpERROR_TRACE("Cannot set auto shutter. \n");
-    close();
-    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
-				   "Cannot set auto shutter") );
-  }
+  setAutoShutter();
 
   if (dc1394_avt_set_auto_shutter(camera, minvalue, maxvalue) 
       != DC1394_SUCCESS) {
@@ -1851,6 +1893,187 @@ vp1394TwoGrabber::setAutoShutter(unsigned int minvalue, unsigned int maxvalue)
 				   "Cannot set auto shutter min and max values") );
   }
 }
+
+/*!
+  Get auto shutter min and max values.
+
+  \warning Getting min and max auto shutter values is only available
+  for AVT cameras.
+
+  \param minvalue : Min shutter exposure time.
+  \param maxvalue : Max shutter exposure time.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+*/
+void
+vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxvalue)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  if (dc1394_avt_get_auto_shutter(camera, &minvalue, &maxvalue)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot get auto shutter min and max values. Is the camera an AVT one?\n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot get auto shutter min and max values") );
+  }
+}
+
+/*!
+  Enable auto gain. It is also possible to set the min
+  and max gain, but only for AVT cameras. In that case
+  use setAutoGain(unsigned int, unsigned int).
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoGain(); // Enable auto gain
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the auto shutter.
+
+  \sa setAutoGain(unsigned int, unsigned int), getAutoGain()
+*/
+void
+vp1394TwoGrabber::setAutoGain()
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set shutter on. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot set shutter on") );
+  }
+
+  if (dc1394_feature_set_mode(camera,
+            DC1394_FEATURE_GAIN,
+            DC1394_FEATURE_MODE_AUTO)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set auto gain. \n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot set auto gain") );
+  }
+}
+/*!
+  Enable auto gain. If available set min and max gain values.
+
+  \warning Setting min and max gain feature is only available
+  for AVT cameras.
+
+  \param minvalue : Min gain.
+  \param maxvalue : Max gain.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+
+  Below you will find an example that shows how to grab images in
+  Format7 with a transmission speed set to 800Mbps in 1394b mode.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vp1394TwoGrabber.h>
+
+int main()
+{
+#if defined(VISP_HAVE_DC1394_2)
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g(false); // Don't reset the bus
+  g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
+  g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
+  g.setAutoGain(1600*20-1, 1600*20); // Set gain min and max values
+  g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
+  while(1)
+    g.acquire(I);
+#endif
+}
+  \endcode
+
+  \exception vpFrameGrabberException::settingError : If we can't set
+  the auto shutter.
+
+  \sa setAutoGain(), getAutoGain()
+*/
+void
+vp1394TwoGrabber::setAutoGain(unsigned int minvalue, unsigned int maxvalue)
+{
+  setAutoGain();
+
+  if (dc1394_avt_set_auto_gain(camera, minvalue, maxvalue)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot set auto gain min and max values. Is the camera an AVT one?\n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot set auto gain min and max values") );
+  }
+}
+
+/*!
+  Get auto gain min and max values.
+
+  \warning Getting min and max auto gain values is only available
+  for AVT cameras.
+
+  \param minvalue : Min gain.
+  \param maxvalue : Max gain.
+
+  \exception vpFrameGrabberException::initializationError : If no
+  camera found on the bus.
+*/
+void
+vp1394TwoGrabber::getAutoGain(unsigned int &minvalue, unsigned int &maxvalue)
+{
+  if (! num_cameras) {
+    close();
+    vpERROR_TRACE("No camera found");
+    throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
+                                   "No camera found") );
+  }
+
+  if (dc1394_avt_get_auto_gain(camera, &minvalue, &maxvalue)
+      != DC1394_SUCCESS) {
+    //       vpERROR_TRACE("Cannot get auto gain min and max values. Is the camera an AVT one?\n");
+    close();
+    throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
+           "Cannot get auto gain min and max values") );
+  }
+}
+
 
 /*!
 
