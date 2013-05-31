@@ -1,0 +1,128 @@
+/**
+
+\page tutorial-pose-estimation Tutorial: Pose estimation from points
+\tableofcontents
+
+\section tutorial_pose_intro Introduction
+
+This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane, and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between the camera and the object frame. This pose is returned as an homogenous matrix cMo. Note that to estimate a pose at least four points need to be considered. 
+
+In this tutorial we assume that you are familiar with ViSP blob tracking. If not, see \ref tutorial-tracking-blob.
+
+\section tutorial_pose_est Pose estimation from 4 planar points
+
+In this section we consider the case of four planar points. An image processing done by our blob tracker allows to extract the pixel coordinates of each blob center of gravity. Then using the camera intrinsic parameters we convert these pixel coordinates in meters in the image plane. Knowing the 3D coordinates of the points we then estimate the pose of the object.
+
+The corresponding source code also provided in tutorial-pose-from-points-image.cpp is the following.
+
+\include tutorial-pose-from-points-image.cpp
+
+Here is a screen shot of the resulting program:
+
+\image html img-pose-square.jpg
+
+And here is the detailed explanation of the new lines introduced in the source code.
+
+First we include the headers of the vpPixelMeterConversion class that contains static functions able to convert coordinates of a point expressed in pixels in the image into meter in the image plane thanks to the camera intrinsic parameters. We also include the header of the vpPose class that is able to estimate a pose from points.
+
+\code
+#include <visp/vpPixelMeterConversion.h>
+#include <visp/vpPose.h>
+\endcode
+
+Here we introduce the computePose() function that does the pose estimation. This function uses as input two vectors. The first one is a vpPoint that contains the 3D coordinates in meters of a point, while the second one is a vpDot2 that contains the 2D coordinates in pixels of a blob center of gravity. The 3D and 2D coordinates of the points need to be matched. That meens that \c point[i] and \c dot[i] should refer to the same physical point. Other inputs are \c cam that corresponds to the camera intrinsic parameters, and \c init that indicates if the pose needs to be initialized the first time. We have \c cMo parameter that will contain the resulting pose estimated from the input points.
+
+\code
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
+                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
+{
+  vpPose pose;     double x=0, y=0;
+  for (unsigned int i=0; i < point.size(); i ++) {
+    vpPixelMeterConversion::convertPoint(cam, dot[i].getCog(), x, y);
+    point[i].set_x(x);
+    point[i].set_y(y);
+    pose.addPoint(point[i]);
+  }
+
+  if (init == true) pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
+  else              pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+}
+\endcode
+
+In the computePose() function, we create first an instance of the vpPose class. Then for each \c point we get its 2D coordinates in pixels as the center of gravity of a blob, convert them in 2D coordinates \c (x,y) in meter in the image plane using vpPixelMeterConversion::convertPoint(). We update then the \c point instance with the corresponding 2D coordinates and add this point to the vpPose class.
+Once all the points are added, we can estimate the pose. If \c init is \c true, we estimate a first pose using vpPose::DEMENTHON linear approach. It produces a pose used as initialisation for the vpPose::VIRTUAL_VS (virtual visual servoing) non linear approach that will converge to the solution with a lower residue than  the linear approach. If \c init is \c false, we consider that the previous pose  \c cMo is near the solution so that it can be uses as initialisation for the non linear visual servoing minimisation. 
+
+In the main() function, instead of using an image sequence of the object, we consider always the same image \c "square.pgm". In this image we consider a 12cm by 12 cm square. The corners are represented by a blob. Their center of gravity correspond to a corner position. This gray level image is read thanks to:
+\code
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "square.pgm");
+\endcode
+
+After the instantiation of a window able to display the image, and at the end the result of the estimated pose, we setup the camera parameters. We consider here the following camera model \f${\bf a}=(p_x,p_y, u_0,v_0)\f$ where \f$p_x = p_y = 800 \f$ are the ratio between the focal length and the size of a pixel, and where the principal point \f$(u_0, v_0)\f$ is located at the image center position.
+\code
+  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+\endcode
+
+Each blob is then tracked using a vector of four vpDot2 trackers. To avoid human interaction, we initialize the tracker with a pixel position inside each blob.
+\code
+  std::vector<vpDot2> dot(4);
+  dot[0].initTracking(I, vpImagePoint(193, 157));
+  dot[1].initTracking(I, vpImagePoint(203, 366));
+  dot[2].initTracking(I, vpImagePoint(313, 402));
+  dot[3].initTracking(I, vpImagePoint(304, 133));
+\endcode
+
+We also define the model of our 12cm by 12cm square by setting the 3D coordinates of the corners in an object frame located in this example in the middle of the square. We consider here that the points are located in the plane \f$z=0\f$.
+\code
+  std::vector<vpPoint> point(4);
+  point[0].setWorldCoordinates(-0.06, -0.06, 0);
+  point[1].setWorldCoordinates( 0.06, -0.06, 0);
+  point[2].setWorldCoordinates( 0.06,  0.06, 0);
+  point[3].setWorldCoordinates(-0.06,  0.06, 0);
+\endcode
+
+Next, we created an homogeneous matrix \c cMo that will contain the estimated pose.
+\code
+  vpHomogeneousMatrix cMo;
+\endcode
+ 
+In the infinite loop, at each iteration we read a new image (in this example it remains the same), display its content in the window, and track each blob. 
+\code
+    vpImageIo::read(I, "square.pgm");
+    vpDisplay::display(I);
+    for (unsigned int i=0; i < dot.size(); i ++) {
+      dot[i].setGraphics(true);
+      dot[i].track(I);
+    }
+\endcode
+
+Then we call the pose estimation function computePose() presented previously. It uses the 3D coordinates of the points defined as our model in the object frame, and their corresponding 2D positions in the image obtained by the blob tracker to estimate the pose \c cMo. This homogeneous transformation gives the position of the object frame in the camera frame.
+\code
+    computePose(point, dot, cam, init, cMo);
+\endcode
+
+The resulting pose is displayed as an RGB frame in the window overlay. Red,  green and blue colors are for x, y and z axis respectively. Each axis is 0.05 meter long. All the drawings are then flused to update the window content.
+\code
+    vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none);
+    vpDisplay::flush(I);
+\endcode
+
+At the end of the first iteration, we turn off the \c init flag that indicates that the next pose estimation could use our non linear vpPose::VIRTUAL_VS estimation method with the previous pose as initial value.
+\code
+    if (init) init = false;
+\endcode
+
+Finally, we interrupt the infinite loop by a user mouse click in the window.
+\code
+   if (vpDisplay::getClick(I, false)) break;
+\endcode
+
+We also introduce a 40 milliseconds sleep to slow down the loop and relax the CPU. 
+
+\code
+    vpTime::wait(40);
+\endcode
+
+We provide also an other example in tutorial-pose-from-points-tracking.cpp that shows how to estimate the pose from a tracking perfomed on images acquired by a firewire camera.
+
+*/

@@ -51,6 +51,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
+- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
@@ -97,6 +98,7 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
+- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 

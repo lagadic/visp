@@ -71,9 +71,7 @@
 
   \note It is also possible to estimate a pose from other features using vpPoseFeatures class.
 
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-
-  \date   April, 6 1999 (first issue)
+  To see how to use this class you can follow the \ref tutorial-pose-estimation.
 */
 
 

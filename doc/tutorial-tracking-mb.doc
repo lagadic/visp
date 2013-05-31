@@ -117,7 +117,7 @@ As illustrated in the following figure, the angle \f$ \alpha \f$ between the nor
 \image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
 
 - When Ogre visibility test is disabled, the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Faces are considered as visible if  \f$ \alpha < 90\f$ degrees. When only moving-edges are used (nor keypoints) and when the object to track is simple like a single box, we suggest as here to disable Ogre visibility test. It will help the tracker to detect as soon as possible new faces when only one face is currently tracked.  
-- When Ogre visibility test is enabled, the algorithm used to compute the normal of the face uses Ogre and allows to consider convex and concave shapes. It is not mandatory to orientate the face counter clockwise. Two additional parameters need then to be introduced; the angle to determine if a face is appearing, and the angle to determine if the face is disappearing.
+- When Ogre visibility test is enabled, the algorithm used to determine the visibility of a face is the same than previously except that once visible faces are detected thanks to their normal, we add an other test to reject faces that are partially occluded by an other one. This additional test is performed using Ogre ray-tracing capability. Note also that two additional parameters need to be introduced; the angle to determine if a face is appearing, and the angle to determine if the face is disappearing.
 \code
   tracker.setOgreVisibilityTest(true);
   tracker.setAngleAppear(70);

@@ -2,6 +2,7 @@ project(ViSP-tutorial)
 
 cmake_minimum_required(VERSION 2.6)
 
+subdirs(computer-vision)
 subdirs(grabber)
 subdirs(image)
 subdirs(simulator/image)
