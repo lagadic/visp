@@ -5,7 +5,7 @@
 
 \section tutorial_pose_intro Introduction
 
-This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane, and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between the camera and the object frame. This pose is returned as an homogenous matrix cMo. Note that to estimate a pose at least four points need to be considered. 
+This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane, and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between the camera and the object frame. This pose is returned as an homogeneous matrix cMo. Note that to estimate a pose at least four points need to be considered. 
 
 In this tutorial we assume that you are familiar with ViSP blob tracking. If not, see \ref tutorial-tracking-blob.
 
@@ -30,7 +30,7 @@ First we include the headers of the vpPixelMeterConversion class that contains s
 #include <visp/vpPose.h>
 \endcode
 
-Here we introduce the computePose() function that does the pose estimation. This function uses as input two vectors. The first one is a vpPoint that contains the 3D coordinates in meters of a point, while the second one is a vpDot2 that contains the 2D coordinates in pixels of a blob center of gravity. The 3D and 2D coordinates of the points need to be matched. That meens that \c point[i] and \c dot[i] should refer to the same physical point. Other inputs are \c cam that corresponds to the camera intrinsic parameters, and \c init that indicates if the pose needs to be initialized the first time. We have \c cMo parameter that will contain the resulting pose estimated from the input points.
+Here we introduce the computePose() function that does the pose estimation. This function uses as input two vectors. The first one is a vpPoint that contains the 3D coordinates in meters of a point, while the second one is a vpDot2 that contains the 2D coordinates in pixels of a blob center of gravity. The 3D and 2D coordinates of the points need to be matched. That means that \c point[i] and \c dot[i] should refer to the same physical point. Other inputs are \c cam that corresponds to the camera intrinsic parameters, and \c init that indicates if the pose needs to be initialized the first time. We have \c cMo parameter that will contain the resulting pose estimated from the input points.
 
 \code
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
@@ -101,7 +101,7 @@ Then we call the pose estimation function computePose() presented previously. It
     computePose(point, dot, cam, init, cMo);
 \endcode
 
-The resulting pose is displayed as an RGB frame in the window overlay. Red,  green and blue colors are for x, y and z axis respectively. Each axis is 0.05 meter long. All the drawings are then flused to update the window content.
+The resulting pose is displayed as an RGB frame in the window overlay. Red,  green and blue colors are for x, y and z axis respectively. Each axis is 0.05 meter long. All the drawings are then flushed to update the window content.
 \code
     vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none);
     vpDisplay::flush(I);
@@ -123,6 +123,6 @@ We also introduce a 40 milliseconds sleep to slow down the loop and relax the CP
     vpTime::wait(40);
 \endcode
 
-We provide also an other example in tutorial-pose-from-points-tracking.cpp that shows how to estimate the pose from a tracking perfomed on images acquired by a firewire camera.
+We provide also an other example in tutorial-pose-from-points-tracking.cpp that shows how to estimate the pose from a tracking performed on images acquired by a firewire camera.
 
 */
