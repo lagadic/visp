@@ -40,6 +40,7 @@ ViSP 2.7.1 (under development)
       is used
     . [15730] ViSP-third-party.txt is installed in a wrong location
     . [15896] Ogre Boost components miss Boost.Filesystem
+    . [15895] ViSP does not compile on FreeBSD (amd64 / i386)
 ----------------------------------------------
 ViSP 2.7.0 (released February 11th, 2013)
   - New features
