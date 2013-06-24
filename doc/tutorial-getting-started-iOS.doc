@@ -1,0 +1,25 @@
+
+/**
+  \page tutorial-getting-started-iOS Tutorial: Getting started for iOS
+  \tableofcontents
+
+
+  \note We assume that you have successfully installed ViSP as described in the previous \ref tutorial-install-iOS.
+
+\section getting-started-iOS-add Add ViSP library into your project
+
+Create your own Xcode project as usual.
+
+Add <lib_folder> a lib folder in your project.
+
+Copy the libvisp.a file in <lib_folder>. You'll find libvisp.a in the VISP.xcodeproj folder in lib --> Debug.
+
+Go to your Xcode project Settings and edit the Build Phases by adding libvisp.a in "Link Binary With Libraries".
+
+\image html img-getting-started-iOS-lib.png
+
+\section getting-started-iOS-use Use ViSP in your project
+
+You can know use ViSP methods and samples in your project.
+
+*/

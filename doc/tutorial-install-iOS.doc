@@ -1,0 +1,95 @@
+/**
+
+\page tutorial-install-iOS Tutorial: Installation from source on OSX for iOS project
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on OSX in order to be able to compile and use it for iOS development. These steps have been tested for OS X 10.8.4  but should work with any other distribution as well.
+
+ViSP can also be installed on other platforms including Windows, OSX, Fedora, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+
+
+\section install_iOS_required Required software
+
+- CMake gui 2.8 for OS X or higher that could be download at : http://www.cmake.org/cmake/resources/software.html
+
+
+ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_iOS_3rdparty section.
+
+\section install_iOS_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code:
+
+- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+\code
+tar xvzf ViSP-2.7.0.tar.gz 
+\endcode
+or
+\code
+unzip ViSP-2.7.0.zip
+\endcode
+
+- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
+\code
+unzip ViSP-2.7.1-snapshot-2013.05.02.zip
+\endcode
+- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion and then use the following command
+\code
+svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.7.0
+
+\section install_iOS_config Configuring ViSP from source
+
+- Choose the right path for the \<source_dir\> and the \<binary_dir\> in c-make gui.
+
+  \image html img-configure-path-iOS.png
+
+- Make sure that USE_X11 is unchecked because we will not use the display part of visp for iOS and USE_COIN is unchecked unless your really need it because their is a known bug on the OS X Coin package.
+
+  \image html img-configure-options-iOS.png
+
+- Press Configure on c-make gui to validate your configuration and choose Xcode as the generator for the project.
+
+  \image html img-configure-generator-iOS.png
+
+\section install_iOS_3rdparty Optional 3rd party packages
+
+As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
+
+- OpenCV get OpenCV for iOS Version 2.4.3 or later in http://opencv.org/downloads.html
+
+- liblapack, libxml2, libjpeg, libpng, ffmpeg should be already included in your OS X package
+
+Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
+
+Now we can build ViSP.
+
+\section install_iOS_build Building ViSP from source
+
+- To build ViSP press Generate on c-make gui
+
+\section getting-started-iOS-configure Open and Configure ViSP for XCode
+
+Launch XCode (Version 4.6.2) and open ViSP.xcodeproj that should be on the <binary_dir> where you previously built ViSP sources.
+
+Open the VISP Project File at the top of your hierarchy in order to configure the project and Select the visp target.
+
+\image html img-getting-started-iOS-project.png
+
+In the Architectures group, edit the following informations :
+- Supported Platforms : iOS
+- Base SDK : Latest iOS
+- Architectures : Standard (armv7, armv7s)
+
+\image html img-getting-started-iOS-architectures.png
+
+\section getting-started-iOS-generate Generate ViSP library
+
+Now that you have correctly configured your project, choose the visp target  and press run.
+
+\image html img-getting-started-iOS-run.png
+
+You are now ready to see the next \ref tutorial-getting-started-iOS that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/
