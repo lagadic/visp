@@ -441,21 +441,22 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method,
   Compute the multi-images calibration according to the desired method using many poses.
 
   \param method : Method used to estimate the camera parameters.
-  \param nbPose : number of images used to compute multi-images calibration
-  \param table_cal : array of vpCalibration.
-  \param cam : intrinsic camera parameters.
-  \param verbose : set at true if information about the residual at each loop
+  \param table_cal : Vector of vpCalibration.
+  \param cam : Estimated intrinsic camera parameters.
+  \param globalReprojectionError : Global reprojection error or global residual.
+  \param verbose : Set at true if information about the residual at each loop
   of the algorithm is hoped.
 
   \return 0 if the computation was managed succeed.
 */
 int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
-                                           unsigned int nbPose,
-                                           vpCalibration table_cal[],
+                                           std::vector<vpCalibration> &table_cal,
                                            vpCameraParameters& cam,
+                                           double &globalReprojectionError,
                                            bool verbose)
 {
   try{
+    unsigned int nbPose = table_cal.size();
     for(unsigned int i=0;i<nbPose;i++){
       if(table_cal[i].get_npt()>3)
         table_cal[i].computePose(cam,table_cal[i].cMo);
@@ -491,7 +492,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
     case CALIB_VIRTUAL_VS:
     case CALIB_VIRTUAL_VS_DIST:
       {
-        calibVVSMulti(nbPose, table_cal, cam, verbose);
+        calibVVSMulti(table_cal, cam, globalReprojectionError, verbose);
       }
       break ;
     }
@@ -514,7 +515,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
         if(verbose)
           std::cout << "Compute camera parameters with distortion"<<std::endl;
 
-        calibVVSWithDistortionMulti(nbPose, table_cal, cam, verbose);
+        calibVVSWithDistortionMulti(table_cal, cam, globalReprojectionError, verbose);
       }
       break ;
     }
@@ -532,46 +533,38 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
 }
 
 /*!
-  \brief Compute the multi-image calibration of effector-camera from R. Tsai and R. LorenzTsai.
+  \brief Compute the multi-image calibration of effector-camera from R. Tsai and R. Lenz \cite Tsai89a.
 
   Compute extrinsic camera parameters : the constant transformation from
-  the effector to the camera coordinates (eMc).
+  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the camera model with or without distorsion.
 
-  R. Tsai, R. Lenz. -- A new technique for fully autonomous and efficient 3D
-  robotics hand/eye calibration. -- IEEE Transactions on Robotics and
-  Automation, 5(3):345--358, June 1989.
-
-  \param nbPose : number of images used to compute multi-images calibration
-  \param table_cal : array of vpCalibration. All the vpHomogeneousMatrix cMo
-  and rMe of each vpCalibration have to be initialized.
-  \param eMc : output: estimated pose of the camera in relation to the effector
-  (camera support) with the camera model without distortion.
-  \param eMc_dist : output: estimated pose of the camera in relation to the
-  effector (camera support) with the model with distortion.
+  \param[in] table_cal : Vector of vpCalibration that contains for each index a couple of
+  \f${^r}{\bf M}_e\f$ (world to end-effector) and \f${^c}{\bf M}_o\f$ (camera to object)
+  transformations.
+  \param[out] eMc : Estimated pose of the camera in relation to the end-effector
+  considering the camera model without distortion.
+  \param[out] eMc_dist : Estimated pose of the camera in relation to the
+  end-effector considering the model with distortion.
   \return 0 if the computation managed, -1 if less than three poses are provides as input.
 */
-int vpCalibration::computeCalibrationTsai(unsigned int nbPose,
-                                          vpCalibration table_cal[],
+int vpCalibration::computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
                                           vpHomogeneousMatrix& eMc,
                                           vpHomogeneousMatrix& eMc_dist)
 {
   try{
+    unsigned int nbPose = table_cal.size();
     if (nbPose > 2){
-      vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
-      vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
-      vpHomogeneousMatrix* table_rMe = new vpHomogeneousMatrix[nbPose];
+      std::vector<vpHomogeneousMatrix> table_cMo(nbPose);
+      std::vector<vpHomogeneousMatrix> table_cMo_dist(nbPose);
+      std::vector<vpHomogeneousMatrix> table_rMe(nbPose);
 
       for(unsigned int i=0;i<nbPose;i++){
         table_cMo[i] = table_cal[i].cMo;
         table_cMo_dist[i] = table_cal[i].cMo_dist;
         table_rMe[i] = table_cal[i].rMe;
       }
-      calibrationTsai(nbPose,table_cMo,table_rMe,eMc);
-      calibrationTsai(nbPose,table_cMo_dist,table_rMe,eMc_dist);
-
-      delete [] table_cMo;
-      delete [] table_cMo_dist;
-      delete [] table_rMe;
+      calibrationTsai(table_cMo,      table_rMe, eMc);
+      calibrationTsai(table_cMo_dist, table_rMe, eMc_dist);
 
       return 0;
     }
@@ -810,7 +803,159 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
   return 0;
 }
 
+/*!
+  \deprecated This method is deprecated. You should use
+  vpCalibration::computeCalibrationMulti(vpCalibrationMethodType, std::vector<vpCalibration> &,
+                                         vpCameraParameters &, bool)
+
+  Compute the multi-images calibration according to the desired method using many poses.
+
+  \param method : Method used to estimate the camera parameters.
+  \param nbPose : number of images used to compute multi-images calibration
+  \param table_cal : array of vpCalibration.
+  \param cam : intrinsic camera parameters.
+  \param verbose : set at true if information about the residual at each loop
+  of the algorithm is hoped.
+
+  \return 0 if the computation was managed succeed.
+*/
+int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
+                                           unsigned int nbPose,
+                                           vpCalibration table_cal[],
+                                           vpCameraParameters& cam,
+                                           bool verbose)
+{
+  try{
+    for(unsigned int i=0;i<nbPose;i++){
+      if(table_cal[i].get_npt()>3)
+        table_cal[i].computePose(cam,table_cal[i].cMo);
+    }
+    switch (method) {
+    case CALIB_LAGRANGE :
+      if(nbPose > 1){
+        std::cout << "this calibration method is not available in" << std::endl
+            << "vpCalibration::computeCalibrationMulti()" << std::endl;
+        return -1 ;
+      }
+      else {
+        table_cal[0].calibLagrange(cam,table_cal[0].cMo);
+        table_cal[0].cam = cam ;
+        table_cal[0].cam_dist = cam ;
+        table_cal[0].cMo_dist = table_cal[0].cMo ;
+      }
+      break;
+    case CALIB_LAGRANGE_VIRTUAL_VS :
+    case CALIB_LAGRANGE_VIRTUAL_VS_DIST :
+      if(nbPose > 1){
+        std::cout << "this calibration method is not available in" << std::endl
+            << "vpCalibration::computeCalibrationMulti()" << std::endl
+            << "with several images." << std::endl;
+        return -1 ;
+      }
+      else {
+        table_cal[0].calibLagrange(cam,table_cal[0].cMo);
+        table_cal[0].cam = cam ;
+        table_cal[0].cam_dist = cam ;
+        table_cal[0].cMo_dist = table_cal[0].cMo ;
+      }
+    case CALIB_VIRTUAL_VS:
+    case CALIB_VIRTUAL_VS_DIST:
+      {
+        calibVVSMulti(nbPose, table_cal, cam, verbose);
+      }
+      break ;
+    }
+    //Print camera parameters
+    if(verbose){
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
+      cam.printParameters();
+    }
+
+    switch (method)
+    {
+    case CALIB_LAGRANGE :
+    case CALIB_LAGRANGE_VIRTUAL_VS :
+    case CALIB_VIRTUAL_VS:
+      verbose = false ;
+      break;
+    case CALIB_LAGRANGE_VIRTUAL_VS_DIST :
+    case CALIB_VIRTUAL_VS_DIST:
+      {
+        if(verbose)
+          std::cout << "Compute camera parameters with distortion"<<std::endl;
+
+        calibVVSWithDistortionMulti(nbPose, table_cal, cam, verbose);
+      }
+      break ;
+    }
+    //Print camera parameters
+    if(verbose){
+      //       std::cout << "Camera parameters without distortion :" << std::endl;
+      table_cal[0].cam.printParameters();
+      //       std::cout << "Camera parameters with distortion:" << std::endl;
+      cam.printParameters();
+      std::cout<<std::endl;
+    }
+    return 0 ;
+  }
+  catch(...){ throw; }
+}
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated. You should use
+  vpCalibration::computeCalibrationTsai(std::vector<vpCalibration> &, vpHomogeneousMatrix &,
+  vpHomogeneousMatrix &)
+
+  \brief Compute the multi-image calibration of effector-camera from R. Tsai and R. Lenz \cite Tsai89a.
+
+  Compute extrinsic camera parameters : the constant transformation from
+  the effector to the camera coordinates (eMc).
+
+  \param nbPose : number of images used to compute multi-images calibration
+  \param table_cal : array of vpCalibration. All the vpHomogeneousMatrix cMo
+  and rMe of each vpCalibration have to be initialized.
+  \param eMc : output: estimated pose of the camera in relation to the effector
+  (camera support) with the camera model without distortion.
+  \param eMc_dist : output: estimated pose of the camera in relation to the
+  effector (camera support) with the model with distortion.
+  \return 0 if the computation managed, -1 if less than three poses are provides as input.
+*/
+int vpCalibration::computeCalibrationTsai(unsigned int nbPose,
+                                          vpCalibration table_cal[],
+                                          vpHomogeneousMatrix& eMc,
+                                          vpHomogeneousMatrix& eMc_dist)
+{
+  try{
+    if (nbPose > 2){
+      vpHomogeneousMatrix* table_cMo = new vpHomogeneousMatrix[nbPose];
+      vpHomogeneousMatrix* table_cMo_dist = new vpHomogeneousMatrix[nbPose];
+      vpHomogeneousMatrix* table_rMe = new vpHomogeneousMatrix[nbPose];
+
+      for(unsigned int i=0;i<nbPose;i++){
+        table_cMo[i] = table_cal[i].cMo;
+        table_cMo_dist[i] = table_cal[i].cMo_dist;
+        table_rMe[i] = table_cal[i].rMe;
+      }
+      calibrationTsai(nbPose,table_cMo,table_rMe,eMc);
+      calibrationTsai(nbPose,table_cMo_dist,table_rMe,eMc_dist);
+
+      delete [] table_cMo;
+      delete [] table_cMo_dist;
+      delete [] table_rMe;
+
+      return 0;
+    }
+    else{
+      vpERROR_TRACE("Three images are needed to compute Tsai calibration !\n");
+      return -1;
+    }
+  }
+  catch(...){
+    throw;
+  }
+}
+
 /*!
   \deprecated This method is deprecated. You should use
   vpCalibration::readGrid(const char*,unsigned int &, vpList<double> &, vpList<double> &, vpList<double> &, bool) instead.
