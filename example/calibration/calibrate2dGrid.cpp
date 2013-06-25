@@ -964,15 +964,17 @@ int main(int argc, const char ** argv)
  
   // Calibrate by a non linear method based on virtual visual servoing
   vpCameraParameters cam2;
-  int resultCalib = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS,opt_nimages,table_cal,cam2,false) ;
-  if(resultCalib == 0)
+  int resultCalib = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS,opt_nimages,table_cal,cam2,true) ;
+  if(resultCalib == 0) {
     std::cout << cam2 << std::endl;
+  }
   else
     std::cout << "Calibration without distortion failed." << std::endl;
     
-  int resultCalibDist = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST,opt_nimages,table_cal,cam,false) ;
-  if(resultCalibDist == 0)
+  int resultCalibDist = vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST,opt_nimages,table_cal,cam,true) ;
+  if(resultCalibDist == 0) {
     std::cout << cam << std::endl;
+  }
   else
     std::cout << "Calibration with distortion failed." << std::endl;
   
