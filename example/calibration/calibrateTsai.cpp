@@ -45,25 +45,26 @@
   \brief Example of Tsai calibration to estimate extrinsic camera parameters, ie hand-eye homogeneous transformation.
 
 */
+#include <stdio.h>
+#include <sstream>
+#include <iomanip>
+#include <vector>
 
 #include <visp/vpDebug.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpCalibration.h>
 #include <visp/vpExponentialMap.h>
-#include <stdio.h>
-#include <sstream>
-#include <iomanip>
 
 int main()
 {
   // We want to calibrate the hand to eye extrinsic camera parameters from 6 couple of poses: cMo and wMe
   const int N = 6;
   // Input: six couple of poses used as input in the calibration proces
-  vpHomogeneousMatrix cMo[N] ; // eye (camera) to object transformation. The object frame is attached to the calibrartion grid
-  vpHomogeneousMatrix wMe[N] ; // world to hand (end-effector) transformation
+  std::vector<vpHomogeneousMatrix> cMo(N) ; // eye (camera) to object transformation. The object frame is attached to the calibrartion grid
+  std::vector<vpHomogeneousMatrix>  wMe(N) ; // world to hand (end-effector) transformation
   // Output: Result of the calibration
-  vpHomogeneousMatrix eMc; // hand (end-effector) to eye (camera) transformation 
+  vpHomogeneousMatrix  eMc; // hand (end-effector) to eye (camera) transformation
 
   // Initialize an eMc transformation used to produce the simulated input transformations cMo and wMe
   vpTranslationVector etc(0.1, 0.2, 0.3); 
@@ -100,7 +101,7 @@ int main()
     vpHomogeneousMatrix cMc; // camera displacement
     cMc = vpExponentialMap::direct(v_c) ; // Compute the camera displacement due to the velocity applied to the camera
     if (i > 0) {
-      // From the camera displacement cMc, compute the wMe and cMo matrixes
+      // From the camera displacement cMc, compute the wMe and cMo matrices
       cMo[i] = cMc.inverse() * cMo[i-1];
       wMe[i] = wMe[i-1] * eMc * cMc * eMc.inverse();
     }
@@ -125,7 +126,7 @@ int main()
   // Compute the eMc hand to eye transformation from six poses
   // - cMo[6]: camera to object poses as six homogeneous transformations
   // - wMe[6]: world to hand (end-effector) poses as six homogeneous transformations
-  vpCalibration::calibrationTsai(N, cMo, wMe, eMc) ;
+  vpCalibration::calibrationTsai(cMo, wMe, eMc) ;
 
   std::cout << std::endl << "Output: hand to eye calibration result: eMc estimated " << std::endl ;
   std::cout << eMc << std::endl ;
