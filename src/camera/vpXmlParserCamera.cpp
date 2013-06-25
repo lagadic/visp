@@ -213,18 +213,19 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
     return SEQUENCE_ERROR;
   }
 
+  this->camera = cam;
+
   int nbCamera = count(doc, node, camera_name,cam.get_projModel(),
                        image_width, image_height);
   if( nbCamera > 0){
-    vpCERROR << nbCamera
-             << " set(s) of camera parameters is(are) already "<< std::endl
-             << "available in the file with your specifications : "<< std::endl
-             << "precise the grabber parameters or delete manually"<< std::endl
-             << "the previous one."<<std::endl;
+//    vpCERROR << nbCamera
+//             << " set(s) of camera parameters is(are) already "<< std::endl
+//             << "available in the file with your specifications : "<< std::endl
+//             << "precise the grabber parameters or delete manually"<< std::endl
+//             << "the previous one."<<std::endl;
     xmlFreeDoc(doc);
     return SEQUENCE_ERROR;
   }
-  this->camera = cam;
 
   nodeCamera = find_camera(doc, node, camera_name, image_width, image_height);
   if(nodeCamera == NULL){
@@ -233,6 +234,7 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
   else{
     write_camera(nodeCamera);
   }
+
   xmlSaveFormatFile(filename,doc,1);
   xmlFreeDoc(doc);
 
