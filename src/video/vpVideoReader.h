@@ -98,10 +98,34 @@ int main()
 }
   \endcode
   
-  The other following example explains how to use the class to manipulate a
+  The other following example explains how to use the class to read a
   sequence of images. The images are stored in the folder "./image" and are
-  named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
+  named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ... As explained
+  in setFirstFrameIndex() it is also possible to set the first and last image numbers.
+
+  \code
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
+#include <visp/vpVideoReader.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+
+  vpVideoReader reader;
+
+  // Initialize the reader.
+  reader.setFileName("./image/image%04d.jpeg");
+  reader.open(I);
+
+  while (! reader.end() )
+    reader.acquire(I);
+
+  return 0;
+}
+  \endcode
   
+  Note that it is also possible to access to a specific frame using getFrame().
   \code
 #include <visp/vpImage.h>
 #include <visp/vpRGBa.h>
@@ -163,6 +187,8 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     long firstFrame;
     //!The last frame index
     long lastFrame;
+    bool firstFrameIndexIsSet;
+    bool lastFrameIndexIsSet;
 
   public:
     vpVideoReader();
@@ -215,14 +241,58 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     /*!
       Enables to set the first frame index if you want to use the class like a grabber (ie with the
       acquire method).
-      
+
       \param firstFrame : The first frame index.
+
+      The following example shows how to specify the first and last frame numbers.
+      \code
+#include <visp/vpImage.h>
+#include <visp/vpRGBa.h>
+#include <visp/vpVideoReader.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+
+  vpVideoReader reader;
+
+  // Initialize the reader.
+  reader.setFileName("./image/image%04d.jpeg");
+  reader.setFirstFrameIndex(10);
+  reader.setLastFrameIndex(19);
+  reader.open(I);
+
+  while (! reader.end() )
+    reader.acquire(I);
+
+  return 0;
+}
+      \endcode
+
+      \sa setLastFrameIndex()
     */
-    inline void setFirstFrameIndex(const long firstFrame) {this->firstFrame = firstFrame;}    
-    
+    inline void setFirstFrameIndex(const long firstFrame) {
+      this->firstFrameIndexIsSet = true;
+      this->firstFrame = firstFrame;
+    }
+    /*!
+      Enables to set the last frame index.
+
+      \param lastFrame : The last frame index.
+
+      The following example shows how to specify the first and last frame numbers.
+
+      \sa setFirstFrameIndex()
+    */
+    inline void setLastFrameIndex(const long lastFrame) {
+      this->lastFrameIndexIsSet = true;
+      this->lastFrame = lastFrame;
+    }
+
   private:
     vpVideoFormatType getFormat(const char *filename);
     static std::string getExtension(const std::string &filename);
+    void findFirstFrameIndex();
     void findLastFrameIndex();
 };
 

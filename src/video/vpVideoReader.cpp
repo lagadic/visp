@@ -65,6 +65,8 @@ vpVideoReader::vpVideoReader()
   firstFrame = 0;
   frameCount = 0;
   lastFrame = 0;
+  firstFrameIndexIsSet = false;
+  lastFrameIndexIsSet = false;
 }
 
 
@@ -146,7 +148,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
-    imSequence->setImageNumber((int)firstFrame);
+    if (firstFrameIndexIsSet)
+      imSequence->setImageNumber(firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -176,6 +179,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
     throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
   }
   
+  findFirstFrameIndex();
   frameCount = firstFrame;
   if(!getFrame(I,firstFrame))
   {
@@ -213,7 +217,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
-    imSequence->setImageNumber((int)firstFrame);
+    if (firstFrameIndexIsSet)
+      imSequence->setImageNumber(firstFrame);
   }
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
@@ -242,6 +247,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
   }
   
+  findFirstFrameIndex();
   frameCount = firstFrame;
   if(!getFrame(I,firstFrame))
   {
@@ -312,7 +318,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
   Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
   
   \warning For the video files this method is not precise, and returns the nearest key frame from the expected frame.
-  But this method enables to postion the reader where you want. Then, use the acquire method to grab the following images
+  But this method enables to position the reader where you want. Then, use the acquire method to grab the following images
   one after one.
   
   \param I : The vpImage used to stored the frame.
@@ -353,7 +359,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame)
   Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
   
   \warning For the video files this method is not precise, and returns the nearest key frame from the expected frame.
-  But this method enables to postion the reader where you want. Then, use the acquire method to grab the following images
+  But this method enables to position the reader where you want. Then, use the acquire method to grab the following images
   one after one.
   
   \param I : The vpImage used to stored the frame.
@@ -481,13 +487,47 @@ vpVideoReader::findLastFrameIndex()
       if (!failed) file.close();
       image_number++;
     }while(!failed);
-      
+
     lastFrame = image_number - 2;
-  }  
-    
+  }
+
   #ifdef VISP_HAVE_FFMPEG
   else if (ffmpeg != NULL)
     lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
+  #endif
+}
+/*!
+  Get the first frame index (update the firstFrame attribute).
+*/
+void
+vpVideoReader::findFirstFrameIndex()
+{
+  if (imSequence != NULL)
+  {
+    if (! firstFrameIndexIsSet) {
+      char name[FILENAME_MAX];
+      int image_number = 0;
+      std::fstream file;
+      bool failed;
+      do {
+        sprintf(name, fileName, image_number) ;
+        file.open(name, std::fstream::in);
+        failed = file.fail();
+        if (!failed) file.close();
+        image_number++;
+      } while(failed);
+
+      firstFrame = image_number - 1;
+      imSequence->setImageNumber(firstFrame);
+    }
+  }
+
+  #ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg != NULL) {
+    if (! firstFrameIndexIsSet) {
+      firstFrame = (long)(0);
+    }
+  }
   #endif
 }
 
