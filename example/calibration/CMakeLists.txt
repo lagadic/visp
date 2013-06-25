@@ -44,7 +44,7 @@
 #
 # If you want to add/remove a source, modify here
 SET (SOURCE
-  calibrate2dGrid.cpp
+  camera_calibration.cpp
   calibrateTsai.cpp
 )
 
@@ -65,7 +65,3 @@ ENDFOREACH(source)
 # of acquired images
 ADD_TEST(calibrateTsai calibrateTsai)
 
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
