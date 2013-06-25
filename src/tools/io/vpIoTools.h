@@ -179,7 +179,8 @@ public:
   static std::string path(const std::string &pathname);
   
   // read configuration file
-  static void loadConfigFile(const std::string &confFile);
+  static bool loadConfigFile(const std::string &confFile);
+  static bool readConfigVar(const std::string &var, float &value);
   static bool readConfigVar(const std::string &var, double &value);
   static bool readConfigVar(const std::string &var, int &value);
   static bool readConfigVar(const std::string &var, unsigned int &value);

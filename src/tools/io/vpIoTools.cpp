@@ -754,46 +754,82 @@ vpIoTools::path(const std::string &pathname)
  Reads the configuration file and parses it.
 
  \param confFile : path to the file containing the configuration parameters to parse.
+
+ \return true if succeed, false otherwise.
  */
-void vpIoTools::loadConfigFile(const std::string &confFile)
+bool vpIoTools::loadConfigFile(const std::string &confFile)
 {
   configFile = path(confFile);
   configVars.clear();configValues.clear();
   std::ifstream confContent(configFile.c_str(), std::ios::in);
 
-  if(confContent)
+  if(confContent.is_open())
+  {
+    std::string line,var,val;
+    long unsigned int k;
+    int c;
+    std::string stop[3] = {" ", "\t", "#"};
+    while(std::getline(confContent, line))
     {
-      std::string line,var,val;
-      long unsigned int k;
-      int c;
-      std::string stop[3] = {" ", "\t", "#"};
-      while(std::getline(confContent, line))
-	{
-	  if((line.find("#",0,1) != 0) && (line.size() > 2))
-	    {
-	      try
-		{
-		  // name of the variable
-		  k = line.find(" ");
-		  var = line.substr(0,k);
-		  // look for the end of the actual value
-		  c = 200;
-		  for(unsigned i=0;i<3;++i)
-		    c = vpMath::minimum(c,(int)line.find(stop[i],k+1));
-		  if(c==-1)
-                    c = (int)line.size();
-		  long unsigned int c_ = (long unsigned int) c;
-		  val = line.substr(k+1,c_-k-1);
-		  configVars.push_back(var);
-		  configValues.push_back(val);
-		}
-	      catch(...){}
-	    }
-	}
-      confContent.close();
+      if((line.find("#",0,1) != 0) && (line.size() > 2))
+      {
+        try
+        {
+          // name of the variable
+          k = line.find(" ");
+          var = line.substr(0,k);
+          // look for the end of the actual value
+          c = 200;
+          for(unsigned i=0;i<3;++i)
+            c = vpMath::minimum(c,(int)line.find(stop[i],k+1));
+          if(c==-1)
+            c = (int)line.size();
+          long unsigned int c_ = (long unsigned int) c;
+          val = line.substr(k+1,c_-k-1);
+          configVars.push_back(var);
+          configValues.push_back(val);
+        }
+        catch(...){}
+      }
     }
+    confContent.close();
+  }
+  else {
+    return false;
+  }
+  return true;
 }
 
+/*!
+  Tries to read the parameter named \e var as a \e float.
+
+  \param var : Name of the parameter in the configuration file.
+  \param value : Value to be read.
+
+  \return true if the parameter could be read.
+*/
+bool vpIoTools::readConfigVar(const std::string &var, float &value)
+{
+  bool found = false;
+  for(unsigned int k=0;k<configVars.size() && found==false;++k)
+    {
+      if(configVars[k] == var)
+        {
+          if(configValues[k].compare("PI") == 0)
+              value = M_PI;
+          else if(configValues[k].compare("PI/2") == 0)
+              value = M_PI/2;
+          else if(configValues[k].compare("-PI/2") == 0)
+              value = -M_PI/2;
+          else
+              value = (float) atof(configValues[k].c_str());
+          found = true;
+        }
+    }
+  if(found == false)
+    std::cout << var << " not found in config file" << std::endl;
+  return found;
+}
 /*!
   Tries to read the parameter named \e var as a \e double.
 
