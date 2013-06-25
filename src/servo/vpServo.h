@@ -63,7 +63,8 @@
   \class vpServo
 
   \ingroup VsTask
-  \brief Class required to compute the visual servoing control law.
+  \brief Class required to compute the visual servoing control law descbribed
+  in \cite Chaumette06a and \cite Chaumette07a.
 
   \warning To avoid potential memory leaks, it is mendatory to call
   explicitly the kill() function to destroy the task. Otherwise, the

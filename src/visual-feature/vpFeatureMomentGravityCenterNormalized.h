@@ -54,7 +54,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for centered and normalized moment feature. Computes the interaction matrix associated with vpMomentGravityCenterNormalized.
 
-  The interaction matrix for the moment feature can be deduced from [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (19).
+  The interaction matrix for the moment feature can be deduced from \cite Tahri05z, equation (19).
   To do so, one must derive it and obtain a combination of interaction matrices by using (1).
   It allows to compute the interaction matrices for \f$ (x_n,y_n) \f$.
 

@@ -45,37 +45,11 @@
   \file vpHomographyMalis.cpp
 
   This file implements the fonctions related with the homography
-  estimation from non planar points using the Malis algorithm
+  estimation from non planar points using the Malis algorithms \cite Malis00b.
 
-  references
+  The algorithm for 2D scene implemented in this file is described in Ezio
+  Malis PhD thesis \cite TheseMalis.
 
-  E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
-  objects through a new estimation scheme of camera displacement. Int. Journal
-  of Computer Vision, 37(1):79-97, Juin 2000.
-
-  \@article{Malis00b,
-  Author = {Malis, E. and Chaumette, F.},
-  Title = {2 1/2 D visual servoing with respect to unknown objects
-  through a new estimation scheme of camera displacement},
-  Journal = {Int. Journal of Computer Vision},
-  Volume = {37},
-  Number = {1},
-  Pages = {79--97},
-  Month = {June},
-  Year = {2000}
-  }
-
-  paper can be obtained at this url :
-  http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
-
-  the algorithm for 2D scene implemented in this file is described in Ezio
-  Malis PhD thesis
-
-  E. Malis. Contributions à la modélisation et à la commande en asservissement
-  visuel.
-  Thèse de l'Universite de Rennes 1, Télécommunications et Traitement du Signal,
-  Novembre 1998.
-  http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
 */
 
 #include <visp/vpHomography.h>
@@ -721,53 +695,20 @@ HLM(unsigned int q_cible,
 #endif
 
 /*!
-  \brief Computes the homography matrix from planar or non planar points
-  using Ezio Malis linear method (HLM).
+  \brief Computes the homography matrix from planar \cite TheseMalis or non planar points
+  using Ezio Malis linear method (HLM) \cite Malis00b.
 
   Computes H such as  \f[
   ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
   \f]
 
-  This function implements the fonctions related with the homography
-  estimation from non coplanar points using the Malis algorithm
+  The algorithm for 2D scene implemented in this file is described in Ezio
+  Malis PhD thesis.
 
-  References:
-
-  E. Malis, F. Chaumette. 2 1/2 D visual servoing with respect to unknown
-  objects through a new estimation scheme of camera displacement. Int. Journal
-  of Computer Vision, 37(1):79-97, June 2000.
-
-  \code
-  @article{Malis00b,
-  Author = {Malis, E. and Chaumette, F.},
-  Title = {2 1/2 D visual servoing with respect to unknown objects
-  through a new estimation scheme of camera displacement},
-  Journal = {Int. Journal of Computer Vision},
-  Volume = {37},
-  Number = {1},
-  Pages = {79--97},
-  Month = {June},
-  Year = {2000}
-  }
-  \endcode
-
-  paper can be obtained at this url :
-  http://www.irisa.fr/lagadic/publi/publi/Malis00b-fra.html
-
-  the algorithm for 2D scene implemented in this file is described in Ezio
-  Malis PhD thesis
-
-  E. Malis. Contributions à la modélisation et à la commande en asservissement
-  visuel.
-  Thèse de l'Universite de Rennes 1, Télécommunications et Traitement du Signal,
-  Novembre 1998.
-  http://www.irisa.fr/lagadic/publi/publi/TheseMalis-fra.html
-
-
-  if the boolean isplanar is true the point is assumed to be in a plane
+  If the boolean isplanar is true the point is assumed to be in a plane
   otherwise there are assumed to be planar.
 
-  the reference planar is the plane build from the 3 first points
+  The reference planar is the plane build from the 3 first points.
 
 */
 void vpHomography::HLM(unsigned int n,

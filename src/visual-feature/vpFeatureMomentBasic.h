@@ -56,7 +56,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for basic moment feature. Computes the interaction matrix associated with vpMomentBasic.
 
-    The interaction matrix for the basic moment feature is defined in [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (13).
+    The interaction matrix for the basic moment feature is defined in \cite Tahri05z, equation (13).
     This vpFeatureMoment, as well as it's corresponding moment primitive is double-indexed.
     The interaction matrix \f$ L_{m_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction (i,j) and is associated to \f$ m_{ij} \f$ obtained by vpMomentBasic::get (i,j).
     vpFeatureMomentBasic computes interaction matrices all interaction matrices up to vpMomentObject::getOrder()-1.

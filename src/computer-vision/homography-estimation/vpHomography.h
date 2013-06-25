@@ -70,10 +70,9 @@ tools for homography computation.
   the corresponding point (image of the same 3D point) in the other image
   points set.  These 2 sets are the only data needed to compute the
   homography.  One method used is the one introduced by Ezio Malis during his
-  PhD. A normalization is carried out on this points in order to improve the
+  PhD \cite TheseMalis. A normalization is carried out on this points in order to improve the
   conditioning of the problem, what leads to improve the stability of the
   result.
-
 
   Store and compute the homography such that
   \f[

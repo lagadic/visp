@@ -57,9 +57,7 @@ class vpMomentBasic;
   \ingroup TrackingMoments
 
   \brief This class defines several 2D (translation+rotation+scale) invariants for both symmetric and non-symmetric objects.
-  These moment-based invariants are described in the following papers:
-  - [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Fran&ccedil;ois Chaumette
-  - [2] "Image moments: a general and useful set of features for visual servoing" by Fran&ccedil;ois Chaumette
+  These moment-based invariants are described in the following papers \cite Chaumette04a, \cite Tahri05z.
 
   The descriptions for the invariants \f$C_1\f$ to \f$C_{10}\f$ can be found in [1] and for invariants \f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in [2].
 

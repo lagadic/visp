@@ -402,17 +402,9 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
 
   \param type : Method to use for the pose computation.
 
-  - The virtual visual servoing approach is described in:
-  E. Marchand, F. Chaumette. Virtual Visual Servoing: a framework for real-time
-  augmented reality. In EUROGRAPHICS 2002 Conference Proceeding, G. Drettakis,
-  H.-P. Seidel (eds.), Computer Graphics Forum, Volume 21(3), Pages 289-298,
-  Sarrebruck, Germany, 2002.
+  - The virtual visual servoing approach is described in \cite Marchand02c.
 
-  - The robust virtual visual servoing approach is described in:
-  A.I. Comport, E. Marchand, M. Pressigout, F. Chaumette. Real-time
-  markerless tracking for augmented reality: the virtual visual servoing
-  framework. IEEE Trans. on Visualization and Computer Graphics,
-  12(4):615-628, July 2006.
+  - The robust virtual visual servoing approach is described in \cite Comport06b.
 
 */
 void vpPoseFeatures::computePose(vpHomogeneousMatrix & cMo, const vpPoseFeaturesMethodType &type)
@@ -500,15 +492,8 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix & cMo)
 
 
 /*!
-  Compute the pose thanks to the robust virtual visual servoing approach
+  Compute the pose thanks to the robust virtual visual servoing approach described in \cite Comport06b.
 
-  This approach is described in:
-
-  A.I. Comport, E. Marchand, M. Pressigout, F. Chaumette. Real-time
-  markerless tracking for augmented reality: the virtual visual servoing
-  framework. IEEE Trans. on Visualization and Computer Graphics,
-  12(4):615-628, July 2006.
-  
   \param cMo : Computed pose.
 */
 void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)

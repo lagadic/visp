@@ -62,7 +62,8 @@ class vpMoment;
 
 \ingroup VsFeature2
 
-\brief This class defines shared system methods/attributes for 2D moment features but no functional code. It is used to compute interaction matrixes for moment features..
+\brief This class defines shared system methods/attributes for 2D moment features but no functional code.
+It is used to compute interaction matrices for moment features.
 
 While vpMoment-type classes do only compute moment values and can by used for almost anything, vpFeatureMoment-type classes
 are specifically designed for visual servoing. More importantly, a vpFeatureMoment is used to compute the interaction matrix associated to it's moment primitive.
@@ -77,7 +78,7 @@ These parameters can be updated anytime.
 - All interaction matrices (different from vpBasicFeature::interaction which selects the required interaction matrix).
 
 Like vpMoment, vpFeatureMoment provides a vpFeatureMoment::update() method. But unlike vpMoment::update() which only acknowledges the new object,
-the vpFeatureMoment::update() acknowledges the new plane parameters AND computes the interaction matrixes associated with the feature.
+the vpFeatureMoment::update() acknowledges the new plane parameters AND computes the interaction matrices associated with the feature.
 
 A vpFeatureMoment will be often part of a vpFeatureMomentDatabase in the same way a vpMoment is part of a vpMomentDatabase. This database is specified inside the
 vpFeatureMoment::vpFeatureMoment() constructor.
@@ -86,7 +87,7 @@ As a result, a vpFeatureMoment will be able to access other vpFeatureMoments thr
 A vpBasicFeature can be duplicated into a vpMomentGenericFeature. In that case, all data in the vpBasicFeature is copied but the feature's name
 is lost. For example if a vpFeatureMomentCInvariant is duplicated, the duplicata will be operational but could not be used in a vpFeatureMomentDatabase.
 
-Note that you can use vpFeatureMoment to do visual servoing but it is not it's only purpose. You may compute your interaction matrixes with vpFeatureMoment::update()
+Note that you can use vpFeatureMoment to do visual servoing but it is not it's only purpose. You may compute your interaction matrices with vpFeatureMoment::update()
 and use them for any purpose.
 
 \attention - A vpFeatureMoment is not responsible for updating the moment primitives it depends on. Make sure your vpMoments are all up to date before computing an interaction matrix using vpFeatureMoment.

@@ -82,9 +82,7 @@ class vpServo;
 
   The moment features computed by this class are classical moments
   features used in moment-based visual servoing.  For more
-  information see: [1] "Point-based and region-based image moments
-  for visual servoing of planar objects" by Omar Tahri and Francois
-  Chaumette.
+  information see \cite Tahri05z.
 
   To initialize this feature set, the user needs to supply a vpMomentDatabase containing at least the contents of vpMomentCommon.
 
@@ -158,12 +156,12 @@ int main()
 
   //update+compute moment primitives from object (for source)
   mdb_src.updateAll(src);
-  //update+compute features (+interaction matrixes) from plane
+  //update+compute features (+interaction matrices) from plane
   fmdb_src.updateAll(0.,0.,1.);
 
   //update+compute moment primitives from object (for destination)
   mdb_dst.updateAll(dst);
-  //update+compute features (+interaction matrixes) from plane
+  //update+compute features (+interaction matrices) from plane
   fmdb_dst.updateAll(0.,0.,1.);
 
   //define visual servoing task

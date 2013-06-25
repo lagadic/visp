@@ -54,7 +54,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for gravity center moment feature. Computes the interaction matrix associated with vpMomentGravityCenter.
 
-  The interaction matrix for the is defined in [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (16).
+  The interaction matrix for the is defined in \cite Tahri05z, equation (16).
   It allows to compute the interaction matrices for \f$ (x_g,y_g) \f$.
 
   These interaction matrices may be selected afterwards by calling vpFeatureMomentGravityCenter::interaction().
@@ -187,7 +187,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for gravity center moment feature. Computes the interaction matrix associated with vpMomentGravityCenter.
 
-  The interaction matrix for the is defined in [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (16).
+  The interaction matrix for the is defined in \cite Tahri05z, equation (16).
   It allows to compute the interaction matrices for \f$ (x_g,y_g) \f$.
 
   These interaction matrices may be selected afterwards by calling vpFeatureMomentGravityCenter::interaction().

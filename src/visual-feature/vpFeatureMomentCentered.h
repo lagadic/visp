@@ -54,7 +54,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for centered moment feature. Computes the interaction matrix associated with vpMomentCentered.
 
-  The interaction matrix for the feature is defined in [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (17).
+  The interaction matrix for the feature is defined in \cite Tahri05z, equation (17).
   This vpFeatureMoment, as well as it's corresponding moment primitive is double-indexed.
   The interaction matrix \f$ L_{\mu_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction (i,j) and is associated to \f$ \mu_{ij} \f$ obtained by vpFeatureMomentCentered::get (i,j).
 
@@ -103,7 +103,7 @@ class vpMomentDatabase;
 
   \brief Functionality computation for centered moment feature. Computes the interaction matrix associated with vpMomentCentered.
 
-  The interaction matrix for the feature is defined in [1] "Point-based and region-based image moments for visual servoing of planar objects" by Omar Tahri and Francois Chaumette, equation (17).
+  The interaction matrix for the feature is defined in \cite Tahri05z, equation (17).
   This vpFeatureMoment, as well as it's corresponding moment primitive is double-indexed.
   The interaction matrix \f$ L_{\mu_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction (i,j) and is associated to \f$ \mu_{ij} \f$ obtained by vpFeatureMomentCentered::get (i,j).
 

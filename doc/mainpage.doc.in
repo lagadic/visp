@@ -6,7 +6,7 @@
 
 \section intro_sec Introduction
 
-<p>ViSP is a modular C++ library that allows fast development of visual
+<p>ViSP \cite Marchand05b is a modular C++ library that allows fast development of visual
 servoing applications. ViSP is developed and maintained by the Inria
 <a href="http://www.irisa.fr/lagadic" target="_parent">Lagadic</a> team located at <a
 href="http://www.inria.fr/rennes" target="_parent">Inria Rennes</a>.</p>

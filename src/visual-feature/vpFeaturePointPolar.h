@@ -61,7 +61,7 @@
   \ingroup VsFeature2
 
   \brief Class that defines 2D image point visual feature with
-  polar coordinates \f$(\rho,\theta)\f$.
+  polar coordinates \f$(\rho,\theta)\f$ described in \cite Corke09a.
 
   Let us denote \f$(\rho,\theta)\f$ the polar coordinates of an image
   point, with \f$\rho\f$ the radius of the feature point with respect

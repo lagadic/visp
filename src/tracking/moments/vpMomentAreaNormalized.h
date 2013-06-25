@@ -59,9 +59,7 @@ class vpMomentCentered;
 
   This moment depends on vpMomentCentered.
 
-  The idea behind vpMomentAreaNormalized is described in:
-
-  [1] Point-based and region-based image moments for visual servoing of planar objects by Omar Tahri and Francois Chaumette.
+  The idea behind vpMomentAreaNormalized is described in \cite Tahri05z.
 
   During a visual servoing process, a vpMomentAreaNormalized will converge towards the desired depth when the current surface will converge to the destination surface.
   It is defined as follows: \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the destination surface.
