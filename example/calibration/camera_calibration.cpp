@@ -183,6 +183,8 @@ int main(int argc, const char ** argv)
     case Settings::CIRCLES_GRID:
       found = findCirclesGrid( cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID  );
       break;
+    default:
+      break;
     }
 
     std::cout << "frame: " << frame_index << " status: " << found << std::endl;
@@ -198,7 +200,7 @@ int main(int argc, const char ** argv)
       }
       char title[20]; sprintf(title, "image %ld", frame_index);
       vpDisplay::setTitle(I, title);
-      for (int i=0; i < pointBuf.size(); i++) {
+      for (unsigned int i=0; i < pointBuf.size(); i++) {
         vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
         data.push_back(ip);
         vpDisplay::displayCross(I, ip, 10, vpColor::red);
@@ -209,7 +211,7 @@ int main(int argc, const char ** argv)
       vpCalibration calib;
       calib.setLambda(0.5);
       calib.clearPoint();
-      for (int i=0; i<model.size(); i++) {
+      for (unsigned int i=0; i<model.size(); i++) {
         calib.addPoint(model[i].get_oX(), model[i].get_oY(), model[i].get_oZ(), data[i]);
       }
       vpHomogeneousMatrix cMo;

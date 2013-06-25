@@ -141,10 +141,6 @@ public:
                                      vpCameraParameters &cam,
                                      double &globalReprojectionError,
                                      bool verbose = false) ;
-  static int computeCalibrationMulti(vpCalibrationMethodType method,unsigned int nbPose,
-                                     vpCalibration table_cal[],
-                                     vpCameraParameters &cam,
-                                     bool verbose = false) ;
 
   static int computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
                                     vpHomogeneousMatrix &eMc,
@@ -173,9 +169,13 @@ public:
   /*!
     @name Deprecated functions
   */
-  vp_deprecated static void calibrationTsai(unsigned int nbPose, vpHomogeneousMatrix cMo[],
-                                            vpHomogeneousMatrix rMe[],
-                                            vpHomogeneousMatrix &eMc);
+  static void calibrationTsai(unsigned int nbPose, vpHomogeneousMatrix cMo[],
+                              vpHomogeneousMatrix rMe[],
+                              vpHomogeneousMatrix &eMc);
+  static int computeCalibrationMulti(vpCalibrationMethodType method,unsigned int nbPose,
+                                     vpCalibration table_cal[],
+                                     vpCameraParameters &cam,
+                                     bool verbose = false) ;
   vp_deprecated static int computeCalibrationTsai(unsigned int nbPose,
                                                   vpCalibration table_cal[],
                                                   vpHomogeneousMatrix &eMc,
