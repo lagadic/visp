@@ -118,15 +118,16 @@ private:
 };
 
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
 int main(int argc, const char ** argv)
 {
-#ifdef VISP_HAVE_OPENCV
   std::string outputFileName = "camera.xml";
 
   Settings s;
-  const std::string inputSettingsFile = argc > 1 ? argv[1] : "default.xml";
+  const std::string inputSettingsFile = argc > 1 ? argv[1] : "default.cfg";
   if (! s.read(inputSettingsFile) ) {
     std::cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << std::endl;
+    std::cout << std::endl << "Usage: " << argv[0] << " <configuration file>.cfg" << std::endl;
     return -1;
   }
 
@@ -278,7 +279,10 @@ int main(int argc, const char ** argv)
   }
   else
     std::cout << "Calibration with distortion failed." << std::endl;
-#else
-  std::cout << "OpenCV is requested to run the calibration." << std::endl;
-#endif
 }
+#else
+int main()
+{
+  std::cout << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl;
+}
+#endif
