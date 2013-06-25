@@ -12,9 +12,9 @@ Create a new single view Xcode project.
 
 \image html img-getting-started-iOS-create.png
 
-Add <lib_folder> a lib folder in your project.
+Add \<lib_folder\> a lib folder in your project.
 
-Copy the libvisp.a file in <lib_folder>. You'll find libvisp.a in the VISP.xcodeproj folder in lib --> Debug.
+Copy the libvisp.a file in \<lib_folder\>. You'll find libvisp.a in the VISP.xcodeproj folder in lib --> Debug.
 
 Go to your Xcode project Settings and edit the Build Phases by adding libvisp.a in "Link Binary With Libraries".
 
@@ -22,11 +22,11 @@ Go to your Xcode project Settings and edit the Build Phases by adding libvisp.a 
 
 \section getting-started-iOS-copy Copy ViSP header into your project
 
-Add <header_folder> a header folder in your project.
+Add \<header_folder\> a header folder in your project.
 
-Go to ViSP source code in "include" folder and copy the "visp" folder in your project <header_folder>.
+Go to ViSP source code in "include" folder and copy the "visp" folder in your project \<header_folder\>.
 
-Go to your Xcode project Settings and edit the Build Settings by adding your <header_folder> path in the "Header Search Paths".
+Go to your Xcode project Settings and edit the Build Settings by adding your \<header_folder\> path in the "Header Search Paths".
 
 \image html img-getting-started-iOS-header.png
 

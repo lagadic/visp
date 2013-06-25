@@ -244,31 +244,6 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 
       \param firstFrame : The first frame index.
 
-      The following example shows how to specify the first and last frame numbers.
-      \code
-#include <visp/vpImage.h>
-#include <visp/vpRGBa.h>
-#include <visp/vpVideoReader.h>
-
-int main()
-{
-  vpImage<vpRGBa> I;
-
-  vpVideoReader reader;
-
-  // Initialize the reader.
-  reader.setFileName("./image/image%04d.jpeg");
-  reader.setFirstFrameIndex(10);
-  reader.setLastFrameIndex(19);
-  reader.open(I);
-
-  while (! reader.end() )
-    reader.acquire(I);
-
-  return 0;
-}
-      \endcode
-
       \sa setLastFrameIndex()
     */
     inline void setFirstFrameIndex(const long firstFrame) {
@@ -279,8 +254,6 @@ int main()
       Enables to set the last frame index.
 
       \param lastFrame : The last frame index.
-
-      The following example shows how to specify the first and last frame numbers.
 
       \sa setFirstFrameIndex()
     */
