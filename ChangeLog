@@ -22,6 +22,7 @@ ViSP 2.7.1 (under development)
       on. Also new getter to get the auto shutter and auto gain min/max values.
   - Examples
     . Introduction of tutorials
+    . New automized camera calibration tool: example/camera_calibration.cpp
   - Bug fixed
     . [15404] Segfault in vpMbTracker derived classes around Coin SoDB::init()
       and SoDB::finish() usage
