@@ -71,7 +71,7 @@ Now we can finish the configuration stage by generating the Xcode project.
 
 To generate the Xcode project press Generate on c-make gui. From now, c-make gui can be closed.
 
-\section install_iOS_build Build ViSP library
+\section install_iOS_build Building ViSP library
 \subsection getting-started-iOS-configure Open and configure ViSP Xcode project
 
 Launch Xcode (Version 4.6.2) and open ViSP.xcodeproj that should be in the \<binary_dir\> where you previously built ViSP sources.

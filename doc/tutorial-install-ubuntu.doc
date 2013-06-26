@@ -70,7 +70,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
 ccmake ../ViSP-2.7.0
 \endcode
-The following image shows that this command allows to configure the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
 \image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.7.0 command used to configure ViSP.
 
 - There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter the content of this file:
@@ -137,7 +137,7 @@ ViSP built with C++11 features: no
 \endcode
 In our case, only \c pthread an OpenMP 3rd party are detected.  
 
-\section install_ubuntu_3rdparty Optional 3rd party packages
+\subsection install_ubuntu_3rdparty Optional 3rd party packages
 
 As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
 
@@ -189,6 +189,10 @@ ccmake ../ViSP-2.7.0
 \endcode
 The following image shows now that all the previous optional 3rd party are detected.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.7.0 command used to configure ViSP after installation of optional 3rd party libraries.
+
+\subsection install_ubuntu_generate Generate Makefiles
+
+To generate the makefiles, just press [g] key in the ccmake gui.
 
 Now we can build ViSP.
 
