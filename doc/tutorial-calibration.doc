@@ -1,0 +1,230 @@
+/**
+
+\page tutorial-calibration Tutorial: Camera calibration 
+\tableofcontents
+
+This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real worls units (normalized position in meters in the image plane).
+
+\section calibration_intro Introduction
+
+If we denote \f$(u,v)\f$ the position of a pixel in the
+digitized image, this position is related to the corresponding
+coordinates \f$(x,y)\f$ in the normalized space. 
+
+In ViSP we consider two unit conversions:
+- From meters to pixels we consider the following formula:
+  \f[ \begin{array}{l}
+  u = u_0 + x p_x (1+k_{ud} r^2) \\ 
+  v = v_0 + y p_y (1+k_{ud} r^2)
+  \end{array} 
+  \f]
+  with \f$ r^2 = x^2+y^2 \f$ 
+
+- From pixels to meters we consider the following formula:
+  \f[ \begin{array}{l}
+  x = (u-u_0)*(1+k_{du} r^2)/p_x \\
+  y = (v-v_0)*(1+k_{du} r^2)/p_y 
+  \end{array} 
+  \f]
+  with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$
+
+In this modelization we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
+- \f$(u_0, v_0)\f$ are the coordinates of the principal point in pixel;
+- \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
+- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distorsion.
+
+Note that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distorsion. 
+
+The calibration process allows to estimate the values of these parameters. To this end, one of the following calibration grid can be used:
+- a black and white chessboard [<a href="http://www.irisa.fr/lagadic/visp/img/OpenCV_Chessboard.pdf">OpenCV_Chessboard.pdf</a>];
+- a symmetrical circle pattern [<a href="http://www.irisa.fr/lagadic/visp/code/grid2d.pdf">grid2d.pdf</a>]. 
+
+To calibrate your camera you need to take snapshots of one of these two patterns with your camera. At least 5 good snapshots of the input pattern acquired at different positions are requested for good results.
+
+\section calibration_source_code Source code
+
+The source code of the calibration tool is available in \c camera_calibration.cpp located in \c example/calibration folder.
+
+We will not describe in detail the source, but just mention that:
+- the image processing is performed using OpenCV;
+- the estimation of the parameters is done using a virtual visual servoing scheme;
+- the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the images (chessboard or circle grid), and the location of the images used as input. If \c libjpeg and \c libpng 3rd party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images. Default configuration files are provided in \c example/calibration folder;
+- the resulting parameters are saved in \c camera.xml file. 
+
+\section calibration_chessboard Calibration from a chessboard
+
+In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. We took 5 images called \c chessboard-01.png, \c chessboard-02.png, \c chessboard-03.png, \c chessboard-04.png, \c chessboard-05.png. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
+
+\image html img-chessboard-01.png Snapshot example of the chessboard used to calibrate the camera.
+
+Before starting the calibration we need to create a configuration file. We create \c /tmp/chessboard.cfg with the following content:
+\code
+# Number of inner corners per a item row and column. (square, circle)
+BoardSize_Width: 9
+BoardSize_Height: 6
+
+# The size of a square in meters
+Square_Size: 0.025
+
+# The type of pattern used for camera calibration. 
+# One of: CHESSBOARD or CIRCLES_GRID
+Calibrate_Pattern: CHESSBOARD
+
+# The input image sequence to use for calibration
+Input: /tmp/chessboard-%02d.png
+\endcode
+
+To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
+\code
+./camera_calibration /tmp/chessboard.cfg
+\endcode
+
+This command will produce the following output:
+\code
+grid width : 9
+grid height: 6
+square size: 0.025
+pattern    : CHESSBOARD
+input seq  : /tmp/chessboard-%02d.png
+frame: 1 status: 1
+frame: 2 status: 1
+frame: 3 status: 1
+frame: 4 status: 1
+frame: 5 status: 1
+
+Calibration without distorsion in progress on 5 images...
+Camera parameters for perspective projection without distortion:
+  px = 547.3080992	 py = 546.9825167
+  u0 = 324.6299338	 v0 = 229.9072033
+
+Global reprojection error: 2.632851934
+Camera parameters without distortion successfully saved in "camera.xml"
+
+Calibration with distorsion in progress on 5 images...
+Camera parameters for perspective projection with distortion:
+  px = 582.7521622	 py = 580.6586412
+  u0 = 326.5736348	 v0 = 214.9591392
+  kud = -0.3372254753
+  kdu = 0.4021511255
+
+Global reprojection error: 0.6350883328
+Camera parameters without distortion successfully saved in "camera.xml"
+\endcode
+
+The resulting parameters are also saved in \c ./camera.xml file.
+
+\section calibration_circle Calibration from a circle grid
+
+In this section we consider the ViSP symetric circle grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant form it's horizontal or vertical neighboorgh. We took 6 images called \c circles-02.pgm, \c circles-03.pgm, ..., \c circles-07.pgm. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
+
+\image html img-circles-grid-02.png Snapshot example of the symmetric circles grid used to calibrate the camera.
+
+Before starting the calibration we need to create a configuration file. We create \c /tmp/circles-grid.cfg with the following content:
+\code
+# Number of inner corners per a item row and column. (square, circle)
+BoardSize_Width: 6
+BoardSize_Height: 6
+
+# The size of a square in meters
+Square_Size: 0.034
+
+# The type of pattern used for camera calibration. 
+# One of: CHESSBOARD or CIRCLES_GRID
+Calibrate_Pattern: CIRCLES_GRID
+
+# The input image sequence to use for calibration
+Input: /tmp/circles-%02d.pgm
+\endcode
+
+To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
+\code
+./camera_calibration /tmp/circles-grid.cfg
+\endcode
+
+This command will produce the following output:
+\code
+grid width : 6
+grid height: 6
+square size: 0.034
+pattern    : CIRCLES_GRID
+input seq  : /tmp/circles-%02d.pgm
+frame: 2 status: 1
+frame: 3 status: 1
+frame: 4 status: 1
+frame: 5 status: 0
+frame: 6 status: 1
+frame: 7 status: 1
+
+Calibration without distorsion in progress on 6 images...
+Camera parameters for perspective projection without distortion:
+  px = 552.4774691	 py = 544.8066862
+  u0 = 308.732533	 v0 = 245.8146982
+
+Global reprojection error: 0.2888553796
+Camera parameters without distortion successfully saved in "camera.xml"
+
+Calibration with distorsion in progress on 6 images...
+Camera parameters for perspective projection with distortion:
+  px = 550.9009948	 py = 543.1425164
+  u0 = 309.1726232	 v0 = 245.7667949
+  kud = 0.01091468479
+  kdu = -0.01088523009
+
+Global reprojection error: 0.2763660773
+Camera parameters without distortion successfully saved in "camera.xml"
+\endcode
+
+The resulting parameters are also saved in \c ./camera.xml file.
+
+Note here that the following line indicates that the 5th frame corresponding to the image \c circles-05.pgm was not used in the calibration process since the status of the image processing is false.
+\code
+frame: 5 status: 0
+\endcode
+
+\section calibration_undistort Distorsion removal
+
+Once the camera is calibrated, you can remove the distorsion in the images. The following example available in tutorial-undistort.cpp shows how to do it.
+
+\include tutorial-undistort.cpp
+
+In this example we first load the image \c chessboard.pgm
+
+\code
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "chessboard.pgm");
+\endcode
+
+Then we read the camera parameters with distorsion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support.
+
+\code
+  vpCameraParameters cam;
+#ifdef VISP_HAVE_XML2
+  vpXmlParserCamera p;
+  vpCameraParameters::vpCameraParametersProjType projModel;
+  projModel = vpCameraParameters::perspectiveProjWithDistortion;
+  if (p.parse(cam, "camera.xml", "Camera", projModel, I.getWidth(), I.getHeight()) != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot found parameters for camera named \"Camera\"" << std::endl;
+  }
+\endcode
+
+If vpXmlParserCamera is not available (this may occur if ViSP was not build with \c libxml2), we initialise the camera parameters "by hand" using the following code:
+
+\code
+#else
+  cam.initPersProjWithDistortion(582.7, 580.6, 326.6, 215.0, -0.3372, 0.4021);
+#endif
+\endcode
+
+Finaly, we create a new image \c Iud where distorsion is removed. This image is saved in \c chessboard-undistort.pgm.
+
+\code
+  vpImage<unsigned char> Iud;
+  vpImageTools::undistort(I, cam, Iud);
+  vpImageIo::write(Iud, "chessboard-undistort.pgm");
+\endcode
+
+The resulting \c chessboard-undistort.pgm image is the following.
+
+\image html img-chessboard-undistort.png \c chessboard-undistort.pgm image where distorsion was removed.
+
+*/

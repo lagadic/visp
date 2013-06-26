@@ -12,6 +12,7 @@ add_executable(tutorial-image-converter tutorial-image-converter.cpp)
 add_executable(tutorial-image-manipulation tutorial-image-manipulation.cpp)
 add_executable(tutorial-image-reader tutorial-image-reader.cpp)
 add_executable(tutorial-image-viewer tutorial-image-viewer.cpp)
+add_executable(tutorial-undistort tutorial-undistort.cpp)
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 
 # copy the data
@@ -19,6 +20,8 @@ get_target_property(target_location tutorial-image-reader LOCATION)
 get_filename_component(target_location "${target_location}" PATH)
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/lena.bmp" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/lena.ppm" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard.pgm" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/camera.xml" )
 foreach(data ${data2copy})
   add_custom_command(
     TARGET tutorial-image-reader

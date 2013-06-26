@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<root>
+  <!--This file stores intrinsic camera parameters used
+   in the vpCameraParameters Class of ViSP available
+   at http://www.irisa.fr/lagadic/visp/visp.html .
+   It can be read with the parse method of
+   the vpXmlParserCamera class.-->
+  <camera>
+    <!--Name of the camera-->
+    <name>Camera</name>
+    <!--Size of the image on which camera calibration was performed-->
+    <image_width>640</image_width>
+    <image_height>480</image_height>
+    <!--Intrinsic camera parameters computed for each projection model-->
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithoutDistortion</type>
+      <!--Pixel ratio-->
+      <px>547.3080992024</px>
+      <py>546.9825166999</py>
+      <!--Principal point-->
+      <u0>324.6299337540</u0>
+      <v0>229.9072032646</v0>
+    </model>
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithDistortion</type>
+      <!--Pixel ratio-->
+      <px>582.7521621754</px>
+      <py>580.6586412497</py>
+      <!--Principal point-->
+      <u0>326.5736348476</u0>
+      <v0>214.9591392030</v0>
+      <!--Undistorted to distorted distortion parameter-->
+      <kud>-0.3372254753</kud>
+      <!--Distorted to undistorted distortion parameter-->
+      <kdu>0.4021511255</kdu>
+    </model>
+  </camera>
+</root>
