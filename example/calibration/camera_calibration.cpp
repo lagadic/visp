@@ -40,6 +40,10 @@
  *****************************************************************************/
 #include <iostream>
 
+#include <visp/vpConfig.h>
+
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
@@ -117,8 +121,6 @@ private:
   std::string patternToUse;
 };
 
-
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
 int main(int argc, const char ** argv)
 {
   std::string outputFileName = "camera.xml";
