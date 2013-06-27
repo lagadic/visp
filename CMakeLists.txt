@@ -1859,12 +1859,10 @@ ENDIF(DOXYGEN_FOUND)
 # a worthwhile exercise ! The use of these deprecated functions causes a lot of
 # warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
 # definition
-IF(WIN32)
-  IF(MSVC80 OR MSVC90 OR MSVC10)
-    #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
-    list(APPEND VISP_DEFS "-D_CRT_SECURE_NO_DEPRECATE")
-  ENDIF(MSVC80 OR MSVC90 OR MSVC10)
-ENDIF(WIN32)
+if(WIN32 AND MSVC)
+  #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
+  list(APPEND VISP_DEFS "-D_CRT_SECURE_NO_DEPRECATE")
+endif()
 
 #MESSAGE("Definitions: ${VISP_DEFS}")
 IF(VISP_DEFS)

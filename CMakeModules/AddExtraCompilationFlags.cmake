@@ -132,7 +132,7 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     else()
       string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
-    if(MSVC80 OR MSVC90 OR MSVC10)
+    if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11)
       # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want 
   # your catch(...) blocks to catch structured exceptions.
       list(APPEND CMAKE_CXX_FLAGS "/EHa") 
