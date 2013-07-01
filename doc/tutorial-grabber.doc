@@ -7,7 +7,7 @@
   \section grabber-camera-firewire-unix Images from firewire cameras
 
 
-The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 rd party are available.
+The next example shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 3rd party are available.
 
 \include tutorial-grabber-1394.cpp
 

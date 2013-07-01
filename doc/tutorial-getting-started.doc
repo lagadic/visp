@@ -3,11 +3,17 @@
   \page tutorial-getting-started Tutorial: Getting started
   \tableofcontents
 
+\note We assume in this tutorial that you have successfully installed ViSP. Information on ViSP installation is provided in:
+ - \ref tutorial-install-ubuntu
+ - \ref tutorial-install-win
+ - or on <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>
 
-  \note We assume that you have successfully installed ViSP as described in the previous \ref tutorial-install-ubuntu.
+In this tutorial you will learn how to use ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 
 The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
+Note also that all the material (source code and images) described in this tutorial is available in ViSP source code, in \c tutorial/image folder.
+ 
 \section image_code Create a program using ViSP
 Let's start to write our first program to see how to read an image and
   open a  window to display the image. This simple program is provided in tutorial-viewer.cpp example and given below:
@@ -40,6 +46,7 @@ try {
 }
 catch(...) {
   std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
+  return -1;
 }
 \endcode
 The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
@@ -94,16 +101,24 @@ endif(VISP_FOUND)
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 \endcode
 
-\section image_build Generate the executable
+\section image_unix On Unix-like systems
+
+\subsection image_unix_config Configure your project
 
 Proceed as with any other project using CMake:
 
 \code
 cmake .
+\endcode
+
+\subsection image_unix_build Generate the executable
+
+Just run:
+\code
 make
 \endcode
 
-\section image_output Run the executable
+\subsection image_unix_output Run the executable
 
 By now you should have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
 
@@ -115,6 +130,54 @@ By now you should have an executable called \c tutorial-viewer. You just have to
 Here is a screen shot of the resulting output window :
 
   \image html img-lena.png
+
+\section image_win On Windows
+
+We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial_viewer.cpp and lena.ppm. These files are also provider in ViSP source code, in \c tutorial/image folder.
+
+
+\subsection image_win_config Configure your project
+
+- Launch CMake (cmake-gui) from Windows "Start" menu. Set the source code location as \c C:/ViSP/ViSP-started. Here we set the build location to the same folder.
+
+\image html img-started-win-cmake-1.jpg
+
+- Press "Configure" button, and select your compiler. In our case we will use Visual Studio 11. Press then "Finish". The configuration is now under progress and should lead to the following image.
+
+\image html img-started-win-cmake-2.jpg
+
+- Note here that CMake has automatically found the location of ViSP install folder; \c C:/ViSP/ViSP-2.7.1-build.
+
+- Press then "Generate" button. As presented in the following image, all the red lines should disappear.
+
+\image html img-started-win-cmake-3.jpg
+
+- From now, in \c C:/ViSP/ViSP-started you should have \c tutorial-image.sln Visual Studio solution file.
+
+\subsection image_win_build Generate the executable
+
+- To open the project in Visual Studio C++ just double click on \c C:/ViSP/ViSP-started/tutorial-image.sln solution file. 
+
+\image html img-started-win-msvc-1.jpg
+
+- Now to build the solution, enter "BUILD/Build Solution" menu.
+
+\image html img-started-win-msvc-2.jpg
+
+- In \c C:/ViSP/ViSP-started/Debug folder you have now \c tutorial-image.exe executable.
+
+
+\subsection image_win_output Run the executable
+
+- In your "Start" menu click on "Run" and type in \c cmd.exe to run a terminal.
+- Enter in \c C:/ViSP/ViSP-started/Debug folder, and run \c tutorial-viewer.exe with an image location as argument:
+
+\image html img-started-win-run.jpg
+
+
+- Here is a screen shot of the resulting output window :
+
+  \image html img-lena-win.jpg
 
 
 You are now ready to see the next \ref tutorial-grabber.

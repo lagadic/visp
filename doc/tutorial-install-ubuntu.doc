@@ -5,7 +5,11 @@
 
 In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested for Ubuntu 13.04 (64 bit) distribution, but should work with any other distribution as well. 
 
-ViSP can also be installed on other platforms including Windows, OSX, Fedora, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+Concerning ViSP installation, we provide also other tutorials
+- \ref tutorial-install-win
+- \ref tutorial-install-iOS
+
+ViSP can also be installed on other platforms including OSX, Fedora, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
 
 \section install_ubuntu_required Required packages
@@ -190,7 +194,7 @@ ccmake ../ViSP-2.7.0
 The following image shows now that all the previous optional 3rd party are detected.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.7.0 command used to configure ViSP after installation of optional 3rd party libraries.
 
-\subsection install_ubuntu_generate Generate Makefiles
+\subsection install_ubuntu_generate Generating Makefiles
 
 To generate the makefiles, just press [g] key in the ccmake gui.
 
