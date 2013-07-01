@@ -7,7 +7,7 @@
 int main()
 {
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, "lena.jpg");
+  vpImageIo::read(I, "lena.ppm");
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I);
@@ -27,6 +27,9 @@ int main()
 #ifdef VISP_HAVE_LIBJPEG
   vpImageIo::write(I, "lena-out.jpg");
   vpImageIo::write(O, "lena-out-with-overlay.jpg");
+#else
+  vpImageIo::write(I, "lena-out.ppm");
+  vpImageIo::write(O, "lena-out-with-overlay.ppm");
 #endif
 
   vpDisplay::getClick(I);
