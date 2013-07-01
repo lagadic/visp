@@ -45,7 +45,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 <p>Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS devices.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
@@ -96,7 +96,7 @@ scheme, ...</p>
 Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS devices.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.

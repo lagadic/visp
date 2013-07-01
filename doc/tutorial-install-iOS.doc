@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-iOS Tutorial: Installation from source on OSX for iOS project
+\page tutorial-install-iOS Tutorial: Installation from source on OSX for iOS devices
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on OSX in order to be able to compile and use it for iOS development. These steps have been tested for OSX 10.8.4  but should work with any other distribution as well.
