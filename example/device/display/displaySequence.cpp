@@ -325,7 +325,7 @@ main(int argc, const char ** argv)
   // exception readPGM may throw various exception if, for example,
   // the file does not exist, or if the memory cannot be allocated
   try{
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {
@@ -391,7 +391,7 @@ main(int argc, const char ** argv)
 
       std::cout << "read : " << filename << std::endl;
       // read the image
-      vpImageIo::readPGM(I, filename);
+      vpImageIo::read(I, filename);
       if (opt_display) {
         // Display the image
         vpDisplay::display(I) ;

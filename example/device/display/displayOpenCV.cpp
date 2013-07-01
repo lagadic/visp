@@ -275,7 +275,12 @@ main(int argc, const char ** argv)
 
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(I, filename) ;
+  try {
+    vpImageIo::read(I, filename) ;
+  }
+  catch (...) {
+    return -1;
+  }
 
   // Create a display using OpenCV
   vpDisplayOpenCV display;
@@ -380,7 +385,12 @@ main(int argc, const char ** argv)
 
   // Load a grey image from the disk and convert it to a color image
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(Irgba, filename) ;
+  try {
+    vpImageIo::read(Irgba, filename) ;
+  }
+  catch (...) {
+    return -1;
+  }
 
   // Create a new display
   vpDisplayOpenCV displayRGBa;

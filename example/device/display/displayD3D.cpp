@@ -267,7 +267,12 @@ main(int argc, const char ** argv)
 
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(I, filename) ;
+  try {
+    vpImageIo::read(I, filename) ;
+  }
+  catch (...) {
+    return -1;
+  }
 
   // For this grey level image, open a D3D display at position 100,100
   // in the screen, and with title "D3D display"
@@ -373,7 +378,12 @@ main(int argc, const char ** argv)
 
   // Load a grey image from the disk and convert it to a color image
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(Irgba, filename) ;
+  try {
+    vpImageIo::read(Irgba, filename) ;
+  }
+  catch (...) {
+    return -1;
+  }
 
   // For this color image, open a D3D display at position 100,100
   // in the screen, and with title "D3D color display"

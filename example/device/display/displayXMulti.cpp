@@ -277,7 +277,7 @@ main(int argc, const char ** argv)
   try {
     // Load a grey image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-    vpImageIo::readPGM(I1, filename) ;
+    vpImageIo::read(I1, filename) ;
   }
   catch(...)
   {
@@ -292,7 +292,7 @@ main(int argc, const char ** argv)
   try {
     // Load a color image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
-    vpImageIo::readPPM(I2, filename) ;
+    vpImageIo::read(I2, filename) ;
   }
   catch(...)
   {
