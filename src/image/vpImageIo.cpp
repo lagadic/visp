@@ -249,6 +249,8 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 #else
       vpCERROR << "You need the libjpeg library to open JPEG files "
          << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
       break;
 #endif
   case FORMAT_PNG :
@@ -257,6 +259,8 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 #else
       vpCERROR << "You need the libpng library to open PNG files "
          << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
       break;
 #endif
     case FORMAT_UNKNOWN :
@@ -308,6 +312,8 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 #else
       vpCERROR << "You need the libjpeg library to open JPEG files "
          << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
       break;
 #endif
   case FORMAT_PNG :
@@ -316,6 +322,8 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 #else
       vpCERROR << "You need the libpng library to open PNG files "
          << std::endl;
+      throw (vpImageException(vpImageException::ioError,
+             "cannot read file")) ;
       break;
 #endif
     case FORMAT_UNKNOWN :
