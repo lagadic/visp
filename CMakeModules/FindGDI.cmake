@@ -67,6 +67,7 @@ IF(WIN32)
                    "C:/Program Files/Microsoft Platform SDK/Lib/x64"
                    "C:/DXSDK/Include/Lib/x64"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib/x64"
+                   "C:/Program Files (x86)/Windows Kits/8.0/Lib/win8/um/x64"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
                   )
 
@@ -109,6 +110,7 @@ IF(WIN32)
                    "C:/Program Files/Microsoft Platform SDK/Lib"
                    "C:/DXSDK/Include/Lib"
                    "C:/Program Files/Microsoft SDKs/Windows/v6.0a/Lib"
+                   "C:/Program Files (x86)/Windows Kits/8.0/Lib/win8/um/x86"
                    DOC "Where can the GDI (Graphics Device Interface) library be found"
                   )
 
