@@ -20,6 +20,7 @@ int main(int argc, char** argv )
   }
   catch(...) {
     std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
+    return -1;
   }
 
 #if defined(VISP_HAVE_X11)
