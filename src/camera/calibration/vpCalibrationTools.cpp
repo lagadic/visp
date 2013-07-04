@@ -1069,15 +1069,13 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   }
   globalReprojectionError = sqrt(r/(nbPointTotal));
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-  \brief calibration method of effector-camera from R. Tsai and R. Lorenz
+  \deprecated Calibration method of effector-camera from R. Tsai and R. Lorenz \cite Tsai89a.
 
   Compute extrinsic camera parameters : the constant transformation from
   the effector to the camera coordinates (eMc).
-
-  R. Tsai, R. Lenz. -- A new technique for fully autonomous and efficient 3D
-  robotics hand/eye calibration. -- IEEE Transactions on Robotics and
-  Automation, 5(3):345--358, June 1989.
 
   \param nbPose : number of different positions (input)
   \param cMo : table of homogeneous matrices representing the transformation
@@ -1279,16 +1277,13 @@ vpCalibration::calibrationTsai(unsigned int nbPose,
     eMc.insert(eRc) ;
   }
 }
+#endif
 
 /*!
-  \brief calibration method of effector-camera from R. Tsai and R. Lorenz
+  \brief calibration method of effector-camera from R. Tsai and R. Lorenz \cite Tsai89a.
 
   Compute extrinsic camera parameters : the constant transformation from
   the effector to the camera coordinates (eMc).
-
-  R. Tsai, R. Lenz. -- A new technique for fully autonomous and efficient 3D
-  robotics hand/eye calibration. -- IEEE Transactions on Robotics and
-  Automation, 5(3):345--358, June 1989.
 
   \param cMo : vector of homogeneous matrices representing the transformation
   between the camera and the scene (input)

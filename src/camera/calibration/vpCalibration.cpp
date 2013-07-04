@@ -803,6 +803,7 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
   return 0;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   \deprecated This method is deprecated. You should use
   vpCalibration::computeCalibrationMulti(vpCalibrationMethodType, std::vector<vpCalibration> &,
@@ -901,7 +902,6 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   catch(...){ throw; }
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   \deprecated This method is deprecated. You should use
   vpCalibration::computeCalibrationTsai(std::vector<vpCalibration> &, vpHomogeneousMatrix &,
