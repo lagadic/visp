@@ -142,13 +142,13 @@ We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-sta
 
 \image html img-started-win-cmake-1.jpg
 
-- Press "Configure" button, and select your compiler. In our case we will use Visual Studio 11. Press then "Finish". The configuration is now under progress and should lead to the following image.
+- Press "Configure" button, and select your compiler. In our case we will use Visual Studio 11 Win64. Press then "Finish". The configuration is now under progress and should lead to the following image.
 
 \image html img-started-win-cmake-2.jpg
 
-- Note here that CMake has automatically found the location of ViSP install folder; \c C:/ViSP/ViSP-2.7.1-build.
+- Note here that CMake has automatically found the location of ViSP install folder; \c C:/ViSP/ViSP-install.
 
-- Press then "Generate" button. As presented in the following image, all the red lines should disappear.
+- Press then "Configure" button to remove the red lines, and then "Generate" button. As presented in the following image, all the red lines should disappear.
 
 \image html img-started-win-cmake-3.jpg
 
