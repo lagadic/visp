@@ -431,9 +431,9 @@ vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 void
 vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
-  unsigned int offsetj = 0;
+  size_t offsetj = 0;
   for (unsigned int i = 0; i < curveNbr; i++) {
-    unsigned int offset = epsj * strlen((curveList+i)->legend);
+    size_t offset = epsj * strlen((curveList+i)->legend);
     offsetj = vpMath::maximum(offset, offsetj);
   }
   if (offsetj > dWidth) offsetj = dWidth;

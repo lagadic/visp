@@ -344,7 +344,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
   std::cout.precision(10);
   unsigned int nbPoint[256]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
-  unsigned int nbPose = table_cal.size();
+  unsigned int nbPose = (unsigned int)table_cal.size();
   unsigned int nbPose6 = 6*nbPose;
 
   for (unsigned int i=0; i<nbPose ; i++)
@@ -795,7 +795,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   std::cout.precision(10);
   unsigned int nbPoint[1024]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
-  unsigned int nbPose = table_cal.size();
+  unsigned int nbPose = (unsigned int)table_cal.size();
   unsigned int nbPose6 = 6*nbPose;
   for (unsigned int i=0; i<nbPose ; i++)
   {
@@ -1298,7 +1298,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
 						vpHomogeneousMatrix &eMc){
 
   vpColVector x ;
-  unsigned int nbPose = cMo.size();
+  unsigned int nbPose = (unsigned int)cMo.size();
   if(cMo.size()!=rMe.size()) throw vpCalibrationException(vpCalibrationException::dimensionError,"cMo and rMe have different sizes");
   {
     vpMatrix A ;

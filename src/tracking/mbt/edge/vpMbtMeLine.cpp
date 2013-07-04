@@ -404,7 +404,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
 {
   double d = sqrt(vpMath::sqr(ip1.get_i()-ip2.get_i())+vpMath::sqr(ip1.get_j()-ip2.get_j())) ;
 
-  unsigned int n = list.size();//numberOfSignal() ;
+  size_t n = list.size();
   expecteddensity = d / (double)me->getSampleStep();
 
   if ((double)n<0.5*expecteddensity && n > 0)

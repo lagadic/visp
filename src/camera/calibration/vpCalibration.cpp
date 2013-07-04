@@ -456,7 +456,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
                                            bool verbose)
 {
   try{
-    unsigned int nbPose = table_cal.size();
+    unsigned int nbPose = (unsigned int) table_cal.size();
     for(unsigned int i=0;i<nbPose;i++){
       if(table_cal[i].get_npt()>3)
         table_cal[i].computePose(cam,table_cal[i].cMo);
@@ -552,7 +552,7 @@ int vpCalibration::computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
                                           vpHomogeneousMatrix& eMc_dist)
 {
   try{
-    unsigned int nbPose = table_cal.size();
+    unsigned int nbPose = (unsigned int)table_cal.size();
     if (nbPose > 2){
       std::vector<vpHomogeneousMatrix> table_cMo(nbPose);
       std::vector<vpHomogeneousMatrix> table_cMo_dist(nbPose);

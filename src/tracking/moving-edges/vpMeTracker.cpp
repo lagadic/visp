@@ -126,8 +126,7 @@ vpMeTracker::numberOfSignal()
 unsigned int
 vpMeTracker::totalNumberOfSignal()
 {
-  return list.size();
-
+  return (unsigned int)list.size();
 }
 
 int

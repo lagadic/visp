@@ -319,7 +319,7 @@ comment :
 		mytext = mysptr;	/* sauvegarde le jeton	*/
 		mysptr++;
 		for (; isidnt((int)CURC); mysptr++);
-		mylength = mysptr - mytext;
+		mylength = (int)(mysptr - mytext);
 		return (get_symbol (mytext, mylength));
 		break;
 	case INTT	:
@@ -401,7 +401,7 @@ string :
 		case STGT	:
 			if (PREVC != '\\') {	/* veritable fin	*/
 				mytext++;
-				mylength = mysptr - mytext;
+				mylength = (int)(mysptr - mytext);
 				mysptr++;
 				return (T_STRING);
 			}
@@ -508,7 +508,7 @@ comment :
 		mytext = mysptr;	/* sauvegarde le jeton	*/
 		mysptr++;
 		for (; isidnt((int)CURC); mysptr++);
-		mylength = mysptr - mytext;
+		mylength = (int)(mysptr - mytext);
 		if (token != get_symbol (mytext, mylength))
 			fwrite (mytext, mylength, 1, f);
 		return (get_symbol (mytext, mylength));
@@ -594,7 +594,7 @@ string :
 			fwrite (mysptr, 1, 1, f);
 			if (PREVC != '\\') {	/* veritable fin	*/
 				mytext++;
-				mylength = mysptr - mytext;
+				mylength = (int)(mysptr - mytext);
 				mysptr++;
 				return (T_STRING);
 			}
@@ -679,7 +679,7 @@ void close_source (void)
  */
 static	void	next_source (void)
 {
-	int	size;
+	size_t	size;
 	char	*bot = buf;
 	char	*top = topbuf;
 

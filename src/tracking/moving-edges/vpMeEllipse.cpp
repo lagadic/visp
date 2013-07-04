@@ -241,7 +241,7 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   }
   vpMeTracker::initTracking(I) ;
 
-  n_sample = list.size() ;
+  n_sample = (unsigned int)list.size() ;
 
   vpCDEBUG(1) << "end vpMeEllipse::sample() : " ;
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;

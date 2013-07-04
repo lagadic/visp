@@ -169,7 +169,7 @@ public:
   void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t){ ransacThreshold = t; }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
-  unsigned int getRansacNbInliers(){ return ransacInliers.size(); }
+  unsigned int getRansacNbInliers(){ return (unsigned int) ransacInliers.size(); }
   std::vector<vpPoint> getRansacInliers(){ return ransacInliers; }
   
   /*!

@@ -88,7 +88,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   }
   vpMbEdgeTracker::nbvisiblepolygone = n;
   
-  unsigned int i=scales.size();
+  unsigned int i = (unsigned int)scales.size();
   do {
     i--;
     if(scales[i]){
@@ -139,7 +139,7 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     }
     vpMbEdgeTracker::nbvisiblepolygone = n;
     
-    unsigned int i=scales.size();
+    unsigned int i = (unsigned int)scales.size();
     do {
       i--;
       if(scales[i]){
@@ -684,7 +684,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     }
     vpMbEdgeTracker::nbvisiblepolygone = n;
     
-    unsigned int i=scales.size();
+    unsigned int i = (unsigned int)scales.size();
     do {
       i--;
       if(scales[i]){

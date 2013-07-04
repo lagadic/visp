@@ -857,7 +857,7 @@ unsigned vpHistogram::sort(std::list<vpHistogramPeak> & peaks)
 
   peaks.sort(compare_vpHistogramPeak);
 
-  return peaks.size();
+  return (unsigned int)peaks.size();
 }
 
 /*!

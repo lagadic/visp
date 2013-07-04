@@ -88,7 +88,7 @@ vpBSpline::~vpBSpline()
 unsigned int 
 vpBSpline::findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots)
 {
-  unsigned int m = l_knots.size()-1;
+  unsigned int m = (unsigned int)l_knots.size()-1;
 
   if(l_u > l_knots.back()) 
   {

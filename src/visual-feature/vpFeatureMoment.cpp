@@ -64,7 +64,7 @@ void vpFeatureMoment::init (){
 	 * This partly explains why vpFeatureMomentBasic cannot be used directly as a visual feature.
 	 */
     if(this->moment!=NULL)
-        dim_s = this->moment->get().size();
+        dim_s = (unsigned int)this->moment->get().size();
     else
         dim_s = 0;
 
@@ -159,7 +159,7 @@ void vpFeatureMoment::update (double A, double B, double C){
     }
     nbParameters = 1;
     if(this->moment!=NULL){
-        dim_s = this->moment->get().size();
+        dim_s = (unsigned int)this->moment->get().size();
 
         s.resize(dim_s);
 

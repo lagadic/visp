@@ -187,8 +187,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
   train();
 
   _reference_computed = true;
-  return objKeypoints.size();
-
+  return (unsigned int)objKeypoints.size();
 }
 
 /*!
@@ -237,7 +236,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
   
   train();
 
-  return objKeypoints.size(); 
+  return (unsigned int)objKeypoints.size(); 
 }
 
 /*!
@@ -302,8 +301,8 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   
   ldetector(imgPyr, imgKeypoints, 500);
 
-  unsigned int m = modelPoints.size();
-  unsigned int n = imgKeypoints.size();
+  unsigned int m = (unsigned int)modelPoints.size();
+  unsigned int n = (unsigned int)imgKeypoints.size();
   std::vector<int> bestMatches(m, -1);
   std::vector<float> maxLogProb(m, -FLT_MAX);
   std::vector<float> signature;

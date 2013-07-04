@@ -402,7 +402,7 @@ vpPolygon::updateBoundingBox()
 void
 vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness)
 {
-  const unsigned int N = _corners.size();
+  const unsigned int N = (unsigned int)_corners.size();
   for(unsigned int i=0; i<N; ++i){
     vpDisplay::displayLine(I, _corners[i], _corners[(i+1)%N], color, thickness);
   }

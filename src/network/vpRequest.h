@@ -203,7 +203,7 @@ public:
     
     \return Number of parameters.
   */
-  unsigned int  size(){ return listOfParams.size(); }
+  unsigned int  size(){ return (unsigned int)listOfParams.size(); }
 };
 
 

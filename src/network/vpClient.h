@@ -197,7 +197,7 @@ public:
 
     \return Number of servers.
   */
-  unsigned int  getNumberOfServers(){ return receptor_list.size(); }
+  unsigned int  getNumberOfServers(){ return (unsigned int)receptor_list.size(); }
   
   void          print();
   

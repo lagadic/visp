@@ -776,7 +776,7 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
         try
         {
           // name of the variable
-          k = line.find(" ");
+          k = (unsigned long)line.find(" ");
           var = line.substr(0,k);
           // look for the end of the actual value
           c = 200;
@@ -981,7 +981,7 @@ bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const uns
 	  // resize or not
 	  if(nCols != 0 && nRows != 0)
 	    value.resize(nRows, nCols);
-	  long unsigned int ind=0,ind2;
+	  size_t ind=0,ind2;
 	  for(unsigned int i=0;i<value.getRows();++i)
         for(unsigned int j=0;j<value.getCols();++j)
           {

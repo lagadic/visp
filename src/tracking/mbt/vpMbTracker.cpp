@@ -138,7 +138,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
   
 	std::string ext = ".init";
 	std::string str_pose = "";
-  unsigned int pos =  initFile.rfind(ext);
+  size_t pos =  (unsigned int)initFile.rfind(ext);
 
   // Load the last poses from files
   std::fstream finitpos ;
@@ -468,7 +468,7 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
 	std::fstream finit ;
 	
 	std::string ext = ".init";
-  unsigned int pos =  initFile.rfind(ext);
+  size_t pos = initFile.rfind(ext);
 	
   if( pos == initFile.size()-ext.size() && pos != 0)
     sprintf(s,"%s", initFile.c_str());
@@ -547,11 +547,11 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
 	if(points2D_list.size() != points3D_list.size())
 		vpERROR_TRACE( "vpMbTracker::initFromPoints(), Number of 2D points different to the number of 3D points." );
 	
-	unsigned int size = points3D_list.size();
+	size_t size = points3D_list.size();
 	vpPoint *P = new vpPoint [size]; 
 	vpPose pose ;
 	
-	for(unsigned int i=0 ; i< size ; i++)
+	for(size_t i=0 ; i< size ; i++)
 	{
 		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ;
 		double x=0,y=0;
@@ -603,7 +603,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::strin
 	vpPoseVector init_pos;
 	
 	std::string ext = ".pos";
-  unsigned int pos =  initFile.rfind(ext);
+  size_t pos =  initFile.rfind(ext);
 	
   if( pos == initFile.size()-ext.size() && pos != 0)
     sprintf(s,"%s", initFile.c_str());

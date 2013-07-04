@@ -229,7 +229,7 @@ public:
     
     \return Number of reference points.
   */
-  inline unsigned int getNbRefPoints() {return currentImagePoints.size() ;}
+  inline unsigned int getNbRefPoints() {return (unsigned int)currentImagePoints.size() ;}
   
   /*!
     Get the i-th reference point.

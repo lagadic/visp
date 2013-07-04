@@ -126,7 +126,7 @@ void vpPoseFeatures::addFeaturePoint(const vpPoint &p)
   
   totalSize++;
   if(featurePoint_Point_list.size() > maxSize)
-    maxSize = featurePoint_Point_list.size();
+    maxSize = (unsigned int)featurePoint_Point_list.size();
 }
 
 /*!
@@ -143,7 +143,7 @@ void vpPoseFeatures::addFeaturePoint3D(const vpPoint &p)
   
   totalSize++;
   if(featurePoint3D_Point_list.size() > maxSize)
-    maxSize = featurePoint3D_Point_list.size();
+    maxSize = (unsigned int)featurePoint3D_Point_list.size();
 }
 
 /*!
@@ -160,7 +160,7 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpPoint &p)
   
   totalSize++;
   if(featureVanishingPoint_Point_list.size() > maxSize)
-    maxSize = featureVanishingPoint_Point_list.size();
+    maxSize = (unsigned int)featureVanishingPoint_Point_list.size();
 }
 
 /*!
@@ -179,7 +179,7 @@ void vpPoseFeatures::addFeatureVanishingPoint(const vpLine &l1, const vpLine &l2
   
   totalSize++;
   if(featureVanishingPoint_DuoLine_list.size() > maxSize)
-    maxSize = featureVanishingPoint_DuoLine_list.size();
+    maxSize = (unsigned int)featureVanishingPoint_DuoLine_list.size();
 }
 
 /*!
@@ -196,7 +196,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpSphere &s)
   
   totalSize++;
   if(featureEllipse_Sphere_list.size() > maxSize)
-    maxSize = featureEllipse_Sphere_list.size();
+    maxSize = (unsigned int)featureEllipse_Sphere_list.size();
 }
 
 /*!
@@ -213,7 +213,7 @@ void vpPoseFeatures::addFeatureEllipse(const vpCircle &c)
   
   totalSize++;
   if(featureEllipse_Circle_list.size() > maxSize)
-    maxSize = featureEllipse_Circle_list.size();
+    maxSize = (unsigned int)featureEllipse_Circle_list.size();
 }
   
 /*!
@@ -230,7 +230,7 @@ void vpPoseFeatures::addFeatureLine(const vpLine &l)
   
   totalSize++;
   if(featureLine_Line_list.size() > maxSize)
-    maxSize = featureLine_Line_list.size();
+    maxSize = (unsigned int)featureLine_Line_list.size();
 }
 
 /*!
@@ -250,7 +250,7 @@ void vpPoseFeatures::addFeatureLine(const vpCylinder &c, const int &line)
   
   totalSize++;
   if(featureLine_DuoLineInt_List.size() > maxSize)
-    maxSize = featureLine_DuoLineInt_List.size();
+    maxSize = (unsigned int)featureLine_DuoLineInt_List.size();
 }
 
 /*!
@@ -269,7 +269,7 @@ void vpPoseFeatures::addFeatureSegment(vpPoint &P1, vpPoint &P2)
   
   totalSize++;
   if(featureSegment_DuoPoints_list.size() > maxSize)
-    maxSize = featureSegment_DuoPoints_list.size();
+    maxSize = (unsigned int)featureSegment_DuoPoints_list.size();
 }
 
 /*!

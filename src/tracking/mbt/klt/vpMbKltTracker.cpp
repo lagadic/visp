@@ -389,7 +389,7 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
   if( corners.size() > 2){ // This tracker can't handle lignes
     vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
   //   polygon->setCameraParameters(cam);
-    polygon->setNbPoint(corners.size());
+    polygon->setNbPoint((unsigned int)corners.size());
     polygon->setIndex((int)indexFace);
     for(unsigned int j = 0; j < corners.size(); j++) {
       polygon->addPoint(j, corners[j]);

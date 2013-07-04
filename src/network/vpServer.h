@@ -206,7 +206,7 @@ public:
 
     \return Number of clients connected.
   */
-  unsigned int  getNumberOfClients(){ return receptor_list.size(); }
+  unsigned int  getNumberOfClients(){ return (unsigned int)receptor_list.size(); }
   
   void          print();
   

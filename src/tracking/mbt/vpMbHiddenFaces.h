@@ -197,7 +197,7 @@ class vpMbHiddenFaces
     
     \return Size of the list.
   */
-  inline unsigned int            size(){ return Lpol.size(); }
+  inline unsigned int            size(){ return (unsigned int)Lpol.size(); }
 } ;
 
 /*!

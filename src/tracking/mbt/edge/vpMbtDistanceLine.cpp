@@ -333,7 +333,7 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
     {
       Reinit = true;
     }
-    nbFeature = meline->getMeList().size();
+    nbFeature =(unsigned int) meline->getMeList().size();
   }
 }
 
@@ -383,7 +383,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
     {
       Reinit = true;
     }
-    nbFeature = meline->getMeList().size();
+    nbFeature = (unsigned int)meline->getMeList().size();
   }
 }
 
@@ -497,9 +497,9 @@ vpMbtDistanceLine::initInteractionMatrixError()
 {
   if (isvisible == true)
   {
-    L.resize(meline->getMeList().size(),6) ;
-    error.resize(meline->getMeList().size()) ;
-    nbFeature = meline->getMeList().size() ;
+    L.resize((unsigned int)meline->getMeList().size(),6) ;
+    error.resize((unsigned int)meline->getMeList().size()) ;
+    nbFeature = (unsigned int)meline->getMeList().size() ;
   }
   else
     nbFeature = 0 ;

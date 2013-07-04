@@ -362,9 +362,9 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   }
 
   // Update the number of features
-  nbFeaturel1 = meline1->getMeList().size();
-  nbFeaturel2 = meline2->getMeList().size();
-  nbFeature = meline1->getMeList().size()+meline2->getMeList().size();
+  nbFeaturel1 = (unsigned int)meline1->getMeList().size();
+  nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+  nbFeature = nbFeaturel1 + nbFeaturel2;
 }
 
 
@@ -461,9 +461,9 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
   }
 
   // Update the numbers of features
-  nbFeaturel1 = meline1->getMeList().size();
-  nbFeaturel2 = meline2->getMeList().size();
-  nbFeature = meline1->getMeList().size()+meline2->getMeList().size();
+  nbFeaturel1 = (unsigned int)meline1->getMeList().size();
+  nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+  nbFeature = nbFeaturel1 + nbFeaturel2;
 }
 
 
@@ -640,11 +640,11 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCylinder::initInteractionMatrixError()
 {
-    L.resize(meline1->getMeList().size()+meline2->getMeList().size(),6) ;
-    error.resize(meline1->getMeList().size()+meline2->getMeList().size()) ;
-    nbFeaturel1 = meline1->getMeList().size();
-    nbFeaturel2 = meline2->getMeList().size();
-    nbFeature = meline1->getMeList().size()+meline2->getMeList().size() ;
+    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
+    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeature = nbFeaturel1 + nbFeaturel2;
+    L.resize(nbFeature, 6);
+    error.resize(nbFeature);
 }
 
 /*!

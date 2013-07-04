@@ -71,7 +71,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
     int iter = 0 ;
 
-    unsigned int nb = listP.size() ;
+    unsigned int nb = (unsigned int)listP.size() ;
     vpMatrix L(2*nb,6) ;
     vpColVector err(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
@@ -171,11 +171,11 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
 
     // we stop the minimization when the error is bellow 1e-8
     vpMatrix W ;
-    vpRobust robust(2*listP.size()) ;
+    vpRobust robust((unsigned int)(2*listP.size())) ;
     robust.setThreshold(0.0000) ;
     vpColVector w,res ;
 
-    unsigned int nb = listP.size() ;
+    unsigned int nb = (unsigned int)listP.size() ;
     vpMatrix L(2*nb,6) ;
     vpColVector error(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;

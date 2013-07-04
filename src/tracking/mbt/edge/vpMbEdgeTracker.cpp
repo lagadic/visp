@@ -791,7 +791,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
   initPyramid(I, Ipyramid);
   
 //  for (int lvl = ((int)scales.size()-1); lvl >= 0; lvl -= 1)
-  unsigned int lvl = scales.size();
+  unsigned int lvl = (unsigned int)scales.size();
   do{
     lvl--;
     if(scales[lvl]){
@@ -919,7 +919,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   
   initPyramid(I, Ipyramid);
   visibleFace(I, cMo, a);
-  unsigned int i=scales.size();
+  unsigned int i = (unsigned int)scales.size();
   
   do {
     i--;
@@ -1588,7 +1588,7 @@ vpMbEdgeTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const
 {
   vpMbtPolygon *polygon = NULL;
   polygon = new vpMbtPolygon;
-  polygon->setNbPoint(_corners.size());
+  polygon->setNbPoint((unsigned int)_corners.size());
   polygon->setIndex((int)_indexFace);
   for(unsigned int j = 0; j < _corners.size(); j++) {
     polygon->addPoint(j, _corners[j]);

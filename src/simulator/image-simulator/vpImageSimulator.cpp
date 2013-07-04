@@ -1127,7 +1127,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   unsigned int width = I.getWidth();
   unsigned int height = I.getHeight();
 
-  unsigned int nbsimList = list.size();
+  unsigned int nbsimList = (unsigned int)list.size();
 
   if (nbsimList < 1)
     return;
@@ -1327,7 +1327,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I,
   unsigned int width = I.getWidth();
   unsigned int height = I.getHeight();
 
-  unsigned int nbsimList = list.size();
+  unsigned int nbsimList = (unsigned int)list.size();
 
   if (nbsimList < 1)
     return;
