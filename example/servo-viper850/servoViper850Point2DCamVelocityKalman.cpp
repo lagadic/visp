@@ -217,6 +217,7 @@ main()
     // - we want an eye-in-hand control law
     // - robot is controlled in the camera frame
     task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
 
     // - we want to see a point on a point
     task.addFeature(p,pd) ;
@@ -285,9 +286,9 @@ main()
           dedt_mes = 0;
         }
         else{
-          err_1 = err;
           vpMatrix J1 = task.getTaskJacobian();
-          dedt_mes = (err_1 - err)/(Tv) - J1 *vm;
+          dedt_mes = (err - err_1)/(Tv) - J1 *vm;
+          err_1 = err;
         }
 
         // Filter de/dt
