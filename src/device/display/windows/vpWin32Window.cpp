@@ -185,7 +185,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN: 
       //case WM_KEYUP: 
       {
-	GetKeyNameText(lParam, window->lpString, 10); // 10 is the size of lpString
+    GetKeyNameText((LONG)lParam, window->lpString, 10); // 10 is the size of lpString
 	//window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
 	vpReleaseSemaphore(window->semaKey,1,NULL);
 	break;
