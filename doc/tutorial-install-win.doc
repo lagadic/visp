@@ -65,6 +65,8 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. 
 
+\subsubsection install_win_3rdparty_opencv OpenCV 3rd party
+
 - We recommand to install OpenCV. The simplest is to install OpenCV pre-build libraries by following <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a>. In our case we install \c OpenCV-2.4.5.exe pre-build SDK in \c C:\\OpenCV. The installer copied all the material in \c C:\\OpenCV\\opencv.
 
 - Now in order that ViSP detects OpenCV you have to set \c OPENCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
@@ -84,7 +86,30 @@ setx OPENCV_DIR C:\OpenCV\opencv\build
 
 - Press "Configure" button again.
 
+\subsubsection install_win_3rdparty_ogre Ogre3D 3rd party
 
+- We recommand also to install Ogre3D. As given in <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">ViSP third party pages</a>, follow the steps described on <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">Ogre Wiki</a>. In our case we install <a href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812">DirectX SDK (June 2010)</a> and the latest <a href="http://www.ogre3d.org/download/sdk">Ogre SDK</a>; OGRE 1.9 RC 1 SDK for Visual C++ .Net 2012 (64-bit) in \c C:/ViSP/OgreSDK. You should adapt the versions that match your environment.
+
+- After Ogre3D installation you should get something similar to the next snapshot where Ogre3D SDK is installed in \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable.
+\image html img-win-ogre-dir.jpg 
+
+- To help CMake detection of Ogre3D, set the following environment variables (\c OGRE_HOME and \c BOOST_ROOT) by opening a Window Command Shell. In our case it becomes:
+\image html img-win-ogre-var.jpg 
+
+- Set also the \c PATH environment variable to append the location of Ogre3D libraries used during execution. In our case we add \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable/bin/Debug and \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable/bin/Release.
+
+- Now quit and restart CMake to take into account the environment variables changes. Select "Configure" button. Ogre3D should be detected.
+
+\image html img-cmake-win-ogre-found.jpg 
+
+- If you enter in the advanced view, you should have something similar to:
+
+\image html img-cmake-win-ogre-found-advanced.jpg 
+
+- Make sure that \c Boost_, \c OGRE_ and \c DIRECT3D_ prefixed vars are well set. 
+
+- Press "Configure" button again.
+ 
 
 \subsection install_win_gene Ending the configuration
 
