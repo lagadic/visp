@@ -652,7 +652,7 @@ int main(int argc, const char **argv)
       double t0 = vpTime::measureTimeMs();
 
     // Rendering loop
-    while(ogre.continueRendering()){
+      while(ogre.continueRendering() && !grabber.end()){
      // Acquire a frame
       grabber.acquire(IC);
 
