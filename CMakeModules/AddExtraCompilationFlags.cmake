@@ -137,8 +137,13 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   # your catch(...) blocks to catch structured exceptions.
       list(APPEND CMAKE_CXX_FLAGS "/EHa") 
     endif()
+  endif()
 
-
+  # If compiler support symbol visibility, enable it.
+  include(CheckCCompilerFlag)
+  check_c_compiler_flag(-fvisibility=hidden HAS_VISIBILITY)
+  if (HAS_VISIBILITY)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
   endif()
 
   # Remove duplicates compilation flags
