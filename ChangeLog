@@ -22,6 +22,8 @@ ViSP 2.7.1 (under development)
     . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
       on. Also new getter to get the auto shutter and auto gain min/max values.
     . Support Visual Studio 2012 (MSVC11)
+    . Introduce C++ visibility support as described here 
+      http://gcc.gnu.org/wiki/Visibility
   - Examples
     . Introduction of tutorials as minimalist line by line illustrated examples.
   - Bug fixed
