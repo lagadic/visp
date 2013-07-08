@@ -109,7 +109,7 @@
 #define	M_POLY3(x,a,b,c,d)	(M_POLY2((x),(a),(b),(c)) * (x) + (d))
 
 
-VISP_EXPORT typedef	struct	{
+typedef	struct	{
 	int	x, y;
 } Point2i;
 
