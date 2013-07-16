@@ -83,7 +83,7 @@ vpScale::vpScale(double kernel_bandwidth,
 #endif
 
   bandwidth = kernel_bandwidth;
-  this->dimension = dimension;
+  this->dimension = (unsigned)dimension;
   this->kernel_type = kernel_type;
 
 #if (DEBUG_LEVEL2)

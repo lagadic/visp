@@ -1065,7 +1065,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
     table_cal[p].cam_dist = cam ;
     perViewError = table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam);
     totalError += perViewError*perViewError * table_cal[p].npt;
-    totalPoints += table_cal[p].npt;
+    totalPoints += (int)table_cal[p].npt;
   }
   globalReprojectionError = sqrt(r/(nbPointTotal));
 }
