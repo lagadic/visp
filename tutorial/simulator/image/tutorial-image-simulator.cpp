@@ -29,9 +29,12 @@ int main()
   sim.setCameraPosition(cMo);
   sim.getImage(I, cam);
 
-#ifdef VISP_HAVE_JPEG
-  vpImageIo::write(I, "./rendered_image.jpg");
-#endif
+  try {
+    vpImageIo::write(I, "./rendered_image.jpg");
+  }
+  catch(...) {
+    std::cout << "Unsupported image format" << std::endl;
+  }
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I);

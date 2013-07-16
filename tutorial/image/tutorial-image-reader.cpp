@@ -3,14 +3,13 @@
 
 int main()
 {
-#ifdef VISP_HAVE_LIBJPEG
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, "lena.jpg");
-
-#  ifdef VISP_HAVE_LIBPNG
-  vpImageIo::write(I, "lena.png"); // color
-#  endif
-
-#endif
+  try {
+    vpImage<vpRGBa> I;
+    vpImageIo::read(I, "lena.jpg");
+    vpImageIo::write(I, "lena.png");
+  }
+  catch(...) {
+    std::cout << "Unsupported image format" << std::endl;
+  }
 }
 

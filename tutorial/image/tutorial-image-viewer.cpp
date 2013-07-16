@@ -24,13 +24,14 @@ int main()
 
   vpImage<vpRGBa> O;
   vpDisplay::getImage(I, O);
-#ifdef VISP_HAVE_LIBJPEG
-  vpImageIo::write(I, "lena-out.jpg");
-  vpImageIo::write(O, "lena-out-with-overlay.jpg");
-#else
-  vpImageIo::write(I, "lena-out.ppm");
-  vpImageIo::write(O, "lena-out-with-overlay.ppm");
-#endif
+
+  try {
+    vpImageIo::write(I, "lena-out.jpg");
+    vpImageIo::write(O, "lena-out-with-overlay.jpg");
+  }
+  catch(...) {
+    std::cout << "Cannot write the image: unsupported format..." << std::endl;
+  }
 
   vpDisplay::getClick(I);
 }

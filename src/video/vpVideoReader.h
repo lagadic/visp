@@ -165,6 +165,14 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       FORMAT_PPM,
       FORMAT_JPEG,
       FORMAT_PNG,
+      // Formats supported by opencv
+      FORMAT_TIFF,
+      FORMAT_BMP,
+      FORMAT_DIB,
+      FORMAT_PBM,
+      FORMAT_RASTER,
+      FORMAT_JPEG2000,
+      // Video format
       FORMAT_AVI,
       FORMAT_MPEG,
       FORMAT_MOV,

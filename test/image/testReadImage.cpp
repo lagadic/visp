@@ -194,67 +194,50 @@ main(int argc, const char ** argv)
   vpImage<unsigned char> I;
   vpImage<vpRGBa> Irgb;
   
+  try {
   if (opt_ppath.empty())
   {
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
-    vpImageIo::readPPM(I,filename);
-    vpTRACE("Read ppm ok");
+    vpImageIo::read(I,filename);
+    printf("Read ppm ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-    vpImageIo::readPGM(I,filename);
-    vpTRACE("Read pgm ok");
-#if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
+    vpImageIo::read(I,filename);
+    printf("Read pgm ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
-    vpImageIo::readJPEG(I,filename);
-    vpTRACE("Read jpeg ok");
+    vpImageIo::read(I,filename);
+    printf("Read jpeg ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
-    vpImageIo::readJPEG(I,filename);
-    vpTRACE("Read jpeg ok");
-#else
-    vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
-#endif
-    
-#if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
+    vpImageIo::read(I,filename);
+    printf("Read jpg ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
-    vpImageIo::readPNG(I,filename);
-    vpTRACE("Read png ok");
-#else
-    vpTRACE("To read png you must have the libpng or OpenCV library");
-#endif
+    vpImageIo::read(I,filename);
+    printf("Read png ok\n");
 
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
-    vpImageIo::readPPM(Irgb,filename);
-    vpTRACE("Read ppm ok");
+    vpImageIo::read(Irgb,filename);
+    printf("Read ppm ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
-    vpImageIo::readPGM(Irgb,filename);
-    vpTRACE("Read pgm ok");
-#if defined(VISP_HAVE_LIBJPEG)  || defined(VISP_HAVE_OPENCV)
+    vpImageIo::read(Irgb,filename);
+    printf("Read pgm ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.jpeg");
-    vpImageIo::readJPEG(Irgb,filename);
-    vpTRACE("Read jpeg ok");
-    //vpImageIo::writePPM(Irgb,"jpeg-rgb.ppm");
+    vpImageIo::read(Irgb,filename);
+    printf("Read jpeg ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.jpg");
-    vpImageIo::readJPEG(Irgb,filename);
-    vpTRACE("Read jpeg ok");
-    //vpImageIo::writePPM(Irgb,"jpeg-uchar.ppm");
-#else
-    vpTRACE("To read jpeg you must have the libjpeg or OpenCV library");
-#endif
-    
-#if defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV)
+    vpImageIo::read(Irgb,filename);
+    printf("Read jpg ok\n");
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.png");
-    vpImageIo::readPNG(Irgb,filename);
-    vpTRACE("Read png ok");
-#else
-    vpTRACE("To read png you must have the libpng or OpenCV library");
-#endif
-
+    vpImageIo::read(Irgb,filename);
+    printf("Read png ok\n");
   }
-  
   else
   {
     filename = opt_ppath;
     vpImageIo::read(I,filename);
     vpTRACE("image read without problem");
+  }
+  }
+  catch(...) {
+    std::cout << "Unsupported image format" << std::endl;
   }
 
   return 0;

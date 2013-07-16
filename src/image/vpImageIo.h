@@ -116,6 +116,13 @@ private:
     FORMAT_PPM,
     FORMAT_JPEG,
     FORMAT_PNG,
+    // Formats supported by opencv
+    FORMAT_TIFF,
+    FORMAT_BMP,
+    FORMAT_DIB,
+    FORMAT_PBM,
+    FORMAT_RASTER,
+    FORMAT_JPEG2000,
     FORMAT_UNKNOWN
   } vpImageFormatType;
   

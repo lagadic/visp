@@ -144,7 +144,13 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   if (formatType == FORMAT_PGM ||
       formatType == FORMAT_PPM ||
       formatType == FORMAT_JPEG ||
-      formatType == FORMAT_PNG)
+      formatType == FORMAT_PNG ||
+      formatType == FORMAT_TIFF ||
+      formatType == FORMAT_BMP ||
+      formatType == FORMAT_DIB ||
+      formatType == FORMAT_PBM ||
+      formatType == FORMAT_RASTER ||
+      formatType == FORMAT_JPEG2000)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
@@ -213,7 +219,13 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   if (formatType == FORMAT_PGM ||
       formatType == FORMAT_PPM ||
       formatType == FORMAT_JPEG ||
-      formatType == FORMAT_PNG)
+      formatType == FORMAT_PNG ||
+      formatType == FORMAT_TIFF ||
+      formatType == FORMAT_BMP ||
+      formatType == FORMAT_DIB ||
+      formatType == FORMAT_PBM ||
+      formatType == FORMAT_RASTER ||
+      formatType == FORMAT_JPEG2000)
   {
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);

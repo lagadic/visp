@@ -9,7 +9,7 @@
 int main(int argc, char** argv )
 {
   if(argc != 2) {
-    printf( "Usage: %s <image name.[pgm,ppm,jpeg,png]>\n", argv[0] );
+    printf( "Usage: %s <image name.[pgm,ppm,jpeg,png,tiff,bmp,ras,jp2]>\n", argv[0] );
     return -1;
   }
 

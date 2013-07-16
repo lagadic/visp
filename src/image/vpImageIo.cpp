@@ -210,6 +210,39 @@ vpImageIo::getFormat(const char *filename)
     return FORMAT_PNG;
   else if (ext.compare(".png") == 0)
     return FORMAT_PNG;
+  // Formats supported by opencv
+  else if (ext.compare(".TIFF") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".tiff") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".TIF") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".tif") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".BMP") == 0)
+    return FORMAT_BMP;
+  else if (ext.compare(".bmp") == 0)
+    return FORMAT_BMP;
+  else if (ext.compare(".DIB") == 0)
+    return FORMAT_DIB;
+  else if (ext.compare(".dib") == 0)
+    return FORMAT_DIB;
+  else if (ext.compare(".PBM") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".pbm") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".SR") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".sr") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".RAS") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".ras") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".JP2") == 0)
+    return FORMAT_JPEG2000;
+  else if (ext.compare(".jp2") == 0)
+    return FORMAT_JPEG2000;
   else
     return FORMAT_UNKNOWN;
 }
@@ -225,12 +258,17 @@ std::string vpImageIo::getExtension(const std::string &filename)
 
 
 /*!
-  Read the contents of the file,
-  allocate memory for the corresponding greyscale image.
+  Read the contents of the image filename, allocate memory for the corresponding
+  greyscale image, update its content, and return a reference to the image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
@@ -238,46 +276,62 @@ std::string vpImageIo::getExtension(const std::string &filename)
 void
 vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 {
+  bool try_opencv_reader = false;
+
   switch(getFormat(filename)){
-    case FORMAT_PGM :
-      readPGM(I,filename); break;
-    case FORMAT_PPM :
-      readPPM(I,filename); break;
+  case FORMAT_PGM :
+    readPGM(I,filename); break;
+  case FORMAT_PPM :
+    readPPM(I,filename); break;
   case FORMAT_JPEG :
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
-      readJPEG(I,filename); break;
+#ifdef VISP_HAVE_LIBJPEG
+    readJPEG(I,filename);
 #else
-      vpCERROR << "You need the libjpeg library to open JPEG files "
-         << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    try_opencv_reader = true;
 #endif
+    break;
   case FORMAT_PNG :
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
-      readPNG(I,filename); break;
+#if defined(VISP_HAVE_LIBPNG)
+    readPNG(I,filename);
 #else
-      vpCERROR << "You need the libpng library to open PNG files "
-         << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    try_opencv_reader = true;
 #endif
-    case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
-          << " image format are implemented..." << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    break;
+  case FORMAT_TIFF :
+  case FORMAT_BMP :
+  case FORMAT_DIB :
+  case FORMAT_PBM :
+  case FORMAT_RASTER :
+  case FORMAT_JPEG2000 :
+  case FORMAT_UNKNOWN :
+    try_opencv_reader = true;
+    break;
+  }
+
+  if (try_opencv_reader) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    //std::cout << "Use opencv to read the image" << std::endl;
+    cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+    vpImageConvert::convert(cvI, I);
+#else
+    vpCERROR << "Cannot read file: Image format not supported..." << std::endl;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot read file: Image format not supported")) ;
+#endif
   }
 }
 /*!
-  Read the contents of the file,
-  allocate memory for the corresponding greyscale image.
+  Read the contents of the image filename, allocate memory for the corresponding
+  greyscale image, update its content, and return a reference to the image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
@@ -288,12 +342,17 @@ vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
   read(I,filename.c_str());
 }
 /*!
-  Read the contents of the file,
-  allocate memory for the corresponding vpRGBa image.
+  Read the contents of the image filename, allocate memory for the corresponding
+  color image, update its content, and return a reference to the image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
@@ -301,46 +360,62 @@ vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 {
+  bool try_opencv_reader = false;
+
   switch(getFormat(filename)){
-    case FORMAT_PGM :
-      readPGM(I,filename); break;
-    case FORMAT_PPM :
-      readPPM(I,filename); break;
+  case FORMAT_PGM :
+    readPGM(I,filename); break;
+  case FORMAT_PPM :
+    readPPM(I,filename); break;
   case FORMAT_JPEG :
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
-      readJPEG(I,filename); break;
+#ifdef VISP_HAVE_LIBJPEG
+    readJPEG(I,filename);
 #else
-      vpCERROR << "You need the libjpeg library to open JPEG files "
-         << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    try_opencv_reader = true;
 #endif
+    break;
   case FORMAT_PNG :
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
-      readPNG(I,filename); break;
+#if defined(VISP_HAVE_LIBPNG)
+    readPNG(I,filename);
 #else
-      vpCERROR << "You need the libpng library to open PNG files "
-         << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    try_opencv_reader = true;
 #endif
-    case FORMAT_UNKNOWN :
-      vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
-          << " image format are implemented..." << std::endl;
-      throw (vpImageException(vpImageException::ioError,
-             "cannot read file")) ;
-      break;
+    break;
+  case FORMAT_TIFF :
+  case FORMAT_BMP :
+  case FORMAT_DIB :
+  case FORMAT_PBM :
+  case FORMAT_RASTER :
+  case FORMAT_JPEG2000 :
+  case FORMAT_UNKNOWN :
+    try_opencv_reader = true;
+    break;
+  }
+
+  if (try_opencv_reader) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    // std::cout << "Use opencv to read the image" << std::endl;
+    cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
+    vpImageConvert::convert(cvI, I);
+#else
+    vpCERROR << "Cannot read file: Image format not supported..." << std::endl;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot read file: Image format not supported")) ;
+#endif
   }
 }
 /*!
-  Read the contents of the file,
-  allocate memory for the corresponding vpRGBa image.
+  Read the contents of the image filename, allocate memory for the corresponding
+  color image, update its content, and return a reference to the image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
+
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
@@ -352,51 +427,75 @@ vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
 }
 
 /*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
-  filename extension.
+  Write the content of the image in the file which name is given by \e
+  filename.
 
-  \param I : Image to save as a PNM or a JPEG file.
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+
+  \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
 void
 vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
 {
+  bool try_opencv_writer = false;
+
   switch(getFormat(filename)){
   case FORMAT_PGM :
     writePGM(I,filename); break;
   case FORMAT_PPM :
     writePPM(I,filename); break;
   case FORMAT_JPEG :
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
-    writeJPEG(I,filename); break;
+#ifdef VISP_HAVE_LIBJPEG
+    writeJPEG(I,filename);
 #else
-    vpCERROR << "You need the libjpeg library to write JPEG files "
-         << std::endl;
-    break;
+    try_opencv_writer = true;
 #endif
+    break;
   case FORMAT_PNG :
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
-    writePNG(I,filename); break;
+#ifdef VISP_HAVE_LIBPNG
+    writePNG(I,filename);
 #else
-    vpCERROR << "You need the libpng library to write PNG files "
-         << std::endl;
-    break;
+    try_opencv_writer = true;
 #endif
-  case FORMAT_UNKNOWN :
-    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6) JPEG and PNG " << std::endl
-       << " image format are implemented..." << std::endl;
-    throw (vpImageException(vpImageException::ioError,
-          "cannot write file")) ;
     break;
+  case FORMAT_TIFF :
+  case FORMAT_BMP :
+  case FORMAT_DIB :
+  case FORMAT_PBM :
+  case FORMAT_RASTER :
+  case FORMAT_JPEG2000 :
+  case FORMAT_UNKNOWN :
+    try_opencv_writer = true;
+    break;
+  }
+
+  if (try_opencv_writer) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    // std::cout << "Use opencv to write the image" << std::endl;
+    cv::Mat cvI;
+    vpImageConvert::convert(I, cvI);
+    cv::imwrite(filename, cvI);
+#else
+    vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot write file: Image format not supported")) ;
+#endif
   }
 }
 /*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
-  filename extension.
+  Write the content of the image in the file which name is given by \e
+  filename.
 
-  \param I : Image to save as a PNM or a JPEG file.
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+
+  \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
 void
@@ -405,51 +504,75 @@ vpImageIo::write(const vpImage<unsigned char> &I, const std::string filename)
   write(I,filename.c_str());
 }
 /*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
-  filename extension.
+  Write the content of the image in the file which name is given by \e
+  filename.
 
-  \param I : Image to save as a PNM or a JPEG file.
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+
+  \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
 void
 vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
 {
+  bool try_opencv_writer = false;
+
   switch(getFormat(filename)){
   case FORMAT_PGM :
     writePGM(I,filename); break;
   case FORMAT_PPM :
     writePPM(I,filename); break;
   case FORMAT_JPEG :
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
-    writeJPEG(I,filename); break;
+#ifdef VISP_HAVE_LIBJPEG
+    writeJPEG(I,filename);
 #else
-      vpCERROR << "You need the libjpeg library to write JPEG files "
-         << std::endl;
-      break;
+    try_opencv_writer = true;
 #endif
-  case FORMAT_PNG :
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
-    writePNG(I,filename); break;
-#else
-      vpCERROR << "You need the libpng library to write PNG files "
-         << std::endl;
-      break;
-#endif
-  case FORMAT_UNKNOWN :
-    vpCERROR << "Error: Only PNM (PGM P5 and PPM P6), JPEG and PNG " << std::endl
-       << " image format are implemented..." << std::endl;
-    throw (vpImageException(vpImageException::ioError,
-          "cannot write file")) ;
     break;
+  case FORMAT_PNG :
+#ifdef VISP_HAVE_LIBPNG
+    writePNG(I,filename);
+#else
+    try_opencv_writer = true;
+#endif
+    break;
+  case FORMAT_TIFF :
+  case FORMAT_BMP :
+  case FORMAT_DIB :
+  case FORMAT_PBM :
+  case FORMAT_RASTER :
+  case FORMAT_JPEG2000 :
+  case FORMAT_UNKNOWN :
+    try_opencv_writer = true;
+    break;
+  }
+
+  if (try_opencv_writer) {
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    // std::cout << "Use opencv to write the image" << std::endl;
+    cv::Mat cvI;
+    vpImageConvert::convert(I, cvI);
+    cv::imwrite(filename, cvI);
+#else
+    vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot write file: Image format not supported")) ;
+#endif
   }
 }
 /*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a PNM (PGM P5 or PPM P6) or a JPEG file depending on the
-  filename extension.
+  Write the content of the image in the file which name is given by \e
+  filename.
 
-  \param I : Image to save as a PNM or a JPEG file.
+  Always supported formats are *.pgm and *.ppm.
+  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
+  If \c libpng 3rd party is used, we support also *.png files.
+  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+
+  \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
 void
@@ -2400,7 +2523,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 {
   FILE *file;
   png_byte magic[8];
-
+  std::cout << "ici\n";
   // Test the filename
   if (filename == '\0')   {
      vpERROR_TRACE("no filename\n");
@@ -2847,7 +2970,7 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
 void
 vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
 {
-  vpImageIo::writeJPEG(I, filename.c_str());
+  vpImageIo::writePNG(I, filename.c_str());
 }
 
 
@@ -2994,18 +3117,3 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
 }
 
 #endif
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
