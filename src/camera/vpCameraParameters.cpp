@@ -51,6 +51,7 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpDebug.h>
 #include <visp/vpException.h>
+#include <visp/vpRotationMatrix.h>
 #include <cmath>
 #include <limits>
 
@@ -72,6 +73,11 @@ const vpCameraParameters::vpCameraParametersProjType
 */
 vpCameraParameters::vpCameraParameters()
 {
+  isFov = false;
+  fovAngleX = 0;
+  fovAngleY = 0;
+  width = 0;
+  height = 0;
   init() ;
 }
 
@@ -93,6 +99,11 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
 vpCameraParameters::vpCameraParameters(const double px, const double py,
                                        const double u0, const double v0)
 {
+  isFov = false;
+  fovAngleX = 0;
+  fovAngleY = 0;
+  width = 0;
+  height = 0;
   initPersProjWithoutDistortion(px,py,u0,v0) ;
 }
 
@@ -109,6 +120,11 @@ vpCameraParameters::vpCameraParameters(const double px, const double py,
                                        const double u0, const double v0,
                                        const double kud, const double kdu)
 {
+  isFov = false;
+  fovAngleX = 0;
+  fovAngleY = 0;
+  width = 0;
+  height = 0;
   initPersProjWithDistortion(px,py,u0,v0,kud,kdu) ;
 }
 
@@ -278,8 +294,68 @@ vpCameraParameters&
   
   inv_px = cam.inv_px; 
   inv_py = cam.inv_py;
+  
+  isFov = cam.isFov;
+  fovAngleX = cam.fovAngleX;
+  fovAngleY = cam.fovAngleY;
+  fovNormals = cam.fovNormals;
+  width = cam.width;
+  height = cam.height;
+  
   return *this ;
 }
+
+/*!
+  Compute angles and normals of the FOV.
+  
+  \param w : Width of the image
+  \param h : Height of the image.
+*/
+void
+vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
+{
+  if( !isFov && w != width && h != height && w != 0 && h != 0){
+    fovNormals = std::vector<vpColVector>(4);
+    
+    isFov = true;
+    
+    fovAngleX = atan((double)w / ( 2.0 * px ));
+    fovAngleY = atan((double)h / ( 2.0 * py ));
+    
+    width = w;
+    height = h;
+    
+    vpColVector n(3);
+    n = 0;
+    n[0] = 1.0;
+    
+    vpRotationMatrix Rleft(0,-fovAngleX,0);
+    vpRotationMatrix Rright(0,fovAngleX,0);
+    
+    vpColVector nLeft, nRight;
+    
+    nLeft = Rleft * (-n);
+    fovNormals[0] = nLeft.normalize();
+    
+    nRight = Rright * n;
+    fovNormals[1] = nRight.normalize();
+    
+    n = 0;
+    n[1] = 1.0;
+  
+    vpRotationMatrix Rup(fovAngleY,0,0);
+    vpRotationMatrix Rdown(-fovAngleY,0,0);
+    
+    vpColVector nUp, nDown;
+    
+    nUp = Rup * (-n);
+    fovNormals[2] = nUp.normalize();
+    
+    nDown = Rdown * n;
+    fovNormals[3] = nDown.normalize();
+  }
+}
+
 
 /*!
   Return the calibration matrix \f$K\f$.

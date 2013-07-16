@@ -52,8 +52,12 @@
 #ifndef vpCameraParameters_H
 #define vpCameraParameters_H
 
+#include <vector>
+
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpColVector.h>
+#include <visp/vpDebug.h>
 
 /*!
   \class vpCameraParameters
@@ -226,6 +230,57 @@ public :
                                       const double u0, const double v0) ;
   void initPersProjWithDistortion(const double px, const double py,
      const double u0, const double v0, const double kud,const double kdu) ;
+     
+  /*!
+    Specify if the fov has been computed.
+    
+    \sa computeFov()
+    
+    \return True if the fov has been computed, False otherwise.
+  */
+  inline bool isFovComputed() const { return isFov; }
+     
+  void computeFov(const unsigned int &w, const unsigned int &h);
+  
+  /*!
+    Get the horizontal angle of the field of view.
+    
+    \sa computeFov()
+    
+    \return AngleX computed with px and width.
+  */
+  inline double getFovAngleX() const { 
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleX() won't be significant.");
+    return fovAngleX; 
+  }
+  
+  /*!
+    Get the vertical angle of the field of view.
+    
+    \sa computeFov()
+    
+    \return AngleY computed with py and height.
+  */
+  inline double getFovAngleY() const { 
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleY() won't be significant.");
+    return fovAngleY; 
+  }
+  
+  /*!
+    Get the list of the normals corresponding to planes describing the field of view.
+      - vector[0] : Left Normal.
+      - vector[1] : Right Normal.
+      - vector[2] : Up Normal.
+      - vector[3] : Down Normal.
+      
+    \sa computeFov()
+    
+    \return List of the normals.
+  */
+  inline std::vector<vpColVector> getFovNormals() const { 
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovNormals() won't be significant.");
+    return fovNormals; 
+  }
   
   inline double get_px() const { return px; }
   inline double get_px_inverse() const {return inv_px; }
@@ -261,6 +316,13 @@ private:
   double u0, v0 ; //!<  principal point
   double kud ; //!< radial distortion (from undistorted to distorted)
   double kdu ; //!< radial distortion (from distorted to undistorted)
+  
+  unsigned int width ; //!< Width of the image used for the fov computation
+  unsigned int height ; //!< Height of the image used for the fov computation
+  bool isFov ; //!< Boolean to specify if the fov has been computed
+  double fovAngleX ; //!< AngleX/2.0 of the fov
+  double fovAngleY ; //!< AngleY/2.0 of the fov
+  std::vector<vpColVector> fovNormals ; //!< Normals of the planes describing the fov
   
   double inv_px, inv_py; 
    

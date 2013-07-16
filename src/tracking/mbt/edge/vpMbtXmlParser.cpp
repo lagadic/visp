@@ -59,6 +59,8 @@
 */
 vpMbtXmlParser::vpMbtXmlParser()
 {
+  hasNearClipping = false;
+  hasFarClipping = false;
   init();
 }
 
@@ -94,6 +96,8 @@ vpMbtXmlParser::init()
   nodeMap["face"] = face;
   nodeMap["angle_appear"] = angle_appear;
   nodeMap["angle_disappear"] = angle_disappear;
+  nodeMap["near_clipping"] = near_clipping;
+  nodeMap["far_clipping"] = far_clipping;
   nodeMap["camera"] = camera;
   nodeMap["height"] = height;
   nodeMap["width"] = width;
@@ -394,6 +398,8 @@ vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
 {
   bool angle_appear_node = false;
   bool angle_disappear_node = false;
+  bool near_clipping_node = false;
+  bool far_clipping_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -407,6 +413,16 @@ vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
         case angle_disappear:{
           angleDisappear = xmlReadDoubleChild(doc, dataNode);
           angle_disappear_node = true;
+          }break;
+        case near_clipping:{
+          nearClipping = xmlReadDoubleChild(doc, dataNode);
+          near_clipping_node = true;
+          hasNearClipping = true;
+          }break;
+        case far_clipping:{
+          farClipping = xmlReadDoubleChild(doc, dataNode);
+          far_clipping_node = true;
+          hasFarClipping = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -425,6 +441,16 @@ vpMbtXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "WARNING: In FACE Node, ANGLE_DESAPPEAR Node not specified, default value used : " << angleDisappear << std::endl;
   else
     std::cout << "face : Angle Disappear : "<< angleDisappear <<std::endl;
+  
+  if(!near_clipping_node)
+    std::cout << "WARNING: In FACE Node, NEAR_CLIPPING Node not specified, no near clipping used" << std::endl;
+  else
+    std::cout << "face : Near Clipping : "<< nearClipping <<std::endl;
+  
+  if(!far_clipping_node)
+    std::cout << "WARNING: In FACE Node, FAR_CLIPPING Node not specified, no far clipping used" << std::endl;
+  else
+    std::cout << "face : Far Clipping : "<< farClipping <<std::endl;
 }
 
 /*!

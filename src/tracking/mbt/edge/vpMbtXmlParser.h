@@ -80,6 +80,14 @@ protected:
   double angleAppear;
   //! Angle to determine if a face disappeared
   double angleDisappear;
+  //! Is near clipping distance specified?
+  bool hasNearClipping;
+  //! Near clipping distance
+  double nearClipping;
+  //! Is far clipping distance specified?
+  bool hasFarClipping;
+  //! Near clipping distance
+  double farClipping;
     
   typedef enum{
     conf,
@@ -99,6 +107,8 @@ protected:
     face,
     angle_appear,
     angle_disappear,
+    near_clipping,
+    far_clipping,
     camera,
     height,
     width,
@@ -129,7 +139,36 @@ public:
   inline double getAngleDisappear() const {return angleDisappear;}
   
   void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
+  
+  /*!
+    Get the far clipping distance.
+
+    \return farClipping
+  */
+  inline double getFarClippingDistance() const {return farClipping;}
+  
   void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
+  
+  /*!
+    Get the near clipping distance.
+
+    \return nearClipping
+  */
+  inline double getNearClippingDistance() const {return nearClipping;}
+  
+  /*!
+    Has Far clipping been specified?
+
+    \return True if yes, False otherwise.
+  */
+  inline bool hasFarClippingDistance() const {return hasFarClipping;}
+  
+  /*!
+    Has Near clipping been specified?
+
+    \return True if yes, False otherwise.
+  */
+  inline bool hasNearClippingDistance() const {return hasNearClipping;}
   
 	void parse(const char * filename);
 
@@ -157,7 +196,22 @@ public:
   inline void setAngleDisappear(const double &adisappear) {angleDisappear = adisappear;}
   
   void setCameraParameters(const vpCameraParameters &_cam){ cam = _cam; }
+  
+  /*!
+    Set the far clipping distance.
+
+    \param fclip : New farClipping
+  */
+  inline void setFarClippingDistance(const double &fclip) {farClipping = fclip;}
+  
   void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }
+  
+  /*!
+    Set the near clipping distance.
+
+    \param nclip : New nearClipping
+  */
+  inline void setNearClippingDistance(const double &nclip) {nearClipping = nclip;}
 	
   void writeMainClass(xmlNodePtr node);
 	

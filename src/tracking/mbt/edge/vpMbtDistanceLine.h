@@ -76,6 +76,8 @@ class VISP_EXPORT vpMbtDistanceLine
     double alpha;
     double wmean;
     vpFeatureLine featureline ;
+    //! Polygon describing the line
+    vpMbtPolygon poly;
     
   public: 
     //! The moving edge container
@@ -142,6 +144,13 @@ class VISP_EXPORT vpMbtDistanceLine
       \return Return the name of the line
     */
     inline std::string getName() const {return name;}
+    
+    /*!
+     Get the polygon associated to the line.
+   
+     \return poly.
+    */
+    inline vpMbtPolygon& getPolygon() {return poly;}
     
     void initInteractionMatrixError();
     

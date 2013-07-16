@@ -100,6 +100,7 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   
   angleAppears = vpMath::rad(95);
   angleDisappears = vpMath::rad(95);
+  clippingFlag = vpMbtPolygon::NO_CLIPPING;
 }
 
 /*!
@@ -1053,6 +1054,12 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   setMovingEdge(meParser);
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+  
+  if(xmlp.hasNearClippingDistance())
+    setNearClippingDistance(xmlp.getNearClippingDistance());
+  
+  if(xmlp.hasFarClippingDistance())
+    setFarClippingDistance(xmlp.getFarClippingDistance());
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif
@@ -1341,6 +1348,16 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string nam
         l->hiddenface = &faces ;
         l->setIndex(nline) ;
         l->setName(name);
+        
+        if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+          l->getPolygon().setClipping(clippingFlag);
+        
+        if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+          l->getPolygon().setNearClippingDistance(distNearClip);
+        
+        if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+          l->getPolygon().setFarClippingDistance(distFarClip);
+        
         nline +=1 ;
         lines[i].push_back(l);
       }
@@ -1657,6 +1674,10 @@ vpMbEdgeTracker::resetTracker()
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
   
+  angleAppears = vpMath::rad(95);
+  angleDisappears = vpMath::rad(95);
+  clippingFlag = vpMbtPolygon::NO_CLIPPING;
+  
   // reinitialisation of the scales.
   this->setScales(scales);
 }
@@ -1800,6 +1821,86 @@ vpMbEdgeTracker::setScales(const std::vector<bool>& scales)
     for (unsigned int i = 0; i < lines.size(); i += 1){
       lines[i].clear();
       cylinders[i].clear();
+    }
+  }
+}
+
+/*!
+  Set the far distance for clipping.
+  
+  \param dist : Far clipping value.
+*/
+void            
+vpMbEdgeTracker::setFarClippingDistance(const double &dist) 
+{ 
+  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
+    vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
+  else if ( dist < 0 ) 
+    vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
+  else{  
+    distFarClip = dist; 
+    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
+    vpMbtDistanceLine *l;
+
+    for (unsigned int i = 0; i < scales.size(); i += 1){
+      if(scales[i]){
+        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+          l = *it;
+          l->getPolygon().setFarClippingDistance(distFarClip);
+        }
+      }
+    }  
+  }
+}
+
+/*!
+  Set the near distance for clipping.
+  
+  \param dist : Near clipping value.
+*/
+void           
+vpMbEdgeTracker::setNearClippingDistance(const double &dist) 
+{ 
+  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
+    vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
+  else if ( dist < 0 ) 
+    vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
+  else{
+    distNearClip = dist; 
+    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
+    vpMbtDistanceLine *l;
+
+    for (unsigned int i = 0; i < scales.size(); i += 1){
+      if(scales[i]){
+        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+          l = *it;
+          l->getPolygon().setNearClippingDistance(distNearClip);
+        }
+      }
+    }
+  }
+}
+
+/*!
+  Specify which clipping to use.
+  
+  \sa vpMbtPolygonClipping
+  
+  \param flags : New clipping flags.
+*/
+void            
+vpMbEdgeTracker::setClipping(const unsigned int &flags) 
+{ 
+  clippingFlag = flags;
+  
+  vpMbtDistanceLine *l;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+        l = *it;
+        l->getPolygon().setClipping(clippingFlag);
+      }
     }
   }
 }

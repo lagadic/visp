@@ -318,6 +318,15 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
   
     //! Angle used to detect a face disparition
     double angleDisappears;
+    
+    //! Distance for near clipping
+    double distNearClip;
+    
+    //! Distance for near clipping
+    double distFarClip;
+    
+    //! Flags specifying which clipping to used
+    unsigned int clippingFlag;
   
 public:
   
@@ -335,8 +344,25 @@ public:
   /*! Return the angle used to test polygons disparition. */
   virtual inline double getAngleDisappear() { return angleDisappears; } 
   
+  /*!
+    Get the clipping used.
+    
+    \sa vpMbtPolygonClipping
+    
+    \return Clipping flags.
+  */          
+  inline  unsigned int getClipping() { return clippingFlag; } 
+  
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
+  
+  /*!
+    Get the far distance for clipping.
+    
+    \return Far clipping value.
+  */
+  inline double getFarClippingDistance() { return distFarClip; }
+  
   double getFirstThreshold() { return percentageGdPt;}
   
   void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0);
@@ -348,6 +374,13 @@ public:
     \return an instance of the moving edge parameters used by the tracker.
   */
   inline void getMovingEdge(vpMe &me ) { me = this->me;}
+  
+  /*!
+    Get the near distance for clipping.
+    
+    \return Near clipping value.
+  */
+  inline double getNearClippingDistance() { return distNearClip; }
   
   unsigned int getNbPoints(const unsigned int level=0);
   unsigned int getNbPolygon();
@@ -417,6 +450,8 @@ public:
     }
   }
   
+  void  setClipping(const unsigned int &flags);
+  
   /*!
     Enable to display the points along the line with a color corresponding to their state.
     
@@ -428,6 +463,8 @@ public:
     \param displayMe : set it to true to display the points.
   */
   void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
+  
+  void setFarClippingDistance(const double &dist);
   
   /*!
     Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
@@ -448,6 +485,8 @@ public:
   inline void setLambda(const double lambda) {this->lambda = lambda;}
   
   void setMovingEdge(const vpMe &me);
+  
+  void setNearClippingDistance(const double &dist);
   
   virtual void setOgreVisibilityTest(const bool &v);
   

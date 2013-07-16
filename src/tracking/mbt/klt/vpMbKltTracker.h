@@ -256,6 +256,12 @@ protected:
   vpMbHiddenFaces<vpMbtKltPolygon> faces;
   //! First track() called
   bool firstTrack;
+  //! Distance for near clipping
+  double distNearClip;
+  //! Distance for near clipping
+  double distFarClip;
+  //! Flags specifying which clipping to used
+  unsigned int clippingFlag;
   
 public:
   
@@ -281,9 +287,25 @@ public:
   
           /*! Return the angle used to test polygons disparition. */
   virtual inline  double  getAngleDisappear() { return angleDisappears; } 
+  
+          /*!
+            Get the clipping used.
+            
+            \sa vpMbtPolygonClipping
+            
+            \return Clipping flags.
+          */          
+  inline  unsigned int    getClipping() { return clippingFlag; } 
     
           /*! Return a reference to the faces structure. */
           vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
+          
+          /*!
+            Get the far distance for clipping.
+            
+            \return Far clipping value.
+          */
+  inline  double          getFarClippingDistance() { return distFarClip; }
 
           /*!
             Get the current list of KLT points.
@@ -332,6 +354,13 @@ public:
   inline  int             getNbKltPoints() {return tracker.getNbFeatures();}
        
           /*!
+            Get the near distance for clipping.
+            
+            \return Near clipping value.
+          */
+  inline double           getNearClippingDistance() { return distNearClip; }
+  
+          /*!
             Get the threshold for the acceptation of a point.
 
             \return threshold_outlier : Threshold for the weight below which a point is rejected.
@@ -364,6 +393,10 @@ public:
   
           void            setCameraParameters(const vpCameraParameters& cam);
           
+          void            setClipping(const unsigned int &flags);
+          
+          void            setFarClippingDistance(const double &dist);
+          
           void            setKltOpencv(const vpKltOpencv& t);
           
           /*!
@@ -386,6 +419,8 @@ public:
             \param max : the desired number of iteration
           */
   inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
+  
+          void            setNearClippingDistance(const double &dist);
   
   virtual void            setOgreVisibilityTest(const bool &v);
   

@@ -250,22 +250,38 @@ public:
           /*! Return the angle used to test polygons disparition. */
   virtual inline  double  getAngleDisappear() { return vpMbKltTracker::getAngleDisappear(); } 
   
+          /*!
+            Get the clipping used.
+            
+            \sa vpMbtPolygonClipping
+            
+            \return Clipping flags.
+          */          
+  inline  unsigned int    getClipping() { return vpMbKltTracker::clippingFlag; } 
+  
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
 
-  /*!
+          /*!
             Get the value of the gain used to compute the control law.
 
             \return the value for the gain.
           */
   inline  double  getLambda() {return lambda;}
 
-  /*!
+          /*!
             Get the maximum iteration of the virtual visual servoing stage.
 
             \return the number of iteration
           */
   inline  unsigned int getMaxIter() {return maxIter;}
+  
+          /*!
+            Get the near distance for clipping.
+            
+            \return Near clipping value.
+          */
+  inline  double  getNearClippingDistance() { return vpMbKltTracker::getNearClippingDistance(); }
 
           void    loadConfigFile(const char* configFile);
   virtual void    loadConfigFile(const std::string& configFile);
@@ -296,20 +312,36 @@ public:
   virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); }
 
   virtual void    setCameraParameters(const vpCameraParameters& cam);
+  
+          /*!
+            Specify which clipping to use.
+            
+            \sa vpMbtPolygonClipping
+            
+            \param flags : New clipping flags.
+          */
+          void    setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); vpMbKltTracker::setClipping(flags);}
 
-  /*!
+          /*!
             Set the value of the gain used to compute the control law.
 
             \param lambda : the desired value for the gain.
           */
   inline  void    setLambda(const double lambda) {this->lambda = lambda; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
 
-  /*!
+          /*!
             Set the maximum iteration of the virtual visual servoing stage.
 
             \param max : the desired number of iteration
           */
   inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
+  
+          /*!
+            Set the near distance for clipping.
+            
+            \param dist : Near clipping value.
+          */
+  inline  void   setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); vpMbKltTracker::setNearClippingDistance(dist); }
           
           /*!
             Use Ogre3D for visibility tests

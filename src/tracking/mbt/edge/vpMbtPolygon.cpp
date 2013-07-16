@@ -61,6 +61,12 @@ vpMbtPolygon::vpMbtPolygon()
   p = NULL ;
   isappearing = false;
   isvisible = false;
+  nbCornersInsidePrev = 0;
+  
+  distNearClip = 0.001;
+  distFarClip = 100.0;
+  
+  clippingFlag = vpMbtPolygon::NO_CLIPPING;
 }
 
 /*!
@@ -242,17 +248,324 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   return false ;
 }
 
-std::vector<vpImagePoint> 
-vpMbtPolygon::getRoi(const vpCameraParameters &_cam)
+/*!
+  Compute the region of interest in the image according to the used clipping.
+  
+  \param cam : camera parameters used to compute the field of view.
+*/
+void
+vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
+{  
+  roiPointsClip = std::vector<std::pair<vpPoint,unsigned int> >();
+  std::vector<vpColVector> fovNormals;
+  
+  if(cam.isFovComputed() && clippingFlag > 3)
+    fovNormals = cam.getFovNormals();
+  
+  for (unsigned int i = 0; i < nbpt; i ++){
+    vpPoint p1Clipped, p2Clipped;
+    unsigned int p1ClippedInfo, p2ClippedInfo;
+    vpImagePoint ip;
+    if(vpMbtPolygon::getClippedPoints(p[i], p[(i+1)%nbpt], p1Clipped, p2Clipped, p1ClippedInfo, p2ClippedInfo, cam, fovNormals)){
+      p1Clipped.projection();
+      roiPointsClip.push_back(std::make_pair(p1Clipped, p1ClippedInfo));
+      
+      if(p2ClippedInfo != vpMbtPolygon::NO_CLIPPING){
+        p2Clipped.projection();
+        roiPointsClip.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
+      }
+      
+      if(nbpt == 2){ //Case of a line.
+        if(p2ClippedInfo == vpMbtPolygon::NO_CLIPPING){
+          p2Clipped.projection();
+          roiPointsClip.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
+        }
+        break;
+      }
+    }
+  }
+}    
+    
+/*!
+  Get the clipped points according to a plane equation.
+
+  \param cam : camera parameters
+  \param p1 : First extremity of the line.
+  \param p2 : Second extremity of the line.
+  \param p1Clipped : Resulting p1.
+  \param p2Clipped : Resulting p2.
+  \param p1ClippedInfo : Resulting clipping flag for p1.
+  \param p2ClippedInfo : Resulting clipping flag for p2.
+  \param A : Param A from plane equation.
+  \param B : Param B from plane equation.
+  \param C : Param C from plane equation.
+  \param D : Param D from plane equation.
+  \param flag : flag specifying the clipping used when calling this function.
+  
+  \return True if the points have been clipped, False otherwise
+*/
+bool
+vpMbtPolygon::getClippedPointsFov(const vpPoint &p1, const vpPoint &p2, 
+                                vpPoint &p1Clipped, vpPoint &p2Clipped, 
+                                unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo,
+                                const vpColVector &normal, const unsigned int &flag)
+{    
+  vpRowVector p1Vec(3);
+  p1Vec[0] = p1.get_X(); p1Vec[1] = p1.get_Y(); p1Vec[2] = p1.get_Z();
+  p1Vec = p1Vec.normalize();
+  
+  vpRowVector p2Vec(3);
+  p2Vec[0] = p2.get_X(); p2Vec[1] = p2.get_Y(); p2Vec[2] = p2.get_Z();
+  p2Vec = p2Vec.normalize();
+  
+  if((clippingFlag & flag) == flag){
+    double beta1 = acos( p1Vec * normal );
+    double beta2 = acos( p2Vec * normal );
+    
+    if(beta1 < M_PI / 2.0 && beta2 < M_PI / 2.0)
+      return false;
+    else if (beta1 < M_PI / 2.0 || beta2 < M_PI / 2.0){
+      vpPoint pClipped;
+      double t = -(normal[0] * p1.get_X() + normal[1] * p1.get_Y() + normal[2] * p1.get_Z());
+      t = t / ( normal[0] * (p2.get_X() - p1.get_X()) + normal[1] * (p2.get_Y() - p1.get_Y()) + normal[2] * (p2.get_Z() - p1.get_Z()) );
+      
+      pClipped.set_X((p2.get_X() - p1.get_X())*t + p1.get_X());
+      pClipped.set_Y((p2.get_Y() - p1.get_Y())*t + p1.get_Y());
+      pClipped.set_Z((p2.get_Z() - p1.get_Z())*t + p1.get_Z());
+      
+      if(beta1 < M_PI / 2.0){
+        p1ClippedInfo = p1ClippedInfo | flag;
+        p1Clipped = pClipped;
+      }
+      else{
+        p2ClippedInfo = p2ClippedInfo | flag;
+        p2Clipped = pClipped;
+      }
+    }
+  }
+  
+  return true;
+}
+
+/*!
+  Get the clipped points.
+
+  \param p1 : First extremity of the line.
+  \param p2 : Second extremity of the line.
+  \param p1Clipped : Resulting p1.
+  \param p2Clipped : Resulting p2.
+  \param p1ClippedInfo : Resulting clipping flag for p1.
+  \param p2ClippedInfo : Resulting clipping flag for p2.
+  \param cam : camera parameters.
+  
+  \return True if the points have been clipped, False otherwise
+*/
+bool           
+vpMbtPolygon::getClippedPoints(const vpPoint &p1, const vpPoint &p2, 
+                               vpPoint &p1Clipped, vpPoint &p2Clipped, 
+                               unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo,
+                               const vpCameraParameters &cam, const std::vector<vpColVector> &fovNormals)
 {
+  p1Clipped = p1;
+  p2Clipped = p2;
+  p1ClippedInfo = vpMbtPolygon::NO_CLIPPING;
+  p2ClippedInfo = vpMbtPolygon::NO_CLIPPING;
+  
+  if(clippingFlag != vpMbtPolygon::NO_CLIPPING){
+    // Near Clipping
+    if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING || 
+        ((clippingFlag & vpMbtPolygon::LEFT_CLIPPING) == vpMbtPolygon::LEFT_CLIPPING && (clippingFlag & vpMbtPolygon::RIGHT_CLIPPING) == vpMbtPolygon::RIGHT_CLIPPING) || 
+        ((clippingFlag & vpMbtPolygon::UP_CLIPPING) == vpMbtPolygon::UP_CLIPPING && (clippingFlag & vpMbtPolygon::DOWN_CLIPPING) == vpMbtPolygon::DOWN_CLIPPING)){
+      if(p1Clipped.get_Z() < distNearClip && p2Clipped.get_Z() < distNearClip) //Not using getClippedPointsFov for efficiency
+        return false;
+      else if(p1Clipped.get_Z() < distNearClip || p2Clipped.get_Z() < distNearClip){
+        vpPoint pClippedNear;
+        double t = (p2Clipped.get_Z() - p1Clipped.get_Z());
+        t = (distNearClip - p1Clipped.get_Z()) / t;
+        
+        pClippedNear.set_X((p2Clipped.get_X() - p1Clipped.get_X())*t + p1Clipped.get_X());
+        pClippedNear.set_Y((p2Clipped.get_Y() - p1Clipped.get_Y())*t + p1Clipped.get_Y());
+        pClippedNear.set_Z(distNearClip);
+        
+        if(p1Clipped.get_Z() < distNearClip){
+          p1Clipped = pClippedNear;
+          p1ClippedInfo = p1ClippedInfo | vpMbtPolygon::NEAR_CLIPPING;
+        }
+        else{
+          p2Clipped = pClippedNear;
+          p2ClippedInfo = p2ClippedInfo | vpMbtPolygon::NEAR_CLIPPING;
+        }
+      }
+    }
+    
+    // Left Clipping
+    if((clippingFlag & vpMbtPolygon::LEFT_CLIPPING) == vpMbtPolygon::LEFT_CLIPPING){
+      if(!cam.isFovComputed())
+        vpTRACE("Field of view not computed, left clipping skipped.");
+      else if(!getClippedPointsFov(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo, p2ClippedInfo, 
+             fovNormals[0], vpMbtPolygon::LEFT_CLIPPING))
+        return false;
+    }
+    
+    // Right Clipping
+    if((clippingFlag & vpMbtPolygon::RIGHT_CLIPPING) == vpMbtPolygon::RIGHT_CLIPPING ){
+      if(!cam.isFovComputed())
+        vpTRACE("Field of view not computed, right clipping skipped.");
+      else if(!getClippedPointsFov(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo, p2ClippedInfo, 
+             fovNormals[1], vpMbtPolygon::RIGHT_CLIPPING))
+        return false;
+    }
+      
+    // Up Clipping
+    if((clippingFlag & vpMbtPolygon::UP_CLIPPING) == vpMbtPolygon::UP_CLIPPING){
+      if(!cam.isFovComputed())
+        vpTRACE("Field of view not computed, up clipping skipped.");
+      else if(!getClippedPointsFov(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo, p2ClippedInfo, 
+              fovNormals[2], vpMbtPolygon::UP_CLIPPING))
+        return false;
+    }
+      
+    // Down Clipping
+    if((clippingFlag & vpMbtPolygon::DOWN_CLIPPING) == vpMbtPolygon::DOWN_CLIPPING ){
+      if(!cam.isFovComputed())
+        vpTRACE("Field of view not computed, down clipping skipped.");
+      else if(!getClippedPointsFov(p1Clipped, p2Clipped, p1Clipped, p2Clipped, p1ClippedInfo, p2ClippedInfo, 
+              fovNormals[3], vpMbtPolygon::DOWN_CLIPPING))
+        return false;
+    }
+      
+    // Far Clipping
+    if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING ){
+      if(p1Clipped.get_Z() > distFarClip && p2Clipped.get_Z() > distFarClip) //Not using getClippedPointsFov for efficiency
+        return false;
+      else if(p1Clipped.get_Z() > distFarClip || p2Clipped.get_Z() > distFarClip){
+        vpPoint pClippedFar;
+        double t = (p2Clipped.get_Z() - p1Clipped.get_Z());
+        t = (distFarClip - p1Clipped.get_Z()) / t;
+        
+        pClippedFar.set_X((p2Clipped.get_X() - p1Clipped.get_X())*t + p1Clipped.get_X());
+        pClippedFar.set_Y((p2Clipped.get_Y() - p1Clipped.get_Y())*t + p1Clipped.get_Y());
+        pClippedFar.set_Z(distFarClip); 
+        
+        if(p1Clipped.get_Z() > distFarClip){
+          p1Clipped = pClippedFar;
+          p1ClippedInfo = p1ClippedInfo | vpMbtPolygon::FAR_CLIPPING;
+        }
+        else{
+          p2Clipped = pClippedFar;
+          p2ClippedInfo = p2ClippedInfo | vpMbtPolygon::FAR_CLIPPING;
+        }
+      }
+    }
+  }
+  
+  return true;
+}
+
+/*!
+  Get the region of interest in the image.
+  
+  \warning Suppose that changeFrame() has already been called.
+  
+  \param cam : camera parameters.
+
+  \return Image point corresponding to the region of interest.
+*/
+std::vector<vpImagePoint>
+vpMbtPolygon::getRoi(const vpCameraParameters &cam)
+{     
   std::vector<vpImagePoint> roi;
   for (unsigned int i = 0; i < nbpt; i ++){
     vpImagePoint ip;
-    vpMeterPixelConversion::convertPoint(_cam, p[i].get_x(), p[i].get_y(), ip);
+    vpMeterPixelConversion::convertPoint(cam, p[i].get_x(), p[i].get_y(), ip);
     roi.push_back(ip);
   }
+  
   return roi;
 }
+
+/*!
+  Get the region of interest in the image.
+  
+  \param cam : camera parameters.
+  \param cMo : pose.
+
+  \return Image point corresponding to the region of interest.
+*/
+std::vector<vpImagePoint> 
+vpMbtPolygon::getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo)
+{
+  changeFrame(cMo);
+  return getRoi(cam);
+}
+
+/*!
+  Get the region of interest clipped in the image.
+  
+  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+  
+  \param cam : camera parameters.
+  \param roi : image point corresponding to the region of interest.
+*/
+void
+vpMbtPolygon::getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi)
+{
+  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
+    vpImagePoint ip;
+    vpMeterPixelConversion::convertPoint(cam,roiPointsClip[i].first.get_x(),roiPointsClip[i].first.get_y(),ip);
+    roi.push_back(ip);
+  }
+}
+
+/*!
+  Get the region of interest clipped in the image.
+  
+  \param cam : camera parameters.
+  \param cMo : pose.
+  \param roi : image point corresponding to the region of interest.
+*/
+void
+vpMbtPolygon::getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi, const vpHomogeneousMatrix &cMo)
+{
+  changeFrame(cMo);
+  computeRoiClipped(cam);
+  getRoiClipped(cam, roi);
+}
+  
+/*!
+  Get the region of interest clipped in the image and the information to know if it's a clipped point.
+  
+  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+  
+  \param cam : camera parameters.
+  \param roi : image point corresponding to the region of interest with clipping information.
+*/
+void
+vpMbtPolygon::getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi)
+{
+  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
+    vpImagePoint ip;
+    vpMeterPixelConversion::convertPoint(cam,roiPointsClip[i].first.get_x(),roiPointsClip[i].first.get_y(),ip);
+    roi.push_back(std::make_pair(ip, roiPointsClip[i].second));
+  }
+}
+
+/*!
+  Get the region of interest clipped in the image and the information to know if it's a clipped point.
+  
+  \param cam : camera parameters.
+  \param roi : image point corresponding to the region of interest with clipping information.
+  \param cMo : pose.
+*/
+void
+vpMbtPolygon::getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo)
+{
+  changeFrame(cMo);
+  computeRoiClipped(cam);
+  getRoiClipped(cam, roi);
+}
+
+
 
 /*!
   Static method to check the number of points of a region defined by the vector of image point that are inside the image.
@@ -273,6 +586,8 @@ vpMbtPolygon::getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCa
     }
   }
   
+  nbCornersInsidePrev = nbPolyIn;
+  
   return nbPolyIn;
 }
 
@@ -281,7 +596,7 @@ vpMbtPolygon::getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCa
 //###################################
 
 void                
-vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max)
+vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &iroi, int & i_min, int &i_max, int &j_min, int &j_max)
 {
   // i_min_d = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
   double i_min_d = (double) INT_MAX;
@@ -289,24 +604,24 @@ vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, in
   double j_min_d = (double) INT_MAX;
   double j_max_d = 0;
 
-  for (unsigned int i = 0; i < roi.size(); i += 1){
-    if(i_min_d > roi[i].get_i())
-      i_min_d = roi[i].get_i();
+  for (unsigned int i = 0; i < iroi.size(); i += 1){
+    if(i_min_d > iroi[i].get_i())
+      i_min_d = iroi[i].get_i();
     
-    if(roi[i].get_i() < 0)
+    if(iroi[i].get_i() < 0)
       i_min_d = 1;
     
-    if((roi[i].get_i() > 0) && (i_max_d < roi[i].get_i()))
-      i_max_d = roi[i].get_i();
+    if((iroi[i].get_i() > 0) && (i_max_d < iroi[i].get_i()))
+      i_max_d = iroi[i].get_i();
     
-    if(j_min_d > roi[i].get_j())
-      j_min_d = roi[i].get_j();
+    if(j_min_d > iroi[i].get_j())
+      j_min_d = iroi[i].get_j();
     
-    if(roi[i].get_j() < 0)
+    if(iroi[i].get_j() < 0)
       j_min_d = 1;//border
       
-    if((roi[i].get_j() > 0) && j_max_d < roi[i].get_j())
-      j_max_d = roi[i].get_j();
+    if((iroi[i].get_j() > 0) && j_max_d < iroi[i].get_j())
+      j_max_d = iroi[i].get_j();
   }
   i_min = static_cast<int> (i_min_d);
   i_max = static_cast<int> (i_max_d);
@@ -337,5 +652,7 @@ vpMbtPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<
   
   return true;
 }
+
+
 
 

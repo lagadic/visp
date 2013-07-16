@@ -42,6 +42,7 @@
 
 vpMbKltTracker::vpMbKltTracker()
 {
+  
   cur = NULL;
   compute_interaction = true;
   firstInitialisation = true;
@@ -61,6 +62,8 @@ vpMbKltTracker::vpMbKltTracker()
   
   angleAppears = vpMath::rad(65);
   angleDisappears = vpMath::rad(75);
+  
+  clippingFlag = vpMbtPolygon::NO_CLIPPING;
   
   maskBorder = 5;
   threshold_outlier = 0.5;
@@ -130,7 +133,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(faces[i]->isVisible())
-        faces[i]->updateMask(mask, 255 - i*15, maskBorder);
+      faces[i]->updateMask(mask, 255/* - i*15*/, maskBorder);
   }
   
   tracker.initTracking(cur, mask);
@@ -176,6 +179,8 @@ vpMbKltTracker::resetTracker()
   
   angleAppears = vpMath::rad(65);
   angleDisappears = vpMath::rad(75);
+  
+  clippingFlag = vpMbtPolygon::NO_CLIPPING;
   
   maskBorder = 5;
   threshold_outlier = 0.5;
@@ -376,6 +381,63 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
     }
   }
 }
+
+/*!
+  Set the far distance for clipping.
+  
+  \param dist : Far clipping value.
+*/
+void            
+vpMbKltTracker::setFarClippingDistance(const double &dist) 
+{ 
+  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
+    vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
+  else if ( dist < 0 ) 
+    vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
+  else{   
+    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
+    distFarClip = dist; 
+    for (unsigned int i = 0; i < faces.size(); i ++){
+      faces[i]->setFarClippingDistance(distFarClip);
+    }  
+  }
+}
+
+/*!
+  Set the near distance for clipping.
+  
+  \param dist : Near clipping value.
+*/
+void           
+vpMbKltTracker::setNearClippingDistance(const double &dist) 
+{ 
+  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
+    vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
+  else if ( dist < 0 ) 
+    vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
+  else{
+    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
+    distNearClip = dist; 
+    for (unsigned int i = 0; i < faces.size(); i ++){
+      faces[i]->setNearClippingDistance(distNearClip);
+    } 
+  }
+}
+
+/*!
+  Specify which clipping to use.
+  
+  \sa vpMbtPolygonClipping
+  
+  \param flags : New clipping flags.
+*/
+void            
+vpMbKltTracker::setClipping(const unsigned int &flags) 
+{ 
+  clippingFlag = flags;
+  for (unsigned int i = 0; i < faces.size(); i ++)
+    faces[i]->setClipping(clippingFlag);
+}
           
 /*!
   Initialise a new face from the coordinates given in parameter.
@@ -396,6 +458,15 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
     }
     faces.addPolygon(polygon);
     faces.getPolygon().back()->setCameraParameters(cam);
+    
+    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+      faces.getPolygon().back()->setClipping(clippingFlag);
+    
+    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+      faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+    
+    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+      faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 
     delete polygon;
     polygon = NULL;
@@ -429,7 +500,7 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
         nbFaceUsed++;
       }
     }
-  }
+  } 
 }
 
 /*!
@@ -709,6 +780,12 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   maskBorder = xmlp.getMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+  
+  if(xmlp.hasNearClippingDistance())
+    setNearClippingDistance(xmlp.getNearClippingDistance());
+  
+  if(xmlp.hasFarClippingDistance())
+    setFarClippingDistance(xmlp.getFarClippingDistance());
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif
@@ -728,16 +805,32 @@ void
 vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
                         const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
+  vpCameraParameters c = cam;
+  
+  if(clippingFlag > 3) // Contains at least one FOV constraint
+    c.computeFov(I.getWidth(), I.getHeight());
+  
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
       faces[i]->changeFrame(cMo);
-      std::vector<vpImagePoint> roi = faces[i]->getRoi(cam);
-      for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
-        vpImagePoint ip1, ip2;
-        ip1 = roi[j];
-        ip2 = roi[(j+1)%faces[i]->getNbPoint()];
-        vpDisplay::displayLine (I, ip1, ip2, col, thickness);
+      faces[i]->computeRoiClipped(c);
+      std::vector<std::pair<vpImagePoint,unsigned int> > roi;
+      faces[i]->getRoiClipped(c, roi);
+      
+      for (unsigned int j = 0; j < roi.size(); j += 1){
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){
+          vpImagePoint ip1, ip2;
+          ip1 = roi[j].first;
+          ip2 = roi[(j+1)%roi.size()].first;
+          
+          vpDisplay::displayLine (I, ip1, ip2, col, thickness);
+        }
       }
     }
     if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
@@ -766,25 +859,40 @@ void
 vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
                         const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
+  vpCameraParameters c = cam;
+  
+  if(clippingFlag > 3) // Contains at least one FOV constraint
+    c.computeFov(I.getWidth(), I.getHeight());
+  
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
       faces[i]->changeFrame(cMo);
-      std::vector<vpImagePoint> roi = faces[i]->getRoi(cam);
-      for (unsigned int j = 0; j < faces[i]->getNbPoint(); j += 1){
-        vpImagePoint ip1, ip2;
-        ip1 = roi[j];
-        ip2 = roi[(j+1)%faces[i]->getNbPoint()];
-        vpDisplay::displayLine (I, ip1, ip2, col, thickness);
-      }
+      faces[i]->computeRoiClipped(c);      
+      std::vector<std::pair<vpImagePoint,unsigned int> > roi;
+      faces[i]->getRoiClipped(c, roi);
       
+      for (unsigned int j = 0; j < roi.size(); j += 1){
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){
+          vpImagePoint ip1, ip2;
+          ip1 = roi[j].first;
+          ip2 = roi[(j+1)%roi.size()].first;
+          
+          vpDisplay::displayLine (I, ip1, ip2, col, thickness);
+        }
+      }
     }
     if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
         faces[i]->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
-  
+
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
     faces.displayOgre(cMo);

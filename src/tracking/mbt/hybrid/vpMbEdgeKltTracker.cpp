@@ -871,17 +871,34 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& _p1, const vpPoint _p2, const do
 void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
                             const vpColor& col , const unsigned int thickness, const bool displayFullModel)
-{
-  vpMbKltTracker::display(I, cMo, cam, col, thickness, displayFullModel);
+{  
+  vpMbtDistanceLine *l ;
   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
+      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+        l = *it;
+        l->display(I,cMo, cam, col, thickness, displayFullModel);
+      }
+
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
         (*it)->display(I, cMo, cam, col, thickness);
       }
+
       break ; //displaying model on one scale only
     }
   }
+  
+  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+    if(displayFeatures && vpMbKltTracker::faces[i]->hasEnoughPoints() && vpMbKltTracker::faces[i]->isVisible()) {
+        vpMbKltTracker::faces[i]->displayPrimitive(I);
+    }
+  }
+  
+#ifdef VISP_HAVE_OGRE
+  if(vpMbKltTracker::useOgre)
+    vpMbKltTracker::faces.displayOgre(cMo);
+#endif
 }
 
 /*!
@@ -897,17 +914,34 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
 void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
                             const vpColor& col , const unsigned int thickness, const bool displayFullModel)
-{
-  vpMbKltTracker::display(I, cMo, cam, col, thickness, displayFullModel);
+{ 
+  vpMbtDistanceLine *l ;
   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
+      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+        l = *it;
+        l->display(I,cMo, cam, col, thickness, displayFullModel);
+      }
+
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
         (*it)->display(I, cMo, cam, col, thickness);
       }
+
       break ; //displaying model on one scale only
     }
   }
+  
+  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
+    if(displayFeatures && vpMbKltTracker::faces[i]->hasEnoughPoints() && vpMbKltTracker::faces[i]->isVisible()) {
+        vpMbKltTracker::faces[i]->displayPrimitive(I);
+    }
+  }
+  
+#ifdef VISP_HAVE_OGRE
+  if(vpMbKltTracker::useOgre)
+    vpMbKltTracker::faces.displayOgre(cMo);
+#endif
 }
 
 #endif //VISP_HAVE_OPENCV

@@ -86,6 +86,14 @@ protected:
   double angleAppear;
   //! Angle to determine if a face disappeared
   double angleDisappear;
+  //! Is near clipping distance specified?
+  bool hasNearClipping;
+  //! Near clipping distance
+  double nearClipping;
+  //! Is far clipping distance specified?
+  bool hasFarClipping;
+  //! Near clipping distance
+  double farClipping;
   //! Camera parameters.
   vpCameraParameters cam;
     
@@ -103,6 +111,8 @@ protected:
     face,
     angle_appear,
     angle_disappear,
+    near_clipping,
+    far_clipping,
     camera,
     height,
     width,
@@ -147,6 +157,13 @@ public:
   void getCameraParameters(vpCameraParameters& _cam) const { _cam = cam;}
   
   /*!
+    Get the far clipping distance.
+
+    \return farClipping
+  */
+  inline double getFarClippingDistance() const {return farClipping;}
+  
+  /*!
     Get the Harris free parameter.
 
     \return harrisParam
@@ -175,6 +192,13 @@ public:
   inline double getMinDistance() const {return minDist;}
   
   /*!
+    Get the near clipping distance.
+
+    \return nearClipping
+  */
+  inline double getNearClippingDistance() const {return nearClipping;}
+  
+  /*!
     Get the number of pyramid levels
 
     \return pyramidLevels
@@ -194,6 +218,20 @@ public:
     \return winSize
   */
   inline unsigned int getWindowSize() const {return winSize;}
+  
+  /*!
+    Has Far clipping been specified?
+
+    \return True if yes, False otherwise.
+  */
+  inline bool hasFarClippingDistance() const {return hasFarClipping;}
+  
+  /*!
+    Has Near clipping been specified?
+
+    \return True if yes, False otherwise.
+  */
+  inline bool hasNearClippingDistance() const {return hasNearClipping;}
   
   void parse(const char * filename);
   
@@ -231,6 +269,13 @@ public:
   void setCameraParameters(const vpCameraParameters& _cam) {cam = _cam;}
   
   /*!
+    Set the far clipping distance.
+
+    \param fclip : New farClipping
+  */
+  inline void setFarClippingDistance(const double &fclip) {farClipping = fclip;}
+  
+  /*!
     Set the Harris free parameter.
 
     \param hp : New harrisParam
@@ -257,6 +302,13 @@ public:
     \param mD : New minDist
   */
   inline void setMinDistance(const double &mD) {minDist = mD;}
+  
+  /*!
+    Set the near clipping distance.
+
+    \param nclip : New nearClipping
+  */
+  inline void setNearClippingDistance(const double &nclip) {nearClipping = nclip;}
   
   /*!
     Set the number of pyramid levels

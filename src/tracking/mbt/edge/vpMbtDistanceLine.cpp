@@ -67,7 +67,7 @@ vpMbtDistanceLine::vpMbtDistanceLine()
   wmean = 1 ;
   nbFeature =0 ;
   Reinit = false;
-  isvisible = true;
+  isvisible = false;
 }
 
 /*!
@@ -76,9 +76,6 @@ vpMbtDistanceLine::vpMbtDistanceLine()
 vpMbtDistanceLine::~vpMbtDistanceLine()
 {
 //	cout << "Deleting line " << index << endl ;
-
-	if (p1 != NULL) delete p1 ;
-  if (p2 != NULL) delete p2 ;
   if (line != NULL) delete line ;
   if (meline != NULL) delete meline ;
 
@@ -172,11 +169,12 @@ void
 vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
 {
   line = new vpLine ;
-  p1 = new vpPoint ;
-  p2 = new vpPoint ;
-
-  *p1 = _p1 ;
-  *p2 = _p2 ;
+  poly.setNbPoint(2);
+  poly.addPoint(0, _p1);
+  poly.addPoint(1, _p2);
+  
+  p1 = &poly.p[0];
+  p2 = &poly.p[1];
 
   vpColVector V1(3);
   vpColVector V2(3);
@@ -204,7 +202,7 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
       v_tmp2 = V3-V1;
       V4=vpColVector::cross(v_tmp1,v_tmp2);
     }
-
+    
     vpPoint P3;
     P3.setWorldCoordinates(V3[0],V3[1],V3[2]);
     vpPoint P4;
@@ -239,7 +237,7 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 
 
 /*!
-  Initialize the moving edge thanks to a given pose of the camera.
+  Initialize the moving edge thanks to a given pose of the camera.                          
   The 3D model is projected into the image to create moving edges along the line.
   
   \param I : The image.
@@ -248,49 +246,58 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 void
 vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  if(isvisible)
-  {
+  if(isvisible){
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
-    line->changeFrame(cMo);
-
-    p1->projection();
-    p2->projection();
-    line->projection();
-
-    vpImagePoint ip1, ip2;
-    double rho,theta;
-
-    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1);
-    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2);
-    //rho theta uv
-    vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
     
-    while (theta > M_PI) { theta -= M_PI ; }
-    while (theta < -M_PI) { theta += M_PI ; }
+    if(poly.getClipping() > 3) // Contains at least one FOV constraint
+      cam.computeFov(I.getWidth(), I.getHeight());
     
-    if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
-    else theta = M_PI/2.0 - theta;
+    poly.computeRoiClipped(cam);
+    
+    if(poly.roiPointsClip.size() == 2){ //Les points sont visibles.
+      vpImagePoint ip1, ip2;
+      double rho,theta;
+      line->changeFrame(cMo);
+      line->projection();
+    
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
+      
+      //rho theta uv
+      vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
+      
+      while (theta > M_PI) { theta -= M_PI ; }
+      while (theta < -M_PI) { theta += M_PI ; }
+      
+      if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
+      else theta = M_PI/2.0 - theta;
 
-    meline = new vpMbtMeLine ;
-    meline->setMe(me) ;
+      meline = new vpMbtMeLine ;
+      meline->setMe(me) ;
 
-//    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
-    meline->setInitRange(0);
-    
-    int marge = /*10*/5; //ou 5 normalement
-    if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
-    if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
-    
-    try
-    {
-      meline->initTracking(I,ip1,ip2,rho,theta);
+    //    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
+      meline->setInitRange(0);
+      
+      int marge = /*10*/5; //ou 5 normalement
+      if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
+      if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
+      
+      try
+      {
+        meline->initTracking(I,ip1,ip2,rho,theta);
+      }
+      catch(...)
+      {
+        //vpTRACE("the line can't be initialized");
+      }
     }
-    catch(...)
-    {
-      //vpTRACE("the line can't be initialized");
+    else{
+      if (meline!=NULL) delete meline;
+      meline=NULL;
+      isvisible = false;
     }
-  }
+  }   
 //	trackMovingEdge(I,cMo)  ;
 }
 
@@ -347,43 +354,53 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
 void
 vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  if (isvisible)
-  {
-    p1->changeFrame(cMo) ;
-    p2->changeFrame(cMo) ;
-    line->changeFrame(cMo) ;
-
-    p1->projection() ;
-    p2->projection() ;
-    line->projection() ;
+  if(isvisible){
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
     
-    vpImagePoint ip1, ip2;
-    double rho,theta;
-
-    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1);
-    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2);
-    vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
+    if(poly.getClipping() > 3) // Contains at least one FOV constraint
+      cam.computeFov(I.getWidth(), I.getHeight());
     
-    while (theta > M_PI) { theta -= M_PI ; }
-    while (theta < -M_PI) { theta += M_PI ; }
+    poly.computeRoiClipped(cam);
     
-    if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
-    else theta = M_PI/2.0 - theta;
+    if(poly.roiPointsClip.size() == 2){ //Les points sont visibles.
+      vpImagePoint ip1, ip2;
+      double rho,theta;
+      line->changeFrame(cMo);
+      line->projection();
+    
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
+      
+      //rho theta uv
+      vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
+      
+      while (theta > M_PI) { theta -= M_PI ; }
+      while (theta < -M_PI) { theta += M_PI ; }
+      
+      if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
+      else theta = M_PI/2.0 - theta;
 
-    int marge = /*10*/5; //ou 5 normalement
-    if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
-    if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
+      int marge = /*10*/5; //ou 5 normalement
+      if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
+      if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
 
-    try 
-    {
-      //meline->updateParameters(I,rho,theta) ;
-      meline->updateParameters(I,ip1,ip2,rho,theta) ;
+      try 
+      {
+        //meline->updateParameters(I,rho,theta) ;
+        meline->updateParameters(I,ip1,ip2,rho,theta) ;
+      }
+      catch(...)
+      {
+        Reinit = true;
+      }
+      nbFeature = (unsigned int)meline->getMeList().size();
     }
-    catch(...)
-    {
-      Reinit = true;
+    else{
+      if (meline!=NULL) delete meline;
+      meline=NULL;
+      isvisible = false;
     }
-    nbFeature = (unsigned int)meline->getMeList().size();
   }
 }
 
@@ -421,20 +438,29 @@ vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHom
 void
 vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if (isvisible ==true || displayFullModel)
-  {
-    p1->changeFrame(cMo) ;
-    p2->changeFrame(cMo) ;
+  p1->changeFrame(cMo);
+  p2->changeFrame(cMo);
 
-    p1->projection() ;
-    p2->projection() ;
-
+  if(isvisible || displayFullModel){
     vpImagePoint ip1, ip2;
-
-    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1) ;
-    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2) ;
-
-    vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+    vpCameraParameters c = cam;
+    if(poly.getClipping() > 3) // Contains at least one FOV constraint
+      c.computeFov(I.getWidth(), I.getHeight());
+    
+    poly.computeRoiClipped(c);
+    
+    if( poly.roiPointsClip.size() == 2 && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){ 
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
+    
+      vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+    }
   }
 }
 
@@ -452,20 +478,29 @@ vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMa
 void
 vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if (isvisible ==true || displayFullModel)
-  {
-    p1->changeFrame(cMo) ;
-    p2->changeFrame(cMo) ;
+  p1->changeFrame(cMo);
+  p2->changeFrame(cMo);
 
-    p1->projection() ;
-    p2->projection() ;
-
+  if(isvisible || displayFullModel){
     vpImagePoint ip1, ip2;
+    vpCameraParameters c = cam;
+    if(poly.getClipping() > 3) // Contains at least one FOV constraint
+      c.computeFov(I.getWidth(), I.getHeight());
+    
+    poly.computeRoiClipped(c);
+    
+    if( poly.roiPointsClip.size() == 2 && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){ 
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
+      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
 
-    vpMeterPixelConversion::convertPoint(cam,p1->get_x(),p1->get_y(),ip1) ;
-    vpMeterPixelConversion::convertPoint(cam,p2->get_x(),p2->get_y(),ip2) ;
-
-    vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+      vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+    }
   }
 }
 

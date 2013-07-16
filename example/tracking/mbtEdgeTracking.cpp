@@ -350,6 +350,9 @@ main(int argc, const char ** argv)
 
   // Retrieve the camera parameters from the tracker
   tracker.getCameraParameters(cam);
+  
+  // Specify the clipping to use
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING);
 
   // Loop to position the cube
   if (opt_display && opt_click_allowed)
@@ -398,8 +401,7 @@ main(int argc, const char ** argv)
   // Uncomment if you want to compute the covariance matrix.
   // tracker.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work.  
   
-  int iter  = 0;
-  while (iter < 200)
+  while (!reader.end())
   {
     try
     {
@@ -430,7 +432,6 @@ main(int argc, const char ** argv)
       break;
     }
     vpDisplay::flush(I) ;
-    iter++;
   }
   reader.close();
 

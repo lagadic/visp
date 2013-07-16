@@ -263,14 +263,9 @@ template<class PolygonType>
 unsigned int
 vpMbHiddenFaces<PolygonType>::setVisible(const vpHomogeneousMatrix &_cMo)
 {
-  nbVisiblePolygon = 0 ;
-  
-  for(unsigned int i = 0 ; i < Lpol.size() ; i++){
-    if (Lpol[i]->isVisible(_cMo, depthTest)){
-      nbVisiblePolygon++;
-    }
-  }
-  return nbVisiblePolygon ;
+  bool changed = false;
+  nbVisiblePolygon = setVisiblePrivate(_cMo,vpMath::rad(89),vpMath::rad(89),changed);
+  return nbVisiblePolygon;
 }
 
 /*!
@@ -316,7 +311,6 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
   changed = false;
   
   vpTranslationVector cameraPos;
-  std::vector<vpImagePoint> roi;
   
   if(useOgre){
 #ifdef VISP_HAVE_OGRE
@@ -330,14 +324,14 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
   for (unsigned int i = 0; i < Lpol.size(); i += 1){ 
     Lpol[i]->changeFrame(_cMo);
     Lpol[i]->isappearing = false;
-    if(testRoi)
-      roi = Lpol[i]->getRoi(_cam);
     
     if(Lpol[i]->isVisible())
     {
       bool testDisappear = false;
+      unsigned int nbCornerInsidePrev = 0;
       
       if(testRoi){
+       nbCornerInsidePrev = Lpol[i]->getNbCornerInsidePrevImage();
        if(Lpol[i]->getNbCornerInsideImage(_I, _cam) == 0)
           testDisappear = true;
       }
@@ -362,14 +356,17 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
       else {
         nbVisiblePolygon++;
         Lpol[i]->isvisible = true;
+        
+        if(nbCornerInsidePrev > Lpol[i]->getNbCornerInsidePrevImage())
+          changed = true;
       }
     }
     else
     {
       bool testAppear = true;
       
-      if(testRoi)
-       testAppear = (vpMbtPolygon::roiInsideImage(_I, roi));
+      if(testRoi && Lpol[i]->getNbCornerInsideImage(_I, _cam) == 0)
+       testAppear = false;
       
       if(testAppear){
         if(useOgre)
@@ -393,6 +390,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
     }
   }
   
+//   std::cout << "Nombre de polygones visibles: " << nbVisiblePolygon << std::endl;
   return nbVisiblePolygon;
 }
 
