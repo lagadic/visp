@@ -2523,7 +2523,6 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 {
   FILE *file;
   png_byte magic[8];
-  std::cout << "ici\n";
   // Test the filename
   if (filename == '\0')   {
      vpERROR_TRACE("no filename\n");
