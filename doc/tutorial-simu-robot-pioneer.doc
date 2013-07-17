@@ -1,0 +1,240 @@
+/**
+
+\page tutorial-simu-robot-pioneer Tutorial: Visual servo simulation on a pioneer-like unicycle robot
+\tableofcontents
+
+This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
+
+We suppose here that you have at least followed the \ref tutorial-ibvs that may help to understand this tutorial.
+
+\section simu_robot_pioneer_camera Unicycle with a fixed camera
+
+In this section we consider the following unicycle:
+
+\image html pioneer.png
+
+This robot has 2 dof: \f$(v_x, w_z)\f$, the translational and rotational velocities that are applied at point E, considered as the end-effector. A camera is rigidly attached to the robot at point C. The homogeneous transformation between C and E is given by \c cMe. This transformation is constant.
+
+The robot position evolves with respect to a world frame; \c wMe. When a new joint velocity is applied to the robot using setVelocity(), the position of the camera wrt the world frame is also updated; \c wMc.
+
+To control the robot by visual servoing we need to introduce two visual features. If we consider a 3D point at position O as the target, to position the robot relative to the target we can consider the coordinate \f$x\f$ of the point in the image plane and \f$log(Z/Z^*)\f$, with \f$Z\f$ the distance of point in the camera frame, as visual features. The first feature implemented in vpFeaturePoint allows to control \f$w_z\f$, while the second one implemented in vpFeatureDepth \f$v_x\f$. The position of the target in the world frame is given by \c wMo transformation. Thus the current visual feature \f${\bf s} = (x, log(Z/Z^*))^\top\f$ and the desired feature \f${\bf s}^* = (0, 0)^\top\f$.
+
+The code that does the simulation is provided in tutorial-simu-pioneer.cpp and given hereafter.
+
+\include tutorial-simu-pioneer.cpp
+
+We provide now a line by line explanation of the code.
+
+Firstly we define \c cdMo the desired position the camera has to reach wrt the target. \f$t_y=1.2\f$ should be different from zero to be non singular. The camera has to keep a distance of 0.5 meter from the target.
+\code
+  vpHomogeneousMatrix cdMo ;
+  cdMo[1][3] = 1.2; // ty
+  cdMo[2][3] = 0.5; // tz
+\endcode
+
+Secondly we specify \c cMo the initial position of the camera wrt the target.
+
+\code
+  vpHomogeneousMatrix cMo;
+  cMo[0][3] = 0.3;        // tx
+  cMo[1][3] = cdMo[1][3]; // ty
+  cMo[2][3] = 1.;         // tz
+  vpRotationMatrix cRo(0, atan2( cMo[0][3], cMo[1][3]), 0);
+  cMo.insert(cRo);
+\endcode
+
+Thirdly by introducing our simulated robot we can compute the position of the target \c wMo and of the camera \c wMc wrt the world frame.  
+
+\code
+  vpSimulatorPioneer robot ;
+  robot.setSamplingTime(0.04);
+  vpHomogeneousMatrix wMc, wMo;
+  robot.getPosition(wMc);
+  wMo = wMc * cMo;
+\endcode
+
+Once all the frames are defined, we define a 3D point and its coordinates (0,0,0) in the object frame as the target.
+
+\code
+  vpPoint point;
+  point.setWorldCoordinates(0,0,0);
+\endcode
+
+We compute then its coordinates in the camera frame.
+\code
+  point.track(cMo);
+\endcode
+
+A visual servo task is then instanciated. 
+
+\code
+  vpServo task;
+\endcode
+
+With the next line, we specify the king of visual servoing control law that will be used to control our mobile robot. Since the camera is mounted on the robot, we consider the case of an eye-in-hand visual servo. The robot controller provided in vpSimulatorPioneer allows to send \f$(v_x, w_z)\f$ velocities. This controller implements also the robot jacobian \f$\bf ^e J_e\f$ that links the end-effector velocity skew vector \f$\bf v_e\f$ to the control velocities \f$(v_x, w_z)\f$. The also provided velocity twist matrix \f$\bf ^c V_e\f$ allows to transform a velocity skew vector expressed in the end-effector frame in the camera frame.
+\code
+  task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+\endcode
+
+We specify then that the interaction matrix \f$\bf L\f$ is computed from the visual features at the desired position. The constant gain that allows an exponential decrease of the features error is set to 0.2. 
+\code
+  task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
+  task.setLambda(0.2);
+\endcode
+
+To resume, with the previous line, the following control law will be used:
+
+ \f[ 
+\left[\begin{array}{c}
+  v_x \\
+  w_z
+  \end{array}\right]
+ = -0.2 \left( {\bf L_{s^*} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
+
+From the robot position we retrieve the velocity twist transformation \f$\bf ^c V_e\f$ that is then reinjected to the task.
+\code
+  vpVelocityTwistMatrix cVe;
+  cVe = robot.get_cVe();
+  task.set_cVe(cVe);
+\endcode
+
+We do the same with the robot jacobian \f$\bf ^e J_e\f$.
+\code
+  vpMatrix eJe;
+  robot.get_eJe(eJe);
+  task.set_eJe(eJe);
+\endcode
+
+Let us now consider the visual features. 
+We fisrt instantiate the current and desired position of the 3D target point as a visual feature point.
+
+\code
+  vpFeaturePoint s_x, s_xd;
+\endcode
+The current visual feature is directly computed from the perspective projection of the point position in the camera frame.
+ 
+\code
+  vpFeatureBuilder::create(s_x, point);
+\endcode
+The desired position of the feature is set to (0,0). The depth of the point \c cdMo[2][3] is required to compute the feature position.
+\code
+  s_xd.buildFrom(0, 0, cdMo[2][3]);
+\endcode
+
+Finaly only the position of the feature along x is added to the task.
+\code
+task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
+\endcode
+
+We consider now the second visual feature \f$log(Z/Z^*)\f$ that corresponds to the depth of the point. The current and desired features are instantiated with:
+
+\code
+  vpFeatureDepth s_Z, s_Zd;
+\endcode
+
+Then, we get the current \c Z and desired \c Zd depth of the target.
+\code
+  double Z = point.get_Z();
+  double Zd = cdMo[2][3];
+\endcode
+
+From these values, we are able to initialize the current depth feature:
+
+\code
+  s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd));
+\endcode
+
+and also the desired one:
+\code
+  s_Zd.buildFrom(0, 0, Zd, 0);
+\endcode
+
+Finally, we add the feature to the task:
+
+\code
+  task.addFeature(s_Z, s_Zd);
+\endcode
+
+Then comes the material used to plot in real-time the curves that shows the evolution of the velocities, the visual error and the estimation of the depth. The corresponding lines are not explained in this tutorial, but should be easily understand by reading \ref tutorial-plotter.
+
+In the visual servo loop we retrieve the robot position and compute the new position of the camera wrt the target:
+\code
+      robot.getPosition(wMc) ;
+      cMo = wMc.inverse() * wMo;
+\endcode
+
+We compute the coordinates of the point in the new camera frame:
+\code
+      point.track(cMo);
+\endcode
+
+Based on these new coordinates, we update the point visual feature \c s_x:
+\code
+      vpFeatureBuilder::create(s_x, point);
+\endcode
+
+and also the depth visual feature:
+\code
+      Z = point.get_Z() ;
+      s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd)) ;
+\endcode
+
+We also update the task with the values of the velocity twist matrix \c cVe and the robot jacobian \c eJe:
+
+\code
+      robot.get_cVe(cVe);
+      task.set_cVe(cVe);
+      robot.get_eJe(eJe);
+      task.set_eJe(eJe);
+\endcode
+
+After all these updates, we are able to conpute the control law:
+\code
+      vpColVector v = task.computeControlLaw();
+\endcode
+
+Computed velocities are send to the robot:
+\code
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
+\endcode
+
+At the end, we stop the infinite loop when the visual error reaches a value that is considered as small enought:
+\code
+      if (task.getError().sumSquare() < 0.0001) {
+        std::cout << "Reached a small error. We stop the loop... " << std::endl;
+        break;
+      }
+\endcode
+
+\section simu_robot_pioneer_camera_pan Unicycle with a moving camera
+
+In this section we consider the following unicycle:
+
+\image html pioneer-pan.png
+
+This robot has 3 dof: \f$(v_x, w_z, \dot q_{1})\f$, as previously the translational and rotational velocities that are applied here at point M, and \f$\dot q_{1}\f$ the pan of the head. The position of the end-effector E depends on \f$ q_{1}\f$ position. The camera at point C is attached to the robot at point E. The homogeneous transformation between C and E is given by \c cMe. This transformation is constant.
+
+If we consider the same visual features than previously \f${\bf s} = (x, log(Z/Z^*))^\top\f$ and the desired feature \f${\bf s}^* = (0, 0)^\top\f$, we are able to simulate this new robot simply by replacing vpSimulatorPioneer by vpSimulatorPioneerPan. The code is available in tutorial-simu-pioneer-pan.cpp.
+
+You can just notice here that we compute the control law using the current interaction matrix; the one computed with the current visual feature values.
+
+\code
+  vpServo task;
+  task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+  task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
+\endcode
+
+The following control law is used:
+ \f[ 
+\left[\begin{array}{c}
+  v_x \\
+  w_z \\
+  \dot q_{1}
+  \end{array}\right]
+ = -0.2 \left( {\bf L_{s} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
+
+
+
+
+
+*/

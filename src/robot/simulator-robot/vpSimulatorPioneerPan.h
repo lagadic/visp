@@ -100,6 +100,8 @@ int main()
 }
   \endcode
 
+  The usage of this class is also highlighted in \ref tutorial-simu-robot-pioneer.
+
 */
 class VISP_EXPORT vpSimulatorPioneerPan : public vpPioneerPan, public vpRobotSimulator
 {

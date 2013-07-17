@@ -45,7 +45,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 <p>Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS devices.
+- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
@@ -57,6 +57,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
+- \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
 
@@ -96,7 +97,7 @@ scheme, ...</p>
 Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS devices.
+- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
@@ -108,6 +109,7 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
+- \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 
 */
