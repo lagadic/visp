@@ -88,6 +88,8 @@ protected:
   bool hasFarClipping;
   //! Near clipping distance
   double farClipping;
+  //! Fov Clipping
+  bool fovClipping;
     
   typedef enum{
     conf,
@@ -109,6 +111,7 @@ protected:
     angle_disappear,
     near_clipping,
     far_clipping,
+    fov_clipping,
     camera,
     height,
     width,
@@ -146,6 +149,13 @@ public:
     \return farClipping
   */
   inline double getFarClippingDistance() const {return farClipping;}
+  
+  /*!
+    Use FOV clipping
+
+    \return True if yes, False otherwise.
+  */
+  inline bool getFovClipping() const {return fovClipping;}
   
   void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
   

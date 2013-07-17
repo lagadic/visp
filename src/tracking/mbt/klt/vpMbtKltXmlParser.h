@@ -94,6 +94,8 @@ protected:
   bool hasFarClipping;
   //! Near clipping distance
   double farClipping;
+  //! Fov Clipping
+  bool fovClipping;
   //! Camera parameters.
   vpCameraParameters cam;
     
@@ -113,6 +115,7 @@ protected:
     angle_disappear,
     near_clipping,
     far_clipping,
+    fov_clipping,
     camera,
     height,
     width,
@@ -162,6 +165,13 @@ public:
     \return farClipping
   */
   inline double getFarClippingDistance() const {return farClipping;}
+  
+  /*!
+    Use FOV clipping
+
+    \return True if yes, False otherwise.
+  */
+  inline bool getFovClipping() const {return fovClipping;}
   
   /*!
     Get the Harris free parameter.

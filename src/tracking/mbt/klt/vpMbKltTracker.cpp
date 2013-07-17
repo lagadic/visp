@@ -789,6 +789,9 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   
   if(xmlp.hasFarClippingDistance())
     setFarClippingDistance(xmlp.getFarClippingDistance());
+  
+  if(xmlp.getFovClipping())
+    clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING;
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif

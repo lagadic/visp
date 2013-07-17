@@ -58,6 +58,7 @@ vpMbtKltXmlParser::vpMbtKltXmlParser()
 {
   hasNearClipping = false;
   hasFarClipping = false;
+  fovClipping = false;
   init();
 }
 
@@ -91,6 +92,7 @@ vpMbtKltXmlParser::init()
   nodeMap["angle_disappear"] = angle_disappear;
   nodeMap["near_clipping"] = near_clipping;
   nodeMap["far_clipping"] = far_clipping;
+  nodeMap["fov_clipping"] = fov_clipping;
   nodeMap["camera"] = camera;
   nodeMap["height"] = height;
   nodeMap["width"] = width;
@@ -188,6 +190,7 @@ vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
   bool angle_disappear_node = false;
   bool near_clipping_node = false;
   bool far_clipping_node = false;
+  bool fov_clipping_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -211,6 +214,10 @@ vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
           farClipping = xmlReadDoubleChild(doc, dataNode);
           far_clipping_node = true;
           hasFarClipping = true;
+          }break;
+        case fov_clipping:{
+          fovClipping = (bool)xmlReadIntChild(doc, dataNode);
+          fov_clipping_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_camera : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -239,6 +246,15 @@ vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "WARNING: In FACE Node, FAR_CLIPPING Node not specified, no far clipping used" << std::endl;
   else
     std::cout << "face : Far Clipping : "<< farClipping <<std::endl;
+  
+  if(!fov_clipping_node)
+    std::cout << "WARNING: In FACE Node, FOV_CLIPPING Node not specified, no fov clipping used" << std::endl;
+  else{
+    if(fovClipping)
+      std::cout << "face : Fov Clipping : True" <<std::endl;
+    else
+      std::cout << "face : Fov Clipping : False" <<std::endl;
+  }
 }
 
 /*!

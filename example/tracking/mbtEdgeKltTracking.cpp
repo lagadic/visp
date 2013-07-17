@@ -352,6 +352,10 @@ main(int argc, const char ** argv)
   tracker.setAngleAppear( vpMath::rad(65) );
   tracker.setAngleDisappear( vpMath::rad(75) );
   tracker.setMaskBorder(5);
+  
+  // Specify the clipping to use
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
   
   // Display the moving edges, and the Klt points
@@ -362,9 +366,6 @@ main(int argc, const char ** argv)
 
   // Retrieve the camera parameters from the tracker
   tracker.getCameraParameters(cam);
-  
-  // Specify the clipping to use
-  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING);
 
   // Loop to position the cube
   if (opt_display && opt_click_allowed)

@@ -76,6 +76,7 @@ public:
       RIGHT_CLIPPING = 8,
       UP_CLIPPING = 16,
       DOWN_CLIPPING = 32,
+      FOV_CLIPPING = 60,
       ALL_CLIPPING = 63
     } vpMbtPolygonClippingType;
   

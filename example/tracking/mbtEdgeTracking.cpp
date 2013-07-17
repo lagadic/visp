@@ -340,6 +340,10 @@ main(int argc, const char ** argv)
 
   tracker.setCameraParameters(cam);
   tracker.setMovingEdge(me);
+  
+  // Specify the clipping to use
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
   // Display the moving edges, see documentation for the significations of the colour
@@ -350,9 +354,6 @@ main(int argc, const char ** argv)
 
   // Retrieve the camera parameters from the tracker
   tracker.getCameraParameters(cam);
-  
-  // Specify the clipping to use
-  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING);
 
   // Loop to position the cube
   if (opt_display && opt_click_allowed)
