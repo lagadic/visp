@@ -95,7 +95,7 @@ void
 vpMbKltTracker::init(const vpImage<unsigned char>& I)
 {
   if(!modelInitialised){
-    throw vpException(vpException::fatalError, "model not initialised");
+    throw vpException(vpException::fatalError, "model not initialized");
   }
   
  bool reInitialisation = false;
@@ -271,7 +271,7 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& cam)
 /*!
   Use Ogre3D for visibility tests
   
-  \warning This function has to be called before the initialisation of the tracker.
+  \warning This function has to be called before the initialization of the tracker.
   
   \param v : True to use it, False otherwise
 */
@@ -282,7 +282,7 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
   if(useOgre){
 #ifndef VISP_HAVE_OGRE     
     useOgre = false;
-    std::cout << "WARNING: ViSP dosen't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
+    std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
 #endif
   }
 }
@@ -291,7 +291,7 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
   
-  \warning This function has to be called after the initialisation of the tracker.
+  \warning This function has to be called after the initialization of the tracker.
   
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
@@ -312,7 +312,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
     }
     
     if(reInitialisation){
-      std::cout << "WARNING: Visibility changed, must reinitialise to update pose" << std::endl;
+      std::cout << "WARNING: Visibility changed, must reinitialize to update pose" << std::endl;
       cMo = cdMo;
       reinit(I);
     }
@@ -443,7 +443,7 @@ vpMbKltTracker::setClipping(const unsigned int &flags)
   Initialise a new face from the coordinates given in parameter.
 
   \param corners : Coordinates of the corners of the face in the object frame.
-  \param indexFace : index of the face (depends on the vrml file organisation).
+  \param indexFace : index of the face (depends on the vrml file organization).
 */
 void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
@@ -474,7 +474,7 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
 }
 
 /*!
-  Realise the pre tracking operations
+  Realize the pre tracking operations
 
   \param I : The input image.
   \param nbInfos : Size of the features.
@@ -504,13 +504,13 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
 }
 
 /*!
-  Realise the post tracking operations. Mostly visibility tests
+  Realize the post tracking operations. Mostly visibility tests
 */
 bool
 vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 {
-  // # For a better Post Tracking, tracker should reinitialise if so faces don't have enough points but are visible.
-  // # Here we are not doing it for more spee performance.
+  // # For a better Post Tracking, tracker should reinitialize if so faces don't have enough points but are visible.
+  // # Here we are not doing it for more speed performance.
   bool reInitialisation = false;
   
   unsigned int initialNumber = 0;
@@ -559,7 +559,7 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 }
 
 /*!
-  Realise the VVS loop for the tracking
+  Realize the VVS loop for the tracking
 
   \param nbInfos : Size of the features
   \param w : weight of the features after M-Estimation.
@@ -654,7 +654,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 }
 
 /*!
-  Realise the tracking of the object in the image
+  Realize the tracking of the object in the image
 
   \throw vpException : if the tracking is supposed to have failed
 
@@ -918,9 +918,9 @@ vpMbKltTracker::testTracking()
   }
 
   if(nbTotalPoints < 10){
-    std::cerr << "test tracking failed (too few points to realise a good tracking)." << std::endl;
+    std::cerr << "test tracking failed (too few points to realize a good tracking)." << std::endl;
     throw vpTrackingException(vpTrackingException::fatalError,
-          "test tracking failed (too few points to realise a good tracking).");
+          "test tracking failed (too few points to realize a good tracking).");
   }
 }
 

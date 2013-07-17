@@ -93,7 +93,7 @@ class VISP_EXPORT vpRobotPtu46
 
 private:
 
-  /*! \brief No copy contructor allowed.   */
+  /*! \brief No copy constructor allowed.   */
   vpRobotPtu46 (const vpRobotPtu46 & ass);
 
   /*! Object to control. This is a contribution. */

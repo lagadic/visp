@@ -1510,7 +1510,7 @@ vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
 void vpDisplayOpenCV::getImage(vpImage<vpRGBa> &I)
 {
   vpImageConvert::convert(background,I);
-  // shoudl certainly be optimized.
+  // should certainly be optimized.
 }
 
 void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* display )

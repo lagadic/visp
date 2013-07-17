@@ -68,7 +68,7 @@ const double vpAdaptativeGain::DEFAULT_LAMBDA_PENTE  = 1.666;
 /* -------------------------------------------------------------------------- */
 
 /*!
-  \deprecated This class is deprecated. You shoud use
+  \deprecated This class is deprecated. You should use
   vpAdaptive class instead.
   Basic constructor which initializes the parameters with a default value.
 */

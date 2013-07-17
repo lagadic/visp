@@ -536,7 +536,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   \brief Compute the multi-image calibration of effector-camera from R. Tsai and R. Lenz \cite Tsai89a.
 
   Compute extrinsic camera parameters : the constant transformation from
-  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the camera model with or without distorsion.
+  the end-effector to the camera frame \f${^e}{\bf M}_c\f$ considering the camera model with or without distortion.
 
   \param[in] table_cal : Vector of vpCalibration that contains for each index a couple of
   \f${^r}{\bf M}_e\f$ (world to end-effector) and \f${^c}{\bf M}_o\f$ (camera to object)

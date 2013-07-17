@@ -77,15 +77,15 @@
 int main() 
 {
   vpRxyzVector r;         // By default initialized to zero
-  r[0] = vpMath::rad(45); // Rotation arround x set to 45 degres converted in radians
-  r[1] = M_PI;            // Rotation arround y set to PI radians
-  r[2] = 0;               // Rotation arround z set to 0 radians
+  r[0] = vpMath::rad(45); // Rotation around x set to 45 degres converted in radians
+  r[1] = M_PI;            // Rotation around y set to PI radians
+  r[2] = 0;               // Rotation around z set to 0 radians
   
   std::cout << "Rxyz rotation vector: " << r << std::endl;
 
-  double rx = r[1];       // Get the value of the angle arround x axis
-  double ry = r[2];       // Get the value of the angle arround y axis
-  double rz = r[3];       // Get the value of the angle arround z axis
+  double rx = r[1];       // Get the value of the angle around x axis
+  double ry = r[2];       // Get the value of the angle around y axis
+  double rz = r[3];       // Get the value of the angle around z axis
 }
   
   \endcode

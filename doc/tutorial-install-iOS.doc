@@ -61,7 +61,7 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
 \subsection install_iOS_3rdparty Optional 3rd party packages
 
-As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
+As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommend to install the following:
 
 - OpenCV: get OpenCV for iOS Version 2.4.3 or later in http://opencv.org/downloads.html
 
@@ -84,7 +84,7 @@ Open the VISP Project File at the top of your hierarchy in order to configure th
 
 \image html img-getting-started-iOS-project.png
 
-In the Architectures group, edit the following informations in this order :
+In the Architectures group, edit the following information in this order :
 - Base SDK : Latest iOS
 - Supported Platforms : iOS
 - Architectures : Standard (armv7, armv7s)

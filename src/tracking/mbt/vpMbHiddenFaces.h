@@ -289,8 +289,8 @@ vpMbHiddenFaces<PolygonType>::reset()
   Compute the number of visible polygons.
   
   \param _cMo : The pose of the camera
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDisappears : Angle used to test the disparition of a face
+  \param angleAppears : Angle used to test the appearance of a face
+  \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   \param useOgre : True if a Ogre is used to test the visibility, False otherwise
   \param testRoi : True if a face have to be entirely in the image False otherwise
@@ -400,7 +400,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &_cMo,
   \param _I : Image used to check if the region of interest is inside the image.
   \param _cam : Camera parameters.
   \param _cMo : The pose of the camera.
-  \param angle : Angle used to test the apparition and disparition of a face.
+  \param angle : Angle used to test the appearance and disappearance of a face.
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   
   \return Return the number of visible polygons
@@ -419,8 +419,8 @@ vpMbHiddenFaces<PolygonType>::setVisible(const vpImage<unsigned char>& _I, const
   \param _cam : Camera parameters.
   \param _cMo : The pose of the camera
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDisappears : Angle used to test the disparition of a face
+  \param angleAppears : Angle used to test the appearance of a face
+  \param angleDisappears : Angle used to test the disappearance of a face
   
   \return Return the number of visible polygons
 */
@@ -435,8 +435,8 @@ vpMbHiddenFaces<PolygonType>::setVisible(const vpImage<unsigned char>& _I, const
   Compute the number of visible polygons.
   
   \param _cMo : The pose of the camera
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDisappears : Angle used to test the disparition of a face
+  \param angleAppears : Angle used to test the appearance of a face
+  \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   
   \return Return the number of visible polygons
@@ -509,8 +509,8 @@ vpMbHiddenFaces<PolygonType>::displayOgre(const vpHomogeneousMatrix &_cMo)
   \param _cam : Camera parameters.
   \param _cMo : The pose of the camera
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDisappears : Angle used to test the disparition of a face
+  \param angleAppears : Angle used to test the appearance of a face
+  \param angleDisappears : Angle used to test the disappearance of a face
   
   \return Return the number of visible polygons
 */
@@ -525,8 +525,8 @@ vpMbHiddenFaces<PolygonType>::setVisibleOgre(const vpImage<unsigned char>& _I, c
   Compute the number of visible polygons through Ogre3D.
   
   \param _cMo : The pose of the camera
-  \param angleAppears : Angle used to test the apparition of a face
-  \param angleDisappears : Angle used to test the disparition of a face
+  \param angleAppears : Angle used to test the appearance of a face
+  \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   
   \return Return the number of visible polygons

@@ -85,7 +85,7 @@ Then we display the image in the window created previously.
   vpDisplay::flush(I);
 \endcode
 
-We then initialise the moving edges parameters used later by the tracker. From the previous position of a moving edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the contour we keep a space of 10 pixels.
+We then initialize the moving edges parameters used later by the tracker. From the previous position of a moving edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the contour we keep a space of 10 pixels.
 \code
   vpMe me;
   me.setRange(25);
@@ -94,15 +94,15 @@ We then initialise the moving edges parameters used later by the tracker. From t
 \endcode
 
 We then, create an instance of the vpMeTracker class that will track our line.
-We initialise the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track. 
+We initialize the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track. 
 \code
   vpMeLine line;
-  line.setMe(&me);
-  line.setDisplay(vpMeSite::RANGE_RESULT);
+  line.set Me(&me);
+  line.set Display(vpMeSite::RANGE_RESULT);
   line.initTracking(I);
 \endcode
 
-Once the tracker is initialized, we enter in a while loop where we succesively acquire a new image, display it, track the line, display the tracking results and finally flush the overlay drawings in the viewer.
+Once the tracker is initialized, we enter in a while loop where we successively acquire a new image, display it, track the line, display the tracking results and finally flush the overlay drawings in the viewer.
 \code
   while(1) {
     g.acquire(I); 

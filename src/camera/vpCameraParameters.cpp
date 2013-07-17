@@ -253,7 +253,7 @@ vpCameraParameters::init(const vpCameraParameters &c)
 
 /*!
   initialise the camera from a calibration matrix. 
-  Using a calibration matrix leads to a camera without distorsion
+  Using a calibration matrix leads to a camera without distortion
   
   The K matrix in parameters must be like:
   

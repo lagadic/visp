@@ -67,7 +67,7 @@
   A quaternion is defined by four values: \f${\bf q} = (x, y, z, w)\f$.
 
   This class allows to compute a quaternion from a rotation matrix
-  using either vpQuaternionVector(const vpRotationMatrix &) contructor
+  using either vpQuaternionVector(const vpRotationMatrix &) constructor
   or buildFrom() method.
 
   It also defines common operations on a quaternion such as:

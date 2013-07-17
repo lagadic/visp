@@ -542,7 +542,7 @@ IF(USE_YARP)
     SET(VISP_HAVE_YARP_FOUND "yes")  # for ViSP-third-party.txt
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${YARP_INCLUDE_DIRS})
     
-	# Work arround to add Yarp libraries and also third party libraries requested by Yarp 
+  # Work around to add Yarp libraries and also third party libraries requested by Yarp
     LIST(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
     FOREACH(lib ${YARP_LIBRARIES})
  	  #MESSAGE("lib: ${lib}")
@@ -898,7 +898,7 @@ IF(USE_OIS AND USE_OGRE)
   LIST(APPEND VISP_EXTERN_LIBRARIES ${OIS_LIBRARIES})   
   IF(APPLE)
     # With Ogre 1.7.4 and 1.8.1 to be able to link with libOIS.a, Cocoa framework is requested.
-    # This is a work arround since it should come with FindOGRE.cmake
+    # This is a work around since it should come with FindOGRE.cmake
     LIST(APPEND VISP_EXTERN_LIBRARIES "-framework Cocoa")
   ENDIF(APPLE)
 

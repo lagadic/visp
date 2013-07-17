@@ -29,7 +29,7 @@ Then we are modifying some default settings to allow drawings in overlay the con
   blob.setGraphicsThickness(2);
 \endcode
 
-Then we are waiting for a user initialisation throw a mouse click event in the blob to track. 
+Then we are waiting for a user initialization throw a mouse click event in the blob to track. 
 \code
   blob.initTracking(I);
 \endcode

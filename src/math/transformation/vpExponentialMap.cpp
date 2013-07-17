@@ -46,7 +46,7 @@
 /*!
 
   Compute the exponential map. The inverse function is inverse().  The sampling
-  time is here set to 1 second. To use an other value you shoud use
+  time is here set to 1 second. To use an other value you should use
   direct(const vpColVector &, const float &).
 
   \param v : Instantaneous velocity represented by a 6 dimension

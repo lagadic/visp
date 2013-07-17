@@ -272,7 +272,7 @@ vpSimulatorViper850::initDisplay()
 
   The eMc parameters depend on the camera.
   
-  \warning Only perspective projection without distorsion is available!
+  \warning Only perspective projection without distortion is available!
 
   \param tool : Tool to use.
 

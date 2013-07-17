@@ -123,7 +123,7 @@ To synchronize the video decoding with the video framerate, we measure the begin
   double t = vpTime::measureTimeMs();
 \endcode
 
-The synchronisation is done by waiting from the beginning of the iteration the corresponding time expressed in milli seconds by using:
+The synchronization is done by waiting from the beginning of the iteration the corresponding time expressed in milliseconds by using:
 \code
   vpTime::wait(t, 1000. / g.getFramerate());
 \endcode

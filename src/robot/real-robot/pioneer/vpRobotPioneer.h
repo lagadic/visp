@@ -67,7 +67,7 @@ class VISP_EXPORT vpRobotPioneer: public vpRobot, public vpPioneer, public ArRob
 private: /* Not allowed functions. */
 
   /*!
-    Copy contructor not allowed.
+    Copy constructor not allowed.
    */
   vpRobotPioneer(const vpRobotPioneer &robot);
 

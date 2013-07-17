@@ -109,7 +109,7 @@ class VISP_EXPORT vpRobotBiclops
 
 private:
 
-  /*! \brief No copy contructor allowed.   */
+  /*! \brief No copy constructor allowed.   */
   vpRobotBiclops (const vpRobotBiclops & ass);
   void getCameraDisplacement(vpColVector &d);
   void getArticularDisplacement(vpColVector &d);

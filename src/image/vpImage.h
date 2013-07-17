@@ -1423,7 +1423,7 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 }
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-  \deprecated This method is deprecated. You shoud use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
+  \deprecated This method is deprecated. You should use vpImage<Type>::sub(const vpImage<Type> &, vpImage<Type> &) instead.
 
   Operation C = *this - B.
 

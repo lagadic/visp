@@ -83,7 +83,7 @@
   be rejected if the shape is not ellipsoid. To determine if the shape
   is ellipsoid the algorithm consider an inner and outside ellipse.
   Sampled points on these two ellipses should have the right gray levels.
-  Along the inner ellipse the sampled points shoud have gray levels
+  Along the inner ellipse the sampled points should have gray levels
   that are in the gray level minimum and maximum bounds, while
   on the outside ellipse, the gray levels should be out of the gray level
   bounds. To set the percentage of the sample points which should have the right
@@ -435,7 +435,7 @@ public:
   */
   /*!
 
-    \deprecated This method is deprecated. You shoud use
+    \deprecated This method is deprecated. You should use
     getEdges(std::list<vpImagePoint> &) instead.\n \n
     Return the list of all the image points on the dot
     border.

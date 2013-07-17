@@ -27,7 +27,7 @@ The provide hereafter the explanation of the new lines that were introduced.
 \endcode
 Include the header of the vpImageSimulator class that allows to project an image to a given camera position.
 
-Then in the main() function we create an instance of a grey level image that corresponds to the image of the planar target, and then we read the image from the disk. 
+Then in the main() function we create an instance of a gray level image that corresponds to the image of the planar target, and then we read the image from the disk. 
 \code
   vpImage<unsigned char> target; 
   vpImageIo::read(target, "./target_square.pgm");

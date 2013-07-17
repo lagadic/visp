@@ -83,7 +83,7 @@
 
   \brief Class for firewire ieee1394 video devices using libdc1394-1.x api
 
-  \deprecated This class is deprecated. You shoud use
+  \deprecated This class is deprecated. You should use
   vp1394TwoGrabber class instead.
 
   Needs libraw1394-1.2.0 and libdc1394-1.1.0 or more recent versions

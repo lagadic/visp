@@ -104,7 +104,7 @@ int main()
 #endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
   tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
-  tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+  tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the cube.init file.
 
   while(true){
     // Acquire a new image
@@ -150,7 +150,7 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
   tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
 
   while(true){
@@ -200,7 +200,7 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
 
   while(true){
     // acquire a new image
@@ -223,7 +223,7 @@ int main()
 class VISP_EXPORT vpMbEdgeKltTracker: public vpMbKltTracker, public vpMbEdgeTracker
 {
 protected:
-  //! If true, compute the interaction matrix at each iteration of the minimisation. Otherwise, compute it only on the first iteration.
+  //! If true, compute the interaction matrix at each iteration of the minimization. Otherwise, compute it only on the first iteration.
   bool compute_interaction;
   //! The gain of the virtual visual servoing stage.
   double lambda;
@@ -244,10 +244,10 @@ public:
   virtual void    display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                           const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   
-  /*! Return the angle used to test polygons apparition. */
+  /*! Return the angle used to test polygons appearance. */
   virtual inline  double  getAngleAppear() { return vpMbKltTracker::getAngleAppear(); }   
   
-          /*! Return the angle used to test polygons disparition. */
+          /*! Return the angle used to test polygons disappearance. */
   virtual inline  double  getAngleDisappear() { return vpMbKltTracker::getAngleDisappear(); } 
   
           /*!
@@ -290,7 +290,7 @@ public:
           void    resetTracker();
           
           /*!
-            Set the angle used to test polygons apparition.
+            Set the angle used to test polygons appearance.
             If the angle between the normal of the polygon and the line going
             from the camera to the polygon center has a value lower than
             this parameter, the polygon is considered as appearing.
@@ -301,7 +301,7 @@ public:
   virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); }
   
           /*!
-            Set the angle used to test polygons disparition.
+            Set the angle used to test polygons disappearance.
             If the angle between the normal of the polygon and the line going
             from the camera to the polygon center has a value greater than
             this parameter, the polygon is considered as disappearing.
@@ -346,7 +346,7 @@ public:
           /*!
             Use Ogre3D for visibility tests
             
-            \warning This function has to be called before the initialisation of the tracker.
+            \warning This function has to be called before the initialization of the tracker.
             
             \param v : True to use it, False otherwise
           */

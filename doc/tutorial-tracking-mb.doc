@@ -142,7 +142,7 @@ The file \c teabox.cao describes first the vertexes of the box, then the edges t
 
 \image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
 
-Four vertices with their 3D coordinates are then used to initialise the tracker:
+Four vertices with their 3D coordinates are then used to initialize the tracker:
 \code
   tracker.initClick(I, "teabox.init");
 \endcode

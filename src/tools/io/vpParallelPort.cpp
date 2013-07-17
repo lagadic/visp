@@ -63,7 +63,7 @@ static unsigned char vpParallelPortData;
 
 /*!
 
-  Contructor to acces to a parallel port.
+  Constructor to acces to a parallel port.
 
   Open and initialise the parallel port by sending 0 to the data bus.
 

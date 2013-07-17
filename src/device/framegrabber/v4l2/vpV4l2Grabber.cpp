@@ -417,7 +417,7 @@ vpV4l2Grabber::setInput(unsigned input)
 /*!
   Set the decimation factor applied to full resolution images (768x576).
 
-  \exception vpFrameGrabberException::settingError : Wrong scale (shoud be
+  \exception vpFrameGrabberException::settingError : Wrong scale (should be
   between 1 and 16).
 
   \param scale : Decimation factor. If scale is set to 2, 384x288 images will
@@ -433,7 +433,7 @@ vpV4l2Grabber::setScale(unsigned scale)
   {
     close();
 
-    vpERROR_TRACE("Wrong scale %d, scale shoud be between 1 and 16",scale) ;
+    vpERROR_TRACE("Wrong scale %d, scale should be between 1 and 16",scale) ;
     throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				   "Wrong scale") );
   }

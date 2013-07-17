@@ -63,7 +63,7 @@
 
 /*!
 
-  Contructor to acces to the ring light device connected to the parallel port.
+  Constructor to acces to the ring light device connected to the parallel port.
 
   Open and initialise the default parallel port device "/dev/parport0" to
   communicate with the ring light.

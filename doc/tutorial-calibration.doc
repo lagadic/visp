@@ -3,7 +3,7 @@
 \page tutorial-calibration Tutorial: Camera calibration 
 \tableofcontents
 
-This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real worls units (normalized position in meters in the image plane).
+This tutorial focuses on pinhole camera calibration. The goal of the calibration is here to estimate some camera parameters that allows to make the relation between camera's natural units (pixel positions in the image) and real world units (normalized position in meters in the image plane).
 
 \section calibration_intro Introduction
 
@@ -28,12 +28,12 @@ In ViSP we consider two unit conversions:
   \f]
   with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$
 
-In this modelization we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
+In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
 - \f$(u_0, v_0)\f$ are the coordinates of the principal point in pixel;
 - \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
-- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distorsion.
+- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion.
 
-Note that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distorsion. 
+Note that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion. 
 
 The calibration process allows to estimate the values of these parameters. To this end, one of the following calibration grid can be used:
 - a black and white chessboard [<a href="http://www.irisa.fr/lagadic/visp/img/OpenCV_Chessboard.pdf">OpenCV_Chessboard.pdf</a>];
@@ -92,7 +92,7 @@ frame: 3 status: 1
 frame: 4 status: 1
 frame: 5 status: 1
 
-Calibration without distorsion in progress on 5 images...
+Calibration without distortion in progress on 5 images...
 Camera parameters for perspective projection without distortion:
   px = 547.3080992	 py = 546.9825167
   u0 = 324.6299338	 v0 = 229.9072033
@@ -100,7 +100,7 @@ Camera parameters for perspective projection without distortion:
 Global reprojection error: 2.632851934
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distorsion in progress on 5 images...
+Calibration with distortion in progress on 5 images...
 Camera parameters for perspective projection with distortion:
   px = 582.7521622	 py = 580.6586412
   u0 = 326.5736348	 v0 = 214.9591392
@@ -115,7 +115,7 @@ The resulting parameters are also saved in \c ./camera.xml file.
 
 \section calibration_circle Calibration from a circle grid
 
-In this section we consider the ViSP symetric circle grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant form it's horizontal or vertical neighboorgh. We took 6 images called \c circles-02.pgm, \c circles-03.pgm, ..., \c circles-07.pgm. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
+In this section we consider the ViSP symmetric circle grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 6 images called \c circles-02.pgm, \c circles-03.pgm, ..., \c circles-07.pgm. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
 
 \image html img-circles-grid-02.png Snapshot example of the symmetric circles grid used to calibrate the camera.
 
@@ -155,7 +155,7 @@ frame: 5 status: 0
 frame: 6 status: 1
 frame: 7 status: 1
 
-Calibration without distorsion in progress on 6 images...
+Calibration without distortion in progress on 6 images...
 Camera parameters for perspective projection without distortion:
   px = 552.4774691	 py = 544.8066862
   u0 = 308.732533	 v0 = 245.8146982
@@ -163,7 +163,7 @@ Camera parameters for perspective projection without distortion:
 Global reprojection error: 0.2888553796
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distorsion in progress on 6 images...
+Calibration with distortion in progress on 6 images...
 Camera parameters for perspective projection with distortion:
   px = 550.9009948	 py = 543.1425164
   u0 = 309.1726232	 v0 = 245.7667949
@@ -183,7 +183,7 @@ frame: 5 status: 0
 
 \section calibration_undistort Distorsion removal
 
-Once the camera is calibrated, you can remove the distorsion in the images. The following example available in tutorial-undistort.cpp shows how to do it.
+Once the camera is calibrated, you can remove the distortion in the images. The following example available in tutorial-undistort.cpp shows how to do it.
 
 \include tutorial-undistort.cpp
 
@@ -194,7 +194,7 @@ In this example we first load the image \c chessboard.pgm
   vpImageIo::read(I, "chessboard.pgm");
 \endcode
 
-Then we read the camera parameters with distorsion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support.
+Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support.
 
 \code
   vpCameraParameters cam;
@@ -207,7 +207,7 @@ Then we read the camera parameters with distorsion of a camera named "Camera" fr
   }
 \endcode
 
-If vpXmlParserCamera is not available (this may occur if ViSP was not build with \c libxml2), we initialise the camera parameters "by hand" using the following code:
+If vpXmlParserCamera is not available (this may occur if ViSP was not build with \c libxml2), we initialize the camera parameters "by hand" using the following code:
 
 \code
 #else
@@ -215,7 +215,7 @@ If vpXmlParserCamera is not available (this may occur if ViSP was not build with
 #endif
 \endcode
 
-Finaly, we create a new image \c Iud where distorsion is removed. This image is saved in \c chessboard-undistort.pgm.
+Finally, we create a new image \c Iud where distortion is removed. This image is saved in \c chessboard-undistort.pgm.
 
 \code
   vpImage<unsigned char> Iud;
@@ -225,6 +225,6 @@ Finaly, we create a new image \c Iud where distorsion is removed. This image is 
 
 The resulting \c chessboard-undistort.pgm image is the following.
 
-\image html img-chessboard-undistort.png \c chessboard-undistort.pgm image where distorsion was removed.
+\image html img-chessboard-undistort.png \c chessboard-undistort.pgm image where distortion was removed.
 
 */

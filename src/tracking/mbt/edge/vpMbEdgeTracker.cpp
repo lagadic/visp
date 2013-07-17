@@ -164,7 +164,7 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &me)
 /*!
   Use Ogre3D for visibility tests
   
-  \warning This function has to be called before the initialisation of the tracker.
+  \warning This function has to be called before the initialization of the tracker.
   
   \param v : True to use it, False otherwise
 */
@@ -175,7 +175,7 @@ vpMbEdgeTracker::setOgreVisibilityTest(const bool &v)
   if(useOgre){
 #ifndef VISP_HAVE_OGRE     
     useOgre = false;
-    std::cout << "WARNING: ViSP dosen't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
+    std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
 #endif
   }
 }
@@ -938,7 +938,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
   
-  \warning This function has to be called after the initialisation of the tracker.
+  \warning This function has to be called after the initialization of the tracker.
   
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
@@ -1037,7 +1037,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   
   try{
-    std::cout << " *********** Parsing XML for MbEdge Tracker ************ " << std::endl;
+    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
     xmlp.parse(configFile);
   }
   catch(...){
@@ -1265,7 +1265,7 @@ vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
   A line is reinitialized if the 2D line do not match enough with the projected 3D line.
   
   \param I : the image.
-  \param _cMo : the pose of the used to re-initialise the moving edges
+  \param _cMo : the pose of the used to re-initialize the moving edges
 */
 void
 vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
@@ -1315,7 +1315,7 @@ bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold=1e-5)
   \param P1 : The first extremity of the line.
   \param P2 : The second extremity of the line.
   \param polygone : The index of the polygon to which the line belongs.
-  \param name : the optionnal name of the line 
+  \param name : the optional name of the line 
 */
 void
 vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
@@ -1398,7 +1398,7 @@ vpMbEdgeTracker::removeLine(const std::string& name)
   \param P1 : The first extremity of the axis.
   \param P2 : The second extremity of the axis.
   \param r : The radius of the cylinder.
-  \param name : the optionnal name of the cylinder
+  \param name : the optional name of the cylinder
 */
 void
 vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name)
@@ -1595,7 +1595,7 @@ vpMbEdgeTracker::loadModel(const std::string &file)
 /*!
   Add a face to track from its corners (in the object frame). This method is
   called from the loadModel() one to add a face of the object to track. 
-  The initialisation of the face depends on the primitive to track.
+  The initialization of the face depends on the primitive to track.
   
   \param _corners : The vector of corners representing the face.
   \param _indexFace : The index of the face.
@@ -1678,14 +1678,14 @@ vpMbEdgeTracker::resetTracker()
   angleDisappears = vpMath::rad(95);
   clippingFlag = vpMbtPolygon::NO_CLIPPING;
   
-  // reinitialisation of the scales.
+  // reinitialization of the scales.
   this->setScales(scales);
 }
 
 
 
 /*!
-  Re-initialise the model used by the tracker.  
+  Re-initialize the model used by the tracker.  
   
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
@@ -1777,10 +1777,10 @@ vpMbEdgeTracker::getNbPolygon()
 }
 
 /*!
-  Set the scales to use to realise the tracking. The vector of boolean activates
-  or not the scales to se for the object tracking. The first element of the list
+  Set the scales to use to realize the tracking. The vector of boolean activates
+  or not the scales to set for the object tracking. The first element of the list
   correspond to the tracking on the full image, the second element corresponds 
-  to the tracking on an image sbsampled by two. 
+  to the tracking on an image subsampled by two. 
   
   Using multi scale tracking allows to track the object with greater moves. It 
   requires the computation of a pyramid of images, but the total tracking can be
@@ -1789,7 +1789,7 @@ vpMbEdgeTracker::getNbPolygon()
   track is small in the image, because the subsampled scale(s) will have only 
   few points to compute the pose (it could result in a loss of precision). 
   
-  \warning This method must be used before the tracker has been initialised (
+  \warning This method must be used before the tracker has been initialized (
   before the call of the loadConfigFile() or loadModel() methods). 
   
   \warning At least one level must be activated. 
@@ -1907,10 +1907,10 @@ vpMbEdgeTracker::setClipping(const unsigned int &flags)
 
 /*!
   Compute the pyramid of image associated to the image in parameter. The scales 
-  computed are the ones corresponding to the scales  attribte of the class. If 
+  computed are the ones corresponding to the scales  attribute of the class. If 
   OpenCV is detected, the functions used to computed a smoothed pyramid come 
   from OpenCV, otherwise a simple subsampling (no smoothing, no interpolation) 
-  is realised. 
+  is realized. 
   
   \warning The pyramid contains pointers to vpImage. To properly deallocate the
   pyramid. All the element but the first (which is a pointer to the input image)
@@ -2073,11 +2073,11 @@ vpMbEdgeTracker::upScale(const unsigned int _scale)
 }
 
 /*!
-  Re initialise the moving edges associated to a given level. This method is 
-  used to re-initialise the level if the tracking failed on this level but 
-  succedded on the other one. 
+  Re initialize the moving edges associated to a given level. This method is 
+  used to re-initialize the level if the tracking failed on this level but 
+  succeeded on the other one. 
   
-  \param _lvl : The level to re-initialise.
+  \param _lvl : The level to re-initialize.
 */
 void 
 vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)

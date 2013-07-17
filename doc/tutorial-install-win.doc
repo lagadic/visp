@@ -32,7 +32,7 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.7.1-build.
 
-- Lauch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
 
 \image html img-cmake-win-1.jpg 
 
@@ -67,7 +67,7 @@ ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.
 
 \subsubsection install_win_3rdparty_opencv OpenCV 3rd party
 
-- We recommand to install OpenCV. The simplest is to install OpenCV pre-build libraries by following <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a>. In our case we install \c OpenCV-2.4.5.exe pre-build SDK in \c C:\\OpenCV. The installer copied all the material in \c C:\\OpenCV\\opencv.
+- We recommend to install OpenCV. The simplest is to install OpenCV pre-build libraries by following <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a>. In our case we install \c OpenCV-2.4.5.exe pre-build SDK in \c C:\\OpenCV. The installer copied all the material in \c C:\\OpenCV\\opencv.
 
 - Now in order that ViSP detects OpenCV you have to set \c OPENCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
 \code
@@ -88,7 +88,7 @@ setx OPENCV_DIR C:\OpenCV\opencv\build
 
 \subsubsection install_win_3rdparty_ogre Ogre3D 3rd party
 
-- We recommand also to install Ogre3D. As given in <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">ViSP third party pages</a>, follow the steps described on <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">Ogre Wiki</a>. In our case we install <a href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812">DirectX SDK (June 2010)</a> and the latest <a href="http://www.ogre3d.org/download/sdk">Ogre SDK</a>; OGRE 1.9 RC 1 SDK for Visual C++ .Net 2012 (64-bit) in \c C:/ViSP/OgreSDK. You should adapt the versions that match your environment.
+- We recommend also to install Ogre3D. As given in <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">ViSP third party pages</a>, follow the steps described on <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">Ogre Wiki</a>. In our case we install <a href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812">DirectX SDK (June 2010)</a> and the latest <a href="http://www.ogre3d.org/download/sdk">Ogre SDK</a>; OGRE 1.9 RC 1 SDK for Visual C++ .Net 2012 (64-bit) in \c C:/ViSP/OgreSDK. You should adapt the versions that match your environment.
 
 - After Ogre3D installation you should get something similar to the next snapshot where Ogre3D SDK is installed in \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable.
 \image html img-win-ogre-dir.jpg 
@@ -123,7 +123,7 @@ setx OPENCV_DIR C:\OpenCV\opencv\build
 
 \section install_win_build Building ViSP from source
 
-- To build ViSP just double click on \c C:/ViSP/ViSP-2.7.1-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shnow in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+- To build ViSP just double click on \c C:/ViSP/ViSP-2.7.1-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
 
 \image html img-msvc-1.jpg 
 
@@ -147,13 +147,13 @@ setx OPENCV_DIR C:\OpenCV\opencv\build
 
 - This ends ViSP installation with \c Debug configuration.
 
-- We recommand now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
+- We recommend now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
 
 \image html img-msvc-release.jpg 
 
 - Now, as previously, build and install ViSP again.
 
-- At the end, in \c C:/ViSP/ViSP-install/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug informations, the other one optimized with release compiler options.
+- At the end, in \c C:/ViSP/ViSP-install/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
 
 \image html img-msvc-install-end.jpg 
 
@@ -180,7 +180,7 @@ Some ViSP examples and tests require data set (images, models). These data set i
 setx VISP_INPUT_IMAGE_PATH C:\ViSP
 \endcode
 
-- It is also possible to run the examples and tests without positionning \c VISP_INPUT_IMAGE_PATH by using command line option \c -i \<\c path \c to \c the \c data \c set\>. If you want to run \c \<binary dir\>/example/device/display/Debug/displayGDI.exe, open a command window, enter in the right folder, and run: 
+- It is also possible to run the examples and tests without positioning \c VISP_INPUT_IMAGE_PATH by using command line option \c -i \<\c path \c to \c the \c data \c set\>. If you want to run \c \<binary dir\>/example/device/display/Debug/displayGDI.exe, open a command window, enter in the right folder, and run: 
 \code
 displayGDI.exe -i C:\ViSP
 \endcode

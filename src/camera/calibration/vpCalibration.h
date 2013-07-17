@@ -82,10 +82,10 @@ public:
     Minimization algorithm use to estimate the camera parameters.
   */
   typedef enum{
-    CALIB_LAGRANGE,   /*!< Lagrange approach without estimation of the distorsion. */
-    CALIB_VIRTUAL_VS, /*!< Virtual visual servoing approach without estimation of the distorsion (results are similar to Lowe approach). */
+    CALIB_LAGRANGE,   /*!< Lagrange approach without estimation of the distortion. */
+    CALIB_VIRTUAL_VS, /*!< Virtual visual servoing approach without estimation of the distortion (results are similar to Lowe approach). */
     CALIB_VIRTUAL_VS_DIST, /*!< Virtual visual servoing approach with estimation of the distortion. */
-    CALIB_LAGRANGE_VIRTUAL_VS, /*!< Lagrange approach first, than virtual visual servoing approach,  without estimation of the distorsion. */
+    CALIB_LAGRANGE_VIRTUAL_VS, /*!< Lagrange approach first, than virtual visual servoing approach,  without estimation of the distortion. */
     CALIB_LAGRANGE_VIRTUAL_VS_DIST, /*!< Lagrange approach first, than virtual visual servoing approach, with estimation of the distortion. */
   } vpCalibrationMethodType ;
 

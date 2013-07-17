@@ -336,7 +336,7 @@ void vpHomography::DLT(unsigned int n,
     for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
-      vpTRACE(" Rank is : %d, shoud be 8", rank);
+      vpTRACE(" Rank is : %d, should be 8", rank);
       throw(vpMatrixException(vpMatrixException::rankDeficient,
 			      "\n\t\t Matrix rank is deficient")) ;
     }

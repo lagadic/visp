@@ -65,7 +65,7 @@ vpMbEdgeKltTracker::~vpMbEdgeKltTracker()
 }
 
 /*!
-  Initialisation of the tracker using a known initial pose.
+  Initialization of the tracker using a known initial pose.
   The 3D model must first have been loaded.
 
   \param I : Input image.
@@ -105,7 +105,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
   
-  \warning This function has to be called after the initialisation of the tracker.
+  \warning This function has to be called after the initialization of the tracker.
   
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
@@ -117,7 +117,7 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     vpMbKltTracker::setPose(I, cdMo);
     
     vpMbtDistanceLine *l;
-    lines[scaleLevel].front() ;
+    lines[scale Level].front() ;
     for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
       l = *it;
       if(l->meline != NULL){
@@ -296,7 +296,7 @@ vpMbEdgeKltTracker::loadModel(const std::string& modelFile)
 }
 
 /*!
-  Realise the post tracking operations. Mostly visibility tests
+  Realize the post tracking operations. Mostly visibility tests
 */
 bool
 vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
@@ -349,11 +349,11 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
 /*!
   post tracking computation. Compute the mean weight of a line and, check the
   weight associated to a site (to eventually remove an outlier) and eventually
-  set a flag to re-initialise the line.
+  set a flag to re-initialize the line.
 
   \warning level parameter not yet implemented.
 
-  \param w : Vector of weight associated to the residu.
+  \param w : Vector of weight associated to the residual.
   \param lvl : Optional parameter to specify the level to track.
 */
 void
@@ -462,7 +462,7 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 }
 
 /*!
-  Realise the VVS loop for the tracking
+  Realize the VVS loop for the tracking
 
   \param I : current image.
   \param nbInfos : Size of the features.
@@ -641,7 +641,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
 }
 
 /*!
-  Realise the tracking of the object in the image.
+  Realize the tracking of the object in the image.
 
   \throw vpException : if the tracking is supposed to have failed.
 
@@ -834,7 +834,7 @@ vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& cam)
   Initialise a new face from the coordinates given in parameter.
 
   \param corners : Coordinates of the corners of the face in the object frame.
-  \param indexFace : index of the face (depends on the vrml file organisation).
+  \param indexFace : index of the face (depends on the vrml file organization).
 */
 void
 vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)

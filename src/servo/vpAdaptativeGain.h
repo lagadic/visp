@@ -61,7 +61,7 @@ class vpColVector;
   
   \brief Adaptative gain computation.
 
-  \deprecated This class is deprecated. You shoud use
+  \deprecated This class is deprecated. You should use
   vpAdaptive class instead.
 
   The formula used to compute the gain is the following :

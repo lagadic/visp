@@ -343,7 +343,7 @@ void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
   \param cam : Parameters of the camera causing distortion.
 
   \param undistI : Undistorted output image. The size of this image
-  will be the same than the input image \e I. If the distorsion
+  will be the same than the input image \e I. If the distortion
   parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
   just a copy of \e I.
 

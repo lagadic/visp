@@ -379,7 +379,7 @@ bool vpDot::connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int 
 
   Compute the center of gravity (COG) of the dot using connex
   components.  We assume the origin pixel (u, v) is in the dot. If
-  not, the dot is seach arround this origin using a spiral search.
+  not, the dot is seach around this origin using a spiral search.
 
   \param I : Image to process.
   \param u : Starting pixel coordinate along the columns from where the

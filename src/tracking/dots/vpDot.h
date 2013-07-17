@@ -68,10 +68,10 @@
 
   \ingroup TrackingImageBasic
 
-  \brief This tracker is meant to track a dot (connex pixels with same
+  \brief This tracker is meant to track a dot (connected pixels with same
   gray level) on a vpImage.
 
-  The underground algorithm is based on a binarisation of the image
+  The underground algorithm is based on a binarization of the image
   and a connex component segmentation to determine the dot
   characteristics (location, moments, size...).
 
@@ -430,7 +430,7 @@ public:
   */
   /*!
 
-    \deprecated This method is deprecated since the naming is not representative regarding to its funtionnality. \n
+    \deprecated This method is deprecated since the naming is not representative regarding to its functionality. \n
     Previously it returned all the points inside the dot. To get the equivalent, use getConnexities(). \n \n
     If you rather want to get the points on the dot border use getEdges(). 
 
@@ -444,7 +444,7 @@ public:
   
   /*!
 
-    \deprecated This method is deprecated. You shoud use
+    \deprecated This method is deprecated. You should use
     getEdges(std::list<vpImagePoint> &) instead.\n \n
     Return the list of all the image points on the dot
     border.

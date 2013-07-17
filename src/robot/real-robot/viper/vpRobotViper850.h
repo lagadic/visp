@@ -109,9 +109,9 @@ int main()
 
   This initialize the robot kinematics with the \f$^e{\bf M}_c\f$
   extrinsic camera parameters obtained with a projection model without
-  distorsion. To set the robot kinematics with the \f$^e{\bf M}_c\f$
+  distortion. To set the robot kinematics with the \f$^e{\bf M}_c\f$
   transformation obtained with a camera perspective model including
-  distorsion you need to initialize the robot with:
+  distortion you need to initialize the robot with:
 
   \code
 #include <visp/vpConfig.h>
@@ -123,7 +123,7 @@ int main()
   vpRobotViper850 robot;
 
   // Set the extrinsic camera parameters obtained with a perpective 
-  // projection model including a distorsion parameter
+  // projection model including a distortion parameter
   robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
 	     vpCameraParameters::perspectiveProjWithDistortion);
 #endif
@@ -154,7 +154,7 @@ int main()
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
   // In cam, you get the intrinsic parameters of the projection model 
-  // with distorsion.  
+  // with distortion.
 #endif
 }
   \endcode
@@ -298,7 +298,7 @@ public:  /* Constantes */
 private: /* Not allowed functions. */
 
   /*!
-    Copy contructor not allowed.
+    Copy constructor not allowed.
    */
   vpRobotViper850 (const vpRobotViper850 & robot);
 

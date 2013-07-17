@@ -102,7 +102,7 @@ void vpDot2::init()
 }
 
 /*!
-  Default contructor. Just do basic default initialisation.
+  Default constructor. Just do basic default initialization.
 */
 vpDot2::vpDot2() : vpTracker()
 {
@@ -111,7 +111,7 @@ vpDot2::vpDot2() : vpTracker()
 
 /*!
 
-  Constructor initialise the coordinates of the gravity center of the dot to
+  Constructor initialize the coordinates of the gravity center of the dot to
   the image point \e ip.  Rest is the same as the default constructor.
 
   \param ip : An image point with sub-pixel coordinates.
@@ -125,7 +125,7 @@ vpDot2::vpDot2(const vpImagePoint &ip) : vpTracker()
 }
 
 /*!
-  Copy contructor.
+  Copy constructor.
 */
 vpDot2::vpDot2(const vpDot2& twinDot ) : vpTracker()
 {
@@ -229,8 +229,8 @@ void vpDot2::display(const vpImage<unsigned char>& I, vpColor color,
 
   If no valid dot was found in the window, return an exception.
 
-  \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can fail if the following characteristics are
+  \exception vpTrackingException::featureLostError : If the dot initialization
+  failed. The initialization can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -293,8 +293,8 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I, unsigned int size)
 
   If no valid dot was found in the window, return an exception.
 
-  \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can fail if the following characteristics are
+  \exception vpTrackingException::featureLostError : If the dot initialization
+  failed. The initialization can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -364,8 +364,8 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I,
 
   If no valid dot was found in the window, return an exception.
 
-  \exception vpTrackingException::featureLostError : If the dot initialisation
-  failed. The initialisation can fail if the following characteristics are
+  \exception vpTrackingException::featureLostError : If the dot initialization
+  failed. The initialization can fail if the following characteristics are
   not valid;
   - The gray level is between gray level min and gray level max.
 
@@ -474,14 +474,14 @@ void vpDot2::track(const vpImage<unsigned char> &I)
   }
 
   if (! found) {
-    //     vpDEBUG_TRACE(0, "Search the dot in a bigest window around the last position");
+    //     vpDEBUG_TRACE(0, "Search the dot in a biggest window around the last position");
     //     vpDEBUG_TRACE(0, "Bad computed dot: ");
     //     vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
     //     vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
 
     // if estimation was wrong (get an error tracking), look for the dot
     // closest from the estimation,
-    // i.e. search for dots in an a region of interest arround the this dot and get the first
+    // i.e. search for dots in an a region of interest around the this dot and get the first
     // element in the area.
 
     // first get the size of the search window from the dot size
@@ -783,7 +783,7 @@ void vpDot2::setArea( const double & area )
 
   \param grayLevelPrecision : It is a double precision float which value is in ]0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
-  - Values lower or equal to 0 are brought back to an epsion>0
+  - Values lower or equal to 0 are brought back to an epsilon>0
   - Values higher than  1 are brought back to 1
   If the initial gray level is I, the gray levels of the dot will be between :
   \f$Imin=255*\big((\frac{I}{255})^{{\gamma}^{-1}}-(1-grayLevelPrecision)\big)^{\gamma}\f$
@@ -848,11 +848,11 @@ void vpDot2::setSizePrecision( const double & sizePrecision )
   - Values higher than  1 are brought back to 1.
   To track a non ellipsoid shape use setEllipsoidShapePrecision(0).
 
-  The following example show how to track a blob with a hight constaint on an ellipsoid shape.
+  The following example show how to track a blob with a height constraint on an ellipsoid shape.
   The tracking will fail if the shape is not ellipsoid.
   \code
   vpDot2 dot;
-  dot.setEllipsoidShapePrecision(0.9); // to track a blob with a hight constraint attendee on a circle shape
+  dot.setEllipsoidShapePrecision(0.9); // to track a blob with a height constraint attendee on a circle shape
   ...
   dot.track();
   \endcode
@@ -1085,7 +1085,7 @@ vpList<vpDot2>* vpDot2::searchDotsInArea(const vpImage<unsigned char>& I)
         // next grid intersection.
         if( !hasGoodLevel(I, u, v) ) continue;
 
-        // Test if an other germ is inside the bounding box of a dot previoulsy
+        // Test if an other germ is inside the bounding box of a dot previously
         // detected
         bool good_germ = true;
         niceDotsVector->front();
@@ -1669,11 +1669,11 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
     for( u=area_u_min ; u<area_u_max ; u=u+gridWidth )
     {
       // if the pixel we're in doesn't have the right color (outside the
-      // graylevel interval), no need to check futher, just get to the
+      // graylevel interval), no need to check further, just get to the
       // next grid intersection.
       if( !hasGoodLevel(I, u, v) ) continue;
 
-      // Test if an other germ is inside the bounding box of a dot previoulsy
+      // Test if an other germ is inside the bounding box of a dot previously
       // detected
       bool good_germ = true;
 
@@ -1977,7 +1977,7 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
   //
   // Now we can proceed to more advanced (and costy) checks.
   // First check there is a white (>level) elipse within dot
-  // Then check the dot is surrounded by a black elipse.
+  // Then check the dot is surrounded by a black ellipse.
   //
   int nb_point_to_test = 20; // Nb points to test on inner and outside ellipsoid
   int nb_bad_points = 0;
@@ -2147,7 +2147,7 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char>& I,
 /*!
 
   Check if a the pixel of coordinates (u, v) in the image has a good level to
-  be a dark zone arround the dot.
+  be a dark zone around the dot.
 
   \param I : Image.
   \param u : Pixel to test.
@@ -2192,7 +2192,7 @@ vpDot2* vpDot2::getInstance()
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
 
-  \deprecated This method is deprecated. You shoud use
+  \deprecated This method is deprecated. You should use
   getFreemanChain(std::list<unsigned int> &) instead.\n \n
   Returns the list of Freeman chain code used to turn around the dot
   counterclockwise.
@@ -2252,7 +2252,7 @@ void vpDot2::getFreemanChain(std::list<unsigned int> &freeman_chain)
   Compute all the parameters of the dot (center, width, height, surface,
   inertia moments...).
 
-  This is done the followin way:
+  This is done the following way:
 
   - First, we check the point (_u, _v) passed in has the right level in the
     image

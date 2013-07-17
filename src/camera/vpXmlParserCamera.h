@@ -114,7 +114,7 @@ int main()
 #ifdef VISP_HAVE_XML2
   vpXmlParserCamera p; // Create a XML parser
   vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
-  // Use a perspective projection model without distorsion
+  // Use a perspective projection model without distortion
   projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
   // Parse the xml file "myXmlFile.xml" to find the intrinsic camera 
   // parameters of the camera named "myCamera" for the image sizes 640x480,
@@ -127,7 +127,7 @@ int main()
   // cout the parameters
   cam.printParameters();
 
-  // Get the camera parameters for the model without distorsion
+  // Get the camera parameters for the model without distortion
   double px = cam.get_px();
   double py = cam.get_py();
   double u0 = cam.get_u0();
@@ -168,7 +168,7 @@ int main()
   double px = 563.2;
   double py = 564.1;
   
-  // Set the camera parameters for a model without distorsion
+  // Set the camera parameters for a model without distortion
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
 #ifdef VISP_HAVE_XML2

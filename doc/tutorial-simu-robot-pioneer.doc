@@ -65,7 +65,7 @@ We compute then its coordinates in the camera frame.
   point.track(cMo);
 \endcode
 
-A visual servo task is then instanciated. 
+A visual servo task is then instantiated. 
 
 \code
   vpServo task;
@@ -91,7 +91,7 @@ To resume, with the previous line, the following control law will be used:
   \end{array}\right]
  = -0.2 \left( {\bf L_{s^*} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
 
-From the robot position we retrieve the velocity twist transformation \f$\bf ^c V_e\f$ that is then reinjected to the task.
+From the robot position we retrieve the velocity twist transformation \f$\bf ^c V_e\f$ that is then re-injected to the task.
 \code
   vpVelocityTwistMatrix cVe;
   cVe = robot.get_cVe();
@@ -106,7 +106,7 @@ We do the same with the robot jacobian \f$\bf ^e J_e\f$.
 \endcode
 
 Let us now consider the visual features. 
-We fisrt instantiate the current and desired position of the 3D target point as a visual feature point.
+We first instantiate the current and desired position of the 3D target point as a visual feature point.
 
 \code
   vpFeaturePoint s_x, s_xd;
@@ -121,7 +121,7 @@ The desired position of the feature is set to (0,0). The depth of the point \c c
   s_xd.buildFrom(0, 0, cdMo[2][3]);
 \endcode
 
-Finaly only the position of the feature along x is added to the task.
+Finally only the position of the feature along x is added to the task.
 \code
 task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
 \endcode
@@ -188,7 +188,7 @@ We also update the task with the values of the velocity twist matrix \c cVe and 
       task.set_eJe(eJe);
 \endcode
 
-After all these updates, we are able to conpute the control law:
+After all these updates, we are able to compute the control law:
 \code
       vpColVector v = task.computeControlLaw();
 \endcode
@@ -198,7 +198,7 @@ Computed velocities are send to the robot:
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
 \endcode
 
-At the end, we stop the infinite loop when the visual error reaches a value that is considered as small enought:
+At the end, we stop the infinite loop when the visual error reaches a value that is considered as small enough:
 \code
       if (task.getError().sumSquare() < 0.0001) {
         std::cout << "Reached a small error. We stop the loop... " << std::endl;
@@ -232,9 +232,5 @@ The following control law is used:
   \dot q_{1}
   \end{array}\right]
  = -0.2 \left( {\bf L_{s} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
-
-
-
-
 
 */

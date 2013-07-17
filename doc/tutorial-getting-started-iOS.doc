@@ -47,7 +47,7 @@ Here is the detailed explanation of the source, line by line :
 #include <visp/vpHomography.h>
 #include <visp/vpMeterPixelConversion.h>
 \endcode
-Include all the headers for Homography computation in ViewController.mm.
+Include all the headers for homography computation in ViewController.mm.
 
 \code
 #pragma mark - ViSP Methods
@@ -77,7 +77,6 @@ Include all the headers for Homography computation in ViewController.mm.
         oP[i].project(bMo);
         xb[i] = oP[i].get_x();
         yb[i] = oP[i].get_y();
-    
     }
     
     vpHomography aHb ;
@@ -91,29 +90,21 @@ Include all the headers for Homography computation in ViewController.mm.
     vpTranslationVector atb;
     vpColVector n;
     
-    
     // Compute the 3D transformation
     aHb.computeDisplacement(aRb, atb, n);
     
     std::cout << "atb: " << atb.t() << std::endl;
     
-    
     // Compute coordinates in pixels of point 3
-    
     double ua, va, ub, vb;
-    
     vpCameraParameters cam;
-    
     vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], ub, vb);
     vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], ua, va);
-    
     
     std::cout << "Point 3 in pixels in frame b: " << "(" << ub << ", " << vb << ")" << std::endl;
     std::cout << "Point 3 in pixels in frame a: " << "(" << ua << ", " << va << ")" << std::endl;
     
     // Estimate the position in pixel of point 3 from the homography
-    
-    
     vpMatrix H = cam.get_K() * aHb * cam.get_K_inverse();
     
     double z = ub * H[2][0] + vb * H[2][1] + H[2][2];

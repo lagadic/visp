@@ -73,7 +73,7 @@
   The main intrinsic camera parameters are \f$(p_x, p_y)\f$ the ratio
   between the focal length and the size of a pixel, and \f$(u_0,
   v_0)\f$ the coordinates of the principal point in pixel. The lens
-  distorsion can also be considered by two additional parameters
+  distortion can also be considered by two additional parameters
   \f$(k_{ud}, k_{du})\f$.
 
   <b>1. Camera parameters for a perspective projection without distortion model</b>

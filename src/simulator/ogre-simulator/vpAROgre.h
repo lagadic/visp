@@ -211,7 +211,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   void setScale(const std::string &name, const float factorx, const float factory, const float factorz);
   
   /*!
-    Enable/Disable the apparition of the config dialog on startup.
+    Enable/Disable the appearance of the config dialog on startup.
   
     \warning To be effective, this method must be called before the init() one. 
   

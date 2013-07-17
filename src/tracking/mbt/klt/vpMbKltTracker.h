@@ -105,7 +105,7 @@ int main()
 #endif
   tracker.getCameraParameters(cam);   // Get the camera parameters used by the tracker (from the configuration file).
   tracker.loadModel("cube.cao");      // Load the 3d model in cao format. No 3rd party library is required
-  tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points containned in the cube.init file.
+  tracker.initClick(I, "cube.init");  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the cube.init file.
 
   while(true){
     // Acquire a new image
@@ -151,8 +151,8 @@ int main()
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
-  tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+  tracker.initFromPose(I, cMo); // initialize the tracker with the given pose.
 
   while(true){
     // acquire a new image
@@ -201,7 +201,7 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
 #endif
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coi is required, if coin is not installed .cao file can be used.
+  tracker.loadModel("cube.cao"); // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
 
   while(true){
     // acquire a new image
@@ -228,13 +228,13 @@ protected:
   IplImage* cur;
   //! Initial pose.
   vpHomogeneousMatrix c0Mo;
-  //! Angle used to detect a face apparition
+  //! Angle used to detect a face appearance
   double angleAppears;
-  //! Angle used to detect a face disparition
+  //! Angle used to detect a face disappearance
   double angleDisappears;
-  //! If true, compute the interaction matrix at each iteration of the minimisation. Otherwise, compute it only on the first iteration.
+  //! If true, compute the interaction matrix at each iteration of the minimization. Otherwise, compute it only on the first iteration.
   bool compute_interaction;
-  //! Flag to specify whether the init method is called the first or not (specific calls to realise in this case).
+  //! Flag to specify whether the init method is called the first or not (specific calls to realize in this case).
   bool firstInitialisation;
   //! Erosion of the mask
   unsigned int maskBorder;
@@ -282,10 +282,10 @@ public:
   virtual void            loadConfigFile(const std::string& configFile);
           void            loadConfigFile(const char* configFile);
           
-          /*! Return the angle used to test polygons apparition. */
+          /*! Return the angle used to test polygons appearance. */
   virtual inline  double  getAngleAppear() { return angleAppears; }   
   
-          /*! Return the angle used to test polygons disparition. */
+          /*! Return the angle used to test polygons disappearance. */
   virtual inline  double  getAngleDisappear() { return angleDisappears; } 
   
           /*!
@@ -370,7 +370,7 @@ public:
           void            resetTracker();
           
           /*! 
-            Set the angle used to test polygons apparition. 
+            Set the angle used to test polygons appearance.
             If the angle between the normal of the polygon and the line going
             from the camera to the polygon center has a value lower than
             this parameter, the polygon is considered as appearing.
@@ -381,7 +381,7 @@ public:
   virtual inline  void    setAngleAppear(const double &a) { angleAppears = a; }   
   
           /*! 
-            Set the angle used to test polygons disparition. 
+            Set the angle used to test polygons disappearance.
             If the angle between the normal of the polygon and the line going
             from the camera to the polygon center has a value greater than
             this parameter, the polygon is considered as disappearing.

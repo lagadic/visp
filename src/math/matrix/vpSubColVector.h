@@ -77,9 +77,9 @@ class VISP_EXPORT vpSubColVector : public vpColVector {
       
   public:
 
-    //!Default contructor
+    //!Default constructor
     vpSubColVector();
-    //!Contructor
+    //!Constructor
     vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
     //!Destructor
     ~vpSubColVector();

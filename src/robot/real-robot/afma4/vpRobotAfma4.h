@@ -187,7 +187,7 @@ class VISP_EXPORT vpRobotAfma4
 private: /* Not allowed functions. */
 
   /*!
-    Copy contructor not allowed.
+    Copy constructor not allowed.
    */
   vpRobotAfma4 (const vpRobotAfma4 & robot);
 
