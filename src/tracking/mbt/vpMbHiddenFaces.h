@@ -67,9 +67,8 @@ template<class PolygonType = vpMbtPolygon>
 class vpMbHiddenFaces
 {
   private:
+  //! List of polygons
   std::vector<PolygonType *> Lpol ;
-  //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
-  bool depthTest;
   //! Number of visible polygon
   unsigned int nbVisiblePolygon;
   
@@ -108,13 +107,6 @@ class vpMbHiddenFaces
 #ifdef VISP_HAVE_OGRE
   void            initOgre(vpCameraParameters _cam = vpCameraParameters());
 #endif
-  
-    /*!
-      Get the depthTest value.
-
-      \return true if all the points of a polygon has to be in front of the camera, false otherwise.
-    */
-    bool          getDepthTest(){return depthTest;}
     
     /*!
       get the number of visible polygons.
@@ -177,13 +169,6 @@ class vpMbHiddenFaces
     void          setBackgroundSizeOgre(const unsigned int &h, const unsigned int &w) { ogreBackground.resize(h,w); }
 #endif
     
-    /*!
-      Set the depthTest value.
-
-      \param d : New value.
-    */
-    void          setDepthTest(const bool &d){depthTest = d;} 
-    unsigned int  setVisible(const vpHomogeneousMatrix &_cMo) ;
     unsigned int  setVisible(const vpImage<unsigned char>& _I, const vpCameraParameters &_cam, const vpHomogeneousMatrix &_cMo, const double &angle, bool &changed) ;
     unsigned int  setVisible(const vpImage<unsigned char>& _I, const vpCameraParameters &_cam, const vpHomogeneousMatrix &_cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
     unsigned int  setVisible(const vpHomogeneousMatrix &_cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
@@ -198,19 +183,48 @@ class vpMbHiddenFaces
     \return Size of the list.
   */
   inline unsigned int            size(){ return (unsigned int)Lpol.size(); }
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
+  bool depthTest;
+  
+  /*!
+    @name Deprecated functions
+  */
+  /*!
+    \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n 
+    
+    Get the depthTest value.
+
+    \return true if all the points of a polygon has to be in front of the camera, false otherwise.
+  */
+  vp_deprecated bool getDepthTest(){return depthTest;}
+  /*!
+    \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n
+    
+    Set the depthTest value.
+
+    \param d : New value.
+  */
+  vp_deprecated void setDepthTest(const bool &d){depthTest = d;} 
+  unsigned int setVisible(const vpHomogeneousMatrix &_cMo) ;
+#endif
 } ;
 
 /*!
   Basic constructor.
 */
 template<class PolygonType>
-vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): depthTest(false), nbVisiblePolygon(0)
+vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): nbVisiblePolygon(0)
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640);
+#endif
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  depthTest = false;
 #endif
 }
 
@@ -250,22 +264,6 @@ vpMbHiddenFaces<PolygonType>::addPolygon(PolygonType *p)
   for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];
   Lpol.push_back(p_new);
-}
-
-/*!
-  Compute the number of visible polygons.
-  
-  \param _cMo : The pose of the camera
-  
-  \return Return the number of visible polygons
-*/
-template<class PolygonType>
-unsigned int
-vpMbHiddenFaces<PolygonType>::setVisible(const vpHomogeneousMatrix &_cMo)
-{
-  bool changed = false;
-  nbVisiblePolygon = setVisiblePrivate(_cMo,vpMath::rad(89),vpMath::rad(89),changed);
-  return nbVisiblePolygon;
 }
 
 /*!
@@ -626,5 +624,30 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
 }
 #endif //VISP_HAVE_OGRE
 
-#endif
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n
+  
+  Compute the number of visible polygons.
+  
+  \param _cMo : The pose of the camera
+  
+  \return Return the number of visible polygons
+*/
+template<class PolygonType>
+unsigned int
+vpMbHiddenFaces<PolygonType>::setVisible(const vpHomogeneousMatrix &_cMo)
+{
+  nbVisiblePolygon = 0 ;
+  
+  for(unsigned int i = 0 ; i < Lpol.size() ; i++){
+    if (Lpol[i]->isVisible(_cMo, depthTest)){
+      nbVisiblePolygon++;
+    }
+  }
+  return nbVisiblePolygon ;
+}
+#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
+
+#endif // vpMbHiddenFaces
 

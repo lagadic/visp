@@ -184,7 +184,6 @@ public:
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo);
 
   inline    bool          isAppearing() const {return isappearing;}
-            bool          isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false) ;
             bool          isVisible() const {return isvisible;}
             
@@ -222,6 +221,14 @@ public:
 public:
   static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max);
   static   bool           roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
+  
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+  /*!
+    @name Deprecated functions
+  */
+  bool      isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
+#endif
 };
 
 #endif

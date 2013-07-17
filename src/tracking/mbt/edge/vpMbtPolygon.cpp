@@ -140,31 +140,6 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
 }
 
 /*!
-  Check if the polygon is visible in the image. To do that, the polygon is projected into the image thanks to the camera pose.
-  
-  \param cMo : The pose of the camera.
-  \param depthTest : True if a face has to be entirely visible (in front of the camera). False if it can be partially visible.
-  
-  \return Return true if the polygon is visible.
-*/
-bool
-vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
-{
-  changeFrame(cMo) ;
-  
-  if(depthTest)
-    for (unsigned int i = 0 ; i < nbpt ; i++){
-      if(p[i].get_Z() < 0){
-        isappearing = false;
-        isvisible = false ;
-        return false ;
-      }
-    }
-  
-  return isVisible(cMo, vpMath::rad(89));
-}
-
-/*!
   Check if the polygon is visible in the image and if the angle between the normal 
   to the face and the line vector going from the optical center to the cog of the face is below
   the given threshold.
@@ -653,6 +628,33 @@ vpMbtPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<
   return true;
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n
+  
+  Check if the polygon is visible in the image. To do that, the polygon is projected into the image thanks to the camera pose.
+  
+  \param cMo : The pose of the camera.
+  \param depthTest : True if a face has to be entirely visible (in front of the camera). False if it can be partially visible.
+  
+  \return Return true if the polygon is visible.
+*/
+bool
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest)
+{
+  changeFrame(cMo) ;
+  
+  if(depthTest)
+    for (unsigned int i = 0 ; i < nbpt ; i++){
+      if(p[i].get_Z() < 0){
+        isappearing = false;
+        isvisible = false ;
+        return false ;
+      }
+    }
+  
+  return isVisible(cMo, vpMath::rad(89));
+}
+#endif
 
 

@@ -120,7 +120,7 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     vpMbKltTracker::setPose(I, cdMo);
     
     vpMbtDistanceLine *l;
-    lines[scale Level].front() ;
+    lines[scaleLevel].front() ;
     for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
       l = *it;
       if(l->meline != NULL){

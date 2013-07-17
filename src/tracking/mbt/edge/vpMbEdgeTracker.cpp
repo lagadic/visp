@@ -1538,15 +1538,15 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &
                              , const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
 {
   unsigned int n ;
+  bool changed = false;
 
   if(!useOgre)
-    n = faces.setVisible(_cMo) ;
+    n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
   else{
 #ifdef VISP_HAVE_OGRE   
-    bool changed = false;
     n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
 #else
-    n = faces.setVisible(_cMo) ;
+    n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
 #endif
   } 
   
