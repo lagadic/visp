@@ -292,7 +292,7 @@ int main()
   printf("Use camera with GUID: 0x%lx\n", g.getGuid());
   g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
   
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+  vpImageIo::write(I, "image.pgm"); // Write image on the disk
 #endif
 }
   \endcode

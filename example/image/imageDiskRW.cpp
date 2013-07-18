@@ -265,10 +265,10 @@ main(int argc, const char ** argv)
   // color image. Obviously the color will be translated as a gray level
 
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
-  vpImageIo::readPPM(I, filename);
+  vpImageIo::read(I, filename);
 
   filename = dirname +  vpIoTools::path("/IoPPM.Klimt_char.ppm");
-  vpImageIo::writePPM(I, filename) ;
+  vpImageIo::write(I, filename) ;
 
 
   // test io error
@@ -279,7 +279,7 @@ main(int argc, const char ** argv)
     //Try to load a non existing image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
 
-    vpImageIo::readPPM(I,filename) ;
+    vpImageIo::read(I,filename) ;
   }
   catch(vpImageException e)
   {
@@ -292,7 +292,7 @@ main(int argc, const char ** argv)
   try
   {
     filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
-    vpImageIo::writePPM(I,filename) ;
+    vpImageIo::write(I,filename) ;
   }
   catch(vpImageException e)
   {
@@ -309,17 +309,17 @@ main(int argc, const char ** argv)
 
   // Load a color image from the disk
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
-  vpImageIo::readPPM(Irgba, filename);
+  vpImageIo::read(Irgba, filename);
 
   // Write the content of the color image on the disk
   filename = dirname + vpIoTools::path("/IoPGM.Klimt_rgba.ppm");
-  vpImageIo::writePPM(Irgba, filename) ;
+  vpImageIo::write(Irgba, filename) ;
 
   // test io error
   try
   {
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
-    vpImageIo::readPPM(Irgba,filename) ;
+    vpImageIo::read(Irgba,filename) ;
   }
   catch(vpImageException e)
   {
@@ -331,7 +331,7 @@ main(int argc, const char ** argv)
   try
   {
     filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
-    vpImageIo::writePPM(Irgba,filename) ;
+    vpImageIo::write(Irgba,filename) ;
   }
   catch(vpImageException e)
   {

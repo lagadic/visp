@@ -240,7 +240,7 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filename << std::endl;
 
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {
@@ -330,7 +330,7 @@ main(int argc, const char ** argv)
     filename = dirname + s.str();
     std::cout << "Tracking on image: " << filename << std::endl;
     // read the image
-    vpImageIo::readPGM(I, filename);
+    vpImageIo::read(I, filename);
     if (opt_display) {
       // Display the image
       vpDisplay::display(I) ;

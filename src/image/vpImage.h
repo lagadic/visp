@@ -887,16 +887,16 @@ void vpImage<Type>::insert(const vpImage<Type> &src,
   The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
-  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImageIo::read(I, "myImage.pgm");
   vpImage<unsigned char> I2; // half size image
   I.halfSizeImage(I2);
-  vpImageIo::writePGM(I2, "myHalfSizeImage.pgm");
+  vpImageIo::write(I2, "myHalfSizeImage.pgm");
   \endcode
 
   This other example shows how to construct a pyramid of the image:
   \code
   vpImage<unsigned char> I[4];   // pyramid with 4 levels
-  vpImageIo::readPGM(I[1], "myImage.pgm"); // Original image at level 1
+  vpImageIo::read(I[1], "myImage.pgm"); // Original image at level 1
   // compute the other levels
   I5[1].doubleSizeImage(I5[0]);  // double size image at level 0
   I5[1].halfSizeImage(I5[2]);    // half size image at level 2
@@ -928,10 +928,10 @@ vpImage<Type>::halfSizeImage(vpImage<Type> &res)
   The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
-  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImageIo::read(I, "myImage.pgm");
   vpImage<unsigned char> I4; // quarter size image
   I.halfSizeImage(I4);
-  vpImageIo::writePGM(I4, "myQuarterSizeImage.pgm");
+  vpImageIo::write(I4, "myQuarterSizeImage.pgm");
   \endcode
 
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
@@ -974,10 +974,10 @@ vpImage<Type>::quarterSizeImage(vpImage<Type> &res)
   The example below shows how to use this method:
   \code
   vpImage<unsigned char> I; // original image
-  vpImageIo::readPGM(I, "myImage.pgm");
+  vpImageIo::read(I, "myImage.pgm");
   vpImage<unsigned char> I2; // double size image
   I.doubleSizeImage(I2);
-  vpImageIo::writePGM(I2, "myDoubleSizeImage.pgm");
+  vpImageIo::write(I2, "myDoubleSizeImage.pgm");
   \endcode
  
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.

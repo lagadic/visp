@@ -126,7 +126,7 @@ int main()
   printf("Use camera with GUID: 0x%lx\n", (long unsigned int)g.getGuid());
   g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
   
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+  vpImageIo::write(I, "image.pgm"); // Write image on the disk
 #endif
 }
   \endcode
@@ -163,7 +163,7 @@ int main()
     g.setCamera(camera);
     g.acquire(I[camera]);
     sprintf(filename, "image-cam%d.pgm", camera);
-    vpImageIo::writePGM(I[camera], filename);
+    vpImageIo::write(I[camera], filename);
   }
   delete [] I;
 #endif

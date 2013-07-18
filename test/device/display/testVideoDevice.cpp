@@ -317,12 +317,12 @@ main(int argc, const char ** argv)
     // Load a grey image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
     vpCTRACE << "Load " <<  filename << std::endl;
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
 
     // Load a color image from the disk
     filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
     vpCTRACE << "Load " <<  filename << std::endl;
-    vpImageIo::readPPM(Irgba, filename) ;
+    vpImageIo::read(Irgba, filename) ;
 
 
     // Create a display for the image

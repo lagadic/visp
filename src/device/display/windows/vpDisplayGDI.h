@@ -72,10 +72,10 @@ int main()
 
   // Read an image in PGM P5 format
 #ifdef UNIX
-  //vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-  vpImageIo::readPGM(I, "/tmp/Klimt.pgm");
+  //vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::read(I, "/tmp/Klimt.pgm");
 #elif WIN32
-  vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
 #endif
 
   vpDisplayGDI d;

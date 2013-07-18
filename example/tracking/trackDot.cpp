@@ -309,7 +309,7 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filename << std::endl;
 
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {
@@ -409,7 +409,7 @@ main(int argc, const char ** argv)
       }
       // read the image
       std::cout << "read : " << filename << std::endl;
-      vpImageIo::readPGM(I, filename);
+      vpImageIo::read(I, filename);
 
       if (opt_display) {
         // Display the image

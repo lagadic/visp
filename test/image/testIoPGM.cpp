@@ -239,11 +239,11 @@ main(int argc, const char ** argv)
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   std::cout << "Read image: " << filename << std::endl;
-  vpImageIo::readPGM(I, filename);
+  vpImageIo::read(I, filename);
   // Write the content of the image on the disk
   filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
   std::cout << "Write image: " << filename << std::endl;
-  vpImageIo::writePGM(I, filename) ;
+  vpImageIo::write(I, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
@@ -251,7 +251,7 @@ main(int argc, const char ** argv)
     // Load a non existing grey image
     filename = ipath +  vpIoTools::path("/ViSP-images/image-that-does-not-exist.pgm");
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(vpImageException e)
   {
@@ -264,7 +264,7 @@ main(int argc, const char ** argv)
   {
     filename = opath +  vpIoTools::path("/directory-that-does-not-exist/Klimt.pgm");
     std::cout << "Write image: " << filename << std::endl;
-    vpImageIo::writePGM(I, filename) ;
+    vpImageIo::write(I, filename) ;
   }
   catch(vpImageException e)
   {

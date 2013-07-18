@@ -125,7 +125,7 @@ int main()
   g.open(I);        // Open the grabber
 
   g.acquire(I);     // Acquire a 768x576 grey image
-  vpImageIo::writePGM(I, "image.pgm"); // Save the image on the disk
+  vpImageIo::write(I, "image.pgm"); // Save the image on the disk
 #endif
 }
   \endcode

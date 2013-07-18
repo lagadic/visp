@@ -394,7 +394,7 @@ int main()
 
 	      vpDisplay::getImage(I,Ic) ;
 	      sprintf(name,"/tmp/marchand/image.%04d.ppm",it++) ;
-	      vpImageIo::writePPM(Ic,name) ;
+        vpImageIo::write(Ic,name) ;
 	    }
     }
     v = 0 ;

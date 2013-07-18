@@ -245,7 +245,7 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filename << std::endl;
 
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {
@@ -335,7 +335,7 @@ main(int argc, const char ** argv)
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
     filename = dirname + s.str();
     // read the image
-    vpImageIo::readPGM(I, filename);
+    vpImageIo::read(I, filename);
     if (opt_display) {
       // Display the image
       vpDisplay::display(I) ;

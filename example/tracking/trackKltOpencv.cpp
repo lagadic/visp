@@ -312,7 +312,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Load: " << filename << std::endl;
 
     // Load a ViSP image used for the display
-    vpImageIo::readPGM(vpI, filename) ;
+    vpImageIo::read(vpI, filename) ;
     // Load an OpenCV IPL image used by the tracker
     if((cvI = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE))== NULL) {
       printf("Cannot read image: %s\n", filename.c_str());
@@ -412,7 +412,7 @@ main(int argc, const char ** argv)
       // read the image
       std::cout << "read : " << filename << std::endl;
       // Load a ViSP image used for the display
-      vpImageIo::readPGM(vpI, filename) ;
+      vpImageIo::read(vpI, filename) ;
       // Load an OpenCV IPL image used by the tracker
       if((cvI = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE))
          == NULL) {

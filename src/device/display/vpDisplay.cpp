@@ -305,7 +305,7 @@ int main()
 
   // Write the color image on the disk
   std::string ofilename("overlay.ppm");
-  vpImageIo::writePPM(Ioverlay, ofilename) ;
+  vpImageIo::write(Ioverlay, ofilename) ;
 
   // Wait for a click in the display window
   vpDisplay::getClick(I);
@@ -2267,7 +2267,7 @@ int main()
 
   // Write the color image on the disk
   std::string ofilename("overlay.ppm");
-  vpImageIo::writePPM(Ioverlay, ofilename) ;
+  vpImageIo::write(Ioverlay, ofilename) ;
 
   // Wait for a click in the display window
   vpDisplay::getClick(I);

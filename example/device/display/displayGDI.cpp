@@ -359,7 +359,7 @@ main(int argc, const char ** argv)
 
     // Write the color image on the disk
     filename = odirname +  vpIoTools::path("/Klimt_grey.overlay.ppm");
-    vpImageIo::writePPM(Ioverlay, filename) ;
+    vpImageIo::write(Ioverlay, filename) ;
 
     // If click is allowed, wait for a mouse click to close the display
     if (opt_click_allowed) {

@@ -112,7 +112,7 @@ int main()
 
   g.open(I);                           // Open the framegrabber
   g.acquire(I);                        // Acquire an image
-  vpImageIo::writePGM(I, "image.pgm"); // Write image on the disk
+  vpImageIo::write(I, "image.pgm"); // Write image on the disk
 #endif
 }
   \endcode

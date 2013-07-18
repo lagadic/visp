@@ -235,11 +235,11 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filenameRef << std::endl;
 
-    vpImageIo::readPGM(Iref, filenameRef) ;
+    vpImageIo::read(Iref, filenameRef) ;
 
     vpCTRACE << "Load: " << filenameCur << std::endl;
 
-    vpImageIo::readPGM(Icur, filenameCur) ;
+    vpImageIo::read(Icur, filenameCur) ;
   }
   catch(...)
   {

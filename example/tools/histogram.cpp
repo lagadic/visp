@@ -255,7 +255,7 @@ main(int argc, const char ** argv)
     filename +=  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
 
   std::cout << "Read: " << filename << std::endl;
-  vpImageIo::readPGM(I, filename) ;
+  vpImageIo::read(I, filename) ;
 
   unsigned char distance = 60;
   vpHistogram h;

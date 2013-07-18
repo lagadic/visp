@@ -245,24 +245,24 @@ main(int argc, const char ** argv)
   // Load a grey image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
   vpCTRACE << "Load " <<  filename << std::endl;
-  vpImageIo::readPGM(Ig, filename) ;
+  vpImageIo::read(Ig, filename) ;
   // Create a color image from the grey
   vpImageConvert::convert(Ig, Ic);
   filename = opath +  vpIoTools::path("/Klimt_color.ppm");
   vpCTRACE << "Write " << filename << std::endl;
-  vpImageIo::writePPM(Ic, filename) ;
+  vpImageIo::write(Ic, filename) ;
 
   //-------------------- .ppm -> .pgm
   vpTRACE("Convert a color image (.ppm) to a grey image (.pgm)");
   // Load a color image from the disk
   filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   vpCTRACE << "Load " << filename << std::endl;
-  vpImageIo::readPPM(Ic, filename) ;
+  vpImageIo::read(Ic, filename) ;
   // Create a grey image from the color
   vpImageConvert::convert(Ic, Ig);
   filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
   vpCTRACE << "Write " << filename << std::endl;
-  vpImageIo::writePPM(Ig, filename) ;
+  vpImageIo::write(Ig, filename) ;
 
   //-------------------- YUV -> RGB
   unsigned char y=187, u=10, v=30;
@@ -291,7 +291,7 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ic);
   filename = opath +  vpIoTools::path("/Klimt_color_cv.ppm");
   /* Save the the current image */
-  vpImageIo::writePPM(Ic, filename) ;
+  vpImageIo::write(Ic, filename) ;
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
@@ -309,7 +309,7 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ic);
   filename = opath +  vpIoTools::path("/Klimt_grey_cv.ppm");
   /* Save the the current image */
-  vpImageIo::writePPM(Ic, filename) ;
+  vpImageIo::write(Ic, filename) ;
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
@@ -330,7 +330,7 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ig);
   filename = opath +  vpIoTools::path("/Klimt_color_cv.pgm");
   /* Save the the current image */
-  vpImageIo::writePGM(Ig, filename) ;
+  vpImageIo::write(Ig, filename) ;
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
@@ -349,7 +349,7 @@ main(int argc, const char ** argv)
   vpImageConvert::convert(image, Ig);
   filename = opath +  vpIoTools::path("/Klimt_grey_cv.pgm");
   /* Save the the current image */
-  vpImageIo::writePGM(Ig, filename) ;
+  vpImageIo::write(Ig, filename) ;
 
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
@@ -362,7 +362,7 @@ main(int argc, const char ** argv)
 
   // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
-  vpImageIo::readPPM(Ic, filename) ;
+  vpImageIo::read(Ic, filename) ;
   vpImageConvert::convert(Ic, image);
   filename = opath +  vpIoTools::path("/Klimt_ipl_color_cv.ppm");
   /* Save the the current image */
@@ -383,7 +383,7 @@ main(int argc, const char ** argv)
 
   // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
-  vpImageIo::readPGM(Ig, filename) ;
+  vpImageIo::read(Ig, filename) ;
   vpImageConvert::convert(Ig, image);
   filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cv.pgm");
   /* Save the the current image */
@@ -534,7 +534,7 @@ main(int argc, const char ** argv)
 
   // Load a color image from the disk
   vpCTRACE << "Load " << filename << std::endl;
-  vpImageIo::readPPM(Ic, filename) ;
+  vpImageIo::read(Ic, filename) ;
   vpImage<unsigned char> R,G,B,a;
   vpImageConvert::split(Ic, &R,NULL,&B); 
   double begintime  = vpTime::measureTimeMs();
@@ -548,13 +548,13 @@ main(int argc, const char ** argv)
   filename = opath +  vpIoTools::path("/Klimt_RChannel.pgm");
   /* Save the the current image */
   vpCTRACE << "Write " << filename << std::endl;
-  vpImageIo::writePGM(R, filename) ;
+  vpImageIo::write(R, filename) ;
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
   filename = opath +  vpIoTools::path("/Klimt_BChannel.pgm");
   /* Save the the current image */
   vpCTRACE << "Write " << filename << std::endl;
-  vpImageIo::writePGM(B, filename) ;
+  vpImageIo::write(B, filename) ;
   vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
 }

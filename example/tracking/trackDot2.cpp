@@ -309,7 +309,7 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filename << std::endl;
 
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {
@@ -450,7 +450,7 @@ main(int argc, const char ** argv)
       }
       // read the image
       std::cout << "read : " << filename << std::endl;
-      vpImageIo::readPGM(I, filename);
+      vpImageIo::read(I, filename);
 
       // track the dot and returns its coordinates in the image
       // results are given in float since many many are usually considered

@@ -232,7 +232,7 @@ main(int argc, const char ** argv)
   try{
     vpCTRACE << "Load: " << filename << std::endl;
 
-    vpImageIo::readPGM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(...)
   {

@@ -242,11 +242,11 @@ main(int argc, const char ** argv)
   // Load a color image from the disk and convert it to a grey level one
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   std::cout << "Read image: " << filename << std::endl;
-  vpImageIo::readPPM(I, filename);
+  vpImageIo::read(I, filename);
   // Write the content of the image on the disk
   filename = opath + vpIoTools::path("/Klimt_grey.ppm");
   std::cout << "Write image: " << filename << std::endl;
-  vpImageIo::writePGM(I, filename) ;
+  vpImageIo::write(I, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
@@ -254,7 +254,7 @@ main(int argc, const char ** argv)
     // Load a non existing grey image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::readPPM(I, filename) ;
+    vpImageIo::read(I, filename) ;
   }
   catch(vpImageException e)
   {
@@ -267,7 +267,7 @@ main(int argc, const char ** argv)
   {
     filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     std::cout << "Write image: " << filename << std::endl;
-    vpImageIo::writePPM(I, filename) ;
+    vpImageIo::write(I, filename) ;
   }
   catch(vpImageException e)
   {
@@ -282,11 +282,11 @@ main(int argc, const char ** argv)
   // Load a color image from the disk
   filename = ipath + vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
   std::cout << "Read image: " << filename << std::endl;
-  vpImageIo::readPPM(Irgba, filename);
+  vpImageIo::read(Irgba, filename);
   // Write the content of the color image on the disk
   filename = opath + vpIoTools::path("/Klimt_color.ppm");
   std::cout << "Write image: " << filename << std::endl;
-  vpImageIo::writePPM(Irgba, filename) ;
+  vpImageIo::write(Irgba, filename) ;
 
   // Try to load a non existing image (test for exceptions)
   try
@@ -294,7 +294,7 @@ main(int argc, const char ** argv)
     // Load a non existing color image
     filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::readPPM(Irgba, filename) ;
+    vpImageIo::read(Irgba, filename) ;
   }
   catch(vpImageException e)
   {
@@ -307,7 +307,7 @@ main(int argc, const char ** argv)
   {
     filename = opath + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
     std::cout << "Write image: " << filename << std::endl;
-    vpImageIo::writePPM(Irgba, filename) ;
+    vpImageIo::write(Irgba, filename) ;
   }
   catch(vpImageException e)
   {

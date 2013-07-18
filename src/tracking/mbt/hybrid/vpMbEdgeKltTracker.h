@@ -95,7 +95,7 @@ int main()
   vpCameraParameters cam;
 
   // Acquire an image
-  vpImageIo::readPGM(I, "cube.pgm");
+  vpImageIo::read(I, "cube.pgm");
 
 #if defined VISP_HAVE_X11
   vpDisplayX display;
@@ -148,7 +148,7 @@ int main()
   vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker. 
   
   //acquire an image
-  vpImageIo::readPGM(I, "cube.pgm"); // Example of acquisition
+  vpImageIo::read(I, "cube.pgm"); // Example of acquisition
 
 #if defined VISP_HAVE_XML2
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
@@ -192,7 +192,7 @@ int main()
   vpCameraParameters cam;
   
   // Acquire an image
-  vpImageIo::readPGM(I, "cube.pgm");
+  vpImageIo::read(I, "cube.pgm");
   
 #if defined VISP_HAVE_X11
   vpDisplayX display;

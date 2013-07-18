@@ -238,7 +238,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 #endif
     try{
       if(displayHelp){
-        vpImageIo::readPPM(Iref,s) ;
+        vpImageIo::read(Iref,s) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
         d.init(Iref,10,500, "Where to initialize...")  ;
     	  vpDisplay::display(Iref) ;
@@ -369,7 +369,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 	if(displayFile != ""){	
 		try{
 			std::cout << displayFile.c_str() << std::endl;
-			vpImageIo::readPPM(Iref,displayFile.c_str()) ;
+      vpImageIo::read(Iref,displayFile.c_str()) ;
 			#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 				d.init(Iref,10,500, "Where to initialize...")  ;
 				vpDisplay::display(Iref) ;

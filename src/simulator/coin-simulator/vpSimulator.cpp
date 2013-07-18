@@ -1016,7 +1016,7 @@ vpSimulator::write (const char * fileName)
       I[i][j].G =g ;
       I[i][j].B =b ;
     }
-  vpImageIo::writePPM(I,fileName) ;
+  vpImageIo::write(I,fileName) ;
   // fclose (fp);
   get =1 ;
 }

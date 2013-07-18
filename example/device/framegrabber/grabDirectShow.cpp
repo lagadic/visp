@@ -252,11 +252,7 @@ main(int argc, const char ** argv)
         sprintf(buf, opath.c_str(), i);
         std::string filename(buf);
         std::cout << "Write: " << filename << std::endl;
-#ifdef GRAB_COLOR
-        vpImageIo::writePPM(I, filename);
-#else
-        vpImageIo::writePGM(I, filename);
-#endif
+        vpImageIo::write(I, filename);
       }
       tend = vpTime::measureTimeMs();
       tloop = tend - tbegin;

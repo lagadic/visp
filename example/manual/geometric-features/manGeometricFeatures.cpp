@@ -134,7 +134,7 @@ int main()
   vpImage<vpRGBa> Ic;
   vpDisplay::getImage(I,Ic);
   std::cout << "ViSP creates \"./geometricFeatures.ppm\" B&W image "<< std::endl;
-  vpImageIo::writePPM(Ic, "./geometricFeatures.ppm");
+  vpImageIo::write(Ic, "./geometricFeatures.ppm");
 
 #endif
   return 0;
