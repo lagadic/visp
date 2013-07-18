@@ -36,6 +36,9 @@ int main()
   tracker.setMovingEdge(me);
   cam.initPersProjWithoutDistortion(839, 839, 325, 243);
   tracker.setCameraParameters(cam);
+  
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
   tracker.setDisplayFeatures(true);
   tracker.setOgreVisibilityTest(false);

@@ -45,7 +45,7 @@ As output, it will estimate \c cMo, the pose of the object in the camera frame.
 Once the input image \c teabox.pgm is loaded in \c I, a window is created and initialized with image \c I. Then we create an instance of the tracker.
 
 \code
-  vpMbKltTracker tracker;
+  vpMbEdgeTracker tracker;
 \endcode
 
 There are then two different ways to initialize the tracker.
@@ -133,6 +133,51 @@ It is also possible to introduce these two parameters in the xml file. It should
   </face>
 \endcode
 Here the face is considered as appearing if \f$ \alpha < 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
+
+Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
+
+\image html img-fov.png Camera field of view and clipping planes. 
+
+Let's consider two plane categories: the ones belonging to the field of view or FOV (Left, Right, Up and Down), and the Near and Far clipping planes. The FOV planes can be enabled by:
+
+\code
+  tracker.setClipping(vpMbtPolygon::FOV_CLIPPING);
+  //tracker.setClipping(vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+\endcode
+
+Of course, if the user just wants to activate Right and Up clipping, he will use:
+
+\code
+  tracker.setClipping(vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING);
+\endcode
+
+For the Near and Far clipping it is quite different. Indeed, thoses planes require clipping distances. Here there are two choices, either the user uses default values and activate them with:
+
+\code
+  tracker.setClipping(vpMbtPolygon::NEAR_CLIPPING | vpMbtPolygon::FAR_CLIPPING);
+\endcode
+
+Or specify the distances, which will automatically activate the clipping for thoses planes:
+
+\code
+  tracker.setNearClippingDistance(0.1);
+  tracker.setFarClippingDistance(100.0);
+\endcode
+
+It is also possible to enable them in the xml file. It should be modified by adding the following lines:
+
+\code
+<conf>
+  ...
+  <face>
+    ...
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100.0</far_clipping>
+    <fov_clipping>0</fov_clipping>
+  </face>
+\endcode
+
+Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
 
 Now we are ready to load the cad model of the object in cao format with:
 \code
