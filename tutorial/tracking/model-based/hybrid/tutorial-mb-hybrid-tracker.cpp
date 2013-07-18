@@ -11,7 +11,7 @@ int main()
   vpCameraParameters cam;
   vpHomogeneousMatrix cMo;
 
-  vpImageIo::readPGM(I, "teabox.pgm");
+  vpImageIo::read(I, "teabox.pgm");
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX display(I,100,100,"Model-based hybrid tracker");;
