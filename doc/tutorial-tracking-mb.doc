@@ -142,7 +142,15 @@ Let's consider two plane categories: the ones belonging to the field of view or 
 
 \code
   tracker.setClipping(vpMbtPolygon::FOV_CLIPPING);
-  //tracker.setClipping(vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+\endcode
+
+which is equivalent to:
+
+\code
+  tracker.setClipping(vpMbtPolygon::LEFT_CLIPPING 
+                    | vpMbtPolygon::RIGHT_CLIPPING
+                    | vpMbtPolygon::UP_CLIPPING 
+                    | vpMbtPolygon::DOWN_CLIPPING);
 \endcode
 
 Of course, if the user just wants to activate Right and Up clipping, he will use:
@@ -157,7 +165,7 @@ For the Near and Far clipping it is quite different. Indeed, thoses planes requi
   tracker.setClipping(vpMbtPolygon::NEAR_CLIPPING | vpMbtPolygon::FAR_CLIPPING);
 \endcode
 
-Or specify the distances, which will automatically activate the clipping for thoses planes:
+Or specify the distances in meters, which will automatically activate the clipping for thoses planes:
 
 \code
   tracker.setNearClippingDistance(0.1);
