@@ -1012,6 +1012,11 @@ vpMbEdgeTracker::loadConfigFile(const std::string& configFile)
     <step>4</step>
     <nb_sample>250</nb_sample>
   </sample>
+  <face>
+    <near_clipping>0.01</near_clipping>
+    <far_clipping>0.90</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
   <camera>
     <width>640</width>
     <height>480</height>

@@ -36,6 +36,8 @@ int main()
   tracker.setMovingEdge(me);
   cam.initPersProjWithoutDistortion(839, 839, 325, 243);
   tracker.setCameraParameters(cam);
+  tracker.setNearClippingDistance(0.1);
+  tracker.setFarClippingDistance(100.0);
   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
   tracker.setDisplayFeatures(true);

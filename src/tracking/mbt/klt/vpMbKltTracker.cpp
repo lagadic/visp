@@ -726,6 +726,9 @@ vpMbKltTracker::loadConfigFile(const std::string& configFile)
   <face>
     <angle_appear>65</angle_appear>
     <angle_disappear>85</angle_disappear>
+    <near_clipping>0.01</near_clipping>
+    <far_clipping>0.90</far_clipping>
+    <fov_clipping>1</fov_clipping>
   </face>
   <klt>
     <mask_border>10</mask_border>
