@@ -48,14 +48,20 @@ relpath=`(cd $relpath/..; pwd)`
 
 PREFIX=$relpath
 
-CFLAGS_CMD=`pkg-config --cflags visp`
-CFLAGS=$CFLAGS_CMD
+CFLAGS="${VISP_CONFIG_CFLAGS_SCRIPT}"
 
-LIBS_CMD=`pkg-config --libs visp`
-LIBS=$LIBS_CMD
+LIBS="${VISP_CONFIG_LIBS_SCRIPT}"
 
-VERSION_CMD=`pkg-config --modversion visp`
-VERSION=$VERSION_CMD
+VERSION="${VISP_VERSION}"
+
+#CFLAGS_CMD=`pkg-config --cflags visp`
+#CFLAGS=$CFLAGS_CMD
+
+#LIBS_CMD=`pkg-config --libs visp`
+#LIBS=$LIBS_CMD
+
+#VERSION_CMD=`pkg-config --modversion visp`
+#VERSION=$VERSION_CMD
 
 NO_NEWLINE_CHARACTER="${VISP_ECHO_NO_NEWLINE_CHARACTER}"
 NO_NEWLINE_OPTION="${VISP_ECHO_NO_NEWLINE_OPTION}"
