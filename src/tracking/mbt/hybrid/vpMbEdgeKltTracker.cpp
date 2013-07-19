@@ -666,7 +666,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     vpMbKltTracker::computeVVS(nbInfos, w_klt);
   else{
     nbInfos = 0;
-    std::cout << "[ERROR] Unable to init with KLT" << std::endl;
+    // std::cout << "[Warning] Unable to init with KLT" << std::endl;
   }
   
   vpMbEdgeTracker::trackMovingEdge(I);
