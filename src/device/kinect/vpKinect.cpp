@@ -102,7 +102,7 @@ void vpKinect::start(vpKinect::vpDMResolution res)
 		wd = 640;
 	}
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+#if defined(VISP_HAVE_ACCESS_TO_NAS) && defined(VISP_HAVE_XML2)
   	vpXmlParserCamera cameraParser;
   	char cameraXmlFile[FILENAME_MAX];
     sprintf(cameraXmlFile, "/udd/fspindle/robot/Viper850/Viper850-code/include/const_camera_Viper850.xml");
