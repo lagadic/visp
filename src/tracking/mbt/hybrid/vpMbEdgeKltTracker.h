@@ -266,6 +266,13 @@ public:
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
 
           /*!
+            Get the far distance for clipping.
+
+            \return Far clipping value.
+          */
+  inline  double  getFarClippingDistance() { return vpMbKltTracker::getFarClippingDistance(); }
+
+          /*!
             Get the value of the gain used to compute the control law.
 
             \return the value for the gain.
@@ -324,6 +331,13 @@ public:
             \param flags : New clipping flags.
           */
           void    setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); vpMbKltTracker::setClipping(flags);}
+
+          /*!
+            Set the far distance for clipping.
+
+            \param dist : Far clipping value.
+          */
+  inline  void   setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); vpMbKltTracker::setFarClippingDistance(dist); }
 
           /*!
             Set the value of the gain used to compute the control law.

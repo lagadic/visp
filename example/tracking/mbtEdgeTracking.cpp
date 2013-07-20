@@ -342,6 +342,8 @@ main(int argc, const char ** argv)
   tracker.setMovingEdge(me);
   
   // Specify the clipping to use
+  tracker.setNearClippingDistance(0.01);
+  tracker.setFarClippingDistance(0.90);
   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
