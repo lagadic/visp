@@ -351,7 +351,7 @@ public:
     
     \return Clipping flags.
   */          
-  inline  unsigned int getClipping() { return clippingFlag; } 
+  inline  unsigned int getClipping() const { return clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
@@ -361,7 +361,7 @@ public:
     
     \return Far clipping value.
   */
-  inline double getFarClippingDistance() { return distFarClip; }
+  inline double getFarClippingDistance() const { return distFarClip; }
   
   double getFirstThreshold() { return percentageGdPt;}
   
@@ -380,7 +380,7 @@ public:
     
     \return Near clipping value.
   */
-  inline double getNearClippingDistance() { return distNearClip; }
+  inline double getNearClippingDistance() const { return distNearClip; }
   
   unsigned int getNbPoints(const unsigned int level=0);
   unsigned int getNbPolygon();

@@ -298,7 +298,7 @@ public:
             
             \return Clipping flags.
           */          
-  inline  unsigned int    getClipping() { return clippingFlag; } 
+  inline  unsigned int    getClipping() const { return clippingFlag; } 
     
           /*! Return a reference to the faces structure. */
           vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
@@ -308,7 +308,7 @@ public:
             
             \return Far clipping value.
           */
-  inline  double          getFarClippingDistance() { return distFarClip; }
+  inline  double          getFarClippingDistance() const { return distFarClip; }
 
           /*!
             Get the current list of KLT points.
@@ -361,7 +361,7 @@ public:
             
             \return Near clipping value.
           */
-  inline double           getNearClippingDistance() { return distNearClip; }
+  inline double           getNearClippingDistance() const { return distNearClip; }
   
           /*!
             Get the threshold for the acceptation of a point.

@@ -131,14 +131,14 @@ public:
     
     \return Clipping flags.
   */          
-  inline    unsigned int  getClipping() { return clippingFlag; } 
+  inline    unsigned int  getClipping() const { return clippingFlag; } 
   
    /*!
     Get the far distance for clipping.
     
     \return Far clipping value.
   */
-  inline    double       getFarClippingDistance() { return distFarClip; }
+  inline    double       getFarClippingDistance() const { return distFarClip; }
   
    /*!
     Get the index of the face.
@@ -159,7 +159,7 @@ public:
 
     \return number of corner of the face at the previous computation
   */
-  inline    unsigned int  getNbCornerInsidePrevImage() { return nbCornersInsidePrev; }
+  inline    unsigned int  getNbCornerInsidePrevImage() const { return nbCornersInsidePrev; }
   
             unsigned int  getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCameraParameters &cam);
             
@@ -168,7 +168,7 @@ public:
     
     \return Near clipping value.
   */
-  inline    double        getNearClippingDistance() { return distNearClip; }
+  inline    double        getNearClippingDistance() const { return distNearClip; }
           
             vpPoint &     getPoint(const unsigned int _index);
             

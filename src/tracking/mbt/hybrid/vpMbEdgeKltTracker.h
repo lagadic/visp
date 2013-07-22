@@ -260,7 +260,7 @@ public:
             
             \return Clipping flags.
           */          
-  inline  unsigned int    getClipping() { return vpMbKltTracker::clippingFlag; } 
+  inline  unsigned int    getClipping() const { return vpMbKltTracker::clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
@@ -270,7 +270,7 @@ public:
 
             \return Far clipping value.
           */
-  inline  double  getFarClippingDistance() { return vpMbKltTracker::getFarClippingDistance(); }
+  inline  double  getFarClippingDistance() const { return vpMbKltTracker::getFarClippingDistance(); }
 
           /*!
             Get the value of the gain used to compute the control law.
@@ -291,7 +291,7 @@ public:
             
             \return Near clipping value.
           */
-  inline  double  getNearClippingDistance() { return vpMbKltTracker::getNearClippingDistance(); }
+  inline  double  getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
           void    loadConfigFile(const char* configFile);
   virtual void    loadConfigFile(const std::string& configFile);
