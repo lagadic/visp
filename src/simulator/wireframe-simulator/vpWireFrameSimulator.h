@@ -63,6 +63,8 @@ extern "C" {
 #include <visp/vpToken.h>
 #include <visp/vpTmstack.h>
 #include <visp/vpVwstack.h>
+#include <visp/vpRfstack.h>
+#include <visp/vpArit.h>
 
 int open_display();
 int close_display();
@@ -77,18 +79,11 @@ int parser (Bound_scene *bsp);
 int close_source (void);
 int close_lex (void);
 int close_keyword (void);
-void add_rfstack (int i);
-void load_rfstack (int i);
-void add_vwstack (const char* path, ... );
 void display_scene(Matrix mat, Bound_scene sc);
-int * get_rfstack (void);
-Matrix	* get_tmstack (void);
 int View_to_Matrix (View_parameters *vp, Matrix m);
-void postmult_matrix (Matrix a, Matrix b);
 Bound *clipping_Bound (Bound *bp, Matrix m);
 int set_Bound_face_display (Bound *bp, Byte b);
 int point_3D_2D (Point3f *p3, Index size, unsigned int xsize, unsigned int ysize, Point2i *p2);
-void point_3D_4D (Point3f *p3, int size, Matrix m, Point4f *p4);
 int wireframe_Face (Face *fp, Point2i *pp);
 }
 
