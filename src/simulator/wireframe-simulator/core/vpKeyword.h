@@ -44,6 +44,7 @@
 #define vpKeyword_H
 
 #include <visp/vpConfig.h>
+#include <visp/vpMy.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

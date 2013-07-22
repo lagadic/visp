@@ -44,8 +44,10 @@
 #define vpBound_H
  
 #include <visp/vpConfig.h>
+#include <visp/vpMy.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 
 #define	START_ARG	0
 #define	NEXT_ARG	1
