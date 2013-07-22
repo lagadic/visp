@@ -260,7 +260,7 @@ public:
             
             \return Clipping flags.
           */          
-  inline  unsigned int    getClipping() const { return vpMbKltTracker::clippingFlag; } 
+  virtual inline  unsigned int getClipping() const { return vpMbKltTracker::clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
@@ -270,7 +270,7 @@ public:
 
             \return Far clipping value.
           */
-  inline  double  getFarClippingDistance() const { return vpMbKltTracker::getFarClippingDistance(); }
+  virtual inline  double  getFarClippingDistance() const { return vpMbKltTracker::getFarClippingDistance(); }
 
           /*!
             Get the value of the gain used to compute the control law.
@@ -291,7 +291,7 @@ public:
             
             \return Near clipping value.
           */
-  inline  double  getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
+  virtual inline  double  getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
           void    loadConfigFile(const char* configFile);
   virtual void    loadConfigFile(const std::string& configFile);
@@ -330,14 +330,14 @@ public:
             
             \param flags : New clipping flags.
           */
-          void    setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); vpMbKltTracker::setClipping(flags);}
+  virtual void    setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); vpMbKltTracker::setClipping(flags);}
 
           /*!
             Set the far distance for clipping.
 
             \param dist : Far clipping value.
           */
-  inline  void   setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); vpMbKltTracker::setFarClippingDistance(dist); }
+  virtual void   setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); vpMbKltTracker::setFarClippingDistance(dist); }
 
           /*!
             Set the value of the gain used to compute the control law.
@@ -358,7 +358,7 @@ public:
             
             \param dist : Near clipping value.
           */
-  inline  void   setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); vpMbKltTracker::setNearClippingDistance(dist); }
+  virtual void   setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); vpMbKltTracker::setNearClippingDistance(dist); }
           
           /*!
             Use Ogre3D for visibility tests

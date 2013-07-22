@@ -351,7 +351,7 @@ public:
     
     \return Clipping flags.
   */          
-  inline  unsigned int getClipping() const { return clippingFlag; } 
+  virtual inline  unsigned int getClipping() const { return clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
   vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
@@ -361,7 +361,7 @@ public:
     
     \return Far clipping value.
   */
-  inline double getFarClippingDistance() const { return distFarClip; }
+  virtual inline double getFarClippingDistance() const { return distFarClip; }
   
   double getFirstThreshold() { return percentageGdPt;}
   
@@ -380,7 +380,7 @@ public:
     
     \return Near clipping value.
   */
-  inline double getNearClippingDistance() const { return distNearClip; }
+  virtual inline double getNearClippingDistance() const { return distNearClip; }
   
   unsigned int getNbPoints(const unsigned int level=0);
   unsigned int getNbPolygon();
@@ -450,7 +450,7 @@ public:
     }
   }
   
-  void  setClipping(const unsigned int &flags);
+  virtual void  setClipping(const unsigned int &flags);
   
   /*!
     Enable to display the points along the line with a color corresponding to their state.
@@ -464,7 +464,7 @@ public:
   */
   void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
   
-  void setFarClippingDistance(const double &dist);
+  virtual void setFarClippingDistance(const double &dist);
   
   /*!
     Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
@@ -486,7 +486,7 @@ public:
   
   void setMovingEdge(const vpMe &me);
   
-  void setNearClippingDistance(const double &dist);
+  virtual void setNearClippingDistance(const double &dist);
   
   virtual void setOgreVisibilityTest(const bool &v);
   

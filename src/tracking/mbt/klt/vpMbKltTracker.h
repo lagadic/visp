@@ -298,7 +298,7 @@ public:
             
             \return Clipping flags.
           */          
-  inline  unsigned int    getClipping() const { return clippingFlag; } 
+  virtual inline  unsigned int getClipping() const { return clippingFlag; } 
     
           /*! Return a reference to the faces structure. */
           vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
@@ -308,7 +308,7 @@ public:
             
             \return Far clipping value.
           */
-  inline  double          getFarClippingDistance() const { return distFarClip; }
+  virtual inline  double  getFarClippingDistance() const { return distFarClip; }
 
           /*!
             Get the current list of KLT points.
@@ -361,7 +361,7 @@ public:
             
             \return Near clipping value.
           */
-  inline double           getNearClippingDistance() const { return distNearClip; }
+  virtual inline double   getNearClippingDistance() const { return distNearClip; }
   
           /*!
             Get the threshold for the acceptation of a point.
@@ -396,9 +396,9 @@ public:
   
           void            setCameraParameters(const vpCameraParameters& cam);
           
-          void            setClipping(const unsigned int &flags);
+  virtual void            setClipping(const unsigned int &flags);
           
-          void            setFarClippingDistance(const double &dist);
+  virtual void            setFarClippingDistance(const double &dist);
           
           void            setKltOpencv(const vpKltOpencv& t);
           
@@ -423,7 +423,7 @@ public:
           */
   inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
   
-          void            setNearClippingDistance(const double &dist);
+  virtual void            setNearClippingDistance(const double &dist);
   
   virtual void            setOgreVisibilityTest(const bool &v);
   
