@@ -354,7 +354,7 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
-  inline vpMbHiddenFaces<vpMbtPolygon> getFaces() const { return faces; }
+  inline vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces; }
   
   /*!
     Get the far distance for clipping.
