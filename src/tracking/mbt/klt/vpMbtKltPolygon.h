@@ -127,7 +127,6 @@ public:
   
   inline std::map<int, int>& getCurrentPointsInd() {return curPointsInd; }
   
-  vpImagePoint&       getImagePoint(const unsigned int _index);
   /*!
     Get the number of point that was belonging to the face at the initialisation
 
