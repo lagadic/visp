@@ -6,9 +6,9 @@
                     http://www.irisa.fr/lagadic
 
 
-ViSP 2.7.1 (under development)
+ViSP 2.8.0 (released July 24th, 2013)
   - New features
-    . New automized camera calibration tool: example/camera_calibration.cpp
+    . New camera calibration tool: example/camera_calibration.cpp
   - Improvements
     . vpV4l2Grabber and vp1394CMUGrabber does no more require a call to
       open(I).
@@ -21,7 +21,7 @@ ViSP 2.7.1 (under development)
     . Still in model-based trackers, add functionalities to use clipping planes.
     . ViSP can now be used with pkg-config
     . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
-      on. Also new getter to get the auto shutter and auto gain min/max values.
+      on. Also new getter for auto shutter and auto gain min/max values.
     . Support Visual Studio 2012 (MSVC11)
     . Introduce C++ visibility support as described here
       http://gcc.gnu.org/wiki/Visibility

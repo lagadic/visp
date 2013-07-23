@@ -45,8 +45,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 SET(VISP_VERSION_MAJOR "2")
-SET(VISP_VERSION_MINOR "7")
-SET(VISP_VERSION_PATCH "1")
+SET(VISP_VERSION_MINOR "8")
+SET(VISP_VERSION_PATCH "0")
 SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 # Package revision number
 SET(VISP_REVISION "1")
