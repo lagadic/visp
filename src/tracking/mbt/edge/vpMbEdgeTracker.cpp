@@ -1715,7 +1715,7 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
   \return the number of good points. 
 */
 unsigned int 
-vpMbEdgeTracker::getNbPoints(const unsigned int level)
+vpMbEdgeTracker::getNbPoints(const unsigned int level) const
 {
   if((level > scales.size()) || !scales[level]){
     throw vpException(vpException::dimensionError, "Level is not used");
@@ -1776,7 +1776,7 @@ vpMbEdgeTracker::getPolygon(const unsigned int index)
   \return Number of polygon.
 */
 unsigned int 
-vpMbEdgeTracker::getNbPolygon() 
+vpMbEdgeTracker::getNbPolygon() const
 {
   return static_cast<unsigned int>(faces.size());
 }

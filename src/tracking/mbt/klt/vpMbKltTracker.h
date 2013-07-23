@@ -286,10 +286,10 @@ public:
           void            loadConfigFile(const char* configFile);
           
           /*! Return the angle used to test polygons appearance. */
-  virtual inline  double  getAngleAppear() { return angleAppears; }   
+  virtual inline  double  getAngleAppear() const { return angleAppears; }   
   
           /*! Return the angle used to test polygons disappearance. */
-  virtual inline  double  getAngleDisappear() { return angleDisappears; } 
+  virtual inline  double  getAngleDisappear() const { return angleDisappears; } 
   
           /*!
             Get the clipping used.
@@ -301,7 +301,7 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; } 
     
           /*! Return a reference to the faces structure. */
-          vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return faces;}
+  inline  vpMbHiddenFaces<vpMbtKltPolygon> getFaces() const { return faces;}
           
           /*!
             Get the far distance for clipping.
@@ -317,44 +317,44 @@ public:
           */
   inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
   
-          std::vector<vpImagePoint> getKltImagePoints();
+          std::vector<vpImagePoint> getKltImagePoints() const;
           
-          std::map<int, vpImagePoint> getKltImagePointsWithId();
+          std::map<int, vpImagePoint> getKltImagePointsWithId() const;
           
           /*!
             Get the klt tracker at the current state.
             
             \return klt tracker.
           */
-  inline  vpKltOpencv     getKltOpencv() { return tracker; }
+  inline  vpKltOpencv     getKltOpencv() const { return tracker; }
           
           /*!
             Get the value of the gain used to compute the control law.
             
             \return the value for the gain.
           */
-  inline  double          getLambda() {return lambda;}
+  virtual inline  double  getLambda() const {return lambda;}
   
           /*!
             Get the erosion of the mask used on the Model faces.
 
             \return The erosion.
           */
-  inline  unsigned int    getMaskBorder() { return maskBorder; }
+  inline  unsigned int    getMaskBorder() const { return maskBorder; }
   
           /*!
             Get the maximum iteration of the virtual visual servoing stage.
             
             \return the number of iteration
           */
-  inline  unsigned int    getMaxIter() {return maxIter;}
+  virtual inline unsigned int getMaxIter() const {return maxIter;}
   
           /*!
             Get the current number of klt points.
             
             \return the number of features
           */
-  inline  int             getNbKltPoints() {return tracker.getNbFeatures();}
+  inline  int             getNbKltPoints() const {return tracker.getNbFeatures();}
        
           /*!
             Get the near distance for clipping.
@@ -368,7 +368,7 @@ public:
 
             \return threshold_outlier : Threshold for the weight below which a point is rejected.
           */
-  inline  double          getThresholdAcceptation() { return threshold_outlier;}
+  inline  double          getThresholdAcceptation() const { return threshold_outlier;}
   
           void            resetTracker();
           
@@ -407,21 +407,21 @@ public:
             
             \param lambda : the desired value for the gain.
           */
-  inline  void            setLambda(const double lambda) {this->lambda = lambda;}
+  virtual inline  void    setLambda(const double lambda) {this->lambda = lambda;}
   
           /*!
             Set the erosion of the mask used on the Model faces.
 
             \param  e : The desired erosion.
           */
-          void            setMaskBorder(const unsigned int &e){ maskBorder = e; }
+  inline  void            setMaskBorder(const unsigned int &e){ maskBorder = e; }
   
           /*!
             Set the maximum iteration of the virtual visual servoing stage.
             
             \param max : the desired number of iteration
           */
-  inline  void            setMaxIter(const unsigned int max) {maxIter = max;}
+  virtual inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
   
   virtual void            setNearClippingDistance(const double &dist);
   

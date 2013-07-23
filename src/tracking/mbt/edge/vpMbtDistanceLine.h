@@ -121,14 +121,14 @@ class VISP_EXPORT vpMbtDistanceLine
    
      \param cam : The vpCameraParameters used to store the camera parameters.
     */
-    inline void getCameraParameters(vpCameraParameters& cam) {cam = this->cam;}
+    inline void getCameraParameters(vpCameraParameters& cam) const {cam = this->cam;}
     
     /*!
       Get the index of the line.
       
       \return Return the index of the line.
     */
-    inline unsigned int getIndex() {return index ;}
+    inline unsigned int getIndex() const {return index ;}
     
     /*!
      Get the mean weight of the line. The mean weight is computed thanks to the weight of each moving edge.

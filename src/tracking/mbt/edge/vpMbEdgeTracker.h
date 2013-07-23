@@ -339,10 +339,10 @@ public:
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   
   /*! Return the angle used to test polygons appearance. */
-  virtual inline double getAngleAppear() { return angleAppears; }   
+  virtual inline double getAngleAppear() const { return angleAppears; }   
   
   /*! Return the angle used to test polygons disappearance. */
-  virtual inline double getAngleDisappear() { return angleDisappears; } 
+  virtual inline double getAngleDisappear() const { return angleDisappears; } 
   
   /*!
     Get the clipping used.
@@ -354,7 +354,7 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; } 
   
   /*! Return a reference to the faces structure. */
-  vpMbHiddenFaces<vpMbtPolygon> & getFaces() { return faces;}
+  inline vpMbHiddenFaces<vpMbtPolygon> getFaces() const { return faces; }
   
   /*!
     Get the far distance for clipping.
@@ -363,7 +363,14 @@ public:
   */
   virtual inline double getFarClippingDistance() const { return distFarClip; }
   
-  double getFirstThreshold() { return percentageGdPt;}
+  inline double getFirstThreshold() const { return percentageGdPt;}
+  
+  /*!
+    Get the value of the gain used to compute the control law.
+    
+    \return the value for the gain.
+  */
+  virtual inline double getLambda() const {return lambda;}
   
   void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0);
   void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level = 0);
@@ -373,7 +380,7 @@ public:
     
     \return an instance of the moving edge parameters used by the tracker.
   */
-  inline void getMovingEdge(vpMe &me ) { me = this->me;}
+  inline void getMovingEdge(vpMe &me ) const { me = this->me;}
   
   /*!
     Get the near distance for clipping.
@@ -382,8 +389,8 @@ public:
   */
   virtual inline double getNearClippingDistance() const { return distNearClip; }
   
-  unsigned int getNbPoints(const unsigned int level=0);
-  unsigned int getNbPolygon();
+  unsigned int getNbPoints(const unsigned int level=0) const;
+  unsigned int getNbPolygon() const ;
   vpMbtPolygon* getPolygon(const unsigned int index);
   
   /*!
@@ -482,7 +489,7 @@ public:
     
     \param lambda : the desired value for the gain.
   */
-  inline void setLambda(const double lambda) {this->lambda = lambda;}
+  virtual inline void setLambda(const double lambda) {this->lambda = lambda;}
   
   void setMovingEdge(const vpMe &me);
   

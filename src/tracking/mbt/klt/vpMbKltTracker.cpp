@@ -207,7 +207,7 @@ vpMbKltTracker::resetTracker()
   \return the list of KLT points through vpKltOpencv.
 */
 std::vector<vpImagePoint> 
-vpMbKltTracker::getKltImagePoints()
+vpMbKltTracker::getKltImagePoints() const
 {
   std::vector<vpImagePoint> kltPoints;
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){
@@ -228,7 +228,7 @@ vpMbKltTracker::getKltImagePoints()
   \return the list of KLT points and their id through vpKltOpencv.
 */
 std::map<int, vpImagePoint> 
-vpMbKltTracker::getKltImagePointsWithId()
+vpMbKltTracker::getKltImagePointsWithId() const
 {
   std::map<int, vpImagePoint> kltPoints;
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){

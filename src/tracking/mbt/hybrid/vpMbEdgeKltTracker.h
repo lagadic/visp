@@ -248,10 +248,10 @@ public:
                           const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   
   /*! Return the angle used to test polygons appearance. */
-  virtual inline  double  getAngleAppear() { return vpMbKltTracker::getAngleAppear(); }   
+  virtual inline  double  getAngleAppear() const { return vpMbKltTracker::getAngleAppear(); }   
   
           /*! Return the angle used to test polygons disappearance. */
-  virtual inline  double  getAngleDisappear() { return vpMbKltTracker::getAngleDisappear(); } 
+  virtual inline  double  getAngleDisappear() const { return vpMbKltTracker::getAngleDisappear(); } 
   
           /*!
             Get the clipping used.
@@ -262,8 +262,8 @@ public:
           */          
   virtual inline  unsigned int getClipping() const { return vpMbKltTracker::clippingFlag; } 
   
-  /*! Return a reference to the faces structure. */
-  vpMbHiddenFaces<vpMbtKltPolygon> & getFaces() { return vpMbKltTracker::faces;}
+          /*! Return a reference to the faces structure. */
+  inline  vpMbHiddenFaces<vpMbtKltPolygon> getFaces() const { return vpMbKltTracker::faces;}
 
           /*!
             Get the far distance for clipping.
@@ -277,14 +277,14 @@ public:
 
             \return the value for the gain.
           */
-  inline  double  getLambda() {return lambda;}
+  virtual inline  double  getLambda() const {return lambda;}
 
           /*!
             Get the maximum iteration of the virtual visual servoing stage.
 
             \return the number of iteration
           */
-  inline  unsigned int getMaxIter() {return maxIter;}
+  virtual inline  unsigned int getMaxIter() const {return maxIter;}
   
           /*!
             Get the near distance for clipping.
@@ -344,14 +344,14 @@ public:
 
             \param lambda : the desired value for the gain.
           */
-  inline  void    setLambda(const double lambda) {this->lambda = lambda; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
+  virtual inline  void setLambda(const double lambda) {this->lambda = lambda; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
 
           /*!
             Set the maximum iteration of the virtual visual servoing stage.
 
             \param max : the desired number of iteration
           */
-  inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
+  virtual inline  void setMaxIter(const unsigned int max) {maxIter = max;}
   
           /*!
             Set the near distance for clipping.

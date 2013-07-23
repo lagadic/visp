@@ -113,7 +113,7 @@ class vpMbHiddenFaces
 
       \return number of visible polygons.
     */
-    unsigned int getNbVisiblePolygon(){return nbVisiblePolygon;}
+    unsigned int getNbVisiblePolygon() const {return nbVisiblePolygon;}
 
 #ifdef VISP_HAVE_OGRE
     /*!
@@ -182,7 +182,7 @@ class vpMbHiddenFaces
     
     \return Size of the list.
   */
-  inline unsigned int            size(){ return (unsigned int)Lpol.size(); }
+  inline unsigned int            size() const { return (unsigned int)Lpol.size(); }
   
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
