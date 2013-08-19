@@ -79,7 +79,7 @@ protected:
     Ogre::Entity* robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
     Ogre::SceneNode* RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
-    RobotNode->setPosition(0.0, 0.05f, 0.5);
+    RobotNode->setPosition(-0.3, 0.2, 0);
     RobotNode->attachObject(robot);
     RobotNode->scale(0.001f,0.001f,0.001f);
     RobotNode->pitch(Ogre::Degree(180));
@@ -135,6 +135,7 @@ int main()
   // Here we acquire an image from an available framegrabber to update
   // the image size
   grabber.open(I);
+  grabber.acquire(I);
   // Parameters of our camera
   double px = 565;
   double py = 565;
@@ -143,6 +144,7 @@ int main()
   vpCameraParameters cam(px,py,u0,v0);
   // The matrix with our pose
   vpHomogeneousMatrix cMo;
+  cMo[2][3] = 1.; // Z = 1 meter
 
   // Our object
   vpAROgreAdvanced ogre(cam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
@@ -165,6 +167,6 @@ int main()
   std::cout << "You need an available framegrabber to run this example" << std::endl;
 #endif
 #else
-  std::cout << "You Ogre3D to run this example" << std::endl;
+  std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
 }

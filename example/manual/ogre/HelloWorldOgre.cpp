@@ -69,7 +69,7 @@ int main()
   vp1394TwoGrabber grabber;
 #elif defined(VISP_HAVE_DIRECTSHOW)
   // OpenCV to gather images
-  vpOpenCVGrabber grabber;
+  vpDirectShowGrabber grabber;
 #elif defined(VISP_HAVE_OPENCV)
   // OpenCV to gather images
   vpOpenCVGrabber grabber;
@@ -83,6 +83,7 @@ int main()
   // Here we acquire an image from an available framegrabber to update
   // the image size
   grabber.open(I);
+  grabber.acquire(I);
 
   // Parameters of our camera
   double px = 565;
@@ -118,10 +119,13 @@ int main()
   // Here we load the "robot.mesh" model that is found thanks to the resources locations
   // specified in the "resources.cfg" file
   ogre.load("Robot", "robot.mesh");
-  ogre.setPosition("Robot", vpTranslationVector(0, 0.05, 0.5));
+  ogre.setPosition("Robot", vpTranslationVector(-0.3, 0.2, 0));
   ogre.setScale("Robot", 0.001f,0.001f,0.001f);
-  ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, -M_PI/4, 0)));
+  ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, 0, 0)));
 
+  cMo[2][3] = 1.; // Z = 1 meter
+
+  std::cout << "cMo:\n" << cMo << std::endl;
 
   // Rendering loop, ended with on escape
   while(ogre.continueRendering()){
@@ -140,6 +144,6 @@ int main()
   std::cout << "You need an available framegrabber to run this example" << std::endl;
 #endif
 #else
-  std::cout << "You Ogre3D to run this example" << std::endl;
+  std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
 }
