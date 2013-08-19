@@ -6,6 +6,13 @@
                     http://www.irisa.fr/lagadic
 
 
+ViSP under development version
+  - New features
+  - Improvements
+  - Examples
+  - Bug fixed
+    . [16263] libopencv_nonfree for Surf not detected by CMake.
+----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
     . New camera calibration tool: example/camera_calibration.cpp
