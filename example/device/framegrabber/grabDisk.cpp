@@ -44,13 +44,13 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 #include <stdlib.h>
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp/vpDiskGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpTime.h>
 #include <visp/vpParseArgv.h>
 
@@ -303,12 +303,14 @@ main(int argc, const char ** argv)
   std::cout << "Image size: width : " << I.getWidth() <<  " height: "
             << I.getHeight() << std::endl;
 
-  // We open a window using either X11 or GTK.
+  // We open a window using either X11 or GDI.
   // Its size is automatically defined by the image (I) size
-#if defined VISP_HAVE_X11
-  vpDisplayX display;
-#elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
+#if defined(VISP_HAVE_X11)
+  vpDisplayX display(I);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI display(I);
+#else
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
 
   if (opt_display) {
