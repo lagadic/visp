@@ -169,8 +169,8 @@ public:
   void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t){ ransacThreshold = t; }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
-  unsigned int getRansacNbInliers(){ return (unsigned int) ransacInliers.size(); }
-  std::vector<vpPoint> getRansacInliers(){ return ransacInliers; }
+  unsigned int getRansacNbInliers() const { return (unsigned int) ransacInliers.size(); }
+  std::vector<vpPoint> getRansacInliers() const{ return ransacInliers; }
   
   /*!
     Set if the covaraince matrix has to be computed in the Virtual Visual Servoing approach.

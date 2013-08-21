@@ -142,10 +142,9 @@ public:
   vpBiclops (void);
   void init (void);
 
-  void computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc);
-
-  vpHomogeneousMatrix computeMGD (const vpColVector & q);
-  void computeMGD (const vpColVector &q,  vpPoseVector &fvc);
+  void computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;
+  vpHomogeneousMatrix computeMGD (const vpColVector & q) const;
+  void computeMGD (const vpColVector &q,  vpPoseVector &fvc) const;
 
   /*!
     Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and the end
@@ -156,20 +155,20 @@ public:
     return cMe_;
   }
 
-  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
-  void get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc);
-  void get_fMc (const vpColVector &q,  vpPoseVector &fvc);
-  vpHomogeneousMatrix get_fMc (const vpColVector &q);
-  vpHomogeneousMatrix get_fMe (const vpColVector &q);
+  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc) const;
+  void get_fMc (const vpColVector &q,  vpPoseVector &fvc) const;
+  vpHomogeneousMatrix get_fMc (const vpColVector &q) const;
+  vpHomogeneousMatrix get_fMe (const vpColVector &q) const;
 
-  void get_eJe(const vpColVector &q, vpMatrix &eJe);
-  void get_fJe(const vpColVector &q, vpMatrix &fJe);
+  void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
+  void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   /*!
     Return the Denavit Hartenberg representation used to model the head.
     \sa vpBiclops::DenavitHartenbergModel
     */
-  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel()
+  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const
   {
     return dh_model_;
   }

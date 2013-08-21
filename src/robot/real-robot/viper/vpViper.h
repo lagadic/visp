@@ -114,31 +114,31 @@ class VISP_EXPORT vpViper
   vpViper();
   virtual ~vpViper() {};
 
-  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
-  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose=false);
-  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose=false);
-  vpHomogeneousMatrix get_fMc (const vpColVector & q);
-  void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw);
-  void get_wMe(vpHomogeneousMatrix & wMe);
-  void get_eMc(vpHomogeneousMatrix & eMc);
-  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe);
-  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
+  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
+  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose=false) const;
+  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose=false) const;
+  vpHomogeneousMatrix get_fMc (const vpColVector & q) const;
+  void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw) const;
+  void get_wMe(vpHomogeneousMatrix & wMe) const;
+  void get_eMc(vpHomogeneousMatrix & eMc) const;
+  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
+  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
 
-  void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &cVe) ;
-  void get_fJw(const vpColVector &q, vpMatrix &fJw)  ;
-  void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
-  void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;
+  void get_cMe(vpHomogeneousMatrix &cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
+  void get_fJw(const vpColVector &q, vpMatrix &fJw) const;
+  void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
+  void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
 
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 						 const vpViper & viper);
 
-  vpColVector getJointMin();
-  vpColVector getJointMax();
-  double getCoupl56();
+  vpColVector getJointMin() const;
+  vpColVector getJointMax() const;
+  double getCoupl56() const;
 
  private:
-  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false);
+  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false) const;
 
  public:
   static const unsigned int njoint; ///< Number of joint.
@@ -160,15 +160,7 @@ class VISP_EXPORT vpViper
   // Software joint limits in radians
   vpColVector joint_max; // Maximal value of the joints
   vpColVector joint_min; // Minimal value of the joints
-
-
 };
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif
 

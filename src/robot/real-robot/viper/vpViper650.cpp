@@ -574,7 +574,7 @@ int main()
 void
 vpViper650::getCameraParameters (vpCameraParameters &cam,
                                  const unsigned int &image_width,
-                                 const unsigned int &image_height)
+                                 const unsigned int &image_height) const
 {
 #if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_ACCESS_TO_NAS)
   vpXmlParserCamera parser;
@@ -796,7 +796,7 @@ int main()
 */
 void
 vpViper650::getCameraParameters (vpCameraParameters &cam,
-                                 const vpImage<unsigned char> &I)
+                                 const vpImage<unsigned char> &I) const
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }
@@ -866,15 +866,7 @@ int main()
 
 void
 vpViper650::getCameraParameters (vpCameraParameters &cam,
-                                 const vpImage<vpRGBa> &I)
+                                 const vpImage<vpRGBa> &I) const
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

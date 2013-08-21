@@ -111,19 +111,19 @@ class VISP_EXPORT vpViper850: public vpViper
 
 
   //! Get the current camera model projection type
-  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType(){
+  vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const{
     return projModel;
   };
 
   void getCameraParameters(vpCameraParameters &cam,
 			   const unsigned int &image_width,
-			   const unsigned int &image_height);
+               const unsigned int &image_height) const;
   void getCameraParameters(vpCameraParameters &cam,
-			   const vpImage<unsigned char> &I);
-  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
+               const vpImage<unsigned char> &I) const;
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
   //! Get the current tool type
-  vpToolType getToolType(){
+  vpToolType getToolType() const {
     return tool_current;
   };
 

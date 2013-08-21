@@ -95,15 +95,14 @@ public: /* Methodes publiques */
   vpPtu46 (void);
   void init (void);
 
-  void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc);
+  void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;
+  vpHomogeneousMatrix computeMGD (const vpColVector & q) const;
+  void  computeMGD (const vpColVector & q,  vpPoseVector & r) const;
 
-  vpHomogeneousMatrix computeMGD (const vpColVector & q);
-  void  computeMGD (const vpColVector & q,  vpPoseVector & r);
-
-  void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
-  void get_eJe(const vpColVector &q, vpMatrix &eJe);
-  void get_fJe(const vpColVector &q, vpMatrix &fJe);
+  void get_cMe(vpHomogeneousMatrix &_cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
+  void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 				     const vpPtu46 & constant);

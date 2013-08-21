@@ -210,7 +210,7 @@ vpServolens::close()
   with Servolens.
 */
 void
-vpServolens::reset()
+vpServolens::reset() const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -248,7 +248,7 @@ vpServolens::reset()
   \sa open()
 */
 void
-vpServolens::init()
+vpServolens::init() const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -283,7 +283,7 @@ vpServolens::init()
 
 */
 void 
-vpServolens::enableCmdComplete(vpServoType servo, bool active)
+vpServolens::enableCmdComplete(vpServoType servo, bool active) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -331,7 +331,7 @@ vpServolens::enableCmdComplete(vpServoType servo, bool active)
 
 */
 void 
-vpServolens::enablePrompt(bool active)
+vpServolens::enablePrompt(bool active) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -358,7 +358,7 @@ vpServolens::enablePrompt(bool active)
   with Servolens.
 */
 void 
-vpServolens::setController(vpControllerType controller)
+vpServolens::setController(vpControllerType controller) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -399,7 +399,7 @@ vpServolens::setController(vpControllerType controller)
 
 */
 void 
-vpServolens::setAutoIris(bool enable)
+vpServolens::setAutoIris(bool enable) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -427,7 +427,7 @@ vpServolens::setAutoIris(bool enable)
 
 */
 void
-vpServolens::setPosition(vpServoType servo, unsigned int position)
+vpServolens::setPosition(vpServoType servo, unsigned int position) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -511,7 +511,7 @@ vpServolens::setPosition(vpServoType servo, unsigned int position)
 
 */
 bool
-vpServolens::getPosition(vpServoType servo, unsigned int &position)
+vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -649,7 +649,7 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position)
   
  */
 vpCameraParameters 
-vpServolens::getCameraParameters(vpImage<unsigned char> &I)
+vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -697,7 +697,7 @@ vpServolens::getCameraParameters(vpImage<unsigned char> &I)
   with Servolens.
 */
 char 
-vpServolens::wait()
+vpServolens::wait() const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -732,7 +732,7 @@ vpServolens::wait()
 
 */
 void
-vpServolens::wait(vpServoType servo)
+vpServolens::wait(vpServoType servo) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -798,7 +798,7 @@ vpServolens::wait(vpServoType servo)
   with Servolens.
 */
 bool 
-vpServolens::read(char *c, long timeout_s)
+vpServolens::read(char *c, long timeout_s) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -835,7 +835,7 @@ vpServolens::read(char *c, long timeout_s)
   with Servolens.
 */
 void 
-vpServolens::write(const char *s)
+vpServolens::write(const char *s) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
@@ -874,7 +874,7 @@ vpServolens::write(const char *s)
 
 */
 bool 
-vpServolens::clean(const char *in, char *out)
+vpServolens::clean(const char *in, char *out) const
 {
   short nb_car, i=0;
   bool error = false;

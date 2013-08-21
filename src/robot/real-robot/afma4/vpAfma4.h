@@ -116,25 +116,25 @@ class VISP_EXPORT vpAfma4
 
   void init (void);
 
-  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q);
+  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
 /*   int getInverseKinematics(const vpHomogeneousMatrix & fMc, */
 /* 			   vpColVector & q, const bool &nearest=true); */
-  vpHomogeneousMatrix get_fMc (const vpColVector & q);
-  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe);
-  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc);
+  vpHomogeneousMatrix get_fMc (const vpColVector & q) const;
+  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
+  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
 
-  void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &cVe) ;
-  void get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf);
-  void get_eJe(const vpColVector &q, vpMatrix &eJe)  ;
-  void get_fJe(const vpColVector &q, vpMatrix &fJe)  ;
-  void get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse)  ;
+  void get_cMe(vpHomogeneousMatrix &cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
+  void get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf) const;
+  void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
+  void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
+  void get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const;
 
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
 						 const vpAfma4 & afma4);
 
-  vpColVector getJointMin();
-  vpColVector getJointMax();
+  vpColVector getJointMin() const;
+  vpColVector getJointMax() const;
 
  public:
 

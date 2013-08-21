@@ -120,39 +120,34 @@ class VISP_EXPORT vpServolens
 
   void open(const char *port="/dev/ttyS0");
   void close();
-  void reset();
+  void reset() const;
 
-  void setController(vpControllerType controller);
-  void setAutoIris(bool enable);
-  void setPosition(vpServoType servo, unsigned int position);
-  bool getPosition(vpServoType servo, unsigned int &position);
-  vpCameraParameters getCameraParameters(vpImage<unsigned char> &I);
+  void setController(vpControllerType controller) const;
+  void setAutoIris(bool enable) const;
+  void setPosition(vpServoType servo, unsigned int position) const;
+  bool getPosition(vpServoType servo, unsigned int &position) const;
+  vpCameraParameters getCameraParameters(vpImage<unsigned char> &I) const;
 
-  void enablePrompt(bool active);
+  void enablePrompt(bool active) const;
 
  private:
 
-  void init();
+  void init() const;
 
-  void enableCmdComplete(vpServoType servo, bool active);
+  void enableCmdComplete(vpServoType servo, bool active) const;
 
-  char wait();
-  void wait(vpServoType servo);
+  char wait() const;
+  void wait(vpServoType servo) const;
 
-  bool read(char *c, long timeout_s);
-  void write(const char *s);
+  bool read(char *c, long timeout_s) const;
+  void write(const char *s) const;
 
-  bool clean(const char *in, char *out);
+  bool clean(const char *in, char *out) const;
 
   int remfd; // file pointer of the host's tty
   bool isinit;
 };
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 #endif
 #endif
 

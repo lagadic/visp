@@ -77,7 +77,7 @@ const float vpBiclops::speedLimit = (float)(M_PI/3.0); /*!< Maximum speed (in ra
   \sa get_fMc(const vpColVector &, vpHomogeneousMatrix &)
 */
 void
-vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
+vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
   fMc = fMe * cMe_.inverse();
@@ -98,7 +98,7 @@ vpBiclops::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc)
 
 */
 void
-vpBiclops::get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc)
+vpBiclops::get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
   fMc = fMe * cMe_.inverse();
@@ -123,7 +123,7 @@ vpBiclops::get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc)
   \sa get_fMc(const vpColVector &)
 */
 vpHomogeneousMatrix
-vpBiclops::computeMGD (const vpColVector & q)
+vpBiclops::computeMGD (const vpColVector & q) const
 {
   vpHomogeneousMatrix fMc;
 
@@ -143,7 +143,7 @@ vpBiclops::computeMGD (const vpColVector & q)
 
 */
 vpHomogeneousMatrix
-vpBiclops::get_fMc (const vpColVector & q)
+vpBiclops::get_fMc (const vpColVector & q) const
 {
   vpHomogeneousMatrix fMc;
 
@@ -163,7 +163,7 @@ vpBiclops::get_fMc (const vpColVector & q)
 
 */
 vpHomogeneousMatrix
-vpBiclops::get_fMe (const vpColVector & q)
+vpBiclops::get_fMe (const vpColVector & q) const
 {
   vpHomogeneousMatrix fMe;
 
@@ -243,7 +243,7 @@ vpBiclops::get_fMe (const vpColVector & q)
 */
 
 void
-vpBiclops::computeMGD (const vpColVector &q, vpPoseVector &fvc)
+vpBiclops::computeMGD (const vpColVector &q, vpPoseVector &fvc) const
 {
   vpHomogeneousMatrix fMc;
 
@@ -264,7 +264,7 @@ vpBiclops::computeMGD (const vpColVector &q, vpPoseVector &fvc)
 */
 
 void
-vpBiclops::get_fMc (const vpColVector &q, vpPoseVector &fvc)
+vpBiclops::get_fMc (const vpColVector &q, vpPoseVector &fvc) const
 {
   vpHomogeneousMatrix fMc;
 
@@ -333,7 +333,7 @@ std::ostream & operator << (std::ostream & os,
 
 */
 void
-vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe)
+vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   cVe.buildFrom(cMe_) ;
 }
@@ -386,10 +386,8 @@ vpBiclops::set_cMe()
 
 */
 void
-vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe)
+vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
-
-
   eJe.resize(6,2) ;
 
   if (q.getRows() != 2) {
@@ -428,9 +426,8 @@ vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe)
 */
 
 void
-vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe)
+vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
-
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for biclops articular vector");
     throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
@@ -456,4 +453,3 @@ vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe)
     fJe[5][0] = 1;
   }
 }
-

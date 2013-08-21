@@ -472,7 +472,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
 
 */
 vpHomogeneousMatrix
-vpAfma6::getForwardKinematics(const vpColVector & q)
+vpAfma6::getForwardKinematics(const vpColVector & q) const
 {
   vpHomogeneousMatrix fMc;
   fMc = get_fMc(q);
@@ -555,7 +555,7 @@ int main()
 */
 int
 vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
-                              vpColVector & q, const bool &nearest, const bool &verbose)
+                              vpColVector & q, const bool &nearest, const bool &verbose) const
 {
   vpHomogeneousMatrix fMe;
   double q_[2][6],d[2],t;
@@ -735,7 +735,7 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   \sa getForwardKinematics(const vpColVector & q)
 */
 vpHomogeneousMatrix
-vpAfma6::get_fMc (const vpColVector & q)
+vpAfma6::get_fMc (const vpColVector & q) const
 {
   vpHomogeneousMatrix fMc;
   get_fMc(q, fMc);
@@ -763,7 +763,7 @@ vpAfma6::get_fMc (const vpColVector & q)
 
 */
 void
-vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
+vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
 {
 
   // Compute the direct geometric model: fMe = transformation between
@@ -797,7 +797,7 @@ vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc)
 
 */
 void
-vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
+vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const
 {
   double            q0 = q[0]; // meter
   double            q1 = q[1]; // meter
@@ -851,7 +851,7 @@ vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe)
 
 */
 void
-vpAfma6::get_cMe(vpHomogeneousMatrix &cMe)
+vpAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   cMe = this->_eMc.inverse();
 }
@@ -866,7 +866,7 @@ vpAfma6::get_cMe(vpHomogeneousMatrix &cMe)
 
 */
 void
-vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
+vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   get_cMe(cMe) ;
@@ -889,7 +889,7 @@ vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
 
 */
 void
-vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
+vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
 
   eJe.resize(6,6) ;
@@ -956,7 +956,7 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe)
 */
 
 void
-vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
+vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
 
   fJe.resize(6,6) ;
@@ -993,7 +993,7 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe)
 
 */
 vpColVector
-vpAfma6::getJointMin()
+vpAfma6::getJointMin() const
 {
   vpColVector qmin(6);
   for (unsigned int i=0; i < 6; i ++)
@@ -1010,7 +1010,7 @@ vpAfma6::getJointMin()
 
 */
 vpColVector
-vpAfma6::getJointMax()
+vpAfma6::getJointMax() const
 {
   vpColVector qmax(6);
   for (unsigned int i=0; i < 6; i ++)
@@ -1025,7 +1025,7 @@ vpAfma6::getJointMax()
   \return Coupling factor between join 5 and 6.
 */
 double
-vpAfma6::getCoupl56()
+vpAfma6::getCoupl56() const
 {
   return _coupl_56;
 }
@@ -1037,7 +1037,7 @@ vpAfma6::getCoupl56()
   \return Distance between join 5 and 6.
 */
 double
-vpAfma6::getLong56()
+vpAfma6::getLong56() const
 {
   return _long_56;
 }
@@ -1233,7 +1233,7 @@ int main()
 void
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
                               const unsigned int &image_width,
-                              const unsigned int &image_height)
+                              const unsigned int &image_height) const
 {
 #if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_ACCESS_TO_NAS)
   vpXmlParserCamera parser;
@@ -1451,7 +1451,7 @@ int main()
 */
 void
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
-                              const vpImage<unsigned char> &I)
+                              const vpImage<unsigned char> &I) const
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }
@@ -1500,7 +1500,7 @@ int main()
 
 void
 vpAfma6::getCameraParameters (vpCameraParameters &cam,
-                              const vpImage<vpRGBa> &I)
+                              const vpImage<vpRGBa> &I) const
 {
   getCameraParameters(cam,I.getWidth(),I.getHeight());
 }
@@ -1568,8 +1568,4 @@ std::ostream & operator << (std::ostream & os,
 
   return os;
 }
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+
