@@ -61,6 +61,8 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpXmlParserCamera.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class Settings
 {
 public:
@@ -121,6 +123,7 @@ private:
   std::string patternToUse;
 };
 
+#endif
 int main(int argc, const char ** argv)
 {
   std::string outputFileName = "camera.xml";
