@@ -294,10 +294,10 @@ public:  /* Methode publiques */
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
 
-  void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
-  void get_eJe(vpMatrix &_eJe)  ;
-  void get_fJe(vpMatrix &_fJe)  ;
+  void get_cMe(vpHomogeneousMatrix &_cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_eJe(vpMatrix &_eJe);
+  void get_fJe(vpMatrix &_fJe);
 
   void init (void);
   void init (vpAfma6::vpAfma6ToolType tool,

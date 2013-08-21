@@ -649,7 +649,7 @@ vpRobotAfma6::getPowerState(void)
 
 */
 void
-vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
+vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   vpAfma6::get_cMe(cMe) ;
@@ -668,7 +668,7 @@ vpRobotAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
 
 */
 void
-vpRobotAfma6::get_cMe(vpHomogeneousMatrix &cMe)
+vpRobotAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   vpAfma6::get_cMe(cMe) ;
 }

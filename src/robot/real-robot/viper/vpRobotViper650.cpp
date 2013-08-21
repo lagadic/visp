@@ -679,7 +679,7 @@ void
   \sa powerOn(), powerOff()
 */
 bool
-    vpRobotViper650::getPowerState(void)
+    vpRobotViper650::getPowerState(void) const
 {
   InitTry;
   bool status = false;
@@ -712,7 +712,7 @@ bool
 
 */
 void
-    vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe)
+    vpRobotViper650::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   vpViper650::get_cMe(cMe) ;
@@ -732,7 +732,7 @@ void
 
 */
 void
-    vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe)
+    vpRobotViper650::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   vpViper650::get_cMe(cMe) ;
 }
@@ -861,7 +861,7 @@ void
   \sa setPositioningVelocity()
 */
 double
-    vpRobotViper650::getPositioningVelocity (void)
+    vpRobotViper650::getPositioningVelocity (void) const
 {
   return positioningVelocity;
 }
@@ -2167,7 +2167,7 @@ void
 
 */
 void
-    vpRobotViper650::biasForceTorqueSensor()
+    vpRobotViper650::biasForceTorqueSensor() const
 {
   InitTry;
 
@@ -2224,7 +2224,7 @@ int main()
 
 */
 void
-    vpRobotViper650::getForceTorque(vpColVector &H)
+    vpRobotViper650::getForceTorque(vpColVector &H) const
 {
   InitTry;
 
@@ -2245,7 +2245,7 @@ void
 
   \sa disbleJoint6Limits()
 */
-void vpRobotViper650::enableJoint6Limits()
+void vpRobotViper650::enableJoint6Limits() const
 {
   InitTry;
   Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper650(0) );
@@ -2267,7 +2267,7 @@ void vpRobotViper650::enableJoint6Limits()
 
   \sa enableJoint6Limits()
 */
-void vpRobotViper650::disableJoint6Limits()
+void vpRobotViper650::disableJoint6Limits() const
 {
   InitTry;
   Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper650(1) );

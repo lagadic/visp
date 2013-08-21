@@ -117,7 +117,7 @@ public:
   virtual ~vpSimulatorCamera() ;
 
 public:
-  void get_cVe(vpVelocityTwistMatrix &cVe);
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_eJe(vpMatrix &eJe);
 
   void getPosition(vpHomogeneousMatrix &wMc) const;

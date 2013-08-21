@@ -680,7 +680,7 @@ void
   \sa powerOn(), powerOff()
 */
 bool
-    vpRobotViper850::getPowerState(void)
+    vpRobotViper850::getPowerState(void) const
 {
   InitTry;
   bool status = false;
@@ -713,7 +713,7 @@ bool
 
 */
 void
-    vpRobotViper850::get_cVe(vpVelocityTwistMatrix &cVe)
+    vpRobotViper850::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   vpViper850::get_cMe(cMe) ;
@@ -733,7 +733,7 @@ void
 
 */
 void
-    vpRobotViper850::get_cMe(vpHomogeneousMatrix &cMe)
+    vpRobotViper850::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   vpViper850::get_cMe(cMe) ;
 }
@@ -862,7 +862,7 @@ void
   \sa setPositioningVelocity()
 */
 double
-    vpRobotViper850::getPositioningVelocity (void)
+    vpRobotViper850::getPositioningVelocity (void) const
 {
   return positioningVelocity;
 }
@@ -2181,7 +2181,7 @@ void
 
 */
 void
-    vpRobotViper850::biasForceTorqueSensor()
+    vpRobotViper850::biasForceTorqueSensor() const
 {
   InitTry;
 
@@ -2238,7 +2238,7 @@ int main()
 
 */
 void
-    vpRobotViper850::getForceTorque(vpColVector &H)
+    vpRobotViper850::getForceTorque(vpColVector &H) const
 {
   InitTry;
 
@@ -2280,7 +2280,7 @@ void
   \sa openGripper()
 
 */
-void vpRobotViper850::closeGripper()
+void vpRobotViper850::closeGripper() const
 {
   InitTry;
   Try( PrimitiveGripper_Viper850(0) );
@@ -2298,7 +2298,7 @@ void vpRobotViper850::closeGripper()
 
   \sa disbleJoint6Limits()
 */
-void vpRobotViper850::enableJoint6Limits()
+void vpRobotViper850::enableJoint6Limits() const
 {
   InitTry;
   Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper850(0) );
@@ -2320,7 +2320,7 @@ void vpRobotViper850::enableJoint6Limits()
 
   \sa enableJoint6Limits()
 */
-void vpRobotViper850::disableJoint6Limits()
+void vpRobotViper850::disableJoint6Limits() const
 {
   InitTry;
   Try( PrimitiveREMOVE_JOINT6_LIMITS_Viper850(1) );

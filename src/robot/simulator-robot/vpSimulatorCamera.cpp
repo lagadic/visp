@@ -104,7 +104,7 @@ vpSimulatorCamera::~vpSimulatorCamera()
 
 */
 void
-vpSimulatorCamera::get_cVe(vpVelocityTwistMatrix &cVe)
+vpSimulatorCamera::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpVelocityTwistMatrix cVe_;
   cVe = cVe_;

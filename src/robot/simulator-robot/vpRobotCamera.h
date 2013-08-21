@@ -116,8 +116,8 @@ public:
   vpRobotCamera() ;
   virtual ~vpRobotCamera() ;
 
-  void get_cVe(vpVelocityTwistMatrix &cVe);
-  void get_eJe(vpMatrix &eJe)    ;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
+  void get_eJe(vpMatrix &eJe);
 
   void getPosition(vpHomogeneousMatrix &cMw) const   ;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);

@@ -112,8 +112,8 @@ public:
   vpRobotPtu46 (vpRobotPtu46 * pub);
   virtual ~vpRobotPtu46 (void);
 
-  void get_cMe(vpHomogeneousMatrix &_cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &_cVe) ;
+  void get_cMe(vpHomogeneousMatrix &_cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
   void get_eJe(vpMatrix &_eJe);
   void get_fJe(vpMatrix &_fJe);
 

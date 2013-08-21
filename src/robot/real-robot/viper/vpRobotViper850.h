@@ -336,12 +336,12 @@ public:  /* Methode publiques */
   virtual ~vpRobotViper850 (void);
 
   // Force/Torque control
-  void biasForceTorqueSensor();
+  void biasForceTorqueSensor() const;
 
-  void closeGripper();
+  void closeGripper() const;
 
-  void disableJoint6Limits();
-  void enableJoint6Limits();
+  void disableJoint6Limits() const;
+  void enableJoint6Limits() const;
 
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
@@ -349,11 +349,11 @@ public:  /* Methode publiques */
     \return The control mode indicating if the robot is in automatic, 
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
-  vpControlModeType getControlMode() {
+  vpControlModeType getControlMode() const {
     return controlMode;
   }
 
-  void getForceTorque(vpColVector &H);
+  void getForceTorque(vpColVector &H) const;
 
   void getPosition (const vpRobot::vpControlFrameType frame,
                     vpColVector &position);
@@ -364,8 +364,8 @@ public:  /* Methode publiques */
   void getPosition (const vpRobot::vpControlFrameType frame,
                     vpPoseVector &position, double &timestamp);
 
-  double getPositioningVelocity (void);
-  bool getPowerState();
+  double getPositioningVelocity (void) const;
+  bool getPowerState() const;
 
   void getVelocity (const vpRobot::vpControlFrameType frame,
                     vpColVector & velocity);
@@ -377,10 +377,10 @@ public:  /* Methode publiques */
 
   double getTime() const;
 
-  void get_cMe(vpHomogeneousMatrix &cMe) ;
-  void get_cVe(vpVelocityTwistMatrix &cVe) ;
-  void get_eJe(vpMatrix &eJe)  ;
-  void get_fJe(vpMatrix &fJe)  ;
+  void get_cMe(vpHomogeneousMatrix &cMe) const;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
+  void get_eJe(vpMatrix &eJe);
+  void get_fJe(vpMatrix &fJe);
 
   void init (void);
   void init (vpViper850::vpToolType tool,

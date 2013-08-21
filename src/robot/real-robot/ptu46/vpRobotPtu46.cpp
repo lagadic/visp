@@ -235,7 +235,7 @@ vpRobotPtu46::stopMotion(void)
 
 */
 void
-vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe)
+vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   vpPtu46::get_cMe(cMe) ;
@@ -253,7 +253,7 @@ vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe)
 
 */
 void
-vpRobotPtu46::get_cMe(vpHomogeneousMatrix &cMe)
+vpRobotPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   vpPtu46::get_cMe(cMe) ;
 }

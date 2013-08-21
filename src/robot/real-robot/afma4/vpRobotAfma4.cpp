@@ -554,7 +554,7 @@ vpRobotAfma4::getPowerState(void)
 
 */
 void
-vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe)
+vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe ;
   vpAfma4::get_cMe(cMe) ;
@@ -572,7 +572,7 @@ vpRobotAfma4::get_cVe(vpVelocityTwistMatrix &cVe)
 
 */
 void
-vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf)
+vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf) const
 {
   double position[this->njoint];
   double timestamp;
@@ -604,7 +604,7 @@ vpRobotAfma4::get_cVf(vpVelocityTwistMatrix &cVf)
 
 */
 void
-vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe)
+vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   vpAfma4::get_cMe(cMe) ;
 }

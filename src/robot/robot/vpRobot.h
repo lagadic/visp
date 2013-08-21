@@ -120,9 +120,9 @@ public:
 
   //---------- Jacobian -----------------------------
   //! Get the robot Jacobian expressed in the end-effector frame
-  virtual void get_eJe(vpMatrix &_eJe)  = 0 ;
+  virtual void get_eJe(vpMatrix &_eJe) = 0 ;
   //! Get the robot Jacobian expressed in the robot reference (or world) frame.
-  virtual void get_fJe(vpMatrix &_fJe)  = 0 ;
+  virtual void get_fJe(vpMatrix &_fJe) = 0 ;
 
   //! Get a displacement (frame as to ve specified) between two successive position control.
   virtual void getDisplacement(const vpRobot::vpControlFrameType frame,
@@ -136,7 +136,7 @@ public:
 
   // Return the robot position (frame has to be specified).
   vpColVector getPosition (const vpRobot::vpControlFrameType frame);
-  virtual vpRobotStateType getRobotState (void) { return stateRobot ; }
+  virtual vpRobotStateType getRobotState (void) const { return stateRobot ; }
 
   virtual void init() = 0 ;
 
@@ -156,7 +156,7 @@ public:
 
 protected:
   vpControlFrameType setRobotFrame (vpRobot::vpControlFrameType newFrame);
-  vpControlFrameType getRobotFrame (void) { return frameRobot ; }
+  vpControlFrameType getRobotFrame (void) const { return frameRobot ; }
 } ;
 
 #endif

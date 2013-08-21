@@ -118,7 +118,7 @@ vpRobotCamera::~vpRobotCamera()
 
 */
 void
-vpRobotCamera::get_cVe(vpVelocityTwistMatrix &cVe)
+vpRobotCamera::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpVelocityTwistMatrix cVe_;
   cVe = cVe_;
