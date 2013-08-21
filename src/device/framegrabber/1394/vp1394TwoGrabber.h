@@ -382,10 +382,10 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   void getGuid(uint64_t &guid);
   void getHeight(unsigned int &height);
   unsigned int getHeight();
-  void getNumCameras(unsigned int &ncameras);
-  unsigned int getNumCameras();
+  void getNumCameras(unsigned int &ncameras) const;
+  unsigned int getNumCameras() const;
   unsigned int getParameterValue(vp1394TwoParametersType param);
-  unsigned int getRingBufferSize();
+  unsigned int getRingBufferSize() const;
   void getVideoMode(vp1394TwoVideoModeType & videomode);
   uint32_t getVideoModeSupported(std::list<vp1394TwoVideoModeType> & videomodes);
   void getWidth(unsigned int &width);

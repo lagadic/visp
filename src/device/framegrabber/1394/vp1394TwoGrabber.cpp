@@ -434,7 +434,7 @@ vp1394TwoGrabber::getCamera()
 
 */
 void
-vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
+vp1394TwoGrabber::getNumCameras(unsigned int &ncameras) const
 {
   if (! num_cameras) {
     vpCTRACE << "No camera found..."<< std::endl;
@@ -452,7 +452,7 @@ vp1394TwoGrabber::getNumCameras(unsigned int &ncameras)
 
 */
 unsigned int
-vp1394TwoGrabber::getNumCameras()
+vp1394TwoGrabber::getNumCameras() const
 {
   unsigned int ncameras = 0;
   if (! num_cameras) {
@@ -1771,7 +1771,7 @@ vp1394TwoGrabber::setRingBufferSize(unsigned int size)
   \sa setRingBufferSize()
 */
 unsigned int
-vp1394TwoGrabber::getRingBufferSize()
+vp1394TwoGrabber::getRingBufferSize() const
 {
   return num_buffers;
 }
@@ -3764,7 +3764,7 @@ vp1394TwoGrabber::getFramerateSupported(vp1394TwoVideoModeType mode,
 */
 uint32_t
 vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
-    vpList<vp1394TwoColorCodingType> & codings)
+                                          vpList<vp1394TwoColorCodingType> & codings)
 {
   if (! num_cameras) {
     close();
