@@ -47,7 +47,6 @@ SET (SOURCE
   geometric-features/manGeometricFeatures.cpp
   hello-world/CMake/HelloWorld.cpp
   image-manipulation/manDisplay.cpp
-  image-manipulation/manGrab1394-1.cpp
   image-manipulation/manGrab1394-2.cpp
   image-manipulation/manGrabDirectShow.cpp
   image-manipulation/manGrabDisk.cpp

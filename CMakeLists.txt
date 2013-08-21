@@ -164,17 +164,12 @@ ENDIF()
 
 
 IF (UNIX)
-  FIND_PACKAGE(DC1394)
-  IF(DC1394_2_FOUND)
-    OPTION(USE_DC1394_2    "Compile ViSP with the libdc1394.2 library" ON)
-  ELSE(DC1394_2_FOUND)
-    SET(USE_DC1394_2 OFF)
-  ENDIF(DC1394_2_FOUND)
-  IF(DC1394_1_FOUND)
-    OPTION(USE_DC1394_1    "Compile ViSP with the libdc1394.1 library" ON)
-  ELSE(DC1394_1_FOUND)
-    SET(USE_DC1394_1 OFF)
-  ENDIF(DC1394_1_FOUND)
+  find_package(DC1394)
+  if(DC1394_FOUND)
+    option(USE_DC1394    "Compile ViSP with the libdc1394.2 library" ON)
+  else()
+    set(USE_DC1394 OFF)
+  endif()
 
   FIND_PACKAGE(V4L2)
   IF(V4L2_FOUND)
@@ -509,8 +504,7 @@ endif()
 #SET(USE_GTK2       ON) # For Linux/OSX/Windows display with gtk-2.x
 #SET(USE_DIRECT3D   ON) # For Windows display
 #SET(USE_GDI        ON) # For Windows display
-#SET(USE_DC1394_1   ON) # For firewire grabber under Linux and OSX ?
-#SET(USE_DC1394_2   ON) # For firewire grabber under Linux and OSX ?
+#SET(USE_DC1394     ON) # For firewire grabber under Linux and OSX ?
 #SET(USE_V4L2       ON) # For Video 4 Linux 2 grabber under Linux
 #SET(USE_DIRECTSHOW ON) # For Windows direct show grabber
 #SET(USE_LIBJPEG    ON) # For reading jpeg files
@@ -1374,63 +1368,43 @@ ENDIF(USE_FFMPEG)
 # Specific hardware : framegrabbers and cameras
 #----------------------------------------------------------------------
 # default initialisation
-SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
 # library for firewire cameras
-IF(USE_DC1394_1 OR USE_DC1394_2)
+IF(USE_DC1394)
   #FIND_PACKAGE(DC1394)
-  IF(DC1394_FOUND)
-    SET(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
-    IF(DC1394_2_FOUND AND USE_DC1394_2)
-      MESSAGE(STATUS "libdc1394-2.x found")
-      SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
-      SET(VISP_HAVE_DC1394_2_FOUND "yes")  # for ViSP-third-party.txt
-      IF(DC1394_CAMERA_ENUMERATE_FOUND)
-        SET(VISP_HAVE_DC1394_2_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
-      ENDIF(DC1394_CAMERA_ENUMERATE_FOUND)
-      IF(DC1394_FIND_CAMERAS_FOUND)
-        SET(VISP_HAVE_DC1394_2_FIND_CAMERAS TRUE) # for header vpConfig.h
-      ENDIF(DC1394_FIND_CAMERAS_FOUND)
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${DC1394_2_INCLUDE_DIRS})
-      LIST(APPEND VISP_EXTERN_LIBRARIES ${DC1394_2_LIBRARY})
+  if(DC1394_FOUND)
+    set(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
 
-      #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
-    ELSE(DC1394_2_FOUND AND USE_DC1394_2)
-      MESSAGE(STATUS "libdc1394-2.x not found")
-      SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
-    ENDIF(DC1394_2_FOUND AND USE_DC1394_2)
-    
-    IF(DC1394_1_FOUND AND USE_DC1394_1)
-      MESSAGE(STATUS "libdc1394-1.x found")
-      SET(VISP_HAVE_DC1394_1 TRUE) # for header vpConfig.h
-      SET(VISP_HAVE_DC1394_1_FOUND "yes")  # for ViSP-third-party.txt
-      #MESSAGE("DBG VISP_HAVE_DC1394_1= ${VISP_HAVE_DC1394_1}")
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${DC1394_1_INCLUDE_DIRS})
-      LIST(APPEND VISP_EXTERN_LIBRARIES ${DC1394_1_LIBRARY})
-    ELSE(DC1394_1_FOUND AND USE_DC1394_1)
-      MESSAGE(STATUS "libdc1394-1.x not found")
-      SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
-    ENDIF(DC1394_1_FOUND AND USE_DC1394_1)
+    MESSAGE(STATUS "libdc1394-2.x found")
+    SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_DC1394_2_FOUND "yes")  # for ViSP-third-party.txt
+    IF(DC1394_CAMERA_ENUMERATE_FOUND)
+      SET(VISP_HAVE_DC1394_2_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
+    ENDIF(DC1394_CAMERA_ENUMERATE_FOUND)
+    IF(DC1394_FIND_CAMERAS_FOUND)
+      SET(VISP_HAVE_DC1394_2_FIND_CAMERAS TRUE) # for header vpConfig.h
+    ENDIF(DC1394_FIND_CAMERAS_FOUND)
+    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${DC1394_INCLUDE_DIRS})
+    LIST(APPEND VISP_EXTERN_LIBRARIES ${DC1394_LIBRARY})
+
+    #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
     #MESSAGE("DBG DC1394_INCLUDE_DIRS=${DC1394_INCLUDE_DIRS}")
     
-
     IF(APPLE)
       #SET(VISP_EXTERN_LIBRARIES ${VISP_EXTERN_LIBRARIES} IOkit "-framework Carbon")
       LIST(APPEND VISP_EXTERN_LIBRARIES "-framework IOkit -framework Carbon")
     ENDIF(APPLE)
-     #MESSAGE("DC1394_LIBRARIES = ${DC1394_LIBRARIES}")
+    #MESSAGE("DC1394_LIBRARIES = ${DC1394_LIBRARIES}")
   ELSE(DC1394_FOUND)
-    MESSAGE(STATUS "libdc1394-1.x not found")
     MESSAGE(STATUS "libdc1394-2.x not found")
-    SET(VISP_HAVE_DC1394_1_FOUND "no")  # for ViSP-third-party.txt
     SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
     #MESSAGE("Firewire dc1394 requested but not found. Turn off USE_DC1394!")
     # SET(USE_DC1394 OFF)
   ENDIF(DC1394_FOUND)
-ENDIF(USE_DC1394_1 OR USE_DC1394_2)
+ENDIF(USE_DC1394)
 
 # library for CMU1394 pan-tilt head
 IF(USE_CMU1394)

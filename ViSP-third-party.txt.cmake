@@ -33,7 +33,6 @@ Video devices (display)
   GDI                         : ${VISP_HAVE_GDI_FOUND}
   Direct3D                    : ${VISP_HAVE_D3D9_FOUND}
 Framegrabbers
-  Firewire libdc1394-1.x      : ${VISP_HAVE_DC1394_1_FOUND}
   Firewire libdc1394-2.x      : ${VISP_HAVE_DC1394_2_FOUND}
   Video For Linux Two         : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                  : ${VISP_HAVE_DIRECTSHOW_FOUND}

@@ -69,14 +69,13 @@
 #include <visp/vpDebug.h> // Debug trace
 #include <signal.h>
 #include <stdlib.h>
-#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394_2) /*|| defined (VISP_HAVE_DC1394_1)*/ || defined(VISP_HAVE_DIRECTSHOW)) )
+#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394_2) || defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
 #include <visp/vp1394TwoGrabber.h>
-//#include <visp/vp1394Grabber.h>
 #include <visp/vpDirectShowGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
@@ -279,8 +278,6 @@ main(int argc, const char ** argv)
 
 #if defined VISP_HAVE_DC1394_2
     vp1394TwoGrabber g;
-    // #elif defined VISP_HAVE_DC1394_1
-    //     vp1394Grabber g;
 #elif defined VISP_HAVE_DIRECTSHOW
     vpDirectShowGrabber g;
 #endif
@@ -306,7 +303,6 @@ main(int argc, const char ** argv)
     vpDisplayGDI display(I, 100, 100,"Display GDI...") ;
 #endif
 
-    
     try{
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;

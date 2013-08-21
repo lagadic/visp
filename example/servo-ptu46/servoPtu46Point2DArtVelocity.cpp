@@ -70,13 +70,13 @@
 
 
 
-#if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394) )
+#if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394_2) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
 
-#include <visp/vp1394Grabber.h>
+#include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayX.h>
@@ -139,7 +139,7 @@ main()
 
     vpImage<unsigned char> I ;
 
-    vp1394Grabber g;
+    vp1394TwoGrabber g;
 
     g.open(I) ;
 
