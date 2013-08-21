@@ -1457,8 +1457,9 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &_cMt)
 
   if (angle > 0)
     visible=true;
-  else 
+  else {
     visible=false;
+  }
 
   if(visible)
   {
@@ -1950,4 +1951,13 @@ vpImageSimulator::getRoi(const unsigned int &Iwidth,
   rectangle.setBottom(bottom);
   rectangle.setLeft(left);
   rectangle.setRight(right);
+}
+
+std::vector<vpColVector>
+vpImageSimulator::get3DcornersTextureRectangle()
+{
+  std::vector<vpColVector> X_;
+  for (int i=0; i<4; i++)
+    X_.push_back(X[i]);
+  return X_;
 }

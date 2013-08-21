@@ -242,6 +242,8 @@ class VISP_EXPORT vpImageSimulator
                          std::list <vpImageSimulator> &list,
                          const vpCameraParameters &cam);
 
+    std::vector<vpColVector> get3DcornersTextureRectangle();
+
     /*!
       As it can be time consuming to reset all the image to a default baground value, this function enable to reset only the pixel which changed the previous time.
       
