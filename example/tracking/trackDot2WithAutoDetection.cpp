@@ -418,7 +418,7 @@ main(int argc, const char ** argv)
       printf("Dot characteristics: \n");
       printf("  width : %lf\n", d.getWidth());
       printf("  height: %lf\n", d.getHeight());
-      printf("  surface: %lf\n", d.getSurface());
+      printf("  area: %lf\n", d.getArea());
       printf("  gray level min: %d\n", d.getGrayLevelMin());
       printf("  gray level max: %d\n", d.getGrayLevelMax());
       printf("  grayLevelPrecision: %lf\n", d.getGrayLevelPrecision());
@@ -436,7 +436,7 @@ main(int argc, const char ** argv)
     d.setGraphics(true);
     d.setWidth(15.0);
     d.setHeight(12.0);
-    d.setSurface(124);
+    d.setArea(124);
     d.setGrayLevelMin(164);
     d.setGrayLevelMax(255);
     d.setGrayLevelPrecision(opt_grayLevelPrecision);

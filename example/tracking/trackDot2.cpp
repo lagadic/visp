@@ -411,7 +411,7 @@ main(int argc, const char ** argv)
                 << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
-      std::cout << "Surface: " << d.getSurface() << std::endl;
+      std::cout << "Area: " << d.getArea() << std::endl;
       std::cout << "Moments:" << std::endl;
       std::cout << "  m00: " << d.m00 << std::endl;
       std::cout << "  m10: " << d.m10 << std::endl;
@@ -475,7 +475,7 @@ main(int argc, const char ** argv)
                 << d.m10 / d.m00 << " " << d.m01 / d.m00 << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
-      std::cout << "Surface: " << d.getSurface() << std::endl;
+      std::cout << "Area: " << d.getArea() << std::endl;
       std::cout << "Moments:" << std::endl;
       std::cout << "  m00: " << d.m00 << std::endl;
       std::cout << "  m10: " << d.m10 << std::endl;

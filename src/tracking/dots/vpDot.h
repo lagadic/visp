@@ -54,10 +54,6 @@
 #include <visp/vpRect.h>
 #include <visp/vpImagePoint.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp/vpList.h>
-#endif
-
 #include <math.h>
 #include <fstream>
 #include <list>
@@ -200,7 +196,7 @@ public :
   virtual ~vpDot() ;
 
   void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
-               unsigned int thickness=1);
+               unsigned int thickness=1) const;
 
   /*!
 
@@ -209,7 +205,7 @@ public :
     \sa getWidth(), getHeight()
 
   */
-  inline vpRect getBBox() {
+  inline vpRect getBBox() const {
     vpRect bbox;
 
     bbox.setRect(this->u_min,
@@ -233,7 +229,7 @@ public :
 
       \warning Doesn't return the image points inside the dot anymore. To get those points see getConnexities().
   */
-  inline std::list<vpImagePoint> getEdges() {
+  inline std::list<vpImagePoint> getEdges() const {
     return this->ip_edges_list;
   };
 
@@ -245,11 +241,11 @@ public :
     This list is updated after a call to track().
 
   */
-  inline std::list<vpImagePoint> getConnexities() {
+  inline std::list<vpImagePoint> getConnexities() const {
     return this->ip_connexities_list;
   };
 
-  inline double getGamma() {return this->gamma;};
+  inline double getGamma() const {return this->gamma;};
   /*!
 
     Return the precision of the gray level of the dot. It is a double
@@ -258,13 +254,13 @@ public :
 
   */
   double getGrayLevelPrecision() const {return grayLevelPrecision;}
-  double getMaxDotSize(){
+  double getMaxDotSize() const {
     return this->maxDotSizePercentage;
   }
   /*!
     Return the mean gray level value of the dot.
   */
-  double getMeanGrayLevel() {
+  double getMeanGrayLevel() const {
     return (this->mean_gray_level);
   };
 
@@ -423,45 +419,6 @@ public:
   static void display(const vpImage<vpRGBa>& I,const vpImagePoint &cog,
                       const std::list<vpImagePoint> &edges_list, vpColor color = vpColor::red,
                       unsigned int thickness=1);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-
-    \deprecated This method is deprecated since the naming is not representative regarding to its functionality. \n
-    Previously it returned all the points inside the dot. To get the equivalent, use getConnexities(). \n \n
-    If you rather want to get the points on the dot border use getEdges(). 
-
-    \param edges_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  vp_deprecated void getEdges(std::list<vpImagePoint> &edges_list) {
-    edges_list = this->ip_edges_list;
-  };
-  
-  /*!
-
-    \deprecated This method is deprecated. You should use
-    getEdges(std::list<vpImagePoint> &) instead.\n \n
-    Return the list of all the image points on the dot
-    border.
-
-    \param connexities_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  vp_deprecated void getConnexities(vpList<vpImagePoint> &connexities_list) {
-    // convert a vpList in a std::list
-    connexities_list.kill();
-    std::list<vpImagePoint>::const_iterator it;
-    for (it = ip_connexities_list.begin(); it != ip_connexities_list.end(); ++it) {
-      connexities_list += *it;
-    }
-  };
-#endif
 } ;
 
 #endif

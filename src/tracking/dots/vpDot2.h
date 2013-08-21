@@ -53,10 +53,6 @@
 #include <visp/vpColor.h>
 #include <visp/vpImagePoint.h>
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp/vpList.h>
-#endif
-
 #include <vector>
 #include <list>
 
@@ -139,7 +135,7 @@ public:
   static vpMatrix defineDots(vpDot2 dot[], const unsigned int &n, const std::string &dotFile, vpImage<unsigned char> &I, vpColor col = vpColor::blue, bool trackDot = true);
 
   void display(const vpImage<unsigned char>& I, vpColor color = vpColor::red,
-               unsigned int thickness=1);
+               unsigned int thickness=1) const;
 
   double getArea() const;
   /*!
@@ -149,7 +145,7 @@ public:
     \sa getWidth(), getHeight()
 
   */
-  inline vpRect getBBox() {
+  inline vpRect getBBox() const {
     vpRect bbox;
 
     bbox.setRect(this->bbox_u_min,
@@ -178,7 +174,7 @@ public:
     border. This list is update after a call to track().
 
   */
-  void getEdges(std::list<vpImagePoint> &edges_list) {
+  void getEdges(std::list<vpImagePoint> &edges_list) const {
     edges_list = this->ip_edges_list;
   };
   /*!
@@ -187,15 +183,15 @@ public:
 
     \sa setEllipsoidBadPointsPercentage()
     */
-  double getEllipsoidBadPointsPercentage()
+  double getEllipsoidBadPointsPercentage() const
   {
     return allowedBadPointsPercentage_;
   }
 
   double getEllipsoidShapePrecision() const;
-  void getFreemanChain(std::list<unsigned int> &freeman_chain) ;
+  void getFreemanChain(std::list<unsigned int> &freeman_chain) const;
 
-  inline double getGamma() {return this->gamma;};
+  inline double getGamma() const {return this->gamma;};
   /*!
     Return the color level of pixels inside the dot.
 
@@ -219,11 +215,10 @@ public:
   /*!
   \return The mean gray level value of the dot.
   */
-  double getMeanGrayLevel() {
+  double getMeanGrayLevel() const {
     return (this->mean_gray_level);
   };
   double getSizePrecision() const;
-  double getSurface() const;
   double getWidth() const;
 
   void initTracking(const vpImage<unsigned char>& I, unsigned int size = 0);
@@ -354,7 +349,6 @@ public:
   void setHeight( const double & height );
   void setMaxSizeSearchDistancePrecision(const double & maxSizeSearchDistancePrecision);
   void setSizePrecision( const double & sizePrecision );
-  void setSurface( const double & surface );
   void setWidth( const double & width );
 
   void track(const vpImage<unsigned char> &I);
@@ -428,37 +422,6 @@ public:
 		
 		\sa setComputeMoments()
 	      */
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-
-    \deprecated This method is deprecated. You should use
-    getEdges(std::list<vpImagePoint> &) instead.\n \n
-    Return the list of all the image points on the dot
-    border.
-
-    \param edges_list : The list of all the images points on the dot
-    border. This list is update after a call to track().
-
-  */
-  vp_deprecated void getEdges(vpList<vpImagePoint> &edges_list) {
-    // convert a vpList in a std::list
-    edges_list.kill();
-    std::list<vpImagePoint>::const_iterator it;
-    for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
-      edges_list += *it;
-    }
-  };
-  vp_deprecated void getFreemanChain(vpList<unsigned int> &freeman_chain) ;
-  vp_deprecated vpList<vpDot2>* searchDotsInArea(const vpImage<unsigned char>& I,
-            int area_u, int area_v,
-            unsigned int area_w, unsigned int area_h );
-
-  /* vp_deprecated */ vpList<vpDot2>* searchDotsInArea(const vpImage<unsigned char>& I );
-#endif
 
 private:
   virtual bool isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot);

@@ -850,7 +850,7 @@ vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &cog)
   \param thickness : Thickness of the displayed cross located at the dot cog.
 */
 void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
-                     unsigned int thickness)
+                     unsigned int thickness) const
 {
   vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
