@@ -2703,7 +2703,7 @@ d,e,f;
 g,h,i]
 */
 std::ostream & vpMatrix::
-matlabPrint(std::ostream & os)
+matlabPrint(std::ostream & os) const
 {
 
   unsigned int i,j;
@@ -2732,7 +2732,7 @@ Print using the following way so that this output can be directly copied into MA
 ])
 */
 std::ostream & vpMatrix::
-maplePrint(std::ostream & os)
+maplePrint(std::ostream & os) const
 {
   unsigned int i,j;
 
@@ -2746,6 +2746,32 @@ maplePrint(std::ostream & os)
     os << "]," << std::endl;
   }
    os << "])" << std::endl;
+  return os;
+};
+
+/*!
+\brief Print matrix in csv format.
+
+Print as comma separated values so that this output can be imported into any program which has a csv data import option:
+0.939846, 0.0300754, 0.340272
+0.0300788, 0.984961, -0.170136
+-0.340272, 0.170136, 0.924807
+*/
+std::ostream & vpMatrix::
+csvPrint(std::ostream & os) const
+{
+  unsigned int i,j;
+
+  for (i=0; i < this->getRows(); ++ i)
+  {
+    for (j=0; j < this->getCols(); ++ j)
+    {
+      os <<  (*this)[i][j];
+      if (!(j==(this->getCols()-1)))
+        os << ", ";
+    }
+    os << std::endl;
+  }
   return os;
 };
 
@@ -2765,7 +2791,7 @@ the line vpMatrix A(6,7) (see example).
 each bytes of the double array.
 */
 std::ostream & vpMatrix::
-cppPrint(std::ostream & os, const char * matrixName, bool octet)
+cppPrint(std::ostream & os, const char * matrixName, bool octet) const
 {
 
   unsigned int i,j;
