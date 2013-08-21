@@ -431,10 +431,6 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 */
 /*!
   \ingroup RealRobot
-  \defgroup Cycab Cycab car-like mobile robot
-*/
-/*!
-  \ingroup RealRobot
   \defgroup Pioneer Pioneer mobile robot
 */
 /*

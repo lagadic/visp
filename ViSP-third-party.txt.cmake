@@ -25,8 +25,7 @@ Robots
   Pioneer                     : ${VISP_HAVE_PIONEER_FOUND}
   Viper S650                  : ${VISP_HAVE_VIPER650_FOUND}
   Viper S850                  : ${VISP_HAVE_VIPER850_FOUND}
-  Cycab                       : ${VISP_HAVE_CYCAB_FOUND}
-Video devices (display)                  
+Video devices (display)
   X11                         : ${VISP_HAVE_X11_FOUND}
   GTK                         : ${VISP_HAVE_GTK_FOUND} 
   OpenCV                      : ${VISP_HAVE_OPENCV_FOUND} 

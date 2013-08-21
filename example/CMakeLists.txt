@@ -64,7 +64,6 @@ SET (SRC_SUBDIRS
   servo-afma4
   servo-afma6
   servo-biclops
-  servo-cycab
   servo-pioneer
   servo-ptu46
   servo-viper650
