@@ -230,7 +230,6 @@ IF(VISP_HAVE_VIPER850)
 ENDIF()
 
 SET (SRC_SERVO
-  servo/vpAdaptativeGain.cpp
   servo/vpAdaptiveGain.cpp
   servo/vpServo.cpp
   servo/vpServoData.cpp
