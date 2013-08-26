@@ -240,19 +240,24 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
          * Getters for I
          * (calculated from normalized 2nd and 3ord order moments)
          */
-        double getIn1() {return In1;}
+        double getIn1() const {return In1;}
 
         /*!
          * Getter for c
          * (calculated from normalized 2nd and 3ord order moments)
          */
-        double getCN(unsigned int i){return cn[i];}
+        double getCN(unsigned int i) const {return cn[i];}
 
         /*!
          * Getter for s
          * (calculated from normalized 2nd and 3ord order moments)
          */
-        double getSN(unsigned int i){return sn[i];}
+        double getSN(unsigned int i) const {return sn[i];}
+
+        /*!
+         * To know if Sx and Sy were calculated from normalized moments or not
+         */
+        bool isSxSyfromNormalizedMoments() const {return flg_sxsynormalization_;};
 
         /*!
          *  To get all the invariant values as a whole.
