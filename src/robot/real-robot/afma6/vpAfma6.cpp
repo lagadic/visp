@@ -939,12 +939,13 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
   1  &   0  &   0  & -Ls4 &   0  &   0   \\
   0  &   1  &   0  &  Lc4 &   0  &   0   \\
   0  &   0  &   1  &   0  &   0  &   0   \\
-  0  &   0  &   0  &   0  &   c4 & -s4c5 \\
-  0  &   0  &   0  &   0  &   s4 &  c4c5 \\
-  0  &   0  &   0  &   1  &   0  &  s5   \\
+  0  &   0  &   0  &   0  &   c4+\gamma s4c5 & -s4c5 \\
+  0  &   0  &   0  &   0  &   s4-\gamma c4c5 &  c4c5 \\
+  0  &   0  &   0  &   1  &   -gamma s5  &  s5   \\
   \end{array}
   \right)
   \f]
+  where \f$\gamma\f$ is the coupling factor between join 5 and 6.
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
@@ -964,8 +965,8 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   // block superieur gauche
   fJe[0][0] = fJe[1][1] = fJe[2][2] = 1 ;
 
-  double s4 = sin(q[4]) ;
-  double c4 = cos(q[4]) ;
+  double s4 = sin(q[3]) ;
+  double c4 = cos(q[3]) ;
 
 
   // block superieur droit
@@ -973,12 +974,17 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   fJe[1][3] =   this->_long_56*c4 ;
 
 
-  double s5 = sin(q[5]) ;
-  double c5 = cos(q[5]) ;
+  double s5 = sin(q[4]) ;
+  double c5 = cos(q[4]) ;
   // block inferieur droit
   fJe[3][4] = c4 ;     fJe[3][5] = -s4*c5 ;
   fJe[4][4] = s4 ;     fJe[4][5] = c4*c5 ;
   fJe[5][3] = 1 ;      fJe[5][5] = s5 ;
+
+  // coupling between joint 5 and 6
+  fJe[3][4] += this->_coupl_56*s4*c5;
+  fJe[4][4] += -this->_coupl_56*c4*c5;
+  fJe[5][4] += -this->_coupl_56*s5;
 
   return;
 }
