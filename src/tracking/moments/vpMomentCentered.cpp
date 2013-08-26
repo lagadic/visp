@@ -46,6 +46,61 @@
 #include <cassert>
 
 /*!
+  To set the values of centred moments. Required when normalizing the moment values.
+  @param i : first index of the 2D moment.
+  @param j : second index of the 2D moment.
+  @param value : value of the moment.
+*/
+void vpMomentCentered::set(unsigned int i, unsigned int j, double value){
+    vpMomentObject mobj = getObject();
+    assert(i+j<=mobj.getOrder());
+    if(i+j>mobj.getOrder()) throw vpException(vpException::badValue,"You cannot set that value.");
+    values[j*(mobj.getOrder()+1)+i] = value;
+}
+
+/*!
+ * To add normalization for scale invariance
+ * Refer to Flusser's text P.15
+ */
+void
+vpMomentCentered::normalizeforScale(NormalizationMode normmode){
+
+  double normfactor = 1.0;
+  double w = 1.0;               // power to which the den is raised
+
+  double orderp1 = this->getObject().getOrder()+1;
+
+  if (normmode == vpMomentCentered::NORMALIZE_BY_MU00) {
+      normfactor = this->get(0,0);
+  }
+  else
+    if (normmode == vpMomentCentered::NORMALIZE_BY_MU02PMU20by2){
+      normfactor = this->get(2,0) + this->get(0,2);
+    }
+
+
+  for (unsigned int p = 0; p < orderp1; p++){
+    for (unsigned int q = 0; q < orderp1 - p; q++){
+
+       w = ((p+q)/2.0) + 1;
+       if (normmode == vpMomentCentered::NORMALIZE_BY_MU00) {
+          normfactor = pow(normfactor, w);
+        }
+        else
+          if (normmode == vpMomentCentered::NORMALIZE_BY_MU02PMU20by2){
+            w = ((p+q)/2.0) + 1;
+            normfactor = pow(normfactor, (w/2.0));
+          }
+
+       double newval = this->get(p,q) / normfactor;
+       this->set(p,q,newval);
+    }
+  }
+
+  flg_normalized = true;
+}
+
+/*!
   Computes centered moments of all available orders. 
   Depends on vpMomentGravityCenter.
 */
@@ -53,8 +108,9 @@ void vpMomentCentered::compute(){
     bool found_moment_gravity;    
     values.resize((getObject().getOrder()+1)*(getObject().getOrder()+1));
 
-    vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(getMoments().get("vpMomentGravityCenter",found_moment_gravity));
+    const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(getMoments().get("vpMomentGravityCenter",found_moment_gravity));
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
+
     unsigned int order = getObject().getOrder()+1;
     for(register unsigned int j=0;j<(order);j++){
         for(register unsigned int i=0;i<order-j;i++){
@@ -87,11 +143,12 @@ vpMomentCentered::vpMomentCentered() : vpMoment(){
   \param j : second index of the centered moment.
   \return \f$\mu_{ij}\f$ moment.
 */
-double vpMomentCentered::get(unsigned int i,unsigned int j){
-    assert(i+j<=getObject().getOrder());
-    if(i+j>getObject().getOrder()) throw vpException(vpException::badValue,"The requested value has not been computed, you should specify a higher order.");
+double vpMomentCentered::get(unsigned int i,unsigned int j) const {
+    double order = getObject().getOrder();
+    assert(i+j<=order);
+    if(i+j>order) throw vpException(vpException::badValue,"The requested value has not been computed, you should specify a higher order.");
 
-    return values[j*(getObject().getOrder()+1)+i];
+    return values[j*(order+1)+i];
 }
 
 /*!

@@ -79,18 +79,32 @@ class vpMomentObject;
 class VISP_EXPORT vpMomentCentered : public vpMoment {
 public:
 
+  typedef enum{
+    NORMALIZE_BY_MU00,          // Normalize by mu00
+    NORMALIZE_BY_MU02PMU20by2   // Normalize by (mu02+mu20)/2
+  } NormalizationMode;
+
   vpMomentCentered();
 
-	void compute();
-  double get(unsigned int i,unsigned int j);
+  void compute();
+  double get(unsigned int i,unsigned int j) const;
 
-  inline std::vector<double>& get();
+  void
+  normalizeforScale(NormalizationMode normmode);
+
+  inline const std::vector<double>& get() const;
   /*!
      Moment name.
   */
   inline const char* name(){return "vpMomentCentered";}
 
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, vpMomentCentered& v);
+
+private:
+
+  bool flg_normalized;
+  void set(unsigned int i, unsigned int j, double value);
+
 };
 
 /*!
@@ -120,7 +134,7 @@ mu12 = mc.get()[2*(obj.getOrder()+1)+1]; // i=1 and j=2
 mu12 = mc.get(1,2); // the same
   \endcode
 */
-inline std::vector<double>& vpMomentCentered::get()
+inline const std::vector<double>& vpMomentCentered::get() const
 {
   return vpMoment::get();
 }
