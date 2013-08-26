@@ -44,13 +44,14 @@
 
 /*!
   Default constructor. Initializes the common database with the following moments: 
-  basic, gravity,centered,centered+normalized,normalized gravity,normalized surface, scale-plane-rotation-translation invariant,alpha, symmetric invariant.
-  \param dstSurface : destination surface. You may use vpMomentCommon::getSurface.
-  \param ref : reference 3rd order moments (see vpMomentAlpha). You may use  vpMomentCommon::getMu3.
-  \param refAlpha : reference alpha (see vpMomentAlpha). You may use vpMomentCommon::getAlpha.
+  basic, gravity,centered,centered+normalized,normalized gravity,normalized surface, scale-plane-rotation-translation invariant, alpha, symmetric invariant.
+  \param dstSurface : destination surface. You may use vpMomentCommon::getSurface().
+  \param ref : reference 3rd order moments (see vpMomentAlpha). You may use  vpMomentCommon::getMu3().
+  \param refAlpha : reference alpha (see vpMomentAlpha). You may use vpMomentCommon::getAlpha().
   \param dstZ : destination depth.
+  \param flg_sxsyfromnormalized : flag to enable calculation of sx,sy from normalized moments.
 */
-vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ):
+vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ, bool flg_sxsyfromnormalized):
     momentBasic(),
     momentGravity(),
     momentCentered(),
@@ -60,12 +61,14 @@ vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double 
     momentAlpha(ref,refAlpha),
 	momentArea()
 {
+    momentCInvariant = new vpMomentCInvariant(flg_sxsyfromnormalized);
+
     momentBasic.linkTo(*this);
     momentGravity.linkTo(*this);
     momentCentered.linkTo(*this);
     momentGravityNormalized.linkTo(*this);
     momentSurfaceNormalized.linkTo(*this);
-    momentCInvariant.linkTo(*this);
+    momentCInvariant->linkTo(*this);
     momentAlpha.linkTo(*this);
     momentArea.linkTo(*this);
 }
@@ -130,7 +133,7 @@ void vpMomentCommon::updateAll(vpMomentObject& object){
         momentGravity.compute();
         momentCentered.compute();
         momentAlpha.compute();
-        momentCInvariant.compute();        
+        momentCInvariant->compute();
 
         momentSurfaceNormalized.compute();
         momentGravityNormalized.compute();
@@ -140,14 +143,13 @@ void vpMomentCommon::updateAll(vpMomentObject& object){
         std::cout << "exception:" << ex <<std::endl;
 
     }
-
 }
 
 /*!
 Gets the surface of an object
 \param object : moment object
 */
-double vpMomentCommon::getSurface(vpMomentObject& object){
+double vpMomentCommon::getSurface(vpMomentObject& object) {
     vpMomentDatabase moments;
 
     vpMomentGravityCenter momentGravity;momentGravity.linkTo(moments);
@@ -165,14 +167,13 @@ double vpMomentCommon::getSurface(vpMomentObject& object){
         a = object.get(0,0);
 
     return a;
-
 }
 
 /*!
 Gets a reference alpha of an object.
 \param object : Moment object.
 */
-double vpMomentCommon::getAlpha(vpMomentObject& object){
+double vpMomentCommon::getAlpha(vpMomentObject& object) {
     vpMomentDatabase moments;
 
     vpMomentGravityCenter momentGravity;momentGravity.linkTo(moments);
@@ -191,7 +192,7 @@ double vpMomentCommon::getAlpha(vpMomentObject& object){
 Gets the reference 3rd order moments of an object.
 \param object : Moment object.
 */
-std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object){
+std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object) {
     vpMomentDatabase moments;
 
     vpMomentGravityCenter momentGravity;momentGravity.linkTo(moments);
@@ -213,4 +214,9 @@ std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object){
       }
     }
     return mu;
+}
+
+vpMomentCommon::~vpMomentCommon(){
+   if (momentCInvariant)
+     delete momentCInvariant;
 }
