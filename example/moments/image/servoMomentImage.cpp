@@ -255,8 +255,8 @@ void initFeatures(){
 
   ///////////////////////////// initializing moments and features /////////////////////////////////
   //don't need to be specific, vpMomentCommon automatically loads Xg,Yg,An,Ci,Cj,Alpha moments
-  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2]);
-  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2]);
+  moments = new vpMomentCommon(vpMomentCommon ::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst), vec[2], true);
+  momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),vec[2], true);
   //same thing with common features
   featureMoments = new vpFeatureMomentCommon(*moments);
   featureMomentsDes = new vpFeatureMomentCommon(*momentsDes);
