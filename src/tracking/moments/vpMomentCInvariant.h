@@ -121,12 +121,20 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
    std::vector<double> II;
    std::vector<double> c;
    std::vector<double> s;
-        double K;
+   double K;
+   void computeI(const vpMomentCentered& momentCentered, std::vector<double>& I);
 
-        void computeI(vpMomentCentered& momentCentered, std::vector<double>& I);
+   /* To calculate Sx and Sy from normalized moments */
+   void calcSxSy(double& sx, double& sy) const;
+   void calcSxSyNormalized(double& sx, double& sy) const;
+   std::vector<double> cn;  // same as s above but calculated from normalized moments
+   std::vector<double> sn;  // same as c above but calculated from normalized moments
+   double In1;              // same as I1 in Sx,Sy formulae but calculated from normalized moments
+   bool flg_sxsynormalization_;
+
  public:	
 	
-        vpMomentCInvariant();
+        vpMomentCInvariant(bool flg_sxsynormalization = false);
 
         /*!
           Shorcut for getting the value of \f$C_1\f$.
@@ -169,7 +177,7 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
           */
         double C10(){ return values[9]; }
 
-	void compute();
+        void compute();
 
         /*!
           Gets the desired invariant.
@@ -180,25 +188,25 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
         /*!
           Access to partial invariant c (see [2]).
           */
-        double getC(unsigned int i){return c[i];}
+        double getC(unsigned int i) const {return c[i];}
         /*!
           Access to partial invariants. The index convention is the same as in [1].
           */
-        double getI(unsigned int index){return I[index];}
+        double getI(unsigned int index) const {return I[index];}
 
         /*!
           Access to partial invariant I (see [2]).
           */
-        double getII(unsigned int i){return II[i];}
+        double getII(unsigned int i) const {return II[i];}
         /*!
           Access to partial invariant K (see [2]).
           */
-        double getK(){return K;}
+        double getK() const {return K;}
 
         /*!
           Access to partial invariant S (see [2]).
           */
-        double getS(unsigned int i){return s[i];}
+        double getS(unsigned int i) const {return s[i];}
 
         /*!
           Moment name.
@@ -222,13 +230,35 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
         /*!
           Shorcut for getting the value of \f$S_x\f$.
           */
-        double Sx(){ return values[10]; }
+        double Sx() const { return values[10]; }
         /*!
           Shorcut for getting the value of \f$S_y\f$.
           */
-        double Sy(){ return values[11]; }
+        double Sy() const { return values[11]; }
+
+        /*!
+         * Getters for I
+         * (calculated from normalized 2nd and 3ord order moments)
+         */
+        double getIn1() {return In1;}
+
+        /*!
+         * Getter for c
+         * (calculated from normalized 2nd and 3ord order moments)
+         */
+        double getCN(unsigned int i){return cn[i];}
+
+        /*!
+         * Getter for s
+         * (calculated from normalized 2nd and 3ord order moments)
+         */
+        double getSN(unsigned int i){return sn[i];}
+
+        /*!
+         *  To get all the invariant values as a whole.
+         */
+        inline const std::vector<double>& getMomentVector() const { return values; }
 
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& v);
 };
-
 #endif
