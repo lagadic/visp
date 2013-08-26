@@ -115,7 +115,7 @@ class VISP_EXPORT vpMomentGravityCenter : public vpMoment {
 
         vpMomentGravityCenter();        
 	void compute();
-        std::vector<double>& get();
+        const std::vector<double>& get() const;
         /*!
           Shortcut function to retrieve \f$x_g\f$.
           \return The first gravity center coordinate.

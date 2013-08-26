@@ -76,8 +76,8 @@ class VISP_EXPORT vpMomentBasic : public vpMoment {
         vpMomentBasic();	
 
         void compute();
-        std::vector<double>& get();
-        double get(unsigned int i,unsigned int j);
+        const std::vector<double>& get() const;
+        double get (unsigned int i,unsigned int j) const;
         /*!
           Moment name.
           */

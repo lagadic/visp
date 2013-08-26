@@ -210,11 +210,29 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
         /*!
           Retrieve the orientation of the object as a single double value.
           */
-        double get(){ return values[0]; }
+        double get() const { return values[0]; }
         /*!
           Moment name.
           */
-	const char* name(){return "vpMomentAlpha";}
+       const char* name(){return "vpMomentAlpha";}
+
+        inline bool
+        is_ref()
+        {
+          if (isRef)
+            return true;
+          else
+            return false;
+        }
+
+        inline bool
+        is_symmetric()
+        {
+          if (symmetric)
+            return true;
+          else
+            return false;
+        }
 
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& v);
 	

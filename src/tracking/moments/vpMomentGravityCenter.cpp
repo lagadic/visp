@@ -60,7 +60,7 @@ vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment(){
   Returns a vector of the two gravity center coordinates.
   \return Coordinates in the following moment: \f$(x_g,y_g)\f$.
 */
-std::vector<double>& vpMomentGravityCenter::get(){
+const std::vector<double>& vpMomentGravityCenter::get() const{
     return values;
 }
 

@@ -62,7 +62,7 @@ void vpMomentDatabase::add(vpMoment& moment,const char* name){
   \param found : true if the moment's type exists in the database, false otherwise.
   \return Moment corresponding to \e type.
 */
-vpMoment& vpMomentDatabase::get(const char* type, bool& found){
+const vpMoment& vpMomentDatabase::get(const char* type, bool& found) const {
   std::map<const char*,vpMoment*,vpMomentDatabase::cmp_str>::const_iterator it = moments.find(type);
     
     found = (it!=moments.end());

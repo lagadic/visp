@@ -122,7 +122,7 @@ class VISP_EXPORT vpMoment{
         Returns all values computed by the moment.
         \return vector of values
         */
-        std::vector<double>& get(){ return values;}
+        const std::vector<double>& get() const { return values;}
         void linkTo(vpMomentDatabase& moments);
         void update(vpMomentObject& object);
         virtual void compute()=0;

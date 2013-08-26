@@ -54,7 +54,7 @@ vpMomentBasic::vpMomentBasic() : vpMoment(){
 
   Same behaviour as vpMomentObject.
 */
-std::vector<double>& vpMomentBasic::get(){
+const std::vector<double>& vpMomentBasic::get() const{
     return getObject().get();
 }
 
@@ -66,7 +66,7 @@ std::vector<double>& vpMomentBasic::get(){
 
   Same behaviour as vpMomentObject.
 */
-double vpMomentBasic::get(unsigned int i,unsigned int j){
+double vpMomentBasic::get(unsigned int i,unsigned int j) const{
     return getObject().get(i,j);
 }
 

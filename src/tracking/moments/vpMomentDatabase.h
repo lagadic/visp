@@ -138,7 +138,7 @@ class VISP_EXPORT vpMomentDatabase{
  public:
         virtual ~vpMomentDatabase() {}
 
-        vpMoment& get(const char* type, bool& found);
+        const vpMoment& get(const char* type, bool& found) const;
         /*!
           Get the first element in the database.
           May be useful in case an unnamed object is present but is the only element in the database.
