@@ -57,7 +57,7 @@ vpFeatureMomentCommon::vpFeatureMomentCommon(vpMomentDatabase& moments,double A,
     featureAlpha(moments,A,B,C),
     featureCentered(moments,A,B,C),
     featureMomentBasic(moments,A,B,C),
-	feature_moment_area(moments,A,B,C)
+    feature_moment_area(moments,A,B,C)
 
 {
     featureGravity.linkTo(*this);

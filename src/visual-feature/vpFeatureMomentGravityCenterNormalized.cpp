@@ -117,9 +117,9 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction(){
     bool found_moment_gravity;
     bool found_moment_centered;
 
-    vpMomentCentered& momentCentered = static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
-    vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
-    vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
+    const vpMomentCentered& momentCentered = static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
+    const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
+    const vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
 
     if(!found_moment_surface_normalized) throw vpException(vpException::notInitialized,"vpMomentAreaNormalized not found");
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");

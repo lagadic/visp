@@ -145,8 +145,8 @@ return 0;
 */
 class VISP_EXPORT vpFeatureMoment : public vpBasicFeature{
 protected:
-  vpMoment* moment;
-  vpMoment& getMoment(){return *moment;}
+  const vpMoment* moment;
+  const vpMoment& getMoment() const {return *moment;}
   vpMomentDatabase& moments;
   vpFeatureMomentDatabase* featureMomentsDataBase;
   std::vector<vpMatrix> interaction_matrices;
@@ -155,6 +155,7 @@ protected:
   double B;
   double C;
   char _name[255];
+
 public:
   /*!
   Initializes the feature with information about the database of moment primitives, the object plane, feature database and matrix size.
@@ -182,7 +183,7 @@ public:
 
       int 	getDimension (unsigned int select=FEATURE_ALL) const;
       void 	init (void);
-      vpMatrix 	interaction (const unsigned int select=FEATURE_ALL);        
+      vpMatrix 	interaction (const unsigned int select=FEATURE_ALL) ;
       void linkTo(vpFeatureMomentDatabase& featureMoments);
 
       /*!
@@ -222,7 +223,7 @@ Duplication is mostly used internally in ViSP.
 */
 class VISP_EXPORT vpMomentGenericFeature : public vpFeatureMoment{
 public:
-  vpMomentGenericFeature(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments, vpMoment* moment) : vpFeatureMoment(moments,A,B,C,featureMoments){this->moment = moment;}
+  vpMomentGenericFeature(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments, const vpMoment* moment) : vpFeatureMoment(moments,A,B,C,featureMoments){this->moment = moment;}
   /*!
   No specific moment name.
   */

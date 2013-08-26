@@ -104,8 +104,8 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
     bool found_moment_centered;
     bool found_moment_gravity;
 
-    vpMomentCentered& momentCentered= (static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
-    vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
+    const vpMomentCentered& momentCentered= (static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
+    const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
 
 
     vpMomentObject& momentObject = moment->getObject();

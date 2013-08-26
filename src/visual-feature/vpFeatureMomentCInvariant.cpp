@@ -194,7 +194,7 @@ void vpFeatureMomentCInvariant::compute_interaction(){
 #include <vector>
 #include <iostream>
 #include <limits>
-
+#include <cmath>
 
 /*!
   Computes interaction matrix for space-scale-rotation invariants. Called internally.
@@ -214,16 +214,15 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     bool found_FeatureMoment_centered;
     bool found_featuremoment_basic;
 
-    vpMomentObject& momentObject = moment->getObject();
-    vpMomentCentered& momentCentered = (static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
-    vpMomentCInvariant& momentCInvariant = (static_cast<vpMomentCInvariant&>(moments.get("vpMomentCInvariant",found_moment_cinvariant)));
+    const vpMomentObject& momentObject = moment->getObject();
+    const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
+    const vpMomentCInvariant& momentCInvariant = (static_cast<const vpMomentCInvariant&>(moments.get("vpMomentCInvariant",found_moment_cinvariant)));
+
     vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMomentsDataBase->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
 
     vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMomentsDataBase->get("vpFeatureMomentBasic",found_featuremoment_basic)));
 
     if(!found_featuremoment_basic) throw vpException(vpException::notInitialized,"vpFeatureMomentBasic not found");
-
-
     if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
     if(!found_moment_cinvariant) throw vpException(vpException::notInitialized,"vpMomentCInvariant not found");
     if(!found_FeatureMoment_centered) throw vpException(vpException::notInitialized,"vpFeatureMomentCentered not found");
@@ -256,8 +255,6 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     double mu12 = momentCentered.get(1,2);
     double mu11 = momentCentered.get(1,1);
 
-
-
     double mu12_2 = mu12*mu12;
     double mu21_2 = mu21*mu21;
     double mu21_3 = mu21*mu21_2;
@@ -281,7 +278,6 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     vpMatrix Lmu32 = featureMomentCentered.interaction(3,2);
     vpMatrix Lmu41 = featureMomentCentered.interaction(4,1);
     vpMatrix Lmu50 = featureMomentCentered.interaction(5,0);
-
 
     LI[1]= -Lmu20*mu02-mu20*Lmu02+2*mu11*Lmu11;
 
@@ -317,6 +313,7 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     double s2 = momentCInvariant.getS(2);
     double c3 = momentCInvariant.getC(3);
     double c2 = momentCInvariant.getC(2);
+
     double I1 = momentCInvariant.getII(1);
     double I2 = momentCInvariant.getII(2);
     double I3 = momentCInvariant.getII(3);
@@ -331,7 +328,6 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     vpMatrix LI2 = 2 * (mu03 - 3 * mu21) * (Lc2) + 2 * (mu30 - 3 * mu12) * (Ls2);
     vpMatrix LI3 = Lmu20 + Lmu02;
 
-
     vpMatrix La(1,6);
     double a;
     if(momentObject.getType()==vpMomentObject::DISCRETE){
@@ -341,8 +337,8 @@ void vpFeatureMomentCInvariant::compute_interaction(){
         a = momentObject.get(0,0);
         La = featureMomentBasic.interaction(0,0);
     }
-    interaction_matrices.resize(14);
 
+    interaction_matrices.resize(14);
 
     interaction_matrices[0] = (1./(momentCInvariant.getI(2)*momentCInvariant.getI(2)))*(momentCInvariant.getI(2)*LI[1]-momentCInvariant.getI(1)*LI[2]);
     interaction_matrices[1] = (1./(momentCInvariant.getI(4)*momentCInvariant.getI(4)))*(momentCInvariant.getI(4)*LI[3]-momentCInvariant.getI(3)*LI[4]);
@@ -355,7 +351,6 @@ void vpFeatureMomentCInvariant::compute_interaction(){
 
     interaction_matrices[5] = (1./(momentCInvariant.getI(6)*momentCInvariant.getI(6)))*(momentCInvariant.getI(6)*LI[9]-momentCInvariant.getI(9)*LI[6]);
 
-
     interaction_matrices[6] = (1./(momentCInvariant.getI(10)*momentCInvariant.getI(10)))*(momentCInvariant.getI(10)*LI[11]-momentCInvariant.getI(11)*LI[10]);
 
     interaction_matrices[7] = (1./(momentCInvariant.getI(10)*momentCInvariant.getI(10)))*(momentCInvariant.getI(10)*LI[12]-momentCInvariant.getI(12)*LI[10]);
@@ -364,12 +359,12 @@ void vpFeatureMomentCInvariant::compute_interaction(){
 
     interaction_matrices[9] = (1./(momentCInvariant.getI(15)*momentCInvariant.getI(15)))*(momentCInvariant.getI(15)*LI[14]-momentCInvariant.getI(14)*LI[15]);
 
-
     interaction_matrices[10] = (Lc2 * c3 + c2 * Lc3 + Ls2 * s3 + s2 * Ls3) * sqrt(a) / I1 * pow(I3, -0.3e1 / 0.2e1) + (c2 * c3 + s2 * s3) * pow(a, -0.1e1 / 0.2e1) / I1 * pow(I3, -0.3e1 / 0.2e1) * La / 0.2e1 - (c2 * c3 + s2 * s3) * sqrt(a) * pow(I1, -0.2e1) * pow(I3, -0.3e1 / 0.2e1) * LI1 - 0.3e1 / 0.2e1 * (c2 * c3 + s2 * s3) * sqrt(a) / I1 * pow(I3, -0.5e1 / 0.2e1) * LI3;
 
     interaction_matrices[11] = (Ls2 * c3 + s2 * Lc3 - Lc2 * s3 - c2 * Ls3) * sqrt(a) / I1 * pow(I3, -0.3e1 / 0.2e1) + (s2 * c3 - c2 * s3) * pow(a, -0.1e1 / 0.2e1) / I1 * pow(I3, -0.3e1 / 0.2e1) * La / 0.2e1 - (s2 * c3 - c2 * s3) * sqrt(a) * pow(I1, -0.2e1) * pow(I3, -0.3e1 / 0.2e1) * LI1 - 0.3e1 / 0.2e1 * (s2 * c3 - c2 * s3) * sqrt(a) / I1 * pow(I3, -0.5e1 / 0.2e1) * LI3;
 
     interaction_matrices[12] = (1/(I3*I3))*LI1-(2*I1/(I3*I3*I3))*LI3;
+
     interaction_matrices[13] = (I2/(I3*I3*I3))*La+(a/(I3*I3*I3))*LI2-(3*a*I2/(I3*I3*I3*I3))*LI3;
 }
 #endif
