@@ -894,35 +894,36 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   eJe.resize(6,6) ;
 
-  double s3,c3,s4,c4,s5,c5 ;
+  double s4,c4,s5,c5,s6,c6 ;
 
-  s3=sin(q[3]); c3=cos(q[3]);
-  s4=sin(q[4]); c4=cos(q[4]);
-  s5=sin(q[5]); c5=cos(q[5]);
+  s4=sin(q[3]); c4=cos(q[3]);
+  s5=sin(q[4]); c5=cos(q[4]);
+  s6=sin(q[5]); c6=cos(q[5]);
 
   eJe = 0;
-  eJe[0][0] = s3*s4*c5+c3*s5;
-  eJe[0][1] = -c3*s4*c5+s3*s5;
-  eJe[0][2] = c4*c5;
-  eJe[0][3] = - this->_long_56*s4*c5;
+  eJe[0][0] = s4*s5*c6+c4*s6;
+  eJe[0][1] = -c4*s5*c6+s4*s6;
+  eJe[0][2] = c5*c6;
+  eJe[0][3] = - this->_long_56*s5*c6;
 
-  eJe[1][0] = -s3*s4*s5+c3*c5;
-  eJe[1][1] = c3*s4*s5+s3*c5;
-  eJe[1][2] = -c4*s5;
-  eJe[1][3] = this->_long_56*s4*s5;
+  eJe[1][0] = -s4*s5*s6+c4*c6;
+  eJe[1][1] = c4*s5*s6+s4*c6;
+  eJe[1][2] = -c5*s6;
+  eJe[1][3] = this->_long_56*s5*s6;
 
-  eJe[2][0] = -s3*c4;
-  eJe[2][1] = c3*c4;
-  eJe[2][2] = s4;
-  eJe[2][3] = this->_long_56*c4;
+  eJe[2][0] = -s4*c5;
+  eJe[2][1] = c4*c5;
+  eJe[2][2] = s5;
+  eJe[2][3] = this->_long_56*c5;
 
-  eJe[3][3] = c4*c5;
-  eJe[3][4] = s5;
+  eJe[3][3] = c5*c6;
+  eJe[3][4] = s6;
 
-  eJe[4][3] = -c4*s5;
-  eJe[4][4] = c5;
+  eJe[4][3] = -c5*s6;
+  eJe[4][4] = c6;
 
-  eJe[5][3] = s4;
+  eJe[5][3] = s5;
+  eJe[5][4] = -this->_coupl_56;
   eJe[5][5] = 1;
 
   return;
