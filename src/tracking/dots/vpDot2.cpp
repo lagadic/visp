@@ -2600,3 +2600,36 @@ void vpDot2::display(const vpImage<vpRGBa>& I,const vpImagePoint &cog,
     vpDisplay::displayPoint(I, *it, color);
   }
 }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated Return the area of the dot.
+
+  This function is deprecated since it is mis named. Surface means here area.
+  You should rather use getArea().
+
+  The area of the dot is also given by \f$|m00|\f$.
+
+  \sa getArea()
+*/
+double vpDot2::getSurface() const
+{
+  return fabs(surface);
+}
+
+/*!
+
+  \deprecated Set the surface of the dot. This is meant to be used to search a dot in a region of interest.
+
+  This function is deprecated since it is mis named. You should rather use setArea()
+
+  \param surface : Here surface means area. Area of a dot to search in a region of interest.
+
+  \sa setWidth(), setHeight(), setArea(), setSizePrecision()
+
+*/
+void vpDot2::setSurface( const double & surface )
+{
+  this->surface = surface;
+}
+#endif
