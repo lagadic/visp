@@ -72,7 +72,6 @@ SET (SRC_SUBDIRS
   tracking
   video
   wireframe-simulator
-  visual-servo-simu 
 )
 
 # Build process propagation in the sub directories
