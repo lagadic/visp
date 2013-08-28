@@ -898,7 +898,7 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   s4=sin(q[3]); c4=cos(q[3]);
   s5=sin(q[4]); c5=cos(q[4]);
-  s6=sin(q[5]); c6=cos(q[5]);
+  s6=sin(q[5]-this->_coupl_56*q[4]); c6=cos(q[5]-this->_coupl_56*q[4]);
 
   eJe = 0;
   eJe[0][0] = s4*s5*c6+c4*s6;
