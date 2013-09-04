@@ -101,7 +101,10 @@ int main()
   The other following example explains how to use the class to read a
   sequence of images. The images are stored in the folder "./image" and are
   named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ... As explained
-  in setFirstFrameIndex() it is also possible to set the first and last image numbers.
+  in setFirstFrameIndex() and setLastFrameIndex() it is also possible to set the
+  first and last image numbers to read a portion of the sequence. If these two
+  functions are not used, first and last image numbers are set automatically to
+  match the first and image images of the sequence.
 
   \code
 #include <visp/vpImage.h>
@@ -116,6 +119,8 @@ int main()
 
   // Initialize the reader.
   reader.setFileName("./image/image%04d.jpeg");
+  reader.setFirstFrameIndex(10);
+  reader.setLastFrameIndex(20);
   reader.open(I);
 
   while (! reader.end() )

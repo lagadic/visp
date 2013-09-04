@@ -487,25 +487,30 @@ vpVideoReader::findLastFrameIndex()
 
   if (imSequence != NULL)
   {
-    char name[FILENAME_MAX];
-    int image_number = firstFrame;
-    std::fstream file;
-    bool failed;
-    do
-    {
-      sprintf(name,fileName,image_number) ;
-      file.open(name, std::fstream::in);
-      failed = file.fail();
-      if (!failed) file.close();
-      image_number++;
-    }while(!failed);
+    if (! lastFrameIndexIsSet) {
+      char name[FILENAME_MAX];
+      int image_number = firstFrame;
+      std::fstream file;
+      bool failed;
+      do
+      {
+        sprintf(name,fileName,image_number) ;
+        file.open(name, std::fstream::in);
+        failed = file.fail();
+        if (!failed) file.close();
+        image_number++;
+      }while(!failed);
 
-    lastFrame = image_number - 2;
+      lastFrame = image_number - 2;
+    }
   }
 
-  #ifdef VISP_HAVE_FFMPEG
-  else if (ffmpeg != NULL)
-    lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
+#ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg != NULL) {
+    if (! lastFrameIndexIsSet) {
+      lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
+    }
+  }
   #endif
 }
 /*!
