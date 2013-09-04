@@ -17,6 +17,7 @@ get_filename_component(target_location "${target_location}" PATH)
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.pgm" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.xml" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.cao" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.wrl" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/teabox.init" )
 foreach(data ${data2copy})
   add_custom_command(
