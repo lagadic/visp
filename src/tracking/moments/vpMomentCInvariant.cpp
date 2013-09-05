@@ -51,8 +51,7 @@ vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization) : vpMoment(),
 
   values.resize(14);
 
-  if (flg_sxsynormalization)
-    flg_sxsynormalization_ = flg_sxsynormalization;
+  flg_sxsynormalization_ = flg_sxsynormalization;
 }
 
 /*!
