@@ -216,7 +216,7 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
   message += end;
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(WIN32)
+#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 

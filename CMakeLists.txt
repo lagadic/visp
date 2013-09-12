@@ -612,6 +612,9 @@ IF(UNIX)
   IF(APPLE)
     LIST(APPEND VISP_DEFS "-DAPPLE")
   ENDIF(APPLE)
+  if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+    list(APPEND VISP_DEFS "-DSOLARIS")
+  endif()
 ENDIF(UNIX)
 
 IF(UNIX)
@@ -672,15 +675,25 @@ ENDIF(USE_LAPACK)
 #--------------------------------------------------------------------
 # X11 lib
 #--------------------------------------------------------------------
-SET(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
-IF(USE_X11)
-  MESSAGE(STATUS "X11 found")
-  SET(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
-  SET(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
-  LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${X11_INCLUDE_DIR})
-  LIST(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES} -lm)
+set(VISP_HAVE_X11_FOUND "no")  # for ViSP-third-party.txt
+if(USE_X11)
+  message(STATUS "X11 found")
+  set(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
+  set(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
+  list(APPEND VISP_EXTERN_INCLUDE_DIRS ${X11_INCLUDE_DIR})
+  list(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES} -lm)
   #MESSAGE("X11: ${X11_LIBRARIES}")
-ENDIF(USE_X11)
+else()
+  # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
+  find_library(SOCKET_LIBRARY NAMES socket)
+  find_library(NSL_LIBRARY NAMES nsl)
+  if (SOCKET_LIBRARY)
+    list(APPEND VISP_EXTERN_LIBRARIES ${SOCKET_LIBRARY})
+  endif()
+  if (NSL_LIBRARY)
+    list(APPEND VISP_EXTERN_LIBRARIES ${NSL_LIBRARY})
+  endif()
+endif()
 
 
 #--------------------------------------------------------------------

@@ -426,7 +426,7 @@ int vpNetwork::send(T* object, const unsigned int &sizeOfObject)
   }
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(WIN32)
+#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
@@ -472,7 +472,7 @@ int vpNetwork::sendTo(T* object, const unsigned int &dest, const unsigned int &s
   }
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(WIN32)
+#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 

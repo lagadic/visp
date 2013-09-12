@@ -49,6 +49,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <vector>
+#include <strings.h>
 
 #include <visp/vpSimulatorException.h>
 #include <visp/vpPoint.h>

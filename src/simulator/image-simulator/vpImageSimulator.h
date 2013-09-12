@@ -210,15 +210,15 @@ class VISP_EXPORT vpImageSimulator
 
     
     //creation du plan a partir de ses coordonnees 3D ds repere objet et de son image texture
-    void init(const vpImage<unsigned char> &I,vpColVector* _X);
-    void init(const vpImage<vpRGBa> &I,vpColVector* _X);
-    void init(const char* file_image,vpColVector* _X);
-    void init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& _X);
-    void init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& _X);
-    void init(const char* file_image, const std::vector<vpPoint>& _X);
+    void init(const vpImage<unsigned char> &I,vpColVector* X);
+    void init(const vpImage<vpRGBa> &I,vpColVector* X);
+    void init(const char* file_image,vpColVector* X);
+    void init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& X);
+    void init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& X);
+    void init(const char* file_image, const std::vector<vpPoint>& X);
 
     //projection du plan par cMo => creation des deux triangles definissant projection du plan sur plan image (coord en metre)
-    void setCameraPosition(const vpHomogeneousMatrix &_cMt);
+    void setCameraPosition(const vpHomogeneousMatrix &cMt);
     
     void setInterpolationType (const vpInterpolationType interp) {this->interp = interp;}
     
@@ -280,7 +280,7 @@ class VISP_EXPORT vpImageSimulator
 #endif
     
   private:
-    void initPlan(vpColVector* _X);
+    void initPlan(vpColVector* X);
     
     //result = plan est visible.
     //ie: un plan est oriente dans si normal_plan.focal < 0 => plan est visible sinon invisible.

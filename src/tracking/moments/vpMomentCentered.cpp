@@ -144,7 +144,7 @@ vpMomentCentered::vpMomentCentered() : vpMoment(){
   \return \f$\mu_{ij}\f$ moment.
 */
 double vpMomentCentered::get(unsigned int i,unsigned int j) const {
-    double order = getObject().getOrder();
+    unsigned int order = getObject().getOrder();
     assert(i+j<=order);
     if(i+j>order) throw vpException(vpException::badValue,"The requested value has not been computed, you should specify a higher order.");
 
