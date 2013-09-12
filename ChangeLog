@@ -13,6 +13,7 @@ ViSP under development version
   - Bug fixed
     . [16263] libopencv_nonfree for Surf not detected by CMake.
     . [16307] vpVideoReader::setLastFrameIndex() doesn't work.
+    . [16371] No convergence in SVDcmp
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features

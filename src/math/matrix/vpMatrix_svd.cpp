@@ -297,8 +297,10 @@ void vpMatrix::svdNr(vpColVector& W, vpMatrix& V)
 	g=c*g;
 	z=pythag(f,h);
 	rv1[j]=z;
-	c=f/z;
-	s=h/z;
+  if ((std::fabs(z) > epsilon) /*|| (fabs(z) > EPS_SVD)*/) {
+    c=f/z;
+    s=h/z;
+  }
 	f=x*c+g*s;
 	g=g*c-x*s;
 	h=y*s;
