@@ -51,7 +51,7 @@
 #include <errno.h>
 #include <netdb.h>
 #include <string.h>
-#include <strings.h>
+//#include <strings.h>
 #include <math.h>
 #include <assert.h>
 #include <stdlib.h>
