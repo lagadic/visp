@@ -693,6 +693,7 @@ else()
   if (NSL_LIBRARY)
     list(APPEND VISP_EXTERN_LIBRARIES ${NSL_LIBRARY})
   endif()
+  mark_as_advanced(SOCKET_LIBRARY NSL_LIBRARY)
 endif()
 
 
