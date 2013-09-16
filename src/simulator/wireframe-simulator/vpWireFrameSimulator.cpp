@@ -49,7 +49,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <vector>
-#include <strings.h>
 
 #include <visp/vpSimulatorException.h>
 #include <visp/vpPoint.h>
@@ -57,11 +56,6 @@
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPoint.h>
 #include <visp/vpIoTools.h>
-
-#if defined(WIN32)
-#define bcopy(b1,b2,len) (memmove((b2), (b1), (len)), (void) 0) 
-#endif
-
 
 //Inventor includes
 #if defined(VISP_HAVE_COIN)
@@ -464,7 +458,8 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpImage<u
   Byte b  = (Byte) *get_rfstack ();
   Matrix m;
 
-  bcopy ((char *) mat, (char *) m, sizeof (Matrix));
+  //bcopy ((char *) mat, (char *) m, sizeof (Matrix));
+  memmove((char *) m, (char *) mat, sizeof (Matrix));
   View_to_Matrix (get_vwstack (), *(get_tmstack ()));
   postmult_matrix (m, *(get_tmstack ()));
   bp   = sc.bound.ptr;
