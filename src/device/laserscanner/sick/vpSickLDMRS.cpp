@@ -130,7 +130,8 @@ bool vpSickLDMRS::setup()
      fprintf(stderr, "Failed to create socket\n"); 
      return false;
   }
-  bzero(&serv_addr, sizeof(serv_addr));
+  //bzero(&serv_addr, sizeof(serv_addr));
+  memset(&serv_addr, 0, sizeof(serv_addr));
   serv_addr.sin_family = AF_INET;                     // Internet/IP
   serv_addr.sin_addr.s_addr = inet_addr(ip.c_str());  // IP address
   serv_addr.sin_port = htons(port);                   // server port
