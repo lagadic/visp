@@ -59,48 +59,6 @@ void vpMomentCentered::set(unsigned int i, unsigned int j, double value){
 }
 
 /*!
- * To add normalization for scale invariance
- * Refer to Flusser's text P.15
- */
-void
-vpMomentCentered::normalizeforScale(NormalizationMode normmode){
-
-  double normfactor = 1.0;
-  double w = 1.0;               // power to which the den is raised
-
-  double orderp1 = this->getObject().getOrder()+1;
-
-  if (normmode == vpMomentCentered::NORMALIZE_BY_MU00) {
-      normfactor = this->get(0,0);
-  }
-  else
-    if (normmode == vpMomentCentered::NORMALIZE_BY_MU02PMU20by2){
-      normfactor = this->get(2,0) + this->get(0,2);
-    }
-
-
-  for (unsigned int p = 0; p < orderp1; p++){
-    for (unsigned int q = 0; q < orderp1 - p; q++){
-
-       w = ((p+q)/2.0) + 1;
-       if (normmode == vpMomentCentered::NORMALIZE_BY_MU00) {
-          normfactor = pow(normfactor, w);
-        }
-        else
-          if (normmode == vpMomentCentered::NORMALIZE_BY_MU02PMU20by2){
-            w = ((p+q)/2.0) + 1;
-            normfactor = pow(normfactor, (w/2.0));
-          }
-
-       double newval = this->get(p,q) / normfactor;
-       this->set(p,q,newval);
-    }
-  }
-
-  flg_normalized = true;
-}
-
-/*!
   Computes centered moments of all available orders. 
   Depends on vpMomentGravityCenter.
 */
