@@ -239,9 +239,9 @@ void close_lex (void)
 
 
 #define	ECHO	printf ("%c", *(mysptr))
-#define	CURC	(*mysptr)	/* caractere courant	*/
-#define	NEXTC	(*(mysptr+1))	/* caractere suivant	*/
-#define	PREVC	(*(mysptr-1))	/* caractere precedent	*/
+#define	CURC	(*((signed char *)mysptr))	/* caractere courant	*/
+#define	NEXTC	(*((signed char *)mysptr+1))	/* caractere suivant	*/
+#define	PREVC	(*((signed char *)mysptr-1))	/* caractere precedent	*/
 
 
 /*

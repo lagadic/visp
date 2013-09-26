@@ -9,11 +9,13 @@
 ViSP under development version
   - New features
   - Improvements
+    . Add missing const to member functions and arguments passed by reference.
   - Examples
   - Bug fixed
     . [16263] libopencv_nonfree for Surf not detected by CMake.
     . [16307] vpVideoReader::setLastFrameIndex() doesn't work.
     . [16371] No convergence in SVDcmp
+    . [16465] FTBFS on armhf, ppc, s390: Errors while running CTest
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
