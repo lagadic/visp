@@ -275,14 +275,24 @@ main(int argc, const char ** argv)
     // if the image you want to read on the disk does not exist
     // an exception is thrown
     //Try to load a non existing image
-    filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
-    vpImageIo::read(I,filename) ;
+    try {
+      filename = ipath + vpIoTools::path("/ViSP-images/image-that-does-not-exist.ppm");
+      vpImageIo::read(I,filename) ;
+    }
+    catch(vpException e) {
+      std::cout << "Catch an exception: " << e << std::endl;
+    }
 
 
     // same thing if you to write in a directory that does not exist
     // or where you are not allowd to write.
-    filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
-    vpImageIo::write(I,filename) ;
+    try {
+      filename = dirname + vpIoTools::path("/directory-that-does-not-exist/Klimt.ppm");
+      vpImageIo::write(I,filename) ;
+    }
+    catch(vpException e) {
+      std::cout << "Catch an exception: " << e << std::endl;
+    }
 
 
     std::cout << "----------------------------------------------------" << std::endl ;
