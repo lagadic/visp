@@ -453,9 +453,8 @@ vpImage<Type>::vpImage(unsigned int height, unsigned int width)
   {
     init(height,width,0) ;
   }
-  catch(vpException me)
+  catch(...)
   {
-    vpERROR_TRACE(" ") ;
     throw ;
   }
 }

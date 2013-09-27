@@ -109,16 +109,22 @@ void init_visp_plot(vpPlot& );
 
 int main()
 {
-  //intial pose
-  vpHomogeneousMatrix cMo(-0.1,-0.1,1.5,-vpMath::rad(20),-vpMath::rad(20),-vpMath::rad(30));
-  //Desired pose
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,-0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
+  try {
+    //intial pose
+    vpHomogeneousMatrix cMo(-0.1,-0.1,1.5,-vpMath::rad(20),-vpMath::rad(20),-vpMath::rad(30));
+    //Desired pose
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,-0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
 
-  //init the simulation
-  init(cMo,cdMo);
+    //init the simulation
+    init(cMo,cdMo);
 
-  execute(1500);
-  return 0;
+    execute(1500);
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 

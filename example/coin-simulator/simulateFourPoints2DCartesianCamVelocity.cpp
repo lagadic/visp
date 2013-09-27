@@ -318,76 +318,83 @@ void *mainLoop (void *_simu)
 int
 main(int argc, const char ** argv)
 {
-  std::string env_ipath;
-  std::string opt_ipath;
-  std::string ipath;
-  std::string filename;
-  std::string username;
-  bool opt_display = true;
+  try {
+    std::string env_ipath;
+    std::string opt_ipath;
+    std::string ipath;
+    std::string filename;
+    std::string username;
+    bool opt_display = true;
 
-  // Get the VISP_IMAGE_PATH environment variable value
-  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-  if (ptenv != NULL)
-    env_ipath = ptenv;
+    // Get the VISP_IMAGE_PATH environment variable value
+    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+    if (ptenv != NULL)
+      env_ipath = ptenv;
 
-  // Set the default input path
-  if (! env_ipath.empty())
-    ipath = env_ipath;
+    // Set the default input path
+    if (! env_ipath.empty())
+      ipath = env_ipath;
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_display) == false) {
-    exit (-1);
-  }
-
-  // Get the option values
-  if (!opt_ipath.empty())
-    ipath = opt_ipath;
-
-  // Compare ipath and env_ipath. If they differ, we take into account
-  // the input path comming from the command line option
-  if (!opt_ipath.empty() && !env_ipath.empty()) {
-    if (ipath != env_ipath) {
-      std::cout << std::endl
-                << "WARNING: " << std::endl;
-      std::cout << "  Since -i <visp image path=" << ipath << "> "
-                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                << "  we skip the environment variable." << std::endl;
+    // Read the command line options
+    if (getOptions(argc, argv, opt_ipath, opt_display) == false) {
+      exit (-1);
     }
+
+    // Get the option values
+    if (!opt_ipath.empty())
+      ipath = opt_ipath;
+
+    // Compare ipath and env_ipath. If they differ, we take into account
+    // the input path comming from the command line option
+    if (!opt_ipath.empty() && !env_ipath.empty()) {
+      if (ipath != env_ipath) {
+        std::cout << std::endl
+                  << "WARNING: " << std::endl;
+        std::cout << "  Since -i <visp image path=" << ipath << "> "
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  we skip the environment variable." << std::endl;
+      }
+    }
+
+    // Test if an input path is set
+    if (opt_ipath.empty() && env_ipath.empty()){
+      usage(argv[0], NULL, ipath);
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl << std::endl;
+      exit(-1);
+    }
+
+    vpCameraParameters cam ;
+    vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
+
+
+    if (opt_display) {
+      vpSimulator simu ;
+      simu.initInternalViewer(300, 300) ;
+      simu.initExternalViewer(300, 300) ;
+
+      vpTime::wait(1000) ;
+      simu.setZoomFactor(1.0f) ;
+
+      // Load the cad model
+      filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
+      simu.load(filename.c_str()) ;
+
+      simu.setInternalCameraParameters(cam) ;
+      simu.setExternalCameraParameters(cam) ;
+      simu.initApplication(&mainLoop) ;
+
+      simu.mainLoop() ;
+    }
+    return 0;
   }
-
-  // Test if an input path is set
-  if (opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL, ipath);
-    std::cerr << std::endl
-              << "ERROR:" << std::endl;
-    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-              << std::endl
-              << "  environment variable to specify the location of the " << std::endl
-              << "  image path where test images are located." << std::endl << std::endl;
-    exit(-1);
-  }
-
-  vpCameraParameters cam ;
-  vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
-
-
-  if (opt_display) {
-    vpSimulator simu ;
-    simu.initInternalViewer(300, 300) ;
-    simu.initExternalViewer(300, 300) ;
-
-    vpTime::wait(1000) ;
-    simu.setZoomFactor(1.0f) ;
-
-    // Load the cad model
-    filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
-    simu.load(filename.c_str()) ;
-
-    simu.setInternalCameraParameters(cam) ;
-    simu.setExternalCameraParameters(cam) ;
-    simu.initApplication(&mainLoop) ;
-
-    simu.mainLoop() ;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
 }
 

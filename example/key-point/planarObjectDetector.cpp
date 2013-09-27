@@ -185,273 +185,279 @@ bool getOptions(int argc, const char **argv,
 int 
 main(int argc, const char** argv)
 {
-  bool isLearning = false;
-  std::string dataFile("./dataPlanar");
-  bool opt_click_allowed = true;
-  bool opt_display = true;
-  std::string objectName("object");
-  bool displayPoints = false;
-  bool useSequence = true;
-  std::string opt_ipath;
-  std::string ipath;
-  std::string env_ipath;
-  std::string dirname;
-  std::string filename;
+  try {
+    bool isLearning = false;
+    std::string dataFile("./dataPlanar");
+    bool opt_click_allowed = true;
+    bool opt_display = true;
+    std::string objectName("object");
+    bool displayPoints = false;
+    bool useSequence = true;
+    std::string opt_ipath;
+    std::string ipath;
+    std::string env_ipath;
+    std::string dirname;
+    std::string filename;
 
 
-  // Get the VISP_IMAGE_PATH environment variable value
-  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-  if (ptenv != NULL){
-    env_ipath = ptenv;
-  }
-
-  // Set the default input path
-  if (! env_ipath.empty()){
-    ipath = env_ipath;
-  } 
-
-  // Read the command line options
-	if (getOptions(argc, argv,
-                 isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, useSequence, opt_ipath) == false) {
-    exit (-1);
-  }
-
-  // Get the option values
-  if (useSequence && !opt_ipath.empty()){
-    ipath = opt_ipath;
-  }
-
-  // Compare ipath and env_ipath. If they differ, we take into account
-  // the input path comming from the command line option
-  if (useSequence && !opt_ipath.empty() && !env_ipath.empty()) {
-    if (ipath != env_ipath) {
-      std::cout << std::endl
-                << "WARNING: " << std::endl;
-      std::cout << "  Since -i <visp image path=" << ipath << "> "
-                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                << "  we skip the environment variable." << std::endl;
+    // Get the VISP_IMAGE_PATH environment variable value
+    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+    if (ptenv != NULL){
+      env_ipath = ptenv;
     }
-  }
 
-  // Test if an input path is set
-  if (useSequence && opt_ipath.empty() && env_ipath.empty()){
-    usage(argv[0], NULL);
-    std::cerr << std::endl
-              << "ERROR:" << std::endl;
-    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-              << std::endl
-              << "  environment variable to specify the location of the " << std::endl
-              << "  image path where test images are located." << std::endl << std::endl;
-    exit(-1);
-  }
-
-  
-  // Declare two images, these are gray level images (unsigned char)
-  vpImage <unsigned char> I;
-  vpImage <unsigned char> Iref;
-
-
-  // Set the path location of the image sequence
-  dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
-
-  // Build the name of the image file
-  unsigned iter = 0; // Image number
-  std::ostringstream s;
-  s.setf(std::ios::right, std::ios::adjustfield);
-  s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-  filename = dirname + s.str();
-
-  // Read the PGM image named "filename" on the disk, and put the
-  // bitmap into the image structure I.  I is initialized to the
-  // correct size
-  //
-  // exception readPGM may throw various exception if, for example,
-  // the file does not exist, or if the memory cannot be allocated
-  try{
-    if(useSequence){
-      vpCTRACE << "Load: " << filename << std::endl;
-      vpImageIo::read(Iref, filename) ;
-      I = Iref;
+    // Set the default input path
+    if (! env_ipath.empty()){
+      ipath = env_ipath;
     }
-  }
-  catch(...)
-  {
-    // an exception is throwned if an exception from readPGM has been catched
-    // here this will result in the end of the program
-    // Note that another error message has been printed from readPGM
-    // to give more information about the error
-    std::cerr << std::endl
-              << "ERROR:" << std::endl;
-    std::cerr << "  Cannot read " << filename << std::endl;
-    std::cerr << "  Check your -i " << ipath << " option " << std::endl
-              << "  or VISP_INPUT_IMAGE_PATH environment variable."
-              << std::endl;
-    exit(-1);
-  }
 
-  
-  // Declare a framegrabber
-  vpOpenCVGrabber g;
-  if(!useSequence){
-    try{
-      g.open(I);
+    // Read the command line options
+    if (getOptions(argc, argv,
+                   isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, useSequence, opt_ipath) == false) {
+      exit (-1);
     }
-    catch(...){
-      std::cout << "problem to initialise the framegrabber" << std::endl;
-      exit(-1);
+
+    // Get the option values
+    if (useSequence && !opt_ipath.empty()){
+      ipath = opt_ipath;
     }
-    
-    
-    g.acquire(I);
-    // initialise the reference image
-    g.acquire(Iref);
-  }
 
-#if defined VISP_HAVE_X11
-  vpDisplayX display;
-#elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
-#endif
-  
-#if defined VISP_HAVE_X11
-  vpDisplayX displayRef;
-#elif defined VISP_HAVE_GTK
-  vpDisplayGTK displayRef;
-#elif defined VISP_HAVE_GDI
-  vpDisplayGDI displayRef;
-#endif
-
-  // declare a planar object detector
-  vpPlanarObjectDetector planar;
-
-  vpImagePoint corners[2];
-  if(isLearning){  
-    if(opt_display){
-      displayRef.init(Iref, 100, 100, "Reference image") ;
-      vpDisplay::display(Iref);
-      vpDisplay::flush(Iref);
-    }
-    if (opt_display && opt_click_allowed){
-      std::cout << "Click on the top left and the bottom right corners to define the reference plane" << std::endl;
-      for (int i=0 ; i < 2 ; i++){
-        vpDisplay::getClick(Iref, corners[i]);
-        std::cout << corners[i] << std::endl;
+    // Compare ipath and env_ipath. If they differ, we take into account
+    // the input path comming from the command line option
+    if (useSequence && !opt_ipath.empty() && !env_ipath.empty()) {
+      if (ipath != env_ipath) {
+        std::cout << std::endl
+                  << "WARNING: " << std::endl;
+        std::cout << "  Since -i <visp image path=" << ipath << "> "
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  we skip the environment variable." << std::endl;
       }
     }
-    else{
-      corners[0].set_ij(50, I.getWidth()-100);// small ROI for the automated test
-      corners[1].set_ij(I.getHeight()-100, I.getWidth()-2);
-    }
 
-    if (opt_display) {
-      //Display the rectangle which defines the part of the image where the reference points are computed.
-      vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
-      vpDisplay::flush(Iref);
-    }
-
-    if (opt_click_allowed){
-      std::cout << "Click on the image to continue" << std::endl;
-      vpDisplay::getClick(Iref);
-    }  
-
-    vpRect roi(corners[0], corners[1]);
-
-    std::cout << "> train the classifier on the selected plane (may take up to several minutes)." << std::endl;
-    if(opt_display) {
-      vpDisplay::display(Iref);
-      vpDisplay::flush(Iref);
-    }
-    double t0 = vpTime::measureTimeMs (); 
-    planar.buildReference(Iref, roi); 
-    std::cout << "build reference in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
-    t0 = vpTime::measureTimeMs (); 
-    planar.recordDetector(objectName, dataFile);
-    std::cout << "record detector in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
-  }
-  else{    
-    if(!vpIoTools::checkFilename(dataFile)){
-      vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
+    // Test if an input path is set
+    if (useSequence && opt_ipath.empty() && env_ipath.empty()){
+      usage(argv[0], NULL);
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl << std::endl;
       exit(-1);
     }
+
+
+    // Declare two images, these are gray level images (unsigned char)
+    vpImage <unsigned char> I;
+    vpImage <unsigned char> Iref;
+
+
+    // Set the path location of the image sequence
+    dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
+
+    // Build the name of the image file
+    unsigned iter = 0; // Image number
+    std::ostringstream s;
+    s.setf(std::ios::right, std::ios::adjustfield);
+    s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+    filename = dirname + s.str();
+
+    // Read the PGM image named "filename" on the disk, and put the
+    // bitmap into the image structure I.  I is initialized to the
+    // correct size
+    //
+    // exception readPGM may throw various exception if, for example,
+    // the file does not exist, or if the memory cannot be allocated
     try{
-      // load a previously recorded file
-      planar.load(dataFile, objectName);
+      if(useSequence){
+        vpCTRACE << "Load: " << filename << std::endl;
+        vpImageIo::read(Iref, filename) ;
+        I = Iref;
+      }
     }
-    catch(...){
-      vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
+    catch(...)
+    {
+      // an exception is throwned if an exception from readPGM has been catched
+      // here this will result in the end of the program
+      // Note that another error message has been printed from readPGM
+      // to give more information about the error
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Cannot read " << filename << std::endl;
+      std::cerr << "  Check your -i " << ipath << " option " << std::endl
+                << "  or VISP_INPUT_IMAGE_PATH environment variable."
+                << std::endl;
       exit(-1);
     }
-  }
 
-  if(opt_display){
-    display.init(I, 110 + (int)Iref.getWidth(), 100, "Current image") ;
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-  }
 
-  if (opt_display && opt_click_allowed){
-    std::cout << "Click on the reference image to continue" << std::endl;
-    vpDisplay::displayCharString (Iref, vpImagePoint(15,15), 
-                                  (char*)"Click on the reference image to continue", vpColor::red);
-    vpDisplay::flush(Iref);
-    vpDisplay::getClick(Iref);
-  }  
-  
-  for ( ; ; ) {
-    // acquire a new image
-    if(useSequence){
-      iter++;
-      if(iter >= 80){
-        break;
-      }      
-      s.str("");
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-      filename = dirname + s.str();
-      // read the image
-      vpImageIo::read(I, filename);
+    // Declare a framegrabber
+    vpOpenCVGrabber g;
+    if(!useSequence){
+      try{
+        g.open(I);
+      }
+      catch(...){
+        std::cout << "problem to initialise the framegrabber" << std::endl;
+        exit(-1);
+      }
+
+
+      g.acquire(I);
+      // initialise the reference image
+      g.acquire(Iref);
+    }
+
+#if defined VISP_HAVE_X11
+    vpDisplayX display;
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK display;
+#elif defined VISP_HAVE_GDI
+    vpDisplayGDI display;
+#endif
+
+#if defined VISP_HAVE_X11
+    vpDisplayX displayRef;
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK displayRef;
+#elif defined VISP_HAVE_GDI
+    vpDisplayGDI displayRef;
+#endif
+
+    // declare a planar object detector
+    vpPlanarObjectDetector planar;
+
+    vpImagePoint corners[2];
+    if(isLearning){
+      if(opt_display){
+        displayRef.init(Iref, 100, 100, "Reference image") ;
+        vpDisplay::display(Iref);
+        vpDisplay::flush(Iref);
+      }
+      if (opt_display && opt_click_allowed){
+        std::cout << "Click on the top left and the bottom right corners to define the reference plane" << std::endl;
+        for (int i=0 ; i < 2 ; i++){
+          vpDisplay::getClick(Iref, corners[i]);
+          std::cout << corners[i] << std::endl;
+        }
+      }
+      else{
+        corners[0].set_ij(50, I.getWidth()-100);// small ROI for the automated test
+        corners[1].set_ij(I.getHeight()-100, I.getWidth()-2);
+      }
+
+      if (opt_display) {
+        //Display the rectangle which defines the part of the image where the reference points are computed.
+        vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
+        vpDisplay::flush(Iref);
+      }
+
+      if (opt_click_allowed){
+        std::cout << "Click on the image to continue" << std::endl;
+        vpDisplay::getClick(Iref);
+      }
+
+      vpRect roi(corners[0], corners[1]);
+
+      std::cout << "> train the classifier on the selected plane (may take up to several minutes)." << std::endl;
+      if(opt_display) {
+        vpDisplay::display(Iref);
+        vpDisplay::flush(Iref);
+      }
+      double t0 = vpTime::measureTimeMs ();
+      planar.buildReference(Iref, roi);
+      std::cout << "build reference in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
+      t0 = vpTime::measureTimeMs ();
+      planar.recordDetector(objectName, dataFile);
+      std::cout << "record detector in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
     }
     else{
-      g.acquire(I);
+      if(!vpIoTools::checkFilename(dataFile)){
+        vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
+        exit(-1);
+      }
+      try{
+        // load a previously recorded file
+        planar.load(dataFile, objectName);
+      }
+      catch(...){
+        vpERROR_TRACE("cannot load the database with the specified name. Has the object been learned with the -l option? ");
+        exit(-1);
+      }
     }
-    
+
     if(opt_display){
+      display.init(I, 110 + (int)Iref.getWidth(), 100, "Current image") ;
       vpDisplay::display(I);
+      vpDisplay::flush(I);
     }
-    
-    double t0 = vpTime::measureTimeMs (); 
-    // detection  of the reference planar surface
-    bool isDetected = planar.matchPoint(I);
-    std::cout << "matching in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
-    
-    if(isDetected){
-      vpHomography H;
-      planar.getHomography(H);    
-      std::cout << " > computed homography:" << std::endl << H << std::endl;
+
+    if (opt_display && opt_click_allowed){
+      std::cout << "Click on the reference image to continue" << std::endl;
+      vpDisplay::displayCharString (Iref, vpImagePoint(15,15),
+                                    (char*)"Click on the reference image to continue", vpColor::red);
+      vpDisplay::flush(Iref);
+      vpDisplay::getClick(Iref);
+    }
+
+    for ( ; ; ) {
+      // acquire a new image
+      if(useSequence){
+        iter++;
+        if(iter >= 80){
+          break;
+        }
+        s.str("");
+        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        filename = dirname + s.str();
+        // read the image
+        vpImageIo::read(I, filename);
+      }
+      else{
+        g.acquire(I);
+      }
+
       if(opt_display){
-        if(isLearning){
-          vpDisplay::display(Iref);
-          vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
-          planar.display(Iref, I, displayPoints);
-          vpDisplay::flush(Iref);
-        }else{
-          planar.display(I, displayPoints);
+        vpDisplay::display(I);
+      }
+
+      double t0 = vpTime::measureTimeMs ();
+      // detection  of the reference planar surface
+      bool isDetected = planar.matchPoint(I);
+      std::cout << "matching in " << vpTime::measureTimeMs () - t0 << " ms" << std::endl;
+
+      if(isDetected){
+        vpHomography H;
+        planar.getHomography(H);
+        std::cout << " > computed homography:" << std::endl << H << std::endl;
+        if(opt_display){
+          if(isLearning){
+            vpDisplay::display(Iref);
+            vpDisplay::displayRectangle(Iref, corners[0], corners[1], vpColor::green);
+            planar.display(Iref, I, displayPoints);
+            vpDisplay::flush(Iref);
+          }else{
+            planar.display(I, displayPoints);
+          }
+        }
+      }
+      else{
+        std::cout << " > reference is not detected in the image" << std::endl;
+      }
+      if(opt_display){
+        vpDisplay::flush(I);
+        if(vpDisplay::getClick(I, false)){
+          break;
         }
       }
     }
-    else{
-      std::cout << " > reference is not detected in the image" << std::endl;
-    }
-    if(opt_display){
-      vpDisplay::flush(I);
-      if(vpDisplay::getClick(I, false)){
-        break;
-      }
-    }
+
+    return 0;
   }
-  
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 #else

@@ -163,97 +163,103 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
+
+    vpPoint P[5]  ;  //  Point to be tracked
+    vpPose pose ;
+    pose.clearPoint() ;
+
+    P[0].setWorldCoordinates(-L,-L, 0 ) ;
+    P[1].setWorldCoordinates(L,-L, 0 ) ;
+    P[2].setWorldCoordinates(L,L, 0 ) ;
+    P[3].setWorldCoordinates(-2*L, 3*L, 0 ) ;
+    P[4].setWorldCoordinates(-L,L, 0.01 ) ;
+    //P[3].setWorldCoordinates(-L,L, 0 ) ;
+
+    int test_fail = 0, fail = 0;
+    vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0,vpMath::rad(10));
+    vpHomogeneousMatrix cMo_ref(cpo_ref) ;
+    vpHomogeneousMatrix cMo ; // will contain the estimated pose
+
+    for(int i=0 ; i < 5 ; i++) {
+      P[i].project(cMo_ref) ;
+      //P[i].print();
+      pose.addPoint(P[i]) ; // and added to the pose computation class
+    }
+
+    // Let's go ...
+    print_pose(cMo_ref, std::string("Reference pose"));  // print the reference pose
+
+    std::cout <<"-------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::LAGRANGE, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Lagrange"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
+    test_fail |= fail;
+
+    std::cout <<"--------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::DEMENTHON, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Dementhon"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
+    test_fail |= fail;
+
+    std::cout <<"--------------------------------------------------"<<std::endl ;
+    pose.setRansacNbInliersToReachConsensus(4);
+    pose.setRansacThreshold(0.01);
+    pose.computePose(vpPose::RANSAC, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Ransac"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
+    test_fail |= fail;
+
+    std::cout <<"--------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::LAGRANGE_LOWE, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
+    test_fail |= fail;
+
+    std::cout <<"--------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
+    test_fail |= fail;
+
+    // Now Virtual Visual servoing
+
+    std::cout <<"--------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by VVS"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
+    test_fail |= fail;
+
+    std::cout <<"-------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
+    test_fail |= fail;
+
+    std::cout <<"-------------------------------------------------"<<std::endl ;
+    pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo) ;
+
+    print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
+    fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
+    test_fail |= fail;
+
+    std::cout << "\nGlobal pose estimation test " << (test_fail ? "fail" : "is ok") << std::endl;
+
+    return test_fail;
   }
-
-  vpPoint P[5]  ;  //  Point to be tracked
-  vpPose pose ;
-  pose.clearPoint() ;
-
-  P[0].setWorldCoordinates(-L,-L, 0 ) ;
-  P[1].setWorldCoordinates(L,-L, 0 ) ;
-  P[2].setWorldCoordinates(L,L, 0 ) ;
-  P[3].setWorldCoordinates(-2*L, 3*L, 0 ) ;
-  P[4].setWorldCoordinates(-L,L, 0.01 ) ;
-  //P[3].setWorldCoordinates(-L,L, 0 ) ;
-
-  int test_fail = 0, fail = 0;
-  vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0,vpMath::rad(10));
-  vpHomogeneousMatrix cMo_ref(cpo_ref) ;
-  vpHomogeneousMatrix cMo ; // will contain the estimated pose
-
-  for(int i=0 ; i < 5 ; i++) {
-    P[i].project(cMo_ref) ;
-    //P[i].print();
-    pose.addPoint(P[i]) ; // and added to the pose computation class
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-
-  // Let's go ...
-  print_pose(cMo_ref, std::string("Reference pose"));  // print the reference pose
-
-  std::cout <<"-------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LAGRANGE, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Lagrange"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange");
-  test_fail |= fail;
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::DEMENTHON, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Dementhon"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon");
-  test_fail |= fail;
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.setRansacNbInliersToReachConsensus(4);
-  pose.setRansacThreshold(0.01);
-  pose.computePose(vpPose::RANSAC, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Ransac"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Ransac");
-  test_fail |= fail;
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LAGRANGE_LOWE, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Lagrange than Lowe"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than Lowe");
-  test_fail |= fail;
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::DEMENTHON_LOWE, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Dementhon than Lowe"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than Lowe");
-  test_fail |= fail;
-
-  // Now Virtual Visual servoing
-
-  std::cout <<"--------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by VVS"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by VVS");
-  test_fail |= fail;
-
-  std::cout <<"-------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Dementhon than by VVS"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon than by VVS");
-  test_fail |= fail;
-
-  std::cout <<"-------------------------------------------------"<<std::endl ;
-  pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo) ;
-
-  print_pose(cMo, std::string("Pose estimated by Lagrange than by VVS"));
-  fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange than by VVS");
-  test_fail |= fail;
-
-  std::cout << "\nGlobal pose estimation test " << (test_fail ? "fail" : "is ok") << std::endl;
-
-  return test_fail;
 }

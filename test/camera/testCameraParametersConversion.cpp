@@ -121,56 +121,62 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
+
+    vpCameraParameters cam;
+    double px,py,u0,v0;
+    px = 1657.429131;
+    py = 1658.818598;
+    u0 = 322.2437833;
+    v0 = 230.8012737;
+    vpCameraParameters camDist;
+    double px_dist,py_dist,u0_dist,v0_dist,kud_dist,kdu_dist;
+    px_dist = 1624.824731;
+    py_dist = 1625.263641;
+    u0_dist = 324.0923411;
+    v0_dist = 245.2421388;
+    kud_dist = -0.1741532338;
+    kdu_dist = 0.1771165148;
+
+    cam.initPersProjWithoutDistortion(px,py,u0,v0);
+    camDist.initPersProjWithDistortion(px_dist,py_dist,u0_dist,v0_dist,
+                                       kud_dist, kdu_dist);
+
+    double u1 = 320;
+    double v1 = 240;
+    double x1 = 0, y1 = 0;
+    double u2 = 0, v2 = 0;
+    vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1);
+    vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2);
+    if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
+      vpTRACE("Error in convertPoint without distortion:\n"
+              "u1 = %f, u2 = %f\n"
+              "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
+      return -1;
+    }
+    vpTRACE("convertPoint without distortion :\n"
+            "u1 - u2 = %.20f\n"
+            "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
+
+    vpPixelMeterConversion::convertPoint(camDist,u1,v1,x1,y1);
+    vpMeterPixelConversion::convertPoint(camDist,x1,y1,u2,v2);
+    if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
+      vpTRACE("Error in convertPoint with distortion :\n"
+              "u1 = %f, u2 = %f\n"
+              "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
+      return -1;
+    }
+    vpTRACE("convertPoint with distortion :\n"
+            "u1 - u2 = %.20f\n"
+            "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
+    return 0;
   }
-
-  vpCameraParameters cam;
-  double px,py,u0,v0;
-  px = 1657.429131;
-  py = 1658.818598;
-  u0 = 322.2437833;
-  v0 = 230.8012737;
-  vpCameraParameters camDist;
-  double px_dist,py_dist,u0_dist,v0_dist,kud_dist,kdu_dist;
-  px_dist = 1624.824731;
-  py_dist = 1625.263641;
-  u0_dist = 324.0923411;
-  v0_dist = 245.2421388;
-  kud_dist = -0.1741532338;
-  kdu_dist = 0.1771165148;
-
-  cam.initPersProjWithoutDistortion(px,py,u0,v0);
-  camDist.initPersProjWithDistortion(px_dist,py_dist,u0_dist,v0_dist,
-                                     kud_dist, kdu_dist);
-
-  double u1 = 320;
-  double v1 = 240;
-  double x1 = 0, y1 = 0;
-  double u2 = 0, v2 = 0;
-  vpPixelMeterConversion::convertPoint(cam,u1,v1,x1,y1);
-  vpMeterPixelConversion::convertPoint(cam,x1,y1,u2,v2);
-  if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
-    vpTRACE("Error in convertPoint without distortion:\n"
-            "u1 = %f, u2 = %f\n"
-            "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
-    return -1;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-  vpTRACE("convertPoint without distortion :\n"
-          "u1 - u2 = %.20f\n"
-          "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
-
-  vpPixelMeterConversion::convertPoint(camDist,u1,v1,x1,y1);
-  vpMeterPixelConversion::convertPoint(camDist,x1,y1,u2,v2);
-  if(!vpMath::equal(u1,u2) || !vpMath::equal(v1,v2)){
-    vpTRACE("Error in convertPoint with distortion :\n"
-            "u1 = %f, u2 = %f\n"
-            "v1 = %f, v2 = %f\n",u1,u2,v1,v2);
-    return -1;
-  }
-  vpTRACE("convertPoint with distortion :\n"
-          "u1 - u2 = %.20f\n"
-          "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
-  return 0;
 }

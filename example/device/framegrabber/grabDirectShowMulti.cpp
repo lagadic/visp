@@ -455,12 +455,12 @@ main(int argc, const char ** argv)
 		if (display)
 			delete [] d;
 
-	}
-	catch (...) {
-		vpCERROR << "Failure: exit" << std::endl;
-	}
-
-	std::cout << " the end" << std::endl;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 #else // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 

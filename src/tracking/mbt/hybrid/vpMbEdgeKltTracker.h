@@ -379,7 +379,7 @@ protected:
                              vpColVector &w_klt, const unsigned int lvl=0);
 
   virtual void    init(const vpImage<unsigned char>& I);
-  virtual void    initCylinder(const vpPoint& , const vpPoint , const double , const unsigned int );
+  virtual void    initCylinder(const vpPoint& , const vpPoint &, const double , const unsigned int );
   virtual void    initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
   unsigned int    initMbtTracking(const unsigned int level=0);
 

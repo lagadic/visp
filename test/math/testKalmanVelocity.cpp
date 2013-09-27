@@ -58,79 +58,85 @@ typedef enum {
 int
 main()
 {
-  unsigned int nsignal = 2; // Number of signal to filter
-  unsigned int niter = 200;
-  unsigned int size_state_vector = 2*nsignal;
-  unsigned int size_measure_vector = 1*nsignal;
-  //vpMeasureType measure_t = Velocity;
-  vpMeasureType measure_t = Position;
+  try {
+    unsigned int nsignal = 2; // Number of signal to filter
+    unsigned int niter = 200;
+    unsigned int size_state_vector = 2*nsignal;
+    unsigned int size_measure_vector = 1*nsignal;
+    //vpMeasureType measure_t = Velocity;
+    vpMeasureType measure_t = Position;
 
-  std::string filename = "/tmp/log.dat";
-  std::ofstream flog(filename.c_str());
+    std::string filename = "/tmp/log.dat";
+    std::ofstream flog(filename.c_str());
 
-  vpLinearKalmanFilterInstantiation kalman;
+    vpLinearKalmanFilterInstantiation kalman;
 
-  vpColVector sigma_measure(size_measure_vector);
-  for (unsigned int signal=0; signal < nsignal; signal ++) 
-    sigma_measure = 0.000001;
-  vpColVector sigma_state(size_state_vector);
+    vpColVector sigma_measure(size_measure_vector);
+    for (unsigned int signal=0; signal < nsignal; signal ++)
+      sigma_measure = 0.000001;
+    vpColVector sigma_state(size_state_vector);
 
-  switch (measure_t) {
-  case Velocity:
-    for (unsigned int signal=0; signal < nsignal; signal ++) {
-      sigma_state[2*signal] = 0.; // not used
-      sigma_state[2*signal+1] = 0.000001;
+    switch (measure_t) {
+    case Velocity:
+      for (unsigned int signal=0; signal < nsignal; signal ++) {
+        sigma_state[2*signal] = 0.; // not used
+        sigma_state[2*signal+1] = 0.000001;
+      }
+      break;
+    case Position:
+      for (unsigned int signal=0; signal < nsignal; signal ++) {
+        sigma_state[2*signal] = 0.000001;
+        sigma_state[2*signal+1] = 0; // not used
+      }
+      break;
     }
-    break;
-  case Position:
+
+    vpColVector measure(size_measure_vector);
+
     for (unsigned int signal=0; signal < nsignal; signal ++) {
-      sigma_state[2*signal] = 0.000001; 
-      sigma_state[2*signal+1] = 0; // not used
+      measure[signal] = 3+2*signal;
     }
-    break;
-  }
-  
-  vpColVector measure(size_measure_vector);
 
-  for (unsigned int signal=0; signal < nsignal; signal ++) {
-    measure[signal] = 3+2*signal;
-  }
+    kalman.verbose(true);
 
-  kalman.verbose(true);
-
-  vpLinearKalmanFilterInstantiation::vpStateModel model;
-  double dt = 0.04; // Sampling period
-  double rho = 0.5;
-  double dummy = 0; // non used parameter
-  switch (measure_t) {
-  case Velocity:
-    model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
-    kalman.setStateModel(model);
-    kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
-    break;
-  case Position:
-    model = vpLinearKalmanFilterInstantiation::stateConstVel_MeasurePos;
-    kalman.setStateModel(model);
-    kalman.initFilter(nsignal, sigma_state, sigma_measure, dummy, dt);
-    break;
-  }
-
-  for (unsigned int iter=0; iter <= niter; iter++) {
-    std::cout << "-------- iter " << iter << " ------------" << std::endl;
-    for (unsigned int signal=0; signal < nsignal; signal ++) {
-      measure[signal] = 3+2*signal + 0.3*sin(vpMath::rad(360./niter*iter));
+    vpLinearKalmanFilterInstantiation::vpStateModel model;
+    double dt = 0.04; // Sampling period
+    double rho = 0.5;
+    double dummy = 0; // non used parameter
+    switch (measure_t) {
+    case Velocity:
+      model = vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel;
+      kalman.setStateModel(model);
+      kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
+      break;
+    case Position:
+      model = vpLinearKalmanFilterInstantiation::stateConstVel_MeasurePos;
+      kalman.setStateModel(model);
+      kalman.initFilter(nsignal, sigma_state, sigma_measure, dummy, dt);
+      break;
     }
-    std::cout << "measure : " << measure.t() << std::endl;
 
-    flog << measure.t();
+    for (unsigned int iter=0; iter <= niter; iter++) {
+      std::cout << "-------- iter " << iter << " ------------" << std::endl;
+      for (unsigned int signal=0; signal < nsignal; signal ++) {
+        measure[signal] = 3+2*signal + 0.3*sin(vpMath::rad(360./niter*iter));
+      }
+      std::cout << "measure : " << measure.t() << std::endl;
 
-    //    kalman.prediction();
-    kalman.filter(measure);
-    flog << kalman.Xest.t() << std::endl;
+      flog << measure.t();
 
-    std::cout << "Xest: " << kalman.Xest.t() << std::endl;
+      //    kalman.prediction();
+      kalman.filter(measure);
+      flog << kalman.Xest.t() << std::endl;
+
+      std::cout << "Xest: " << kalman.Xest.t() << std::endl;
+    }
+
+    flog.close();
+    return 0;
   }
-
-  flog.close();
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }

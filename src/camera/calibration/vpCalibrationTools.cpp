@@ -178,6 +178,7 @@ vpCalibration::calibVVS(
   vpHomogeneousMatrix &cMo,
   bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int   n_points = npt ;
 
@@ -332,7 +333,8 @@ vpCalibration::calibVVS(
   this->residual_dist = r;
   if (verbose)
     std::cout <<  " std dev " << sqrt(r/n_points) << std::endl;
-
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 
 void
@@ -341,6 +343,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
                              double &globalReprojectionError,
                              bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int nbPoint[256]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
@@ -540,6 +543,8 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
     table_cal[p].computeStdDeviation(deviation,deviation_dist);
   }
   globalReprojectionError = sqrt(r/nbPointTotal);
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 
 void
@@ -548,6 +553,7 @@ vpCalibration::calibVVSWithDistortion(
   vpHomogeneousMatrix& cMo,
   bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int n_points =npt ;
 
@@ -784,6 +790,9 @@ vpCalibration::calibVVSWithDistortion(
 
   if (verbose)
     std::cout <<  " std dev " << sqrt(r/n_points) << std::endl;
+
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 
 
@@ -792,6 +801,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
                                            vpCameraParameters &cam, double &globalReprojectionError,
                                            bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int nbPoint[1024]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
@@ -1068,6 +1078,9 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
     totalPoints += (int)table_cal[p].npt;
   }
   globalReprojectionError = sqrt(r/(nbPointTotal));
+
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -1491,6 +1504,7 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
                              vpCameraParameters &cam,
                              bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int nbPoint[256]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
@@ -1690,6 +1704,9 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
   }
   if (verbose)
     std::cout <<  " Global std dev " << sqrt(r/nbPointTotal) << std::endl;
+
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 
 
@@ -1700,6 +1717,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   vpCameraParameters &cam,
   bool verbose)
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   std::cout.precision(10);
   unsigned int nbPoint[1024]; //number of points by image
   unsigned int nbPointTotal = 0; //total number of points
@@ -1973,4 +1991,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   }
   if (verbose)
     std::cout <<" Global std dev " << sqrt(r/(nbPointTotal)) << std::endl;
+
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }

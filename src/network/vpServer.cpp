@@ -48,6 +48,7 @@
 vpServer::vpServer( ) : vpNetwork(), started(false)
 {
   int protocol = 0;
+  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
@@ -73,6 +74,7 @@ vpServer::vpServer( ) : vpNetwork(), started(false)
 vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
 {
   int protocol = 0;
+  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
@@ -99,6 +101,7 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
 vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNetwork(), started(false)
 {
   int protocol = 0;
+  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #ifdef UNIX
   if (emitter.socketFileDescriptorEmitter < 0)

@@ -59,24 +59,30 @@
 
 int main()
 {
-  vpSickLDMRS laser;
-  std::string ip = "131.254.12.119";
-  
-  laser.setIpAddress(ip);
-  laser.setup();
-  unsigned long int iter = 0;
+  try {
+    vpSickLDMRS laser;
+    std::string ip = "131.254.12.119";
 
-  for ( ; ; ) {
-    double t1 = vpTime::measureTimeMs();
-    vpLaserScan laserscan[4];
-    if (laser.measure(laserscan) == false)
-      continue;
-    
-    iter ++;
-    std::cout << "iter: " << iter << " time: " 
-              << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
+    laser.setIpAddress(ip);
+    laser.setup();
+    unsigned long int iter = 0;
+
+    for ( ; ; ) {
+      double t1 = vpTime::measureTimeMs();
+      vpLaserScan laserscan[4];
+      if (laser.measure(laserscan) == false)
+        continue;
+
+      iter ++;
+      std::cout << "iter: " << iter << " time: "
+                << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
+    }
+    return 0;
   }
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 #else // #ifdef UNIX

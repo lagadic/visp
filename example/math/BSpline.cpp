@@ -152,147 +152,146 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 int
 main(int argc, const char ** argv)
 {
-  bool opt_click_allowed = true;
-  bool opt_display = true;
+  try {
+    bool opt_click_allowed = true;
+    bool opt_display = true;
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_click_allowed,
-                 opt_display) == false) {
-    exit (-1);
-  }
+    // Read the command line options
+    if (getOptions(argc, argv, opt_click_allowed,
+                   opt_display) == false) {
+      exit (-1);
+    }
 
-  // Declare an image, this is a gray level image (unsigned char)
-  // it size is not defined yet, it will be defined when the image will
-  // read on the disk
-  vpImage<unsigned char> I(540,480);
+    // Declare an image, this is a gray level image (unsigned char)
+    // it size is not defined yet, it will be defined when the image will
+    // read on the disk
+    vpImage<unsigned char> I(540,480);
 
-  // We open a window using either X11, GTK or GDI.
+    // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
-  vpDisplayX display;
+    vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
+    vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
+    vpDisplayGDI display;
 #elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV display;
+    vpDisplayOpenCV display;
 #elif defined VISP_HAVE_D3D9
-  vpDisplayD3D display;
+    vpDisplayD3D display;
 #endif
 
-  if (opt_display) {
-    try{
+    if (opt_display) {
       // Display size is automatically defined by the image (I) size
       display.init(I, 100, 100,"Display image") ;
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
     }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
-  }
 
-  vpBSpline bSpline;
-  std::list<double> knots;
-  knots.push_back(0);
-  knots.push_back(0);
-  knots.push_back(0);
-  knots.push_back(1);
-  knots.push_back(2);
-  knots.push_back(3);
-  knots.push_back(4);
-  knots.push_back(4);
-  knots.push_back(5);
-  knots.push_back(5);
-  knots.push_back(5);
-  
-  std::list<vpImagePoint> controlPoints;
-  vpImagePoint pt;
-  pt.set_ij(50,300);
-  controlPoints.push_back(pt);
-  pt.set_ij(100,130);
-  controlPoints.push_back(pt);
-  pt.set_ij(150,400);
-  controlPoints.push_back(pt);
-  pt.set_ij(200,370);
-  controlPoints.push_back(pt);
-  pt.set_ij(250,120);
-  controlPoints.push_back(pt);
-  pt.set_ij(300,250);
-  controlPoints.push_back(pt);
-  pt.set_ij(350,200);
-  controlPoints.push_back(pt);
-  pt.set_ij(400,300);
-  controlPoints.push_back(pt);
-  
-  bSpline.set_p(2);
-  bSpline.set_knots(knots);
-  bSpline.set_controlPoints(controlPoints);
+    vpBSpline bSpline;
+    std::list<double> knots;
+    knots.push_back(0);
+    knots.push_back(0);
+    knots.push_back(0);
+    knots.push_back(1);
+    knots.push_back(2);
+    knots.push_back(3);
+    knots.push_back(4);
+    knots.push_back(4);
+    knots.push_back(5);
+    knots.push_back(5);
+    knots.push_back(5);
 
-  std::cout << "The parameters are :" <<std::endl;
-  std::cout << "p : " << bSpline.get_p() <<std::endl;
-  std::cout << "" <<std::endl;
-  std::cout << "The knot vector :" <<std::endl;
-  std::list<double> knots_cur;
-  bSpline.get_knots(knots_cur);
-  unsigned int i_display=0;
-  for(std::list<double>::const_iterator it=knots_cur.begin(); it!=knots_cur.end(); ++it, ++i_display){
-    std::cout << i_display << " ---> " << *it << std::endl;
-  }
-  std::cout << "The control points are :" <<std::endl;
-  std::list<vpImagePoint> controlPoints_cur;
-  bSpline.get_controlPoints(controlPoints_cur);
-  i_display=0;
-  for(std::list<vpImagePoint>::const_iterator it=controlPoints_cur.begin(); it!=controlPoints_cur.end(); ++it, ++i_display){
-    std::cout << i_display << " ---> " << *it << std::endl;
-  }
-
-  unsigned int i = bSpline.findSpan(5/2.0);
-  std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
-
-  vpBasisFunction *N = NULL;
-  N = bSpline.computeBasisFuns(5/2.0);
-  std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl; 
-  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
-    std::cout << N[j].value << std::endl;
-  
-  vpBasisFunction **N2 = NULL;
-  N2 = bSpline.computeDersBasisFuns(5/2.0, 2);
-  std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
-  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
-    std::cout << N2[1][j].value << std::endl; 
-  
-  std::cout << "The second derivatives of the basis functions N''(u=5/2) are :" << std::endl;
-  for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
-    std::cout << N2[2][j].value << std::endl; 
-  
-  if (opt_display && opt_click_allowed)
-  {
-    double u = 0.0;
+    std::list<vpImagePoint> controlPoints;
     vpImagePoint pt;
-    while (u <= 5)
+    pt.set_ij(50,300);
+    controlPoints.push_back(pt);
+    pt.set_ij(100,130);
+    controlPoints.push_back(pt);
+    pt.set_ij(150,400);
+    controlPoints.push_back(pt);
+    pt.set_ij(200,370);
+    controlPoints.push_back(pt);
+    pt.set_ij(250,120);
+    controlPoints.push_back(pt);
+    pt.set_ij(300,250);
+    controlPoints.push_back(pt);
+    pt.set_ij(350,200);
+    controlPoints.push_back(pt);
+    pt.set_ij(400,300);
+    controlPoints.push_back(pt);
+
+    bSpline.set_p(2);
+    bSpline.set_knots(knots);
+    bSpline.set_controlPoints(controlPoints);
+
+    std::cout << "The parameters are :" <<std::endl;
+    std::cout << "p : " << bSpline.get_p() <<std::endl;
+    std::cout << "" <<std::endl;
+    std::cout << "The knot vector :" <<std::endl;
+    std::list<double> knots_cur;
+    bSpline.get_knots(knots_cur);
+    unsigned int i_display=0;
+    for(std::list<double>::const_iterator it=knots_cur.begin(); it!=knots_cur.end(); ++it, ++i_display){
+      std::cout << i_display << " ---> " << *it << std::endl;
+    }
+    std::cout << "The control points are :" <<std::endl;
+    std::list<vpImagePoint> controlPoints_cur;
+    bSpline.get_controlPoints(controlPoints_cur);
+    i_display=0;
+    for(std::list<vpImagePoint>::const_iterator it=controlPoints_cur.begin(); it!=controlPoints_cur.end(); ++it, ++i_display){
+      std::cout << i_display << " ---> " << *it << std::endl;
+    }
+
+    unsigned int i = bSpline.findSpan(5/2.0);
+    std::cout << "The knot interval number for the value u = 5/2 is : " << i <<std::endl;
+
+    vpBasisFunction *N = NULL;
+    N = bSpline.computeBasisFuns(5/2.0);
+    std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl;
+    for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
+      std::cout << N[j].value << std::endl;
+
+    vpBasisFunction **N2 = NULL;
+    N2 = bSpline.computeDersBasisFuns(5/2.0, 2);
+    std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
+    for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
+      std::cout << N2[1][j].value << std::endl;
+
+    std::cout << "The second derivatives of the basis functions N''(u=5/2) are :" << std::endl;
+    for (unsigned int j = 0; j < bSpline.get_p()+1; j++)
+      std::cout << N2[2][j].value << std::endl;
+
+    if (opt_display && opt_click_allowed)
     {
-      pt = bSpline.computeCurvePoint(u);
-      vpDisplay::displayCross(I,pt,4,vpColor::red);
-      u+=0.01;
+      double u = 0.0;
+      vpImagePoint pt;
+      while (u <= 5)
+      {
+        pt = bSpline.computeCurvePoint(u);
+        vpDisplay::displayCross(I,pt,4,vpColor::red);
+        u+=0.01;
+      }
+      for(std::list<vpImagePoint>::const_iterator it=controlPoints.begin(); it!= controlPoints.end(); ++it){
+        vpDisplay::displayCross(I, *it, 4, vpColor::green);
+      }
+      vpDisplay::flush(I) ;
+      vpDisplay::getClick(I);
     }
-    for(std::list<vpImagePoint>::const_iterator it=controlPoints.begin(); it!= controlPoints.end(); ++it){
-      vpDisplay::displayCross(I, *it, 4, vpColor::green);
+
+    if (N != NULL) delete[] N;
+    if (N2 != NULL)
+    {
+      for (unsigned int j = 0; j <= 2; j++)
+        delete[] N2[j];
+      delete[] N2;
     }
-    vpDisplay::flush(I) ;
-    vpDisplay::getClick(I);
+
+    return 0;
   }
-  
-  if (N != NULL) delete[] N;
-  if (N2 != NULL)
-  {
-    for (unsigned int j = 0; j <= 2; j++)
-      delete[] N2[j];
-    delete[] N2;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-  
-  return 0;
 }
 
 #else

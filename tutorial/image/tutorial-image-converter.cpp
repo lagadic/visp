@@ -5,14 +5,19 @@
 int main()
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  cv::Mat A;
-  A = cv::imread("lena.bmp", CV_LOAD_IMAGE_GRAYSCALE);
+  try {
+    cv::Mat A;
+    A = cv::imread("lena.bmp", CV_LOAD_IMAGE_GRAYSCALE);
 
-  vpImage<unsigned char> I;
-  vpImageConvert::convert(A, I);
+    vpImage<unsigned char> I;
+    vpImageConvert::convert(A, I);
 
 #  ifdef VISP_HAVE_LIBPNG
-  vpImageIo::write(I, "lena.png"); // Gray
+    vpImageIo::write(I, "lena.png"); // Gray
 #  endif
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 #endif
 }

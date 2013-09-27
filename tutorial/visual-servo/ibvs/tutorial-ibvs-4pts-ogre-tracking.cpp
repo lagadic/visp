@@ -41,139 +41,110 @@ void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &backgro
 int main()
 {
 #if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-  unsigned int thickness = 3;
+  try {
+    unsigned int thickness = 3;
 
-  vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+    vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
-  // Color image used as background texture.
-  vpImage<unsigned char> background(480, 640, 255);
+    // Color image used as background texture.
+    vpImage<unsigned char> background(480, 640, 255);
 
-  // Parameters of our camera
-  vpCameraParameters cam(840, 840, background.getWidth()/2, background.getHeight()/2);
+    // Parameters of our camera
+    vpCameraParameters cam(840, 840, background.getWidth()/2, background.getHeight()/2);
 
-  // Define the target as 4 points
-  std::vector<vpPoint> point(4) ;
-  point[0].setWorldCoordinates(-0.1,-0.1, 0);
-  point[1].setWorldCoordinates( 0.1,-0.1, 0);
-  point[2].setWorldCoordinates( 0.1, 0.1, 0);
-  point[3].setWorldCoordinates(-0.1, 0.1, 0);
+    // Define the target as 4 points
+    std::vector<vpPoint> point(4) ;
+    point[0].setWorldCoordinates(-0.1,-0.1, 0);
+    point[1].setWorldCoordinates( 0.1,-0.1, 0);
+    point[2].setWorldCoordinates( 0.1, 0.1, 0);
+    point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-  // Our object
-  // A simulator with the camera parameters defined above,
-  // and the background image size
-  vpAROgre ogre;
-  ogre.setCameraParameters(cam);
-  ogre.setShowConfigDialog(false);
-  ogre.addResource("./"); // Add the path to the Sphere.mesh resource
-  ogre.init(background, false, true);
-  //ogre.setWindowPosition(680, 400);
+    // Our object
+    // A simulator with the camera parameters defined above,
+    // and the background image size
+    vpAROgre ogre;
+    ogre.setCameraParameters(cam);
+    ogre.setShowConfigDialog(false);
+    ogre.addResource("./"); // Add the path to the Sphere.mesh resource
+    ogre.init(background, false, true);
+    //ogre.setWindowPosition(680, 400);
 
-  // Create the scene that contains 4 spheres
-  // Sphere.mesh contains a sphere with 1 meter radius
-  std::vector<std::string> name(4);
-  for (int i=0; i<4; i++) {
-    std::ostringstream s; s << "Sphere" <<  i; name[i] = s.str();
-    ogre.load(name[i], "Sphere.mesh");
-    ogre.setScale(name[i], 0.02f, 0.02f, 0.02f); // Rescale the sphere to 2 cm radius
-    // Set the position of each sphere in the object frame
-    ogre.setPosition(name[i], vpTranslationVector(point[i].get_oX(), point[i].get_oY(), point[i].get_oZ()));
-    ogre.setRotation(name[i], vpRotationMatrix(M_PI/2, 0, 0));
-  }
+    // Create the scene that contains 4 spheres
+    // Sphere.mesh contains a sphere with 1 meter radius
+    std::vector<std::string> name(4);
+    for (int i=0; i<4; i++) {
+      std::ostringstream s; s << "Sphere" <<  i; name[i] = s.str();
+      ogre.load(name[i], "Sphere.mesh");
+      ogre.setScale(name[i], 0.02f, 0.02f, 0.02f); // Rescale the sphere to 2 cm radius
+      // Set the position of each sphere in the object frame
+      ogre.setPosition(name[i], vpTranslationVector(point[i].get_oX(), point[i].get_oY(), point[i].get_oZ()));
+      ogre.setRotation(name[i], vpRotationMatrix(M_PI/2, 0, 0));
+    }
 
-  // Add an optional point light source
-  Ogre::Light * light = ogre.getSceneManager()->createLight();
-  light->setDiffuseColour(1, 1, 1); // scaled RGB values
-  light->setSpecularColour(1, 1, 1); // scaled RGB values
-  light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
-  light->setType(Ogre::Light::LT_POINT);
+    // Add an optional point light source
+    Ogre::Light * light = ogre.getSceneManager()->createLight();
+    light->setDiffuseColour(1, 1, 1); // scaled RGB values
+    light->setSpecularColour(1, 1, 1); // scaled RGB values
+    light->setPosition((Ogre::Real)cdMo[0][3], (Ogre::Real)cdMo[1][3], (Ogre::Real)(-cdMo[2][3]));
+    light->setType(Ogre::Light::LT_POINT);
 
-  vpServo task ;
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  task.setLambda(0.5);
+    vpServo task ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
 
-  // Image used for the image processing
-  vpImage<unsigned char> I;
+    // Image used for the image processing
+    vpImage<unsigned char> I;
 
-  // Render the scene at the desired position
-  ogre_get_render_image(ogre, background, cdMo, I);
+    // Render the scene at the desired position
+    ogre_get_render_image(ogre, background, cdMo, I);
 
-  // Display the image in which we will do the tracking
+    // Display the image in which we will do the tracking
 #if defined(VISP_HAVE_X11)
-  vpDisplayX d(I, 0, 0, "Camera view at desired position");
+    vpDisplayX d(I, 0, 0, "Camera view at desired position");
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I, 0, 0, "Camera view at desired position");
+    vpDisplayGDI d(I, 0, 0, "Camera view at desired position");
 #else
-  std::cout << "No image viewer is available..." << std::endl;
+    std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-  vpDisplay::display(I);
-  vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to learn their positions", vpColor::red);
-  vpDisplay::flush(I);
-
-  std::vector<vpDot2> dot(4);
-  vpFeaturePoint p[4], pd[4];
-
-  for (int i = 0 ; i < 4 ; i++) {
-    // Compute the desired feature at the desired position
-    dot[i].setGraphics(true);
-    dot[i].setGraphicsThickness(thickness);
-    dot[i].initTracking(I);
+    vpDisplay::display(I);
+    vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to learn their positions", vpColor::red);
     vpDisplay::flush(I);
-    vpFeatureBuilder::create(pd[i], cam, dot[i].getCog());
-  }
 
-  // Render the scene at the initial position
-  ogre_get_render_image(ogre, background, cMo, I);
+    std::vector<vpDot2> dot(4);
+    vpFeaturePoint p[4], pd[4];
 
-  vpDisplay::display(I);
-  vpDisplay::setTitle(I, "Current camera view");
-  vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
-  vpDisplay::flush(I);
+    for (int i = 0 ; i < 4 ; i++) {
+      // Compute the desired feature at the desired position
+      dot[i].setGraphics(true);
+      dot[i].setGraphicsThickness(thickness);
+      dot[i].initTracking(I);
+      vpDisplay::flush(I);
+      vpFeatureBuilder::create(pd[i], cam, dot[i].getCog());
+    }
 
-  for (int i = 0 ; i < 4 ; i++) {
-    // We notice that if we project the scene at a given pose, the pose estimated from
-    // the rendered image differs a little. That's why we cannot simply compute the desired
-    // feature from the desired pose using the next two lines. We will rather compute the
-    // desired position of the features from a learning stage.
-    // point[i].project(cdMo);
-    // vpFeatureBuilder::create(pd[i], point[i]);
-
-    // Compute the current feature at the initial position
-    dot[i].setGraphics(true);
-    dot[i].initTracking(I);
-    vpDisplay::flush(I);
-    vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
-  }
-
-  for (int i = 0 ; i < 4 ; i++) {
-    // Set the feature Z coordinate from the pose
-    vpColVector cP;
-    point[i].changeFrame(cMo, cP) ;
-    p[i].set_Z(cP[2]);
-
-    task.addFeature(p[i], pd[i]);
-  }
-
-  vpHomogeneousMatrix wMc, wMo;
-  vpSimulatorCamera robot;
-  robot.setSamplingTime(0.040);
-  robot.getPosition(wMc);
-  wMo = wMc * cMo;
-
-  for (; ; ) {
-    // From the camera position in the world frame we retrieve the object position
-    robot.getPosition(wMc);
-    cMo = wMc.inverse() * wMo;
-
-    // Update the scene from the new camera position
+    // Render the scene at the initial position
     ogre_get_render_image(ogre, background, cMo, I);
 
     vpDisplay::display(I);
+    vpDisplay::setTitle(I, "Current camera view");
+    vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
+    vpDisplay::flush(I);
 
     for (int i = 0 ; i < 4 ; i++) {
-      dot[i].track(I);
+      // We notice that if we project the scene at a given pose, the pose estimated from
+      // the rendered image differs a little. That's why we cannot simply compute the desired
+      // feature from the desired pose using the next two lines. We will rather compute the
+      // desired position of the features from a learning stage.
+      // point[i].project(cdMo);
+      // vpFeatureBuilder::create(pd[i], point[i]);
+
+      // Compute the current feature at the initial position
+      dot[i].setGraphics(true);
+      dot[i].initTracking(I);
+      vpDisplay::flush(I);
       vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
     }
 
@@ -182,21 +153,58 @@ int main()
       vpColVector cP;
       point[i].changeFrame(cMo, cP) ;
       p[i].set_Z(cP[2]);
+
+      task.addFeature(p[i], pd[i]);
     }
 
-    vpColVector v = task.computeControlLaw();
+    vpHomogeneousMatrix wMc, wMo;
+    vpSimulatorCamera robot;
+    robot.setSamplingTime(0.040);
+    robot.getPosition(wMc);
+    wMo = wMc * cMo;
 
-    display_trajectory(I, dot, thickness);
-    vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red, thickness+2) ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+    for (; ; ) {
+      // From the camera position in the world frame we retrieve the object position
+      robot.getPosition(wMc);
+      cMo = wMc.inverse() * wMo;
 
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
+      // Update the scene from the new camera position
+      ogre_get_render_image(ogre, background, cMo, I);
 
-    vpTime::wait( robot.getSamplingTime() * 1000);
+      vpDisplay::display(I);
+
+      for (int i = 0 ; i < 4 ; i++) {
+        dot[i].track(I);
+        vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
+      }
+
+      for (int i = 0 ; i < 4 ; i++) {
+        // Set the feature Z coordinate from the pose
+        vpColVector cP;
+        point[i].changeFrame(cMo, cP) ;
+        p[i].set_Z(cP[2]);
+      }
+
+      vpColVector v = task.computeControlLaw();
+
+      display_trajectory(I, dot, thickness);
+      vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red, thickness+2) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+
+      vpTime::wait( robot.getSamplingTime() * 1000);
+    }
+    task.kill();
   }
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+  }
+  catch(boost::exception & e) {
+    std::cout << "Catch a boost exception: " << boost::diagnostic_information(e) << std::endl;
+  }
 #endif
 }
 

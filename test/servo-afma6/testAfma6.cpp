@@ -104,10 +104,9 @@ int main()
 
     return 0;
   }
-  catch(...) {
-    vpERROR_TRACE(" Test failed");
-    return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-
 }
 

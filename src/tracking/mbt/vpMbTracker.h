@@ -305,7 +305,7 @@ protected:
     \param radius : Radius of the cylinder.
     \param indexCylinder : Index of the cylinder.
   */
-  virtual void initCylinder(const vpPoint& p1, const vpPoint p2, const double radius, const unsigned int indexCylinder=0)=0;
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder=0)=0;
 
   /*!
     Add a face to track from its corners (in the object frame). This method is

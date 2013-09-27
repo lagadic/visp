@@ -114,7 +114,7 @@ public:
   npts is the number of data points.
 
   \param s : The minimum number of samples from x required by fitting fn to
-  fit a model.
+  fit a model. Value should be greater or equal to 4.
 
   \param t : The distance threshold between data point and the model used to
   decide whether a point is an inlier or not.
@@ -141,22 +141,22 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 				   vpColVector &inliers,
 				   int consensus,
            double /* areaThreshold */,
-           const int maxNbumbersOfTrials
-				   )
+           const int maxNbumbersOfTrials)
 {
-
-
-/*   bool isplanar; */
-/*   if (s == 4) isplanar = true; */
-/*   else isplanar = false; */
+  /*   bool isplanar; */
+  /*   if (s == 4) isplanar = true; */
+  /*   else isplanar = false; */
 
   double eps = 1e-6 ;
   double p = 0.99;    // Desired probability of choosing at least one sample
-					  // free from outliers
+  // free from outliers
 
   int maxTrials = maxNbumbersOfTrials;      // Maximum number of trials before we give up.
   int  maxDataTrials = 1000;  // Max number of attempts to select a non-degenerate
-							  // data set.
+  // data set.
+
+  if (s<4)
+    s = 4;
 
   // Sentinel value allowing detection of solution failure.
   bool solutionFind = false ;
@@ -184,7 +184,7 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
     {
       // Generate s random indicies in the range 1..npts
       for  (unsigned int i=0 ; i < s ; i++)
-	ind[i] = (unsigned int)ceil(random()*npts) -1;
+        ind[i] = (unsigned int)ceil(random()*npts) -1;
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x,ind) ;
@@ -194,10 +194,10 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
       count = count + 1;
 
       if (count > maxDataTrials)      {
-	      delete [] ind;
-	      vpERROR_TRACE("Unable to select a nondegenerate data set");
-	      throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
-	      //return false; //Useless after a throw() function
+        delete [] ind;
+        vpERROR_TRACE("Unable to select a nondegenerate data set");
+        throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
+        //return false; //Useless after a throw() function
       }
     }
     // Fit model to this random selection of data points.
@@ -215,9 +215,9 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
       double resid = fabs(d[i]);
       if (resid < t)
       {
-	inliers[i] = 1 ;
-	ninliers++ ;
-	residual += fabs(d[i]);
+        inliers[i] = 1 ;
+        ninliers++ ;
+        residual += fabs(d[i]);
       }
       else inliers[i] = 0;
     }

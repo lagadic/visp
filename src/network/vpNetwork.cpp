@@ -694,12 +694,12 @@ int vpNetwork::_receiveRequestOnce()
 #else
         numbytes=recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
 #endif
-        
-        
+          
         if(numbytes <= 0)
         {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
           receptor_list.erase(receptor_list.begin()+(int)i);
+          delete [] buf;
           return numbytes;
         }
         else if(numbytes > 0){
@@ -777,6 +777,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
       {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr) << std::endl;
         receptor_list.erase(receptor_list.begin()+(int)receptorEmitting);
+        delete [] buf;
         return numbytes;
       }
       else if(numbytes > 0){

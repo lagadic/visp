@@ -123,56 +123,62 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
+
+    vpTRACE("--------------------------");
+    vpTRACE("--- TEST vpVelocityTwistMatrix ---");
+    vpTRACE("--------------------------");
+
+    // Set the translation
+    vpTranslationVector cte;
+    cte[0] = 1.;
+    cte[1] = 0.5;
+    cte[2] = -1.;
+
+    // Set the rotation
+    vpRxyzVector cre;
+    cre[0] =  M_PI/2.;
+    cre[1] = -M_PI/2.;
+    cre[2] = -M_PI/4.;
+
+    // Build rotation matrix
+    vpRotationMatrix cRe(cre);
+
+    // Build the twist matrix
+    vpVelocityTwistMatrix cVe(cte, cRe);
+
+    vpTRACE("cVe twist matrix:");
+    cVe.print (std::cout, 6);
+
+
+    // Set a speed skew
+    vpColVector ev(6);
+
+    ev[0] = 1.;
+    ev[1] = 0.1;
+    ev[2] = -0.5;
+    ev[3] = M_PI/180.;
+    ev[4] = M_PI/18.;
+    ev[5] = M_PI/10.;
+
+    vpTRACE("ev colvector:");
+    ev.print (std::cout, 6);
+
+    // Set a speed skew
+    vpColVector cv;
+
+    cv = cVe * ev;
+
+    vpTRACE("cv = cVe * ev:");
+    cv.print (std::cout, 6);
+    return 0;
   }
-
-  vpTRACE("--------------------------");
-  vpTRACE("--- TEST vpVelocityTwistMatrix ---");
-  vpTRACE("--------------------------");
-
-  // Set the translation
-  vpTranslationVector cte;
-  cte[0] = 1.;
-  cte[1] = 0.5;
-  cte[2] = -1.;
-
-  // Set the rotation
-  vpRxyzVector cre;
-  cre[0] =  M_PI/2.;
-  cre[1] = -M_PI/2.;
-  cre[2] = -M_PI/4.;
-
-  // Build rotation matrix
-  vpRotationMatrix cRe(cre);
-
-  // Build the twist matrix
-  vpVelocityTwistMatrix cVe(cte, cRe);
-
-  vpTRACE("cVe twist matrix:");
-  cVe.print (std::cout, 6);
-
-
-  // Set a speed skew
-  vpColVector ev(6);
-
-  ev[0] = 1.;
-  ev[1] = 0.1;
-  ev[2] = -0.5;
-  ev[3] = M_PI/180.;
-  ev[4] = M_PI/18.;
-  ev[5] = M_PI/10.;
-
-  vpTRACE("ev colvector:");
-  ev.print (std::cout, 6);
-
-  // Set a speed skew
-  vpColVector cv;
-
-  cv = cVe * ev;
-
-  vpTRACE("cv = cVe * ev:");
-  cv.print (std::cout, 6);
-
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }

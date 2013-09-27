@@ -65,41 +65,47 @@
 //              1 to dial with a second camera attached to the computer
 int main(int argc, char** argv)
 {
-  int device = 0;
-  if (argc > 1)
-    device = atoi(argv[1]);
+  try {
+    int device = 0;
+    if (argc > 1)
+      device = atoi(argv[1]);
 
-  std::cout << "Use device: " << device << std::endl;
-  cv::VideoCapture cap(device); // open the default camera
-  cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
-  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
-  if(!cap.isOpened())  // check if we succeeded
-    return -1;
-  cv::Mat frame;
-  cap >> frame; // get a new frame from camera
-
-  IplImage iplimage = frame;
-  std::cout << "Image size: " << iplimage.width << " " 
-            << iplimage.height << std::endl;
-
-  //vpImage<vpRGBa> I; // for color images
-  vpImage<unsigned char> I; // for gray images
-  vpImageConvert::convert(&iplimage, I);
-  vpDisplayOpenCV d(I);
-
-  for(;;) {
+    std::cout << "Use device: " << device << std::endl;
+    cv::VideoCapture cap(device); // open the default camera
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, 640);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
+    if(!cap.isOpened())  // check if we succeeded
+      return -1;
+    cv::Mat frame;
     cap >> frame; // get a new frame from camera
-    iplimage = frame;
 
-    // Convert the image in ViSP format and display it 
+    IplImage iplimage = frame;
+    std::cout << "Image size: " << iplimage.width << " "
+              << iplimage.height << std::endl;
+
+    //vpImage<vpRGBa> I; // for color images
+    vpImage<unsigned char> I; // for gray images
     vpImageConvert::convert(&iplimage, I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false)) // a click to exit
-      break;
+    vpDisplayOpenCV d(I);
+
+    for(;;) {
+      cap >> frame; // get a new frame from camera
+      iplimage = frame;
+
+      // Convert the image in ViSP format and display it
+      vpImageConvert::convert(&iplimage, I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false)) // a click to exit
+        break;
+    }
+    // the camera will be deinitialized automatically in VideoCapture destructor
+    return 0;
   }
-  // the camera will be deinitialized automatically in VideoCapture destructor
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 #else

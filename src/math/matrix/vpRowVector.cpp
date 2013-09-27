@@ -150,7 +150,8 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
   if (colNum != A.getRows())
   {
     vpERROR_TRACE("vpMatrix mismatch in vpRowVector/matrix multiply") ;
-    throw(vpMatrixException::incorrectMatrixSizeError) ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "vpMatrix mismatch in vpRowVector/matrix multiply")) ;
   }
 
   c = 0.0;

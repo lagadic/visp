@@ -315,7 +315,8 @@ vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   if (6 != v.getRows())
     {
       vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vector multiply") ;
-      throw(vpMatrixException::incorrectMatrixSizeError) ;
+      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                              "Mismatch in vpVelocityTwistMatrix/vector multiply")) ;
     }
 
   c = 0.0;

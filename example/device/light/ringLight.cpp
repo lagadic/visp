@@ -166,15 +166,15 @@ bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
 int
 main(int argc, const char **argv)
 {
-  bool on = false;
-  int nsec = 5; // Time while the ring light is turned on
-  double nmsec = 0; // Pulse duration
-
-  // Read the command line options
-  if (getOptions(argc, argv, on, nsec, nmsec) == false) {
-    exit (-1);
-  }
   try {
+    bool on = false;
+    int nsec = 5; // Time while the ring light is turned on
+    double nmsec = 0; // Pulse duration
+
+    // Read the command line options
+    if (getOptions(argc, argv, on, nsec, nmsec) == false) {
+      exit (-1);
+    }
 
     vpRingLight light;
 

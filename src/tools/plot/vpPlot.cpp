@@ -376,15 +376,15 @@ vpPlot::navigate()
       vpDisplay::getPointerPosition(I,iP);
       for (unsigned int i = 0; i < graphNbr ; i++)
       {
-	if (iP.inRectangle((graphList+i)->graphZone))
-	{
-	  iblocked = i;
-	  break;
-	}
+        if (iP.inRectangle((graphList+i)->graphZone))
+        {
+          iblocked = i;
+          break;
+        }
       }
       if ((graphList+iblocked)->move(I))
       {
-	(graphList+iblocked)->replot3D(I);
+        (graphList+iblocked)->replot3D(I);
       }
       
       blocked = (graphList+iblocked)->blocked;
@@ -393,7 +393,7 @@ vpPlot::navigate()
     {
       if ((graphList+iblocked)->move(I))
       {
-	(graphList+iblocked)->replot3D(I);
+        (graphList+iblocked)->replot3D(I);
       }
       blocked = (graphList+iblocked)->blocked;
     }

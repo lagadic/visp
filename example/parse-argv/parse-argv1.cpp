@@ -147,32 +147,30 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
 int
 main(int argc, const char ** argv)
 {
-  using ::std::cout;
-  using ::std::endl;
+  try {
+    using ::std::cout;
+    using ::std::endl;
 
-  int    i_val = 3;
-  float  f_val = 3.14f;
-  double d_val = 3.1415;
+    int    i_val = 3;
+    float  f_val = 3.14f;
+    double d_val = 3.1415;
 
-  // Read the command line options
-  if (getOptions(argc, argv, i_val, f_val, d_val) == false) {
-    return (-1);
+    // Read the command line options
+    if (getOptions(argc, argv, i_val, f_val, d_val) == false) {
+      return (-1);
+    }
+
+    cout << "Your parameters: " << endl;
+    cout << "  Integer value: " << i_val << endl;
+    cout << "  Float   value: " << f_val << endl;
+    cout << "  Double  value: " << d_val << endl << endl;
+    cout << "Call  " << argv[0]
+         << " -h to see how to change these parameters." << endl;
+
+    return 0;
   }
-
-  cout << "Your parameters: " << endl;
-  cout << "  Integer value: " << i_val << endl;
-  cout << "  Float   value: " << f_val << endl;
-  cout << "  Double  value: " << d_val << endl << endl;
-  cout << "Call  " << argv[0]
-       << " -h to see how to change these parameters." << endl;
-
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
+  }
 }
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

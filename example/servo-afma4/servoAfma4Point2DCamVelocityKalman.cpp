@@ -194,53 +194,53 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman,
 int
 main(int argc, const char ** argv)
 {
-  KalmanType opt_kalman = K_NONE;
-  vpAdaptiveGain	lambda; // Gain de la commande
-  bool doAdaptativeGain = true; // Compute adaptative gain
-  lambda.initStandard(4, 0.2, 40);
-  int opt_cam_frequency = 60; // 60 Hz
-
-  // Read the command line options
-  if (getOptions(argc, argv, opt_kalman, doAdaptativeGain, lambda) == false) {
-    return (-1);
-  }
-
-  // Log file creation in /tmp/$USERNAME/log.dat
-  // This file contains by line:
-  // - the 6 computed cam velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured joint velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
-  // - the 2 values of s - s*
-  std::string username;
-  // Get the user login name
-  vpIoTools::getUserName(username);
-
-  // Create a log filename to save velocities...
-  std::string logdirname;
-  logdirname ="/tmp/" + username;
-
-  // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(logdirname) == false) {
-    try {
-      // Create the dirname
-      vpIoTools::makeDirectory(logdirname);
-    }
-    catch (...) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Cannot create " << logdirname << std::endl;
-      exit(-1);
-    }
-  }
-  std::string logfilename;
-  logfilename = logdirname + "/log.dat";
-
-  // Open the log file name
-  std::ofstream flog(logfilename.c_str());
-
-  vpServo task ;
-  
   try {
+    KalmanType opt_kalman = K_NONE;
+    vpAdaptiveGain	lambda; // Gain de la commande
+    bool doAdaptativeGain = true; // Compute adaptative gain
+    lambda.initStandard(4, 0.2, 40);
+    int opt_cam_frequency = 60; // 60 Hz
+
+    // Read the command line options
+    if (getOptions(argc, argv, opt_kalman, doAdaptativeGain, lambda) == false) {
+      return (-1);
+    }
+
+    // Log file creation in /tmp/$USERNAME/log.dat
+    // This file contains by line:
+    // - the 6 computed cam velocities (m/s, rad/s) to achieve the task
+    // - the 6 mesured joint velocities (m/s, rad/s)
+    // - the 6 mesured joint positions (m, rad)
+    // - the 2 values of s - s*
+    std::string username;
+    // Get the user login name
+    vpIoTools::getUserName(username);
+
+    // Create a log filename to save velocities...
+    std::string logdirname;
+    logdirname ="/tmp/" + username;
+
+    // Test if the output path exist. If no try to create it
+    if (vpIoTools::checkDirectory(logdirname) == false) {
+      try {
+        // Create the dirname
+        vpIoTools::makeDirectory(logdirname);
+      }
+      catch (...) {
+        std::cerr << std::endl
+                  << "ERROR:" << std::endl;
+        std::cerr << "  Cannot create " << logdirname << std::endl;
+        exit(-1);
+      }
+    }
+    std::string logfilename;
+    logfilename = logdirname + "/log.dat";
+
+    // Open the log file name
+    std::ofstream flog(logfilename.c_str());
+
+    vpServo task ;
+
     vpImage<unsigned char> I ;
     vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
@@ -271,16 +271,16 @@ main(int argc, const char ** argv)
     std::cout << "Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
     std::cout << "Task : servo a point \n" << std::endl ;
 
-    // Kalman filtering 
+    // Kalman filtering
     switch(opt_kalman) {
-    case K_NONE: 
+    case K_NONE:
       std::cout << "Servo with no target motion compensation (see -K option)\n";
       break;
     case K_VELOCITY:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
                 << "with constant velocity modelization (see -K option)\n";
       break;
-    case K_ACCELERATION: 
+    case K_ACCELERATION:
       std::cout << "Servo with target motion compensation using a Kalman filter\n"
                 << "with constant acceleration modelization (see -K option)\n";
       break;
@@ -309,7 +309,7 @@ main(int argc, const char ** argv)
 
     // Sets the current position of the visual feature
     vpFeaturePoint p ;
-    vpFeatureBuilder::create(p, cam, dot) ;  
+    vpFeatureBuilder::create(p, cam, dot) ;
 
     // Sets the desired position of the visual feature
     vpFeaturePoint pd ;
@@ -336,7 +336,7 @@ main(int argc, const char ** argv)
 
     //!Initialize filter
     vpLinearKalmanFilterInstantiation kalman;
-    
+
     // Initialize the kalman filter
     unsigned int nsignal = 2; // The two values of dedt
     double rho = 0.3;
@@ -350,9 +350,9 @@ main(int argc, const char ** argv)
       kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
       state_size = kalman.getStateSize();
       sigma_state.resize(state_size*nsignal);
-      sigma_state = 0.00001; // Same state variance for all signals 
+      sigma_state = 0.00001; // Same state variance for all signals
       sigma_measure = 0.05; // Same measure variance for all the signals
-      double dummy = 0; // non used parameter dt for the velocity state model 
+      double dummy = 0; // non used parameter dt for the velocity state model
       kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
 
       break;
@@ -381,15 +381,15 @@ main(int argc, const char ** argv)
     vpColVector v(6), v1(6), v2(6); // robot velocities
     //task error
     vpColVector err(2), err_0(2), err_1(2);
-    vpColVector dedt_filt(2), dedt_mes(2);	
+    vpColVector dedt_filt(2), dedt_mes(2);
 
 
-    t_1 = vpTime::measureTimeMs(); // t_1: time at previous iter 	
+    t_1 = vpTime::measureTimeMs(); // t_1: time at previous iter
 
     Tv_0  = 0;
 
     //
-    // Warning: In all varaible names, 
+    // Warning: In all varaible names,
     //   _0 means the value for the current iteration (t=0)
     //   _1 means the value for the previous iteration (t=-1)
     //   _2 means the value for the previous previous iteration (t=-2)
@@ -426,7 +426,7 @@ main(int argc, const char ** argv)
       //!-------------------- Update displacements and time ------------------
       //----------------------------------------------------------------------
       vm_0 = vm;
-      
+
       // Update current loop time and previous one
       Tv_1 = Tv_0;
       Tv_0 = Tv;
@@ -437,13 +437,13 @@ main(int argc, const char ** argv)
       err = task.error;
 
       //!terme correctif : de/dt = Delta s / Delta t - L*vc
-      if (iter==0){			
+      if (iter==0){
         err_0 = 0;
         err_1 = 0;
         dedt_mes = 0;
         dedt_filt = 0;
       }
-      else{				
+      else{
         err_1 = err_0;
         err_0 = err;
 
@@ -457,13 +457,13 @@ main(int argc, const char ** argv)
       //----------------------------------------------------------------------
       //----------------------- Kalman Filter Equations ----------------------
       //----------------------------------------------------------------------
-      // Kalman filtering 
+      // Kalman filtering
       switch(opt_kalman) {
-      case K_NONE: 
+      case K_NONE:
         dedt_filt = 0;
         break;
       case K_VELOCITY:
-      case K_ACCELERATION: 
+      case K_ACCELERATION:
         kalman.filter(dedt_mes);
         for (unsigned int i=0; i < nsignal; i++) {
           dedt_filt[i] = kalman.Xest[i*state_size];
@@ -477,15 +477,15 @@ main(int argc, const char ** argv)
       //   std::cout << "task J1p: " <<  J1p.t() << std::endl  ;
       //   std::cout << "dedt_filt: " <<  dedt_filt.t() << std::endl  ;
 
-      v = v1 + v2;	
-      
+      v = v1 + v2;
+
       // Display the current and desired feature points in the image display
       vpServoDisplay::display(task, cam, I) ;
 
 
       //    std::cout << "v2 : " << v2.t() << std::endl  ;
       //   std::cout << "v1 : " << v1.t() << std::endl  ;
-      
+
       //   std::cout << "v : " << v.t();
 
       // Apply the camera velocities to the robot
@@ -498,15 +498,15 @@ main(int argc, const char ** argv)
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-           << v[3] << " " << v[4] << " " << v[5] << " ";
+                   << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
       // in meters in the camera frame
-      flog << task.error[0] << " " << task.error[1] << " "; 
+      flog << task.error[0] << " " << task.error[1] << " ";
 
       // Save feature error (s-s*) in pixels in the image.
-      flog << cog.get_u()-cam.get_u0() << " " 
+      flog << cog.get_u()-cam.get_u0() << " "
            << cog.get_v()-cam.get_v0() << " ";
 
       // Save de/dt
@@ -534,15 +534,11 @@ main(int argc, const char ** argv)
 
     return 0;
   }
-  catch (...) {
-    flog.close() ; // Close the log file
-
-    // Kill the task
-    task.kill();
-
-    vpERROR_TRACE(" Test failed") ;
-    return 0;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
+
 }
 
 

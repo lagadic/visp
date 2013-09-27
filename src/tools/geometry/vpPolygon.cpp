@@ -165,8 +165,8 @@ vpPolygon::initClick(const vpImage<unsigned char>& I)
   std::vector<vpImagePoint> cornersClick;
 
   while(button == vpMouseButton::button1){
-    vpDisplay::getClick(I, ip, button, true);
-    if(button == vpMouseButton::button1){
+    bool ret = vpDisplay::getClick(I, ip, button, true);
+    if(ret && button == vpMouseButton::button1){
       vpDisplay::displayCross(I, ip, 5, vpColor::red);
       cornersClick.push_back(ip);
       vpDisplay::flush(I);

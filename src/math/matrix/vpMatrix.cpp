@@ -859,7 +859,7 @@ vpMatrix::operator*(const vpTranslationVector &b) const
   if (rowNum != 3 || colNum != 3)
   {
     vpERROR_TRACE("vpMatrix mismatch in vpMatrix::operator*(const vpTranslationVector)") ;
-    throw(vpMatrixException::incorrectMatrixSizeError) ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "vpMatrix mismatch in vpMatrix::operator*()")) ;
   }
 
   for (unsigned int j=0;j<3;j++) c[j]=0 ;
@@ -2380,7 +2380,7 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
                  const unsigned int r, const unsigned int c)
 {
   if( ( (r + B.getRows()) <= A.getRows() ) && 
-    ( (c + B.getCols()) <= A.getRows() ) ){
+    ( (c + B.getCols()) <= A.getCols() ) ){
       try {
         C.resize(A.getRows(),A.getCols()  ) ;
       }

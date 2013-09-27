@@ -160,135 +160,141 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  bool opt_click_allowed = true;
+  try {
+    bool opt_display = true;
+    bool opt_click_allowed = true;
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-    exit (-1);
-  }
+    // Read the command line options
+    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+      exit (-1);
+    }
 
-  vpImage<unsigned char> I(512,512,0) ;
+    vpImage<unsigned char> I(512,512,0) ;
 
-  // We open a window using either X11, GTK or GDI.
+    // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
-  vpDisplayX display;
+    vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
+    vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
+    vpDisplayGDI display;
 #endif
 
-  if (opt_display) {
-    try{
-      // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100,"Camera view...") ;
-      // Display the image
-      // The image class has a member that specify a pointer toward
-      // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
-      // display variable.
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
-    }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
-  }
-
-  double px, py ; px = py = 600 ;
-  double u0, v0 ; u0 = v0 = 256 ;
-
-  vpCameraParameters cam(px,py,u0,v0);
-
-  vpServo task ;
-  vpSimulatorCamera robot ;
-
-  // sets the initial camera location
-  vpHomogeneousMatrix cMo(0,0,1,
-                          vpMath::rad(0),  vpMath::rad(80),  vpMath::rad(30))   ;
-  vpHomogeneousMatrix wMc, wMo;
-  robot.getPosition(wMc) ;
-  wMo = wMc * cMo; // Compute the position of the object in the world frame
-
-  vpHomogeneousMatrix cMod(-0.1,-0.1,0.7,
-                           vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(30))   ;
-
-  // sets the circle coordinates in the world frame
-  vpCircle circle ;
-  circle.setWorldCoordinates(0,0,1,
-                             0,0,0,
-                             0.1) ;
-
-  // sets the desired position of the visual feature
-  vpFeatureEllipse pd ;
-  circle.track(cMod) ;
-  vpFeatureBuilder::create(pd,circle)  ;
-
-  // project : computes the circle coordinates in the camera frame and its 2D coordinates
-  // sets the current position of the visual feature
-  vpFeatureEllipse p ;
-  circle.track(cMo) ;
-  vpFeatureBuilder::create(p,circle)  ;
-
-  // define the task
-  // - we want an eye-in-hand control law
-  // - robot is controlled in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-  task.setInteractionMatrixType(vpServo::DESIRED) ;
-  // - we want to see a circle on a circle
-  task.addFeature(p,pd) ;
-  // - set the gain
-  task.setLambda(1) ;
-
-  // Display task information
-  task.print() ;
-
-  unsigned int iter=0 ;
-  // loop
-  while(iter++ < 200)
-  {
-    std::cout << "---------------------------------------------" << iter <<std::endl ;
-    vpColVector v ;
-
-    // get the robot position
-    robot.getPosition(wMc) ;
-    // Compute the position of the camera wrt the object frame
-    cMo = wMc.inverse() * wMo;
-
-    // new circle position
-    // retrieve x,y and Z of the vpCircle structure
-    circle.track(cMo) ;
-    vpFeatureBuilder::create(p,circle);
-    circle.print() ;
-    p.print() ;
-
     if (opt_display) {
-      vpDisplay::display(I) ;
-      vpServoDisplay::display(task,cam,I) ;
-      vpDisplay::flush(I) ;
+      try{
+        // Display size is automatically defined by the image (I) size
+        display.init(I, 100, 100,"Camera view...") ;
+        // Display the image
+        // The image class has a member that specify a pointer toward
+        // the display that has been initialized in the display declaration
+        // therefore is is no longuer necessary to make a reference to the
+        // display variable.
+        vpDisplay::display(I) ;
+        vpDisplay::flush(I) ;
+      }
+      catch(...)
+      {
+        vpERROR_TRACE("Error while displaying the image") ;
+        exit(-1);
+      }
     }
 
-    // compute the control law
-    v = task.computeControlLaw() ;
-    std::cout << "task rank: " << task.getTaskRank() <<std::endl ;
-    // send the camera velocity to the controller
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    double px, py ; px = py = 600 ;
+    double u0, v0 ; u0 = v0 = 256 ;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    vpCameraParameters cam(px,py,u0,v0);
+
+    vpServo task ;
+    vpSimulatorCamera robot ;
+
+    // sets the initial camera location
+    vpHomogeneousMatrix cMo(0,0,1,
+                            vpMath::rad(0),  vpMath::rad(80),  vpMath::rad(30))   ;
+    vpHomogeneousMatrix wMc, wMo;
+    robot.getPosition(wMc) ;
+    wMo = wMc * cMo; // Compute the position of the object in the world frame
+
+    vpHomogeneousMatrix cMod(-0.1,-0.1,0.7,
+                             vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(30))   ;
+
+    // sets the circle coordinates in the world frame
+    vpCircle circle ;
+    circle.setWorldCoordinates(0,0,1,
+                               0,0,0,
+                               0.1) ;
+
+    // sets the desired position of the visual feature
+    vpFeatureEllipse pd ;
+    circle.track(cMod) ;
+    vpFeatureBuilder::create(pd,circle)  ;
+
+    // project : computes the circle coordinates in the camera frame and its 2D coordinates
+    // sets the current position of the visual feature
+    vpFeatureEllipse p ;
+    circle.track(cMo) ;
+    vpFeatureBuilder::create(p,circle)  ;
+
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setInteractionMatrixType(vpServo::DESIRED) ;
+    // - we want to see a circle on a circle
+    task.addFeature(p,pd) ;
+    // - set the gain
+    task.setLambda(1) ;
+
+    // Display task information
+    task.print() ;
+
+    unsigned int iter=0 ;
+    // loop
+    while(iter++ < 200)
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
+      vpColVector v ;
+
+      // get the robot position
+      robot.getPosition(wMc) ;
+      // Compute the position of the camera wrt the object frame
+      cMo = wMc.inverse() * wMo;
+
+      // new circle position
+      // retrieve x,y and Z of the vpCircle structure
+      circle.track(cMo) ;
+      vpFeatureBuilder::create(p,circle);
+      circle.print() ;
+      p.print() ;
+
+      if (opt_display) {
+        vpDisplay::display(I) ;
+        vpServoDisplay::display(task,cam,I) ;
+        vpDisplay::flush(I) ;
+      }
+
+      // compute the control law
+      v = task.computeControlLaw() ;
+      std::cout << "task rank: " << task.getTaskRank() <<std::endl ;
+      // send the camera velocity to the controller
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+
+    if (opt_display && opt_click_allowed) {
+      std::cout << "Click in the camera view window to end..." << std::endl;
+      vpDisplay::getClick(I) ;
+    }
+    return 0;
   }
-
-  // Display task information
-  task.print() ;
-  task.kill();
-
-  if (opt_display && opt_click_allowed) {
-    std::cout << "Click in the camera view window to end..." << std::endl;
-    vpDisplay::getClick(I) ;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
-
 }
 #else
 int

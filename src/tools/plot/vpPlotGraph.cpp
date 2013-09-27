@@ -881,7 +881,7 @@ vpPlotGraph::check3Dpoint(vpImagePoint &iP)
     if (iP.get_j() <dTopLeft3D.get_j())
       iP.set_j(dTopLeft3D.get_j());
     else if (iP.get_j() > dTopLeft3D.get_j()+dWidth)
-      iP.set_i(dTopLeft3D.get_j()+dWidth-1);
+      iP.set_j(dTopLeft3D.get_j()+dWidth-1);
     return false;
   }
   return true;

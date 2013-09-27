@@ -136,107 +136,114 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
-  }
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
 
-  vpServo task ;
-  vpSimulatorCamera robot ;
+    vpServo task ;
+    vpSimulatorCamera robot ;
 
-  std::cout << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << " Test program for vpServo "  <<std::endl ;
-  std::cout << " Simulation " << std::endl ;
-  std::cout << " task : servo a sphere with a secondary task" << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << std::endl ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Simulation " << std::endl ;
+    std::cout << " task : servo a sphere with a secondary task" << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
 
-  // sets the initial camera location
-  vpHomogeneousMatrix cMo ;
-  cMo[0][3] = 0.1 ;
-  cMo[1][3] = 0.2 ;
-  cMo[2][3] = 2 ;
-  // Compute the position of the object in the world frame
-  vpHomogeneousMatrix wMc, wMo;
-  robot.getPosition(wMc) ;
-  wMo = wMc * cMo;
-
-  vpHomogeneousMatrix cMod ;
-  cMod[0][3] = 0 ;
-  cMod[1][3] = 0 ;
-  cMod[2][3] = 1 ;
-
-  // sets the sphere coordinates in the world frame
-  vpSphere sphere ;
-  sphere.setWorldCoordinates(0,0,0,0.1) ;
-
-  // sets the desired position of the visual feature
-  vpFeatureEllipse pd ;
-  sphere.track(cMod) ;
-  vpFeatureBuilder::create(pd,sphere)  ;
-
-  // computes  the sphere coordinates in the camera frame and its 2D coordinates
-  // sets the current position of the visual feature
-  vpFeatureEllipse p ;
-  sphere.track(cMo) ;
-  vpFeatureBuilder::create(p,sphere)  ;
-
-  // define the task
-  // - we want an eye-in-hand control law
-  // - robot is controlled in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-
-  // we want to see a sphere on a sphere
-  std::cout << std::endl ;
-  task.addFeature(p,pd) ;
-
-  // set the gain
-  task.setLambda(1) ;
-
-  // Display task information
-  task.print() ;
-  // exit(1) ;
-  unsigned int iter=0 ;
-  // loop
-  while(iter++ < 500)
-  {
-    std::cout << "---------------------------------------------" << iter <<std::endl ;
-    vpColVector v ;
-
-    // get the robot position
+    // sets the initial camera location
+    vpHomogeneousMatrix cMo ;
+    cMo[0][3] = 0.1 ;
+    cMo[1][3] = 0.2 ;
+    cMo[2][3] = 2 ;
+    // Compute the position of the object in the world frame
+    vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc) ;
-    // Compute the position of the camera wrt the object frame
-    cMo = wMc.inverse() * wMo;
+    wMo = wMc * cMo;
 
-    // new sphere position: retrieve x,y and Z of the vpSphere structure
+    vpHomogeneousMatrix cMod ;
+    cMod[0][3] = 0 ;
+    cMod[1][3] = 0 ;
+    cMod[2][3] = 1 ;
+
+    // sets the sphere coordinates in the world frame
+    vpSphere sphere ;
+    sphere.setWorldCoordinates(0,0,0,0.1) ;
+
+    // sets the desired position of the visual feature
+    vpFeatureEllipse pd ;
+    sphere.track(cMod) ;
+    vpFeatureBuilder::create(pd,sphere)  ;
+
+    // computes  the sphere coordinates in the camera frame and its 2D coordinates
+    // sets the current position of the visual feature
+    vpFeatureEllipse p ;
     sphere.track(cMo) ;
-    vpFeatureBuilder::create(p,sphere);
+    vpFeatureBuilder::create(p,sphere)  ;
 
-    vpColVector de2dt(6) ;
-    de2dt[2] = 1 ;    // should be zero in (I-WpW)de2dt
-    de2dt[5] = 0.01 ; // should be ok
-    de2dt[0] = 0.01 ;  // should generate a motion on (I-WpW)de2dt[4]
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
 
-    // compute the control law
-    v = task.computeControlLaw() ;
+    // we want to see a sphere on a sphere
+    std::cout << std::endl ;
+    task.addFeature(p,pd) ;
 
-    std::cout << "de2dt :"<< de2dt.t() << std::endl;
-    vpColVector sec ;
-    sec = task.secondaryTask(de2dt) ;
-    std::cout << "(I-WpW)de2dt :"<< sec.t() << std::endl;
+    // set the gain
+    task.setLambda(1) ;
 
-    if (iter>20)  v += sec ;
+    // Display task information
+    task.print() ;
+    // exit(1) ;
+    unsigned int iter=0 ;
+    // loop
+    while(iter++ < 500)
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
+      vpColVector v ;
 
-    // send the camera velocity to the controller
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      // get the robot position
+      robot.getPosition(wMc) ;
+      // Compute the position of the camera wrt the object frame
+      cMo = wMc.inverse() * wMo;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+      // new sphere position: retrieve x,y and Z of the vpSphere structure
+      sphere.track(cMo) ;
+      vpFeatureBuilder::create(p,sphere);
+
+      vpColVector de2dt(6) ;
+      de2dt[2] = 1 ;    // should be zero in (I-WpW)de2dt
+      de2dt[5] = 0.01 ; // should be ok
+      de2dt[0] = 0.01 ;  // should generate a motion on (I-WpW)de2dt[4]
+
+      // compute the control law
+      v = task.computeControlLaw() ;
+
+      std::cout << "de2dt :"<< de2dt.t() << std::endl;
+      vpColVector sec ;
+      sec = task.secondaryTask(de2dt) ;
+      std::cout << "(I-WpW)de2dt :"<< sec.t() << std::endl;
+
+      if (iter>20)  v += sec ;
+
+      // send the camera velocity to the controller
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+    return 0;
   }
-
-  // Display task information
-  task.print() ;
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
+  }
 }
 

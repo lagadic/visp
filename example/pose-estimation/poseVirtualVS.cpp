@@ -216,177 +216,177 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 int
 main(int argc, const char** argv)
 {
-  std::string env_ipath;
-  std::string opt_ipath;
-  std::string ipath;
-  std::string opt_ppath;
-  std::string dirname;
-  std::string filename;
-  unsigned opt_first = 0;
-  unsigned opt_nimages = 80;
-  unsigned opt_step = 1;
-  bool opt_click_allowed = true;
-  bool opt_display = true;
+  try {
+    std::string env_ipath;
+    std::string opt_ipath;
+    std::string ipath;
+    std::string opt_ppath;
+    std::string dirname;
+    std::string filename;
+    unsigned opt_first = 0;
+    unsigned opt_nimages = 80;
+    unsigned opt_step = 1;
+    bool opt_click_allowed = true;
+    bool opt_display = true;
 
 
-  int i ;
+    int i ;
 
-  std::cout <<  "-------------------------------------------------------" << std::endl ;
-  std::cout <<  "  poseVirtualVS.cpp" <<std::endl << std::endl ;
+    std::cout <<  "-------------------------------------------------------" << std::endl ;
+    std::cout <<  "  poseVirtualVS.cpp" <<std::endl << std::endl ;
 
-  std::cout <<  "  Example of dots tracking in an image sequence and pose computation" << std::endl ;
-  std::cout <<  "-------------------------------------------------------" << std::endl ;
-  std::cout << std::endl ;
+    std::cout <<  "  Example of dots tracking in an image sequence and pose computation" << std::endl ;
+    std::cout <<  "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
-  // Get the VISP_IMAGE_PATH environment variable value
-  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-  if (ptenv != NULL)
-    env_ipath = ptenv;
+    // Get the VISP_IMAGE_PATH environment variable value
+    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+    if (ptenv != NULL)
+      env_ipath = ptenv;
 
-  // Set the default input path
-  if (! env_ipath.empty())
-    ipath = env_ipath;
+    // Set the default input path
+    if (! env_ipath.empty())
+      ipath = env_ipath;
 
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_click_allowed, opt_display) == false) {
-    exit (-1);
-  }
-
-  // Get the option values
-  if (!opt_ipath.empty())
-    ipath = opt_ipath;
-
-  // Compare ipath and env_ipath. If they differ, we take into account
-  // the input path comming from the command line option
-  if (opt_ipath.empty() && opt_ppath.empty()) {
-    if (ipath != env_ipath) {
-      std::cout << std::endl
-                << "WARNING: " << std::endl;
-      std::cout << "  Since -i <visp image path=" << ipath << "> "
-                << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                << "  we skip the environment variable." << std::endl;
+    // Read the command line options
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_click_allowed, opt_display) == false) {
+      exit (-1);
     }
-  }
-  // Test if an input path is set
-  if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()){
-    usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
-    std::cerr << std::endl
-              << "ERROR:" << std::endl;
-    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-              << std::endl
-              << "  environment variable to specify the location of the " << std::endl
-              << "  image path where test images are located." << std::endl
-              << "  Use -p <personal image path> option if you want to "<< std::endl
-              << "  use personal images" <<std::endl << std::endl;
-    exit(-1);
-  }
+
+    // Get the option values
+    if (!opt_ipath.empty())
+      ipath = opt_ipath;
+
+    // Compare ipath and env_ipath. If they differ, we take into account
+    // the input path comming from the command line option
+    if (opt_ipath.empty() && opt_ppath.empty()) {
+      if (ipath != env_ipath) {
+        std::cout << std::endl
+                  << "WARNING: " << std::endl;
+        std::cout << "  Since -i <visp image path=" << ipath << "> "
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  we skip the environment variable." << std::endl;
+      }
+    }
+    // Test if an input path is set
+    if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()){
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << "  Use -p <personal image path> option if you want to "<< std::endl
+                << "  use personal images" <<std::endl << std::endl;
+      exit(-1);
+    }
 
 
 
 
-  // Declare an image, this is a gray level image (unsigned char)
-  // it size is not defined yet, it will be defined when the image will
-  // read on the disk
-  vpImage<unsigned char> I ;
+    // Declare an image, this is a gray level image (unsigned char)
+    // it size is not defined yet, it will be defined when the image will
+    // read on the disk
+    vpImage<unsigned char> I ;
 
-  unsigned iter = opt_first ;
-  std::ostringstream s;
-  char cfilename[FILENAME_MAX];
+    unsigned iter = opt_first ;
+    std::ostringstream s;
+    char cfilename[FILENAME_MAX];
 
-  if (opt_ppath.empty()){
+    if (opt_ppath.empty()){
 
-    // Warning :
-    // the image sequence is not provided with the ViSP package
-    // therefore the program will return you an error :
-    //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file /ViSP-images/cube/image.0001.pgm
-    //  !!    poseExample.cpp: main(#95) :Error while reading the image
-    //  terminate called after throwing an instance of 'vpImageException'
+      // Warning :
+      // the image sequence is not provided with the ViSP package
+      // therefore the program will return you an error :
+      //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file /ViSP-images/cube/image.0001.pgm
+      //  !!    poseExample.cpp: main(#95) :Error while reading the image
+      //  terminate called after throwing an instance of 'vpImageException'
+      //
+      //  The sequence is available on the visp www site
+      //  http://www.irisa.fr/lagadic/visp/visp.html
+      //  in the download section. It is named "ViSP-images-x.y.z.tar.gz"
+
+      // directory name
+      dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
+
+
+      // Build the name of the image file
+
+      s.setf(std::ios::right, std::ios::adjustfield);
+      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+      filename = dirname + s.str();
+    }
+    else {
+
+      sprintf(cfilename, opt_ppath.c_str(), iter) ;
+      filename = cfilename;
+    }
+
+    // define the vpDot structure, here 4 dots will tracked
+    vpDot d[4] ;
+
+    for (i=0 ; i < 4 ; i++)
+    {
+      // by using setGraphics, we request to see the all the pixel of the dot
+      // in green on the screen.
+      // It uses the overlay image plane.
+      // The default of this setting is that it is time consumming
+
+      if (opt_display) {
+        d[i].setGraphics(true) ;
+      }
+      else {
+        d[i].setGraphics(false) ;
+      }
+    }
+
+    // Read the PGM image named "s" on the disk, and put the bitmap into the
+    // image structure I.
+    // I is initialized to the correct size
     //
-    //  The sequence is available on the visp www site
-    //  http://www.irisa.fr/lagadic/visp/visp.html
-    //  in the download section. It is named "ViSP-images-x.y.z.tar.gz"
-
-    // directory name
-    dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
-
-
-    // Build the name of the image file
-
-    s.setf(std::ios::right, std::ios::adjustfield);
-    s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-    filename = dirname + s.str();
-  }
-  else {
-
-    sprintf(cfilename, opt_ppath.c_str(), iter) ;
-    filename = cfilename;
-  }
-
-  // define the vpDot structure, here 4 dots will tracked
-  vpDot d[4] ;
-
-  for (i=0 ; i < 4 ; i++)
-  {
-    // by using setGraphics, we request to see the all the pixel of the dot
-    // in green on the screen.
-    // It uses the overlay image plane.
-    // The default of this setting is that it is time consumming
-
-    if (opt_display) {
-      d[i].setGraphics(true) ;
-    }
-    else {
-      d[i].setGraphics(false) ;
-    }
-  }
-
-  // Read the PGM image named "s" on the disk, and put the bitmap into the
-  // image structure I.
-  // I is initialized to the correct size
-  //
-  // exception readPGM may throw various exception if, for example,
-  // the file does not exist, or if the memory cannot be allocated
-  try{
-    vpImageIo::read(I,filename) ;
-  }
-  catch(...)
-  {
-    // an exception is throwned if an exception from readPGM has been catched
-    // here this will result in the end of the program
-    // Note that another error message has been printed from readPGM
-    // to give more information about the error
-    if (opt_ppath.empty()) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filename << std::endl;
-      std::cerr << "  Check your -i " << ipath << " option, " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable"
-                << std::endl;
-    }
-    else {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Cannot read " << filename << std::endl;
-      std::cerr << "  or your -p " << opt_ppath << " option " <<std::endl
-                << std::endl;
-    }
-    exit(-1);
-
-  }
-
-  // We open a window using either the X11 or GTK or GDI window manager
-  // it will be located in 100,100 and titled "tracking using vpDot"
-  // its size is automatically defined by the image (I) size
-#if defined VISP_HAVE_X11
-  vpDisplayX display;
-#elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
-#endif
-  if (opt_display) {
+    // exception readPGM may throw various exception if, for example,
+    // the file does not exist, or if the memory cannot be allocated
     try{
+      vpImageIo::read(I,filename) ;
+    }
+    catch(...)
+    {
+      // an exception is throwned if an exception from readPGM has been catched
+      // here this will result in the end of the program
+      // Note that another error message has been printed from readPGM
+      // to give more information about the error
+      if (opt_ppath.empty()) {
+        std::cerr << std::endl
+                  << "ERROR:" << std::endl;
+        std::cerr << "  Cannot read " << filename << std::endl;
+        std::cerr << "  Check your -i " << ipath << " option, " << std::endl
+                  << "  or VISP_INPUT_IMAGE_PATH environment variable"
+                  << std::endl;
+      }
+      else {
+        std::cerr << std::endl
+                  << "ERROR:" << std::endl;
+        std::cerr << "  Cannot read " << filename << std::endl;
+        std::cerr << "  or your -p " << opt_ppath << " option " <<std::endl
+                  << std::endl;
+      }
+      exit(-1);
+
+    }
+
+    // We open a window using either the X11 or GTK or GDI window manager
+    // it will be located in 100,100 and titled "tracking using vpDot"
+    // its size is automatically defined by the image (I) size
+#if defined VISP_HAVE_X11
+    vpDisplayX display;
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK display;
+#elif defined VISP_HAVE_GDI
+    vpDisplayGDI display;
+#endif
+    if (opt_display) {
       // Display size is automatically defined by the image (I) size
       display.init(I,100,100,"tracking using vpDot");
       // display the image
@@ -397,20 +397,12 @@ main(int argc, const char** argv)
       vpDisplay::display(I) ;
       //Flush the display
       vpDisplay::flush(I) ;
-
     }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      return(-1) ;
-    }
-  }
 
-  vpImagePoint cog[4]; // Center of gravity of the dot
-  try{
+    vpImagePoint cog[4]; // Center of gravity of the dot
     if (opt_display && opt_click_allowed) {
       // dot coordinates (u,v) = (column,row)
-      std::cout << "Click the four white dots on the object corner clockwise" 
+      std::cout << "Click the four white dots on the object corner clockwise"
                 << std::endl  ;
       for (i=0 ; i < 4 ; i++)
       {
@@ -460,116 +452,109 @@ main(int argc, const char** argv)
       d[3].track(I, cog[3]);
       vpDisplay::flush(I) ;
     }
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error in tracking initialization ") ;
-    return(-1) ;
-  }
 
-  if (opt_display)
-  {
+    if (opt_display)
+    {
 
-    // display a red cross (size 10) in the image at the dot center
-    // of gravity location
+      // display a red cross (size 10) in the image at the dot center
+      // of gravity location
+      //
+      // WARNING
+      // in the vpDisplay class member's when pixel coordinates
+      // are considered the first element is the row index and the second
+      // is the column index:
+      //   vpDisplay::displayCross(Image, row index, column index, size, color)
+      //   therefore u and v are inverted wrt to the vpDot specification
+      // Alternatively, to avoid this problem another set of member have
+      // been defined in the vpDisplay class.
+      // If the method name is postfixe with _uv the specification is :
+      //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
+
+      for (i=0 ; i < 4 ; i++)
+        vpDisplay::displayCross(I, cog[i], 10, vpColor::red) ;
+
+      // flush the X11 buffer
+      vpDisplay::flush(I) ;
+    }
+
+    // --------------------------------------------------------
+    // Now wil compute the pose
     //
-    // WARNING
-    // in the vpDisplay class member's when pixel coordinates
-    // are considered the first element is the row index and the second
-    // is the column index:
-    //   vpDisplay::displayCross(Image, row index, column index, size, color)
-    //   therefore u and v are inverted wrt to the vpDot specification
-    // Alternatively, to avoid this problem another set of member have
-    // been defined in the vpDisplay class.
-    // If the method name is postfixe with _uv the specification is :
-    //   vpDisplay::displayCross_uv(Image, column index, row index, size, color)
 
+    // The pose will be contained in an homogeneous matrix cMo
+    vpHomogeneousMatrix cMo ;
+
+
+    // We need a structure that content both the 3D coordinates of the point
+    // in the object frame and the 2D coordinates of the point expressed in meter
+    // the vpPoint class is ok for that
+    vpPoint P[4]  ;
+
+    // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
+    vpPose pose ;
+    //  the list of point is cleared (if that's not done before)
+    pose.clearPoint() ;
+
+    // we set the 3D points coordinates (in meter !) in the object/world frame
+    double L=0.04 ;
+    P[0].setWorldCoordinates(-L,-L, 0 ) ; // (X,Y,Z)
+    P[1].setWorldCoordinates(L,-L, 0 ) ;
+    P[2].setWorldCoordinates(L,L, 0 ) ;
+    P[3].setWorldCoordinates(-L,L, 0 ) ;
+
+
+    // set the camera intrinsic parameters
+    // see more details about the model in vpCameraParameters
+    double px = 600 ;
+    double py = 600 ;
+    double u0 = 192 ;
+    double v0 = 144 ;
+    vpCameraParameters cam(px,py,u0,v0) ;
+
+    // pixel-> meter conversion
     for (i=0 ; i < 4 ; i++)
-      vpDisplay::displayCross(I, cog[i], 10, vpColor::red) ;
-
-    // flush the X11 buffer
-    vpDisplay::flush(I) ;
-  }
-
-  // --------------------------------------------------------
-  // Now wil compute the pose
-  //
-
-  // The pose will be contained in an homogeneous matrix cMo
-  vpHomogeneousMatrix cMo ;
-
-
-  // We need a structure that content both the 3D coordinates of the point
-  // in the object frame and the 2D coordinates of the point expressed in meter
-  // the vpPoint class is ok for that
-  vpPoint P[4]  ;
-
-  // The vpPose class mainly contents a list of vpPoint (that is (X,Y,Z, x, y) )
-  vpPose pose ;
-  //  the list of point is cleared (if that's not done before)
-  pose.clearPoint() ;
-
-  // we set the 3D points coordinates (in meter !) in the object/world frame
-  double L=0.04 ;
-  P[0].setWorldCoordinates(-L,-L, 0 ) ; // (X,Y,Z)
-  P[1].setWorldCoordinates(L,-L, 0 ) ;
-  P[2].setWorldCoordinates(L,L, 0 ) ;
-  P[3].setWorldCoordinates(-L,L, 0 ) ;
+    {
+      // u[i]. v[i] are expressed in pixel
+      // conversion in meter is achieved using
+      // x = (u-u0)/px
+      // y = (v-v0)/py
+      // where px, py, u0, v0 are the intrinsic camera parameters
+      double x=0, y=0;
+      vpPixelMeterConversion::convertPoint(cam, cog[i], x,y)  ;
+      P[i].set_x(x) ;
+      P[i].set_y(y) ;
+    }
 
 
-  // set the camera intrinsic parameters
-  // see more details about the model in vpCameraParameters
-  double px = 600 ;
-  double py = 600 ;
-  double u0 = 192 ;
-  double v0 = 144 ;
-  vpCameraParameters cam(px,py,u0,v0) ;
+    // The pose structure is build, we put in the point list the set of point
+    // here both 2D and 3D world coordinates are known
+    for (i=0 ; i < 4 ; i++)
+    {
+      pose.addPoint(P[i]) ; // and added to the pose computation point list
+    }
 
-  // pixel-> meter conversion
-  for (i=0 ; i < 4 ; i++)
-  {
-    // u[i]. v[i] are expressed in pixel
-    // conversion in meter is achieved using
-    // x = (u-u0)/px
-    // y = (v-v0)/py
-    // where px, py, u0, v0 are the intrinsic camera parameters
-    double x=0, y=0;
-    vpPixelMeterConversion::convertPoint(cam, cog[i], x,y)  ;
-    P[i].set_x(x) ;
-    P[i].set_y(y) ;
-  }
+    // compute the initial pose using Dementhon method followed by a non linear
+    // minimisation method
 
+    // Pose by Lagrange it provides an initialization of the pose
+    pose.computePose(vpPose::LAGRANGE, cMo) ;
+    // the pose is now refined using the virtual visual servoing approach
+    // Warning: cMo needs to be initialized otherwise it may  diverge
+    pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+    if( opt_display ){
+      // display the compute pose
+      pose.display(I,cMo,cam, 0.05, vpColor::red) ;
+      vpDisplay::flush(I) ;
+    }
 
-  // The pose structure is build, we put in the point list the set of point
-  // here both 2D and 3D world coordinates are known
-  for (i=0 ; i < 4 ; i++)
-  {
-    pose.addPoint(P[i]) ; // and added to the pose computation point list
-  }
+    // Covariance Matrix Computation
+    // Uncomment if you want to compute the covariance matrix.
+    // pose.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work.
 
-  // compute the initial pose using Dementhon method followed by a non linear
-  // minimisation method
-
-  // Pose by Lagrange it provides an initialization of the pose
-  pose.computePose(vpPose::LAGRANGE, cMo) ;
-  // the pose is now refined using the virtual visual servoing approach
-  // Warning: cMo needs to be initialized otherwise it may  diverge
-  pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
-  if( opt_display ){
-    // display the compute pose
-    pose.display(I,cMo,cam, 0.05, vpColor::red) ;
-    vpDisplay::flush(I) ;
-  }
-  
-  // Covariance Matrix Computation
-  // Uncomment if you want to compute the covariance matrix.
-  // pose.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work. 
-
-  unsigned niter = 0;
-  // this is the loop over the image sequence
-  while (iter < opt_nimages)
-  {
-    try {
+    unsigned niter = 0;
+    // this is the loop over the image sequence
+    while (iter < opt_nimages)
+    {
       // set the new image name
 
       if (opt_ppath.empty()){
@@ -627,19 +612,21 @@ main(int argc, const char** argv)
 
         vpDisplay::flush(I) ;
       }
-      
+
       // Covariance Matrix Display
-      // Uncomment if you want to print the covariance matrix. 
+      // Uncomment if you want to print the covariance matrix.
       // Make sure pose.setCovarianceComputation(true) has been called (uncomment below).
       // std::cout << pose.getCovarianceMatrix() << std::endl << std::endl;
-      
+
       niter++ ;
+
+      iter += opt_step ;
     }
-    catch(...){
-      vpERROR_TRACE("Error in tracking loop") ;
-      return(-1) ;
-    }
-    iter += opt_step ;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
 }
 #else

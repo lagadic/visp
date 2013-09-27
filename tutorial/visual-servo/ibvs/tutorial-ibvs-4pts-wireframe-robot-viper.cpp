@@ -27,11 +27,11 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
 int main()
 {
 #if defined(VISP_HAVE_PTHREAD)
+  try {
+    vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
-  vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
-
-  /*
+    /*
     Top view of the world frame, the camera frame and the object frame
 
     world, also robot base frame :  --> w_y
@@ -53,114 +53,118 @@ int main()
              c_x <--
 
     */
-  vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
-                          vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
+    vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
+                            vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
-  std::vector<vpPoint> point(4) ;
-  point[0].setWorldCoordinates(-0.1,-0.1, 0);
-  point[1].setWorldCoordinates( 0.1,-0.1, 0);
-  point[2].setWorldCoordinates( 0.1, 0.1, 0);
-  point[3].setWorldCoordinates(-0.1, 0.1, 0);
+    std::vector<vpPoint> point(4) ;
+    point[0].setWorldCoordinates(-0.1,-0.1, 0);
+    point[1].setWorldCoordinates( 0.1,-0.1, 0);
+    point[2].setWorldCoordinates( 0.1, 0.1, 0);
+    point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-  vpServo task ;
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  task.setLambda(0.5);
+    vpServo task ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
 
-  vpFeaturePoint p[4], pd[4] ;
-  for (int i = 0 ; i < 4 ; i++) {
-    point[i].track(cdMo);
-    vpFeatureBuilder::create(pd[i], point[i]);
-    point[i].track(cMo);
-    vpFeatureBuilder::create(p[i], point[i]);
-    task.addFeature(p[i], pd[i]);
-  }
-
-  vpSimulatorViper850 robot(true);
-  robot.setVerbose(true);
-
-  // Enlarge the default joint limits
-  vpColVector qmin = robot.getJointMin();
-  vpColVector qmax = robot.getJointMax();
-  qmin[0] = -vpMath::rad(180);
-  qmax[0] =  vpMath::rad(180);
-  qmax[1] =  vpMath::rad(0);
-  qmax[2] =  vpMath::rad(270);
-  qmin[4] = -vpMath::rad(180);
-  qmax[4] =  vpMath::rad(180);
-
-  robot.setJointLimit(qmin, qmax);
-
-  std::cout << "Robot joint limits: " << std::endl;
-  for (unsigned int i=0; i< qmin.size(); i ++)
-    std::cout << "Joint " << i << ": min " << vpMath::deg(qmin[i]) << " max " << vpMath::deg(qmax[i]) << " (deg)" << std::endl;
-
-  robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
-  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-  robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
-  robot.set_fMo(wMo);
-  bool ret = true;
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
-  ret =
-#endif
-  robot.initialiseCameraRelativeToObject(cMo);
-  if (ret == false)
-    return 0; // Not able to set the position
-  robot.setDesiredCameraPosition(cdMo);
-  // We modify the default external camera position
-  robot.setExternalCameraPosition(vpHomogeneousMatrix(vpTranslationVector(-0.4, 0.4, 2),
-                                                      vpRotationMatrix(vpRxyzVector(M_PI/2,0,0))));
-
-  vpImage<unsigned char> Iint(480, 640, 255);
-#if defined(VISP_HAVE_X11)
-  vpDisplayX displayInt(Iint, 700, 0, "Internal view");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI displayInt(Iint, 700, 0, "Internal view");
-#else
-  std::cout << "No image viewer is available..." << std::endl;
-#endif
-
-  vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
-  // Modify the camera parameters to match those used in the other simulations
-  robot.setCameraParameters(cam);
-
-  bool start = true;
-  //for ( ; ; )
-  for (int iter =0; iter < 275; iter ++)
-  {
-    cMo = robot.get_cMo();
-
+    vpFeaturePoint p[4], pd[4] ;
     for (int i = 0 ; i < 4 ; i++) {
+      point[i].track(cdMo);
+      vpFeatureBuilder::create(pd[i], point[i]);
       point[i].track(cMo);
       vpFeatureBuilder::create(p[i], point[i]);
+      task.addFeature(p[i], pd[i]);
     }
 
-    vpDisplay::display(Iint);
-    robot.getInternalView(Iint);
-    if (!start) {
-      display_trajectory(Iint, point, cMo, cam);
-      vpDisplay::displayCharString(Iint, 40, 120, "Click to stop the servo...", vpColor::red);
-    }
-    vpDisplay::flush(Iint);
+    vpSimulatorViper850 robot(true);
+    robot.setVerbose(true);
 
-    vpColVector v = task.computeControlLaw();
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+    // Enlarge the default joint limits
+    vpColVector qmin = robot.getJointMin();
+    vpColVector qmax = robot.getJointMax();
+    qmin[0] = -vpMath::rad(180);
+    qmax[0] =  vpMath::rad(180);
+    qmax[1] =  vpMath::rad(0);
+    qmax[2] =  vpMath::rad(270);
+    qmin[4] = -vpMath::rad(180);
+    qmax[4] =  vpMath::rad(180);
 
-    // A click to exit
-    if (vpDisplay::getClick(Iint, false))
-      break;
+    robot.setJointLimit(qmin, qmax);
 
-    if (start) {
-      start = false;
-      v = 0;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      vpDisplay::displayCharString(Iint, 40, 120, "Click to start the servo...", vpColor::blue);
+    std::cout << "Robot joint limits: " << std::endl;
+    for (unsigned int i=0; i< qmin.size(); i ++)
+      std::cout << "Joint " << i << ": min " << vpMath::deg(qmin[i]) << " max " << vpMath::deg(qmax[i]) << " (deg)" << std::endl;
+
+    robot.init(vpViper850::TOOL_PTGREY_FLEA2_CAMERA, vpCameraParameters::perspectiveProjWithoutDistortion);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+    robot.set_fMo(wMo);
+    bool ret = true;
+#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
+    ret =
+    #endif
+        robot.initialiseCameraRelativeToObject(cMo);
+    if (ret == false)
+      return 0; // Not able to set the position
+    robot.setDesiredCameraPosition(cdMo);
+    // We modify the default external camera position
+    robot.setExternalCameraPosition(vpHomogeneousMatrix(vpTranslationVector(-0.4, 0.4, 2),
+                                                        vpRotationMatrix(vpRxyzVector(M_PI/2,0,0))));
+
+    vpImage<unsigned char> Iint(480, 640, 255);
+#if defined(VISP_HAVE_X11)
+    vpDisplayX displayInt(Iint, 700, 0, "Internal view");
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI displayInt(Iint, 700, 0, "Internal view");
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
+
+    vpCameraParameters cam(840, 840, Iint.getWidth()/2, Iint.getHeight()/2);
+    // Modify the camera parameters to match those used in the other simulations
+    robot.setCameraParameters(cam);
+
+    bool start = true;
+    //for ( ; ; )
+    for (int iter =0; iter < 275; iter ++)
+    {
+      cMo = robot.get_cMo();
+
+      for (int i = 0 ; i < 4 ; i++) {
+        point[i].track(cMo);
+        vpFeatureBuilder::create(p[i], point[i]);
+      }
+
+      vpDisplay::display(Iint);
+      robot.getInternalView(Iint);
+      if (!start) {
+        display_trajectory(Iint, point, cMo, cam);
+        vpDisplay::displayCharString(Iint, 40, 120, "Click to stop the servo...", vpColor::red);
+      }
       vpDisplay::flush(Iint);
-      //vpDisplay::getClick(Iint);
-    }
 
-    vpTime::wait(1000*robot.getSamplingTime());
+      vpColVector v = task.computeControlLaw();
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+
+      // A click to exit
+      if (vpDisplay::getClick(Iint, false))
+        break;
+
+      if (start) {
+        start = false;
+        v = 0;
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+        vpDisplay::displayCharString(Iint, 40, 120, "Click to start the servo...", vpColor::blue);
+        vpDisplay::flush(Iint);
+        //vpDisplay::getClick(Iint);
+      }
+
+      vpTime::wait(1000*robot.getSamplingTime());
+    }
+    task.kill();
   }
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 #endif
 }

@@ -62,6 +62,7 @@
 int
 main()
 {
+  try {
     std::cout << "Pose computation with matched points" << std::endl;
     int size = 8;
     vpPoint *P = new vpPoint [size]  ;  //  Point to be tracked
@@ -81,7 +82,7 @@ main()
 
     vpHomogeneousMatrix cMo_ref(0, 0.2, 1, 0, 0, 0) ;
     for(int i=0 ; i < size ; i++)
-    {      
+    {
       P[i].project(cMo_ref) ;
       P[i].print() ;
       std::cout << std::endl;
@@ -131,4 +132,9 @@ main()
     std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
     delete [] P;
     return test_fail;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }

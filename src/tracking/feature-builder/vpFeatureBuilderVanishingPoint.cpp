@@ -116,8 +116,9 @@ vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, co
   if(fabs(theta_r-theta_l)<min || fabs(fabs(theta_r-theta_l)-M_PI)<min \
      || fabs(fabs(theta_r-theta_l)-2*M_PI)<min)
   {
-    vpCERROR<<"there is no vanishing point : the lines are parallel in the image plane"<<std::endl;
-    throw(" ");
+    vpCERROR<<"There is no vanishing point : the lines are parallel in the image plane"<<std::endl;
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
+           "There is no vanishing point : the lines are parallel in the image plane")) ;
   }
 
   y = (rho_r *c_l - rho_l * c_r) / (-s_l * c_r + s_r * c_l );

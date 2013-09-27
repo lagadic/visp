@@ -7,67 +7,72 @@
 int main()
 {
 #ifdef VISP_HAVE_OPENCV
-  vpImage<unsigned char> I;
-  vpCameraParameters cam;
-  vpHomogeneousMatrix cMo;
+  try {
+    vpImage<unsigned char> I;
+    vpCameraParameters cam;
+    vpHomogeneousMatrix cMo;
 
-  vpImageIo::read(I, "teabox.pgm");
+    vpImageIo::read(I, "teabox.pgm");
 
 #if defined(VISP_HAVE_X11)
-  vpDisplayX display(I,100,100,"Model-based keypoints tracker");;
+    vpDisplayX display(I,100,100,"Model-based keypoints tracker");;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI display(I,100,100,"Model-based keypoints tracker");;
+    vpDisplayGDI display(I,100,100,"Model-based keypoints tracker");;
 #else
-  std::cout << "No image viewer is available..." << std::endl;
+    std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-  vpMbKltTracker tracker;
+    vpMbKltTracker tracker;
 #ifdef VISP_HAVE_XML2
-  tracker.loadConfigFile("teabox.xml");
+    tracker.loadConfigFile("teabox.xml");
 #else
-  tracker.setAngleAppear(70);
-  tracker.setAngleDisappear(80);
-  tracker.setMaskBorder(5);
-  vpKltOpencv klt_settings;
-  klt_settings.setMaxFeatures(300);
-  klt_settings.setWindowSize(5);
-  klt_settings.setQuality(0.015);
-  klt_settings.setMinDistance(8);
-  klt_settings.setHarrisFreeParameter(0.01);
-  klt_settings.setBlockSize(3);
-  klt_settings.setPyramidLevels(3);
-  tracker.setKltOpencv(klt_settings);
-  cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-  tracker.setCameraParameters(cam);
-  tracker.setNearClippingDistance(0.1);
-  tracker.setFarClippingDistance(100.0);
-  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    tracker.setAngleAppear(70);
+    tracker.setAngleDisappear(80);
+    tracker.setMaskBorder(5);
+    vpKltOpencv klt_settings;
+    klt_settings.setMaxFeatures(300);
+    klt_settings.setWindowSize(5);
+    klt_settings.setQuality(0.015);
+    klt_settings.setMinDistance(8);
+    klt_settings.setHarrisFreeParameter(0.01);
+    klt_settings.setBlockSize(3);
+    klt_settings.setPyramidLevels(3);
+    tracker.setKltOpencv(klt_settings);
+    cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+    tracker.setCameraParameters(cam);
+    tracker.setNearClippingDistance(0.1);
+    tracker.setFarClippingDistance(100.0);
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
-  tracker.setDisplayFeatures(true);
-  tracker.setOgreVisibilityTest(true);
-  tracker.loadModel("teabox-triangle.cao");
-  tracker.initClick(I, "teabox.init");
+    tracker.setDisplayFeatures(true);
+    tracker.setOgreVisibilityTest(true);
+    tracker.loadModel("teabox-triangle.cao");
+    tracker.initClick(I, "teabox.init");
 
-  while(1){
-    vpDisplay::display(I);
-    tracker.track(I);
-    tracker.getPose(cMo);
-    tracker.getCameraParameters(cam);
-    tracker.display(I, cMo, cam, vpColor::red, 2, true);
-    vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
-    vpDisplay::flush(I);
+    while(1){
+      vpDisplay::display(I);
+      tracker.track(I);
+      tracker.getPose(cMo);
+      tracker.getCameraParameters(cam);
+      tracker.display(I, cMo, cam, vpColor::red, 2, true);
+      vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+      vpDisplay::flush(I);
 
-    if (vpDisplay::getClick(I, false))
-      break;
-    vpTime::wait(40);
-  }
+      if (vpDisplay::getClick(I, false))
+        break;
+      vpTime::wait(40);
+    }
 
 #ifdef VISP_HAVE_XML2
-  vpXmlParser::cleanup();
+    vpXmlParser::cleanup();
 #endif
 #ifdef VISP_HAVE_COIN
-  SoDB::finish();
+    SoDB::finish();
 #endif
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 
 #endif
 }

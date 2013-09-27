@@ -59,24 +59,31 @@
 
 int main()
 {
-  vpImage<unsigned char> I; // Grey level image
-  
+  try {
+    vpImage<unsigned char> I; // Grey level image
+
 #ifdef VISP_HAVE_DIRECTSHOW
-  vpDirectShowGrabber g; // Create the grabber
-  if(g.getDeviceNumber() == 0) //test if a camera is connected
-  {
-    g.close();
-    return -1;
-  }
-  
-  g.open(); // Initialize the grabber
-  
-  g.setImageSize(640,480); // If the camera supports 640x480 image size
-  g.setFramerate(30); // If the camera supports 30fps framerate
-  
-  for ( ; ; )
-    g.acquire(I); // Acquire an image
+    vpDirectShowGrabber g; // Create the grabber
+    if(g.getDeviceNumber() == 0) //test if a camera is connected
+    {
+      g.close();
+      return -1;
+    }
+
+    g.open(); // Initialize the grabber
+
+    g.setImageSize(640,480); // If the camera supports 640x480 image size
+    g.setFramerate(30); // If the camera supports 30fps framerate
+
+    for ( ; ; )
+      g.acquire(I); // Acquire an image
 #endif
 
-  return 0;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
+
 }

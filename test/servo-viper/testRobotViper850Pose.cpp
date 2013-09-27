@@ -228,9 +228,9 @@ int main()
 
     return 0;
   }
-  catch(...) {
-    std::cout << "Test failed" << std::endl;
-    return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
 }
 #else

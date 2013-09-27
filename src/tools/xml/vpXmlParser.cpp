@@ -387,7 +387,9 @@ vpXmlParser::save(const std::string& filename, const bool append)
   else{
   	if(!append){
       xmlFreeDoc(doc);
-  		remove(filename.c_str());
+      if (remove(filename.c_str()) != 0)
+        throw vpException(vpException::ioError, "Cannot remove existing xml file");
+
   		doc = xmlNewDoc ((xmlChar*)"1.0");
   		root_node = xmlNewNode(NULL, (xmlChar*)main_tag.c_str());
   		xmlDocSetRootElement(doc, root_node);

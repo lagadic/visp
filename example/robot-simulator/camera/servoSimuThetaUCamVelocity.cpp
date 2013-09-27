@@ -135,88 +135,95 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
-  }
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
 
-  vpServo task ;
-  vpSimulatorCamera robot ;
+    vpServo task ;
+    vpSimulatorCamera robot ;
 
-  std::cout << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << " Test program for vpServo "  <<std::endl ;
-  std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-  std::cout << " Simulation " << std::endl ;
-  std::cout << " task :  servo using theta U visual feature " << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << std::endl ;
-
-
-  // sets the initial camera location
-  vpPoseVector c_r_o(0.1,0.2,2,
-                     vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
-                     ) ;
-
-  vpHomogeneousMatrix cMo(c_r_o) ;
-  // Compute the position of the object in the world frame
-  vpHomogeneousMatrix wMc, wMo;
-  robot.getPosition(wMc) ;
-  wMo = wMc * cMo;
-
-  // sets the desired camera location
-  vpPoseVector cd_r_o(0,0,1,
-                      vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
-  vpHomogeneousMatrix cdMo(cd_r_o) ;
+    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
+    std::cout << " Simulation " << std::endl ;
+    std::cout << " task :  servo using theta U visual feature " << std::endl ;
+    std::cout << "-------------------------------------------------------" << std::endl ;
+    std::cout << std::endl ;
 
 
-  // compute the rotation that the camera has to realize
-  vpHomogeneousMatrix cdMc ;
-  cdMc = cdMo*cMo.inverse() ;
-  vpFeatureThetaU tu(vpFeatureThetaU::cdRc) ;
-  tu.buildFrom(cdMc) ;
+    // sets the initial camera location
+    vpPoseVector c_r_o(0.1,0.2,2,
+                       vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50)
+                       ) ;
 
-  // define the task
-  // - we want an eye-in-hand control law
-  // - robot is controlled in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-  task.setInteractionMatrixType(vpServo::DESIRED) ;
-
-  task.addFeature(tu) ;
-
-  // - set the gain
-  task.setLambda(1) ;
-
-  // Display task information
-  task.print() ;
-
-  unsigned int iter=0 ;
-  // loop
-  while(iter++ < 200)
-  {
-    std::cout << "---------------------------------------------" << iter <<std::endl ;
-    vpColVector v ;
-
-    // get the robot position
+    vpHomogeneousMatrix cMo(c_r_o) ;
+    // Compute the position of the object in the world frame
+    vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc) ;
-    // Compute the position of the camera wrt the object frame
-    cMo = wMc.inverse() * wMo;
+    wMo = wMc * cMo;
 
-    // new rotation to achieve
+    // sets the desired camera location
+    vpPoseVector cd_r_o(0,0,1,
+                        vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+    vpHomogeneousMatrix cdMo(cd_r_o) ;
+
+
+    // compute the rotation that the camera has to realize
+    vpHomogeneousMatrix cdMc ;
     cdMc = cdMo*cMo.inverse() ;
+    vpFeatureThetaU tu(vpFeatureThetaU::cdRc) ;
     tu.buildFrom(cdMc) ;
 
-    // compute the control law
-    v = task.computeControlLaw() ;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setInteractionMatrixType(vpServo::DESIRED) ;
 
-    // send the camera velocity to the controller
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    task.addFeature(tu) ;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
+    // - set the gain
+    task.setLambda(1) ;
+
+    // Display task information
+    task.print() ;
+
+    unsigned int iter=0 ;
+    // loop
+    while(iter++ < 200)
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
+      vpColVector v ;
+
+      // get the robot position
+      robot.getPosition(wMc) ;
+      // Compute the position of the camera wrt the object frame
+      cMo = wMc.inverse() * wMo;
+
+      // new rotation to achieve
+      cdMc = cdMo*cMo.inverse() ;
+      tu.buildFrom(cdMc) ;
+
+      // compute the control law
+      v = task.computeControlLaw() ;
+
+      // send the camera velocity to the controller
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+    return 0;
   }
-
-  // Display task information
-  task.print() ;
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
+  }
 }
 

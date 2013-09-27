@@ -29,92 +29,91 @@
 
 int main()
 {
-  // Set the position the camera has to reach
-  vpHomogeneousMatrix cdMo ;
-  cdMo[1][3] = 1.2; // t_y should be different from zero to be non singular
-  cdMo[2][3] = 0.5;
+  try {
+    // Set the position the camera has to reach
+    vpHomogeneousMatrix cdMo ;
+    cdMo[1][3] = 1.2; // t_y should be different from zero to be non singular
+    cdMo[2][3] = 0.5;
 
-  // Set the initial camera position
-  vpHomogeneousMatrix cMo;
-  cMo[0][3] = 0.3;
-  cMo[1][3] = cdMo[1][3];
-  cMo[2][3] = 1.;
-  vpRotationMatrix cdRo(0, atan2(cMo[0][3], cMo[1][3]), 0);
-  cMo.insert(cdRo);
+    // Set the initial camera position
+    vpHomogeneousMatrix cMo;
+    cMo[0][3] = 0.3;
+    cMo[1][3] = cdMo[1][3];
+    cMo[2][3] = 1.;
+    vpRotationMatrix cdRo(0, atan2(cMo[0][3], cMo[1][3]), 0);
+    cMo.insert(cdRo);
 
-  vpSimulatorPioneerPan robot ;
-  robot.setSamplingTime(0.04);
-  vpHomogeneousMatrix wMc, wMo;
+    vpSimulatorPioneerPan robot ;
+    robot.setSamplingTime(0.04);
+    vpHomogeneousMatrix wMc, wMo;
 
-  // Get robot position world frame
-  robot.getPosition(wMc);
+    // Get robot position world frame
+    robot.getPosition(wMc);
 
-  // Compute the position of the object in the world frame
-  wMo = wMc * cMo;
+    // Compute the position of the object in the world frame
+    wMo = wMc * cMo;
 
-  // Define the target
-  vpPoint point;
-  point.setWorldCoordinates(0,0,0); // Coordinates in the object frame
-  point.track(cMo);
+    // Define the target
+    vpPoint point;
+    point.setWorldCoordinates(0,0,0); // Coordinates in the object frame
+    point.track(cMo);
 
-  vpServo task;
-  task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
-  task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
-  task.setLambda(0.2);
+    vpServo task;
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
+    task.setLambda(0.2);
 
-  vpVelocityTwistMatrix cVe;
-  cVe = robot.get_cVe();
-  task.set_cVe(cVe);
+    vpVelocityTwistMatrix cVe;
+    cVe = robot.get_cVe();
+    task.set_cVe(cVe);
 
-  vpMatrix eJe;
-  robot.get_eJe(eJe);
-  task.set_eJe(eJe);
+    vpMatrix eJe;
+    robot.get_eJe(eJe);
+    task.set_eJe(eJe);
 
-  // Current and desired visual feature associated later to the x coordinate of the point
-  vpFeaturePoint s_x, s_xd;
+    // Current and desired visual feature associated later to the x coordinate of the point
+    vpFeaturePoint s_x, s_xd;
 
-  // Create the current x visual feature
-  vpFeatureBuilder::create(s_x, point);
+    // Create the current x visual feature
+    vpFeatureBuilder::create(s_x, point);
 
-  // Create the desired x* visual feature
-  s_xd.buildFrom(0, 0, cdMo[2][3]);
+    // Create the desired x* visual feature
+    s_xd.buildFrom(0, 0, cdMo[2][3]);
 
-  // Add the feature
-  task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
+    // Add the feature
+    task.addFeature(s_x, s_xd, vpFeaturePoint::selectX());
 
-  // Create the current and desired log(Z/Z*) visual feature
-  vpFeatureDepth s_Z, s_Zd;
-  // Initial depth of the target in front of the camera
-  double Z = point.get_Z();
-  // Desired depth Z* of the target.
-  double Zd = cdMo[2][3];
-  s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd));
-  s_Zd.buildFrom(0, 0, Zd, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
+    // Create the current and desired log(Z/Z*) visual feature
+    vpFeatureDepth s_Z, s_Zd;
+    // Initial depth of the target in front of the camera
+    double Z = point.get_Z();
+    // Desired depth Z* of the target.
+    double Zd = cdMo[2][3];
+    s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z/Zd));
+    s_Zd.buildFrom(0, 0, Zd, 0); // log(Z/Z*) = 0 that's why the last parameter is 0
 
-  // Add the feature
-  task.addFeature(s_Z, s_Zd);
+    // Add the feature
+    task.addFeature(s_Z, s_Zd);
 
 #ifdef VISP_HAVE_DISPLAY
-  // Create a window (800 by 500) at position (400, 10) with 3 graphics
-  vpPlot graph(3, 800, 500, 400, 10, "Curves...");
+    // Create a window (800 by 500) at position (400, 10) with 3 graphics
+    vpPlot graph(3, 800, 500, 400, 10, "Curves...");
 
-  // Init the curve plotter
-  graph.initGraph(0,3);
-  graph.initGraph(1,2);
-  graph.initGraph(2,1);
-  graph.setTitle(0, "Velocities");
-  graph.setTitle(1, "Error s-s*");
-  graph.setTitle(2, "Depth");
-  graph.setLegend(0, 0, "vx");
-  graph.setLegend(0, 1, "wz");
-  graph.setLegend(0, 2, "qdot_pan");
-  graph.setLegend(1, 0, "x");
-  graph.setLegend(1, 1, "log(Z/Z*)");
-  graph.setLegend(2, 0, "Z");
+    // Init the curve plotter
+    graph.initGraph(0,3);
+    graph.initGraph(1,2);
+    graph.initGraph(2,1);
+    graph.setTitle(0, "Velocities");
+    graph.setTitle(1, "Error s-s*");
+    graph.setTitle(2, "Depth");
+    graph.setLegend(0, 0, "vx");
+    graph.setLegend(0, 1, "wz");
+    graph.setLegend(0, 2, "qdot_pan");
+    graph.setLegend(1, 0, "x");
+    graph.setLegend(1, 1, "log(Z/Z*)");
+    graph.setLegend(2, 0, "Z");
 #endif
 
-  try
-  {
     int iter = 1;
     for (; ;)
     {
@@ -159,12 +158,12 @@ int main()
     vpDisplay::flush(graph.I);
     vpDisplay::getClick(graph.I);
 #endif
-  }
-  catch(...)
-  {
-  }
 
-  // Kill the servo task
-  task.print();
-  task.kill();
+    // Kill the servo task
+    task.print();
+    task.kill();
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 }

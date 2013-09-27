@@ -45,6 +45,7 @@
 #define vpMatrix_H
 
 #include <visp/vpConfig.h>
+#include <visp/vpException.h>
 #include <visp/vpTime.h>
 
 #ifdef VISP_HAVE_GSL

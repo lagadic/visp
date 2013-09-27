@@ -167,35 +167,34 @@ bool getOptions(int argc, const char **argv, bool &display,
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  unsigned nframes = 50;
-  bool save = false;
-
-  // Declare an image. It size is not defined yet. It will be defined when the
-  // image will acquired the first time.
-#ifdef GRAB_COLOR
-  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
-#else
-  vpImage<unsigned char> I; // This is a B&W image
-#endif
-
-  // Set default output image name for saving
-#ifdef GRAB_COLOR
-  // Color images will be saved in PGM P6 format
-  std::string opath = "C:/temp/I%04d.ppm";
-#else
-  // B&W images will be saved in PGM P5 format
-  std::string opath = "C:/temp/I%04d.pgm";
-#endif
-
-  // Read the command line options
-  if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
-    exit (-1);
-  }
-  vpDirectShowGrabber* grabber = NULL;
   try {
+    bool opt_display = true;
+    unsigned nframes = 50;
+    bool save = false;
+
+    // Declare an image. It size is not defined yet. It will be defined when the
+    // image will acquired the first time.
+#ifdef GRAB_COLOR
+    vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+#else
+    vpImage<unsigned char> I; // This is a B&W image
+#endif
+
+    // Set default output image name for saving
+#ifdef GRAB_COLOR
+    // Color images will be saved in PGM P6 format
+    std::string opath = "C:/temp/I%04d.ppm";
+#else
+    // B&W images will be saved in PGM P5 format
+    std::string opath = "C:/temp/I%04d.pgm";
+#endif
+
+    // Read the command line options
+    if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
+      exit (-1);
+    }
     // Create the grabber
-    grabber = new vpDirectShowGrabber();
+    vpDirectShowGrabber* grabber = new vpDirectShowGrabber();
 
     //test if a camera is connected
     if(grabber->getDeviceNumber() == 0)
@@ -209,29 +208,22 @@ main(int argc, const char ** argv)
 
     // Acquire an image
     grabber->acquire(I);
-  }
-  catch(...)
-  {
-    if (grabber !=NULL) delete grabber;
-    vpCTRACE << "Cannot acquire an image... " << std::endl ;
-    exit(-1);
-  }
 
-  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-            << I.getHeight() << std::endl;
 
-  // Creates a display
+    std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+              << I.getHeight() << std::endl;
+
+    // Creates a display
 #if defined VISP_HAVE_GTK
-  vpDisplayGTK display;
+    vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
+    vpDisplayGDI display;
 #endif
 
-  if (opt_display) {
-    display.init(I,100,100,"DirectShow Framegrabber");
-  }
+    if (opt_display) {
+      display.init(I,100,100,"DirectShow Framegrabber");
+    }
 
-  try {
     double tbegin=0, tend=0, tloop=0, ttotal=0;
 
     ttotal = 0;
@@ -242,8 +234,8 @@ main(int argc, const char ** argv)
       grabber->acquire(I);
 
       if (opt_display) {
-	      //Displays the grabbed rgba image
-	      vpDisplay::display(I);
+        //Displays the grabbed rgba image
+        vpDisplay::display(I);
         vpDisplay::flush(I);
       }
 
@@ -264,14 +256,12 @@ main(int argc, const char ** argv)
     std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
 
     // Release the framegrabber
-    if (grabber !=NULL) delete grabber;
-
+    delete grabber;
+    return 0;
   }
-  catch(...)
-  {
-    vpCERROR << "Failure: exit" << std::endl;
-    if (grabber !=NULL) delete grabber;
-    return(-1);
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
 }
 #else // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))

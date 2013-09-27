@@ -241,11 +241,12 @@ main(int argc, const char ** argv)
     sleep(5) ;
 
     std::cout << "The end" << std::endl;
+    return 0;
   }
-  catch (...) {
-    vpERROR_TRACE(" Test failed") ;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
-  return 0;
 }
 #else
 int

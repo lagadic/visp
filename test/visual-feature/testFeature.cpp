@@ -96,8 +96,8 @@ int main()
     }
     return 0;
   }
-  catch(vpServoException e) {
-    std::cout << e << std::endl;
-    return -1;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
 }

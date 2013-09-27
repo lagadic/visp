@@ -156,170 +156,177 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  bool opt_click_allowed = true;
+  try {
+    bool opt_display = true;
+    bool opt_click_allowed = true;
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-    exit (-1);
-  }
+    // Read the command line options
+    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+      exit (-1);
+    }
 
-  vpImage<unsigned char> I(512,512,255) ;
+    vpImage<unsigned char> I(512,512,255) ;
 
-  // We open a window using either X11, GTK or GDI.
+    // We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
-  vpDisplayX display;
+    vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display;
+    vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display;
+    vpDisplayGDI display;
 #endif
 
-  if (opt_display) {
-    try{
-      // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100,"Camera view...") ;
-      // Display the image
-      // The image class has a member that specify a pointer toward
-      // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
-      // display variable.
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
+    if (opt_display) {
+      try{
+        // Display size is automatically defined by the image (I) size
+        display.init(I, 100, 100,"Camera view...") ;
+        // Display the image
+        // The image class has a member that specify a pointer toward
+        // the display that has been initialized in the display declaration
+        // therefore is is no longuer necessary to make a reference to the
+        // display variable.
+        vpDisplay::display(I) ;
+        vpDisplay::flush(I) ;
+      }
+      catch(...)
+      {
+        vpERROR_TRACE("Error while displaying the image") ;
+        exit(-1);
+      }
     }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
-  }
 
-  double px, py ; px = py = 600 ;
-  double u0, v0 ; u0 = v0 = 256 ;
+    double px, py ; px = py = 600 ;
+    double u0, v0 ; u0 = v0 = 256 ;
 
-  vpCameraParameters cam(px,py,u0,v0);
+    vpCameraParameters cam(px,py,u0,v0);
 
-  vpServo task ;
-  vpSimulatorCamera robot ;
+    vpServo task ;
+    vpSimulatorCamera robot ;
 
-  // sets the initial camera location
-  vpHomogeneousMatrix cMo(-0.2,0.1,2,
-                          vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(20));
+    // sets the initial camera location
+    vpHomogeneousMatrix cMo(-0.2,0.1,2,
+                            vpMath::rad(5),  vpMath::rad(5),  vpMath::rad(20));
 
-  vpHomogeneousMatrix wMc, wMo;
-  robot.getPosition(wMc) ;
-  wMo = wMc * cMo; // Compute the position of the object in the world frame
-
-  // sets the final camera location (for simulation purpose)
-  vpHomogeneousMatrix cMod(0,0,1,
-                           vpMath::rad(-60),  vpMath::rad(0),  vpMath::rad(0));
-
-  // sets the cylinder coordinates in the world frame
-  vpCylinder cylinder(0,1,0,  // direction
-                      0,0,0,  // point of the axis
-                      0.1) ;  // radius
-
-  // sets the desired position of the visual feature
-  cylinder.track(cMod) ;
-  cylinder.print() ;
-
-  vpFeatureLine ld[2] ;
-  int i ;
-  for(i=0 ; i < 2 ; i++)
-    vpFeatureBuilder::create(ld[i],cylinder,i)  ;
-
-  // computes  the cylinder coordinates in the camera frame and its 2D coordinates
-  // sets the current position of the visual feature
-  cylinder.track(cMo) ;
-  cylinder.print() ;
-
-  vpFeatureLine l[2] ;
-  for(i=0 ; i < 2 ; i++)
-  {
-    vpFeatureBuilder::create(l[i],cylinder,i)  ;
-    l[i].print() ;
-  }
-
-  // define the task
-  // - we want an eye-in-hand control law
-  // - robot is controlled in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-  // task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE) ;
-  //  it can also be interesting to test these possibilities
-  //    task.setInteractionMatrixType(vpServo::MEAN, vpServo::PSEUDO_INVERSE) ;
-  task.setInteractionMatrixType(vpServo::DESIRED,vpServo::PSEUDO_INVERSE) ;
-  //task.setInteractionMatrixType(vpServo::DESIRED,  vpServo::TRANSPOSE) ;
-  // task.setInteractionMatrixType(vpServo::CURRENT,  vpServo::TRANSPOSE) ;
-
-  // - we want to see 2 lines on 2 lines
-  task.addFeature(l[0],ld[0]) ;
-  task.addFeature(l[1],ld[1]) ;
-
-  vpServoDisplay::display(task,cam,I) ;
-  vpDisplay::flush(I) ;
-
-  // Display task information
-  task.print() ;
-
-  if (opt_display && opt_click_allowed) {
-    std::cout << "\n\nClick in the camera view window to start..." << std::endl;
-    vpDisplay::getClick(I) ;
-  }
-
-  // - set the gain
-  task.setLambda(1) ;
-
-  // Display task information
-  task.print() ;
-
-  unsigned int iter=0 ;
-  // loop
-  do
-  {
-    std::cout << "---------------------------------------------" << iter++ <<std::endl ;
-    vpColVector v ;
-
-    // get the robot position
+    vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc) ;
-    // Compute the position of the camera wrt the object frame
-    cMo = wMc.inverse() * wMo;
+    wMo = wMc * cMo; // Compute the position of the object in the world frame
 
-    // new line position
-    // retrieve x,y and Z of the vpLine structure
+    // sets the final camera location (for simulation purpose)
+    vpHomogeneousMatrix cMod(0,0,1,
+                             vpMath::rad(-60),  vpMath::rad(0),  vpMath::rad(0));
+
+    // sets the cylinder coordinates in the world frame
+    vpCylinder cylinder(0,1,0,  // direction
+                        0,0,0,  // point of the axis
+                        0.1) ;  // radius
+
+    // sets the desired position of the visual feature
+    cylinder.track(cMod) ;
+    cylinder.print() ;
+
+    vpFeatureLine ld[2] ;
+    int i ;
+    for(i=0 ; i < 2 ; i++)
+      vpFeatureBuilder::create(ld[i],cylinder,i)  ;
+
+    // computes  the cylinder coordinates in the camera frame and its 2D coordinates
+    // sets the current position of the visual feature
     cylinder.track(cMo) ;
-    //    cylinder.print() ;
+    cylinder.print() ;
+
+    vpFeatureLine l[2] ;
     for(i=0 ; i < 2 ; i++)
     {
       vpFeatureBuilder::create(l[i],cylinder,i)  ;
-      //   l[i].print() ;
+      l[i].print() ;
     }
 
-    if (opt_display) {
-      vpDisplay::display(I) ;
-      vpServoDisplay::display(task,cam,I) ;
-      vpDisplay::flush(I) ;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    // task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE) ;
+    //  it can also be interesting to test these possibilities
+    //    task.setInteractionMatrixType(vpServo::MEAN, vpServo::PSEUDO_INVERSE) ;
+    task.setInteractionMatrixType(vpServo::DESIRED,vpServo::PSEUDO_INVERSE) ;
+    //task.setInteractionMatrixType(vpServo::DESIRED,  vpServo::TRANSPOSE) ;
+    // task.setInteractionMatrixType(vpServo::CURRENT,  vpServo::TRANSPOSE) ;
+
+    // - we want to see 2 lines on 2 lines
+    task.addFeature(l[0],ld[0]) ;
+    task.addFeature(l[1],ld[1]) ;
+
+    vpServoDisplay::display(task,cam,I) ;
+    vpDisplay::flush(I) ;
+
+    // Display task information
+    task.print() ;
+
+    if (opt_display && opt_click_allowed) {
+      std::cout << "\n\nClick in the camera view window to start..." << std::endl;
+      vpDisplay::getClick(I) ;
     }
 
-    // compute the control law
-    v = task.computeControlLaw() ;
+    // - set the gain
+    task.setLambda(1) ;
 
-    // send the camera velocity to the controller
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    // Display task information
+    task.print() ;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
+    unsigned int iter=0 ;
+    // loop
+    do
+    {
+      std::cout << "---------------------------------------------" << iter++ <<std::endl ;
+      vpColVector v ;
 
-    //   vpDisplay::getClick(I) ;
+      // get the robot position
+      robot.getPosition(wMc) ;
+      // Compute the position of the camera wrt the object frame
+      cMo = wMc.inverse() * wMo;
+
+      // new line position
+      // retrieve x,y and Z of the vpLine structure
+      cylinder.track(cMo) ;
+      //    cylinder.print() ;
+      for(i=0 ; i < 2 ; i++)
+      {
+        vpFeatureBuilder::create(l[i],cylinder,i)  ;
+        //   l[i].print() ;
+      }
+
+      if (opt_display) {
+        vpDisplay::display(I) ;
+        vpServoDisplay::display(task,cam,I) ;
+        vpDisplay::flush(I) ;
+      }
+
+      // compute the control law
+      v = task.computeControlLaw() ;
+
+      // send the camera velocity to the controller
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ; ;
+
+      //   vpDisplay::getClick(I) ;
+    }
+    while(( task.getError() ).sumSquare() >  1e-9) ;
+
+    if (opt_display && opt_click_allowed) {
+      std::cout << "\nClick in the camera view window to end..." << std::endl;
+      vpDisplay::getClick(I) ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+    return 0;
   }
-  while(( task.getError() ).sumSquare() >  1e-9) ;
-
-  if (opt_display && opt_click_allowed) {
-    std::cout << "\nClick in the camera view window to end..." << std::endl;
-    vpDisplay::getClick(I) ;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
-
-  // Display task information
-  task.print() ;
-  task.kill();
 }
 
 #else

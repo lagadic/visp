@@ -188,72 +188,79 @@ bool testSvdOpenCvGSLCoherence(double epsilon){
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
-  }
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
 
-  unsigned int i,j ;
-  vpMatrix L(60000,6), Ls ;
-  for (i=0 ; i < L.getRows() ; i++)
-    for  (j=0 ; j < L.getCols() ; j++)
-      L[i][j] = 2*i+j + cos((double)(i+j))+((double)(i)) ;
-  //  std::cout << L << std::endl ;
-  Ls = L ;
-  std::cout << "--------------------------------------"<<std::endl ;
+    unsigned int i,j ;
+    vpMatrix L(60000,6), Ls ;
+    for (i=0 ; i < L.getRows() ; i++)
+      for  (j=0 ; j < L.getCols() ; j++)
+        L[i][j] = 2*i+j + cos((double)(i+j))+((double)(i)) ;
+    //  std::cout << L << std::endl ;
+    Ls = L ;
+    std::cout << "--------------------------------------"<<std::endl ;
 
-  vpColVector W(L.getCols()) ;
-  vpMatrix V(L.getCols(), L.getCols()) ;
+    vpColVector W(L.getCols()) ;
+    vpMatrix V(L.getCols(), L.getCols()) ;
 
-  double t = vpTime::measureTimeMs() ;
-  L.svdNr(W,V) ;
-  t = vpTime::measureTimeMs() -t ;
+    double t = vpTime::measureTimeMs() ;
+    L.svdNr(W,V) ;
+    t = vpTime::measureTimeMs() -t ;
 
-  std::cout <<"svdNr Numerical recipes \n time " <<t << std::endl;
-  std::cout << W.t() ;
-  std::cout << "--------------------------------------"<<std::endl ;
+    std::cout <<"svdNr Numerical recipes \n time " <<t << std::endl;
+    std::cout << W.t() ;
+    std::cout << "--------------------------------------"<<std::endl ;
 
 
 #ifdef VISP_HAVE_GSL
-  L = Ls ;
-  t = vpTime::measureTimeMs() ;
-  L.svdGsl(W,V) ;
-  t = vpTime::measureTimeMs() -t ;
-  std::cout <<"svdGsl_mod \n time " <<t << std::endl;
-  std::cout << W.t() ;
+    L = Ls ;
+    t = vpTime::measureTimeMs() ;
+    L.svdGsl(W,V) ;
+    t = vpTime::measureTimeMs() -t ;
+    std::cout <<"svdGsl_mod \n time " <<t << std::endl;
+    std::cout << W.t() ;
 
-  std::cout << "--------------------------------------"<<std::endl ;
-  std::cout << "TESTING RANDOM MATRICES:" ;
+    std::cout << "--------------------------------------"<<std::endl ;
+    std::cout << "TESTING RANDOM MATRICES:" ;
 
-  bool ret = true;
-  for(int i=0;i<2000;i++)
-    ret = ret & testRandom(0.00001);
-  if(ret)
-    std:: cout << "Success"<< std:: endl;
-  else
-    std:: cout << "Fail"<< std:: endl;
+    bool ret = true;
+    for(int i=0;i<2000;i++)
+      ret = ret & testRandom(0.00001);
+    if(ret)
+      std:: cout << "Success"<< std:: endl;
+    else
+      std:: cout << "Fail"<< std:: endl;
 
-  std::cout << "--------------------------------------"<<std::endl ;
+    std::cout << "--------------------------------------"<<std::endl ;
 #endif
 
-  std::cout << "--------------------------------------"<<std::endl ;
-  std::cout << "TESTING OPENCV-GSL coherence:" ;
+    std::cout << "--------------------------------------"<<std::endl ;
+    std::cout << "TESTING OPENCV-GSL coherence:" ;
 
-  bool ret2 = true;
-  for(int i=0;i<1;i++)
-    ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
-  if(ret2)
-    std:: cout << "Success"<< std:: endl;
-  else
-    std:: cout << "Fail"<< std:: endl;
+    bool ret2 = true;
+    for(int i=0;i<1;i++)
+      ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
+    if(ret2)
+      std:: cout << "Success"<< std:: endl;
+    else
+      std:: cout << "Fail"<< std:: endl;
 
-  std::cout << "--------------------------------------"<<std::endl ;
+    std::cout << "--------------------------------------"<<std::endl ;
 
-  L = Ls ;
-  t = vpTime::measureTimeMs() ;
-  L.svdFlake(W,V) ;
-  t = vpTime::measureTimeMs() -t ;
-  std::cout <<"svdFlake\n time " <<t << std::endl;
-  std::cout << W.t() ;
+    L = Ls ;
+    t = vpTime::measureTimeMs() ;
+    L.svdFlake(W,V) ;
+    t = vpTime::measureTimeMs() -t ;
+    std::cout <<"svdFlake\n time " <<t << std::endl;
+    std::cout << W.t() ;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 

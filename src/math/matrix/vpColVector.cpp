@@ -190,7 +190,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
   if (m.getCols() !=1)
   {
     vpTRACE(" m should be a 1 cols matrix ") ;
-    throw (vpException(vpException::dimensionError)," m should be a 1 cols matrix ");
+    throw (vpException(vpException::dimensionError,"m should be a 1 cols matrix "));
   }
 
   try {

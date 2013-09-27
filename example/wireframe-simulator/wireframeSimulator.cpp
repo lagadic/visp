@@ -143,41 +143,39 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click)
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  bool opt_click = true;
-  
-  // Read the command line options
-  if (getOptions(argc, argv, opt_display, opt_click) == false) {
-    exit (-1);
-  }
-  
-  /*
+  try {
+    bool opt_display = true;
+    bool opt_click = true;
+
+    // Read the command line options
+    if (getOptions(argc, argv, opt_display, opt_click) == false) {
+      exit (-1);
+    }
+
+    /*
     Three vpImage are created : one for the main camera and the others
     for two external cameras
   */
-  vpImage<vpRGBa> Iint(480,640,255);
-  vpImage<vpRGBa> Iext1(480,640,255);
-  vpImage<vpRGBa> Iext2(480,640,255);
+    vpImage<vpRGBa> Iint(480,640,255);
+    vpImage<vpRGBa> Iext1(480,640,255);
+    vpImage<vpRGBa> Iext2(480,640,255);
 
-  /*
+    /*
     Create a display for each different cameras.
   */
 #if defined VISP_HAVE_X11
-  vpDisplayX display[3];
+    vpDisplayX display[3];
 #elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV display[3];
+    vpDisplayOpenCV display[3];
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display[3];
+    vpDisplayGDI display[3];
 #elif defined VISP_HAVE_D3D9
-  vpDisplayD3D display[3];
+    vpDisplayD3D display[3];
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display[3];
+    vpDisplayGTK display[3];
 #endif
-  
-  if (opt_display)
-  {
-    try
-    {
+
+    if (opt_display) {
       // Display size is automatically defined by the image (I) size
       display[0].init(Iint, 100, 100,"The internal view") ;
       display[1].init(Iext1, 100, 100,"The first external view") ;
@@ -192,146 +190,145 @@ main(int argc, const char ** argv)
       vpDisplay::display(Iext2);
       vpDisplay::flush(Iext2);
     }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
-  }
 
-  //The homogeneous matrix which gives the current position of the main camera relative to the object
-  vpHomogeneousMatrix cMo(0,0.05,1.3,vpMath::rad(15),vpMath::rad(25),0);
-  
-  //The homogeneous matrix which gives the desired position of the main camera relative to the object
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
+    //The homogeneous matrix which gives the current position of the main camera relative to the object
+    vpHomogeneousMatrix cMo(0,0.05,1.3,vpMath::rad(15),vpMath::rad(25),0);
 
-  //Declaration of the simulator
-  vpWireFrameSimulator sim;
-  /*
+    //The homogeneous matrix which gives the desired position of the main camera relative to the object
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
+
+    //Declaration of the simulator
+    vpWireFrameSimulator sim;
+    /*
     Set the scene. It enables to choose the shape of the object and the shape of the desired object which is
-    displayed in the main camera view. It exists several objects in ViSP. See the html documentation of the 
+    displayed in the main camera view. It exists several objects in ViSP. See the html documentation of the
     simulator class to have the complete list.
     
     Note : if you don't want to have a desired object displayed in the main camera view you can use the initObject Method.
     
-    Here the object is a plate with 4 points and it is the same object which is used to display the object at the desired position. 
+    Here the object is a plate with 4 points and it is the same object which is used to display the object at the desired position.
   */
-  sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
-  
-  /*
+    sim.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+
+    /*
     The object at the current position will be displayed in blue
     The object at the desired position will be displayed in red
     The camera will be display in green
   */
-  sim.setCurrentViewColor(vpColor::blue);
-  sim.setDesiredViewColor(vpColor::red);
-  sim.setCameraColor(vpColor::green);
-  /*
+    sim.setCurrentViewColor(vpColor::blue);
+    sim.setDesiredViewColor(vpColor::red);
+    sim.setCameraColor(vpColor::green);
+    /*
     Set the current and the desired position of the camera relative to the object.
   */
-  sim.setCameraPositionRelObj(cMo) ;
-  sim.setDesiredCameraPosition(cdMo);
-  /*
+    sim.setCameraPositionRelObj(cMo) ;
+    sim.setDesiredCameraPosition(cdMo);
+    /*
     Set the main external camera's position relative to the world reference frame.
     More information about the different frames are given in the html documentation.
   */
-  vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0,0,4.5,vpMath::rad(0),vpMath::rad(-30),0));
-  sim.setExternalCameraPosition(camMw);
-  
-  /*
+    vpHomogeneousMatrix camMw(vpHomogeneousMatrix(0.0,0,4.5,vpMath::rad(0),vpMath::rad(-30),0));
+    sim.setExternalCameraPosition(camMw);
+
+    /*
     Set the parameters of the cameras (internal and external)
   */
-  vpCameraParameters camera(1000,1000,320,240);
-  sim.setInternalCameraParameters(camera);
-  sim.setExternalCameraParameters(camera);
-  
-  vpHomogeneousMatrix camoMw(vpHomogeneousMatrix(-0.3,0.2,2.5,vpMath::rad(0),vpMath::rad(10),0));
-  
-  if (opt_display)
-  {
-    //Get the view of the internal camera
-    sim.getInternalImage(Iint);
-    //Get the view of the main external camera
-    sim.getExternalImage(Iext1);
-    //Get the view of an external camera that you can positionned thanks 
-    //to a vpHomogeneousMatrix which describes the position of the camera
-    //relative to the world reference frame.
-    sim.getExternalImage(Iext2,camoMw);
-    //Display the views.
-  
-    vpDisplay::flush(Iint);
-    vpDisplay::flush(Iext1);
-    vpDisplay::flush(Iext2);
-  }
-  
-  std::cout << std::endl;
-  std::cout << "Here are presented the effect of the basic functions of the simulator" << std::endl;
-  std::cout << std::endl;
-  
-  if (opt_display)
-  {
-    if (opt_click) {
-      std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
-      vpDisplay::getClick(Iint);
+    vpCameraParameters camera(1000,1000,320,240);
+    sim.setInternalCameraParameters(camera);
+    sim.setExternalCameraParameters(camera);
+
+    vpHomogeneousMatrix camoMw(vpHomogeneousMatrix(-0.3,0.2,2.5,vpMath::rad(0),vpMath::rad(10),0));
+
+    if (opt_display)
+    {
+      //Get the view of the internal camera
+      sim.getInternalImage(Iint);
+      //Get the view of the main external camera
+      sim.getExternalImage(Iext1);
+      //Get the view of an external camera that you can positionned thanks
+      //to a vpHomogeneousMatrix which describes the position of the camera
+      //relative to the world reference frame.
+      sim.getExternalImage(Iext2,camoMw);
+      //Display the views.
+
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext1);
+      vpDisplay::flush(Iext2);
     }
-    vpDisplay::display(Iint) ;
-    vpDisplay::display(Iext1) ;
-    vpDisplay::display(Iext2) ;
-  }
-  /*
+
+    std::cout << std::endl;
+    std::cout << "Here are presented the effect of the basic functions of the simulator" << std::endl;
+    std::cout << std::endl;
+
+    if (opt_display)
+    {
+      if (opt_click) {
+        std::cout << "Click on the internal view window to continue. the object will move. The external cameras are fixed. The main camera moves too because the homogeneous matrix cMo didn't change." << std::endl;
+        vpDisplay::getClick(Iint);
+      }
+      vpDisplay::display(Iint) ;
+      vpDisplay::display(Iext1) ;
+      vpDisplay::display(Iext2) ;
+    }
+    /*
     To move the object you have to define a vpHomogeneousMatrix which gives
     the position of the object relative to the world refrenece frame.
   */
-  vpHomogeneousMatrix mov(0.05,0.05,0.2,vpMath::rad(10),0,0);
-  sim.set_fMo(mov);
+    vpHomogeneousMatrix mov(0.05,0.05,0.2,vpMath::rad(10),0,0);
+    sim.set_fMo(mov);
 
-  
-  if (opt_display)
-  {
-    //Get the view of the internal camera
-    sim.getInternalImage(Iint);
-    //Get the view of the main external camera
-    sim.getExternalImage(Iext1);
-    //Get the view of an external camera that you can positionned thanks 
-    //to a vpHomogeneousMatrix which describes the position of the camera
-    //relative to the world reference frame.
-    sim.getExternalImage(Iext2,camoMw);
-    //Display the views.
-  
-    vpDisplay::flush(Iint);
-    vpDisplay::flush(Iext1);
-    vpDisplay::flush(Iext2);
-  }
-  
-  std::cout << std::endl;
-  if (opt_display)
-  {
-    if (opt_click) {
-      std::cout << "Click on the internal view window to continue" << std::endl; 
-      vpDisplay::getClick(Iint);
+
+    if (opt_display)
+    {
+      //Get the view of the internal camera
+      sim.getInternalImage(Iint);
+      //Get the view of the main external camera
+      sim.getExternalImage(Iext1);
+      //Get the view of an external camera that you can positionned thanks
+      //to a vpHomogeneousMatrix which describes the position of the camera
+      //relative to the world reference frame.
+      sim.getExternalImage(Iext2,camoMw);
+      //Display the views.
+
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext1);
+      vpDisplay::flush(Iext2);
     }
-  }
-  std::cout << std::endl;
-  std::cout << "Now you can move the main external camera. Click inside the corresponding window with one of the three buttons of your mouse and move the pointer." << std::endl;
-  std::cout << std::endl;
-  std::cout << "Click on the internal view window when you are finished" << std::endl;
-  
-  /*
+
+    std::cout << std::endl;
+    if (opt_display)
+    {
+      if (opt_click) {
+        std::cout << "Click on the internal view window to continue" << std::endl;
+        vpDisplay::getClick(Iint);
+      }
+    }
+    std::cout << std::endl;
+    std::cout << "Now you can move the main external camera. Click inside the corresponding window with one of the three buttons of your mouse and move the pointer." << std::endl;
+    std::cout << std::endl;
+    std::cout << "Click on the internal view window when you are finished" << std::endl;
+
+    /*
     To move the main external camera you need a loop containing the getExternalImage method. This functionnality is only available for the main external camera.
   */
-  if (opt_display && opt_click)
-  {
-    while (!vpDisplay::getClick(Iint, false))
+    if (opt_display && opt_click)
     {
-      vpDisplay::display(Iext1) ;
-      sim.getExternalImage(Iext1);
-      vpDisplay::flush(Iext1);
+      while (!vpDisplay::getClick(Iint, false))
+      {
+        vpDisplay::display(Iext1) ;
+        sim.getExternalImage(Iext1);
+        vpDisplay::flush(Iext1);
+      }
     }
-  }
 
-  std::cout << std::endl;
-  std::cout << "You have seen the main capabilities of the simulator. Other specific functionalities are available. Please refers to the html documentation to access the list of all functions" << std::endl;
-  return 0;
+    std::cout << std::endl;
+    std::cout << "You have seen the main capabilities of the simulator. Other specific functionalities are available. Please refers to the html documentation to access the list of all functions" << std::endl;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 #else
 int

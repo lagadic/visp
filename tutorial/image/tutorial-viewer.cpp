@@ -23,22 +23,27 @@ int main(int argc, char** argv )
     return -1;
   }
 
+  try {
 #if defined(VISP_HAVE_X11)
-  vpDisplayX d(I);
+    vpDisplayX d(I);
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV d(I);
+    vpDisplayOpenCV d(I);
 #elif defined(VISP_HAVE_GTK)
-  vpDisplayGTK d(I);
+    vpDisplayGTK d(I);
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
+    vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_D3D9)
-  vpDisplayD3d d(I);
+    vpDisplayD3d d(I);
 #else
-  std::cout << "No image viewer is available..." << std::endl;
+    std::cout << "No image viewer is available..." << std::endl;
 #endif
-  vpDisplay::setTitle(I, "My image");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-  std::cout << "A click to quit..." << std::endl;
-  vpDisplay::getClick(I);
+    vpDisplay::setTitle(I, "My image");
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
+    std::cout << "A click to quit..." << std::endl;
+    vpDisplay::getClick(I);
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 }

@@ -57,19 +57,24 @@
 
 int main()
 {
+  try {
+    vpImage<unsigned char> I; // Grey level image
 
-  vpImage<unsigned char> I; // Grey level image
-  
 #ifdef VISP_HAVE_V4L2
-  vpV4l2Grabber g;
-  g.setInput(2);    // Input 2 on the board
-  g.setWidth(768);  // Acquired images are 768 width
-  g.setHeight(576); // Acquired images are 576 height
-  g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
-  g.open(I);        // Open the grabber
-  for ( ; ; )
-    g.acquire(I);     // Acquire a 768x576 grey image
+    vpV4l2Grabber g;
+    g.setInput(2);    // Input 2 on the board
+    g.setWidth(768);  // Acquired images are 768 width
+    g.setHeight(576); // Acquired images are 576 height
+    g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
+    g.open(I);        // Open the grabber
+    for ( ; ; )
+      g.acquire(I);     // Acquire a 768x576 grey image
 #endif
 
-  return 0;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }

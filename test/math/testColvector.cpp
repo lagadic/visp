@@ -114,24 +114,30 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
+
+    vpColVector V(4) ;
+    V = 1.0;
+
+    vpTRACE("------------------------");
+    vpTRACE("call std::cout << V;");
+    std::cout << V << std::endl;
+
+    vpTRACE("------------------------");
+    vpTRACE("call V.normalize();");
+    V.normalize();
+
+    vpTRACE("------------------------");
+    vpTRACE("call std::cout << V;");
+    std::cout << V << std::endl;
+    return (0);
   }
-
-  vpColVector V(4) ;
-  V = 1.0;
-
-  vpTRACE("------------------------");
-  vpTRACE("call std::cout << V;");
-  std::cout << V << std::endl;
-
-  vpTRACE("------------------------");
-  vpTRACE("call V.normalize();");
-  V.normalize();
-
-  vpTRACE("------------------------");
-  vpTRACE("call std::cout << V;");
-  std::cout << V << std::endl;
-
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return (1);
+  }
 }

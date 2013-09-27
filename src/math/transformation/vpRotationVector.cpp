@@ -99,12 +99,16 @@ Rxyz rotation vector:
 */
 std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 {
+  std::ios::fmtflags original_flags( s.flags() );
   s.precision(10) ;
 
   for (unsigned int i=0; i < m.size(); i++)
     s <<  m.r[i] << "\n";
 
   s << std::endl;
+
+  // Restore ostream format
+  s.flags(original_flags);
 
   return s;
 }

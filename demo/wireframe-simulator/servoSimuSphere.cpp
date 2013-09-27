@@ -157,7 +157,7 @@ bool getOptions(int argc, const char **argv, bool &display)
   with h2 = (gx²+gy²)/(4*n20*gy²+4*n02*gx²-8n11gxgy)
   with n20,n02,n11 the second order moments of the sphere
 */
-void computeVisualFeatures(const vpSphere sphere, vpGenericFeature &s)
+void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s)
 {
   double gx = sphere.get_x();
   double gy = sphere.get_y();
@@ -185,7 +185,7 @@ void computeVisualFeatures(const vpSphere sphere, vpGenericFeature &s)
   with I3 the 3x3 identity matrix
   with [s]x the skew matrix related to s
 */
-void computeInteractionMatrix(const vpGenericFeature s,const vpSphere sphere, vpMatrix &L)
+void computeInteractionMatrix(const vpGenericFeature &s,const vpSphere &sphere, vpMatrix &L)
 {
   L = 0;
   L[0][0] = -1/sphere.getR();
@@ -208,32 +208,31 @@ void computeInteractionMatrix(const vpGenericFeature s,const vpSphere sphere, vp
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  
-  // Read the command line options
-  if (getOptions(argc, argv, opt_display) == false) {
-    exit (-1);
-  }
-  
-  vpImage<vpRGBa> Iint(480,640,255);
-  vpImage<vpRGBa> Iext1(480,640,255);
-  vpImage<vpRGBa> Iext2(480,640,255);
+  try {
+    bool opt_display = true;
+
+    // Read the command line options
+    if (getOptions(argc, argv, opt_display) == false) {
+      exit (-1);
+    }
+
+    vpImage<vpRGBa> Iint(480,640,255);
+    vpImage<vpRGBa> Iext1(480,640,255);
+    vpImage<vpRGBa> Iext2(480,640,255);
 
 #if defined VISP_HAVE_X11
-  vpDisplayX display[3];
+    vpDisplayX display[3];
 #elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV display[3];
+    vpDisplayOpenCV display[3];
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI display[3];
+    vpDisplayGDI display[3];
 #elif defined VISP_HAVE_D3D9
-  vpDisplayD3D display[3];
+    vpDisplayD3D display[3];
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK display[3];
+    vpDisplayGTK display[3];
 #endif
-  
-  if (opt_display)
-  {
-    try
+
+    if (opt_display)
     {
       // Display size is automatically defined by the image (I) size
       display[0].init(Iint, 100, 100,"The internal view") ;
@@ -249,162 +248,92 @@ main(int argc, const char ** argv)
       vpDisplay::display(Iext2);
       vpDisplay::flush(Iext2);
     }
-    catch(...)
-    {
-      vpERROR_TRACE("Error while displaying the image") ;
-      exit(-1);
-    }
-  }
 
-  vpServo task;
-  vpRobotCamera robot ;
-  float sampling_time = 0.040f; // Sampling period in second
-  robot.setSamplingTime(sampling_time);
+    vpServo task;
+    vpRobotCamera robot ;
+    float sampling_time = 0.040f; // Sampling period in second
+    robot.setSamplingTime(sampling_time);
 
-  // Since the task gain lambda is very high, we need to increase default max velocities
-  robot.setMaxTranslationVelocity(10);
-  robot.setMaxRotationVelocity(vpMath::rad(180));
+    // Since the task gain lambda is very high, we need to increase default max velocities
+    robot.setMaxTranslationVelocity(10);
+    robot.setMaxRotationVelocity(vpMath::rad(180));
 
-  // Set initial position of the object in the camera frame
-  vpHomogeneousMatrix cMo(0,0.1,2.0,vpMath::rad(35),vpMath::rad(25),0);
-  // Set desired position of the object in the camera frame
-  vpHomogeneousMatrix cdMo(0.0,0.0,0.8,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
-  // Set initial position of the object in the world frame
-  vpHomogeneousMatrix wMo(0.0,0.0,0,0,0,0);
-  // Position of the camera in the world frame
-  vpHomogeneousMatrix wMc, cMw;
-  wMc = wMo * cMo.inverse();
-  cMw = wMc.inverse();
+    // Set initial position of the object in the camera frame
+    vpHomogeneousMatrix cMo(0,0.1,2.0,vpMath::rad(35),vpMath::rad(25),0);
+    // Set desired position of the object in the camera frame
+    vpHomogeneousMatrix cdMo(0.0,0.0,0.8,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
+    // Set initial position of the object in the world frame
+    vpHomogeneousMatrix wMo(0.0,0.0,0,0,0,0);
+    // Position of the camera in the world frame
+    vpHomogeneousMatrix wMc, cMw;
+    wMc = wMo * cMo.inverse();
+    cMw = wMc.inverse();
 
-  robot.setPosition( cMw );
-  
-  //The sphere
-  vpSphere sphere(0,0,0,0.15);
-  
-  // Projection of the sphere
-  sphere.track(cMo);
+    robot.setPosition( cMw );
 
-  //Set the current visual feature
-  vpGenericFeature s(3);
-  computeVisualFeatures(sphere, s);
-    
-  // Projection of the points
-  sphere.track(cdMo);
+    //The sphere
+    vpSphere sphere(0,0,0,0.15);
 
-  vpGenericFeature sd(3);
-  computeVisualFeatures(sphere, sd);
-  
-  vpMatrix L(3,6);
-  computeInteractionMatrix(sd,sphere,L);
-  sd.setInteractionMatrix(L);
-
-  task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
-  task.setInteractionMatrixType(vpServo::DESIRED);
-  
-  vpHomogeneousMatrix cMe;
-  vpVelocityTwistMatrix cVe(cMe);
-  task.set_cVe(cVe);
-
-  vpMatrix eJe;
-  robot.get_eJe(eJe);
-  task.set_eJe(eJe);
-
-  task.addFeature(s,sd) ;
-  
-  task.setLambda(7);
-  
-  vpWireFrameSimulator sim;
-  
-  // Set the scene
-  sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::D_STANDARD);
-
-  // Initialize simulator frames
-  sim.set_fMo( wMo );  // Position of the object in the world reference frame
-  sim.setCameraPositionRelObj(cMo) ; // initial position of the camera
-  sim.setDesiredCameraPosition(cdMo); // desired position of the camera
-  
-  // Set the External camera position
-  vpHomogeneousMatrix camMf(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0);
-  sim.setExternalCameraPosition(camMf);
-  
-  // Computes the position of a camera which is fixed in the object frame
-  vpHomogeneousMatrix camoMf(0,0.0,2.5,0,vpMath::rad(140),0);
-  camoMf = camoMf*(sim.get_fMo().inverse());
-  
-  // Set the parameters of the cameras (internal and external)
-  vpCameraParameters camera(1000,1000,320,240);
-  sim.setInternalCameraParameters(camera);
-  sim.setExternalCameraParameters(camera);
-  
-  int stop = 10;
-  
-  if (opt_display)
-  {
-    stop = 1000;
-    //Get the internal and external views
-    sim.getInternalImage(Iint);
-    sim.getExternalImage(Iext1);
-    sim.getExternalImage(Iext2,camoMf);
-
-    //Display the object frame (current and desired position)
-    vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
-
-    //Display the object frame the world reference frame and the camera frame
-    vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo(),camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iext1,camMf,camera,0.2,vpColor::none);
-
-    //Display the world reference frame and the object frame
-    vpDisplay::displayFrame(Iext2,camoMf,camera,0.2,vpColor::none);
-    vpDisplay::displayFrame(Iext2,camoMf*sim.get_fMo(),camera,0.05,vpColor::none);
-
-    vpDisplay::flush(Iint);
-    vpDisplay::flush(Iext1);
-    vpDisplay::flush(Iext2);
-    
-    std::cout << "Click on a display" << std::endl;
-    while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext1,false) && !vpDisplay::getClick(Iext2,false)){};
-  }
-
-  //Print the task
-  task.print() ;
-
-  int iter = 0;
-  vpColVector v ;
-
-  while(iter++ < stop)
-  {
-    if (opt_display)
-    {
-      vpDisplay::display(Iint) ;
-      vpDisplay::display(Iext1) ;
-      vpDisplay::display(Iext2) ;
-    }
-
-    double t = vpTime::measureTimeMs();
-
-    robot.get_eJe(eJe) ;
-    task.set_eJe(eJe) ;
-
-    robot.getPosition(cMw) ;
-    cMo = cMw * wMo;
-
+    // Projection of the sphere
     sphere.track(cMo);
 
     //Set the current visual feature
+    vpGenericFeature s(3);
     computeVisualFeatures(sphere, s);
+    
+    // Projection of the points
+    sphere.track(cdMo);
 
-    v = task.computeControlLaw() ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-    sim.setCameraPositionRelObj(cMo);
+    vpGenericFeature sd(3);
+    computeVisualFeatures(sphere, sd);
 
-    //Compute the position of the external view which is fixed in the object frame
-    camoMf.buildFrom(0,0.0,2.5,0,vpMath::rad(150),0);
+    vpMatrix L(3,6);
+    computeInteractionMatrix(sd,sphere,L);
+    sd.setInteractionMatrix(L);
+
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+    task.setInteractionMatrixType(vpServo::DESIRED);
+
+    vpHomogeneousMatrix cMe;
+    vpVelocityTwistMatrix cVe(cMe);
+    task.set_cVe(cVe);
+
+    vpMatrix eJe;
+    robot.get_eJe(eJe);
+    task.set_eJe(eJe);
+
+    task.addFeature(s,sd) ;
+
+    task.setLambda(7);
+
+    vpWireFrameSimulator sim;
+
+    // Set the scene
+    sim.initScene(vpWireFrameSimulator::SPHERE, vpWireFrameSimulator::D_STANDARD);
+
+    // Initialize simulator frames
+    sim.set_fMo( wMo );  // Position of the object in the world reference frame
+    sim.setCameraPositionRelObj(cMo) ; // initial position of the camera
+    sim.setDesiredCameraPosition(cdMo); // desired position of the camera
+
+    // Set the External camera position
+    vpHomogeneousMatrix camMf(0.0,0,3.5,vpMath::rad(0),vpMath::rad(30),0);
+    sim.setExternalCameraPosition(camMf);
+
+    // Computes the position of a camera which is fixed in the object frame
+    vpHomogeneousMatrix camoMf(0,0.0,2.5,0,vpMath::rad(140),0);
     camoMf = camoMf*(sim.get_fMo().inverse());
+
+    // Set the parameters of the cameras (internal and external)
+    vpCameraParameters camera(1000,1000,320,240);
+    sim.setInternalCameraParameters(camera);
+    sim.setExternalCameraParameters(camera);
+
+    int stop = 10;
 
     if (opt_display)
     {
+      stop = 1000;
       //Get the internal and external views
       sim.getInternalImage(Iint);
       sim.getExternalImage(Iext1);
@@ -414,10 +343,10 @@ main(int argc, const char ** argv)
       vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
       vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
 
-      //Display the camera frame, the object frame the world reference frame
-      vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
-      vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
-      vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition(),camera,0.2,vpColor::none);
+      //Display the object frame the world reference frame and the camera frame
+      vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
+      vpDisplay::displayFrame(Iext1,camMf*sim.get_fMo(),camera,0.2,vpColor::none);
+      vpDisplay::displayFrame(Iext1,camMf,camera,0.2,vpColor::none);
 
       //Display the world reference frame and the object frame
       vpDisplay::displayFrame(Iext2,camoMf,camera,0.2,vpColor::none);
@@ -426,17 +355,85 @@ main(int argc, const char ** argv)
       vpDisplay::flush(Iint);
       vpDisplay::flush(Iext1);
       vpDisplay::flush(Iext2);
+
+      std::cout << "Click on a display" << std::endl;
+      while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext1,false) && !vpDisplay::getClick(Iext2,false)){};
     }
 
-    vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+    //Print the task
+    task.print() ;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    int iter = 0;
+    vpColVector v ;
+
+    while(iter++ < stop)
+    {
+      if (opt_display)
+      {
+        vpDisplay::display(Iint) ;
+        vpDisplay::display(Iext1) ;
+        vpDisplay::display(Iext2) ;
+      }
+
+      double t = vpTime::measureTimeMs();
+
+      robot.get_eJe(eJe) ;
+      task.set_eJe(eJe) ;
+
+      robot.getPosition(cMw) ;
+      cMo = cMw * wMo;
+
+      sphere.track(cMo);
+
+      //Set the current visual feature
+      computeVisualFeatures(sphere, s);
+
+      v = task.computeControlLaw() ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+      sim.setCameraPositionRelObj(cMo);
+
+      //Compute the position of the external view which is fixed in the object frame
+      camoMf.buildFrom(0,0.0,2.5,0,vpMath::rad(150),0);
+      camoMf = camoMf*(sim.get_fMo().inverse());
+
+      if (opt_display)
+      {
+        //Get the internal and external views
+        sim.getInternalImage(Iint);
+        sim.getExternalImage(Iext1);
+        sim.getExternalImage(Iext2,camoMf);
+
+        //Display the object frame (current and desired position)
+        vpDisplay::displayFrame(Iint,cMo,camera,0.2,vpColor::none);
+        vpDisplay::displayFrame(Iint,cdMo,camera,0.2,vpColor::none);
+
+        //Display the camera frame, the object frame the world reference frame
+        vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo()*cMo.inverse(),camera,0.2,vpColor::none);
+        vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition()*sim.get_fMo(),camera,0.2,vpColor::none);
+        vpDisplay::displayFrame(Iext1,sim.getExternalCameraPosition(),camera,0.2,vpColor::none);
+
+        //Display the world reference frame and the object frame
+        vpDisplay::displayFrame(Iext2,camoMf,camera,0.2,vpColor::none);
+        vpDisplay::displayFrame(Iext2,camoMf*sim.get_fMo(),camera,0.05,vpColor::none);
+
+        vpDisplay::flush(Iint);
+        vpDisplay::flush(Iext1);
+        vpDisplay::flush(Iext2);
+      }
+
+      vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    }
+
+    task.print() ;
+    task.kill() ;
+    return 0;
   }
-
-  task.print() ;
-  task.kill() ;
-
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 #else
 int

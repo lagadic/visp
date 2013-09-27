@@ -35,6 +35,7 @@
 
 
 #include <visp/vpConfig.h>
+#include <visp/vpException.h>
 
 /*!
   \class vpParseArgv

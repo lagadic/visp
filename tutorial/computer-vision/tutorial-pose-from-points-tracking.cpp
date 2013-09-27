@@ -45,48 +45,52 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 int main()
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394))
-  vpImage<unsigned char> I;
+  try {  vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_DC1394_2)
-  vp1394TwoGrabber g;
+    vp1394TwoGrabber g;
 #elif defined(VISP_HAVE_CMU1394)
-  vp1394CMUGrabber g;
+    vp1394CMUGrabber g;
 #endif
-  g.open(I);
+    g.open(I);
 
-  // Parameters of our camera
-  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+    // Parameters of our camera
+    vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
 
-  // The pose container
-  vpHomogeneousMatrix cMo;
+    // The pose container
+    vpHomogeneousMatrix cMo;
 
-  std::vector<vpDot2> dot(4);
-  std::vector<vpPoint> point(4);
-  double L = 0.06;
-  point[0].setWorldCoordinates(-L, -L, 0);
-  point[1].setWorldCoordinates( L, -L, 0);
-  point[2].setWorldCoordinates( L,  L, 0);
-  point[3].setWorldCoordinates(-L,  L, 0);
+    std::vector<vpDot2> dot(4);
+    std::vector<vpPoint> point(4);
+    double L = 0.06;
+    point[0].setWorldCoordinates(-L, -L, 0);
+    point[1].setWorldCoordinates( L, -L, 0);
+    point[2].setWorldCoordinates( L,  L, 0);
+    point[3].setWorldCoordinates(-L,  L, 0);
 
-  bool init = true;
+    bool init = true;
 #if defined(VISP_HAVE_X11)
-  vpDisplayX d(I);
+    vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
+    vpDisplayGDI d(I);
 #endif
 
-  while(1){
-    // Image Acquisition
-    g.acquire(I);
-    vpDisplay::display(I);
-    track(I, dot, init);
-    computePose(point, dot, cam, init, cMo);
-    vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
-    vpDisplay::flush(I);
-    if (init) init = false; // turn off the initialisation specific stuff
+    while(1){
+      // Image Acquisition
+      g.acquire(I);
+      vpDisplay::display(I);
+      track(I, dot, init);
+      computePose(point, dot, cam, init, cMo);
+      vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
+      vpDisplay::flush(I);
+      if (init) init = false; // turn off the initialisation specific stuff
 
-    if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I, false))
         break;
+    }
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif
 }

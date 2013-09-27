@@ -101,40 +101,40 @@
 int
 main()
 {
-  // Log file creation in /tmp/$USERNAME/log.dat
-  // This file contains by line:
-  // - the 6 computed joint velocities (m/s, rad/s) to achieve the task
-  // - the 6 mesured joint velocities (m/s, rad/s)
-  // - the 6 mesured joint positions (m, rad)
-  // - the 2 values of s - s*
-  std::string username;
-  // Get the user login name
-  vpIoTools::getUserName(username);
-
-  // Create a log filename to save velocities...
-  std::string logdirname;
-  logdirname ="/tmp/" + username;
-
-  // Test if the output path exist. If no try to create it
-  if (vpIoTools::checkDirectory(logdirname) == false) {
-    try {
-      // Create the dirname
-      vpIoTools::makeDirectory(logdirname);
-    }
-    catch (...) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Cannot create " << logdirname << std::endl;
-      exit(-1);
-    }
-  }
-  std::string logfilename;
-  logfilename = logdirname + "/log.dat";
-
-  // Open the log file name
-  std::ofstream flog(logfilename.c_str());
-
   try {
+    // Log file creation in /tmp/$USERNAME/log.dat
+    // This file contains by line:
+    // - the 6 computed joint velocities (m/s, rad/s) to achieve the task
+    // - the 6 mesured joint velocities (m/s, rad/s)
+    // - the 6 mesured joint positions (m, rad)
+    // - the 2 values of s - s*
+    std::string username;
+    // Get the user login name
+    vpIoTools::getUserName(username);
+
+    // Create a log filename to save velocities...
+    std::string logdirname;
+    logdirname ="/tmp/" + username;
+
+    // Test if the output path exist. If no try to create it
+    if (vpIoTools::checkDirectory(logdirname) == false) {
+      try {
+        // Create the dirname
+        vpIoTools::makeDirectory(logdirname);
+      }
+      catch (...) {
+        std::cerr << std::endl
+                  << "ERROR:" << std::endl;
+        std::cerr << "  Cannot create " << logdirname << std::endl;
+        exit(-1);
+      }
+    }
+    std::string logfilename;
+    logfilename = logdirname + "/log.dat";
+
+    // Open the log file name
+    std::ofstream flog(logfilename.c_str());
+
     //    vpRobotAfma4 robot ;
     vpRobotAfma4 robot ;
 
@@ -273,7 +273,7 @@ main()
       // v[0], v[1], v[2] correspond to joint translation velocities in m/s
       // v[3], v[4], v[5] correspond to joint rotation velocities in rad/s
       flog << v[0] << " " << v[1] << " " << v[2] << " "
-           << v[3] << " " << v[4] << " " << v[5] << " ";
+                   << v[3] << " " << v[4] << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -284,7 +284,7 @@ main()
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
       flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+                      << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -295,7 +295,7 @@ main()
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
       flog << q[0] << " " << q[1] << " " << q[2] << " "
-           << q[3] << " " << q[4] << " " << q[5] << " ";
+                   << q[3] << " " << q[4] << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
       // point, we have 2 errors (along x and y axis).  This error is expressed
@@ -313,11 +313,9 @@ main()
     task.kill();
     return 0;
   }
-  catch (...)
-  {
-    flog.close() ; // Close the log file
-    vpERROR_TRACE(" Test failed") ;
-    return 0;
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
   }
 }
 

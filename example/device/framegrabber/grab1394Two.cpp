@@ -695,12 +695,12 @@ main(int argc, const char ** argv)
     if (display)
       delete [] d;
 #endif
+    return 0;
   }
-  catch (...) {
-    vpCERROR << "Failure: exit" << std::endl;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-
-  std::cout << " the end" << std::endl;
 }
 #else
 int

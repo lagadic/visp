@@ -255,28 +255,35 @@ void *mainLoop (void *_simu)
 int
 main()
 {
-  vpSimulator simu ;
+  try {
+    vpSimulator simu ;
 
-  // Internal view initialization : view from the robot camera
-  simu.initInternalViewer(480, 360) ;
-  // External view initialization : view from an external camera
-  simu.initExternalViewer(300, 300) ; 
+    // Internal view initialization : view from the robot camera
+    simu.initInternalViewer(480, 360) ;
+    // External view initialization : view from an external camera
+    simu.initExternalViewer(300, 300) ;
 
-  // Inernal camera paramters initialization
-  vpCameraParameters cam(800,800,240,180) ;
-  simu.setInternalCameraParameters(cam) ;
+    // Inernal camera paramters initialization
+    vpCameraParameters cam(800,800,240,180) ;
+    simu.setInternalCameraParameters(cam) ;
 
-  vpTime::wait(500) ;
-  // Load the scene
-  std::cout << "Load : ./4Points.iv" << std::endl
-            << "This file should be in the working directory" << std::endl;
+    vpTime::wait(500) ;
+    // Load the scene
+    std::cout << "Load : ./4Points.iv" << std::endl
+              << "This file should be in the working directory" << std::endl;
 
-  simu.load("./4points.iv") ;
+    simu.load("./4points.iv") ;
 
-  // Run the main loop
-  simu.initApplication(&mainLoop) ;
-  // Run the simulator
-  simu.mainLoop() ;
+    // Run the main loop
+    simu.initApplication(&mainLoop) ;
+    // Run the simulator
+    simu.mainLoop() ;
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 #else

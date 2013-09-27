@@ -130,83 +130,90 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
-  }
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
 
-  vpServo task ;
-  vpSimulatorCamera robot ;
+    vpServo task ;
+    vpSimulatorCamera robot ;
 
-  // sets the initial camera location
-  vpHomogeneousMatrix cMo ;
-  cMo[0][3] = 0.1 ;
-  cMo[1][3] = 0.2 ;
-  cMo[2][3] = 2 ;
+    // sets the initial camera location
+    vpHomogeneousMatrix cMo ;
+    cMo[0][3] = 0.1 ;
+    cMo[1][3] = 0.2 ;
+    cMo[2][3] = 2 ;
 
-  // Compute the position of the object in the world frame
-  vpHomogeneousMatrix wMc, wMo;
-  robot.getPosition(wMc) ;
-  wMo = wMc * cMo;
-
-  // sets the point coordinates in the world frame
-  vpPoint point ;
-  point.setWorldCoordinates(0,0,0) ;
-
-  // computes the point coordinates in the camera frame and its 2D coordinates
-  point.track(cMo) ;
-
-  // sets the current position of the visual feature
-  vpFeaturePoint p ;
-  vpFeatureBuilder::create(p,point)  ;  //retrieve x,y and Z of the vpPoint structure
-
-  // sets the desired position of the visual feature
-  vpFeaturePoint pd ;
-  pd.buildFrom(0,0,1) ; // buildFrom(x,y,Z) ;
-
-  // define the task
-  // - we want an eye-in-hand control law
-  // - robot is controlled in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA) ;
-
-  // we want to see a point on a point
-  std::cout << std::endl ;
-  task.addFeature(p,pd) ;
-
-  // set the gain
-  task.setLambda(1) ;
-
-  // Display task information
-  task.print() ;
-
-  unsigned int iter=0 ;
-  // loop
-  while(iter++<100)
-  {
-    std::cout << "---------------------------------------------" << iter <<std::endl ;
-    vpColVector v ;
-
-    // get the robot position
+    // Compute the position of the object in the world frame
+    vpHomogeneousMatrix wMc, wMo;
     robot.getPosition(wMc) ;
-    // Compute the position of the camera wrt the object frame
-    cMo = wMc.inverse() * wMo;
+    wMo = wMc * cMo;
 
-    // new point position
+    // sets the point coordinates in the world frame
+    vpPoint point ;
+    point.setWorldCoordinates(0,0,0) ;
+
+    // computes the point coordinates in the camera frame and its 2D coordinates
     point.track(cMo) ;
-    //retrieve x,y and Z of the vpPoint structure
-    vpFeatureBuilder::create(p,point);
 
-    // compute the control law
-    v = task.computeControlLaw() ;
+    // sets the current position of the visual feature
+    vpFeaturePoint p ;
+    vpFeatureBuilder::create(p,point)  ;  //retrieve x,y and Z of the vpPoint structure
 
-    // send the camera velocity to the controller
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+    // sets the desired position of the visual feature
+    vpFeaturePoint pd ;
+    pd.buildFrom(0,0,1) ; // buildFrom(x,y,Z) ;
 
-    std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+
+    // we want to see a point on a point
+    std::cout << std::endl ;
+    task.addFeature(p,pd) ;
+
+    // set the gain
+    task.setLambda(1) ;
+
+    // Display task information
+    task.print() ;
+
+    unsigned int iter=0 ;
+    // loop
+    while(iter++<100)
+    {
+      std::cout << "---------------------------------------------" << iter <<std::endl ;
+      vpColVector v ;
+
+      // get the robot position
+      robot.getPosition(wMc) ;
+      // Compute the position of the camera wrt the object frame
+      cMo = wMc.inverse() * wMo;
+
+      // new point position
+      point.track(cMo) ;
+      //retrieve x,y and Z of the vpPoint structure
+      vpFeatureBuilder::create(p,point);
+
+      // compute the control law
+      v = task.computeControlLaw() ;
+
+      // send the camera velocity to the controller
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+    }
+
+    // Display task information
+    task.print() ;
+    task.kill();
+    return 0;
   }
-
-  // Display task information
-  task.print() ;
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
+  }
 }
 

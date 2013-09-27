@@ -79,91 +79,96 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 int main()
 {
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
-  vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-  vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+  try {
+    vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
 
-  vpImage<unsigned char> I(480, 640, 255);
-  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+    vpImage<unsigned char> I(480, 640, 255);
+    vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
 
-  std::vector<vpPoint> point(4) ;
-  point[0].setWorldCoordinates(-0.1,-0.1, 0);
-  point[1].setWorldCoordinates( 0.1,-0.1, 0);
-  point[2].setWorldCoordinates( 0.1, 0.1, 0);
-  point[3].setWorldCoordinates(-0.1, 0.1, 0);
+    std::vector<vpPoint> point(4) ;
+    point[0].setWorldCoordinates(-0.1,-0.1, 0);
+    point[1].setWorldCoordinates( 0.1,-0.1, 0);
+    point[2].setWorldCoordinates( 0.1, 0.1, 0);
+    point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-  vpServo task ;
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  task.setLambda(0.5);
+    vpServo task ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    task.setLambda(0.5);
 
-  vpVirtualGrabber g("./target_square.pgm", cam);
-  g.acquire(I, cMo);
-
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d(I, 0, 0, "Current camera view");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I, 0, 0, "Current camera view");
-#else
-  std::cout << "No image viewer is available..." << std::endl;
-#endif
-
-  vpDisplay::display(I);
-  vpDisplay::displayCharString(I, 10, 10,
-                               "Click in the 4 dots to initialise the tracking and start the servo",
-                               vpColor::red);
-  vpDisplay::flush(I);
-
-  vpFeaturePoint p[4], pd[4];
-  std::vector<vpDot2> dot(4);
-
-  for (int i = 0 ; i < 4 ; i++) {
-    point[i].track(cdMo);
-    vpFeatureBuilder::create(pd[i], point[i]);
-
-    dot[i].setGraphics(true);
-    dot[i].initTracking(I);
-    vpDisplay::flush(I);
-    vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
-
-    task.addFeature(p[i], pd[i]);
-  }
-
-  vpHomogeneousMatrix wMc, wMo;
-  vpSimulatorCamera robot;
-  robot.setSamplingTime(0.040);
-  robot.getPosition(wMc);
-  wMo = wMc * cMo;
-
-  for (; ; ) {
-    robot.getPosition(wMc);
-    cMo = wMc.inverse() * wMo;
-
+    vpVirtualGrabber g("./target_square.pgm", cam);
     g.acquire(I, cMo);
 
+#if defined(VISP_HAVE_X11)
+    vpDisplayX d(I, 0, 0, "Current camera view");
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d(I, 0, 0, "Current camera view");
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+#endif
+
     vpDisplay::display(I);
+    vpDisplay::displayCharString(I, 10, 10,
+                                 "Click in the 4 dots to initialise the tracking and start the servo",
+                                 vpColor::red);
+    vpDisplay::flush(I);
+
+    vpFeaturePoint p[4], pd[4];
+    std::vector<vpDot2> dot(4);
 
     for (int i = 0 ; i < 4 ; i++) {
-      dot[i].track(I);
+      point[i].track(cdMo);
+      vpFeatureBuilder::create(pd[i], point[i]);
+
+      dot[i].setGraphics(true);
+      dot[i].initTracking(I);
+      vpDisplay::flush(I);
       vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
 
-      vpColVector cP;
-      point[i].changeFrame(cMo, cP) ;
-      p[i].set_Z(cP[2]);
+      task.addFeature(p[i], pd[i]);
     }
 
-    vpColVector v = task.computeControlLaw();
+    vpHomogeneousMatrix wMc, wMo;
+    vpSimulatorCamera robot;
+    robot.setSamplingTime(0.040);
+    robot.getPosition(wMc);
+    wMo = wMc * cMo;
 
-    display_trajectory(I, dot);
-    vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red) ;
-    robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+    for (; ; ) {
+      robot.getPosition(wMc);
+      cMo = wMc.inverse() * wMo;
 
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
+      g.acquire(I, cMo);
 
-    vpTime::wait( robot.getSamplingTime() * 1000);
+      vpDisplay::display(I);
+
+      for (int i = 0 ; i < 4 ; i++) {
+        dot[i].track(I);
+        vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
+
+        vpColVector cP;
+        point[i].changeFrame(cMo, cP) ;
+        p[i].set_Z(cP[2]);
+      }
+
+      vpColVector v = task.computeControlLaw();
+
+      display_trajectory(I, dot);
+      vpServoDisplay::display(task, cam, I, vpColor::green, vpColor::red) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+
+      vpTime::wait( robot.getSamplingTime() * 1000);
+    }
+    task.kill();
   }
-  task.kill();
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
 #endif
 }
 

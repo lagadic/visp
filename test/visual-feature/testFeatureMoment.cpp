@@ -73,21 +73,25 @@ using namespace std;
 //Compute a set of parallel positions and check if the matrix is in the right form;
 int main()
 {
-  int sum=0;
-  for(double i=-0.2;i<0.2;i+=0.1){
-    for(double j=-0.2;j<0.2;j+=0.1){
-      for(double k=-vpMath::rad(30);k<vpMath::rad(30);k+=vpMath::rad(10)){
-        for(double l=0.5;l<1.5;l+=0.1){
-          sum+=test(i,j,l,k);
+  try {
+    int sum=0;
+    for(double i=-0.2;i<0.2;i+=0.1){
+      for(double j=-0.2;j<0.2;j+=0.1){
+        for(double k=-vpMath::rad(30);k<vpMath::rad(30);k+=vpMath::rad(10)){
+          for(double l=0.5;l<1.5;l+=0.1){
+            sum+=test(i,j,l,k);
+          }
         }
+
       }
-
     }
+    if(sum<0) return -1;
+    else return 0;
   }
-
-
-  if(sum<0) return -1;
-  else return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 int test(double x,double y,double z,double alpha){

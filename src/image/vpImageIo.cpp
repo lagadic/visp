@@ -774,9 +774,9 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
 }
 
 /*!
-  Read a PGM P5 file and initialize a scalar image.
+  Read a PFM P8 file and initialize a float image.
 
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
+  Read the contents of the portable gray pixmap (PFM P8) filename, allocate
   memory for the corresponding image, and set the bitmap whith the content of
   the file.
 
@@ -818,7 +818,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
           "couldn't read file")) ;
   }
 
-  // Read the first line with magic number P5
+  // Read the first line with magic number P8
   line = 0;
 
   err = fgets(str, vpMAX_LEN - 1, fd);
@@ -834,9 +834,9 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
   if (strlen(str) < 3)
   {
     fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PGM file\n", filename) ;
+    vpERROR_TRACE("\"%s\" is not a PFM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "this is not a pfm file")) ;
+          "this is not a PFM file")) ;
   }
 
   str[2] = '\0';
@@ -845,7 +845,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("\"%s\" is not a PFM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "this is not a pgm file")) ;
+          "this is not a PFM file")) ;
   }
 
   // Jump the possible comment, or empty line and read the following line
@@ -855,6 +855,8 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     if (err == NULL) {
       fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
       fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+                              "Cannot read content of PFM file")) ;
     }
   } while ((str[0] == '#') || (str[0] == '\n'));
 
@@ -867,6 +869,8 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
       if (err == NULL) {
         fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
         fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+                                "Cannot read content of PFM file")) ;
       }
     } while ((str[0] == '#') || (str[0] == '\n'));
     ierr = sscanf(str, "%d", &h);
@@ -876,20 +880,19 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+                            "Cannot read content of PFM file")) ;
   }
 
   if ((h != I.getHeight())||( w != I.getWidth()))
   {
-
     try
     {
       I.resize(h,w) ;
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
-      throw ;
+      throw (vpImageException(vpImageException::ioError,
+                              "Cannot read content of PFM file")) ;
     }
   }
 
@@ -900,7 +903,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+                            "Cannot read content of PFM file")) ;
   }
 
   ierr = sscanf(str, "%d", &is255);
@@ -908,7 +911,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+                            "Cannot read content of PFM file")) ;
   }
 
   if (is255 != 255)
@@ -916,7 +919,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pfm file")) ;
+                            "Cannot read content of PFM file")) ;
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
@@ -925,12 +928,10 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read %d bytes in file \"%s\"\n", nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pfm file")) ;
+                            "Cannot read content of PFM file")) ;
   }
 
   fclose (fd);
-
-
 }
 
 
@@ -968,7 +969,6 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     vpERROR_TRACE("no filename") ;
     throw (vpImageException(vpImageException::ioError,
           " no filename")) ;
-
   }
 
   // Open the filename
@@ -1017,6 +1017,8 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     if (err == NULL) {
       fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
       fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "couldn't read PGM file")) ;
     }
   } while ((str[0] == '#') || (str[0] == '\n'));
 
@@ -1029,6 +1031,8 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
       if (err == NULL) {
         fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
         fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "couldn't read PGM file")) ;
       }
     } while ((str[0] == '#') || (str[0] == '\n'));
     ierr = sscanf(str, "%d", &h);
@@ -1038,20 +1042,19 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PGM file")) ;
   }
 
   if ((h != I.getHeight())||( w != I.getWidth()))
   {
-
     try
     {
       I.resize(h,w) ;
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
-      throw ;
+      throw (vpImageException(vpImageException::ioError,
+            "couldn't read PGM file")) ;
     }
   }
 
@@ -1062,7 +1065,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PGM file")) ;
   }
 
   ierr = sscanf(str, "%d", &is255);
@@ -1070,7 +1073,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PGM file")) ;
   }
 
   if (is255 != 255)
@@ -1078,7 +1081,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pgm file")) ;
+          "couldn't read PGM file")) ;
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
@@ -1087,12 +1090,10 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read %d bytes in file \"%s\"\n", nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pgm file")) ;
+          "couldn't read PGM file")) ;
   }
 
   fclose (fd);
-
-
 }
 
 
@@ -1214,7 +1215,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   {
     vpERROR_TRACE("couldn't read file \"%s\"", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PPM file")) ;
   }
 
   // Read the first line with magic number P5
@@ -1227,7 +1228,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",  line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PPM file")) ;
   }
 
   if (strlen(str) < 3)
@@ -1254,6 +1255,8 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     if (err == NULL) {
       fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
       fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "couldn't read PPM file")) ;
     }
   } while ((str[0] == '#') || (str[0] == '\n'));
 
@@ -1266,6 +1269,8 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
       if (err == NULL) {
         fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
         fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "couldn't read PPM file")) ;
       }
     } while ((str[0] == '#') || (str[0] == '\n'));
     ierr = sscanf(str, "%d", &h);
@@ -1275,7 +1280,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PPM file")) ;
   }
 
   if ((h != I.getHeight())||( w != I.getWidth()))
@@ -1287,8 +1292,8 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
-      throw ;
+      throw (vpImageException(vpImageException::ioError,
+            "couldn't read PPM file")) ;
     }
   }
 
@@ -1299,7 +1304,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PPM file")) ;
   }
 
   ierr = sscanf(str, "%d", &is255);
@@ -1307,7 +1312,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "couldn't read PPM file")) ;
   }
 
   if (is255 != 255)
@@ -1315,7 +1320,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     fclose (fd);
     vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading ppm file")) ;
+          "couldn't read PPM file")) ;
   }
 
   for(unsigned int i=0;i<I.getHeight();i++)
@@ -1328,16 +1333,15 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
       res |= fread(&v.B,sizeof(v.B),1,fd) ;
       if (res==0)
       {
-   fclose (fd);
-   vpERROR_TRACE("couldn't read  bytes in file \"%s\"\n", filename) ;
-   throw (vpImageException(vpImageException::ioError,
-         "error reading ppm file")) ;
+        fclose (fd);
+        vpERROR_TRACE("couldn't read  bytes in file \"%s\"\n", filename) ;
+        throw (vpImageException(vpImageException::ioError,
+              "couldn't read PPM file")) ;
       }
       I[i][j] = v ;
     }
   }
   fclose(fd) ;
-
 }
 
 /*!

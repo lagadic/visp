@@ -55,65 +55,72 @@
 int main ()
 {
 #if defined(VISP_HAVE_DISPLAY)
-  vpPlot plot(2, 700, 700, 100, 200, "Curves...");
+  try {
+    vpPlot plot(2, 700, 700, 100, 200, "Curves...");
 
-  // Change the default font
-  //  plot.setFont("-misc-fixed-bold-r-semicondensed--0-0-75-75-c-0-iso8859-10");
+    // Change the default font
+    //  plot.setFont("-misc-fixed-bold-r-semicondensed--0-0-75-75-c-0-iso8859-10");
 
-  //Initialize the number of curve for each graphic
-  plot.initGraph(0,1);
-  plot.initGraph(1,1);
+    //Initialize the number of curve for each graphic
+    plot.initGraph(0,1);
+    plot.initGraph(1,1);
 
-  //Set the color of the curves
-  plot.setColor(0,0,vpColor::green);
-  plot.setColor(1,0,vpColor::red);
+    //Set the color of the curves
+    plot.setColor(0,0,vpColor::green);
+    plot.setColor(1,0,vpColor::red);
 
-  //Set the titles of the graphic
-  char title[40];
-  strncpy( title, "cos function", 40 );
-  plot.setTitle(0,title);
-  strncpy( title, "sin function", 40 );
-  plot.setTitle(1, title);
+    //Set the titles of the graphic
+    char title[40];
+    strncpy( title, "cos function", 40 );
+    plot.setTitle(0,title);
+    strncpy( title, "sin function", 40 );
+    plot.setTitle(1, title);
 
-  //Set the legend of each curves
-  char legend[40];
-  strncpy( legend, "cos x", 40 );
-  plot.setLegend(0,0,legend);
-  strncpy( legend, "sin x", 40 );
-  plot.setLegend(1,0, legend);
+    //Set the legend of each curves
+    char legend[40];
+    strncpy( legend, "cos x", 40 );
+    plot.setLegend(0,0,legend);
+    strncpy( legend, "sin x", 40 );
+    plot.setLegend(1,0, legend);
 
-  //Set the x axis legend of each curves
-  char unit[40];
-  strncpy( unit, "x", 40 );
-  plot.setUnitX(0,unit);
-  strncpy( unit, "x", 40 );
-  plot.setUnitX(1,unit);
+    //Set the x axis legend of each curves
+    char unit[40];
+    strncpy( unit, "x", 40 );
+    plot.setUnitX(0,unit);
+    strncpy( unit, "x", 40 );
+    plot.setUnitX(1,unit);
 
-  //Set the y axis legend of each curves
-  strncpy( unit, "y", 40 );
-  plot.setUnitY(0,unit);
-  strncpy( unit, "y", 40 );
-  plot.setUnitY(1,unit);
+    //Set the y axis legend of each curves
+    strncpy( unit, "y", 40 );
+    plot.setUnitY(0,unit);
+    strncpy( unit, "y", 40 );
+    plot.setUnitY(1,unit);
 
-  //Plot the cosinus and sinus functions
-  double i = 0;
-  while(i <= 20*2*M_PI)
-  {
-    double co = cos(i); 
-    double si = sin(i);
-    plot.plot(0,0,i,co);
-    plot.plot(1,0,i,si);
-    i+=0.1;
+    //Plot the cosinus and sinus functions
+    double i = 0;
+    while(i <= 20*2*M_PI)
+    {
+      double co = cos(i);
+      double si = sin(i);
+      plot.plot(0,0,i,co);
+      plot.plot(1,0,i,si);
+      i+=0.1;
+    }
+
+    vpDisplay::getClick(plot.I);
+
+    //Save the datas as text files
+    plot.saveData(0, "dataCos.txt");
+    plot.saveData(0, "dataSin.txt");
+    return 0;
   }
-  
-  vpDisplay::getClick(plot.I);
-  
-  //Save the datas as text files
-  plot.saveData(0, "dataCos.txt");
-  plot.saveData(0, "dataSin.txt");
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
+
 #else
   std::cout << "Plot functionalities are not avalaible since no display is available." << std::endl;
 #endif
 
-  return 0;
 }

@@ -357,21 +357,21 @@ vpImageConvert::convert(const IplImage* src,
   }
   else
   {
-      if(nChannel == 1 && depth == 8){
+    if(nChannel == 1 && depth == 8){
+      dest.resize((unsigned int)height, (unsigned int)width) ;
       unsigned char* beginOutput = (unsigned char*)dest.bitmap;
-        dest.resize((unsigned int)height, (unsigned int)width) ;
-        for (int i =0  ; i < height ; i++){
-          memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
-                (size_t)width);
-        }
+      for (int i =0  ; i < height ; i++){
+        memcpy(beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) , src->imageData + i*widthStep,
+               (size_t)width);
       }
-      if(nChannel == 3 && depth == 8){
-        dest.resize((unsigned int)height, (unsigned int)width) ;
-        //for (int i = 0  ; i < height ; i++){
-          BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
-                      dest.bitmap /*+ i*width*/, (unsigned int)width, (unsigned int)height/*1*/, true);
-        //}
-      }
+    }
+    if(nChannel == 3 && depth == 8){
+      dest.resize((unsigned int)height, (unsigned int)width) ;
+      //for (int i = 0  ; i < height ; i++){
+      BGRToGrey((unsigned char*)src->imageData /*+ i*widthStep*/,
+                dest.bitmap /*+ i*width*/, (unsigned int)width, (unsigned int)height/*1*/, true);
+      //}
+    }
   }
 }
 

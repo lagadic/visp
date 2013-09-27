@@ -195,113 +195,121 @@ int
 main(int argc, const char ** argv)
 {
 #ifdef VISP_HAVE_LAPACK
-  unsigned int nb_matrices=1000;
-  unsigned int nb_iterations=10;
-  unsigned int nb_rows = 6;
-  unsigned int nb_cols = 6;
-  bool verbose = false;
-  std::string plotfile("plot.txt");
-  bool use_plot_file=false;
-  std::ofstream of;
+  try {
+    unsigned int nb_matrices=1000;
+    unsigned int nb_iterations=10;
+    unsigned int nb_rows = 6;
+    unsigned int nb_cols = 6;
+    bool verbose = false;
+    std::string plotfile("plot.txt");
+    bool use_plot_file=false;
+    std::ofstream of;
 
-  double t, qr_time, lu_time,pi_time,chol_time;
-  // Read the command line options
-  if (getOptions(argc, argv, nb_matrices,nb_iterations,use_plot_file,plotfile,nb_rows,nb_cols,verbose) == false) {
-    exit (-1);
-  }
-
-  if(use_plot_file){
-    of.open(plotfile.c_str());
-  }
-
-  for(unsigned int iter=0;iter<nb_iterations;iter++){
-    std::vector<vpMatrix> benchQR;
-    std::vector<vpMatrix> benchLU;
-    std::vector<vpMatrix> benchCholesky;
-    std::vector<vpMatrix> benchPseudoInverse;
-    if(verbose)
-      std::cout << "********* generating matrices for iteration " << iter << "." << std::endl;
-    for(unsigned int i=0;i<nb_matrices;i++){
-      vpMatrix cur;
-      double det=0.;
-      //don't put singular matrices in the benchmark
-      for(cur=makeRandomMatrix(nb_rows,nb_cols);std::abs(det=cur.AtA().det())<.01;cur = makeRandomMatrix(nb_rows,nb_cols))
-        if(verbose){
-          std::cout << "Generated random matrix A*tA=" << std::endl << cur.AtA() << std::endl;
-          std::cout << "generated random matrix not invertibleL: det="<<det<< ". Retrying..." << std::endl;
-        }
-      benchCholesky.push_back(cur);
-      benchQR.push_back(cur);
-      benchLU.push_back(cur);
-      benchPseudoInverse.push_back(cur);
+    double t, qr_time, lu_time,pi_time,chol_time;
+    // Read the command line options
+    if (getOptions(argc, argv, nb_matrices,nb_iterations,use_plot_file,plotfile,nb_rows,nb_cols,verbose) == false) {
+      exit (-1);
     }
-
-    if(verbose)
-      std::cout << "\t Inverting " << benchCholesky[0].AtA().getRows() << "x" << benchCholesky[0].AtA().getCols() << " matrix using cholesky decomposition." << std::endl;
-    t = vpTime::measureTimeMs() ;
-    for(unsigned int i=0;i<nb_matrices;i++){
-      benchCholesky[i]=benchCholesky[i].AtA().inverseByCholesky()*benchCholesky[i].transpose();
-    }
-    chol_time = vpTime::measureTimeMs() - t ;
-
-    if(verbose)
-      std::cout << "\t Inverting " << benchLU[0].AtA().getRows() << "x" << benchLU[0].AtA().getCols() << " matrix using LU decomposition." << std::endl;
-    t = vpTime::measureTimeMs() ;
-    for(unsigned int i=0;i<nb_matrices;i++)
-      benchLU[i] = benchLU[i].AtA().inverseByLU()*benchLU[i].transpose();
-    lu_time = vpTime::measureTimeMs() -t ;
-
-    if(verbose)
-      std::cout << "\t Inverting " << benchQR[0].AtA().getRows() << "x" << benchQR[0].AtA().getCols() << " matrix using QR decomposition." << std::endl;
-    t = vpTime::measureTimeMs() ;
-    for(unsigned int i=0;i<nb_matrices;i++){
-      benchQR[i]=benchQR[i].AtA().inverseByQR()*benchQR[i].transpose();
-    }
-    qr_time = vpTime::measureTimeMs() - t ;
-
-    if(verbose)
-      std::cout << "\t Inverting " << benchPseudoInverse[0].AtA().getRows() << "x" << benchPseudoInverse[0].AtA().getCols() << " matrix while computing pseudo-inverse." << std::endl;
-    t = vpTime::measureTimeMs() ;
-    for(unsigned int i=0;i<nb_matrices;i++){
-      benchPseudoInverse[i]=benchPseudoInverse[i].pseudoInverse();
-    }
-    pi_time = vpTime::measureTimeMs() - t ;
-
-    double avg_err_lu_qr=0.;
-    double avg_err_lu_pi=0.;
-    double avg_err_lu_chol=0.;
-    double avg_err_qr_pi=0.;
-    double avg_err_qr_chol=0.;
-    double avg_err_pi_chol=0.;
-
-    for(unsigned int i=0;i<nb_matrices;i++){
-      avg_err_lu_qr+= (benchQR[i]-benchLU[i]).euclideanNorm();
-      avg_err_lu_pi+= (benchPseudoInverse[i]-benchLU[i]).euclideanNorm();
-      avg_err_qr_pi+= (benchPseudoInverse[i]-benchQR[i]).euclideanNorm();
-      avg_err_qr_chol+= (benchCholesky[i]-benchQR[i]).euclideanNorm();
-      avg_err_lu_chol+= (benchCholesky[i]-benchLU[i]).euclideanNorm();
-      avg_err_pi_chol+= (benchCholesky[i]-benchPseudoInverse[i]).euclideanNorm();
-    }
-
-    avg_err_lu_qr/=nb_matrices;
-    avg_err_lu_pi/=nb_matrices;
-    avg_err_qr_pi/=nb_matrices;
 
     if(use_plot_file){
-      of << iter << "\t" << lu_time << "\t" << qr_time << "\t" << pi_time << "\t" << chol_time << "\t" << avg_err_lu_qr << "\t" << avg_err_qr_pi << "\t" << avg_err_lu_pi << "\t" << avg_err_qr_chol << "\t" << avg_err_lu_chol << "\t" <<  avg_err_pi_chol << std::endl;
+      of.open(plotfile.c_str());
     }
-    if(verbose || !use_plot_file){
-      writeTime("LU",lu_time);
-      writeTime("QR",qr_time);
-      writeTime("Pseudo-inverse",pi_time);
-      writeTime("Cholesky",chol_time);
+
+    for(unsigned int iter=0;iter<nb_iterations;iter++){
+      std::vector<vpMatrix> benchQR;
+      std::vector<vpMatrix> benchLU;
+      std::vector<vpMatrix> benchCholesky;
+      std::vector<vpMatrix> benchPseudoInverse;
+      if(verbose)
+        std::cout << "********* generating matrices for iteration " << iter << "." << std::endl;
+      for(unsigned int i=0;i<nb_matrices;i++){
+        vpMatrix cur;
+        double det=0.;
+        //don't put singular matrices in the benchmark
+        for(cur=makeRandomMatrix(nb_rows,nb_cols);std::abs(det=cur.AtA().det())<.01;cur = makeRandomMatrix(nb_rows,nb_cols))
+          if(verbose){
+            std::cout << "Generated random matrix A*tA=" << std::endl << cur.AtA() << std::endl;
+            std::cout << "generated random matrix not invertibleL: det="<<det<< ". Retrying..." << std::endl;
+          }
+        benchCholesky.push_back(cur);
+        benchQR.push_back(cur);
+        benchLU.push_back(cur);
+        benchPseudoInverse.push_back(cur);
+      }
+
+      if(verbose)
+        std::cout << "\t Inverting " << benchCholesky[0].AtA().getRows() << "x" << benchCholesky[0].AtA().getCols() << " matrix using cholesky decomposition." << std::endl;
+      t = vpTime::measureTimeMs() ;
+      for(unsigned int i=0;i<nb_matrices;i++){
+        benchCholesky[i]=benchCholesky[i].AtA().inverseByCholesky()*benchCholesky[i].transpose();
+      }
+      chol_time = vpTime::measureTimeMs() - t ;
+
+      if(verbose)
+        std::cout << "\t Inverting " << benchLU[0].AtA().getRows() << "x" << benchLU[0].AtA().getCols() << " matrix using LU decomposition." << std::endl;
+      t = vpTime::measureTimeMs() ;
+      for(unsigned int i=0;i<nb_matrices;i++)
+        benchLU[i] = benchLU[i].AtA().inverseByLU()*benchLU[i].transpose();
+      lu_time = vpTime::measureTimeMs() -t ;
+
+      if(verbose)
+        std::cout << "\t Inverting " << benchQR[0].AtA().getRows() << "x" << benchQR[0].AtA().getCols() << " matrix using QR decomposition." << std::endl;
+      t = vpTime::measureTimeMs() ;
+      for(unsigned int i=0;i<nb_matrices;i++){
+        benchQR[i]=benchQR[i].AtA().inverseByQR()*benchQR[i].transpose();
+      }
+      qr_time = vpTime::measureTimeMs() - t ;
+
+      if(verbose)
+        std::cout << "\t Inverting " << benchPseudoInverse[0].AtA().getRows() << "x" << benchPseudoInverse[0].AtA().getCols() << " matrix while computing pseudo-inverse." << std::endl;
+      t = vpTime::measureTimeMs() ;
+      for(unsigned int i=0;i<nb_matrices;i++){
+        benchPseudoInverse[i]=benchPseudoInverse[i].pseudoInverse();
+      }
+      pi_time = vpTime::measureTimeMs() - t ;
+
+      double avg_err_lu_qr=0.;
+      double avg_err_lu_pi=0.;
+      double avg_err_lu_chol=0.;
+      double avg_err_qr_pi=0.;
+      double avg_err_qr_chol=0.;
+      double avg_err_pi_chol=0.;
+
+      for(unsigned int i=0;i<nb_matrices;i++){
+        avg_err_lu_qr+= (benchQR[i]-benchLU[i]).euclideanNorm();
+        avg_err_lu_pi+= (benchPseudoInverse[i]-benchLU[i]).euclideanNorm();
+        avg_err_qr_pi+= (benchPseudoInverse[i]-benchQR[i]).euclideanNorm();
+        avg_err_qr_chol+= (benchCholesky[i]-benchQR[i]).euclideanNorm();
+        avg_err_lu_chol+= (benchCholesky[i]-benchLU[i]).euclideanNorm();
+        avg_err_pi_chol+= (benchCholesky[i]-benchPseudoInverse[i]).euclideanNorm();
+      }
+
+      avg_err_lu_qr/=nb_matrices;
+      avg_err_lu_pi/=nb_matrices;
+      avg_err_qr_pi/=nb_matrices;
+
+      if(use_plot_file){
+        of << iter << "\t" << lu_time << "\t" << qr_time << "\t" << pi_time << "\t" << chol_time << "\t" << avg_err_lu_qr << "\t" << avg_err_qr_pi << "\t" << avg_err_lu_pi << "\t" << avg_err_qr_chol << "\t" << avg_err_lu_chol << "\t" <<  avg_err_pi_chol << std::endl;
+      }
+      if(verbose || !use_plot_file){
+        writeTime("LU",lu_time);
+        writeTime("QR",qr_time);
+        writeTime("Pseudo-inverse",pi_time);
+        writeTime("Cholesky",chol_time);
+      }
     }
+    return 0;
   }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
+
 #else
   (void)argc;
   (void)argv;
   std::cout << "You don't have lapack installed" << std::endl;
-#endif
   return 0;
+#endif
 }
 

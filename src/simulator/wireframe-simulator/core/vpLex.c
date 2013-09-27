@@ -689,11 +689,7 @@ static	void	next_source (void)
 	while ((*--bot = *--top) != EOL);
 	myline = mysptr = bot + 1;
 
-	//if ((size = read (fds, buf, BUFSIZE)) < 0) {
-	if ((size = fread (buf,sizeof (char), BUFSIZE,fds)) < 0) {
-		perror (source);
-		exit (1);
-	}
+  size = fread (buf,sizeof (char), BUFSIZE,fds);
 	if (size == 0) {
 		topbuf  = buf + 1;
 		*buf    = EOF;

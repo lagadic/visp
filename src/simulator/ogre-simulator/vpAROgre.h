@@ -57,6 +57,8 @@
 #ifdef VISP_HAVE_OGRE
 #include <list>
 
+#include <boost/exception/diagnostic_information.hpp>
+
 #include <visp/vpImage.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpRGBa.h>

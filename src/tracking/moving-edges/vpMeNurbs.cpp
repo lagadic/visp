@@ -944,7 +944,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
       
       //if(( u != 1.0 || uend != 1.0)
       if( (std::fabs(u-1.0) > std::fabs(vpMath::maximum(u, 1.0))*std::numeric_limits<double>::epsilon())
-          || (std::fabs(uend-1.0) > std::fabs(vpMath::maximum(u, 1.0))*std::numeric_limits<double>::epsilon()))
+          || (std::fabs(uend-1.0) > std::fabs(vpMath::maximum(uend, 1.0))*std::numeric_limits<double>::epsilon()))
       {
         iP = nurbs.computeCurveDersPoint(u, 1);
 

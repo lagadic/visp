@@ -99,16 +99,22 @@ int main()
   std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
 }
 #else
-int main(){
-  //intial pose
-  vpHomogeneousMatrix cMo(0.05,0.1,1.5,vpMath::rad(30),vpMath::rad(20),-vpMath::rad(15));
-  //Desired pose
-  vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
+int main()
+{
+  try {  //intial pose
+    vpHomogeneousMatrix cMo(0.05,0.1,1.5,vpMath::rad(30),vpMath::rad(20),-vpMath::rad(15));
+    //Desired pose
+    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
 
-  //init and run the simulation
-  init(cMo,cdMo);
-  execute(1500);
-  return 0;
+    //init and run the simulation
+    init(cMo,cdMo);
+    execute(1500);
+    return 0;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 //init the right display

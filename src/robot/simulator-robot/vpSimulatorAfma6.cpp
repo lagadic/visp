@@ -1943,7 +1943,6 @@ robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 bool
 vpSimulatorAfma6::readPosFile(const char *filename, vpColVector &q)
 {
-
   FILE * fd ;
   fd = fopen(filename, "r") ;
   if (fd == NULL)
@@ -1958,15 +1957,16 @@ vpSimulatorAfma6::readPosFile(const char *filename, vpColVector &q)
     // Saut des lignes commencant par #
     if (fgets (line, FILENAME_MAX, fd) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
-	// La ligne n'est pas un commentaire
-	if ( strncmp (line, head, sizeof(head)-1) == 0) {
-	  sortie = true; 	// Position robot trouvee.
-	}
-// 	else
-// 	  return (false); // fin fichier sans position robot.
+        // La ligne n'est pas un commentaire
+        if ( strncmp (line, head, sizeof(head)-1) == 0) {
+          sortie = true; 	// Position robot trouvee.
+        }
+        // 	else
+        // 	  return (false); // fin fichier sans position robot.
       }
     }
     else {
+      fclose(fd) ;
       return (false);		/* fin fichier 	*/
     }
 
@@ -1975,10 +1975,14 @@ vpSimulatorAfma6::readPosFile(const char *filename, vpColVector &q)
 
   // Lecture des positions
   q.resize(njoint);
-  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
-	 dummy,
-	 &q[0], &q[1], &q[2],
-	 &q[3], &q[4], &q[5]);
+  int ret = sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
+                   dummy,
+                   &q[0], &q[1], &q[2], &q[3], &q[4], &q[5]);
+
+  if (ret != 7) {
+    fclose(fd) ;
+    return false;
+  }
 
   // converts rotations from degrees into radians
   //q.deg2rad();

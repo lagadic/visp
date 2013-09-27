@@ -179,71 +179,71 @@ bool getOptions(int argc, const char **argv, bool &display,
 int
 main(int argc, const char ** argv)
 {
-  bool opt_display = true;
-  unsigned nframes = 50;
-  bool save = false;
-  int deviceType = CV_CAP_ANY;
+  try {
+    bool opt_display = true;
+    unsigned nframes = 50;
+    bool save = false;
+    int deviceType = CV_CAP_ANY;
 
-  // Declare an image. It size is not defined yet. It will be defined when the
-  // image will acquired the first time.
+    // Declare an image. It size is not defined yet. It will be defined when the
+    // image will acquired the first time.
 #ifdef GRAB_COLOR
-  vpImage<vpRGBa> I; // This is a color image (in RGBa format)
+    vpImage<vpRGBa> I; // This is a color image (in RGBa format)
 #else
-  vpImage<unsigned char> I; // This is a B&W image
+    vpImage<unsigned char> I; // This is a B&W image
 #endif
 
-  // Set default output image name for saving
+    // Set default output image name for saving
 #ifdef GRAB_COLOR
-  // Color images will be saved in PGM P6 format
+    // Color images will be saved in PGM P6 format
 #  if defined(UNIX)
-  std::string opath = "/tmp/I%04d.ppm";
+    std::string opath = "/tmp/I%04d.ppm";
 #  elif defined(WIN32)
-  std::string opath = "C:/temp/I%04d.ppm";
+    std::string opath = "C:/temp/I%04d.ppm";
 #  endif
 #else
-  // B&W images will be saved in PGM P5 format
+    // B&W images will be saved in PGM P5 format
 #  if defined(UNIX)
-  std::string opath = "/tmp/I%04d.pgm";
+    std::string opath = "/tmp/I%04d.pgm";
 #  elif defined(WIN32)
-  std::string opath = "C:/temp/I%04d.pgm";
+    std::string opath = "C:/temp/I%04d.pgm";
 #  endif
 #endif
 
-  // Read the command line options
-  if (getOptions(argc, argv, opt_display, nframes, save, opath, deviceType) == false) {
-    exit (-1);
-  }
-  // Create the grabber
-  vpOpenCVGrabber grabber ;
-  try {
-    // Set the type of device to detect. Here for example we expect to find a firewire camera.
-    grabber.setDeviceType(deviceType);
+    // Read the command line options
+    if (getOptions(argc, argv, opt_display, nframes, save, opath, deviceType) == false) {
+      exit (-1);
+    }
+    // Create the grabber
+    vpOpenCVGrabber grabber ;
+    try {
+      // Set the type of device to detect. Here for example we expect to find a firewire camera.
+      grabber.setDeviceType(deviceType);
 
-    // Initialize the grabber
-    grabber.open(I);
+      // Initialize the grabber
+      grabber.open(I);
 
-    // Acquire an image
-    grabber.acquire(I);
-  }
-  catch(...)
-  {
-    vpCTRACE << "Cannot acquire an image... " 
-             << "Check if a camera is connected to your computer."
-             << std::endl ;
-    return 0;
-  }
+      // Acquire an image
+      grabber.acquire(I);
+    }
+    catch(...)
+    {
+      vpCTRACE << "Cannot acquire an image... "
+               << "Check if a camera is connected to your computer."
+               << std::endl ;
+      return 0;
+    }
 
-  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-            << I.getHeight() << std::endl;
+    std::cout << "Image size: width : " << I.getWidth() <<  " height: "
+              << I.getHeight() << std::endl;
 
-  // Creates a display
-  vpDisplayOpenCV display;
+    // Creates a display
+    vpDisplayOpenCV display;
 
-  if (opt_display) {
-    display.init(I,100,100,"OpenCV framegrabber");
-  }
+    if (opt_display) {
+      display.init(I,100,100,"OpenCV framegrabber");
+    }
 
-  try {
     double tbegin=0, tend=0, tloop=0, ttotal=0;
 
     ttotal = 0;
@@ -275,11 +275,11 @@ main(int argc, const char ** argv)
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
 
+    return 0;
   }
-  catch(...)
-  {
-    vpCERROR << "Failure: exit" << std::endl;
-    return(-1);
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
 }
 #else // defined (VISP_HAVE_OPENCV) 

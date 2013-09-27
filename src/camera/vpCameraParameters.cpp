@@ -447,6 +447,7 @@ vpCameraParameters::get_K_inverse() const
 void
 vpCameraParameters::printParameters()
 {
+  std::ios::fmtflags original_flags( std::cout.flags() );
   switch(projModel){
     case vpCameraParameters::perspectiveProjWithoutDistortion :
       std::cout.precision(10);
@@ -465,6 +466,8 @@ vpCameraParameters::printParameters()
       std::cout << "  kdu = " << kdu << std::endl ;
       break;
   } 
+  // Restore ostream format
+  std::cout.flags(original_flags);
 }
 /*!
 

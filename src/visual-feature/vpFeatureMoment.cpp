@@ -154,8 +154,7 @@ void vpFeatureMoment::update (double A, double B, double C){
     if(moment==NULL){
         bool found;        
         this->moment = &(moments.get(momentName(),found));
-        if(!found) throw ("Moment not found for feature");
-
+        if(!found) throw vpException(vpException::notInitialized,"Moment not found for feature");
     }
     nbParameters = 1;
     if(this->moment!=NULL){
