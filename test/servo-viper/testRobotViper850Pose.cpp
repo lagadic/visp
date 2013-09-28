@@ -226,12 +226,11 @@ int main()
               << vpMath::deg(r[1]) << " "
               << vpMath::deg(r[2]) << " deg" << std::endl << std::endl;
 
-    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
   }
+  return 0;
 }
 #else
 int main()

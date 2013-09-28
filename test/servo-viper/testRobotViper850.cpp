@@ -110,12 +110,11 @@ int main()
               << " " << vpMath::deg(rzyz[1])
               << " " << vpMath::deg(rzyz[2]) << std::endl;
 
-    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
   }
+  return 0;
 }
 #else
 int main()

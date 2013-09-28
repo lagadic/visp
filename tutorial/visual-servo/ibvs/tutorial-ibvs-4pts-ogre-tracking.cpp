@@ -202,9 +202,6 @@ int main()
   catch(vpException e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
-  catch(boost::exception & e) {
-    std::cout << "Catch a boost exception: " << boost::diagnostic_information(e) << std::endl;
-  }
 #endif
 }
 

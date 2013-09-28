@@ -529,7 +529,7 @@ int main(int argc, const char **argv)
     ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI/2, -M_PI/2, 0)));
 
     // Rendering loop
-    while(ogre.continueRendering() && !grabber.end()){
+    while(ogre.continueRendering() && !grabber.end()) {
       // Acquire a frame
       grabber.acquire(IC);
 
@@ -574,11 +574,6 @@ int main(int argc, const char **argv)
   }
   catch(vpException e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
-  }
-  catch (Ogre::Exception& e)
-  {
-    std::cout << "Catch an Ogre exception: "  << e.getFullDescription().c_str() << "\n";
     return 1;
   }
 }

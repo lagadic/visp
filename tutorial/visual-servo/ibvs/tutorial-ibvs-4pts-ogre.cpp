@@ -93,10 +93,5 @@ int main()
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-#if defined(VISP_HAVE_OGRE)
-  catch(boost::exception & e) {
-    std::cout << "Catch a boost exception: " << boost::diagnostic_information(e) << std::endl;
-  }
-#endif
 }
 

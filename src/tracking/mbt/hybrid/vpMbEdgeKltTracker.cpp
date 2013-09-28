@@ -853,15 +853,15 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, con
   Add a cylinder to track from tow points on the axis (defining the length of
   the cylinder) and its radius.
 
-  \param _p1 : First point on the axis.
-  \param _p2 : Second point on the axis.
-  \param _radius : Radius of the cylinder.
-  \param _indexCylinder : Index of the cylinder.
+  \param p1 : First point on the axis.
+  \param p2 : Second point on the axis.
+  \param radius : Radius of the cylinder.
+  \param indexCylinder : Index of the cylinder.
 */
 void    
-vpMbEdgeKltTracker::initCylinder(const vpPoint& _p1, const vpPoint _p2, const double _radius, const unsigned int _indexCylinder)
+vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder)
 {
-  vpMbEdgeTracker::initCylinder(_p1, _p2, _radius, _indexCylinder);
+  vpMbEdgeTracker::initCylinder(p1, p2, radius, indexCylinder);
 }
 
 /*!

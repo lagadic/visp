@@ -101,13 +101,11 @@ int main()
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
-
-    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
   }
+  return 0;
 }
 #else
 int main()

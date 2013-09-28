@@ -650,68 +650,55 @@ int main(int argc, const char **argv)
     double t0 = vpTime::measureTimeMs();
 
     // Rendering loop
-    while(ogre.continueRendering() && !grabber.end()){
+    while(ogre.continueRendering() && !grabber.end()) {
       // Acquire a frame
       grabber.acquire(IC);
 
       // Convert it to a grey level image for tracking purpose
       vpImageConvert::convert(IC,I);
 
-      // Update pose calculation
-      try{
-        // kill the point list
-        mPose.clearPoint() ;
+      // kill the point list
+      mPose.clearPoint() ;
 
-        // track the dot
-        for (int i=0 ; i < 4 ; i++)
+      // track the dot
+      for (int i=0 ; i < 4 ; i++)
+      {
+        // track the point
+        md[i].track(I, mcog[i]) ;
+        md[i].setGrayLevelPrecision(0.90);
+        // pixel->meter conversion
         {
-          // track the point
-          md[i].track(I, mcog[i]) ;
-          md[i].setGrayLevelPrecision(0.90);
-          // pixel->meter conversion
-          {
-            double x=0, y=0;
-            vpPixelMeterConversion::convertPoint(mcam, mcog[i], x, y)  ;
-            mP[i].set_x(x) ;
-            mP[i].set_y(y) ;
-          }
-
-          // and added to the pose computation point list
-          mPose.addPoint(mP[i]) ;
+          double x=0, y=0;
+          vpPixelMeterConversion::convertPoint(mcam, mcog[i], x, y)  ;
+          mP[i].set_x(x) ;
+          mP[i].set_y(y) ;
         }
-        // the pose structure has been updated
 
-        // the pose is now updated using the virtual visual servoing approach
-        // Dementhon or lagrange is no longuer necessary, pose at the
-        // previous iteration is sufficient
-        mPose.computePose(vpPose::VIRTUAL_VS, cmo);
-
-        // Display with ogre
-        ogre.display(IC,cmo);
-
-        // Wait so that the video does not go too fast
-        double t1 = vpTime::measureTimeMs();
-        std::cout << "\r> " << 1000 / (t1 - t0) << " fps" ;
-        t0 = t1;
+        // and added to the pose computation point list
+        mPose.addPoint(mP[i]) ;
       }
-      // Close the grabber
-      grabber.close();
+      // the pose structure has been updated
+
+      // the pose is now updated using the virtual visual servoing approach
+      // Dementhon or lagrange is no longuer necessary, pose at the
+      // previous iteration is sufficient
+      mPose.computePose(vpPose::VIRTUAL_VS, cmo);
+
+      // Display with ogre
+      ogre.display(IC,cmo);
+
+      // Wait so that the video does not go too fast
+      double t1 = vpTime::measureTimeMs();
+      std::cout << "\r> " << 1000 / (t1 - t0) << " fps" ;
+      t0 = t1;
     }
-    catch (...)
-    {
-      std::cerr << "Exception: " << "\n";
-      return 1;
-    }
+    // Close the grabber
+    grabber.close();
 
     return 0;
   }
   catch(vpException e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
-  }
-  catch (Ogre::Exception& e)
-  {
-    std::cout << "Catch an Ogre exception: "  << e.getFullDescription().c_str() << "\n";
     return 1;
   }
 }
