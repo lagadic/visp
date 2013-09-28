@@ -305,12 +305,11 @@ main(int argc, const char ** argv)
       std::cout << "Click to exit the test" << std::endl;
       vpDisplay::getClick(I);
     }
-    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
   }
+  return 0;
 }
 #else
 int main()
