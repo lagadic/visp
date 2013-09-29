@@ -234,10 +234,9 @@ main(int argc, const char ** argv)
       vpImageIo::read(I,filename);
       vpTRACE("image read without problem");
     }
-    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
   }
+  return 0;
 }
