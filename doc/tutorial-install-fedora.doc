@@ -1,0 +1,227 @@
+/**
+
+\page tutorial-install-fedora Tutorial: Installation from source on Linux Fedora
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 18 (64 bit) distribution, but should work with any other distribution as well. 
+
+Concerning ViSP installation, we provide also other tutorials
+- \ref tutorial-install-ubuntu
+- \ref tutorial-install-win
+- \ref tutorial-install-iOS
+
+ViSP can also be installed on other platforms including OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+
+
+\section install_ubuntu_required Required packages
+
+- gcc 4.4.x or later. This can be installed with:
+\code
+su -c "yum install gcc-c++"
+\endcode
+- CMake 2.6 or higher that could be installed with:
+\code
+su -c "yum install cmake"
+\endcode
+
+
+ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_fedora_3rdparty section.
+
+\section install_fedora_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code:
+
+- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+\code
+tar xvzf ViSP-2.8.0.tar.gz 
+\endcode
+or
+\code
+unzip ViSP-2.8.0.zip
+\endcode
+
+- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
+\code
+unzip ViSP-2.y.z-snapshot-2013.mm.dd.zip
+\endcode
+- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
+\code
+su -c "yum install subversion"
+\endcode
+and then use the following command
+\code
+svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.8.0
+
+\section install_fedora_config Configuring ViSP from source
+
+- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+\code
+cd $HOME; mkdir ViSP-build-release
+\endcode
+
+- Enter the \<binary_dir\> and to configure the build type:
+\code
+cmake [<optional parameters>] <source_dir>
+\endcode
+For example:
+\code
+cd $HOME/ViSP-build-release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=ON ../ViSP-2.8.0
+\endcode
+A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+\code
+ccmake ../ViSP-2.8.0
+\endcode
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
+\image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.8.0 command used to configure ViSP.
+
+- There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+\code
+                    ViSP third-party libraries
+
+Below you will find the list of third party libraries used to 
+build ViSP on your computer.
+
+Mathematics:
+  Gnu Scientific Library      : no
+  Lapack/blas                 : no
+Simulator:
+  Ogre simulator              : no
+  \- Ogre3D                   : no
+  \- OIS                      : no
+  Coin simulator              : 
+  \- Coin3D                   : no
+  \- SoWin                    : no
+  \- SoXt                     : no
+  \- SoQt                     : no
+  \- Qt4                      : no
+  \- Qt3                      : no
+Robots
+  Afma6                       : no
+  Afma4                       : no
+  Biclops                     : no
+  Ptu46                       : no
+  Pioneer                     : no
+  Viper S650                  : no
+  Viper S850                  : no
+  Cycab                       : no
+Video devices (display)                  
+  X11                         : no
+  GTK                         : no 
+  OpenCV                      : no 
+  GDI                         : no
+  Direct3D                    : no
+Framegrabbers
+  Firewire libdc1394-1.x      : no
+  Firewire libdc1394-2.x      : no
+  Video For Linux Two         : no
+  DirectShow                  : no
+  CMU 1394 Digital Camera SDK : no
+  OpenCV                      : no 
+Specific devices
+  Yarp                        : no
+  Kinect                      : no
+  \-libfreenect               : no
+  \-libusb-1.0                : no
+  \-pthread                   : yes
+Video and image Read/Write:
+  FFMPEG                      : no
+  libjpeg                     : no
+  libpng                      : no
+Misc:
+  XML2                        : no
+  pthread                     : yes
+  OpenMP                      : yes
+Documentation:
+  Doxygen                     : no
+  Graphviz dot                : no
+ViSP built with C++11 features: no
+\endcode
+In our case, only \c pthread an OpenMP 3rd party are detected.  
+
+\subsection install_fedora_3rdparty Optional 3rd party packages
+
+As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
+
+- OpenCV
+\code
+su -c "yum install opencv-devel"
+\endcode
+- libX11 to be able to open a window to display images
+\code
+su -c "yum install libX11-devel"
+\endcode
+- lapack and gsl to benefit from optimized mathematical capabilities
+\code
+su -c "yum install lapack-devel gsl-devel"
+\endcode
+- libdc1394 to grab images from firewire cameras
+\code
+su -c "yum install libdc1394-devel"
+\endcode
+- libv4l to grab images from usb or analogic cameras
+\code
+su -c "yum install libv4l-devel"
+\endcode
+- Coin, to be able to support vrml cad model used by the model-based trackers
+\code
+su -c "yum install Coin2-devel"
+\endcode
+- libxml2 to be able to configure the model-based trackers from xml files
+\code
+su -c "yum install libxml2-devel"
+\endcode
+- libjpeg, libpng to support jpeg and png images
+\code
+su -c "yum install libjpeg-devel libpng-devel"
+\endcode
+- ffmpeg, to be able to read or encode compressed video streams
+\code
+su -c "yum install ffmpeg-devel"
+\endcode
+- Ogre 3D if you want to do augmented reality or simulation
+\code
+su -c "yum install ogre-devel ogre-samples ois-devel"
+\endcode
+
+Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
+
+\code
+ccmake ../ViSP-2.8.0
+\endcode
+The following image shows now that all the previous optional 3rd party are detected.
+\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.8.0 command used to configure ViSP after installation of optional 3rd party libraries.
+
+\subsection install_ubuntu_generate Generating Makefiles
+
+To generate the makefiles, just press [g] key in the ccmake gui.
+
+Now we can build ViSP.
+
+\section install_fedora_build Building ViSP from source
+
+- To build ViSP proceed with:
+\code
+make
+\endcode
+
+- To install ViSP proceed with:
+\code
+sudo make install
+\endcode
+
+- To build ViSP documentation, you have first to install Doxygen package:
+\code
+su -c "yum install doxygen graphviz"
+\endcode
+Then you can proceed with:
+\code
+make html-doc
+\endcode
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/
