@@ -187,11 +187,17 @@ It is also possible to enable them in the xml file. It should be modified by add
 
 Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
 
-Now we are ready to load the cad model of the object in cao format with:
+Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format with:
 \code
   tracker.loadModel("teabox.cao");
 \endcode
-The file \c teabox.cao describes first the vertexes of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_face). The next figure gives the index of the vertices that are defined in \c teabox.cao.
+The file \c teabox.cao describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_face). The next figure gives the index of the vertices that are defined in \c teabox.cao.
+
+To load the cad model in vrml the user has to replace the previous line by the following:
+\code
+  tracker.loadModel("teabox.wrl");
+\endcode
+As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_wrl.
 
 \image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
 
@@ -311,7 +317,7 @@ Note also that in this example we model the tea box with triangles:
 \code
   tracker.loadModel("teabox-triangle.cao");
 \endcode
-The file \c teabox-triangle.cao describes first the vertexes of the box, then the triangular faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_triangle).
+The file \c teabox-triangle.cao describes first the vertices of the box, then the triangular faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_triangle).
 
 Note that this is the only tracker for which lines of the model are not necessary edges of the object.
 
@@ -398,7 +404,7 @@ We make the choice to describe the faces of the box from the 3D points that corr
 - line 11: Number of single lines of the model. Sometimes, it could be useful to track a single line that doesn't lead to a face. 
 - line 12: Deprecated parameter that should always be set to 0. 
 - line 13: The number of faces defined by a set of points. Here our tea box has 6 faces. Thus, next 6 lines describe each face from the 3D points defined previously line 3 to 10.
-- line 14: First face defined by 4 points, respectively vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, than 2 and 3. This fixes the orientation of the normal of the face going outside the object.
+- line 14: First face defined by 4 points, respectively vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
 - line 15: Second face also defined by 4 points, respectively vertices 1,6,5,2 to have a counter clockwise orientation.
 - line 16 to 19: The four other faces of the box.
 - line 20: Number of cylinders describing the model. Since we model a simple box, the number of cylinders is 0.
@@ -416,5 +422,23 @@ This file describes the model of the tea box corresponding to the next image:
 Until line 12, the content of this file is similar to the one described in 
 \ref tracking_mb_cao_face. Line 13 we specify that the model contains 12 faces. Each face is then described as a triangle.
 
+\section tracking_mb_wrl CAD model in vrml format
+
+ViSP support vrml format only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
+
+\subsection tracking_mb_vrml_face teabox.wrl example
+
+The content of the teabox.wrl file used in the \ref tracking_mb_edges is given hereafter. This content is to make into relation with teabox.cao described in \ref tracking_mb_cao_face.
+
+\includelineno teabox.wrl
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao.jpg Index of the vertices used to model the tea box in vrml format.
+
+We provide now a line by line description of the file where the faces of the box are defined from the vertices:
+- line 1 to 10: Header of the \c .wrl file.
+- line 13 to 20: 3D coordinates of the 8 tea box vertices.
+- line 34 to 29: Each line describe a face. In this example, a face is defined by 4 vertices. For example, the first face join vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
 
 */

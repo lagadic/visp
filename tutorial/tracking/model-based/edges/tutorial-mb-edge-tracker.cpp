@@ -43,8 +43,8 @@ int main()
 #endif
     tracker.setDisplayFeatures(true);
     tracker.setOgreVisibilityTest(false);
-    //tracker.loadModel("teabox.cao");
-    tracker.loadModel("teabox.wrl");
+    tracker.loadModel("teabox.cao");
+    //tracker.loadModel("teabox.wrl");
     tracker.initClick(I, "teabox.init");
 
     while(1){
