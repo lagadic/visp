@@ -355,12 +355,12 @@ void vpAROgre::init(bool
   }
 
   // With Ogre version >= 1.8.1 we hide the window
-#if ( OGRE_VERSION >= (1 << 16 | 8 << 8 | 1) )
   if( hidden ){
+#if ( OGRE_VERSION >= (1 << 16 | 8 << 8 | 1) )
     misc["hidden"] = "true";
     windowHidden = true;
-  }
 #endif
+  }
   mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
 
   // Initialise resources
@@ -807,23 +807,23 @@ void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
   }
 
   // Pointer to the dynamic texture
-  Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("BackgroundTexture")
-#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-    .dynamicCast<Ogre::Texture>();// Get the pixel buffer
-#else
-      ;
-#endif
+  Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
+//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+//    .dynamicCast<Ogre::Texture>();// Get the pixel buffer
+//#else
+//      ;
+//#endif
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
   Ogre::MaterialPtr Backgroundmaterial
     = Ogre::MaterialManager::getSingleton().create("BackgroundMaterial",
-               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)
-#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-      .dynamicCast<Ogre::Material>();
-#else
-      ;
-#endif
+               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+//      .dynamicCast<Ogre::Material>();
+//#else
+//      ;
+//#endif
   Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
   Backgroundtechnique->createPass();
   Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
@@ -882,12 +882,12 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
 
   // Pointer to the dynamic texture
   Ogre::TexturePtr dynTexPtr =
-    Ogre::TextureManager::getSingleton().getByName("BackgroundTexture")
-#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-      .dynamicCast<Ogre::Texture>();// Get the pixel buffer
-#else
-      ;
-#endif
+    Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
+//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+//      .dynamicCast<Ogre::Texture>();// Get the pixel buffer
+//#else
+//      ;
+//#endif
 
   // Get the pixel buffer
   mPixelBuffer = dynTexPtr->getBuffer();
@@ -895,12 +895,12 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
   // Material to apply the texture to the background
   Ogre::MaterialPtr Backgroundmaterial
     = Ogre::MaterialManager::getSingleton().create("BackgroundMaterial",
-               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME)
-#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-      .dynamicCast<Ogre::Material>();
-#else
-      ;
-#endif
+               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+//      .dynamicCast<Ogre::Material>();
+//#else
+//      ;
+//#endif
   Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
   Backgroundtechnique->createPass();
   Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
@@ -1036,12 +1036,12 @@ void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
 void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
 {
     updateCameraParameters(cMo);
-    Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("rtf")
-#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-        .dynamicCast<Ogre::Texture>();
-#else
-        ;
-#endif
+    Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("rtf");
+//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+//        .dynamicCast<Ogre::Texture>();
+//#else
+//        ;
+//#endif
     Ogre::RenderTexture* RTarget = dynTexPtr->getBuffer()->getRenderTarget();
     mWindow->update();
     RTarget->update();
