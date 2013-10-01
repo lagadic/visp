@@ -543,6 +543,7 @@ double vpMomentObject::get(unsigned int i, unsigned int j) const {
   Sets the basic moment value \f$m_{ij}\f$ corresponding to i,j indexes
   \param i : First moment index, with \f$i+j \leq order\f$.
   \param j : Second moment index, with \f$i+j \leq order\f$.
+  \param value_ij : Moment value.
 */
 void vpMomentObject::set(unsigned int i, unsigned int j, const double& value_ij){
     assert(i+j<=getOrder());

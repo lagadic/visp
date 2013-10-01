@@ -1548,7 +1548,7 @@ vpImageSimulator::init(const vpImage<unsigned char> &I,vpColVector* X_)
   - \f$ X[3] \f$ :Bottom left corner.
   
   \param I : The image which is projected.
-  \param _X : table of the 3D coordinates corresponding to the image corners.
+  \param X_ : table of the 3D coordinates corresponding to the image corners.
 */
 void
 vpImageSimulator::init(const vpImage<vpRGBa> &I,vpColVector* X_)
@@ -1569,7 +1569,7 @@ vpImageSimulator::init(const vpImage<vpRGBa> &I,vpColVector* X_)
   - \f$ X[3] \f$ :Bottom left corner.
   
   \param file_image : The adress of an image file.
-  \param _X : table of the 3D coordinates corresponding to the image corners.
+  \param X_ : table of the 3D coordinates corresponding to the image corners.
 */
 void
 vpImageSimulator::init(const char* file_image,vpColVector* X_)

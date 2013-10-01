@@ -6,10 +6,11 @@
 In this tutorial you will learn how to install ViSP from source on OSX in order to be able to compile and use it for iOS development. These steps have been tested for OSX 10.8.4  but should work with any other distribution as well.
 
 Concerning ViSP installation, we provide also other tutorials
-- \ref tutorial-install-win
 - \ref tutorial-install-ubuntu
+- \ref tutorial-install-fedora
+- \ref tutorial-install-win
 
-ViSP can also be installed on other platforms including OSX, Fedora, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+ViSP can also be installed on other platforms including OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
 
 \section install_iOS_required Required software
@@ -25,23 +26,23 @@ There are different ways to get ViSP source code:
 
 - You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf ViSP-2.7.0.tar.gz 
+tar xvzf ViSP-2.8.0.tar.gz 
 \endcode
 or
 \code
-unzip ViSP-2.7.0.zip
+unzip ViSP-2.8.0.zip
 \endcode
 
 - You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
 \code
-unzip ViSP-2.7.1-snapshot-2013.05.02.zip
+unzip ViSP-2.y.z-snapshot-2013.mm.dd.zip
 \endcode
 - Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion and then use the following command
 \code
 svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.7.0
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.8.0
 
 \section install_iOS_config Configuring ViSP from source
 
