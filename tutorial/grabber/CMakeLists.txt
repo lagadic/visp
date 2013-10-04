@@ -9,6 +9,7 @@ endif(VISP_FOUND)
 
 # build the examples
 add_executable(tutorial-grabber-1394 tutorial-grabber-1394.cpp)
+add_executable(tutorial-grabber-1394-writer tutorial-grabber-1394-writer.cpp)
 add_executable(tutorial-grabber-CMU1394 tutorial-grabber-CMU1394.cpp)
 add_executable(tutorial-grabber-opencv tutorial-grabber-opencv.cpp)
 add_executable(tutorial-grabber-opencv-bis tutorial-grabber-opencv-bis.cpp)
