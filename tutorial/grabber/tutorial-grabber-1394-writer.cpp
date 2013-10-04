@@ -4,7 +4,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpVideoWriter.h>
 
-int main(int argc)
+int main(int argc, char **)
 {
 #ifdef VISP_HAVE_DC1394_2
   bool save = false;
@@ -48,7 +48,9 @@ int main(int argc)
 
   if (save)
     writer.close();
+#else
+  (void)argc;
+#endif
 
   return 0;
-#endif
 }
