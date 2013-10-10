@@ -43,7 +43,7 @@
 #include <visp/vpImageConvert.h>
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 #include <opencv2/imgproc/imgproc_c.h>
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#elif defined(VISP_HAVE_OPENCV)
 #include <cv.h>
 #endif
 
