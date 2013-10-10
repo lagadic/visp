@@ -1,4 +1,4 @@
-/*! \example tutorial-grabber-1394.cpp */
+/*! \example tutorial-grabber-1394-writer.cpp */
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImage.h>
