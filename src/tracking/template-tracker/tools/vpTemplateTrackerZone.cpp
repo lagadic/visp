@@ -197,7 +197,7 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, cons
     // Init Delaunay
     cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
     for(size_t i=0; i< vip.size(); i++) {
-      cv::Point2f fp(vip[i].get_u(), vip[i].get_v());
+      cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
       std::cout << "Click point: " << vip[i] << std::endl;
       subdiv.insert(fp);
     }
@@ -614,7 +614,7 @@ void vpTemplateTrackerZone::displayZone(const vpImage<unsigned char> &I, vpTempl
                                         const vpColor &col, const unsigned int thickness)
 {
   //std::cout<<"nb_pts="<<nb_pts<<std::endl;
-  for(int i=0;i<nb_pts;i+=3)
+  for(unsigned int i=0;i<nb_pts;i+=3)
     //int i=3;
   {
     vpDisplay::displayLine(I,list_pt[i].y,list_pt[i].x,list_pt[i+1].y,list_pt[i+1].x,col,thickness);
