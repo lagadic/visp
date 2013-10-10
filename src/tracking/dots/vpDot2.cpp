@@ -135,7 +135,7 @@ vpDot2::vpDot2(const vpDot2& twinDot ) : vpTracker()
 /*!
   = operator.
 */
-void vpDot2::operator=(const vpDot2& twinDot )
+vpDot2& vpDot2::operator=(const vpDot2& twinDot )
 {
   cog = twinDot.cog;
 
@@ -178,6 +178,8 @@ void vpDot2::operator=(const vpDot2& twinDot )
   mu11 = twinDot.mu11;
   mu20 = twinDot.mu20;
   mu02 = twinDot.mu02;
+
+  return (*this);
 }
 
 /*!

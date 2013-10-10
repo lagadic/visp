@@ -336,6 +336,25 @@ SET (SRC_TRACKING
   tracking/moments/vpMomentGravityCenter.cpp
   tracking/moments/vpMomentGravityCenterNormalized.cpp
   tracking/moments/vpMomentObject.cpp
+
+  tracking/template-tracker/vpTemplateTracker.cpp
+  tracking/template-tracker/ssd/vpTemplateTrackerSSD.cpp
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDESM.cpp
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDForwardAdditional.cpp
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDForwardCompositional.cpp
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDInverseCompositional.cpp
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCC.cpp
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCCForwardAdditional.cpp
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCCInverseCompositional.cpp
+  tracking/template-tracker/tools/vpTemplateTrackerBSpline.cpp
+  tracking/template-tracker/tools/vpTemplateTrackerZone.cpp
+  tracking/template-tracker/tools/vpTemplateTrackerTriangle.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarp.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarpAffine.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarpHomography.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarpHomographySL3.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarpSRT.cpp
+  tracking/template-tracker/warp/vpTemplateTrackerWarpTranslation.cpp
   )
 
 IF(VISP_HAVE_XML2)

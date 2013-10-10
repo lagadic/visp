@@ -216,7 +216,10 @@ vpMbtKltXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
           hasFarClipping = true;
           }break;
         case fov_clipping:{
-          fovClipping = (bool)xmlReadIntChild(doc, dataNode);
+          if (xmlReadIntChild(doc, dataNode))
+            fovClipping = true;
+          else
+            fovClipping = false;
           fov_clipping_node = true;
           }break;
         default:{

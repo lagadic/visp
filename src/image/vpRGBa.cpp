@@ -58,25 +58,27 @@
 
   \param v : Input color ( R = G = B = v )
 */
-void
+vpRGBa &
 vpRGBa::operator=(const unsigned char &v)
 {
   this->R = v;
   this->G = v;
   this->B = v;
   this->A = v;
+  return *this;
 }
 
 /*!
   Copy operator.
 */
-void
+vpRGBa &
 vpRGBa::operator=(const vpRGBa &v)
 {
   this->R = v.R;
   this->G = v.G;
   this->B = v.B;
   this->A = v.A;
+  return *this;
 }
 
 /*!
@@ -88,7 +90,7 @@ vpRGBa::operator=(const vpRGBa &v)
   \exception vpException::dimensionError : If v is not a 4 four
   dimention vector.
 */
-void
+vpRGBa &
 vpRGBa::operator=(const vpColVector &v)
 {
   if (v.getRows() != 4) {
@@ -99,6 +101,7 @@ vpRGBa::operator=(const vpColVector &v)
   G = (unsigned char)v[1];
   B = (unsigned char)v[2];
   A = (unsigned char)v[3];
+  return *this;
 }
 
 /*!

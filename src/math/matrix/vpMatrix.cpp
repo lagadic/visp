@@ -77,6 +77,10 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 
+#ifdef VISP_HAVE_GSL
+#include <gsl/gsl_linalg.h>
+#endif
+
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
@@ -3633,6 +3637,21 @@ vpMatrix::expm()
   }
   else
   {
+#ifdef VISP_HAVE_GSL
+    size_t size = rowNum * colNum;
+    double *b = new double [size];
+    for (size_t i=0; i< size; i++)
+      b[i] = 0.;
+    gsl_matrix_view m  = gsl_matrix_view_array(this->data, rowNum, colNum);
+    gsl_matrix_view em = gsl_matrix_view_array(b, rowNum, colNum);
+    gsl_linalg_exponential_ss(&m.matrix, &em.matrix, .01);
+    //gsl_matrix_fprintf(stdout, &em.matrix, "%g");
+    vpMatrix expA(rowNum, colNum);
+    memcpy(expA.data, b, size * sizeof(double));
+
+    delete [] b;
+    return expA;
+#else
     vpMatrix _expE(rowNum, colNum);
     vpMatrix _expD(rowNum, colNum);
     vpMatrix _expX(rowNum, colNum);
@@ -3690,6 +3709,7 @@ vpMatrix::expm()
       exp=_expE;
     }
     return exp;
+#endif
   }
 }
 
@@ -3760,6 +3780,56 @@ vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
       M_comp[i-1][j-1]=M[i][j];
   }
   return M_comp;
+}
+
+/*!
+   \return The condition number, the ratio of the largest singular value of the matrix to the smallest.
+ */
+double vpMatrix::cond()
+{
+  vpMatrix v;
+  vpColVector w;
+
+  vpMatrix M;
+  M = *this;
+
+  M.svd(w, v);
+  double min=w[0];
+  double max=w[0];
+  for(unsigned int i=0;i<M.getCols();i++)
+  {
+    if(min>w[i])min=w[i];
+    if(max<w[i])max=w[i];
+  }
+  return max/min;
+}
+
+/*!
+  Compute \f${\bf H} + \alpha * diag({\bf H})\f$
+  \param H : input Matrix \f${\bf H}\f$. This matrix should be square.
+  \param alpha : Scalar \f$\alpha\f$
+  \param HLM : Resulting operation.
+ */
+void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
+{
+  if(H.getCols() != H.getRows())
+  {
+    vpTRACE("The matrix must be square");
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "The matrix must be square" ));
+  }
+  HLM.resize(H.getRows(), H.getCols());
+
+  for(unsigned int i=0;i<H.getCols();i++)
+  {
+    for(unsigned int j=0;j<H.getCols();j++)
+    {
+      HLM[i][j]=H[i][j];
+      if(i==j)
+        HLM[i][j]+= alpha*H[i][j];
+    }
+  }
+
 }
 
 #undef DEBUG_LEVEL1

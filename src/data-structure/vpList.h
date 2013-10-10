@@ -173,7 +173,7 @@ class vpList
   inline unsigned int nbElement(void);       // returns the number of items currently in the list
   inline unsigned int nbElements(void);       // returns the number of items currently in the list
 
-  void operator=(const vpList<type>& l);
+  vpList<type>& operator=(const vpList<type>& l);
   inline void operator+=(vpList<type>& l);
   inline void operator+=(const type& l);
 
@@ -741,7 +741,7 @@ void vpList<type>::suppress(void)
  */
 
 template<class type>
-void vpList<type>::operator=(const vpList<type>& l)
+vpList<type>& vpList<type>::operator=(const vpList<type>& l)
 {
   type x ;
   vpListElement<type> *e ;
@@ -758,6 +758,8 @@ void vpList<type>::operator=(const vpList<type>& l)
 
   nb = l.nb ;
   cur = first->next ;
+
+  return *this;
 }
 
 /*!

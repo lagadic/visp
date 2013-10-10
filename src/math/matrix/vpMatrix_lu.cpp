@@ -260,7 +260,13 @@ vpMatrix::inverseByLU() const
   unsigned int *perm = new unsigned int[rowNum];
   int p;
 
-  A.LUDcmp(perm, p);
+  try {
+    A.LUDcmp(perm, p);
+  }
+  catch(vpException e) {
+    delete [] perm;
+    throw(e);
+  }
 
   vpColVector c_tmp(rowNum)  ;
   for (j=1; j<=rowNum; j++)

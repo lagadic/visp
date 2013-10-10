@@ -133,9 +133,9 @@ public:
     *this = v ;
   }
 
-  void operator=(const unsigned char &v) ;
-  void operator=(const vpRGBa &v) ;
-  void operator=(const vpColVector &v) ;
+  vpRGBa & operator=(const unsigned char &v) ;
+  vpRGBa & operator=(const vpRGBa &v) ;
+  vpRGBa & operator=(const vpColVector &v) ;
   bool operator==(const vpRGBa &v);
   bool operator!=(const vpRGBa &v);
 

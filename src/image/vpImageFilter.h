@@ -4,7 +4,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -72,16 +72,6 @@ class VISP_EXPORT vpImageFilter
 {
 
 public:
-  static void filter(const vpImage<double> &I,
-		     vpImage<double>& Iu,
-		     vpImage<double>& Iv,
-		     const vpMatrix& M) ;
-
-
-  static void filter(const vpImage<unsigned char> &I,
-		     vpImage<double>& If,
-		     const vpMatrix& M) ;
-
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   static void canny(const vpImage<unsigned char>& I,
                     vpImage<unsigned char>& Ic,
@@ -91,92 +81,36 @@ public:
 #endif
 
   /*!
-   Apply a 5x5 Gaussian filter to an image pixel.
+   Apply a 1x3 derivative filter to an image pixel.
 
-   \param fr : Image to filter
-   \param r : coordinates (row) of the pixel
-   \param c : coordinates (column) of the pixel
-   */
-  template<class T>
-  static double
-  gaussianFilter(vpImage<T> & fr,
-                                const unsigned int r, const unsigned int c)
-  {
-    //filter Gaussien
-    return (
-                                          15.0 * fr[r][c]
-                                          + 12.0 * ( fr[r-1][c]  + fr[r][c-1]  + fr[r+1][c]   + fr[r][c+1]   )
-                                          + 9.0  * ( fr[r-1][c-1] + fr[r+1][c-1] + fr[r-1][c+1] + fr[r+1][c+1])
-                                          + 5.0  * ( fr[r-2][c]   + fr[r][c-2]   + fr[r+2][c]   + fr[r][c+2] )
-                                          + 4.0  * ( fr[r-2][c+1] + fr[r-2][c-1] + fr[r-1][c-2] + fr[r+1][c-2] +
-                                                                                  fr[r+2][c-1] + fr[r+2][c+1] + fr[r-1][c+2] + fr[r+1][c+2] )
-                                          + 2.0  * ( fr[r-2][c-2] + fr[r+2][c-2] + fr[r-2][c+2] + fr[r+2][c+2] )
-                                          )
-          /159.0;
-  }
-
-
-
-  /*!
-   Apply a 1x3 Derivative Filter to an image pixel.
-
-   \param fr : Image to filter
+   \param I : Image to filter
    \param r: coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
   template<class T>
-  static double
-  derivativeFilterX(vpImage<T> & fr,
-                                   const unsigned int r, const unsigned int c)
+  static double derivativeFilterX(const vpImage<T> &I,
+                                  const unsigned int r, const unsigned int c)
   {
-    return (2047.0 *(fr[r][c+1] - fr[r][c-1])
-            +913.0 *(fr[r][c+2] - fr[r][c-2])
-            +112.0 *(fr[r][c+3] - fr[r][c-3]))/8418.0;
+    return (2047.0 *(I[r][c+1] - I[r][c-1])
+            +913.0 *(I[r][c+2] - I[r][c-2])
+            +112.0 *(I[r][c+3] - I[r][c-3]))/8418.0;
   }
 
   /*!
-   Apply a 3x1 Derivative Filter to an image pixel.
+   Apply a 3x1 derivative filter to an image pixel.
 
-   \param fr : Image to filter
+   \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
   template<class T>
-  static double
-  derivativeFilterY(vpImage<T> & fr,
-                                   const unsigned int r, const unsigned int c)
+  static double derivativeFilterY(const vpImage<T> &I,
+                                  const unsigned int r, const unsigned int c)
   {
-    return (2047.0 *(fr[r+1][c] - fr[r-1][c])
-            +913.0 *(fr[r+2][c] - fr[r-2][c])
-            +112.0 *(fr[r+3][c] - fr[r-3][c]))/8418.0;
+    return (2047.0 *(I[r+1][c] - I[r-1][c])
+            +913.0 *(I[r+2][c] - I[r-2][c])
+            +112.0 *(I[r+3][c] - I[r-3][c]))/8418.0;
   }
-
-  /*!
-   build a Gaussian Derivative filter
-
-          \param filter : array (of size t/2) that contains the filter
-          \param t : size of the filter
-
-   \warning filter has to be deallocated
-   */
-  static void
-  coefficientGaussianDerivative(double *filter, const unsigned int t)
-  {
-    unsigned int i;
-    //  double sigma;
-          if (filter == NULL)
-                  filter = new double[t/2] ;
-
-    double s2 = vpMath::sqr((t-1)/6.0);
-
-    for(i=1; i<=(t-1)/2; i++)
-    {
-      filter[i] = (i/(s2*sqrt(2*M_PI)))*exp((i*i)/(-2*s2));
-
-    }
-
-  }
-
 
   /*!
    Apply a 1 x size Derivative Filter in X to an image pixel.
@@ -184,28 +118,27 @@ public:
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
-   \param filter : coefficients of the filter to be initialized using vpImageFilter::coefficientGaussianDerivative().
+   \param filter : coefficients of the filter to be initialized using vpImageFilter::getGaussianDerivativeKernel().
    \param size : size of the filter
 
-   \sa vpImageFilter::coefficientGaussianDerivative()
+   \sa vpImageFilter::getGaussianDerivativeKernel()
    */
 
   template<class T>
-  static double
-  derivativeFilterX(vpImage<T> &I,
-                                   const unsigned int r, const unsigned int c,
-                                   double *filter, const unsigned int size)
+  static double derivativeFilterX(const vpImage<T> &I,
+                                  const unsigned int r, const unsigned int c,
+                                  const double *filter, const unsigned int size)
   {
-          unsigned int i;
-          double result;
+    unsigned int i;
+    double result;
 
-          result = 0;
+    result = 0;
 
-          for(i=1; i<=(size-1)/2; i++)
-          {
-                  result += filter[i]*(I[r][c+i] - I[r][c-i]) ;
-          }
-          return result;
+    for(i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r][c+i] - I[r][c-i]) ;
+    }
+    return result;
   }
 
 
@@ -216,36 +149,300 @@ public:
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
-   \param filter : coefficients of the filter to be initialized using vpImageFilter::coefficientGaussianDerivative().
+   \param filter : coefficients of the filter to be initialized using vpImageFilter::getGaussianDerivativeKernel().
    \param size : size of the filter
 
-  \sa vpImageFilter::coefficientGaussianDerivative()
+  \sa vpImageFilter::getGaussianDerivativeKernel()
    */
   template<class T>
-  static double
-  derivativeFilterY(vpImage<T> &I,
-                                   const unsigned int r, const unsigned int c,
-                                   double *filter, const unsigned int size)
+  static double derivativeFilterY(const vpImage<T> &I,
+                                  const unsigned int r, const unsigned int c,
+                                  const double *filter, const unsigned int size)
   {
-          unsigned int i;
-          double result;
+    unsigned int i;
+    double result;
 
-          result = 0;
+    result = 0;
 
-          for(i=1; i<=(size-1)/2; i++)
-          {
-                  result += filter[i]*(I[r+i][c] - I[r-i][c]) ;
-          }
-          return result;
+    for(i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r+i][c] - I[r-i][c]) ;
+    }
+    return result;
   }
+
+  static void filter(const vpImage<double> &I,
+                     vpImage<double>& Iu,
+                     vpImage<double>& Iv,
+                     const vpMatrix& M) ;
+
+
+  static void filter(const vpImage<unsigned char> &I,
+                     vpImage<double>& If,
+                     const vpMatrix& M) ;
+
+
+  static void filter(const vpImage<unsigned char> &I, vpImage<double>& GI, const double *filter,unsigned  int size);
+  static void filter(const vpImage<double> &I, vpImage<double>& GI, const double *filter,unsigned  int size);
+
+  static inline unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
+  {
+    return (unsigned char)((1.*I[i][j-2]+4.*I[i][j-1]+6.*I[i][j]+4.*I[i][j+1]+1.*I[i][j+2])/16.);
+  }
+  static inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
+  {
+    return (unsigned char)((1.*I[i-2][j]+4.*I[i-1][j]+6.*I[i][j]+4.*I[i+1][j]+1.*I[i+2][j])/16.);
+  }
+
+  static void filterX(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *filter,unsigned  int size);
+  static void filterX(const vpImage<double> &I, vpImage<double>& dIx, const double *filter,unsigned  int size);
+
+  static inline double filterX(const vpImage<unsigned char> &I,
+                               unsigned int r, unsigned int c,
+                               const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+
+  static inline double filterXLeftBorder(const vpImage<unsigned char> &I,
+                                         unsigned int r, unsigned int c,
+                                         const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(c>i)
+        result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+      else
+        result += filter[i]*(I[r][c+i] + I[r][i-c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterXRightBorder(const vpImage<unsigned char> &I,
+                                          unsigned int r, unsigned int c,
+                                          const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(c+i<I.getWidth())
+        result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+      else
+        result += filter[i]*(I[r][2*I.getWidth()-c-i-1] + I[r][c-i]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterX(const vpImage<double> &I,
+                               unsigned int r, unsigned int c,
+                               const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterXLeftBorder(const vpImage<double> &I,
+                                         unsigned int r, unsigned int c,
+                                         const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(c>i)
+        result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+      else
+        result += filter[i]*(I[r][c+i] + I[r][i-c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterXRightBorder(const vpImage<double> &I,
+                                          unsigned int r, unsigned int c,
+                                          const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(c+i<I.getWidth())
+        result += filter[i]*(I[r][c+i] + I[r][c-i]) ;
+      else
+        result += filter[i]*(I[r][2*I.getWidth()-c-i-1] + I[r][c-i]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static void filterY(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *filter,unsigned  int size);
+  static void filterY(const vpImage<double> &I, vpImage<double>& dIx, const double *filter,unsigned  int size);
+  static inline double filterY(const vpImage<unsigned char> &I,
+                               unsigned int r, unsigned int c,
+                               const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  double static inline filterYTopBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(r>i)
+        result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+      else
+        result += filter[i]*(I[r+i][c] + I[i-r][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  double static inline filterYBottomBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(r+i<I.getHeight())
+        result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+      else
+        result += filter[i]*(I[2*I.getHeight()-r-i-1][c] + I[r-i][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterYTopBorder(const vpImage<double> &I, unsigned int r, unsigned int c, const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(r>i)
+        result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+      else
+        result += filter[i]*(I[r+i][c] + I[i-r][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterYBottomBorder(const vpImage<double> &I, unsigned int r, unsigned int c, const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      if(r+i<I.getHeight())
+        result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+      else
+        result += filter[i]*(I[2*I.getHeight()-r-i-1][c] + I[r-i][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static inline double filterY(const vpImage<double> &I,
+                               unsigned int r, unsigned int c,
+                               const double *filter,unsigned  int size)
+  {
+    double result;
+
+    result = 0;
+
+    for(unsigned int i=1; i<=(size-1)/2; i++)
+    {
+      result += filter[i]*(I[r+i][c] + I[r-i][c]) ;
+    }
+    return result+filter[0]*I[r][c];
+  }
+
+  static void gaussianBlur(const vpImage<unsigned char> &I, vpImage<double>& GI, unsigned int size=7, double sigma=0., bool normalize=true);
+  /*!
+   Apply a 5x5 Gaussian filter to an image pixel.
+
+   \param fr : Image to filter
+   \param r : coordinates (row) of the pixel
+   \param c : coordinates (column) of the pixel
+   */
+  template<class T>
+  static double gaussianFilter(const vpImage<T> & fr,
+                               const unsigned int r, const unsigned int c)
+  {
+    //filter Gaussien
+    return (
+          15.0 * fr[r][c]
+          + 12.0 * ( fr[r-1][c]  + fr[r][c-1]  + fr[r+1][c]   + fr[r][c+1]   )
+          + 9.0  * ( fr[r-1][c-1] + fr[r+1][c-1] + fr[r-1][c+1] + fr[r+1][c+1])
+          + 5.0  * ( fr[r-2][c]   + fr[r][c-2]   + fr[r+2][c]   + fr[r][c+2] )
+          + 4.0  * ( fr[r-2][c+1] + fr[r-2][c-1] + fr[r-1][c-2] + fr[r+1][c-2] +
+                     fr[r+2][c-1] + fr[r+2][c+1] + fr[r-1][c+2] + fr[r+1][c+2] )
+          + 2.0  * ( fr[r-2][c-2] + fr[r+2][c-2] + fr[r-2][c+2] + fr[r+2][c+2] )
+          )
+        /159.0;
+  }
+  //operation pour pyramide gaussienne
+  static void getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI);
+  static void getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI);
+  static void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI);
+
+  static void getGaussianKernel(double *filter, unsigned int size, double sigma=0., bool normalize=true);
+  static void getGaussianDerivativeKernel(double *filter, unsigned int size, double sigma=0., bool normalize=true);
+
+  //fonction renvoyant le gradient en X de l'image I pour traitement pyramidal => dimension /2
+  static void getGradX(const vpImage<unsigned char> &I, vpImage<double>& dIx);
+  static void getGradX(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *filter, unsigned int size);
+  static void getGradX(const vpImage<double> &I, vpImage<double>& dIx, const double *filter, unsigned int size);
+  static void getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *gaussianKernel,
+                              const double *gaussianDerivativeKernel, unsigned  int size);
+
+  //fonction renvoyant le gradient en Y de l'image I
+  static void getGradY(const vpImage<unsigned char> &I, vpImage<double>& dIy);
+  static void getGradY(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *filter, unsigned int size);
+  static void getGradY(const vpImage<double> &I, vpImage<double>& dIy, const double *filter, unsigned int size);
+  static void getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *gaussianKernel,
+                              const double *gaussianDerivativeKernel,unsigned  int size);
+
 } ;
 
 
 #endif
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

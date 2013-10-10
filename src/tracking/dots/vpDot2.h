@@ -228,7 +228,7 @@ public:
         unsigned int gray_level_min, unsigned int gray_level_max,
         unsigned int size = 0 );
 
-  void operator=(const vpDot2& twinDot );
+  vpDot2& operator=(const vpDot2& twinDot );
   /*!
     Writes the dot center of gravity coordinates in the frame (i,j) (For more details
     about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,

@@ -132,3 +132,45 @@ vpRect &vpRect::operator=(const vpRect& r)
   this->height = r.height;
   return *this;
 };
+
+/*!
+
+  Create a rectangle as the bounding box of a vector of image points.
+  \param ip : Vector of image points. At least 1 points is mandatory,
+  otherwise an exception is thrown.
+*/
+vpRect::vpRect(const std::vector<vpImagePoint> &ip)
+{
+  set(ip);
+}
+
+/*!
+
+  Set the rectangle as the bounding box of a vector of image points.
+  \param ip : Vector of image points. At least 1 points is mandatory,
+  otherwise an exception is thrown.
+*/
+void vpRect::set(const std::vector<vpImagePoint> &ip)
+{
+  if (ip.size() < 1)
+    throw (vpException(vpException::dimensionError,
+                       "At least 1 point is requested to build a rectangle"));
+  double minu, maxu;
+  double minv, maxv;
+  minu = maxu = ip[0].get_u();
+  minv = maxv = ip[0].get_v();
+
+  for(size_t i=1; i<ip.size(); i++) {
+    double u  = ip[i].get_u();
+    double v  = ip[i].get_v();
+    if ( u < minu ) minu = u;
+    else if (u > maxu) maxu = u;
+    if ( v < minv ) minv = v;
+    else if (v > maxv) maxv = v;
+  }
+
+  setLeft  (minu);
+  setTop   (minv);
+  setRight (maxu);
+  setBottom(maxv);
+};

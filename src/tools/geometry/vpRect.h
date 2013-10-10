@@ -77,7 +77,10 @@
 
 */
 
+#include <vector>
+#include <visp/vpException.h>
 #include <visp/vpImagePoint.h>
+
 
 class VISP_EXPORT vpRect
 {
@@ -88,6 +91,8 @@ public:
   vpRect(const vpImagePoint &topLeft, double width, double height);
   vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight);
   vpRect(const vpRect& r);
+  vpRect(const std::vector<vpImagePoint> &ip);
+
   
   vpRect &operator=(const vpRect& r);
 
@@ -186,6 +191,9 @@ public:
 
   */
   inline double getWidth() const { return this->width;  };
+
+
+  void set(const std::vector<vpImagePoint> &ip);
 
   /*!
 
@@ -310,6 +318,13 @@ private:
 */
 VISP_EXPORT inline bool inRectangle( const vpImagePoint &ip, const vpRect &rect ) {
   return ( ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
+}
+
+VISP_EXPORT inline std::ostream& operator<< (std::ostream &os,
+               const vpRect& r)
+ {
+  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
+  return os;
 }
 
 

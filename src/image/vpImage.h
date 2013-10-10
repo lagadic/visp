@@ -287,9 +287,9 @@ public:
   vpImage<Type> operator-(const vpImage<Type> &B);
 
   //! Copy operator
-  void operator=(const vpImage<Type> &I) ;
+  vpImage<Type>&  operator=(const vpImage<Type> &I) ;
 
-  void operator=(const Type &v);
+  vpImage<Type>& operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
 
@@ -672,7 +672,7 @@ void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
   \brief Copy operator
 */
 template<class Type>
-void vpImage<Type>::operator=(const vpImage<Type> &I)
+vpImage<Type> & vpImage<Type>::operator=(const vpImage<Type> &I)
 {
     /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
   if(bitmap != NULL){
@@ -722,6 +722,7 @@ void vpImage<Type>::operator=(const vpImage<Type> &I)
     vpERROR_TRACE(" ") ;
     throw ;
   }
+  return (* this);
 }
 
 
@@ -732,10 +733,12 @@ void vpImage<Type>::operator=(const vpImage<Type> &I)
    \warning = must be defined for \f$ <\f$ Type \f$ > \f$
 */
 template<class Type>
-void vpImage<Type>::operator=(const Type &v)
+vpImage<Type>& vpImage<Type>::operator=(const Type &v)
 {
   for (unsigned int i=0 ; i < npixels ; i++)
     bitmap[i] = v ;
+
+  return *this;
 }
 
 /*!

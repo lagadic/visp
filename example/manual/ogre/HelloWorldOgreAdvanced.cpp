@@ -79,9 +79,9 @@ protected:
     Ogre::Entity* robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
     Ogre::SceneNode* RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
-    RobotNode->setPosition(-0.3, 0.2, 0);
+    RobotNode->setPosition((Ogre::Real)-0.3, (Ogre::Real)0.2, (Ogre::Real)0);
     RobotNode->attachObject(robot);
-    RobotNode->scale(0.001f,0.001f,0.001f);
+    RobotNode->scale((Ogre::Real)0.001,(Ogre::Real)0.001,(Ogre::Real)0.001);
     RobotNode->pitch(Ogre::Degree(180));
     RobotNode->yaw(Ogre::Degree(-90));
 

@@ -8,6 +8,7 @@
 
 ViSP under development version
   - New features
+    . Introduction of a new template tracker.
   - Improvements
     . Add missing const to member functions and arguments passed by reference.
   - Examples

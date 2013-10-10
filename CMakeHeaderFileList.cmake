@@ -287,6 +287,26 @@ SET (HEADER_TRACKING
   tracking/moments/vpMomentObject.h
   tracking/moments/vpMomentAreaNormalized.h
   tracking/moments/vpMomentArea.h
+
+  tracking/template-tracker/vpTemplateTracker.h
+  tracking/template-tracker/ssd/vpTemplateTrackerSSD.h
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDESM.h
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDForwardAdditional.h
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDForwardCompositional.h
+  tracking/template-tracker/ssd/vpTemplateTrackerSSDInverseCompositional.h
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCC.h
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCCForwardAdditional.h
+  tracking/template-tracker/zncc/vpTemplateTrackerZNCCInverseCompositional.h
+  tracking/template-tracker/tools/vpTemplateTrackerBSpline.h
+  tracking/template-tracker/tools/vpTemplateTrackerHeader.h
+  tracking/template-tracker/tools/vpTemplateTrackerZone.h
+  tracking/template-tracker/tools/vpTemplateTrackerTriangle.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarp.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarpAffine.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarpHomography.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarpHomographySL3.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarpSRT.h
+  tracking/template-tracker/warp/vpTemplateTrackerWarpTranslation.h
   )
 
 SET (HEADER_VIDEO

@@ -121,7 +121,7 @@ public:
   //! operator multiplication by a scalar V =  A * x
   vpColVector operator*(const double x) const;
   //! operator A = -A
-  vpColVector operator-() ;
+  vpColVector operator-() const;
 
   vpColVector rows(unsigned int first_row, unsigned int last_row)
   { 

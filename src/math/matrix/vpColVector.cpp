@@ -139,7 +139,7 @@ vpColVector::vpColVector (const vpRotationVector &v){
 
   
  //! operator A = -A
-vpColVector vpColVector::operator-()
+vpColVector vpColVector::operator-() const
 {
   vpColVector A ;
   try {
