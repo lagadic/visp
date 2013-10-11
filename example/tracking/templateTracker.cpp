@@ -116,7 +116,7 @@ OPTIONS:                                                            Default\n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mbt/cube/image%%04d.ppm\". These \n\
+     \"ViSP-images/cube/image%%04d.pgm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -325,7 +325,7 @@ main(int argc, const char ** argv)
   tracker->setThresholdGradient(60.);
   tracker->setIterationMax(800);
   if (opt_pyramidal) {
-    tracker->setPyramidal(2);
+    tracker->setPyramidal(2, 1);
   }
   bool delaunay = false;
   if (opt_display && opt_click_allowed)

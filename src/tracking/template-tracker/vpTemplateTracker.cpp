@@ -87,7 +87,7 @@ vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   ptTemplateSuppPyr  = NULL;
   ptTemplateCompoPyr = NULL;
 
-  setPyramidal(); // Use the default number of pyramid levels
+  nbLvlPyr = 1; // Disable pyramidal usage
 }
 
 void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)
@@ -539,6 +539,10 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   delete[] talpha;
 }
 
+
+/*!
+  \param
+ */
 void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
 {
   // 	vpTRACE("init_pyramidal");
@@ -563,7 +567,6 @@ void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
   HLMdesireInversePyr=new vpMatrix[nbLvlPyr];
 
   pyrInitialised=true;
-  currentLvlPyr=l0;
   // 	vpTRACE("fin init_pyramidal");
 
 }
@@ -600,6 +603,7 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char>& I,vpTempla
     zoneTracked=&zoneTrackedPyr[i];
     init_pos_evalRMS(ptemp);
   }*/
+  zoneTracked=&zoneTrackedPyr[0];
 
 
   // 	vpTRACE("fin initTrackingPyr");
@@ -630,15 +634,15 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay
 {
   zoneWarp_.initClick(I, delaunay);
 
-  if (pyr_nlevels_ > 1) {
-    initPyramidal(pyr_nlevels_, pyr_nlevels_ - 1);
+  if (nbLvlPyr > 1) {
+    initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneWarp_);
     initHessienDesiredPyr(I);
   }
   else {
     initTracking(I, zoneWarp_);
     initHessienDesired(I);
-    trackNoPyr(I);
+//    trackNoPyr(I);
   }
 }
 
@@ -656,15 +660,15 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const st
 {
   zoneWarp_.initFromPoints(I, v_ip, delaunay);
 
-  if (pyr_nlevels_ > 1) {
-    initPyramidal(pyr_nlevels_, pyr_nlevels_ - 1);
+  if (nbLvlPyr > 1) {
+    initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneWarp_);
     initHessienDesiredPyr(I);
   }
   else {
     initTracking(I, zoneWarp_);
     initHessienDesired(I);
-    trackNoPyr(I);
+    //trackNoPyr(I);
   }
 }
 
@@ -678,15 +682,15 @@ void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTe
 {
   zoneWarp_ = zone;
 
-  if (pyr_nlevels_ > 1) {
-    initPyramidal(pyr_nlevels_, pyr_nlevels_ - 1);
+  if (nbLvlPyr > 1) {
+    initPyramidal(nbLvlPyr, l0Pyr);
     initTrackingPyr(I, zoneWarp_);
     initHessienDesiredPyr(I);
   }
   else {
     initTracking(I, zoneWarp_);
     initHessienDesired(I);
-    trackNoPyr(I);
+//    trackNoPyr(I);
   }
 }
 
@@ -771,7 +775,7 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
  */
 void vpTemplateTracker::track(const vpImage<unsigned char> &I)
 {
-  if (pyr_nlevels_ > 1)
+  if (nbLvlPyr > 1)
     trackPyr(I);
   else
     trackNoPyr(I);
@@ -781,16 +785,17 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
 {
   //vpTRACE("trackPyr");
   vpImage<unsigned char> *pyr_I;
-  pyr_I=new vpImage<unsigned char>[nbLvlPyr+1];
+//  pyr_I=new vpImage<unsigned char>[nbLvlPyr+1]; // Why +1 ?
+  pyr_I=new vpImage<unsigned char>[nbLvlPyr]; // Why +1 ?
   pyr_I[0]=I;
 
   vpColVector ptemp(nbParam);
   if(nbLvlPyr>1)
   {
-    vpColVector *p_sauv=new vpColVector[nbLvlPyr];
-    for(unsigned int i=0;i<nbLvlPyr;i++)p_sauv[i].resize(nbParam);
+//    vpColVector *p_sauv=new vpColVector[nbLvlPyr];
+//    for(unsigned int i=0;i<nbLvlPyr;i++)p_sauv[i].resize(nbParam);
 
-    p_sauv[0]=p;
+//    p_sauv[0]=p;
     for(unsigned int i=1;i<nbLvlPyr;i++)
     {
       vpImageFilter::getGaussPyramidal(pyr_I[i-1],pyr_I[i]);
@@ -804,7 +809,9 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
       //std::cout<<"get p down"<<std::endl;
       Warp->getp_PyramidDown(p,ptemp);
       p=ptemp;
-      p_sauv[i]=p;
+      zoneTracked=&zoneTrackedPyr[i];
+
+//      p_sauv[i]=p;
       /*std::cout<<"p_down = "<<p.t()<<std::endl;
 
       vpColVector vX_testd(2);vX_testd[0]=15./2.;vX_testd[1]=30./2.;
@@ -816,9 +823,9 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
 
     }
 
-    for(unsigned int i=nbLvlPyr-1;i>0;i--)
+    for(int i=(int)nbLvlPyr-1;i>=0;i--)
     {
-      if(i>=l0Pyr)
+      if(i>=(int)l0Pyr)
       {
         templateSize=templateSizePyr[i];
         ptTemplate=ptTemplatePyr[i];
@@ -828,14 +835,18 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
         H=HdesirePyr[i];
         HLM=HLMdesirePyr[i];
         HLMdesireInverse=HLMdesireInversePyr[i];
-        zoneTracked=&zoneTrackedPyr[i];
+//        zoneTracked=&zoneTrackedPyr[i];
         trackRobust(pyr_I[i]);
       }
       //std::cout<<"get p up"<<std::endl;
-      ptemp=p_sauv[i-1];
-      Warp->getp_PyramidUp(p,ptemp);
-      p=ptemp;
+//      ptemp=p_sauv[i-1];
+      if (i > 0) {
+        Warp->getp_PyramidUp(p,ptemp);
+        p=ptemp;
+        zoneTracked=&zoneTrackedPyr[i-1];
+      }
     }
+#if 0
     if(l0Pyr==0)
     {
       templateSize=templateSizePyr[0];
@@ -850,7 +861,15 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
       trackRobust(pyr_I[0]);
     }
 
-    delete [] p_sauv;
+    if (l0Pyr > 0) {
+//      for (int l=(int)l0Pyr; l >=0; l--) {
+//        Warp->getp_PyramidUp(p,ptemp);
+//        p=ptemp;
+//      }
+      zoneTracked=&zoneTrackedPyr[0];
+    }
+#endif
+    //    delete [] p_sauv;
   }
   else
   {
@@ -859,21 +878,21 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
   }
   delete[] pyr_I;
 
-  //veridie si des sommets sont � l'infini, si c est le cas => diverge
-  Warp->computeCoeff(p);
-  //std::cout<<"nb sommets "<<zoneTrackedPyr[0].getNbSommetDiff()<<std::endl;
-  for(unsigned int i=0;i<zoneTrackedPyr[0].getNbSommetDiff();i++)
-  {
-    int x,y;
-    zoneTrackedPyr[0].getCornerDiff((int)i,x,y);
-    X1[0]=x;X1[1]=y;
-    Warp->computeDenom(X1,p);
-    Warp->warpX(X1,X2,p);
-    //std::cout<<X2[0]<<","<<X2[1]<<std::endl;
-    //	if(lo_ieee_isnan(X2[0])||lo_ieee_isnan(X2[1])||lo_ieee_isinf(X2[0])||lo_ieee_isinf(X2[1]))
-    //EM	if(lo_ieee_isnanisnan(X2[0])||isnan(X2[1])||isinf(X2[0])||isinf(X2[1]))
-    //	diverge=true;
-  }
+//  //veridie si des sommets sont � l'infini, si c est le cas => diverge
+//  Warp->computeCoeff(p);
+//  //std::cout<<"nb sommets "<<zoneTrackedPyr[0].getNbSommetDiff()<<std::endl;
+//  for(unsigned int i=0;i<zoneTrackedPyr[0].getNbSommetDiff();i++)
+//  {
+//    int x,y;
+//    zoneTrackedPyr[0].getCornerDiff((int)i,x,y);
+//    X1[0]=x;X1[1]=y;
+//    Warp->computeDenom(X1,p);
+//    Warp->warpX(X1,X2,p);
+//    //std::cout<<X2[0]<<","<<X2[1]<<std::endl;
+//    //	if(lo_ieee_isnan(X2[0])||lo_ieee_isnan(X2[1])||lo_ieee_isinf(X2[0])||lo_ieee_isinf(X2[1]))
+//    //EM	if(lo_ieee_isnanisnan(X2[0])||isnan(X2[1])||isinf(X2[0])||isinf(X2[1]))
+//    //	diverge=true;
+//  }
 
   //vpTRACE("fin");
 }

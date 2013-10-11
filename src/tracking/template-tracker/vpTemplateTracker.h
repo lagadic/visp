@@ -61,7 +61,6 @@ class VISP_EXPORT vpTemplateTracker
     unsigned int                nbLvlPyr;
     unsigned int                l0Pyr;
     bool                        pyrInitialised;
-    unsigned int                currentLvlPyr;
     
     vpTemplateTrackerPoint     *ptTemplate;
     vpTemplateTrackerPoint    **ptTemplatePyr;
@@ -129,7 +128,6 @@ class VISP_EXPORT vpTemplateTracker
     vpImage<double>             BI;
     vpImage<double>             dIx ;
     vpImage<double>             dIy ;
-    unsigned int                pyr_nlevels_;
     vpTemplateTrackerZone       zoneWarp_;
     
   public:
@@ -178,7 +176,7 @@ class VISP_EXPORT vpTemplateTracker
      Set the number of pyramid levels used in the multi-resolution scheme.
      If \e nlevels > 1, the tracker uses a pyramidal approach.
      */
-    void    setPyramidal(unsigned int nlevels=1) {pyr_nlevels_ = nlevels;}
+    void    setPyramidal(unsigned int nlevels=2, unsigned int level_to_stop=1) {nbLvlPyr = nlevels; l0Pyr = level_to_stop; }
     void    setSampling(int _mod_i,int _mod_j){mod_i=_mod_i;mod_j=_mod_j;}
     void    setThresholdGradient(double threshold){thresholdGradient=threshold;}
     /*! By default Brent usage is disabled. */
