@@ -81,7 +81,7 @@ public:
     } vpMbtPolygonClippingType;
   
 public:
-  //! Index of the polygon. Cannot be unsigned int because deafult value is -1.
+  //! Index of the polygon. Cannot be unsigned int because default value is -1.
   int index;
   //! Number of points used to define the polygon.
   unsigned int nbpt;

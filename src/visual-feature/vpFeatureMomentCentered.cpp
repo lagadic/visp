@@ -155,8 +155,8 @@ void vpFeatureMomentCentered::compute_interaction(){
 */
 vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments) :
     vpFeatureMoment(moments,A,B,C,featureMoments)
-
 {
+  order = 0;
 }
 
 /*!

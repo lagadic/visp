@@ -57,6 +57,7 @@
 vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments) :
     vpFeatureMoment(moments,A,B,C,featureMoments)
 {
+  order = 0;
 }
 
 /*!

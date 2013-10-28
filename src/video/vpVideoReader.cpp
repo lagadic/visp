@@ -67,6 +67,7 @@ vpVideoReader::vpVideoReader()
   lastFrame = 0;
   firstFrameIndexIsSet = false;
   lastFrameIndexIsSet = false;
+  formatType = FORMAT_UNKNOWN;
 }
 
 

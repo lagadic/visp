@@ -106,6 +106,7 @@ vpMeLine::vpMeLine():vpMeTracker()
   sign = 1;
   angle_1 = 90;
   _useIntensityForRho = true;
+  rho = theta = delta = delta_1 = angle = a = b = c = 0.;
 }
 /*!
 

@@ -71,6 +71,10 @@ vpPlot::vpPlot()
     
   margei = 30;
   margej = 40;
+
+  graphNbr = 1;
+  factori = 1.f;
+  factorj = 1.f;
 }
 /*!
   This constructor creates a new window where the curves
@@ -203,7 +207,6 @@ vpPlot::initNbGraph (unsigned int nbGraph)
     strcpy(graphList[i].unitx, "");
     strcpy(graphList[i].unity, "");
     strcpy(graphList[i].unitz, "");
-    graphList[i].textdispayed=false;
   }
 }
 

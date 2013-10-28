@@ -86,6 +86,7 @@ vpPose::init()
   ransacThreshold = 0.0001;
   ransacNbInlierConsensus = 4;
 
+  residual = 0;
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::Init() " << std::endl ;
 #endif

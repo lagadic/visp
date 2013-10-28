@@ -50,6 +50,8 @@ vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseComposition
   HCompInverse.resize(nbParam,nbParam);
   useTemplateSelect=false;
   threshold_RMS=1e-20;
+  evolRMS = 0;
+  x_pos = y_pos = NULL;
 }
 
 void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<unsigned char> &/*I*/)

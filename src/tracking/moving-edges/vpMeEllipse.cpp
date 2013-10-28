@@ -101,6 +101,8 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
 
   thresholdWeight = 0.2;
 
+  a = b = e = ce = se = 0.;
+
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
@@ -134,6 +136,8 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse):vpMeTracker(meellipse)
   m02 = meellipse.m02;
   m20 = meellipse.m20;  
   thresholdWeight = meellipse.thresholdWeight;
+
+  circle = meellipse.circle;
 }
 
 /*!

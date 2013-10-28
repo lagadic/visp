@@ -70,6 +70,7 @@ vpMbtMeLine::vpMbtMeLine():vpMeTracker()
 {
   sign = 1;
   theta_1 = M_PI/2;
+  rho = theta = delta = delta_1 = a = b = c = imin = imax = jmin = jmax = expecteddensity = 0.;
 }
 
 /*!

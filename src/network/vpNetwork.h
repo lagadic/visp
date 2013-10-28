@@ -97,12 +97,19 @@ protected:
   };
   
   struct vpEmitter{
-    struct sockaddr_in    emitterAdress;
+    struct sockaddr_in    emitterAddress;
 #ifdef UNIX
     int                   socketFileDescriptorEmitter;
 #else
     SOCKET                socketFileDescriptorEmitter;
 #endif
+    vpEmitter() {
+      emitterAddress.sin_family = AF_INET;
+      emitterAddress.sin_addr.s_addr = INADDR_ANY;
+      emitterAddress.sin_port = 0;
+      emitterAddress.sin_len = 0;
+      socketFileDescriptorEmitter = 0;
+    }
   };
   
   //######## PARAMETERS ########

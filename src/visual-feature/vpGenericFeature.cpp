@@ -90,6 +90,7 @@ vpGenericFeature::vpGenericFeature()
   throw(vpException(vpException::cannotUseConstructorError,
 			     "You are not allow to use this constructor ")) ;
   */
+  errorStatus = errorNotInitalized;
 }
 
 

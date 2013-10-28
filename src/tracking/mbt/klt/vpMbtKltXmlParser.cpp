@@ -59,6 +59,8 @@ vpMbtKltXmlParser::vpMbtKltXmlParser()
   hasNearClipping = false;
   hasFarClipping = false;
   fovClipping = false;
+  maskBorder = maxFeatures = winSize = blockSize = pyramidLevels = 0;
+  qualityValue = minDist = harrisParam = angleAppear = angleDisappear = nearClipping = farClipping = 0.;
   init();
 }
 

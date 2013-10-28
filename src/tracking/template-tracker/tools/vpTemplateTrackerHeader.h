@@ -83,9 +83,19 @@
 
 struct vpTemplateTrackerZPoint {
     int x,y;
+
+    vpTemplateTrackerZPoint()
+    {
+      x=y=0;
+    }
 };
 struct vpTemplateTrackerDPoint {
     double x,y;
+
+    vpTemplateTrackerDPoint()
+    {
+      x=y=0.;
+    }
 };
 struct vpTemplateTrackerPoint {
     int x,y;
@@ -96,6 +106,7 @@ struct vpTemplateTrackerPoint {
 
     vpTemplateTrackerPoint()
     {
+      x=y=dx=dy=val=0.;
       dW = NULL;
       HiG = NULL;
     }
@@ -117,6 +128,8 @@ struct vpTemplateTrackerPointSuppMIInv {
     double *d2Wy;
     vpTemplateTrackerPointSuppMIInv()
     {
+      et=0.;
+      ct=0;
       Bt = NULL;
       dBt = NULL;
       d2W = NULL;

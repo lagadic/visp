@@ -47,6 +47,8 @@ vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositi
   useInverse=true;
   compoInitialised=false;
   threshold_RMS=1e-20;
+  evolRMS = 0.;
+  x_pos = y_pos = NULL;
 }
 
 void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)

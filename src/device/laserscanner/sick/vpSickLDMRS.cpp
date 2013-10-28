@@ -85,6 +85,7 @@ vpSickLDMRS::vpSickLDMRS()
   vAngle[2] = vpMath::rad( 0.4); 
   vAngle[3] = vpMath::rad( 1.2);
 
+  socket_fd = -1;
 }
 
 /*!

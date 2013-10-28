@@ -100,6 +100,17 @@ vpPlotGraph::vpPlotGraph()
   old_iPz = vpImagePoint(-1,-1);
 
   gridThickness = 1;
+
+  xorg = yorg = 0.;
+  zoomx = zoomy = 1.;
+  curveNbr = 1;
+  width = height = 0;
+  dWidth = dHeight = 0;
+  w_xval = w_yval = w_zval = 0.;
+  w_xsize = w_ysize = w_zsize = 0.;
+  ptXorg = ptYorg = ptZorg = 0.;
+  zoomx_3D = zoomy_3D = zoomz_3D = 1.;
+  zorg = zoomz = 1.;
 }
 
 vpPlotGraph::~vpPlotGraph()

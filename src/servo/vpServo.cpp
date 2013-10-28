@@ -76,11 +76,12 @@
 */
 vpServo::vpServo() 
 {
-  init() ;
+  init();
 }
 
 vpServo::vpServo(vpServoType _servoType)
 {
+  init();
   setServo(_servoType);
 }
 
@@ -155,6 +156,8 @@ void
   taskWasKilled = false;
 
   forceInteractionMatrixComputation = false;
+
+  rankJ1 = 0;
 }
 
 /*!
@@ -221,8 +224,6 @@ void
   else
     signInteractionMatrix = -1 ;
 
-
-
   // when the control is directly compute in the camera frame
   // we relieve the end-user to initialize cVa and aJe
   if (servoType==EYEINHAND_CAMERA)
@@ -233,7 +234,6 @@ void
     _eJe.eye(6) ;
     set_eJe(_eJe) ;
   };
-
 }
 
 

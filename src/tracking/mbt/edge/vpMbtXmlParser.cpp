@@ -62,6 +62,10 @@ vpMbtXmlParser::vpMbtXmlParser()
   hasNearClipping = false;
   hasFarClipping = false;
   fovClipping = false;
+  angleAppear = 70;
+  angleDisappear = 80;
+  nearClipping = false;
+  farClipping = false;
   init();
 }
 

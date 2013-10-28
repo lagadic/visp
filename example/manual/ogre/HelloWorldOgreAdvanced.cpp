@@ -70,6 +70,7 @@ public:
                    unsigned int width = 640, unsigned int height = 480)
 		: vpAROgre(cam, width, height)
   {
+    mAnimationState = NULL;
   }
 
 protected:

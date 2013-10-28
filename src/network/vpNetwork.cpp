@@ -50,8 +50,8 @@ vpNetwork::vpNetwork()
   param_sep = "[*|*]";
   max_size_message = 999999;
   
-  tv_sec = 0;
-  tv_usec = 10;
+  tv.tv_sec = tv_sec = 0;
+  tv.tv_usec = tv_usec = 10;
   
   verboseMode = false;
 
@@ -62,6 +62,7 @@ vpNetwork::vpNetwork()
   WSADATA WSAData;
   WSAStartup(MAKEWORD(2,0), &WSAData);
 #endif
+  socketMax = 0;
 }
 
 vpNetwork::~vpNetwork()

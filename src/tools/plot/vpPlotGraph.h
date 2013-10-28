@@ -79,7 +79,6 @@ class vpPlotGraph
     char unity[256];
     unsigned int curveNbr;
     vpPlotCurve* curveList;
-    bool textdispayed;
     bool scaleInitialized;
     bool firstPoint;
     

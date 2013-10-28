@@ -39,6 +39,7 @@ vpFeatureLuminance::init()
 
     firstTimeIn =0 ;
 
+    nbr = nbc = 0;
 }
 
 

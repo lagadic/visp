@@ -68,6 +68,9 @@ vpMbtDistanceLine::vpMbtDistanceLine()
   nbFeature =0 ;
   Reinit = false;
   isvisible = false;
+  index = 0;
+  me = NULL;
+  alpha = 0;
 }
 
 /*!

@@ -62,6 +62,14 @@ vpDiskGrabber::vpDiskGrabber()
 
 vpDiskGrabber::vpDiskGrabber(const char *genericName)
 {
+  setDirectory("/tmp");
+  setBaseName("I");
+  setImageNumber(0);
+  setStep(1);
+  setNumberOfZero(0);
+  setExtension("pgm");
+
+  init = false;
   strcpy(this->genericName, genericName);
   useGenericName = true;
 }

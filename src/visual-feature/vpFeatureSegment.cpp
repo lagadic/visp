@@ -92,6 +92,7 @@ vpFeatureSegment::init()
 vpFeatureSegment::vpFeatureSegment(bool normalized):
   vpBasicFeature()
 {
+  xc_=yc_=l_=alpha_=Z1_=Z2_=cos_a_=sin_a_=0.;
   this->normalized_ = normalized;
 
   init();

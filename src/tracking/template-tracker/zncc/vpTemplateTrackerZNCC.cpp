@@ -53,6 +53,8 @@ vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp):vpTemp
   X1.resize(2);
   X2.resize(2);
   DI.resize(2);
+
+  tG = NULL;
 }
 
 
@@ -90,7 +92,10 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, vpColVect
     }
   }
   ratioPixelIn=(double)Nbpoint/(double)templateSize;
-
+  if(! Nbpoint) {
+    throw(vpException(vpException::divideByZeroError,
+          "Cannot get cost: size = 0")) ;
+  }
 
   moyTij=moyTij/Nbpoint;
   moyIW=moyIW/Nbpoint;

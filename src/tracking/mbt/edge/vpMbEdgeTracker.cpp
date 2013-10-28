@@ -101,6 +101,10 @@ vpMbEdgeTracker::vpMbEdgeTracker()
   angleAppears = vpMath::rad(95);
   angleDisappears = vpMath::rad(95);
   clippingFlag = vpMbtPolygon::NO_CLIPPING;
+
+  scaleLevel = 0;
+  distNearClip = 0.001;
+  distFarClip = 100.0;
 }
 
 /*!

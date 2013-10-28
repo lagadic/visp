@@ -62,6 +62,8 @@ int vpCalibration::init()
 {
   npt = 0 ;
 
+  residual = residual_dist = 1000.;
+
   LoX.clear() ;
   LoY.clear() ;
   LoZ.clear() ;

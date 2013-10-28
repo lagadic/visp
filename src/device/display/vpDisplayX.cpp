@@ -81,6 +81,7 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          int y,
                          const char *title ) : vpDisplay()
 {
+  size = 0;
   x_color = NULL;
   init ( I, x, y, title ) ;
 }
@@ -100,6 +101,7 @@ vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int y,
                          const char *title ) : vpDisplay()
 {
+  size = 0;
   x_color = NULL;
   init ( I, x, y, title ) ;
 }
@@ -137,6 +139,8 @@ vpDisplayX::vpDisplayX ( int x, int y, const char *title )  : vpDisplay()
     strcpy (this->title, title);
 
   ximage_data_init = false;
+
+  size = 0;
 }
 
 /*!
@@ -162,6 +166,7 @@ vpDisplayX::vpDisplayX() : vpDisplay()
 {
   x_color = NULL;
   ximage_data_init = false;
+  size = 0;
 }
 
 /*!

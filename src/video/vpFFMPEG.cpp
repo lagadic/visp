@@ -82,6 +82,14 @@ vpFFMPEG::vpFFMPEG()
   packet = new AVPacket;
 
   pFormatCtx = NULL;
+  pCodecCtx = NULL;
+  pCodec = NULL;
+  pFrame = NULL;
+  pFrameRGB = NULL;
+  pFrameGRAY = NULL;
+  img_convert_ctx = NULL;
+  videoStream = numBytes = outbuf_size = out_size = 0;
+  color_type = COLORED;
 }
 
 /*!

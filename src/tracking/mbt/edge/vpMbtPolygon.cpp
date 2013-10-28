@@ -67,6 +67,7 @@ vpMbtPolygon::vpMbtPolygon()
   distFarClip = 100.0;
   
   clippingFlag = vpMbtPolygon::NO_CLIPPING;
+  index = -1;
 }
 
 /*!

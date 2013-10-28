@@ -98,6 +98,10 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
   mOptionnalResourceLocation.clear();
 
   name = "ViSP - Augmented Reality";
+
+  mBackground = NULL;
+  mBackgroundHeight = 0;
+  mBackgroundWidth = 0;
 }
 
 /*!

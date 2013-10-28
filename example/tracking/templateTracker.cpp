@@ -218,134 +218,133 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 int
 main(int argc, const char ** argv)
 {
-  std::string env_ipath;
-  std::string opt_ipath;
-  std::string ipath;
-  bool opt_click_allowed = true;
-  bool opt_display = true;
-  bool opt_pyramidal = false;
-  TrackerType opt_tracker_type = TRACKER_SSD_INVERSE_COMPOSITIONAL;
-  WarpType opt_warp_type = WARP_AFFINE;
-  unsigned int opt_last_frame = 30;
+  try {
+    std::string env_ipath;
+    std::string opt_ipath;
+    std::string ipath;
+    bool opt_click_allowed = true;
+    bool opt_display = true;
+    bool opt_pyramidal = false;
+    TrackerType opt_tracker_type = TRACKER_SSD_INVERSE_COMPOSITIONAL;
+    WarpType opt_warp_type = WARP_AFFINE;
+    unsigned int opt_last_frame = 30;
 
-  // Get the VISP_IMAGE_PATH environment variable value
-  char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-  if (ptenv != NULL)
-    env_ipath = ptenv;
+    // Get the VISP_IMAGE_PATH environment variable value
+    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
+    if (ptenv != NULL)
+      env_ipath = ptenv;
 
-  // Set the default input path
-  if (! env_ipath.empty())
-    ipath = env_ipath;
+    // Set the default input path
+    if (! env_ipath.empty())
+      ipath = env_ipath;
 
-  // Read the command line options
-  if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_pyramidal,
-                  opt_warp_type, opt_tracker_type, opt_last_frame)) {
-    return (-1);
-  }
+    // Read the command line options
+    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_pyramidal,
+                    opt_warp_type, opt_tracker_type, opt_last_frame)) {
+      return (-1);
+    }
 
-  // Test if an input path is set
-  if (opt_ipath.empty() && env_ipath.empty() ){
-    usage(argv[0], NULL, opt_warp_type, opt_tracker_type, opt_last_frame);
-    std::cerr << std::endl
-              << "ERROR:" << std::endl;
-    std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-              << std::endl
-              << "  environment variable to specify the location of the " << std::endl
-              << "  image path where test images are located." << std::endl
-              << std::endl;
+    // Test if an input path is set
+    if (opt_ipath.empty() && env_ipath.empty() ){
+      usage(argv[0], NULL, opt_warp_type, opt_tracker_type, opt_last_frame);
+      std::cerr << std::endl
+                << "ERROR:" << std::endl;
+      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+                << std::endl
+                << "  environment variable to specify the location of the " << std::endl
+                << "  image path where test images are located." << std::endl
+                << std::endl;
 
-    return (-1);
-  }
+      return (-1);
+    }
 
-  // Get the option values
-  if (!opt_ipath.empty())
-    ipath = opt_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
-  else
-    ipath = env_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+    // Get the option values
+    if (!opt_ipath.empty())
+      ipath = opt_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+    else
+      ipath = env_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
 
-  vpImage<unsigned char> I;
-  vpVideoReader reader;
+    vpImage<unsigned char> I;
+    vpVideoReader reader;
 
-  reader.setFileName(ipath.c_str());
-  reader.setFirstFrameIndex(1);
-  reader.setLastFrameIndex(opt_last_frame);
-  try{
-    reader.open(I);
-  }catch(...){
-    std::cout << "Cannot open sequence: " << ipath << std::endl;
-    return -1;
-  }
-  reader.acquire(I);
+    reader.setFileName(ipath.c_str());
+    reader.setFirstFrameIndex(1);
+    reader.setLastFrameIndex(opt_last_frame);
+    try{
+      reader.open(I);
+    }catch(...){
+      std::cout << "Cannot open sequence: " << ipath << std::endl;
+      return -1;
+    }
+    reader.acquire(I);
 
-  vpDisplay *display = NULL;
-  if (opt_display)
-  {
-    // initialise a  display
+    vpDisplay *display = NULL;
+    if (opt_display)
+    {
+      // initialise a  display
 #if defined VISP_HAVE_X11
-    display = new vpDisplayX;
+      display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
-    display = new vpDisplayGDI;
+      display = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
-    display = new vpDisplayOpenCV;
+      display = new vpDisplayOpenCV;
 #elif defined VISP_HAVE_D3D9
-    display = new vpDisplayD3D;
+      display = new vpDisplayD3D;
 #elif defined VISP_HAVE_GTK
-    display = new vpDisplayGTK;
+      display = new vpDisplayGTK;
 #else
-    opt_display = false;
+      opt_display = false;
 #endif
 #if (defined VISP_HAVE_DISPLAY)
-    display->init(I, 100, 100, "Test tracking") ;
+      display->init(I, 100, 100, "Test tracking") ;
 #endif
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I);
-  }
+      vpDisplay::display(I) ;
+      vpDisplay::flush(I);
+    }
 
-  vpTemplateTrackerWarp *warp = NULL;
-  switch(opt_warp_type) {
-  case WARP_AFFINE:         warp = new vpTemplateTrackerWarpAffine; break;
-  case WARP_HOMOGRAPHY:     warp = new vpTemplateTrackerWarpHomography; break;
-  case WARP_HOMOGRAPHY_SL3: warp = new vpTemplateTrackerWarpHomographySL3; break;
-  case WARP_SRT:            warp = new vpTemplateTrackerWarpSRT; break;
-  case WARP_TRANSLATION:    warp = new vpTemplateTrackerWarpTranslation;  break;
-  }
+    vpTemplateTrackerWarp *warp = NULL;
+    switch(opt_warp_type) {
+    case WARP_AFFINE:         warp = new vpTemplateTrackerWarpAffine; break;
+    case WARP_HOMOGRAPHY:     warp = new vpTemplateTrackerWarpHomography; break;
+    case WARP_HOMOGRAPHY_SL3: warp = new vpTemplateTrackerWarpHomographySL3; break;
+    case WARP_SRT:            warp = new vpTemplateTrackerWarpSRT; break;
+    case WARP_TRANSLATION:    warp = new vpTemplateTrackerWarpTranslation;  break;
+    }
 
-  vpTemplateTracker *tracker = NULL;
-  switch(opt_tracker_type) {
-  case TRACKER_SSD_ESM:                    tracker = new vpTemplateTrackerSSDESM(warp); break;
-  case TRACKER_SSD_FORWARD_ADDITIONAL:     tracker = new vpTemplateTrackerSSDForwardAdditional(warp); break;
-  case TRACKER_SSD_FORWARD_COMPOSITIONAL:  tracker = new vpTemplateTrackerSSDForwardCompositional(warp); break;
-  case TRACKER_SSD_INVERSE_COMPOSITIONAL:  tracker = new vpTemplateTrackerSSDInverseCompositional(warp); break;
-  case TRACKER_ZNCC_FORWARD_ADDITIONEL:    tracker = new vpTemplateTrackerZNCCForwardAdditional(warp); break;
-  case TRACKER_ZNCC_INVERSE_COMPOSITIONAL: tracker = new vpTemplateTrackerZNCCInverseCompositional(warp); break;
-  }
+    vpTemplateTracker *tracker = NULL;
+    switch(opt_tracker_type) {
+    case TRACKER_SSD_ESM:                    tracker = new vpTemplateTrackerSSDESM(warp); break;
+    case TRACKER_SSD_FORWARD_ADDITIONAL:     tracker = new vpTemplateTrackerSSDForwardAdditional(warp); break;
+    case TRACKER_SSD_FORWARD_COMPOSITIONAL:  tracker = new vpTemplateTrackerSSDForwardCompositional(warp); break;
+    case TRACKER_SSD_INVERSE_COMPOSITIONAL:  tracker = new vpTemplateTrackerSSDInverseCompositional(warp); break;
+    case TRACKER_ZNCC_FORWARD_ADDITIONEL:    tracker = new vpTemplateTrackerZNCCForwardAdditional(warp); break;
+    case TRACKER_ZNCC_INVERSE_COMPOSITIONAL: tracker = new vpTemplateTrackerZNCCInverseCompositional(warp); break;
+    }
 
-  tracker->setSampling(2,2);
-  tracker->setLambda(0.001);
-  tracker->setThresholdGradient(60.);
-  tracker->setIterationMax(800);
-  if (opt_pyramidal) {
-    tracker->setPyramidal(2, 1);
-  }
-  bool delaunay = false;
-  if (opt_display && opt_click_allowed)
-    tracker->initClick(I, delaunay);
-  else {
-    std::vector<vpImagePoint> v_ip;
-    vpImagePoint ip;
-    ip.set_ij(166, 54);  v_ip.push_back(ip);
-    ip.set_ij(284, 55);  v_ip.push_back(ip);
-    ip.set_ij(259, 284); v_ip.push_back(ip); // ends the first triangle
-    ip.set_ij(259, 284); v_ip.push_back(ip); // start the second triangle
-    ip.set_ij(149, 240); v_ip.push_back(ip);
-    ip.set_ij(167, 58);  v_ip.push_back(ip);
+    tracker->setSampling(2,2);
+    tracker->setLambda(0.001);
+    tracker->setThresholdGradient(60.);
+    tracker->setIterationMax(800);
+    if (opt_pyramidal) {
+      tracker->setPyramidal(2, 1);
+    }
+    bool delaunay = false;
+    if (opt_display && opt_click_allowed)
+      tracker->initClick(I, delaunay);
+    else {
+      std::vector<vpImagePoint> v_ip;
+      vpImagePoint ip;
+      ip.set_ij(166, 54);  v_ip.push_back(ip);
+      ip.set_ij(284, 55);  v_ip.push_back(ip);
+      ip.set_ij(259, 284); v_ip.push_back(ip); // ends the first triangle
+      ip.set_ij(259, 284); v_ip.push_back(ip); // start the second triangle
+      ip.set_ij(149, 240); v_ip.push_back(ip);
+      ip.set_ij(167, 58);  v_ip.push_back(ip);
 
-    tracker->initFromPoints(I, v_ip, false);
-  }
+      tracker->initFromPoints(I, v_ip, false);
+    }
 
-  while (! reader.end())
-  {
-    try
+    while (! reader.end())
     {
       std::cout << "Process image number " << reader.getFrameIndex() << std::endl;
       // Acquire a new image
@@ -395,26 +394,25 @@ main(int argc, const char ** argv)
 
       vpDisplay::flush(I) ;
     }
-    catch(vpException e)
-    {
-      std::cout << "error caught: " << e << std::endl;
-      break;
+    if (opt_click_allowed) {
+      vpDisplay::displayCharString(I, 10,10, "A click to exit...", vpColor::red);
+      vpDisplay::flush(I) ;
+      vpDisplay::getClick(I) ;
     }
-    vpDisplay::flush(I) ;
-  }
-  if (opt_click_allowed) {
-    vpDisplay::displayCharString(I, 10,10, "A click to exit...", vpColor::red);
-    vpDisplay::flush(I) ;
-    vpDisplay::getClick(I) ;
-  }
-  reader.close();
-  if (display)
-    delete display;
+    reader.close();
+    if (display)
+      delete display;
 
-  delete warp;
-  delete tracker;
+    delete warp;
+    delete tracker;
 
-  return 0;
+    return 0;
+  }
+  catch(vpException e)
+  {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return -1;
+  }
 }
 
 #else

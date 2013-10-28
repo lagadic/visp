@@ -89,7 +89,8 @@ void vpDot2::init()
   ellipsoidShapePrecision = 0.65;
   maxSizeSearchDistancePrecision = 0.65;
   setEllipsoidBadPointsPercentage();
-  m00 = m11 = m02 = m20 = m10 = m01 = 0 ;
+  m00 = m11 = m02 = m20 = m10 = m01 = 0.;
+  mu11 = mu02 = mu20 = 0.;
 
   bbox_u_min = bbox_u_max = bbox_v_min = bbox_v_max = 0;
 

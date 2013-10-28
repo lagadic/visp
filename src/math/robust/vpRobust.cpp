@@ -79,7 +79,7 @@ vpRobust::vpRobust(unsigned int n_data)
   sorted_residues.resize(n_data);
   it=0;
   NoiseThreshold=0.0017; //Can not be more accurate than 1 pixel
-
+  sig_prev = swap = 0.;
 }
 
 /*!

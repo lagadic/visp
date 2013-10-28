@@ -216,9 +216,13 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
         moyTij+=Tij;
         moyIW+=IW;
       }
-
-
     }
+
+    if(! Nbpoint) {
+      throw(vpException(vpException::divideByZeroError,
+            "Cannot track the template: no point")) ;
+    }
+
     moyTij=moyTij/Nbpoint;
     moyIW=moyIW/Nbpoint;
     //vpMatrix d2Wx(nbParam,nbParam);

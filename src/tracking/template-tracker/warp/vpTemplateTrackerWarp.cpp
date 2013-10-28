@@ -71,7 +71,10 @@ void vpTemplateTrackerWarp::get_p_by_click(const vpImage<unsigned char> &I0,cons
   }
   warp->find_warp(u1,v1,u2,v2,nb_pt,p);
 
-
+  delete [] u1;
+  delete [] v1;
+  delete [] u2;
+  delete [] v2;
 }
 
 void vpTemplateTrackerWarp::get_p_by_click(const vpImage<vpRGBa> &I0,const vpImage<unsigned char> &I,vpTemplateTrackerWarp *warp,vpColVector &p,int nb_pt)
@@ -103,6 +106,11 @@ void vpTemplateTrackerWarp::get_p_by_click(const vpImage<vpRGBa> &I0,const vpIma
     vpDisplay::flush(I) ;
   }
   warp->find_warp(u1,v1,u2,v2,nb_pt,p);
+
+  delete [] u1;
+  delete [] v1;
+  delete [] u2;
+  delete [] v2;
 }
 
 //warp Tr en TT avec le deplacement p

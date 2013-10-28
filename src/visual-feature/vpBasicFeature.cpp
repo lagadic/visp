@@ -83,6 +83,7 @@ vpBasicFeature::vpBasicFeature()
     //vpTRACE("0x%x", this);
     deallocate = vpBasicFeature::user ;
     flags = NULL;
+    dim_s = nbParameters = 0;
 }
 
 //! Get the feature vector dimension.

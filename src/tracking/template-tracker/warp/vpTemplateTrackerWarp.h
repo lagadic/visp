@@ -62,7 +62,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
     
   public:
     //constructor;
-    vpTemplateTrackerWarp(){}
+    vpTemplateTrackerWarp(){ NbParam = 0; Denom = 1.;}
     virtual ~vpTemplateTrackerWarp(){}
 
     virtual void computeCoeff(const vpColVector &p)=0;

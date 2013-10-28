@@ -300,6 +300,7 @@ vpBiclops::vpBiclops (void)
 void
 vpBiclops::init ()
 {
+  dh_model_ = DH1;
   set_cMe();
   return ;
 }

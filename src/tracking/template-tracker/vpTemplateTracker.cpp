@@ -88,6 +88,21 @@ vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   ptTemplateCompoPyr = NULL;
 
   nbLvlPyr = 1; // Disable pyramidal usage
+  nbIteration = 0;
+
+  l0Pyr = 0;
+  templateSize = 0;
+  templateSelectSize = 0;
+  iterationGlobale = 0;
+  ratioPixelIn = 0.;
+  templateSizePyr = NULL;
+  ptTemplateSelectPyr = NULL;
+  zoneTracked = NULL;
+  zoneTrackedPyr = NULL;
+  pyr_IDes = NULL;
+  HdesirePyr = NULL;
+  HLMdesirePyr = NULL;
+  HLMdesireInversePyr = NULL;
 }
 
 void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)

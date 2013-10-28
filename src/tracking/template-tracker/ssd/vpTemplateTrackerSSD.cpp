@@ -54,6 +54,8 @@ vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp):vpTempla
   X1.resize(2);
   X2.resize(2);
   DI.resize(2);
+
+  tG = NULL;
 }
 
 double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,vpColVector &tp)

@@ -80,6 +80,11 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
 
   cercle1 = NULL;
   cercle2 = NULL;
+
+  index = 0;
+  me = NULL;
+  alpha = 0;
+  radius = 0;
 }
 
 /*!

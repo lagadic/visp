@@ -65,6 +65,8 @@ vpDisplay::vpDisplay()
 
   title = new char[1024];
   strcpy (title, "" );
+  font = NULL;
+  width = height = 0;
 }
 /*!
   Destructor that desallocates memory.

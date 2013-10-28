@@ -47,15 +47,13 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle()
   minx_temp=0;
   miny_temp=0;
 
-  sommet_mileu_top=false;
-  xp1=0;
-  yp2=0;
-  yp3=0;
-
   l_t=0;
   h_t=0;
 
   marge_triangle = 0.00001;
+
+  pas_bon = false;
+  uvinv00 = uvinv01 = uvinv10 = uvinv11 = 0.;
 
   //ptempo.resize(2);ptempo=0;
   //p_ds_uv.resize(2);p_ds_uv=0;
@@ -72,11 +70,6 @@ vpTemplateTrackerTriangle & vpTemplateTrackerTriangle::operator=(const vpTemplat
 {
   minx_temp=T.minx_temp;
   miny_temp=T.miny_temp;
-
-  sommet_mileu_top=T.sommet_mileu_top;
-  xp1=T.xp1;
-  yp2=T.yp2;
-  yp3=T.yp3;
 
   l_t=T.l_t;
   h_t=T.h_t;

@@ -92,6 +92,8 @@ vpFeatureDepth::init()
     if (flags == NULL)
       flags = new bool[nbParameters];
     for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
+    x = y = 0.;
+    Z = 1.;
 }
 
 

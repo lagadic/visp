@@ -58,12 +58,12 @@ vpServer::vpServer( ) : vpNetwork(), started(false)
   {
     vpERROR_TRACE( "vpServer::vpServer(), cannot open socket." );
   }
-  emitter.emitterAdress.sin_family = AF_INET;
-  emitter.emitterAdress.sin_addr.s_addr = INADDR_ANY;
-  emitter.emitterAdress.sin_port = 0; 
+  emitter.emitterAddress.sin_family = AF_INET;
+  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY;
+  emitter.emitterAddress.sin_port = 0;
   
-  adress = inet_ntoa(emitter.emitterAdress.sin_addr);
-  port = emitter.emitterAdress.sin_port;
+  adress = inet_ntoa(emitter.emitterAddress.sin_addr);
+  port = emitter.emitterAddress.sin_port;
 }
 
 /*!
@@ -84,11 +84,11 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
   {
     vpERROR_TRACE( "vpServer::vpServer(const int &port_serv), cannot open socket." );
   }
-  emitter.emitterAdress.sin_family = AF_INET;
-  emitter.emitterAdress.sin_addr.s_addr = INADDR_ANY; //inet_addr("127.0.0.1");;
-  emitter.emitterAdress.sin_port = htons( (unsigned short)port_serv ); 
+  emitter.emitterAddress.sin_family = AF_INET;
+  emitter.emitterAddress.sin_addr.s_addr = INADDR_ANY; //inet_addr("127.0.0.1");;
+  emitter.emitterAddress.sin_port = htons( (unsigned short)port_serv );
   
-  adress = inet_ntoa(emitter.emitterAdress.sin_addr);
+  adress = inet_ntoa(emitter.emitterAddress.sin_addr);
   port = port_serv;
 }
 
@@ -111,9 +111,9 @@ vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNe
   {
     vpERROR_TRACE( "vpServer::vpServer(const std::string &adress_serv,const int &port_serv), cannot open socket." );
   }
-  emitter.emitterAdress.sin_family = AF_INET;
-  emitter.emitterAdress.sin_addr.s_addr = inet_addr(adress_serv.c_str());
-  emitter.emitterAdress.sin_port = htons( (unsigned short)port_serv );
+  emitter.emitterAddress.sin_family = AF_INET;
+  emitter.emitterAddress.sin_addr.s_addr = inet_addr(adress_serv.c_str());
+  emitter.emitterAddress.sin_port = htons( (unsigned short)port_serv );
   
   adress = adress_serv;
   port = port_serv;
@@ -146,11 +146,11 @@ vpServer::~vpServer()
 */
 bool vpServer::start()
 {  
-  int serverStructLength = sizeof(emitter.emitterAdress);
+  int serverStructLength = sizeof(emitter.emitterAddress);
 #ifdef UNIX
-  int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, (unsigned)serverStructLength );
+  int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAddress, (unsigned)serverStructLength );
 #else //Win32
-  int bindResult = bind( (unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAdress, serverStructLength );
+  int bindResult = bind( (unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAddress, serverStructLength );
 #endif
   
   

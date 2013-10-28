@@ -228,6 +228,7 @@ vpMeNurbs::vpMeNurbs():vpMeTracker()
   enableCannyDetection = false;
   cannyTh1 = 100.0;
   cannyTh2 = 200.0;
+  dist = 0.;
 }
 
 /*!

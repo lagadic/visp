@@ -50,6 +50,7 @@
   from doing more than 180deg rotation with moments.
  */
 vpMomentAlpha::vpMomentAlpha() : vpMoment(),isRef(true), symmetric(false){
+    alphaRef = 0.;
     values.resize(1);
 }
 

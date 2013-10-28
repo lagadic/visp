@@ -383,10 +383,10 @@ public:
   vpServo task;
   ...
   vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  double   rank = task.getTaskRank();       // Get the rank of the task jacobian
+  unsigned int rank = task.getTaskRank();   // Get the rank of the task jacobian
 \endcode
   */
-  inline double getTaskRank() const
+  inline unsigned int getTaskRank() const
   {
     return rankJ1;
   }

@@ -49,6 +49,7 @@ vpPoseFeatures::vpPoseFeatures()
   vvsIterMax = 200;
   totalSize = 0;
   maxSize = 0;
+  computeCovariance = false;
   
   verbose = false;
 }

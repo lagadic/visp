@@ -462,6 +462,7 @@ vpImagePoint vpTemplateTrackerZone::getCenter() const
       {
         xc+=j;
         yc+=i;
+        cpt ++;
       }
   if(! cpt) {
     throw(vpException(vpException::divideByZeroError,
@@ -748,6 +749,12 @@ void vpTemplateTrackerZone::copy(const vpTemplateTrackerZone& Z)
   }
 }
 
+/*!
+  Return the position of the center of gravity in a given area.
+  \param borne_x : Right coordinate of the area to consider.
+  \param borne_y : Bottom coordinate of the area to consider.
+  \exception vpException::divideByZeroError: The size of the zone is null.
+ */
 
 vpImagePoint vpTemplateTrackerZone::getCenter(int borne_x, int borne_y) const
 {
@@ -761,6 +768,12 @@ vpImagePoint vpTemplateTrackerZone::getCenter(int borne_x, int borne_y) const
         y_center+=i;
         cpt_pt++;
       }
+
+  if(! cpt_pt) {
+    throw(vpException(vpException::divideByZeroError,
+          "Cannot compute the zone center: size = 0")) ;
+  }
+
   x_center=x_center/cpt_pt;
   y_center=y_center/cpt_pt;
   vpImagePoint center;

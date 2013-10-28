@@ -43,7 +43,9 @@
 
 
 vpClient::vpClient() :  vpNetwork()
-{}
+{
+  numberOfAttempts = 0;
+}
 
 /*!
   Disconnect the client from all the servers, and close the sockets.

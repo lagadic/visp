@@ -63,10 +63,6 @@ class VISP_EXPORT vpTemplateTrackerTriangle
     vpTemplateTrackerDPoint    S2;
     vpTemplateTrackerDPoint    S3;
 
-    bool              sommet_mileu_top;
-    double            xp1;
-    double            yp2;
-    double            yp3;
     double            l_t;
     double            h_t;
 

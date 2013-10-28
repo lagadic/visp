@@ -249,7 +249,11 @@ public:
   unsigned int nthreads;
   unsigned int threadid;
 public:
-  vpUndistortInternalType() {};
+  vpUndistortInternalType() {
+    src = dst = NULL;
+    width = height = 0;
+    nthreads = threadid = 0;
+  };
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) {
     src = u.src;
     dst = u.dst;

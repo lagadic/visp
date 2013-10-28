@@ -90,6 +90,10 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   bgColor = vpColor::white;
   cleanPrevImage = false;
   setBackgroundTexture = false;
+
+  distance = 1.;
+  visible_result = 1.;
+  euclideanNorm_u = euclideanNorm_v = 0.;
 }
 
 

@@ -568,6 +568,21 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   objectImage.clear();
 
   thickness_ = 1;
+
+  scene.name = NULL;
+  scene.bound.ptr = NULL;
+  scene.bound.nbr = 0;
+
+  desiredScene.name = NULL;
+  desiredScene.bound.ptr = NULL;
+  desiredScene.bound.nbr = 0;
+
+  camera.name = NULL;
+  camera.bound.ptr = NULL;
+  camera.bound.nbr = 0;
+
+  object = PLATE;
+  desiredObject = D_STANDARD;
 }
 
 

@@ -58,6 +58,8 @@ vpPlotCurve::vpPlotCurve()
   pointListz.clear();
   nbPoint = 0;
   thickness = 1 ;
+  curveStyle = point;
+  xmin = xmax = ymin = ymax = 0;
 }
 
 vpPlotCurve::~vpPlotCurve()

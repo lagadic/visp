@@ -86,6 +86,7 @@ vpServolens::vpServolens()
 */
 vpServolens::vpServolens(const char *port)
 {
+  remfd = 0;
   isinit = false;
 
   this->open(port);

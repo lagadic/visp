@@ -195,6 +195,11 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     dp=gain*dp;
     if(useBrent)
     {
+      if(! Nbpoint) {
+        throw(vpException(vpException::divideByZeroError,
+              "Cannot compute optimal Brent gain: size = 0")) ;
+      }
+
       alpha=2.;
       computeOptimalBrentGain(I,p,erreur/Nbpoint,dp,alpha);
       dp=alpha*dp;

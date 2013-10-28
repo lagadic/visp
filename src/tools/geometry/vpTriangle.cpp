@@ -128,6 +128,7 @@ vpTriangle::buildFrom(const vpImagePoint &iP1, const vpImagePoint &iP2, const vp
 void
 vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
 {
+  ptempo0 = ptempo1 = 0.;
   apex1 = iP1;
   apex2 = iP2;
   apex3 = iP3;

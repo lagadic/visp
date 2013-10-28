@@ -59,6 +59,10 @@ vpRobot::vpRobot (void)
   frameRobot = vpRobot::CAMERA_FRAME;
   stateRobot = vpRobot::STATE_STOP ;
   verbose_ = true;
+  nDof = 0;
+  eJeAvailable = fJeAvailable = areJointLimitsAvailable = false;
+  qmin = 0;
+  qmax = 0;
 }
 
 /*!
