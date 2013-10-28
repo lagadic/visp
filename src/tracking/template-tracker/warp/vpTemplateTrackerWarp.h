@@ -48,6 +48,7 @@
 #ifndef vpTemplateTrackerWarp_hh
 #define vpTemplateTrackerWarp_hh
 
+#include <visp/vpDisplay.h>
 #include <visp/vpTemplateTrackerHeader.h>
 #include <visp/vpTemplateTrackerTriangle.h>
 #include <visp/vpTemplateTrackerZone.h>

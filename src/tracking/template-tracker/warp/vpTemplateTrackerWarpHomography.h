@@ -49,6 +49,7 @@
 #define vpTemplateTrackerWarpHomography_hh
 
 #include <visp/vpTemplateTrackerWarp.h>
+#include <visp/vpHomography.h>
 
 
 class VISP_EXPORT vpTemplateTrackerWarpHomography: public vpTemplateTrackerWarp

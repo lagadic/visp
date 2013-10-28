@@ -47,39 +47,7 @@
 #ifndef vpTemplateTrackerHeader_hh
 #define vpTemplateTrackerHeader_hh
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpSimulator.h>
-#include <visp/vpColor.h>
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMatrix.h>
-#include <visp/vpColVector.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpImageTools.h>
-#include <visp/vpImageFilter.h>
-#include <visp/vpTime.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpPose.h>
-#ifdef USE_DISPLAY
-#include <visp/vpDisplayX.h>
-#endif
-
-#include <vector>
-
-// #define USE_DISPLAY
-
+#include <stdio.h>
 
 struct vpTemplateTrackerZPoint {
     int x,y;

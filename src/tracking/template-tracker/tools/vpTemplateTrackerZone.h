@@ -42,6 +42,9 @@
 #ifndef vpTemplateTrackerZone_hh
 #define vpTemplateTrackerZone_hh
 
+#include <vector>
+
+#include <visp/vpDisplay.h>
 #include <visp/vpException.h>
 #include <visp/vpTemplateTrackerTriangle.h>
 #include <visp/vpTemplateTrackerHeader.h>
