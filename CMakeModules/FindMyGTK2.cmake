@@ -69,7 +69,7 @@ IF(UNIX OR WIN32)
     /usr/lib/i386-linux-gnu/glib-2.0/include
     /usr/lib/x86_64-linux-gnu/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
-    "C:/GTK/lib/glib-2.0/include"glib
+    "C:/GTK/lib/glib-2.0/include"
     /sw/lib/glib-2.0/include
   )
 
