@@ -917,6 +917,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     std::cout << "> " << caoNbrLine << " lines" << std::endl;
 
     if (caoNbrLine > 100000) {
+      delete [] caoPoints;
       throw vpException(vpException::badValue,
         "Exceed the max number of lines in the CAO model.");
     }
@@ -959,6 +960,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     fileId >> caoNbrPolygonLine;
     std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
     if (caoNbrPolygonLine > 100000) {
+      delete [] caoPoints;
+      delete [] caoLinePoints;
       throw vpException(vpException::badValue, "Exceed the max number of polygon lines.");
     }
 

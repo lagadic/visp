@@ -862,8 +862,10 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
-  if (w > 100000 || h>100000)
+  if (w > 100000 || h>100000) {
+    fclose (fd);
     throw(vpException(vpException::badValue, "Bad image size"));
+  }
 
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
@@ -894,6 +896,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
     }
     catch(...)
     {
+      fclose (fd);
       throw (vpImageException(vpImageException::ioError,
                               "Cannot read content of PFM file")) ;
     }
@@ -1027,8 +1030,10 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
-  if (w > 100000 || h>100000)
+  if (w > 100000 || h>100000) {
+    fclose (fd);
     throw(vpException(vpException::badValue, "Bad image size"));
+  }
 
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
@@ -1059,6 +1064,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
     }
     catch(...)
     {
+      fclose (fd);
       throw (vpImageException(vpImageException::ioError,
             "couldn't read PGM file")) ;
     }
@@ -1269,8 +1275,10 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
 
-  if (w > 100000 || h>100000)
+  if (w > 100000 || h>100000) {
+    fclose (fd);
     throw(vpException(vpException::badValue, "Bad image size"));
+  }
 
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
@@ -1301,6 +1309,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
     }
     catch(...)
     {
+      fclose (fd);
       throw (vpImageException(vpImageException::ioError,
             "couldn't read PPM file")) ;
     }
