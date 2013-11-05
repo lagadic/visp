@@ -44,10 +44,10 @@
 #define vpDisplayGTK_h
 
 #include <visp/vpConfig.h>
-#include <visp/vpDisplay.h>
 #if ( defined(VISP_HAVE_GTK) )
 
 #include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkrgb.h>
@@ -84,9 +84,9 @@ int main()
 
   // Read an image in PGM P5 format
 #ifdef UNIX
-  vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
 #elif WIN32
-  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
 #endif
 
   vpDisplayGTK d; 
@@ -154,7 +154,7 @@ private:
 	   purple, lightGray, gray, darkGray;
   GdkColormap  *colormap;
 
-  GdkFont *Police1,*Police2;
+  GdkFont *font;
   guchar  *vectgtk;
   GdkColor **col ;
   int ncol, nrow ;
@@ -208,7 +208,7 @@ public:
 
 protected:
 
-  void setFont( const char *font );
+  void setFont( const char *fontname );
   void setTitle(const char *title) ;
   void setWindowPosition(int winx, int winy);
 
@@ -276,8 +276,6 @@ protected:
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
-
-  void init_common();
 } ;
 
 #endif

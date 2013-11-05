@@ -348,6 +348,7 @@ main(int argc, const char ** argv)
       // Display in overlay a yellow string
       ip.set_i( 85 );
       ip.set_j( 100 );
+      //vpDisplay::setFont(I, "-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
       vpDisplay::displayCharString(I, ip,
                                    "ViSP is a marvelous software",
                                    vpColor::yellow) ;
