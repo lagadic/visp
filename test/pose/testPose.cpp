@@ -149,10 +149,16 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
     if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
       fail = 1;
   }
+
   std::cout << "Based on 3D parameters " << legend << " is " << (fail ? "badly" : "well") << " estimated" << std::endl;
 
   // Test done on the residual
   double r = pose.computeResidual(cMo_est);
+  if (pose.listP.size() < 4) {
+    fail = 1;
+    std::cout << "Not enough point" << std::endl;
+    return fail;
+  }
   r = sqrt(r)/pose.listP.size();
   //std::cout << "Residual on each point (meter): " << r << std::endl;
   fail = (r > 0.1) ? 1 : 0;

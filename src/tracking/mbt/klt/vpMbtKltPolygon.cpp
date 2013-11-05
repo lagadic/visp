@@ -60,6 +60,9 @@ vpMbtKltPolygon::vpMbtKltPolygon()
   curPointsInd = std::map<int, int>();
   
   isvisible = false;
+
+  invd0 = 1.;
+  dt = d0 = 1.;
 }
 
 /*!

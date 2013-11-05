@@ -250,6 +250,11 @@ vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor color)
 void
 vpPlotGraph::setTitle (const char *title)
 {
+  if (strlen(title) >= 256) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the title"));
+  }
+
   strcpy(this->title, title);
   dispTitle = true;
 }
@@ -257,6 +262,11 @@ vpPlotGraph::setTitle (const char *title)
 void
 vpPlotGraph::setUnitX (const char *unitx)
 {
+  if (strlen(unitx) >= 256) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the unit along x axis"));
+  }
+
   strcpy(this->unitx, unitx);
   dispUnit = true;
 }
@@ -264,6 +274,11 @@ vpPlotGraph::setUnitX (const char *unitx)
 void
 vpPlotGraph::setUnitY (const char *unity)
 {
+  if (strlen(unity) >= 256) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the unit along y axis"));
+  }
+
   strcpy(this->unity, unity);
   dispUnit = true;
 }
@@ -271,6 +286,11 @@ vpPlotGraph::setUnitY (const char *unity)
 void
 vpPlotGraph::setUnitZ (const char *unitz)
 {
+  if (strlen(unitz) >= 256) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the unit along z axis"));
+  }
+
   strcpy(this->unitz, unitz);
   dispUnit = true;
 }
@@ -278,6 +298,11 @@ vpPlotGraph::setUnitZ (const char *unitz)
 void
 vpPlotGraph::setLegend (const unsigned int curveNum, const char *legend)
 {
+  if (strlen(legend) >= 256) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the legend"));
+  }
+
   strcpy((curveList+curveNum)->legend,legend);
   dispLegend = true;
 }

@@ -385,8 +385,9 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
     for (i=0;i<3;i++) {s += (X1[i]*X2[i]);}
     for (i=0;i<3;i++)  {X2[i] -= (s*X1[i]);} /* X1^T X2 = 0	*/
 
-    s = 0.0;
-    for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
+    //s = 0.0;
+    //for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
+    s = X2[0]*X2[0] + X2[1]*X2[1] + X2[2]*X2[2]; // To avoid a Coverity copy/past error
 
     if (s<1e-10)
     {
@@ -559,8 +560,9 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     for (i=0;i<3;i++) {s += (X1[i]*X2[i]);}
     for (i=0;i<3;i++)  {X2[i] -= (s*X1[i]);} /* X1^T X2 = 0	*/
 
-    s = 0.0;
-    for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
+    //s = 0.0;
+    //for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
+    s = X2[0]*X2[0] + X2[1]*X2[1] + X2[2]*X2[2]; // To avoid a Coverity copy/past error
 
     if (s<1e-10)
     {

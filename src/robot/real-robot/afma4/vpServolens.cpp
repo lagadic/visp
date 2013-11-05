@@ -73,6 +73,7 @@
 */
 vpServolens::vpServolens()
 {
+  remfd = 0;
   isinit = false;
 }
 

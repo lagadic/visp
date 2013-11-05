@@ -44,6 +44,7 @@
 #include <visp/vpMath.h>
 
 #include <ostream>
+#include <sstream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <math.h>
@@ -250,13 +251,18 @@ std::cout << p << std::endl;
 
  */
 inline std::ostream &operator << (std::ostream &s, const vpScanPoint &p) {
-   s.precision(10);
-   s << p.getRadialDist() << " "
-     << p.getHAngle() << " "
-     << p.getVAngle() << " "
-     << p.getX() << " "
-     << p.getY() << " " << p.getZ();
-   return s;
- }
+  std::ios_base::fmtflags original_flags = s.flags();
+
+  s.precision(10);
+  s << p.getRadialDist() << " "
+    << p.getHAngle() << " "
+    << p.getVAngle() << " "
+    << p.getX() << " "
+    << p.getY() << " " << p.getZ();
+
+  s.setf(original_flags); // restore s to standard state
+
+  return s;
+}
 
 #endif

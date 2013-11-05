@@ -285,7 +285,8 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 		       vpCameraParameters::vpCameraParametersProjType projModel)
 {
   this->projModel = projModel;
-  
+  unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
+
   // Use here default values of the robot constant parameters.
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
@@ -302,11 +303,12 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       {
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-        char name_arm[FILENAME_MAX];
+        char *name_arm = new char [arm_dir.size() + name_length];
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_ccmop.bnd");
         set_scene(name_arm, robotArms+5, 1.0);
         set_displayBusy(false);
+        delete [] name_arm;
       }
       break;
     }
@@ -324,11 +326,12 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       {
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-        char name_arm[FILENAME_MAX];
+        char *name_arm = new char [arm_dir.size() + name_length];
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_gripper.bnd");
         set_scene(name_arm, robotArms+5, 1.0);
         set_displayBusy(false);
+        delete [] name_arm;
       }
       break;
     }
@@ -346,11 +349,14 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       {
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-        char name_arm[FILENAME_MAX];
+
+        char *name_arm = new char [arm_dir.size() + name_length];
+
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_vacuum.bnd");
         set_scene(name_arm, robotArms+5, 1.0);
         set_displayBusy(false);
+        delete [] name_arm;
       }
       break;
     }
@@ -2199,13 +2205,14 @@ vpSimulatorAfma6::initArms()
     }
   }
 
-  char name_cam[FILENAME_MAX];
+  unsigned int name_length = 30; // the size of this king of string "/afma6_arm2.bnd"
+  char *name_cam = new char [scene_dir.size() + name_length];
 
   strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
-  char name_arm[FILENAME_MAX];
+  char *name_arm = new char [arm_dir.size() + name_length];
   strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_gate.bnd");
   set_scene(name_arm, robotArms, 1.0);
@@ -2254,6 +2261,9 @@ vpSimulatorAfma6::initArms()
 //   sceneInitialized = true;
 //   displayObject = true;
   displayCamera = true;
+
+  delete [] name_cam;
+  delete [] name_arm;
 }
 
 

@@ -205,10 +205,10 @@ std::vector<double> vpMomentCommon::getMu3(vpMomentObject& object) {
 
     std::vector<double> mu(4);
     unsigned int idx=0;
-    for (unsigned int i=0; i<4; i++) {
-      for (unsigned int j=0; j<4; j++) {
+    for (unsigned int j=0; j<4; j++) {
+      for (unsigned int i=0; i<4; i++) {
         if (i+j==3){
-          mu[idx] = momentCentered.get(j,i);
+          mu[idx] = momentCentered.get(i,j);
           idx++;
         }
       }

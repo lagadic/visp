@@ -233,7 +233,7 @@ double	enorm (const double *x, int n)
  *
  */
 int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
-	      double *delta, double *par, double *x, double *sdiag, double *wa1, double *wa2)
+          double *delta, double *par, double *x, double *sdiag, double *wa1, double *wa2)
 {
   const double	tol1 = 0.1, tol001 = 0.001;	/* tolerance a 0.1 et a 0.001	*/
 
@@ -276,8 +276,8 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
       if (jm1 >= 0)
       {
-	for (unsigned int j = 0; j <= (unsigned int)jm1; j++)
-	  wa1[j] -= *MIJ(r, i, j, ldr) * temp;
+        for (unsigned int j = 0; j <= (unsigned int)jm1; j++)
+          wa1[j] -= *MIJ(r, i, j, ldr) * temp;
       }
     }
   }
@@ -315,22 +315,22 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     {
       for (int i = 0; i < n; i++)
       {
-	l = ipvt[i];
-	wa1[i] = diag[l] * (wa2[l] / dxnorm);
+        l = ipvt[i];
+        wa1[i] = diag[l] * (wa2[l] / dxnorm);
       }
 
       for (int i = 0; i <  n; i++)
       {
-	long	im1;
-	sum = 0.0;
-	im1 = (i - 1L);
+        long	im1;
+        sum = 0.0;
+        im1 = (i - 1L);
 
-	if (im1 >= 0)
-	{
-	  for (unsigned int j = 0; j <= (unsigned int)im1; j++)
-	    sum += (*MIJ(r, i, j, ldr) * wa1[j]);
-	}
-	wa1[i] = (wa1[i] - sum) / *MIJ(r, i, i, ldr);
+        if (im1 >= 0)
+        {
+          for (unsigned int j = 0; j <= (unsigned int)im1; j++)
+            sum += (*MIJ(r, i, j, ldr) * wa1[j]);
+        }
+        wa1[i] = (wa1[i] - sum) / *MIJ(r, i, i, ldr);
       }
 
       temp = enorm(wa1, n);
@@ -346,7 +346,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       sum = 0.0;
 
       for (int j = 0; j <= i; j++)
-	sum += *MIJ(r, i, j, ldr) * qtb[j];
+        sum += *MIJ(r, i, j, ldr) * qtb[j];
 
       l = ipvt[i];
       wa1[i] = sum / diag[l];
@@ -384,17 +384,17 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        */
       //if (*par == 0.0)
       if (std::fabs(*par) <= std::numeric_limits<double>::epsilon() )
-	*par = vpMath::maximum(dwarf, (tol001 * paru));
+        *par = vpMath::maximum(dwarf, (tol001 * paru));
 
       temp = sqrt(*par);
 
       for (int i = 0; i < n; i++)
-	wa1[i] = temp * diag[i];
+        wa1[i] = temp * diag[i];
 
       qrsolv(n, r, ldr, ipvt, wa1, qtb, x, sdiag, wa2);
 
       for (int i = 0; i < n; i++)
-	wa2[i] = diag[i] * x[i];
+        wa2[i] = diag[i] * x[i];
 
       dxnorm = enorm(wa2, n);
       temp = fp;
@@ -409,16 +409,15 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       //if ((std::fabs(fp) <= tol1 * (*delta)) || ((parl == 0.0) && (fp <= temp)
       //	  && (temp < 0.0)) || (iter == 10))
       if ((std::fabs(fp) <= tol1 * (*delta)) || ((std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && (fp <= temp)
-	  && (temp < 0.0)) || (iter == 10))
+                                                 && (temp < 0.0)) || (iter == 10))
       {
-	/*
-	 *	terminaison.
-	 */
+        // terminaison.
 
-	if (iter == 0)
-	  *par = 0.0;
+        // Remove the two next lines since this is a dead code
+        /* if (iter == 0)
+          *par = 0.0; */
 
-	return (0);
+        return (0);
       }
 
       /*
@@ -427,20 +426,20 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
       for (int i = 0; i < n; i++)
       {
-	l = ipvt[i];
-	wa1[i] = diag[l] * (wa2[l] / dxnorm);
+        l = ipvt[i];
+        wa1[i] = diag[l] * (wa2[l] / dxnorm);
       }
 
       for (unsigned int i = 0; i < (unsigned int)n; i++)
       {
-	wa1[i] = wa1[i] / sdiag[i];
-	temp = wa1[i];
-	jp1 = i + 1;
-	if (  (unsigned int) n >= jp1)
-	{
-	  for (unsigned int j = jp1; j <  (unsigned int)n; j++)
-	    wa1[j] -= (*MIJ(r, i, j, ldr) * temp);
-	}
+        wa1[i] = wa1[i] / sdiag[i];
+        temp = wa1[i];
+        jp1 = i + 1;
+        if (  (unsigned int) n >= jp1)
+        {
+          for (unsigned int j = jp1; j <  (unsigned int)n; j++)
+            wa1[j] -= (*MIJ(r, i, j, ldr) * temp);
+        }
       }
 
       temp = enorm(wa1, n);
@@ -451,10 +450,10 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        *	de parl ou paru.
        */
       if (fp > 0.0)
-	parl = vpMath::maximum(parl, *par);
+        parl = vpMath::maximum(parl, *par);
 
       if (fp < 0.0)
-	paru = vpMath::minimum(paru, *par);
+        paru = vpMath::minimum(paru, *par);
 
       /*
        *	calcul d'une estimee ameliree de "par".

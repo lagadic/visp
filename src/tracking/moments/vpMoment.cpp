@@ -102,11 +102,15 @@ int main()
   \param moments : database of moment primitives.
 */
 void vpMoment::linkTo(vpMomentDatabase& moments){
-    std::strcpy(_name,name());
-    this->moments=&moments;
+  if (strlen( name() ) >= 255) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the moment name"));
+  }
 
+  std::strcpy(_name,name());
+  this->moments=&moments;
 
-    moments.add(*this,_name);
+  moments.add(*this,_name);
 }
 
 

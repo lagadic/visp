@@ -251,6 +251,11 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     unsigned int n ;
     finit >> n ;
     std::cout << "number of points  " << n << std::endl ;
+    if (n > 100000) {
+      throw vpException(vpException::badValue,
+        "Exceed the max number of points.");
+    }
+
     vpPoint *P = new vpPoint [n]  ;
     for (unsigned int i=0 ; i < n ; i++){
       finit >> X ;
@@ -486,6 +491,12 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
 	double X, Y, Z;
 	finit >> size ;
   std::cout << "number of points  " << size << std::endl ;
+
+  if (size > 100000) {
+    throw vpException(vpException::badValue,
+      "Exceed the max number of points.");
+  }
+
 	vpPoint *P = new vpPoint [size]; 
 	vpPose pose ;
 	
@@ -848,9 +859,9 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       fileId >> caoVersion;
     }
     else{
-      std::cout <<"in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...";
+      std::cout <<"in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...";
       throw vpException(vpException::badValue,
-        "in vpMbEdgeTracker::loadCAOModel -> Bad parameter header file : use V0, V1, ...");
+                        "in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...");
     }
 
     while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
@@ -861,9 +872,17 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     unsigned int caoNbrPoint;
     fileId >> caoNbrPoint;
     std::cout << "> " << caoNbrPoint << " points" << std::endl;
-    vpPoint *caoPoints = NULL;
-    if (caoNbrPoint > 0)
-      caoPoints = new vpPoint[caoNbrPoint];
+    if (caoNbrPoint > 100000) {
+      throw vpException(vpException::badValue,
+        "Exceed the max number of points in the CAO model.");
+    }
+
+    if (caoNbrPoint == 0) {
+      throw vpException(vpException::badValue,
+                        "in vpMbTracker::loadCAOModel() -> no points are defined");
+
+    }
+    vpPoint *caoPoints = new vpPoint[caoNbrPoint];
 
     double x ; // 3D coordinates
     double y ;
@@ -871,7 +890,6 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
     int i ;    // image coordinate (used for matching)
     int j ;
-
 
     for(unsigned int k=0; k < caoNbrPoint; k++){
       fileId >> x ;
@@ -897,6 +915,12 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     fileId >> caoNbrLine;
     unsigned int *caoLinePoints = NULL;
     std::cout << "> " << caoNbrLine << " lines" << std::endl;
+
+    if (caoNbrLine > 100000) {
+      throw vpException(vpException::badValue,
+        "Exceed the max number of lines in the CAO model.");
+    }
+
     if (caoNbrLine > 0)
       caoLinePoints = new unsigned int[2*caoNbrLine];
 
@@ -934,13 +958,25 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     unsigned int caoNbrPolygonLine;
     fileId >> caoNbrPolygonLine;
     std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
+    if (caoNbrPolygonLine > 100000) {
+      throw vpException(vpException::badValue, "Exceed the max number of polygon lines.");
+    }
+
     unsigned int index;
     for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
       unsigned int nbLinePol;
       fileId >> nbLinePol;
       std::vector<vpPoint> corners;
+      if (nbLinePol > 100000) {
+        throw vpException(vpException::badValue, "Exceed the max number of lines.");
+      }
+
       for(unsigned int i = 0; i < nbLinePol; i++){
         fileId >> index;
+        if (2*index > 2*caoNbrLine-1) {
+          throw vpException(vpException::badValue, "Exceed the max number of lines.");
+        }
+
         corners.push_back(caoPoints[caoLinePoints[2*index]]);
       }
       if(k != caoNbrPolygonLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
@@ -957,12 +993,24 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     unsigned int caoNbrPolygonPoint;
     fileId >> caoNbrPolygonPoint;
     std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
+
+    if (caoNbrPolygonPoint > 100000) {
+      throw vpException(vpException::badValue, "Exceed the max number of polygon point.");
+    }
+
     for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
       int nbPointPol;
       fileId >> nbPointPol;
+      if (nbPointPol > 100000) {
+        throw vpException(vpException::badValue, "Exceed the max number of points.");
+      }
+
       std::vector<vpPoint> corners;
       for(int i = 0; i < nbPointPol; i++){
         fileId >> index;
+        if (index > caoNbrPoint-1) {
+          throw vpException(vpException::badValue, "Exceed the max number of points.");
+        }
         corners.push_back(caoPoints[index]);
       }
       if(k != caoNbrPolygonPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).

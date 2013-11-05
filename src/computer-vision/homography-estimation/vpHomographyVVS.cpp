@@ -126,14 +126,16 @@ vpHomography::computeRotation(unsigned int nbpoint,
   unsigned int n=0 ;
   for (unsigned int i=0 ; i < nbpoint ; i++) {
     //    if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
-    if ( (std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) 
-	 && 
-	 (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.))) )
-      {
-	n++ ;
-      }
+    if ( (std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.)))
+         &&
+         (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.))) )
+    {
+      n++ ;
+    }
   }
-  if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  if ( (! only_1) && (! only_2) )
+    n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;
@@ -159,9 +161,9 @@ vpHomography::computeRotation(unsigned int nbpoint,
     int k =0 ;
     for (unsigned int i=0 ; i < nbpoint ; i++) {
       //if ((c2P[i].get_x() !=-1) && (c1P[i].get_x() !=-1))
-      if ( (std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.))) 
-	 && 
-	   (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.))) )
+      if ( (std::fabs(c2P[i].get_x() + 1) > std::fabs(vpMath::maximum(c2P[i].get_x(), 1.)))
+           &&
+           (std::fabs(c1P[i].get_x() + 1) > std::fabs(vpMath::maximum(c1P[i].get_x(), 1.))) )
       {
         p2[0] = c2P[i].get_x() ;
         p2[1] = c2P[i].get_y() ;
@@ -324,13 +326,18 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpMatrix H1(2,6) ;
   vpColVector e1(2) ;
 
-  int only_1 = 1 ;
-  int only_2 = 0 ;
+  int only_1;
+  int only_2;
   int iter = 0 ;
   unsigned int i ;
   unsigned int n=0 ;
   n = nbpoint ;
-  if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  only_1 = 1 ;
+  only_2 = 0 ;
+
+ //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  if ( (! only_1) && (! only_2) )
+    n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;
@@ -532,8 +539,6 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpColVector e(2) ;
   double r_1 = -1 ;
 
-
-
   vpColVector p2(3) ;
   vpColVector p1(3) ;
   vpColVector Hp2(3) ;
@@ -545,13 +550,17 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpColVector e1(2) ;
 
 
-  int only_1 = 1 ;
-  int only_2 = 0 ;
+  int only_1;
+  int only_2;
   int iter = 0 ;
   unsigned int i ;
   unsigned int n=0 ;
+  only_1 = 1 ;
+  only_2 = 0 ;
   n = nbpoint ;
-  if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+ // if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  if ( (! only_1) && (! only_2) )
+    n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;

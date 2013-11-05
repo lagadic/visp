@@ -276,6 +276,8 @@ protected:
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
+
+  void init_common();
 } ;
 
 #endif

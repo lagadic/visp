@@ -69,7 +69,8 @@ static	int	*sp		 = stack;		/* sommet 	*/
 void
 fprintf_rfstack (FILE *fp)
 {
-	int	flg = 0;	/* nul si element unique	*/
+  int	flg;
+  flg = 0;	/* nul si element unique	*/
 
 	if (*sp == IS_INSIDE) {
 		fprintf (fp, "(null)\n");
@@ -77,28 +78,34 @@ fprintf_rfstack (FILE *fp)
 	}
 	fprintf (fp, "(");
 	if (*sp & IS_ABOVE) {
-		if (flg++) fprintf (fp, " ");
+    if (flg) fprintf (fp, " ");
+    flg ++;
 		fprintf (fp, "above");
 	}
 	if (*sp & IS_BELOW) {
-		if (flg++) fprintf (fp, " ");
-		fprintf (fp, "below");
+    if (flg) fprintf (fp, " ");
+    flg ++;
+    fprintf (fp, "below");
 	}
 	if (*sp & IS_RIGHT) {
-		if (flg++) fprintf (fp, " ");
-		fprintf (fp, "right");
+    if (flg) fprintf (fp, " ");
+    flg ++;
+    fprintf (fp, "right");
 	}
 	if (*sp & IS_LEFT) {
-		if (flg++) fprintf (fp, " ");
-	 	fprintf (fp, "left");
+    if (flg) fprintf (fp, " ");
+    flg ++;
+    fprintf (fp, "left");
 	}
 	if (*sp & IS_BACK) {
-		if (flg++) fprintf (fp, " ");
-		fprintf (fp, "back");
+    if (flg) fprintf (fp, " ");
+    flg ++;
+    fprintf (fp, "back");
 	}
 	if (*sp & IS_FRONT) {
-		if (flg++) fprintf (fp, " ");
-		fprintf (fp, "front");
+    if (flg) fprintf (fp, " ");
+    flg ++;
+    fprintf (fp, "front");
 	}
 	fprintf (fp, ")\n");
 }

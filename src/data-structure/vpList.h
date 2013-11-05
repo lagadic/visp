@@ -236,13 +236,10 @@ vpList<type>::vpList()
 template<class type>
 vpList<type>::~vpList()
 {
-
   kill() ;
 
-  if (first != NULL) delete first ;
-  if (last != NULL) delete last ;
-
-
+  /*if (first != NULL) */ delete first ;
+  /*if (last != NULL)  */ delete last ;
 }
 
 /*!

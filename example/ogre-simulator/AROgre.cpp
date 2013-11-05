@@ -190,6 +190,8 @@ public:
     if (resourcePath) mResourcePath = resourcePath;
     std::cout << "mResourcePath: " << mResourcePath<< std::endl;
     vecDevant = Ogre::Vector3(0,-1,0);
+    robot = NULL;
+    mAnimationState = NULL;
   }
 	
 protected :
@@ -699,6 +701,10 @@ int main(int argc, const char **argv)
   }
   catch(vpException e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return 1;
+  }
+  catch(...) {
+    std::cout << "Catch an exception " << std::endl;
     return 1;
   }
 }

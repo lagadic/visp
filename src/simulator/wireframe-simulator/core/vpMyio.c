@@ -107,7 +107,14 @@ void fscanf_string (char **str)
 		lexerr ("start", "string expected", NULL);
 	if (*str == NULL)
 		*str = (char *) malloc ((mylength + 1) * sizeof (char));
-	else	*str = (char *) realloc (*str, (mylength + 1) * sizeof (char));
+  else
+    *str = (char *) realloc (*str, (mylength + 1) * sizeof (char));
+
+  if (*str == NULL) {
+    printf("Unable to read the string: bad memory allocation");
+    return;
+  }
+
 	strncpy (*str, mytext, mylength);
 }
 

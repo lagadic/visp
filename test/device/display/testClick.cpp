@@ -426,7 +426,6 @@ main(int argc, const char ** argv)
     vpERROR_TRACE("Error while displaying the image") ;
     exit(-1);
   }
-
 }
 
 #else

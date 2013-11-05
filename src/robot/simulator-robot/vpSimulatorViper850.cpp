@@ -2202,13 +2202,14 @@ vpSimulatorViper850::initArms()
     }
   }
 
-  char name_cam[FILENAME_MAX];
+  unsigned int name_length = 30; // the size of this king of string "/viper850_arm2.bnd"
+  char *name_cam = new char [scene_dir.size() + name_length];
 
   strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
-  char name_arm[FILENAME_MAX];
+  char *name_arm = new char [arm_dir.size() + name_length];
   strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/viper850_arm1.bnd");
   set_scene(name_arm, robotArms, 1.0);
@@ -2243,6 +2244,9 @@ vpSimulatorViper850::initArms()
 //   sceneInitialized = true;
 //   displayObject = true;
   displayCamera = true;
+
+  delete [] name_cam;
+  delete [] name_arm;
 }
 
 

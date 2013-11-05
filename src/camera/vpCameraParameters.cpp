@@ -54,6 +54,9 @@
 #include <visp/vpRotationMatrix.h>
 #include <cmath>
 #include <limits>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
@@ -480,33 +483,30 @@ std::ostream & operator << (std::ostream & os,
 			    const vpCameraParameters &cam)
 {
   switch(cam.get_projModel()){
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      os << "Camera parameters for perspective projection without distortion:"
-	 << std::endl ;
-      os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py() 
-	 << std::endl ;
-      os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0() 
-	 << std::endl ;
-      break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-      os.precision(10);
-      os << "Camera parameters for perspective projection with distortion:"
-                << std::endl ;
-      os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py() 
-	 << std::endl ;
-      os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0()
-	 << std::endl ;
-      os << "  kud = " << cam.get_kud() << std::endl ;
-      os << "  kdu = " << cam.get_kdu() << std::endl ;
-      break;
-  } 
+  case vpCameraParameters::perspectiveProjWithoutDistortion :
+    os << "Camera parameters for perspective projection without distortion:"
+       << std::endl ;
+    os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py()
+       << std::endl ;
+    os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0()
+       << std::endl ;
+    break;
+  case vpCameraParameters::perspectiveProjWithDistortion :
+    std::ios_base::fmtflags original_flags = os.flags();
+    os.precision(10);
+    os << "Camera parameters for perspective projection with distortion:"
+       << std::endl ;
+    os << "  px = " << cam.get_px() <<"\t py = "<< cam.get_py()
+       << std::endl ;
+    os << "  u0 = " << cam.get_u0() <<"\t v0 = "<< cam.get_v0()
+       << std::endl ;
+    os << "  kud = " << cam.get_kud() << std::endl ;
+    os << "  kdu = " << cam.get_kdu() << std::endl ;
+
+    os.flags(original_flags); // restore os to standard state
+    break;
+  }
   return os;
 }
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 

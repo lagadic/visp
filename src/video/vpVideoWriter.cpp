@@ -98,7 +98,12 @@ void vpVideoWriter::setFileName(const char *filename)
     vpERROR_TRACE("filename empty ") ;
     throw (vpImageException(vpImageException::noFileNameError,"filename empty ")) ;
   }
-  
+
+  if (strlen( filename ) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the file name"));
+  }
+
   strcpy(this->fileName,filename);
   
   formatType = getFormat(fileName);

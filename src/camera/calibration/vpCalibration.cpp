@@ -638,12 +638,16 @@ int vpCalibration::readData(const char* filename)
   std::ifstream f;
   f.open(filename);
   if (f != NULL){
-    int n ;
+    unsigned int n ;
     f >> n ;
     std::cout << "There are "<< n <<" point on the calibration grid " << std::endl ;
 
     clearPoint() ;
-    for (int i=0 ; i < n ; i++)
+
+    if (n > 100000)
+      throw(vpException(vpException::badValue, "Bad number of point in the calibration grid"));
+
+    for (unsigned int i=0 ; i < n ; i++)
     {
       double x, y, z, u, v ;
       f >> x >> y >> z >> u >> v ;
@@ -694,6 +698,9 @@ int vpCalibration::readGrid(const char* filename, unsigned int &n,
       oX.clear();
       oY.clear();
       oZ.clear();
+
+      if (n > 100000)
+        throw(vpException(vpException::badValue, "Bad number of point in the calibration grid"));
 
       for (unsigned int i=0 ; i < n ; i++)
       {
@@ -994,6 +1001,10 @@ int vpCalibration::readGrid(const char* filename,unsigned int &n,
       oX.front();
       oY.front();
       oZ.front();
+
+      if (n > 100000)
+        throw(vpException(vpException::badValue, "Bad number of point in the calibration grid"));
+
       for (unsigned int i=0 ; i < n ; i++)
       {
         f >> no_pt >> x >> y >> z ;

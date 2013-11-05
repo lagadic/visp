@@ -354,6 +354,7 @@ vpViper850::init (vpViper850::vpToolType tool,
       etc[2] =  0.1022; // tz
       break;
     }
+    break;
   }
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA:
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:  {
@@ -375,6 +376,7 @@ vpViper850::init (vpViper850::vpToolType tool,
       etc[2] =  0.078; // tz
       break;
     }
+    break;
   }
   case vpViper850::TOOL_GENERIC_CAMERA: {
     // Set eMc to identity
@@ -389,6 +391,7 @@ vpViper850::init (vpViper850::vpToolType tool,
       etc[2] = 0; // tz
       break;
     }
+    break;
   }
   }
   vpRotationMatrix eRc(erc);

@@ -2579,6 +2579,8 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 */
 std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
 {
+  std::ios_base::fmtflags original_flags = s.flags();
+
   s.precision(10) ;
   for (unsigned int i=0;i<m.getRows();i++) {
     for (unsigned int j=0;j<m.getCols();j++){
@@ -2588,6 +2590,8 @@ std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
     if (i < m.getRows()-1)
       s << std::endl;
   }
+
+  s.flags(original_flags); // restore s to standard state
 
   return s;
 }
@@ -2626,6 +2630,8 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
   std::vector<std::string> values(m*n);
   std::ostringstream oss;
   std::ostringstream ossFixed;
+  std::ios_base::fmtflags original_flags = oss.flags();
+
   // ossFixed <<std::fixed;
   ossFixed.setf ( std::ios::fixed, std::ios::floatfield );
 
@@ -2693,6 +2699,8 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
     }
     s <<std::endl;
   }
+
+  s.flags(original_flags); // restore s to standard state
 
   return (int)(maxBefore+maxAfter);
 }
@@ -3573,6 +3581,11 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
       unsigned int rows, cols;
       file >> rows;
       file >> cols;
+
+      if (rows > std::numeric_limits<unsigned int>::max()
+          || cols > std::numeric_limits<unsigned int>::max())
+        throw vpException(vpException::badValue, "Matrix exceed the max size.");
+
       M.resize(rows,cols);
 
       double value;

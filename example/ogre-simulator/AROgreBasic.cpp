@@ -576,6 +576,10 @@ int main(int argc, const char **argv)
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
+  catch(...) {
+    std::cout << "Catch an exception " << std::endl;
+    return 1;
+  }
 }
 #else // VISP_HAVE_OGRE && VISP_HAVE_DISPLAY
 int

@@ -624,11 +624,11 @@ std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS)
           << "  Convolution: " << vpMeS.convlt
           << "  Flag: " << vpMeS.suppress
           << "  Weight: " << vpMeS.weight );
-#endif
-  
+#else
   return (os << "Alpha: " << vpMeS.alpha
           << "  Convolution: " << vpMeS.convlt
           << "  Weight: " << vpMeS.weight );
+#endif
 }
 
 void vpMeSite::display(const vpImage<unsigned char>& I)
@@ -675,6 +675,7 @@ void vpMeSite::display(const vpImage<unsigned char>& I, const double &i, const d
 
     case TOO_NEAR:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::cyan,1);
+      break;
 
     default:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::yellow,1);
@@ -718,6 +719,7 @@ void vpMeSite::display(const vpImage<vpRGBa>& I, const double &i, const double &
 
     case TOO_NEAR:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::cyan,1);
+      break;
 
     default:
       vpDisplay::displayCross(I,vpImagePoint(i,j),3,vpColor::yellow,1);

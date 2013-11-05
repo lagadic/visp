@@ -552,13 +552,15 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
     }
 
   }
-  if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
+  // Create a specific test for subsampling_width and subsampling_height to ensure that division by zero is not possible in the next test
+  if (subsampling_width == 0 || subsampling_height == 0) {
+    back = SEQUENCE_ERROR;
+  }
+  else if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
         (abs((int)image_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || image_width == 0) &&
         (abs((int)image_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || image_height == 0) &&
-        ( subsampling_width == 0 ||
-          abs((int)subsampling_width - (int)subsampling_width_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)))&&
-        ( subsampling_height == 0 ||
-          abs((int)subsampling_height - (int)subsampling_height_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width))))){
+        (abs((int)subsampling_width - (int)subsampling_width_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)))&&
+        (abs((int)subsampling_height - (int)subsampling_height_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_height_tmp / subsampling_height))))){
     back = SEQUENCE_ERROR;
   }
   else{
@@ -780,14 +782,18 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     }
   }
 
+  if(model_type == NULL) {
+    vpERROR_TRACE("projection model type doesn't match with any known model !");
+    return SEQUENCE_ERROR;
+  }
+
   if( !strcmp(model_type,LABEL_XML_MODEL_WITHOUT_DISTORTION)){
     if (nb != 5 || validation != 0x1F)
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 5 parameters\n";
-      if(model_type != NULL){
-        xmlFree(model_type);
-      }
+      xmlFree(model_type);
+
       return SEQUENCE_ERROR;
     }
     cam_tmp.initPersProjWithoutDistortion(px,py,u0,v0) ;
@@ -797,23 +803,20 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     {
       vpCERROR <<"ERROR in 'model' field:\n";
       vpCERROR << "it must contain 7 parameters\n";
-      if(model_type != NULL){
-        xmlFree(model_type);
-      }
+      xmlFree(model_type);
+
       return SEQUENCE_ERROR;
     }
     cam_tmp.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
   }
   else{
     vpERROR_TRACE("projection model type doesn't match with any known model !");
-    if(model_type != NULL){
-      xmlFree(model_type);
-    }
+    xmlFree(model_type);
+
     return SEQUENCE_ERROR;
   }
-  if(model_type != NULL){
-    xmlFree(model_type);
-  }
+  xmlFree(model_type);
+
   return back;
 }
 

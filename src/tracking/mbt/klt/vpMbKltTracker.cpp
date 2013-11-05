@@ -80,6 +80,9 @@ vpMbKltTracker::vpMbKltTracker()
 #endif
   
   useOgre = false;
+
+  distNearClip = 0.01;
+  distFarClip = 100.;
 }
 
 /*!

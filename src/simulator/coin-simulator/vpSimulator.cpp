@@ -291,6 +291,24 @@ vpSimulator::init()
   offScreenRenderer = NULL ;
   bufferView = NULL;
   get = 1 ;
+  typeImage = grayImage;
+  mainThread = NULL;
+  scene = NULL;
+  internalRoot = NULL;
+  externalRoot = NULL;
+  internalCamera = NULL;
+  externalCamera = NULL;
+  internalCameraPosition = NULL;
+  extrenalCameraPosition = NULL;
+  internalCameraObject = NULL;
+#if defined(VISP_HAVE_SOWIN)
+  // mainWindow = ?;
+#elif defined(VISP_HAVE_SOQT)
+  mainWindow = NULL;
+#elif defined(VISP_HAVE_SOXT)
+  // mainWindow = ?;
+#endif
+
 }
 void
 vpSimulator::kill()

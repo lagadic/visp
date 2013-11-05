@@ -122,11 +122,9 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   //if ((fd = fopen (str, 0)) == -1)
   if ((fd = fopen (str, "r")) == NULL)
   {
-    char strerr[80];
-    strcpy (strerr,"The file ");
-    strcat (strerr,str);
-    strcat (strerr," can not be opened");
-    throw(vpException(vpSimulatorException::ioError,strerr)) ;
+    std::string error = "The file " + std::string(str) + " can not be opened";
+
+    throw(vpException(vpSimulatorException::ioError, error.c_str())) ;
   }
   open_keyword (keyword_tbl);
   open_lex ();
@@ -200,7 +198,10 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
   else
   {
     sceneGraphVRML2	= SoDB::readAllVRML(&in);
-    if (sceneGraphVRML2 == NULL) { /*return -1;*/ }
+    if (sceneGraphVRML2 == NULL) {
+      /*return -1;*/
+      throw(vpException(vpException::notInitialized, "Cannot read VRML file"));
+    }
     sceneGraphVRML2->ref();
   }
   
@@ -628,7 +629,13 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
   object = obj;
   this->desiredObject = desiredObject;
 
-  strcpy(name_cam, scene_dir.c_str());
+  const char *scene_dir_ = scene_dir.c_str();
+  if (strlen(scene_dir_) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the camera name"));
+  }
+
+  strcpy(name_cam, scene_dir_);
   if (desiredObject != D_TOOL) 
   {
     strcat(name_cam,"/camera.bnd");
@@ -640,7 +647,7 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
     set_scene(name_cam,&(this->camera),1.0);
   }
 
-  strcpy(name, scene_dir.c_str());
+  strcpy(name, scene_dir_);
   switch (obj)
   {
     case THREE_PTS : {strcat(name,"/3pts.bnd"); break; }
@@ -663,19 +670,25 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
   }
   set_scene(name,&(this->scene),1.0);
 
+  scene_dir_ = scene_dir.c_str();
+  if (strlen(scene_dir_) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the desired object name"));
+  }
+
   switch (desiredObject)
   {
     case D_STANDARD : { break; }
     case D_CIRCLE : { 
-      strcpy(name, scene_dir.c_str());
+      strcpy(name, scene_dir_);
       strcat(name, "/circle_sq2.bnd");
       break; }
     case D_TOOL : { 
-      strcpy(name, scene_dir.c_str());
+      strcpy(name, scene_dir_);
       strcat(name, "/tool.bnd");
       break; }
   }
-  set_scene(name,&(this->desiredScene),1.0);
+  set_scene(name, &(this->desiredScene), 1.0);
 
   if (obj == PIPE) load_rfstack(IS_INSIDE);
   else add_rfstack(IS_BACK);
@@ -759,9 +772,20 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   object = THREE_PTS;
   this->desiredObject = D_STANDARD;
   
-  strcpy(name_cam, scene_dir.c_str());
+  const char *scene_dir_ = scene_dir.c_str();
+  if (strlen(scene_dir_) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the camera name"));
+  }
+
+  strcpy(name_cam, scene_dir_);
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
+
+  if (strlen(obj) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the name"));
+  }
 
   strcpy(name,obj);
   Model_3D model;
@@ -773,6 +797,11 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   else if (model == UNKNOWN_MODEL)
   {
     vpERROR_TRACE("Unknown file extension for the 3D model");
+  }
+
+  if (strlen(desiredObject) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the camera name"));
   }
 
   strcpy(name,desiredObject);  
@@ -862,11 +891,17 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj)
 
   object = obj;
 
-  strcpy(name_cam, scene_dir.c_str());
+  const char *scene_dir_ = scene_dir.c_str();
+  if (strlen(scene_dir_) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the camera name"));
+  }
+
+  strcpy(name_cam, scene_dir_);
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
 
-  strcpy(name, scene_dir.c_str());
+  strcpy(name, scene_dir_);
   switch (obj)
   {
     case THREE_PTS : {strcat(name,"/3pts.bnd"); break; }
@@ -966,9 +1001,20 @@ vpWireFrameSimulator::initScene(const char* obj)
 
   object = THREE_PTS;
   
-  strcpy(name_cam, scene_dir.c_str());
+  const char *scene_dir_ = scene_dir.c_str();
+  if (strlen(scene_dir_) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the camera name"));
+  }
+
+  strcpy(name_cam, scene_dir_);
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
+
+  if (strlen(obj) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the name"));
+  }
 
   strcpy(name,obj);
   Model_3D model;

@@ -54,6 +54,7 @@
 #include <visp/vpLaserScan.h>
 #include <visp/vpLaserScanner.h>
 #include <visp/vpColVector.h>
+#include <visp/vpException.h>
 
 /*!
 

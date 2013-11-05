@@ -81,6 +81,12 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
   vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
   double r, r_lagrange, r_dementhon;
 
+  if (size < 4) {
+    //vpERROR_TRACE("Not enough point to compute the pose");
+    throw(vpPoseException(vpPoseException::notInitializedError,
+                          "Not enough point to compute the pose")) ;
+  }
+
   bool foundSolution = false;
   
   while (nbTrials < ransacMaxTrials && nbInliers < (unsigned)ransacNbInlierConsensus)

@@ -55,6 +55,7 @@
 #include <math.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <limits.h>
 
 
 
@@ -267,6 +268,9 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   double hAngle; // horizontal angle in rad
   double rDist; // radial distance in meters
   vpScanPoint scanPoint;
+
+  if (numPoints > USHRT_MAX-2)
+    throw(vpException (vpException::ioError, "Out of range number of point"));
 
   for (int i=0; i < numPoints; i++) {
     ushortptr = (unsigned short *) (body+44+i*10);

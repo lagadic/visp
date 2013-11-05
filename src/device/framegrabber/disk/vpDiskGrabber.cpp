@@ -70,6 +70,11 @@ vpDiskGrabber::vpDiskGrabber(const char *genericName)
   setExtension("pgm");
 
   init = false;
+  if (strlen( genericName ) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the generic name"));
+  }
+
   strcpy(this->genericName, genericName);
   useGenericName = true;
 }
@@ -409,6 +414,11 @@ vpDiskGrabber::setNumberOfZero(unsigned int noz)
 void
 vpDiskGrabber::setGenericName(const char *genericName)
 {
+  if (strlen( genericName ) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+                      "Not enough memory to intialize the generic name"));
+  }
+
   strcpy(this->genericName, genericName) ;
   useGenericName = true;
 }

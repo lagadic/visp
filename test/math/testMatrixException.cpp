@@ -116,39 +116,44 @@ bool getOptions(int argc, const char **argv)
 int
 main(int argc, const char ** argv)
 {
-  // Read the command line options
-  if (getOptions(argc, argv) == false) {
-    exit (-1);
+  try {
+    // Read the command line options
+    if (getOptions(argc, argv) == false) {
+      exit (-1);
+    }
+
+    vpMatrix M ;
+    vpMatrix M1(2,3) ;
+    vpMatrix M2(3,3) ;
+    vpMatrix M3(2,2) ;
+
+    vpTRACE("test matrix size in multiply") ;
+
+    try
+    {
+      M = M1*M3 ;
+    }
+    catch (vpMatrixException me)
+    {
+      vpCTRACE ;
+      std::cout << me << std::endl ;
+    }
+
+
+    vpTRACE("test matrix size in addition") ;
+
+    try
+    {
+      M = M1+M3 ;
+    }
+    catch (vpMatrixException me)
+    {
+      vpCTRACE ;
+      std::cout << me << std::endl ;
+    }
   }
-
-  vpMatrix M ;
-  vpMatrix M1(2,3) ;
-  vpMatrix M2(3,3) ;
-  vpMatrix M3(2,2) ;
-
-  vpTRACE("test matrix size in multiply") ;
-
-  try
-  {
-    M = M1*M3 ;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
   }
-  catch (vpMatrixException me)
-  {
-    vpCTRACE ;
-    std::cout << me << std::endl ;
-  }
-
-
-  vpTRACE("test matrix size in addition") ;
-
-  try
-  {
-    M = M1+M3 ;
-  }
-  catch (vpMatrixException me)
-  {
-    vpCTRACE ;
-    std::cout << me << std::endl ;
-  }
-
 }

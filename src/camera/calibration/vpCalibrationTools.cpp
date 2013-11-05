@@ -356,6 +356,12 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
     nbPointTotal += nbPoint[i];
   }
 
+  if (nbPointTotal < 4) {
+    //vpERROR_TRACE("Not enough point to calibrate");
+    throw(vpCalibrationException(vpCalibrationException::notInitializedError,
+                                 "Not enough point to calibrate")) ;
+  }
+
   vpColVector oX(nbPointTotal), cX(nbPointTotal)  ;
   vpColVector oY(nbPointTotal), cY(nbPointTotal) ;
   vpColVector oZ(nbPointTotal), cZ(nbPointTotal) ;
@@ -811,6 +817,13 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   {
     nbPoint[i] = table_cal[i].npt;
     nbPointTotal += nbPoint[i];
+  }
+
+  if (nbPointTotal < 4)
+  {
+    //vpERROR_TRACE("Not enough point to calibrate");
+    throw(vpCalibrationException(vpCalibrationException::notInitializedError,
+                                 "Not enough point to calibrate")) ;
   }
 
   vpColVector oX(nbPointTotal), cX(nbPointTotal)  ;
@@ -1517,6 +1530,13 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
     nbPointTotal += nbPoint[i];
   }
 
+  if (nbPointTotal < 4)
+  {
+    //vpERROR_TRACE("Not enough point to calibrate");
+    throw(vpCalibrationException(vpCalibrationException::notInitializedError,
+                                 "Not enough point to calibrate")) ;
+  }
+
   vpColVector oX(nbPointTotal), cX(nbPointTotal)  ;
   vpColVector oY(nbPointTotal), cY(nbPointTotal) ;
   vpColVector oZ(nbPointTotal), cZ(nbPointTotal) ;
@@ -1727,6 +1747,13 @@ vpCalibration::calibVVSWithDistortionMulti(
   {
     nbPoint[i] = table_cal[i].npt;
     nbPointTotal += nbPoint[i];
+  }
+
+  if (nbPointTotal < 4)
+  {
+    //vpERROR_TRACE("Not enough point to calibrate");
+    throw(vpCalibrationException(vpCalibrationException::notInitializedError,
+                                 "Not enough point to calibrate")) ;
   }
 
   vpColVector oX(nbPointTotal), cX(nbPointTotal)  ;
@@ -1986,8 +2013,7 @@ vpCalibration::calibVVSWithDistortionMulti(
   for (unsigned int p = 0 ; p < nbPose ; p++)
   {
     table_cal[p].cam_dist = cam ;
-    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist,
-                                          cam);
+    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam);
   }
   if (verbose)
     std::cout <<" Global std dev " << sqrt(r/(nbPointTotal)) << std::endl;

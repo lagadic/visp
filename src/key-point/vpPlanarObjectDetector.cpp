@@ -80,6 +80,7 @@ vpPlanarObjectDetector::vpPlanarObjectDetector()
 vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string& _dataFile, const std::string& _objectName)
 {
   isCorrect = false;
+  minNbMatching = 10;
   load(_dataFile, _objectName);
 }
 

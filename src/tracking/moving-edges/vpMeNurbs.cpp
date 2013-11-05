@@ -552,8 +552,8 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   {
     list.pop_front();
   }
-  if(begin != NULL) delete[] begin;
-  if(end != NULL) delete[] end;
+  /*if(begin != NULL)*/ delete[] begin;
+  /*if(end != NULL)  */ delete[] end;
 }
 
 
@@ -710,7 +710,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       me->setRange(memory_range);
     }
     
-    if (begin != NULL) delete[] begin;
+    /* if (begin != NULL) */ delete[] begin;
     beginPtFound = 0;
   }
 
@@ -850,7 +850,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       me->setRange(memory_range);
     }
     
-    if (end != NULL) delete[] end;
+    /* if (end != NULL) */ delete[] end;
     endPtFound = 0;
   }
 #else
@@ -952,7 +952,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
         while (vpImagePoint::sqrDistance(iP[0],iPend) > vpMath::sqr(me->getSampleStep()) && u < uend)
         {
           u+=0.01;
-          if (iP!=NULL) {
+          /*if (iP!=NULL)*/ {
             delete[] iP;
             iP = NULL;
           }
@@ -971,7 +971,7 @@ vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
             }
           }
         }
-        if (iP!=NULL) {
+        /*if (iP!=NULL)*/ {
           delete[] iP;
           iP = NULL;
         }

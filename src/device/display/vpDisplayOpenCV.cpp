@@ -140,6 +140,16 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title ) : vpDisplay
 
   if (title != NULL)
     strcpy (this->title, title);
+
+  fontHeight = 10;
+  ncol = nrow = 0;
+  x_move = y_move = 0; move = false;
+  x_lbuttondown = y_lbuttondown = 0; lbuttondown = false;
+  x_mbuttondown = y_mbuttondown = 0; mbuttondown = false;
+  x_rbuttondown = y_rbuttondown = 0; rbuttondown = false;
+  x_lbuttonup = y_lbuttonup = 0; lbuttonup = false;
+  x_mbuttonup = y_mbuttonup = 0; mbuttonup = false;
+  x_rbuttonup = y_rbuttonup = 0; rbuttonup = false;
 }
 
 /*!
@@ -166,6 +176,15 @@ vpDisplayOpenCV::vpDisplayOpenCV() : vpDisplay()
   col = NULL;
   background = NULL;
   font = NULL;
+  fontHeight = 10;
+  ncol = nrow = 0;
+  x_move = y_move = 0; move = false;
+  x_lbuttondown = y_lbuttondown = 0; lbuttondown = false;
+  x_mbuttondown = y_mbuttondown = 0; mbuttondown = false;
+  x_rbuttondown = y_rbuttondown = 0; rbuttondown = false;
+  x_lbuttonup = y_lbuttonup = 0; lbuttonup = false;
+  x_mbuttonup = y_mbuttonup = 0; mbuttonup = false;
+  x_rbuttonup = y_rbuttonup = 0; rbuttonup = false;
 }
 
 /*!

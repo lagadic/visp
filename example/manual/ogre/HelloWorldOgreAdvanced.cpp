@@ -177,4 +177,8 @@ int main()
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
+  catch(...) {
+    std::cout << "Catch an exception " << std::endl;
+    return 1;
+  }
 }

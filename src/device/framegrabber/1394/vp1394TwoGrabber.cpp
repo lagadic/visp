@@ -1530,7 +1530,7 @@ vp1394TwoGrabber::initialize(bool reset)
       dc1394_reset_bus(cameras[0]);
     }
 
-    if (list != NULL)
+    // if (list != NULL)
       dc1394_camera_free_list (list);
     list = NULL;
 
@@ -3319,7 +3319,7 @@ void vp1394TwoGrabber::resetBus()
   dc1394_camera_free (camera);
   dc1394_free (d);
   d = NULL;
-  if (cameras != NULL)
+  //if (cameras != NULL)
     delete [] cameras;
   cameras = NULL ;
 #elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7

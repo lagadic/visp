@@ -327,7 +327,6 @@ private:
   double inv_px, inv_py; 
    
   vpCameraParametersProjType projModel ; //!< used projection model
-
 } ;
 
 #endif

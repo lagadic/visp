@@ -136,7 +136,7 @@ void vpNetwork::print(const char *id)
   
   \param name : Name of the receptor.
   
-  \return Index of the receptor.
+  \return Index of the receptor, or -1 if an error occurs.
 */
 int vpNetwork::getReceptorIndex(const char *name)
 {
@@ -147,7 +147,8 @@ int vpNetwork::getReceptorIndex(const char *name)
     std::string noSuchHostMessage( "ERROR, " );
     noSuchHostMessage.append( name );
     noSuchHostMessage.append( ": no such host\n" );
-    vpERROR_TRACE( noSuchHostMessage.c_str(), "vpClient::getReceptorIndex()" );
+    vpERROR_TRACE( noSuchHostMessage.c_str(), "vpNetwork::getReceptorIndex()" );
+    return -1;
   }
   
   std::string ip = inet_ntoa(*(in_addr *)server->h_addr);

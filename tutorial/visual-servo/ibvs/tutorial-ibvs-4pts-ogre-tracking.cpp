@@ -202,6 +202,10 @@ int main()
   catch(vpException e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
+  catch(...) {
+    std::cout << "Catch an exception " << std::endl;
+    return 1;
+  }
 #endif
 }
 

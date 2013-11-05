@@ -66,7 +66,7 @@
 class Settings
 {
 public:
-  Settings() : goodInput(false) {}
+  Settings() : goodInput(false), squareSize(0.025), calibrationPattern(UNDEFINED) {}
   enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID};
 
   bool read(const std::string &filename)    // Read the parameters

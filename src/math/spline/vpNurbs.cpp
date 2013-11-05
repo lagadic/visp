@@ -691,13 +691,19 @@ vpNurbs::removeCurveKnot(double u, unsigned int r, unsigned int num, double TOL)
   The result of the method is composed by a knot vector, a set of control points and a set of associated weights.
   
   \param l_crossingPoints : The list of data points which have to be interpolated.
-  \param l_p : Degree of the NURBS basis functions.
+  \param l_p : Degree of the NURBS basis functions. This value need to be > 0.
   \param l_knots : The knot vector
   \param l_controlPoints : the list of control points.
   \param l_weights : the list of weights.
 */
 void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
+  if (l_p == 0) {
+    //vpERROR_TRACE("Bad degree of the NURBS basis functions");
+    throw(vpException(vpException::badValue,
+                      "Bad degree of the NURBS basis functions")) ;
+  }
+
   l_knots.clear();
   l_controlPoints.clear();
   l_weights.clear();

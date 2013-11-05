@@ -862,6 +862,9 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
+  if (w > 100000 || h>100000)
+    throw(vpException(vpException::badValue, "Bad image size"));
+
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
       err = fgets(str, vpMAX_LEN - 1, fd);
@@ -1024,6 +1027,9 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
+  if (w > 100000 || h>100000)
+    throw(vpException(vpException::badValue, "Bad image size"));
+
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
       err = fgets(str, vpMAX_LEN - 1, fd);
@@ -1262,6 +1268,10 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 
   // Extract image size
   ierr = sscanf(str, "%d %d", &w, &h);
+
+  if (w > 100000 || h>100000)
+    throw(vpException(vpException::badValue, "Bad image size"));
+
   if(ierr == 1){// the norm allows to have the two values on two separated lines.
     do {
       err = fgets(str, vpMAX_LEN - 1, fd);
@@ -1285,7 +1295,6 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 
   if ((h != I.getHeight())||( w != I.getWidth()))
   {
-
     try
     {
       I.resize(h,w) ;

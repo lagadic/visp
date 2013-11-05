@@ -93,5 +93,8 @@ int main()
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+  catch(...) {
+    std::cout << "Catch an exception " << std::endl;
+  }
 }
 

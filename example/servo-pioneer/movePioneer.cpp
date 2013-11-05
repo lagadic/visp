@@ -69,43 +69,44 @@ int main()
 */
 int main(int argc, char **argv)
 {
-  std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, \n"
-               "the robot WILL collide with any objects in the way! Make sure the \n"
-               "robot has approximately 3 meters of free space on all sides.\n"
-            << std::endl;
+  try {
+    std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, \n"
+                 "the robot WILL collide with any objects in the way! Make sure the \n"
+                 "robot has approximately 3 meters of free space on all sides.\n"
+              << std::endl;
 
-  vpRobotPioneer robot;
+    vpRobotPioneer robot;
 
-  ArArgumentParser parser(&argc, argv);
-  parser.loadDefaultArguments();
+    ArArgumentParser parser(&argc, argv);
+    parser.loadDefaultArguments();
 
-  // ArRobotConnector connects to the robot, get some initial data from it such as type and name,
-  // and then loads parameter files for this robot.
-  ArRobotConnector robotConnector(&parser, &robot);
-  if(!robotConnector.connectRobot())
-  {
-    ArLog::log(ArLog::Terse, "Could not connect to the robot.");
-    if(parser.checkHelpAndWarnUnparsed())
+    // ArRobotConnector connects to the robot, get some initial data from it such as type and name,
+    // and then loads parameter files for this robot.
+    ArRobotConnector robotConnector(&parser, &robot);
+    if(!robotConnector.connectRobot())
+    {
+      ArLog::log(ArLog::Terse, "Could not connect to the robot.");
+      if(parser.checkHelpAndWarnUnparsed())
+      {
+        Aria::logOptions();
+        Aria::exit(1);
+      }
+    }
+    if (!Aria::parseArgs())
     {
       Aria::logOptions();
-      Aria::exit(1);
+      Aria::shutdown();
+      return false;
     }
-  }
-  if (!Aria::parseArgs())
-  {
-    Aria::logOptions();
-    Aria::shutdown();
-    return false;
-  }
-  
-  std::cout << "Robot connected" << std::endl;
-  robot.useSonar(false); // disable the sonar device usage
 
-  // Robot velocities
-  vpColVector v(2), v_mes(2);
+    std::cout << "Robot connected" << std::endl;
+    robot.useSonar(false); // disable the sonar device usage
 
-  for (int i=0; i < 100; i++)
-  {
+    // Robot velocities
+    vpColVector v(2), v_mes(2);
+
+    for (int i=0; i < 100; i++)
+    {
       double t = vpTime::measureTimeMs();
 
       v = 0;
@@ -120,28 +121,33 @@ int main(int argc, char **argv)
       std::cout << "Battery=" << robot.getBatteryVoltage() << std::endl;
 
       vpTime::wait(t, 40);
+    }
+
+    ArLog::log(ArLog::Normal, "simpleMotionCommands: Stopping.");
+    robot.lock();
+    robot.stop();
+    robot.unlock();
+    ArUtil::sleep(1000);
+
+    robot.lock();
+    ArLog::log(ArLog::Normal, "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
+               robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
+    robot.unlock();
+
+    std::cout << "Ending robot thread..." << std::endl;
+    robot.stopRunning();
+
+    // wait for the thread to stop
+    robot.waitForRunExit();
+
+    // exit
+    ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
+    return 0;
   }
-
-  ArLog::log(ArLog::Normal, "simpleMotionCommands: Stopping.");
-  robot.lock();
-  robot.stop();
-  robot.unlock();
-  ArUtil::sleep(1000);
-
-  robot.lock();
-  ArLog::log(ArLog::Normal, "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
-    robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
-  robot.unlock();
-
-  std::cout << "Ending robot thread..." << std::endl;
-  robot.stopRunning();
-
-  // wait for the thread to stop
-  robot.waitForRunExit();
-
-  // exit
-  ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
-  return 0;
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
 }
 
 #endif

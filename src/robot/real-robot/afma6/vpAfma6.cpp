@@ -382,6 +382,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
       _etc[2] = 0.2286; // tz
       break;
     }
+    break;
   }
   case vpAfma6::TOOL_GRIPPER: {
     switch(projModel) {
@@ -402,6 +403,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
       _etc[2] = 0.1642; // tz
       break;
     }
+    break;
   }
   case vpAfma6::TOOL_VACUUM: {
     switch(projModel) {
@@ -422,6 +424,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
       _etc[2] = 0.1658; // tz
       break;
     }
+    break;
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     switch(projModel) {
@@ -436,6 +439,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
       _etc[2] = 0; // tz
       break;
     }
+    break;
   }
   }
   vpRotationMatrix eRc(_erc);

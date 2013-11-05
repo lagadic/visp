@@ -89,6 +89,7 @@ vpRobotBiclopsController::vpRobotBiclopsController()
     shm.q_dot[i] = 0.;
     shm.actual_q[i] = 0.;
     shm.jointLimit[i] = false;
+    shm.status[i] = STOP;
   }
 
 }

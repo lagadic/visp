@@ -127,6 +127,8 @@ vpRobotBiclops::vpRobotBiclops ()
   pthread_mutex_init (&vpShm_mutex, NULL);
   pthread_mutex_init (&vpEndThread_mutex, NULL);
   pthread_mutex_init (&vpMeasure_mutex, NULL);
+
+  positioningVelocity = defaultPositioningVelocity ;
 }
 
 /*!
@@ -175,8 +177,9 @@ vpRobotBiclops::vpRobotBiclops (const char * filename)
   // Initialize the mutex dedicated to she shm protection
   pthread_mutex_init (&vpShm_mutex, NULL);
   pthread_mutex_init (&vpEndThread_mutex, NULL);
-  pthread_mutex_init (&vpMeasure_mutex
-, NULL);
+  pthread_mutex_init (&vpMeasure_mutex, NULL);
+
+  positioningVelocity = defaultPositioningVelocity ;
 
   init();
 
@@ -274,8 +277,6 @@ vpRobotBiclops::init ()
   }
 
   vpRobotBiclops::robotAlreadyCreated = true;
-
-  positioningVelocity = defaultPositioningVelocity ;
 
   // Initialize previous articular position to manage getDisplacement()
   q_previous.resize(vpBiclops::ndof);
@@ -1279,16 +1280,19 @@ vpRobotBiclops::readPositionFile(const char *filename, vpColVector &q)
     // skip lines begining with # for comments
     if (fgets (line, 100, pt_f) != NULL) {
       if ( strncmp (line, "#", 1) != 0) {
-	// this line is not a comment
-	if ( fscanf (pt_f, "%s", line) != EOF)   {
-	  if ( strcmp (line, head) == 0)
-	    end = true; 	// robot position was found
-	}
-	else
-	  return (false); // end of file without position
+        // this line is not a comment
+        if ( fscanf (pt_f, "%s", line) != EOF)   {
+          if ( strcmp (line, head) == 0)
+            end = true; 	// robot position was found
+        }
+        else {
+          fclose(pt_f);
+          return (false); // end of file without position
+        }
       }
     }
     else {
+      fclose(pt_f);
       return (false);// end of file
     }
 
@@ -1298,6 +1302,7 @@ vpRobotBiclops::readPositionFile(const char *filename, vpColVector &q)
   double q1,q2;
   // Read positions
   if (fscanf(pt_f, "%lf %lf", &q1, &q2) == EOF) {
+    fclose(pt_f);
     std::cout << "Cannot read joint positions." << std::endl;
     return false;
   }
