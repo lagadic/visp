@@ -556,7 +556,8 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
 
 
 /*!
-  \param
+  \param nbLvl : Number of levels in the pyramid.
+  \param l0 : Pyramid level where the tracking is stopped. The level with the highest resolution is 0.
  */
 void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
 {
