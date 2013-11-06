@@ -217,9 +217,11 @@ public:
 
   //! operator[] allows operation like I[i] = x.
   inline Type *operator[]( const unsigned int i)   { return row[i];}
+  inline Type *operator[]( const int i)   { return row[i];}
 
   //! operator[] allows operation like x = I[i]
   inline const  Type *operator[](unsigned int i) const { return row[i];}
+  inline const  Type *operator[](int i) const { return row[i];}
 
   /*!
     Get the value of an image point.

@@ -40,6 +40,8 @@
  *
  *****************************************************************************/
 
+#include <limits>   // numeric_limits
+
 #include <visp/vpConfig.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
@@ -270,7 +272,7 @@ void vpTemplateTrackerZone::initFromListPoints(const vpImage<unsigned char>& I)
     y[cpt]=Iterateur_pt->y;
 
     bool existe_deja=false;
-    int sommet_trouve=0;
+    unsigned int sommet_trouve=0;
     if(nb_sommets_diff!=0)
       for(unsigned int st=0;st<nb_sommets_diff;st++)
       {
@@ -397,9 +399,9 @@ bool vpTemplateTrackerZone::inZone(const double &ie,const double &je) const
   return false;
 
 }
-bool vpTemplateTrackerZone::inZone(const int &ie,const int &je, int &id_triangle) const
+bool vpTemplateTrackerZone::inZone(const int &ie,const int &je, unsigned int &id_triangle) const
 {
-  int id=0;
+  unsigned int id=0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
   for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
   {
@@ -413,10 +415,10 @@ bool vpTemplateTrackerZone::inZone(const int &ie,const int &je, int &id_triangle
   return false;
 
 }
-bool vpTemplateTrackerZone::inZone(const double &ie,const double &je, int &id_triangle) const
+bool vpTemplateTrackerZone::inZone(const double &ie,const double &je, unsigned int &id_triangle) const
 {
 
-  int id=0;
+  unsigned int id=0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
   for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
   {
@@ -491,15 +493,15 @@ int vpTemplateTrackerZone::getMiny() const
 {
   return min_y;
 }
-int vpTemplateTrackerZone::getInterpol(double i,double j,int sommet[3],double coeff[3]) const
+int vpTemplateTrackerZone::getInterpol(double i,double j, unsigned int sommet[3],double coeff[3]) const
 {
   //trouve triangle et ses sommets
-  int triangle ;
+  unsigned int triangle ;
   double ie=i,je=j;
   if(inZone(ie,je,triangle))
   {
     vpTemplateTrackerZPoint sommets_triangle[3];
-    for(int s=0;s<3;s++)
+    for(unsigned int s=0;s<3;s++)
     {
       sommet[s]=corresp_sommet[3*triangle+s];
       sommets_triangle[s]=liste_sommets[sommet[s]];
@@ -516,13 +518,16 @@ int vpTemplateTrackerZone::getInterpol(double i,double j,int sommet[3],double co
     vpColVector a1ap(2);a1ap=S2S1S2S3.inverseByLU()*S2p;
     double alpha1=a1ap[0];//if(alpha1<0)alpha1=0;
     double alpha2=a1ap[1]/(1.-a1ap[0]);//if(alpha2<0)alpha2=0;
-    if(1.-a1ap[0]==0.)alpha2=0.;
+    //if(1.-a1ap[0]==0.)
+    if (std::fabs(1.-a1ap[0]) <= std::numeric_limits<double>::epsilon())
+      alpha2=0.;
     //coeff[0]=(1.-alpha2)*alpha1+alpha2*alpha1;
 
     //std::cout<<"a1 :"<<alpha1<<"  ; a2=  "<<alpha2<<std::endl;
 
     coeff[0]=alpha1;
-    if(1.-alpha1!=0.)
+    // if(1.-alpha1!=0.)
+    if (std::fabs(1.-alpha1) > std::numeric_limits<double>::epsilon())
     {
       coeff[1]=(1.-alpha2)*(1.-alpha1);
       coeff[2]=alpha2*(1.-alpha1);
@@ -545,15 +550,15 @@ int vpTemplateTrackerZone::getInterpol(double i,double j,int sommet[3],double co
   }
 
 }
-int vpTemplateTrackerZone::getInterpol(double i,double j,int sommet[3],float coeff[3]) const
+int vpTemplateTrackerZone::getInterpol(double i,double j,unsigned int sommet[3],float coeff[3]) const
 {
   //trouve triangle et ses sommets
-  int triangle ;
+  unsigned int triangle ;
   double ie=i,je=j;
   if(inZone(ie,je,triangle))
   {
     vpTemplateTrackerZPoint sommets_triangle[3];
-    for(int s=0;s<3;s++)
+    for(unsigned int s=0;s<3;s++)
     {
       sommet[s]=corresp_sommet[3*triangle+s];
       sommets_triangle[s]=liste_sommets[sommet[s]];
@@ -695,7 +700,7 @@ vpTemplateTrackerZone::~vpTemplateTrackerZone()
    \param t: index of the triangle.
    \param corners: Corners of the triangle.
  */
-void vpTemplateTrackerZone::getCornersTriangle(int t,int corners[3]) const
+void vpTemplateTrackerZone::getCornersTriangle(unsigned int t, unsigned int corners[3]) const
 {
   for(unsigned int s=0;s<3;s++)
   {

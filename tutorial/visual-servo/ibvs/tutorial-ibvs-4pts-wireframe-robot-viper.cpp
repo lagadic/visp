@@ -8,7 +8,7 @@
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
 {
-  int thickness = 3;
+  unsigned int thickness = 3;
   static std::vector<vpImagePoint> traj[4];
   vpImagePoint cog;
   for (unsigned int i=0; i<4; i++) {
@@ -68,7 +68,7 @@ int main()
     task.setLambda(0.5);
 
     vpFeaturePoint p[4], pd[4] ;
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       point[i].track(cdMo);
       vpFeatureBuilder::create(pd[i], point[i]);
       point[i].track(cMo);
@@ -130,7 +130,7 @@ int main()
     {
       cMo = robot.get_cMo();
 
-      for (int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0 ; i < 4 ; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
       }

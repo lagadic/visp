@@ -97,14 +97,14 @@ class VISP_EXPORT vpTemplateTrackerZone
     bool inZone(const int &ie,const int &je) const;
     bool inZone(const double &ie,const double &je) const;
     //check if a point is in the area and return the corresponding triangle id_triangle where the point is.
-    bool inZone(const int &ie,const int &je, int &id_triangle) const;
-    bool inZone(const double &ie,const double &je, int &id_triangle) const;
+    bool inZone(const int &ie,const int &je, unsigned int &id_triangle) const;
+    bool inZone(const double &ie,const double &je, unsigned int &id_triangle) const;
 
     vpImagePoint getCenter() const;
     vpImagePoint getCenter(int borne_x, int borne_y) const;
     //renvoie interpolation lineaire d'un point en fonction des 3 sommets du triangle defini par leurs index dans liste_sommets
-    int getInterpol(double i,double j,int sommet[3],double coeff[3]) const;
-    int getInterpol(double i,double j,int sommet[3],float coeff[3]) const;
+    int getInterpol(double i,double j, unsigned int sommet[3],double coeff[3]) const;
+    int getInterpol(double i,double j, unsigned int sommet[3],float coeff[3]) const;
     //get bounds of the area
     //renvoie le pointeur de la liste de sommet
     vpTemplateTrackerZPoint *getListPt() const {return liste_tout_sommets;}
@@ -115,12 +115,12 @@ class VISP_EXPORT vpTemplateTrackerZone
     int getMiny() const;
     unsigned int getNbSommetDiff() const {return nb_sommets_diff;}
     unsigned int getNbToutSommets() const {return nb_tout_sommets;}
-    int getNbTriangle() const {return Zone.size();}
+    int getNbTriangle() const {return (int)Zone.size();}
     vpTemplateTrackerZone getPyramidDown() const;
     vpTemplateTrackerZPoint getCorner(int i) const {return liste_sommets[i];}
     void getCornerDiff(int n,int &x,int &y) const {x=liste_sommets[n].x;y=liste_sommets[n].y;}
     //renvoie les indices des sommets du tieme triangle
-    void getCornersTriangle(int t,int corners[3]) const;
+    void getCornersTriangle(unsigned int t, unsigned int corners[3]) const;
     //renvoie le ieme triangle de la zone
     void getTriangle(int i,vpTemplateTrackerTriangle &T) const;
 

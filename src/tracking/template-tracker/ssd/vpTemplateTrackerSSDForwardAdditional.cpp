@@ -39,6 +39,9 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+
+#include <limits>   // numeric_limits
+
 #include <visp/vpTemplateTrackerSSDForwardAdditional.h>
 #include <visp/vpImageTools.h>
 
@@ -171,7 +174,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
         s_scal_y=s_quasi.t()*y_quasi;
         //if(s_scal_y!=0)//BFGS
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
-        if(s_scal_y!=0.0)//DFP
+        //if(s_scal_y!=0.0)//DFP
+        if(std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) //DFP
           KQuasiNewton=KQuasiNewton+0.001*(s_quasi*s_quasi.t()/s_scal_y-KQuasiNewton*y_quasi*y_quasi.t()*KQuasiNewton/(y_quasi.t()*KQuasiNewton*y_quasi));
       }
       dp=-KQuasiNewton*G;

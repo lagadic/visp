@@ -39,6 +39,8 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+#include <limits>   // numeric_limits
+
 #include <visp/vpTemplateTrackerZNCCInverseCompositional.h>
 #include <visp/vpImageFilter.h>
 
@@ -345,7 +347,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
       covarIc=sqrt(covarIc);
       denom=covarIref*covarIc;
 
-      if(denom==0.0)
+      //if(denom==0.0)
+      if (std::fabs(denom) <= std::numeric_limits<double>::epsilon())
       {
         diverge=true;
       }

@@ -22,7 +22,7 @@ int main()
     task.setLambda(0.5);
 
     vpFeaturePoint p[4], pd[4] ;
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       point[i].track(cdMo);
       vpFeatureBuilder::create(pd[i], point[i]);
       point[i].track(cMo);
@@ -39,7 +39,7 @@ int main()
     for (unsigned int iter=0; iter < 150; iter ++) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
-      for (int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0 ; i < 4 ; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
       }

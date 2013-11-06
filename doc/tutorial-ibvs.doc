@@ -104,7 +104,7 @@ It is now time to define four visual features as points in the image-plane. To t
 
 Each feature is obtained by computing the position of the 3D points in the corresponding camera frame, and then by applying the perspective projection. Once current and desired features are created, they are added to the visual servo task.
 \code
-  for (int i = 0 ; i < 4 ; i++) {
+  for (unsigned int i = 0 ; i < 4 ; i++) {
     point[i].track(cdMo);
     vpFeatureBuilder::create(pd[i], point[i]);
     point[i].track(cMo);
@@ -141,7 +141,7 @@ Now we can enter in the visual servo loop. When a velocity is applied to our fre
 
 The current visual features are then updated by projecting the 3D points in the image-plane associated to the new camera location \c cMo.
 \code
-   for (int i = 0 ; i < 4 ; i++) {
+   for (unsigned int i = 0 ; i < 4 ; i++) {
       point[i].track(cMo);
       vpFeatureBuilder::create(p[i], point[i]);
     }
@@ -232,7 +232,7 @@ We create an instance of the vpProjectionDisplay class. This class is only avail
 \code
 #if defined(VISP_HAVE_DISPLAY)
   vpProjectionDisplay externalview;
-  for (int i = 0 ; i < 4 ; i++)
+  for (unsigned int i = 0 ; i < 4 ; i++)
     externalview.insert(point[i]) ;
 #endif
 \endcode
@@ -354,7 +354,7 @@ To retrieve the simulated image that depends on the simulated camera position we
 The current visual features are computed using a vpDot2 blob tracker. Once four trackers are instantiated, we are waiting for a mouse click in each blob to initialize the tracker. Then we compute the current visual features \f$(x,y) \f$ from the camera parameters and the cog position of each blob.
 
 \code
-  for (int i = 0 ; i < 4 ; i++) {
+  for (unsigned int i = 0 ; i < 4 ; i++) {
     ...
     dot[i].setGraphics(true);
     dot[i].initTracking(I);
@@ -372,7 +372,7 @@ In the visual servo loop, at each iteration we get a new image of the target.
 
 We track each blob and update the values of the current visual features as previously.
 \code
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       dot[i].track(I);
       vpFeatureBuilder::create(p[i], cam, dot[i].getCog());    
 \endcode

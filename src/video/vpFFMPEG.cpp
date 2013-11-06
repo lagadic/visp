@@ -88,7 +88,8 @@ vpFFMPEG::vpFFMPEG()
   pFrameRGB = NULL;
   pFrameGRAY = NULL;
   img_convert_ctx = NULL;
-  videoStream = numBytes = outbuf_size = out_size = 0;
+  numBytes = outbuf_size = out_size = 0;
+  videoStream = 0;
   color_type = COLORED;
 }
 

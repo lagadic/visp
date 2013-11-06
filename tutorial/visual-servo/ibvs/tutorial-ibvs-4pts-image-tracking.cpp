@@ -117,7 +117,7 @@ int main()
     vpFeaturePoint p[4], pd[4];
     std::vector<vpDot2> dot(4);
 
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       point[i].track(cdMo);
       vpFeatureBuilder::create(pd[i], point[i]);
 
@@ -143,7 +143,7 @@ int main()
 
       vpDisplay::display(I);
 
-      for (int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0 ; i < 4 ; i++) {
         dot[i].track(I);
         vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
 

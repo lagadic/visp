@@ -60,7 +60,7 @@ int main()
 {
   try {
     // We want to calibrate the hand to eye extrinsic camera parameters from 6 couple of poses: cMo and wMe
-    const int N = 6;
+    const unsigned int N = 6;
     // Input: six couple of poses used as input in the calibration proces
     std::vector<vpHomogeneousMatrix> cMo(N) ; // eye (camera) to object transformation. The object frame is attached to the calibrartion grid
     std::vector<vpHomogeneousMatrix>  wMe(N) ; // world to hand (end-effector) transformation
@@ -80,7 +80,7 @@ int main()
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
 
     vpColVector v_c(6) ; // camera velocity used to produce 6 simulated poses
-    for (int i=0 ; i < N ; i++)
+    for (unsigned int i=0 ; i < N ; i++)
     {
       v_c = 0 ;
       if (i==0) {
@@ -109,7 +109,7 @@ int main()
     }
 
     if (0) {
-      for (int i=0 ; i < N ; i++) {
+      for (unsigned int i=0 ; i < N ; i++) {
         vpHomogeneousMatrix wMo;
         wMo = wMe[i] * eMc * cMo[i];
         std::cout << std::endl << "wMo[" << i << "] " << std::endl ;

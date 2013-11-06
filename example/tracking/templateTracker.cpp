@@ -101,7 +101,7 @@ typedef enum {
 
 
 void usage(const char *name, const char *badparam, const WarpType &warp_type,
-           TrackerType &tracker_type, const unsigned int &last_frame)
+           TrackerType &tracker_type, const long &last_frame)
 {
   fprintf(stdout, "\n\
 Example of template tracking.\n\
@@ -123,7 +123,7 @@ OPTIONS:                                                            Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
           \n\
-  -l <last frame number>                                              %u\n\
+  -l <last frame number>                                              %ld\n\
      Last frame number to consider.\n\
           \n\
   -d \n\
@@ -170,7 +170,7 @@ OPTIONS:                                                            Default\n\
 
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed,
                 bool &display, bool &pyramidal, WarpType &warp_type, TrackerType &tracker_type,
-                unsigned int &last_frame)
+                long &last_frame)
 {
   const char *optarg;
   int   c;
@@ -181,7 +181,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     case 'd': display = false; break;
     case 'h': usage(argv[0], NULL, warp_type, tracker_type, last_frame); return false; break;
     case 'i': ipath = optarg; break;
-    case 'l': last_frame = (unsigned int)atoi(optarg); break;
+    case 'l': last_frame = (long)atoi(optarg); break;
     case 'p': pyramidal = true; break;
     case 't': tracker_type = (TrackerType)atoi(optarg); break;
     case 'w': warp_type = (WarpType)atoi(optarg); break;
@@ -227,7 +227,7 @@ main(int argc, const char ** argv)
     bool opt_pyramidal = false;
     TrackerType opt_tracker_type = TRACKER_SSD_INVERSE_COMPOSITIONAL;
     WarpType opt_warp_type = WARP_AFFINE;
-    unsigned int opt_last_frame = 30;
+    long opt_last_frame = 30;
 
     // Get the VISP_IMAGE_PATH environment variable value
     char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
