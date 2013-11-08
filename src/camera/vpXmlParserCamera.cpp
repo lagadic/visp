@@ -553,14 +553,20 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 
   }
   // Create a specific test for subsampling_width and subsampling_height to ensure that division by zero is not possible in the next test
-  if (subsampling_width == 0 || subsampling_height == 0) {
-    back = SEQUENCE_ERROR;
+  bool test_subsampling_width = true;
+  bool test_subsampling_height = true;
+
+  if (subsampling_width) {
+    test_subsampling_width = (abs((int)subsampling_width - (int)subsampling_width_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)));
   }
-  else if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
+  if (subsampling_height) {
+    test_subsampling_height = (abs((int)subsampling_height - (int)subsampling_height_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_height_tmp / subsampling_height)));
+  }
+  if( !((projModelFound == true) && (camera_name == camera_name_tmp) &&
         (abs((int)image_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || image_width == 0) &&
         (abs((int)image_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || image_height == 0) &&
-        (abs((int)subsampling_width - (int)subsampling_width_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_width_tmp / subsampling_width)))&&
-        (abs((int)subsampling_height - (int)subsampling_height_tmp) < (allowedPixelDiffOnImageSize * (int)(subsampling_height_tmp / subsampling_height))))){
+        (test_subsampling_width)&&
+        (test_subsampling_height))){
     back = SEQUENCE_ERROR;
   }
   else{
