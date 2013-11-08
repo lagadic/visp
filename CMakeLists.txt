@@ -681,7 +681,7 @@ if(USE_X11)
   set(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
   set(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
   list(APPEND VISP_EXTERN_INCLUDE_DIRS ${X11_INCLUDE_DIR})
-  list(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES} -lm)
+  list(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES} m)
   #MESSAGE("X11: ${X11_LIBRARIES}")
 else()
   # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
