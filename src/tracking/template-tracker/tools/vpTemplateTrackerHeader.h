@@ -74,7 +74,8 @@ struct vpTemplateTrackerPoint {
 
     vpTemplateTrackerPoint()
     {
-      x=y=dx=dy=val=0.;
+      x=y=0;
+      dx=dy=val=0.;
       dW = NULL;
       HiG = NULL;
     }
