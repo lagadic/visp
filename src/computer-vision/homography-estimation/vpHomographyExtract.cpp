@@ -55,7 +55,7 @@ const double vpHomography::sing_threshold = 0.0001;
   Compute the camera displacement between two images from the homography \f$
   {^a}{\bf H}_b \f$.
 
-  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^b}{\bf p} \f$ is
   represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
   vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
   (vpHomogeneousMatrix).
