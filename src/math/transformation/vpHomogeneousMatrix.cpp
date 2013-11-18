@@ -481,7 +481,7 @@ vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
 void
 vpHomogeneousMatrix::save(std::ofstream &f) const
 {
-  if (f != NULL)
+  if (! f.fail())
   {
     f << *this ;
   }
@@ -514,7 +514,7 @@ vpHomogeneousMatrix::save(std::ofstream &f) const
 void
 vpHomogeneousMatrix::load(std::ifstream &f)
 {
-  if (f != NULL)
+  if (! f.fail())
   {
     for (unsigned int i=0 ; i < 4 ; i++)
       for (unsigned int j=0 ; j < 4 ; j++)

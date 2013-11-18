@@ -184,7 +184,7 @@ main(int argc, const char ** argv)
     std::ofstream f;
     std::cout << "Create file: " << ofilename << std::endl;
     f.open(ofilename.c_str());
-    if (f == NULL) {
+    if (f.fail()) {
       usage(argv[0], NULL, ofilename);
       std::cerr << std::endl
                 << "ERROR:" << std::endl;

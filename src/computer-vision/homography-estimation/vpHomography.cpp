@@ -297,7 +297,7 @@ vpHomography::inverse(vpHomography &bHa) const
 void
 vpHomography::save(std::ofstream &f) const
 {
-  if (f != NULL)
+  if (! f.fail())
   {
     f << *this ;
   }
@@ -394,7 +394,7 @@ vpHomography vpHomography::operator/(const double &v) const
 void
 vpHomography::load(std::ifstream &f)
 {
-  if (f != NULL)
+  if (! f.fail())
   {
     for (unsigned int i=0 ; i < 3 ; i++)
       for (unsigned int j=0 ; j < 3 ; j++)

@@ -46,6 +46,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <iostream>
+#include <algorithm>    // std::min
 
 #define	SIGN(x)		((x) < 0 ? -1 : 1)
 #define	SWAP(a,b,c)	{(c) = (a); (a) = (b); (b) = (c);}

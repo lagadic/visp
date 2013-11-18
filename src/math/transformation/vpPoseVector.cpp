@@ -276,7 +276,7 @@ vpPoseVector::print()
 void
 vpPoseVector::save(std::ofstream &f) const
 {
-  if (f != NULL)
+  if (! f.fail())
     {
       f << *this ;
     }
@@ -301,7 +301,7 @@ vpPoseVector::save(std::ofstream &f) const
 void
 vpPoseVector::load(std::ifstream &f)
 {
-  if (f != NULL)
+  if (! f.fail())
     {
       for (unsigned int i=0 ; i < 6 ; i++)
 	{

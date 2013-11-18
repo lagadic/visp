@@ -307,8 +307,8 @@ void vpTemplateTrackerWarpHomographySL3::warpX(const int &i,const int &j,double 
 vpHomography vpTemplateTrackerWarpHomographySL3::getHomography() const
 {
   vpHomography H;
-  for (size_t i=0; i<3; i++)
-    for (size_t j=0; j<3; j++)
+  for (unsigned int i=0; i<3; i++)
+    for (unsigned int j=0; j<3; j++)
       H[i][j] = G[i][j];
   return H;
 }

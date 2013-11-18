@@ -637,7 +637,7 @@ int vpCalibration::readData(const char* filename)
   vpImagePoint ip;
   std::ifstream f;
   f.open(filename);
-  if (f != NULL){
+  if (! f.fail()){
     unsigned int n ;
     f >> n ;
     std::cout << "There are "<< n <<" point on the calibration grid " << std::endl ;
@@ -686,7 +686,7 @@ int vpCalibration::readGrid(const char* filename, unsigned int &n,
   try{
     std::ifstream f;
     f.open(filename);
-    if (f != NULL){
+    if (! f.fail()){
 
       f >> n ;
       if(verbose)   
@@ -990,7 +990,7 @@ int vpCalibration::readGrid(const char* filename,unsigned int &n,
   try{
     std::ifstream f;
     f.open(filename);
-    if (f != NULL){
+    if (! f.fail()){
 
       f >> n ;
       if(verbose)

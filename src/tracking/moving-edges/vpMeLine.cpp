@@ -58,6 +58,8 @@
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include <algorithm>    // std::min
+
 #define INCR_MIN 1
 
 static void

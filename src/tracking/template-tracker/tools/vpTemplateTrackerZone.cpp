@@ -259,7 +259,7 @@ void vpTemplateTrackerZone::initFromListPoints(const vpImage<unsigned char>& I)
   int y[3];
 
   int cpt=0;
-  nb_tout_sommets=liste_pt.size();
+  nb_tout_sommets=(unsigned int)liste_pt.size();
   int pb_nb=0;
 
   for(Iterateur_pt=liste_pt.begin();Iterateur_pt!=liste_pt.end();Iterateur_pt++)
