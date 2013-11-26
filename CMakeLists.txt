@@ -143,6 +143,10 @@ OPTION(BUILD_TUTORIAL "Build ViSP tutorial." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
 
+if(MSVC)
+  option(BUILD_WITH_STATIC_CRT    "Enables use of staticaly linked CRT for staticaly linked ViSP" ON)
+endif()
+
 # Note that it is better to set MOMENTS_COMBINE_MATRICES to OFF
 OPTION(MOMENTS_COMBINE_MATRICES "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." OFF)
 MARK_AS_ADVANCED(MOMENTS_COMBINE_MATRICES)
@@ -1857,6 +1861,14 @@ IF(VISP_EXTERN_LINK_DIR)
 ENDIF(VISP_EXTERN_LINK_DIR)
 #MESSAGE("VISP_EXTERN_LINK_DIR without duplicates: ${VISP_EXTERN_LINK_DIR}")
 LINK_DIRECTORIES(${VISP_EXTERN_LINK_DIR})
+
+#----------------------------------------------------------------------
+# Use statically or dynamically linked CRT?
+# Default: dynamic
+#----------------------------------------------------------------------
+if(MSVC)
+   include(${VISP_CMAKE_MODULE_PATH}/VISPCRTLinkage.cmake)
+endif(MSVC)
 
 #----------------------------------------------------------------------
 # Cleanify the libraries list

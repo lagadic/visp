@@ -11,12 +11,17 @@ ViSP under development version
     . Introduction of a new template tracker.
   - Improvements
     . Add missing const to member functions and arguments passed by reference.
+    . Introduction of a new option BUILD_WITH_STATIC_CRT that allows to set
+      /MT (default) or /MD msvc build option
+    . Compatibility with msvc11 (2012) and msvc12 (2013)	  
   - Examples
+    . New example to show how to use the template tracker
   - Bug fixed
     . [16263] libopencv_nonfree for Surf not detected by CMake.
     . [16307] vpVideoReader::setLastFrameIndex() doesn't work.
     . [16371] No convergence in SVDcmp
     . [16465] FTBFS on armhf, ppc, s390: Errors while running CTest
+    . [16696] Build with OpenCV fails with msvc (/MT conflicts with /MD)
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
