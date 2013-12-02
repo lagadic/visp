@@ -245,12 +245,12 @@ protected:
   static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
 
   /*!
-    Load a matrix to a file.
+    Load a matrix from a file.
 
     \param filename : absolute file name
     \param M : matrix to be loaded
-    \param binary :If true the matrix is load from a binary file, else from a text file.
-    \param Header : Header of the file is load in this parameter
+    \param binary :If true the matrix is loaded from a binary file, else from a text file.
+    \param Header : Header of the file is loaded in this parameter
 
     \return Returns true if no problem appends.
   */
@@ -282,6 +282,39 @@ protected:
     return vpMatrix::saveMatrix(filename.c_str(), M, binary, Header);
   }
   static bool saveMatrix(const char *filename, const vpMatrix &M, const bool binary = false, const char *Header = "");
+
+  /*!
+    Save a matrix in a YAML-formatted file.
+
+    \param filename : absolute file name
+    \param M : matrix to be saved
+    \param Header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+
+    \return Returns true if no problem appends.
+
+  */
+  static inline bool saveMatrixYAML(std::string filename, const vpMatrix &M,
+        const char *Header = "")
+  {
+    return vpMatrix::saveMatrixYAML(filename.c_str(), M, Header);
+  }
+  static bool saveMatrixYAML(const char *filename, const vpMatrix &M, const char *Header = "");
+  /*!
+    Load a matrix from a YAML-formatted file.
+
+    \param filename : absolute file name
+    \param M : matrix to be loaded
+    \param Header : Header of the file is loaded in this parameter
+
+    \return Returns true if no problem appends.
+  */
+  static inline bool loadMatrixYAML(std::string filename, vpMatrix &M, char *Header = NULL)
+  {
+    return vpMatrix::loadMatrixYAML(filename.c_str(), M, Header);
+  }
+  static bool loadMatrixYAML(const char *filename, vpMatrix &M, char *Header = NULL);
+
+
   // Stack the matrix A below the current one, copy if not initialized this = [ this A ]^T
   void stackMatrices(const vpMatrix &A);
   //! Stack two Matrices C = [ A B ]^T

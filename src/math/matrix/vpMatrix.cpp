@@ -3535,9 +3535,105 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
   return true;
 }
 
+/*!
+  Save a matrix in a YAML-formatted file.
+
+  \param filename : absolute file name
+  \param M : matrix to be saved
+  \param Header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+
+  \return Returns true if no problem appends.
+
+  Here is an example of outputs.
+\code
+vpMatrix M(3,4);
+vpMatrix::saveMatrixYAML("matrix.yml", M, "example: a YAML-formatted header");
+vpMatrix::saveMatrixYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted header\n    - with inner indentation");
+\endcode
+Content of matrix.yml:
+\code
+example: a YAML-formatted header
+rows: 3
+cols: 4
+data:
+  - [0, 0, 0, 0]
+  - [0, 0, 0, 0]
+  - [0, 0, 0, 0]
+\endcode
+Content of matrixIndent.yml:
+\code
+example:
+    - a YAML-formatted header
+    - with inner indentation
+rows: 3
+cols: 4
+data:
+    - [0, 0, 0, 0]
+    - [0, 0, 0, 0]
+    - [0, 0, 0, 0]
+\endcode
+*/
+bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const char *Header)
+{
+    std::fstream file;
+
+    file.open(filename, std::fstream::out);
+
+    if(!file)
+    {
+        file.close();
+        return false;
+    }
+
+    unsigned int i = 0;
+    bool inIndent = false;
+    std::string indent = "";
+    bool checkIndent = true;
+    while (Header[i] != '\0')
+    {
+        file << Header[i];
+        if(checkIndent)
+        {
+            if (inIndent)
+            {
+                if(Header[i] == ' ')
+                    indent +=  " ";
+                else if (indent.length() > 0)
+                    checkIndent = false;
+            }
+            if (Header[i] == '\n' || (inIndent && Header[i] == ' '))
+                inIndent = true;
+            else
+                inIndent = false;
+        }
+        i++;
+    }
+
+    if(i != 0)
+        file << std::endl;
+    file << "rows: " << M.getRows() << std::endl;
+    file << "cols: " << M.getCols() << std::endl;
+
+    if(indent.length() == 0)
+        indent = "  ";
+
+    file << "data: " << std::endl;
+    unsigned int j;
+    for(i=0;i<M.getRows();++i)
+    {
+        file << indent << "- [";
+        for(j=0;j<M.getCols()-1;++j)
+            file << M[i][j] << ", ";
+        file << M[i][j] << "]" << std::endl;
+    }
+
+    file.close();
+    return true;
+}
+
 
 /*!
-  Load a matrix to a file.
+  Load a matrix from a file.
 
   \param filename : Absolute file name.
   \param M : Matrix to be loaded.
@@ -3631,6 +3727,85 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
   return true;
 }
 
+
+/*!
+  Load a matrix from a YAML-formatted file.
+
+  \param filename : absolute file name
+  \param M : matrix to be loaded
+  \param Header : Header of the file is loaded in this parameter
+
+  \return Returns true if no problem appends.
+*/
+bool
+vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *Header)
+{
+    std::fstream file;
+
+    file.open(filename, std::fstream::in);
+
+    if(!file)
+    {
+        file.close();
+        return false;
+    }
+
+    unsigned int rows = 0,cols = 0;
+    std::string h;
+    std::string line,subs;
+    bool inHeader = true;
+    unsigned int i=0, j;
+    unsigned int lineStart;
+
+    while ( getline (file,line) )
+    {
+        if(inHeader)
+        {
+            if(rows == 0 && line.compare(0,5,"rows:") == 0)
+            {
+                std::stringstream ss(line);
+                ss >> subs;
+                ss >> rows;
+            }
+            else if (cols == 0 && line.compare(0,5,"cols:") == 0)
+            {
+                std::stringstream ss(line);
+                ss >> subs;
+                ss >> cols;
+            }
+            else if (line.compare(0,5,"data:") == 0)
+                inHeader = false;
+            else
+                h += line + "\n";
+        }
+        else
+        {
+            // if i == 0, we just got out of the header: initialize matrix dimensions
+            if(i == 0)
+            {
+                if(rows == 0 || cols == 0)
+                {
+                    file.close();
+                    return false;
+                }
+                M.resize(rows, cols);
+                // get indentation level which is common to all lines
+                lineStart = line.find("[") + 1;
+            }
+            std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
+            j = 0;
+            while(getline(ss, subs, ','))
+                M[i][j++] = atof(subs.c_str());
+            i++;
+        }
+    }
+
+    if (Header != NULL)
+      strncpy(Header, h.substr(0,h.length()-1).c_str(), h.size());
+
+    file.close();
+    return true;
+}
 
 /*!
 
