@@ -3467,7 +3467,7 @@ Save a matrix to a file.
 \param filename : Absolute file name.
 \param M : Matrix to be saved.
 \param binary : If true the matrix is saved in a binary file, else a text file.
-\param Header : Optional line that will be saved at the beginning of the file.
+\param header : Optional line that will be saved at the beginning of the file.
 
 \return Returns true if no problem happened.
 
@@ -3476,7 +3476,7 @@ less than if you save it in a binary file.
 */
 bool
 vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, 
-                     const bool binary, const char *Header)
+                     const bool binary, const char *header)
 {
   std::fstream file;
 
@@ -3497,10 +3497,10 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
     {
       unsigned int i = 0;
       file << "# ";
-      while (Header[i] != '\0')
+      while (header[i] != '\0')
       {
-        file << Header[i];
-        if (Header[i] == '\n')
+        file << header[i];
+        if (header[i] == '\n')
           file << "# ";
         i++;
       }
@@ -3512,8 +3512,8 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
     else
     {
       int headerSize = 0;
-      while (Header[headerSize] != '\0') headerSize++;
-      file.write(Header,headerSize+1);
+      while (header[headerSize] != '\0') headerSize++;
+      file.write(header,headerSize+1);
       unsigned int matrixSize;
       matrixSize = M.getRows();
       file.write((char*)&matrixSize,sizeof(int));
@@ -3538,11 +3538,11 @@ vpMatrix::saveMatrix(const char *filename, const vpMatrix &M,
 /*!
   Save a matrix in a YAML-formatted file.
 
-  \param filename : absolute file name
-  \param M : matrix to be saved
-  \param Header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+  \param filename : absolute file name.
+  \param M : matrix to be saved in the file.
+  \param header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
 
-  \return Returns true if no problem appends.
+  \return Returns true if success.
 
   Here is an example of outputs.
 \code
@@ -3572,8 +3572,10 @@ data:
     - [0, 0, 0, 0]
     - [0, 0, 0, 0]
 \endcode
+
+  \sa loadMatrixYAML()
 */
-bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const char *Header)
+bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const char *header)
 {
     std::fstream file;
 
@@ -3589,19 +3591,19 @@ bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const cha
     bool inIndent = false;
     std::string indent = "";
     bool checkIndent = true;
-    while (Header[i] != '\0')
+    while (header[i] != '\0')
     {
-        file << Header[i];
+        file << header[i];
         if(checkIndent)
         {
             if (inIndent)
             {
-                if(Header[i] == ' ')
+                if(header[i] == ' ')
                     indent +=  " ";
                 else if (indent.length() > 0)
                     checkIndent = false;
             }
-            if (Header[i] == '\n' || (inIndent && Header[i] == ' '))
+            if (header[i] == '\n' || (inIndent && header[i] == ' '))
                 inIndent = true;
             else
                 inIndent = false;
@@ -3639,13 +3641,13 @@ bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const cha
   \param M : Matrix to be loaded.
   \param binary : If true the matrix is loaded from a binary file, 
   else from a text file.
-  \param Header : Header of the file loaded in this parameter.
+  \param header : header of the file loaded in this parameter.
 
   \return Returns true if no problem happened.
 */
 bool
 vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 
-                     char *Header)
+                     char *header)
 {
   std::fstream file;
 
@@ -3671,8 +3673,8 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
         file.read(&c,1);
         h+=c;
       }
-      if (Header != NULL)
-        strncpy(Header, h.c_str(), h.size() + 1);
+      if (header != NULL)
+        strncpy(header, h.c_str(), h.size() + 1);
 
       unsigned int rows, cols;
       file >> rows;
@@ -3703,8 +3705,8 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
         file.read(&c,1);
         h+=c;
       }
-      if (Header != NULL)
-        strncpy(Header, h.c_str(), h.size() + 1);
+      if (header != NULL)
+        strncpy(header, h.c_str(), h.size() + 1);
 
       unsigned int rows, cols;
       file.read((char*)&rows,sizeof(unsigned int));
@@ -3731,14 +3733,17 @@ vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary,
 /*!
   Load a matrix from a YAML-formatted file.
 
-  \param filename : absolute file name
-  \param M : matrix to be loaded
-  \param Header : Header of the file is loaded in this parameter
+  \param filename : absolute file name.
+  \param M : matrix to be loaded from the file.
+  \param header : header of the file is loaded in this parameter.
 
-  \return Returns true if no problem appends.
+  \return Returns true on success.
+
+  \sa saveMatrixYAML()
+
 */
 bool
-vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *Header)
+vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *header)
 {
     std::fstream file;
 
@@ -3753,13 +3758,13 @@ vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *Header)
     unsigned int rows = 0,cols = 0;
     std::string h;
     std::string line,subs;
-    bool inHeader = true;
+    bool inheader = true;
     unsigned int i=0, j;
-    unsigned int lineStart;
+    unsigned int lineStart = 0;
 
     while ( getline (file,line) )
     {
-        if(inHeader)
+        if(inheader)
         {
             if(rows == 0 && line.compare(0,5,"rows:") == 0)
             {
@@ -3774,7 +3779,7 @@ vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *Header)
                 ss >> cols;
             }
             else if (line.compare(0,5,"data:") == 0)
-                inHeader = false;
+                inheader = false;
             else
                 h += line + "\n";
         }
@@ -3800,8 +3805,8 @@ vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *Header)
         }
     }
 
-    if (Header != NULL)
-      strncpy(Header, h.substr(0,h.length()-1).c_str(), h.size());
+    if (header != NULL)
+      strncpy(header, h.substr(0,h.length()-1).c_str(), h.size());
 
     file.close();
     return true;

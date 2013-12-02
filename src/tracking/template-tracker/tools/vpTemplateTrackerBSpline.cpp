@@ -41,6 +41,7 @@
  *****************************************************************************/
 #include <visp/vpTemplateTrackerBSpline.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, double r, double t)
 {
@@ -77,3 +78,5 @@ double vpTemplateTrackerBSpline::Bspline4(double diff)
   else
     return 0;
 }
+
+#endif

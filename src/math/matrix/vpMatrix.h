@@ -286,33 +286,32 @@ protected:
   /*!
     Save a matrix in a YAML-formatted file.
 
-    \param filename : absolute file name
-    \param M : matrix to be saved
+    \param filename : absolute file name.
+    \param M : matrix to be saved in the file.
     \param Header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
 
-    \return Returns true if no problem appends.
+    \return Returns true if success.
 
   */
-  static inline bool saveMatrixYAML(std::string filename, const vpMatrix &M,
-        const char *Header = "")
+  static inline bool saveMatrixYAML(std::string filename, const vpMatrix &M, const char *header = "")
   {
-    return vpMatrix::saveMatrixYAML(filename.c_str(), M, Header);
+    return vpMatrix::saveMatrixYAML(filename.c_str(), M, header);
   }
-  static bool saveMatrixYAML(const char *filename, const vpMatrix &M, const char *Header = "");
+  static bool saveMatrixYAML(const char *filename, const vpMatrix &M, const char *header = "");
   /*!
     Load a matrix from a YAML-formatted file.
 
-    \param filename : absolute file name
-    \param M : matrix to be loaded
-    \param Header : Header of the file is loaded in this parameter
+    \param filename : absolute file name.
+    \param M : matrix to be loaded from the file.
+    \param Header : Header of the file is loaded in this parameter.
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrixYAML(std::string filename, vpMatrix &M, char *Header = NULL)
+  static inline bool loadMatrixYAML(std::string filename, vpMatrix &M, char *header = NULL)
   {
-    return vpMatrix::loadMatrixYAML(filename.c_str(), M, Header);
+    return vpMatrix::loadMatrixYAML(filename.c_str(), M, header);
   }
-  static bool loadMatrixYAML(const char *filename, vpMatrix &M, char *Header = NULL);
+  static bool loadMatrixYAML(const char *filename, vpMatrix &M, char *header = NULL);
 
 
   // Stack the matrix A below the current one, copy if not initialized this = [ this A ]^T
