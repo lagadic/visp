@@ -51,40 +51,14 @@
 #include <visp/vpImage.h>
 #include <visp/vpMath.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class VISP_EXPORT vpTemplateTrackerBSpline
 {
 public:
-  static double Bspline2(double diff);
-  static double Bspline3(double diff);
   static double Bspline4(double diff);
 
-  static inline double Bspline4i(double diff,int &interv)
-  {
-    switch(interv)
-    {
-    case -1:
-      return ((2.+diff)*(2.+diff)*(2.+diff)/6.);
-    case 0:
-      return (-diff*diff*diff/2.-diff*diff+4./6.);
-    case 1:
-      return (diff*diff*diff/2.-diff*diff+4./6.);
-    case 2:
-      return ((2.-diff)*(2.-diff)*(2.-diff)/6.);
-    default:
-      return 0;
-    }
-  }
-
-  static double dBspline4(double diff);
-
   static double getSubPixBspline4(const vpImage<double> &I, double r, double t);
-  static double getSubPixBspline4dx(const vpImage<unsigned char> &I, double r, double t);
-  static double getSubPixBspline4dy(const vpImage<unsigned char> &I, double r, double t);
-
-  static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, int &degre);
-  static void PutPVBsplineD2(double *Prt, int cr, double er, int ct, double et,int Nc, double val);
-  static void PutPVBsplineD3(double *Prt, int cr, double er, int ct, double et,int Nc, double val);
-  static void PutPVBsplineD4(double *Prt, int cr, double er, int ct, double et,int Nc, double val);
 };
 #endif
-
+#endif
