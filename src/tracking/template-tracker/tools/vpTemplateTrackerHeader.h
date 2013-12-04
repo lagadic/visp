@@ -90,6 +90,7 @@ struct vpTemplateTrackerPointCompo {
 struct vpTemplateTrackerPointSuppMIInv {
     double et;
     int ct;
+    double *BtInit;
     double *Bt;
     double *dBt;
     double *d2W;
@@ -100,6 +101,7 @@ struct vpTemplateTrackerPointSuppMIInv {
       et=0.;
       ct=0;
       Bt = NULL;
+      BtInit = NULL;
       dBt = NULL;
       d2W = NULL;
       d2Wx = NULL;
