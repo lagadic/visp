@@ -302,6 +302,7 @@ void vpTemplateTracker::resetTracker()
       for(unsigned int point=0;point<templateSize;point++)
       {
         delete[] ptTemplateSupp[point].Bt;
+        delete[] ptTemplateSupp[point].BtInit;
         delete[] ptTemplateSupp[point].dBt;
         delete[] ptTemplateSupp[point].d2W;
         delete[] ptTemplateSupp[point].d2Wx;
