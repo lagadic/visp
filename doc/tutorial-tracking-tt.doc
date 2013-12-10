@@ -74,33 +74,46 @@ In the example presented above, we focused on the vpTemplateTrackerWarpHomograph
 
 \b vpTemplateTrackerWarpTranslation
 
-\f$w({\bf x},\mu) = {\bf x} + {\bf t}\f$ with the following estimated parameters \f$\mu = (tx, ty)\f$
+\f$w({\bf x},{\bf p}) = {\bf x} + {\bf t}\f$ with the following estimated parameters \f$ {\bf p} = (tx, ty)\f$
 
 This class is the most simple transformation available for the template trackers. It only considers translation on two-axis (x-axis and y-axis).
 
 \b vpTemplateTrackerWarpSRT
 
-\f$w({\bf x},\mu) = s{\bf Rx} + {\bf t}\f$ with \f$\mu = (s, \theta, tx, ty)\f$
+\f$w({\bf x},{\bf p}) = s{\bf Rx} + {\bf t}\f$ with \f${\bf p} = (s, \theta, tx, ty)\f$
 
 The SRT warp considers a scale factor, a rotation on z-axis and a 2D translation as in vpTemplateTrackerWarpTranslation.
 
 \b vpTemplateTrackerWarpAffine
 
-\f$w({\bf x},\mu) = {\bf Ax} + {\bf b}\f$ with \f$\mu = (a_1 ... a_6)\f$
+
+\f$ w({\bf x},{\bf p}) = \left( \begin{array}{c}
+  a_1 \\
+  a_4
+  \end{array} \right)
+ + \left( \begin{array}{cc}
+  a_2 & a_3 \\
+  a_5 & a_6
+  \end{array} \right) 
+  {\bf x} \f$ with \f${\bf p} = (a_1 ... a_6)\f$
 
 The template transformation can also be defined as an affine transformation. This warping function preserves points, straight lines, and planes.
 
 \b vpTemplateTrackerWarpHomography
 
-\f$w({\bf x},\mu) = {\bf Hx}\f$ with \f$\mu = (h_1 ... h_8)\f$
+\f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f$ {\bf H}=\left( \begin{array}{ccc}
+  h_{11} &h_{12} & h_{13} \\
+  h_{21} &h_{22} & h_{23} \\
+  h_{31} &h_{32} & h_{33} 
+  \end{array} \right) \f$ and the estimated parameters \f${\bf p} = (h_{11} ... h_{33})\f$
 
-As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of the homography matrix. 
+As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of the homography matrix \f$ {\bf H}\f$. 
 
 \b vpTemplateTrackerWarpHomographySL3
 
-\f$w({\bf x},\mu) = {\bf Hx}\f$ with \f$\mu = (h_1 ... h_8)\f$
+\f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f${\bf p} = (h_{11} ... h_{33})\f$
 
-The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The only difference is that here, the parameters are estimated in the SL3 reference frame.
+The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The only difference is that here, the parameters of the homography are estimated in the SL3 reference frame.
 
 \subsection tune_tt How to tune the tracker
 
