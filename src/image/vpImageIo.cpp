@@ -47,6 +47,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageConvert.h> //image  conversion
+#include <visp/vpIoTools.h>
 
 const int vpImageIo::vpMAX_LEN = 100;
 
@@ -276,6 +277,11 @@ std::string vpImageIo::getExtension(const std::string &filename)
 void
 vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 {
+  bool exist = vpIoTools::checkFilename(filename);
+  if (!exist) {
+    std::string message = "Cannot read file: \"" + std::string(filename) + "\" doesn't exist";
+    throw (vpImageException(vpImageException::ioError, message));
+  }
   bool try_opencv_reader = false;
 
   switch(getFormat(filename)){
@@ -314,9 +320,8 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
     vpImageConvert::convert(cvI, I);
 #else
-    vpCERROR << "Cannot read file: Image format not supported..." << std::endl;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read file: Image format not supported")) ;
+    std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+    throw (vpImageException(vpImageException::ioError, message)) ;
 #endif
   }
 }
@@ -360,6 +365,12 @@ vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 {
+  bool exist = vpIoTools::checkFilename(filename);
+  if (!exist) {
+    std::string message = "Cannot read file: \"" + std::string(filename) + "\" doesn't exist";
+    throw (vpImageException(vpImageException::ioError, message));
+  }
+
   bool try_opencv_reader = false;
 
   switch(getFormat(filename)){
@@ -398,9 +409,8 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
     vpImageConvert::convert(cvI, I);
 #else
-    vpCERROR << "Cannot read file: Image format not supported..." << std::endl;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read file: Image format not supported")) ;
+    std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+    throw (vpImageException(vpImageException::ioError, message)) ;
 #endif
   }
 }
