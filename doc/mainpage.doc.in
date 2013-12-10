@@ -55,6 +55,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches. 
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
@@ -107,7 +108,8 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 - \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
-- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
+- \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.  
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
