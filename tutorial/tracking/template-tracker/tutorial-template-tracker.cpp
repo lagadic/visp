@@ -37,6 +37,8 @@ int main()
     vpDisplay::display(I);
     tracker.track(I);
 
+    vpColVector p = tracker.getp();
+
     tracker.display(I, vpColor::red);
 
     vpDisplay::flush(I);
