@@ -46,6 +46,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpTime.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <errno.h>
