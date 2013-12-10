@@ -27,13 +27,13 @@ The following sections give a line by line explanation of the source code dedica
  
 \section blur Gaussian blur
 
-Lena input image is read from disk and is stored in  \c I wich is a gray level image declared as 
+Lena input image is read from disk and is stored in  \c I which is a gray level image declared as 
 
 \code 
 vpImage<unsigned char> I;
 \endcode 
 
-To apply a Gaussian blur to this image we first have to declare a resulting floating-point image \c F. Then the blured image could be obtained using the default Gaussian filter: 
+To apply a Gaussian blur to this image we first have to declare a resulting floating-point image \c F. Then the blurred image could be obtained using the default Gaussian filter: 
 
 \code 
 vpImage<double> F;
@@ -44,7 +44,7 @@ The resulting image is the following:
 
 \image html img-lena-blured-default.png
 
-It is also possible to specify the Gaussian filter kernel size and the Gaussian standart deviation (sigma) using:
+It is also possible to specify the Gaussian filter kernel size and the Gaussian standard deviation (sigma) using:
 
 \code 
 vpImageFilter::gaussianBlur(I, F, 7, 2); // Kernel size: 7, sigma: 2
@@ -78,7 +78,7 @@ The resulting floating-point images \c dIx, \c dIy are the following:
 
 Canny edge detector function is only available if ViSP was build with OpenCV 2.1 or higher.
 
-After the declaration of a new image container \c C, Canny edge detector is applyed using:
+After the declaration of a new image container \c C, Canny edge detector is applied using:
 \code 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
     vpImage<unsigned char> C;
@@ -96,7 +96,7 @@ The resulting image \c C is the following:
 \image html img-lena-canny.png
 
 
-\section kernelconvolution Convolution 
+\section convolution Convolution 
 
 To apply a convolution to an image, we first have to define a kernel.
 For example, let us consider the 3x3 Sobel kernel defined in \c K.
