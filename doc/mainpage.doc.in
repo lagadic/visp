@@ -50,6 +50,7 @@ href="http://www.irisa.fr/lagadic/visp/publication.html" target="_parent">http:/
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
+- \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-calibration <br>This tutorial explains how to calibrate a camera.
 - \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
@@ -104,6 +105,7 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
+- \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-calibration <br>This tutorial explains how to calibrate a camera.
 - \ref tutorial-tracking-blob <br>This tutorial focuses on blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.

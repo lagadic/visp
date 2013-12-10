@@ -1,0 +1,152 @@
+/**
+
+\page tutorial-image-filtering Tutorial: Image filtering
+\tableofcontents
+
+This tutorial supposes that you have followed the \ref tutorial-getting-started.
+
+\section intro Introduction
+
+In this tutorial you will learn how to use ViSP filtering functions implemented in vpImageFilter class.
+
+Let us consider the following source code that comes from tutorial-image-filter.cpp.
+
+\include tutorial-image-filter.cpp
+
+Once build, you should have \c tutorial-image-filter binary. It shows how to apply different filters on an input image. Here we will consider lena.pgm as input image. 
+
+\image html img-lena-gray.png
+
+To see the resulting filtered images, just run:
+
+\code 
+./tutorial-image-filter lena.pgm
+\endcode 
+
+The following sections give a line by line explanation of the source code dedicated to image filtering capabilities.
+ 
+\section blur Gaussian blur
+
+Lena input image is read from disk and is stored in  \c I wich is a gray level image declared as 
+
+\code 
+vpImage<unsigned char> I;
+\endcode 
+
+To apply a Gaussian blur to this image we first have to declare a resulting floating-point image \c F. Then the blured image could be obtained using the default Gaussian filter: 
+
+\code 
+vpImage<double> F;
+vpImageFilter::gaussianBlur(I, F);
+\endcode 
+
+The resulting image is the following:
+
+\image html img-lena-blured-default.png
+
+It is also possible to specify the Gaussian filter kernel size and the Gaussian standart deviation (sigma) using:
+
+\code 
+vpImageFilter::gaussianBlur(I, F, 7, 2); // Kernel size: 7, sigma: 2
+\endcode 
+
+We thus obtain the following image:
+
+\image html img-lena-blured-var2.png
+
+\section gradient Gradients computation
+
+To compute the gradients or the spatial derivative along X use:
+
+\code 
+vpImage<double> dIx;
+vpImageFilter::getGradX(I, dIx);
+\endcode 
+
+Gradients along Y could be obtained using:
+
+\code 
+vpImage<double> dIy;
+vpImageFilter::getGradY(I, dIy);
+\endcode 
+
+The resulting floating-point images \c dIx, \c dIy are the following:
+
+\image html img-lena-dIxy.png
+
+\section canny Canny edge detector
+
+Canny edge detector function is only available if ViSP was build with OpenCV 2.1 or higher.
+
+After the declaration of a new image container \c C, Canny edge detector is applyed using:
+\code 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    vpImage<unsigned char> C;
+    vpImageFilter::canny(I, C, 5, 15, 3);
+#endif
+\endcode 
+
+Where:
+- 5: is the low threshold
+- 15: is the high threshold set in the program as three times the lower threshold (following Canny’s recommendation)
+- 3: is the size of the Sobel kernel used internally.
+
+The resulting image \c C is the following:
+ 
+\image html img-lena-canny.png
+
+
+\section kernelconvolution Convolution 
+
+To apply a convolution to an image, we first have to define a kernel.
+For example, let us consider the 3x3 Sobel kernel defined in \c K.
+
+  \f[
+  {\bf K} = \begin{tabular}{|c|c|c|}
+  \hline
+  1 & 0 & -1 \\
+  \hline
+  2 & 0 & -2 \\
+  \hline
+  1 & 0 & -1 \\
+  \hline
+  \end{tabular}
+  \f]
+
+
+\code 
+    vpMatrix K(3,3); // Sobel kernel along x
+    K[0][0] = 1; K[0][1] = 0; K[0][2] = -1;
+    K[1][0] = 2; K[1][1] = 0; K[1][2] = -2;
+    K[2][0] = 1; K[2][1] = 0; K[2][2] = -1;
+\endcode 
+
+After the declaration of a new floating-point image \c Gx, the convolution is obtained using: 
+\code 
+    vpImage<double> Gx;
+    vpImageFilter::filter(I, Gx, K);
+\endcode 
+
+The content of the filtered image \c Gx is the following.
+
+\image html img-lena-sobel.png
+
+\section pyramid Gaussian image pyramid
+
+To construct a pyramid of Gaussian filtered images as a vector of images implemented in \c pyr[] you may use:
+\code 
+    size_t nlevel = 3;
+    std::vector< vpImage<unsigned char> > pyr(nlevel);
+    pyr[0] = I;
+    for (size_t i=1; i < nlevel; i++) {
+      vpImageFilter::getGaussPyramidal(pyr[i-1], pyr[i]);
+      display(pyr[i], "Pyramid");
+    }
+\endcode 
+
+The content of \c pyr[0], \c pyr[1], \c pyr[2] is the following:
+\image html img-lena-pyr.png
+
+You are now ready to see the next \ref tutorial-tracking-blob.
+
+*/

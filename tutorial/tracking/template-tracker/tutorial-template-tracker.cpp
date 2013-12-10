@@ -1,4 +1,4 @@
-/*! \example tutorial-template-tracker-image.cpp */
+/*! \example tutorial-template-tracker.cpp */
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
@@ -18,7 +18,7 @@ int main()
   vpDisplayGDI display;
 #endif
 
-  display.init(I,100,100,"Template tracker");
+  display.init(I, 100, 100, "Template tracker");
   vpDisplay::display(I);
   vpDisplay::flush(I);
 

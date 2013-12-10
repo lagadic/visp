@@ -288,7 +288,7 @@ protected:
 
     \param filename : absolute file name.
     \param M : matrix to be saved in the file.
-    \param Header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+    \param header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
 
     \return Returns true if success.
 
@@ -303,7 +303,7 @@ protected:
 
     \param filename : absolute file name.
     \param M : matrix to be loaded from the file.
-    \param Header : Header of the file is loaded in this parameter.
+    \param header : Header of the file is loaded in this parameter.
 
     \return Returns true if no problem appends.
   */
