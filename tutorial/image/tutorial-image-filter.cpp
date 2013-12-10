@@ -5,6 +5,8 @@
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpImageFilter.h>
 
 void display(vpImage<unsigned char> &I, const std::string &title)
 {
