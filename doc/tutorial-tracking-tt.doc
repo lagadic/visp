@@ -10,7 +10,7 @@ In the following sections, we consider the tracking of a pattern. To simplify th
 \section tracking_tt Track the painting
 
 The following example that comes from tutorial-template-tracker.cpp allows to track a template using vpTemplateTrackerSSDInverseCompositional class.
-Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration. In ViSP, we have implemented, for now, two different similarity functions: the "Sum of Square Differences" (vpTemplateTrackerSSD classes) and the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC classes). Both methods can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
+Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration. In ViSP, we have implemented, for now, two different similarity functions: the "Sum of Square Differences" (vpTemplateTrackerSSD classes \cite Baker04a) and the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC classes \cite Irani98a). Both methods can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
 
 \include tutorial-template-tracker.cpp
 
@@ -62,7 +62,13 @@ Next, in the infinite while loop, after displaying the next image, we track the 
 tracker.track(I);
 \endcode
 
-Next line is used to display the template using red lines and according to the computed transformation from the last call to track.
+If you need to get the parameters of the current transformation of the template, it can be done by calling:
+
+\code
+vpColVector p = tracker.getp();
+\endcode
+
+For further information about the warping parameters, see the following section of \ref warp_tt. Next line is used to display the template using red lines and according to the computed transformation from the last call to track.
 
 \code
 tracker.display(I, vpColor::red);
@@ -74,44 +80,42 @@ In the example presented above, we focused on the vpTemplateTrackerWarpHomograph
 
 \b vpTemplateTrackerWarpTranslation
 
-\f$w({\bf x},{\bf p}) = {\bf x} + {\bf t}\f$ with the following estimated parameters \f$ {\bf p} = (tx, ty)\f$
+\f$w({\bf x},{\bf p}) = {\bf x} + {\bf t}\f$ with the following estimated parameters \f$ {\bf p} = (t_x, t_y)\f$
 
 This class is the most simple transformation available for the template trackers. It only considers translation on two-axis (x-axis and y-axis).
 
 \b vpTemplateTrackerWarpSRT
 
-\f$w({\bf x},{\bf p}) = s{\bf Rx} + {\bf t}\f$ with \f${\bf p} = (s, \theta, tx, ty)\f$
+\f$w({\bf x},{\bf p}) = (1+s){\bf Rx} + {\bf t}\f$ with \f${\bf p} = (s, \theta, t_x, t_y)\f$
 
 The SRT warp considers a scale factor, a rotation on z-axis and a 2D translation as in vpTemplateTrackerWarpTranslation.
 
 \b vpTemplateTrackerWarpAffine
 
 
-\f$ w({\bf x},{\bf p}) = \left( \begin{array}{c}
-  a_1 \\
-  a_4
-  \end{array} \right)
- + \left( \begin{array}{cc}
-  a_2 & a_3 \\
-  a_5 & a_6
-  \end{array} \right) 
-  {\bf x} \f$ with \f${\bf p} = (a_1 ... a_6)\f$
+\f$ w({\bf x},{\bf p}) = {\bf Ax} + {\bf t}\f$ with \f${\bf A} = \left( \begin{array}{cc}
+  1+a_0 & a_2 \\
+  a_1 & 1+a_3
+  \end{array} \right)\f$, \f${\bf t} = \left( \begin{array}{c}
+  t_x \\
+  t_y
+  \end{array} \right)\f$ and the estimated parameters \f${\bf p} = (a_0 ... a_3, t_x, t_y)\f$
 
 The template transformation can also be defined as an affine transformation. This warping function preserves points, straight lines, and planes.
 
 \b vpTemplateTrackerWarpHomography
 
 \f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f$ {\bf H}=\left( \begin{array}{ccc}
-  h_{11} &h_{12} & h_{13} \\
-  h_{21} &h_{22} & h_{23} \\
-  h_{31} &h_{32} & h_{33} 
-  \end{array} \right) \f$ and the estimated parameters \f${\bf p} = (h_{11} ... h_{33})\f$
+  1 + p_0 & p_3 & p_6 \\
+  p_1 & 1+p_4 & p_7 \\
+  p_2 & p_5 & 1.0 
+  \end{array} \right) \f$ and the estimated parameters \f${\bf p} = (p_0 ... p_7)\f$
 
 As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of the homography matrix \f$ {\bf H}\f$. 
 
 \b vpTemplateTrackerWarpHomographySL3
 
-\f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f${\bf p} = (h_{11} ... h_{33})\f$
+\f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f${\bf p} = (p_0 ... p_7)\f$
 
 The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The only difference is that here, the parameters of the homography are estimated in the SL3 reference frame.
 
