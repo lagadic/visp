@@ -244,9 +244,6 @@ class VISP_EXPORT vpTemplateTrackerWarp
       \param p : parameters of the warp.
     */
     void warpZone(const vpTemplateTrackerZone &Z,const vpColVector &p);
-
-    static void get_p_by_click(const vpImage<unsigned char> &I0,const vpImage<unsigned char> &I,vpTemplateTrackerWarp *warp,vpColVector &p,int nb_pt);
-    static void get_p_by_click(const vpImage<vpRGBa> &I0,const vpImage<unsigned char> &I,vpTemplateTrackerWarp *warp,vpColVector &p,int nb_pt);
 };
 
 #endif

@@ -87,6 +87,8 @@ struct vpTemplateTrackerPointCompo {
       dW = NULL;
     }
 };
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 struct vpTemplateTrackerPointSuppMIInv {
     double et;
     int ct;
@@ -108,6 +110,6 @@ struct vpTemplateTrackerPointSuppMIInv {
       d2Wy = NULL;
     }
 };
-
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

@@ -71,8 +71,12 @@ class VISP_EXPORT vpTemplateTracker
     bool                      **ptTemplateSelectPyr;
     bool                        ptTemplateSelectInit;
     unsigned int                templateSelectSize;
+
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     vpTemplateTrackerPointSuppMIInv *ptTemplateSupp; //pour inverse et compo
     vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr;  //pour inverse et compo
+    #endif
+
     bool                        ptTemplateSuppInit;
     vpTemplateTrackerPointCompo *ptTemplateCompo;    //pour ESM
     vpTemplateTrackerPointCompo **ptTemplateCompoPyr;   //pour ESM
