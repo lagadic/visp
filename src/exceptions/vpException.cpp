@@ -72,16 +72,22 @@ vpException::vpException (int _code,
     return ;
 }
 
-
 vpException::vpException (int _code,
-	     const char * _msg)
-    :
-    code (_code),
-    message (_msg)
+                          const char* format, ...)
+  :
+    code (_code)
 {
-    return ;
+  va_list args;
+  va_start(args, format);
+  setMessage(format, args);
+  va_end (args);
 }
 
+vpException::vpException (const int code, const char* format, va_list args)
+  : code (code)
+{
+  setMessage(format, args);
+}
 /* ------------------------------------------------------------------------ */
 /* --- DESTRUCTORS -------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
@@ -92,10 +98,18 @@ vpException::vpException (int _code,
 // {
 // }
 
+
+void vpException::setMessage(const char* format, va_list args)
+{
+  char buffer[1024];
+  vsnprintf (buffer, 1024, format, args);
+  std::string msg(buffer);
+  message = msg;
+}
+
 /* ------------------------------------------------------------------------ */
 /* --- ACCESSORS ---------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
-
 
 const char *vpException::getMessage (void)
 {

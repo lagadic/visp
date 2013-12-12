@@ -78,36 +78,31 @@
  */
 class VISP_EXPORT vpParallelPortException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible errors than can be emmited while calling
     vpParallelPort member
    */
-  enum error
+    enum error
     {
       opening, /*!< Cannot access to the parallel port device. */
       closing  /*!< Cannot close the parallel port device. */
     } ;
 
-public:
-  vpParallelPortException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpParallelPortException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpParallelPortException (const int code)
-    : vpException(code){ ; }
+  public:
+    vpParallelPortException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpParallelPortException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpParallelPortException (const int code)
+      : vpException(code){ ; }
 
 };
 
-
-
-
-
-#endif /* #ifndef __vpParallelPortException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

@@ -68,12 +68,12 @@
  */
 class VISP_EXPORT vpMatrixException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpMatrix member
    */
-  enum errorCodeEnum
+    enum errorCodeEnum
     {
       //! error returns by a constructor
       constructionError,
@@ -92,25 +92,20 @@ public:
       rankDeficient
     } ;
 
-public:
-  vpMatrixException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpMatrixException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpMatrixException (const int code)
-    : vpException(code){ ; }
- // vpMatrixException() : vpException() { ;}
+  public:
+    vpMatrixException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpMatrixException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpMatrixException (const int code)
+      : vpException(code){ ; }
+    // vpMatrixException() : vpException() { ;}
 };
 
-
-
-
-
-#endif /* #ifndef __vpMatrixException_ERROR_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

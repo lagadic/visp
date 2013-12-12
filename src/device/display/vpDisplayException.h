@@ -73,12 +73,12 @@
  */
 class VISP_EXPORT vpDisplayException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpDisplay member
    */
-  enum errorDisplayCodeEnum
+    enum errorDisplayCodeEnum
     {
       notInitializedError,
       cannotOpenWindowError,
@@ -89,33 +89,26 @@ public:
       depthNotSupportedError
     } ;
 
-public:
-  vpDisplayException(const int code, const char * msg)
-   : vpException(code, msg)
+  public:
+    vpDisplayException(const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+
+    vpDisplayException (const int code, const std::string & msg)
+      : vpException(code, msg)
     {
     }
-  
-  vpDisplayException (const int code, const std::string & msg)
-    : vpException(code, msg)
+
+    vpDisplayException (const int code)
+      : vpException(code)
     {
     }
-  
-  vpDisplayException (const int code)
-    : vpException(code)
-  {
-  }
 
 };
 
-
-
-
-
-#endif /* #ifndef __vpDisplayException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

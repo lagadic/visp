@@ -71,37 +71,32 @@
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpFrameGrabber member
    */
-  enum errorFrameGrabberCodeEnum
+    enum errorFrameGrabberCodeEnum
     {
       settingError,
       initializationError,
       otherError
     } ;
 
-public:
-  vpFrameGrabberException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpFrameGrabberException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpFrameGrabberException (const int code)
-    : vpException(code){ ; }
+  public:
+    vpFrameGrabberException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpFrameGrabberException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpFrameGrabberException (const int code)
+      : vpException(code){ ; }
 
 };
 
-
-
-
-
 #endif /* #ifndef __vpFrameGrabberException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

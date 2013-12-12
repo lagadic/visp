@@ -73,12 +73,12 @@
  */
 class VISP_EXPORT vpSimulatorException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpSimulator member
    */
-  enum errorSimulatorCodeEnum
+    enum errorSimulatorCodeEnum
     {
       ioError,
       noFileNameError,
@@ -87,25 +87,20 @@ public:
       badInitializationError
     } ;
 
-public:
-  vpSimulatorException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpSimulatorException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpSimulatorException (const int code)
-    : vpException(code){ ; }
+  public:
+    vpSimulatorException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpSimulatorException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpSimulatorException (const int code)
+      : vpException(code){ ; }
 
 };
 
-
-
-
-
-#endif /* #ifndef __vpSimulatorException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

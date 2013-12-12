@@ -70,12 +70,12 @@
  */
 class VISP_EXPORT vpCalibrationException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpCalibration member
    */
-  enum errorCodeEnum
+    enum errorCodeEnum
     {
       //! error returns by a constructor
       constructionError,
@@ -90,25 +90,19 @@ public:
       forbiddenOperatorError,
     } ;
 
-public:
-  vpCalibrationException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpCalibrationException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpCalibrationException (const int code)
-    : vpException(code){ ; }
- // vpMatrixException() : vpException() { ;}
+  public:
+    vpCalibrationException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpCalibrationException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpCalibrationException (const int code)
+      : vpException(code){ ; }
 };
 
-
-
-
-
-#endif /* #ifndef __vpCalibrationException_ERROR_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

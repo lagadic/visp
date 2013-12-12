@@ -71,12 +71,12 @@
  */
 class VISP_EXPORT vpIoException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpIo member.
    */
-  enum error
+    enum error
     {
       invalidDirectoryName, /*! Directory name is invalid. */
       cantCreateDirectory,  /*! Unable to create a directory. */
@@ -84,25 +84,20 @@ public:
       cantGetenv            /*! Cannot get environment variable value. */
     } ;
 
-public:
-  vpIoException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpIoException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpIoException (const int code)
-    : vpException(code){ ; }
+  public:
+    vpIoException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpIoException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpIoException (const int code)
+      : vpException(code){ ; }
 
 };
 
-
-
-
-
-#endif /* #ifndef __vpIoException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

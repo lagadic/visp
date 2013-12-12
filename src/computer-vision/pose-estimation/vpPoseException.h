@@ -67,12 +67,12 @@
  */
 class VISP_EXPORT vpPoseException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpPose member
    */
-  enum errorCodeEnum
+    enum errorCodeEnum
     {
       poseError,
       //! something is not initialized
@@ -84,25 +84,20 @@ public:
       notEnoughPointError
     } ;
 
-public:
-  vpPoseException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpPoseException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpPoseException (const int code)
-    : vpException(code){ ; }
- // vpPoseException() : vpException() { ;}
+  public:
+    vpPoseException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpPoseException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpPoseException (const int code)
+      : vpException(code){ ; }
+    // vpPoseException() : vpException() { ;}
 };
 
-
-
-
-
-#endif /* #ifndef __vpPoseException_ERROR_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

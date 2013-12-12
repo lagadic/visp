@@ -70,12 +70,12 @@
  */
 class VISP_EXPORT vpFeatureException : public vpException
 {
-public:
-  /*!
+  public:
+    /*!
     \brief Lists the possible error than can be emmited while calling
     vpFeature member
    */
-  enum errorFeatureCodeEnum
+    enum errorFeatureCodeEnum
     {
       //! feature list or desired feature list is empty
       badErrorVectorError,
@@ -84,25 +84,20 @@ public:
       badInitializationError
     } ;
 
-public:
-  vpFeatureException (const int code, const char * msg)
-    : vpException(code, msg){ ; }
-  vpFeatureException (const int code, const std::string & msg)
-    : vpException(code, msg){ ; }
-  vpFeatureException (const int code)
-    : vpException(code){ ; }
+  public:
+    vpFeatureException (const int code,  const char* format, ...)
+    {
+      this->code = code;
+      va_list args;
+      va_start(args, format);
+      setMessage(format, args);
+      va_end (args);
+    }
+    vpFeatureException (const int code, const std::string & msg)
+      : vpException(code, msg){ ; }
+    vpFeatureException (const int code)
+      : vpException(code){ ; }
 
 };
 
-
-
-
-
-#endif /* #ifndef __vpFeatureException_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif
