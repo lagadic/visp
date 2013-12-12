@@ -44,6 +44,7 @@
    \brief error that can be emited by the vp class and its derivates
  */
 
+#include <stdio.h>
 #include "visp/vpException.h"
 
 
