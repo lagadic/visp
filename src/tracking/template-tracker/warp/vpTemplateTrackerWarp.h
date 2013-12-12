@@ -69,42 +69,180 @@ class VISP_EXPORT vpTemplateTrackerWarp
     virtual void computeCoeff(const vpColVector &p)=0;
     virtual void computeDenom(vpColVector &vX, const vpColVector &ParamM)=0;
     
-    // dérivée du warp par rapport aux paramètres
+    /*!
+      Compute the derivative of the warp according to the its parameters.
+
+      \param X1 : Point to consider in the derivative computation.
+      \param X2 : Point to consider in the derivative computation.
+      \param ParamM : Parameters of the warp.
+      \param dW : Resulting derivative matrix.
+    */
     virtual void dWarp(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,vpMatrix &dW) = 0;
-    // Similaire à dWarp en compositionnel
+
+    /*!
+      Compute the compositionnal derivative of the warp according to its parameters.
+
+      \param X1 : Point to consider in the derivative computation.
+      \param X2 : Point to consider in the derivative computation.
+      \param ParamM : Parameters of the warp.
+      \param dwdp0 : Derivative matrix of the warp according to the warp parameters (p=0).
+      \param dW : Resulting derivative matrix.
+    */
     virtual void dWarpCompo(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW) = 0;
 
-    //retrouve le parametre de deplacement a partir d'une liste de point
+    /*!
+      Find the displacement parameters from a list of points.
+
+      \warning Only used in vpTemplateTrackerWarpHomographySL3.
+    */
     void find_warp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p);
     
-    // dérivée de l'image par rapport au warp
+    /*!
+      Compute the derivative of the image according to the warp.
+
+      \param i : i coordinate of the point to consider in the image.
+      \param j : j coordinate of the point to consider in the image.
+      \param dy : Derivative on the y-axis of the point (i,j).
+      \param dx : Derivative on the x-axis of the point (i,j).
+      \param dIdW : Resulting derivative matrix.
+    */
     virtual void getdW0(const int &i,const int &j,const double &dy,const double &dx,double *dIdW) = 0;
-    // dérivée du warp par rapport aux paramètres avec param = 0
+
+    /*!
+      Compute the derivative of the warp according to the parameters (p=0).
+
+      \param i : i coordinate of the point to consider in the image.
+      \param j : j coordinate of the point to consider in the image.
+      \param dIdW : Resulting derivative matrix.
+    */
     virtual void getdWdp0(const int &i,const int &j,double *dIdW) = 0;
-    //calcule la somme des distances entre les points d'origines et points warpes
+
+    /*!
+      Compute the distance between a zone and its associated warped zone.
+
+      \param Z : Zone to consider.
+      \param p : Parameters of the warp.
+    */
     double getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z,const vpColVector &p);
-    //retourne nombre de parametre du deplacement
+
+    /*!
+      Get the number of parameters of the warp.
+
+      \return Number of parameters.
+    */
     unsigned int getNbParam() const {return NbParam;}
+
+    /*!
+      Get the parameters of the warp one level down.
+
+      \param p : Current parameters of the warp.
+      \param pdown : Resulting parameters on level down.
+    */
     virtual void getp_PyramidDown(const vpColVector &p,vpColVector &pdown) =0;
+
+    /*!
+      Get the parameters of the warp one level up.
+
+      \param p : Current parameters of the warp.
+      \param pup : Resulting parameters one level up.
+    */
     virtual void getp_PyramidUp(const vpColVector &p,vpColVector &pup) =0;
+
+    /*!
+      Tells if the warp is ESM compatible.
+
+      \return True if it is ESM compatible, False otherwise.
+    */
     virtual bool isESMcompatible() const =0;
+
+    /*!
+      Get the inverse of the warp parameters.
+
+      \param ParamM : Parameters of the warp.
+      \param ParamMinv : Inverse parameters.
+    */
     virtual void Param_inv(const vpColVector &ParamM,vpColVector &ParamMinv) = 0;
-    //fonction renvoyant le vecteur deplacement resultant de la composition du deplacement p1 avec p2
+
+    /*!
+      Get the displacement resulting from the composition of two other displacements.
+
+      \param p1 : First displacement.
+      \param p2 : Second displacement.
+      \param pres : Displacement resulting from the composition of p1 and p2.
+    */
     virtual void pRondp(const vpColVector &p1, const vpColVector &p2,vpColVector &pres) const = 0;
 
+    /*!
+      Set the number of parameters of the warp.
+
+      \param nb : New number of parameters.
+    */
     void setNbParam(unsigned int nb){NbParam=nb;dW.resize(2,NbParam);}
 
-    //Deplacement liste de point
+    /*!
+      Warp a list of points.
+
+      \param ut0 : List of u coordinates of the points.
+      \param vt0 : List of v coordinates of the points.
+      \param p : Parameters of the warp.
+      \param u : Resulting u coordinates.
+      \param v : resulting v coordinates.
+    */
     void warp(const double *ut0,const double *vt0,int nb_pt,const vpColVector& p,double *u,double *v);
+
+    /*!
+      Warp a point.
+
+      \param i : i coordinate of the point to warp.
+      \param j : j coordinate of the point to warp.
+      \param i2 : i coordinate of the warped point.
+      \param j2 : j coordinate of the warped point.
+      \param ParamM : Parameters of the warp.
+    */
     virtual void warpX(const int &i, const int &j,double &i2,double &j2, const vpColVector &ParamM) = 0;
+
+    /*!
+      Warp a point.
+
+      \param vX : Coordinates of the point to warp.
+      \param vXres : Coordinates of the warped point.
+      \param ParamM : Parameters of the warp.
+    */
     virtual void warpX(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM) = 0;
-    //fonction renvoyant le resultat du deplacement inverse de vX par le vecteur  ParamM
+
+    /*!
+      Inverse Warp a point.
+
+      \param vX : Coordinates of the point to warp.
+      \param vXres : Coordinates of the warped point.
+      \param ParamM : Parameters of the warp.
+    */
     virtual void warpXInv(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM) = 0;
-    //transforme triangle TR en TT
+
+    /*!
+      Warp a triangle.
+
+      \param TR : Triangle to warp.
+      \param p : Parameters of the warp.
+      \param TT : Resulting triangle.
+    */
     void warpTriangle(const vpTemplateTrackerTriangle &TR,const vpColVector &p, vpTemplateTrackerTriangle &TT);
-    //transforme zone ZR en ZT
+
+    /*!
+      Warp a zone and store the result in a new zone.
+
+      \param ZR : Zone to warp.
+      \param p : Parameters of the warp.
+      \param ZT : Resulting zone.
+    */
     void warpZone(const vpTemplateTrackerZone &ZR,const vpColVector &p, vpTemplateTrackerZone &ZT);
-    //warp les sommets d'une zone pour affichage
+
+    /*!
+      Warp a zone.
+
+      \param Z : zone to warp.
+      \param p : parameters of the warp.
+    */
     void warpZone(const vpTemplateTrackerZone &Z,const vpColVector &p);
 
     static void get_p_by_click(const vpImage<unsigned char> &I0,const vpImage<unsigned char> &I,vpTemplateTrackerWarp *warp,vpColVector &p,int nb_pt);
