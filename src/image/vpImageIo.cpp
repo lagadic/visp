@@ -973,146 +973,186 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 {
   FILE* fd = NULL; // File descriptor
   int   ierr;
-  int   line;
-  int   is255;
   char* err ;
   char  str[vpMAX_LEN];
-  unsigned int   w, h;
+  unsigned int magic=5, w=0, h=0, maxval=255;
 
   // Test the filename
-  if (filename == '\0')
-  {
-    vpERROR_TRACE("no filename") ;
+  if (filename == '\0') {
     throw (vpImageException(vpImageException::ioError,
-          " no filename")) ;
+          "No filename")) ;
   }
 
   // Open the filename
-  fd = fopen(filename, "rb");
-  if (fd == NULL)
-  {
-    vpERROR_TRACE("couldn't read file \"%s\"", filename) ;
+  if ((fd = fopen(filename, "rb")) == NULL) {
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+          "Cannot read file \"%s\"", filename)) ;
   }
 
-  // Read the first line with magic number P5
-  line = 0;
-
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
-  if (err == NULL)
-  {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",  line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
-  }
-
-  if (strlen(str) < 3)
-  {
-    fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PGM file\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "this is not a pgm file")) ;
-  }
-
-  str[2] = '\0';
-  if (strcmp(str, "P5") != 0)
-  {
-    fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PGM file\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "this is not a pgm file")) ;
-  }
-
-  // Jump the possible comment, or empty line and read the following line
-  do {
-    err = fgets(str, vpMAX_LEN - 1, fd);
-    line++;
-    if (err == NULL) {
-      fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "couldn't read PGM file")) ;
-    }
-  } while ((str[0] == '#') || (str[0] == '\n'));
-
-  // Extract image size
-  ierr = sscanf(str, "%d %d", &w, &h);
-  if (w > 100000 || h>100000) {
-    fclose (fd);
-    throw(vpException(vpException::badValue, "Bad image size"));
-  }
-
-  if(ierr == 1){// the norm allows to have the two values on two separated lines.
-    do {
-      err = fgets(str, vpMAX_LEN - 1, fd);
-      line++;
-      if (err == NULL) {
-        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "couldn't read PGM file")) ;
-      }
-    } while ((str[0] == '#') || (str[0] == '\n'));
-    ierr = sscanf(str, "%d", &h);
-  }
-  if (ierr == EOF)
-  {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read PGM file")) ;
-  }
-
-  if ((h != I.getHeight())||( w != I.getWidth()))
-  {
-    try
-    {
-      I.resize(h,w) ;
-    }
-    catch(...)
-    {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "couldn't read PGM file")) ;
-    }
-  }
-
-  // Read 255
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
+  while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
   if (err == NULL) {
     fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PGM file")) ;
+          "Cannot read header of file \"%s\"",  filename));
   }
-
-  ierr = sscanf(str, "%d", &is255);
-  if (ierr == EOF) {
+  if ((ierr = sscanf(str, "P%u %u %u %u", &magic, &w, &h, &maxval)) == 0) {
     fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PGM file")) ;
+          "Cannot read header of file \"%s\"",  filename));
   }
 
-  if (is255 != 255)
+  if (magic != 5) {
+    fclose (fd);
+    throw (vpImageException(vpImageException::ioError,
+                            "\"%s\" is not a PGM P5 file", filename));
+  }
+
+  // Depending on ierr the line may contain:
+  // 1 : P5
+  // 2 : P5 w
+  // 3 : P5 w h
+  // 4 : P5 w h maxval
+
+  if (ierr == 1) {
+//    std::cout << "magic: " << magic << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+    if (err == NULL) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if (((ierr = sscanf(str, "%u %u %u", &w, &h, &maxval)) == 0) || (ierr != 1 && ierr != 2 && ierr != 3)) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    // Depending on ierr the line may contain:
+    // 1 : w
+    // 2 : w h
+    // 3 : w h maxval
+    if (ierr == 1) {
+//      std::cout << "w: " << w << std::endl;
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if (ierr == 1) {
+//        std::cout << "h: " << h << std::endl;
+        while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+        if (err == NULL) {
+          fclose (fd);
+          throw (vpImageException(vpImageException::ioError,
+                "Cannot read header of file \"%s\"",  filename));
+        }
+        if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
+          fclose (fd);
+          throw (vpImageException(vpImageException::ioError,
+                "Cannot read header of file \"%s\"",  filename));
+        }
+      }
+//      else {
+//        std::cout << "h: " << h << " maxval: " << maxval << std::endl;
+//      }
+    }
+    else if (ierr == 2) {
+//      std::cout << "w: " << w << " h: " << h << std::endl;
+
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+//      std::cout << "maxval: " << maxval << std::endl;
+    }
+//    else {
+//      std::cout << "w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
+//    }
+  }
+  else if (ierr == 2) {
+//    std::cout << "magic: " << magic << " w: " << w << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+    if (err == NULL) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if (ierr == 1) {
+//      std::cout << "h: " << h << std::endl;
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+//      std::cout << "maxval: " << maxval << std::endl;
+    }
+//    else {
+//      std::cout << "h: " << h << " maxval: " << maxval << std::endl;
+//    }
+  }
+  else if (ierr == 3) {
+//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+    if (err == NULL) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+//    std::cout << "maxval: " << maxval << std::endl;
+  }
+//  else if (ierr == 4) {
+//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
+//  }
+
+  if (w > 100000 || h>100000) {
+    fclose (fd);
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename));
+  }
+  if (maxval != 255)
   {
     fclose (fd);
-    vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PGM file")) ;
+          "Bad maxval in \"%s\"",  filename));
+  }
+
+  if ((h != I.getHeight())||( w != I.getWidth())) {
+    I.resize(h,w) ;
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
-  if (fread (I.bitmap, sizeof(unsigned char), nbyte, fd ) != nbyte)
-  {
+  size_t n;
+  if ((n = fread (I.bitmap, sizeof(unsigned char), nbyte, fd)) != nbyte) {
     fclose (fd);
-    vpERROR_TRACE("couldn't read %d bytes in file \"%s\"\n", nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PGM file")) ;
+          "Read only %d of %d bytes in file \"%s\"", n, nbyte, filename));
   }
 
   fclose (fd);
@@ -1140,13 +1180,11 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 void
 vpImageIo::readPGM(vpImage<vpRGBa> &I, const char *filename)
 {
-
   try
   {
     vpImage<unsigned char> Itmp ;
 
     vpImageIo::readPGM(Itmp, filename) ;
-
 
     vpImageConvert::convert(Itmp, I) ;
 
@@ -1213,142 +1251,180 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
 void
 vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 {
-
   FILE* fd = NULL; // File descriptor
   int   ierr;
-  int   line;
-  int   is255;
   char* err ;
   char  str[vpMAX_LEN];
-  unsigned int   w, h;
+  unsigned int magic=5, w=0, h=0, maxval=255;
 
   // Test the filename
-  if (filename == '\0')
-  {
-    vpERROR_TRACE("no filename") ;
+  if (filename == '\0') {
     throw (vpImageException(vpImageException::ioError,
-          " no filename")) ;
-
+          "No filename")) ;
   }
 
   // Open the filename
-  fd = fopen(filename, "rb");
-  if (fd == NULL)
-  {
-    vpERROR_TRACE("couldn't read file \"%s\"", filename) ;
+  if ((fd = fopen(filename, "rb")) == NULL) {
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
+          "Cannot read file \"%s\"", filename)) ;
   }
 
-  // Read the first line with magic number P5
-  line = 0;
-
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
-  if (err == NULL)
-  {
+  while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+  if (err == NULL) {
     fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",  line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
+          "Cannot read header of file \"%s\"",  filename));
   }
-
-  if (strlen(str) < 3)
-  {
+  if ((ierr = sscanf(str, "P%u %u %u %u", &magic, &w, &h, &maxval)) == 0) {
     fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PPM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "this is not a ppm file")) ;
+          "Cannot read header of file \"%s\"",  filename));
   }
 
-  str[2] = '\0';
-  if (strcmp(str, "P6") != 0)
-  {
+  if (magic != 6) {
     fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PPM file\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "this is not a ppm file")) ;
+                            "\"%s\" is not a PGM P6 file", filename));
   }
 
-  // Jump the possible comment, or empty line and read the following line
-  do {
-    err = fgets(str, vpMAX_LEN - 1, fd);
-    line++;
+  // Depending on ierr the line may contain:
+  // 1 : P6
+  // 2 : P6 w
+  // 3 : P6 w h
+  // 4 : P6 w h maxval
+
+  if (ierr == 1) {
+//    std::cout << "magic: " << magic << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
     if (err == NULL) {
-      fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
       fclose (fd);
       throw (vpImageException(vpImageException::ioError,
-            "couldn't read PPM file")) ;
+            "Cannot read header of file \"%s\"",  filename));
     }
-  } while ((str[0] == '#') || (str[0] == '\n'));
+    if (((ierr = sscanf(str, "%u %u %u", &w, &h, &maxval)) == 0) || (ierr != 1 && ierr != 2 && ierr != 3)) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    // Depending on ierr the line may contain:
+    // 1 : w
+    // 2 : w h
+    // 3 : w h maxval
+    if (ierr == 1) {
+//      std::cout << "w: " << w << std::endl;
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if (ierr == 1) {
+//        std::cout << "h: " << h << std::endl;
+        while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+        if (err == NULL) {
+          fclose (fd);
+          throw (vpImageException(vpImageException::ioError,
+                "Cannot read header of file \"%s\"",  filename));
+        }
+        if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
+          fclose (fd);
+          throw (vpImageException(vpImageException::ioError,
+                "Cannot read header of file \"%s\"",  filename));
+        }
+      }
+//      else {
+//        std::cout << "h: " << h << " maxval: " << maxval << std::endl;
+//      }
+    }
+    else if (ierr == 2) {
+//      std::cout << "w: " << w << " h: " << h << std::endl;
 
-  // Extract image size
-  ierr = sscanf(str, "%d %d", &w, &h);
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+//      std::cout << "maxval: " << maxval << std::endl;
+    }
+//    else {
+//      std::cout << "w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
+//    }
+  }
+  else if (ierr == 2) {
+//    std::cout << "magic: " << magic << " w: " << w << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+    if (err == NULL) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if (ierr == 1) {
+//      std::cout << "h: " << h << std::endl;
+      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+      if (err == NULL) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+      if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
+        fclose (fd);
+        throw (vpImageException(vpImageException::ioError,
+              "Cannot read header of file \"%s\"",  filename));
+      }
+//      std::cout << "maxval: " << maxval << std::endl;
+    }
+//    else {
+//      std::cout << "h: " << h << " maxval: " << maxval << std::endl;
+//    }
+  }
+  else if (ierr == 3) {
+//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << std::endl;
+    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
+    if (err == NULL) {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+    if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+      fclose (fd);
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename));
+    }
+//    std::cout << "maxval: " << maxval << std::endl;
+  }
+//  else if (ierr == 4) {
+//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
+//  }
 
   if (w > 100000 || h>100000) {
     fclose (fd);
-    throw(vpException(vpException::badValue, "Bad image size"));
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename));
   }
-
-  if(ierr == 1){// the norm allows to have the two values on two separated lines.
-    do {
-      err = fgets(str, vpMAX_LEN - 1, fd);
-      line++;
-      if (err == NULL) {
-        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "couldn't read PPM file")) ;
-      }
-    } while ((str[0] == '#') || (str[0] == '\n'));
-    ierr = sscanf(str, "%d", &h);
-  }
-  if (ierr == EOF)
+  if (maxval != 255)
   {
     fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
+          "Bad maxval in \"%s\"",  filename));
   }
 
-  if ((h != I.getHeight())||( w != I.getWidth()))
-  {
-    try
-    {
-      I.resize(h,w) ;
-    }
-    catch(...)
-    {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "couldn't read PPM file")) ;
-    }
-  }
-
-  // Read 255
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
-  if (err == NULL) {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
-  }
-
-  ierr = sscanf(str, "%d", &is255);
-  if (ierr == EOF) {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
-  }
-
-  if (is255 != 255)
-  {
-    fclose (fd);
-    vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read PPM file")) ;
+  if ((h != I.getHeight())||( w != I.getWidth())) {
+    I.resize(h,w) ;
   }
 
   for(unsigned int i=0;i<I.getHeight();i++)
@@ -1362,14 +1438,14 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
       if (res==0)
       {
         fclose (fd);
-        vpERROR_TRACE("couldn't read  bytes in file \"%s\"\n", filename) ;
         throw (vpImageException(vpImageException::ioError,
-              "couldn't read PPM file")) ;
+              "Cannot read bytes in file \"%s\"\n", filename));
       }
       I[i][j] = v ;
     }
   }
-  fclose(fd) ;
+
+  fclose (fd);
 }
 
 /*!
