@@ -406,9 +406,9 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 
   void resetBus();
 
-  void setAutoGain();
+  void setAutoGain(bool enable = true);
   void setAutoGain(unsigned int minvalue, unsigned int maxvalue);
-  void setAutoShutter();
+  void setAutoShutter(bool enable = true);
   void setAutoShutter(unsigned int minvalue, unsigned int maxvalue);
   void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);

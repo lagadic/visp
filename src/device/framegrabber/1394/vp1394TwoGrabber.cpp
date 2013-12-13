@@ -1781,6 +1781,9 @@ vp1394TwoGrabber::getRingBufferSize() const
   and max exposure time, but only for AVT cameras. In that case
   use setAutoShutter(unsigned int, unsigned int).
 
+  \param enable : Flag to enable or disable the auto shutter. If false, set the
+  shutter as manual.
+
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
@@ -1813,13 +1816,21 @@ int main()
   \sa setAutoShutter(unsigned int, unsigned int), getAutoShutter()
 */
 void
-vp1394TwoGrabber::setAutoShutter()
+vp1394TwoGrabber::setAutoShutter(bool enable)
 {
   if (! num_cameras) {
     close();
     vpERROR_TRACE("No camera found");
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
                                    "No camera found") );
+  }
+
+  dc1394feature_mode_t mode;
+  if (enable) {
+    mode = DC1394_FEATURE_MODE_AUTO;
+  }
+  else {
+    mode = DC1394_FEATURE_MODE_MANUAL;
   }
 
   if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON)
@@ -1832,7 +1843,7 @@ vp1394TwoGrabber::setAutoShutter()
 
   if (dc1394_feature_set_mode(camera,
             DC1394_FEATURE_SHUTTER,
-            DC1394_FEATURE_MODE_AUTO)
+            mode)
       != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto shutter. \n");
     close();
@@ -1930,6 +1941,9 @@ vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxvalue)
   and max gain, but only for AVT cameras. In that case
   use setAutoGain(unsigned int, unsigned int).
 
+  \param enable : Flag to enable or disable the auto gain. If false, set the
+  gain as manual.
+
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
 
@@ -1948,7 +1962,7 @@ int main()
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
   g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
-  g.setAutoGain(); // Enable auto gain
+  g.setAutoGain(true); // Enable auto gain
   g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800); // 1394b
   while(1)
     g.acquire(I);
@@ -1962,7 +1976,7 @@ int main()
   \sa setAutoGain(unsigned int, unsigned int), getAutoGain()
 */
 void
-vp1394TwoGrabber::setAutoGain()
+vp1394TwoGrabber::setAutoGain(bool enable)
 {
   if (! num_cameras) {
     close();
@@ -1971,7 +1985,15 @@ vp1394TwoGrabber::setAutoGain()
                                    "No camera found") );
   }
 
-  if (dc1394_feature_set_power(camera, DC1394_FEATURE_SHUTTER, DC1394_ON)
+  dc1394feature_mode_t mode;
+  if (enable) {
+    mode = DC1394_FEATURE_MODE_AUTO;
+  }
+  else {
+    mode = DC1394_FEATURE_MODE_MANUAL;
+  }
+
+  if (dc1394_feature_set_power(camera, DC1394_FEATURE_GAIN, DC1394_ON)
       != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set shutter on. \n");
     close();
@@ -1981,7 +2003,7 @@ vp1394TwoGrabber::setAutoGain()
 
   if (dc1394_feature_set_mode(camera,
             DC1394_FEATURE_GAIN,
-            DC1394_FEATURE_MODE_AUTO)
+            mode)
       != DC1394_SUCCESS) {
     //       vpERROR_TRACE("Cannot set auto gain. \n");
     close();
