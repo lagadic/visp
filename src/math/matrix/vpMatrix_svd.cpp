@@ -595,8 +595,7 @@ void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
   dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
 
   if( info > 0 ) {
-    std::cout << "The algorithm computing SVD failed to converge." << std::endl;
-
+   vpTRACE("The algorithm computing SVD failed to converge.");
   }
 
   V=V.transpose();
