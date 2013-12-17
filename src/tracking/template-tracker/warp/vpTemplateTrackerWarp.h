@@ -184,6 +184,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
 
       \param ut0 : List of u coordinates of the points.
       \param vt0 : List of v coordinates of the points.
+      \param nb_pt : Number of points to consider.
       \param p : Parameters of the warp.
       \param u : Resulting u coordinates.
       \param v : resulting v coordinates.
