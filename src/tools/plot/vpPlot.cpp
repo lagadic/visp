@@ -360,12 +360,11 @@ void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector
 }
 
 /*!
-  This method unable to move the point of view if you have a 3D graphic.
+  This method allows to change the point of view with the mouse if you have a 3D graphic.
 */
 void
 vpPlot::navigate()
 {
-  vpImagePoint trash;
   vpMouseButton::vpMouseButtonType b = vpMouseButton::button1;
   
   bool blocked = false;

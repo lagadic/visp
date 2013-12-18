@@ -807,6 +807,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       }
 
       std::list<vpMeSite>::iterator itList = list.end();
+      --itList; // Move on the last element
       double convlt;
       double delta;
       int nbr = 0;
@@ -840,6 +841,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       unsigned int  memory_range = me->getRange();
       me->setRange(3);
       std::list<vpMeSite>::iterator itList2 = list.end();
+      --itList2; // Move to the last element
       for (int j = 0; j < nbr; j++)
       {
         vpMeSite s = *itList2;

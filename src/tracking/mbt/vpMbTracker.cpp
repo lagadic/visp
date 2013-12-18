@@ -1055,7 +1055,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     }
 
     for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
-      int nbPointPol;
+      unsigned int nbPointPol;
       fileId >> nbPointPol;
       if (nbPointPol > 100000) {
         throw vpException(vpException::badValue, "Exceed the max number of points.");
@@ -1103,6 +1103,10 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
       fileId >> caoNbCylinder;
       std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
+      if (caoNbCylinder > 100000) {
+        throw vpException(vpException::badValue, "Exceed the max number of cylinders.");
+      }
+
       for(unsigned int k=0; k<caoNbCylinder; ++k){
         double radius;
         unsigned int indexP1, indexP2;

@@ -286,6 +286,11 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 {
   this->projModel = projModel;
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
+  if (arm_dir.size() > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
+  unsigned int full_length = arm_dir.size() + name_length;
+  if (full_length > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
@@ -303,7 +308,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       {
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-        char *name_arm = new char [arm_dir.size() + name_length];
+        char *name_arm = new char [full_length];
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_ccmop.bnd");
         set_scene(name_arm, robotArms+5, 1.0);
@@ -326,7 +331,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       {
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
-        char *name_arm = new char [arm_dir.size() + name_length];
+        char *name_arm = new char [full_length];
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_gripper.bnd");
         set_scene(name_arm, robotArms+5, 1.0);
@@ -350,7 +355,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
         while (get_displayBusy()) vpTime::wait(2);
         free_Bound_scene (&(robotArms[5]));
 
-        char *name_arm = new char [arm_dir.size() + name_length];
+        char *name_arm = new char [full_length];
 
         strcpy(name_arm, arm_dir.c_str());
         strcat(name_arm,"/afma6_tool_vacuum.bnd");
@@ -2205,14 +2210,26 @@ vpSimulatorAfma6::initArms()
     }
   }
 
-  unsigned int name_length = 30; // the size of this king of string "/afma6_arm2.bnd"
-  char *name_cam = new char [scene_dir.size() + name_length];
+  unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
+  if (scene_dir.size() > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
+  unsigned int full_length = scene_dir.size() + name_length;
+  if (full_length > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
+
+  char *name_cam = new char [full_length];
 
   strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
-  char *name_arm = new char [arm_dir.size() + name_length];
+  if (arm_dir.size() > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
+  full_length = arm_dir.size() + name_length;
+  if (full_length > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
+
+  char *name_arm = new char [full_length];
   strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/afma6_gate.bnd");
   set_scene(name_arm, robotArms, 1.0);

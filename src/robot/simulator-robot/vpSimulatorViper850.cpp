@@ -2202,14 +2202,27 @@ vpSimulatorViper850::initArms()
     }
   }
 
-  unsigned int name_length = 30; // the size of this king of string "/viper850_arm2.bnd"
-  char *name_cam = new char [scene_dir.size() + name_length];
+  unsigned int name_length = 30; // the size of this kind of string "/viper850_arm2.bnd"
+  if (scene_dir.size() > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
+
+  unsigned int full_length = scene_dir.size() + name_length;
+  if (full_length > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
+
+  char *name_cam = new char [full_length];
 
   strcpy(name_cam, scene_dir.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
-  char *name_arm = new char [arm_dir.size() + name_length];
+  if (arm_dir.size() > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
+  full_length = arm_dir.size() + name_length;
+  if (full_length > FILENAME_MAX)
+    throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
+
+  char *name_arm = new char [full_length];
   strcpy(name_arm, arm_dir.c_str());
   strcat(name_arm,"/viper850_arm1.bnd");
   set_scene(name_arm, robotArms, 1.0);

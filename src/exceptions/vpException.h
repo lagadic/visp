@@ -87,7 +87,9 @@ class VISP_EXPORT vpException : public std::exception
     void setMessage(const char* format, va_list args);
 
     //!  forbid the empty constructor (protected)
-    vpException() {};
+    vpException() {
+      code = notInitialized;
+    };
 
   public:
 
