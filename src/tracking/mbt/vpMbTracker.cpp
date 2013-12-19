@@ -1062,7 +1062,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
 
       std::vector<vpPoint> corners;
-      for(int i = 0; i < nbPointPol; i++){
+      for(unsigned int i = 0; i < nbPointPol; i++){
         fileId >> index;
         if (index > caoNbrPoint-1) {
           throw vpException(vpException::badValue, "Exceed the max number of points.");
