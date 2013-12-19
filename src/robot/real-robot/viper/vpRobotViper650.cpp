@@ -1992,7 +1992,7 @@ bool
     return false;
 
   fprintf(fd, "\
-#Viper - Position - Version 1.0\n\
+#Viper650 - Position - Version 1.00\n\
 #\n\
 # R: A B C D E F\n\
 # Joint position in degrees\n\
