@@ -109,8 +109,8 @@ public:
       goodInput = false;
 
     calibrationPattern = UNDEFINED;
-    if (!patternToUse.compare("CHESSBOARD")) calibrationPattern = CHESSBOARD;
-    if (!patternToUse.compare("CIRCLES_GRID")) calibrationPattern = CIRCLES_GRID;
+    if (patternToUse.compare("CHESSBOARD")) calibrationPattern = CHESSBOARD;
+    else if (patternToUse.compare("CIRCLES_GRID")) calibrationPattern = CIRCLES_GRID;
     if (calibrationPattern == UNDEFINED) {
       std::cerr << " Inexistent camera calibration mode: " << patternToUse << std::endl;
       goodInput = false;
