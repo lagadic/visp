@@ -64,6 +64,7 @@ class vpTranslationVector;
 class vpColVector;
 class vpTranslationVector;
 class vpRowVector;
+class vpHomography;
 
 
 
@@ -134,6 +135,8 @@ protected:
   vpMatrix(const vpMatrix &m, unsigned int r, unsigned int c, 
 	   unsigned int nrows, unsigned int ncols) ;
 
+  vpMatrix(const vpHomography& H);
+
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix();
 
@@ -199,6 +202,8 @@ protected:
 
   //! Copy operator.   Allow operation such as A = B
   vpMatrix &operator=(const vpMatrix &B);
+  //! Copy operator.   Allow operation such as A = H
+  vpMatrix &operator=(const vpHomography &H);
   //! Set all the element of the matrix A to x
   vpMatrix &operator=(const double x);
   void diag(const vpColVector &A);
@@ -210,9 +215,9 @@ protected:
   /** @name Access/modification operators  */
   //@{
   //! write elements Aij (usage : A[i][j] = x )
-  inline double *operator[](unsigned int n) { return rowPtrs[n]; }
+  inline double *operator[](unsigned int i) { return rowPtrs[i]; }
   //! read elements Aij  (usage : x = A[i][j] )
-  inline double *operator[](unsigned int n) const {return rowPtrs[n];}
+  inline double *operator[](unsigned int i) const {return rowPtrs[i];}
   //@}
 
   //---------------------------------
@@ -334,6 +339,7 @@ protected:
   vpMatrix &operator-=(const vpMatrix &B);
 
   vpMatrix operator*(const vpMatrix &B) const;
+  vpMatrix operator*(const vpHomography &H) const;
   vpMatrix operator+(const vpMatrix &B) const;
   vpMatrix operator-(const vpMatrix &B) const;
   vpMatrix operator-() const;

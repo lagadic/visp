@@ -56,6 +56,7 @@
 
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
+#include <visp/vpHomography.h>
 #include <visp/vpTranslationVector.h>
 
 // Exception
@@ -130,6 +131,11 @@ vpMatrix::vpMatrix(unsigned int r, unsigned int c)
 {
   init() ;
   resize(r, c);
+}
+
+vpMatrix::vpMatrix(const vpHomography& H)
+{
+  (*this) = H;
 }
 
 /*!
@@ -336,6 +342,24 @@ vpMatrix::operator=(const vpMatrix &B)
   return *this;
 }
 
+/*!
+\brief Copy operator.
+Allow operation such as A = H
+
+\param H : homography matrix to be copied.
+*/
+vpMatrix &
+vpMatrix::operator=(const vpHomography& H)
+{
+  init() ;
+  resize(3,3);
+  for(unsigned int i=0; i<3; i++)
+    for(unsigned int j=0; j<3; j++)
+      (*this)[i][j] = H[i][j];
+
+  return *this;
+}
+
 //! set all the element of the matrix A to x
 vpMatrix &
 vpMatrix::operator=(double x)
@@ -445,6 +469,28 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 
   return C;
 }
+/*!
+  Allows to multiply a matrix by an homography.
+  Operation M = K * H (H is unchanged).
+
+*/
+vpMatrix vpMatrix::operator*(const vpHomography &H) const
+{
+  if (colNum != 3)
+    throw(vpException(vpMatrixException::dimensionError, "Cannot multiply the matrix by the homography; bad matrix size"));
+  vpMatrix M(rowNum, 3);
+
+  for (unsigned int i=0;i<rowNum;i++){
+    for (unsigned int j=0;j<3;j++) {
+      double s = 0;
+      for (unsigned int k=0;k<3;k++) s += (*this)[i][k] * H[k][j];
+      M[i][j] = s;
+    }
+  }
+
+  return M;
+}
+
 /*!
 Operation C = A*wA + B*wB 
 
