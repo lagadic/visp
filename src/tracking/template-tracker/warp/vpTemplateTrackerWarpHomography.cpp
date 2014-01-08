@@ -65,7 +65,6 @@ void vpTemplateTrackerWarpHomography::getp_PyramidUp(const vpColVector &p,vpColV
   pup[5]=p[5]/2.;
   pup[6]=p[6]*2.;
   pup[7]=p[7]*2.;
-
 }
 
 /*calcul de di*dw(x,p0)/dp  */
