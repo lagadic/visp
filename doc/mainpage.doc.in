@@ -47,6 +47,7 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 \subsection tuto_intro Introduction
 
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
@@ -105,7 +106,7 @@ scheme, ...</p>
 
 - You can help VISP to be more widely known, by displaying a <a href="http://team.inria.fr/lagadic/visp/documentation/visp-flyers.pdf">ViSP flyer</a> at work, in your lab or school.
 - You can submit a <a href="https://gforge.inria.fr/tracker/?atid=1867&group_id=397&func=browse">bug report using the tracker</a>.
-- You can submit <a href="https://gforge.inria.fr/tracker/?func=browse&group_id=397&atid=1660">patches or new functionality here</a>.
+- You can submit <a href="https://gforge.inria.fr/tracker/?func=browse&group_id=397&atid=1660">patches or new functionalities here</a>.
 - You can write new tutorials, new documentations or simply improve the existing documentation.
 - If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 
@@ -128,6 +129,7 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 \section tuto_intro Introduction
 
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
+- \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
