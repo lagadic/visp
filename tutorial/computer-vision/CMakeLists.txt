@@ -8,6 +8,7 @@ if(VISP_FOUND)
 endif(VISP_FOUND)
 
 # build the examples
+add_executable(tutorial-homography-from-points tutorial-homography-from-points.cpp)
 add_executable(tutorial-pose-from-points-image tutorial-pose-from-points-image.cpp)
 add_executable(tutorial-pose-from-points-tracking tutorial-pose-from-points-tracking.cpp)
 
