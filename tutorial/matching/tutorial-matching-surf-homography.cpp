@@ -110,6 +110,8 @@ int main(int argc, const char **argv)
   }
 
   vpDisplay::getClick(Idisp);
+#else
+  (void)argc; (void)argv;
 #endif
   return 0;
 }

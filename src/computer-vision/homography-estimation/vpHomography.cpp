@@ -637,7 +637,7 @@ vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &y
       yan = ya;
     }
 
-    int nbLinesA = 2;
+    unsigned int nbLinesA = 2;
     vpMatrix A(nbLinesA*n,8);
     vpColVector X(8);
     vpColVector Y(nbLinesA*n);

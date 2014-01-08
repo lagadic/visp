@@ -145,8 +145,6 @@ main(int argc, const char ** argv)
       exit (-1);
     }
 
-    int i ;
-
     vpPoint P[nbpt]  ;  //  Point to be tracked
     std::vector<double> xa(nbpt), ya(nbpt) ;
     std::vector<double> xb(nbpt), yb(nbpt) ;
@@ -169,7 +167,7 @@ main(int argc, const char ** argv)
     vpHomogeneousMatrix bMo(0,0,1, 0,0,0) ;
     vpHomogeneousMatrix aMb(0.1,0.1,0.1,vpMath::rad(10),0,vpMath::rad(40)) ;
     vpHomogeneousMatrix aMo =aMb*bMo ;
-    for(i=0 ; i < nbpt ; i++)
+    for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(aMo) ;
       aP[i] = P[i] ;
@@ -177,7 +175,7 @@ main(int argc, const char ** argv)
       ya[i] = P[i].get_y() ;
     }
 
-    for(i=0 ; i < nbpt ; i++)
+    for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(bMo) ;
       bP[i] = P[i] ;
@@ -226,7 +224,7 @@ main(int argc, const char ** argv)
     std::cout << "-------------------------------" <<std::endl ;
     std::cout << "test if ap = aHb bp" << std::endl ;
 
-    for(i=0 ; i < nbpt ; i++)
+    for(unsigned int i=0 ; i < nbpt ; i++)
     {
       std::cout << "Point "<< i<< std::endl ;
       vpPoint p ;

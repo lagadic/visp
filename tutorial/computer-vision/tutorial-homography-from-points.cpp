@@ -17,7 +17,7 @@ int main()
 
   std::vector<vpPoint> aP(4), bP(4);
   std::vector<double> xa(4), ya(4), xb(4), yb(4);
-  for(int i=0 ; i < 4; i++)
+  for(unsigned int i=0 ; i < 4; i++)
   {
     oP[i].project(aMo);
     xa[i] = oP[i].get_x();
