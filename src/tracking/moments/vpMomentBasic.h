@@ -81,7 +81,7 @@ class VISP_EXPORT vpMomentBasic : public vpMoment {
         /*!
           Moment name.
           */
-        const char* name(){ return "vpMomentBasic";}
+        const char* name() const { return "vpMomentBasic";}
 
 };
 std::ostream & operator<<(std::ostream & os, vpMomentBasic& v);

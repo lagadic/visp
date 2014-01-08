@@ -139,16 +139,16 @@ class VISP_EXPORT vpMomentAreaNormalized : public vpMoment {
         /*!
         Retrieves the desired depth \e Z* as specified in the constructor.
         */
-        double getDesiredDepth(){ return desiredDepth; }
+        double getDesiredDepth() const { return desiredDepth; }
         /*!
         Retrieves the desired surface \e a* as specified in the constructor.
         */
-        double getDesiredSurface(){ return desiredSurface; }
+        double getDesiredSurface() const { return desiredSurface; }
 
         /*!
         Moment name.
         */
-        const char* name(){return "vpMomentAreaNormalized";}
+        const char* name() const {return "vpMomentAreaNormalized";}
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAreaNormalized& v);
 };
 

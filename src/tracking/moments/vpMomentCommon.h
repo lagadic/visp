@@ -70,14 +70,15 @@ class vpMomentObject;
     - vpMomentBasic
     - vpMomentGravityCenter
     - vpMomentCentered
-    - vpMomentCenteredNormalized
+    - vpMomentGravityCenterNormalized
     - vpMomentAreaNormalized
     - vpMomentCInvariant
     - vpMomentAlpha
+    - vpMomentArea
 
     There is no need to do the linkTo operations manually nor is it necessary to care about the order of moment computation.
 
-    This class carries an vpMomentCommon::updateAll method capable of updating AND computing moments from an object (see 4-step process in vpMoment).
+    This class carries an vpMomentCommon::updateAll() method capable of updating AND computing moments from an object (see 4-step process in vpMoment).
     The moments computed by this class are classical moments used in moment-based visual servoing.
     For more information see \cite Tahri05z.
 
@@ -88,7 +89,8 @@ class vpMomentObject;
     - the surface of the destination object in the end of the visual servoing process.
     - the reference alpha: angular position of the object used to obtain the Mu3 set.
 
-    Shortcuts for each of these prerequisites are provided by this class except depth (methods vpMomentCommon::getMu3, vpMomentCommon::getSurface,vpMomentCommon::getAlpha).
+    Shortcuts for each of these prerequisites are provided by this class except depth (methods
+    vpMomentCommon::getMu3(), vpMomentCommon::getSurface(), vpMomentCommon::getAlpha()).
 
     \attention Make sure your object is at least of order 5 when using this pre-filled database.
 

@@ -68,7 +68,7 @@ class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
         /*!
           Moment name.
           */
-        const char* name(){return "vpMomentGravityCenterNormalized";}
+        const char* name() const {return "vpMomentGravityCenterNormalized";}
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& v);
 };
 

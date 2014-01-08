@@ -87,19 +87,23 @@ class vpMomentObject;
   Some moments can be computed only if they are linked to a a database containing their dependencies.
   Linking to a database is done using the vpMoment::linkTo(...) method.
 
-  There are no constraints about format of the array returned by vpMoment::get: any implementation is fine.
+  There are no constraints about format of the array returned by vpMoment::get(); any implementation is fine.
 
   Each moment must have a string name by implementing the char* vpMoment::name() method which allows to identify the moment in the database.
   Each moment must also implement a compute method describing how to obtain its values from the object.
 
-  \attention Order of moment computation DOES matter: when you compute (vpMoment::compute call) a moment, all moment dependencies must be computed.
-  Moments pre-implementes dans ViSP:
+  \attention Order of moment computation DOES matter: when you compute a moment using vpMoment::compute(),
+  all moment dependencies must be computed.
+  We recall that implemented moments are:
   - vpMomentAlpha
+  - vpMomentArea
+  - vpMomentAreaNormalized
   - vpMomentBasic
   - vpMomentCentered
   - vpMomentCInvariant
-  - vpMomentSInvariant
-  - vpMomentAreaNormalized
+  - vpMomentGravityCenter
+  - vpMomentGravityCenterNormalized
+
 */
 class VISP_EXPORT vpMoment{
  private:
@@ -126,7 +130,7 @@ class VISP_EXPORT vpMoment{
         void linkTo(vpMomentDatabase& moments);
         void update(vpMomentObject& object);
         virtual void compute()=0;
-        virtual const char* name() = 0;
+        virtual const char* name() const = 0;
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
 
         /*!

@@ -56,10 +56,10 @@ class vpMomentBasic;
 
   \ingroup TrackingMoments
 
-  \brief This class defines several 2D (translation+rotation+scale) invariants for both symmetric and non-symmetric objects.
+  This class defines several 2D (translation+rotation+scale) invariants for both symmetric and non-symmetric objects.
   These moment-based invariants are described in the following papers \cite Chaumette04a, \cite Tahri05z.
 
-  The descriptions for the invariants \f$C_1\f$ to \f$C_{10}\f$ can be found in [1] and for invariants \f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in [2].
+  The descriptions for the invariants \f$C_1\f$ to \f$C_{10}\f$ can be found in \cite Chaumette04a and for invariants \f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in \cite Tahri05z.
 
   These invariants are classicaly used in visual servoing to control the out-of-plane rotations.
   The C-type or P-type invariants are used for non-symmetric objects whereas the S-type invariants are used for symmetric objects.
@@ -103,7 +103,7 @@ int main()
   db.updateAll(obj); // Update AND compute all moments
 
   //get C-invariant
-  vpMomentCInvariant& C = static_cast<vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
+  const vpMomentCInvariant& C = static_cast<const vpMomentCInvariant&>(db.get("vpMomentCInvariant",success));
   if(success)
       std::cout << C.get(1) << std:: endl; // print C2 invariant
   else
@@ -139,43 +139,43 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
         /*!
           Shorcut for getting the value of \f$C_1\f$.
           */
-        double C1(){ return values[0]; }
+        double C1() const { return values[0]; }
         /*!
           Shorcut for getting the value of \f$C_2\f$.
           */
-        double C2(){ return values[1]; }
+        double C2() const { return values[1]; }
         /*!
           Shorcut for getting the value of \f$C_3\f$.
           */
-        double C3(){ return values[2]; }
+        double C3() const { return values[2]; }
         /*!
           Shorcut for getting the value of \f$C_4\f$.
           */
-        double C4(){ return values[3]; }
+        double C4() const { return values[3]; }
         /*!
           Shorcut for getting the value of \f$C_5\f$.
           */
-        double C5(){ return values[4]; }
+        double C5() const { return values[4]; }
         /*!
           Shorcut for getting the value of \f$C_6\f$.
           */
-        double C6(){ return values[5]; }
+        double C6() const { return values[5]; }
         /*!
           Shorcut for getting the value of \f$C_7\f$.
           */
-        double C7(){ return values[6]; }
+        double C7() const { return values[6]; }
         /*!
           Shorcut for getting the value of \f$C_8\f$.
           */
-        double C8(){ return values[7]; }
+        double C8() const { return values[7]; }
         /*!
           Shorcut for getting the value of \f$C_9\f$.
           */
-        double C9(){ return values[8]; }
+        double C9() const { return values[8]; }
         /*!
           Shorcut for getting the value of \f$C_{10}\f$.
           */
-        double C10(){ return values[9]; }
+        double C10() const { return values[9]; }
 
         void compute();
 
@@ -183,7 +183,7 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
           Gets the desired invariant.
           \param i given index. For invariants from C1 to C10 the corresponding index is from 0 to 9. For \f$S_x\f$,\f$S_y\f$ the indexes are 10,11 and for \f$P_x\f$,\f$P_y\f$ they are 12,13.
           */
-        double get(unsigned int i){ return values[i]; }
+        double get(unsigned int i) const { return values[i]; }
 
         /*!
           Access to partial invariant c (see [2]).
@@ -211,7 +211,7 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
         /*!
           Moment name.
           */
-        const char* name(){return "vpMomentCInvariant";}
+        const char* name() const {return "vpMomentCInvariant";}
 
         /*!
           Print partial invariant.

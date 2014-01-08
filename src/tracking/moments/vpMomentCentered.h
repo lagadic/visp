@@ -88,7 +88,7 @@ public:
   /*!
      Moment name.
   */
-  inline const char* name(){return "vpMomentCentered";}
+  inline const char* name() const {return "vpMomentCentered";}
 
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, vpMomentCentered& v);
 

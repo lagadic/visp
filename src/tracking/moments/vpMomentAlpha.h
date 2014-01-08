@@ -214,10 +214,9 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
         /*!
           Moment name.
           */
-       const char* name(){return "vpMomentAlpha";}
+        const char* name() const {return "vpMomentAlpha";}
 
-        inline bool
-        is_ref()
+        inline bool is_ref() const
         {
           if (isRef)
             return true;
@@ -225,8 +224,7 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
             return false;
         }
 
-        inline bool
-        is_symmetric()
+        inline bool is_symmetric() const
         {
           if (symmetric)
             return true;

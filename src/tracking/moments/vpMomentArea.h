@@ -61,7 +61,7 @@ class VISP_EXPORT vpMomentArea : public vpMoment {
         /*!
         Moment name.
         */
-        const char* name(){return "vpMomentArea";}
+        const char* name() const {return "vpMomentArea";}
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentArea& m);
 };
 
