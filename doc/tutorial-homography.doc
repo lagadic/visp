@@ -14,13 +14,13 @@ This tutorial shows how to estimate an homography from points. Two cases are con
 
 Let us consider the following source code also available in tutorial-homography.cpp. To resume, we do the following:
 - define four 3D points \c oP in an object frame, 
-- define an homogenous transformation \c aMo from frame \c a to to the object frame \c o,
-- define a similar homogenous transformation \c bMo from frame \c b to to the object frame \c o,
+- define an homogeneous transformation \c aMo from frame \c a to to the object frame \c o,
+- define a similar homogeneous transformation \c bMo from frame \c b to to the object frame \c o,
 - compute the coordinates of the four 3D points in the image plane \c a and \c b. These are the matched coordinates \c (xa,ya) and \c (xb,yb) that are then used to estimate the homography using either vpHomography::DLT() or vpHomography::HLM().
     
 \include tutorial-matching-surf-homography.cpp
 
-Now we give a line by line explaination of the code:
+Now we give a line by line explanation of the code:
 
 First we have to include the header of the vpHomography class.
 \code
@@ -152,7 +152,7 @@ Here after is the resulting video. The left image represents the reference image
 
 Now, let us explain the new lines that were introduced to estimate the homography.
 
-First we detect the command line arguments to be able later to user etheir Ransac or the robust M-estimator:
+First we detect the command line arguments to be able later to user either Ransac or the robust M-estimator:
 \code
   int method = 0;
 
@@ -174,7 +174,7 @@ We also initialize the coordinates of the pixels in the reference image that cor
   corner_ref[3].set_ij(330,  72);
 \endcode
 
-Using these coordinates, we display red lines arround the postcard:
+Using these coordinates, we display red lines around the postcard:
 \code
   for (unsigned int i=0; i<4; i++) {
     vpDisplay::displayCross(Idisp, corner_ref[i], 12, vpColor::red);
@@ -205,7 +205,7 @@ To estimate the homography we need first to convert the points from pixel to met
       vpPixelMeterConversion::convertPoint(cam, matched_cur, mPcur_x[i], mPcur_y[i]);
 \endcode
 
-We can now estimate the homography using either ransac or the robust M-estimator approach:
+We can now estimate the homography using either Ransac or the robust M-estimator approach:
 \code
     double residual;
     if (method == 0)
