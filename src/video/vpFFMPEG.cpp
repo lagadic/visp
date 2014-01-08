@@ -150,7 +150,7 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType color_type)
 #endif
     {
       videoStream = i;
-      std::cout << "rate: " << pFormatCtx->streams[i]->r_frame_rate.num << " " << pFormatCtx->streams[i]->r_frame_rate.den << std::endl;
+      //std::cout << "rate: " << pFormatCtx->streams[i]->r_frame_rate.num << " " << pFormatCtx->streams[i]->r_frame_rate.den << std::endl;
       framerate_stream =  pFormatCtx->streams[i]->r_frame_rate.num;
       framerate_stream /= pFormatCtx->streams[i]->r_frame_rate.den;
       found_codec= true;
