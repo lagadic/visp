@@ -135,7 +135,6 @@ main(int argc, const char ** argv)
     }
     catch (vpMatrixException me)
     {
-      vpCTRACE ;
       std::cout << me << std::endl ;
     }
 
@@ -148,7 +147,6 @@ main(int argc, const char ** argv)
     }
     catch (vpMatrixException me)
     {
-      vpCTRACE ;
       std::cout << me << std::endl ;
     }
   }
