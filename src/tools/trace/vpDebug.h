@@ -82,21 +82,23 @@
 
   This class is used to define the following macros:
 
-  - Macros for tracing: vpTRACE() and vpERROR_TRACE() work like printf
-    with carreer return at the end of the string.  vpCERROR() et
-    vpCTRACE() work like the C++ output streams std::cout and
+  - Macros for tracing: vpTRACE(), vpERROR_TRACE(), vpIN_FCT() and
+    vpOUT_FCT() work like printf
+    with carreer return at the end of the string, while vpCTRACE() and
+    vpCERROR() work like the C++ output streams std::cout and
     std::cerr.
 
-  - Macros for debuging: vpDEBUG_TRACE(niv) and vpDERROR_TRACE(niv)
-    work like printf, but print only if the tracing level \e niv is
-    greater than the debug level VP_DEBUG_MODE macro. vpCDEBUG(niv)
-    work like the C++ output stream std::cout. vpDEBUG_ENABLE(niv) is
-    equal to 1 if the debug level niv is greater than the debug mode
+  - Macros for debuging: vpDEBUG_TRACE(level) and vpDERROR_TRACE(level)
+    work like printf, but print only if the tracing level \e level is
+    greater than the debug level VP_DEBUG_MODE macro. vpCDEBUG(level)
+    work like the C++ output stream std::cout. vpDEBUG_ENABLE(level) is
+    equal to 1 if the debug level level is greater than the debug mode
     VP_DEBUG_MODE, 0 else.
 
   The example below shows how to use these macros.
 
   \code
+#define VP_TRACE        // Activate the trace mode
 #define VP_DEBUG        // Activate the debug mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
@@ -123,7 +125,7 @@ int main()
   vpDERROR_TRACE(2, "C-like error trace level 2"); // stderr
 
   // C++-like debug printings
-  vpCTRACE << "C++-like debug trace" << std::endl; // stdout
+  vpCTRACE << "C++-like trace" << std::endl; // stdout
   vpCERROR << "C++-like error trace" << std::endl; // stderr
 
   // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
@@ -136,7 +138,7 @@ int main()
 */
 class vpTraceOutput
 {
-private:
+  private:
     const char* currentFile; //Name of the file to use in the displays
     const char* currentFunc; //Name of the function to use in the displays
     int currentLine;		 //Line to use in the displays
@@ -146,7 +148,7 @@ private:
     //string to display before anything else
     const char* header;
 
-public:
+  public:
     /*!
       Constructor.
       \param file Should be the name of the file where this constructor was called.
@@ -157,37 +159,37 @@ public:
       \note Call the constructor with something like vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
     */
     vpTraceOutput(const char* file, int line, const char* func, bool error=false, const char * s=NULL) :
-        currentFile(file),
-	currentFunc(func),
-	currentLine(line),
-	err(error),
-	header(s)
+      currentFile(file),
+      currentFunc(func),
+      currentLine(line),
+      err(error),
+      header(s)
     {}
 
     /*!
       Displays a string if the debug level is inferior to VP_DEBUG_MODE.
-      \param niv Level of this message.
+      \param level Level of this message.
       \param format Formating string.
     */
-    void operator()(int niv, const char* format, ...)
+    void operator()(int level, const char* format, ...)
     {
-	//if the niv level is inferior to VP_DEBUG_MODE
-	if(VP_DEBUG_MODE >= niv)
-	{
-	    //gets the variable list of arguments
-	    va_list args;
-	    va_start(args, format);
-	    
-	    if (err)
-		std::cerr << "(N" << niv << ") " ;
-	    else
-		std::cout << "(N" << niv << ") " ;
+      //if the level is inferior to VP_DEBUG_MODE
+      if(VP_DEBUG_MODE >= level)
+      {
+        //gets the variable list of arguments
+        va_list args;
+        va_start(args, format);
 
-	    //calls display with it
-	    display(format, args);
+        if (err)
+          std::cerr << "(L" << level << ") " ;
+        else
+          std::cout << "(L" << level << ") " ;
 
-	    va_end(args);
-	}
+        //calls display with it
+        display(format, args);
+
+        va_end(args);
+      }
     }
 
     /*!
@@ -196,18 +198,18 @@ public:
     */
     void operator()(const char* format, ...)
     {
-	//gets the variable list of arguments
-	va_list args;
-	va_start(args, format);
+      //gets the variable list of arguments
+      va_list args;
+      va_start(args, format);
 
 #ifdef VP_DEBUG
-	std::cout<<"(N0) ";
+      std::cout<<"(L0) ";
 #endif
 
-	//calls display with it
-	display(format, args);
+      //calls display with it
+      display(format, args);
 
-	va_end(args);
+      va_end(args);
     }
 
     /*!
@@ -221,31 +223,31 @@ public:
     */
     void display(const char* format, va_list args)
     {
-	//if we want to write to std::cerr/stderr
-	if(err)
-	{
-	    //first writes the header if there is one
-	    if(header != NULL) std::cerr<<header;
-	    //then writes the recorded namefile, function and line
-	    std::cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") :" ;
-	    //and finally writes the message passed to () operator.
-	    vfprintf (stderr, format, args);
-	    fprintf (stderr, "\n");
-	    //flushes the buffer
-	    fflush (stderr);
-	}
-	else
-	{
-	    //first writes the header if there is one
-	    if(header != NULL) std::cout<<header;
-	    //then writes the recorded namefile, function and line
-	    std::cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") :" ;
-	    //and finally writes the message passed to () operator.
-	    vprintf (format, args);
-	    printf ("\n");
-	    //flushes the buffer
-	    fflush (stdout);
-	}
+      //if we want to write to std::cerr/stderr
+      if(err)
+      {
+        //first writes the header if there is one
+        if(header != NULL) std::cerr<<header;
+        //then writes the recorded namefile, function and line
+        std::cerr << "!!\t" << currentFile << ": " <<currentFunc << "(#" << currentLine << ") : " ;
+        //and finally writes the message passed to () operator.
+        vfprintf (stderr, format, args);
+        fprintf (stderr, "\n");
+        //flushes the buffer
+        fflush (stderr);
+      }
+      else
+      {
+        //first writes the header if there is one
+        if(header != NULL) std::cout<<header;
+        //then writes the recorded namefile, function and line
+        std::cout <<currentFile << ": " << currentFunc << "(#" << currentLine << ") : " ;
+        //and finally writes the message passed to () operator.
+        vprintf (format, args);
+        printf ("\n");
+        //flushes the buffer
+        fflush (stdout);
+      }
     }
 
 };
@@ -255,11 +257,14 @@ public:
 /* --- vpTRACE IN/OUT FONCTION --------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
+#ifdef VP_TRACE        // Activate the trace mode
+
 /*!
   \ingroup Debug
   Works like vpTRACE() and should be used at the beginning of a function.
 
   \code
+#define VP_TRACE // To activate the trace mode
 #include <visp/vpDebug.h>
 
 int main()
@@ -280,6 +285,7 @@ int main()
   Works like vpTRACE() and should be used at the end of a function.
 
   \code
+#define VP_TRACE // To activate the trace mode
 #include <visp/vpDebug.h>
 
 int main()
@@ -294,11 +300,18 @@ int main()
 */
 #define vpOUT_FCT (vpTraceOutput(__FILE__,__LINE__, __FUNCTION__, false, "end "))
 
+#else // #ifdef VP_TRACE
 
+inline void vpIN_FCT (const char * /* a */, ...){}
+inline void vpOUT_FCT (const char * /* a */, ...){}
+
+#endif // #ifdef VP_TRACE
 
 /* -------------------------------------------------------------------------- */
 /* --- vpTRACE -------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
+
+#ifdef VP_TRACE
 
 /*!
   \ingroup Debug
@@ -306,15 +319,16 @@ int main()
   Use like this : vpCTRACE<<"my message"<<std::endl;
 
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+#define VP_TRACE        // To activate trace mode
+#define VP_DEBUG        // To activate the debug mode
+#define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
 
 #include <visp/vpDebug.h>
 
 int main()
 {
   // C++-like debug printings
-  vpCTRACE << "C++-like debug trace" << std::endl; // stdout
+  vpCTRACE << "C++-like trace" << std::endl; // stdout
   vpCERROR << "C++-like error trace" << std::endl; // stderr
 
   // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
@@ -324,7 +338,7 @@ int main()
 
   \sa vpTRACE(), vpCERROR(), vpCDEBUG()
 */
-#define vpCTRACE std::cout << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define vpCTRACE std::cout << "(L0) " << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 
 /*!
@@ -333,15 +347,16 @@ int main()
   Use like this : vpCERROR<<"my message"<<std::endl;
 
   \code
-#define VP_DEBUG        // Activate the debug mode
-#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+#define VP_TRACE        // To activate trace mode
+#define VP_DEBUG        // To activate the debug mode
+#define VP_DEBUG_MODE 2 // To activate debug level 1 and 2
 
 #include <visp/vpDebug.h>
 
 int main()
 {
   // C++-like debug printings
-  vpCTRACE << "C++-like debug trace" << std::endl; // stdout
+  vpCTRACE << "C++-like trace" << std::endl; // stdout
   vpCERROR << "C++-like error trace" << std::endl; // stderr
 
   // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
@@ -351,7 +366,7 @@ int main()
 
   \sa vpCTRACE(), vpCDEBUG()
 */
-#define vpCERROR std::cerr << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define vpCERROR std::cerr << "(L0) " << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup Debug
@@ -362,6 +377,7 @@ int main()
   with any "printf" string.
 
   \code
+#define VP_TRACE // To activate trace mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
 #include <visp/vpDebug.h>
@@ -387,6 +403,7 @@ int main()
   with any "printf" string.
 
   \code
+#define VP_TRACE // To activate trace mode
 #include <visp/vpDebug.h>
 
 int main()
@@ -400,6 +417,17 @@ int main()
 */
 #define vpTRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
+#else // #ifdef VP_TRACE
+
+#define vpCTRACE if(false) std::cout // Warning C4127
+#define vpCERROR if(false) std::cerr // Warning C4127
+
+inline void vpERROR_TRACE (const char * /* a */, ...){}
+inline void vpERROR_TRACE (int /* level */, const char * /* a */, ...){}
+inline void vpTRACE (const char * /* a */, ...){}
+inline void vpTRACE (int /* level */, const char * /* a */, ...){}
+
+#endif // #ifdef VP_TRACE
 
 /* ------------------------------------------------------------------------- */
 /* --- VP_DEBUG ------------------------------------------------------------ */
@@ -410,7 +438,7 @@ int main()
 /*!
   \ingroup Debug
   vpDERROR_TRACE works like printf, but prints only if the
-  tracing level niv is greater than the debug level VP_DEBUG_MODE.
+  tracing level is smaller than the debug level VP_DEBUG_MODE.
 
   \code
 #define VP_DEBUG        // Activate the debug mode
@@ -433,7 +461,7 @@ int main()
 /*!
   \ingroup Debug
   vpDEBUG_TRACE works like printf, but prints only if the
-  tracing level niv is greater than the debug level VP_DEBUG_MODE.
+  tracing level level is greater than the debug level VP_DEBUG_MODE.
 
   \code
 #define VP_DEBUG        // Activate the debug mode
@@ -455,7 +483,7 @@ int main()
 
 /*!
   \ingroup Debug
-  vpCDEBUG(niv) work like the C++ output stream std::cout.
+  vpCDEBUG(level) work like the C++ output stream std::cout.
   \code
 #define VP_DEBUG        // Activate the debug mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
@@ -465,7 +493,7 @@ int main()
 int main()
 {
   // C++-like debug printings
-  vpCTRACE << "C++-like debug trace" << std::endl; // stdout
+  vpCTRACE << "C++-like trace" << std::endl; // stdout
   vpCERROR << "C++-like error trace" << std::endl; // stderr
 
   // Printing if VP_DEBUG defined and VP_DEBUG_MODE value >= 2
@@ -475,13 +503,13 @@ int main()
 
   \sa vpCTRACE(), vpCERROR()
 */
-#define vpCDEBUG(niv) if (VP_DEBUG_MODE < niv) ; else \
-		std::cout << "(N" << niv << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") :"
+#define vpCDEBUG(level) if (VP_DEBUG_MODE < level) ; else \
+    std::cout << "(L" << level << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
   \ingroup Debug
 
-  vpDEBUG_ENABLE(niv) is equal to 1 if the debug level \e niv is greater than
+  vpDEBUG_ENABLE(level) is equal to 1 if the debug level \e level is greater than
   the debug mode VP_DEBUG_MODE, 0 else.
 
   \code
@@ -499,17 +527,19 @@ int main()
 }  
   \endcode
 */
-#define vpDEBUG_ENABLE(niv) (VP_DEBUG_MODE >= niv)
+#define vpDEBUG_ENABLE(level) (VP_DEBUG_MODE >= level)
 
-#else
+#else // #ifdef VP_DEBUG
 
-inline void vpDERROR_TRACE(int /* niv */, const char * /* a */, ...){}
-inline void vpDEBUG_TRACE(int /* niv */, const char * /* a */, ...){}
+inline void vpDERROR_TRACE(const char * /* a */, ...){}
+inline void vpDEBUG_TRACE(const char * /* a */, ...){}
+inline void vpDERROR_TRACE(int /* level */, const char * /* a */, ...){}
+inline void vpDEBUG_TRACE(int /* level */, const char * /* a */, ...){}
 
-#define vpCDEBUG(niv) if(false) std::cout // Warning C4127
-#define vpDEBUG_ENABLE(niv) (false)       // Warning C4127
+#define vpCDEBUG(level) if(false) std::cout // Warning C4127
+#define vpDEBUG_ENABLE(level) (false)       // Warning C4127
 
-#endif
+#endif // #ifdef VP_DEBUG
 
 /* -------------------------------------------------------------------------- */
 /* --- DEFENSIF ------------------------------------------------------------- */
@@ -522,9 +552,3 @@ inline void vpDEBUG_TRACE(int /* niv */, const char * /* a */, ...){}
 
 
 #endif /* #ifdef __DEBUG_HH */
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */

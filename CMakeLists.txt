@@ -142,6 +142,16 @@ OPTION(BUILD_DEMOS "Build ViSP demos." ON)
 OPTION(BUILD_TUTORIAL "Build ViSP tutorial." ON)
 # Build deprecated functions as an option.
 OPTION(BUILD_DEPRECATED_FUNCTIONS "Build deprecated functionalities." ON)
+# Debug and trace cflags
+option(ACTIVATE_DEBUG_TRACE "Enable debug and trace printings" ON)
+
+if(ACTIVATE_DEBUG_TRACE)
+  list(APPEND VISP_DEFS "-DVP_TRACE")
+  list(APPEND VISP_DEFS "-DVP_DEBUG")
+else()
+  string(REPLACE "-DVP_TRACE" "" " " VISP_DEFS "${VISP_DEFS}")
+  string(REPLACE "-DVP_DEBUG" "" " " VISP_DEFS "${VISP_DEFS}")
+endif()
 
 if(MSVC)
   option(BUILD_WITH_STATIC_CRT    "Enables use of staticaly linked CRT for staticaly linked ViSP" ON)
@@ -1840,7 +1850,7 @@ IF(VISP_DEFS)
   LIST(REMOVE_DUPLICATES VISP_DEFS)
 ENDIF(VISP_DEFS)
 #MESSAGE("Definitions without duplicates: ${VISP_DEFS}")
-ADD_DEFINITIONS(${VISP_DEFS})
+add_definitions(${VISP_DEFS})
 
 #----------------------------------------------------------------------
 # Add intern and third party include dirs
