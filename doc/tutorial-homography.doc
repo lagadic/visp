@@ -1,0 +1,250 @@
+/**
+
+\page tutorial-homography Tutorial: Homography estimation from points
+
+\tableofcontents
+
+\section intro Introduction
+
+This tutorial shows how to estimate an homography from points. Two cases are considered in the next sections:
+- points are matched without possible mismatches. In that case vpHomography::DLT() or vpHomography::HLM() are used to estimate the homography,
+- points are matched with possible mismatches. In that case vpHomography::ransac() or vpHomography::robust() are used.
+
+\section homography Homography estimation
+
+Let us consider the following source code also available in tutorial-homography.cpp. To resume, we do the following:
+- define four 3D points \c oP in an object frame, 
+- define an homogenous transformation \c aMo from frame \c a to to the object frame \c o,
+- define a similar homogenous transformation \c bMo from frame \c b to to the object frame \c o,
+- compute the coordinates of the four 3D points in the image plane \c a and \c b. These are the matched coordinates \c (xa,ya) and \c (xb,yb) that are then used to estimate the homography using either vpHomography::DLT() or vpHomography::HLM().
+    
+\include tutorial-matching-surf-homography.cpp
+
+Now we give a line by line explaination of the code:
+
+First we have to include the header of the vpHomography class.
+\code
+#include <visp/vpHomography.h>
+\endcode
+
+In the main() function we first define the 3D coordinates of 4 points that are localized in the plane Z=0:
+\code
+  double L = 0.1;
+  std::vector<vpPoint> oP(4);
+  oP[0].setWorldCoordinates( -L,-L,   0);
+  oP[1].setWorldCoordinates(2*L,-L,   0);
+  oP[2].setWorldCoordinates(  L, 3*L, 0);
+  oP[3].setWorldCoordinates( -L, 4*L, 0);
+\endcode
+
+Then we define the homogeneous transformations between frames \c a, \c b and object frame \c o:
+\code
+  vpHomogeneousMatrix bMo(0.1, 0, 1,   0, vpMath::rad(15), 0);
+  vpHomogeneousMatrix aMb(0.2, -0.1, 0.1, vpMath::rad(-3), vpMath::rad(20), vpMath::rad(5));
+  vpHomogeneousMatrix aMo = aMb*bMo;
+\endcode
+
+From these transformations we compute the homogeneous coordinates of the points in the image plane \c a and \c b. For each point we have its coordinates \c (xa,ya) in frame \c a and \c (xb,yb) in frame \c b:
+\code
+  std::vector<vpPoint> aP(4), bP(4);
+  std::vector<double> xa(4), ya(4), xb(4), yb(4);
+  for(int i=0 ; i < 4; i++)
+  {
+    oP[i].project(aMo);
+    xa[i] = oP[i].get_x();
+    ya[i] = oP[i].get_y();
+    oP[i].project(bMo);
+    xb[i] = oP[i].get_x();
+    yb[i] = oP[i].get_y();
+  }
+\endcode
+
+We have now matched couples of coordinates of four points that are used to estimate an homography between image plane \c a and \c b. Two methods are available, either using the DLT (Direct Linear Transform) algorithm or the HLM algorithm.
+\code
+  vpHomography aHb ;
+
+  // Compute the homography using DLT
+  vpHomography::DLT(xb, yb, xa, ya, aHb, true);
+  std::cout << "Estimated homography using DLT:\n" << aHb/aHb[2][2] << std::endl;
+
+  // Compute the homography using HLM
+  vpHomography::HLM(xb, yb, xa, ya, true, aHb);
+  std::cout << "Estimated homography using HLM:\n" << aHb/aHb[2][2] << std::endl;
+\endcode
+
+\note Note that vpHomography::HLM() allows to consider points that are not coplanar.
+  
+Once the homography is estimated, the vpHomography class allows to extract the 3D homogeneous transformation between frames \c a and \c b:
+\code
+  vpRotationMatrix aRb;
+  vpTranslationVector atb;
+  vpColVector n;
+  aHb.computeDisplacement(aRb, atb, n);
+\endcode
+
+Just for fun we print the values to this transformation using:
+\code
+  std::cout << "\nEstimated displacement:"  << std::endl;
+  std::cout << " atb: " << atb.t() << std::endl;
+  vpThetaUVector atub;
+  atub.buildFrom(aRb);
+  std::cout << " athetaub: ";
+  for(unsigned int i=0; i<3; i++)
+    std::cout << vpMath::deg(atub[i]) << " ";
+  std::cout << std::endl;
+  std::cout << " n: " << n.t() << std::endl;
+\endcode
+
+This code lead to the following output:
+\code
+Estimated displacement:
+ atb: 0.2016519874  -0.1008259937  0.1008259937  
+ athetaub: -3 20 5 
+ n: 0.2588190451  -1.124100812e-14  0.9659258263  
+\endcode
+where we can see that the values for \c atb and \c athetaub are the one specified at the beginning of the source code during \c aMb initialization.
+
+After we show how to retrieve the coordinates in pixels of a point (here point [3]) in the corresponding images using camera parameters:
+\code
+  vpImagePoint iPa, iPb;
+  vpCameraParameters cam;
+  vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], iPb);
+  vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], iPa);
+
+  std::cout << " Ground truth: Point 3 in pixels in frame b: " << iPb << std::endl;
+  std::cout << " Ground truth: Point 3 in pixels in frame a: " << iPa << std::endl;
+\endcode
+
+At the end, we show how to project a point with pixel coordinates from image \c b to image \c a using the homography:
+\code
+  std::cout << "Estimation from homography: Point 3 in pixels in frame a: "
+            << vpHomography::project(cam, aHb, iPb) << std::endl;
+\endcode
+
+This last part of the code produce the following output:
+\code
+Ground truth: Point 3 in pixels in frame b: 377.9450564, 193.9928711
+Ground truth: Point 3 in pixels in frame a: 353.8501593, 486.1851856
+Estimation from homography: Point 3 in pixels in frame a: 353.8501593, 486.1851856
+\endcode
+
+
+\section ransac Ransac or robust homography estimation
+
+This section  follows the \ref tutorial-matching. It explains how to exploit couples of matched points obtained using SURF detector in order to estimate an homography that allows to reject mismatched couples of points. The homography is then used to track a postcard from its initial position in the reference image.
+
+
+Let us consider the following source code also available in tutorial-matching-surf-homography.cpp. 
+
+\include tutorial-matching-surf-homography.cpp
+
+The command line allows to use either Ransac algorithm of a robust M-estimator approach:
+\code
+% ./tutorial-matching-surf-homography 0 // to run Ransac
+% ./tutorial-matching-surf-homography 1 // to run the robust M-estimator
+\endcode
+
+Here after is the resulting video. The left image represents the reference image. The right images correspond to the successive images of the input video. All the green lines extremities represent the points that are well matched and used in the homography estimation process. All the red lines represent couple of matched points that are rejected by the robust estimator.
+
+\htmlonly
+<iframe width="560" height="315" src="http://www.youtube.com/embed/g-aEH5Chmsg" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+Now, let us explain the new lines that were introduced to estimate the homography.
+
+First we detect the command line arguments to be able later to user etheir Ransac or the robust M-estimator:
+\code
+  int method = 0;
+
+  if (argc > 1)
+    method = atoi(argv[1]);
+
+  if (method == 0)
+    std::cout << "Uses Ransac to estimate the homography" << std::endl;
+  else
+    std::cout << "Uses a robust scheme to estimate the homography" << std::endl;
+\endcode
+
+We also initialize the coordinates of the pixels in the reference image that correspond to the postcard corners. These coordinates were obtained after a user initial click. To simplify the code, we set directly the coordinates of the points:
+\code
+  vpImagePoint corner_ref[4];
+  corner_ref[0].set_ij(115,  64);
+  corner_ref[1].set_ij( 83, 253);
+  corner_ref[2].set_ij(282, 307);
+  corner_ref[3].set_ij(330,  72);
+\endcode
+
+Using these coordinates, we display red lines arround the postcard:
+\code
+  for (unsigned int i=0; i<4; i++) {
+    vpDisplay::displayCross(Idisp, corner_ref[i], 12, vpColor::red);
+  }
+  vpDisplay::flush(Idisp);
+\endcode
+
+We need also to define roughly the parameters of our camera:
+\code
+  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+\endcode
+
+For each new image, once points are matched using:
+\code
+    unsigned int nbMatch = surf.matchPoint(I);
+\endcode
+
+We allocate new containers useful for the homography estimation. The coordinates of the points in the reference image will be stored in \c (mPref_x, mPref_y), while the corresponding coordinates in the current image will be stored in \c (mPcur_x, mPcur_y). We also allocate \c inliers a vector of boolean that will indicate if a couple of point is an inlier or an outlier:
+\code
+    std::vector<double> mPref_x(nbMatch), mPref_y(nbMatch);
+    std::vector<double> mPcur_x(nbMatch), mPcur_y(nbMatch); 
+    std::vector<bool> inliers(nbMatch);
+\endcode
+
+To estimate the homography we need first to convert the points from pixel to meters:
+\code
+      vpPixelMeterConversion::convertPoint(cam, matched_ref, mPref_x[i], mPref_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, matched_cur, mPcur_x[i], mPcur_y[i]);
+\endcode
+
+We can now estimate the homography using either ransac or the robust M-estimator approach:
+\code
+    double residual;
+    if (method == 0)
+      vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
+                           mPref_x.size()/2, 2.0/cam.get_px(), true);
+    else
+      vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual, 
+                           0.4, 4, true);
+\endcode
+
+For Ransac we consider that at least 50 percent of the points should be inliers (\c mPref_x.size()/2) to reach a consensus and that a couple of point is stated as an inlier if the reprojection error is lower than 2 pixels (\c 2.0/cam.get_px()).
+
+Then using the homography, we project the coordinates of the postcard corners in the current image:
+\code
+    vpImagePoint corner_ref[4], corner_cur[4];
+    for (int i=0; i< 4; i++) {
+      corner_cur[i] = vpHomography::project(cam, curHref, corner_ref[i]);
+    }
+\endcode
+
+We use these coordinates to draw blue lines arround the postcard:
+\code
+    vpImagePoint offset(0, I.getWidth());
+    for (int i=0; i< 4; i++) {
+      vpDisplay::displayLine(Idisp,
+                             corner_cur[i]       + offset,
+                             corner_cur[(i+1)%4] + offset,
+                             vpColor::blue, 3);
+    }
+\endcode
+
+Since the homography estimation updates the status of the couples of matched points as inliers or outliers, between the matched points we are able to draw green lines when they are inliers, or red lines when they are outliers.
+\code
+    for (unsigned int i = 0; i < nbMatch; i++) {
+      if(inliers[i] == true)
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::green);
+      else
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::red);
+    }
+\endcode
+
+*/
