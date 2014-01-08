@@ -13,12 +13,20 @@ ViSP under development version
     . Add missing const to member functions and arguments passed by reference.
     . Introduction of a new option BUILD_WITH_STATIC_CRT that allows to set
       /MT (default) or /MD msvc build option
-    . Compatibility with msvc11 (2012) and msvc12 (2013)
+    . Compatibility with msvc11 (2012), msvc12 (2013) and open solaris 11
+    . Trace and debug can now be enabled/disabled using CMake
+      ACTIVATE_DEBUG_TRACE option
+    . Fix errors detected by Covery Scan static code analyser
+    . Improve vpHomography class
   - Examples
     . New example to show how to use the template tracker
   - Tutorials
-    . New image filtering tutorial
-    . New template tracker tutorial
+    . ViSP installation on Fedora
+    . Image filtering
+    . Template tracker
+    . Debug and trace printings
+    . Homography estimation from points
+    . Keypoint matching
   - Bug fixed
     . [16263] libopencv_nonfree for Surf not detected by CMake.
     . [16307] vpVideoReader::setLastFrameIndex() doesn't work.
@@ -26,6 +34,7 @@ ViSP under development version
     . [16465] FTBFS on armhf, ppc, s390: Errors while running CTest
     . [16696] Build with OpenCV fails with msvc (/MT conflicts with /MD)
     . [16781] Unable to open .pgm saved with Matlab imwrite
+    . [16823] Problems with camera calibration code
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
