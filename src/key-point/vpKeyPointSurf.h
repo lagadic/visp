@@ -83,7 +83,7 @@
   The coordinates of the different reference points and matched points
   are given in pixel thanks to the class vpImagePoint. In this
   documentation we do not explain the SURF technics. So if you want to
-  learn more about it you can refere to the following article :
+  learn more about it you can refer to the following article :
   Herbert Bay, Tinne Tuytelaars and Luc Van Gool "SURF: Speeded Up
   Robust Features", Proceedings of the 9th European Conference on
   Computer Vision, Springer LNCS volume 3951, part 1, pp 404--417,
@@ -188,6 +188,8 @@ int main()
 int main() {}
 #endif
   \endcode
+
+  This class is also described in \ref tutorial-matching.
 */
 
 class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
