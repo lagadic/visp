@@ -74,8 +74,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
-#define L 0.1
-#define nbpt 11
 
 /*!
 
@@ -149,11 +147,11 @@ main(int argc, const char ** argv)
       exit (-1);
     }
 
-    int i ;
+    double L=0.1;
+    unsigned int nbpt = 11;
 
     vpPoint P[nbpt]  ;  //  Point to be tracked
-    double xa[nbpt], ya[nbpt] ;
-    double xb[nbpt], yb[nbpt] ;
+    std::vector<double> xa(nbpt), ya(nbpt), xb(nbpt), yb(nbpt);
 
     vpPoint aP[nbpt]  ;  //  Point to be tracked
     vpPoint bP[nbpt]  ;  //  Point to be tracked
@@ -168,15 +166,20 @@ main(int argc, const char ** argv)
     P[7].setWorldCoordinates(-2*L,-L, -3*L ) ;
     P[8].setWorldCoordinates(-5*L,-5*L, 0 ) ;  // inlier
     P[9].setWorldCoordinates(-2*L,+3*L, 4*L ) ;
-    P[10].setWorldCoordinates(-2*L,-0.5*L, 0 ) ;
-    /*
-    P[5].setWorldCoordinates(10,20, 0 ) ;
-    P[6].setWorldCoordinates(-10,12, 0 ) ;
-  */
+    P[10].setWorldCoordinates(-2*L,-0.5*L, 0 ) ; // inlier
+
+    std::vector<bool> inliers_ground_truth(nbpt, false);
+    inliers_ground_truth[0] = true;
+    inliers_ground_truth[1] = true;
+    inliers_ground_truth[2] = true;
+    inliers_ground_truth[3] = true;
+    inliers_ground_truth[8] = true;
+    inliers_ground_truth[10] = true;
+
     vpHomogeneousMatrix bMo(0,0,1, 0,0,0) ;
     vpHomogeneousMatrix aMb(0.1,0.1,0.1,vpMath::rad(10),0,vpMath::rad(40)) ;
     vpHomogeneousMatrix aMo =aMb*bMo ;
-    for(i=0 ; i < nbpt ; i++)
+    for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(aMo) ;
       aP[i] = P[i] ;
@@ -184,7 +187,7 @@ main(int argc, const char ** argv)
       ya[i] = P[i].get_y() ;
     }
 
-    for(i=0 ; i < nbpt ; i++)
+    for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(bMo) ;
       bP[i] = P[i] ;
@@ -196,11 +199,10 @@ main(int argc, const char ** argv)
     vpRotationMatrix aRb  ;
     vpTranslationVector aTb ;
     vpColVector n ;
-    vpTRACE("Compare with built homography H = R + t/d n ") ;
+    std::cout << "Compare with built homography H = R + t/d n " << std::endl;
     vpPlane bp(0,0,1,1) ;
     vpHomography aHb_built(aMb,bp) ;
-    vpTRACE( "aHb built from the displacement ") ;
-    std::cout <<  std::endl <<aHb_built/aHb_built[2][2] << std::endl ;
+    std::cout << "aHb built from the displacement: \n" << aHb_built/aHb_built[2][2] << std::endl ;
 
     aHb_built.computeDisplacement(aRb, aTb, n) ;
     std::cout << "Rotation aRb: " <<std::endl ;
@@ -211,12 +213,27 @@ main(int argc, const char ** argv)
     std::cout << (n).t() <<std::endl ;
 
     std::cout << "-------------------------------" <<std::endl ;
-    vpTRACE(" ") ;
-    vpHomography aHb ;
-    vpHomography::ransac(nbpt,xb,yb,xa,ya, aHb) ;
+    vpHomography aHb;
+    std::vector<bool> inliers;
+    double residual;
+    // Suppose px=1000. Set the threshold to 2 pixels => 2/1000
+    // In the data we have 6 inliers. We request that at least 6 are retrieved
+    vpHomography::ransac(xb, yb, xa, ya, aHb, inliers, residual, 6, 2./1000) ;
 
-    std::cout << aHb << std::endl ;
-    return 0;
+    std::cout << "aHb estimated using ransac:\n" << aHb << std::endl ;
+    std::cout << "Inliers indexes (should be 0,1,2,3,8,10): ";
+    for (unsigned int i=0; i< inliers.size(); i++)
+      if (inliers[i]) std::cout << i << ",";
+    std::cout << std::endl;
+
+    if (inliers == inliers_ground_truth) {
+      std::cout << "Ransac estimation succeed" << std::endl;
+      return 0;
+    }
+    else {
+      std::cout << "Ransac estimation fails" << std::endl;
+      return 1;
+    }
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;

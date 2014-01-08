@@ -240,16 +240,16 @@ HLM2D(unsigned int nb_pts,
     M[3*j+2][8] =  0 ;
   }
 
-  /** calcul de la pseudo-inverse V de M et des valeurs singulières **/
+  /** calcul de la pseudo-inverse V de M et des valeurs singulieres **/
   M.svd(sv,V);
 
   /*****
 	La meilleure solution est le vecteur de V associe
 	a la valeur singuliere la plus petite en valeur	absolu.
 	Pour cela on parcourt la matrice des valeurs singulieres
-	et on repère la plus petite valeur singulière, on en profite
+	et on repere la plus petite valeur singuliere, on en profite
 	pour effectuer un controle sur le rang de la matrice : pas plus
-	de 2 valeurs singulières quasi=0
+	de 2 valeurs singulieres quasi=0
   *****/
   vals_inf = fabs(sv[0]) ;
   vect = 0 ;
@@ -268,7 +268,7 @@ HLM2D(unsigned int nb_pts,
   }
 
 
-  /** cas d'erreur : plus de 2 valeurs singulières =0 **/
+  /** cas d'erreur : plus de 2 valeurs singulieres =0 **/
   if (contZeros > 2) {
     //vpERROR_TRACE("matrix is rank deficient");
     throw (vpMatrixException(vpMatrixException::matrixError,
@@ -320,8 +320,8 @@ HLM3D(unsigned int nb_pts,
   unsigned int cont_pts;			/* Pour compter le nombre de points dans l'image */
   //unsigned int nl;			/*** Nombre de lignes ***/
   unsigned int nc ;			/*** Nombre de colonnes ***/
-  unsigned int  pts_ref[4];		/*** définit lesquels des points de
-				     l'image sont les points de référence***/
+  unsigned int  pts_ref[4];		/*** definit lesquels des points de
+				     l'image sont les points de reference***/
   /***  ***/
   int perm;			/***  Compte le nombre de permutations, quand le nombre
 				      de permutations =0 arret de l'ordonnancement **/
@@ -345,10 +345,10 @@ HLM3D(unsigned int nb_pts,
 
 
   vpMatrix H_int(3,3) ;
-  vpMatrix pn((nb_pts-3),3) ; //points courant nouveau repère
+  vpMatrix pn((nb_pts-3),3) ; //points courant nouveau repere
 
 
-  vpMatrix pnd((nb_pts-3),3) ; //points dérivés nouveau repère
+  vpMatrix pnd((nb_pts-3),3) ; //points derives nouveau repere
 
   /* preparation du changement de repere */
   /****
@@ -491,7 +491,7 @@ HLM3D(unsigned int nb_pts,
 	pour obtenir une solution il faut au moins 5 equations independantes
 	donc il faut au moins la mise en correspondence de 3+5 points
   *****/
-  vpColVector sv(nc) ; //Vecteur contenant les valeurs singulières
+  vpColVector sv(nc) ; //Vecteur contenant les valeurs singulieres
 
   CtC.svd(sv,V) ;
 
@@ -521,9 +521,9 @@ HLM3D(unsigned int nb_pts,
   }
 
   /*****
-	Parcours de la matrice ordonnée des valeurs singulières
-	On note "cont_zeros" le nbre de valeurs quasi= à 0.
-	On note "vect" le rang de la plus petite valeur singlière
+	Parcours de la matrice ordonnee des valeurs singulieres
+	On note "cont_zeros" le nbre de valeurs quasi= a 0.
+	On note "vect" le rang de la plus petite valeur singliere
 	en valeur absolu
   *****/
 
@@ -605,29 +605,30 @@ HLM3D(unsigned int nb_pts,
   }
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /**************************************************************************
  * NOM :
  * Homographie_CrvMafCalculHomographie
  *
  * DESCRIPTION :
- * Calcul de l'homographie, en fonction de la cible désirée et de la cible
- * en cours. C'est une estimation linéaire.
- * Cette procédure n'effectue pas elle-même le calcul de l'homographie :
- * elle se contente d'appeler la bonne sous-procédure.
- * Cette procédure est appellée par "crv_maf_calcul_tomographie".
+ * Calcul de l'homographie, en fonction de la cible desiree et de la cible
+ * en cours. C'est une estimation lineaire.
+ * Cette procedure n'effectue pas elle-meme le calcul de l'homographie :
+ * elle se contente d'appeler la bonne sous-procedure.
+ * Cette procedure est appellee par "crv_maf_calcul_tomographie".
  *
  ****************************************************************************
  * ENTREES :
  *  STR_CIBLE_ASSER   *cible_asser  	Pointeur sur structure contenant les
- *                                       commandes du robot, les données de la
+ *                                       commandes du robot, les donnees de la
  *					carte...
  *					Voir "cvda/edixaa/param/robot.h"
- *	STR_VITESSE_ROBOT *data_common   Pointeur sur la structure décrivant la
+ *	STR_VITESSE_ROBOT *data_common   Pointeur sur la structure decrivant la
  *					cible d'asservissement.
  *					Voir "cvda/edixia/param/param.h"
  *	STR_MACH_DIV 		*machine_div   Pointeur sur structure contenant divers
- *					paramètres de configuration du robot.
+ *					parametres de configuration du robot.
  *					Voir "cvda/edixia/param/param.h"
  *
  * SORTIES :
@@ -636,7 +637,7 @@ HLM3D(unsigned int nb_pts,
 
  *
  ****************************************************************************
- * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5ème année.
+ * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
  *
  * DATE DE CREATION : 01/12/98
  *
@@ -690,9 +691,57 @@ HLM(unsigned int q_cible,
 
 
 } /* fin procedure calcul_homogaphie */
+#endif // #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+void
+HLM(unsigned int q_cible,
+    const std::vector<double> &xm, const std::vector<double> &ym,
+    const std::vector<double> &xmi, const std::vector<double> &ymi,
+    vpMatrix &H)
+{
+  unsigned int nbpt = xm.size();
+
+  /****
+       on regarde si il y a au moins un point mais pour l'homographie
+       il faut au moins quatre points
+  ****/
+  vpMatrix pd(nbpt,3) ;
+  vpMatrix p(nbpt,3) ;
+
+  for (unsigned int i=0;i<nbpt;i++)  {
+    /****
+   on assigne les points fournies par la structure robot
+   pour la commande globale
+    ****/
+    pd[i][0] = xmi[i];
+    pd[i][1] = ymi[i];
+    pd[i][2] = 1.0 ;
+    p[i][0] = xm[i];
+    p[i][1] = ym[i];
+    p[i][2] = 1.0 ;
+  }
+
+  switch (q_cible) {
+  case (1):
+  case (2):
+    /* La cible est planaire  de type points   */
+
+    HLM2D(nbpt,pd,p,H);
+
+    break;
+  case (3) : /* cible non planaire : chateau */
+    /* cible non planaire  de type points   */
+    HLM3D(nbpt,pd,p,H);
+    break;
+  } /* fin switch */
 
 
-#endif
+
+} /* fin procedure calcul_homogaphie */
+
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 /*!
   \brief Computes the homography matrix from planar \cite TheseMalis or non planar points
@@ -712,19 +761,14 @@ HLM(unsigned int q_cible,
 
 */
 void vpHomography::HLM(unsigned int n,
-		       double *xb, double *yb,
-		       double *xa, double *ya ,
-		       bool isplanar,
-		       vpHomography &aHb)
+           double *xb, double *yb,
+           double *xa, double *ya ,
+           bool isplanar,
+           vpHomography &aHb)
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
   unsigned int i,j;
   unsigned int q_cible;
   vpMatrix H; // matrice d'homographie en metre
-
-  aHb.setIdentity();
-
 
   if (isplanar)
     q_cible =1;
@@ -736,7 +780,56 @@ void vpHomography::HLM(unsigned int n,
   for(i=0;i<3;i++)
     for(j=0;j<3;j++)
       aHb[i][j] = H[i][j];
+}
 
-#endif
+#endif //#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+/*!
+  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates, computes the
+  homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}\f$
+  using Ezio Malis linear method (HLM) \cite Malis00b.
+
+  This method can consider points that are planar or non planar. The algorithm for planar
+  scene implemented in this file is described in Ezio
+  Malis PhD thesis \cite TheseMalis.
+
+  \param xb, yb : Coordinates vector of matched points in image b. These coordinates are expressed in meters.
+  \param xa, ya : Coordinates vector of matched points in image a. These coordinates are expressed in meters.
+  \param isplanar : If true the points are assumed to be in a plane,
+  otherwise there are assumed to be non planar.
+  \param aHb : Estimated homography that relies the transformation from image a to image b.
+
+  If the boolean isplanar is true the points are assumed to be in a plane
+  otherwise there are assumed to be non planar.
+
+  \sa DLT() when the scene is planar.
+*/
+void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> &yb,
+                       const std::vector<double> &xa, const std::vector<double> &ya,
+                       bool isplanar,
+                       vpHomography &aHb)
+{
+  unsigned int n = xb.size();
+  if (yb.size() != n || xa.size() != n || ya.size() != n)
+    throw(vpException(vpException::dimensionError,
+                      "Bad dimension for HLM shomography estimation"));
+
+  // 4 point are required
+  if(n<4)
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
+
+  // The reference plane is the plane build from the 3 first points.
+  unsigned int q_cible;
+  vpMatrix H; // matrice d'homographie en metre
+
+  if (isplanar)
+    q_cible =1;
+  else
+    q_cible =3;
+
+  ::HLM(q_cible, xa, ya, xb, yb, H) ;
+
+  aHb = H;
 }
 

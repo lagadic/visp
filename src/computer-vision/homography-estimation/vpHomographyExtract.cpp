@@ -51,6 +51,60 @@
 const double vpHomography::sing_threshold = 0.0001;
 
 /*!
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
+
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
+
+*/
+void vpHomography::computeDisplacement(vpRotationMatrix &aRb,
+                                       vpTranslationVector &atb,
+                                       vpColVector &n)
+{
+
+
+  vpColVector nd(3) ;
+  nd[0]=0;nd[1]=0;nd[2]=1;
+
+  computeDisplacement(*this,aRb,atb,n);
+
+}
+
+/*!
+
+  Compute the camera displacement between two images from the homography \f$
+  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
+
+  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
+  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  (vpHomogeneousMatrix).
+
+  \param nd : Input normal vector to the plane used to compar with the normal
+  vector \e n extracted from the homography.
+
+  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+
+  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+
+  \param n : Normal vector to the plane as an output.
+
+*/
+void vpHomography::computeDisplacement(const vpColVector& nd,
+                                       vpRotationMatrix &aRb,
+                                       vpTranslationVector &atb,
+                                       vpColVector &n)
+{
+  computeDisplacement(*this,nd, aRb,atb,n);
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+/*!
 
   Compute the camera displacement between two images from the homography \f$
   {^a}{\bf H}_b \f$.
@@ -79,7 +133,7 @@ void
                                        vpTranslationVector &atb,
                                        vpColVector &n)
 {
-  /**** Déclarations des variables ****/
+  /**** Declarations des variables ****/
 
   vpMatrix aRbint(3,3) ;
   vpColVector svTemp(3), sv(3);
@@ -344,35 +398,6 @@ void
 /*!
 
   Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
-  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
-  (vpHomogeneousMatrix).
-
-  \param nd : Input normal vector to the plane used to compar with the normal
-  vector \e n extracted from the homography.
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-  \sa computeDisplacement(const vpHomography &, const vpColVector &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)
-*/
-void
-    vpHomography::computeDisplacement(const vpColVector& nd,
-                                      vpRotationMatrix &aRb,
-                                      vpTranslationVector &atb,
-                                      vpColVector &n)
-{
-  computeDisplacement(*this,nd, aRb,atb,n);
-}
-/*!
-
-  Compute the camera displacement between two images from the homography \f$
   {^a}{\bf H}_b \f$.
 
   Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
@@ -394,7 +419,7 @@ void
                                        vpTranslationVector &atb,
                                        vpColVector &n)
 {
-  /**** Déclarations des variables ****/
+  /**** Declarations des variables ****/
 
   vpMatrix aRbint(3,3) ;
   vpColVector svTemp(3), sv(3);
@@ -655,32 +680,6 @@ void
 
 }
 
-
-/*!
-  Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-  \sa computeDisplacement(const vpHomography &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)
-*/
-void vpHomography::computeDisplacement(vpRotationMatrix &aRb,
-                                       vpTranslationVector &atb,
-                                       vpColVector &n)
-{
-
-
-  vpColVector nd(3) ;
-  nd[0]=0;nd[1]=0;nd[2]=1;
-
-  computeDisplacement(*this,aRb,atb,n);
-
-}
-
 void vpHomography::computeDisplacement(const vpMatrix &H,
                                       const double x,
                                       const double y,
@@ -697,7 +696,7 @@ void vpHomography::computeDisplacement(const vpMatrix &H,
   vT.clear();
   vN.clear();
 
-  /**** Déclarations des variables ****/
+  /**** Declarations des variables ****/
   int cas1 =1, cas2=2, cas3=3, cas4=4;
   int cas =0;
   bool norm1ok=false, norm2ok = false,norm3ok=false,norm4ok =false;
@@ -1333,6 +1332,7 @@ void vpHomography::computeDisplacement(const vpMatrix &H,
   printf("fin : Homographie_EstimationDeplacementCamera\n");
 #endif
 }
+#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
@@ -1355,7 +1355,7 @@ void vpHomography::computeDisplacement(const vpMatrix H,
   vT.kill();
   vN.kill();
 
-  /**** Déclarations des variables ****/
+  /**** Declarations des variables ****/
   int cas1 =1, cas2=2, cas3=3, cas4=4;
   int cas =0;
   bool norm1ok=false, norm2ok = false,norm3ok=false,norm4ok =false;

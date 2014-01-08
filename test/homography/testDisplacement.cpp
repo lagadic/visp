@@ -145,10 +145,7 @@ main(int argc, const char ** argv)
 
       vpHomography H(M,p) ;
 
-      vpTRACE(" ") ;
       std::cout << "H" <<std::endl <<H << std::endl ;
-
-      vpTRACE(" ") ;
 
       vpColVector n ;
       vpTranslationVector T ;
@@ -156,17 +153,15 @@ main(int argc, const char ** argv)
       H.computeDisplacement(R,T,n) ;
 
       std::cout << "R" <<std::endl << R ;
-      std::cout << "T" <<std::endl << T.t()  ;
-      std::cout << "n" <<std::endl << n.t()  ;
-      vpTRACE(" ") ;
-      vpTRACE(" ") ;
+      std::cout << "T" <<std::endl << T.t() << std::endl;
+      std::cout << "n" <<std::endl << n.t() << std::endl;
     }
     std::cout <<"------------------------------------------------------" << std::endl ;
 
     {
       vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
-      std::cout << "Initialization " <<std::endl ;
+      std::cout << "Initialization " << std::endl ;
       // std::cout << tu << std::endl ;
 
       std::cout << "From vpThetaUVector to vpRotationMatrix " << std::endl ;
@@ -180,15 +175,12 @@ main(int argc, const char ** argv)
       M[1][3] = 0.31 ;
       M[2][3] = 0.5 ;
 
-      std::cout << "M" <<std::endl <<M << std::endl ;
+      std::cout << "M" << std::endl << M << std::endl ;
       vpPlane p(0,0,1,1) ;
 
       vpHomography H(M,p) ;
 
-      vpTRACE(" ") ;
-      std::cout << "H" <<std::endl <<H << std::endl ;
-
-      vpTRACE(" ") ;
+      std::cout << "H" << std::endl << H << std::endl ;
 
       vpColVector n ;
       vpTranslationVector T ;
@@ -196,10 +188,8 @@ main(int argc, const char ** argv)
       H.computeDisplacement(R,T,n) ;
 
       std::cout << "R" <<std::endl << R ;
-      std::cout << "T" <<std::endl << T.t()  ;
-      std::cout << "n" <<std::endl << n.t()  ;
-      vpTRACE(" ") ;
-      vpTRACE(" ") ;
+      std::cout << "T" <<std::endl << T.t() << std::endl;
+      std::cout << "n" <<std::endl << n.t() << std::endl;
     }
 
     std::cout <<"------------------------------------------------------" << std::endl ;
@@ -216,26 +206,24 @@ main(int argc, const char ** argv)
       M[1][3] =- 0.31 ;
       M[2][3] = 0.5 ;
 
-      std::cout << "M" <<std::endl <<M << std::endl ;
+      std::cout << "M" << std::endl << M << std::endl ;
       vpPlane p(0.4,-0.5,0.5,1) ;
 
       vpHomography H(M,p) ;
 
-      vpTRACE(" ") ;
-      std::cout << "H" <<std::endl <<H << std::endl ;
+      std::cout << "H" << std::endl << H << std::endl ;
 
-      vpTRACE(" ") ;
       vpColVector n ;
       vpTranslationVector T ;
       H.computeDisplacement(R,T,n) ;
 
       std::cout << "R" <<std::endl << R ;
-      std::cout << "T" <<std::endl << T.t()  ;
-      std::cout << "n" <<std::endl << n.t()  ;
+      std::cout << "T" <<std::endl << T.t() << std::endl;
+      std::cout << "n" <<std::endl << n.t() << std::endl;
 
       vpPlane p1(n[0],n[1],n[2],1.0) ;
       H.buildFrom(R,T,p1) ;
-      std::cout << "H" <<std::endl <<H << std::endl ;
+      std::cout << "H" << std::endl << H << std::endl ;
     }
     return 0;
   }

@@ -347,7 +347,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
           double invDc = 1.0 / plan.getD();
           
           //Create the homography
-          vpHomography cdHc;
+          vpMatrix cdHc;
           vpGEMM(cdtc, Nc, -invDc, cdRc, 1.0, cdHc, VP_GEMM_B_T);
           cdHc /= cdHc[2][2];
           

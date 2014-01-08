@@ -55,6 +55,8 @@
 const double vpHomography::threshold_rotation = 1e-7;
 const double vpHomography::threshold_displacement = 1e-18;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 static void
 updatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
 {
@@ -746,3 +748,4 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
 
 }
 
+#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS

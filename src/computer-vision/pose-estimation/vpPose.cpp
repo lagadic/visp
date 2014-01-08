@@ -673,8 +673,8 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
                           vpHomogeneousMatrix & cMo)
 {
 
-  double rectx[4] ;
-  double recty[4] ;
+  std::vector<double> rectx(4) ;
+  std::vector<double> recty(4) ;
   rectx[0]= 0 ;
   recty[0]=0 ;
   rectx[1]=1 ;
@@ -683,8 +683,8 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   recty[2]=1 ;
   rectx[3]=0 ;
   recty[3]=1 ;
-  double irectx[4] ;
-  double irecty[4] ;
+  std::vector<double>  irectx(4) ;
+  std::vector<double>  irecty(4) ;
   irectx[0]=(p1.get_x()) ;
   irecty[0]=(p1.get_y()) ;
   irectx[1]=(p2.get_x()) ;
@@ -698,8 +698,8 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   vpMatrix H(3,3);
   vpHomography hom;
 
-  //  vpHomography::HartleyDLT(4,rectx,recty,irectx,irecty,hom);
-  vpHomography::HLM(4,rectx,recty,irectx,irecty,1,hom);
+  //  vpHomography::HartleyDLT(rectx,recty,irectx,irecty,hom);
+  vpHomography::HLM(rectx,recty,irectx,irecty,1,hom);
   for (unsigned int i=0 ; i < 3 ; i++)
     for(unsigned int j=0 ; j < 3 ; j++)
       H[i][j] = hom[i][j] ;

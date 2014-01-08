@@ -20,6 +20,10 @@
 #include <visp/vpColVector.h>
 #include <visp/vpRansac.h>
 
+#include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpMeterPixelConversion.h>
+
 #define vpEps 1e-6
 
 /*!
@@ -27,6 +31,7 @@
   \brief function used to estimate an homography using the Ransac algorithm
 */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 bool
 iscolinear(double *x1, double *x2, double *x3)
@@ -40,6 +45,11 @@ iscolinear(double *x1, double *x2, double *x3)
   //return (v.sumSquare() < vpEps);
   // Assume inhomogeneous coords, or homogeneous coords with equal
   // scale.
+  return ((vpColVector::cross(p2-p1, p3-p1).sumSquare()) < vpEps);
+}
+bool
+isColinear(vpColVector &p1, vpColVector &p2, vpColVector &p3)
+{
   return ((vpColVector::cross(p2-p1, p3-p1).sumSquare()) < vpEps);
 }
 
@@ -149,14 +159,49 @@ vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind)
 	   iscolinear(pb[0],pb[2],pb[3]) ||
 	   iscolinear(pb[1],pb[2],pb[3]));
 }
+bool
+vpHomography::degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
+                                      const std::vector<double> &xa, const std::vector<double> &ya)
+{
+  unsigned int n = xb.size();
+  if (n < 4)
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
+
+  std::vector<vpColVector> pa(n), pb(n);
+  for (unsigned i=0; i<n;i++) {
+    pa[i].resize(3);
+    pa[i][0] = xa[i];
+    pa[i][1] = ya[i];
+    pa[i][2] = 1;
+    pb[i].resize(3);
+    pb[i][0] = xb[i];
+    pb[i][1] = yb[i];
+    pb[i][2] = 1;
+  }
+
+  for (unsigned int i = 0; i < n-2; i++) {
+    for (unsigned int j = i+1; j < n-1; j++) {
+      for (unsigned int k = j+1; k < n ; k++)
+      {
+        if (isColinear(pa[i], pa[j], pa[k])) {
+          return true;
+        }
+        if (isColinear(pb[i], pb[j], pb[k])){
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
 // Fit model to this random selection of data points.
 void
 vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
   unsigned int i ;
   unsigned int n = x.getRows()/4 ;
-  double xa[4], xb[4];
-  double ya[4], yb[4];
+  std::vector<double> xa(4), xb(4);
+  std::vector<double> ya(4), yb(4);
   unsigned int n2 = n * 2;
   unsigned int ind2;
   for(i=0 ; i < 4 ; i++)
@@ -171,8 +216,7 @@ vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVect
 
   vpHomography aHb ;
   try {
-    vpHomography::HLM(4,xb, yb, xa, ya, true, aHb);
-    //vpHomography::HLM(8, xb, yb, xa, ya, false, aHb); //modified 13/09
+    vpHomography::HLM(xb, yb, xa, ya, true, aHb);
   }
   catch(...)
     {
@@ -240,6 +284,7 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 
   return 0 ;
 }
+#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 
 void
@@ -261,14 +306,20 @@ vpHomography::initRansac(unsigned int n,
   }
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+/*!
+  \deprecated This method is deprecated. You should rather use
+  vpHomography::ransac(const std::vector<double> &, const std::vector<double> &, const std::vector<double> &, const std::vector<double> &, vpHomography &, std::vector<bool> &, double &, unsigned int, double, bool)
+ */
 bool
 vpHomography::ransac(unsigned int n,
-		     double *xb, double *yb,
-		     double *xa, double *ya ,
-		     vpHomography &aHb,
-		     int consensus,
-		     double threshold
-		     )
+                     double *xb, double *yb,
+                     double *xa, double *ya ,
+                     vpHomography &aHb,
+                     int consensus,
+                     double threshold
+                     )
 {
   vpColVector x ;
   vpHomography::initRansac(n, xb, yb, xa, ya, x) ;
@@ -291,6 +342,8 @@ vpHomography::ransac(unsigned int n,
 }
 
 /*!
+  \deprecated This method is deprecated. You should rather use
+  vpHomography::ransac(const std::vector<double> &, const std::vector<double> &, const std::vector<double> &, const std::vector<double> &, vpHomography &, std::vector<bool> &, double &, unsigned int, double, bool)
 
   Computes homography matrix \f$ b^H_a \f$ such as \f$X_b = b^H_a X_a \f$ with
   \f$ X_a = (xa, ya)^t \f$ and \f$ X_b = (xb, yb)^t \f$.
@@ -321,14 +374,14 @@ vpHomography::ransac(unsigned int n,
 
 */
 bool vpHomography::ransac(unsigned int n,
-			  double *xb, double *yb,
-			  double *xa, double *ya ,
-			  vpHomography &bHa,
-			  vpColVector &inliers,
-			  double& /* residual */,
-			  int consensus,
-			  double threshold,
-			  double areaThreshold)
+                          double *xb, double *yb,
+                          double *xa, double *ya ,
+                          vpHomography &bHa,
+                          vpColVector &inliers,
+                          double /* residual */,
+                          int consensus,
+                          double threshold,
+                          double areaThreshold)
 {
   vpColVector x ;
   vpHomography::initRansac(n, xb, yb, xa, ya, x);
@@ -348,9 +401,216 @@ bool vpHomography::ransac(unsigned int n,
   bHa /= bHa[2][2];
   return ransacable;
 }
+#endif //#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates, computes the
+  homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}\f$
+  using Ransac algorithm.
+
+  \param xb, yb : Coordinates vector of matched points in image b. These coordinates are expressed in meters.
+  \param xa, ya : Coordinates vector of matched points in image a. These coordinates are expressed in meters.
+  \param aHb : Estimated homography that relies the transformation from image a to image b.
+  \param inliers : Vector that indicates if a matched point is an inlier (true) or an outlier (false).
+  \param residual : Global residual computed as
+  \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the
+  number of inliers.
+
+  \param nbInliersConsensus : Minimal number of points requested to fit the estimated homography.
+
+  \param threshold : Threshold for outlier removing. A point is considered as an outlier if the reprojection error
+  \f$\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|\f$ is greater than this threshold.
+
+  \param normalization : When set to true, the coordinates of the points are normalized. The normalization
+  carried out is the one preconized by Hartley.
+
+  \return true if the homography could be computed, false otherwise.
+
+*/
+bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<double> &yb,
+                          const std::vector<double> &xa, const std::vector<double> &ya,
+                          vpHomography &aHb,
+                          std::vector<bool> &inliers,
+                          double &residual,
+                          unsigned int nbInliersConsensus,
+                          double threshold,
+                          bool normalization)
+{
+  unsigned int n = xb.size();
+  if (yb.size() != n || xa.size() != n || ya.size() != n)
+    throw(vpException(vpException::dimensionError,
+                      "Bad dimension for robust homography estimation"));
+
+  // 4 point are required
+  if(n<4)
+    throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
+
+  vpUniRand random((const long)time(NULL)) ;
+
+  std::vector<unsigned int> best_consensus;
+  std::vector<unsigned int> cur_consensus;
+  std::vector<unsigned int> cur_outliers;
+  std::vector<unsigned int> cur_randoms;
+
+  std::vector<unsigned int> rand_ind;
+
+  unsigned int nbMinRandom = 4 ;
+  unsigned int ransacMaxTrials = 1000;
+  unsigned int maxDegenerateIter = 1000;
+
+  unsigned int nbTrials = 0;
+  unsigned int nbDegenerateIter = 0;
+  unsigned int nbInliers = 0;
+
+  bool foundSolution = false;
+
+  std::vector<double> xa_rand(nbMinRandom);
+  std::vector<double> ya_rand(nbMinRandom);
+  std::vector<double> xb_rand(nbMinRandom);
+  std::vector<double> yb_rand(nbMinRandom);
+
+  if (inliers.size() != n)
+    inliers.resize(n);
+
+  while (nbTrials < ransacMaxTrials && nbInliers < nbInliersConsensus)
+  {
+    cur_outliers.clear();
+    cur_randoms.clear();
+
+    bool degenerate = true;
+    while(degenerate == true){
+      std::vector<bool> usedPt(n, false);
+
+      rand_ind.clear();
+      for(unsigned int i = 0; i < nbMinRandom; i++)
+      {
+        // Generate random indicies in the range 0..n
+        unsigned int r = (unsigned int)ceil(random()*n) -1;
+        while(usedPt[r]) {
+          r = (unsigned int)ceil(random()*n) -1;
+        }
+        usedPt[r] = true;
+        rand_ind.push_back(r);
+
+        xa_rand[i] = xa[r];
+        ya_rand[i] = ya[r];
+        xb_rand[i] = xb[r];
+        yb_rand[i] = yb[r];
+      }
+
+      try{
+        if (! vpHomography::degenerateConfiguration(xb_rand, yb_rand, xa_rand, ya_rand)) {
+          vpHomography::DLT(xb_rand, yb_rand, xa_rand, ya_rand, aHb, normalization);
+         degenerate = false;
+        }
+      }
+      catch(vpException &e){
+        degenerate = true;
+      }
+
+      nbDegenerateIter ++;
+
+      if (nbDegenerateIter > maxDegenerateIter){
+        vpERROR_TRACE("Unable to select a nondegenerate data set");
+        throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
+      }
+    }
+
+    aHb /= aHb[2][2] ;
+
+    // Computing Residual
+    double r = 0;
+    vpColVector a(3), b(3), c(3) ;
+    for (unsigned int i=0 ; i < nbMinRandom ; i++) {
+      a[0] = xa_rand[i] ; a[1] = ya_rand[i] ; a[2] = 1 ;
+      b[0] = xb_rand[i] ; b[1] = yb_rand[i] ; b[2] = 1 ;
+
+      c = aHb*b; c /= c[2] ;
+      r += (a-c).sumSquare() ;
+      //cout << "point " <<i << "  " << (a-c).sumSquare()  <<endl ;;
+    }
+
+    // Finding inliers & ouliers
+    r = sqrt(r/nbMinRandom);
+    //std::cout << "Candidate residual: " << r << std::endl;
+    if (r < threshold)
+    {
+      unsigned int nbInliersCur = 0;
+      vpColVector a(3), b(3), c(3);
+      for (unsigned int i = 0; i < n ; i++)
+      {
+        a[0] = xa[i] ; a[1] = ya[i] ; a[2] = 1 ;
+        b[0] = xb[i] ; b[1] = yb[i] ; b[2] = 1 ;
+
+        c = aHb*b ; c /= c[2] ;
+        double error = sqrt((a-c).sumSquare()) ;
+        if(error <= threshold){
+          nbInliersCur++;
+          cur_consensus.push_back(i);
+          inliers[i] = true;
+        }
+        else{
+          cur_outliers.push_back(i);
+          inliers[i] = false;
+        }
+      }
+      //std::cout << "nb inliers that matches: " << nbInliersCur << std::endl;
+      if(nbInliersCur > nbInliers)
+      {
+        foundSolution = true;
+        best_consensus = cur_consensus;
+        nbInliers = nbInliersCur;
+      }
+
+      cur_consensus.clear();
+    }
+
+    nbTrials++;
+    if(nbTrials >= ransacMaxTrials){
+      vpERROR_TRACE("Ransac reached the maximum number of trials");
+      foundSolution = true;
+    }
+  }
+
+  if(foundSolution){
+    if(nbInliers >= nbInliersConsensus)
+    {
+      std::vector<double> xa_best(best_consensus.size());
+      std::vector<double> ya_best(best_consensus.size());
+      std::vector<double> xb_best(best_consensus.size());
+      std::vector<double> yb_best(best_consensus.size());
+
+      for(unsigned i = 0 ; i < best_consensus.size(); i++)
+      {
+        xa_best[i] = xa[best_consensus[i]];
+        ya_best[i] = ya[best_consensus[i]];
+        xb_best[i] = xb[best_consensus[i]];
+        yb_best[i] = yb[best_consensus[i]];
+      }
+
+      vpHomography::DLT(xb_best, yb_best, xa_best, ya_best, aHb, normalization) ;
+      aHb /= aHb[2][2];
+
+      residual = 0 ;
+      vpColVector a(3), b(3), c(3);
+      for (unsigned int i=0 ; i < best_consensus.size() ; i++) {
+        a[0] = xa_best[i] ; a[1] = ya_best[i] ; a[2] = 1 ;
+        b[0] = xb_best[i] ; b[1] = yb_best[i] ; b[2] = 1 ;
+
+        c = aHb*b ; c /= c[2] ;
+        residual += (a-c).sumSquare() ;
+      }
+
+      residual = sqrt(residual/best_consensus.size());
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    return false;
+  }
+}

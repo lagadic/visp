@@ -254,12 +254,13 @@ vpMbtKltPolygon::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomograph
 
   _cTc0.extract(cRc0);
   _cTc0.extract(ctransc0);
-  
+  vpMatrix cHc0(_cHc0);
+
 //   vpGEMM(cRc0, 1.0, invd0, cRc0, -1.0, _cHc0, VP_GEMM_A_T);
-  vpGEMM(ctransc0, N, -invd0, cRc0, 1.0, _cHc0, VP_GEMM_B_T);
-  _cHc0 /= _cHc0[2][2];
+  vpGEMM(ctransc0, N, -invd0, cRc0, 1.0, cHc0, VP_GEMM_B_T);
+  cHc0 /= cHc0[2][2];
   
-  H = _cHc0;
+  H = cHc0;
   
 //   vpQuaternionVector NQuat(N[0], N[1], N[2], 0.0);
 //   vpQuaternionVector RotQuat(cRc0);

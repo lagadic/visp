@@ -149,8 +149,8 @@ main(int argc, const char ** argv)
     int i ;
 
     vpPoint P[nbpt]  ;  //  Point to be tracked
-    double xa[nbpt], ya[nbpt] ;
-    double xb[nbpt], yb[nbpt] ;
+    std::vector<double> xa(nbpt), ya(nbpt) ;
+    std::vector<double> xb(nbpt), yb(nbpt) ;
 
     vpPoint aP[nbpt]  ;  //  Point to be tracked
     vpPoint bP[nbpt]  ;  //  Point to be tracked
@@ -187,18 +187,17 @@ main(int argc, const char ** argv)
     std::cout << "-------------------------------" <<std::endl ;
     vpHomography aHb ;
 
-    vpHomography::HLM(nbpt,xb,yb,xa,ya,true, aHb) ;
+    vpHomography::HLM(xb, yb, xa, ya, true, aHb) ;
 
-    vpTRACE("aHb computed using the Malis paralax  algorithm") ;
     aHb /= aHb[2][2] ;
-    std::cout << std::endl << aHb<< std::endl ;
+    std::cout << "aHb computed using the Malis paralax  algorithm: \n" << aHb<< std::endl ;
 
     vpRotationMatrix aRb  ;
     vpTranslationVector aTb ;
     vpColVector n ;
 
     std::cout << "-------------------------------" <<std::endl ;
-    vpTRACE("extract R, T and n ") ;
+    std::cout << "extract R, T and n " << std::endl;
     aHb.computeDisplacement(aRb, aTb, n) ;
     std::cout << "Rotation: aRb" <<std::endl ;
     std::cout << aRb << std::endl ;
@@ -209,10 +208,10 @@ main(int argc, const char ** argv)
 
 
     std::cout << "-------------------------------" <<std::endl ;
-    vpTRACE("Compare with built homography H = R + t/d ") ;
+    std::cout << "Compare with built homography H = R + t/d " << std::endl ;
     vpPlane bp(0,0,1,1) ;
     vpHomography aHb_built(aMb,bp) ;
-    vpTRACE( "aHb built from the displacement ") ;
+    std::cout << "aHb built from the displacement " << std::endl ;
     std::cout <<  std::endl <<aHb_built/aHb_built[2][2] << std::endl ;
 
     aHb_built.computeDisplacement(aRb, aTb, n) ;
@@ -223,8 +222,8 @@ main(int argc, const char ** argv)
     std::cout << "Normal to the plane: n" <<std::endl;
     std::cout << (n).t() <<std::endl ;
 
-    std::cout << "-------------------------------" <<std::endl ;
-    vpTRACE("test if ap = aHb bp") ;
+    std::cout << "-------------------------------" << std::endl ;
+    std::cout << "test if ap = aHb bp" << std::endl ;
 
     for(i=0 ; i < nbpt ; i++)
     {
@@ -238,7 +237,7 @@ main(int argc, const char ** argv)
     }
 
     std::cout << "-------------------------------" <<std::endl ;
-    vpTRACE("test displacement") ;
+    std::cout << "test displacement" << std::endl ;
 
     std::list<vpRotationMatrix> laRb ;
     std::list<vpTranslationVector> laTb ;

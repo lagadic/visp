@@ -150,8 +150,7 @@ main(int argc, const char ** argv)
     int i ;
 
     vpPoint P[nbpt]  ;  //  Point to be tracked
-    double xa[nbpt], ya[nbpt] ;
-    double xb[nbpt], yb[nbpt] ;
+    std::vector<double> xa(nbpt), ya(nbpt), xb(nbpt), yb(nbpt);
 
     vpPoint aP[nbpt]  ;  //  Point to be tracked
     vpPoint bP[nbpt]  ;  //  Point to be tracked
@@ -188,7 +187,7 @@ main(int argc, const char ** argv)
     std::cout << "-------------------------------" <<std::endl ;
     vpHomography aHb ;
 
-    vpHomography::HartleyDLT(nbpt,xb,yb,xa,ya,aHb) ;
+    vpHomography::DLT(xb, yb, xa, ya, aHb, true) ;
 
     vpTRACE("aHb computed using the DLT algorithm") ;
     aHb /= aHb[2][2] ;
@@ -207,7 +206,6 @@ main(int argc, const char ** argv)
     std::cout << (aTb).t() <<std::endl   ;
     std::cout << "Normal to the plane: n" <<std::endl;
     std::cout << (n).t() <<std::endl ;
-
 
     std::cout << "-------------------------------" <<std::endl ;
     vpTRACE("Compare with built homoraphy H = R + t/d ") ;
