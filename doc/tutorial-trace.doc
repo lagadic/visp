@@ -76,7 +76,7 @@ endif()
 \endcode 
 
 
-The following example shows how to use the previous macro.
+The following example also available in tutorial-trace.cpp shows how to use the previous macro.
 
 \includelineno tutorial-trace.cpp
 

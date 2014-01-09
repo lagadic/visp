@@ -1,3 +1,4 @@
+/*! \example tutorial-trace.cpp */
 //#define VP_TRACE        // Activate the trace mode
 //#define VP_DEBUG        // Activate the debug mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
