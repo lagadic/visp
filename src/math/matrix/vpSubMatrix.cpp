@@ -2,10 +2,10 @@
  *
  * $Id$
  *
- * Copyright (C) 2005 - 2013 Inria. All rights reserved.
+ * Copyright (C) 2005 - 2014 Inria. All rights reserved.
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

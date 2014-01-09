@@ -33,16 +33,16 @@ There are different ways to get ViSP source code:
 
 - You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf ViSP-2.8.0.tar.gz 
+tar xvzf ViSP-2.9.0.tar.gz 
 \endcode
 or
 \code
-unzip ViSP-2.8.0.zip
+unzip ViSP-2.9.0.zip
 \endcode
 
 - You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
 \code
-unzip ViSP-2.y.z-snapshot-2013.mm.dd.zip
+unzip ViSP-2.y.z-snapshot-2014.mm.dd.zip
 \endcode
 - Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
 \code
@@ -53,7 +53,7 @@ and then use the following command
 svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.8.0
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.9.0
 
 \section install_ubuntu_config Configuring ViSP from source
 
@@ -69,14 +69,14 @@ cmake [<optional parameters>] <source_dir>
 For example:
 \code
 cd $HOME/ViSP-build-release
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=ON ../ViSP-2.8.0
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=ON ../ViSP-2.9.0
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../ViSP-2.8.0
+ccmake ../ViSP-2.9.0
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
-\image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.8.0 command used to configure ViSP.
+\image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.9.0 command used to configure ViSP.
 
 - There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
@@ -190,10 +190,10 @@ sudo apt-get install libogre-dev libois-dev
 Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
 
 \code
-ccmake ../ViSP-2.8.0
+ccmake ../ViSP-2.9.0
 \endcode
 The following image shows now that all the previous optional 3rd party are detected.
-\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.8.0 command used to configure ViSP after installation of optional 3rd party libraries.
+\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.9.0 command used to configure ViSP after installation of optional 3rd party libraries.
 
 \subsection install_ubuntu_generate Generating Makefiles
 

@@ -5,7 +5,7 @@
 # $Id: visp-config.in 4057 2013-01-05 13:10:29Z fspindle $
 #
 # This file is part of the ViSP software.
-# Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
+# Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
 # 
 # This software is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@ usage()
     cat <<EOF
 
 ViSP $VERSION (Visual Servoing Platform)
-Copyright (C) 2005 - 2013 Inria. All rights reserved.
+Copyright (C) 2005 - 2014 Inria. All rights reserved.
 
 Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--dumpversion]  [--help]
 
@@ -101,7 +101,7 @@ for arg in $@; do
 	--version) 
 	    echo "ViSP $VERSION (Visual Servoing Platform)"
 	    echo ""
-	    echo "Copyright (C) 2005 - 2013 Inria. All rights reserved.";;
+	    echo "Copyright (C) 2005 - 2014 Inria. All rights reserved.";;
 	--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
 	*) usage; exit -1 ;;
     esac;

@@ -3,7 +3,7 @@
  * $Id: servoViper850FourPoints2DCamVelocityInteractionCurrent.cpp 3870 2012-09-05 17:03:43Z fspindle $
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

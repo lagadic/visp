@@ -1,7 +1,7 @@
                             ViSP-2.7.0
                      Visual Servoing Platform
 
-      Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
+      Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
                   www: http://www.irisa.fr/lagadic
 
 

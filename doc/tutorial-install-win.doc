@@ -27,11 +27,11 @@ There are different ways to get ViSP source code:
 - You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. 
 - Or you can get the cutting-edge ViSP from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP.
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.8.0
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.9.0
 
 \section install_win_config Configuring ViSP from source 
 
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.8.0-build.
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.9.0-build.
 
 - Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
 
@@ -41,7 +41,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \image html img-cmake-win-2.jpg 
 
-- Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.8.0-build folder.
+- Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.9.0-build folder.
 - Select then your compiler, for example here Visual Studio 11 Win64, and click on "Finish" button. 
 
 \image html img-cmake-win-msvc-version.jpg 
@@ -118,13 +118,13 @@ setx OPENCV_DIR C:\OpenCV\opencv\build
 
 \image html img-cmake-win-generate.jpg 
 
-- Once the generation is done, in \c C:/ViSP/ViSP-2.8.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
+- Once the generation is done, in \c C:/ViSP/ViSP-2.9.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
 
 \image html img-cmake-win-solution.jpg 
 
 \section install_win_build Building ViSP from source
 
-- To build ViSP just double click on \c C:/ViSP/ViSP-2.8.0-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+- To build ViSP just double click on \c C:/ViSP/ViSP-2.9.0-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
 
 \image html img-msvc-1.jpg 
 
@@ -171,7 +171,7 @@ C:\ViSP\ViSP-install\bin; C:\OpenCV\opencv\build\x64\vc11\bin
 
 Some ViSP examples and tests require data set (images, models). These data set is provided as a compressed zip files. 
 
-- Download ViSP-images-2.8.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
+- Download ViSP-images-2.9.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
 
 \image html img-ViSP-images.jpg 
 

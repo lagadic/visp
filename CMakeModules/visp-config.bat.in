@@ -3,7 +3,7 @@
 @rem # $Id$
 @rem #
 @rem # This file is part of the ViSP software.
-@rem # Copyright (C) 2005 - 2013 by INRIA. All rights reserved.
+@rem # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
 @rem # 
 @rem # This software is free software; you can redistribute it and/or
 @rem # modify it under the terms of the GNU General Public License
@@ -106,7 +106,7 @@ for %%a in (%*) do (
   if "%%a" == "--version" (
 	echo ViSP %VERSION% Visual Servoing Platform
 	echo.
-	echo Copyright 2005 - 2013 Inria. All rights reserved.
+	echo Copyright 2005 - 2014 Inria. All rights reserved.
 	goto END
   )
   if "%%a" == "--dumpversion" (
@@ -118,7 +118,7 @@ for %%a in (%*) do (
 
 :USAGE
 echo ViSP %VERSION% (Visual Servoing Platform)
-echo Copyright (C) 2005 - 2013 Inria. All rights reserved.
+echo Copyright (C) 2005 - 2014 Inria. All rights reserved.
 echo.
 echo Usage: %0 [--prefix] [--def] [--include] [--openmp] [--libpath] 
 echo [--libs-debug] [--libs-optimized] [--version] [--dumpversion] [--help]
