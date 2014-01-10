@@ -90,11 +90,11 @@ class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentAreaNormalized";}
+        const char* momentName() const { return "vpMomentAreaNormalized";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentAreaNormalized";}
+        const char* name() const { return "vpFeatureMomentAreaNormalized";}
 
 };
 
@@ -173,11 +173,11 @@ class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentAreaNormalized";}
+        const char* momentName() const { return "vpMomentAreaNormalized";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentAreaNormalized";}
+        const char* name() const { return "vpFeatureMomentAreaNormalized";}
 
 };
 #endif

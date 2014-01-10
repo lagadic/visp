@@ -85,11 +85,11 @@ private:
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentCentered";}
+        const char* momentName() const { return "vpMomentCentered";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentCentered";}
+        const char* name() const { return "vpFeatureMomentCentered";}
 
 
 };
@@ -135,11 +135,11 @@ private:
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentCentered";}
+        const char* momentName() const { return "vpMomentCentered";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentCentered";}
+        const char* name() const { return "vpFeatureMomentCentered";}
 
 
 };

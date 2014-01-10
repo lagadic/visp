@@ -160,11 +160,11 @@ class VISP_EXPORT vpFeatureMomentGravityCenter: public vpFeatureMoment{
         /*!
           Associated moment name.
         */
-        const char* momentName(){ return "vpMomentGravityCenter";}
+        const char* momentName() const { return "vpMomentGravityCenter";}
         /*!
           Feature name.
           */
-        const char* name(){ return "vpFeatureMomentGravityCenter";}
+        const char* name() const { return "vpFeatureMomentGravityCenter";}
 
         /*!
           Shortcut selector for \f$x_g\f$.
@@ -221,11 +221,11 @@ class VISP_EXPORT vpFeatureMomentGravityCenter: public vpFeatureMoment{
         /*!
           Associated moment name.
         */
-        const char* momentName(){ return "vpMomentGravityCenter";}
+        const char* momentName() const { return "vpMomentGravityCenter";}
         /*!
           Feature name.
           */
-        const char* name(){ return "vpFeatureMomentGravityCenter";}
+        const char* name() const { return "vpFeatureMomentGravityCenter";}
 
         /*!
           Shortcut selector for \f$x_g\f$.

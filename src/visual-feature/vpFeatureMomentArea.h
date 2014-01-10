@@ -75,11 +75,11 @@ class VISP_EXPORT vpFeatureMomentArea : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentArea";}
+        const char* momentName() const { return "vpMomentArea";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentArea";}
+        const char* name() const { return "vpFeatureMomentArea";}
 
 };
 #endif

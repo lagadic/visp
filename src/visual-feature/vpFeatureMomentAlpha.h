@@ -91,11 +91,11 @@ class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentAlpha";}
+        const char* momentName() const { return "vpMomentAlpha";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentAlpha";}
+        const char* name() const { return "vpFeatureMomentAlpha";}
 };
 #else
 class vpMomentDatabase;
@@ -164,11 +164,11 @@ class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment{
     /*!
       Associated moment name.
       */
-    const char* momentName(){ return "vpMomentAlpha";}
+    const char* momentName() const { return "vpMomentAlpha";}
     /*!
       Feature name.
       */
-    const char* name(){ return "vpFeatureMomentAlpha";}
+    const char* name() const { return "vpFeatureMomentAlpha";}
 
     vpColVector error (const vpBasicFeature &s_star, const unsigned int select=FEATURE_ALL);
 };

@@ -190,11 +190,11 @@ public:
       Name of the moment corresponding to the feature. This allows to locate the moment
       associated with the feature in the provided database.
       */
-      virtual const char* momentName() = 0;
+      virtual const char* momentName() const = 0;
       /*!
       Name of the feature used to locate it in the database of features.
       */
-      virtual const char* name() = 0;
+      virtual const char* name() const = 0;
       void 	print (const unsigned int select=FEATURE_ALL) const ;
 
       void update (double A, double B, double C);

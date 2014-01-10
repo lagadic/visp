@@ -96,11 +96,11 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentCInvariant";}
+        const char* momentName() const { return "vpMomentCInvariant";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentCInvariant";}
+        const char* name() const { return "vpFeatureMomentCInvariant";}
 
         /*!
           Shortcut selector for \f$C_1\f$.
@@ -214,11 +214,11 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
         /*!
           associated moment name
           */
-        const char* momentName(){ return "vpMomentCInvariant";}
+        const char* momentName() const { return "vpMomentCInvariant";}
         /*!
           feature name
           */
-        const char* name(){ return "vpFeatureMomentCInvariant";}
+        const char* name() const { return "vpFeatureMomentCInvariant";}
 
         /*!
           Shortcut selector for \f$C_1\f$.

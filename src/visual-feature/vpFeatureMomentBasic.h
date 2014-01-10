@@ -88,11 +88,11 @@ private:
         /*!
           Associated moment name.
           */
-        const char* momentName(){ return "vpMomentBasic";}
+        const char* momentName() const { return "vpMomentBasic";}
         /*!
           Feature name.
           */
-        const char* name(){ return "vpFeatureMomentBasic";}
+        const char* name() const { return "vpFeatureMomentBasic";}
 
 };
 #endif
