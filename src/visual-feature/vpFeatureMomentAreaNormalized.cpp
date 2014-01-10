@@ -68,14 +68,14 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
     bool found_FeatureMoment_centered;
 
     bool found_featuremoment_basic;
-    vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMoments->get("vpFeatureMomentBasic",found_featuremoment_basic)));
+    vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMomentsDataBase->get("vpFeatureMomentBasic",found_featuremoment_basic)));
 
 
 
-    vpMomentCentered& momentCentered = static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
+    const vpMomentCentered& momentCentered = static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
     vpMomentObject& momentObject = moment->getObject();
-    vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
-    vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMoments->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
+    const vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
+    vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMomentsDataBase->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
 
     if(!found_FeatureMoment_centered) throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
     if(!found_moment_surface_normalized) throw vpException(vpException::notInitialized,"vpMomentAreaNormalized not found");

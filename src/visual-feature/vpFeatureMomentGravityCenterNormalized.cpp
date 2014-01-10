@@ -71,10 +71,10 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction(){
     bool found_featuremoment_gravity;
     bool found_featuremoment_surfacenormalized;
 
-    vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
-    vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
-    vpFeatureMomentGravityCenter& featureMomentGravity = (static_cast<vpFeatureMomentGravityCenter&>(featureMoments->get("vpFeatureMomentGravityCenter",found_featuremoment_gravity)));
-    vpFeatureMomentAreaNormalized featureMomentAreaNormalized = (static_cast<vpFeatureMomentAreaNormalized&>(featureMoments->get("vpFeatureMomentAreaNormalized",found_featuremoment_surfacenormalized)));
+    const vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
+    const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
+    vpFeatureMomentGravityCenter& featureMomentGravity = (static_cast<vpFeatureMomentGravityCenter&>(featureMomentsDataBase->get("vpFeatureMomentGravityCenter",found_featuremoment_gravity)));
+    vpFeatureMomentAreaNormalized featureMomentAreaNormalized = (static_cast<vpFeatureMomentAreaNormalized&>(featureMomentsDataBase->get("vpFeatureMomentAreaNormalized",found_featuremoment_surfacenormalized)));
 
     if(!found_moment_surface_normalized) throw vpException(vpException::notInitialized,"vpMomentAreaNormalized not found");
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");

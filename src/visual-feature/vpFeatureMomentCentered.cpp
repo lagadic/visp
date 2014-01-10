@@ -101,9 +101,9 @@ void vpFeatureMomentCentered::compute_interaction(){
     for(std::vector< vpMatrix >::iterator i=interaction_matrices.begin();i!=interaction_matrices.end(); ++i)
         i->resize(1,6);
 
-    vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMoments->get("vpFeatureMomentBasic",found_featuremoment_basic)));
-    vpFeatureMomentGravityCenter& featureMomentGravityCenter= (static_cast<vpFeatureMomentGravityCenter&>(featureMoments->get("vpFeatureMomentGravityCenter",found_feature_gravity_center)));
-    vpMomentGravityCenter& momentGravity = static_cast<vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
+    vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMomentsDataBase->get("vpFeatureMomentBasic",found_featuremoment_basic)));
+    vpFeatureMomentGravityCenter& featureMomentGravityCenter= (static_cast<vpFeatureMomentGravityCenter&>(featureMomentsDataBase->get("vpFeatureMomentGravityCenter",found_feature_gravity_center)));
+    const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
     vpMatrix zeros(1,6);
     for(int i=0;i<6;i++) zeros[0][i]=0;
 

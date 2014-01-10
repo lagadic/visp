@@ -62,8 +62,8 @@ void vpFeatureMomentAlpha::compute_interaction(){
     bool found_moment_centered;
     bool found_FeatureMoment_centered;
 
-    vpMomentCentered& momentCentered = (static_cast<vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
-    vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMoments->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
+    const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
+    vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMomentsDataBase->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
 
     if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
     if(!found_FeatureMoment_centered) throw vpException(vpException::notInitialized,"vpFeatureMomentCentered not found");
