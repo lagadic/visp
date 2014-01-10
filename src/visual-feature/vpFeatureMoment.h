@@ -227,11 +227,11 @@ public:
   /*!
   No specific moment name.
   */
-  const char* momentName() { return NULL;}
+  const char* momentName() const { return NULL;}
   /*!
   No specific feature name.
   */
-  virtual const char* name() { return NULL;}
+  virtual const char* name() const { return NULL;}
 };
 
 #endif
