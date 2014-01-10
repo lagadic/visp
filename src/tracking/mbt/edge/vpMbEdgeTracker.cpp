@@ -98,8 +98,8 @@ vpMbEdgeTracker::vpMbEdgeTracker()
 #endif
   useOgre = false;
   
-  angleAppears = vpMath::rad(95);
-  angleDisappears = vpMath::rad(95);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
   clippingFlag = vpMbtPolygon::NO_CLIPPING;
 
   scaleLevel = 0;
@@ -1045,6 +1045,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   
+
   try{
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
     xmlp.parse(configFile);
@@ -1549,13 +1550,15 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
   unsigned int n ;
   bool changed = false;
 
-  if(!useOgre)
-    n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
+  if(!useOgre) {
+    //n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
+    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
+  }
   else{
 #ifdef VISP_HAVE_OGRE   
     n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
 #else
-    n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
+    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
 #endif
   } 
   
@@ -1683,10 +1686,10 @@ vpMbEdgeTracker::resetTracker()
   nbvisiblepolygone = 0;
   percentageGdPt = 0.4;
   
-  angleAppears = vpMath::rad(95);
-  angleDisappears = vpMath::rad(95);
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
   clippingFlag = vpMbtPolygon::NO_CLIPPING;
-  
+
   // reinitialization of the scales.
   this->setScales(scales);
 }
@@ -1703,7 +1706,37 @@ vpMbEdgeTracker::resetTracker()
 void
 vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo)
 {
-  resetTracker();
+  this->cMo.setIdentity();
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+        l = *it;
+        if (l!=NULL) delete l ;
+        l = NULL ;
+      }
+
+      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
+        cy = *it;
+        if (cy!=NULL) delete cy;
+        cy = NULL;
+      }
+      lines[i].clear();
+      cylinders[i].clear();
+    }
+  }
+
+  faces.reset();
+
+  index_polygon =0;
+  //compute_interaction=1;
+  nline = 0;
+  ncylinder = 0;
+  //lambda = 1;
+  nbvisiblepolygone = 0;
+
   loadModel(cad_name);
   initFromPose(I, cMo);
 }
