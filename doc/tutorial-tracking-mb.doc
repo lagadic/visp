@@ -120,8 +120,8 @@ As illustrated in the following figure, the angle \f$ \alpha \f$ between the nor
 - When Ogre visibility test is enabled, the algorithm used to determine the visibility of a face is the same than previously except that once visible faces are detected thanks to their normal, we add an other test to reject faces that are partially occluded by an other one. This additional test is performed using Ogre ray-tracing capability. Note also that two additional parameters need to be introduced; the angle to determine if a face is appearing, and the angle to determine if the face is disappearing.
 \code
   tracker.setOgreVisibilityTest(true);
-  tracker.setAngleAppear(70);
-  tracker.setAngleDisappear(80);
+  tracker.setAngleAppear( vpMath::rad(70) );
+  tracker.setAngleDisappear( vpMath::rad(80) );
 \endcode
 It is also possible to introduce these two parameters in the xml file. It should be modified by adding the following lines:
 \code

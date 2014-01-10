@@ -36,8 +36,8 @@ int main()
     me.setSampleStep(4);
     me.setNbTotalSample(250);
     tracker.setMovingEdge(me);
-    tracker.setAngleAppear(70);
-    tracker.setAngleDisappear(80);
+    tracker.setAngleAppear( vpMath::rad(70) );
+    tracker.setAngleDisappear( vpMath::rad(80) );
     tracker.setMaskBorder(5);
     vpKltOpencv klt_settings;
     klt_settings.setMaxFeatures(300);

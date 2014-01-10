@@ -35,6 +35,8 @@ int main()
     me.setSampleStep(4);
     me.setNbTotalSample(250);
     tracker.setMovingEdge(me);
+    tracker.setAngleAppear( vpMath::rad(70) );
+    tracker.setAngleDisappear( vpMath::rad(80) );
     cam.initPersProjWithoutDistortion(839, 839, 325, 243);
     tracker.setCameraParameters(cam);
     tracker.setNearClippingDistance(0.1);

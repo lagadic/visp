@@ -26,8 +26,8 @@ int main()
 #ifdef VISP_HAVE_XML2
     tracker.loadConfigFile("teabox.xml");
 #else
-    tracker.setAngleAppear(70);
-    tracker.setAngleDisappear(80);
+    tracker.setAngleAppear( vpMath::rad(70) );
+    tracker.setAngleDisappear( vpMath::rad(80) );
     tracker.setMaskBorder(5);
     vpKltOpencv klt_settings;
     klt_settings.setMaxFeatures(300);
