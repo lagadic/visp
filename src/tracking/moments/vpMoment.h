@@ -120,7 +120,7 @@ class VISP_EXPORT vpMoment{
 
 
  public:
-        inline vpMomentObject& getObject() const { return *object;}
+        inline const vpMomentObject& getObject() const { return *object;}
         vpMoment();
         /*!
         Returns all values computed by the moment.

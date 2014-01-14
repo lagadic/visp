@@ -66,7 +66,7 @@ vpFeatureMomentBasic::vpFeatureMomentBasic(vpMomentDatabase& moments,double A, d
 */
 void vpFeatureMomentBasic::compute_interaction(){
     int delta;
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
     order = momentObject.getOrder()+1;
     interaction_matrices.resize(order*order);
     for(std::vector< vpMatrix >::iterator i=interaction_matrices.begin();i!=interaction_matrices.end();i++)

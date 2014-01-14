@@ -125,7 +125,7 @@ void vpFeatureMomentGravityCenterNormalized::compute_interaction(){
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
     if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
 
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
     interaction_matrices[0].resize(1,6);
     interaction_matrices[1].resize(1,6);
 

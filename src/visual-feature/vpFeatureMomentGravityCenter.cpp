@@ -108,7 +108,7 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
     const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_moment_gravity));
 
 
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
 
     if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
