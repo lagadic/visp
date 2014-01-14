@@ -278,8 +278,64 @@ void
 vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
 {
 #ifdef VISP_HAVE_XML2
-  vpMbEdgeTracker::loadConfigFile(configFile);
-  vpMbKltTracker::loadConfigFile(configFile);
+  vpMbtEdgeKltXmlParser xmlp;
+
+  xmlp.setCameraParameters(cam);
+  xmlp.setAngleAppear(vpMath::deg(vpMbKltTracker::angleAppears));
+  xmlp.setAngleDisappear(vpMath::deg(vpMbKltTracker::angleDisappears));
+
+  xmlp.setMovingEdge(me);
+
+  xmlp.setMaxFeatures(10000);
+  xmlp.setWindowSize(5);
+  xmlp.setQuality(0.01);
+  xmlp.setMinDistance(5);
+  xmlp.setHarrisParam(0.01);
+  xmlp.setBlockSize(3);
+  xmlp.setPyramidLevels(3);
+  xmlp.setMaskBorder(maskBorder);
+
+  try{
+    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    xmlp.parse(configFile);
+  }
+  catch(...){
+    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
+    throw vpException(vpException::ioError, "problem to parse configuration file.");
+  }
+
+  vpCameraParameters camera;
+  xmlp.getCameraParameters(camera);
+  setCameraParameters(camera);
+
+  vpMbEdgeTracker::angleAppears = vpMath::rad(xmlp.getAngleAppear());
+  vpMbEdgeTracker::angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+  vpMbKltTracker::angleAppears = vpMath::rad(xmlp.getAngleAppear());
+  vpMbKltTracker::angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+
+  if(xmlp.hasNearClippingDistance())
+    setNearClippingDistance(xmlp.getNearClippingDistance());
+
+  if(xmlp.hasFarClippingDistance())
+    setFarClippingDistance(xmlp.getFarClippingDistance());
+
+  if(xmlp.getFovClipping()){
+    vpMbEdgeTracker::setClipping(vpMbEdgeTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+    vpMbKltTracker::setClipping(vpMbKltTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+  }
+
+  vpMe meParser;
+  xmlp.getMe(meParser);
+  vpMbEdgeTracker::setMovingEdge(meParser);
+
+  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getWindowSize());
+  tracker.setQuality(xmlp.getQuality());
+  tracker.setMinDistance(xmlp.getMinDistance());
+  tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
+  tracker.setBlockSize((int)xmlp.getBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
+  maskBorder = xmlp.getMaskBorder();
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif

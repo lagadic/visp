@@ -767,7 +767,6 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   
   try{
     std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
-    
     xmlp.parse(configFile);
   }
   catch(...){
@@ -797,7 +796,8 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
   
   if(xmlp.getFovClipping())
-    clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING;
+    setClipping(clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif

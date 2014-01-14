@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpMbtEdgeKltXmlParser.h 4574 2014-01-09 08:48:51Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -32,23 +32,20 @@
  *
  *
  * Description:
- * Load XML parameters of the Model based tracker (using edges).
+ * Load XML parameters of the Model based tracker (using edges and point features).
  *
  * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Eric Marchand
  * Aurelien Yol
  *
  *****************************************************************************/
 
 /*!
- * \file vpMbtXmlParser.h
+ * \file vpMbtEdgeKltXmlParser.h
  * \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
 */
 
-#ifndef vpMbtXmlParser_HH
-#define vpMbtXmlParser_HH
+#ifndef vpMbtEdgeKltXmlParser_HH
+#define vpMbtEdgeKltXmlParser_HH
 
 #include <visp/vpConfig.h>
 
@@ -56,60 +53,36 @@
 
 #include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
 
-#include <visp/vpMbXmlParser.h>
-#include <visp/vpMe.h>
+#include <visp/vpMbtXmlParser.h>
+#include <visp/vpMbtKltXmlParser.h>
 
 /*!
-  \class vpMbtXmlParser
+  \class vpMbtEdgeKltXmlParser
   \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
   \ingroup ModelBasedTracking
 
   Data parser for the model based tracker.
 
  */
-class VISP_EXPORT vpMbtXmlParser: virtual public vpMbXmlParser
+class VISP_EXPORT vpMbtEdgeKltXmlParser: public vpMbtXmlParser, public vpMbtKltXmlParser
 {
 protected:
-  //! Moving edges parameters.
-  vpMe m_ecm;
-
   typedef enum{
-    ecm = vpMbXmlParser::last,
-    mask,
-    size,
-    nb_mask,
-    range,
-    tracking,
-    contrast,
-    edge_threshold,
-    mu1,
-    mu2,
-    sample,
-    step,
-    nb_sample,
-    last
-  } dataToParseMb;
-
-
+    camera,
+    face,
+    klt,
+    ecm,
+    sample
+  } dataToParseMbtEdgeKlt;
 public:
 
-	vpMbtXmlParser();
-	virtual ~vpMbtXmlParser();
-
-  void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
-  
+    vpMbtEdgeKltXmlParser();
+    virtual ~vpMbtEdgeKltXmlParser();
 
   void parse(const char * filename);
 
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-  void read_ecm (xmlDocPtr doc, xmlNodePtr node);
-  void read_sample (xmlDocPtr doc, xmlNodePtr node);
-  void read_mask (xmlDocPtr doc, xmlNodePtr node);
-  void read_range (xmlDocPtr doc, xmlNodePtr node);
-  void read_contrast (xmlDocPtr doc, xmlNodePtr node);
-  
-  void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }
-	
+
   void writeMainClass(xmlNodePtr node);
 	
 protected:
@@ -119,7 +92,7 @@ protected:
 
 #endif
 
-#endif /* NMBTXMLPARSER_H_ */
+#endif /* NMBTEDGEKLTXMLPARSER_H_ */
 
 
 

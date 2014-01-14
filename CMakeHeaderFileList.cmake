@@ -262,7 +262,8 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeNurbs.h
 
   tracking/mbt/vpMbTracker.h
-  tracking/mbt/vpMbHiddenFaces.h 
+  tracking/mbt/vpMbHiddenFaces.h
+  tracking/mbt/vpMbXmlParser.h
   tracking/mbt/edge/vpMbtDistanceLine.h
   tracking/mbt/edge/vpMbtPolygon.h
   tracking/mbt/edge/vpMbtMeLine.h
@@ -270,6 +271,7 @@ SET (HEADER_TRACKING
   tracking/mbt/edge/vpMbtXmlParser.h
   tracking/mbt/edge/vpMbtDistanceCylinder.h
   tracking/mbt/hybrid/vpMbEdgeKltTracker.h
+  tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.h
   tracking/mbt/klt/vpMbtKltPolygon.h
   tracking/mbt/klt/vpMbKltTracker.h
   tracking/mbt/klt/vpMbtKltXmlParser.h

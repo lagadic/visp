@@ -46,8 +46,6 @@
   \brief Make the complete tracking of an object by using its CAD model.
 */
 
-
-
 #include <visp/vpDebug.h>
 #include <visp/vpPose.h>
 #include <visp/vpExponentialMap.h>
@@ -1022,8 +1020,6 @@ vpMbEdgeTracker::loadConfigFile(const std::string& configFile)
     <fov_clipping>1</fov_clipping>
   </face>
   <camera>
-    <width>640</width>
-    <height>480</height>
     <u0>320</u0>
     <v0>240</v0>
     <px>686.24</px>
@@ -1041,10 +1037,9 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   vpMbtXmlParser xmlp;
   
   xmlp.setCameraParameters(cam);
-  xmlp.setMovingEdge(me);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
-  
+  xmlp.setMovingEdge(me);
 
   try{
     std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
@@ -1072,7 +1067,8 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
   
   if(xmlp.getFovClipping())
-    clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING;
+    setClipping(clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif

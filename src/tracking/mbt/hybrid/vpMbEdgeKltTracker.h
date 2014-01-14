@@ -55,11 +55,11 @@
 #include <visp/vpSubMatrix.h>
 #include <visp/vpSubColVector.h>
 #include <visp/vpExponentialMap.h>
-#include <visp/vpMbtXmlParser.h>
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpPoseVector.h>
+#include <visp/vpMbtEdgeKltXmlParser.h>
 #include <visp/vpMbKltTracker.h>
 
 /*!
@@ -308,7 +308,7 @@ public:
 
             \param a : new angle in radian.
           */
-  virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); }
+  virtual inline  void setAngleAppear(const double &a) { vpMbKltTracker::setAngleAppear(a); vpMbEdgeTracker::setAngleAppear(a);}
   
           /*!
             Set the angle used to test polygons disappearance.
@@ -319,7 +319,7 @@ public:
 
             \param a : new angle in radian.
           */
-  virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); }
+  virtual inline  void setAngleDisappear(const double &a) { vpMbKltTracker::setAngleDisappear(a); vpMbEdgeTracker::setAngleDisappear(a);}
 
   virtual void    setCameraParameters(const vpCameraParameters& cam);
   

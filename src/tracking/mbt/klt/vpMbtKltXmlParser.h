@@ -32,7 +32,7 @@
  *
  *
  * Description:
- * Read MBT KLT Tracker information in an XML file
+ * Load XML parameters of the Model based tracker (using point features).
  *
  * Authors:
  * Aurelien Yol
@@ -52,8 +52,7 @@
 
 #include <libxml/xmlmemory.h>      /* Fonctions de la lib XML. */
 
-#include <visp/vpXmlParser.h>
-#include <visp/vpCameraParameters.h>
+#include <visp/vpMbXmlParser.h>
 
 /*!
   \class vpMbtKltXmlParser
@@ -63,7 +62,7 @@
   Data parser for the KLT model based tracker.
 
 */
-class VISP_EXPORT vpMbtKltXmlParser: public vpXmlParser
+class VISP_EXPORT vpMbtKltXmlParser: virtual public vpMbXmlParser
 {
 protected:
   //! Border of the mask used on Klt points
@@ -82,26 +81,9 @@ protected:
   unsigned int blockSize;
   //! Number of pyramid levels
   unsigned int pyramidLevels;
-  //! Angle to determine if a face appeared
-  double angleAppear;
-  //! Angle to determine if a face disappeared
-  double angleDisappear;
-  //! Is near clipping distance specified?
-  bool hasNearClipping;
-  //! Near clipping distance
-  double nearClipping;
-  //! Is far clipping distance specified?
-  bool hasFarClipping;
-  //! Near clipping distance
-  double farClipping;
-  //! Fov Clipping
-  bool fovClipping;
-  //! Camera parameters.
-  vpCameraParameters cam;
     
   typedef enum{
-    conf,
-    klt,
+    klt = vpMbXmlParser::last,
     mask_border,
     max_features,
     window_size,
@@ -110,20 +92,8 @@ protected:
     harris,
     size_block,
     pyramid_lvl,
-    face,
-    angle_appear,
-    angle_disappear,
-    near_clipping,
-    far_clipping,
-    fov_clipping,
-    camera,
-    height,
-    width,
-    u0,
-    v0,
-    px,
-    py
-  } dataToParse;
+    last
+  } dataToParseMbKlt;
 
 
 public:
@@ -132,46 +102,11 @@ public:
 	virtual ~vpMbtKltXmlParser();
 
   /*!
-    Get the angle to determine if a face appeared.
-
-    \return angleAppear
-  */
-  inline double getAngleAppear() const {return angleAppear;}
-  
-  /*!
-    Get the angle to determine if a face disappeared.
-
-    \return angleDisappear
-  */
-  inline double getAngleDisappear() const {return angleDisappear;}
-  
-  /*!
     Get the size of a block.
 
     \return blockSize
   */
   inline unsigned int getBlockSize() const {return blockSize;}
-  
-  /*!
-    Get the camera parameters.
-
-    \return cam
-  */
-  void getCameraParameters(vpCameraParameters& _cam) const { _cam = cam;}
-  
-  /*!
-    Get the far clipping distance.
-
-    \return farClipping
-  */
-  inline double getFarClippingDistance() const {return farClipping;}
-  
-  /*!
-    Use FOV clipping
-
-    \return True if yes, False otherwise.
-  */
-  inline bool getFovClipping() const {return fovClipping;}
   
   /*!
     Get the Harris free parameter.
@@ -202,13 +137,6 @@ public:
   inline double getMinDistance() const {return minDist;}
   
   /*!
-    Get the near clipping distance.
-
-    \return nearClipping
-  */
-  inline double getNearClippingDistance() const {return nearClipping;}
-  
-  /*!
     Get the number of pyramid levels
 
     \return pyramidLevels
@@ -229,40 +157,10 @@ public:
   */
   inline unsigned int getWindowSize() const {return winSize;}
   
-  /*!
-    Has Far clipping been specified?
-
-    \return True if yes, False otherwise.
-  */
-  inline bool hasFarClippingDistance() const {return hasFarClipping;}
-  
-  /*!
-    Has Near clipping been specified?
-
-    \return True if yes, False otherwise.
-  */
-  inline bool hasNearClippingDistance() const {return hasNearClipping;}
-  
   void parse(const char * filename);
   
-  void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-  void read_camera (xmlDocPtr doc, xmlNodePtr node);
+  virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_klt(xmlDocPtr doc, xmlNodePtr node);
-  void read_face(xmlDocPtr doc, xmlNodePtr node);
-  
-  /*!
-    Set the angle to determine if a face appeared.
-
-    \param aappear : New angleAppear
-  */
-  inline void setAngleAppear(const double &aappear) {angleAppear = aappear;}
-  
-  /*!
-    Set the angle to determine if a face disappeared.
-
-    \param adisappear : New angleDisappear
-  */
-  inline void setAngleDisappear(const double &adisappear) {angleDisappear = adisappear;}
   
   /*!
     Set the size of a block.
@@ -270,20 +168,6 @@ public:
     \param bs : New blockSize
   */
   inline void setBlockSize(const unsigned int &bs) {blockSize = bs;}
-  
-  /*!
-    Set the camera parameters.
-
-    \param _cam : New cam
-  */
-  void setCameraParameters(const vpCameraParameters& _cam) {cam = _cam;}
-  
-  /*!
-    Set the far clipping distance.
-
-    \param fclip : New farClipping
-  */
-  inline void setFarClippingDistance(const double &fclip) {farClipping = fclip;}
   
   /*!
     Set the Harris free parameter.
@@ -312,14 +196,7 @@ public:
     \param mD : New minDist
   */
   inline void setMinDistance(const double &mD) {minDist = mD;}
-  
-  /*!
-    Set the near clipping distance.
 
-    \param nclip : New nearClipping
-  */
-  inline void setNearClippingDistance(const double &nclip) {nearClipping = nclip;}
-  
   /*!
     Set the number of pyramid levels
 
