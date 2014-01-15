@@ -51,7 +51,7 @@
 #include <iostream>
 
 //#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
-#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) || (defined(VISP_HAVE_X11) && ! defined(APPLE)))
 
 #if defined(VISP_HAVE_X11) && ! defined(APPLE)
 // produce an error on OSX: ‘typedef int Cursor’
@@ -712,6 +712,6 @@ int main(int argc, const char **argv)
 int
 main()
 {  
-  std::cout << "You should install Ogre3D to run this example..." << std::endl;
+  std::cout << "You should install Ogre3D or a display (GTK or OpenCV...) to run this example..." << std::endl;
 }
 #endif
