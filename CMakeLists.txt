@@ -40,7 +40,7 @@
 
 PROJECT(VISP C CXX)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
@@ -787,6 +787,19 @@ IF(USE_OGRE)
   SET(VISP_HAVE_OGRE_FOUND "yes")   # for ViSP-third-party.txt
   SET(VISP_HAVE_OGRE TRUE)          # for header vpConfig.h
 
+  # If Ogre media are not available we provide the minimal material to run the examples:
+  # - resources.cfg
+  # - plugins.cfg
+  # - media/materials/...
+  # - media/models/...
+  #
+  # We need to introduce OGRE_MEDIA_NOT_AVAILABLE to memorize when OGRE_MEDIA_DIR is not set.
+  # Because in that case, OGRE_MEDIA_DIR should be set first to VISP_HAVE_OGRE_RESOURCES_PATH
+  #  (for the "make all" case) then to VISP_INSTALL_DIR_OGRE_RESOURCES (for the "make install" case)
+  if(NOT OGRE_MEDIA_DIR)
+    set(OGRE_MEDIA_NOT_AVAILABLE "TRUE")
+  endif()
+
   # Try to search for an existing plugins.cfg file
   # Here we cannot use OGRE_PLUGIN_DIR_REL or OGRE_PLUGIN_DIR_DBG where
   # we may find an existing plugins.cfg file, since under Windows in these 
@@ -861,17 +874,34 @@ IF(USE_OGRE)
     NO_SYSTEM_ENVIRONMENT_PATH
   )
 
+  # Here we copy all the minimal media files
+  # - media/materials/...
+  # - media/models/...
+  if(OGRE_MEDIA_NOT_AVAILABLE)
+    file(COPY data/ogre-simulator/media DESTINATION ${VISP_BINARY_DIR}/data/ogre-simulator)
+  endif()
+
+
+  # Here we create a resources.cfg if it was not found
   IF(NOT VISP_HAVE_OGRE_RESOURCES_PATH)
     # we create a resources.cfg file for vpAROgre.cpp
     # case 1: normal case
+    #         If OGRE_MEDIA_DIR is not found, we set it to VISP_HAVE_OGRE_RESOURCES_PATH in order to use
+    #         the minimal requested media to run the examples
     #--------------
     SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
+    if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
+    endif()
+
     CONFIGURE_FILE(
       ${VISP_CMAKE_MODULE_PATH}/resources.cfg.in
       ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
       IMMEDIATE @ONLY)
 
     # case 2: install or packaging case
+    #         If OGRE_MEDIA_DIR is not found, we set it to VISP_INSTALL_DIR_OGRE_RESOURCES in order to use
+    #         the minimal requested media to run the examples
     #--------------
     IF(UNIX)
       set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator")
@@ -879,23 +909,47 @@ IF(USE_OGRE)
       set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
     ENDIF()
 
-    # install rule for resources.cfg:
-    IF(UNIX)
-      INSTALL(FILES
-        ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+    if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_MEDIA_DIR ${VISP_INSTALL_DIR_OGRE_RESOURCES}/media)
+    endif()
+    CONFIGURE_FILE(
+      ${VISP_CMAKE_MODULE_PATH}/resources.cfg.in
+      ${VISP_BINARY_DIR}/install/resources.cfg
+      IMMEDIATE @ONLY)
+
+    # install rule for resources.cfg and Ogre media if they are not available:
+    if(UNIX)
+      install(FILES
+        ${VISP_BINARY_DIR}/install/resources.cfg
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT libraries
       )
-    ELSE()
-      INSTALL(FILES
-        ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+      if(OGRE_MEDIA_NOT_AVAILABLE)
+        install(DIRECTORY
+          data/ogre-simulator/media
+          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
+          FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+        )
+      endif()
+    else()
+      install(FILES
+        ${VISP_BINARY_DIR}/install/resources.cfg
         DESTINATION data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT libraries
       )
-    ENDIF()
-  ENDIF()
+      if(OGRE_MEDIA_NOT_AVAILABLE)
+        install(DIRECTORY
+          data/ogre-simulator/media
+          DESTINATION data/ogre-simulator
+          FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT libraries
+        )
+      endif()
+    endif()
+  endif()
   
   MARK_AS_ADVANCED(VISP_HAVE_OGRE_PLUGINS_PATH)
   MARK_AS_ADVANCED(VISP_HAVE_OGRE_RESOURCES_PATH)

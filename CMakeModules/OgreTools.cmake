@@ -38,18 +38,72 @@
 #
 #############################################################################
 
+#########################################################
+# Find Ogre plugins
+#
+# This is a modified version of the macro provided with Ogre
+# except that should be used only in a desparate way when the one original
+# one doesn't detect anything
+#########################################################
+
+macro(ogre_find_plugin_lib_visp PLUGIN)
+  # On Unix, the plugins might have no prefix
+  if (CMAKE_FIND_LIBRARY_PREFIXES)
+    set(TMP_CMAKE_LIB_PREFIX ${CMAKE_FIND_LIBRARY_PREFIXES})
+    set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES} "")
+  endif()
+
+  # strip RenderSystem_ or Plugin_ prefix from plugin name
+  string(REPLACE "RenderSystem_" "" PLUGIN_TEMP ${PLUGIN})
+  string(REPLACE "Plugin_" "" PLUGIN_NAME ${PLUGIN_TEMP})
+
+  set(OGRE_PLUGIN_PATH_SUFFIXES
+    PlugIns PlugIns/${PLUGIN_NAME} Plugins Plugins/${PLUGIN_NAME} ${PLUGIN}
+    RenderSystems RenderSystems/${PLUGIN_NAME} ${ARGN})
+  # find link libraries for plugins
+  set(OGRE_${PLUGIN}_LIBRARY_NAMES "${PLUGIN}${OGRE_LIB_SUFFIX}")
+  get_debug_names(OGRE_${PLUGIN}_LIBRARY_NAMES)
+  find_library(OGRE_${PLUGIN}_LIBRARY_REL NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES}
+    HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
+    PATH_SUFFIXES "" OGRE opt release release/opt relwithdebinfo relwithdebinfo/opt minsizerel minsizerel/opt)
+  find_library(OGRE_${PLUGIN}_LIBRARY_DBG NAMES ${OGRE_${PLUGIN}_LIBRARY_NAMES_DBG}
+    HINTS ${OGRE_LIBRARY_DIRS} ${OGRE_LIBRARY_DIRS}/OGRE ${OGRE_LIBRARY_DIRS}/OGRE-${OGRE_VERSION_MAJOR}.${OGRE_VERSION_MINOR}.${OGRE_VERSION_PATCH}
+    PATH_SUFFIXES "" OGRE opt debug debug/opt)
+  make_library_set(OGRE_${PLUGIN}_LIBRARY)
+
+  if (OGRE_${PLUGIN}_LIBRARY)
+    set(OGRE_${PLUGIN}_FOUND TRUE)
+  endif ()
+
+  mark_as_advanced(OGRE_${PLUGIN}_LIBRARY_REL OGRE_${PLUGIN}_LIBRARY_DBG OGRE_${PLUGIN}_LIBRARY_FWK)
+
+endmacro(ogre_find_plugin_lib_visp)
+
 MACRO(CREATE_OGRE_PLUGIN_CONFIG_FILE)
     	SET(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
 
 	# If OGRE_PLUGIN_DIR_REL and OGRE_PLUGIN_DIR_DBG are not defined we 
-        # try to find these path manually
+        # try to find them manually
 	IF(NOT OGRE_PLUGIN_DIR_REL AND NOT OGRE_PLUGIN_DIR_DBG)
-	  IF(OGRE_RenderSystem_GL_LIBRARY_REL)
+          ogre_find_plugin_lib_visp(RenderSystem_Direct3D9)
+          ogre_find_plugin_lib_visp(RenderSystem_Direct3D10)
+          ogre_find_plugin_lib_visp(RenderSystem_Direct3D11)
+          ogre_find_plugin_lib_visp(RenderSystem_GL)
+          ogre_find_plugin_lib_visp(RenderSystem_GLES)
+          ogre_find_plugin_lib_visp(Plugin_ParticleFX)
+          ogre_find_plugin_lib_visp(Plugin_BSPSceneManager)
+          ogre_find_plugin_lib_visp(Plugin_CgProgramManager)
+          ogre_find_plugin_lib_visp(Plugin_PCZSceneManager)
+          ogre_find_plugin_lib_visp(Plugin_OctreeSceneManager)
+          ogre_find_plugin_lib_visp(Plugin_OctreeZone)
+
+
+          IF(OGRE_RenderSystem_GL_LIBRARY_REL)
 	    GET_FILENAME_COMPONENT(OGRE_PLUGIN_DIR_REL ${OGRE_RenderSystem_GL_LIBRARY_REL} PATH)
-	    #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
+            #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
           ELSEIF(OGRE_RenderSystem_GL_LIBRARY_DBG)
 	    GET_FILENAME_COMPONENT(OGRE_PLUGIN_DIR_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG} PATH)
-	    #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
+            #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
  	  ENDIF()
 	ENDIF()
 
