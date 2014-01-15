@@ -1,12 +1,5 @@
 <?xml version="1.0"?>
 <conf>
-  <face>
-    <angle_appear>70</angle_appear> 
-    <angle_disappear>80</angle_disappear> 
-    <near_clipping>0.1</near_clipping>
-    <far_clipping>100</far_clipping>
-    <fov_clipping>1</fov_clipping>
-  </face>
   <klt>
     <mask_border>5</mask_border> 
     <max_features>300</max_features> 
@@ -23,5 +16,12 @@
     <px>839.21470</px> 
     <py>839.44555</py> 
   </camera>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
 </conf>
 

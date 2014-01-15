@@ -18,16 +18,18 @@
     <step>4</step>
     <nb_sample>250</nb_sample>
   </sample>
-  <face>
-    <near_clipping>0.1</near_clipping>
-    <far_clipping>100</far_clipping>
-    <fov_clipping>1</fov_clipping>
-  </face>
   <camera>
     <u0>325.66776</u0> 
     <v0>243.69727</v0> 
     <px>839.21470</px> 
     <py>839.44555</py> 
   </camera>
+  <face>
+    <angle_appear>70</angle_appear>
+    <angle_disappear>80</angle_disappear>
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
 </conf>
 

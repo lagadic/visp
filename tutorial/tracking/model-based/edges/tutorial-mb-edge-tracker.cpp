@@ -35,18 +35,18 @@ int main()
     me.setSampleStep(4);
     me.setNbTotalSample(250);
     tracker.setMovingEdge(me);
-    tracker.setAngleAppear( vpMath::rad(70) );
-    tracker.setAngleDisappear( vpMath::rad(80) );
     cam.initPersProjWithoutDistortion(839, 839, 325, 243);
     tracker.setCameraParameters(cam);
+    tracker.setAngleAppear( vpMath::rad(70) );
+    tracker.setAngleDisappear( vpMath::rad(80) );
     tracker.setNearClippingDistance(0.1);
     tracker.setFarClippingDistance(100.0);
     tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
-    tracker.setDisplayFeatures(true);
     tracker.setOgreVisibilityTest(false);
     tracker.loadModel("teabox.cao");
     //tracker.loadModel("teabox.wrl");
+    tracker.setDisplayFeatures(true);
     tracker.initClick(I, "teabox.init");
 
     while(1){

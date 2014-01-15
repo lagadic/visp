@@ -82,6 +82,13 @@ The content of the xml file is the following:
     <px>839.21470</px> 
     <py>839.44555</py> 
   </camera>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
 </conf>
 \endcode
 
@@ -99,31 +106,16 @@ The content of the xml file is the following:
   tracker.setMovingEdge(me);
   cam.initPersProjWithoutDistortion(839, 839, 325, 243);
   tracker.setCameraParameters(cam);
-\endcode
-
-The display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
-\code
-  tracker.setDisplayFeatures(true);
-\endcode
-
-An important setting concerns the visibility test that is used to determine if a face is visible. Note that moving-edges are tracked only on visible faces. Two different visibility tests are implemented; with or without Ogre ray tracing. With the next line, we disable Ogre visibility test.
-
-\code
-  tracker.setOgreVisibilityTest(false);
-\endcode
-
-As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is then used to determine if the face is visible.
-
-\image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
-
-- When Ogre visibility test is disabled, the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Faces are considered as visible if  \f$ \alpha < 90\f$ degrees. When only moving-edges are used (nor keypoints) and when the object to track is simple like a single box, we suggest as here to disable Ogre visibility test. It will help the tracker to detect as soon as possible new faces when only one face is currently tracked.  
-- When Ogre visibility test is enabled, the algorithm used to determine the visibility of a face is the same than previously except that once visible faces are detected thanks to their normal, we add an other test to reject faces that are partially occluded by an other one. This additional test is performed using Ogre ray-tracing capability. Note also that two additional parameters need to be introduced; the angle to determine if a face is appearing, and the angle to determine if the face is disappearing.
-\code
-  tracker.setOgreVisibilityTest(true);
   tracker.setAngleAppear( vpMath::rad(70) );
   tracker.setAngleDisappear( vpMath::rad(80) );
+  tracker.setNearClippingDistance(0.1);
+  tracker.setFarClippingDistance(100.0);
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 \endcode
-It is also possible to introduce these two parameters in the xml file. It should be modified by adding the following lines:
+
+An important setting concerns the visibility test that is used to determine if a face is visible. Note that moving-edges are tracked only on visible faces. Two different visibility tests are implemented; with or without Ogre ray tracing. The default test is the one without Ogre. The function vpMbEdgeTracker::setOgreVisibilityTest() allow to select which test is to use. 
+
+Let us now highlight how the visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible. If we consider two parameters; the angle to determine if a face is appearing \f$ \alpha_{appear} \f$, and the angle to determine if the face is disappearing \f$ \alpha_{disappear} \f$, a face will be considered as visible if  \f$  \alpha \leq \alpha_{disappear} \f$. We consider also that a new face is appearing if \f$  \alpha \geq \alpha_{appear} \f$. These two parameters can be set either in the xml file:
 \code
 <conf>
   ...
@@ -132,7 +124,26 @@ It is also possible to introduce these two parameters in the xml file. It should
     <angle_disappear>80</angle_disappear> 
   </face>
 \endcode
-Here the face is considered as appearing if \f$ \alpha < 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
+or in the code:
+\code
+  tracker.setAngleAppear( vpMath::rad(70) );
+  tracker.setAngleDisappear( vpMath::rad(80) );
+\endcode
+
+\note When these two angle parameters are not set, their default values set to 89 degrees are used.
+
+\image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
+
+- When Ogre visibility test is disabled (we recall that this is the default behavior), the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Here the face is considered as appearing if \f$ \alpha < 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees. When only moving-edges are used (nor keypoints) and when the object to track is simple like a single box, we suggest as here to disable Ogre visibility test.
+\code
+  tracker.setOgreVisibilityTest(false); // Default behavior
+\endcode
+
+- When Ogre visibility test is enabled, the algorithm used to determine the visibility of a face is the same than previously except that once visible faces are detected thanks to their normal, we add an other test to reject faces that are partially occluded by an other one. This additional test is performed using Ogre ray-tracing capability. 
+\code
+  tracker.setOgreVisibilityTest(true);
+\endcode
+
 
 Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
 
@@ -165,14 +176,14 @@ For the Near and Far clipping it is quite different. Indeed, thoses planes requi
   tracker.setClipping(vpMbtPolygon::NEAR_CLIPPING | vpMbtPolygon::FAR_CLIPPING);
 \endcode
 
-Or specify the distances in meters, which will automatically activate the clipping for thoses planes:
+or the user can specify the distances in meters, which will automatically activate the clipping for thoses planes:
 
 \code
   tracker.setNearClippingDistance(0.1);
   tracker.setFarClippingDistance(100.0);
 \endcode
 
-It is also possible to enable them in the xml file. It should be modified by adding the following lines:
+It is also possible to enable them in the xml file. This is done with the following lines:
 
 \code
 <conf>
@@ -186,6 +197,8 @@ It is also possible to enable them in the xml file. It should be modified by add
 \endcode
 
 Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
+
+\note When clipping parameters are not set in the xml file, nor in the code, clipping is not used. Usually clipping is not helpfull when the oject to track is simple.  
 
 Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format with:
 \code
@@ -201,11 +214,16 @@ As for the cao format, \c teabox.wrl describes first the vertices of the box, th
 
 \image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
 
-Four vertices with their 3D coordinates are then used to initialize the tracker:
+Once the model of the object to track is loaded, with the next line the display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
+\code
+  tracker.setDisplayFeatures(true);
+\endcode
+
+Now we have to initialize the tracker. With the next line we choose to use a user interaction. As explained later, the user has to match in the image four vertices with their 3D coordinates. Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker:
 \code
   tracker.initClick(I, "teabox.init");
 \endcode
-The content of \c teabox.init file is provided hereafter:
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter:
 
 \includelineno teabox.init
 
@@ -273,10 +291,6 @@ The \c teabox.xml file used here contains the following:
 \code
 <?xml version="1.0"?>
 <conf>
-  <face>
-    <angle_appear>70</angle_appear> 
-    <angle_disappear>80</angle_disappear> 
-  </face>
   <klt>
     <mask_border>5</mask_border> 
     <max_features>300</max_features> 
@@ -293,6 +307,13 @@ The \c teabox.xml file used here contains the following:
     <px>839.21470</px> 
     <py>839.44555</py> 
   </camera>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
 </conf>
 \endcode
 - The second one consists in initializing the parameters directly in the source code: 
@@ -357,10 +378,6 @@ We provide just hereafter the content of the \c teabox.xml file:
     <step>4</step>
     <nb_sample>250</nb_sample>
   </sample>
-  <face>
-    <angle_appear>70</angle_appear> 
-    <angle_disappear>80</angle_disappear> 
-  </face>
   <klt>
     <mask_border>5</mask_border> 
     <max_features>300</max_features> 
@@ -377,6 +394,13 @@ We provide just hereafter the content of the \c teabox.xml file:
     <px>839.21470</px> 
     <py>839.44555</py> 
   </camera>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
 </conf>
 \endcode
 
