@@ -318,7 +318,6 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
 
   tracking/mbt/vpMbTracker.cpp
-  tracking/mbt/vpMbXmlParser.cpp
   tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/edge/vpMbtDistanceLine.cpp
@@ -358,11 +357,12 @@ SET (SRC_TRACKING
   tracking/template-tracker/warp/vpTemplateTrackerWarpTranslation.cpp
   )
 
-IF(VISP_HAVE_XML2)
-  LIST(APPEND SRC_TRACKING tracking/mbt/edge/vpMbtXmlParser.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltXmlParser.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.cpp)
-ENDIF()
+if(VISP_HAVE_XML2)
+  list(APPEND SRC_TRACKING tracking/mbt/vpMbXmlParser.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/edge/vpMbtXmlParser.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltXmlParser.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.cpp)
+endif()
 
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
