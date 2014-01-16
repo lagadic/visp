@@ -179,7 +179,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
 */
 void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, 
                         vpPose * mPose, vpDot2 *md, vpImagePoint *mcog,
-                        vpHomogeneousMatrix *cmo, vpPoint *mP,
+                        vpHomogeneousMatrix *cMo, vpPoint *mP,
                         const bool &opt_click_allowed)
 {
   // ---------------------------------------------------
@@ -364,16 +364,16 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   // minimisation method
 	
   // Pose by Lagrange it provides an initialization of the pose
-  mPose->computePose(vpPose::LAGRANGE, *cmo) ;
+  mPose->computePose(vpPose::LAGRANGE, *cMo) ;
   // the pose is now refined using the virtual visual servoing approach
   // Warning: cMo needs to be initialized otherwise it may  diverge
-  mPose->computePose(vpPose::VIRTUAL_VS, *cmo) ;
+  mPose->computePose(vpPose::VIRTUAL_VS, *cMo) ;
 	
   // Display breifly just to have a glimpse a the ViSP pose
   //	while(cpt<500){
   if( opt_display ){
     // Display the computed pose
-    mPose->display(I,*cmo,*mcam, 0.05, vpColor::red) ;
+    mPose->display(I,*cMo,*mcam, 0.05, vpColor::red) ;
     vpDisplay::flush(I) ;
     vpTime::wait(1000);
   }
@@ -472,7 +472,7 @@ int main(int argc, const char **argv)
     // RGBa image to get background
     vpImage<vpRGBa> IC;
     // Matrix representing camera parameters
-    vpHomogeneousMatrix cmo;
+    vpHomogeneousMatrix cMo;
 
     // Variables used for pose computation purposes
     vpPose mPose;
@@ -496,7 +496,7 @@ int main(int argc, const char **argv)
       grabber.acquire(Idisplay);
       vpCameraParameters mcamTmp(592,570,grabber.getWidth()/2,grabber.getHeight()/2);
       // Compute the initial pose of the camera
-      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cmo, mP,
+      computeInitialPose(&mcamTmp, Idisplay, &mPose, md, mcog, &cMo, mP,
                          opt_click_allowed);
       // Close the framegrabber
       grabber.close();
@@ -521,12 +521,19 @@ int main(int argc, const char **argv)
     }
 
     // Create a vpRAOgre object with color background
-    vpAROgre ogre(mcam, (unsigned int)grabber.getWidth(), (unsigned int)grabber.getHeight());
+    vpAROgre ogre(mcam, grabber.getWidth(), grabber.getHeight());
     // Initialize it
     ogre.init(IC);
     ogre.load("Robot", "robot.mesh");
     ogre.setScale("Robot", 0.001f,0.001f,0.001f);
     ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI/2, -M_PI/2, 0)));
+
+    // Add an optional point light source
+    Ogre::Light * light = ogre.getSceneManager()->createLight();
+    light->setDiffuseColour(1, 1, 1); // scaled RGB values
+    light->setSpecularColour(1, 1, 1); // scaled RGB values
+    light->setPosition(-5, -5, 10);
+    light->setType(Ogre::Light::LT_POINT);
 
     // Rendering loop
     while(ogre.continueRendering() && !grabber.end()) {
@@ -560,10 +567,10 @@ int main(int argc, const char **argv)
       // the pose is now updated using the virtual visual servoing approach
       // Dementhon or lagrange is no longuer necessary, pose at the
       // previous iteration is sufficient
-      mPose.computePose(vpPose::VIRTUAL_VS, cmo);
+      mPose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       // Display with ogre
-      ogre.display(IC,cmo);
+      ogre.display(IC,cMo);
 
       // Wait so that the video does not go too fast
       vpTime::wait(15);
