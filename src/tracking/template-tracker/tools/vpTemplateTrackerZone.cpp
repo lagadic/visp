@@ -369,10 +369,7 @@ void vpTemplateTrackerZone::add_new(const vpTemplateTrackerTriangle &T)
       corresp_sommet[nb_tout_sommets]=sommet_trouve;
     }
     nb_tout_sommets++;
-
-
   }
-
 }
 
 bool vpTemplateTrackerZone::inZone(const int &ie, const int &je) const
@@ -433,24 +430,43 @@ bool vpTemplateTrackerZone::inZone(const double &ie,const double &je, unsigned i
 
 }
 
-//recup�re un triangle dans la liste
-void vpTemplateTrackerZone::getTriangle(int i,vpTemplateTrackerTriangle &T) const
+/*!
+  A zone is defined by a set of triangles. This function returns the ith triangle.
+  \param i : Index of the triangle to return.
+  \param T : The triangle corresponding to index i.
+  \return true if the triangle with index i was found, false otherwise.
+
+  The following sample code shows how to use this function:
+  \code
+    vpTemplateTrackerZone zone;
+    ...
+    for (int i=0; i < zone.getNbTriangle(); i++) {
+      vpTemplateTrackerTriangle triangle;
+      zone.getTriangle(i, triangle);
+    }
+  \endcode
+ */
+bool vpTemplateTrackerZone::getTriangle(int i,vpTemplateTrackerTriangle &T) const
 {
   int id=0;
+  if (i < 0 || i > getNbTriangle()-1)
+    return false;
+
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
   for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
   {
     if(id==i)
     {
       T = (*Iterateurvecteur);
+      return true;
       break;
     }
     id++;
   }
-
+  return false;
 }
 /*!
-  Return the position of the center of gravity.
+  Return the position of the center of gravity of the zone.
   \exception vpException::divideByZeroError: The size of the zone is null.
  */
 vpImagePoint vpTemplateTrackerZone::getCenter() const
@@ -477,18 +493,34 @@ vpImagePoint vpTemplateTrackerZone::getCenter() const
   return ip;
 }
 
+/*!
+  \return The maximal x coordinate (along the columns of the image) of the points that are in the zone.
+  \sa getMinx()
+ */
 int vpTemplateTrackerZone::getMaxx() const
 {
   return max_x;
 }
+/*!
+  \return The maximal y coordinate (along the rows of the image) of the points that are in the zone.
+  \sa getMiny()
+ */
 int vpTemplateTrackerZone::getMaxy() const
 {
   return max_y;
 }
+/*!
+  \return The minimal x coordinate (along the columns of the image) of the points that are in the zone.
+  \sa getMaxx()
+ */
 int vpTemplateTrackerZone::getMinx() const
 {
   return min_x;
 }
+/*!
+  \return The minimal y coordinate (along the rows of the image) of the points that are in the zone.
+  \sa getMaxy()
+ */
 int vpTemplateTrackerZone::getMiny() const
 {
   return min_y;

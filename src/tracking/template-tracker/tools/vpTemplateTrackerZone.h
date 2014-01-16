@@ -115,6 +115,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     int getMiny() const;
     unsigned int getNbSommetDiff() const {return nb_sommets_diff;}
     unsigned int getNbToutSommets() const {return nb_tout_sommets;}
+    /*! Return the number of triangles that define the zone. \sa getTriangle() */
     int getNbTriangle() const {return (int)Zone.size();}
     vpTemplateTrackerZone getPyramidDown() const;
     vpTemplateTrackerZPoint getCorner(int i) const {return liste_sommets[i];}
@@ -122,7 +123,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     //renvoie les indices des sommets du tieme triangle
     void getCornersTriangle(unsigned int t, unsigned int corners[3]) const;
     //renvoie le ieme triangle de la zone
-    void getTriangle(int i,vpTemplateTrackerTriangle &T) const;
+    bool getTriangle(int i,vpTemplateTrackerTriangle &T) const;
 
     //display the area on an image
     void displayReferenceZone(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness=3);
