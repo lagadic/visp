@@ -385,11 +385,12 @@ main(int argc, const char ** argv)
 #if 1
       tracker->display(I, vpColor::red, 3);
 #else
-      vpTemplateTrackerZone zoneWarp_ = tracker->getZoneWarp();
+      vpTemplateTrackerZone zoneWarped_, zoneRef_ = tracker->getZoneRef();
       vpTemplateTrackerWarp *warp_ = tracker->getWarp();
       vpColVector p_= tracker->getp();
-      warp_->warpZone(zoneWarp_, p_);
-      zoneWarp_.display(I, vpColor::red, 3);
+      warp_->warpZone(zoneRef_, p_, zoneWarped_);
+      zoneWarped_.display(I, vpColor::red, 3);
+      zoneRef_.display(I, vpColor::green, 3);
 #endif
 
       vpDisplay::flush(I) ;

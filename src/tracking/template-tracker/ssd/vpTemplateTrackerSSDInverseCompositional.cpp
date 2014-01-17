@@ -188,39 +188,49 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
 
 void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(vpColVector &p)
 {
-  x_pos=new double[zoneTracked->getNbSommetDiff()];
-  y_pos=new double[zoneTracked->getNbSommetDiff()];
+  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
+  x_pos=new double[nb_corners];
+  y_pos=new double[nb_corners];
 
   Warp->computeCoeff(p);
-  for(unsigned int i=0;i<zoneTracked->getNbSommetDiff();i++)
+  vpTemplateTrackerTriangle triangle;
+
+  for(unsigned int i=0;i<zoneTracked->getNbTriangle();i++)
   {
-    int x,y;
-    zoneTracked->getCornerDiff((int)i,x,y);
-    X1[0]=x;X1[1]=y;
-    Warp->computeDenom(X1,p);
-    Warp->warpX(X1,X2,p);
-    x_pos[i]=X2[0];
-    y_pos[i]=X2[1];
+    zoneTracked->getTriangle(i, triangle);
+    for (unsigned int j=0; j<3; j++) {
+      triangle.getCorner(j, X1[0], X1[1]);
+
+      Warp->computeDenom(X1,p);
+      Warp->warpX(X1,X2,p);
+      x_pos[i*3+j]=X2[0];
+      y_pos[i*3+j]=X2[1];
+    }
   }
 }
 
 void vpTemplateTrackerSSDInverseCompositional::computeEvalRMS(const vpColVector &p)
 {
+  unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 
   Warp->computeCoeff(p);
   evolRMS=0;
-  for(unsigned int i=0;i<zoneTracked->getNbSommetDiff();i++)
+  vpTemplateTrackerTriangle triangle;
+
+  for(unsigned int i=0;i<zoneTracked->getNbTriangle();i++)
   {
-    int x,y;
-    zoneTracked->getCornerDiff((int)i,x,y);
-    X1[0]=x;X1[1]=y;
-    Warp->computeDenom(X1,p);
-    Warp->warpX(X1,X2,p);
-    evolRMS+=(x_pos[i]-X2[0])*(x_pos[i]-X2[0])+(y_pos[i]-X2[1])*(y_pos[i]-X2[1]);
-    x_pos[i]=X2[0];
-    y_pos[i]=X2[1];
+    zoneTracked->getTriangle(i, triangle);
+    for (unsigned int j=0; j<3; j++) {
+      triangle.getCorner(j, X1[0], X1[1]);
+
+      Warp->computeDenom(X1,p);
+      Warp->warpX(X1,X2,p);
+      evolRMS+=(x_pos[i*3+j]-X2[0])*(x_pos[i*3+j]-X2[0])+(y_pos[i*3+j]-X2[1])*(y_pos[i*3+j]-X2[1]);
+      x_pos[i*3+j]=X2[0];
+      y_pos[i*3+j]=X2[1];
+    }
   }
-  evolRMS=evolRMS/zoneTracked->getNbSommetDiff();
+  evolRMS=evolRMS/nb_corners;
 }
 
 void vpTemplateTrackerSSDInverseCompositional::deletePosEvalRMS()

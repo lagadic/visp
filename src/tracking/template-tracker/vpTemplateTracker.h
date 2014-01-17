@@ -132,7 +132,7 @@ class VISP_EXPORT vpTemplateTracker
     vpImage<double>             BI;
     vpImage<double>             dIx ;
     vpImage<double>             dIy ;
-    vpTemplateTrackerZone       zoneWarp_;
+    vpTemplateTrackerZone       zoneRef_; // Reference zone
     
   public:
     vpTemplateTracker(vpTemplateTrackerWarp *_warp);
@@ -159,7 +159,7 @@ class VISP_EXPORT vpTemplateTracker
     /*!
      Return the reference template zone.
      */
-    vpTemplateTrackerZone getZoneWarp() const { return zoneWarp_; }
+    vpTemplateTrackerZone getZoneRef() const { return zoneRef_; }
 
     void    initClick(const vpImage<unsigned char> &I, bool delaunay=false);
     void    initFromPoints(const vpImage<unsigned char> &I, const std::vector< vpImagePoint > &v_ip, bool delaunay=false);

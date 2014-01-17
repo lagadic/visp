@@ -221,30 +221,25 @@ class VISP_EXPORT vpTemplateTrackerWarp
     virtual void warpXInv(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM) = 0;
 
     /*!
-      Warp a triangle.
+      Warp a triangle and store the result in a new zone.
 
-      \param TR : Triangle to warp.
-      \param p : Parameters of the warp.
-      \param TT : Resulting triangle.
+      \param in : Triangle to warp.
+      \param p : Parameters of the warping function. These parameters are estimated by the template
+      tracker and returned using vpTemplateTracker::getp().
+      \param out : Resulting triangle.
     */
-    void warpTriangle(const vpTemplateTrackerTriangle &TR,const vpColVector &p, vpTemplateTrackerTriangle &TT);
+    void warpTriangle(const vpTemplateTrackerTriangle &in,const vpColVector &p, vpTemplateTrackerTriangle &out);
 
     /*!
       Warp a zone and store the result in a new zone.
 
-      \param ZR : Zone to warp.
-      \param p : Parameters of the warp.
-      \param ZT : Resulting zone.
+      \param in : Zone to warp.
+      \param p : Parameters of the warping function. These parameters are estimated by the template
+      tracker and returned using vpTemplateTracker::getp().
+      \param out : Resulting zone.
     */
-    void warpZone(const vpTemplateTrackerZone &ZR,const vpColVector &p, vpTemplateTrackerZone &ZT);
+    void warpZone(const vpTemplateTrackerZone &in,const vpColVector &p, vpTemplateTrackerZone &out);
 
-    /*!
-      Warp a zone.
-
-      \param Z : zone to warp.
-      \param p : parameters of the warp.
-    */
-    void warpZone(const vpTemplateTrackerZone &Z,const vpColVector &p);
 };
 
 #endif

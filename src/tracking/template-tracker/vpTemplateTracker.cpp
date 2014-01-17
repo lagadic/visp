@@ -329,29 +329,80 @@ void vpTemplateTracker::resetTracker()
   \param col: Color used to draw the triangle edges.
   \param thickness: Thickness of the lines.
 
-  An other way to display the warped zone is to use the following code:
+  The following code shows how to use display capabilities:
   \code
-  vpTemplateTrackerZone zoneWarp_ = tracker->getZoneWarp();
-  vpTemplateTrackerWarp *warp_ = tracker->getWarp();
-  vpColVector p_;
-  tracker->getp(p);
-  warp_->warpZone(zoneWarp_, p_);
-  zoneWarp_.display(I);
+#include <visp/vpTemplateTrackerSSDInverseCompositional.h>
+#include <visp/vpTemplateTrackerWarpHomography.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+  vpTemplateTrackerWarpHomography warp;
+  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+  vpTemplateTrackerZone zoneRef, zoneWarped;
+
+  // Display the warped zone
+  tracker.display(I, vpColor::red);
+
+  // Display the reference zone
+  zoneRef = tracker.getZoneRef();
+  zoneRef.display(I, vpColor::green);
+
+  // Display the warped zone
+  vpColVector p = tracker.getp();
+  warp.warpZone(zoneRef, p, zoneWarped);
+  zoneWarped.display(I, vpColor::blue);
+}
   \endcode
  */
 void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor& col, const unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
-    Warp->warpZone(*zoneTracked,p);
-    zoneTracked->display(I, col, thickness);
+    vpTemplateTrackerZone zoneWarped;
+    Warp->warpZone(*zoneTracked, p, zoneWarped);
+    zoneWarped.display(I, col, thickness);
   }
 }
 
+/*!
+  Display the warped reference template in an image.
+
+  \param I: Image in which the warped zone has to be displayed.
+  \param col: Color used to draw the triangle edges.
+  \param thickness: Thickness of the lines.
+
+  The following code shows how to use display capabilities:
+  \code
+#include <visp/vpTemplateTrackerSSDInverseCompositional.h>
+#include <visp/vpTemplateTrackerWarpHomography.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+  vpTemplateTrackerWarpHomography warp;
+  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+  vpTemplateTrackerZone zoneRef, zoneWarped;
+
+  // Display the warped zone
+  tracker.display(I, vpColor::red);
+
+  // Display the reference zone
+  zoneRef = tracker.getZoneRef();
+  zoneRef.display(I, vpColor::green);
+
+  // Display the warped zone
+  vpColVector p = tracker.getp();
+  warp.warpZone(zoneRef, p, zoneWarped);
+  zoneWarped.display(I, vpColor::blue);
+}
+  \endcode
+ */
 void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor& col, const unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
-    Warp->warpZone(*zoneTracked,p);
-    zoneTracked->display(I, col, thickness);
+    vpTemplateTrackerZone zoneWarped;
+    Warp->warpZone(*zoneTracked, p, zoneWarped);
+    zoneWarped.display(I, col, thickness);
   }
 }
 
@@ -631,12 +682,11 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char>& I,vpTempla
   Select the reference template in image \e I using mouse click.
 
   \param I: Image containing the reference template.
-  \param delaunay:
+  \param delaunay: Flag used to enable Delaunay triangulation.
   - If true, from the image points selected by the user, a Delaunay triangulation is performed
     to initialize the reference template.
     - A left click select a image point;
     - A right click select the last image point and ends the initialisation stage.
-
   - If false, the user select directly points as successive triangle corners.
     The size of \e v_ip vector should be a multiple of 3. It is not mandatory
     that triangles have one edge in common; they can define a discontinued area.
@@ -645,19 +695,18 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char>& I,vpTempla
     For example, to select the reference template as two triangles, the user has to left click
     five times and finish the selection on the sixth corner with a right click.
 
-
  */
 void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay)
 {
-  zoneWarp_.initClick(I, delaunay);
+  zoneRef_.initClick(I, delaunay);
 
   if (nbLvlPyr > 1) {
     initPyramidal(nbLvlPyr, l0Pyr);
-    initTrackingPyr(I, zoneWarp_);
+    initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
   }
   else {
-    initTracking(I, zoneWarp_);
+    initTracking(I, zoneRef_);
     initHessienDesired(I);
 //    trackNoPyr(I);
   }
@@ -675,15 +724,15 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay
  */
 void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const std::vector< vpImagePoint > &v_ip, bool delaunay)
 {
-  zoneWarp_.initFromPoints(I, v_ip, delaunay);
+  zoneRef_.initFromPoints(I, v_ip, delaunay);
 
   if (nbLvlPyr > 1) {
     initPyramidal(nbLvlPyr, l0Pyr);
-    initTrackingPyr(I, zoneWarp_);
+    initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
   }
   else {
-    initTracking(I, zoneWarp_);
+    initTracking(I, zoneRef_);
     initHessienDesired(I);
     //trackNoPyr(I);
   }
@@ -697,15 +746,15 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const st
  */
 void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTemplateTrackerZone& zone)
 {
-  zoneWarp_ = zone;
+  zoneRef_ = zone;
 
   if (nbLvlPyr > 1) {
     initPyramidal(nbLvlPyr, l0Pyr);
-    initTrackingPyr(I, zoneWarp_);
+    initTrackingPyr(I, zoneRef_);
     initHessienDesiredPyr(I);
   }
   else {
-    initTracking(I, zoneWarp_);
+    initTracking(I, zoneRef_);
     initHessienDesired(I);
 //    trackNoPyr(I);
   }
@@ -894,24 +943,6 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
     trackRobust(I);
   }
   delete[] pyr_I;
-
-//  //veridie si des sommets sont � l'infini, si c est le cas => diverge
-//  Warp->computeCoeff(p);
-//  //std::cout<<"nb sommets "<<zoneTrackedPyr[0].getNbSommetDiff()<<std::endl;
-//  for(unsigned int i=0;i<zoneTrackedPyr[0].getNbSommetDiff();i++)
-//  {
-//    int x,y;
-//    zoneTrackedPyr[0].getCornerDiff((int)i,x,y);
-//    X1[0]=x;X1[1]=y;
-//    Warp->computeDenom(X1,p);
-//    Warp->warpX(X1,X2,p);
-//    //std::cout<<X2[0]<<","<<X2[1]<<std::endl;
-//    //	if(lo_ieee_isnan(X2[0])||lo_ieee_isnan(X2[1])||lo_ieee_isinf(X2[0])||lo_ieee_isinf(X2[1]))
-//    //EM	if(lo_ieee_isnanisnan(X2[0])||isnan(X2[1])||isinf(X2[0])||isinf(X2[1]))
-//    //	diverge=true;
-//  }
-
-  //vpTRACE("fin");
 }
 
 void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)

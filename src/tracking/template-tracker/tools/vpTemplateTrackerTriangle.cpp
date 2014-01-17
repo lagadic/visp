@@ -108,6 +108,19 @@ vpTemplateTrackerTriangle & vpTemplateTrackerTriangle::operator=(const vpTemplat
 }
 
 /*!
+  Create a triangle from 3 corners.
+  \param c1 : First corner.
+  \param c2 : Second corner.
+  \param c3 : Third corner.
+
+  The coordinates of the points are defined as a 2 dimension vector with coordinates (x,y).
+  */
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpColVector &c1,const vpColVector &c2,const vpColVector &c3)
+{
+  vpTemplateTrackerTriangle();
+  init(c1[0],c1[1],c2[0],c2[1],c3[0],c3[1]);
+}
+/*!
   Return a triangle with coordinates that are down scaled by a factor 2.
   */
 vpTemplateTrackerTriangle vpTemplateTrackerTriangle::getPyramidDown() const
@@ -127,6 +140,19 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(int x1,int y1, int x2,int y
   vpTemplateTrackerTriangle();
   init(x1,y1,x2,y2,x3,y3);
 }
+
+/*!
+  Create a triangle from 3 corners defined as image points.
+  \param c1 : First corner.
+  \param c2 : Second corner.
+  \param c3 : Third corner.
+ */
+vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3)
+{
+  vpTemplateTrackerTriangle();
+  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
+}
+
 /*!
   Create a triangle from 3 corners with coordinates (x1,y1), (x2,y2), (x3,y3).
   - x coordinate is along the columns
@@ -150,6 +176,18 @@ void vpTemplateTrackerTriangle::init(const vpColVector &c1,const vpColVector &c2
   vpTemplateTrackerTriangle();
   init(c1[0],c1[1],c2[0],c2[1],c3[0],c3[1]);
 }
+/*!
+  Initializes a triangle from 3 corners defined as image points.
+  \param c1 : First corner.
+  \param c2 : Second corner.
+  \param c3 : Third corner.
+ */
+void vpTemplateTrackerTriangle::init(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3)
+{
+  vpTemplateTrackerTriangle();
+  init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
+}
+
 /*!
   Initializes a triangle from 3 corners with coordinates (x1,y1), (x2,y2), (x3,y3).
   - x coordinate is along the columns
@@ -269,6 +307,14 @@ bool vpTemplateTrackerTriangle::inTriangle(const double &i, const double &j) con
   return (p_ds_uv0+p_ds_uv1<1.+marge_triangle && p_ds_uv0>-marge_triangle && p_ds_uv1>-marge_triangle);
 }
 
+/*!
+  Indicates if an image point is in the triangle.
+  \param ip : Image point to consider.
+ */
+bool vpTemplateTrackerTriangle::inTriangle(const vpImagePoint &ip) const
+{
+  return inTriangle(ip.get_i(), ip.get_j());
+}
 /*!
   Returns the coordinates of the triangle corners as an image point.
   \param c1 : First corner.

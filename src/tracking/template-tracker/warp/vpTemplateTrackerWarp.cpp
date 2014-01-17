@@ -41,61 +41,52 @@
  *****************************************************************************/
 #include <visp/vpTemplateTrackerWarp.h>
 
-//warp Tr en TT avec le deplacement p
-void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &TR,const vpColVector &p, vpTemplateTrackerTriangle &TT)
+void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in,const vpColVector &p, vpTemplateTrackerTriangle &out)
 {
   vpColVector S1(2),S2(2),S3(2);
   vpColVector rS1(2),rS2(2),rS3(2);
-  TR.getCorners(S1,S2,S3);
+  in.getCorners(S1,S2,S3);
+  computeDenom(S1,p);
   warpX(S1,rS1,p);
+  computeDenom(S2,p);
   warpX(S2,rS2,p);
+  computeDenom(S3,p);
   warpX(S3,rS3,p);
-  TT.init(rS1,rS2,rS3);
+  out.init(rS1,rS2,rS3);
 }
-void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &ZR,const vpColVector &p, vpTemplateTrackerZone &ZT)
+void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &in,const vpColVector &p, vpTemplateTrackerZone &out)
 {
   vpTemplateTrackerTriangle TR,TT;
-  for(int i=0;i<ZR.getNbTriangle();i++)
+  out.clear();
+  for(unsigned int i=0;i<in.getNbTriangle();i++)
   {
-    ZR.getTriangle(i,TR);
+    in.getTriangle(i,TR);
     warpTriangle(TR,p,TT);
-    ZT.add(TT);
+    out.add(TT);
   }
 }
-void vpTemplateTrackerWarp::warpZone(const vpTemplateTrackerZone &Z,const vpColVector &p)
-{
-  computeCoeff(p);
-  vpColVector X1(2),X2(2);
-  vpTemplateTrackerZPoint *pt=Z.getListPt();
-  vpTemplateTrackerZPoint *ptWarpes=Z.getListPtWarpes();
-  
-  for(unsigned int i=0;i<Z.getNbToutSommets();i++)
-  {
-    X1[0]=pt[i].x;
-    X1[1]=pt[i].y;
-    computeDenom(X1,p);
-    warpX(X1,X2,p);
-    ptWarpes[i].x=vpMath::round(X2[0]);
-    ptWarpes[i].y=vpMath::round(X2[1]);
-  }
-}
+
 double vpTemplateTrackerWarp::getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z, const vpColVector &p)
 {
-  int nb_pt_diff=(int)Z.getNbSommetDiff();
+  unsigned int nb_corners = Z.getNbTriangle() * 3;
   computeCoeff(p);
   vpColVector X1(2),X2(2);
-  vpTemplateTrackerZPoint pt;
+
   double res=0;
-  for(int i=0;i<nb_pt_diff;i++)
+  vpTemplateTrackerTriangle triangle;
+  for(unsigned int i=0;i<Z.getNbTriangle();i++)
   {
-    pt=Z.getCorner(i);
-    X1[0]=pt.x;
-    X1[1]=pt.y;
-    computeDenom(X1,p);
-    warpX(X1,X2,p);
-    res+=sqrt((X2[0]-X1[0])*(X2[0]-X1[0])+(X2[1]-X1[1])*(X2[1]-X1[1]));
+    Z.getTriangle(i, triangle);
+    for (unsigned int j=0; j<3; j++) {
+      triangle.getCorner(j, X1[0], X1[1]);
+
+      computeDenom(X1,p);
+      warpX(X1,X2,p);
+      res+=sqrt((X2[0]-X1[0])*(X2[0]-X1[0])+(X2[1]-X1[1])*(X2[1]-X1[1]));
+    }
   }
-  return res/nb_pt_diff;
+
+  return res/nb_corners;
 }
 
 void vpTemplateTrackerWarp::warp(const double *ut0,const double *vt0,int nb_pt,const vpColVector& p,double *u,double *v)

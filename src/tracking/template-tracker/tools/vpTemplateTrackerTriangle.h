@@ -83,16 +83,19 @@ class VISP_EXPORT vpTemplateTrackerTriangle
   public:
     vpTemplateTrackerTriangle();
     vpTemplateTrackerTriangle(const vpTemplateTrackerTriangle& T);
-    vpTemplateTrackerTriangle(int x1,int y1, int x2,int y2, int x3,int y3);
-    vpTemplateTrackerTriangle(double x1,double y1, double x2,double y2, double x3,double y3);
-        
+    vpTemplateTrackerTriangle(const vpColVector &c1, const vpColVector &c2, const vpColVector &c3);
+    vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3);
+    vpTemplateTrackerTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
+    vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
+
     vpTemplateTrackerTriangle getPyramidDown() const;
     void getCorners(vpColVector &c1,vpColVector &c2,vpColVector &c3) const;
     void getCorners(vpImagePoint &c1, vpImagePoint &c2, vpImagePoint &c3) const;
     void getCorners(std::vector<vpImagePoint> &c) const;
 
     /*!
-       \param i : Allowed values are 0,1 or 2.
+       Returns the coordinates of a triangle corner.
+       \param i : Allowed values are 0, 1 or 2.
        \return
        - if i = 0, return corner 1 coordinates,
        - if i = 1, return corner 2 coordinates,
@@ -106,6 +109,29 @@ class VISP_EXPORT vpTemplateTrackerTriangle
       else if(i==1) return getCorner2();
       else /*if(i==2)*/ return getCorner3();
     };
+    /*!
+       Returns the coordinates of a triangle corner.
+       \param i : Allowed values are 0, 1 or 2.
+       - if i = 0, return corner 1 coordinates,
+       - if i = 1, return corner 2 coordinates,
+       - if i = 2, return corner 3 coordinates.
+       \param x,y : The coordinates of the corner.
+     */
+    void getCorner(unsigned int i, double &x, double &y) const {
+      assert(i<3);
+      if(i==0) {
+        x = C1.x;
+        y = C1.y;
+      }
+      else if(i==1) {
+        x = C2.x;
+        y = C2.y;
+      }
+      else /*if(i==2)*/ {
+        x = C3.x;
+        y = C3.y;
+      }
+    };
 
     double getMaxx() const;
     double getMaxy() const;
@@ -116,8 +142,10 @@ class VISP_EXPORT vpTemplateTrackerTriangle
     void getSize(int &w, int &h) const;
     
     void init(const vpColVector &c1,const vpColVector &c2,const vpColVector &c3);
+    void init(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3);
     void init(int x1,int y1, int x2,int y2, int x3,int y3);
     void init(double x1,double y1, double x2,double y2, double x3,double y3);
+    bool inTriangle(const vpImagePoint &ip) const;
     bool inTriangle(const int &i, const int &j) const;
     bool inTriangle(const double &i,const double &j) const;
 
