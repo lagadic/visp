@@ -37,7 +37,8 @@ vpTemplateTrackerSSDInverseCompositional tracker(&warp);
 Once the tracker is created with the desired warp, parameters can be tuned to be more consistent with the expected behavior.
 
 \code
-tracker.setSampling(2,2);     // Will consider only one pixel from two along rows and columns to create the reference template
+tracker.setSampling(2,2);     // Will consider only one pixel from two along rows and columns 
+                              // to create the reference template
 tracker.setLambda(0.001);     // Gain used in the optimization loop
 tracker.setIterationMax(200); // Maximum number of iterations for the optimization loop
 tracker.setPyramidal(2, 1);   // First and last level of the pyramid
@@ -124,7 +125,8 @@ The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemp
 When you want to obtain a perfect pose estimation, it is often time-consuming. However, by tuning the tracker, you can find a good compromise between speed and efficiency. Basically, what will make the difference is the size of the reference template. The more pixels it contains, the more time-consuming it will be. Fortunately, the solutions to avoid this problem are multiple. First of all lets come back on the vpTemplateTracker::setSampling() function.
 
 \code
-tracker.setSampling(4,4);     // Will consider only one pixel from four along rows and columns to create the reference template.
+tracker.setSampling(4,4);     // Will consider only one pixel from four along rows and columns
+                              // to create the reference template.
 \endcode
 
 In the example above, we decided to consider only one pixel from 16 (4 by 4) to create the reference template. Obviously, by increasing those values it will consider much less pixels, which unfortunately decrease the efficiency, but the tracking phase will be much faster. 
@@ -158,6 +160,55 @@ tracker.setThresholdRMS(1e-6);
 
 By increasing this root mean square threshold value, the algorithm will reduce its number of iterations which should also speed up the tracking phase. This function should be used wisely with the vpTemplateTracker::setIterationMax() function.
 
+\subsection points_tt How to get the points of the template
+
+The previous code provided in tutorial-template-tracker.cpp can be modified to get the coordinates of the corners of the triangles that define the zone to track. To this end, as shown in the next lines, before the while loop we first define a reference zone and the corresponding warped zone. Then in the loop, we update the warped zone using the parameters of the warping model that is estimated by the tracker. From the warped zone, we extract all the triangles, and then for each triangles, we get the corners coordinates. 
+
+\code
+  // Instantiate and get the reference zone
+  vpTemplateTrackerZone zone_ref = tracker.getZoneRef();
+  // Instantiate a warped zone
+  vpTemplateTrackerZone zone_warped;
+
+  while(!g.end()){
+    g.acquire(I);
+    vpDisplay::display(I);
+    tracker.track(I);
+
+    tracker.display(I, vpColor::red);
+
+    // Get the estimated parameters
+    vpColVector p = tracker.getp();
+
+    // Update the warped zone given the tracker estimated parameters
+    warp.warpZone(zone_ref, p, zone_warped);
+
+    // Parse all the triangles that describe the zone
+    for (int i=0; i < zone_warped.getNbTriangle(); i++) {
+      vpTemplateTrackerTriangle triangle;
+      // Get a triangle 
+      zone_warped.getTriangle(i, triangle);
+      std::vector<vpImagePoint> corners;
+      // Get the 3 triangle corners
+      triangle.getCorners( corners );
+
+      // From here, each corner triangle is available in 
+      // corners[0], corners[1] and corners[2]
+
+      // Display a green cross over each corner
+      for(unsigned int j=0; j<corners.size(); j++)
+        vpDisplay::displayCross(I, corners[j], 15, vpColor::green, 2);
+    }
+    vpDisplay::displayRectangle(I, zone_warped.getBoundingBox(), vpColor::orange);
+\endcode
+
+With the last line, we also sho how to get and display an orange rectangle that corresponds to the bounding box of all the triangles that define the zone.
+
+The resulting drawings introduced previously are shown in the next image. Here we initialize the tracker with 2 triangles that are not connex.
+
+\image html img-template-tracker.jpg 
+
+
 \section tracking_tt_example More examples
 
 The templateTracker.cpp source code provided in the example/tracking folder allows to test all the template tracker classes that derive from vpTemplateTracker as well as all the warping classes that derive from vpTemplateTrackerWarp.
@@ -165,7 +216,7 @@ The templateTracker.cpp source code provided in the example/tracking folder allo
 Once build, in a terminal just run:
 
 \code
-templateTracker -h
+./templateTracker -h
 \endcode
 
 to see which are the command lines options.
