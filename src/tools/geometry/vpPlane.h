@@ -54,7 +54,7 @@
   \brief This class defines the container for a plane geometrical structure.
 
   A plane is given by the equation \f$Ax + By + Cz + D = 0\f$ where
-  (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is normal
+  (x,y,z) are the coordinates of a point and where \f$[A,B,C]^T\f$ is a normal
   vector of the plane.
 
 */
