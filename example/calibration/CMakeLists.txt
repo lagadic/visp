@@ -65,3 +65,25 @@ ENDFOREACH(source)
 # of acquired images
 ADD_TEST(calibrateTsai calibrateTsai)
 
+# copy the data
+get_target_property(target_location camera_calibration LOCATION)
+get_filename_component(target_location "${target_location}" PATH)
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-chessboard.cfg" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-circles.cfg" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-01.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-02.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-03.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-04.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-05.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-01.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
+foreach(data ${data2copy})
+  add_custom_command(
+    TARGET camera_calibration
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${data}" "${target_location}"
+  )
+endforeach()

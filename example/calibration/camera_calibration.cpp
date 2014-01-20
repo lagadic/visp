@@ -71,6 +71,8 @@ public:
     calibrationPattern = UNDEFINED;
     squareSize = 0.025;
     goodInput = false;
+    tempo = 1;
+
   }
   enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID};
 
@@ -84,12 +86,14 @@ public:
     vpIoTools::readConfigVar("Square_Size:", squareSize);
     vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
     vpIoTools::readConfigVar("Input:", input);
+    vpIoTools::readConfigVar("Tempo:", tempo);
 
     std::cout << "grid width : " << boardSize.width << std::endl;
     std::cout << "grid height: " << boardSize.height << std::endl;
     std::cout << "square size: " << squareSize << std::endl;
     std::cout << "pattern    : " << patternToUse << std::endl;
     std::cout << "input seq  : " << input << std::endl;
+    std::cout << "tempo      : " << tempo << std::endl;
     interprate();
     return true;
   }
@@ -109,8 +113,8 @@ public:
       goodInput = false;
 
     calibrationPattern = UNDEFINED;
-    if (patternToUse.compare("CHESSBOARD")) calibrationPattern = CHESSBOARD;
-    else if (patternToUse.compare("CIRCLES_GRID")) calibrationPattern = CIRCLES_GRID;
+    if (patternToUse.compare("CHESSBOARD") == 0) calibrationPattern = CHESSBOARD;
+    else if (patternToUse.compare("CIRCLES_GRID") == 0) calibrationPattern = CIRCLES_GRID;
     if (calibrationPattern == UNDEFINED) {
       std::cerr << " Inexistent camera calibration mode: " << patternToUse << std::endl;
       goodInput = false;
@@ -122,6 +126,7 @@ public:
   Pattern calibrationPattern;// One of the Chessboard, circles, or asymmetric circle pattern
   float squareSize;          // The size of a square in your defined unit (point, millimeter,etc).
   std::string input;         // The input image sequence
+  double tempo;              // Tempo in seconds between two images. If > 10 wait a click to continue
   bool goodInput;
 
 private:
@@ -189,17 +194,24 @@ int main(int argc, const char ** argv)
       switch( s.calibrationPattern ) // Find feature points on the input format
       {
       case Settings::CHESSBOARD:
+        //std::cout << "Use chessboard " << std::endl;
         found = findChessboardCorners( cvI, s.boardSize, pointBuf,
                                        CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
         break;
       case Settings::CIRCLES_GRID:
+        //std::cout << "Use circle grid " << std::endl;
         found = findCirclesGrid( cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID  );
         break;
       default:
+        std::cout << "Unkown calibration grid " << std::endl;
         break;
       }
 
-      std::cout << "frame: " << frame_index << " status: " << found << std::endl;
+      std::cout << "frame: " << frame_index << ", status: " << found;
+      if (!found)
+        std::cout << ", image rejected" << std::endl;
+      else
+        std::cout << ", image used as input data" << std::endl;
 
       if ( found)                // If done with success,
       {
@@ -216,7 +228,6 @@ int main(int argc, const char ** argv)
           vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
           data.push_back(ip);
           vpDisplay::displayCross(I, ip, 10, vpColor::red);
-
         }
 
         // Calibration on a single mono image
@@ -242,8 +253,22 @@ int main(int argc, const char ** argv)
         }
       }
 
-      vpDisplay::flush(I);
-      //vpDisplay::getClick(I);
+
+
+      if (found)
+        vpDisplay::displayCharString(I, 15, 15, "Image processing succeed", vpColor::green);
+      else
+        vpDisplay::displayCharString(I, 15, 15, "Image processing fails", vpColor::green);
+
+      if (s.tempo > 10.f) {
+        vpDisplay::displayCharString(I, 35, 15, "A click to process the next image", vpColor::green);
+        vpDisplay::flush(I);
+        vpDisplay::getClick(I);
+      }
+      else {
+        vpDisplay::flush(I);
+        vpTime::wait(s.tempo*1000);
+      }
     }
 
     // Now we consider the multi image calibration
@@ -277,6 +302,7 @@ int main(int argc, const char ** argv)
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) == 0) {
       std::cout << cam << std::endl;
       std::cout << "Global reprojection error: " << error << std::endl;
+
 #ifdef VISP_HAVE_XML2
       vpXmlParserCamera xml;
 
@@ -287,6 +313,10 @@ int main(int argc, const char ** argv)
         std::cout << "A file with the same name exists. Remove it to be able to save the parameters..." << std::endl;
       }
 #endif
+      std::cout << std::endl;
+      for (unsigned int i=0; i<calibrator.size(); i++)
+        std::cout << "Estimated pose on input data " << i << ": " << vpPoseVector(calibrator[i].cMo_dist).t() << std::endl;
+
     }
     else
       std::cout << "Calibration with distortion failed." << std::endl;

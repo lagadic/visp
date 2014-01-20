@@ -48,16 +48,16 @@ The source code of the calibration tool is available in \c camera_calibration.cp
 We will not describe in detail the source, but just mention that:
 - the image processing is performed using OpenCV;
 - the estimation of the parameters is done using a virtual visual servoing scheme;
-- the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the images (chessboard or circle grid), and the location of the images used as input. If \c libjpeg and \c libpng 3rd party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images. Default configuration files are provided in \c example/calibration folder;
+- the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the images (chessboard or circles grid), and the location of the images used as input. If \c libjpeg and \c libpng 3rd party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images. Default configuration files are provided in \c example/calibration folder;
 - the resulting parameters are saved in \c camera.xml file. 
 
 \section calibration_chessboard Calibration from a chessboard
 
-In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. We took 5 images called \c chessboard-01.png, \c chessboard-02.png, \c chessboard-03.png, \c chessboard-04.png, \c chessboard-05.png. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
+In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. We took 5 images called \c chessboard-01.png, \c chessboard-02.png, ..., \c chessboard-05.png. Hereafter we give an example of one of these images. 
 
 \image html img-chessboard-01.png Snapshot example of the chessboard used to calibrate the camera.
 
-Before starting the calibration we need to create a configuration file. We create \c /tmp/chessboard.cfg with the following content:
+Before starting the calibration we need to create a configuration file. We create \c default-chessboard.cfg with the following content:
 \code
 # Number of inner corners per a item row and column. (square, circle)
 BoardSize_Width: 9
@@ -71,12 +71,17 @@ Square_Size: 0.025
 Calibrate_Pattern: CHESSBOARD
 
 # The input image sequence to use for calibration
-Input: /tmp/chessboard-%02d.png
+Input: chessboard-%02d.png
+
+# Tempo in seconds between two images. If > 10 wait a click to continue
+Tempo: 1
 \endcode
+
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c camera_calibration binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
 \code
-./camera_calibration /tmp/chessboard.cfg
+./camera_calibration default-chessboard.cfg
 \endcode
 
 This command will produce the following output:
@@ -85,41 +90,48 @@ grid width : 9
 grid height: 6
 square size: 0.025
 pattern    : CHESSBOARD
-input seq  : /tmp/chessboard-%02d.png
-frame: 1 status: 1
-frame: 2 status: 1
-frame: 3 status: 1
-frame: 4 status: 1
-frame: 5 status: 1
+input seq  : chessboard-%02d.png
+tempo      : 1
+frame: 1, status: 1, image used as input data
+frame: 2, status: 1, image used as input data
+frame: 3, status: 1, image used as input data
+frame: 4, status: 1, image used as input data
+frame: 5, status: 1, image used as input data
 
-Calibration without distortion in progress on 5 images...
+Calibration without distorsion in progress on 5 images...
 Camera parameters for perspective projection without distortion:
-  px = 547.3080992	 py = 546.9825167
-  u0 = 324.6299338	 v0 = 229.9072033
+  px = 278.5184659	 py = 273.9720502
+  u0 = 162.1161106	 v0 = 113.1789595
 
-Global reprojection error: 2.632851934
+Global reprojection error: 0.2784261067
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distortion in progress on 5 images...
+Calibration with distorsion in progress on 5 images...
 Camera parameters for perspective projection with distortion:
-  px = 582.7521622	 py = 580.6586412
-  u0 = 326.5736348	 v0 = 214.9591392
-  kud = -0.3372254753
-  kdu = 0.4021511255
+  px = 276.3370556	 py = 271.9804892
+  u0 = 162.3656808	 v0 = 113.4484506
+  kud = 0.02739893948
+  kdu = -0.02719442967
 
-Global reprojection error: 0.6350883328
+Global reprojection error: 0.2602153289
 Camera parameters without distortion successfully saved in "camera.xml"
+
+Estimated pose on input data 0: 0.1004079988  0.07228624926  0.2759094615  0.1622201484  -0.04594748279  -3.067523182  
+Estimated pose on input data 1: 0.1126235389  0.09590025615  0.2967542475  0.5743609549  -0.1960511892  -2.915893698  
+Estimated pose on input data 2: 0.09983133876  0.08044014071  0.2920209765  -0.02917708148  -0.6751719307  3.046437745  
+Estimated pose on input data 3: 0.07481330068  0.0832284992  0.2825482261  -0.09487329058  -0.220597075  -2.747906623  
+Estimated pose on input data 4: 0.08061439562  0.08765353523  0.2837166409  0.1009190234  -0.09325252997  -2.906079819
 \endcode
 
 The resulting parameters are also saved in \c ./camera.xml file.
 
-\section calibration_circle Calibration from a circle grid
+\section calibration_circle Calibration from a circles grid
 
-In this section we consider the ViSP symmetric circle grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 6 images called \c circles-02.pgm, \c circles-03.pgm, ..., \c circles-07.pgm. Hereafter we give an example of such an image. These images are located in \c /tmp folder.
+In this section we consider the ViSP symmetric circles grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 5 images called \c circles-01.pgm, \c circles-02.pgm, ..., \c circles-05.pgm. Hereafter we give an example of such an image. 
 
 \image html img-circles-grid-02.png Snapshot example of the symmetric circles grid used to calibrate the camera.
 
-Before starting the calibration we need to create a configuration file. We create \c /tmp/circles-grid.cfg with the following content:
+Before starting the calibration we need to create a configuration file. We create \c circles-grid.cfg with the following content:
 \code
 # Number of inner corners per a item row and column. (square, circle)
 BoardSize_Width: 6
@@ -133,12 +145,17 @@ Square_Size: 0.034
 Calibrate_Pattern: CIRCLES_GRID
 
 # The input image sequence to use for calibration
-Input: /tmp/circles-%02d.pgm
+Input: circles-%02d.pgm
+
+# Tempo in seconds between two images. If > 10 wait a click to continue
+Tempo: 1
 \endcode
+
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c camera_calibration binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
 \code
-./camera_calibration /tmp/circles-grid.cfg
+./camera_calibration circles-grid.cfg
 \endcode
 
 This command will produce the following output:
@@ -147,39 +164,41 @@ grid width : 6
 grid height: 6
 square size: 0.034
 pattern    : CIRCLES_GRID
-input seq  : /tmp/circles-%02d.pgm
-frame: 2 status: 1
-frame: 3 status: 1
-frame: 4 status: 1
-frame: 5 status: 0
-frame: 6 status: 1
-frame: 7 status: 1
+input seq  : circles-%02d.png
+tempo      : 1
+frame: 1, status: 1, image used as input data
+frame: 2, status: 1, image used as input data
+frame: 3, status: 1, image used as input data
+frame: 4, status: 1, image used as input data
+frame: 5, status: 1, image used as input data
 
-Calibration without distortion in progress on 6 images...
+Calibration without distorsion in progress on 5 images...
 Camera parameters for perspective projection without distortion:
-  px = 552.4774691	 py = 544.8066862
-  u0 = 308.732533	 v0 = 245.8146982
+  px = 276.7844987	 py = 273.2284128
+  u0 = 164.029061	 v0 = 113.2926414
 
-Global reprojection error: 0.2888553796
+Global reprojection error: 0.3245572722
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distortion in progress on 6 images...
+Calibration with distorsion in progress on 5 images...
 Camera parameters for perspective projection with distortion:
-  px = 550.9009948	 py = 543.1425164
-  u0 = 309.1726232	 v0 = 245.7667949
-  kud = 0.01091468479
-  kdu = -0.01088523009
+  px = 272.6576029	 py = 268.9209423
+  u0 = 163.3267494	 v0 = 112.9548567
+  kud = 0.03132515383
+  kdu = -0.03098719022
 
-Global reprojection error: 0.2763660773
+Global reprojection error: 0.2985458516
 Camera parameters without distortion successfully saved in "camera.xml"
+
+Estimated pose on input data 0: -0.08883802146  -0.07573082723  0.254649414  0.009277810667  -0.1162730223  -0.06217958144  
+Estimated pose on input data 1: -0.03031929668  -0.07792577124  0.226777101  0.04390110018  -0.474640394  0.09584680839  
+Estimated pose on input data 2: 0.02757364367  -0.08075508106  0.2416734821  0.2541005213  -0.469141926  0.5746851856  
+Estimated pose on input data 3: -0.08528071  -0.0552184701  0.216359278  0.433944401  -0.01692119727  -0.01151973247  
+Estimated pose on input data 4: -0.1104723502  -0.0854285443  0.2684946566  0.4130829919  0.1926077657  0.2736623762
 \endcode
 
 The resulting parameters are also saved in \c ./camera.xml file.
 
-Note here that the following line indicates that the 5th frame corresponding to the image \c circles-05.pgm was not used in the calibration process since the status of the image processing is false.
-\code
-frame: 5 status: 0
-\endcode
 
 \section calibration_undistort Distorsion removal
 
