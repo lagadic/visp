@@ -253,8 +253,6 @@ int main(int argc, const char ** argv)
         }
       }
 
-
-
       if (found)
         vpDisplay::displayCharString(I, 15, 15, "Image processing succeed", vpColor::green);
       else
