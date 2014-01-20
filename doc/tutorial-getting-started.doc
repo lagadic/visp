@@ -86,8 +86,41 @@ The title of the display is then set to \c "My image".
 
 \section image_cmake Create a CMake file
 
-Now you have to create your CMakeLists.txt file. It should look like this:
+Now you have to create your \c CMakeLists.txt file. It should look like this:
 
+\code
+project(tutorial-image)
+
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED)
+if(VISP_FOUND)
+  add_definitions(${VISP_DEFINITIONS})
+  include_directories(${VISP_INCLUDE_DIRS})
+  link_directories(${VISP_LIBRARY_DIRS})
+  link_libraries(${VISP_LIBRARIES})
+endif(VISP_FOUND)
+
+add_executable(tutorial-viewer tutorial-viewer.cpp)
+\endcode
+
+The \c find_package() CMake command searches for a \c VISPConfig.cmake file that will define the corresponding variables:
+- \c VISP_ROOT_DIR       : ViSP base directory location
+- \c VISP_INCLUDE_DIRS   : ViSP and third-party headers location
+- \c VISP_LIBRARY_DIRS   : ViSP and third-party libraries location
+- \c VISP_LIBRARY        : ViSP library name
+- \c VISP_LIBRARIES      : ViSP and third-party libraries name
+- \c VISP_DEFINITIONS    : Defines required to build with ViSP
+
+In the previous \c CMakeLists.txt file, it is also possible to remove the line that started with \c link_libraries() and to specifically link a binary with ViSP using:
+
+\code
+...
+add_executable(tutorial-viewer tutorial-viewer.cpp)
+target_link_libraries(tutorial-viewer ${VISP_LIBRARIES})
+\endcode
+
+Note also that the previous \c CMakeLists.txt file can also be:
 \code
 project(tutorial-image)
 
@@ -101,6 +134,19 @@ endif(VISP_FOUND)
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 \endcode
 
+where \c VISP_USE_FILE variable is set to the full path to \c VISPUse.cmake file that contains all the CMake material that allow to build your project with ViSP. In other terms, the line
+\code
+  include(${VISP_USE_FILE})
+\endcode
+will include the following lines to your \c CMakeFile.txt
+\code
+  add_definitions(${VISP_DEFINITIONS})
+  include_directories(${VISP_INCLUDE_DIRS})
+  link_directories(${VISP_LIBRARY_DIRS})
+  link_libraries(${VISP_LIBRARIES})
+\endcode
+
+
 \section image_unix On Unix-like systems
 
 \subsection image_unix_config Configure your project
@@ -110,6 +156,31 @@ Proceed as with any other project using CMake:
 \code
 cmake .
 \endcode
+
+By default \c cmake searches \c VISPConfig.cmake file in folders like \c /usr/share or \c /usr/local/share. If ViSP was not installed in \c /usr or \c /usr/local it is possible that you get the following error:
+\code
+CMake Error at CMakeLists.txt:5 (find_package):
+  Could not find module FindVISP.cmake or a configuration file for package
+  VISP.
+
+  Adjust CMAKE_MODULE_PATH to find FindVISP.cmake or set VISP_DIR to the
+  directory containing a CMake configuration file for VISP.  The file will
+  have one of the following names:
+
+    VISPConfig.cmake
+    visp-config.cmake
+\endcode
+
+To help \c cmake to find \c VISPConfig.cmake file, just set \c VISP_DIR environment variable and call \c cmake again:
+\code
+export VISP_DIR=/home/ViSP-install-folder
+cmake .
+\endcode
+or run cmake with the additional VISP_DIR definition
+\code
+cmake -DVISP_DIR=/home/ViSP-install-folder .
+\endcode
+ 
 
 \subsection image_unix_build Generate the executable
 
