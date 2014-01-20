@@ -355,6 +355,7 @@ public:  /* Methode publiques */
 
   void getForceTorque(vpColVector &H) const;
 
+  double getMaxRotationVelocityJoint6() const;
   void getPosition (const vpRobot::vpControlFrameType frame,
                     vpColVector &position);
   void getPosition (const vpRobot::vpControlFrameType frame,
@@ -397,6 +398,9 @@ public:  /* Methode publiques */
   static bool readPosFile(const char *filename, vpColVector &q)  ;
   static bool savePosFile(const char *filename, const vpColVector &q)  ;
 
+  void setMaxRotationVelocity(double w_max);
+  void setMaxRotationVelocityJoint6(double w6_max);
+
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame,
                    const vpColVector &position) ;
@@ -418,6 +422,8 @@ public:  /* Methode publiques */
 private:
   void getArticularDisplacement(vpColVector &displacement);
   void getCameraDisplacement(vpColVector &displacement);
+
+  double maxRotationVelocity_joint6;
 };
 
 
