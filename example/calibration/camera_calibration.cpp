@@ -190,7 +190,7 @@ int main(int argc, const char ** argv)
       std::vector<cv::Point2f> pointBuf;
       vpImageConvert::convert(I, cvI);
 
-      bool found;
+      bool found = false;
       switch( s.calibrationPattern ) // Find feature points on the input format
       {
       case Settings::CHESSBOARD:
