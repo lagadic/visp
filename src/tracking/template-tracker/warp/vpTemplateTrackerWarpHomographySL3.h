@@ -114,10 +114,10 @@ class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWa
     /*!
       Compute the derivative of the image with relation to the warping function parameters.
 
-      \param i : i coordinate of the point to consider in the image.
-      \param j : j coordinate of the point to consider in the image.
-      \param dy : Derivative on the y-axis of the point (i,j).
-      \param dx : Derivative on the x-axis of the point (i,j).
+      \param i : i coordinate (along the rows) of the point to consider in the image.
+      \param j : j coordinate (along the columns) of the point to consider in the image.
+      \param dy : Derivative on the y-axis (along the rows) of the point (i,j).
+      \param dx : Derivative on the x-axis (along the columns) of the point (i,j).
       \param dIdW : Resulting derivative matrix (Image according to the warping function).
     */
     void getdW0(const int &i,const int &j,const double &dy,const double &dx,double *dIdW);
@@ -125,11 +125,19 @@ class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWa
     /*!
       Compute the derivative of the warping function according to the initial parameters.
 
-      \param i : i coordinate of the point to consider in the image.
-      \param j : j coordinate of the point to consider in the image.
+      \param i : i coordinate (along the rows) of the point to consider in the image.
+      \param j : j coordinate (along the columns) of the point to consider in the image.
       \param dIdW : Resulting derivative matrix (Image according to the warping function).
     */
     void getdWdp0(const int &i,const int &j,double *dIdW);
+
+    /*!
+      Compute the derivative of the warping function according to the initial parameters.
+
+      \param i : i coordinate (along the rows) of the point to consider in the image.
+      \param j : j coordinate (along the columns) of the point to consider in the image.
+      \param dIdW : Resulting derivative matrix (Image according to the warping function).
+    */
     void getdWdp0(const double &i, const double &j,double *dIdW);
 
     /*!
@@ -191,10 +199,10 @@ class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWa
     /*!
       Warp a point.
 
-      \param i : i coordinate of the point to warp.
-      \param j : j coordinate of the point to warp.
-      \param i2 : i coordinate of the warped point.
-      \param j2 : j coordinate of the warped point.
+      \param i : i coordinate (along the rows) of the point to warp.
+      \param j : j coordinate (along the columns) of the point to warp.
+      \param i2 : i coordinate (along the rows) of the warped point.
+      \param j2 : j coordinate (along the columns) of the warped point.
       \param ParamM : Parameters of the warping function.
     */
     void warpX(const int &i,const int &j,double &i2,double &j2,const vpColVector &ParamM);
