@@ -170,7 +170,7 @@ main(int argc, const char ** argv)
       ipath = env_ipath;
 
     // Set the default output path
-#ifdef WIN32
+#if defined(_WIN32)
     opt_opath = "C:/temp";
 #else
     opt_opath = "/tmp";

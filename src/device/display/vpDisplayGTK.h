@@ -83,10 +83,10 @@ int main()
   vpImage<unsigned char> I; // Grey level image
 
   // Read an image in PGM P5 format
-#ifdef UNIX
-  vpImageIo::readPGM(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-#elif WIN32
-  vpImageIo::readPGM(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#ifdef _WIN32
+  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#else
+  vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
 #endif
 
   vpDisplayGTK d; 

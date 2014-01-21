@@ -142,7 +142,7 @@ main(int argc, const char ** argv)
     std::string username;
 
     // Set the default output filename
-#ifdef WIN32
+#if defined(_WIN32)
     ofilename = "C:/temp";
 #else
     ofilename = "/tmp";

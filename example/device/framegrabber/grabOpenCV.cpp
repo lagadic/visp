@@ -196,16 +196,16 @@ main(int argc, const char ** argv)
     // Set default output image name for saving
 #ifdef GRAB_COLOR
     // Color images will be saved in PGM P6 format
-#  if defined(UNIX)
+#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     std::string opath = "/tmp/I%04d.ppm";
-#  elif defined(WIN32)
+#  elif defined(_WIN32)
     std::string opath = "C:/temp/I%04d.ppm";
 #  endif
 #else
     // B&W images will be saved in PGM P5 format
-#  if defined(UNIX)
+#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     std::string opath = "/tmp/I%04d.pgm";
-#  elif defined(WIN32)
+#  elif defined(_WIN32)
     std::string opath = "C:/temp/I%04d.pgm";
 #  endif
 #endif

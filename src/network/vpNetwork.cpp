@@ -55,7 +55,7 @@ vpNetwork::vpNetwork()
   
   verboseMode = false;
 
-#ifdef WIN32
+#if defined(_WIN32)
   //Enable the sockets to be used
   //Note that: if we were using "winsock.h" instead of "winsock2.h" we would had to use:
   //WSAStartup(MAKEWORD(1,0), &WSAData);
@@ -67,7 +67,7 @@ vpNetwork::vpNetwork()
 
 vpNetwork::~vpNetwork()
 {
-#ifdef WIN32
+#if defined(_WIN32)
   WSACleanup();
 #endif
 }
@@ -218,11 +218,12 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
   message += end;
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
+//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+#if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
                      (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 #else
@@ -691,7 +692,7 @@ int vpNetwork::_receiveRequestOnce()
     for(unsigned int i=0; i<receptor_list.size(); i++){
       if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
         char *buf = new char [max_size_message];
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         numbytes=recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
         numbytes=recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
@@ -770,7 +771,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   else{
     if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
       char *buf = new char [max_size_message];
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       numbytes=recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
       numbytes=recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);

@@ -74,18 +74,18 @@
 
   \code
 #include <visp/vpImageTools.h>
-
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 
 int main()
 {
   vpImage<unsigned char> I;
-#ifdef UNIX
-  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-#elif WIN32
-  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.pgm");
+#ifdef _WIN32
+  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.ppm");
+#else
+  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
 #endif
+
   // Read an image from the disk
   vpImageIo::read(I, filename); 
 

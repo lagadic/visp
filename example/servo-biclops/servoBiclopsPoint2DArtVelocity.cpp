@@ -223,9 +223,9 @@ main(int argc, const char ** argv)
     std::string opt_debugdir;
 
     // Set the default output path
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_debugdir = "/tmp";
-#elif WIN32
+#elif defined(_WIN32)
     opt_debugdir = "C:/temp";
 #endif
 
@@ -299,7 +299,7 @@ main(int argc, const char ** argv)
     vpDisplayX display(I, 100, 100,"Display X...") ;
 #elif defined VISP_HAVE_GTK
     vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
-#elif defined WIN32
+#elif defined(_WIN32)
     vpDisplayGDI display(I, 100, 100,"Display GDI...") ;
 #endif
 

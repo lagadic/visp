@@ -49,10 +49,12 @@
 
 #include <visp/vpConfig.h>
 #include <iostream>
-//#if defined(VISP_HAVE_OGRE) && defined(VISP_HAVE_DISPLAY)
-#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) || (defined(VISP_HAVE_X11) && ! defined(APPLE)))
 
-#if defined(VISP_HAVE_X11) && ! defined(APPLE)
+//#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) || (defined(VISP_HAVE_X11) && ! defined(APPLE)))
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) || (defined(VISP_HAVE_X11) && ! (defined(__APPLE__) && defined(__MACH__))))
+
+//#if defined(VISP_HAVE_X11) && ! defined(APPLE)
+#if defined(VISP_HAVE_X11) && ! (defined(__APPLE__) && defined(__MACH__))
 // produce an error on OSX: ‘typedef int Cursor’
 // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
 // declaration as ‘typedef XID Cursor’. That's why it should not be
@@ -187,7 +189,8 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
   // ----------------------------------------------------
   bool opt_display = true;
 	
-#if defined(VISP_HAVE_X11) && ! defined(APPLE)
+//#if defined(VISP_HAVE_X11) && ! defined(APPLE)
+#if defined(VISP_HAVE_X11) && ! (defined(__APPLE__) && defined(__MACH__))
   // produce an error on OSX: ‘typedef int Cursor’
   // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
   // declaration as ‘typedef XID Cursor’. That's why it should not be

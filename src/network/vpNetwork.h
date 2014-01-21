@@ -50,7 +50,7 @@
 #include <string.h>
 #include <iostream>
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h> 
 #  include <sys/socket.h>
 #  include <netinet/in.h>
@@ -85,7 +85,7 @@ class VISP_EXPORT vpNetwork
 protected:
 
   struct vpReceptor{
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int                   socketFileDescriptorReceptor;
     socklen_t             receptorAddressSize;
 #else
@@ -98,7 +98,7 @@ protected:
   
   struct vpEmitter{
     struct sockaddr_in    emitterAddress;
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int                   socketFileDescriptorEmitter;
 #else
     SOCKET                socketFileDescriptorEmitter;
@@ -118,7 +118,7 @@ protected:
   vpEmitter               emitter;
   std::vector<vpReceptor> receptor_list;
   fd_set                  readFileDescriptor;
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int                     socketMax;
 #else
   SOCKET                  socketMax;
@@ -311,7 +311,7 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
   else{
     for(unsigned int i=0; i<receptor_list.size(); i++){
       if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
 #else
         numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
@@ -384,7 +384,7 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
   }
   else{
     if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       numbytes = recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, sizeOfObject, 0);
 #else
       numbytes = recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char*)(void*)object, (int)sizeOfObject, 0);
@@ -432,11 +432,12 @@ int vpNetwork::send(T* object, const unsigned int &sizeOfObject)
   }
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
+//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+#if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
                 flags, (sockaddr*) &receptor_list[0].receptorAddress,receptor_list[0].receptorAddressSize);
 #else
@@ -478,11 +479,12 @@ int vpNetwork::sendTo(T* object, const unsigned int &dest, const unsigned int &s
   }
   
   int flags = 0;
-#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(WIN32)
+//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+#if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char*)(void*)object, sizeOfObject, 
                 flags, (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 #else

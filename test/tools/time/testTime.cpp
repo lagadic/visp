@@ -47,9 +47,9 @@
 
 */
 #include <visp/vpConfig.h>
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
-#elif defined WIN32
+#elif defined(_WIN32)
 #  include <windows.h>
 #  include <mmsystem.h>
 #  include <winbase.h>
@@ -144,18 +144,18 @@ main(int argc, const char ** argv)
     double t2 = vpTime::measureTimeMs();
 
     // Sleep 10ms
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(10*1000);
-#elif defined WIN32
+#elif defined(_WIN32)
     Sleep(10);
 #endif
 
     double t3 = vpTime::measureTimeMs();
 
     // Sleep 2ms
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     usleep(2*1000);
-#elif defined WIN32
+#elif defined(_WIN32)
     Sleep(2);
 #endif
     double t4 = vpTime::measureTimeMs();

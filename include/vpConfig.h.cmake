@@ -282,7 +282,7 @@
 //
 // On Linux, set the visibility accordingly. If C++ symbol visibility
 // is handled by the compiler, see: http://gcc.gnu.org/wiki/Visibility
-# if defined _WIN32 || defined __CYGWIN__
+# if defined(_WIN32) || defined(__CYGWIN__)
 // On Microsoft Windows, use dllimport and dllexport to tag symbols.
 #  define VISP_DLLIMPORT __declspec(dllimport)
 #  define VISP_DLLEXPORT __declspec(dllexport)
@@ -299,7 +299,7 @@
 #   define VISP_DLLEXPORT
 #   define VISP_DLLLOCAL
 #  endif // __GNUC__ >= 4
-# endif // defined _WIN32 || defined __CYGWIN__
+# endif // defined(_WIN32) || defined(__CYGWIN__)
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
@@ -323,7 +323,7 @@
 
 // Add the material to produce a warning when deprecated functions are used
 #ifndef vp_deprecated
-#  if defined (UNIX)
+#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #    define vp_deprecated __attribute__((deprecated))
 #  else
 #    define vp_deprecated __declspec(deprecated)

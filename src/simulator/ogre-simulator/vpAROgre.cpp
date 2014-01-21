@@ -238,7 +238,7 @@ void vpAROgre::init(bool
 		    )
 {
   // Create the root
-#if defined(NDEBUG) || !defined(WIN32)
+#if defined(NDEBUG) || !defined(_WIN32)
   std::string pluginFile = mPluginsPath+"/plugins.cfg";
 #else
   std::string pluginFile = mPluginsPath+"/plugins_d.cfg";
@@ -412,7 +412,7 @@ void vpAROgre::init(bool
   windowHndStr << windowHnd;
   pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
   // Let the user use the keyboard elsewhere
-#if defined (UNIX)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
 #endif
 

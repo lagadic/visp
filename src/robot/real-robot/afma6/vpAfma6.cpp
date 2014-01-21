@@ -68,70 +68,70 @@ static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
                                   NULL};
 
 const char * const vpAfma6::CONST_AFMA6_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_ccmop_without_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_ccmop_without_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME
-#ifdef WIN32 
+#if defined(_WIN32) 
 = "Z:/robot/Afma6/current/include/const_eMc_ccmop_with_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_ccmop_with_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_gripper_without_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_gripper_without_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME
-#ifdef WIN32 
+#if defined(_WIN32) 
 = "Z:/robot/Afma6/current/include/const_eMc_gripper_with_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_gripper_with_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_vacuum_without_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_vacuum_without_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_vacuum_with_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_vacuum_with_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_generic_without_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_generic_without_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME
-#ifdef WIN32
+#if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_eMc_generic_with_distortion_Afma6.cnf";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_eMc_generic_with_distortion_Afma6.cnf";
 #endif
 
 const char * const vpAfma6::CONST_CAMERA_AFMA6_FILENAME
-#ifdef WIN32 
+#if defined(_WIN32) 
 = "Z:/robot/Afma6/current/include/const_camera_Afma6.xml";
 #else
 = "/udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml";
@@ -254,19 +254,19 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   case vpAfma6::TOOL_CCMOP: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME);
 #endif
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME);
 #endif
@@ -277,19 +277,19 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   case vpAfma6::TOOL_GRIPPER: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME);
 #endif
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME);
 #endif
@@ -300,19 +300,19 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   case vpAfma6::TOOL_VACUUM: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME);
 #endif
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME);
 #endif
@@ -323,19 +323,19 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME);
 #endif
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(filename_eMc, FILENAME_MAX, "%s",
                CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME);
-#else // WIN32
+#else // _WIN32
       _snprintf(filename_eMc, FILENAME_MAX, "%s",
                 CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME);
 #endif

@@ -72,7 +72,7 @@ We then open the connection with the grabber and acquire an image in \c I.
 
 To be able to display image \c I and the tracking results in overlay in a window, we create a display instance.
 \code
-#if defined UNIX
+#if defined(VISP_HAVE_X11)
   vpDisplayX d(I, 0, 0, "Camera view");
 #else
   vpDisplayGDI d(I, 0, 0, "Camera view");

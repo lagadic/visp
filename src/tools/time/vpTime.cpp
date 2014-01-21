@@ -56,10 +56,10 @@
 
 // Unix depend version
 
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <sys/time.h>
 #  include <unistd.h>
-#elif defined WIN32
+#elif defined(_WIN32)
 #  include <windows.h>
 #  include <winbase.h>
 #endif
@@ -85,7 +85,7 @@ double vpTime::minTimeForUsleepCall = 4; /*! This time is in
 double
 vpTime::measureTimeMs()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
   if(frequency.QuadPart == 0){
@@ -95,7 +95,7 @@ vpTime::measureTimeMs()
   QueryPerformanceCounter(&time);
   return (double)(1000.0*time.QuadPart/frequency.QuadPart);
   }
-#elif defined UNIX
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct timeval tp;
   gettimeofday(&tp,0);
   return(1000.0*tp.tv_sec + tp.tv_usec/1000.0);
@@ -111,7 +111,7 @@ vpTime::measureTimeMs()
 double
 vpTime::measureTimeMicros()
 {
-#if defined(WIN32)
+#if defined(_WIN32)
   LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
   if(frequency.QuadPart == 0){
@@ -156,11 +156,11 @@ vpTime::wait(double t0, double t)
   if ( timeToWait <= 0. ) // no need to wait
     return(1);
   else {
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
-#elif defined WIN32
+#elif defined(_WIN32)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       Sleep((DWORD)(timeToWait-vpTime::minTimeForUsleepCall));
     }
@@ -196,11 +196,11 @@ void vpTime::wait(double t)
   if ( timeToWait <= 0. ) // no need to wait
     return;
   else {
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 	if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
-#elif defined WIN32
+#elif defined(_WIN32)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       Sleep((DWORD)(timeToWait-vpTime::minTimeForUsleepCall));
     }
@@ -235,9 +235,9 @@ double  vpTime::measureTimeSecond()
 */
 void vpTime::sleepMs(double t)
 {
-#if defined UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
    usleep((unsigned long )(t*1000));
-#elif defined WIN32
+#elif defined(_WIN32)
    Sleep((DWORD)(t));
 #endif
 }

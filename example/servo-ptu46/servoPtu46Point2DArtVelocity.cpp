@@ -63,7 +63,7 @@
 */
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h> // Debug trace
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
 #endif
 #include <signal.h>

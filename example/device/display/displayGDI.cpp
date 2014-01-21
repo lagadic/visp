@@ -50,7 +50,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if ( defined(WIN32) && defined(VISP_HAVE_GDI) )
+#if ( defined(_WIN32) && defined(VISP_HAVE_GDI) )
 
 #include <visp/vpDisplayGDI.h>
 

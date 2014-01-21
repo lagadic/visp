@@ -48,7 +48,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if ( defined(UNIX) && ( ! defined(WIN32) ) )
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>

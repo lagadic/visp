@@ -12,7 +12,7 @@ int main()
 
   vpImageIo::readPGM(I, "pattern-template-tracker.pgm");
 
-#ifdef UNIX
+#ifdef VISP_HAVE_X11
   vpDisplayX display;
 #else
   vpDisplayGDI display;

@@ -84,7 +84,7 @@ double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
 
-#if !defined(WIN32) && !defined(VISP_HAVE_PTHREAD)
+#if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available
 int main()
 {

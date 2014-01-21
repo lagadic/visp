@@ -595,7 +595,9 @@ ENDIF(NAS_FOUND)
 # Platform dependent
 #----------------------------------------------------------------------
 IF(WIN32 AND NOT CYGWIN)
-  LIST(APPEND VISP_DEFS "-DWIN32")
+  if(BUILD_DEPRECATED_FUNCTIONS)
+    list(APPEND VISP_DEFS "-DWIN32") # only for compat with previous versions
+  endif()
   LIST(APPEND VISP_DEFS "-DGX") # To support exceptions
   CHECK_LIBRARY_EXISTS("winmm.lib" getch "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
@@ -621,25 +623,26 @@ IF(WIN32 AND NOT CYGWIN)
   endif()
 ENDIF(WIN32 AND NOT CYGWIN)
 
-IF(UNIX)
-  LIST(APPEND VISP_DEFS "-DUNIX")
-  IF(APPLE)
-    LIST(APPEND VISP_DEFS "-DAPPLE")
-  ENDIF(APPLE)
-  if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-    list(APPEND VISP_DEFS "-DSOLARIS")
+if(UNIX)
+  if(BUILD_DEPRECATED_FUNCTIONS)
+    list(APPEND VISP_DEFS "-DUNIX")
+    if(APPLE)
+      list(APPEND VISP_DEFS "-DAPPLE")
+    endif()
+    if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+      list(APPEND VISP_DEFS "-DSOLARIS")
+    endif()
   endif()
-ENDIF(UNIX)
+endif()
 
-IF(UNIX)
-  INCLUDE(TestBigEndian)
+if(UNIX)
+  include(TestBigEndian)
   TEST_BIG_ENDIAN(BIGENDIAN)
   #SET(BIGENDIAN FALSE)
-ENDIF()
-
-IF(BIGENDIAN)
-  LIST(APPEND VISP_DEFS "-DBIGENDIAN")
-ENDIF(BIGENDIAN)
+  if(BIGENDIAN)
+    add_definitions("-DBIGENDIAN")
+  endif()
+endif()
 
 #--------------------------------------------------------------------
 # OpenMP

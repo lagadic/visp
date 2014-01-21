@@ -60,7 +60,7 @@
 
 #ifdef VISP_HAVE_COIN
 //Work around to avoid type redefinition int8_t with Coin
-// #if defined(WIN32) && defined(VISP_HAVE_OGRE) && (_MSC_VER >= 1600) // Visual Studio 2010
+// #if defined(_WIN32) && defined(VISP_HAVE_OGRE) && (_MSC_VER >= 1600) // Visual Studio 2010
 //   #define HAVE_INT8_T 1
 // #endif
 

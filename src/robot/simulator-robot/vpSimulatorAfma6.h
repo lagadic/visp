@@ -52,7 +52,7 @@
 
 #include <string>
 
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 
 /*!
   \class vpSimulatorAfma6
@@ -255,7 +255,7 @@ protected:
     void findHighestPositioningSpeed(vpColVector &q);
     void getExternalImage(vpImage<vpRGBa> &I);
     inline void get_fMi(vpHomogeneousMatrix *fMit) {
-#if defined(WIN32)
+#if defined(_WIN32)
       WaitForSingleObject(mutex_fMi,INFINITE);
       for (int i = 0; i < 8; i++)
         fMit[i] = fMi[i];

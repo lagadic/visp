@@ -43,7 +43,7 @@
 
 
 
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <visp/vpRobotWireFrameSimulator.h>
 #include <visp/vpSimulatorViper850.h>
 

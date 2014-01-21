@@ -57,7 +57,7 @@
 #include <iostream>
 
 
-#ifdef WIN32
+#if defined(_WIN32)
 #  ifndef __FUNCTION__
 #    define __FUNCTION__ " "
 #  endif

@@ -304,9 +304,9 @@ int main(int argc, const char** argv)
     std::cout << std::endl ;
 
     // Set the default output path
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
-#elif WIN32
+#elif defined(_WIN32)
     opt_opath = "C:\\temp";
 #endif
 

@@ -51,10 +51,10 @@
 
 
 
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#if defined(WIN32)
+#if defined(_WIN32)
 #  include <windows.h>
 #elif defined(VISP_HAVE_PTHREAD)
 #  include <pthread.h>
@@ -121,7 +121,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*! The velocity in the current frame (articular, camera or reference)*/
     vpColVector velocity;
 
-	#if defined(WIN32)
+	#if defined(_WIN32)
     HANDLE  hThread;
 	HANDLE mutex_fMi;
     HANDLE mutex_artVel;
@@ -329,7 +329,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*!
       Function used to launch the thread which moves the robot.
     */
-    #if defined(WIN32)
+    #if defined(_WIN32)
 	static DWORD WINAPI launcher( LPVOID lpParam ) 
 	{
     ((vpRobotWireFrameSimulator *)lpParam)->updateArticularPosition();
@@ -357,7 +357,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     void initDisplay() {;}
     virtual void initArms() = 0;
 
-	#if defined(WIN32)
+	#if defined(_WIN32)
     vpColVector get_artCoord() const {
       WaitForSingleObject(mutex_artCoord,INFINITE);
       vpColVector artCoordTmp (6);

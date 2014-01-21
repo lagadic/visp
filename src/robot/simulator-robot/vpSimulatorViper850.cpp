@@ -50,7 +50,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <string>
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 
@@ -64,7 +64,7 @@ vpSimulatorViper850::vpSimulatorViper850():vpRobotWireFrameSimulator(), vpViper8
   
   tcur = vpTime::measureTimeMs();
 
-  #if defined(WIN32)
+  #if defined(_WIN32)
   mutex_fMi = CreateMutex(NULL,FALSE,NULL);
   mutex_artVel = CreateMutex(NULL,FALSE,NULL);
   mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
@@ -109,7 +109,7 @@ vpSimulatorViper850::vpSimulatorViper850(bool display):vpRobotWireFrameSimulator
     
   tcur = vpTime::measureTimeMs();
   
-    #if defined(WIN32)
+    #if defined(_WIN32)
   mutex_fMi = CreateMutex(NULL,FALSE,NULL);
   mutex_artVel = CreateMutex(NULL,FALSE,NULL);
   mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
@@ -148,7 +148,7 @@ vpSimulatorViper850::~vpSimulatorViper850()
 {
   robotStop = true;
   
-  #if defined(WIN32)
+  #if defined(_WIN32)
   WaitForSingleObject(hThread,INFINITE);
   CloseHandle(hThread);
   CloseHandle(mutex_fMi);
@@ -689,7 +689,7 @@ vpSimulatorViper850::compute_fMi()
 //   fMit[7] = fMit[6] * cMe;
   vpViper::get_fMc(q,fMit[7]);
   
-  #if defined(WIN32)
+  #if defined(_WIN32)
   WaitForSingleObject(mutex_fMi,INFINITE);
   for (int i = 0; i < 8; i++)
     fMi[i] = fMit[i];

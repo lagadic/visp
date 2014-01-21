@@ -279,9 +279,9 @@ int main(int argc, char **argv)
           {
             // Set the default output path
             std::string opath;
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
             opath = "/tmp";
-#elif WIN32
+#elif defined(_WIN32)
             opath = "C:\\temp";
 #endif
             std::string username = vpIoTools::getUserName();

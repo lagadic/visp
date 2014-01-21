@@ -45,7 +45,7 @@
 */ 
 
 #include <visp/vpConfig.h>
-#if ( defined(WIN32) & defined(VISP_HAVE_D3D9) ) 
+#if ( defined(_WIN32) & defined(VISP_HAVE_D3D9) )
 
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpD3DRenderer.h>

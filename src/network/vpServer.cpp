@@ -50,7 +50,7 @@ vpServer::vpServer( ) : vpNetwork(), started(false)
   int protocol = 0;
   max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
@@ -76,7 +76,7 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
   int protocol = 0;
   max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
@@ -103,7 +103,7 @@ vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNe
   int protocol = 0;
   max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
 #else
   if (emitter.socketFileDescriptorEmitter == INVALID_SOCKET)
@@ -124,14 +124,14 @@ vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNe
 */
 vpServer::~vpServer()
 {
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   close( emitter.socketFileDescriptorEmitter );
 #else //Win32
   closesocket( (unsigned)emitter.socketFileDescriptorEmitter );
 #endif
 
   for(unsigned int i = 0 ; i < receptor_list.size() ; i++)
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     close( receptor_list[i].socketFileDescriptorReceptor );
 #else //Win32
     closesocket( (unsigned)receptor_list[i].socketFileDescriptorReceptor );
@@ -147,7 +147,7 @@ vpServer::~vpServer()
 bool vpServer::start()
 {  
   int serverStructLength = sizeof(emitter.emitterAddress);
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int bindResult = bind( emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAddress, (unsigned)serverStructLength );
 #else //Win32
   int bindResult = bind( (unsigned)emitter.socketFileDescriptorEmitter, (struct sockaddr *) &emitter.emitterAddress, serverStructLength );
@@ -179,7 +179,7 @@ bool vpServer::start()
   }
 #endif // SO_NOSIGPIPE
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   listen( emitter.socketFileDescriptorEmitter, (int)max_clients );
 #else //Win32
   listen( (unsigned)emitter.socketFileDescriptorEmitter, (int)max_clients );
@@ -233,13 +233,13 @@ bool vpServer::checkForConnections()
     if(FD_ISSET((unsigned int)emitter.socketFileDescriptorEmitter,&readFileDescriptor)){
       vpNetwork::vpReceptor client;
       client.receptorAddressSize = sizeof(client.receptorAddress);
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       client.socketFileDescriptorReceptor = accept(emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
 #else //Win32
       client.socketFileDescriptorReceptor = accept((unsigned int)emitter.socketFileDescriptorEmitter,(struct sockaddr*) &client.receptorAddress, &client.receptorAddressSize);
 #endif
       
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       if((client.socketFileDescriptorReceptor) == -1)
 #else
       if((client.socketFileDescriptorReceptor) == INVALID_SOCKET)
@@ -256,7 +256,7 @@ bool vpServer::checkForConnections()
       for(unsigned int i=0; i<receptor_list.size(); i++){
         if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
           char deco;
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
           int numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else //Win32
           int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);

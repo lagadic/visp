@@ -56,7 +56,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#ifdef WIN32
+#if defined(_WIN32)
 #  include <windows.h>
 #endif
 
@@ -89,10 +89,10 @@
 int main()
 {
   vpImage<unsigned char> I;
-#ifdef UNIX
-  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
-#elif WIN32
+#if defined(_WIN32)
   std::string filename("C:/temp/ViSP-images/Klimt/Klimt.ppm");
+#else // UNIX
+  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
 #endif
 
   vpImageIo::read(I, filename); // Convert the color image in a gray level image

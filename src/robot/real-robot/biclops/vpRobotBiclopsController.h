@@ -61,7 +61,7 @@
 #include "Biclops.h"	// Contrib for Biclops robot
 #include "PMDUtils.h"  	// Contrib for Biclops robot
 
-#ifdef WIN32
+#if defined(_WIN32)
 class VISP_EXPORT Biclops; //needed for dll creation
 #endif
 

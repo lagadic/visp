@@ -84,7 +84,7 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   
   serv.socketFileDescriptorReceptor = socket( AF_INET, SOCK_STREAM, 0 );
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ( serv.socketFileDescriptorReceptor < 0){
 #else
   if ( serv.socketFileDescriptorReceptor == INVALID_SOCKET){
@@ -119,7 +119,7 @@ bool vpClient::connectToIP(const std::string &ip, const unsigned int &port_serv)
   
   serv.socketFileDescriptorReceptor = socket( AF_INET, SOCK_STREAM, 0 );
 
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ( serv.socketFileDescriptorReceptor < 0){
 #else
   if ( serv.socketFileDescriptorReceptor == INVALID_SOCKET){
@@ -146,9 +146,9 @@ void vpClient::deconnect(const unsigned int &index)
 {   
   if(index < receptor_list.size())
   {
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     shutdown( receptor_list[index].socketFileDescriptorReceptor, SHUT_RDWR );
-#else // WIN32
+#else // _WIN32
     shutdown( receptor_list[index].socketFileDescriptorReceptor, SD_BOTH );
 #endif
     receptor_list.erase(receptor_list.begin()+(int)index);
@@ -161,9 +161,9 @@ void vpClient::deconnect(const unsigned int &index)
 void vpClient::stop()
 {
   for(unsigned int i = 0 ; i < receptor_list.size() ; i++){
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     shutdown( receptor_list[i].socketFileDescriptorReceptor, SHUT_RDWR );
-#else // WIN32
+#else // _WIN32
     shutdown( receptor_list[i].socketFileDescriptorReceptor, SD_BOTH );
 #endif
     receptor_list.erase(receptor_list.begin()+(int)i);

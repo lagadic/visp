@@ -552,6 +552,31 @@ void vpImageTools::flip(const vpImage<Type> &I,
   Flip vertically the input image.
 
   \param I : Input image which is flipped and modified in output.
+
+  The following example shows how to use this function:
+  \code
+#include <visp/vpImageTools.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+#ifdef _WIN32
+  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.ppm");
+#else
+  std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
+#endif
+
+  // Read an image from the disk
+  vpImageIo::read(I, filename);
+
+  // Flip the image
+  vpImageTools::flip(I);
+
+  vpImageIo::write(I, "Klimt-flip.ppm"); // Write the image in a PGM P5 image file format
+}
+  \endcode
 */
 template<class Type>
 void vpImageTools::flip(vpImage<Type> &I)

@@ -42,7 +42,7 @@
 
 
 #include <visp/vpConfig.h>
-#if defined(WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <visp/vpSimulatorAfma6.h>
 #include <visp/vpTime.h>
 #include <visp/vpImagePoint.h>
@@ -66,7 +66,7 @@ vpSimulatorAfma6::vpSimulatorAfma6():vpRobotWireFrameSimulator(), vpAfma6()
   
   tcur = vpTime::measureTimeMs();
 
-  #if defined(WIN32)
+  #if defined(_WIN32)
   mutex_fMi = CreateMutex(NULL,FALSE,NULL);
   mutex_artVel = CreateMutex(NULL,FALSE,NULL);
   mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
@@ -111,7 +111,7 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool display):vpRobotWireFrameSimulator(displ
     
   tcur = vpTime::measureTimeMs();
   
-    #if defined(WIN32)
+    #if defined(_WIN32)
   mutex_fMi = CreateMutex(NULL,FALSE,NULL);
   mutex_artVel = CreateMutex(NULL,FALSE,NULL);
   mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
@@ -150,7 +150,7 @@ vpSimulatorAfma6::~vpSimulatorAfma6()
 {
   robotStop = true;
   
-  #if defined(WIN32)
+  #if defined(_WIN32)
   WaitForSingleObject(hThread,INFINITE);
   CloseHandle(hThread);
   CloseHandle(mutex_fMi);
@@ -733,7 +733,7 @@ vpSimulatorAfma6::compute_fMi()
 //   fMit[7] = fMit[6] * cMe;
   vpAfma6::get_fMc(q,fMit[7]);
   
-  #if defined(WIN32)
+  #if defined(_WIN32)
   WaitForSingleObject(mutex_fMi,INFINITE);
   for (int i = 0; i < 8; i++)
     fMi[i] = fMit[i];

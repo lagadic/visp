@@ -49,7 +49,7 @@
 
 */
 
-#if defined(UNIX)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
 #include <unistd.h>
 #include <termios.h>
@@ -133,7 +133,7 @@ vpServolens::open(const char *port)
 			      "Cannot open Servolens serial port.");
     }
 
-    // Lecture des paramètres courants de la liaison série.
+    // Lecture des parametres courants de la liaison serie.
     if (tcgetattr(this->remfd, &info) < 0) {
       ::close(this->remfd);
       vpERROR_TRACE ("Error using TCGETS in ioctl.");
@@ -146,11 +146,11 @@ vpServolens::open(const char *port)
     // 9600 bauds, 1 bit de stop, parite paire, 7 bits de donnee
     //
 
-    // Traitement sur les caractères recus
+    // Traitement sur les caracteres recus
     info.c_iflag = 0;
     info.c_iflag |= INLCR;
 
-    // Traitement sur les caractères envoyés sur la RS232.
+    // Traitement sur les caracteres envoyes sur la RS232.
     info.c_oflag = 0;  // idem
 
     // Traitement des lignes
@@ -161,7 +161,7 @@ vpServolens::open(const char *port)
     info.c_cflag |= CREAD;		// Validation reception
     info.c_cflag |= B9600 | CS7 | PARENB; // 9600 baus, 7 data, parite paire
 
-    // Caractères immédiatement disponibles.
+    // Caracteres immediatement disponibles.
     //  info.c_cc[VMIN] = 1;
     //  info.c_cc[VTIME] = 0;
 
@@ -451,8 +451,8 @@ vpServolens::setPosition(vpServoType servo, unsigned int position) const
 #endif	/* FINSERVO */
 
   // 08/08/00 Fabien S. - Correction de la consigne demandee
-  // pour prendre en compte l'erreur entre la consigne demandée
-  // et la consigne mesurée.
+  // pour prendre en compte l'erreur entre la consigne demandee
+  // et la consigne mesuree.
   // A la consigne du zoom on retranche 1.
   // A la consigne du focus on ajoute 1.
   // A la consigne du iris on ajoute 1.
@@ -636,7 +636,7 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   
   int main()
   {
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     vpServolens servolens("/dev/ttyS0");
     
     vpImage<unsigned char> I(240, 320);

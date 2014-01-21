@@ -43,7 +43,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(UNIX) && !defined(WIN32) )
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 
 #include <arpa/inet.h>
 #include <iostream>
@@ -81,7 +81,7 @@
 
 int main()
 {
-#ifdef UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::string ip = "131.254.12.119";
 
   vpSickLDMRS laser;
@@ -99,7 +99,7 @@ int main()
       vpScanPoint p;
     
       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
-	std::cout << pointsInLayer[i] << std::endl; 
+        std::cout << pointsInLayer[i] << std::endl;
       }
     }
   }
@@ -128,7 +128,7 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
   bool measure(vpLaserScan laserscan[4]);
 
  protected:
-#ifdef WIN32
+#if defined(_WIN32)
   SOCKET socket_fd;
 #else
   int socket_fd;  

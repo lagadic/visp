@@ -189,9 +189,9 @@ main(int argc, const char ** argv)
       ipath = env_ipath;
 
     // Set the default output path
-#if defined(UNIX) && !defined(WIN32)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
-#elif WIN32
+#elif defined(_WIN32)
     opt_opath = "C:\\temp";
 #endif
 

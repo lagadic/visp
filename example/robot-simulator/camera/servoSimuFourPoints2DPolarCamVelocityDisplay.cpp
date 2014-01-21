@@ -177,7 +177,7 @@ main(int argc, const char ** argv)
 
     // Create a log filename to save velocities...
     std::string logdirname;
-#ifdef WIN32
+#if defined(_WIN32)
     logdirname ="C:/temp/" + username;
 #else
     logdirname ="/tmp/" + username;
