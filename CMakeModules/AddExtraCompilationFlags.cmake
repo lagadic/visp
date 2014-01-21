@@ -146,6 +146,12 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
   endif()
 
+  if(UNIX)
+    if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif()
+  endif()
+
   # Remove duplicates compilation flags
   separate_arguments(CMAKE_CXX_FLAGS)
   list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
