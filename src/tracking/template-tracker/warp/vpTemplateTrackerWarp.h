@@ -70,7 +70,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
     virtual void computeDenom(vpColVector &vX, const vpColVector &ParamM)=0;
     
     /*!
-      Compute the derivative of the warp according to the its parameters.
+      Compute the derivative of the warp according to its parameters.
 
       \param X1 : Point to consider in the derivative computation.
       \param X2 : Point to consider in the derivative computation.
@@ -86,34 +86,41 @@ class VISP_EXPORT vpTemplateTrackerWarp
       \param X2 : Point to consider in the derivative computation.
       \param ParamM : Parameters of the warp.
       \param dwdp0 : Derivative matrix of the warp according to the warp parameters (p=0).
-      \param dW : Resulting derivative matrix.
+      \param dW : Resulting compositionnal derivative matrix.
     */
     virtual void dWarpCompo(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW) = 0;
 
     /*!
-      Find the displacement parameters from a list of points.
+      Find the displacement/warp parameters from a list of points.
 
       \warning Only used in vpTemplateTrackerWarpHomographySL3.
+
+      \param ut0 : Original u coordinates.
+      \param vt0 : Original v coordinates.
+      \param u : Warped u coordinates.
+      \param v : Warped v coordinates.
+      \param nb_pt : Number of points.
+      \param p : Resulting warp parameters.
     */
     void find_warp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p);
     
     /*!
-      Compute the derivative of the image according to the warp.
+      Compute the derivative of the image with relation to the warp parameters.
 
       \param i : i coordinate of the point to consider in the image.
       \param j : j coordinate of the point to consider in the image.
       \param dy : Derivative on the y-axis of the point (i,j).
       \param dx : Derivative on the x-axis of the point (i,j).
-      \param dIdW : Resulting derivative matrix.
+      \param dIdW : Resulting derivative matrix (Image according to the warp).
     */
     virtual void getdW0(const int &i,const int &j,const double &dy,const double &dx,double *dIdW) = 0;
 
     /*!
-      Compute the derivative of the warp according to the parameters (p=0).
+      Compute the derivative of the warp according to the initial parameters.
 
       \param i : i coordinate of the point to consider in the image.
       \param j : j coordinate of the point to consider in the image.
-      \param dIdW : Resulting derivative matrix.
+      \param dIdW : Resulting derivative matrix (Image according to the warp).
     */
     virtual void getdWdp0(const int &i,const int &j,double *dIdW) = 0;
 
