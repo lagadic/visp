@@ -369,7 +369,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
           break;
         }
 
-        Warp->Param_inv(dp,dpinv);
+        Warp->getParamInverse(dp,dpinv);
         Warp->pRondp(p,dpinv,p);
 
         computeEvalRMS(p);

@@ -104,12 +104,12 @@ void vpTemplateTrackerWarp::warp(const double *ut0,const double *vt0,int nb_pt,c
     //std::cout<<"warp "<<X2[0]<<","<<X2[1]<<std::endl;
   }
 }
-void vpTemplateTrackerWarp::find_warp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p)
+void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p)
 {
-  vpMatrix dW(2,NbParam);
+  vpMatrix dW(2,nbParam);
   vpMatrix dX(2,1);
-  vpMatrix H(NbParam,NbParam);
-  vpMatrix G(NbParam,1);
+  vpMatrix H(nbParam,nbParam);
+  vpMatrix G(nbParam,1);
 
   int cpt=0;
   vpColVector X1(2);

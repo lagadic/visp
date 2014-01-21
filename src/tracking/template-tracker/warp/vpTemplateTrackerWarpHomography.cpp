@@ -44,12 +44,12 @@
 
 vpTemplateTrackerWarpHomography::vpTemplateTrackerWarpHomography()
 {
-  NbParam = 8 ;
-  dW.resize(2,NbParam);
+  nbParam = 8 ;
+  dW.resize(2,nbParam);
 }
 
 //get the parameter corresponding to the lower level of a gaussian pyramid
-void vpTemplateTrackerWarpHomography::getp_PyramidDown(const vpColVector &p,vpColVector &pdown)
+void vpTemplateTrackerWarpHomography::getParamPyramidDown(const vpColVector &p,vpColVector &pdown)
 {
   pdown=p;
   pdown[2]=p[2]*2.;
@@ -58,7 +58,7 @@ void vpTemplateTrackerWarpHomography::getp_PyramidDown(const vpColVector &p,vpCo
   pdown[7]=p[7]/2.;
 }
 
-void vpTemplateTrackerWarpHomography::getp_PyramidUp(const vpColVector &p,vpColVector &pup)
+void vpTemplateTrackerWarpHomography::getParamPyramidUp(const vpColVector &p,vpColVector &pup)
 {
   pup=p;
   pup[2]=p[2]/2.;
@@ -102,23 +102,23 @@ void vpTemplateTrackerWarpHomography::getdWdp0(const int &i,const int &j,double 
 }
 void vpTemplateTrackerWarpHomography::computeDenom(vpColVector &vX, const vpColVector &ParamM)
 {
-  Denom=(1./(ParamM[2]*vX[0]+ParamM[5]*vX[1]+1.));
+  denom=(1./(ParamM[2]*vX[0]+ParamM[5]*vX[1]+1.));
 }
 
 void vpTemplateTrackerWarpHomography::warpX(const int &i,const int &j,double &i2,double &j2,const vpColVector &ParamM)
 {
-  j2=((1.+ParamM[0])*j+ParamM[3]*i+ParamM[6])*Denom;
-  i2=(ParamM[1]*j+(1.+ParamM[4])*i+ParamM[7])*Denom;
+  j2=((1.+ParamM[0])*j+ParamM[3]*i+ParamM[6])*denom;
+  i2=(ParamM[1]*j+(1.+ParamM[4])*i+ParamM[7])*denom;
 }
 
 
 void vpTemplateTrackerWarpHomography::warpX(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM)
 {
   //if((ParamM[2]*vX[0]+ParamM[5]*vX[1]+1)>0)//si dans le plan image reel
-  if((Denom)>0)// FS optimisation
+  if((denom)>0)// FS optimisation
   {
-    vXres[0]=((1+ParamM[0])*vX[0]+ParamM[3]*vX[1]+ParamM[6])*Denom;
-    vXres[1]=(ParamM[1]*vX[0]+(1+ParamM[4])*vX[1]+ParamM[7])*Denom;
+    vXres[0]=((1+ParamM[0])*vX[0]+ParamM[3]*vX[1]+ParamM[6])*denom;
+    vXres[1]=(ParamM[1]*vX[0]+(1+ParamM[4])*vX[1]+ParamM[7])*denom;
   }
   else
     throw(vpTrackingException(vpTrackingException::fatalError,"Division by zero in vpTemplateTrackerWarpHomography::warpX()"));
@@ -129,17 +129,17 @@ void vpTemplateTrackerWarpHomography::dWarp(const vpColVector &X1,const vpColVec
   double j=X1[0];
   double i=X1[1];
   dW=0;
-  dW[0][0]=j*Denom;
-  dW[0][2]=-j*X2[0]*Denom;
-  dW[0][3]=i*Denom;
-  dW[0][5]=-i*X2[0]*Denom;
-  dW[0][6]=Denom;
+  dW[0][0]=j*denom;
+  dW[0][2]=-j*X2[0]*denom;
+  dW[0][3]=i*denom;
+  dW[0][5]=-i*X2[0]*denom;
+  dW[0][6]=denom;
 
-  dW[1][1]=j*Denom;
-  dW[1][2]=-j*X2[1]*Denom;
-  dW[1][4]=i*Denom;
-  dW[1][5]=-i*X2[1]*Denom;
-  dW[1][7]=Denom;
+  dW[1][1]=j*denom;
+  dW[1][2]=-j*X2[1]*denom;
+  dW[1][4]=i*denom;
+  dW[1][5]=-i*X2[1]*denom;
+  dW[1][7]=denom;
 }
 
 /*compute dw=dw/dx*dw/dp  */
@@ -148,14 +148,14 @@ void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &/*X1*/,const
   double dwdx0,dwdx1;
   double dwdy0,dwdy1;
 
-  dwdx0=((1.+ParamM[0])-X2[0]*ParamM[2])*Denom;
-  dwdx1=(ParamM[1]-X2[1]*ParamM[2])*Denom;
-  dwdy0=(ParamM[3]-X2[0]*ParamM[5])*Denom;
-  dwdy1=((1.+ParamM[4])-X2[1]*ParamM[5])*Denom;
-  for(unsigned int i=0;i<NbParam;i++)
+  dwdx0=((1.+ParamM[0])-X2[0]*ParamM[2])*denom;
+  dwdx1=(ParamM[1]-X2[1]*ParamM[2])*denom;
+  dwdy0=(ParamM[3]-X2[0]*ParamM[5])*denom;
+  dwdy1=((1.+ParamM[4])-X2[1]*ParamM[5])*denom;
+  for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=dwdx0*dwdp0[i]+dwdy0*dwdp0[i+NbParam];
-    dW[1][i]=dwdx1*dwdp0[i]+dwdy1*dwdp0[i+NbParam];
+    dW[0][i]=dwdx0*dwdp0[i]+dwdy0*dwdp0[i+nbParam];
+    dW[1][i]=dwdx1*dwdp0[i]+dwdy1*dwdp0[i+nbParam];
   }
 }
 
@@ -170,7 +170,7 @@ void vpTemplateTrackerWarpHomography::warpXInv(const vpColVector &vX,vpColVector
   else
     throw(vpTrackingException(vpTrackingException::fatalError,"Division by zero in vpTemplateTrackerWarpHomography::warpXSpecialInv()")) ;
 } 
-void vpTemplateTrackerWarpHomography::Param_inv(const vpColVector &ParamM,vpColVector &ParamMinv)
+void vpTemplateTrackerWarpHomography::getParamInverse(const vpColVector &ParamM,vpColVector &ParamMinv) const
 {
   vpHomography H    = getHomography(ParamM);
   vpHomography Hinv = H.inverse();

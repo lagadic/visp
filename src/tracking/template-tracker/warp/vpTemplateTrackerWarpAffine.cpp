@@ -44,19 +44,19 @@
 
 vpTemplateTrackerWarpAffine::vpTemplateTrackerWarpAffine()
 {
-  NbParam = 6 ;
-  dW.resize(2,NbParam);
+  nbParam = 6 ;
+  dW.resize(2,nbParam);
 }
 
 //get the parameter corresponding to the lower level of a gaussian pyramid
-void vpTemplateTrackerWarpAffine::getp_PyramidDown(const vpColVector &p,vpColVector &pdown)
+void vpTemplateTrackerWarpAffine::getParamPyramidDown(const vpColVector &p,vpColVector &pdown)
 {
   pdown=p;
   pdown[4]=p[4]/2.;
   pdown[5]=p[5]/2.;
 }
 
-void vpTemplateTrackerWarpAffine::getp_PyramidUp(const vpColVector &p,vpColVector &pup)
+void vpTemplateTrackerWarpAffine::getParamPyramidUp(const vpColVector &p,vpColVector &pup)
 {
   pup=p;
   pup[4]=p[4]*2.;
@@ -118,10 +118,10 @@ void vpTemplateTrackerWarpAffine::dWarp(const vpColVector &X1,const vpColVector 
 */
 void vpTemplateTrackerWarpAffine::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW)
 {
-  for(unsigned int i=0;i<NbParam;i++)
+  for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=(1.+ParamM[0])*dwdp0[i]+ParamM[2]*dwdp0[i+NbParam];
-    dW[1][i]=ParamM[1]*dwdp0[i]+(1.+ParamM[3])*dwdp0[i+NbParam];
+    dW[0][i]=(1.+ParamM[0])*dwdp0[i]+ParamM[2]*dwdp0[i+nbParam];
+    dW[1][i]=ParamM[1]*dwdp0[i]+(1.+ParamM[3])*dwdp0[i+nbParam];
   }
 }
 
@@ -130,7 +130,7 @@ void vpTemplateTrackerWarpAffine::warpXInv(const vpColVector &vX,vpColVector &vX
   vXres[0]=(1+ParamM[0])*vX[0]+ParamM[2]*vX[1]+ParamM[4];
   vXres[1]=ParamM[1]*vX[0]+(1+ParamM[3])*vX[1]+ParamM[5];
 } 
-void vpTemplateTrackerWarpAffine::Param_inv(const vpColVector &ParamM,vpColVector &ParamMinv)
+void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &ParamM,vpColVector &ParamMinv) const
 {
   vpColVector Trans(2);
   vpMatrix MWrap(2,2);

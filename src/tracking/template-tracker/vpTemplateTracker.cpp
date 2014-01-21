@@ -421,7 +421,7 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   if(useCompositionnal)
   {
     if(useInverse)
-      Warp->Param_inv(direction,dpt);
+      Warp->getParamInverse(direction,dpt);
     else
       dpt=direction;
     Warp->pRondp(tp,dpt,p1);
@@ -436,7 +436,7 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   {
     adpt=alpha*direction;
     if(useInverse)
-      Warp->Param_inv(adpt,dpt);
+      Warp->getParamInverse(adpt,dpt);
     else
       dpt=adpt;
     Warp->pRondp(tp,dpt,p2);
@@ -565,7 +565,7 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
     {
       adpt=talpha[3]*direction;
       if(useInverse)
-        Warp->Param_inv(adpt,dpt);
+        Warp->getParamInverse(adpt,dpt);
       else
         dpt=adpt;
       Warp->pRondp(tp,dpt,p3);
@@ -865,7 +865,7 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
     for(unsigned int i=1;i<nbLvlPyr;i++)
     {
       vpImageFilter::getGaussPyramidal(pyr_I[i-1],pyr_I[i]);
-      //test getp_PyramidDown
+      //test getParamPyramidDown
       /*vpColVector vX_test(2);vX_test[0]=15.;vX_test[1]=30.;
       vpColVector vX_test2(2);
       Warp->computeCoeff(p);
@@ -873,7 +873,7 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
       Warp->warpX(vX_test,vX_test2,p);
       std::cout<<"p = "<<p.t()<<std::endl;*/
       //std::cout<<"get p down"<<std::endl;
-      Warp->getp_PyramidDown(p,ptemp);
+      Warp->getParamPyramidDown(p,ptemp);
       p=ptemp;
       zoneTracked=&zoneTrackedPyr[i];
 
@@ -907,7 +907,7 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
       //std::cout<<"get p up"<<std::endl;
 //      ptemp=p_sauv[i-1];
       if (i > 0) {
-        Warp->getp_PyramidUp(p,ptemp);
+        Warp->getParamPyramidUp(p,ptemp);
         p=ptemp;
         zoneTracked=&zoneTrackedPyr[i-1];
       }
@@ -929,7 +929,7 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
 
     if (l0Pyr > 0) {
 //      for (int l=(int)l0Pyr; l >=0; l--) {
-//        Warp->getp_PyramidUp(p,ptemp);
+//        Warp->getParamPyramidUp(p,ptemp);
 //        p=ptemp;
 //      }
       zoneTracked=&zoneTrackedPyr[0];

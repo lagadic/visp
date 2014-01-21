@@ -57,70 +57,62 @@
 class VISP_EXPORT vpTemplateTrackerWarp
 {
   protected:
-    double Denom;
+    double denom;
     vpMatrix dW;
-    unsigned int NbParam ;
+    unsigned int nbParam ;
     
   public:
     //constructor;
-    vpTemplateTrackerWarp(){ NbParam = 0; Denom = 1.;}
+    vpTemplateTrackerWarp(){ nbParam = 0; denom = 1.;}
     virtual ~vpTemplateTrackerWarp(){}
 
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual void computeCoeff(const vpColVector &p)=0;
     virtual void computeDenom(vpColVector &vX, const vpColVector &ParamM)=0;
+    #endif
     
     /*!
-      Compute the derivative of the warp according to its parameters.
+      Compute the derivative of the warping function according to its parameters.
 
       \param X1 : Point to consider in the derivative computation.
       \param X2 : Point to consider in the derivative computation.
-      \param ParamM : Parameters of the warp.
+      \param ParamM : Parameters of the warping function.
       \param dW : Resulting derivative matrix.
     */
     virtual void dWarp(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,vpMatrix &dW) = 0;
 
     /*!
-      Compute the compositionnal derivative of the warp according to its parameters.
+      Compute the compositionnal derivative of the warping function according to its parameters.
 
       \param X1 : Point to consider in the derivative computation.
       \param X2 : Point to consider in the derivative computation.
-      \param ParamM : Parameters of the warp.
-      \param dwdp0 : Derivative matrix of the warp according to the warp parameters (p=0).
+      \param ParamM : Parameters of the warping function.
+      \param dwdp0 : Derivative matrix of the warping function according to the initial warping function parameters (p=0).
       \param dW : Resulting compositionnal derivative matrix.
     */
     virtual void dWarpCompo(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW) = 0;
 
-    /*!
-      Find the displacement/warp parameters from a list of points.
+    #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    void findWarp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p);
+    #endif
 
-      \warning Only used in vpTemplateTrackerWarpHomographySL3.
-
-      \param ut0 : Original u coordinates.
-      \param vt0 : Original v coordinates.
-      \param u : Warped u coordinates.
-      \param v : Warped v coordinates.
-      \param nb_pt : Number of points.
-      \param p : Resulting warp parameters.
-    */
-    void find_warp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p);
-    
     /*!
-      Compute the derivative of the image with relation to the warp parameters.
+      Compute the derivative of the image with relation to the warping function parameters.
 
       \param i : i coordinate of the point to consider in the image.
       \param j : j coordinate of the point to consider in the image.
       \param dy : Derivative on the y-axis of the point (i,j).
       \param dx : Derivative on the x-axis of the point (i,j).
-      \param dIdW : Resulting derivative matrix (Image according to the warp).
+      \param dIdW : Resulting derivative matrix (Image according to the warping function).
     */
     virtual void getdW0(const int &i,const int &j,const double &dy,const double &dx,double *dIdW) = 0;
 
     /*!
-      Compute the derivative of the warp according to the initial parameters.
+      Compute the derivative of the warping function according to the initial parameters.
 
       \param i : i coordinate of the point to consider in the image.
       \param j : j coordinate of the point to consider in the image.
-      \param dIdW : Resulting derivative matrix (Image according to the warp).
+      \param dIdW : Resulting derivative matrix (Image according to the warping function).
     */
     virtual void getdWdp0(const int &i,const int &j,double *dIdW) = 0;
 
@@ -128,47 +120,47 @@ class VISP_EXPORT vpTemplateTrackerWarp
       Compute the distance between a zone and its associated warped zone.
 
       \param Z : Zone to consider.
-      \param p : Parameters of the warp.
+      \param p : Parameters of the warping function.
     */
     double getDistanceBetweenZoneAndWarpedZone(const vpTemplateTrackerZone &Z,const vpColVector &p);
 
     /*!
-      Get the number of parameters of the warp.
+      Get the number of parameters of the warping function.
 
       \return Number of parameters.
     */
-    unsigned int getNbParam() const {return NbParam;}
+    unsigned int getNbParam() const {return nbParam;}
 
     /*!
-      Get the parameters of the warp one level down.
+      Get the inverse of the warping function parameters.
 
-      \param p : Current parameters of the warp.
+      \param ParamM : Parameters of the warping function.
+      \param ParamMinv : Inverse parameters.
+    */
+    virtual void getParamInverse(const vpColVector &ParamM,vpColVector &ParamMinv) const = 0;
+
+    /*!
+      Get the parameters of the warping function one level down.
+
+      \param p : Current parameters of the warping function.
       \param pdown : Resulting parameters on level down.
     */
-    virtual void getp_PyramidDown(const vpColVector &p,vpColVector &pdown) =0;
+    virtual void getParamPyramidDown(const vpColVector &p,vpColVector &pdown) =0;
 
     /*!
-      Get the parameters of the warp one level up.
+      Get the parameters of the warping function one level up.
 
-      \param p : Current parameters of the warp.
+      \param p : Current parameters of the warping function.
       \param pup : Resulting parameters one level up.
     */
-    virtual void getp_PyramidUp(const vpColVector &p,vpColVector &pup) =0;
+    virtual void getParamPyramidUp(const vpColVector &p,vpColVector &pup) =0;
 
     /*!
-      Tells if the warp is ESM compatible.
+      Tells if the warping function is ESM compatible.
 
       \return True if it is ESM compatible, False otherwise.
     */
     virtual bool isESMcompatible() const =0;
-
-    /*!
-      Get the inverse of the warp parameters.
-
-      \param ParamM : Parameters of the warp.
-      \param ParamMinv : Inverse parameters.
-    */
-    virtual void Param_inv(const vpColVector &ParamM,vpColVector &ParamMinv) = 0;
 
     /*!
       Get the displacement resulting from the composition of two other displacements.
@@ -180,11 +172,11 @@ class VISP_EXPORT vpTemplateTrackerWarp
     virtual void pRondp(const vpColVector &p1, const vpColVector &p2,vpColVector &pres) const = 0;
 
     /*!
-      Set the number of parameters of the warp.
+      Set the number of parameters of the warping function.
 
       \param nb : New number of parameters.
     */
-    void setNbParam(unsigned int nb){NbParam=nb;dW.resize(2,NbParam);}
+    void setNbParam(unsigned int nb){nbParam=nb;dW.resize(2,nbParam);}
 
     /*!
       Warp a list of points.
@@ -214,7 +206,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
 
       \param vX : Coordinates of the point to warp.
       \param vXres : Coordinates of the warped point.
-      \param ParamM : Parameters of the warp.
+      \param ParamM : Parameters of the warping function.
     */
     virtual void warpX(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM) = 0;
 
@@ -223,7 +215,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
 
       \param vX : Coordinates of the point to warp.
       \param vXres : Coordinates of the warped point.
-      \param ParamM : Parameters of the warp.
+      \param ParamM : Parameters of the warping function.
     */
     virtual void warpXInv(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM) = 0;
 

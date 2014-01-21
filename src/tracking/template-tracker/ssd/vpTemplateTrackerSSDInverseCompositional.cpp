@@ -174,7 +174,7 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
       computeOptimalBrentGain(I,p,erreur/Nbpoint,dp,alpha);
       dp=alpha*dp;
     }
-    Warp->Param_inv(dp,dpinv);
+    Warp->getParamInverse(dp,dpinv);
     Warp->pRondp(p,dpinv,p);
     iteration++;
 
