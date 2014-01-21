@@ -150,11 +150,11 @@ main(int argc, const char ** argv)
     double L=0.1;
     unsigned int nbpt = 11;
 
-    vpPoint P[nbpt]  ;  //  Point to be tracked
+    std::vector<vpPoint> P(nbpt);  //  Point to be tracked
     std::vector<double> xa(nbpt), ya(nbpt), xb(nbpt), yb(nbpt);
 
-    vpPoint aP[nbpt]  ;  //  Point to be tracked
-    vpPoint bP[nbpt]  ;  //  Point to be tracked
+	std::vector<vpPoint> aP(nbpt);  //  Point to be tracked
+	std::vector<vpPoint> bP(nbpt);  //  Point to be tracked
 
     P[0].setWorldCoordinates(-L,-L, 0 ) ;   // inlier
     P[1].setWorldCoordinates(2*L,-L, 0 ) ;  // inlier
