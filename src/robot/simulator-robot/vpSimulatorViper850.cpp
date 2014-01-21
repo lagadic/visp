@@ -2206,7 +2206,7 @@ vpSimulatorViper850::initArms()
   if (scene_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
 
-  unsigned int full_length = scene_dir.size() + name_length;
+  unsigned int full_length = (unsigned int)scene_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
 
@@ -2218,7 +2218,7 @@ vpSimulatorViper850::initArms()
   
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
-  full_length = arm_dir.size() + name_length;
+  full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Viper850 simulator");
 

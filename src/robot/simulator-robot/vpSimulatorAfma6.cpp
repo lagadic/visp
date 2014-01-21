@@ -288,7 +288,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = arm_dir.size() + name_length;
+  unsigned int full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2213,7 +2213,7 @@ vpSimulatorAfma6::initArms()
   unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
   if (scene_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = scene_dir.size() + name_length;
+  unsigned int full_length = (unsigned int)scene_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
@@ -2225,7 +2225,7 @@ vpSimulatorAfma6::initArms()
   
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  full_length = arm_dir.size() + name_length;
+  full_length = (unsigned int)arm_dir.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
 

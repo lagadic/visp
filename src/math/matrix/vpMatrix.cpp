@@ -3841,7 +3841,7 @@ vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *header)
                 }
                 M.resize(rows, cols);
                 // get indentation level which is common to all lines
-                lineStart = line.find("[") + 1;
+				lineStart = (unsigned int)line.find("[") + 1;
             }
             std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
             j = 0;

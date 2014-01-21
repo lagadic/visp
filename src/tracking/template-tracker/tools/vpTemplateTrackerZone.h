@@ -93,7 +93,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     vpRect getBoundingBox() const;
 
     /*! Return the number of triangles that define the zone. \sa getTriangle() */
-    unsigned int getNbTriangle() const {return Zone.size();}
+	unsigned int getNbTriangle() const { return (unsigned int)Zone.size(); }
     vpTemplateTrackerZone getPyramidDown() const;
     //renvoie le ieme triangle de la zone
     void getTriangle(unsigned int i, vpTemplateTrackerTriangle &T) const;

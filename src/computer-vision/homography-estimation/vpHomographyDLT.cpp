@@ -65,7 +65,7 @@ vpHomography::HartleyNormalization(const std::vector<double> &x, const std::vect
     throw(vpException(vpException::dimensionError,
                       "Hartley normalization require that x and y vector have the same dimension"));
 
-  unsigned int n = x.size();
+  unsigned int n = (unsigned int) x.size();
   if (xn.size() != n)
     xn.resize(n);
   if (yn.size() != n)
@@ -506,7 +506,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
                        vpHomography &aHb,
                        bool normalization)
 {
-  unsigned int n = xb.size();
+  unsigned int n = (unsigned int) xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
     throw(vpException(vpException::dimensionError,
                       "Bad dimension for DLT homography estimation"));

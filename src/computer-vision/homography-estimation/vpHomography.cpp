@@ -610,7 +610,7 @@ vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &y
                      unsigned int niter,
                      bool normalization)
 {
-  unsigned int n = xb.size();
+  unsigned int n = (unsigned int) xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
     throw(vpException(vpException::dimensionError,
                       "Bad dimension for robust homography estimation"));

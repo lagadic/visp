@@ -699,7 +699,7 @@ HLM(unsigned int q_cible,
     const std::vector<double> &xmi, const std::vector<double> &ymi,
     vpMatrix &H)
 {
-  unsigned int nbpt = xm.size();
+  unsigned int nbpt = (unsigned int)xm.size();
 
   /****
        on regarde si il y a au moins un point mais pour l'homographie
@@ -810,7 +810,7 @@ void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> 
                        bool isplanar,
                        vpHomography &aHb)
 {
-  unsigned int n = xb.size();
+  unsigned int n = (unsigned int) xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
     throw(vpException(vpException::dimensionError,
                       "Bad dimension for HLM shomography estimation"));

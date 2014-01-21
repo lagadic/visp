@@ -163,7 +163,7 @@ bool
 vpHomography::degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
                                       const std::vector<double> &xa, const std::vector<double> &ya)
 {
-  unsigned int n = xb.size();
+  unsigned int n = (unsigned int)xb.size();
   if (n < 4)
     throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
@@ -438,7 +438,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
                           double threshold,
                           bool normalization)
 {
-  unsigned int n = xb.size();
+  unsigned int n = (unsigned int)xb.size();
   if (yb.size() != n || xa.size() != n || ya.size() != n)
     throw(vpException(vpException::dimensionError,
                       "Bad dimension for robust homography estimation"));
@@ -506,7 +506,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
          degenerate = false;
         }
       }
-      catch(vpException &e){
+      catch(...){
         degenerate = true;
       }
 
