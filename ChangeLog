@@ -36,6 +36,7 @@ ViSP under development version
     . [16781] Unable to open .pgm saved with Matlab imwrite
     . [16823] Problems with camera calibration code
     . [16889] Link error with CMU 1394 on win x64 arch
+    . [16895] undefined reference to `vpGaussRand::gaussianDraw()'
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
