@@ -69,9 +69,9 @@ public:
   Settings() {
     boardSize = cv::Size(0, 0);
     calibrationPattern = UNDEFINED;
-    squareSize = 0.025;
+    squareSize = 0.025f;
     goodInput = false;
-    tempo = 1;
+    tempo = 1.f;
 
   }
   enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID};
@@ -126,7 +126,7 @@ public:
   Pattern calibrationPattern;// One of the Chessboard, circles, or asymmetric circle pattern
   float squareSize;          // The size of a square in your defined unit (point, millimeter,etc).
   std::string input;         // The input image sequence
-  double tempo;              // Tempo in seconds between two images. If > 10 wait a click to continue
+  float tempo;               // Tempo in seconds between two images. If > 10 wait a click to continue
   bool goodInput;
 
 private:
