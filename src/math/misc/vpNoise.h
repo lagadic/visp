@@ -117,12 +117,11 @@ public:
 
   \code
 #include <iostream>
-
 #include <visp/vpNoise.h>
 
 int main()
 {
-  vpGaussRand noise(0.5, 0);
+  vpGaussRand noise(0.5, 10);
   for(int i=0; i< 10; i++) {
     std::cout << "noise " << i << ": " << noise() << std::endl;
   }
@@ -132,38 +131,64 @@ int main()
  */
 class vpGaussRand : public vpUniRand
 {
-	double mean;
-	double sigma;
+  private :
+    double mean;
+    double sigma;
+    double gaussianDraw();
 
-public:
+  public:
 
-	// Initialization
-	vpGaussRand() {init();mean=0;sigma=0;x=739806647;}
-	vpGaussRand(const double sqrtvariance,
-			const double _mean,
-			const long seed = 0):mean(_mean), sigma(sqrtvariance)
-	{
-		init() ;
-		mean = 0 ;
-		if (seed) x=seed; else x=739806647;
-	}
-	/*!
-      Set the standard deviation and mean for gaussian noise
+    /*!
+      Default noise generator constructor.
+     */
+    vpGaussRand() {
+      init();
+      mean=0;
+      sigma=0;
+      x=739806647;
+    }
 
-      \param _s new standard deviation
-      \param _m new mean
-	 */
-	inline void setSigmaMean(const double _s, const double _m) {mean=_m;sigma=_s;}
-	/*!
-        Set the seed of the noise
+    /*!
+      Gaussian noise random generator constructor.
 
-        \param seed new seed
-	 */
-	inline void seed(const long seed) {x=seed;}
-	inline double operator()() {return sigma*gaussianDraw()+mean;}
+      \param sigma : Standard deviation.
+      \param mean : Mean value.
+      \param seed : Seed of the noise
+    */
+    vpGaussRand(const double sqrtvariance, const double mean, const long seed = 0)
+      : mean(mean), sigma(sqrtvariance)
+    {
+      init() ;
+      if (seed) x = seed;
+      else      x = 739806647;
+    }
 
-private :
-	double gaussianDraw();
+    /*!
+      Set the standard deviation and mean for gaussian noise.
+
+      \param sigma New standard deviation.
+      \param mean New mean value.
+    */
+    void setSigmaMean(const double sigma, const double mean) {
+      this->mean = mean;
+      this->sigma = sigma;
+    }
+
+    /*!
+      Set the seed of the noise.
+
+      \param seed : New seed.
+    */
+    void seed(const long seed) {
+      x=seed;
+    }
+
+    /*!
+      Return a random value from the Gaussian noise generator.
+    */
+    double operator()() {
+      return sigma*gaussianDraw()+mean;
+    }
 };
 
 #endif
