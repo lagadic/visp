@@ -253,6 +253,7 @@ void vpTemplateTracker::resetTracker()
         if (ptTemplateSuppPyr[i]) {
           for(unsigned int point=0;point<templateSizePyr[i];point++) {
             delete[] ptTemplateSuppPyr[i][point].Bt;
+            delete[] ptTemplateSuppPyr[i][point].BtInit;
             delete[] ptTemplateSuppPyr[i][point].dBt;
             delete[] ptTemplateSuppPyr[i][point].d2W;
             delete[] ptTemplateSuppPyr[i][point].d2Wx;
