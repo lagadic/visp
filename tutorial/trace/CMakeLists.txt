@@ -3,9 +3,13 @@ project(tutorial-trace)
 cmake_minimum_required(VERSION 2.6)
 
 find_package(VISP REQUIRED)
-if(VISP_FOUND)
-  include(${VISP_USE_FILE})
-endif(VISP_FOUND)
+include_directories(${VISP_INCLUDE_DIRS})
+add_definitions(${VISP_DEFINITIONS})
 
-add_executable(tutorial-trace tutorial-trace.cpp)
+# set the list of source files
+set(tutorial_cpp
+  tutorial-trace.cpp)
 
+foreach(cpp ${tutorial_cpp})
+  visp_add_target(${cpp})
+endforeach()

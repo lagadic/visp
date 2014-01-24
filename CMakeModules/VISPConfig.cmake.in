@@ -33,33 +33,36 @@
 # Description:
 # CMake package config file for ViSP.
 #
+# ** File generated automatically, do not modify **
+#
 # This file will define the following CMake variables:
 # VISP_ROOT_DIR       : ViSP base directory location
 # VISP_INCLUDE_DIRS   : ViSP and third-party headers location
-# VISP_LIBRARY_DIRS   : ViSP and third-party libraries location
-# VISP_LIBRARY        : ViSP library name
-# VISP_LIBRARIES      : ViSP and third-party libraries name
-# VISP_DEFINITIONS    : Defines required to build ViSP
+# VISP_LIBRARY_DIRS   : ViSP and third-party libraries location. Calling LINK_DIRECTORIES
+#                       with this path is NOT needed under Unix.
+# VISP_LIBNAME_DBG    : ViSP library name when build in debug (libvisp.so, libvisp.a, vispd.dll, vispd.lib)
+# VISP_LIBNAME_OPT    : ViSP library name when build in release (libvisp.so, libvisp.a, visp.dll, visp.lib)
 #
-# VISP_SOURCE_DIR     : Location of ViSP source code 
+# VISP_LIBRARIES      : ViSP and third-party libraries to link against.
+# VISP_DEFINITIONS    : Defines used to build ViSP. Calling ADD_DEFINITIONS with this
+#                       variable is not needed.
 #
-# VISP_VERSION_STRING : Full ViSP version, eg 2.6.1
+# VISP_VERSION_STRING : Full ViSP version, eg 2.9.0
 # VISP_VERSION_MAJOR  : Major version part of VISP_VERSION, eg 2. 
-# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 6. 
-# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 1. 
+# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 9.
+# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 0.
 #
 # Typical usage in user project:
-#   FIND_PACKAGE(VISP)
-#   IF (VISP_FOUND)
-#     INCLUDE(${VISP_USE_FILE})
-#   ENDIF (VISP_FOUND)
+#   find_package(VISP)
+#   add_definitions(${VISP_DEFINITIONS})
+#   link_directories(${VISP_LIBRARY_DIRS})
+#   include_directories(${VISP_INCLUDE_DIRS})
+#   target_link_libraries(MY_TARGET_NAME ${VISP_LIBRARIES})
 #
 # Authors:
 # Fabien Spindler
 #
 #############################################################################
-
-SET(VISP_LIBRARY "@VISP_INTERN_LIBRARY@")
 
 # Set VISP_ROOT_DIR
 SET(VISP_ROOT_DIR "@VISP_ROOT_DIR_CONFIGCMAKE@")
@@ -93,6 +96,7 @@ ENDFOREACH(val ${VISP_EXTERN_INCLUDE_DIRS})
 
 # Tells the user project where to find ViSP library
 SET(VISP_LIBRARY_DIRS "${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@" CACHE FILEPATH "Location of ViSP library")
+#MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
 
 # Tells the user project where to find third party libraries used to
 # compile ViSP
@@ -103,17 +107,22 @@ FOREACH(val ${VISP_EXTERN_LINK_DIR})
 ENDFOREACH(val ${VISP_EXTERN_LINK_DIR})
 #MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
 
-# export source dir for doxygen eventually
-SET(VISP_SOURCE_DIR "@VISP_SOURCE_DIR@")
+# Set the full library name for debug and release
+set(VISP_LIBNAME_DBG "@VISP_LIBNAME_DBG@")
+set(VISP_LIBNAME_OPT "@VISP_LIBNAME_OPT@")
 
 # Tells the user project ViSP library name
-SET(VISP_LIBRARIES debug "@VISP_INTERN_LIBRARY@@CMAKE_DEBUG_POSTFIX@" optimized "@VISP_INTERN_LIBRARY@")
+if(UNIX)
+  set(VISP_LIBRARIES debug ${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@/${VISP_LIBNAME_DBG} optimized ${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@/${VISP_LIBNAME_OPT})
+else()
+  set(VISP_LIBRARIES debug "@VISP_INTERN_LIBRARY@@CMAKE_DEBUG_POSTFIX@" optimized "@VISP_INTERN_LIBRARY@")
+endif()
 
 # Tells the user project libraries name used to build ViSP library
 SET(VISP_EXTERN_LIBRARIES "@VISP_EXTERN_LIBRARIES@")
 FOREACH(val ${VISP_EXTERN_LIBRARIES})
   LIST(APPEND VISP_LIBRARIES "${val}")
-ENDFOREACH(val ${VISP_EXTERN_LIBRARIES})
+ENDFOREACH()
 #MESSAGE("VISP_LIBRARIES: ${VISP_LIBRARIES}")
 
 # where to find the USE file to be used by user project
@@ -129,10 +138,22 @@ IF(BUILD_TEST_COVERAGE)
 ENDIF(BUILD_TEST_COVERAGE)
 
 
-#
-# Remember VISP' third party libs configuration: 
-#
+#----------------------------------------------------------------------
+# Add CXX flags used in ViSP that should be also used when ViSP is a 3rd party
+#----------------------------------------------------------------------
+set(VISP_OPENMP_FLAGS "@VISP_OPENMP_FLAGS@")
+if(VISP_OPENMP_FLAGS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISP_OPENMP_FLAGS}")
+endif()
+set(VISP_CPP11_FLAGS "@VISP_CPP11_FLAGS@")
+if(VISP_CPP11_FLAGS)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISP_CPP11_FLAGS}")
+endif()
 
+
+#----------------------------------------------------------------------
+# Remember VISP' third party libs configuration:
+#----------------------------------------------------------------------
 SET(VISP_HAVE_X11            "@VISP_HAVE_X11@")
 SET(VISP_HAVE_PTHREAD        "@VISP_HAVE_PTHREAD@")
 SET(VISP_HAVE_GTK            "@VISP_HAVE_GTK@")
@@ -177,3 +198,34 @@ SET(VISP_HAVE_YARP           "@VISP_HAVE_YARP@")
 SET(VISP_HAVE_OPENMP         "@VISP_HAVE_OPENMP@")
 SET(VISP_HAVE_ACCESS_TO_NAS  "@VISP_HAVE_ACCESS_TO_NAS@")
 SET(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
+
+#----------------------------------------------------------------------
+# Some useful macro to be able to build the tutorials along side ViSP
+#----------------------------------------------------------------------
+# Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
+# tu ensure that the library is build before this target.
+macro(visp_add_target file_cpp)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  include_directories(${VISP_INCLUDE_DIRS})
+  if(VISP_LIBRARY_DIRS)
+    # should be called before add_executable()
+    link_directories(${VISP_LIBRARY_DIRS})
+  endif()
+  add_executable(${target} ${file_cpp})
+  target_link_libraries(${target} ${VISP_LIBRARIES})
+  if(VISP_INTERN_LIBRARY)
+    add_dependencies(${target} ${VISP_INTERN_LIBRARY})
+  endif()
+endmacro()
+
+# Copy the data files to the same location than the target associated to the cpp files
+macro(visp_copy_data file_cpp file_data)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  get_target_property(target_location ${target} LOCATION)
+  get_filename_component(target_location "${target_location}" PATH)
+  add_custom_command(
+    TARGET ${target}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
+  )
+endmacro()

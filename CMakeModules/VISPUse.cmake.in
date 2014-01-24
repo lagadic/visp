@@ -38,10 +38,6 @@
 #
 #############################################################################
 
-# Add extra build flags to be able to consider especially for OpenMP
-list(APPEND CMAKE_CXX_FLAGS "@VISP_OPENMP_FLAGS@")
-list(APPEND CMAKE_CXX_FLAGS "@VISP_CPP11_FLAGS@")
-
 # Remove duplicates compilation flags
 separate_arguments(CMAKE_CXX_FLAGS)
 list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
@@ -58,6 +54,5 @@ ADD_DEFINITIONS(${VISP_DEFINITIONS})
 # Tell the compiler where to find ViSP's libraries
 # and the third party libraries we depend on
 LINK_DIRECTORIES(${VISP_LIBRARY_DIRS})
-
 LINK_LIBRARIES(${VISP_LIBRARIES})
 

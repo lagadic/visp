@@ -598,7 +598,6 @@ IF(WIN32 AND NOT CYGWIN)
   if(BUILD_DEPRECATED_FUNCTIONS)
     list(APPEND VISP_DEFS "-DWIN32") # only for compat with previous versions
   endif()
-  LIST(APPEND VISP_DEFS "-DGX") # To support exceptions
   CHECK_LIBRARY_EXISTS("winmm.lib" getch "" HAVE_LIBWINMM) # for timeGetTime()
   IF(HAVE_LIBWINMM)
     #MESSAGE("have winmm.lib")
@@ -619,7 +618,7 @@ IF(WIN32 AND NOT CYGWIN)
     if(HAVE_LIBWS2_32)
       #message("have ws2_32.lib")
       list(APPEND VISP_EXTERN_LIBRARIES "ws2_32.lib")
-    endif() 
+    endif()
   endif()
 ENDIF(WIN32 AND NOT CYGWIN)
 
@@ -697,8 +696,14 @@ if(USE_X11)
   message(STATUS "X11 found")
   set(VISP_HAVE_X11 TRUE)  # for header vpConfig.h
   set(VISP_HAVE_X11_FOUND "yes")  # for ViSP-third-party.txt
+  # try to found -lm requested on some platforms to link with X11
   list(APPEND VISP_EXTERN_INCLUDE_DIRS ${X11_INCLUDE_DIR})
-  list(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES} m)
+  list(APPEND VISP_EXTERN_LIBRARIES ${X11_LIBRARIES})
+  find_library(M_LIBRARY NAMES m)
+  mark_as_advanced(M_LIBRARY)
+  if(M_LIBRARY)
+    list(APPEND VISP_EXTERN_LIBRARIES ${M_LIBRARY})
+  endif()
   #MESSAGE("X11: ${X11_LIBRARIES}")
 else()
   # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
@@ -761,7 +766,7 @@ IF(USE_OGRE)
     
     if (Boost_FOUND)
       # Set up referencing of Boost
-      LIST(APPEND VISP_DEFS "-DBOOST_ALL_NO_LIB")  
+      #LIST(APPEND VISP_DEFS "-DBOOST_ALL_NO_LIB")
       LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${Boost_INCLUDE_DIR})  
       LIST(APPEND VISP_EXTERN_LIBRARIES ${Boost_LIBRARIES})
     endif()
@@ -1278,6 +1283,7 @@ IF(USE_OPENCV)
     #MESSAGE("OpenCV_LIB_DIR = ${OpenCV_LIB_DIR}")
     SET(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}*65536 + ${OpenCV_VERSION_MINOR}*256 + ${OpenCV_VERSION_PATCH})") # for ViSP-third-party.txt
     #MESSAGE("VISP_HAVE_OPENCV_VERSION = ${VISP_HAVE_OPENCV_VERSION}")
+    #MESSAGE("VISP_EXTERN_LIBRARIES = ${VISP_EXTERN_LIBRARIES}")
 
     # additional check to see if opencv_nonfree module introduced in OpenCV 2.4 is available
     #message("OpenCV_VERSION = ${OpenCV_VERSION}")
@@ -1927,8 +1933,7 @@ ENDIF(DOXYGEN_FOUND)
 # warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
 # definition
 if(WIN32 AND MSVC)
-  #MESSAGE("Add -D_CRT_SECURE_NO_DEPRECATE ")
-  list(APPEND VISP_DEFS "-D_CRT_SECURE_NO_DEPRECATE")
+  add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
 endif()
 
 #MESSAGE("Definitions: ${VISP_DEFS}")
@@ -1974,14 +1979,6 @@ IF(APPLE)
 ENDIF()
 
 #----------------------------------------------------------------------
-# Generate the package dependent visp-config shell script for projects which
-# are not using CMake:
-# Usage:
-#    visp-config --cflags ...
-#----------------------------------------------------------------------
-INCLUDE(${VISP_CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
-
-#----------------------------------------------------------------------
 # add distclean target
 #----------------------------------------------------------------------
 INCLUDE(${VISP_CMAKE_MODULE_PATH}/TargetDistclean.cmake)
@@ -2013,29 +2010,13 @@ ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
 #----------------------------------------------------------------------
-# Configure the file describing how to use ViSP. VISPConfig.cmake
-# is the main file configuring a CMake package.
-# . Exports build settings and dependencies for projects using ViSP as a
-#   third party project.
-# . Create and install files for simple use of FIND_PACKAGE(VISP)
-#   by other cmakified "user" projects and libraries depending on ViSP.
-#   (see "Mastering CMake", pp.72)
-# . To use ViSP in a third party project based on CMake:
-#   FIND_PACKAGE(VISP REQUIRED)
-#   IF(VISP_FOUND)
-#     INCLUDE(${VISP_USE_FILE})
-#   ENDIF(VISP_FOUND)
+# Configure the files that depend on the build <binary dir> or
+# installation <install dir> usage. This is the case of:
+# vpConfig.h
 #----------------------------------------------------------------------
 
-# Installation for ViSPConfig.cmake
-# case 1: <binary dir>/ViSPConfig.cmake for use with make
-# case 2: <install dir>/ViSPConfig.cmake for use with make install
-
-# case 1
+# case 1: when ViSP is build with make; files are used in <binary dir>
 #--------------
-
-set(VISP_ROOT_DIR_CONFIGCMAKE "${VISP_BINARY_DIR}")
-set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${VISP_BINARY_DIR}")
 set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
 
 SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
@@ -2046,32 +2027,11 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_INCLUDE_DIR}/vpConfig.h
 )
 
-CONFIGURE_FILE(
-  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
-  ${VISP_BINARY_DIR}/VISPConfig.cmake
-  IMMEDIATE @ONLY)
-
-# Just to copy ./CMakeModule/VISPUse.cmake.in <binary dir>/UseVISP.cmake
-CONFIGURE_FILE(
-  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
-  ${VISP_BINARY_DIR}/VISPUse.cmake
-  IMMEDIATE @ONLY)
-
-# Generate the package dependent file include/visp/vpConfig.h
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
-  ${VISP_BINARY_DIR}/ViSP-third-party.txt
-)
-
-
-# case 2
+# case 2: when ViSP is build with make install; files are used in <install dir>
 #--------------
-
-set(VISP_ROOT_DIR_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 IF(UNIX)
-  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp")
   set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp")
 ELSE()
-  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
   set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
 
@@ -2091,17 +2051,6 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_BINARY_DIR}/install/vpConfig.h
 )
 
-CONFIGURE_FILE(
-  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
-  ${VISP_BINARY_DIR}/install/VISPConfig.cmake
-  IMMEDIATE @ONLY)
-
-# Just to copy ./CMakeModule/VISPUse.cmake.in in <install dir>/UseVISP.cmake
-CONFIGURE_FILE(
-  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
-  ${VISP_BINARY_DIR}/install/VISPUse.cmake
-  IMMEDIATE @ONLY)
-
 # Install vpConfig.h that may differ from the one in include/visp
 INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
@@ -2109,7 +2058,16 @@ INSTALL(FILES ${VISP_BINARY_DIR}/install/vpConfig.h
   COMPONENT headers
   )
 
+#----------------------------------------------------------------------
+# Generate the ViSP-third-party.txt information file
+#----------------------------------------------------------------------
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
+  ${VISP_BINARY_DIR}/ViSP-third-party.txt
+)
+
+#----------------------------------------------------------------------
 # Create and install visp-config.1.gz man page
+#----------------------------------------------------------------------
 if(UNIX)
   FIND_PROGRAM(GZIP gzip)
   file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
@@ -2207,26 +2165,99 @@ if (BUILD_PACKAGE)
   include (${VISP_SOURCE_DIR}/CMakeModules/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
+#----------------------------------------------------------------------
+# Propagation in src to build the library
+#----------------------------------------------------------------------
+add_subdirectory(src)
 
 #----------------------------------------------------------------------
-# Propagation in sub dirs
+# Configure the file describing how to use ViSP. VISPConfig.cmake
+# is the main file configuring a CMake package.
+# . Exports build settings and dependencies for projects using ViSP as a
+#   third party project.
+# . Create and install files for simple use of FIND_PACKAGE(VISP)
+#   by other cmakified "user" projects and libraries depending on ViSP.
+#   (see "Mastering CMake", pp.72)
+# . To use ViSP in a third party project based on CMake:
+#   FIND_PACKAGE(VISP REQUIRED)
+#   IF(VISP_FOUND)
+#     INCLUDE(${VISP_USE_FILE})
+#   ENDIF(VISP_FOUND)
 #----------------------------------------------------------------------
-SUBDIRS(src)
+
+# Installation for ViSPConfig.cmake and VISPUse.cmake
+# case 1: <binary dir>/ViSPConfig.cmake for use with make
+# case 2: <install dir>/ViSPConfig.cmake for use with make install
+
+get_target_property(VISP_LIBNAME_DBG ${VISP_INTERN_LIBRARY} LOCATION_Debug)
+get_target_property(VISP_LIBNAME_OPT ${VISP_INTERN_LIBRARY} LOCATION_Release)
+
+get_filename_component(VISP_LIBNAME_DBG "${VISP_LIBNAME_DBG}" NAME)
+get_filename_component(VISP_LIBNAME_OPT "${VISP_LIBNAME_OPT}" NAME)
+
+#message("VISP_LIBNAME_DBG: ${VISP_LIBNAME_DBG}")
+#message("VISP_LIBNAME_OPT: ${VISP_LIBNAME_OPT}")
+
+# case 1
+#--------------
+set(VISP_ROOT_DIR_CONFIGCMAKE "${VISP_BINARY_DIR}")
+set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${VISP_BINARY_DIR}")
+CONFIGURE_FILE(
+  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
+  ${VISP_BINARY_DIR}/VISPConfig.cmake
+  IMMEDIATE @ONLY)
+
+# Just to copy ./CMakeModule/VISPUse.cmake.in <binary dir>/UseVISP.cmake
+CONFIGURE_FILE(
+  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_BINARY_DIR}/VISPUse.cmake
+  IMMEDIATE @ONLY)
+
+# case 2
+#--------------
+set(VISP_ROOT_DIR_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
+if(UNIX)
+  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp")
+else()
+  set(VISP_ROOT_DIR_CMAKE_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
+endif()
+CONFIGURE_FILE(
+  ${VISP_CMAKE_MODULE_PATH}/VISPConfig.cmake.in
+  ${VISP_BINARY_DIR}/install/VISPConfig.cmake
+  IMMEDIATE @ONLY)
+
+# Just to copy ./CMakeModule/VISPUse.cmake.in in <install dir>/UseVISP.cmake
+CONFIGURE_FILE(
+  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_BINARY_DIR}/install/VISPUse.cmake
+  IMMEDIATE @ONLY)
+
+#----------------------------------------------------------------------
+# Generate the package dependent visp-config shell script for projects which
+# are not using CMake:
+# Usage:
+#    visp-config --cflags ...
+#----------------------------------------------------------------------
+INCLUDE(${VISP_CMAKE_MODULE_PATH}/GenerateConfigScript.cmake)
+
+#----------------------------------------------------------------------
+# Propagation in sub dirs to build demo, example, test, tutorial
+#----------------------------------------------------------------------
 if(BUILD_DEMOS)
-  subdirs(demo)
+  add_subdirectory(demo)
 endif()
 if(BUILD_EXAMPLES)
-  subdirs(example)
+  add_subdirectory(example)
 endif()
 if(BUILD_TUTORIAL)
   set(VISP_DIR ${PROJECT_BINARY_DIR})
   mark_as_advanced(VISP_DIR)
   mark_as_advanced(VISP_INCLUDE_DIRS)
   mark_as_advanced(VISP_LIBRARY_DIRS)
-  subdirs(tutorial)
+  add_subdirectory(tutorial)
 endif()
 
-IF(BUILD_TESTING)
+if(BUILD_TESTING)
   #
   # Test coverage specific code
   #
@@ -2245,5 +2276,5 @@ IF(BUILD_TESTING)
     SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
   ENDIF(BUILD_TEST_COVERAGE)
 
-  SUBDIRS(test)
-ENDIF(BUILD_TESTING)
+  add_subdirectory(test)
+endif(BUILD_TESTING)

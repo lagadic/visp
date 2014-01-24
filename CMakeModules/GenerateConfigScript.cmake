@@ -67,8 +67,13 @@ IF (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_CFLAGS
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_CFLAGS ${VISP_OPENMP_FLAGS})
-  LIST(APPEND VISP_CONFIG_CFLAGS "${VISP_DEFS}")
+  if(NOT ${VISP_OPENMP_FLAGS} STREQUAL "")
+    list(APPEND VISP_CONFIG_CFLAGS ${VISP_OPENMP_FLAGS})
+  endif()
+  if(NOT ${VISP_CPP11_FLAGS} STREQUAL "")
+    list(APPEND VISP_CONFIG_CFLAGS ${VISP_CPP11_CFLAGS})
+  endif()
+  list(APPEND VISP_CONFIG_CFLAGS "${VISP_DEFS}")
 
   FOREACH(INCDIR ${VISP_EXTERN_INCLUDE_DIRS})
     LIST(APPEND VISP_CONFIG_CFLAGS "-I${INCDIR}")
@@ -107,11 +112,11 @@ IF (UNIX)
   # Manage the lib path
   SET(VISP_CONFIG_SCRIPT_TMP_LDFLAGS)
   FOREACH(dir ${VISP_EXTERN_LINK_DIR})
-    LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS "-L${dir}") 
+    LIST(APPEND VISP_CONFIG_SCRIPT_TMP_LDFLAGS "-L${dir}")
   ENDFOREACH(dir)
   #MESSAGE("VISP_EXTERN_LINK_DIR: ${VISP_EXTERN_LINK_DIR}")
   #MESSAGE("VISP_CONFIG_SCRIPT_TMP_LDFLAGS: ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS}")
-  # convert semicolon-separated vector to space-separated string 
+  # convert semicolon-separated vector to space-separated string
   FOREACH(val ${VISP_CONFIG_SCRIPT_TMP_LDFLAGS})
      SET(VISP_CONFIG_LIBS "${VISP_CONFIG_LIBS} ${val}")
   ENDFOREACH(val)
@@ -161,12 +166,7 @@ IF (UNIX)
   set(VISP_CONFIG_CFLAGS_SCRIPT "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR} ${VISP_CONFIG_CFLAGS}")
 
   # prepend with ViSP own lib dir
-  SET(VISP_CONFIG_LIBS_SCRIPT  "-L$PREFIX/${CMAKE_INSTALL_LIBDIR} -l${VISP_INTERN_LIBRARY} ${VISP_CONFIG_LIBS}")
-  IF(UNIX)
-    IF(NOT APPLE)
-      SET(VISP_CONFIG_LIBS_SCRIPT "-Wl,-rpath,$PREFIX/${CMAKE_INSTALL_LIBDIR} ${VISP_CONFIG_LIBS_SCRIPT}")
-    ENDIF(NOT APPLE)
-  ENDIF(UNIX)
+  SET(VISP_CONFIG_LIBS_SCRIPT  "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${VISP_LIBNAME_OPT} ${VISP_CONFIG_LIBS}")
 
   SET(VISP_ECHO_NO_NEWLINE_CHARACTER "")
   SET(VISP_ECHO_NO_NEWLINE_OPTION "")
@@ -197,12 +197,7 @@ IF (UNIX)
   set(VISP_CONFIG_CFLAGS_PC "-I\${includedir} ${VISP_CONFIG_CFLAGS}")
 
   # prepend with ViSP own lib dir
-  SET(VISP_CONFIG_LIBS_PC  "-L\${libdir} -l${VISP_INTERN_LIBRARY} ${VISP_CONFIG_LIBS}")
-  IF(UNIX)
-    IF(NOT APPLE)
-      SET(VISP_CONFIG_LIBS_PC "-Wl,-rpath,\${libdir} ${VISP_CONFIG_LIBS_PC}")
-    ENDIF(NOT APPLE)
-  ENDIF(UNIX)
+  SET(VISP_CONFIG_LIBS_PC  "\${libdir}/${VISP_LIBNAME_OPT} ${VISP_CONFIG_LIBS}")
   CONFIGURE_FILE(${FILE_VISP_CONFIG_PC_INSTALL_IN} ${FILE_VISP_CONFIG_PC_INSTALL})
 
 ELSE(UNIX)
@@ -222,7 +217,14 @@ ELSE(UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_DEF
   #----------------------------------------------------------------------
-  SET(VISP_CONFIG_SCRIPT_DEFS "")
+  set(VISP_CONFIG_SCRIPT_DEFS "")
+  if(NOT ${VISP_OPENMP_FLAGS} STREQUAL "")
+    set(VISP_CONFIG_SCRIPT_DEFS "${VISP_OPENMP_FLAGS}")
+  endif()
+  if(NOT ${VISP_CPP11_FLAGS} STREQUAL "")
+    set(VISP_CONFIG_SCRIPT_DEFS "${VISP_CPP11_FLAGS}, ${VISP_CONFIG_SCRIPT_DEFS}")
+  endif()
+
   FOREACH(def ${VISP_DEFS})
     #MESSAGE("def to process: ${def}")
     IF("${def}" MATCHES "[-][D]+.")
@@ -248,15 +250,6 @@ ELSE(UNIX)
 #  MESSAGE(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
 
   #---------------------------------------------------------------------
-  # Updates VISP_OPENMP_SUPPORT
-  #----------------------------------------------------------------------
-  IF(VISP_OPENMP_FLAGS)
-    SET(VISP_OPENMP_SUPPORT "OpenMP support: Yes")
-  ELSE()
-    SET(VISP_OPENMP_SUPPORT "OpenMP support: No")
-  ENDIF()
-  
-  #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_LIBDIR
   #----------------------------------------------------------------------
   SET(TMP_SCRIPT_LIBDIR "%PREFIX%\\lib")
@@ -266,9 +259,9 @@ ELSE(UNIX)
   FOREACH(var ${VISP_EXTERN_LINK_DIR})
     #MESSAGE("var to process: ${var}")
     IF("${var}" MATCHES "[-][L]+.")
-    	#MESSAGE("${var} matches -L")
+        #MESSAGE("${var} matches -L")
         STRING(REGEX REPLACE "[-][L]" "" var ${var})
-	#MESSAGE("new ${newvar} without -L")
+        #MESSAGE("new ${newvar} without -L")
     ENDIF("${var}" MATCHES "[-][L]+.")
     LIST(APPEND TMP_SCRIPT_LIBDIR ${var})
     LIST(APPEND TMP_SCRIPT_LIBDIR "${var}\\$(ConfigurationName)")
