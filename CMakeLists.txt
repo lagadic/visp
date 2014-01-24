@@ -1240,10 +1240,39 @@ IF(USE_OPENCV)
     ENDIF(VISP_BUILD_SHARED_LIBS AND VISP_USE_MSVC)
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_OPENCV_FOUND "yes")  # for ViSP-third-party.txt
-
+    # In OpenCV 2.4.8 we cannot use OpenCV_LIBS since the library names are not suffixed by the version number.
+    # To be clear OpenCV_LIBS contains opencv_core and not opencv_core248 as requested to use ViSP
+    # For the build of ViSP it works with OpenCV_LIBS: in that case thanks to opencv_core properties, CMake
+    # is able to find the real name and location of the library.
+    # But when ViSP is used as a 3rd party where it should import OpenCV libraries, it doesn't work with OpenCV_LIBS.
+    # The solution here is to get the real name of OpenCV libraries thanks to the properties and link with these names
+    if(OpenCV_LIB_COMPONENTS)
+      #foreach(component_ ${OpenCV_LIB_COMPONENTS})
+      foreach(component_ ${OpenCV_LIBS})
+        if(NOT component_ STREQUAL "debug" AND NOT component_ STREQUAL "optimized")
+          get_target_property(component_property_ ${component_} IMPORTED_LOCATION_RELEASE)
+          if(component_property_)
+            get_filename_component(component_property_ ${component_property_} NAME_WE)
+            list(APPEND VISP_EXTERN_LIBRARIES optimized ${component_property_})
+          else()
+            list(APPEND VISP_EXTERN_LIBRARIES optimized ${component_})
+          endif()
+          get_target_property(component_property_ ${component_} IMPORTED_LOCATION_DEBUG)
+          if(component_property_)
+            get_filename_component(component_property_ ${component_property_} NAME_WE)
+            list(APPEND VISP_EXTERN_LIBRARIES debug ${component_property_})
+          else()
+            list(APPEND VISP_EXTERN_LIBRARIES debug ${component_})
+          endif()
+        endif()
+      endforeach()
+    else()
+      # this should be an old OpenCV version that doesn't have the previous behavior
+      list(APPEND VISP_EXTERN_LIBRARIES ${OpenCV_LIBS})
+    endif()
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS})
     LIST(APPEND VISP_EXTERN_LINK_DIR ${OpenCV_LIB_DIR})
-    LIST(APPEND VISP_EXTERN_LIBRARIES ${OpenCV_LIBS})
+    #LIST(APPEND VISP_EXTERN_LIBRARIES ${OpenCV_LIBS})
     #MESSAGE("OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
     #MESSAGE("OpenCV_LIBS = ${OpenCV_LIBS}")
     #MESSAGE("OpenCV_LIB_DIR = ${OpenCV_LIB_DIR}")
