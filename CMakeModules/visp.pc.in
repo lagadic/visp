@@ -7,7 +7,7 @@ includedir=@includedir@
 
 Name: ViSP
 Description: Visual Servoing Platform
-URL: http://www.irisa.fr/lagadic/visp
+URL: http://team.inria.fr/lagadic/visp
 Version: ${VISP_VERSION}
 Libs: ${VISP_CONFIG_LIBS_PC}
 
