@@ -112,13 +112,14 @@ public:
   // Add a new point in this array
   int addPoint(double X, double Y, double Z, vpImagePoint &ip) ;
 
-  //! Constructor
+  // Constructor
   vpCalibration() ;
+  vpCalibration(const vpCalibration& c) ;
 
-  //! Destructor
+  // Destructor
   virtual ~vpCalibration() ;
   //! = operator
-  void operator=(vpCalibration& twinCalibration );
+  void operator=(const vpCalibration& twinCalibration);
 
   //!get the residual in pixels
   double getResidual(void) const {return residual;}

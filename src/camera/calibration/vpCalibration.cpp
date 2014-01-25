@@ -72,9 +72,19 @@ int vpCalibration::init()
   return 0 ;
 }
 
+/*!
+  Default constructor.
+ */
 vpCalibration::vpCalibration()
 {
   init() ;
+}
+/*!
+  Copy constructor.
+ */
+vpCalibration::vpCalibration(const vpCalibration &c)
+{
+  (*this) = c;
 }
 
 
@@ -91,8 +101,8 @@ vpCalibration::~vpCalibration()
 
   \param twinCalibration : object to be copied
 */
-void vpCalibration::operator=(vpCalibration& twinCalibration )
-                             {
+void vpCalibration::operator=(const vpCalibration& twinCalibration )
+{
   npt = twinCalibration.npt ;
   LoX = twinCalibration.LoX ;
   LoY = twinCalibration.LoY ;
