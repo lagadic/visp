@@ -276,7 +276,6 @@ SET (HEADER_TRACKING
   tracking/mbt/klt/vpMbKltTracker.h
   tracking/mbt/klt/vpMbtKltXmlParser.h
 
-  tracking/moments/vpMomentObject.h
   tracking/moments/vpMomentAlpha.h
   tracking/moments/vpMomentBasic.h
   tracking/moments/vpMomentCentered.h
@@ -341,26 +340,24 @@ SET (HEADER_VISUAL_FEATURE
   visual-feature/vpFeatureEllipse.h
   visual-feature/vpFeatureException.h
   visual-feature/vpFeatureLine.h
+  visual-feature/vpFeatureLuminance.h
+  visual-feature/vpFeatureMoment.h
+  visual-feature/vpFeatureMomentAlpha.h
+  visual-feature/vpFeatureMomentArea.h
+  visual-feature/vpFeatureMomentAreaNormalized.h
+  visual-feature/vpFeatureMomentBasic.h
+  visual-feature/vpFeatureMomentCentered.h
+  visual-feature/vpFeatureMomentCInvariant.h
+  visual-feature/vpFeatureMomentCommon.h
+  visual-feature/vpFeatureMomentDatabase.h
+  visual-feature/vpFeatureMomentGravityCenter.h
+  visual-feature/vpFeatureMomentGravityCenterNormalized.h
   visual-feature/vpFeaturePoint3D.h
   visual-feature/vpFeaturePoint.h
   visual-feature/vpFeaturePointPolar.h
   visual-feature/vpFeatureThetaU.h
   visual-feature/vpFeatureTranslation.h
   visual-feature/vpFeatureVanishingPoint.h
-  visual-feature/vpFeatureMoment.h  
-  visual-feature/vpFeatureMomentDatabase.h
-  visual-feature/vpFeatureMomentCommon.h
-  visual-feature/vpFeatureMomentAlpha.h
-  visual-feature/vpFeatureMomentGravityCenter.h
-  visual-feature/vpFeatureMomentBasic.h
-  visual-feature/vpFeatureMomentGravityCenterNormalized.h
-  visual-feature/vpFeatureMomentCentered.h
-  visual-feature/vpFeatureMomentCInvariant.h
-  visual-feature/vpFeatureMomentCommon.h
-  visual-feature/vpFeatureMomentAreaNormalized.h
-  visual-feature/vpFeatureMomentArea.h
-
-  visual-feature/vpFeatureLuminance.h
   visual-feature/vpFeatureSegment.h
   visual-feature/vpGenericFeature.h
   )
