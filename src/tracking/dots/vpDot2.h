@@ -229,14 +229,7 @@ public:
         unsigned int size = 0 );
 
   vpDot2& operator=(const vpDot2& twinDot );
-  /*!
-    Writes the dot center of gravity coordinates in the frame (i,j) (For more details
-    about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
-    and returns a reference to the stream.
-  */
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot2& d) {
-    return (os << "(" << d.getCog() << ")" ) ;
-  } ;
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot2& d);
 
   void print(std::ostream& os) { os << *this << std::endl ; }
   void searchDotsInArea(const vpImage<unsigned char>& I,

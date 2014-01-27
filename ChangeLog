@@ -18,9 +18,9 @@ ViSP under development version
       ACTIVATE_DEBUG_TRACE option
     . Fix errors detected by Covery Scan static code analyser
     . Improve vpHomography class
-  - Examples
-    . New example to show how to use the template tracker
-  - Tutorials
+  - New examples
+    . New example that shows how to use the template tracker
+  - New tutorials
     . ViSP installation on Fedora
     . Image filtering
     . Template tracker
@@ -38,6 +38,7 @@ ViSP under development version
     . [16889] Link error with CMU 1394 on win x64 arch
     . [16895] undefined reference to `vpGaussRand::gaussianDraw()'
     . [16919] Unable to link with OpenCV 2.4.8 under Windows
+    . [16924] MinGW: unable to build ViSP as a shared library
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features

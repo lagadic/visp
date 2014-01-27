@@ -129,8 +129,7 @@ class VISP_EXPORT vpException : public std::exception
     const char *getMessage (void);
 
     //! print the error structure
-    friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
-                                                   const vpException & art);
+    friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpException & art);
 
     const char* what () const throw();
 

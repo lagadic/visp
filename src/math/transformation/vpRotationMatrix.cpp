@@ -456,7 +456,7 @@ vpRotationMatrix::inverse(vpRotationMatrix &M) const
 
 
 //! std::cout an rotation matrix [thetaU]
-std::ostream &operator <<(std::ostream &s,const vpRotationMatrix &R)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpRotationMatrix &R)
 {
   for (unsigned int i=0; i<3; i++)
   {

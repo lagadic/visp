@@ -286,7 +286,7 @@ vpPoint::display(const vpImage<vpRGBa> &I,
   vpFeatureDisplay::displayPoint(_p[0],_p[1], cam, I, color, thickness) ;
 }
 
-std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
+VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpPoint& /* vpp */)
 {
   return( os<<"vpPoint" );
 }

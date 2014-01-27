@@ -124,7 +124,7 @@ u30 x    x  x
   \endcode
 
 */
-std::ostream & operator<<(std::ostream & os, vpMomentCentered& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, vpMomentCentered& m){
     for(unsigned int i = 0;i<m.values.size();i++){
         if(i%(m.getObject().getOrder()+1)==0)
           os << std::endl;

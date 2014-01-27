@@ -83,7 +83,7 @@ vpHistogramValey::operator==(const vpHistogramValey &v) const
 /*!
   \brief std::cout a valey
 */
-std::ostream &operator <<(std::ostream &s,const vpHistogramValey &v)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramValey &v)
 {
   
   s << (int)v.getLevel() << " " << v.getValue();

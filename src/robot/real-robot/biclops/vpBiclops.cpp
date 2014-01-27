@@ -310,10 +310,8 @@ vpBiclops::init ()
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-std::ostream & operator << (std::ostream & os,
-			    const vpBiclops & /*constant*/)
+VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpBiclops & /*constant*/)
 {
-
   os
     << "Geometric parameters: " << std::endl
     << "h: "

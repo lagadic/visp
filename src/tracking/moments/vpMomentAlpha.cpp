@@ -148,7 +148,7 @@ void vpMomentAlpha::compute(){
 /*!
         Prints the value of the orientation.
  */
-std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& c){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& c){
 	os << c.values[0] ;
 	return os;
 }

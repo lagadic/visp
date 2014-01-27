@@ -1258,7 +1258,7 @@ vpViper::getCoupl56() const
   \param os : Output stream.
   \param viper : Robot parameters.
 */
-std::ostream & operator << (std::ostream & os, const vpViper & viper)
+VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper)
 {
   vpRotationMatrix eRc;
   viper.eMc.extract(eRc);

@@ -1526,7 +1526,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \param os : Output stream.
   \param afma6 : Robot parameters.
 */
-std::ostream & operator << (std::ostream & os,
+VISP_EXPORT std::ostream & operator << (std::ostream & os,
                             const vpAfma6 & afma6)
 {
   vpRotationMatrix eRc;

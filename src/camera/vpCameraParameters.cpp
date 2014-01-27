@@ -479,8 +479,7 @@ vpCameraParameters::printParameters()
   \param os : Output stream.
   \param cam : Camera parameters.
 */
-std::ostream & operator << (std::ostream & os,
-			    const vpCameraParameters &cam)
+VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpCameraParameters &cam)
 {
   switch(cam.get_projModel()){
   case vpCameraParameters::perspectiveProjWithoutDistortion :

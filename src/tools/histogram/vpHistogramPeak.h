@@ -153,8 +153,7 @@ public :
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
-						const vpHistogramPeak &p);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,	const vpHistogramPeak &p);
 
 
 protected :

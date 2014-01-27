@@ -594,7 +594,7 @@ vpAfma4::getJointMax() const
   \param os : Output stream.
   \param afma4 : Robot parameters.
 */
-std::ostream & operator << (std::ostream & os,
+VISP_EXPORT std::ostream & operator << (std::ostream & os,
 			    const vpAfma4 & afma4)
 {
   vpRotationMatrix eRc;

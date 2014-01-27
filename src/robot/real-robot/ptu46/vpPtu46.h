@@ -104,8 +104,7 @@ public: /* Methodes publiques */
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
-				     const vpPtu46 & constant);
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpPtu46 & constant);
 };
 
 

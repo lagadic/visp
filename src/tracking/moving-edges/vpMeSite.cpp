@@ -617,7 +617,7 @@ int vpMeSite::operator!=(const vpMeSite &m)
 
 }
 
-std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS)
+VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpMeSite& vpMeS)
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   return (os << "Alpha: " << vpMeS.alpha

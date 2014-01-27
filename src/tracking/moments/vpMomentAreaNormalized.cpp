@@ -81,7 +81,7 @@ vpMomentAreaNormalized::vpMomentAreaNormalized(double desiredSurface, double des
 /*!
   Outputs the moment's values to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentAreaNormalized& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAreaNormalized& m){
     os << "An:" << m.values[0] ;
 
     return os;    

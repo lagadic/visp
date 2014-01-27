@@ -1965,3 +1965,9 @@ vpImageSimulator::get3DcornersTextureRectangle()
     X_.push_back(X[i]);
   return X_;
 }
+
+VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpImageSimulator& /*ip*/)
+{
+  os << "";
+  return os;
+}

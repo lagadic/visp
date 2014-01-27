@@ -749,7 +749,7 @@ vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &y
 /*!
 \brief std::cout a matrix
 */
-std::ostream &operator <<(std::ostream &s,const vpHomography &H)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHomography &H)
 {
   std::ios_base::fmtflags original_flags = s.flags();
 

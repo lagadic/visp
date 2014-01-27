@@ -110,7 +110,7 @@ vpHistogramPeak::operator==(const vpHistogramPeak &p) const
 /*!
   \brief std::cout a peak
 */
-std::ostream &operator <<(std::ostream &s,const vpHistogramPeak &p)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramPeak &p)
 {
   
   s << (int)p.getLevel() << " " << p.getValue();

@@ -191,10 +191,8 @@ vpPtu46::init ()
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-std::ostream & operator << (std::ostream & os,
-			    const vpPtu46 & /* constant */)
+VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpPtu46 & /* constant */)
 {
-
   os
     << "Geometric parameters: " << std::endl
     << "L: "

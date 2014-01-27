@@ -2623,7 +2623,7 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 /*!
 \brief std::cout a matrix
 */
-std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpMatrix &m)
 {
   std::ios_base::fmtflags original_flags = s.flags();
 

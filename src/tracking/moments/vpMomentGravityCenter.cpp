@@ -67,7 +67,7 @@ const std::vector<double>& vpMomentGravityCenter::get() const{
 /*!
   Outputs the moment's values to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenter& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenter& m){
     os << "Xg=" << m.values[0] << ", Yg=" << m.values[1];
     
     return os;    

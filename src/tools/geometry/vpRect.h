@@ -192,7 +192,8 @@ public:
   */
   inline double getWidth() const { return this->width;  };
 
-
+  friend VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect );
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r);
   void set(const std::vector<vpImagePoint> &ip);
 
   /*!
@@ -304,28 +305,5 @@ private:
   double width;  // Rectangle width
   double height; // Rectangle height
 };
-
-
-/*!
-
-  Check if an image point belongs to a rectangle.
-  
-  \param ip : the image point.
-  \param rect : the rectangle.
-  
-  \return Returns true if the point belongs to the rectangle.
-
-*/
-VISP_EXPORT inline bool inRectangle( const vpImagePoint &ip, const vpRect &rect ) {
-  return ( ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
-}
-
-VISP_EXPORT inline std::ostream& operator<< (std::ostream &os,
-               const vpRect& r)
- {
-  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
-  return os;
-}
-
 
 #endif

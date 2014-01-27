@@ -244,6 +244,8 @@ class VISP_EXPORT vpImageSimulator
 
     std::vector<vpColVector> get3DcornersTextureRectangle();
 
+    friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpImageSimulator& /*ip*/);
+
     /*!
       As it can be time consuming to reset all the image to a default baground value, this function enable to reset only the pixel which changed the previous time.
       
@@ -308,12 +310,6 @@ class VISP_EXPORT vpImageSimulator
     void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, 
 		const vpCameraParameters &cam, vpPoint* pt, vpRect &rect);
 };
-
-VISP_EXPORT inline std::ostream& operator<< (std::ostream &os, const vpImageSimulator& /*ip*/)
-{
-  os << "";
-  return os;
-}
 
 
 #endif

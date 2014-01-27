@@ -86,7 +86,7 @@ void vpMomentDatabase::updateAll(vpMomentObject& object){
 /*!
 	Outputs all the moments values in the database to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentDatabase& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentDatabase& m){
   std::map<const char*,vpMoment*,vpMomentDatabase::cmp_str>::const_iterator itr;
     os << "{";
     

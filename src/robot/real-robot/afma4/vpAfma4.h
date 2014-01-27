@@ -130,8 +130,7 @@ class VISP_EXPORT vpAfma4
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
   void get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
-						 const vpAfma4 & afma4);
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpAfma4 & afma4);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;

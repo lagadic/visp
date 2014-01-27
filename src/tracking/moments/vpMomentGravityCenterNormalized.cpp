@@ -74,7 +74,7 @@ vpMomentGravityCenterNormalized::vpMomentGravityCenterNormalized() : vpMomentGra
 /*!
   Outputs the moment's values to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& m){
     os << "Xn:" << m.values[0] << ",Yn=" << m.values[1];
     
     return os;    

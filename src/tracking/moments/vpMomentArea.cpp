@@ -74,7 +74,7 @@ vpMomentArea::vpMomentArea() : vpMoment(){
 /*!
   Outputs the moment's values to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentArea& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentArea& m){
     os << "Area a:" << m.values[0];
     return os;    
 }

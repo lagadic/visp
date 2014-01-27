@@ -160,8 +160,7 @@ class VISP_EXPORT vpAfma6
                            const vpImage<unsigned char> &I) const;
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
-						 const vpAfma6 & afma6);
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpAfma6 & afma6);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;

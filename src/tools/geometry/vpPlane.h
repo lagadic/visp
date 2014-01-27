@@ -155,19 +155,7 @@ public:
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-
-  /*!
-
-    Print the plane parameters as a stream like "(A,B,C,D) " where
-    A,B,C and D correspond to the parameters of the plane.
-
-  */
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpPlane& p)
-  {
-    return (os  << "("<<p.getA() << ","<<p.getB()
-	    << ","<<p.getC()<< ","<<p.getD() <<") ") ;
-  } ;
-
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpPlane& p);
 
   // Operation with  Plane
   void projectionPointOnPlan(const vpPoint& P, vpPoint& Pproj) const ;

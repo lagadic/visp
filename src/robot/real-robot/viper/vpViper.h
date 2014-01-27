@@ -130,8 +130,7 @@ class VISP_EXPORT vpViper
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os,
-						 const vpViper & viper);
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;

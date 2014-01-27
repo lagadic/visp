@@ -953,5 +953,13 @@ void vpDot::display(const vpImage<vpRGBa>& I,const vpImagePoint &cog,
   }
 }
 
+/*!
+  Writes the dot center of gravity coordinates in the frame (i,j) (For more details
+  about the orientation of the frame see the vpImagePoint documentation) to the stream \e os,
+  and returns a reference to the stream.
+*/
+VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d) {
+  return (os << "(" << d.getCog() << ")" ) ;
+} ;
 
 

@@ -127,7 +127,7 @@ void vpMoment::update(vpMomentObject& object){
   \param os : a std::stream.
   \param m : a moment instance.
 */
-std::ostream & operator<<(std::ostream & os, const vpMoment& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m){
   for(std::vector<double>::const_iterator i = m.values.begin();i!=m.values.end();i++)
     os << *i << ",";
 

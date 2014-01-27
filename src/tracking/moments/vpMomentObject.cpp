@@ -566,7 +566,7 @@ void vpMomentObject::set(unsigned int i, unsigned int j, const double& value_ij)
   \endcode
 
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentObject& m){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& m){
     for(unsigned int i = 0;i<m.values.size();i++){
 
         if(i%(m.order)==0)

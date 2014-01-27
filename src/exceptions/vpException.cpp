@@ -148,9 +148,8 @@ const char* vpException::what () const throw()
 /* --- OP << --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-std::ostream &
-operator << (std::ostream & os,
-	     const vpException & error)
+VISP_EXPORT std::ostream &
+operator << (std::ostream & os, const vpException & error)
 {
   os << "Error [" << error.code << "]:\t" << error.message << std::endl;
 

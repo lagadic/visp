@@ -332,7 +332,7 @@ operator()  (const vpColVector & e) const
   \param os : The stream where to print the adaptive gain parameters.
   \param lambda : The adaptive gain containing the parameters to print.
 */
-std::ostream&
+VISP_EXPORT std::ostream&
 operator<< (std::ostream &os, const vpAdaptiveGain& lambda)
 {
   os << "Zero= " << lambda .coeff_a + lambda .coeff_c

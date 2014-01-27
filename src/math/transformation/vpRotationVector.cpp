@@ -97,7 +97,7 @@ Rxyz rotation vector:
 0
   \endcode
 */
-std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
+VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 {
   std::ios::fmtflags original_flags( s.flags() );
   s.precision(10) ;

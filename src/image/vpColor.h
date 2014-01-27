@@ -206,6 +206,8 @@ class VISP_EXPORT vpColor : public vpRGBa
     : vpRGBa(R, G, B), id(id)
   {};
 
+  friend VISP_EXPORT bool operator==( const vpColor &c1, const vpColor &c2 );
+  friend VISP_EXPORT bool operator!=( const vpColor &c1, const vpColor &c2 );
   /*!
     Set a color from its RGB values.
     
@@ -234,29 +236,6 @@ class VISP_EXPORT vpColor : public vpRGBa
   static inline vpColor getColor(const unsigned int &i) {return vpColor::allColors[i % vpColor::nbColors];};
 
 };
-
-/*!
-  Compare two colors.
-
-  Return true if the R,G,B components are the same.
-
-  \param c1,c2 : Color to compare.
-*/
-VISP_EXPORT inline bool operator==( const vpColor &c1, const vpColor &c2 ) {
-  return ( ( c1.R == c2.R ) && ( c1.G == c2.G ) && ( c1.B == c2.B) );
-}
- 
-/*!
-
-  Compare two colors.
-
-  Return true if the R,G,B components are different.
-
-  \param c1,c2 : Color to compare.
-*/
-VISP_EXPORT inline bool operator!=( const vpColor &c1, const vpColor &c2 ) {
-  return ( ( c1.R != c2.R ) || ( c1.G != c2.G ) || ( c1.B == c2.B) );
-}
 
 #endif
 

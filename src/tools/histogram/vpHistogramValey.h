@@ -156,8 +156,7 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
-						const vpHistogramValey &v);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpHistogramValey &v);
 };
 
 /*

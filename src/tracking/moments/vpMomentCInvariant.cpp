@@ -258,7 +258,7 @@ void vpMomentCInvariant::printI(unsigned int index){
 /*!
   Outputs the moment's values to a stream.
 */
-std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& c){
+VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& c){
     for(unsigned int i = 0;i<c.values.size();i++){
       os << c.values[i] << "," << std::endl;
     }

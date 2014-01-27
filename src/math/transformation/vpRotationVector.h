@@ -132,8 +132,7 @@ public:
   // Transpose of the rotation vector.
   vpRowVector t() const;
 
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,
-						const vpRotationVector &m);
+  friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationVector &m);
 
 } ;
 
