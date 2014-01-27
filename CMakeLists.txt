@@ -1245,31 +1245,79 @@ IF(USE_OPENCV)
     ENDIF(VISP_BUILD_SHARED_LIBS AND VISP_USE_MSVC)
     SET(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_OPENCV_FOUND "yes")  # for ViSP-third-party.txt
-    # In OpenCV 2.4.8 we cannot use OpenCV_LIBS since the library names are not suffixed by the version number.
-    # To be clear OpenCV_LIBS contains opencv_core and not opencv_core248 as requested to use ViSP
+    # On win32 since OpenCV 2.4.7 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
+    # Using OpenCV_LIBS works to build visp library, examples, demos and test thanks to the components, 
+	# but not tutorials that are stand alone Cmake project that use ViSP as a 3rd party.
+    # To be clear OpenCV_LIBS contains opencv_core and not c:\...\opencv_core248.lib full path as requested 
+	# to use ViSP. This was not the case with OpenCV 2.4.6.
     # For the build of ViSP it works with OpenCV_LIBS: in that case thanks to opencv_core properties, CMake
-    # is able to find the real name and location of the library.
-    # But when ViSP is used as a 3rd party where it should import OpenCV libraries, it doesn't work with OpenCV_LIBS.
-    # The solution here is to get the real name of OpenCV libraries thanks to the properties and link with these names
-    if(OpenCV_LIB_COMPONENTS)
-      #foreach(component_ ${OpenCV_LIB_COMPONENTS})
-      foreach(component_ ${OpenCV_LIBS})
-        if(NOT component_ STREQUAL "debug" AND NOT component_ STREQUAL "optimized")
-          get_target_property(component_property_ ${component_} IMPORTED_LOCATION_RELEASE)
-          if(component_property_)
-            get_filename_component(component_property_ ${component_property_} NAME_WE)
-            list(APPEND VISP_EXTERN_LIBRARIES optimized ${component_property_})
-          else()
-            list(APPEND VISP_EXTERN_LIBRARIES optimized ${component_})
-          endif()
-          get_target_property(component_property_ ${component_} IMPORTED_LOCATION_DEBUG)
-          if(component_property_)
-            get_filename_component(component_property_ ${component_property_} NAME_WE)
-            list(APPEND VISP_EXTERN_LIBRARIES debug ${component_property_})
-          else()
-            list(APPEND VISP_EXTERN_LIBRARIES debug ${component_})
-          endif()
-        endif()
+    # is able to find the real name and location of the libraries.
+    # But when ViSP is used as a 3rd party where it should import OpenCV libraries, it doesn't work with 
+	# OpenCV_LIBS.
+    # The solution here is to get the real name of OpenCV libraries thanks to the properties and link 
+	# with these names.
+	# An other way could be to include OpenCVConfig.cmake, but in that case, visp-config and visp.pc 
+	# will be not able to give the names of OpenCV libraries when used without CMake.
+	#message("OpenCV_LIB_COMPONENTS: ${OpenCV_LIB_COMPONENTS}")
+	#message("OpenCV_LIBS: ${OpenCV_LIBS}")
+	if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6)
+      foreach(component_ ${OpenCV_LIB_COMPONENTS})
+	    #message("component: ${component_}")
+		if(VISP_BUILD_SHARED_LIBS)
+          get_target_property(component_property_opt_ ${component_} IMPORTED_IMPLIB_RELEASE)
+          get_target_property(component_property_dbg_ ${component_} IMPORTED_IMPLIB_DEBUG)
+		  # particular case of opencv_ts that doesn't have an optimized implib
+		  if(NOT component_property_opt_)
+		    get_target_property(component_property_opt_ ${component_} IMPORTED_LOCATION_RELEASE)
+		  endif()
+		  # particular case of opencv_ts that doesn't have a debug implib
+		  if(NOT component_property_dbg_)
+		    get_target_property(component_property_dbg_ ${component_} IMPORTED_LOCATION_DEBUG)
+		  endif()
+		else()
+          get_target_property(component_property_opt_ ${component_} IMPORTED_LOCATION_RELEASE)
+          get_target_property(component_property_dbg_ ${component_} IMPORTED_LOCATION_DEBUG)
+		endif()
+		get_target_property(component_property_3rdparty_opt_ ${component_} IMPORTED_LINK_INTERFACE_LIBRARIES_RELEASE)
+		get_target_property(component_property_3rdparty_dbg_ ${component_} IMPORTED_LINK_INTERFACE_LIBRARIES_DEBUG)
+		#message("component_property_opt_: ${component_property_opt_}")
+		#message("component_property_dbg_: ${component_property_dbg_}")
+		#message("component_property_3rdparty_opt_: ${component_property_3rdparty_opt_}")
+		#message("component_property_3rdparty_dbg_: ${component_property_3rdparty_dbg_}")
+		if(component_property_opt_)
+		  list(APPEND VISP_EXTERN_LIBRARIES optimized ${component_property_opt_})
+		endif()
+		if(component_property_dbg_)
+		  list(APPEND VISP_EXTERN_LIBRARIES debug     ${component_property_dbg_})
+		endif()
+		#if(NOT component_property_opt_ AND NOT component_property_dbg_)
+		#  message("No implib for component ${component_}")
+		#endif()
+		foreach(3rdparty_opt_ ${component_property_3rdparty_opt_})
+		    list(FIND OpenCV_LIB_COMPONENTS ${3rdparty_opt_} 3rdparty_is_opencv_component_)
+			if(3rdparty_is_opencv_component_ LESS 0)
+			  #message("${3rdparty_opt_} is not an opencv component")
+		      get_target_property(3rdparty_opt_location_ ${3rdparty_opt_} IMPORTED_LOCATION_RELEASE)
+			  #message("3rdparty_opt_: ${3rdparty_opt_} location: ${3rdparty_opt_location_}")
+			  if(3rdparty_opt_location_)
+			    list(APPEND VISP_EXTERN_LIBRARIES optimized ${3rdparty_opt_location_})
+			  else()
+			    list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_opt_}) # should be a system dependency			
+			  endif()
+			endif()
+		endforeach()
+		foreach(3rdparty_dbg_ ${component_property_3rdparty_dbg_})
+		    list(FIND OpenCV_LIB_COMPONENTS ${3rdparty_dbg_} 3rdparty_is_opencv_component_)
+		    if(3rdparty_is_opencv_component_ LESS 0)
+			  get_target_property(3rdparty_dbg_location_ ${3rdparty_dbg_} IMPORTED_LOCATION_DEBUG)
+			  #message("3rdparty_dbg_: ${3rdparty_dbg_} location: ${3rdparty_dbg_location_}")
+			  if(3rdparty_dbg_location_)
+			    list(APPEND VISP_EXTERN_LIBRARIES debug ${3rdparty_dbg_location_})
+			  else()
+			    list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_dbg_}) # should be a system dependency			
+			  endif()
+			endif()
+		endforeach()
       endforeach()
     else()
       # this should be an old OpenCV version that doesn't have the previous behavior
