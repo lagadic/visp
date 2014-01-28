@@ -151,12 +151,12 @@ class vpGaussRand : public vpUniRand
     /*!
       Gaussian noise random generator constructor.
 
-      \param sigma : Standard deviation.
-      \param mean : Mean value.
+      \param s : Standard deviation.
+      \param m : Mean value.
       \param seed : Seed of the noise
     */
-    vpGaussRand(const double sqrtvariance, const double mean, const long seed = 0)
-      : mean(mean), sigma(sqrtvariance)
+    vpGaussRand(const double s, const double m, const long seed = 0)
+      : mean(m), sigma(s)
     {
       init() ;
       if (seed) x = seed;
@@ -166,8 +166,8 @@ class vpGaussRand : public vpUniRand
     /*!
       Set the standard deviation and mean for gaussian noise.
 
-      \param sigma New standard deviation.
-      \param mean New mean value.
+      \param sigma : New standard deviation.
+      \param mean : New mean value.
     */
     void setSigmaMean(const double sigma, const double mean) {
       this->mean = mean;

@@ -104,6 +104,8 @@ void vpTemplateTrackerWarp::warp(const double *ut0,const double *vt0,int nb_pt,c
     //std::cout<<"warp "<<X2[0]<<","<<X2[1]<<std::endl;
   }
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p)
 {
   vpMatrix dW(2,nbParam);
@@ -151,5 +153,6 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
   }
   while((cpt<150)&&(sqrt((erreur_prec-erreur)*(erreur_prec-erreur))>1e-20));
   //std::cout<<"erreur apres transformation="<<erreur<<std::endl;
-
 }
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+

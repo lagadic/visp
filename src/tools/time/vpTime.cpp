@@ -78,7 +78,7 @@ double vpTime::minTimeForUsleepCall = 4; /*! This time is in
 
 
 /*!
-  Return the time in milliseconds.
+  Return the time in milliseconds since January 1st 1970.
 
   \sa measureTimeMicros(), measureTimeSecond()
 */
@@ -104,7 +104,7 @@ vpTime::measureTimeMs()
 
 
 /*!
-  Return the time in microseconds.
+  Return the time in microseconds since January 1st 1970.
 
   \sa measureTimeMs(), measureTimeSecond()
 */
@@ -218,7 +218,7 @@ void vpTime::wait(double t)
 
 /*!
 
-  Return the measured time in seconds.
+  Return the measured time in seconds since January 1st 1970.
 
   \sa measureTimeMs()
 */
