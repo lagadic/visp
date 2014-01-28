@@ -209,11 +209,14 @@ public:
     void getDisplacement(const vpRobot::vpControlFrameType frame,
                          vpColVector &displacement);
     void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-    void getPosition (const vpRobot::vpControlFrameType frame,
-                      vpPoseVector &position);
+    void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
+    void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
+    void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
     double getPositioningVelocity (void){return positioningVelocity;}
     void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q);
+    void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
     vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+    vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
 
     void get_cMe(vpHomogeneousMatrix &cMe);
     void get_cVe(vpVelocityTwistMatrix &cVe);

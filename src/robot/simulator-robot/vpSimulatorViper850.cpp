@@ -1094,6 +1094,29 @@ vpSimulatorViper850::getVelocity (const vpRobot::vpControlFrameType frame, vpCol
 }
 
 /*!
+  Get the robot time stamped velocities.
+
+  \param frame : Frame in wich velocities are mesured.
+
+  \param vel : Measured velocities. Translations are expressed in m/s
+  and rotations in rad/s.
+
+  \param timestamp : Unix time in second since January 1st 1970.
+
+  \warning In camera frame, reference frame and mixt frame, the representation
+  of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y, \dot
+  z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
+
+  \sa getVelocity(const vpRobot::vpControlFrameType frame, vpColVector & vel)
+*/
+void
+vpSimulatorViper850::getVelocity (const vpRobot::vpControlFrameType frame, vpColVector & vel, double &timestamp)
+{
+  timestamp = vpTime::measureTimeSecond();
+  getVelocity(frame, vel);
+}
+
+/*!
   Get the robot velocities.
 
   \param frame : Frame in wich velocities are mesured.
@@ -1144,6 +1167,27 @@ vpSimulatorViper850::getVelocity (vpRobot::vpControlFrameType frame)
   return velocity;
 }
 
+/*!
+  Get the time stamped robot velocities.
+
+  \param frame : Frame in wich velocities are mesured.
+
+  \param timestamp : Unix time in second since January 1st 1970.
+
+  \return Measured velocities. Translations are expressed in m/s
+  and rotations in rad/s.
+
+  \sa getVelocity(vpRobot::vpControlFrameType frame)
+*/
+vpColVector
+vpSimulatorViper850::getVelocity (vpRobot::vpControlFrameType frame, double &timestamp)
+{
+  timestamp = vpTime::measureTimeSecond();
+  vpColVector velocity(6);
+  getVelocity (frame, velocity);
+
+  return velocity;
+}
 
 void 
 vpSimulatorViper850::findHighestPositioningSpeed(vpColVector &q)
@@ -1573,8 +1617,8 @@ int main()
 }
   \endcode
 
-  \sa setPosition(const vpRobot::vpControlFrameType frame, const
-  vpColVector & r)
+  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp)
+  \sa setPosition(const vpRobot::vpControlFrameType frame, const vpColVector & r)
 
 */
 void 
@@ -1627,6 +1671,39 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
   }
 }
 
+/*!
+
+  Get the current time stamped position of the robot.
+
+  \param frame : Control frame type in which to get the position, either :
+  - in the camera cartesien frame,
+  - joint (articular) coordinates of each axes
+  - in a reference or fixed cartesien frame attached to the robot base
+  - in a mixt cartesien frame (translation in reference
+  frame, and rotation in camera frame)
+
+  \param q : Measured position of the robot:
+  - in camera cartesien frame, a 6 dimension vector, set to 0.
+
+  - in articular, a 6 dimension vector corresponding to the joint
+  position of each dof in radians.
+
+  - in reference frame, a 6 dimension vector, the first 3 values correspond to
+  the translation tx, ty, tz in meters (like a vpTranslationVector), and the
+  last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
+  below show how to convert this position into a vpHomogenousMatrix:
+
+  \param timestamp : Unix time in second since January 1st 1970.
+
+  \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
+ */
+void
+vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp)
+{
+  timestamp = vpTime::measureTimeSecond();
+  getPosition(frame, q);
+}
+
 
 /*!
   Get the current position of the robot.
@@ -1640,7 +1717,7 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
 */
 void 
 vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,   
-                            vpPoseVector &position)
+                                  vpPoseVector &position)
 {
   vpColVector posRxyz;
   //recupere  position en Rxyz
@@ -1655,6 +1732,24 @@ vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,
     position[j]=posRxyz[j];
     position[j+3]=RtuVect[j];
   }
+}
+
+/*!
+
+  Get the current time stamped position of the robot.
+
+  Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &)
+
+  The difference is here that the position is returned using a ThetaU
+  representation.
+
+ */
+void
+vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame,
+                                 vpPoseVector &position, double &timestamp)
+{
+  timestamp = vpTime::measureTimeSecond();
+  getPosition(frame, position);
 }
 
 /*!
