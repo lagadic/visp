@@ -850,14 +850,14 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     char c;
     // Extraction of the version (remove empty line and commented ones (comment
     // line begin with the #)).
-	//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#'))
-	{
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
-	fileId.unget();
+    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    fileId.get(c);
+    while (!fileId.fail() && (c == '#'))
+    {
+      fileId.ignore(256, '\n');
+      fileId.get(c);
+    }
+    fileId.unget();
 
     int caoVersion;
     fileId.get(c);
@@ -871,20 +871,20 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     }
 
     //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-	fileId.get(c);
-	while (!fileId.fail() && (c != '\n'))
-	{
-		fileId.get(c);
-	}
+    fileId.get(c);
+    while (!fileId.fail() && (c != '\n'))
+    {
+      fileId.get(c);
+    }
 
-	//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#'))
-	{
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
-	fileId.unget();
+    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    fileId.get(c);
+    while (!fileId.fail() && (c == '#'))
+    {
+      fileId.ignore(256, '\n');
+      fileId.get(c);
+    }
+    fileId.unget();
 
     //Read the points
     unsigned int caoNbrPoint;
@@ -892,7 +892,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     std::cout << "> " << caoNbrPoint << " points" << std::endl;
     if (caoNbrPoint > 100000) {
       throw vpException(vpException::badValue,
-        "Exceed the max number of points in the CAO model.");
+                        "Exceed the max number of points in the CAO model.");
     }
 
     if (caoNbrPoint == 0) {
@@ -924,20 +924,20 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       caoPoints[k].setWorldCoordinates(x, y, z) ;
     }
 
-	//while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-	fileId.get(c);
-	while (!fileId.fail() && (c != '\n'))
-	{
-		fileId.get(c);
-	}
+    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    fileId.get(c);
+    while (!fileId.fail() && (c != '\n'))
+    {
+      fileId.get(c);
+    }
 
-	//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#'))
-	{
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
+    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    fileId.get(c);
+    while (!fileId.fail() && (c == '#'))
+    {
+      fileId.ignore(256, '\n');
+      fileId.get(c);
+    }
     fileId.unget();
 
     //Read the lines
@@ -949,7 +949,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     if (caoNbrLine > 100000) {
       delete [] caoPoints;
       throw vpException(vpException::badValue,
-        "Exceed the max number of lines in the CAO model.");
+                        "Exceed the max number of lines in the CAO model.");
     }
 
     if (caoNbrLine > 0)
@@ -979,23 +979,23 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
     }
 
-	//while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-	fileId.get(c);
-	while (!fileId.fail() && (c != '\n'))
-	{
-		fileId.get(c);
-	}
+    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    fileId.get(c);
+    while (!fileId.fail() && (c != '\n'))
+    {
+      fileId.get(c);
+    }
 
-	//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#'))
-	{
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
+    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    fileId.get(c);
+    while (!fileId.fail() && (c == '#'))
+    {
+      fileId.ignore(256, '\n');
+      fileId.get(c);
+    }
     fileId.unget();
 
-      /* Load polygon from the lines extracted earlier
+    /* Load polygon from the lines extracted earlier
           (the first point of the line is used)*/
     unsigned int caoNbrPolygonLine;
     fileId >> caoNbrPolygonLine;
@@ -1029,23 +1029,23 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       initFaceFromCorners(corners, k);
     }
 
-	//while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-	fileId.get(c);
-	while (!fileId.fail() && (c != '\n'))
-	{
-		fileId.get(c);
-	}
+    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+    fileId.get(c);
+    while (!fileId.fail() && (c != '\n'))
+    {
+      fileId.get(c);
+    }
 
-	//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#'))
-	{
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
-	fileId.unget();
+    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+    fileId.get(c);
+    while (!fileId.fail() && (c == '#'))
+    {
+      fileId.ignore(256, '\n');
+      fileId.get(c);
+    }
+    fileId.unget();
 
-      /* Extract the polygon using the point coordinates (top of the file) */
+    /* Extract the polygon using the point coordinates (top of the file) */
     unsigned int caoNbrPolygonPoint;
     fileId >> caoNbrPolygonPoint;
     std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
@@ -1077,20 +1077,20 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
     unsigned int caoNbCylinder;
     try{
-		//while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-		fileId.get(c);
-		while (!fileId.fail() && (c != '\n'))
-		{
-			fileId.get(c);
-		}
+      //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+      fileId.get(c);
+      while (!fileId.fail() && (c != '\n'))
+      {
+        fileId.get(c);
+      }
 
-		//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-		fileId.get(c);
-		while (!fileId.fail() && (c == '#'))
-		{
-			fileId.ignore(256, '\n');
-			fileId.get(c);
-		}      fileId.unget();
+      //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }      fileId.unget();
 
       if(fileId.eof()){// check if not at the end of the file (for old style files)
         delete[] caoPoints;
@@ -1129,9 +1129,6 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
   }
 
 }
-
-
-
 
 #ifdef VISP_HAVE_COIN
 /*!

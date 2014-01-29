@@ -302,17 +302,17 @@ void
 vpPoseVector::load(std::ifstream &f)
 {
   if (! f.fail())
+  {
+    for (unsigned int i=0 ; i < 6 ; i++)
     {
-      for (unsigned int i=0 ; i < 6 ; i++)
-	{
-	  f>>   (*this)[i] ;
-	}
+      f >> (*this)[i] ;
     }
+  }
   else
-    {
-      vpERROR_TRACE("\t\t file not open " );
-      throw(vpException(vpException::ioError, "\t\t file not open")) ;
-    }
+  {
+    vpERROR_TRACE("\t\t file not open " );
+    throw(vpException(vpException::ioError, "\t\t file not open")) ;
+  }
 }
 
 

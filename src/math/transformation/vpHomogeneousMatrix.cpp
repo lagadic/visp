@@ -519,7 +519,7 @@ vpHomogeneousMatrix::load(std::ifstream &f)
     for (unsigned int i=0 ; i < 4 ; i++)
       for (unsigned int j=0 ; j < 4 ; j++)
       {
-	f>>   (*this)[i][j] ;
+        f >> (*this)[i][j] ;
       }
   }
   else
