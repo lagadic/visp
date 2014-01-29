@@ -110,7 +110,7 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
 {
   vpMatrix dW(2,nbParam);
   vpMatrix dX(2,1);
-  vpMatrix H(nbParam,nbParam);
+  vpMatrix H(nbParam,nbParam), HLM(nbParam,nbParam);
   vpMatrix G(nbParam,1);
 
   int cpt=0;
@@ -146,9 +146,14 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
 
     }
 
-    vpMatrix::computeHLM(H,lambda,H);
-    try{p+=H.inverseByLU()*G;}
-    catch(...){std::cerr<<"probleme inversion find homography"<<std::endl;break;}
+    vpMatrix::computeHLM(H, lambda, HLM);
+    try{
+      p+=HLM.inverseByLU()*G;
+    }
+    catch(...) {
+      std::cout<<"Cannot inverse the matrix by LU " << std::endl;
+      break;
+    }
     cpt++;
   }
   while((cpt<150)&&(sqrt((erreur_prec-erreur)*(erreur_prec-erreur))>1e-20));

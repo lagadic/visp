@@ -49,7 +49,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,const double
   vpColVector dp(nbParam);
   vpMatrix dW(2,nbParam);
   vpMatrix dX(2,1);
-  vpMatrix H(nbParam,nbParam);
+  vpMatrix H(nbParam,nbParam), HLM(nbParam,nbParam);
   vpMatrix G(nbParam,1);
 
   //vpMatrix *dW_ddp0=new vpMatrix[nb_pt];
@@ -102,9 +102,14 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,const double
       erreur+=((u[i]-fX1[0])*(u[i]-fX1[0])+(v[i]-fX1[1])*(v[i]-fX1[1]));   
     }
 
-    vpMatrix::computeHLM(H,lambda,H);
-    try{dp=1.*H.inverseByLU()*G;}
-    catch(...){std::cerr<<"probleme inversion find homography"<<std::endl;break;}
+    vpMatrix::computeHLM(H, lambda, HLM);
+    try{
+      dp=HLM.inverseByLU()*G;
+    }
+    catch(...){
+      std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
+      break;
+    }
     pRondp(p,dp,p);
 
     cpt++;
@@ -112,61 +117,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,const double
   }
   //while((cpt<1500));
   while((cpt<150)&&(sqrt((erreur_prec-erreur)*(erreur_prec-erreur))>1e-20));
-  
-  /*for(int i=0;i<nb_pt;i++)
-  {
-    //dW_ddp0[i].resize(2,nbParam);
-    dW_ddp0[i]=new double[2*nbParam];
-    //getdWdp0(vt0[i],ut0[i],dW_ddp0[i]);
-    getdWdp0(vt0[i],ut0[i],dW_ddp0[i]);
-  }
-  
-  
-  int cpt=0;
-  vpColVector X1(2);
-  vpColVector fX1(2);
-  vpColVector X2(2);
-  double erreur=0;
-  double erreur_prec;
-  double lambda=0.00001;
-  do
-  {
-    erreur_prec=erreur;
-    H=0;
-    G=0;
-    erreur=0;
-    computeCoeff(p);
-    for(int i=0;i<nb_pt;i++)
-    {
-      X1[0]=ut0[i];
-      X1[1]=vt0[i];
-      computeDenom(X1,p);
-      warpX(X1,fX1,p);
-      dWarpCompo(X1,fX1,p,dW_ddp0[i],dW);
-      //dWarp(X1,fX1,p,dW);
-      H+=dW.AtA();
-      
-      X2[0]=u[i];
-      X2[1]=v[i];
-
-      dX=X2-fX1;
-      G+=dW.t()*dX;
-
-      erreur+=((u[i]-fX1[0])*(u[i]-fX1[0])+(v[i]-fX1[1])*(v[i]-fX1[1]));
-      
-    }
-
-    vpMatrix::computeHLM(H,lambda,H);
-    try{dp=0.1*H.inverseByLU()*G;}
-    catch(...){std::cerr<<"probleme inversion find homography"<<std::endl;break;}
-    pRondp(p,dp,p);
-
-    cpt++;
-    //std::cout<<"erreur ="<<erreur<<std::endl;
-  }
-  //while((cpt<1500));
-  while((cpt<150)&&(sqrt((erreur_prec-erreur)*(erreur_prec-erreur))>1e-20));*/
-  
+    
   //std::cout<<"erreur apres transformation="<<erreur<<std::endl;
   for(int i=0;i<nb_pt;i++)
     delete[] dW_ddp0[i];
@@ -227,7 +178,6 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(const vpColVector &
   delete[] v;
   delete[] u2;
   delete[] v2;
-
 }
 
 void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p,vpColVector &pup)
