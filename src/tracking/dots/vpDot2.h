@@ -178,6 +178,18 @@ public:
     edges_list = this->ip_edges_list;
   };
   /*!
+
+    Return the list of all the image points on the dot
+    border.
+
+    \return The list of all the images points on the dot
+    border. This list is update after a call to track().
+
+  */
+  std::list<vpImagePoint> getEdges() const {
+    return(this->ip_edges_list);
+  };
+  /*!
     Get the percentage of sampled points that are considered non conform
     in terms of the gray level on the inner and the ouside ellipses.
 
