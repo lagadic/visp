@@ -55,7 +55,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpDot.h>
+#include <visp/vpDot2.h>
 #include <visp/vpFeatureEllipse.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpFeatureBuilder.h>
@@ -272,19 +272,20 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
 
-    vpDot dot ;
-    dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
+    vpDot2 dot ;
+	std::cout << "debut 1\n";
+	//dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
     vpImagePoint ip;
     ip.set_i( 140 );
     ip.set_j( 140 );
-    dot.initTracking(I, ip) ;
+	dot.initTracking(I, ip);
     if (opt_display) {
       dot.setGraphics(true) ;
     }
     else {
       dot.setGraphics(false) ;
     }
-    dot.setComputeMoments(true) ;
+	dot.setComputeMoments(true);
     dot.track(I) ;
 
     vpFeatureEllipse e ;
@@ -293,6 +294,7 @@ main(int argc, const char ** argv)
     vpFeatureBuilder::create(e,cam,dot) ;
     if (opt_display) {
       e.display(cam, I, vpColor::red) ;
+	  vpDisplay::flush(I);
       if (opt_click_allowed) {
         std::cout << "A click to exit..." << std::endl;
         vpDisplay::getClick(I) ;
