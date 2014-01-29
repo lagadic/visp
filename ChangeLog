@@ -39,6 +39,8 @@ ViSP under development version
     . [16895] undefined reference to `vpGaussRand::gaussianDraw()'
     . [16919] Unable to link with OpenCV 2.4.8 under Windows
     . [16924] MinGW: unable to build ViSP as a shared library
+    . [16928] vpVideoReader is unable to find the number of the first image
+	      from a generic sequence of images
 ----------------------------------------------
 ViSP 2.8.0 (released July 24th, 2013)
   - New features
