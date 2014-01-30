@@ -143,6 +143,16 @@ VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const vpImagePoint 
 
   \relates vpImagePoint
 
+  Returns a vpImagePoint wich is the sum of \f$ ip1 \f$ and \f$ ip2 \f$.
+
+*/
+VISP_EXPORT vpImagePoint operator+=( const vpImagePoint &ip1, const vpImagePoint &ip2 ) {
+  return ( vpImagePoint(ip1.get_i()+ip2.get_i(), ip1.get_j()+ip2.get_j()));
+}
+/*!
+
+  \relates vpImagePoint
+
   Returns a vpImagePoint with an offset added to the two coordinates.
 
   \code
