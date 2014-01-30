@@ -39,6 +39,7 @@
  *
  *****************************************************************************/
 
+#include <algorithm> // for std::min and std::max
 #include <visp/vpConfig.h>
 
 #include <visp/vpMatrix.h>
