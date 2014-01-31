@@ -16,6 +16,8 @@ set(tutorial_cpp
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.bmp" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.ppm" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.jpeg" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.png" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/chessboard.pgm" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/camera.xml" )
 
