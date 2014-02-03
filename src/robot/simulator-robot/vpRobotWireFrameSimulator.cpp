@@ -50,7 +50,17 @@
 /*!
   Basic constructor
 */
-vpRobotWireFrameSimulator::vpRobotWireFrameSimulator():vpWireFrameSimulator(), vpRobotSimulator()
+vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
+  : vpWireFrameSimulator(), vpRobotSimulator(),
+    I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+    displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
+    cameraParam(),
+#if defined(VISP_HAVE_DISPLAY)
+    display(),
+#endif
+    displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false),
+    setVelocityCalled(false), verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -59,18 +69,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator():vpWireFrameSimulator(), v
 #if defined(VISP_HAVE_DISPLAY)
   display.init(I, 0, 0,"The External view");
 #endif
-  robotStop = false;
-  jointLimit = false;
-  displayBusy = false;
-  displayType = MODEL_3D;
-  displayAllowed = true;
-  singularityManagement = true;
-  robotArms = NULL;   
-  
-  constantSamplingTimeMode = false;
-  setVelocityCalled = false;
-  
-  verbose_ = false;
+
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);
 }
@@ -79,28 +78,28 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator():vpWireFrameSimulator(), v
   Default constructor.
   \param display : When true, enables the display of the external view.
   */
-vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display) : vpWireFrameSimulator(), vpRobotSimulator()
+vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display)
+  : vpWireFrameSimulator(), vpRobotSimulator(),
+    I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+    displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
+    cameraParam(),
+#if defined(VISP_HAVE_DISPLAY)
+    display(),
+#endif
+    displayType(MODEL_3D), displayAllowed(display), constantSamplingTimeMode(false),
+    setVelocityCalled(false), verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
   I.resize(480,640);
   I = 255;
   
-  displayAllowed = display;
 #if defined(VISP_HAVE_DISPLAY)
   if (display)
     this->display.init(I, 0, 0,"The External view");
 #endif  
-  robotStop = false;
-  jointLimit = false;
-  displayBusy = false;
-  displayType = MODEL_3D;
-  singularityManagement = true;
-  robotArms = NULL;
-  
-  constantSamplingTimeMode = false;
-  setVelocityCalled = false;
- 
+   
  //pid_t pid = getpid();
  // setpriority (PRIO_PROCESS, pid, 19);
 }

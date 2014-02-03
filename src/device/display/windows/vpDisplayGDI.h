@@ -133,9 +133,9 @@ class VISP_EXPORT vpDisplayGDI : public vpDisplayWin32
 {
 public:
   vpDisplayGDI();
-  vpDisplayGDI(int winx, int winy, const char *_title=NULL);
-  vpDisplayGDI(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const char *_title=NULL);
-  vpDisplayGDI(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const char *_title=NULL);
+  vpDisplayGDI(int winx, int winy, const char *title=NULL);
+  vpDisplayGDI(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const char *title=NULL);
+  vpDisplayGDI(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const char *title=NULL);
 
   virtual ~vpDisplayGDI();
 };

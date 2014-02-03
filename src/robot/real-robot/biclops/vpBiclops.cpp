@@ -285,6 +285,7 @@ vpBiclops::get_fMc (const vpColVector &q, vpPoseVector &fvc) const
 
 */
 vpBiclops::vpBiclops (void)
+  : dh_model_(DH1), cMe_()
 {
   init();
 }

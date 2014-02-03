@@ -102,7 +102,7 @@ protected :
 private:
   int vvsIterMax ; //! define the maximum number of iteration in VVS
   //! variable used in the Dementhon approach
-  vpPoint *c3d ;
+  std::vector<vpPoint> c3d ;
   //! Flag used to specify if the covariance matrix has to be computed or not.
   bool computeCovariance;
   //! Covariance matrix
@@ -120,7 +120,7 @@ protected:
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo) ;
 
 public:
-  //! constructor
+  // constructor
   vpPose() ;
   //! destructor
   virtual ~vpPose() ;

@@ -51,29 +51,6 @@
 
 */
 
-
-/*!
-  Affectation of two vectors.
-*/
-vpRzyxVector &
-vpRzyxVector::operator=(const vpRzyxVector &m)
-{
-
-  for (int i=0; i<3; i++)
-  {
-      r[i] = m.r[i] ;
-  }
-  return *this;
-}
-
-
-//! Copy constructor.
-vpRzyxVector::vpRzyxVector(const vpRzyxVector &m) : vpRotationVector()
-{
-  *this = m ;
-}
-
-
 /*! 
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.

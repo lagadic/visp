@@ -57,20 +57,11 @@
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
+  : name(), index(0), cam(), me(NULL), alpha(0), wmean(1),
+    featureline(), poly(), meline(NULL), line(NULL), p1(NULL), p2(NULL), L(),
+    error(), nbFeature(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
+    isvisible(false)
 {
-  name = "";
-  p1 = NULL ;
-  p2 = NULL ;
-  line = NULL ;
-  meline = NULL ;
-  hiddenface = NULL ;
-  wmean = 1 ;
-  nbFeature =0 ;
-  Reinit = false;
-  isvisible = false;
-  index = 0;
-  me = NULL;
-  alpha = 0;
 }
 
 /*!

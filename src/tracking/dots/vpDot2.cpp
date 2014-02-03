@@ -105,9 +105,15 @@ void vpDot2::init()
 /*!
   Default constructor. Just do basic default initialization.
 */
-vpDot2::vpDot2() : vpTracker()
+vpDot2::vpDot2()
+  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.),
+    mu11(0.), mu20(0.), mu02(0.), cog(), width(0), height(0), surface(0),
+    gray_level_min(128), gray_level_max(255), mean_gray_level(0), grayLevelPrecision(0.8), gamma(1.5),
+    sizePrecision(0.65), ellipsoidShapePrecision(0.65), maxSizeSearchDistancePrecision(0.65),
+    allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(), compute_moment(false),
+    graphics(false), thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0),
+    firstBorder_u(0), firstBorder_v()
 {
-  init();
 }
 
 /*!
@@ -118,17 +124,30 @@ vpDot2::vpDot2() : vpTracker()
   \param ip : An image point with sub-pixel coordinates.
 
 */
-vpDot2::vpDot2(const vpImagePoint &ip) : vpTracker()
+vpDot2::vpDot2(const vpImagePoint &ip)
+  : m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.),
+    mu11(0.), mu20(0.), mu02(0.), cog(), width(0), height(0), surface(0),
+    gray_level_min(128), gray_level_max(255), mean_gray_level(0), grayLevelPrecision(0.8), gamma(1.5),
+    sizePrecision(0.65), ellipsoidShapePrecision(0.65), maxSizeSearchDistancePrecision(0.65),
+    allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(), compute_moment(false),
+    graphics(false), thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0),
+    firstBorder_u(0), firstBorder_v()
 {
-  init() ;
-
   cog = ip;
 }
 
 /*!
   Copy constructor.
 */
-vpDot2::vpDot2(const vpDot2& twinDot ) : vpTracker()
+vpDot2::vpDot2(const vpDot2& twinDot )
+  : vpTracker(twinDot),
+    m00(0.), m10(0.), m01(0.), m11(0.), m20(0.), m02(0.),
+    mu11(0.), mu20(0.), mu02(0.), cog(), width(0), height(0), surface(0),
+    gray_level_min(128), gray_level_max(255), mean_gray_level(0), grayLevelPrecision(0.8), gamma(1.5),
+    sizePrecision(0.65), ellipsoidShapePrecision(0.65), maxSizeSearchDistancePrecision(0.65),
+    allowedBadPointsPercentage_(0.), area(), direction_list(), ip_edges_list(), compute_moment(false),
+    graphics(false), thickness(1), bbox_u_min(0), bbox_u_max(0), bbox_v_min(0), bbox_v_max(0),
+    firstBorder_u(0), firstBorder_v()
 {
   *this = twinDot;
 }

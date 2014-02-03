@@ -64,10 +64,11 @@
 template <class type>
 class vpListElement
 {
- public:
-  vpListElement<type> *prev; //<! pointer to the previous element in the list
-  vpListElement<type> *next; //<! pointer to the next element in the list
-  type val;             //<! value of the element
+  public:
+    vpListElement() : prev(NULL), next(NULL), val() {};
+    vpListElement<type> *prev; //<! pointer to the previous element in the list
+    vpListElement<type> *next; //<! pointer to the next element in the list
+    type val;             //<! value of the element
 } ;
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
@@ -222,7 +223,7 @@ void vpList<type>::init()
   \sa init()
  */
 template<class type>
-vpList<type>::vpList()
+vpList<type>::vpList() : nb(0), first(NULL), last(NULL), cur(NULL)
 {
   init() ;
 }
@@ -805,6 +806,7 @@ void vpList<type>::operator += (const type& l)
 */
 template<class type>
 vpList<type>::vpList(const vpList<type>& l)
+ : nb(0), first(NULL), last(NULL), cur(NULL)
 {
   init() ;
   *this = l;

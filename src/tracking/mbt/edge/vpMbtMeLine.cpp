@@ -66,12 +66,11 @@ normalizeAngle(double &delta)
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
-vpMbtMeLine::vpMbtMeLine():vpMeTracker()
+vpMbtMeLine::vpMbtMeLine()
+  : rho(0.), theta(0.), theta_1(M_PI/2), delta(0.), delta_1(0), sign(1),
+    a(0.), b(0.), c(0.), imin(0), imax(0), jmin(0), jmax(0),
+    expecteddensity(0.)
 {
-  sign = 1;
-  theta_1 = M_PI/2;
-  rho = theta = delta = delta_1 = a = b = c = expecteddensity = 0.;
-  imin = imax = jmin = jmax = 0;
 }
 
 /*!

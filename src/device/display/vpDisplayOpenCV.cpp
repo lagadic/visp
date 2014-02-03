@@ -80,7 +80,7 @@
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int x,
                                  int y,
-                                 const char *title) : vpDisplay()
+                                 const char *title)
 {
   col = NULL;
   background = NULL;
@@ -100,7 +100,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
                                  int x,
                                  int y,
-                                 const char *title) : vpDisplay()
+                                 const char *title)
 {
   col = NULL;
   background = NULL;
@@ -130,7 +130,7 @@ int main()
 }
   \endcode
 */
-vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title ) : vpDisplay()
+vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
 {
   col = NULL;
   background = NULL;
@@ -138,8 +138,10 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title ) : vpDisplay
   windowXPosition = x;
   windowYPosition = y;
 
-  if (title != NULL)
-    strcpy (this->title, title);
+  if(title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   fontHeight = 10;
   ncol = nrow = 0;
@@ -171,7 +173,7 @@ int main()
 }
   \endcode
 */
-vpDisplayOpenCV::vpDisplayOpenCV() : vpDisplay()
+vpDisplayOpenCV::vpDisplayOpenCV()
 {
   col = NULL;
   background = NULL;
@@ -273,16 +275,18 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
     this->windowYPosition = y;
   int flags = CV_WINDOW_AUTOSIZE;
 
-  if (title != NULL)
-    strcpy(this->title, title) ;
+  if(title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   /* Create the window*/
-  if (cvNamedWindow( this->title, flags ) < 0) {
+  if (cvNamedWindow( this->title_.c_str(), flags ) < 0) {
     vpERROR_TRACE("OpenCV was not built with a display device");
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV was not built with a display device")) ;
   }
-  cvMoveWindow( this->title, this->windowXPosition, this->windowYPosition );
+  cvMoveWindow( this->title_.c_str(), this->windowXPosition, this->windowYPosition );
   move = false;
   lbuttondown = false;
   mbuttondown = false;
@@ -290,11 +294,11 @@ vpDisplayOpenCV::init(unsigned int width, unsigned int height,
   lbuttonup = false;
   mbuttonup = false;
   rbuttonup = false;
-  cvSetMouseCallback( this->title, on_mouse, this );
+  cvSetMouseCallback( this->title_.c_str(), on_mouse, this );
   /* Create background pixmap */
 //   background = cvCreateImage(cvSize((int)width,(int)height),IPL_DEPTH_8U,3);
 //
-//   cvShowImage( this->title,background);
+//   cvShowImage( this->title_.c_str(),background);
 
   col = new CvScalar[vpColor::id_unknown] ;
 
@@ -400,7 +404,7 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
   if (displayHasBeenInitialized) {
     this->windowXPosition = winx;
     this->windowYPosition = winy;
-    cvMoveWindow( this->title, winx, winy );
+    cvMoveWindow( this->title_.c_str(), winx, winy );
   }
   else
   {
@@ -654,7 +658,7 @@ void vpDisplayOpenCV::closeDisplay()
   }
 
   if (displayHasBeenInitialized) {
-    cvDestroyWindow( this->title );
+    cvDestroyWindow( this->title_.c_str() );
 
     displayHasBeenInitialized= false;
   }
@@ -670,7 +674,7 @@ void vpDisplayOpenCV::flushDisplay()
 {
   if (displayHasBeenInitialized)
   {
-    cvShowImage(this->title, background );
+    cvShowImage(this->title_.c_str(), background );
     cvWaitKey(5);
   }
   else
@@ -690,7 +694,7 @@ void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned
 {
   if (displayHasBeenInitialized)
   {
-    cvShowImage(this->title, background );
+    cvShowImage(this->title_.c_str(), background );
     cvWaitKey(5);
   }
   else

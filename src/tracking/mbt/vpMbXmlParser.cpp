@@ -56,14 +56,11 @@
   
 */
 vpMbXmlParser::vpMbXmlParser()
+  : cam(), angleAppear(70), angleDisappear(80),
+    hasNearClipping(false), nearClipping(false),
+    hasFarClipping(false), farClipping(false), fovClipping(false)
+
 {
-  hasNearClipping = false;
-  hasFarClipping = false;
-  fovClipping = false;
-  angleAppear = 70;
-  angleDisappear = 80;
-  nearClipping = false;
-  farClipping = false;
   init();
 }
 

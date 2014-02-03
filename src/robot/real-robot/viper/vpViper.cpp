@@ -68,6 +68,7 @@ const unsigned int vpViper::njoint = 6;
 
 */
 vpViper::vpViper()
+  : eMc(), etc(), erc(), a1(0), d1(0), a2(), a3(), d4(0), d6(0), c56(0), joint_max(), joint_min()
 {
   // Default values are initialized
 

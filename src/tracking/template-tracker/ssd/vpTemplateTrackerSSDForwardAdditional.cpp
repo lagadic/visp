@@ -45,10 +45,10 @@
 #include <visp/vpTemplateTrackerSSDForwardAdditional.h>
 #include <visp/vpImageTools.h>
 
-vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp):vpTemplateTrackerSSD(warp)
+vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), minimizationMethod(USE_NEWTON), p_prec(), G_prec(), KQuasiNewton()
 {
   useCompositionnal=false;
-  minimizationMethod=USE_NEWTON;
 }
 
 void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)

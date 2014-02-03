@@ -83,11 +83,10 @@ int main()
   
   std::cout << "Rxyz rotation vector: " << r << std::endl;
 
-  double rx = r[1];       // Get the value of the angle around x axis
-  double ry = r[2];       // Get the value of the angle around y axis
-  double rz = r[3];       // Get the value of the angle around z axis
+  double rx = r[0];       // Get the value of the angle around x axis
+  double ry = r[1];       // Get the value of the angle around y axis
+  double rz = r[2];       // Get the value of the angle around z axis
 }
-  
   \endcode
 
 */
@@ -100,18 +99,29 @@ protected:
   unsigned int _size;
   void init(const unsigned int size);
 public:
-  //! Constructor that constructs a vector of size 3 initialize three vector values to zero.
-  vpRotationVector() { 
-	init(3);
+  //! Constructor that constructs a vector of size 3 and initialize all values to zero.
+  vpRotationVector()
+    : r(NULL), _size(0)
+  {
+    init(3);
   }
 
-  
-  //! Constructor that constructs a vector of size n initialize three vector values to zero.
-  vpRotationVector(const unsigned int n) { 
-	init(n);
+  //! Constructor that constructs a vector of size n and initialize all values to zero.
+  vpRotationVector(const unsigned int n)
+    : r(NULL), _size(n)
+  {
+    init(n);
   }
-  
-  ~vpRotationVector();
+  /*!
+    Copy operator.
+  */
+  vpRotationVector(const vpRotationVector &v)
+    : r(NULL), _size(0)
+  {
+    *this = v;
+  }
+
+  virtual ~vpRotationVector();
 
   /*!
     Operator that allows to set the value of an element of the rotation 
@@ -124,7 +134,19 @@ public:
   */
   inline const double &operator [](unsigned int n) const { return *(r+n);  }
 
-    
+  /*!
+    Affectation of two vectors.
+  */
+  vpRotationVector &operator=(const vpRotationVector &v)
+  {
+    init(v.size());
+    for (unsigned int i=0; i<_size; i++)
+    {
+      r[i] = v.r[i] ;
+    }
+    return *this;
+  }
+
   /*! Returns the size of the rotation vector
    */
   unsigned int size() const;

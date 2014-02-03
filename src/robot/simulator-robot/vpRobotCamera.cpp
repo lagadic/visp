@@ -72,6 +72,7 @@
 
 */
 vpRobotCamera::vpRobotCamera()
+  : cMw_()
 {
   init() ;
 }

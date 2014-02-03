@@ -55,23 +55,16 @@
    Default constructor.
  */
 vpTemplateTrackerZone::vpTemplateTrackerZone()
+  : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1)
 {
-  min_x=-1;
-  min_y=-1;
-  max_x=-1;
-  max_y=-1;
 }
 
 /*!
    Copy constructor.
  */
 vpTemplateTrackerZone::vpTemplateTrackerZone(const vpTemplateTrackerZone &z)
+  : Zone(), min_x(-1), min_y(-1), max_x(-1), max_y(-1)
 {
-  min_x=-1;
-  min_y=-1;
-  max_x=-1;
-  max_y=-1;
-
   *this = z;
 }
 
@@ -93,11 +86,6 @@ void vpTemplateTrackerZone::clear()
  */
 vpTemplateTrackerZone & vpTemplateTrackerZone::operator=(const vpTemplateTrackerZone &z)
 {
-  this->min_x = z.min_x;
-  this->min_y = z.min_y;
-  this->max_x = z.max_x;
-  this->max_y = z.max_y;
-
   clear();
 
   this->copy(z);

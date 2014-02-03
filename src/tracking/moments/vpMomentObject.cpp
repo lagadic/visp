@@ -491,14 +491,20 @@ vpMomentObject::init(const vpMomentObject& objin){
 
   Mani : outsourced the constructor work to void init (unsigned int orderinp);
 */
-vpMomentObject::vpMomentObject(unsigned int order){
+vpMomentObject::vpMomentObject(unsigned int order)
+  : flg_normalize_intensity(true), order(order+1), type(vpMomentObject::DENSE_FULL_OBJECT),
+    values()
+{
     init(order);
 }
 
 /*!
   Copy constructor
  */
-vpMomentObject::vpMomentObject(const vpMomentObject& srcobj){
+vpMomentObject::vpMomentObject(const vpMomentObject& srcobj)
+  : flg_normalize_intensity(true), order(order+1), type(vpMomentObject::DENSE_FULL_OBJECT),
+    values()
+{
     init(srcobj);
 }
 

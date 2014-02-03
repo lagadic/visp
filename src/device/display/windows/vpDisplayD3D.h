@@ -110,9 +110,9 @@ class VISP_EXPORT vpDisplayD3D : public vpDisplayWin32
 {
 public:
   vpDisplayD3D();
-  vpDisplayD3D(int winx, int winy, const char *_title=NULL);
-  vpDisplayD3D(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const char *_title=NULL);
-  vpDisplayD3D(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const char *_title=NULL);
+  vpDisplayD3D(int winx, int winy, const char *title=NULL);
+  vpDisplayD3D(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const char *title=NULL);
+  vpDisplayD3D(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const char *title=NULL);
 
   virtual ~vpDisplayD3D();
   

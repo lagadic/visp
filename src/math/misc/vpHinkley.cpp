@@ -78,11 +78,8 @@
 
 */
 vpHinkley::vpHinkley()
+  : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
 {
-  init();
-
-  setAlpha(0.2);
-  setDelta(0.2);
 }
 
 /*!
@@ -102,11 +99,8 @@ vpHinkley::vpHinkley()
 */
 
 vpHinkley::vpHinkley(double alpha, double delta)
+  : dmin2(delta/2.), alpha(alpha), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
 {
-  init();
-
-  setAlpha(alpha);
-  setDelta(delta);
 }
 
 /*!

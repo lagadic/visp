@@ -100,7 +100,7 @@ vpFeatureDepth::init()
 /*! 
   Default constructor that build a visual feature.
 */
-vpFeatureDepth::vpFeatureDepth() : vpBasicFeature()
+vpFeatureDepth::vpFeatureDepth() : x(0), y(0), Z(1.)
 {
     init() ;
 }

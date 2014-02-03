@@ -55,21 +55,14 @@
   Basic constructor.
 */
 vpVideoReader::vpVideoReader()
+  : imSequence(NULL),
+#ifdef VISP_HAVE_FFMPEG
+    ffmpeg(NULL),
+#endif
+    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
+    firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)
 {
-  imSequence = NULL;
-  #ifdef VISP_HAVE_FFMPEG
-  ffmpeg = NULL;
-  #endif
-  initFileName = false;
-  isOpen = false;
-  firstFrame = 0;
-  frameCount = 0;
-  lastFrame = 0;
-  firstFrameIndexIsSet = false;
-  lastFrameIndexIsSet = false;
-  formatType = FORMAT_UNKNOWN;
 }
-
 
 /*!
   Basic destructor.

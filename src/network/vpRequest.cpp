@@ -42,6 +42,7 @@
 #include <visp/vpRequest.h>
 
 vpRequest::vpRequest()
+  : request_id(""), listOfParams()
 {}
 
 vpRequest::~vpRequest()

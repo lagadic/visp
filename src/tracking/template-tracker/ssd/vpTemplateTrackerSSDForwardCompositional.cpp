@@ -42,9 +42,9 @@
 #include <visp/vpTemplateTrackerSSDForwardCompositional.h>
 #include <visp/vpImageFilter.h>
 
-vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp):vpTemplateTrackerSSD(warp)
+vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), compoInitialised(false)
 {
-  compoInitialised=false;
 }
 
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> &/*I*/)

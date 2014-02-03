@@ -58,7 +58,7 @@
 
 // Compare two surf descriptors.
 double compareSURFDescriptors( const float* d1, const float* d2,
-			       double best, int length )
+                               double best, int length )
 {
   double total_cost = 0;
   int i;
@@ -79,8 +79,8 @@ double compareSURFDescriptors( const float* d1, const float* d2,
 
 //Find for a point candidate the most similar point in the reference point list.
 int naiveNearestNeighbor( const float *vec, int laplacian,
-			  const CvSeq *model_keypoints,
-			  const CvSeq *model_descriptors )
+                          const CvSeq *model_keypoints,
+                          const CvSeq *model_descriptors )
 {
   int length = (int)(model_descriptors->elem_size/(int)sizeof(float));
   int i, neighbor = -1;
@@ -115,8 +115,8 @@ int naiveNearestNeighbor( const float *vec, int laplacian,
 
 //Find for a point candidate the most similar point in the reference point list.
 int naiveNearestNeighbor( const float *vec,
-			  const CvSeq *ref_keypoints,
-			  const CvSeq *ref_descriptors )
+                          const CvSeq *ref_keypoints,
+                          const CvSeq *ref_descriptors )
 {
   int length = (int)(ref_descriptors->elem_size/(int)sizeof(float));
   int i, neighbor = -1;
@@ -149,10 +149,10 @@ int naiveNearestNeighbor( const float *vec,
 
 //Find all the matched points
 void findPairs( const CvSeq* objectKeypoints,
-		const CvSeq* objectDescriptors,
-		const CvSeq* imageKeypoints,
-		const CvSeq* imageDescriptors,
-		std::vector<int>& ptpairs )
+                const CvSeq* objectDescriptors,
+                const CvSeq* imageKeypoints,
+                const CvSeq* imageDescriptors,
+                std::vector<int>& ptpairs )
 {
   int i;
   CvSeqReader reader, kreader;
@@ -187,18 +187,12 @@ void findPairs( const CvSeq* objectKeypoints,
   type to extended.
 
 */
-vpKeyPointSurf::vpKeyPointSurf():vpBasicKeyPoint()
+vpKeyPointSurf::vpKeyPointSurf()
+  : vpBasicKeyPoint(),
+    storage(NULL), params(), storage_cur(NULL), image_keypoints(NULL), image_descriptors(NULL),
+    ref_keypoints(NULL), ref_descriptors(NULL), hessianThreshold(500), descriptorType(extendedDescriptor)
 {
-  descriptorType = extendedDescriptor;
-  hessianThreshold = 500;
   init();
-
-  image_keypoints = NULL;
-  image_descriptors = NULL;
-  ref_keypoints = NULL;
-  ref_descriptors = NULL;
-
-  storage_cur = NULL;
 }
 
 /*!

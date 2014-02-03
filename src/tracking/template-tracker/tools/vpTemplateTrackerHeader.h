@@ -52,18 +52,12 @@
 struct vpTemplateTrackerZPoint {
     int x,y;
 
-    vpTemplateTrackerZPoint()
-    {
-      x=y=0;
-    }
+    vpTemplateTrackerZPoint() : x(0), y(0) {}
 };
 struct vpTemplateTrackerDPoint {
     double x,y;
 
-    vpTemplateTrackerDPoint()
-    {
-      x=y=0.;
-    }
+    vpTemplateTrackerDPoint() : x(0), y(0) {}
 };
 struct vpTemplateTrackerPoint {
     int x,y;
@@ -72,20 +66,11 @@ struct vpTemplateTrackerPoint {
     double *dW;
     double *HiG;
 
-    vpTemplateTrackerPoint()
-    {
-      x=y=0;
-      dx=dy=val=0.;
-      dW = NULL;
-      HiG = NULL;
-    }
+    vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(NULL), HiG(NULL) {}
 };
 struct vpTemplateTrackerPointCompo {
     double *dW;
-    vpTemplateTrackerPointCompo()
-    {
-      dW = NULL;
-    }
+    vpTemplateTrackerPointCompo() : dW(NULL) {}
 };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -98,17 +83,8 @@ struct vpTemplateTrackerPointSuppMIInv {
     double *d2W;
     double *d2Wx;
     double *d2Wy;
-    vpTemplateTrackerPointSuppMIInv()
-    {
-      et=0.;
-      ct=0;
-      Bt = NULL;
-      BtInit = NULL;
-      dBt = NULL;
-      d2W = NULL;
-      d2Wx = NULL;
-      d2Wy = NULL;
-    }
+    vpTemplateTrackerPointSuppMIInv() : et(0), ct(0), BtInit(NULL), Bt(NULL), dBt(NULL),
+      d2W(NULL), d2Wx(NULL), d2Wy(NULL) {}
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 

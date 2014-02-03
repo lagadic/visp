@@ -121,6 +121,7 @@ public:
   inline  unsigned int getWidth() const { return width ; }
 
 public:
+  vpFrameGrabber() : init(false), height(0), width(0) {};
   virtual ~vpFrameGrabber() { ; }
 
   virtual void open(vpImage<unsigned char> &I) =0 ;

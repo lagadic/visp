@@ -200,7 +200,7 @@ public:
       void update (double A, double B, double C);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-        void operator=(const vpFeatureMoment &){
+        vpFeatureMoment& operator=(const vpFeatureMoment &){
           throw vpException(vpException::functionNotImplementedError,"Not implemented!");
         }
 #endif

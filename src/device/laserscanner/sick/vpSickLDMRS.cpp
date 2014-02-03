@@ -74,20 +74,18 @@
   body messages.
 */
 vpSickLDMRS::vpSickLDMRS()
+  : socket_fd(-1), body(NULL), vAngle(), time_offset(0),
+    isFirstMeasure(true), maxlen_body(104000)
 {
   ip = "131.254.12.119";
   port = 12002;
-  body = new unsigned char [104000];
-  isFirstMeasure = true;
-  time_offset = 0;
+  body = new unsigned char [maxlen_body];
 
   vAngle.resize(4); // Vertical angle of the 4 layers
   vAngle[0] = vpMath::rad(-1.2);
   vAngle[1] = vpMath::rad(-0.4); 
   vAngle[2] = vpMath::rad( 0.4); 
   vAngle[3] = vpMath::rad( 1.2);
-
-  socket_fd = -1;
 }
 
 /*!

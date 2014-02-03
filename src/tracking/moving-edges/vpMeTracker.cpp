@@ -66,19 +66,20 @@ vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
+  : list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  , query_range (0), display_point(false)
+#endif
 {
   init();
-  me = NULL ;
-  nGoodElement = 0;
-  init_range = 1;
-  
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  query_range = 0;
-  display_point = false ;
-  #endif
 }
 
-vpMeTracker::vpMeTracker(const vpMeTracker& meTracker):vpTracker(meTracker)
+vpMeTracker::vpMeTracker(const vpMeTracker& meTracker)
+  : vpTracker(meTracker),
+    list(), me(NULL), init_range(1), nGoodElement(0), selectDisplay(vpMeSite::NONE)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    , query_range (0), display_point(false)
+#endif
 {
   init();
 

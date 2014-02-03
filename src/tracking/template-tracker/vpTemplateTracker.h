@@ -58,7 +58,7 @@ class VISP_EXPORT vpTemplateTracker
 {
   protected:
     //traitement pyramidal
-    unsigned int                nbLvlPyr;
+    unsigned int                nbLvlPyr; // If = 1, disable pyramidal usage
     unsigned int                l0Pyr;
     bool                        pyrInitialised;
     

@@ -70,23 +70,17 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   double seuil=1.0;
   double f=1.;
 
-  //  CPoint c3d[npt] ;
-
-  if (c3d !=NULL) delete [] c3d ;
-  c3d = new vpPoint[npt] ;
-
   vpPoint p0 = listP.front() ;
 
-  vpPoint P ;
-  int i=0;
+  c3d.clear();
+  vpPoint P;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
   {
-    P = *it ;
-    c3d[i] = P ;
-    c3d[i].set_oX(P.get_oX()-p0.get_oX()) ;
-    c3d[i].set_oY(P.get_oY()-p0.get_oY()) ;
-    c3d[i].set_oZ(P.get_oZ()-p0.get_oZ()) ;
-    ++i;
+    P = (*it);
+    P.set_oX(P.get_oX()-p0.get_oX()) ;
+    P.set_oY(P.get_oY()-p0.get_oY()) ;
+    P.set_oZ(P.get_oZ()-p0.get_oZ()) ;
+    c3d.push_back(P) ;
   }
 
   vpMatrix a ;
@@ -227,8 +221,6 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   cMo[0][3] -= (p0.get_oX()*cMo[0][0]+p0.get_oY()*cMo[0][1]+p0.get_oZ()*cMo[0][2]);
   cMo[1][3] -= (p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2]);
   cMo[2][3] -= (p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2]);
-
-  delete [] c3d ; c3d = NULL ;
 }
 
 
@@ -519,21 +511,17 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   unsigned int i,j,k ;
 
-  if (c3d !=NULL) delete []c3d ;
-  c3d = new vpPoint[npt] ;
-
   vpPoint p0 = listP.front() ;
 
   vpPoint P ;
-  i=0 ;
+  c3d.clear();
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
   {
     P = *it;
-    c3d[i] = P ;
-    c3d[i].set_oX(P.get_oX()-p0.get_oX()) ;
-    c3d[i].set_oY(P.get_oY()-p0.get_oY()) ;
-    c3d[i].set_oZ(P.get_oZ()-p0.get_oZ()) ;
-    i++  ;
+    P.set_oX(P.get_oX()-p0.get_oX()) ;
+    P.set_oY(P.get_oY()-p0.get_oY()) ;
+    P.set_oZ(P.get_oZ()-p0.get_oZ()) ;
+    c3d.push_back(P);
   }
 
   vpMatrix a ;
@@ -714,7 +702,6 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
       cMo[1][3] -= p0.get_oX()*cMo[1][0]+p0.get_oY()*cMo[1][1]+p0.get_oZ()*cMo[1][2];
       cMo[2][3] -= p0.get_oX()*cMo[2][0]+p0.get_oY()*cMo[2][1]+p0.get_oZ()*cMo[2][2];
 
-      delete [] c3d ; c3d = NULL ;
 #if (DEBUG_LEVEL1)
       std::cout << "end CCalculPose::PoseDementhonPlan()" << std::endl ;
 #endif

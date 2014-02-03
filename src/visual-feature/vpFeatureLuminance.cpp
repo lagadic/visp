@@ -71,15 +71,42 @@ vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 /*! 
   Default constructor that build a visual feature.
 */
-vpFeatureLuminance::vpFeatureLuminance() : vpBasicFeature()
+vpFeatureLuminance::vpFeatureLuminance()
+  : Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
 {
     nbParameters = 1;
     dim_s = 0 ;
-    bord = 10 ;
     flags = NULL;
-    pixInfo = NULL;
 
     init() ;
+}
+
+/*!
+ Copy constructor.
+ */
+vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance& f)
+  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
+{
+  *this = f;
+}
+
+/*!
+ Copy operator.
+ */
+vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance& f)
+{
+  Z = f.Z;
+  nbr = f.nbr;
+  nbc = f.nbc;
+  bord = f.bord;
+  firstTimeIn = f.firstTimeIn;
+  cam = f.cam;
+  if (pixInfo)
+    delete [] pixInfo;
+  pixInfo = new vpLuminance[dim_s] ;
+  for(unsigned int i=0; i< dim_s; i++)
+    pixInfo[i] = f.pixInfo[i];
+  return (*this);
 }
 
 /*! 

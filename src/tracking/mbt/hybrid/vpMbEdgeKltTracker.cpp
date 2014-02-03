@@ -44,14 +44,10 @@
 #ifdef VISP_HAVE_OPENCV
 
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
+  : compute_interaction(true), lambda(0.8), thresholdKLT(2.), thresholdMBT(2.), maxIter(200)
 {
-  compute_interaction = true;
   computeCovariance = false;
   
-  lambda = 0.8;
-  thresholdKLT = 2.0;
-  thresholdMBT = 2.0;
-  maxIter = 200;
   vpMbKltTracker::setMaxIter(30);
   
 #ifdef VISP_HAVE_OGRE

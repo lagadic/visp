@@ -46,16 +46,9 @@
 #include <visp/vpDebug.h>
 #include <stdlib.h>
 
-vpSubMatrix::vpSubMatrix(){
-  data=NULL;
-  parent=NULL;
-  rowPtrs=NULL;
-  rowNum=0;
-  colNum=0;
-  pRowNum=0;
-  pColNum=0;
-  dsize=0;
-  trsize=0;
+vpSubMatrix::vpSubMatrix()
+  : pRowNum(0), pColNum(0), parent(NULL)
+{
 }
 
 /*!
@@ -66,7 +59,10 @@ vpSubMatrix::vpSubMatrix(){
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols){
+vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col,
+                         const unsigned int & nrows,  const unsigned int & ncols)
+  : pRowNum(0), pColNum(0), parent(NULL)
+{
   init(m,row,col,nrows,ncols);
 }
 

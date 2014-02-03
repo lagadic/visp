@@ -46,7 +46,6 @@
 /*!
   Basic constructor that sets the sampling time by default to 40ms.
 */
-vpRobotSimulator::vpRobotSimulator() : vpRobot()
+vpRobotSimulator::vpRobotSimulator() : vpRobot(), delta_t_(0.040f)
 {
-  setSamplingTime(0.040f);
 }

@@ -56,13 +56,7 @@
 
 */
 
-vpRect::vpRect()
-{
-  this->left = 0;
-  this->top = 0;
-  this->width = 0;
-  this->height = 0;
-};
+vpRect::vpRect() : left(0), top(0), width(0), height(0) {};
 
 /*!
  
@@ -71,11 +65,8 @@ vpRect::vpRect()
 
 */
 vpRect::vpRect(double left, double top, double width, double height)
+  : left(left), top(top), width(width), height(height)
 {
-  this->left = left;
-  this->top = top;
-  this->width = width;
-  this->height = height;
 };
 
 /*!
@@ -85,11 +76,8 @@ vpRect::vpRect(double left, double top, double width, double height)
 
 */
 vpRect::vpRect(const vpImagePoint &topLeft, double width, double height)
+  : left(topLeft.get_u()), top(topLeft.get_v()), width(width), height(height)
 {
-  this->left = topLeft.get_u();
-  this->top = topLeft.get_v();
-  this->width = width;
-  this->height = height;
 };
 
 /*!
@@ -99,6 +87,7 @@ vpRect::vpRect(const vpImagePoint &topLeft, double width, double height)
 
 */
 vpRect::vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
+  : left(topLeft.get_u()), top(topLeft.get_v()), width(0), height(0)
 {
   this->left = topLeft.get_u();
   this->top = topLeft.get_v();
@@ -113,11 +102,9 @@ vpRect::vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
 
 */
 vpRect::vpRect(const vpRect& r)
+  : left(0), top(0), width(0), height(0)
 {
-  this->left   = r.left;
-  this->top    = r.top;
-  this->width  = r.width;
-  this->height = r.height;
+  *this = r;
 };
 
 /*!
@@ -140,6 +127,7 @@ vpRect &vpRect::operator=(const vpRect& r)
   otherwise an exception is thrown.
 */
 vpRect::vpRect(const std::vector<vpImagePoint> &ip)
+  : left(0), top(0), width(0), height(0)
 {
   set(ip);
 }

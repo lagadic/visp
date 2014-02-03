@@ -59,7 +59,10 @@ const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 /*!
   Basic constructor
 */
-vpSimulatorAfma6::vpSimulatorAfma6():vpRobotWireFrameSimulator(), vpAfma6()
+vpSimulatorAfma6::vpSimulatorAfma6()
+  : vpRobotWireFrameSimulator(), vpAfma6(),
+    q_prev_getdis(), first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
+    zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -104,7 +107,10 @@ vpSimulatorAfma6::vpSimulatorAfma6():vpRobotWireFrameSimulator(), vpAfma6()
   \param display : When true, enables the display of the external view.
 
 */
-vpSimulatorAfma6::vpSimulatorAfma6(bool display):vpRobotWireFrameSimulator(display)
+vpSimulatorAfma6::vpSimulatorAfma6(bool display)
+  : vpRobotWireFrameSimulator(display),
+    q_prev_getdis(), first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
+    zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();

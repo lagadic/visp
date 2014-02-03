@@ -62,7 +62,7 @@
   setSamplingTime().
 
 */
-vpSimulatorPioneerPan::vpSimulatorPioneerPan()
+vpSimulatorPioneerPan::vpSimulatorPioneerPan() : wMc_(), wMm_(), xm_(0), ym_(0), theta_(0), q_pan_()
 {
   init() ;
 }

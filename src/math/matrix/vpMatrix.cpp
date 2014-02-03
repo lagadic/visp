@@ -114,8 +114,8 @@ Construction of the object matrix.
 Number of columns and rows are zero.
 */
 vpMatrix::vpMatrix()
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
-  init() ;
 }
 
 
@@ -128,12 +128,13 @@ Initialize a matrix with 0.
 \param c : Matrix number of columns.
 */
 vpMatrix::vpMatrix(unsigned int r, unsigned int c)
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
-  init() ;
   resize(r, c);
 }
 
 vpMatrix::vpMatrix(const vpHomography& H)
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
   (*this) = H;
 }
@@ -144,9 +145,8 @@ vpMatrix::vpMatrix(const vpHomography& H)
 vpMatrix::vpMatrix(const vpMatrix &m,
                    unsigned int r, unsigned int c, 
                    unsigned int nrows, unsigned int ncols)
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
-  init() ;
-
   if (((r + nrows) > m.rowNum) || ((c + ncols) > m.colNum))
   {
     vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
@@ -159,9 +159,8 @@ vpMatrix::vpMatrix(const vpMatrix &m,
 
 //! copie constructor
 vpMatrix::vpMatrix(const vpMatrix& m)
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
-  init() ;
-
   resize(m.rowNum,m.colNum);
 
   memcpy(data,m.data,rowNum*colNum*sizeof(double)) ;

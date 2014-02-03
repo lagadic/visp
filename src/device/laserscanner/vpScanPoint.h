@@ -76,13 +76,9 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
 {
  public:
   /*! Default constructor. */
-  inline vpScanPoint() {
-    this->rDist = 0;
-    this->hAngle = 0;
-    this->vAngle = 0;
-  }
+    inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) {}
   /*! Copy constructor. */
-  inline vpScanPoint(const vpScanPoint &scanpoint) {
+  inline vpScanPoint(const vpScanPoint &scanpoint) : rDist(0), hAngle(0), vAngle(0) {
     this->rDist = scanpoint.rDist;
     this->hAngle = scanpoint.hAngle;
     this->vAngle = scanpoint.vAngle;
@@ -93,7 +89,9 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
     \param hAngle : Horizontal angle in radian.
     \param vAngle : Vertical angle in radian.   
   */
-  inline vpScanPoint(double rDist, double hAngle, double vAngle) {
+  inline vpScanPoint(double rDist, double hAngle, double vAngle)
+    : rDist(rDist), hAngle(hAngle), vAngle(vAngle)
+  {
     this->rDist = rDist;
     this->hAngle = hAngle;
     this->vAngle = vAngle;

@@ -67,9 +67,9 @@ vpAdaptiveGain (void)
   :
   coeff_a (),
   coeff_b (),
-  coeff_c ()
+  coeff_c (),
+  lambda(1.)
 {
-  lambda = 1.;
   vpDEBUG_TRACE (10, "# Entree constructeur par default.");
   this ->initFromVoid ();
 

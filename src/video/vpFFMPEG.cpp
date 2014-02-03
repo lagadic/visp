@@ -65,32 +65,15 @@ extern "C"
   Basic constructor.
 */
 vpFFMPEG::vpFFMPEG()
+  : width(-1), height(-1), frameNumber(0), pFormatCtx(NULL), pCodecCtx(NULL),
+    pCodec(NULL), pFrame(NULL), pFrameRGB(NULL), pFrameGRAY(NULL), packet(NULL),
+    img_convert_ctx(NULL), videoStream(0), numBytes(0), buffer(NULL), index(),
+    streamWasOpen(false), streamWasInitialized(false), color_type(COLORED),
+    f(NULL), outbuf(NULL), picture_buf(NULL), outbuf_size(0), out_size(0),
+    bit_rate(500000), encoderWasOpened(false),
+    framerate_stream(-1), framerate_encoder(25)
 {
-  frameNumber = 0;
-  width = -1;
-  height = -1;
-  framerate_stream = -1;
-  framerate_encoder = 25;
-  buffer = NULL;
-  streamWasOpen = false;
-  streamWasInitialized = false;
-  bit_rate = 500000;
-  outbuf = NULL;
-  picture_buf = NULL;
-  f = NULL;
-  encoderWasOpened = false;
   packet = new AVPacket;
-
-  pFormatCtx = NULL;
-  pCodecCtx = NULL;
-  pCodec = NULL;
-  pFrame = NULL;
-  pFrameRGB = NULL;
-  pFrameGRAY = NULL;
-  img_convert_ctx = NULL;
-  numBytes = outbuf_size = out_size = 0;
-  videoStream = 0;
-  color_type = COLORED;
 }
 
 /*!

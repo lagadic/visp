@@ -47,26 +47,21 @@
   Elementary constructor.
 */
 vpDiskGrabber::vpDiskGrabber()
+  : image_number(0), image_step(1), number_of_zero(0), useGenericName(false)
 {
   setDirectory("/tmp");
   setBaseName("I");
-  setImageNumber(0);
-  setStep(1);
-  setNumberOfZero(0);
   setExtension("pgm");
 
   init = false;
-  useGenericName = false;
 }
 
 
 vpDiskGrabber::vpDiskGrabber(const char *genericName)
+  : image_number(0), image_step(1), number_of_zero(0), useGenericName(false)
 {
   setDirectory("/tmp");
   setBaseName("I");
-  setImageNumber(0);
-  setStep(1);
-  setNumberOfZero(0);
   setExtension("pgm");
 
   init = false;
@@ -95,16 +90,13 @@ vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
                              long number,
                              int step, unsigned int noz,
                              const char *ext)
+  : image_number(number), image_step(step), number_of_zero(noz), useGenericName(false)
 {
   setDirectory(dir);
   setBaseName(basename);
-  setImageNumber(number);
-  setStep(step);
-  setNumberOfZero(noz);
   setExtension(ext);
 
   init = false;
-  useGenericName = false;
 }
 
 void

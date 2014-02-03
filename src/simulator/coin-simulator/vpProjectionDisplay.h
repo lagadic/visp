@@ -96,8 +96,25 @@ public:
   static int internalView() { return 0x01 ; }
   static int externalView() { return 0x02 ; }
 
-  vpProjectionDisplay() { init() ;}
-  vpProjectionDisplay(int select) { init(select) ;}
+  /*! Default constructor. */
+  vpProjectionDisplay()
+    : Icam(), Iext(),
+#if defined (VISP_HAVE_DISPLAY)
+      dIcam(), dIext(),
+#endif
+      listFp(), o(), x(), y(), z(), traj()
+  {
+    init();
+  }
+  vpProjectionDisplay(int select)
+    : Icam(), Iext(),
+#if defined (VISP_HAVE_DISPLAY)
+      dIcam(), dIext(),
+#endif
+      listFp(), o(), x(), y(), z(), traj()
+  {
+    init(select) ;
+  }
 
   void insert( vpForwardProjection &fp) ;
   void display(vpImage<unsigned char> &I,

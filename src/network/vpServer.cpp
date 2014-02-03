@@ -45,10 +45,9 @@
 /*!
   Construct a server on the machine launching it.
 */
-vpServer::vpServer( ) : vpNetwork(), started(false)
+vpServer::vpServer( ) : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
@@ -71,10 +70,9 @@ vpServer::vpServer( ) : vpNetwork(), started(false)
   
   \param port_serv : server's port.
 */
-vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
+vpServer::vpServer( const int &port_serv ) : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)
@@ -98,10 +96,10 @@ vpServer::vpServer( const int &port_serv ) : vpNetwork(), started(false)
   \param adress_serv : server's adress.
   \param port_serv : server's port.
 */
-vpServer::vpServer( const std::string &adress_serv,const int &port_serv ) : vpNetwork(), started(false)
+vpServer::vpServer( const std::string &adress_serv,const int &port_serv )
+  : adress(), port(0), started(false), max_clients(10)
 {
   int protocol = 0;
-  max_clients = 10;
   emitter.socketFileDescriptorEmitter = socket(AF_INET, SOCK_STREAM, protocol);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if (emitter.socketFileDescriptorEmitter < 0)

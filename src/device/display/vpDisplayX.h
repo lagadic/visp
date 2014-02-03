@@ -174,23 +174,22 @@ public:
   vpDisplayX() ;
   vpDisplayX(int winx, int winy, const char *title=NULL) ;
   vpDisplayX(vpImage<unsigned char> &I, int winx=-1, int winy=-1,
-	     const char *title=NULL) ;
+             const char *title=NULL) ;
   vpDisplayX(vpImage<vpRGBa> &I, int winx=-1, int winy=-1,
-	     const char *title=NULL) ;
-
+             const char *title=NULL) ;
 
   virtual ~vpDisplayX() ;
 
   void init(vpImage<unsigned char> &I,
-	    int winx=-1, int winy=-1,
-	    const char *title=NULL)  ;
+            int winx=-1, int winy=-1,
+            const char *title=NULL)  ;
   void init(vpImage<vpRGBa> &I,
-	   int winx=-1, int winy=-1,
-	   const char *title=NULL)  ;
+            int winx=-1, int winy=-1,
+            const char *title=NULL)  ;
 
   void init(unsigned int width, unsigned int height,
-	    int winx=-1, int winy=-1 ,
-	    const char *title=NULL) ;
+            int winx=-1, int winy=-1 ,
+            const char *title=NULL) ;
   
   unsigned int getScreenDepth();
   void getScreenSize(unsigned int &width, unsigned int &height);

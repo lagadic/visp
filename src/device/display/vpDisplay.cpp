@@ -58,27 +58,28 @@
   Default constructor.
 */
 vpDisplay::vpDisplay()
-{
-  displayHasBeenInitialized = false;
-  windowXPosition = 0;
-  windowYPosition = 0;
+  : displayHasBeenInitialized(false), windowXPosition(0), windowYPosition(0), width(0), height(0), title_() {}
 
-  title = new char[1024];
-  strcpy (title, "" );
-  font = NULL;
-  width = height = 0;
+/*!
+  Copy constructor.
+*/
+vpDisplay::vpDisplay(const vpDisplay &d)
+  : displayHasBeenInitialized(false), windowXPosition(0), windowYPosition(0), width(0), height(0), title_()
+{
+  displayHasBeenInitialized = d.displayHasBeenInitialized;
+  windowXPosition = d.windowXPosition;
+  windowYPosition = d.windowYPosition;
+
+  width  = d.width;
+  height = d.height;
 }
+
 /*!
   Destructor that desallocates memory.
 */
 vpDisplay::~vpDisplay()
 {
   displayHasBeenInitialized = false ;
-
-  if (title != NULL) {
-    delete [] title;
-    title = NULL;
-  }
 }
 
 /*!
@@ -119,7 +120,7 @@ vpDisplay::setFont ( const vpImage<unsigned char> &I,
 */
 void
 vpDisplay::setTitle ( const vpImage<unsigned char> &I, 
-		      const char *windowtitle )
+                      const char *windowtitle )
 {
 
   try

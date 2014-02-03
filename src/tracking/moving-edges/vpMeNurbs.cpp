@@ -220,21 +220,19 @@ bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
-vpMeNurbs::vpMeNurbs():vpMeTracker()
+vpMeNurbs::vpMeNurbs()
+  : nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false),
+    cannyTh1(100.), cannyTh2(200.)
 {
-  nbControlPoints = 20;
-  beginPtFound = 0;
-  endPtFound =0;
-  enableCannyDetection = false;
-  cannyTh1 = 100.0;
-  cannyTh2 = 200.0;
-  dist = 0.;
 }
 
 /*!
   Copy constructor.
 */
-vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs):vpMeTracker(menurbs)
+vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
+  : vpMeTracker(menurbs),
+    nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false),
+    cannyTh1(100.), cannyTh2(200.)
 {
   nurbs = menurbs.nurbs;
   dist = menurbs.dist;

@@ -88,11 +88,12 @@ class VISP_EXPORT vpLinearKalmanFilterInstantiation : public vpKalmanFilter
     By default the state model is unknown and set to
     vpLinearKalmanFilterInstantiation::unknown.
   */
-  vpLinearKalmanFilterInstantiation() : vpKalmanFilter()
+    vpLinearKalmanFilterInstantiation() : model(unknown)
     {
-      setStateModel(unknown);
     };
 
+  /*! Destructor that does nothng. */
+  virtual ~vpLinearKalmanFilterInstantiation() {};
   /*!
     Return the current state model.
    */

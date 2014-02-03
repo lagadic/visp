@@ -225,10 +225,8 @@ public:
 private:
   vpForwardProjectionDeallocatorType deallocate ;
 public:
-  vpForwardProjection()
-  {
-    deallocate = user;
-  }
+  vpForwardProjection() : oP(), deallocate(user) {}
+
   void setDeallocate(vpForwardProjectionDeallocatorType d) { deallocate = d ; }
   vpForwardProjectionDeallocatorType getDeallocate() { return deallocate ; }
 } ;

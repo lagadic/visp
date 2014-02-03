@@ -42,11 +42,13 @@
 #include <visp/vpTemplateTrackerSSDESM.h>
 #include <visp/vpImageFilter.h>
 
-vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp):vpTemplateTrackerSSD(warp)
+vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), compoInitialised(false), HDir(), HInv(),
+    HLMDir(), HLMInv(), GDir(), GInv()
 {
   useCompositionnal=false;
   useInverse=false;
-  compoInitialised=false;
+
   if(!Warp->isESMcompatible())
     std::cerr<<"The selected warp function is not appropriate for the ESM algorithm..."<<std::endl;
 

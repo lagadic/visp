@@ -168,28 +168,20 @@ int main()
 
 */
 vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
+  : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
+    num_buffers(4), // ring buffer size
+    isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
+  #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+  , d(NULL),
+    list(NULL)
+  #endif
 {
   // protected members
   width = height = 0;
 
   // private members
-  num_cameras = 0;
-  cameras = NULL;
-  camera_id = 0;
-  verbose = false;//true;
-  camIsOpen = NULL;
   init = false;
-  cameras = NULL;
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-  d = NULL;
-  list = NULL;
-#endif
-  num_buffers = 4; // ring buffer size
 
-  isDataModified = NULL; 
-  initialShutterMode = NULL;
-  dataCam = NULL; 
-  
   reset = false;
   initialize(reset);
   

@@ -77,6 +77,9 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
   vpHistogramValey(const vpHistogramValey & v) : 
     vpHistogramPeak(v) {};
 
+  /*! Destructor that does nothing. */
+  virtual ~vpHistogramValey() {}
+
   vpHistogramValey & operator=(const vpHistogramValey &v);
   bool operator==(const vpHistogramValey &v) const;
 

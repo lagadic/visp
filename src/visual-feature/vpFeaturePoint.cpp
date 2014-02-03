@@ -89,13 +89,12 @@ vpFeaturePoint::init()
 
     //default value Z (1 meters)
     Z = 1;
-
 }
 
 /*! 
   Default constructor that build a visual feature.
 */
-vpFeaturePoint::vpFeaturePoint() : vpBasicFeature()
+vpFeaturePoint::vpFeaturePoint() : Z(1.)
 {
     init() ;
 }

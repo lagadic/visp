@@ -42,23 +42,12 @@
 
 #include <visp/vpBasicKeyPoint.h>
 
-#include <vector>
-
 /*!
   Basic constructor.
 */
 vpBasicKeyPoint::vpBasicKeyPoint()
+  : referenceImagePointsList(), currentImagePointsList(), matchedReferencePoints(), _reference_computed(false)
 {
-  _reference_computed = false;
-  matchedReferencePoints.resize(0);
-  currentImagePointsList.resize(0);
-  referenceImagePointsList.resize(0);
 }
 
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
 

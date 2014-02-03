@@ -64,27 +64,12 @@
   Basic constructor
 */
 vpMbtDistanceCylinder::vpMbtDistanceCylinder()
+  : name(), index(0), cam(), me(NULL), alpha(0), wmean1(1), wmean2(1),
+    featureline1(), featureline2(), meline1(NULL), meline2(NULL),
+    cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(),
+    error(), nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false),
+    c(NULL)
 {
-  name = "";
-  p1 = NULL ;
-  p2 = NULL ;
-  c = NULL ;
-  meline1 = NULL ;
-  meline2 = NULL ;
-  wmean1 = 1 ;
-  wmean2 = 1 ;
-  nbFeaturel1 =0 ;
-  nbFeaturel2 =0 ;
-  nbFeature =0 ;
-  Reinit = false;
-
-  cercle1 = NULL;
-  cercle2 = NULL;
-
-  index = 0;
-  me = NULL;
-  alpha = 0;
-  radius = 0;
 }
 
 /*!

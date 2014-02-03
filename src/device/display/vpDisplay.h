@@ -44,6 +44,8 @@
 #ifndef vpDisplay_h
 #define vpDisplay_h
 
+#include <string>
+
 // image
 #include <visp/vpImage.h>
 
@@ -180,13 +182,9 @@ class VISP_EXPORT vpDisplay
   int windowXPosition ;
   //! display position
   int windowYPosition ;
-  //! display title
-  char *title ;
-  char *font;
   unsigned int width ;
   unsigned int height ;
-
-  vpDisplay() ;
+  std::string title_;
 
   /*!
     Display an arrow from image point \e ip1 to image point \e ip2.
@@ -315,6 +313,8 @@ class VISP_EXPORT vpDisplay
 				unsigned int thickness=1)=0 ;
 
  public:
+  vpDisplay() ;
+  vpDisplay(const vpDisplay& d) ;
   virtual ~vpDisplay();
 
   /*!

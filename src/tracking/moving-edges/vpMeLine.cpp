@@ -103,19 +103,21 @@ project(double a, double b, double c,
   Basic constructor that calls the constructor of the class vpMeTracker.
 
 */
-vpMeLine::vpMeLine():vpMeTracker()
+vpMeLine::vpMeLine()
+  : rho(0.), theta(0.), delta(0.), delta_1(0.), angle(0.), angle_1(90), sign(1),
+    _useIntensityForRho(true), a(0.), b(0.), c(0.)
 {
-  sign = 1;
-  angle_1 = 90;
-  _useIntensityForRho = true;
-  rho = theta = delta = delta_1 = angle = a = b = c = 0.;
 }
 /*!
 
   Copy constructor.
 
 */
-vpMeLine::vpMeLine(const vpMeLine &meline):vpMeTracker(meline)
+vpMeLine::vpMeLine(const vpMeLine &meline)
+  : vpMeTracker(meline),
+    rho(0.), theta(0.), delta(0.), delta_1(0.), angle(0.), angle_1(90), sign(1),
+    _useIntensityForRho(true), a(0.), b(0.), c(0.)
+
 {
   rho = meline.rho;
   theta = meline.theta;

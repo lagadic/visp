@@ -96,7 +96,7 @@ vpFeaturePoint3D::init()
   initialize it to \f${\bf X} = (0, 0, 1)\f$.
 
 */
-vpFeaturePoint3D::vpFeaturePoint3D() : vpBasicFeature()
+vpFeaturePoint3D::vpFeaturePoint3D()
 {
     init() ;
 }

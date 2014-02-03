@@ -64,6 +64,7 @@ inline double distance(const vpImagePoint &iP1, const double w1, const vpImagePo
   compute cubic NURBS.
 */
 vpNurbs::vpNurbs()
+  : weights()
 {
   p = 3;
 }
@@ -71,7 +72,7 @@ vpNurbs::vpNurbs()
 /*!
   Copy constructor.
 */
-vpNurbs::vpNurbs(const vpNurbs &nurbs)  : vpBSpline(nurbs)
+vpNurbs::vpNurbs(const vpNurbs &nurbs)  : vpBSpline(nurbs), weights()
 {
   weights = nurbs.weights;
 }

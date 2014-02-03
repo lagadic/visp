@@ -118,8 +118,8 @@ public:
 
   // Destructor
   virtual ~vpCalibration() ;
-  //! = operator
-  void operator=(const vpCalibration& twinCalibration);
+  // = operator
+  vpCalibration& operator=(const vpCalibration& twinCalibration);
 
   //!get the residual in pixels
   double getResidual(void) const {return residual;}

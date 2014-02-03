@@ -54,7 +54,6 @@ const double vpQuaternionVector::minimum = 0.0001;
   \file vpQuaternionVector.cpp
   \brief Defines a quaternion and common operations on it.
 */
-vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) {  }
 
 //! Constructor from doubles.
 vpQuaternionVector::vpQuaternionVector(const double x, const double y, 
@@ -74,16 +73,7 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
 {	
   buildFrom(R);
 }
-/*! 
-  Copy constructor.
-  \param q : quaternion to construct from.
-*/
-vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) 
-  : vpRotationVector(4) 
-{  
-  for(unsigned int i=0;i<size();i++) (*this)[i]=q.r[i];   
-}
-    
+
 /*! 
   Manually change values of a quaternion.
   \param x : x quaternion parameter.
@@ -143,13 +133,6 @@ vpQuaternionVector vpQuaternionVector::operator* ( vpQuaternionVector &rq) {
 			    w() * rq.z() + z() * rq.w() + x() * rq.y() - y() * rq.x(),
 			    w() * rq.w() - x() * rq.x() - y() * rq.y() - z() * rq.z());
 }
-
-//! Copy operator.   Allow operation such as Q = q.
-vpQuaternionVector &vpQuaternionVector::operator=( vpQuaternionVector &q)
-{ 
-  for(unsigned int i=0;i<size();i++) (*this)[i]=q.r[i];
-  return *this;
-} 
 
 /*! 
   Constructs a quaternion from a rotation matrix.

@@ -91,14 +91,9 @@ vpKalmanFilter::init(unsigned int size_state, unsigned int size_measure,
   
 */
 vpKalmanFilter::vpKalmanFilter()
+  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
+    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
 {
-  verbose(false);
-  //  init_done = false ;
-  this->size_state = 0;
-  this->size_measure = 0 ;
-  this->nsignal = 0 ;
-  iter = 0 ;
-  dt = -1 ;
 }
 
 /*!
@@ -109,14 +104,9 @@ vpKalmanFilter::vpKalmanFilter()
   \param nsignal : Number of signal to filter.
 */
 vpKalmanFilter::vpKalmanFilter(unsigned int nsignal)
+  : iter(0), size_state(0), size_measure(0), nsignal(nsignal), verbose_mode(false),
+    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
 {
-  verbose(false);
-  // init_done = false;
-  this->size_state = 0;
-  this->size_measure = 0 ;
-  this->nsignal = nsignal;
-  iter = 0 ;
-  dt = -1 ;
 }
 
 /*!
@@ -132,8 +122,9 @@ vpKalmanFilter::vpKalmanFilter(unsigned int nsignal)
   \param nsignal : Number of signal to filter.
 */
 vpKalmanFilter::vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int nsignal)
+  : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
+    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
 {
-  verbose(false);
   init( size_state, size_measure, nsignal) ;
 }
 

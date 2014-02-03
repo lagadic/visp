@@ -63,20 +63,16 @@ bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second)
 /*!
   Defaut constructor for a gray level histogram.
 */
-vpHistogram::vpHistogram()
+vpHistogram::vpHistogram() : histogram(NULL), size(256)
 {
-  histogram = NULL;
-  size = 256;
   init();
 }
 
 /*!
   Copy constructor of a gray level histogram.
 */
-vpHistogram::vpHistogram(const vpHistogram &h)
+vpHistogram::vpHistogram(const vpHistogram &h)  : histogram(NULL), size(256)
 {
-  //  vpTRACE("copy");
-  histogram = NULL;
   init(h.size);
   memcpy(histogram, h.histogram, size * sizeof(unsigned));
 }
@@ -89,9 +85,8 @@ vpHistogram::vpHistogram(const vpHistogram &h)
   \sa calculate()
 */
 vpHistogram::vpHistogram(const vpImage<unsigned char> &I)
+ : histogram(NULL), size(256)
 {
-  histogram = NULL;
-  size = 256;
   init();
 
   calculate(I);

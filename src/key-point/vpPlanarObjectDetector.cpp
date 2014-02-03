@@ -60,13 +60,9 @@
 
 */
 vpPlanarObjectDetector::vpPlanarObjectDetector()
+  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
+    refImagePoints(), minNbMatching(10)
 {
-  isCorrect = false;
-  dst_corners.resize(0); 
-  ref_corners.resize(0);
-  currentImagePoints.resize(0);
-  refImagePoints.resize(0);
-  minNbMatching = 10;
 }
 
 /*!
@@ -78,20 +74,18 @@ vpPlanarObjectDetector::vpPlanarObjectDetector()
 
 */
 vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string& _dataFile, const std::string& _objectName)
+  : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
+    refImagePoints(), minNbMatching(10)
 {
-  isCorrect = false;
-  minNbMatching = 10;
   load(_dataFile, _objectName);
 }
 
 /*!
-  initialise stuff
-  
+  Initialise stuff. For the moment does nothing.
 */
 void
 vpPlanarObjectDetector::init()
 {
-
 }
 
 /*!

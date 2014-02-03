@@ -62,7 +62,6 @@
   \brief class that defines the vpFeatureSegment visual feature
 */
 
-
 /*! 
 
   Initialise the memory space requested for segment visual
@@ -89,12 +88,9 @@ vpFeatureSegment::init()
   \param normalized : If true, use normalized features \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$.
   If false, use non normalized features \f${\bf s} = (x_c, y_c, l_c, \alpha)\f$.
 */
-vpFeatureSegment::vpFeatureSegment(bool normalized):
-  vpBasicFeature()
+vpFeatureSegment::vpFeatureSegment(bool normalized)
+  : xc_(0), yc_(0), l_(0), alpha_(0), Z1_(0), Z2_(0), cos_a_(0), sin_a_(0), normalized_(normalized)
 {
-  xc_=yc_=l_=alpha_=Z1_=Z2_=cos_a_=sin_a_=0.;
-  this->normalized_ = normalized;
-
   init();
 }
 

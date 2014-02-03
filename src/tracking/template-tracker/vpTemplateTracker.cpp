@@ -43,66 +43,28 @@
 #include <visp/vpTemplateTrackerBSpline.h>
 
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL),
+    ptTemplateInit(false), templateSize(0), templateSizePyr(NULL),
+    ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL), ptTemplateSelectInit(NULL),
+    templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL), ptTemplateSuppInit(false),
+    ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
+    pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(),
+    HLMdesireInverse(), HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40),
+    costFunctionVerification(false), blur(true), useBrent(false), nbIterBrent(3),
+    taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
+    lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0),
+    useCompositionnal(true), useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(),
+    dW(), BI(), dIx(), dIy(), zoneRef_()
 {
-  Warp=_warp;  
   nbParam = Warp->getNbParam() ;
   p.resize(nbParam);
   dp.resize(nbParam);
-  p=0;
 
-  iterationMax = 30;
-  lambdaDep =0.001 ;
-  diverge=false;
-  //Interpol=2;
-  blur=true;
-
-  mod_i=1;
-  mod_j=1;
-
-  taillef=7;
   fgG=new double[(taillef+1)/2] ;
   vpImageFilter::getGaussianKernel(fgG, taillef) ;
 
   fgdG=new double[(taillef+1)/2] ;
   vpImageFilter::getGaussianDerivativeKernel(fgdG, taillef) ;
-
-  gain=1.;
-  useBrent=false;nbIterBrent=3;
-  useCompositionnal=true;
-  useInverse=false;
-  pyrInitialised=false;
-
-  costFunctionVerification=false;
-  thresholdGradient=40.;
-
-  ptTemplateSuppInit=false;     // FS: To check when is set to true ?
-  ptTemplateInit=false;
-  ptTemplateSelectInit = false;
-
-  ptTemplate         = NULL;
-  ptTemplateCompo    = NULL;
-  ptTemplatePyr      = NULL;
-  ptTemplateSelect   = NULL;
-  ptTemplateSupp     = NULL;
-  ptTemplateSuppPyr  = NULL;
-  ptTemplateCompoPyr = NULL;
-
-  nbLvlPyr = 1; // Disable pyramidal usage
-  nbIteration = 0;
-
-  l0Pyr = 0;
-  templateSize = 0;
-  templateSelectSize = 0;
-  iterationGlobale = 0;
-  ratioPixelIn = 0.;
-  templateSizePyr = NULL;
-  ptTemplateSelectPyr = NULL;
-  zoneTracked = NULL;
-  zoneTrackedPyr = NULL;
-  pyr_IDes = NULL;
-  HdesirePyr = NULL;
-  HLMdesirePyr = NULL;
-  HLMdesireInversePyr = NULL;
 }
 
 void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)

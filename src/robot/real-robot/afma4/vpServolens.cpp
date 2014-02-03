@@ -71,10 +71,8 @@
   \sa open()
 
 */
-vpServolens::vpServolens()
+vpServolens::vpServolens() : remfd(0), isinit(false)
 {
-  remfd = 0;
-  isinit = false;
 }
 
 /*! 
@@ -85,11 +83,8 @@ vpServolens::vpServolens()
 
   \sa open()
 */
-vpServolens::vpServolens(const char *port)
+vpServolens::vpServolens(const char *port) : remfd(0), isinit(false)
 {
-  remfd = 0;
-  isinit = false;
-
   this->open(port);
 }
 

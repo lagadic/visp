@@ -52,27 +52,21 @@
 /*!
   Defaut constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak()
-{
-  level = 0;
-  value = 0;
-}
+vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
 
 /*!
   Defaut constructor for a gray level histogram peak.
 */
 vpHistogramPeak::vpHistogramPeak(unsigned char level, unsigned value)
-{
-  setLevel(level);
-  setValue(value);
-}
+  : level(level), value(value) {}
+
 /*!
   Copy constructor of a gray level histogram peak.
 */
 vpHistogramPeak::vpHistogramPeak(const vpHistogramPeak &p)
+  : level(0), value(0)
 {
-  setLevel(p.level);
-  setValue(p.value);
+  *this = p;
 }
 
 /*!

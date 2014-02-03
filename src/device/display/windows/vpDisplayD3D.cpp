@@ -60,17 +60,19 @@ vpDisplayD3D::vpDisplayD3D(): vpDisplayWin32(new vpD3DRenderer()){}
   \brief Constructor : Initialize a display.
 
   \param winx, winy The window is set at position x,y (column index, row index).
-  \param _title  Window's title.
+  \param title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *_title)
+vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   windowXPosition = winx;
   windowYPosition = winy;
 
-  if (_title != NULL)
-    strcpy(this->title, _title);
+  if (title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 }
 
 /*!
@@ -80,15 +82,15 @@ vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *_title)
 
 \param I : Image to be displayed (note that image has to be initialized).
 \param winx, winy : The window is set at position x,y (column index, row index).
-\param _title : Window's title.
+\param title : Window's title.
 
 */
 vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
 			   int winx, int winy,
-			   const char *_title)
+         const char *title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
-  init(I,winx,winy,_title);
+  init(I,winx,winy,title);
 }
 
 /*!
@@ -98,15 +100,15 @@ vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
 
 \param I  Image to be displayed (note that image has to be initialized).
 \param winx, winy The window is set at position x,y (column index, row index).
-\param _title  Window's title.
+\param title  Window's title.
 
 */
 vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I,
 			   int winx, int winy,
-			   const char *_title)
+         const char *title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
-  init(I,winx,winy,_title);
+  init(I,winx,winy,title);
 }
 
 /*!

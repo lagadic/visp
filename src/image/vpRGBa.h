@@ -74,10 +74,7 @@ public:
     Build a black value.
     
   */
-  inline vpRGBa() 
-    : R(0), G(0), B(0), A(0) 
-    {
-    };
+  inline vpRGBa() : R(0), G(0), B(0), A(0) {};
   
   /*!
     Constructor.
@@ -92,9 +89,7 @@ public:
   */
   inline vpRGBa(const unsigned char &R, const unsigned char &G,
 		const unsigned char &B, const unsigned char &A=0) 
-    : R(R), G(G), B(B), A(A)
-  {
-  };
+    : R(R), G(G), B(B), A(A) {};
 
 
   /*!
@@ -105,19 +100,13 @@ public:
     \param v : Value to set.
     
   */
-  inline vpRGBa(const unsigned char &v) 
-    : R(v), G(v), B(v), A(v)
-  {
-  };
+  inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {};
 
 
   /*!
     Copy constructor.
   */
-  inline vpRGBa(const vpRGBa &v)
-  {
-    *this = v ;
-  };
+  inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) {};
 
   /*!
     Create a RGBa value from a 4 dimension column vector.
@@ -128,10 +117,14 @@ public:
     A=v[3]
     
   */
-  inline vpRGBa(const vpColVector &v)
+  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(0)
   {
-    *this = v ;
-  }
+    *this = v;
+  };
+
+  // We cannot add here the following destructor without changing the hypothesis that the size of this class is 4.
+  // With the destructor it becomes 16 that does break a lot of things arround image conversions
+  // virtual ~vpRGBa() {}; // Not to implement
 
   vpRGBa & operator=(const unsigned char &v) ;
   vpRGBa & operator=(const vpRGBa &v) ;

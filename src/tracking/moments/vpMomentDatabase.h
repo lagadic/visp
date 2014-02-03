@@ -136,6 +136,7 @@ class VISP_EXPORT vpMomentDatabase{
         std::map<const char*,vpMoment*,cmp_str> moments;
         void add(vpMoment& moment, const char* name);
  public:
+        vpMomentDatabase() : moments() {}
         virtual ~vpMomentDatabase() {}
 
         const vpMoment& get(const char* type, bool& found) const;

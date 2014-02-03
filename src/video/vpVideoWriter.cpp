@@ -52,11 +52,23 @@
   Basic constructor.
 */
 vpVideoWriter::vpVideoWriter()
+  :
+#ifdef VISP_HAVE_FFMPEG
+    ffmpeg(NULL),
+#  if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
+    codec(CODEC_ID_MPEG1VIDEO),
+#  else
+    codec(AV_CODEC_ID_MPEG1VIDEO),
+#  endif
+    bit_rate(500000),
+    framerate(25),
+#endif
+    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
+    firstFrame(0), width(0), height(0)
 {
   initFileName = false;
   firstFrame = 0;
   frameCount = 0;
-  formatType = FORMAT_UNKNOWN;
   isOpen = false;
   width = height = 0;
 #ifdef VISP_HAVE_FFMPEG

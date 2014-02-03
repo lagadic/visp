@@ -67,17 +67,16 @@ class VISP_EXPORT vpLaserScan
 {
  public:
   /*! Default constructor that initialize all the internal variable to zero. */
-  vpLaserScan() {
-    startTimestamp = 0;
-    endTimestamp = 0;
-    measurementId = 0;
-    numSteps = 0;
-    startAngle = 0;
-    stopAngle = 0;
-    numPoints = 0;
+    vpLaserScan()
+      : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0),
+        numSteps(0), startAngle(0), stopAngle(0), numPoints(0)
+  {
   }
   /*! Copy constructor. */
-  vpLaserScan(const vpLaserScan &scan) {
+  vpLaserScan(const vpLaserScan &scan)
+    : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0),
+      numSteps(0), startAngle(0), stopAngle(0), numPoints(0)
+  {
     startTimestamp = scan.startTimestamp;
     endTimestamp = scan.endTimestamp;
     measurementId = scan.measurementId;

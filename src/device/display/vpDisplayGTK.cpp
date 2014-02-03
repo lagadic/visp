@@ -80,7 +80,7 @@
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
                            int x,
                            int y,
-                           const char *title) : vpDisplay()
+                           const char *title)
 {
   widget = NULL;
   vectgtk = NULL;
@@ -106,7 +106,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
                            int x,
                            int y,
-                           const char *title) : vpDisplay()
+                           const char *title)
 {
   widget = NULL;
   vectgtk = NULL;
@@ -144,7 +144,7 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title) : vpDisplay()
+vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
 {
   widget = NULL;
   vectgtk = NULL;
@@ -158,8 +158,10 @@ vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title) : vpDisplay()
   windowXPosition = x ;
   windowYPosition = y ;
 
-  if (title != NULL)
-    strcpy(this->title, title) ;
+  if(title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 }
 
 /*!
@@ -394,11 +396,13 @@ vpDisplayGTK::init(unsigned int width, unsigned int height,
   if (font == NULL)
     font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
 
-  if (title != NULL)
-    strcpy(this->title, title) ;
+  if(title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   displayHasBeenInitialized = true ;
-  setTitle(this->title) ;
+  gdk_window_set_title(widget->window, title_.c_str());
 }
 
 
@@ -431,8 +435,11 @@ vpDisplayGTK::setTitle(const char *title)
 {
   if (displayHasBeenInitialized)
   {
-    if (title != NULL)
-      gdk_window_set_title(widget->window,(char *)title);
+    if(title != NULL)
+      title_ = std::string(title);
+    else
+      title_ = std::string(" ");
+    gdk_window_set_title(widget->window, title_.c_str());
   }
   else
   {

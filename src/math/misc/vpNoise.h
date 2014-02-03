@@ -71,37 +71,26 @@
  */
 class VISP_EXPORT vpUniRand
 {
+    /*unsigned*/ long    a  ;
+    /*unsigned*/ long    m ; //2^31-1
+    /*unsigned*/ long    q ; //integer part of m/a
+    /*unsigned*/ long    r ;//r=m mod a
+    double    normalizer ; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
 
+  private:
+    void draw0();
+  protected:
+    long x;
+    double draw1();
 
-	/*unsigned*/ long    a  ;
-	/*unsigned*/ long    m ; //2^31-1
-	/*unsigned*/ long    q ; //integer part of m/a
-	/*unsigned*/ long    r ;//r=m mod a
-	double    normalizer ; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
+  public:
+    vpUniRand(const long seed = 0)
+      : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0), x((seed)? seed : 739806647)
+    {
+    }
+    virtual ~vpUniRand() {};
 
-
-private:
-	void draw0();
-protected:
-	long x;
-	double draw1();
-	void init()
-	{
-		a = 16807 ;
-		m = /*(unsigned long)*/2147483647 ; //2^31-1
-		q = 127773 ; //integer part of m/a
-		r = 2836 ;//r=m mod a
-		//we use a normalizer > m to ensure ans will never be
-		// 1 (it is the case if x = 739806647)
-		normalizer = 2147484721.0 ;
-	}
-
-public:
-	vpUniRand(const long seed = 0):x((seed)? seed : 739806647)
-	{
-		init() ;
-	}
-	double operator()() {return draw1();}
+    double operator()() {return draw1();}
 
 };
 
@@ -141,12 +130,7 @@ class vpGaussRand : public vpUniRand
     /*!
       Default noise generator constructor.
      */
-    vpGaussRand() {
-      init();
-      mean=0;
-      sigma=0;
-      x=739806647;
-    }
+    vpGaussRand() : vpUniRand(), mean(0), sigma(0) {}
 
     /*!
       Gaussian noise random generator constructor.
@@ -156,12 +140,7 @@ class vpGaussRand : public vpUniRand
       \param seed : Seed of the noise
     */
     vpGaussRand(const double s, const double m, const long seed = 0)
-      : mean(m), sigma(s)
-    {
-      init() ;
-      if (seed) x = seed;
-      else      x = 739806647;
-    }
+      : vpUniRand(seed), mean(m), sigma(s) {}
 
     /*!
       Set the standard deviation and mean for gaussian noise.

@@ -215,16 +215,18 @@ class vpMbHiddenFaces
   Basic constructor.
 */
 template<class PolygonType>
-vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(): nbVisiblePolygon(0)
+vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
+  : Lpol(), nbVisiblePolygon(0)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  , depthTest(false)
+#endif
+
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640);
-#endif
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  depthTest = false;
 #endif
 }
 

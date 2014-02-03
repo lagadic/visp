@@ -82,9 +82,11 @@ private:
   static const double minimum;
 public:
     
-  vpQuaternionVector() ;    
+  /*! Default constructor that initialize all the angles to zero. */
+  vpQuaternionVector() : vpRotationVector(4) {}
+  /*! Copy constructor. */
+  vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) {}
   vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
-  vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const vpRotationMatrix &R);
 
   void buildFrom(const vpRotationMatrix& R);
@@ -104,8 +106,7 @@ public:
   vpQuaternionVector operator-( vpQuaternionVector &q)  ;
   vpQuaternionVector operator-()  ;
   vpQuaternionVector operator*(const double l) ;
-  vpQuaternionVector operator* ( vpQuaternionVector &rq) ;
-  vpQuaternionVector &operator=( vpQuaternionVector &q); 
+  vpQuaternionVector operator*( vpQuaternionVector &rq) ;
 } ;
 
 #endif

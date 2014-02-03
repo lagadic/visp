@@ -91,8 +91,8 @@ vpFeatureThetaU::init()
   visual feature.
 
 */
-vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r):
-  vpBasicFeature()
+vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r)
+  : rotation(r)
 {
   //vpTRACE("0x%x", this);
   init() ;
@@ -121,15 +121,12 @@ vpFeatureThetaU::vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r):
 */
 
 vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu, 
-				 vpFeatureThetaURotationRepresentationType r):
-  vpBasicFeature()
+                                 vpFeatureThetaURotationRepresentationType r)
+  : rotation(r)
 {
   init() ;
   
   buildFrom(tu) ;
-
-  // kind of rotation representation
-  rotation = r;
 }
 
 /*!
@@ -150,16 +147,13 @@ vpFeatureThetaU::vpFeatureThetaU(vpThetaUVector &tu,
 */
 
 vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R, 
-				 vpFeatureThetaURotationRepresentationType r):
-  vpBasicFeature()
+                                 vpFeatureThetaURotationRepresentationType r)
+  : rotation(r)
 {
   init() ;
   
   vpThetaUVector tu(R) ;
   buildFrom(tu) ;
-
-  // kind of rotation representation
-  rotation = r;
 }
 
 /*!
@@ -182,17 +176,14 @@ vpFeatureThetaU::vpFeatureThetaU(vpRotationMatrix &R,
 
 */
 vpFeatureThetaU::vpFeatureThetaU(vpHomogeneousMatrix &M, 
-				 vpFeatureThetaURotationRepresentationType r):
- vpBasicFeature()
+                                 vpFeatureThetaURotationRepresentationType r)
+  : rotation(r)
 {
   init() ;
   vpRotationMatrix R ;
   M.extract(R)  ;
   vpThetaUVector tu(R) ;
   buildFrom(tu) ;
-
-  // kind of rotation representation
-  rotation = r;
 }
 
 /*!

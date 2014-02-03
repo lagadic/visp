@@ -155,12 +155,11 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
   friend class vpThetaUVector;
   
  public:
-  //! Default constructor. Initialize the angles to zero.
-  vpRxyzVector() { ; }
-    
-  // Copy constructor.
-  vpRxyzVector(const vpRxyzVector &m);
-    
+  /*! Default constructor that initialize all the angles to zero. */
+  vpRxyzVector() {}
+  /*! Copy constructor. */
+  vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz) {}
+
   /*!
     Constructor from 3 angles (in radian).
     \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
@@ -175,9 +174,6 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
 
   // initialize a Rxyz vector from a ThetaU vector
   vpRxyzVector(const vpThetaUVector&  tu) ;
-
-  // Affectation of two vectors.
-  vpRxyzVector &operator=(const vpRxyzVector &m);
 
   /*!
     Construction from 3 angles (in radian).
@@ -201,9 +197,3 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

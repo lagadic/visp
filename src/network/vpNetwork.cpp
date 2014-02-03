@@ -43,18 +43,14 @@
 #include <visp/vpNetwork.h>
 
 vpNetwork::vpNetwork()
-{
-  separator = "[*@*]";
-  beginning = "[*start*]";
-  end = "[*end*]";
-  param_sep = "[*|*]";
-  max_size_message = 999999;
+  : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(),
+    max_size_message(999999), separator("[*@*]"), beginning("[*start*]"), end("[*end*]"),
+    param_sep("[*|*]"), currentMessageReceived(), tv(), tv_sec(0), tv_usec(10),
+    verboseMode(false)
+{ 
+  tv.tv_sec = tv_sec;
+  tv.tv_usec = tv_usec;
   
-  tv.tv_sec = tv_sec = 0;
-  tv.tv_usec = tv_usec = 10;
-  
-  verboseMode = false;
-
 #if defined(_WIN32)
   //Enable the sockets to be used
   //Note that: if we were using "winsock.h" instead of "winsock2.h" we would had to use:
@@ -62,7 +58,6 @@ vpNetwork::vpNetwork()
   WSADATA WSAData;
   WSAStartup(MAKEWORD(2,0), &WSAData);
 #endif
-  socketMax = 0;
 }
 
 vpNetwork::~vpNetwork()

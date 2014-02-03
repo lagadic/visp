@@ -70,16 +70,14 @@
 
 */
 vpRobust::vpRobust(unsigned int n_data)
+  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(n_data)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
-  size=n_data;
   normres.resize(n_data); 
   sorted_normres.resize(n_data); 
   sorted_residues.resize(n_data);
-  it=0;
-  NoiseThreshold=0.0017; //Can not be more accurate than 1 pixel
-  sig_prev = swap = 0.;
+  // NoiseThreshold=0.0017; //Can not be more accurate than 1 pixel
 }
 
 /*!

@@ -71,10 +71,9 @@ vpPose::init()
 #endif
   npt = 0 ;
   listP.clear() ;
+  c3d.clear();
 
   lambda = 0.25 ;
-
-  c3d = NULL ;
 
   vvsIterMax = 200 ;
 
@@ -93,7 +92,12 @@ vpPose::init()
 
 }
 
+/*! Defaukt constructor. */
 vpPose::vpPose()
+  : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
+    computeCovariance(false), covarianceMatrix(),
+    ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacThreshold(0.0001),
+    distanceToPlaneForCoplanarityTest(0.001)
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::vpPose() " << std::endl ;
@@ -108,7 +112,7 @@ vpPose::vpPose()
 }
 
 /*!
-\brief destructor delete the array of point (freed the memory)
+  Destructor that deletes the array of point (freed the memory).
 */
 vpPose::~vpPose()
 {
@@ -123,7 +127,7 @@ vpPose::~vpPose()
 #endif
 }
 /*!
-\brief  delete the array of point
+  Delete the array of point
 */
 void
 vpPose::clearPoint()

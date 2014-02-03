@@ -54,7 +54,7 @@
 /*!
   Activates the raw mode to read keys in an non blocking way.
 */
-vpKeyboard::vpKeyboard()
+vpKeyboard::vpKeyboard() : initial_settings(), new_settings()
 {
   init();
 }

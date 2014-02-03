@@ -61,7 +61,7 @@
 /*!
   \brief initialize an homography as Identity
 */
-vpHomography::vpHomography()
+vpHomography::vpHomography() : data(NULL), aMb(), bP()
 {
   data = new double [9];
   setIdentity();
@@ -72,7 +72,7 @@ vpHomography::vpHomography()
   \brief initialize an homography from another homography
 */
 
-vpHomography::vpHomography(const vpHomography &H)
+vpHomography::vpHomography(const vpHomography &H) : data(NULL), aMb(), bP()
 {
   data = new double [9];
 
@@ -82,7 +82,7 @@ vpHomography::vpHomography(const vpHomography &H)
 /*!
   \brief initialize an homography from another homography
 */
-vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP)
+vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : data(NULL), aMb(), bP()
 {
   data = new double [9];
   buildFrom(aMb, bP) ;
@@ -90,7 +90,7 @@ vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 
 vpHomography::vpHomography(const vpThetaUVector &tu,
                            const vpTranslationVector &atb,
-                           const vpPlane &bP)
+                           const vpPlane &bP) : data(NULL), aMb(), bP()
 {
   data = new double [9];
   buildFrom(tu, atb, bP) ;
@@ -98,13 +98,13 @@ vpHomography::vpHomography(const vpThetaUVector &tu,
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb,
                            const vpTranslationVector &atb,
-                           const vpPlane &bP)
+                           const vpPlane &bP) : data(NULL), aMb(), bP()
 {
   data = new double [9];
   buildFrom(aRb, atb, bP) ;
 }
 
-vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &bP)
+vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &bP) : data(NULL), aMb(), bP()
 {
   data = new double [9];
   buildFrom(arb, bP) ;

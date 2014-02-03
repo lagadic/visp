@@ -93,6 +93,9 @@ public: /* Constants */
 public: /* Methodes publiques */
 
   vpPtu46 (void);
+  /*! Destructor that does nothing. */
+  virtual ~vpPtu46() {};
+
   void init (void);
 
   void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;

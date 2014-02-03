@@ -99,64 +99,46 @@ void vpKltOpencv::reset()
 
 }
 
+/*!
+  Default constructor.
+ */
 vpKltOpencv::vpKltOpencv()
+  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10), quality(0.01),
+    min_distance(10), harris_free_parameter(0.04), block_size(3), use_harris(1),
+    pyramid_level(3), _tid(-1), image(NULL), prev_image(NULL), pyramid(NULL),
+    prev_pyramid(NULL), swap_temp(NULL), countFeatures(0), countPrevFeatures(0),
+    features(NULL), prev_features(NULL), featuresid(NULL), prev_featuresid(NULL),
+    flags(0), initial_guess(false), lostDuringTrack(0), status(0), OnInitialize(0),
+    OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0), IsFeatureValid(0)
 {
-  //Valeurs par d�faut pour le KLT
-  initialized = 0;
-  maxFeatures = 50;
-  countFeatures = 0;
-  countPrevFeatures = 0;
-  globalcountFeatures = 0;
-  win_size = 10;
-  quality = 0.01;
-  min_distance = 10;
-  block_size = 3;
-  use_harris = 1;
-  pyramid_level = 3;
-  harris_free_parameter = 0.04;
-
-  //Zeroing pointers
-  image = NULL;
-  prev_image = NULL;
-  pyramid = NULL;
-  prev_pyramid = NULL;
-  swap_temp = NULL;
-  features = NULL;
-  prev_features = NULL;
-  flags = 0;
-  status = 0;
-  lostDuringTrack = 0;
-  featuresid = NULL;
-  prev_featuresid = NULL;
-  OnInitialize = 0;
-  OnFeatureLost = 0;
-  OnNewFeature = 0;
-  OnMeasureFeature = 0;
-  IsFeatureValid = 0;
-  initial_guess = false;
-
   features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(features[0]));
   prev_features = (CvPoint2D32f*)cvAlloc((unsigned int)maxFeatures*sizeof(prev_features[0]));
   status = (char*)cvAlloc((size_t)maxFeatures);
   lostDuringTrack = (bool*)cvAlloc((size_t)maxFeatures);
   featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
   prev_featuresid = (long*)cvAlloc((unsigned int)maxFeatures*sizeof(long));
-
-  _tid = -1;
 }
 
+/*!
+  Copy constructor.
+ */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
+  : initialized(0), maxFeatures(50), globalcountFeatures(0), win_size(10), quality(0.01),
+    min_distance(10), harris_free_parameter(0.04), block_size(3), use_harris(1),
+    pyramid_level(3), _tid(-1), image(NULL), prev_image(NULL), pyramid(NULL),
+    prev_pyramid(NULL), swap_temp(NULL), countFeatures(0), countPrevFeatures(0),
+    features(NULL), prev_features(NULL), featuresid(NULL), prev_featuresid(NULL),
+    flags(0), initial_guess(false), lostDuringTrack(0), status(0), OnInitialize(0),
+    OnFeatureLost(0), OnNewFeature(0), OnMeasureFeature(0), IsFeatureValid(0)
 {
-  image = NULL;
-  prev_image = NULL;
-  pyramid = NULL;
-  prev_pyramid = NULL;
-  features = NULL;
-  prev_features = NULL;
-  prev_featuresid = NULL;
-  featuresid = NULL;
-  swap_temp = NULL;
+  *this = copy;
+}
 
+/*!
+  Copy operator.
+ */
+vpKltOpencv & vpKltOpencv::operator=(const vpKltOpencv& copy)
+{
   //Shallow copy of primitives
   initialized = copy.initialized;
   maxFeatures = copy.maxFeatures;
@@ -258,6 +240,8 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
     for (int i = 0; i < copy.maxFeatures; i++)
       lostDuringTrack[i] = copy.lostDuringTrack[i];
   }
+
+  return *this;
 }
 
 vpKltOpencv::~vpKltOpencv()

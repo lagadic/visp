@@ -68,13 +68,7 @@ vpPlane::operator =(const vpPlane& p)
 /*!
   Basic constructor that set the plane parameters A, B, C, D to zero.
 */
-vpPlane::vpPlane()
-{
-  setA(0) ;
-  setB(0) ;
-  setC(0) ;
-  setD(0) ;
-}
+vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
 
 /*!
   Plane constructor from A, B, C, D parameters.
@@ -87,17 +81,13 @@ vpPlane::vpPlane()
 
 */
 vpPlane::vpPlane(const double A,const double B,const double C, const double D)
-{
-  setA(A) ;
-  setB(B) ;
-  setC(C) ;
-  setD(D) ;
-}
+  : A(A), B(B), C(C), D(D) {}
 
 /*!
   Copy constructor.
 */
 vpPlane::vpPlane(const vpPlane& P)
+  : A(0), B(0), C(0), D(0)
 {
   setA(P.getA()) ;
   setB(P.getB()) ;
@@ -120,6 +110,7 @@ vpPlane::vpPlane(const vpPlane& P)
 
 */
 vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
+  : A(0), B(0), C(0), D(0)
 {
   //Equation of the plane is given by:
   A = n[0];
@@ -211,6 +202,7 @@ vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
   \sa init(const vpPoint &, const vpPoint &, const vpPoint &)
 */
 vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
+  : A(0), B(0), C(0), D(0)
 {
   init(P,Q,R) ;
 }

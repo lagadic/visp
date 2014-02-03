@@ -57,8 +57,8 @@
   \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 vpPolygon::vpPolygon()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
 {
-  _goodPoly = true;
   std::vector<vpImagePoint> corners;
   corners.push_back(vpImagePoint(0,0));
   corners.push_back(vpImagePoint(1,0));
@@ -74,6 +74,7 @@ vpPolygon::vpPolygon()
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
 {
   if(corners.size() < 3){
     _goodPoly = false;
@@ -87,11 +88,13 @@ vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
   \param poly : The polygon used for the initialisation.
 */
 vpPolygon::vpPolygon(const vpPolygon &poly)
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
 {
   _corners = poly._corners;
   _center = poly._center;
   _area = poly._area;
   _goodPoly = poly._goodPoly;
+  _bbox = poly._bbox;
 }
 
 /*!

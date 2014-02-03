@@ -115,7 +115,8 @@ private:
                                            const vpCameraParameters &cam, const std::vector<vpColVector> &fovNormals);
     
 public: 
-                           vpMbtPolygon() ;
+            vpMbtPolygon() ;
+            vpMbtPolygon(const vpMbtPolygon& mbtp) ;
             virtual       ~vpMbtPolygon() ;
                                     
             void          addPoint(const unsigned int n, const vpPoint &P) ;               
@@ -187,7 +188,9 @@ public:
   inline    bool          isAppearing() const {return isappearing;}
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false) ;
             bool          isVisible() const {return isvisible;}
-            
+
+            vpMbtPolygon& operator=(const vpMbtPolygon& mbtp) ;
+
   /*!
     Specify which clipping to use.
     

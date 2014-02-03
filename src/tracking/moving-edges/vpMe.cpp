@@ -411,34 +411,28 @@ vpMe::print( )
 }
 
 vpMe::vpMe()
+  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0),
+    range(4), sample_step(10), ntotal_sample(0), points_to_track(500), mask_size(5),
+    n_mask(180), strip(2), mask(NULL)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  , aberration(2), init_aberration(5.)
+#endif
 {
-  mask = NULL ;
-  threshold = 1500 ;
-  mu1 = 0.5 ;
-  mu2 = 0.5 ;
-  sample_step = 10 ;
-  range = 4 ;
-  mask_size = 5 ;
-  n_mask = 180 ;
-  mask_sign = 0 ;
-  ntotal_sample = 0; // not sure that it is used
-  points_to_track = 500; // not sure that it is used
+  //ntotal_sample = 0; // not sure that it is used
+  //points_to_track = 500; // not sure that it is used
   anglestep = (180 / n_mask) ;
-  strip = 2 ;
-  min_samplestep = 4 ;
-  
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  aberration = 2.0 ;
-  init_aberration = 5.0 ;
-  #endif
-  
+    
   initMask() ;
 }
 
 vpMe::vpMe(const vpMe &me)
+  : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0),
+    range(4), sample_step(10), ntotal_sample(0), points_to_track(500), mask_size(5),
+    n_mask(180), strip(2), mask(NULL)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  , aberration(2), init_aberration(5.)
+#endif
 {
-  mask = NULL ;
-  
   *this = me;
 }
 

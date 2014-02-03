@@ -49,20 +49,14 @@
 
 */
 vpMbtKltPolygon::vpMbtKltPolygon()
+  : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
+    nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.), cam()
 {
-  minNbPoint = 4;
-  enoughPoints = false;
-  
-  nbPointsInit = 0;
-  nbPointsCur = 0;
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
   
   isvisible = false;
-
-  invd0 = 1.;
-  dt = d0 = 1.;
 }
 
 /*!

@@ -102,7 +102,7 @@ public:
   /*!
     Create a pioneer mobile robot equiped with a pan head.
     */
-  vpPioneerPan() : vpUnicycle()
+    vpPioneerPan() : mMp_(), pMe_()
   {
     double q = 0; // Initial position of the pan axis
     set_mMp();

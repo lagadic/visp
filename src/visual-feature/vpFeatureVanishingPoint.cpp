@@ -77,7 +77,7 @@ vpFeatureVanishingPoint::init()
     //set_Z(1) ;
 
 }
-vpFeatureVanishingPoint::vpFeatureVanishingPoint() : vpBasicFeature()
+vpFeatureVanishingPoint::vpFeatureVanishingPoint()
 {
     init() ;
 }

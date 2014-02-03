@@ -121,14 +121,14 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*! The velocity in the current frame (articular, camera or reference)*/
     vpColVector velocity;
 
-	#if defined(_WIN32)
-    HANDLE  hThread;
-	HANDLE mutex_fMi;
+#if defined(_WIN32)
+    HANDLE hThread;
+    HANDLE mutex_fMi;
     HANDLE mutex_artVel;
     HANDLE mutex_artCoord;
     HANDLE mutex_velocity;
     HANDLE mutex_display;
-    #elif defined(VISP_HAVE_PTHREAD)
+#elif defined(VISP_HAVE_PTHREAD)
     pthread_t thread;
     pthread_attr_t attr;
     pthread_mutex_t mutex_fMi;
@@ -136,7 +136,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     pthread_mutex_t mutex_artCoord;
     pthread_mutex_t mutex_velocity;
     pthread_mutex_t mutex_display;
-    #endif
+#endif
     
     bool displayBusy;
 

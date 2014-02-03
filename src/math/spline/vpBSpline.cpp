@@ -49,8 +49,9 @@
   compute cubic B-Spline.
 */
 vpBSpline::vpBSpline()
+  : controlPoints(), knots(), p(3), // By default : p=3 for clubic spline
+    crossingPoints()
 {
-  p = 3;  //By default : clubic spline
 }
 
 /*!
@@ -58,6 +59,8 @@ vpBSpline::vpBSpline()
   
 */
 vpBSpline::vpBSpline(const vpBSpline &bspline)
+  : controlPoints(), knots(), p(3), // By default : p=3 for clubic spline
+    crossingPoints()
 {
   controlPoints = bspline.controlPoints;
   knots = bspline.knots;

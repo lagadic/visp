@@ -81,15 +81,17 @@ private:
 public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpServoData(const vpServoData &) {
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+  vpServoData(const vpServoData &sd)
+    : velocityFile(), errorFile(), errorNormFile(), sFile(),
+      sStarFile(), vNormFile(), cmDeg(false) {
+    *this = sd;
   }      
-  void operator=(const vpServoData &){
+  vpServoData & operator=(const vpServoData &) {
     throw vpException(vpException::functionNotImplementedError,"Not implemented!");
   }
 #endif
 
-  vpServoData() { ; }
+  vpServoData() : velocityFile(), errorFile(), errorNormFile(), sFile(), sStarFile(), vNormFile(), cmDeg(false) { ; }
   virtual ~vpServoData() { ; }
 
   //! velocity output in cm and deg

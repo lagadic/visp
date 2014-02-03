@@ -76,6 +76,8 @@ int vpCalibration::init()
   Default constructor.
  */
 vpCalibration::vpCalibration()
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(),
+    npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.), residual_dist(1000.)
 {
   init() ;
 }
@@ -83,6 +85,8 @@ vpCalibration::vpCalibration()
   Copy constructor.
  */
 vpCalibration::vpCalibration(const vpCalibration &c)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(),
+    npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.), residual_dist(1000.)
 {
   (*this) = c;
 }
@@ -101,7 +105,7 @@ vpCalibration::~vpCalibration()
 
   \param twinCalibration : object to be copied
 */
-void vpCalibration::operator=(const vpCalibration& twinCalibration )
+vpCalibration& vpCalibration::operator=(const vpCalibration& twinCalibration )
 {
   npt = twinCalibration.npt ;
   LoX = twinCalibration.LoX ;
@@ -121,6 +125,8 @@ void vpCalibration::operator=(const vpCalibration& twinCalibration )
 
   eMc = twinCalibration.eMc;
   eMc_dist = twinCalibration.eMc_dist;
+
+  return (*this);
 }
 
 

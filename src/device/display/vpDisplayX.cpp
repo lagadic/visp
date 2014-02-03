@@ -79,7 +79,7 @@
 vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          int x,
                          int y,
-                         const char *title ) : vpDisplay()
+                         const char *title )
 {
   size = 0;
   x_color = NULL;
@@ -99,7 +99,7 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
 vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int x,
                          int y,
-                         const char *title ) : vpDisplay()
+                         const char *title )
 {
   size = 0;
   x_color = NULL;
@@ -128,7 +128,7 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX ( int x, int y, const char *title )  : vpDisplay()
+vpDisplayX::vpDisplayX ( int x, int y, const char *title )
 {
   windowXPosition = x ;
   windowYPosition = y ;
@@ -136,7 +136,9 @@ vpDisplayX::vpDisplayX ( int x, int y, const char *title )  : vpDisplay()
   this->x_color = NULL;
 
   if (title != NULL)
-    strcpy (this->title, title);
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   ximage_data_init = false;
 
@@ -162,7 +164,7 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX() : vpDisplay()
+vpDisplayX::vpDisplayX()
 {
   x_color = NULL;
   ximage_data_init = false;
@@ -200,8 +202,10 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   if (y != -1)
     windowYPosition = y ;
 
-  if ( title != NULL )
-    strcpy ( this->title, title ) ;
+  if (title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   // Positionnement de la fenetre dans l'�cran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
@@ -573,7 +577,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
     }
   }
 
-  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title_.c_str(), this->title_.c_str(), None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -617,7 +621,9 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
 
   }
   displayHasBeenInitialized = true ;
-  setTitle ( this->title ) ;
+
+  XStoreName ( display, window, title_.c_str() );
+
   XSync ( display, 1 );
 
   I.display = this ;
@@ -647,10 +653,12 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     x_color= new unsigned long [vpColor::id_unknown]; 
   }
 
-  if ( title != NULL )
-    strcpy ( this->title, title ) ;
+  if (title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
-  // Positionnement de la fenetre dans l'�cran.
+  // Positionnement de la fenetre dans l'ecran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -1024,7 +1032,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     }
   }
 
-  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title_.c_str(), this->title_.c_str(), None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -1072,7 +1080,8 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
   displayHasBeenInitialized = true ;
 
   XSync ( display, true );
-  setTitle ( this->title ) ;
+
+  XStoreName ( display, window, title_.c_str() );
 
   I.display = this ;
 }
@@ -1111,8 +1120,10 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
     hints.y = windowYPosition;
   }
 
-  if ( title != NULL )
-    strcpy ( this->title, title ) ;
+  if (title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   if ( ( display = XOpenDisplay ( NULL ) ) == NULL )
   {
@@ -1494,7 +1505,7 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
     }
   }
 
-  XSetStandardProperties ( display, window, this->title, this->title, None, 0, 0, &hints );
+  XSetStandardProperties ( display, window, this->title_.c_str(), this->title_.c_str(), None, 0, 0, &hints );
   XMapWindow ( display, window ) ;
   // Selection des evenements.
   XSelectInput ( display, window,
@@ -1539,8 +1550,8 @@ void vpDisplayX::init ( unsigned int width, unsigned int height,
   displayHasBeenInitialized = true ;
 
   XSync ( display, true );
-  setTitle ( this->title ) ;
 
+  XStoreName ( display, window, title_.c_str() );
 }
 
 /*!  
@@ -1593,7 +1604,11 @@ vpDisplayX::setTitle ( const char *title )
 {
   if ( displayHasBeenInitialized )
   {
-    XStoreName ( display, window, title );
+    if(title != NULL)
+      title_ = std::string(title);
+    else
+      title_ = std::string(" ");
+    XStoreName ( display, window, title_.c_str() );
   }
   else
   {

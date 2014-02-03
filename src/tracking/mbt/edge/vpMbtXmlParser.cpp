@@ -58,7 +58,7 @@
   Default constructor. 
   
 */
-vpMbtXmlParser::vpMbtXmlParser()
+vpMbtXmlParser::vpMbtXmlParser() : m_ecm()
 {
   init();
 }

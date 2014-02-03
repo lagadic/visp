@@ -58,7 +58,7 @@ const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 void vpCreateWindow(threadParam * param)
 {
   //char* title = param->title;
-  (param->vpDisp)->window.initWindow(param->title, param->x, param->y,
+  (param->vpDisp)->window.initWindow(param->title.c_str(), param->x, param->y,
 				     param->w, param->h);
   delete param;
 }
@@ -150,7 +150,9 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
 			  const char *title)
 {
   if (title != NULL)
-    strcpy(this->title, title) ;
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 
   if (x != -1)
     windowXPosition = x;
@@ -164,7 +166,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
   param->w = width;
   param->h = height;
   param->vpDisp = this;
-  param->title = this->title;
+  param->title = this->title_;
 
   //creates the window in a separate thread
   hThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)vpCreateWindow,

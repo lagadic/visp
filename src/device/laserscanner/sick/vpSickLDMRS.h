@@ -48,7 +48,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <vector>
-
+#include <string.h>
 
 #include <visp/vpScanPoint.h>
 #include <visp/vpLaserScan.h>
@@ -118,11 +118,27 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
   };
   vpSickLDMRS();
   /*! Copy constructor. */
-  vpSickLDMRS(const vpSickLDMRS &sick) : vpLaserScanner(sick) {
-    socket_fd = sick.socket_fd;
-    body = new unsigned char [104000];
+  vpSickLDMRS(const vpSickLDMRS &sick)
+    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0),
+      isFirstMeasure(true), maxlen_body(104000)
+ {
+    *this = sick;
   };
   virtual ~vpSickLDMRS();
+  /*! Copy constructor. */
+  vpSickLDMRS &operator=(const vpSickLDMRS &sick)
+  {
+    socket_fd = sick.socket_fd;
+    vAngle = sick.vAngle;
+    time_offset = sick.time_offset;
+    isFirstMeasure = sick.isFirstMeasure;
+    maxlen_body = sick.maxlen_body;
+    if (body) delete [] body;
+    body = new unsigned char [104000];
+    memcpy(body, sick.body, maxlen_body);
+    return (*this);
+  };
+
   bool setup(std::string ip, int port);
   bool setup();
   bool measure(vpLaserScan laserscan[4]);
@@ -133,11 +149,11 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 #else
   int socket_fd;  
 #endif
- private:
   unsigned char *body;
   vpColVector vAngle; // constant vertical angle for each layer
   double time_offset;
   bool isFirstMeasure;
+  size_t maxlen_body;
  };
 
 #endif

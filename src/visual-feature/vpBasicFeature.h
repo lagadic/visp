@@ -106,6 +106,8 @@ public:
   virtual void init() = 0 ;
 
   vpBasicFeature() ;
+  vpBasicFeature(const vpBasicFeature &f) ;
+  vpBasicFeature &operator=(const vpBasicFeature &f) ;
   virtual ~vpBasicFeature() { /*vpTRACE("0x%x", this)*/; }
   //! Return element \e i in the state vector  (usage : x = s[i] )
   virtual inline double operator[](const unsigned int i) const {  return s[i]; }

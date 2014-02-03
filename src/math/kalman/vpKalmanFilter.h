@@ -130,6 +130,8 @@ public:
   vpKalmanFilter() ;
   vpKalmanFilter(unsigned int nsignal) ;
   vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int nsignal) ;
+  /*! Destructor that does noting. */
+  virtual ~vpKalmanFilter() {};
   /*!
     Set the number of signal to filter.
   */

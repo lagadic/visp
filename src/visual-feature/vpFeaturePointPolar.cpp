@@ -108,7 +108,7 @@ vpFeaturePointPolar::init()
   matrix (see interaction()) is initialized to \f$Z=1\f$.
 
 */
-vpFeaturePointPolar::vpFeaturePointPolar() : vpBasicFeature()
+vpFeaturePointPolar::vpFeaturePointPolar() : Z(1.)
 {
     init() ;
 }

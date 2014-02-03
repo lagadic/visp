@@ -139,6 +139,7 @@ const vpViper650::vpToolType vpViper650::defaultTool = vpViper650::TOOL_PTGREY_F
 
 */
 vpViper650::vpViper650()
+  : tool_current(vpViper650::defaultTool), projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
   // Denavit Hartenberg parameters
   a1 = 0.075;

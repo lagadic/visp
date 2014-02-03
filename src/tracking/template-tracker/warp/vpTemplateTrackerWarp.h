@@ -63,7 +63,7 @@ class VISP_EXPORT vpTemplateTrackerWarp
     
   public:
     //constructor;
-    vpTemplateTrackerWarp(){ nbParam = 0; denom = 1.;}
+    vpTemplateTrackerWarp() : denom(1.), dW(), nbParam(0) {}
     virtual ~vpTemplateTrackerWarp(){}
 
     #ifndef DOXYGEN_SHOULD_SKIP_THIS

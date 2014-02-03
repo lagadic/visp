@@ -58,9 +58,8 @@
   
   Initialise the main tag with default value.
 */
-vpXmlParser::vpXmlParser()
+vpXmlParser::vpXmlParser() : nodeMap(), main_tag("config")
 {
-  main_tag = "config";
 }
 
 /*!
@@ -88,6 +87,7 @@ vpXmlParser::~vpXmlParser()
   \param _twin : The parser to copy.
 */
 vpXmlParser::vpXmlParser(const vpXmlParser& _twin)
+ : nodeMap(), main_tag("config")
 {
   main_tag = _twin.main_tag;
   nodeMap = _twin.nodeMap;

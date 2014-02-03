@@ -57,7 +57,10 @@ const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 /*!
   Basic constructor
 */
-vpSimulatorViper850::vpSimulatorViper850():vpRobotWireFrameSimulator(), vpViper850()
+vpSimulatorViper850::vpSimulatorViper850()
+  : vpRobotWireFrameSimulator(), vpViper850(),
+    q_prev_getdis(), first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
+    zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
@@ -102,7 +105,10 @@ vpSimulatorViper850::vpSimulatorViper850():vpRobotWireFrameSimulator(), vpViper8
   \param display : When true, enables the display of the external view.
 
 */
-vpSimulatorViper850::vpSimulatorViper850(bool display):vpRobotWireFrameSimulator(display)
+vpSimulatorViper850::vpSimulatorViper850(bool display)
+  : vpRobotWireFrameSimulator(display),
+    q_prev_getdis(), first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
+    zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();

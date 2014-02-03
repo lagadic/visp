@@ -44,13 +44,11 @@
 #include <visp/vpTemplateTrackerZNCCInverseCompositional.h>
 #include <visp/vpImageFilter.h>
 
-vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp):vpTemplateTrackerZNCC(warp)
+vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerZNCC(warp), compoInitialised(false),
+    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-8), moydIrefdp()
 {
   useInverse=true;
-  compoInitialised=false;
-  threshold_RMS=1e-8;
-  evolRMS = 0.;
-  x_pos = y_pos = NULL;
 }
 
 void vpTemplateTrackerZNCCInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)

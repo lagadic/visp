@@ -42,7 +42,8 @@
 
 #include <visp/vpTemplateTrackerSSD.h>
 
-vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp):vpTemplateTracker(warp)
+vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
+  : vpTemplateTracker(warp), DI(), temp(), tG()
 {
   dW.resize(2,nbParam);
   G.resize(nbParam);

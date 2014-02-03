@@ -53,18 +53,50 @@ const double vpRobot::maxRotationVelocityDefault = 0.7;
 
 vpRobot::vpRobot (void)
   :
+  stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
   maxTranslationVelocity (maxTranslationVelocityDefault),
-  maxRotationVelocity (maxRotationVelocityDefault)
+  maxRotationVelocity (maxRotationVelocityDefault),
+  nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false),
+  qmin(NULL), qmax(NULL), verbose_(true)
 {
-  frameRobot = vpRobot::CAMERA_FRAME;
-  stateRobot = vpRobot::STATE_STOP ;
-  verbose_ = true;
-  nDof = 0;
-  eJeAvailable = fJeAvailable = areJointLimitsAvailable = false;
-  qmin = 0;
-  qmax = 0;
 }
 
+vpRobot::vpRobot (const vpRobot &robot)
+  :
+  stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
+  maxTranslationVelocity (maxTranslationVelocityDefault),
+  maxRotationVelocity (maxRotationVelocityDefault),
+  nDof(0),
+  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false),
+  qmin(NULL), qmax(NULL), verbose_(true)
+{
+  *this = robot;
+}
+
+/*! Copy operator. */
+vpRobot & vpRobot::operator=(const vpRobot &robot)
+{
+  stateRobot = robot.stateRobot;
+  frameRobot = robot.frameRobot;
+  maxTranslationVelocity = robot.maxTranslationVelocity;
+  maxRotationVelocity = robot.maxRotationVelocity;
+  nDof = robot.nDof;
+  eJe = robot.eJe;
+  eJeAvailable = robot.eJeAvailable;
+  fJe= robot.fJe;
+  fJeAvailable = robot.fJeAvailable;
+  areJointLimitsAvailable = robot.areJointLimitsAvailable;
+  qmin = new double [nDof];
+  qmax = new double [nDof];
+  for (int i = 0; i< nDof; i++) {
+    qmin[i] = robot.qmin[i];
+    qmax[i] = robot.qmax[i];
+  }
+  verbose_ = robot.verbose_;
+
+  return (*this);
+}
 /*!
   Saturate velocities.
 

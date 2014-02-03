@@ -123,9 +123,3 @@ void vpRotationVector::init(const unsigned int size){
 vpRotationVector::~vpRotationVector(){
 	delete[] r;
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

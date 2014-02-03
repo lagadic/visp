@@ -93,10 +93,9 @@
 
 */
 vpMbTracker::vpMbTracker()
+  : cam(), cMo(), modelFileName(), modelInitialised(false),
+    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false)
 {
-  modelInitialised = false;
-  computeCovariance = false;
-  displayFeatures = false;
 }
 
 /*!

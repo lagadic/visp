@@ -92,11 +92,10 @@ vpFeatureTranslation::init()
   \param r : Type of considered 3D translation feature. 
 
 */
-vpFeatureTranslation::vpFeatureTranslation(vpFeatureTranslationRepresentationType r) : vpBasicFeature()
+vpFeatureTranslation::vpFeatureTranslation(vpFeatureTranslationRepresentationType r)
+  : f2Mf1(), translation(r)
 {
   init() ;
-
-  translation = r;
 }
 
 
@@ -110,11 +109,10 @@ vpFeatureTranslation::vpFeatureTranslation(vpFeatureTranslationRepresentationTyp
   \param r : type of feature. It can be vpFeature::cdMc or vpFeature::cMo.
 
 */
-vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r) : vpBasicFeature()
+vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r)
+  : f2Mf1(), translation(r)
 {
   init() ;
-
-  translation = r;
 
   buildFrom(f2Mf1) ;
 }

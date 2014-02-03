@@ -75,14 +75,26 @@
 
 */
 vpServo::vpServo() 
+  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE),
+    rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
+    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
+    cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
+    errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), sv()
 {
-  init();
 }
-
+/*!
+  Constrcutor that does the initialization of the visual servoing type.
+   \param _servoType : Visual servoing type.
+ */
 vpServo::vpServo(vpServoType _servoType)
+  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(_servoType),
+    rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
+    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
+    cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
+    errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), sv()
 {
-  init();
-  setServo(_servoType);
 }
 
 /*!
@@ -125,8 +137,7 @@ vpServo::~vpServo()
     \f$ v = \lambda \; L^t \; e\f$ .
 
 */
-void
-    vpServo::init()
+void vpServo::init()
 {
   // type of visual servoing
   servoType = vpServo::NONE ;

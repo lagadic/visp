@@ -202,6 +202,7 @@ class VISP_EXPORT vpKltOpencv
   //Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
 
+  vpKltOpencv & operator=(const vpKltOpencv& copy);
   //Track !
   void track(const IplImage *I);
 

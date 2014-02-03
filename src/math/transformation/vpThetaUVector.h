@@ -148,10 +148,10 @@ private:
 
 public:
 
-  // constructor
-  vpThetaUVector() { ; }
-  // copy constructor
-  vpThetaUVector(const vpThetaUVector &tu) ;
+  /*! Default constructor that initialize all the angles to zero. */
+  vpThetaUVector() {}
+  /*! Copy constructor. */
+  vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) {}
 
   // constructor initialize a Theta U vector from a homogeneous matrix
   vpThetaUVector(const vpHomogeneousMatrix & M) ;
@@ -181,8 +181,6 @@ public:
   // convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
 
-  // copy operator
-  vpThetaUVector &operator=(const vpThetaUVector &tu);
   vpThetaUVector &operator=(double x) ;
 
   // extract the angle and the axis from the ThetaU representation

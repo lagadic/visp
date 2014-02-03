@@ -113,7 +113,7 @@ vpFeatureLine::init()
 /*! 
   Default constructor that build a visual feature.
 */
-vpFeatureLine::vpFeatureLine() : vpBasicFeature()
+vpFeatureLine::vpFeatureLine() : A(0), B(0), C(0), D(0)
 {
     init() ;
 }

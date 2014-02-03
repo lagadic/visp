@@ -116,7 +116,9 @@ public:
   void init(unsigned int _nbr, unsigned int _nbc, double _Z) ;
 
   vpFeatureLuminance() ;
- 
+  vpFeatureLuminance(const vpFeatureLuminance& f) ;
+  vpFeatureLuminance &operator=(const vpFeatureLuminance& f) ;
+
   //! Destructor.
   virtual ~vpFeatureLuminance()  ;
 

@@ -57,7 +57,7 @@
   world frame and camera frame to identity.
 
 */
-vpSimulatorCamera::vpSimulatorCamera()
+vpSimulatorCamera::vpSimulatorCamera() : wMc_()
 {
   init() ;
 }

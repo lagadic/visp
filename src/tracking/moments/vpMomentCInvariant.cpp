@@ -47,11 +47,10 @@
   Default constructor.
   (option to use a different calculation mode for sx and sy)
 */
-vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization) : vpMoment(),I(16),II(4),c(4),s(4), K(0.0), cn(4),sn(4), In1(0.0){
-
+vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization)
+  : I(16),II(4),c(4),s(4), K(0.0), cn(4),sn(4), In1(0.0), flg_sxsynormalization_(flg_sxsynormalization)
+{
   values.resize(14);
-
-  flg_sxsynormalization_ = flg_sxsynormalization;
 }
 
 /*!

@@ -154,6 +154,9 @@ const unsigned int vpAfma6::njoint = 6;
 
 */
 vpAfma6::vpAfma6()
+  : _coupl_56(0), _long_56(0), _etc(), _erc(), _eMc(),
+    tool_current(vpAfma6::defaultTool),
+    projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
   // Set the default parameters in case of the config files on the NAS
   // at Inria are not available.

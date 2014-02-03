@@ -58,17 +58,13 @@
 	Basic Constructor.
 */
 vpOpenCVGrabber::vpOpenCVGrabber()
+  : capture(NULL), DeviceType(0), flip(false)
 {
 	// public memebers
 	init = false;
 
 	// protected members
 	width = height = 0;
-
-	// private members
-	capture = NULL;
-	DeviceType = 0;
-	flip = false;
 }
 
 

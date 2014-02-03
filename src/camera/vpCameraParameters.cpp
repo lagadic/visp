@@ -75,12 +75,15 @@ const vpCameraParameters::vpCameraParametersProjType
   \sa init()
 */
 vpCameraParameters::vpCameraParameters()
+  :
+    px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
+    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
+    width(0), height(0),
+    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
+    projModel(DEFAULT_PROJ_TYPE)
 {
-  isFov = false;
-  fovAngleX = 0;
-  fovAngleY = 0;
-  width = 0;
-  height = 0;
   init() ;
 }
 
@@ -88,6 +91,14 @@ vpCameraParameters::vpCameraParameters()
   Copy constructor
  */
 vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
+  :
+    px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
+    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
+    width(0), height(0),
+    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
+    projModel(DEFAULT_PROJ_TYPE)
 {
   init(c) ;
 }
@@ -101,12 +112,15 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
  */
 vpCameraParameters::vpCameraParameters(const double px, const double py,
                                        const double u0, const double v0)
+  :
+    px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
+    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
+    width(0), height(0),
+    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
+    projModel(DEFAULT_PROJ_TYPE)
 {
-  isFov = false;
-  fovAngleX = 0;
-  fovAngleY = 0;
-  width = 0;
-  height = 0;
   initPersProjWithoutDistortion(px,py,u0,v0) ;
 }
 
@@ -122,12 +136,15 @@ vpCameraParameters::vpCameraParameters(const double px, const double py,
 vpCameraParameters::vpCameraParameters(const double px, const double py,
                                        const double u0, const double v0,
                                        const double kud, const double kdu)
+  :
+    px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
+    u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
+    width(0), height(0),
+    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
+    projModel(DEFAULT_PROJ_TYPE)
 {
-  isFov = false;
-  fovAngleX = 0;
-  fovAngleY = 0;
-  width = 0;
-  height = 0;
   initPersProjWithDistortion(px,py,u0,v0,kud,kdu) ;
 }
 
@@ -136,16 +153,7 @@ vpCameraParameters::vpCameraParameters(const double px, const double py,
 */
 void
 vpCameraParameters::init()
-{
-  this->projModel = DEFAULT_PROJ_TYPE ;
-  
-  this->px    = DEFAULT_PX_PARAMETER ;
-  this->py    = DEFAULT_PY_PARAMETER ;
-  this->u0    = DEFAULT_U0_PARAMETER ;
-  this->v0    = DEFAULT_V0_PARAMETER ;
-  this->kud   = DEFAULT_KUD_PARAMETER ;
-  this->kdu   = DEFAULT_KDU_PARAMETER ;
-  
+{  
   if (fabs(this->px)<1e-6)
   {
     vpERROR_TRACE("Camera parameter px = 0") ;

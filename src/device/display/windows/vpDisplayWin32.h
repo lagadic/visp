@@ -46,6 +46,8 @@
 #ifndef vpDisplayWin32_hh
 #define vpDisplayWin32_hh
 
+#include <string>
+
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <windows.h>
@@ -76,7 +78,7 @@ struct threadParam
   unsigned int h;
 
   //! Title of the window.
-  char * title;
+  std::string title;
 };
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 

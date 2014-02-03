@@ -42,16 +42,13 @@
 #include <visp/vpTemplateTrackerSSDInverseCompositional.h>
 #include <visp/vpImageTools.h>
 
-vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp):vpTemplateTrackerSSD(warp)
+vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp)
+  : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(), HCompInverse(), useTemplateSelect(false),
+    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-8)
 {
   useInverse=true;
-  compoInitialised=false;
   HInv.resize(nbParam,nbParam);
   HCompInverse.resize(nbParam,nbParam);
-  useTemplateSelect=false;
-  threshold_RMS=1e-8;
-  evolRMS = 0;
-  x_pos = y_pos = NULL;
 }
 
 void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<unsigned char> &/*I*/)

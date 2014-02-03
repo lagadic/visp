@@ -162,7 +162,11 @@ class VISP_EXPORT vpFeatureMomentDatabase{
   void add(vpFeatureMoment& featureMoment,char* name);
  public:
   /*!
-    virtual destructor.
+    Default constructor.
+  */
+  vpFeatureMomentDatabase() {}
+  /*!
+    Virtual destructor that does nothing.
   */
   virtual ~vpFeatureMomentDatabase() {}
   virtual void updateAll(double A=0.0, double B=0.0, double C=1.0);

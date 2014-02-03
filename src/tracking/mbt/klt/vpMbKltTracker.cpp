@@ -44,14 +44,11 @@
 #ifdef VISP_HAVE_OPENCV
 
 vpMbKltTracker::vpMbKltTracker()
-{
-  
-  cur = NULL;
-  compute_interaction = true;
-  firstInitialisation = true;
-  computeCovariance = false;
-  firstTrack = false;
-  
+  : cur(NULL), c0Mo(), angleAppears(0), angleDisappears(0), compute_interaction(true),
+    firstInitialisation(true), maskBorder(5), lambda(0.8), maxIter(200), threshold_outlier(0.5),
+    percentGood(0.6), useOgre(false), ctTc0(), tracker(), faces(), firstTrack(false),
+    distNearClip(0.01), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
+{  
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);
   
@@ -65,24 +62,10 @@ vpMbKltTracker::vpMbKltTracker()
   
   angleAppears = vpMath::rad(65);
   angleDisappears = vpMath::rad(75);
-  
-  clippingFlag = vpMbtPolygon::NO_CLIPPING;
-  
-  maskBorder = 5;
-  threshold_outlier = 0.5;
-  percentGood = 0.6;
-  
-  lambda = 0.8;
-  maxIter = 200;
-
+    
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT KLT");
 #endif
-  
-  useOgre = false;
-
-  distNearClip = 0.01;
-  distFarClip = 100.;
 }
 
 /*!

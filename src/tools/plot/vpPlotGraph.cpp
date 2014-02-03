@@ -62,55 +62,22 @@
 #if defined(VISP_HAVE_DISPLAY)
 
 vpPlotGraph::vpPlotGraph()
+  : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10),
+    xdelt(1), ydelt(1), gridx(true), gridy(true), gridColor(), curveNbr(1), curveList(NULL),
+    scaleInitialized(false), firstPoint(true), nbDivisionx(10), nbDivisiony(10), topLeft(),
+    width(0), height(0), graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
+    dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0), w_yval(0), w_ysize(0),
+    w_zval(0), w_zsize(0), ptXorg(0), ptYorg(0), ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.),
+    nbDivisionz(10), zorg(1.), zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(),
+    blockedr(false), blockedz(false), blocked(false), epsi(5), epsj(6),
+    dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
 {
-  curveList = NULL;
-  
   gridColor.setColor(200,200,200);
-  
-  nbDivisionx = 10;
-  nbDivisiony = 10;
-  nbDivisionz = 10;
-  
-  xmax = 10;
-  xmin = 0;
-  ymax = 10;
-  ymin = -10;
-  zmax = 10;
-  zmin = -10;
-  xdelt = 1;
-  ydelt = 1;
-  zdelt = 1;
-  gridx = true;
-  gridy = true;
-  scaleInitialized = false;
-  firstPoint = true;
-  
-  dispUnit = false;
-  dispTitle = false;
-  dispLegend = false;
-
-  blockedr = false;
-  blockedz = false;
-  blocked = false;
-  
-  epsi = 5;
-  epsj = 6;
   
   old_iPr = vpImagePoint(-1,-1);
   old_iPz = vpImagePoint(-1,-1);
 
   gridThickness = 1;
-
-  xorg = yorg = 0.;
-  zoomx = zoomy = 1.;
-  curveNbr = 1;
-  width = height = 0;
-  dWidth = dHeight = 0;
-  w_xval = w_yval = w_zval = 0.;
-  w_xsize = w_ysize = w_zsize = 0.;
-  ptXorg = ptYorg = ptZorg = 0.;
-  zoomx_3D = zoomy_3D = zoomz_3D = 1.;
-  zorg = zoomz = 1.;
 }
 
 vpPlotGraph::~vpPlotGraph()

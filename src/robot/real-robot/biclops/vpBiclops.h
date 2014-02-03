@@ -140,6 +140,9 @@ protected:
 
 public:
   vpBiclops (void);
+  /*! Destructor that does nothing. */
+  virtual ~vpBiclops() {};
+
   void init (void);
 
   void computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;

@@ -61,17 +61,19 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
   \brief Constructor : Initialize a display.
 
   \param winx, winy The window is set at position x,y (column index, row index).
-  \param _title  Window's title.
+  \param title  Window's title.
 
 */
-vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *_title)
+vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   windowXPosition = winx;
   windowYPosition = winy;
 
-  if (_title != NULL)
-    strcpy(this->title, _title);
+  if (title != NULL)
+    title_ = std::string(title);
+  else
+    title_ = std::string(" ");
 }
 
 /*!
@@ -81,15 +83,15 @@ vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *_title)
 
   \param I : image to be displayed (note that image has to be initialized).
   \param winx, winy The window is set at position x,y (column index, row index).
-  \param _title  Window's title.
+  \param title  Window's title.
 
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 			   int winx, int winy,
-			   const char *_title)
+         const char *title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
-  init(I,winx,winy,_title);
+  init(I,winx,winy,title);
 }
 
 /*!
@@ -104,10 +106,10 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
 			   int winx, int winy,
-			   const char *_title)
+         const char *title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
-  init(I,winx,winy,_title);
+  init(I,winx,winy,title);
 }
 
 /*!

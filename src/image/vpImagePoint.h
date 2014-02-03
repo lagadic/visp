@@ -96,18 +96,12 @@ class VISP_EXPORT vpImagePoint
     Default constructor that initialize the coordinates of the image
     point to zero.
   */
-  inline vpImagePoint() {
-    i = 0;
-    j = 0;
-  }
+  inline vpImagePoint() : i(0), j(0) {}
   /*!
     Default constructor that initialize the coordinates of the image
     thanks to the parameters \f$ i \f$ and \f$ j \f$.
   */
-  inline vpImagePoint(double i, double j) {
-    this->i = i;
-    this->j = j;
-  }
+  inline vpImagePoint(double i, double j) : i(i), j(j) {}
   /*!
     Copy constructor.
 
@@ -115,10 +109,7 @@ class VISP_EXPORT vpImagePoint
 
     \param ip : An image point.
   */
-  inline vpImagePoint(const vpImagePoint &ip) {
-    this->i = ip.i;
-    this->j = ip.j;
-  }
+  inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) {}
   //! Destructor.
   inline virtual ~vpImagePoint() { ; }
 
@@ -137,6 +128,7 @@ class VISP_EXPORT vpImagePoint
     Operator +=.
 
     This operator can be used to compute the center of gravity of a set of image points.
+
     \code
 #include <iostream>
 #include <vector>

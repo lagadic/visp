@@ -13,10 +13,12 @@ ViSP under development version
     . Add missing const to member functions and arguments passed by reference.
     . Introduction of a new option BUILD_WITH_STATIC_CRT that allows to set
       /MT (default) or /MD msvc build option
-    . Compatibility with msvc11 (2012), msvc12 (2013) and open solaris 11
+    . Compatibility with mingw, msvc11 (2012), msvc12 (2013)
+      and open solaris 11
     . Trace and debug can now be enabled/disabled using CMake
       ACTIVATE_DEBUG_TRACE option
     . Fix errors detected by Covery Scan static code analyser
+    . Fix warnings detected with -Weffc++ Gnu g++ compiler flag
     . Improve vpHomography class
   - New examples
     . New example that shows how to use the template tracker

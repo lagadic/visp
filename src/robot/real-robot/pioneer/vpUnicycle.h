@@ -63,7 +63,7 @@ public:
   /*!
     Default constructor that does nothing.
     */
-  vpUnicycle()
+  vpUnicycle() : cMe_(), eJe_()
   {
   };
   /*!

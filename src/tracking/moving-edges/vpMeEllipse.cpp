@@ -78,18 +78,17 @@ computeTheta(double &theta, vpColVector &K, vpImagePoint iP)
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
-vpMeEllipse::vpMeEllipse():vpMeTracker()
+vpMeEllipse::vpMeEllipse()
+  : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2*M_PI),
+    ce(0.), se(0.), angle(), m00(0.), mu11(0.), mu20(0.), mu02(0.),
+    m10(0.), m01(0.), m11(0.), m02(0.), m20(0.), thresholdWeight(0.2), circle(false)
 {
   vpCDEBUG(1) << "begin vpMeEllipse::vpMeEllipse() " <<  std::endl ;
 
   // redimensionnement du vecteur de parametre
   // i^2 + K0 j^2 + 2 K1 i j + 2 K2 i + 2 K3 j + K4
 
-  circle = false ;
   K.resize(5) ;
-
-  alpha1 = 0 ;
-  alpha2 = 2*M_PI ;
 
   //j1 = j2 = i1 = i2 = 0 ;
   iP1.set_i(0);
@@ -97,19 +96,16 @@ vpMeEllipse::vpMeEllipse():vpMeTracker()
   iP2.set_i(0);
   iP2.set_j(0);
   
-  m00 = m01 = m10 = m11 = m20 = m02 = mu11 = mu20 = mu02 = 0;
-
-  thresholdWeight = 0.2;
-
-  a = b = e = ce = se = 0.;
-
   vpCDEBUG(1) << "end vpMeEllipse::vpMeEllipse() " << std::endl ;
 }
 
 /*!
   Copy constructor.
 */
-vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse):vpMeTracker(meellipse)
+vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse)
+  : vpMeTracker(meellipse), K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2*M_PI),
+    ce(0.), se(0.), angle(), m00(0.), mu11(0.), mu20(0.), mu02(0.),
+    m10(0.), m01(0.), m11(0.), m02(0.), m20(0.), thresholdWeight(0.2), circle(false)
 {
   K = meellipse.K;
   iPc = meellipse.iPc;

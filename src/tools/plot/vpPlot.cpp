@@ -64,17 +64,9 @@
   Needs then a call to init().
 
 */
-vpPlot::vpPlot()
+vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40),
+  factori(1.f), factorj(1.)
 {
-  graphList = NULL;
-  display = NULL;
-    
-  margei = 30;
-  margej = 40;
-
-  graphNbr = 1;
-  factori = 1.f;
-  factorj = 1.f;
 }
 /*!
   This constructor creates a new window where the curves
@@ -95,13 +87,9 @@ vpPlot::vpPlot()
 vpPlot::vpPlot(const unsigned int graphNbr, 
 	       const unsigned int height, const unsigned int width, 
 	       const int x, const int y, const char *title)
-{
-  graphList = NULL;
-  display = NULL;
-      
-  margei = 30;
-  margej = 40;
-  
+  : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40),
+    factori(1.f), factorj(1.)
+{  
   init(graphNbr, height, width, x, y, title);
 }
 

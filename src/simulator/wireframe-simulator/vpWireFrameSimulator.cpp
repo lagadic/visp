@@ -507,6 +507,15 @@ vpWireFrameSimulator::display_scene(Matrix mat, Bound_scene &sc, const vpImage<u
   variable that the user has to set.
 */
 vpWireFrameSimulator::vpWireFrameSimulator()
+  : scene(), desiredScene(), camera(), objectImage(), fMo(), fMc(), camMf(),
+    refMo(), cMo(), cdMo(), object(PLATE), desiredObject(D_STANDARD),
+    camColor(vpColor::green), camTrajColor(vpColor::green), curColor(vpColor::blue),
+    desColor(vpColor::red), sceneInitialized(false), displayCameraTrajectory(true),
+    cameraTrajectory(), poseList(), fMoList(), nbrPtLimit(1000), old_iPr(), old_iPz(),
+    old_iPt(), blockedr(false), blockedz(false), blockedt(false), blocked(false),
+    camMf2(), f2Mf(), px_int(1), py_int(1), px_ext(1), py_ext(1), displayObject(false),
+    displayDesiredObject(false), displayCamera(false), displayImageSimulator(false),
+    cameraFactor(1.), camTrajType(CT_LINE), extCamChanged(false), rotz(), thickness_(1), scene_dir()
 {
   // set scene_dir from #define VISP_SCENE_DIR if it exists
   if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
@@ -524,52 +533,12 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   open_display();
   open_clipping();
 
-  camColor = vpColor::green;
-  camTrajColor = vpColor::green;
-  curColor = vpColor::blue;
-  desColor = vpColor::red;
-
-  sceneInitialized = false;
-
-  displayCameraTrajectory = true;
-  cameraTrajectory.clear();
-  poseList.clear();
-  fMoList.clear();
-
-  fMo.setIdentity();
-
   old_iPr = vpImagePoint(-1,-1);
   old_iPz = vpImagePoint(-1,-1);
   old_iPt = vpImagePoint(-1,-1);
-  blockedr = false;
-  blockedz = false;
-  blockedt = false;
-  blocked = false;
-
-  nbrPtLimit = 1000;
-  
-  px_int = 1;
-  py_int = 1;
-  px_ext = 1;
-  py_ext = 1;
-  
-  displayObject = false;
-  displayDesiredObject = false;
-  displayCamera = false;
-  
-  cameraFactor = 1.0;
-  
-  camTrajType = CT_LINE;
-  
-  extCamChanged = false;
-  
+   
   rotz.buildFrom(0,0,0,0,0,vpMath::rad(180));
   
-  displayImageSimulator = false;
-  objectImage.clear();
-
-  thickness_ = 1;
-
   scene.name = NULL;
   scene.bound.ptr = NULL;
   scene.bound.nbr = 0;
@@ -581,9 +550,6 @@ vpWireFrameSimulator::vpWireFrameSimulator()
   camera.name = NULL;
   camera.bound.ptr = NULL;
   camera.bound.nbr = 0;
-
-  object = PLATE;
-  desiredObject = D_STANDARD;
 }
 
 

@@ -58,6 +58,7 @@
 
 */
 vpSimulatorPioneer::vpSimulatorPioneer()
+  : wMc_(), wMe_(), xm_(0), ym_(0), theta_(0)
 {
   init() ;
 }

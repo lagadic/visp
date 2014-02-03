@@ -396,8 +396,6 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
     }
   }
 
-
-
   this->width = width ;
   this->height = height ;
 
@@ -445,12 +443,8 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
 */
 template<class Type>
 vpImage<Type>::vpImage(unsigned int height, unsigned int width)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  bitmap = NULL ;
-  row = NULL ;
-
-  display =  NULL ;
-  this->height = this->width = 0 ;
   try
   {
     init(height,width,0) ;
@@ -478,12 +472,8 @@ vpImage<Type>::vpImage(unsigned int height, unsigned int width)
 */
 template<class Type>
 vpImage<Type>::vpImage (unsigned int height, unsigned int width, Type value)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  bitmap = NULL ;
-  row = NULL ;
-
-  display =  NULL ;
-  this->height = this->width = 0 ;
   try
   {
     init(height,width,value) ;
@@ -506,14 +496,8 @@ vpImage<Type>::vpImage (unsigned int height, unsigned int width, Type value)
 */
 template<class Type>
 vpImage<Type>::vpImage()
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  bitmap = NULL ;
-  row = NULL ;
-
-  display =  NULL ;
-
-  this->height = this->width = 0 ;
-  this->npixels = 0;
 }
 
 /*!
@@ -597,23 +581,13 @@ vpImage<Type>::~vpImage()
 */
 template<class Type>
 vpImage<Type>::vpImage(const vpImage<Type>& I)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  bitmap = NULL ;
-  row = NULL ;  
-    /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
-  this->width = 0;
-  this->height = 0;
-  this->npixels = 0;
   try
   {
-    //if (I.bitmap!=NULL)
-//    if(I.getHeight() != 0 || I.getWidth() != 0)
-    {
-      resize(I.getHeight(),I.getWidth());
-      unsigned int i;
-      memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
-      for (i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
-    }
+    resize(I.getHeight(),I.getWidth());
+    memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
+    for (unsigned int i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
   }
   catch(vpException me)
   {

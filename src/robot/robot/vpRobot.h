@@ -116,6 +116,7 @@ protected:
 
 public:
   vpRobot (void);
+  vpRobot (const vpRobot &robot);
   virtual ~vpRobot() { ; }
 
   //---------- Jacobian -----------------------------
@@ -139,6 +140,8 @@ public:
   virtual vpRobotStateType getRobotState (void) const { return stateRobot ; }
 
   virtual void init() = 0 ;
+
+  vpRobot & operator=(const vpRobot &robot);
 
   static vpColVector saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose=false);
 

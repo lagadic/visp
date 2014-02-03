@@ -42,9 +42,8 @@
 #include <visp/vpClient.h>
 
 
-vpClient::vpClient() :  vpNetwork()
+vpClient::vpClient() :  vpNetwork(), numberOfAttempts(0)
 {
-  numberOfAttempts = 0;
 }
 
 /*!

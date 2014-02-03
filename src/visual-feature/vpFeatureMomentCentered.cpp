@@ -153,10 +153,9 @@ void vpFeatureMomentCentered::compute_interaction(){
   \param C : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param featureMoments : Database of features.
 */
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments) :
-    vpFeatureMoment(moments,A,B,C,featureMoments)
+vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments)
+  : vpFeatureMoment(moments,A,B,C,featureMoments), order(0)
 {
-  order = 0;
 }
 
 /*!

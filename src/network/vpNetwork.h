@@ -94,6 +94,8 @@ protected:
 #endif
     struct sockaddr_in    receptorAddress;
     std::string           receptorIP;
+
+    vpReceptor() : socketFileDescriptorReceptor(0), receptorAddressSize(), receptorAddress(), receptorIP() {}
   };
   
   struct vpEmitter{
@@ -103,7 +105,8 @@ protected:
 #else
     SOCKET                socketFileDescriptorEmitter;
 #endif
-    vpEmitter() {
+    vpEmitter() : emitterAddress(), socketFileDescriptorEmitter(0)
+    {
       emitterAddress.sin_family = AF_INET;
       emitterAddress.sin_addr.s_addr = INADDR_ANY;
       emitterAddress.sin_port = 0;

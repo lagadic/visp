@@ -49,8 +49,9 @@
   By default, the three 2D points coordinates which define the triangle are \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 vpTriangle::vpTriangle()
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
+    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
 {
-  goodTriange = true;
   init (vpImagePoint(0,0),vpImagePoint(1,0),vpImagePoint(0,1));
 }
 
@@ -62,9 +63,9 @@ vpTriangle::vpTriangle()
   \param iP3 : The first apex of the triangle.
 */
 vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
+    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
 {
-  goodTriange = true;
-  
   init(iP1,iP2,iP3);
 }
 
@@ -74,16 +75,10 @@ vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const v
   \param tri : The triangle used for the initialisation.
 */
 vpTriangle::vpTriangle(const vpTriangle &tri)
+  : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0),
+    ptempo0(0), ptempo1(0), area(0), apex1(), apex2(), apex3()
 {
-  goodTriange = tri.goodTriange;
-  S1 = tri.S1;
-  uvinv00 = tri.uvinv00;
-  uvinv01 = tri.uvinv01;
-  uvinv10 = tri.uvinv10;
-  uvinv11 = tri.uvinv11;
-  ptempo0 = tri.ptempo0;
-  ptempo1 = tri.ptempo1;
-  area = tri.area;
+  *this = tri;
 }
 
 /*!

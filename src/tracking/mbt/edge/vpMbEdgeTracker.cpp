@@ -73,36 +73,17 @@
   Basic constructor
 */
 vpMbEdgeTracker::vpMbEdgeTracker()
+  : compute_interaction(1), lambda(1), me(), lines(1), cylinders(1), nline(0), ncylinder(0),
+    index_polygon(0), faces(), nbvisiblepolygone(0), percentageGdPt(0.4), scales(1),
+    Ipyramid(0), scaleLevel(0), useOgre(false),
+    angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
 {
-  index_polygon =0;
-  compute_interaction=1;
-  nline = 0;
-  ncylinder = 0;
-  lambda = 1;
-  nbvisiblepolygone = 0;
-  percentageGdPt = 0.4;
-  computeCovariance = false;
-
-  lines.resize(1);
-  cylinders.resize(1);
-  scales.resize(1);
   scales[0] = true;
-  lines[0].clear();
-  cylinders[0].clear();
-  Ipyramid.resize(0);
   
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Edge");
 #endif
-  useOgre = false;
-  
-  angleAppears = vpMath::rad(89);
-  angleDisappears = vpMath::rad(89);
-  clippingFlag = vpMbtPolygon::NO_CLIPPING;
-
-  scaleLevel = 0;
-  distNearClip = 0.001;
-  distFarClip = 100.0;
 }
 
 /*!

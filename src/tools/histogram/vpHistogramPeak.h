@@ -74,6 +74,9 @@ public :
   vpHistogramPeak(unsigned char level, unsigned value);
   vpHistogramPeak(const vpHistogramPeak & p);
 
+  /*! Destructor that does nothing. */
+  virtual ~vpHistogramPeak() {}
+
   vpHistogramPeak & operator=(const vpHistogramPeak &p);
   bool operator==(const vpHistogramPeak &p) const;
 

@@ -100,15 +100,21 @@ vpMeSite::init()
 }
 
 vpMeSite::vpMeSite()
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.),
+    convlt(0.), normGradient(0), weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    , suppress(0)
+#endif
 {
-  init() ;
 }
 
 vpMeSite::vpMeSite(double ip, double jp)
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.),
+    convlt(0.), normGradient(0), weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    , suppress(0)
+#endif
 {
-  init() ;
-
-  selectDisplay = NONE ;
   i = vpMath::round(ip) ;
   j = vpMath::round(jp) ;
   ifloat = ip ;
@@ -119,6 +125,11 @@ vpMeSite::vpMeSite(double ip, double jp)
   Copy constructor.
 */
 vpMeSite::vpMeSite (const vpMeSite &mesite)
+  : i(0), j(0), i_1(0), j_1(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.),
+    convlt(0.), normGradient(0), weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    , suppress(0)
+#endif
 {
   *this = mesite;
 }

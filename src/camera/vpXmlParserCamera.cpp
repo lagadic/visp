@@ -80,20 +80,22 @@
 /*!
   Default constructor
 */
-vpXmlParserCamera::vpXmlParserCamera(): vpXmlParser(){
-  camera_name = "";
-  image_width = 0;
-  image_height = 0;
-  subsampling_width = 0;
-  subsampling_height = 0;
-  full_width = 0;
-  full_height = 0;
+vpXmlParserCamera::vpXmlParserCamera()
+  : vpXmlParser(),
+    camera(), camera_name(), image_width(0), image_height(0),
+    subsampling_width(0), subsampling_height(0), full_width(0), full_height(0)
+{
 }
 /*!
   Copy constructor
   \param twinParser : parser object to copy
 */
-vpXmlParserCamera::vpXmlParserCamera(vpXmlParserCamera& twinParser): vpXmlParser(twinParser){
+vpXmlParserCamera::vpXmlParserCamera(vpXmlParserCamera& twinParser)
+  : vpXmlParser(twinParser),
+    camera(), camera_name(), image_width(0), image_height(0),
+    subsampling_width(0), subsampling_height(0), full_width(0), full_height(0)
+
+{
   this->camera = twinParser.camera;
   this->camera_name = twinParser.camera_name;
   this->image_width = twinParser.image_width;

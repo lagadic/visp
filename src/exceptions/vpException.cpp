@@ -51,32 +51,20 @@
 /* ------------------------------------------------------------------------- */
 /* --- CONSTRUCTORS -------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
-
-
 vpException::vpException (int _code)
-    :
-    code (_code),
-    message ()
-
+  : code (_code), message ()
 {
-    return ;
 }
 
-
 vpException::vpException (int _code,
-	     const std::string & _msg)
-    :
-    code (_code),
-    message (_msg)
-
+                          const std::string & _msg)
+  : code (_code), message (_msg)
 {
-    return ;
 }
 
 vpException::vpException (int _code,
                           const char* format, ...)
-  :
-    code (_code)
+  : code (_code), message ()
 {
   va_list args;
   va_start(args, format);
@@ -85,7 +73,7 @@ vpException::vpException (int _code,
 }
 
 vpException::vpException (const int code, const char* format, va_list args)
-  : code (code)
+  : code (code), message ()
 {
   setMessage(format, args);
 }

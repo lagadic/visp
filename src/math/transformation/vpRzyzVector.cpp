@@ -51,28 +51,6 @@
   Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
-
-/*!
-  Affectation of two vectors.
-*/
-vpRzyzVector &
-vpRzyzVector::operator=(const vpRzyzVector &m)
-{
-
-  for (int i=0; i<3; i++)
-  {
-      r[i] = m.r[i] ;
-  }
-  return *this;
-}
-
-
-//! Copy constructor.
-vpRzyzVector::vpRzyzVector(const vpRzyzVector &m) : vpRotationVector()
-{
-  *this = m ;
-}
-
 /*! 
   Constructor that initialize \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.
@@ -82,7 +60,6 @@ vpRzyzVector::vpRzyzVector(const vpRotationMatrix& R)
 {
   buildFrom(R) ;
 }
-
 
 /*!
   Constructor that initialize \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -144,11 +121,30 @@ vpRzyzVector::buildFrom(const vpThetaUVector& tu)
     return *this ;
 }
 
+/*!
 
+  Initialize each element of the vector to the same angle value \e v.
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+  \param v : Angle value to set for each element of the vector.
+
+\code
+#include <visp/vpMath.h>
+#include <visp/vpRzyzVector.h>
+
+int main()
+{
+  vpRzyzVector r;
+
+  // Initialise the rotation vector
+  r = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+}
+\endcode
+*/
+vpRzyzVector &vpRzyzVector::operator=(double v)
+{
+  for (int i=0; i< 3; i++)
+    r[i] = v;
+
+  return *this;
+}
 

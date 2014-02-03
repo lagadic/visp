@@ -126,6 +126,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,const double
 }
 
 vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3()
+  : G(), dGx(), A()
 {
   nbParam = 8 ;
   G.resize(3,3);

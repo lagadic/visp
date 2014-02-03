@@ -46,15 +46,9 @@
 #include <visp/vpDebug.h>
 #include <stdlib.h>
 
-vpSubColVector::vpSubColVector(){
-   data=NULL;
-   parent=NULL;
-   rowPtrs=NULL;
-   rowNum=0;
-   colNum=0;
-   pRowNum=0;
-   dsize=0;
-   trsize=0;
+vpSubColVector::vpSubColVector()
+  : pRowNum(0), parent(NULL)
+{
 }
 
 /*!
@@ -63,7 +57,9 @@ vpSubColVector::vpSubColVector(){
   \param offset : offset where subColVector start in the parent colVector
   \param nrows : size of the subColVector
 */
-vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows){
+vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int & offset, const unsigned int & nrows)
+  : pRowNum(0), parent(NULL)
+{
   init(v,offset,nrows);
 }
 

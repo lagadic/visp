@@ -154,11 +154,10 @@ class VISP_EXPORT vpRzyxVector : public vpRotationVector
   friend class vpThetaUVector;
 
 public:
-  //! Default constructor. Initialize the angles to zero.
-  vpRzyxVector() { ; }
-
-  // Copy constructor.
-  vpRzyxVector(const vpRzyxVector &m);
+  /*! Default constructor that initialize all the angles to zero. */
+  vpRzyxVector() {}
+  /*! Copy constructor. */
+  vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) {}
 
   /*!
     Constructor from 3 angles (in radian).
@@ -173,10 +172,7 @@ public:
   vpRzyxVector(const vpRotationMatrix& R) ;
 
   // initialize a Rzyx vector from a ThetaU vector
-  vpRzyxVector(const vpThetaUVector&  tu) ;
-
-  // Affectation of two vectors.
-  vpRzyxVector &operator=(const vpRzyxVector &m);
+  vpRzyxVector(const vpThetaUVector& tu) ;
 
   /*!
     Construction from 3 angles (in radian).

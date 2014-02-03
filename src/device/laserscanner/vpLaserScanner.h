@@ -61,12 +61,11 @@ class VISP_EXPORT vpLaserScanner
 {
  public:
   /*! Default constructor that initialize all the internal variable to zero. */
-  vpLaserScanner() {
-    ip = "null";
-    port = 0;
-  };
+    vpLaserScanner() : ip("null"), port(0) {};
   /*! Copy constructor. */
-  vpLaserScanner(const vpLaserScanner &scanner) {
+  vpLaserScanner(const vpLaserScanner &scanner)
+    : ip("null"), port(0)
+  {
     ip = scanner.ip;
     port = scanner.port;
   };

@@ -58,12 +58,9 @@ vpTracker::init()
 
 
 
-vpTracker::vpTracker()
-{
-  init() ;
-}
+vpTracker::vpTracker() : p(), cP(), cPAvailable(false) {}
 
-vpTracker::vpTracker(const vpTracker &tracker)
+vpTracker::vpTracker(const vpTracker &tracker) : p(), cP(), cPAvailable(false)
 {
   *this = tracker;
 }

@@ -55,28 +55,6 @@ rotation
 const double vpThetaUVector::minimum = 0.0001;
 
 /*!
-Affectation of two \f$\theta {\bf u}\f$ vector.
-*/
-vpThetaUVector &
-vpThetaUVector::operator=(const vpThetaUVector &m)
-{
-  for (int i=0; i<3; i++)
-  {
-    r[i] = m.r[i] ;
-  }
-  return *this;
-}
-
-
-/*!
-Copy constructor.
-*/
-vpThetaUVector::vpThetaUVector(const vpThetaUVector &m) : vpRotationVector()
-{
-  *this = m ;
-}
-
-/*!
 Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
 */
 vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
@@ -271,7 +249,7 @@ vpThetaUVector::buildFrom(const vpRxyzVector& rxyz)
   return *this ;
 }
 
-/*! 
+/*!
 
 Initialize each element of the \f$\theta {\bf u}\f$ vector to the
 same angle value \e v.
@@ -327,8 +305,3 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
 }
 
 #undef vpDEBUG_LEVEL1
-/*
-* Local variables:
-* c-basic-offset: 2
-* End:
-*/

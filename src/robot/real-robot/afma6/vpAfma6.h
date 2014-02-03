@@ -118,6 +118,8 @@ class VISP_EXPORT vpAfma6
 
  public:
   vpAfma6();
+  /*! Destructor that does nothing. */
+  virtual ~vpAfma6() {};
 
   void init (void);
 #ifdef VISP_HAVE_ACCESS_TO_NAS

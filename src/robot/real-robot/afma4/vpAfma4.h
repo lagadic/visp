@@ -113,6 +113,8 @@ class VISP_EXPORT vpAfma4
 {
  public:
   vpAfma4();
+  /*! Destructor that does nothing. */
+  virtual ~vpAfma4() {};
 
   void init (void);
 

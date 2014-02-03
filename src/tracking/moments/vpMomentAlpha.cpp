@@ -49,8 +49,7 @@
   A reference alpha is class harbouring an alpha value computed for a \f$[-\pi/2..\pi/2]\f$ portion of the circle. Not setting a reference alpha will prevent you
   from doing more than 180deg rotation with moments.
  */
-vpMomentAlpha::vpMomentAlpha() : vpMoment(),isRef(true), symmetric(false){
-    alphaRef = 0.;
+vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(0.) {
     values.resize(1);
 }
 
