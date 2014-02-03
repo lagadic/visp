@@ -3882,7 +3882,7 @@ vpMatrix::expm()
       b[i] = 0.;
     gsl_matrix_view m  = gsl_matrix_view_array(this->data, rowNum, colNum);
     gsl_matrix_view em = gsl_matrix_view_array(b, rowNum, colNum);
-    gsl_linalg_exponential_ss(&m.matrix, &em.matrix, .01);
+    gsl_linalg_exponential_ss(&m.matrix, &em.matrix, 0);
     //gsl_matrix_fprintf(stdout, &em.matrix, "%g");
     vpMatrix expA(rowNum, colNum);
     memcpy(expA.data, b, size * sizeof(double));
