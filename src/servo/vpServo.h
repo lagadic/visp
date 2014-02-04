@@ -211,7 +211,7 @@ public:
   /*!
     Return the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
   */
-  vpVelocityTwistMatrix set_fVe() const { return fVe; }
+  vpVelocityTwistMatrix get_fVe() const { return fVe; }
   /*!
     Return the robot jacobian expressed in the end-effector frame.
   */
