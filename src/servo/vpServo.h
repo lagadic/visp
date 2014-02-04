@@ -314,7 +314,7 @@ public:
 \endcode
     \sa getTaskJacobian()
   */
-  inline vpMatrix getInteractionMatrix()
+  inline vpMatrix getInteractionMatrix() const
   {
     return L;
   }
@@ -396,7 +396,7 @@ public:
 
     \return Singular values that relies on the task jacobian pseudo inverse.
     */
-  inline vpColVector getTaskSingularValues()
+  inline vpColVector getTaskSingularValues() const
   {
     return sv;
   }
