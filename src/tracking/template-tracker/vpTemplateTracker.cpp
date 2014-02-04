@@ -46,7 +46,7 @@ vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL),
     ptTemplateInit(false), templateSize(0), templateSizePyr(NULL),
     ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL), ptTemplateSelectInit(NULL),
-    templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL), ptTemplateSuppInit(false),
+    templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
     ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
     pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(),
     HLMdesireInverse(), HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40),
@@ -274,14 +274,11 @@ void vpTemplateTracker::resetTracker()
       delete[] ptTemplateSupp;
       ptTemplateSupp = NULL;
     }
-    if(ptTemplateSelectInit)
+    if(ptTemplateSelectInit) {
       if (ptTemplateSelect) {
         delete[] ptTemplateSelect; ptTemplateSelect = NULL;
       }
-    if(ptTemplateSuppInit)
-      if(ptTemplateSupp) {
-        delete[] ptTemplateSupp; ptTemplateSupp = NULL;
-      }
+    }
   }
 }	
 

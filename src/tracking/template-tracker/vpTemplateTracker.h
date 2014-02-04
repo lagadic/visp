@@ -77,7 +77,6 @@ class VISP_EXPORT vpTemplateTracker
     vpTemplateTrackerPointSuppMIInv **ptTemplateSuppPyr;  //pour inverse et compo
     #endif
 
-    bool                        ptTemplateSuppInit;
     vpTemplateTrackerPointCompo *ptTemplateCompo;    //pour ESM
     vpTemplateTrackerPointCompo **ptTemplateCompoPyr;   //pour ESM
     vpTemplateTrackerZone               *zoneTracked;
