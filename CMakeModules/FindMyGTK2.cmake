@@ -69,7 +69,7 @@ IF(UNIX OR WIN32)
     /usr/lib/i386-linux-gnu/glib-2.0/include
     /usr/lib/x86_64-linux-gnu/glib-2.0/include
     /opt/gnome/lib/glib-2.0/include
-    "C:/GTK/lib/glib-2.0/include"
+    C:/GTK/lib/glib-2.0/include
     /sw/lib/glib-2.0/include
   )
 
@@ -78,7 +78,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/include/glib-2.0
     /usr/include/glib-2.0
     /opt/gnome/include/glib-2.0
-    "C:/GTK/include/glib-2.0"
+    C:/GTK/include/glib-2.0
     /sw/include/glib-2.0
   )
 
@@ -87,7 +87,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/include/pango-1.0
     /usr/include/pango-1.0
     /opt/gnome/include/pango-1.0
-    "C:/GTK/include/pango-1.0"
+    C:/GTK/include/pango-1.0
     /sw/include/pango-1.0
   )
 
@@ -96,7 +96,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/include/cairo
     /usr/include/cairo
     /opt/gnome/include/cairo
-    "C:/GTK/include/cairo"
+    C:/GTK/include/cairo
     /sw/include/cairo
   )
 
@@ -106,7 +106,7 @@ IF(UNIX OR WIN32)
     /usr/lib/gtk-2.0/include
     /usr/lib64/gtk-2.0/include
     /opt/gnome/lib/gtk-2.0/include
-    "C:/GTK/lib/gtk-2.0/include"
+    C:/GTK/lib/gtk-2.0/include
     /sw/lib/gtk-2.0/include
     /usr/lib/i386-linux-gnu/gtk-2.0/include
     /usr/lib/x86_64-linux-gnu/gtk-2.0/include
@@ -117,7 +117,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/gdk-pixbuf-2.0
     /usr/include/gdk-pixbuf-2.0
     /usr/include/gtk-2.0
-    "C:/GTK/include/gtk-2.0"
+    C:/GTK/include/gtk-2.0
     /sw/include/gtk-2.0
   )
 
@@ -128,7 +128,7 @@ IF(UNIX OR WIN32)
     $ENV{GTK2_HOME}/include/atk-1.0
     /usr/include/atk-1.0
     /opt/gnome/include/atk-1.0
-    "C:/GTK/include/atk-1.0"
+    C:/GTK/include/atk-1.0
     /sw/include/atk-1.0
   )
 
@@ -141,7 +141,7 @@ IF(UNIX OR WIN32)
           /usr/openwin/lib
           /usr/X11R6/lib
           /opt/gnome/lib
-          "C:/GTK/lib"
+          C:/GTK/lib
 	  /sw/lib
   )
 
@@ -154,7 +154,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
-           "C:/GTK/lib"
+           C:/GTK/lib
 	   /sw/lib
   )
 
@@ -167,7 +167,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
-           "C:/GTK/lib"
+           C:/GTK/lib
 	   /sw/lib
   )
 
@@ -180,7 +180,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
-           "C:/GTK/lib"
+           C:/GTK/lib
 	   /sw/lib
   )
 
@@ -193,7 +193,7 @@ IF(UNIX OR WIN32)
            /usr/openwin/lib
            /usr/X11R6/lib
            /opt/gnome/lib
-           "C:/GTK/lib"
+           C:/GTK/lib
 	   /sw/lib
   )
 
@@ -203,7 +203,7 @@ IF(UNIX OR WIN32)
     PATHS  $ENV{GTK2_HOME}/lib
            /usr/lib
            /opt/gnome/lib
-           "C:/GTK/lib"
+           C:/GTK/lib
 	   /sw/lib
   )
 
