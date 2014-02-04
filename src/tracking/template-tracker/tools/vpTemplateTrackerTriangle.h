@@ -150,8 +150,6 @@ class VISP_EXPORT vpTemplateTrackerTriangle
     bool inTriangle(const double &i,const double &j) const;
 
     vpTemplateTrackerTriangle & operator=(const vpTemplateTrackerTriangle& T);
-    
-    void setMinZero();
 };
 #endif
 

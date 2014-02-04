@@ -166,7 +166,6 @@ vpTemplateTrackerTriangle::vpTemplateTrackerTriangle(double x1,double y1, double
   */
 void vpTemplateTrackerTriangle::init(const vpColVector &c1,const vpColVector &c2,const vpColVector &c3)
 {
-  vpTemplateTrackerTriangle();
   init(c1[0],c1[1],c2[0],c2[1],c3[0],c3[1]);
 }
 /*!
@@ -177,7 +176,6 @@ void vpTemplateTrackerTriangle::init(const vpColVector &c1,const vpColVector &c2
  */
 void vpTemplateTrackerTriangle::init(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3)
 {
-  vpTemplateTrackerTriangle();
   init(c1.get_u(), c1.get_v(), c2.get_u(), c2.get_v(), c3.get_u(), c3.get_v());
 }
 
@@ -188,7 +186,6 @@ void vpTemplateTrackerTriangle::init(const vpImagePoint &c1, const vpImagePoint 
   */
 void vpTemplateTrackerTriangle::init(int x1, int y1, int x2,int y2, int x3, int y3)
 {
-  vpTemplateTrackerTriangle();
   init((double)x1,(double)y1,(double)x2,(double)y2,(double)x3,(double)y3);
 }
 
@@ -199,7 +196,6 @@ void vpTemplateTrackerTriangle::init(int x1, int y1, int x2,int y2, int x3, int 
   */
 void vpTemplateTrackerTriangle::init(double x1, double y1, double x2,double y2, double x3, double y3)
 {
-
   C1.x=x1;C1.y=y1;
   C2.x=x2;C2.y=y2;
   C3.x=x3;C3.y=y3;
