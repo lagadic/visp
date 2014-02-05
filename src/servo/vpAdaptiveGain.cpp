@@ -52,18 +52,21 @@
 #include <limits>   // numeric_limits
 
 const double vpAdaptiveGain::DEFAULT_LAMBDA_ZERO = 1.666;
-const double vpAdaptiveGain::DEFAULT_LAMBDA_INFINI = 0.1666;
-const double vpAdaptiveGain::DEFAULT_LAMBDA_PENTE  = 1.666;
+const double vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY = 0.1666;
+const double vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE  = 1.666;
 
 /* -------------------------------------------------------------------------- */
 /* --- CONSTRUCTION --------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 /*!
-  Basic constructor which initializes the parameters with a default value.
+  Basic constructor which initializes all the parameters with their default value:
+  - \f$ \lambda(0) = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_ZERO
+  - \f$ \lambda(\infty) = 0.1666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY
+  - \f$ {\dot \lambda}(0) = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE
+
 */
-vpAdaptiveGain::
-vpAdaptiveGain (void)
+vpAdaptiveGain::vpAdaptiveGain ()
   :
   coeff_a (),
   coeff_b (),
@@ -77,24 +80,45 @@ vpAdaptiveGain (void)
   return;
 }
 
+/*!
+  Constructor that initializes the gain as constant. In that case \f$\lambda(x) = c\f$.
+
+  \param c : Value of the constant gain.
+*/
+vpAdaptiveGain::vpAdaptiveGain (double c)
+{
+  initFromConstant(c);
+}
+
+/*!
+  Constructor that initializes the gain as adaptive.
+
+  \param gain_at_zero : the expected gain when \f$x=0\f$: \f$\lambda(0)\f$.
+  \param gain_at_infinity : the expected gain when \f$x=\infty\f$: \f$\lambda(\infty)\f$.
+  \param slope_at_zero : the expected slope of \f$\lambda(x)\f$ when \f$x=0\f$: \f${\dot \lambda}(0)\f$.
+
+*/
+vpAdaptiveGain::vpAdaptiveGain (double gain_at_zero, double gain_at_infinity, double slope_at_zero)
+{
+  initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
+}
+
 /* -------------------------------------------------------------------------- */
 /* --- INIT ----------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
 /*!
-  Initializes the parameters to have a constant gain.
-  Thus \f$ a = 0 \f$, \f$ b = 1 \f$ and \f$ c = lambda \f$
-  
-  \param lambda : the expected constant gain.
+  Initializes the parameters to have a constant gain. In that case \f$\lambda(x) = c\f$.
+
+  \param c : Value of the constant gain.
 */
-void vpAdaptiveGain::
-initFromConstant (const double lambda)
+void vpAdaptiveGain::initFromConstant (const double c)
 {
     vpDEBUG_TRACE (10, "# Entree.");
 
     this ->coeff_a = 0;
     this ->coeff_b = 1;
-    this ->coeff_c = lambda;
+    this ->coeff_c = c;
 
     vpDEBUG_TRACE (10, "# Sortie.");
     return;
@@ -103,18 +127,17 @@ initFromConstant (const double lambda)
 
 /*!
   Initializes the parameters with the default value :
-  - \f$ lambda(0) = 1.666 \f$
-  - \f$ lambda(inf) = 0.1666 \f$
-  - \f$ lambda'(0) = 1.666 \f$
+  - \f$ \lambda(0) = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_ZERO
+  - \f$ \lambda(\infty) = 0.1666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY
+  - \f$ {\dot \lambda}(0) = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE
 */
-void vpAdaptiveGain::
-initFromVoid (void)
+void vpAdaptiveGain::initFromVoid (void)
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
   this ->initStandard (vpAdaptiveGain::DEFAULT_LAMBDA_ZERO,
-		       vpAdaptiveGain::DEFAULT_LAMBDA_INFINI,
-		       vpAdaptiveGain::DEFAULT_LAMBDA_PENTE);
+                       vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY,
+                       vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE);
 
   vpDEBUG_TRACE (10, "# Sortie.");
   return;
@@ -122,22 +145,19 @@ initFromVoid (void)
 
 
 /*!
-  Computes the parameters thanks to the given \f$ lambda(0)\f$, \f$ lambda(inf)\f$ and \f$ lambda'(0)\f$.
+  Set the parameters \f$\lambda(0), \lambda(\infty), {\dot \lambda}(0)\f$ used to compute \f$\lambda(x)\f$.
   
-  \f$ lambda(0)\f$ represents the gain in 0, \f$ lambda(inf)\f$ represents the gain to infinity and \f$ lambda'(0)\f$ represents the slope in 0.
-  
-  \param en_zero : the expected gain in 0.
-  \param en_infini : the expected gain to infinity.
-  \param pente_en_zero : the expected slope in 0.
+  \param gain_at_zero : the expected gain when \f$x=0\f$: \f$\lambda(0)\f$.
+  \param gain_at_infinity : the expected gain when \f$x=\infty\f$: \f$\lambda(\infty)\f$.
+  \param slope_at_zero : the expected slope of \f$\lambda(x)\f$ when \f$x=0\f$: \f${\dot \lambda}(0)\f$.
 */
-void vpAdaptiveGain::
-initStandard (const double en_zero,
-	      const double en_infini,
-	      const double pente_en_zero)
+void vpAdaptiveGain::initStandard (const double gain_at_zero,
+                                   const double gain_at_infinity,
+                                   const double slope_at_zero)
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
-  this ->coeff_a = en_zero - en_infini;
+  this ->coeff_a = gain_at_zero - gain_at_infinity;
   //if (0 == this ->coeff_a)
   if (std::fabs(this ->coeff_a) <= std::numeric_limits<double>::epsilon())
     {
@@ -145,9 +165,9 @@ initStandard (const double en_zero,
     }
   else
     {
-      this ->coeff_b = pente_en_zero / ( this ->coeff_a);
+      this ->coeff_b = slope_at_zero / ( this ->coeff_a);
     }
-  this ->coeff_c = en_infini;
+  this ->coeff_c = gain_at_infinity;
 
   vpDEBUG_TRACE (10, "# Sortie :a,b,c= %.3f,%.3f,%.3f.",
 	       this ->coeff_a, this ->coeff_b, this ->coeff_c);
@@ -161,12 +181,12 @@ initStandard (const double en_zero,
 /* -------------------------------------------------------------------------- */
 
 /*!
-  Sets the parameters in order to obtain a constant gain equal to the gain in 0.
+  Sets the internal parameters \f$a,b,c\f$ in order to obtain a constant gain equal to
+  the gain in 0 set through the parameter \f$\lambda(0)\f$.
   
-  \return It returns the value of the computed constant gain.
+  \return It returns the value of the constant gain \f$\lambda(0)\f$.
 */
-double vpAdaptiveGain::
-setConstant (void)
+double vpAdaptiveGain::setConstant (void)
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
@@ -185,34 +205,32 @@ setConstant (void)
 /* -------------------------------------------------------------------------- */
 
 /*!
-  Computes the value of the adaptive gain \f$\lambda\f$ corresponding to
-  the norm of the task function. The formula is the following:
+  Computes the value of the adaptive gain \f$\lambda(x)\f$ using:
 
-  \f[\lambda = a * exp(-b*val_e) + c\f]
+  \f[\lambda(x) = a * exp(-b*x) + c\f]
 
-  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
+  \param x : Input value to consider. During a visual servo this value can be the euclidian
+  norm \f$||s - s^*||\f$ or the infinity norm \f$||s - s^*||_{\infty}\f$ of the task function.
   
   \return It returns the value of the computed gain.
 */
-double vpAdaptiveGain::
-value_const (const double val_e) const
+double vpAdaptiveGain::value_const (const double x) const
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
-  double res = this ->coeff_a * exp (- this ->coeff_b * val_e)
-    + this ->coeff_c;
+  double res = this ->coeff_a * exp (- this ->coeff_b * x) + this ->coeff_c;
 
   vpDEBUG_TRACE (10, "# Sortie: %.3f.", res);
   return res;
 }
 
 /*!
-  Gets the value of the gain at infinity (ie the value of \f$ c \f$).
+  Gets the value of the gain at infinity (ie the value of \f$ \lambda(\infty) = c \f$).
+  Similar to limitValue() except that here the value is not stored as a parameter of the class.
 
-  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
+  \return It returns the value of the gain at infinity.
  */
-double vpAdaptiveGain::
-limitValue_const (void) const
+double vpAdaptiveGain::limitValue_const (void) const
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
@@ -222,25 +240,23 @@ limitValue_const (void) const
   return res;
 }
 
-
-
 /*!
-  Computes the value of the adaptive gain \f$\lambda\f$ corresponding to
-  the norm of the task function and stores it as a parameter of the class.
-  The formula used for the gain computation is the following:
+  Computes the value of the adaptive gain \f$\lambda(x)\f$ using:
 
-  \f[\lambda = a * exp(-b*val_e) + c\f]
+  \f[\lambda(x) = a * exp(-b*x) + c\f]
 
-  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
-  
+  This value is stored as a parameter of the class.
+
+  \param x : Input value to consider. During a visual servo this value can be the euclidian
+  norm \f$||s - s^*||\f$ or the infinity norm \f$||s - s^*||_{\infty}\f$ of the task function.
+
   \return It returns the value of the computed gain.
-*/
-double vpAdaptiveGain::
-value (const double val_e) const
+  */
+double vpAdaptiveGain::value (const double x) const
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
-  this ->lambda = this ->value_const (val_e);
+  this ->lambda = this ->value_const (x);
 
   vpDEBUG_TRACE (10, "# Sortie: %.3f.", this ->lambda);
   return lambda;
@@ -248,13 +264,12 @@ value (const double val_e) const
 
 
 /*!
-  Gets the value of the gain at infinity (ie the value of \f$ c \f$)and stores it
+  Gets the value of the gain at infinity (ie the value of \f$\lambda(\infty) = c \f$) and stores it
   as a parameter of the class.
 
-  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
+  \return It returns the value of the gain at infinity.
  */
-double vpAdaptiveGain::
-limitValue (void) const
+double vpAdaptiveGain:: limitValue (void) const
 {
   vpDEBUG_TRACE (10, "# Entree.");
 
@@ -277,42 +292,42 @@ limitValue (void) const
 // }
 
 /*!
-  Operator which calls the value(double val_e) method with \e val_e in parameter in order
-  to compute the adaptive gain corresponding to \e val_e.
+  Operator that computes \f$\lambda(x)\f$.
      
-  \param val_e : Norm of the task function \f$\mid s - s^*\mid\f$.
-      
+  \param x : Input value to consider. During a visual servo this value can be the euclidian
+  norm \f$||s - s^*||\f$ or the infinity norm \f$||s - s^*||_{\infty}\f$ of the task function.
+
   \return It returns the value of the computed gain.
+
+  \sa value()
 */
-double vpAdaptiveGain::
-operator() (const double val_e) const
+double vpAdaptiveGain::operator() (const double x) const
 {
-  return this ->value (val_e);
+  return this ->value (x);
 }
 
 /*!
-  Gets the value of the gain at infinity (ie the value of \f$ c \f$).
+  Gets the value of the gain at infinity (ie the value of \f$\lambda(\infty) = c \f$).
 
-  \return It returns the value of the gain at infinity (ie the value of \f$ c \f$).
+  \return It returns the value of the gain at infinity.
+
+  \sa limitValue()
  */
-double vpAdaptiveGain::
-operator() (void) const
+double vpAdaptiveGain::operator() (void) const
 {
   return this ->limitValue ();
 }
 
 /*!
-  Operator which calls the value(double val_e) method with the infinity norm of \e e in parameter in order
-  to compute the adaptive gain corresponding to \f$ |e| \f$.
+  Operator which computes \f$\lambda({||x||}_{\infty})\f$.
      
-  \param e : the task function \f$\mid s - s^*\mid\f$.
+  \param x : Input vector to consider.
       
   \return It returns the value of the computed gain.
 */
-double vpAdaptiveGain::
-operator()  (const vpColVector & e) const
+double vpAdaptiveGain::operator() (const vpColVector & x) const
 {
-  return this ->value (e .infinityNorm());
+  return this ->value (x .infinityNorm());
 }
 
 
@@ -326,14 +341,12 @@ operator()  (const vpColVector & e) const
 
 
 /*!
-  Prints the adaptive gain  coefficients. It prints the gain in 0, 
-  the gain to infinity and the slope in 0.
+  Prints the adaptive gain parameters \f$\lambda(0), \lambda(\infty), {\dot \lambda}(0)\f$.
   
   \param os : The stream where to print the adaptive gain parameters.
   \param lambda : The adaptive gain containing the parameters to print.
 */
-VISP_EXPORT std::ostream&
-operator<< (std::ostream &os, const vpAdaptiveGain& lambda)
+VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpAdaptiveGain& lambda)
 {
   os << "Zero= " << lambda .coeff_a + lambda .coeff_c
      << "\tInf= " << lambda .coeff_c
@@ -341,11 +354,3 @@ operator<< (std::ostream &os, const vpAdaptiveGain& lambda)
 
   return os;
 }
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */

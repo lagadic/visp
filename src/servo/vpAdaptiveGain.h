@@ -59,19 +59,18 @@ class vpColVector;
   
   The formula used to compute the gain is the following :
   
-  \f[ lambda (x) = a * exp (-b*x) + c \f]
+  \f[ \lambda (x) = a * exp (-b*x) + c \f]
   
-  where \f$ a \f$, \f$ b \f$ and \f$ c \f$ are parameters which must be set 
-  and \f$ x \f$ is the vector error of the task.
+  where \f$ a \f$, \f$ b \f$ and \f$ c \f$ are constant parameters and \f$ x \f$ is the entry to consider.
   
-  By default, the parameters are set with default values:
-  \f[ a = lambda(0) - lambda(inf) \f]
-  \f[ b = lambda'(0) / a \f]
-  \f[ c = lambda(inf) \f]
+  The parameters \f$a,b,c\f$ are not set directly. They are computed from three other parameters
+  \f$\lambda(0), \lambda(\infty), {\dot \lambda}(0)\f$ that are more intuitive to tune:
+  \f[ a = \lambda(0) - \lambda(\infty) \f]
+  \f[ b = {\dot \lambda}(0) / a \f]
+  \f[ c = \lambda(\infty) \f]
   
-  with \f$ lambda(0) = 1.666 \f$, \f$ lambda(inf) = 0.1666 \f$ and \f$ lambda'(0) = 1.666 \f$.
-  
-  \f$ lambda(0)\f$ represents the gain in 0, \f$ lambda(inf)\f$ represents the gain to infinity and \f$ lambda'(0)\f$ represents the slope in 0.
+  where \f$ \lambda(0)\f$ represents the gain when \f$x=0\f$, \f$ \lambda(\infty)\f$ represents the gain when \f$x=\infty\f$
+  and \f$ {\dot \lambda}(0)\f$ represents the slope of \f$\lambda(x)\f$ when \f$x=0\f$.
   
 */
 
@@ -81,8 +80,8 @@ class VISP_EXPORT vpAdaptiveGain
 public: /* constantes */
 
     static const double DEFAULT_LAMBDA_ZERO;
-    static const double DEFAULT_LAMBDA_INFINI;
-    static const double DEFAULT_LAMBDA_PENTE;
+    static const double DEFAULT_LAMBDA_INFINITY;
+    static const double DEFAULT_LAMBDA_SLOPE;
 
 
 private: /* Attributs*/
@@ -101,14 +100,19 @@ public:  /* Methodes*/
 
     /* --- CONSTRUCTOR -------------------------------------------------------- */
 
-    vpAdaptiveGain (void);
+    vpAdaptiveGain ();
+    vpAdaptiveGain (double c);
+    vpAdaptiveGain (double gain_at_zero,
+                    double gain_at_infinity,
+                    double slope_at_zero);
+
 
     /* --- INIT --------------------------------------------------------------- */
-    void                        initFromConstant (double lambda);
+    void                        initFromConstant (double c);
     void                        initFromVoid (void);
-    void                        initStandard (double en_zero,
-					      double en_infini,
-					      double pente_en_zero);
+    void                        initStandard (double gain_at_zero,
+                                              double gain_at_infinity,
+                                              double slope_at_zero);
 
 
     /* --- MODIFIORS ---------------------------------------------------------- */
@@ -128,7 +132,7 @@ public:  /* Methodes*/
      * \param val_e: valeur de la norme de l'erreur.
      * \return: valeur de gain au point courrant.
      */
-    double                      value_const (double val_e) const;
+    double                      value_const (double x) const;
 
     /* \brief Calcule la valeur de lambda au point courrant et stockage du
      * resultat.
@@ -139,7 +143,7 @@ public:  /* Methodes*/
      * \param val_e: valeur de la norme de l'erreur.
      * \return: valeur de gain au point courrant.
      */
-    double                      value (double val_e) const;
+    double                      value (double x) const;
 
     double                      limitValue_const (void) const;
 
@@ -152,12 +156,12 @@ public:  /* Methodes*/
   
       \return It returns the last adaptive gain value which was stored in the class.
     */
-    inline double                      getLastValue (void) const {return this ->lambda;}
+    inline double               getLastValue (void) const {return this ->lambda;}
    
-    double                      operator() (double val_e) const;
+    double                      operator() (double x) const;
 
     /* \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
-    double                      operator()  (const vpColVector & e) const;
+    double                      operator()  (const vpColVector & x) const;
 
     /* \brief Idem function limitValue. */
     double                      operator() (void) const;
@@ -169,12 +173,3 @@ public:  /* Methodes*/
 };
 
 #endif /*  __VP_ADAPTIVE_GAIN_H	*/
-
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
