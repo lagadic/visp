@@ -114,7 +114,7 @@ int main()
     graph.setLegend(2, 0, "Z");
 #endif
 
-    int iter = 1;
+    int iter = 0;
     for (; ;)
     {
       robot.getPosition(wMc) ;

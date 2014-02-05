@@ -12,6 +12,8 @@ set(tutorial_cpp
   tutorial-ibvs-4pts-ogre.cpp
   tutorial-ibvs-4pts-ogre-tracking.cpp
   tutorial-ibvs-4pts-plotter.cpp
+  tutorial-ibvs-4pts-plotter-gain-adaptive.cpp
+  tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp
   tutorial-ibvs-4pts-wireframe-camera.cpp
   tutorial-ibvs-4pts-wireframe-robot-afma6.cpp
   tutorial-ibvs-4pts-wireframe-robot-viper.cpp

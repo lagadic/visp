@@ -1,5 +1,5 @@
 /*!
-  \example tutorial-simu-pioneer.cpp
+  \example tutorial-simu-pioneer-continuous-gain-adaptive.cpp
 
   Example that shows how to simulate a visual servoing on a Pioneer mobile robot equipped with a camera.
   The current visual features that are used are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
@@ -53,7 +53,7 @@ int main()
     vpServo task;
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
-    task.setLambda(0.2);
+    task.setLambda(2, 0.2, 10);
     vpVelocityTwistMatrix cVe;
     cVe = robot.get_cVe();
     task.set_cVe(cVe);
@@ -110,7 +110,7 @@ int main()
       robot.get_eJe(eJe);
       task.set_eJe(eJe);
 
-      vpColVector v = task.computeControlLaw();
+      vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
 
 #ifdef VISP_HAVE_DISPLAY
