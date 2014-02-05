@@ -80,34 +80,27 @@
   \param thickness : Thickness of the feature representation.
 
 */
-void
-vpServoDisplay::display(vpServo &s,
-                        const vpCameraParameters &cam,
-                        vpImage<unsigned char> &I,
-                        vpColor currentColor,
-                        vpColor desiredColor,
-			unsigned int thickness)
+void vpServoDisplay::display(const vpServo &s,
+                             const vpCameraParameters &cam,
+                             const vpImage<unsigned char> &I,
+                             vpColor currentColor,
+                             vpColor desiredColor,
+                             unsigned int thickness)
 {
+  std::list<vpBasicFeature *>::const_iterator it_s;
+  std::list<vpBasicFeature *>::const_iterator it_s_star;
 
-
-
-  for (s.featureList.front(),
-	 s.desiredFeatureList.front() ;
-       !s.featureList.outside() ;
-       s.featureList.next(),
-	 s.desiredFeatureList.next() )
+  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin();
+       it_s != s.featureList.end();
+       ++it_s, ++it_s_star)
   {
-    vpBasicFeature *s_ptr = NULL;
-
     if (desiredColor != vpColor::none) {
       // desired list
-      s_ptr = s.desiredFeatureList.value() ;
-      s_ptr->display(cam, I, desiredColor, thickness ) ;
+      (*it_s_star)->display(cam, I, desiredColor, thickness ) ;
     }
     if (currentColor != vpColor::none) {
       // current list
-      s_ptr =  s.featureList.value() ;
-      s_ptr->display(cam, I, currentColor, thickness ) ;
+      (*it_s)->display(cam, I, currentColor, thickness ) ;
     }
   }
   //  vpDisplay::flush(I) ;
@@ -134,40 +127,28 @@ vpServoDisplay::display(vpServo &s,
 
  */
 void
-vpServoDisplay::display(vpServo &s,
+vpServoDisplay::display(const vpServo &s,
                         const vpCameraParameters &cam,
-                        vpImage<vpRGBa> &I,
+                        const vpImage<vpRGBa> &I,
                         vpColor currentColor,
                         vpColor desiredColor,
-			unsigned int thickness)
+                        unsigned int thickness)
 {
+  std::list<vpBasicFeature *>::const_iterator it_s;
+  std::list<vpBasicFeature *>::const_iterator it_s_star;
 
-
-
-  for (s.featureList.front(),
-	 s.desiredFeatureList.front() ;
-       !s.featureList.outside() ;
-       s.featureList.next(),
-	 s.desiredFeatureList.next() )
+  for (it_s = s.featureList.begin(), it_s_star = s.desiredFeatureList.begin();
+       it_s != s.featureList.end();
+       ++it_s, ++it_s_star)
   {
-    vpBasicFeature *s_ptr = NULL;
-
     if (desiredColor != vpColor::none) {
       // desired list
-      s_ptr = s.desiredFeatureList.value() ;
-      s_ptr->display(cam, I, desiredColor, thickness ) ;
+      (*it_s_star)->display(cam, I, desiredColor, thickness ) ;
     }
     if (currentColor != vpColor::none) {
       // current list
-      s_ptr =  s.featureList.value() ;
-      s_ptr->display(cam, I, currentColor, thickness ) ;
+      (*it_s)->display(cam, I, currentColor, thickness ) ;
     }
   }
   //  vpDisplay::flush(I) ;
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
