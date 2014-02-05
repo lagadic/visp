@@ -88,6 +88,71 @@ vpImagePoint::projection(const vpHomography& aHb)
 }
 
 /*!
+
+  Operator +=.
+
+  This operator can be used to compute the center of gravity of a set of image points.
+
+  \code
+#include <iostream>
+#include <vector>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+std::vector<vpImagePoint> ip(2);
+
+ip[0].set_ij(100, 200);
+ip[1].set_ij(300, 400);
+
+vpImagePoint cog(0,0);
+for(unsigned int i=0; i<ip.size(); i++)
+  cog += ip[i];
+cog /= ip.size();
+std::cout << "cog: " << cog << std::endl;
+}
+  \endcode
+
+*/
+vpImagePoint& vpImagePoint::operator+=(const vpImagePoint &ip) {
+  this->i += ip.i;
+  this->j += ip.j;
+  return *this;
+}
+
+/*!
+
+  Operator /=.
+
+  This operator can be used to compute the center of gravity of a set of image points.
+  \code
+#include <iostream>
+#include <vector>
+#include <visp/vpImagePoint.h>
+
+int main()
+{
+std::vector<vpImagePoint> ip(2);
+
+ip[0].set_ij(100, 200);
+ip[1].set_ij(300, 400);
+
+vpImagePoint cog(0,0);
+for(unsigned int i=0; i<ip.size(); i++)
+  cog += ip[i];
+cog /= ip.size();
+std::cout << "cog: " << cog << std::endl;
+}
+  \endcode
+
+*/
+vpImagePoint& vpImagePoint::operator/=(const double scale) {
+  this->i /= scale;
+  this->j /= scale;
+  return *this;
+}
+
+/*!
   \relates vpImagePoint
 
   Returns true if ip1 and ip2 are equal; otherwire returns false.
