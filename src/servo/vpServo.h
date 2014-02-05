@@ -50,12 +50,12 @@
   \brief  Class required to compute the visual servoing control law
 */
 
+#include <list>
+
 #include <visp/vpMatrix.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpBasicFeature.h>
 #include <visp/vpServoException.h>
-
-#include <visp/vpList.h>
 #include <visp/vpAdaptiveGain.h>
 
 
@@ -63,7 +63,7 @@
   \class vpServo
 
   \ingroup VsTask
-  \brief Class required to compute the visual servoing control law descbribed
+  Class required to compute the visual servoing control law descbribed
   in \cite Chaumette06a and \cite Chaumette07a.
 
   \warning To avoid potential memory leaks, it is mendatory to call
@@ -159,46 +159,144 @@ public:
   typedef enum
     {
       NONE,
+      /*!< No control law is specified. */
       EYEINHAND_CAMERA,
+      /*!< Eye in hand visual servoing with the following control law
+        \f[{\bf v}_c = -\lambda {\widehat {\bf L}}^{+}_{e} {\bf e}\f]
+        where camera velocities are computed. */
       EYEINHAND_L_cVe_eJe,
+      /*!< Eye in hand visual servoing with the following control law
+        \f[{\dot {\bf q}} = -\lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
+        where joint velocities are computed. */
       EYETOHAND_L_cVe_eJe,
+      /*!< Eye to hand visual servoing with the following control law
+        \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
+        where joint velocities are computed. */
       EYETOHAND_L_cVf_fVe_eJe,
+      /*!< Eye to hand visual servoing with the following control law
+        \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_f {^f}{\bf V}_e {^e}{\bf J}_e} \right)^{+} {\bf e}\f]
+        where joint velocities are computed. */
       EYETOHAND_L_cVf_fJe
+      /*!< Eye to hand visual servoing with the following control law
+        \f[{\dot {\bf q}} = \lambda \left( {{\widehat {\bf L}}_{e} {^c}{\bf V}_f {^f}{\bf J}_e} \right)^{+} {\bf e}\f]
+        where joint velocities are computed. */
     } vpServoType;
 
   typedef enum
     {
       CURRENT,
+      /*!< In the control law (see vpServo::vpServoType), uses the interaction matrix \f${\widehat {\bf L}}_s \f$computed using the current features \f$\bf s\f$. */
       DESIRED,
+      /*!< In the control law (see vpServo::vpServoType), uses the interaction matrix \f${\widehat {\bf L}}_{s^*} \f$computed using the desired features \f${\bf s}^*\f$. */
       MEAN,
+      /*!< In the control law (see vpServo::vpServoType), uses the interaction matrix \f${\widehat {\bf L}} = \left({\widehat {\bf L}}_s + {\widehat {\bf L}}_{s^*}\right)/2 \f$. */
       USER_DEFINED
+      /*!< In the control law (see vpServo::vpServoType), uses an interaction matrix set by the user. */
     } vpServoIteractionMatrixType;
 
   typedef enum
     {
-      TRANSPOSE,
-      PSEUDO_INVERSE
+      TRANSPOSE,     /*!< In the control law (see vpServo::vpServoType), uses the transpose instead of the pseudo inverse. */
+      PSEUDO_INVERSE /*!< In the control law (see vpServo::vpServoType), uses the pseudo inverse. */
     } vpServoInversionType;
 
   typedef enum
     {
       ALL,                /*!< Print all the task information. */
       CONTROLLER,         /*!< Print the type of controller law. */
-      ERROR_VECTOR,       /*!< Print the error vector \f$(s-s^*)\f$. */
-      FEATURE_CURRENT,    /*!< Print the current features \f$s\f$. */
-      FEATURE_DESIRED,    /*!< Print the desired features \f$s^*\f$. */
+      ERROR_VECTOR,       /*!< Print the error vector \f$\bf e = (s-s^*)\f$. */
+      FEATURE_CURRENT,    /*!< Print the current features \f$\bf s\f$. */
+      FEATURE_DESIRED,    /*!< Print the desired features \f${\bf s}^*\f$. */
       GAIN,               /*!< Print the gain \f$\lambda\f$. */
       INTERACTION_MATRIX, /*!< Print the interaction matrix. */
-      MINIMUM             /*!< Same as vpServoPrintType::ERROR_VECTOR. */
+      MINIMUM             /*!< Same as vpServo::vpServoPrintType::ERROR_VECTOR. */
     } vpServoPrintType;
 
 public:
   // default constructor
   vpServo();
-  //! constructor with Choice of the visual servoing control law
-  vpServo(vpServoType _servoType) ;
-  //! destructor
+  // constructor with Choice of the visual servoing control law
+  vpServo(vpServoType servoType) ;
+  // destructor
   virtual ~vpServo() ;
+
+  // create a new ste of  two visual features
+  void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
+                  const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
+  // create a new ste of  two visual features
+  void addFeature(vpBasicFeature& s,
+                  const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
+
+  // compute the desired control law
+  vpColVector computeControlLaw() ;
+  // compute the desired control law
+  vpColVector computeControlLaw(double t) ;
+  vpColVector computeControlLaw(double t, const vpColVector &e_dot_init);
+
+  // compute the error between the current set of visual features and
+  // the desired set of visual features
+  vpColVector computeError() ;
+  // compute the interaction matrix related to the set of visual features
+  vpMatrix computeInteractionMatrix() ;
+
+  // Return the task dimension.
+  unsigned int getDimension() const ;
+  /*!
+   Return the error \f$\bf e = (s - s^*)\f$ between the current set of visual features
+   \f$\bf s\f$ and the desired set of visual features \f$\bf s^*\f$.
+   The error vector is updated after a call of computeError() or computeControlLaw().
+\code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpColVector e = task.getError();          // Get the error vector
+\endcode
+   */
+  inline vpColVector getError() const
+  {
+    return error ;
+  }
+  /*
+     Return the interaction matrix \f$L\f$ used to compute the task jacobian \f$J_1\f$.
+     The interaction matrix is updated after a call to computeInteractionMatrix() or computeControlLaw().
+
+ \code
+   vpServo task;
+   ...
+   vpColVector v = task.computeControlLaw();    // Compute the velocity corresponding to the visual servoing
+   vpMatrix    L = task.getInteractionMatrix(); // Get the interaction matrix used to compute v
+ \endcode
+     \sa getTaskJacobian()
+   */
+  inline vpMatrix getInteractionMatrix() const
+  {
+    return L;
+  }
+
+  vpMatrix getI_WpW() const;
+  /*!
+     Return the visual servo type.
+   */
+  inline vpServoType getServoType() const
+  {
+    return servoType;
+  }
+
+  vpMatrix getTaskJacobian() const;
+  vpMatrix getTaskJacobianPseudoInverse() const;
+  unsigned int getTaskRank() const;
+
+  /*!
+     Get task singular values.
+
+     \return Singular values that relies on the task jacobian pseudo inverse.
+     */
+  inline vpColVector getTaskSingularValues() const
+  {
+    return sv;
+  }
+
+  vpMatrix getWpW() const;
 
   /*!
     Return the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
@@ -221,211 +319,141 @@ public:
   */
   vpMatrix get_fJe() const { return fJe; }
 
-  //! destruction (memory deallocation if required)
+  // destruction (memory deallocation if required)
   void kill() ;
 
-  //!  Choice of the visual servoing control law
-  void setServo(vpServoType _servo_type) ;
+  void print(const vpServo::vpServoPrintType display_level=ALL,
+             std::ostream &os = std::cout) ;
 
-  void set_cVe(vpVelocityTwistMatrix &_cVe) { cVe = _cVe ; init_cVe = true ; }
-  void set_cVf(vpVelocityTwistMatrix &_cVf) { cVf = _cVf ; init_cVf = true ; }
-  void set_fVe(vpVelocityTwistMatrix &_fVe) { fVe = _fVe ; init_fVe = true ; }
+  // Add a secondary task.
+  vpColVector secondaryTask(const vpColVector &de2dt) ;
+  // Add a secondary task.
+  vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt) ;
 
-  void set_cVe(vpHomogeneousMatrix &cMe) { cVe.buildFrom(cMe); init_cVe=true ;}
-  void set_cVf(vpHomogeneousMatrix &cMf) { cVf.buildFrom(cMf); init_cVf=true ;}
-  void set_fVe(vpHomogeneousMatrix &fMe) { fVe.buildFrom(fMe); init_fVe=true ;}
+  /*!
+    Set a variable which enables to compute the interaction matrix at each iteration.
 
-  void set_eJe(vpMatrix &_eJe) { eJe = _eJe ; init_eJe = true ; }
-  void set_fJe(vpMatrix &_fJe) { fJe = _fJe ; init_fJe = true ; }
+    When the interaction matrix is computed from the desired features \f${\bf s}^*\f$ which are in general constant,
+    the interaction matrix \f${\widehat {\bf L}}_{s^*}\f$ is computed just at the first iteration of the servo loop.
+    Sometimes, when the desired features are time dependent \f${{\bf s}(t)}^*\f$ or varying, the interaction matrix
+    need to be computed at each iteration of the servo loop. This method allows to force the computation of
+    \f${\widehat {\bf L}}\f$ in this particular case.
 
-
-  //! Set the type of the interaction matrix (current, mean, desired, user).
-  void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
-				const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
-
-  /*! 
-    Set a variable which enable to compute the interaction matrix for each iteration.
     \param forceInteractionMatrixComputation: If true it forces the interaction matrix computation even if it is already done.
+
   */
-  void setForceInteractionMatrixComputation(bool forceInteractionMatrixComputation) {this->forceInteractionMatrixComputation = forceInteractionMatrixComputation;}
+  void setForceInteractionMatrixComputation(bool forceInteractionMatrixComputation)
+  {
+    this->forceInteractionMatrixComputation = forceInteractionMatrixComputation;
+  }
 
-  //! set the gain lambda
-  void setLambda(double _lambda) { lambda .initFromConstant (_lambda) ; }
-  void setLambda(const double at_zero,
-		 const double at_infinity,
-		 const double deriv_at_zero)
-  { lambda .initStandard (at_zero, at_infinity, deriv_at_zero) ; }
-  void setLambda(const vpAdaptiveGain& _l){lambda=_l;}
+  /*!
+    Set the interaction matrix type (current, desired, mean or user defined) and how its inverse is computed.
+    \param interactionMatrixType : The interaction matrix type. See vpServo::vpServoIteractionMatrixType for
+    more details.
+    \param interactionMatrixInversion : How is the inverse computed. See vpServo::vpServoInversionType for
+    more details.
+    */
+  void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
+                                const vpServoInversionType &interactionMatrixInversion=PSEUDO_INVERSE) ;
 
-  //! create a new ste of  two visual features
-  void addFeature(vpBasicFeature& s, vpBasicFeature& s_star,
-	       const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
-  //! create a new ste of  two visual features
-  void addFeature(vpBasicFeature& s,
-	       const unsigned int select=vpBasicFeature::FEATURE_ALL) ;
+  /*!
+    Set the gain \f$\lambda\f$ used in the control law (see vpServo::vpServoType) as constant.
 
-  //! compute the interaction matrix related to the set of visual features
-  vpMatrix computeInteractionMatrix() ;
-  // compute the error between the current set of visual features and
-  // the desired set of visual features
-  vpColVector computeError() ;
-  //! compute the desired control law
-  vpColVector computeControlLaw() ;
-  //! test if all the initialization are correct if true control law can
-  //! be computed
+    The usage of an adaptive gain allows to reduce the convergence time, see setLambda(const vpAdaptiveGain&).
+
+    \param c : Constant gain. Values are in general between 0.1 and 1. Higher is the gain, higher are the velocities
+    that may be applied to the robot.
+   */
+  void setLambda(double c)
+  {
+    lambda .initFromConstant (c) ;
+  }
+
+  /*!
+    Set the gain \f$\lambda\f$ used in the control law (see vpServo::vpServoType) as adaptive.
+    Value of \f$\lambda\f$ that is used in computeControlLaw() depend on the infinity norm of the task Jacobian.
+
+    The usage of an adaptive gain rather than a constant gain allows to reduce the convergence time.
+
+    \param gain_at_zero : the expected gain when \f$x=0\f$: \f$\lambda(0)\f$.
+    \param gain_at_infinity : the expected gain when \f$x=\infty\f$: \f$\lambda(\infty)\f$.
+    \param slope_at_zero : the expected slope of \f$\lambda(x)\f$ when \f$x=0\f$: \f${\dot \lambda}(0)\f$.
+
+    For more details on these parameters see vpAdaptiveGain class.
+   */
+  void setLambda(const double gain_at_zero,
+                 const double gain_at_infinity,
+                 const double slope_at_zero)
+  {
+    lambda .initStandard (gain_at_zero, gain_at_infinity, slope_at_zero) ;
+  }
+  /*!
+    Set the gain \f$\lambda\f$ used in the control law (see vpServo::vpServoType) as adaptive.
+    Value of \f$\lambda\f$ that is used in computeControlLaw() depend on the infinity norm of the task Jacobian.
+
+    The usage of an adaptive gain rather than a constant gain allows to reduce the convergence time.
+    \sa vpAdaptiveGain
+   */
+  void setLambda(const vpAdaptiveGain& l){lambda=l;}
+  /*!
+    Set the value of the parameter \f$\mu\f$ used to ensure the continuity of the velocities
+    computed using computeControlLaw(double).
+
+    A recommended value is 4.
+  */
+  void setMu(double mu){this->mu=mu;}
+  //  Choice of the visual servoing control law
+  void setServo(const vpServoType &servo_type) ;
+
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
+   */
+  void set_cVe(const vpVelocityTwistMatrix &cVe) { this->cVe = cVe ; init_cVe = true ; }
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
+   */
+  void set_cVe(const vpHomogeneousMatrix &cMe) { cVe.buildFrom(cMe); init_cVe=true ;}
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from robot fixed frame (also called world or base frame) into the camera frame.
+   */
+  void set_cVf(const vpVelocityTwistMatrix &cVf) { this->cVf = cVf ; init_cVf = true ; }
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from robot fixed frame (also called world or base frame) into the camera frame.
+   */
+  void set_cVf(const vpHomogeneousMatrix &cMf) { cVf.buildFrom(cMf); init_cVf=true ;}
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
+   */
+  void set_fVe(const vpVelocityTwistMatrix &fVe) { this->fVe = fVe ; init_fVe = true ; }
+  /*!
+    Set the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
+   */
+  void set_fVe(const vpHomogeneousMatrix &fMe) { fVe.buildFrom(fMe); init_fVe=true ;}
+
+  /*!
+    Set the robot jacobian expressed in the end-effector frame.
+   */
+  void set_eJe(const vpMatrix &eJe) { this->eJe = eJe ; init_eJe = true ; }
+  /*!
+    Set the robot jacobian expressed in the robot fixed frame (also called world or base frame).
+   */
+  void set_fJe(const vpMatrix &fJe) { this->fJe = fJe ; init_fJe = true ; }
+
+  /*!
+    Test if all the initialization are correct. If true, the control law can be computed.
+    */
   bool testInitialization() ;
-  //! test if all the update are correct if true control law can
-  //! be computed
+  /*!
+    Test if all the update are correct. If true control law can be computed.
+    */
   bool testUpdated() ;
 
-
-  //! Add a secondary task.
-  vpColVector secondaryTask(vpColVector &de2dt) ;
-  //! Add a secondary task.
-  vpColVector secondaryTask(vpColVector &e2, vpColVector &de2dt) ;
-
-  //! Return the task dimension.
-  unsigned int getDimension() ;
-
-  /*!
-   Return the error \f$(s - s^*)\f$ between the current set of visual features
-   \f$s\f$ and the desired set of visual features \f$s^*\f$.
-   The error vector is updated after a call of computeError() or computeControlLaw().
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpColVector e = task.getError();          // Get the error vector
-\endcode
-   */
-  inline vpColVector getError() const
-  {
-    return error ;
-  }
-  /*
-    Return the interaction matrix \f$L\f$ used to compute the task jacobian \f$J_1\f$.
-    The interaction matrix is updated after a call to computeInteractionMatrix() or computeControlLaw().
-
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw();    // Compute the velocity corresponding to the visual servoing
-  vpMatrix    L = task.getInteractionMatrix(); // Get the interaction matrix used to compute v
-\endcode
-    \sa getTaskJacobian()
-  */
-  inline vpMatrix getInteractionMatrix() const
-  {
-    return L;
-  }
-
-  /*!
-    Return the projection operator \f${\bf I}-{\bf W}^+{\bf W}\f$. This operator is updated
-    after a call of computeControlLaw().
-
-\code
-  vpServo task;
-  ...
-  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix I_WpW = task.getI_WpW();          // Get the projection operator
-\endcode
-    \sa getWpW()
-  */
-  inline vpMatrix getI_WpW() const
-  {
-    return I_WpW;
-  }
-  /*!
-    Return the visual servo type.
-  */
-  inline vpServoType getServoType() const
-  {
-    return servoType;
-  }
-  /*!
-    Return the task jacobian \f$J_1\f$. The task jacobian is updated after a call of computeControlLaw().
-
-    In the general case, the task jacobian is given by \f$J_1 = L {^c}V_a {^a}J_e\f$.
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix   J1 = task.getTaskJacobian();   // Get the task jacobian used to compute v
-\endcode
-    \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
-  */
-  inline vpMatrix getTaskJacobian() const
-  {
-    return J1;
-  }
-  /*!
-    Return the pseudo inverse of the task jacobian \f$J_1\f$. The task jacobian
-    and its pseudo inverse are updated after a call of computeControlLaw().
-
-    \return Pseudo inverse \f${J_1}^{+}\f$ of the task jacobian.
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw();            // Compute the velocity corresponding to the visual servoing
-  vpMatrix  J1p = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v
-\endcode
-
-  \sa getTaskJacobian()
-  */
-  inline vpMatrix getTaskJacobianPseudoInverse() const
-  {
-    return J1p;
-  }
-  /*!
-    Return the rank of the task jacobian. The rank is updated after a call of computeControlLaw().
-
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  unsigned int rank = task.getTaskRank();   // Get the rank of the task jacobian
-\endcode
-  */
-  inline unsigned int getTaskRank() const
-  {
-    return rankJ1;
-  }
-
-  /*!
-    Get task singular values.
-
-    \return Singular values that relies on the task jacobian pseudo inverse.
-    */
-  inline vpColVector getTaskSingularValues() const
-  {
-    return sv;
-  }
-
-  /*!
-    Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is updated
-    after a call of computeControlLaw().
-
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix  WpW = task.getWpW();            // Get the projection operator
-\endcode
-    \sa getI_WpW()
-  */
-  inline vpMatrix getWpW() const
-  {
-    return WpW;
-  }
-
-
-  void print(const vpServo::vpServoPrintType display_level=ALL,
-	     std::ostream &os = std::cout) ;
-protected:
-  //! basic initialization
+  protected:
+  //! Basic initialization.
   void init() ;
 
-public:
+  public:
   //! Interaction matrix
   vpMatrix L ;
   //! Error \f$(s - s^*)\f$ between the current set of visual features
@@ -449,7 +477,6 @@ public:
   //! Task \f$e = e_1 + (I-{J_1}^{+} J_1) e_2\f$
   vpColVector e ;
 
-
   //! Articular velocity
   vpColVector q_dot ;
   //! Camera velocity
@@ -461,15 +488,15 @@ public:
   //! Rank of the task Jacobian
   unsigned int rankJ1 ;
 
-  //! List of visual features (produce \f$s\f$)
-  vpList<vpBasicFeature *> featureList ;
-  //! List of desired visual features (produce \f$s^*\f$)
-  vpList<vpBasicFeature *> desiredFeatureList ;
+  //! List of current visual features \f$\bf s\f$.
+  std::list<vpBasicFeature *> featureList ;
+  //! List of desired visual features \f$\bf s^*\f$.
+  std::list<vpBasicFeature *> desiredFeatureList ;
   //! List of selection among visual features
-  //! used for selection of a subset of each visual feature if required
-  vpList<unsigned int> featureSelectionList ;
+  //! used for selection of a subset of each visual feature if required.
+  std::list<unsigned int> featureSelectionList ;
 
-  //! Gain
+  //! Gain used in the control law.
   vpAdaptiveGain lambda ;
 
   //! Sign of the interaction +/- 1 (1 for eye-in-hand, -1 for
@@ -478,21 +505,21 @@ public:
   //! Type of the interaction matrox (current, mean, desired, user)
   vpServoIteractionMatrixType interactionMatrixType ;
   //! Indicates if the transpose or the pseudo inverse of the
-  //!interaction matrix should be used to compute the task
+  //! interaction matrix should be used to compute the task.
   vpServoInversionType inversionType ;
 
-protected:
+  protected:
   /*
     Twist transformation matrix
   */
 
-  //! Twist transformation matrix between Re and Rc
+  //! Twist transformation matrix between Re and Rc.
   vpVelocityTwistMatrix cVe ;
   bool init_cVe ;
-  //! Twist transformation matrix between Rf and Rc
+  //! Twist transformation matrix between Rf and Rc.
   vpVelocityTwistMatrix cVf ;
   bool init_cVf ;
-  //! Twist transformation matrix between Re and Rf
+  //! Twist transformation matrix between Re and Rf.
   vpVelocityTwistMatrix fVe ;
   bool init_fVe ;
 
@@ -511,29 +538,26 @@ protected:
     Task building
   */
 
-  //! true if the error has been computed
+  //! true if the error has been computed.
   bool errorComputed ;
-  //! true if the interaction matrix has been computed
+  //! true if the interaction matrix has been computed.
   bool interactionMatrixComputed ;
-  //! dimension of the task
+  //! Dimension of the task updated during computeControlLaw().
   unsigned int dim_task ;
-  bool taskWasKilled; // flag to indicate if the task was killed
+  //! Flag to indicate if the task was killed
+  bool taskWasKilled;
   //! Force the interaction matrix computation even if it is already done.
   bool forceInteractionMatrixComputation;
 
-  //! projection operators WpW
+  //! Projection operators \f$\bf WpW\f$.
   vpMatrix WpW ;
-  //! projection operators I-WpW
+  //! Projection operators \f$\bf I-WpW\f$.
   vpMatrix I_WpW ;
 
-  vpColVector sv ; // singular values from the pseudo inverse
+  //! Singular values from the pseudo inverse.
+  vpColVector sv ;
+
+  double mu;
 } ;
 
-
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
