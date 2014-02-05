@@ -101,7 +101,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
 
   \param I Image to be displayed (note that image has to be initialized).
   \param winx, winy The window is set at position x,y (column index, row index).
-  \param _title  Window's title.
+  \param title  Window's title.
 
 */
 vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
