@@ -6,9 +6,11 @@
                     http://team.inria.fr/lagadic
 
 
-ViSP under development version
+ViSP 2.9.0 (release candidate 1 February 7th, 2014)
   - New features
-    . Introduction of a new template tracker.
+    . Introduction of a new template tracker using SSD or ZNCC. A video that uses
+      this tracker is available on http://team.inria.fr/lagadic/visp/computer-vision.html
+    . In vpServo introduction of a new controller able to ensure continuous sequencing
   - Improvements
     . Add missing const to member functions and arguments passed by reference.
     . Introduction of a new option BUILD_WITH_STATIC_CRT that allows to set
@@ -18,10 +20,11 @@ ViSP under development version
     . Trace and debug can now be enabled/disabled using CMake
       ACTIVATE_DEBUG_TRACE option
     . Fix errors detected by Covery Scan static code analyser
-    . Fix warnings detected with Gnu g++ -Weffc++ -Wshadow compiler flag
-    . Improve vpHomography class
+    . Fix warnings detected with Gnu g++ -Weffc++ -Wshadow compiler flags
+    . Improve a lot of classes
   - New examples
     . New example that shows how to use the template tracker
+    . New sample code provided in tutorial folder
   - New tutorials
     . ViSP installation on Fedora
     . Image filtering
