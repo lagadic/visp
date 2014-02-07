@@ -71,7 +71,7 @@ class vpMomentDatabase;
 
 */
 class VISP_EXPORT vpFeatureMomentBasic : public vpFeatureMoment{
-private:
+protected:
     unsigned int order;
  public:
         vpFeatureMomentBasic(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL);
@@ -84,7 +84,7 @@ private:
         }
 #endif
 
-        vpMatrix interaction (unsigned int select_one,unsigned int select_two);
+        vpMatrix interaction (unsigned int select_one,unsigned int select_two) const;
         /*!
           Associated moment name.
           */
