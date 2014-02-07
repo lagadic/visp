@@ -390,7 +390,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
   double intensity = 0;
   double intensity_white = 0;
 
-  double Imax = static_cast<double>(image.getMaxValue());
+  //double Imax = static_cast<double>(image.getMaxValue());
+  double Imax = 255.;                                                     // To check the effect of gray level change. ISR Coimbra
 
   double iscale = 1.0;
   if (flg_normalize_intensity)                                            // This makes the image a probability density function
