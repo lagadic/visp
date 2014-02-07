@@ -124,19 +124,19 @@ vpLine::setWorldCoordinates(const double &A1, const double &B1,
   \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
 
-  \param oP : The column vector which contains the eight parameters
+  \param oP_ : The column vector which contains the eight parameters
   needed to define the equations of the two planes in the object
   frame. \f[ oP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\
   B2 \\ C2 \\ D2 \end{array}\right] \f]
 
 */
 void
-vpLine::setWorldCoordinates(const vpColVector &oP)
+vpLine::setWorldCoordinates(const vpColVector &oP_)
 {
-  if (oP.getRows() != 8)
+  if (oP_.getRows() != 8)
     throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
 
-  this->oP = oP ;
+  this->oP = oP_ ;
 }
 
 
@@ -226,18 +226,18 @@ vpLine::projection()
   image plane parameters \f$p=(\rho , \theta)\f$ are updated in
   output.
 
-  \param cP : The vector containing the line features relative to the
+  \param cP_ : The vector containing the line features relative to the
   camera frame. \f[ cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1
   \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
   
-  \param p : The vector which contains the 2D line features expressed
+  \param p_ : The vector which contains the 2D line features expressed
   in the image plane. \f[ p = \left[\begin{array}{c} \rho \\ \theta
   \end{array}\right] \f]
 
   \exception vpException::fatalError : Degenerate case, the image of the straight line is a point.
 */
 void
-vpLine::projection(const vpColVector &cP, vpColVector &p)
+vpLine::projection(const vpColVector &cP_, vpColVector &p_)
 {
  //projection
 
@@ -246,15 +246,15 @@ vpLine::projection(const vpColVector &cP, vpColVector &p)
 
   double A1, A2, B1, B2, C1, C2, D1, D2;
 
-  A1=cP[0] ;
-  B1=cP[1] ;
-  C1=cP[2] ;
-  D1=cP[3] ;
+  A1=cP_[0] ;
+  B1=cP_[1] ;
+  C1=cP_[2] ;
+  D1=cP_[3] ;
 
-  A2=cP[4] ;
-  B2=cP[5] ;
-  C2=cP[6] ;
-  D2=cP[7] ;
+  A2=cP_[4] ;
+  B2=cP_[5] ;
+  C2=cP_[6] ;
+  D2=cP_[7] ;
 
   double a, b, c, s;
   a = A2*D1 - A1*D2;
@@ -274,8 +274,8 @@ vpLine::projection(const vpColVector &cP, vpColVector &p)
   if (p.getRows() != 2)
     p.resize(2);
 
-  p[0] = rho ;
-  p[1] = theta ;
+  p_[0] = rho ;
+  p_[1] = theta ;
 }
 
 
@@ -336,7 +336,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
   \param cMo : The homogeneous matrix relative to the pose
   between the desired frame and the object frame.
 
-  \param cP : The vector which will contain the parameters of the two
+  \param cP_ : The vector which will contain the parameters of the two
   planes in the camera frame. \f[ cP =
   \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2
   \end{array}\right] \f]
@@ -363,7 +363,7 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo)
 */
 
 void
-vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
+vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 {
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
@@ -424,10 +424,10 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 
   // Constraint A1^2 + B1^2 + C1^2 = 1
   d1 = 1.0/sqrt(a1*a1 + b1*b1 + c1*c1);
-  cP[0] = A1 = a1*d1 ;
-  cP[1] = B1 = b1*d1 ;
-  cP[2] = C1 = c1*d1 ;
-  cP[3] = D1 = 0 ;
+  cP_[0] = A1 = a1*d1 ;
+  cP_[1] = B1 = b1*d1 ;
+  cP_[2] = C1 = c1*d1 ;
+  cP_[3] = D1 = 0 ;
 
   // Constraint A1 A2 + B1 B2 + C1 C2 = 0 (P2 orthogonal to P1)
   // N2_new = (N1 x N2) x N1_new
@@ -458,10 +458,10 @@ vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
   //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
 
-  cP[4] =  A2;
-  cP[5] =  B2;
-  cP[6] =  C2;
-  cP[7] =  D2;
+  cP_[4] =  A2;
+  cP_[5] =  B2;
+  cP_[6] =  C2;
+  cP_[7] =  D2;
 
   // in case of verification
   /* 

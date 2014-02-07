@@ -235,10 +235,10 @@ public:
 
   void initTracking(const vpImage<unsigned char>& I, unsigned int size = 0);
   void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
-        unsigned int size = 0);
+                    unsigned int size = 0);
   void initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
-        unsigned int gray_level_min, unsigned int gray_level_max,
-        unsigned int size = 0 );
+                    unsigned int gray_lvl_min, unsigned int gray_lvl_max,
+                    unsigned int size = 0 );
 
   vpDot2& operator=(const vpDot2& twinDot );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot2& d);
@@ -252,10 +252,10 @@ public:
 
   void setArea( const double & area );
   /*!
-    Initialize the dot coordinates with \e cog. 
+    Initialize the dot coordinates with \e ip.
   */
-  inline void setCog(const vpImagePoint &cog) {
-    this->cog = cog; 
+  inline void setCog(const vpImagePoint &ip) {
+    this->cog = ip;
   }
   /*!
 
@@ -315,7 +315,7 @@ public:
 
     \sa setGraphics()
     */
-  void setGraphicsThickness(unsigned int thickness) {this->thickness = thickness;};
+  void setGraphicsThickness(unsigned int t) {this->thickness = t;};
   /*!
 
   Set the color level of the dot to search a dot in a region of interest. This level will be

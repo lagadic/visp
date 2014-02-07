@@ -175,20 +175,20 @@ public:
 
   */
   inline void rad2deg() {
-    double rad2deg = 180.0/M_PI;
+    double r2d = 180.0/M_PI;
 
     for (unsigned int i=0; i < rowNum; i++)
-      (*this)[i] *= rad2deg;
+      (*this)[i] *= r2d;
   }
   /*!
     Convert a column vector containing angles in degrees into radians.
 
   */
   inline void deg2rad() {
-    double deg2rad = M_PI/180.0;
+    double d2r = M_PI/180.0;
 
     for (unsigned int i=0; i < rowNum; i++)
-      (*this)[i] *= deg2rad;
+      (*this)[i] *= d2r;
   }
 
   /*!

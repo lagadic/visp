@@ -146,16 +146,16 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) : vpM
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &tv,
 					     const vpThetaUVector &thetau) : vpMatrix()
 {
   init() ;
-  buildFrom(t, thetau) ;
+  buildFrom(tv, thetau) ;
 }
 
 /*!
@@ -163,16 +163,16 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &tv,
 					     const vpRotationMatrix &R)
 {
   init() ;
-  buildFrom(t,R) ;
+  buildFrom(tv,R) ;
 }
 
 /*!
@@ -313,18 +313,18 @@ vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   vpColVector c(6);
 
   if (6 != v.getRows())
-    {
-      vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vector multiply") ;
-      throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-                              "Mismatch in vpVelocityTwistMatrix/vector multiply")) ;
-    }
+  {
+    vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vector multiply") ;
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "Mismatch in vpVelocityTwistMatrix/vector multiply")) ;
+  }
 
   c = 0.0;
 
   for (unsigned int i=0;i<6;i++) {
     for (unsigned int j=0;j<6;j++) {
       {
- 	c[i]+=rowPtrs[i][j] * v[j];
+        c[i]+=rowPtrs[i][j] * v[j];
       }
     }
   }
@@ -338,26 +338,26 @@ vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   Build a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param R : Rotation matrix.
 
 */
 vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &tv,
 				 const vpRotationMatrix &R)
 {
   unsigned int i, j;
-  vpMatrix skewaR = t.skew(t)*R ;
+  vpMatrix skewaR = tv.skew(tv)*R ;
 
   for (i=0 ; i < 3 ; i++)
     for (j=0 ; j < 3 ; j++)
-      {
-	(*this)[i][j] = R[i][j] ;
-	(*this)[i+3][j+3] = R[i][j] ;
-	(*this)[i][j+3] = skewaR[i][j] ;
+    {
+      (*this)[i][j] = R[i][j] ;
+      (*this)[i+3][j+3] = R[i][j] ;
+      (*this)[i][j+3] = skewaR[i][j] ;
 
-      }
+    }
   return (*this) ;
 }
 
@@ -366,18 +366,18 @@ vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
 vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &tv,
 				 const vpThetaUVector &thetau)
 {
   vpRotationMatrix R ;
   R.buildFrom(thetau) ;
-  buildFrom(t,R) ;
+  buildFrom(tv,R) ;
   return (*this) ;
 
 }
@@ -396,12 +396,12 @@ vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
 vpVelocityTwistMatrix
 vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
 {
-  vpTranslationVector t ;
+  vpTranslationVector tv ;
   vpRotationMatrix R ;
   M.extract(R) ;
-  M.extract(t) ;
+  M.extract(tv) ;
 
-  buildFrom(t, R) ;
+  buildFrom(tv, R) ;
   return (*this) ;
 }
 
@@ -439,7 +439,7 @@ vpVelocityTwistMatrix::extract( vpRotationMatrix &R) const
 
 //! extract the translation vector from the twist matrix
 void
-vpVelocityTwistMatrix::extract(vpTranslationVector &t) const
+vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
 {
 	vpRotationMatrix R;extract(R);
 	vpMatrix skTR(3,3);
@@ -448,9 +448,9 @@ vpVelocityTwistMatrix::extract(vpTranslationVector &t) const
 		skTR[i][j] = (*this)[i][j+3];
 
 	vpMatrix skT = skTR*R.t();
-	t[0] = skT[2][1];
-	t[1] = skT[0][2];
-	t[2] = skT[1][0];
+  tv[0] = skT[2][1];
+  tv[1] = skT[0][2];
+  tv[2] = skT[1][0];
 }
 
 /*

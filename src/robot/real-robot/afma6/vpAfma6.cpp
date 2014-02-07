@@ -240,15 +240,15 @@ vpAfma6::init (const char * paramAfma6,
 
   \param tool : Camera in use.
 
-  \param projModel : Projection model of the camera.
+  \param proj_model : Projection model of the camera.
 
 */
 void
 vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
-               vpCameraParameters::vpCameraParametersProjType projModel)
+               vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   
-  this->projModel = projModel;
+  this->projModel = proj_model;
   
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   // Read the robot parameters from files

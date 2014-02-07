@@ -793,8 +793,8 @@ void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
   l_crossingPoints.next();
   while(!l_crossingPoints.outside())
   {
-    vpMeSite s = l_crossingPoints.value();
-    vpImagePoint pt(s.ifloat,s.jfloat);
+    s = l_crossingPoints.value();
+    pt.set_ij(s.ifloat,s.jfloat);
     if (vpImagePoint::distance(pt_1,pt) >= 10)
     {
       v_crossingPoints.push_back(pt);
@@ -897,11 +897,10 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   
   d = (double)(m+1)/(double)(l_n-l_p+1);
   
-  double i;
   double alpha;
   for(unsigned int j = 1; j <= l_n-l_p; j++)
   {
-    i = floor(j*d);
+    double i = floor(j*d);
     alpha = j*d-i;
     l_knots.push_back((1.0-alpha)*ubar[(unsigned int)i-1]+alpha*ubar[(unsigned int)i]);
   }

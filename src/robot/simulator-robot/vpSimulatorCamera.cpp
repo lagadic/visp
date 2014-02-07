@@ -114,13 +114,13 @@ vpSimulatorCamera::get_cVe(vpVelocityTwistMatrix &cVe) const
   Get the robot jacobian expressed in the end-effector frame.
   For that simple robot the Jacobian is the identity.
 
-  \param eJe : A 6 by 6 matrix representing the robot jacobian \f$ {^e}{\bf
+  \param eJe_ : A 6 by 6 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame. Yhis matrix is equal to identity.
 */
 void
-vpSimulatorCamera::get_eJe(vpMatrix &eJe)
+vpSimulatorCamera::get_eJe(vpMatrix &eJe_)
 {
-  eJe = this->eJe ;
+  eJe_ = this->eJe ;
 }
 
 /*!

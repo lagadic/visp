@@ -56,9 +56,21 @@
 #include <vector>
 #include <list>
 
+double compareSURFDescriptors( const float* d1, const float* d2, double best, int length );
+int naiveNearestNeighbor( const float *vec, int laplacian,
+                          const CvSeq *model_keypoints,
+                          const CvSeq *model_descriptors );
+int naiveNearestNeighbor( const float *vec,
+                          const CvSeq *ref_keypoints,
+                          const CvSeq *ref_descriptors );
+void findPairs( const CvSeq* objectKeypoints,
+                const CvSeq* objectDescriptors,
+                const CvSeq* imageKeypoints,
+                const CvSeq* imageDescriptors,
+                std::vector<int>& ptpairs );
+
 // Compare two surf descriptors.
-double compareSURFDescriptors( const float* d1, const float* d2,
-                               double best, int length )
+double compareSURFDescriptors( const float* d1, const float* d2, double best, int length )
 {
   double total_cost = 0;
   int i;

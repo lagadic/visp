@@ -89,14 +89,14 @@ public:
     CALIB_LAGRANGE_VIRTUAL_VS_DIST, /*!< Lagrange approach first, than virtual visual servoing approach, with estimation of the distortion. */
   } vpCalibrationMethodType ;
 
-  vpHomogeneousMatrix cMo ;    //!< the pose computed for the model without distortion
+  vpHomogeneousMatrix cMon ;    //!< the pose computed for the model without distortion
   //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_dist ;  //!< the pose computed for perspective projection
+  vpHomogeneousMatrix cMo_distn ;  //!< the pose computed for perspective projection
   //!< with distortion model
   //!< (as a 3x4 matrix [R T])
-  vpCameraParameters cam;   //!< camera intrinsic parameters for perspective
+  vpCameraParameters camn;   //!< camera intrinsic parameters for perspective
   //!< projection model without distortion
-  vpCameraParameters cam_dist; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam_distn; //!< camera intrinsic parameters for perspective
   //!< projection model with distortion
 
   vpHomogeneousMatrix rMe; //!< position of the effector in relation to the
@@ -105,37 +105,30 @@ public:
   vpHomogeneousMatrix eMc_dist;
 
 public:
-  int init() ;
-
-  //! Suppress all the point in the array of point
-  int clearPoint() ;
-  // Add a new point in this array
-  int addPoint(double X, double Y, double Z, vpImagePoint &ip) ;
-
   // Constructor
   vpCalibration() ;
   vpCalibration(const vpCalibration& c) ;
 
   // Destructor
   virtual ~vpCalibration() ;
+
+  // Add a new point in this array
+  int addPoint(double X, double Y, double Z, vpImagePoint &ip) ;
+
   // = operator
   vpCalibration& operator=(const vpCalibration& twinCalibration);
-
-  //!get the residual in pixels
-  double getResidual(void) const {return residual;}
-  //!get the residual for perspective projection with distortion (in pixels)
-  double getResidual_dist(void) const {return residual_dist;}
-  //!get the number of points
-  unsigned int get_npt() const {return npt;}
 
   static void calibrationTsai(std::vector<vpHomogeneousMatrix> &cMo,
                               std::vector<vpHomogeneousMatrix> &rMe,
                               vpHomogeneousMatrix &eMc);
 
+  //! Suppress all the point in the array of point
+  int clearPoint() ;
+
   void computeStdDeviation(double &deviation, double &deviation_dist);
   int computeCalibration(vpCalibrationMethodType method,
-                         vpHomogeneousMatrix &cMo,
-                         vpCameraParameters &cam,
+                         vpHomogeneousMatrix &cMo_est,
+                         vpCameraParameters &cam_est,
                          bool verbose = false) ;
   static int computeCalibrationMulti(vpCalibrationMethodType method,
                                      std::vector<vpCalibration> &table_cal,
@@ -146,17 +139,27 @@ public:
   static int computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
                                     vpHomogeneousMatrix &eMc,
                                     vpHomogeneousMatrix &eMc_dist);
-  double computeStdDeviation(vpHomogeneousMatrix &cMo,
-                             vpCameraParameters &cam);
-  double computeStdDeviation_dist(vpHomogeneousMatrix &cMo,
-                                  vpCameraParameters &cam);
+  double computeStdDeviation(const vpHomogeneousMatrix &cMo_est,
+                             const vpCameraParameters &camera);
+  double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo,
+                                  const vpCameraParameters &cam);
   int displayData(vpImage<unsigned char> &I, vpColor color=vpColor::red,
                   unsigned int thickness=1) ;
   int displayGrid(vpImage<unsigned char> &I, vpColor color=vpColor::yellow,
                   unsigned int thickness=1) ;
 
-  //!set the gain for the virtual visual servoing algorithm
+  //! Set the gain for the virtual visual servoing algorithm.
   static double getLambda(){return gain;}
+
+  //!get the residual in pixels
+  double getResidual(void) const {return residual;}
+  //!get the residual for perspective projection with distortion (in pixels)
+  double getResidual_dist(void) const {return residual_dist;}
+  //!get the number of points
+  unsigned int get_npt() const {return npt;}
+
+  int init() ;
+
   int readData(const char *filename) ;
   static int readGrid(const char *filename,unsigned int &n,
                       std::list<double> &oX, std::list<double> &oY, std::list<double> &oZ,

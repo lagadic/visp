@@ -339,12 +339,12 @@ public:
     need to be computed at each iteration of the servo loop. This method allows to force the computation of
     \f${\widehat {\bf L}}\f$ in this particular case.
 
-    \param forceInteractionMatrixComputation: If true it forces the interaction matrix computation even if it is already done.
+    \param force_computation: If true it forces the interaction matrix computation even if it is already done.
 
   */
-  void setForceInteractionMatrixComputation(bool forceInteractionMatrixComputation)
+  void setForceInteractionMatrixComputation(bool force_computation)
   {
-    this->forceInteractionMatrixComputation = forceInteractionMatrixComputation;
+    this->forceInteractionMatrixComputation = force_computation;
   }
 
   /*!
@@ -402,14 +402,14 @@ public:
 
     A recommended value is 4.
   */
-  void setMu(double mu){this->mu=mu;}
+  void setMu(double mu_){this->mu=mu_;}
   //  Choice of the visual servoing control law
   void setServo(const vpServoType &servo_type) ;
 
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
    */
-  void set_cVe(const vpVelocityTwistMatrix &cVe) { this->cVe = cVe ; init_cVe = true ; }
+  void set_cVe(const vpVelocityTwistMatrix &cVe_) { this->cVe = cVe_ ; init_cVe = true ; }
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from end-effector frame into the camera frame.
    */
@@ -417,7 +417,7 @@ public:
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from robot fixed frame (also called world or base frame) into the camera frame.
    */
-  void set_cVf(const vpVelocityTwistMatrix &cVf) { this->cVf = cVf ; init_cVf = true ; }
+  void set_cVf(const vpVelocityTwistMatrix &cVf_) { this->cVf = cVf_ ; init_cVf = true ; }
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from robot fixed frame (also called world or base frame) into the camera frame.
    */
@@ -425,7 +425,7 @@ public:
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
    */
-  void set_fVe(const vpVelocityTwistMatrix &fVe) { this->fVe = fVe ; init_fVe = true ; }
+  void set_fVe(const vpVelocityTwistMatrix &fVe_) { this->fVe = fVe_ ; init_fVe = true ; }
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector from robot end-effector frame into the fixed frame (also called world or base frame).
    */
@@ -434,11 +434,11 @@ public:
   /*!
     Set the robot jacobian expressed in the end-effector frame.
    */
-  void set_eJe(const vpMatrix &eJe) { this->eJe = eJe ; init_eJe = true ; }
+  void set_eJe(const vpMatrix &eJe_) { this->eJe = eJe_ ; init_eJe = true ; }
   /*!
     Set the robot jacobian expressed in the robot fixed frame (also called world or base frame).
    */
-  void set_fJe(const vpMatrix &fJe) { this->fJe = fJe ; init_fJe = true ; }
+  void set_fJe(const vpMatrix &fJe_) { this->fJe = fJe_ ; init_fJe = true ; }
 
   /*!
     Test if all the initialization are correct. If true, the control law can be computed.

@@ -82,32 +82,32 @@ vpHomography::vpHomography(const vpHomography &H) : data(NULL), aMb(), bP()
 /*!
   \brief initialize an homography from another homography
 */
-vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : data(NULL), aMb(), bP()
+vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p) : data(NULL), aMb(), bP()
 {
   data = new double [9];
-  buildFrom(aMb, bP) ;
+  buildFrom(M, p) ;
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu,
                            const vpTranslationVector &atb,
-                           const vpPlane &bP) : data(NULL), aMb(), bP()
+                           const vpPlane &p) : data(NULL), aMb(), bP()
 {
   data = new double [9];
-  buildFrom(tu, atb, bP) ;
+  buildFrom(tu, atb, p) ;
 }
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb,
                            const vpTranslationVector &atb,
-                           const vpPlane &bP) : data(NULL), aMb(), bP()
+                           const vpPlane &p) : data(NULL), aMb(), bP()
 {
   data = new double [9];
-  buildFrom(aRb, atb, bP) ;
+  buildFrom(aRb, atb, p) ;
 }
 
-vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &bP) : data(NULL), aMb(), bP()
+vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : data(NULL), aMb(), bP()
 {
   data = new double [9];
-  buildFrom(arb, bP) ;
+  buildFrom(arb, p) ;
 }
 
 vpHomography::~vpHomography()
@@ -118,41 +118,41 @@ vpHomography::~vpHomography()
 }
 
 void
-vpHomography::buildFrom(const vpHomogeneousMatrix &aMb,
-                        const vpPlane &bP)
+vpHomography::buildFrom(const vpHomogeneousMatrix &M,
+                        const vpPlane &p)
 {
-  insert(aMb) ;
-  insert(bP) ;
+  insert(M) ;
+  insert(p) ;
   build() ;
 }
 
 void
 vpHomography::buildFrom(const vpThetaUVector &tu,
                         const vpTranslationVector &atb,
-                        const vpPlane &bP)
+                        const vpPlane &p)
 {
   insert(tu) ;
   insert(atb) ;
-  insert(bP) ;
+  insert(p) ;
   build() ;
 }
 
 void
 vpHomography::buildFrom(const vpRotationMatrix &aRb,
                         const vpTranslationVector &atb,
-                        const vpPlane &bP)
+                        const vpPlane &p)
 {
   insert(aRb) ;
   insert(atb) ;
-  insert(bP) ;
+  insert(p) ;
   build() ;
 }
 
 void
-vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &bP)
+vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &p)
 {
   aMb.buildFrom(arb[0],arb[1],arb[2],arb[3],arb[4],arb[5]) ;
-  insert(bP) ;
+  insert(p) ;
   build() ;
 }
 
@@ -176,9 +176,9 @@ vpHomography::insert(const vpRotationMatrix &aRb)
   To recompute the homography call build().
 */
 void
-vpHomography::insert(const vpHomogeneousMatrix &aMb)
+vpHomography::insert(const vpHomogeneousMatrix &M)
 {
-  this->aMb = aMb ;
+  this->aMb = M ;
 }
 
 /*!  \brief insert the rotational component, insert a
@@ -208,15 +208,15 @@ vpHomography::insert(const vpTranslationVector &atb)
   To recompute the homography call build().
 */
 void
-vpHomography::insert(const vpPlane &bP)
+vpHomography::insert(const vpPlane &p)
 {
-  this->bP = bP;
+  this->bP = p;
 }
 
 /*!
-  \brief invert the homography
+  \brief Invert the homography
 
-  \return   [H]^-1
+  \return  \f$\bf H^{-1}\f$
 */
 vpHomography
 vpHomography::inverse() const
@@ -235,10 +235,9 @@ vpHomography::inverse() const
 }
 
 /*!
-  \brief invert the homography
+  \brief Invert the homography.
 
-
-  \param bHa : [H]^-1
+  \param bHa : \f$\bf H^{-1}\f$ with H = *this.
 */
 void
 vpHomography::inverse(vpHomography &bHa) const

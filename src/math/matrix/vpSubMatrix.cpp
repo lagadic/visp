@@ -54,27 +54,27 @@ vpSubMatrix::vpSubMatrix()
 /*!
   \brief Constructor
   \param m : parent matrix
-  \param row : row offset 
-  \param col : col offset 
+  \param row_offset : row offset
+  \param col_offset : col offset
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col,
+vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
                          const unsigned int & nrows,  const unsigned int & ncols)
   : pRowNum(0), pColNum(0), parent(NULL)
 {
-  init(m,row,col,nrows,ncols);
+  init(m,row_offset,col_offset,nrows,ncols);
 }
 
 /*!
   \brief Initialisation of a sub matrix
   \param m : parent matrix
-  \param row : row offset 
-  \param col : col offset 
+  \param row_offset : row offset
+  \param col_offset : col offset
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-void vpSubMatrix::init(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols){
+void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset , const unsigned int & nrows ,  const unsigned int & ncols){
   
   if(! m.data){
     vpERROR_TRACE("\n\t\t SubMatrix parent matrix is not allocated") ;
@@ -82,7 +82,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int & row, const unsigned int
 			    "\n\t\t SubMatrix parent matrix is not allocated")) ;
   } 
   
-  if(row+nrows <= m.getRows() && col+ncols <= m.getCols()){	
+  if(row_offset+nrows <= m.getRows() && col_offset+ncols <= m.getCols()){
     data=m.data;
     parent =&m; 
     rowNum = nrows;
@@ -95,7 +95,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int & row, const unsigned int
     
     rowPtrs=(double**) malloc(nrows * sizeof(double*));
     for(unsigned int r=0;r<nrows;r++)
-      rowPtrs[r]= m.data+col+(r+row)*pColNum;
+      rowPtrs[r]= m.data+col_offset+(r+row_offset)*pColNum;
     
     dsize = pRowNum*pColNum ;
     trsize =0 ;

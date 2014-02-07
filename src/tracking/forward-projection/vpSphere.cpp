@@ -55,9 +55,9 @@ vpSphere::init()
 }
 
 void
-vpSphere::setWorldCoordinates(const vpColVector& oP)
+vpSphere::setWorldCoordinates(const vpColVector& oP_)
 {
-  this->oP = oP ;
+  this->oP = oP_ ;
 }
 
 void
@@ -78,10 +78,10 @@ vpSphere::vpSphere()
 }
 
 
-vpSphere::vpSphere(const vpColVector& oP)
+vpSphere::vpSphere(const vpColVector& oP_)
 {
   init() ;
-  setWorldCoordinates(oP) ;
+  setWorldCoordinates(oP_) ;
 }
 
 vpSphere::vpSphere(const double X0, const double Y0,
@@ -103,9 +103,9 @@ vpSphere::projection()
   projection(cP,p) ;
 }
 
-//! perspective projection of the circle
+//! Perspective projection of the circle.
 void
-vpSphere::projection(const vpColVector &cP, vpColVector &p)
+vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
 {
   double x0, y0, z0;  //variables intermediaires
 //   double k0, k1, k2, k3, k4;  //variables intermediaires
@@ -113,12 +113,11 @@ vpSphere::projection(const vpColVector &cP, vpColVector &p)
 
   //calcul des parametres M20, M11, M02 de l'ellipse
   double s, a, b, r, e;  //variables intermediaires
-  r =  cP[3];
+  r =  cP_[3];
 
-  x0 = cP[0] ;
-  y0 = cP[1] ;
-  z0 = cP[2] ;
-
+  x0 = cP_[0] ;
+  y0 = cP_[1] ;
+  z0 = cP_[2] ;
 
   s = r*r - y0*y0 -z0*z0;
 
@@ -133,8 +132,8 @@ vpSphere::projection(const vpColVector &cP, vpColVector &p)
     vpERROR_TRACE("sphere derriere le plan image\n");
   }
 
-  p[0] =  x0*z0/s ;  //x
-  p[1] =  y0*z0/s ;  //y
+  p_[0] =  x0*z0/s ;  //x
+  p_[1] =  y0*z0/s ;  //y
 
   if (fabs(x0)  > 1e-6)
   {
@@ -167,14 +166,13 @@ vpSphere::projection(const vpColVector &cP, vpColVector &p)
     B = r*sqrt(y0*y0+z0*z0-r*r)/s;
   }
 
-  p[2] = ( A*A + B*B * E*E) / (1.0 + E*E);  // mu20
-  p[3] = ( A*A - B*B) * E / (1.0 + E*E);    // mu11
-  p[4] = ( B*B + A*A * E*E) / (1.0 + E*E);  // mu02
+  p_[2] = ( A*A + B*B * E*E) / (1.0 + E*E);  // mu20
+  p_[3] = ( A*A - B*B) * E / (1.0 + E*E);    // mu11
+  p_[4] = ( B*B + A*A * E*E) / (1.0 + E*E);  // mu02
 
   // vpERROR_TRACE(" %f",r) ;
 
   //  std::cout << p.t() ;
-
 }
 //! perspective projection of the circle
 void
@@ -183,25 +181,21 @@ vpSphere::changeFrame(const vpHomogeneousMatrix &cMo)
   changeFrame(cMo,cP) ;
 }
 
-//! perspective projection of the circle
+//! Perspective projection of the circle.
 void
-vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
+vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 {
-
   double x0, y0, z0;  //variables intermediaires
-
 
   x0 = cMo[0][0]*oP[0] + cMo[0][1]*oP[1]  + cMo[0][2]*oP[2] + cMo[0][3];
   y0 = cMo[1][0]*oP[0] + cMo[1][1]*oP[1]  + cMo[1][2]*oP[2] + cMo[1][3];
   z0 = cMo[2][0]*oP[0] + cMo[2][1]*oP[1]  + cMo[2][2]*oP[2] + cMo[2][3];
 
-  cP[3] = oP[3];
+  cP_[3] = oP[3];
 
-  cP[0] = x0 ;
-  cP[1] = y0 ;
-  cP[2] = z0 ;
-
-
+  cP_[0] = x0 ;
+  cP_[1] = y0 ;
+  cP_[2] = z0 ;
 }
 
 //! for memory issue (used by the vpServo class only)

@@ -71,8 +71,8 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
   vpHistogramValey() :
     vpHistogramPeak() {};
     
-  vpHistogramValey(unsigned char level, unsigned value) : 
-    vpHistogramPeak(level, value) {};
+  vpHistogramValey(unsigned char lvl, unsigned val) :
+    vpHistogramPeak(lvl, val) {};
 
   vpHistogramValey(const vpHistogramValey & v) : 
     vpHistogramPeak(v) {};
@@ -88,43 +88,43 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
     Set the valey gray \e level. To set the number of pixels having this
     gray level use setValue().
 
-    \param level : Location of the valey or gray level.
+    \param lvl : Location of the valey or gray level.
 
     \sa setValue(), set()
 
   */
-  inline void setLevel(unsigned char level)
+  inline void setLevel(unsigned char lvl)
     {
-      this->level = level;
+      this->level = lvl;
     };
   /*!
 
     Set the valey number of pixels having a same gray level. To set the
     gray level of this valey use setLevel().
 
-    \param value    : Number of pixels having the same location or gray level.
+    \param val : Number of pixels having the same location or gray level.
 
     \sa setPosition(), set()
 
   */
-  inline void setValue(unsigned value) 
+  inline void setValue(unsigned val)
     {
-      this->value = value; 
+      this->value = val;
     };
   /*!
 
     Set the valey gray \e level and number of pixels at this location.
 
-    \param level : Location of the valey or gray level.
-    \param value : Number of pixels having the same location or gray level.
+    \param lvl : Location of the valey or gray level.
+    \param val : Number of pixels having the same location or gray level.
 
     \sa setLevel(), setValue()
 
   */
-  inline void set(unsigned char level, unsigned value)
+  inline void set(unsigned char lvl, unsigned val)
     {
-      this->level = level;
-      this->value = value; 
+      this->level = lvl;
+      this->value = val;
     };
       
   /*!
@@ -146,7 +146,7 @@ class VISP_EXPORT vpHistogramValey : vpHistogramPeak
     Get the valey number of pixels having a same gray level. The
     corresponding gray level is available through getLevel().
 
-    \return    : Number of pixels having the same location or gray level.
+    \return  Number of pixels having the same location or gray level.
 
     \sa getLevel()
 

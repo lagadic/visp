@@ -168,9 +168,9 @@ class VISP_EXPORT vpBSpline
 	/*!
 	  Sets the degree of the B-Spline.
 	  
-	  \param p : the degree of the B-Spline.
+    \param degree : the degree of the B-Spline.
 	*/
-	inline void set_p(unsigned int p) {this->p = p;}
+  inline void set_p(unsigned int degree) {this->p = degree;}
 
 
   /*!

@@ -125,20 +125,20 @@ class VISP_EXPORT vpRobotException : public vpException
     } ;
 
   public:
-    vpRobotException (const int code,  const char* format, ...)
+    vpRobotException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpRobotException (const int code, const std::string & msg)
-      : vpException(code, msg)
+    vpRobotException (const int id, const std::string & msg)
+      : vpException(id, msg)
     {
     }
-    vpRobotException (const int code)
-      : vpException(code)
+    vpRobotException (const int id)
+      : vpException(id)
     {
     }
 

@@ -260,11 +260,11 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*!
       Set the desired position of the robot's camera relative to the object.
 
-      \param cdMo : The desired pose of the camera.
+      \param cdMo_ : The desired pose of the camera.
     */
-    void setDesiredCameraPosition(const vpHomogeneousMatrix cdMo)
+    void setDesiredCameraPosition(const vpHomogeneousMatrix cdMo_)
     {
-      this->vpWireFrameSimulator::setDesiredCameraPosition(cdMo);
+      this->vpWireFrameSimulator::setDesiredCameraPosition(cdMo_);
     }
 
     /*!
@@ -276,11 +276,11 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*!
       Set the external camera point of view.
 
-      \param camMf : The pose of the external camera relative to the world reference frame.
+      \param camMf_ : The pose of the external camera relative to the world reference frame.
     */
-    void setExternalCameraPosition(const vpHomogeneousMatrix camMf)
+    void setExternalCameraPosition(const vpHomogeneousMatrix camMf_)
     {
-      this->vpWireFrameSimulator::setExternalCameraPosition(camMf);
+      this->vpWireFrameSimulator::setExternalCameraPosition(camMf_);
     }
     /*!
       Specify the thickness of the graphics drawings.
@@ -321,9 +321,9 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     /*!
       Set the pose between the object and the fixed world frame.
       
-      \param fMo : The pose between the object and the fixed world frame.
+      \param fMo_ : The pose between the object and the fixed world frame.
     */
-    void set_fMo(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;}
+    void set_fMo(const vpHomogeneousMatrix &fMo_) {this->fMo = fMo_;}
 
   protected:
     /*!

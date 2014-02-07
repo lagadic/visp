@@ -81,15 +81,15 @@ public:
     
     Initialize the color with R, G, B, A values.
     
-    \param R : Red value.
-    \param G : Green value.
-    \param B : Blue value.
-    \param A : Additional value.
+    \param r : Red value.
+    \param g : Green value.
+    \param b : Blue value.
+    \param a : Additional value.
     
   */
-  inline vpRGBa(const unsigned char &R, const unsigned char &G,
-		const unsigned char &B, const unsigned char &A=0) 
-    : R(R), G(G), B(B), A(A) {};
+  inline vpRGBa(const unsigned char &r, const unsigned char &g,
+    const unsigned char &b, const unsigned char &a=0)
+    : R(r), G(g), B(b), A(a) {};
 
 
   /*!

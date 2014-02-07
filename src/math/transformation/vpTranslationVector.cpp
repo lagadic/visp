@@ -82,7 +82,7 @@ vpTranslationVector::vpTranslationVector(const double tx,
 /*!
   Copy constructor.
 
-  \param t : Translation vector to copy.
+  \param tv : Translation vector to copy.
 
   \code
   vpTranslationVector t1(1,2,3); // Create and initialize a translation vector
@@ -91,7 +91,7 @@ vpTranslationVector::vpTranslationVector(const double tx,
   \endcode
 
 */
-vpTranslationVector::vpTranslationVector (const vpTranslationVector &t) : vpColVector(t)
+vpTranslationVector::vpTranslationVector (const vpTranslationVector &tv) : vpColVector(tv)
 {
 }
 
@@ -114,7 +114,7 @@ vpTranslationVector::set(const double tx,
 /*!
   Operator that allows to add two translation vectors.
 
-  \param t : Translation  vector to add.
+  \param tv : Translation  vector to add.
 
   \return The sum of the current translation vector (*this) and the one to add.
   \code
@@ -129,11 +129,11 @@ vpTranslationVector::set(const double tx,
 
 */
 vpTranslationVector
-vpTranslationVector::operator+(const vpTranslationVector &t) const
+vpTranslationVector::operator+(const vpTranslationVector &tv) const
 {
     vpTranslationVector sum ;
 
-    for (unsigned int i=0;i<3;i++)  sum[i] = (*this)[i]+t[i] ;
+    for (unsigned int i=0;i<3;i++)  sum[i] = (*this)[i]+tv[i] ;
 
     return sum;
 }
@@ -141,7 +141,7 @@ vpTranslationVector::operator+(const vpTranslationVector &t) const
 /*!
   Operator that allows to substract two translation vectors.
 
-  \param t : Translation  vector to substract.
+  \param tv : Translation  vector to substract.
 
   \return The substraction of the current translation vector (*this) and the one to substract.
   \code
@@ -156,11 +156,11 @@ vpTranslationVector::operator+(const vpTranslationVector &t) const
 
 */
 vpTranslationVector
-vpTranslationVector::operator-(const vpTranslationVector &t) const
+vpTranslationVector::operator-(const vpTranslationVector &tv) const
 {
     vpTranslationVector sub ;
 
-    for (unsigned int i=0;i<3;i++)  sub[i] = (*this)[i]-t[i] ;
+    for (unsigned int i=0;i<3;i++)  sub[i] = (*this)[i]-tv[i] ;
 
     return sub;
 }
@@ -182,13 +182,13 @@ vpTranslationVector::operator-(const vpTranslationVector &t) const
 */
 vpTranslationVector vpTranslationVector::operator-() const //negate
 {
-    vpTranslationVector t ;
-    for (unsigned int i=0;i<dsize;i++)
-    {
-	*(t.data + i) = -*(data + i) ;
-    }
+  vpTranslationVector tv ;
+  for (unsigned int i=0;i<dsize;i++)
+  {
+    *(tv.data + i) = -*(data + i) ;
+  }
 
-    return t;
+  return tv;
 }
 
 /*!
@@ -208,18 +208,18 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
 */
 vpTranslationVector vpTranslationVector::operator*(const double x) const 
 {
-    vpTranslationVector t ;
-    for (unsigned int i=0;i<dsize;i++)
-    {
-	*(t.data + i) = (*(data + i)) * x ;
-    }
+  vpTranslationVector tv ;
+  for (unsigned int i=0;i<dsize;i++)
+  {
+    *(tv.data + i) = (*(data + i)) * x ;
+  }
 
-    return t;
+  return tv;
 }
 
 /*!
   Copy operator.  
-  \param t : Translation vector to copy
+  \param tv : Translation vector to copy
   \return A copy of t.
 
   \code
@@ -230,10 +230,10 @@ vpTranslationVector vpTranslationVector::operator*(const double x) const
   // t2 is now equal to t1 : 1, 2, 3 
   \endcode
 */
-vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t)
+vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &tv)
 {
 
-  unsigned int k = t.rowNum ;
+  unsigned int k = tv.rowNum ;
   if (rowNum != k){
     try {
       resize(k);
@@ -245,7 +245,7 @@ vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t
     }
   }
 
-  memcpy(data, t.data, rowNum*sizeof(double)) ;
+  memcpy(data, tv.data, rowNum*sizeof(double)) ;
 
   return *this;
 }

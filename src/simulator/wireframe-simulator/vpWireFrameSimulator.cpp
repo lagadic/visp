@@ -83,6 +83,9 @@ typedef enum
   UNKNOWN_MODEL
 } Model_3D;
 
+Model_3D getExtension(const char* file);
+void set_scene_wrl (const char* str, Bound_scene *sc, float factor);
+
 /*
   Get the extension of the file and return it
 */
@@ -584,16 +587,16 @@ vpWireFrameSimulator::~vpWireFrameSimulator()
   It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
 
   \param obj : Type of scene used to display the object at the current position.
-  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
 */
 void
-vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject)
+vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desired_object)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
 
   object = obj;
-  this->desiredObject = desiredObject;
+  this->desiredObject = desired_object;
 
   const char *scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
@@ -684,13 +687,13 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
   It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
 
   \param obj : Type of scene used to display the object at the current position.
-  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
   \param imObj : A list of vpImageSimulator instances.
 */
 void
-vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj)
+vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desired_object, vpList<vpImageSimulator> &imObj)
 {
-  initScene(obj, desiredObject);
+  initScene(obj, desired_object);
   objectImage.clear();
   for(imObj.front(); !imObj.outside(); imObj.next()){
     objectImage.push_back(imObj.value());
@@ -708,13 +711,13 @@ vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desiredO
   It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
 
   \param obj : Type of scene used to display the object at the current position.
-  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
   \param imObj : A list of vpImageSimulator instances.
 */
 void
-vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject, const std::list<vpImageSimulator> &imObj)
+vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desired_object, const std::list<vpImageSimulator> &imObj)
 {
-  initScene(obj, desiredObject);
+  initScene(obj, desired_object);
   objectImage = imObj;
   displayImageSimulator = true;
 }
@@ -727,10 +730,10 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
   Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
 
   \param obj : Path to the scene file you want to use.
-  \param desiredObject : Path to the scene file you want to use.
+  \param desired_object : Path to the scene file you want to use.
 */
 void
-vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
+vpWireFrameSimulator::initScene(const char* obj, const char* desired_object)
 {
   char name_cam[FILENAME_MAX];
   char name[FILENAME_MAX];
@@ -765,13 +768,13 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
     vpERROR_TRACE("Unknown file extension for the 3D model");
   }
 
-  if (strlen(desiredObject) >= FILENAME_MAX) {
+  if (strlen(desired_object) >= FILENAME_MAX) {
     throw(vpException(vpException::memoryAllocationError,
                       "Not enough memory to intialize the camera name"));
   }
 
-  strcpy(name,desiredObject);  
-  model = getExtension(desiredObject);
+  strcpy(name,desired_object);
+  model = getExtension(desired_object);
   if (model == BND_MODEL)
     set_scene(name,&(this->desiredScene),1.0);
   else if (model == WRL_MODEL)
@@ -806,13 +809,13 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
   It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
 
   \param obj : Path to the scene file you want to use.
-  \param desiredObject : Path to the scene file you want to use.
+  \param desired_object : Path to the scene file you want to use.
   \param imObj : A list of vpImageSimulator instances.
 */
 void
-vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj)
+vpWireFrameSimulator::initScene(const char* obj, const char* desired_object, vpList<vpImageSimulator> &imObj)
 {
-  initScene(obj, desiredObject);
+  initScene(obj, desired_object);
   objectImage.clear();
   for(imObj.front(); !imObj.outside(); imObj.next()){
     objectImage.push_back(imObj.value());
@@ -830,13 +833,13 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, vpLi
   It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
 
   \param obj : Path to the scene file you want to use.
-  \param desiredObject : Path to the scene file you want to use.
+  \param desired_object : Path to the scene file you want to use.
   \param imObj : A list of vpImageSimulator instances.
 */
 void
-vpWireFrameSimulator::initScene(const char* obj, const char* desiredObject, const std::list<vpImageSimulator> &imObj)
+vpWireFrameSimulator::initScene(const char* obj, const char* desired_object, const std::list<vpImageSimulator> &imObj)
 {
-  initScene(obj, desiredObject);
+  initScene(obj, desired_object);
   objectImage = imObj;
   displayImageSimulator = true;
 }
@@ -1275,16 +1278,16 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I)
   Get an external view. The point of view is set thanks to the pose between the camera camMf and the fixed world frame.
 
   \param I : The image where the external view is displayed.
-  \param camMf : The pose between the point of view and the fixed world frame.
+  \param cam_Mf : The pose between the point of view and the fixed world frame.
   
   \warning : The objects are displayed thanks to overlays. The image I is not modified.
 */
 void
-vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &camMf)
+vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cam_Mf)
 {
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
   
-  vpHomogeneousMatrix camMft = rotz * camMf;
+  vpHomogeneousMatrix camMft = rotz * cam_Mf;
 
   double u;
   double v;
@@ -1321,7 +1324,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<vpRGBa> &I, const vpHomogeneousMa
 
     for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
       vpImageSimulator* imSim = &(*it);
-      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->setCameraPosition(rotz*cam_Mf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
     }
 
@@ -1558,16 +1561,16 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I)
   Get an external view. The point of view is set thanks to the pose between the camera camMf and the fixed world frame.
 
   \param I : The image where the external view is displayed.
-  \param camMf : The pose between the point of view and the fixed world frame.
+  \param cam_Mf : The pose between the point of view and the fixed world frame.
   
   \warning : The objects are displayed thanks to overlays. The image I is not modified.
 */
 void
-vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpHomogeneousMatrix &camMf)
+vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cam_Mf)
 {
   float w44o[4][4],w44cext[4][4],w44c[4][4],x,y,z;
 
-  vpHomogeneousMatrix camMft = rotz * camMf;
+  vpHomogeneousMatrix camMft = rotz * cam_Mf;
   
   double u;
   double v;
@@ -1603,7 +1606,7 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpHomoge
     I = 255;
     for(std::list<vpImageSimulator>::iterator it=objectImage.begin(); it!=objectImage.end(); ++it){
       vpImageSimulator* imSim = &(*it);
-      imSim->setCameraPosition(rotz*camMf*fMo);
+      imSim->setCameraPosition(rotz*cam_Mf*fMo);
       imSim->getImage(I,getInternalCameraParameters(I));
     }
     if (I.display != NULL)
@@ -1977,12 +1980,13 @@ vpWireFrameSimulator::navigation(const vpImage<unsigned char> &I, bool &changed)
   Project the center of the internal camera into the external camera view.
 */
 vpImagePoint
-vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo)
+vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_,
+                                               const vpHomogeneousMatrix &fMo_)
 {
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(rotz*(camMf*fMo*cMo.inverse())) ;
+  point.track(rotz*(camMf*fMo_*cMo_.inverse())) ;
 
   vpImagePoint iP;
 
@@ -1995,12 +1999,14 @@ vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const v
   Project the center of the internal camera into the external camera view.
 */
 vpImagePoint
-vpWireFrameSimulator::projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo)
+vpWireFrameSimulator::projectCameraTrajectory (const vpImage<unsigned char> &I,
+                                               const vpHomogeneousMatrix &cMo_,
+                                               const vpHomogeneousMatrix &fMo_)
 {
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(rotz*(camMf*fMo*cMo.inverse())) ;
+  point.track(rotz*(camMf*fMo_*cMo_.inverse())) ;
 
   vpImagePoint iP;
 
@@ -2013,12 +2019,13 @@ vpWireFrameSimulator::projectCameraTrajectory (const vpImage<unsigned char> &I, 
   Project the center of the internal camera into the external camera view.
 */
 vpImagePoint
-vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf)
+vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo_,
+                                               const vpHomogeneousMatrix &fMo_, const vpHomogeneousMatrix &cMf)
 {
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(rotz*(cMf*fMo*cMo.inverse())) ;
+  point.track(rotz*(cMf*fMo_*cMo_.inverse())) ;
 
   vpImagePoint iP;
 
@@ -2031,12 +2038,13 @@ vpWireFrameSimulator::projectCameraTrajectory (const vpImage<vpRGBa> &I, const v
   Project the center of the internal camera into the external camera view.
 */
 vpImagePoint
-vpWireFrameSimulator::projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf)
+vpWireFrameSimulator::projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo_,
+                                               const vpHomogeneousMatrix &fMo_, const vpHomogeneousMatrix &cMf)
 {
   vpPoint point;
   point.setWorldCoordinates(0,0,0);
 
-  point.track(rotz*(cMf*fMo*cMo.inverse())) ;
+  point.track(rotz*(cMf*fMo_*cMo_.inverse())) ;
 
   vpImagePoint iP;
 

@@ -77,9 +77,9 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
   int nbTrials = 0;
   unsigned int nbMinRandom = 4 ;
   unsigned int nbInliers = 0;
+  double r, r_lagrange, r_dementhon;
 
   vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
-  double r, r_lagrange, r_dementhon;
 
   if (size < 4) {
     //vpERROR_TRACE("Not enough point to compute the pose");
@@ -99,12 +99,12 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     vpPose poseMin ;
     for(unsigned int i = 0; i < nbMinRandom; i++)
     {
-      unsigned int r = (unsigned int)rand()%size;
-      while(usedPt[r] ) r = (unsigned int)rand()%size;
-      usedPt[r] = true;        
+      unsigned int r_ = (unsigned int)rand()%size;
+      while(usedPt[r_] ) r_ = (unsigned int)rand()%size;
+      usedPt[r_] = true;
       
       std::list<vpPoint>::const_iterator iter = listP.begin();
-      std::advance(iter, r);
+      std::advance(iter, r_);
       vpPoint pt = *iter;
       
       bool degenerate = false;
@@ -118,7 +118,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       }
       if(!degenerate){
         poseMin.addPoint(pt) ;
-        cur_randoms.push_back(r);
+        cur_randoms.push_back(r_);
       }
       else
         i--;
@@ -159,7 +159,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
           for(unsigned int it_inlier_index = 0; it_inlier_index< cur_consensus.size(); it_inlier_index++){
             std::list<vpPoint>::const_iterator it_point = listP.begin();
             std::advance(it_point, cur_consensus[it_inlier_index]);
-            vpPoint pt = *it_point;
+            pt = *it_point;
 
             vpPoint ptdeg = *it;
             if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||

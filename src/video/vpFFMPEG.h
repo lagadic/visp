@@ -252,9 +252,9 @@ class VISP_EXPORT vpFFMPEG
     /*!
      Sets the bit rate of the video when encoding.
 
-     \param bit_rate : the expected bit rate.
+     \param rate : the expected bit rate.
     */
-    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
+    inline void setBitRate(const unsigned int rate) {this->bit_rate = rate;}
     /*!
      Sets the framerate of the video when encoding.
 

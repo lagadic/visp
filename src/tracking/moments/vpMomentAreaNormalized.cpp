@@ -71,10 +71,12 @@ void vpMomentAreaNormalized::compute(){
 
 /*!
   Default constructor.
-  \param desiredSurface : desired area \e a* when the visual servoing converges.
-  \param desiredDepth : desired depth \e Z* when the visual servoing converges.
+  \param desired_surface : desired area \e a* when the visual servoing converges.
+  \param desired_depth : desired depth \e Z* when the visual servoing converges.
 */
-vpMomentAreaNormalized::vpMomentAreaNormalized(double desiredSurface, double desiredDepth) : vpMoment(),desiredSurface(desiredSurface),desiredDepth(desiredDepth){
+vpMomentAreaNormalized::vpMomentAreaNormalized(double desired_surface, double desired_depth)
+  : vpMoment(),desiredSurface(desired_surface),desiredDepth(desired_depth)
+{
     values.resize(1);
 }
 

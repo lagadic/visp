@@ -352,7 +352,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   double sigma=0;				// Standard Deviation
 
   unsigned int n_data = residues.getRows();
-  vpColVector normres(n_data); // Normalized Residue
+  vpColVector norm_res(n_data); // Normalized Residue
   vpColVector w(n_data);
   
   vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data
@@ -364,14 +364,14 @@ vpRobust::simultMEstimator(vpColVector &residues)
 
   // Normalize residues
   for(unsigned int i=0; i<n_data; i++)
-    normres[i] = (fabs(residues[i]- med));
+    norm_res[i] = (fabs(residues[i]- med));
 
   // Check for various methods.
   // For Huber compute Simultaneous scale estimate
   // For Others use MAD calculated on first iteration
   if(it==0)
   {
-    normmedian = select(normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
+    normmedian = select(norm_res, 0, n_data-1, ind_med/*(int)n_data/2*/);
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826*normmedian; // Median Absolute Deviation
   }
@@ -388,10 +388,9 @@ vpRobust::simultMEstimator(vpColVector &residues)
     sigma= NoiseThreshold;
   }
 
-
   vpCDEBUG(2) << "MAD and C computed" << std::endl;
 
-  psiHuber(sigma, normres,w);
+  psiHuber(sigma, norm_res,w);
 
   sig_prev = sigma;
 

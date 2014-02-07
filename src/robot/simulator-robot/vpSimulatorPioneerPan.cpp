@@ -107,13 +107,13 @@ vpSimulatorPioneerPan::~vpSimulatorPioneerPan()
   Get the robot jacobian expressed in the end-effector frame.
   The jacobian expression is given in vpPioneerPan class.
 
-  \param eJe : A 6 by 3 matrix representing the robot jacobian \f$ {^e}{\bf
+  \param _eJe : A 6 by 3 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
 void
-vpSimulatorPioneerPan::get_eJe(vpMatrix &eJe)
+vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
 {
-  eJe = vpUnicycle::get_eJe();
+  _eJe = vpUnicycle::get_eJe();
 }
 
 /*!

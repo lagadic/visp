@@ -241,10 +241,10 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
       Computer Vision, Springer LNCS volume 3951, part 1, pp 404--417,
       2006.
 
-      \param hessianThreshold : Desired hessian threshold value.
+      \param hessian_threshold : Desired hessian threshold value.
     */
-    void setHessianThreshold (double hessianThreshold) {
-			this->hessianThreshold = hessianThreshold;
+    void setHessianThreshold (double hessian_threshold) {
+      this->hessianThreshold = hessian_threshold;
 			params = cvSURFParams(this->hessianThreshold, this->descriptorType);
     } ;
 
@@ -252,10 +252,10 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
       Sets the type of descriptors to use.
 
-      \param descriptorType : Type of descriptor to use.
+      \param descriptor_type : Type of descriptor to use.
     */
-    void setDescriptorType (vpDescriptorType descriptorType) {
-			this->descriptorType = descriptorType;
+    void setDescriptorType (vpDescriptorType descriptor_type) {
+      this->descriptorType = descriptor_type;
 			params = cvSURFParams(this->hessianThreshold, this->descriptorType);
     } ;
 

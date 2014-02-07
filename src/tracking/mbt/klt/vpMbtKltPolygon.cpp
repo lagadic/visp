@@ -154,7 +154,7 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
 void
 vpMbtKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J)
 {
-  unsigned int index = 0;
+  unsigned int index_ = 0;
   
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
@@ -173,23 +173,23 @@ vpMbtKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J
 
     double invZ = compute_1_over_Z(x_cur, y_cur);
       
-    _J[2*index][0] = - invZ;
-    _J[2*index][1] = 0;
-    _J[2*index][2] = x_cur * invZ;
-    _J[2*index][3] = x_cur * y_cur;
-    _J[2*index][4] = -(1+x_cur*x_cur);
-    _J[2*index][5] = y_cur;
+    _J[2*index_][0] = - invZ;
+    _J[2*index_][1] = 0;
+    _J[2*index_][2] = x_cur * invZ;
+    _J[2*index_][3] = x_cur * y_cur;
+    _J[2*index_][4] = -(1+x_cur*x_cur);
+    _J[2*index_][5] = y_cur;
     
-    _J[2*index+1][0] = 0;
-    _J[2*index+1][1] = - invZ;
-    _J[2*index+1][2] = y_cur * invZ;
-    _J[2*index+1][3] = (1+y_cur*y_cur);
-    _J[2*index+1][4] = - y_cur * x_cur;
-    _J[2*index+1][5] = - x_cur;
+    _J[2*index_+1][0] = 0;
+    _J[2*index_+1][1] = - invZ;
+    _J[2*index_+1][2] = y_cur * invZ;
+    _J[2*index_+1][3] = (1+y_cur*y_cur);
+    _J[2*index_+1][4] = - y_cur * x_cur;
+    _J[2*index_+1][5] = - x_cur;
 
-    _R[2*index] =  (x0_transform - x_cur);
-    _R[2*index+1] = (y0_transform - y_cur);
-    index++;
+    _R[2*index_] =  (x0_transform - x_cur);
+    _R[2*index_+1] = (y0_transform - y_cur);
+    index_++;
   }
 }
 

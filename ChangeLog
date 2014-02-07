@@ -18,7 +18,7 @@ ViSP under development version
     . Trace and debug can now be enabled/disabled using CMake
       ACTIVATE_DEBUG_TRACE option
     . Fix errors detected by Covery Scan static code analyser
-    . Fix warnings detected with -Weffc++ Gnu g++ compiler flag
+    . Fix warnings detected with Gnu g++ -Weffc++ -Wshadow compiler flag
     . Improve vpHomography class
   - New examples
     . New example that shows how to use the template tracker

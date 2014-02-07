@@ -58,7 +58,7 @@ vpCylinder::init()
   Set the cylinder parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
   expressed in the world frame.
 
-  \param oP : Vector of parameters \f$^{o}{\bf P}\f$.
+  \param o_P : Vector of parameters \f$^{o}{\bf P}\f$.
 
   \code
   vpCylinder cylinder;
@@ -74,9 +74,9 @@ vpCylinder::init()
   \endcode
 */
 void
-vpCylinder::setWorldCoordinates(const vpColVector& oP)
+vpCylinder::setWorldCoordinates(const vpColVector& o_P)
 {
-  this->oP = oP ;
+  this->oP = o_P ;
 }
 
 /*!
@@ -115,7 +115,7 @@ vpCylinder::vpCylinder()
   Create and initialize a cylinder with parameters \f$^{o}{\bf P} = ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$
   expressed in the world frame.
 
-  \param oP : Vector of parameters \f$^{o}{\bf P}\f$.
+  \param o_P : Vector of parameters \f$^{o}{\bf P}\f$.
 
   \code
   vpCylinder cylinder;
@@ -131,10 +131,10 @@ vpCylinder::vpCylinder()
   \endcode
   \sa setWorldCoordinates(const vpColVector&)
 */
-vpCylinder::vpCylinder(const vpColVector& oP)
+vpCylinder::vpCylinder(const vpColVector& o_P)
 {
   init() ;
-  setWorldCoordinates(oP) ;
+  setWorldCoordinates(o_P) ;
 }
 
 /*!
@@ -198,8 +198,8 @@ vpCylinder::projection()
   From the parameters of the cylinder in the camera frame \f$c{\bf P}\f$, compute the perspective
   projection of the cylinder in the image plane.
 
-  \param cP [in] : Cylinder parameters in the camera frame.
-  \param p [out] : Parameters of the cylinder in the image plane obtained by perspective projection.
+  \param cP_ [in] : Cylinder parameters in the camera frame.
+  \param p_ [out] : Parameters of the cylinder in the image plane obtained by perspective projection.
 
   \exception vpException::fatalError : The camera is inside the cylinder.
 
@@ -220,7 +220,7 @@ vpCylinder::projection()
   \sa projection()
   */
 void
-vpCylinder::projection(const vpColVector &cP, vpColVector &p)
+vpCylinder::projection(const vpColVector &cP_, vpColVector &p_)
 {
   //calcul de la scene 2-D
 
@@ -228,13 +228,13 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   double A,B,C, X0, Y0, Z0, R ;
   double s, a, b, c, zero;
 
-  A = cP[0] ;
-  B = cP[1] ;
-  C = cP[2] ;
-  X0 = cP[3] ;
-  Y0 = cP[4] ;
-  Z0 = cP[5] ;
-  R= cP[6] ;
+  A = cP_[0] ;
+  B = cP_[1] ;
+  C = cP_[2] ;
+  X0 = cP_[3] ;
+  Y0 = cP_[4] ;
+  Z0 = cP_[5] ;
+  R= cP_[6] ;
   zero = A*X0 + B*Y0 + C*Z0;  // should be zero for a good reprensetation of the cylinder
 
   s = X0*X0 + Y0*Y0 + Z0*Z0 - R*R - zero*zero;
@@ -255,8 +255,8 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   co = R*a*s-x0;
   si = R*b*s-y0;
   e = sqrt(co*co + si*si);
-  p[0] = -(R*c*s-z0)/e ;  // rho1
-  p[1] = atan2(si,co) ; // theta 1
+  p_[0] = -(R*c*s-z0)/e ;  // rho1
+  p_[1] = atan2(si,co) ; // theta 1
 
   //  while (p[1] > M_PI/2)  { p[1] -= M_PI ; p[0] *= -1 ; }
   //  while (p[1] < -M_PI/2) { p[1] += M_PI ; p[0] *= -1 ; }
@@ -265,8 +265,8 @@ vpCylinder::projection(const vpColVector &cP, vpColVector &p)
   co = R*a*s+x0;
   si = R*b*s+y0;
   e = sqrt(co*co + si*si);
-  p[2]  =  -( R*c*s+z0 )/e ; //rho2
-  p[3]  =  atan2( si,co ) ;  //theta2
+  p_[2]  =  -( R*c*s+z0 )/e ; //rho2
+  p_[3]  =  atan2( si,co ) ;  //theta2
 
 
   //  while (p[3] > M_PI/2)  { p[3] -= M_PI ; p[2] *= -1 ; }
@@ -294,12 +294,12 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo)
   the cylinder parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
 
   \param cMo : Camera to world frame transformation.
-  \param cP [out] : Parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
+  \param cP_ [out] : Parameters \f$^{c}{\bf P}\f$ expressed in the camera frame.
 
   \sa changeFrame(const vpHomogeneousMatrix &)
 */
 void
-vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
+vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 {
   double X1, Y1, Z1;
   double X2, Y2, Z2;
@@ -322,9 +322,9 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   c = Z1 / s;
 
   // set axis coordinates  in camera frame
-  cP[0] = a ;
-  cP[1] = b ;
-  cP[2] = c ;
+  cP_[0] = a ;
+  cP_[1] = b ;
+  cP_[2] = c ;
 
   X2 = cMo[0][3] + cMo[0][0]*oX0 + cMo[0][1]*oY0 + cMo[0][2]*oZ0;
   Y2 = cMo[1][3] + cMo[1][0]*oX0 + cMo[1][1]*oY0 + cMo[1][2]*oZ0;
@@ -332,9 +332,9 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
 
   // adding the constraint X0 is the nearest point to the origin (A^T . X0 = 0)
   // using the projection operator (I - AA^T) orthogonal to A
-  cP[3] =  (1-a*a)*X2 - a*b*Y2 - a*c*Z2;
-  cP[4] = -a*b*X2 + (1-b*b)*Y2 - b*c*Z2;
-  cP[5] = -a*c*X2 - b*c*Y2 + (1-c*c)*Z2;
+  cP_[3] =  (1-a*a)*X2 - a*b*Y2 - a*c*Z2;
+  cP_[4] = -a*b*X2 + (1-b*b)*Y2 - b*c*Z2;
+  cP_[5] = -a*c*X2 - b*c*Y2 + (1-c*c)*Z2;
 
   /*  old version for the same onstraint
   if ( fabs(a) > 0.25 )
@@ -385,7 +385,7 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   }
   */
   //radius
-  cP[6] = oP[6] ;
+  cP_[6] = oP[6] ;
 
 }
 

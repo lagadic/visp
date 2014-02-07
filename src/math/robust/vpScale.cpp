@@ -72,9 +72,8 @@ vpScale::vpScale()
 }
 
 //! Constructor
-vpScale::vpScale(double kernel_bandwidth,
-                 int dimension=1, int kernel_type=EPANECHNIKOV)
-  : bandwidth(kernel_bandwidth), dimension(dimension), kernel_type(kernel_type)
+vpScale::vpScale(double kernel_bandwidth, int dim=1, int type=EPANECHNIKOV)
+  : bandwidth(kernel_bandwidth), dimension(dim), kernel_type(type)
 
 {
 #if (DEBUG_LEVEL2)
@@ -83,16 +82,12 @@ vpScale::vpScale(double kernel_bandwidth,
 #if (DEBUG_LEVEL2)
   std::cout << "vpScale constructor finished" << std::endl;
 #endif
-
 }
 
 //! Destructor
 vpScale::~vpScale()
 {
-
 }
-
-
 
 // Calculate the modes of the density for the distribution
 // and their associated errors

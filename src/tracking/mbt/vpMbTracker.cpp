@@ -309,7 +309,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 
       vpDisplay::flush(I) ;
 
-      vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+      button = vpMouseButton::button1;
       while (!vpDisplay::getClick(I, ip, button)) ;
 
 
@@ -639,11 +639,11 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::strin
   Initialise the tracking thanks to the pose.
   
   \param I : Input image
-  \param cMo : Pose matrix.
+  \param cMo_ : Pose matrix.
 */
-void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo)
+void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_)
 {
-  this->cMo = cMo;
+  this->cMo = cMo_;
   init(I);
 }
 
@@ -1014,7 +1014,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
         throw vpException(vpException::badValue, "Exceed the max number of lines.");
       }
 
-      for(unsigned int i = 0; i < nbLinePol; i++){
+      for(unsigned int n = 0; n < nbLinePol; n++){
         fileId >> index;
         if (2*index > 2*caoNbrLine-1) {
           throw vpException(vpException::badValue, "Exceed the max number of lines.");
@@ -1061,7 +1061,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
 
       std::vector<vpPoint> corners;
-      for(unsigned int i = 0; i < nbPointPol; i++){
+      for(unsigned int n = 0; n < nbPointPol; n++){
         fileId >> index;
         if (index > caoNbrPoint-1) {
           throw vpException(vpException::badValue, "Exceed the max number of points.");

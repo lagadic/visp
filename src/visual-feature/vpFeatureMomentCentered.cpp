@@ -147,14 +147,14 @@ void vpFeatureMomentCentered::compute_interaction(){
 
 /*!
   Default constructor
-  \param moments : Database of moment primitives.
-  \param A : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param B : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param C : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param data_base : Database of moment primitives.
+  \param A_ : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param B_ : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param featureMoments : Database of features.
 */
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments)
-  : vpFeatureMoment(moments,A,B,C,featureMoments), order(0)
+vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& data_base,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments)
+  : vpFeatureMoment(data_base,A_,B_,C_,featureMoments), order(0)
 {
 }
 

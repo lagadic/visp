@@ -91,18 +91,18 @@ class VISP_EXPORT vpCalibrationException : public vpException
     } ;
 
   public:
-    vpCalibrationException (const int code,  const char* format, ...)
+    vpCalibrationException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpCalibrationException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpCalibrationException (const int code)
-      : vpException(code){ ; }
+    vpCalibrationException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpCalibrationException (const int id)
+      : vpException(id){ ; }
 };
 
 #endif

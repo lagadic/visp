@@ -53,6 +53,9 @@
 #include <visp/vpFeatureBuilder.h>
 #include <stdlib.h>
 
+void buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane);
+void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
+
 /*!
   Basic constructor
 */
@@ -424,20 +427,21 @@ vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHom
 
   \param I : The image.
   \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the line.
   \param displayFullModel : If true, the line is displayed even if it is not visible.
 */
 void
-vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
+vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                           const vpCameraParameters &camera, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
   p1->changeFrame(cMo);
   p2->changeFrame(cMo);
 
   if(isvisible || displayFullModel){
     vpImagePoint ip1, ip2;
-    vpCameraParameters c = cam;
+    vpCameraParameters c = camera;
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       c.computeFov(I.getWidth(), I.getHeight());
     
@@ -464,20 +468,22 @@ vpMbtDistanceLine::display(const vpImage<unsigned char>&I, const vpHomogeneousMa
 
   \param I : The image.
   \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the line.
   \param displayFullModel : If true, the line is displayed even if it is not visible.
 */
 void
-vpMbtDistanceLine::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness, const bool displayFullModel)
+vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                           const vpCameraParameters &camera, const vpColor col,
+                           const unsigned int thickness, const bool displayFullModel)
 {
   p1->changeFrame(cMo);
   p2->changeFrame(cMo);
 
   if(isvisible || displayFullModel){
     vpImagePoint ip1, ip2;
-    vpCameraParameters c = cam;
+    vpCameraParameters c = camera;
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       c.computeFov(I.getWidth(), I.getHeight());
     
@@ -560,7 +566,7 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
     double xc = cam.get_u0() ;
     double yc = cam.get_v0() ;
 
-    double alpha ;
+    double alpha_ ;
     vpMatrix H ;
     H = featureline.interaction() ;
 
@@ -574,14 +580,14 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
       x = (x-xc)*mx ;
       y = (y-yc)*my ;
 
-      alpha = x*si - y*co;
+      alpha_ = x*si - y*co;
 
       double *Lrho = H[0] ;
       double *Ltheta = H[1] ;
       // Calculate interaction matrix for a distance
       for (unsigned int k=0 ; k < 6 ; k++)
       {
-        L[j][k] = (Lrho[k] + alpha*Ltheta[k]);
+        L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
       }
       error[j] = rho - ( x*co + y*si) ;
       j++;

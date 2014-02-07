@@ -33,6 +33,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+bool iscolinear(double *x1, double *x2, double *x3);
+bool isColinear(vpColVector &p1, vpColVector &p2, vpColVector &p3);
+
 bool
 iscolinear(double *x1, double *x2, double *x3)
 {
@@ -538,7 +541,6 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
     if (r < threshold)
     {
       unsigned int nbInliersCur = 0;
-      vpColVector a(3), b(3), c(3);
       for (unsigned int i = 0; i < n ; i++)
       {
         a[0] = xa[i] ; a[1] = ya[i] ; a[2] = 1 ;

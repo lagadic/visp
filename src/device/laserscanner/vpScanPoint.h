@@ -85,29 +85,29 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
   }
   /*! 
     Set the polar point coordinates. 
-    \param rDist : Radial distance in meter.
-    \param hAngle : Horizontal angle in radian.
-    \param vAngle : Vertical angle in radian.   
+    \param r_dist : Radial distance in meter.
+    \param h_angle : Horizontal angle in radian.
+    \param v_angle : Vertical angle in radian.
   */
-  inline vpScanPoint(double rDist, double hAngle, double vAngle)
-    : rDist(rDist), hAngle(hAngle), vAngle(vAngle)
+  inline vpScanPoint(double r_dist, double h_angle, double v_angle)
+    : rDist(r_dist), hAngle(h_angle), vAngle(v_angle)
   {
-    this->rDist = rDist;
-    this->hAngle = hAngle;
-    this->vAngle = vAngle;
+    this->rDist = r_dist;
+    this->hAngle = h_angle;
+    this->vAngle = v_angle;
   }
   /*! Destructor that does nothing. */
   inline virtual ~vpScanPoint() {};
   /*! 
     Set the polar point coordinates. 
-    \param rDist : Radial distance in meter.
-    \param hAngle : Horizontal angle in radian.
-    \param vAngle : Vertical angle in radian.   
+    \param r_dist : Radial distance in meter.
+    \param h_angle : Horizontal angle in radian.
+    \param v_angle : Vertical angle in radian.
   */
-  inline void setPolar(double rDist, double hAngle, double vAngle) {
-    this->rDist = rDist;
-    this->hAngle = hAngle;
-    this->vAngle = vAngle;
+  inline void setPolar(double r_dist, double h_angle, double v_angle) {
+    this->rDist = r_dist;
+    this->hAngle = h_angle;
+    this->vAngle = v_angle;
   }
   /*! 
     Return the radial distance in meter.

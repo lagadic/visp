@@ -78,19 +78,19 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
   default font is set to "-adobe-times-medium-i-normal--10-100-75-75-p-52-iso8859-*". 
   Note that you can chose an other one using "xfontsel".
 
-  \param graphNbr : The number of graph in the window.
+  \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title. 
 */
-vpPlot::vpPlot(const unsigned int graphNbr, 
+vpPlot::vpPlot(const unsigned int graph_nbr,
 	       const unsigned int height, const unsigned int width, 
 	       const int x, const int y, const char *title)
   : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40),
     factori(1.f), factorj(1.)
 {  
-  init(graphNbr, height, width, x, y, title);
+  init(graph_nbr, height, width, x, y, title);
 }
 
 /*!
@@ -99,13 +99,13 @@ vpPlot::vpPlot(const unsigned int graphNbr,
 
   \warning You can modify the default window size, but this is not advised.
 
-  \param graphNbr : The number of graph in the window.
+  \param graph_nbr : The number of graph in the window.
   \param height : Height of the window.
   \param width : Width of the window.
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title. 
 */
-void vpPlot::init(const unsigned int graphNbr, 
+void vpPlot::init(const unsigned int graph_nbr,
 		  const unsigned int height, const unsigned int width, 
 		  const int x, const int y, const char *title)
 {
@@ -130,7 +130,7 @@ void vpPlot::init(const unsigned int graphNbr,
   factori = height/700.0f;
   factorj = width/700.0f;
     
-  initNbGraph(graphNbr);
+  initNbGraph(graph_nbr);
 }
 
 /*!

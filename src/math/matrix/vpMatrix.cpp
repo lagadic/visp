@@ -231,8 +231,8 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
 
     vpDEBUG_TRACE (25, "Recomputation this->trsize array values.");
     {
-      double **t= rowPtrs;
-      for (unsigned int i=0; i<dsize; i+=ncols)  { *t++ = this->data + i; }
+      double **t_= rowPtrs;
+      for (unsigned int i=0; i<dsize; i+=ncols)  { *t_++ = this->data + i; }
     }
 
     this->rowNum = nrows; this->colNum = ncols;
@@ -1281,10 +1281,10 @@ void  vpMatrix::transpose(vpMatrix & At )const{
 
   for( unsigned int i = 0; i < colNum; i++ )
   {
-    double * row = AtRowPtrs[i];
+    double * row_ = AtRowPtrs[i];
     double * col = rowPtrs[0]+i;
     for( unsigned int j = 0; j < rowNum; j++, col+=A_step )
-      *(row++)=*col;   
+      *(row_++)=*col;
   }
 }
 
@@ -2946,7 +2946,7 @@ See the Numerical Recipes in C page 43 for further explanations.
 
 double vpMatrix::detByLU() const
 {
-  double det(0);
+  double det_ = 0;
 
   // Test wether the matrix is squred
   if (rowNum == colNum)
@@ -2967,10 +2967,10 @@ double vpMatrix::detByLU() const
     delete[]perm;
 
     // compute the determinant that is the product of the eigen values
-    det = (double) d;
+    det_ = (double) d;
     for(unsigned int i=0;i<rowNum;i++)
     {
-      det*=tmp[i][i];
+      det_*=tmp[i][i];
     }
   }
 
@@ -2981,7 +2981,7 @@ double vpMatrix::detByLU() const
 
 
   }
-  return det ;
+  return det_ ;
 }
 
 
@@ -3419,10 +3419,10 @@ vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
       }
       //   if (noyau == 1)
       {
-        double maxsv = 0 ;
+        maxsv = 0 ;
         for (i=0 ; i < ddl ; i++)
           if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-        unsigned int rank = 0 ;
+        rank = 0 ;
         for (i=0 ; i < ddl ; i++)
           if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
         vpMatrix cons(ddl,ddl) ;
@@ -3495,14 +3495,14 @@ A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
 */
 double vpMatrix::det(vpDetMethod method) const
 {
-  double det = 0;
+  double det_ = 0;
 
   if ( method == LU_DECOMPOSITION )
   {
-    det = this->detByLU();
+    det_ = this->detByLU();
   }
 
-  return (det);
+  return (det_);
 }
 
 

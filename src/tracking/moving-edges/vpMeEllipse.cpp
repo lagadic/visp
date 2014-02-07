@@ -51,6 +51,8 @@
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+
+void computeTheta(double &theta, vpColVector &K, vpImagePoint iP);
 /*!
   Computes the \f$ \theta \f$ angle which represents the angle between the tangente to the curve and the i axis.
 
@@ -416,16 +418,16 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 void
 vpMeEllipse::updateTheta()
 {
-  vpMeSite p;
+  vpMeSite p_me;
   double theta;
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-    p = *it;
+    p_me = *it;
     vpImagePoint iP;
-    iP.set_i(p.ifloat);
-    iP.set_j(p.jfloat);
+    iP.set_i(p_me.ifloat);
+    iP.set_j(p_me.jfloat);
     computeTheta(theta, K, iP) ;
-    p.alpha = theta ;
-    *it = p;
+    p_me.alpha = theta ;
+    *it = p_me;
   }
 }
 
@@ -629,10 +631,10 @@ vpMeEllipse::leastSquare()
   // A = (j^2 2ij 2i 2j 1)   x = (K0 K1 K2 K3 K4)^T  b = (-i^2 )
   unsigned int i ;
 
-  vpMeSite p ;
+  vpMeSite p_me ;
 
   unsigned int iter =0 ;
-  vpColVector b(numberOfSignal()) ;
+  vpColVector b_(numberOfSignal()) ;
   vpRobust r(numberOfSignal()) ;
   r.setThreshold(2);
   r.setIteration(0) ;
@@ -658,17 +660,16 @@ vpMeEllipse::leastSquare()
 
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
-
-        A[k][0] = vpMath::sqr(p.jfloat) ;
-        A[k][1] = 2 * p.ifloat * p.jfloat ;
-        A[k][2] = 2 * p.ifloat ;
-        A[k][3] = 2 * p.jfloat ;
+        A[k][0] = vpMath::sqr(p_me.jfloat) ;
+        A[k][1] = 2 * p_me.ifloat * p_me.jfloat ;
+        A[k][2] = 2 * p_me.ifloat ;
+        A[k][3] = 2 * p_me.jfloat ;
         A[k][4] = 1 ;
 
-        b[k] = - vpMath::sqr(p.ifloat) ;
+        b_[k] = - vpMath::sqr(p_me.ifloat) ;
         k++ ;
       }
     }
@@ -678,10 +679,10 @@ vpMeEllipse::leastSquare()
       DA = D*A ;
       vpMatrix DAp ;
 
-      x = DA.pseudoInverse(1e-26) *D*b ;
+      x = DA.pseudoInverse(1e-26) *D*b_ ;
 
       vpColVector residu(nos_1);
-      residu = b - A*x;
+      residu = b_ - A*x;
       r.setIteration(iter) ;
       r.MEstimator(vpRobust::TUKEY,residu,w) ;
 
@@ -696,14 +697,14 @@ vpMeEllipse::leastSquare()
 
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < thresholdWeight)
         {
-          p.setState(vpMeSite::M_ESTIMATOR);
+          p_me.setState(vpMeSite::M_ESTIMATOR);
           
-          *it = p;
+          *it = p_me;
         }
         k++ ;
       }
@@ -719,15 +720,14 @@ vpMeEllipse::leastSquare()
 
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
-
-        A[k][0] = 2* p.ifloat ;
-        A[k][1] = 2 * p.jfloat ;
+        A[k][0] = 2* p_me.ifloat ;
+        A[k][1] = 2 * p_me.jfloat ;
         A[k][2] = 1 ;
 
-        b[k] = - vpMath::sqr(p.ifloat) - vpMath::sqr(p.jfloat) ;
+        b_[k] = - vpMath::sqr(p_me.ifloat) - vpMath::sqr(p_me.jfloat) ;
         k++ ;
       }
     }
@@ -737,10 +737,10 @@ vpMeEllipse::leastSquare()
       DA = D*A ;
       vpMatrix DAp ;
 
-      x = DA.pseudoInverse(1e-26) *D*b ;
+      x = DA.pseudoInverse(1e-26) *D*b_ ;
 
       vpColVector residu(nos_1);
-      residu = b - A*x;
+      residu = b_ - A*x;
       r.setIteration(iter) ;
       r.MEstimator(vpRobust::TUKEY,residu,w) ;
 
@@ -755,14 +755,14 @@ vpMeEllipse::leastSquare()
 
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < thresholdWeight)
         {
-          p.setState(vpMeSite::M_ESTIMATOR);
+          p_me.setState(vpMeSite::M_ESTIMATOR);
       
-          *it = p;
+          *it = p_me;
         }
         k++ ;
       }
@@ -840,7 +840,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
   if (circle==false)
   {
     vpMatrix A(n,5) ;
-    vpColVector b(n) ;
+    vpColVector b_(n) ;
     vpColVector x(5) ;
 
     // Construction du systeme Ax=b
@@ -855,16 +855,16 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
       A[k][3] = 2* iP[k].get_j() ;
       A[k][4] = 1 ;
 
-      b[k] = - vpMath::sqr(iP[k].get_i()) ;
+      b_[k] = - vpMath::sqr(iP[k].get_i()) ;
     }
 
-    K = A.pseudoInverse(1e-26)*b ;
+    K = A.pseudoInverse(1e-26)*b_ ;
     std::cout << K << std::endl;
   }
   else
   {
     vpMatrix A(n,3) ;
-    vpColVector b(n) ;
+    vpColVector b_(n) ;
     vpColVector x(3) ;
 
     vpColVector Kc(3) ;
@@ -874,10 +874,10 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
       A[k][1] =  2* iP[k].get_j() ;
       A[k][2] = 1 ;
 
-      b[k] = - vpMath::sqr(iP[k].get_i()) - vpMath::sqr(iP[k].get_j()) ;
+      b_[k] = - vpMath::sqr(iP[k].get_i()) - vpMath::sqr(iP[k].get_j()) ;
     }
 
-    Kc = A.pseudoInverse(1e-26)*b ;
+    Kc = A.pseudoInverse(1e-26)*b_ ;
     K[0] = 1 ;
     K[1] = 0 ;
     K[2] = Kc[0] ;
@@ -900,7 +900,6 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
   {
     vpMeTracker::initTracking(I) ;
   }
-
 
   try{
     track(I) ;
@@ -1130,7 +1129,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
   if (circle==false)
   {
     vpMatrix A(n,5) ;
-    vpColVector b(n) ;
+    vpColVector b_(n) ;
     vpColVector x(5) ;
 
     // Construction du systeme Ax=b
@@ -1145,16 +1144,16 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
       A[k][3] = 2* j[k] ;
       A[k][4] = 1 ;
 
-      b[k] = - vpMath::sqr(i[k]) ;
+      b_[k] = - vpMath::sqr(i[k]) ;
     }
 
-    K = A.pseudoInverse(1e-26)*b ;
+    K = A.pseudoInverse(1e-26)*b_ ;
     std::cout << K << std::endl;
   }
   else
   {
     vpMatrix A(n,3) ;
-    vpColVector b(n) ;
+    vpColVector b_(n) ;
     vpColVector x(3) ;
 
     vpColVector Kc(3) ;
@@ -1164,10 +1163,10 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
       A[k][1] =  2* j[k] ;
 
       A[k][2] = 1 ;
-      b[k] = - vpMath::sqr(i[k]) - vpMath::sqr(j[k]) ;
+      b_[k] = - vpMath::sqr(i[k]) - vpMath::sqr(j[k]) ;
     }
 
-    Kc = A.pseudoInverse(1e-26)*b ;
+    Kc = A.pseudoInverse(1e-26)*b_ ;
     K[0] = 1 ;
     K[1] = 0 ;
     K[2] = Kc[0] ;
@@ -1191,7 +1190,6 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
   {
     vpMeTracker::initTracking(I) ;
   }
-
 
   try{
     track(I) ;

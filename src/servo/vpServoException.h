@@ -83,18 +83,18 @@ class VISP_EXPORT vpServoException : public vpException
     } ;
 
   public:
-    vpServoException (const int code,  const char* format, ...)
+    vpServoException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpServoException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpServoException (const int code)
-      : vpException(code){ ; }
+    vpServoException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpServoException (const int id)
+      : vpException(id){ ; }
 
 };
 

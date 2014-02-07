@@ -367,7 +367,6 @@ vpPose::calculArbreDementhon(vpMatrix &b, vpColVector &U,
     vpColVector I(3) ;
     vpColVector J(3) ;
 
-    vpHomogeneousMatrix cMo_old ;
     smin_old = 2*smin ;
 
     cpt = 0;
@@ -722,12 +721,10 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 */
 double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
-  unsigned int i ;
-  double residual = 0 ;
+  double residual_ = 0 ;
 
-
-  residual  =0 ;
-  for (i =0 ; i < npt ; i++)
+  residual_  =0 ;
+  for (unsigned int i =0 ; i < npt ; i++)
   {
 
     double X = c3d[i].get_oX()*cMo[0][0]+c3d[i].get_oY()*cMo[0][1]+c3d[i].get_oZ()*cMo[0][2] + cMo[0][3];
@@ -737,11 +734,9 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
     double x = X/Z ;
     double y = Y/Z ;
 
-
-
-    residual += vpMath::sqr(x-c3d[i].get_x()) +  vpMath::sqr(y-c3d[i].get_y())  ;
+    residual_ += vpMath::sqr(x-c3d[i].get_x()) +  vpMath::sqr(y-c3d[i].get_y())  ;
   }
-  return residual ;
+  return residual_ ;
 }
 
 

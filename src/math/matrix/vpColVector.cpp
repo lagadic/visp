@@ -185,8 +185,6 @@ vpColVector vpColVector::operator*(double x) const
 */
 vpColVector &vpColVector::operator=(const vpMatrix &m)
 {
-
-
   if (m.getCols() !=1)
   {
     vpTRACE(" m should be a 1 cols matrix ") ;

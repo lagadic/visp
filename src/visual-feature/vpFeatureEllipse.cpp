@@ -343,7 +343,7 @@ void
 vpFeatureEllipse::buildFrom(const double x, const double y,
 			    const double mu20, const double mu11,
 			    const double mu02,
-			    const double A, const double B, const double C)
+          const double a, const double b, const double c)
 {
 
   s[0] = x ;
@@ -352,9 +352,9 @@ vpFeatureEllipse::buildFrom(const double x, const double y,
   s[3] = mu11 ;
   s[4] = mu02 ;
 
-  this->A = A ;
-  this->B = B ;
-  this->C = C ;
+  this->A = a ;
+  this->B = b ;
+  this->C = c ;
 
   for( unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
@@ -382,11 +382,11 @@ vpFeatureEllipse::set_xy(const double x,const double y)
 }
 
 void
-vpFeatureEllipse::setABC(const double A, const double B, const double C)
+vpFeatureEllipse::setABC(const double a, const double b, const double c)
 {
-  this->A = A ;
-  this->B = B ;
-  this->C = C ;
+  this->A = a ;
+  this->B = b ;
+  this->C = c ;
   for( unsigned int i = 5; i < nbParameters; i++) flags[i] = true;
 }
 

@@ -386,7 +386,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
   deletePosEvalRMS();
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(vpColVector &p)
+void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos=new double[nb_corners];
@@ -401,19 +401,19 @@ void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(vpColVector &p)
     for (unsigned int j=0; j<3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1,p);
-      Warp->warpX(X1,X2,p);
+      Warp->computeDenom(X1,p_);
+      Warp->warpX(X1,X2,p_);
       x_pos[i*3+j]=X2[0];
       y_pos[i*3+j]=X2[1];
     }
   }
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::computeEvalRMS(const vpColVector &p)
+void vpTemplateTrackerZNCCInverseCompositional::computeEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 
-  Warp->computeCoeff(p);
+  Warp->computeCoeff(p_);
   evolRMS=0;
   vpTemplateTrackerTriangle triangle;
 
@@ -423,8 +423,8 @@ void vpTemplateTrackerZNCCInverseCompositional::computeEvalRMS(const vpColVector
     for (unsigned int j=0; j<3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1,p);
-      Warp->warpX(X1,X2,p);
+      Warp->computeDenom(X1,p_);
+      Warp->warpX(X1,X2,p_);
       evolRMS+=(x_pos[i*3+j]-X2[0])*(x_pos[i*3+j]-X2[0])+(y_pos[i*3+j]-X2[1])*(y_pos[i*3+j]-X2[1]);
       x_pos[i*3+j]=X2[0];
       y_pos[i*3+j]=X2[1];

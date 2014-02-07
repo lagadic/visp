@@ -76,9 +76,9 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
 
 /*!
   Default constructor.
-  \param display : When true, enables the display of the external view.
+  \param do_display : When true, enables the display of the external view.
   */
-vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display)
+vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   : vpWireFrameSimulator(), vpRobotSimulator(),
     I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
     /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
@@ -87,7 +87,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display)
 #if defined(VISP_HAVE_DISPLAY)
     display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(display), constantSamplingTimeMode(false),
+    displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false),
     setVelocityCalled(false), verbose_(false)
 {
   setSamplingTime(0.010);
@@ -96,7 +96,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool display)
   I = 255;
   
 #if defined(VISP_HAVE_DISPLAY)
-  if (display)
+  if (do_display)
     this->display.init(I, 0, 0,"The External view");
 #endif  
    
@@ -120,15 +120,15 @@ vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator()
   It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
 
   \param obj : Type of scene used to display the object at the current position.
-  \param desiredObject : Type of scene used to display the object at the desired pose (in the internal view).
+  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
 */
 void
-vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desiredObject)
+vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desired_object)
 {
   if(displayCamera){
     free_Bound_scene (&(this->camera));
   }
-  vpWireFrameSimulator::initScene(obj, desiredObject);
+  vpWireFrameSimulator::initScene(obj, desired_object);
   if(displayCamera){
     free_Bound_scene (&(this->camera));
   }
@@ -143,15 +143,15 @@ vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesi
   It is also possible to use a vrml (.wrl) file.
 
   \param obj : Path to the scene file you want to use.
-  \param desiredObject : Path to the scene file you want to use.
+  \param desired_object : Path to the scene file you want to use.
 */
 void
-vpRobotWireFrameSimulator::initScene(const char* obj, const char* desiredObject)
+vpRobotWireFrameSimulator::initScene(const char* obj, const char* desired_object)
 {
   if(displayCamera){
     free_Bound_scene (&(this->camera));
   }
-  vpWireFrameSimulator::initScene(obj, desiredObject);
+  vpWireFrameSimulator::initScene(obj, desired_object);
   if(displayCamera){
     free_Bound_scene (&(this->camera));
   }
@@ -205,12 +205,12 @@ vpRobotWireFrameSimulator::initScene(const char* obj)
   
   According to the initialisation method you used, the current position and maybee the desired position of the object are displayed.
   
-  \param I : The image where the internal view is displayed.
+  \param I_ : The image where the internal view is displayed.
   
   \warning : The objects are displayed thanks to overlays. The image I is not modified.
 */
 void
-vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I)
+vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I_)
 {
   
   if (!sceneInitialized)
@@ -223,13 +223,13 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I)
   if( (std::fabs(px_int-1.) > vpMath::maximum(px_int,1.)*std::numeric_limits<double>::epsilon()) 
       && (std::fabs(py_int-1) > vpMath::maximum(py_int,1.)*std::numeric_limits<double>::epsilon()))
   {
-    u = (double)I.getWidth()/(2*px_int);
-    v = (double)I.getHeight()/(2*py_int);
+    u = (double)I_.getWidth()/(2*px_int);
+    v = (double)I_.getHeight()/(2*py_int);
   }
   else
   {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
+    u = (double)I_.getWidth()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
+    v = (double)I_.getHeight()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
   }
 
   float o44c[4][4],o44cd[4][4],x,y,z;
@@ -254,7 +254,7 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I)
   add_vwstack ("start","vup", o44c[1][0],o44c[1][1],o44c[1][2]);
   add_vwstack ("start","window", -u, u, -v, v);
   if (displayObject)
-    display_scene(id,this->scene,I, curColor);
+    display_scene(id,this->scene,I_, curColor);
 
   add_vwstack ("start","cop", o44cd[3][0],o44cd[3][1],o44cd[3][2]);
   x = o44cd[2][0] + o44cd[3][0];
@@ -266,8 +266,8 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I)
   add_vwstack ("start","window", -u, u, -v, v);
   if (displayDesiredObject)
   {
-    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
-    else display_scene(id,desiredScene,I, desColor);
+    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I_, vpColor::red);
+    else display_scene(id,desiredScene,I_, desColor);
   }
   delete[] fMit;
   set_displayBusy(false);
@@ -278,12 +278,12 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I)
   
   According to the initialisation method you used, the current position and maybee the desired position of the object are displayed.
   
-  \param I : The image where the internal view is displayed.
+  \param I_ : The image where the internal view is displayed.
   
   \warning : The objects are displayed thanks to overlays. The image I is not modified.
 */
 void
-vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I)
+vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I_)
 {
   
   if (!sceneInitialized)
@@ -301,8 +301,8 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I)
   }
   else
   {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
+    u = (double)I_.getWidth()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
+    v = (double)I_.getHeight()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
   }
 
   float o44c[4][4],o44cd[4][4],x,y,z;
@@ -328,7 +328,7 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I)
   add_vwstack ("start","window", -u, u, -v, v);
   if (displayObject)
   {
-    display_scene(id,this->scene,I, curColor);
+    display_scene(id,this->scene,I_, curColor);
   }
 
   add_vwstack ("start","cop", o44cd[3][0],o44cd[3][1],o44cd[3][2]);
@@ -341,8 +341,8 @@ vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I)
   add_vwstack ("start","window", -u, u, -v, v);
   if (displayDesiredObject)
   {
-    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I, vpColor::red);
-    else display_scene(id,desiredScene,I, desColor);
+    if (desiredObject == D_TOOL) display_scene(o44cd,desiredScene,I_, vpColor::red);
+    else display_scene(id,desiredScene,I_, desColor);
   }
   delete[] fMit;
   set_displayBusy(false);

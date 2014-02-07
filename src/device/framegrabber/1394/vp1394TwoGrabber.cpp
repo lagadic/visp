@@ -212,7 +212,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
   If multiples cameras are connected on the bus, select the camero to dial
   with.
 
-  \param camera_id : A camera identifier or GUID. By identifier, we
+  \param cam_id : A camera identifier or GUID. By identifier, we
   mean a value comprised between 0 (the first camera found on the bus)
   and the number of cameras found on the bus and returned by
   getNumCameras() minus 1. If two cameras are connected on the bus,
@@ -324,24 +324,23 @@ int main()
 }
   \endcode
 
-
   \sa setFormat(), setVideoMode(), setFramerate(), getNumCameras()
 
 */
 void
-vp1394TwoGrabber::setCamera(uint64_t camera_id)
+vp1394TwoGrabber::setCamera(uint64_t cam_id)
 {
   // Suppose that if camera_id is a camera GUID, this value is greater
   // than the number of cameras connected to the bus
-  if (camera_id >= num_cameras) {
+  if (cam_id >= num_cameras) {
     // Check if camera_id is a camera guid
     bool is_guid = false;
     // check if the camera_id is a guid
     for (unsigned int i=0; i< num_cameras; i++) {
       if (cameras[i]->guid == camera_id) {
-	this->camera_id = i; 
-	is_guid = true;
-	break;
+        this->camera_id = i;
+        is_guid = true;
+        break;
       }
     }
     if (is_guid == false) {
@@ -354,7 +353,7 @@ vp1394TwoGrabber::setCamera(uint64_t camera_id)
     }
   }
   else {
-    this->camera_id =  camera_id;
+    this->camera_id =  cam_id;
   }
 
   // create a pointer to the working camera
@@ -366,7 +365,7 @@ vp1394TwoGrabber::setCamera(uint64_t camera_id)
 
   Get the active camera identifier on the bus.
 
-  \param camera_id : The active camera identifier. The value is
+  \param cam_id : The active camera identifier. The value is
   comprised between 0 (the first camera) and the number of cameras
   found on the bus returned by getNumCameras() minus 1.
 
@@ -377,10 +376,10 @@ vp1394TwoGrabber::setCamera(uint64_t camera_id)
 
 */
 void
-vp1394TwoGrabber::getCamera(uint64_t &camera_id)
+vp1394TwoGrabber::getCamera(uint64_t &cam_id)
 {
   if (num_cameras) {
-    camera_id = this->camera_id;
+    cam_id = this->camera_id;
   }
   else {
     close();
@@ -1337,10 +1336,10 @@ vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode,
 
   \param top : Position of the upper left roi corner.
 
-  \param width : Roi width. If width is set to 0, uses the maximum
+  \param w : Roi width. If width is set to 0, uses the maximum
   allowed image width.
 
-  \param height : Roi height. If width is set to 0, uses the maximum
+  \param h : Roi height. If width is set to 0, uses the maximum
   allowed image height.
 
 
@@ -1354,7 +1353,7 @@ vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode,
 */
 void
 vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
-                                unsigned int width, unsigned int height)
+                                unsigned int w, unsigned int h)
 {
   open();
   if (! num_cameras) {
@@ -1389,8 +1388,8 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     }
 #if 0
     vpTRACE("left: %d top: %d width: %d height: %d", left, top,
-            width == 0 ? DC1394_USE_MAX_AVAIL: width,
-            height == 0 ? DC1394_USE_MAX_AVAIL : height);
+            width == 0 ? DC1394_USE_MAX_AVAIL: w,
+            height == 0 ? DC1394_USE_MAX_AVAIL : h);
     vpTRACE("max_width: %d max_height: %d", max_width, max_height);
 #endif
 
@@ -1408,26 +1407,25 @@ vp1394TwoGrabber::setFormat7ROI(unsigned int left, unsigned int top,
     int32_t roi_width;
     int32_t roi_height;
 
-    if (width != 0) {
+    if (w != 0) {
       // Check if roi width is acceptable (ie roi is contained in the image)
-      if (width > (max_width - left))
-        width = (max_width - left);
-      roi_width = (int32_t)width;
+      if (w > (max_width - left))
+        w = (max_width - left);
+      roi_width = (int32_t)w;
     }
     else {
       roi_width = DC1394_USE_MAX_AVAIL;
     }
 
-    if (height != 0) {
+    if (h != 0) {
       // Check if roi height is acceptable (ie roi is contained in the image)
-      if (height > (max_height - top))
-        height = (max_height - top);
-      roi_height = (int32_t)height;
+      if (h > (max_height - top))
+        h = (max_height - top);
+      roi_height = (int32_t)h;
     }
     else {
       roi_height = DC1394_USE_MAX_AVAIL;
     }
-
 
     if (dc1394_format7_set_roi(camera, _videomode,
                                (dc1394color_coding_t) DC1394_QUERY_FROM_CAMERA, // color_coding
@@ -2938,7 +2936,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
   Get the image width. It depends on the camera video mode setVideoMode(). The
   image size is only available after a call to open() or acquire().
 
-  \param width : The image width, zero if the required camera is not available.
+  \param w : The image width, zero if the required camera is not available.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
@@ -2949,7 +2947,7 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
   \sa getHeight(), open(), acquire()
 
 */
-void vp1394TwoGrabber::getWidth(unsigned int &width)
+void vp1394TwoGrabber::getWidth(unsigned int &w)
 {
   if (! num_cameras) {
     close();
@@ -2958,7 +2956,7 @@ void vp1394TwoGrabber::getWidth(unsigned int &width)
                                    "No camera found") );
   }
 
-  width = this->width;
+  w = this->width;
 }
 
 /*!
@@ -2995,7 +2993,7 @@ unsigned int vp1394TwoGrabber::getWidth()
   setVideoMode(). The image size is only available after a call to
   open() or acquire().
 
-  \param height : The image height.
+  \param h : The image height.
 
   \exception vpFrameGrabberException::initializationError : If no
   camera found on the bus.
@@ -3006,7 +3004,7 @@ unsigned int vp1394TwoGrabber::getWidth()
   \sa getWidth()
 
 */
-void vp1394TwoGrabber::getHeight(unsigned int &height)
+void vp1394TwoGrabber::getHeight(unsigned int &h)
 {
   if (! num_cameras) {
     close();
@@ -3015,7 +3013,7 @@ void vp1394TwoGrabber::getHeight(unsigned int &height)
                                    "No camera found") );
   }
 
-  height = this->height;
+  h = this->height;
 }
 /*!
 
@@ -3110,8 +3108,8 @@ std::string vp1394TwoGrabber::videoMode2string(vp1394TwoVideoModeType videomode)
     _str = strVideoMode[_videomode - DC1394_VIDEO_MODE_MIN];
   }
   else {
-    vpCERROR << "The video mode " << videomode
-    << " is not supported by the camera" << std::endl;
+    vpCERROR << "The video mode " << (int)videomode
+             << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3139,8 +3137,8 @@ std::string vp1394TwoGrabber::framerate2string(vp1394TwoFramerateType fps)
     _str = strFramerate[_fps - DC1394_FRAMERATE_MIN];
   }
   else {
-    vpCERROR << "The framerate " << fps
-    << " is not supported by the camera" << std::endl;
+    vpCERROR << "The framerate " << (int)fps
+             << " is not supported by the camera" << std::endl;
   }
 
   return _str;
@@ -3169,8 +3167,8 @@ std::string vp1394TwoGrabber::colorCoding2string(vp1394TwoColorCodingType colorc
 
   }
   else {
-    vpCERROR << "The color coding " << colorcoding
-    << " is not supported by the camera" << std::endl;
+    vpCERROR << "The color coding " << (int)colorcoding
+             << " is not supported by the camera" << std::endl;
   }
 
   return _str;

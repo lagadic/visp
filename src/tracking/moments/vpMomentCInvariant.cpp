@@ -58,7 +58,7 @@ vpMomentCInvariant::vpMomentCInvariant(bool flg_sxsynormalization)
   \param momentCentered : centered moments
   \param I : invariant output values
 */
-void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::vector<double>& I){
+void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::vector<double>& I_val){
 
     double mu30 = momentCentered.get(3,0);
     double mu30_2 = mu30*mu30;
@@ -116,23 +116,23 @@ void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::v
     double delta_2 = delta*delta;
     double phi_2 = phi*phi;
 
-    I[1]=-mu20*mu02+mu11_2;
-    I[2]=zeta_2+4*mu11_2;
-    I[3]=(mu30-3*mu12)*(mu30-3*mu12)+(mu03-3*mu21)*(mu03-3*mu21);
-    I[4]=(mu30+mu12)*(mu30+mu12)+(mu21+mu03)*(mu21+mu03);
-    I[5]=-mu30_2*mu03_2+(-4*mu12_3+6*mu21*mu12*mu03)*mu30-4*mu21_3*mu03+3*mu21_2*mu12_2;
-    I[6]=3*mu12_4+2*mu30*mu12_3+(3*mu30_2-6*mu03*mu21)*mu12_2-6*mu30*mu21*(mu21+mu03)*mu12+2*mu30_2*mu03_2+2*mu21_3*mu03+3*mu21_2*mu03_2+3*mu21_4;
-    I[7]=(3*mu21+2*mu03)*mu12_3+3*mu30*(mu03+2*mu21)*mu12_2-3*mu21*(mu30+mu03+mu21)*(-mu30+mu03+mu21)*mu12+mu30*(-mu30_2*mu03-2*mu21_3-3*mu03*mu21_2+mu03_3);
-    //I[8]=3*mu21_4-3*mu21_3*mu03+(3*mu03_2+kappa-6*mu12_2)*mu21_2-mu03*(-15*mu12_2+kappa)*mu21-(-3*mu12_2*mu30+(2*kappa-3*mu03_2)*mu12+kappa*mu30)*mu12;
-    I[8] = 3*mu03*mu21_3-2*mu03_2*mu21_2+mu21_2*mu30_2+3*mu12_2*mu03*mu21-mu03*mu21*mu30_2-mu03_3*mu21+3*mu12_3*mu30-2*mu12_2*mu30_2+mu12_2*mu03_2-mu12*mu30_3-mu12*mu30*mu03_2+3*mu12*mu30*mu21_2-6*mu12*mu30*mu03*mu21;
-    I[9]=omicron*omicron;
+    I_val[1]=-mu20*mu02+mu11_2;
+    I_val[2]=zeta_2+4*mu11_2;
+    I_val[3]=(mu30-3*mu12)*(mu30-3*mu12)+(mu03-3*mu21)*(mu03-3*mu21);
+    I_val[4]=(mu30+mu12)*(mu30+mu12)+(mu21+mu03)*(mu21+mu03);
+    I_val[5]=-mu30_2*mu03_2+(-4*mu12_3+6*mu21*mu12*mu03)*mu30-4*mu21_3*mu03+3*mu21_2*mu12_2;
+    I_val[6]=3*mu12_4+2*mu30*mu12_3+(3*mu30_2-6*mu03*mu21)*mu12_2-6*mu30*mu21*(mu21+mu03)*mu12+2*mu30_2*mu03_2+2*mu21_3*mu03+3*mu21_2*mu03_2+3*mu21_4;
+    I_val[7]=(3*mu21+2*mu03)*mu12_3+3*mu30*(mu03+2*mu21)*mu12_2-3*mu21*(mu30+mu03+mu21)*(-mu30+mu03+mu21)*mu12+mu30*(-mu30_2*mu03-2*mu21_3-3*mu03*mu21_2+mu03_3);
+    //I_val[8]=3*mu21_4-3*mu21_3*mu03+(3*mu03_2+kappa-6*mu12_2)*mu21_2-mu03*(-15*mu12_2+kappa)*mu21-(-3*mu12_2*mu30+(2*kappa-3*mu03_2)*mu12+kappa*mu30)*mu12;
+    I_val[8] = 3*mu03*mu21_3-2*mu03_2*mu21_2+mu21_2*mu30_2+3*mu12_2*mu03*mu21-mu03*mu21*mu30_2-mu03_3*mu21+3*mu12_3*mu30-2*mu12_2*mu30_2+mu12_2*mu03_2-mu12*mu30_3-mu12*mu30*mu03_2+3*mu12*mu30*mu21_2-6*mu12*mu30*mu03*mu21;
+    I_val[9]=omicron*omicron;
 
-    I[10]=mu40*mu04-4*mu31*mu13+3*mu22_2;
-    I[11]=3*mu13_2+2*mu31*mu13+(-3*mu40-3*mu04)*mu22-2*mu40*mu04+3*mu31_2;
-    I[12]=3*mu04_2+(2*mu40+12*mu22)*mu04+3*mu40_2+12*mu40*mu22+16*mu31*mu13;
-    I[13]=omega_2+nu_2;
-    I[14]=ro_2+gamma_2;
-    I[15]=delta_2+phi_2;
+    I_val[10]=mu40*mu04-4*mu31*mu13+3*mu22_2;
+    I_val[11]=3*mu13_2+2*mu31*mu13+(-3*mu40-3*mu04)*mu22-2*mu40*mu04+3*mu31_2;
+    I_val[12]=3*mu04_2+(2*mu40+12*mu22)*mu04+3*mu40_2+12*mu40*mu22+16*mu31*mu13;
+    I_val[13]=omega_2+nu_2;
+    I_val[14]=ro_2+gamma_2;
+    I_val[15]=delta_2+phi_2;
 
     double a;
     if(getObject().getType()==vpMomentObject::DISCRETE)
@@ -150,7 +150,6 @@ void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::v
     II[1]=c[1]*c[1]+s[1]*s[1];
     II[2]=c[2]*c[2]+s[2]*s[2];
     II[3]=momentCentered.get(2,0)+momentCentered.get(0,2);
-
 
     K=(II[1]*(II[3]*sqrt(std::abs(II[3]))))/sqrt(std::abs(a));
 

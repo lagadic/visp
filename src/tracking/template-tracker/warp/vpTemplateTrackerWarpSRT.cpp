@@ -100,28 +100,29 @@ void vpTemplateTrackerWarpSRT::warpX(const vpColVector &vX,vpColVector &vXres,co
   vXres[1]=((1.0+ParamM[0])*sin(ParamM[1])*vX[0]) + ((1.0+ParamM[0])*cos(ParamM[1])*vX[1]) + ParamM[3];
 }
 
-void vpTemplateTrackerWarpSRT::dWarp(const vpColVector &X1,const vpColVector &/*X2*/,const vpColVector &ParamM,vpMatrix &dW)
+void vpTemplateTrackerWarpSRT::dWarp(const vpColVector &X1,const vpColVector &/*X2*/,const vpColVector &ParamM,vpMatrix &dW_)
 {
   double j=X1[0];
   double i=X1[1];
-  dW=0;
-  dW[0][0]=cos(ParamM[1])*j - sin(ParamM[1])*i;
-  dW[0][1]=(-(1.0+ParamM[0])*sin(ParamM[1])*j) - ((1.0+ParamM[0])*cos(ParamM[1])*i);
-  dW[0][2]=1;
+  dW_=0;
+  dW_[0][0]=cos(ParamM[1])*j - sin(ParamM[1])*i;
+  dW_[0][1]=(-(1.0+ParamM[0])*sin(ParamM[1])*j) - ((1.0+ParamM[0])*cos(ParamM[1])*i);
+  dW_[0][2]=1;
   
-  dW[1][0]=sin(ParamM[1])*j + cos(ParamM[1])*i;
-  dW[1][1]=(1.0+ParamM[0])*cos(ParamM[1])*j - (1.0+ParamM[0])*sin(ParamM[1])*i;
-  dW[1][3]=1;
+  dW_[1][0]=sin(ParamM[1])*j + cos(ParamM[1])*i;
+  dW_[1][1]=(1.0+ParamM[0])*cos(ParamM[1])*j - (1.0+ParamM[0])*sin(ParamM[1])*i;
+  dW_[1][3]=1;
 }
 
 /*compute dw=dw/dx*dw/dp
 */
-void vpTemplateTrackerWarpSRT::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW)
+void vpTemplateTrackerWarpSRT::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,
+                                          const double *dwdp0,vpMatrix &dW_)
 {
   for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=((1.+ParamM[0])*cos(ParamM[1])*dwdp0[i]) - ((1.0+ParamM[0])*sin(ParamM[1])*dwdp0[i+nbParam]);
-    dW[1][i]=((1.+ParamM[0])*sin(ParamM[1])*dwdp0[i]) + ((1.0+ParamM[0])*cos(ParamM[1])*dwdp0[i+nbParam]);
+    dW_[0][i]=((1.+ParamM[0])*cos(ParamM[1])*dwdp0[i]) - ((1.0+ParamM[0])*sin(ParamM[1])*dwdp0[i+nbParam]);
+    dW_[1][i]=((1.+ParamM[0])*sin(ParamM[1])*dwdp0[i]) + ((1.0+ParamM[0])*cos(ParamM[1])*dwdp0[i+nbParam]);
   }
 }
 

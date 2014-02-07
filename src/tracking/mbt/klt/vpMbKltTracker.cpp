@@ -246,15 +246,15 @@ vpMbKltTracker::setKltOpencv(const vpKltOpencv& t){
 /*!
   Set the camera parameters.
 
-  \param cam : the new camera parameters.
+  \param camera : the new camera parameters.
 */
 void
-vpMbKltTracker::setCameraParameters(const vpCameraParameters& cam)
+vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
 {
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    faces[i]->setCameraParameters(cam);
+    faces[i]->setCameraParameters(camera);
   }
-  this->cam = cam;
+  this->cam = camera;
 }
    
 /*!
@@ -790,17 +790,17 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   Display the 3D model at a given position using the given camera parameters
 
   \param I : The image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : Boolean to say if all the model has to be displayed.
 */
 void
-vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
-                        const vpColor& col , const unsigned int thickness, const bool displayFullModel)
+vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters & camera,
+                        const vpColor& col, const unsigned int thickness, const bool displayFullModel)
 {
-  vpCameraParameters c = cam;
+  vpCameraParameters c = camera;
   
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
@@ -808,7 +808,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
-      faces[i]->changeFrame(cMo);
+      faces[i]->changeFrame(cMo_);
       faces[i]->computeRoiClipped(c);
       std::vector<std::pair<vpImagePoint,unsigned int> > roi;
       faces[i]->getRoiClipped(c, roi);
@@ -836,7 +836,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
 
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(cMo);
+    faces.displayOgre(cMo_);
 #endif
 }
 
@@ -844,17 +844,17 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   Display the 3D model at a given position using the given camera parameters
 
   \param I : The color image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : Boolean to say if all the model has to be displayed.
 */
 void
-vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters & camera,
                         const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 {
-  vpCameraParameters c = cam;
+  vpCameraParameters c = camera;
   
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
@@ -862,7 +862,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(displayFullModel || faces[i]->isVisible())
     {
-      faces[i]->changeFrame(cMo);
+      faces[i]->changeFrame(cMo_);
       faces[i]->computeRoiClipped(c);      
       std::vector<std::pair<vpImagePoint,unsigned int> > roi;
       faces[i]->getRoiClipped(c, roi);
@@ -890,7 +890,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
 
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(cMo);
+    faces.displayOgre(cMo_);
 #endif
 }
 

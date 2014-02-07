@@ -58,14 +58,14 @@ vpCircle::init()
   Set the world coordinates of the circle from the intersection of a plane and a sphere.  
   We mean here the coordinates of the circle in the object frame
  
-  \param oP : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
+  \param oP_ : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
               oP[3], oP[4], oP[5] correspond to X, Y, Z the coordinates of the center of the sphere.
               oP[6] corresponds to the radius of the sphere.
 */
 void
-vpCircle::setWorldCoordinates(const vpColVector& oP)
+vpCircle::setWorldCoordinates(const vpColVector& oP_)
 {
-  this->oP = oP ;
+  this->oP = oP_ ;
 }
 
 /*! 
@@ -106,16 +106,16 @@ vpCircle::vpCircle()
 /*! 
   Construct the circle from the intersection of a plane and a sphere.  
  
-  \param oP : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
+  \param oP_ : oP[0], oP[1], oP[2] correspond to A, B, C from the plane equation Ax + By + Cz = 0.
               oP[3], oP[4], oP[5] correspond to X, Y, Z the coordinates of the center of the sphere.
               oP[6] corresponds to the radius of the sphere.
               
   \sa setWorldCoordinates()
 */
-vpCircle::vpCircle(const vpColVector& oP)
+vpCircle::vpCircle(const vpColVector& oP_)
 {
   init() ;
-  setWorldCoordinates(oP) ;
+  setWorldCoordinates(oP_) ;
 }
 
 /*! 
@@ -157,23 +157,21 @@ vpCircle::projection()
   projection(cP,p) ;
 }
 
-//! perspective projection of the circle
+//! Perspective projection of the circle.
 void
-vpCircle::projection(const vpColVector &cP, vpColVector &p)
+vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
 {
-
   vpColVector K(6) ;
-
   {
-    double A = cP[0] ;
-    double B = cP[1] ;
-    double C = cP[2] ;
+    double A = cP_[0] ;
+    double B = cP_[1] ;
+    double C = cP_[2] ;
 
-    double X0 = cP[3] ;
-    double Y0 = cP[4] ;
-    double Z0 = cP[5] ;
+    double X0 = cP_[3] ;
+    double Y0 = cP_[4] ;
+    double Z0 = cP_[5] ;
 
-    double r =  cP[6];
+    double r =  cP_[6];
 
     // projection
     double s = X0*X0 + Y0*Y0 + Z0*Z0 - r*r ;
@@ -196,9 +194,7 @@ vpCircle::projection(const vpColVector &cP, vpColVector &p)
     vpERROR_TRACE("division par 0") ;
     throw(vpException(vpException::divideByZeroError,
 		      "division par 0")) ;
-
   }
-
 
   double xc = (K[1]*K[3]-K[2]*K[4])/det;
   double yc = (K[0]*K[4]-K[2]*K[3])/det;
@@ -243,16 +239,16 @@ vpCircle::projection(const vpColVector &cP, vpColVector &p)
   double m11 = (vpMath::sqr(A)  - vpMath::sqr(B)) *E / det ;
   double m02 = (vpMath::sqr(B) + vpMath::sqr(A*E))   / det ;
 
-  p[0] = xc ;
-  p[1] = yc ;
-  p[2] = m20 ;
-  p[3] = m11 ;
-  p[4] = m02 ;
+  p_[0] = xc ;
+  p_[1] = yc ;
+  p_[2] = m20 ;
+  p_[3] = m11 ;
+  p_[4] = m02 ;
 }
 
 //! perspective projection of the circle
 void
-vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
+vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 {
 
   double A,B,C ;
@@ -266,15 +262,15 @@ vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP)
   Z0 = cMo[2][3] + cMo[2][0]*oP[3] + cMo[2][1]*oP[4] + cMo[2][2]*oP[5];
   double R = oP[6] ;
 
-  cP[0] = A ;
-  cP[1] = B ;
-  cP[2] = C ;
+  cP_[0] = A ;
+  cP_[1] = B ;
+  cP_[2] = C ;
 
-  cP[3] = X0 ;
-  cP[4] = Y0 ;
-  cP[5] = Z0 ;
+  cP_[3] = X0 ;
+  cP_[4] = Y0 ;
+  cP_[5] = Z0 ;
 
-  cP[6] = R ;
+  cP_[6] = R ;
 
   // vpTRACE("_cP :") ; std::cout << _cP.t() ;
 

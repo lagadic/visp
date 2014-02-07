@@ -89,17 +89,17 @@ vpHinkley::vpHinkley()
   Call init() to initialise the Hinkley's test and set \f$\alpha\f$
   and \f$\delta\f$ thresholds.
 
-  \param alpha : \f$\alpha\f$ is a predefined threshold.
+  \param alpha_val : \f$\alpha\f$ is a predefined threshold.
 
-  \param delta : \f$\delta\f$ denotes the jump minimal magnitude that
+  \param delta_val : \f$\delta\f$ denotes the jump minimal magnitude that
   we want to detect.
 
   \sa setAlpha(), setDelta()
 
 */
 
-vpHinkley::vpHinkley(double alpha, double delta)
-  : dmin2(delta/2.), alpha(alpha), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
+vpHinkley::vpHinkley(double alpha_val, double delta_val)
+  : dmin2(delta_val/2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
 {
 }
 
@@ -108,21 +108,21 @@ vpHinkley::vpHinkley(double alpha, double delta)
   Call init() to initialise the Hinkley's test and set \f$\alpha\f$
   and \f$\delta\f$ thresholds.
 
-  \param alpha : \f$\alpha\f$ is a predefined threshold.
+  \param alpha_val : \f$\alpha\f$ is a predefined threshold.
 
-  \param delta : \f$\delta\f$ denotes the jump minimal magnitude that
+  \param delta_val : \f$\delta\f$ denotes the jump minimal magnitude that
   we want to detect.
 
   \sa setAlpha(), setDelta()
 
 */
 void
-vpHinkley::init(double alpha, double delta)
+vpHinkley::init(double alpha_val, double delta_val)
 {
   init();
 
-  setAlpha(alpha);
-  setDelta(delta);
+  setAlpha(alpha_val);
+  setDelta(delta_val);
 }
 
 /*!
@@ -172,9 +172,9 @@ void vpHinkley::setDelta(double delta)
   \sa setDelta()
 
 */
-void vpHinkley::setAlpha(double alpha)
+void vpHinkley::setAlpha(double alpha_val)
 {
-  this->alpha = alpha;
+  this->alpha = alpha_val;
 }
 
 /*!

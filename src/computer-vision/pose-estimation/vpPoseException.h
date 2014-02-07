@@ -85,18 +85,18 @@ class VISP_EXPORT vpPoseException : public vpException
     } ;
 
   public:
-    vpPoseException (const int code,  const char* format, ...)
+    vpPoseException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpPoseException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpPoseException (const int code)
-      : vpException(code){ ; }
+    vpPoseException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpPoseException (const int id)
+      : vpException(id){ ; }
     // vpPoseException() : vpException() { ;}
 };
 

@@ -88,18 +88,18 @@ class VISP_EXPORT vpSimulatorException : public vpException
     } ;
 
   public:
-    vpSimulatorException (const int code,  const char* format, ...)
+    vpSimulatorException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpSimulatorException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpSimulatorException (const int code)
-      : vpException(code){ ; }
+    vpSimulatorException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpSimulatorException (const int id)
+      : vpException(id){ ; }
 
 };
 

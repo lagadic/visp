@@ -783,8 +783,8 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
     l->computeInteractionMatrixError(cMo);
     
     double fac = 1;
-    for(std::list<int>::const_iterator it = l->Lindex_polygon.begin(); it!=l->Lindex_polygon.end(); ++it){
-      int index = *it;
+    for(std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
+      int index = *itindex;
       if (l->hiddenface->isAppearing((unsigned int)index)) {
         fac = 0.2;
         break;
@@ -842,7 +842,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
 
 void 
 vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &L, vpColVector &error,
-                                    vpHomogeneousMatrix& cMo, const unsigned int lvl)
+                                    vpHomogeneousMatrix& cMo_, const unsigned int lvl)
 {
   vpMbtDistanceLine* l;
   vpMbtDistanceCylinder *cy ;
@@ -850,7 +850,7 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
   unsigned int n = 0 ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
-    l->computeInteractionMatrixError(cMo) ;
+    l->computeInteractionMatrixError(cMo_) ;
     for (unsigned int i=0 ; i < l->nbFeature ; i++){
       for (unsigned int j=0; j < 6 ; j++){
         L[n+i][j] = l->L[i][j];
@@ -862,7 +862,7 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
   
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
-    cy->computeInteractionMatrixError(cMo, I) ;
+    cy->computeInteractionMatrixError(cMo_, I) ;
     for(unsigned int i=0 ; i < cy->nbFeature ; i++){
       for(unsigned int j=0; j < 6 ; j++){
         L[n+i][j] = cy->L[i][j];
@@ -877,12 +877,12 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
 /*!
   Set the camera parameters
 
-  \param cam : the new camera parameters
+  \param camera : the new camera parameters
 */
 void
-vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& cam)
+vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& camera)
 {
-  this->cam = cam;
+  this->cam = camera;
   
   vpMbEdgeTracker::setCameraParameters(cam);
   vpMbKltTracker::setCameraParameters(cam);
@@ -920,15 +920,15 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const dou
   Display the 3D model at a given position using the given camera parameters
 
   \param I : The image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : boolean to say if all the model has to be displayed.
 */
 void
-vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
-                            const vpColor& col , const unsigned int thickness, const bool displayFullModel)
+vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
+                            const vpColor& col, const unsigned int thickness, const bool displayFullModel)
 {  
   vpMbtDistanceLine *l ;
   
@@ -936,11 +936,11 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
         l = *it;
-        l->display(I,cMo, cam, col, thickness, displayFullModel);
+        l->display(I,cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo, cam, col, thickness);
+        (*it)->display(I, cMo_, camera, col, thickness);
       }
 
       break ; //displaying model on one scale only
@@ -955,7 +955,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
   
 #ifdef VISP_HAVE_OGRE
   if(vpMbKltTracker::useOgre)
-    vpMbKltTracker::faces.displayOgre(cMo);
+    vpMbKltTracker::faces.displayOgre(cMo_);
 #endif
 }
 
@@ -963,14 +963,14 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
   Display the 3D model at a given position using the given camera parameters
 
   \param I : The color image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : boolean to say if all the model has to be displayed.
 */
 void
-vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters & cam,
+vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
                             const vpColor& col , const unsigned int thickness, const bool displayFullModel)
 { 
   vpMbtDistanceLine *l ;
@@ -979,11 +979,11 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
         l = *it;
-        l->display(I,cMo, cam, col, thickness, displayFullModel);
+        l->display(I,cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo, cam, col, thickness);
+        (*it)->display(I, cMo_, camera, col, thickness);
       }
 
       break ; //displaying model on one scale only
@@ -998,7 +998,7 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
   
 #ifdef VISP_HAVE_OGRE
   if(vpMbKltTracker::useOgre)
-    vpMbKltTracker::faces.displayOgre(cMo);
+    vpMbKltTracker::faces.displayOgre(cMo_);
 #endif
 }
 

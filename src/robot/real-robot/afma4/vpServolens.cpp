@@ -439,7 +439,7 @@ vpServolens::setPosition(vpServoType servo, unsigned int position) const
   this->wait();
   */
 
-#if FINSERVO
+#ifdef FINSERVO
   /* envoie des commandes pour qu'en fin de mouvement servolens renvoie */
   /* une commande de fin de mouvement (ex: ZF, FF, DF). */
   this->enableCommandComplete();
@@ -485,13 +485,13 @@ vpServolens::setPosition(vpServoType servo, unsigned int position) const
       break;
     }
   /* envoie de la commande */
-#if PRINT
+#ifdef PRINT
   printf("\ncommande: %s", commande);
 #endif
 
   this->write(commande);
 
-#if FINSERVO
+#ifdef FINSERVO
   /* on attend la fin du mouvement des objectifs */
   this->wait(servo);  /* on attend les codes ZF, FF, DF */
 #endif

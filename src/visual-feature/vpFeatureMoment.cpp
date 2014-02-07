@@ -142,14 +142,14 @@ void vpFeatureMoment::display (const vpCameraParameters &cam, const vpImage< vpR
 
   \attention The behaviour of this method is not the same as vpMoment::update which only acknowledges the new object. This method also computes the interaction matrices.
 
-  \param A : A coefficient of the plane.
-  \param B : B coefficient of the plane.
-  \param C : C coefficient of the plane.
+  \param A_ : A coefficient of the plane.
+  \param B_ : B coefficient of the plane.
+  \param C_ : C coefficient of the plane.
 */
-void vpFeatureMoment::update (double A, double B, double C){
-    this->A = A;
-    this->B = B;
-    this->C = C;
+void vpFeatureMoment::update (double A_, double B_, double C_){
+    this->A = A_;
+    this->B = B_;
+    this->C = C_;
 
     if(moment==NULL){
         bool found;        

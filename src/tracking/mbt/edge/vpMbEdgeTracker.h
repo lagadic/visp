@@ -380,7 +380,7 @@ public:
     
     \return an instance of the moving edge parameters used by the tracker.
   */
-  inline void getMovingEdge(vpMe &me ) const { me = this->me;}
+  inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
   
   /*!
     Get the near distance for clipping.
@@ -439,10 +439,10 @@ public:
   /*!
     Set the camera parameters.
 
-    \param cam : the new camera parameters
+    \param camera : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& cam) {
-    this->cam = cam;
+  virtual void setCameraParameters(const vpCameraParameters& camera) {
+    this->cam = camera;
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
       if(scales[i]){
@@ -487,9 +487,9 @@ public:
   /*!
     Set the value of the gain used to compute the control law.
     
-    \param lambda : the desired value for the gain.
+    \param gain : the desired value for the gain.
   */
-  virtual inline void setLambda(const double lambda) {this->lambda = lambda;}
+  virtual inline void setLambda(const double gain) {this->lambda = gain;}
   
   void setMovingEdge(const vpMe &me);
   

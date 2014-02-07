@@ -126,9 +126,9 @@ class VISP_EXPORT vpMbtDistanceCylinder
     /*!
      Get the camera paramters.
    
-     \param cam : The vpCameraParameters used to store the camera parameters.
+     \param camera : The vpCameraParameters used to store the camera parameters.
     */
-    inline void getCameraParameters(vpCameraParameters& cam) {cam = this->cam;}
+    inline void getCameraParameters(vpCameraParameters& camera) {camera = this->cam;}
     
     /*!
       Get the index of the cylinder.
@@ -168,9 +168,9 @@ class VISP_EXPORT vpMbtDistanceCylinder
     
     /*!
      Set the camera paramters.
-     \param cam : The camera parameters.
+     \param camera : The camera parameters.
     */
-    inline void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
+    inline void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
     
     /*!
       Set the index of the cylinder.
@@ -198,18 +198,17 @@ class VISP_EXPORT vpMbtDistanceCylinder
     /*!
       Set the name of the cylinder.
       
-      \param name : The name of the cylinder.
+      \param cyl_name : The name of the cylinder.
     */
-    inline void setName(const std::string& name) {this->name = name;}
+    inline void setName(const std::string& cyl_name) {this->name = cyl_name;}
     
     /*!
       Set the name of the cylinder.
       
-      \param name : The name of the cylinder
+      \param cyl_name : The name of the cylinder
     */
-    inline void setName(const char* name) {this->name = name;}
+    inline void setName(const char* cyl_name) {this->name = std::string(cyl_name);}
 
-    
     void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);

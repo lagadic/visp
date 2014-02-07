@@ -53,6 +53,7 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
+int allocate_work(double** work);
 
 #ifdef VISP_HAVE_LAPACK
 extern "C" int dgeqrf_(int *m, int *n, double*a, int *lda, double *tau, double *work, int *lwork, int *info);
@@ -64,7 +65,8 @@ extern "C" int dorgqr_(int *, int *, int *, double *, int *,
 extern "C" int dtrtri_(char *uplo, char *diag, int *n, double *a, int *lda, int *info);
 #endif
 
-int allocate_work(double** work){
+int allocate_work(double** work)
+{
   int dimWork = (int)((*work)[0]);
   delete[] *work;
   *work = new double[dimWork];
@@ -72,10 +74,10 @@ int allocate_work(double** work){
 }
 #ifdef VISP_HAVE_LAPACK
 vpMatrix vpMatrix::inverseByQRLapack() const{
-  int rowNum = (int)this->getRows();
-  int colNum = (int)this->getCols();
-  int lda = (int)rowNum; //lda is the number of rows because we don't use a submatrix
-  int dimTau = std::min(rowNum,colNum);
+  int rowNum_ = (int)this->getRows();
+  int colNum_ = (int)this->getCols();
+  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
+  int dimTau = std::min(rowNum_,colNum_);
   int dimWork = -1;
   double *tau = new double[dimTau];
   double *work = new double[1];
@@ -86,8 +88,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const{
   try{
     //1) Extract householder reflections (useful to compute Q) and R
     dgeqrf_(
-            &rowNum,        //The number of rows of the matrix A.  M >= 0.
-            &colNum,        //The number of columns of the matrix A.  N >= 0.
+            &rowNum_,        //The number of rows of the matrix A.  M >= 0.
+            &colNum_,        //The number of columns of the matrix A.  N >= 0.
             A.data,     /*On entry, the M-by-N matrix A.
                               On exit, the elements on and above the diagonal of the array
                               contain the min(M,N)-by-N upper trapezoidal matrix R (R is
@@ -111,8 +113,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const{
     dimWork = allocate_work(&work);
 
     dgeqrf_(
-          &rowNum,        //The number of rows of the matrix A.  M >= 0.
-          &colNum,        //The number of columns of the matrix A.  N >= 0.
+          &rowNum_,        //The number of rows of the matrix A.  M >= 0.
+          &colNum_,        //The number of columns of the matrix A.  N >= 0.
           A.data,     /*On entry, the M-by-N matrix A.
                             On exit, the elements on and above the diagonal of the array
                             contain the min(M,N)-by-N upper trapezoidal matrix R (R is
@@ -157,7 +159,6 @@ vpMatrix vpMatrix::inverseByQRLapack() const{
       for(unsigned int j=0;j<C.getRows();j++)
         if(j>i) C[i][j] = 0.;
 
-
     dimWork = -1;
     int ldc = lda;
 
@@ -165,14 +166,14 @@ vpMatrix vpMatrix::inverseByQRLapack() const{
     //get R^-1*tQ
     //C contains R^-1
     //A contains Q
-    dormqr_((char*)"R", (char*)"T", &rowNum, &colNum, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    dormqr_((char*)"R", (char*)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
     if(info != 0){
       std::cout << "dormqr_:Preparation"<< -info << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     dimWork = allocate_work(&work);
 
-    dormqr_((char*)"R", (char*)"T", &rowNum, &colNum, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    dormqr_((char*)"R", (char*)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
 
     if(info != 0){
       std::cout << "dormqr_:"<< -info << "th element had an illegal value" << std::endl;

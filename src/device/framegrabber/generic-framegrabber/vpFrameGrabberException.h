@@ -84,18 +84,18 @@ class VISP_EXPORT vpFrameGrabberException : public vpException
     } ;
 
   public:
-    vpFrameGrabberException (const int code,  const char* format, ...)
+    vpFrameGrabberException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpFrameGrabberException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpFrameGrabberException (const int code)
-      : vpException(code){ ; }
+    vpFrameGrabberException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpFrameGrabberException (const int id)
+      : vpException(id){ ; }
 
 };
 

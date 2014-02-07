@@ -105,23 +105,24 @@ void vpTemplateTrackerWarpAffine::warpX(const vpColVector &vX,vpColVector &vXres
   vXres[1]=ParamM[1]*vX[0]+(1.0+ParamM[3])*vX[1]+ParamM[5];
 }
 
-void vpTemplateTrackerWarpAffine::dWarp(const vpColVector &X1,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,vpMatrix &dW)
+void vpTemplateTrackerWarpAffine::dWarp(const vpColVector &X1,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,vpMatrix &dW_)
 {
   double j=X1[0];
   double i=X1[1];
-  dW=0;
-  dW[0][0]=j;dW[0][2]=i;dW[0][4]=1;
-  dW[1][1]=j;dW[1][3]=i;dW[1][5]=1;
+  dW_=0;
+  dW_[0][0]=j;dW_[0][2]=i;dW_[0][4]=1;
+  dW_[1][1]=j;dW_[1][3]=i;dW_[1][5]=1;
 }
 
 /*compute dw=dw/dx*dw/dp
 */
-void vpTemplateTrackerWarpAffine::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW)
+void vpTemplateTrackerWarpAffine::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,
+                                             const double *dwdp0, vpMatrix &dW_)
 {
   for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=(1.+ParamM[0])*dwdp0[i]+ParamM[2]*dwdp0[i+nbParam];
-    dW[1][i]=ParamM[1]*dwdp0[i]+(1.+ParamM[3])*dwdp0[i+nbParam];
+    dW_[0][i]=(1.+ParamM[0])*dwdp0[i]+ParamM[2]*dwdp0[i+nbParam];
+    dW_[1][i]=ParamM[1]*dwdp0[i]+(1.+ParamM[3])*dwdp0[i+nbParam];
   }
 }
 

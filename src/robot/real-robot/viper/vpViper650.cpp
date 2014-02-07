@@ -210,15 +210,15 @@ vpViper650::init (const char *camera_extrinsic_parameters)
 
   \param tool : Camera in use.
 
-  \param projModel : Projection model of the camera.
+  \param proj_model : Projection model of the camera.
 
 */
 void
 vpViper650::init (vpViper650::vpToolType tool,
-                  vpCameraParameters::vpCameraParametersProjType projModel)
+                  vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   
-  this->projModel = projModel;
+  this->projModel = proj_model;
   
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   // Read the robot parameters from files

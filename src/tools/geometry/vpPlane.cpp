@@ -77,11 +77,11 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
   (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
-  \param A, B, C, D : Parameters of the plane.
+  \param a, b, c, d : Parameters of the plane.
 
 */
-vpPlane::vpPlane(const double A,const double B,const double C, const double D)
-  : A(A), B(B), C(C), D(D) {}
+vpPlane::vpPlane(const double a,const double b,const double c, const double d)
+  : A(a), B(b), C(c), D(d) {}
 
 /*!
   Copy constructor.

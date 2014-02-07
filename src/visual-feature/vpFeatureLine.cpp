@@ -139,19 +139,19 @@ vpFeatureLine::setRhoTheta(const double rho, const double theta)
   \f[ AX + BY + CZ + D = 0 \f]
   Those parameters are needed to compute the interaction matrix associated to a visual feature. Normally, two plans are needed to describe a line (the intersection of those two plans). But to compute the interaction matrix only one plan equation is required. The only one restrictions is that the value of D must not be equal to zero !
 
-  \param A : A value to set.
-  \param B : B value to set.
-  \param C : C value to set.
-  \param D : D value to set.
+  \param A_ : A value to set.
+  \param B_ : B value to set.
+  \param C_ : C value to set.
+  \param D_ : D value to set.
 */
 void
-vpFeatureLine::setABCD(const double A, const double B,
-		       const double C, const double D)
+vpFeatureLine::setABCD(const double A_, const double B_,
+           const double C_, const double D_)
 {
-  this->A = A ;
-  this->B = B ;
-  this->C = C ;
-  this->D = D ;
+  this->A = A_ ;
+  this->B = B_ ;
+  this->C = C_ ;
+  this->D = D_ ;
   for(unsigned int i = 2; i < nbParameters; i++) flags[i] = true;
 }
 
@@ -457,22 +457,22 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 
   \param rho : The \f$ \rho \f$ parameter.
   \param theta : The \f$ \theta \f$ parameter.
-  \param A : A parameter of the plan equation.
-  \param B : B parameter of the plan equation.
-  \param C : C parameter of the plan equation.
-  \param D : D parameter of the plan equation.
+  \param A_ : A parameter of the plan equation.
+  \param B_ : B parameter of the plan equation.
+  \param C_ : C parameter of the plan equation.
+  \param D_ : D parameter of the plan equation.
 
 */
 void vpFeatureLine::buildFrom(const double rho, const double theta,
-			      const double A, const double B,
-			      const double C, const double D)
+            const double A_, const double B_,
+            const double C_, const double D_)
 {
   s[0] = rho ;
   s[1] = theta ;
-  this->A = A ;
-  this->B = B ;
-  this->C = C ;
-  this->D = D ;
+  this->A = A_ ;
+  this->B = B_ ;
+  this->C = C_ ;
+  this->D = D_ ;
   for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 

@@ -243,7 +243,7 @@ public:
                       const double pos5,
                       const double pos6);
     void setPosition(const char *filename);
-    void setPositioningVelocity (const double velocity) {positioningVelocity = velocity;}
+    void setPositioningVelocity (const double vel) {positioningVelocity = vel;}
     bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint=NULL, const double &errMax = 0.001);
     vpRobot::vpRobotStateType setRobotState (const vpRobot::vpRobotStateType newState);
     

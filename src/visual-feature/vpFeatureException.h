@@ -85,18 +85,18 @@ class VISP_EXPORT vpFeatureException : public vpException
     } ;
 
   public:
-    vpFeatureException (const int code,  const char* format, ...)
+    vpFeatureException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpFeatureException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpFeatureException (const int code)
-      : vpException(code){ ; }
+    vpFeatureException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpFeatureException (const int id)
+      : vpException(id){ ; }
 
 };
 

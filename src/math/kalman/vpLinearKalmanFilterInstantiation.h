@@ -156,8 +156,8 @@ int main()
 }
   \endcode
 */
-void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel model) {
-  this->model = model;
+void vpLinearKalmanFilterInstantiation::setStateModel(vpStateModel mdl) {
+  this->model = mdl;
   switch(model) {
   case stateConstVel_MeasurePos:
   case stateConstVelWithColoredNoise_MeasureVel:

@@ -1090,17 +1090,15 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 /*!
   Initialize the display size, position and title.
 
-  \param width, height : Width and height of the window.
+  \param w, h : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpDisplayX::init ( unsigned int width, unsigned int height,
-                        int x, int y, const char *title )
+void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char *title )
 {
-
   /* setup X11 ------------------------------------------------------------- */
-  this->width  = width;
-  this->height = height;
+  this->width  = w;
+  this->height = h;
 
   XSizeHints  hints;
 
@@ -1667,11 +1665,11 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         // ROUGE, VERT, BLEU, JAUNE
         {
           unsigned int i = 0;
-          unsigned int size = width * height;
+          unsigned int size_ = width * height;
           unsigned char nivGris;
           unsigned char nivGrisMax = 255 - vpColor::id_unknown;
 
-          while ( i < size )
+          while ( i < size_ )
           {
             nivGris = src_8[i] ;
             if ( nivGris > nivGrisMax )
@@ -1714,10 +1712,10 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
       default:
       {
         unsigned char       *dst_32 = NULL;
-        unsigned int size = width * height ;
+        unsigned int size_ = width * height ;
         dst_32 = ( unsigned char* ) Ximage->data;
         unsigned char *bitmap = I.bitmap ;
-        unsigned char *n = I.bitmap + size;
+        unsigned char *n = I.bitmap + size_;
         //for (unsigned int i = 0; i < size; i++) // suppression de l'iterateur i
         while ( bitmap < n )
         {
@@ -1872,136 +1870,135 @@ void vpDisplayX::displayImage ( const unsigned char *I )
   
   \param iP : Top left corner of the region of interest
   
-  \param width : Width of the region of interest
+  \param w, h : Width and height of the region of interest
   
-  \param height : Height of the region of interest
-
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP,
+                                   const unsigned int w, const unsigned int h )
 {
   if ( displayHasBeenInitialized )
   {
     switch ( screen_depth )
     {
-      case 8:
+    case 8:
+    {
+      unsigned char       *src_8  = NULL;
+      unsigned char       *dst_8  = NULL;
+      src_8 = ( unsigned char * ) I.bitmap;
+      dst_8 = ( unsigned char * ) Ximage->data;
+      // Correction de l'image de facon a liberer les niveaux de gris
+      // ROUGE, VERT, BLEU, JAUNE
       {
-        unsigned char       *src_8  = NULL;
-        unsigned char       *dst_8  = NULL;
-        src_8 = ( unsigned char * ) I.bitmap;
-        dst_8 = ( unsigned char * ) Ximage->data;
-        // Correction de l'image de facon a liberer les niveaux de gris
-        // ROUGE, VERT, BLEU, JAUNE
+        //int size = width * height;
+        unsigned char nivGris;
+        unsigned char nivGrisMax = 255 - vpColor::id_unknown;
+
+        //unsigned int iwidth = I.getWidth();
+        unsigned int iwidth = I.getWidth();
+
+        src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
+        dst_8 = dst_8 + (int)(iP.get_i()*this->height+ iP.get_j());
+
+        unsigned int i = 0;
+        while (i < h)
         {
-          //int size = width * height;
-          unsigned char nivGris;
-          unsigned char nivGrisMax = 255 - vpColor::id_unknown;
-	  
-	  //unsigned int iwidth = I.getWidth();
-	  unsigned int iwidth = I.getWidth();
-	  
-	  src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
-	  dst_8 = dst_8 + (int)(iP.get_i()*this->height+ iP.get_j());
-	  
-	  unsigned int i = 0;
-	  while (i < height)
-	  {
-	    unsigned int j = 0;
-	    while (j < width)
-	    {
-	      nivGris = *(src_8+j);
-              if ( nivGris > nivGrisMax )
-                *(dst_8+j) = 255;
-              else
-                *(dst_8+j) = nivGris;
-	      j++;
-	    }
-	    src_8 = src_8 + iwidth;
-	    dst_8 = dst_8 + this->height;
-	    i++;
-	  }
+          unsigned int j = 0;
+          while (j < w)
+          {
+            nivGris = *(src_8+j);
+            if ( nivGris > nivGrisMax )
+              *(dst_8+j) = 255;
+            else
+              *(dst_8+j) = nivGris;
+            j++;
+          }
+          src_8 = src_8 + iwidth;
+          dst_8 = dst_8 + this->height;
+          i++;
         }
-
-        // Affichage de l'image dans la Pixmap.
-        XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), width, height );
-        XSetWindowBackgroundPixmap ( display, window, pixmap );
-//        XClearWindow ( display, window );
-//        XSync ( display,1 );
-        break;
       }
-      case 16:
+
+      // Affichage de l'image dans la Pixmap.
+      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+      //        XClearWindow ( display, window );
+      //        XSync ( display,1 );
+      break;
+    }
+    case 16:
+    {
+      unsigned short      *dst_16 = NULL;
+      dst_16 = ( unsigned short* ) Ximage->data;
+      unsigned char       *src_8  = NULL;
+      src_8 = ( unsigned char * ) I.bitmap;
+
+      unsigned int iwidth = I.getWidth();
+
+      src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
+      dst_16 = dst_16 + (int)(iP.get_i()*this->height+ iP.get_j());
+
+      unsigned int i = 0;
+      while (i < h)
       {
-        unsigned short      *dst_16 = NULL;
-        dst_16 = ( unsigned short* ) Ximage->data;
-	unsigned char       *src_8  = NULL;
-	src_8 = ( unsigned char * ) I.bitmap;
-	
-	unsigned int iwidth = I.getWidth();
-	
-	src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
-	dst_16 = dst_16 + (int)(iP.get_i()*this->height+ iP.get_j());
-	
-	unsigned int i = 0;
-	while (i < height)
-	{
-	  unsigned int j = 0;
-	  while (j < width)
-	  {
-	    *(dst_16+j) = ( unsigned short ) colortable[*(src_8+j)];
-	    j++;
-	  }
-	  src_8 = src_8 + iwidth;
-	  dst_16 = dst_16 + this->height;
-	  i++;
-	}
-
-        // Affichage de l'image dans la Pixmap.
-        XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), width, height );
-        XSetWindowBackgroundPixmap ( display, window, pixmap );
-//        XClearWindow ( display, window );
-//        XSync ( display,1 );
-        break;
+        unsigned int j = 0;
+        while (j < w)
+        {
+          *(dst_16+j) = ( unsigned short ) colortable[*(src_8+j)];
+          j++;
+        }
+        src_8 = src_8 + iwidth;
+        dst_16 = dst_16 + this->height;
+        i++;
       }
 
-      case 24:
-      default:
+      // Affichage de l'image dans la Pixmap.
+      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+      //        XClearWindow ( display, window );
+      //        XSync ( display,1 );
+      break;
+    }
+
+    case 24:
+    default:
+    {
+      unsigned char       *dst_32 = NULL;
+      //unsigned int size = width * height ;
+      dst_32 = ( unsigned char* ) Ximage->data;
+      unsigned char *src_8 = I.bitmap ;
+      //unsigned char *n = I.bitmap + size;
+
+      unsigned int iwidth = I.getWidth();
+
+      src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
+      dst_32 = dst_32 + (int)(iP.get_i()*4*this->width+ iP.get_j()*4);
+
+      unsigned int i = 0;
+      while (i < h)
       {
-        unsigned char       *dst_32 = NULL;
-        //unsigned int size = width * height ;
-        dst_32 = ( unsigned char* ) Ximage->data;
-        unsigned char *src_8 = I.bitmap ;
-        //unsigned char *n = I.bitmap + size;
-	
-	unsigned int iwidth = I.getWidth();
-	
-	src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
-	dst_32 = dst_32 + (int)(iP.get_i()*4*this->width+ iP.get_j()*4);
-	
-	unsigned int i = 0;
-	while (i < height)
-	{
-	  unsigned int j = 0;
-	  while (j < width)
-	  {
-	    unsigned char val = *(src_8+j);
-	    *(dst_32+4*j) = val;
-	    *(dst_32+4*j+1) = val;
-	    *(dst_32+4*j+2) = val;
-	    *(dst_32+4*j+3) = val;
-	    j++;
-	  }
-	  src_8 = src_8 + iwidth;
-	  dst_32 = dst_32 + 4*this->width;
-	  i++;
-	}
-
-        // Affichage de l'image dans la Pixmap.
-        XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), width, height );
-        XSetWindowBackgroundPixmap ( display, window, pixmap );
-//        XClearWindow ( display, window );
-//        XSync ( display,1 );
-        break;
+        unsigned int j = 0;
+        while (j < w)
+        {
+          unsigned char val = *(src_8+j);
+          *(dst_32+4*j) = val;
+          *(dst_32+4*j+1) = val;
+          *(dst_32+4*j+2) = val;
+          *(dst_32+4*j+3) = val;
+          j++;
+        }
+        src_8 = src_8 + iwidth;
+        dst_32 = dst_32 + 4*this->width;
+        i++;
       }
+
+      // Affichage de l'image dans la Pixmap.
+      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+      //        XClearWindow ( display, window );
+      //        XSync ( display,1 );
+      break;
+    }
     }
   }
   else
@@ -2024,74 +2021,72 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
   
   \param iP : Top left corner of the region of interest
   
-  \param width : Width of the region of interest
+  \param w, h : Width and height of the region of interest
   
-  \param height : Height of the region of interest
-
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP,
+                                   const unsigned int w, const unsigned int h )
 {
-
   if ( displayHasBeenInitialized )
   {
 
     switch ( screen_depth )
     {
-      case 24:
-      case 32:
-      {
-        /*
+    case 24:
+    case 32:
+    {
+      /*
          * 32-bit source, 24/32-bit destination
          */
 
-        unsigned char       *dst_32 = NULL;
-        dst_32 = ( unsigned char* ) Ximage->data;
-	vpRGBa* src_32 = I.bitmap;
-	//unsigned int sizeI = I.getWidth() * I.getHeight();
-	
-	unsigned int iwidth = I.getWidth();
-	
-	src_32 = src_32 + (int)(iP.get_i()*iwidth+ iP.get_j());
-	dst_32 = dst_32 + (int)(iP.get_i()*4*this->width+ iP.get_j()*4);
-	
-	unsigned int i = 0;
-	while (i < height)
-	{
-	  unsigned int j = 0;
-	  while (j < width)
-	  {
-#ifdef BIGENDIAN
-	    *(dst_32+4*j) = (src_32+j)->A;
-	    *(dst_32+4*j+1) = (src_32+j)->R;
-	    *(dst_32+4*j+2) = (src_32+j)->G;
-	    *(dst_32+4*j+3) = (src_32+j)->B;
-#else
-	    *(dst_32+4*j) = (src_32+j)->B;
-	    *(dst_32+4*j+1) = (src_32+j)->G;
-	    *(dst_32+4*j+2) = (src_32+j)->R;
-	    *(dst_32+4*j+3) = (src_32+j)->A;
-#endif
-	    j++;
-	  }
-	  src_32 = src_32 + iwidth;
-	  dst_32 = dst_32 + 4*this->width;
-	  i++;
-	}
-	
-        // Affichage de l'image dans la Pixmap.
-        XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), width, height );
-        XSetWindowBackgroundPixmap ( display, window, pixmap );
-//        XClearWindow ( display, window );
-//        XSync ( display,1 );
-        break;
+      unsigned char       *dst_32 = NULL;
+      dst_32 = ( unsigned char* ) Ximage->data;
+      vpRGBa* src_32 = I.bitmap;
+      //unsigned int sizeI = I.getWidth() * I.getHeight();
 
+      unsigned int iwidth = I.getWidth();
+
+      src_32 = src_32 + (int)(iP.get_i()*iwidth+ iP.get_j());
+      dst_32 = dst_32 + (int)(iP.get_i()*4*this->width+ iP.get_j()*4);
+
+      unsigned int i = 0;
+      while (i < h)
+      {
+        unsigned int j = 0;
+        while (j < w)
+        {
+#ifdef BIGENDIAN
+          *(dst_32+4*j) = (src_32+j)->A;
+          *(dst_32+4*j+1) = (src_32+j)->R;
+          *(dst_32+4*j+2) = (src_32+j)->G;
+          *(dst_32+4*j+3) = (src_32+j)->B;
+#else
+          *(dst_32+4*j) = (src_32+j)->B;
+          *(dst_32+4*j+1) = (src_32+j)->G;
+          *(dst_32+4*j+2) = (src_32+j)->R;
+          *(dst_32+4*j+3) = (src_32+j)->A;
+#endif
+          j++;
+        }
+        src_32 = src_32 + iwidth;
+        dst_32 = dst_32 + 4*this->width;
+        i++;
       }
-      default:
-        vpERROR_TRACE ( "Unsupported depth (%d bpp) for color display",
-                        screen_depth ) ;
-        throw ( vpDisplayException ( vpDisplayException::depthNotSupportedError,
-                                     "Unsupported depth for color display" ) ) ;
+
+      // Affichage de l'image dans la Pixmap.
+      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+      //        XClearWindow ( display, window );
+      //        XSync ( display,1 );
+      break;
+
+    }
+    default:
+      vpERROR_TRACE ( "Unsupported depth (%d bpp) for color display",
+                      screen_depth ) ;
+      throw ( vpDisplayException ( vpDisplayException::depthNotSupportedError,
+                                   "Unsupported depth for color display" ) ) ;
     }
   }
   else
@@ -2161,15 +2156,14 @@ void vpDisplayX::flushDisplay()
   It's necessary to use this function to see the results of any drawing.
 
   \param iP : Top left corner of the region of interest
-  \param width  : Width of the region of interest
-  \param height  : Height of the region of interest
+  \param w,h  : Width and height of the region of interest
 */
-void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)
+void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w, const unsigned int h)
 {
   if ( displayHasBeenInitialized )
   {
     //XClearWindow ( display, window );
-    XClearArea ( display, window,iP.get_u(),iP.get_v(),width,height,0 );
+    XClearArea ( display, window,iP.get_u(),iP.get_v(),w,h,0 );
     XFlush ( display );
   }
   else
@@ -2374,14 +2368,14 @@ void vpDisplayX::displayCircle ( const vpImagePoint &center,
 /*!
   Display a cross at the image point \e ip location.
   \param ip : Cross location.
-  \param size : Size (width and height) of the cross.
+  \param cross_size : Size (width and height) of the cross.
   \param color : Cross color.
   \param thickness : Thickness of the lines used to display the cross.
 */
 void vpDisplayX::displayCross ( const vpImagePoint &ip, 
-                                unsigned int size, 
-				const vpColor &color,
-				unsigned int thickness)
+                                unsigned int cross_size,
+                                const vpColor &color,
+                                unsigned int thickness)
 {
   if ( displayHasBeenInitialized )
   {
@@ -2391,16 +2385,16 @@ void vpDisplayX::displayCross ( const vpImagePoint &ip,
       double j = ip.get_j();
       vpImagePoint ip1, ip2;
 
-      ip1.set_i( i-size/2 ); 
+      ip1.set_i( i-cross_size/2 );
       ip1.set_j( j );
-      ip2.set_i( i+size/2 ); 
+      ip2.set_i( i+cross_size/2 );
       ip2.set_j( j );
       displayLine ( ip1, ip2, color, thickness ) ;
 
       ip1.set_i( i ); 
-      ip1.set_j( j-size/2 );
+      ip1.set_j( j-cross_size/2 );
       ip2.set_i( i ); 
-      ip2.set_j( j+size/2 );
+      ip2.set_j( j+cross_size/2 );
 
       displayLine ( ip1, ip2, color, thickness ) ;
     }
@@ -2544,7 +2538,7 @@ void vpDisplayX::displayPoint ( const vpImagePoint &ip,
   width and \e height the rectangle size.
 
   \param topLeft : Top-left corner of the rectangle.
-  \param width,height : Rectangle size.
+  \param w,h : Rectangle size in terms of width and height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 
@@ -2554,9 +2548,9 @@ void vpDisplayX::displayPoint ( const vpImagePoint &ip,
 */
 void
 vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
-                               unsigned int width, unsigned int height,
+                               unsigned int w, unsigned int h,
                                const vpColor &color, bool fill,
-			       unsigned int thickness )
+                               unsigned int thickness )
 {
   if ( displayHasBeenInitialized )
   {
@@ -2578,14 +2572,14 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
       XDrawRectangle ( display, pixmap, context, 
 		       vpMath::round( topLeft.get_u() ),
 		       vpMath::round( topLeft.get_v() ),
-		       width-1, height-1 );
+           w-1, h-1 );
     }
     else
     {
       XFillRectangle ( display, pixmap, context, 
 		       vpMath::round( topLeft.get_u() ),
 		       vpMath::round( topLeft.get_v() ),
-		       width, height );
+           w, h );
     }
   }
   else
@@ -2612,7 +2606,7 @@ void
 vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
                                const vpImagePoint &bottomRight,
                                const vpColor &color, bool fill,
-			       unsigned int thickness )
+                               unsigned int thickness )
 {
   if ( displayHasBeenInitialized )
   {
@@ -2631,22 +2625,22 @@ vpDisplayX::displayRectangle ( const vpImagePoint &topLeft,
     XSetLineAttributes ( display, context, thickness,
                          LineSolid, CapButt, JoinBevel );
 
-    unsigned int width  = (unsigned int)vpMath::round( std::fabs(bottomRight.get_u() - topLeft.get_u()) );
-    unsigned int height = (unsigned int)vpMath::round( std::fabs(bottomRight.get_v() - topLeft.get_v()) );
+    unsigned int w  = (unsigned int)vpMath::round( std::fabs(bottomRight.get_u() - topLeft.get_u()) );
+    unsigned int h = (unsigned int)vpMath::round( std::fabs(bottomRight.get_v() - topLeft.get_v()) );
     if ( fill == false )
     {    
 
       XDrawRectangle ( display, pixmap, context, 
                        vpMath::round( topLeft.get_u() < bottomRight.get_u() ? topLeft.get_u() : bottomRight.get_u() ),
                        vpMath::round( topLeft.get_v() < bottomRight.get_v() ? topLeft.get_v() : bottomRight.get_v() ),
-                       width > 0 ? width-1 : 1, height > 0 ? height : 1 );
+                       w > 0 ? w-1 : 1, h > 0 ? h : 1 );
     }
     else
     {  
       XFillRectangle ( display, pixmap, context, 
                        vpMath::round( topLeft.get_u() < bottomRight.get_u() ? topLeft.get_u() : bottomRight.get_u() ),
                        vpMath::round( topLeft.get_v() < bottomRight.get_v() ? topLeft.get_v() : bottomRight.get_v() ),
-                       width, height );
+                       w, h );
     }
   }
   else
@@ -3044,46 +3038,46 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 */
 unsigned int vpDisplayX::getScreenDepth()
 {
-  Display *_display;
-  int  screen;
+  Display *display_;
+  int  screen_;
   unsigned int  depth;
 
-  if ( ( _display = XOpenDisplay ( NULL ) ) == NULL )
+  if ( ( display_ = XOpenDisplay ( NULL ) ) == NULL )
   {
     vpERROR_TRACE ( "Can't connect display on server %s.",
                     XDisplayName ( NULL ) );
     throw ( vpDisplayException ( vpDisplayException::connexionError,
                                  "Can't connect display on server." ) ) ;
   }
-  screen = DefaultScreen ( _display );
-  depth  = (unsigned int)DefaultDepth ( _display, screen );
+  screen_ = DefaultScreen ( display_ );
+  depth  = (unsigned int)DefaultDepth ( display_, screen_ );
 
-  XCloseDisplay ( _display );
+  XCloseDisplay ( display_ );
 
   return ( depth );
 }
 
 /*!
   Gets the window size.
-  \param width, height : Size of the display.
+  \param w, h : Size of the display in therms of width and height.
  */
-void vpDisplayX::getScreenSize ( unsigned int &width, unsigned int &height )
+void vpDisplayX::getScreenSize ( unsigned int &w, unsigned int &h )
 {
-  Display *_display;
-  int  screen;
+  Display *display_;
+  int  screen_;
 
-  if ( ( _display = XOpenDisplay ( NULL ) ) == NULL )
+  if ( ( display_ = XOpenDisplay ( NULL ) ) == NULL )
   {
     vpERROR_TRACE ( "Can't connect display on server %s.",
                     XDisplayName ( NULL ) );
     throw ( vpDisplayException ( vpDisplayException::connexionError,
                                  "Can't connect display on server." ) ) ;
   }
-  screen = DefaultScreen ( _display );
-  width = (unsigned int)DisplayWidth ( _display, screen );
-  height = (unsigned int)DisplayHeight ( _display, screen );
+  screen_ = DefaultScreen ( display_ );
+  w = (unsigned int)DisplayWidth ( display_, screen_ );
+  h = (unsigned int)DisplayHeight ( display_, screen_ );
 
-  XCloseDisplay ( _display );
+  XCloseDisplay ( display_ );
 }
 /*!
 

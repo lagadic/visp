@@ -133,12 +133,12 @@ vpFeatureDepth::get_LogZoverZstar() const
 /*!
   Set the value of \f$ x \f$ which represents the x coordinate of the point in the camera frame.
 
-  \param x : \f$ x \f$ value to set.
+  \param x_ : \f$ x \f$ value to set.
 */
 void
-vpFeatureDepth::set_x(const double x)
+vpFeatureDepth::set_x(const double x_)
 {
-    this->x = x ;
+    this->x = x_ ;
     flags[0] = true;
 }
 
@@ -158,12 +158,12 @@ vpFeatureDepth::get_x() const
 /*!
   Set the value of \f$ y \f$ which represents the y coordinate of the point in the camera frame.
 
-  \param y : \f$ y \f$ value to set.
+  \param y_ : \f$ y \f$ value to set.
 */
 void
-vpFeatureDepth::set_y(const double y)
+vpFeatureDepth::set_y(const double y_)
 {
-    this->y = y ;
+    this->y = y_ ;
     flags[1] = true;
 }
 
@@ -182,12 +182,12 @@ vpFeatureDepth::get_y() const
 /*!
   Set the value of \f$ Z \f$ which represents the depth in the 3D camera frame.
 
-  \param Z : \f$ Z \f$ value to set.
+  \param Z_ : \f$ Z \f$ value to set.
 */
 void
-vpFeatureDepth::set_Z(const double Z)
+vpFeatureDepth::set_Z(const double Z_)
 {
-    this->Z = Z ;
+    this->Z = Z_ ;
     flags[2] = true;
 }
 
@@ -207,20 +207,20 @@ vpFeatureDepth::get_Z() const
 /*!
   Set the value of \f$ x \f$, \f$ y \f$, \f$ Z \f$ and \f$ log(\frac{Z}{Z^*}) \f$. \f$ x \f$ and \f$ y \f$ represent the coordinates of the point in the camera frame. \f$ Z \f$ is the 3D coordinate representing the depth. \f$ log(\frac{Z}{Z^*}) \f$ represents the logarithm of the current depth relative to the desired depth.
 
-  \param x : \f$ x \f$ value to set.
-  \param y : \f$ y \f$ value to set.
-  \param Z : \f$ Z \f$ value to set.
+  \param x_ : \f$ x \f$ value to set.
+  \param y_ : \f$ y \f$ value to set.
+  \param Z_ : \f$ Z \f$ value to set.
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
 void
-vpFeatureDepth::set_xyZLogZoverZstar(const double x,
-			const double y,
-			const double Z,
+vpFeatureDepth::set_xyZLogZoverZstar(const double x_,
+      const double y_,
+      const double Z_,
 			const double LogZoverZstar)
 {
-  set_x(x) ;
-  set_y(y) ;
-  set_Z(Z) ;
+  set_x(x_) ;
+  set_y(y_) ;
+  set_Z(Z_) ;
   set_LogZoverZstar(LogZoverZstar) ;
   for( unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
@@ -278,23 +278,23 @@ vpFeatureDepth::interaction(const unsigned int select)
 
   L.resize(1,6) ;
 
-  double x = get_x();
-  double y = get_y();
-  double Z = get_Z();
+  double x_ = get_x();
+  double y_ = get_y();
+  double Z_ = get_Z();
 
-  if (Z < 0)
+  if (Z_ < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
-  if (fabs(Z) < 1e-6)
+  if (fabs(Z_) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -305,9 +305,9 @@ vpFeatureDepth::interaction(const unsigned int select)
     L = 0;
     L[0][0] = 0;
     L[0][1] = 0;
-    L[0][2] = -1/Z;
-    L[0][3] = -y;
-    L[0][4] = x;
+    L[0][2] = -1/Z_;
+    L[0][3] = -y_;
+    L[0][4] = x_;
     L[0][5] = 0;
   }
 
@@ -405,20 +405,20 @@ vpFeatureDepth::print(const unsigned int select ) const
 /*!
   Build a 3D depth visual feature from the point coordinates \f$ x \f$ and \f$ y \f$ given in the camera frame, \f$ Z \f$ which describes the depth and \f$ log(\frac{Z}{Z^*}) \f$ which represents the logarithm of the current depth relative to the desired depth.
 
-  \param x : The \f$ x \f$ parameter.
-  \param y : The \f$ y \f$ parameter.
-  \param Z : The \f$ Z \f$ parameter.
+  \param x_ : The \f$ x \f$ parameter.
+  \param y_ : The \f$ y \f$ parameter.
+  \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
 void
-vpFeatureDepth::buildFrom(const double x, const double y, const double Z, const double LogZoverZstar)
+vpFeatureDepth::buildFrom(const double x_, const double y_, const double Z_, const double LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;
 
-  this->x = x  ;
-  this->y = y  ;
-  this->Z = Z  ;
+  this->x = x_  ;
+  this->y = y_  ;
+  this->Z = Z_  ;
 
   if (Z < 0)
   {

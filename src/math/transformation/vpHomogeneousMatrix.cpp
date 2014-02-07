@@ -86,11 +86,11 @@ vpHomogeneousMatrix::init()
 
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, 
-					 const vpQuaternionVector &q) 
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
+                                         const vpQuaternionVector &q)
 {
   init();
-  buildFrom(t,q);
+  buildFrom(tv,q);
 }
 
 /*!
@@ -111,19 +111,19 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpMatri
   *this = M ;
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
                                          const vpThetaUVector &tu) : vpMatrix()
 {
   init() ;
-  buildFrom(t,tu) ;
+  buildFrom(tv,tu) ;
 }
 
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
                                          const vpRotationMatrix &R) : vpMatrix()
 {
   init() ;
   insert(R) ;
-  insert(t) ;
+  insert(tv) ;
 }
 
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpMatrix()
@@ -145,20 +145,20 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const double tx,
 }
 
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
                                const vpThetaUVector &tu)
 {
   insert(tu) ;
-  insert(t) ;
+  insert(tv) ;
 }
 
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
                                const vpRotationMatrix &R)
 {
   init() ;
   insert(R) ;
-  insert(t) ;
+  insert(tv) ;
 }
 
 
@@ -166,17 +166,17 @@ void
 vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
 {
 
-  vpTranslationVector t(p[0],p[1],p[2]) ;
+  vpTranslationVector tv(p[0],p[1],p[2]) ;
   vpThetaUVector tu(p[3],p[4],p[5]) ;
 
   insert(tu) ;
-  insert(t) ;
+  insert(tv) ;
 }
 
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, 
+void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
 				    const vpQuaternionVector &q) 
 {
-  insert(t);
+  insert(tv);
   insert(q);
 }
 
@@ -189,10 +189,10 @@ vpHomogeneousMatrix::buildFrom(const double tx,
 			       const double tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz) ;
-  vpTranslationVector t(tx, ty, tz) ;
+  vpTranslationVector tv(tx, ty, tz) ;
 
   insert(R) ;
-  insert(t) ;
+  insert(tv) ;
 }
 
 /*!
@@ -308,11 +308,11 @@ vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
   Extract the translation vector from the homogeneous matrix. 
 */
 void
-vpHomogeneousMatrix::extract(vpTranslationVector &t) const
+vpHomogeneousMatrix::extract(vpTranslationVector &tv) const
 {
-  t[0] = (*this)[0][3] ;
-  t[1] = (*this)[1][3] ;
-  t[2] = (*this)[2][3] ;
+  tv[0] = (*this)[0][3] ;
+  tv[1] = (*this)[1][3] ;
+  tv[2] = (*this)[2][3] ;
 }
 /*!
   Extract the rotation as a Theta U vector.

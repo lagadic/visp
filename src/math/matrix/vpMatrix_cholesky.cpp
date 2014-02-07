@@ -60,30 +60,27 @@ extern "C" int dpotri_(char *uplo, int *n, double *a, int *lda, int *info);
 
 #ifdef VISP_HAVE_LAPACK
 vpMatrix vpMatrix::inverseByCholeskyLapack() const{
-  int rowNum = (int)this->getRows();
-  int lda = (int)rowNum; //lda is the number of rows because we don't use a submatrix
+  int rowNum_ = (int)this->getRows();
+  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
   int info;
 
   vpMatrix A = *this;
-  dpotrf_((char*)"L",&rowNum,A.data,&lda,&info);
+  dpotrf_((char*)"L",&rowNum_,A.data,&lda,&info);
 
   if(info!=0)
     std::cout << "cholesky:dpotrf_:error" << std::endl;
 
-  dpotri_((char*)"L",&rowNum,A.data,&lda,&info);
+  dpotri_((char*)"L",&rowNum_,A.data,&lda,&info);
   if(info!=0){
     std::cout << "cholesky:dpotri_:error" << std::endl;
     throw vpMatrixException::badValue;
   }
 
-
   for(unsigned int i=0;i<A.getRows();i++)
     for(unsigned int j=0;j<A.getCols();j++)
       if(i>j) A[i][j] = A[j][i];
 
-
   return A;
-
 }
 #endif
 

@@ -84,18 +84,18 @@ class VISP_EXPORT vpTrackingException : public vpException
     } ;
 
   public:
-    vpTrackingException (const int code,  const char* format, ...)
+    vpTrackingException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpTrackingException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpTrackingException (const int code)
-      : vpException(code){ ; }
+    vpTrackingException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpTrackingException (const int id)
+      : vpException(id){ ; }
 
 };
 

@@ -578,10 +578,10 @@ vpViper::getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, 
 {
   vpHomogeneousMatrix fMw;
   vpHomogeneousMatrix wMe;
-  vpHomogeneousMatrix eMc;
+  vpHomogeneousMatrix eMc_;
   this->get_wMe(wMe);
-  this->get_eMc(eMc);
-  fMw = fMc * eMc.inverse() * wMe.inverse();
+  this->get_eMc(eMc_);
+  fMw = fMc * eMc_.inverse() * wMe.inverse();
   
   return (getInverseKinematicsWrist(fMw, q, verbose));
 }
@@ -905,15 +905,15 @@ vpViper::get_wMe(vpHomogeneousMatrix & wMe) const
   the camera frame. This transformation is constant and correspond to
   the extrinsic camera parameters estimated by calibration.
 
-  \param eMc : Transformation between the the
+  \param eMc_ : Transformation between the the
   end-effector frame and the camera frame.
 
   \sa get_cMe()
 */
 void
-vpViper::get_eMc(vpHomogeneousMatrix &eMc) const
+vpViper::get_eMc(vpHomogeneousMatrix &eMc_) const
 {
-  eMc = this->eMc;
+  eMc_ = this->eMc;
 }
 
 /*!

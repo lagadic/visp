@@ -239,12 +239,15 @@ public:
     Sets the coordinates of the rectangle's top left corner to
     (left, top), and its size to (width, height).
 
+    \param l,t : (left, top) corner position.
+    \param w,h : (width, height) rectangle size.
+
   */
-  inline void setRect(double left, double top, double width, double height) {
-     this->left   = left; 
-     this->top    = top; 
-     this->width  = width;
-     this->height = height;
+  inline void setRect(double l, double t, double w, double h) {
+     this->left   = l;
+     this->top    = t;
+     this->width  = w;
+     this->height = h;
   };
   /*!
 

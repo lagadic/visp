@@ -153,9 +153,9 @@ public:
   /*!
     Get the camera parameters.
 
-    \param cam : copy of the camera parameters used by the tracker.
+    \param camera : copy of the camera parameters used by the tracker.
   */
-  virtual void getCameraParameters(vpCameraParameters& cam) const { cam = this->cam;}
+  virtual void getCameraParameters(vpCameraParameters& camera) const { camera = this->cam;}
   
   /*!
     Get the covariance matrix.
@@ -172,9 +172,9 @@ public:
     cMo is the matrix which can be used to express 
     coordinates from the object frame to camera frame.
 
-    \param cMo : the pose
+    \param cMo_ : the pose
   */
-  inline void getPose(vpHomogeneousMatrix& cMo) const {cMo = this->cMo;}
+  inline void getPose(vpHomogeneousMatrix& cMo_) const {cMo_ = this->cMo;}
   
   /*!
     Get the current pose between the object and the camera.
@@ -228,9 +228,9 @@ public:
   /*!
     Set the camera parameters.
 
-    \param cam : the new camera parameters
+    \param camera : the new camera parameters
   */
-  virtual void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
+  virtual void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
   
   /*!
     Set if the covaraince matrix has to be computed.

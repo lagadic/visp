@@ -759,10 +759,10 @@ vpDot::initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip)
   \param ip : Location of the starting point from which the dot will
   be tracked in the image.
 
-  \param gray_level_min : Minimum gray level threshold used to segment the dot;
+  \param level_min : Minimum gray level threshold used to segment the dot;
   value comprised between 0 and 255.
 
-  \param gray_level_max : Maximum gray level threshold used to segment the
+  \param level_max : Maximum gray level threshold used to segment the
   dot; value comprised between 0 and 255. \e gray_level_max should be
   greater than \e gray_level_min.
 
@@ -770,13 +770,13 @@ vpDot::initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip)
 */
 void
 vpDot::initTracking(const vpImage<unsigned char>& I, const vpImagePoint &ip,
-		    unsigned int gray_level_min, unsigned int gray_level_max)
+                    unsigned int level_min, unsigned int level_max)
 {
 
   cog = ip ;
 
-  this->gray_level_min = gray_level_min;
-  this->gray_level_max = gray_level_max;
+  this->gray_level_min = level_min;
+  this->gray_level_max = level_max;
 
   try {
     track( I );
@@ -848,14 +848,14 @@ vpDot::track(const vpImage<unsigned char> &I)
 
   \param I : Image to process.
 
-  \param cog [out] : Sub pixel coordinate of the tracked dot.
+  \param ip [out] : Sub pixel coordinate of the tracked dot center of gravity.
 */
 void
-vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &cog)
+vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &ip)
 {
   track( I ) ;
 
-  cog = this->cog;
+  ip = this->cog;
 }
 
 /*!
@@ -863,12 +863,11 @@ vpDot::track(const vpImage<unsigned char> &I, vpImagePoint &cog)
 
   \param I : Image.
   \param color : The color used for the display.
-  \param thickness : Thickness of the displayed cross located at the dot cog.
+  \param thick : Thickness of the displayed cross located at the dot cog.
 */
-void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
-                     unsigned int thickness) const
+void vpDot::display(const vpImage<unsigned char>& I, vpColor color, unsigned int thick) const
 {
-  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thickness);
+  vpDisplay::displayCross(I, cog, 3*thickness+8, color, thick);
   std::list<vpImagePoint>::const_iterator it;
 
   for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it)
@@ -881,7 +880,7 @@ void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
 
   Set the precision of the gray level of the dot.
 
-  \param grayLevelPrecision : It is a double precision float which value is 
+  \param precision : It is a double precision float which value is
   in ]0,1]:
   - 1 means full precision, whereas values close to 0 show a very bad accuracy.
   - Values lower or equal to 0 are brought back to an epsion>0
@@ -894,7 +893,7 @@ void vpDot::display(const vpImage<unsigned char>& I, vpColor color,
 
   \sa setWidth(), setHeight(), setGrayLevelMin(), setGrayLevelMax()
 */
-void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
+void vpDot::setGrayLevelPrecision( const double & precision )
 {
   double epsilon = 0.05;
   if( grayLevelPrecision<epsilon )
@@ -907,7 +906,7 @@ void vpDot::setGrayLevelPrecision( const double & grayLevelPrecision )
   }
   else
   {
-    this->grayLevelPrecision = grayLevelPrecision;
+    this->grayLevelPrecision = precision;
   }
 }
 

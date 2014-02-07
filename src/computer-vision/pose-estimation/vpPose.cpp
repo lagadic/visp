@@ -343,8 +343,7 @@ the pose matrix 'cMo'.
 double
 vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
-
-  double residual = 0 ;
+  double residual_ = 0 ;
   vpPoint P ;
   for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
@@ -354,9 +353,9 @@ vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 
     P.track(cMo) ;
 
-    residual += vpMath::sqr(x-P.get_x()) + vpMath::sqr(y-P.get_y())  ;
+    residual_ += vpMath::sqr(x-P.get_x()) + vpMath::sqr(y-P.get_y())  ;
   }
-  return residual ;
+  return residual_ ;
 }
 
 

@@ -255,24 +255,24 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       Enables to set the first frame index if you want to use the class like a grabber (ie with the
       acquire method).
 
-      \param firstFrame : The first frame index.
+      \param first_frame : The first frame index.
 
       \sa setLastFrameIndex()
     */
-    inline void setFirstFrameIndex(const long firstFrame) {
+    inline void setFirstFrameIndex(const long first_frame) {
       this->firstFrameIndexIsSet = true;
-      this->firstFrame = firstFrame;
+      this->firstFrame = first_frame;
     }
     /*!
       Enables to set the last frame index.
 
-      \param lastFrame : The last frame index.
+      \param last_frame : The last frame index.
 
       \sa setFirstFrameIndex()
     */
-    inline void setLastFrameIndex(const long lastFrame) {
+    inline void setLastFrameIndex(const long last_frame) {
       this->lastFrameIndexIsSet = true;
-      this->lastFrame = lastFrame;
+      this->lastFrame = last_frame;
     }
 
   private:

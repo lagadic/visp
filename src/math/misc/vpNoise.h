@@ -135,31 +135,31 @@ class vpGaussRand : public vpUniRand
     /*!
       Gaussian noise random generator constructor.
 
-      \param s : Standard deviation.
-      \param m : Mean value.
-      \param seed : Seed of the noise
+      \param sigma_val : Standard deviation.
+      \param mean_val : Mean value.
+      \param noise_seed : Seed of the noise
     */
-    vpGaussRand(const double s, const double m, const long seed = 0)
-      : vpUniRand(seed), mean(m), sigma(s) {}
+    vpGaussRand(const double sigma_val, const double mean_val, const long noise_seed = 0)
+      : vpUniRand(noise_seed), mean(mean_val), sigma(sigma_val) {}
 
     /*!
       Set the standard deviation and mean for gaussian noise.
 
-      \param sigma : New standard deviation.
-      \param mean : New mean value.
+      \param sigma_val : New standard deviation sigma.
+      \param mean_val : New mean value.
     */
-    void setSigmaMean(const double sigma, const double mean) {
-      this->mean = mean;
-      this->sigma = sigma;
+    void setSigmaMean(const double sigma_val, const double mean_val) {
+      this->mean = mean_val;
+      this->sigma = sigma_val;
     }
 
     /*!
       Set the seed of the noise.
 
-      \param seed : New seed.
+      \param seed_val : New seed.
     */
-    void seed(const long seed) {
-      x=seed;
+    void seed(const long seed_val) {
+      x=seed_val;
     }
 
     /*!

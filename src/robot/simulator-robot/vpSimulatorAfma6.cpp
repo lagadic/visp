@@ -104,11 +104,11 @@ vpSimulatorAfma6::vpSimulatorAfma6()
 /*!
   Constructor used to enable or disable the external view of the robot.
 
-  \param display : When true, enables the display of the external view.
+  \param do_display : When true, enables the display of the external view.
 
 */
-vpSimulatorAfma6::vpSimulatorAfma6(bool display)
-  : vpRobotWireFrameSimulator(display),
+vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
+  : vpRobotWireFrameSimulator(do_display),
     q_prev_getdis(), first_time_getdis(true), positioningVelocity(defaultPositioningVelocity),
     zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
@@ -282,15 +282,15 @@ vpSimulatorAfma6::initDisplay()
 
   \param tool : Tool to use. Note that the generic camera is not handled.
 
-  \param projModel : Projection model associated to the camera.
+  \param proj_model : Projection model associated to the camera.
 
   \sa vpCameraParameters, init()
 */
 void
 vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
-		       vpCameraParameters::vpCameraParametersProjType projModel)
+           vpCameraParameters::vpCameraParametersProjType proj_model)
 {
-  this->projModel = projModel;
+  this->projModel = proj_model;
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
   if (arm_dir.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
@@ -444,30 +444,30 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
   Get the current intrinsic camera parameters obtained by calibration.
 
   \param cam : In output, camera parameters to fill.
-  \param I : A B&W image send by the current camera in use.
+  \param I_ : A B&W image send by the current camera in use.
 
   \warning The image size must be : 640x480 !
 */
 void
 vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
-			      const vpImage<unsigned char> &I)
+            const vpImage<unsigned char> &I_)
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam,I_.getWidth(),I_.getHeight());
 }
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
 
   \param cam : In output, camera parameters to fill.
-  \param I : A B&W image send by the current camera in use.
+  \param I_ : A B&W image send by the current camera in use.
 
   \warning The image size must be : 640x480 !
 */
 void
 vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
-				 const vpImage<vpRGBa> &I)
+         const vpImage<vpRGBa> &I_)
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam,I_.getWidth(),I_.getHeight());
 }
 
 
@@ -987,24 +987,24 @@ vpSimulatorAfma6::computeArticularVelocity()
   {
     case vpRobot::CAMERA_FRAME :
     {
-      vpMatrix eJe;
+      vpMatrix eJe_;
       vpVelocityTwistMatrix eVc(_eMc);
-      vpAfma6::get_eJe(articularCoordinates,eJe);
-      eJe = eJe.pseudoInverse();
+      vpAfma6::get_eJe(articularCoordinates,eJe_);
+      eJe_ = eJe_.pseudoInverse();
       if (singularityManagement)
-        singularityTest(articularCoordinates,eJe);
-      articularVelocity = eJe*eVc*velocityframe;
+        singularityTest(articularCoordinates,eJe_);
+      articularVelocity = eJe_*eVc*velocityframe;
       set_artVel (articularVelocity);
       break;
     }
     case vpRobot::REFERENCE_FRAME :
     {
-      vpMatrix fJe;
-      vpAfma6::get_fJe(articularCoordinates,fJe);
-      fJe = fJe.pseudoInverse();
+      vpMatrix fJe_;
+      vpAfma6::get_fJe(articularCoordinates,fJe_);
+      fJe_ = fJe_.pseudoInverse();
       if (singularityManagement)
-        singularityTest(articularCoordinates,fJe);
-      articularVelocity = fJe*velocityframe;
+        singularityTest(articularCoordinates,fJe_);
+      articularVelocity = fJe_*velocityframe;
       set_artVel (articularVelocity);
       break;
     }
@@ -1112,10 +1112,10 @@ vpSimulatorAfma6::getVelocity (const vpRobot::vpControlFrameType frame, vpColVec
   {
     case vpRobot::CAMERA_FRAME : 
     {
-      vpMatrix eJe;
+      vpMatrix eJe_;
       vpVelocityTwistMatrix cVe(_eMc);
-      vpAfma6::get_eJe(articularCoordinates,eJe);
-      vel = cVe*eJe*articularVelocity;
+      vpAfma6::get_eJe(articularCoordinates,eJe_);
+      vel = cVe*eJe_*articularVelocity;
       break ;
     }
     case vpRobot::ARTICULAR_FRAME : 
@@ -1125,9 +1125,9 @@ vpSimulatorAfma6::getVelocity (const vpRobot::vpControlFrameType frame, vpColVec
     }
     case vpRobot::REFERENCE_FRAME : 
     {
-      vpMatrix fJe;
-      vpAfma6::get_fJe(articularCoordinates,fJe);
-      vel = fJe*articularVelocity;
+      vpMatrix fJe_;
+      vpAfma6::get_fJe(articularCoordinates,fJe_);
+      vel = fJe_*articularVelocity;
       break ;
     }
     case vpRobot::MIXT_FRAME : 
@@ -1211,10 +1211,10 @@ int main()
 vpColVector
 vpSimulatorAfma6::getVelocity (vpRobot::vpControlFrameType frame)
 {
-  vpColVector velocity(6);
-  getVelocity (frame, velocity);
+  vpColVector vel(6);
+  getVelocity (frame, vel);
 
-  return velocity;
+  return vel;
 }
 
 /*!
@@ -1233,10 +1233,10 @@ vpColVector
 vpSimulatorAfma6::getVelocity (vpRobot::vpControlFrameType frame, double &timestamp)
 {
   timestamp = vpTime::measureTimeSecond();
-  vpColVector velocity(6);
-  getVelocity (frame, velocity);
+  vpColVector vel(6);
+  getVelocity (frame, vel);
 
-  return velocity;
+  return vel;
 }
 
 void 
@@ -1360,10 +1360,10 @@ vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,const vpCo
       vpRotationMatrix cRc2(rxyz);
       vpHomogeneousMatrix cMc2(txyz, cRc2);
 
-      vpHomogeneousMatrix fMc;
-      vpAfma6::get_fMc(articularCoordinates, fMc);
+      vpHomogeneousMatrix fMc_;
+      vpAfma6::get_fMc(articularCoordinates, fMc_);
 	
-      vpHomogeneousMatrix fMc2 = fMc * cMc2;
+      vpHomogeneousMatrix fMc2 = fMc_ * cMc2;
 	
       do
       {
@@ -1433,13 +1433,13 @@ vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame,const vpCo
       }
 
       vpRotationMatrix fRc(rxyz);
-      vpHomogeneousMatrix fMc(txyz, fRc);
+      vpHomogeneousMatrix fMc_(txyz, fRc);
 
       do
       {
         articularCoordinates = get_artCoord();
         qdes = articularCoordinates;
-        nbSol = getInverseKinematics(fMc, qdes, true, verbose_);
+        nbSol = getInverseKinematics(fMc_, qdes, true, verbose_);
         setVelocityCalled = true;
         if (nbSol > 0)
         {
@@ -1692,15 +1692,15 @@ vpSimulatorAfma6::getPosition(const vpRobot::vpControlFrameType frame, vpColVect
       
     case vpRobot::REFERENCE_FRAME:
     {
-      vpHomogeneousMatrix fMc;
-      vpAfma6::get_fMc (get_artCoord(), fMc);
+      vpHomogeneousMatrix fMc_;
+      vpAfma6::get_fMc (get_artCoord(), fMc_);
       
       vpRotationMatrix fRc;
-      fMc.extract(fRc);
+      fMc_.extract(fRc);
       vpRxyzVector rxyz(fRc);
       
       vpTranslationVector txyz;
-      fMc.extract(txyz);
+      fMc_.extract(txyz);
       
       for (unsigned int i=0; i <3; i++)
       {
@@ -2220,15 +2220,15 @@ vpSimulatorAfma6::get_cVe(vpVelocityTwistMatrix &cVe)
   To compute \f$^e{\bf J}_e\f$, we communicate with the low level
   controller to get the joint position of the robot.
 
-  \param eJe : Robot jacobian \f$^e{\bf J}_e\f$ expressed in the
+  \param eJe_ : Robot jacobian \f$^e{\bf J}_e\f$ expressed in the
   end-effector frame.
 */
 void
-vpSimulatorAfma6::get_eJe(vpMatrix &eJe)
+vpSimulatorAfma6::get_eJe(vpMatrix &eJe_)
 {
   try
   {
-    vpAfma6::get_eJe(get_artCoord(), eJe) ;
+    vpAfma6::get_eJe(get_artCoord(), eJe_) ;
   }
   catch(...)
   {
@@ -2244,16 +2244,16 @@ vpSimulatorAfma6::get_eJe(vpMatrix &eJe)
   To compute \f$^f{\bf J}_e\f$, we communicate with the low level
   controller to get the joint position of the robot.
 
-  \param fJe : Robot jacobian \f$^f{\bf J}_e\f$ expressed in the
+  \param fJe_ : Robot jacobian \f$^f{\bf J}_e\f$ expressed in the
   reference frame.
 */
 void
-vpSimulatorAfma6::get_fJe(vpMatrix &fJe)
+vpSimulatorAfma6::get_fJe(vpMatrix &fJe_)
 {
   try
   {
     vpColVector articularCoordinates = get_artCoord(); 
-    vpAfma6::get_fJe(articularCoordinates, fJe) ;
+    vpAfma6::get_fJe(articularCoordinates, fJe_) ;
   }
   catch(...)
   {
@@ -2297,13 +2297,13 @@ void
 vpSimulatorAfma6::initArms()
 {
   // set scene_dir from #define VISP_SCENE_DIR if it exists
-  std::string scene_dir;
+  std::string scene_dir_;
   if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
-    scene_dir = VISP_SCENES_DIR;
+    scene_dir_ = VISP_SCENES_DIR;
   else {
     try {
-      scene_dir = vpIoTools::getenv("VISP_SCENES_DIR");
-      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir << std::endl;
+      scene_dir_ = vpIoTools::getenv("VISP_SCENES_DIR");
+      std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir_ << std::endl;
     }
     catch (...) {
       std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
@@ -2311,15 +2311,15 @@ vpSimulatorAfma6::initArms()
   }
 
   unsigned int name_length = 30; // the size of this kind of string "/afma6_arm2.bnd"
-  if (scene_dir.size() > FILENAME_MAX)
+  if (scene_dir_.size() > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
-  unsigned int full_length = (unsigned int)scene_dir.size() + name_length;
+  unsigned int full_length = (unsigned int)scene_dir_.size() + name_length;
   if (full_length > FILENAME_MAX)
     throw vpException (vpException::dimensionError, "Cannot initialize Afma6 simulator");
 
   char *name_cam = new char [full_length];
 
-  strcpy(name_cam, scene_dir.c_str());
+  strcpy(name_cam, scene_dir_.c_str());
   strcat(name_cam,"/camera.bnd");
   set_scene(name_cam,&camera,cameraFactor);
   
@@ -2385,10 +2385,10 @@ vpSimulatorAfma6::initArms()
 
 
 void 
-vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
+vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
 {
   bool changed = false;
-  vpHomogeneousMatrix displacement = navigation(I,changed);
+  vpHomogeneousMatrix displacement = navigation(I_,changed);
 
   //if (displacement[2][3] != 0)
   if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon())
@@ -2405,13 +2405,13 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
   if( (std::fabs(px_ext-1.) > vpMath::maximum(px_ext,1.)*std::numeric_limits<double>::epsilon()) 
       && (std::fabs(py_ext-1) > vpMath::maximum(py_ext,1.)*std::numeric_limits<double>::epsilon()))
   {
-    u = (double)I.getWidth()/(2*px_ext);
-    v = (double)I.getHeight()/(2*py_ext);
+    u = (double)I_.getWidth()/(2*px_ext);
+    v = (double)I_.getHeight()/(2*py_ext);
   }
   else
   {
-    u = (double)I.getWidth()/(vpMath::minimum(I.getWidth(),I.getHeight()));
-    v = (double)I.getHeight()/(vpMath::minimum(I.getWidth(),I.getHeight()));
+    u = (double)I_.getWidth()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
+    v = (double)I_.getHeight()/(vpMath::minimum(I_.getWidth(),I_.getHeight()));
   }
 
   float w44o[4][4],w44cext[4][4],x,y,z;
@@ -2431,22 +2431,22 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
   get_fMi(fMit);
   
   vp2jlc_matrix(vpHomogeneousMatrix(0,0,0,0,0,0),w44o);
-  display_scene(w44o,robotArms[0],I, curColor);
+  display_scene(w44o,robotArms[0],I_, curColor);
   
   vp2jlc_matrix(fMit[0],w44o);
-  display_scene(w44o,robotArms[1],I, curColor);
+  display_scene(w44o,robotArms[1],I_, curColor);
   
   vp2jlc_matrix(fMit[2],w44o);
-  display_scene(w44o,robotArms[2],I, curColor);
+  display_scene(w44o,robotArms[2],I_, curColor);
   
   vp2jlc_matrix(fMit[3],w44o);
-  display_scene(w44o,robotArms[3],I, curColor);
+  display_scene(w44o,robotArms[3],I_, curColor);
   
   vp2jlc_matrix(fMit[4],w44o);
-  display_scene(w44o,robotArms[4],I, curColor);
+  display_scene(w44o,robotArms[4],I_, curColor);
   
   vp2jlc_matrix(fMit[5],w44o);
-  display_scene(w44o,robotArms[5],I, curColor);
+  display_scene(w44o,robotArms[5],I_, curColor);
 
   if (displayCamera)
   {
@@ -2455,13 +2455,13 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
     cMe = cMe.inverse();
     cMe = fMit[6] * cMe;
     vp2jlc_matrix(cMe,w44o);
-    display_scene(w44o,camera, I, camColor);
+    display_scene(w44o,camera, I_, camColor);
   }
   
   if (displayObject)
   {
     vp2jlc_matrix(fMo,w44o);
-    display_scene(w44o,scene,I, curColor);
+    display_scene(w44o,scene,I_, curColor);
   }
 }
 
@@ -2476,24 +2476,24 @@ vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I)
   \f${^f}{\bf M}_c = {^f}{\bf M}_o \; ({^c}{\bf M}_o)^{-1}\f$, and from the inverse kinematics
   set the joint positions \f${\bf q}\f$ that corresponds to the \f${^f}{\bf M}_c\f$ transformation.
 
-  \param cMo : the desired pose of the camera.
+  \param cMo_ : the desired pose of the camera.
 
   \return false if the robot kinematics is not able to reach the cMo position.
 
 */
 bool
-vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo)
+vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   bool status = true;
   stop = 0;
   set_artVel(stop);
   set_velocity(stop);
-  vpHomogeneousMatrix fMc;
-  fMc = fMo * cMo.inverse();
+  vpHomogeneousMatrix fMc_;
+  fMc_ = fMo * cMo_.inverse();
   
   vpColVector articularCoordinates = get_artCoord();
-  int nbSol = getInverseKinematics(fMc, articularCoordinates, true, verbose_);
+  int nbSol = getInverseKinematics(fMc_, articularCoordinates, true, verbose_);
   
   if (nbSol == 0) {
     status = false;
@@ -2520,10 +2520,10 @@ vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cM
   \f${^f}{\bf M}_o = {^f}{\bf M}_c \; {^c}{\bf M}_o\f$ where \f$ {^f}{\bf M}_c = f({\bf q})\f$
   with \f${\bf q}\f$ the robot joint position
 
-  \param cMo : the desired pose of the camera.
+  \param cMo_ : the desired pose of the camera.
 */
 void 
-vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo)
+vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo_)
 {
   vpColVector stop(6);
   stop = 0;
@@ -2531,21 +2531,21 @@ vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cM
   set_velocity(stop);
   vpHomogeneousMatrix fMit[8];
   get_fMi(fMit);
-  fMo = fMit[7] * cMo;
+  fMo = fMit[7] * cMo_;
 }
 
 /*!
   This method enable to move the robot with respect to the initialized object.
   The robot trajectory is a straight line from the current position to the one corresponding to the desired pose (3D visual servoing).
 
-  \param cdMo : the desired pose of the camera wrt. the object
+  \param cdMo_ : the desired pose of the camera wrt. the object
   \param Iint : pointer to the image where the internal view is displayed
   \param errMax : maximum error to consider the pose is reached
 
   \return True is the pose is reached, False else
 */
 bool
-vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint, const double &errMax)
+vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<unsigned char> *Iint, const double &errMax)
 {
 	// get rid of max velocity
 	double vMax = getMaxTranslationVelocity();
@@ -2561,7 +2561,6 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned 
 	double t;
 
 	vpVelocityTwistMatrix cVe;
-	vpMatrix eJe;
 
 	unsigned int i,iter=0;
 	while((iter++<300) & (err.euclideanNorm()>errMax))
@@ -2577,7 +2576,7 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned 
 		}
 
 		// update pose error
-		cdMc = cdMo*get_cMo().inverse();
+    cdMc = cdMo_*get_cMo().inverse();
 		cdMc.extract(cdRc);
 		cdMc.extract(cdTc);
 		cdTUc.buildFrom(cdRc);

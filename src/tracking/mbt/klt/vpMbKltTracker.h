@@ -405,9 +405,9 @@ public:
           /*!
             Set the value of the gain used to compute the control law.
             
-            \param lambda : the desired value for the gain.
+            \param gain : the desired value for the gain.
           */
-  virtual inline  void    setLambda(const double lambda) {this->lambda = lambda;}
+  virtual inline  void    setLambda(const double gain) {this->lambda = gain;}
   
           /*!
             Set the erosion of the mask used on the Model faces.

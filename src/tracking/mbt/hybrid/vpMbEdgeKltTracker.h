@@ -342,9 +342,9 @@ public:
           /*!
             Set the value of the gain used to compute the control law.
 
-            \param lambda : the desired value for the gain.
+            \param gain : the desired value for the gain.
           */
-  virtual inline  void setLambda(const double lambda) {this->lambda = lambda; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
+  virtual inline  void setLambda(const double gain) {this->lambda = gain; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
 
           /*!
             Set the maximum iteration of the virtual visual servoing stage.

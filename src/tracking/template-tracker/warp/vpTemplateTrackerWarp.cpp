@@ -108,7 +108,7 @@ void vpTemplateTrackerWarp::warp(const double *ut0,const double *vt0,int nb_pt,c
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p)
 {
-  vpMatrix dW(2,nbParam);
+  vpMatrix dW_(2,nbParam);
   vpMatrix dX(2,1);
   vpMatrix H(nbParam,nbParam), HLM(nbParam,nbParam);
   vpMatrix G(nbParam,1);
@@ -133,14 +133,14 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
       X1[1]=vt0[i];
       computeDenom(X1,p);
       warpX(X1,fX1,p);
-      dWarp(X1,fX1,p,dW);
-      H+=dW.AtA();
+      dWarp(X1,fX1,p,dW_);
+      H+=dW_.AtA();
 
       X2[0]=u[i];
       X2[1]=v[i];
 
       dX=X2-fX1;
-      G+=dW.t()*dX;
+      G+=dW_.t()*dX;
 
       erreur+=((u[i]-fX1[0])*(u[i]-fX1[0])+(v[i]-fX1[1])*(v[i]-fX1[1]));
 

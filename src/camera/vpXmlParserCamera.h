@@ -257,16 +257,16 @@ public:
   unsigned int getSubsampling_height(){return this->subsampling_height;}
   vpCameraParameters getCameraParameters(){return this->camera;}
 
-  void setCameraName(const std::string& camera_name){
-    this->camera_name = camera_name;
+  void setCameraName(const std::string& name){
+    this->camera_name = name;
   }
   void setWidth(const unsigned int width){ this->image_width = width ; }
   void setHeight(const unsigned int height){ this->image_height = height ; }
-  void setSubsampling_width(const unsigned int subsampling_width){
-    this->subsampling_width = subsampling_width ;
+  void setSubsampling_width(const unsigned int subsampling){
+    this->subsampling_width = subsampling ;
   }
-  void setSubsampling_height(const unsigned int subsampling_height){
-    this->subsampling_height = subsampling_height ;
+  void setSubsampling_height(const unsigned int subsampling){
+    this->subsampling_height = subsampling ;
   }
 
 private:

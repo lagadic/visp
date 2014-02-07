@@ -162,16 +162,16 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix(
   Initialize a force/torque twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
-				       const vpThetaUVector &thetau) : vpMatrix()
+vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &tv,
+                                       const vpThetaUVector &thetau) : vpMatrix()
 {
   init() ;
-  buildFrom(t, thetau) ;
+  buildFrom(tv, thetau) ;
 }
 
 /*!
@@ -179,16 +179,16 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
   Initialize a force/torque twist transformation matrix from a translation vector
   \e t and a rotation matrix R.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param R : Rotation matrix.
 
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
+vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &tv,
 				       const vpRotationMatrix &R)
 {
   init() ;
-  buildFrom(t,R) ;
+  buildFrom(tv,R) ;
 }
 
 /*!
@@ -365,17 +365,17 @@ vpForceTwistMatrix::operator*(const vpColVector &H) const
   Build a force/torque twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param R : Rotation matrix.
 
 */
 vpForceTwistMatrix
-vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
-			 const vpRotationMatrix &R)
+vpForceTwistMatrix::buildFrom(const vpTranslationVector &tv,
+                              const vpRotationMatrix &R)
 {
   unsigned int i, j;
-  vpMatrix skewaR = t.skew(t)*R ;
+  vpMatrix skewaR = tv.skew(tv)*R ;
   
   for (i=0 ; i < 3 ; i++) {
     for (j=0 ; j < 3 ; j++)	{
@@ -392,18 +392,18 @@ vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
   Initialize a force/torque twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param t : Translation vector.
+  \param tv : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
 vpForceTwistMatrix
-vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
-			      const vpThetaUVector &thetau)
+vpForceTwistMatrix::buildFrom(const vpTranslationVector &tv,
+                              const vpThetaUVector &thetau)
 {
   vpRotationMatrix R ;
   R.buildFrom(thetau) ;
-  buildFrom(t,R) ;
+  buildFrom(tv,R) ;
   return (*this) ;
 }
 
@@ -421,12 +421,12 @@ vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
 vpForceTwistMatrix
 vpForceTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
 {
-  vpTranslationVector t ;
+  vpTranslationVector tv ;
   vpRotationMatrix R ;
   M.extract(R) ;
-  M.extract(t) ;
+  M.extract(tv) ;
   
-  buildFrom(t, R) ;
+  buildFrom(tv, R) ;
   return (*this) ;
 }
 

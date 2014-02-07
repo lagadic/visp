@@ -93,18 +93,18 @@ class VISP_EXPORT vpMatrixException : public vpException
     } ;
 
   public:
-    vpMatrixException (const int code,  const char* format, ...)
+    vpMatrixException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpMatrixException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpMatrixException (const int code)
-      : vpException(code){ ; }
+    vpMatrixException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpMatrixException (const int id)
+      : vpException(id){ ; }
     // vpMatrixException() : vpException() { ;}
 };
 

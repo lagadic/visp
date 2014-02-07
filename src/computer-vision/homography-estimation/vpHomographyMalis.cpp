@@ -91,16 +91,36 @@ const double eps = 1e-6 ;
  ****************************************************************************
  */
 
+void changeFrame(unsigned int *pts_ref,
+                 unsigned int nb_pts,
+                 vpMatrix &pd, vpMatrix &p,
+                 vpMatrix &pnd, vpMatrix &pn,
+                 vpMatrix &M, vpMatrix &Mdp);
+void HLM2D(unsigned int nb_pts,
+           vpMatrix &points_des,
+           vpMatrix &points_cour,
+           vpMatrix &H);
+void HLM3D(unsigned int nb_pts,
+           vpMatrix &pd,
+           vpMatrix &p,
+           vpMatrix &H);
+void HLM(unsigned int q_cible,
+         unsigned int nbpt,
+         double *xm, double *ym,
+         double *xmi, double *ymi,
+         vpMatrix &H);
+
+void HLM(unsigned int q_cible,
+         const std::vector<double> &xm, const std::vector<double> &ym,
+         const std::vector<double> &xmi, const std::vector<double> &ymi,
+         vpMatrix &H);
 
 void changeFrame(unsigned int *pts_ref,
-		 unsigned int nb_pts,
-		 vpMatrix &pd, vpMatrix &p,
-		 vpMatrix &pnd, vpMatrix &pn,
-		 vpMatrix &M, vpMatrix &Mdp)
+                 unsigned int nb_pts,
+                 vpMatrix &pd, vpMatrix &p,
+                 vpMatrix &pnd, vpMatrix &pn,
+                 vpMatrix &M, vpMatrix &Mdp)
 {
-
-
-
   unsigned int i,j, k ;
   unsigned int cont_pts;		/* */
   double lamb_des[3];	/* */

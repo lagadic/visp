@@ -99,9 +99,9 @@ class VISP_EXPORT vpImagePoint
   inline vpImagePoint() : i(0), j(0) {}
   /*!
     Default constructor that initialize the coordinates of the image
-    thanks to the parameters \f$ i \f$ and \f$ j \f$.
+    thanks to the parameters \f$ ii \f$ and \f$ jj \f$.
   */
-  inline vpImagePoint(double i, double j) : i(i), j(j) {}
+  inline vpImagePoint(double ii, double jj) : i(ii), j(jj) {}
   /*!
     Copy constructor.
 
@@ -151,35 +151,35 @@ class VISP_EXPORT vpImagePoint
     Sets the point coordinate corresponding to the \f$ i \f$ axes in
     the frame (i,j).
 
-    \param i : The desired value for the coordinate along the \f$ i \f$ axes.
+    \param ii : The desired value for the coordinate along the \f$ i \f$ axes.
 
     \sa set_j(), set_u(), set_v()
   */
-  inline void set_i(const double i) {  this->i = i ; }
+  inline void set_i(const double ii) {  this->i = ii ; }
 
   /*!
 
     Sets the point coordinate corresponding to the \f$ j \f$ axes in
     the frame (i,j).
 
-    \param j : The desired value for the coordinate along the \f$ j \f$ axes.
+    \param jj : The desired value for the coordinate along the \f$ j \f$ axes.
 
     \sa set_i(), set_u(), set_v()
   */
-  inline void set_j(const double j) {  this->j = j ; }
+  inline void set_j(const double jj) {  this->j = jj ; }
 
   /*!
 
     Sets the point coordinates in the frame (i,j).
 
-    \param i : The desired value for the coordinate along the \f$ i \f$ axes.
-    \param j : The desired value for the coordinate along the \f$ j \f$ axes.
+    \param ii : The desired value for the coordinate along the \f$ i \f$ axes.
+    \param jj : The desired value for the coordinate along the \f$ j \f$ axes.
 
     \sa set_i(), set_j(), set_u(), set_v()
   */
-  inline void set_ij(const double i, const double j) {
-    this->i = i ;
-    this->j = j ;
+  inline void set_ij(const double ii, const double jj) {
+    this->i = ii ;
+    this->j = jj ;
   }
 
   /*!
@@ -291,6 +291,7 @@ class VISP_EXPORT vpImagePoint
 
   friend VISP_EXPORT bool operator==( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT bool operator!=( const vpImagePoint &ip1, const vpImagePoint &ip2 );
+  friend VISP_EXPORT vpImagePoint operator+=( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const int offset );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const double offset );

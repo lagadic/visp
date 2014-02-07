@@ -106,12 +106,12 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
 /*!
   Constructor for perspective projection without distortion model
 
-  \param px,py : pixel size
-  \param u0,v0 : principal points
+  \param cam_px,cam_py : pixel size
+  \param cam_u0,cam_v0 : principal points
 
  */
-vpCameraParameters::vpCameraParameters(const double px, const double py,
-                                       const double u0, const double v0)
+vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
+                                       const double cam_u0, const double cam_v0)
   :
     px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
@@ -121,21 +121,21 @@ vpCameraParameters::vpCameraParameters(const double px, const double py,
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
-  initPersProjWithoutDistortion(px,py,u0,v0) ;
+  initPersProjWithoutDistortion(cam_px,cam_py,cam_u0,cam_v0) ;
 }
 
 /*!
   Constructor for perspective projection with distortion model
 
-  \param px,py : pixel size
-  \param u0,v0 : principal points
-  \param kud : undistorted to distorted radial distortion
-  \param kdu : distorted to undistorted radial distortion
+  \param cam_px,cam_py : pixel size
+  \param cam_u0,cam_v0 : principal points
+  \param cam_kud : undistorted to distorted radial distortion
+  \param cam_kdu : distorted to undistorted radial distortion
 
  */
-vpCameraParameters::vpCameraParameters(const double px, const double py,
-                                       const double u0, const double v0,
-                                       const double kud, const double kdu)
+vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
+                                       const double cam_u0, const double cam_v0,
+                                       const double cam_kud, const double cam_kdu)
   :
     px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER),
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
@@ -145,7 +145,7 @@ vpCameraParameters::vpCameraParameters(const double px, const double py,
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
-  initPersProjWithDistortion(px,py,u0,v0,kud,kdu) ;
+  initPersProjWithDistortion(cam_px,cam_py,cam_u0,cam_v0,cam_kud,cam_kdu) ;
 }
 
 /*!
@@ -173,19 +173,19 @@ vpCameraParameters::init()
 /*!
   Initialization with specific parameters using perpective projection without
   distortion model.
-  \param px,py : pixel size
-  \param u0,v0 : principal point
+  \param cam_px,cam_py : pixel size
+  \param cam_u0,cam_v0 : principal point
  */
 void
-vpCameraParameters::initPersProjWithoutDistortion(const double px,
-    const double py, const double u0, const double v0)
+vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const double cam_py,
+                                                  const double cam_u0, const double cam_v0)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithoutDistortion ;
   
-  this->px    = px ;
-  this->py    = py ;
-  this->u0    = u0 ;
-  this->v0    = v0 ;
+  this->px    = cam_px ;
+  this->py    = cam_py ;
+  this->u0    = cam_u0 ;
+  this->v0    = cam_v0 ;
   this->kud   = 0 ;
   this->kdu   = 0 ;
   
@@ -208,24 +208,24 @@ vpCameraParameters::initPersProjWithoutDistortion(const double px,
 /*!
   Initialization with specific parameters using perpective projection with
   distortion model.
-  \param px,py : pixel size
-  \param u0,v0 : principal points
-  \param kud : undistorted to distorted radial distortion
-  \param kdu : distorted to undistorted radial distortion
+  \param cam_px,cam_py : pixel size
+  \param cam_u0,cam_v0 : principal points
+  \param cam_kud : undistorted to distorted radial distortion
+  \param cam_kdu : distorted to undistorted radial distortion
 */
 void
-vpCameraParameters::initPersProjWithDistortion(const double px, const double py,
-                            const double u0, const double v0,
-                            const double kud, const double kdu)
+vpCameraParameters::initPersProjWithDistortion(const double cam_px, const double cam_py,
+                                               const double cam_u0, const double cam_v0,
+                                               const double cam_kud, const double cam_kdu)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithDistortion ;
 
-  this->px    = px ;
-  this->py    = py ;
-  this->u0    = u0 ;
-  this->v0    = v0 ;
-  this->kud   = kud ;
-  this->kdu   = kdu ;
+  this->px    = cam_px ;
+  this->py    = cam_py ;
+  this->u0    = cam_u0 ;
+  this->v0    = cam_v0 ;
+  this->kud   = cam_kud ;
+  this->kdu   = cam_kdu ;
   
   if (fabs(px)<1e-6)
   {

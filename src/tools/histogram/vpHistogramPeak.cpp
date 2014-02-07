@@ -57,8 +57,8 @@ vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
 /*!
   Defaut constructor for a gray level histogram peak.
 */
-vpHistogramPeak::vpHistogramPeak(unsigned char level, unsigned value)
-  : level(level), value(value) {}
+vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val)
+  : level(lvl), value(val) {}
 
 /*!
   Copy constructor of a gray level histogram peak.

@@ -353,7 +353,6 @@ void vpHomography::DLT(unsigned int n,
     vpColVector h(9);
     vpColVector D(9);
     vpMatrix V(9,9);
-    unsigned int i, j;
     
     // We need here to compute the SVD on a (n*2)*9 matrix (where n is
     // the number of points). if n == 4, the matrix has more columns
@@ -363,7 +362,7 @@ void vpHomography::DLT(unsigned int n,
       A.resize(2*n+1,9);
 
     // build matrix A
-    for(i=0; i<n;i++)
+    for(unsigned int i=0; i<n;i++)
     {
       A[2*i][0]=0;
       A[2*i][1]=0;
@@ -389,7 +388,7 @@ void vpHomography::DLT(unsigned int n,
 
     // Add an extra line with zero.
     if (n == 4) {
-      for (int i=0; i < 9; i ++) {
+      for (unsigned int i=0; i < 9; i ++) {
         A[2*n][i] = 0;
       }
     }
@@ -401,7 +400,7 @@ void vpHomography::DLT(unsigned int n,
     // on en profite pour effectuer un controle sur le rang de la matrice :
     // pas plus de 2 valeurs singulieres quasi=0
     int rank=0;
-    for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
+    for(unsigned int i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
       vpTRACE(" Rank is : %d, should be 8", rank);
@@ -414,16 +413,16 @@ void vpHomography::DLT(unsigned int n,
     // singular value... we seek for the smallest
     double smallestSv = 1e30 ;
     unsigned int indexSmallestSv  = 0 ;
-    for (i=0 ; i < 9 ; i++)
+    for (unsigned int i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
 
     h=V.column(indexSmallestSv+1);
 
     // build the homography
-    for(i =0;i<3;i++)
+    for(unsigned int i =0;i<3;i++)
     {
-      for(j=0;j<3;j++)
+      for(unsigned int j=0;j<3;j++)
         aHb[i][j]=h[3*i+j];
     }
 
@@ -537,7 +536,6 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     vpColVector h(9);
     vpColVector D(9);
     vpMatrix V(9,9);
-    unsigned int i, j;
 
     // We need here to compute the SVD on a (n*2)*9 matrix (where n is
     // the number of points). if n == 4, the matrix has more columns
@@ -547,7 +545,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
       A.resize(2*n+1,9);
 
     // build matrix A
-    for(i=0; i<n;i++)
+    for(unsigned int i=0; i<n;i++)
     {
       A[2*i][0]=0;
       A[2*i][1]=0;
@@ -573,7 +571,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
 
     // Add an extra line with zero.
     if (n == 4) {
-      for (int i=0; i < 9; i ++) {
+      for (unsigned int  i=0; i < 9; i ++) {
         A[2*n][i] = 0;
       }
     }
@@ -585,7 +583,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     // on en profite pour effectuer un controle sur le rang de la matrice :
     // pas plus de 2 valeurs singulieres quasi=0
     int rank=0;
-    for(i = 0; i<9;i++) if(D[i]>1e-7) rank++;
+    for(unsigned int i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
       vpTRACE(" Rank is : %d, should be 8", rank);
@@ -598,15 +596,15 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     // singular value... we seek for the smallest
     double smallestSv = 1e30 ;
     unsigned int indexSmallestSv  = 0 ;
-    for (i=0 ; i < 9 ; i++)
+    for (unsigned int i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
     h=V.column(indexSmallestSv+1);
 
     // build the homography
-    for(i =0;i<3;i++)
+    for(unsigned int i =0;i<3;i++)
     {
-      for(j=0;j<3;j++)
+      for(unsigned int j=0;j<3;j++)
         aHbn[i][j]=h[3*i+j];
     }
 

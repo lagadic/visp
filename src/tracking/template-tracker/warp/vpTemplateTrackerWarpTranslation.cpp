@@ -92,20 +92,22 @@ void vpTemplateTrackerWarpTranslation::warpX(const vpColVector &vX,vpColVector &
   vXres[1]=vX[1]+ParamM[1];
 }
 
-void vpTemplateTrackerWarpTranslation::dWarp(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,vpMatrix &dW)
+void vpTemplateTrackerWarpTranslation::dWarp(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,
+                                             vpMatrix &dW_)
 {
-  dW[0][0]=1;dW[0][1]=0;
-  dW[1][0]=0;dW[1][1]=1;
+  dW_[0][0]=1;dW_[0][1]=0;
+  dW_[1][0]=0;dW_[1][1]=1;
 }
 
 /*compute dw=dw/dx*dw/dp
 */
-void vpTemplateTrackerWarpTranslation::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,const double *dwdp0,vpMatrix &dW)
+void vpTemplateTrackerWarpTranslation::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &/*ParamM*/,
+                                                  const double *dwdp0,vpMatrix &dW_)
 {
   for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=dwdp0[i];
-    dW[1][i]=dwdp0[i+nbParam];
+    dW_[0][i]=dwdp0[i];
+    dW_[1][i]=dwdp0[i+nbParam];
   }
 }
 

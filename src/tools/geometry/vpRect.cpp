@@ -64,8 +64,8 @@ vpRect::vpRect() : left(0), top(0), width(0), height(0) {};
   and \e height.
 
 */
-vpRect::vpRect(double left, double top, double width, double height)
-  : left(left), top(top), width(width), height(height)
+vpRect::vpRect(double l, double t, double w, double h)
+  : left(l), top(t), width(w), height(h)
 {
 };
 
@@ -75,8 +75,8 @@ vpRect::vpRect(double left, double top, double width, double height)
   and \e width and \e height the rectangle size.
 
 */
-vpRect::vpRect(const vpImagePoint &topLeft, double width, double height)
-  : left(topLeft.get_u()), top(topLeft.get_v()), width(width), height(height)
+vpRect::vpRect(const vpImagePoint &topLeft, double w, double h)
+  : left(topLeft.get_u()), top(topLeft.get_v()), width(w), height(h)
 {
 };
 

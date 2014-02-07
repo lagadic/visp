@@ -123,12 +123,12 @@ vpFeatureLuminance::~vpFeatureLuminance()
 /*!
   Set the value of \f$ Z \f$ which represents the depth in the 3D camera frame.
 
-  \param Z : \f$ Z \f$ value to set.
+  \param Z_ : \f$ Z \f$ value to set.
 */
 void
-vpFeatureLuminance::set_Z(const double Z)
+vpFeatureLuminance::set_Z(const double Z_)
 {
-    this->Z = Z ;
+    this->Z = Z_ ;
     flags[0] = true;
 }
 

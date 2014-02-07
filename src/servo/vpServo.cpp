@@ -79,7 +79,7 @@ vpServo::vpServo()
 }
 /*!
   Constructor that allows to choose the visual servoing control law.
-  \param servoType : Visual servoing control law.
+  \param servo_type : Visual servoing control law.
 
   The other settings are the following:
   - In the control law, the interaction matrix \f${\widehat {\bf L}}_e \f$ is computed with the desired
@@ -90,8 +90,8 @@ vpServo::vpServo()
     allows to use the transpose instead.
 
  */
-vpServo::vpServo(vpServoType servoType)
-  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(servoType),
+vpServo::vpServo(vpServoType servo_type)
+  : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(servo_type),
     rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
     cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
@@ -214,12 +214,12 @@ void vpServo::kill()
 
 /*!
   Set the visual servoing control law.
-  \param servoType : Control law that will be considered.
+  \param servo_type : Control law that will be considered.
   See vpServo::vpServoType to see the possible values.
  */
-void vpServo::setServo(const vpServoType &servoType)
+void vpServo::setServo(const vpServoType &servo_type)
 {
-  this->servoType = servoType ;
+  this->servoType = servo_type ;
 
   if ((servoType==EYEINHAND_CAMERA) ||(servoType==EYEINHAND_L_cVe_eJe))
     signInteractionMatrix = 1 ;
@@ -424,7 +424,7 @@ void
 /*!
   Add a new set of 2 features \f$\bf s\f$ and \f${\bf s}^*\f$ in the task.
 
-  \param s : Current visual feature denoted \f$\bf s\f$.
+  \param s_cur : Current visual feature denoted \f$\bf s\f$.
   \param s_star : Desired visual feature denoted \f${\bf s}^*\f$.
   \param select : Feature selector. By default all the features in \e s and \e s_star are used,
   but is is possible to specify which one is used in case of multiple features.
@@ -446,9 +446,9 @@ void
   \endcode
 
   */
-void vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int select)
+void vpServo::addFeature(vpBasicFeature& s_cur, vpBasicFeature &s_star, unsigned int select)
 {
-  featureList.push_back( &s );
+  featureList.push_back( &s_cur );
   desiredFeatureList.push_back( &s_star );
   featureSelectionList.push_back( select );
 }
@@ -456,7 +456,7 @@ void vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int
 /*!
   Add a new features \f$\bf s\f$ in the task. The desired visual feature denoted \f${\bf s}^*\f$ is equal to zero.
 
-  \param s : Current visual feature denoted \f$\bf s\f$.
+  \param s_cur : Current visual feature denoted \f$\bf s\f$.
   \param select : Feature selector. By default all the features in \e s are used,
   but is is possible to specify which one is used in case of multiple features.
 
@@ -476,9 +476,9 @@ void vpServo::addFeature(vpBasicFeature& s, vpBasicFeature &s_star, unsigned int
   task.addFeature(s, vpFeatureThetaU::selectTUx);
   \endcode
   */
-void vpServo::addFeature(vpBasicFeature& s, unsigned int select)
+void vpServo::addFeature(vpBasicFeature& s_cur, unsigned int select)
 {
-  featureList.push_back( &s );
+  featureList.push_back( &s_cur );
 
   // in fact we have a problem with s_star that is not defined
   // by the end user.
@@ -495,7 +495,7 @@ void vpServo::addFeature(vpBasicFeature& s, unsigned int select)
   // vpServo must deallocate the memory (see ~vpServo and kill() )
 
   vpBasicFeature *s_star ;
-  s_star = s.duplicate()  ;
+  s_star = s_cur.duplicate()  ;
 
   s_star->init() ;
   s_star->setDeallocate(vpBasicFeature::vpServo)  ;
@@ -519,10 +519,10 @@ unsigned int vpServo::getDimension() const
   return dim;
 }
 
-void vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
+void vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrix_type,
                                        const vpServoInversionType &interactionMatrixInversion)
 {
-  this->interactionMatrixType = interactionMatrixType ;
+  this->interactionMatrixType = interactionMatrix_type ;
   this->inversionType = interactionMatrixInversion ;
 }
 

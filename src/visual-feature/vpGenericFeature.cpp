@@ -97,28 +97,28 @@ vpGenericFeature::vpGenericFeature()
 /*!
   Constructor of the class you have to use. The feature table is initilialized with the good dimension.
 
-  \param dim_s : Dimension of the feature. It corresponds to the number of features you want to create.
+  \param dimension_gen_s : Dimension of the generic feature. It corresponds to the number of features you want to create.
 */
-vpGenericFeature::vpGenericFeature(unsigned int dim_s)
+vpGenericFeature::vpGenericFeature(unsigned int dimension_gen_s)
   : L(), err(), errorStatus(errorNotInitalized)
 {
-  this->dim_s = dim_s ;
-  s.resize(dim_s) ;
+  this->dim_s = dimension_gen_s ;
+  s.resize(dimension_gen_s) ;
 }
 
 /*!
 
   Set the error vector \f$(s-s*)\f$.
 
-  \param error : Error vector \f$(s-s*)\f$.
+  \param error_vector : Error vector \f$(s-s*)\f$.
 
   \exception vpFeatureException::sizeMismatchError : If the size of
   the error vector is bad.
 */
 void
-vpGenericFeature::setError(vpColVector &error)
+vpGenericFeature::setError(const vpColVector &error_vector)
 {
-  if (error.getRows() != dim_s)
+  if (error_vector.getRows() != dim_s)
   {
     vpERROR_TRACE("size mismatch between error dimension"
 		"and feature dimension");
@@ -128,7 +128,7 @@ vpGenericFeature::setError(vpColVector &error)
 
   }
   errorStatus = errorInitialized ;
-  err = error ;
+  err = error_vector ;
 }
 
 
@@ -449,80 +449,74 @@ vpGenericFeature::interaction(const unsigned int select)
 /*!
   \brief set the value of the interaction matrix.
 
-  \param L : The matrix corresponding to the interaction matrix you computed.
+  \param L_ : The matrix corresponding to the interaction matrix you computed.
 
   \exception an exception is thrown if the number of row of the interaction
   matrix is different from the dimension of the visual feature as specified
   in the constructor
 */
 void
-vpGenericFeature::setInteractionMatrix(const vpMatrix &L)
+vpGenericFeature::setInteractionMatrix(const vpMatrix &L_)
 {
-
-  if (L.getRows() != dim_s)
+  if (L_.getRows() != dim_s)
   {
-    std::cout << L.getRows() <<"  " << dim_s << std::endl ;;
+    std::cout << L_.getRows() <<"  " << dim_s << std::endl ;;
     vpERROR_TRACE("size mismatch between interaction matrix size "
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between interaction matrix size "
 			     "and feature dimension"));
-
   }
 
-  this->L = L ;
-
+  this->L = L_ ;
 }
 
 /*!
   \brief set the value of all the features.
 
-  \param s : It is a vector containing the value of the visual features.
+  \param s_vector : It is a vector containing the value of the visual features.
 
   \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
 void
-vpGenericFeature::set_s(const vpColVector &s)
+vpGenericFeature::set_s(const vpColVector &s_vector)
 {
 
-  if (s.getRows() != dim_s)
+  if (s_vector.getRows() != dim_s)
   {
     vpERROR_TRACE("size mismatch between s dimension"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s dimension"
 			     "and feature dimension"));
-
   }
-  this->s = s ;
+  this->s = s_vector ;
 }
 
 
 /*!
   \brief get the value of all the features.
 
-  \param s : It is a vector which will contain the value of the visual features.
+  \param s_vector : It is a vector which will contain the value of the visual features.
 
   \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
 void
-vpGenericFeature::get_s(vpColVector &s) const
+vpGenericFeature::get_s(vpColVector &s_vector) const
 {
-
-  if (s.getRows() != dim_s)
+  if (s_vector.getRows() != dim_s)
   {
     vpERROR_TRACE("size mismatch between s dimension"
 		"and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
 			     "size mismatch between s dimension"
 			     "and feature dimension"));
-
   }
-  s = this->s ;
+  s_vector = this->s ;
 }
 
 

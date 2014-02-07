@@ -299,10 +299,10 @@ public :
   void print(std::ostream& os) { os << *this << std::endl ; }
 
   /*!
-    Initialize the dot coordinates with \e cog.
+    Initialize the dot coordinates with \e ip.
   */
-  inline void setCog(const vpImagePoint &cog) {
-    this->cog = cog;
+  inline void setCog(const vpImagePoint &ip) {
+    this->cog = ip;
   }
 
   /*!
@@ -324,13 +324,13 @@ public :
   /*!
     Set the type of connexity: 4 or 8.
   */
-  void setConnexity(vpConnexityType connexityType) {this->connexityType = connexityType; };
+  void setConnexity(vpConnexityType type) {this->connexityType = type; };
   void setMaxDotSize(double percentage) ;
-  void setGrayLevelMin( const unsigned int &gray_level_min ) {
-    this->gray_level_min = gray_level_min;
+  void setGrayLevelMin( const unsigned int &level_min ) {
+    this->gray_level_min = level_min;
   };
-  void setGrayLevelMax( const unsigned int &gray_level_max ) {
-    this->gray_level_max = gray_level_max;
+  void setGrayLevelMax( const unsigned int &level_max ) {
+    this->gray_level_max = level_max;
   };
   void setGrayLevelPrecision( const double & grayLevelPrecision );
 
@@ -353,7 +353,7 @@ public :
 
     \sa setGraphics()
     */
-  void setGraphicsThickness(unsigned int thickness) {this->thickness = thickness;};
+  void setGraphicsThickness(unsigned int t) {this->thickness = t;};
 
   void track(const vpImage<unsigned char> & I) ;
   void track(const vpImage<unsigned char> & I, vpImagePoint &ip) ;

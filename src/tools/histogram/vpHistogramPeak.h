@@ -85,43 +85,43 @@ public :
     Set the peak gray \e level. To set the number of pixels having this
     gray level use setValue().
 
-    \param level : Location of the peak or gray \e level.
+    \param lvl : Location of the peak or gray \e level.
 
     \sa setValue(), set()
 
   */
-  inline void setLevel(unsigned char level)
+  inline void setLevel(unsigned char lvl)
     {
-      this->level = level;
+      this->level = lvl;
     };
   /*!
 
     Set the peak number of pixels having a same gray level. To set the
     gray level of this peak use setLevel().
 
-    \param value    : Number of pixels having the same location or gray level.
+    \param val    : Number of pixels having the same location or gray level.
 
     \sa setLevel(), set()
 
   */
-  inline void setValue(unsigned value) 
+  inline void setValue(unsigned val)
     {
-      this->value = value; 
+      this->value = val;
     };
   /*!
 
     Set the peak gray \e level and number of pixels at this gray level.
 
-    \param level : Location of the peak or gray level.
-    \param value : Number of pixels having the same location or gray level.
+    \param lvl : Location of the peak or gray level.
+    \param val : Number of pixels having the same location or gray level.
 
     \sa setLevel(), setValue()
 
   */
-  inline void set(unsigned char level, unsigned value)
+  inline void set(unsigned char lvl, unsigned val)
     {
-      this->level = level;
-      this->value = value; 
+      this->level = lvl;
+      this->value = val;
     };
       
   /*!

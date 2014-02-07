@@ -175,9 +175,9 @@ public:
 
       Compared to the classical equation of an ellipse, \f$ K_0 \f$ is equal to 1 and \f$ K_1 \f$ is equal to 0.
 
-      \param circle : Set to true if you want to track a circle.
+      \param is_circle : Set to true if you want to track a circle.
   */
-  void setCircle(bool circle) { this->circle = circle ; }
+  void setCircle(bool is_circle) { this->circle = is_circle ; }
   
   /*!
     Gets the 0 order moment \f$ m_{00} \f$ which represents the area of the ellipse.

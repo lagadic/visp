@@ -69,6 +69,8 @@
 #include <sstream>
 #include <float.h>
 
+bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
+
 /*!
   Basic constructor
 */
@@ -122,12 +124,12 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
 /*! 
   Set the moving edge parameters.
   
-  \param me : an instance of vpMe containing all the desired parameters
+  \param p_me : an instance of vpMe containing all the desired parameters
 */
 void
-vpMbEdgeTracker::setMovingEdge(const vpMe &me)
+vpMbEdgeTracker::setMovingEdge(const vpMe &p_me)
 {
-  this->me = me;
+  this->me = p_me;
 
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -251,8 +253,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       double fac = 1;
       if (iter == 0)
       {
-        for(std::list<int>::const_iterator it = l->Lindex_polygon.begin(); it!=l->Lindex_polygon.end(); ++it){
-          int index = *it;
+        for(std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
+          int index = *itindex;
           if (l->hiddenface->isAppearing((unsigned int)index))
           {
             fac = 0.2;
@@ -723,8 +725,8 @@ vpMbEdgeTracker::testTracking()
     if (l->isVisible() && l->meline != NULL)
     {
       nbExpectedPoint += (int)l->meline->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=l->meline->getMeList().begin(); it!=l->meline->getMeList().end(); ++it){
-        vpMeSite pix = *it;
+      for(std::list<vpMeSite>::const_iterator itme=l->meline->getMeList().begin(); itme!=l->meline->getMeList().end(); ++itme){
+        vpMeSite pix = *itme;
         if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
@@ -738,14 +740,14 @@ vpMbEdgeTracker::testTracking()
     if (cy->meline1 !=NULL && cy->meline2 != NULL)
     {
       nbExpectedPoint += (int)cy->meline1->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=cy->meline1->getMeList().begin(); it!=cy->meline1->getMeList().end(); ++it){
-        vpMeSite pix = *it;
+      for(std::list<vpMeSite>::const_iterator itme1=cy->meline1->getMeList().begin(); itme1!=cy->meline1->getMeList().end(); ++itme1){
+        vpMeSite pix = *itme1;
         if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
       nbExpectedPoint += (int)cy->meline2->expecteddensity;
-      for(std::list<vpMeSite>::const_iterator it=cy->meline2->getMeList().begin(); it!=cy->meline2->getMeList().end(); ++it){
-        vpMeSite pix = *it;
+      for(std::list<vpMeSite>::const_iterator itme2=cy->meline2->getMeList().begin(); itme2!=cy->meline2->getMeList().end(); ++itme2){
+        vpMeSite pix = *itme2;
         if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
@@ -1060,16 +1062,16 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   Display the 3D model from a given position of the camera.
 
   \param I : The image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
 */
 void
-vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-											const vpColor& col,
-											const unsigned int thickness, const bool displayFullModel)
+vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_,
+                         const vpCameraParameters &camera, const vpColor& col,
+                         const unsigned int thickness, const bool displayFullModel)
 {
   vpMbtDistanceLine *l ;
   
@@ -1077,11 +1079,11 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
         l = *it;
-        l->display(I,cMo, cam, col, thickness, displayFullModel);
+        l->display(I,cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo, cam, col, thickness);
+        (*it)->display(I, cMo_, camera, col, thickness);
       }
 
       break ; //displaying model on one scale only
@@ -1090,7 +1092,7 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(cMo);
+    faces.displayOgre(cMo_);
 #endif
 }
 
@@ -1098,16 +1100,16 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
   Display the 3D model from a given position of the camera.
 
   \param I : The image.
-  \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param cMo_ : Pose used to project the 3D model into the image.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
   \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
 */
 void
-vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-											const vpColor& col,
-											const unsigned int thickness, const bool displayFullModel)
+vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_,
+                         const vpCameraParameters &camera, const vpColor& col,
+                         const unsigned int thickness, const bool displayFullModel)
 {
   vpMbtDistanceLine *l ;
   
@@ -1115,11 +1117,11 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cM
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
         l = *it;
-        l->display(I, cMo, cam, col, thickness, displayFullModel) ;
+        l->display(I, cMo_, camera, col, thickness, displayFullModel) ;
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo, cam, col, thickness) ;
+        (*it)->display(I, cMo_, camera, col, thickness) ;
       }
 
       break ; //displaying model on one scale only
@@ -1128,7 +1130,7 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cM
   
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
-    faces.displayOgre(cMo);
+    faces.displayOgre(cMo_);
 #endif
 }
 
@@ -1150,8 +1152,8 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     l = *it;
     bool isvisible = false ;
 
-    for(std::list<int>::const_iterator it=l->Lindex_polygon.begin(); it!=l->Lindex_polygon.end(); ++it){
-      int index = *it;
+    for(std::list<int>::const_iterator itindex=l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
+      int index = *itindex;
       if (index ==-1) isvisible =true ;
       else
       {
@@ -1678,10 +1680,11 @@ vpMbEdgeTracker::resetTracker()
   
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
-  \param cMo : The new vpHomogeneousMatrix between the camera and the new model
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
 */
 void
-vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo)
+vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
+                             const vpHomogeneousMatrix& cMo_)
 {
   this->cMo.setIdentity();
   vpMbtDistanceLine *l;
@@ -1715,7 +1718,7 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
   nbvisiblepolygone = 0;
 
   loadModel(cad_name);
-  initFromPose(I, cMo);
+  initFromPose(I, cMo_);
 }
 
 /*!
@@ -1741,8 +1744,8 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
     l = *it;
     if (l->isVisible() && l->meline != NULL)
     {
-      for(std::list<vpMeSite>::const_iterator it=l->meline->getMeList().begin(); it!=l->meline->getMeList().end(); ++it){
-        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator itme=l->meline->getMeList().begin(); itme!=l->meline->getMeList().end(); ++itme){
+        if (itme->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
     }
   }
@@ -1752,11 +1755,11 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
     cy = *it;
     if (cy->meline1 != NULL || cy->meline2 != NULL)
     {
-      for(std::list<vpMeSite>::const_iterator it=cy->meline1->getMeList().begin(); it!=cy->meline1->getMeList().end(); ++it){
-        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator itme1=cy->meline1->getMeList().begin(); itme1!=cy->meline1->getMeList().end(); ++itme1){
+        if (itme1->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
-      for(std::list<vpMeSite>::const_iterator it=cy->meline2->getMeList().begin(); it!=cy->meline2->getMeList().end(); ++it){
-        if (it->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
+      for(std::list<vpMeSite>::const_iterator itme2=cy->meline2->getMeList().begin(); itme2!=cy->meline2->getMeList().end(); ++itme2){
+        if (itme2->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
     }
   }
@@ -1813,18 +1816,18 @@ vpMbEdgeTracker::getNbPolygon() const
   
   \warning At least one level must be activated. 
   
-  \param scales : The vector describing the levels to use.
+  \param scale : The vector describing the levels to use.
 */
 void 
-vpMbEdgeTracker::setScales(const std::vector<bool>& scales)
+vpMbEdgeTracker::setScales(const std::vector<bool>& scale)
 {
   unsigned int nbActivatedLevels = 0;
-  for (unsigned int i = 0; i < scales.size(); i += 1){
-    if(scales[i]){
+  for (unsigned int i = 0; i < scale.size(); i += 1){
+    if(scale[i]){
       nbActivatedLevels++;
     }
   }
-  if((scales.size() < 1) || (nbActivatedLevels == 0)){
+  if((scale.size() < 1) || (nbActivatedLevels == 0)){
     vpERROR_TRACE(" !! WARNING : must use at least one level for the tracking. Use the global one");
     this->scales.resize(0);
     this->scales.push_back(true);
@@ -1834,9 +1837,9 @@ vpMbEdgeTracker::setScales(const std::vector<bool>& scales)
     cylinders[0].clear();
   }
   else{
-    this->scales = scales;
-    lines.resize(scales.size());
-    cylinders.resize(scales.size());
+    this->scales = scale;
+    lines.resize(scale.size());
+    cylinders.resize(scale.size());
     for (unsigned int i = 0; i < lines.size(); i += 1){
       lines[i].clear();
       cylinders[i].clear();

@@ -75,7 +75,6 @@ class VISP_EXPORT vpPlane
 #endif
   double A,B,C,D ;
 
-
 public:
   vpPlane() ;
   vpPlane(const vpPlane& P) ;
@@ -88,21 +87,21 @@ public:
 
   // SET the parameter
   /*! Set plane parameter A. */
-  inline void setA(const double A) {   this->A = A ; }
+  inline void setA(const double a) {   this->A = a ; }
   /*! Set plane parameter B. */
-  inline void setB(const double B) {   this->B = B ; }
+  inline void setB(const double b) {   this->B = b ; }
   /*! Set plane parameter C. */
-  inline void setC(const double C) {   this->C = C ; }
+  inline void setC(const double c) {   this->C = c ; }
   /*! Set plane parameter D. */
-  inline void setD(const double D) {   this->D = D ; }
+  inline void setD(const double d) {   this->D = d ; }
   /*! Set plane parameters A, B, C, D. */
-  inline void setABCD(const double A, const double B, 
-		      const double C, const double D) 
+  inline void setABCD(const double a, const double b,
+                      const double c, const double d)
   {
-    this->A = A;
-    this->B = B;
-    this->C = C;
-    this->D = D; 
+    this->A = a;
+    this->B = b;
+    this->C = c;
+    this->D = d;
   }
 
   vpPlane& operator =(const vpPlane& f) ;

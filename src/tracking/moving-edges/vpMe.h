@@ -166,9 +166,9 @@ public:
   /*!
     Set the minimum image contrast allowed to detect a contour.
     
-    \param mu1 : new mu1.
+    \param mu_1 : new mu1.
   */
-  void setMu1(const double &mu1) { this->mu1 = mu1  ; }
+  void setMu1(const double &mu_1) { this->mu1 = mu_1  ; }
   
   /*!
     Get the minimum image contrast allowed to detect a contour.
@@ -180,9 +180,9 @@ public:
   /*!
     Set the maximum image contrast allowed to detect a contour.
     
-    \param mu2 : new mu2.
+    \param mu_2 : new mu2.
   */
-  void setMu2(const double &mu2) { this->mu2 = mu2  ; }
+  void setMu2(const double &mu_2) { this->mu2 = mu_2  ; }
   
   /*!
     Get the maximum image contrast allowed to detect a contour.

@@ -487,12 +487,13 @@ vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const v
 
   \param I : The image.
   \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
+vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
+                               const vpCameraParameters&camera, const vpColor col, const unsigned int thickness)
 {
 	// Perspective projection
 	p1->changeFrame(cMo);
@@ -517,8 +518,8 @@ vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneo
   double rho2,theta2;
 
   // Meters to pixels conversion
-  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+  vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
+  vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
 
 	// Determine intersections between circles and limbos
 	double i11,i12,i21,i22,j11,j12,j21,j22;
@@ -546,12 +547,13 @@ vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneo
 
   \param I : The image.
   \param cMo : Pose used to project the 3D model into the image.
-  \param cam : The camera parameters.
+  \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
 */
 void
-vpMbtDistanceCylinder::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatrix &cMo, const vpCameraParameters&cam, const vpColor col, const unsigned int thickness)
+vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+                               const vpCameraParameters &camera, const vpColor col, const unsigned int thickness)
 {
 	// Perspective projection
 	p1->changeFrame(cMo);
@@ -576,8 +578,8 @@ vpMbtDistanceCylinder::display(const vpImage<vpRGBa>&I, const vpHomogeneousMatri
   double rho2,theta2;
 
   // Meters to pixels conversion
-  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+  vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
+  vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
 
 	// Determine intersections between circles and limbos
 	double i11,i12,i21,i22,j11,j12,j21,j22;

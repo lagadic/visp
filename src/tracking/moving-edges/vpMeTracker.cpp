@@ -101,11 +101,11 @@ vpMeTracker::~vpMeTracker()
 }
 
 vpMeTracker&
-vpMeTracker::operator = (vpMeTracker& p)
+vpMeTracker::operator = (vpMeTracker& p_me)
 {
-  list = p.list;
-  me = p.me;
-  selectDisplay = p.selectDisplay ;
+  list = p_me.list;
+  me = p_me.me;
+  selectDisplay = p_me.selectDisplay ;
 
   return *this;
 }
@@ -332,8 +332,8 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
   }
 #endif
   for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-    vpMeSite p = *it;
-    p.display(I);
+    vpMeSite p_me = *it;
+    p_me.display(I);
   }
 }
 

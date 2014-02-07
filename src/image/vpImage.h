@@ -135,7 +135,7 @@ public:
   //! set the size of the image
   void init(unsigned int height, unsigned int width, Type value) ;
   //! set the size of the image
-  void resize(const unsigned int height, const unsigned int width) ;
+  void resize(const unsigned int h, const unsigned int w) ;
   //! destructor
   void destroy() ;
 
@@ -333,21 +333,23 @@ private:
 /*!
   \brief Image initialisation
 
-  Allocate memory for an [height x width] image
+  Allocate memory for an [h x w] image.
 
-  Set all the element of the bitmap to value
+  \param w : Image width.
+  \param h : Image height.
+  \param value : Set all the element of the bitmap to \e value.
 
   \exception vpException::memoryAllocationError
 
-  \sa vpImage::init(height, width)
+  \sa vpImage::init(h, w)
 */
 template<class Type>
 void
-vpImage<Type>::init(unsigned int height, unsigned int width, Type value)
+vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
   try
   {
-    init(height,width) ;
+    init(h,w) ;
   }
   catch(vpException me)
   {
@@ -363,7 +365,10 @@ vpImage<Type>::init(unsigned int height, unsigned int width, Type value)
 /*!
   \brief Image initialization
 
-  Allocate memory for an [height x width] image
+  Allocate memory for an [h x w] image.
+
+  \param w : Image width.
+  \param h : Image height.
 
   Element of the bitmap are not initialized
 
@@ -376,10 +381,10 @@ vpImage<Type>::init(unsigned int height, unsigned int width, Type value)
 */
 template<class Type>
 void
-vpImage<Type>::init(unsigned int height, unsigned int width)
+vpImage<Type>::init(unsigned int h, unsigned int w)
 {
 
-  if (height != this->height) {
+  if (h != this->height) {
     if (row != NULL)  {
       vpDEBUG_TRACE(10,"Destruction row[]");
       delete [] row;
@@ -387,7 +392,7 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
     }
   }
 
-  if ((height != this->height) || (width != this->width))
+  if ((h != this->height) || (w != this->width))
   {
     if (bitmap != NULL) {
       vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
@@ -396,11 +401,10 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
     }
   }
 
-  this->width = width ;
-  this->height = height ;
+  this->width = w ;
+  this->height = h;
 
   npixels=width*height;
-
 
   if (bitmap == NULL)  bitmap = new  Type[npixels] ;
 
@@ -429,9 +433,12 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
 /*!
   \brief Constructor
 
-  Allocate memory for an [height x width] image
+  Allocate memory for an [h x w] image.
 
-  Element of the bitmap are set to zero
+  \param w : Image width.
+  \param h : Image height.
+
+  Element of the bitmap are set to zero.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
@@ -442,12 +449,12 @@ vpImage<Type>::init(unsigned int height, unsigned int width)
   \sa vpImage::init(height, width)
 */
 template<class Type>
-vpImage<Type>::vpImage(unsigned int height, unsigned int width)
+vpImage<Type>::vpImage(unsigned int h, unsigned int w)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
   try
   {
-    init(height,width,0) ;
+    init(h,w,0) ;
   }
   catch(...)
   {
@@ -458,9 +465,11 @@ vpImage<Type>::vpImage(unsigned int height, unsigned int width)
 /*!
   \brief Constructor
 
-  Allocate memory for an [height x width] image
+  Allocate memory for an [height x width] image.
 
-  set all the element of the bitmap to value
+  \param w : Image width.
+  \param h : Image height.
+  \param value : Set all the element of the bitmap to value.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
@@ -471,12 +480,12 @@ vpImage<Type>::vpImage(unsigned int height, unsigned int width)
   \sa vpImage::init(height, width, value)
 */
 template<class Type>
-vpImage<Type>::vpImage (unsigned int height, unsigned int width, Type value)
+vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
   try
   {
-    init(height,width,value) ;
+    init(h,w,value) ;
   }
   catch(vpException me)
   {
@@ -505,6 +514,9 @@ vpImage<Type>::vpImage()
 
   Allocate memory for an [height x width] image
 
+  \param w : Image width.
+  \param h : Image height.
+
   Element of the bitmap are not initialized
 
   If the image has been already initialized, memory allocation is done
@@ -517,11 +529,11 @@ vpImage<Type>::vpImage()
 */
 template<class Type>
 void
-vpImage<Type>::resize(unsigned int height, unsigned int width)
+vpImage<Type>::resize(unsigned int h, unsigned int w)
 {
   try
   {
-    init(height, width) ;
+    init(h, w) ;
   }
   catch(vpException me)
   {

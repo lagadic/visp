@@ -103,12 +103,12 @@ vpFeaturePoint::vpFeaturePoint() : Z(1.)
 /*!
   Set the value of \f$ Z \f$ which represents the depth in the 3D camera frame.
 
-  \param Z : \f$ Z \f$ value to set.
+  \param Z_ : \f$ Z \f$ value to set.
 */
 void
-vpFeaturePoint::set_Z(const double Z)
+vpFeaturePoint::set_Z(const double Z_)
 {
-    this->Z = Z ;
+    this->Z = Z_ ;
     flags[2] = true;
 }
 
@@ -184,18 +184,18 @@ vpFeaturePoint::get_y() const
   parameters of the visual feature \f$ s \f$. \f$ Z \f$ is the 3D coordinate in the camera frame
   representing the depth.
 
-  \param x : \f$ x \f$ value to set.
-  \param y : \f$ y \f$ value to set.
-  \param Z : \f$ Z \f$ value to set.
+  \param x_ : \f$ x \f$ value to set.
+  \param y_ : \f$ y \f$ value to set.
+  \param Z_ : \f$ Z \f$ value to set.
 */
 void
-vpFeaturePoint::set_xyZ(const double x,
-			const double y,
-			const double Z)
+vpFeaturePoint::set_xyZ(const double x_,
+      const double y_,
+      const double Z_)
 {
-  set_x(x) ;
-  set_y(y) ;
-  set_Z(Z) ;
+  set_x(x_) ;
+  set_y(y_) ;
+  set_Z(Z_) ;
   for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
 
@@ -274,23 +274,23 @@ vpFeaturePoint::interaction(const unsigned int select)
     resetFlags();
   }
 
-  double x = get_x() ;
-  double y = get_y() ;
-  double Z = get_Z() ;
+  double x_ = get_x() ;
+  double y_ = get_y() ;
+  double Z_ = get_Z() ;
 
-  if (Z < 0)
+  if (Z_ < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
-  if (fabs(Z) < 1e-6)
+  if (fabs(Z_) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -300,12 +300,12 @@ vpFeaturePoint::interaction(const unsigned int select)
   {
     vpMatrix Lx(1,6) ; Lx = 0;
 
-    Lx[0][0] = -1/Z  ;
+    Lx[0][0] = -1/Z_  ;
     Lx[0][1] = 0 ;
-    Lx[0][2] = x/Z ;
-    Lx[0][3] = x*y ;
-    Lx[0][4] = -(1+x*x) ;
-    Lx[0][5] = y ;
+    Lx[0][2] = x_/Z_ ;
+    Lx[0][3] = x_*y_ ;
+    Lx[0][4] = -(1+x_*x_) ;
+    Lx[0][5] = y_ ;
 
     L = vpMatrix::stackMatrices(L,Lx) ;
   }
@@ -315,11 +315,11 @@ vpFeaturePoint::interaction(const unsigned int select)
     vpMatrix Ly(1,6) ; Ly = 0;
 
     Ly[0][0] = 0 ;
-    Ly[0][1]  = -1/Z ;
-    Ly[0][2] = y/Z ;
-    Ly[0][3] = 1+y*y ;
-    Ly[0][4] = -x*y ;
-    Ly[0][5] = -x ;
+    Ly[0][1]  = -1/Z_ ;
+    Ly[0][2] = y_/Z ;
+    Ly[0][3] = 1+y_*y_ ;
+    Ly[0][4] = -x_*y_ ;
+    Ly[0][5] = -x_ ;
 
     L = vpMatrix::stackMatrices(L,Ly) ;
   }
@@ -434,32 +434,32 @@ vpFeaturePoint::print(const unsigned int select ) const
 
   See the vpFeaturePoint class description for more details about \f$ x \f$ and \f$ y \f$.
 
-  \param x : The \f$ x \f$ parameter.
-  \param y : The \f$ y \f$ parameter.
-  \param Z : The \f$ Z \f$ parameter.
+  \param x_ : The \f$ x \f$ parameter.
+  \param y_ : The \f$ y \f$ parameter.
+  \param Z_ : The \f$ Z \f$ parameter.
 */
 void
-vpFeaturePoint::buildFrom(const double x, const double y, const double Z)
+vpFeaturePoint::buildFrom(const double x_, const double y_, const double Z_)
 {
 
-  s[0] = x ;
-  s[1] = y ;
+  s[0] = x_ ;
+  s[1] = y_ ;
 
-  this->Z = Z  ;
+  this->Z = Z_  ;
 
-  if (Z < 0)
+  if (Z_ < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
-  if (fabs(Z) < 1e-6)
+  if (fabs(Z_) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;

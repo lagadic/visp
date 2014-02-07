@@ -119,9 +119,9 @@ class VISP_EXPORT vpMbtDistanceLine
     /*!
      Get the camera paramters.
    
-     \param cam : The vpCameraParameters used to store the camera parameters.
+     \param camera : The vpCameraParameters used to store the camera parameters.
     */
-    inline void getCameraParameters(vpCameraParameters& cam) const {cam = this->cam;}
+    inline void getCameraParameters(vpCameraParameters& camera) const {camera = this->cam;}
     
     /*!
       Get the index of the line.
@@ -167,9 +167,9 @@ class VISP_EXPORT vpMbtDistanceLine
     
     /*!
      Set the camera paramters.
-     \param cam : The camera parameters.
+     \param camera : The camera parameters.
     */
-    inline void setCameraParameters(const vpCameraParameters& cam) {this->cam = cam;}
+    inline void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
     
     /*!
       Set the index of the line.
@@ -181,25 +181,25 @@ class VISP_EXPORT vpMbtDistanceLine
     /*!
      Set the mean weight of the line.
    
-     \param wmean : The mean weight of the line.
+     \param w_mean : The mean weight of the line.
     */
-    inline void setMeanWeight(const double wmean) {this->wmean = wmean;}
+    inline void setMeanWeight(const double w_mean) {this->wmean = w_mean;}
     
     void setMovingEdge(vpMe *Me);
     
     /*!
       Set the name of the line.
       
-      \param name : The name of the line.
+      \param line_name : The name of the line.
     */
-    inline void setName(const std::string name) {this->name = name;}
+    inline void setName(const std::string line_name) {this->name = line_name;}
     
     /*!
       Set the name of the line.
       
-      \param name : The name of the line.
+      \param line_name : The name of the line.
     */
-    inline void setName(const char* name) {this->name = name;}
+    inline void setName(const char* line_name) {this->name = std::string(line_name);}
 
     /*!
       Set a boolean parameter to indicates if the line is visible in the image or not.
@@ -213,7 +213,7 @@ class VISP_EXPORT vpMbtDistanceLine
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   private:
-    void belongToPolygon(int index) { Lindex_polygon.push_back(index); }
+    void belongToPolygon(int index_) { Lindex_polygon.push_back(index_); }
     void project(const vpHomogeneousMatrix &cMo);
     void setFace( vpMbHiddenFaces<vpMbtPolygon> *_hiddenface) { hiddenface = _hiddenface ; }
     

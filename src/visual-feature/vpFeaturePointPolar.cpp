@@ -142,9 +142,9 @@ vpFeaturePointPolar::set_theta(const double theta)
 
 */
 void
-vpFeaturePointPolar::set_Z(const double Z)
+vpFeaturePointPolar::set_Z(const double Z_)
 {
-    this->Z = Z ;
+    this->Z = Z_ ;
     flags[2] = true;
 }
 
@@ -154,18 +154,18 @@ vpFeaturePointPolar::set_Z(const double Z)
   \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
   the image point.
 
-  \param Z : 3D depth of the point in the camera frame.
+  \param Z_ : 3D depth of the point in the camera frame.
   
   \sa set_rho(), set_theta(), set_Z()
 */
 void
 vpFeaturePointPolar::set_rhoThetaZ(const double rho,
 					 const double theta,
-					 const double Z)
+           const double Z_)
 {
   set_rho(rho) ;
   set_theta(theta) ;
-  set_Z(Z) ;
+  set_Z(Z_) ;
 
   for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
 }
@@ -311,10 +311,10 @@ vpFeaturePointPolar::interaction(const unsigned int select)
 
   double rho   = get_rho() ;
   double theta = get_theta() ;
-  double Z     = get_Z() ;
+  double Z_    = get_Z() ;
 
-  double c = cos(theta);
-  double s = sin(theta);
+  double c_ = cos(theta);
+  double s_ = sin(theta);
 
   double rho2 = rho*rho;
 
@@ -326,20 +326,19 @@ vpFeaturePointPolar::interaction(const unsigned int select)
 			     "rho polar coordinate of the point is null")) ;
   }
 
-
-  if (Z < 0)
+  if (Z_ < 0)
   {
     vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point is behind the camera ")) ;
   }
 
-  if (fabs(Z) < 1e-6)
+  if (fabs(Z_) < 1e-6)
   {
     vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+    std::cout <<"Z = " << Z_ << std::endl ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
 			     "Point Z coordinates is null")) ;
@@ -349,11 +348,11 @@ vpFeaturePointPolar::interaction(const unsigned int select)
   {
     vpMatrix Lrho(1,6) ; Lrho = 0;
 
-    Lrho[0][0] = -c/Z  ;
-    Lrho[0][1] = -s/Z ;
-    Lrho[0][2] = rho/Z ;
-    Lrho[0][3] = (1+rho2)*s ;
-    Lrho[0][4] = -(1+rho2)*c ;
+    Lrho[0][0] = -c_/Z_  ;
+    Lrho[0][1] = -s_/Z_ ;
+    Lrho[0][2] = rho/Z_ ;
+    Lrho[0][3] = (1+rho2)*s_ ;
+    Lrho[0][4] = -(1+rho2)*c_ ;
     Lrho[0][5] = 0 ;
 
 //     printf("Lrho: rho %f theta %f Z %f\n", rho, theta, Z);
@@ -366,11 +365,11 @@ vpFeaturePointPolar::interaction(const unsigned int select)
   {
     vpMatrix Ltheta(1,6) ; Ltheta = 0;
 
-    Ltheta[0][0] = s/(rho*Z) ;
-    Ltheta[0][1]  = -c/(rho*Z) ;
+    Ltheta[0][0] = s_/(rho*Z_) ;
+    Ltheta[0][1]  = -c_/(rho*Z_) ;
     Ltheta[0][2] = 0 ;
-    Ltheta[0][3] = c/rho ;
-    Ltheta[0][4] = s/rho ;
+    Ltheta[0][3] = c_/rho ;
+    Ltheta[0][4] = s_/rho ;
     Ltheta[0][5] = -1 ;
 
 //     printf("Ltheta: rho %f theta %f Z %f\n", rho, theta, Z);
@@ -513,7 +512,7 @@ vpFeaturePointPolar::print(const unsigned int select ) const
   \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
   the image point.
 
-  \param Z : 3D depth of the point in the camera frame.
+  \param Z_ : 3D depth of the point in the camera frame.
 
   \exception vpFeatureException::badInitializationError: If the depth
   (\f$Z\f$ coordinate) is negative. That means that the 3D point is
@@ -525,13 +524,13 @@ vpFeaturePointPolar::print(const unsigned int select ) const
 */
 void
 vpFeaturePointPolar::buildFrom(const double rho, const double theta, 
-				     const double Z)
+             const double Z_)
 {
 
   s[0] = rho ;
   s[1] = theta ;
 
-  this->Z = Z  ;
+  this->Z = Z_  ;
 
   if (Z < 0)
   {

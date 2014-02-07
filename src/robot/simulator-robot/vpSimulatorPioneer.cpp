@@ -99,13 +99,13 @@ vpSimulatorPioneer::~vpSimulatorPioneer()
   Get the robot jacobian expressed in the end-effector frame.
   The jacobian expression is given in vpPioneer class.
 
-  \param eJe : A 6 by 2 matrix representing the robot jacobian \f$ {^e}{\bf
+  \param _eJe : A 6 by 2 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
 void
-vpSimulatorPioneer::get_eJe(vpMatrix &eJe)
+vpSimulatorPioneer::get_eJe(vpMatrix &_eJe)
 {
-  eJe = vpUnicycle::get_eJe();
+  _eJe = vpUnicycle::get_eJe();
 }
 
 

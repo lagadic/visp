@@ -124,26 +124,27 @@ void vpTemplateTrackerWarpHomography::warpX(const vpColVector &vX,vpColVector &v
     throw(vpTrackingException(vpTrackingException::fatalError,"Division by zero in vpTemplateTrackerWarpHomography::warpX()"));
 }
 
-void vpTemplateTrackerWarpHomography::dWarp(const vpColVector &X1,const vpColVector &X2,const vpColVector &/*ParamM*/,vpMatrix &dW)
+void vpTemplateTrackerWarpHomography::dWarp(const vpColVector &X1,const vpColVector &X2,const vpColVector &/*ParamM*/,vpMatrix &dW_)
 {
   double j=X1[0];
   double i=X1[1];
-  dW=0;
-  dW[0][0]=j*denom;
-  dW[0][2]=-j*X2[0]*denom;
-  dW[0][3]=i*denom;
-  dW[0][5]=-i*X2[0]*denom;
-  dW[0][6]=denom;
+  dW_=0;
+  dW_[0][0]=j*denom;
+  dW_[0][2]=-j*X2[0]*denom;
+  dW_[0][3]=i*denom;
+  dW_[0][5]=-i*X2[0]*denom;
+  dW_[0][6]=denom;
 
-  dW[1][1]=j*denom;
-  dW[1][2]=-j*X2[1]*denom;
-  dW[1][4]=i*denom;
-  dW[1][5]=-i*X2[1]*denom;
-  dW[1][7]=denom;
+  dW_[1][1]=j*denom;
+  dW_[1][2]=-j*X2[1]*denom;
+  dW_[1][4]=i*denom;
+  dW_[1][5]=-i*X2[1]*denom;
+  dW_[1][7]=denom;
 }
 
 /*compute dw=dw/dx*dw/dp  */
-void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &X2,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW)
+void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &X2,const vpColVector &ParamM,
+                                                 const double *dwdp0,vpMatrix &dW_)
 {
   double dwdx0,dwdx1;
   double dwdy0,dwdy1;
@@ -154,8 +155,8 @@ void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &/*X1*/,const
   dwdy1=((1.+ParamM[4])-X2[1]*ParamM[5])*denom;
   for(unsigned int i=0;i<nbParam;i++)
   {
-    dW[0][i]=dwdx0*dwdp0[i]+dwdy0*dwdp0[i+nbParam];
-    dW[1][i]=dwdx1*dwdp0[i]+dwdy1*dwdp0[i+nbParam];
+    dW_[0][i]=dwdx0*dwdp0[i]+dwdy0*dwdp0[i+nbParam];
+    dW_[1][i]=dwdx1*dwdp0[i]+dwdy1*dwdp0[i+nbParam];
   }
 }
 

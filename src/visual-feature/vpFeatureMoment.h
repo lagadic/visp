@@ -159,19 +159,20 @@ protected:
 public:
   /*!
   Initializes the feature with information about the database of moment primitives, the object plane, feature database and matrix size.
-  \param moments : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
-  \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
+  \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
   \param featureMoments : Feature database
   \param nbmatrices : If you want to create a new vpFeatureMoment implementation, your feature will often have a matrix size of n lines. You can specify the number of lines by this parameter.
   */
-  vpFeatureMoment(vpMomentDatabase& moments,double A=0.0, double B=0.0, double C=0.0,vpFeatureMomentDatabase* featureMoments=NULL,unsigned int nbmatrices=1) :
-      moment(NULL),
-        moments(moments),
-        featureMomentsDataBase(featureMoments),
-        interaction_matrices(nbmatrices),
-        A(A),B(B),C(C) {}
+  vpFeatureMoment(vpMomentDatabase& data_base,double A_=0.0, double B_=0.0, double C_=0.0,
+                  vpFeatureMomentDatabase* featureMoments=NULL,unsigned int nbmatrices=1)
+    : moment(NULL),
+      moments(data_base),
+      featureMomentsDataBase(featureMoments),
+      interaction_matrices(nbmatrices),
+      A(A_),B(B_),C(C_) {}
       virtual ~vpFeatureMoment();
 
       virtual void 	compute_interaction (void);
@@ -223,7 +224,9 @@ Duplication is mostly used internally in ViSP.
 */
 class VISP_EXPORT vpMomentGenericFeature : public vpFeatureMoment{
 public:
-  vpMomentGenericFeature(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments, const vpMoment* moment) : vpFeatureMoment(moments,A,B,C,featureMoments){this->moment = moment;}
+  vpMomentGenericFeature(vpMomentDatabase& data_base,double A_, double B_, double C_,
+                         vpFeatureMomentDatabase* featureMoments, const vpMoment* p_moment)
+    : vpFeatureMoment(data_base,A_,B_,C_,featureMoments){this->moment = p_moment;}
   /*!
   No specific moment name.
   */

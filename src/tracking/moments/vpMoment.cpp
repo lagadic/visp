@@ -98,27 +98,27 @@ int main()
 
   \endcode
 
-  \param moments : database of moment primitives.
+  \param data_base : database of moment primitives.
 */
-void vpMoment::linkTo(vpMomentDatabase& moments){
+void vpMoment::linkTo(vpMomentDatabase& data_base){
   if (strlen( name() ) >= 255) {
     throw(vpException(vpException::memoryAllocationError,
                       "Not enough memory to intialize the moment name"));
   }
 
   std::strcpy(_name,name());
-  this->moments=&moments;
+  this->moments=&data_base;
 
-  moments.add(*this,_name);
+  data_base.add(*this,_name);
 }
 
 
 /*!
   Updates the moment with the current object. This does not compute any values.
-  \param object : object descriptor of the current camera vision.
+  \param moment_object : object descriptor of the current camera vision.
 */
-void vpMoment::update(vpMomentObject& object){
-    this->object=&object;
+void vpMoment::update(vpMomentObject& moment_object){
+    this->object=&moment_object;
 }
 
 /*!

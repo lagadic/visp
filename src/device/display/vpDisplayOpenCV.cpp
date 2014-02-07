@@ -254,7 +254,7 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
 /*!
   Initialize the display size, position and title.
 
-  \param width, height : Width and height of the window.
+  \param w, h : Width and height of the window.
   \param x, y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 
@@ -262,12 +262,12 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
   with an available display device suach as Gtk, Cocoa, Carbon, Qt.
 */
 void
-vpDisplayOpenCV::init(unsigned int width, unsigned int height,
+vpDisplayOpenCV::init(unsigned int w, unsigned int h,
                       int x, int y,
                       const char *title)
 {
-  this->width  = width;
-  this->height = height;
+  this->width  = w;
+  this->height = h;
 
   if (x != -1)
     this->windowXPosition = x;
@@ -459,18 +459,17 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
   
   \param iP : Top left corner of the region of interest
   
-  \param width : Width of the region of interest
+  \param w, h : Width and height of the region of interest
   
-  \param height : Height of the region of interest
-
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vpImagePoint &iP,
+                                        const unsigned int w, const unsigned int h )
 {
   if (displayHasBeenInitialized)
   { 
     vpImage<unsigned char> Itemp;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Itemp);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Itemp);
     vpImage<vpRGBa> Ic;
     vpImageConvert::convert(Itemp,Ic);
     
@@ -497,15 +496,15 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
     
     unsigned int i = 0;
-    while (i < height)
+    while (i < h)
     {
       unsigned int j = 0;
-      while (j < width)
+      while (j < w)
       {
-	*(output+3*j) = *(input+j*3);
-	*(output+3*j+1) = *(input+j*3+1);
-	*(output+3*j+2) = *(input+j*3+2);
-	j++;
+        *(output+3*j) = *(input+j*3);
+        *(output+3*j+1) = *(input+j*3+1);
+        *(output+3*j+2) = *(input+j*3+2);
+        j++;
       }
       input = input + 3*iwidth;
       output = output + 3*this->width;
@@ -566,18 +565,17 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
   
   \param iP : Top left corner of the region of interest
   
-  \param width : Width of the region of interest
+  \param w, h : Width and height of the region of interest
   
-  \param height : Height of the region of interest
-
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height )
+void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &iP,
+                                        const unsigned int w, const unsigned int h )
 {
   if (displayHasBeenInitialized)
   { 
     vpImage<vpRGBa> Ic;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),height,width,Ic);
+    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Ic);
     
     CvSize size = cvSize((int)this->width, (int)this->height);
     int depth = 8;
@@ -602,15 +600,15 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
     
     unsigned int i = 0;
-    while (i < height)
+    while (i < h)
     {
       unsigned int j = 0;
-      while (j < width)
+      while (j < w)
       {
-	*(output+3*j) = *(input+j*3);
-	*(output+3*j+1) = *(input+j*3+1);
-	*(output+3*j+2) = *(input+j*3+2);
-	j++;
+        *(output+3*j) = *(input+j*3);
+        *(output+3*j+1) = *(input+j*3+1);
+        *(output+3*j+2) = *(input+j*3+2);
+        j++;
       }
       input = input + 3*iwidth;
       output = output + 3*this->width;
@@ -1058,7 +1056,7 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
   width and \e height the rectangle size.
 
   \param topLeft : Top-left corner of the rectangle.
-  \param width,height : Rectangle size.
+  \param w,h : Rectangle size in terms of width and height.
   \param color : Rectangle color.
   \param fill : When set to true fill the rectangle.
 
@@ -1068,7 +1066,7 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip,
 */
 void
 vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
-                                  unsigned int width, unsigned int height,
+                                  unsigned int w, unsigned int h,
                                   const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
@@ -1076,41 +1074,40 @@ vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ),
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( topLeft.get_u()+width ),
-			      vpMath::round( topLeft.get_v()+height ) ),
-		     col[color.id], (int)thickness);
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( topLeft.get_u()+w ),
+                              vpMath::round( topLeft.get_v()+h ) ),
+                     col[color.id], (int)thickness);
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ),
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( topLeft.get_u()+width ),
-			      vpMath::round( topLeft.get_v()+height ) ),
-		     cvcolor, (int)thickness);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( topLeft.get_u()+w ),
+                              vpMath::round( topLeft.get_v()+h ) ),
+                     cvcolor, (int)thickness);
       }
     }
     else {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ),
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( topLeft.get_u()+width ),
-			      vpMath::round( topLeft.get_v()+height ) ),
-		     col[color.id], CV_FILLED);
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( topLeft.get_u()+w ),
+                              vpMath::round( topLeft.get_v()+h ) ),
+                     col[color.id], CV_FILLED);
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ),
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( topLeft.get_u()+width ),
-			      vpMath::round( topLeft.get_v()+height ) ),
-		     cvcolor, CV_FILLED);
-
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( topLeft.get_u()+w ),
+                              vpMath::round( topLeft.get_v()+h ) ),
+                     cvcolor, CV_FILLED);
       }
     }
   }

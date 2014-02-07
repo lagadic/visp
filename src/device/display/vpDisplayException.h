@@ -90,22 +90,22 @@ class VISP_EXPORT vpDisplayException : public vpException
     } ;
 
   public:
-    vpDisplayException(const int code,  const char* format, ...)
+    vpDisplayException(const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
 
-    vpDisplayException (const int code, const std::string & msg)
-      : vpException(code, msg)
+    vpDisplayException (const int id, const std::string & msg)
+      : vpException(id, msg)
     {
     }
 
-    vpDisplayException (const int code)
-      : vpException(code)
+    vpDisplayException (const int id)
+      : vpException(id)
     {
     }
 

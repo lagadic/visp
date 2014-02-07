@@ -51,6 +51,8 @@
 #include <visp/vpHistogram.h>
 #include <stdlib.h>
 
+bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second);
+
 // comparison,
 bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second)
 {
@@ -133,14 +135,14 @@ vpHistogram::operator=(const vpHistogram &h)
   - Initialise all the values to zero.
 */
 void
-vpHistogram::init(unsigned size)
+vpHistogram::init(unsigned size_)
 {
   if (histogram != NULL) {
     delete [] histogram;
     histogram = NULL;
   }
 
-  this->size = size;
+  this->size = size_;
   histogram = new unsigned [size];
 
   memset(histogram, 0, size * sizeof(unsigned));

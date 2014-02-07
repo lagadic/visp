@@ -220,7 +220,7 @@ class VISP_EXPORT vpImageSimulator
     //projection du plan par cMo => creation des deux triangles definissant projection du plan sur plan image (coord en metre)
     void setCameraPosition(const vpHomogeneousMatrix &cMt);
     
-    void setInterpolationType (const vpInterpolationType interp) {this->interp = interp;}
+    void setInterpolationType (const vpInterpolationType interplt) {this->interp = interplt;}
     
     void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam);
     void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam);

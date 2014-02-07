@@ -100,16 +100,16 @@ vpSickLDMRS::~vpSickLDMRS()
 /*! 
   Initialize the connexion with the Sick LD-MRS laser scanner.
 
-  \param ip : Ethernet address of the laser.
-  \param port : Ethernet port of the laser.
+  \param ip_address : Ethernet address of the laser.
+  \param com_port : Ethernet port of the laser.
 
   \return true if the device was initialized, false otherwise.
   
 */
-bool vpSickLDMRS::setup(std::string ip, int port)
+bool vpSickLDMRS::setup(std::string ip_address, int com_port)
 {
-  setIpAddress( ip );
-  setPort( port );
+  setIpAddress( ip_address );
+  setPort( com_port );
   return ( this->setup() );
 }
 

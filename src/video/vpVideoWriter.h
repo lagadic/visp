@@ -212,16 +212,16 @@ class VISP_EXPORT vpVideoWriter
     /*!
       Sets the bit rate of the video when encoding.
 
-      \param bit_rate : the expected bit rate.
+      \param bitrate : the expected bit rate.
 
       By default the bit rate is set to 500 000.
     */
-    inline void setBitRate(const unsigned int bit_rate) {this->bit_rate = bit_rate;}
+    inline void setBitRate(const unsigned int bitrate) {this->bit_rate = bitrate;}
 
     /*!
       Sets the codec used to encode the video.
 
-      \param codec : the expected codec.
+      \param codec_id : the expected codec.
 
       By default codec is set to AV_CODEC_ID_MPEG1VIDEO. But if installed, you can use one of the
       AVCodecID proposed by ffmpeg such as : AV_CODEC_ID_MPEG2VIDEO, AV_CODEC_ID_MPEG2VIDEO_XVMC,
@@ -230,9 +230,9 @@ class VISP_EXPORT vpVideoWriter
       Of course to use the codec it must be installed on your computer.
     */
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-    inline void setCodec(const CodecID codec) {this->codec = codec;}
+    inline void setCodec(const CodecID codec_id) {this->codec = codec_id;}
 #else
-    inline void setCodec(const AVCodecID codec) {this->codec = codec;}
+    inline void setCodec(const AVCodecID codec_id) {this->codec = codec_id;}
 #endif
 #endif
 
@@ -241,19 +241,19 @@ class VISP_EXPORT vpVideoWriter
     /*!
       Enables to set the first frame index.
       
-      \param firstFrame : The first frame index.
+      \param first_frame : The first frame index.
     */
-    inline void setFirstFrameIndex(const unsigned int firstFrame) {this->firstFrame = firstFrame;}
+    inline void setFirstFrameIndex(const unsigned int first_frame) {this->firstFrame = first_frame;}
 #ifdef VISP_HAVE_FFMPEG
     /*!
       Sets the framerate in Hz of the video when encoding.
 
-      \param framerate : the expected framerate.
+      \param frame_rate : the expected framerate.
 
       By default the framerate is set to 25Hz.
     */
-    inline void setFramerate(const int framerate) {
-      this->framerate = framerate;
+    inline void setFramerate(const int frame_rate) {
+      this->framerate = frame_rate;
     }
 #endif
 

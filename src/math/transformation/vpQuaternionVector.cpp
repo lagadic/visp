@@ -56,11 +56,11 @@ const double vpQuaternionVector::minimum = 0.0001;
 */
 
 //! Constructor from doubles.
-vpQuaternionVector::vpQuaternionVector(const double x, const double y, 
-				       const double z,const double w) 
+vpQuaternionVector::vpQuaternionVector(const double x_, const double y_,
+               const double z_,const double w_)
   : vpRotationVector(4) 
 {
-  set(x, y, z, w);
+  set(x_, y_, z_, w_);
 }
 
 /*! 
@@ -76,18 +76,18 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
 
 /*! 
   Manually change values of a quaternion.
-  \param x : x quaternion parameter.
-  \param y : y quaternion parameter.
-  \param z : z quaternion parameter.
-  \param w : w quaternion parameter.
+  \param x_ : x quaternion parameter.
+  \param y_ : y quaternion parameter.
+  \param z_ : z quaternion parameter.
+  \param w_ : w quaternion parameter.
 */
-void vpQuaternionVector::set(const double x, const double y, 
-			     const double z,const double w) 
+void vpQuaternionVector::set(const double x_, const double y_,
+           const double z_,const double w_)
 {
-  r[0]=x;
-  r[1]=y;
-  r[2]=z;
-  r[3]=w;
+  r[0]=x_;
+  r[1]=y_;
+  r[2]=z_;
+  r[3]=w_;
 }
 
     

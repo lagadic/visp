@@ -135,9 +135,9 @@ public:
   /*!
     Set the moving edges initialisation parameters
   
-    \param me : Moving Edges.
+    \param p_me : Moving Edges.
   */
-  void setMe(vpMe *me) { this->me = me ; }
+  void setMe(vpMe *p_me) { this->me = p_me ; }
   
   /*!
     Return the moving edges initialisation parameters

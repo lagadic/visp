@@ -62,6 +62,8 @@
 
 #define INCR_MIN 1
 
+void computeDelta(double &delta, int i1, int j1, int i2, int j2);
+
 static void
 normalizeAngle(double &delta)
 {
@@ -305,7 +307,7 @@ vpMeLine::leastSquare()
   vpColVector w(numberOfSignal()) ;
   vpColVector B(numberOfSignal()) ;
   w =1 ;
-  vpMeSite p ;
+  vpMeSite p_me ;
   unsigned int iter =0 ;
   unsigned int nos_1 = 0 ;
   double distance = 100;
@@ -325,12 +327,12 @@ vpMeLine::leastSquare()
     nos_1 = numberOfSignal() ;
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
-        A[k][0] = p.ifloat ;
+        A[k][0] = p_me.ifloat ;
         A[k][1] = 1 ;
-        B[k] = -p.jfloat ;
+        B[k] = -p_me.jfloat ;
         k++ ;
       }
     }
@@ -358,14 +360,14 @@ vpMeLine::leastSquare()
 
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < 0.2)
         {
-          p.setState(vpMeSite::M_ESTIMATOR);
+          p_me.setState(vpMeSite::M_ESTIMATOR);
           
-          *it = p;
+          *it = p_me;
         }
         k++ ;
       }
@@ -390,12 +392,12 @@ vpMeLine::leastSquare()
     nos_1 = numberOfSignal() ;
     unsigned int k =0 ;
     for(std::list<vpMeSite>::const_iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
-        A[k][0] = p.jfloat ;
+        A[k][0] = p_me.jfloat ;
         A[k][1] = 1 ;
-        B[k] = -p.ifloat ;
+        B[k] = -p_me.ifloat ;
         k++ ;
       }
     }
@@ -421,17 +423,16 @@ vpMeLine::leastSquare()
       x_1 = x;
     }
 
-
     k =0 ;
     for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-      p = *it;
-      if (p.getState() == vpMeSite::NO_SUPPRESSION)
+      p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION)
       {
         if (w[k] < 0.2)
         {
-          p.setState(vpMeSite::M_ESTIMATOR);
+          p_me.setState(vpMeSite::M_ESTIMATOR);
           
-          *it = p;
+          *it = p_me;
         }
         k++ ;
       }
@@ -487,9 +488,9 @@ vpMeLine::initTracking(const vpImage<unsigned char> &I,
       PExt[1].ifloat = (float)ip2.get_i() ;
       PExt[1].jfloat = (float)ip2.get_j() ;
 
-      double angle = atan2((double)(i1s-i2s),(double)(j1s-j2s)) ;
-      a = cos(angle) ;
-      b = sin(angle) ;
+      double angle_ = atan2((double)(i1s-i2s),(double)(j1s-j2s)) ;
+      a = cos(angle_) ;
+      b = sin(angle_) ;
 
       // Real values of a, b can have an other sign. So to get the good values
       // of a and b in order to initialise then c, we call track(I) just below
@@ -639,7 +640,7 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   // number of samples along line_p
   n_sample = length_p/(double)me->getSampleStep();
-  double sample = (double)me->getSampleStep();
+  double sample_step = (double)me->getSampleStep();
 
   vpMeSite P ;
   P.init((int) PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign) ;
@@ -652,8 +653,8 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   for (int i=0 ; i < 3 ; i++)
   {
-    P.ifloat = P.ifloat + di*sample ; P.i = (int)P.ifloat ;
-    P.jfloat = P.jfloat + dj*sample ; P.j = (int)P.jfloat ;
+    P.ifloat = P.ifloat + di*sample_step ; P.i = (int)P.ifloat ;
+    P.jfloat = P.jfloat + dj*sample_step ; P.j = (int)P.jfloat ;
 
     if(!outOfImage(P.i, P.j, 5, rows, cols))
     {
@@ -683,8 +684,8 @@ vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   P.setDisplay(selectDisplay) ;
   for (int i=0 ; i < 3 ; i++)
   {
-    P.ifloat = P.ifloat - di*sample ; P.i = (int)P.ifloat ;
-    P.jfloat = P.jfloat - dj*sample ; P.j = (int)P.jfloat ;
+    P.ifloat = P.ifloat - di*sample_step ; P.i = (int)P.ifloat ;
+    P.jfloat = P.jfloat - dj*sample_step ; P.j = (int)P.jfloat ;
 
     if(!outOfImage(P.i, P.j, 5, rows, cols))
     {
@@ -772,34 +773,34 @@ vpMeLine::reSample(const vpImage<unsigned char> &I)
 void
 vpMeLine::updateDelta()
 {
-  vpMeSite p ;
+  vpMeSite p_me ;
 
-  double angle = delta + M_PI/2;
+  double angle_ = delta + M_PI/2;
   double diff = 0;
 
-  while (angle<0) angle += M_PI;
-  while (angle>M_PI) angle -= M_PI;
+  while (angle_<0) angle_ += M_PI;
+  while (angle_>M_PI) angle_ -= M_PI;
 
-  angle = vpMath::round(angle * 180 / M_PI) ;
+  angle_ = vpMath::round(angle_ * 180 / M_PI) ;
 
-  //if(fabs(angle) == 180 )
-  if(std::fabs(std::fabs(angle) - 180) <= std::numeric_limits<double>::epsilon())
+  //if(fabs(angle_) == 180 )
+  if(std::fabs(std::fabs(angle_) - 180) <= std::numeric_limits<double>::epsilon())
   {
-    angle= 0 ;
+    angle_= 0 ;
   }
 
   //std::cout << "angle theta : " << theta << std::endl ;
-  diff = fabs(angle - angle_1);
+  diff = fabs(angle_ - angle_1);
   if (diff > 90)
     sign *= -1;
 
-  angle_1 = angle;
+  angle_1 = angle_;
 
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
-    p = *it;
-    p.alpha = delta ;
-    p.mask_sign = sign;
-    *it = p;
+    p_me = *it;
+    p_me.alpha = delta ;
+    p_me.mask_sign = sign;
+    *it = p_me;
   }
   delta_1 = delta;
 }

@@ -508,7 +508,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   int  max_rank =-1 ;
   //   int max_rank1=-1 ;
   //   int max_rank2 = -1;
-  double  convolution = 0 ;
+  double  convolution_ = 0 ;
   double  max_convolution = 0 ;
   double max = 0 ;
   double contraste = 0;
@@ -541,21 +541,21 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   for(unsigned int n = 0 ; n < 2 * range + 1 ; n++)
   {
     //   convolution results
-    convolution = list_query_pixels[n].convolution(I, me) ;
+    convolution_ = list_query_pixels[n].convolution(I, me) ;
 
     // luminance ratio of reference pixel to potential correspondent pixel
     // the luminance must be similar, hence the ratio value should
     // lay between, for instance, 0.5 and 1.5 (parameter tolerance)
     if( test_contraste )
     {
-      likelihood[n] = fabs(convolution + convlt );
+      likelihood[n] = fabs(convolution_ + convlt );
       if (likelihood[n]> threshold)
       {
-        contraste = convolution / convlt;
+        contraste = convolution_ / convlt;
         if((contraste > contraste_min) && (contraste < contraste_max) && fabs(1-contraste) < diff)
         {
           diff = fabs(1-contraste);
-          max_convolution= convolution;
+          max_convolution= convolution_;
           max = likelihood[n] ;
           max_rank = (int)n ;
           // 	    max_rank2 = max_rank1;
@@ -566,10 +566,10 @@ vpMeSite::track(const vpImage<unsigned char>& I,
 
     else
     {
-      likelihood[n] = fabs(2*convolution) ;
+      likelihood[n] = fabs(2*convolution_) ;
       if (likelihood[n] > max  && likelihood[n] > threshold)
       {
-        max_convolution= convolution;
+        max_convolution= convolution_;
         max = likelihood[n] ;
         max_rank = (int)n ;
         //           max_rank2 = max_rank1;

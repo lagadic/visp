@@ -62,7 +62,7 @@
 
   \warning It is requiered to set the state model before using this method.
 
-  \param nsignal : Number of signal to filter.
+  \param n_signal : Number of signal to filter.
  
   \param sigma_state : Vector that contains the variance of the state
   noise. The dimension of this vector is equal to the state vector
@@ -79,7 +79,7 @@
   \param rho : Degree of correlation between successive accelerations. Values 
   are in [0:1[.
 
-  \param dt : Sampling time \f$\Delta t\f$ expressed is
+  \param delta_t : Sampling time \f$\Delta t\f$ expressed is
   second. Depending on the filter modelization, this value may not be
   used. This is for example the case for the
   vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel model
@@ -174,23 +174,23 @@ int main()
   \endcode
  */
 void
-vpLinearKalmanFilterInstantiation::initFilter(unsigned int nsignal, 
-			   vpColVector &sigma_state,
-			   vpColVector &sigma_measure,
-			   double rho, double dt)
+vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal,
+                                              vpColVector &sigma_state,
+                                              vpColVector &sigma_measure,
+                                              double rho, double delta_t)
 {
   switch (model) {
   case stateConstVelWithColoredNoise_MeasureVel:
-    initStateConstVelWithColoredNoise_MeasureVel(nsignal, sigma_state, 
+    initStateConstVelWithColoredNoise_MeasureVel(n_signal, sigma_state,
 						 sigma_measure, rho);
     break;
   case stateConstVel_MeasurePos:
-    initStateConstVel_MeasurePos(nsignal, sigma_state, 
-				 sigma_measure, dt);
+    initStateConstVel_MeasurePos(n_signal, sigma_state,
+         sigma_measure, delta_t);
     break;
   case stateConstAccWithColoredNoise_MeasureVel:
-    initStateConstAccWithColoredNoise_MeasureVel(nsignal, sigma_state, 
-						 sigma_measure, rho, dt);
+    initStateConstAccWithColoredNoise_MeasureVel(n_signal, sigma_state,
+             sigma_measure, rho, delta_t);
     break;
   case unknown:
     vpERROR_TRACE("Kalman state model is not set") ;    
@@ -282,7 +282,7 @@ vpLinearKalmanFilterInstantiation::initFilter(unsigned int nsignal,
   \right] 
   \f]
 
-  \param nsignal : Number of signal to filter.
+  \param n_signal : Number of signal to filter.
 
   \param sigma_state : Vector that fix the variance of the state covariance matrix
   \f$[\sigma^2_Q \; 0]^T\f$. The dimension of
@@ -292,19 +292,19 @@ vpLinearKalmanFilterInstantiation::initFilter(unsigned int nsignal,
   noise. The dimension of this vector is equal to the number of signal
   to filter.
 
-  \param dt : Sampling time \f$\Delta t\f$ expressed is second. 
+  \param delta_t : Sampling time \f$\Delta t\f$ expressed is second.
 
 */
 void
-vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int nsignal,
+vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int n_signal,
 					     vpColVector &sigma_state,
 					     vpColVector &sigma_measure, 
-					     double dt )
+               double delta_t )
 {
   // init_done = true ;
   setStateModel(stateConstVel_MeasurePos);
 
-  init(size_state, size_measure, nsignal);
+  init(size_state, size_measure, n_signal);
 
   iter = 0;
   Pest = 0;
@@ -313,12 +313,12 @@ vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int nsi
   H    = 0;
   R    = 0;
   Q    = 0;
-  this->dt = dt ;
+  this->dt = delta_t ;
 
   double dt2 = dt*dt ;
   double dt3 = dt2*dt ;
 
-  for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
+  for (unsigned int i=0;  i < size_measure*n_signal ;  i++ ) {
     // State model
     //         | 1  dt |
     //     F = |       |
@@ -443,7 +443,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned int nsi
   \right] 
   \f]
  
-  \param nsignal : Number of signal to filter.
+  \param n_signal : Number of signal to filter.
 
   \param sigma_state : Vector that fix the variance of the state covariance matrix
   \f$[0 \; \sigma^2_Q]^T\f$. The dimension of
@@ -505,7 +505,7 @@ int main()
   \endcode
 */
 void 
-vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(unsigned int nsignal,
+vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(unsigned int n_signal,
 					       vpColVector &sigma_state,
 					       vpColVector &sigma_measure,
 					       double rho)
@@ -517,7 +517,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(
 
   setStateModel(stateConstVelWithColoredNoise_MeasureVel);
 
-  init(size_state, size_measure, nsignal);
+  init(size_state, size_measure, n_signal);
 
   iter = 0;
   Pest = 0;
@@ -527,7 +527,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(
   R    = 0;
   Q    = 0;
 
-  for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
+  for (unsigned int i=0;  i < size_measure*n_signal ;  i++ ) {
     // State model
     //         | 1    1  |
     //     F = |         |
@@ -658,7 +658,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(
   \right] 
   \f]
  
-  \param nsignal : Number of signal to filter.
+  \param n_signal : Number of signal to filter.
  
   \param sigma_state : Vector that fix the variance of the state
   covariance matrix \f$[0 \; \sigma^2_{Q_1} \;
@@ -672,7 +672,7 @@ vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_MeasureVel(
   \param rho : Degree of correlation between successive accelerations. Values 
   are in [0:1[.
 
-  \param dt : Sampling time \f$\Delta t\f$ expressed is second. 
+  \param delta_t : Sampling time \f$\Delta t\f$ expressed is second.
 
   \exception vpException::badValue : Bad rho value wich is not in [0:1[.
 
@@ -728,11 +728,11 @@ int main()
 
 */
 void
-vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(unsigned int nsignal, 
+vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(unsigned int n_signal,
 							 vpColVector &sigma_state,
 							 vpColVector &sigma_measure,
 							 double rho,
-							 double dt)
+               double delta_t)
 {
   if ((rho < 0) || (rho >= 1)) {
     vpERROR_TRACE("Bad rho value %g; should be in [0:1[", rho) ;    
@@ -740,7 +740,7 @@ vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(
   }
   setStateModel(stateConstAccWithColoredNoise_MeasureVel);
 
-  init(size_state, size_measure, nsignal);
+  init(size_state, size_measure, n_signal);
 
   iter = 0;
   Pest = 0;
@@ -749,7 +749,7 @@ vpLinearKalmanFilterInstantiation::initStateConstAccWithColoredNoise_MeasureVel(
   H    = 0;
   R    = 0;
   Q    = 0;
-  this->dt = dt;
+  this->dt = delta_t;
   // initialise les matrices decrivant les modeles
   for (unsigned int i=0;  i < size_measure*nsignal ;  i++ ) {
     // State model

@@ -447,16 +447,16 @@ public:
   /*!
       Set the position of the camera relative to the object.
       
-      \param cMo : The pose of the camera.
+      \param cMo_ : The pose of the camera.
     */
-  void setCameraPositionRelObj(const vpHomogeneousMatrix &cMo) {this->cMo = rotz * cMo; fMc = fMo*this->cMo.inverse();}
+  void setCameraPositionRelObj(const vpHomogeneousMatrix &cMo_) {this->cMo = rotz * cMo_; fMc = fMo*this->cMo.inverse();}
 
   /*!
       Set the position of the the world reference frame relative to the camera.
       
-      \param fMc : The pose of the camera.
+      \param fMc_ : The pose of the camera.
     */
-  void setCameraPositionRelWorld(const vpHomogeneousMatrix &fMc) {this->fMc = fMc*rotz; cMo = this->fMc.inverse()*fMo;}
+  void setCameraPositionRelWorld(const vpHomogeneousMatrix &fMc_) {this->fMc = fMc_*rotz; cMo = this->fMc.inverse()*fMo;}
 
   /*!
       Set the parameter which enables to choose the size of the main camera in the external camera views. By default this parameter is set to 1.
@@ -475,9 +475,9 @@ public:
   /*!
       Set the way to display the history of the main camera trajectory in the main external view. The choice is given between displaying lines and points.
 
-      \param camTrajType : The chosen way to display the camera trajectory.
+      \param camTraj_type : The chosen way to display the camera trajectory.
     */
-  inline void setCameraTrajectoryDisplayType (const vpCameraTrajectoryDisplayType &camTrajType) {this->camTrajType = camTrajType;}
+  inline void setCameraTrajectoryDisplayType (const vpCameraTrajectoryDisplayType &camTraj_type) {this->camTrajType = camTraj_type;}
 
   /*!
       Set the color used to display the object at the current position.
@@ -488,9 +488,9 @@ public:
   /*!
       Set the desired position of the camera relative to the object.
       
-      \param cdMo : The desired pose of the camera.
+      \param cdMo_ : The desired pose of the camera.
     */
-  void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo) {this->cdMo = rotz * cdMo;}
+  void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_) {this->cdMo = rotz * cdMo_;}
   /*!
       Set the color used to display the object at the desired position.
 
@@ -502,9 +502,9 @@ public:
 
       By default the trajectory is displayed.
 
-      \param displayCameraTrajectory : Set to true to display the camera trajectory.
+      \param do_display : Set to true to display the camera trajectory.
     */
-  void setDisplayCameraTrajectory (const bool &displayCameraTrajectory) {this->displayCameraTrajectory = displayCameraTrajectory;}
+  void setDisplayCameraTrajectory (const bool &do_display) {this->displayCameraTrajectory = do_display;}
 
   /*!
       Set the internal camera parameters.
@@ -518,11 +518,11 @@ public:
   /*!
       Set the external camera point of view.
       
-      \param camMf : The pose of the external camera relative to the world reference frame.
+      \param cam_Mf : The pose of the external camera relative to the world reference frame.
     */
-  void setExternalCameraPosition(const vpHomogeneousMatrix &camMf)
+  void setExternalCameraPosition(const vpHomogeneousMatrix &cam_Mf)
   {
-    this->camMf = rotz * camMf;
+    this->camMf = rotz * cam_Mf;
     vpTranslationVector T;
     this->camMf.extract (T);
     this->camMf2.buildFrom(0,0,T[2],0,0,0);
@@ -558,9 +558,9 @@ public:
   /*!
       Set the pose between the object and the fixed world frame.
       
-      \param fMo : The pose between the object and the fixed world frame.
+      \param fMo_ : The pose between the object and the fixed world frame.
     */
-  void set_fMo(const vpHomogeneousMatrix &fMo) {this->fMo = fMo;/*this->cMo = fMc.inverse()*fMo;*/}
+  void set_fMo(const vpHomogeneousMatrix &fMo_) {this->fMo = fMo_;/*this->cMo = fMc.inverse()*fMo;*/}
 
 protected:
   void display_scene(Matrix mat, Bound_scene &sc, const vpImage<vpRGBa> &I, const vpColor &color);

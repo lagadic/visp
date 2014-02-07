@@ -119,15 +119,15 @@ vpPoseVector::vpPoseVector(const double tx,
   u]^\top\f$ from a translation vector \f$ \bf t \f$ and a \f$\Theta
   \bf u\f$ vector.
 
-  \param t : Translation vector \f$ \bf t \f$.
+  \param tv : Translation vector \f$ \bf t \f$.
   \param tu : \f$\Theta \bf u\f$ rotation  vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+vpPoseVector::vpPoseVector(const vpTranslationVector& tv,
                            const vpThetaUVector& tu)
 {
   init() ;
-  buildFrom(t,tu) ;
+  buildFrom(tv,tu) ;
 }
 
 /*! 
@@ -136,17 +136,17 @@ vpPoseVector::vpPoseVector(const vpTranslationVector& t,
   u]^\top\f$ from a translation vector \f$ \bf t \f$ and a rotation
   matrix \f$ \bf R \f$.
 
-  \param t : Translation vector \f$ \bf t \f$.
+  \param tv : Translation vector \f$ \bf t \f$.
 
   \param R : Rotation matrix \f$ \bf R \f$ from which \f$\Theta \bf
   u\f$ vector is extracted to initialise the pose vector.
 
 */
-vpPoseVector::vpPoseVector(const vpTranslationVector& t,
+vpPoseVector::vpPoseVector(const vpTranslationVector& tv,
                            const vpRotationMatrix& R)
 {
   init() ;
-  buildFrom(t,R) ;
+  buildFrom(tv,R) ;
 }
 
 /*! 
@@ -180,8 +180,8 @@ vpPoseVector
 vpPoseVector::buildFrom(const vpHomogeneousMatrix& M)
 {
   vpRotationMatrix R ;    M.extract(R) ;
-  vpTranslationVector t ; M.extract(t) ;
-  buildFrom(t,R) ;
+  vpTranslationVector tv ; M.extract(tv) ;
+  buildFrom(tv,R) ;
   return *this ;
 }
 
@@ -191,18 +191,18 @@ vpPoseVector::buildFrom(const vpHomogeneousMatrix& M)
   from a translation vector \f$ \bf t \f$ and a \f$\Theta \bf u\f$
   vector.
 
-  \param t : Translation vector \f$ \bf t \f$.
+  \param tv : Translation vector \f$ \bf t \f$.
   \param tu : \f$\Theta \bf u\f$ rotation  vector.
 
   \return The build pose vector.
 */
 vpPoseVector
-vpPoseVector::buildFrom(const vpTranslationVector& t,
+vpPoseVector::buildFrom(const vpTranslationVector& tv,
                         const vpThetaUVector& tu)
 {
   for (unsigned int i =0  ; i < 3 ; i++)
     {
-      (*this)[i] = t[i] ;
+      (*this)[i] = tv[i] ;
       (*this)[i+3] = tu[i] ;
     }
   return *this ;
@@ -214,7 +214,7 @@ vpPoseVector::buildFrom(const vpTranslationVector& t,
   from a translation vector \f$ \bf t \f$ and a rotation matrix \f$
   \bf R \f$.
 
-  \param t : Translation vector \f$ \bf t \f$.
+  \param tv : Translation vector \f$ \bf t \f$.
 
   \param R : Rotation matrix \f$ \bf R \f$ from which \f$\Theta \bf
   u\f$ vector is extracted to initialise the pose vector.
@@ -222,13 +222,13 @@ vpPoseVector::buildFrom(const vpTranslationVector& t,
   \return The build pose vector.
 */
 vpPoseVector
-vpPoseVector::buildFrom(const vpTranslationVector& t,
+vpPoseVector::buildFrom(const vpTranslationVector& tv,
                         const vpRotationMatrix& R)
 {
   vpThetaUVector tu ;
   tu.buildFrom(R) ;
 
-  buildFrom(t,tu) ;
+  buildFrom(tv,tu) ;
   return *this ;
 }
 

@@ -484,18 +484,18 @@ vpMomentObject::init(const vpMomentObject& objin){
   The parameter specified is the highest desired included order.
   All orders up to this values will be computed. In other words, a vpMomentObject will compute all \f$ m_{ij} \f$ moments with \f$ i+j \in [0..order] \f$.
 
-  \param order : Maximum reached order (i+j) to be used. All
+  \param max_order : Maximum reached order (i+j) to be used. All
   considered i+j will be of order smaller or equal than this
   parameter. For example if this parameter is 5, all moment values of
   order 0 to 5 included will be computed.
 
   Mani : outsourced the constructor work to void init (unsigned int orderinp);
 */
-vpMomentObject::vpMomentObject(unsigned int order)
-  : flg_normalize_intensity(true), order(order+1), type(vpMomentObject::DENSE_FULL_OBJECT),
+vpMomentObject::vpMomentObject(unsigned int max_order)
+  : flg_normalize_intensity(true), order(max_order+1), type(vpMomentObject::DENSE_FULL_OBJECT),
     values()
 {
-    init(order);
+    init(max_order);
 }
 
 /*!

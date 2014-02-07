@@ -68,6 +68,15 @@
 #  endif
 #endif
 
+double computeDelta(double deltai, double deltaj);
+void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+               vpMe* me, double &angle, double &convlt);
+vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePoint &iP);
+bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list);
+#endif
+
 //Compute the angle delta = arctan(deltai/deltaj)
 //and normalize it between 0 and pi
 double
@@ -458,7 +467,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   //Check if the two extremities are not to close to eachother.
   double d = vpImagePoint::distance(begin[0],end[0]);
   double threshold = 3*me->getSampleStep();
-  double sample = me->getSampleStep();
+  double sample_step = me->getSampleStep();
   vpImagePoint pt;
   if ( d > threshold /*|| (list.firstValue()).mask_sign != (list.lastValue()).mask_sign*/)
   {
@@ -482,8 +491,8 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     si = si * vpMath::sign(begin[1].get_i());
     for (int i=0 ; i < 3 ; i++)
     {
-      P.ifloat = P.ifloat - si*sample ; P.i = (int)P.ifloat ;
-      P.jfloat = P.jfloat - co*sample ; P.j = (int)P.jfloat ;
+      P.ifloat = P.ifloat - si*sample_step ; P.i = (int)P.ifloat ;
+      P.jfloat = P.jfloat - co*sample_step ; P.j = (int)P.jfloat ;
       pt.set_ij(P.ifloat,P.jfloat);
       if (vpImagePoint::distance(end[0],pt) < threshold) break;
       if(!outOfImage(P.i, P.j, 5, rows, cols))
@@ -500,9 +509,9 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
           }
         }
         else {
-	  if (vpDEBUG_ENABLE(3)) {
-	    vpDisplay::displayCross(I, pt, 10, vpColor::blue) ;
-	  }
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, pt, 10, vpColor::blue) ;
+          }
         }
       }
     }
@@ -520,8 +529,8 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
     si = si * vpMath::sign(end[1].get_i());
     for (int i=0 ; i < 3 ; i++)
     {
-      P.ifloat = P.ifloat + si*sample ; P.i = (int)P.ifloat ;
-      P.jfloat = P.jfloat + co*sample ; P.j = (int)P.jfloat ;
+      P.ifloat = P.ifloat + si*sample_step ; P.i = (int)P.ifloat ;
+      P.jfloat = P.jfloat + co*sample_step ; P.j = (int)P.jfloat ;
       pt.set_ij(P.ifloat,P.jfloat);
       if (vpImagePoint::distance(begin[0],pt) < threshold) break;
       if(!outOfImage(P.i, P.j, 5, rows, cols))
@@ -537,9 +546,9 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
           }
         }
         else {
-	  if (vpDEBUG_ENABLE(3)) {
-	    vpDisplay::displayCross(I, pt, 10, vpColor::blue) ;
-	  }
+          if (vpDEBUG_ENABLE(3)) {
+            vpDisplay::displayCross(I, pt, 10, vpColor::blue) ;
+          }
         }
       }
     }
@@ -842,9 +851,9 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
       --itList2; // Move to the last element
       for (int j = 0; j < nbr; j++)
       {
-        vpMeSite s = *itList2;
-        s.track(I,me,false);
-        *itList2 = s;
+        vpMeSite me_s = *itList2;
+        me_s.track(I,me,false);
+        *itList2 = me_s;
         --itList2;
       }
       me->setRange(memory_range);

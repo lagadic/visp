@@ -260,9 +260,9 @@ public:
 
   /*!
     Specifies the type of the input data.
-    \param type : An input type.
+    \param input_type : An input type.
   */
-  void setType(vpObjectType type){this->type=type;}
+  void setType(vpObjectType input_type){this->type=input_type;}
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& v);
 
 protected:
