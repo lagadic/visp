@@ -54,6 +54,7 @@
 #endif
 
 #include <vector>
+#include <limits>
 
 /*!
   \class vpMbHiddenFaces
@@ -596,7 +597,8 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
         it++;
         while(!visible && it != result.end()){
           distance = it->distance;
-          if(distance == distancePrev){
+          //if(distance == distancePrev){
+          if(std::fabs(distance - distancePrev) < distance * std::numeric_limits<double>::epsilon()){
             if(it->movable->getName() == Ogre::StringConverter::toString(index)){
               visible = true;
               break;

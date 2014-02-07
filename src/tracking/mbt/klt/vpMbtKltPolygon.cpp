@@ -475,7 +475,8 @@ bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, 
 
   double den = dx * ey - dy * ex;
   double t = 0, u = 0;
-  if(den != 0){
+  //if(den != 0){
+  if(std::fabs(den) > std::fabs(den)*std::numeric_limits<double>::epsilon()){
     t = -( ey * ( p1.get_j() - j_test ) + ex * ( -p1.get_i() + i_test ) ) / den;
     u = -( dx * ( -p1.get_i() + i_test ) + dy * ( p1.get_j() - j_test ) ) / den;
   }
