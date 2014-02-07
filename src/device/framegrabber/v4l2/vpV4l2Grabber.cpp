@@ -924,6 +924,10 @@ vpV4l2Grabber::open()
       fprintf(stdout, "     Support asynchronous I/O methods.\n");
     else
       fprintf(stdout, "     Does not support asynchronous I/O methods.\n");
+    if(cap.capabilities & V4L2_CAP_TIMEPERFRAME)
+      fprintf(stdout, "     Support time per frame field.\n");
+    else
+      fprintf(stdout, "     Does not support time per frame field.\n");
   }
 
   getCapabilities();
