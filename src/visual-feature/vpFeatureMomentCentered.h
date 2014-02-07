@@ -117,7 +117,7 @@ class vpMomentDatabase;
       - vpMomentCentered
 */
 class VISP_EXPORT vpFeatureMomentCentered : public vpFeatureMoment{
-private:
+protected:
     unsigned int order;
  public:
         vpFeatureMomentCentered(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL);
@@ -130,7 +130,7 @@ private:
         }
 #endif
 
-        vpMatrix 	interaction (unsigned int select_one,unsigned int select_two);
+        vpMatrix interaction (unsigned int select_one,unsigned int select_two) const;
 
         /*!
           associated moment name
@@ -141,7 +141,7 @@ private:
           */
         const char* name() const { return "vpFeatureMomentCentered";}
 
-
+        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpFeatureMomentCentered& v);
 };
 
 #endif

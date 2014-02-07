@@ -164,7 +164,7 @@ Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment
 \param select_two : second index (j)
 \return Interaction matrix corresponding to the moment
 */
-vpMatrix 	vpFeatureMomentCentered::interaction (unsigned int select_one,unsigned int select_two){
+vpMatrix 	vpFeatureMomentCentered::interaction (unsigned int select_one,unsigned int select_two) const {
     if(select_one+select_two>moment->getObject().getOrder())
       throw vpException(vpException::badValue,"The requested value has not been computed, you should specify a higher order.");
     return interaction_matrices[select_two*order+select_one];
@@ -297,5 +297,17 @@ void vpFeatureMomentCentered::compute_interaction(){
         interaction_matrices[j_*order+i_][0][WZ] = i*mu_im1jp1-j*mu_ip1jm1;
       }
     }
+  }
+
+  std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCentered& mu){
+    vpTRACE(" << CENTRED MOMENTS >>");
+    unsigned int order = mu.order;
+    for(int i=0; i<(int)order-1; i++){
+        for(int j=0; j<(int)order-1-i; j++){
+            std::cout << "L_mu[" << i << "," << j << "] = ";
+            mu.interaction(i,j).matlabPrint(std::cout);
+        }
+    }
+    return os;
   }
 #endif
