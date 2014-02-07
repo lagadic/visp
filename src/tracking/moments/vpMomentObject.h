@@ -270,8 +270,8 @@ protected:
   vpObjectType type;
   std::vector<double> values;
   void set(unsigned int i, unsigned int j, const double& value_ij);
-private:
   void cacheValues(std::vector<double>& cache,double x, double y);
+private:
   void cacheValues(std::vector<double>& cache,double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint>& points);
 
