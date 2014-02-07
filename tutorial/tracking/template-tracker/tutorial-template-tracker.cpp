@@ -41,6 +41,9 @@ int main()
 
     tracker.display(I, vpColor::red);
 
+    if (vpDisplay::getClick(I, false))
+      break;
+
     vpDisplay::flush(I);
     vpTime::wait(40);
   }
