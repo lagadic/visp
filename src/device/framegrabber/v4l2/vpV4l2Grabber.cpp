@@ -919,15 +919,22 @@ vpV4l2Grabber::open()
     if (cap.capabilities & V4L2_CAP_STREAMING)
       fprintf(stdout, "     Support streaming capture.\n");
     else
-      fprintf(stdout, "     Does not support streaming capture.\n");
+      fprintf(stdout, "     Does not support streaming capture\n");
     if(cap.capabilities & V4L2_CAP_ASYNCIO)
-      fprintf(stdout, "     Support asynchronous I/O methods.\n");
+      fprintf(stdout, "     Support asynchronous I/O methods\n");
     else
-      fprintf(stdout, "     Does not support asynchronous I/O methods.\n");
+      fprintf(stdout, "     Does not support asynchronous I/O methods\n");
     if(cap.capabilities & V4L2_CAP_TIMEPERFRAME)
-      fprintf(stdout, "     Support time per frame field.\n");
+      fprintf(stdout, "     Support time per frame field\n");
     else
-      fprintf(stdout, "     Does not support time per frame field.\n");
+      fprintf(stdout, "     Does not support time per frame field\n");
+    // Get framerate
+    struct v4l2_streamparm streamparm;
+    streamparm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (v4l2_ioctl(fd, VIDIOC_G_PARM, &streamparm) != -1) {
+      fprintf(stdout, "     Current acquisition framerate: %d fps\n",
+              streamparm.parm.output.timeperframe.denominator);
+    }
   }
 
   getCapabilities();
