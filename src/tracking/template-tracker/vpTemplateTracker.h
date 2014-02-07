@@ -178,8 +178,20 @@ class VISP_EXPORT vpTemplateTracker
     /*!
      Set the number of pyramid levels used in the multi-resolution scheme.
      If \e nlevels > 1, the tracker uses a pyramidal approach.
+
+     \param nlevels: Number of pyramid levels. Algorithm starts at level nlevels-1.
+     \param level_to_stop: Last level of the pyramid that will be considered. (Lowest level is Zero)
      */
-    void    setPyramidal(unsigned int nlevels=2, unsigned int level_to_stop=1) {nbLvlPyr = nlevels; l0Pyr = level_to_stop; }
+    void    setPyramidal(unsigned int nlevels=2, unsigned int level_to_stop=1) {
+        nbLvlPyr = nlevels;
+        l0Pyr = level_to_stop;
+        if(l0Pyr >= nlevels){
+          std::cout << "Warning: level_to_stop: " << level_to_stop << " higher than level_to_start: " << nlevels-1 << " (nlevels-1)" <<std::endl;
+          std::cout << "Level to stop put to: " << nlevels-1 << std::endl;
+          l0Pyr = nlevels-1;
+        }
+    }
+
     void    setSampling(int _mod_i,int _mod_j){mod_i=_mod_i;mod_j=_mod_j;}
     void    setThresholdGradient(double threshold){thresholdGradient=threshold;}
     /*! By default Brent usage is disabled. */
