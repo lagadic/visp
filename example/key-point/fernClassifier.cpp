@@ -73,6 +73,10 @@
 
 #define GETOPTARGS  "hlcdb:i:sp"
 
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, bool &isLearning, std::string& dataFile, bool& click_allowed,
+                bool& display, bool& displayPoints, bool& useSequence, std::string& ipath);
+
 /*!
 
   Print the program options.
@@ -145,24 +149,24 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv,
-                bool &isLearning, std::string& dataFile, bool& click_allowed, bool& display, bool& displayPoints, bool& useSequence, std::string& ipath)
+bool getOptions(int argc, const char **argv, bool &isLearning, std::string& dataFile, bool& click_allowed,
+                bool& display, bool& displayPoints, bool& useSequence, std::string& ipath)
 {
-  const char *optarg;
+  const char *optarg_;
   int   c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'l': isLearning = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
-    case 'b': dataFile = optarg; break;
+    case 'b': dataFile = optarg_; break;
     case 'p': displayPoints = true; break;
     case 's': useSequence = false; break;
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg_);
       return false; break;
     }
   }
@@ -171,7 +175,7 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

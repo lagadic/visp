@@ -8,6 +8,12 @@
 #include <visp/vpServoDisplay.h>
 #include <visp/vpSimulatorCamera.h>
 
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness);
+#if defined(VISP_HAVE_OGRE)
+void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &background,
+                           const vpHomogeneousMatrix &cMo, vpImage<unsigned char> &I);
+#endif
+
 void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness)
 {
   static std::vector<vpImagePoint> traj[4];
@@ -23,10 +29,7 @@ void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot
 
 #if defined(VISP_HAVE_OGRE)
 void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &background,
-                         #if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
-                           const
-                         #endif
-                           vpHomogeneousMatrix &cMo, vpImage<unsigned char> &I)
+                           const vpHomogeneousMatrix &cMo, vpImage<unsigned char> &I)
 {
   static vpImage<vpRGBa> Irender; // Image from ogre scene rendering
   ogre.display(background, cMo);

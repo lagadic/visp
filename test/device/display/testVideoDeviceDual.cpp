@@ -60,6 +60,7 @@
 
 */
 
+
 // List of allowed command line options
 #define GETOPTARGS	"hlt:dc"
 
@@ -70,6 +71,9 @@ typedef enum {
   vpD3D,
   vpCV 
 } vpDisplayType;
+
+void usage(const char *name, const char *badparam, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, bool &click_allowed, bool &display);
 
 /*!
 
@@ -142,16 +146,16 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv,
                 vpDisplayType &dtype, bool &list,
-                bool &click_allowed, bool &display )
+                bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
   std::string sDisplayType;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'l': list = true; break;
-    case 't': sDisplayType = optarg;
+    case 't': sDisplayType = optarg_;
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
         dtype = vpX11;
@@ -175,7 +179,7 @@ bool getOptions(int argc, const char **argv,
     case 'd': display = false; break;
 
     default:
-      usage(argv[0], optarg, dtype); return false; break;
+      usage(argv[0], optarg_, dtype); return false; break;
     }
   }
 

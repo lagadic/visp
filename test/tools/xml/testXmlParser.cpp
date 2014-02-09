@@ -212,6 +212,9 @@ vpExampleDataParser::writeMainClass(xmlNodePtr node)
 // List of allowed command line options
 #define GETOPTARGS	"o:h"
 
+void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+
 /*!
 
 Print the program options.
@@ -256,19 +259,18 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv,
-                std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg; break;
+    case 'o': opath = optarg_; break;
     case 'h': usage(argv[0], NULL, opath, user); return false; break;
 
     default:
-      usage(argv[0], optarg, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user); return false; break;
     }
   }
 
@@ -276,7 +278,7 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL, opath, user);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

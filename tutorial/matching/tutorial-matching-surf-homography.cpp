@@ -83,7 +83,7 @@ int main(int argc, const char **argv)
       vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
                            0.4, 4, true);
 
-    vpImagePoint corner_ref[4], corner_cur[4];
+    vpImagePoint corner_cur[4];
     for (int i=0; i< 4; i++) {
       corner_cur[i] = vpHomography::project(cam, curHref, corner_ref[i]);
     }

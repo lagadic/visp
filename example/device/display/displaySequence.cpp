@@ -84,6 +84,11 @@
 // List of allowed command line options
 #define GETOPTARGS	"di:p:hf:n:s:w"
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
+           unsigned first, unsigned nimages, unsigned step);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
+                unsigned &first, unsigned &nimages, unsigned &step, bool &display, bool &wait);
+
 /*!
 
   Print the program options.
@@ -98,7 +103,7 @@
 
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
-	   unsigned first, unsigned nimages, unsigned step)
+           unsigned first, unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
@@ -180,26 +185,25 @@ SYNOPSIS\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
-                unsigned &first, unsigned &nimages, unsigned &step,
-                bool &display, bool &wait)
+                unsigned &first, unsigned &nimages, unsigned &step, bool &display, bool &wait)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'd': display = false; break;
-    case 'i': ipath = optarg; break;
-    case 'p': ppath = optarg; break;
-    case 'f': first = (unsigned) atoi(optarg); break;
-    case 'n': nimages = (unsigned) atoi(optarg); break;
-    case 's': step = (unsigned) atoi(optarg); break;
+    case 'i': ipath = optarg_; break;
+    case 'p': ppath = optarg_; break;
+    case 'f': first = (unsigned) atoi(optarg_); break;
+    case 'n': nimages = (unsigned) atoi(optarg_); break;
+    case 's': step = (unsigned) atoi(optarg_); break;
     case 'w': wait = true; break;
     case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step);
       return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step);
+      usage(argv[0], optarg_, ipath, ppath, first, nimages, step);
       return false; break;
     }
   }
@@ -208,7 +212,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath, first, nimages, step);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

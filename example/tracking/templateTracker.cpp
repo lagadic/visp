@@ -99,6 +99,10 @@ typedef enum {
 
 #endif
 
+void usage(const char *name, const char *badparam, const WarpType &warp_type,
+           TrackerType &tracker_type, const long &last_frame);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
+                bool &pyramidal, WarpType &warp_type, TrackerType &tracker_type, long &last_frame);
 
 void usage(const char *name, const char *badparam, const WarpType &warp_type,
            TrackerType &tracker_type, const long &last_frame)
@@ -168,26 +172,25 @@ OPTIONS:                                                            Default\n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed,
-                bool &display, bool &pyramidal, WarpType &warp_type, TrackerType &tracker_type,
-                long &last_frame)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
+                bool &pyramidal, WarpType &warp_type, TrackerType &tracker_type, long &last_frame)
 {
-  const char *optarg;
+  const char *optarg_;
   int   c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'h': usage(argv[0], NULL, warp_type, tracker_type, last_frame); return false; break;
-    case 'i': ipath = optarg; break;
-    case 'l': last_frame = (long)atoi(optarg); break;
+    case 'i': ipath = optarg_; break;
+    case 'l': last_frame = (long)atoi(optarg_); break;
     case 'p': pyramidal = true; break;
-    case 't': tracker_type = (TrackerType)atoi(optarg); break;
-    case 'w': warp_type = (WarpType)atoi(optarg); break;
+    case 't': tracker_type = (TrackerType)atoi(optarg_); break;
+    case 'w': warp_type = (WarpType)atoi(optarg_); break;
 
     default:
-      usage(argv[0], optarg, warp_type, tracker_type, last_frame);
+      usage(argv[0], optarg_, warp_type, tracker_type, last_frame);
       return false; break;
     }
   }
@@ -195,20 +198,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   if (warp_type > WARP_TRANSLATION) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << warp_type << std::endl << std::endl;
+    std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << (int)warp_type << std::endl << std::endl;
     return false;
   }
   if (tracker_type > TRACKER_ZNCC_INVERSE_COMPOSITIONAL) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << tracker_type << std::endl << std::endl;
+    std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl << std::endl;
     return false;
   }
   if ((c == 1) || (c == -1)) {
     // standalone param or error
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

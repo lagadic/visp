@@ -63,6 +63,10 @@
 // List of allowed command line options
 #define GETOPTARGS	"dhn:o:D:"
 
+void usage(const char *name, const char *badparam, unsigned int &nframes, std::string &opath);
+bool getOptions(int argc, const char **argv, bool &display,
+                unsigned int &nframes, bool &save, std::string &opath, int &deviceType);
+
 /*!
 
   Print the program options.
@@ -126,33 +130,33 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv, bool &display,
                 unsigned int &nframes, bool &save, std::string &opath, int &deviceType)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'd': display = false; break;
     case 'D':
-      if (strcmp( optarg ,"ANY") == 0 ) {deviceType = CV_CAP_ANY;}
-      else if ( strcmp( optarg ,"MIL") == 0) {deviceType = CV_CAP_MIL;}
-      else if ( strcmp( optarg ,"VFW") == 0) {deviceType = CV_CAP_VFW;}
-      else if ( strcmp( optarg ,"V4L") == 0) {deviceType = CV_CAP_V4L;}
-      else if ( strcmp( optarg ,"V4L2") == 0) {deviceType = CV_CAP_V4L2;}
-      else if ( strcmp( optarg ,"DC1394") == 0) {deviceType = CV_CAP_DC1394;}
-      else if ( strcmp( optarg ,"CMU1394") == 0) {deviceType = CV_CAP_CMU1394;}
-      else if ( strcmp( optarg ,"DSHOW") == 0) {deviceType = CV_CAP_DSHOW;}
+      if (strcmp( optarg_ ,"ANY") == 0 ) {deviceType = CV_CAP_ANY;}
+      else if ( strcmp( optarg_ ,"MIL") == 0) {deviceType = CV_CAP_MIL;}
+      else if ( strcmp( optarg_ ,"VFW") == 0) {deviceType = CV_CAP_VFW;}
+      else if ( strcmp( optarg_ ,"V4L") == 0) {deviceType = CV_CAP_V4L;}
+      else if ( strcmp( optarg_ ,"V4L2") == 0) {deviceType = CV_CAP_V4L2;}
+      else if ( strcmp( optarg_ ,"DC1394") == 0) {deviceType = CV_CAP_DC1394;}
+      else if ( strcmp( optarg_ ,"CMU1394") == 0) {deviceType = CV_CAP_CMU1394;}
+      else if ( strcmp( optarg_ ,"DSHOW") == 0) {deviceType = CV_CAP_DSHOW;}
       else {std::cout << "Unknown type of device" << std::endl;
 	      deviceType = 0;}
       break;
     case 'n':
-      nframes = (unsigned int)atoi(optarg); break;
+      nframes = (unsigned int)atoi(optarg_); break;
     case 'o':
       save = true;
-      opath = optarg; break;
+      opath = optarg_; break;
     case 'h': usage(argv[0], NULL, nframes, opath); return false; break;
 
     default:
-      usage(argv[0], optarg, nframes, opath);
+      usage(argv[0], optarg_, nframes, opath);
       return false; break;
     }
   }
@@ -161,7 +165,7 @@ bool getOptions(int argc, const char **argv, bool &display,
     // standalone param or error
     usage(argv[0], NULL, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

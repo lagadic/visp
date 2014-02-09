@@ -57,6 +57,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"ho:"
 
+void usage(const char *name, const char *badparam, std::string ofilename);
+bool getOptions(int argc, const char **argv, std::string &ofilename);
+
 /*!
 
   Print the program options.
@@ -107,16 +110,16 @@ OPTIONS:                                              Default\n\
 */
 bool getOptions(int argc, const char **argv, std::string &ofilename)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': ofilename = optarg; break;
+    case 'o': ofilename = optarg_; break;
     case 'h': usage(argv[0], NULL, ofilename); return false; break;
 
     default:
-      usage(argv[0], optarg, ofilename);
+      usage(argv[0], optarg_, ofilename);
       return false; break;
     }
   }
@@ -125,7 +128,7 @@ bool getOptions(int argc, const char **argv, std::string &ofilename)
     // standalone param or error
     usage(argv[0], NULL, ofilename);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

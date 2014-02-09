@@ -85,6 +85,9 @@ pthread_mutex_t shm_mutex;
 #endif
 std::string output_path;
 
+void *laser_display_and_save_loop(void *);
+void *laser_acq_loop(void *);
+void *camera_acq_and_display_loop(void *);
 
 void *laser_display_and_save_loop(void *)
 {

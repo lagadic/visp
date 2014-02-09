@@ -66,6 +66,12 @@
 // List of allowed command line options
 #define GETOPTARGS	"b:de:f:i:hn:s:z:"
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename,
+     std::string ext, int first, unsigned int nimages, int step, unsigned int nzero);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename,
+                std::string &ext, int &first, unsigned int &nimages,
+                int &step, unsigned int &nzero, bool &display);
+
 /*
 
   Print the program options.
@@ -82,8 +88,7 @@
 
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string basename,
-	   std::string ext, int first, unsigned int nimages, int step,
-	   unsigned int nzero)
+     std::string ext, int first, unsigned int nimages, int step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -163,25 +168,24 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
                 std::string &ext, int &first, unsigned int &nimages,
                 int &step, unsigned int &nzero, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'b': basename = optarg; break;
+    case 'b': basename = optarg_; break;
     case 'd': display = false; break;
-    case 'e': ext = optarg; break;
-    case 'f': first = atoi(optarg); break;
-    case 'i': ipath = optarg; break;
-    case 'n': nimages = (unsigned) atoi(optarg); break;
-    case 's': step = atoi(optarg); break;
-    case 'z': nzero = (unsigned) atoi(optarg); break;
+    case 'e': ext = optarg_; break;
+    case 'f': first = atoi(optarg_); break;
+    case 'i': ipath = optarg_; break;
+    case 'n': nimages = (unsigned) atoi(optarg_); break;
+    case 's': step = atoi(optarg_); break;
+    case 'z': nzero = (unsigned) atoi(optarg_); break;
     case 'h': usage(argv[0], NULL, ipath, basename, ext, first, nimages,
                     step, nzero); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, basename, ext, first, nimages,
-            step, nzero);
+      usage(argv[0], optarg, ipath, basename, ext, first, nimages, step, nzero);
       return false; break;
     }
   }
@@ -190,7 +194,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
     // standalone param or error
     usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

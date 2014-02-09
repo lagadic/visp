@@ -8,6 +8,9 @@
 #include <visp/vpServoDisplay.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
+                        const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
+
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
 {
   static std::vector<vpImagePoint> traj[4];

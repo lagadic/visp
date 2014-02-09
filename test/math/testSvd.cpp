@@ -60,6 +60,13 @@
 // List of allowed command line options
 #define GETOPTARGS	"h"
 
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv);
+bool testSvdOpenCvGSLCoherence(double epsilon);
+#ifdef VISP_HAVE_GSL
+bool testRandom(double epsilon);
+#endif
+
 /*!
 
   Print the program options.
@@ -90,15 +97,15 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg_);
       return false; break;
     }
   }
@@ -107,7 +114,7 @@ bool getOptions(int argc, const char **argv)
     // standalone param or error
     usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
@@ -115,7 +122,6 @@ bool getOptions(int argc, const char **argv)
 }
 #define abs(x) ((x) < 0 ? - (x) : (x))
 #ifdef VISP_HAVE_GSL
-
 
 bool testRandom(double epsilon)
 {
@@ -125,8 +131,6 @@ bool testRandom(double epsilon)
   for (unsigned int i=0 ; i < L0.getRows() ; i++)
     for  (unsigned int j=0 ; j < L0.getCols() ; j++)
 	    L1[i][j] = L0[i][j] = (double)rand()/(double)RAND_MAX;
-
-	
 
   vpColVector W0(L0.getCols()) ;
   vpMatrix V0(L0.getCols(), L0.getCols()) ;
@@ -151,7 +155,8 @@ bool testRandom(double epsilon)
 
 #endif
 
-bool testSvdOpenCvGSLCoherence(double epsilon){
+bool testSvdOpenCvGSLCoherence(double epsilon)
+{
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) && defined (VISP_HAVE_GSL) // Require opencv >= 2.1.1
   vpMatrix A;
   vpMatrix vA;
@@ -194,10 +199,9 @@ main(int argc, const char ** argv)
       exit (-1);
     }
 
-    unsigned int i,j ;
     vpMatrix L(60000,6), Ls ;
-    for (i=0 ; i < L.getRows() ; i++)
-      for  (j=0 ; j < L.getCols() ; j++)
+    for (unsigned int i=0 ; i < L.getRows() ; i++)
+      for  (unsigned int j=0 ; j < L.getCols() ; j++)
         L[i][j] = 2*i+j + cos((double)(i+j))+((double)(i)) ;
     //  std::cout << L << std::endl ;
     Ls = L ;
@@ -227,7 +231,7 @@ main(int argc, const char ** argv)
     std::cout << "TESTING RANDOM MATRICES:" ;
 
     bool ret = true;
-    for(int i=0;i<2000;i++)
+    for(unsigned int  i=0;i<2000;i++)
       ret = ret & testRandom(0.00001);
     if(ret)
       std:: cout << "Success"<< std:: endl;
@@ -241,7 +245,7 @@ main(int argc, const char ** argv)
     std::cout << "TESTING OPENCV-GSL coherence:" ;
 
     bool ret2 = true;
-    for(int i=0;i<1;i++)
+    for(unsigned int i=0;i<1;i++)
       ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
     if(ret2)
       std:: cout << "Success"<< std:: endl;

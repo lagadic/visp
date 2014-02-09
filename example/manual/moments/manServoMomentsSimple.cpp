@@ -58,7 +58,11 @@
 #include <limits>
 #include <iostream> //some console output
 //this function converts the plane defined by the cMo to 1/Z=Ax+By+C plane form
-void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C){
+
+void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C);
+
+void cMoToABC(vpHomogeneousMatrix& cMo, double& A,double& B, double& C)
+{
 	vpPlane pl;
 	pl.setABCD(0,0,1.0,0);
   pl.changeFrame(cMo);

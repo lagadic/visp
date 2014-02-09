@@ -82,6 +82,7 @@ void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
 double error();
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
+void removeJointLimits(vpSimulatorAfma6& robot);
 
 #if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available
@@ -319,7 +320,8 @@ void execute(unsigned int nbIter){
 void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type){interaction_type=type;}
 double error(){return _error;}
 
-void removeJointLimits(vpSimulatorAfma6& robot){
+void removeJointLimits(vpSimulatorAfma6& robot_)
+{
   vpColVector limMin(6);
   vpColVector limMax(6);
   limMin[0] = vpMath::rad(-3600);
@@ -336,7 +338,7 @@ void removeJointLimits(vpSimulatorAfma6& robot){
   limMax[4] = vpMath::rad(3600);
   limMax[5] = vpMath::rad(3600);
 
-  robot.setJointLimit(limMin,limMax);
+  robot_.setJointLimit(limMin,limMax);
 }
 
 void _planeToABC(vpPlane& pl, double& A,double& B, double& C){

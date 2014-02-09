@@ -77,6 +77,11 @@ typedef enum {
   vpCV 
 } vpDisplayType;
 
+void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv,
+                std::string &ipath, vpDisplayType &dtype, bool &list,
+                bool &click_allowed, bool &display );
+
 /*!
 
   Print the program options.
@@ -163,17 +168,17 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv,
                 std::string &ipath, vpDisplayType &dtype, bool &list,
-                bool &click_allowed, bool &display )
+                bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
   std::string sDisplayType;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     case 'l': list = true; break;
-    case 't': sDisplayType = optarg;
+    case 't': sDisplayType = optarg_;
       // Parse the display type option
       if (sDisplayType.compare("X11") == 0) {
         dtype = vpX11;
@@ -197,7 +202,7 @@ bool getOptions(int argc, const char **argv,
     case 'd': display = false; break;
 
     default:
-      usage(argv[0], optarg, ipath, dtype); return false; break;
+      usage(argv[0], optarg_, ipath, dtype); return false; break;
     }
   }
 
@@ -206,7 +211,7 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL, ipath, dtype);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

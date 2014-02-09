@@ -76,6 +76,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:h"
 
+void usage(const char *name, const char *badparam, std::string ipath);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
+
 /*!
 
   Print the program options.
@@ -130,21 +133,20 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath,
-                bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath);
+      usage(argv[0], optarg_, ipath);
       return false; break;
     }
   }
@@ -153,7 +155,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
     // standalone param or error
     usage(argv[0], NULL, ipath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
@@ -181,7 +183,6 @@ main(int argc, const char ** argv)
     // Set the default input path
     if (! env_ipath.empty())
       ipath = env_ipath;
-
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
@@ -227,7 +228,7 @@ main(int argc, const char ** argv)
     dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
 
     // Build the name of the image file
-    unsigned iter = 0; // Image number
+    unsigned int iter = 0; // Image number
     std::ostringstream s;
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
@@ -338,7 +339,7 @@ main(int argc, const char ** argv)
       }
     }
 
-    for (int iter = 1 ; iter < 30 ; iter++)
+    for (iter = 1 ; iter < 30 ; iter++)
     {
       std::cout <<"----------------------------------------------------------"<<std::endl;
       // set the new image name

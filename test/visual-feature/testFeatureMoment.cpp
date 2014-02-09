@@ -51,24 +51,13 @@
 #include <iostream>
 
 //initialize scene in the interface
-void initScene();
+void initScene(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
+               vpMomentObject &src, vpMomentObject &dst);
 
-void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
-vpMatrix execute(); //launch the test
-void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
+vpMatrix execute(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
+                 vpMomentObject &src, vpMomentObject &dst); //launch the test
+void planeToABC(const vpPlane& pl, double& A,double& B, double& C);
 int test(double x,double y,double z,double alpha);
-
-//start and destination positioning matrices
-vpHomogeneousMatrix cMo;
-vpHomogeneousMatrix cdMo;
-
-vpServo::vpServoIteractionMatrixType interaction_type; //current or desired
-
-//source and destination objects for moment manipulation
-vpMomentObject src(6);
-vpMomentObject dst(6);
-
-using namespace std;
 
 //Compute a set of parallel positions and check if the matrix is in the right form;
 int main()
@@ -100,48 +89,51 @@ int test(double x,double y,double z,double alpha){
   //Desired pose
   vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
 
+  //source and destination objects for moment manipulation
+  vpMomentObject src(6);
+  vpMomentObject dst(6);
+
   //init and run the simulation
-  init(cMo,cdMo);
-  vpMatrix mat = execute();
+  initScene(cMo, cdMo, src, dst); //initialize graphical scene (for interface)
 
-  if(fabs(mat[0][0]-(-1)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[0][1]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[0][2]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  vpMatrix mat = execute(cMo, cdMo, src, dst);
 
-  if(fabs(mat[1][0]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[1][1]-(-1)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[1][2]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[0][0]-(-1)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[0][1]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[0][2]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
 
-  if(fabs(mat[2][0]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[2][1]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[2][2]-(-1)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[2][5]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[1][0]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[1][1]-(-1)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[1][2]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
 
-  if(fabs(mat[3][0]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[3][1]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[3][2]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[3][5]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[2][0]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[2][1]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[2][2]-(-1)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[2][5]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
 
-  if(fabs(mat[4][0]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[4][1]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[4][2]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[4][5]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[3][0]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[3][1]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[3][2]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[3][5]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
 
-  if(fabs(mat[5][0]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[5][1]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[5][2]-(0)) > numeric_limits<double>::epsilon()*1e10) return -1;
-  if(fabs(mat[5][5]-(-1)) > numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[4][0]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[4][1]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[4][2]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[4][5]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+
+  if(fabs(mat[5][0]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[5][1]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[5][2]-(0)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
+  if(fabs(mat[5][5]-(-1)) > std::numeric_limits<double>::epsilon()*1e10) return -1;
 
   return 0;
 }
 
-
-
-
-
-void initScene(){
-  vector<vpPoint> src_pts;
-  vector<vpPoint> dst_pts;
+void initScene(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
+               vpMomentObject &src, vpMomentObject &dst)
+{
+  std::vector<vpPoint> src_pts;
+  std::vector<vpPoint> dst_pts;
 
   double x[5] = { 0.2, 0.2,-0.2,-0.2, 0.2 };
   double y[5] = {-0.1, 0.1, 0.1,-0.1,-0.1 };
@@ -164,21 +156,14 @@ void initScene(){
   }
   dst.setType(vpMomentObject::DENSE_POLYGON);
   dst.fromVector(dst_pts);
-
 }
 
 
-void init(vpHomogeneousMatrix& _cMo, vpHomogeneousMatrix& _cdMo)
+vpMatrix execute(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
+                 vpMomentObject &src, vpMomentObject &dst)
 {
-  cMo = _cMo;
-  cdMo = _cdMo;
-  interaction_type = vpServo::CURRENT;
+  vpServo::vpServoIteractionMatrixType interaction_type = vpServo::CURRENT; ; //current or desired
 
-
-  initScene(); //initialize graphical scene (for interface)
-}
-
-vpMatrix execute(){
   vpServo task;
   task.setServo(vpServo::EYEINHAND_CAMERA);
   //A,B,C parameters of source and destination plane
@@ -190,11 +175,11 @@ vpMatrix execute(){
   vpPlane pl;
   pl.setABCD(0,0,1.0,0);
   pl.changeFrame(cMo);
-  _planeToABC(pl,A,B,C);
+  planeToABC(pl,A,B,C);
 
   pl.setABCD(0,0,1.0,0);
   pl.changeFrame(cdMo);
-  _planeToABC(pl,Ad,Bd,Cd);
+  planeToABC(pl,Ad,Bd,Cd);
 
   //extracting initial position (actually we only care about Zdst)
   vpTranslationVector vec;
@@ -232,8 +217,8 @@ vpMatrix execute(){
 }
 
 
-void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
-
+void planeToABC(const vpPlane& pl, double& A,double& B, double& C)
+{
   A=-pl.getA()/pl.getD();
   B=-pl.getB()/pl.getD();
   C=-pl.getC()/pl.getD();

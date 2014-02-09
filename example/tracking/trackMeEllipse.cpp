@@ -77,6 +77,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:h"
 
+void usage(const char *name, const char *badparam, std::string ipath);
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
+
 /*!
 
   Print the program options.
@@ -133,18 +136,18 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath);
+      usage(argv[0], optarg_, ipath);
       return false; break;
     }
   }
@@ -153,7 +156,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     // standalone param or error
     usage(argv[0], NULL, ipath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
@@ -226,7 +229,7 @@ main(int argc, const char ** argv)
     dirname = ipath +  vpIoTools::path("/ViSP-images/ellipse-1/");
 
     // Build the name of the image file
-    unsigned iter = 1; // Image number
+    unsigned int iter = 1; // Image number
     std::ostringstream s;
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
@@ -316,7 +319,7 @@ main(int argc, const char ** argv)
     std::cout <<"------------------------------------------------------------"<<std::endl;
 
 
-    for (int iter = 1 ; iter < 51 ; iter++) // initially : iter < 1500
+    for (iter = 1 ; iter < 51 ; iter++) // initially : iter < 1500
     {
       // set the new image name
       s.str("");

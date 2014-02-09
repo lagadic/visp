@@ -61,6 +61,14 @@
 // List of allowed command line options
 #define GETOPTARGS	"n:i:pf:r:c:vh"
 
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv,
+                unsigned int& nb_matrices, unsigned int& nb_iterations,
+                bool& use_plot_file, std::string& plotfile,
+                unsigned int& nbrows, unsigned int& nbcols, bool& verbose);
+void writeTime(const char *name, double time);
+vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols);
+
 /*!
 
   Print the program options.
@@ -129,36 +137,36 @@ bool getOptions(int argc, const char **argv,
                 bool& use_plot_file, std::string& plotfile,
                 unsigned int& nbrows, unsigned int& nbcols, bool& verbose)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'h': usage(argv[0], NULL); return false; break;
     case 'n':
-      nb_matrices = (unsigned int)atoi(optarg);
+      nb_matrices = (unsigned int)atoi(optarg_);
       break;
     case 'i':
-      nb_iterations = (unsigned int)atoi(optarg);
+      nb_iterations = (unsigned int)atoi(optarg_);
       break;
     case 'f':
-      plotfile = optarg;
+      plotfile = optarg_;
       use_plot_file = true;
       break;
     case 'p':
       use_plot_file = true;
       break;
     case 'r':
-      nbrows = (unsigned int)atoi(optarg);
+      nbrows = (unsigned int)atoi(optarg_);
       break;
     case 'c':
-      nbcols = (unsigned int)atoi(optarg);
+      nbcols = (unsigned int)atoi(optarg_);
       break;
     case 'v':
       verbose = true;
       break;
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg_);
       return false; break;
     }
   }
@@ -167,20 +175,20 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
   return true;
 }
 
-void writeTime(const char *name, double time){
+void writeTime(const char *name, double time)
+{
   std::cout << name << " time=" << time << " ms." << std::endl;
 }
 
-
-
-vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols){
+vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols)
+{
   vpMatrix A;
   A.resize(nbrows,nbcols);
 

@@ -88,6 +88,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
 
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+
 /*!
 
 Print the program options.
@@ -137,9 +140,9 @@ Set the program options.
 */
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
@@ -147,7 +150,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg_);
       return false; break;
     }
   }
@@ -156,7 +159,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     // standalone param or error
     usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 
@@ -193,7 +196,6 @@ main(int argc, const char ** argv)
       displayInt.init(Iint,700,0, "Internal view") ;
     }
 
-    int i;
     vpServo task;
 
     std::cout << std::endl ;
@@ -219,12 +221,12 @@ main(int argc, const char ** argv)
     point[1].setWorldCoordinates(0.045,-0.045,0) ;
 
     // computes the point coordinates in the camera frame and its 2D coordinates
-    for (i = 0 ; i < 4 ; i++)
+    for (unsigned int i = 0 ; i < 4 ; i++)
       point[i].track(cMo) ;
 
     // sets the desired position of the point
     vpFeaturePoint p[4] ;
-    for (i = 0 ; i < 4 ; i++)
+    for (unsigned int i = 0 ; i < 4 ; i++)
       vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the feature point s*
@@ -234,10 +236,10 @@ main(int argc, const char ** argv)
     vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,0.8,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
 
     // Projection of the points
-    for (int i = 0 ; i < 4 ; i++)
+    for (unsigned int i = 0 ; i < 4 ; i++)
       point[i].track(cdMo);
 
-    for (int i = 0 ; i < 4 ; i++)
+    for (unsigned int i = 0 ; i < 4 ; i++)
       vpFeatureBuilder::create(pd[i], point[i]);
 
     // define the task
@@ -247,7 +249,7 @@ main(int argc, const char ** argv)
     task.setInteractionMatrixType(vpServo::DESIRED) ;
 
     // - we want to see a point on a point
-    for (i = 0 ; i < 4 ; i++)
+    for (unsigned int i = 0 ; i < 4 ; i++)
       task.addFeature(p[i],pd[i]) ;
 
     // set the gain
@@ -303,7 +305,7 @@ main(int argc, const char ** argv)
       }
 
       // new point position
-      for (i = 0 ; i < 4 ; i++)
+      for (unsigned int i = 0 ; i < 4 ; i++)
       {
         point[i].track(cMo) ;
         //retrieve x,y and Z of the vpPoint structure

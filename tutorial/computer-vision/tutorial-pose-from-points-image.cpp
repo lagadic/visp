@@ -7,6 +7,9 @@
 #include <visp/vpPose.h>
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
+                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);
+
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
                  const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
 {
   vpPose pose;     double x=0, y=0;

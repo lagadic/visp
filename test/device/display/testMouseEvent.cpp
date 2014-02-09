@@ -91,6 +91,12 @@ typedef enum {
   vpD3D,
 } vpDisplayType;
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
+           unsigned first, unsigned nimages, unsigned step, vpDisplayType &dtype);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
+                unsigned &first, unsigned &nimages, unsigned &step,
+                vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
+
 /*!
 
   Print the program options.
@@ -106,8 +112,7 @@ typedef enum {
 
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
-           unsigned first, unsigned nimages, unsigned step,
-           vpDisplayType &dtype)
+           unsigned first, unsigned nimages, unsigned step, vpDisplayType &dtype)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
@@ -217,15 +222,15 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 		unsigned &first, unsigned &nimages, unsigned &step,
 		vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
   std::string sDisplayType; 
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click = false; break;
     case 'd': display = false; break;
-    case 't': sDisplayType = optarg;
+    case 't': sDisplayType = optarg_;
       // Parse the display type option
     if (sDisplayType.compare("X11") == 0) {
       dtype = vpX11;
@@ -241,18 +246,18 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     }
 
     break;  
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     case 'l': list = true; break;
-    case 'p': ppath = optarg; break;
-    case 'f': first = (unsigned) atoi(optarg); break;
-    case 'n': nimages = (unsigned) atoi(optarg); break;
-    case 's': step = (unsigned) atoi(optarg); break;
+    case 'p': ppath = optarg_; break;
+    case 'f': first = (unsigned) atoi(optarg_); break;
+    case 'n': nimages = (unsigned) atoi(optarg_); break;
+    case 's': step = (unsigned) atoi(optarg_); break;
     case 'w': wait = true; break;
     case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step, dtype);
       return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step, dtype);
+      usage(argv[0], optarg_, ipath, ppath, first, nimages, step, dtype);
       return false; break;
     }
   }
@@ -261,7 +266,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath, first, nimages, step, dtype);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

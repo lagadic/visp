@@ -78,10 +78,29 @@
 
 // List of allowed command line options
 #define GETOPTARGS	"b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
-
-
 #define DUAL_ACQ
 
+void usage(const char *name, const char *badparam, unsigned int camera,
+           const unsigned int &nframes, const std::string &opath,
+           const unsigned int &roi_left, const unsigned int &roi_top,
+           const unsigned int &roi_width, const unsigned int &roi_height,
+           const unsigned int &ringbuffersize, const unsigned int &panControl);
+void read_options(int argc, const char **argv, bool &multi, unsigned int &camera,
+                  unsigned int &nframes, bool &verbose_info,
+                  bool &verbose_settings,
+                  bool &videomode_is_set,
+                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode,
+                  bool &framerate_is_set,
+                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate,
+                  bool &colorcoding_is_set,
+                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding,
+                  bool &ringbuffersize_is_set,
+                  unsigned int &ringbuffersize,
+                  bool &display, bool &save, std::string &opath,
+                  unsigned int &roi_left, unsigned int &roi_top,
+                  unsigned int &roi_width, unsigned int &roi_height,
+                  bool &reset,
+                  unsigned int &panControl, bool & panControl_is_set);
 
 /*!
 
@@ -277,41 +296,41 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
   /*
    * Lecture des options.
    */
-  const char *optarg;
+  const char *optarg_;
   int	c;
 
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
     switch (c) {
     case 'c':
-      camera = (unsigned int)atoi(optarg); break;
+      camera = (unsigned int)atoi(optarg_); break;
     case 'd':
       display = false; break;
     case 'f':
       framerate_is_set = true;
-      framerate = (vp1394TwoGrabber::vp1394TwoFramerateType) atoi(optarg);
+      framerate = (vp1394TwoGrabber::vp1394TwoFramerateType) atoi(optarg_);
       break;
     case 'g':
       colorcoding_is_set = true;
-      colorcoding = (vp1394TwoGrabber::vp1394TwoColorCodingType) atoi(optarg);
+      colorcoding = (vp1394TwoGrabber::vp1394TwoColorCodingType) atoi(optarg_);
       break;
     case 'H':
-      roi_height = (unsigned int) atoi(optarg); break;
+      roi_height = (unsigned int) atoi(optarg_); break;
     case 'i':
       verbose_info = true; break;
     case 'L':
-      roi_left = (unsigned int) atoi(optarg); break;
+      roi_left = (unsigned int) atoi(optarg_); break;
     case 'm':
       multi = true; break;
     case 'n':
-      nframes = (unsigned int)atoi(optarg); break;
+      nframes = (unsigned int)atoi(optarg_); break;
     case 'o':
       save = true;
-      opath = optarg; break;
+      opath = optarg_; break;
     case 'b':
       ringbuffersize_is_set = true;
-      ringbuffersize = (unsigned int) atoi(optarg); break;
+      ringbuffersize = (unsigned int) atoi(optarg_); break;
     case 'p':
-      panControl = (unsigned int) atoi(optarg);
+      panControl = (unsigned int) atoi(optarg_);
       panControl_is_set = true;
       break;
     case 'r':
@@ -319,13 +338,13 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case 's':
       verbose_settings = true; break;
     case 'T':
-      roi_top = (unsigned int) atoi(optarg); break;
+      roi_top = (unsigned int) atoi(optarg_); break;
     case 'v':
       videomode_is_set = true;
-      videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg);
+      videomode = (vp1394TwoGrabber::vp1394TwoVideoModeType) atoi(optarg_);
       break;
     case 'W':
-      roi_width = (unsigned int) atoi(optarg); break;
+      roi_width = (unsigned int) atoi(optarg_); break;
     case 'h':
     case '?':
       usage(argv[0], NULL, camera, nframes, opath,
@@ -341,7 +360,7 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     usage(argv[0], NULL, camera, nframes, opath,
           roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     exit(-1);
   }
 }
@@ -488,10 +507,10 @@ main(int argc, const char ** argv)
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
             if (curmode == supmode)
               std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode)
-                        << " (-v " << supmode << ")" << std::endl;
+                        << " (-v " << (int)supmode << ")" << std::endl;
             else
               std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode)
-                        << " (-v " << supmode << ")" << std::endl;
+                        << " (-v " << (int)supmode << ")" << std::endl;
 
             if (g.isVideoModeFormat7(supmode)){
               // Format 7 video mode; no framerate setting, but color
@@ -503,11 +522,11 @@ main(int argc, const char ** argv)
                 if ( (curmode == supmode) && (supcoding == curcoding) )
                   std::cout << "    * "
                             << vp1394TwoGrabber::colorCoding2string(supcoding)
-                            << " (-g " << supcoding << ")" << std::endl;
+                            << " (-g " << (int)supcoding << ")" << std::endl;
                 else
                   std::cout << "      "
                             << vp1394TwoGrabber::colorCoding2string(supcoding)
-                            << " (-g " << supcoding << ")" << std::endl;
+                            << " (-g " << (int)supcoding << ")" << std::endl;
               }
             }
             else {
@@ -519,11 +538,11 @@ main(int argc, const char ** argv)
                 if ( (curmode == supmode) && (supfps == curfps) )
                   std::cout << "    * "
                             << vp1394TwoGrabber::framerate2string(supfps)
-                            << " (-f " << supfps << ")" << std::endl;
+                            << " (-f " << (int)supfps << ")" << std::endl;
                 else
                   std::cout << "      "
                             << vp1394TwoGrabber::framerate2string(supfps)
-                            << " (-f " << supfps << ")" << std::endl;
+                            << " (-f " << (int)supfps << ")" << std::endl;
               }
             }
           }

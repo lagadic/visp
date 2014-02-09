@@ -74,6 +74,14 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:p:f:n:s:S:G:E:h"
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
+           unsigned first, unsigned nimages, unsigned step, double sizePrecision,
+           double grayLevelPrecision, double ellipsoidShapePrecision );
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &ppath,unsigned &first, unsigned &nimages,
+                unsigned &step, double &sizePrecision, double &grayLevelPrecision,
+                double &ellipsoidShapePrecision, bool &click_allowed, bool &display);
+
 /*!
 
   Print the program options.
@@ -93,7 +101,7 @@
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
            unsigned first, unsigned nimages, unsigned step, double sizePrecision,
-           double grayLevelPrecision, double ellipsoidShapePrecision )
+           double grayLevelPrecision, double ellipsoidShapePrecision)
 {
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
@@ -196,27 +204,27 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
                 unsigned &step, double &sizePrecision, double &grayLevelPrecision,
                 double &ellipsoidShapePrecision, bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
-    case 'i': ipath = optarg; break;
-    case 'p': ppath = optarg; break;
-    case 'f': first = (unsigned) atoi(optarg); break;
-    case 'n': nimages = (unsigned) atoi(optarg); break;
-    case 's': step = (unsigned) atoi(optarg); break;
-    case 'S': sizePrecision = atof(optarg);break;
-    case 'G': grayLevelPrecision = atof(optarg);break;
-    case 'E': ellipsoidShapePrecision = atof(optarg);break;
+    case 'i': ipath = optarg_; break;
+    case 'p': ppath = optarg_; break;
+    case 'f': first = (unsigned) atoi(optarg_); break;
+    case 'n': nimages = (unsigned) atoi(optarg_); break;
+    case 's': step = (unsigned) atoi(optarg_); break;
+    case 'S': sizePrecision = atof(optarg_);break;
+    case 'G': grayLevelPrecision = atof(optarg_);break;
+    case 'E': ellipsoidShapePrecision = atof(optarg_);break;
     case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step,
                     sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
       return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath, first, nimages, step,
+      usage(argv[0], optarg_, ipath, ppath, first, nimages, step,
             sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
       return false; break;
     }
@@ -227,7 +235,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath,
     usage(argv[0], NULL, ipath, ppath, first, nimages, step,
           sizePrecision,grayLevelPrecision,ellipsoidShapePrecision);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

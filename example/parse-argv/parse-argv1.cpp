@@ -63,6 +63,9 @@
 // List of allowed command line options
 #define GETOPTARGS	"d:f:i:h"
 
+void usage(const char *name, const char *badparam, int i_val, float f_val, double d_val);
+bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val);
+
 /*!
 
   Print the program options.
@@ -118,18 +121,18 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d_val)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'd': d_val = atof(optarg); break;
-    case 'f': f_val = (float) atof(optarg); break;
-    case 'i': i_val = atoi(optarg); break;
+    case 'd': d_val = atof(optarg_); break;
+    case 'f': f_val = (float) atof(optarg_); break;
+    case 'i': i_val = atoi(optarg_); break;
     case 'h': usage(argv[0], NULL, i_val, f_val, d_val); return false; break;
 
     default:
-      usage(argv[0], optarg, i_val, f_val, d_val); return false; break;
+      usage(argv[0], optarg_, i_val, f_val, d_val); return false; break;
     }
   }
 
@@ -137,7 +140,7 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
     // standalone param or error
     usage(argv[0], NULL, i_val, f_val, d_val);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

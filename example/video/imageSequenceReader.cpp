@@ -65,6 +65,10 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:p:f:h"
 
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
+bool getOptions(int argc, const char **argv,
+                std::string &ipath, std::string &ppath, int &first, bool &click_allowed, bool &display);
+
 /*!
 
 Print the program options.
@@ -137,20 +141,20 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv,
                 std::string &ipath, std::string &ppath, int &first, bool &click_allowed, bool &display)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
-    case 'i': ipath = optarg; break;
-    case 'p': ppath = optarg; break;
-    case 'f': first = atoi(optarg); break;
+    case 'i': ipath = optarg_; break;
+    case 'p': ppath = optarg_; break;
+    case 'f': first = atoi(optarg_); break;
     case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, ppath); return false; break;
+      usage(argv[0], optarg_, ipath, ppath); return false; break;
     }
   }
 
@@ -158,7 +162,7 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL, ipath, ppath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

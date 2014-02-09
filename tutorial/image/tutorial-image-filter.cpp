@@ -8,6 +8,9 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpImageFilter.h>
 
+void display(vpImage<unsigned char> &I, const std::string &title);
+void display(vpImage<double> &D, const std::string &title);
+
 void display(vpImage<unsigned char> &I, const std::string &title)
 {
 #if defined(VISP_HAVE_X11)

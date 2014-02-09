@@ -8,6 +8,12 @@
 #include <visp/vpPose.h>
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
+                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init);
+#endif
+
+void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
                  const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
 {
   vpPose pose;     double x=0, y=0;

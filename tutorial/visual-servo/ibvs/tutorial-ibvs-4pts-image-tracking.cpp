@@ -8,6 +8,8 @@
 #include <visp/vpServoDisplay.h>
 #include <visp/vpSimulatorCamera.h>
 
+void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot);
+
 /*!
   Given an image of a target, this class provided virtual
   framegrabbing capabilities in order to retrieve an image of a

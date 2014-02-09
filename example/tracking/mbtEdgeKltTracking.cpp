@@ -65,6 +65,10 @@
 
 #define GETOPTARGS  "x:m:i:n:dchtfCo"
 
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
+                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
+                bool& cao3DModel, bool& trackCylinder, bool &useOgre);
 
 void usage(const char *name, const char *badparam)
 {
@@ -134,17 +138,19 @@ OPTIONS:                                               \n\
 }
 
 
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile, std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display, bool& cao3DModel, bool& trackCylinder, bool &useOgre)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
+                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
+                bool& cao3DModel, bool& trackCylinder, bool &useOgre)
 {
-  const char *optarg;
+  const char *optarg_;
   int   c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i': ipath = optarg; break;
-    case 'x': configFile = optarg; break;
-    case 'm': modelFile = optarg; break;
-    case 'n': initFile = optarg; break;
+    case 'i': ipath = optarg_; break;
+    case 'x': configFile = optarg_; break;
+    case 'm': modelFile = optarg_; break;
+    case 'n': initFile = optarg_; break;
     case 't': displayFeatures = false; break;
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
@@ -154,7 +160,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg_);
       return false; break;
     }
   }
@@ -163,7 +169,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     // standalone param or error
     usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

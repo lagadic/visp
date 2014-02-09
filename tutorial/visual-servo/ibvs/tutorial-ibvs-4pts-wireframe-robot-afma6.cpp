@@ -6,6 +6,9 @@
 #include <visp/vpSimulatorAfma6.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
+                        const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
+
+void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
 {
   unsigned int thickness = 3;
