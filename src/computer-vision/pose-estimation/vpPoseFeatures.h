@@ -323,7 +323,7 @@ public:
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename featureType, typename RetType, typename ...Args >
-class VISP_EXPORT vpPoseSpecificFeatureTemplate : public vpPoseSpecificFeature
+class vpPoseSpecificFeatureTemplate : public vpPoseSpecificFeature
 {
 private:
   featureType desiredFeature;
@@ -372,7 +372,7 @@ public:
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename ObjectType, typename featureType, typename RetType, typename ...Args >
-class VISP_EXPORT vpPoseSpecificFeatureTemplateObject : public vpPoseSpecificFeature
+class vpPoseSpecificFeatureTemplateObject : public vpPoseSpecificFeature
 {
 private:
   featureType desiredFeature;
