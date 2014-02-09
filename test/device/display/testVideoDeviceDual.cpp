@@ -187,7 +187,7 @@ bool getOptions(int argc, const char **argv,
     // standalone param or error
     usage(argv[0], NULL, dtype);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

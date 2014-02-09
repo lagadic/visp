@@ -137,7 +137,7 @@ bool getOptions(int argc, const char **argv, bool &display,
       nframes = (unsigned int)atoi(optarg_); break;
     case 'o':
       save = true;
-      opath = optarg; break;
+      opath = optarg_; break;
     case 'h': usage(argv[0], NULL, nframes, opath); return false; break;
 
     default:

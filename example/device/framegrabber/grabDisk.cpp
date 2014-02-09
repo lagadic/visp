@@ -185,7 +185,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
                     step, nzero); return false; break;
 
     default:
-      usage(argv[0], optarg, ipath, basename, ext, first, nimages, step, nzero);
+      usage(argv[0], optarg_, ipath, basename, ext, first, nimages, step, nzero);
       return false; break;
     }
   }

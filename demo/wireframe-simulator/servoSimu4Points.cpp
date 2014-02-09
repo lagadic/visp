@@ -140,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i': ipath = optarg; break;
+    case 'i': ipath = optarg_; break;
     case 'd': display = false; break;
     case 'h': usage(argv[0],ipath, NULL); return false; break;
 
