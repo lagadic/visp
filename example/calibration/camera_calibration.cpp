@@ -202,6 +202,7 @@ int main(int argc, const char ** argv)
         //std::cout << "Use circle grid " << std::endl;
         found = findCirclesGrid( cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID  );
         break;
+      case Settings::UNDEFINED:
       default:
         std::cout << "Unkown calibration grid " << std::endl;
         break;

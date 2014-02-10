@@ -185,7 +185,7 @@ bool vpClient::connectServer(vpNetwork::vpReceptor &serv)
   
   numberOfAttempts = 15;
   unsigned int ind = 1;
-  int connectionResult;
+  int connectionResult=-1;
   
   while(ind <= numberOfAttempts){
     std::cout << "Attempt number " << ind << "..." << std::endl;

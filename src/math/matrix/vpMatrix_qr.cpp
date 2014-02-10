@@ -67,10 +67,10 @@ extern "C" int dtrtri_(char *uplo, char *diag, int *n, double *a, int *lda, int 
 
 int allocate_work(double** work)
 {
-  int dimWork = (int)((*work)[0]);
+  unsigned int dimWork = (unsigned int)((*work)[0]);
   delete[] *work;
   *work = new double[dimWork];
-  return dimWork;
+  return (int)dimWork;
 }
 #ifdef VISP_HAVE_LAPACK
 vpMatrix vpMatrix::inverseByQRLapack() const{

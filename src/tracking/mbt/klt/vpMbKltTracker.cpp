@@ -120,9 +120,10 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   IplImage* mask = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
   
+  unsigned char val = 255/* - i*15*/;
   for (unsigned int i = 0; i < faces.size(); i += 1){
     if(faces[i]->isVisible())
-      faces[i]->updateMask(mask, 255/* - i*15*/, maskBorder);
+      faces[i]->updateMask(mask, val, maskBorder);
   }
   
   tracker.initTracking(cur, mask);

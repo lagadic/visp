@@ -592,8 +592,8 @@ void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<u
 #ifdef VISP_HAVE_OPENCV
   IplImage* imgsrc = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
   IplImage* imgdest = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
-  imgsrc = cvCreateImage(cvSize(I.getWidth(),I.getHeight()), IPL_DEPTH_8U, 1);
-  imgdest = cvCreateImage(cvSize(I.getWidth()/2,I.getHeight()/2), IPL_DEPTH_8U, 1);
+  imgsrc = cvCreateImage(cvSize((int)I.getWidth(),(int)I.getHeight()), IPL_DEPTH_8U, 1);
+  imgdest = cvCreateImage(cvSize((int)I.getWidth()/2,(int)I.getHeight()/2), IPL_DEPTH_8U, 1);
   vpImageConvert::convert(I,imgsrc);
   cvPyrDown( imgsrc, imgdest);
   vpImageConvert::convert(imgdest,GI);

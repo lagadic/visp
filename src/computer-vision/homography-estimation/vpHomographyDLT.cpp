@@ -517,7 +517,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
   try{
     std::vector<double> xan, yan, xbn, ybn;
 
-    double xg1, yg1, coef1, xg2, yg2, coef2;
+    double xg1=0., yg1=0., coef1=0., xg2=0., yg2=0., coef2=0.;
 
     vpHomography aHbn;
 

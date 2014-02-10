@@ -301,9 +301,9 @@ void vpFeatureMomentCentered::compute_interaction(){
 
   std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCentered& mu){
     vpTRACE(" << CENTRED MOMENTS >>");
-    unsigned int order = mu.order;
-    for(int i=0; i<(int)order-1; i++){
-        for(int j=0; j<(int)order-1-i; j++){
+    unsigned int order_m_1 = (unsigned int)(mu.order - 1);
+    for(unsigned int i=0; i<order_m_1; i++){
+        for(unsigned int j=0; j<order_m_1-i; j++){
             std::cout << "L_mu[" << i << "," << j << "] = ";
             mu.interaction(i,j).matlabPrint(std::cout);
         }

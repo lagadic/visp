@@ -498,9 +498,8 @@ vpTemplateTrackerZone::~vpTemplateTrackerZone()
    of triangles used to define the zone and available using getNbTriangle().
    \param gray_level: Color used to fill the triangle with.
  */
-void vpTemplateTrackerZone::fillTriangle(vpImage<unsigned char>& I, unsigned int id,unsigned int gray_level)
+void vpTemplateTrackerZone::fillTriangle(vpImage<unsigned char>& I, unsigned int id,unsigned char gray_level)
 {
-  assert(gray_level < 256);
   assert(id < getNbTriangle());
   vpTemplateTrackerTriangle triangle;
   getTriangle(id, triangle);

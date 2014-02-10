@@ -54,7 +54,7 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0,const double
   vpMatrix G_(nbParam,1);
 
   //vpMatrix *dW_ddp0=new vpMatrix[nb_pt];
-  double **dW_ddp0=new double*[nb_pt];
+  double **dW_ddp0=new double*[(unsigned int)nb_pt];
   for(int i=0;i<nb_pt;i++)
   {
     //dW_ddp0[i].resize(2,nbParam);

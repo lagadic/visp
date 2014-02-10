@@ -313,7 +313,7 @@ vpMbtKltPolygon::isTrackedFeature(const int _id)
   \param _shiftBorder : Optionnal shift for the border in pixel (sort of built-in erosion) to avoid to consider pixels near the limits of the face.
 */
 void
-vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned int _nb, unsigned int _shiftBorder)
+vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _shiftBorder)
 {
   int width = _mask->width;
   int i_min, i_max, j_min, j_max;
@@ -338,7 +338,7 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned int _nb, unsigned int _shi
   }
   
   double shiftBorder_d = (double) _shiftBorder;
-  char* ptrData = _mask->imageData + i_min*width+j_min;
+  unsigned char* ptrData = (unsigned char*)_mask->imageData + i_min*width+j_min;
   for(int i=i_min; i< i_max; i++){
     double i_d = (double) i;
     for(int j=j_min; j< j_max; j++){

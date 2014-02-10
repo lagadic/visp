@@ -429,6 +429,7 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
+  case vpAfma6::TOOL_GENERIC_CAMERA:
   case vpAfma6::TOOL_VACUUM: {
       std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
       break;

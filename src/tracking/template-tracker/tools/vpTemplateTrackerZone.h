@@ -81,7 +81,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness=3);
 
     //colorie le tieme triangle
-    void fillTriangle(vpImage<unsigned char>& I, unsigned int id, unsigned int gray_level);
+    void fillTriangle(vpImage<unsigned char>& I, unsigned int id, unsigned char gray_level);
 
     vpImagePoint getCenter() const;
     vpImagePoint getCenter(int borne_x, int borne_y) const;

@@ -185,6 +185,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     }
       break;
 
+    case vpTemplateTrackerSSDForwardAdditional::USE_NEWTON:
     default:
     {
       if(useBrent)

@@ -157,7 +157,7 @@ public:
   */
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; } 
   
-  void                updateMask(IplImage* _mask, unsigned int _nb = 255, unsigned int _shiftBorder = 0);
+  void                updateMask(IplImage* _mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
   
 //###################
 // Static Functions
