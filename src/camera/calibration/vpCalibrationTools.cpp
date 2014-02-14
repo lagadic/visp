@@ -162,8 +162,8 @@ vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
   }
   for (unsigned int i=0 ; i < 3 ; i++) cMo_est[i][3] = resul[i+4] ;
 
-  this->cMon = cMo_est ;
-  this->cMo_distn = cMo_est;
+  this->cMo = cMo_est ;
+  this->cMo_dist = cMo_est;
 
   double deviation,deviation_dist;
   this->computeStdDeviation(deviation,deviation_dist);
@@ -317,8 +317,8 @@ vpCalibration::calibVVS(vpCameraParameters &cam_est,
     throw(vpCalibrationException(vpCalibrationException::convergencyError,
                                  "Maximum number of iterations reached")) ;
   }
-  this->cMon   = cMo_est;
-  this->cMo_distn = cMo_est;
+  this->cMo   = cMo_est;
+  this->cMo_dist = cMo_est;
   this->residual = r;
   this->residual_dist = r;
   if (verbose)
@@ -408,7 +408,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMon;
+      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint2 = 2*curPoint;    
@@ -516,8 +516,8 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
       for (unsigned int i = 0 ; i < 6 ; i++)
         Tc_v_Tmp[i] = Tc_v[6*p + i];
 
-      table_cal[p].cMon = vpExponentialMap::direct(Tc_v_Tmp,1).inverse()
-                         * table_cal[p].cMon;
+      table_cal[p].cMo = vpExponentialMap::direct(Tc_v_Tmp,1).inverse()
+                         * table_cal[p].cMo;
     }
 
     if (verbose)
@@ -532,9 +532,9 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
   }
   for (unsigned int p = 0 ; p < nbPose ; p++)
   {
-    table_cal[p].cMo_distn = table_cal[p].cMon ;
-    table_cal[p].camn = cam_est;
-    table_cal[p].cam_distn = cam_est;
+    table_cal[p].cMo_dist = table_cal[p].cMo ;
+    table_cal[p].cam = cam_est;
+    table_cal[p].cam_dist = cam_est;
     double deviation,deviation_dist;
     table_cal[p].computeStdDeviation(deviation,deviation_dist);
   }
@@ -777,8 +777,8 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
                                  "Maximum number of iterations reached")) ;
   }
   this->residual_dist = r;
-  this->cMo_distn = cMo_est ;
-  this->cam_distn = cam_est ;
+  this->cMo_dist = cMo_est ;
+  this->cam_dist = cam_est ;
 
   if (verbose)
     std::cout <<  " std dev " << sqrt(r/n_points) << std::endl;
@@ -861,7 +861,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_distn;
+      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_dist;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         cX[curPoint] = oX[curPoint]*cMoTmp[0][0]+oY[curPoint]*cMoTmp[0][1]
@@ -1051,8 +1051,8 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
       for (unsigned int i = 0 ; i < 6 ; i++)
         Tc_v_Tmp[i] = Tc_v[6*p + i];
 
-      table_cal[p].cMo_distn = vpExponentialMap::direct(Tc_v_Tmp).inverse()
-                            * table_cal[p].cMo_distn;
+      table_cal[p].cMo_dist = vpExponentialMap::direct(Tc_v_Tmp).inverse()
+                            * table_cal[p].cMo_dist;
     }
     if (verbose)
       std::cout <<  " std dev: " << sqrt(r/nbPointTotal) << std::endl;
@@ -1071,8 +1071,8 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   int totalPoints = 0;
   for (unsigned int p = 0 ; p < nbPose ; p++)
   {
-    table_cal[p].cam_distn = cam_est ;
-    perViewError = table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_distn, cam_est);
+    table_cal[p].cam_dist = cam_est ;
+    perViewError = table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
     totalError += perViewError*perViewError * table_cal[p].npt;
     totalPoints += (int)table_cal[p].npt;
   }
@@ -1579,7 +1579,7 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMon;
+      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint2 = 2*curPoint;
@@ -1687,8 +1687,8 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
       for (unsigned int i = 0 ; i < 6 ; i++)
         Tc_v_Tmp[i] = Tc_v[6*p + i];
 
-      table_cal[p].cMon = vpExponentialMap::direct(Tc_v_Tmp,1).inverse()
-                         * table_cal[p].cMon;
+      table_cal[p].cMo = vpExponentialMap::direct(Tc_v_Tmp,1).inverse()
+                         * table_cal[p].cMo;
     }
     if (verbose)
       std::cout <<  " std dev " << sqrt(r/nbPointTotal) << std::endl;
@@ -1702,9 +1702,9 @@ vpCalibration::calibVVSMulti(unsigned int nbPose,
   }
   for (unsigned int p = 0 ; p < nbPose ; p++)
   {
-    table_cal[p].cMo_distn = table_cal[p].cMon ;
-    table_cal[p].camn = cam_est;
-    table_cal[p].cam_distn = cam_est;
+    table_cal[p].cMo_dist = table_cal[p].cMo ;
+    table_cal[p].cam = cam_est;
+    table_cal[p].cam_dist = cam_est;
     double deviation,deviation_dist;
     table_cal[p].computeStdDeviation(deviation,deviation_dist);
   }
@@ -1791,7 +1791,7 @@ vpCalibration::calibVVSWithDistortionMulti(
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_distn;
+      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_dist;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         cX[curPoint] = oX[curPoint]*cMoTmp[0][0]+oY[curPoint]*cMoTmp[0][1]
@@ -1981,8 +1981,8 @@ vpCalibration::calibVVSWithDistortionMulti(
       for (unsigned int i = 0 ; i < 6 ; i++)
         Tc_v_Tmp[i] = Tc_v[6*p + i];
 
-      table_cal[p].cMo_distn = vpExponentialMap::direct(Tc_v_Tmp).inverse()
-                            * table_cal[p].cMo_distn;
+      table_cal[p].cMo_dist = vpExponentialMap::direct(Tc_v_Tmp).inverse()
+                            * table_cal[p].cMo_dist;
     }
     if (verbose)
       std::cout <<  " std dev: " << sqrt(r/nbPointTotal) << std::endl;
@@ -1998,8 +1998,8 @@ vpCalibration::calibVVSWithDistortionMulti(
 
   for (unsigned int p = 0 ; p < nbPose ; p++)
   {
-    table_cal[p].cam_distn = cam_est ;
-    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_distn, cam_est);
+    table_cal[p].cam_dist = cam_est ;
+    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
   }
   if (verbose)
     std::cout <<" Global std dev " << sqrt(r/(nbPointTotal)) << std::endl;

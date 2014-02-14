@@ -89,14 +89,14 @@ public:
     CALIB_LAGRANGE_VIRTUAL_VS_DIST, /*!< Lagrange approach first, than virtual visual servoing approach, with estimation of the distortion. */
   } vpCalibrationMethodType ;
 
-  vpHomogeneousMatrix cMon ;    //!< the pose computed for the model without distortion
+  vpHomogeneousMatrix cMo ;    //!< the pose computed for the model without distortion
   //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_distn ;  //!< the pose computed for perspective projection
+  vpHomogeneousMatrix cMo_dist ;  //!< the pose computed for perspective projection
   //!< with distortion model
   //!< (as a 3x4 matrix [R T])
-  vpCameraParameters camn;   //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam;   //!< camera intrinsic parameters for perspective
   //!< projection model without distortion
-  vpCameraParameters cam_distn; //!< camera intrinsic parameters for perspective
+  vpCameraParameters cam_dist; //!< camera intrinsic parameters for perspective
   //!< projection model with distortion
 
   vpHomogeneousMatrix rMe; //!< position of the effector in relation to the

@@ -314,7 +314,7 @@ int main(int argc, const char ** argv)
 #endif
       std::cout << std::endl;
       for (unsigned int i=0; i<calibrator.size(); i++)
-        std::cout << "Estimated pose on input data " << i << ": " << vpPoseVector(calibrator[i].cMo_distn).t() << std::endl;
+        std::cout << "Estimated pose on input data " << i << ": " << vpPoseVector(calibrator[i].cMo_dist).t() << std::endl;
 
     }
     else
