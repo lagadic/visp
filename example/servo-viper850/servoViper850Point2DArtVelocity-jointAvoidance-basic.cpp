@@ -47,10 +47,8 @@
 
   Joint limits avoidance by stopping the motion on axis near the joint limits. 
 
-  Implemented from section III.B in F. Chaumette, E. Marchand. A
-  redundancy-based iterative approach for avoiding joint limits: Application
-  to visual servoing. IEEE Trans. on Robotics and Automation, 17(5):719-730,
-  October 2001.
+  Implemented from section III.B in \cite Chaumette01c.
+
 */
 
 #include <visp/vpConfig.h>

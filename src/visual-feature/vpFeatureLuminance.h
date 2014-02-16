@@ -51,11 +51,7 @@
   \file vpFeatureLuminance.h
   \brief Class that defines the image luminance visual feature
 
-  for more details see
-  C. Collewet, E. Marchand, F. Chaumette. Visual
-  servoing set free from image processing. In IEEE Int. Conf. on
-  Robotics and Automation, ICRA'08, Pages 81-86, Pasadena, Californie,
-  Mai 2008.
+  For more details see \cite collewet:inria-00261398.
 */
 
 
@@ -82,11 +78,7 @@ class VISP_EXPORT vpLuminance
   \class vpFeatureLuminance
   \brief Class that defines the image luminance visual feature
 
-  For more details see
-  C. Collewet, E. Marchand, F. Chaumette. Visual
-  servoing set free from image processing. In IEEE Int. Conf. on
-  Robotics and Automation, ICRA'08, Pages 81-86, Pasadena, Californie,
-  Mai 2008.
+  For more details see \cite collewet:inria-00261398.
 */
 
 class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature

@@ -73,13 +73,8 @@
   image. The points of interests belonging to the model and the points detected
   in the current image are given in pixels thanks to the vpImagePoint class.
   
-  For more details about the Ferns Classifier and the point detector, see
-   - Mustafa Özuysal, Michael Calonder, Vincent Lepetit, Pascal Fua, "Fast 
-      KeyPoint Recognition Using Random Ferns", IEEE Transactions on Pattern 
-      Analysis and Machine Intelligence, 15 Jan. 2009.
-
-   - Vincent Lepetit, Pascal Fua, “Towards Recognizing Feature Points Using 
-      Classification Trees”, Technical Report IC/2004/74, EPFL, 2004.
+  For more details about the Ferns Classifier and the point detector,
+  see \cite Ozuysal10 and \cite Lepetit04c.
       
   To use this class, you first have to detect points in the model and train the 
   associated Fern classifier. Then, for each new grabbed image, You can detect
