@@ -133,8 +133,8 @@ vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3()
   G.resize(3,3);
   dGx.resize(3,nbParam);
 
-  A=new vpMatrix[8];
-  for(int i=0;i<8;i++)
+  A.resize(8);
+  for(unsigned int i=0;i<8;i++)
   {
     A[i].resize(3,3);
     A[i]=0;
@@ -153,7 +153,6 @@ vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3()
 
 vpTemplateTrackerWarpHomographySL3::~vpTemplateTrackerWarpHomographySL3()
 {
-  delete [] A;
 }
 
 //get the parameter corresponding to the lower level of a gaussian pyramid

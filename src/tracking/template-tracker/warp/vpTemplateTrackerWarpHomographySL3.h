@@ -48,6 +48,8 @@
 #ifndef vpTemplateTrackerWarpHomographySL3_hh
 #define vpTemplateTrackerWarpHomographySL3_hh
 
+#include <vector>
+
 #include <visp/vpTemplateTrackerWarp.h>
 #include <visp/vpHomography.h>
 
@@ -56,7 +58,7 @@ class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWa
   protected:
     vpMatrix G;
     vpMatrix dGx;
-    vpMatrix *A;
+    std::vector<vpMatrix> A;
     
   public:
     //constructor;

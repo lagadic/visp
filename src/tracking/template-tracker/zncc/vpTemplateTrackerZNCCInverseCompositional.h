@@ -47,6 +47,8 @@
 #ifndef vpTemplateTrackerZNCCInverseCompositional_hh
 #define vpTemplateTrackerZNCCInverseCompositional_hh
 
+#include <vector>
+
 #include <visp/vpTemplateTrackerZNCC.h>
 
 /*!
@@ -58,8 +60,8 @@ class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional: public vpTemplateTr
     bool        compoInitialised;
     //pour eval evolRMS
     double      evolRMS;
-    double      *x_pos;
-    double      *y_pos;
+    std::vector<double> x_pos;
+    std::vector<double> y_pos;
     double      threshold_RMS;
     vpColVector moydIrefdp;
 
