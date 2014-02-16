@@ -68,7 +68,7 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     bool found_FeatureMoment_centered;
     bool found_featuremoment_basic;
 
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
     const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered)));
     const vpMomentCInvariant& momentCInvariant = (static_cast<const vpMomentCInvariant&>(moments.get("vpMomentCInvariant",found_moment_cinvariant)));
     vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMomentsDataBase->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));

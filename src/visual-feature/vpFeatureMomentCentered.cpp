@@ -55,15 +55,15 @@
 /*!
   Default constructor
   \param moments : Database of moment primitives.
-  \param A : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param B : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
-  \param C : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param A_ : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param B_ : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
+  \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param featureMoments : Database of features.
 */
 vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,
-                                                 double A, double B, double C,
-                                                 vpFeatureMomentDatabase* featureMoments) :
-    vpFeatureMoment(moments,A,B,C,featureMoments)
+                                                 double A_, double B_, double C_,
+                                                 vpFeatureMomentDatabase* featureMoments)
+  : vpFeatureMoment(moments,A_,B_,C_,featureMoments), order(0)
 
 {
 }
@@ -95,7 +95,7 @@ void vpFeatureMomentCentered::compute_interaction(){
     bool found_feature_gravity_center;
     bool found_moment_gravity;
 
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
     order = momentObject.getOrder()+1;
     interaction_matrices.resize(order*order);
     for(std::vector< vpMatrix >::iterator i=interaction_matrices.begin();i!=interaction_matrices.end(); ++i)

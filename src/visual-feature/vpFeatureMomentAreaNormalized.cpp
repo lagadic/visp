@@ -70,10 +70,8 @@ void vpFeatureMomentAreaNormalized::compute_interaction(){
     bool found_featuremoment_basic;
     vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMomentsDataBase->get("vpFeatureMomentBasic",found_featuremoment_basic)));
 
-
-
     const vpMomentCentered& momentCentered = static_cast<const vpMomentCentered&>(moments.get("vpMomentCentered",found_moment_centered));
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
     const vpMomentAreaNormalized& momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized&>(moments.get("vpMomentAreaNormalized",found_moment_surface_normalized));
     vpFeatureMomentCentered& featureMomentCentered = (static_cast<vpFeatureMomentCentered&>(featureMomentsDataBase->get("vpFeatureMomentCentered",found_FeatureMoment_centered)));
 

@@ -64,7 +64,7 @@ void vpFeatureMomentGravityCenter::compute_interaction(){
     bool found_featuremoment_basic;
 
     vpFeatureMomentBasic& featureMomentBasic= (static_cast<vpFeatureMomentBasic&>(featureMomentsDataBase->get("vpFeatureMomentBasic",found_featuremoment_basic)));
-    vpMomentObject& momentObject = moment->getObject();
+    const vpMomentObject& momentObject = moment->getObject();
 
     if(!found_featuremoment_basic) throw vpException(vpException::notInitialized,"vpFeatureMomentBasic not found");
 
