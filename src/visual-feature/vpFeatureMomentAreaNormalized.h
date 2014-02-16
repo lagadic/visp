@@ -77,15 +77,15 @@ class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment{
  public:
         /*!
         Initializes the feature with information about the database of moment primitives, the object plane and feature database.
-        \param moments : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
+        \param database : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
         \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
         \param featureMoments : Feature database.
 
         */
-        vpFeatureMomentAreaNormalized(vpMomentDatabase& moments,double A, double B, double C,vpFeatureMomentDatabase* featureMoments=NULL) :
-            vpFeatureMoment(moments,A,B,C,featureMoments,1){}
+        vpFeatureMomentAreaNormalized(vpMomentDatabase& database,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments=NULL)
+          : vpFeatureMoment(database,A_,B_,C_,featureMoments,1){}
         void compute_interaction();
         /*!
           associated moment name
