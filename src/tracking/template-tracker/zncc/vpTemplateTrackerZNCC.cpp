@@ -42,7 +42,7 @@
 #include <visp/vpTemplateTrackerZNCC.h>
 
 vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp)
-  : vpTemplateTracker(warp), DI(), temp(), tG(NULL)
+  : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2,nbParam);
   G.resize(nbParam);

@@ -43,7 +43,7 @@
 #include <visp/vpTemplateTrackerSSD.h>
 
 vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
-  : vpTemplateTracker(warp), DI(), temp(), tG()
+  : vpTemplateTracker(warp), DI(), temp()
 {
   dW.resize(2,nbParam);
   G.resize(nbParam);
@@ -55,8 +55,6 @@ vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
   X1.resize(2);
   X2.resize(2);
   DI.resize(2);
-
-  tG = NULL;
 }
 
 double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,vpColVector &tp)

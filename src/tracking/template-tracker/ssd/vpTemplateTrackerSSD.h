@@ -66,7 +66,6 @@ class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
   protected:
     vpRowVector     DI;
     vpRowVector     temp;
-    double          *tG;
 
   protected:
             double  getCost(const vpImage<unsigned char> &I, vpColVector &tp);
