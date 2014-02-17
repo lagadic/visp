@@ -165,8 +165,8 @@ IF (UNIX)
   # prepend with ViSP own include dir
   set(VISP_CONFIG_CFLAGS_SCRIPT "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR} ${VISP_CONFIG_CFLAGS}")
 
-  # prepend with ViSP own lib dir
-  SET(VISP_CONFIG_LIBS_SCRIPT  "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${VISP_LIBNAME_OPT} ${VISP_CONFIG_LIBS}")
+  # prepend with ViSP own lib and -L<lib dir>
+  SET(VISP_CONFIG_LIBS_SCRIPT  "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${VISP_LIBNAME_OPT} -L$PREFIX/${CMAKE_INSTALL_LIBDIR} ${VISP_CONFIG_LIBS}")
 
   SET(VISP_ECHO_NO_NEWLINE_CHARACTER "")
   SET(VISP_ECHO_NO_NEWLINE_OPTION "")
@@ -196,8 +196,8 @@ IF (UNIX)
   # prepend with ViSP own include dir
   set(VISP_CONFIG_CFLAGS_PC "-I\${includedir} ${VISP_CONFIG_CFLAGS}")
 
-  # prepend with ViSP own lib dir
-  SET(VISP_CONFIG_LIBS_PC  "\${libdir}/${VISP_LIBNAME_OPT} ${VISP_CONFIG_LIBS}")
+  # prepend with ViSP own lib dir and append -L<lib dir>
+  SET(VISP_CONFIG_LIBS_PC  "\${libdir}/${VISP_LIBNAME_OPT} ${VISP_CONFIG_LIBS} -L\${libdir}")
   CONFIGURE_FILE(${FILE_VISP_CONFIG_PC_INSTALL_IN} ${FILE_VISP_CONFIG_PC_INSTALL})
 
 ELSE(UNIX)
