@@ -46,6 +46,8 @@
 #ifndef vpTemplateTrackerSSDInverseCompositional_hh
 #define vpTemplateTrackerSSDInverseCompositional_hh
 
+#include <vector>
+
 #include <visp/vpTemplateTrackerSSD.h>
 
 /*!
@@ -60,8 +62,8 @@ class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional: public vpTemplateTra
     bool      useTemplateSelect;//use only the strong gradient pixels to compute the Jabocian
     //pour eval evolRMS
     double    evolRMS;
-    double    *x_pos;
-    double    *y_pos;
+    std::vector<double> x_pos;
+    std::vector<double> y_pos;
     double    threshold_RMS;
     
   protected:

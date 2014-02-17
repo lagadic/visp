@@ -44,7 +44,7 @@
 
 vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerSSD(warp), compoInitialised(false), HInv(), HCompInverse(), useTemplateSelect(false),
-    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-8)
+    evolRMS(0), x_pos(), y_pos(), threshold_RMS(1e-8)
 {
   useInverse=true;
   HInv.resize(nbParam,nbParam);
@@ -186,8 +186,8 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
 void vpTemplateTrackerSSDInverseCompositional::initPosEvalRMS(vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
-  x_pos=new double[nb_corners];
-  y_pos=new double[nb_corners];
+  x_pos.resize(nb_corners);
+  y_pos.resize(nb_corners);
 
   Warp->computeCoeff(p_);
   vpTemplateTrackerTriangle triangle;
@@ -232,6 +232,4 @@ void vpTemplateTrackerSSDInverseCompositional::computeEvalRMS(const vpColVector 
 
 void vpTemplateTrackerSSDInverseCompositional::deletePosEvalRMS()
 {
-  delete[] x_pos;
-  delete[] y_pos;
 }
