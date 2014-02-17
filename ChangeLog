@@ -6,11 +6,16 @@
                     http://team.inria.fr/lagadic
 
 
-ViSP 2.9.0 (release candidate 1 February 7th, 2014)
+ViSP 2.9.0 (released February 18th, 2014)
   - New features
-    . Introduction of a new template tracker using SSD or ZNCC. A video that uses
-      this tracker is available on http://team.inria.fr/lagadic/visp/computer-vision.html
-    . In vpServo introduction of a new controller able to ensure continuous sequencing
+    . Introduction of a new template tracker using SSD (vpTemplateTrackerSSD
+      classes) or ZNCC (vpTemplateTrackerZNCC classes). These trackers are able
+      to estimate 2D transformations such as translation, SRT (scale, rotation
+      and translation), affine and homography. A video
+      illustrating this tracker capabilities is available on:
+      http://team.inria.fr/lagadic/visp/computer-vision.html
+    . In vpServo introduction of a new controller able to ensure continuous
+      sequencing
   - Improvements
     . Add missing const to member functions and arguments passed by reference.
     . Introduction of a new option BUILD_WITH_STATIC_CRT that allows to set
@@ -24,14 +29,15 @@ ViSP 2.9.0 (release candidate 1 February 7th, 2014)
     . Improve a lot of classes
   - New examples
     . New example that shows how to use the template tracker
-    . New sample code provided in tutorial folder
+    . A lot of new sample code provided in tutorial folder
   - New tutorials
-    . ViSP installation on Fedora
+    . Installation from source on Linux Fedora
     . Image filtering
-    . Template tracker
-    . Debug and trace printings
+    . Template tracking
     . Homography estimation from points
     . Keypoint matching
+    . How to boost your visual servo control law
+    . Debug and trace printings
   - Bug fixed
     . [16263] libopencv_nonfree for Surf not detected by CMake.
     . [16307] vpVideoReader::setLastFrameIndex() doesn't work.
