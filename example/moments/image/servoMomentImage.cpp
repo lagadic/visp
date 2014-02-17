@@ -73,23 +73,6 @@
 #include <visp/vpPoseVector.h>
 #include <visp/vpPlot.h>
 
-//setup robot parameters
-void paramRobot();
-
-//update moment objects and interface
-void refreshScene(vpMomentObject &obj);
-//initialize scene in the interface
-void initScene();
-//initialize the moment features
-void initFeatures();
-
-void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
-void execute(unsigned int nbIter); //launch the simulation
-void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
-double error();
-void _planeToABC(vpPlane& pl, double& A,double& B, double& C);
-void paramRobot();
-
 #if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available
 int main()
@@ -105,6 +88,24 @@ int main()
   std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
 }
 #else
+
+//setup robot parameters
+void paramRobot();
+
+//update moment objects and interface
+void refreshScene(vpMomentObject &obj);
+//initialize scene in the interface
+void initScene();
+//initialize the moment features
+void initFeatures();
+
+void init(vpHomogeneousMatrix& cMo, vpHomogeneousMatrix& cdMo);
+void execute(unsigned int nbIter); //launch the simulation
+void setInteractionMatrixType(vpServo::vpServoIteractionMatrixType type);
+double error();
+void planeToABC(vpPlane& pl, double& A,double& B, double& C);
+void paramRobot();
+
 void init_visp_plot(vpPlot& );
 
 int main()
@@ -249,11 +250,11 @@ void initFeatures(){
   vpPlane pl;
   pl.setABCD(0,0,1.0,0);
   pl.changeFrame(cMo);
-  _planeToABC(pl,A,B,C);
+  planeToABC(pl,A,B,C);
 
   pl.setABCD(0,0,1.0,0);
   pl.changeFrame(cdMo);
-  _planeToABC(pl,Ad,Bd,Cd);
+  planeToABC(pl,Ad,Bd,Cd);
 
   //extracting initial position (actually we only care about Zdst)
   vpTranslationVector vec;
@@ -322,8 +323,8 @@ void execute(unsigned int nbIter){
     vpPlane pl;
     double A,B,C;
     pl.setABCD(0,0,1.0,0);
-	pl.changeFrame(cMo);
-    _planeToABC(pl,A,B,C);
+    pl.changeFrame(cMo);
+    planeToABC(pl,A,B,C);
 
     //track points, draw points and add refresh our object
     refreshScene(obj);
@@ -389,7 +390,7 @@ double error(){return _error;}
 
 
 
-void _planeToABC(vpPlane& pl, double& A,double& B, double& C){
+void planeToABC(vpPlane& pl, double& A,double& B, double& C){
 	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
 		std::cout << "Invalid position:" << std::endl;
 		std::cout << cMo << std::endl;

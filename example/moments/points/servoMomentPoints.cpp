@@ -67,6 +67,23 @@
 #include <visp/vpSimulatorAfma6.h>
 #include <visp/vpPlane.h>
 
+
+#if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
+// Robot simulator used in this example is not available
+int main()
+{
+  std::cout << "Can't run this example since vpSimulatorAfma6 capability is not available." << std::endl;
+  std::cout << "You should install pthread third-party library." << std::endl;
+}
+// No display available
+#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) && !defined(VISP_HAVE_GTK)
+int main()
+{
+  std::cout << "Can't run this example since no display capability is available." << std::endl;
+  std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
+}
+#else
+
 //setup robot parameters
 void paramRobot();
 
@@ -85,21 +102,6 @@ void planeToABC(vpPlane& pl, double& A,double& B, double& C);
 void paramRobot();
 void removeJointLimits(vpSimulatorAfma6& robot);
 
-#if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
-// Robot simulator used in this example is not available
-int main()
-{
-  std::cout << "Can't run this example since vpSimulatorAfma6 capability is not available." << std::endl;
-  std::cout << "You should install pthread third-party library." << std::endl;
-}
-// No display available
-#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) && !defined(VISP_HAVE_GTK)
-int main()
-{
-  std::cout << "Can't run this example since no display capability is available." << std::endl;
-  std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
-}
-#else
 int main()
 {
   try {  //intial pose
@@ -152,8 +154,6 @@ vpFeatureMomentCommon *featureMomentsDes;
 //source and destination objects for moment manipulation
 vpMomentObject src(6);
 vpMomentObject dst(6);
-
-using namespace std;
 
 
 void initScene(){
