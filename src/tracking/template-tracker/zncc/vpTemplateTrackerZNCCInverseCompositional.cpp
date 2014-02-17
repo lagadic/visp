@@ -46,7 +46,7 @@
 
 vpTemplateTrackerZNCCInverseCompositional::vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp)
   : vpTemplateTrackerZNCC(warp), compoInitialised(false),
-    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-8), moydIrefdp()
+    evolRMS(0), x_pos(), y_pos(), threshold_RMS(1e-8), moydIrefdp()
 {
   useInverse=true;
 }
