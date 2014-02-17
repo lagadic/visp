@@ -387,4 +387,5 @@ depends on \f$(x,y)\f$ but also on \f$Z\f$ the depth of the feature, we need to 
     }
 \endcode
 
+You are now ready to see the \ref tutorial-simu-robot-pioneer and \ref tutorial-boost-vs. 
 */

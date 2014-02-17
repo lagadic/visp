@@ -72,6 +72,8 @@
   vpServoException::notKilledProperly.
 
   To learn how to use this class, we suggest first to follow the \ref tutorial-ibvs.
+  The \ref tutorial-simu-robot-pioneer and \ref tutorial-boost-vs are also useful
+  for advanced usage of this class.
 
   The example below shows how to build a position-based visual servo
   from 3D visual features \f$s=({^{c^*}}t_c,\theta u)\f$. In that

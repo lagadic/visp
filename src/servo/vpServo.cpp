@@ -880,7 +880,8 @@ bool vpServo::testUpdated()
 /*!
 
   Compute the control law specified using setServo(). See vpServo::vpServoType for more
-  details concerning the control laws that are available.
+  details concerning the control laws that are available. The \ref tutorial-ibvs and \ref tutorial-boost-vs
+  are also useful to illustrate the usage of this function.
 
   The general form of the control law is the following:
 
@@ -1038,7 +1039,8 @@ vpColVector vpServo::computeControlLaw()
 
 /*!
   Compute the control law specified using setServo(). See vpServo::vpServoType for more
-  details concerning the control laws that are available.
+  details concerning the control laws that are available. The \ref tutorial-boost-vs is also useful to
+  illustrate the usage of this function.
 
   To the general form of the control law given in computeControlLaw(), we add here an additional term that comes from
   the task sequencing approach described in \cite Mansard07e equation (17). This additional term allows to compute
@@ -1056,7 +1058,7 @@ vpColVector vpServo::computeControlLaw()
   - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction matrix and of the robot
   Jacobian.
   - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-  - \f$t\f$ is the time given as parameter of this method
+  - \f$t\f$ is the time given as parameter of this method.
   - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified using setMu().
   - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
   This value is internally stored either at the first call of this method, or when \e t parameter is set to 0.
@@ -1228,7 +1230,7 @@ vpColVector vpServo::computeControlLaw(double t)
   - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction matrix and of the robot
   Jacobian.
   - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-  - \f$t\f$ is the time given as parameter of this method
+  - \f$t\f$ is the time given as parameter of this method.
   - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified using setMu().
   - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
   This value is internally stored either at the first call of this method, or when \e t parameter is set to 0.

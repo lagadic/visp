@@ -84,6 +84,7 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
+- \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 
 \subsection tuto_tools Other tools
 
@@ -166,6 +167,7 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 
 - \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
 - \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
+- \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 
 \section tuto_tools Other tools
 
