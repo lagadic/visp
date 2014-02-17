@@ -157,8 +157,8 @@ vpMomentObject dst(6);
 
 
 void initScene(){
-  vector<vpPoint> src_pts;
-  vector<vpPoint> dst_pts;
+  std::vector<vpPoint> src_pts;
+  std::vector<vpPoint> dst_pts;
 
   double x[8] = { 1,3, 4,-1 ,-3,-2,-1,1};
   double y[8] = { 0,1, 4, 4, -2,-2, 1,0};
@@ -236,7 +236,7 @@ void refreshScene(vpMomentObject &obj){
   double x[8] = { 1,3, 4,-1 ,-3,-2,-1,1};
   double y[8] = { 0,1, 4, 4, -2,-2, 1,0};
   int nbpoints = 8;
-  vector<vpPoint> cur_pts;
+  std::vector<vpPoint> cur_pts;
 
   for (int i = 0 ; i < nbpoints ; i++){
     vpPoint p;
