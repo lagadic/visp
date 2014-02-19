@@ -35,6 +35,7 @@
 #
 # LIBUSB_1_FOUND
 # LIBUSB_1_LIBRARIES
+# LIBUSB_1_INCLUDE_DIRS
 #
 # Authors:
 # Celine Teuliere
@@ -55,11 +56,18 @@ ELSE(WIN32)
     /usr/lib
     /usr/local/lib
     )
+  FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
+    $ENV{LIBUSB_1_HOME}/include/libusb-1.0
+    $ENV{LIBUSB_1_HOME}/build/include/libusb-1.0
+    /usr/include/libusb-1.0
+    /usr/local/include/libusb-1.0
+    )
 ENDIF(WIN32)
 
 ## --------------------------------
 
-IF(LIBUSB_1_LIBRARY)
+IF(LIBUSB_1_LIBRARY AND LIBUSB_1_INCLUDE_DIR)
+  SET(LIBUSB_1_INCLUDE_DIRS ${LIBUSB_1_INCLUDE_DIR})
   SET(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})
   SET(LIBUSB_1_FOUND TRUE)
 ELSE()
@@ -67,6 +75,8 @@ ELSE()
 ENDIF()
 
 MARK_AS_ADVANCED(
+  LIBUSB_1_INCLUDE_DIRS
+  LIBUSB_1_INCLUDE_DIR
   LIBUSB_1_LIBRARIES
   LIBUSB_1_LIBRARY
   )
