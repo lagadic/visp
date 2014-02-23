@@ -62,7 +62,7 @@ FOREACH(source ${SOURCE})
 
 ENDFOREACH(source)
 
-ADD_TEST(testFeature testFeature ${OPTION_TO_DESACTIVE_DISPLAY})
+ADD_TEST(testFeature testFeature)
 ADD_TEST(testFeatureMoment testFeatureMoment)
 ADD_TEST(testFeatureSegment testFeatureSegment ${OPTION_TO_DESACTIVE_DISPLAY} -normalized 0)
 ADD_TEST(testFeatureSegment-norm testFeatureSegment ${OPTION_TO_DESACTIVE_DISPLAY} -normalized 1)
