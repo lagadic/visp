@@ -251,4 +251,18 @@ IF(VISP_HAVE_OPENMP)
   SET(BUILDNAME "${BUILDNAME}-OpenMP")
 ENDIF()
 
+#---- Special compiler flags ----
+if(ACTIVATE_WARNING_STRICT_OVERFLOW)
+  SET(BUILDNAME "${BUILDNAME}-Wstrict-overflow")
+endif()
+if(ACTIVATE_WARNING_FLOAT_EQUAL)
+  SET(BUILDNAME "${BUILDNAME}-Wfloat-equal")
+endif()
+if(USE_CPP11)
+  SET(BUILDNAME "${BUILDNAME}-c++11")
+endif()
+if(MOMENTS_COMBINE_MATRICES)
+  SET(BUILDNAME "${BUILDNAME}-MomentsCombineMatrices")
+endif()
+
 #MESSAGE("BUILDNAME=${BUILDNAME}")
