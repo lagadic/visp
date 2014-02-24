@@ -291,7 +291,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
     //std::cout<<G<<std::endl;
     H=H/sqrt(denom);
 
-    if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
+    //if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl; // cannot occur
 
     try
     {

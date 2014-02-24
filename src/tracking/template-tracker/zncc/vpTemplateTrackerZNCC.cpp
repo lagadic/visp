@@ -126,7 +126,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, vpColVect
       Nbpoint++;
     }
   }
-  if(Nbpoint==0)return 10e10;
+  // if(Nbpoint==0)return 10e10; // cannot occur
   //return -nom/sqrt(denom);
   return -nom/sqrt(var1*var2);
 }
