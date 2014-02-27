@@ -409,7 +409,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
   size_t n = list.size();
   expecteddensity = d / (double)me->getSampleStep();
 
-  if ((double)n<0.5*expecteddensity && n > 0)
+  if ((double)n<0.5*expecteddensity /*&& n > 0*/) // n is always > 0
   {
     double delta_new = delta;
     delta = delta_1;
