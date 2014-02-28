@@ -69,10 +69,10 @@ class vpMomentDatabase;
         - vpMomentGravityCenter
 */
 class VISP_EXPORT vpFeatureMomentCentered : public vpFeatureMoment{
-private:
-    unsigned int order;
 
-  protected:
+protected:
+    
+    unsigned int order;
     /*!
        Core computation of interaction matrix for moment m_pq
     */
