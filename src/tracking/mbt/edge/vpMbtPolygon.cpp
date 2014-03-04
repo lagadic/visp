@@ -629,13 +629,13 @@ vpMbtPolygon::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vp
     poly.setNbPoint(ptIn.size());
     poly.setClipping(clippingFlags);
 
-    if(clippingFlags & vpMbtPolygon::NEAR_CLIPPING == vpMbtPolygon::NEAR_CLIPPING)
+    if((clippingFlags & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
         poly.setNearClippingDistance(znear);
 
-    if(clippingFlags & vpMbtPolygon::FAR_CLIPPING == vpMbtPolygon::FAR_CLIPPING)
+    if((clippingFlags & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
         poly.setFarClippingDistance(zfar);
 
-    for(int i = 0; i < ptIn.size(); i++)
+    for(unsigned int i = 0; i < ptIn.size(); i++)
         poly.addPoint(i,ptIn[i]);
 
     poly.changeFrame(cMo);

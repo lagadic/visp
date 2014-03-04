@@ -108,7 +108,7 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
     setBackgroundTexture(false), bgColor(vpColor::white), focal()
 {
   pt.resize(4);
-  for(int i=0;i<4;i++)
+  for(unsigned int i=0;i<4;i++)
   {
     X[i] = text.X[i];
     pt[i] = text.pt[i];
@@ -164,7 +164,7 @@ vpImageSimulator::~vpImageSimulator()
 vpImageSimulator&
 vpImageSimulator::operator=(const vpImageSimulator& sim)
 {
-  for(int i=0;i<4;i++)
+  for(unsigned int i=0;i<4;i++)
   {
     X[i] = sim.X[i];
     pt[i] = sim.pt[i];
@@ -1473,7 +1473,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
   
   visible_result = vpColVector::dotProd(normal_Cam,focal);
   
-  for(int i = 0; i < 4; i++)
+  for(unsigned int i = 0; i < 4; i++)
     pt[i].track(cMt);
   
   vpColVector e1(3) ;
@@ -1501,7 +1501,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
   if(visible)
   {
-    for(int i = 0; i < 4; i++)
+    for(unsigned int i = 0; i < 4; i++)
     {
       project(X[i],cMt,X2[i]);
       pt[i].track(cMt);
@@ -2029,9 +2029,8 @@ vpImageSimulator::getRoi(const unsigned int &Iwidth,
   double bottom = -1;
   double right = -1;
   double left= Iwidth+1;
-  int size=4;
 
-  for( int i = 0; i < point.size(); i++)
+  for( unsigned int i = 0; i < point.size(); i++)
   {
     double u=0,v=0;
     vpMeterPixelConversion::convertPoint(cam,point[i].get_x(),point[i].get_y(),u,v);
