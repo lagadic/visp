@@ -177,6 +177,8 @@ public:
 
   std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo);
 
+            void          getRoiClipped(std::vector<vpPoint> &points);
+
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint>&roi);
 
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint>&roi, const vpHomogeneousMatrix &cMo);
@@ -223,6 +225,9 @@ public:
   inline    void          setNearClippingDistance(const double &dist) { distNearClip = dist; clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);}
   
 public:
+  static   void           getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vpPoint> &ptOut, const vpHomogeneousMatrix &cMo,
+                                            const unsigned int &clippingFlags, const vpCameraParameters &cam = vpCameraParameters(),
+                                            const double &znear = 0.001, const double &zfar = 100 );
   static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max);
   static   bool           roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
   

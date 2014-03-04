@@ -152,9 +152,10 @@ class VISP_EXPORT vpImageSimulator
     
   private:
     vpColVector X[4];
-    vpPoint pt[4];
     vpHomogeneousMatrix cMt;
     vpColVector X2[4];
+    std::vector<vpPoint> pt;
+    std::vector<vpPoint> ptClipped;
     
     vpInterpolationType interp;
 
@@ -187,7 +188,7 @@ class VISP_EXPORT vpImageSimulator
     double *Xinter_optim;
 
     //triangles de projection du plan
-    vpTriangle T1,T2;
+    std::vector<vpTriangle> listTriangle;
     
     //image de texture
     vpColorPlan colorI;
@@ -200,6 +201,9 @@ class VISP_EXPORT vpImageSimulator
     vpColor bgColor;
     
     vpColVector focal;
+
+    //boolean to tell if the points in the camera frame have to be clipped
+    bool needClipping;
     
   public:
     vpImageSimulator(const vpColorPlan &col = COLORED);
@@ -286,7 +290,7 @@ class VISP_EXPORT vpImageSimulator
     
     //result = plan est visible.
     //ie: un plan est oriente dans si normal_plan.focal < 0 => plan est visible sinon invisible.
-    bool isVisible() {return visible;};
+    bool isVisible() {return visible;}
     
     //function that project a point x,y on the plane, return true if the projection is on the limited plane
     // and in this case return the corresponding image pixel Ipixelplan
@@ -308,7 +312,7 @@ class VISP_EXPORT vpImageSimulator
     void getCoordFromHomog(const vpColVector &_vH, vpColVector &_v);
     
     void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, 
-		const vpCameraParameters &cam, vpPoint* pt, vpRect &rect);
+        const vpCameraParameters &cam, const std::vector<vpPoint> &point, vpRect &rect);
 };
 
 

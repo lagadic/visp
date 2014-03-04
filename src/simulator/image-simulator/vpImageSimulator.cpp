@@ -48,6 +48,7 @@
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpMatrixException.h>
+#include <visp/vpMbtPolygon.h>
 
 /*!
   Basic constructor.
@@ -62,7 +63,7 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   : cMt(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
     distance(1.), visible_result(1.), visible(false), X0_2_optim(NULL),
     euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(), vbase_v(),
-    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), T1(), T2(),
+    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
     colorI(col), Ig(), Ic(), rect(), cleanPrevImage(false),
     setBackgroundTexture(false), bgColor(vpColor::white), focal()
 {
@@ -90,6 +91,8 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   vbase_u_optim = new double[3];
   vbase_v_optim = new double[3];
   Xinter_optim = new double[3];
+
+  pt.resize(4);
 }
 
 
@@ -100,10 +103,11 @@ vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   : cMt(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
     distance(1.), visible_result(1.), visible(false), X0_2_optim(NULL),
     euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(), vbase_v(),
-    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), T1(), T2(),
+    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
     colorI(GRAY_SCALED), Ig(), Ic(), rect(), cleanPrevImage(false),
     setBackgroundTexture(false), bgColor(vpColor::white), focal()
 {
+  pt.resize(4);
   for(int i=0;i<4;i++)
   {
     X[i] = text.X[i];
@@ -217,7 +221,10 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
     
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -227,7 +234,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
     unsigned char *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    
+
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++)
     {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++)
@@ -287,7 +294,10 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   }
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
 
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -347,7 +357,10 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   }
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
     
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -421,7 +434,10 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam)
   
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
     
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -493,7 +509,10 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
   
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
     
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -552,7 +571,10 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam,
   }
   if(visible)
   {
-    getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    if(!needClipping)
+        getRoi(I.getWidth(),I.getHeight(),cam,pt,rect);
+    else
+        getRoi(I.getWidth(),I.getHeight(),cam,ptClipped,rect);
     
     double top = rect.getTop();
     double bottom = rect.getBottom();
@@ -757,8 +779,10 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
       
   for (unsigned int i = 0; i < nbsimList; i++)
   {
-    
-    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    if(!simList[i]->needClipping)
+        simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    else
+        simList[i]->getRoi(width,height,cam,simList[i]->ptClipped,simList[i]->rect);
     
     if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
     if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
@@ -962,8 +986,10 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
       
   for (unsigned int i = 0; i < nbsimList; i++)
   {
-    
-    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    if(!simList[i]->needClipping)
+        simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    else
+        simList[i]->getRoi(width,height,cam,simList[i]->ptClipped,simList[i]->rect);
     
     if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
     if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
@@ -1165,8 +1191,10 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
 
   for (unsigned int i = 0; i < nbsimList; i++)
   {
-
-    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    if(!simList[i]->needClipping)
+        simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    else
+        simList[i]->getRoi(width,height,cam,simList[i]->ptClipped,simList[i]->rect);
 
     if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
     if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
@@ -1365,8 +1393,10 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I,
 
   for (unsigned int i = 0; i < nbsimList; i++)
   {
-
-    simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    if(!simList[i]->needClipping)
+        simList[i]->getRoi(width,height,cam,simList[i]->pt,simList[i]->rect);
+    else
+        simList[i]->getRoi(width,height,cam,simList[i]->ptClipped,simList[i]->rect);
 
     if (topFinal > simList[i]->rect.getTop()) topFinal = simList[i]->rect.getTop();
     if (bottomFinal < simList[i]->rect.getBottom()) bottomFinal = simList[i]->rect.getBottom();
@@ -1437,6 +1467,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
   cMt = cMt_;
   vpRotationMatrix R;
   cMt.extract(R);
+  needClipping = false;
 
   normal_Cam = R * normal_obj;	
   
@@ -1461,8 +1492,9 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
   double angle = pt[0].get_X()*facenormal[0] +  pt[0].get_Y()*facenormal[1]  +  pt[0].get_Z()*facenormal[2]  ;
 
-  if (angle > 0)
+  if (angle > 0){
     visible=true;
+  }
   else {
     visible=false;
   }
@@ -1473,6 +1505,8 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
     {
       project(X[i],cMt,X2[i]);
       pt[i].track(cMt);
+      if(pt[i].get_Z() < 0)
+        needClipping = true;
     }
 
     vbase_u = X2[1]-X2[0];
@@ -1480,6 +1514,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
     distance = vpColVector::dotProd(normal_Cam,X2[1]);
     
+
     if(distance < 0)
     {
       visible = false;
@@ -1493,16 +1528,28 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
       vbase_u_optim[i] = vbase_u[i];
       vbase_v_optim[i] = vbase_v[i];
     }
-    
-    vpImagePoint iPa[4];
-    for(unsigned int i = 0; i < 4; i++)
-    {
-      iPa[i].set_j(X2[i][0]/X2[i][2]);
-      iPa[i].set_i(X2[i][1]/X2[i][2]);
+
+    std::vector<vpPoint> *ptPtr = &pt;
+    if(needClipping){
+        vpMbtPolygon::getClippedPolygon(pt,ptClipped,cMt,vpMbtPolygon::NEAR_CLIPPING);
+        ptPtr = &ptClipped;
     }
-    
-    T1.buildFrom(iPa[0],iPa[1],iPa[3]);
-    T2.buildFrom(iPa[2],iPa[1],iPa[3]);
+
+    listTriangle.clear();
+    for(unsigned int i = 1 ; i < (*ptPtr).size()-1 ; i++){
+      vpImagePoint ip1, ip2, ip3;
+      ip1.set_j((*ptPtr)[0].get_x());
+      ip1.set_i((*ptPtr)[0].get_y());
+
+      ip2.set_j((*ptPtr)[i].get_x());
+      ip2.set_i((*ptPtr)[i].get_y());
+
+      ip3.set_j((*ptPtr)[i+1].get_x());
+      ip3.set_i((*ptPtr)[i+1].get_y());
+
+      vpTriangle tri(ip1,ip2,ip3);
+      listTriangle.push_back(tri);
+    }
   }
 }
 
@@ -1685,9 +1732,19 @@ vpImageSimulator::init(const char* file_image, const std::vector<vpPoint>& X_)
 bool
 vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
+//  std::cout << "In get Pixel" << std::endl;
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+  bool inside = false;
+  for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+      if(listTriangle[i].inTriangle(iP)){
+          inside = true;
+          break;
+      }
+  if(!inside) return false;
+
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP)){
+////      std::cout << "Le pixel est dans la zone projetée" << std::endl;
+//    return false;}
 
   //methoed algebrique
   double z;
@@ -1735,8 +1792,16 @@ vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc,
 			   const vpImagePoint &iP, unsigned char &Ipixelplan)
 {
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+  bool inside = false;
+  for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+      if(listTriangle[i].inTriangle(iP)){
+          inside = true;
+          break;
+      }
+  if(!inside) return false;
+
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+//    return false;
 
   //methoed algebrique
   double z;
@@ -1784,8 +1849,15 @@ bool
 vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
 {
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+  bool inside = false;
+  for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+      if(listTriangle[i].inTriangle(iP)){
+          inside = true;
+          break;
+      }
+  if(!inside) return false;
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+//    return false;
 
   //methoed algebrique
   double z;
@@ -1833,8 +1905,15 @@ vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
 			   vpRGBa &Ipixelplan)
 {
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+//    return false;
+  bool inside = false;
+  for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+      if(listTriangle[i].inTriangle(iP)){
+          inside = true;
+          break;
+      }
+  if(!inside) return false;
 
   //methoed algebrique
   double z;
@@ -1881,8 +1960,15 @@ bool
 vpImageSimulator::getPixelDepth(const vpImagePoint &iP, double &Zpixelplan)
 {
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+    bool inside = false;
+    for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+        if(listTriangle[i].inTriangle(iP)){
+            inside = true;
+            break;
+        }
+    if(!inside) return false;
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+//    return false;
 
   Zpixelplan = distance/(normal_Cam_optim[0]*iP.get_u()+normal_Cam_optim[1]*iP.get_v()+normal_Cam_optim[2]);
   return true;
@@ -1893,8 +1979,15 @@ vpImageSimulator::getPixelVisibility(const vpImagePoint &iP,
 				     double &Visipixelplan)
 {
   //test si pixel dans zone projetee
-  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
-    return false;
+  bool inside = false;
+  for(unsigned int i = 0 ; i < listTriangle.size() ; i++)
+      if(listTriangle[i].inTriangle(iP)){
+          inside = true;
+          break;
+      }
+  if(!inside) return false;
+//  if(!T1.inTriangle(iP) && !T2.inTriangle(iP))
+//    return false;
   
   Visipixelplan = visible_result;
   return true;
@@ -1929,13 +2022,16 @@ void
 vpImageSimulator::getRoi(const unsigned int &Iwidth, 
 			 const unsigned int &Iheight, 
 			 const vpCameraParameters &cam, 
-			 vpPoint* point, vpRect &rectangle)
+             const std::vector<vpPoint> &point,
+             vpRect &rectangle)
 {
   double top = Iheight+1;
   double bottom = -1;
   double right = -1;
   double left= Iwidth+1;
-  for( int i = 0; i < 4; i++)
+  int size=4;
+
+  for( int i = 0; i < point.size(); i++)
   {
     double u=0,v=0;
     vpMeterPixelConversion::convertPoint(cam,point[i].get_x(),point[i].get_y(),u,v);

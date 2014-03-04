@@ -245,6 +245,8 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
 
 /*!
   Compute the region of interest in the image according to the used clipping.
+
+  \warning If the FOV clipping is used, camera normals have to be precomputed.
   
   \param cam : camera parameters used to compute the field of view.
 */
@@ -495,6 +497,21 @@ vpMbtPolygon::getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &c
 }
 
 /*!
+  Get the 3D points of the clipped region of interest.
+
+  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+
+  \param points : resulting points.
+*/
+void
+vpMbtPolygon::getRoiClipped(std::vector<vpPoint> &points)
+{
+  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
+    points.push_back(roiPointsClip[i].first);
+  }
+}
+
+/*!
   Get the region of interest clipped in the image.
   
   \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
@@ -589,6 +606,42 @@ vpMbtPolygon::getNbCornerInsideImage(const vpImage<unsigned char>& I, const vpCa
 //###################################
 //      Static functions
 //###################################
+
+/*!
+  Static method to compute the clipped points from a set of initial points.
+
+  \warning When using FOV clipping and personnal camera parameters, camera normals have to be computed before (see vpCameraParameters::computeFov())
+
+  \param ptIn : Input points
+  \param ptOut : Output points (result of the clipping).
+  \param cMo : Pose considered for the clipping.
+  \param clippingFlags: Clipping flag (see vpMbtPolygon::vpMbtPolygonClippingType).
+  \param cam : Camera parameters (Only used if clipping flags contain FOV clipping).
+  \param znear : Near clipping distance value (Only used if clipping flags contain Near clipping).
+  \param zfar : Far clipping distance value (Only used if clipping flags contain Far clipping).
+*/
+void
+vpMbtPolygon::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vpPoint> &ptOut, const vpHomogeneousMatrix &cMo, const unsigned int &clippingFlags,
+                                const vpCameraParameters &cam, const double &znear, const double &zfar)
+{
+    ptOut.clear();
+    vpMbtPolygon poly;
+    poly.setNbPoint(ptIn.size());
+    poly.setClipping(clippingFlags);
+
+    if(clippingFlags & vpMbtPolygon::NEAR_CLIPPING == vpMbtPolygon::NEAR_CLIPPING)
+        poly.setNearClippingDistance(znear);
+
+    if(clippingFlags & vpMbtPolygon::FAR_CLIPPING == vpMbtPolygon::FAR_CLIPPING)
+        poly.setFarClippingDistance(zfar);
+
+    for(int i = 0; i < ptIn.size(); i++)
+        poly.addPoint(i,ptIn[i]);
+
+    poly.changeFrame(cMo);
+    poly.computeRoiClipped(cam);
+    poly.getRoiClipped(ptOut);
+}
 
 void                
 vpMbtPolygon::getMinMaxRoi(const std::vector<vpImagePoint> &iroi, int & i_min, int &i_max, int &j_min, int &j_max)
