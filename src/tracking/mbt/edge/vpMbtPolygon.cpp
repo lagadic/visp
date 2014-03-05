@@ -626,7 +626,7 @@ vpMbtPolygon::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vp
 {
     ptOut.clear();
     vpMbtPolygon poly;
-    poly.setNbPoint(ptIn.size());
+    poly.setNbPoint((unsigned int)ptIn.size());
     poly.setClipping(clippingFlags);
 
     if((clippingFlags & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
