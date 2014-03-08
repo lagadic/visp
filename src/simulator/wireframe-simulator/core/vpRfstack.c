@@ -103,7 +103,7 @@ fprintf_rfstack (FILE *fp)
     fprintf (fp, "back");
 	}
 	if (*sp & IS_FRONT) {
-    if (flg) fprintf (fp, " ");
+    /*if (flg)*/ fprintf (fp, " ");
     flg ++;
     fprintf (fp, "front");
 	}
