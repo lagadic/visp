@@ -264,6 +264,16 @@ public:
   */
   void setType(vpObjectType input_type){this->type=input_type;}
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& v);
+  /*!
+    Outputs raw moments in indexed form like m[1,1] = value of moment m11
+    \param momobj : A vpMomentObject
+   */
+  static void printWithIndices(const vpMomentObject& momobj);
+  /*!
+    Converts the raw moments contained in vpMomentObject to a vpMatrix
+    \param momobj : A vpMomentObject
+   */
+  static vpMatrix convertTovpMatrix(const vpMomentObject& momobj);
 
 protected:
   unsigned int order;

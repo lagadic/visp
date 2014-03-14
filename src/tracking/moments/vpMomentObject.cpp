@@ -590,3 +590,60 @@ VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& m
 
     return os;
 }
+
+/*!
+  Outputs the raw moment values \f$m_{ij}\f$ in indexed form.
+  (The moment values are same as provided by the operator << which outputs x for uncalculated moments)
+ */
+void
+vpMomentObject::printWithIndices(const vpMomentObject& momobj) {
+    std::vector<double> moment = momobj.get();
+    std::cout << std::endl <<"Order of vpMomentObject: "<<momobj.getOrder()<<std::endl;
+    // Print out values. This is same as printing using operator <<
+    for(unsigned int k=0; k<=momobj.getOrder(); k++) {
+            for(unsigned int l=0; l<(momobj.getOrder()+1)-k; l++){
+                    std::cout << "m[" << l << "," << k << "] = " << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+            }
+            std::cout<<std::endl;
+    }
+    std::cout <<std::endl;
+}
+
+/*!
+ This function returns a vpMatrix of size (order+1, order+1).
+\code
+ vpMomentObject obj(8);
+ obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
+ obj.fromImageWeighted(I, cam, vpMomentObject::BLACK); // cam should have the camera parameters
+ vpMatrix Mpq = vpMomentObject::convertTovpMatrix(obj);
+\endcode
+ Instead of accessing the moment m21 as obj.get(2,1), you can now do Mpq[2][1].
+ This is useful when you want to use the functions available in vpMatrix.
+ One use case i see now is to copy the contents of the matrix to a file or std::cout.
+ For instance, like
+ \code
+ // Print to console
+ Mpq.maplePrint(std::cout);
+ // Or write to a file
+ std::ofstream fileMpq("Mpq.csv");
+ Mpq.maplePrint(fileMpq);
+\endcode
+
+The output can be copied and pasted to MAPLE as a matrix.
+
+\warning
+The moments that are not calculated have zeros. For instance, for a vpMomentObject of order 8,
+the moment m[7,2] is not calculated. It will have 0 by default. User discretion is advised.
+*/
+vpMatrix
+vpMomentObject::convertTovpMatrix(const vpMomentObject& momobj) {
+    std::vector<double> moment = momobj.get();
+    unsigned int order = momobj.getOrder();
+    vpMatrix M(order+1, order+1);
+    for(unsigned int k=0; k<=order; k++) {
+        for(unsigned int l=0; l<(order+1)-k; l++){
+            M[l][k] = moment[k*(order+1)+ l];
+        }
+    }
+    return M;
+}
