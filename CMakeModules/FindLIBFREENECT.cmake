@@ -62,6 +62,8 @@ ELSE()
     $ENV{LIBFREENECT_HOME}/include
     /usr/include
     /usr/local/include
+    /usr/include/libfreenect
+    /usr/local/include/libfreenect
     )
   FIND_PATH(LIBFREENECT_H_INCLUDE_DIR libfreenect.h
     $ENV{LIBFREENECT_HOME}/include
