@@ -110,6 +110,7 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
      
     this->rho = rho_;
     this->theta = theta_;
+    theta_1 = theta_;
       
     a = cos(theta);
     b = sin(theta);
