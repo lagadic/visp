@@ -59,6 +59,13 @@ ELSE(BUILDNAME)
   SET(BUILDNAME "${CMAKE_SYSTEM_NAME}")
 ENDIF(BUILDNAME)
 
+# Add i386 or amd64
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(BUILDNAME "${BUILDNAME}-amd64")
+else()
+  set(BUILDNAME "${BUILDNAME}-i386")
+endif()
+
 # Add the compiler name, e.g. "g++, msvc7..."
 if(MSVC70)
   set(BUILDNAME "${BUILDNAME}-msvc70")
