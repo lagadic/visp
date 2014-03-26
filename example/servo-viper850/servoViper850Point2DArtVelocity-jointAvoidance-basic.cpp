@@ -62,7 +62,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 
-#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2))
+#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
