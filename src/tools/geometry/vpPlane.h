@@ -76,12 +76,16 @@ class VISP_EXPORT vpPlane
   double A,B,C,D ;
 
 public:
+  typedef enum {
+    object_frame,
+    camera_frame
+  } vpPlaneFrame;
   vpPlane() ;
   vpPlane(const vpPlane& P) ;
   vpPlane(const double A, const double B,const  double C,const  double D) ;
-  vpPlane(const vpPoint& P, const vpColVector &n) ;
-  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R) ;
-  void init(const vpPoint& P, const vpPoint& Q, const vpPoint& R) ;
+  vpPlane(const vpPoint& P, const vpColVector &n, vpPlaneFrame frame=camera_frame) ;
+  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame=camera_frame) ;
+  void init(const vpPoint& P, const vpPoint& Q, const vpPoint& R, vpPlaneFrame frame=camera_frame) ;
   void init(const vpColVector& P, const vpColVector &n) ;
   void init(const vpPlane& P) ;
 

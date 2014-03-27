@@ -104,12 +104,16 @@ vpPlane::vpPlane(const vpPlane& P)
   (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
-  \param P : A point with coordinates (x,y,z) on the plane.
+  \param P : A point with coordinates (x,y,z) on the plane. The \frame parameter indicates
+  if the coordinates of this points that are used are expressed in the camera of object frame.
   
   \param n : The normal to the plane.
 
+  \param frame: Indicates if the plane should be initialized from the point P
+  coordinates expressed in the camera or object frame.
+
 */
-vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
+vpPlane::vpPlane(const vpPoint& P, const vpColVector &n, vpPlaneFrame frame)
   : A(0), B(0), C(0), D(0)
 {
   //Equation of the plane is given by:
@@ -117,7 +121,11 @@ vpPlane::vpPlane(const vpPoint& P, const vpColVector &n)
   B = n[1];
   C = n[2];
 
-  D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
+  if (frame == vpPlane::camera_frame)
+    D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
+  else
+    D=-(A*P.get_oX()+B*P.get_oY()+C*P.get_oZ());
+
 }
 
 /*!
@@ -138,6 +146,7 @@ void vpPlane::init(const vpPlane& P)
   \e n to the plane.
 
   \param P : A point with coordinates (x,y,z) on the plane.
+  The size of the vector should be 3, with P[0]=x, with P[1]=y, with P[2]=z.
   
   \param n : The normal to the plane.
 
@@ -156,26 +165,42 @@ void vpPlane::init(const vpColVector & P, const vpColVector &n)
 /*!
   Compute the equation of a plane given three point P, Q, R.
 
-  The normal to the plane is given by
+  The normal to the plane is given by:
   n = PQ x PR
+
+  \param P,Q,R: Three points on the plane.
+  \param frame: Indicates if the plane should be initialized from the points
+  coordinates expressed in the camera or object frame.
 
 */
 void
-vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
+vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
 {
   vpColVector a(3);
   vpColVector b(3);
   vpColVector n(3);
-  //Calculate vector corresponding to PQ
-  a[0]=P.get_X()-Q.get_X();
-  a[1]=P.get_Y()-Q.get_Y();
-  a[2]=P.get_Z()-Q.get_Z();
+  if (frame == vpPlane::camera_frame) {
+    //Calculate vector corresponding to PQ
+    a[0]=P.get_X()-Q.get_X();
+    a[1]=P.get_Y()-Q.get_Y();
+    a[2]=P.get_Z()-Q.get_Z();
 
-  //Calculate vector corresponding to PR
-  b[0]=P.get_X()-R.get_X();
-  b[1]=P.get_Y()-R.get_Y();
-  b[2]=P.get_Z()-R.get_Z();
+    //Calculate vector corresponding to PR
+    b[0]=P.get_X()-R.get_X();
+    b[1]=P.get_Y()-R.get_Y();
+    b[2]=P.get_Z()-R.get_Z();
+  }
+  else {
+    //Calculate vector corresponding to PQ
+    a[0]=P.get_oX()-Q.get_oX();
+    a[1]=P.get_oY()-Q.get_oY();
+    a[2]=P.get_oZ()-Q.get_oZ();
 
+    //Calculate vector corresponding to PR
+    b[0]=P.get_oX()-R.get_oX();
+    b[1]=P.get_oY()-R.get_oY();
+    b[2]=P.get_oZ()-R.get_oZ();
+  }
   //Calculate normal vector to plane PQ x PR
   n=vpColVector::cross(a,b);
 
@@ -183,7 +208,10 @@ vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
   A = n[0];
   B = n[1];
   C = n[2];
-  D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
+  if (frame == vpPlane::camera_frame)
+    D=-(A*P.get_X()+B*P.get_Y()+C*P.get_Z());
+  else
+    D=-(A*P.get_oX()+B*P.get_oY()+C*P.get_oZ());
 
   double norm =  sqrt(A*A+B*B+C*C) ;
   A /= norm ;
@@ -196,15 +224,19 @@ vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
 /*!
   Compute the equation of a plane given three point P, Q, R.
 
-  The normal to the plane is given by
+  The normal to the plane is given by:
   n = PQ x PR
+
+  \param P,Q,R: Three points on the plane.
+  \param frame: Indicates if the plane should be initialized from the points
+  coordinates expressed in the camera or object frame.
 
   \sa init(const vpPoint &, const vpPoint &, const vpPoint &)
 */
-vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R)
+vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame)
   : A(0), B(0), C(0), D(0)
 {
-  init(P,Q,R) ;
+  init(P, Q, R, frame) ;
 }
 
 /*!

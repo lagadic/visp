@@ -150,14 +150,31 @@ vpCircle::~vpCircle()
 
 
 
-//! perspective projection of the circle
+/*!
+  Perspective projection of the circle.
+
+  From the 3D parameters of the circle in the camera frame available in cP, computes the 2D parameters of the ellipse resulting from the perspective projection in the image plane. Those 2D parameters are available in p vector.
+
+  See vpCircle::projection(const vpColVector &, vpColVector &) for a more detailed description of the parameters.
+  */
 void
 vpCircle::projection()
 {
   projection(cP,p) ;
 }
 
-//! Perspective projection of the circle.
+/*!
+  Perspective projection of the circle.
+  \param cP_: 3D cercle input parameters. This vector is of dimension 7. It contains the following parameters: A, B, C, X0, Y0, Z0, r where
+  - A,B,C are the parameters of the plane with equation Ax+By+Cz+D=0 containing the circle
+  - X0,Y0,Z0 are the 3D coordinates of the cercle in the camera frame
+  - r is the circle radius.
+
+  \param p_: 2D circle output parameters. This is a 5 dimension vector. It contains the following parameters: xc, yc, m20, m11, m02 where:
+  - xc,yc are the normalized coordinates of the center of the ellipse (ie the perspective projection of a 3D
+    circle becomes a 2D ellipse in the image) in the image plane.
+  - mu20,mu11,mu02 are the second order centered moments of the ellipse.
+  */
 void
 vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
 {
@@ -188,6 +205,12 @@ vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
     K[5] = 1 - 2*C*Z0 + C*C*s;
 
   }
+
+//  {
+//    std::cout << "K dans vpCircle::projection(): " << std::endl;
+//    for (unsigned int i=1; i<6; i++)
+//      std::cout << K[i]/K[0] << std::endl;
+//  }
   double det  = K[2]*K[2] -K[0]*K[1];
   if (fabs(det) < 1e-8)
   {
@@ -235,15 +258,15 @@ vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
   }
 
   det =  (1.0 + vpMath::sqr(E));
-  double m20 = (vpMath::sqr(A) +  vpMath::sqr(B*E))  /det ;
-  double m11 = (vpMath::sqr(A)  - vpMath::sqr(B)) *E / det ;
-  double m02 = (vpMath::sqr(B) + vpMath::sqr(A*E))   / det ;
+  double mu20 = (vpMath::sqr(A) +  vpMath::sqr(B*E))  /det ;
+  double mu11 = (vpMath::sqr(A)  - vpMath::sqr(B)) *E / det ;
+  double mu02 = (vpMath::sqr(B) + vpMath::sqr(A*E))   / det ;
 
   p_[0] = xc ;
   p_[1] = yc ;
-  p_[2] = m20 ;
-  p_[3] = m11 ;
-  p_[4] = m02 ;
+  p_[2] = mu20 ;
+  p_[3] = mu11 ;
+  p_[4] = mu02 ;
 }
 
 //! perspective projection of the circle
