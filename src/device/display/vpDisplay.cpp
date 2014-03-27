@@ -40,6 +40,8 @@
  *
  *****************************************************************************/
 
+#include <limits>
+
 #include <visp/vpDisplay.h>
 #include <visp/vpDisplayException.h>
 #include <visp/vpImageConvert.h>
@@ -3217,4 +3219,171 @@ vpDisplay::getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip)
     throw ;
   }
   return false;
+}
+
+/*!
+  Display an ellipse from its parameters (xc,yc,a,b,e).
+  \param center : Center (xc,yc) of the ellipse.
+  \param a,b : Ellipse axis size along x and y.
+  \param e : Ellipse excentricity.
+  \param color : Drawings color.
+  \param thickness : Drawings thickness.
+*/
+void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
+                               const vpImagePoint &center,
+                               const double &a, const double &b, const double &e,
+                               const double &angle1, const double &angle2,
+                               const vpColor &color,
+                               unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      double j1, i1;
+      vpImagePoint iP11;
+      double j2, i2;
+      vpImagePoint iP22;
+      j1 = j2 = i1 = i2 = 0 ;
+
+      // Approximation of the circumference of an ellipse:
+      // [Ramanujan, S., "Modular Equations and Approximations to ,"
+      // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
+      double t = (a-b)/(a+b);
+      double circumference = M_PI*(a+b)*(1 + 3*vpMath::sqr(t)/(10 + sqrt(4 - 3*vpMath::sqr(t))));
+
+      int nbpoints = (int)(floor(circumference/5));
+      if (nbpoints < 10)
+        nbpoints = 10;
+      double incr = 2*M_PI / nbpoints ; // angle increment
+
+      double smallalpha = angle1;
+      double highalpha  = angle2;
+
+      double k = smallalpha ;
+      j1 = a *cos(k) ; // equation of an ellipse
+      i1 = b *sin(k) ; // equation of an ellipse
+
+      // (i1,j1) are the coordinates on the origin centered ellipse ;
+      // a rotation by "e" and a translation by (xci,jc) are done
+      // to get the coordinates of the point on the shifted ellipse
+      iP11.set_j ( center.get_j() + cos(e) *j1 - sin(e) *i1 );
+      iP11.set_i ( center.get_i() + sin(e) *j1 + cos(e) *i1 );
+      std::cout << "vpDisplay:  " << a << " " << b << " " << vpMath::deg(e) << std::endl; // TODO: remove debug
+
+      while (k+incr<highalpha+incr)
+      {
+        j2 = a *cos(k+incr) ; // equation of an ellipse
+        i2 = b *sin(k+incr) ; // equation of an ellipse
+
+        // to get the coordinates of the point on the shifted ellipse
+        iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
+        iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+
+        ( I.display )->displayLine(iP11, iP22, color, thickness) ;
+
+        i1 = i2;
+        j1 = j2;
+        iP11 = iP22;
+
+        k += incr ;
+      }
+//      j2 = a *cos(highalpha) ; // equation of an ellipse
+//      i2 = b *sin(highalpha) ; // equation of an ellipse
+
+//      // to get the coordinates of the point on the shifted ellipse
+//      iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
+//      iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+
+//      ( I.display )->displayLine(iP11, iP22, color, thickness) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display an ellipse from its parameters (xc,yc,a,b,e).
+  \param center : Center (xc,yc) of the ellipse.
+  \param a,b : Ellipse axis size along x and y.
+  \param e : Ellipse excentricity.
+  \param color : Drawings color.
+  \param thickness : Drawings thickness.
+*/
+void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
+                               const vpImagePoint &center,
+                               const double &a, const double &b, const double &e,
+                               const double &angle1, const double &angle2,
+                               const vpColor &color,
+                               unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      double j1, i1;
+      vpImagePoint iP11;
+      double j2, i2;
+      vpImagePoint iP22;
+      j1 = j2 = i1 = i2 = 0 ;
+
+      // Approximation of the circumference of an ellipse:
+      // [Ramanujan, S., "Modular Equations and Approximations to ,"
+      // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
+      double t = (a-b)/(a+b);
+      double circumference = M_PI*(a+b)*(1 + 3*vpMath::sqr(t)/(10 + sqrt(4 - 3*vpMath::sqr(t))));
+
+      int nbpoints = (int)(floor(circumference/5));
+      if (nbpoints < 10)
+        nbpoints = 10;
+      double incr = 2*M_PI / nbpoints ; // angle increment
+
+      double smallalpha = angle1;
+      double highalpha  = angle2;
+
+      double k = smallalpha ;
+      j1 = a *cos(k) ; // equation of an ellipse
+      i1 = b *sin(k) ; // equation of an ellipse
+
+      // (i1,j1) are the coordinates on the origin centered ellipse ;
+      // a rotation by "e" and a translation by (xci,jc) are done
+      // to get the coordinates of the point on the shifted ellipse
+      iP11.set_j ( center.get_j() + cos(e) *j1 - sin(e) *i1 );
+      iP11.set_i ( center.get_i() + sin(e) *j1 + cos(e) *i1 );
+
+      while (k+incr<highalpha+incr)
+      {
+        j2 = a *cos(k+incr) ; // equation of an ellipse
+        i2 = b *sin(k+incr) ; // equation of an ellipse
+
+        // to get the coordinates of the point on the shifted ellipse
+        iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
+        iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+
+        ( I.display )->displayLine(iP11, iP22, color, thickness) ;
+
+        i1 = i2;
+        j1 = j2;
+        iP11 = iP22;
+
+        k += incr ;
+      }
+      j2 = a *cos(highalpha) ; // equation of an ellipse
+      i2 = b *sin(highalpha) ; // equation of an ellipse
+
+      // to get the coordinates of the point on the shifted ellipse
+      iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
+      iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+
+      ( I.display )->displayLine(iP11, iP22, color, thickness) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
 }

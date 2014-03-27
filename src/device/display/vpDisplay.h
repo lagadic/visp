@@ -249,10 +249,10 @@ class VISP_EXPORT vpDisplay
     \param color : Line color.
     \param thickness : Line thickness.
   */
-  virtual void displayLine(const vpImagePoint &ip1, 
-			   const vpImagePoint &ip2,
-			   const vpColor &color, 
-			   unsigned int thickness=1) =0;
+  virtual void displayLine(const vpImagePoint &ip1,
+         const vpImagePoint &ip2,
+         const vpColor &color,
+         unsigned int thickness=1) =0;
 
   /*!
     Display a point at the image point \e ip location.
@@ -644,6 +644,12 @@ class VISP_EXPORT vpDisplay
 			     int i1, int j1, int i2, int j2,
 			     const vpColor &color, 
 			     unsigned int thickness=1) ;
+  static void displayEllipse(const vpImage<unsigned char> &I,
+                             const vpImagePoint &center,
+                              const double &a, const double &b, const double &e,
+                              const double &angle1, const double &angle2,
+                              const vpColor &color,
+                              unsigned int thickness=1);
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
@@ -786,6 +792,12 @@ class VISP_EXPORT vpDisplay
 			   const vpCameraParameters &cam,
 			   double size, const vpColor &color, 
 			   unsigned int thickness=1)  ;
+  static void displayEllipse(const vpImage<vpRGBa> &I,
+                             const vpImagePoint &center,
+                             const double &a, const double &b, const double &e,
+                             const double &angle1, const double &angle2,
+                             const vpColor &color,
+                             unsigned int thickness=1);
   static void displayLine(const vpImage<vpRGBa> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
