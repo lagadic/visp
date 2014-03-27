@@ -54,6 +54,7 @@
 #include <visp/vpMe.h>
 #include <visp/vpMbtMeLine.h>
 #include <visp/vpMbtDistanceLine.h>
+#include <visp/vpMbtDistanceCircle.h>
 #include <visp/vpMbtDistanceCylinder.h>
 #include <visp/vpXmlParser.h>
 
@@ -277,18 +278,25 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     double lambda;
     
     //! The moving edges parameters. 
-    vpMe  me;
+    vpMe me;
     //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
     std::vector< std::list< vpMbtDistanceLine*> > lines;
+
+    //! Vector of the tracked circles.
+    std::vector< std::list< vpMbtDistanceCircle*> > circles;
+
     //! Vector of the tracked cylinders.
     std::vector< std::list< vpMbtDistanceCylinder*> > cylinders;
 
     //! Index of the polygon to add, and total number of polygon extracted so far. 
     unsigned int nline;
 
-    //! Index of the cylinder to add, and total number of polygon extracted so far.
+    //! Index of the circle to add, and total number of circles extracted so far.
+    unsigned int ncircle;
+
+    //! Index of the cylinder to add, and total number of cylinders extracted so far.
     unsigned int ncylinder;
-    
+
     //! Index of the polygon to add, and total number of polygon extracted so far. Cannot be unsigned because the default index of a polygon is -1.
     int index_polygon;
     
@@ -373,8 +381,9 @@ public:
   virtual inline double getLambda() const {return lambda;}
   
   void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0);
+  void getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level = 0);
   void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level = 0);
-  
+
   /*!
     Get the moving edge parameters.
     
@@ -453,6 +462,10 @@ public:
         for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
           (*it)->setCameraParameters(cam);
         }
+
+        for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+          (*it)->setCameraParameters(cam);
+        }
       }
     }
   }
@@ -504,6 +517,7 @@ public:
   void track(const vpImage<unsigned char> &I);
 
 protected:
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p) ;
@@ -511,12 +525,14 @@ protected:
   void computeVVS(const vpImage<unsigned char>& _I);
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char>& I);
+  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle=0);
   virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder=0);
   virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
+  void removeCircle(const std::string& name);
   void removeCylinder(const std::string& name);
   void removeLine(const std::string& name);
   void testTracking();

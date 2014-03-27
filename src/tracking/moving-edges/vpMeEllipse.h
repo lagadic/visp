@@ -146,12 +146,17 @@ public:
   vpMeEllipse(const vpMeEllipse &meellipse) ;
   virtual ~vpMeEllipse() ;
 
+  /*!
+    \return Expected number of moving edges to track along the ellipse.
+   */
+  int getExpectedDensity() {return (int)expecteddensity;};
   void track(const vpImage<unsigned char>& Im);
 
   void initTracking(const vpImage<unsigned char> &I) ;
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
-		    vpImagePoint* iP) ;
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint* iP) ;
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p, double e_p, double low_alpha, double high_alpha) ;
   void display(const vpImage<unsigned char>&I, vpColor col) ;
+  void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
   void printParameters() ;
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -315,7 +320,7 @@ protected:
   double b;
   //! \f$ e \f$ is the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$.
   double e;
-	
+
 protected:
   //! The coordinates of the point corresponding to the smallest \f$ alpha \f$ angle. More things about the \f$ alpha \f$ are given at the beginning of the class description.
   vpImagePoint iP1;
@@ -341,6 +346,8 @@ protected:
   double m11,m02,m20;
   //! Threshold for the robust least square.
   double thresholdWeight;
+  //! Expected number of me to track along the ellipse.
+  double expecteddensity;
 
 private:
   //! True if the ellipse to track is a circle
@@ -373,11 +380,13 @@ public:
   static void display(const vpImage<unsigned char>& I, const vpImagePoint &center,
                       const double &A, const double &B, const double &E,
                       const double & smallalpha, const double &highalpha,
-                      vpColor color = vpColor::green);
+                      const vpColor &color = vpColor::green,
+                      unsigned int thickness=1);
   static void display(const vpImage<vpRGBa>& I, const vpImagePoint &center,
                       const double &A, const double &B, const double &E,
                       const double & smallalpha, const double &highalpha,
-                      vpColor color = vpColor::green);
+                      const vpColor &color = vpColor::green,
+                      unsigned int thickness=1);
 
 };
 

@@ -6,6 +6,12 @@
                     http://team.inria.fr/lagadic
 
 
+ViSP 2.9.1 (under development)
+  - New features
+    . Introduction of circles in the model-based tracker
+  - Bug fixed
+    . [17112] Error after second call to track() in vpMbEdgeTracker
+----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features
     . Introduction of a new template tracker using SSD (vpTemplateTrackerSSD

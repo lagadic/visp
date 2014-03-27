@@ -75,7 +75,7 @@ bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
   Basic constructor
 */
 vpMbEdgeTracker::vpMbEdgeTracker()
-  : compute_interaction(1), lambda(1), me(), lines(1), cylinders(1), nline(0), ncylinder(0),
+  : compute_interaction(1), lambda(1), me(), lines(1), circles(1), cylinders(1), nline(0), ncylinder(0),
     index_polygon(0), faces(), nbvisiblepolygone(0), percentageGdPt(0.4), scales(1),
     Ipyramid(0), scaleLevel(0), useOgre(false),
     angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
@@ -94,8 +94,9 @@ vpMbEdgeTracker::vpMbEdgeTracker()
 vpMbEdgeTracker::~vpMbEdgeTracker()
 {
   vpMbtDistanceLine *l ;
-  vpMbtDistanceCylinder *c;
-  
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
+
   for (unsigned int i = 0; i < lines.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
@@ -107,15 +108,24 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
-        c = *it;
-        if (c!=NULL){
-          delete c ;
+        cy = *it;
+        if (cy!=NULL){
+          delete cy ;
         }
-        c = NULL ;
+        cy = NULL ;
+      }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if (ci!=NULL){
+          delete ci ;
+        }
+        ci = NULL ;
       }
 
       lines[i].clear();
       cylinders[i].clear();
+      circles[i].clear();
     }
   }
   cleanPyramid(Ipyramid);
@@ -141,6 +151,12 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &p_me)
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
         cy = *it;
         cy->setMovingEdge(&(this->me)) ;
+      }
+
+      vpMbtDistanceCircle *ci;
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        ci->setMovingEdge(&(this->me)) ;
       }
     }
   }
@@ -184,6 +200,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   // compute the interaction matrix and its pseudo inverse
   vpMbtDistanceLine *l ;
   vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCircle *ci ;
 
   vpColVector w;
   vpColVector weighted_error;
@@ -195,6 +212,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   unsigned int nbrow  = 0;
   unsigned int nberrors_lines = 0;
   unsigned int nberrors_cylinders = 0;
+  unsigned int nberrors_circles = 0;
 
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;
@@ -209,7 +227,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     nberrors_cylinders += cy->nbFeature ;
     cy->initInteractionMatrixError() ;
   }
-  
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    nbrow += ci->nbFeature ;
+    nberrors_circles += ci->nbFeature ;
+    ci->initInteractionMatrixError() ;
+  }
+
   if (nbrow==0){
     vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data in the interaction matrix...");
@@ -337,7 +362,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       n+= l->nbFeature ;
     }
 
-
     for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
       cy = *it;
       cy->computeInteractionMatrixError(cMo, _I);
@@ -440,7 +464,78 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
       n+= cy->nbFeature ;
     }
-    
+
+    for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+      ci = *it;
+      ci->computeInteractionMatrixError(cMo);
+      double fac = 1.0;
+
+      std::list<vpMeSite>::const_iterator itCir;
+      if (iter == 0 && (ci->meEllipse != NULL)) {
+        itCir = ci->meEllipse->getMeList().begin();
+      }
+
+      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+        for(unsigned int j=0; j < 6 ; j++){
+          L[n+i][j] = ci->L[i][j]; //On remplit la matrice d'interaction globale
+        }
+        error[n+i] = ci->error[i]; //On remplit la matrice d'erreur
+
+        if (error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
+
+        w[n+i] = 0;
+
+        if (iter == 0)
+        {
+          factor[n+i] = fac;
+          vpMeSite site = *itCir;
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+          ++itCir;
+        }
+
+        //If pour la premiere extremite des moving edges
+        if (i == 0)
+        {
+          e_cur = ci->error[0];
+          if (ci->nbFeature > 1)
+          {
+            e_next = ci->error[1];
+            if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
+            {
+              w[n+i] = 1/*0.5*/;
+            }
+            e_prev = e_cur;
+          }
+          else w[n+i] = 1;
+        }
+
+        //If pour la derniere extremite des moving edges
+        else if(i == ci->nbFeature-1)
+        {
+          e_cur = ci->error[i];
+          if ( fabs(e_cur - e_prev) < limite && vpMath::sign(e_cur) == vpMath::sign(e_prev) )
+          {
+            w[n+i] += 1/*0.5*/;
+          }
+        }
+
+        else
+        {
+          e_cur = ci->error[i];
+          e_next = ci->error[i+1];
+          if ( fabs(e_cur - e_prev) < limite ){
+            w[n+i] += 0.5;
+          }
+          if ( fabs(e_cur - e_next) < limite ){
+            w[n+i] += 0.5;
+          }
+          e_prev = e_cur;
+        }
+      }
+
+      n+= ci->nbFeature ;
+    }
+
     count = count / (double)nbrow;
     if (count < 0.85){
       reloop = true;
@@ -474,19 +569,25 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     iter++;
   }
-//   cout << "\t First minimization in " << iter << " iteration " << endl ;
+
+  // std::cout << "\t First minimization in " << iter << " iteration give as initial cMo: \n" << cMo << std::endl ;
   
+
 /*** Second phase ***/
 
   vpRobust robust_lines(nberrors_lines);
   vpRobust robust_cylinders(nberrors_cylinders);
+  vpRobust robust_circles(nberrors_circles);
   robust_lines.setIteration(0) ;
   robust_cylinders.setIteration(0) ;
+  robust_circles.setIteration(0) ;
   iter = 0;
   vpColVector w_lines(nberrors_lines);
   vpColVector w_cylinders(nberrors_cylinders);
+  vpColVector w_circles(nberrors_circles);
   vpColVector error_lines(nberrors_lines);
   vpColVector error_cylinders(nberrors_cylinders);
+  vpColVector error_circles(nberrors_circles);
 
   vpColVector error_vec;
   vpColVector W_true;
@@ -497,6 +598,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     unsigned int n = 0 ;
     unsigned int nlines = 0;
     unsigned int ncylinders = 0;
+    unsigned int ncircles = 0;
     for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
       l = *it;
       l->computeInteractionMatrixError(cMo) ;
@@ -525,7 +627,22 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       n+= cy->nbFeature ;
       ncylinders+= cy->nbFeature ;
     }
-    
+
+    for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+      ci = *it;
+      ci->computeInteractionMatrixError(cMo) ;
+      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+        for(unsigned int j=0; j < 6 ; j++){
+          L[n+i][j] = ci->L[i][j];
+          error[n+i] = ci->error[i];
+          error_circles[ncircles+i] = error[n+i];
+        }
+      }
+
+      n+= ci->nbFeature ;
+      ncircles+= ci->nbFeature ;
+    }
+
     if(iter==0)
     {
       weighted_error.resize(nerror);
@@ -535,24 +652,30 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       w_lines = 1;
       w_cylinders.resize(nberrors_cylinders);
       w_cylinders = 1;
+      w_circles.resize(nberrors_circles);
+      w_circles = 1;
 
       robust_lines.setThreshold(2/cam.get_px());
       robust_cylinders.setThreshold(2/cam.get_px());
-			if(nberrors_lines > 0)
+      robust_circles.setThreshold(2/cam.get_px());
+      if(nberrors_lines > 0)
 				robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
-      if(nberrors_cylinders > 0){
+      if(nberrors_cylinders > 0)
        robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
-      }
+      if(nberrors_circles > 0)
+       robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
     }
     else
     {
       robust_lines.setIteration(iter);
       robust_cylinders.setIteration(iter);
-			if(nberrors_lines > 0)
+      robust_circles.setIteration(iter);
+      if(nberrors_lines > 0)
 				robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
-      if(nberrors_cylinders > 0){
+      if(nberrors_cylinders > 0)
         robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
-      }
+      if(nberrors_circles > 0)
+        robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
     }
 
     unsigned int cpt = 0;
@@ -560,8 +683,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       if(cpt<nberrors_lines){
         w[cpt] = w_lines[cpt];
       }
-      else{
+      else if (cpt<nberrors_lines+nberrors_cylinders){
         w[cpt] = w_cylinders[cpt-nberrors_lines];
+      }
+      else {
+        w[cpt] = w_circles[cpt-nberrors_lines-nberrors_cylinders];
       }
       cpt++;
     }
@@ -604,6 +730,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     iter++;
   }
   
+  // std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
+
   if(computeCovariance){
     vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
     D.diag(W_true);
@@ -705,6 +833,43 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     n+= cy->nbFeature ;
   }
+
+  // Same thing with circles as with lines
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    double wmean = 0 ;
+    std::list<vpMeSite>::iterator itListCir;
+
+    if (ci->nbFeature > 0){
+      itListCir = ci->meEllipse->getMeList().begin();
+    }
+
+    wmean = 0;
+    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+      wmean += w[n+i] ;
+      vpMeSite p = *itListCir;
+      if (w[n+i] < 0.5){
+        p.setState(vpMeSite::M_ESTIMATOR);
+
+        *itListCir = p;
+      }
+
+      ++itListCir;
+    }
+
+    if (ci->nbFeature!=0)
+      wmean /= ci->nbFeature ;
+    else
+      wmean = 1;
+
+    ci->setMeanWeight(wmean);
+
+    if (wmean < 0.8){
+      ci->Reinit = true;
+    }
+
+    n+= ci->nbFeature ;
+  }
 }
 
 /*!
@@ -733,7 +898,6 @@ vpMbEdgeTracker::testTracking()
     }
   }    
 
-
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
@@ -748,6 +912,20 @@ vpMbEdgeTracker::testTracking()
       nbExpectedPoint += (int)cy->meline2->expecteddensity;
       for(std::list<vpMeSite>::const_iterator itme2=cy->meline2->getMeList().begin(); itme2!=cy->meline2->getMeList().end(); ++itme2){
         vpMeSite pix = *itme2;
+        if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
+        else nbBadPoint++;
+      }
+    }
+  }
+
+  vpMbtDistanceCircle *ci ;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    if (ci->meEllipse !=NULL)
+    {
+      nbExpectedPoint += ci->meEllipse->getExpectedDensity();
+      for(std::list<vpMeSite>::const_iterator itme=ci->meEllipse->getMeList().begin(); itme!=ci->meEllipse->getMeList().end(); ++itme){
+        vpMeSite pix = *itme;
         if (pix.getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoint++;
         else nbBadPoint++;
       }
@@ -812,6 +990,12 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           cy->initInteractionMatrixError();
         }
 
+        vpMbtDistanceCircle *ci ;
+        for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
+          ci = *it;
+          ci->initInteractionMatrixError();
+        }
+
         try
         {
           computeVVS(*Ipyramid[lvl]);
@@ -845,9 +1029,14 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
               cy = *it;
               cy->displayMovingEdges(I);
             }
+
+            for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
+              ci = *it;
+              ci->displayMovingEdges(I);
+            }
           }
         }
-        
+
         try
         {
           updateMovingEdge(I);
@@ -1086,6 +1275,10 @@ vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMat
         (*it)->display(I, cMo_, camera, col, thickness);
       }
 
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+        (*it)->display(I, cMo_, camera, col, thickness);
+      }
+
       break ; //displaying model on one scale only
     }
   }
@@ -1124,6 +1317,9 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cM
         (*it)->display(I, cMo_, camera, col, thickness) ;
       }
 
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+        (*it)->display(I, cMo_, camera, col, thickness);
+      }
       break ; //displaying model on one scale only
     }
   }
@@ -1144,9 +1340,9 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cM
 */
 void
 vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
-{
+{  
   vpMbtDistanceLine *l ;
-  
+
   lines[scaleLevel].front() ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;
@@ -1181,13 +1377,20 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     }
   }   
 
-
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
     if (cy->meline1==NULL || cy->meline2==NULL){
       cy->initMovingEdge(I, _cMo) ;
     }
+  }
+
+  vpMbtDistanceCircle *ci ;
+  circles[scaleLevel].front() ;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    if (ci->meEllipse==NULL)
+      ci->initMovingEdge(I, _cMo) ;
   }
 }
 
@@ -1219,6 +1422,15 @@ vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
     }
     cy->trackMovingEdge(I, cMo) ;
   }
+
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    if(ci->meEllipse == NULL){
+      ci->initMovingEdge(I, cMo);
+    }
+    ci->trackMovingEdge(I, cMo) ;
+  }
 }
 
 
@@ -1239,13 +1451,21 @@ vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
     }
   }
 
-
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
     cy->updateMovingEdge(I, cMo) ;
     if(cy->nbFeaturel1 == 0 || cy->nbFeaturel2 == 0){
       cy->Reinit = true;
+    }
+  }
+
+  vpMbtDistanceCircle *ci ;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    ci->updateMovingEdge(I, cMo) ;
+    if(ci->nbFeature == 0){
+      ci->Reinit = true;
     }
   }
 }
@@ -1274,6 +1494,13 @@ vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomog
     cy = *it;
     if (cy->Reinit)
       cy->reinitMovingEdge(I, _cMo);
+  }
+
+  vpMbtDistanceCircle*ci;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    if (ci->Reinit)
+      ci->reinitMovingEdge(I, _cMo);
   }
 }
 
@@ -1381,8 +1608,47 @@ vpMbEdgeTracker::removeLine(const std::string& name)
   }
 }
 
+/*!
+  Add a circle to the list of circles.
 
+  \param P1 : Center of the circle.
+  \param P2,P3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
+  defining the plane that contains the circle.
+  \param r : Radius of the circle.
+  \param name : the optional name of the circle.
+*/
+void
+vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string& name)
+{
+  bool already_here = false ;
+  vpMbtDistanceCircle *ci ;
 
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      downScale(i);
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if((samePoint(*(ci->p1),P1) && samePoint(*(ci->p2),P2) && samePoint(*(ci->p3),P3)) ||
+           (samePoint(*(ci->p1),P1) && samePoint(*(ci->p2),P3) && samePoint(*(ci->p3),P2)) ){
+          already_here = (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
+        }
+      }
+
+      if (!already_here){
+        ci = new vpMbtDistanceCircle ;
+
+        ci->setCameraParameters(cam);
+        ci->buildFrom(P1, P2, P3, r);
+        ci->setMovingEdge(&me);
+        ci->setIndex(ncircle);
+        ci->setName(name);
+        ncircle +=1;
+        circles[i].push_back(ci);
+      }
+      upScale(i);
+    }
+  }
+}
 
 /*!
   Add a cylinder to the list of cylinders.
@@ -1425,7 +1691,6 @@ vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double 
   }
 }
 
-
 /*!
   Remove a cylinder by its name.
 
@@ -1442,6 +1707,29 @@ vpMbEdgeTracker::removeCylinder(const std::string& name)
         cy = *it;
         if (name.compare(cy->getName()) == 0){
           cylinders[i].erase(it);
+          break;
+        }
+      }
+    }
+  }
+}
+
+/*!
+  Remove a circle by its name.
+
+  \param name : The name of the circle to remove.
+*/
+void
+vpMbEdgeTracker::removeCircle(const std::string& name)
+{
+  vpMbtDistanceCircle *ci;
+
+  for(unsigned int i=0; i<scales.size(); i++){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceCircle*>::iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if (name.compare(ci->getName()) == 0){
+          circles[i].erase(it);
           break;
         }
       }
@@ -1608,7 +1896,26 @@ vpMbEdgeTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const
 }
 
 /*!
-  Add a cylinder to track from tow points on the axis (defining the length of
+  Add a circle to track from its center, 3 points (including the center) defining the plane that contain
+  the circle and its radius.
+
+  \param p1 : Center of the circle.
+  \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
+  defining the plane that contains the circle.
+  \param radius : Radius of the circle.
+  \param indexCircle : Index of the cicle.
+*/
+void
+vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle)
+{
+  if(indexCircle != 0){
+    ncircle = indexCircle;
+  }
+  addCircle(p1, p2, p3, radius);
+}
+
+/*!
+  Add a cylinder to track from two points on the axis (defining the length of
   the cylinder) and its radius.
 
   \param p1 : First point on the axis.
@@ -1636,6 +1943,7 @@ vpMbEdgeTracker::resetTracker()
   this->cMo.setIdentity();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
 
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -1650,8 +1958,15 @@ vpMbEdgeTracker::resetTracker()
         if (cy!=NULL) delete cy;
         cy = NULL;
       }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if (ci!=NULL) delete ci;
+        ci = NULL;
+      }
       lines[i].clear();
       cylinders[i].clear();
+      circles[i].clear();
     }
   }
   
@@ -1689,6 +2004,7 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
   this->cMo.setIdentity();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
 
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -1703,8 +2019,16 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
         if (cy!=NULL) delete cy;
         cy = NULL;
       }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if (ci!=NULL) delete ci;
+        ci = NULL;
+      }
+
       lines[i].clear();
       cylinders[i].clear();
+      circles[i].clear();
     }
   }
 
@@ -1760,6 +2084,17 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
       }
       for(std::list<vpMeSite>::const_iterator itme2=cy->meline2->getMeList().begin(); itme2!=cy->meline2->getMeList().end(); ++itme2){
         if (itme2->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
+      }
+    }
+  }
+
+  vpMbtDistanceCircle *ci ;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[level].begin(); it!=circles[level].end(); ++it){
+    ci = *it;
+    if (ci->meEllipse != NULL)
+    {
+      for(std::list<vpMeSite>::const_iterator itme=ci->meEllipse->getMeList().begin(); itme!=ci->meEllipse->getMeList().end(); ++itme){
+        if (itme->getState() == vpMeSite::NO_SUPPRESSION) nbGoodPoints++;
       }
     }
   }
@@ -2051,6 +2386,29 @@ vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList,
 
 
 /*!
+  Get the list of the circles tracked for the specified level. Each circle
+  contains the list of the vpMeSite.
+
+  \throw vpException::dimensionError if the second parameter does not correspond
+  to an used level.
+
+  \param level : Level corresponding to the list to return.
+  \param circlesList : The list of the circles of the model.
+*/
+void
+vpMbEdgeTracker::getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level)
+{
+  if(level > scales.size() || !scales[level]){
+    std::ostringstream oss;
+    oss << level;
+    std::string errorMsg = "level " + oss.str() + " is not used, cannot get its distance lines.";
+    throw vpException(vpException::dimensionError, errorMsg);
+  }
+
+  circlesList = circles[level];
+}
+
+/*!
   Modify the camera parameters to have them corresponding to the current scale.
   The new parameters are divided by \f$ 2^{\_scale} \f$. 
   
@@ -2113,13 +2471,18 @@ vpMbEdgeTracker::reInitLevel(const unsigned int _lvl)
     l->reinitMovingEdge(*Ipyramid[_lvl], cMo);
   }
 
-
   vpMbtDistanceCylinder *cy;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
     cy->reinitMovingEdge(*Ipyramid[_lvl], cMo);
   }
   
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    ci->reinitMovingEdge(*Ipyramid[_lvl], cMo);
+  }
+
   trackMovingEdge(*Ipyramid[_lvl]);
   updateMovingEdge(*Ipyramid[_lvl]);
   scaleLevel = scaleLevel_1;

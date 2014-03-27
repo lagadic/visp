@@ -443,8 +443,9 @@ protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
   virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
-  virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int ){};
-  
+          virtual void            initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int ){};
+          virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int ){};
+
           void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
           bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);
 };

@@ -902,6 +902,22 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, con
 }
 
 /*!
+  Add a circle to track from its center, 3 points (including the center) defining the plane that contain
+  the circle and its radius.
+
+  \param p1 : Center of the circle.
+  \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
+  defining the plane that contains the circle.
+  \param radius : Radius of the circle.
+  \param indexCircle : Index of the cicle.
+*/
+void
+vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCylinder)
+{
+  vpMbEdgeTracker::initCircle(p1, p2, p3, radius, indexCylinder);
+}
+
+/*!
   Add a cylinder to track from tow points on the axis (defining the length of
   the cylinder) and its radius.
 
@@ -910,7 +926,7 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, con
   \param radius : Radius of the cylinder.
   \param indexCylinder : Index of the cylinder.
 */
-void    
+void
 vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, indexCylinder);
