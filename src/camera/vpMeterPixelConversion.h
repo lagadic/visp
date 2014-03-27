@@ -52,9 +52,10 @@
 */
 
 #include <visp/vpCameraParameters.h>
-#include<visp/vpException.h>
-#include<visp/vpMath.h>
-#include<visp/vpImagePoint.h>
+#include <visp/vpCircle.h>
+#include <visp/vpException.h>
+#include <visp/vpImagePoint.h>
+#include <visp/vpMath.h>
 
 /*!
   \class vpMeterPixelConversion
@@ -70,6 +71,13 @@
 class VISP_EXPORT vpMeterPixelConversion
 {
 public:
+    static void convertEllipse(const vpCameraParameters &cam,
+                               const vpCircle &circle, vpImagePoint &center,
+                               double &a,  double &b,  double &e);
+
+    static void convertLine(const vpCameraParameters &cam,
+                            const double &rho_m, const double &theta_m,
+                            double &rho_p, double &theta_p) ;
 
 /*!
 
@@ -93,10 +101,9 @@ public:
 */
 
   inline static void
-  convertPoint( const vpCameraParameters &cam,
+  convertPoint(const vpCameraParameters &cam,
                 const double &x, const double &y,
                 double &u, double &v)
-
   {
     switch(cam.projModel){
       case vpCameraParameters::perspectiveProjWithoutDistortion :   
@@ -132,10 +139,9 @@ public:
 */
 
   inline static void
-  convertPoint( const vpCameraParameters &cam,
-                const double &x, const double &y,
-                vpImagePoint &iP)
-
+  convertPoint(const vpCameraParameters &cam,
+               const double &x, const double &y,
+               vpImagePoint &iP)
   {
     switch(cam.projModel){
       case vpCameraParameters::perspectiveProjWithoutDistortion :   
@@ -147,6 +153,7 @@ public:
     }       
   }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   /*!
 
     \brief Point coordinates conversion without distortion from
@@ -158,9 +165,8 @@ public:
 
   inline static void
   convertPointWithoutDistortion(const vpCameraParameters &cam,
-				const double &x, const double &y,
-				double &u, double &v)
-
+                                const double &x, const double &y,
+                                double &u, double &v)
   {
       u = x * cam.px + cam.u0 ;
       v = y * cam.py + cam.v0 ;
@@ -178,14 +184,13 @@ public:
 
   inline static void
   convertPointWithoutDistortion(const vpCameraParameters &cam,
-				const double &x, const double &y,
-				vpImagePoint &iP)
-
+                                const double &x, const double &y,
+                                vpImagePoint &iP)
   {
       iP.set_u( x * cam.px + cam.u0 );
       iP.set_v( y * cam.py + cam.v0 );
   }
-  
+
   /*!
 
     \brief Point coordinates conversion with distortion from
@@ -202,9 +207,8 @@ public:
   */
   inline static void
   convertPointWithDistortion(const vpCameraParameters &cam,
-			     const double &x, const double &y,
-			     double &u, double &v)
-
+                             const double &x, const double &y,
+                             double &u, double &v)
   {
     double r2 = 1.+cam.kud*(x*x+y*y);
     u = cam.u0 + cam.px*x*r2;
@@ -228,26 +232,16 @@ public:
   */
   inline static void
   convertPointWithDistortion(const vpCameraParameters &cam,
-              const double &x, const double &y,
-              vpImagePoint &iP)
-
+                             const double &x, const double &y,
+                             vpImagePoint &iP)
   {
     double r2 = 1.+cam.kud*(x*x+y*y);
     iP.set_u( cam.u0 + cam.px*x*r2 );
     iP.set_v( cam.v0 + cam.py*y*r2 );
   }
-
-  //! line coordinates conversion (rho,theta)
-  static void convertLine(const vpCameraParameters &cam,
-			  const double &rho_m, const double &theta_m,
-			  double &rho_p, double &theta_p) ;
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 } ;
 
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 

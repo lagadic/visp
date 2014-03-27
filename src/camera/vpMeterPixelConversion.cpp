@@ -51,7 +51,7 @@
 #include <visp/vpMath.h>
 #include <visp/vpDebug.h>
 
-//! line coordinates conversion (rho,theta)
+//! Line coordinates conversion (rho,theta).
 void
 vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 				    const double &rho_m, const double &theta_m,
@@ -71,14 +71,53 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   theta_p = atan2(cam.px*si, cam.py*co) ;
   rho_p = (cam.px*cam.py*rho_m + cam.u0*cam.py*co + cam.v0*cam.px*si) ;
   rho_p /= d ;
-
-
 }
 
+/*!
+  Converts an ellipse with parameters expressed in meter in the image
+  plane in parameters expressed in the image in pixels.
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
+  \param circle [in]: 3D circle with parameters circle.p[] expressed in meters in the image plane.
+  \param center [out]: Center of the corresponding ellipse in the image with coordinates
+  expressed in pixels.
+  \param a, b [out]: Ellipse axis size in pixels.
+  \param e [out]: Ellipse excentricity.
+
+  The following code shows how to use this function:
+  \code
+  vpCircle circle;
+  circle.changeFrame(cMo);
+  vpMeterPixelConversion::convertEllipse(cam, circle, center, a, b, e);
+  vpDisplay::displayEllipse(I, center, a, b, e);
+  \endcode
  */
+void
+vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
+                                       const vpCircle &circle, vpImagePoint &center,
+                                       double &a,  double &b,  double &e)
+{
+  // Get the parameters of the ellipse in the image plane
+  double xc_m = circle.p[0];
+  double yc_m = circle.p[1];
+  double mu20_m = circle.p[2];
+  double mu11_m = circle.p[3];
+  double mu02_m = circle.p[4];
+
+  // Convert from meter to pixels
+  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center);
+  double mu20_p = mu20_m*vpMath::sqr(cam.get_px());
+  double mu11_p = mu11_m*cam.get_px()*cam.get_py();
+  double mu02_p = mu02_m*vpMath::sqr(cam.get_py());
+
+  double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
+  b = sqrt((mu20_p + mu02_p - val_p)/2);
+  a = sqrt((mu20_p + mu02_p + val_p)/2);
+
+  // if mu11 = 0, the projection of the circle is a circle
+  if (std::fabs(mu11_m) > std::numeric_limits<double>::epsilon())
+    e = (mu02_p - mu20_p + val_p)/(2*mu11_p);
+  else
+    e = 0.;
+  e = atan(e);
+}
 
