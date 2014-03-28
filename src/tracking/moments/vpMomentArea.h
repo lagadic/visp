@@ -63,6 +63,7 @@ class VISP_EXPORT vpMomentArea : public vpMoment {
         */
         const char* name() const {return "vpMomentArea";}
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentArea& m);
+        void printDependencies(std::ostream& os) const;
 };
 
 #endif

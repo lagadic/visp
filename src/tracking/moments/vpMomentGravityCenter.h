@@ -131,6 +131,7 @@ class VISP_EXPORT vpMomentGravityCenter : public vpMoment {
           */
   const char* name() const {return "vpMomentGravityCenter";}
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenter& v);
+  void  printDependencies(std::ostream& os) const;
 };
 
 #endif

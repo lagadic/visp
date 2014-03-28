@@ -147,9 +147,26 @@ void vpMomentAlpha::compute(){
 }
 
 /*!
-        Prints the value of the orientation.
+  Prints the value of the major-axis orientation in degrees and rad
  */
 VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& c){
-	os << c.values[0] ;
+    os << (__FILE__) << std::endl;
+    os << "Alpha = " << c.values[0] << "rad = " << vpMath::deg(c.values[0]) << "deg " << std::endl;
 	return os;
+}
+
+/*!
+Prints the dependencies of alpha, namely centered moments mu11, mu20 ad mu02
+*/
+void  vpMomentAlpha::printDependencies(std::ostream& os) const{
+    os << (__FILE__) << std::endl;
+    bool found_moment_centered;
+    const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&> (getMoments().get("vpMomentCentered",
+            found_moment_centered)));
+    if (!found_moment_centered)
+        throw vpException(vpException::notInitialized, "vpMomentCentered not found");
+
+    os << "mu11 = " << momentCentered.get(1, 1) << "\t";
+    os << "mu20 = " << momentCentered.get(2, 0) << "\t";
+    os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
 }

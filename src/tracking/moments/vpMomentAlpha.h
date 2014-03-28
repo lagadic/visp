@@ -233,8 +233,7 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
         }
 
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& v);
-	
-
+  void  printDependencies(std::ostream& os) const;
 };
 
 #endif

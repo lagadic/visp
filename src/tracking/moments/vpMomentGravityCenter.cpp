@@ -68,7 +68,18 @@ const std::vector<double>& vpMomentGravityCenter::get() const{
   Outputs the moment's values to a stream.
 */
 VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenter& m){
-    os << "Xg=" << m.values[0] << ", Yg=" << m.values[1];
-    
+    os << (__FILE__) << std::endl;
+    os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
     return os;    
+}
+
+/*!
+Prints its dependencies
+Basic moments m10, m01 and m00 from vpMomentObject
+*/
+void  vpMomentGravityCenter::printDependencies(std::ostream& os) const{
+    os << (__FILE__) << std::endl;
+    os << "m10 = " << getObject().get(1,0) << "\t";
+    os << "m00 = " << getObject().get(0,1) << "\t";
+    os << "m00 = " << getObject().get(0,0) << std::endl;
 }
