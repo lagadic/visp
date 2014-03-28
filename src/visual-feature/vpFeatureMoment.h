@@ -206,6 +206,8 @@ public:
         }
 #endif
 
+      friend VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMoment& featM);
+      virtual void printDependencies(std::ostream& os) const;
 };
 
 /*!

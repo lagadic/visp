@@ -253,3 +253,25 @@ void vpFeatureMoment::compute_interaction (){
 vpFeatureMoment::~vpFeatureMoment (){
   delete[] flags;
 }
+
+VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMoment& featM) {
+    /*
+    A const_cast is forced here since interaction() defined in vpBasicFeature() is not const
+    But introducing const in vpBasicFeature() can break a lot of client code
+    */
+    vpMatrix Lcomplete(featM.getDimension(), 6); // 6 corresponds to 6velocities in standard interaction matrix
+    Lcomplete = const_cast<vpFeatureMoment&>(featM).interaction(vpBasicFeature::FEATURE_ALL);
+    Lcomplete.matlabPrint(os);
+    return os;
+}
+
+/*!
+Interface function to display the moments and other interaction matrices
+on which a particular vpFeatureMoment is dependent upon
+Not made pure to maintain compatibility
+Recommended : Types inheriting from vpFeatureMoment should implement this function
+*/
+void
+vpFeatureMoment::printDependencies(std::ostream& os) const{
+    os << " WARNING : Falling back to base class version of printDependencies() in vpFeatureMoment. To prevent that, this has to be implemented in the derived classes!" << std::endl;
+}
