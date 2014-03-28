@@ -116,9 +116,7 @@ class VISP_EXPORT vpMoment{
         Returns the linked moment database.
         \return the moment database
         */
-        inline vpMomentDatabase& getMoments(){ return *moments; }
-
-
+        inline vpMomentDatabase& getMoments() const { return *moments; }
  public:
         inline const vpMomentObject& getObject() const { return *object;}
         vpMoment();
@@ -132,6 +130,7 @@ class VISP_EXPORT vpMoment{
         virtual void compute()=0;
         virtual const char* name() const = 0;
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
+        virtual void printDependencies(std::ostream& os) const;
 
         /*!
         Virtual destructor.
