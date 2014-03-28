@@ -398,9 +398,10 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
   }
   //std::cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;
 
-  if (alpha2 <alpha1)
+  if (alpha2 < alpha1)
     alpha2 += 2 * M_PI;
-  else if (alpha2 == alpha1)
+  //else if (alpha2 == alpha1)
+  else if (std::fabs(alpha2 - alpha1) < std::fabs(alpha1) * std::numeric_limits<double>::epsilon())
     alpha2 += 2 * M_PI;
 
   //std::cout << "end vpMeEllipse::computeAngle(..)" << alpha1 << "  " << alpha2 << std::endl ;

@@ -388,7 +388,7 @@ vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cM
   vpMatrix H1 = featureEllipse.interaction();
 
   vpRowVector H(5);
-  double x,y;
+  double x=0, y=0;
 
   // Get the parameters of the ellipse in the image plane
   double xg = circle->p[0];
