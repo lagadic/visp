@@ -133,3 +133,11 @@ VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m){
   return os;
 }
 
+/*!
+Prints values of all dependent moments required to calculate a specific vpMoment.
+Not made pure to maintain compatibility
+Recommended : Types inheriting from vpMoment should implement this function
+*/
+void vpMoment::printDependencies(std::ostream& os) const{
+    os << " WARNING : Falling back to base class version of printDependencies(). To prevent that, this has to be implemented in the derived classes!" << std::endl;
+}
