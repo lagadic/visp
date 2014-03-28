@@ -268,7 +268,7 @@ public:
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
     \param momobj : A vpMomentObject
    */
-  static void printWithIndices(const vpMomentObject& momobj);
+  static void printWithIndices(const vpMomentObject& momobj, std::ostream& os);
   /*!
     Converts the raw moments contained in vpMomentObject to a vpMatrix
     \param momobj : A vpMomentObject

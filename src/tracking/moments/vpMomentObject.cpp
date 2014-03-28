@@ -596,17 +596,17 @@ VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& m
   (The moment values are same as provided by the operator << which outputs x for uncalculated moments)
  */
 void
-vpMomentObject::printWithIndices(const vpMomentObject& momobj) {
+vpMomentObject::printWithIndices(const vpMomentObject& momobj, std::ostream& os) {
     std::vector<double> moment = momobj.get();
-    std::cout << std::endl <<"Order of vpMomentObject: "<<momobj.getOrder()<<std::endl;
+    os << std::endl <<"Order of vpMomentObject: "<<momobj.getOrder()<<std::endl;
     // Print out values. This is same as printing using operator <<
     for(unsigned int k=0; k<=momobj.getOrder(); k++) {
             for(unsigned int l=0; l<(momobj.getOrder()+1)-k; l++){
-                    std::cout << "m[" << l << "," << k << "] = " << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+                    os << "m[" << l << "," << k << "] = " << moment[k*(momobj.getOrder()+1)+ l] << "\t";
             }
-            std::cout<<std::endl;
+            os << std::endl;
     }
-    std::cout <<std::endl;
+    os <<std::endl;
 }
 
 /*!
