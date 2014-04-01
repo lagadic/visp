@@ -203,7 +203,7 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
         vpDisplay::displayCross(I, v_iP[i], 5, vpColor::darkBlue); // TODO remove
       }
       vpDisplay::flush(I); // TODO remove
-      meEllipse->initTracking(I, v_iP.size(), tab_iP);
+      meEllipse->initTracking(I, (unsigned int)v_iP.size(), tab_iP);
       delete [] tab_iP;
 
     }
