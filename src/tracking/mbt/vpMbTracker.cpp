@@ -1119,7 +1119,56 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       std::cerr << "Cannot get the number of cylinders. Defaulting to zero." << std::endl;
       caoNbCylinder = 0;
     }
-    
+
+    unsigned int caoNbCircle;
+    try{
+      //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
+      fileId.get(c);
+      while (!fileId.fail() && (c != '\n'))
+      {
+        fileId.get(c);
+      }
+
+      //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }      fileId.unget();
+
+      if(fileId.eof()){// check if not at the end of the file (for old style files)
+        delete[] caoPoints;
+        delete[] caoLinePoints;
+        return ;
+      }
+
+      /* Extract the circles */
+      fileId >> caoNbCircle;
+      std::cout << "> " << caoNbCircle << " circle" << std::endl;
+      if (caoNbCircle > 100000) {
+        throw vpException(vpException::badValue, "Exceed the max number of cicles.");
+      }
+
+      for(unsigned int k=0; k<caoNbCircle; ++k){
+        double radius;
+        unsigned int indexP1, indexP2, indexP3;
+        fileId >> radius;
+        fileId >> indexP1;
+        fileId >> indexP2;
+        fileId >> indexP3;
+//        std::cout << "circle centre: " << caoPoints[indexP1].get_oX() << " " << caoPoints[indexP1].get_oY() << " " << caoPoints[indexP1].get_oZ() << std::endl;
+//        std::cout << "circle p2: " << caoPoints[indexP2].get_oX() << " " << caoPoints[indexP2].get_oY() << " " << caoPoints[indexP2].get_oZ() << std::endl;
+//        std::cout << "circle p3: " << caoPoints[indexP3].get_oX() << " " << caoPoints[indexP3].get_oY() << " " << caoPoints[indexP3].get_oZ() << std::endl;
+//        std::cout << "circle radius: " << radius << std::endl;
+        initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius);
+      }
+
+    }catch(...){
+      std::cerr << "Cannot get the number of circles. Defaulting to zero." << std::endl;
+      caoNbCircle = 0;
+    }
+
     delete[] caoPoints;
     delete[] caoLinePoints;
   }catch(std::ifstream::failure e){
