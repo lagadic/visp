@@ -1386,7 +1386,6 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
   }
 
   vpMbtDistanceCircle *ci ;
-  circles[scaleLevel].front() ;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     ci = *it;
     if (ci->meEllipse==NULL)
