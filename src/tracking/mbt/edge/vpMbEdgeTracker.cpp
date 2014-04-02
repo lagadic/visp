@@ -115,18 +115,19 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
         cy = NULL ;
       }
 
-      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
-        ci = *it;
-        if (ci!=NULL){
-          delete ci ;
-        }
-        ci = NULL ;
-      }
-
       lines[i].clear();
       cylinders[i].clear();
-      circles[i].clear();
     }
+  }
+  for (unsigned int i = 0; i < circles.size(); i += 1){
+    for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+      ci = *it;
+      if (ci!=NULL){
+        delete ci ;
+      }
+      ci = NULL ;
+    }
+    circles[i].clear();
   }
   cleanPyramid(Ipyramid);
 }
