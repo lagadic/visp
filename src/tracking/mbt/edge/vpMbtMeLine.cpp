@@ -85,7 +85,7 @@ vpMbtMeLine::~vpMbtMeLine()
   Initialization of the tracking. The line is defined thanks to the
   coordinates of two points corresponding to the extremities and its (\f$\rho \: \theta\f$) parameters.
   
-  Remeber the equation of a line : \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
+  Remember the equation of a line : \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
 
   \param I : Image in which the line appears.
   \param ip1 : Coordinates of the first point.
