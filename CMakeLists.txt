@@ -54,7 +54,7 @@ SET(VISP_REVISION "1")
 # where are user-specific cmake modules
 set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
 
-find_file(GNU_INSTALL_DIRS_FROM_CMAKE ${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
+find_file(GNU_INSTALL_DIRS_FROM_CMAKE NAMES GNUInstallDirs.cmake PATHS ${CMAKE_ROOT}/Modules)
 mark_as_advanced(GNU_INSTALL_DIRS_FROM_CMAKE)
 if(GNU_INSTALL_DIRS_FROM_CMAKE)
   include(${CMAKE_ROOT}/Modules/GNUInstallDirs.cmake)
