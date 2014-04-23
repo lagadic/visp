@@ -73,7 +73,7 @@ class VISP_EXPORT vpMeterPixelConversion
 public:
     static void convertEllipse(const vpCameraParameters &cam,
                                const vpCircle &circle, vpImagePoint &center,
-                               double &a,  double &b,  double &e);
+                               double &mu20_p, double &mu11_p, double &mu02_p);
 
     static void convertLine(const vpCameraParameters &cam,
                             const double &rho_m, const double &theta_m,
