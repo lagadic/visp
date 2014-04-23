@@ -47,7 +47,7 @@
 #define vpMbtDistanceCircle_HH
 
 #include <visp/vpPoint.h>
-#include <visp/vpMeEllipse.h>
+#include <visp/vpMbtMeEllipse.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeatureEllipse.h>
 #include <visp/vpCircle.h>
@@ -72,7 +72,7 @@ class VISP_EXPORT vpMbtDistanceCircle
     
   public: 
     //! The moving edge containers
-    vpMeEllipse *meEllipse;
+    vpMbtMeEllipse *meEllipse;
 
     //! The circle to track
     vpCircle *circle;

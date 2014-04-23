@@ -268,6 +268,7 @@ SET (HEADER_TRACKING
   tracking/mbt/edge/vpMbtDistanceCylinder.h
   tracking/mbt/edge/vpMbtDistanceLine.h
   tracking/mbt/edge/vpMbtPolygon.h
+  tracking/mbt/edge/vpMbtMeEllipse.h
   tracking/mbt/edge/vpMbtMeLine.h
   tracking/mbt/edge/vpMbEdgeTracker.h
   tracking/mbt/edge/vpMbtXmlParser.h

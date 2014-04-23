@@ -323,6 +323,7 @@ SET (SRC_TRACKING
   tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/edge/vpMbtDistanceLine.cpp
   tracking/mbt/edge/vpMbtPolygon.cpp
+  tracking/mbt/edge/vpMbtMeEllipse.cpp
   tracking/mbt/edge/vpMbtMeLine.cpp
 
   tracking/moments/vpMoment.cpp

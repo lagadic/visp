@@ -158,55 +158,18 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
   catch(...){std::cout<<"Problem when projecting circle\n";}
 
   // Create the moving edges containers
-  meEllipse = new vpMeEllipse;
+  meEllipse = new vpMbtMeEllipse;
   meEllipse->setMe(me) ;
 
-  meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
+  //meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
   meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
-
-  vpImagePoint ic; // center in pixels
-  double a_p, b_p, e_p;
-  vpMeterPixelConversion::convertEllipse(cam, *circle, ic, a_p, b_p, e_p);
 
   try
   {
-    if (0) { // TODO: Fix Ne fonctionne pas !!!!!
-      meEllipse->initTracking(I, ic, a_p, b_p, e_p, vpMath::rad(0), vpMath::rad(360));
-    }
-    else {
-      double j1, i1;
-      vpImagePoint iP11;
-
-      j1 = i1 = 0 ;
-
-      double incr = vpMath::rad(2) ; // angle increment
-
-      std::vector<vpImagePoint> v_iP;
-      double k = 0 ;
-      while (k<vpMath::rad(360))
-      {
-        j1 = a_p *cos(k) ; // equation of an ellipse
-        i1 = b_p *sin(k) ; // equation of an ellipse
-
-        // (i1,j1) are the coordinates on the origin centered ellipse ;
-        // a rotation by "e" and a translation by (xci,jc) are done
-        // to get the coordinates of the point on the shifted ellipse
-        iP11.set_j ( ic.get_j() + cos(e_p) *j1 - sin(e_p) *i1 );
-        iP11.set_i ( ic.get_i() + sin(e_p) *j1 + cos(e_p) *i1 );
-
-        v_iP.push_back(iP11);
-        k += incr ;
-      }
-      vpImagePoint *tab_iP = new vpImagePoint[v_iP.size()];
-      for (unsigned int i=0; i< v_iP.size(); i++) {
-        tab_iP[i] = v_iP[i];
-        vpDisplay::displayCross(I, v_iP[i], 5, vpColor::darkBlue); // TODO remove
-      }
-      vpDisplay::flush(I); // TODO remove
-      meEllipse->initTracking(I, (unsigned int)v_iP.size(), tab_iP);
-      delete [] tab_iP;
-
-    }
+    vpImagePoint ic;
+    double mu20_p, mu11_p, mu02_p;
+    vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
+    meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p);
   }
   catch(...)
   {
@@ -247,12 +210,29 @@ vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHo
   \param cMo : The pose of the camera.
 */
 void
-vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &/*I*/, const vpHomogeneousMatrix &/*cMo*/)
+vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  // FS: I don't see any good reason to implement this function.
-  // In the case of a line, it was useful because we need to update the line extrimities in
-  // the case of a motion along the line to avoid a shift. But here it seems not useful !
-//  vpTRACE("not implemented");
+  // Perspective projection
+  circle->changeFrame(cMo);
+
+  try{
+    circle->projection();
+  }
+  catch(...){std::cout<<"Problem when projecting circle\n";}
+
+  try
+  {
+
+    vpImagePoint ic;
+    double mu20_p, mu11_p, mu02_p;
+    vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
+    meEllipse->updateParameters(I, ic, mu20_p, mu11_p, mu02_p);
+  }
+  catch(...)
+  {
+    Reinit = true;
+  }
+  nbFeature = (unsigned int)meEllipse->getMeList().size();
 }
 
 
@@ -300,11 +280,9 @@ vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneous
   catch(...){std::cout<<"Cannot project the circle";}
 
   vpImagePoint center;
-  double a, b, e;
-  vpMeterPixelConversion::convertEllipse(camera, *circle, center, a, b, e);
-
-  // Display
-  vpDisplay::displayEllipse(I, center, a, b, e, 0, vpMath::rad(360), col, thickness);
+  double mu20_p, mu11_p, mu02_p;
+  vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
 }
 
 /*!
@@ -330,11 +308,9 @@ vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
   catch(...){std::cout<<"Cannot project the circle";}
 
   vpImagePoint center;
-  double a, b, e;
-  vpMeterPixelConversion::convertEllipse(camera, *circle, center, a, b, e);
-
-  // Display
-  vpDisplay::displayEllipse(I, center, a, b, e, 0, vpMath::rad(360), col, thickness);
+  double mu20_p, mu11_p, mu02_p;
+  vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
 }
 
 
@@ -353,8 +329,9 @@ vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   if (meEllipse != NULL)
   {
-    //meEllipse->display(I, vpColor::green); // display the ellipse
     meEllipse->display(I); // display the me
+    if (vpDEBUG_ENABLE(3))
+      vpDisplay::flush(I);
   }
 }
 
@@ -370,7 +347,7 @@ vpMbtDistanceCircle::initInteractionMatrixError()
 }
 
 /*!
-  Compute the interaction matrix and the error vector corresponding to the circle.
+  Compute the interaction matrix and the error vector corresponding to the point to ellipse algebraic distance.
 */
 void
 vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
@@ -382,9 +359,8 @@ vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cM
   }
   catch(...){std::cout<<"Problem projection circle\n";}
 
-  vpFeatureBuilder::create(featureEllipse, cam, *meEllipse);
+  vpFeatureBuilder::create(featureEllipse, *circle);
 
-  featureEllipse.setABC(circle->getA(), circle->getB(), circle->getC());
   vpMatrix H1 = featureEllipse.interaction();
 
   vpRowVector H(5);
@@ -404,8 +380,7 @@ vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cM
     H[0] = 2*(mu11*(y-yg)+mu02*(xg-x));
     H[1] = 2*(mu20*(yg-y)+mu11*(x-xg));
     H[2] = vpMath::sqr(y-yg)-mu02;
-    //H[3] = 2*(yg*(x-xg)+y*xg+mu11-x*y);
-    H[3] = 2*(yg*(x+xg)+y*xg+mu11);
+    H[3] = 2*(yg*(x-xg)+y*xg+mu11-x*y);
     H[4] = vpMath::sqr(x-xg)-mu20;
 
     for (unsigned int k=0; k<6; k++)
