@@ -337,23 +337,25 @@ vp1394TwoGrabber::setCamera(uint64_t cam_id)
     bool is_guid = false;
     // check if the camera_id is a guid
     for (unsigned int i=0; i< num_cameras; i++) {
-      if (cameras[i]->guid == camera_id) {
+      if (cameras[i]->guid == cam_id) {
         this->camera_id = i;
         is_guid = true;
         break;
       }
     }
     if (is_guid == false) {
+      printf("Error: The camera with guid 0x%lx or id %lu is not present\n", cam_id, cam_id);
+      printf("%d camera(s) connected\n", num_cameras);
+      for (unsigned int i=0; i< num_cameras; i++) {
+        printf(" - camera %d with guid 0x%lx\n", i, cameras[i]->guid);
+      }
       close();
-      vpERROR_TRACE("The camera with GUID 0x%x or id %u is not present", 
-		    camera_id, camera_id);
-      vpERROR_TRACE("Only %u camera on the bus.", num_cameras);
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
 				     "The required camera is not present") );
     }
   }
   else {
-    this->camera_id =  cam_id;
+    this->camera_id = (unsigned int) cam_id; // The input cam_id is not a uint64_t guid, but the index of the camera
   }
 
   // create a pointer to the working camera
