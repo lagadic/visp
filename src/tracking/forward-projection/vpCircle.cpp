@@ -73,19 +73,17 @@ vpCircle::setWorldCoordinates(const vpColVector& oP_)
   We mean here the coordinates of the circle in the object frame
  
   \param A : A from the plane equation Ax + By + Cz = 0.
-  \param B : A from the plane equation Ax + By + Cz = 0.
-  \param C : A from the plane equation Ax + By + Cz = 0.
+  \param B : B from the plane equation Ax + By + Cz = 0.
+  \param C : C from the plane equation Ax + By + Cz = 0.
   \param X0 : X Coordinate of the center of the sphere.
   \param Y0 : Y Coordinate of the center of the sphere.
   \param Z0 : Z Coordinate of the center of the sphere.
   \param R : Radius of the sphere.
 */
 void
-vpCircle::setWorldCoordinates(const double A, const double B,
-			       const double C,
-			       const double X0, const double Y0,
-			       const double Z0,
-			       const double R)
+vpCircle::setWorldCoordinates(const double A, const double B, const double C,
+                              const double X0, const double Y0, const double Z0,
+                              const double R)
 {
   oP[0] = A ;
   oP[1] = B ;
@@ -122,8 +120,8 @@ vpCircle::vpCircle(const vpColVector& oP_)
   Construct the circle from the intersection of a plane and a sphere. 
  
   \param A : A from the plane equation Ax + By + Cz = 0.
-  \param B : A from the plane equation Ax + By + Cz = 0.
-  \param C : A from the plane equation Ax + By + Cz = 0.
+  \param B : B from the plane equation Ax + By + Cz = 0.
+  \param C : C from the plane equation Ax + By + Cz = 0.
   \param X0 : X Coordinate of the center of the sphere.
   \param Y0 : Y Coordinate of the center of the sphere.
   \param Z0 : Z Coordinate of the center of the sphere.
@@ -259,7 +257,7 @@ vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
 
   det =  (1.0 + vpMath::sqr(E));
   double mu20 = (vpMath::sqr(A) +  vpMath::sqr(B*E))  /det ;
-  double mu11 = (vpMath::sqr(A)  - vpMath::sqr(B)) *E / det ;
+  double mu11 = (vpMath::sqr(A) - vpMath::sqr(B)) *E / det ;
   double mu02 = (vpMath::sqr(B) + vpMath::sqr(A*E))   / det ;
 
   p_[0] = xc ;
