@@ -344,10 +344,10 @@ vp1394TwoGrabber::setCamera(uint64_t cam_id)
       }
     }
     if (is_guid == false) {
-      printf("Error: The camera with guid 0x%lx or id %lu is not present\n", cam_id, cam_id);
-      printf("%d camera(s) connected\n", num_cameras);
+      std::cout << "Error: The camera with guid 0x" << std::hex << cam_id << " is not present" << std::endl;
+      std::cout << num_cameras << " camera(s) connected" << std::endl;
       for (unsigned int i=0; i< num_cameras; i++) {
-        printf(" - camera %d with guid 0x%lx\n", i, cameras[i]->guid);
+        std::cout << " - camera " << i << " with guid 0x" << std::hex << cameras[i]->guid << std::endl;
       }
       close();
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,
