@@ -3222,17 +3222,71 @@ vpDisplay::getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip)
 }
 
 /*!
-  Display an ellipse from its parameters (xc,yc,a,b,e).
+  Display an ellipse from its parameters expressed in pixels.
+  \param I: Image to consider.
   \param center : Center (xc,yc) of the ellipse.
-  \param a,b : Ellipse axis size along x and y.
-  \param e : Ellipse excentricity.
+  \param coef1, coef2, coef3: Depending on the parameter \e use_centered_moments these parameters
+  are:
+  - the centered moments expressed in pixels: mu20_p, mu11_p, m02_p;
+  - the major and minor axis lenght in pixels and the orientation of the ellipse in radians: a, b, e.
+  \param use_centered_moments : When true, the parameters coef1, coef2, coef3 are the centered moments
+  expressed in pixels. When false, the parameters coef1, coef2, coef3 are the parameters a, b and e.
   \param color : Drawings color.
   \param thickness : Drawings thickness.
+
+  The following example shows how to use for example this function to display the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I) ;
+
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
+                              true, vpColor::orange, 1);
+    vpDisplay::flush(I);
+  \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
                                const vpImagePoint &center,
-                               const double &a, const double &b, const double &e,
-                               const double &angle1, const double &angle2,
+                               const double &coef1, const double &coef2, const double &coef3,
+                               bool use_centered_moments,
+                               const vpColor &color,
+                               unsigned int thickness)
+{
+  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0., vpMath::rad(360), use_centered_moments, color, thickness);
+}
+
+/*!
+  Display an ellipse from its parameters expressed in pixels.
+  \param I: Image to consider.
+  \param center : Center (xc,yc) of the ellipse.
+  \param coef1, coef2, coef3: Depending on the parameter \e use_centered_moments these parameters
+  are:
+  - the centered moments expressed in pixels: mu20_p, mu11_p, m02_p;
+  - the major and minor axis lenght in pixels and the orientation of the ellipse in radians: a, b, e.
+  \param angle1, angle2: Angles in radians used to select a portion of the ellipse.
+  If angle1=0 and angle2=vpMath::rad(360) all the ellipse is displayed.
+  \param use_centered_moments : When true, the parameters coef1, coef2, coef3 are the centered moments
+  expressed in pixels. When false, the parameters coef1, coef2, coef3 are the parameters a, b and e.
+  \param color : Drawings color.
+  \param thickness : Drawings thickness.
+
+  The following example shows how to use for example this function to display the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I) ;
+
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
+                              ellipse.getSmallestAngle(), ellipse.getHighestAngle(), true, vpColor::orange, 1);
+    vpDisplay::flush(I);
+  \endcode
+*/
+void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
+                               const vpImagePoint &center,
+                               const double &coef1, const double &coef2, const double &coef3,
+                               const double &angle1, const double &angle2, bool use_centered_moments,
                                const vpColor &color,
                                unsigned int thickness)
 {
@@ -3245,6 +3299,28 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
       double j2, i2;
       vpImagePoint iP22;
       j1 = j2 = i1 = i2 = 0 ;
+      double a=0., b=0., e=0.;
+
+      if (use_centered_moments) {
+        double mu20_p = coef1;
+        double mu11_p = coef2;
+        double mu02_p = coef3;
+
+        double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
+        a = sqrt((mu20_p + mu02_p - val_p)/2);
+        b = sqrt((mu20_p + mu02_p + val_p)/2);
+        // if mu11 = 0, the projection of the circle is a circle
+        if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+          e = (mu02_p - mu20_p + val_p)/(2*mu11_p);
+        }
+
+        e = atan(e);
+      }
+      else {
+        a = coef1;
+        b = coef2;
+        e = coef3;
+      }
 
       // Approximation of the circumference of an ellipse:
       // [Ramanujan, S., "Modular Equations and Approximations to ,"
@@ -3259,26 +3335,26 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
 
       double smallalpha = angle1;
       double highalpha  = angle2;
-
+      double ce = cos(e);
+      double se = sin(e);
       double k = smallalpha ;
-      j1 = a *cos(k) ; // equation of an ellipse
-      i1 = b *sin(k) ; // equation of an ellipse
+      j1 = a *sin(k) ; // equation of an ellipse
+      i1 = b *cos(k) ; // equation of an ellipse
 
       // (i1,j1) are the coordinates on the origin centered ellipse ;
       // a rotation by "e" and a translation by (xci,jc) are done
       // to get the coordinates of the point on the shifted ellipse
-      iP11.set_j ( center.get_j() + cos(e) *j1 - sin(e) *i1 );
-      iP11.set_i ( center.get_i() + sin(e) *j1 + cos(e) *i1 );
-      std::cout << "vpDisplay:  " << a << " " << b << " " << vpMath::deg(e) << std::endl; // TODO: remove debug
+      iP11.set_j ( center.get_j() + ce *j1 + se *i1 );
+      iP11.set_i ( center.get_i() - se *j1 + ce *i1 );
 
       while (k+incr<highalpha+incr)
       {
-        j2 = a *cos(k+incr) ; // equation of an ellipse
-        i2 = b *sin(k+incr) ; // equation of an ellipse
+        j2 = a *sin(k+incr) ; // equation of an ellipse
+        i2 = b *cos(k+incr) ; // equation of an ellipse
 
         // to get the coordinates of the point on the shifted ellipse
-        iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
-        iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+        iP22.set_j ( center.get_j() + ce *j2 + se *i2 );
+        iP22.set_i ( center.get_i() - se *j2 + ce *i2 );
 
         ( I.display )->displayLine(iP11, iP22, color, thickness) ;
 
@@ -3288,14 +3364,6 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
 
         k += incr ;
       }
-//      j2 = a *cos(highalpha) ; // equation of an ellipse
-//      i2 = b *sin(highalpha) ; // equation of an ellipse
-
-//      // to get the coordinates of the point on the shifted ellipse
-//      iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
-//      iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
-
-//      ( I.display )->displayLine(iP11, iP22, color, thickness) ;
     }
   }
   catch ( ... )
@@ -3306,17 +3374,71 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
 }
 
 /*!
-  Display an ellipse from its parameters (xc,yc,a,b,e).
+  Display an ellipse from its parameters expressed in pixels.
+  \param I: Image to consider.
   \param center : Center (xc,yc) of the ellipse.
-  \param a,b : Ellipse axis size along x and y.
-  \param e : Ellipse excentricity.
+  \param coef1, coef2, coef3: Depending on the parameter \e use_centered_moments these parameters
+  are:
+  - the centered moments expressed in pixels: mu20_p, mu11_p, m02_p;
+  - the major and minor axis lenght in pixels and the orientation of the ellipse in radians: a, b, e.
+  \param use_centered_moments : When true, the parameters coef1, coef2, coef3 are the centered moments
+  expressed in pixels. When false, the parameters coef1, coef2, coef3 are the parameters a, b and e.
   \param color : Drawings color.
   \param thickness : Drawings thickness.
+
+  The following example shows how to use for example this function to display the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I) ;
+
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
+                              true, vpColor::orange, 1);
+    vpDisplay::flush(I);
+  \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
                                const vpImagePoint &center,
-                               const double &a, const double &b, const double &e,
-                               const double &angle1, const double &angle2,
+                               const double &coef1, const double &coef2, const double &coef3,
+                               bool use_centered_moments,
+                               const vpColor &color,
+                               unsigned int thickness)
+{
+  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0., vpMath::rad(360), use_centered_moments, color, thickness);
+}
+
+/*!
+  Display an ellipse from its parameters expressed in pixels.
+  \param I: Image to consider.
+  \param center : Center (xc,yc) of the ellipse.
+  \param coef1, coef2, coef3: Depending on the parameter \e use_centered_moments these parameters
+  are:
+  - the centered moments expressed in pixels: mu20_p, mu11_p, m02_p;
+  - the major and minor axis lenght in pixels and the orientation of the ellipse in radians: a, b, e.
+  \param angle1, angle2: Angles in radians used to select a portion of the ellipse.
+  If angle1=0 and angle2=vpMath::rad(360) all the ellipse is displayed.
+  \param use_centered_moments : When true, the parameters coef1, coef2, coef3 are the centered moments
+  expressed in pixels. When false, the parameters coef1, coef2, coef3 are the parameters a, b and e.
+  \param color : Drawings color.
+  \param thickness : Drawings thickness.
+
+  The following example shows how to use for example this function to display the result of a tracking.
+  \code
+    vpMeEllipse ellipse;
+    ...
+    vpDisplay::display(I);
+    ellipse.track(I) ;
+
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
+                              ellipse.getSmallestAngle(), ellipse.getHighestAngle(), true, vpColor::orange, 1);
+    vpDisplay::flush(I);
+  \endcode
+*/
+void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
+                               const vpImagePoint &center,
+                               const double &coef1, const double &coef2, const double &coef3,
+                               const double &angle1, const double &angle2, bool use_centered_moments,
                                const vpColor &color,
                                unsigned int thickness)
 {
@@ -3329,6 +3451,28 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
       double j2, i2;
       vpImagePoint iP22;
       j1 = j2 = i1 = i2 = 0 ;
+      double a=0., b=0., e=0.;
+
+      if (use_centered_moments) {
+        double mu20_p = coef1;
+        double mu11_p = coef2;
+        double mu02_p = coef3;
+
+        double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
+        a = sqrt((mu20_p + mu02_p - val_p)/2);
+        b = sqrt((mu20_p + mu02_p + val_p)/2);
+        // if mu11 = 0, the projection of the circle is a circle
+        if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+          e = (mu02_p - mu20_p + val_p)/(2*mu11_p);
+        }
+
+        e = atan(e);
+      }
+      else {
+        a = coef1;
+        b = coef2;
+        e = coef3;
+      }
 
       // Approximation of the circumference of an ellipse:
       // [Ramanujan, S., "Modular Equations and Approximations to ,"
@@ -3343,25 +3487,26 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
 
       double smallalpha = angle1;
       double highalpha  = angle2;
-
+      double ce = cos(e);
+      double se = sin(e);
       double k = smallalpha ;
-      j1 = a *cos(k) ; // equation of an ellipse
-      i1 = b *sin(k) ; // equation of an ellipse
+      j1 = a *sin(k) ; // equation of an ellipse
+      i1 = b *cos(k) ; // equation of an ellipse
 
       // (i1,j1) are the coordinates on the origin centered ellipse ;
       // a rotation by "e" and a translation by (xci,jc) are done
       // to get the coordinates of the point on the shifted ellipse
-      iP11.set_j ( center.get_j() + cos(e) *j1 - sin(e) *i1 );
-      iP11.set_i ( center.get_i() + sin(e) *j1 + cos(e) *i1 );
+      iP11.set_j ( center.get_j() + ce *j1 + se *i1 );
+      iP11.set_i ( center.get_i() - se *j1 + ce *i1 );
 
       while (k+incr<highalpha+incr)
       {
-        j2 = a *cos(k+incr) ; // equation of an ellipse
-        i2 = b *sin(k+incr) ; // equation of an ellipse
+        j2 = a *sin(k+incr) ; // equation of an ellipse
+        i2 = b *cos(k+incr) ; // equation of an ellipse
 
         // to get the coordinates of the point on the shifted ellipse
-        iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
-        iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
+        iP22.set_j ( center.get_j() + ce *j2 + se *i2 );
+        iP22.set_i ( center.get_i() - se *j2 + ce *i2 );
 
         ( I.display )->displayLine(iP11, iP22, color, thickness) ;
 
@@ -3371,14 +3516,6 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
 
         k += incr ;
       }
-      j2 = a *cos(highalpha) ; // equation of an ellipse
-      i2 = b *sin(highalpha) ; // equation of an ellipse
-
-      // to get the coordinates of the point on the shifted ellipse
-      iP22.set_j ( center.get_j() + cos(e) *j2 - sin(e) *i2 );
-      iP22.set_i ( center.get_i() + sin(e) *j2 + cos(e) *i2 );
-
-      ( I.display )->displayLine(iP11, iP22, color, thickness) ;
     }
   }
   catch ( ... )
@@ -3387,3 +3524,4 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
     throw ;
   }
 }
+

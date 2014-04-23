@@ -646,10 +646,16 @@ class VISP_EXPORT vpDisplay
 			     unsigned int thickness=1) ;
   static void displayEllipse(const vpImage<unsigned char> &I,
                              const vpImagePoint &center,
-                              const double &a, const double &b, const double &e,
-                              const double &angle1, const double &angle2,
-                              const vpColor &color,
-                              unsigned int thickness=1);
+                             const double &coef1, const double &coef2, const double &coef3,
+                             bool use_centered_moments,
+                             const vpColor &color,
+                             unsigned int thickness=1);
+  static void displayEllipse(const vpImage<unsigned char> &I,
+                             const vpImagePoint &center,
+                             const double &coef1, const double &coef2, const double &coef3,
+                             const double &angle1, const double &angle2, bool use_centered_moments,
+                             const vpColor &color,
+                             unsigned int thickness=1);
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
@@ -794,8 +800,14 @@ class VISP_EXPORT vpDisplay
 			   unsigned int thickness=1)  ;
   static void displayEllipse(const vpImage<vpRGBa> &I,
                              const vpImagePoint &center,
-                             const double &a, const double &b, const double &e,
-                             const double &angle1, const double &angle2,
+                             const double &coef1, const double &coef2, const double &coef3,
+                             bool use_centered_moments,
+                             const vpColor &color,
+                             unsigned int thickness=1);
+  static void displayEllipse(const vpImage<vpRGBa> &I,
+                             const vpImagePoint &center,
+                             const double &coef1, const double &coef2, const double &coef3,
+                             const double &angle1, const double &angle2, bool use_centered_moments,
                              const vpColor &color,
                              unsigned int thickness=1);
   static void displayLine(const vpImage<vpRGBa> &I,
