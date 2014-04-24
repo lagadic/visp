@@ -116,8 +116,6 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
   int height = (int)I.getHeight() ;
   int width = (int)I.getWidth() ;
 
-  double n_sample;
-
   //if (me->getSampleStep()==0)
   if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
@@ -180,8 +178,6 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
   }
 
   vpMeTracker::initTracking(I) ;
-
-  n_sample = (unsigned int)list.size() ;
 }
 
 
@@ -248,7 +244,6 @@ void
 vpMbtMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
-  std::list<vpMeSite>::iterator itList = list.begin();
   for(std::list<vpMeSite>::iterator itList=list.begin(); itList!=list.end(); ++itList){
     vpMeSite s = *itList;//current reference pixel
     if (s.getState() != vpMeSite::NO_SUPPRESSION)
