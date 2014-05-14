@@ -829,7 +829,7 @@ bool vpServo::testInitialization()
     break ;
   case  EYETOHAND_L_cVf_fVe_eJe:
     if (!init_cVf) vpERROR_TRACE("cVf not initialized") ;
-    if (!init_fJe) vpERROR_TRACE("fVe not initialized") ;
+    if (!init_fVe) vpERROR_TRACE("fVe not initialized") ;
     if (!init_eJe) vpERROR_TRACE("eJe not initialized") ;
     return (init_cVf && init_fVe && init_eJe) ;
     break ;
@@ -1415,7 +1415,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 */
 vpColVector vpServo::secondaryTask(const vpColVector &de2dt)
 {
-  if (rankJ1 == L.getCols())
+  if (rankJ1 == J1.getCols())
   {
     vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
     throw(vpServoException(vpServoException::noDofFree,
@@ -1473,7 +1473,7 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt)
 */
 vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2dt)
 {
-  if (rankJ1 == L.getCols())
+  if (rankJ1 == J1.getCols())
   {
     vpERROR_TRACE("no degree of freedom is free, cannot use secondary task") ;
     throw(vpServoException(vpServoException::noDofFree,
