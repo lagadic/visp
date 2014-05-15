@@ -978,7 +978,7 @@ vpColVector vpServo::computeControlLaw()
     else
       J1p = J1.t() ;
 
-    if (rankJ1 == L.getCols())
+    if (rankJ1 == J1.getCols())
     {
       /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
@@ -1145,7 +1145,7 @@ vpColVector vpServo::computeControlLaw(double t)
     else
       J1p = J1.t() ;
 
-    if (rankJ1 == L.getCols())
+    if (rankJ1 == J1.getCols())
     {
       /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
@@ -1318,7 +1318,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     else
       J1p = J1.t() ;
 
-    if (rankJ1 == L.getCols())
+    if (rankJ1 == J1.getCols())
     {
       /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
