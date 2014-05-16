@@ -46,21 +46,19 @@
 
 IF(WIN32)
   FIND_PACKAGE(ICONV)
-  IF(ICONV_FOUND)
-    FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
-      $ENV{XML2_DIR}/include
-      $ENV{XML2_DIR}/include/libxml2
-      $ENV{XML2_HOME}/include
-      $ENV{XML2_HOME}/include/libxml2
-      )
-    FIND_LIBRARY(XML2_LIBRARY libxml2
-      $ENV{XML2_DIR}/lib
-      $ENV{XML2_HOME}/lib
-      /usr/lib
-      /usr/local/lib
-      "c:/libxml2/lib"
-      )
-  ENDIF(ICONV_FOUND)  
+  FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
+    $ENV{XML2_DIR}/include
+    $ENV{XML2_DIR}/include/libxml2
+    $ENV{XML2_HOME}/include
+    $ENV{XML2_HOME}/include/libxml2
+    )
+  FIND_LIBRARY(XML2_LIBRARY libxml2
+    $ENV{XML2_DIR}/lib
+    $ENV{XML2_HOME}/lib
+    /usr/lib
+    /usr/local/lib
+    "c:/libxml2/lib"
+    )
 ELSE(WIN32) 
   FIND_PATH(XML2_INCLUDE_DIR libxml/xmlmemory.h
     $ENV{XML2_DIR}/include/libxml2
@@ -97,10 +95,10 @@ IF(XML2_LIBRARIES AND XML2_INCLUDE_DIR)
   SET(XML2_INCLUDE_DIRS ${XML2_INCLUDE_DIR})
   SET(XML2_FOUND TRUE)
 
-  IF(WIN32)
+  IF(WIN32 AND ICONV_FOUND)
     LIST(APPEND XML2_INCLUDE_DIRS ${ICONV_INCLUDE_DIRS})
     SET(XML2_LIBRARIES ${XML2_LIBRARIES} ${ICONV_LIBRARIES})
-  ENDIF(WIN32)
+  ENDIF()
 
 ELSE(XML2_LIBRARIES AND XML2_INCLUDE_DIR)
   SET(XML2_FOUND FALSE)
