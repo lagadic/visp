@@ -137,7 +137,6 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
   double circumference = M_PI*(a+b)*(1 + 3*vpMath::sqr(t)/(10 + sqrt(4 - 3*vpMath::sqr(t))));
   int nb_points_to_track = (int)(circumference / me->getSampleStep());
   double incr = 2*M_PI/nb_points_to_track;
-  std::cout << "vpMbtMeEllipse::sample(): " << "circonference: " << circumference << " nbp=" << nb_points_to_track << " incr=" << vpMath::deg(incr) << std::endl; // TODO remove
 
   expecteddensity = 0;//nb_points_to_track;
 
