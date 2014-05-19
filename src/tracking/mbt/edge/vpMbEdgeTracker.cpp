@@ -658,7 +658,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
       robust_lines.setThreshold(2/cam.get_px());
       robust_cylinders.setThreshold(2/cam.get_px());
-      robust_circles.setThreshold(2/cam.get_px());
+      robust_circles.setThreshold(vpMath::sqr(2/cam.get_px()));
       if(nberrors_lines > 0)
 				robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
       if(nberrors_cylinders > 0)
