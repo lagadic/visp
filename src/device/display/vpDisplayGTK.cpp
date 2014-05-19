@@ -736,10 +736,10 @@ void vpDisplayGTK::clearDisplay(const vpColor & /* color */)
   \param thickness : Thickness of the lines used to display the arrow.
 */
 void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1, 
-				  const vpImagePoint &ip2,
-				  const vpColor &color,
-				  unsigned int w, unsigned int h,
-				  unsigned int thickness)
+                                  const vpImagePoint &ip2,
+                                  const vpColor &color,
+                                  unsigned int w, unsigned int h,
+                                  unsigned int thickness)
 {
   if (displayHasBeenInitialized)
   {
@@ -758,21 +758,24 @@ void vpDisplayGTK::displayArrow ( const vpImagePoint &ip1,
         a /= lg ;
         b /= lg ;
 
-	vpImagePoint ip3;
+        vpImagePoint ip3;
         ip3.set_i(ip2.get_i() - w*a);
         ip3.set_j(ip2.get_j() - w*b);
 
-	vpImagePoint ip4;
-	ip4.set_i( ip3.get_i() - b*h );
-	ip4.set_j( ip3.get_j() + a*h );
+        vpImagePoint ip4;
+        ip4.set_i( ip3.get_i() - b*h );
+        ip4.set_j( ip3.get_j() + a*h );
 
-	displayLine ( ip2, ip4, color, thickness ) ;
+        if (lg > 2*vpImagePoint::distance(ip2, ip4) )
+          displayLine ( ip2, ip4, color, thickness ) ;
         
-	ip4.set_i( ip3.get_i() + b*h );
-	ip4.set_j( ip3.get_j() - a*h );
+        ip4.set_i( ip3.get_i() + b*h );
+        ip4.set_j( ip3.get_j() - a*h );
 
-	displayLine ( ip2, ip4, color, thickness ) ;
-	displayLine ( ip1, ip2, color, thickness ) ;
+        if (lg > 2*vpImagePoint::distance(ip2, ip4) )
+          displayLine ( ip2, ip4, color, thickness ) ;
+
+        displayLine ( ip1, ip2, color, thickness ) ;
       }
     }
     catch (...)

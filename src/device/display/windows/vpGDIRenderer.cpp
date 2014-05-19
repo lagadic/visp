@@ -1092,27 +1092,30 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1,
 
       //double t = 0 ;
       //while (t<=_l)
-	{
-	  ip4.set_i( ip3.get_i() - b*h );
-	  ip4.set_j( ip3.get_j() + a*h );
+      {
+        ip4.set_i( ip3.get_i() - b*h );
+        ip4.set_j( ip3.get_j() + a*h );
 
-	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
-	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
+        if (lg > 2*vpImagePoint::distance(ip2, ip4) ) {
+          MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
+          LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
+        }
+        // t+=0.1 ;
+      }
 
-	  // t+=0.1 ;
-	}
+      //t = 0 ;
+      //while (t>= -_l)
+      {
+        ip4.set_i( ip3.get_i() + b*h );
+        ip4.set_j( ip3.get_j() - a*h );
 
-	//t = 0 ;
-	//while (t>= -_l)
-	{
-	  ip4.set_i( ip3.get_i() + b*h );
-	  ip4.set_j( ip3.get_j() - a*h );
+        if (lg > 2*vpImagePoint::distance(ip2, ip4) ) {
+          MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
+          LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
+        }
 
-	  MoveToEx(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()), NULL);
-	  LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
-
-	  // t-=0.1 ;
-	}
+        // t-=0.1 ;
+      }
       MoveToEx(hDCMem, vpMath::round(ip1.get_u()), vpMath::round(ip1.get_v()), NULL);
       LineTo(hDCMem, vpMath::round(ip2.get_u()), vpMath::round(ip2.get_v()));
 
