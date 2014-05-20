@@ -763,7 +763,7 @@ void
 vpMbTracker::loadVRMLModel(const std::string& modelFile)
 {
 #ifdef VISP_HAVE_COIN
-  SoDB::init(); // Call SoDD::finish() before ending the program.
+  SoDB::init(); // Call SoDB::finish() before ending the program.
 
   SoInput in;
   SbBool ok = in.openFile(modelFile.c_str());
