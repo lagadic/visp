@@ -157,6 +157,7 @@ class VISP_EXPORT vpVideoWriter
       FORMAT_PNG,
       FORMAT_AVI,
       FORMAT_MPEG,
+      FORMAT_MPEG4,
       FORMAT_MOV,
       FORMAT_UNKNOWN
     } vpVideoFormatType;

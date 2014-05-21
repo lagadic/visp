@@ -9,6 +9,7 @@
 ViSP 2.9.1 (under development)
   - New features
     . Introduction of circles in the model-based tracker
+    . Video reader and writer support mpeg4
   - Bug fixed
     . [17112] Error after second call to track() in vpMbEdgeTracker
     . [17212] vp1394TwoGrabber: unable to select a camera from its guid

@@ -159,6 +159,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV ||
            formatType == FORMAT_OGV)
   {
@@ -171,6 +172,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV ||
            formatType == FORMAT_OGV)
   {
@@ -180,8 +182,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   #endif
   else if (formatType == FORMAT_UNKNOWN)
   {
-    vpERROR_TRACE("The format of the file does not correpsond to a readable format.");
-    throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
+    vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format."));
   }
   
   findFirstFrameIndex();
@@ -234,6 +236,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV ||
            formatType == FORMAT_OGV)
   {
@@ -245,6 +248,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV ||
            formatType == FORMAT_OGV)
   {
@@ -254,8 +258,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   #endif
   else if (formatType == FORMAT_UNKNOWN)
   {
-    vpERROR_TRACE("The format of the file does not correpsond to a readable format.");
-    throw (vpException(vpException::fatalError ,"The format of the file does not correpsond to a readable format."));
+    vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format."));
   }
   
   findFirstFrameIndex();
@@ -450,6 +454,14 @@ vpVideoReader::getFormat(const char *filename)
     return FORMAT_MPEG;
   else if (ext.compare(".mpg") == 0)
     return FORMAT_MPEG;
+  else if (ext.compare(".MPEG4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mpeg4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".MP4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mp4") == 0)
+    return FORMAT_MPEG4;
   else if (ext.compare(".MOV") == 0)
     return FORMAT_MOV;
   else if (ext.compare(".mov") == 0)

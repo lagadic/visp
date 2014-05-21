@@ -159,6 +159,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
@@ -171,6 +172,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
     vpERROR_TRACE("To write video files the FFmpeg library has to be installed");
@@ -208,6 +210,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
   #ifdef VISP_HAVE_FFMPEG
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
     ffmpeg = new vpFFMPEG;
@@ -220,6 +223,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
   #else
   else if (formatType == FORMAT_AVI ||
            formatType == FORMAT_MPEG ||
+           formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
     vpERROR_TRACE("To write video files the FFmpeg library has to be installed");
@@ -373,6 +377,14 @@ vpVideoWriter::getFormat(const char *filename)
     return FORMAT_MPEG;
   else if (ext.compare(".mpg") == 0)
     return FORMAT_MPEG;
+  else if (ext.compare(".MPEG4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mpeg4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".MP4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mp4") == 0)
+    return FORMAT_MPEG4;
   else if (ext.compare(".MOV") == 0)
     return FORMAT_MOV;
   else if (ext.compare(".mov") == 0)
