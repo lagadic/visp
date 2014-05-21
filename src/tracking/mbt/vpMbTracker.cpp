@@ -809,30 +809,44 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
 }
 
 /*!
-  Load a 3D model contained in a .cao file.
+  Load a 3D model contained in a *.cao file.
   
-  the structure of the file is (without the comments) :
+  Since ViSP 2.9.1, lines starting with # character are considered as comments.
+  It is also possible to add comment at the end of the lines. No specific character is requested before the comment.
+  In the following example we use "//" but it could be an other character.
+
+  Since ViSP 2.9.1, circles are supported.
+
+  The structure of the file is :
   \code
   V1
-  8 // Number of points describing the object
-  0.01 0.01 0.01  //  \
-  ...             //  | coordinates of the points in the object frame (in m.)
-  0.01 0.01 0.01  // /
-  3 // Number of lines to track. 
-  0 2 //  \
-  1 4 //  | Index of the points representing the extremities of the lines
-  1 5 // /
-  0 // Number of polygon (face) to track using the line previously described
-  // Face described as follow : nbLine IndexLine1 indexLine2 ... indexLineN
-  3 // Number of polygon (face) to track using the line previously described
+  # Number of points describing the object
+  8
+  0.01 0.01 0.01  // point with index 0 \
+  ...             // ...                 | coordinates of the points in the object frame (in m.)
+  0.01 0.01 0.01  // point with index 7 /
+  # Number of lines to track.
+  3
+  0 2 // line with index 0 \
+  1 4 //                    | Index of the points representing the extremities of the lines
+  1 5 // line with index 2 /
+  # Number of polygon (face) to track using the line previously described
+  1
+  3 0 1 2 // Face described as follow : nbLine indexLine1 indexLine2 ... indexLineN
+  # Number of polygon (face) to track using the points previously described
+  3
   4 0 2 3 4 // Face described as follow : nbPoint IndexPoint1 IndexPoint2 ... IndexPointN
   4 1 3 5 7
   3 1 5 6 
-  1 // Number of cylinder
+  # Number of cylinder
+  1
   6 7 0.05 // Index of the limits points on the axis (used to know the 'height' of the cylinder) and radius of the cyclinder (in m.)
+  # Number of circle
+  1
+  0.5 0 1 2 // radius, index center point, index 2 other points on the plane containing the circle
   \endcode
   
-  \param modelFile : Full name of the .CAO file containing the model.
+  \param modelFile : Full name of the *.cao file containing the model.
 */
 void 
 vpMbTracker::loadCAOModel(const std::string& modelFile)
