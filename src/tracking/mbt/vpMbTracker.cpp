@@ -862,6 +862,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     fileId.get(c);
     if(c=='V'){
       fileId >> caoVersion;
+      fileId.ignore(256, '\n'); // skip the rest of the line
     }
     else{
       std::cout <<"in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...";
@@ -869,14 +870,6 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
                         "in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...");
     }
 
-    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-    fileId.get(c);
-    while (!fileId.fail() && (c != '\n'))
-    {
-      fileId.get(c);
-    }
-
-    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
     fileId.get(c);
     while (!fileId.fail() && (c == '#'))
     {
@@ -888,6 +881,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     //Read the points
     unsigned int caoNbrPoint;
     fileId >> caoNbrPoint;
+    fileId.ignore(256, '\n'); // skip the rest of the line
+
     std::cout << "> " << caoNbrPoint << " points" << std::endl;
     if (caoNbrPoint > 100000) {
       throw vpException(vpException::badValue,
@@ -909,28 +904,27 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     int j ;
 
     for(unsigned int k=0; k < caoNbrPoint; k++){
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }
+      fileId.unget();
+
       fileId >> x ;
       fileId >> y ;
       fileId >> z ;
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
       if (caoVersion == 2){
         fileId >> i ;
         fileId >> j ;
       }
 
-      if(k != caoNbrPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        fileId.ignore(256,'\n');
-      }
       caoPoints[k].setWorldCoordinates(x, y, z) ;
     }
 
-    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-    fileId.get(c);
-    while (!fileId.fail() && (c != '\n'))
-    {
-      fileId.get(c);
-    }
-
-    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
     fileId.get(c);
     while (!fileId.fail() && (c == '#'))
     {
@@ -942,6 +936,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     //Read the lines
     unsigned int caoNbrLine;
     fileId >> caoNbrLine;
+    fileId.ignore(256, '\n'); // skip the rest of the line
+
     unsigned int *caoLinePoints = NULL;
     std::cout << "> " << caoNbrLine << " lines" << std::endl;
 
@@ -957,8 +953,17 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     unsigned int index1, index2;
 
     for(unsigned int k=0; k < caoNbrLine ; k++){
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }
+      fileId.unget();
+
       fileId >> index1 ;
       fileId >> index2 ;
+      fileId.ignore(256, '\n'); // skip the rest of the line
 
       caoLinePoints[2*k] = index1;
       caoLinePoints[2*k+1] = index2;
@@ -972,20 +977,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       else{
         vpTRACE(" line %d has wrong coordinates.", k);
       }
-
-      if(k != caoNbrLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        fileId.ignore(256,'\n');
-      }
     }
 
-    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-    fileId.get(c);
-    while (!fileId.fail() && (c != '\n'))
-    {
-      fileId.get(c);
-    }
-
-    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
     fileId.get(c);
     while (!fileId.fail() && (c == '#'))
     {
@@ -998,6 +991,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
           (the first point of the line is used)*/
     unsigned int caoNbrPolygonLine;
     fileId >> caoNbrPolygonLine;
+    fileId.ignore(256, '\n'); // skip the rest of the line
+
     std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
     if (caoNbrPolygonLine > 100000) {
       delete [] caoPoints;
@@ -1007,6 +1002,14 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
     unsigned int index;
     for(unsigned int k = 0;k < caoNbrPolygonLine; k++){
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }
+      fileId.unget();
+
       unsigned int nbLinePol;
       fileId >> nbLinePol;
       std::vector<vpPoint> corners;
@@ -1022,20 +1025,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
         corners.push_back(caoPoints[caoLinePoints[2*index]]);
       }
-      if(k != caoNbrPolygonLine-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        fileId.ignore(256,'\n');
-      }
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
       initFaceFromCorners(corners, k);
     }
 
-    //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-    fileId.get(c);
-    while (!fileId.fail() && (c != '\n'))
-    {
-      fileId.get(c);
-    }
-
-    //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
     fileId.get(c);
     while (!fileId.fail() && (c == '#'))
     {
@@ -1047,6 +1041,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     /* Extract the polygon using the point coordinates (top of the file) */
     unsigned int caoNbrPolygonPoint;
     fileId >> caoNbrPolygonPoint;
+    fileId.ignore(256, '\n'); // skip the rest of the line
+
     std::cout << "> " << caoNbrPolygonPoint << " polygon point" << std::endl;
 
     if (caoNbrPolygonPoint > 100000) {
@@ -1054,6 +1050,14 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     }
 
     for(unsigned int k = 0;k < caoNbrPolygonPoint; k++){
+      fileId.get(c);
+      while (!fileId.fail() && (c == '#'))
+      {
+        fileId.ignore(256, '\n');
+        fileId.get(c);
+      }
+      fileId.unget();
+
       unsigned int nbPointPol;
       fileId >> nbPointPol;
       if (nbPointPol > 100000) {
@@ -1068,28 +1072,20 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
         }
         corners.push_back(caoPoints[index]);
       }
-      if(k != caoNbrPolygonPoint-1){// the rest of the line is removed (not the last one due to the need to remove possible comments).
-        fileId.ignore(256,'\n');
-      }
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
       initFaceFromCorners(corners, k);
     }
 
     unsigned int caoNbCylinder;
     try{
-      //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-      fileId.get(c);
-      while (!fileId.fail() && (c != '\n'))
-      {
-        fileId.get(c);
-      }
-
-      //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
       fileId.get(c);
       while (!fileId.fail() && (c == '#'))
       {
         fileId.ignore(256, '\n');
         fileId.get(c);
-      }      fileId.unget();
+      }
+      fileId.unget();
 
       if(fileId.eof()){// check if not at the end of the file (for old style files)
         delete[] caoPoints;
@@ -1098,20 +1094,30 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
 
       /* Extract the cylinders */
-
-
       fileId >> caoNbCylinder;
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
       std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
       if (caoNbCylinder > 100000) {
         throw vpException(vpException::badValue, "Exceed the max number of cylinders.");
       }
 
       for(unsigned int k=0; k<caoNbCylinder; ++k){
+        fileId.get(c);
+        while (!fileId.fail() && (c == '#'))
+        {
+          fileId.ignore(256, '\n');
+          fileId.get(c);
+        }
+        fileId.unget();
+
         double radius;
         unsigned int indexP1, indexP2;
         fileId >> indexP1;
         fileId >> indexP2;
         fileId >> radius;
+        fileId.ignore(256, '\n'); // skip the rest of the line
+
         initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
       }
 
@@ -1122,20 +1128,13 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
     unsigned int caoNbCircle;
     try{
-      //while( (fileId.get(c)!=NULL)&&(c!='\n')) ;
-      fileId.get(c);
-      while (!fileId.fail() && (c != '\n'))
-      {
-        fileId.get(c);
-      }
-
-      //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
       fileId.get(c);
       while (!fileId.fail() && (c == '#'))
       {
         fileId.ignore(256, '\n');
         fileId.get(c);
-      }      fileId.unget();
+      }
+      fileId.unget();
 
       if(fileId.eof()){// check if not at the end of the file (for old style files)
         delete[] caoPoints;
@@ -1145,22 +1144,30 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
 
       /* Extract the circles */
       fileId >> caoNbCircle;
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
       std::cout << "> " << caoNbCircle << " circle" << std::endl;
       if (caoNbCircle > 100000) {
         throw vpException(vpException::badValue, "Exceed the max number of cicles.");
       }
 
       for(unsigned int k=0; k<caoNbCircle; ++k){
+        fileId.get(c);
+        while (!fileId.fail() && (c == '#'))
+        {
+          fileId.ignore(256, '\n');
+          fileId.get(c);
+        }
+        fileId.unget();
+
         double radius;
         unsigned int indexP1, indexP2, indexP3;
         fileId >> radius;
         fileId >> indexP1;
         fileId >> indexP2;
         fileId >> indexP3;
-//        std::cout << "circle centre: " << caoPoints[indexP1].get_oX() << " " << caoPoints[indexP1].get_oY() << " " << caoPoints[indexP1].get_oZ() << std::endl;
-//        std::cout << "circle p2: " << caoPoints[indexP2].get_oX() << " " << caoPoints[indexP2].get_oY() << " " << caoPoints[indexP2].get_oZ() << std::endl;
-//        std::cout << "circle p3: " << caoPoints[indexP3].get_oX() << " " << caoPoints[indexP3].get_oY() << " " << caoPoints[indexP3].get_oZ() << std::endl;
-//        std::cout << "circle radius: " << radius << std::endl;
+        fileId.ignore(256, '\n'); // skip the rest of the line
+
         initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius);
       }
 
