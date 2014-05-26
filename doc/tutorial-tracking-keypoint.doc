@@ -103,6 +103,73 @@ With the following line, we release the memory allocated for the OpenCV IplImage
   cvReleaseImage(&cvI);
 \endcode
 
+\section tracking_keypoint_klt_init KLT tracker with re-initialisation
+
+Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to detect and track new features online. A possible criteria is for example to compare the number of currently tracked features to the initial number of detected features. If less than a given percentage of features are tracked, you can start a new detection. 
+
+To get the number of detected or tracked features just call:
+
+\code
+  tracker.getNbFeatures();
+\endcode
+
+Then the idea is to add the previously tracked features to the list of features that are detected.
+
+The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that example we start a new detection on frame 25. Compared to the previous code available in tutorial-klt-tracker.cpp we add the following lines:
+
+\code
+      if (reader.getFrameIndex() == 25) {
+        std::cout << "Re initialize the tracker" << std::endl;
+
+        // Save of previous features
+        int prev_nfeatures = tracker.getNbFeatures();
+        float x, y;
+        int id, j=0;
+
+        CvPoint2D32f *prev_features = (CvPoint2D32f*)cvAlloc(prev_nfeatures*sizeof(CvPoint2D32f));
+
+        for (int i=0; i <prev_nfeatures ; i ++) {
+          tracker.getFeature(i, id, x, y);
+          prev_features[i].x=x;
+          prev_features[i].y=y;
+        }
+
+        // Start a new feature detection
+        tracker.initTracking(cvI);
+
+        // Add previous features if they are not to close to detected one
+        float distance, minDistance_ = 2.f;// choose to keep old points distant of 2
+        bool is_redundant;
+        for(int i = tracker.getNbFeatures() ;
+            j<prev_nfeatures && i<tracker.getMaxFeatures() ;
+            j++){
+          // Test if a previous feature is not redundant with new the one that are newly detected
+          is_redundant = false;
+          for(int k=0; k<tracker.getNbFeatures(); k++){
+            tracker.getFeature(k,id,x,y);
+            distance = sqrt(vpMath::sqr(x-prev_features[j].x) + vpMath::sqr(y-prev_features[j].y));
+            if(distance < minDistance_){
+              is_redundant = true;
+              break;
+            }
+          }
+          if(is_redundant)
+            continue;
+      
+          tracker.addFeature(i, prev_features[j].x, prev_features[j].y);
+          i++;
+        }
+        cvFree(&prev_features);
+      }
+
+      tracker.track(cvI);
+\endcode
+
+In this code we do the following:
+- save the features that are tracked until now
+- initialize the tracker to detect new features
+- parse all the saved features and compare them to the newly detected features. If a previous feature is close in terms of geometric distanceto a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is added to the list of detected features. 
+ 
 You are now ready to see the next \ref tutorial-tracking-me.
 
 */

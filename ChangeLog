@@ -8,8 +8,11 @@
 
 ViSP 2.9.1 (under development)
   - New features
-    . Introduction of circles in the model-based tracker
+    . Introduction of circles in the model-based tracker. In *.cao files
+      comments are allowed on lines starting with # character
     . Video reader and writer support mpeg4
+  - Tutorials
+    . Update KLT tracker to show how to initialize the tracker on line.
   - Bug fixed
     . [17112] Error after second call to track() in vpMbEdgeTracker
     . [17212] vp1394TwoGrabber: unable to select a camera from its guid
