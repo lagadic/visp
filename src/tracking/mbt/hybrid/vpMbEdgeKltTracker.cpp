@@ -912,9 +912,9 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, con
   \param indexCircle : Index of the cicle.
 */
 void
-vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCylinder)
+vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle)
 {
-  vpMbEdgeTracker::initCircle(p1, p2, p3, radius, indexCylinder);
+  vpMbEdgeTracker::initCircle(p1, p2, p3, radius, indexCircle);
 }
 
 /*!

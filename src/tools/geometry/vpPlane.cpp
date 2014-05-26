@@ -104,7 +104,7 @@ vpPlane::vpPlane(const vpPlane& P)
   (x,y,z) are the coordinates of a point and \f$[A,B,C]^T\f$ is the normal
   vector of the plane.
 
-  \param P : A point with coordinates (x,y,z) on the plane. The \frame parameter indicates
+  \param P : A point with coordinates (x,y,z) on the plane. The \e frame parameter indicates
   if the coordinates of this points that are used are expressed in the camera of object frame.
   
   \param n : The normal to the plane.

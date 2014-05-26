@@ -60,6 +60,8 @@
 #include <math.h>
 #include <list>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*!
   \class vpMbtMeEllipse
   \ingroup TrackingImageME
@@ -239,4 +241,5 @@ private:
   void suppressPoints() ;
 };
 
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #endif

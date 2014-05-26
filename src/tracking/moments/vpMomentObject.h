@@ -267,6 +267,7 @@ public:
   /*!
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
     \param momobj : A vpMomentObject
+    \param os : Output stream.
    */
   static void printWithIndices(const vpMomentObject& momobj, std::ostream& os);
   /*!

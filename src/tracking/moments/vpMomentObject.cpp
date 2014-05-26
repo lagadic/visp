@@ -593,7 +593,7 @@ VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& m
 
 /*!
   Outputs the raw moment values \f$m_{ij}\f$ in indexed form.
-  (The moment values are same as provided by the operator << which outputs x for uncalculated moments)
+  The moment values are same as provided by the operator << which outputs x for uncalculated moments.
  */
 void
 vpMomentObject::printWithIndices(const vpMomentObject& momobj, std::ostream& os) {

@@ -53,6 +53,8 @@
 #include <visp/vpMe.h>
 #include <visp/vpMeTracker.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 /*!
   \class vpMbtMeLine
   \brief Implementation of a line used by the model-based tracker.
@@ -120,6 +122,8 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     void reSample(const vpImage<unsigned char>&image, vpImagePoint ip1, vpImagePoint ip2);
     void updateDelta();
 } ;
+
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif
 

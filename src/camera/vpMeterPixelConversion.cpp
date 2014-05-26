@@ -79,18 +79,20 @@ vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
 
   The ellipse is here represented by its parameters \f$x_c,y_c,\mu_{20}, \mu_{11}, \mu_{02}\f$.
 
+  \param cam [in]: Intrinsic camera parameters.
   \param circle [in]: 3D circle with parameters circle.p[] expressed in meters in the image plane.
   \param center [out]: Center of the corresponding ellipse in the image with coordinates
   expressed in pixels.
-  \param mu20,mu11,m02 [out]: Centered moments expressed in pixels.
+  \param mu20_p,mu11_p,mu02_p [out]: Centered moments expressed in pixels.
 
   The following code shows how to use this function:
   \code
   vpCircle circle;
+  double mu20_p, mu11_p, mu02_p;
   circle.changeFrame(cMo);
   circle.projection();
-  vpMeterPixelConversion::convertEllipse(cam, circle, center, mu20, mu11, mu02);
-  vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true);
+  vpMeterPixelConversion::convertEllipse(cam, circle, center_p, mu20_p, mu11_p, mu02_p);
+  vpDisplay::displayEllipse(I, center_p, mu20_p, mu11_p, mu02_p);
   \endcode
  */
 void
