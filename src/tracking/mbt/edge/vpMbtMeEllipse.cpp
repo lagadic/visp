@@ -41,8 +41,6 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#define VP_DEBUG_MODE 3 // Activate debug level up to 3
-
 #include <visp/vpMbtMeEllipse.h>
 
 #include <visp/vpMe.h>
