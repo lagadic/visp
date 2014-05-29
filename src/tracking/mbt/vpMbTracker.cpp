@@ -247,8 +247,18 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     }
     catch(...){}
 
+    char c;
+    // skip lines starting with # as comment
+    finit.get(c);
+    while (!finit.fail() && (c == '#')) {
+      finit.ignore(256, '\n');
+      finit.get(c);
+    }
+    finit.unget();
+
     unsigned int n ;
     finit >> n ;
+    finit.ignore(256, '\n'); // skip the rest of the line
     std::cout << "number of points  " << n << std::endl ;
     if (n > 100000) {
       throw vpException(vpException::badValue,
@@ -257,9 +267,20 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 
     vpPoint *P = new vpPoint [n]  ;
     for (unsigned int i=0 ; i < n ; i++){
+      // skip lines starting with # as comment
+      finit.get(c);
+      while (!finit.fail() && (c == '#')) {
+        finit.ignore(256, '\n');
+        finit.get(c);
+      }
+      finit.unget();
+
       finit >> X ;
       finit >> Y ;
       finit >> Z ;
+      finit.ignore(256, '\n'); // skip the rest of the line
+
+      std::cout << "get 3D: " << X << " " << Y << " " << Z << std::endl;
       P[i].setWorldCoordinates(X,Y,Z) ; // (X,Y,Z)
     }
 
