@@ -933,12 +933,11 @@ vpMbEdgeTracker::testTracking()
     }
   }
 
-  //if (nbGoodPoint < percentageGdPt *(nbGoodPoint+nbBadPoint) || nbExpectedPoint < 2)
   // Compare the number of good points with the min between the number of expected points and number of points that are tracked
-  if ( ( (nbGoodPoint < percentageGdPt *nbExpectedPoint) && (nbGoodPoint < percentageGdPt *(nbGoodPoint+nbBadPoint)) ) // Modif FS
-       || nbExpectedPoint < 2)
-  {
-    throw vpTrackingException(vpTrackingException::fatalError, "Not enough points to track the object");
+  int nb_min = (int) std::min(percentageGdPt *nbExpectedPoint, percentageGdPt *(nbGoodPoint+nbBadPoint));
+  if (nbGoodPoint < nb_min || nbExpectedPoint < 2) {
+    throw vpTrackingException(vpTrackingException::fatalError, "Not enough points (%d) to track the object: expected %d",
+                              nbGoodPoint, nb_min);
   }      
 }
 
@@ -1013,7 +1012,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         catch(...)
         {
-          throw vpTrackingException(vpTrackingException::fatalError, "test Tracking fail");
+          throw;
         }
         
         if (displayFeatures)
