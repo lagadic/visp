@@ -715,13 +715,19 @@ class VISP_EXPORT vpDisplay
   static bool getClick(const vpImage<unsigned char> &I,
 		       vpImagePoint &ip, bool blocking=true) ;
   static bool getClick(const vpImage<unsigned char> &I,
-		       vpImagePoint &ip,
-		       vpMouseButton::vpMouseButtonType &button,
-		       bool blocking=true) ;
+           vpImagePoint &ip,
+           vpMouseButton::vpMouseButtonType &button,
+           bool blocking=true) ;
+  static bool getClick(const vpImage<unsigned char> &I,
+           vpMouseButton::vpMouseButtonType &button,
+           bool blocking=true) ;
   static bool getClickUp(const vpImage<unsigned char> &I,
-			 vpImagePoint &ip,
-			 vpMouseButton::vpMouseButtonType &button,
-			 bool blocking=true) ;
+       vpImagePoint &ip,
+       vpMouseButton::vpMouseButtonType &button,
+       bool blocking=true) ;
+  static bool getClickUp(const vpImage<unsigned char> &I,
+       vpMouseButton::vpMouseButtonType &button,
+       bool blocking=true) ;
   static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
 
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, 
@@ -864,13 +870,19 @@ class VISP_EXPORT vpDisplay
   static bool getClick(const vpImage<vpRGBa> &I,
 		       vpImagePoint &ip, bool blocking=true) ;
   static bool getClick(const vpImage<vpRGBa> &I,
-		       vpImagePoint &ip,
-		       vpMouseButton::vpMouseButtonType &button,
-		       bool blocking=true) ;
+           vpImagePoint &ip,
+           vpMouseButton::vpMouseButtonType &button,
+           bool blocking=true) ;
+  static bool getClick(const vpImage<vpRGBa> &I,
+           vpMouseButton::vpMouseButtonType &button,
+           bool blocking=true) ;
   static bool getClickUp(const vpImage<vpRGBa> &I,
-			 vpImagePoint &ip,
-			 vpMouseButton::vpMouseButtonType &button,
-			 bool blocking=true) ;
+       vpImagePoint &ip,
+       vpMouseButton::vpMouseButtonType &button,
+       bool blocking=true) ;
+  static bool getClickUp(const vpImage<vpRGBa> &I,
+       vpMouseButton::vpMouseButtonType &button,
+       bool blocking=true) ;
   static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
 
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, 

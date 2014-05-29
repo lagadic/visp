@@ -2485,7 +2485,7 @@ bool vpDisplay::getClick ( const vpImage<unsigned char> &I,
 bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
                             vpImagePoint &ip, 
                             vpMouseButton::vpMouseButtonType& button,
-			    bool blocking)
+                            bool blocking)
 {
   try
   {
@@ -2500,6 +2500,56 @@ bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
     throw ;
   }
   return false ;
+}
+
+/*!
+  Wait for a mouse button click and get the position of the clicked
+  image point. The button used to click is also set.
+
+  \param I [in] : The displayed image.
+
+  \param button [out] : The button used to click.
+
+  \param blocking [in] :
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise.
+
+*/
+bool  vpDisplay::getClick ( const vpImage<unsigned char> &I,
+                            vpMouseButton::vpMouseButtonType& button,
+                            bool blocking)
+{
+  vpImagePoint ip;
+  return vpDisplay::getClick(I, ip, button, blocking);
+}
+
+/*!
+  Wait for a mouse button click and get the position of the clicked
+  image point. The button used to click is also set.
+
+  \param I [in] : The displayed image.
+
+  \param button [out] : The button used to click.
+
+  \param blocking [in] :
+  - When set to true, this method waits until a mouse button is
+    pressed and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    pressed, otherwise returns false.
+
+  \return true if a mouse button is pressed, false otherwise.
+
+*/
+bool  vpDisplay::getClick ( const vpImage<vpRGBa> &I,
+                            vpMouseButton::vpMouseButtonType& button,
+                            bool blocking)
+{
+  vpImagePoint ip;
+  return vpDisplay::getClick(I, ip, button, blocking);
 }
 
 /*!
@@ -2543,6 +2593,57 @@ vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
   }
   return false ;
 }
+
+/*!
+  Wait for a mouse button click release and get the position of the clicked
+  image point. The button used to click is also set.
+
+  \param I [in] : The displayed image.
+
+  \param button [out] : The clicked button.
+
+  \param blocking [in] :
+  - When set to true, this method waits until a mouse button is
+    released and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    released, otherwise returns false.
+
+  \return true if a mouse button is released, false otherwise.
+
+*/
+bool  vpDisplay::getClickUp ( const vpImage<unsigned char> &I,
+                            vpMouseButton::vpMouseButtonType& button,
+                            bool blocking)
+{
+  vpImagePoint ip;
+  return vpDisplay::getClickUp(I, ip, button, blocking);
+}
+
+/*!
+  Wait for a mouse button click release and get the position of the clicked
+  image point. The button used to click is also set.
+
+  \param I [in] : The displayed image.
+
+  \param button [out] : The clicked button.
+
+  \param blocking [in] :
+  - When set to true, this method waits until a mouse button is
+    released and then returns always true.
+  - When set to false, returns true only if a mouse button is
+    released, otherwise returns false.
+
+  \return true if a mouse button is released, false otherwise.
+
+*/
+bool  vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
+                            vpMouseButton::vpMouseButtonType& button,
+                            bool blocking)
+{
+  vpImagePoint ip;
+  return vpDisplay::getClickUp(I, ip, button, blocking);
+}
+
 /*!
   Get a keyboard event.
 
