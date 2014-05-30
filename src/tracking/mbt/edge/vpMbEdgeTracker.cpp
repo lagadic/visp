@@ -68,6 +68,7 @@
 #include <string>
 #include <sstream>
 #include <float.h>
+#include <algorithm>    // std::min
 
 bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
 
