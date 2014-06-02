@@ -68,7 +68,6 @@
 #include <string>
 #include <sstream>
 #include <float.h>
-#include <algorithm>    // std::min
 
 bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
 
@@ -935,7 +934,8 @@ vpMbEdgeTracker::testTracking()
   }
 
   // Compare the number of good points with the min between the number of expected points and number of points that are tracked
-  int nb_min = (int) std::min(percentageGdPt *nbExpectedPoint, percentageGdPt *(nbGoodPoint+nbBadPoint));
+  int nb_min = (int)vpMath::minimum(percentageGdPt *nbExpectedPoint, percentageGdPt *(nbGoodPoint + nbBadPoint) );
+  //int nb_min = std::min(val1, val2);
   if (nbGoodPoint < nb_min || nbExpectedPoint < 2) {
     throw vpTrackingException(vpTrackingException::fatalError, "Not enough points (%d) to track the object: expected %d",
                               nbGoodPoint, nb_min);
