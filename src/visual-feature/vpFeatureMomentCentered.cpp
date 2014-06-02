@@ -115,7 +115,7 @@ vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int& p, const unsigned in
       {
           qml = q - (int)l;
           qcombl = static_cast<double>(vpMath::comb(q,l));
-          minus1pow = pow(-1,(pmk + qml));
+		  minus1pow = pow((double)-1, (double)(pmk + qml));
           pcombkqcombl =  pcombk * qcombl;
           mkl = m.get(k, l);
           pintom =   pcombkqcombl * mkl;
