@@ -134,8 +134,13 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType colortype)
     {
       videoStream = i;
       //std::cout << "rate: " << pFormatCtx->streams[i]->r_frame_rate.num << " " << pFormatCtx->streams[i]->r_frame_rate.den << std::endl;
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(55,12,0)
       framerate_stream =  pFormatCtx->streams[i]->r_frame_rate.num;
       framerate_stream /= pFormatCtx->streams[i]->r_frame_rate.den;
+#else
+      framerate_stream =  pFormatCtx->streams[i]->avg_frame_rate.num;
+      framerate_stream /= pFormatCtx->streams[i]->avg_frame_rate.den;
+#endif
       found_codec= true;
       break;
     }
@@ -162,11 +167,19 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType colortype)
       return false;		// Could not open codec
     }
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,34,0)
     pFrame = avcodec_alloc_frame();
-    
+#else
+    pFrame = av_frame_alloc(); // libavcodec 55.34.1
+#endif
+
     if (color_type == vpFFMPEG::COLORED)
     {
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,34,0)
       pFrameRGB=avcodec_alloc_frame();
+#else
+      pFrameRGB=av_frame_alloc(); // libavcodec 55.34.1
+#endif
     
       if (pFrameRGB == NULL)
         return false;
@@ -176,7 +189,11 @@ bool vpFFMPEG::openStream(const char *filename, vpFFMPEGColorType colortype)
     
     else if (color_type == vpFFMPEG::GRAY_SCALED)
     {
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,34,0)
       pFrameGRAY=avcodec_alloc_frame();
+#else
+      pFrameGRAY=av_frame_alloc(); // libavcodec 55.34.1
+#endif
     
       if (pFrameGRAY == NULL)
         return false;
@@ -666,8 +683,14 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int w, unsigned int h,
 #else
   pCodecCtx = avcodec_alloc_context3(NULL);
 #endif
+
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,34,0)
   pFrame = avcodec_alloc_frame();
   pFrameRGB = avcodec_alloc_frame();
+#else
+  pFrame = av_frame_alloc(); // libavcodec 55.34.1
+  pFrameRGB = av_frame_alloc(); // libavcodec 55.34.1
+#endif
 
   /* put sample parameters */
   pCodecCtx->bit_rate = (int)bit_rate;
