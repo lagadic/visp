@@ -1361,16 +1361,24 @@ void vpDisplay::displayLine ( const vpImage<vpRGBa> &I,
   \param I : The image associated to the display.
   \param ip : Point location.
   \param color : Point color.
+  \param thickness : Thickness of the point
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                const vpImagePoint &ip,
-			       const vpColor &color )
+                               const vpColor &color,
+                               unsigned int thickness )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayPoint ( ip, color ) ;
+      if (thickness == 1)
+        ( I.display )->displayPoint ( ip, color ) ;
+      else {
+        vpRect rect(0, 0, thickness, thickness);
+        rect.moveCenter(ip);
+        ( I.display )->displayRectangle ( rect, color, true ) ;
+      }
     }
   }
   catch ( ... )
@@ -1384,16 +1392,24 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
   \param I : The image associated to the display.
   \param ip : Point location.
   \param color : Point color.
+  \param thickness : Thickness of the point
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                const vpImagePoint &ip,
-			       const vpColor &color )
+                               const vpColor &color,
+                               unsigned int thickness )
 {
   try
   {
     if ( I.display != NULL )
     {
-      ( I.display )->displayPoint ( ip, color ) ;
+      if (thickness == 1)
+        ( I.display )->displayPoint ( ip, color ) ;
+      else {
+        vpRect rect(0, 0, thickness, thickness);
+        rect.moveCenter(ip);
+        ( I.display )->displayRectangle ( rect, color, true ) ;
+      }
     }
   }
   catch ( ... )
@@ -1408,10 +1424,12 @@ void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
   \param I : The image associated to the display.
   \param i,j : Point location.
   \param color : Point color.
+  \param thickness : Thickness of the point
 */
 void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
                                int i, int j,
-                               const vpColor &color )
+                               const vpColor &color,
+                               unsigned int thickness )
 {
   try
   {
@@ -1420,7 +1438,13 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
       vpImagePoint ip;
       ip.set_i( i );
       ip.set_j( j );
-      ( I.display )->displayPoint ( ip, color ) ;
+      if (thickness == 1)
+        ( I.display )->displayPoint ( ip, color ) ;
+      else {
+        vpRect rect(0, 0, thickness, thickness);
+        rect.moveCenter(ip);
+        ( I.display )->displayRectangle ( rect, color, true ) ;
+      }
     }
   }
   catch ( ... )
@@ -1436,10 +1460,13 @@ void vpDisplay::displayPoint ( const vpImage<unsigned char> &I,
   \param I : The image associated to the display.
   \param i,j : Point location.
   \param color : Point color.
+  \param thickness : Thickness of the point
+
 */
 void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
                                int i, int j,
-                               const vpColor &color )
+                               const vpColor &color,
+                               unsigned int thickness )
 {
   try
   {
@@ -1448,7 +1475,13 @@ void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
       vpImagePoint ip;
       ip.set_i( i );
       ip.set_j( j );
-      ( I.display )->displayPoint ( ip, color ) ;
+      if (thickness == 1)
+        ( I.display )->displayPoint ( ip, color ) ;
+      else {
+        vpRect rect(0, 0, thickness, thickness);
+        rect.moveCenter(ip);
+        ( I.display )->displayRectangle ( rect, color, true ) ;
+      }
     }
   }
   catch ( ... )

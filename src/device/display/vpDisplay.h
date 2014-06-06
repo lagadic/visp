@@ -671,11 +671,13 @@ class VISP_EXPORT vpDisplay
 			  const vpColor &color, 
 			  unsigned int thickness=1) ;
   static void displayPoint(const vpImage<unsigned char> &I,
-			   const vpImagePoint &ip,
-			   const vpColor &color) ;
+                           const vpImagePoint &ip,
+                           const vpColor &color,
+                           unsigned int thickness=1) ;
   static void displayPoint(const vpImage<unsigned char> &I,
-			   int i, int j,
-			   const vpColor &color) ;
+                           int i, int j,
+                           const vpColor &color,
+                           unsigned int thickness=1) ;
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
@@ -826,11 +828,13 @@ class VISP_EXPORT vpDisplay
 			  const vpColor &color, 
 			  unsigned int thickness=1) ;
   static void displayPoint(const vpImage<vpRGBa> &I,
-			   const vpImagePoint &ip,
-			   const vpColor &color) ;
+                           const vpImagePoint &ip,
+                           const vpColor &color,
+                           unsigned int thickness=1) ;
   static void displayPoint(const vpImage<vpRGBa> &I,
-			   int i, int j,
-			   const vpColor &color) ;
+                           int i, int j,
+                           const vpColor &color,
+                           unsigned int thickness=1) ;
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
