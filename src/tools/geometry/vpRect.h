@@ -302,6 +302,19 @@ public:
     this->top  = y - this->height/2 + 0.5;
   };
   
+  /*!
+
+    Center the rectangle to the image point given as parameter, leaving
+    the size unchanged.
+
+    \sa getCenter()
+
+  */
+  inline void moveCenter(const vpImagePoint &center) {
+    this->left = center.get_u() - this->width/2  + 0.5;
+    this->top  = center.get_v() - this->height/2 + 0.5;
+  };
+
 private:
   double left;   // Upper left corner position along the columns axis
   double top;    // Upper left corner position along the rows axis
