@@ -1256,7 +1256,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
+  \param displayFullModel : If true, the full model is displayed (even the non visible faces).
 */
 void
 vpMbEdgeTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_,

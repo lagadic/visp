@@ -63,6 +63,8 @@
 #include <visp/vpSubMatrix.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpMbtKltPolygon.h>
+#include <visp/vpMbtDistanceCircle.h>
+#include <visp/vpMbtDistanceCylinder.h>
 
 /*!
   \class vpMbKltTracker
@@ -265,12 +267,18 @@ protected:
   double distFarClip;
   //! Flags specifying which clipping to used
   unsigned int clippingFlag;
-  
+  //! Vector of the cylinders used here only to display the full model.
+  std::list<vpMbtDistanceCylinder*> cylinders_disp;
+  //! Vector of the circles used here only to display the full model.
+  std::list<vpMbtDistanceCircle*> circles_disp;
+
 public:
   
             vpMbKltTracker();
   virtual   ~vpMbKltTracker();
   
+            void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r);
+            void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r);
   virtual void            display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
                                   const bool displayFullModel = false);
@@ -443,8 +451,8 @@ protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
   virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
-          virtual void            initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int ){};
-          virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int ){};
+          virtual void            initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
+          virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
 
           void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
           bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);

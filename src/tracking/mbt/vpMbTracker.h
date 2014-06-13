@@ -132,7 +132,7 @@ public:
     \param cam : The camera parameters.
     \param col : The desired color.
     \param thickness : The thickness of the lines.
-  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
+    \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false)=0;
@@ -145,7 +145,7 @@ public:
     \param cam : The camera parameters.
     \param col : The desired color.
     \param thickness : The thickness of the lines.
-  \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
+    \param displayFullModel : If true, the full model is displayed (even the non visible surfaces).
   */
   virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false)=0;

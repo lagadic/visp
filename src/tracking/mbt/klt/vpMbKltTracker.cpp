@@ -78,6 +78,28 @@ vpMbKltTracker::~vpMbKltTracker()
     cvReleaseImage(&cur);
     cur = NULL;
   }
+
+  // delete the structures used to display cylinders and circles
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
+    cy = *it;
+    if (cy!=NULL){
+      delete cy ;
+    }
+    cy = NULL ;
+  }
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
+    ci = *it;
+    if (ci!=NULL){
+      delete ci ;
+    }
+    ci = NULL ;
+  }
+
+  cylinders_disp.clear();
+  circles_disp.clear();
 }
 
 void 
@@ -122,14 +144,17 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   
   unsigned char val = 255/* - i*15*/;
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible())
+    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2)
       faces[i]->updateMask(mask, val, maskBorder);
+//    else
+//      vpCTRACE << "face not visible" << std::endl;
   }
   
   tracker.initTracking(cur, mask);
+//  vpCTRACE << "init klt. detected " << tracker.getNbFeatures() << " points" << std::endl;
   
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible()){
+    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
       faces[i]->init(tracker);
     }
   }
@@ -320,7 +345,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       initial_guess = (CvPoint2D32f*)cvAlloc((unsigned int)tracker.getMaxFeatures()*sizeof(initial_guess[0]));
         
       for (unsigned int i = 0; i < faces.size(); i += 1){
-        if(faces[i]->isVisible() && faces[i]->hasEnoughPoints()){  
+        if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2 && faces[i]->hasEnoughPoints()){
           //Get the normal to the face at the current state cMo
           vpPlane plan(faces[i]->p[0], faces[i]->p[1], faces[i]->p[2]);
           plan.changeFrame(cMcd);
@@ -438,7 +463,7 @@ vpMbKltTracker::setClipping(const unsigned int &flags)
 void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
 {     
-  if( corners.size() > 2){ // This tracker can't handle lignes
+  //if( corners.size() > 2){ // This tracker can't handle lignes
     vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
   //   polygon->setCameraParameters(cam);
     polygon->setNbPoint((unsigned int)corners.size());
@@ -460,11 +485,11 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
 
     delete polygon;
     polygon = NULL;
-  }
+  //}
 }
 
 /*!
-  Realize the pre tracking operations
+  Achieve the tracking of the KLT features and associate the features to the faces.
 
   \param I : The input image.
   \param nbInfos : Size of the features.
@@ -475,14 +500,14 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
 {
   vpImageConvert::convert(I, cur);
   tracker.track(cur);
-  
+  //vpCTRACE << "klt nb feat: " << tracker.getNbFeatures() << std::endl;
   if(!firstTrack)
     firstTrack = true;
   
   nbInfos = 0;  
   nbFaceUsed = 0;
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible()){
+    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
       faces[i]->computeNbDetectedCurrent(tracker);
 //       faces[i]->ransac();
       if(faces[i]->hasEnoughPoints()){
@@ -507,7 +532,7 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
   unsigned int currentNumber = 0;
   unsigned int shift = 0;
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible()){
+    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
       initialNumber += faces[i]->getInitialNumberPoint();
       if(faces[i]->hasEnoughPoints()){    
         vpSubColVector sub_w(w, shift, 2*faces[i]->getNbPointsCur());
@@ -579,7 +604,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     
     unsigned int shift = 0;
     for (unsigned int i = 0; i < faces.size(); i += 1){
-      if(faces[i]->isVisible() && faces[i]->hasEnoughPoints()){
+      if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2 && faces[i]->hasEnoughPoints()){
         vpSubColVector subR(R, shift, 2*faces[i]->getNbPointsCur());
         vpSubMatrix subJ(J, shift, 0, 2*faces[i]->getNbPointsCur(), 6);
         try{
@@ -795,7 +820,7 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : Boolean to say if all the model has to be displayed.
+  \param displayFullModel : Boolean to say if all the model has to be displayed, even the faces that are visible.
 */
 void
 vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters & camera,
@@ -835,6 +860,14 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
     }
   }
 
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
+    (*it)->display(I, cMo_, camera, col, thickness);
+  }
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
+    (*it)->display(I, cMo_, camera, col, thickness);
+  }
+
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
     faces.displayOgre(cMo_);
@@ -849,7 +882,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : Boolean to say if all the model has to be displayed.
+  \param displayFullModel : Boolean to say if all the model has to be displayed, even the faces that are not visible.
 */
 void
 vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters & camera,
@@ -889,6 +922,14 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
     }
   }
 
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
+    (*it)->display(I, cMo_, camera, col, thickness);
+  }
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
+    (*it)->display(I, cMo_, camera, col, thickness);
+  }
+
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
     faces.displayOgre(cMo_);
@@ -908,7 +949,7 @@ vpMbKltTracker::testTracking()
 {
   unsigned int nbTotalPoints = 0;
   for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible()){
+    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
       nbTotalPoints += faces[i]->getNbPointsCur();
     }
   }
@@ -917,6 +958,98 @@ vpMbKltTracker::testTracking()
     std::cerr << "test tracking failed (too few points to realize a good tracking)." << std::endl;
     throw vpTrackingException(vpTrackingException::fatalError,
           "test tracking failed (too few points to realize a good tracking).");
+  }
+}
+
+/*!
+  Add a cylinder to display (not for tracking) from two points on the axis (defining the length of
+  the cylinder) and its radius.
+
+  \param p1 : First point on the axis.
+  \param p2 : Second point on the axis.
+  \param radius : Radius of the cylinder.
+  \param indexCylinder : Unused index of the cylinder.
+*/
+void
+vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*indexCylinder*/)
+{
+  addCylinder(p1, p2, radius);
+}
+
+/*!
+  Add a cylinder to the list of cylinders.
+
+  \param P1 : The first extremity of the axis.
+  \param P2 : The second extremity of the axis.
+  \param r : The radius of the cylinder.
+*/
+void
+vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r)
+{
+  bool already_here = false ;
+  vpMbtDistanceCylinder *cy ;
+
+//  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
+//    cy = *it;
+//    if((samePoint(*(cy->p1),P1) && samePoint(*(cy->p2),P2)) ||
+//       (samePoint(*(cy->p1),P2) && samePoint(*(cy->p2),P1)) ){
+//      already_here = (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
+//    }
+//  }
+
+  if (!already_here){
+    cy = new vpMbtDistanceCylinder ;
+
+    cy->setCameraParameters(cam);
+    cy->buildFrom(P1, P2, r);
+    cylinders_disp.push_back(cy);
+  }
+}
+
+/*!
+  Add a circle to display (not for tracking) from its center, 3 points (including the center) defining the plane that contain
+  the circle and its radius.
+
+  \param p1 : Center of the circle.
+  \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
+  defining the plane that contains the circle.
+  \param radius : Radius of the circle.
+  \param indexCircle : Unused index of the cicle.
+*/
+void
+vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int /*indexCircle*/)
+{
+  addCircle(p1, p2, p3, radius);
+}
+
+/*!
+  Add a circle to the list of circles.
+
+  \param P1 : Center of the circle.
+  \param P2,P3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
+  defining the plane that contains the circle.
+  \param r : Radius of the circle.
+*/
+void
+vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r)
+{
+  bool already_here = false ;
+  vpMbtDistanceCircle *ci ;
+
+//  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp[i].end(); ++it){
+//    ci = *it;
+//    if((samePoint(*(ci->p1),P1) && samePoint(*(ci->p2),P2) && samePoint(*(ci->p3),P3)) ||
+//       (samePoint(*(ci->p1),P1) && samePoint(*(ci->p2),P3) && samePoint(*(ci->p3),P2)) ){
+//      already_here = (std::fabs(ci->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(ci->radius, r));
+//    }
+//  }
+
+  if (!already_here){
+    ci = new vpMbtDistanceCircle ;
+
+    ci->setCameraParameters(cam);
+    ci->buildFrom(P1, P2, P3, r);
+    circles_disp.push_back(ci);
   }
 }
 

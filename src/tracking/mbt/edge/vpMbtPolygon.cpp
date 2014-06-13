@@ -196,7 +196,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   e2[0] = p[2].get_X() - p[1].get_X() ;
   e2[1] = p[2].get_Y() - p[1].get_Y() ;
   e2[2] = p[2].get_Z() - p[1].get_Z() ;
- 
+
   e1.normalize();
   e2.normalize();
   
@@ -216,7 +216,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   double cos_angle = vpColVector::dotProd (e4, facenormal);
   double angle = acos(cos_angle);
   
-//   std::cout << cos_angle << "/" << vpMath::deg(angle) << std::endl;
+  //vpCTRACE << cos_angle << "/" << vpMath::deg(angle) << "/" << vpMath::deg(alpha) << std::endl;
   
   if( angle < alpha ){
     isvisible = true;

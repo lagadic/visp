@@ -77,6 +77,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   initPyramid(I, Ipyramid);
   
   unsigned int n = 0;
+
   for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
       if(vpMbKltTracker::faces[i]->isVisible()){
         vpMbEdgeTracker::faces[i]->isvisible = true;
@@ -940,7 +941,7 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const dou
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : boolean to say if all the model has to be displayed.
+  \param displayFullModel : boolean to say if all the model has to be displayed, even the faces that are not visible.
 */
 void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
@@ -983,7 +984,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : boolean to say if all the model has to be displayed.
+  \param displayFullModel : boolean to say if all the model has to be displayed, even the faces that are not visible.
 */
 void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
