@@ -968,7 +968,6 @@ vpMbKltTracker::testTracking()
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
-  \param indexCylinder : Unused index of the cylinder.
 */
 void
 vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*indexCylinder*/)
@@ -1014,7 +1013,6 @@ vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r
   \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
-  \param indexCircle : Unused index of the cicle.
 */
 void
 vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int /*indexCircle*/)
