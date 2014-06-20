@@ -5,18 +5,30 @@
 
 \section tracking_blob_tracking Blob tracking
 
-With ViSP you can track a blob using either vpDot or vpDot2 classes.
+With ViSP you can track a blob using either vpDot or vpDot2 classes. By blob we mean a region of the image that has the same gray level. The blob can be white on a black background, or black on a white background.
 
-\include tutorial-blob-tracker.cpp
+In this tutorial we focus on vpDot2 class that provides more functionalities than vpDot class. As presented in section \ref tracking_blob_auto, it allows especially to automize the detection of blobs that have the same characteristics than a reference blob. 
 
-The videos show the result of the tracking on two different objects:
+The next videos show the result of ViSP blob tracker on two different objects:
 
 \htmlonly
 <iframe width="420" height="315" src="http://www.youtube.com/embed/2Jv7OYBuPgI?rel=0" frameborder="0" allowfullscreen></iframe>
 <iframe width="420" height="315" src="http://www.youtube.com/embed/Kr2DJotfsiA?rel=0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
+In the next subsections we explain how to achieve this kind of tracking, first using a firewire live camera, then using a v4l2 live camera that can be an usb camera, or a Raspberry Pi camera module.
+
+\subsection live-firewire From a firewire live camera
+
+The following code also available in tutorial-blob-tracker-live-firewire.cpp file provided in ViSP source code tree allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on a pixel that belongs to the blob. 
+ 
+To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems or vp1394CMUGrabber class under Windows. These classes are described in the \ref tutorial-grabber.
+
+\include tutorial-blob-tracker-live-firewire.cpp
+
+From now, we assume that you have successfully followed the \ref tutorial-getting-started and the \ref tutorial-grabber.
 Here after we explain the new lines that are introduced.
+
 
 First an instance of the blob tracker is created. 
 \code
@@ -40,9 +52,27 @@ The tracker is now initialized. The tracking can be performed on new images:
   blob.track(I);
 \endcode
 
+\subsection live-v4l2 From a v4l2 live camera
+
+The following code also available in tutorial-blob-tracker-live-v4l2.cpp file provided in ViSP source code tree allows to grab images from a camera compatible with video for linux two driver (v4l2) and track a blob. Webcams or more generally USB cameras, but also the Raspberry Pi Camera Module can be considered. 
+
+To acquire images from a v4l2 camera we use vpV4l2Grabber class on unix-like systems. This class is described in the \ref tutorial-grabber.
+
+\include tutorial-blob-tracker-live-v4l2.cpp
+
+The code is the same than the one presented in the previous subsection, except that here we use the vpV4l2Grabber class to grab images from usb cameras. Here we have also modified the while loop in order to catch an exception when the tracker fail:
+
+\code
+    try { blob.track(I); }
+    catch(...) { }
+\endcode
+
+If possible, it allows the tracker to overcome a previous tracking failure (due to blur, blob outside the image,...) on the next available images. 
+
+
 \section tracking_blob_auto Blob auto detection and tracking
 
-The following example shows how to detect blobs in the first image and then track all the detected blobs. This functionality is only available with vpDot2 class.
+The following example also available in tutorial-blob-auto-tracker.cpp file provided in ViSP source code tree shows how to detect blobs in the first image and then track all the detected blobs. This functionality is only available with vpDot2 class. Here we consider an image that is provided in ViSP source tree.
 
 \include tutorial-blob-auto-tracker.cpp
 

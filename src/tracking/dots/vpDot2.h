@@ -1,4 +1,4 @@
- /****************************************************************************
+/****************************************************************************
   *
   * $Id: vpDot2.h 2135 2009-04-29 13:51:31Z fspindle $
   *
@@ -105,11 +105,11 @@
     is used when there was a problem performing basic tracking of the dot, but
     can also be used to find a certain type of dots in the full image.
 
-  The following sample code available in tutorial-blob-tracker.cpp shows how to
+  The following sample code available in tutorial-blob-tracker-live-firewire.cpp shows how to
   grab images from a firewire camera, track a blob and display the tracking
   results.
 
-  \include tutorial-blob-tracker.cpp
+  \include tutorial-blob-tracker-live-firewire.cpp
   A line by line explanation of the previous example is provided in
   \ref tutorial-tracking-blob.
 

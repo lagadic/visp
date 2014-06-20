@@ -5,13 +5,15 @@
 
 In this tutorial you will learn how to install ViSP from source on Windows. These steps have been tested on Windows 7 (64 bit), with CMake 2.8 and Visual Studio 2012 but should work with any other version as well. 
 
-Concerning ViSP installation, we provide also other tutorials
+Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
+- \ref tutorial-install-raspberry
 - \ref tutorial-install-iOS
 
-ViSP can also be installed on other platforms OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+ViSP can also be installed from source on other platforms OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
+Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
 
 \section install_win_required Required packages
 

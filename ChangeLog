@@ -12,7 +12,11 @@ ViSP 2.9.1 (under development)
       comments are allowed on lines starting with # character
     . Video reader and writer support mpeg4
   - Tutorials
-    . Update KLT tracker to show how to initialize the tracker on line.
+    . Introduce a new tutorial to show how to install ViSP from Ubuntu
+      official packages.
+    . Introduce a new tutorial to show how to install ViSP on Raspberry Pi.
+    . Update KLT tracker tutorial to show how to initialize the tracker online.
+    . Update blob tracker tutorial to show how to use v4l2 live camera.
   - Bug fixed
     . [17112] Error after second call to track() in vpMbEdgeTracker
     . [17212] vp1394TwoGrabber: unable to select a camera from its guid

@@ -1,0 +1,81 @@
+/**
+
+\page tutorial-install-ubuntu-package Tutorial: Installation from prebuilt packages on Linux Ubuntu
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from prebuilt official packages on Linux Ubuntu. 
+
+Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source code:
+- \ref tutorial-install-ubuntu
+- \ref tutorial-install-fedora
+- \ref tutorial-install-raspberry
+- \ref tutorial-install-win
+- \ref tutorial-install-iOS
+
+Since Ubuntu 14.04 LTS, ViSP library can be installed from <a href="http://packages.ubuntu.com/search?keywords=visp&searchon=names&suite=trusty&section=all">existing packages</a> on amd64 or i386 architectures. In Ubuntu 13.10, the packages are only available for amd64 architecture.
+
+The table below shows which are the packages available given the distribution and architecture.
+
+<table>
+<tr>
+  <th colspan="2">Ubuntu 13.10
+  <th colspan="2">Ubuntu 14.04 LTS
+</tr>
+<tr>
+  <th>i386</th>
+  <th>amd64</th>
+  <th>i386</th>
+  <th>amd64</th>
+</tr>
+<tr>
+  <td></td>
+  <td>libvisp-dev</td>
+  <td>libvisp-dev</td>
+  <td>libvisp-dev</td>
+</tr>
+<tr>
+  <td></td>
+  <td>libvisp2.8</td>
+  <td>libvisp2.8</td>
+  <td>libvisp2.8</td>
+</tr>
+<tr>
+  <td></td>
+  <td>libvisp2.8-dbg</td>
+  <td>libvisp2.8-dbg</td>
+  <td>libvisp2.8-dbg</td>
+</tr>
+<tr>
+  <td></td>
+  <td>libvisp-doc</td>
+  <td>libvisp-doc</td>
+  <td>libvisp-doc</td>
+</tr>
+<tr>
+  <td></td>
+  <td>visp-images</td>
+  <td>visp-images</td>
+  <td>visp-images</td>
+</tr>
+</table>
+
+To install ViSP library and headers just run:
+
+\code
+sudo apt-get install libvisp-dev
+\endcode
+
+To install ViSP images data set useful to run ViSP examples you can run:
+\code
+sudo apt-get install visp-images
+\endcode
+
+To install ViSP html documentation you can run:
+\code
+sudo apt-get install visp-doc
+\endcode
+
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/
