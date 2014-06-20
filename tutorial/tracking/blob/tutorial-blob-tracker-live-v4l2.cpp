@@ -13,7 +13,6 @@ int main()
   vpImage<unsigned char> I; // Create a gray level image container
 
   vpV4l2Grabber g;
-  vp1394CMUGrabber g;
 
   g.open(I);
   g.acquire(I);
