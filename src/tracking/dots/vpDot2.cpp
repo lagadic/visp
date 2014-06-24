@@ -290,10 +290,10 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I, unsigned int size)
   try {
     track( I );
   }
-  catch(...)
+  catch(vpException e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    //vpERROR_TRACE("Error caught") ;
+    throw(e) ;
   }
 }
 
@@ -352,10 +352,10 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I,
   try {
     track( I );
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    //vpERROR_TRACE("Error caught") ;
+    throw(e) ;
   }
 }
 
@@ -415,10 +415,10 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I,
   try {
     track( I );
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    //vpERROR_TRACE("Error caught") ;
+    throw(e) ;
   }
 }
 
@@ -530,7 +530,7 @@ void vpDot2::track(const vpImage<unsigned char> &I)
     // in the area, return an error tracking.
     if( candidates.empty() )
     {
-      vpERROR_TRACE("No dot was found") ;
+      //vpERROR_TRACE("No dot was found") ;
       throw(vpTrackingException(vpTrackingException::featureLostError,
                                 "No dot was found")) ;
     }
@@ -577,9 +577,9 @@ void vpDot2::track(const vpImage<unsigned char> &I)
   // if this dot is partially out of the image, return an error tracking.
   if( !isInImage( I ) )
   {
-    vpERROR_TRACE("The center of gravity of the dot is not in the image") ;
+    //vpERROR_TRACE("The center of gravity of the dot is not in the image") ;
     throw(vpTrackingException(vpTrackingException::featureLostError,
-                              "No dot was found")) ;
+                              "The center of gravity of the dot is not in the image")) ;
   }
 
   // Get dots center of gravity
