@@ -25,24 +25,34 @@ int main()
 #else
   vpDisplayGDI d(I, 0, 0, "Camera view");
 #endif
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
 
   vpDot2 blob;
   blob.setGraphics(true);
   blob.setGraphicsThickness(2);
-  blob.initTracking(I);
+
+  vpImagePoint germ;
+  bool init_done = false;
 
   while(1) {
-    g.acquire(I); // Acquire an image
-    vpDisplay::display(I);
+    try {
+      g.acquire(I); // Acquire an image
+      vpDisplay::display(I);
 
-    blob.track(I);
-
-    vpDisplay::flush(I);
-
-    if (vpDisplay::getClick(I, false))
-      break;
+      if (! init_done) {
+        vpDisplay::displayCharString(I, vpImagePoint(10,10), "Click in the blob to initialize the tracker", vpColor::red);
+        if (vpDisplay::getClick(I, germ, false)) {
+          blob.initTracking(I, germ);
+          init_done = true;
+        }
+      }
+      else {
+        blob.track(I);
+      }
+      vpDisplay::flush(I);
+    }
+    catch(...) {
+      init_done = false;
+    }
   }
 #endif
 }
