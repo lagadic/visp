@@ -229,9 +229,9 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const char * filename,
     return SEQUENCE_ERROR;
   }
 
-  nodeCamera = find_camera(doc, node, camera_name, image_width, image_height);
+  nodeCamera = find_camera(doc, node, cam_name, im_width, im_height);
   if(nodeCamera == NULL){
-    write(node, camera_name, image_width, image_height);
+    write(node, cam_name, im_width, im_height);
   }
   else{
     write_camera(nodeCamera);

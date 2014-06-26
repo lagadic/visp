@@ -22,6 +22,8 @@ ViSP 2.9.1 (under development)
     . [17212] vp1394TwoGrabber: unable to select a camera from its guid
     . [17457] Cannot apply a secondary task to a 7dof robot
     . [17550] Build error with ffmpeg libraries
+    . [17620] vpXmlParserCamera::save() doesn't save the camera name and
+      image size
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features
