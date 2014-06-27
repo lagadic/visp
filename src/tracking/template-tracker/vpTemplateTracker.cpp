@@ -184,16 +184,21 @@ void vpTemplateTracker::resetTracker()
   // 	vpTRACE("resetTracking");
   if(pyrInitialised)
   {
-    for(unsigned int i=0;i<nbLvlPyr;i++)
-    {
-      for(unsigned int point=0;point<templateSizePyr[i];point++)
-      {
-        delete[] ptTemplatePyr[i][point].dW;
-        delete[] ptTemplatePyr[i][point].HiG;
-      }
-      delete[] ptTemplatePyr[i];
+    if(ptTemplatePyr){
+        for(unsigned int i=0;i<nbLvlPyr;i++)
+        {
+          if(ptTemplatePyr[i]){
+              for(unsigned int point=0;point<templateSizePyr[i];point++)
+              {
+                delete[] ptTemplatePyr[i][point].dW;
+                delete[] ptTemplatePyr[i][point].HiG;
+              }
+              delete[] ptTemplatePyr[i];
+          }
+        }
+        delete[] ptTemplatePyr;
+        ptTemplatePyr = NULL;
     }
-    delete[] ptTemplatePyr;
 
     if (ptTemplateCompoPyr) {
       for(unsigned int i=0;i<nbLvlPyr;i++)
@@ -228,17 +233,44 @@ void vpTemplateTracker::resetTracker()
       ptTemplateSuppPyr = NULL;
     }
 
-    for(unsigned int i=0;i<nbLvlPyr;i++)
-      delete[] ptTemplateSelectPyr[i];
-    delete[] ptTemplateSelectPyr;
+    if(ptTemplateSelectPyr){
+        for(unsigned int i=0;i<nbLvlPyr;i++){
+            if(ptTemplateSelectPyr[i])
+                delete[] ptTemplateSelectPyr[i];
+        }
+        delete[] ptTemplateSelectPyr;
+        ptTemplateSelectPyr = NULL;
+    }
 
-    delete[] templateSizePyr;
-    delete[] HdesirePyr;
-    delete[] HLMdesirePyr;
-    delete[] HLMdesireInversePyr;
+    if(templateSizePyr){
+        delete[] templateSizePyr;
+        templateSizePyr = NULL;
+    }
 
-    delete[] zoneTrackedPyr;
-    delete[] pyr_IDes;
+    if(HdesirePyr) {
+        delete[] HdesirePyr;
+        HdesirePyr = NULL;
+    }
+
+    if(HLMdesirePyr){
+        delete[] HLMdesirePyr;
+        HLMdesirePyr = NULL;
+    }
+
+    if(HLMdesireInversePyr){
+        delete[] HLMdesireInversePyr;
+        HLMdesireInversePyr = NULL;
+    }
+
+    if(zoneTrackedPyr){
+        delete[] zoneTrackedPyr;
+        zoneTrackedPyr = NULL;
+    }
+
+    if(pyr_IDes){
+        delete[] pyr_IDes;
+        pyr_IDes = NULL;
+    }
   }
   else
   {
@@ -754,13 +786,15 @@ void vpTemplateTracker::initCompInversePyr(const vpImage<unsigned char> &I)
 void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
 {
   // 	vpTRACE("initHessienDesiredPyr");
+
   templateSize=templateSizePyr[0];
   //ptTemplateSupp=ptTemplateSuppPyr[0];
   //ptTemplateCompo=ptTemplateCompoPyr[0];
   ptTemplate=ptTemplatePyr[0];
   ptTemplateSelect=ptTemplateSelectPyr[0];
-  initHessienDesired(I);
+  ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
   ptTemplateSuppPyr[0]=ptTemplateSupp;
+  initHessienDesired(I);
 
   ptTemplateCompoPyr[0]=ptTemplateCompo;
   //HdesirePyr[0].resize(NbParam,NbParam);
@@ -781,8 +815,9 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
       ptTemplateSelect=ptTemplateSelectPyr[i];
       //ptTemplateSupp=ptTemplateSuppPyr[i];
       //ptTemplateCompo=ptTemplateCompoPyr[i];
-      initHessienDesired(Itemp);
+      ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
       ptTemplateSuppPyr[i]=ptTemplateSupp;
+      initHessienDesired(Itemp);
       ptTemplateCompoPyr[i]=ptTemplateCompo;
 
       /*HdesirePyr[i].resize(NbParam,NbParam);HdesirePyr[i]=H;
@@ -815,94 +850,101 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
   pyr_I=new vpImage<unsigned char>[nbLvlPyr]; // Why +1 ?
   pyr_I[0]=I;
 
-  vpColVector ptemp(nbParam);
-  if(nbLvlPyr>1)
+  try
   {
-//    vpColVector *p_sauv=new vpColVector[nbLvlPyr];
-//    for(unsigned int i=0;i<nbLvlPyr;i++)p_sauv[i].resize(nbParam);
-
-//    p_sauv[0]=p;
-    for(unsigned int i=1;i<nbLvlPyr;i++)
-    {
-      vpImageFilter::getGaussPyramidal(pyr_I[i-1],pyr_I[i]);
-      //test getParamPyramidDown
-      /*vpColVector vX_test(2);vX_test[0]=15.;vX_test[1]=30.;
-      vpColVector vX_test2(2);
-      Warp->computeCoeff(p);
-      Warp->computeDenom(vX_test,p);
-      Warp->warpX(vX_test,vX_test2,p);
-      std::cout<<"p = "<<p.t()<<std::endl;*/
-      //std::cout<<"get p down"<<std::endl;
-      Warp->getParamPyramidDown(p,ptemp);
-      p=ptemp;
-      zoneTracked=&zoneTrackedPyr[i];
-
-//      p_sauv[i]=p;
-      /*std::cout<<"p_down = "<<p.t()<<std::endl;
-
-      vpColVector vX_testd(2);vX_testd[0]=15./2.;vX_testd[1]=30./2.;
-      vpColVector vX_testd2(2);
-      Warp->computeCoeff(p);
-      Warp->computeDenom(vX_testd,p);
-      Warp->warpX(vX_testd,vX_testd2,p);
-      std::cout<<2.*vX_testd2[0]<<","<<2.*vX_testd2[1]<<" <=> "<<vX_test2[0]<<","<<vX_test2[1]<<std::endl;*/
-
-    }
-
-    for(int i=(int)nbLvlPyr-1;i>=0;i--)
-    {
-      if(i>=(int)l0Pyr)
+      vpColVector ptemp(nbParam);
+      if(nbLvlPyr>1)
       {
-        templateSize=templateSizePyr[i];
-        ptTemplate=ptTemplatePyr[i];
-        ptTemplateSelect=ptTemplateSelectPyr[i];
-        ptTemplateSupp=ptTemplateSuppPyr[i];
-        ptTemplateCompo=ptTemplateCompoPyr[i];
-        H=HdesirePyr[i];
-        HLM=HLMdesirePyr[i];
-        HLMdesireInverse=HLMdesireInversePyr[i];
-//        zoneTracked=&zoneTrackedPyr[i];
-        trackRobust(pyr_I[i]);
-      }
-      //std::cout<<"get p up"<<std::endl;
-//      ptemp=p_sauv[i-1];
-      if (i > 0) {
-        Warp->getParamPyramidUp(p,ptemp);
-        p=ptemp;
-        zoneTracked=&zoneTrackedPyr[i-1];
-      }
-    }
-#if 0
-    if(l0Pyr==0)
-    {
-      templateSize=templateSizePyr[0];
-      ptTemplate=ptTemplatePyr[0];
-      ptTemplateSelect=ptTemplateSelectPyr[0];
-      ptTemplateSupp=ptTemplateSuppPyr[0];
-      ptTemplateCompo=ptTemplateCompoPyr[0];
-      H=HdesirePyr[0];
-      HLM=HLMdesirePyr[0];
-      HLMdesireInverse=HLMdesireInversePyr[0];
-      zoneTracked=&zoneTrackedPyr[0];
-      trackRobust(pyr_I[0]);
-    }
+    //    vpColVector *p_sauv=new vpColVector[nbLvlPyr];
+    //    for(unsigned int i=0;i<nbLvlPyr;i++)p_sauv[i].resize(nbParam);
 
-    if (l0Pyr > 0) {
-//      for (int l=(int)l0Pyr; l >=0; l--) {
-//        Warp->getParamPyramidUp(p,ptemp);
-//        p=ptemp;
-//      }
-      zoneTracked=&zoneTrackedPyr[0];
-    }
-#endif
-    //    delete [] p_sauv;
+    //    p_sauv[0]=p;
+        for(unsigned int i=1;i<nbLvlPyr;i++)
+        {
+          vpImageFilter::getGaussPyramidal(pyr_I[i-1],pyr_I[i]);
+          //test getParamPyramidDown
+          /*vpColVector vX_test(2);vX_test[0]=15.;vX_test[1]=30.;
+          vpColVector vX_test2(2);
+          Warp->computeCoeff(p);
+          Warp->computeDenom(vX_test,p);
+          Warp->warpX(vX_test,vX_test2,p);
+          std::cout<<"p = "<<p.t()<<std::endl;*/
+          //std::cout<<"get p down"<<std::endl;
+          Warp->getParamPyramidDown(p,ptemp);
+          p=ptemp;
+          zoneTracked=&zoneTrackedPyr[i];
+
+    //      p_sauv[i]=p;
+          /*std::cout<<"p_down = "<<p.t()<<std::endl;
+
+          vpColVector vX_testd(2);vX_testd[0]=15./2.;vX_testd[1]=30./2.;
+          vpColVector vX_testd2(2);
+          Warp->computeCoeff(p);
+          Warp->computeDenom(vX_testd,p);
+          Warp->warpX(vX_testd,vX_testd2,p);
+          std::cout<<2.*vX_testd2[0]<<","<<2.*vX_testd2[1]<<" <=> "<<vX_test2[0]<<","<<vX_test2[1]<<std::endl;*/
+
+        }
+
+        for(int i=(int)nbLvlPyr-1;i>=0;i--)
+        {
+          if(i>=(int)l0Pyr)
+          {
+            templateSize=templateSizePyr[i];
+            ptTemplate=ptTemplatePyr[i];
+            ptTemplateSelect=ptTemplateSelectPyr[i];
+            ptTemplateSupp=ptTemplateSuppPyr[i];
+            ptTemplateCompo=ptTemplateCompoPyr[i];
+            H=HdesirePyr[i];
+            HLM=HLMdesirePyr[i];
+            HLMdesireInverse=HLMdesireInversePyr[i];
+    //        zoneTracked=&zoneTrackedPyr[i];
+            trackRobust(pyr_I[i]);
+          }
+          //std::cout<<"get p up"<<std::endl;
+    //      ptemp=p_sauv[i-1];
+          if (i > 0) {
+            Warp->getParamPyramidUp(p,ptemp);
+            p=ptemp;
+            zoneTracked=&zoneTrackedPyr[i-1];
+          }
+        }
+    #if 0
+        if(l0Pyr==0)
+        {
+          templateSize=templateSizePyr[0];
+          ptTemplate=ptTemplatePyr[0];
+          ptTemplateSelect=ptTemplateSelectPyr[0];
+          ptTemplateSupp=ptTemplateSuppPyr[0];
+          ptTemplateCompo=ptTemplateCompoPyr[0];
+          H=HdesirePyr[0];
+          HLM=HLMdesirePyr[0];
+          HLMdesireInverse=HLMdesireInversePyr[0];
+          zoneTracked=&zoneTrackedPyr[0];
+          trackRobust(pyr_I[0]);
+        }
+
+        if (l0Pyr > 0) {
+    //      for (int l=(int)l0Pyr; l >=0; l--) {
+    //        Warp->getParamPyramidUp(p,ptemp);
+    //        p=ptemp;
+    //      }
+          zoneTracked=&zoneTrackedPyr[0];
+        }
+    #endif
+        //    delete [] p_sauv;
+      }
+      else
+      {
+        //std::cout<<"reviens a tracker de base"<<std::endl;
+        trackRobust(I);
+      }
+      delete[] pyr_I;
   }
-  else
-  {
-    //std::cout<<"reviens a tracker de base"<<std::endl;
-    trackRobust(I);
+  catch(vpException &e){
+      delete[] pyr_I;
+      throw(vpTrackingException(vpTrackingException::badValue, e.getMessage()));
   }
-  delete[] pyr_I;
 }
 
 void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
