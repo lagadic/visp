@@ -700,7 +700,8 @@ bool vpFFMPEG::openEncoder(const char *filename, unsigned int w, unsigned int h,
   this->width = (int)w;
   this->height = (int)h;
   /* frames per second */
-  pCodecCtx->time_base= (AVRational){1,framerate_encoder};
+  pCodecCtx->time_base.num = 1;
+  pCodecCtx->time_base.den = framerate_encoder;
   pCodecCtx->gop_size = 10; /* emit one intra frame every ten frames */
   pCodecCtx->max_b_frames=1;
   pCodecCtx->pix_fmt = PIX_FMT_YUV420P;
