@@ -792,16 +792,23 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
   //ptTemplateCompo=ptTemplateCompoPyr[0];
   ptTemplate=ptTemplatePyr[0];
   ptTemplateSelect=ptTemplateSelectPyr[0];
-  ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
-  ptTemplateSuppPyr[0]=ptTemplateSupp;
-  initHessienDesired(I);
-
-  ptTemplateCompoPyr[0]=ptTemplateCompo;
-  //HdesirePyr[0].resize(NbParam,NbParam);
-  //HLMdesirePyr[0].resize(NbParam,NbParam);
-  HdesirePyr[0]=Hdesire;
-  HLMdesirePyr[0]=HLMdesire;
-  HLMdesireInversePyr[0]=HLMdesireInverse;
+//  ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
+  try{
+      initHessienDesired(I);
+      ptTemplateSuppPyr[0]=ptTemplateSupp;
+      ptTemplateCompoPyr[0]=ptTemplateCompo;
+      HdesirePyr[0]=Hdesire;
+      HLMdesirePyr[0]=HLMdesire;
+      HLMdesireInversePyr[0]=HLMdesireInverse;
+  }
+  catch(vpException &e){
+      ptTemplateSuppPyr[0]=ptTemplateSupp;
+      ptTemplateCompoPyr[0]=ptTemplateCompo;
+      HdesirePyr[0]=Hdesire;
+      HLMdesirePyr[0]=HLMdesire;
+      HLMdesireInversePyr[0]=HLMdesireInverse;
+      throw(e);
+  }
 
   if(nbLvlPyr>1)
   {
@@ -815,16 +822,22 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
       ptTemplateSelect=ptTemplateSelectPyr[i];
       //ptTemplateSupp=ptTemplateSuppPyr[i];
       //ptTemplateCompo=ptTemplateCompoPyr[i];
-      ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
-      ptTemplateSuppPyr[i]=ptTemplateSupp;
-      initHessienDesired(Itemp);
-      ptTemplateCompoPyr[i]=ptTemplateCompo;
-
-      /*HdesirePyr[i].resize(NbParam,NbParam);HdesirePyr[i]=H;
-      HLMdesirePyr[i].resize(NbParam,NbParam);HLMdesirePyr[i]=HLM;*/
-      HdesirePyr[i]=Hdesire;
-      HLMdesirePyr[i]=HLMdesire;
-      HLMdesireInversePyr[i]=HLMdesireInverse;
+      try{
+        initHessienDesired(Itemp);
+        ptTemplateSuppPyr[i]=ptTemplateSupp;
+        ptTemplateCompoPyr[i]=ptTemplateCompo;
+        HdesirePyr[i]=Hdesire;
+        HLMdesirePyr[i]=HLMdesire;
+        HLMdesireInversePyr[i]=HLMdesireInverse;
+      }
+      catch(vpException &e){
+          ptTemplateSuppPyr[i]=ptTemplateSupp;
+          ptTemplateCompoPyr[i]=ptTemplateCompo;
+          HdesirePyr[i]=Hdesire;
+          HLMdesirePyr[i]=HLMdesire;
+          HLMdesireInversePyr[i]=HLMdesireInverse;
+          throw(e);
+      }
     }
   }
   // 	vpTRACE("fin initHessienDesiredPyr");
