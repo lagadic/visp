@@ -517,6 +517,7 @@ public:
   void track(const vpImage<unsigned char> &I);
 
 protected:
+  bool samePoint(const vpPoint &P1, const vpPoint &P2);
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");

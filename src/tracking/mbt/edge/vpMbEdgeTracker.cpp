@@ -1508,18 +1508,23 @@ vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomog
 /*!
   Check if two vpPoints are similar.
   
-  To be similar : \f$ (X_1 - X_2)^2 + (Y_1 - Y_2)^2 + (Z_1 - Z_2)^2 < threshold \f$.
+  To be similar : \f$ (X_1 - X_2)^2 + (Y_1 - Y_2)^2 + (Z_1 - Z_2)^2 < epsilon \f$.
   
   \param P1 : The first point to compare
   \param P2 : The second point to compare
-  \param threshold : The threshold  used to decide if the points are similar or not.
 */
-bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold=1e-5)
+bool
+vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2)
 {
-  double d = vpMath::sqr(P1.get_oX() - P2.get_oX())+
-  vpMath::sqr(P1.get_oY() - P2.get_oY())+
-  vpMath::sqr(P1.get_oZ() - P2.get_oZ()) ;
-  if (d  < threshold)
+  double dx = fabs(P1.get_oX() - P2.get_oX());
+  double dy = fabs(P1.get_oY() - P2.get_oY());
+  double dz = fabs(P1.get_oZ() - P2.get_oZ());
+
+  double dxmax = vpMath::maximum(P1.get_oX(),P2.get_oX());
+  double dymax = vpMath::maximum(P1.get_oY(),P2.get_oY());
+  double dzmax = vpMath::maximum(P1.get_oZ(),P2.get_oZ());
+
+  if (dx  < std::numeric_limits<double>::epsilon()*dxmax && dy  < std::numeric_limits<double>::epsilon()*dymax && dz  < std::numeric_limits<double>::epsilon()*dzmax)
     return true ;
   else
     return false ;
@@ -1540,7 +1545,6 @@ void
 vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygone, std::string name)
 {
   //suppress line already in the model
-  
   bool already_here = false ;
   vpMbtDistanceLine *l ;
   
@@ -1822,14 +1826,13 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
     n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
   }
   else{
-#ifdef VISP_HAVE_OGRE   
+#ifdef VISP_HAVE_OGRE
     n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
 #else
     n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
 #endif
   } 
-  
-//  cout << "visible face " << n << endl ;
+
   if (n > nbvisiblepolygone)
   {
     //cout << "une nouvelle face est visible " << endl ;
