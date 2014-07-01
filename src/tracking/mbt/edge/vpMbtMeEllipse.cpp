@@ -297,10 +297,9 @@ vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint
   try{
     track(I) ;
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    throw(e) ;
   }
   vpMeTracker::display(I) ;
   vpDisplay::flush(I) ;
@@ -317,10 +316,9 @@ vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
   try{
     vpMeTracker::track(I) ;
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    throw(e) ;
   }
 }
 
