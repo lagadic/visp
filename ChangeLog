@@ -8,8 +8,11 @@
 
 ViSP 2.9.1 (under development)
   - New features
-    . Introduction of circles in the model-based tracker. In *.cao files
-      comments are allowed on lines starting with # character
+    . Model-based tracker:
+      + Introduction of 3D circles.
+      + In *.cao files comments are allowed on lines starting with # character.
+      + New functions getError() and getRobustWeights() useful to compute
+        tracking quality indicators.
     . Video reader and writer support mpeg4
   - Tutorials
     . Introduce a new tutorial to show how to install ViSP from Ubuntu

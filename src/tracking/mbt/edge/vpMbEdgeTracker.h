@@ -335,7 +335,7 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     
     //! Flags specifying which clipping to used
     unsigned int clippingFlag;
-  
+
 public:
   
   vpMbEdgeTracker(); 

@@ -551,7 +551,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpColVector *R;
   vpColVector R_mbt, R_klt;  // residu
   vpMatrix J_true;
-  vpColVector R_true;
+  //vpColVector R_true;
   vpColVector w_true;
   
   if(nbrow != 0){
@@ -564,7 +564,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     R_klt.resize(2*nbInfos);
   }
   
-  vpColVector w;  // weight from MEstimator
+  //vpColVector w;  // weight from MEstimator
   vpColVector v;  // "speed" for VVS
   vpRobust robust_mbt(0), robust_klt(0);
   vpHomography H;
@@ -604,8 +604,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     }
     
     if(iter == 0){
-      w.resize(nbrow + 2*nbInfos);
-      w=1;
+      m_w.resize(nbrow + 2*nbInfos);
+      m_w=1;
       
       w_mbt.resize(nbrow);
       w_mbt = 1;
@@ -649,15 +649,15 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     unsigned int cpt = 0;
     while(cpt< (nbrow+2*nbInfos)){
       if(cpt<(unsigned)nbrow){
-        w[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT) ;
+        m_w[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT) ;
       }
       else
-        w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
+        m_w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
       cpt++;
     }
     
+    m_error = (*R);
     if(computeCovariance){
-      R_true = (*R);
       J_true = (*J);
     }
 
@@ -666,14 +666,14 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     double num = 0;
     double den = 0;
     for (unsigned int i = 0; i < static_cast<unsigned int>(R->getRows()); i++){
-      num += w[i]*vpMath::sqr((*R)[i]);
-      den += w[i];
+      num += m_w[i]*vpMath::sqr((*R)[i]);
+      den += m_w[i];
       
-      w_true[i] = w[i]*w[i];
-      (*R)[i] *= w[i];
+      w_true[i] = m_w[i]*m_w[i];
+      (*R)[i] *= m_w[i];
       if(compute_interaction){
         for (unsigned int j = 0; j < 6; j += 1){
-          (*J)[i][j] *= w[i];
+          (*J)[i][j] *= m_w[i];
         }
       }
     }
@@ -695,7 +695,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*R_true,D);
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*m_error,D);
   }
 }
 

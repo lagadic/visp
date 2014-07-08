@@ -585,7 +585,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   vpMatrix J;     // interaction matrix
   vpColVector R;  // residu
   vpMatrix J_true;     // interaction matrix
-  vpColVector R_true;  // residu
+  //vpColVector R_true;  // residu
   vpColVector v;  // "speed" for VVS
   vpHomography H;
   vpColVector w_true;
@@ -629,8 +629,8 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     robust.setThreshold(2/cam.get_px());
     robust.MEstimator( vpRobust::TUKEY, R, w);
     
+    m_error = R;
     if(computeCovariance){
-      R_true = R;
       J_true = J;
     }
 
@@ -662,7 +662,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*R_true,D);
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*m_error,D);
   }
   
   cMo = ctTc0 * c0Mo;
@@ -687,10 +687,10 @@ vpMbKltTracker::track(const vpImage<unsigned char>& I)
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data");
   }
 
-  vpColVector w;
-  computeVVS(nbInfos, w);  
+  //vpColVector w;
+  computeVVS(nbInfos, m_w);
 
-  if(postTracking(I, w))
+  if(postTracking(I, m_w))
     reinit(I);
 }
 

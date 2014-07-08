@@ -118,6 +118,10 @@ protected:
   vpMatrix covarianceMatrix;
   //! If true, the features are displayed. 
   bool displayFeatures;
+  //! Weights used in the robust scheme
+  vpColVector m_w;
+  //! Error s-s*
+  vpColVector m_error;
 
 public:
   vpMbTracker();
@@ -165,6 +169,42 @@ public:
       vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
     
     return covarianceMatrix; 
+  }
+
+  /*!
+    Return the error vector \f$(s-s^*)\f$ reached after the virtual visual servoing process used to estimate the pose.
+
+    The following example shows how to use this function:
+    \code
+      tracker.track(I);
+      std::cout << "Error: " << sqrt( (tracker.getError()).sumSquare()) << std::endl;
+    \endcode
+
+    \sa getRobustWeights()
+   */
+  virtual vpColVector getError() {
+    return m_error;
+  }
+  /*!
+    Return the weights vector \f$w_i\f$ computed by the robust scheme.
+
+    The following example shows how to use this function:
+    \code
+      tracker.track(I);
+      vpColVector w = tracker.getRobustWeights();
+      vpColVector e = tracker.getError();
+      vpColVector we(w.size());
+      for(unsigned int i=0; i<w.size(); i++)
+        we[i] = w[i]*e[i];
+
+      std::cout << "Error         : " << sqrt( (e ).sumSquare() ) << std::endl;
+      std::cout << "Weighted error: " << sqrt( (we).sumSquare() ) << std::endl;
+    \endcode
+
+    \sa getError()
+   */
+  virtual vpColVector getRobustWeights() {
+    return m_w;
   }
 
   /*!

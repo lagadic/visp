@@ -203,9 +203,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpMbtDistanceCylinder *cy ;
   vpMbtDistanceCircle *ci ;
 
-  vpColVector w;
-  vpColVector weighted_error;
+  //vpColVector w;
   vpColVector factor;
+  //vpColVector error; // s-s*
+  vpColVector weighted_error; // Weighted error vector wi(s-s)*
 
   unsigned int iter = 0;
 
@@ -244,8 +245,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpMatrix L(nbrow,6), Lp;
 
   // compute the error vector
-  vpColVector error(nbrow);
-  unsigned int nerror = error.getRows();
+  m_error.resize(nbrow);
+  unsigned int nerror = m_error.getRows();
   vpColVector v ;
 
   double limite = 3; //Une limite de 3 pixels
@@ -262,8 +263,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if(iter==0)
     {
       weighted_error.resize(nerror) ;
-      w.resize(nerror);
-      w = 0;
+      m_w.resize(nerror);
+      m_w = 0;
       factor.resize(nerror);
       factor = 1;
     }
@@ -304,11 +305,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         {
           L[n+i][j] = l->L[i][j]; //On remplit la matrice d'interaction globale
         }
-        error[n+i] = l->error[i]; //On remplit la matrice d'erreur
+        m_error[n+i] = l->error[i]; //On remplit la matrice d'erreur
 
-        if (error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
+        if (m_error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
 
-        w[n+i] = 0;
+        m_w[n+i] = 0;
 
         if (iter == 0)
         {
@@ -327,11 +328,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
             e_next = l->error[1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
-              w[n+i] = 1/*0.5*/;
+              m_w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
           }
-          else w[n+i] = 1;
+          else m_w[n+i] = 1;
         }
 
         //If pour la derniere extremite des moving edges
@@ -340,7 +341,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = l->error[i];
           if ( fabs(e_cur - e_prev) < limite && vpMath::sign(e_cur) == vpMath::sign(e_prev) )
           {
-            w[n+i] += 1/*0.5*/;
+            m_w[n+i] += 1/*0.5*/;
           }
         }
 
@@ -350,11 +351,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_next = l->error[i+1];
           if ( fabs(e_cur - e_prev) < limite )
           {
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           if ( fabs(e_cur - e_next) < limite )
           {
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           e_prev = e_cur;
         }
@@ -379,11 +380,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         for(unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = cy->L[i][j]; //On remplit la matrice d'interaction globale
         }
-        error[n+i] = cy->error[i]; //On remplit la matrice d'erreur
+        m_error[n+i] = cy->error[i]; //On remplit la matrice d'erreur
 
-        if (error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
+        if (m_error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
 
-        w[n+i] = 0;
+        m_w[n+i] = 0;
 
         if (iter == 0)
         {
@@ -409,11 +410,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
             e_next = cy->error[1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
-              w[n+i] = 1/*0.5*/;
+              m_w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
           }
-          else w[n+i] = 1;
+          else m_w[n+i] = 1;
         }
         if (i == cy->nbFeaturel1)
         {
@@ -423,11 +424,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
             e_next = cy->error[i+1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
-              w[n+i] = 1/*0.5*/;
+              m_w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
           }
-          else w[n+i] = 1;
+          else m_w[n+i] = 1;
         }
 
         //If pour la derniere extremite des moving edges
@@ -436,7 +437,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = cy->error[i];
           if ( fabs(e_cur - e_prev) < limite && vpMath::sign(e_cur) == vpMath::sign(e_prev) )
           {
-            w[n+i] += 1/*0.5*/;
+            m_w[n+i] += 1/*0.5*/;
           }
         }
         //If pour la derniere extremite des moving edges
@@ -445,7 +446,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = cy->error[i];
           if ( fabs(e_cur - e_prev) < limite && vpMath::sign(e_cur) == vpMath::sign(e_prev) )
           {
-            w[n+i] += 1/*0.5*/;
+            m_w[n+i] += 1/*0.5*/;
           }
         }
 
@@ -454,10 +455,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = cy->error[i];
           e_next = cy->error[i+1];
           if ( fabs(e_cur - e_prev) < limite ){
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           if ( fabs(e_cur - e_next) < limite ){
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           e_prev = e_cur;
         }
@@ -480,11 +481,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         for(unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = ci->L[i][j]; //On remplit la matrice d'interaction globale
         }
-        error[n+i] = ci->error[i]; //On remplit la matrice d'erreur
+        m_error[n+i] = ci->error[i]; //On remplit la matrice d'erreur
 
-        if (error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
+        if (m_error[n+i] <= limite) count = count+1.0; //Si erreur proche de 0 on incremente cur
 
-        w[n+i] = 0;
+        m_w[n+i] = 0;
 
         if (iter == 0)
         {
@@ -503,11 +504,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
             e_next = ci->error[1];
             if ( fabs(e_cur - e_next) < limite && vpMath::sign(e_cur) == vpMath::sign(e_next) )
             {
-              w[n+i] = 1/*0.5*/;
+              m_w[n+i] = 1/*0.5*/;
             }
             e_prev = e_cur;
           }
-          else w[n+i] = 1;
+          else m_w[n+i] = 1;
         }
 
         //If pour la derniere extremite des moving edges
@@ -516,7 +517,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = ci->error[i];
           if ( fabs(e_cur - e_prev) < limite && vpMath::sign(e_cur) == vpMath::sign(e_prev) )
           {
-            w[n+i] += 1/*0.5*/;
+            m_w[n+i] += 1/*0.5*/;
           }
         }
 
@@ -525,10 +526,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
           e_cur = ci->error[i];
           e_next = ci->error[i+1];
           if ( fabs(e_cur - e_prev) < limite ){
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           if ( fabs(e_cur - e_next) < limite ){
-            w[n+i] += 0.5;
+            m_w[n+i] += 0.5;
           }
           e_prev = e_cur;
         }
@@ -547,8 +548,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     double wi ; double eri ;
     for(unsigned int i = 0; i < nerror; i++){
-      wi = w[i]*factor[i];
-      eri = error[i];
+      wi = m_w[i]*factor[i];
+      eri = m_error[i];
       num += wi*vpMath::sqr(eri);
       den += wi ;
 
@@ -558,7 +559,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if((iter==0) || compute_interaction){
       for (unsigned int i=0 ; i < nerror ; i++){
         for (unsigned int j=0 ; j < 6 ; j++){
-          L[i][j] = w[i]*factor[i]*L[i][j] ;
+          L[i][j] = m_w[i]*factor[i]*L[i][j] ;
         }
       }
     }
@@ -606,8 +607,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
         for (unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = l->L[i][j];
-          error[n+i] = l->error[i];
-          error_lines[nlines+i] = error[n+i];
+          m_error[n+i] = l->error[i];
+          error_lines[nlines+i] = m_error[n+i];
         }
       }
       n+= l->nbFeature;
@@ -620,8 +621,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       for(unsigned int i=0 ; i < cy->nbFeature ; i++){
         for(unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = cy->L[i][j];
-          error[n+i] = cy->error[i];
-          error_cylinders[ncylinders+i] = error[n+i];
+          m_error[n+i] = cy->error[i];
+          error_cylinders[ncylinders+i] = m_error[n+i];
         }
       }
 
@@ -635,8 +636,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       for(unsigned int i=0 ; i < ci->nbFeature ; i++){
         for(unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = ci->L[i][j];
-          error[n+i] = ci->error[i];
-          error_circles[ncircles+i] = error[n+i];
+          m_error[n+i] = ci->error[i];
+          error_circles[ncircles+i] = m_error[n+i];
         }
       }
 
@@ -647,8 +648,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if(iter==0)
     {
       weighted_error.resize(nerror);
-      w.resize(nerror);
-      w = 1;
+      m_w.resize(nerror);
+      m_w = 1;
       w_lines.resize(nberrors_lines);
       w_lines = 1;
       w_cylinders.resize(nberrors_cylinders);
@@ -682,13 +683,13 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     unsigned int cpt = 0;
     while(cpt<nbrow){
       if(cpt<nberrors_lines){
-        w[cpt] = w_lines[cpt];
+        m_w[cpt] = w_lines[cpt];
       }
       else if (cpt<nberrors_lines+nberrors_cylinders){
-        w[cpt] = w_cylinders[cpt-nberrors_lines];
+        m_w[cpt] = w_cylinders[cpt-nberrors_lines];
       }
       else {
-        w[cpt] = w_circles[cpt-nberrors_lines-nberrors_cylinders];
+        m_w[cpt] = w_circles[cpt-nberrors_lines-nberrors_cylinders];
       }
       cpt++;
     }
@@ -704,9 +705,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     W_true = vpColVector(nerror);
     
     for(unsigned int i=0; i<nerror; i++){
-      wi = w[i]*factor[i];
+      wi = m_w[i]*factor[i];
       W_true[i] = wi*wi;
-      eri = error[i];
+      eri = m_error[i];
       num += wi*vpMath::sqr(eri);
       den += wi;
 
@@ -718,7 +719,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if((iter==0)|| compute_interaction){
       for (unsigned int i=0 ; i < nerror ; i++){
         for (unsigned int j=0 ; j < 6 ; j++){
-          L[i][j] = w[i]*factor[i]*L[i][j];
+          L[i][j] = m_w[i]*factor[i]*L[i][j];
         }
       }
     }
@@ -736,7 +737,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   if(computeCovariance){
     vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
     D.diag(W_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*error,D);
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
   }
   
   unsigned int n =0 ;
@@ -748,9 +749,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       if (l->nbFeature > 0) itListLine = l->meline->getMeList().begin();
       
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
-        wmean += w[n+i] ;
+        wmean += m_w[n+i] ;
         vpMeSite p = *itListLine;
-        if (w[n+i] < 0.5){
+        if (m_w[n+i] < 0.5){
           p.setState(vpMeSite::M_ESTIMATOR);
           
           *itListLine = p;
@@ -786,9 +787,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     wmean = 0;
     for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
-      wmean += w[n+i] ;
+      wmean += m_w[n+i] ;
       vpMeSite p = *itListCyl1;
-      if (w[n+i] < 0.5){
+      if (m_w[n+i] < 0.5){
         p.setState(vpMeSite::M_ESTIMATOR);
           
         *itListCyl1 = p;
@@ -810,9 +811,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     wmean = 0;
     for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
-      wmean += w[n+i] ;
+      wmean += m_w[n+i] ;
       vpMeSite p = *itListCyl2;
-      if (w[n+i] < 0.5){
+      if (m_w[n+i] < 0.5){
         p.setState(vpMeSite::M_ESTIMATOR);
         
         *itListCyl2 = p;
@@ -847,9 +848,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
     wmean = 0;
     for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-      wmean += w[n+i] ;
+      wmean += m_w[n+i] ;
       vpMeSite p = *itListCir;
-      if (w[n+i] < 0.5){
+      if (m_w[n+i] < 0.5){
         p.setState(vpMeSite::M_ESTIMATOR);
 
         *itListCir = p;
