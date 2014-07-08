@@ -5,7 +5,7 @@ int main()
 {
   try {
     vpImage<vpRGBa> I;
-    vpImageIo::read(I, "lena.jpg");
+    vpImageIo::read(I, "lena.jpeg");
     vpImageIo::write(I, "lena.png");
   }
   catch(vpException e) {
