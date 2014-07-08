@@ -42,7 +42,7 @@
 # Find Ogre plugins
 #
 # This is a modified version of the macro provided with Ogre
-# except that should be used only in a desparate way when the one original
+# except that it should be used only in a desperate way when the original
 # one doesn't detect anything
 #########################################################
 
