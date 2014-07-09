@@ -107,8 +107,7 @@ IF(WIN32)
     GSL_LIBRARIES
     GSL_LINK_DIRECTORIES
   )  
-ELSE(WIN32)
-  IF(UNIX) 
+ELSEIF(UNIX)
     FIND_PROGRAM(GSL_CONFIG gsl-config
       $ENV{GSL_HOME}/bin
       $ENV{GSL_DIR}/bin
@@ -173,19 +172,22 @@ ELSE(WIN32)
       FOREACH(libs ${GSL_LINK_LIBRARIES})
 	STRING(REGEX REPLACE "[-][l]" "" GSL_LIB_ONES ${libs})
     	#MESSAGE("GSL_LIB_ONES=${GSL_LIB_ONES} -  ${libs}")
-  	MARK_AS_ADVANCED(LIBGSL_${GSL_LIB_ONES})
-	FIND_LIBRARY(LIBGSL_${GSL_LIB_ONES}
-	  NAMES ${GSL_LIB_ONES}
-	  PATHS
-	  ${GSL_LINK_DIRECTORIES}
-	  /usr/lib
-	  /usr/local/lib
-	)
-	#MESSAGE("LIBGSL_${GSL_LIB_ONES} ${LIBGSL_${GSL_LIB_ONES}}")
-	IF(LIBGSL_${GSL_LIB_ONES})
-     	  #MESSAGE("LIB_GSL=${LIB_GSL} -  ${libs}")
-	  LIST(APPEND GSL_LIBRARIES ${LIBGSL_${GSL_LIB_ONES}})
-        ENDIF()
+        if(NOT ${GSL_LIB_ONES} MATCHES "gslcblas")
+          #message("${GSL_LIB_ONES} is not equal to libgslcblas")
+          MARK_AS_ADVANCED(LIBGSL_${GSL_LIB_ONES})
+          FIND_LIBRARY(LIBGSL_${GSL_LIB_ONES}
+            NAMES ${GSL_LIB_ONES}
+            PATHS
+            ${GSL_LINK_DIRECTORIES}
+            /usr/lib
+            /usr/local/lib
+          )
+          #MESSAGE("LIBGSL_${GSL_LIB_ONES} ${LIBGSL_${GSL_LIB_ONES}}")
+          IF(LIBGSL_${GSL_LIB_ONES})
+            #MESSAGE("LIB_GSL=${LIB_GSL} -  ${libs}")
+            LIST(APPEND GSL_LIBRARIES ${LIBGSL_${GSL_LIB_ONES}})
+          ENDIF()
+        endif()
       ENDFOREACH(libs)
 
       #MESSAGE("GSL_LIBRARIES=${GSL_LIBRARIES}")
@@ -229,7 +231,5 @@ ELSE(WIN32)
     GSL_LINK_DIRECTORIES
     GSL_CONFIG
   )
-
-  ENDIF(UNIX)
-ENDIF(WIN32)
+ENDIF()
 
