@@ -829,18 +829,12 @@ IF(USE_OGRE)
 
     # case 2: install or packaging case
     #--------------
-    IF(UNIX)
-      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator")
-    ELSE()
-      set(VISP_INSTALL_DIR_OGRE_PLUGINS "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
-    ENDIF()
-
     # install rule for plugins.cfg:
     IF(UNIX)
       if(OGRE_PLUGIN_DIR_REL)
         INSTALL(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
-          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT libraries
           )
@@ -848,7 +842,7 @@ IF(USE_OGRE)
       if(OGRE_PLUGIN_DIR_DBG)
         INSTALL(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
-          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT libraries
           )
@@ -2097,7 +2091,7 @@ if(VISP_INSTALL_DIR_OGRE_RESOURCES)
 endif()
 # Only if plugins.cfg created by hand, we change the path to plugins.cfg in install/vpConfig.h
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  SET(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator)
+  SET(VISP_HAVE_OGRE_PLUGINS_PATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator)
 endif()
 
 # Generate the package dependent file include/visp/vpConfig.h
