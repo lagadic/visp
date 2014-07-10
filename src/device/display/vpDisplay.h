@@ -653,7 +653,7 @@ class VISP_EXPORT vpDisplay
   static void displayEllipse(const vpImage<unsigned char> &I,
                              const vpImagePoint &center,
                              const double &coef1, const double &coef2, const double &coef3,
-                             const double &angle1, const double &angle2, bool use_centered_moments,
+                             const double &theta1, const double &theta2, bool use_centered_moments,
                              const vpColor &color,
                              unsigned int thickness=1);
   static void displayFrame(const vpImage<unsigned char> &I,

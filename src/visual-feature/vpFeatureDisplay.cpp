@@ -165,11 +165,16 @@ void vpFeatureDisplay::displayCylinder(double rho1,double theta1,
   }
 }
 /*!
-  \param x, y, mu20, mu11, mu02 : Ellipse parameters.
+  \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
+  - \f$(x,y)\f$ are the normalized coordinates of the ellipse center, respectively
+    along the horizontal and vertical axis in the image.
+  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
+
+  \sa vpDisplay::displayEllipse()
 */
 void vpFeatureDisplay::displayEllipse(double x,double y,
                                       double mu20, double mu11, double mu02,
@@ -178,64 +183,62 @@ void vpFeatureDisplay::displayEllipse(double x,double y,
                                       const vpColor &color,
                                       unsigned int thickness)
 {
+  try {
+    unsigned int number_of_points = 45 ;
+    const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
+    unsigned int i = 0 ;
 
+    double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
+    double a, b, e ;
 
-  try{
-    {
-      unsigned int number_of_points = 45 ;
-      const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
-      unsigned int i = 0 ;
-
-      //	 std::cout << s.t() ;
-      double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
-      double e ;
-
-      if (fabs(mu11)<1e-6) e =0 ;
-      else e =  (mu02-mu20+s)/(2*mu11) ;
-      double a =sqrt( (mu02+mu20+s)/2.0) ;
-      double b =sqrt( (mu02+mu20-s)/2.0) ;
-
-      //    vpTRACE("%f %f %f", a,b,e) ;
-
-      double e1  = atan(e) ;
-
-      double k = 0.0 ;
-
-      double ce = cos(e1) ;
-      double se = sin(e1) ;
-
-      double x2  = 0;
-      double y2 =0;
-      vpImagePoint ip1, ip2;
-
-      for( i = 0; i < number_of_points+2 ; i++)
-      {
-        double    x1 = a *cos(k) ; // equation of an ellipse
-        double    y1 = b *sin(k) ; // equation of an ellipse
-        double    x11 = x + ce *x1 - se *y1 ;
-        double    y11 = y + se *x1 + ce *y1 ;
-
-        vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
-
-        if (i > 1) {
-          ip2.set_u( x2 );
-          ip2.set_v( y2 );
-
-          vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
-        }
-
-        ip2 = ip1;
-        y2 = y1 ;
-        x2 = x1 ;
-        k += incr ;
-      } // end for loop
+    //if (fabs(mu11)<1e-6) e =0 ;
+    if (fabs(mu11) < std::numeric_limits<double>::epsilon()) {
+      e = 0 ;
+      a = sqrt(mu20);
+      b = sqrt(mu02);
     }
-    //    vpDisplay::getClick(I) ;
+    else {
+      e = (mu02-mu20+s)/(2*mu11) ;
+      a = sqrt( (mu02+mu20+s)/2.0) ;
+      b = sqrt( (mu02+mu20-s)/2.0) ;
+    }
+
+    double e1  = atan(e) ;
+
+    double k = 0.0 ;
+
+    double ce = cos(e1) ;
+    double se = sin(e1) ;
+
+    double x2  = 0;
+    double y2 =0;
+    vpImagePoint ip1, ip2;
+
+    for( i = 0; i < number_of_points+2 ; i++)
+    {
+      double    x1 = a *cos(k) ; // equation of an ellipse
+      double    y1 = b *sin(k) ; // equation of an ellipse
+      double    x11 = x + ce *x1 - se *y1 ;
+      double    y11 = y + se *x1 + ce *y1 ;
+
+      vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
+
+      if (i > 1) {
+        ip2.set_u( x2 );
+        ip2.set_v( y2 );
+
+        vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
+      }
+
+      ip2 = ip1;
+      y2 = y1 ;
+      x2 = x1 ;
+      k += incr ;
+    } // end for loop
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    throw(e);
   }
 }
 
@@ -348,11 +351,16 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1,
 }
 
 /*!
-  \param x, y, mu20, mu11, mu02 : Ellipse parameters.
+  \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
+  - \f$(x,y)\f$ are the normalized coordinates of the ellipse center, respectively
+    along the horizontal and vertical axis in the image.
+  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature
   \param thickness : Thickness of the feature representation.
+
+  \sa vpDisplay::displayEllipse()
 */
 void vpFeatureDisplay::displayEllipse(double x, double y,
                                       double mu20, double mu11, double mu02,
@@ -361,67 +369,61 @@ void vpFeatureDisplay::displayEllipse(double x, double y,
                                       const vpColor &color,
                                       unsigned int thickness)
 {
+  try {
+    unsigned int number_of_points = 45 ;
+    const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
+    unsigned int i = 0 ;
 
+    double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
+    double a, b, e ;
 
-  try{
-    {
-      unsigned int number_of_points = 45 ;
-      const double incr = 2 * M_PI/(double)number_of_points ; // angle increment
-      unsigned int i = 0 ;
-
-      //	 std::cout << s.t() ;
-      double s = sqrt(vpMath::sqr(mu20-mu02)+4*mu11*mu11) ;
-      double e ;
-
-      if (fabs(mu11)<1e-6) e =0 ;
-      else e =  (mu02-mu20+s)/(2*mu11) ;
-      double a =sqrt( (mu02+mu20+s)/2.0) ;
-      double b =sqrt( (mu02+mu20-s)/2.0) ;
-
-      //    vpTRACE("%f %f %f", a,b,e) ;
-
-      double e1  = atan(e) ;
-
-      double k = 0.0 ;
-
-      double ce = cos(e1) ;
-      double se = sin(e1) ;
-      double x2  = 0;
-      double y2 =0;
-      vpImagePoint ip1, ip2;
-
-      for( i = 0; i < number_of_points+2 ; i++)
-      {
-        double    x1 = a *cos(k) ; // equation of an ellipse
-        double    y1 = b *sin(k) ; // equation of an ellipse
-        double    x11 = x + ce *x1 - se *y1 ;
-        double    y11 = y + se *x1 + ce *y1 ;
-
-        vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
-
-        if (i > 1) {
-          ip2.set_u( x2 );
-          ip2.set_v( y2 );
-
-          vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
-        }
-
-        ip2 = ip1;
-        k += incr ;
-      } // end for loop
+    //if (fabs(mu11)<1e-6) e =0 ;
+    if (fabs(mu11) < std::numeric_limits<double>::epsilon()) {
+      e = 0 ;
+      a = sqrt(mu20);
+      b = sqrt(mu02);
     }
-    //    vpDisplay::getClick(I) ;
+    else {
+      e = (mu02-mu20+s)/(2*mu11) ;
+      a = sqrt( (mu02+mu20+s)/2.0) ;
+      b = sqrt( (mu02+mu20-s)/2.0) ;
+    }
+
+    double e1  = atan(e) ;
+
+    double k = 0.0 ;
+
+    double ce = cos(e1) ;
+    double se = sin(e1) ;
+
+    double x2  = 0;
+    double y2 =0;
+    vpImagePoint ip1, ip2;
+
+    for( i = 0; i < number_of_points+2 ; i++)
+    {
+      double    x1 = a *cos(k) ; // equation of an ellipse
+      double    y1 = b *sin(k) ; // equation of an ellipse
+      double    x11 = x + ce *x1 - se *y1 ;
+      double    y11 = y + se *x1 + ce *y1 ;
+
+      vpMeterPixelConversion::convertPoint(cam, x11, y11, ip1);
+
+      if (i > 1) {
+        ip2.set_u( x2 );
+        ip2.set_v( y2 );
+
+        vpDisplay::displayLine(I, ip1, ip2, color, thickness) ;
+      }
+
+      ip2 = ip1;
+      y2 = y1 ;
+      x2 = x1 ;
+      k += incr ;
+    } // end for loop
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    throw(e);
   }
 }
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
