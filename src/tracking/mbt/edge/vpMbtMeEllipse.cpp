@@ -146,11 +146,11 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
   double iP_i, iP_j;
   for (int pt=0; pt < nb_points_to_track; pt++)
   {
-    j = a *sin(k) ; // equation of an ellipse
-    i = b *cos(k) ; // equation of an ellipse
+    j = a *cos(k) ; // equation of an ellipse
+    i = b *sin(k) ; // equation of an ellipse
 
-    iP_j = iPc.get_j() + ce *j + se *i;
-    iP_i = iPc.get_i() - se *j + ce *i;
+    iP_j = iPc.get_j() + ce *j - se *i;
+    iP_i = iPc.get_i() + se *j + ce *i;
 
     vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ;
 
@@ -274,13 +274,18 @@ vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint
   mu11 = mu11_p;
   mu02 = mu02_p;
 
-  double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
-  a = sqrt((mu20_p + mu02_p - val_p)/2);
-  b = sqrt((mu20_p + mu02_p + val_p)/2);
-  e = 0.;
-  // if mu11 = 0, the projection of the circle is a circle
   if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+
+    double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
+    a = sqrt((mu20_p + mu02_p + val_p)/2);
+    b = sqrt((mu20_p + mu02_p - val_p)/2);
+
     e = (mu02_p - mu20_p + val_p)/(2*mu11_p);
+  }
+  else {
+    a = sqrt(mu20_p);
+    b = sqrt(mu02_p);
+    e = 0.;
   }
 
   e = atan(e);
@@ -330,13 +335,18 @@ vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImageP
   mu11 = mu11_p;
   mu02 = mu02_p;
 
-  double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
-  a = sqrt((mu20_p + mu02_p - val_p)/2);
-  b = sqrt((mu20_p + mu02_p + val_p)/2);
-  e = 0.;
-  // if mu11 = 0, the projection of the circle is a circle
   if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+
+    double val_p = sqrt(vpMath::sqr(mu20_p-mu02_p) + 4*vpMath::sqr(mu11_p));
+    a = sqrt((mu20_p + mu02_p + val_p)/2);
+    b = sqrt((mu20_p + mu02_p - val_p)/2);
+
     e = (mu02_p - mu20_p + val_p)/(2*mu11_p);
+  }
+  else {
+    a = sqrt(mu20_p);
+    b = sqrt(mu02_p);
+    e = 0.;
   }
 
   e = atan(e);
