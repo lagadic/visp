@@ -225,7 +225,8 @@ vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
 
   double A,B,E ;
 
-  if (fabs(K[2])<1e-6)
+  //if (fabs(K[2])<1e-6)
+  if (fabs(K[2])<std::numeric_limits<double>::epsilon())
   {
     E = 0.0;
     if (K[0] > K[1])
