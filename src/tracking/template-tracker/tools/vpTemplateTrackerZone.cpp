@@ -177,7 +177,7 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, cons
     cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
     for(size_t i=0; i< vip.size(); i++) {
       cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
-      std::cout << "Click point: " << vip[i] << std::endl;
+      //std::cout << "Click point: " << vip[i] << std::endl;
       subdiv.insert(fp);
     }
 
