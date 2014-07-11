@@ -614,9 +614,10 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   // Pixmap creation.
   pixmap = XCreatePixmap ( display, window, width, height, screen_depth );
 
-  do
-    XNextEvent ( display, &event );
-  while ( event.xany.type != Expose );
+  // Hangs when forward X11 is used to send the display to an other computer
+//  do
+//    XNextEvent ( display, &event );
+//  while ( event.xany.type != Expose );
 
   {
     Ximage = XCreateImage ( display, DefaultVisual ( display, screen ),
@@ -1076,9 +1077,10 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
   // Pixmap creation.
   pixmap = XCreatePixmap ( display, window, width, height, screen_depth );
 
-  do
-    XNextEvent ( display, &event );
-  while ( event.xany.type != Expose );
+  // Hangs when forward X11 is used to send the display to an other computer
+//  do
+//    XNextEvent ( display, &event );
+//  while ( event.xany.type != Expose );
 
   {
     Ximage = XCreateImage ( display, DefaultVisual ( display, screen ),
@@ -1553,9 +1555,10 @@ void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char
   // Pixmap creation.
   pixmap = XCreatePixmap ( display, window, width, height, screen_depth );
 
-  do
-    XNextEvent ( display, &event );
-  while ( event.xany.type != Expose );
+  // Hangs when forward X11 is used to send the display to an other computer
+//  do
+//    XNextEvent ( display, &event );
+//  while ( event.xany.type != Expose );
 
   {
     Ximage = XCreateImage ( display, DefaultVisual ( display, screen ),
