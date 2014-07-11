@@ -201,6 +201,9 @@ int main(int argc, const char ** argv)
       vpDisplay::getClick(C);
     }
   }
+#else
+  (void)argc;
+  (void)argv;
 #endif
   return 0;
 }
