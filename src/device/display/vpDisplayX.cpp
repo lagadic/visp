@@ -234,11 +234,10 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   lut          = DefaultColormap ( display, screen );
   screen_depth = (unsigned int)DefaultDepth ( display, screen );
 
-  if ( ( window =
-              XCreateSimpleWindow ( display, RootWindow ( display, screen ),
-                                    windowXPosition, windowYPosition, width, height, 1,
-                                    BlackPixel ( display, screen ),
-                                    WhitePixel ( display, screen ) ) ) == 0 )
+  if ( ( window = XCreateSimpleWindow ( display, RootWindow ( display, screen ),
+                                        windowXPosition, windowYPosition, width, height, 1,
+                                        BlackPixel ( display, screen ),
+                                        WhitePixel ( display, screen ) ) ) == 0 )
   {
     vpERROR_TRACE ( "Can't create window." );
     throw ( vpDisplayException ( vpDisplayException::cannotOpenWindowError,
@@ -285,6 +284,14 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
     XSetWindowColormap ( display, window, lut ) ;
     XInstallColormap ( display, lut ) ;
 
+    Visual *visual = DefaultVisual (display, screen);
+    RMask = visual->red_mask;
+    GMask = visual->green_mask;
+    BMask = visual->blue_mask;
+
+    RShift = 15 - getMsb(RMask);    /* these are right-shifts */
+    GShift = 15 - getMsb(GMask);
+    BShift = 15 - getMsb(BMask);
   }
 
   //
@@ -1073,7 +1080,6 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
     XNextEvent ( display, &event );
   while ( event.xany.type != Expose );
 
-
   {
     Ximage = XCreateImage ( display, DefaultVisual ( display, screen ),
                             screen_depth, ZPixmap, 0, NULL,
@@ -1195,6 +1201,14 @@ void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char
     XSetWindowColormap ( display, window, lut ) ;
     XInstallColormap ( display, lut ) ;
 
+    Visual *visual = DefaultVisual (display, screen);
+    RMask = visual->red_mask;
+    GMask = visual->green_mask;
+    BMask = visual->blue_mask;
+
+    RShift = 15 - getMsb(RMask);    /* these are right-shifts */
+    GShift = 15 - getMsb(GMask);
+    BShift = 15 - getMsb(BMask);
   }
 
   vpColor pcolor; // predefined colors
@@ -3046,11 +3060,7 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 
   if ( displayHasBeenInitialized )
   {
-
-
     XImage *xi ;
-    //xi= XGetImage ( display,window, 0,0, getWidth(), getHeight(),
-    //                AllPlanes, ZPixmap ) ;
 
     XCopyArea (display,window, pixmap, context,
                0,0, getWidth(), getHeight(), 0, 0);
@@ -3071,26 +3081,40 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
     unsigned char       *src_32 = NULL;
     src_32 = ( unsigned char* ) xi->data;
 
+    if (screen_depth == 16) {
+      for ( unsigned int i = 0; i < I.getHeight() ; i++ ) {
+        size_t i_ = i*I.getWidth();
+        for ( unsigned int j = 0; j < I.getWidth() ; j++ ) {
+          size_t ij_ = i_+j;
+          unsigned long pixel = XGetPixel(xi, j, i);
+          I.bitmap[ij_].R = (((pixel & RMask) << RShift) >> 8);
+          I.bitmap[ij_].G = (((pixel & GMask) << GShift) >> 8);
+          I.bitmap[ij_].B = (((pixel & BMask) << BShift) >> 8);
+          I.bitmap[ij_].A = 0;
+        }
+      }
+
+    }
+    else {
 #ifdef BIGENDIAN
-    // little indian/big indian
-    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-    {
-      I.bitmap[i].A = src_32[i*4] ;
-      I.bitmap[i].R = src_32[i*4 + 1] ;
-      I.bitmap[i].G = src_32[i*4 + 2] ;
-      I.bitmap[i].B = src_32[i*4 + 3] ;
-    }
+      // little indian/big indian
+      for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
+      {
+        I.bitmap[i].A = src_32[i*4] ;
+        I.bitmap[i].R = src_32[i*4 + 1] ;
+        I.bitmap[i].G = src_32[i*4 + 2] ;
+        I.bitmap[i].B = src_32[i*4 + 3] ;
+      }
 #else
-    for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-    {
-      I.bitmap[i].B = src_32[i*4] ;
-      I.bitmap[i].G = src_32[i*4 + 1] ;
-      I.bitmap[i].R = src_32[i*4 + 2] ;
-      I.bitmap[i].A = src_32[i*4 + 3] ;
-    }
+      for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
+      {
+        I.bitmap[i].B = src_32[i*4] ;
+        I.bitmap[i].G = src_32[i*4 + 1] ;
+        I.bitmap[i].R = src_32[i*4 + 2] ;
+        I.bitmap[i].A = src_32[i*4 + 3] ;
+      }
 #endif
-
-
+    }
     XDestroyImage ( xi ) ;
 
   }
