@@ -169,7 +169,9 @@ private:
   XGCValues     values;
   int size ;
   bool ximage_data_init;
-  
+  unsigned int RMask, GMask, BMask;
+  int RShift, GShift, BShift;
+
 public:
   vpDisplayX() ;
   vpDisplayX(int winx, int winy, const char *title=NULL) ;
@@ -262,11 +264,15 @@ protected:
 
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(char *string, bool blocking=true);
+
+  int getMsb(unsigned int u32val);
   bool getPointerMotionEvent (vpImagePoint &ip);
   bool getPointerPosition (vpImagePoint &ip);
 
   inline  unsigned int getWidth() const  { return width ; }
   inline  unsigned int getHeight() const { return height ; }
+
+
 } ; 
 
 

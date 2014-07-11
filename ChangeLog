@@ -14,6 +14,7 @@ ViSP 2.9.1 (under development)
       + New functions getError() and getRobustWeights() useful to compute
         tracking quality indicators.
     . Video reader and writer support mpeg4
+    . Compat with RaspberryPi architecture
   - Tutorials
     . Introduce a new tutorial to show how to install ViSP from Ubuntu
       official packages.
@@ -27,6 +28,7 @@ ViSP 2.9.1 (under development)
     . [17550] Build error with ffmpeg libraries
     . [17620] vpXmlParserCamera::save() doesn't save the camera name and
       image size
+    . [17644] vpDisplayX doesn't work on RaspberryPi
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features

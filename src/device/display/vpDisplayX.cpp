@@ -616,7 +616,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
                             screen_depth, ZPixmap, 0, NULL,
                             I.getWidth() , I.getHeight(), XBitmapPad ( display ), 0 );
 
-    Ximage->data = ( char * ) malloc ( I.getWidth() * I.getHeight() * (unsigned int)Ximage->bits_per_pixel / 8 );
+    Ximage->data = ( char * ) malloc ( I.getHeight() * (unsigned int)Ximage->bytes_per_line );
     ximage_data_init = true;
 
   }
@@ -735,9 +735,17 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
       colortable[i] = xcolor.pixel;
     }
 
+    Visual *visual = DefaultVisual (display, screen);
+    RMask = visual->red_mask;
+    GMask = visual->green_mask;
+    BMask = visual->blue_mask;
+
+    RShift = 15 - getMsb(RMask);    /* these are right-shifts */
+    GShift = 15 - getMsb(GMask);
+    BShift = 15 - getMsb(BMask);
+
     XSetWindowColormap ( display, window, lut ) ;
     XInstallColormap ( display, lut ) ;
-
   }
 
 
@@ -1072,8 +1080,7 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
                             I.getWidth() , I.getHeight(), XBitmapPad ( display ), 0 );
 
 
-    Ximage->data = ( char * ) malloc ( I.getWidth() * I.getHeight()
-                                       * (unsigned int)Ximage->bits_per_pixel / 8 );
+    Ximage->data = ( char * ) malloc ( I.getHeight() * (unsigned int)Ximage->bytes_per_line );
     ximage_data_init = true;
 
   }
@@ -1541,8 +1548,7 @@ void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char
                             screen_depth, ZPixmap, 0, NULL,
                             width, height, XBitmapPad ( display ), 0 );
 
-    Ximage->data = ( char * ) malloc ( width * height
-                                       * (unsigned int)Ximage->bits_per_pixel / 8 );
+    Ximage->data = ( char * ) malloc ( height * (unsigned int)Ximage->bytes_per_line );
     ximage_data_init = true;
   }
   displayHasBeenInitialized = true ;
@@ -1689,14 +1695,14 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
       }
       case 16:
       {
-        unsigned short      *dst_16 = NULL;
-        dst_16 = ( unsigned short* ) Ximage->data;
-
-        for ( unsigned int i = 0; i < height ; i++ )
-        {
+        unsigned short *dst_16 = ( unsigned short* ) Ximage->data;
+        unsigned char  *dst_8  = NULL;
+        for ( unsigned int i = 0; i < height ; i++ ) {
+          dst_8 =  (unsigned char*) Ximage->data + i * Ximage->bytes_per_line;
+          dst_16 = (unsigned short *) dst_8;
           for ( unsigned int j=0 ; j < width; j++ )
           {
-            * ( dst_16+ ( i*width+j ) ) = ( unsigned short ) colortable[I[i][j]] ;
+            * ( dst_16 + j ) = ( unsigned short ) colortable[I[i][j]] ;
           }
         }
 
@@ -1761,6 +1767,32 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
 
     switch ( screen_depth )
     {
+    case 16: {
+      unsigned short *dst_16 = NULL;
+      unsigned char  *dst_8  = NULL;
+      vpRGBa* bitmap = I.bitmap;
+      unsigned int r, g, b;
+
+      for ( unsigned int i = 0; i < height ; i++ ) {
+        dst_8 =  (unsigned char*) Ximage->data + i * Ximage->bytes_per_line;
+        dst_16 = (unsigned short *) dst_8;
+        for ( unsigned int j=0 ; j < width; j++ )
+        {
+          r = bitmap->R;
+          g = bitmap->G;
+          b = bitmap->B;
+          * ( dst_16 + j ) = (((r << 8) >> RShift) & RMask) |
+              (((g << 8) >> GShift) & GMask) |
+              (((b << 8) >> BShift) & BMask);
+          bitmap++;
+        }
+      }
+
+      XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+
+      break;
+    }
       case 24:
       case 32:
       {
@@ -1898,7 +1930,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
         unsigned int iwidth = I.getWidth();
 
         src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
-        dst_8 = dst_8 + (int)(iP.get_i()*this->height+ iP.get_j());
+        dst_8 = dst_8 + (int)(iP.get_i()*this->width+ iP.get_j());
 
         unsigned int i = 0;
         while (i < h)
@@ -1914,7 +1946,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
             j++;
           }
           src_8 = src_8 + iwidth;
-          dst_8 = dst_8 + this->height;
+          dst_8 = dst_8 + this->width;
           i++;
         }
       }
@@ -1928,29 +1960,39 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
     }
     case 16:
     {
-      unsigned short      *dst_16 = NULL;
-      dst_16 = ( unsigned short* ) Ximage->data;
-      unsigned char       *src_8  = NULL;
-      src_8 = ( unsigned char * ) I.bitmap;
-
-      unsigned int iwidth = I.getWidth();
-
-      src_8 = src_8 + (int)(iP.get_i()*iwidth+ iP.get_j());
-      dst_16 = dst_16 + (int)(iP.get_i()*this->height+ iP.get_j());
-
-      unsigned int i = 0;
-      while (i < h)
-      {
-        unsigned int j = 0;
-        while (j < w)
+      unsigned short *dst_16 = NULL;
+      unsigned char  *dst_8  = NULL;
+      for ( unsigned int i = iP.get_i(); i < iP.get_i()+h ; i++ ) {
+        dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
+        dst_16 = (unsigned short *) dst_8;
+        for ( unsigned int j=iP.get_j() ; j < iP.get_j()+w; j++ )
         {
-          *(dst_16+j) = ( unsigned short ) colortable[*(src_8+j)];
-          j++;
+          * ( dst_16 + j ) = ( unsigned short ) colortable[I[i][j]] ;
         }
-        src_8 = src_8 + iwidth;
-        dst_16 = dst_16 + this->height;
-        i++;
       }
+
+//      unsigned char *src_8 = (unsigned char *) I.bitmap;
+//      unsigned char *dst_8 = (unsigned char *) Ximage->data;
+//      unsigned short *dst_16  = NULL;
+
+//      unsigned int iwidth = I.getWidth();
+
+//      src_8 += (int)(iP.get_i()*iwidth + iP.get_j());
+//      dst_8 += (int)(iP.get_i()*Ximage->bytes_per_line + iP.get_j()*Ximage->bits_per_pixel/8);
+//      dst_16 = (unsigned short *) dst_8;
+
+//      unsigned int i = 0;
+//      while (i < h) {
+//        unsigned int j = 0;
+
+//        while (j < w) {
+//          *(dst_16 + j) = ( unsigned short ) colortable[*(src_8+j)];
+//          j++;
+//        }
+//        src_8  = src_8  + iwidth;
+//        dst_16 = dst_16 + Ximage->bytes_per_line;
+//        i++;
+//      }
 
       // Affichage de l'image dans la Pixmap.
       XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
@@ -2033,6 +2075,30 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
 
     switch ( screen_depth )
     {
+    case 16: {
+      unsigned short *dst_16 = NULL;
+      unsigned char  *dst_8  = NULL;
+      unsigned int r, g, b;
+
+      for ( unsigned int i = iP.get_i(); i < iP.get_i()+h ; i++ ) {
+        dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
+        dst_16 = (unsigned short *) dst_8;
+        for ( unsigned int j=iP.get_j() ; j < iP.get_j()+w; j++ )
+        {
+          r = I[i][j].R;
+          g = I[i][j].G;
+          b = I[i][j].B;
+          * ( dst_16 + j ) = (((r << 8) >> RShift) & RMask) |
+              (((g << 8) >> GShift) & GMask) |
+              (((b << 8) >> BShift) & BMask);
+        }
+      }
+
+      XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+
+      break;
+    }
     case 24:
     case 32:
     {
@@ -3274,10 +3340,20 @@ vpDisplayX::getPointerPosition ( vpImagePoint &ip)
   return ret ;
 }
 
+/*!
+  Get the position of the most significant bit.
+*/
+int vpDisplayX::getMsb(unsigned int u32val)
+{
+    int i;
+
+    for (i = 31;  i >= 0;  --i) {
+        if (u32val & 0x80000000L)
+            break;
+        u32val <<= 1;
+    }
+    return i;
+}
+
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
