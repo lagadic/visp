@@ -1027,7 +1027,7 @@ vpMatrix  vpMatrix::operator/(double x) const
 
   //if (x == 0) {
   if (std::fabs(x) <= std::numeric_limits<double>::epsilon()) {
-    vpERROR_TRACE("Divide by zero in method /(double x)") ;
+    //vpERROR_TRACE("Divide by zero in method /(double x)") ;
     throw vpMatrixException(vpMatrixException::divideByZeroError, "Divide by zero in method /(double x)");
   }
 

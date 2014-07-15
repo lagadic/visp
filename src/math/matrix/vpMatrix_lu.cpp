@@ -99,9 +99,9 @@ vpMatrix::LUDcmp(unsigned int *perm, int& d)
     //if (big == 0.0)
     if (std::fabs(big) <= std::numeric_limits<double>::epsilon())
     {
-      vpERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
+      //vpERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
         throw(vpMatrixException(vpMatrixException::matrixError,
-			    "\n\t\tSingular vpMatrix in  LUDcmp")) ;
+          "Singular vpMatrix in  LUDcmp")) ;
     }
     vv[i]=1.0/big;
   }
