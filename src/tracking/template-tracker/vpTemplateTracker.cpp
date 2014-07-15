@@ -978,5 +978,4 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
   }
   else
     trackNoPyr(I);
-
 }

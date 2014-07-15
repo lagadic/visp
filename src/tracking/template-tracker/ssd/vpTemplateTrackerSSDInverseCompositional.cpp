@@ -162,7 +162,12 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
         }
       }
     }
-    if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
+    //std::cout << "npoint: " << Nbpoint << std::endl;
+    if(Nbpoint==0) {
+      //std::cout<<"plus de point dans template suivi"<<std::endl;
+      deletePosEvalRMS();
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
+    }
     dp=gain*dp;
     //std::cout<<erreur/Nbpoint<<","<<GetCost(I,p)<<std::endl;
     if(useBrent)
@@ -176,6 +181,8 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
     iteration++;
 
     computeEvalRMS(p);
+    //std::cout << "iteration: " << iteration << " max: " << iterationMax << std::endl;
+    //std::cout << "evolRMS: " <<  evolRMS << " threshold: " << threshold_RMS << std::endl;
   }
   while(/*( erreur_prec-erreur<50) &&*/ (iteration < iterationMax)&&(evolRMS>threshold_RMS));
 

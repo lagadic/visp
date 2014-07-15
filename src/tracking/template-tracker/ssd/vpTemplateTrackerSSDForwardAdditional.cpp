@@ -119,17 +119,19 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
 
 
     }
-    if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
+    if(Nbpoint==0) {
+      //std::cout<<"plus de point dans template suivi"<<std::endl;
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
+    }
 
     vpMatrix::computeHLM(H,lambda,HLM);
     try
     {
       dp=1.*HLM.inverseByLU()*G;
     }
-    catch(...)
+    catch(vpException &e)
     {
-      std::cout<<"probleme inversion"<<std::endl;
-      break;
+      throw(e);
     }
 
     switch(minimizationMethod)

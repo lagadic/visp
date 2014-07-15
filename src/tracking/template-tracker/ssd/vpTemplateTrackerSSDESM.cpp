@@ -181,6 +181,11 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     }
     vpMatrix::computeHLM(HDir,lambdaDep,HLMDir);
     //if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
+    if(Nbpoint==0) {
+      //std::cout<<"plus de point dans template suivi"<<std::endl;
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
+    }
+
     try
     {
       //dp=(HLMInv+HLMDir).inverseByLU()*(GInv+GDir);
@@ -188,10 +193,10 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
       //dp=HLMInv.inverseByLU()*GInv;
       dp=(HLMDir).inverseByLU()*(GDir);
     }
-    catch(...)
+    catch(vpException &e)
     {
-      std::cout<<"probleme inversion"<<std::endl;
-      break;
+      //std::cout<<"probleme inversion"<<std::endl;
+      throw(e);
     }
 
     dp=gain*dp;

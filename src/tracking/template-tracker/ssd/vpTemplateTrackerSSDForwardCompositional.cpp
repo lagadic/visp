@@ -143,7 +143,10 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 
 
     }
-    if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
+    if(Nbpoint==0) {
+      //std::cout<<"plus de point dans template suivi"<<std::endl;
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
+    }
 
     vpMatrix::computeHLM(H,lambda,HLM);
 
@@ -151,10 +154,10 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     {
       dp=1.*HLM.inverseByLU()*G;
     }
-    catch(...)
+    catch(vpException &e)
     {
-      std::cout<<"probleme inversion"<<std::endl;
-      break;
+      //std::cout<<"probleme inversion"<<std::endl;
+      throw(e);
     }
 
     dp=gain*dp;
