@@ -588,3 +588,17 @@ vpImagePoint vpTemplateTrackerZone::getCenter(int borne_x, int borne_y) const
   return center;
 }
 
+/*!
+ Return the area of the template zone.
+ */
+double vpTemplateTrackerZone::getArea() const
+{
+  double area = 0;
+  vpTemplateTrackerTriangle triangle;
+  for (unsigned int i=0; i < getNbTriangle(); i++) {
+    getTriangle(i, triangle);
+    area += triangle.getArea();
+  }
+  return area;
+}
+

@@ -83,6 +83,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     //colorie le tieme triangle
     void fillTriangle(vpImage<unsigned char>& I, unsigned int id, unsigned char gray_level);
 
+    double getArea() const;
     vpImagePoint getCenter() const;
     vpImagePoint getCenter(int borne_x, int borne_y) const;
     //get bounds of the area
@@ -93,7 +94,7 @@ class VISP_EXPORT vpTemplateTrackerZone
     vpRect getBoundingBox() const;
 
     /*! Return the number of triangles that define the zone. \sa getTriangle() */
-	unsigned int getNbTriangle() const { return (unsigned int)Zone.size(); }
+    unsigned int getNbTriangle() const { return (unsigned int)Zone.size(); }
     vpTemplateTrackerZone getPyramidDown() const;
     //renvoie le ieme triangle de la zone
     void getTriangle(unsigned int i, vpTemplateTrackerTriangle &T) const;

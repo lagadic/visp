@@ -74,6 +74,7 @@ class VISP_EXPORT vpTemplateTrackerTriangle
     double            uvinv10;
     double            uvinv11;
     double            marge_triangle;
+    double area;
 
   private:
     vpColVector getCorner1() const;
@@ -87,6 +88,15 @@ class VISP_EXPORT vpTemplateTrackerTriangle
     vpTemplateTrackerTriangle(const vpImagePoint &c1, const vpImagePoint &c2, const vpImagePoint &c3);
     vpTemplateTrackerTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
     vpTemplateTrackerTriangle(double x1, double y1, double x2, double y2, double x3, double y3);
+
+    /*!
+      Return the area of the triangle.
+
+      \return The area of the triangle.
+    */
+    inline double getArea() const{
+      return this->area;
+    }
 
     vpTemplateTrackerTriangle getPyramidDown() const;
     void getCorners(vpColVector &c1,vpColVector &c2,vpColVector &c3) const;
