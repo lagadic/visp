@@ -43,6 +43,10 @@
 
 void vpTemplateTrackerWarp::warpTriangle(const vpTemplateTrackerTriangle &in,const vpColVector &p, vpTemplateTrackerTriangle &out)
 {
+  if (p.size() < 2) {
+    vpCTRACE << "Bad template tracker warp parameters dimension. Should never occur. " << std::endl;
+    throw(vpException(vpException::dimensionError, "Bad template tracker warp parameters dimension"));
+  }
   vpColVector S1(2),S2(2),S3(2);
   vpColVector rS1(2),rS2(2),rS3(2);
   in.getCorners(S1,S2,S3);
@@ -150,9 +154,9 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
     try{
       p+=HLM.inverseByLU()*G;
     }
-    catch(...) {
-      std::cout<<"Cannot inverse the matrix by LU " << std::endl;
-      break;
+    catch(vpException &e) {
+      //std::cout<<"Cannot inverse the matrix by LU " << std::endl;
+      throw(e);
     }
     cpt++;
   }
