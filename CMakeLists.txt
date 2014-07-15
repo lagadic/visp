@@ -905,7 +905,7 @@ IF(USE_OGRE)
     #         the minimal requested media to run the examples
     #--------------
     IF(UNIX)
-      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator")
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator")
     ELSE()
       set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
     ENDIF()
@@ -922,14 +922,14 @@ IF(USE_OGRE)
     if(UNIX)
       install(FILES
         ${VISP_BINARY_DIR}/install/resources.cfg
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
         PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
         COMPONENT libraries
       )
       if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
           data/ogre-simulator/media
-          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/ogre-simulator
+          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT libraries
         )
@@ -2078,7 +2078,7 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
 # case 2: when ViSP is build with make install; files are used in <install dir>
 #--------------
 IF(UNIX)
-  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp")
+  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
 ELSE()
   set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
@@ -2151,7 +2151,7 @@ IF(UNIX)
   foreach(SCENE ${WIREFRAME_SCENES})
     INSTALL(FILES 
       "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}"
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/wireframe-simulator
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/wireframe-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT libraries
     )
@@ -2159,7 +2159,7 @@ IF(UNIX)
   foreach(SCENE ${ROBOT_ARMS_SCENES})
     INSTALL(FILES 
       "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE}"
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp/data/robot-simulator
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/robot-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
       COMPONENT libraries
     )
