@@ -29,6 +29,7 @@ ViSP 2.9.1 (under development)
     . [17620] vpXmlParserCamera::save() doesn't save the camera name and
       image size
     . [17644] vpDisplayX doesn't work on RaspberryPi
+    . [17659] ViSP+Ogre3D+boost: libboost_chrono cannot be opened
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features
