@@ -383,7 +383,7 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> Irgba ;
 
     // Load a grey image from the disk and convert it to a color image
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
     vpImageIo::read(Irgba, filename) ;
 
     // Create a new display
@@ -421,6 +421,15 @@ main(int argc, const char ** argv)
       // Flush the display. Sometimes the display content is
       // bufferized. Force to display the content that has been bufferized.
       vpDisplay::flush(Irgba);
+
+      // Create a color image
+      vpImage<vpRGBa> Ioverlay ;
+      // Updates the color image with the original loaded image and the overlay
+      vpDisplay::getImage(Irgba, Ioverlay) ;
+
+      // Write the color image on the disk
+      filename = odirname +  vpIoTools::path("/Klimt_color.overlay.ppm");
+      vpImageIo::write(Ioverlay, filename) ;
 
       // If click is allowed, wait for a blocking mouse click to exit.
       if (opt_click_allowed) {
