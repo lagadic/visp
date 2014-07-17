@@ -633,15 +633,6 @@ if(UNIX)
   endif()
 endif()
 
-if(UNIX)
-  include(TestBigEndian)
-  TEST_BIG_ENDIAN(BIGENDIAN)
-  #SET(BIGENDIAN FALSE)
-  if(BIGENDIAN)
-    add_definitions("-DBIGENDIAN")
-  endif()
-endif()
-
 #--------------------------------------------------------------------
 # OpenMP
 #--------------------------------------------------------------------
