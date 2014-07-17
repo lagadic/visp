@@ -1778,10 +1778,8 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
 */
 void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
 {
-
   if ( displayHasBeenInitialized )
   {
-
     switch ( screen_depth )
     {
     case 16: {
@@ -1810,50 +1808,49 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
 
       break;
     }
-      case 24:
-      case 32:
-      {
-        /*
+    case 24:
+    case 32:
+    {
+      /*
          * 32-bit source, 24/32-bit destination
          */
-
-        unsigned char       *dst_32 = NULL;
-        dst_32 = ( unsigned char* ) Ximage->data;
-	vpRGBa* bitmap = I.bitmap;
-	unsigned int sizeI = I.getWidth() * I.getHeight();
-#ifdef BIGENDIAN
-        // little indian/big indian
-        for ( unsigned int i = 0; i < sizeI ; i++ )
-        {
+      unsigned char       *dst_32 = NULL;
+      dst_32 = ( unsigned char* ) Ximage->data;
+      vpRGBa* bitmap = I.bitmap;
+      unsigned int sizeI = I.getWidth() * I.getHeight();
+      if (XImageByteOrder(display) == 1) {
+        // big endian
+        for ( unsigned int i = 0; i < sizeI ; i++ ) {
           *(dst_32++) = bitmap->A;
           *(dst_32++) = bitmap->R;
           *(dst_32++) = bitmap->G;
           *(dst_32++) = bitmap->B;
-	  bitmap++;
+          bitmap++;
         }
-#else
-        for ( unsigned int i = 0; i < sizeI; i++ )
-        {
-          *(dst_32++) = bitmap->B;
-          *(dst_32++) = bitmap->G;
-          *(dst_32++) = bitmap->R;
-          *(dst_32++) = bitmap->A;
-	  bitmap++;
-        }
-#endif
-        // Affichage de l'image dans la Pixmap.
-        XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
-        XSetWindowBackgroundPixmap ( display, window, pixmap );
-//        XClearWindow ( display, window );
-//        XSync ( display,1 );
-        break;
-
       }
-      default:
-        vpERROR_TRACE ( "Unsupported depth (%d bpp) for color display",
-                        screen_depth ) ;
-        throw ( vpDisplayException ( vpDisplayException::depthNotSupportedError,
-                                     "Unsupported depth for color display" ) ) ;
+      else {
+        // little endian
+        for ( unsigned int i = 0; i < sizeI; i++ ) {
+          *(dst_32++) = bitmap->B;
+          *(dst_32++) = bitmap->G;
+          *(dst_32++) = bitmap->R;
+          *(dst_32++) = bitmap->A;
+          bitmap++;
+        }
+      }
+      // Affichage de l'image dans la Pixmap.
+      XPutImage ( display, pixmap, context, Ximage, 0, 0, 0, 0, width, height );
+      XSetWindowBackgroundPixmap ( display, window, pixmap );
+      //        XClearWindow ( display, window );
+      //        XSync ( display,1 );
+      break;
+
+    }
+    default:
+      vpERROR_TRACE ( "Unsupported depth (%d bpp) for color display",
+                      screen_depth ) ;
+      throw ( vpDisplayException ( vpDisplayException::depthNotSupportedError,
+                                   "Unsupported depth for color display" ) ) ;
     }
   }
   else
@@ -2089,7 +2086,6 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
 {
   if ( displayHasBeenInitialized )
   {
-
     switch ( screen_depth )
     {
     case 16: {
@@ -2134,27 +2130,41 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
       dst_32 = dst_32 + (int)(iP.get_i()*4*this->width+ iP.get_j()*4);
 
       unsigned int i = 0;
-      while (i < h)
-      {
-        unsigned int j = 0;
-        while (j < w)
-        {
-#ifdef BIGENDIAN
-          *(dst_32+4*j) = (src_32+j)->A;
-          *(dst_32+4*j+1) = (src_32+j)->R;
-          *(dst_32+4*j+2) = (src_32+j)->G;
-          *(dst_32+4*j+3) = (src_32+j)->B;
-#else
-          *(dst_32+4*j) = (src_32+j)->B;
-          *(dst_32+4*j+1) = (src_32+j)->G;
-          *(dst_32+4*j+2) = (src_32+j)->R;
-          *(dst_32+4*j+3) = (src_32+j)->A;
-#endif
-          j++;
+
+      if (XImageByteOrder(display) == 1) {
+        // big endian
+        while (i < h) {
+          unsigned int j = 0;
+          while (j < w) {
+            *(dst_32+4*j) = (src_32+j)->A;
+            *(dst_32+4*j+1) = (src_32+j)->R;
+            *(dst_32+4*j+2) = (src_32+j)->G;
+            *(dst_32+4*j+3) = (src_32+j)->B;
+
+            j++;
+          }
+          src_32 = src_32 + iwidth;
+          dst_32 = dst_32 + 4*this->width;
+          i++;
         }
-        src_32 = src_32 + iwidth;
-        dst_32 = dst_32 + 4*this->width;
-        i++;
+
+      }
+      else {
+        // little endian
+        while (i < h) {
+          unsigned int j = 0;
+          while (j < w) {
+            *(dst_32+4*j) = (src_32+j)->B;
+            *(dst_32+4*j+1) = (src_32+j)->G;
+            *(dst_32+4*j+2) = (src_32+j)->R;
+            *(dst_32+4*j+3) = (src_32+j)->A;
+
+            j++;
+          }
+          src_32 = src_32 + iwidth;
+          dst_32 = dst_32 + 4*this->width;
+          i++;
+        }
       }
 
       // Affichage de l'image dans la Pixmap.
@@ -3060,7 +3070,6 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
 */
 void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 {
-
   if ( displayHasBeenInitialized )
   {
     XImage *xi ;
@@ -3099,27 +3108,26 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
 
     }
     else {
-#ifdef BIGENDIAN
-      // little indian/big indian
-      for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-      {
-        I.bitmap[i].A = src_32[i*4] ;
-        I.bitmap[i].R = src_32[i*4 + 1] ;
-        I.bitmap[i].G = src_32[i*4 + 2] ;
-        I.bitmap[i].B = src_32[i*4 + 3] ;
+      if (XImageByteOrder(display) == 1) {
+        // big endian
+        for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ ) {
+          I.bitmap[i].A = src_32[i*4] ;
+          I.bitmap[i].R = src_32[i*4 + 1] ;
+          I.bitmap[i].G = src_32[i*4 + 2] ;
+          I.bitmap[i].B = src_32[i*4 + 3] ;
+        }
       }
-#else
-      for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ )
-      {
-        I.bitmap[i].B = src_32[i*4] ;
-        I.bitmap[i].G = src_32[i*4 + 1] ;
-        I.bitmap[i].R = src_32[i*4 + 2] ;
-        I.bitmap[i].A = src_32[i*4 + 3] ;
+      else {
+        // little endian
+        for ( unsigned int i = 0; i < I.getWidth() * I.getHeight() ; i++ ) {
+          I.bitmap[i].B = src_32[i*4] ;
+          I.bitmap[i].G = src_32[i*4 + 1] ;
+          I.bitmap[i].R = src_32[i*4 + 2] ;
+          I.bitmap[i].A = src_32[i*4 + 3] ;
+        }
       }
-#endif
     }
     XDestroyImage ( xi ) ;
-
   }
   else
   {

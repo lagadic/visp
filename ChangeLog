@@ -30,6 +30,7 @@ ViSP 2.9.1 (under development)
       image size
     . [17644] vpDisplayX doesn't work on RaspberryPi
     . [17659] ViSP+Ogre3D+boost: libboost_chrono cannot be opened
+    . [17705] Bad endianness support in vpDisplayX
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features
