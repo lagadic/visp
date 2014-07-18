@@ -55,6 +55,7 @@
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpQuaternionVector.h>
+#include <visp/vpPoseVector.h>
 
 /*!
   \class vpRotationMatrix
@@ -77,6 +78,7 @@ class VISP_EXPORT vpRotationMatrix : public vpMatrix
   friend class vpRzyxVector;
   friend class vpThetaUVector;
   friend class vpTranslationVector;
+  friend class vpPoseVector;
 public:
   //! Basic initialisation (identity)
   void init() ;
@@ -88,15 +90,17 @@ public:
   vpRotationMatrix()   ;
   //! copy constructor
   vpRotationMatrix(const vpRotationMatrix &R) ;
-  //! Construction from  rotation (theta U parameterization)
+  //! Construction from rotation (theta U parameterization)
   vpRotationMatrix(const vpThetaUVector &r) ;
-  //! Construction from  rotation (Euler parameterization)
+  //! Construction from a pose vector.
+  vpRotationMatrix(const vpPoseVector &p) ;
+  //! Construction from rotation (Euler parameterization)
   vpRotationMatrix(const vpRzyzVector &r) ;
-  //! Construction from  rotation Rxyz
+  //! Construction from rotation Rxyz
   vpRotationMatrix(const vpRxyzVector &r) ;
-  //! Construction from  rotation Rzyx
+  //! Construction from rotation Rzyx
   vpRotationMatrix(const vpRzyxVector &r) ;
-  //! Construction from  rotation (theta U parameterization)
+  //! Construction from rotation (theta U parameterization)
   vpRotationMatrix(const double tux, const  double tuy, const double tuz) ;
 
   vpRotationMatrix(const vpQuaternionVector& q);
@@ -134,8 +138,10 @@ public:
   void printVector() ;
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationMatrix &m);
 
-  //! Transform a vector vpThetaUVector into an rotation matrix
+  //! Transform a vector vpThetaUVector into a rotation matrix
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
+  //! Transform a pose vector into a rotation matrix
+  vpRotationMatrix buildFrom(const vpPoseVector &p) ;
   //! Transform a vector reprensenting the euler (Rzyz) angle
   //! into a rotation matrix
   vpRotationMatrix buildFrom(const vpRzyzVector &v) ;

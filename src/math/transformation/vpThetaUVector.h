@@ -155,6 +155,8 @@ public:
 
   // constructor initialize a Theta U vector from a homogeneous matrix
   vpThetaUVector(const vpHomogeneousMatrix & M) ;
+  // constructor initialize a Theta U vector from a pose vector
+  vpThetaUVector(const vpPoseVector & p) ;
   // constructor initialize a Theta U vector from a rotation matrix
   vpThetaUVector(const vpRotationMatrix& R) ;
   // constructor initialize a Theta U vector from a RzyxVector
@@ -172,6 +174,8 @@ public:
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;
+  // convert a pose vector into Theta U vector
+  vpThetaUVector buildFrom(const vpPoseVector& p) ;
   // convert a rotation matrix into Theta U vector
   vpThetaUVector buildFrom(const vpRotationMatrix& R) ;
   // convert an Rzyx vector into Theta U vector

@@ -62,6 +62,13 @@ vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
   buildFrom(M) ;
 }
 /*!
+Initialize a \f$\theta {\bf u}\f$ vector from a pose vector.
+*/
+vpThetaUVector::vpThetaUVector(const vpPoseVector& p)
+{
+  buildFrom(p) ;
+}
+/*!
 Initialize a \f$\theta {\bf u}\f$ vector from a rotation matrix.
 */
 vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
@@ -104,6 +111,17 @@ vpThetaUVector::buildFrom(const vpHomogeneousMatrix& M)
 
   M.extract(R);
   buildFrom(R);
+
+  return *this ;
+}
+/*!
+Converts a pose vector into a \f$\theta {\bf u}\f$ vector.
+*/
+vpThetaUVector
+vpThetaUVector::buildFrom(const vpPoseVector& p)
+{
+  for(unsigned int i=0; i<3; i++)
+    r[i] = p[i+3];
 
   return *this ;
 }

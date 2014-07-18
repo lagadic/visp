@@ -372,6 +372,12 @@ vpRotationMatrix::vpRotationMatrix(const vpThetaUVector &tu) : vpMatrix()
   init() ;
   buildFrom(tu) ;
 }
+//! Construction from a pose vector.
+vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpMatrix()
+{
+  init() ;
+  buildFrom(p) ;
+}
 
 
 //! Construction from  rotation (Euler parameterization, ie Rzyz parameterization)
@@ -571,6 +577,19 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 #endif
 
   return *this ;
+}
+
+/*
+  \relates vpRotationMatrix
+  Transform a pose vector into a rotation matrix.
+
+  \sa buildFrom(const vpThetaUVector &)
+*/
+vpRotationMatrix
+vpRotationMatrix::buildFrom(const vpPoseVector &p)
+{
+  vpThetaUVector tu(p);
+  return buildFrom(tu);
 }
 
 /*!
