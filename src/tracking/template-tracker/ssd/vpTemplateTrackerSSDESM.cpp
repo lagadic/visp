@@ -179,12 +179,12 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
 
     }
-    vpMatrix::computeHLM(HDir,lambdaDep,HLMDir);
-    //if(Nbpoint==0)std::cout<<"plus de point dans template suivi"<<std::endl;
     if(Nbpoint==0) {
       //std::cout<<"plus de point dans template suivi"<<std::endl;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
+
+    vpMatrix::computeHLM(HDir,lambdaDep,HLMDir);
 
     try
     {
@@ -202,11 +202,6 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     dp=gain*dp;
     if(useBrent)
     {
-      if(Nbpoint == 0) {
-        throw(vpException(vpException::divideByZeroError,
-              "Cannot compute optimal Brent gain: size = 0")) ;
-      }
-
       alpha=2.;
       computeOptimalBrentGain(I,p,erreur/Nbpoint,dp,alpha);
       dp=alpha*dp;
