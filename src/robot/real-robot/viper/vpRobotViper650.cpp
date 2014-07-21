@@ -218,6 +218,8 @@ vpRobotViper650::vpRobotViper650 (bool verbose)
   }
   positioningVelocity  = defaultPositioningVelocity ;
 
+  maxRotationVelocity_joint6 = maxRotationVelocity;
+
   vpRobotViper650::robotAlreadyCreated = true;
 
   return ;
@@ -1524,13 +1526,21 @@ void
     }
     // saturation in joint space
   case vpRobot::ARTICULAR_FRAME : {
-      vpColVector vel_max(6);
+    vpColVector vel_max(6);
 
+    if (getMaxRotationVelocity() == getMaxRotationVelocityJoint6()) {
       for (unsigned int i=0; i<6; i++)
         vel_max[i] = getMaxRotationVelocity();
-
-      vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
     }
+    else {
+      for (unsigned int i=0; i<5; i++)
+        vel_max[i] = getMaxRotationVelocity();
+      vel_max[5] = getMaxRotationVelocityJoint6();
+    }
+
+    vel_sat = vpRobot::saturateVelocities(vel, vel_max, true);
+
+  }
   }
 
   InitTry;
@@ -2279,5 +2289,60 @@ void vpRobotViper650::disableJoint6Limits() const
                             "Cannot disable joint limits on axis 6.");
   }
 }
+
+/*!
+
+  Set the maximal rotation velocity that can be sent to the robot  during a velocity control.
+
+  \param w_max : Maximum rotation velocity expressed in rad/s.
+*/
+
+void
+vpRobotViper650::setMaxRotationVelocity (double w_max)
+{
+  vpRobot::setMaxRotationVelocity(w_max);
+  setMaxRotationVelocityJoint6(w_max);
+
+  return;
+}
+
+/*!
+
+  Set the maximal rotation velocity on joint 6 that is used only during velocity joint control.
+
+  This function affects only the velocities that are sent as joint velocities.
+
+  \code
+  vpRobotViper650 robot;
+  robot.setMaxRotationVelocity( vpMath::rad(20) );
+  robot.setMaxRotationVelocityJoint6( vpMath::rad(50) );
+
+  robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+  robot.setVelocity(ARTICULAR_FRAME, v);
+  \endcode
+
+
+  \param w6_max : Maximum rotation velocity expressed in rad/s on joint 6.
+*/
+
+void
+vpRobotViper650::setMaxRotationVelocityJoint6 (const double w6_max)
+{
+  maxRotationVelocity_joint6 = w6_max;
+  return;
+}
+
+/*!
+
+  Get the maximal rotation velocity on joint 6 that is used only during velocity joint control.
+
+  \return Maximum rotation velocity on joint 6 expressed in rad/s.
+*/
+double
+vpRobotViper650::getMaxRotationVelocityJoint6() const
+{
+  return maxRotationVelocity_joint6;
+}
+
 #endif
 
