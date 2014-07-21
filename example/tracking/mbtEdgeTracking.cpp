@@ -228,7 +228,7 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = opt_ipath + vpIoTools::path("/ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = opt_ipath;
     else
       ipath = env_ipath + vpIoTools::path("/ViSP-images/mbt/cube/image%04d.pgm");
 
@@ -383,16 +383,66 @@ main(int argc, const char ** argv)
     // Load the 3D model (either a vrml file or a .cao file)
     tracker.loadModel(modelFile.c_str());
 
+    tracker.setClipping(vpMbtPolygon::FOV_CLIPPING);
+
     // Initialise the tracker by clicking on the image
     // This function looks for
     //   - a ./cube/cube.init file that defines the 3d coordinates (in meter, in the object basis) of the points used for the initialisation
     //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
     if (opt_display && opt_click_allowed)
     {
-      tracker.initClick(I, initFile.c_str(), true);
+      try{
+        vpTranslationVector t(-168,32,15);
+        vpRxyzVector r(vpMath::rad(90),0,vpMath::rad(-30));
+        vpHomogeneousMatrix oMcb2(t,vpRotationMatrix(r));
+        vpHomogeneousMatrix oMcb3(vpTranslationVector(0,0,0),vpRotationMatrix(r));
+
+        vpRxyzVector r2(vpMath::rad(180),0,0);
+        vpHomogeneousMatrix cMcb4(vpTranslationVector(0,0,0),vpRotationMatrix(r2));
+
+
+        vpHomogeneousMatrix oMcb(-168,32,15,0,0,0);
+        vpHomogeneousMatrix cMcb1(0,0,0,vpMath::rad(90),0,0);
+        vpHomogeneousMatrix cMcb2(0,0,0,vpMath::rad(0),0,vpMath::rad(-30));
+        vpHomogeneousMatrix cMcb3(0,0,0,vpMath::rad(180),0,vpMath::rad(0));
+
+        vpHomogeneousMatrix rot1 = cMcb2 * cMcb1 * cMcb3;
+        vpHomogeneousMatrix rot2 = oMcb3;
+        vpHomogeneousMatrix rot3 = oMcb3;
+
+        std::cout << "Rot1: " << vpPoseVector(rot1).t() << std::endl;
+        std::cout << "Rot2: " << vpPoseVector(rot2).t() << std::endl;
+        std::cout << "Rot3: " << vpPoseVector(rot3).t() << std::endl;
+
+
+        vpHomogeneousMatrix cMo;
+
+        cMo = (oMcb * cMcb2 * cMcb1 * cMcb3).inverse();
+
+        std::cout << "Pose1: " << vpPoseVector(cMo).t() << std::endl;
+        std::cout << "Inverse1: " << vpPoseVector(cMo.inverse()).t() << std::endl;
+
+//        tracker.initFromPose(I,cMo);
+
+        tracker.initClick(I, initFile.c_str(), true);
+        }
+        catch(vpException &e)
+        {
+            std::cout << e.getMessage() << std::endl;
+        }
+
       tracker.getPose(cMo);
+
+      std::cout << "Pose: " << vpPoseVector(cMo).t() << std::endl;
+      std::cout << "Inverse: " << vpPoseVector(cMo.inverse()).t() << std::endl;
+
       // display the 3D model at the given pose
-      tracker.display(I,cMo, cam, vpColor::red);
+      //tracker.display(I,cMo, cam, vpColor::red);
+
+      vpDisplay::display(I) ;
+      tracker.display(I, cMo, cam, vpColor::red, 3.0);
+      vpDisplay::flush(I) ;
+      vpDisplay::getClick(I,true);
     }
     else
     {
@@ -418,8 +468,16 @@ main(int argc, const char ** argv)
       if (opt_display)
         vpDisplay::display(I);
       // track the object
+      try{
       tracker.track(I);
+      }
+      catch(vpException &e)
+      {
+          std::cout << e.getMessage() << std::endl;
+      }
+
       tracker.getPose(cMo);
+      std::cout << vpPoseVector(cMo).t() << std::endl;
       // display the 3D model
       if (opt_display)
       {

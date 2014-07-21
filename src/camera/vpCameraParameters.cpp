@@ -335,6 +335,14 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     
     width = w;
     height = h;
+
+    double xcenter, ycenter;
+    xcenter = ((double)w/2.0 - u0)/px;
+    ycenter = ((double)h/2.0 - v0)/py;
+//    vpColVector center(3);
+//    center[0] = xcenter;
+//    center[1] = ycenter;
+//    center[2] = 0.0;
     
     vpColVector n(3);
     n = 0;
@@ -346,9 +354,11 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     vpColVector nLeft, nRight;
     
     nLeft = Rleft * (-n);
+//    nLeft -= center;
     fovNormals[0] = nLeft.normalize();
     
     nRight = Rright * n;
+//    nRight -= center;
     fovNormals[1] = nRight.normalize();
     
     n = 0;
@@ -360,9 +370,11 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     vpColVector nUp, nDown;
     
     nUp = Rup * (-n);
+//    nUp -= center;
     fovNormals[2] = nUp.normalize();
     
     nDown = Rdown * n;
+//    nDown -= center;
     fovNormals[3] = nDown.normalize();
   }
 }

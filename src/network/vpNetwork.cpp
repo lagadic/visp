@@ -576,7 +576,7 @@ int vpNetwork::_handleFirstRequest()
   size_t indEndParam = currentMessageReceived.find(param_sep,indDebParam);
   
   std::string param;
-  while(indEndParam != std::string::npos)
+  while(indEndParam != std::string::npos || indEndParam < indEnd)
   {
     param = currentMessageReceived.substr((unsigned)indDebParam,(unsigned)(indEndParam - indDebParam));
     request_list[(unsigned)indRequest]->addParameter(param);

@@ -1792,7 +1792,7 @@ vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleli
 #endif
   } 
   
-//  cout << "visible face " << n << endl ;
+  std::cout << "visible face " << n << std::endl ;
   if (n > nbvisiblepolygone)
   {
     //cout << "une nouvelle face est visible " << endl ;
@@ -1834,6 +1834,7 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
 #endif
   } 
 
+//  std::cout << "visible face " << n << std::endl ;
   if (n > nbvisiblepolygone)
   {
     //cout << "une nouvelle face est visible " << endl ;
