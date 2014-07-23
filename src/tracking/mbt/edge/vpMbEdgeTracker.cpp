@@ -1992,7 +1992,19 @@ vpMbEdgeTracker::resetTracker()
   this->setScales(scales);
 }
 
+/*!
+  Re-initialize the model used by the tracker.
 
+  \param I : The image containing the object to initialize.
+  \param cad_name : Path to the file containing the 3D model description.
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+*/
+void
+vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
+                             const vpHomogeneousMatrix& cMo_)
+{
+  reInitModel(I, cad_name.c_str(), cMo_);
+}
 
 /*!
   Re-initialize the model used by the tracker.  
