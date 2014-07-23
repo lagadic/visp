@@ -154,7 +154,7 @@ class VISP_EXPORT vpMbtDistanceLine
     
     void initInteractionMatrixError();
     
-    void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     /*!
       Check if the line is visible in the image or not.

@@ -228,8 +228,9 @@ vpMbtDistanceCylinder::getCylinderLineExtremity(double &i, double &j,double rho,
   
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
+  \return false if an error occur, true otherwise.
 */
-void
+bool
 vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
 	// Perspective projection
@@ -244,11 +245,17 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   try{
   	cercle1->projection();
   }
-  catch(...){std::cout<<"Problem when projecting circle 1\n";}
+  catch(...){
+    //std::cout<<"Problem when projecting circle 1\n";
+    return false;
+  }
   try{
   	cercle2->projection();
   }
-  catch(...){std::cout<<"Problem when projecting circle 2\n";}
+  catch(...){
+    //std::cout<<"Problem when projecting circle 2\n";
+    return false;
+  }
   c->projection();
 
   double rho1,theta1;
@@ -309,7 +316,8 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   }
   catch(...)
   {
-    vpTRACE("the line can't be initialized");
+    //vpTRACE("the line can't be initialized");
+    return false;
   }
   try
   {
@@ -317,8 +325,10 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
   }
   catch(...)
   {
-    vpTRACE("the line can't be initialized");
+    //vpTRACE("the line can't be initialized");
+    return false;
   }
+  return true;
 }
 
 
@@ -338,7 +348,8 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   }
   catch(...)
   {
-    std::cout << "Track meline1 failed" << std::endl;
+    //std::cout << "Track meline1 failed" << std::endl;
+    meline1->reset();
     Reinit = true;
   }
   try 
@@ -347,7 +358,8 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   }
   catch(...)
   {
-    std::cout << "Track meline2 failed" << std::endl;
+    //std::cout << "Track meline2 failed" << std::endl;
+    meline2->reset();
     Reinit = true;
   }
 
@@ -476,7 +488,8 @@ vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const v
   meline1 = NULL;
   meline2 = NULL;
 
-  initMovingEdge(I,cMo);
+  if (initMovingEdge(I,cMo) == false)
+    Reinit = true;
 
   Reinit = false;
 }

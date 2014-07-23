@@ -139,7 +139,7 @@ class VISP_EXPORT vpMbtDistanceCircle
     
     void initInteractionMatrixError();
     
-    void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     

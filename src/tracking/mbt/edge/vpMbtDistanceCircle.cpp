@@ -145,8 +145,9 @@ vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
+  \return false if an error occur, true otherwise.
 */
-void
+bool
 vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
 	// Perspective projection
@@ -155,7 +156,10 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
   try{
     circle->projection();
   }
-  catch(...){std::cout<<"Problem when projecting circle\n";}
+  catch(...){
+    std::cout<<"Problem when projecting circle\n";
+    return false;
+  }
 
   // Create the moving edges containers
   meEllipse = new vpMbtMeEllipse;
@@ -173,8 +177,10 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
   }
   catch(...)
   {
-    vpTRACE("the circle can't be initialized");
+    //vpTRACE("the circle can't be initialized");
+    return false;
   }
+  return true;
 }
 
 /*!
@@ -192,7 +198,8 @@ vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHo
   }
   catch(...)
   {
-    std::cout << "Track meEllipse failed" << std::endl;
+    //std::cout << "Track meEllipse failed" << std::endl;
+    meEllipse->reset();
     Reinit = true;
   }
 
@@ -252,7 +259,8 @@ vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpH
   
   meEllipse = NULL;
 
-  initMovingEdge(I,cMo);
+  if(initMovingEdge(I,cMo) == false)
+    Reinit = true;
 
   Reinit = false;
 }
