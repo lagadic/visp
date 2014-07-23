@@ -201,9 +201,9 @@ public:
   //! Swap two value
   void exch(double &A, double &B){swap = A; A = B;  B = swap;}
   //! Sort function using partition method
-  unsigned int partition(vpColVector &a, unsigned int l, unsigned int r);
+  int partition(vpColVector &a, int l, int r);
   //! Sort the vector and select a value in the sorted vector
-  double select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k);
+  double select(vpColVector &a, int l, int r, int k);
   //@}
 };
 

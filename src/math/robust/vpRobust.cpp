@@ -721,11 +721,11 @@ void vpRobust::psiMcLure(double sig, vpColVector &r,vpColVector &weights)
   \param l : first value to be considered
   \param r : last value to be considered
 */
-unsigned int 
-vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
+int
+vpRobust::partition(vpColVector &a, int l, int r)
 {
-  unsigned int i = l-1;
-  unsigned int j = r;
+  int i = l-1;
+  int j = r;
   double v = a[r];
 
   for (;;)
@@ -747,11 +747,11 @@ vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
   \param k : value to be selected
 */
 double 
-vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k)
+vpRobust::select(vpColVector &a, int l, int r, int k)
 {
   while (r > l)
   {
-    unsigned int i = partition(a, l, r);
+    int i = partition(a, l, r);
     if (i >= k) r = i-1;
     if (i <= k) l = i+1;
   }
