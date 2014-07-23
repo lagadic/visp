@@ -152,7 +152,7 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
     iP_j = iPc.get_j() + ce *j - se *i;
     iP_i = iPc.get_i() + se *j + ce *i;
 
-    vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ;
+    //vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ; //debug only
 
     // If point is in the image, add to the sample list
     if(!outOfImage(vpMath::round(iP_i), vpMath::round(iP_j), 0, height, width))
