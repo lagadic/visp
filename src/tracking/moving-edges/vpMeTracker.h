@@ -114,6 +114,8 @@ public:
   int outOfImage( int i , int j , int half , int rows , int cols) ;
   int outOfImage( vpImagePoint iP , int half , int rows , int cols) ;
   
+  void reset();
+
   //!Sample pixels at a given interval
   virtual void sample(const vpImage<unsigned char> &image)=0;
   

@@ -95,9 +95,18 @@ vpMeTracker::vpMeTracker(const vpMeTracker& meTracker)
   #endif
 }
 
+/*!
+ Reset the tracker by removing all the moving edges.
+ */
+void vpMeTracker::reset()
+{
+  nGoodElement = 0;
+  list.clear();
+}
+
 vpMeTracker::~vpMeTracker()
 {
-  list.clear();
+  reset();
 }
 
 vpMeTracker&
