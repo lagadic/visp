@@ -378,6 +378,8 @@ public:
           */
   inline  double          getThresholdAcceptation() const { return threshold_outlier;}
   
+  void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_);
+  void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
           void            resetTracker();
           
           /*! 
@@ -450,7 +452,7 @@ public:
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
-  virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
+  virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
           virtual void            initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
           virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
 

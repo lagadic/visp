@@ -63,7 +63,8 @@
 vpMbtDistanceCircle::vpMbtDistanceCircle()
   : name(), index(0), cam(), me(NULL), wmean(1),
     featureEllipse(), meEllipse(NULL),
-    circle(NULL), L(), error(), nbFeature(0), Reinit(false)
+    circle(NULL), L(), error(), nbFeature(0), Reinit(false),
+    hiddenface(NULL), index_polygon(-1), isvisible(false)
 {
 }
 
@@ -150,35 +151,37 @@ vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
 bool
 vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-	// Perspective projection
-  circle->changeFrame(cMo);
+  if(isvisible){
+    // Perspective projection
+    circle->changeFrame(cMo);
 
-  try{
-    circle->projection();
-  }
-  catch(...){
-    std::cout<<"Problem when projecting circle\n";
-    return false;
-  }
+    try{
+      circle->projection();
+    }
+    catch(...){
+      std::cout<<"Problem when projecting circle\n";
+      return false;
+    }
 
-  // Create the moving edges containers
-  meEllipse = new vpMbtMeEllipse;
-  meEllipse->setMe(me) ;
+    // Create the moving edges containers
+    meEllipse = new vpMbtMeEllipse;
+    meEllipse->setMe(me) ;
 
-  //meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
-  meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
+    //meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
+    meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
 
-  try
-  {
-    vpImagePoint ic;
-    double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
-    meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p);
-  }
-  catch(...)
-  {
-    //vpTRACE("the circle can't be initialized");
-    return false;
+    try
+    {
+      vpImagePoint ic;
+      double mu20_p, mu11_p, mu02_p;
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
+      meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p);
+    }
+    catch(...)
+    {
+      //vpTRACE("the circle can't be initialized");
+      return false;
+    }
   }
   return true;
 }
@@ -192,19 +195,21 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
 void
 vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
-  try 
-  {
-    meEllipse->track(I) ;
-  }
-  catch(...)
-  {
-    //std::cout << "Track meEllipse failed" << std::endl;
-    meEllipse->reset();
-    Reinit = true;
-  }
+  if(isvisible){
+    try
+    {
+      meEllipse->track(I) ;
+    }
+    catch(...)
+    {
+      //std::cout << "Track meEllipse failed" << std::endl;
+      meEllipse->reset();
+      Reinit = true;
+    }
 
-  // Update the number of features
-  nbFeature = (unsigned int)meEllipse->getMeList().size();
+    // Update the number of features
+    nbFeature = (unsigned int)meEllipse->getMeList().size();
+  }
 }
 
 
@@ -219,27 +224,29 @@ vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHo
 void
 vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  // Perspective projection
-  circle->changeFrame(cMo);
+  if(isvisible){
+    // Perspective projection
+    circle->changeFrame(cMo);
 
-  try{
-    circle->projection();
-  }
-  catch(...){std::cout<<"Problem when projecting circle\n";}
+    try{
+      circle->projection();
+    }
+    catch(...){std::cout<<"Problem when projecting circle\n";}
 
-  try
-  {
+    try
+    {
 
-    vpImagePoint ic;
-    double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
-    meEllipse->updateParameters(I, ic, mu20_p, mu11_p, mu02_p);
+      vpImagePoint ic;
+      double mu20_p, mu11_p, mu02_p;
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
+      meEllipse->updateParameters(I, ic, mu20_p, mu11_p, mu02_p);
+    }
+    catch(...)
+    {
+      Reinit = true;
+    }
+    nbFeature = (unsigned int)meEllipse->getMeList().size();
   }
-  catch(...)
-  {
-    Reinit = true;
-  }
-  nbFeature = (unsigned int)meEllipse->getMeList().size();
 }
 
 
@@ -277,20 +284,23 @@ vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpH
 */
 void
 vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &camera, const vpColor col, const unsigned int thickness)
+                             const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
+                             const bool displayFullModel )
 {
-  // Perspective projection
-  circle->changeFrame(cMo);
+  if(isvisible || displayFullModel){
+    // Perspective projection
+    circle->changeFrame(cMo);
 
-  try{
-    circle->projection();
+    try{
+      circle->projection();
+    }
+    catch(...){std::cout<<"Cannot project the circle";}
+
+    vpImagePoint center;
+    double mu20_p, mu11_p, mu02_p;
+    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
   }
-  catch(...){std::cout<<"Cannot project the circle";}
-
-  vpImagePoint center;
-  double mu20_p, mu11_p, mu02_p;
-  vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
 }
 
 /*!
@@ -305,20 +315,22 @@ vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneous
 void
 vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &camera, const vpColor col,
-                             const unsigned int thickness)
+                             const unsigned int thickness, const bool displayFullModel)
 {
-  // Perspective projection
-  circle->changeFrame(cMo);
+  if(isvisible || displayFullModel){
+    // Perspective projection
+    circle->changeFrame(cMo);
 
-  try{
-    circle->projection();
+    try{
+      circle->projection();
+    }
+    catch(...){std::cout<<"Cannot project the circle";}
+
+    vpImagePoint center;
+    double mu20_p, mu11_p, mu02_p;
+    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+    vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
   }
-  catch(...){std::cout<<"Cannot project the circle";}
-
-  vpImagePoint center;
-  double mu20_p, mu11_p, mu02_p;
-  vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
 }
 
 
@@ -349,9 +361,14 @@ vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCircle::initInteractionMatrixError()
 {
+  if (isvisible == true)
+  {
     nbFeature = (unsigned int)meEllipse->getMeList().size();
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
+  }
+  else
+    nbFeature = 0 ;
 }
 
 /*!
@@ -360,46 +377,49 @@ vpMbtDistanceCircle::initInteractionMatrixError()
 void
 vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
-	// Perspective projection
-  circle->changeFrame(cMo) ;
-  try{
-    circle->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle\n";}
+  if (isvisible)
+  {
+    // Perspective projection
+    circle->changeFrame(cMo) ;
+    try{
+      circle->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle\n";}
 
-  vpFeatureBuilder::create(featureEllipse, *circle);
+    vpFeatureBuilder::create(featureEllipse, *circle);
 
-  vpMatrix H1 = featureEllipse.interaction();
+    vpMatrix H1 = featureEllipse.interaction();
 
-  vpRowVector H(5);
-  double x=0, y=0;
+    vpRowVector H(5);
+    double x=0, y=0;
 
-  // Get the parameters of the ellipse in the image plane
-  double xg = circle->p[0];
-  double yg = circle->p[1];
-  double mu20 = circle->p[2];
-  double mu11 = circle->p[3];
-  double mu02 = circle->p[4];
+    // Get the parameters of the ellipse in the image plane
+    double xg = circle->p[0];
+    double yg = circle->p[1];
+    double mu20 = circle->p[2];
+    double mu11 = circle->p[3];
+    double mu02 = circle->p[4];
 
-  unsigned int j = 0;
+    unsigned int j = 0;
 
-  for(std::list<vpMeSite>::const_iterator it=meEllipse->getMeList().begin(); it!=meEllipse->getMeList().end(); ++it){
-    vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
-    H[0] = 2*(mu11*(y-yg)+mu02*(xg-x));
-    H[1] = 2*(mu20*(yg-y)+mu11*(x-xg));
-    H[2] = vpMath::sqr(y-yg)-mu02;
-    H[3] = 2*(yg*(x-xg)+y*xg+mu11-x*y);
-    H[4] = vpMath::sqr(x-xg)-mu20;
+    for(std::list<vpMeSite>::const_iterator it=meEllipse->getMeList().begin(); it!=meEllipse->getMeList().end(); ++it){
+      vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
+      H[0] = 2*(mu11*(y-yg)+mu02*(xg-x));
+      H[1] = 2*(mu20*(yg-y)+mu11*(x-xg));
+      H[2] = vpMath::sqr(y-yg)-mu02;
+      H[3] = 2*(yg*(x-xg)+y*xg+mu11-x*y);
+      H[4] = vpMath::sqr(x-xg)-mu20;
 
-    for (unsigned int k=0; k<6; k++)
-      L[j][k] = H[0]*H1[0][k] + H[1]*H1[1][k] + H[2]*H1[2][k] + H[3]*H1[3][k]  + H[4]*H1[4][k];
+      for (unsigned int k=0; k<6; k++)
+        L[j][k] = H[0]*H1[0][k] + H[1]*H1[1][k] + H[2]*H1[2][k] + H[3]*H1[3][k]  + H[4]*H1[4][k];
 
-    error[j] = mu02*vpMath::sqr(x) + mu20*vpMath::sqr(y) - 2*mu11*x*y
-        + 2*(mu11*yg-mu02*xg)*x + 2*(mu11*xg-mu20*yg)*y
-        + mu02*vpMath::sqr(xg) + mu20*vpMath::sqr(yg) - 2*mu11*xg*yg
-        + vpMath::sqr(mu11) - mu20*mu02;
+      error[j] = mu02*vpMath::sqr(x) + mu20*vpMath::sqr(y) - 2*mu11*x*y
+          + 2*(mu11*yg-mu02*xg)*x + 2*(mu11*xg-mu20*yg)*y
+          + mu02*vpMath::sqr(xg) + mu20*vpMath::sqr(yg) - 2*mu11*xg*yg
+          + vpMath::sqr(mu11) - mu20*mu02;
 
-    j++;
+      j++;
+    }
   }
 }
 

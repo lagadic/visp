@@ -126,8 +126,6 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
   vpImagePoint iP11;
   j = i = 0.0 ;
 
-  vpColor col = vpColor::red ;
-
   // Approximation of the circumference of an ellipse:
   // [Ramanujan, S., "Modular Equations and Approximations to ,"
   // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
@@ -152,6 +150,7 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
     iP_j = iPc.get_j() + ce *j - se *i;
     iP_i = iPc.get_i() + se *j + ce *i;
 
+    //vpColor col = vpColor::red ;
     //vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ; //debug only
 
     // If point is in the image, add to the sample list

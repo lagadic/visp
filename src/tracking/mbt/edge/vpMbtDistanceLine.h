@@ -213,11 +213,7 @@ class VISP_EXPORT vpMbtDistanceLine
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   private:
-    void belongToPolygon(int index_) { Lindex_polygon.push_back(index_); }
     void project(const vpHomogeneousMatrix &cMo);
-    void setFace( vpMbHiddenFaces<vpMbtPolygon> *_hiddenface) { hiddenface = _hiddenface ; }
-    
-
 } ;
 
 #endif

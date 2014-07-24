@@ -297,6 +297,8 @@ public:
   virtual void    loadConfigFile(const std::string& configFile);
   virtual void    loadModel(const std::string& modelFile);
   
+          void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_);
+          void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
           void    resetTracker();
           
           /*!
@@ -379,9 +381,9 @@ protected:
                              vpColVector &w_klt, const unsigned int lvl=0);
 
   virtual void    init(const vpImage<unsigned char>& I);
-  virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
-  virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
-  virtual void    initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1);
+  virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const unsigned int idFace);
+  virtual void    initCylinder(const vpPoint&, const vpPoint &, const double r, const unsigned int idFace);
+  virtual void    initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
   unsigned int    initMbtTracking(const unsigned int level=0);
 
           bool    postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
@@ -391,6 +393,7 @@ protected:
   unsigned int    trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
           void    trackSecondLoop(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &_error,
                                   vpHomogeneousMatrix& cMo, const unsigned int lvl=0);
+          void updateVisibility(const vpImage<unsigned char> &I);
 };
 
 #endif

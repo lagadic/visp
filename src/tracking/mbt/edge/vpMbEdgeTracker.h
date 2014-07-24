@@ -297,9 +297,6 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     //! Index of the cylinder to add, and total number of cylinders extracted so far.
     unsigned int ncylinder;
 
-    //! Index of the polygon to add, and total number of polygon extracted so far. Cannot be unsigned because the default index of a polygon is -1.
-    int index_polygon;
-    
     //! Set of faces describing the object. 
     vpMbHiddenFaces<vpMbtPolygon> faces;
     
@@ -518,17 +515,17 @@ public:
 
 protected:
   bool samePoint(const vpPoint &P1, const vpPoint &P2);
-  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string& name = "");
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int polygon = -1, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string& name = "");
-  void addLine(vpPoint &p1, vpPoint &p2, int polygone = -1, std::string name = "");
+  void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p) ;
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void computeVVS(const vpImage<unsigned char>& _I);
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char>& I);
-  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle=0);
-  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder=0);
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _indexFace = -1);
+  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0);
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0);
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _idFace = -1);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);

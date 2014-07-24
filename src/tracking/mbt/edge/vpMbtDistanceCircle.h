@@ -51,6 +51,7 @@
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeatureEllipse.h>
 #include <visp/vpCircle.h>
+#include <visp/vpMbHiddenFaces.h>
 
 /*!
   \class vpMbtDistanceCircle
@@ -69,6 +70,8 @@ class VISP_EXPORT vpMbtDistanceCircle
     //double alpha;
     double wmean;
     vpFeatureEllipse featureEllipse ;
+    //! Polygon describing the circle bbox
+//    vpMbtPolygon poly;
     
   public: 
     //! The moving edge containers
@@ -95,6 +98,12 @@ class VISP_EXPORT vpMbtDistanceCircle
     unsigned int nbFeature;
     //! Indicates if the circle has to be reinitialized
     bool Reinit;
+    //! Pointer to the list of faces
+    vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
+    //! Index of the faces which contain the line
+    int index_polygon;
+    //! Indicates if the circle is visible or not
+    bool isvisible;
     
   public:
     vpMbtDistanceCircle() ;
@@ -104,8 +113,8 @@ class VISP_EXPORT vpMbtDistanceCircle
     
     void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
     
-    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
-    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
+    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
     void displayMovingEdges(const vpImage<unsigned char> &I);
     
     /*!
@@ -136,11 +145,25 @@ class VISP_EXPORT vpMbtDistanceCircle
       \return Return the name of the circle.
     */
     inline std::string getName() const {return name;}
+
+    /*!
+     Get the polygon associated to the circle.
+
+     \return poly.
+    */
+//    inline vpMbtPolygon& getPolygon() {return poly;}
     
     void initInteractionMatrixError();
     
     bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
-    
+
+    /*!
+      Check if the circle is visible in the image or not.
+
+      \return Return true if the circle is visible
+    */
+    inline bool isVisible() const {return isvisible; }
+
     void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     /*!
@@ -178,6 +201,14 @@ class VISP_EXPORT vpMbtDistanceCircle
       \param circle_name : The name of the circle.
     */
     inline void setName(const char* circle_name) {this->name = std::string(circle_name);}
+
+    /*!
+      Set a boolean parameter to indicates if the circle is visible in the image or not.
+
+      \param _isvisible : Set to true if the circle is visible
+    */
+    inline void setVisible(bool _isvisible) {isvisible = _isvisible ;}
+
 
     void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     

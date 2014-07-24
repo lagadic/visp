@@ -329,8 +329,8 @@ protected:
   
 #ifdef VISP_HAVE_COIN
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
-  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace);
-  virtual void extractLines(SoVRMLIndexedLineSet* line_set);
+  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace);
+  virtual void extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace);
   virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform);
 #endif
   
@@ -344,9 +344,9 @@ protected:
     \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
     defining the plane that contains the circle.
     \param radius : Radius of the circle.
-    \param indexCircle : Index of the cicle.
+    \param idFace : Id of the face associated to the circle.
   */
-  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle=0)=0;
+  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0)=0;
   /*!
     Add a cylinder to track from two points on the axis (defining the length of
     the cylinder) and its radius.
@@ -354,9 +354,9 @@ protected:
     \param p1 : First point on the axis.
     \param p2 : Second point on the axis.
     \param radius : Radius of the cylinder.
-    \param indexCylinder : Index of the cylinder.
+    \param idFace : Id of the face associated to the cylinder.
   */
-  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder=0)=0;
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0)=0;
 
   /*!
     Add a face to track from its corners (in the object frame). This method is
@@ -364,9 +364,9 @@ protected:
     The initialisation of the face depends on the primitive to track.
     
     \param corners : The vector of corners representing the face.
-    \param indexFace : The index of the face.
+    \param idFace : The index of the face.
   */
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace = -1)=0;
+  virtual void initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1)=0;
   
   virtual void loadVRMLModel(const std::string& modelFile);
   virtual void loadCAOModel(const std::string& modelFile);

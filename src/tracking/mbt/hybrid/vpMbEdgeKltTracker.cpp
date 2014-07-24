@@ -39,9 +39,14 @@
  *
  *****************************************************************************/
 
+//#define VP_DEBUG_MODE 1 // Activate debug level 1
+
+#include <visp/vpDebug.h>
 #include <visp/vpMbEdgeKltTracker.h>
 
 #ifdef VISP_HAVE_OPENCV
+
+
 
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   : compute_interaction(true), lambda(0.8), thresholdKLT(2.), thresholdMBT(2.), maxIter(200)
@@ -76,18 +81,8 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   
   initPyramid(I, Ipyramid);
   
-  unsigned int n = 0;
+  updateVisibility(I);
 
-  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-      if(vpMbKltTracker::faces[i]->isVisible()){
-        vpMbEdgeTracker::faces[i]->isvisible = true;
-        n++;
-      }
-      else
-        vpMbEdgeTracker::faces[i]->isvisible = false;
-  }
-  vpMbEdgeTracker::nbvisiblepolygone = n;
-  
   unsigned int i = (unsigned int)scales.size();
   do {
     i--;
@@ -113,32 +108,43 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
 void           
 vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  if(firstTrack){
+  //if(firstTrack)
+  if(firstTrack)
+  {
     vpMbKltTracker::setPose(I, cdMo);
     
-    vpMbtDistanceLine *l;
     lines[scaleLevel].front() ;
     for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-      l = *it;
-      if(l->meline != NULL){
-        delete l->meline;
-        l->meline = NULL;
+      if((*it)->meline != NULL){
+        delete (*it)->meline;
+        (*it)->meline = NULL;
       }
     }
     
+    cylinders[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
+      if((*it)->meline1 != NULL){
+        delete (*it)->meline1;
+        (*it)->meline1 = NULL;
+      }
+      if((*it)->meline2 != NULL){
+        delete (*it)->meline2;
+        (*it)->meline2 = NULL;
+      }
+    }
+
+    circles[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+      if((*it)->meEllipse != NULL){
+        delete (*it)->meEllipse;
+        (*it)->meEllipse = NULL;
+      }
+    }
+
     initPyramid(I, Ipyramid);
     
-    unsigned int n = 0;
-    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-        if(vpMbKltTracker::faces[i]->isVisible()){
-          vpMbEdgeTracker::faces[i]->isvisible = true;
-          n++;
-        }
-        else
-          vpMbEdgeTracker::faces[i]->isvisible = false;
-    }
-    vpMbEdgeTracker::nbvisiblepolygone = n;
-    
+    updateVisibility(I);
+
     unsigned int i = (unsigned int)scales.size();
     do {
       i--;
@@ -169,6 +175,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 {
   vpMbtDistanceLine *l ;
   vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCircle *ci ;
 
   if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "lvl not used.");
@@ -186,7 +193,13 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
     nbrow += cy->nbFeature ;
     cy->initInteractionMatrixError() ;
   }
-  
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
+    ci = *it;
+    nbrow += ci->nbFeature ;
+    ci->initInteractionMatrixError() ;
+  }
+
   return nbrow;  
 }
 
@@ -379,7 +392,16 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
       vpMbtDistanceCylinder *cy ;
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
         cy = *it;
+        // A cylinder is always visible
         cy->displayMovingEdges(I);
+      }
+
+      vpMbtDistanceCircle *ci ;
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
+        ci = *it;
+        if (ci->isVisible()){
+          ci->displayMovingEdges(I);
+        }
       }
     }
   }
@@ -388,16 +410,8 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
     return true;
   
   vpMbEdgeTracker::updateMovingEdge(I);
-  unsigned int n = 0;
-  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-      if(vpMbKltTracker::faces[i]->isVisible()){
-        vpMbEdgeTracker::faces[i]->isvisible = true;
-        n++;
-      }
-      else
-        vpMbEdgeTracker::faces[i]->isvisible = false;
-  }
-  vpMbEdgeTracker::nbvisiblepolygone = n;
+
+  updateVisibility(I);
   
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
@@ -406,7 +420,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
 }
 
 /*!
-  post tracking computation. Compute the mean weight of a line and, check the
+  Post tracking computation. Compute the mean weight of a line and, check the
   weight associated to a site (to eventually remove an outlier) and eventually
   set a flag to re-initialize the line.
 
@@ -418,7 +432,6 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
 void
 vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 {
-
   if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
@@ -517,6 +530,44 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
     }
 
     n+= cy->nbFeature ;
+  }
+
+  // Same thing with circles as with lines
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    double wmean = 0 ;
+    std::list<vpMeSite>::iterator itListCir;
+
+    if (ci->nbFeature > 0){
+      itListCir = ci->meEllipse->getMeList().begin();
+    }
+
+    wmean = 0;
+    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+      wmean += m_w[n+i] ;
+      vpMeSite p = *itListCir;
+      if (m_w[n+i] < 0.5){
+        p.setState(vpMeSite::M_ESTIMATOR);
+
+        *itListCir = p;
+      }
+
+      ++itListCir;
+    }
+
+    if (ci->nbFeature!=0)
+      wmean /= ci->nbFeature ;
+    else
+      wmean = 1;
+
+    ci->setMeanWeight(wmean);
+
+    if (wmean < 0.8){
+      ci->Reinit = true;
+    }
+
+    n+= ci->nbFeature ;
   }
 }
 
@@ -732,16 +783,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     
     initPyramid(I, Ipyramid);
   
-    unsigned int n = 0;
-    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-        if(vpMbKltTracker::faces[i]->isVisible()){
-          vpMbEdgeTracker::faces[i]->isvisible = true;
-          n++;
-        }
-        else
-          vpMbEdgeTracker::faces[i]->isvisible = false;
-    }
-    vpMbEdgeTracker::nbvisiblepolygone = n;
+    updateVisibility(I);
     
     unsigned int i = (unsigned int)scales.size();
     do {
@@ -762,6 +804,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
 {
   vpMbtDistanceLine *l ;
   vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCircle *ci ;
 
   if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
@@ -837,6 +880,26 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
 
     n+= cy->nbFeature ;
   }
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    ci->computeInteractionMatrixError(cMo);
+    double fac = 1.0;
+
+    std::list<vpMeSite>::const_iterator itCir;
+    if (ci->meEllipse != NULL) {
+      itCir = ci->meEllipse->getMeList().begin();
+    }
+
+    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+      factor[n+i] = fac;
+      vpMeSite site = *itCir;
+      if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+      ++itCir;
+    }
+
+    n+= ci->nbFeature ;
+  }
   
   return nbrow;
 }
@@ -847,7 +910,8 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
 {
   vpMbtDistanceLine* l;
   vpMbtDistanceCylinder *cy ;
-  
+  vpMbtDistanceCircle *ci ;
+
   unsigned int n = 0 ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
@@ -870,8 +934,19 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
         error[n+i] = cy->error[i];
       }
     }
-
     n+= cy->nbFeature ;
+  }
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    ci = *it;
+    ci->computeInteractionMatrixError(cMo) ;
+    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+      for(unsigned int j=0; j < 6 ; j++){
+        L[n+i][j] = ci->L[i][j];
+        error[n+i] = ci->error[i];
+      }
+    }
+
+    n+= ci->nbFeature ;
   }
 }
 
@@ -893,13 +968,13 @@ vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& camera)
   Initialise a new face from the coordinates given in parameter.
 
   \param corners : Coordinates of the corners of the face in the object frame.
-  \param indexFace : index of the face (depends on the vrml file organization).
+  \param idFace : Id of the face.
 */
 void
-vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
+vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
 {
-  vpMbEdgeTracker::initFaceFromCorners(corners, indexFace);
-  vpMbKltTracker::initFaceFromCorners(corners, indexFace);
+  vpMbEdgeTracker::initFaceFromCorners(corners, idFace);
+  vpMbKltTracker::initFaceFromCorners(corners, idFace);
 }
 
 /*!
@@ -910,12 +985,12 @@ vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, con
   \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
-  \param indexCircle : Index of the cicle.
+  \param idFace : Id of the face associated to the circle.
 */
 void
-vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int indexCircle)
+vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
 {
-  vpMbEdgeTracker::initCircle(p1, p2, p3, radius, indexCircle);
+  vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace);
 }
 
 /*!
@@ -925,12 +1000,12 @@ vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoi
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
-  \param indexCylinder : Index of the cylinder.
+  \param idFace : Id of the face associated to the cylinder.
 */
 void
-vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int indexCylinder)
+vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace)
 {
-  vpMbEdgeTracker::initCylinder(p1, p2, radius, indexCylinder);
+  vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace);
 }
 
 /*!
@@ -947,17 +1022,18 @@ void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
                             const vpColor& col, const unsigned int thickness, const bool displayFullModel)
 {  
-  vpMbtDistanceLine *l ;
-  
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-        l = *it;
-        l->display(I,cMo_, camera, col, thickness, displayFullModel);
+        (*it)->display(I,cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo_, camera, col, thickness);
+        (*it)->display(I, cMo_, camera, col, thickness); // displayFullModel has no sence here since there is no visibility for cylinders
+      }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       break ; //displaying model on one scale only
@@ -989,18 +1065,19 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
 void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
                             const vpColor& col , const unsigned int thickness, const bool displayFullModel)
-{ 
-  vpMbtDistanceLine *l ;
-  
+{   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-        l = *it;
-        l->display(I,cMo_, camera, col, thickness, displayFullModel);
+        (*it)->display(I,cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
         (*it)->display(I, cMo_, camera, col, thickness);
+      }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       break ; //displaying model on one scale only
@@ -1017,6 +1094,150 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
   if(vpMbKltTracker::useOgre)
     vpMbKltTracker::faces.displayOgre(cMo_);
 #endif
+}
+
+/*!
+  Visibility is done on the faces that belong to vpMbKltTracker.
+  Affect the visibility flag to the faces that common to vpMbEdgeTracker.
+  If vpMbEdgeTracker has faces that are not present in vpMbKltTracker we compute
+  the visibility for these specific faces.
+*/
+void vpMbEdgeKltTracker::updateVisibility(const vpImage<unsigned char> &I)
+{
+  if (vpDEBUG_ENABLE(1)) {
+    vpCTRACE << "to remove" << std::endl;
+    std::cout << "Klt has " << vpMbKltTracker::faces.size() << " faces with id: ";
+    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++)
+      std::cout << vpMbKltTracker::faces[i]->getIndex() << " (" << vpMbKltTracker::faces[i]->isVisible() << ") ";
+    std::cout << std::endl;
+    std::cout << "Edge has " << vpMbEdgeTracker::faces.size() << " faces with id: ";
+    for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++)
+      std::cout << vpMbEdgeTracker::faces[i]->getIndex() << " (" << vpMbEdgeTracker::faces[i]->isVisible() << ") ";
+    std::cout << std::endl;
+  }
+  unsigned int n_visible_faces = 0;
+  // Visibility is computed for MbKlt faces.
+  // Check if a same face exists in MbEdges.
+  // - if yes set visibility to the same value as for MbKlt
+  // If MbEdges faces doesn't exist in MbKlt, we compute the visibility for this specific face
+  // Each face has an id. If the id are the same in MbEdges and MbKlt, the faces are the same.
+  // Faces id are ranges from lower to higher values
+  unsigned int i_edge = 0;
+  std::vector<unsigned int> mbEdgeProcessedFaces;
+  for(unsigned int i_klt = 0; i_klt < vpMbKltTracker::faces.size() ; i_klt++) {
+    // Check if we have the same face in MbEdges
+    int id_klt = vpMbKltTracker::faces[i_klt]->getIndex();
+    for(unsigned int i=i_edge; i<vpMbEdgeTracker::faces.size(); i++) {
+      int id_edge = vpMbEdgeTracker::faces[i]->getIndex();
+      if (id_klt == id_edge) {
+        vpMbEdgeTracker::faces[i]->isvisible = vpMbKltTracker::faces[i_klt]->isVisible();
+        mbEdgeProcessedFaces.push_back(i);
+        i_edge = i;
+        break;
+      }
+    }
+    // Update the visible face counter
+    if (vpMbKltTracker::faces[i_klt]->isVisible())
+      n_visible_faces ++;
+  }
+  if (vpDEBUG_ENABLE(1)) {
+    std::cout << mbEdgeProcessedFaces.size() << " are common between mbKlt and mbEdge" << std::endl;
+    std::cout << "The index of the common faces are: ";
+    for(unsigned int i=0; i<mbEdgeProcessedFaces.size(); i++)
+      std::cout << mbEdgeProcessedFaces[i] << " ";
+    std::cout << std::endl;
+    std::cout << "Klt has " << n_visible_faces << " visible faces" << std::endl;
+    if (n_visible_faces == 0) {
+      std::cout << "Klt has no visible face" << std::endl;
+      exit(0);
+    }
+    std::cout << "Edge has " << vpMbEdgeTracker::faces.size() << " faces with id: ";
+    for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++)
+      std::cout << vpMbEdgeTracker::faces[i]->getIndex() << " (" << vpMbEdgeTracker::faces[i]->isVisible() << ") ";
+    std::cout << std::endl;
+  }
+  // Identify if faces exist in MbEdges that are not in MbKlt
+  unsigned int j_last = 0;
+  std::vector<unsigned int> new_faces;
+  for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++) {
+    bool face_already_processed = false;
+    for(unsigned int j = j_last; j < mbEdgeProcessedFaces.size() ; j++) {
+      if (i == mbEdgeProcessedFaces[j]) {
+        face_already_processed = true;
+        j_last = j;
+        break;
+      }
+    }
+    if (! face_already_processed)
+      new_faces.push_back(i);
+  }
+
+  if (vpDEBUG_ENABLE(1)) {
+    std::cout << "Number of faces that has to be checked for visibility: " << new_faces.size() << std::endl;
+  }
+  // Compute visibility of faces that are not in MbKlt
+  if (new_faces.size()) {
+    bool changed = false;
+    bool testRoi = true;
+    vpTranslationVector cameraPos;
+
+    for(unsigned int i = 0; i < new_faces.size() ; i++) {
+      if (vpMbEdgeTracker::faces.computeVisibility(cMo, vpMbEdgeTracker::angleAppears, vpMbEdgeTracker::angleDisappears,
+                                                   changed, false /*vpMbEdgeTracker::useOgre*/, testRoi,
+                                                   I, cam, cameraPos, new_faces[i] )) {
+        n_visible_faces ++;
+        if (vpDEBUG_ENABLE(1)) {
+        std::cout << "The new face with index " << new_faces[i] << " is visible; value: " << vpMbEdgeTracker::faces[ new_faces[i] ]->isvisible << std::endl;
+        }
+      }
+    }
+  }
+
+  vpMbEdgeTracker::nbvisiblepolygone = n_visible_faces;
+  if (vpDEBUG_ENABLE(1)) {
+    std::cout << "Number of visible faces: " << vpMbEdgeTracker::nbvisiblepolygone << std::endl;
+  }
+
+  // This is the version befor circle introduction
+  //  unsigned int n = 0;
+  //  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
+  //      if(vpMbKltTracker::faces[i]->isVisible()){
+  //        vpMbEdgeTracker::faces[i]->isvisible = true;
+  //        n++;
+  //      }
+  //      else
+  //        vpMbEdgeTracker::faces[i]->isvisible = false;
+  //  }
+  //  vpMbEdgeTracker::nbvisiblepolygone = n;
+}
+
+/*!
+  Re-initialize the model used by the tracker.
+
+  \param I : The image containing the object to initialize.
+  \param cad_name : Path to the file containing the 3D model description.
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+*/
+void
+vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
+                                const vpHomogeneousMatrix& cMo_)
+{
+  reInitModel(I, cad_name.c_str(), cMo_);
+}
+
+/*!
+  Re-initialize the model used by the tracker.
+
+  \param I : The image containing the object to initialize.
+  \param cad_name : Path to the file containing the 3D model description.
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+*/
+void
+vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
+                                const vpHomogeneousMatrix& cMo_)
+{
+  vpMbKltTracker::reInitModel(I, cad_name, cMo_);
+  vpMbEdgeTracker::reInitModel(I, cad_name, cMo_);
 }
 
 #endif //VISP_HAVE_OPENCV

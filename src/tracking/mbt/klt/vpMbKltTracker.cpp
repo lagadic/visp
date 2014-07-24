@@ -314,7 +314,8 @@ vpMbKltTracker::setOgreVisibilityTest(const bool &v)
 void           
 vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  if(firstTrack){
+  if(firstTrack)
+  {
     bool reInitialisation = false;
     if(!useOgre)
       faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
@@ -325,7 +326,6 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
   #endif
     }
-    
     if(reInitialisation){
       std::cout << "WARNING: Visibility changed, must reinitialize to update pose" << std::endl;
       cMo = cdMo;
@@ -346,6 +346,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
         
       for (unsigned int i = 0; i < faces.size(); i += 1){
         if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2 && faces[i]->hasEnoughPoints()){
+          vpCTRACE << "dans if" << std::endl;
           //Get the normal to the face at the current state cMo
           vpPlane plan(faces[i]->p[0], faces[i]->p[1], faces[i]->p[2]);
           plan.changeFrame(cMcd);
@@ -458,16 +459,16 @@ vpMbKltTracker::setClipping(const unsigned int &flags)
   Initialise a new face from the coordinates given in parameter.
 
   \param corners : Coordinates of the corners of the face in the object frame.
-  \param indexFace : index of the face (depends on the vrml file organization).
+  \param idFace : Id of the face (depends on the vrml file organization).
 */
 void
-vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int indexFace)
+vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
 {     
   //if( corners.size() > 2){ // This tracker can't handle lignes
     vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
   //   polygon->setCameraParameters(cam);
     polygon->setNbPoint((unsigned int)corners.size());
-    polygon->setIndex((int)indexFace);
+    polygon->setIndex((int)idFace);
     for(unsigned int j = 0; j < corners.size(); j++) {
       polygon->addPoint(j, corners[j]);
     }
@@ -970,7 +971,7 @@ vpMbKltTracker::testTracking()
   \param radius : Radius of the cylinder.
 */
 void
-vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*indexCylinder*/)
+vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*idFace*/)
 {
   addCylinder(p1, p2, radius);
 }
@@ -1015,7 +1016,7 @@ vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r
   \param radius : Radius of the circle.
 */
 void
-vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int /*indexCircle*/)
+vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int /*idFace*/)
 {
   addCircle(p1, p2, p3, radius);
 }
@@ -1049,6 +1050,47 @@ vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P
     ci->buildFrom(P1, P2, P3, r);
     circles_disp.push_back(ci);
   }
+}
+
+/*!
+  Re-initialize the model used by the tracker.
+
+  \param I : The image containing the object to initialize.
+  \param cad_name : Path to the file containing the 3D model description.
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+*/
+void
+vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
+                            const vpHomogeneousMatrix& cMo_)
+{
+  reInitModel(I, cad_name.c_str(), cMo_);
+}
+
+/*!
+  Re-initialize the model used by the tracker.
+
+  \param I : The image containing the object to initialize.
+  \param cad_name : Path to the file containing the 3D model description.
+  \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+*/
+void
+vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
+                            const vpHomogeneousMatrix& cMo_)
+{
+  this->cMo.setIdentity();
+
+  if(cur != NULL){
+    cvReleaseImage(&cur);
+    cur = NULL;
+  }
+
+  firstInitialisation = true;
+  firstTrack = false;
+
+  faces.reset();
+
+  loadModel(cad_name);
+  initFromPose(I, cMo_);
 }
 
 #endif //VISP_HAVE_OPENCV

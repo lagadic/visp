@@ -986,6 +986,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       caoLinePoints = new unsigned int[2*caoNbrLine];
 
     unsigned int index1, index2;
+    int idFace = 0;
 
     for(unsigned int k=0; k < caoNbrLine ; k++){
       fileId.get(c);
@@ -1007,7 +1008,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
         std::vector<vpPoint> extremities;
         extremities.push_back(caoPoints[index1]);
         extremities.push_back(caoPoints[index2]);
-        initFaceFromCorners(extremities, k);
+        initFaceFromCorners(extremities, idFace++);
       }
       else{
         vpTRACE(" line %d has wrong coordinates.", k);
@@ -1062,7 +1063,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
       fileId.ignore(256, '\n'); // skip the rest of the line
 
-      initFaceFromCorners(corners, k);
+      initFaceFromCorners(corners, idFace++);
     }
 
     fileId.get(c);
@@ -1109,7 +1110,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
       }
       fileId.ignore(256, '\n'); // skip the rest of the line
 
-      initFaceFromCorners(corners, k);
+      initFaceFromCorners(corners, idFace++);
     }
 
     unsigned int caoNbCylinder;
@@ -1203,7 +1204,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
         fileId >> indexP3;
         fileId.ignore(256, '\n'); // skip the rest of the line
 
-        initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius);
+        initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++);
       }
 
     }catch(...){
@@ -1217,7 +1218,6 @@ vpMbTracker::loadCAOModel(const std::string& modelFile)
     std::cerr << "Cannot read line!" << std::endl;
     throw vpException(vpException::ioError, "cannot read line");
   }
-
 }
 
 #ifdef VISP_HAVE_COIN
@@ -1300,7 +1300,7 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
         {
           SoVRMLIndexedLineSet * line_set;
           line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
-          extractLines(line_set);
+          extractLines(line_set, indexFace);
         }
       }
     }
@@ -1313,10 +1313,10 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
 
   \param face_set : Pointer to the face in the vrml format.
   \param transform : Transformation matrix applied to the face.
-  \param indexFace : Face index.
+  \param idFace : Face id.
 */
 void
-vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &indexFace)
+vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -1335,8 +1335,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
     {
       if(corners.size() > 1)
       {
-        initFaceFromCorners(corners, indexFace);
-        indexFace++;
+        initFaceFromCorners(corners, idFace++);
         corners.resize(0);
       }
     }
@@ -1464,9 +1463,10 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
   the initFaceFromCorners() method implemented in the child class. 
 
   \param line_set : Pointer to the line in the vrml format.
+  \param idFace : Id of the face.
 */
 void
-vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set)
+vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -1477,16 +1477,13 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set)
   vpPoint pt;
   SoVRMLCoordinate *coord;
   
-  unsigned int indexFace = 0;
-
   for (int i = 0; i < indexListSize; i++)
   {
     if (line_set->coordIndex[i] == -1)
     {
       if(corners.size() > 1)
       {
-        initFaceFromCorners(corners, indexFace);
-        indexFace++;
+        initFaceFromCorners(corners, idFace++);
         corners.resize(0);
       }
     }
