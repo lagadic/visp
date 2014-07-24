@@ -356,7 +356,11 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
                                                 bool &changed, bool useOgre, bool testRoi,
                                                 const vpImage<unsigned char> &I,
                                                 const vpCameraParameters &cam,
-                                                const vpTranslationVector &cameraPos,
+                                                const vpTranslationVector &
+                                                #ifdef VISP_HAVE_OGRE
+                                                cameraPos
+                                                #endif
+                                                ,
                                                 unsigned int index)
 {
   unsigned int i = index;
