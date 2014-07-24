@@ -80,6 +80,22 @@ The following example also available in tutorial-trace.cpp shows how to use the 
 
 \includelineno tutorial-trace.cpp
 
+
+\note In the previous example it is important to notice that the following lines have to be put prior to any other ViSP includes:
+\code
+#define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
+#include <visp/vpDebug.h>
+\endcode
+For example, if you modify the previous example just by including <visp/vpImage.h> on the top of the file, you will get the following warnings:
+\code 
+Building CXX object tutorial/trace/CMakeFiles/tutorial-trace.dir/tutorial-trace.cpp.o
+.../ViSP-code/tutorial/trace/tutorial-trace.cpp:5:1: warning: "VP_DEBUG_MODE" redefined
+In file included from .../ViSP-build-debug/include/visp/vpImage.h:52,
+                 from .../ViSP-code/tutorial/trace/tutorial-trace.cpp:2:
+.../ViSP-build-debug/include/visp/vpDebug.h:67:1: warning: this is the location of the previous definition
+\endcode 
+
+
 When ViSP library was built without debug and trace the previous example produces the output:
 \code 
 %./tutorial-trace
