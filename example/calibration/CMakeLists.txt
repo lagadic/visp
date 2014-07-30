@@ -81,7 +81,7 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
 
 # Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
 # If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
-if (CMAKE_VERSION VERSION_GREATER 3.0.0)
+if (CMAKE_VERSION VERSION_GREATER 2.8.12)
   foreach(data ${data2copy})
     add_custom_command(
       TARGET camera_calibration

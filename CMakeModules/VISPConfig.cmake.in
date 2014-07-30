@@ -221,7 +221,7 @@ endmacro()
 # Copy the data files to the same location than the target associated to the cpp files
 # Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
 # If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
-if (CMAKE_VERSION VERSION_GREATER 3.0.0)
+if (CMAKE_VERSION VERSION_GREATER 2.8.12)
   macro(visp_copy_data file_cpp file_data)
     get_filename_component(target ${file_cpp} NAME_WE)
     #get_target_property(target_location ${target} LOCATION)
