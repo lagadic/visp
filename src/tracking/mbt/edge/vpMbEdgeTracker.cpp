@@ -1659,10 +1659,11 @@ vpMbEdgeTracker::removeLine(const std::string& name)
   \param P2,P3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param r : Radius of the circle.
+  \param idFace : Id of the face that is associated to the circle to handle visibility test.
   \param name : the optional name of the circle.
 */
 void
-vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int polygon, const std::string& name)
+vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace, const std::string& name)
 {
   bool already_here = false ;
   vpMbtDistanceCircle *ci ;
@@ -1686,7 +1687,7 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
         ci->setMovingEdge(&me);
         ci->setIndex(ncircle);
         ci->setName(name);
-        ci->index_polygon = polygon;
+        ci->index_polygon = idFace;
         ci->hiddenface = &faces ;
 
 //        if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
@@ -2023,6 +2024,7 @@ vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint 
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
+  \param idFace : Not used. Id of the face that is associated to the cylinder to handle visibility test.
 */
 void
 vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*idFace*/)
