@@ -45,7 +45,7 @@
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
   : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL),
     ptTemplateInit(false), templateSize(0), templateSizePyr(NULL),
-    ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL), ptTemplateSelectInit(NULL),
+    ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false),
     templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
     ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
     pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(),
