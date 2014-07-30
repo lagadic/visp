@@ -2234,6 +2234,13 @@ add_subdirectory(src)
 # case 1: <binary dir>/ViSPConfig.cmake for use with make
 # case 2: <install dir>/ViSPConfig.cmake for use with make install
 
+# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
+# Here waiting for a better solution, we turn the policy off by using the previous
+# behavior valid until CMake 2.8.12
+if(POLICY CMP0026)
+  cmake_policy(SET CMP0026 OLD)
+endif()
+
 get_target_property(VISP_LIBNAME_DBG ${VISP_INTERN_LIBRARY} LOCATION_Debug)
 get_target_property(VISP_LIBNAME_OPT ${VISP_INTERN_LIBRARY} LOCATION_Release)
 

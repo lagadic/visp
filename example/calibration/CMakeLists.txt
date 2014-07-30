@@ -66,8 +66,6 @@ ENDFOREACH(source)
 ADD_TEST(calibrateTsai calibrateTsai)
 
 # copy the data
-get_target_property(target_location camera_calibration LOCATION)
-get_filename_component(target_location "${target_location}" PATH)
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-chessboard.cfg" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/default-circles.cfg" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/chessboard-01.png" )
@@ -80,10 +78,25 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
-foreach(data ${data2copy})
-  add_custom_command(
-    TARGET camera_calibration
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${data}" "${target_location}"
-  )
-endforeach()
+
+# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
+# If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
+if (CMAKE_VERSION VERSION_GREATER 3.0.0)
+  foreach(data ${data2copy})
+    add_custom_command(
+      TARGET camera_calibration
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${data}" "$<TARGET_FILE_DIR:camera_calibration"
+    )
+  endforeach()
+else()
+  get_target_property(target_location camera_calibration LOCATION)
+  get_filename_component(target_location "${target_location}" PATH)
+  foreach(data ${data2copy})
+    add_custom_command(
+      TARGET camera_calibration
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${data}" "${target_location}"
+    )
+  endforeach()
+endif()
