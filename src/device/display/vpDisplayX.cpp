@@ -1966,7 +1966,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       XSetWindowBackgroundPixmap ( display, window, pixmap );
       //        XClearWindow ( display, window );
       //        XSync ( display,1 );
@@ -1976,10 +1976,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
     {
       unsigned short *dst_16 = NULL;
       unsigned char  *dst_8  = NULL;
-      for ( unsigned int i = iP.get_i(); i < iP.get_i()+h ; i++ ) {
+      for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
         dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
         dst_16 = (unsigned short *) dst_8;
-        for ( unsigned int j=iP.get_j() ; j < iP.get_j()+w; j++ )
+        for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {
           * ( dst_16 + j ) = ( unsigned short ) colortable[I[i][j]] ;
         }
@@ -2009,7 +2009,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
 //      }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       XSetWindowBackgroundPixmap ( display, window, pixmap );
       //        XClearWindow ( display, window );
       //        XSync ( display,1 );
@@ -2049,7 +2049,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       XSetWindowBackgroundPixmap ( display, window, pixmap );
       //        XClearWindow ( display, window );
       //        XSync ( display,1 );
@@ -2093,10 +2093,10 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
       unsigned char  *dst_8  = NULL;
       unsigned int r, g, b;
 
-      for ( unsigned int i = iP.get_i(); i < iP.get_i()+h ; i++ ) {
+      for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
         dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
         dst_16 = (unsigned short *) dst_8;
-        for ( unsigned int j=iP.get_j() ; j < iP.get_j()+w; j++ )
+        for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {
           r = I[i][j].R;
           g = I[i][j].G;
@@ -2168,7 +2168,7 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
       }
 
       // Affichage de l'image dans la Pixmap.
-      XPutImage ( display, pixmap, context, Ximage, iP.get_u(), iP.get_v(), iP.get_u(), iP.get_v(), w, h );
+      XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       XSetWindowBackgroundPixmap ( display, window, pixmap );
       //        XClearWindow ( display, window );
       //        XSync ( display,1 );
@@ -2256,7 +2256,7 @@ void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w, c
   if ( displayHasBeenInitialized )
   {
     //XClearWindow ( display, window );
-    XClearArea ( display, window,iP.get_u(),iP.get_v(),w,h,0 );
+    XClearArea ( display, window,(int)iP.get_u(),(int)iP.get_v(),w,h,0 );
     XFlush ( display );
   }
   else
