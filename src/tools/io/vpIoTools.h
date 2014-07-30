@@ -178,6 +178,22 @@ public:
   static std::string path(const char * pathname);
   static std::string path(const std::string &pathname);
   
+  /*!
+   	 Define the directory separator character, backslash ('\') for windows platform or slash ('/') otherwise.
+   */
+  static const char separator =
+  #if defined(_WIN32)
+  	'\\';
+  #else
+  	'/';
+  #endif
+
+  static std::string getName(const std::string &pathname);
+  static std::string getParent(const std::string& pathname);
+  static std::string createFilePath(const std::string& parent, const std::string child);
+  static bool isAbsolutePathname(const std::string& pathname);
+  static std::pair<std::string, std::string> splitDrive(const std::string& pathname);
+
   // read configuration file
   static bool loadConfigFile(const std::string &confFile);
   static bool readConfigVar(const std::string &var, float &value);
@@ -224,7 +240,7 @@ public:
   // write files
   static void saveConfigFile(const bool &actuallySave = true);
   static void createBaseNamePath(const bool &empty = false);
-  
+
  protected:
   static std::string baseName;
   static std::string baseDir;

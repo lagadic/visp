@@ -55,6 +55,7 @@
 #include <fcntl.h>
 #include <limits>
 #include <cmath>
+#include <algorithm>
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
 #elif defined(_WIN32)
@@ -1075,4 +1076,201 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
     // file copy
     vpIoTools::copy(configFile, dest);
   }
+}
+
+
+/*!
+ 	 Returns the name of the file or directory denoted by this pathname.
+ 	 \return The name of the file or directory denoted by this pathname, or the
+ 	 empty string if this pathname's name sequence is empty
+ */
+std::string vpIoTools::getName(const std::string& pathname)
+{
+	if(pathname.size() > 0)
+	{
+		std::string convertedPathname = vpIoTools::path(pathname);
+
+		size_t index = convertedPathname.find_last_of(vpIoTools::separator);
+		if(index != std::string::npos) {
+			return convertedPathname.substr(index + 1);
+		}
+
+		return convertedPathname;
+	}
+
+	return "";
+}
+
+/*!
+ 	 Returns the pathname string of this pathname's parent.
+     \return Returns the pathname string of this pathname's parent, or
+     the empty string if this pathname does not name a parent directory.
+ */
+std::string vpIoTools::getParent(const std::string& pathname)
+{
+	if(pathname.size() > 0)
+	{
+		std::string convertedPathname = vpIoTools::path(pathname);
+
+		size_t index = convertedPathname.find_last_of(vpIoTools::separator);
+		if(index != std::string::npos) {
+			return convertedPathname.substr(0, index);
+		}
+	}
+
+	return "";
+}
+
+/*!
+ */
+std::string vpIoTools::createFilePath(const std::string& parent, const std::string child)
+{
+	if(child.size() == 0 && parent.size() == 0)
+	{
+		return "";
+	}
+
+	if(child.size() == 0)
+	{
+		return vpIoTools::path(parent);
+	}
+
+	if(parent.size() == 0)
+	{
+		return vpIoTools::path(child);
+	}
+
+	std::string convertedParent = vpIoTools::path(parent);
+	std::string convertedChild = vpIoTools::path(child);
+
+	std::stringstream ss;
+	ss << vpIoTools::separator;
+	std::string stringSeparator;
+	ss >> stringSeparator;
+
+	std::string lastConvertedParentChar = convertedParent.substr(convertedParent.size() - 1);
+	std::string firstConvertedChildChar = convertedChild.substr(0, 1);
+
+	if(lastConvertedParentChar == stringSeparator)
+	{
+		convertedParent = convertedParent.substr(0, convertedParent.size() - 1);
+	}
+
+	if(firstConvertedChildChar == stringSeparator)
+	{
+		convertedChild = convertedChild.substr(1);
+	}
+
+	return std::string(convertedParent + vpIoTools::separator + convertedChild);
+}
+
+/*!
+ 	 Inspired by the Python 2.7.8 module.
+ 	 \return true if the pathname is absolute, false otherwise
+ */
+bool vpIoTools::isAbsolutePathname(const std::string& pathname)
+{
+	//# Return whether a path is absolute.
+	//# Trivial in Posix, harder on the Mac or MS-DOS.
+	//# For DOS it is absolute if it starts with a slash or backslash (current
+	//# volume), or if a pathname after the volume letter and colon / UNC resource
+	//# starts with a slash or backslash.
+	//
+	//def isabs(s):
+	//    """Test whether a path is absolute"""
+	//    s = splitdrive(s)[1]
+	//    return s != '' and s[:1] in '/\\'
+	std::string path = splitDrive(pathname).second;
+	return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
+}
+
+/*!
+ 	 Inspired by the Python 2.7.8 module.
+ 	 \return a pair whose the first element is the drive specification and the second element
+ 	 the path specification
+ */
+std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pathname)
+{
+//# Split a path in a drive specification (a drive letter followed by a
+//# colon) and the path specification.
+//# It is always true that drivespec + pathspec == p
+//def splitdrive(p):
+//    """Split a pathname into drive/UNC sharepoint and relative path specifiers.
+//    Returns a 2-tuple (drive_or_unc, path); either part may be empty.
+//
+//    If you assign
+//        result = splitdrive(p)
+//    It is always true that:
+//        result[0] + result[1] == p
+//
+//    If the path contained a drive letter, drive_or_unc will contain everything
+//    up to and including the colon.  e.g. splitdrive("c:/dir") returns ("c:", "/dir")
+//
+//    If the path contained a UNC path, the drive_or_unc will contain the host name
+//    and share up to but not including the fourth directory separator character.
+//    e.g. splitdrive("//host/computer/dir") returns ("//host/computer", "/dir")
+//
+//    Paths cannot contain both a drive letter and a UNC path.
+//
+//    """
+//    if len(p) > 1:
+//        normp = p.replace(altsep, sep)
+//        if (normp[0:2] == sep*2) and (normp[2] != sep):
+//            # is a UNC path:
+//            # vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
+//            # \\machine\mountpoint\directory\etc\...
+//            #           directory ^^^^^^^^^^^^^^^
+//            index = normp.find(sep, 2)
+//            if index == -1:
+//                return '', p
+//            index2 = normp.find(sep, index + 1)
+//            # a UNC path can't have two slashes in a row
+//            # (after the initial two)
+//            if index2 == index + 1:
+//                return '', p
+//            if index2 == -1:
+//                index2 = len(p)
+//            return p[:index2], p[index2:]
+//        if normp[1] == ':':
+//            return p[:2], p[2:]
+//    return '', p
+
+	const std::string sep = "\\";
+	const std::string sepsep = "\\\\";
+	const std::string altsep = "/";
+
+	if(pathname.size() > 1) {
+		std::string normPathname = pathname;
+		std::replace(normPathname.begin(), normPathname.end(), *altsep.c_str(), *sep.c_str());
+
+		if(normPathname.substr(0, 2) == sepsep && normPathname.substr(2, 1) != sep) {
+			// is a UNC path:
+			// vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
+			// \\machine\mountpoint\directory\etc\...
+			//           directory ^^^^^^^^^^^^^^^
+			size_t index = normPathname.find(sep, 2);
+			if(index == std::string::npos) {
+				return std::pair<std::string, std::string>("", pathname);
+			}
+
+			size_t index2 = normPathname.find(sep, index + 1);
+			//# a UNC path can't have two slashes in a row
+			//# (after the initial two)
+			if(index2 == index + 1) {
+				return std::pair<std::string, std::string>("", pathname);
+			}
+
+			if(index2 == std::string::npos) {
+				index2 = pathname.size();
+			}
+
+			return std::pair<std::string, std::string>(pathname.substr(0, index2), pathname.substr(index2));
+		}
+
+		if(normPathname[1] == ':') {
+			return std::pair<std::string, std::string>(pathname.substr(0, 2), pathname.substr(2));
+		}
+	}
+
+	return std::pair<std::string, std::string>("", pathname);
 }
