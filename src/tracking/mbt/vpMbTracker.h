@@ -369,7 +369,10 @@ protected:
   virtual void initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1)=0;
   
   virtual void loadVRMLModel(const std::string& modelFile);
-  virtual void loadCAOModel(const std::string& modelFile);
+  virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace);
+
+
+  void removeComment(std::ifstream& fileId);
 };
 
 
