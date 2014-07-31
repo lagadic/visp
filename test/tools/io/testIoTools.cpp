@@ -32,10 +32,10 @@
  *
  *
  * Description:
- * Test functions in IoTools.
+ * Test functions in vpIoTools.
  *
  * Authors:
- * 
+ * Souriya Trinh
  *
  *****************************************************************************/
 
