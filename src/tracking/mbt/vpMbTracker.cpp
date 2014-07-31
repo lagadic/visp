@@ -843,7 +843,7 @@ void vpMbTracker::removeComment(std::ifstream& fileId) {
 			fileId.get(c);
 		}
 		fileId.unget();
-	} catch (std::ifstream::failure& e) {
+	} catch (...) {
 		std::cerr << "Cannot read line!" << std::endl;
 		throw vpException(vpException::ioError, "cannot read line");
 	}
@@ -1245,7 +1245,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 		delete[] caoPoints;
 		delete[] caoLinePoints;
-	} catch (std::ifstream::failure& e) {
+	} catch (...) {
 		std::cerr << "Cannot read line!" << std::endl;
 		throw vpException(vpException::ioError, "cannot read line");
 	}
