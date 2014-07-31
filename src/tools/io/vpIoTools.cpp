@@ -172,16 +172,11 @@ vpIoTools::getUserName()
 /*!
   Get the content of an environment variable.
 
-  \warning Under windows, this function is not implemented yet.
-
   \param env : Environment variable name (HOME, LOGNAME...).
-  \return Value of the environment variable
-
-  \exception vpException::notImplementedError : If this method is
-  called under Windows.
+  \return Value of the environment variable.
 
   \exception vpIoException::cantGetenv : If an error occur while
-  getting the environement variable value.
+  getting the environment variable value.
 
   \code
 #include <iostream>
@@ -195,8 +190,8 @@ int main()
     envvalue = vpIoTools::getenv("HOME");
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (...) {
-    std::cout << "Cannot get the environment variable value" << std::endl;
+  catch (vpException &e) {
+    std::cout << e.getMessage() << std::endl;
     return -1;
   }
   return 0;
@@ -206,14 +201,9 @@ int main()
   \sa getenv(std::string &)
 */
 std::string
-vpIoTools::getenv(const char *
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-                  env
-#endif
-                  )
+vpIoTools::getenv(const char *env)
 {
   std::string value;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the environment variable value.
   char *_value = NULL;
   _value = ::getenv(env);
@@ -225,27 +215,16 @@ vpIoTools::getenv(const char *
   value = _value;
 
   return value;
-#elif defined(_WIN32)
-
-  vpERROR_TRACE( "Not implemented!" );
-  throw(vpIoException(vpException::notImplementedError,
-		      "Not implemented!")) ;
-#endif
 }
 
 /*!
   Get the content of an environment variable.
 
-  \warning Under windows, this function is not implemented yet.
-
   \param env : Environment variable name (HOME, LOGNAME...).
   \return Value of the environment variable
 
-  \exception vpException::notImplementedError : If this method is
-  called under Windows.
-
   \exception vpIoException::cantGetenv : If an error occur while
-  getting the environement variable value.
+  getting the environment variable value.
 
   \code
 #include <iostream>
@@ -260,8 +239,8 @@ int main()
     envvalue = vpIoTools::getenv(env);
     std::cout << "$HOME = \"" << envvalue << "\"" << std::endl;
   }
-  catch (...) {
-    std::cout << "Cannot get the environment variable value" << std::endl;
+  catch (vpException &e) {
+    std::cout << e.getMessage() << std::endl;
     return -1;
   }
   return 0;
@@ -271,7 +250,7 @@ int main()
   \sa getenv(const char *)
 */
 std::string
-vpIoTools::getenv(std::string &env)
+vpIoTools::getenv(const std::string &env)
 {
   return (vpIoTools::getenv(env.c_str()));
 }

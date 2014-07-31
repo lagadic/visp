@@ -159,7 +159,7 @@ public:
   static void getUserName(std::string &username);
   static std::string getUserName();
   static std::string getenv(const char *env);
-  static std::string getenv(std::string &env);
+  static std::string getenv(const std::string &env);
   static void getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch);  
   static bool checkDirectory(const char *dirname);
   static bool checkDirectory(const std::string &dirname);
@@ -172,8 +172,7 @@ public:
   static bool remove(const char *filename);
   static bool remove(const std::string &filename);
   static bool rename(const char *oldfilename, const char *newfilename);
-  static bool rename(const std::string &oldfilename, 
-		     const std::string &newfilename);
+  static bool rename(const std::string &oldfilename, const std::string &newfilename);
   
   static std::string path(const char * pathname);
   static std::string path(const std::string &pathname);
