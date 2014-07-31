@@ -287,7 +287,7 @@ int main(int argc, char **argv)
             std::string username = vpIoTools::getUserName();
 
             // Append to the output path string, the login name of the user
-            opath +=  vpIoTools::path("/") + username;
+            opath = vpIoTools::createFilePath(opath, username);
 
             // Test if the output path exist. If no try to create it
             if (vpIoTools::checkDirectory(opath) == false) {

@@ -176,10 +176,8 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -226,7 +224,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    filename = ipath +  vpIoTools::path("/ViSP-images/ellipse-1/image.%04d.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/ellipse-1/image.%04d.pgm");
 
     // Build the name of the image file
     vpVideoReader reader;
@@ -264,7 +262,6 @@ main(int argc, const char ** argv)
     me.setPointsToTrack(60) ;
     me.setThreshold(15000) ;
 
-
     nurbs.setMe(&me);
     nurbs.setDisplay(vpMeSite::RANGE_RESULT) ;
     nurbs.setNbControlPoints(14);
@@ -291,14 +288,12 @@ main(int argc, const char ** argv)
       nurbs.display(I, vpColor::green) ;
     }
 
-
     nurbs.track(I) ;
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I) ;
     }
     std::cout <<"------------------------------------------------------------"<<std::endl;
-
 
     for (int iter = 1 ; iter < 40 ; iter++)
     {

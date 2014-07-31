@@ -186,10 +186,8 @@ main(int argc, const char ** argv)
     std::cout << std::endl ;
 
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -241,7 +239,7 @@ main(int argc, const char ** argv)
 
     if (opt_ppath.empty())
     {
-      filename = ipath +  vpIoTools::path("/ViSP-images/video/cube.mpeg");
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/video/cube.mpeg");
     }
     else
     {

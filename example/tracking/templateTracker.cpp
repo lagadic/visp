@@ -232,10 +232,8 @@ main(int argc, const char ** argv)
     WarpType opt_warp_type = WARP_AFFINE;
     long opt_last_frame = 30;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -263,9 +261,9 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = opt_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mire-2/image.%04d.pgm");
     else
-      ipath = env_ipath + vpIoTools::path("/ViSP-images/mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mire-2/image.%04d.pgm");
 
     vpImage<unsigned char> I;
     vpVideoReader reader;

@@ -394,10 +394,8 @@ int main(int argc, const char **argv)
     std::string filename;
     bool opt_click_allowed = true;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -452,13 +450,13 @@ int main(int argc, const char **argv)
 
     if (opt_ppath.empty()){
       // Set the path location of the image sequence
-      dirname = ipath + vpIoTools::path("/ViSP-images/mire-2/");
+      dirname = vpIoTools::createFilePath(ipath, "ViSP-images/mire-2");
 
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
       s << "image.%04d.pgm";
-      filename = dirname + s.str();
+      filename = vpIoTools::createFilePath(dirname, s.str());
     }
     else {
       filename = opt_ppath;

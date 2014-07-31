@@ -161,10 +161,8 @@ main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -192,7 +190,7 @@ main(int argc, const char ** argv)
       opath = opt_opath;
 
     // Append to the output path string, the login name of the user
-    opath += vpIoTools::path("/") + username;
+    opath = vpIoTools::createFilePath(opath, username);
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(opath) == false) {
@@ -244,24 +242,24 @@ main(int argc, const char ** argv)
     //-------------------- .pgm -> .ppm
     vpTRACE("Convert a grey image (.pgm) to a color image (.ppm)");
     // Load a grey image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     vpCTRACE << "Load " <<  filename << std::endl;
     vpImageIo::read(Ig, filename) ;
     // Create a color image from the grey
     vpImageConvert::convert(Ig, Ic);
-    filename = opath +  vpIoTools::path("/Klimt_color.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_color.ppm");
     vpCTRACE << "Write " << filename << std::endl;
     vpImageIo::write(Ic, filename) ;
 
     //-------------------- .ppm -> .pgm
     vpTRACE("Convert a color image (.ppm) to a grey image (.pgm)");
     // Load a color image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
     vpCTRACE << "Load " << filename << std::endl;
     vpImageIo::read(Ic, filename) ;
     // Create a grey image from the color
     vpImageConvert::convert(Ic, Ig);
-    filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey.pgm");
     vpCTRACE << "Write " << filename << std::endl;
     vpImageIo::write(Ig, filename) ;
 
@@ -279,7 +277,7 @@ main(int argc, const char ** argv)
     // Convert a IplImage to a vpImage<vpRGBa>
     ////////////////////////
     IplImage* image = NULL; /*!< The image read / acquired */
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -290,13 +288,13 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(image, Ic);
-    filename = opath +  vpIoTools::path("/Klimt_color_cv.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_color_cv.ppm");
     /* Save the the current image */
     vpImageIo::write(Ic, filename) ;
 
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
 
     /* Read the pgm image */
 
@@ -308,7 +306,7 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(image, Ic);
-    filename = opath +  vpIoTools::path("/Klimt_grey_cv.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey_cv.ppm");
     /* Save the the current image */
     vpImageIo::write(Ic, filename) ;
 
@@ -317,7 +315,7 @@ main(int argc, const char ** argv)
     ///////////////////////////
     // Convert a IplImage to a vpImage<unsigned char>
     ////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -329,13 +327,13 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(image, Ig);
-    filename = opath +  vpIoTools::path("/Klimt_color_cv.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_color_cv.pgm");
     /* Save the the current image */
     vpImageIo::write(Ig, filename) ;
 
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
 
     /* Read the pgm image */
 
@@ -348,7 +346,7 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(image, Ig);
-    filename = opath +  vpIoTools::path("/Klimt_grey_cv.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey_cv.pgm");
     /* Save the the current image */
     vpImageIo::write(Ig, filename) ;
 
@@ -357,7 +355,7 @@ main(int argc, const char ** argv)
     ////////////////////////////////////
     // Convert a vpImage<vpRGBa> to a IplImage
     ////////////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -365,7 +363,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Load " << filename << std::endl;
     vpImageIo::read(Ic, filename) ;
     vpImageConvert::convert(Ic, image);
-    filename = opath +  vpIoTools::path("/Klimt_ipl_color_cv.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_ipl_color_cv.ppm");
     /* Save the the current image */
     vpCTRACE << "Write " << filename << std::endl;
     if((cvSaveImage(filename.c_str(), image)) == 0) {
@@ -378,7 +376,7 @@ main(int argc, const char ** argv)
     ////////////////////////////////////////
     // Convert a IplImage to a vpImage<unsigned char>
     ////////////////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
 
     /* Read the grey image */
 
@@ -386,7 +384,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Load " << filename << std::endl;
     vpImageIo::read(Ig, filename) ;
     vpImageConvert::convert(Ig, image);
-    filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cv.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_ipl_grey_cv.pgm");
     /* Save the the current image */
 
     vpCTRACE << "Write " << filename << std::endl;
@@ -411,7 +409,7 @@ main(int argc, const char ** argv)
     // Convert a cv::Mat to a vpImage<vpRGBa>
     ////////////////////////
     cv::Mat imageMat;
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
     vpCTRACE << "Reading the color image with c++ interface of opencv: "<< std::endl
              << filename << std::endl;
     imageMat = cv::imread(filename, 1);// force to a three channel color image.
@@ -420,12 +418,12 @@ main(int argc, const char ** argv)
       return -1;
     }
     vpImageConvert::convert(imageMat, Ic);
-    filename = opath +  vpIoTools::path("/Klimt_color_cvMat.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_color_cvMat.ppm");
     /* Save the the current image */
     vpImageIo::write(Ic, filename) ;
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     /* Read the pgm image */
 
     vpCTRACE << "Reading the greyscale image with opencv: "<< std::endl
@@ -436,7 +434,7 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(imageMat, Ic);
-    filename = opath +  vpIoTools::path("/Klimt_grey_cvMat.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey_cvMat.ppm");
     /* Save the the current image */
     vpImageIo::write(Ic, filename) ;
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
@@ -444,7 +442,7 @@ main(int argc, const char ** argv)
     ///////////////////////////
     // Convert a cv::Mat to a vpImage<unsigned char>
     ////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -456,12 +454,12 @@ main(int argc, const char ** argv)
       return -1;
     }
     vpImageConvert::convert(imageMat, Ig);
-    filename = opath +  vpIoTools::path("/Klimt_color_cvMat.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_color_cvMat.pgm");
     /* Save the the current image */
     vpImageIo::write(Ig, filename) ;
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
 
     /* Read the pgm image */
 
@@ -473,7 +471,7 @@ main(int argc, const char ** argv)
       return (-1);
     }
     vpImageConvert::convert(imageMat, Ig);
-    filename = opath +  vpIoTools::path("/Klimt_grey_cvMat.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey_cvMat.pgm");
     /* Save the the current image */
     vpImageIo::write(Ig, filename) ;
 
@@ -482,7 +480,7 @@ main(int argc, const char ** argv)
     ////////////////////////////////////
     // Convert a vpImage<vpRGBa> to a cv::Mat
     ////////////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -490,7 +488,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Load " << filename << std::endl;
     vpImageIo::read(Ic, filename) ;
     vpImageConvert::convert(Ic, imageMat);
-    filename = opath +  vpIoTools::path("/Klimt_ipl_color_cvMat.ppm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_ipl_color_cvMat.ppm");
     /* Save the the current image */
     vpCTRACE << "Write " << filename << std::endl;
     if(!cv::imwrite(filename, imageMat)){
@@ -503,7 +501,7 @@ main(int argc, const char ** argv)
     ////////////////////////////////////////
     // Convert a IplImage to a vpImage<unsigned char>
     ////////////////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
 
     /* Read the grey image */
 
@@ -511,7 +509,7 @@ main(int argc, const char ** argv)
     vpCTRACE << "Load " << filename << std::endl;
     vpImageIo::read(Ig, filename);
     vpImageConvert::convert(Ig, imageMat);
-    filename = opath +  vpIoTools::path("/Klimt_ipl_grey_cvMat.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_ipl_grey_cvMat.pgm");
     /* Save the the current image */
 
     vpCTRACE << "Write " << filename << std::endl;
@@ -529,7 +527,7 @@ main(int argc, const char ** argv)
     ////////////////////////////////////
     // Split a vpImage<vpRGBa> to vpImage<unsigned char>
     ////////////////////////////////////
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 
     /* Read the color image */
 
@@ -546,13 +544,13 @@ main(int argc, const char ** argv)
 
     std::cout<<"Time for 1000 split (ms): "<< endtime - begintime <<std::endl;
 
-    filename = opath +  vpIoTools::path("/Klimt_RChannel.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_RChannel.pgm");
     /* Save the the current image */
     vpCTRACE << "Write " << filename << std::endl;
     vpImageIo::write(R, filename) ;
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
 
-    filename = opath +  vpIoTools::path("/Klimt_BChannel.pgm");
+    filename =  vpIoTools::createFilePath(opath, "Klimt_BChannel.pgm");
     /* Save the the current image */
     vpCTRACE << "Write " << filename << std::endl;
     vpImageIo::write(B, filename) ;

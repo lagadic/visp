@@ -184,15 +184,12 @@ main(int argc, const char ** argv)
     bool opt_display = true;
     int opt_niter = 400;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
       ipath = env_ipath;
-
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
@@ -229,7 +226,7 @@ main(int argc, const char ** argv)
     }
 
     vpImage<unsigned char> Itexture ;
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::read(Itexture,filename) ;
 
     vpColVector X[4];
@@ -259,9 +256,6 @@ main(int argc, const char ** argv)
     sim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION) ;
     sim.init(Itexture, X);
 
-
-
-
     vpCameraParameters cam(870, 870, 160, 120);
 
     // ----------------------------------------------------------
@@ -277,7 +271,6 @@ main(int argc, const char ** argv)
     sim.setCameraPosition(cdMo) ;
     sim.getImage(I,cam);  // and aquire the image Id
     Id = I ;
-
 
     // display the image
 #if defined VISP_HAVE_X11
@@ -299,7 +292,6 @@ main(int argc, const char ** argv)
       vpDisplay::getClick(I) ;
     }
 #endif
-
 
     // ----------------------------------------------------------
     // position the robot at the initial position
@@ -328,9 +320,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> Idiff ;
     Idiff = I ;
 
-
     vpImageTools::imageDifference(I,Id,Idiff) ;
-
 
     // Affiche de l'image de difference
 #if defined VISP_HAVE_X11
@@ -364,14 +354,11 @@ main(int argc, const char ** argv)
     sI.setCameraParameters(cam) ;
     sI.buildFrom(I) ;
 
-
     // desired visual feature built from the image
     vpFeatureLuminance sId ;
     sId.init(I.getHeight(), I.getWidth(),  Z) ;
     sId.setCameraParameters(cam) ;
     sId.buildFrom(Id) ;
-
-
 
     // Matrice d'interaction, Hessien, erreur,...
     vpMatrix Lsd;   // matrice d'interaction a la position desiree
@@ -385,7 +372,6 @@ main(int argc, const char ** argv)
     // here it is computed at the desired position
     sId.interaction(Lsd) ;
 
-
     // Compute the Hessian H = L^TL
     Hsd = Lsd.AtA() ;
 
@@ -396,14 +382,11 @@ main(int argc, const char ** argv)
     diagHsd.eye(n);
     for(unsigned int i = 0 ; i < n ; i++) diagHsd[i][i] = Hsd[i][i];
 
-
-
     // ------------------------------------------------------
     // Control law
     double lambda ; //gain
     vpColVector e ;
     vpColVector v ; // camera velocity send to the robot
-
 
     // ----------------------------------------------------------
     // Minimisation
@@ -411,15 +394,9 @@ main(int argc, const char ** argv)
     double mu ;  // mu = 0 : Gauss Newton ; mu != 0  : LM
     double lambdaGN;
 
-
     mu       =  0.01;
     lambda   = 30 ;
     lambdaGN = 30;
-
-
-
-
-
 
     // set a velocity control mode
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
@@ -429,11 +406,8 @@ main(int argc, const char ** argv)
     int iterGN = 90 ; // swicth to Gauss Newton after iterGN iterations
 
     double normeError = 0;
-    do
-    {
-
+    do {
       std::cout << "--------------------------------------------" << iter++ << std::endl ;
-
 
       //  Acquire the new image
       sim.setCameraPosition(cMo) ;

@@ -166,10 +166,8 @@ int main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -197,7 +195,7 @@ int main(int argc, const char ** argv)
       opath = opt_opath;
 
     // Append to the output path string, the login name of the user
-    opath += vpIoTools::path("/") + username;
+    opath = vpIoTools::createFilePath(opath, username);
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(opath) == false) {
@@ -253,9 +251,9 @@ int main(int argc, const char ** argv)
     cam.initPersProjWithDistortion(600,600,192,144,-0.17,0.17);
     // Read the input grey image from the disk
 #if defined BW
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm") ;
 #elif defined COLOR
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
 #endif
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I, filename) ;
@@ -278,9 +276,9 @@ int main(int argc, const char ** argv)
 
     // Write the undistorted image on the disk
 #if defined BW
-    filename = opath +  vpIoTools::path("/Klimt_undistorted.pgm");
+    filename = vpIoTools::path( vpIoTools::createFilePath(opath, "Klimt_undistorted.pgm") );
 #elif defined COLOR
-    filename = opath +  vpIoTools::path("/Klimt_undistorted.ppm");
+    filename = vpIoTools::path( vpIoTools::createFilePath(opath, "Klimt_undistorted.ppm") );
 #endif
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U, filename) ;

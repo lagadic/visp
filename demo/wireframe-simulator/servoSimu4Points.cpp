@@ -291,9 +291,8 @@ main(int argc, const char ** argv)
     X[3][1] = 0.2;
     X[3][2] = 0;
 
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     if (! env_ipath.empty())
       ipath = env_ipath;
@@ -301,7 +300,7 @@ main(int argc, const char ** argv)
     if (!opt_ipath.empty())
       ipath = opt_ipath;
 
-    filename = ipath +  vpIoTools::path("/ViSP-images/mire/mire.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/mire/mire.pgm");
 
     imsim.init(filename.c_str(), X);
 

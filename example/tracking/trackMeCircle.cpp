@@ -174,15 +174,12 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
       ipath = env_ipath;
-
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed,
@@ -225,10 +222,10 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    dirname = ipath +  vpIoTools::path("/ViSP-images/circle/");
+    dirname = vpIoTools::createFilePath(ipath, "ViSP-images/circle");
 
     // Build the name of the image file
-    filename = dirname + "circle.pgm";
+    filename = vpIoTools::createFilePath(dirname, "circle.pgm");
 
     // Read the PGM image named "filename" on the disk, and put the
     // bitmap into the image structure I.  I is initialized to the
@@ -285,7 +282,6 @@ main(int argc, const char ** argv)
     me.setSampleStep(2) ;
     me.setPointsToTrack(60) ;
     me.setThreshold(15000) ;
-
 
     E1.setCircle(true) ;
     E1.setMe(&me) ;

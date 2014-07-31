@@ -190,10 +190,8 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -218,7 +216,7 @@ main(int argc, const char ** argv)
       opath = opt_opath;
 
     // Append to the output path string, the login name of the user
-    std::string odirname = opath +  vpIoTools::path("/") + username;
+    std::string odirname = vpIoTools::createFilePath(opath, username);
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(odirname) == false) {
@@ -265,17 +263,16 @@ main(int argc, const char ** argv)
     vpImagePoint ip, ip1, ip2;
 
     // Load a grey image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     vpImageIo::read(I, filename) ;
 
-    // For this grey level image, open a GDI display at position 100,100
-    // in the screen, and with title "GDI display"
+    // Create a display using X11
     vpDisplayGDI display;
 
     if (opt_display) {
-      // We open a window using GDI.
-      // Its size is automatically defined by the image (I) size
-      display.init(I, 100, 100, "GDI display") ;
+      // For this grey level image, open a X11 display at position 100,100
+      // in the screen, and with title "X11 display"
+      display.init(I, 100, 100, "X11 display") ;
 
       // Display the image
       vpDisplay::display(I) ;
@@ -353,7 +350,7 @@ main(int argc, const char ** argv)
       vpDisplay::getImage(I, Ioverlay) ;
 
       // Write the color image on the disk
-      filename = odirname +  vpIoTools::path("/Klimt_grey.overlay.ppm");
+      filename = vpIoTools::createFilePath(odirname, "Klimt_grey.overlay.ppm");
       vpImageIo::write(Ioverlay, filename) ;
 
       // If click is allowed, wait for a mouse click to close the display
@@ -371,17 +368,16 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> Irgba ;
 
     // Load a grey image from the disk and convert it to a color image
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
     vpImageIo::read(Irgba, filename) ;
 
-    // For this color image, open a GDI display at position 100,100
-    // in the screen, and with title "GDI color display"
+    // Create a new display
     vpDisplayGDI displayRGBa;
 
     if (opt_display) {
-      // We open a window using GDI.
-      // Its size is automatically defined by the image (Irgba) size
-      displayRGBa.init(Irgba, 100, 100, "GDI color display");
+      // For this color image, open a X11 display at position 100,100
+      // in the screen, and with title "X11 color display"
+      displayRGBa.init(Irgba, 100, 100, "X11 color display");
 
       // Display the color image
       vpDisplay::display(Irgba) ;
@@ -411,6 +407,15 @@ main(int argc, const char ** argv)
       // bufferized. Force to display the content that has been bufferized.
       vpDisplay::flush(Irgba);
 
+      // Create a color image
+      vpImage<vpRGBa> Ioverlay ;
+      // Updates the color image with the original loaded image and the overlay
+      vpDisplay::getImage(Irgba, Ioverlay) ;
+
+      // Write the color image on the disk
+      filename = vpIoTools::createFilePath(odirname, "Klimt_color.overlay.ppm");
+      vpImageIo::write(Ioverlay, filename) ;
+
       // If click is allowed, wait for a blocking mouse click to exit.
       if (opt_click_allowed) {
         std::cout << "\nA click to exit the program..." << std::endl;
@@ -418,6 +423,7 @@ main(int argc, const char ** argv)
         std::cout << "Bye" << std::endl;
       }
     }
+    return 0;
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;

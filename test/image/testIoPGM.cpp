@@ -157,10 +157,8 @@ main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -188,7 +186,7 @@ main(int argc, const char ** argv)
       opath = opt_opath;
 
     // Append to the output path string, the login name of the user
-    opath += vpIoTools::path("/") + username;
+    opath = vpIoTools::createFilePath(opath, username);
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(opath) == false) {
@@ -238,18 +236,18 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Load a grey image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I, filename);
     // Write the content of the image on the disk
-    filename = opath +  vpIoTools::path("/Klimt_grey.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_grey.pgm");
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename) ;
 
     try {
       // Try to load a non existing image (test for exceptions)
       // Load a non existing grey image
-      filename = ipath +  vpIoTools::path("/ViSP-images/image-that-does-not-exist.pgm");
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.pgm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename) ;
     }
@@ -259,7 +257,7 @@ main(int argc, const char ** argv)
 
     try {
       // Try to write an image to a non existing directory
-      filename = opath +  vpIoTools::path("/directory-that-does-not-exist/Klimt.pgm");
+      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.pgm");
       std::cout << "Write image: " << filename << std::endl;
       vpImageIo::write(I, filename) ;
     }

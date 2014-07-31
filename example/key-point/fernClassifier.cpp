@@ -201,11 +201,8 @@ main(int argc, const char** argv)
     std::string dirname;
     std::string filename;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL){
-      env_ipath = ptenv;
-    }
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty()){
@@ -254,14 +251,14 @@ main(int argc, const char** argv)
 
 
     // Set the path location of the image sequence
-    dirname = ipath +  vpIoTools::path("/ViSP-images/cube/");
+    dirname = vpIoTools::createFilePath(ipath, "ViSP-images/cube");
 
     // Build the name of the image file
     unsigned iter = 0; // Image number
     std::ostringstream s;
     s.setf(std::ios::right, std::ios::adjustfield);
     s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-    filename = dirname + s.str();
+    filename = vpIoTools::createFilePath(dirname, s.str());
 
     // Read the PGM image named "filename" on the disk, and put the
     // bitmap into the image structure I.  I is initialized to the
@@ -423,7 +420,7 @@ main(int argc, const char** argv)
         }
         s.str("");
         s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
-        filename = dirname + s.str();
+        filename = vpIoTools::createFilePath(dirname, s.str());
         // read the image
         vpImageIo::read(I, filename);
       }

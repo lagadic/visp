@@ -353,10 +353,8 @@ main(int argc, const char ** argv)
     std::string username;
     bool opt_display = true;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -408,7 +406,7 @@ main(int argc, const char ** argv)
       simu.setZoomFactor(1.0f) ;
 
       // Load the cad model
-      filename = ipath +  vpIoTools::path("/ViSP-images/iv/4points.iv");
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/iv/4points.iv");
       simu.load(filename.c_str()) ;
 
       simu.setInternalCameraParameters(cam) ;

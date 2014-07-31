@@ -244,10 +244,8 @@ main(int argc, const char ** argv)
     opt_dtype = vpCV;  
 #endif
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -322,7 +320,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Load a grey image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     vpCTRACE << "Load " <<  filename << std::endl;
     vpImageIo::read(I, filename) ;
 

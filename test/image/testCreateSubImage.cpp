@@ -162,10 +162,8 @@ main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the VISP_IMAGE_PATH environment variable value
-    char *ptenv = getenv("VISP_INPUT_IMAGE_PATH");
-    if (ptenv != NULL)
-      env_ipath = ptenv;
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
     if (! env_ipath.empty())
@@ -193,7 +191,7 @@ main(int argc, const char ** argv)
       opath = opt_opath;
 
     // Append to the output path string, the login name of the user
-    opath += vpIoTools::path("/") + username;
+    opath = vpIoTools::createFilePath(opath, username);
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(opath) == false) {
@@ -241,9 +239,8 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I; // Input image
     vpImage<unsigned char> C; // Cropped output image
 
-
     // Read the input grey image from the disk
-    filename = ipath +  vpIoTools::path("/ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I, filename) ;
 
@@ -258,7 +255,7 @@ main(int argc, const char ** argv)
     vpImageTools::createSubImage(I, crop, C);
 
     // Write the cropped image on the disk
-    filename = opath +  vpIoTools::path("/Klimt_crop.pgm");
+    filename = vpIoTools::createFilePath(opath, "Klimt_crop.pgm");
     std::cout << "Write cropped image: " << filename << std::endl;
     vpImageIo::write(C, filename) ;
     return 0;

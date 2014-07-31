@@ -1057,6 +1057,41 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
   }
 }
 
+/*!
+ Get ViSP images data path. ViSP images data can be installed from Debian or Ubuntu \e visp-images-data package.
+ It can be also installed from ViSP-images.zip that can be found on http://team.inria.fr/lagadic/visp/download.html page.
+
+ This function returns the path to the folder that contains the data.
+ - It checks first if visp-images-data package is installed. In that case returns then -e /usr/share/visp-images-data".
+ - Then it checks if VISP_INPUT_IMAGE_PATH environment variable that gives the location of the data is set. In that
+   case returns the content of this environment var.
+
+ If the path is not found, returns an empty string.
+ */
+std::string vpIoTools::getViSPImagesDataPath()
+{
+  std::string data_path;
+  std::string file_to_test("ViSP-images/mbt/cube.cao");
+  std::string filename;
+#ifdef UNIX
+  // Test if visp-images-data package is u-installed (Ubuntu and Debian)
+  data_path = "/usr/share/visp-images-data";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename))
+    return data_path;
+#endif
+  // Test if VISP_INPUT_IMAGE_PATH env var is set
+  try {
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename))
+      return data_path;
+  }
+  catch(...) {
+  }
+  data_path = "";
+  return data_path;
+}
 
 /*!
  	 Returns the name of the file or directory denoted by this pathname.

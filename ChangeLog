@@ -15,6 +15,8 @@ ViSP 2.9.1 (under development)
         tracking quality indicators.
     . Video reader and writer support mpeg4
     . Compat with RaspberryPi architecture
+    . Auto detection of visp-images-data Debian or Ubuntu package that allows
+      testing without setting VISP_INPUT_IMAGE_PATH
   - Tutorials
     . Introduce a new tutorial to show how to install ViSP from Ubuntu
       official packages.
