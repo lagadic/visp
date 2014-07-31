@@ -1062,7 +1062,7 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
  It can be also installed from ViSP-images.zip that can be found on http://team.inria.fr/lagadic/visp/download.html page.
 
  This function returns the path to the folder that contains the data.
- - It checks first if visp-images-data package is installed. In that case returns then -e /usr/share/visp-images-data".
+ - It checks first if \e visp-images-data package is installed. In that case returns then \e /usr/share/visp-images-data".
  - Then it checks if VISP_INPUT_IMAGE_PATH environment variable that gives the location of the data is set. In that
    case returns the content of this environment var.
 
@@ -1095,8 +1095,8 @@ std::string vpIoTools::getViSPImagesDataPath()
 
 /*!
  	 Returns the name of the file or directory denoted by this pathname.
- 	 \return The name of the file or directory denoted by this pathname, or the
- 	 empty string if this pathname's name sequence is empty
+   \return The name of the file or directory denoted by this pathname, or an
+   empty string if this pathname's name sequence is empty.
  */
 std::string vpIoTools::getName(const std::string& pathname)
 {
@@ -1117,8 +1117,8 @@ std::string vpIoTools::getName(const std::string& pathname)
 
 /*!
  	 Returns the pathname string of this pathname's parent.
-     \return Returns the pathname string of this pathname's parent, or
-     the empty string if this pathname does not name a parent directory.
+   \return The pathname string of this pathname's parent, or
+   an empty string if this pathname does not name a parent directory.
  */
 std::string vpIoTools::getParent(const std::string& pathname)
 {
@@ -1136,6 +1136,14 @@ std::string vpIoTools::getParent(const std::string& pathname)
 }
 
 /*!
+  Return the file path that corresponds to the concatenated
+  \e parent and \e child string files
+  by adding the corresponding separator for unix or windows.
+
+  The corresponding path is also converted. Under
+  windows, all the "/" characters are converted
+  into "\\" characters. Under Unix systems all the "\\"
+  characters are converted into "/" characters.
  */
 std::string vpIoTools::createFilePath(const std::string& parent, const std::string child)
 {
@@ -1179,11 +1187,13 @@ std::string vpIoTools::createFilePath(const std::string& parent, const std::stri
 }
 
 /*!
- 	 Inspired by the Python 2.7.8 module.
- 	 \return true if the pathname is absolute, false otherwise
+   Return whether a path is absolute.
+
+   \return true if the pathname is absolute, false otherwise.
  */
 bool vpIoTools::isAbsolutePathname(const std::string& pathname)
 {
+  //# Inspired by the Python 2.7.8 module.
 	//# Return whether a path is absolute.
 	//# Trivial in Posix, harder on the Mac or MS-DOS.
 	//# For DOS it is absolute if it starts with a slash or backslash (current

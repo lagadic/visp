@@ -345,6 +345,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo,
   \param testRoi : True if a face have to be entirely in the image False otherwise
   \param I : Image used to test if a face is entirely projected in the image.
   \param cam : Camera parameters.
+  \param cameraPos : Position of the camera. Used only when Ogre is used as 3rd party.
   \param index : Index of the face to consider.
 
   \return Return true if the face is visible.

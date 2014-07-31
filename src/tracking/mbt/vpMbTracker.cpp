@@ -887,7 +887,9 @@ void vpMbTracker::removeComment(std::ifstream& fileId) {
   0.5 0 1 2 // radius, index center point, index 2 other points on the plane containing the circle
   \endcode
   
-  \param modelFile : Full name of the *.cao file containing the model.
+  \param modelFile : Full name of the main *.cao file containing the model.
+  \param vectorOfModelFilename : A vector of *.cao files.
+  \param startIdFace : Id of the first face that is found.
 */
 void
 vpMbTracker::loadCAOModel(const std::string& modelFile,
@@ -900,7 +902,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		throw vpException(vpException::ioError, "cannot read CAO model file");
 	}
 
-	std::cout << "Model file : " << modelFile << std::endl;
+  //std::cout << "Model file : " << modelFile << std::endl;
 	vectorOfModelFilename.push_back(modelFile);
 
 	try {
@@ -909,7 +911,6 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		// line begin with the #)).
 		//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
 		removeComment(fileId);
-
 
 		//////////////////////////Read CAO Version (V1, V2, ...)//////////////////////////
 		int caoVersion;

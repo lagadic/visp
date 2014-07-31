@@ -281,8 +281,8 @@ vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpH
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
-  \param displayFullModel : When true, display the circle even if it is non visible.
-  If false, display the circle only if it is visible.
+  \param displayFullModel : When true, display the circle even if non visible.
+  If false, display the circle only if visible.
 */
 void
 vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
@@ -313,6 +313,8 @@ vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneous
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
+  \param displayFullModel : When true, display the circle even if non visible.
+  If false, display the circle only if visible.
 */
 void
 vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
