@@ -436,7 +436,9 @@ main(int argc, const char ** argv)
 
 #ifdef VISP_HAVE_COIN
     // Cleanup memory allocated by Coin library used to load a vrml model in vpMbEdgeTracker::loadModel()
-    SoDB::finish();
+    // We clean only if Coin was used.
+    if(! cao3DModel)
+      SoDB::finish();
 #endif
   
     return 0;
