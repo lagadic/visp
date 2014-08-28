@@ -205,9 +205,9 @@ main(int argc, const char ** argv)
       vpHomogeneousMatrix M ;
       M.insert(R) ;
 
-      M[0][3] = 0.21 ;
-      M[1][3] =- 0.31 ;
-      M[2][3] = 0.5 ;
+      M[0][3] =  0.21 ;
+      M[1][3] = -0.31 ;
+      M[2][3] =  0.5 ;
 
       std::cout << "M" << std::endl << M << std::endl ;
       vpPlane p(0.4,-0.5,0.5,1) ;
