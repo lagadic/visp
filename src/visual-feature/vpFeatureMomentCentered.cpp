@@ -301,12 +301,12 @@ void vpFeatureMomentCentered::compute_interaction() {
 
 
 std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCentered& mu){
-  vpTRACE(" << CENTRED MOMENTS >>");
+  vpTRACE(" << Ls - CENTRED MOMENTS >>");
   unsigned int order_m_1 = (unsigned int)(mu.order - 1);
   for(unsigned int i=0; i<order_m_1; i++){
       for(unsigned int j=0; j<order_m_1-i; j++){
-          std::cout << "L_mu[" << i << "," << j << "] = ";
-          mu.interaction(i,j).matlabPrint(std::cout);
+          os << "L_mu[" << i << "," << j << "] = ";
+          mu.interaction(i,j).matlabPrint(os);
       }
   }
   return os;
