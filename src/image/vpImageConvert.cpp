@@ -571,52 +571,61 @@ int main()
 void
 vpImageConvert::convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool flip)
 {
-  if(src.type() == CV_8UC4){
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    vpRGBa rgbaVal;
-    for(unsigned int i=0; i<dest.getRows(); ++i)
-      for(unsigned int j=0; j<dest.getCols(); ++j){
-        cv::Vec4b tmp = src.at<cv::Vec4b>((int)i, (int)j);
-        rgbaVal.R = tmp[2];
-        rgbaVal.G = tmp[1];
-        rgbaVal.B = tmp[0];
-	rgbaVal.A = tmp[3];
-        if(flip)
-          dest[dest.getRows()-i-1][j] = rgbaVal;
-        else
-          dest[i][j] = rgbaVal;
-      }
-  }else if(src.type() == CV_8UC3){
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    vpRGBa rgbaVal;
-    rgbaVal.A = 0;
-    for(unsigned int i=0; i<dest.getRows(); ++i){
-      for(unsigned int j=0; j<dest.getCols(); ++j){
-        cv::Vec3b tmp = src.at<cv::Vec3b>((int)i, (int)j);
-        rgbaVal.R = tmp[2];
-        rgbaVal.G = tmp[1];
-        rgbaVal.B = tmp[0];
-        if(flip){
-          dest[dest.getRows()-i-1][j] = rgbaVal;
-        }else{
-          dest[i][j] = rgbaVal;
-        }
-      }
-    }
-  }else if(src.type() == CV_8UC1){
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    vpRGBa rgbaVal;
-    for(unsigned int i=0; i<dest.getRows(); ++i){
-      for(unsigned int j=0; j<dest.getCols(); ++j){
-        rgbaVal = src.at<unsigned char>((int)i, (int)j);
-        if(flip){
-          dest[dest.getRows()-i-1][j] = rgbaVal;
-        }else{
-          dest[i][j] = rgbaVal;
-        }
-      }
-    }
-  }
+	if(src.type() == CV_8UC4 || src.type() == CV_8UC3 || src.type() == CV_8UC1)
+	{
+		dest.resize((unsigned int) src.rows, (unsigned int) src.cols);
+		vpRGBa rgbaVal;
+
+		int channels = src.channels();
+		int nRows = src.rows;
+		int nCols = src.cols * channels;
+
+		if (src.isContinuous())
+		{
+			nCols *= nRows;
+			nRows = 1;
+		}
+
+		int i, j;
+		const uchar* p;
+		for(i = 0; i < nRows; ++i)
+		{
+			p = src.ptr<uchar>(i);
+			for (j = 0; j < nCols; j+=channels)
+			{
+				switch(src.type())
+				{
+				case CV_8UC4:
+					rgbaVal.A = p[j + 3];
+					rgbaVal.R = p[j + 2];
+					rgbaVal.G = p[j + 1];
+					rgbaVal.B = p[j];
+					break;
+
+				case CV_8UC3:
+					rgbaVal.R = p[j + 2];
+					rgbaVal.G = p[j + 1];
+					rgbaVal.B = p[j];
+					break;
+
+				case CV_8UC1:
+					rgbaVal = p[j];
+					break;
+
+				default:
+					break;
+				}
+
+				int rowIdx = src.isContinuous() ? (j / (src.cols * channels)) : i;
+				int colIdx = src.isContinuous() ? ((j - rowIdx * src.cols * channels) / channels) : (j / channels);
+				if(flip) {
+					dest[dest.getRows()-rowIdx-1][colIdx] = rgbaVal;
+				} else {
+					dest[rowIdx][colIdx] = rgbaVal;
+				}
+			}
+		}
+	}
 }
 
 /*!
