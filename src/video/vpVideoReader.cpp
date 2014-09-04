@@ -617,7 +617,7 @@ void
 			firstFrame = (long)(0);
 		}
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else if (! firstFrameIndexIsSet)
 	{		
 		firstFrame = (long) (0);		
@@ -639,7 +639,7 @@ double vpVideoReader::getFramerate()
 	{
 		framerate = ffmpeg->getFramerate();
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	 framerate = capture.get(CV_CAP_PROP_FPS);
 	 if(framerate == 0)
 	 {
