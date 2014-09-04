@@ -183,7 +183,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 	height = I.getHeight();
 	width = I.getWidth();
 
-#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if !defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
   dummyImage = cv::Mat(height, width, CV_8UC3);
 #endif
 
@@ -250,7 +250,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 	height = I.getHeight();
 	width = I.getWidth();
 
-#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if !defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
   dummyImage = cv::Mat(height, width, CV_8UC3);
 #endif
 
