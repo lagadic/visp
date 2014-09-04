@@ -52,6 +52,13 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpFFMPEG.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020200
+#include "opencv2/highgui/highgui.hpp"
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#include "opencv/highgui.h"
+#endif
+
+
 /*!
   \class vpVideoWriter
 
@@ -97,13 +104,14 @@
 
 int main()
 {
-#ifdef VISP_HAVE_FFMPEG
   vpImage<vpRGBa> I;
 
   vpVideoWriter writer;
 
   // Set up the framerate to 30Hz. Default is 25Hz.
   writer.setFramerate(30);
+
+#ifdef VISP_HAVE_FFMPEG
   // Set up the bit rate
   writer.setBitRate(1000000);
   // Set up the codec to use
@@ -111,6 +119,9 @@ int main()
   writer.setCodec(CODEC_ID_MPEG2VIDEO);
 #else
   writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
+#endif
+#elif defined VISP_HAVE_OPENCV
+  writer.setCodec( CV_FOURCC('M','P','E','G') );
 #endif
   writer.setFileName("./test.mpeg");
 
@@ -127,7 +138,6 @@ int main()
   writer.close();
 
   return 0;
-#endif
 }
   \endcode
 */
@@ -147,6 +157,10 @@ class VISP_EXPORT vpVideoWriter
     //!The bite rate
     unsigned int bit_rate;
     int framerate;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+	  cv::VideoWriter writer;
+	  int fourcc;
+	  double framerate;
 #endif
     //!Types of available formats
     typedef enum
@@ -235,6 +249,8 @@ class VISP_EXPORT vpVideoWriter
 #else
     inline void setCodec(const AVCodecID codec_id) {this->codec = codec_id;}
 #endif
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+	inline void setCodec(const int fourcc) {this->fourcc = fourcc;}
 #endif
 
     void setFileName(const char *filename);
@@ -254,6 +270,17 @@ class VISP_EXPORT vpVideoWriter
       By default the framerate is set to 25Hz.
     */
     inline void setFramerate(const int frame_rate) {
+      this->framerate = frame_rate;
+    }
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+	/*!
+      Sets the framerate in Hz of the video when encoding.
+
+      \param frame_rate : the expected framerate.
+
+      By default the framerate is set to 25Hz.
+    */
+    inline void setFramerate(const double frame_rate) {
       this->framerate = frame_rate;
     }
 #endif

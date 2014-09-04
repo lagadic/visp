@@ -53,6 +53,12 @@
 #include <visp/vpDiskGrabber.h>
 #include <visp/vpFFMPEG.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020200
+#include "opencv2/highgui/highgui.hpp"
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#include "opencv/highgui.h"
+#endif
+
 /*!
   \class vpVideoReader
 
@@ -162,6 +168,11 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 #ifdef VISP_HAVE_FFMPEG
     //!To read video files
     vpFFMPEG *ffmpeg;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+    //!To read video files with OpenCV
+    cv::VideoCapture capture;
+    cv::Mat dummyImage;
+    cv::Mat frame;
 #endif
     //!Types of available formats
     typedef enum
@@ -183,6 +194,9 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       FORMAT_MPEG4,
       FORMAT_MOV,
       FORMAT_OGV,
+      FORMAT_WMV,
+      FORMAT_FLV,
+      FORMAT_MKV,
       FORMAT_UNKNOWN
     } vpVideoFormatType;
     
@@ -222,7 +236,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     }
     bool getFrame(vpImage<vpRGBa> &I, long frame);
     bool getFrame(vpImage<unsigned char> &I, long frame);
-    double getFramerate() const;
+    double getFramerate();
 
     /*!
       Get the current frame index. This index is updated at each call of the
@@ -281,6 +295,8 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     static std::string getExtension(const std::string &filename);
     void findFirstFrameIndex();
     void findLastFrameIndex();
+	bool isImageExtensionSupported();
+	bool isVideoExtensionSupported();
 };
 
 #endif
