@@ -79,7 +79,7 @@ vpVideoWriter::vpVideoWriter() :
 #  endif
   bit_rate = 500000;
   framerate = 25;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   framerate = 25.0;
   fourcc = CV_FOURCC_DEFAULT;
 #endif
@@ -170,7 +170,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
       throw (vpException(vpException::ioError ,"Could not open the video"));
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	  writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
 
 	  if(!writer.isOpened())
@@ -223,7 +223,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
       throw (vpException(vpException::ioError ,"Could not open the video"));
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	  writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
 
 	  if(!writer.isOpened())
@@ -274,7 +274,7 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
   {
 #ifdef VISP_HAVE_FFMPEG
     ffmpeg->saveFrame(I);
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	  cv::Mat matFrame;
 	  vpImageConvert::convert(I, matFrame);
 	  writer << matFrame;
@@ -315,7 +315,7 @@ void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
   {
 #ifdef VISP_HAVE_FFMPEG
     ffmpeg->saveFrame(I);
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	  cv::Mat matFrame, rgbMatFrame;
 	  vpImageConvert::convert(I, matFrame);
 	  cv::cvtColor(matFrame, rgbMatFrame, CV_GRAY2BGR);

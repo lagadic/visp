@@ -154,7 +154,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 		if(!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
 			throw (vpException(vpException::ioError ,"Could not open the video"));
 		ffmpeg->initStream();
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 		capture.open(fileName);
 
 		if(!capture.isOpened())
@@ -183,7 +183,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 	height = I.getHeight();
 	width = I.getWidth();
 
-#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020000
+#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
   dummyImage = cv::Mat(height, width, CV_8UC3);
 #endif
 
@@ -221,7 +221,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 		if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
 			throw (vpException(vpException::ioError ,"Could not open the video"));
 		ffmpeg->initStream();
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 		capture.open(fileName);
 
 		if(!capture.isOpened())
@@ -250,7 +250,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 	height = I.getHeight();
 	width = I.getWidth();
 
-#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020000
+#if not defined(VISP_HAVE_FFMPEG) && VISP_HAVE_OPENCV_VERSION >= 0x020100
   dummyImage = cv::Mat(height, width, CV_8UC3);
 #endif
 
@@ -284,7 +284,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 	{
 		ffmpeg->acquire(I);
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else
 	{
 		capture >> frame;
@@ -327,7 +327,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 	{
 		ffmpeg->acquire(I);
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else
 	{
 		capture >> frame;
@@ -382,7 +382,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index) ;
       return false;
     }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     if(!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
     {
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index) ;
@@ -433,7 +433,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index) ;
       return false;
     }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     if(!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
     {
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index) ;
@@ -573,7 +573,7 @@ void
 			lastFrame = (long)(ffmpeg->getFrameNumber() - 1);
 		}
 	}
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else if (! lastFrameIndexIsSet)
 	{
 		lastFrame = (long) capture.get(CV_CAP_PROP_FRAME_COUNT);

@@ -168,7 +168,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 #ifdef VISP_HAVE_FFMPEG
     //!To read video files
     vpFFMPEG *ffmpeg;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     //!To read video files with OpenCV
     cv::VideoCapture capture;
     cv::Mat dummyImage;

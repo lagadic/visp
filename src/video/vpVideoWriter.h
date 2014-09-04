@@ -157,7 +157,7 @@ class VISP_EXPORT vpVideoWriter
     //!The bite rate
     unsigned int bit_rate;
     int framerate;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	  cv::VideoWriter writer;
 	  int fourcc;
 	  double framerate;
@@ -249,7 +249,7 @@ class VISP_EXPORT vpVideoWriter
 #else
     inline void setCodec(const AVCodecID codec_id) {this->codec = codec_id;}
 #endif
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	inline void setCodec(const int fourcc) {this->fourcc = fourcc;}
 #endif
 
@@ -272,7 +272,7 @@ class VISP_EXPORT vpVideoWriter
     inline void setFramerate(const int frame_rate) {
       this->framerate = frame_rate;
     }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	/*!
       Sets the framerate in Hz of the video when encoding.
 
