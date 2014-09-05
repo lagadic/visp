@@ -50,6 +50,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>   // numeric_limits
 
 /*!
 Basic constructor.
@@ -641,7 +642,8 @@ double vpVideoReader::getFramerate()
 	}
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	 framerate = capture.get(CV_CAP_PROP_FPS);
-	 if(framerate == 0)
+   // if(framerate == 0)
+   if(std::fabs(framerate) <= std::numeric_limits<double>::epsilon())
 	 {
 		vpERROR_TRACE("Problem with CV_CAP_PROP_FPS") ;
 	 }
