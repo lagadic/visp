@@ -76,11 +76,12 @@ bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
 */
 vpMbEdgeTracker::vpMbEdgeTracker()
   : compute_interaction(1), lambda(1), me(), lines(1), circles(1), cylinders(1), nline(0), ncylinder(0),
-    faces(), nbvisiblepolygone(0), percentageGdPt(0.4), scales(1),
-    Ipyramid(0), scaleLevel(0), useOgre(false),
-    angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
+    nbvisiblepolygone(0), percentageGdPt(0.4), scales(1),
+    Ipyramid(0), scaleLevel(0)
 {
+  angleAppears = vpMath::rad(89);
+  angleDisappears = vpMath::rad(89);
+
   scales[0] = true;
   
 #ifdef VISP_HAVE_OGRE
@@ -160,25 +161,6 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &p_me)
         ci->setMovingEdge(&(this->me)) ;
       }
     }
-  }
-}
-
-/*!
-  Use Ogre3D for visibility tests
-  
-  \warning This function has to be called before the initialization of the tracker.
-  
-  \param v : True to use it, False otherwise
-*/
-void    
-vpMbEdgeTracker::setOgreVisibilityTest(const bool &v) 
-{
-  useOgre = v; 
-  if(useOgre){
-#ifndef VISP_HAVE_OGRE     
-    useOgre = false;
-    std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
-#endif
   }
 }
 
@@ -1802,8 +1784,6 @@ vpMbEdgeTracker::removeCircle(const std::string& name)
 void
 vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 {
-  faces.addPolygon(&p) ;
-
   unsigned int nbpt = p.getNbPoint() ;
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
@@ -1957,63 +1937,6 @@ vpMbEdgeTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const
 void
 vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
 {
-  vpMbtPolygon polygon;
-  polygon.setNbPoint(4);
-
-  {
-    // Create the 4 points of the circle bounding box
-    vpPlane plane(p1, p2, p3, vpPlane::object_frame);
-
-    // Matrice de passage entre world et circle frame
-    double norm_X = sqrt(vpMath::sqr(p2.get_oX()-p1.get_oX())
-                         + vpMath::sqr(p2.get_oY()-p1.get_oY())
-                         + vpMath::sqr(p2.get_oZ()-p1.get_oZ()));
-    double norm_Y = sqrt(vpMath::sqr(plane.getA())
-                         + vpMath::sqr(plane.getB())
-                         + vpMath::sqr(plane.getC()));
-    vpRotationMatrix wRc;
-    vpColVector x(3),y(3),z(3);
-    // X axis is P2-P1
-    x[0] = (p2.get_oX()-p1.get_oX()) / norm_X;
-    x[1] = (p2.get_oY()-p1.get_oY()) / norm_X;
-    x[2] = (p2.get_oZ()-p1.get_oZ()) / norm_X;
-    // Y axis is the normal of the plane
-    y[0] = plane.getA() / norm_Y;
-    y[1] = plane.getB() / norm_Y;
-    y[2] = plane.getC() / norm_Y;
-    // Z axis = X ^ Y
-    z = vpColVector::crossProd(x, y);
-    for (unsigned int i=0; i< 3; i++) {
-      wRc[i][0] = x[i];
-      wRc[i][1] = y[i];
-      wRc[i][2] = z[i];
-    }
-
-    vpTranslationVector wtc(p1.get_oX(), p1.get_oY(), p1.get_oZ());
-    vpHomogeneousMatrix wMc(wtc, wRc);
-
-    vpColVector c_p(4); // A point in the circle frame that is on the bbox
-    c_p[0] = radius;
-    c_p[1] = 0;
-    c_p[2] = radius;
-    c_p[3] = 1;
-
-    // Matrix to rotate a point by 90 deg around Y in the circle frame
-    for(unsigned int i=0; i<4; i++) {
-      vpColVector w_p(4); // A point in the word frame
-      vpHomogeneousMatrix cMc_90(vpTranslationVector(), vpRotationMatrix(0,vpMath::rad(90*i), 0));
-      w_p = wMc * cMc_90 * c_p;
-
-      vpPoint w_P;
-      w_P.setWorldCoordinates(w_p[0], w_p[1], w_p[2]);
-
-      polygon.addPoint(i,w_P);
-    }
-  }
-
-  polygon.setIndex(idFace) ;
-  faces.addPolygon(&polygon) ;
-
   addCircle(p1, p2, p3, radius, idFace);
 }
 
@@ -2069,7 +1992,7 @@ vpMbEdgeTracker::resetTracker()
       circles[i].clear();
     }
   }
-  
+
   faces.reset();
   
   compute_interaction=1;
@@ -2306,8 +2229,7 @@ vpMbEdgeTracker::setFarClippingDistance(const double &dist)
   else if ( dist < 0 ) 
     vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
   else{  
-    distFarClip = dist; 
-    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
+    vpMbTracker::setFarClippingDistance(dist);
     vpMbtDistanceLine *l;
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
@@ -2334,8 +2256,7 @@ vpMbEdgeTracker::setNearClippingDistance(const double &dist)
   else if ( dist < 0 ) 
     vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
   else{
-    distNearClip = dist; 
-    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
+    vpMbTracker::setNearClippingDistance(dist);
     vpMbtDistanceLine *l;
 
     for (unsigned int i = 0; i < scales.size(); i += 1){
@@ -2359,7 +2280,7 @@ vpMbEdgeTracker::setNearClippingDistance(const double &dist)
 void            
 vpMbEdgeTracker::setClipping(const unsigned int &flags) 
 { 
-  clippingFlag = flags;
+  vpMbTracker::setClipping(flags);
   
   vpMbtDistanceLine *l;
 

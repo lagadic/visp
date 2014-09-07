@@ -54,9 +54,12 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   computeCovariance = false;
   
   vpMbKltTracker::setMaxIter(30);
+
+  angleAppears = vpMath::rad(65);
+  angleDisappears = vpMath::rad(75);
   
 #ifdef VISP_HAVE_OGRE
-  vpMbKltTracker::faces.getOgreContext()->setWindowName("MBT Hybrid");
+  faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif
 }
 
@@ -80,8 +83,6 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   vpMbKltTracker::init(I);
   
   initPyramid(I, Ipyramid);
-  
-  updateVisibility(I);
 
   unsigned int i = (unsigned int)scales.size();
   do {
@@ -142,8 +143,6 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     }
 
     initPyramid(I, Ipyramid);
-    
-    updateVisibility(I);
 
     unsigned int i = (unsigned int)scales.size();
     do {
@@ -291,8 +290,8 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
   vpMbtEdgeKltXmlParser xmlp;
 
   xmlp.setCameraParameters(cam);
-  xmlp.setAngleAppear(vpMath::deg(vpMbKltTracker::angleAppears));
-  xmlp.setAngleDisappear(vpMath::deg(vpMbKltTracker::angleDisappears));
+  xmlp.setAngleAppear(vpMath::deg(angleAppears));
+  xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
   xmlp.setMovingEdge(me);
 
@@ -318,10 +317,8 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
   xmlp.getCameraParameters(camera);
   setCameraParameters(camera);
 
-  vpMbEdgeTracker::angleAppears = vpMath::rad(xmlp.getAngleAppear());
-  vpMbEdgeTracker::angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
-  vpMbKltTracker::angleAppears = vpMath::rad(xmlp.getAngleAppear());
-  vpMbKltTracker::angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+  angleAppears = vpMath::rad(xmlp.getAngleAppear());
+  angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
 
   if(xmlp.hasNearClippingDistance())
     setNearClippingDistance(xmlp.getNearClippingDistance());
@@ -330,8 +327,7 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
 
   if(xmlp.getFovClipping()){
-    vpMbEdgeTracker::setClipping(vpMbEdgeTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
-    vpMbKltTracker::setClipping(vpMbKltTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+    setClipping(vpMbEdgeTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
   }
 
   vpMe meParser;
@@ -410,8 +406,6 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
     return true;
   
   vpMbEdgeTracker::updateMovingEdge(I);
-
-  updateVisibility(I);
   
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
@@ -786,8 +780,6 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     vpMbKltTracker::reinit(I);
     
     initPyramid(I, Ipyramid);
-  
-    updateVisibility(I);
     
     unsigned int i = (unsigned int)scales.size();
     do {
@@ -1054,8 +1046,8 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
   }
   
 #ifdef VISP_HAVE_OGRE
-  if(vpMbKltTracker::useOgre)
-    vpMbKltTracker::faces.displayOgre(cMo_);
+  if(useOgre)
+    faces.displayOgre(cMo_);
 #endif
 }
 
@@ -1101,124 +1093,9 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
   }
   
 #ifdef VISP_HAVE_OGRE
-  if(vpMbKltTracker::useOgre)
-    vpMbKltTracker::faces.displayOgre(cMo_);
+  if(useOgre)
+    faces.displayOgre(cMo_);
 #endif
-}
-
-/*!
-  Visibility is done on the faces that belong to vpMbKltTracker.
-  Affect the visibility flag to the faces that common to vpMbEdgeTracker.
-  If vpMbEdgeTracker has faces that are not present in vpMbKltTracker we compute
-  the visibility for these specific faces.
-*/
-void vpMbEdgeKltTracker::updateVisibility(const vpImage<unsigned char> &I)
-{
-  if (vpDEBUG_ENABLE(1)) {
-    vpCTRACE << "to remove" << std::endl;
-    std::cout << "Klt has " << vpMbKltTracker::faces.size() << " faces with id: ";
-    for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++)
-      std::cout << vpMbKltTracker::faces[i]->getIndex() << " (" << vpMbKltTracker::faces[i]->isVisible() << ") ";
-    std::cout << std::endl;
-    std::cout << "Edge has " << vpMbEdgeTracker::faces.size() << " faces with id: ";
-    for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++)
-      std::cout << vpMbEdgeTracker::faces[i]->getIndex() << " (" << vpMbEdgeTracker::faces[i]->isVisible() << ") ";
-    std::cout << std::endl;
-  }
-  unsigned int n_visible_faces = 0;
-  // Visibility is computed for MbKlt faces.
-  // Check if a same face exists in MbEdges.
-  // - if yes set visibility to the same value as for MbKlt
-  // If MbEdges faces doesn't exist in MbKlt, we compute the visibility for this specific face
-  // Each face has an id. If the id are the same in MbEdges and MbKlt, the faces are the same.
-  // Faces id are ranges from lower to higher values
-  unsigned int i_edge = 0;
-  std::vector<unsigned int> mbEdgeProcessedFaces;
-  for(unsigned int i_klt = 0; i_klt < vpMbKltTracker::faces.size() ; i_klt++) {
-    // Check if we have the same face in MbEdges
-    int id_klt = vpMbKltTracker::faces[i_klt]->getIndex();
-    for(unsigned int i=i_edge; i<vpMbEdgeTracker::faces.size(); i++) {
-      int id_edge = vpMbEdgeTracker::faces[i]->getIndex();
-      if (id_klt == id_edge) {
-        vpMbEdgeTracker::faces[i]->isvisible = vpMbKltTracker::faces[i_klt]->isVisible();
-        mbEdgeProcessedFaces.push_back(i);
-        i_edge = i;
-        break;
-      }
-    }
-    // Update the visible face counter
-    if (vpMbKltTracker::faces[i_klt]->isVisible())
-      n_visible_faces ++;
-  }
-  if (vpDEBUG_ENABLE(1)) {
-    std::cout << mbEdgeProcessedFaces.size() << " are common between mbKlt and mbEdge" << std::endl;
-    std::cout << "The index of the common faces are: ";
-    for(unsigned int i=0; i<mbEdgeProcessedFaces.size(); i++)
-      std::cout << mbEdgeProcessedFaces[i] << " ";
-    std::cout << std::endl;
-    std::cout << "Klt has " << n_visible_faces << " visible faces" << std::endl;
-    if (n_visible_faces == 0) {
-      std::cout << "Klt has no visible face" << std::endl;
-      exit(0);
-    }
-    std::cout << "Edge has " << vpMbEdgeTracker::faces.size() << " faces with id: ";
-    for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++)
-      std::cout << vpMbEdgeTracker::faces[i]->getIndex() << " (" << vpMbEdgeTracker::faces[i]->isVisible() << ") ";
-    std::cout << std::endl;
-  }
-  // Identify if faces exist in MbEdges that are not in MbKlt
-  unsigned int j_last = 0;
-  std::vector<unsigned int> new_faces;
-  for(unsigned int i = 0; i < vpMbEdgeTracker::faces.size() ; i++) {
-    bool face_already_processed = false;
-    for(unsigned int j = j_last; j < mbEdgeProcessedFaces.size() ; j++) {
-      if (i == mbEdgeProcessedFaces[j]) {
-        face_already_processed = true;
-        j_last = j;
-        break;
-      }
-    }
-    if (! face_already_processed)
-      new_faces.push_back(i);
-  }
-
-  if (vpDEBUG_ENABLE(1)) {
-    std::cout << "Number of faces that has to be checked for visibility: " << new_faces.size() << std::endl;
-  }
-  // Compute visibility of faces that are not in MbKlt
-  if (new_faces.size()) {
-    bool changed = false;
-    bool testRoi = true;
-    vpTranslationVector cameraPos;
-
-    for(unsigned int i = 0; i < new_faces.size() ; i++) {
-      if (vpMbEdgeTracker::faces.computeVisibility(cMo, vpMbEdgeTracker::angleAppears, vpMbEdgeTracker::angleDisappears,
-                                                   changed, false /*vpMbEdgeTracker::useOgre*/, testRoi,
-                                                   I, cam, cameraPos, new_faces[i] )) {
-        n_visible_faces ++;
-        if (vpDEBUG_ENABLE(1)) {
-        std::cout << "The new face with index " << new_faces[i] << " is visible; value: " << vpMbEdgeTracker::faces[ new_faces[i] ]->isvisible << std::endl;
-        }
-      }
-    }
-  }
-
-  vpMbEdgeTracker::nbvisiblepolygone = n_visible_faces;
-  if (vpDEBUG_ENABLE(1)) {
-    std::cout << "Number of visible faces: " << vpMbEdgeTracker::nbvisiblepolygone << std::endl;
-  }
-
-  // This is the version befor circle introduction
-  //  unsigned int n = 0;
-  //  for(unsigned int i = 0; i < vpMbKltTracker::faces.size() ; i++){
-  //      if(vpMbKltTracker::faces[i]->isVisible()){
-  //        vpMbEdgeTracker::faces[i]->isvisible = true;
-  //        n++;
-  //      }
-  //      else
-  //        vpMbEdgeTracker::faces[i]->isvisible = false;
-  //  }
-  //  vpMbEdgeTracker::nbvisiblepolygone = n;
 }
 
 /*!

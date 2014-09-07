@@ -44,10 +44,9 @@
 #ifdef VISP_HAVE_OPENCV
 
 vpMbKltTracker::vpMbKltTracker()
-  : cur(NULL), c0Mo(), angleAppears(0), angleDisappears(0), compute_interaction(true),
+  : cur(NULL), c0Mo(), compute_interaction(true),
     firstInitialisation(true), maskBorder(5), lambda(0.8), maxIter(200), threshold_outlier(0.5),
-    percentGood(0.6), useOgre(false), ctTc0(), tracker(), faces(), firstTrack(false),
-    distNearClip(0.01), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
+    percentGood(0.6), ctTc0(), tracker(), firstTrack(false)
 {  
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);
@@ -224,7 +223,7 @@ vpMbKltTracker::resetTracker()
   
   lambda = 0.8;
   maxIter = 200;
-  
+
   faces.reset();
   
 #ifdef VISP_HAVE_OGRE
@@ -309,25 +308,6 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
   }
 
   this->cam = camera;
-}
-   
-/*!
-  Use Ogre3D for visibility tests
-  
-  \warning This function has to be called before the initialization of the tracker.
-  
-  \param v : True to use it, False otherwise
-*/
-void    
-vpMbKltTracker::setOgreVisibilityTest(const bool &v) 
-{
-  useOgre = v; 
-  if(useOgre){
-#ifndef VISP_HAVE_OGRE     
-    useOgre = false;
-    std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
-#endif
-  }
 }
 
 /*!
@@ -431,63 +411,6 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
     }
   }
 }
-
-/*!
-  Set the far distance for clipping.
-  
-  \param dist : Far clipping value.
-*/
-void            
-vpMbKltTracker::setFarClippingDistance(const double &dist) 
-{ 
-  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
-    vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
-  else if ( dist < 0 ) 
-    vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
-  else{   
-    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
-    distFarClip = dist; 
-    for (unsigned int i = 0; i < faces.size(); i ++){
-      faces[i]->setFarClippingDistance(distFarClip);
-    }  
-  }
-}
-
-/*!
-  Set the near distance for clipping.
-  
-  \param dist : Near clipping value.
-*/
-void           
-vpMbKltTracker::setNearClippingDistance(const double &dist) 
-{ 
-  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
-    vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
-  else if ( dist < 0 ) 
-    vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
-  else{
-    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
-    distNearClip = dist; 
-    for (unsigned int i = 0; i < faces.size(); i ++){
-      faces[i]->setNearClippingDistance(distNearClip);
-    } 
-  }
-}
-
-/*!
-  Specify which clipping to use.
-  
-  \sa vpMbtPolygonClipping
-  
-  \param flags : New clipping flags.
-*/
-void            
-vpMbKltTracker::setClipping(const unsigned int &flags) 
-{ 
-  clippingFlag = flags;
-  for (unsigned int i = 0; i < faces.size(); i ++)
-    faces[i]->setClipping(clippingFlag);
-}
           
 /*!
   Initialise a new face from the coordinates given in parameter.
@@ -497,36 +420,12 @@ vpMbKltTracker::setClipping(const unsigned int &flags)
 */
 void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
-{     
-  //if( corners.size() > 2){ // This tracker can't handle lignes
-    vpMbtPolygon *polygon = new vpMbtPolygon;
-  //   polygon->setCameraParameters(cam);
-    polygon->setNbPoint((unsigned int)corners.size());
-    polygon->setIndex((int)idFace);
-    for(unsigned int j = 0; j < corners.size(); j++) {
-      polygon->addPoint(j, corners[j]);
-    }
-    faces.addPolygon(polygon);
-//    faces.getPolygon().back()->setCameraParameters(cam);
-    
-    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
-      faces.getPolygon().back()->setClipping(clippingFlag);
-    
-    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
-      faces.getPolygon().back()->setNearClippingDistance(distNearClip);
-    
-    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
-      faces.getPolygon().back()->setFarClippingDistance(distFarClip);
-
+{
     vpMbtDistanceKltPolygon *kltPoly = new vpMbtDistanceKltPolygon();
     kltPoly->setCameraParameters(cam) ;
     kltPoly->index_polygon = idFace;
     kltPoly->hiddenface = &faces;
     kltPolygons.push_back(kltPoly);
-
-    delete polygon;
-    polygon = NULL;
-  //}
 }
 
 /*!

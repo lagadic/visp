@@ -123,6 +123,21 @@ protected:
   //! Error s-s*
   vpColVector m_error;
 
+  //! Set of faces describing the object.
+  vpMbHiddenFaces<vpMbtPolygon> faces;
+  //! Angle used to detect a face appearance
+  double angleAppears;
+  //! Angle used to detect a face disappearance
+  double angleDisappears;
+  //! Distance for near clipping
+  double distNearClip;
+  //! Distance for near clipping
+  double distFarClip;
+  //! Flags specifying which clipping to used
+  unsigned int clippingFlag;
+  //! Use Ogre3d for visibility tests
+  bool useOgre;
+
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
@@ -154,6 +169,12 @@ public:
   virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false)=0;
 
+  /*! Return the angle used to test polygons appearance. */
+  virtual inline  double  getAngleAppear() const { return angleAppears; }
+
+  /*! Return the angle used to test polygons disappearance. */
+  virtual inline  double  getAngleDisappear() const { return angleDisappears; }
+
   /*!
     Get the camera parameters.
 
@@ -161,6 +182,15 @@ public:
   */
   virtual void getCameraParameters(vpCameraParameters& camera) const { camera = this->cam;}
   
+  /*!
+    Get the clipping used.
+
+    \sa vpMbtPolygonClipping
+
+    \return Clipping flags.
+  */
+  virtual inline  unsigned int getClipping() const { return clippingFlag; }
+
   /*!
     Get the covariance matrix.
   */
@@ -185,6 +215,17 @@ public:
   virtual vpColVector getError() {
     return m_error;
   }
+
+  /*! Return a reference to the faces structure. */
+  inline  vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
+
+  /*!
+    Get the far distance for clipping.
+
+    \return Far clipping value.
+  */
+  virtual inline  double  getFarClippingDistance() const { return distFarClip; }
+
   /*!
     Return the weights vector \f$w_i\f$ computed by the robust scheme.
 
@@ -206,6 +247,13 @@ public:
   virtual vpColVector getRobustWeights() {
     return m_w;
   }
+
+  /*!
+    Get the near distance for clipping.
+
+    \return Near clipping value.
+  */
+  virtual inline double   getNearClippingDistance() const { return distNearClip; }
 
   /*!
     Get the current pose between the object and the camera.
@@ -264,6 +312,28 @@ public:
   virtual void resetTracker() = 0;
 
   void savePose(const std::string &filename);
+
+  /*!
+    Set the angle used to test polygons appearance.
+    If the angle between the normal of the polygon and the line going
+    from the camera to the polygon center has a value lower than
+    this parameter, the polygon is considered as appearing.
+    The polygon will then be tracked.
+
+    \param a : new angle in radian.
+  */
+  virtual inline  void    setAngleAppear(const double &a) { angleAppears = a; }
+
+  /*!
+    Set the angle used to test polygons disappearance.
+    If the angle between the normal of the polygon and the line going
+    from the camera to the polygon center has a value greater than
+    this parameter, the polygon is considered as disappearing.
+    The tracking of the polygon will then be stopped.
+
+    \param a : new angle in radian.
+  */
+  virtual inline  void    setAngleDisappear(const double &a) { angleDisappears = a; }
   
   /*!
     Set the camera parameters.
@@ -271,6 +341,8 @@ public:
     \param camera : the new camera parameters
   */
   virtual void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
+
+  virtual void setClipping(const unsigned int &flags);
   
   /*!
     Set if the covaraince matrix has to be computed.
@@ -285,6 +357,10 @@ public:
     \param displayF : set it to true to display the features.
   */
   void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
+
+  virtual void setFarClippingDistance(const double &dist);
+
+  virtual void setNearClippingDistance(const double &dist);
   
   /*!
     Set the pose to be used in entry of the next call to the track() function.
@@ -310,6 +386,8 @@ public:
     poseSavingFilename = filename;
   }
 
+  virtual void setOgreVisibilityTest(const bool &v);
+
   /*!
     Test the quality of the tracking.
 
@@ -325,6 +403,9 @@ public:
   virtual void track(const vpImage<unsigned char>& I)=0;
 
 protected:
+  void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0);
+
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN

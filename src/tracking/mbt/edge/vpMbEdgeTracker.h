@@ -296,9 +296,6 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
 
     //! Index of the cylinder to add, and total number of cylinders extracted so far.
     unsigned int ncylinder;
-
-    //! Set of faces describing the object. 
-    vpMbHiddenFaces<vpMbtPolygon> faces;
     
     //! Number of polygon (face) currently visible. 
     unsigned int nbvisiblepolygone;
@@ -314,24 +311,6 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     
     //! Current scale level used. This attribute must not be modified outside of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
     unsigned int scaleLevel;
-    
-    //! Use Ogre3d for visibility tests
-    bool useOgre;
-  
-    //! Angle used to detect a face appearance
-    double angleAppears;
-  
-    //! Angle used to detect a face disappearance
-    double angleDisappears;
-    
-    //! Distance for near clipping
-    double distNearClip;
-    
-    //! Distance for near clipping
-    double distFarClip;
-    
-    //! Flags specifying which clipping to used
-    unsigned int clippingFlag;
 
 public:
   
@@ -342,32 +321,7 @@ public:
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
-  
-  /*! Return the angle used to test polygons appearance. */
-  virtual inline double getAngleAppear() const { return angleAppears; }   
-  
-  /*! Return the angle used to test polygons disappearance. */
-  virtual inline double getAngleDisappear() const { return angleDisappears; } 
-  
-  /*!
-    Get the clipping used.
-    
-    \sa vpMbtPolygonClipping
-    
-    \return Clipping flags.
-  */          
-  virtual inline  unsigned int getClipping() const { return clippingFlag; } 
-  
-  /*! Return a reference to the faces structure. */
-  inline vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces; }
-  
-  /*!
-    Get the far distance for clipping.
-    
-    \return Far clipping value.
-  */
-  virtual inline double getFarClippingDistance() const { return distFarClip; }
-  
+
   inline double getFirstThreshold() const { return percentageGdPt;}
   
   /*!
@@ -387,14 +341,7 @@ public:
     \return an instance of the moving edge parameters used by the tracker.
   */
   inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
-  
-  /*!
-    Get the near distance for clipping.
-    
-    \return Near clipping value.
-  */
-  virtual inline double getNearClippingDistance() const { return distNearClip; }
-  
+
   unsigned int getNbPoints(const unsigned int level=0) const;
   unsigned int getNbPolygon() const ;
   vpMbtPolygon* getPolygon(const unsigned int index);
@@ -413,34 +360,6 @@ public:
   void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
   void resetTracker();
-  
-  /*!
-    Set the angle used to test polygons appearance.
-    If the angle between the normal of the polygon and the line going
-    from the camera to the polygon center has a value lower than
-    this parameter, the polygon is considered as appearing.
-    The polygon will then be tracked.
-
-    \warning This angle will only be used when setOgreVisibilityTest(true)
-    is called.
-
-    \param a : new angle in radian.
-  */
-  virtual inline  void setAngleAppear(const double &a) { angleAppears = a; }   
-  
-  /*!
-    Set the angle used to test polygons disappearance.
-    If the angle between the normal of the polygon and the line going
-    from the camera to the polygon center has a value greater than
-    this parameter, the polygon is considered as disappearing.
-    The tracking of the polygon will then be stopped.
-
-    \warning This angle will only be used when setOgreVisibilityTest(true)
-    is called.
-
-    \param a : new angle in radian.
-  */
-  virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; }
   
   /*!
     Set the camera parameters.
@@ -466,9 +385,13 @@ public:
       }
     }
   }
-  
-  virtual void  setClipping(const unsigned int &flags);
-  
+
+  virtual void setClipping(const unsigned int &flags);
+
+  virtual void setFarClippingDistance(const double &dist);
+
+  virtual void setNearClippingDistance(const double &dist);
+
   /*!
     Enable to display the points along the line with a color corresponding to their state.
     
@@ -480,9 +403,7 @@ public:
     \param displayMe : set it to true to display the points.
   */
   void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
-  
-  virtual void setFarClippingDistance(const double &dist);
-  
+
   /*!
     Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
     
@@ -502,11 +423,7 @@ public:
   virtual inline void setLambda(const double gain) {this->lambda = gain;}
   
   void setMovingEdge(const vpMe &me);
-  
-  virtual void setNearClippingDistance(const double &dist);
-  
-  virtual void setOgreVisibilityTest(const bool &v);
-  
+
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   
   void setScales(const std::vector<bool>& _scales);

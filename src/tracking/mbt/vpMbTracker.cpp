@@ -95,8 +95,10 @@
 
 */
 vpMbTracker::vpMbTracker()
-  : cam(), cMo(), modelFileName(), modelInitialised(false),
-    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false)
+  : cam(), cMo(), modelFileName(), modelInitialised(false), faces(),
+    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false), useOgre(false),
+    angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
 {
 }
 
@@ -106,7 +108,6 @@ vpMbTracker::vpMbTracker()
 vpMbTracker::~vpMbTracker()
 {
 }
-
 
 /*!
   Initialise the tracking by clicking on the image points corresponding to the 
@@ -701,6 +702,88 @@ void vpMbTracker::savePose(const std::string &filename)
 	finitpos.close();
 }
 
+
+void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace)
+{
+    vpMbtPolygon polygon;
+    polygon.setNbPoint((unsigned int)corners.size());
+    polygon.setIndex((int)idFace);
+    for(unsigned int j = 0; j < corners.size(); j++) {
+      polygon.addPoint(j, corners[j]);
+    }
+
+    faces.addPolygon(&polygon);
+
+    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+      faces.getPolygon().back()->setClipping(clippingFlag);
+
+    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+      faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+
+    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+      faces.getPolygon().back()->setFarClippingDistance(distFarClip);
+}
+
+void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
+{
+    vpMbtPolygon polygon;
+    polygon.setNbPoint(4);
+
+    {
+      // Create the 4 points of the circle bounding box
+      vpPlane plane(p1, p2, p3, vpPlane::object_frame);
+
+      // Matrice de passage entre world et circle frame
+      double norm_X = sqrt(vpMath::sqr(p2.get_oX()-p1.get_oX())
+                           + vpMath::sqr(p2.get_oY()-p1.get_oY())
+                           + vpMath::sqr(p2.get_oZ()-p1.get_oZ()));
+      double norm_Y = sqrt(vpMath::sqr(plane.getA())
+                           + vpMath::sqr(plane.getB())
+                           + vpMath::sqr(plane.getC()));
+      vpRotationMatrix wRc;
+      vpColVector x(3),y(3),z(3);
+      // X axis is P2-P1
+      x[0] = (p2.get_oX()-p1.get_oX()) / norm_X;
+      x[1] = (p2.get_oY()-p1.get_oY()) / norm_X;
+      x[2] = (p2.get_oZ()-p1.get_oZ()) / norm_X;
+      // Y axis is the normal of the plane
+      y[0] = plane.getA() / norm_Y;
+      y[1] = plane.getB() / norm_Y;
+      y[2] = plane.getC() / norm_Y;
+      // Z axis = X ^ Y
+      z = vpColVector::crossProd(x, y);
+      for (unsigned int i=0; i< 3; i++) {
+        wRc[i][0] = x[i];
+        wRc[i][1] = y[i];
+        wRc[i][2] = z[i];
+      }
+
+      vpTranslationVector wtc(p1.get_oX(), p1.get_oY(), p1.get_oZ());
+      vpHomogeneousMatrix wMc(wtc, wRc);
+
+      vpColVector c_p(4); // A point in the circle frame that is on the bbox
+      c_p[0] = radius;
+      c_p[1] = 0;
+      c_p[2] = radius;
+      c_p[3] = 1;
+
+      // Matrix to rotate a point by 90 deg around Y in the circle frame
+      for(unsigned int i=0; i<4; i++) {
+        vpColVector w_p(4); // A point in the word frame
+        vpHomogeneousMatrix cMc_90(vpTranslationVector(), vpRotationMatrix(0,vpMath::rad(90*i), 0));
+        w_p = wMc * cMc_90 * c_p;
+
+        vpPoint w_P;
+        w_P.setWorldCoordinates(w_p[0], w_p[1], w_p[2]);
+
+        polygon.addPoint(i,w_P);
+      }
+    }
+
+    polygon.setIndex(idFace) ;
+    faces.addPolygon(&polygon) ;
+}
+
 /*!
   Load a 3D model from the file in parameter. This file must either be a vrml
   file (.wrl) or a CAO file (.cao). CAO format is described in the 
@@ -1066,6 +1149,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 				std::vector<vpPoint> extremities;
 				extremities.push_back(caoPoints[index1]);
 				extremities.push_back(caoPoints[index2]);
+
+                addPolygon(extremities, idFace);
 				initFaceFromCorners(extremities, idFace++);
 			} else {
 				vpTRACE(" line %d has wrong coordinates.", k);
@@ -1113,6 +1198,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			}
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
+            addPolygon(corners, idFace);
 			initFaceFromCorners(corners, idFace++);
 		}
 
@@ -1154,6 +1240,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			}
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
+            addPolygon(corners, idFace);
 			initFaceFromCorners(corners, idFace++);
 		}
 
@@ -1231,6 +1318,9 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 				fileId >> indexP2;
 				fileId >> indexP3;
 				fileId.ignore(256, '\n'); // skip the rest of the line
+
+                addPolygon(caoPoints[indexP1], caoPoints[indexP2],
+                        caoPoints[indexP3], radius, idFace);
 
 				initCircle(caoPoints[indexP1], caoPoints[indexP2],
 						caoPoints[indexP3], radius, idFace++);
@@ -1367,6 +1457,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
     {
       if(corners.size() > 1)
       {
+        addPolygon(corners, idFace);
         initFaceFromCorners(corners, idFace++);
         corners.resize(0);
       }
@@ -1489,6 +1580,81 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
   return G;
 }
 
+/*!
+  Use Ogre3D for visibility tests
+
+  \warning This function has to be called before the initialization of the tracker.
+
+  \param v : True to use it, False otherwise
+*/
+void
+vpMbTracker::setOgreVisibilityTest(const bool &v)
+{
+  useOgre = v;
+  if(useOgre){
+#ifndef VISP_HAVE_OGRE
+    useOgre = false;
+    std::cout << "WARNING: ViSP doesn't have Ogre3D, basic visibility test will be used. setOgreVisibilityTest() set to false." << std::endl;
+#endif
+  }
+}
+
+/*!
+  Set the far distance for clipping.
+
+  \param dist : Far clipping value.
+*/
+void
+vpMbTracker::setFarClippingDistance(const double &dist)
+{
+  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
+    vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
+  else if ( dist < 0 )
+    vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
+  else{
+    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
+    distFarClip = dist;
+    for (unsigned int i = 0; i < faces.size(); i ++){
+      faces[i]->setFarClippingDistance(distFarClip);
+    }
+  }
+}
+
+/*!
+  Set the near distance for clipping.
+
+  \param dist : Near clipping value.
+*/
+void
+vpMbTracker::setNearClippingDistance(const double &dist)
+{
+  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
+    vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
+  else if ( dist < 0 )
+    vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
+  else{
+    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
+    distNearClip = dist;
+    for (unsigned int i = 0; i < faces.size(); i ++){
+      faces[i]->setNearClippingDistance(distNearClip);
+    }
+  }
+}
+
+/*!
+  Specify which clipping to use.
+
+  \sa vpMbtPolygonClipping
+
+  \param flags : New clipping flags.
+*/
+void
+vpMbTracker::setClipping(const unsigned int &flags)
+{
+  clippingFlag = flags;
+  for (unsigned int i = 0; i < faces.size(); i ++)
+    faces[i]->setClipping(clippingFlag);
+}
 
 /*!
   Extract a line of the object to track from the VMRL model. This method calls
@@ -1515,6 +1681,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
     {
       if(corners.size() > 1)
       {
+        addPolygon(corners, idFace);
         initFaceFromCorners(corners, idFace++);
         corners.resize(0);
       }

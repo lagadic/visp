@@ -67,7 +67,6 @@
 class VISP_EXPORT vpMbtDistanceKltPolygon
 {
 private:
-  // vpMbtDistanceKltPolygon personnal attributes
   //! the homography in meter
   vpMatrix H;
   //! normal to the initial plane
@@ -100,13 +99,10 @@ private:
   vpCameraParameters cam;
 
 public:
-  // Common to all distance Features.
   //! Pointer to the list of faces
   vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
   //! Index of the faces which contain the line
   int index_polygon;
-  //! Indicates if the line is visible or not
-  bool isvisible;
 
 private:
 
@@ -169,24 +165,6 @@ public:
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
 
   void                updateMask(IplImage* _mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
-
-//###################
-// Common Functions
-//###################
-
-  /*!
-    Check if the line is visible in the image or not.
-
-    \return Return true if the line is visible
-  */
-  inline bool isVisible() const {return isvisible; }
-
-  /*!
-    Set a boolean parameter to indicates if the line is visible in the image or not.
-
-    \param _isvisible : Set to true if the line is visible
-  */
-  inline void setVisible(bool _isvisible) {isvisible = _isvisible ;}
 
 //###################
 // Static Functions

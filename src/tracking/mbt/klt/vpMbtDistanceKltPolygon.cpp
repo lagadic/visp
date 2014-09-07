@@ -54,8 +54,6 @@ vpMbtDistanceKltPolygon::vpMbtDistanceKltPolygon()
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
-
-  isvisible = false;
 }
 
 /*!

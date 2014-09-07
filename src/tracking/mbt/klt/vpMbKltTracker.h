@@ -233,10 +233,6 @@ protected:
   IplImage* cur;
   //! Initial pose.
   vpHomogeneousMatrix c0Mo;
-  //! Angle used to detect a face appearance
-  double angleAppears;
-  //! Angle used to detect a face disappearance
-  double angleDisappears;
   //! If true, compute the interaction matrix at each iteration of the minimization. Otherwise, compute it only on the first iteration.
   bool compute_interaction;
   //! Flag to specify whether the init method is called the first or not (specific calls to realize in this case).
@@ -251,24 +247,12 @@ protected:
   double threshold_outlier;
   //! Percentage of good points, according to the initial number, that must have the tracker.
   double percentGood;
-  //! Use Ogre3d for visibility tests
-  bool useOgre;
   //! The estimated displacement of the pose between the current instant and the initial position.
   vpHomogeneousMatrix ctTc0;
   //! Points tracker.
   vpKltOpencv tracker;
   //! First track() called
   bool firstTrack;
-  //! Distance for near clipping
-  double distNearClip;
-  //! Distance for near clipping
-  double distFarClip;
-  //! Flags specifying which clipping to used
-  unsigned int clippingFlag;
-//  //! Set of faces describing the object.
-//  vpMbHiddenFaces<vpMbtKltPolygon> faces;
-  //! Set of faces describing the object.
-  vpMbHiddenFaces<vpMbtPolygon> faces;
   //! Vector of the cylinders used here only to display the full model.
   std::list<vpMbtDistanceKltPolygon*> kltPolygons;
   //! Vector of the cylinders used here only to display the full model.
@@ -297,31 +281,6 @@ public:
   virtual void            loadConfigFile(const std::string& configFile);
           void            loadConfigFile(const char* configFile);
           
-          /*! Return the angle used to test polygons appearance. */
-  virtual inline  double  getAngleAppear() const { return angleAppears; }   
-  
-          /*! Return the angle used to test polygons disappearance. */
-  virtual inline  double  getAngleDisappear() const { return angleDisappears; } 
-  
-          /*!
-            Get the clipping used.
-            
-            \sa vpMbtPolygonClipping
-            
-            \return Clipping flags.
-          */          
-  virtual inline  unsigned int getClipping() const { return clippingFlag; } 
-    
-          /*! Return a reference to the faces structure. */
-  inline  vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
-          
-          /*!
-            Get the far distance for clipping.
-            
-            \return Far clipping value.
-          */
-  virtual inline  double  getFarClippingDistance() const { return distFarClip; }
-
           /*!
             Get the current list of KLT points.
             
@@ -367,14 +326,7 @@ public:
             \return the number of features
           */
   inline  int             getNbKltPoints() const {return tracker.getNbFeatures();}
-       
-          /*!
-            Get the near distance for clipping.
-            
-            \return Near clipping value.
-          */
-  virtual inline double   getNearClippingDistance() const { return distNearClip; }
-  
+        
           /*!
             Get the threshold for the acceptation of a point.
 
@@ -385,35 +337,9 @@ public:
   void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);
           void            resetTracker();
-          
-          /*! 
-            Set the angle used to test polygons appearance.
-            If the angle between the normal of the polygon and the line going
-            from the camera to the polygon center has a value lower than
-            this parameter, the polygon is considered as appearing.
-            The polygon will then be tracked.
             
-            \param a : new angle in radian.
-          */
-  virtual inline  void    setAngleAppear(const double &a) { angleAppears = a; }   
-  
-          /*! 
-            Set the angle used to test polygons disappearance.
-            If the angle between the normal of the polygon and the line going
-            from the camera to the polygon center has a value greater than
-            this parameter, the polygon is considered as disappearing.
-            The tracking of the polygon will then be stopped.
-
-            \param a : new angle in radian.
-          */
-  virtual inline  void    setAngleDisappear(const double &a) { angleDisappears = a; } 
-  
           void            setCameraParameters(const vpCameraParameters& cam);
-          
-  virtual void            setClipping(const unsigned int &flags);
-          
-  virtual void            setFarClippingDistance(const double &dist);
-          
+
           void            setKltOpencv(const vpKltOpencv& t);
           
           /*!
@@ -436,10 +362,6 @@ public:
             \param max : the desired number of iteration
           */
   virtual inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
-  
-  virtual void            setNearClippingDistance(const double &dist);
-  
-  virtual void            setOgreVisibilityTest(const bool &v);
   
   virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   
