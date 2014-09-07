@@ -103,16 +103,16 @@ public:
   double distFarClip;
   
 private:            
-            bool          getClippedPointsFov(const vpPoint &p1, const vpPoint &p2, 
+            bool          getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2,
                                            vpPoint &p1Clipped, vpPoint &p2Clipped, 
                                            unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo,
                                            const vpColVector &normal,
                                            const unsigned int &flag);
-            
-            bool          getClippedPoints(const vpPoint &p1, const vpPoint &p2, 
-                                           vpPoint &p1Clipped, vpPoint &p2Clipped, 
+
+            bool          getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2,
+                                           vpPoint &p1Clipped, vpPoint &p2Clipped,
                                            unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo,
-                                           const vpCameraParameters &cam, const std::vector<vpColVector> &fovNormals);
+                                           const unsigned int &flag, const double &distance);
     
 public: 
             vpMbtPolygon() ;

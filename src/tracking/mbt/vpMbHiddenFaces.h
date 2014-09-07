@@ -368,16 +368,21 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
   Lpol[i]->changeFrame(cMo);
   Lpol[i]->isappearing = false;
 
+  if(Lpol[i]->getNbPoint() <= 2)
+  {
+      Lpol[i]->isvisible = true;
+  }
+  else{
   if(Lpol[i]->isVisible())
   {
     bool testDisappear = false;
     unsigned int nbCornerInsidePrev = 0;
 
-    if(testRoi){
-      nbCornerInsidePrev = Lpol[i]->getNbCornerInsidePrevImage();
-      if(Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
-        testDisappear = true;
-    }
+//    if(testRoi){
+//      nbCornerInsidePrev = Lpol[i]->getNbCornerInsidePrevImage();
+//      if(Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
+//        testDisappear = true;
+//    }
 
     if(!testDisappear){
       if(useOgre)
@@ -392,7 +397,7 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
 
     // test if the face is still visible
     if(testDisappear){
-      //         std::cout << "Face " << i << " disappears" << std::endl;
+//               std::cout << "Face " << i << " disappears" << std::endl;
       changed = true;
       Lpol[i]->isvisible = false;
     }
@@ -408,8 +413,8 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
   {
     bool testAppear = true;
 
-    if(testRoi && Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
-      testAppear = false;
+//    if(testRoi && Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
+//      testAppear = false;
 
     if(testAppear){
       if(useOgre)
@@ -423,15 +428,17 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     }
 
     if(testAppear){
-      //std::cout << "Face " << i << " appears" << std::endl;
+//      std::cout << "Face " << i << " appears" << std::endl;
       Lpol[i]->isvisible = true;
       changed = true;
       //nbVisiblePolygon++;
     }
-    else
+    else{
+//      std::cout << "Problem" << std::endl;
       Lpol[i]->isvisible = false;
+    }
   }
-
+  }
   //   std::cout << "Nombre de polygones visibles: " << nbVisiblePolygon << std::endl;
   return Lpol[i]->isvisible;
 }
