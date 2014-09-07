@@ -95,11 +95,10 @@
 
 */
 vpMbTracker::vpMbTracker()
-  : cam(), cMo(), modelFileName(), modelInitialised(false),
+  : cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
     poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
     m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
-    oJo(6,6), isoJoIdentity(true)
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false)
 {
     oJo.setIdentity();
 }
@@ -1802,7 +1801,8 @@ vpMbTracker::setEstimatedDoF(const vpColVector& v)
     {
         isoJoIdentity = true;
         for(unsigned int i = 0 ; i < 6 ; i++){
-            if(v[i] != 0){
+            // if(v[i] != 0){
+            if(std::fabs(v[i]) > std::numeric_limits<double>::epsilon()){
               oJo[i][i] = 1.0;
             }
             else{
