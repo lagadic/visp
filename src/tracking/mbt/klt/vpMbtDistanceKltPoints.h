@@ -99,10 +99,8 @@ private:
   vpCameraParameters cam;
 
 public:
-  //! Pointer to the list of faces
-  vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
-  //! Index of the faces which contain the line
-  int index_polygon;
+  //! Pointer to the polygon that define a face
+  vpMbtPolygon *polygon;
 
 private:
 

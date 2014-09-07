@@ -1180,7 +1180,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 				extremities.push_back(caoPoints[index2]);
 
         addPolygon(extremities, idFace);
-        initFaceFromCorners(faces.getPolygon().back(), idFace++); // Init from the last polygon that was added
+        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
 			} else {
 				vpTRACE(" line %d has wrong coordinates.", k);
 			}
@@ -1228,7 +1228,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
       addPolygon(corners, idFace);
-      initFaceFromCorners(faces.getPolygon().back(), idFace++); // Init from the last polygon that was added
+      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
     }
 
 		removeComment(fileId);
@@ -1268,7 +1268,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
       addPolygon(corners, idFace);
-      initFaceFromCorners(faces.getPolygon().back(), idFace++); // Init from the last polygon that was added
+      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
     }
 
 		//////////////////////////Read the cylinder declaration part//////////////////////////
@@ -1484,7 +1484,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
       if(corners.size() > 1)
       {
         addPolygon(corners, idFace);
-        initFaceFromCorners(faces.getPolygon().back(), idFace++); // Init from the last polygon that was added
+        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
         corners.resize(0);
       }
     }
@@ -1708,7 +1708,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
       if(corners.size() > 1)
       {
         addPolygon(corners, idFace);
-        initFaceFromCorners(faces.getPolygon().back(), idFace++); // Init from the last polygon that was added
+        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
         corners.resize(0);
       }
     }

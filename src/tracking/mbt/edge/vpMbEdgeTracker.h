@@ -428,7 +428,7 @@ protected:
   void init(const vpImage<unsigned char>& I);
   virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0);
   virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0);
-  virtual void initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace);
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);

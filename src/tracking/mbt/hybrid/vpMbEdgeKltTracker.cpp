@@ -625,8 +625,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     //  for (unsigned int i = 0; i < faces.size(); i += 1){
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=vpMbKltTracker::kltPolygons.begin(); it!=vpMbKltTracker::kltPolygons.end(); ++it){
         kltpoly = *it;
-        int index = kltpoly->index_polygon;
-        if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hasEnoughPoints()){
+        if(kltpoly->polygon->isVisible() && kltpoly->hasEnoughPoints()){
           vpSubColVector subR(R_klt, shift, 2*kltpoly->getNbPointsCur());
           vpSubMatrix subJ(J_klt, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
           kltpoly->computeHomography(ctTc0, H);
@@ -948,13 +947,12 @@ vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& camera)
   Initialise a new face from the coordinates given in parameter.
 
   \param polygon : The polygon describing the set of lines that has to be tracked.
-  \param idFace : Id of the face.
 */
 void
-vpMbEdgeKltTracker::initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace)
+vpMbEdgeKltTracker::initFaceFromCorners(vpMbtPolygon &polygon)
 {
-  vpMbEdgeTracker::initFaceFromCorners(polygon, idFace);
-  vpMbKltTracker::initFaceFromCorners(polygon, idFace);
+  vpMbEdgeTracker::initFaceFromCorners(polygon);
+  vpMbKltTracker::initFaceFromCorners(polygon);
 }
 
 /*!
@@ -1023,8 +1021,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
   vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    int index = kltpoly->index_polygon;
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
   }
@@ -1070,8 +1067,7 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
   vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    int index = kltpoly->index_polygon;
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
   }

@@ -80,7 +80,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
   std::vector<vpImagePoint> roi;
-  (*hiddenface)[index_polygon]->getRoiClipped(cam, roi);
+  polygon->getRoiClipped(cam, roi);
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
     int id;
@@ -97,7 +97,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
   }
 
   // initialisation of the value for the computation in SE3
-  vpPlane plan((*hiddenface)[index_polygon]->getPoint(0), (*hiddenface)[index_polygon]->getPoint(1), (*hiddenface)[index_polygon]->getPoint(2));
+  vpPlane plan(polygon->getPoint(0), polygon->getPoint(1), polygon->getPoint(2));
 
   d0 = plan.getD();
   N = plan.getNormal();
@@ -315,9 +315,9 @@ vpMbtDistanceKltPoints::updateMask(IplImage* _mask, unsigned char _nb, unsigned 
   int width = _mask->width;
   int i_min, i_max, j_min, j_max;
   cam.computeFov((unsigned)_mask->width, (unsigned)_mask->height);
-  (*hiddenface)[index_polygon]->computeRoiClipped(cam);
+  polygon->computeRoiClipped(cam);
   std::vector<vpImagePoint> roi;
-  (*hiddenface)[index_polygon]->getRoiClipped(cam, roi);
+  polygon->getRoiClipped(cam, roi);
   vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
   /* check image boundaries */

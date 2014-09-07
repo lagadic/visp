@@ -450,9 +450,8 @@ protected:
     The id of the polygon is supposed to be set prior calling this function.
 
     \param polygon : The polygon describing the set of lines that has to be tracked.
-    \param idFace : Id of the face associated to the polygon.
   */
-  virtual void initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace=0)=0;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon)=0;
   
   virtual void loadVRMLModel(const std::string& modelFile);
   virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace);

@@ -1889,16 +1889,15 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
   This method is called from the loadModel() one to add a face of the object to track.
   
   \param polygon : The polygon describing the set of lines that has to be tracked.
-  \param idFace : Id of the face associated to the polygon.
 */
 void 
-vpMbEdgeTracker::initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace)
+vpMbEdgeTracker::initFaceFromCorners(vpMbtPolygon &polygon)
 {
-  unsigned int nbpt = polygon->getNbPoint() ;
+  unsigned int nbpt = polygon.getNbPoint() ;
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
-      addLine(polygon->p[i], polygon->p[i+1], polygon->getIndex()) ;
-    addLine(polygon->p[nbpt-1], polygon->p[0], polygon->getIndex()) ;
+      addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex()) ;
+    addLine(polygon.p[nbpt-1], polygon.p[0], polygon.getIndex()) ;
   }
 }
 
