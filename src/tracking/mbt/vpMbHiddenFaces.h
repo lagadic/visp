@@ -354,9 +354,9 @@ template<class PolygonType>
 bool
 vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
                                                 const double &angleAppears, const double &angleDisappears,
-                                                bool &changed, bool useOgre, bool testRoi,
-                                                const vpImage<unsigned char> &I,
-                                                const vpCameraParameters &cam,
+                                                bool &changed, bool useOgre, bool /* testRoi */,
+                                                const vpImage<unsigned char> & /* I */,
+                                                const vpCameraParameters & /* cam */,
                                                 const vpTranslationVector &
                                                 #ifdef VISP_HAVE_OGRE
                                                 cameraPos
