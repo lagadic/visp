@@ -62,7 +62,7 @@
 #include <visp/vpSubMatrix.h>
 #include <visp/vpExponentialMap.h>
 //#include <visp/vpMbtKltPolygon.h>
-#include <visp/vpMbtDistanceKltPolygon.h>
+#include <visp/vpMbtDistanceKltPoints.h>
 #include <visp/vpMbtDistanceCircle.h>
 #include <visp/vpMbtDistanceCylinder.h>
 
@@ -254,7 +254,7 @@ protected:
   //! First track() called
   bool firstTrack;
   //! Vector of the cylinders used here only to display the full model.
-  std::list<vpMbtDistanceKltPolygon*> kltPolygons;
+  std::list<vpMbtDistanceKltPoints*> kltPolygons;
   //! Vector of the cylinders used here only to display the full model.
   std::list<vpMbtDistanceCylinder*> cylinders_disp;
   //! Vector of the circles used here only to display the full model.

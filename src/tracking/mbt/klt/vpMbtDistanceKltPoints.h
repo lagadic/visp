@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMbtDistanceKltPolygon.h 4661 2014-02-10 19:34:58Z fspindle $
+ * $Id: vpMbtDistanceKltPoints.h 4661 2014-02-10 19:34:58Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -39,8 +39,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpMbtDistanceKltPolygon_h
-#define vpMbtDistanceKltPolygon_h
+#ifndef vpMbtDistanceKltPoints_h
+#define vpMbtDistanceKltPoints_h
 
 #include <visp/vpConfig.h>
 
@@ -56,7 +56,7 @@
 #include <visp/vpMbHiddenFaces.h>
 
 /*!
-  \class vpMbtDistanceKltPolygon
+  \class vpMbtDistanceKltPoints
 
   \brief Implementation of a polygon of the model containing points of interest. It is used by the model-based tracker KLT, and hybrid.
 
@@ -64,7 +64,7 @@
 
   \ingroup ModelBasedTracking
 */
-class VISP_EXPORT vpMbtDistanceKltPolygon
+class VISP_EXPORT vpMbtDistanceKltPoints
 {
 private:
   //! the homography in meter
@@ -111,8 +111,8 @@ private:
   bool                isTrackedFeature(const int id);
 
 public:
-                      vpMbtDistanceKltPolygon();
-  virtual             ~vpMbtDistanceKltPolygon();
+                      vpMbtDistanceKltPoints();
+  virtual             ~vpMbtDistanceKltPoints();
 
   unsigned int        computeNbDetectedCurrent(const vpKltOpencv& _tracker);
   void                computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& cHc0);

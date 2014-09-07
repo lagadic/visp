@@ -264,18 +264,17 @@ SET (HEADER_TRACKING
   tracking/mbt/vpMbTracker.h
   tracking/mbt/vpMbHiddenFaces.h
   tracking/mbt/vpMbXmlParser.h
+  tracking/mbt/vpMbtPolygon.h
   tracking/mbt/edge/vpMbtDistanceCircle.h
   tracking/mbt/edge/vpMbtDistanceCylinder.h
   tracking/mbt/edge/vpMbtDistanceLine.h
-  tracking/mbt/edge/vpMbtPolygon.h
   tracking/mbt/edge/vpMbtMeEllipse.h
   tracking/mbt/edge/vpMbtMeLine.h
   tracking/mbt/edge/vpMbEdgeTracker.h
   tracking/mbt/edge/vpMbtXmlParser.h
   tracking/mbt/hybrid/vpMbEdgeKltTracker.h
   tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.h
-#  tracking/mbt/klt/vpMbtKltPolygon.h
-  tracking/mbt/klt/vpMbtDistanceKltPolygon.h
+  tracking/mbt/klt/vpMbtDistanceKltPoints.h
   tracking/mbt/klt/vpMbKltTracker.h
   tracking/mbt/klt/vpMbtKltXmlParser.h
 

@@ -318,11 +318,11 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
 
   tracking/mbt/vpMbTracker.cpp
+  tracking/mbt/vpMbtPolygon.cpp
   tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtDistanceCircle.cpp
   tracking/mbt/edge/vpMbtDistanceCylinder.cpp
   tracking/mbt/edge/vpMbtDistanceLine.cpp
-  tracking/mbt/edge/vpMbtPolygon.cpp
   tracking/mbt/edge/vpMbtMeEllipse.cpp
   tracking/mbt/edge/vpMbtMeLine.cpp
 
@@ -369,8 +369,7 @@ endif()
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
   LIST(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPolygon.cpp)
-#  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtKltPolygon.cpp)
+  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPoints.cpp)
   LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
 ENDIF()
 
