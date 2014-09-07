@@ -354,7 +354,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
   bool reInit = vpMbKltTracker::postTracking(I, w_klt);
   
   postTrackingMbt(w_mbt,lvl);
-  
+
   if (displayFeatures)
   {
     if(lvl == 0){
@@ -520,9 +520,9 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 
     wmean = 0;
     for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-      wmean += m_w[n+i] ;
+      wmean += w[n+i] ;
       vpMeSite p = *itListCir;
-      if (m_w[n+i] < 0.5){
+      if (w[n+i] < 0.5){
         p.setState(vpMeSite::M_ESTIMATOR);
 
         *itListCir = p;
@@ -607,6 +607,11 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   factorMBT = 0.35;
   factorKLT = 0.65;
   
+  if (nbrow < 4)
+    factorKLT = 1.;
+  if (nbInfos < 4)
+    factorMBT = 1.;
+
   double residuMBT = 0;
   double residuKLT = 0;
   
@@ -778,7 +783,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
  
   vpColVector w_mbt;
   computeVVS(I, nbInfos, w_mbt, w_klt);
-  
+
   if(postTracking(I, w_mbt, w_klt)){
     vpMbKltTracker::reinit(I);
     
