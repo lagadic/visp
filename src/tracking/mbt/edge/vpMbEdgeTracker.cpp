@@ -1068,6 +1068,10 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 */
 void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 {
+  if(!modelInitialised){
+    throw vpException(vpException::fatalError, "model not initialized");
+  }
+
 	bool a = false;
 
 #ifdef VISP_HAVE_OGRE 
@@ -1872,36 +1876,6 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
     newvisibleline = false ;
 
   nbvisiblepolygone= n ;
-}
-
-
-/*!
-  Load a 3D model contained in a file. This file is either a vrml or a cao file.
-  
-  \param file : Full name the file containing the 3D model description.
-  The extension of this file is either .wrl or .cao.
-
-  \sa vpMbTracker::loadModel()
-*/
-void
-vpMbEdgeTracker::loadModel(const char* file)
-{
-  std::string model(file);
-  vpMbTracker::loadModel(model);
-}
-
-/*!
-  Load a 3D model contained in a file.
-  
-  \param file : Full name the file containing the 3D model description.
-  The extension of this file is either .wrl or .cao.
-
-  \sa vpMbTracker::loadModel()
-*/
-void
-vpMbEdgeTracker::loadModel(const std::string &file)
-{
-  vpMbTracker::loadModel(file);
 }
 
 /*!

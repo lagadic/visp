@@ -270,7 +270,6 @@ public:
 
           void    loadConfigFile(const char* configFile);
   virtual void    loadConfigFile(const std::string& configFile);
-  virtual void    loadModel(const std::string& modelFile);
   
           void    reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_);
           void    reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo);

@@ -348,22 +348,6 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
 }
 
 /*!
-  Load a 3D model from the file in parameter. This file must either be a vrml
-  file (.wrl) or a CAO file (.cao). CAO format is described in the 
-  loadCAOModel() method. 
-
-  \throw vpException::ioError if the file cannot be open, or if its extension is
-  not wrl or cao. 
-
-  \param modelFile : the file containing the model.
-*/
-void
-vpMbEdgeKltTracker::loadModel(const std::string& modelFile)
-{
-  vpMbTracker::loadModel(modelFile);
-}
-
-/*!
   Realize the post tracking operations. Mostly visibility tests
 */
 bool

@@ -95,10 +95,10 @@
 
 */
 vpMbTracker::vpMbTracker()
-  : cam(), cMo(), modelFileName(), modelInitialised(false), faces(),
-    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false), useOgre(false),
-    angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING)
+  : cam(), cMo(), modelFileName(), modelInitialised(false),
+    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
+    m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false)
 {
 }
 
@@ -801,11 +801,40 @@ int main()
 }
   \endcode
 
-
   \throw vpException::ioError if the file cannot be open, or if its extension is
   not wrl or cao. 
 
-  \param modelFile : the file containing the model.
+  \param modelFile : the file containing the the 3D model description.
+  The extension of this file is either .wrl or .cao.
+*/
+void
+vpMbTracker::loadModel(const char *modelFile)
+{
+  loadModel( std::string(modelFile) );
+}
+
+/*!
+  Load a 3D model from the file in parameter. This file must either be a vrml
+  file (.wrl) or a CAO file (.cao). CAO format is described in the
+  loadCAOModel() method.
+
+  \warning When this class is called to load a vrml model, remember that you
+  have to call Call SoDD::finish() before ending the program.
+  \code
+int main()
+{
+    ...
+#ifdef VISP_HAVE_COIN
+  SoDB::finish();
+#endif
+}
+  \endcode
+
+  \throw vpException::ioError if the file cannot be open, or if its extension is
+  not wrl or cao.
+
+  \param modelFile : the file containing the the 3D model description.
+  The extension of this file is either .wrl or .cao.
 */
 void
 vpMbTracker::loadModel(const std::string& modelFile)
@@ -814,11 +843,11 @@ vpMbTracker::loadModel(const std::string& modelFile)
   
   if(vpIoTools::checkFilename(modelFile)) {
     it = modelFile.end();
-    if((*(it-1) == 'o' && *(it-2) == 'a' && *(it-3) == 'c' && *(it-4) == '.') || 
+    if((*(it-1) == 'o' && *(it-2) == 'a' && *(it-3) == 'c' && *(it-4) == '.') ||
        (*(it-1) == 'O' && *(it-2) == 'A' && *(it-3) == 'C' && *(it-4) == '.') ){
-    	std::vector<std::string> vectorOfModelFilename;
-    	int startIdFace = 0;
-        loadCAOModel(modelFile, vectorOfModelFilename, startIdFace);
+      std::vector<std::string> vectorOfModelFilename;
+      int startIdFace = 0;
+      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace);
     }
     else if((*(it-1) == 'l' && *(it-2) == 'r' && *(it-3) == 'w' && *(it-4) == '.') ||
             (*(it-1) == 'L' && *(it-2) == 'R' && *(it-3) == 'W' && *(it-4) == '.') ){

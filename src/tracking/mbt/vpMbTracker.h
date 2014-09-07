@@ -93,11 +93,6 @@
     tracking failed. 
   - display() : Display the model and eventually other information.
 
-  In addition, two flags are declared in this class and may have to be 
-  initialised in the child class : 
-  - modelInitialised : flag to ensure that the model has been loaded.
-  initialised (either by loading them from a configuration file or by setting 
-  them with the setCameraParameters() method).
 */
 class VISP_EXPORT vpMbTracker
 {
@@ -300,11 +295,12 @@ public:
     
     Pure virtual method to adapt to each tracker.
     
-    \param configFile : the (xml) config file to parse
+    \param configFile : An xml config file to parse.
   */
   virtual void loadConfigFile(const std::string& configFile)=0;
 
-  virtual void loadModel(const std::string& modelFile);
+  virtual void loadModel(const char *modelFile);
+  virtual void loadModel(const std::string &modelFile);
 
   /*!
     Reset the tracker.
