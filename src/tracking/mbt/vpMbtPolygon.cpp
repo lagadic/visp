@@ -261,10 +261,9 @@ vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
   if(cam.isFovComputed() && clippingFlag > 3)
     fovNormals = cam.getFovNormals();
 
-//  std::cout << " @@@@@@@@@@@ COPIE ORIGINALE @@@@@@@@@@@@" << std::endl;
   for(unsigned int i = 0 ; i < nbpt ; i++){
+      p[i%nbpt].projection();
       roiPointsClipTemp.push_back(std::make_pair(p[i%nbpt],vpMbtPolygon::NO_CLIPPING));
-//      std::cout << p[i%nbpt].get_X() << " - " << p[i%nbpt].get_Y() << " - " << p[i%nbpt].get_Z() << std::endl;
   }
 
 
@@ -273,7 +272,6 @@ vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
   {
       if(((clippingFlag & i) == i) || ((clippingFlag > vpMbtPolygon::FAR_CLIPPING) && (i==1)))
       {
-//      std::cout << " @@@@@@@@@@@ i : " << i << " \ " << (clippingFlag & i) << " @@@@@@@@@@@@" << std::endl;
       for(unsigned int j = 0 ; j < roiPointsClipTemp.size() ; j++)
       {
           vpPoint p1Clipped = roiPointsClipTemp[j].first;
@@ -334,19 +332,10 @@ vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
           }
       }
 
-//      for(unsigned int i = 0 ; i < roiPointsClipTemp2.size() ; i++){
-//        std::cout << roiPointsClipTemp2[i].first.get_X() << " - " << roiPointsClipTemp2[i].first.get_Y() << " - " << roiPointsClipTemp2[i].first.get_Z() ;
-//        std::cout << " + " << roiPointsClipTemp2[i].first.get_x() << " - " << roiPointsClipTemp2[i].first.get_y();
-//        std::cout << " / " << roiPointsClipTemp2[i].second << std::endl;
-//      }
-
       roiPointsClipTemp = roiPointsClipTemp2;
       roiPointsClipTemp2.clear();
       }
   }
-
-
-//  std::cout << " @@@@@@@@@@@ FIN @@@@@@@@@@@@" << std::endl;
 
   roiPointsClip = roiPointsClipTemp;
 }
