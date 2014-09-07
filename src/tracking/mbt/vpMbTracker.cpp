@@ -1576,6 +1576,52 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
 }
 
 /*!
+  Extract a line of the object to track from the VMRL model. This method calls
+  the initFaceFromCorners() method implemented in the child class. 
+
+  \param line_set : Pointer to the line in the vrml format.
+  \param idFace : Id of the face.
+*/
+void
+vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
+{
+  std::vector<vpPoint> corners;
+  corners.resize(0);
+
+  int indexListSize = line_set->coordIndex.getNum();
+
+  SbVec3f point(0,0,0);
+  vpPoint pt;
+  SoVRMLCoordinate *coord;
+  
+  for (int i = 0; i < indexListSize; i++)
+  {
+    if (line_set->coordIndex[i] == -1)
+    {
+      if(corners.size() > 1)
+      {
+        addPolygon(corners, idFace++);
+        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+        corners.resize(0);
+      }
+    }
+    else
+    {
+      coord = (SoVRMLCoordinate *)(line_set->coord.getValue());
+      int index = line_set->coordIndex[i];
+      point[0]=coord->point[index].getValue()[0];
+      point[1]=coord->point[index].getValue()[1];
+      point[2]=coord->point[index].getValue()[2];
+
+      pt.setWorldCoordinates(point[0],point[1],point[2]);
+      corners.push_back(pt);
+    }
+  }
+}
+
+#endif // VISP_HAVE_COIN
+
+/*!
   Compute the center of gravity of a set of point. This is used in the cylinder
   extraction to find the center of the circles.
 
@@ -1681,52 +1727,6 @@ vpMbTracker::setClipping(const unsigned int &flags)
   for (unsigned int i = 0; i < faces.size(); i ++)
     faces[i]->setClipping(clippingFlag);
 }
-
-/*!
-  Extract a line of the object to track from the VMRL model. This method calls
-  the initFaceFromCorners() method implemented in the child class. 
-
-  \param line_set : Pointer to the line in the vrml format.
-  \param idFace : Id of the face.
-*/
-void
-vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
-{
-  std::vector<vpPoint> corners;
-  corners.resize(0);
-
-  int indexListSize = line_set->coordIndex.getNum();
-
-  SbVec3f point(0,0,0);
-  vpPoint pt;
-  SoVRMLCoordinate *coord;
-  
-  for (int i = 0; i < indexListSize; i++)
-  {
-    if (line_set->coordIndex[i] == -1)
-    {
-      if(corners.size() > 1)
-      {
-        addPolygon(corners, idFace++);
-        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-        corners.resize(0);
-      }
-    }
-    else
-    {
-      coord = (SoVRMLCoordinate *)(line_set->coord.getValue());
-      int index = line_set->coordIndex[i];
-      point[0]=coord->point[index].getValue()[0];
-      point[1]=coord->point[index].getValue()[1];
-      point[2]=coord->point[index].getValue()[2];
-
-      pt.setWorldCoordinates(point[0],point[1],point[2]);
-      corners.push_back(pt);
-    }
-  }
-}
-
-#endif
 
 /*!
   Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of 
