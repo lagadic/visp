@@ -240,12 +240,12 @@ void
 vpMbtMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
-  for(std::list<vpMeSite>::iterator itList=list.begin(); itList!=list.end(); ++itList){
+  for(std::list<vpMeSite>::iterator itList=list.begin(); itList!=list.end();){
     vpMeSite s = *itList;//current reference pixel
     if (s.getState() != vpMeSite::NO_SUPPRESSION)
-    {
-      itList = list.erase(itList) ;
-    }
+      itList = list.erase(itList);
+    else
+      ++itList;
   }
 }
 
@@ -349,6 +349,7 @@ vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImageP
   ce = cos(e);
   se = sin(e);
 
+  suppressPoints();
   reSample(I);
 
   // remet a jour l'angle delta pour chaque  point de la liste
