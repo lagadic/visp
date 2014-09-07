@@ -348,8 +348,14 @@ public:
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
   /*!
-    Enable to display the features.
-    
+    Enable to display the features. By features, we meant the moving edges (ME) and the klt points if used.
+
+    Note that if present, the moving edges can be displayed with different colors:
+    - If green : The ME is a good point.
+    - If blue : The ME is removed because of a contrast problem during the tracking phase.
+    - If purple : The ME is removed because of a threshold problem during the tracking phase.
+    - If red : The ME is removed because it is rejected by the robust approach in the virtual visual servoing scheme.
+
     \param displayF : set it to true to display the features.
   */
   void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}

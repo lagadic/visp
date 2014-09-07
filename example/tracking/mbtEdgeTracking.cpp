@@ -68,7 +68,7 @@
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display,
+                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
                 bool& cao3DModel, bool& trackCylinder, bool &useOgre);
 
 void usage(const char *name, const char *badparam)
@@ -140,7 +140,7 @@ OPTIONS:                                               \n\
 
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, bool &displayMovingEdge, bool &click_allowed, bool &display,
+                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
                 bool& cao3DModel, bool& trackCylinder, bool &useOgre)
 {
   const char *optarg_;
@@ -152,12 +152,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'x': configFile = optarg_; break;
     case 'm': modelFile = optarg_; break;
     case 'n': initFile = optarg_; break;
-    case 't': displayMovingEdge = false; break;
+    case 't': displayFeatures = false; break;
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
     case 'C': trackCylinder = false; break;
-    case 'o' : useOgre = true; break;
+    case 'o': useOgre = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -190,7 +190,7 @@ main(int argc, const char ** argv)
     std::string modelFile;
     std::string opt_initFile;
     std::string initFile;
-    bool displayMovingEdge = true;
+    bool displayFeatures = true;
     bool opt_click_allowed = true;
     bool opt_display = true;
     bool cao3DModel = false;
@@ -206,7 +206,7 @@ main(int argc, const char ** argv)
 
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayMovingEdge, opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures, opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre)) {
       return (-1);
     }
 
@@ -353,8 +353,8 @@ main(int argc, const char ** argv)
     //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
-    // Display the moving edges, see documentation for the significations of the colour
-    tracker.setDisplayMovingEdges(displayMovingEdge);
+    // Display the moving edges, see documentation for the signification of the colours
+    tracker.setDisplayFeatures(displayFeatures);
 
     // Tells if the tracker has to use Ogre3D for visibility tests
     tracker.setOgreVisibilityTest(useOgre);
