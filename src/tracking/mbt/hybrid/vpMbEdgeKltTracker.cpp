@@ -43,6 +43,7 @@
 
 #include <visp/vpDebug.h>
 #include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 #ifdef VISP_HAVE_OPENCV
 
@@ -109,9 +110,6 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
 void           
 vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  //if(firstTrack)
-  if(firstTrack)
-  {
     vpMbKltTracker::setPose(I, cdMo);
     
     lines[scaleLevel].front() ;
@@ -155,7 +153,6 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     } while(i != 0);
     
     cleanPyramid(Ipyramid);
-  }
 }
 
 /*!
@@ -575,21 +572,22 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   double residu_1 = -1;
   unsigned int iter = 0;
 
-  vpMatrix *J;
-  vpMatrix J_mbt, J_klt;     // interaction matrix
+  vpMatrix *L;
+  vpMatrix L_mbt, L_klt;     // interaction matrix
   vpColVector *R;
   vpColVector R_mbt, R_klt;  // residu
-  vpMatrix J_true;
+  vpMatrix L_true;
+  vpMatrix LVJ_true;
   //vpColVector R_true;
   vpColVector w_true;
   
   if(nbrow != 0){
-    J_mbt.resize(nbrow,6);
+    L_mbt.resize(nbrow,6);
     R_mbt.resize(nbrow);
   }
   
   if(nbInfos != 0){
-    J_klt.resize(2*nbInfos,6);
+    L_klt.resize(2*nbInfos,6);
     R_klt.resize(2*nbInfos);
   }
   
@@ -598,7 +596,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpRobust robust_mbt(0), robust_klt(0);
   vpHomography H;
 
-  vpMatrix JTJ, JTR;
+  vpMatrix LTL, LTR;
   
   double factorMBT = 1.0;
   double factorKLT = 1.0;
@@ -613,11 +611,11 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   double residuKLT = 0;
   
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){   
-    J = new vpMatrix(); 
+    L = new vpMatrix();
     R = new vpColVector();
     
     if(nbrow >= 4)
-      trackSecondLoop(I,J_mbt,R_mbt,cMo,lvl);
+      trackSecondLoop(I,L_mbt,R_mbt,cMo,lvl);
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
@@ -627,9 +625,9 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         kltpoly = *it;
         if(kltpoly->polygon->isVisible() && kltpoly->hasEnoughPoints()){
           vpSubColVector subR(R_klt, shift, 2*kltpoly->getNbPointsCur());
-          vpSubMatrix subJ(J_klt, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
+          vpSubMatrix subL(L_klt, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
           kltpoly->computeHomography(ctTc0, H);
-          kltpoly->computeInteractionMatrixAndResidu(subR, subJ);
+          kltpoly->computeInteractionMatrixAndResidu(subR, subL);
           shift += 2*kltpoly->getNbPointsCur();
         }
       }
@@ -660,7 +658,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       robust_mbt.setIteration(iter);
       robust_mbt.setThreshold(thresholdMBT/cam.get_px());
       robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
-      J->stackMatrices(J_mbt);
+      L->stackMatrices(L_mbt);
       R->stackMatrices(R_mbt);
     }
     
@@ -674,7 +672,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       robust_klt.setThreshold(thresholdKLT/cam.get_px());
       robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
       
-      J->stackMatrices(J_klt);
+      L->stackMatrices(L_klt);
       R->stackMatrices(R_klt);
     }
 
@@ -690,7 +688,12 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     
     m_error = (*R);
     if(computeCovariance){
-      J_true = (*J);
+      L_true = (*L);
+      if(!isoJoIdentity){
+         vpVelocityTwistMatrix cVo;
+         cVo.buildFrom(cMo);
+         LVJ_true = ((*L)*cVo*oJo);
+      }
     }
 
     residu_1 = residu;
@@ -705,29 +708,46 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       (*R)[i] *= m_w[i];
       if(compute_interaction){
         for (unsigned int j = 0; j < 6; j += 1){
-          (*J)[i][j] *= m_w[i];
+          (*L)[i][j] *= m_w[i];
         }
       }
     }
 
     residu = sqrt(num/den);
 
-    JTJ = J->AtA();
-    computeJTR(*J, *R, JTR);
-    v = -lambda * JTJ.pseudoInverse() * JTR;
+    if(isoJoIdentity){
+        LTL = L->AtA();
+        computeJTR(*L, *R, LTR);
+        v = -lambda * LTL.pseudoInverse() * LTR;
+    }
+    else{
+        vpVelocityTwistMatrix cVo;
+        cVo.buildFrom(cMo);
+        vpMatrix LVJ = ((*L)*cVo*oJo);
+        vpMatrix LVJTLVJ = (LVJ).AtA();
+        vpMatrix LVJTR;
+        computeJTR(LVJ, *R, LVJTR);
+        v = -lambda*LVJTLVJ.pseudoInverse(1e-16)*LVJTR;
+        v = cVo * v;
+    }
+
+
     cMo = vpExponentialMap::direct(v).inverse() * cMo;
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
     
     iter++;
     
-    delete J;
+    delete L;
     delete R;
   }
   
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*m_error,D);
+    if(isoJoIdentity)
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+    else
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
   }
 }
 

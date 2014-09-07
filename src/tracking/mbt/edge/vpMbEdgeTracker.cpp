@@ -63,6 +63,7 @@
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
 #include <visp/vpMbtPolygon.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 #include <limits>
 #include <string>
@@ -546,9 +547,23 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       }
     }
 
-    LTL = L.AtA();
-    computeJTR(L, weighted_error, LTR);
-    v = -0.7*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+
+    if(isoJoIdentity){
+        LTL = L.AtA();
+        computeJTR(L, weighted_error, LTR);
+        v = -0.7*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+    }
+    else{
+        vpVelocityTwistMatrix cVo;
+        cVo.buildFrom(cMo);
+        vpMatrix LVJ = (L*cVo*oJo);
+        vpMatrix LVJTLVJ = (LVJ).AtA();
+        vpMatrix LVJTR;
+        computeJTR(LVJ, weighted_error, LVJTR);
+        v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
+        v = cVo * v;
+    }
+
     cMo =  vpExponentialMap::direct(v).inverse() * cMo;
 
     iter++;
@@ -576,6 +591,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector error_vec;
   vpColVector W_true;
   vpMatrix L_true;
+  vpMatrix LVJ_true;
   
   while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
   {
@@ -685,6 +701,15 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     
     L_true = L;
     W_true = vpColVector(nerror);
+
+    if(computeCovariance){
+        L_true = L;
+       if(!isoJoIdentity){
+         vpVelocityTwistMatrix cVo;
+         cVo.buildFrom(cMo);
+         LVJ_true = (L*cVo*oJo);
+       }
+    }
     
     for(unsigned int i=0; i<nerror; i++){
       wi = m_w[i]*factor[i];
@@ -706,9 +731,22 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       }
     }
 
-    LTL = L.AtA();
-    computeJTR(L, weighted_error, LTR);
-    v = -lambda*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+    if(isoJoIdentity){
+        LTL = L.AtA();
+        computeJTR(L, weighted_error, LTR);
+        v = -lambda*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+    }
+    else{
+        vpVelocityTwistMatrix cVo;
+        cVo.buildFrom(cMo);
+        vpMatrix LVJ = (L*cVo*oJo);
+        vpMatrix LVJTLVJ = (LVJ).AtA();
+        vpMatrix LVJTR;
+        computeJTR(LVJ, weighted_error, LVJTR);
+        v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
+        v = cVo * v;
+    }
+
     cMo =  vpExponentialMap::direct(v).inverse() * cMo;
 
     iter++;
@@ -718,7 +756,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   if(computeCovariance){
     vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
     D.diag(W_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+    if(isoJoIdentity)
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+    else
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
   }
   
   unsigned int n =0 ;

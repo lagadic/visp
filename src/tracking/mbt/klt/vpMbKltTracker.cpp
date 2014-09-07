@@ -40,6 +40,7 @@
  *****************************************************************************/
 
 #include <visp/vpMbKltTracker.h>
+#include <visp/vpVelocityTwistMatrix.h>
 
 #ifdef VISP_HAVE_OPENCV
 
@@ -405,6 +406,10 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       cMo = cdMo;
     }
   }
+  else{
+   cMo = cdMo;
+   init(I);
+  }
 }
           
 /*!
@@ -521,23 +526,24 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 void
 vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 {
-  vpMatrix J;     // interaction matrix
+  vpMatrix L;     // interaction matrix
   vpColVector R;  // residu
-  vpMatrix J_true;     // interaction matrix
+  vpMatrix L_true;     // interaction matrix
+  vpMatrix LVJ_true;
   //vpColVector R_true;  // residu
   vpColVector v;  // "speed" for VVS
   vpHomography H;
   vpColVector w_true;
   vpRobust robust(2*nbInfos);
 
-  vpMatrix JTJ, JTR;
+  vpMatrix LTL, LTR;
   
   double normRes = 0;
   double normRes_1 = -1;
   unsigned int iter = 0;
 
   R.resize(2*nbInfos);
-  J.resize(2*nbInfos, 6, 0);
+  L.resize(2*nbInfos, 6, 0);
   
   while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ){
     
@@ -549,10 +555,10 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
       if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2 &&
          kltpoly->hasEnoughPoints()){
         vpSubColVector subR(R, shift, 2*kltpoly->getNbPointsCur());
-        vpSubMatrix subJ(J, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
+        vpSubMatrix subL(L, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
         try{
           kltpoly->computeHomography(ctTc0, H);
-          kltpoly->computeInteractionMatrixAndResidu(subR, subJ);
+          kltpoly->computeInteractionMatrixAndResidu(subR, subL);
         }catch(...){
           throw vpTrackingException(vpTrackingException::fatalError, "Cannot compute interaction matrix");
         }
@@ -573,7 +579,12 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     
     m_error = R;
     if(computeCovariance){
-      J_true = J;
+      L_true = L;
+      if(!isoJoIdentity){
+         vpVelocityTwistMatrix cVo;
+         cVo.buildFrom(cMo);
+         LVJ_true = (L*cVo*oJo);
+      }
     }
 
     normRes_1 = normRes;
@@ -587,15 +598,27 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     if((iter == 0) || compute_interaction){
       for(unsigned int i=0; i<static_cast<unsigned int>(R.getRows()); i++){
         for(unsigned int j=0; j<6; j++){
-          J[i][j] *= w[i];
+          L[i][j] *= w[i];
         }
       }
     }
-    
-    JTJ = J.AtA();
-    computeJTR(J, R, JTR);
-    v = -lambda * JTJ.pseudoInverse(1e-16) * JTR;
-    
+
+    if(isoJoIdentity){
+        LTL = L.AtA();
+        computeJTR(L, R, LTR);
+        v = -lambda * LTL.pseudoInverse(1e-16) * LTR;
+    }
+    else{
+        vpVelocityTwistMatrix cVo;
+        cVo.buildFrom(cMo);
+        vpMatrix LVJ = (L*cVo*oJo);
+        vpMatrix LVJTLVJ = (LVJ).AtA();
+        vpMatrix LVJTR;
+        computeJTR(LVJ, R, LVJTR);
+        v = -lambda*LVJTLVJ.pseudoInverse(1e-16)*LVJTR;
+        v = cVo * v;
+    }
+
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
     
     iter++;
@@ -604,7 +627,10 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    covarianceMatrix = vpMatrix::computeCovarianceMatrix(J_true,v,-lambda*m_error,D);
+    if(isoJoIdentity)
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+    else
+        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
   }
   
   cMo = ctTc0 * c0Mo;

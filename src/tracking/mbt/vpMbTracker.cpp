@@ -98,8 +98,10 @@ vpMbTracker::vpMbTracker()
   : cam(), cMo(), modelFileName(), modelInitialised(false),
     poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
     m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false)
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
+    oJo(6,6), isoJoIdentity(true)
 {
+    oJo.setIdentity();
 }
 
 /*!
@@ -1760,6 +1762,55 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
     }
     JTR[i][0] = ssum;
   }
+}
+
+/*!
+  Get a 1x6 vpColVector representing the estimated degrees of freedom.
+  vpColVector[0] = 1 if translation on X is estimated, 0 otherwise;
+  vpColVector[1] = 1 if translation on Y is estimated, 0 otherwise;
+  vpColVector[2] = 1 if translation on Z is estimated, 0 otherwise;
+  vpColVector[3] = 1 if rotation on X is estimated, 0 otherwise;
+  vpColVector[4] = 1 if rotation on Y is estimated, 0 otherwise;
+  vpColVector[5] = 1 if rotation on Z is estimated, 0 otherwise;
+
+  \return 1x6 vpColVector representing the estimated degrees of freedom.
+*/
+vpColVector
+vpMbTracker::getEstimatedDoF()
+{
+    vpColVector v(6);
+    for(unsigned int i = 0 ; i < 6 ; i++)
+        v[i] = oJo[i][i];
+    return v;
+}
+
+/*!
+  Set a 1x6 vpColVector representing the estimated degrees of freedom. The Vector has to be this form:
+  vpColVector[0] = 1 if translation on X is estimated, 0 otherwise;
+  vpColVector[1] = 1 if translation on Y is estimated, 0 otherwise;
+  vpColVector[2] = 1 if translation on Z is estimated, 0 otherwise;
+  vpColVector[3] = 1 if rotation on X is estimated, 0 otherwise;
+  vpColVector[4] = 1 if rotation on Y is estimated, 0 otherwise;
+  vpColVector[5] = 1 if rotation on Z is estimated, 0 otherwise;
+
+  \return 1x6 vpColVector representing the estimated degrees of freedom.
+*/
+void
+vpMbTracker::setEstimatedDoF(const vpColVector& v)
+{
+    if(v.getRows() == 6)
+    {
+        isoJoIdentity = true;
+        for(unsigned int i = 0 ; i < 6 ; i++){
+            if(v[i] != 0){
+              oJo[i][i] = 1.0;
+            }
+            else{
+              oJo[i][i] = 0.0;
+              isoJoIdentity = false;
+            }
+        }
+    }
 }
 
 

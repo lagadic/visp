@@ -101,6 +101,10 @@ protected:
   vpCameraParameters cam;
   //! The current pose.
   vpHomogeneousMatrix cMo;
+  //! The Degrees of Freedom to estimate
+  vpMatrix oJo;
+  //! Boolean to know if oJo is identity (for fast computation)
+  bool isoJoIdentity;
   //! The name of the file containing the model (it is used to create a file name.0.pos used to store the compute pose in the initClick method).
   std::string modelFileName;
   //! Flag used to ensure that the CAD model is loaded before the initialisation.
@@ -195,6 +199,8 @@ public:
     
     return covarianceMatrix; 
   }
+
+  virtual vpColVector getEstimatedDoF();
 
   /*!
     Return the error vector \f$(s-s^*)\f$ reached after the virtual visual servoing process used to estimate the pose.
@@ -346,6 +352,8 @@ public:
     \param flag : True if the covariance has to be computed, false otherwise
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
+
+  virtual void setEstimatedDoF(const vpColVector& v);
 
   /*!
     Enable to display the features. By features, we meant the moving edges (ME) and the klt points if used.
