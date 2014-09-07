@@ -292,8 +292,6 @@ vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint
   ce = cos(e);
   se = sin(e);
 
-  display(I, vpColor::green) ;
-
   sample(I) ;
 
   vpMeTracker::initTracking(I) ;
@@ -305,8 +303,6 @@ vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint
   {
     throw(e) ;
   }
-  vpMeTracker::display(I) ;
-  vpDisplay::flush(I) ;
 }
 
 /*!
