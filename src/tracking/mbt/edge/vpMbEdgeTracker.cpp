@@ -1879,23 +1879,27 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
 }
 
 /*!
-  Add a face to track from its corners (in the object frame). This method is
-  called from the loadModel() one to add a face of the object to track. 
-  The initialization of the face depends on the primitive to track.
+  Add the lines to track from the polygon description. If the polygon has only
+  two points, it defines a single line that is always visible. If it has three or
+  more corners, it defines a face. In that case the visibility of the face is computed
+  in order to track the corresponding lines only if the face is visible.
+
+  The id of the polygon is supposed to be set prior calling this function.
+
+  This method is called from the loadModel() one to add a face of the object to track.
   
-  \param _corners : The vector of corners representing the face.
-  \param _idFace : The id of the face.
+  \param polygon : The polygon describing the set of lines that has to be tracked.
+  \param idFace : Id of the face associated to the polygon.
 */
 void 
-vpMbEdgeTracker::initFaceFromCorners(const std::vector<vpPoint>& _corners, const unsigned int _idFace)
+vpMbEdgeTracker::initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace)
 {
-  vpMbtPolygon polygon;
-  polygon.setNbPoint((unsigned int)_corners.size());
-  polygon.setIndex((int)_idFace);
-  for(unsigned int j = 0; j < _corners.size(); j++) {
-    polygon.addPoint(j, _corners[j]);
+  unsigned int nbpt = polygon->getNbPoint() ;
+  if(nbpt > 0){
+    for (unsigned int i=0 ; i < nbpt-1 ; i++)
+      addLine(polygon->p[i], polygon->p[i+1], polygon->getIndex()) ;
+    addLine(polygon->p[nbpt-1], polygon->p[0], polygon->getIndex()) ;
   }
-  addPolygon(polygon);
 }
 
 /*!

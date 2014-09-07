@@ -326,7 +326,7 @@ protected:
   virtual void    init(const vpImage<unsigned char>& I);
   virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const unsigned int idFace);
   virtual void    initCylinder(const vpPoint&, const vpPoint &, const double r, const unsigned int idFace);
-  virtual void    initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
+  virtual void    initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace = -1);
   unsigned int    initMbtTracking(const unsigned int level=0);
 
           bool    postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,

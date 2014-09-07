@@ -87,7 +87,7 @@
   realised by implementing the main functions:
   - init() : Initialisation of the tracker (it includes re-initialisation). This
     method is called at the end of the initClick() method.
-  - initFaceFromCorners() : Initialisation of a face using its corners. 
+  - initFaceFromCorners() : Initialisation of the lines that has to be tracked.
   - track() : Tracking on the current image
   - testTracking() : Test the tracking. This method throws exception if the 
     tracking failed. 
@@ -442,14 +442,17 @@ protected:
   virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0)=0;
 
   /*!
-    Add a face to track from its corners (in the object frame). This method is
-    called from the loadModel() one to add a face of the object to track. 
-    The initialisation of the face depends on the primitive to track.
-    
-    \param corners : The vector of corners representing the face.
-    \param idFace : The index of the face.
+    Add the lines to track from the polygon description. If the polygon has only
+    two points, it defines a single line that is always visible. If it has three or
+    more corners, it defines a face. In that case the visibility of the face is computed
+    in order to track the corresponding lines only if the face is visible.
+
+    The id of the polygon is supposed to be set prior calling this function.
+
+    \param polygon : The polygon describing the set of lines that has to be tracked.
+    \param idFace : Id of the face associated to the polygon.
   */
-  virtual void initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1)=0;
+  virtual void initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace=0)=0;
   
   virtual void loadVRMLModel(const std::string& modelFile);
   virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace);

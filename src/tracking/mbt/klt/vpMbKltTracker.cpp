@@ -415,11 +415,11 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 /*!
   Initialise a new face from the coordinates given in parameter.
 
-  \param corners : Coordinates of the corners of the face in the object frame.
+  \param polygon : The polygon describing the set of lines that has to be tracked.
   \param idFace : Id of the face (depends on the vrml file organization).
 */
 void
-vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
+vpMbKltTracker::initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace)
 {
     vpMbtDistanceKltPoints *kltPoly = new vpMbtDistanceKltPoints();
     kltPoly->setCameraParameters(cam) ;

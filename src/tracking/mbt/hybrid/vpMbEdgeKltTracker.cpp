@@ -947,14 +947,14 @@ vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& camera)
 /*!
   Initialise a new face from the coordinates given in parameter.
 
-  \param corners : Coordinates of the corners of the face in the object frame.
+  \param polygon : The polygon describing the set of lines that has to be tracked.
   \param idFace : Id of the face.
 */
 void
-vpMbEdgeKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
+vpMbEdgeKltTracker::initFaceFromCorners(const vpMbtPolygon *polygon, const unsigned int idFace)
 {
-  vpMbEdgeTracker::initFaceFromCorners(corners, idFace);
-  vpMbKltTracker::initFaceFromCorners(corners, idFace);
+  vpMbEdgeTracker::initFaceFromCorners(polygon, idFace);
+  vpMbKltTracker::initFaceFromCorners(polygon, idFace);
 }
 
 /*!
