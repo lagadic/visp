@@ -643,13 +643,17 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       
     if(nbInfos >= 4){
       unsigned int shift = 0;
-      for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-        if(vpMbKltTracker::faces[i]->isVisible() && vpMbKltTracker::faces[i]->hasEnoughPoints()){
-          vpSubColVector subR(R_klt, shift, 2*vpMbKltTracker::faces[i]->getNbPointsCur());
-          vpSubMatrix subJ(J_klt, shift, 0, 2*vpMbKltTracker::faces[i]->getNbPointsCur(), 6);
-          vpMbKltTracker::faces[i]->computeHomography(ctTc0, H);
-          vpMbKltTracker::faces[i]->computeInteractionMatrixAndResidu(subR, subJ);
-          shift += 2*vpMbKltTracker::faces[i]->getNbPointsCur();
+      vpMbtDistanceKltPolygon *kltpoly;
+    //  for (unsigned int i = 0; i < faces.size(); i += 1){
+      for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=vpMbKltTracker::kltPolygons.begin(); it!=vpMbKltTracker::kltPolygons.end(); ++it){
+        kltpoly = *it;
+        int index = kltpoly->index_polygon;
+        if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hasEnoughPoints()){
+          vpSubColVector subR(R_klt, shift, 2*kltpoly->getNbPointsCur());
+          vpSubMatrix subJ(J_klt, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
+          kltpoly->computeHomography(ctTc0, H);
+          kltpoly->computeInteractionMatrixAndResidu(subR, subJ);
+          shift += 2*kltpoly->getNbPointsCur();
         }
       }
     }
@@ -1040,9 +1044,12 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
     }
   }
   
-  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-    if(displayFeatures && vpMbKltTracker::faces[i]->hasEnoughPoints() && vpMbKltTracker::faces[i]->isVisible()) {
-        vpMbKltTracker::faces[i]->displayPrimitive(I);
+  vpMbtDistanceKltPolygon *kltpoly;
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+        kltpoly->displayPrimitive(I);
     }
   }
   
@@ -1084,9 +1091,12 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
     }
   }
   
-  for (unsigned int i = 0; i < vpMbKltTracker::faces.size(); i += 1){
-    if(displayFeatures && vpMbKltTracker::faces[i]->hasEnoughPoints() && vpMbKltTracker::faces[i]->isVisible()) {
-        vpMbKltTracker::faces[i]->displayPrimitive(I);
+  vpMbtDistanceKltPolygon *kltpoly;
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+        kltpoly->displayPrimitive(I);
     }
   }
   

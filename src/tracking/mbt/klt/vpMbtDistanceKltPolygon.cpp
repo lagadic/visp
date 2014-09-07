@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpMbtDistanceKltPolygon.cpp 4661 2014-02-10 19:34:58Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -31,7 +31,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Generic model polygon, containing points of interest.
+ * Klt polygon, containing points of interest.
  *
  * Authors:
  * Romain Tallonneau
@@ -39,8 +39,7 @@
  *
  *****************************************************************************/
 
-
-#include <visp/vpMbtKltPolygon.h>
+#include <visp/vpMbtDistanceKltPolygon.h>
 
 #ifdef VISP_HAVE_OPENCV
 
@@ -48,14 +47,14 @@
   Basic constructor.
 
 */
-vpMbtKltPolygon::vpMbtKltPolygon()
+vpMbtDistanceKltPolygon::vpMbtDistanceKltPolygon()
   : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
     nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.), cam()
 {
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
-  
+
   isvisible = false;
 }
 
@@ -63,7 +62,7 @@ vpMbtKltPolygon::vpMbtKltPolygon()
   Basic destructor.
 
 */
-vpMbtKltPolygon::~vpMbtKltPolygon()
+vpMbtDistanceKltPolygon::~vpMbtDistanceKltPolygon()
 {}
 
 /*!
@@ -74,7 +73,7 @@ vpMbtKltPolygon::~vpMbtKltPolygon()
   \param _tracker : ViSP OpenCV KLT Tracker.
 */
 void
-vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
+vpMbtDistanceKltPolygon::init(const vpKltOpencv& _tracker)
 {
   // extract ids of the points in the face
   nbPointsInit = 0;
@@ -83,8 +82,8 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
   std::vector<vpImagePoint> roi;
-  getRoiClipped(cam, roi);
-  
+  (*hiddenface)[index_polygon]->getRoiClipped(cam, roi);
+
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
     int id;
     float x_tmp, y_tmp;
@@ -100,11 +99,11 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
   }
 
   // initialisation of the value for the computation in SE3
-  vpPlane plan(p[0], p[1], p[2]);
+  vpPlane plan((*hiddenface)[index_polygon]->getPoint(0), (*hiddenface)[index_polygon]->getPoint(1), (*hiddenface)[index_polygon]->getPoint(2));
 
   d0 = plan.getD();
-  N = plan.getNormal(); 
-  
+  N = plan.getNormal();
+
   N.normalize();
   N_cur = N;
   invd0 = 1.0 / d0;
@@ -118,14 +117,14 @@ vpMbtKltPolygon::init(const vpKltOpencv& _tracker)
   \return the number of points that are tracked in this face and in this instanciation of the tracker
 */
 unsigned int
-vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
+vpMbtDistanceKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
 {
   int id;
   float x, y;
   nbPointsCur = 0;
   curPoints = std::map<int, vpImagePoint>();
   curPointsInd = std::map<int, int>();
-  
+
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++){
     _tracker.getFeature((int)i, id, x, y);
     if(isTrackedFeature(id)){
@@ -134,10 +133,10 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
       nbPointsCur++;
     }
   }
-  
+
   if(nbPointsCur >= minNbPoint) enoughPoints = true;
   else enoughPoints = false;
-  
+
   return nbPointsCur;
 }
 
@@ -152,34 +151,34 @@ vpMbtKltPolygon::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
   \param _J : the interaction matrix
 */
 void
-vpMbtKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J)
+vpMbtDistanceKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J)
 {
   unsigned int index_ = 0;
-  
+
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
     int id(iter->first);
     double i_cur(iter->second.get_i()), j_cur(iter->second.get_j());
-    
+
     double x_cur(0), y_cur(0);
     vpPixelMeterConversion::convertPoint(cam, j_cur, i_cur, x_cur, y_cur);
-    
+
     vpImagePoint iP0 = initPoints[id];
     double x0(0), y0(0);
     vpPixelMeterConversion::convertPoint(cam, iP0, x0, y0);
-    
+
     double x0_transform, y0_transform ;// equivalent x and y in the first image (reference)
     computeP_mu_t(x0, y0, x0_transform, y0_transform, H );
 
     double invZ = compute_1_over_Z(x_cur, y_cur);
-      
+
     _J[2*index_][0] = - invZ;
     _J[2*index_][1] = 0;
     _J[2*index_][2] = x_cur * invZ;
     _J[2*index_][3] = x_cur * y_cur;
     _J[2*index_][4] = -(1+x_cur*x_cur);
     _J[2*index_][5] = y_cur;
-    
+
     _J[2*index_+1][0] = 0;
     _J[2*index_+1][1] = - invZ;
     _J[2*index_+1][2] = y_cur * invZ;
@@ -194,7 +193,7 @@ vpMbtKltPolygon::computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J
 }
 
 double
-vpMbtKltPolygon::compute_1_over_Z(const double x, const double y)
+vpMbtDistanceKltPolygon::compute_1_over_Z(const double x, const double y)
 {
   double num = cRc0_0n[0] * x + cRc0_0n[1] * y + cRc0_0n[2];
   double den = -(d0 - dt);
@@ -214,7 +213,7 @@ vpMbtKltPolygon::compute_1_over_Z(const double x, const double y)
   \param _cHc0 : the homography used to transfer the point
 */
 inline void
-vpMbtKltPolygon::computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& _cHc0)
+vpMbtDistanceKltPolygon::computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& _cHc0)
 {
   double p_mu_t_2 = x_in * _cHc0[2][0] + y_in * _cHc0[2][1] + _cHc0[2][2];
 
@@ -226,8 +225,8 @@ vpMbtKltPolygon::computeP_mu_t(const double x_in, const double y_in, double& x_o
 
   x_out = (x_in * _cHc0[0][0] + y_in * _cHc0[0][1] + _cHc0[0][2]) / p_mu_t_2;
   y_out = (x_in * _cHc0[1][0] + y_in * _cHc0[1][1] + _cHc0[1][2]) / p_mu_t_2;
-}  
-  
+}
+
 /*!
   compute the homography using a displacement matrix.
 
@@ -241,7 +240,7 @@ vpMbtKltPolygon::computeP_mu_t(const double x_in, const double y_in, double& x_o
   \param _cHc0 : the homography of the plane
 */
 void
-vpMbtKltPolygon::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& _cHc0)
+vpMbtDistanceKltPolygon::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& _cHc0)
 {
   vpRotationMatrix cRc0;
   vpTranslationVector ctransc0;
@@ -253,22 +252,22 @@ vpMbtKltPolygon::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomograph
 //   vpGEMM(cRc0, 1.0, invd0, cRc0, -1.0, _cHc0, VP_GEMM_A_T);
   vpGEMM(ctransc0, N, -invd0, cRc0, 1.0, cHc0, VP_GEMM_B_T);
   cHc0 /= cHc0[2][2];
-  
+
   H = cHc0;
-  
+
 //   vpQuaternionVector NQuat(N[0], N[1], N[2], 0.0);
 //   vpQuaternionVector RotQuat(cRc0);
 //   vpQuaternionVector RotQuatConj(-RotQuat.x(), -RotQuat.y(), -RotQuat.z(), RotQuat.w());
 //   vpQuaternionVector partial = RotQuat * NQuat;
 //   vpQuaternionVector resQuat = (partial * RotQuatConj);
-//   
+//
 //   cRc0_0n = vpColVector(3);
 //   cRc0_0n[0] = resQuat.x();
 //   cRc0_0n[1] = resQuat.y();
 //   cRc0_0n[2] = resQuat.z();
-  
+
   cRc0_0n = cRc0*N;
-  
+
 //   vpPlane p(corners[0], corners[1], corners[2]);
 //   vpColVector Ncur = p.getNormal();
 //   Ncur.normalize();
@@ -287,7 +286,7 @@ vpMbtKltPolygon::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomograph
   \return true if the id is in the list of tracked feature
 */
 bool
-vpMbtKltPolygon::isTrackedFeature(const int _id)
+vpMbtDistanceKltPolygon::isTrackedFeature(const int _id)
 {
 //   std::map<int, vpImagePoint>::const_iterator iter = initPoints.begin();
 //   while(iter != initPoints.end()){
@@ -296,11 +295,11 @@ vpMbtKltPolygon::isTrackedFeature(const int _id)
 //     }
 //     iter++;
 //   }
-  
+
   std::map<int, vpImagePoint>::iterator iter = initPoints.find(_id);
   if(iter != initPoints.end())
     return true;
-  
+
   return false;
 }
 
@@ -313,14 +312,14 @@ vpMbtKltPolygon::isTrackedFeature(const int _id)
   \param _shiftBorder : Optionnal shift for the border in pixel (sort of built-in erosion) to avoid to consider pixels near the limits of the face.
 */
 void
-vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _shiftBorder)
+vpMbtDistanceKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _shiftBorder)
 {
   int width = _mask->width;
   int i_min, i_max, j_min, j_max;
   cam.computeFov((unsigned)_mask->width, (unsigned)_mask->height);
-  computeRoiClipped(cam);
+  (*hiddenface)[index_polygon]->computeRoiClipped(cam);
   std::vector<vpImagePoint> roi;
-  getRoiClipped(cam, roi);
+  (*hiddenface)[index_polygon]->getRoiClipped(cam, roi);
   vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
   /* check image boundaries */
@@ -336,7 +335,7 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _sh
   if(j_max > _mask->width){
     j_max = _mask->width;
   }
-  
+
   double shiftBorder_d = (double) _shiftBorder;
   unsigned char* ptrData = (unsigned char*)_mask->imageData + i_min*width+j_min;
   for(int i=i_min; i< i_max; i++){
@@ -344,11 +343,11 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _sh
     for(int j=j_min; j< j_max; j++){
       double j_d = (double) j;
       if(_shiftBorder != 0){
-        if( vpMbtKltPolygon::isInside(roi, i_d, j_d)
-            && vpMbtKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
-            && vpMbtKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
+        if( vpMbtDistanceKltPolygon::isInside(roi, i_d, j_d)
+            && vpMbtDistanceKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtDistanceKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtDistanceKltPolygon::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
+            && vpMbtDistanceKltPolygon::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
           *(ptrData++) = _nb;
         }
         else{
@@ -356,7 +355,7 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _sh
         }
       }
       else{
-        if(vpMbtKltPolygon::isInside(roi, i, j)){
+        if(vpMbtDistanceKltPolygon::isInside(roi, i, j)){
           *(ptrData++) = _nb;
         }
         else{
@@ -366,7 +365,6 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _sh
     }
     ptrData += width - j_max + j_min;
   }
-  
 }
 
 /*!
@@ -377,13 +375,13 @@ vpMbtKltPolygon::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _sh
   \param threshold_outlier : Threshold to specify wether or not a point has to be deleted.
 */
 void
-vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_outlier)
+vpMbtDistanceKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_outlier)
 {
   std::map<int, vpImagePoint> tmp;
   std::map<int, int> tmp2;
   unsigned int nbSupp = 0;
   unsigned int k = 0;
-  
+
   nbPointsCur = 0;
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
@@ -397,18 +395,18 @@ vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_o
       nbSupp++;
       initPoints.erase(iter->first);
     }
-      
+
     k+=2;
   }
-  
+
   if(nbSupp != 0){
     curPoints = std::map<int, vpImagePoint>();
     curPointsInd = std::map<int, int>();
-    
+
     curPoints = tmp;
     curPointsInd = tmp2;
     if(nbPointsCur >= minNbPoint) enoughPoints = true;
-    else enoughPoints = false; 
+    else enoughPoints = false;
   }
 }
 
@@ -418,17 +416,17 @@ vpMbtKltPolygon::removeOutliers(const vpColVector& _w, const double &threshold_o
   \param _I : The image where to display.
 */
 void
-vpMbtKltPolygon::displayPrimitive(const vpImage<unsigned char>& _I)
-{  
+vpMbtDistanceKltPolygon::displayPrimitive(const vpImage<unsigned char>& _I)
+{
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
     int id(iter->first);
     vpImagePoint iP;
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
-    
+
     vpDisplay::displayCross(_I, iP, 10, vpColor::red);
-    
+
     iP.set_i( vpMath::round( iP.get_i() + 7 ) );
     iP.set_j( vpMath::round( iP.get_j() + 7 ) );
     char ide[10];
@@ -443,17 +441,17 @@ vpMbtKltPolygon::displayPrimitive(const vpImage<unsigned char>& _I)
   \param _I : The image where to display.
 */
 void
-vpMbtKltPolygon::displayPrimitive(const vpImage<vpRGBa>& _I)
-{  
+vpMbtDistanceKltPolygon::displayPrimitive(const vpImage<vpRGBa>& _I)
+{
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
   for( ; iter != curPoints.end(); iter++){
     int id(iter->first);
     vpImagePoint iP;
     iP.set_i(static_cast<double>(iter->second.get_i()));
     iP.set_j(static_cast<double>(iter->second.get_j()));
-    
+
     vpDisplay::displayCross(_I, iP, 10, vpColor::red);
-    
+
     iP.set_i( vpMath::round( iP.get_i() + 7 ) );
     iP.set_j( vpMath::round( iP.get_j() + 7 ) );
     char ide[10];
@@ -466,7 +464,8 @@ vpMbtKltPolygon::displayPrimitive(const vpImage<vpRGBa>& _I)
 //      Static functions
 //###################################
 
-bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double i_test, const double j_test, const double i, const double j)
+bool
+vpMbtDistanceKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double i_test, const double j_test, const double i, const double j)
 {
   double dx = p2.get_j() - p1.get_j();
   double dy = p2.get_i() - p1.get_i();
@@ -486,7 +485,8 @@ bool vpMbtKltPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, 
   return ( t >= std::numeric_limits<double>::epsilon() && t < 1.0 && u >= std::numeric_limits<double>::epsilon() && u < 1.0);
 }
 
-bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const double i, const double j)
+bool
+vpMbtDistanceKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const double i, const double j)
 {
   double i_test = 100000.;
   double j_test = 100000.;
@@ -497,7 +497,7 @@ bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const doubl
     computeAgain = false;
     for(unsigned int k=0; k< roi.size(); k++){
       try{
-        if(vpMbtKltPolygon::intersect(roi[k], roi[(k+1)%roi.size()], i, j, i_test, j_test)){
+        if(vpMbtDistanceKltPolygon::intersect(roi[k], roi[(k+1)%roi.size()], i, j, i_test, j_test)){
           nbInter++;
         }
       }
@@ -516,4 +516,4 @@ bool vpMbtKltPolygon::isInside(const std::vector<vpImagePoint>& roi, const doubl
   return ((nbInter%2) == 1);
 }
 
-#endif // VISP_HAVE_OPENCV
+#endif

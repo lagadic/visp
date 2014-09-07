@@ -79,6 +79,17 @@ vpMbKltTracker::~vpMbKltTracker()
     cur = NULL;
   }
 
+  // delete the Klt Polygon features
+  vpMbtDistanceKltPolygon *kltpoly;
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    if (kltpoly!=NULL){
+      delete kltpoly ;
+    }
+    kltpoly = NULL ;
+  }
+  kltPolygons.clear();
+
   // delete the structures used to display cylinders and circles
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
@@ -143,9 +154,15 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   cvZero(mask);
   
   unsigned char val = 255/* - i*15*/;
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2)
-      faces[i]->updateMask(mask, val, maskBorder);
+
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+
+    if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2)
+      kltpoly->updateMask(mask, val, maskBorder);
 //    else
 //      vpCTRACE << "face not visible" << std::endl;
   }
@@ -153,9 +170,13 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   tracker.initTracking(cur, mask);
 //  vpCTRACE << "init klt. detected " << tracker.getNbFeatures() << " points" << std::endl;
   
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
-      faces[i]->init(tracker);
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+
+    if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2){
+      kltpoly->init(tracker);
     }
   }
 
@@ -277,9 +298,16 @@ vpMbKltTracker::setKltOpencv(const vpKltOpencv& t){
 void
 vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
 {
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    faces[i]->setCameraParameters(camera);
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+//    faces[i]->setCameraParameters(camera);
+//  }
+
+  vpMbtDistanceKltPolygon *kltpoly;
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    kltpoly->setCameraParameters(camera);
   }
+
   this->cam = camera;
 }
    
@@ -344,11 +372,17 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       CvPoint2D32f* initial_guess = NULL;
       initial_guess = (CvPoint2D32f*)cvAlloc((unsigned int)tracker.getMaxFeatures()*sizeof(initial_guess[0]));
         
-      for (unsigned int i = 0; i < faces.size(); i += 1){
-        if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2 && faces[i]->hasEnoughPoints()){
-          vpCTRACE << "dans if" << std::endl;
+//      for (unsigned int i = 0; i < faces.size(); i += 1){
+      vpMbtDistanceKltPolygon *kltpoly;
+      for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+        kltpoly = *it;
+        int index = kltpoly->index_polygon;
+
+        if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2 &&
+           kltpoly->hasEnoughPoints()){
+
           //Get the normal to the face at the current state cMo
-          vpPlane plan(faces[i]->p[0], faces[i]->p[1], faces[i]->p[2]);
+          vpPlane plan(kltpoly->hiddenface->getPolygon()[index]->p[0], kltpoly->hiddenface->getPolygon()[index]->p[1], kltpoly->hiddenface->getPolygon()[index]->p[2]);
           plan.changeFrame(cMcd);
           
           vpColVector Nc = plan.getNormal(); 
@@ -365,8 +399,8 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
           vpMatrix cdGc = cam.get_K() * cdHc * cam.get_K_inverse();
           
           //Points displacement
-          std::map<int, vpImagePoint>::const_iterator iter = faces[i]->getCurrentPoints().begin();
-          for( ; iter != faces[i]->getCurrentPoints().end(); iter++){
+          std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
+          for( ; iter != kltpoly->getCurrentPoints().end(); iter++){
             vpColVector cdp(3);
             cdp[0] = iter->second.get_j(); cdp[1] = iter->second.get_i(); cdp[2] = 1.0;
             
@@ -382,8 +416,8 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
             cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
             
             //Set value to the KLT tracker
-            initial_guess[(faces[i]->getCurrentPointsInd())[iter->first]].x = (float)cdp[0];
-            initial_guess[(faces[i]->getCurrentPointsInd())[iter->first]].y = (float)cdp[1];
+            initial_guess[(kltpoly->getCurrentPointsInd())[iter->first]].x = (float)cdp[0];
+            initial_guess[(kltpoly->getCurrentPointsInd())[iter->first]].y = (float)cdp[1];
           }
         }
       }  
@@ -465,7 +499,7 @@ void
 vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace)
 {     
   //if( corners.size() > 2){ // This tracker can't handle lignes
-    vpMbtKltPolygon *polygon = new vpMbtKltPolygon;
+    vpMbtPolygon *polygon = new vpMbtPolygon;
   //   polygon->setCameraParameters(cam);
     polygon->setNbPoint((unsigned int)corners.size());
     polygon->setIndex((int)idFace);
@@ -473,7 +507,7 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
       polygon->addPoint(j, corners[j]);
     }
     faces.addPolygon(polygon);
-    faces.getPolygon().back()->setCameraParameters(cam);
+//    faces.getPolygon().back()->setCameraParameters(cam);
     
     if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
       faces.getPolygon().back()->setClipping(clippingFlag);
@@ -483,6 +517,12 @@ vpMbKltTracker::initFaceFromCorners(const std::vector<vpPoint>& corners, const u
     
     if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
       faces.getPolygon().back()->setFarClippingDistance(distFarClip);
+
+    vpMbtDistanceKltPolygon *kltPoly = new vpMbtDistanceKltPolygon();
+    kltPoly->setCameraParameters(cam) ;
+    kltPoly->index_polygon = idFace;
+    kltPoly->hiddenface = &faces;
+    kltPolygons.push_back(kltPoly);
 
     delete polygon;
     polygon = NULL;
@@ -507,12 +547,16 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
   
   nbInfos = 0;  
   nbFaceUsed = 0;
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
-      faces[i]->computeNbDetectedCurrent(tracker);
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2){
+      kltpoly->computeNbDetectedCurrent(tracker);
 //       faces[i]->ransac();
-      if(faces[i]->hasEnoughPoints()){
-        nbInfos += faces[i]->getNbPointsCur();
+      if(kltpoly->hasEnoughPoints()){
+        nbInfos += kltpoly->getNbPointsCur();
         nbFaceUsed++;
       }
     }
@@ -532,15 +576,19 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
   unsigned int initialNumber = 0;
   unsigned int currentNumber = 0;
   unsigned int shift = 0;
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
-      initialNumber += faces[i]->getInitialNumberPoint();
-      if(faces[i]->hasEnoughPoints()){    
-        vpSubColVector sub_w(w, shift, 2*faces[i]->getNbPointsCur());
-        faces[i]->removeOutliers(sub_w, threshold_outlier);
-        shift += 2*faces[i]->getNbPointsCur();
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2){
+      initialNumber += kltpoly->getInitialNumberPoint();
+      if(kltpoly->hasEnoughPoints()){
+        vpSubColVector sub_w(w, shift, 2*kltpoly->getNbPointsCur());
+        kltpoly->removeOutliers(sub_w, threshold_outlier);
+        shift += 2*kltpoly->getNbPointsCur();
         
-        currentNumber += faces[i]->getNbPointsCur();
+        currentNumber += kltpoly->getNbPointsCur();
       }
 //       else{
 //         reInitialisation = true;
@@ -604,19 +652,24 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ){
     
     unsigned int shift = 0;
-    for (unsigned int i = 0; i < faces.size(); i += 1){
-      if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2 && faces[i]->hasEnoughPoints()){
-        vpSubColVector subR(R, shift, 2*faces[i]->getNbPointsCur());
-        vpSubMatrix subJ(J, shift, 0, 2*faces[i]->getNbPointsCur(), 6);
+    vpMbtDistanceKltPolygon *kltpoly;
+  //  for (unsigned int i = 0; i < faces.size(); i += 1){
+    for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+      kltpoly = *it;
+      int index = kltpoly->index_polygon;
+      if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2 &&
+         kltpoly->hasEnoughPoints()){
+        vpSubColVector subR(R, shift, 2*kltpoly->getNbPointsCur());
+        vpSubMatrix subJ(J, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
         try{
-          faces[i]->computeHomography(ctTc0, H);
-          faces[i]->computeInteractionMatrixAndResidu(subR, subJ);
+          kltpoly->computeHomography(ctTc0, H);
+          kltpoly->computeInteractionMatrixAndResidu(subR, subJ);
         }catch(...){
-          std::cerr << "exception while tracking face " << i << std::endl;
+          std::cerr << "exception while tracking face " << index << std::endl;
           throw ;
         }
 
-        shift += 2*faces[i]->getNbPointsCur();
+        shift += 2*kltpoly->getNbPointsCur();
       }
     }
 
@@ -832,13 +885,17 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
   
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(displayFullModel || faces[i]->isVisible())
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(displayFullModel || kltpoly->hiddenface->isVisible((unsigned int)index))
     {
-      faces[i]->changeFrame(cMo_);
-      faces[i]->computeRoiClipped(c);
+      kltpoly->hiddenface->getPolygon()[index]->changeFrame(cMo_);
+      kltpoly->hiddenface->getPolygon()[index]->computeRoiClipped(c);
       std::vector<std::pair<vpImagePoint,unsigned int> > roi;
-      faces[i]->getRoiClipped(c, roi);
+      kltpoly->hiddenface->getPolygon()[index]->getRoiClipped(c, roi);
       
       for (unsigned int j = 0; j < roi.size(); j += 1){
         if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
@@ -855,8 +912,8 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
         }
       }
     }
-    if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
-        faces[i]->displayPrimitive(I);
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+        kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
@@ -894,31 +951,35 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
   
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(displayFullModel || faces[i]->isVisible())
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(displayFullModel || kltpoly->hiddenface->isVisible((unsigned int)index))
     {
-      faces[i]->changeFrame(cMo_);
-      faces[i]->computeRoiClipped(c);      
+      kltpoly->hiddenface->getPolygon()[index]->changeFrame(cMo_);
+      kltpoly->hiddenface->getPolygon()[index]->computeRoiClipped(c);
       std::vector<std::pair<vpImagePoint,unsigned int> > roi;
-      faces[i]->getRoiClipped(c, roi);
-      
+      kltpoly->hiddenface->getPolygon()[index]->getRoiClipped(c, roi);
+
       for (unsigned int j = 0; j < roi.size(); j += 1){
-        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) &&
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){
           vpImagePoint ip1, ip2;
           ip1 = roi[j].first;
           ip2 = roi[(j+1)%roi.size()].first;
-          
+
           vpDisplay::displayLine (I, ip1, ip2, col, thickness);
         }
       }
     }
-    if(displayFeatures && faces[i]->hasEnoughPoints() && faces[i]->isVisible()) {
-        faces[i]->displayPrimitive(I);
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->hiddenface->isVisible((unsigned int)index)) {
+        kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
@@ -949,9 +1010,13 @@ void
 vpMbKltTracker::testTracking()
 {
   unsigned int nbTotalPoints = 0;
-  for (unsigned int i = 0; i < faces.size(); i += 1){
-    if(faces[i]->isVisible() && faces[i]->getNbPoint() > 2){
-      nbTotalPoints += faces[i]->getNbPointsCur();
+  vpMbtDistanceKltPolygon *kltpoly;
+//  for (unsigned int i = 0; i < faces.size(); i += 1){
+  for(std::list<vpMbtDistanceKltPolygon*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    int index = kltpoly->index_polygon;
+    if(kltpoly->hiddenface->isVisible((unsigned int)index) && kltpoly->hiddenface->getPolygon()[index]->getNbPoint() > 2){
+      nbTotalPoints += kltpoly->getNbPointsCur();
     }
   }
 

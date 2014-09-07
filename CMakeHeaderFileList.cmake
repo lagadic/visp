@@ -274,7 +274,8 @@ SET (HEADER_TRACKING
   tracking/mbt/edge/vpMbtXmlParser.h
   tracking/mbt/hybrid/vpMbEdgeKltTracker.h
   tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.h
-  tracking/mbt/klt/vpMbtKltPolygon.h
+#  tracking/mbt/klt/vpMbtKltPolygon.h
+  tracking/mbt/klt/vpMbtDistanceKltPolygon.h
   tracking/mbt/klt/vpMbKltTracker.h
   tracking/mbt/klt/vpMbtKltXmlParser.h
 

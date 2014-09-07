@@ -52,7 +52,6 @@
 
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
-#include <visp/vpMbtKltPolygon.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpDisplayX.h>
@@ -62,7 +61,8 @@
 #include <visp/vpSubColVector.h>
 #include <visp/vpSubMatrix.h>
 #include <visp/vpExponentialMap.h>
-#include <visp/vpMbtKltPolygon.h>
+//#include <visp/vpMbtKltPolygon.h>
+#include <visp/vpMbtDistanceKltPolygon.h>
 #include <visp/vpMbtDistanceCircle.h>
 #include <visp/vpMbtDistanceCylinder.h>
 
@@ -257,8 +257,6 @@ protected:
   vpHomogeneousMatrix ctTc0;
   //! Points tracker.
   vpKltOpencv tracker;
-  //! Set of faces describing the object. 
-  vpMbHiddenFaces<vpMbtKltPolygon> faces;
   //! First track() called
   bool firstTrack;
   //! Distance for near clipping
@@ -267,6 +265,12 @@ protected:
   double distFarClip;
   //! Flags specifying which clipping to used
   unsigned int clippingFlag;
+//  //! Set of faces describing the object.
+//  vpMbHiddenFaces<vpMbtKltPolygon> faces;
+  //! Set of faces describing the object.
+  vpMbHiddenFaces<vpMbtPolygon> faces;
+  //! Vector of the cylinders used here only to display the full model.
+  std::list<vpMbtDistanceKltPolygon*> kltPolygons;
   //! Vector of the cylinders used here only to display the full model.
   std::list<vpMbtDistanceCylinder*> cylinders_disp;
   //! Vector of the circles used here only to display the full model.
@@ -309,7 +313,7 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; } 
     
           /*! Return a reference to the faces structure. */
-  inline  vpMbHiddenFaces<vpMbtKltPolygon>& getFaces() { return faces;}
+  inline  vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
           
           /*!
             Get the far distance for clipping.
@@ -453,8 +457,8 @@ protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
   virtual void            initFaceFromCorners(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
-          virtual void            initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
-          virtual void            initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
+          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
+          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
 
           void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
           bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);
