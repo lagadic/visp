@@ -272,7 +272,7 @@ public:
   virtual void    loadConfigFile(const std::string& configFile);
   
           void    reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
-        		  const bool verbose=false));
+        		  const bool verbose=false);
           void    reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
         		  const bool verbose=false);
           void    resetTracker();
