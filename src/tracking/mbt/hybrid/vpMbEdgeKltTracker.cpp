@@ -1109,12 +1109,14 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
-                                const vpHomogeneousMatrix& cMo_)
+                                const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  reInitModel(I, cad_name.c_str(), cMo_);
+  reInitModel(I, cad_name.c_str(), cMo_, verbose);
 }
 
 /*!
@@ -1123,13 +1125,15 @@ vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::stri
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
-                                const vpHomogeneousMatrix& cMo_)
+                                const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  vpMbKltTracker::reInitModel(I, cad_name, cMo_);
-  vpMbEdgeTracker::reInitModel(I, cad_name, cMo_);
+  vpMbKltTracker::reInitModel(I, cad_name, cMo_, verbose);
+  vpMbEdgeTracker::reInitModel(I, cad_name, cMo_, verbose);
 }
 
 #endif //VISP_HAVE_OPENCV

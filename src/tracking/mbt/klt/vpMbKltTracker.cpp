@@ -1034,12 +1034,14 @@ vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
-                            const vpHomogeneousMatrix& cMo_)
+                            const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  reInitModel(I, cad_name.c_str(), cMo_);
+  reInitModel(I, cad_name.c_str(), cMo_, verbose);
 }
 
 /*!
@@ -1048,10 +1050,12 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
-                            const vpHomogeneousMatrix& cMo_)
+                            const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
   this->cMo.setIdentity();
 
@@ -1065,7 +1069,7 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
 
   faces.reset();
 
-  loadModel(cad_name);
+  loadModel(cad_name, verbose);
   initFromPose(I, cMo_);
 }
 

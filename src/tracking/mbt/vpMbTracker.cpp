@@ -807,11 +807,13 @@ int main()
 
   \param modelFile : the file containing the the 3D model description.
   The extension of this file is either .wrl or .cao.
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
-vpMbTracker::loadModel(const char *modelFile)
+vpMbTracker::loadModel(const char *modelFile, const bool verbose)
 {
-  loadModel( std::string(modelFile) );
+  loadModel( std::string(modelFile), verbose );
 }
 
 /*!
@@ -836,9 +838,11 @@ int main()
 
   \param modelFile : the file containing the the 3D model description.
   The extension of this file is either .wrl or .cao.
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
-vpMbTracker::loadModel(const std::string& modelFile)
+vpMbTracker::loadModel(const std::string& modelFile, const bool verbose)
 {
   std::string::const_iterator it;
   
@@ -848,7 +852,13 @@ vpMbTracker::loadModel(const std::string& modelFile)
        (*(it-1) == 'O' && *(it-2) == 'A' && *(it-3) == 'C' && *(it-4) == '.') ){
       std::vector<std::string> vectorOfModelFilename;
       int startIdFace = 0;
-      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace);
+      nbPoints = 0;
+      nbLines = 0;
+      nbPolygonLines = 0;
+      nbPolygonPoints = 0;
+      nbCylinders = 0;
+      nbCircles = 0;
+      loadCAOModel(modelFile, vectorOfModelFilename, startIdFace, verbose, true);
     }
     else if((*(it-1) == 'l' && *(it-2) == 'r' && *(it-3) == 'w' && *(it-4) == '.') ||
             (*(it-1) == 'L' && *(it-2) == 'R' && *(it-3) == 'W' && *(it-4) == '.') ){
@@ -1002,11 +1012,15 @@ void vpMbTracker::removeComment(std::ifstream& fileId) {
   
   \param modelFile : Full name of the main *.cao file containing the model.
   \param vectorOfModelFilename : A vector of *.cao files.
-  \param startIdFace : Id of the first face that is found.
+  \param startIdFace : Current Id of the face.
+  \param verbose : If true, will print additional information with CAO model files which include other CAO model files.
+  \param parent : This parameter is set to true when parsing a parent CAO model file, and false when parsing an included
+  CAO model file.
 */
 void
 vpMbTracker::loadCAOModel(const std::string& modelFile,
-		std::vector<std::string>& vectorOfModelFilename, int& startIdFace) {
+		std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
+		const bool verbose, const bool parent) {
 	std::ifstream fileId;
 	fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
 	fileId.open(modelFile.c_str(), std::ifstream::in);
@@ -1015,7 +1029,9 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		throw vpException(vpException::ioError, "cannot read CAO model file");
 	}
 
-  //std::cout << "Model file : " << modelFile << std::endl;
+	if(verbose) {
+		std::cout << "Model file : " << modelFile << std::endl;
+	}
 	vectorOfModelFilename.push_back(modelFile);
 
 	try {
@@ -1083,7 +1099,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 				if (!cyclic) {
 					if (vpIoTools::checkFilename(modelFile)) {
-						loadCAOModel(headerPath, vectorOfModelFilename,	startIdFace);
+						loadCAOModel(headerPath, vectorOfModelFilename,	startIdFace, verbose, false);
 					} else {
 						throw vpException(vpException::ioError,
 								"file cannot be open");
@@ -1105,7 +1121,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		fileId >> caoNbrPoint;
 		fileId.ignore(256, '\n'); // skip the rest of the line
 
-		std::cout << "> " << caoNbrPoint << " points" << std::endl;
+		nbPoints += caoNbrPoint;
+		if(verbose || vectorOfModelFilename.size() == 1) {
+			std::cout << "> " << caoNbrPoint << " points" << std::endl;
+		}
+
 		if (caoNbrPoint > 100000) {
 			throw vpException(vpException::badValue,
 					"Exceed the max number of points in the CAO model.");
@@ -1149,8 +1169,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		fileId >> caoNbrLine;
 		fileId.ignore(256, '\n'); // skip the rest of the line
 
+		nbLines += caoNbrLine;
 		unsigned int *caoLinePoints = NULL;
-		std::cout << "> " << caoNbrLine << " lines" << std::endl;
+		if(verbose || vectorOfModelFilename.size() == 1) {
+			std::cout << "> " << caoNbrLine << " lines" << std::endl;
+		}
 
 		if (caoNbrLine > 100000) {
 			delete[] caoPoints;
@@ -1197,7 +1220,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		fileId >> caoNbrPolygonLine;
 		fileId.ignore(256, '\n'); // skip the rest of the line
 
-		std::cout << "> " << caoNbrPolygonLine << " polygon line" << std::endl;
+		nbPolygonLines += caoNbrPolygonLine;
+		if(verbose || vectorOfModelFilename.size() == 1) {
+			std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
+		}
+
 		if (caoNbrPolygonLine > 100000) {
 			delete[] caoPoints;
 			delete[] caoLinePoints;
@@ -1240,8 +1267,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 		fileId >> caoNbrPolygonPoint;
 		fileId.ignore(256, '\n'); // skip the rest of the line
 
-		std::cout << "> " << caoNbrPolygonPoint << " polygon point"
-				<< std::endl;
+		nbPolygonPoints += caoNbrPolygonPoint;
+		if(verbose || vectorOfModelFilename.size() == 1) {
+			std::cout << "> " << caoNbrPolygonPoint << " polygon points"
+					<< std::endl;
+		}
 
 		if (caoNbrPolygonPoint > 100000) {
 			throw vpException(vpException::badValue,
@@ -1287,7 +1317,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			fileId >> caoNbCylinder;
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
-			std::cout << "> " << caoNbCylinder << " cylinder" << std::endl;
+			nbCylinders += caoNbCylinder;
+			if(verbose || vectorOfModelFilename.size() == 1) {
+				std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
+			}
+
 			if (caoNbCylinder > 100000) {
 				throw vpException(vpException::badValue,
 						"Exceed the max number of cylinders.");
@@ -1329,7 +1363,11 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			fileId >> caoNbCircle;
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
-			std::cout << "> " << caoNbCircle << " circle" << std::endl;
+			nbCircles += caoNbCircle;
+			if(verbose || vectorOfModelFilename.size() == 1) {
+				std::cout << "> " << caoNbCircle << " circles" << std::endl;
+			}
+
 			if (caoNbCircle > 100000) {
 				throw vpException(vpException::badValue,
 						"Exceed the max number of cicles.");
@@ -1363,6 +1401,25 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 		delete[] caoPoints;
 		delete[] caoLinePoints;
+
+		if(vectorOfModelFilename.size() > 1 && parent) {
+			if(verbose) {
+				std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
+				std::cout << "Total nb of points : " << nbPoints << std::endl;
+				std::cout << "Total nb of lines : " << nbLines << std::endl;
+				std::cout << "Total nb of polygon lines : " << nbPolygonLines << std::endl;
+				std::cout << "Total nb of polygon points : " << nbPolygonPoints << std::endl;
+				std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
+				std::cout << "Total nb of circles : " << nbCircles << std::endl;
+			} else {
+				std::cout << "> " << nbPoints << " points" << std::endl;
+				std::cout << "> " << nbLines << " lines" << std::endl;
+				std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
+				std::cout << "> " << nbPolygonPoints << " polygon points" << std::endl;
+				std::cout << "> " << nbCylinders << " cylinders" << std::endl;
+				std::cout << "> " << nbCircles << " circles" << std::endl;
+			}
+		}
 	} catch (...) {
 		std::cerr << "Cannot read line!" << std::endl;
 		throw vpException(vpException::ioError, "cannot read line");

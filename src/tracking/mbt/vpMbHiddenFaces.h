@@ -370,11 +370,11 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
 
   //Commented because we need to compute visibility
   // even when dealing with line in level of detail case
-//  if(Lpol[i]->getNbPoint() <= 2)
-//  {
-//      Lpol[i]->isvisible = true;
-//  }
-//  else{
+  /*if(Lpol[i]->getNbPoint() <= 2)
+  {
+      Lpol[i]->isvisible = true;
+  }
+  else*/{
   if(Lpol[i]->isVisible())
   {
     bool testDisappear = false;

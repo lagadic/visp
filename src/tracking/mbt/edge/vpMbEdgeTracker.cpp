@@ -2034,12 +2034,14 @@ vpMbEdgeTracker::resetTracker()
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name,
-                             const vpHomogeneousMatrix& cMo_)
+                             const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  reInitModel(I, cad_name.c_str(), cMo_);
+  reInitModel(I, cad_name.c_str(), cMo_, verbose);
 }
 
 /*!
@@ -2048,10 +2050,12 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const std::string 
   \param I : The image containing the object to initialize.
   \param cad_name : Path to the file containing the 3D model description.
   \param cMo_ : The new vpHomogeneousMatrix between the camera and the new model
+  \param verbose : verbose option to print additional information when loading CAO model files which include other
+  CAO model files.
 */
 void
 vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
-                             const vpHomogeneousMatrix& cMo_)
+                             const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
   this->cMo.setIdentity();
   vpMbtDistanceLine *l;
@@ -2093,7 +2097,7 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
   //lambda = 1;
   nbvisiblepolygone = 0;
 
-  loadModel(cad_name);
+  loadModel(cad_name, verbose);
   initFromPose(I, cMo_);
 }
 

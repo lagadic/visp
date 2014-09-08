@@ -136,7 +136,18 @@ protected:
   unsigned int clippingFlag;
   //! Use Ogre3d for visibility tests
   bool useOgre;
-
+  //! Number of points in CAO model
+  unsigned int nbPoints;
+  //! Number of lines in CAO model
+  unsigned int nbLines;
+  //! Number of polygon lines in CAO model
+  unsigned int nbPolygonLines;
+  //! Number of polygon points in CAO model
+  unsigned int nbPolygonPoints;
+  //! Number of cylinders in CAO model
+  unsigned int nbCylinders;
+  //! Number of circles in CAO model
+  unsigned int nbCircles;
 
 public:
   vpMbTracker();
@@ -306,8 +317,8 @@ public:
   */
   virtual void loadConfigFile(const std::string& configFile)=0;
 
-  virtual void loadModel(const char *modelFile);
-  virtual void loadModel(const std::string &modelFile);
+  virtual void loadModel(const char *modelFile, const bool verbose=false);
+  virtual void loadModel(const std::string &modelFile, const bool verbose=false);
 
   /*!
     Reset the tracker.
@@ -469,7 +480,8 @@ protected:
   virtual void initFaceFromCorners(vpMbtPolygon &polygon)=0;
   
   virtual void loadVRMLModel(const std::string& modelFile);
-  virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace);
+  virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
+		  const bool verbose=false, const bool parent=true);
 
 
   void removeComment(std::ifstream& fileId);
