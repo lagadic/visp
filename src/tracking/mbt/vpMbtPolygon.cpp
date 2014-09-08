@@ -172,6 +172,7 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \param alpha : Maximum angle to detect if the face is visible (in rad).
   \param modulo : Indicates if the test should also consider faces that are not oriented
   counter clockwise. If true, the orientation of the face is without importance.
+  \param cam : Camera parameters (intrinsics parameters)
   
   \return Return true if the polygon is visible.
 */
