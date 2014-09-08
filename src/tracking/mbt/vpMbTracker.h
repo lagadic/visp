@@ -382,7 +382,7 @@ public:
 
   virtual void setFarClippingDistance(const double &dist);
 
-  virtual void setLOD(const bool useLOD);
+  virtual void setLod(const bool useLod);
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh);
 

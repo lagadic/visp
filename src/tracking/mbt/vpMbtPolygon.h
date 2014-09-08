@@ -102,7 +102,7 @@ public:
   //! Distance for near clipping
   double distFarClip;
   //! Flag to specify if the visibility of the polygon depends also of the current level of detail (LOD)
-  bool useLOD;
+  bool useLod;
   //! Threshold for minimum line length in pixel to consider if the line is visible or not in LOD case
   double minLineLengthThresh;
   //! Threshold for minimum polygon area in pixel to consider if the polygon is visible or not in LOD case
@@ -225,9 +225,9 @@ public:
   /*!
    	Set the flag to consider if the level of detail (LOD) is used
 
-   	\param useLOD : true if level of detail must be used, false otherwise
+   	\param useLod : true if level of detail must be used, false otherwise
    */
-  inline 		 void	  setLOD(const bool useLOD) {this->useLOD = useLOD;}
+  inline 		 void	  setLod(const bool useLod) {this->useLod = useLod;}
   /*!
    	Set the threshold for the minimum line length to be considered as visible in the LOD case
 

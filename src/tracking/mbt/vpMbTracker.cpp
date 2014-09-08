@@ -1753,14 +1753,14 @@ vpMbTracker::setFarClippingDistance(const double &dist)
 /*!
  	Set the flag to consider if the level of detail (LOD) is used
 
- 	\param useLOD : true if the level of detail must be used, false otherwise
+ 	\param useLod : true if the level of detail must be used, false otherwise
  */
 void
-vpMbTracker::setLOD(const bool useLOD)
+vpMbTracker::setLod(const bool useLod)
 {
   for (unsigned int i = 0; i < faces.size(); i++)
   {
-    faces[i]->setLOD(useLOD);
+    faces[i]->setLod(useLod);
   }
 }
 

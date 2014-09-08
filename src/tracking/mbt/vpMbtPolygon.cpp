@@ -60,7 +60,7 @@ vpMbtPolygon::vpMbtPolygon()
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.),
-    useLOD(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
+    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
 {
 }
 
@@ -68,7 +68,7 @@ vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon& mbtp)
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.),
-    useLOD(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
+    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
 {
   *this = mbtp;
 }
@@ -191,7 +191,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
 	double y2 = roiImagePoints[1].get_v();
 	double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
-	if(useLOD && length < minLineLengthThresh) {
+	if(useLod && length < minLineLengthThresh) {
 		isvisible = false;
 		isappearing = false;
 		return  false;
@@ -207,7 +207,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
   vpPolygon roiPolygon(roiImagePoints);
   double area = roiPolygon.getArea();
-  if(useLOD && area < minPolygonAreaThresh) {
+  if(useLod && area < minPolygonAreaThresh) {
   	  isappearing = false;
   	  isvisible = false ;
   	  return false;
