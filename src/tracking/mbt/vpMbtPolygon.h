@@ -101,6 +101,12 @@ public:
   double distNearClip;
   //! Distance for near clipping
   double distFarClip;
+  //! Flag to specify if the visibility of the polygon depends also of the current level of detail (LOD)
+  bool useLOD;
+  //! Threshold for minimum line length in pixel to consider if the line is visible or not in LOD case
+  double minLineLengthThresh;
+  //! Threshold for minimum polygon area in pixel to consider if the polygon is visible or not in LOD case
+  double minPolygonAreaThresh;
   
 private:            
             bool          getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2,
@@ -188,7 +194,8 @@ public:
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo);
 
   inline    bool          isAppearing() const {return isappearing;}
-  virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false) ;
+  virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
+		  const vpCameraParameters &cam = vpCameraParameters());
             bool          isVisible() const {return isvisible;}
 
             vpMbtPolygon& operator=(const vpMbtPolygon& mbtp) ;
@@ -215,6 +222,26 @@ public:
     \param i : the new index of the face.
   */
   virtual inline void     setIndex(const int i ) { index = i ; } 
+  /*!
+   	Set the flag to consider if the level of detail (LOD) is used
+
+   	\param useLOD : true if level of detail must be used, false otherwise
+   */
+  inline 		 void	  setLOD(const bool useLOD) {this->useLOD = useLOD;}
+  /*!
+   	Set the threshold for the minimum line length to be considered as visible in the LOD case
+
+   	\param minLineLengthThresh : threshold for the minimum line length in pixel
+   */
+  inline		 void	  setMinLineLengthThresh(const double minLineLengthThresh) {this->minLineLengthThresh =
+		  minLineLengthThresh;}
+  /*!
+    Set the minimum polygon area to be considered as visible in the LOD case
+
+    \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel
+   */
+  inline		 void	  setMinPolygonAreaThresh(const double minPolygonAreaThresh) {this->minPolygonAreaThresh =
+		  minPolygonAreaThresh;}
   virtual        void     setNbPoint(const unsigned int nb)  ;
   
   /*!

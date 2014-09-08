@@ -136,6 +136,12 @@ protected:
   unsigned int clippingFlag;
   //! Use Ogre3d for visibility tests
   bool useOgre;
+  //! Flag to specify if the visibility of the polygon depends also of the current level of detail (LOD)
+  bool useLOD;
+  //! Threshold for minimum line length in pixel to consider if the line is visible or not in LOD case
+  double minLineLengthThresh;
+  //! Threshold for minimum polygon area in pixel to consider if the polygon is visible or not in LOD case
+  double minPolygonAreaThresh;
 
 public:
   vpMbTracker();
@@ -369,6 +375,12 @@ public:
   void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
 
   virtual void setFarClippingDistance(const double &dist);
+
+  virtual void setLOD(const bool useLOD);
+
+  virtual void setMinLineLengthThresh(const double minLineLengthThresh);
+
+  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh);
 
   virtual void setNearClippingDistance(const double &dist);
   

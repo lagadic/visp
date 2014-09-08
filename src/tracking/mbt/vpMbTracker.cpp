@@ -98,7 +98,8 @@ vpMbTracker::vpMbTracker()
   : cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
     poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
     m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false)
+    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
+    useLOD(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
 {
     oJo.setIdentity();
 }
@@ -1690,6 +1691,48 @@ vpMbTracker::setFarClippingDistance(const double &dist)
     for (unsigned int i = 0; i < faces.size(); i ++){
       faces[i]->setFarClippingDistance(distFarClip);
     }
+  }
+}
+
+/*!
+ 	Set the flag to consider if the level of detail (LOD) is used
+
+ 	\param useLOD : true if the level of detail must be used, false otherwise
+ */
+void
+vpMbTracker::setLOD(const bool useLOD)
+{
+  for (unsigned int i = 0; i < faces.size(); i++)
+  {
+    faces[i]->setLOD(useLOD);
+  }
+}
+
+/*!
+ 	Set the threshold for the minimum line length to be considered as visible in the LOD case
+
+ 	\param minLineLengthThresh : threshold for the minimum line length in pixel
+ */
+void
+vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh)
+{
+  for (unsigned int i = 0; i < faces.size(); i++)
+  {
+    faces[i]->setMinLineLengthThresh(minLineLengthThresh);
+  }
+}
+
+/*!
+  Set the minimum polygon area to be considered as visible in the LOD case
+
+  \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel
+ */
+void
+vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh)
+{
+  for (unsigned int i = 0; i < faces.size(); i++)
+  {
+    faces[i]->setMinPolygonAreaThresh(minPolygonAreaThresh);
   }
 }
 

@@ -356,7 +356,7 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
                                                 const double &angleAppears, const double &angleDisappears,
                                                 bool &changed, bool useOgre, bool /* testRoi */,
                                                 const vpImage<unsigned char> & /* I */,
-                                                const vpCameraParameters & /* cam */,
+                                                const vpCameraParameters & cam,
                                                 const vpTranslationVector &
                                                 #ifdef VISP_HAVE_OGRE
                                                 cameraPos
@@ -368,11 +368,13 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
   Lpol[i]->changeFrame(cMo);
   Lpol[i]->isappearing = false;
 
-  if(Lpol[i]->getNbPoint() <= 2)
-  {
-      Lpol[i]->isvisible = true;
-  }
-  else{
+  //Commented because we need to compute visibility
+  // even when dealing with line in level of detail case
+//  if(Lpol[i]->getNbPoint() <= 2)
+//  {
+//      Lpol[i]->isvisible = true;
+//  }
+//  else{
   if(Lpol[i]->isVisible())
   {
     bool testDisappear = false;
@@ -387,12 +389,12 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     if(!testDisappear){
       if(useOgre)
 #ifdef VISP_HAVE_OGRE
-        testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true)) || !isVisibleOgre(cameraPos,i));
+        testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam)) || !isVisibleOgre(cameraPos,i));
 #else
-        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears));
+        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam));
 #endif
       else
-        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears));
+        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam));
     }
 
     // test if the face is still visible
@@ -419,12 +421,12 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     if(testAppear){
       if(useOgre)
 #ifdef VISP_HAVE_OGRE
-        testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true)) && isVisibleOgre(cameraPos,i));
+        testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam)) && isVisibleOgre(cameraPos,i));
 #else
-        testAppear = (Lpol[i]->isVisible(cMo, angleAppears));
+        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam));
 #endif
       else
-        testAppear = (Lpol[i]->isVisible(cMo, angleAppears));
+        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam));
     }
 
     if(testAppear){

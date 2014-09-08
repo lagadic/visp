@@ -51,6 +51,7 @@
 */
 
 #include <visp/vpMbtPolygon.h>
+#include <visp/vpPolygon.h>
 
 /*!
   Basic constructor.
@@ -58,14 +59,16 @@
 vpMbtPolygon::vpMbtPolygon()
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
-    distNearClip(0.001), distFarClip(100.)
+    distNearClip(0.001), distFarClip(100.),
+    useLOD(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
 {
 }
 
 vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon& mbtp)
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
-    distNearClip(0.001), distFarClip(100.)
+    distNearClip(0.001), distFarClip(100.),
+    useLOD(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
 {
   *this = mbtp;
 }
@@ -173,15 +176,42 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \return Return true if the polygon is visible.
 */
 bool 
-vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo)
+vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
+		  const vpCameraParameters &cam)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
   if(nbpt <= 2){
-    /* a line is allways visible */
+
+	//Level of detail (LOD) case
+	std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
+	double x1 = roiImagePoints[0].get_u();
+	double y1 = roiImagePoints[0].get_v();
+	double x2 = roiImagePoints[1].get_u();
+	double y2 = roiImagePoints[1].get_v();
+	double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+
+	if(useLOD && length < minLineLengthThresh) {
+		isvisible = false;
+		isappearing = false;
+		return  false;
+	}
+
+    /* a line is always visible when LOD is not used */
     isvisible = true;
     isappearing = false;
     return  true ;
   }
+
+
+  std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
+  vpPolygon roiPolygon(roiImagePoints);
+  double area = roiPolygon.getArea();
+  if(useLOD && area < minPolygonAreaThresh) {
+  	  isappearing = false;
+  	  isvisible = false ;
+  	  return false;
+  }
+
 
   changeFrame(cMo);
 
