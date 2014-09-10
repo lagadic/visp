@@ -194,9 +194,7 @@ public:
   virtual void getCameraParameters(vpCameraParameters& camera) const { camera = this->cam;}
   
   /*!
-    Get the clipping used.
-
-    \sa vpMbtPolygonClipping
+    Get the clipping used and defined in vpMbtPolygon::vpMbtPolygonClippingType.
 
     \return Clipping flags.
   */
