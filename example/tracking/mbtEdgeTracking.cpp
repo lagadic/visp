@@ -414,6 +414,28 @@ main(int argc, const char ** argv)
       // track the object
       tracker.track(I);
       tracker.getPose(cMo);
+
+      // Test to reset the tracker
+      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 10) {
+        vpTRACE("Test reset tracker");
+        if (opt_display)
+          vpDisplay::display(I);
+        tracker.resetTracker();
+        tracker.loadConfigFile(configFile);
+        tracker.loadModel(modelFile);
+        tracker.setCameraParameters(cam);
+        tracker.initFromPose(I, cMo);
+      }
+
+      // Test to set an initial pose
+      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
+        vpTRACE("Test set pose");
+        if (opt_display)
+          vpDisplay::display(I);
+        cMo[2][3] += 0.05;
+        tracker.setPose(I, cMo);
+      }
+
       // display the 3D model
       if (opt_display)
       {

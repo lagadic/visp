@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
     // Initialise the tracker: camera parameters, moving edge and KLT settings
 #if defined (VISP_HAVE_XML2)
     // From the xml file
-    tracker.loadConfigFile(configFile.c_str());
+    tracker.loadConfigFile(configFile);
 #else
     // By setting the parameters:
     cam.initPersProjWithoutDistortion(547, 542, 338, 234);
@@ -386,7 +386,7 @@ main(int argc, const char ** argv)
     }
 
     // Load the 3D model (either a vrml file or a .cao file)
-    tracker.loadModel(modelFile.c_str());
+    tracker.loadModel(modelFile);
 
     // Initialise the tracker by clicking on the image
     // This function looks for
@@ -425,6 +425,28 @@ main(int argc, const char ** argv)
       // track the object
       tracker.track(I);
       tracker.getPose(cMo);
+
+      // Test to reset the tracker
+      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 10) {
+        vpTRACE("Test reset tracker");
+        if (opt_display)
+          vpDisplay::display(I);
+        tracker.resetTracker();
+        tracker.loadConfigFile(configFile);
+        tracker.loadModel(modelFile);
+        tracker.setCameraParameters(cam);
+        tracker.initFromPose(I, cMo);
+      }
+
+      // Test to set an initial pose
+      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
+        vpTRACE("Test set pose");
+        if (opt_display)
+          vpDisplay::display(I);
+        cMo[2][3] += 0.05;
+        tracker.setPose(I, cMo);
+      }
+
       // display the 3D model
       if (opt_display)
       {
