@@ -1154,31 +1154,37 @@ vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMa
 {
   cMo = cdMo;
   
-  lines[scaleLevel].front() ;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-    if((*it)->meline != NULL){
-      delete (*it)->meline;
-      (*it)->meline = NULL;
+  if (! lines[scaleLevel].empty()) {
+    lines[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+      if((*it)->meline != NULL){
+        delete (*it)->meline;
+        (*it)->meline = NULL;
+      }
     }
   }
 
-  cylinders[scaleLevel].front() ;
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-    if((*it)->meline1 != NULL){
-      delete (*it)->meline1;
-      (*it)->meline1 = NULL;
-    }
-    if((*it)->meline2 != NULL){
-      delete (*it)->meline2;
-      (*it)->meline2 = NULL;
+  if (! cylinders[scaleLevel].empty()) {
+    cylinders[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
+      if((*it)->meline1 != NULL){
+        delete (*it)->meline1;
+        (*it)->meline1 = NULL;
+      }
+      if((*it)->meline2 != NULL){
+        delete (*it)->meline2;
+        (*it)->meline2 = NULL;
+      }
     }
   }
 
-  circles[scaleLevel].front() ;
-  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
-    if((*it)->meEllipse != NULL){
-      delete (*it)->meEllipse;
-      (*it)->meEllipse = NULL;
+  if (! circles[scaleLevel].empty()) {
+    circles[scaleLevel].front() ;
+    for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+      if((*it)->meEllipse != NULL){
+        delete (*it)->meEllipse;
+        (*it)->meEllipse = NULL;
+      }
     }
   }
 
