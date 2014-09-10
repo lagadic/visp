@@ -34,6 +34,7 @@ ViSP 2.10.0 (under development)
     . [17659] ViSP+Ogre3D+boost: libboost_chrono cannot be opened
     . [17705] Bad endianness support in vpDisplayX
     . [17766] Compat with cmake 3.0.0: failed due to new CMP0026 policy
+    . [17972] Ogre examples are not working with Fedora 20
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features

@@ -892,6 +892,19 @@ IF(USE_OGRE)
       set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
     endif()
 
+    # On Fedora 20 when ogre-devel and ogre-samples packages are installed, AROgre and
+    # AROgreBasic examples produce a segfault when the folowing line in resource.cf.in
+    # is commented:
+    # '#FileSystem=@OGRE_MEDIA_DIR@/materials/programs'
+    # Here we check if @OGRE_MEDIA_DIR@/materials/programs forder is empty.
+    # If empty, we comment the line to avoid lintian warnings.
+    # If not empty we remove the comment to use the available programs.
+    file(GLOB OGRE_PROGRAM_CONTENT ${OGRE_MEDIA_DIR}/materials/programs/*.*)
+    if(OGRE_PROGRAM_CONTENT)
+      set(OGRE_COMMENT_LINE "")
+    else()
+      set(OGRE_COMMENT_LINE "#")
+    endif()
     CONFIGURE_FILE(
       ${VISP_CMAKE_MODULE_PATH}/resources.cfg.in
       ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg

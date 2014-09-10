@@ -5,7 +5,7 @@
 # Resource locations to be added to the default path
 [General]
 FileSystem=@OGRE_MEDIA_DIR@
-#FileSystem=@OGRE_MEDIA_DIR@/materials/programs
+@OGRE_COMMENT_LINE@FileSystem=@OGRE_MEDIA_DIR@/materials/programs
 FileSystem=@OGRE_MEDIA_DIR@/materials/scripts
 FileSystem=@OGRE_MEDIA_DIR@/materials/textures
 FileSystem=@OGRE_MEDIA_DIR@/models
