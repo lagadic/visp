@@ -596,6 +596,9 @@ void vpMatrix::svdLapack(vpColVector& W, vpMatrix& V){
 
   if( info > 0 ) {
    vpTRACE("The algorithm computing SVD failed to converge.");
+   throw(vpMatrixException(vpMatrixException::fatalError,
+         "The algorithm computing SVD failed to converge.")) ;
+
   }
 
   V=V.transpose();
