@@ -261,7 +261,6 @@ protected:
   std::list<vpMbtDistanceCircle*> circles_disp;
 
 public:
-  
             vpMbKltTracker();
   virtual   ~vpMbKltTracker();
   
@@ -278,6 +277,12 @@ protected:
   virtual void            reinit(const vpImage<unsigned char>& I);
   
 public:
+  /*! Return the address of the circle feature list. */
+  std::list<vpMbtDistanceCircle*> &getFeaturesCircle() { return circles_disp; }
+  /*! Return the address of the cylinder feature list. */
+  std::list<vpMbtDistanceCylinder*> &getFeaturesCylinder() { return cylinders_disp; }
+  /*! Return the address of the Klt feature list. */
+  std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
   virtual void            loadConfigFile(const std::string& configFile);
           void            loadConfigFile(const char* configFile);
           
