@@ -248,6 +248,12 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     inline long getFrameIndex() const { return frameCount;}
 
     /*!
+      Gets the first frame index.
+
+      \return Returns the first frame index.
+    */
+    inline long getFirstFrameIndex() const {return firstFrame;}
+    /*!
       Gets the last frame index.
 
       \return Returns the last frame index.
