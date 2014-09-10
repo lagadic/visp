@@ -192,7 +192,40 @@ vpMbKltTracker::resetTracker()
     cvReleaseImage(&cur);
     cur = NULL;
   }
-  
+
+  // delete the Klt Polygon features
+  vpMbtDistanceKltPoints *kltpoly;
+  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    if (kltpoly!=NULL){
+      delete kltpoly ;
+    }
+    kltpoly = NULL ;
+  }
+  kltPolygons.clear();
+
+  // delete the structures used to display cylinders and circles
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
+    cy = *it;
+    if (cy!=NULL){
+      delete cy ;
+    }
+    cy = NULL ;
+  }
+
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
+    ci = *it;
+    if (ci!=NULL){
+      delete ci ;
+    }
+    ci = NULL ;
+  }
+
+  cylinders_disp.clear();
+  circles_disp.clear();
+
   compute_interaction = true;
   firstInitialisation = true;
   computeCovariance = false;
