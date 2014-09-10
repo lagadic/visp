@@ -284,7 +284,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
 void
 vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
 {
-  roiPointsClip = std::vector<std::pair<vpPoint,unsigned int> >();
+  roiPointsClip.clear();
   std::vector<vpColVector> fovNormals;
   std::vector<std::pair<vpPoint,unsigned int> > roiPointsClipTemp;
   std::vector<std::pair<vpPoint,unsigned int> > roiPointsClipTemp2;
@@ -296,7 +296,6 @@ vpMbtPolygon::computeRoiClipped(const vpCameraParameters &cam)
       p[i%nbpt].projection();
       roiPointsClipTemp.push_back(std::make_pair(p[i%nbpt],vpMbtPolygon::NO_CLIPPING));
   }
-
 
   if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
   for(unsigned int i = 1 ; i < 64 ; i=i*2)
@@ -441,8 +440,16 @@ vpMbtPolygon::getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2,
                                unsigned int &p1ClippedInfo, unsigned int &p2ClippedInfo,
                                const unsigned int &flag, const double &distance)
 {
-    p1Clipped = p1;
-    p2Clipped = p2;
+    // Since p1 and p1Clipped can be the same object as well as p2 and p2Clipped
+    // to avoid a valgrind "Source and destination overlap in memcpy" error,
+    // we introduce a two temporary points.
+    vpPoint p1Clipped_, p2Clipped_;
+    p1Clipped_ = p1;
+    p2Clipped_ = p2;
+
+    p1Clipped = p1Clipped_;
+    p2Clipped = p2Clipped_;
+
 
     bool test1 = (p1Clipped.get_Z() < distance && p2Clipped.get_Z() < distance);
     if(flag == vpMbtPolygon::FAR_CLIPPING)
@@ -458,6 +465,7 @@ vpMbtPolygon::getClippedPointsDistance(const vpPoint &p1, const vpPoint &p2,
 
     if(test1)
       return false;
+
     else if(test2){
       vpPoint pClippedNear;
       double t;
