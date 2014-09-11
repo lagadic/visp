@@ -449,8 +449,10 @@ protected:
     @name Deprecated functions
   */
   vp_deprecated void visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
+
+public:
   /*!
-    \deprecated Use vpMbTracker::setDisplayFeature() instead.
+    \deprecated Use vpMbTracker::setDisplayFeatures() instead.
     Enable to display the points along the line with a color corresponding to their state.
 
     - If green : The vpMeSite is a good point.
