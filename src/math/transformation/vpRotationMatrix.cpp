@@ -359,11 +359,18 @@ vpRotationMatrix::vpRotationMatrix() : vpMatrix()
 /*!
   \brief initialize a rotation matrix from another rotation matrix
 */
-
 vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpMatrix()
 {
   init() ;
   (*this) = M ;
+}
+/*!
+  Initialize a rotation matrix from an homogenous matrix.
+*/
+vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
+{
+  init() ;
+  buildFrom(M);
 }
 
 //! Construction from  rotation (Theta U parameterization)
@@ -575,6 +582,19 @@ vpRotationMatrix::buildFrom(const vpThetaUVector &v)
   }
   // end test
 #endif
+
+  return *this ;
+}
+
+/*!
+  Build a rotation matrix from an homogenous matrix.
+*/
+vpRotationMatrix
+vpRotationMatrix::buildFrom(const vpHomogeneousMatrix &M)
+{
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3; j++)
+      (*this)[i][j] = M[i][j] ;
 
   return *this ;
 }

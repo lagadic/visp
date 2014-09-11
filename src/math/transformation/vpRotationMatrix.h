@@ -48,6 +48,7 @@
   \brief Class that consider the particular case of rotation matrix
 */
 
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpRxyzVector.h>
 #include <visp/vpRzyxVector.h>
@@ -72,7 +73,8 @@
 */
 class VISP_EXPORT vpRotationMatrix : public vpMatrix
 {
-  friend class vpMatrix;  
+  friend class vpMatrix;
+  friend class vpHomogeneousMatrix;
   friend class vpRxyzVector;
   friend class vpRzyzVector;
   friend class vpRzyxVector;
@@ -86,10 +88,12 @@ public:
   //! Basic initialisation (identity)
   void setIdentity() ;
   void eye();
-  //! basic constructor
+  //! Default constructor.
   vpRotationMatrix()   ;
-  //! copy constructor
+  //! Copy constructor.
   vpRotationMatrix(const vpRotationMatrix &R) ;
+  //! Copy constructor.
+  vpRotationMatrix(const vpHomogeneousMatrix &M) ;
   //! Construction from rotation (theta U parameterization)
   vpRotationMatrix(const vpThetaUVector &r) ;
   //! Construction from a pose vector.
@@ -138,6 +142,8 @@ public:
   void printVector() ;
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationMatrix &m);
 
+  //! Build a rotation matrix from an homogeneous matrix.
+  vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M) ;
   //! Transform a vector vpThetaUVector into a rotation matrix
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
   //! Transform a pose vector into a rotation matrix
