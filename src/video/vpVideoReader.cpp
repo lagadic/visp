@@ -153,32 +153,32 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 #ifdef VISP_HAVE_FFMPEG
 		ffmpeg = new vpFFMPEG;
 		if(!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
-			throw (vpException(vpException::ioError ,"Could not open the video"));
+      throw (vpException(vpException::ioError ,"Could not open the video with ffmpeg"));
 		ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 		capture.open(fileName);
 
 		if(!capture.isOpened())
 		{
-			throw (vpException(vpException::ioError ,"Could not open the video"));
+      throw (vpException(vpException::ioError ,"Could not open the video with opencv"));
 		}
 #else
-		vpERROR_TRACE("To read video files the FFmpeg library or OpenCV have to be installed");
-		throw (vpException(vpException::fatalError ,"the FFmpeg library or OpenCV are required"));
+    //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
 #endif
 	}
 	else if (formatType == FORMAT_UNKNOWN)
 	{
-		vpERROR_TRACE("The format of the file does not correspond to a readable format.");
-		throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format."));
+    //vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format supported by ViSP."));
 	}
 
 	findFirstFrameIndex();
 	frameCount = firstFrame;
 	if(!getFrame(I, firstFrame))
 	{
-		vpERROR_TRACE("Could not read the first frame");
-		throw (vpException(vpException::ioError ,"Could not read the first frame"));
+    //vpERROR_TRACE("Could not read the video first frame");
+    throw (vpException(vpException::ioError ,"Could not read the video first frame"));
 	}
 
 	height = I.getHeight();
@@ -220,33 +220,33 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 #ifdef VISP_HAVE_FFMPEG
 		ffmpeg = new vpFFMPEG;
 		if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
-			throw (vpException(vpException::ioError ,"Could not open the video"));
+      throw (vpException(vpException::ioError ,"Could not open the video with ffmpeg"));
 		ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 		capture.open(fileName);
 
 		if(!capture.isOpened())
 		{
-			throw (vpException(vpException::ioError ,"Could not open the video"));
+      throw (vpException(vpException::ioError ,"Could not open the video with opencv"));
 		}
 #else
-		vpERROR_TRACE("To read video files the FFmpeg library has to be installed");
-		throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
+    //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
 #endif
 	}
 	else if (formatType == FORMAT_UNKNOWN)
 	{
-		vpERROR_TRACE("The format of the file does not correspond to a readable format.");
-		throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format."));
-	}
+    //vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError ,"The format of the file does not correspond to a readable format supported by ViSP."));
+  }
 
 	findFirstFrameIndex();
 	frameCount = firstFrame;
 	if(!getFrame(I,firstFrame))
 	{
-		vpERROR_TRACE("Could not read the first frame");
-		throw (vpException(vpException::ioError ,"Could not read the first frame"));
-	}
+    //vpERROR_TRACE("Could not read the video first frame");
+    throw (vpException(vpException::ioError ,"Could not read the video first frame"));
+  }
 
 	height = I.getHeight();
 	width = I.getWidth();
@@ -578,9 +578,9 @@ void
 	else if (! lastFrameIndexIsSet)
 	{
 		lastFrame = (long) capture.get(CV_CAP_PROP_FRAME_COUNT);
-    if(lastFrame <= 0)
+    if(lastFrame <= 1)
 		{
-			vpERROR_TRACE("Problem with CV_CAP_PROP_FRAME_COUNT");
+      std::cout << "Warning: Problem with CV_CAP_PROP_FRAME_COUNT. We set video last frame to an arbitrary value (1000)." << std::endl;
       lastFrame = 1000; // Set lastFrame to an arbitrary value
 		}
 		lastFrame--; //Last frame index = total frame count - 1

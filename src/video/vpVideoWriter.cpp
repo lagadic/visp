@@ -168,19 +168,19 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
     ffmpeg->setFramerate(framerate);
     ffmpeg->setBitRate(bit_rate);
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
-      throw (vpException(vpException::ioError ,"Could not open the video"));
-	}
+      throw (vpException(vpException::ioError ,"Could not open encode the video with ffmpeg"));
+    }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	  writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
 
-	  if(!writer.isOpened())
-	  {
-		vpERROR_TRACE("Fail to initialize the VideoWriter");
-		throw (vpException(vpException::fatalError , "Fail to initialize the VideoWriter"));
-	  }
+    if(!writer.isOpened())
+    {
+      //vpERROR_TRACE("Could not open encode the video with opencv");
+      throw (vpException(vpException::fatalError , "Could not open encode the video with opencv"));
+    }
 #else
-	vpERROR_TRACE("To write video files the FFmpeg library or OpenCV (with FFmpeg support) have to be installed");
-    throw (vpException(vpException::fatalError ,"the FFmpeg library or OpenCV (with FFmpeg support) are required"));
+    //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
 #endif
   }
   
@@ -221,19 +221,19 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
     ffmpeg->setFramerate(framerate);
     ffmpeg->setBitRate(bit_rate);
     if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
-      throw (vpException(vpException::ioError ,"Could not open the video"));
-	}
+      throw (vpException(vpException::ioError ,"Could not encode the video with ffmpeg"));
+    }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	  writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
 
-	  if(!writer.isOpened())
-	  {
-		vpERROR_TRACE("Fail to initialize the VideoWriter");
-		throw (vpException(vpException::fatalError , "Fail to initialize the VideoWriter"));
-	  }
+    if(!writer.isOpened())
+    {
+      vpERROR_TRACE("Could not encode the video with opencv");
+      throw (vpException(vpException::ioError ,"Could not encode the video with opencv"));
+    }
 #else
-	vpERROR_TRACE("To write video files the FFmpeg library has to be installed");
-    throw (vpException(vpException::fatalError ,"the FFmpeg library is required"));
+    //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
 #endif
   }
   
