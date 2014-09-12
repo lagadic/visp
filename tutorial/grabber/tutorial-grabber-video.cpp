@@ -1,10 +1,12 @@
 /*! \example tutorial-grabber-video.cpp */
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpTime.h>
 #include <visp/vpVideoReader.h>
 
 int main()
 {
-#ifdef VISP_HAVE_FFMPEG
   try {
     vpImage<unsigned char> I;
 
@@ -17,6 +19,10 @@ int main()
 
 #ifdef VISP_HAVE_X11
     vpDisplayX d(I);
+#elif VISP_HAVE_GDI
+    vpDisplayGDI d(I);
+#elif VISP_HAVE_OPENCV
+    vpDisplayOpenCV d(I);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -31,7 +37,6 @@ int main()
     }
   }
   catch(vpException e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << e.getMessage() << std::endl;
   }
-#endif
 }
