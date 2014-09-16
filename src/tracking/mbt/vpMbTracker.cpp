@@ -263,7 +263,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     unsigned int n ;
     finit >> n ;
     finit.ignore(256, '\n'); // skip the rest of the line
-    std::cout << "number of points  " << n << std::endl ;
+    std::cout << "Number of 3D points  " << n << std::endl ;
     if (n > 100000) {
       throw vpException(vpException::badValue,
         "Exceed the max number of points.");
@@ -284,7 +284,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
       finit >> Z ;
       finit.ignore(256, '\n'); // skip the rest of the line
 
-      std::cout << "get 3D: " << X << " " << Y << " " << Z << std::endl;
+      std::cout << "Point " << i+1 << " with 3D coordinates: " << X << " " << Y << " " << Z << std::endl;
       P[i].setWorldCoordinates(X,Y,Z) ; // (X,Y,Z)
     }
 
@@ -297,7 +297,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 ////////////////////////////////
       for(unsigned int i=0 ; i< n ; i++)
       {
-        std::cout << "Click on point " << i+1 << std::endl ;
+        std::cout << "Click on point " << i+1 << " ";
         double x=0,y=0;
         vpDisplay::getClick(I, ip) ;
         vpDisplay::displayCross(I, ip, 5,vpColor::green) ;
@@ -306,7 +306,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
         P[i].set_x(x);
         P[i].set_y(y);
 
-        std::cout << "click sur point " << ip << std::endl;
+        std::cout << "with 2D coordinates: " << ip << std::endl;
 
         vpDisplay::displayPoint (I, ip, vpColor::green); //display target point
         pose.addPoint(P[i]) ; // and added to the pose computation point list
