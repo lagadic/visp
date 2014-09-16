@@ -1883,7 +1883,7 @@ vpMbTracker::getEstimatedDoF()
 }
 
 /*!
-  Set a 1x6 vpColVector representing the estimated degrees of freedom. The Vector has to be this form:
+  Set a 1x6 vpColVector representing the estimated degrees of freedom. The vector has to be this form:
   vpColVector[0] = 1 if translation on X is estimated, 0 otherwise;
   vpColVector[1] = 1 if translation on Y is estimated, 0 otherwise;
   vpColVector[2] = 1 if translation on Z is estimated, 0 otherwise;
@@ -1891,7 +1891,6 @@ vpMbTracker::getEstimatedDoF()
   vpColVector[4] = 1 if rotation on Y is estimated, 0 otherwise;
   vpColVector[5] = 1 if rotation on Z is estimated, 0 otherwise;
 
-  \return 1x6 vpColVector representing the estimated degrees of freedom.
 */
 void
 vpMbTracker::setEstimatedDoF(const vpColVector& v)
