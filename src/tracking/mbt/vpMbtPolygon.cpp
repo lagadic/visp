@@ -183,26 +183,26 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
   if(nbpt <= 2){
 
-	//Level of detail (LOD) case
-	std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
-	double x1 = roiImagePoints[0].get_u();
-	double y1 = roiImagePoints[0].get_v();
-	double x2 = roiImagePoints[1].get_u();
-	double y2 = roiImagePoints[1].get_v();
-	double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+    //Level of detail (LOD) case
+    std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
+    double x1 = roiImagePoints[0].get_u();
+    double y1 = roiImagePoints[0].get_v();
+    double x2 = roiImagePoints[1].get_u();
+    double y2 = roiImagePoints[1].get_v();
+    double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
-	if(useLod && length < minLineLengthThresh) {
-		isvisible = false;
-		isappearing = false;
-		return  false;
-	}
+    vpTRACE("useLod: %d lenght: %f minLineLengthThresh: %f", useLod, length, minLineLengthThresh);
+    if(useLod && length < minLineLengthThresh) {
+      isvisible = false;
+      isappearing = false;
+      return  false;
+    }
 
     /* a line is always visible when LOD is not used */
     isvisible = true;
     isappearing = false;
     return  true ;
   }
-
 
   std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
   vpPolygon roiPolygon(roiImagePoints);
