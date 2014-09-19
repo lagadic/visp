@@ -173,6 +173,7 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \param modulo : Indicates if the test should also consider faces that are not oriented
   counter clockwise. If true, the orientation of the face is without importance.
   \param cam : Camera parameters (intrinsics parameters)
+  \param I : Current image
   
   \return Return true if the polygon is visible.
 */
