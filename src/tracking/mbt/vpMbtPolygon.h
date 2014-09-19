@@ -223,25 +223,77 @@ public:
   */
   virtual inline void     setIndex(const int i ) { index = i ; } 
   /*!
-   	Set the flag to consider if the level of detail (LOD) is used
+    Set the flag to consider if the level of detail (LOD) is used or not.
+    When activated, lines and faces of the 3D model are tracked if respectively their
+    projected lenght and area in the image are significative enough. By significative, we mean:
+    - if the lenght of the projected line in the image is greater that a threshold set by
+    setMinLineLengthThresh()
+    - if the area of the projected face in the image is greater that a threshold set by
+    setMinPolygonAreaThresh().
 
-   	\param useLod : true if level of detail must be used, false otherwise
+    \param use_lod : true if level of detail must be used, false otherwise.
+
+    The sample code below shows how to introduce this feature:
+    \code
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+
+  // Acquire an image
+  vpImageIo::read(I, "my-image.pgm");
+
+  std::string object = "my-object";
+  vpMbEdgeTracker tracker;
+  tracker.loadConfigFile( object+".xml" );
+  tracker.loadModel( object+".cao" );
+
+  tracker.setLod(true);
+  tracker.setMinLineLengthThresh(20.);
+  tracker.setMinPolygonAreaThresh(20.*20.);
+
+  tracker.initClick(I, object+".init" );
+
+  while (true) {
+    // tracking loop
+  }
+  vpXmlParser::cleanup();
+
+  return 0;
+}
+    \endcode
+
+    \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
    */
-  inline 		 void	  setLod(const bool useLod) {this->useLod = useLod;}
+  inline 		 void	  setLod(const bool use_lod) {this->useLod = use_lod;}
   /*!
-   	Set the threshold for the minimum line length to be considered as visible in the LOD case
+    Set the threshold for the minimum line length to be considered as visible in the LOD
+    (level of detail) case. This threshold is only used when setLoD() is turned on.
 
-   	\param minLineLengthThresh : threshold for the minimum line length in pixel
+    \param min_line_length : threshold for the minimum line length in pixel. When a single line that doesn't
+    belong to a face is considered by the tracker, this line is tracked only if its lenght in pixel is
+    greater than \e min_line_length.
+
+    \sa setLoD()
    */
-  inline		 void	  setMinLineLengthThresh(const double minLineLengthThresh) {this->minLineLengthThresh =
-		  minLineLengthThresh;}
+  inline		 void	  setMinLineLengthThresh(const double min_line_length) {
+    this->minLineLengthThresh = min_line_length;
+  }
   /*!
-    Set the minimum polygon area to be considered as visible in the LOD case
+    Set the minimum polygon area to be considered as visible in the LOD (level of detail)
+    case. This threshold is only used when setLoD() is turned on.
 
-    \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel
-   */
-  inline		 void	  setMinPolygonAreaThresh(const double minPolygonAreaThresh) {this->minPolygonAreaThresh =
-		  minPolygonAreaThresh;}
+    \param min_polygon_area : threshold for the minimum polygon area in pixel. When a face
+    is considered by the tracker, this face is tracked only if its area in pixel is
+    greater than \e min_polygon_area.
+
+    \sa setLoD()
+  */
+  inline		 void	  setMinPolygonAreaThresh(const double min_polygon_area) {
+    this->minPolygonAreaThresh = min_polygon_area;
+  }
   virtual        void     setNbPoint(const unsigned int nb)  ;
   
   /*!
