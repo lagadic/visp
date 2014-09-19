@@ -240,7 +240,7 @@ vpCylinder::projection(const vpColVector &cP_, vpColVector &p_)
   s = X0*X0 + Y0*Y0 + Z0*Z0 - R*R - zero*zero;
   if (s < 0) 
     {
-      printf("The camera is inside the cylinder!\n");
+      printf("The camera is inside the cylinder with s=%f !\n", s);
       throw vpException(vpException::fatalError, "The camera is inside the cylinder!");
     }
   s = 1.0/sqrt(s);
