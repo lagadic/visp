@@ -957,19 +957,14 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
 }
 
 void vpMbTracker::removeComment(std::ifstream& fileId) {
-	try {
-		char c;
+	char c;
 
+	fileId.get(c);
+	while (!fileId.fail() && (c == '#')) {
+		fileId.ignore(256, '\n');
 		fileId.get(c);
-		while (!fileId.fail() && (c == '#')) {
-			fileId.ignore(256, '\n');
-			fileId.get(c);
-		}
-		fileId.unget();
-	} catch (...) {
-		std::cerr << "Cannot read line!" << std::endl;
-		throw vpException(vpException::ioError, "cannot read line");
 	}
+	fileId.unget();
 }
 
 /*!
