@@ -355,7 +355,7 @@ bool
 vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
                                                 const double &angleAppears, const double &angleDisappears,
                                                 bool &changed, bool useOgre, bool /* testRoi */,
-                                                const vpImage<unsigned char> & /* I */,
+                                                const vpImage<unsigned char> & I,
                                                 const vpCameraParameters & cam,
                                                 const vpTranslationVector &
                                                 #ifdef VISP_HAVE_OGRE
@@ -389,12 +389,12 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     if(!testDisappear){
       if(useOgre)
 #ifdef VISP_HAVE_OGRE
-        testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam)) || !isVisibleOgre(cameraPos,i));
+        testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, I)) || !isVisibleOgre(cameraPos,i));
 #else
-        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam));
+        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
 #endif
       else
-        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam));
+        testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
     }
 
     // test if the face is still visible
@@ -421,12 +421,12 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     if(testAppear){
       if(useOgre)
 #ifdef VISP_HAVE_OGRE
-        testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam)) && isVisibleOgre(cameraPos,i));
+        testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, I)) && isVisibleOgre(cameraPos,i));
 #else
-        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam));
+        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, I));
 #endif
       else
-        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam));
+        testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, I));
     }
 
     if(testAppear){

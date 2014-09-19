@@ -178,25 +178,38 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
 */
 bool 
 vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
-		  const vpCameraParameters &cam)
+		  const vpCameraParameters &cam, const vpImage<unsigned char> &I)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
+
+  changeFrame(cMo);
+
+  vpCameraParameters c = cam;
+  if(clippingFlag > 3) { // Contains at least one FOV constraint
+    c.computeFov(I.getWidth(), I.getHeight());
+  }
+  computeRoiClipped(c);
+  std::vector<vpImagePoint> roiImagePoints;
+  getRoiClipped(c, roiImagePoints);
+
   if(nbpt <= 2){
 
-    //Level of detail (LOD) case
-    std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
-    double x1 = roiImagePoints[0].get_u();
-    double y1 = roiImagePoints[0].get_v();
-    double x2 = roiImagePoints[1].get_u();
-    double y2 = roiImagePoints[1].get_v();
-    double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	if(roiImagePoints.size() == 2) {
+		//Level of detail (LOD) case
+		double x1 = roiImagePoints[0].get_u();
+		double y1 = roiImagePoints[0].get_v();
+		double x2 = roiImagePoints[1].get_u();
+		double y2 = roiImagePoints[1].get_v();
+		double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	//	std::cout << "Index=" << index << " ; Line length=" << length << std::endl;
+		vpTRACE("useLod=%d index=%d lenght=%f minLineLengthThresh=%f", useLod, index, length, minLineLengthThresh);
 
-    vpTRACE("useLod: %d lenght: %f minLineLengthThresh: %f", useLod, length, minLineLengthThresh);
-    if(useLod && length < minLineLengthThresh) {
-      isvisible = false;
-      isappearing = false;
-      return  false;
-    }
+		if(useLod && length < minLineLengthThresh) {
+			isvisible = false;
+			isappearing = false;
+			return  false;
+		}
+	}
 
     /* a line is always visible when LOD is not used */
     isvisible = true;
@@ -204,17 +217,15 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
     return  true ;
   }
 
-  std::vector<vpImagePoint> roiImagePoints = getRoi(cam, cMo);
   vpPolygon roiPolygon(roiImagePoints);
   double area = roiPolygon.getArea();
+//  std::cout << "Index=" << index << " ; area=" << area << std::endl;
   if(useLod && area < minPolygonAreaThresh) {
   	  isappearing = false;
   	  isvisible = false ;
   	  return false;
   }
 
-
-  changeFrame(cMo);
 
   vpColVector e1(3) ;
   vpColVector e2(3) ;

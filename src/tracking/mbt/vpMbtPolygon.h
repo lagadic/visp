@@ -195,7 +195,7 @@ public:
 
   inline    bool          isAppearing() const {return isappearing;}
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
-		  const vpCameraParameters &cam = vpCameraParameters());
+		  const vpCameraParameters &cam = vpCameraParameters(), const vpImage<unsigned char> &I = vpImage<unsigned char>());
             bool          isVisible() const {return isvisible;}
 
             vpMbtPolygon& operator=(const vpMbtPolygon& mbtp) ;
