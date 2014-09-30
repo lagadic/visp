@@ -272,10 +272,10 @@ public:
       unsigned char* rgb, unsigned int size);
 
   static void BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
-      unsigned int width, unsigned int height, bool flip);
+      unsigned int width, unsigned int height, bool flip=false);
 
   static void BGRToGrey(unsigned char * bgr, unsigned char * grey,
-      unsigned int width, unsigned int height, bool flip);
+      unsigned int width, unsigned int height, bool flip=false);
 
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
       unsigned int size);
