@@ -458,6 +458,19 @@ vpMbKltTracker::initFaceFromCorners(vpMbtPolygon &polygon)
     kltPoly->polygon = &polygon;
     kltPolygons.push_back(kltPoly);
 }
+/*!
+  Initialise a new face from the coordinates given in parameter.
+
+  \param polygon : The polygon describing the set of lines that has to be tracked.
+*/
+void
+vpMbKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
+{
+    vpMbtDistanceKltPoints *kltPoly = new vpMbtDistanceKltPoints();
+    kltPoly->setCameraParameters(cam) ;
+    kltPoly->polygon = &polygon;
+    kltPolygons.push_back(kltPoly);
+}
 
 /*!
   Achieve the tracking of the KLT features and associate the features to the faces.

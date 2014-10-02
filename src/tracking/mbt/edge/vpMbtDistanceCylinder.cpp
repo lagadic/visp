@@ -68,7 +68,7 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
     featureline1(), featureline2(), meline1(NULL), meline2(NULL),
     cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(),
     error(), nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false),
-    c(NULL)
+    c(NULL), hiddenface(NULL), index_polygon(-1), isvisible(false)
 {
 }
 
@@ -233,100 +233,102 @@ vpMbtDistanceCylinder::getCylinderLineExtremity(double &i, double &j,double rho,
 bool
 vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-	// Perspective projection
-	p1->changeFrame(cMo);
-  p2->changeFrame(cMo);
-  cercle1->changeFrame(cMo);
-  cercle2->changeFrame(cMo);
-  c->changeFrame(cMo);
+  if(isvisible){
+    // Perspective projection
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
+    cercle1->changeFrame(cMo);
+    cercle2->changeFrame(cMo);
+    c->changeFrame(cMo);
 
-  p1->projection();
-  p2->projection();
-  try{
-  	cercle1->projection();
-  }
-  catch(...){
-    //std::cout<<"Problem when projecting circle 1\n";
-    return false;
-  }
-  try{
-  	cercle2->projection();
-  }
-  catch(...){
-    //std::cout<<"Problem when projecting circle 2\n";
-    return false;
-  }
-  c->projection();
+    p1->projection();
+    p2->projection();
+    try{
+      cercle1->projection();
+    }
+    catch(...){
+      //std::cout<<"Problem when projecting circle 1\n";
+      return false;
+    }
+    try{
+      cercle2->projection();
+    }
+    catch(...){
+      //std::cout<<"Problem when projecting circle 2\n";
+      return false;
+    }
+    c->projection();
 
-  double rho1,theta1;
-  double rho2,theta2;
+    double rho1,theta1;
+    double rho2,theta2;
 
-// Create the moving edges containers
-  meline1 = new vpMbtMeLine ;
-  meline1->setMe(me) ;
-  meline2 = new vpMbtMeLine ;
-  meline2->setMe(me) ;
+    // Create the moving edges containers
+    meline1 = new vpMbtMeLine ;
+    meline1->setMe(me) ;
+    meline2 = new vpMbtMeLine ;
+    meline2->setMe(me) ;
 
-//    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
-  meline1->setInitRange(0);
-  meline2->setInitRange(0);
+    //    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
+    meline1->setInitRange(0);
+    meline2->setInitRange(0);
 
-  // Conversion meter to pixels
-  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+    // Conversion meter to pixels
+    vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
 
-	// Determine intersections between circles and limbos
-	double i11,i12,i21,i22,j11,j12,j21,j22;
-	getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
-  getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
-	getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
-  getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
+    // Determine intersections between circles and limbos
+    double i11,i12,i21,i22,j11,j12,j21,j22;
+    getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
+    getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
+    getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
+    getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
 
     // Create the image points
-	vpImagePoint ip11,ip12,ip21,ip22;
-	ip11.set_ij(i11,j11);
-	ip12.set_ij(i12,j12);
-	ip21.set_ij(i21,j21);
-	ip22.set_ij(i22,j22);
+    vpImagePoint ip11,ip12,ip21,ip22;
+    ip11.set_ij(i11,j11);
+    ip12.set_ij(i12,j12);
+    ip21.set_ij(i21,j21);
+    ip22.set_ij(i22,j22);
 
-  // update limits of the melines.
-  int marge = /*10*/5; //ou 5 normalement
-  if (ip11.get_j()<ip12.get_j()) { meline1->jmin = (int)ip11.get_j()-marge ; meline1->jmax = (int)ip12.get_j()+marge ; } else{ meline1->jmin = (int)ip12.get_j()-marge ; meline1->jmax = (int)ip11.get_j()+marge ; }
-  if (ip11.get_i()<ip12.get_i()) { meline1->imin = (int)ip11.get_i()-marge ; meline1->imax = (int)ip12.get_i()+marge ; } else{ meline1->imin = (int)ip12.get_i()-marge ; meline1->imax = (int)ip11.get_i()+marge ; }
+    // update limits of the melines.
+    int marge = /*10*/5; //ou 5 normalement
+    if (ip11.get_j()<ip12.get_j()) { meline1->jmin = (int)ip11.get_j()-marge ; meline1->jmax = (int)ip12.get_j()+marge ; } else{ meline1->jmin = (int)ip12.get_j()-marge ; meline1->jmax = (int)ip11.get_j()+marge ; }
+    if (ip11.get_i()<ip12.get_i()) { meline1->imin = (int)ip11.get_i()-marge ; meline1->imax = (int)ip12.get_i()+marge ; } else{ meline1->imin = (int)ip12.get_i()-marge ; meline1->imax = (int)ip11.get_i()+marge ; }
 
-  if (ip21.get_j()<ip22.get_j()) { meline2->jmin = (int)ip21.get_j()-marge ; meline2->jmax = (int)ip22.get_j()+marge ; } else{ meline2->jmin = (int)ip22.get_j()-marge ; meline2->jmax = (int)ip21.get_j()+marge ; }
-  if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
-  
-	// Initialize the tracking
-  while (theta1 > M_PI) { theta1 -= M_PI ; }
-  while (theta1 < -M_PI) { theta1 += M_PI ; }
+    if (ip21.get_j()<ip22.get_j()) { meline2->jmin = (int)ip21.get_j()-marge ; meline2->jmax = (int)ip22.get_j()+marge ; } else{ meline2->jmin = (int)ip22.get_j()-marge ; meline2->jmax = (int)ip21.get_j()+marge ; }
+    if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
 
-  if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
-  else theta1 = M_PI/2.0 - theta1;
+    // Initialize the tracking
+    while (theta1 > M_PI) { theta1 -= M_PI ; }
+    while (theta1 < -M_PI) { theta1 += M_PI ; }
 
-  while (theta2 > M_PI) { theta2 -= M_PI ; }
-  while (theta2 < -M_PI) { theta2 += M_PI ; }
+    if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
+    else theta1 = M_PI/2.0 - theta1;
 
-  if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
-  else theta2 = M_PI/2.0 - theta2;
+    while (theta2 > M_PI) { theta2 -= M_PI ; }
+    while (theta2 < -M_PI) { theta2 += M_PI ; }
 
-  try
-  {
-    meline1->initTracking(I,ip11,ip12,rho1,theta1);
-  }
-  catch(...)
-  {
-    //vpTRACE("the line can't be initialized");
-    return false;
-  }
-  try
-  {
-    meline2->initTracking(I,ip21,ip22,rho2,theta2);
-  }
-  catch(...)
-  {
-    //vpTRACE("the line can't be initialized");
-    return false;
+    if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
+    else theta2 = M_PI/2.0 - theta2;
+
+    try
+    {
+      meline1->initTracking(I,ip11,ip12,rho1,theta1);
+    }
+    catch(...)
+    {
+      //vpTRACE("the line can't be initialized");
+      return false;
+    }
+    try
+    {
+      meline2->initTracking(I,ip21,ip22,rho2,theta2);
+    }
+    catch(...)
+    {
+      //vpTRACE("the line can't be initialized");
+      return false;
+    }
   }
   return true;
 }
@@ -342,31 +344,33 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
 void
 vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/)
 {
-  try 
-  {
-    meline1->track(I) ;
-  }
-  catch(...)
-  {
-    //std::cout << "Track meline1 failed" << std::endl;
-    meline1->reset();
-    Reinit = true;
-  }
-  try 
-  {
-    meline2->track(I) ;
-  }
-  catch(...)
-  {
-    //std::cout << "Track meline2 failed" << std::endl;
-    meline2->reset();
-    Reinit = true;
-  }
+  if(isvisible){
+    try
+    {
+      meline1->track(I) ;
+    }
+    catch(...)
+    {
+      //std::cout << "Track meline1 failed" << std::endl;
+      meline1->reset();
+      Reinit = true;
+    }
+    try
+    {
+      meline2->track(I) ;
+    }
+    catch(...)
+    {
+      //std::cout << "Track meline2 failed" << std::endl;
+      meline2->reset();
+      Reinit = true;
+    }
 
-  // Update the number of features
-  nbFeaturel1 = (unsigned int)meline1->getMeList().size();
-  nbFeaturel2 = (unsigned int)meline2->getMeList().size();
-  nbFeature = nbFeaturel1 + nbFeaturel2;
+    // Update the number of features
+    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
+    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeature = nbFeaturel1 + nbFeaturel2;
+  }
 }
 
 
@@ -379,93 +383,95 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
 void
 vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-	// Perspective projection
-	p1->changeFrame(cMo);
-  p2->changeFrame(cMo);
-  cercle1->changeFrame(cMo);
-  cercle2->changeFrame(cMo);
-  c->changeFrame(cMo);
+  if(isvisible){
+    // Perspective projection
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
+    cercle1->changeFrame(cMo);
+    cercle2->changeFrame(cMo);
+    c->changeFrame(cMo);
 
-  p1->projection();
-  p2->projection();
-  try{
-  	cercle1->projection();
-  }
-  catch(...){std::cout<<"Probleme projection cercle 1\n";}
-  try{
-  	cercle2->projection();
-  }
-  catch(...){std::cout<<"Probleme projection cercle 2\n";}
-  c->projection();
+    p1->projection();
+    p2->projection();
+    try{
+      cercle1->projection();
+    }
+    catch(...){std::cout<<"Probleme projection cercle 1\n";}
+    try{
+      cercle2->projection();
+    }
+    catch(...){std::cout<<"Probleme projection cercle 2\n";}
+    c->projection();
 
-	// Get the limbos
-  double rho1,theta1;
-  double rho2,theta2;
+    // Get the limbos
+    double rho1,theta1;
+    double rho2,theta2;
 
-  // Conversion meter to pixels
-  vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
+    // Conversion meter to pixels
+    vpMeterPixelConversion::convertLine(cam,c->getRho1(),c->getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(cam,c->getRho2(),c->getTheta2(),rho2,theta2);
 
-	// Determine intersections between circles and limbos
-	double i11,i12,i21,i22,j11,j12,j21,j22;
+    // Determine intersections between circles and limbos
+    double i11,i12,i21,i22,j11,j12,j21,j22;
 
-	getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
-  getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
+    getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
+    getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
 
-	getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
-  getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
+    getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
+    getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
 
     // Create the image points
-	vpImagePoint ip11,ip12,ip21,ip22;
-	ip11.set_ij(i11,j11);
-	ip12.set_ij(i12,j12);
-	ip21.set_ij(i21,j21);
-	ip22.set_ij(i22,j22);
+    vpImagePoint ip11,ip12,ip21,ip22;
+    ip11.set_ij(i11,j11);
+    ip12.set_ij(i12,j12);
+    ip21.set_ij(i21,j21);
+    ip22.set_ij(i22,j22);
 
-  // update limits of the meline.
-  int marge = /*10*/5; //ou 5 normalement
-  if (ip11.get_j()<ip12.get_j()) { meline1->jmin = (int)ip11.get_j()-marge ; meline1->jmax = (int)ip12.get_j()+marge ; } else{ meline1->jmin = (int)ip12.get_j()-marge ; meline1->jmax = (int)ip11.get_j()+marge ; }
-  if (ip11.get_i()<ip12.get_i()) { meline1->imin = (int)ip11.get_i()-marge ; meline1->imax = (int)ip12.get_i()+marge ; } else{ meline1->imin = (int)ip12.get_i()-marge ; meline1->imax = (int)ip11.get_i()+marge ; }
+    // update limits of the meline.
+    int marge = /*10*/5; //ou 5 normalement
+    if (ip11.get_j()<ip12.get_j()) { meline1->jmin = (int)ip11.get_j()-marge ; meline1->jmax = (int)ip12.get_j()+marge ; } else{ meline1->jmin = (int)ip12.get_j()-marge ; meline1->jmax = (int)ip11.get_j()+marge ; }
+    if (ip11.get_i()<ip12.get_i()) { meline1->imin = (int)ip11.get_i()-marge ; meline1->imax = (int)ip12.get_i()+marge ; } else{ meline1->imin = (int)ip12.get_i()-marge ; meline1->imax = (int)ip11.get_i()+marge ; }
 
-  if (ip21.get_j()<ip22.get_j()) { meline2->jmin = (int)ip21.get_j()-marge ; meline2->jmax = (int)ip22.get_j()+marge ; } else{ meline2->jmin = (int)ip22.get_j()-marge ; meline2->jmax = (int)ip21.get_j()+marge ; }
-  if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
+    if (ip21.get_j()<ip22.get_j()) { meline2->jmin = (int)ip21.get_j()-marge ; meline2->jmax = (int)ip22.get_j()+marge ; } else{ meline2->jmin = (int)ip22.get_j()-marge ; meline2->jmax = (int)ip21.get_j()+marge ; }
+    if (ip21.get_i()<ip22.get_i()) { meline2->imin = (int)ip21.get_i()-marge ; meline2->imax = (int)ip22.get_i()+marge ; } else{ meline2->imin = (int)ip22.get_i()-marge ; meline2->imax = (int)ip21.get_i()+marge ; }
 
-  // Initialize the tracking
-  while (theta1 > M_PI) { theta1 -= M_PI ; }
-  while (theta1 < -M_PI) { theta1 += M_PI ; }
+    // Initialize the tracking
+    while (theta1 > M_PI) { theta1 -= M_PI ; }
+    while (theta1 < -M_PI) { theta1 += M_PI ; }
 
-  if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
-  else theta1 = M_PI/2.0 - theta1;
+    if (theta1 < -M_PI/2.0) theta1 = -theta1 - 3*M_PI/2.0;
+    else theta1 = M_PI/2.0 - theta1;
 
-  while (theta2 > M_PI) { theta2 -= M_PI ; }
-  while (theta2 < -M_PI) { theta2 += M_PI ; }
+    while (theta2 > M_PI) { theta2 -= M_PI ; }
+    while (theta2 < -M_PI) { theta2 += M_PI ; }
 
-  if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
-  else theta2 = M_PI/2.0 - theta2;
+    if (theta2 < -M_PI/2.0) theta2 = -theta2 - 3*M_PI/2.0;
+    else theta2 = M_PI/2.0 - theta2;
 
-  try 
-  {
-    //meline1->updateParameters(I,rho1,theta1) ;
-    meline1->updateParameters(I,ip11,ip12,rho1,theta1) ;
+    try
+    {
+      //meline1->updateParameters(I,rho1,theta1) ;
+      meline1->updateParameters(I,ip11,ip12,rho1,theta1) ;
+    }
+    catch(...)
+    {
+      Reinit = true;
+    }
+    try
+    {
+      //meline2->updateParameters(I,rho2,theta2) ;
+      meline2->updateParameters(I,ip21,ip22,rho2,theta2) ;
+    }
+    catch(...)
+    {
+      Reinit = true;
+    }
+
+    // Update the numbers of features
+    nbFeaturel1 = (unsigned int)meline1->getMeList().size();
+    nbFeaturel2 = (unsigned int)meline2->getMeList().size();
+    nbFeature = nbFeaturel1 + nbFeaturel2;
   }
-  catch(...)
-  {
-    Reinit = true;
-  }
-  try 
-  {
-    //meline2->updateParameters(I,rho2,theta2) ;
-    meline2->updateParameters(I,ip21,ip22,rho2,theta2) ;
-  }
-  catch(...)
-  {
-    Reinit = true;
-  }
-
-  // Update the numbers of features
-  nbFeaturel1 = (unsigned int)meline1->getMeList().size();
-  nbFeaturel2 = (unsigned int)meline2->getMeList().size();
-  nbFeature = nbFeaturel1 + nbFeaturel2;
 }
 
 
@@ -503,56 +509,60 @@ vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const v
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
+  \param displayFullModel : When true, display the circle even if non visible.
 */
 void
 vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
-                               const vpCameraParameters&camera, const vpColor col, const unsigned int thickness)
+                               const vpCameraParameters&camera, const vpColor col, const unsigned int thickness,
+                               const bool displayFullModel)
 {
-	// Perspective projection
-	p1->changeFrame(cMo);
-  p2->changeFrame(cMo);
-  cercle1->changeFrame(cMo);
-  cercle2->changeFrame(cMo);
-  c->changeFrame(cMo);
+  if(isvisible || displayFullModel){
+    // Perspective projection
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
+    cercle1->changeFrame(cMo);
+    cercle2->changeFrame(cMo);
+    c->changeFrame(cMo);
 
-  p1->projection();
-  p2->projection();
-  try{
-  	cercle1->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 1";}
-  try{
-  	cercle2->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 2";}
-  c->projection();
+    p1->projection();
+    p2->projection();
+    try{
+      cercle1->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 1";}
+    try{
+      cercle2->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 2";}
+    c->projection();
 
-  double rho1,theta1;
-  double rho2,theta2;
+    double rho1,theta1;
+    double rho2,theta2;
 
-  // Meters to pixels conversion
-  vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
+    // Meters to pixels conversion
+    vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
 
-	// Determine intersections between circles and limbos
-	double i11,i12,i21,i22,j11,j12,j21,j22;
+    // Determine intersections between circles and limbos
+    double i11,i12,i21,i22,j11,j12,j21,j22;
 
-	getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
-  getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
+    getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
+    getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
 
-	getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
-  getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
+    getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
+    getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
 
     // Create the image points
-	vpImagePoint ip11,ip12,ip21,ip22;
-	ip11.set_ij(i11,j11);
-	ip12.set_ij(i12,j12);
-	ip21.set_ij(i21,j21);
-	ip22.set_ij(i22,j22);
+    vpImagePoint ip11,ip12,ip21,ip22;
+    ip11.set_ij(i11,j11);
+    ip12.set_ij(i12,j12);
+    ip21.set_ij(i21,j21);
+    ip22.set_ij(i22,j22);
 
-	// Display
-  vpDisplay::displayLine(I,ip11,ip12,col, thickness);
-  vpDisplay::displayLine(I,ip21,ip22,col, thickness);
+    // Display
+    vpDisplay::displayLine(I,ip11,ip12,col, thickness);
+    vpDisplay::displayLine(I,ip21,ip22,col, thickness);
+  }
 }
 
 /*!
@@ -563,56 +573,60 @@ vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneo
   \param camera : The camera parameters.
   \param col : The desired color.
   \param thickness : The thickness of the lines.
+  \param displayFullModel : When true, display the circle even if non visible.
 */
 void
 vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                               const vpCameraParameters &camera, const vpColor col, const unsigned int thickness)
+                               const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
+                               const bool displayFullModel)
 {
-	// Perspective projection
-	p1->changeFrame(cMo);
-  p2->changeFrame(cMo);
-  cercle1->changeFrame(cMo);
-  cercle2->changeFrame(cMo);
-  c->changeFrame(cMo);
+  if(isvisible || displayFullModel){
+    // Perspective projection
+    p1->changeFrame(cMo);
+    p2->changeFrame(cMo);
+    cercle1->changeFrame(cMo);
+    cercle2->changeFrame(cMo);
+    c->changeFrame(cMo);
 
-  p1->projection();
-  p2->projection();
-  try{
-	  cercle1->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 1";}
-  try{
-	  cercle2->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 2";}
-  c->projection();
+    p1->projection();
+    p2->projection();
+    try{
+      cercle1->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 1";}
+    try{
+      cercle2->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 2";}
+    c->projection();
 
-  double rho1,theta1;
-  double rho2,theta2;
+    double rho1,theta1;
+    double rho2,theta2;
 
-  // Meters to pixels conversion
-  vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
-  vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
+    // Meters to pixels conversion
+    vpMeterPixelConversion::convertLine(camera,c->getRho1(),c->getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(camera,c->getRho2(),c->getTheta2(),rho2,theta2);
 
-	// Determine intersections between circles and limbos
-	double i11,i12,i21,i22,j11,j12,j21,j22;
+    // Determine intersections between circles and limbos
+    double i11,i12,i21,i22,j11,j12,j21,j22;
 
-	getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
-  getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
+    getCylinderLineExtremity(i11, j11, rho1, theta1, cercle1);
+    getCylinderLineExtremity(i12, j12, rho1, theta1, cercle2);
 
-	getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
-  getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
+    getCylinderLineExtremity(i21, j21, rho2, theta2, cercle1);
+    getCylinderLineExtremity(i22, j22, rho2, theta2, cercle2);
 
     // Create the image points
-	vpImagePoint ip11,ip12,ip21,ip22;
-	ip11.set_ij(i11,j11);
-	ip12.set_ij(i12,j12);
-	ip21.set_ij(i21,j21);
-	ip22.set_ij(i22,j22);
+    vpImagePoint ip11,ip12,ip21,ip22;
+    ip11.set_ij(i11,j11);
+    ip12.set_ij(i12,j12);
+    ip21.set_ij(i21,j21);
+    ip22.set_ij(i22,j22);
 
-	// Display
-  vpDisplay::displayLine(I,ip11,ip12,col, thickness);
-  vpDisplay::displayLine(I,ip21,ip22,col, thickness);
+    // Display
+    vpDisplay::displayLine(I,ip11,ip12,col, thickness);
+    vpDisplay::displayLine(I,ip21,ip22,col, thickness);
+  }
 }
 
 
@@ -645,11 +659,18 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCylinder::initInteractionMatrixError()
 {
+  if (isvisible == true) {
     nbFeaturel1 = (unsigned int)meline1->getMeList().size();
     nbFeaturel2 = (unsigned int)meline2->getMeList().size();
     nbFeature = nbFeaturel1 + nbFeaturel2;
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
+  }
+  else {
+    nbFeature = 0 ;
+    nbFeaturel1 = 0;
+    nbFeaturel2 = 0;
+  }
 }
 
 /*!
@@ -658,25 +679,26 @@ vpMbtDistanceCylinder::initInteractionMatrixError()
 void
 vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I)
 {
-	// Perspective projection
-  c->changeFrame(cMo) ;
-  c->projection() ;
-  cercle1->changeFrame(cMo) ;
-  cercle1->changeFrame(cMo) ;
-  try{
-  	cercle1->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 1\n";}
-  try{
-  	cercle2->projection();
-  }
-  catch(...){std::cout<<"Problem projection circle 2\n";}
+  if (isvisible) {
+    // Perspective projection
+    c->changeFrame(cMo) ;
+    c->projection() ;
+    cercle1->changeFrame(cMo) ;
+    cercle1->changeFrame(cMo) ;
+    try{
+      cercle1->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 1\n";}
+    try{
+      cercle2->projection();
+    }
+    catch(...){std::cout<<"Problem projection circle 2\n";}
 
-	bool disp = false;
-	bool disp2 = false;
-	if (disp || disp2) vpDisplay::flush(I);
+    bool disp = false;
+    bool disp2 = false;
+    if (disp || disp2) vpDisplay::flush(I);
 
-	// Build the lines
+    // Build the lines
     vpFeatureBuilder::create(featureline2,*c,vpCylinder::line2) ;
     vpFeatureBuilder::create(featureline1,*c,vpCylinder::line1) ;
 
@@ -731,8 +753,8 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       x = (double)it->j;
       y = (double)it->i;
 
-	    x = (x-xc)*mx ;
-	    y = (y-yc)*my ;
+      x = (x-xc)*mx ;
+      y = (y-yc)*my ;
 
       alpha2 = x*si2 - y*co2;
 
@@ -748,5 +770,6 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
 
       j++;
     }
+  }
 }
 

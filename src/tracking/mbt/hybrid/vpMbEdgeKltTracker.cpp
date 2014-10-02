@@ -985,6 +985,17 @@ vpMbEdgeKltTracker::initFaceFromCorners(vpMbtPolygon &polygon)
   vpMbEdgeTracker::initFaceFromCorners(polygon);
   vpMbKltTracker::initFaceFromCorners(polygon);
 }
+/*!
+  Initialise a new face from the coordinates given in parameter.
+
+  \param polygon : The polygon describing the set of lines that has to be tracked.
+*/
+void
+vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
+{
+  vpMbEdgeTracker::initFaceFromLines(polygon);
+  vpMbKltTracker::initFaceFromLines(polygon);
+}
 
 /*!
   Add a circle to track from its center, 3 points (including the center) defining the plane that contain
@@ -1038,7 +1049,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo_, camera, col, thickness); // displayFullModel has no sence here since there is no visibility for cylinders
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
@@ -1084,7 +1095,7 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo_, camera, col, thickness);
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){

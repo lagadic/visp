@@ -173,7 +173,6 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \param modulo : Indicates if the test should also consider faces that are not oriented
   counter clockwise. If true, the orientation of the face is without importance.
   \param cam : Camera parameters (intrinsics parameters)
-  \param I : Current image
   
   \return Return true if the polygon is visible.
 */
@@ -185,32 +184,33 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
 
   changeFrame(cMo);
 
-  vpCameraParameters c = cam;
-  if(clippingFlag > 3) { // Contains at least one FOV constraint
-    c.computeFov(I.getWidth(), I.getHeight());
-  }
-  computeRoiClipped(c);
-  std::vector<vpImagePoint> roiImagePoints;
-  getRoiClipped(c, roiImagePoints);
+  if(nbpt <= 2) {
+    //Level of detail (LOD)
+    if(useLod) {
+      vpCameraParameters c = cam;
+      if(clippingFlag > 3) { // Contains at least one FOV constraint
+        c.computeFov(I.getWidth(), I.getHeight());
+      }
+      computeRoiClipped(c);
+      std::vector<vpImagePoint> roiImagePoints;
+      getRoiClipped(c, roiImagePoints);
 
-  if(nbpt <= 2){
+      if (roiImagePoints.size() == 2) {
+        double x1 = roiImagePoints[0].get_u();
+        double y1 = roiImagePoints[0].get_v();
+        double x2 = roiImagePoints[1].get_u();
+        double y2 = roiImagePoints[1].get_v();
+        double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+          std::cout << "Index=" << index << " ; Line length=" << length << " ; clippingFlag=" << clippingFlag << std::endl;
+//        vpTRACE("index=%d lenght=%f minLineLengthThresh=%f", index, length, minLineLengthThresh);
 
-	if(roiImagePoints.size() == 2) {
-		//Level of detail (LOD) case
-		double x1 = roiImagePoints[0].get_u();
-		double y1 = roiImagePoints[0].get_v();
-		double x2 = roiImagePoints[1].get_u();
-		double y2 = roiImagePoints[1].get_v();
-		double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-	//	std::cout << "Index=" << index << " ; Line length=" << length << std::endl;
-		vpTRACE("useLod=%d index=%d lenght=%f minLineLengthThresh=%f", useLod, index, length, minLineLengthThresh);
-
-		if(useLod && length < minLineLengthThresh) {
-			isvisible = false;
-			isappearing = false;
-			return  false;
-		}
-	}
+        if (length < minLineLengthThresh) {
+          isvisible = false;
+          isappearing = false;
+          return false;
+        }
+      }
+    }
 
     /* a line is always visible when LOD is not used */
     isvisible = true;
@@ -218,34 +218,21 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
     return  true ;
   }
 
-  vpPolygon roiPolygon(roiImagePoints);
-  double area = roiPolygon.getArea();
-//  std::cout << "Index=" << index << " ; area=" << area << std::endl;
-  if(useLod && area < minPolygonAreaThresh) {
-  	  isappearing = false;
-  	  isvisible = false ;
-  	  return false;
+  //Check visibility from normal
+  //Newell's Method for calculating the normal of an arbitrary 3D polygon
+  //https://www.opengl.org/wiki/Calculating_a_Surface_Normal
+  vpColVector faceNormal(3);
+  vpColVector currentVertex, nextVertex;
+  for(unsigned int  i = 0; i<nbpt; i++) {
+    currentVertex = p[i].cP;
+    nextVertex = p[(i+1) % nbpt].cP;
+
+    faceNormal[0] += (currentVertex[1] - nextVertex[1]) * (currentVertex[2] + nextVertex[2]);
+    faceNormal[1] += (currentVertex[2] - nextVertex[2]) * (currentVertex[0] + nextVertex[0]);
+    faceNormal[2] += (currentVertex[0] - nextVertex[0]) * (currentVertex[1] + nextVertex[1]);
   }
-
-
-  vpColVector e1(3) ;
-  vpColVector e2(3) ;
-  vpColVector facenormal(3) ;
-
-  e1[0] = p[1].get_X() - p[0].get_X() ;
-  e1[1] = p[1].get_Y() - p[0].get_Y() ;
-  e1[2] = p[1].get_Z() - p[0].get_Z() ;
-
-  e2[0] = p[2].get_X() - p[1].get_X() ;
-  e2[1] = p[2].get_Y() - p[1].get_Y() ;
-  e2[2] = p[2].get_Z() - p[1].get_Z() ;
-
-  e1.normalize();
-  e2.normalize();
+  faceNormal.normalize();
   
-  facenormal = vpColVector::crossProd(e1,e2) ;
-  facenormal.normalize();
- 
   vpColVector e4(3) ;
   vpPoint pt;
   for (unsigned int i = 0; i < nbpt; i += 1){
@@ -253,23 +240,41 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
     pt.set_Y(pt.get_Y() + p[i].get_Y());
     pt.set_Z(pt.get_Z() + p[i].get_Z());
   }
-  e4[0] = -pt.get_X()/(double)nbpt; e4[1] = -pt.get_Y()/(double)nbpt; e4[2] = -pt.get_Z()/(double)nbpt; 
+  e4[0] = -pt.get_X() / (double)nbpt;
+  e4[1] = -pt.get_Y() / (double)nbpt;
+  e4[2] = -pt.get_Z() / (double)nbpt;
   e4.normalize();
-  
-  double cos_angle = vpColVector::dotProd (e4, facenormal);
-  double angle = acos(cos_angle);
-  
-  //vpCTRACE << cos_angle << "/" << vpMath::deg(angle) << "/" << vpMath::deg(alpha) << std::endl;
 
-  if( angle < alpha ){
+  double angle = acos(vpColVector::dotProd(e4, faceNormal));
+
+//  vpCTRACE << angle << "/" << vpMath::deg(angle) << "/" << vpMath::deg(alpha) << std::endl;
+
+  if( angle < alpha || (modulo && (M_PI - angle) < alpha)) {
     isvisible = true;
     isappearing = false;
-    return true;
   }
 
-  if(modulo && (M_PI - angle) < alpha){
-    isvisible = true;
-    isappearing = false;
+  if (isvisible) {
+    if (useLod) {
+      vpCameraParameters c = cam;
+      if(clippingFlag > 3) { // Contains at least one FOV constraint
+        c.computeFov(I.getWidth(), I.getHeight());
+      }
+      computeRoiClipped(c);
+      std::vector<vpImagePoint> roiImagePoints;
+      getRoiClipped(c, roiImagePoints);
+
+      vpPolygon roiPolygon(roiImagePoints);
+      double area = roiPolygon.getArea();
+//      std::cout << "After normal test ; Index=" << index << " ; area=" << area << " ; clippingFlag="
+//          << clippingFlag << std::endl;
+      if (area < minPolygonAreaThresh) {
+        isappearing = false;
+        isvisible = false;
+        return false;
+      }
+    }
+
     return true;
   }
 
@@ -282,6 +287,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   else {
     isappearing = false;
   }
+
   isvisible = false ;
   return false ;
 }

@@ -69,6 +69,7 @@
 #include <visp/vpIoTools.h>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 #ifdef VISP_HAVE_COIN
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>
@@ -706,23 +707,33 @@ void vpMbTracker::savePose(const std::string &filename)
 
 void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace)
 {
-    vpMbtPolygon polygon;
-    polygon.setNbPoint((unsigned int)corners.size());
-    polygon.setIndex((int)idFace);
-    for(unsigned int j = 0; j < corners.size(); j++) {
-      polygon.addPoint(j, corners[j]);
+  std::vector<vpPoint> corners_without_duplicates;
+  corners_without_duplicates.push_back(corners[0]);
+  for (unsigned int i=0; i < corners.size()-1; i++) {
+    if (std::fabs(corners[i].get_oX() - corners[i+1].get_oX()) > std::fabs(corners[i].get_oX())*std::numeric_limits<double>::epsilon()
+        || std::fabs(corners[i].get_oY() - corners[i+1].get_oY()) > std::fabs(corners[i].get_oY())*std::numeric_limits<double>::epsilon()
+        || std::fabs(corners[i].get_oZ() - corners[i+1].get_oZ()) > std::fabs(corners[i].get_oZ())*std::numeric_limits<double>::epsilon()) {
+      corners_without_duplicates.push_back(corners[i+1]);
     }
+  }
 
-    faces.addPolygon(&polygon);
+  vpMbtPolygon polygon;
+  polygon.setNbPoint((unsigned int)corners_without_duplicates.size());
+  polygon.setIndex((int)idFace);
+  for(unsigned int j = 0; j < corners_without_duplicates.size(); j++) {
+    polygon.addPoint(j, corners_without_duplicates[j]);
+  }
 
-    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
-      faces.getPolygon().back()->setClipping(clippingFlag);
+  faces.addPolygon(&polygon);
 
-    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
-      faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+  if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+    faces.getPolygon().back()->setClipping(clippingFlag);
 
-    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
-      faces.getPolygon().back()->setFarClippingDistance(distFarClip);
+  if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+    faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+
+  if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+    faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
 void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
@@ -781,8 +792,30 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
       }
     }
 
-    polygon.setIndex(idFace) ;
-    faces.addPolygon(&polygon) ;
+    polygon.setIndex(idFace);
+    faces.addPolygon(&polygon);
+}
+
+void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace)
+{
+  // A a polygon as a single line that corresponds to the revolution axis of the cylinder
+  vpMbtPolygon polygon;
+  polygon.setNbPoint(2);
+
+  polygon.addPoint(0, p1);
+  polygon.addPoint(1, p2);
+
+  polygon.setIndex(idFace) ;
+  faces.addPolygon(&polygon) ;
+
+  if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+    faces.getPolygon().back()->setClipping(clippingFlag);
+
+  if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+    faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+
+  if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+    faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
 /*!
@@ -1160,6 +1193,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 
 		//////////////////////////Read the segment declaration part//////////////////////////
+		//Store in a map the potential segments to be added
+		std::map<std::pair<unsigned int, unsigned int>, std::vector<vpPoint> > segmentTemporaryMap;
 		unsigned int caoNbrLine;
 		fileId >> caoNbrLine;
 		fileId.ignore(256, '\n'); // skip the rest of the line
@@ -1194,12 +1229,15 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			caoLinePoints[2 * k + 1] = index2;
 
 			if (index1 < caoNbrPoint && index2 < caoNbrPoint) {
-				std::vector<vpPoint> extremities;
-				extremities.push_back(caoPoints[index1]);
-				extremities.push_back(caoPoints[index2]);
+              std::vector<vpPoint> extremities;
+              extremities.push_back(caoPoints[index1]);
+              extremities.push_back(caoPoints[index2]);
 
-        addPolygon(extremities, idFace++);
-        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+              std::pair<unsigned int, unsigned int> key(index1, index2);
+
+              segmentTemporaryMap[key] = extremities;
+//        addPolygon(extremities, idFace++);
+//        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
 			} else {
 				vpTRACE(" line %d has wrong coordinates.", k);
 			}
@@ -1209,8 +1247,9 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 
 		//////////////////////////Read the face segment declaration part//////////////////////////
-		/* Load polygon from the lines extracted earlier
-		 (the first point of the line is used)*/
+		/* Load polygon from the lines extracted earlier (the first point of the line is used)*/
+		//Store in a vector the indexes of the segments added in the face segment case
+        std::vector<std::pair<unsigned int, unsigned int> > faceSegmentKeyVector;
 		unsigned int caoNbrPolygonLine;
 		fileId >> caoNbrPolygonLine;
 		fileId.ignore(256, '\n'); // skip the rest of the line
@@ -1235,24 +1274,36 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 			fileId >> nbLinePol;
 			std::vector<vpPoint> corners;
 			if (nbLinePol > 100000) {
-				throw vpException(vpException::badValue,
-						"Exceed the max number of lines.");
+				throw vpException(vpException::badValue, "Exceed the max number of lines.");
 			}
 
-			for (unsigned int n = 0; n < nbLinePol; n++) {
-				fileId >> index;
-				if (2 * index > 2 * caoNbrLine - 1) {
-					throw vpException(vpException::badValue,
-							"Exceed the max number of lines.");
-				}
+            for (unsigned int n = 0; n < nbLinePol; n++) {
+              fileId >> index;
+//              if (2 * index > 2 * caoNbrLine - 1) {
+              if(index >= caoNbrLine) {
+                throw vpException(vpException::badValue, "Exceed the max number of lines.");
+              }
+              corners.push_back(caoPoints[caoLinePoints[2 * index]]);
+              corners.push_back(caoPoints[caoLinePoints[2 * index + 1]]);
 
-				corners.push_back(caoPoints[caoLinePoints[2 * index]]);
-			}
+              std::pair<unsigned int, unsigned int> key(caoLinePoints[2 * index], caoLinePoints[2 * index + 1]);
+              faceSegmentKeyVector.push_back(key);
+            }
 			fileId.ignore(256, '\n'); // skip the rest of the line
 
       addPolygon(corners, idFace++);
-      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+//      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+      initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
     }
+
+		//Add the segments which were not already added in the face segment case
+		for(std::map<std::pair<unsigned int, unsigned int>, std::vector<vpPoint> >::const_iterator it =
+		    segmentTemporaryMap.begin(); it != segmentTemporaryMap.end(); ++it) {
+		  if(std::find(faceSegmentKeyVector.begin(), faceSegmentKeyVector.end(), it->first) == faceSegmentKeyVector.end()) {
+            addPolygon(it->second, idFace++);
+            initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+		  }
+		}
 
 		removeComment(fileId);
 
@@ -1332,7 +1383,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 				fileId >> radius;
 				fileId.ignore(256, '\n'); // skip the rest of the line
 
-				initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius);
+        addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace);
+        initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++);
 			}
 
 		} catch (...) {
@@ -1492,7 +1544,7 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
           SoVRMLIndexedFaceSet * face_set;
           face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
           if(!strncmp(face_set->getName().getString(),"cyl",3)){
-            extractCylinders(face_set, transform);
+            extractCylinders(face_set, transform, indexFace);
           }else{
             extractFaces(face_set, transform, indexFace);
           }
@@ -1569,9 +1621,10 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
 
   \param face_set : Pointer to the cylinder in the vrml format.
   \param transform : Transformation matrix applied to the cylinder.
+  \param idFace : Id of the face.
 */
 void
-vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform)
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace)
 {
   std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
   SoVRMLCoordinate* coords = (SoVRMLCoordinate *)face_set->coord.getValue();
@@ -1624,8 +1677,8 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
     throw vpException(vpException::badValue, "Radius from the two circles of the cylinders are different.");
   }
 
-  initCylinder(p1, p2, radius_c1);
-
+  addPolygon(p1, p2, idFace);
+  initCylinder(p1, p2, radius_c1, idFace++);
 }
 
 /*!

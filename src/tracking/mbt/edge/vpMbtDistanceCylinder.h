@@ -56,6 +56,7 @@
 #include <visp/vpFeatureLine.h>
 #include <visp/vpCylinder.h>
 #include <visp/vpCircle.h>
+#include <visp/vpMbHiddenFaces.h>
 
 /*!
   \class vpMbtDistanceCylinder
@@ -111,6 +112,13 @@ class VISP_EXPORT vpMbtDistanceCylinder
     //! The cylinder
     vpCylinder *c;
     
+    //! Pointer to the list of faces
+    vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
+    //! Index of the face which contains the cylinder
+    int index_polygon;
+    //! Indicates if the cylinder is visible or not
+    bool isvisible;
+
   public:
     vpMbtDistanceCylinder() ;
     ~vpMbtDistanceCylinder() ;
@@ -119,8 +127,8 @@ class VISP_EXPORT vpMbtDistanceCylinder
     
     void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo, const vpImage<unsigned char> &I);
     
-    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
-    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1);
+    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
+    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
     void displayMovingEdges(const vpImage<unsigned char> &I);
     
     /*!
@@ -164,6 +172,13 @@ class VISP_EXPORT vpMbtDistanceCylinder
     
     bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
+    /*!
+      Check if the cylinder is visible in the image or not.
+
+      \return Return true if the cylinder is visible
+    */
+    inline bool isVisible() const {return isvisible; }
+
     void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     /*!
@@ -208,6 +223,13 @@ class VISP_EXPORT vpMbtDistanceCylinder
       \param cyl_name : The name of the cylinder
     */
     inline void setName(const char* cyl_name) {this->name = std::string(cyl_name);}
+
+    /*!
+      Set a boolean parameter to indicates if the cylinder is visible in the image or not.
+
+      \param _isvisible : Set to true if the cylinder is visible
+    */
+    inline void setVisible(bool _isvisible) {isvisible = _isvisible ;}
 
     void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     

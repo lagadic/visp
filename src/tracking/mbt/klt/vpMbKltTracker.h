@@ -385,7 +385,8 @@ public:
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
           
-  virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
+          virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
+          virtual void            initFaceFromLines(vpMbtPolygon &polygon);
           virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
           virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
 

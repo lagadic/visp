@@ -431,6 +431,7 @@ public:
 protected:
   void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0);
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace);
 
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
@@ -438,7 +439,7 @@ protected:
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
   virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace);
   virtual void extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace);
-  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform);
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace);
 #endif
   
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
@@ -476,7 +477,8 @@ protected:
     \param polygon : The polygon describing the set of lines that has to be tracked.
   */
   virtual void initFaceFromCorners(vpMbtPolygon &polygon)=0;
-  
+  virtual void initFaceFromLines(vpMbtPolygon &polygon)=0;
+
   virtual void loadVRMLModel(const std::string& modelFile);
   virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
 		  const bool verbose=false, const bool parent=true);
