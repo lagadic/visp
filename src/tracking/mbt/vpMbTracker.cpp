@@ -48,6 +48,10 @@
   \brief Generic model based tracker
 */
 
+#include <iostream>
+#include <limits>
+#include <algorithm>
+#include <map>
 
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
@@ -67,9 +71,7 @@
 #include <visp/vpMbTracker.h>
 #include <visp/vpMatrixException.h>
 #include <visp/vpIoTools.h>
-#include <iostream>
-#include <limits>
-#include <algorithm>
+
 #ifdef VISP_HAVE_COIN
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>
