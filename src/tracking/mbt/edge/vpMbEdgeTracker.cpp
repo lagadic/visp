@@ -191,6 +191,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector factor;
   //vpColVector error; // s-s*
   vpColVector weighted_error; // Weighted error vector wi(s-s)*
+  vpVelocityTwistMatrix cVo;
 
   unsigned int iter = 0;
 
@@ -553,30 +554,15 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     // If all the 6 dof should be estimated, we check if the interaction matrix is full rank.
     // If not we remove automatically the dof that cannot be estimated
     // This is particularly useful when consering circles (rank 5) and cylinders (rank 4)
-    if (0) {
-//    if (isoJoIdentity_) {
+    if (isoJoIdentity_) {
+      cVo.buildFrom(cMo);
+
       vpMatrix K; // kernel
-      int rank = L.kernel(K);
+      int rank = (L*cVo).kernel(K);
       if (rank != 6) {
         vpMatrix I; // Identity
         I.eye(6);
-        vpMatrix P = I-K.AtA();
-
-        // Determine which dof has to be removed
-        std::map<double, unsigned int> dof;
-        for (unsigned int i=0; i<6; i++)
-          dof.insert( std::pair<double, unsigned int>(P[i][i], i) );
-        // From now the values in the map are ordered from lowest value of P[i][i] to the highest
-        int cpt = 0;
-        // remove the dof: the one that have the lowest values of P[i][i]
-        for (std::map<double, unsigned int>::iterator it=dof.begin(); it!=dof.end(); ++it) {
-          if (cpt++ < 6-rank) {
-            oJo[it->second][it->second] = 0.;
-          }
-          else {
-            oJo[it->second][it->second] = 1.;
-          }
-        }
+        oJo = I-K.AtA();
 
         isoJoIdentity_ = false;
       }
@@ -588,7 +574,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         v = -0.7*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
     }
     else{
-        vpVelocityTwistMatrix cVo;
         cVo.buildFrom(cMo);
         vpMatrix LVJ = (L*cVo*oJo);
         vpMatrix LVJTLVJ = (LVJ).AtA();
@@ -739,7 +724,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if(computeCovariance){
         L_true = L;
        if(!isoJoIdentity_){
-         vpVelocityTwistMatrix cVo;
          cVo.buildFrom(cMo);
          LVJ_true = (L*cVo*oJo);
        }

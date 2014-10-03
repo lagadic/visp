@@ -9,10 +9,15 @@
 ViSP 2.10.0 (under development)
   - New features
     . Model-based tracker:
-      + Introduction of 3D circles.
+      + Introduction of 3D circles that project as ellipses.
       + In *.cao files comments are allowed on lines starting with # character.
       + New functions getError() and getRobustWeights() useful to compute
         tracking quality indicators.
+      + Introduction of setLod() for "level of detail" that checks if the size
+        of the feature is large enough to be considered by the tracker.
+      + Based on the rank of the interaction matrix turn off automatically the
+        degrees of freedom that cannot be estimated. Especially useful when
+        considering 3D objets with only cylinders and circles.
     . Video reader and writer support mpeg4
     . Compat with RaspberryPi architecture
     . Auto detection of visp-images-data Debian or Ubuntu package that allows
