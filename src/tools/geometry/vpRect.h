@@ -194,6 +194,10 @@ public:
 
   friend VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r);
+  void set(double left, double top, double width, double height);
+  void set(const vpImagePoint &topLeft, double width, double height);
+  void set(const vpImagePoint &topLeft, const vpImagePoint &bottomRight);
+  void set(const vpRect& r);
   void set(const std::vector<vpImagePoint> &ip);
 
   /*!

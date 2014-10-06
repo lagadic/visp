@@ -63,6 +63,11 @@ vpRect::vpRect() : left(0), top(0), width(0), height(0) {};
   Constructs a rectangle with the \e top, \e left corner and \e width
   and \e height.
 
+  \param l : coordinate of the top/left corner along the horizontal axis.
+  \param t : coordinate of the top/left corner along the vertical axis.
+  \param w : rectangle width.
+  \param h : rectangle height.
+
 */
 vpRect::vpRect(double l, double t, double w, double h)
   : left(l), top(t), width(w), height(h)
@@ -73,6 +78,10 @@ vpRect::vpRect(double l, double t, double w, double h)
  
   Constructs a rectangle with \e topLeft the top-left corner location
   and \e width and \e height the rectangle size.
+
+  \param topLeft : coordinates of the top/left corner.
+  \param w : rectangle width.
+  \param h : rectangle height.
 
 */
 vpRect::vpRect(const vpImagePoint &topLeft, double w, double h)
@@ -134,6 +143,41 @@ vpRect::vpRect(const std::vector<vpImagePoint> &ip)
 
 /*!
 
+  Set the rectangle with the \e top, \e left corner and \e width
+  and \e height.
+  \param l : coordinate of the top/left corner along the horizontal axis.
+  \param t : coordinate of the top/left corner along the vertical axis.
+  \param w : rectangle width.
+  \param h : rectangle height.
+
+*/
+void vpRect::set(double l, double t, double w, double h)
+{
+  left = l;
+  top = t;
+  width = w;
+  height = h;
+};
+
+/*!
+
+  Set the rectangle with \e topLeft the top-left corner location
+  and \e width and \e height the rectangle size.
+
+  \param topLeft : coordinates of the top-left corner.
+  \param w : rectangle width.
+  \param h : rectangle height.
+*/
+void vpRect::set(const vpImagePoint &topLeft, double w, double h)
+{
+  left = topLeft.get_u();
+  top = topLeft.get_v();
+  width = w;
+  height = h;
+};
+
+/*!
+
   Set the rectangle as the bounding box of a vector of image points.
   \param ip : Vector of image points. At least 1 points is mandatory,
   otherwise an exception is thrown.
@@ -161,6 +205,34 @@ void vpRect::set(const std::vector<vpImagePoint> &ip)
   setTop   (minv);
   setRight (maxu);
   setBottom(maxv);
+};
+
+/*!
+
+  Set the rectangle with \e topLeft the top-left corner location
+  and \e bottomRight the bottom-right corner.
+
+  \param topLeft : coordinates of the top-left corner.
+  \param bottomRight : coordinates of the bottom-right corner.
+
+*/
+void vpRect::set(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
+{
+  this->left = topLeft.get_u();
+  this->top = topLeft.get_v();
+
+  setBottom( bottomRight.get_v() );
+  setRight( bottomRight.get_u() );
+};
+
+/*!
+
+  Set the rectangle from \e r.
+
+*/
+void vpRect::set(const vpRect& r)
+{
+  *this = r;
 };
 
 /*!
