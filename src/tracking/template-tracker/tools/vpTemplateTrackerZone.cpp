@@ -169,7 +169,11 @@ void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I, bool dela
     is only available if ViSP is build with OpenCV >2.3 third-party.
   - If false, the vector of image points describe triangles. Its size is then a multiple of 3.
  */
-void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, const std::vector< vpImagePoint > &vip, bool delaunay)
+void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>&
+                                           #if VISP_HAVE_OPENCV_VERSION >= 0x020300
+                                           I
+                                           #endif
+                                           , const std::vector< vpImagePoint > &vip, bool delaunay)
 {
   if (delaunay) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
