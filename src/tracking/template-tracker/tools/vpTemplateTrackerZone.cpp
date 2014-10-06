@@ -186,10 +186,9 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, cons
     subdiv.getTriangleList(triangleList);
 
     // Keep only the Delaunay points that are inside the area
-    vpRect rect(vip);
+    vpRect rect(0, 0, I.getWidth(), I.getHeight());
 
     std::vector<vpImagePoint> vip_delaunay;
-
     for( size_t i = 0; i < triangleList.size(); i++ ) {
       cv::Vec6f t = triangleList[i];
       std::vector<vpImagePoint> p(3);
@@ -197,6 +196,7 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, cons
       p[0].set_uv(t[0], t[1]);
       p[1].set_uv(t[2], t[3]);
       p[2].set_uv(t[4], t[5]);
+
       if (p[0].inRectangle(rect) && p[1].inRectangle(rect) && p[2].inRectangle(rect)) {
         vip_delaunay.push_back(p[0]);
         vip_delaunay.push_back(p[1]);
@@ -215,10 +215,10 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>& I, cons
       vpTemplateTrackerTriangle  triangle(vip[i], vip[i+1], vip[i+2]);
       add(triangle);
 
-      vpDisplay::displayLine(I, vip[i],   vip[i+1], vpColor::green, 1);
-      vpDisplay::displayLine(I, vip[i+1], vip[i+2], vpColor::green, 1);
-      vpDisplay::displayLine(I, vip[i+2], vip[i],   vpColor::green,1);
-      vpDisplay::flush(I) ;
+//      vpDisplay::displayLine(I, vip[i],   vip[i+1], vpColor::green, 1);
+//      vpDisplay::displayLine(I, vip[i+1], vip[i+2], vpColor::green, 1);
+//      vpDisplay::displayLine(I, vip[i+2], vip[i],   vpColor::green,1);
+//      vpDisplay::flush(I) ;
 
       // Update the bounding box
       if((triangle.getMinx()<min_x)||(min_x==-1))
