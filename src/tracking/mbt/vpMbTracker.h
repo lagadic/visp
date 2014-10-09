@@ -72,6 +72,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 /*!
   \class vpMbTracker
@@ -504,7 +505,6 @@ protected:
   }
 
   std::map<std::string, std::string> parseParameters(std::string& endLine);
-  void removeComment(std::ifstream& fileId);
 
   inline std::string &ltrim(std::string &s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
