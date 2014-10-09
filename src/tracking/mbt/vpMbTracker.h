@@ -52,6 +52,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <algorithm>
 
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
