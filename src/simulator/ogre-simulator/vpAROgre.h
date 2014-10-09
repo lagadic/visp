@@ -321,7 +321,15 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     
     \return Always true.
   */
-  virtual bool destroyScene(void) {return true;};
+  virtual bool destroyScene(void) {
+      if(!mSceneMgr)
+           return false;
+
+      mSceneMgr->destroyAllCameras ();
+      mSceneMgr->clearScene();
+      mRoot->destroySceneManager(mSceneMgr);
+      return true;
+  }
   
   virtual void updateCameraParameters (const vpHomogeneousMatrix &cMo);
 
