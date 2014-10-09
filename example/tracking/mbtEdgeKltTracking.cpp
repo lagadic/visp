@@ -286,7 +286,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I;
     vpVideoReader reader;
 
-    reader.setFileName(ipath.c_str());
+    reader.setFileName(ipath);
     try{
       reader.open(I);
     }catch(...){
@@ -394,7 +394,7 @@ main(int argc, const char ** argv)
     //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
     if (opt_display && opt_click_allowed)
     {
-      tracker.initClick(I, initFile.c_str(), true);
+      tracker.initClick(I, initFile, true);
       tracker.getPose(cMo);
       // display the 3D model at the given pose
       tracker.display(I,cMo, cam, vpColor::red);
@@ -432,7 +432,9 @@ main(int argc, const char ** argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
+#if defined (VISP_HAVE_XML2)
         tracker.loadConfigFile(configFile);
+#endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
         tracker.setOgreVisibilityTest(useOgre);

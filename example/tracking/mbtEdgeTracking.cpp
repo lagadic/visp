@@ -288,7 +288,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I;
     vpVideoReader reader;
 
-    reader.setFileName(ipath.c_str());
+    reader.setFileName(ipath);
     try{
       reader.open(I);
     }catch(...){
@@ -328,7 +328,7 @@ main(int argc, const char ** argv)
     vpCameraParameters cam;
 #if defined (VISP_HAVE_XML2)
     // From the xml file
-    tracker.loadConfigFile(configFile.c_str());
+    tracker.loadConfigFile(configFile);
 #else
     // By setting the parameters:
     cam.initPersProjWithoutDistortion(547, 542, 338, 234);
@@ -375,7 +375,7 @@ main(int argc, const char ** argv)
     }
 
     // Load the 3D model (either a vrml file or a .cao file)
-    tracker.loadModel(modelFile.c_str());
+    tracker.loadModel(modelFile);
 
     // Initialise the tracker by clicking on the image
     // This function looks for
@@ -383,7 +383,7 @@ main(int argc, const char ** argv)
     //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
     if (opt_display && opt_click_allowed)
     {
-      tracker.initClick(I, initFile.c_str(), true);
+      tracker.initClick(I, initFile, true);
       tracker.getPose(cMo);
       // display the 3D model at the given pose
       tracker.display(I,cMo, cam, vpColor::red);
@@ -421,7 +421,9 @@ main(int argc, const char ** argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
+#if defined (VISP_HAVE_XML2)
         tracker.loadConfigFile(configFile);
+#endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
         tracker.setOgreVisibilityTest(useOgre);
