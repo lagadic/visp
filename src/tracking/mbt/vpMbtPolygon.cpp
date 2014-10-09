@@ -173,6 +173,7 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \param modulo : Indicates if the test should also consider faces that are not oriented
   counter clockwise. If true, the orientation of the face is without importance.
   \param cam : Camera parameters (intrinsics parameters)
+  \param I : Current grayscale image
   
   \return Return true if the polygon is visible.
 */
@@ -252,9 +253,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
   if( angle < alpha || (modulo && (M_PI - angle) < alpha)) {
     isvisible = true;
     isappearing = false;
-  }
 
-  if (isvisible) {
     if (useLod) {
       vpCameraParameters c = cam;
       if(clippingFlag > 3) { // Contains at least one FOV constraint
