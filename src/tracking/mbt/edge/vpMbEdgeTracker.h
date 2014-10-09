@@ -393,6 +393,20 @@ public:
   virtual void setNearClippingDistance(const double &dist);
 
   /*!
+    Use Ogre3D for visibility tests
+
+    \warning This function has to be called before the initialization of the tracker.
+
+    \param v : True to use it, False otherwise
+  */
+  virtual void setOgreVisibilityTest(const bool &v){
+      vpMbTracker::setOgreVisibilityTest(v);
+#ifdef VISP_HAVE_OGRE
+      faces.getOgreContext()->setWindowName("MBT Edge");
+#endif
+  }
+
+  /*!
     Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
     
     The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.

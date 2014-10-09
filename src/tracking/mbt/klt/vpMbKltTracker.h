@@ -369,6 +369,20 @@ public:
             \param max : the desired number of iteration
           */
   virtual inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
+
+          /*!
+            Use Ogre3D for visibility tests
+
+            \warning This function has to be called before the initialization of the tracker.
+
+            \param v : True to use it, False otherwise
+          */
+  virtual         void    setOgreVisibilityTest(const bool &v){
+      vpMbTracker::setOgreVisibilityTest(v);
+#ifdef VISP_HAVE_OGRE
+      faces.getOgreContext()->setWindowName("MBT Klt");
+#endif
+  }
   
   virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   

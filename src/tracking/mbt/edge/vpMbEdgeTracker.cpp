@@ -1141,9 +1141,10 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
 
 #ifdef VISP_HAVE_OGRE 
   if(useOgre){
-    if(!faces.isOgreInitialised())
+    if(!faces.isOgreInitialised()){
       faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
       faces.initOgre(cam);
+    }
   }
 #endif
   
@@ -1794,6 +1795,7 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
   \param P1 : The first extremity of the axis.
   \param P2 : The second extremity of the axis.
   \param r : The radius of the cylinder.
+  \param idFace : The index of the face.
   \param name : the optional name of the cylinder
 */
 void
@@ -2090,6 +2092,10 @@ vpMbEdgeTracker::resetTracker()
   }
 
   faces.reset();
+
+#ifdef VISP_HAVE_OGRE
+  useOgre = false;
+#endif
   
   compute_interaction=1;
   nline = 0;

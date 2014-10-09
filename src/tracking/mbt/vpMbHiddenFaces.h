@@ -160,7 +160,7 @@ class vpMbHiddenFaces
     //! operator[] as reader.
     inline const PolygonType*  operator[](const unsigned int i) const { return Lpol[i];}
 
-    void          reset();  
+    void          reset();
     
 #ifdef VISP_HAVE_OGRE
     /*!
@@ -236,7 +236,6 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
 #endif
 }
 
-
 /*!
   Basic destructor.
 */
@@ -250,9 +249,22 @@ vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
     Lpol[i] = NULL ;
   }
   Lpol.resize(0);
-  
+
 #ifdef VISP_HAVE_OGRE
-  delete ogre;
+  if(ogre != NULL){
+    delete ogre;
+    ogre = NULL;
+  }
+
+  // This is already done by calling "delete ogre"
+//  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
+//    if (lOgrePolygons[i]!=NULL){
+//      delete lOgrePolygons[i] ;
+//    }
+//    lOgrePolygons[i] = NULL ;
+//  }
+
+  lOgrePolygons.resize(0);
 #endif
 }
 
@@ -289,6 +301,28 @@ vpMbHiddenFaces<PolygonType>::reset()
     Lpol[i] = NULL ;
   }
   Lpol.resize(0);
+
+#ifdef VISP_HAVE_OGRE
+  if(ogre != NULL){
+    delete ogre;
+    ogre = NULL;
+  }
+
+  // This is already done by calling "delete ogre"
+//  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
+//    if (lOgrePolygons[i]!=NULL){
+//      delete lOgrePolygons[i] ;
+//    }
+//    lOgrePolygons[i] = NULL ;
+//  }
+
+  lOgrePolygons.resize(0);
+
+  ogreInitialised = false;
+  ogre = new vpAROgre();
+  ogre->setShowConfigDialog(false);
+  ogreBackground = vpImage<unsigned char>(480, 640);
+#endif
 }
 
 /*!

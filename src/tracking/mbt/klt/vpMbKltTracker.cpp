@@ -64,7 +64,7 @@ vpMbKltTracker::vpMbKltTracker()
   angleDisappears = vpMath::rad(75);
     
 #ifdef VISP_HAVE_OGRE
-  faces.getOgreContext()->setWindowName("MBT KLT");
+  faces.getOgreContext()->setWindowName("MBT Klt");
 #endif
 }
 

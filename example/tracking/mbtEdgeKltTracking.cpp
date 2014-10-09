@@ -435,6 +435,7 @@ main(int argc, const char ** argv)
         tracker.loadConfigFile(configFile);
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
+        tracker.setOgreVisibilityTest(useOgre);
         tracker.initFromPose(I, cMo);
       }
 
