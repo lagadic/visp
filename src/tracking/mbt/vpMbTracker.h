@@ -47,6 +47,12 @@
 #ifndef vpMbTracker_hh
 #define vpMbTracker_hh
 
+#include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <map>
+
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
 #include <visp/vpImagePoint.h>
@@ -69,10 +75,6 @@
 # include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 # include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
 #endif
-
-#include <vector>
-#include <string>
-#include <fstream>
 
 /*!
   \class vpMbTracker
