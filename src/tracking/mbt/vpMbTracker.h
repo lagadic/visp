@@ -148,6 +148,8 @@ protected:
   unsigned int nbCylinders;
   //! Number of circles in CAO model
   unsigned int nbCircles;
+  //! Map with [map.first]=parameter_names and [map.second]=type (string, number or boolean)
+  std::map<std::string, std::string> mapOfParameterNames;
 
 public:
   vpMbTracker();
@@ -380,11 +382,11 @@ public:
 
   virtual void setFarClippingDistance(const double &dist);
 
-  virtual void setLod(const bool useLod);
+  virtual void setLod(const bool useLod, const std::string &name="");
 
-  virtual void setMinLineLengthThresh(const double minLineLengthThresh);
+  virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name="");
 
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh);
+  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name="");
 
   virtual void setNearClippingDistance(const double &dist);
   
@@ -429,9 +431,12 @@ public:
   virtual void track(const vpImage<unsigned char>& I)=0;
 
 protected:
-  void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace = -1);
-  void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0);
-  void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace);
+  void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace=-1, const std::string &polygonName="",
+      const bool useLod=false, const double minPolygonAreaThreshold=-1.0, const double minLineLengthThreshold=-1.0);
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=-1,
+      const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=-1.0);
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace=-1, const std::string &polygonName="",
+      const bool useLod=false, const double minLineLengthThreshold=-1.0);
 
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
@@ -453,8 +458,10 @@ protected:
     defining the plane that contains the circle.
     \param radius : Radius of the circle.
     \param idFace : Id of the face associated to the circle.
+    \param name : Name of the circle.
   */
-  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=0)=0;
+  virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+      const unsigned int idFace=0, const std::string &name="")=0;
   /*!
     Add a cylinder to track from two points on the axis (defining the length of
     the cylinder) and its radius.
@@ -463,8 +470,10 @@ protected:
     \param p2 : Second point on the axis.
     \param radius : Radius of the cylinder.
     \param idFace : Id of the face associated to the cylinder.
+    \param name : Name of the cylinder.
   */
-  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0)=0;
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0,
+      const std::string &name="")=0;
 
   /*!
     Add the lines to track from the polygon description. If the polygon has only
@@ -485,6 +494,31 @@ protected:
 
 
   void removeComment(std::ifstream& fileId);
+
+  inline bool parseBoolean(std::string &input) {
+    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+    std::istringstream is(input);
+    bool b;
+    is >> std::boolalpha >> b;
+    return b;
+  }
+
+  std::map<std::string, std::string> parseParameters(std::string& endLine);
+  void removeComment(std::ifstream& fileId);
+
+  inline std::string &ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+  }
+
+  inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+  }
+
+  inline std::string &trim(std::string &s) {
+    return ltrim(rtrim(s));
+  }
 };
 
 

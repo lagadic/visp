@@ -93,17 +93,32 @@
 
 
 /*!
+  Structure to store info about segment in CAO model files.
+ */
+struct SegmentInfo {
+  std::vector<vpPoint> extremities;
+  std::string name;
+  bool useLod;
+  double minLineLengthThresh;
+};
+
+/*!
   Basic constructor.
   Set default values.
 
 */
 vpMbTracker::vpMbTracker()
-  : cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
-    poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
-    m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-    distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false)
+: cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
+  poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
+  m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
+  distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
+  nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0)
 {
     oJo.setIdentity();
+    mapOfParameterNames["faceName"] = "string";
+    mapOfParameterNames["minPolygonAreaThreshold"] = "number";
+    mapOfParameterNames["minLineLengthThreshold"] = "number";
+    mapOfParameterNames["useLod"] = "boolean";
 }
 
 /*!
@@ -707,7 +722,8 @@ void vpMbTracker::savePose(const std::string &filename)
 }
 
 
-void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace)
+void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace, const std::string &polygonName,
+    const bool useLod, const double minPolygonAreaThreshold, const double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
   corners_without_duplicates.push_back(corners[0]);
@@ -722,6 +738,17 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned
   vpMbtPolygon polygon;
   polygon.setNbPoint((unsigned int)corners_without_duplicates.size());
   polygon.setIndex((int)idFace);
+  polygon.setName(polygonName);
+  polygon.setLod(useLod);
+
+  if(minPolygonAreaThreshold != -1.0) {
+    polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+  }
+
+  if(minLineLengthThreshold != -1.0) {
+    polygon.setMinLineLengthThresh(minLineLengthThreshold);
+  }
+
   for(unsigned int j = 0; j < corners_without_duplicates.size(); j++) {
     polygon.addPoint(j, corners_without_duplicates[j]);
   }
@@ -738,10 +765,17 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
+void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+    const unsigned int idFace, const std::string &polygonName, const bool useLod, const double minPolygonAreaThreshold)
 {
     vpMbtPolygon polygon;
     polygon.setNbPoint(4);
+    polygon.setName(polygonName);
+    polygon.setLod(useLod);
+
+    if(minPolygonAreaThreshold != -1.0) {
+      polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+    }
 
     {
       // Create the 4 points of the circle bounding box
@@ -796,9 +830,19 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
 
     polygon.setIndex(idFace);
     faces.addPolygon(&polygon);
+
+    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+      faces.getPolygon().back()->setClipping(clippingFlag);
+
+    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+      faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+
+    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+      faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace)
+void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace, const std::string &polygonName,
+    const bool useLod, const double minLineLengthThreshold)
 {
   // A a polygon as a single line that corresponds to the revolution axis of the cylinder
   vpMbtPolygon polygon;
@@ -808,6 +852,13 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigne
   polygon.addPoint(1, p2);
 
   polygon.setIndex(idFace) ;
+  polygon.setName(polygonName);
+  polygon.setLod(useLod);
+
+  if(minLineLengthThreshold != -1.0) {
+    polygon.setMinLineLengthThresh(minLineLengthThreshold);
+  }
+
   faces.addPolygon(&polygon) ;
 
   if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
@@ -1002,6 +1053,63 @@ void vpMbTracker::removeComment(std::ifstream& fileId) {
 	fileId.unget();
 }
 
+std::map<std::string, std::string> vpMbTracker::parseParameters(std::string& endLine) {
+  std::map<std::string, std::string> mapOfParams;
+
+  bool exit = false;
+  while (!endLine.empty() && !exit) {
+    exit = true;
+
+    for (std::map<std::string, std::string>::const_iterator it =
+        mapOfParameterNames.begin(); it != mapOfParameterNames.end();
+        ++it) {
+      endLine = trim(endLine);
+      //          std::cout << "endLine=" << endLine << std::endl;
+      std::string param(it->first + "=");
+
+      //Compare with a potential parameter
+      if (endLine.compare(0, param.size(), param) == 0) {
+        exit = false;
+        endLine = endLine.substr(param.size());
+
+        bool parseQuote = false;
+        if (it->second == "string") {
+          //Check if the string is between quotes
+          if (endLine.size() > 2 && endLine[0] == '"') {
+            parseQuote = true;
+            endLine = endLine.substr(1);
+            size_t pos = endLine.find_first_of('"');
+
+            if (pos != std::string::npos) {
+              mapOfParams[it->first] = endLine.substr(0, pos);
+              endLine = endLine.substr(pos + 1);
+            } else {
+              parseQuote = false;
+            }
+          }
+        }
+
+        if (!parseQuote) {
+          //Deal with space or tabulation after parameter value to substring
+          // to the next sequence
+          size_t pos1 = endLine.find_first_of(' ');
+          size_t pos2 = endLine.find_first_of('\t');
+          size_t pos = pos1 < pos2 ? pos1 : pos2;
+
+          mapOfParams[it->first] = endLine.substr(0, pos);
+          endLine = endLine.substr(pos + 1);
+        }
+      }
+    }
+  }
+
+//  for(std::map<std::string, std::string>::const_iterator it = mapOfParams.begin(); it != mapOfParams.end(); ++it) {
+//    std::cout << it->first << "=" << it->second << std::endl;
+//  }
+
+  return mapOfParams;
+}
+
 /*!
   Load a 3D model contained in a *.cao file.
   
@@ -1051,428 +1159,546 @@ void
 vpMbTracker::loadCAOModel(const std::string& modelFile,
 		std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
 		const bool verbose, const bool parent) {
-	std::ifstream fileId;
-	fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
-	fileId.open(modelFile.c_str(), std::ifstream::in);
-	if (fileId.fail()) {
-		std::cout << "cannot read CAO model file: " << modelFile << std::endl;
-		throw vpException(vpException::ioError, "cannot read CAO model file");
-	}
+  std::ifstream fileId;
+  fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
+  fileId.open(modelFile.c_str(), std::ifstream::in);
+  if (fileId.fail()) {
+      std::cout << "cannot read CAO model file: " << modelFile << std::endl;
+      throw vpException(vpException::ioError, "cannot read CAO model file");
+  }
 
-	if(verbose) {
-		std::cout << "Model file : " << modelFile << std::endl;
-	}
-	vectorOfModelFilename.push_back(modelFile);
+  if(verbose) {
+      std::cout << "Model file : " << modelFile << std::endl;
+  }
+  vectorOfModelFilename.push_back(modelFile);
 
-	try {
-		char c;
-		// Extraction of the version (remove empty line and commented ones (comment
-		// line begin with the #)).
-		//while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
-		removeComment(fileId);
+  try {
+      char c;
+      // Extraction of the version (remove empty line and commented ones (comment
+      // line begin with the #)).
+      //while ((fileId.get(c) != NULL) && (c == '#')) fileId.ignore(256, '\n');
+      removeComment(fileId);
 
-		//////////////////////////Read CAO Version (V1, V2, ...)//////////////////////////
-		int caoVersion;
-		fileId.get(c);
-		if (c == 'V') {
-			fileId >> caoVersion;
-			fileId.ignore(256, '\n'); // skip the rest of the line
-		} else {
-			std::cout
-					<< "in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...";
-			throw vpException(vpException::badValue,
-					"in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...");
-		}
+      //////////////////////////Read CAO Version (V1, V2, ...)//////////////////////////
+      int caoVersion;
+      fileId.get(c);
+      if (c == 'V') {
+          fileId >> caoVersion;
+          fileId.ignore(256, '\n'); // skip the rest of the line
+      } else {
+          std::cout
+                  << "in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...";
+          throw vpException(vpException::badValue,
+                  "in vpMbTracker::loadCAOModel() -> Bad parameter header file : use V0, V1, ...");
+      }
 
-		removeComment(fileId);
-
-
-		//////////////////////////Read the header part if present//////////////////////////
-		std::string line;
-		std::string prefix = "load";
-
-		fileId.get(c);
-		fileId.unget();
-		bool header = false;
-		while(c == 'l' || c == 'L') {
-			header = true;
-
-			getline(fileId, line);
-			if(!line.compare(0, prefix.size(), prefix)) {
-
-				//Get the loaded model pathname
-				std::string headerPathname = line.substr(6);
-				size_t firstIndex = headerPathname.find_first_of("\")");
-				headerPathname = headerPathname.substr(0, firstIndex);
-
-				std::string headerPath = headerPathname;
-				if(!vpIoTools::isAbsolutePathname(headerPathname)) {
-					std::string parentDirectory = vpIoTools::getParent(modelFile);
-					headerPath = vpIoTools::createFilePath(parentDirectory, headerPathname);
-				}
-
-				bool cyclic = false;
-				std::string headerModelFilename = vpIoTools::getName(headerPath);
-				if (!headerModelFilename.compare(vpIoTools::getName(modelFile))) {
-					cyclic = true;
-				}
-
-				for (std::vector<std::string>::const_iterator it =
-						vectorOfModelFilename.begin();
-						it != vectorOfModelFilename.end() - 1 && !cyclic;
-						++it) {
-					std::string loadedModelFilename = vpIoTools::getName(*it);
-					if (!headerModelFilename.compare(loadedModelFilename)) {
-						cyclic = true;
-					}
-				}
-
-				if (!cyclic) {
-					if (vpIoTools::checkFilename(modelFile)) {
-						loadCAOModel(headerPath, vectorOfModelFilename,	startIdFace, verbose, false);
-					} else {
-						throw vpException(vpException::ioError,
-								"file cannot be open");
-					}
-				} else {
-					std::cout << "WARNING Cyclic dependency detected with file "
-							<< headerPath << " declared in " << modelFile << std::endl;
-				}
-			}
-
-			removeComment(fileId);
-			fileId.get(c);
-			fileId.unget();
-		}
+      removeComment(fileId);
 
 
-		//////////////////////////Read the point declaration part//////////////////////////
-		unsigned int caoNbrPoint;
-		fileId >> caoNbrPoint;
-		fileId.ignore(256, '\n'); // skip the rest of the line
+      //////////////////////////Read the header part if present//////////////////////////
+      std::string line;
+      std::string prefix = "load";
 
-		nbPoints += caoNbrPoint;
-		if(verbose || vectorOfModelFilename.size() == 1) {
-			std::cout << "> " << caoNbrPoint << " points" << std::endl;
-		}
+      fileId.get(c);
+      fileId.unget();
+      bool header = false;
+      while(c == 'l' || c == 'L') {
+          header = true;
 
-		if (caoNbrPoint > 100000) {
-			throw vpException(vpException::badValue,
-					"Exceed the max number of points in the CAO model.");
-		}
+          getline(fileId, line);
+          if(!line.compare(0, prefix.size(), prefix)) {
 
-		if (caoNbrPoint == 0 && !header) {
-			throw vpException(vpException::badValue,
-					"in vpMbTracker::loadCAOModel() -> no points are defined");
-		}
-		vpPoint *caoPoints = new vpPoint[caoNbrPoint];
+              //Get the loaded model pathname
+              std::string headerPathname = line.substr(6);
+              size_t firstIndex = headerPathname.find_first_of("\")");
+              headerPathname = headerPathname.substr(0, firstIndex);
 
-		double x; // 3D coordinates
-		double y;
-		double z;
+              std::string headerPath = headerPathname;
+              if(!vpIoTools::isAbsolutePathname(headerPathname)) {
+                  std::string parentDirectory = vpIoTools::getParent(modelFile);
+                  headerPath = vpIoTools::createFilePath(parentDirectory, headerPathname);
+              }
 
-		int i;    // image coordinate (used for matching)
-		int j;
+              bool cyclic = false;
+              std::string headerModelFilename = vpIoTools::getName(headerPath);
+              if (!headerModelFilename.compare(vpIoTools::getName(modelFile))) {
+                  cyclic = true;
+              }
 
-		for (unsigned int k = 0; k < caoNbrPoint; k++) {
-			removeComment(fileId);
+              for (std::vector<std::string>::const_iterator it =
+                      vectorOfModelFilename.begin();
+                      it != vectorOfModelFilename.end() - 1 && !cyclic;
+                      ++it) {
+                  std::string loadedModelFilename = vpIoTools::getName(*it);
+                  if (!headerModelFilename.compare(loadedModelFilename)) {
+                      cyclic = true;
+                  }
+              }
 
-			fileId >> x;
-			fileId >> y;
-			fileId >> z;
-			fileId.ignore(256, '\n'); // skip the rest of the line
+              if (!cyclic) {
+                  if (vpIoTools::checkFilename(modelFile)) {
+                      loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false);
+                  } else {
+                      throw vpException(vpException::ioError,
+                              "file cannot be open");
+                  }
+              } else {
+                  std::cout << "WARNING Cyclic dependency detected with file "
+                          << headerPath << " declared in " << modelFile << std::endl;
+              }
+          } else {
+            header = false;
+          }
 
-			if (caoVersion == 2) {
-				fileId >> i;
-				fileId >> j;
-			}
-
-			caoPoints[k].setWorldCoordinates(x, y, z);
-		}
+          removeComment(fileId);
+          fileId.get(c);
+          fileId.unget();
+      }
 
 
-		removeComment(fileId);
+      //////////////////////////Read the point declaration part//////////////////////////
+      unsigned int caoNbrPoint;
+      fileId >> caoNbrPoint;
+      fileId.ignore(256, '\n'); // skip the rest of the line
+
+      nbPoints += caoNbrPoint;
+      if(verbose || vectorOfModelFilename.size() == 1) {
+          std::cout << "> " << caoNbrPoint << " points" << std::endl;
+      }
+
+      if (caoNbrPoint > 100000) {
+          throw vpException(vpException::badValue,
+                  "Exceed the max number of points in the CAO model.");
+      }
+
+      if (caoNbrPoint == 0 && !header) {
+          throw vpException(vpException::badValue,
+                  "in vpMbTracker::loadCAOModel() -> no points are defined");
+      }
+      vpPoint *caoPoints = new vpPoint[caoNbrPoint];
+
+      double x; // 3D coordinates
+      double y;
+      double z;
+
+      int i;    // image coordinate (used for matching)
+      int j;
+
+      for (unsigned int k = 0; k < caoNbrPoint; k++) {
+          removeComment(fileId);
+
+          fileId >> x;
+          fileId >> y;
+          fileId >> z;
+          fileId.ignore(256, '\n'); // skip the rest of the line
+
+          if (caoVersion == 2) {
+              fileId >> i;
+              fileId >> j;
+          }
+
+          caoPoints[k].setWorldCoordinates(x, y, z);
+      }
 
 
-		//////////////////////////Read the segment declaration part//////////////////////////
-		//Store in a map the potential segments to be added
-		std::map<std::pair<unsigned int, unsigned int>, std::vector<vpPoint> > segmentTemporaryMap;
-		unsigned int caoNbrLine;
-		fileId >> caoNbrLine;
-		fileId.ignore(256, '\n'); // skip the rest of the line
+      removeComment(fileId);
 
-		nbLines += caoNbrLine;
-		unsigned int *caoLinePoints = NULL;
-		if(verbose || vectorOfModelFilename.size() == 1) {
-			std::cout << "> " << caoNbrLine << " lines" << std::endl;
-		}
 
-		if (caoNbrLine > 100000) {
-			delete[] caoPoints;
-			throw vpException(vpException::badValue,
-					"Exceed the max number of lines in the CAO model.");
-		}
+      //////////////////////////Read the segment declaration part//////////////////////////
+      //Store in a map the potential segments to add
+      std::map<std::pair<unsigned int, unsigned int>, SegmentInfo > segmentTemporaryMap;
+      unsigned int caoNbrLine;
+      fileId >> caoNbrLine;
+      fileId.ignore(256, '\n'); // skip the rest of the line
 
-		if (caoNbrLine > 0)
-			caoLinePoints = new unsigned int[2 * caoNbrLine];
+      nbLines += caoNbrLine;
+      unsigned int *caoLinePoints = NULL;
+      if(verbose || vectorOfModelFilename.size() == 1) {
+          std::cout << "> " << caoNbrLine << " lines" << std::endl;
+      }
 
-		unsigned int index1, index2;
-		//Initialization of idFace with startIdFace for dealing with recursive load in header
-		int idFace = startIdFace;
+      if (caoNbrLine > 100000) {
+          delete[] caoPoints;
+          throw vpException(vpException::badValue,
+                  "Exceed the max number of lines in the CAO model.");
+      }
 
-		for (unsigned int k = 0; k < caoNbrLine; k++) {
-			removeComment(fileId);
+      if (caoNbrLine > 0)
+          caoLinePoints = new unsigned int[2 * caoNbrLine];
 
-			fileId >> index1;
-			fileId >> index2;
-			fileId.ignore(256, '\n'); // skip the rest of the line
+      unsigned int index1, index2;
+      //Initialization of idFace with startIdFace for dealing with recursive load in header
+      int idFace = startIdFace;
 
-			caoLinePoints[2 * k] = index1;
-			caoLinePoints[2 * k + 1] = index2;
+      for (unsigned int k = 0; k < caoNbrLine; k++) {
+          removeComment(fileId);
 
-			if (index1 < caoNbrPoint && index2 < caoNbrPoint) {
-              std::vector<vpPoint> extremities;
-              extremities.push_back(caoPoints[index1]);
-              extremities.push_back(caoPoints[index2]);
+          fileId >> index1;
+          fileId >> index2;
 
-              std::pair<unsigned int, unsigned int> key(index1, index2);
+          //////////////////////////Read the parameter value if present//////////////////////////
+          //Get the end of the line
+          char buffer[256];
+          fileId.getline(buffer, 256);
+          std::string endLine(buffer);
+          std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
 
-              segmentTemporaryMap[key] = extremities;
+//          fileId.ignore(256, '\n'); // skip the rest of the line
+
+          std::string segmentName = "";
+          double minLineLengthThresh = -1.0;
+          bool useLod = false;
+          if(mapOfParams.find("faceName") != mapOfParams.end()) {
+            segmentName = mapOfParams["faceName"];
+          }
+          if(mapOfParams.find("minLineLengthThreshold") != mapOfParams.end()) {
+            minLineLengthThresh = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
+          }
+          if(mapOfParams.find("useLod") != mapOfParams.end()) {
+            useLod = parseBoolean(mapOfParams["useLod"]);
+          }
+
+          SegmentInfo segmentInfo;
+          segmentInfo.name = segmentName;
+          segmentInfo.useLod = useLod;
+          segmentInfo.minLineLengthThresh = minLineLengthThresh;
+
+          caoLinePoints[2 * k] = index1;
+          caoLinePoints[2 * k + 1] = index2;
+
+          if (index1 < caoNbrPoint && index2 < caoNbrPoint) {
+            std::vector<vpPoint> extremities;
+            extremities.push_back(caoPoints[index1]);
+            extremities.push_back(caoPoints[index2]);
+            segmentInfo.extremities = extremities;
+
+            std::pair<unsigned int, unsigned int> key(index1, index2);
+
+            segmentTemporaryMap[key] = segmentInfo;
 //        addPolygon(extremities, idFace++);
 //        initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-			} else {
-				vpTRACE(" line %d has wrong coordinates.", k);
-			}
-		}
+          } else {
+              vpTRACE(" line %d has wrong coordinates.", k);
+          }
+      }
 
-		removeComment(fileId);
+      removeComment(fileId);
 
 
-		//////////////////////////Read the face segment declaration part//////////////////////////
-		/* Load polygon from the lines extracted earlier (the first point of the line is used)*/
-		//Store in a vector the indexes of the segments added in the face segment case
-        std::vector<std::pair<unsigned int, unsigned int> > faceSegmentKeyVector;
-		unsigned int caoNbrPolygonLine;
-		fileId >> caoNbrPolygonLine;
-		fileId.ignore(256, '\n'); // skip the rest of the line
+      //////////////////////////Read the face segment declaration part//////////////////////////
+      /* Load polygon from the lines extracted earlier (the first point of the line is used)*/
+      //Store in a vector the indexes of the segments added in the face segment case
+      std::vector<std::pair<unsigned int, unsigned int> > faceSegmentKeyVector;
+      unsigned int caoNbrPolygonLine;
+      fileId >> caoNbrPolygonLine;
+      fileId.ignore(256, '\n'); // skip the rest of the line
 
-		nbPolygonLines += caoNbrPolygonLine;
-		if(verbose || vectorOfModelFilename.size() == 1) {
-			std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
-		}
+      nbPolygonLines += caoNbrPolygonLine;
+      if(verbose || vectorOfModelFilename.size() == 1) {
+          std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
+      }
 
-		if (caoNbrPolygonLine > 100000) {
-			delete[] caoPoints;
-			delete[] caoLinePoints;
-			throw vpException(vpException::badValue,
-					"Exceed the max number of polygon lines.");
-		}
+      if (caoNbrPolygonLine > 100000) {
+          delete[] caoPoints;
+          delete[] caoLinePoints;
+          throw vpException(vpException::badValue,
+                  "Exceed the max number of polygon lines.");
+      }
 
-		unsigned int index;
-		for (unsigned int k = 0; k < caoNbrPolygonLine; k++) {
-			removeComment(fileId);
+      unsigned int index;
+      for (unsigned int k = 0; k < caoNbrPolygonLine; k++) {
+          removeComment(fileId);
 
-			unsigned int nbLinePol;
-			fileId >> nbLinePol;
-			std::vector<vpPoint> corners;
-			if (nbLinePol > 100000) {
-				throw vpException(vpException::badValue, "Exceed the max number of lines.");
-			}
+          unsigned int nbLinePol;
+          fileId >> nbLinePol;
+          std::vector<vpPoint> corners;
+          if (nbLinePol > 100000) {
+              throw vpException(vpException::badValue, "Exceed the max number of lines.");
+          }
 
-            for (unsigned int n = 0; n < nbLinePol; n++) {
-              fileId >> index;
+          for (unsigned int n = 0; n < nbLinePol; n++) {
+            fileId >> index;
 //              if (2 * index > 2 * caoNbrLine - 1) {
-              if(index >= caoNbrLine) {
-                throw vpException(vpException::badValue, "Exceed the max number of lines.");
-              }
-              corners.push_back(caoPoints[caoLinePoints[2 * index]]);
-              corners.push_back(caoPoints[caoLinePoints[2 * index + 1]]);
-
-              std::pair<unsigned int, unsigned int> key(caoLinePoints[2 * index], caoLinePoints[2 * index + 1]);
-              faceSegmentKeyVector.push_back(key);
+            if(index >= caoNbrLine) {
+              throw vpException(vpException::badValue, "Exceed the max number of lines.");
             }
-			fileId.ignore(256, '\n'); // skip the rest of the line
+            corners.push_back(caoPoints[caoLinePoints[2 * index]]);
+            corners.push_back(caoPoints[caoLinePoints[2 * index + 1]]);
 
-      addPolygon(corners, idFace++);
+            std::pair<unsigned int, unsigned int> key(caoLinePoints[2 * index], caoLinePoints[2 * index + 1]);
+            faceSegmentKeyVector.push_back(key);
+          }
+
+
+          //////////////////////////Read the parameter value if present//////////////////////////
+          //Get the end of the line
+          char buffer[256];
+          fileId.getline(buffer, 256);
+          std::string endLine(buffer);
+          std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
+
+//          fileId.ignore(256, '\n'); // skip the rest of the line
+
+    std::string polygonName = "";
+    bool useLod = false;
+    double minPolygonAreaThreshold = -1.0;
+    if(mapOfParams.find("faceName") != mapOfParams.end()) {
+      polygonName = mapOfParams["faceName"];
+    }
+    if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
+      minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
+    }
+    if(mapOfParams.find("useLod") != mapOfParams.end()) {
+      useLod = parseBoolean(mapOfParams["useLod"]);
+    }
+
+    addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold);
 //      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-      initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
-    }
+    initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
+  }
 
-		//Add the segments which were not already added in the face segment case
-		for(std::map<std::pair<unsigned int, unsigned int>, std::vector<vpPoint> >::const_iterator it =
-		    segmentTemporaryMap.begin(); it != segmentTemporaryMap.end(); ++it) {
-		  if(std::find(faceSegmentKeyVector.begin(), faceSegmentKeyVector.end(), it->first) == faceSegmentKeyVector.end()) {
-            addPolygon(it->second, idFace++);
-            initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-		  }
-		}
+      //Add the segments which were not already added in the face segment case
+      for(std::map<std::pair<unsigned int, unsigned int>, SegmentInfo >::const_iterator it =
+          segmentTemporaryMap.begin(); it != segmentTemporaryMap.end(); ++it) {
+        if(std::find(faceSegmentKeyVector.begin(), faceSegmentKeyVector.end(), it->first) == faceSegmentKeyVector.end()) {
+          addPolygon(it->second.extremities, idFace++, it->second.name, it->second.useLod, -1.0,
+              it->second.minLineLengthThresh);
+          initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+        }
+      }
 
-		removeComment(fileId);
-
-		//////////////////////////Read the face point declaration part//////////////////////////
-		/* Extract the polygon using the point coordinates (top of the file) */
-		unsigned int caoNbrPolygonPoint;
-		fileId >> caoNbrPolygonPoint;
-		fileId.ignore(256, '\n'); // skip the rest of the line
-
-		nbPolygonPoints += caoNbrPolygonPoint;
-		if(verbose || vectorOfModelFilename.size() == 1) {
-			std::cout << "> " << caoNbrPolygonPoint << " polygon points"
-					<< std::endl;
-		}
-
-		if (caoNbrPolygonPoint > 100000) {
-			throw vpException(vpException::badValue,
-					"Exceed the max number of polygon point.");
-		}
-
-		for (unsigned int k = 0; k < caoNbrPolygonPoint; k++) {
-			removeComment(fileId);
-
-			unsigned int nbPointPol;
-			fileId >> nbPointPol;
-			if (nbPointPol > 100000) {
-				throw vpException(vpException::badValue,
-						"Exceed the max number of points.");
-			}
-			std::vector<vpPoint> corners;
-			for (unsigned int n = 0; n < nbPointPol; n++) {
-				fileId >> index;
-				if (index > caoNbrPoint - 1) {
-					throw vpException(vpException::badValue,
-							"Exceed the max number of points.");
-				}
-				corners.push_back(caoPoints[index]);
-			}
-			fileId.ignore(256, '\n'); // skip the rest of the line
-
-      addPolygon(corners, idFace++);
-      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-    }
-
-		//////////////////////////Read the cylinder declaration part//////////////////////////
-		unsigned int caoNbCylinder;
-		try {
-			removeComment(fileId);
-
-			if (fileId.eof()) { // check if not at the end of the file (for old style files)
-				delete[] caoPoints;
-				delete[] caoLinePoints;
-				return;
-			}
-
-			/* Extract the cylinders */
-			fileId >> caoNbCylinder;
-			fileId.ignore(256, '\n'); // skip the rest of the line
-
-			nbCylinders += caoNbCylinder;
-			if(verbose || vectorOfModelFilename.size() == 1) {
-				std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
-			}
-
-			if (caoNbCylinder > 100000) {
-				throw vpException(vpException::badValue,
-						"Exceed the max number of cylinders.");
-			}
-
-			for (unsigned int k = 0; k < caoNbCylinder; ++k) {
-				removeComment(fileId);
-
-				double radius;
-				unsigned int indexP1, indexP2;
-				fileId >> indexP1;
-				fileId >> indexP2;
-				fileId >> radius;
-				fileId.ignore(256, '\n'); // skip the rest of the line
-
-        addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace);
-        initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++);
-			}
-
-		} catch (...) {
-			std::cerr
-					<< "Cannot get the number of cylinders. Defaulting to zero."
-					<< std::endl;
-			caoNbCylinder = 0;
-		}
+      removeComment(fileId);
 
 
-		//////////////////////////Read the circle declaration part//////////////////////////
-		unsigned int caoNbCircle;
-		try {
-			removeComment(fileId);
+      //////////////////////////Read the face point declaration part//////////////////////////
+      /* Extract the polygon using the point coordinates (top of the file) */
+      unsigned int caoNbrPolygonPoint;
+      fileId >> caoNbrPolygonPoint;
+      fileId.ignore(256, '\n'); // skip the rest of the line
 
-			if (fileId.eof()) { // check if not at the end of the file (for old style files)
-				delete[] caoPoints;
-				delete[] caoLinePoints;
-				return;
-			}
+      nbPolygonPoints += caoNbrPolygonPoint;
+      if(verbose || vectorOfModelFilename.size() == 1) {
+          std::cout << "> " << caoNbrPolygonPoint << " polygon points"
+                  << std::endl;
+      }
 
-			/* Extract the circles */
-			fileId >> caoNbCircle;
-			fileId.ignore(256, '\n'); // skip the rest of the line
+      if (caoNbrPolygonPoint > 100000) {
+          throw vpException(vpException::badValue,
+                  "Exceed the max number of polygon point.");
+      }
 
-			nbCircles += caoNbCircle;
-			if(verbose || vectorOfModelFilename.size() == 1) {
-				std::cout << "> " << caoNbCircle << " circles" << std::endl;
-			}
+      for (unsigned int k = 0; k < caoNbrPolygonPoint; k++) {
+          removeComment(fileId);
 
-			if (caoNbCircle > 100000) {
-				throw vpException(vpException::badValue,
-						"Exceed the max number of cicles.");
-			}
+          unsigned int nbPointPol;
+          fileId >> nbPointPol;
+          if (nbPointPol > 100000) {
+              throw vpException(vpException::badValue,
+                      "Exceed the max number of points.");
+          }
+          std::vector<vpPoint> corners;
+          for (unsigned int n = 0; n < nbPointPol; n++) {
+              fileId >> index;
+              if (index > caoNbrPoint - 1) {
+                  throw vpException(vpException::badValue,
+                          "Exceed the max number of points.");
+              }
+              corners.push_back(caoPoints[index]);
+          }
 
-			for (unsigned int k = 0; k < caoNbCircle; ++k) {
-				removeComment(fileId);
 
-				double radius;
-				unsigned int indexP1, indexP2, indexP3;
-				fileId >> radius;
-				fileId >> indexP1;
-				fileId >> indexP2;
-				fileId >> indexP3;
-				fileId.ignore(256, '\n'); // skip the rest of the line
+          //////////////////////////Read the parameter value if present//////////////////////////
+          //Get the end of the line
+          char buffer[256];
+          fileId.getline(buffer, 256);
+          std::string endLine(buffer);
+          std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
 
-                addPolygon(caoPoints[indexP1], caoPoints[indexP2],
-                        caoPoints[indexP3], radius, idFace);
+//          fileId.ignore(256, '\n'); // skip the rest of the line
 
-				initCircle(caoPoints[indexP1], caoPoints[indexP2],
-						caoPoints[indexP3], radius, idFace++);
-			}
+          std::string polygonName = "";
+          bool useLod = false;
+          double minPolygonAreaThreshold = -1.0;
+          if(mapOfParams.find("faceName") != mapOfParams.end()) {
+            polygonName = mapOfParams["faceName"];
+          }
+          if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
+            minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
+          }
+          if(mapOfParams.find("useLod") != mapOfParams.end()) {
+            useLod = parseBoolean(mapOfParams["useLod"]);
+          }
 
-		} catch (...) {
-			std::cerr << "Cannot get the number of circles. Defaulting to zero."
-					<< std::endl;
-			caoNbCircle = 0;
-		}
 
-		startIdFace = idFace;
+    addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold);
+    initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+  }
 
-		delete[] caoPoints;
-		delete[] caoLinePoints;
+      //////////////////////////Read the cylinder declaration part//////////////////////////
+      unsigned int caoNbCylinder;
+      try {
+          removeComment(fileId);
 
-		if(vectorOfModelFilename.size() > 1 && parent) {
-			if(verbose) {
-				std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
-				std::cout << "Total nb of points : " << nbPoints << std::endl;
-				std::cout << "Total nb of lines : " << nbLines << std::endl;
-				std::cout << "Total nb of polygon lines : " << nbPolygonLines << std::endl;
-				std::cout << "Total nb of polygon points : " << nbPolygonPoints << std::endl;
-				std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
-				std::cout << "Total nb of circles : " << nbCircles << std::endl;
-			} else {
-				std::cout << "> " << nbPoints << " points" << std::endl;
-				std::cout << "> " << nbLines << " lines" << std::endl;
-				std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
-				std::cout << "> " << nbPolygonPoints << " polygon points" << std::endl;
-				std::cout << "> " << nbCylinders << " cylinders" << std::endl;
-				std::cout << "> " << nbCircles << " circles" << std::endl;
-			}
-		}
-	} catch (...) {
-		std::cerr << "Cannot read line!" << std::endl;
-		throw vpException(vpException::ioError, "cannot read line");
-	}
+          if (fileId.eof()) { // check if not at the end of the file (for old style files)
+              delete[] caoPoints;
+              delete[] caoLinePoints;
+              return;
+          }
+
+          /* Extract the cylinders */
+          fileId >> caoNbCylinder;
+          fileId.ignore(256, '\n'); // skip the rest of the line
+
+          nbCylinders += caoNbCylinder;
+          if(verbose || vectorOfModelFilename.size() == 1) {
+              std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
+          }
+
+          if (caoNbCylinder > 100000) {
+              throw vpException(vpException::badValue,
+                      "Exceed the max number of cylinders.");
+          }
+
+          for (unsigned int k = 0; k < caoNbCylinder; ++k) {
+              removeComment(fileId);
+
+              double radius;
+              unsigned int indexP1, indexP2;
+              fileId >> indexP1;
+              fileId >> indexP2;
+              fileId >> radius;
+
+              //////////////////////////Read the parameter value if present//////////////////////////
+              //Get the end of the line
+              char buffer[256];
+              fileId.getline(buffer, 256);
+              std::string endLine(buffer);
+              std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
+
+//              fileId.ignore(256, '\n'); // skip the rest of the line
+
+              std::string polygonName = "";
+              bool useLod = false;
+              double minLineLengthThreshold = -1.0;
+              if(mapOfParams.find("faceName") != mapOfParams.end()) {
+                polygonName = mapOfParams["faceName"];
+              }
+              if(mapOfParams.find("minLineLengthThreshold") != mapOfParams.end()) {
+                minLineLengthThreshold = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
+              }
+              if(mapOfParams.find("useLod") != mapOfParams.end()) {
+                useLod = parseBoolean(mapOfParams["useLod"]);
+              }
+
+      addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace, polygonName, useLod, minLineLengthThreshold);
+      initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++, polygonName);
+          }
+
+      } catch (...) {
+          std::cerr
+                  << "Cannot get the number of cylinders. Defaulting to zero."
+                  << std::endl;
+          caoNbCylinder = 0;
+      }
+
+
+      //////////////////////////Read the circle declaration part//////////////////////////
+      unsigned int caoNbCircle;
+      try {
+          removeComment(fileId);
+
+          if (fileId.eof()) { // check if not at the end of the file (for old style files)
+              delete[] caoPoints;
+              delete[] caoLinePoints;
+              return;
+          }
+
+          /* Extract the circles */
+          fileId >> caoNbCircle;
+          fileId.ignore(256, '\n'); // skip the rest of the line
+
+          nbCircles += caoNbCircle;
+          if(verbose || vectorOfModelFilename.size() == 1) {
+              std::cout << "> " << caoNbCircle << " circles" << std::endl;
+          }
+
+          if (caoNbCircle > 100000) {
+              throw vpException(vpException::badValue,
+                      "Exceed the max number of cicles.");
+          }
+
+          for (unsigned int k = 0; k < caoNbCircle; ++k) {
+              removeComment(fileId);
+
+              double radius;
+              unsigned int indexP1, indexP2, indexP3;
+              fileId >> radius;
+              fileId >> indexP1;
+              fileId >> indexP2;
+              fileId >> indexP3;
+
+              //////////////////////////Read the parameter value if present//////////////////////////
+              //Get the end of the line
+              char buffer[256];
+              fileId.getline(buffer, 256);
+              std::string endLine(buffer);
+              std::map<std::string, std::string> mapOfParams = parseParameters(endLine);
+
+//              fileId.ignore(256, '\n'); // skip the rest of the line
+
+              std::string polygonName = "";
+              bool useLod = false;
+              double minPolygonAreaThreshold = -1.0;
+              if(mapOfParams.find("faceName") != mapOfParams.end()) {
+                polygonName = mapOfParams["faceName"];
+              }
+              if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
+                minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
+              }
+              if(mapOfParams.find("useLod") != mapOfParams.end()) {
+                useLod = parseBoolean(mapOfParams["useLod"]);
+              }
+
+              addPolygon(caoPoints[indexP1], caoPoints[indexP2],
+                      caoPoints[indexP3], radius, idFace, polygonName, useLod, minPolygonAreaThreshold);
+
+              initCircle(caoPoints[indexP1], caoPoints[indexP2],
+                      caoPoints[indexP3], radius, idFace++, polygonName);
+          }
+
+      } catch (...) {
+          std::cerr << "Cannot get the number of circles. Defaulting to zero."
+                  << std::endl;
+          caoNbCircle = 0;
+      }
+
+      startIdFace = idFace;
+
+      delete[] caoPoints;
+      delete[] caoLinePoints;
+
+      if(vectorOfModelFilename.size() > 1 && parent) {
+          if(verbose) {
+              std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
+              std::cout << "Total nb of points : " << nbPoints << std::endl;
+              std::cout << "Total nb of lines : " << nbLines << std::endl;
+              std::cout << "Total nb of polygon lines : " << nbPolygonLines << std::endl;
+              std::cout << "Total nb of polygon points : " << nbPolygonPoints << std::endl;
+              std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
+              std::cout << "Total nb of circles : " << nbCircles << std::endl;
+          } else {
+              std::cout << "> " << nbPoints << " points" << std::endl;
+              std::cout << "> " << nbLines << " lines" << std::endl;
+              std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
+              std::cout << "> " << nbPolygonPoints << " polygon points" << std::endl;
+              std::cout << "> " << nbCylinders << " cylinders" << std::endl;
+              std::cout << "> " << nbCircles << " circles" << std::endl;
+          }
+      }
+  } catch (...) {
+      std::cerr << "Cannot read line!" << std::endl;
+      throw vpException(vpException::ioError, "cannot read line");
+  }
 }
 
 #ifdef VISP_HAVE_COIN
@@ -1804,27 +2030,33 @@ vpMbTracker::setFarClippingDistance(const double &dist)
  	Set the flag to consider if the level of detail (LOD) is used
 
  	\param useLod : true if the level of detail must be used, false otherwise
+ 	\param name : name of the face we want to modify the LOD parameter
  */
 void
-vpMbTracker::setLod(const bool useLod)
+vpMbTracker::setLod(const bool useLod, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++)
   {
-    faces[i]->setLod(useLod);
+    if(name.empty() || faces[i]->name == name) {
+      faces[i]->setLod(useLod);
+    }
   }
 }
 
 /*!
- 	Set the threshold for the minimum line length to be considered as visible in the LOD case
+    Set the threshold for the minimum line length to be considered as visible in the LOD case
 
- 	\param minLineLengthThresh : threshold for the minimum line length in pixel
+    \param minLineLengthThresh : threshold for the minimum line length in pixel
+    \param name : name of the face we want to modify the LOD threshold
  */
 void
-vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh)
+vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++)
   {
-    faces[i]->setMinLineLengthThresh(minLineLengthThresh);
+    if(name.empty() || faces[i]->name == name) {
+      faces[i]->setMinLineLengthThresh(minLineLengthThresh);
+    }
   }
 }
 
@@ -1832,13 +2064,16 @@ vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh)
   Set the minimum polygon area to be considered as visible in the LOD case
 
   \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel
+    \param name : name of the face we want to modify the LOD threshold
  */
 void
-vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh)
+vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++)
   {
-    faces[i]->setMinPolygonAreaThresh(minPolygonAreaThresh);
+    if(name.empty() || faces[i]->name == name) {
+      faces[i]->setMinPolygonAreaThresh(minPolygonAreaThresh);
+    }
   }
 }
 

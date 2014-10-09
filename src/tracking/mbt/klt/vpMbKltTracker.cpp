@@ -991,11 +991,13 @@ vpMbKltTracker::testTracking()
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
+  \name : The optional name of the cylinder.
 */
 void
-vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*idFace*/)
+vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*idFace*/,
+    const std::string &name)
 {
-  addCylinder(p1, p2, radius);
+  addCylinder(p1, p2, radius, name);
 }
 
 /*!
@@ -1004,9 +1006,10 @@ vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double 
   \param P1 : The first extremity of the axis.
   \param P2 : The second extremity of the axis.
   \param r : The radius of the cylinder.
+  \param name : The optional name of the cylinder.
 */
 void
-vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r)
+vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string &name)
 {
   bool already_here = false ;
   vpMbtDistanceCylinder *cy ;
@@ -1023,6 +1026,7 @@ vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r
     cy = new vpMbtDistanceCylinder ;
 
     cy->setCameraParameters(cam);
+    cy->setName(name);
     cy->buildFrom(P1, P2, r);
     cylinders_disp.push_back(cy);
   }
@@ -1036,11 +1040,13 @@ vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r
   \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
+  \name : The optional name of the circle.
 */
 void
-vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int /*idFace*/)
+vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+    const unsigned int /*idFace*/, const std::string &name)
 {
-  addCircle(p1, p2, p3, radius);
+  addCircle(p1, p2, p3, radius, name);
 }
 
 /*!
@@ -1050,9 +1056,10 @@ vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &
   \param P2,P3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param r : Radius of the circle.
+  \param name : Name of the circle.
 */
 void
-vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r)
+vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name)
 {
   bool already_here = false ;
   vpMbtDistanceCircle *ci ;
@@ -1069,6 +1076,7 @@ vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P
     ci = new vpMbtDistanceCircle ;
 
     ci->setCameraParameters(cam);
+    ci->setName(name);
     ci->buildFrom(P1, P2, P3, r);
     circles_disp.push_back(ci);
   }

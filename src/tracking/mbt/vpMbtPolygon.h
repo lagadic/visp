@@ -107,6 +107,8 @@ public:
   double minLineLengthThresh;
   //! Threshold for minimum polygon area in pixel to consider if the polygon is visible or not in LOD case
   double minPolygonAreaThresh;
+  //! Name of the polygon
+  std::string name;
   
 private:            
             bool          getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2,
@@ -153,6 +155,13 @@ public:
     \return index : the index of the face.
   */
   inline    int           getIndex() const {return index ;}
+
+  /*!
+   Get the name of the face.
+
+   \return Name of the face.
+   */
+  inline    std::string   getName() const {return name;}
             
   /*!
     Return the number of corners.
@@ -294,6 +303,16 @@ int main()
   inline		 void	  setMinPolygonAreaThresh(const double min_polygon_area) {
     this->minPolygonAreaThresh = min_polygon_area;
   }
+
+  /*!
+   Set the name of the face.
+
+   \param name : name of the face.
+   */
+  inline        void        setName(const std::string &name) {
+    this->name = name;
+  }
+
   virtual        void     setNbPoint(const unsigned int nb)  ;
   
   /*!

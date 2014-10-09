@@ -264,8 +264,8 @@ public:
             vpMbKltTracker();
   virtual   ~vpMbKltTracker();
   
-            void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r);
-            void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r);
+            void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name="");
+            void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string &name="");
   virtual void            display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
                                   const bool displayFullModel = false);
@@ -401,8 +401,10 @@ protected:
           
           virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
           virtual void            initFaceFromLines(vpMbtPolygon &polygon);
-          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int );
-          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int );
+          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int,
+              const std::string &name="");
+          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int,
+              const std::string &name="");
 
           void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
           bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);

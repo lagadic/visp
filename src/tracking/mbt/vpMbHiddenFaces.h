@@ -281,6 +281,11 @@ vpMbHiddenFaces<PolygonType>::addPolygon(PolygonType *p)
   p_new->index = p->index;
   p_new->setNbPoint(p->nbpt);
   p_new->isvisible = p->isvisible;
+  p_new->useLod = p->useLod;
+  p_new->minLineLengthThresh = p->minLineLengthThresh;
+  p_new->minPolygonAreaThresh = p->minPolygonAreaThresh;
+  p_new->setName(p->name);
+
   for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];
   Lpol.push_back(p_new);

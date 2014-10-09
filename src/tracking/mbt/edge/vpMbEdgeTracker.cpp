@@ -1995,8 +1995,8 @@ vpMbEdgeTracker::initFaceFromCorners(vpMbtPolygon &polygon)
   unsigned int nbpt = polygon.getNbPoint() ;
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
-      addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex()) ;
-    addLine(polygon.p[nbpt-1], polygon.p[0], polygon.getIndex()) ;
+      addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex(), polygon.getName());
+    addLine(polygon.p[nbpt-1], polygon.p[0], polygon.getIndex(), polygon.getName());
   }
 }
 /*!
@@ -2017,8 +2017,7 @@ vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
   unsigned int nbpt = polygon.getNbPoint() ;
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
-      addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex());
-//    addLine(polygon.p[nbpt-1], polygon.p[0], polygon.getIndex()) ;
+      addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex(), polygon.getName());
   }
 }
 
@@ -2030,12 +2029,14 @@ vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
   \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
-  \param idFace : Index of the face associated to the cicle.
+  \param idFace : Index of the face associated to the circle to handle visibility test.
+  \name : The optional name of the circle.
 */
 void
-vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace)
+vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+    const unsigned int idFace, const std::string &name)
 {
-  addCircle(p1, p2, p3, radius, idFace);
+  addCircle(p1, p2, p3, radius, idFace, name);
 }
 
 /*!
@@ -2046,11 +2047,13 @@ vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint 
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
   \param idFace : Id of the face that is associated to the cylinder to handle visibility test.
+  \name : \name : The optional name of the cylinder.
 */
 void
-vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace)
+vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace,
+    const std::string &name)
 {
-  addCylinder(p1, p2, radius, idFace);
+  addCylinder(p1, p2, radius, idFace, name);
 }
 
 /*!

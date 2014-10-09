@@ -60,7 +60,7 @@ vpMbtPolygon::vpMbtPolygon()
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.),
-    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
+    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0), name("")
 {
 }
 
@@ -68,7 +68,7 @@ vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon& mbtp)
   : index(-1), nbpt(0), nbCornersInsidePrev(0), isvisible(false), isappearing(false),
     p(NULL), roiPointsClip(), clippingFlag(vpMbtPolygon::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.),
-    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0)
+    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0), name("")
 {
   *this = mbtp;
 }
@@ -82,7 +82,12 @@ vpMbtPolygon& vpMbtPolygon::operator=(const vpMbtPolygon& mbtp)
   isappearing = mbtp.isappearing;
   roiPointsClip = mbtp.roiPointsClip;
   clippingFlag = mbtp.clippingFlag;
-  distNearClip = mbtp.distFarClip;
+  distNearClip = mbtp.distNearClip;
+  distFarClip = mbtp.distFarClip;
+  useLod = mbtp.useLod;
+  minLineLengthThresh = mbtp.minLineLengthThresh;
+  minPolygonAreaThresh = mbtp.minPolygonAreaThresh;
+  name = mbtp.name;
 
   if (p) delete [] p;
   p = new vpPoint [nbpt];
@@ -173,7 +178,7 @@ vpMbtPolygon::changeFrame(const vpHomogeneousMatrix &cMo)
   \param modulo : Indicates if the test should also consider faces that are not oriented
   counter clockwise. If true, the orientation of the face is without importance.
   \param cam : Camera parameters (intrinsics parameters)
-  \param I : Current grayscale image
+  \param I : Image used to consider level of detail.
   
   \return Return true if the polygon is visible.
 */
@@ -202,7 +207,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
         double x2 = roiImagePoints[1].get_u();
         double y2 = roiImagePoints[1].get_v();
         double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-          std::cout << "Index=" << index << " ; Line length=" << length << " ; clippingFlag=" << clippingFlag << std::endl;
+//          std::cout << "Index=" << index << " ; Line length=" << length << " ; clippingFlag=" << clippingFlag << std::endl;
 //        vpTRACE("index=%d lenght=%f minLineLengthThresh=%f", index, length, minLineLengthThresh);
 
         if (length < minLineLengthThresh) {

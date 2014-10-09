@@ -340,8 +340,10 @@ protected:
                              vpColVector &w_klt, const unsigned int lvl=0);
 
   virtual void    init(const vpImage<unsigned char>& I);
-  virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const unsigned int idFace);
-  virtual void    initCylinder(const vpPoint&, const vpPoint &, const double r, const unsigned int idFace);
+  virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const unsigned int idFace=0,
+      const std::string &name="");
+  virtual void    initCylinder(const vpPoint&, const vpPoint &, const double r, const unsigned int idFace,
+      const std::string &name="");
           virtual void    initFaceFromCorners(vpMbtPolygon &polygon);
           virtual void    initFaceFromLines(vpMbtPolygon &polygon);
   unsigned int    initMbtTracking(const unsigned int level=0);
