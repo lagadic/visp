@@ -501,12 +501,13 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
 
     switch (prop)
     {
-    case CODE_XML_CAMERA_NAME:{
+    case CODE_XML_CAMERA_NAME: {
       char * val_char = xmlReadCharChild(doc, node);
       camera_name_tmp = val_char;
+      std::cout << "Found camera with name: \"" << camera_name_tmp << "\"" << std::endl;
       xmlFree(val_char);
-    }break;
-
+      break;
+    }
     case CODE_XML_WIDTH:
       image_width_tmp = xmlReadUnsignedIntChild(doc, node);
       break;
