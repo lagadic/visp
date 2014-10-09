@@ -739,14 +739,22 @@ int vpCalibration::readGrid(const char* filename, unsigned int &n,
   \param I : Image where to display data.
   \param color : Color of the data.
   \param thickness : Thickness of the displayed data.
+  \param subsampling_factor : Subsampling factor. Default value is 1.
+  Admissible values are multiple of 2. Divide by this parameter the
+  coordinates of the data points resulting from image processing.
 
 */
 int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
-                               unsigned int thickness)
+                               unsigned int thickness, int subsampling_factor)
 {
 
   for (std::list<vpImagePoint>::const_iterator it = Lip.begin(); it != Lip.end(); ++ it) {
-    vpDisplay::displayCross(I, *it, 12, color, thickness) ;
+    vpImagePoint ip = *it;
+    if (subsampling_factor > 1.) {
+      ip.set_u( ip.get_u() / subsampling_factor);
+      ip.set_v( ip.get_v() / subsampling_factor);
+    }
+    vpDisplay::displayCross(I, ip, 12, color, thickness) ;
   }
   return 0 ;
 }
@@ -757,14 +765,17 @@ int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color,
   \param I : Image where to display grid data.
   \param color : Color of the data.
   \param thickness : Thickness of the displayed data.
+  \param subsampling_factor : Subsampling factor. Default value is 1.
+  Admissible values are multiple of 2. Divide by this parameter the
+  values of the camera parameters.
 */
 int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color,
-                               unsigned int thickness)
+                               unsigned int thickness, int subsampling_factor)
 {
-  double u0_dist = cam_dist.get_u0() ;
-  double v0_dist = cam_dist.get_v0() ;
-  double px_dist = cam_dist.get_px() ;
-  double py_dist = cam_dist.get_py() ;
+  double u0_dist = cam_dist.get_u0() / subsampling_factor;
+  double v0_dist = cam_dist.get_v0() / subsampling_factor;
+  double px_dist = cam_dist.get_px() / subsampling_factor;
+  double py_dist = cam_dist.get_py() / subsampling_factor;
   double kud_dist = cam_dist.get_kud() ;
   //  double kdu_dist = cam_dist.get_kdu() ;
 

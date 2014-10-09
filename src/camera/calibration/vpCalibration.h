@@ -144,9 +144,9 @@ public:
   double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &cam);
   int displayData(vpImage<unsigned char> &I, vpColor color=vpColor::red,
-                  unsigned int thickness=1) ;
+                  unsigned int thickness=1, int subsampling_factor=1) ;
   int displayGrid(vpImage<unsigned char> &I, vpColor color=vpColor::yellow,
-                  unsigned int thickness=1) ;
+                  unsigned int thickness=1, int subsampling_factor=1) ;
 
   //! Set the gain for the virtual visual servoing algorithm.
   static double getLambda(){return gain;}
