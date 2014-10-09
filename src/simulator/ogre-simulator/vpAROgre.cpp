@@ -942,6 +942,8 @@ void vpAROgre::closeOIS(void)
 /*!
   Update the projection parameters of the camera.
 */
+// Note: equation taken from:
+// http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
 void vpAROgre::updateCameraProjection(void)
 {
   Ogre::Real f,n,f_m_n,f_p_n,px,py,u0,v0;
@@ -954,8 +956,8 @@ void vpAROgre::updateCameraProjection(void)
   u0 = (Ogre::Real)mcam.get_u0();
   v0 = (Ogre::Real)mcam.get_v0();
   Ogre::Matrix4 Projection
-    = Ogre::Matrix4( (Ogre::Real)(2.0*px/mBackgroundWidth), 0,  (Ogre::Real)(2.0*(u0/mBackgroundWidth)-1.0), 0,
-		     0, (Ogre::Real)(2.0*py/mBackgroundHeight), (Ogre::Real)(2.0*(v0/mBackgroundHeight)-1.0),0,
+    = Ogre::Matrix4( (Ogre::Real)(2.0*px/mBackgroundWidth), 0,  (Ogre::Real)(1.0 - 2.0*(u0/mBackgroundWidth)), 0,
+             0, (Ogre::Real)(2.0*py/mBackgroundHeight), (Ogre::Real)(-1.0 + 2.0*(v0/mBackgroundHeight)),0,
 		     0, 0, (Ogre::Real)(-1.0*f_p_n/f_m_n), (Ogre::Real)(-2.0*f*n/f_m_n),
 		     0, 0, -1.0, 0);
   mCamera->setCustomProjectionMatrix(true, Projection);
