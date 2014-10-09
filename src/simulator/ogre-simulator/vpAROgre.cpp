@@ -75,7 +75,7 @@
 vpAROgre::vpAROgre(const vpCameraParameters &cam,
 		   unsigned int width, unsigned int height,
 		   const char *resourcePath, const char *pluginsPath)
-  : mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0)
+    : mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mNearClipping(0.001), mFarClipping(200)
 #ifdef VISP_HAVE_OIS
   , mInputManager(0), mKeyboard(0)
 #endif
@@ -946,21 +946,23 @@ void vpAROgre::closeOIS(void)
 // http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
 void vpAROgre::updateCameraProjection(void)
 {
-  Ogre::Real f,n,f_m_n,f_p_n,px,py,u0,v0;
-  f = (Ogre::Real)200.0; // Far clip distance
-  n = (Ogre::Real)0.001; // Near clip distance
-  f_m_n = (Ogre::Real)(f-n);
-  f_p_n = (Ogre::Real)(f+n);
-  px = (Ogre::Real)mcam.get_px();
-  py = (Ogre::Real)mcam.get_py();
-  u0 = (Ogre::Real)mcam.get_u0();
-  v0 = (Ogre::Real)mcam.get_v0();
-  Ogre::Matrix4 Projection
-    = Ogre::Matrix4( (Ogre::Real)(2.0*px/mBackgroundWidth), 0,  (Ogre::Real)(1.0 - 2.0*(u0/mBackgroundWidth)), 0,
-             0, (Ogre::Real)(2.0*py/mBackgroundHeight), (Ogre::Real)(-1.0 + 2.0*(v0/mBackgroundHeight)),0,
-		     0, 0, (Ogre::Real)(-1.0*f_p_n/f_m_n), (Ogre::Real)(-2.0*f*n/f_m_n),
-		     0, 0, -1.0, 0);
-  mCamera->setCustomProjectionMatrix(true, Projection);
+  if(mCamera != 0){
+      Ogre::Real f,n,f_m_n,f_p_n,px,py,u0,v0;
+      f = (Ogre::Real)(mFarClipping); // Far clip distance
+      n = (Ogre::Real)(mNearClipping); // Near clip distance
+      f_m_n = (Ogre::Real)(f-n);
+      f_p_n = (Ogre::Real)(f+n);
+      px = (Ogre::Real)mcam.get_px();
+      py = (Ogre::Real)mcam.get_py();
+      u0 = (Ogre::Real)mcam.get_u0();
+      v0 = (Ogre::Real)mcam.get_v0();
+      Ogre::Matrix4 Projection
+        = Ogre::Matrix4( (Ogre::Real)(2.0*px/mBackgroundWidth), 0,  (Ogre::Real)(1.0 - 2.0*(u0/mBackgroundWidth)), 0,
+                 0, (Ogre::Real)(2.0*py/mBackgroundHeight), (Ogre::Real)(-1.0 + 2.0*(v0/mBackgroundHeight)),0,
+                 0, 0, (Ogre::Real)(-1.0*f_p_n/f_m_n), (Ogre::Real)(-2.0*f*n/f_m_n),
+                 0, 0, -1.0, 0);
+      mCamera->setCustomProjectionMatrix(true, Projection);
+  }
 }
 
 /*!

@@ -2023,6 +2023,9 @@ vpMbTracker::setFarClippingDistance(const double &dist)
     for (unsigned int i = 0; i < faces.size(); i ++){
       faces[i]->setFarClippingDistance(distFarClip);
     }
+#ifdef VISP_HAVE_OGRE
+    faces.getOgreContext()->setFarClippingDistance(distFarClip);
+#endif
   }
 }
 
@@ -2095,6 +2098,9 @@ vpMbTracker::setNearClippingDistance(const double &dist)
     for (unsigned int i = 0; i < faces.size(); i ++){
       faces[i]->setNearClippingDistance(distNearClip);
     }
+#ifdef VISP_HAVE_OGRE
+    faces.getOgreContext()->setNearClippingDistance(distNearClip);
+#endif
   }
 }
 
