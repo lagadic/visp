@@ -172,7 +172,7 @@ class vpMbHiddenFaces
       \param h : Height of the background
       \param w : Width of the background
     */
-    void          setBackgroundSizeOgre(const unsigned int &h, const unsigned int &w) { ogreBackground.resize(h,w); }
+    void          setBackgroundSizeOgre(const unsigned int &h, const unsigned int &w) { ogreBackground = vpImage<unsigned char>(h, w, 0); }
 #endif
     
     unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed) ;
@@ -232,7 +232,7 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
   ogreInitialised = false;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
-  ogreBackground = vpImage<unsigned char>(480, 640);
+  ogreBackground = vpImage<unsigned char>(480, 640, 0);
 #endif
 }
 
