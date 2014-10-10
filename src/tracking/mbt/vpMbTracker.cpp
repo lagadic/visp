@@ -115,7 +115,7 @@ vpMbTracker::vpMbTracker()
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0)
 {
     oJo.setIdentity();
-    mapOfParameterNames["faceName"] = "string";
+    mapOfParameterNames["name"] = "string";
     mapOfParameterNames["minPolygonAreaThreshold"] = "number";
     mapOfParameterNames["minLineLengthThreshold"] = "number";
     mapOfParameterNames["useLod"] = "boolean";
@@ -1352,8 +1352,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
           std::string segmentName = "";
           double minLineLengthThresh = -1.0;
           bool useLod = false;
-          if(mapOfParams.find("faceName") != mapOfParams.end()) {
-            segmentName = mapOfParams["faceName"];
+          if(mapOfParams.find("name") != mapOfParams.end()) {
+            segmentName = mapOfParams["name"];
           }
           if(mapOfParams.find("minLineLengthThreshold") != mapOfParams.end()) {
             minLineLengthThresh = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
@@ -1446,8 +1446,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
     std::string polygonName = "";
     bool useLod = false;
     double minPolygonAreaThreshold = -1.0;
-    if(mapOfParams.find("faceName") != mapOfParams.end()) {
-      polygonName = mapOfParams["faceName"];
+    if(mapOfParams.find("name") != mapOfParams.end()) {
+      polygonName = mapOfParams["name"];
     }
     if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
       minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
@@ -1523,8 +1523,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
           std::string polygonName = "";
           bool useLod = false;
           double minPolygonAreaThreshold = -1.0;
-          if(mapOfParams.find("faceName") != mapOfParams.end()) {
-            polygonName = mapOfParams["faceName"];
+          if(mapOfParams.find("name") != mapOfParams.end()) {
+            polygonName = mapOfParams["name"];
           }
           if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
             minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
@@ -1584,8 +1584,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
               std::string polygonName = "";
               bool useLod = false;
               double minLineLengthThreshold = -1.0;
-              if(mapOfParams.find("faceName") != mapOfParams.end()) {
-                polygonName = mapOfParams["faceName"];
+              if(mapOfParams.find("name") != mapOfParams.end()) {
+                polygonName = mapOfParams["name"];
               }
               if(mapOfParams.find("minLineLengthThreshold") != mapOfParams.end()) {
                 minLineLengthThreshold = std::atof(mapOfParams["minLineLengthThreshold"].c_str());
@@ -1653,8 +1653,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
               std::string polygonName = "";
               bool useLod = false;
               double minPolygonAreaThreshold = -1.0;
-              if(mapOfParams.find("faceName") != mapOfParams.end()) {
-                polygonName = mapOfParams["faceName"];
+              if(mapOfParams.find("name") != mapOfParams.end()) {
+                polygonName = mapOfParams["name"];
               }
               if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
                 minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
