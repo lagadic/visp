@@ -75,17 +75,9 @@ ADD_TEST(mbtEdgeTracking    mbtEdgeTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(mbtEdgeKltTracking mbtEdgeKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(mbtKltTracking     mbtKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
-ADD_TEST(mbtEdgeTracking-ogre    mbtEdgeTracking -c -o ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(mbtEdgeKltTracking-ogre mbtEdgeKltTracking -c -o ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(mbtKltTracking-ogre     mbtKltTracking -c -o ${OPTION_TO_DESACTIVE_DISPLAY})
-
 ADD_TEST(mbtEdgeTracking-cao    mbtEdgeTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(mbtEdgeKltTracking-cao mbtEdgeKltTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(mbtKltTracking-cao     mbtKltTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
-
-ADD_TEST(mbtEdgeTracking-cao-ogre    mbtEdgeTracking -c -f -o ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(mbtEdgeKltTracking-cao-ogre mbtEdgeKltTracking -c -f -o ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(mbtKltTracking-cao-ogre     mbtKltTracking -c -f -o ${OPTION_TO_DESACTIVE_DISPLAY})
 
 ADD_TEST(mbtEdgeTracking-cao-nocyl    mbtEdgeTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
 ADD_TEST(mbtEdgeKltTracking-cao-nocyl mbtEdgeKltTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})

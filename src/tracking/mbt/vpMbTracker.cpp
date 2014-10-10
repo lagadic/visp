@@ -741,11 +741,13 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
-  if(minPolygonAreaThreshold != -1.0) {
+  //if(minPolygonAreaThreshold != -1.0) {
+  if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
     polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
   }
 
-  if(minLineLengthThreshold != -1.0) {
+  //if(minLineLengthThreshold != -1.0) {
+  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
     polygon.setMinLineLengthThresh(minLineLengthThreshold);
   }
 
@@ -773,7 +775,8 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
     polygon.setName(polygonName);
     polygon.setLod(useLod);
 
-    if(minPolygonAreaThreshold != -1.0) {
+    //if(minPolygonAreaThreshold != -1.0) {
+    if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
       polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
     }
 
@@ -855,7 +858,8 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigne
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
-  if(minLineLengthThreshold != -1.0) {
+  //if(minLineLengthThreshold != -1.0) {
+  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
     polygon.setMinLineLengthThresh(minLineLengthThreshold);
   }
 

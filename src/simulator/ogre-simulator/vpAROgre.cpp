@@ -75,33 +75,17 @@
 vpAROgre::vpAROgre(const vpCameraParameters &cam,
 		   unsigned int width, unsigned int height,
 		   const char *resourcePath, const char *pluginsPath)
-    : mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0), mNearClipping(0.001), mFarClipping(200)
+    : name("ViSP - Augmented Reality"),mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0),
+      mResourcePath(resourcePath), mPluginsPath(pluginsPath),
 #ifdef VISP_HAVE_OIS
-  , mInputManager(0), mKeyboard(0)
+      mInputManager(0), mKeyboard(0),
 #endif
+      keepOn(true), // When created no reason to stop displaying
+      mImageRGBA(), mImage(), mPixelBuffer(NULL), mBackground(NULL), mBackgroundHeight(0),
+      mBackgroundWidth(0), mWindowHeight(height), mWindowWidth(width), windowHidden(false),
+      mNearClipping(0.001), mFarClipping(200), mcam(cam), mshowConfigDialog(true),
+      mOptionnalResourceLocation()
 {
-  // Get resources.cfg path
-  mResourcePath = resourcePath;
-  //std::cout << "mResourcePath: " << mResourcePath<< std::endl;
-  // Get plugins.cfg path
-  mPluginsPath = pluginsPath;
-  //std::cout << "mPluginsPath: " << mPluginsPath<< std::endl;
-  // Set intrinsic camera parameters
-  mcam = cam;
-  // When created no reason to stop displaying
-  keepOn = true;
-  // Set Dimensions
-  mWindowWidth = width;
-  mWindowHeight = height;
-  windowHidden = false;
-  mshowConfigDialog = true;
-  mOptionnalResourceLocation.clear();
-
-  name = "ViSP - Augmented Reality";
-
-  mBackground = NULL;
-  mBackgroundHeight = 0;
-  mBackgroundWidth = 0;
 }
 
 /*!
