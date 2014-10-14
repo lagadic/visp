@@ -55,6 +55,8 @@
 #include <algorithm>
 #include <cctype>
 #include <locale>
+#include <functional>   // std::not1
+
 
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpImage.h>
