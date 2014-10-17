@@ -18,7 +18,9 @@ ViSP 2.10.0 (under development)
       + Based on the rank of the interaction matrix turn off automatically the
         degrees of freedom that cannot be estimated. Especially useful when
         considering 3D objets with only cylinders and circles.
-    . Video reader and writer support mpeg4
+    . Video reader and writer support mpeg4. ffmpeg is no more requested
+      in vpVideoReader and vpVideoWriter. If ffmpeg is not detected or installed
+      we use OpenCV.
     . Compat with RaspberryPi architecture
     . Auto detection of visp-images-data Debian or Ubuntu package that allows
       testing without setting VISP_INPUT_IMAGE_PATH
@@ -40,7 +42,8 @@ ViSP 2.10.0 (under development)
     . [17705] Bad endianness support in vpDisplayX
     . [17766] Compat with cmake 3.0.0: failed due to new CMP0026 policy
     . [17972] Ogre examples are not working with Fedora 20
-    . [17983] Unable to build ViSP when an older version was previously installed
+    . [17983] Unable to build ViSP when an older version was previously
+      installed
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features
