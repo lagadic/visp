@@ -5,7 +5,7 @@
 
 int main()
 {  
-#if defined(VISP_HAVE_OPENCV_NONFREE) && defined(VISP_HAVE_FFMPEG)
+#if defined(VISP_HAVE_OPENCV_NONFREE)
   vpImage<unsigned char> I;
 
   vpVideoReader reader;

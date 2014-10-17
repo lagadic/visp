@@ -7,7 +7,7 @@
 
 int main(int argc, const char **argv)
 {  
-#if defined(VISP_HAVE_OPENCV_NONFREE) && defined(VISP_HAVE_FFMPEG)
+#if defined(VISP_HAVE_OPENCV_NONFREE)
   int method = 0;
 
   if (argc > 1)
