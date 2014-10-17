@@ -2030,7 +2030,7 @@ vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
   \param idFace : Index of the face associated to the circle to handle visibility test.
-  \name : The optional name of the circle.
+  \param name : The optional name of the circle.
 */
 void
 vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
@@ -2047,7 +2047,7 @@ vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint 
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
   \param idFace : Id of the face that is associated to the cylinder to handle visibility test.
-  \name : \name : The optional name of the cylinder.
+  \param name : The optional name of the cylinder.
 */
 void
 vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace,

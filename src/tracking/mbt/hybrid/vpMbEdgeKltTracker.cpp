@@ -1006,7 +1006,7 @@ vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
   defining the plane that contains the circle.
   \param radius : Radius of the circle.
   \param idFace : Id of the face associated to the circle.
-  \name : The optional name of the circle.
+  \param name : The optional name of the circle.
 */
 void
 vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
@@ -1023,7 +1023,7 @@ vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoi
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
   \param idFace : Id of the face associated to the cylinder.
-  \name : The optional name of the cylinder.
+  \param name : The optional name of the cylinder.
 */
 void
 vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace,
