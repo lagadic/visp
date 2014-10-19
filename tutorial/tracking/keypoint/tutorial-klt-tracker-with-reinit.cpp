@@ -67,7 +67,7 @@ int main()
         std::cout << "Detection of " << tracker.getNbFeatures() << " new features" << std::endl;
 
         // Add previous features if they are not to close to detected one
-        float distance, minDistance_ = 2.f;// choose to keep old points distant of 2 pixels
+        double distance, minDistance_ = 2.f;// choose to keep old points distant of 2 pixels
         bool is_redundant;
         for(int i = tracker.getNbFeatures() ;
             j<prev_nfeatures && i<tracker.getMaxFeatures() ;
