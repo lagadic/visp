@@ -559,6 +559,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
       vpMatrix K; // kernel
       int rank = (L*cVo).kernel(K);
+      if(rank == 0) {
+        throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
+      }
       if (rank != 6) {
         vpMatrix I; // Identity
         I.eye(6);
