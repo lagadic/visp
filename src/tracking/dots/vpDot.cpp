@@ -47,17 +47,11 @@
 */
 
 #include <visp/vpDot.h>
-
 #include <visp/vpDisplay.h>
 #include <visp/vpColor.h>
-
-// exception handling
 #include <visp/vpTrackingException.h>
-#include <vector>
 
-#ifdef VISP_USE_MSVC
-#  pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
-#endif
+#include <vector>
 
 /*
   \class vpDot

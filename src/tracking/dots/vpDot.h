@@ -48,6 +48,7 @@
 #ifndef vpDot_hh
 #define vpDot_hh
 
+#include <visp/vpConfig.h>
 #include <visp/vpImage.h>
 #include <visp/vpDisplay.h>
 #include <visp/vpTracker.h>
@@ -58,6 +59,10 @@
 #include <fstream>
 #include <list>
 #include <vector>
+
+#ifdef VISP_USE_MSVC
+#  pragma comment(linker, "/STACK:256000000") // Increase max recursion depth
+#endif
 
 /*!
   \class vpDot
