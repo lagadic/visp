@@ -56,8 +56,9 @@ class vpRotationMatrix;
 class vpPoseVector;
 class vpThetaUVector;
 
-#include <visp/vpMatrix.h>
+#include <vector>
 
+#include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
@@ -121,13 +122,17 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   //! Construction from translation and rotation defined as a theta u vector.
   vpHomogeneousMatrix(const double tx, const double ty, const double tz,
 		      const double tux, const double tuy, const double tuz) ;
+  vpHomogeneousMatrix(const std::vector<float> &v);
+  vpHomogeneousMatrix(const std::vector<double> &v);
 
   //! Construction from translation vector and rotation matrix.
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R) ;
   //! Construction from translation vector and theta u rotation vector.
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu) ;
   //! Construction from translation vector and quaternion rotation vector.
-  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector& q  ) ;
+  void buildFrom(const vpTranslationVector &t, const vpQuaternionVector& q) ;
+  void buildFrom(const std::vector<float> &v) ;
+  void buildFrom(const std::vector<double> &v) ;
 
   /*!
     Construction from translation vector and theta u rotation vector 
