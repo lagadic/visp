@@ -338,7 +338,7 @@ main(int argc, const char ** argv)
     me.setThreshold(5000);
     me.setMu1(0.5);
     me.setMu2(0.5);
-    me.setMinSampleStep(4);
+    me.setSampleStep(4);
     me.setNbTotalSample(250);
 
     vpKltOpencv klt;
