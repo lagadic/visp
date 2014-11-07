@@ -444,7 +444,7 @@ main(int argc, const char ** argv)
       {
         tracker.display(I, cMo, cam, vpColor::darkRed);
         // display the frame
-        vpDisplay::displayFrame (I, cMo, cam, 0.05, vpColor::blue);
+        vpDisplay::displayFrame (I, cMo, cam, 0.05);
       }
       
       // Uncomment if you want to print the covariance matrix.
