@@ -659,7 +659,7 @@ class VISP_EXPORT vpDisplay
   static void displayFrame(const vpImage<unsigned char> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, const vpColor &color,
+         double size, const vpColor &color=vpColor::none,
 			   unsigned int thickness=1)  ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  const vpImagePoint &ip1, 
@@ -804,7 +804,7 @@ class VISP_EXPORT vpDisplay
   static void displayFrame(const vpImage<vpRGBa> &I,
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
-			   double size, const vpColor &color, 
+         double size, const vpColor &color=vpColor::none,
 			   unsigned int thickness=1)  ;
   static void displayEllipse(const vpImage<vpRGBa> &I,
                              const vpImagePoint &center,
