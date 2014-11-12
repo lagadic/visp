@@ -2153,7 +2153,7 @@ vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const v
     vpMatrix I3(3,3);
     I3.setIdentity();
 //    Lthetau = -I3;
-    LthetauInvAnalyticytic = -I3;
+    LthetauInvAnalytic = -I3;
 
     if(theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon())
     {
