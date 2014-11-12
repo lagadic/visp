@@ -804,7 +804,6 @@ vpMatrix vpMatrix::operator-() const //negate
   return C;
 }
 
-//!return sum of the Aij^2 (for all i, for all j)
 double
 vpMatrix::sumSquare() const
 {
@@ -841,6 +840,21 @@ vpMatrix::sumSquare() const
 
 
     return sum;
+}
+
+double
+vpMatrix::sum() const
+{
+  double sum=0.0;
+  for (unsigned int i=0;i<rowNum;i++)
+  {
+    for(unsigned int j=0;j<colNum;j++)
+    {
+      sum += rowPtrs[i][j];
+    }
+  }
+
+  return sum;
 }
 
 

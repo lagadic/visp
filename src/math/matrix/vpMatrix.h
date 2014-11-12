@@ -369,7 +369,17 @@ protected:
   // Cij = Aij / x (A is unchanged)
   vpMatrix operator/(const double x) const;
 
-  //!return sum of the Aij^2 (for all i, for all j)
+  /*!
+    Return the sum of all the \f$a_{ij}\f$ elements of the matrix.
+
+    \return \f$\sum a_{ij}\f$
+    */
+  double sum() const;
+  /*!
+    Return the sum square of all the \f$a_{ij}\f$ elements of the matrix.
+
+    \return \f$\sum a_{ij}^{2}\f$
+    */
   double sumSquare() const;
 
   // return the determinant of the matrix.
