@@ -1064,6 +1064,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         catch(...)
         {
+          covarianceMatrix = -1;
           vpTRACE("Error in computeVVS") ;
           throw vpException(vpException::fatalError, "Error in computeVVS");
         }

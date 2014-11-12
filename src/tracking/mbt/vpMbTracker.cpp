@@ -2127,8 +2127,6 @@ vpMbTracker::setClipping(const unsigned int &flags)
 void
 vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W)
 {
-//    vpHomogeneousMatrix cMoTest(-111.2584259,  22.10260044 , -59.71102112 , 1.453182512  ,1.27069078 , -0.9233029933);
-//    vpHomogeneousMatrix cMcd = cMoPrev * cMoTest.inverse();
     //building Lp
     vpMatrix LpInv(6,6);
     LpInv = 0;
@@ -2149,14 +2147,13 @@ vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const v
         tu[i] = thetau[i];
 
     double theta = sqrt(tu.sumSquare()) ;
-//      std::cout << theta << std::endl;
 
 //    vpMatrix Lthetau(3,3);
-    vpMatrix LthetauInvAnal(3,3);
+    vpMatrix LthetauInvAnalytic(3,3);
     vpMatrix I3(3,3);
     I3.setIdentity();
 //    Lthetau = -I3;
-    LthetauInvAnal = -I3;
+    LthetauInvAnalyticytic = -I3;
 
     if(theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon())
     {
@@ -2174,15 +2171,12 @@ vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const v
         vpMatrix u_skew = vpColVector::skew(u);
 
 //        Lthetau += (theta2u_skew - (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
-        LthetauInvAnal += -(vpMath::sqr(vpMath::sinc(theta/2.0)) * theta2u_skew - (1.0-vpMath::sinc(theta))*u_skew*u_skew);
+        LthetauInvAnalytic += -(vpMath::sqr(vpMath::sinc(theta/2.0)) * theta2u_skew - (1.0-vpMath::sinc(theta))*u_skew*u_skew);
     }
 
 //    vpMatrix LthetauInv = Lthetau.inverseByLU();
 
-//      std::cout << LthetauInv << std::endl << std::endl;
-//      std::cout << LthetauInvAnal << std::endl;
-
-    ctoInitSkew = ctoInitSkew * LthetauInvAnal;
+    ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
 
     for(unsigned int a = 0 ; a < 3 ; a++)
         for(unsigned int b = 0 ; b < 3 ; b++)
@@ -2190,7 +2184,7 @@ vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const v
 
     for(unsigned int a = 0 ; a < 3 ; a++)
         for(unsigned int b = 0 ; b < 3 ; b++)
-            LpInv[a+3][b+3] = LthetauInvAnal[a][b];
+            LpInv[a+3][b+3] = LthetauInvAnalytic[a][b];
 
     // Building Js
     vpMatrix Js = Ls * LpInv;
