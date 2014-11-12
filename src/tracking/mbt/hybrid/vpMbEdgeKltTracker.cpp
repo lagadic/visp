@@ -620,6 +620,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
 
   double residuMBT = 0;
   double residuKLT = 0;
+
+  vpHomogeneousMatrix cMoPrev;
   
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){   
     L = new vpMatrix();
@@ -742,7 +744,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         v = cVo * v;
     }
 
-
+    cMoPrev = cMo;
     cMo = vpExponentialMap::direct(v).inverse() * cMo;
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
     
@@ -755,10 +757,18 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    if(isoJoIdentity)
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
-    else
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+//    if(isoJoIdentity)
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+//    else
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+    if(isoJoIdentity){
+        computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
+    }
+    else{
+        covarianceMatrix = -1;
+    }
   }
 }
 

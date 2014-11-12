@@ -2123,6 +2123,84 @@ vpMbTracker::setClipping(const unsigned int &flags)
     faces[i]->setClipping(clippingFlag);
 }
 
+
+void
+vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W)
+{
+//    vpHomogeneousMatrix cMoTest(-111.2584259,  22.10260044 , -59.71102112 , 1.453182512  ,1.27069078 , -0.9233029933);
+//    vpHomogeneousMatrix cMcd = cMoPrev * cMoTest.inverse();
+    //building Lp
+    vpMatrix LpInv(6,6);
+    LpInv = 0;
+    LpInv[0][0] = -1.0;
+    LpInv[1][1] = -1.0;
+    LpInv[2][2] = -1.0;
+
+    vpTranslationVector ctoInit;
+
+    cMoPrev.extract(ctoInit);
+    vpMatrix ctoInitSkew = ctoInit.skew();
+
+    vpThetaUVector thetau;
+    cMoPrev.extract(thetau);
+
+    vpColVector tu(3);
+    for(unsigned int i = 0 ; i < 3 ; i++)
+        tu[i] = thetau[i];
+
+    double theta = sqrt(tu.sumSquare()) ;
+//      std::cout << theta << std::endl;
+
+//    vpMatrix Lthetau(3,3);
+    vpMatrix LthetauInvAnal(3,3);
+    vpMatrix I3(3,3);
+    I3.setIdentity();
+//    Lthetau = -I3;
+    LthetauInvAnal = -I3;
+
+    if(theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon())
+    {
+        // Computing [theta/2 u]_x
+        vpColVector theta2u(3)  ;
+        for (unsigned int i=0 ; i < 3 ; i++) {
+          theta2u[i] = tu[i]/2.0 ;
+        }
+        vpMatrix theta2u_skew = vpColVector::skew(theta2u);
+
+        vpColVector u(3)  ;
+        for (unsigned int i=0 ; i < 3 ; i++) {
+          u[i] = tu[i]/theta ;
+        }
+        vpMatrix u_skew = vpColVector::skew(u);
+
+//        Lthetau += (theta2u_skew - (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
+        LthetauInvAnal += -(vpMath::sqr(vpMath::sinc(theta/2.0)) * theta2u_skew - (1.0-vpMath::sinc(theta))*u_skew*u_skew);
+    }
+
+//    vpMatrix LthetauInv = Lthetau.inverseByLU();
+
+//      std::cout << LthetauInv << std::endl << std::endl;
+//      std::cout << LthetauInvAnal << std::endl;
+
+    ctoInitSkew = ctoInitSkew * LthetauInvAnal;
+
+    for(unsigned int a = 0 ; a < 3 ; a++)
+        for(unsigned int b = 0 ; b < 3 ; b++)
+            LpInv[a][b+3] = ctoInitSkew[a][b];
+
+    for(unsigned int a = 0 ; a < 3 ; a++)
+        for(unsigned int b = 0 ; b < 3 ; b++)
+            LpInv[a+3][b+3] = LthetauInvAnal[a][b];
+
+    // Building Js
+    vpMatrix Js = Ls * LpInv;
+
+    // building deltaP
+    vpColVector deltaP = (Js).pseudoInverse(Js.getRows()*DBL_EPSILON) * deltaS;
+
+    covarianceMatrix = vpMatrix::computeCovarianceMatrix(Js,deltaP,deltaS,W);
+}
+
 /*!
   Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of 
   residu.

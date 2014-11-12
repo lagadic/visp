@@ -583,6 +583,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   vpRobust robust(2*nbInfos);
 
   vpMatrix LTL, LTR;
+  vpHomogeneousMatrix cMoPrev;
   
   double normRes = 0;
   double normRes_1 = -1;
@@ -666,6 +667,8 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     }
 
     ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
+    cMoPrev = cMo;
+    cMo = ctTc0 * c0Mo;
     
     iter++;
   }
@@ -673,13 +676,19 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   if(computeCovariance){
     vpMatrix D;
     D.diag(w_true);
-    if(isoJoIdentity)
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
-    else
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+//    if(isoJoIdentity)
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+//    else
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+    if(isoJoIdentity){
+        computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
+    }
+    else{
+        covarianceMatrix = -1;
+    }
   }
-  
-  cMo = ctTc0 * c0Mo;
 }
 
 /*!

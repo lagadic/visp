@@ -245,6 +245,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   bool isoJoIdentity_ = isoJoIdentity; // Backup since it can be modified if L is not full rank
 
   /*** First phase ***/
+
   while ( reloop == true && iter<10)
   {
     if(iter==0)
@@ -563,6 +564,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
       }
       if (rank != 6) {
+          throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
         vpMatrix I; // Identity
         I.eye(6);
         oJo = I-K.AtA();
@@ -610,7 +612,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector error_cylinders(nberrors_cylinders);
   vpColVector error_circles(nberrors_circles);
 
-  vpColVector error_vec;
+  vpHomogeneousMatrix cMoPrev;
   vpColVector W_true;
   vpMatrix L_true;
   vpMatrix LVJ_true;
@@ -681,7 +683,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       robust_cylinders.setThreshold(2/cam.get_px());
       robust_circles.setThreshold(vpMath::sqr(2/cam.get_px()));
       if(nberrors_lines > 0)
-				robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
+                robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
       if(nberrors_cylinders > 0)
        robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
       if(nberrors_circles > 0)
@@ -693,7 +695,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       robust_cylinders.setIteration(iter);
       robust_circles.setIteration(iter);
       if(nberrors_lines > 0)
-				robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
+                robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
       if(nberrors_cylinders > 0)
         robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
       if(nberrors_circles > 0)
@@ -734,7 +736,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     
     for(unsigned int i=0; i<nerror; i++){
       wi = m_w[i]*factor[i];
-      W_true[i] = wi*wi;
+      W_true[i] = wi;
       eri = m_error[i];
       num += wi*vpMath::sqr(eri);
       den += wi;
@@ -768,19 +770,30 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         v = cVo * v;
     }
 
+    cMoPrev = cMo;
     cMo =  vpExponentialMap::direct(v).inverse() * cMo;
 
     iter++;
   }
+
+//  cMo = cMoPrev;
   
   // std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
   if(computeCovariance){
-    vpMatrix D; //Should be the M.diag(wi) * M.diag(wi).transpose() =  (M.diag(wi^2))  which is more efficient
+    vpMatrix D;
     D.diag(W_true);
-    if(isoJoIdentity_)
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
-    else
-        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+//    if(isoJoIdentity)
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
+//    else
+//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
+
+    if(isoJoIdentity_){
+        computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
+    }
+    else{
+        covarianceMatrix = -1;
+    }
   }
   
   unsigned int n =0 ;
@@ -1113,6 +1126,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
       catch(...)
       {
         if(lvl != 0){
+            std::cout << "Level Stopped before 0" << std::endl;
           cMo = cMo_1;
           reInitLevel(lvl);
           upScale(lvl);
@@ -1694,6 +1708,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name
         l->Lindex_polygon.push_back(polygon);
         l->setMovingEdge(&me) ;
         l->hiddenface = &faces ;
+
         l->setIndex(nline) ;
         l->setName(name);
         
@@ -2592,6 +2607,7 @@ vpMbEdgeTracker::upScale(const unsigned int _scale)
   K[1][1] *= ratio;
   K[0][2] *= ratio;
   K[1][2] *= ratio;
+
 
   cam.initFromCalibrationMatrix(K);
 }

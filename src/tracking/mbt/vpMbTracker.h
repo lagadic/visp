@@ -446,6 +446,7 @@ protected:
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace=-1, const std::string &polygonName="",
       const bool useLod=false, const double minLineLengthThreshold=-1.0);
 
+  void computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN

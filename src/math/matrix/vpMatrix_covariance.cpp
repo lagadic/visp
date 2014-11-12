@@ -42,6 +42,11 @@
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
+// Exception
+#include <visp/vpException.h>
+#include <visp/vpMatrixException.h>
+
+#include <limits>   // numeric_limits
 
 /*!
   Compute the covariance matrix of the parameters x from a least squares minimisation defined as:
@@ -55,8 +60,19 @@
 */
 vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b)
 {
-  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) );
-  return (A.t()*A).pseudoInverse()*sigma2;
+//  double denom = ((double)(A.getRows()) - (double)(A.getCols())); // To consider OLS Estimate for sigma
+  double denom = ((double)(A.getRows())); // To consider MLE Estimate for sigma
+
+  if(denom <= std::numeric_limits<double>::epsilon())
+      throw vpMatrixException(vpMatrixException::divideByZeroError, "Impossible to compute covariance matrix: not enough data");
+
+//  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) ); // Should be equivalent to line bellow.
+  double sigma2 = (b - (A * x)).t() * (b - (A * x));
+
+  sigma2 /= denom;
+
+  vpMatrix X = A.t()*A;
+  return (X).pseudoInverse(X.getRows()*DBL_EPSILON)*sigma2;
 }
 
 /*!
@@ -73,6 +89,18 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 */
 vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const vpMatrix &W)
 {
-  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) );
-  return (A.t()*W*A).pseudoInverse()*sigma2;
+  double denom = 0.0;
+  for(unsigned int i = 0 ; i < W.getCols() ; i++){
+      denom += W[i][i];
+  }
+
+  if(denom <= std::numeric_limits<double>::epsilon())
+      throw vpMatrixException(vpMatrixException::divideByZeroError, "Impossible to compute covariance matrix: not enough data");
+
+//  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) ); // Should be equivalent to line bellow.
+  double sigma2 = (W * b - (W * A * x)).t() * (W*b - (W * A * x));
+  sigma2 /= denom;
+
+  vpMatrix X = A.t()*(W*W)*A;
+  return (X).pseudoInverse(X.getRows()*DBL_EPSILON)*sigma2;
 }
