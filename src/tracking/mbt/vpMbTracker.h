@@ -225,10 +225,12 @@ public:
   /*!
     Return the error vector \f$(s-s^*)\f$ reached after the virtual visual servoing process used to estimate the pose.
 
-    The following example shows how to use this function:
+    The following example shows how to use this function to compute the norm of the residual and the norm of the residual
+    normalized by the number of features that are tracked:
     \code
       tracker.track(I);
-      std::cout << "Error: " << sqrt( (tracker.getError()).sumSquare()) << std::endl;
+      std::cout << "Residual: " << sqrt( (tracker.getError()).sumSquare()) << std::endl;
+      std::cout << "Residual normalized: " << sqrt( (tracker.getError()).sumSquare())/tracker.getError().size() << std::endl;
     \endcode
 
     \sa getRobustWeights()
@@ -250,7 +252,9 @@ public:
   /*!
     Return the weights vector \f$w_i\f$ computed by the robust scheme.
 
-    The following example shows how to use this function:
+    The following example shows how to use this function to compute the norm of the weighted residual
+    and the norm of the weighted residual normalized by the sum of the weights associated to the
+    features that are tracked:
     \code
       tracker.track(I);
       vpColVector w = tracker.getRobustWeights();
@@ -259,8 +263,8 @@ public:
       for(unsigned int i=0; i<w.size(); i++)
         we[i] = w[i]*e[i];
 
-      std::cout << "Error         : " << sqrt( (e ).sumSquare() ) << std::endl;
-      std::cout << "Weighted error: " << sqrt( (we).sumSquare() ) << std::endl;
+      std::cout << "Weighted residual: " << sqrt( (we).sumSquare() ) << std::endl;
+      std::cout << "Weighted residual normalized: " << sqrt( (we).sumSquare() ) / w.sum() << std::endl;
     \endcode
 
     \sa getError()
