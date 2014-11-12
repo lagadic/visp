@@ -761,6 +761,57 @@ vpMbtPolygon::roiInsideImage(const vpImage<unsigned char>& I, const std::vector<
   return true;
 }
 
+/*!
+  Set the flag to consider if the level of detail (LOD) is used or not.
+  When activated, lines and faces of the 3D model are tracked if respectively their
+  projected lenght and area in the image are significative enough. By significative, we mean:
+  - if the lenght of the projected line in the image is greater that a threshold set by
+  setMinLineLengthThresh()
+  - if the area of the projected face in the image is greater that a threshold set by
+  setMinPolygonAreaThresh().
+
+  \param use_lod : true if level of detail must be used, false otherwise.
+
+  The sample code below shows how to introduce this feature:
+  \code
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+vpImage<unsigned char> I;
+
+// Acquire an image
+vpImageIo::read(I, "my-image.pgm");
+
+std::string object = "my-object";
+vpMbEdgeTracker tracker;
+tracker.loadConfigFile( object+".xml" );
+tracker.loadModel( object+".cao" );
+
+tracker.setLod(true);
+tracker.setMinLineLengthThresh(20.);
+tracker.setMinPolygonAreaThresh(20.*20.);
+
+tracker.initClick(I, object+".init" );
+
+while (true) {
+  // tracking loop
+}
+vpXmlParser::cleanup();
+
+return 0;
+}
+  \endcode
+
+  \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
+ */
+void
+vpMbtPolygon::setLod(const bool use_lod)
+{
+  this->useLod = use_lod;
+}
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n

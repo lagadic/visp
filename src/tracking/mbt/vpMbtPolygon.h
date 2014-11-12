@@ -231,52 +231,9 @@ public:
     \param i : the new index of the face.
   */
   virtual inline void     setIndex(const int i ) { index = i ; } 
-  /*!
-    Set the flag to consider if the level of detail (LOD) is used or not.
-    When activated, lines and faces of the 3D model are tracked if respectively their
-    projected lenght and area in the image are significative enough. By significative, we mean:
-    - if the lenght of the projected line in the image is greater that a threshold set by
-    setMinLineLengthThresh()
-    - if the area of the projected face in the image is greater that a threshold set by
-    setMinPolygonAreaThresh().
 
-    \param use_lod : true if level of detail must be used, false otherwise.
-
-    The sample code below shows how to introduce this feature:
-    \code
-#include <visp/vpMbEdgeTracker.h>
-#include <visp/vpImageIo.h>
-
-int main()
-{
-  vpImage<unsigned char> I;
-
-  // Acquire an image
-  vpImageIo::read(I, "my-image.pgm");
-
-  std::string object = "my-object";
-  vpMbEdgeTracker tracker;
-  tracker.loadConfigFile( object+".xml" );
-  tracker.loadModel( object+".cao" );
-
-  tracker.setLod(true);
-  tracker.setMinLineLengthThresh(20.);
-  tracker.setMinPolygonAreaThresh(20.*20.);
-
-  tracker.initClick(I, object+".init" );
-
-  while (true) {
-    // tracking loop
-  }
-  vpXmlParser::cleanup();
-
-  return 0;
-}
-    \endcode
-
-    \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
-   */
-  inline 		 void	  setLod(const bool use_lod) {this->useLod = use_lod;}
+  // Due to a doxygen warning include the sample code in the doc, we remove the inline and put the doc in the *.cpp file
+  void	  setLod(const bool use_lod);
   /*!
     Set the threshold for the minimum line length to be considered as visible in the LOD
     (level of detail) case. This threshold is only used when setLoD() is turned on.
