@@ -66,7 +66,6 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-#include <visp/vpList.h>
 #include <visp/vpDot2.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>

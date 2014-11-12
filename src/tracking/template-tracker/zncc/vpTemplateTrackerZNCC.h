@@ -57,7 +57,6 @@
 #include <visp/vpImageTools.h>
 #include <visp/vpImageFilter.h>
 #include <visp/vpMath.h>
-#include <visp/vpList.h>
 #include <visp/vpHomography.h>
 
 #define APPROX_NCC
