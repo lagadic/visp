@@ -52,6 +52,7 @@
 #include <limits>
 #include <algorithm>
 #include <map>
+#include <float.h>  // DBL_EPSILON
 
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>

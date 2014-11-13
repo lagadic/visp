@@ -32,21 +32,21 @@
  *
  *
  * Description:
- * Matrix LU decomposition.
+ * Covariance matrix computation.
  *
  * Authors:
  * Aurelien Yol
  *
  *****************************************************************************/
 
+#include <limits>   // numeric_limits
+#include <float.h>  // DBL_EPSILON
+
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
-// Exception
-#include <visp/vpException.h>
 #include <visp/vpMatrixException.h>
 
-#include <limits>   // numeric_limits
 
 /*!
   Compute the covariance matrix of the parameters x from a least squares minimisation defined as:
