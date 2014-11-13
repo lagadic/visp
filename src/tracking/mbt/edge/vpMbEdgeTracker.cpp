@@ -564,7 +564,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
       }
       if (rank != 6) {
-          throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
         vpMatrix I; // Identity
         I.eye(6);
         oJo = I-K.AtA();

@@ -71,8 +71,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
   sigma2 /= denom;
 
-  vpMatrix X = A.t()*A;
-  return (X).pseudoInverse(X.getRows()*DBL_EPSILON)*sigma2;
+  return (A.t()*A).pseudoInverse(A.getCols()*DBL_EPSILON)*sigma2;
 }
 
 /*!
@@ -90,8 +89,10 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const vpMatrix &W)
 {
   double denom = 0.0;
+  vpMatrix W2(W.getCols(),W.getCols());
   for(unsigned int i = 0 ; i < W.getCols() ; i++){
       denom += W[i][i];
+      W2[i][i] = W[i][i]*W[i][i];
   }
 
   if(denom <= std::numeric_limits<double>::epsilon())
@@ -101,6 +102,5 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
   double sigma2 = (W * b - (W * A * x)).t() * (W*b - (W * A * x));
   sigma2 /= denom;
 
-  vpMatrix X = A.t()*(W*W)*A;
-  return (X).pseudoInverse(X.getRows()*DBL_EPSILON)*sigma2;
+  return (A.t()*(W2)*A).pseudoInverse(A.getCols()*DBL_EPSILON)*sigma2;
 }
