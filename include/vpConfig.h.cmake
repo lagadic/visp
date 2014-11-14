@@ -42,7 +42,7 @@
 #define vpConfig_h
 
 #if defined _MSC_VER && _MSC_VER >= 1200
-  #pragma warning( disable: 4100 4127 4251 4514 4668 4710 4820 )
+  #pragma warning( disable: 4100 4127 4251 4275 4514 4668 4710 4820 )
   #if _MSC_VER >= 1400 // 1400 = MSVC 8 2005
     #pragma warning( disable: 4548 )
   #endif
@@ -53,6 +53,7 @@
   // 4100 : undocumented ("unreferenced formal parameter")
   // 4127 : conditional expression is constant
   // 4251 : 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2', ie. disable warnings related to inline functions
+  // 4275 : non – DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier'
   // 4514 : 'function' : unreferenced inline function has been removed
   // 4548 : expression before comma has no effect
   // 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
