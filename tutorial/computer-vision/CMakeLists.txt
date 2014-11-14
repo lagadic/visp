@@ -13,6 +13,9 @@ set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/square.pgm" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "tutorials")
+  endif()
 endforeach()
 
 # Copy the data files to the same location than the target

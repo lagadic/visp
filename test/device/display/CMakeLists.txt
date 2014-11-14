@@ -43,7 +43,7 @@
 # the source name.
 #
 # If you want to add/remove a source, modify here
-SET (SOURCE
+set(SOURCE
   testClick.cpp
   testDisplayRoi.cpp
   testDisplays.cpp
@@ -53,15 +53,19 @@ SET (SOURCE
 )
 
 # rule for binary build
-FOREACH(source ${SOURCE})
+foreach(source ${SOURCE})
   # Compute the name of the binary to create
-  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+  get_filename_component(binary ${source} NAME_WE)
 
   # From source compile the binary and add link rules
-  ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  add_executable(${binary} ${source})
+  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
-ENDFOREACH(source)
+  add_dependencies(visp_tests ${binary})
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(${binary} PROPERTIES FOLDER "tests")
+  endif()
+endforeach()
 
 # Add test
 # To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
@@ -69,14 +73,9 @@ ENDFOREACH(source)
 # To get these sequence download ViSP-images.tar.gz from
 # http://www.irisa.fr/lagadic/visp/visp.html
 
-ADD_TEST(testClick             testClick -c ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(testDisplayRoi        testDisplayRoi -c ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(testDisplays          testDisplays -c ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(testMouseEvent        testMouseEvent -c ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(testVideoDevice       testVideoDevice -c ${OPTION_TO_DESACTIVE_DISPLAY})
-ADD_TEST(testVideoDeviceDual   testVideoDeviceDual -c ${OPTION_TO_DESACTIVE_DISPLAY})
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
+add_test(testClick             testClick -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testDisplayRoi        testDisplayRoi -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testDisplays          testDisplays -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testMouseEvent        testMouseEvent -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testVideoDevice       testVideoDevice -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testVideoDeviceDual   testVideoDeviceDual -c ${OPTION_TO_DESACTIVE_DISPLAY})

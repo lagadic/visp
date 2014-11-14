@@ -43,32 +43,31 @@
 # the source name.
 #
 # If you want to add/remove a source, modify here
-SET (SOURCE
+set(SOURCE
   testAfma6.cpp
   testRobotAfma6.cpp
   testRobotAfma6Pose.cpp
 )
 
 # rule for binary build
-FOREACH(source ${SOURCE})
+foreach(source ${SOURCE})
   # Compute the name of the binary to create
-  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+  get_filename_component(binary ${source} NAME_WE)
 
   # From source compile the binary and add link rules
-  ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  add_executable(${binary} ${source})
+  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
-ENDFOREACH(source)
+  add_dependencies(visp_tests ${binary})
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(${binary} PROPERTIES FOLDER "tests")
+  endif()
+endforeach()
 
 # Add test 
-ADD_TEST(testAfma6      testAfma6) 
-ADD_TEST(testRobotAfma6 testRobotAfma6) 
+add_test(testAfma6      testAfma6)
+add_test(testRobotAfma6 testRobotAfma6)
 
 # testRobotAfma6Pose cannot be run automaticlly, since human interaction is
 # required to click on the dots for the pose computation
-#ADD_TEST(testRobotAfma6Pose testRobotAfma6Pose) 
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
+#add_test(testRobotAfma6Pose testRobotAfma6Pose)

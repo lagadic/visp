@@ -49,8 +49,3 @@ SET (SRC_SUBDIRS
 
 # Build process propagation in the sub directories
 SUBDIRS(${SRC_SUBDIRS})
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)

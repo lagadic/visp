@@ -38,20 +38,26 @@
 #
 #############################################################################
 
-# All source and headers in local directory are added to the project before
-# the exacutable is formed.
-
-FILE(GLOB SOURCE "*.cpp")
-FILE(GLOB HEADERS "*.h")
-
-LIST(APPEND FILES ${SOURCE})
-LIST(APPEND FILES ${HEADERS})
-
-
-
-ADD_EXECUTABLE(servoMomentsImage ${FILES})
-TARGET_LINK_LIBRARIES(servoMomentsImage ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
-
-SET_DIRECTORY_PROPERTIES(PROPERTIES
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
+#
+# If you want to add/remove a source, modify here
+set(SOURCE
+  servoMomentImage.cpp
 )
+
+# rule for binary build
+foreach(source ${SOURCE})
+  # Compute the name of the binary to create
+  get_filename_component(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  add_executable(${binary} ${source})
+  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+
+  add_dependencies(visp_examples ${binary})
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(${binary} PROPERTIES FOLDER "examples")
+  endif()
+endforeach()

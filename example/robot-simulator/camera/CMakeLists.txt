@@ -43,66 +43,65 @@
 # the source name.
 #
 # If you want to add/remove a source, modify here
-SET (SOURCE
-servoSimu3D_cdMc_CamVelocity.cpp
-servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
-servoSimu3D_cMcd_CamVelocity.cpp
-servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
-servoSimuCircle2DCamVelocity.cpp
-servoSimuCircle2DCamVelocityDisplay.cpp
-servoSimuCylinder2DCamVelocityDisplay.cpp
-servoSimuCylinder2DCamVelocityDisplaySecondaryTask.cpp
-servoSimuFourPoints2DCamVelocity.cpp
-servoSimuFourPoints2DCamVelocityDisplay.cpp
-servoSimuFourPoints2DPolarCamVelocityDisplay.cpp
-servoSimuLine2DCamVelocityDisplay.cpp
-servoSimuPoint2DCamVelocity1.cpp
-servoSimuPoint2DCamVelocity2.cpp
-servoSimuPoint2DCamVelocity3.cpp
-servoSimuPoint2DhalfCamVelocity1.cpp
-servoSimuPoint2DhalfCamVelocity2.cpp
-servoSimuPoint2DhalfCamVelocity3.cpp
-servoSimuPoint3DCamVelocity.cpp
-servoSimuSphere2DCamVelocity.cpp
-servoSimuSphere2DCamVelocitySecondaryTask.cpp
-servoSimuSquareLine2DCamVelocityDisplay.cpp
-servoSimuThetaUCamVelocity.cpp
+set(SOURCE
+  servoSimu3D_cdMc_CamVelocity.cpp
+  servoSimu3D_cdMc_CamVelocityWithoutVpServo.cpp
+  servoSimu3D_cMcd_CamVelocity.cpp
+  servoSimu3D_cMcd_CamVelocityWithoutVpServo.cpp
+  servoSimuCircle2DCamVelocity.cpp
+  servoSimuCircle2DCamVelocityDisplay.cpp
+  servoSimuCylinder2DCamVelocityDisplay.cpp
+  servoSimuCylinder2DCamVelocityDisplaySecondaryTask.cpp
+  servoSimuFourPoints2DCamVelocity.cpp
+  servoSimuFourPoints2DCamVelocityDisplay.cpp
+  servoSimuFourPoints2DPolarCamVelocityDisplay.cpp
+  servoSimuLine2DCamVelocityDisplay.cpp
+  servoSimuPoint2DCamVelocity1.cpp
+  servoSimuPoint2DCamVelocity2.cpp
+  servoSimuPoint2DCamVelocity3.cpp
+  servoSimuPoint2DhalfCamVelocity1.cpp
+  servoSimuPoint2DhalfCamVelocity2.cpp
+  servoSimuPoint2DhalfCamVelocity3.cpp
+  servoSimuPoint3DCamVelocity.cpp
+  servoSimuSphere2DCamVelocity.cpp
+  servoSimuSphere2DCamVelocitySecondaryTask.cpp
+  servoSimuSquareLine2DCamVelocityDisplay.cpp
+  servoSimuThetaUCamVelocity.cpp
 )
 
 # rule for binary build
-FOREACH(source ${SOURCE})
+foreach(source ${SOURCE})
   # Compute the name of the binary to create
-  GET_FILENAME_COMPONENT(binary ${source} NAME_WE)
+  get_filename_component(binary ${source} NAME_WE)
 
   # From source compile the binary and add link rules
-  ADD_EXECUTABLE(${binary} ${source})
-  TARGET_LINK_LIBRARIES(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  add_executable(${binary} ${source})
+  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 
-ENDFOREACH(source)
+  add_dependencies(visp_examples ${binary})
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(${binary} PROPERTIES FOLDER "examples")
+  endif()
+endforeach()
 
 # Add test
-ADD_TEST(servoSimu3D_cdMc_CamVelocity			servoSimu3D_cdMc_CamVelocity			)	
-ADD_TEST(servoSimu3D_cdMc_CamVelocityWithoutVpServo	servoSimu3D_cdMc_CamVelocityWithoutVpServo	)	
-ADD_TEST(servoSimu3D_cMcd_CamVelocity			servoSimu3D_cMcd_CamVelocity			)	
-ADD_TEST(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocityWithoutVpServo	)	
-ADD_TEST(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
-ADD_TEST(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-ADD_TEST(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-ADD_TEST(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
-ADD_TEST(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-ADD_TEST(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-ADD_TEST(servoSimuPoint2DCamVelocity1			servoSimuPoint2DCamVelocity1			)
-ADD_TEST(servoSimuPoint2DCamVelocity2			servoSimuPoint2DCamVelocity2			)
-ADD_TEST(servoSimuPoint2DCamVelocity3			servoSimuPoint2DCamVelocity3			)
-ADD_TEST(servoSimuPoint2DhalfCamVelocity1		servoSimuPoint2DhalfCamVelocity1		)
-ADD_TEST(servoSimuPoint2DhalfCamVelocity2		servoSimuPoint2DhalfCamVelocity2		)
-ADD_TEST(servoSimuPoint2DhalfCamVelocity3		servoSimuPoint2DhalfCamVelocity3		)
-ADD_TEST(servoSimuPoint3DCamVelocity			servoSimuPoint3DCamVelocity			)
-ADD_TEST(servoSimuSphere2DCamVelocity			servoSimuSphere2DCamVelocity			)
-ADD_TEST(servoSimuSphere2DCamVelocitySecondaryTask	servoSimuSphere2DCamVelocitySecondaryTask	)
-ADD_TEST(servoSimuThetaUCamVelocity			servoSimuThetaUCamVelocity			)
-
-# customize clean target 
-SET_DIRECTORY_PROPERTIES(PROPERTIES 
-  ADDITIONAL_MAKE_CLEAN_FILES "core*;*~;gmon.out;DartTestfile.txt"
-)
+add_test(servoSimu3D_cdMc_CamVelocity			servoSimu3D_cdMc_CamVelocity			)
+add_test(servoSimu3D_cdMc_CamVelocityWithoutVpServo	servoSimu3D_cdMc_CamVelocityWithoutVpServo	)
+add_test(servoSimu3D_cMcd_CamVelocity			servoSimu3D_cMcd_CamVelocity			)
+add_test(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocityWithoutVpServo	)
+add_test(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
+add_test(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
+add_test(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuPoint2DCamVelocity1			servoSimuPoint2DCamVelocity1			)
+add_test(servoSimuPoint2DCamVelocity2			servoSimuPoint2DCamVelocity2			)
+add_test(servoSimuPoint2DCamVelocity3			servoSimuPoint2DCamVelocity3			)
+add_test(servoSimuPoint2DhalfCamVelocity1		servoSimuPoint2DhalfCamVelocity1		)
+add_test(servoSimuPoint2DhalfCamVelocity2		servoSimuPoint2DhalfCamVelocity2		)
+add_test(servoSimuPoint2DhalfCamVelocity3		servoSimuPoint2DhalfCamVelocity3		)
+add_test(servoSimuPoint3DCamVelocity			servoSimuPoint3DCamVelocity			)
+add_test(servoSimuSphere2DCamVelocity			servoSimuSphere2DCamVelocity			)
+add_test(servoSimuSphere2DCamVelocitySecondaryTask	servoSimuSphere2DCamVelocitySecondaryTask	)
+add_test(servoSimuThetaUCamVelocity			servoSimuThetaUCamVelocity			)

@@ -36,26 +36,21 @@
 # ** File generated automatically, do not modify **
 #
 # This file will define the following CMake variables:
-# VISP_ROOT_DIR       : ViSP base directory location
-# VISP_INCLUDE_DIRS   : ViSP and third-party headers location
-# VISP_LIBRARY_DIRS   : ViSP and third-party libraries location. Calling LINK_DIRECTORIES
-#                       with this path is NOT needed under Unix.
-# VISP_LIBNAME_DBG    : ViSP library name when build in debug (libvisp.so, libvisp.a, vispd.dll, vispd.lib)
-# VISP_LIBNAME_OPT    : ViSP library name when build in release (libvisp.so, libvisp.a, visp.dll, visp.lib)
+#   - VISP_INCLUDE_DIRS   : ViSP and third-party include directories
+#   - VISP_LIBRARIES      : ViSP library to link against. Third-party libraries are
+#                           linked automatically thanks to cmake export file VISPTargets.cmake
+#   - VISP_VERSION_STRING : Full ViSP version that is build, "@VISP_VERSION@"
+#   - VISP_VERSION_MAJOR  : Major version part of VISP_VERSION: "@VISP_VERSION_MAJOR@" 
+#   - VISP_VERSION_MINOR  : Minor version part of VISP_VERSION: "@VISP_VERSION_MINOR@"
+#   - VISP_VERSION_PATCH  : Patch version part of VISP_VERSION: "@VISP_VERSION_PATCH@"
 #
-# VISP_LIBRARIES      : ViSP and third-party libraries to link against.
-# VISP_DEFINITIONS    : Defines used to build ViSP. Calling ADD_DEFINITIONS with this
-#                       variable is not needed.
-#
-# VISP_VERSION_STRING : Full ViSP version, eg 2.9.0
-# VISP_VERSION_MAJOR  : Major version part of VISP_VERSION, eg 2. 
-# VISP_VERSION_MINOR  : Minor version part of VISP_VERSION, eg 9.
-# VISP_VERSION_PATCH  : Patch version part of VISP_VERSION, eg 0.
+#  Advanced variables:
+#    - VISP_SHARED        : Use ViSP as shared library
+#    - VISP_CONFIG_PATH   : Path to this VISPConfig.cmake
 #
 # Typical usage in user project:
+#
 #   find_package(VISP)
-#   add_definitions(${VISP_DEFINITIONS})
-#   link_directories(${VISP_LIBRARY_DIRS})
 #   include_directories(${VISP_INCLUDE_DIRS})
 #   target_link_libraries(MY_TARGET_NAME ${VISP_LIBRARIES})
 #
@@ -64,79 +59,70 @@
 #
 #############################################################################
 
-# Set VISP_ROOT_DIR
-SET(VISP_ROOT_DIR "@VISP_ROOT_DIR_CONFIGCMAKE@")
-#MESSAGE("VISP_ROOT_DIR: ${VISP_ROOT_DIR}")
-SET(VISP_ROOT_DIR_CMAKE "@VISP_ROOT_DIR_CMAKE_CONFIGCMAKE@")
-#MESSAGE("VISP_ROOT_DIR_CMAKE: ${VISP_ROOT_DIR_CMAKE}")
+#if(VISP_FOUND)
+#  return()
+#endif()
+
+#set(VISP_FOUND TRUE)
 
 # Set the version numbers
-SET(VISP_VERSION_STRING "@VISP_VERSION@")
-SET(VISP_VERSION_MAJOR  "@VISP_VERSION_MAJOR@")
-SET(VISP_VERSION_MINOR  "@VISP_VERSION_MINOR@")
-SET(VISP_VERSION_PATCH  "@VISP_VERSION_PATCH@")
+set(VISP_VERSION_STRING "@VISP_VERSION@")
+set(VISP_VERSION_MAJOR  "@VISP_VERSION_MAJOR@")
+set(VISP_VERSION_MINOR  "@VISP_VERSION_MINOR@")
+set(VISP_VERSION_PATCH  "@VISP_VERSION_PATCH@")
 
-# Tells the user project where to find ViSP headers
-SET(VISP_INCLUDE_DIRS "${VISP_ROOT_DIR}/@CMAKE_INSTALL_INCLUDEDIR@" CACHE FILEPATH "Location of ViSP includes")
-#MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
+# Some additional settings are required if ViSP is built as static libs
+set(VISP_SHARED @BUILD_SHARED_LIBS@)
 
-# Get ViSP specific definitions
-SET(VISP_DEFINITIONS "@VISP_DEFS@")
-#MESSAGE("VISP_DEFINITIONS: ${VISP_DEFINITIONS}")
+# Extract the directory where *this* file has been installed (determined at cmake run-time)
+get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH CACHE)
+mark_as_advanced(VISP_CONFIG_PATH)
 
-# Tells the user project where to find ViSP third party headers used
-# to compile ViSP. These locations are concatenate to VISP_INCLUDE_DIRS
-SET(VISP_EXTERN_INCLUDE_DIRS "@VISP_EXTERN_INCLUDE_DIRS@")
-#MESSAGE("VISP_EXTERN_INCLUDE_DIRS: ${VISP_EXTERN_INCLUDE_DIRS}")
-FOREACH(val ${VISP_EXTERN_INCLUDE_DIRS})
-  LIST(APPEND VISP_INCLUDE_DIRS "${val}")
-ENDFOREACH(val ${VISP_EXTERN_INCLUDE_DIRS})
-
-#MESSAGE("VISP_INCLUDE_DIRS: ${VISP_INCLUDE_DIRS}")
-
-# Tells the user project where to find ViSP library
-SET(VISP_LIBRARY_DIRS "${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@" CACHE FILEPATH "Location of ViSP library")
-#MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
-
-# Tells the user project where to find third party libraries used to
-# compile ViSP
-SET(VISP_EXTERN_LINK_DIR "@VISP_EXTERN_LINK_DIR@")
-#MESSAGE("VISP_EXTERN_LINK_DIR: ${VISP_EXTERN_LINK_DIR}")
-FOREACH(val ${VISP_EXTERN_LINK_DIR})
-  LIST(APPEND VISP_LIBRARY_DIRS "${val}")
-ENDFOREACH(val ${VISP_EXTERN_LINK_DIR})
-#MESSAGE("VISP_LIBRARY_DIRS: ${VISP_LIBRARY_DIRS}")
-
-# Set the full library name for debug and release
-set(VISP_LIBNAME_DBG "@VISP_LIBNAME_DBG@")
-set(VISP_LIBNAME_OPT "@VISP_LIBNAME_OPT@")
-
-# Tells the user project ViSP library name
-if(UNIX)
-  set(VISP_LIBRARIES debug ${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@/${VISP_LIBNAME_DBG} optimized ${VISP_ROOT_DIR}/@CMAKE_INSTALL_LIBDIR@/${VISP_LIBNAME_OPT})
-else()
-  set(VISP_LIBRARIES debug "@VISP_INTERN_LIBRARY@@CMAKE_DEBUG_POSTFIX@" optimized "@VISP_INTERN_LIBRARY@")
+if(NOT WIN32)
+  # Since this file is installed in ./${VISP_INSTALL_LIBDIR}/cmake/visp
+  # the first "../../" are here to go to ${VISP_INSTALL_LIBDIR}, and then
+  # VISP_INSTALL_LIBDIR_TO_PARENT goes to the parent dir "."
+  set(VISP_INSTALL_PATH "${VISP_CONFIG_PATH}/../../@VISP_INSTALL_LIBDIR_TO_PARENT@")
+  # Get the absolute path with no ../.. relative marks, to eliminate implicit linker warnings
+  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_LESS 2.8)
+    get_filename_component(VISP_INSTALL_PATH "${VISP_INSTALL_PATH}" ABSOLUTE)
+  else()
+    get_filename_component(VISP_INSTALL_PATH "${VISP_INSTALL_PATH}" REALPATH)
+  endif()
 endif()
 
-# Tells the user project libraries name used to build ViSP library
-SET(VISP_EXTERN_LIBRARIES "@VISP_EXTERN_LIBRARIES@")
-FOREACH(val ${VISP_EXTERN_LIBRARIES})
-  LIST(APPEND VISP_LIBRARIES "${val}")
-ENDFOREACH()
-#MESSAGE("VISP_LIBRARIES: ${VISP_LIBRARIES}")
+# Tells the user project where to find ViSP headers
+set(VISP_INCLUDE_DIRS @VISP_INCLUDE_DIRS_CONFIGCMAKE@)
 
-# where to find the USE file to be used by user project
-SET(VISP_USE_FILE "${VISP_ROOT_DIR_CMAKE}/VISPUse.cmake")
+# Tells the user project ViSP library name
+set(VISP_LIBRARIES "@VISP_INTERN_LIBRARY@")
 
-IF(BUILD_TEST_COVERAGE)
+# need to be improved
+if(POLICY CMP0024)
+  # Fix to prevent multiple includes
+  if(NOT TARGET @VISP_INTERN_LIBRARY@)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0024 OLD)
+    # Our library dependencies (contains definitions for IMPORTED targets)
+    include("${CMAKE_CURRENT_LIST_DIR}/VISPTargets.cmake")
+    cmake_policy(POP)
+  endif()
+else()
+  # Fix for cmake 2.8.7 to prevent multiple includes
+  if(NOT TARGET @VISP_INTERN_LIBRARY@)
+    # Our library dependencies (contains definitions for IMPORTED targets)
+    include("${CMAKE_CURRENT_LIST_DIR}/VISPTargets.cmake")
+  endif()
+endif()
+
+if(BUILD_TEST_COVERAGE)
   # Add build options for test coverage. Currently coverage is only supported
   # on gcc compiler 
   # Because using -fprofile-arcs with shared lib can cause problems like:
   # hidden symbol `__bb_init_func', we add this option only for static 
   # library build
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
-ENDIF(BUILD_TEST_COVERAGE)
-
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+endif()
 
 #----------------------------------------------------------------------
 # Add CXX flags used in ViSP that should be also used when ViSP is a 3rd party
@@ -149,7 +135,6 @@ set(VISP_CPP11_FLAGS "@VISP_CPP11_FLAGS@")
 if(VISP_CPP11_FLAGS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISP_CPP11_FLAGS}")
 endif()
-
 
 #----------------------------------------------------------------------
 # Remember VISP' third party libs configuration:
@@ -207,14 +192,21 @@ SET(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
 macro(visp_add_target file_cpp)
   get_filename_component(target ${file_cpp} NAME_WE)
   include_directories(${VISP_INCLUDE_DIRS})
-  if(VISP_LIBRARY_DIRS)
-    # should be called before add_executable()
-    link_directories(${VISP_LIBRARY_DIRS})
-  endif()
   add_executable(${target} ${file_cpp})
   target_link_libraries(${target} ${VISP_LIBRARIES})
   if(VISP_INTERN_LIBRARY)
     add_dependencies(${target} ${VISP_INTERN_LIBRARY})
+  endif()
+endmacro()
+
+# Create a dependency to the target extracted from the *.cpp file and put the target in the solution dependency folder.
+macro(visp_add_dependency file_cpp dependency)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  if(TARGET visp_${dependency})
+    add_dependencies(visp_${dependency} ${target})
+    if(ENABLE_SOLUTION_FOLDERS)
+      set_target_properties(${target} PROPERTIES FOLDER "${dependency}")
+    endif()
   endif()
 endmacro()
 

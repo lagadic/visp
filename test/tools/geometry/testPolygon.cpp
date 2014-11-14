@@ -170,9 +170,6 @@ main(int argc, const char** argv)
 
 
     std::vector <vpImagePoint> vec3;
-    vec2.push_back(vpImagePoint(250, 250));
-    vec2.push_back(vpImagePoint(150, 250));
-    vec2.push_back(vpImagePoint(250, 250));
     vpPolygon p3(vec3);
 
 #if defined VISP_HAVE_X11
