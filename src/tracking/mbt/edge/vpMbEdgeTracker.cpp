@@ -765,7 +765,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         vpMatrix LVJTLVJ = (LVJ).AtA();
         vpMatrix LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
-        v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
+        v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
         v = cVo * v;
     }
 
