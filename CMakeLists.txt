@@ -2258,19 +2258,6 @@ include(${VISP_CMAKE_MODULE_PATH}/VISPGeneratePkgConfigScript.cmake)
 #----------------------------------------------------------------------
 # Propagation in sub dirs to build demo, example, test, tutorial
 #----------------------------------------------------------------------
-if(BUILD_DEMOS)
-  add_subdirectory(demo)
-endif()
-if(BUILD_EXAMPLES)
-  add_subdirectory(example)
-endif()
-if(BUILD_TUTORIALS)
-  set(VISP_DIR ${PROJECT_BINARY_DIR})
-  mark_as_advanced(VISP_DIR)
-  mark_as_advanced(VISP_INCLUDE_DIRS)
-  add_subdirectory(tutorial)
-endif()
-
 if(BUILD_TESTS)
   #----------------------------------------------------------------------
   # For Dart server and tests
@@ -2299,4 +2286,17 @@ if(BUILD_TESTS)
   endif()
 
   add_subdirectory(test)
+endif()
+
+if(BUILD_DEMOS)
+  add_subdirectory(demo)
+endif()
+if(BUILD_EXAMPLES)
+  add_subdirectory(example)
+endif()
+if(BUILD_TUTORIALS)
+  set(VISP_DIR ${PROJECT_BINARY_DIR})
+  mark_as_advanced(VISP_DIR)
+  mark_as_advanced(VISP_INCLUDE_DIRS)
+  add_subdirectory(tutorial)
 endif()
