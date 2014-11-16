@@ -211,7 +211,7 @@ else(UNIX)
   set(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config.bat")
     
   set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.bat.in")
-  set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/win-install/visp-config.bat")
+  set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/win-install/visp-config-${VISP_ARCH}-${VISP_RUNTIME}.bat")
 
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_PREFIX
@@ -243,12 +243,10 @@ else(UNIX)
 
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_SCRIPT_LIBDIR
-  #----------------------------------------------------------------------
-  set(VISP_CONFIG_SCRIPT_LIBDIR "%PREFIX%/lib")
-  list(APPEND VISP_CONFIG_SCRIPT_LIBDIR "%PREFIX%/lib/$(ConfigurationName)")
-
-  #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_SCRIPT_LIBS
+  # 1/ For usage with the build tree
+  # 2/ For usage with the install tree
+  #
+  # and updates VISP_CONFIG_SCRIPT_LIBS_${config}
   #----------------------------------------------------------------------
   set(TMP_SCRIPT_LIBS_DEBUG "${VISP_INTERN_LIBRARY}${VISP_DLLVERSION}${VISP_DEBUG_POSTFIX}.lib")
   set(TMP_SCRIPT_LIBS_OPTIMIZED "${VISP_INTERN_LIBRARY}${VISP_DLLVERSION}.lib")
@@ -274,7 +272,7 @@ else(UNIX)
 
       # Get the library path
       get_filename_component(libpath ${lib} PATH)
-      list(APPEND VISP_CONFIG_SCRIPT_LIBDIR "${libpath}")
+      list(APPEND VISP_CONFIG_SCRIPT_LIBDIR_ "${libpath}")
       
       if(TMP_IS_DEBUG)
         set(TMP_IS_DEBUG FALSE)
@@ -288,24 +286,26 @@ else(UNIX)
       endif()
     endif()
   endforeach(lib)
-  # Format the string
-  string(REGEX REPLACE "lib/Release" "lib/$(ConfigurationName)" VISP_CONFIG_SCRIPT_LIBDIR "${VISP_CONFIG_SCRIPT_LIBDIR}")
-  string(REGEX REPLACE "lib/Debug" "lib/$(ConfigurationName)" VISP_CONFIG_SCRIPT_LIBDIR "${VISP_CONFIG_SCRIPT_LIBDIR}")
-  list(REMOVE_DUPLICATES VISP_CONFIG_SCRIPT_LIBDIR)
-
-  #message("VISP_CONFIG_SCRIPT_LIBDIR: ${VISP_CONFIG_SCRIPT_LIBDIR}")
 
   # Format the string
   set(VISP_CONFIG_SCRIPT_LIBS_DEBUG "${TMP_SCRIPT_LIBS_DEBUG}")
   set(VISP_CONFIG_SCRIPT_LIBS_OPTIMIZED "${TMP_SCRIPT_LIBS_OPTIMIZED}")
 
-  #MESSAGE(VISP_CONFIG_SCRIPT_LIBS: ${VISP_CONFIG_SCRIPT_LIBS})
+  # Format the string
+  string(REGEX REPLACE "lib/Release" "lib/$(ConfigurationName)" VISP_CONFIG_SCRIPT_LIBDIR_ "${VISP_CONFIG_SCRIPT_LIBDIR_}")
+  string(REGEX REPLACE "lib/Debug" "lib/$(ConfigurationName)" VISP_CONFIG_SCRIPT_LIBDIR_ "${VISP_CONFIG_SCRIPT_LIBDIR_}")
 
-  #---------------------------------------------------------------------
-  # Updates the visp-config shell script
-  #----------------------------------------------------------------------
+  # 1/ For usage with the build tree
+  set(VISP_CONFIG_SCRIPT_LIBDIR "%PREFIX%/lib")
+  list(APPEND VISP_CONFIG_SCRIPT_LIBDIR "%PREFIX%/lib/$(ConfigurationName)")
+  list(APPEND VISP_CONFIG_SCRIPT_LIBDIR ${VISP_CONFIG_SCRIPT_LIBDIR_})
+  list(REMOVE_DUPLICATES VISP_CONFIG_SCRIPT_LIBDIR)
   configure_file(${FILE_VISP_CONFIG_SCRIPT_IN} ${FILE_VISP_CONFIG_SCRIPT})
-  
+
+  # 2/ For usage with the install tree
+  set(VISP_CONFIG_SCRIPT_LIBDIR "%PREFIX%/${VISP_ARCH}/${VISP_RUNTIME}/lib")
+  list(APPEND VISP_CONFIG_SCRIPT_LIBDIR ${VISP_CONFIG_SCRIPT_LIBDIR_})
+  list(REMOVE_DUPLICATES VISP_CONFIG_SCRIPT_LIBDIR)
   configure_file(${FILE_VISP_CONFIG_SCRIPT_INSTALL_IN} ${FILE_VISP_CONFIG_SCRIPT_INSTALL})
 endif(UNIX)
 
