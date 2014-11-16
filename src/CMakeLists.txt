@@ -120,31 +120,14 @@ target_link_libraries(${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
 #----------------------------------------------------------------------
 # customize install target 
 #----------------------------------------------------------------------
-# if RPM package is to build, we need EXECUTE rights (see http://www.itk.org/Bug/view.php?id=12253)
-if(BUILD_PACKAGE_RPM)
-  #message("build rpm")
-  install(
-    TARGETS ${VISP_INTERN_LIBRARY}
-    EXPORT VISPTargets
-    # install rule for all the headers
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
-    # Destination is either lib or lib64 on Unix 64 bits architectures
-    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libraries
-    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
-    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE 
-  )
-else()
-  #message("don't build rpm")
-  install(
-    TARGETS ${VISP_INTERN_LIBRARY}
-    EXPORT VISPTargets
-    # install rule for all the headers
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
-    # Destination is either lib or lib64 on Unix 64 bits architectures
-    RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libraries
-    LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
-    ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE 
-  )
-endif()
+install(
+  TARGETS ${VISP_INTERN_LIBRARY}
+  EXPORT VISPTargets
+  # install rule for all the headers
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
+  # Destination is either lib or lib64 on Unix 64 bits architectures
+  RUNTIME DESTINATION ${VISP_BIN_INSTALL_PATH} COMPONENT libraries
+  LIBRARY DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
+  ARCHIVE DESTINATION ${VISP_LIB_INSTALL_PATH} COMPONENT libraries
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
+)
