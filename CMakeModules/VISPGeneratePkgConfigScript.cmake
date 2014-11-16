@@ -79,7 +79,9 @@ if (UNIX)
   endforeach()
 
   # Suppress twins
-  list(REMOVE_DUPLICATES VISP_CONFIG_CFLAGS)
+  if(VISP_CONFIG_CFLAGS)
+    list(REMOVE_DUPLICATES VISP_CONFIG_CFLAGS)
+  endif()
 
   # Format the string to suppress CMake separators ";"
   set(VISP_CONFIG_CFLAGS_REFORMATED "")
