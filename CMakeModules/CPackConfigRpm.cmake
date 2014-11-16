@@ -135,7 +135,7 @@ ENDIF()
 
 set(CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_DEPENDS}")
 
-SET(CPACK_RPM_PACKAGE_DESCRIPTION "Visual Servoing Platform development files
+set(CPACK_RPM_PACKAGE_DESCRIPTION "Visual Servoing Platform development files
  ViSP, standing for Visual Servoing Platform, is unique. This software
  is a complete cross-platform solution that allows prototyping and
  developing applications in visual tracking and visual servoing.
@@ -145,3 +145,5 @@ SET(CPACK_RPM_PACKAGE_DESCRIPTION "Visual Servoing Platform development files
  .
  This package contains development files (headers and shared library
  symbolic link).")
+
+set(CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/usr/share/man" "/usr/share/man/man1" "/usr/lib64/pkgconfig" "/usr/lib/pkgconfig" "/usr/lib64/cmake" "/usr/lib/cmake")
