@@ -44,22 +44,16 @@
 
 /*!
   \file vpNoise.cpp
-  \brief Classe for generating random number
-  with uniform and normal probability density
+  \brief Class for generating random numbers with uniform and normal probability density.
 
-  The algorithms and notations used are described in
+  The algorithms and notations used are described in \cite Gentle:2004.
 
-  James E. Gentle, Random Number Generation and Monte Carlo Methods,
-  Springer 1998
 */
 
 
-/*!  \brief Minimal random number generator of Park and Miller. Returns a
+/*!
+  Minimal random number generator of Park and Miller \cite Park:1988. Returns a
   uniform random deviate between 0.0 and 1.0.
-
-  S.K. Park and K.W. Miller, " Random Number Generators: Good Ones Are Hard To
-  Find", Communications of the ACM, October 1988, pp. 1192-1201.
-
 
 */
 inline void
@@ -73,7 +67,7 @@ vpUniRand::draw0()
 }
 
 /*!
-  \brief Bays-Durham Shuffling of Park-Miller generator
+  Bays-Durham Shuffling of Park-Miller generator.
 
   Minimal random number generator of Park and Miller with Bays-Durham
   shuffle. Returns a uniform random deviate between 0.0 and 1.0 (exclusive of
@@ -118,11 +112,11 @@ vpUniRand::draw1()
 }
 
 /*!
-  \brief Generate a normal random variable using the Box-Muller generator
+  Generate a normal random variable using the Box-Muller generator.
 
   Generate a normal random variable with mean 0 and standard deviation of 1.
-   To adjust to some other distribution, multiply by the standard deviation and
-   add the mean.  Box-Muller method
+  To adjust to some other distribution, multiply by the standard deviation and
+  add the mean.  Box-Muller method
 */
 double
 vpGaussRand::gaussianDraw()

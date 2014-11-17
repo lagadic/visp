@@ -45,6 +45,7 @@ ViSP 2.10.0 (under development)
     . [17983] Unable to build ViSP when an older version was previously
       installed
     . [18258] Stack overflow when using vpDot under Windows
+    . [16895] undefined reference to `vpGaussRand::gaussianDraw()'
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features

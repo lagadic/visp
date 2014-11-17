@@ -64,9 +64,7 @@
   \ingroup Random
   \brief Class for generating random numbers with uniform probability density.
 
-  The algorithms and notations used are described in
-  Random Number Generation and Monte Carlo Methods
-  James E. Gentle, Springer 1998
+  The algorithms and notations used are described in \cite Gentle:2004.
 
  */
 class VISP_EXPORT vpUniRand
@@ -99,10 +97,10 @@ class VISP_EXPORT vpUniRand
   \ingroup Random
   \brief Class for generating random number with normal probability density.
 
-  The algorithms and notations used are described in "Random Number Generation and Monte Carlo Methods",
-  James E. Gentle, Springer 1998
+  The algorithms and notations used are described in \cite Gentle:1998.
 
-  The code below shows how to use the random generator.
+  The code below shows how to use the random generator to get values that have their mean equal to
+  10 with a standart deviation equal to 0.5.
 
   \code
 #include <iostream>
@@ -116,6 +114,56 @@ int main()
   }
   return 0;
 }
+  \endcode
+
+  The previous example produces the following printings:
+\code
+noise 0: 9.43873
+noise 1: 10.1977
+noise 2: 10.8145
+noise 3: 9.13729
+noise 4: 8.86476
+noise 5: 9.83382
+noise 6: 9.43609
+noise 7: 9.34311
+noise 8: 9.62742
+noise 9: 9.37701
+\endcode
+
+  Note that the previous example produces always the same "random" results. To produce real random
+  values, you need to initialize the random generator with different values using seed(). For example,
+  this could be done using the current time. The code becomes:
+
+\code
+#include <iostream>
+#include <visp/vpNoise.h>
+#include <visp/vpTime.h>
+
+int main()
+{
+  vpGaussRand noise(0.5, 10);
+  long seed = (long)vpTime::measureTimeMs();
+
+  noise.seed(seed);
+  for(int i=0; i< 10; i++) {
+    std::cout << "noise " << i << ": " << noise() << std::endl;
+  }
+  return 0;
+}
+\endcode
+
+  Now if you run the previous example you will always get different values:
+  \code
+noise 0: 10.5982
+noise 1: 9.19111
+noise 2: 9.82498
+noise 3: 9.07857
+noise 4: 9.9285
+noise 5: 10.3688
+noise 6: 9.75621
+noise 7: 10.3259
+noise 8: 10.4238
+noise 9: 10.2391
   \endcode
  */
 class VISP_EXPORT vpGaussRand : public vpUniRand
