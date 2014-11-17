@@ -118,7 +118,7 @@ int main()
 }
   \endcode
  */
-class vpGaussRand : public vpUniRand
+class VISP_EXPORT vpGaussRand : public vpUniRand
 {
   private :
     double mean;
