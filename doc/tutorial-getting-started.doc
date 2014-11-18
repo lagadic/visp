@@ -91,40 +91,25 @@ Now you have to create your \c CMakeLists.txt file. It should look like this:
 \code
 project(tutorial-image)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 find_package(VISP REQUIRED)
-if(VISP_FOUND)
-  add_definitions(${VISP_DEFINITIONS})
-  include_directories(${VISP_INCLUDE_DIRS})
-  link_directories(${VISP_LIBRARY_DIRS})
-  link_libraries(${VISP_LIBRARIES})
-endif(VISP_FOUND)
 
-add_executable(tutorial-viewer tutorial-viewer.cpp)
-\endcode
+include_directories(${VISP_INCLUDE_DIRS})
 
-The \c find_package() CMake command searches for a \c VISPConfig.cmake file that will define the corresponding variables:
-- \c VISP_ROOT_DIR       : ViSP base directory location
-- \c VISP_INCLUDE_DIRS   : ViSP and third-party headers location
-- \c VISP_LIBRARY_DIRS   : ViSP and third-party libraries location
-- \c VISP_LIBRARY        : ViSP library name
-- \c VISP_LIBRARIES      : ViSP and third-party libraries name
-- \c VISP_DEFINITIONS    : Defines required to build with ViSP
-
-In the previous \c CMakeLists.txt file, it is also possible to remove the line that started with \c link_libraries() and to specifically link a binary with ViSP using:
-
-\code
-...
 add_executable(tutorial-viewer tutorial-viewer.cpp)
 target_link_libraries(tutorial-viewer ${VISP_LIBRARIES})
 \endcode
 
-Note also that the previous \c CMakeLists.txt file can also be:
+The \c find_package() CMake command searches for a \c VISPConfig.cmake file that will define the corresponding variables:
+- \c VISP_INCLUDE_DIRS   : ViSP and third-party headers location
+- \c VISP_LIBRARIES      : ViSP and third-party libraries name and location
+
+Note that the previous \c CMakeLists.txt file can also be:
 \code
 project(tutorial-image)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 find_package(VISP REQUIRED)
 if(VISP_FOUND)
@@ -140,9 +125,7 @@ where \c VISP_USE_FILE variable is set to the full path to \c VISPUse.cmake file
 \endcode
 will include the following lines to your \c CMakeFile.txt
 \code
-  add_definitions(${VISP_DEFINITIONS})
   include_directories(${VISP_INCLUDE_DIRS})
-  link_directories(${VISP_LIBRARY_DIRS})
   link_libraries(${VISP_LIBRARIES})
 \endcode
 
