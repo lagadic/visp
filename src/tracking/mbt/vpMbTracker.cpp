@@ -887,7 +887,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigne
 int main()
 {
     ...
-#ifdef VISP_HAVE_COIN
+#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
@@ -918,7 +918,7 @@ vpMbTracker::loadModel(const char *modelFile, const bool verbose)
 int main()
 {
     ...
-#ifdef VISP_HAVE_COIN
+#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
@@ -978,7 +978,7 @@ vpMbTracker::loadModel(const std::string& modelFile, const bool verbose)
 int main()
 {
     ...
-#ifdef VISP_HAVE_COIN
+#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
