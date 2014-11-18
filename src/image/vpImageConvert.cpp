@@ -165,6 +165,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
 }
 
 #ifdef VISP_HAVE_OPENCV
+#  if (VISP_HAVE_OPENCV_VERSION < 0x030000) // Removed from OpenCV 3.0.0
 /*!
   Convert a IplImage to a vpImage\<vpRGBa\>
 
@@ -188,7 +189,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<vpRGBa> Ic; // A color image
   IplImage* Ip;
 
@@ -291,7 +292,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ig; // A grayscale image
   IplImage* Ip;
 
@@ -390,7 +391,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<unsigned char> &dest, bool 
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<vpRGBa> Ic; // A color image
   IplImage* Ip = NULL;
 
@@ -475,7 +476,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ig; // A greyscale image
   IplImage* Ip = NULL;
 
@@ -524,6 +525,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src, IplImage* &dest)
     }
   }
 }
+#endif //  if (VISP_HAVE_OPENCV_VERSION < 0x030000) // Removed from OpenCV 3.0.0
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
 /*!

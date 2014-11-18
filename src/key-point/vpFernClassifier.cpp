@@ -42,7 +42,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
 
 #include <visp/vpFernClassifier.h>
 #include <visp/vpImageTools.h>

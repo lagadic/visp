@@ -57,7 +57,10 @@
 #include <visp/vpRGBa.h>
 
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
+#    include <opencv2/core/core.hpp>
+#    include <opencv2/highgui/highgui.hpp>
+#  elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/legacy/legacy.hpp>
 #    include <opencv2/highgui/highgui.hpp>
@@ -117,6 +120,7 @@ public:
           vpImage<double> &dest);
           
 #ifdef VISP_HAVE_OPENCV
+#  if (VISP_HAVE_OPENCV_VERSION < 0x030000) // Removed from OpenCV 3.0.0
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest, bool flip = false) ;
   static void convert(const IplImage* src,
@@ -125,7 +129,8 @@ public:
           IplImage *&dest) ;
   static void convert(const vpImage<unsigned char> & src,
           IplImage* &dest) ;
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#  endif
+#  if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat& src,
           vpImage<vpRGBa>& dest, const bool flip = false);
   static void convert(const cv::Mat& src,
@@ -134,7 +139,7 @@ public:
           cv::Mat& dest) ;
   static void convert(const vpImage<unsigned char> & src,
           cv::Mat& dest, const bool copyData = true) ;
-#endif
+#  endif
 #endif
     
 #ifdef VISP_HAVE_YARP

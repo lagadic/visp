@@ -131,7 +131,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 }
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 /*!
   Apply the Canny edge operator on the image \e Isrc and return the resulting
   image \e Ires.
@@ -145,7 +145,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Cany uses OpenCV v>=2.1.0
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Cany uses OpenCV >=2.1.0 and < 3.0.0
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;
@@ -589,7 +589,8 @@ void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<dou
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI)
 {
   vpImage<unsigned char> GIx;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+
   IplImage* imgsrc = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
   IplImage* imgdest = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
   imgsrc = cvCreateImage(cvSize((int)I.getWidth(),(int)I.getHeight()), IPL_DEPTH_8U, 1);

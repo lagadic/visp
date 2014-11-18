@@ -27,15 +27,20 @@ int main(int argc, char** argv)
     //vpImage<vpRGBa> I; // for color images
     vpImage<unsigned char> I; // for gray images
     vpImageConvert::convert(frame, I);
+
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     vpDisplayOpenCV d(I);
+#endif
     for(;;) {
       cap >> frame; // get a new frame from camera
       // Convert the image in ViSP format and display it
       vpImageConvert::convert(frame, I);
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
       vpDisplay::display(I);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;
+#endif
     }
   }
   catch(vpException e) {

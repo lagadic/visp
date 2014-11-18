@@ -312,7 +312,7 @@ main(int argc, const char ** argv)
     }
 #endif
 
-#if defined VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv < 3.0.0
     vpDisplayOpenCV *displayCv = NULL;
     displayCv = new vpDisplayOpenCV;
     Icv.init(480, 640, 255);
@@ -382,7 +382,7 @@ main(int argc, const char ** argv)
     delete displayGtk;
 #endif
 
-#if defined VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv < 3.0.0
     delete displayCv;
 #endif
 

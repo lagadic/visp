@@ -77,7 +77,7 @@ int main(int argc, char** argv )
     display(dIy, "Gradient dIy");
 
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, 15, 3);
     display(C, "Canny");

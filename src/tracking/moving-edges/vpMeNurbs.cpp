@@ -575,7 +575,7 @@ vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 
   \param I : Image in which the edge appears.
 */
-#ifdef VISP_HAVE_OPENCV
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 void
 vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
 #else
@@ -583,7 +583,7 @@ void
 vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
 #endif
 {
-#ifdef VISP_HAVE_OPENCV
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
   vpMeSite pt = list.front();
   vpImagePoint firstPoint(pt.ifloat,pt.jfloat);
   pt = list.back();

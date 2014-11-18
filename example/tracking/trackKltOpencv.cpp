@@ -55,7 +55,7 @@
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-#if (defined (VISP_HAVE_OPENCV))
+#if defined (VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 #include <visp/vpKltOpencv.h>
 #include <visp/vpImage.h>

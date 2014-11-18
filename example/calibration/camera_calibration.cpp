@@ -196,8 +196,12 @@ int main(int argc, const char ** argv)
       case Settings::CHESSBOARD:
         //std::cout << "Use chessboard " << std::endl;
         found = findChessboardCorners( cvI, s.boardSize, pointBuf,
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+                                       cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
+#else
                                        CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
-        break;
+#endif
+          break;
       case Settings::CIRCLES_GRID:
         //std::cout << "Use circle grid " << std::endl;
         found = findCirclesGrid( cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID  );
@@ -221,7 +225,12 @@ int main(int argc, const char ** argv)
         if (s.calibrationPattern == Settings::CHESSBOARD) {
           // improve the found corners' coordinate accuracy for chessboard
           cornerSubPix( cvI, pointBuf, cv::Size(11,11),
-                        cv::Size(-1,-1), cv::TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+                        cv::Size(-1,-1),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+                        cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
+#else
+                        cv::TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+#endif
         }
         char title[20]; sprintf(title, "image %ld", frame_index);
         vpDisplay::setTitle(I, title);

@@ -60,7 +60,7 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
-#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY)
+#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 
 #define GETOPTARGS  "x:m:i:n:dchtfCo"

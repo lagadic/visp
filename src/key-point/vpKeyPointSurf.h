@@ -105,9 +105,9 @@
 #include <visp/vpImage.h>
 #include <visp/vpKeyPointSurf.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Surf key-points only available since OpenCV-1.1.0
 int main()
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
@@ -126,10 +126,8 @@ int main()
   surf.display(Ireference, Icurrent);
 
   return (0);
-}
-#else
-int main() {}
 #endif
+}
   \endcode
 
   It is also possible to create the reference thanks to only a part of the
@@ -142,9 +140,9 @@ int main() {}
 #include <visp/vpDisplay.h>
 #include <visp/vpKeyPointSurf.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x010100 // Surf key-points only available since OpenCV-1.1.0
 int main()
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
@@ -183,10 +181,8 @@ int main()
   surf.display(Ireference, Icurrent);
 
   return(0);
-}
-#else
-int main() {}
 #endif
+}
   \endcode
 
   This class is also described in \ref tutorial-matching.

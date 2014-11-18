@@ -72,7 +72,7 @@ class VISP_EXPORT vpImageFilter
 {
 
 public:
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   static void canny(const vpImage<unsigned char>& I,
                     vpImage<unsigned char>& Ic,
                     const unsigned int gaussianFilterSize,

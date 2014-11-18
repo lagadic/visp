@@ -53,7 +53,7 @@
 #include <visp/vpConfig.h>
 #include <visp/vpDebug.h>
 
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x020000))
+#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x020000) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 
 #include <iostream>
 #include <stdlib.h>

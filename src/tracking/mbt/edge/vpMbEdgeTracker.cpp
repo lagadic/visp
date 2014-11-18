@@ -2451,7 +2451,7 @@ vpMbEdgeTracker::initPyramid(const vpImage<unsigned char>& _I, std::vector< cons
     if(scales[i]){
       unsigned int cScale = static_cast<unsigned int>(pow(2., (int)i));
       vpImage<unsigned char>* I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
-#ifdef VISP_HAVE_OPENCV
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
       IplImage* vpI0 = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
       vpI0->imageData = (char*)(_I.bitmap);
       IplImage* vpI = cvCreateImage(cvSize((int)(_I.getWidth() / cScale), (int)(_I.getHeight() / cScale)), IPL_DEPTH_8U, 1);

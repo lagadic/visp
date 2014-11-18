@@ -315,7 +315,11 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
   }
 
   if (try_opencv_reader) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    //std::cout << "Use opencv to read the image" << std::endl;
+    cv::Mat cvI = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+    vpImageConvert::convert(cvI, I);
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     //std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
     vpImageConvert::convert(cvI, I);
@@ -404,7 +408,11 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
   }
 
   if (try_opencv_reader) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    // std::cout << "Use opencv to read the image" << std::endl;
+    cv::Mat cvI = cv::imread(filename, cv::IMREAD_COLOR);
+    vpImageConvert::convert(cvI, I);
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     // std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
     vpImageConvert::convert(cvI, I);

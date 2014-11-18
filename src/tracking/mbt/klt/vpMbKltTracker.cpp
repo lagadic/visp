@@ -42,7 +42,7 @@
 #include <visp/vpMbKltTracker.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
-#ifdef VISP_HAVE_OPENCV
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 
 vpMbKltTracker::vpMbKltTracker()
   : cur(NULL), c0Mo(), compute_interaction(true),

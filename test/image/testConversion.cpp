@@ -272,6 +272,7 @@ main(int argc, const char ** argv)
     vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
 #ifdef VISP_HAVE_OPENCV
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
     double t0 = vpTime::measureTimeMs();
     /////////////////////////
     // Convert a IplImage to a vpImage<vpRGBa>
@@ -398,6 +399,7 @@ main(int argc, const char ** argv)
     if(image!=NULL) cvReleaseImage( &image );
     double t1 = vpTime::measureTimeMs();
     std::cout << "Conversion c interface : " << t1 - t0 << " ms" << std::endl;
+#endif
 
     /* ------------------------------------------------------------------------ */
     /*                  conversion for the new c++ interface                    */
@@ -493,7 +495,6 @@ main(int argc, const char ** argv)
     vpCTRACE << "Write " << filename << std::endl;
     if(!cv::imwrite(filename, imageMat)){
       vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
-      if(image!=NULL) cvReleaseImage( &image );
       return (-1);
     }
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
@@ -515,7 +516,6 @@ main(int argc, const char ** argv)
     vpCTRACE << "Write " << filename << std::endl;
     if(!cv::imwrite(filename, imageMat)){
       vpCTRACE<<"Cannot write image: "<< std::endl << filename << std::endl;
-      if(image!=NULL) cvReleaseImage( &image );
       return (-1);
     }
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
