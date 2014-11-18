@@ -87,6 +87,11 @@ configure_file(
   ${VISP_BINARY_DIR}/VISPConfigVersion.cmake
   IMMEDIATE @ONLY)
 
+configure_file(
+  ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
+  ${VISP_BINARY_DIR}/VISPUse.cmake
+  IMMEDIATE @ONLY)
+
 # --------------------------------------------------------------------------------------------
 #  Part 2/3: ${BIN_DIR}/unix-install/VISPConfig.cmake -> For use *with* "make install"
 # -------------------------------------------------------------------------------------------
@@ -110,12 +115,18 @@ if(UNIX)
     ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake
     IMMEDIATE @ONLY)
 
+  configure_file(
+    ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
+    ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
+    IMMEDIATE @ONLY)
+
   configure_file(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
     ${VISP_BINARY_DIR}/unix-install/vpConfig.h @ONLY)
 
   install(FILES
     ${VISP_BINARY_DIR}/unix-install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake
+    ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/visp"
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT libraries)
@@ -149,8 +160,15 @@ if(WIN32)
     ${VISP_BINARY_DIR}/win-install/VISPConfigVersion.cmake
     IMMEDIATE @ONLY)
 
+  configure_file(
+    ${VISP_CMAKE_MODULE_PATH}/VISPUse.cmake.in
+    ${VISP_BINARY_DIR}/win-install/VISPUse.cmake
+    IMMEDIATE @ONLY)
+
   if(BUILD_SHARED_LIBS)
-    install(FILES "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake" 
+    install(FILES
+      "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
+      "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
       DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}"
       COMPONENT libraries)
     install(EXPORT VISPTargets 
@@ -158,7 +176,9 @@ if(WIN32)
       FILE VISPTargets.cmake 
       COMPONENT libraries)
   else()
-    install(FILES "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake" 
+    install(FILES
+      "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
+      "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
       DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}"
       COMPONENT libraries)
     install(EXPORT VISPTargets 

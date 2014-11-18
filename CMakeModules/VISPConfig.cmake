@@ -44,19 +44,27 @@
 #   - VISP_VERSION_MINOR  : Minor version part of VISP_VERSION. Example: "10"
 #   - VISP_VERSION_PATCH  : Patch version part of VISP_VERSION. Example: "0"
 #
-#  Advanced variables:
-#    - VISP_SHARED        : Use ViSP as shared library
-#    - VISP_CONFIG_PATH   : Path to this VISPConfig.cmake
-#    - VISP_FIND_QUIETLY  : If set to TRUE turn off messages during configuration
+# Advanced variables:
+#   - VISP_SHARED        : Use ViSP as shared library
+#   - VISP_CONFIG_PATH   : Path to this VISPConfig.cmake
+#   - VISP_FIND_QUIETLY  : If set to TRUE turn off messages during configuration
+#   - VISP_USE_FILE      : File to include to use ViSP without specific cmake code
 #
-#  Windows specific variables:
-#    - VISP_STATIC        : If set to TRUE uses ViSP static library (.lib) rather then dynamic (.dll) 
+# Windows specific variables:
+#   - VISP_STATIC        : If set to TRUE uses ViSP static library (.lib) rather then dynamic (.dll) 
 #
 # Typical usage in user project:
 #
 #   find_package(VISP)
 #   include_directories(${VISP_INCLUDE_DIRS})
 #   target_link_libraries(MY_TARGET_NAME ${VISP_LIBRARIES})
+#
+# It is also possible to build your project using VISP_USE_FILE.
+#
+#   find_package(VISP)
+#   if(VISP_FOUND)
+#     include(${VISP_USE_FILE})
+#   endif()
 #
 # Authors:
 # Fabien Spindler

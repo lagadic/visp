@@ -47,12 +47,20 @@
 #  Advanced variables:
 #    - VISP_SHARED        : Use ViSP as shared library
 #    - VISP_CONFIG_PATH   : Path to this VISPConfig.cmake
+#    - VISP_USE_FILE      : File to include to use ViSP without specific cmake code
 #
 # Typical usage in user project:
 #
 #   find_package(VISP)
 #   include_directories(${VISP_INCLUDE_DIRS})
 #   target_link_libraries(MY_TARGET_NAME ${VISP_LIBRARIES})
+#
+# It is also possible to build your project using VISP_USE_FILE.
+#
+#   find_package(VISP)
+#   if(VISP_FOUND)
+#     include(${VISP_USE_FILE})
+#   endif()
 #
 # Authors:
 # Fabien Spindler
@@ -114,6 +122,9 @@ else()
     include("${CMAKE_CURRENT_LIST_DIR}/VISPTargets.cmake")
   endif()
 endif()
+
+# where to find the USE file to be used by user project
+set(VISP_USE_FILE "${CMAKE_CURRENT_LIST_DIR}/VISPUse.cmake")
 
 if(BUILD_TEST_COVERAGE)
   # Add build options for test coverage. Currently coverage is only supported
