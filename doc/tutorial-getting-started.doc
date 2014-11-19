@@ -1,6 +1,6 @@
 
 /**
-  \page tutorial-getting-started Tutorial: Getting started
+  \page tutorial-getting-started Tutorial: How to create and build a CMake project that uses ViSP on Unix or Windows 
   \tableofcontents
 
 \note We assume in this tutorial that you have successfully installed ViSP. Information on ViSP installation is provided in:
@@ -156,13 +156,15 @@ CMake Error at CMakeLists.txt:5 (find_package):
 
 To help \c cmake to find \c VISPConfig.cmake file, just set \c VISP_DIR environment variable and call \c cmake again:
 \code
-export VISP_DIR=/home/ViSP-install-folder
+export VISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp
 cmake .
 \endcode
 or run cmake with the additional VISP_DIR definition
 \code
-cmake -DVISP_DIR=/home/ViSP-install-folder .
+cmake -DVISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp .
 \endcode
+
+Depending on the platform "<multi-arch-folder>" can be empty (OSX) or for example equal to "x86_64-linux-gnu" on Ubuntu.
  
 
 \subsection image_unix_build Generate the executable

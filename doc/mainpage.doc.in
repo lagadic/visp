@@ -44,7 +44,7 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
-\subsection tuto_intro Introduction
+\subsection tuto_install Installation
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
@@ -52,6 +52,9 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+
+\subsection tuto_started Getting Started
+
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 
