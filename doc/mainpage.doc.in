@@ -132,7 +132,7 @@ scheme, ...</p>
 
 Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
-\section tuto_intro Introduction
+\section tuto_intro Installation
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
@@ -140,6 +140,9 @@ Here after you will find a list of tutorials that shows the basic use of <a href
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
 - \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+
+\section tuto_started Getting Started
+
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 
