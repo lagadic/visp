@@ -177,6 +177,10 @@ IF(VISP_HAVE_LAPACK)
   LIST(APPEND SRC_MATH math/matrix/vpMatrix_cholesky.cpp)
 ENDIF()
 
+IF(VISP_HAVE_XML2)
+  LIST(APPEND SRC_MATH math/transformation/vpXmlParserHomogeneousMatrix.cpp)
+ENDIF()
+
 SET (SRC_ROBOT
   robot/robot/vpRobot.cpp
   robot/robot/vpRobotTemplate.cpp

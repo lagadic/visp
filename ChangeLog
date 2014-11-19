@@ -21,6 +21,8 @@ ViSP 2.10.0 (under development)
     . Video reader and writer support mpeg4. ffmpeg is no more requested
       in vpVideoReader and vpVideoWriter. If ffmpeg is not detected or installed
       we use OpenCV.
+    . New vpXmlParserHomogeneousMatrix class to read/write homogeneous 
+      transformations from/to xml files
     . Auto detection of visp-images-data Debian or Ubuntu package that allows
       testing without setting VISP_INPUT_IMAGE_PATH
     . Compat with RaspberryPi architecture

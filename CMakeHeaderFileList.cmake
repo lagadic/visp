@@ -148,6 +148,7 @@ SET (HEADER_MATH
   math/transformation/vpRxyzVector.h
   math/transformation/vpRzyxVector.h
   math/transformation/vpRzyzVector.h
+  math/transformation/vpXmlParserHomogeneousMatrix.h
   math/transformation/vpThetaUVector.h
   math/transformation/vpTranslationVector.h
   math/transformation/vpVelocityTwistMatrix.h
