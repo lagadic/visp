@@ -355,7 +355,16 @@ class VISP_EXPORT vpDisplay
   virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
   virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
   
-  
+  /*!
+    Return the position (along the horizontal axis) on the screen of the display window.
+    \sa getWindowYPosition()
+   */
+  int getWindowXPosition() const {return windowXPosition;};
+  /*!
+    Return the position (along the vertical axis) on the screen of the display window.
+    \sa getWindowXPosition()
+   */
+  int getWindowYPosition() const {return windowYPosition;};
   /*!
     Flushes the display.
     It's necessary to use this function to see the results of any drawing.    
@@ -612,11 +621,11 @@ class VISP_EXPORT vpDisplay
                             double size, const vpColor &color,
                             unsigned int thickness)  ;
   static void displayCharString(const vpImage<unsigned char> &I,
-				const vpImagePoint &ip, const char *string,
-				const vpColor &color) ;
+                                const vpImagePoint &ip, const char *string,
+                                const vpColor &color) ;
   static void displayCharString(const vpImage<unsigned char> &I,
-				int i, int j, const char *string,
-				const vpColor &color) ;
+                                int i, int j, const char *string,
+                                const vpColor &color) ;
   static void displayCircle(const vpImage<unsigned char> &I,
 			    const vpImagePoint &center, unsigned int radius,
 			    const vpColor &color,
@@ -709,7 +718,12 @@ class VISP_EXPORT vpDisplay
 			       const vpColor &color, 
 			       unsigned int thickness=1);
   static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
-
+  static void displayText(const vpImage<unsigned char> &I,
+                          const vpImagePoint &ip, const std::string &s,
+                          const vpColor &color) ;
+  static void displayText(const vpImage<unsigned char> &I,
+                          int i, int j, const std::string &s,
+                          const vpColor &color) ;
   static void flush(const vpImage<unsigned char> &I) ;
   static void flushROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
 
@@ -769,11 +783,11 @@ class VISP_EXPORT vpDisplay
                             double size, const vpColor &color,
                             unsigned int thickness)  ;
   static void displayCharString(const vpImage<vpRGBa> &I,
-				const vpImagePoint &ip, const char *string,
-				const vpColor &color) ;
+                                const vpImagePoint &ip, const char *string,
+                                const vpColor &color) ;
   static void displayCharString(const vpImage<vpRGBa> &I,
-				int i, int j, const char *string,
-				const vpColor &color) ;
+                                int i, int j, const char *string,
+                                const vpColor &color) ;
   static void displayCircle(const vpImage<vpRGBa> &I,
 			    const vpImagePoint &center, unsigned int radius,
 			    const vpColor &color,
@@ -867,6 +881,12 @@ class VISP_EXPORT vpDisplay
 			       const vpColor &color, 
 			       unsigned int thickness=1);
   static void displayROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;
+  static void displayText(const vpImage<vpRGBa> &I,
+                          const vpImagePoint &ip, const std::string &s,
+                          const vpColor &color) ;
+  static void displayText(const vpImage<vpRGBa> &I,
+                          int i, int j, const std::string &s,
+                          const vpColor &color) ;
 
   static void flush(const vpImage<vpRGBa> &I) ;
   static void flushROI(const vpImage<vpRGBa> &I, const vpRect &roi) ;

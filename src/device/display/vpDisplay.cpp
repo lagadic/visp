@@ -117,6 +117,8 @@ vpDisplay::setFont ( const vpImage<unsigned char> &I,
 }
 /*!
   Set the windows title.
+  \note This functionality is not implemented when vpDisplayOpenCV is used.
+
   \param I : Image associated to the display window.
   \param windowtitle : Window title.
 */
@@ -727,6 +729,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
 /*! 
 
   Display a string at the image point \e ip location.
+  Use rather displayText() that does the same.
     
   To select the font used to display the string, use setFont().
     
@@ -735,7 +738,7 @@ vpDisplay::displayArrow ( const vpImage<vpRGBa> &I,
   \param string : String to display in overlay.
   \param color : String color.
   
-  \sa setFont()
+  \sa setFont(), displayText()
 
 */
 void
@@ -760,7 +763,8 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 /*! 
 
   Display a string at the image point \e ip location.
-    
+  Use rather displayText() that does the same.
+
   To select the font used to display the string, use setFont().
     
   \param I : Image associated to the display.
@@ -768,7 +772,7 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
   \param string : String to display in overlay.
   \param color : String color.
   
-  \sa setFont()
+  \sa setFont(), displayText()
 
 */
 void
@@ -793,7 +797,8 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
 /*! 
 
   Display a string at the image point (i,j) location.
-    
+  Use rather displayText() that does the same.
+
   To select the font used to display the string, use setFont().
     
   \param I : Image associated to the display.
@@ -801,7 +806,7 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
   \param string : String to display in overlay.
   \param color : String color.
   
-  \sa setFont()
+  \sa setFont(), displayText()
 
 */
 void
@@ -830,7 +835,8 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
 /*!
 
   Display a string at the image point (i,j) location.
-    
+  Use rather displayText() that does the same.
+
   To select the font used to display the string, use setFont().
     
   \param I : Image associated to the display.
@@ -838,13 +844,13 @@ vpDisplay::displayCharString ( const vpImage<unsigned char> &I,
   \param string : String to display in overlay.
   \param color : String color.
   
-  \sa setFont()
+  \sa setFont(), displayText()
 
 */
 void
 vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
                                int i, int j, const char *string,
-			       const vpColor &color)
+                               const vpColor &color)
 {
   try
   {
@@ -854,6 +860,145 @@ vpDisplay::displayCharString ( const vpImage<vpRGBa> &I,
       ip.set_i( i );
       ip.set_j( j );
       ( I.display )->displayCharString ( ip, string, color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a string at the image point \e ip location.
+
+  To select the font used to display the string, use setFont().
+
+  \param I : Image associated to the display.
+  \param ip : Upper left image point location of the string in the display.
+  \param s : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayText ( const vpImage<unsigned char> &I,
+                         const vpImagePoint &ip, const std::string &s,
+                         const vpColor &color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a string at the image point \e ip location.
+
+  To select the font used to display the string, use setFont().
+
+  \param I : Image associated to the display.
+  \param ip : Upper left image point location of the string in the display.
+  \param s : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayText ( const vpImage<vpRGBa> &I,
+                         const vpImagePoint &ip, const std::string &s,
+                         const vpColor &color )
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a string at the image point (i,j) location.
+
+  To select the font used to display the string, use setFont().
+
+  \param I : Image associated to the display.
+  \param i,j : Upper left image point location of the string in the display.
+  \param s : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayText ( const vpImage<unsigned char> &I,
+                         int i, int j, const std::string &s,
+                         const vpColor &color)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+
+      ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+
+  Display a string at the image point (i,j) location.
+
+  To select the font used to display the string, use setFont().
+
+  \param I : Image associated to the display.
+  \param i,j : Upper left image point location of the string in the display.
+  \param s : String to display in overlay.
+  \param color : String color.
+
+  \sa setFont()
+
+*/
+void
+vpDisplay::displayText ( const vpImage<vpRGBa> &I,
+                         int i, int j, const std::string &s,
+                         const vpColor &color)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      vpImagePoint ip;
+      ip.set_i( i );
+      ip.set_j( j );
+      ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
     }
   }
   catch ( ... )
@@ -2084,6 +2229,8 @@ void vpDisplay::close ( vpImage<unsigned char> &I )
 
 /*!
   Set the windows title.
+  \note This functionality is not implemented when vpDisplayOpenCV is used.
+
   \param I : Image associated to the display window.
   \param windowtitle : Window title.
 */
