@@ -219,10 +219,16 @@ Once the model of the object to track is loaded, with the next line the display 
   tracker.setDisplayFeatures(true);
 \endcode
 
-Now we have to initialize the tracker. With the next line we choose to use a user interaction. As explained later, the user has to match in the image four vertices with their 3D coordinates. Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker:
+Now we have to initialize the tracker. With the next line we choose to use a user interaction. 
 \code
-  tracker.initClick(I, "teabox.init");
+  tracker.initClick(I, "teabox.init", true);
 \endcode
+The user has to click in the image on four vertices with their 3D coordinates defined in the "teabox.init" file. The following image shows where the user has to click.
+
+\image html img-teabox-click.jpg Image "teabox.ppm" used to help the user to initialize the tracker. 
+
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the "*.init" file except the extension that sould be ".ppm". In our case it will be "teabox.ppm".
+
 The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter:
 
 \includelineno teabox.init
