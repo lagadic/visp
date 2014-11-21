@@ -1124,7 +1124,7 @@ std::string vpIoTools::getName(const std::string& pathname)
 std::string vpIoTools::getNameWE(const std::string& pathname)
 {
   std::string name = vpIoTools::getName(pathname);
-  unsigned int found = name.find_last_of(".");
+  size_t found = name.find_last_of(".");
   std::string name_we = name.substr(0, found);
   return name_we;
 }
