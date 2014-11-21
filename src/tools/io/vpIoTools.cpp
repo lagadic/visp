@@ -1093,26 +1093,40 @@ std::string vpIoTools::getViSPImagesDataPath()
   return data_path;
 }
 
+
 /*!
- 	 Returns the name of the file or directory denoted by this pathname.
+   Returns the name of the file or directory denoted by this pathname.
    \return The name of the file or directory denoted by this pathname, or an
    empty string if this pathname's name sequence is empty.
  */
 std::string vpIoTools::getName(const std::string& pathname)
 {
-	if(pathname.size() > 0)
-	{
-		std::string convertedPathname = vpIoTools::path(pathname);
+  if(pathname.size() > 0)
+  {
+    std::string convertedPathname = vpIoTools::path(pathname);
 
-		size_t index = convertedPathname.find_last_of(vpIoTools::separator);
-		if(index != std::string::npos) {
-			return convertedPathname.substr(index + 1);
-		}
+    size_t index = convertedPathname.find_last_of(vpIoTools::separator);
+    if(index != std::string::npos) {
+      return convertedPathname.substr(index + 1);
+    }
 
-		return convertedPathname;
-	}
+    return convertedPathname;
+  }
 
-	return "";
+  return "";
+}
+
+/*!
+   Returns the name of the file without extension or directory denoted by this pathname.
+   \return The name of the file without extension or directory denoted by this pathname, or an
+   empty string if this pathname's name sequence is empty.
+ */
+std::string vpIoTools::getNameWE(const std::string& pathname)
+{
+  std::string name = vpIoTools::getName(pathname);
+  unsigned int found = name.find_last_of(".");
+  std::string name_we = name.substr(0, found);
+  return name_we;
 }
 
 /*!
