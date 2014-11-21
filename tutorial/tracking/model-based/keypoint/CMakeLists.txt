@@ -8,7 +8,7 @@ find_package(VISP REQUIRED)
 set(tutorial_cpp
   tutorial-mb-klt-tracker.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.mpg" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.xml" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.cao" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox-triangle.cao" )
