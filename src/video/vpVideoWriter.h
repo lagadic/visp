@@ -66,7 +66,12 @@
 
   \brief Class that enables to write easily a video file or a sequence of images.
  
-  The following example shows how this class is really easy to use. It enable to write an image sequence. The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
+  The following example available in tutorial-video-recorder.cpp shows how this
+  class can be used to record a video from a camera by default in an mpeg file.
+  \include tutorial-video-recorder.cpp
+
+  The following example shows also how this class can be used to write an image sequence.
+  The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
   
   \code
   #include <visp/vpConfig.h>
