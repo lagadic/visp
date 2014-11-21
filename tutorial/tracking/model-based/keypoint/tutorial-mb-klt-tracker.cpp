@@ -48,7 +48,7 @@ int main()
     tracker.setOgreVisibilityTest(true);
     tracker.loadModel("teabox-triangle.cao");
     tracker.setDisplayFeatures(true);
-    tracker.initClick(I, "teabox.init");
+    tracker.initClick(I, "teabox.init", true);
 
     while(1){
       vpDisplay::display(I);

@@ -1,5 +1,6 @@
 /*! \example tutorial-mb-edge-tracker.cpp */
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpMbEdgeTracker.h>
@@ -17,6 +18,8 @@ int main()
     vpDisplayX display(I,100,100,"Model-based edge tracker");;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display(I,100,100,"Model-based edge tracker");;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I,100,100,"Model-based edge tracker");;
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -47,7 +50,7 @@ int main()
     tracker.loadModel("teabox.cao");
     //tracker.loadModel("teabox.wrl");
     tracker.setDisplayFeatures(true);
-    tracker.initClick(I, "teabox.init");
+    tracker.initClick(I, "teabox.init", true);
 
     while(1){
       vpDisplay::display(I);
