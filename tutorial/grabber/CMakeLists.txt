@@ -11,8 +11,10 @@ set(tutorial_cpp
   tutorial-grabber-CMU1394.cpp
   tutorial-grabber-opencv.cpp
   tutorial-grabber-opencv-bis.cpp
-  tutorial-grabber-video.cpp
-  tutorial-grabber-v4l2.cpp)
+  tutorial-grabber-v4l2.cpp
+  tutorial-video-reader.cpp
+  tutorial-video-recorder.cpp
+)
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mpg")
 
@@ -25,5 +27,5 @@ endforeach()
 
 # Copy the data files to the same location than the target
 foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-grabber-video.cpp ${data})
+  visp_copy_data(tutorial-video-reader.cpp ${data})
 endforeach()
