@@ -200,7 +200,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     std::cout << "No modification : left click " << std::endl;
     std::cout << "Modify initial pose : right click " << std::endl ;
 
-    vpDisplay::displayCharString(I, 15, 10,
+    vpDisplay::displayText(I, 15, 10,
               "left click to validate, right click to modify initial pose",
               vpColor::red);
 
@@ -215,6 +215,8 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
   }
   else
   {
+    vpDisplay *d_help = NULL;
+
     vpDisplay::display(I) ;
     vpDisplay::flush(I) ;
 
@@ -234,41 +236,49 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 		else
       sprintf(s,"%s.init", initFile.c_str());
 	
-    std::cout << "filename " << s << std::endl ;
+    std::cout << "Load 3D points from: " << s << std::endl ;
     finit.open(s,std::ios::in) ;
     if (finit.fail()){
       std::cout << "cannot read " << s << std::endl;
 	    throw vpException(vpException::ioError, "cannot read init file");
     }
 
-		std::string dispF;
-    if( pos == initFile.size()-ext.size() && pos != 0)
-      dispF = initFile.substr(0,pos) + ".ppm";
-		else
-      dispF = initFile + ".ppm";
-    
-		sprintf(s, "%s", dispF.c_str());
-
-    vpImage<vpRGBa> Iref ;
-    //Display window creation and initialistation
-#if defined VISP_HAVE_X11
-    vpDisplayX d;
-#elif defined VISP_HAVE_GDI
-    vpDisplayGDI d;
-#elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV d;
-#endif
+    //Display window creation and initialisation
     try{
       if(displayHelp){
-        vpImageIo::read(Iref,s) ;
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-        d.init(Iref,10,500, "Where to initialize...")  ;
-    	  vpDisplay::display(Iref) ;
-    	  vpDisplay::flush(Iref);
+        std::string dispF;
+        if( pos == initFile.size()-ext.size() && pos != 0)
+          dispF = initFile.substr(0,pos) + ".ppm";
+        else
+          dispF = initFile + ".ppm";
+
+        if (vpIoTools::checkFilename(dispF)) {
+          std::cout << "Load image to help initialization: " << dispF << std::endl;
+#if defined VISP_HAVE_X11
+          d_help = new vpDisplayX ;
+#elif defined VISP_HAVE_GDI
+          d_help = new vpDisplayGDI;
+#elif defined VISP_HAVE_OPENCV
+          d_help = new vpDisplayOpenCV;
 #endif
-	  	}
+
+          vpImage<vpRGBa> Iref ;
+          vpImageIo::read(Iref, dispF) ;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+          d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+20, I.display->getWindowYPosition(),
+                       "Where to initialize...")  ;
+          vpDisplay::display(Iref) ;
+          vpDisplay::flush(Iref);
+#endif
+        }
+      }
     }
-    catch(...){}
+    catch(...) {
+      if(d_help != NULL) {
+        delete d_help;
+        d_help = NULL;
+      }
+    }
 
     char c;
     // skip lines starting with # as comment
@@ -314,12 +324,22 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     while(!isWellInit)
     {
 ////////////////////////////////
+      std::vector<vpImagePoint> mem_ip;
       for(unsigned int i=0 ; i< n ; i++)
       {
+        std::ostringstream text;
+        text << "Click on point " << i+1;
+        vpDisplay::display(I);
+        vpDisplay::displayText(I, 15, 10, text.str(), vpColor::red);
+        for (unsigned int k=0; k<mem_ip.size(); k++) {
+          vpDisplay::displayCross(I, mem_ip[k], 10, vpColor::green, 2) ;
+        }
+        vpDisplay::flush(I) ;
+
         std::cout << "Click on point " << i+1 << " ";
         double x=0,y=0;
         vpDisplay::getClick(I, ip) ;
-        vpDisplay::displayCross(I, ip, 5,vpColor::green) ;
+        mem_ip.push_back(ip);
         vpDisplay::flush(I) ;
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
         P[i].set_x(x);
@@ -327,10 +347,10 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 
         std::cout << "with 2D coordinates: " << ip << std::endl;
 
-        vpDisplay::displayPoint (I, ip, vpColor::green); //display target point
         pose.addPoint(P[i]) ; // and added to the pose computation point list
       }
       vpDisplay::flush(I) ;
+      vpDisplay::display(I) ;
 
       vpHomogeneousMatrix cMo1, cMo2;
       pose.computePose(vpPose::LAGRANGE, cMo1) ;
@@ -347,9 +367,9 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       display(I, cMo, cam, vpColor::green, 1, true);
-      vpDisplay::displayCharString(I, 15, 10,
-				 "left click to validate, right click to re initialize object",
-				 vpColor::red);
+      vpDisplay::displayText(I, 15, 10,
+                             "left click to validate, right click to re initialize object",
+                             vpColor::red);
 
       vpDisplay::flush(I) ;
 
@@ -378,6 +398,11 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 			savePose(str_pose);
 		else
 			savePose(poseSavingFilename);
+
+    if(d_help != NULL) {
+      delete d_help;
+      d_help = NULL;
+    }
 	}
 
   std::cout <<"cMo : "<<std::endl << cMo <<std::endl;
@@ -398,6 +423,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 {
   vpDisplay::display(I) ;
   vpDisplay::flush(I) ;
+  vpDisplay *d_help = NULL;
 
 	vpPose pose ;
   vpPoint *P = NULL; P = new vpPoint [points3D_list.size()]  ;
@@ -405,27 +431,33 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ; 
   
 	vpImage<vpRGBa> Iref ;
-	//Display window creation and initialistation
-	#if defined VISP_HAVE_X11
-		vpDisplayX d;
-	#elif defined VISP_HAVE_GDI
-		vpDisplayGDI d;
-	#elif defined VISP_HAVE_OPENCV
-		vpDisplayOpenCV d;
-	#endif
-			
-	if(displayFile != ""){	
-		try{
-			std::cout << displayFile.c_str() << std::endl;
-      vpImageIo::read(Iref,displayFile.c_str()) ;
-			#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-				d.init(Iref,10,500, "Where to initialize...")  ;
-				vpDisplay::display(Iref) ;
-				vpDisplay::flush(Iref);
-			#endif
-		}
-		catch(...){}
-	}
+  //Display window creation and initialisation
+  if(vpIoTools::checkFilename(displayFile)){
+    try{
+      std::cout << "Load image to help initialization: " << displayFile << std::endl;
+#if defined VISP_HAVE_X11
+      d_help = new vpDisplayX ;
+#elif defined VISP_HAVE_GDI
+      d_help = new vpDisplayGDI;
+#elif defined VISP_HAVE_OPENCV
+      d_help = new vpDisplayOpenCV;
+#endif
+
+      vpImageIo::read(Iref, displayFile) ;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+      d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+20, I.display->getWindowYPosition(),
+                   "Where to initialize...")  ;
+      vpDisplay::display(Iref) ;
+      vpDisplay::flush(Iref);
+#endif
+    }
+    catch(...) {
+      if(d_help != NULL) {
+        delete d_help;
+        d_help = NULL;
+      }
+    }
+  }
 	
 	vpImagePoint ip;
 	bool isWellInit = false;
@@ -464,7 +496,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 		pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
     display(I, cMo, cam, vpColor::green, 1, true);
-    vpDisplay::displayCharString(I, 15, 10,
+    vpDisplay::displayText(I, 15, 10,
 				"left click to validate, right click to re initialize object",
 				vpColor::red);
 
@@ -489,6 +521,10 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
   vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
 
 	delete [] P;
+  if(d_help != NULL) {
+    delete d_help;
+    d_help = NULL;
+  }
 
   init(I);
 }
