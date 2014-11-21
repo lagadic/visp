@@ -41,10 +41,12 @@
 
 #include <visp/vpImageFilter.h>
 #include <visp/vpImageConvert.h>
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-#include <opencv2/imgproc/imgproc_c.h>
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#  include <opencv2/imgproc/imgproc.hpp>
+#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#  include <opencv2/imgproc/imgproc_c.h>
 #elif defined(VISP_HAVE_OPENCV)
-#include <cv.h>
+#  include <cv.h>
 #endif
 
 /*!
@@ -131,7 +133,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 }
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 /*!
   Apply the Canny edge operator on the image \e Isrc and return the resulting
   image \e Ires.
@@ -145,7 +147,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Cany uses OpenCV >=2.1.0 and < 3.0.0
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Cany uses OpenCV >=2.1.0
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;
@@ -174,11 +176,12 @@ int main()
 */
 void
 vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
-                  vpImage<unsigned char>& Ires,
-                  const unsigned int gaussianFilterSize,
-                  const double thresholdCanny,
-                  const unsigned int apertureSobel)
+                      vpImage<unsigned char>& Ires,
+                      const unsigned int gaussianFilterSize,
+                      const double thresholdCanny,
+                      const unsigned int apertureSobel)
 {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   IplImage* img_ipl = NULL;
   vpImageConvert::convert(Isrc, img_ipl);
   IplImage* edges_ipl;
@@ -190,6 +193,13 @@ vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
   vpImageConvert::convert(edges_ipl, Ires);
   cvReleaseImage(&img_ipl);
   cvReleaseImage(&edges_ipl);
+#else
+  cv::Mat img_cvmat, edges_cvmat;
+  vpImageConvert::convert(Isrc, img_cvmat);
+  cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size(gaussianFilterSize, gaussianFilterSize), 0, 0);
+  cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny, (int)apertureSobel);
+  vpImageConvert::convert(edges_cvmat, Ires);
+#endif
 }
 #endif
 
