@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 #ifdef VISP_HAVE_XML2
               << "xml,"
 #endif
-              << "cao]" << std::endl;
+              << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     vpImage<unsigned char> I;
@@ -55,30 +55,37 @@ int main(int argc, char** argv)
 #endif
 
     vpMbEdgeTracker tracker;
+    bool usexml = false;
 #ifdef VISP_HAVE_XML2
-    tracker.loadConfigFile(objectname + ".xml");
-#else
-    vpMe me;
-    me.setMaskSize(5);
-    me.setMaskNumber(180);
-    me.setRange(8);
-    me.setThreshold(10000);
-    me.setMu1(0.5);
-    me.setMu2(0.5);
-    me.setSampleStep(4);
-    me.setNbTotalSample(250);
-    tracker.setMovingEdge(me);
-    cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-    tracker.setCameraParameters(cam);
-    tracker.setAngleAppear( vpMath::rad(70) );
-    tracker.setAngleDisappear( vpMath::rad(80) );
-    tracker.setNearClippingDistance(0.1);
-    tracker.setFarClippingDistance(100.0);
-    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    if(vpIoTools::checkFilename(objectname + ".xml")) {
+      tracker.loadConfigFile(objectname + ".xml");
+      usexml = true;
+    }
 #endif
+    if (! usexml) {
+      vpMe me;
+      me.setMaskSize(5);
+      me.setMaskNumber(180);
+      me.setRange(8);
+      me.setThreshold(10000);
+      me.setMu1(0.5);
+      me.setMu2(0.5);
+      me.setSampleStep(4);
+      me.setNbTotalSample(250);
+      tracker.setMovingEdge(me);
+      cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+      tracker.setCameraParameters(cam);
+      tracker.setAngleAppear( vpMath::rad(70) );
+      tracker.setAngleDisappear( vpMath::rad(80) );
+      tracker.setNearClippingDistance(0.1);
+      tracker.setFarClippingDistance(100.0);
+      tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    }
     tracker.setOgreVisibilityTest(false);
-    tracker.loadModel(objectname + ".cao");
-    //tracker.loadModel(objectname + ".wrl");
+    if(vpIoTools::checkFilename(objectname + ".cao"))
+      tracker.loadModel(objectname + ".cao");
+    else if(vpIoTools::checkFilename(objectname + ".wrl"))
+      tracker.loadModel(objectname + ".wrl");
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
 
@@ -107,6 +114,8 @@ int main(int argc, char** argv)
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "Install OpenCV or ffmpeg and rebuild ViSP to use this example." << std::endl;
 #endif
 }

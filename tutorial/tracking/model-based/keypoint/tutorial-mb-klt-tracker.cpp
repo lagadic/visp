@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 #ifdef VISP_HAVE_XML2
               << "xml,"
 #endif
-              << "cao]" << std::endl;
+              << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
     vpImage<unsigned char> I;
     vpCameraParameters cam;
@@ -52,27 +52,32 @@ int main(int argc, char** argv)
 #endif
 
     vpMbKltTracker tracker;
+    bool usexml = false;
 #ifdef VISP_HAVE_XML2
-    tracker.loadConfigFile(objectname + ".xml");
-#else
-    tracker.setMaskBorder(5);
-    vpKltOpencv klt_settings;
-    klt_settings.setMaxFeatures(300);
-    klt_settings.setWindowSize(5);
-    klt_settings.setQuality(0.015);
-    klt_settings.setMinDistance(8);
-    klt_settings.setHarrisFreeParameter(0.01);
-    klt_settings.setBlockSize(3);
-    klt_settings.setPyramidLevels(3);
-    tracker.setKltOpencv(klt_settings);
-    cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-    tracker.setCameraParameters(cam);
-    tracker.setAngleAppear( vpMath::rad(70) );
-    tracker.setAngleDisappear( vpMath::rad(80) );
-    tracker.setNearClippingDistance(0.1);
-    tracker.setFarClippingDistance(100.0);
-    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    if(vpIoTools::checkFilename(objectname + ".xml")) {
+      tracker.loadConfigFile(objectname + ".xml");
+      usexml = true;
+    }
 #endif
+    if (! usexml) {
+      tracker.setMaskBorder(5);
+      vpKltOpencv klt_settings;
+      klt_settings.setMaxFeatures(300);
+      klt_settings.setWindowSize(5);
+      klt_settings.setQuality(0.015);
+      klt_settings.setMinDistance(8);
+      klt_settings.setHarrisFreeParameter(0.01);
+      klt_settings.setBlockSize(3);
+      klt_settings.setPyramidLevels(3);
+      tracker.setKltOpencv(klt_settings);
+      cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+      tracker.setCameraParameters(cam);
+      tracker.setAngleAppear( vpMath::rad(70) );
+      tracker.setAngleDisappear( vpMath::rad(80) );
+      tracker.setNearClippingDistance(0.1);
+      tracker.setFarClippingDistance(100.0);
+      tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    }
     tracker.setOgreVisibilityTest(true);
     tracker.loadModel(objectname + "-triangle.cao");
     tracker.setDisplayFeatures(true);
@@ -102,6 +107,9 @@ int main(int argc, char** argv)
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }
