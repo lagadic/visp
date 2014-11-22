@@ -58,6 +58,8 @@ int main(int argc, char** argv)
     std::cout << e.getMessage() << std::endl;
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "Install OpenCV or ffmpeg and rebuild ViSP to use this example." << std::endl;
 #endif
 }

@@ -77,6 +77,8 @@ int main(int argc, char** argv)
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }
