@@ -29,7 +29,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
 
   vpDisplay::setTitle(I, title.c_str());
   vpDisplay::display(I);
-  vpDisplay::displayCharString(I, 15,15, "Click to continue...", vpColor::red);
+  vpDisplay::displayText(I, 15,15, "Click to continue...", vpColor::red);
   vpDisplay::flush(I);
   vpDisplay::getClick(I);
 }
@@ -77,7 +77,7 @@ int main(int argc, char** argv )
     display(dIy, "Gradient dIy");
 
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, 15, 3);
     display(C, "Canny");
