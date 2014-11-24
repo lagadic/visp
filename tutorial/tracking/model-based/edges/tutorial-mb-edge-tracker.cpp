@@ -97,12 +97,12 @@ int main(int argc, char** argv)
       tracker.getCameraParameters(cam);
       tracker.display(I, cMo, cam, vpColor::red, 2);
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
-      vpDisplay::flush(I);
-
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
+      vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false))
         break;
     }
+    vpDisplay::getClick(I);
 #ifdef VISP_HAVE_XML2
     vpXmlParser::cleanup();
 #endif
