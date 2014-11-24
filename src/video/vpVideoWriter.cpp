@@ -48,6 +48,11 @@
 #include <visp/vpDebug.h>
 #include <visp/vpVideoWriter.h>
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020200
+#  include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+
 /*!
   Basic constructor.
 */
@@ -79,6 +84,10 @@ vpVideoWriter::vpVideoWriter() :
 #  endif
   bit_rate = 500000;
   framerate = 25;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+  framerate = 25.0;
+  //fourcc = cv::VideoWriter::fourcc('I','Y','U','V');
+  fourcc = cv::VideoWriter::fourcc('M','P','E','G');
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   framerate = 25.0;
   fourcc = CV_FOURCC_DEFAULT;
@@ -315,11 +324,16 @@ void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
   {
 #ifdef VISP_HAVE_FFMPEG
     ffmpeg->saveFrame(I);
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    cv::Mat matFrame, rgbMatFrame;
+    vpImageConvert::convert(I, matFrame);
+    cv::cvtColor(matFrame, rgbMatFrame, cv::COLOR_GRAY2BGR);
+    writer << rgbMatFrame;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	  cv::Mat matFrame, rgbMatFrame;
-	  vpImageConvert::convert(I, matFrame);
-	  cv::cvtColor(matFrame, rgbMatFrame, CV_GRAY2BGR);
-	  writer << rgbMatFrame;
+    cv::Mat matFrame, rgbMatFrame;
+    vpImageConvert::convert(I, matFrame);
+    cv::cvtColor(matFrame, rgbMatFrame, CV_GRAY2BGR);
+    writer << rgbMatFrame;
 #endif
   }
 

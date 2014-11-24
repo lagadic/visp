@@ -171,7 +171,6 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     //!To read video files with OpenCV
     cv::VideoCapture capture;
-    cv::Mat dummyImage;
     cv::Mat frame;
 #endif
     //!Types of available formats
@@ -210,7 +209,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     //!Indicates if the video is "open".
     bool isOpen;
     //!Count the frame number when the class is used as a grabber.
-    long frameCount;
+    long frameCount; // Index of the next image
     //!The first frame index
     long firstFrame;
     //!The last frame index
@@ -239,7 +238,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     double getFramerate();
 
     /*!
-      Get the current frame index. This index is updated at each call of the
+      Get the frame index of the next image. This index is updated at each call of the
       acquire method. It can be used to detect the end of a file (comparison
       with getLastFrameIndex()).
 

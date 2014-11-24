@@ -53,9 +53,9 @@
 #include <visp/vpFFMPEG.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
-#include "opencv2/highgui/highgui.hpp"
+#  include <opencv2/highgui/highgui.hpp>
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020000
-#include "opencv/highgui.h"
+#  include <opencv/highgui.h>
 #endif
 
 
