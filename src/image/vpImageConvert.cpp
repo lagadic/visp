@@ -790,10 +790,10 @@ int main()
   vpImageIo::read(Ig, "image.pgm");
   // Convert the vpImage<unsigned char> in to greyscale cv::Mat
   vpImageConvert::convert(Ig, Ip);
-  // Treatments on cv::MatIp
+  // Treatments on cv::Mat Ip
   //...
   // Save the cv::Mat on the disk
-  cv::imwrite("image.pgm", Ip);
+  cv::imwrite("image-cv.pgm", Ip);
 #endif
 }
 
