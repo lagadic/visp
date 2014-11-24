@@ -204,11 +204,9 @@ public:
   std::string getHomogeneousMatrixName() const {return this->m_name;}
 
   vpXmlParserHomogeneousMatrix& operator =(const vpXmlParserHomogeneousMatrix& twinparser);
-  int parse(vpHomogeneousMatrix &M, const char * filename,
-            const std::string &name);
+  int parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
-  int save(const vpHomogeneousMatrix &M, const char * filename,
-           const std::string &name);
+  int save(const vpHomogeneousMatrix &M, const std::string &filename, const std::string &name);
 
   void setHomogeneousMatrixName(const std::string& name){
     this->m_name = name;

@@ -111,13 +111,13 @@ vpXmlParserHomogeneousMatrix::operator =(const vpXmlParserHomogeneousMatrix& twi
   \return error code.
 */
 int
-vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M, const char * filename,
+vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M, const std::string &filename,
                                     const std::string &name)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
 
-  doc = xmlParseFile(filename);
+  doc = xmlParseFile(filename.c_str());
   if (doc == NULL)
   {
     std::cerr << std::endl
@@ -152,13 +152,13 @@ vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M, const char * filenam
   \return error code.
 */
 int
-vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const char * filename,
-                                   const std::string& name)
+vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const std::string &filename,
+                                   const std::string &name)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
 
-  doc = xmlReadFile(filename,NULL,XML_PARSE_NOWARNING + XML_PARSE_NOERROR
+  doc = xmlReadFile(filename.c_str(), NULL, XML_PARSE_NOWARNING + XML_PARSE_NOERROR
                     + XML_PARSE_NOBLANKS);
   if (doc == NULL){
     doc = xmlNewDoc ((xmlChar*)"1.0");
@@ -186,7 +186,7 @@ vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const char * fi
 
   if( M_isFound > 0){
     //vpCERROR
-    std::cout << "There is already an Homogeneous matrixy "<< std::endl
+    std::cout << "There is already an homogeneous matrix "<< std::endl
               << "available in the file with the input name: "<< name << "."<< std::endl
               << "Please delete it manually from the xml file."<< std::endl;
     xmlFreeDoc(doc);
@@ -195,9 +195,9 @@ vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const char * fi
 
   write(node, name);
 
-  xmlSaveFormatFile(filename, doc, 1);
+  xmlSaveFormatFile(filename.c_str(), doc, 1);
   xmlFreeDoc(doc);
-  std::cout << "Homogeneous matrix '"<< name << "' saved in the file named "<< filename << " correctly." << std::endl;
+//  std::cout << "Homogeneous matrix '"<< name << "' saved in the file named "<< filename << " correctly." << std::endl;
 
   return SEQUENCE_OK;
 }
