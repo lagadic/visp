@@ -364,7 +364,7 @@ main(int argc, const char ** argv)
         tracker->resetTracker();
 
         if (opt_display && opt_click_allowed) {
-          vpDisplay::displayCharString(I, 10, 10, "Re-init simulation", vpColor::red);
+          vpDisplay::displayText(I, 10, 10, "Re-init simulation", vpColor::red);
           vpDisplay::flush(I);
           tracker->initClick(I, delaunay);
         }
@@ -397,7 +397,7 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I) ;
     }
     if (opt_click_allowed) {
-      vpDisplay::displayCharString(I, 10,10, "A click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 10,10, "A click to exit...", vpColor::red);
       vpDisplay::flush(I) ;
       vpDisplay::getClick(I) ;
     }

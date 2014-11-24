@@ -111,9 +111,9 @@ int main()
 #endif
 
     vpDisplay::display(I);
-    vpDisplay::displayCharString(I, 10, 10,
-                                 "Click in the 4 dots to initialise the tracking and start the servo",
-                                 vpColor::red);
+    vpDisplay::displayText(I, 10, 10,
+                           "Click in the 4 dots to initialise the tracking and start the servo",
+                           vpColor::red);
     vpDisplay::flush(I);
 
     vpFeaturePoint p[4], pd[4];

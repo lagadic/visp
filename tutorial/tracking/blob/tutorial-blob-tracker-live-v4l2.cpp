@@ -38,7 +38,7 @@ int main()
       vpDisplay::display(I);
 
       if (! init_done) {
-        vpDisplay::displayCharString(I, vpImagePoint(10,10), "Click in the blob to initialize the tracker", vpColor::red);
+        vpDisplay::displayText(I, vpImagePoint(10,10), "Click in the blob to initialize the tracker", vpColor::red);
         if (vpDisplay::getClick(I, germ, false)) {
           blob.initTracking(I, germ);
           init_done = true;

@@ -113,7 +113,7 @@ int main()
 #endif
 
     vpDisplay::display(I);
-    vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to learn their positions", vpColor::red);
+    vpDisplay::displayText(I, 10, 10, "Click in the 4 dots to learn their positions", vpColor::red);
     vpDisplay::flush(I);
 
     std::vector<vpDot2> dot(4);
@@ -133,7 +133,7 @@ int main()
 
     vpDisplay::display(I);
     vpDisplay::setTitle(I, "Current camera view");
-    vpDisplay::displayCharString(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
+    vpDisplay::displayText(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
     vpDisplay::flush(I);
 
     for (int i = 0 ; i < 4 ; i++) {

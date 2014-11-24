@@ -131,7 +131,7 @@ int main()
     graph.saveData(1, "./error2.dat");
 
     const char *legend = "Click to quit...";
-    vpDisplay::displayCharString(graph.I, (int)graph.I.getHeight()-60, (int)graph.I.getWidth()-150, legend, vpColor::red);
+    vpDisplay::displayText(graph.I, (int)graph.I.getHeight()-60, (int)graph.I.getWidth()-150, legend, vpColor::red);
     vpDisplay::flush(graph.I);
     vpDisplay::getClick(graph.I);
 #endif

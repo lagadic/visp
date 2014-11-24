@@ -167,7 +167,7 @@ void draw(vpImage<vpRGBa> &I)
 
   iP1.set_i(20);
   iP1.set_j(60);
-  vpDisplay::displayCharString (I, iP1, "Test...", vpColor::black);
+  vpDisplay::displayText (I, iP1, "Test...", vpColor::black);
 
   iP1.set_i(80);
   iP1.set_j(220);
