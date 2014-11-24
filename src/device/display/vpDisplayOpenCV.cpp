@@ -49,7 +49,7 @@
 
 #include <visp/vpConfig.h>
 
-#if ( defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if defined(VISP_HAVE_OPENCV)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,6 +67,15 @@
 #include <visp/vpDebug.h>
 #include <visp/vpDisplayException.h>
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+
+#include <opencv2/imgproc/imgproc.hpp>
+
+#  ifndef CV_RGB
+#    define CV_RGB( r, g, b )  cv::Scalar( (b), (g), (r), 0 )
+#  endif
+#endif
+
 /*!
 
   Constructor. Initialize a display to visualize a gray level image
@@ -82,9 +91,15 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int y,
                                  const char *title)
 {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   col = NULL;
   background = NULL;
   font = NULL;
+#else
+  col = NULL;
+  font = cv::FONT_HERSHEY_PLAIN;
+  fontScale = 0.8;
+#endif
   init(I, x, y, title) ;
 }
 
@@ -102,9 +117,15 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
                                  int y,
                                  const char *title)
 {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   col = NULL;
   background = NULL;
   font = NULL;
+#else
+  col = NULL;
+  font = cv::FONT_HERSHEY_PLAIN;
+  fontScale = 0.8;
+#endif
   init(I, x, y, title) ;
 }
 
@@ -132,9 +153,15 @@ int main()
 */
 vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
 {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   col = NULL;
   background = NULL;
   font = NULL;
+#else
+  col = NULL;
+  font = cv::FONT_HERSHEY_PLAIN;
+  fontScale = 0.8;
+#endif
   windowXPosition = x;
   windowYPosition = y;
 
@@ -175,9 +202,15 @@ int main()
 */
 vpDisplayOpenCV::vpDisplayOpenCV()
 {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   col = NULL;
   background = NULL;
   font = NULL;
+#else
+  col = NULL;
+  font = cv::FONT_HERSHEY_PLAIN;
+  fontScale = 0.8;
+#endif
   fontHeight = 10;
   ncol = nrow = 0;
   x_move = y_move = 0; move = false;
@@ -195,7 +228,9 @@ vpDisplayOpenCV::vpDisplayOpenCV()
 vpDisplayOpenCV::~vpDisplayOpenCV()
 {
   closeDisplay() ;
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   cvReleaseImage(&background);
+#endif
 }
 
 /*!
@@ -273,7 +308,11 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
     this->windowXPosition = x;
   if (y != -1)
     this->windowYPosition = y;
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   int flags = CV_WINDOW_AUTOSIZE;
+#else
+  int flags = cv::WINDOW_AUTOSIZE;
+#endif
 
   if(title != NULL)
     title_ = std::string(title);
@@ -281,12 +320,20 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
     title_ = std::string(" ");
 
   /* Create the window*/
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   if (cvNamedWindow( this->title_.c_str(), flags ) < 0) {
     vpERROR_TRACE("OpenCV was not built with a display device");
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "OpenCV was not built with a display device")) ;
   }
+#else
+  cv::namedWindow( this->title_, flags );
+#endif
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   cvMoveWindow( this->title_.c_str(), this->windowXPosition, this->windowYPosition );
+#else
+  cv::moveWindow( this->title_.c_str(), this->windowXPosition, this->windowYPosition );
+#endif
   move = false;
   lbuttondown = false;
   mbuttondown = false;
@@ -294,13 +341,13 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
   lbuttonup = false;
   mbuttonup = false;
   rbuttonup = false;
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   cvSetMouseCallback( this->title_.c_str(), on_mouse, this );
-  /* Create background pixmap */
-//   background = cvCreateImage(cvSize((int)width,(int)height),IPL_DEPTH_8U,3);
-//
-//   cvShowImage( this->title_.c_str(),background);
-
   col = new CvScalar[vpColor::id_unknown] ;
+#else
+  cv::setMouseCallback( this->title_, on_mouse, this );
+  col = new cv::Scalar[vpColor::id_unknown] ;
+#endif
 
   /* Create color */
   vpColor pcolor; // Predefined colors
@@ -341,12 +388,19 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
   pcolor = vpColor::darkGray;
   col[vpColor::id_darkGray]   = CV_RGB(pcolor.R, pcolor.G, pcolor.B) ;
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   font = new CvFont;
   cvInitFont( font, CV_FONT_HERSHEY_PLAIN, 0.70f,0.70f);
-
   CvSize fontSize;
   int baseline;
   cvGetTextSize( "A", font, &fontSize, &baseline );
+#else
+  int thickness = 1;
+  cv::Size fontSize;
+  int baseline;
+  fontSize = cv::getTextSize( "A", font, fontScale, thickness, &baseline );
+#endif
+
   fontHeight = fontSize.height + baseline;
   displayHasBeenInitialized = true ;
 }
@@ -383,11 +437,11 @@ vpDisplayOpenCV::setFont(const char * /* font */)
 void
 vpDisplayOpenCV::setTitle(const char * /* title */)
 {
-  static bool warn_displayed = false;
-  if (! warn_displayed) {
-    vpTRACE("Not implemented");
-    warn_displayed = true;
-  }
+//  static bool warn_displayed = false;
+//  if (! warn_displayed) {
+//    vpTRACE("Not implemented");
+//    warn_displayed = true;
+//  }
 }
 
 
@@ -404,7 +458,11 @@ void vpDisplayOpenCV::setWindowPosition(int winx, int winy)
   if (displayHasBeenInitialized) {
     this->windowXPosition = winx;
     this->windowYPosition = winy;
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvMoveWindow( this->title_.c_str(), winx, winy );
+#else
+    cv::moveWindow( this->title_.c_str(), winx, winy );
+#endif
   }
   else
   {
@@ -435,10 +493,6 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
     width = I.getWidth();
     height = I.getHeight();
     /* Le pixmap background devient le fond de la zone de dessin */
-
-    /* Affichage */
-    //gdk_window_clear(window);
-    //gdk_flush();
   }
   else
   {
@@ -471,11 +525,12 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     vpImage<unsigned char> Itemp;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Itemp);
     vpImage<vpRGBa> Ic;
-    vpImageConvert::convert(Itemp,Ic);
-    
-    CvSize size = cvSize((int)this->width, (int)this->height);
+    vpImageConvert::convert(Itemp,Ic); 
+
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     int depth = 8;
     int channels = 3;
+    CvSize size = cvSize((int)this->width, (int)this->height);
     if (background != NULL){
       if(background->nChannels != channels || background->depth != depth
          || background->height != (int) I.getHeight() || background->width != (int) I.getWidth()){
@@ -484,17 +539,15 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
       }
     }
     else background = cvCreateImage( size, depth, channels );
-    
     IplImage* Ip = NULL;
     vpImageConvert::convert(Ic, Ip);
-    
     unsigned char * input = (unsigned char*)Ip->imageData;
     unsigned char * output = (unsigned char*)background->imageData;
-    
+
     unsigned int iwidth = Ic.getWidth();
 
     output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
-    
+
     unsigned int i = 0;
     while (i < h)
     {
@@ -512,6 +565,41 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     }
 
     cvReleaseImage(&Ip);
+#else
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)this->width, (int)this->height);
+    if(background.channels() != channels || background.depth() != depth
+       || background.rows != (int) I.getHeight() || background.cols != (int) I.getWidth()){
+      background = cv::Mat( size, CV_MAKETYPE(depth, channels) );
+    }
+
+    cv::Mat Ip;
+    vpImageConvert::convert(Ic, Ip);
+
+    unsigned char * input = (unsigned char*)Ip.data;
+    unsigned char * output = (unsigned char*)background.data;
+
+    unsigned int iwidth = Ic.getWidth();
+
+    output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
+
+    unsigned int i = 0;
+    while (i < h)
+    {
+      unsigned int j = 0;
+      while (j < w)
+      {
+        *(output+3*j) = *(input+j*3);
+        *(output+3*j+1) = *(input+j*3+1);
+        *(output+3*j+2) = *(input+j*3+2);
+        j++;
+      }
+      input = input + 3*iwidth;
+      output = output + 3*this->width;
+      i++;
+    }
+#endif
   }
   else
   {
@@ -544,7 +632,6 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
     /* Copie de l'image dans le pixmap fond */
     width = I.getWidth();
     height = I.getHeight();
-
   }
   else
   {
@@ -577,6 +664,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     vpImage<vpRGBa> Ic;
     vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Ic);
     
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     CvSize size = cvSize((int)this->width, (int)this->height);
     int depth = 8;
     int channels = 3;
@@ -616,6 +704,40 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     }
 
     cvReleaseImage(&Ip);
+#else
+    int depth = CV_8U;
+    int channels = 3;
+    cv::Size size((int)this->width, (int)this->height);
+    if(background.channels() != channels || background.depth() != depth
+       || background.rows != (int) I.getHeight() || background.cols != (int) I.getWidth()){
+      background = cv::Mat( size, CV_MAKETYPE(depth, channels) );
+    }
+    cv::Mat Ip;
+    vpImageConvert::convert(Ic, Ip);
+
+    unsigned char * input = (unsigned char*)Ip.data;
+    unsigned char * output = (unsigned char*)background.data;
+
+    unsigned int iwidth = Ic.getWidth();
+
+    output = output + (int)(iP.get_i()*3*this->width+ iP.get_j()*3);
+
+    unsigned int i = 0;
+    while (i < h)
+    {
+      unsigned int j = 0;
+      while (j < w)
+      {
+        *(output+3*j) = *(input+j*3);
+        *(output+3*j+1) = *(input+j*3+1);
+        *(output+3*j+2) = *(input+j*3+2);
+        j++;
+      }
+      input = input + 3*iwidth;
+      output = output + 3*this->width;
+      i++;
+    }
+#endif
   }
   else
   {
@@ -649,15 +771,19 @@ void vpDisplayOpenCV::closeDisplay()
   {
     delete [] col ; col = NULL ;
   }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   if (font != NULL)
   {
     delete font ;
     font = NULL ;
   }
-
+#endif
   if (displayHasBeenInitialized) {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvDestroyWindow( this->title_.c_str() );
-
+#else
+    cv::destroyWindow( this->title_ );
+#endif
     displayHasBeenInitialized= false;
   }
 }
@@ -672,8 +798,13 @@ void vpDisplayOpenCV::flushDisplay()
 {
   if (displayHasBeenInitialized)
   {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvShowImage(this->title_.c_str(), background );
     cvWaitKey(5);
+#else
+    cv::imshow(this->title_, background );
+    cv::waitKey(5);
+#endif
   }
   else
   {
@@ -692,8 +823,13 @@ void vpDisplayOpenCV::flushDisplayROI(const vpImagePoint &/*iP*/, const unsigned
 {
   if (displayHasBeenInitialized)
   {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvShowImage(this->title_.c_str(), background );
     cvWaitKey(5);
+#else
+    cv::imshow(this->title_.c_str(), background );
+    cv::waitKey(5);
+#endif
   }
   else
   {
@@ -799,17 +935,31 @@ void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
   if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown) {
-      cvPutText( background, text, 
-		 cvPoint( vpMath::round( ip.get_u() ),
-			  vpMath::round( ip.get_v()+fontHeight ) ), 
-		 font, col[color.id] );
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvPutText( background, text,
+                 cvPoint( vpMath::round( ip.get_u() ),
+                          vpMath::round( ip.get_v()+fontHeight ) ),
+                 font, col[color.id] );
+#else
+      cv::putText( background, text,
+                   cv::Point( vpMath::round( ip.get_u() ),
+                              vpMath::round( ip.get_v()+fontHeight ) ),
+                   font, fontScale, col[color.id] );
+#endif
     }
     else {
       cvcolor = CV_RGB(color.R, color.G, color.B) ;
-      cvPutText( background, text, 
-		 cvPoint( vpMath::round( ip.get_u() ),
-			  vpMath::round( ip.get_v()+fontHeight ) ), 
-		 font, cvcolor );
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvPutText( background, text,
+                 cvPoint( vpMath::round( ip.get_u() ),
+                          vpMath::round( ip.get_v()+fontHeight ) ),
+                 font, cvcolor );
+#else
+      cv::putText( background, text,
+                   cv::Point( vpMath::round( ip.get_u() ),
+                              vpMath::round( ip.get_v()+fontHeight ) ),
+                   font, fontScale, cvcolor );
+#endif
     }
   }
   else
@@ -838,32 +988,60 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center,
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
-	cvCircle( background, 
-		  cvPoint( vpMath::round( center.get_u() ), 
-			   vpMath::round( center.get_v() ) ), 
-		  (int)radius, col[color.id], (int)thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvCircle( background,
+                  cvPoint( vpMath::round( center.get_u() ),
+                           vpMath::round( center.get_v() ) ),
+                  (int)radius, col[color.id], (int)thickness);
+#else
+        cv::circle( background,
+                    cv::Point( vpMath::round( center.get_u() ),
+                               vpMath::round( center.get_v() ) ),
+                    (int)radius, col[color.id], (int)thickness);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvCircle( background, 
-		  cvPoint( vpMath::round( center.get_u() ), 
-			   vpMath::round( center.get_v() ) ), 
-		  (int)radius, cvcolor, (int)thickness);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvCircle( background,
+                  cvPoint( vpMath::round( center.get_u() ),
+                           vpMath::round( center.get_v() ) ),
+                  (int)radius, cvcolor, (int)thickness);
+#else
+        cv::circle( background,
+                    cv::Point( vpMath::round( center.get_u() ),
+                               vpMath::round( center.get_v() ) ),
+                    (int)radius, cvcolor, (int)thickness);
+#endif
       }
     }
     else {
       if (color.id < vpColor::id_unknown) {
-	cvCircle( background, 
-		  cvPoint( vpMath::round( center.get_u() ), 
-			   vpMath::round( center.get_v() ) ), 
-		  (int)radius, col[color.id], CV_FILLED);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvCircle( background,
+                  cvPoint( vpMath::round( center.get_u() ),
+                           vpMath::round( center.get_v() ) ),
+                  (int)radius, col[color.id], CV_FILLED);
+#else
+        cv::circle( background,
+                    cv::Point( vpMath::round( center.get_u() ),
+                               vpMath::round( center.get_v() ) ),
+                    (int)radius, col[color.id], cv::FILLED);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvCircle( background, 
-		  cvPoint( vpMath::round( center.get_u() ), 
-			   vpMath::round( center.get_v() ) ), 
-		  (int)radius, cvcolor, CV_FILLED);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvCircle( background,
+                  cvPoint( vpMath::round( center.get_u() ),
+                           vpMath::round( center.get_v() ) ),
+                  (int)radius, cvcolor, CV_FILLED);
+#else
+        cv::circle( background,
+                    cv::Point( vpMath::round( center.get_u() ),
+                               vpMath::round( center.get_v() ) ),
+                    (int)radius, cvcolor, cv::FILLED);
+#endif
       }
     }
   }
@@ -931,30 +1109,48 @@ vpDisplayOpenCV::displayCross(const vpImagePoint &ip,
 */
 void
 vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1, 
-				const vpImagePoint &ip2,
-				const vpColor &color, 
-				unsigned int thickness)
+                                const vpImagePoint &ip2,
+                                const vpColor &color,
+                                unsigned int thickness)
 {
 
   if (displayHasBeenInitialized)
   {
     vpTRACE("Dot lines are not yet implemented");
     if (color.id < vpColor::id_unknown) {
-      cvLine( background, 
-	      cvPoint( vpMath::round( ip1.get_u() ), 
-		       vpMath::round( ip1.get_v() ) ), 
-	      cvPoint( vpMath::round( ip2.get_u() ),
-		       vpMath::round( ip2.get_v() ) ), 
-	      col[color.id], (int) thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvLine( background,
+              cvPoint( vpMath::round( ip1.get_u() ),
+                       vpMath::round( ip1.get_v() ) ),
+              cvPoint( vpMath::round( ip2.get_u() ),
+                       vpMath::round( ip2.get_v() ) ),
+              col[color.id], (int) thickness);
+#else
+      cv::line( background,
+                cv::Point( vpMath::round( ip1.get_u() ),
+                           vpMath::round( ip1.get_v() ) ),
+                cv::Point( vpMath::round( ip2.get_u() ),
+                           vpMath::round( ip2.get_v() ) ),
+                col[color.id], (int) thickness);
+#endif
     }
     else {
       cvcolor = CV_RGB(color.R, color.G, color.B) ;
-      cvLine( background, 
-	      cvPoint( vpMath::round( ip1.get_u() ), 
-		       vpMath::round( ip1.get_v() ) ), 
-	      cvPoint( vpMath::round( ip2.get_u() ),
-		       vpMath::round( ip2.get_v() ) ), 
-	      cvcolor, (int) thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvLine( background,
+              cvPoint( vpMath::round( ip1.get_u() ),
+                       vpMath::round( ip1.get_v() ) ),
+              cvPoint( vpMath::round( ip2.get_u() ),
+                       vpMath::round( ip2.get_v() ) ),
+              cvcolor, (int) thickness);
+#else
+      cv::line( background,
+                cv::Point( vpMath::round( ip1.get_u() ),
+                           vpMath::round( ip1.get_v() ) ),
+                cv::Point( vpMath::round( ip2.get_u() ),
+                           vpMath::round( ip2.get_v() ) ),
+                cvcolor, (int) thickness);
+#endif
     }
   }
   else
@@ -981,21 +1177,39 @@ vpDisplayOpenCV::displayLine(const vpImagePoint &ip1,
   if (displayHasBeenInitialized)
   {
     if (color.id < vpColor::id_unknown) {
-      cvLine( background, 
-	      cvPoint( vpMath::round( ip1.get_u() ), 
-		       vpMath::round( ip1.get_v() ) ), 
-	      cvPoint( vpMath::round( ip2.get_u() ),
-		       vpMath::round( ip2.get_v() ) ), 
-	      col[color.id], (int) thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvLine( background,
+              cvPoint( vpMath::round( ip1.get_u() ),
+                       vpMath::round( ip1.get_v() ) ),
+              cvPoint( vpMath::round( ip2.get_u() ),
+                       vpMath::round( ip2.get_v() ) ),
+              col[color.id], (int) thickness);
+#else
+      cv::line( background,
+                cv::Point( vpMath::round( ip1.get_u() ),
+                           vpMath::round( ip1.get_v() ) ),
+                cv::Point( vpMath::round( ip2.get_u() ),
+                           vpMath::round( ip2.get_v() ) ),
+                col[color.id], (int) thickness);
+#endif
     }
     else {
       cvcolor = CV_RGB(color.R, color.G, color.B) ;
-      cvLine( background, 
-	      cvPoint( vpMath::round( ip1.get_u() ), 
-		       vpMath::round( ip1.get_v() ) ), 
-	      cvPoint( vpMath::round( ip2.get_u() ),
-		       vpMath::round( ip2.get_v() ) ), 
-	      cvcolor, (int) thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+      cvLine( background,
+              cvPoint( vpMath::round( ip1.get_u() ),
+                       vpMath::round( ip1.get_v() ) ),
+              cvPoint( vpMath::round( ip2.get_u() ),
+                       vpMath::round( ip2.get_v() ) ),
+              cvcolor, (int) thickness);
+#else
+      cv::line( background,
+                cv::Point( vpMath::round( ip1.get_u() ),
+                           vpMath::round( ip1.get_v() ) ),
+                cv::Point( vpMath::round( ip2.get_u() ),
+                           vpMath::round( ip2.get_v() ) ),
+                cvcolor, (int) thickness);
+#endif
     }
   }
   else
@@ -1077,40 +1291,76 @@ vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft,
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
         cvRectangle( background,
                      cvPoint( vpMath::round( topLeft.get_u() ),
                               vpMath::round( topLeft.get_v() ) ),
                      cvPoint( vpMath::round( topLeft.get_u()+w ),
                               vpMath::round( topLeft.get_v()+h ) ),
                      col[color.id], (int)thickness);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( topLeft.get_u()+w ),
+                                  vpMath::round( topLeft.get_v()+h ) ),
+                       col[color.id], (int)thickness);
+#endif
       }
       else {
         cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
         cvRectangle( background,
                      cvPoint( vpMath::round( topLeft.get_u() ),
                               vpMath::round( topLeft.get_v() ) ),
                      cvPoint( vpMath::round( topLeft.get_u()+w ),
                               vpMath::round( topLeft.get_v()+h ) ),
                      cvcolor, (int)thickness);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( topLeft.get_u()+w ),
+                                  vpMath::round( topLeft.get_v()+h ) ),
+                       cvcolor, (int)thickness);
+#endif
       }
     }
     else {
       if (color.id < vpColor::id_unknown) {
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
         cvRectangle( background,
                      cvPoint( vpMath::round( topLeft.get_u() ),
                               vpMath::round( topLeft.get_v() ) ),
                      cvPoint( vpMath::round( topLeft.get_u()+w ),
                               vpMath::round( topLeft.get_v()+h ) ),
                      col[color.id], CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( topLeft.get_u()+w ),
+                                  vpMath::round( topLeft.get_v()+h ) ),
+                       col[color.id], cv::FILLED);
+#endif
       }
       else {
         cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
         cvRectangle( background,
                      cvPoint( vpMath::round( topLeft.get_u() ),
                               vpMath::round( topLeft.get_v() ) ),
                      cvPoint( vpMath::round( topLeft.get_u()+w ),
                               vpMath::round( topLeft.get_v()+h ) ),
                      cvcolor, CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( topLeft.get_u()+w ),
+                                  vpMath::round( topLeft.get_v()+h ) ),
+                       cvcolor, cv::FILLED);
+#endif
       }
     }
   }
@@ -1143,41 +1393,76 @@ vpDisplayOpenCV::displayRectangle ( const vpImagePoint &topLeft,
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ), 
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( bottomRight.get_u() ), 
-			      vpMath::round( bottomRight.get_v() ) ),
-		     col[color.id], (int)thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( bottomRight.get_u() ),
+                              vpMath::round( bottomRight.get_v() ) ),
+                     col[color.id], (int)thickness);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( bottomRight.get_u() ),
+                                  vpMath::round( bottomRight.get_v() ) ),
+                       col[color.id], (int)thickness);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ), 
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( bottomRight.get_u() ), 
-			      vpMath::round( bottomRight.get_v() ) ),
-		     cvcolor, (int)thickness);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( bottomRight.get_u() ),
+                              vpMath::round( bottomRight.get_v() ) ),
+                     cvcolor, (int)thickness);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( bottomRight.get_u() ),
+                                  vpMath::round( bottomRight.get_v() ) ),
+                       cvcolor, (int)thickness);
+#endif
       }
     }
     else {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ), 
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( bottomRight.get_u() ), 
-			      vpMath::round( bottomRight.get_v() ) ),
-		     col[color.id], CV_FILLED);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( bottomRight.get_u() ),
+                              vpMath::round( bottomRight.get_v() ) ),
+                     col[color.id], CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( bottomRight.get_u() ),
+                                  vpMath::round( bottomRight.get_v() ) ),
+                       col[color.id], cv::FILLED);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( topLeft.get_u() ), 
-			      vpMath::round( topLeft.get_v() ) ),
-		     cvPoint( vpMath::round( bottomRight.get_u() ), 
-			      vpMath::round( bottomRight.get_v() ) ),
-		     cvcolor, CV_FILLED);
-
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( topLeft.get_u() ),
+                              vpMath::round( topLeft.get_v() ) ),
+                     cvPoint( vpMath::round( bottomRight.get_u() ),
+                              vpMath::round( bottomRight.get_v() ) ),
+                     cvcolor, CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( topLeft.get_u() ),
+                                  vpMath::round( topLeft.get_v() ) ),
+                       cv::Point( vpMath::round( bottomRight.get_u() ),
+                                  vpMath::round( bottomRight.get_v() ) ),
+                       cvcolor, cv::FILLED);
+#endif
       }
     }
   }
@@ -1210,41 +1495,78 @@ vpDisplayOpenCV::displayRectangle(const vpRect &rectangle,
   {
     if (fill == false) {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( rectangle.getLeft() ),
-			      vpMath::round( rectangle.getBottom() ) ),
-		     cvPoint( vpMath::round( rectangle.getRight() ),
-			      vpMath::round( rectangle.getTop() ) ),
-		     col[color.id], (int)thickness);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( rectangle.getLeft() ),
+                              vpMath::round( rectangle.getBottom() ) ),
+                     cvPoint( vpMath::round( rectangle.getRight() ),
+                              vpMath::round( rectangle.getTop() ) ),
+                     col[color.id], (int)thickness);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( rectangle.getLeft() ),
+                                  vpMath::round( rectangle.getBottom() ) ),
+                       cv::Point( vpMath::round( rectangle.getRight() ),
+                                  vpMath::round( rectangle.getTop() ) ),
+                       col[color.id], (int)thickness);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( rectangle.getLeft() ),
-			      vpMath::round( rectangle.getBottom() ) ),
-		     cvPoint( vpMath::round( rectangle.getRight() ),
-			      vpMath::round( rectangle.getTop() ) ),
-		     cvcolor, (int)thickness);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( rectangle.getLeft() ),
+                              vpMath::round( rectangle.getBottom() ) ),
+                     cvPoint( vpMath::round( rectangle.getRight() ),
+                              vpMath::round( rectangle.getTop() ) ),
+                     cvcolor, (int)thickness);
 
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( rectangle.getLeft() ),
+                                  vpMath::round( rectangle.getBottom() ) ),
+                       cv::Point( vpMath::round( rectangle.getRight() ),
+                                  vpMath::round( rectangle.getTop() ) ),
+                       cvcolor, (int)thickness);
+
+#endif
       }
     }
     else {
       if (color.id < vpColor::id_unknown) {
-	cvRectangle( background,
-		     cvPoint( vpMath::round( rectangle.getLeft() ),
-			      vpMath::round( rectangle.getBottom() ) ),
-		     cvPoint( vpMath::round( rectangle.getRight() ),
-			      vpMath::round( rectangle.getTop() ) ),
-		     col[color.id], CV_FILLED);
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( rectangle.getLeft() ),
+                              vpMath::round( rectangle.getBottom() ) ),
+                     cvPoint( vpMath::round( rectangle.getRight() ),
+                              vpMath::round( rectangle.getTop() ) ),
+                     col[color.id], CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( rectangle.getLeft() ),
+                                  vpMath::round( rectangle.getBottom() ) ),
+                       cv::Point( vpMath::round( rectangle.getRight() ),
+                                  vpMath::round( rectangle.getTop() ) ),
+                       col[color.id], cv::FILLED);
+#endif
       }
       else {
-	cvcolor = CV_RGB(color.R, color.G, color.B) ;
-	cvRectangle( background,
-		     cvPoint( vpMath::round( rectangle.getLeft() ),
-			      vpMath::round( rectangle.getBottom() ) ),
-		     cvPoint( vpMath::round( rectangle.getRight() ),
-			      vpMath::round( rectangle.getTop() ) ),
-		     cvcolor, CV_FILLED);
+        cvcolor = CV_RGB(color.R, color.G, color.B) ;
+#if VISP_HAVE_OPENCV_VERSION < 0x030000
+        cvRectangle( background,
+                     cvPoint( vpMath::round( rectangle.getLeft() ),
+                              vpMath::round( rectangle.getBottom() ) ),
+                     cvPoint( vpMath::round( rectangle.getRight() ),
+                              vpMath::round( rectangle.getTop() ) ),
+                     cvcolor, CV_FILLED);
+#else
+        cv::rectangle( background,
+                       cv::Point( vpMath::round( rectangle.getLeft() ),
+                                  vpMath::round( rectangle.getBottom() ) ),
+                       cv::Point( vpMath::round( rectangle.getRight() ),
+                                  vpMath::round( rectangle.getTop() ) ),
+                       cvcolor, cv::FILLED);
+#endif
       }
     }
   }
@@ -1297,7 +1619,12 @@ vpDisplayOpenCV::getClick(bool blocking)
         ret = true ;
         rbuttondown = false;
       }
-      if (blocking) cvWaitKey(10);
+      if (blocking)
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+        cvWaitKey(10);
+#else
+        cv::waitKey(10);
+#endif
     } while ( ret == false && blocking == true);
   }
   else {
@@ -1365,7 +1692,12 @@ vpDisplayOpenCV::getClick(vpImagePoint &ip, bool blocking)
 	ip.set_v( v );
         rbuttondown = false;
       }
-      if (blocking) cvWaitKey(10);
+      if (blocking)
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+        cvWaitKey(10);
+#else
+        cv::waitKey(10);
+#endif
     } while ( ret == false && blocking == true);
   }
   else {
@@ -1439,7 +1771,12 @@ vpDisplayOpenCV::getClick(vpImagePoint &ip,
         button = vpMouseButton::button3;
         rbuttondown = false;
       }
-      if (blocking) cvWaitKey(10);
+      if (blocking)
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+        cvWaitKey(10);
+#else
+        cv::waitKey(10);
+#endif
     } while ( ret == false && blocking == true);
   }
   else {
@@ -1515,7 +1852,12 @@ vpDisplayOpenCV::getClickUp(vpImagePoint &ip,
         button = vpMouseButton::button3;
         rbuttonup = false;
       }
-      if (blocking) cvWaitKey(10);
+      if (blocking)
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+        cvWaitKey(10);
+#else
+        cv::waitKey(10);
+#endif
     } while ( ret == false && blocking == true);
   }
   else {
@@ -1541,58 +1883,86 @@ void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* di
   vpDisplayOpenCV* disp = (vpDisplayOpenCV*)display;
   switch ( event )
   {
-    case CV_EVENT_MOUSEMOVE:
-    {
-      disp->move = true;
-      disp->x_move = x;
-      disp->y_move = y;
-      break;
-    }
-    case CV_EVENT_LBUTTONDOWN:
-    {
-      disp->lbuttondown = true;
-      disp->x_lbuttondown = x;
-      disp->y_lbuttondown = y;
-      break;
-    }
-    case CV_EVENT_MBUTTONDOWN:
-    {
-      disp->mbuttondown = true;
-      disp->x_mbuttondown = x;
-      disp->y_mbuttondown = y;
-      break;
-    }
-    case CV_EVENT_RBUTTONDOWN:
-    {
-      disp->rbuttondown = true;
-      disp->x_rbuttondown = x;
-      disp->y_rbuttondown = y;
-      break;
-    }
-    case CV_EVENT_LBUTTONUP:
-    {
-      disp->lbuttonup = true;
-      disp->x_lbuttonup = x;
-      disp->y_lbuttonup = y;
-      break;
-    }
-    case CV_EVENT_MBUTTONUP:
-    {
-      disp->mbuttonup = true;
-      disp->x_mbuttonup = x;
-      disp->y_mbuttonup = y;
-      break;
-    }
-    case CV_EVENT_RBUTTONUP:
-    {
-      disp->rbuttonup = true;
-      disp->x_rbuttonup = x;
-      disp->y_rbuttonup = y;
-      break;
-    }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_MOUSEMOVE:
+#else
+  case cv::EVENT_MOUSEMOVE:
+#endif
+  {
+    disp->move = true;
+    disp->x_move = x;
+    disp->y_move = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_LBUTTONDOWN:
+#else
+  case cv::EVENT_LBUTTONDOWN:
+#endif
+  {
+    disp->lbuttondown = true;
+    disp->x_lbuttondown = x;
+    disp->y_lbuttondown = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_MBUTTONDOWN:
+#else
+  case cv::EVENT_MBUTTONDOWN:
+#endif
+  {
+    disp->mbuttondown = true;
+    disp->x_mbuttondown = x;
+    disp->y_mbuttondown = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_RBUTTONDOWN:
+#else
+  case cv::EVENT_RBUTTONDOWN:
+#endif
+  {
+    disp->rbuttondown = true;
+    disp->x_rbuttondown = x;
+    disp->y_rbuttondown = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_LBUTTONUP:
+#else
+  case cv::EVENT_LBUTTONUP:
+#endif
+  {
+    disp->lbuttonup = true;
+    disp->x_lbuttonup = x;
+    disp->y_lbuttonup = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_MBUTTONUP:
+#else
+  case cv::EVENT_MBUTTONUP:
+#endif
+  {
+    disp->mbuttonup = true;
+    disp->x_mbuttonup = x;
+    disp->y_mbuttonup = y;
+    break;
+  }
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+  case CV_EVENT_RBUTTONUP:
+#else
+  case cv::EVENT_RBUTTONUP:
+#endif
+  {
+    disp->rbuttonup = true;
+    disp->x_rbuttonup = x;
+    disp->y_rbuttonup = y;
+    break;
+  }
 
-    default :
-      break;
+  default :
+    break;
   }
 }
 
@@ -1624,7 +1994,12 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
     else 
       delay = 10;
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     key_pressed = cvWaitKey(delay);
+#else
+    key_pressed = cv::waitKey(delay);
+#endif
+
     if (key_pressed == -1)
       return false;
     return true;
@@ -1667,7 +2042,11 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
     else 
       delay = 10;
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     key_pressed = cvWaitKey(delay);
+#else
+    key_pressed = cv::waitKey(delay);
+#endif
     if (key_pressed == -1)
       return false;
     else {

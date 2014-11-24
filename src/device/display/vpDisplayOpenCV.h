@@ -44,7 +44,7 @@
 #define vpDisplayOpenCV_h
 
 #include <visp/vpConfig.h>
-#if ( defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if defined(VISP_HAVE_OPENCV)
 
 #include <visp/vpDisplay.h>
 #include <visp/vpImage.h>
@@ -144,11 +144,19 @@ int main()
 class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
 {
 private:
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   //! true if OpenCV display is ready to use
   IplImage* background;
   CvScalar *col ;
   CvScalar cvcolor;
   CvFont *font;
+#else
+  cv::Mat background;
+  cv::Scalar *col ;
+  cv::Scalar cvcolor;
+  int font;
+  float fontScale;
+#endif
   int fontHeight;  
   int ncol, nrow ;
   int x_move;
