@@ -356,9 +356,9 @@ main(int argc, const char ** argv)
       // In the first display, display in overlay a yellow string
       ip.set_i( 100 );
       ip.set_j( 100 );
-      vpDisplay::displayCharString(I1, ip,
-                                   "ViSP is a marvelous software",
-                                   vpColor::blue) ;
+      vpDisplay::displayText(I1, ip,
+                             "ViSP is a marvelous software",
+                             vpColor::blue) ;
 
       //Flush displays. The displays must be flushed to show the overlay.
       //without this line, nothing will be displayed.

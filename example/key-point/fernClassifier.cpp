@@ -405,8 +405,8 @@ main(int argc, const char** argv)
 
     if (opt_display && opt_click_allowed){
       std::cout << "Click on the current image to continue" << std::endl;
-      vpDisplay::displayCharString (I, vpImagePoint(15,15),
-                                    (char*)"Click on the current image to continue", vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(15,15),
+                             "Click on the current image to continue", vpColor::red);
       vpDisplay::flush(I);
       vpDisplay::getClick(I);
     }

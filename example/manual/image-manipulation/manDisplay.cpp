@@ -123,9 +123,9 @@ int main()
     // Display in overlay a yellow string
     ip.set_i( 300 );
     ip.set_j( 160 );
-    vpDisplay::displayCharString(I, ip,
-                                 "ViSP is a marvelous software",
-                                 vpColor::black) ;
+    vpDisplay::displayText(I, ip,
+                           "ViSP is a marvelous software",
+                           vpColor::black) ;
     //Flush the display : without this line nothing will appear on the screen
     vpDisplay::flush(I);
 

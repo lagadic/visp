@@ -471,8 +471,8 @@ main(int argc, const char ** argv)
         ip.set_j( 10 );
 
         std::cout << "\nClick in the internal camera view to continue..." << std::endl;
-        vpDisplay::displayCharString(Iint, ip,
-                                     "A click to continue...",vpColor::red);
+        vpDisplay::displayText(Iint, ip,
+                               "A click to continue...",vpColor::red);
         vpDisplay::flush(Iint);
         vpDisplay::getClick(Iint);
       }

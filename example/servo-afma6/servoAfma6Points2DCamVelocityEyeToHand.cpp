@@ -284,14 +284,10 @@ int main()
       vpDisplay::display(I) ;
       ip.set_i( 265 );
       ip.set_j( 150 );
-      vpDisplay::displayCharString(I, ip,
-                                   "Eye-To-Hand Visual Servoing",
-                                   vpColor::green) ;
+      vpDisplay::displayText(I, ip, "Eye-To-Hand Visual Servoing", vpColor::green) ;
       ip.set_i( 280 );
       ip.set_j( 150 );
-      vpDisplay::displayCharString(I, ip,
-                                   "IRISA-INRIA Rennes, Lagadic project",
-                                   vpColor::green) ;
+      vpDisplay::displayText(I, ip, "IRISA-INRIA Rennes, Lagadic project", vpColor::green) ;
       try
 	    {
 	      for (i=0 ; i < nbPoint ; i++)

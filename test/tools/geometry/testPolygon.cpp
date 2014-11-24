@@ -206,7 +206,7 @@ main(int argc, const char** argv)
       vpDisplay::displayCross(I, p2.getCenter(), 5, vpColor::red);
       p3.display(I, vpColor::blue, 1);
       vpDisplay::displayCross(I, p3.getCenter(), 5, vpColor::lightBlue);
-      vpDisplay::displayCharString(I, vpImagePoint(10, 10), "Click to finish", vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(10, 10), "Click to finish", vpColor::red);
       vpDisplay::flush(I);
 
       if (opt_click)
@@ -214,8 +214,8 @@ main(int argc, const char** argv)
 
 
       vpDisplay::display(I);
-      vpDisplay::displayCharString(I, vpImagePoint(10, 10), "Left click to add a point", vpColor::red);
-      vpDisplay::displayCharString(I, vpImagePoint(20, 10), "Right click to build the polygon", vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(10, 10), "Left click to add a point", vpColor::red);
+      vpDisplay::displayText(I, vpImagePoint(20, 10), "Right click to build the polygon", vpColor::red);
       vpDisplay::flush(I);
       if (opt_click) {
         vpPolygon p4;

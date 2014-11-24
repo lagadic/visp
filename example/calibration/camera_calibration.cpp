@@ -264,12 +264,12 @@ int main(int argc, const char ** argv)
       }
 
       if (found)
-        vpDisplay::displayCharString(I, 15, 15, "Image processing succeed", vpColor::green);
+        vpDisplay::displayText(I, 15, 15, "Image processing succeed", vpColor::green);
       else
-        vpDisplay::displayCharString(I, 15, 15, "Image processing fails", vpColor::green);
+        vpDisplay::displayText(I, 15, 15, "Image processing fails", vpColor::green);
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayCharString(I, 35, 15, "A click to process the next image", vpColor::green);
+        vpDisplay::displayText(I, 35, 15, "A click to process the next image", vpColor::green);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
       }

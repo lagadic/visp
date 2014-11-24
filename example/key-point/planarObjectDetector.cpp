@@ -392,8 +392,8 @@ main(int argc, const char** argv)
 
     if (opt_display && opt_click_allowed){
       std::cout << "Click on the reference image to continue" << std::endl;
-      vpDisplay::displayCharString (Iref, vpImagePoint(15,15),
-                                    (char*)"Click on the reference image to continue", vpColor::red);
+      vpDisplay::displayText(Iref, vpImagePoint(15,15),
+                             "Click on the reference image to continue", vpColor::red);
       vpDisplay::flush(Iref);
       vpDisplay::getClick(Iref);
     }

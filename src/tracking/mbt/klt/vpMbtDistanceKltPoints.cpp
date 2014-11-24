@@ -429,7 +429,7 @@ vpMbtDistanceKltPoints::displayPrimitive(const vpImage<unsigned char>& _I)
     iP.set_j( vpMath::round( iP.get_j() + 7 ) );
     char ide[10];
     sprintf(ide, "%ld", static_cast<long int>(id));
-    vpDisplay::displayCharString(_I, iP, ide, vpColor::red);
+    vpDisplay::displayText(_I, iP, ide, vpColor::red);
   }
 }
 
@@ -454,7 +454,7 @@ vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa>& _I)
     iP.set_j( vpMath::round( iP.get_j() + 7 ) );
     char ide[10];
     sprintf(ide, "%ld", static_cast<long int>(id));
-    vpDisplay::displayCharString(_I, iP, ide, vpColor::red);
+    vpDisplay::displayText(_I, iP, ide, vpColor::red);
   }
 }
 
