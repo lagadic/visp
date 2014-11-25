@@ -144,6 +144,9 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void buildFrom(const double tx,const  double ty, const double tz,
 		 const double tux,const  double tuy, const double tuz  ) ;
     
+  void convert(std::vector<float> &M);
+  void convert(std::vector<double> &M);
+
   //! Copy operator from vpHomogeneousMatrix.
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
 

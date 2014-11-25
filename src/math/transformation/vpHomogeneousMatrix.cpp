@@ -731,9 +731,24 @@ vpHomogeneousMatrix::setIdentity()
   init() ;
 }
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
+/*!
+  Converts an homogenous matrix to a vector of 12 floats.
+  \param M : Converted matrix.
  */
+void vpHomogeneousMatrix::convert(std::vector<float> &M)
+{
+  M.resize(12);
+  for(unsigned int i=0; i < 12; i++)
+    M[i] = (float)(this->data[i]);
+}
+
+/*!
+  Converts an homogenous matrix to a vector of 12 doubles.
+  \param M : Converted matrix.
+ */
+void vpHomogeneousMatrix::convert(std::vector<double> &M)
+{
+  M.resize(12);
+  for(unsigned int i=0; i < 12; i++)
+    M[i] = this->data[i];
+}
