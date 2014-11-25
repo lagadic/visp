@@ -1636,6 +1636,64 @@ void vpDisplay::displayPoint ( const vpImage<vpRGBa> &I,
   }
 }
 
+/*!
+  Display a polygon defined by a vector of image points.
+  \param I : The image associated to the display.
+  \param vip : Vector of image point that define the vertexes of the polygon.
+  \param color : Line color.
+  \param thickness : Line thickness.
+
+*/
+void
+vpDisplay::displayPolygon(const vpImage<unsigned char> &I,
+                          const std::vector<vpImagePoint> &vip,
+                          const vpColor &color,
+                          unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      for (unsigned int i=0; i< vip.size(); i++)
+        ( I.display )->displayLine ( vip[i], vip[(i+1)%vip.size()], color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
+/*!
+  Display a polygon defined by a vector of image points.
+  \param I : The image associated to the display.
+  \param vip : Vector of image point that define the vertexes of the polygon.
+  \param color : Line color.
+  \param thickness : Line thickness.
+
+*/
+void
+vpDisplay::displayPolygon(const vpImage<vpRGBa> &I,
+                          const std::vector<vpImagePoint> &vip,
+                          const vpColor &color,
+                          unsigned int thickness)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      for (unsigned int i=0; i< vip.size(); i++)
+        ( I.display )->displayLine ( vip[i], vip[(i+1)%vip.size()], color, thickness );
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+}
+
 /*!  
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.

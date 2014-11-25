@@ -687,6 +687,10 @@ class VISP_EXPORT vpDisplay
                            int i, int j,
                            const vpColor &color,
                            unsigned int thickness=1) ;
+  static void displayPolygon(const vpImage<unsigned char> &I,
+                             const std::vector<vpImagePoint> &vip,
+                             const vpColor &color,
+                             unsigned int thickness=1) ;
   static void displayRectangle(const vpImage<unsigned char> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
@@ -849,6 +853,10 @@ class VISP_EXPORT vpDisplay
                            int i, int j,
                            const vpColor &color,
                            unsigned int thickness=1) ;
+  static void displayPolygon(const vpImage<vpRGBa> &I,
+                             const std::vector<vpImagePoint> &vip,
+                             const vpColor &color,
+                             unsigned int thickness=1) ;
   static void displayRectangle(const vpImage<vpRGBa> &I,
 			       const vpImagePoint &topLeft,
 			       unsigned int width, unsigned int height,
