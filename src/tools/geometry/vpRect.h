@@ -167,6 +167,12 @@ public:
   inline double getRight() const { return (this->left + this->width - 1.0); };
 
   /*!
+    Returns the size of the rectangle.
+    \sa getWidth(), getHeight()
+  */
+  inline double getSize() const { return (this->width * this->height); };
+
+  /*!
     Returns the top coordinate of the rectangle. 
 
     \sa getTopLeft(), getBottom()
