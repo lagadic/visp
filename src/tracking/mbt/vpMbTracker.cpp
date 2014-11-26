@@ -265,7 +265,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
           vpImage<vpRGBa> Iref ;
           vpImageIo::read(Iref, dispF) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+20, I.display->getWindowYPosition(),
+          d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+80, I.display->getWindowYPosition(),
                        "Where to initialize...")  ;
           vpDisplay::display(Iref) ;
           vpDisplay::flush(Iref);
@@ -445,7 +445,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 
       vpImageIo::read(Iref, displayFile) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-      d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+20, I.display->getWindowYPosition(),
+      d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+80, I.display->getWindowYPosition(),
                    "Where to initialize...")  ;
       vpDisplay::display(Iref) ;
       vpDisplay::flush(Iref);
