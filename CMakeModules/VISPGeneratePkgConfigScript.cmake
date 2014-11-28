@@ -67,13 +67,6 @@ if (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_CFLAGS
   #----------------------------------------------------------------------
-  if(NOT ${VISP_OPENMP_FLAGS} STREQUAL "")
-    list(APPEND VISP_CONFIG_CFLAGS ${VISP_OPENMP_FLAGS})
-  endif()
-  if(NOT ${VISP_CPP11_FLAGS} STREQUAL "")
-    list(APPEND VISP_CONFIG_CFLAGS ${VISP_CPP11_CFLAGS})
-  endif()
-
   foreach(INCDIR ${VISP_EXTERN_INCLUDE_DIRS})
     list(APPEND VISP_CONFIG_CFLAGS "-I${INCDIR}")
   endforeach()

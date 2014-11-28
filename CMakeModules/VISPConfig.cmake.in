@@ -136,18 +136,6 @@ if(BUILD_TEST_COVERAGE)
 endif()
 
 #----------------------------------------------------------------------
-# Add CXX flags used in ViSP that should be also used when ViSP is a 3rd party
-#----------------------------------------------------------------------
-set(VISP_OPENMP_FLAGS "@VISP_OPENMP_FLAGS@")
-if(VISP_OPENMP_FLAGS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISP_OPENMP_FLAGS}")
-endif()
-set(VISP_CPP11_FLAGS "@VISP_CPP11_FLAGS@")
-if(VISP_CPP11_FLAGS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${VISP_CPP11_FLAGS}")
-endif()
-
-#----------------------------------------------------------------------
 # Remember VISP' third party libs configuration:
 #----------------------------------------------------------------------
 SET(VISP_HAVE_X11            "@VISP_HAVE_X11@")
