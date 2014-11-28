@@ -842,6 +842,8 @@ void vpDisplayOpenCV::closeDisplay()
         }
     }
 
+    title_.clear();
+
     displayHasBeenInitialized= false;
   }
 }
