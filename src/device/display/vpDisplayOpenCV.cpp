@@ -76,6 +76,9 @@
 #  endif
 #endif
 
+std::vector<std::string> vpDisplayOpenCV::m_listTitles = std::vector<std::string>();
+unsigned int vpDisplayOpenCV::m_nbWindows = 0;
+
 /*!
 
   Constructor. Initialize a display to visualize a gray level image
@@ -100,6 +103,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
   font = cv::FONT_HERSHEY_PLAIN;
   fontScale = 0.8;
 #endif
+
   init(I, x, y, title) ;
 }
 
@@ -165,10 +169,32 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
   windowXPosition = x;
   windowYPosition = y;
 
-  if(title != NULL)
+  if(title != NULL){
     title_ = std::string(title);
-  else
-    title_ = std::string(" ");
+  }
+  else{
+      std::ostringstream s;
+      s << m_nbWindows++;
+      title_ = std::string("Window ") + s.str();
+  }
+
+
+  bool isInList;
+  do{
+      isInList = false;
+      for(size_t i = 0 ; i < m_listTitles.size() ; i++){
+          if(m_listTitles[i] == title_){
+              std::ostringstream s;
+              s << m_nbWindows++;
+              title_ = std::string("Window ") + s.str();
+              isInList = true;
+              break;
+          }
+      }
+  }
+  while(isInList);
+
+  m_listTitles.push_back(title_);
 
   fontHeight = 10;
   ncol = nrow = 0;
@@ -314,10 +340,34 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
   int flags = cv::WINDOW_AUTOSIZE;
 #endif
 
-  if(title != NULL)
-    title_ = std::string(title);
-  else
-    title_ = std::string(" ");
+  if(title_.empty()){
+    if(title != NULL){
+      title_ = std::string(title);
+    }
+    else{
+
+        std::ostringstream s;
+        s << m_nbWindows++;
+        title_ = std::string("Window ") + s.str();
+    }
+
+    bool isInList;
+    do{
+        isInList = false;
+        for(size_t i = 0 ; i < m_listTitles.size() ; i++){
+            if(m_listTitles[i] == title_){
+                std::ostringstream s;
+                s << m_nbWindows++;
+                title_ = std::string("Window ") + s.str();
+                isInList = true;
+                break;
+            }
+        }
+    }
+    while(isInList);
+
+    m_listTitles.push_back(title_);
+  }
 
   /* Create the window*/
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
@@ -784,6 +834,14 @@ void vpDisplayOpenCV::closeDisplay()
 #else
     cv::destroyWindow( this->title_ );
 #endif
+
+    for(size_t i = 0 ; i < m_listTitles.size() ; i++){
+        if(title_ == m_listTitles[i]){
+            m_listTitles.erase(m_listTitles.begin()+i);
+            break;
+        }
+    }
+
     displayHasBeenInitialized= false;
   }
 }
