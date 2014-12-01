@@ -133,6 +133,22 @@ vpMatrix::vpMatrix(unsigned int r, unsigned int c)
   resize(r, c);
 }
 
+/*!
+Constructor.
+
+Initialize a matrix with \e val.
+
+\param r : Matrix number of rows.
+\param c : Matrix number of columns.
+\param val : Each element of the matrix is set to \e val.
+*/
+vpMatrix::vpMatrix(unsigned int r, unsigned int c, double val)
+  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
+{
+  resize(r, c);
+  *this = val;
+}
+
 vpMatrix::vpMatrix(const vpHomography& H)
   : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {

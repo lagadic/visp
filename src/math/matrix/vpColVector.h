@@ -78,13 +78,15 @@ protected:
 
 public:
 
-  //! basic constructor
+  //! Basic constructor
   vpColVector() : vpMatrix() {};
-  //! constructor of vector of size n
-  vpColVector(unsigned int nn) : vpMatrix(nn,1){};
-  //! copy constructor
+  //! Constructor of vector of size n. Each element is set to 0.
+  vpColVector(unsigned int n) : vpMatrix(n,1){};
+  //! Constructor of vector of size n. Each element is set to \e val.
+  vpColVector(unsigned int n, double val) : vpMatrix(n, 1, val){};
+  //! Copy constructor
   vpColVector (const vpColVector &v);
-  //! constructor initialize a vpColVector from a vpRotationVector
+  //! Constructor that initialize a vpColVector from a vpRotationVector.
   vpColVector (const vpRotationVector &v);
 
   /*! Set the size of the column vector.

@@ -130,7 +130,7 @@ protected:
   vpMatrix() ;
   //! Constructor. Initialization of A as an r x c matrix with 0.
   vpMatrix(unsigned int r, unsigned int c) ;
-
+  vpMatrix(unsigned int r, unsigned int c, double val);
   //! sub vpMatrix constructor
   vpMatrix(const vpMatrix &m, unsigned int r, unsigned int c, 
 	   unsigned int nrows, unsigned int ncols) ;
