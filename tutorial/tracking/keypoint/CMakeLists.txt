@@ -7,6 +7,7 @@ find_package(VISP REQUIRED)
 # set the list of source files
 set(tutorial_cpp
   tutorial-klt-tracker.cpp
+  tutorial-klt-tracker-live-v4l2.cpp
   tutorial-klt-tracker-with-reinit.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video-postcard.mpeg" )

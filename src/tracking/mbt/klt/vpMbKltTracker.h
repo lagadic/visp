@@ -48,7 +48,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <visp/vpMbTracker.h>
 #include <visp/vpKltOpencv.h>
@@ -230,7 +230,11 @@ class VISP_EXPORT vpMbKltTracker: virtual public vpMbTracker
 {
 protected:
   //! Temporary OpenCV image for fast conversion.
-  IplImage* cur;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat cur;
+#else
+  IplImage *cur;
+#endif
   //! Initial pose.
   vpHomogeneousMatrix c0Mo;
   //! If true, compute the interaction matrix at each iteration of the minimization. Otherwise, compute it only on the first iteration.
@@ -291,7 +295,11 @@ public:
             
             \return the list of KLT points through vpKltOpencv.
           */
-  inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+          inline  std::vector<cv::Point2f> getKltPoints() {return tracker.getFeatures();}
+#else
+          inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
+#endif
   
           std::vector<vpImagePoint> getKltImagePoints() const;
           

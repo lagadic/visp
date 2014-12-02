@@ -49,7 +49,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <visp/vpRobust.h>
 #include <visp/vpSubMatrix.h>

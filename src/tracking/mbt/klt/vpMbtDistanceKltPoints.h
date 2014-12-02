@@ -44,7 +44,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <visp/vpMbtPolygon.h>
 #include <visp/vpKltOpencv.h>
@@ -81,7 +81,7 @@ private:
   std::map<int, vpImagePoint> initPoints;
   //! Current points and their ID
   std::map<int, vpImagePoint> curPoints;
-  //! Current points indexes and their ID
+  //! Current points ID and their indexes
   std::map<int, int> curPointsInd;
   //! number of points detected
   unsigned int nbPointsCur;
@@ -162,7 +162,11 @@ public:
   */
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
 
-  void                updateMask(IplImage* _mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
+#else
+  void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
+#endif
 
 //###################
 // Static Functions

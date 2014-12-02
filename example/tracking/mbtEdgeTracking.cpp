@@ -196,6 +196,7 @@ main(int argc, const char ** argv)
     bool cao3DModel = false;
     bool trackCylinder = true;
     bool useOgre = false;
+    bool quit = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -438,17 +439,27 @@ main(int argc, const char ** argv)
       }
 
       // display the 3D model
-      if (opt_display)
-      {
+      if (opt_display) {
         tracker.display(I, cMo, cam, vpColor::darkRed);
         // display the frame
         vpDisplay::displayFrame (I, cMo, cam, 0.05);
       }
-      
+      if (opt_click_allowed) {
+        vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
+        if (vpDisplay::getClick(I, false)) {
+          quit = true;
+          break;
+        }
+      }
+
       // Uncomment if you want to print the covariance matrix.
       // Make sure tracker.setCovarianceComputation(true) has been called (uncomment below).
       // std::cout << tracker.getCovarianceMatrix() << std::endl << std::endl;
       vpDisplay::flush(I) ;
+    }
+
+    if (opt_click_allowed && !quit) {
+      vpDisplay::getClick(I);
     }
     reader.close();
 

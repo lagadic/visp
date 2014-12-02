@@ -1,8 +1,9 @@
-/*! \example tutorial-klt-tracker.cpp */
+/*! \example tutorial-klt-tracker-live-v4l2.cpp */
 #include <visp/vpImageConvert.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
+#include <visp/vpV4l2Grabber.h>
 
 int main(int argc, const char *argv[])
 {
@@ -22,11 +23,9 @@ int main(int argc, const char *argv[])
     (void)argc;
     (void)argv;
 #endif
-    vpVideoReader reader;
-    reader.setFileName("video-postcard.mpeg");
-
     vpImage<unsigned char> I;
-    reader.acquire(I);
+    vpV4l2Grabber g;
+    g.acquire(I);
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     IplImage * cvI = NULL;
@@ -62,6 +61,7 @@ int main(int argc, const char *argv[])
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
             guess.push_back(cv::Point2f(ip.get_u(), ip.get_v()));
+            vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
         }
@@ -75,19 +75,19 @@ int main(int argc, const char *argv[])
       tracker.initTracking(cvI);
     }
 
-    while ( ! reader.end() )
-    {
-      reader.acquire(I);
+    while ( 1 ) {
+      g.acquire(I);
       vpDisplay::display(I);
 
       vpImageConvert::convert(I, cvI);
       tracker.track(cvI);
 
       tracker.display(I, vpColor::red);
+      vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
       vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
     }
-
-    vpDisplay::getClick(I);
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvReleaseImage(&cvI);

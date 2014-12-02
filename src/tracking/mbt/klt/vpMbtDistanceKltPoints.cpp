@@ -41,7 +41,7 @@
 
 #include <visp/vpMbtDistanceKltPoints.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 /*!
   Basic constructor.
@@ -305,48 +305,82 @@ vpMbtDistanceKltPoints::isTrackedFeature(const int _id)
   Modification of all the pixels that are in the roi to the value of _nb (
   default is 255).
 
-  \param _mask : the mask to update (0, not in the object, _nb otherwise).
-  \param _nb : Optionnal value to set to the pixels included in the face.
-  \param _shiftBorder : Optionnal shift for the border in pixel (sort of built-in erosion) to avoid to consider pixels near the limits of the face.
+  \param mask : the mask to update (0, not in the object, _nb otherwise).
+  \param nb : Optionnal value to set to the pixels included in the face.
+  \param shiftBorder : Optionnal shift for the border in pixel (sort of built-in erosion) to avoid to consider pixels near the limits of the face.
 */
 void
-vpMbtDistanceKltPoints::updateMask(IplImage* _mask, unsigned char _nb, unsigned int _shiftBorder)
+vpMbtDistanceKltPoints::updateMask(
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    cv::Mat &mask,
+#else
+    IplImage* mask,
+#endif
+    unsigned char nb, unsigned int shiftBorder)
 {
-  int width = _mask->width;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  int width  = mask.cols;
+  int height = mask.rows;
+#else
+  int width  = mask->width;
+  int height = mask->width;
+#endif
   int i_min, i_max, j_min, j_max;
-  cam.computeFov((unsigned)_mask->width, (unsigned)_mask->height);
+  cam.computeFov((unsigned)width, (unsigned)height);
   polygon->computeRoiClipped(cam);
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
   vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
   /* check image boundaries */
-  if(i_min > _mask->height){ //underflow
+  if(i_min > height){ //underflow
     i_min = 0;
   }
-  if(i_max > _mask->height){
-    i_max = _mask->height;
+  if(i_max > height){
+    i_max = height;
   }
-  if(j_min > _mask->width){ //underflow
+  if(j_min > width){ //underflow
     j_min = 0;
   }
-  if(j_max > _mask->width){
-    j_max = _mask->width;
+  if(j_max > width){
+    j_max = width;
   }
 
-  double shiftBorder_d = (double) _shiftBorder;
-  unsigned char* ptrData = (unsigned char*)_mask->imageData + i_min*width+j_min;
+  double shiftBorder_d = (double) shiftBorder;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   for(int i=i_min; i< i_max; i++){
     double i_d = (double) i;
     for(int j=j_min; j< j_max; j++){
       double j_d = (double) j;
-      if(_shiftBorder != 0){
+      if(shiftBorder != 0){
         if( vpMbtDistanceKltPoints::isInside(roi, i_d, j_d)
             && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
             && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
             && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
             && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
-          *(ptrData++) = _nb;
+          mask.at<unsigned char>(i,j) = nb;
+        }
+      }
+      else{
+        if(vpMbtDistanceKltPoints::isInside(roi, i, j)){
+          mask.at<unsigned char>(i,j) = nb;
+        }
+      }
+    }
+  }
+#else
+  unsigned char* ptrData = (unsigned char*)mask->imageData + i_min*width+j_min;
+  for(int i=i_min; i< i_max; i++){
+    double i_d = (double) i;
+    for(int j=j_min; j< j_max; j++){
+      double j_d = (double) j;
+      if(shiftBorder != 0){
+        if( vpMbtDistanceKltPoints::isInside(roi, i_d, j_d)
+            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
+            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
+            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
+          *(ptrData++) = nb;
         }
         else{
           ptrData++;
@@ -354,7 +388,7 @@ vpMbtDistanceKltPoints::updateMask(IplImage* _mask, unsigned char _nb, unsigned 
       }
       else{
         if(vpMbtDistanceKltPoints::isInside(roi, i, j)){
-          *(ptrData++) = _nb;
+          *(ptrData++) = nb;
         }
         else{
           ptrData++;
@@ -363,6 +397,7 @@ vpMbtDistanceKltPoints::updateMask(IplImage* _mask, unsigned char _nb, unsigned 
     }
     ptrData += width - j_max + j_min;
   }
+#endif
 }
 
 /*!

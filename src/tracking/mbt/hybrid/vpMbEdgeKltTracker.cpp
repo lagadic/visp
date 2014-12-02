@@ -43,9 +43,10 @@
 
 #include <visp/vpDebug.h>
 #include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpTrackingException.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 vpMbEdgeKltTracker::vpMbEdgeKltTracker()
   : compute_interaction(true), lambda(0.8), thresholdKLT(2.), thresholdMBT(2.), maxIter(200)

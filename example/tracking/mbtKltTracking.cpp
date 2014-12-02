@@ -60,7 +60,7 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpParseArgv.h>
 
-#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined (VISP_HAVE_OPENCV) && defined (VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 
 #define GETOPTARGS  "x:m:i:n:dchtfo"
@@ -188,6 +188,7 @@ main(int argc, const char ** argv)
     bool opt_display = true;
     bool cao3DModel = false;
     bool useOgre = false;
+    bool quit = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -430,13 +431,24 @@ main(int argc, const char ** argv)
         // display the frame
         vpDisplay::displayFrame (I, cMo, cam, 0.05);
       }
-      
+      if (opt_click_allowed) {
+        vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
+        if (vpDisplay::getClick(I, false)) {
+          quit = true;
+          break;
+        }
+      }
+
       // Uncomment if you want to print the covariance matrix. 
       // Make sure tracker.setCovarianceComputation(true) has been called (uncomment below).
       // std::cout << tracker.getCovarianceMatrix() << std::endl << std::endl;
 
       vpDisplay::flush(I) ;
     }
+    if (opt_click_allowed && !quit) {
+      vpDisplay::getClick(I);
+    }
+
     reader.close();
 
 #if defined (VISP_HAVE_XML2)

@@ -6,7 +6,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   try {
     vpVideoReader reader;
     reader.setFileName("video-postcard.mpeg");
@@ -14,7 +14,11 @@ int main()
     vpImage<unsigned char> I;
     reader.acquire(I);
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     IplImage * cvI = NULL;
+#else
+    cv::Mat cvI;
+#endif
     vpImageConvert::convert(I, cvI);
 
     // Display initialisation
@@ -47,7 +51,34 @@ int main()
       // Restart the initialization to detect new keypoints
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+        // Save of previous features
+        std::vector<cv::Point2f> prev_features = tracker.getFeatures();
 
+        // Start a new feature detection
+        tracker.initTracking(cvI);
+        std::vector<cv::Point2f> new_features = tracker.getFeatures();
+
+        // Add previous features if they are not to close to detected one
+        double distance, minDistance_ = tracker.getMinDistance();
+        bool is_redundant;
+        for (size_t i=0; i < prev_features.size(); i++) {
+          // Test if a previous feature is not redundant with one of the newly detected
+          is_redundant = false;
+          for (size_t j=0; j < new_features.size(); j++){
+            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x) + vpMath::sqr(new_features[j].y-prev_features[i].y));
+            if(distance < minDistance_){
+              is_redundant = true;
+              break;
+            }
+          }
+          if(is_redundant){
+            continue;
+          }
+          //std::cout << "Add previous feature with index " << i << std::endl;
+          tracker.addFeature(prev_features[i]);
+        }
+#else
         // Save of previous features
         int prev_nfeatures = tracker.getNbFeatures();
         float x,y;
@@ -67,7 +98,7 @@ int main()
         std::cout << "Detection of " << tracker.getNbFeatures() << " new features" << std::endl;
 
         // Add previous features if they are not to close to detected one
-        double distance, minDistance_ = 2.f;// choose to keep old points distant of 2 pixels
+        double distance, minDistance_ = tracker.getMinDistance();
         bool is_redundant;
         for(int i = tracker.getNbFeatures() ;
             j<prev_nfeatures && i<tracker.getMaxFeatures() ;
@@ -91,6 +122,7 @@ int main()
           i++;
         }
         cvFree(&prev_features);
+#endif
       }
       // Track the features
       tracker.track(cvI);
@@ -102,7 +134,9 @@ int main()
 
     vpDisplay::getClick(I);
 
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     cvReleaseImage(&cvI);
+#endif
 
     return 0;
   }
