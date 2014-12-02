@@ -599,8 +599,12 @@ void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<dou
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI)
 {
   vpImage<unsigned char> GIx;
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
-
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat imgsrc, imgdest;
+  vpImageConvert::convert(I, imgsrc);
+  cv::pyrDown( imgsrc, imgdest);
+  vpImageConvert::convert(imgdest, GI);
+#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   IplImage* imgsrc = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
   IplImage* imgdest = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
   imgsrc = cvCreateImage(cvSize((int)I.getWidth(),(int)I.getHeight()), IPL_DEPTH_8U, 1);
