@@ -582,7 +582,7 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool fl
         rgbaVal.R = tmp[2];
         rgbaVal.G = tmp[1];
         rgbaVal.B = tmp[0];
-	rgbaVal.A = tmp[3];
+        rgbaVal.A = tmp[3];
         if(flip)
           dest[dest.getRows()-i-1][j] = rgbaVal;
         else
