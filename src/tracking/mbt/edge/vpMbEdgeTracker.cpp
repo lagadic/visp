@@ -784,9 +784,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
     }
     else{
-      std::cout << "Rank lost" << std::endl;
         computeCovarianceMatrix(cMoPrev,m_error,LVJ_true,D);
-        vpTime::wait(3000);
     }
   }
   
