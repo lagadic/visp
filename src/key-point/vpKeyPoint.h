@@ -64,7 +64,7 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#if defined (VISP_HAVE_OPENCV_NONFREE)
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400)
 #  include <opencv2/nonfree/nonfree.hpp>
 #endif
 
