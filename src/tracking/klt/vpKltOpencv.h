@@ -118,9 +118,9 @@ public:
   //! Get the minimal Euclidean distance between detected corners during initialization.
   double getMinDistance() const {return m_minDistance;}
   //! Get the number of current features
-  int getNbFeatures() const { return m_points[1].size(); }
+  int getNbFeatures() const { return (int)m_points[1].size(); }
   //! Get the number of previous features.
-  int getNbPrevFeatures() const { return m_points[0].size(); }
+  int getNbPrevFeatures() const { return (int)m_points[0].size(); }
   //void getPrevFeature(int index, int &id, float &x, float &y) const;
   //! Get the list of previous features
   std::vector<cv::Point2f> getPrevFeatures() const {return m_points[0];}

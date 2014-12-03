@@ -39,6 +39,7 @@
  *
  *****************************************************************************/
 
+#include <visp/vpImageConvert.h>
 #include <visp/vpMbKltTracker.h>
 #include <visp/vpVelocityTwistMatrix.h>
 #include <visp/vpTrackingException.h>

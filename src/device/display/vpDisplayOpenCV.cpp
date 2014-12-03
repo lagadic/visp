@@ -105,7 +105,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 #else
   col = NULL;
   font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8;
+  fontScale = 0.8f;
 #endif
 
   init(I, x, y, title) ;
@@ -132,7 +132,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
 #else
   col = NULL;
   font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8;
+  fontScale = 0.8f;
 #endif
   init(I, x, y, title) ;
 }
@@ -168,7 +168,7 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
 #else
   col = NULL;
   font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8;
+  fontScale = 0.8f;
 #endif
   windowXPosition = x;
   windowYPosition = y;
@@ -239,7 +239,7 @@ vpDisplayOpenCV::vpDisplayOpenCV()
 #else
   col = NULL;
   font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8;
+  fontScale = 0.8f;
 #endif
   fontHeight = 10;
   ncol = nrow = 0;
