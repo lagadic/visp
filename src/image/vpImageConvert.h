@@ -57,7 +57,7 @@
 #include <visp/vpRGBa.h>
 
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/highgui/highgui.hpp>
 #  elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -120,7 +120,7 @@ public:
           vpImage<double> &dest);
           
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION < 0x030000) // Removed from OpenCV 3.0.0
+#  if (VISP_HAVE_OPENCV_VERSION < 0x020408) // Removed since transcient from OpenCV C to C++ api
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest, bool flip = false) ;
   static void convert(const IplImage* src,

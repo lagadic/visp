@@ -162,7 +162,7 @@ public:
   */
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #else
   void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);

@@ -55,7 +55,7 @@
 #include <visp/vpColor.h>
 #include <visp/vpImage.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000))
+#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408))
 
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -107,7 +107,7 @@ public:
   std::vector<cv::Point2f> getFeatures() const {return m_points[1];}
   //CvPoint2D32f* getFeatures() const {return features;}
   //! Get the unique id of each feature.
-  std::vector<long> getFeaturesId() const {return m_points_id[1];}
+  std::vector<long> getFeaturesId() const {return m_points_id;}
   //long* getFeaturesId() const {return featuresid;}
   //! Get the free parameter of the Harris detector.
   double getHarrisFreeParameter() const {return m_blockSize;}

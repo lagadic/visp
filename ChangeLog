@@ -25,6 +25,8 @@ ViSP 2.10.0 (under development)
       transformations from/to xml files
     . Auto detection of visp-images-data Debian or Ubuntu package that allows
       testing without setting VISP_INPUT_IMAGE_PATH
+    . If OpenCV version >= 2.4.8 use only OpenCV C++ api. IplImages are no 
+      more supported in ViSP.
     . Compat with RaspberryPi architecture
     . Compat with OpenCV 3.x
     . Compat with CMake 3.x

@@ -59,7 +59,13 @@ vpFernClassifier::vpFernClassifier()
     ldetector(), fernClassifier(), gen(0, 256, 5, true, 0.6, 1.5, -CV_PI/2, CV_PI/2, -CV_PI/2, CV_PI/2),
     hasLearn(false), threshold(20), nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11),
     nbOctave(2), patchSize(32), radius(7), nbPoints(200), blurImage(true), radiusBlur(7),
-    sigmaBlur(1), nbMinPoint(10), curIplImg(NULL), objKeypoints(), modelROI_Ref(), modelROI(),
+    sigmaBlur(1), nbMinPoint(10),
+    #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+    curImg(),
+    #else
+    curImg(NULL),
+    #endif
+    objKeypoints(), modelROI_Ref(), modelROI(),
     modelPoints(), imgKeypoints(), refPt(), curPt()
 {
 }
@@ -79,7 +85,13 @@ vpFernClassifier::vpFernClassifier(const std::string& _dataFile, const std::stri
     ldetector(), fernClassifier(), gen(0, 256, 5, true, 0.6, 1.5, -CV_PI/2, CV_PI/2, -CV_PI/2, CV_PI/2),
     hasLearn(false), threshold(20), nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11),
     nbOctave(2), patchSize(32), radius(7), nbPoints(200), blurImage(true), radiusBlur(7),
-    sigmaBlur(1), nbMinPoint(10), curIplImg(NULL), objKeypoints(), modelROI_Ref(), modelROI(),
+    sigmaBlur(1), nbMinPoint(10),
+    #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+    curImg(),
+    #else
+    curImg(NULL),
+    #endif
+    objKeypoints(), modelROI_Ref(), modelROI(),
     modelPoints(), imgKeypoints(), refPt(), curPt()
 {
    this->load(_dataFile, _objectName);
@@ -91,15 +103,17 @@ vpFernClassifier::vpFernClassifier(const std::string& _dataFile, const std::stri
 */
 vpFernClassifier::~vpFernClassifier()
 {
-  if(curIplImg != NULL){
-    if(curIplImg->width % 8 == 0){
-      curIplImg->imageData = NULL;
-      cvReleaseImageHeader(&curIplImg);
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  if(curImg != NULL){
+    if(curImg->width % 8 == 0){
+      curImg->imageData = NULL;
+      cvReleaseImageHeader(&curImg);
     }else{
-      cvReleaseImage(&curIplImg);
+      cvReleaseImage(&curImg);
     }
-    curIplImg = NULL;
+    curImg = NULL;
   }  
+#endif
 }
 
 /*!
@@ -114,7 +128,9 @@ vpFernClassifier::init()
   nbClassfier = 100;
   ClassifierSize = 11;
   nbPoints = 200;
-  curIplImg = NULL;
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  curImg = NULL;
+#endif
   blurImage = true;
   radiusBlur = 7;
   sigmaBlur = 1;
@@ -140,7 +156,7 @@ vpFernClassifier::train()
   cv::LDetector d(radius, threshold, nbOctave, nbView, patchSize, dist);
   
     //blur 
-  cv::Mat obj = (cv::Mat)curIplImg;
+  cv::Mat obj = (cv::Mat)curImg;
   
   if(this->getBlurSetting()){
     cv::GaussianBlur(obj, obj, cv::Size(getBlurSize(), getBlurSize()), getBlurSigma(), getBlurSigma());
@@ -299,7 +315,7 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   setImage(_I);
   // resize image  
 //  cv::resize(_image, image, Size(), 1./imgscale, 1./imgscale, INTER_CUBIC);
-  cv::Mat img = this->curIplImg;
+  cv::Mat img = this->curImg;
   
   if(this->getBlurSetting()){
     cv::GaussianBlur(img, img, cv::Size(this->getBlurSize(), this->getBlurSize()), this->getBlurSigma(), this->getBlurSigma());
@@ -528,36 +544,40 @@ vpFernClassifier::record(const std::string& _objectName, const std::string& _dat
   Set the current image. This method allows to convert a image from the ViSP
   format to the OpenCV one. 
   
-  \param _I : the input image.
+  \param I : the input image.
 */
 void 
-vpFernClassifier::setImage(const vpImage<unsigned char>& _I)
+vpFernClassifier::setImage(const vpImage<unsigned char>& I)
 {  
-  if(curIplImg != NULL){
-    cvResetImageROI(curIplImg);
-    if((curIplImg->width % 8) == 0){
-      curIplImg->imageData = NULL;
-      cvReleaseImageHeader(&curIplImg);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  vpImageConvert::convert(I, curImg);
+#else
+  if(curImg != NULL){
+    cvResetImageROI(curImg);
+    if((curImg->width % 8) == 0){
+      curImg->imageData = NULL;
+      cvReleaseImageHeader(&curImg);
     }else{
-      cvReleaseImage(&curIplImg);
+      cvReleaseImage(&curImg);
     }
-    curIplImg = NULL;
+    curImg = NULL;
   }
-  
-  if((_I.getWidth()%8) == 0){
-    curIplImg = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
-    if(curIplImg != NULL){
-      curIplImg->imageData = (char*)_I.bitmap;
+  if((I.getWidth()%8) == 0){
+    curImg = cvCreateImageHeader(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
+    if(curImg != NULL){
+      curImg->imageData = (char*)I.bitmap;
     }else{
       throw vpException(vpException::memoryAllocationError, "Could not create the image in the OpenCV format.");
     }
   }else{
-    vpImageConvert::convert(_I, curIplImg);
+    vpImageConvert::convert(I, curImg);
   }
-  if(curIplImg == NULL){
+  if(curImg == NULL){
     std::cout << "!> conversion failed" << std::endl;
     throw vpException(vpException::notInitialized , "conversion failed");
   }
+#endif
+
 }
 
 #endif

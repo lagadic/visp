@@ -272,7 +272,7 @@ main(int argc, const char ** argv)
     vpTRACE("y(%d) u(%d) v(%d) = r(%d) g(%d) b(%d)", y, u, v, r, g, b);
 
 #ifdef VISP_HAVE_OPENCV
-#if VISP_HAVE_OPENCV_VERSION < 0x030000
+#if VISP_HAVE_OPENCV_VERSION < 0x020408
     double t0 = vpTime::measureTimeMs();
     /////////////////////////
     // Convert a IplImage to a vpImage<vpRGBa>

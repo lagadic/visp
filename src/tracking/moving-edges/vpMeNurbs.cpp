@@ -56,6 +56,7 @@
 #include <visp/vpRect.h>
 #include <visp/vpImageTools.h>
 #include <visp/vpImageConvert.h>
+#include <visp/vpImageFilter.h>
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
@@ -614,14 +615,17 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     if( u > 0)
       lastPtInSubIm = nurbs.computeCurvePoint(u);
     
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+    vpImageFilter::canny(Isub, Isub, 3, cannyTh1, 3);
+#else
     IplImage* Ip = NULL;
     vpImageConvert::convert(Isub, Ip);
     
-
     IplImage* dst = cvCreateImage( cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1 );
     cvCanny( Ip, dst, cannyTh1, cannyTh2, 3 );
     
     vpImageConvert::convert(dst, Isub);
+#endif
     
     vpImagePoint firstBorder(-1,-1);
     
@@ -748,14 +752,17 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     if( u < 1.0)
       lastPtInSubIm = nurbs.computeCurvePoint(u);
     
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+    vpImageFilter::canny(Isub, Isub, 3, cannyTh1, 3);
+#else
     IplImage* Ip = NULL;
     vpImageConvert::convert(Isub, Ip);
-    
 
     IplImage* dst = cvCreateImage( cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1 );
     cvCanny( Ip, dst, cannyTh1, cannyTh2, 3 );
-    
+
     vpImageConvert::convert(dst, Isub);
+#endif
     
     vpImagePoint firstBorder(-1,-1);
     

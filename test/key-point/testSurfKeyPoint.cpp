@@ -47,7 +47,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x010100))  // Require opencv >= 1.1.0
+#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x020408))  // Require opencv >= 1.1.0 < 2.4.8
 
 #include <visp/vpKeyPointSurf.h>
 #include <visp/vpImage.h>
@@ -379,7 +379,7 @@ main()
 #if ( ! (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) )
   vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
 #else
-  vpERROR_TRACE("You do not have OpenCV-1.1.0 or a more recent release that contains opencv_nonfree component...");
+  vpERROR_TRACE("You do not have 1.1.0 <= OpenCV < 2.4.8 that contains opencv_nonfree component...");
 #endif
 }
 

@@ -58,10 +58,9 @@
 #include <list>
 #include <vector>
 
-#if defined (VISP_HAVE_OPENCV_NONFREE)
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
 
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)  // Require opencv >= 1.1.0 < 2.4.8
 #  include <opencv2/features2d/features2d.hpp>
 #  include <opencv2/legacy/compat.hpp>
 #  include <opencv2/nonfree/nonfree.hpp>
@@ -107,7 +106,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
@@ -142,7 +141,7 @@ int main()
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;

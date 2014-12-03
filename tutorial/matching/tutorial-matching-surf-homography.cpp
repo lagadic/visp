@@ -7,7 +7,7 @@
 
 int main(int argc, const char **argv)
 {  
-#if defined(VISP_HAVE_OPENCV_NONFREE)
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
   int method = 0;
 
   if (argc > 1)

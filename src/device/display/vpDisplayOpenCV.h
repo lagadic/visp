@@ -144,7 +144,7 @@ int main()
 class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
 {
 private:
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   //! true if OpenCV display is ready to use
   IplImage* background;
   CvScalar *col ;

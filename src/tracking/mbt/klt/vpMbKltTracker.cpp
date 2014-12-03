@@ -47,7 +47,7 @@
 
 vpMbKltTracker::vpMbKltTracker()
   :
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     cur(),
 #else
     cur(NULL),
@@ -80,7 +80,7 @@ vpMbKltTracker::vpMbKltTracker()
 */
 vpMbKltTracker::~vpMbKltTracker()
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){
     cvReleaseImage(&cur);
     cur = NULL;
@@ -158,9 +158,9 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   vpImageConvert::convert(I, cur);
   
   // mask
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat mask((int)I.getRows(), (int)I.getCols(), CV_8UC1);
-  mask = 0;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat mask((int)I.getRows(), (int)I.getCols(), CV_8UC1, cv::Scalar(0));
+  //mask = 0;
 #else
   IplImage* mask = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
@@ -187,7 +187,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
       kltpoly->init(tracker);
     }
   }
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   cvReleaseImage(&mask);
 #endif
 }
@@ -201,7 +201,7 @@ vpMbKltTracker::resetTracker()
 {
   cMo.setIdentity();
   
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){
     cvReleaseImage(&cur);
     cur = NULL;
@@ -395,7 +395,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       cdMc.extract(cdtc);
       
       vpMbtDistanceKltPoints *kltpoly;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       // Retrieve the number of features that are tracked
       int nbp = 0;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it) {
@@ -448,7 +448,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
             cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
             
             //Set value to the KLT tracker
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
             cv::Point2f p((float)cdp[0], (float)cdp[1]);
             initial_guess.at((kltpoly->getCurrentPointsInd())[iter->first]) = p;
 #else
@@ -459,7 +459,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
         }
       }  
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       tracker.setInitialGuess(initial_guess, false); // false to keep the id of the points
 #else
       tracker.setInitialGuess(&initial_guess);
@@ -1150,7 +1150,7 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
 {
   this->cMo.setIdentity();
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){
     cvReleaseImage(&cur);
     cur = NULL;

@@ -186,7 +186,6 @@ protected:
   //! The patch generator (OpenCV format).
   cv::PatchGenerator gen;
   
-  
   //! Flag to indicate whether the classifier has been trained or not.
   bool hasLearn;
   
@@ -222,7 +221,11 @@ protected:
   unsigned int nbMinPoint;
   
   //! The current image in the OpenCV format.
-  IplImage* curIplImg; 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat curImg;
+#else
+  IplImage* curImg;
+#endif
   
   //! keypoints detected in the reference image.
   std::vector<cv::KeyPoint> objKeypoints;
@@ -243,29 +246,29 @@ public:
   vpFernClassifier(const std::string& _dataFile, const std::string& _objectName);
   virtual ~vpFernClassifier();
 
-    /* build reference */
+  /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
-                const vpImagePoint &iP,
-	        const unsigned int height, const unsigned int width);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I, 
-	        const vpRect& rectangle);
-    
-    /* matching */
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
-            const vpImagePoint &iP,
-	    const unsigned int height, const unsigned int width);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, 
-	    const vpRect& rectangle);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
+                                      const vpImagePoint &iP,
+                                      const unsigned int height, const unsigned int width);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &I,
+                                      const vpRect& rectangle);
 
-    /* display */
-  virtual void display(const vpImage<unsigned char> &Iref, 
+  /* matching */
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
+                                  const vpImagePoint &iP,
+                                  const unsigned int height, const unsigned int width);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I,
+                                  const vpRect& rectangle);
+
+  /* display */
+  virtual void display(const vpImage<unsigned char> &Iref,
                        const vpImage<unsigned char> &Icurrent, unsigned int size=3);
   virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size=3,
                        const vpColor &color=vpColor::green);
   
-    /* io methods */
+  /* io methods */
   void load(const std::string& _dataFile, const std::string& /*_objectName*/);
   void record(const std::string& _objectName, const std::string& _dataFile);
   
@@ -324,7 +327,7 @@ public:
   cv::Rect getModelROI() const { return modelROI;}
 
 protected:
-  void setImage(const vpImage<unsigned char>& _I);
+  void setImage(const vpImage<unsigned char>& I);
   void train();
   virtual void init();
 };

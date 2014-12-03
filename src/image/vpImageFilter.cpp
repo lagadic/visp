@@ -147,7 +147,7 @@ vpImageFilter::filter(const vpImage<double> &I,
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Cany uses OpenCV >=2.1.0
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Canny uses OpenCV >=2.1.0
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;

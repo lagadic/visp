@@ -10,7 +10,7 @@ int main(int argc, const char *argv[])
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && defined(VISP_HAVE_V4L2)
   try {
     bool opt_init_by_click = false;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--init-by-click")
         opt_init_by_click = true;
@@ -27,7 +27,7 @@ int main(int argc, const char *argv[])
     vpV4l2Grabber g;
     g.acquire(I);
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
@@ -52,7 +52,7 @@ int main(int argc, const char *argv[])
 
     // Initialise the tracking
     if (opt_init_by_click) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       vpMouseButton::vpMouseButtonType button;
       std::vector<cv::Point2f> guess;
       vpImagePoint ip;
@@ -89,7 +89,7 @@ int main(int argc, const char *argv[])
         break;
     }
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     cvReleaseImage(&cvI);
 #endif
 

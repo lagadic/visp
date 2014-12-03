@@ -311,7 +311,7 @@ int main(int argc, const char ** argv)
       break;
     case vpCV:
       std::cout << "Requested OpenCV display functionnalities..." << std::endl;
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv < 3.0.0
+#if defined(VISP_HAVE_OPENCV)
       d1 = new vpDisplayOpenCV;
       d2 = new vpDisplayOpenCV;
 #else

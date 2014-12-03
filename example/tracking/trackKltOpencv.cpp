@@ -267,7 +267,7 @@ main(int argc, const char ** argv)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
     vpImage<unsigned char> vpI ; // This is a ViSP image used for display only
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL; // This is an OpenCV IPL image used by the tracker
 #else
     cv::Mat cvI;

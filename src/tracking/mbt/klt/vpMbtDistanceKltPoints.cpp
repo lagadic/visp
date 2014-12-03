@@ -311,14 +311,14 @@ vpMbtDistanceKltPoints::isTrackedFeature(const int _id)
 */
 void
 vpMbtDistanceKltPoints::updateMask(
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     cv::Mat &mask,
 #else
     IplImage* mask,
 #endif
     unsigned char nb, unsigned int shiftBorder)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   int width  = mask.cols;
   int height = mask.rows;
 #else
@@ -347,7 +347,7 @@ vpMbtDistanceKltPoints::updateMask(
   }
 
   double shiftBorder_d = (double) shiftBorder;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   for(int i=i_min; i< i_max; i++){
     double i_d = (double) i;
     for(int j=j_min; j< j_max; j++){

@@ -6,7 +6,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100)
   try {
     vpVideoReader reader;
     reader.setFileName("video-postcard.mpeg");
@@ -14,7 +14,7 @@ int main()
     vpImage<unsigned char> I;
     reader.acquire(I);
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
@@ -51,7 +51,7 @@ int main()
       // Restart the initialization to detect new keypoints
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
         // Save of previous features
         std::vector<cv::Point2f> prev_features = tracker.getFeatures();
 
@@ -134,7 +134,7 @@ int main()
 
     vpDisplay::getClick(I);
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     cvReleaseImage(&cvI);
 #endif
 

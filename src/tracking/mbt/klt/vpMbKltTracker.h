@@ -230,7 +230,7 @@ class VISP_EXPORT vpMbKltTracker: virtual public vpMbTracker
 {
 protected:
   //! Temporary OpenCV image for fast conversion.
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat cur;
 #else
   IplImage *cur;
@@ -295,7 +295,7 @@ public:
             
             \return the list of KLT points through vpKltOpencv.
           */
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
           inline  std::vector<cv::Point2f> getKltPoints() {return tracker.getFeatures();}
 #else
           inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
