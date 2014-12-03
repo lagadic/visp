@@ -120,6 +120,11 @@ ENDIF()
 IF(VISP_HAVE_OPENCV)
   LIST(APPEND SRC_KEY_POINT key-point/vpPlanarObjectDetector.cpp)
   LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
+  LIST(APPEND SRC_KEY_POINT key-point/vpKeyPoint.cpp)
+ENDIF()
+
+IF(VISP_HAVE_XML2)
+  LIST(APPEND SRC_KEY_POINT key-point/vpXmlConfigParserKeyPoint.cpp)
 ENDIF()
 
 IF(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)

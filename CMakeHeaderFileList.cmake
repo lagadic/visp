@@ -102,6 +102,8 @@ SET (HEADER_KEY_POINT
   key-point/vpKeyPointSurf.h
   key-point/vpPlanarObjectDetector.h
   key-point/vpFernClassifier.h
+  key-point/vpKeyPoint.h
+  key-point/vpXmlConfigParserKeyPoint.h
   )
 
 SET (HEADER_DEVICE_KINECT
