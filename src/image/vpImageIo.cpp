@@ -2135,12 +2135,18 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
 void
 vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+  cv::imwrite(filename, Ip);
+#else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
   cvSaveImage(filename, Ip);
 
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -2168,12 +2174,18 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string filename
 void
 vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+  cv::imwrite(filename, Ip);
+#else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
   cvSaveImage(filename, Ip);
 
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -2210,6 +2222,19 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
 void
 vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#else
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
   if (Ip != NULL)
@@ -2218,6 +2243,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
     throw (vpImageException(vpImageException::ioError,
            "Can't read the image")) ;
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -2265,14 +2291,27 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#else
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
   if (Ip != NULL)
     vpImageConvert::convert(Ip, I);
   else
-    throw (vpImageException(vpImageException::ioError,
-           "Can't read the image")) ;
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -3066,12 +3105,18 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
 void
 vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+  cv::imwrite(filename, Ip);
+#else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
   cvSaveImage(filename, Ip);
 
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -3099,12 +3144,18 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+  cv::imwrite(filename, Ip);
+#else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
   cvSaveImage(filename, Ip);
 
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -3141,6 +3192,19 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
 void
 vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#else
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
   if (Ip != NULL)
@@ -3149,6 +3213,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
     throw (vpImageException(vpImageException::ioError,
            "Can't read the image")) ;
   cvReleaseImage(&Ip);
+#endif
 }
 
 
@@ -3196,6 +3261,19 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
 void
 vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
 {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  if ( ! Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
+#else
   IplImage* Ip = NULL;
   Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
   if (Ip != NULL)
@@ -3204,6 +3282,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
     throw (vpImageException(vpImageException::ioError,
            "Can't read the image")) ;
   cvReleaseImage(&Ip);
+#endif
 }
 
 
