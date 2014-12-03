@@ -997,11 +997,18 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile) {
   vpXmlConfigParserKeyPoint xmlp;
 
   try {
+    //Reset detector and extractor
+    m_detectorNames.clear();
+    m_extractorNames.clear();
+    m_detectors.clear();
+    m_extractors.clear();
+
     std::cout << " *********** Parsing XML for configuration for vpKeyPoint ************ " << std::endl;
     xmlp.parse(configFile);
-    initDetector(xmlp.getDetectorName());
-    initExtractor(xmlp.getExtractorName());
-    initMatcher(xmlp.getMatcherName());
+
+    m_detectorNames.push_back(xmlp.getDetectorName());
+    m_extractorNames.push_back(xmlp.getExtractorName());
+    m_matcherName = xmlp.getMatcherName();
 
     switch(xmlp.getMatchingMethod()) {
     case vpXmlConfigParserKeyPoint::constantFactorDistanceThreshold:
@@ -1037,6 +1044,14 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile) {
     m_nbRansacMinInlierCount = xmlp.getNbRansacMinInlierCount();
     m_ransacThreshold = xmlp.getRansacThreshold();
     m_ransacConsensusPercentage = xmlp.getRansacConsensusPercentage();
+
+    if(m_filterType == ratioDistanceThreshold || m_filterType == stdAndRatioDistanceThreshold) {
+      m_useKnn = true;
+    } else {
+      m_useKnn = false;
+    }
+
+    init();
   }
   catch(...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
