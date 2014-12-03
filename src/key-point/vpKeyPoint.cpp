@@ -837,6 +837,14 @@ void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) {
   keyPoints = referenceImagePointsList;
 }
 
+void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) {
+  points = m_trainPoints;
+}
+
+void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) {
+  points = m_trainVpPoints;
+}
+
 /*!
    Initialize method for RANSAC parameters and for detectors, extractors and matcher, and for others parameters.
  */
@@ -1208,16 +1216,15 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
         }
       } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
         xmlNodePtr point_node = NULL;
+        double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
+        int octave = 0, class_id = 0, image_id = 0;
+        double oX = 0.0, oY = 0.0, oZ = 0.0;
         std::vector<double> row_value;
 
         for (point_node = first_level_node->children; point_node; point_node =
              point_node->next) {
           if (point_node->type == XML_ELEMENT_NODE) {
-
             name = std::string ((char *) point_node->name);
-            double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
-            int octave = 0, class_id = 0, image_id = 0;
-            double oX = 0.0, oY = 0.0, oZ = 0.0;
 
             if(name == "u") {
               u = std::strtod((char *) point_node->children->content, &pEnd);
@@ -1481,7 +1488,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     for(size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
-      if(mapOfInlierIndex.find(i) == mapOfInlierIndex.end()) {
+      if(mapOfInlierIndex.find((int) i) == mapOfInlierIndex.end()) {
         m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }

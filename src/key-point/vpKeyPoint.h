@@ -190,6 +190,9 @@ public:
   void getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints);
   void getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints);
 
+  void getTrainPoints(std::vector<cv::Point3f> &points);
+  void getTrainPoints(std::vector<vpPoint> &points);
+
   void initMatcher(const std::string &matcherName);
 
   void insertImageMatching(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent,
