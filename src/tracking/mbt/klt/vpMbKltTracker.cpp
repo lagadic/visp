@@ -709,16 +709,12 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     vpMatrix D;
     D.diag(w_true);
 
-//    if(isoJoIdentity)
-//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
-//    else
-//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
-
+    // Note that here the covariance is computed on cMoPrev for time computation efficiency
     if(isoJoIdentity){
         computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
     }
     else{
-        covarianceMatrix = -1;
+        computeCovarianceMatrix(cMoPrev,m_error,LVJ_true,D);
     }
   }
 }

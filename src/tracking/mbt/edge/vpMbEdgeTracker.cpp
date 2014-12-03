@@ -759,7 +759,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         v = -lambda*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
     }
     else{
-        vpVelocityTwistMatrix cVo;
         cVo.buildFrom(cMo);
         vpMatrix LVJ = (L*cVo*oJo);
         vpMatrix LVJTLVJ = (LVJ).AtA();
@@ -775,23 +774,19 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     iter++;
   }
 
-//  cMo = cMoPrev;
-  
   // std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
   if(computeCovariance){
     vpMatrix D;
     D.diag(W_true);
 
-//    if(isoJoIdentity)
-//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(L_true,v,-lambda*m_error,D);
-//    else
-//        covarianceMatrix = vpMatrix::computeCovarianceMatrix(LVJ_true,v,-lambda*m_error,D);
-
+    // Note that here the covariance is computed on cMoPrev for time computation efficiency
     if(isoJoIdentity_){
         computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
     }
     else{
-        covarianceMatrix = -1;
+      std::cout << "Rank lost" << std::endl;
+        computeCovarianceMatrix(cMoPrev,m_error,LVJ_true,D);
+        vpTime::wait(3000);
     }
   }
   
