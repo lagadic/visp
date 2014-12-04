@@ -170,7 +170,7 @@ protected:
 
 };
 
-#elif (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#elif defined(VISP_HAVE_OPENCV)
 #ifdef _CH_
 #pragma package <opencv>
 #endif

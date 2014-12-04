@@ -50,7 +50,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408))
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 
 #include <string>
 
@@ -504,7 +504,7 @@ void vpKltOpencv::suppressFeature(const int &index)
 }
 
 
-#elif (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#elif defined(VISP_HAVE_OPENCV)
 
 #include <string>
 

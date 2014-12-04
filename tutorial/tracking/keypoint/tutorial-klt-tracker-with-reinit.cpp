@@ -6,7 +6,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100)
+#ifdef VISP_HAVE_OPENCV
   try {
     vpVideoReader reader;
     reader.setFileName("video-postcard.mpeg");

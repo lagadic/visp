@@ -6,7 +6,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#ifdef VISP_HAVE_OPENCV
   try {
     bool opt_init_by_click = false;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
