@@ -189,7 +189,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
     }
 #else
     //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
   
@@ -242,7 +242,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
     }
 #else
     //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
   

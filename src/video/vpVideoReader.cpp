@@ -164,7 +164,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 		}
 #else
     //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
+    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
 #endif
 	}
 	else if (formatType == FORMAT_UNKNOWN)
@@ -227,7 +227,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 		}
 #else
     //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries."));
+    throw (vpException(vpException::fatalError ,"To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
 #endif
 	}
 	else if (formatType == FORMAT_UNKNOWN)
