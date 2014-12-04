@@ -39,7 +39,7 @@
 /*!
   \file vpXmlConfigParserKeyPoint.cpp
   \brief Definition of the vpXmlConfigParserKeyPoint class member functions.
-  Class vpXmlConfigParserKeyPoint allows to load configuration defined  in a XML file for vpKeyPoint class.
+  Class vpXmlConfigParserKeyPoint permits to load configuration defined in a XML file for vpKeyPoint class.
 
 */
 
@@ -50,15 +50,15 @@
 #ifdef VISP_HAVE_XML2
 
 vpXmlConfigParserKeyPoint::vpXmlConfigParserKeyPoint() : m_detectorName("SIFT"), m_extractorName("SIFT"), m_matcherName("BruteForce"),
-m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_useRansacVVS(false), m_useRansacConsensusPercentage(false),
-m_nbRansacIterations(200), m_ransacReprojectionError(6.0), m_nbRansacMinInlierCount(100),
-m_ransacThreshold(0.001), m_ransacConsensusPercentage(20.0)
+m_matchingFactorThreshold(2.0), m_matchingMethod(stdDistanceThreshold), m_matchingRatioThreshold(0.85), m_nbRansacIterations(200),
+m_nbRansacMinInlierCount(100), m_ransacConsensusPercentage(20.0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.001),
+m_useRansacConsensusPercentage(false), m_useRansacVVS(false)
 {
   init();
 }
 
 /*!
-  Initialise internal variables (including the map).
+  Initialize the nodeMap for the node parsing.
 */
 void
 vpXmlConfigParserKeyPoint::init()
@@ -89,8 +89,8 @@ vpXmlConfigParserKeyPoint::init()
 }
 
 /*!
-  Parse an xml file to load configuration for vpKeyPoint class.
-  \param filename : name of the xml file to parse.
+  Parse an XML file to load configuration for vpKeyPoint class.
+  \param filename : filename of the XML file to parse.
 */
 void
 vpXmlConfigParserKeyPoint::parse(const std::string &filename)
@@ -111,7 +111,6 @@ vpXmlConfigParserKeyPoint::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool detector_node = false;
   bool extractor_node = false;
   bool matcher_node = false;
-  //bool ransac_node = false;
 
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -135,12 +134,10 @@ vpXmlConfigParserKeyPoint::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 
         case ransac:
           this->read_ransac(doc, dataNode);
-          //ransac_node = true;
           break;
 
-        default:{
-          //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
-        }break;
+        default:
+          break;
         }
       }
     }
@@ -159,6 +156,12 @@ vpXmlConfigParserKeyPoint::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 }
 
+/*!
+  Parse detector tag part.
+
+  \param doc : Document to parse.
+  \param node : Detector node.
+*/
 void
 vpXmlConfigParserKeyPoint::read_detector(xmlDocPtr doc, xmlNodePtr node)
 {
@@ -187,6 +190,12 @@ vpXmlConfigParserKeyPoint::read_detector(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "detector : Name : "<< m_detectorName << std::endl;
 }
 
+/*!
+  Parse extractor tag part.
+
+  \param doc : Document to parse.
+  \param node : Extractor node.
+*/
 void
 vpXmlConfigParserKeyPoint::read_extractor(xmlDocPtr doc, xmlNodePtr node)
 {
@@ -215,6 +224,12 @@ vpXmlConfigParserKeyPoint::read_extractor(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "extractor : Name : "<< m_extractorName << std::endl;
 }
 
+/*!
+  Parse matcher tag part.
+
+  \param doc : Document to parse.
+  \param node : Matcher node.
+*/
 void
 vpXmlConfigParserKeyPoint::read_matcher(xmlDocPtr doc, xmlNodePtr node)
 {
@@ -308,6 +323,12 @@ vpXmlConfigParserKeyPoint::read_matcher(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "matcher : matching ratio threshold : "<< m_matchingRatioThreshold << std::endl;
 }
 
+/*!
+  Parse ransac tag part.
+
+  \param doc : Document to parse.
+  \param node : Ransac node.
+*/
 void
 vpXmlConfigParserKeyPoint::read_ransac(xmlDocPtr doc, xmlNodePtr node)
 {
