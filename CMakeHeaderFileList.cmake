@@ -66,6 +66,12 @@ SET (HEADER_DATA_STRUCTURE
   data-structure/vpList.h
   )
 
+set(HEADER_DETECTION
+  detection/barcode/vpDetectorBarCodeBase.h
+  detection/barcode/vpDetectorDataMatrixCode.h
+  detection/barcode/vpDetectorQRCode.h
+)
+
 SET (HEADER_EXCEPTION
   exceptions/vpException.h
   )
@@ -378,6 +384,7 @@ SET (HEADER_ALL
   ${HEADER_CAMERA}
   ${HEADER_COMPUTER_VISION}
   ${HEADER_DATA_STRUCTURE}
+  ${HEADER_DETECTION}
   ${HEADER_DEVICE_DISPLAY}
   ${HEADER_DEVICE_FRAMEGRABBER}
   ${HEADER_DEVICE_KINECT}

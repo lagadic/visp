@@ -8,6 +8,9 @@
 
 ViSP 2.10.0 (under development)
   - New features
+    . New bar code detectors that uses libdmtx and libzbar:
+      + vpDetectorQRcode class allows to detect QR codes
+      + vpDetectorDataMatrixCode class allows to detect data matrices
     . Model-based tracker:
       + Introduction of 3D circles that project as ellipses.
       + In *.cao files comments are allowed on lines starting with # character.

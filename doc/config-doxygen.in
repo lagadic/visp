@@ -1584,6 +1584,8 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_LIBFREENECT \
                          VISP_HAVE_LIBUSB_1 \
                          VISP_HAVE_YARP \
+                         VISP_HAVE_ZBAR \
+                         VISP_HAVE_DMTX \
                          VISP_HAVE_ACCESS_TO_NAS \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_BUILD_DEPRECATED_FUNCTIONS \

@@ -109,6 +109,15 @@ public:
 
   vpRotationMatrix(const vpQuaternionVector& q);
 
+//  /*!
+//    Return the \f$\theta u\f$ vector that corresponds to tha rotation matrix.
+//   */
+//  vpThetaUVector getThetaUVector()
+//  {
+//    vpThetaUVector tu;
+//    tu.buildFrom(*this);
+//    return tu;
+//  }
 
   //! copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);

@@ -51,6 +51,8 @@ Misc:
   XML2                        : ${VISP_HAVE_XML2_FOUND}
   pthread                     : ${VISP_HAVE_PTHREAD_FOUND}
   OpenMP                      : ${VISP_HAVE_OPENMP_FOUND}
+  zbar                        : ${VISP_HAVE_ZBAR_FOUND}
+  dmtx                        : ${VISP_HAVE_DMTX_FOUND}
 Documentation:
   Doxygen                     : ${VISP_HAVE_DOXYGEN_FOUND}
   Graphviz dot                : ${VISP_HAVE_DOT_FOUND}

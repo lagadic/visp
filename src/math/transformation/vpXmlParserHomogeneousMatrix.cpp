@@ -241,7 +241,7 @@ vpXmlParserHomogeneousMatrix::read (xmlDocPtr doc, xmlNodePtr node,
   if (nbM == 0){
     back = SEQUENCE_ERROR;
     vpCERROR << "No Homogeneous matrix is available" << std::endl
-             << "with name" << name <<"." << std::endl;
+             << "with name: " << name << std::endl;
   }
   else if(nbM > 1){
     back = SEQUENCE_ERROR;

@@ -252,6 +252,12 @@
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 
+// Defined if libzbar is available for bar code detection
+#cmakedefine VISP_HAVE_ZBAR
+
+// Defined if libdmtx is available for bar code detection
+#cmakedefine VISP_HAVE_DMTX
+
 // Defined if Inria's NAS server hosting /udd/ is available
 // Used for the moment in vpAfma6 class to check if config files are
 // available in /udd/fspindle/robot/Afma6/current/include/

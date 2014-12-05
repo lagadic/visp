@@ -511,6 +511,19 @@ else()
   SET(USE_DL OFF)
 endif()
 
+find_package(ZBAR)
+if(ZBAR_FOUND)
+  OPTION(USE_ZBAR    "Compile ViSP with zbar library" ON)
+else()
+  SET(USE_ZBAR OFF)
+endif()
+
+find_package(DMTX)
+if(DMTX_FOUND)
+  OPTION(USE_DMTX    "Compile ViSP with zbar library" ON)
+else()
+  SET(USE_DMTX OFF)
+endif()
 
 # Set other options to default value
 #SET(USE_X11        ON) # For Linux/OSX display
@@ -2009,7 +2022,23 @@ if(USE_ARIA)
   endif(UNIX)
 endif()
 
+if(USE_ZBAR)
+  set(VISP_HAVE_ZBAR TRUE) # for header vpConfig.h
+  set(VISP_HAVE_ZBAR_FOUND "yes")  # for ViSP-third-party.txt
+  list(APPEND VISP_EXTERN_INCLUDE_DIRS ${ZBAR_INCLUDE_DIRS})
+  list(APPEND VISP_EXTERN_LIBRARIES ${ZBAR_LIBRARIES})
+else()
+  set(VISP_HAVE_ZBAR_FOUND "no")  # for ViSP-third-party.txt
+endif()
 
+if(USE_DMTX)
+  set(VISP_HAVE_DMTX TRUE) # for header vpConfig.h
+  set(VISP_HAVE_DMTX_FOUND "yes")  # for ViSP-third-party.txt
+  list(APPEND VISP_EXTERN_INCLUDE_DIRS ${DMTX_INCLUDE_DIRS})
+  list(APPEND VISP_EXTERN_LIBRARIES ${DMTX_LIBRARIES})
+else()
+  set(VISP_HAVE_DMTX_FOUND "no")  # for ViSP-third-party.txt
+endif()
 
 #----------------------------------------------------------------------
 # Add definitions

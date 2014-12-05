@@ -147,6 +147,26 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
 
+  /*!
+    Return the translation vector from the homogeneous transformation matrix.
+   */
+  vpTranslationVector getTranslationVector()
+  {
+    vpTranslationVector t;
+    this->extract(t);
+    return t;
+  }
+  /*!
+    Return the rotation matrix from the homogeneous transformation matrix.
+   */
+//  vpThetaUVector getThetaUVector()
+//  vpRotationMatrix getRotationMatrix()
+//  {
+//    vpRotationMatrix R;
+//    this->extract(R);
+//    return R;
+//  }
+
   //! Copy operator from vpHomogeneousMatrix.
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
 

@@ -25,6 +25,7 @@ endif()
 
 add_subdirectory(computer-vision)
 add_subdirectory(grabber)
+add_subdirectory(detection/barcode)
 add_subdirectory(image)
 add_subdirectory(matching)
 add_subdirectory(robot/pioneer)
