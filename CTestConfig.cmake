@@ -168,7 +168,6 @@ IF(VISP_HAVE_LIBUSB_1)
   SET(BUILDNAME "${BUILDNAME}-usb")
 ENDIF()
 
-
 #---- Video-devices ----
 # X11
 IF(VISP_HAVE_X11)
@@ -246,17 +245,24 @@ ENDIF()
 
 #---- Misc ----
 # XML
-IF(VISP_HAVE_XML2)
-  SET(BUILDNAME "${BUILDNAME}-xml")
-ENDIF(VISP_HAVE_XML2)
+if(VISP_HAVE_XML2)
+  set(BUILDNAME "${BUILDNAME}-xml")
+endif()
 # PThread
-IF(VISP_HAVE_PTHREAD)
-  SET(BUILDNAME "${BUILDNAME}-pthread")
-ENDIF(VISP_HAVE_PTHREAD)
+if(VISP_HAVE_PTHREAD)
+  set(BUILDNAME "${BUILDNAME}-pthread")
+endif()
 # OpenMP
-IF(VISP_HAVE_OPENMP)
-  SET(BUILDNAME "${BUILDNAME}-OpenMP")
-ENDIF()
+if(VISP_HAVE_OPENMP)
+  set(BUILDNAME "${BUILDNAME}-OpenMP")
+endif()
+if(VISP_HAVE_DMTX)
+  set(BUILDNAME "${BUILDNAME}-dmtx")
+endif()
+if(VISP_HAVE_ZBAR)
+  set(BUILDNAME "${BUILDNAME}-zbar")
+endif()
+
 
 #---- Special compiler flags ----
 if(ACTIVATE_WARNING_STRICT_OVERFLOW)
