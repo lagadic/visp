@@ -69,15 +69,16 @@ int main(int argc, const char** argv)
           vpRect bbox = detector->getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green);
           vpDisplay::displayText(I, bbox.getTop()-20, bbox.getLeft(), "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
-          for(size_t i=0; i < p.size(); i++) {
-            vpDisplay::displayCross(I, p[i], 14, vpColor::red, 3);
+          for(size_t j=0; j < p.size(); j++) {
+            vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
             std::ostringstream number;
-            number << i;
-            vpDisplay::displayText(I, p[i]+vpImagePoint(10,0), number.str(), vpColor::blue);
+            number << j;
+            vpDisplay::displayText(I, p[j]+vpImagePoint(10,0), number.str(), vpColor::blue);
           }
         }
       }
 
+      vpDisplay::displayText(I, I.getHeight()-25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;
