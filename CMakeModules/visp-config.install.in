@@ -84,7 +84,7 @@ EOF
 
 if ! test "$1"; then
     usage;
-    exit -1;
+    exit 0;
 fi;
 
 for arg in $@; do
@@ -97,7 +97,7 @@ for arg in $@; do
 	    echo ""
 	    echo "Copyright (C) 2005 - 2014 Inria. All rights reserved.";;
 	--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
-	*) usage; exit -1 ;;
+        *) usage; exit 0 ;;
     esac;
 done;
 echo ""
