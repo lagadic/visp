@@ -80,11 +80,13 @@ protected:
   vpRowVector(vpMatrix &m, unsigned int i);
 
 public:
-  //! basic constructor
+  //! Basic constructor.
   vpRowVector() : vpMatrix() {};
-  //! constructor of vector of size n
-  vpRowVector(unsigned int nn) : vpMatrix(1,nn){};
-  //! copy constructor
+  //! Constructor of vector of size n.
+  vpRowVector(unsigned int n) : vpMatrix(1, n){};
+  //! Constructor of vector of size n. Each element is set to \e val.
+  vpRowVector(unsigned int n, double val) : vpMatrix(1, n, val){};
+  //! Copy constructor.
   vpRowVector(const vpRowVector &v);
 
   //! Set the size of the Row vector
