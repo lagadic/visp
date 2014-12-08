@@ -73,13 +73,13 @@ SET (SRC_COMPUTER_VISION
   computer-vision/pose-estimation/vpPoseVirtualVisualServoing.cpp
   )
 
-#if(VISP_HAVE_ZBAR)
+if(VISP_HAVE_ZBAR)
   list(APPEND SRC_DETECTION detection/barcode/vpDetectorQRCode.cpp)
-#endif()
+endif()
 
-#if(VISP_HAVE_DMTX)
+if(VISP_HAVE_DMTX)
   list(APPEND SRC_DETECTION detection/barcode/vpDetectorDataMatrixCode.cpp)
-#endif()
+endif()
 
 SET (SRC_EXCEPTION
   exceptions/vpException.cpp
