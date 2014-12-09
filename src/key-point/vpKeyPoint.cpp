@@ -1084,6 +1084,14 @@ void vpKeyPoint::init() {
 
   m_currentImageId = 0;
 
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
+  //The following line must be called in order to use SIFT or SURF
+  if (!cv::initModule_nonfree()) {
+    std::cerr << "Cannot init module non free, SIFT or SURF cannot be used."
+        << std::endl;
+  }
+#endif
+
   initDetectors(m_detectorNames);
   initExtractors(m_extractorNames);
   initMatcher(m_matcherName);
