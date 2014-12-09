@@ -77,7 +77,7 @@ bool samePoint(const vpPoint &P1, const vpPoint &P2, double threshold);
   Basic constructor
 */
 vpMbEdgeTracker::vpMbEdgeTracker()
-  : compute_interaction(1), lambda(1), me(), lines(1), circles(1), cylinders(1), nline(0), ncylinder(0),
+  : compute_interaction(1), lambda(1), me(), lines(1), circles(1), cylinders(1), nline(0), ncircle(0), ncylinder(0),
     nbvisiblepolygone(0), percentageGdPt(0.4), scales(1),
     Ipyramid(0), scaleLevel(0)
 {
