@@ -48,8 +48,10 @@ int main(int argc, const char** argv)
       detector = new vpDetectorDataMatrixCode;
 #elif defined(VISP_HAVE_ZBAR)
     detector = new vpDetectorQRCode;
+    (void)opt_barcode;
 #elif defined(VISP_HAVE_DMTX)
     detector = new vpDetectorDataMatrixCode;
+    (void)opt_barcode;
 #endif
 
     for(;;) {
