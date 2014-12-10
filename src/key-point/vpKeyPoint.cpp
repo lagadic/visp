@@ -329,7 +329,7 @@ double vpKeyPoint::computePoseEstimationError(const std::vector<std::pair<cv::Ke
                                               const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est) {
   if(matchKeyPoints.size() == 0) {
     //return std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
-    return INT_MAX;
+    return DBL_MAX;
   }
 
   std::vector<double> errors(matchKeyPoints.size());
@@ -759,7 +759,7 @@ void vpKeyPoint::filterMatches() {
   if(m_useKnn) {
     double max_dist = 0;
     //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
-    double min_dist = INT_MAX;
+    double min_dist = DBL_MAX;
     double mean = 0.0;
     std::vector<double> distance_vec(m_queryDescriptors.rows);
 
@@ -807,7 +807,7 @@ void vpKeyPoint::filterMatches() {
   } else {
     double max_dist = 0;
     //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
-    double min_dist = INT_MAX;
+    double min_dist = DBL_MAX;
     double mean = 0.0;
     std::vector<double> distance_vec(m_queryDescriptors.rows);
     for (int i = 0; i < m_queryDescriptors.rows; i++) {
@@ -1727,7 +1727,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
   convertToVpType(m_filteredMatches, matchedReferencePoints);
 
   //error = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
-  error = INT_MAX;
+  error = DBL_MAX;
   m_ransacInliers.clear();
   m_ransacOutliers.clear();
 
