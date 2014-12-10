@@ -332,8 +332,8 @@ void vpKltOpencv::setMaxFeatures(const int maxCount)
 /*!
   Set the window size used to refine the corner locations.
 
-  \param size : Half of the side length of the search window.
-  For example, if \e winSize=5 , then a 5*2+1 \times 5*2+1 = 11 \times 11 search window is used.
+  \param winSize : Half of the side length of the search window.
+  For example, if \e winSize=5 , then a 5*2+1 \f$\times\f$ 5*2+1 = 11 \f$\times\f$ 11 search window is used.
 */
 void vpKltOpencv::setWindowSize(const int winSize)
 {
@@ -356,7 +356,7 @@ void vpKltOpencv::setQuality(double qualityLevel)
 /*!
   Set the free parameter of the Harris detector.
 
-  \param k : Free parameter of the Harris detector.
+  \param harris_k : Free parameter of the Harris detector.
 */
 void vpKltOpencv::setHarrisFreeParameter(double harris_k)
 {

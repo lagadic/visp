@@ -111,17 +111,17 @@ int main()
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
 
-  //First grab the reference image Ireference
+  // First grab the reference image Ireference
 
-  //Build the reference SURF points.
+  // Build the reference SURF points.
   surf.buildReference(Ireference);
 
-  //Then grab another image which represents the current image Icurrent
+  // Then grab another image which represents the current image Icurrent
 
-  //Match points between the reference points and the SURF points computed in the current image.
+  // Match points between the reference points and the SURF points computed in the current image.
   surf.matchPoint(Icurrent);
 
-  //Display the matched points
+  // Display the matched points
   surf.display(Ireference, Icurrent);
 
   return (0);
