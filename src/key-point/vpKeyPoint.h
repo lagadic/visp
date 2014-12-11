@@ -64,8 +64,14 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 #  include <opencv2/nonfree/nonfree.hpp>
+#endif
+
+//TODO: Add flag to detect if there is the contrib module in OpenCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+//In current code source (2014/12/11) xfeatures2d.hpp already calls "opencv2/xfeatures2d/nonfree.hpp"
+#  include <opencv2/xfeatures2d.hpp>
 #endif
 
 #ifdef VISP_HAVE_XML2
@@ -471,6 +477,13 @@ private:
 
   void initExtractor(const std::string &extractorName);
   void initExtractors(const std::vector<std::string> &extractorNames);
+
+//TODO: Try to implement a pyramidal feature detection
+//#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+//  void pyramidFeatureDetection(cv::Ptr<cv::FeatureDetector> &detector, const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask,
+//      const int maxLevel=2);
+//  void runByPixelsMask(std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask);
+//#endif
 };
 
 #endif

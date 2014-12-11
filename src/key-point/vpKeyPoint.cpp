@@ -114,6 +114,12 @@ inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
+///*!
+//   Convert an imagePoint to cv::Point2f.
+//
+//   \param point : Point to convert in ViSP type.
+//   \return The train index.
+// */
 inline cv::Point2f vpImagePointToPoint2f(const vpImagePoint &point) {
   return cv::Point2f((float) point.get_u(), (float) point.get_v());
 }
@@ -125,6 +131,82 @@ inline cv::Point3f vpCamPointToPoint3f(const vpPoint &point) {
 inline cv::Point3f vpObjectPointToPoint3f(const vpPoint &point) {
   return cv::Point3f((float) point.get_oX(), (float) point.get_oY(), (float) point.get_oZ());
 }
+
+//TODO: Try to implement a pyramidal feature detection
+//#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+//class MaskPredicate
+//{
+//public:
+//    MaskPredicate( const cv::Mat& _mask ) : mask(_mask) {}
+//    bool operator() (const cv::KeyPoint& key_pt) const
+//    {
+//        return mask.at<uchar>( (int)(key_pt.pt.y + 0.5f), (int)(key_pt.pt.x + 0.5f) ) == 0;
+//    }
+//
+//private:
+//    const cv::Mat mask;
+//    MaskPredicate& operator=(const MaskPredicate&);
+//};
+//
+//void vpKeyPoint::runByPixelsMask( std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask )
+//{
+//    if( mask.empty() )
+//  {
+//        return;
+//  }
+//
+//    keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(), MaskPredicate(mask)), keypoints.end());
+//}
+//
+//void vpKeyPoint::pyramidFeatureDetection(cv::Ptr<cv::FeatureDetector> &detector, const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask,
+//               const int maxLevel)
+//{
+//    cv::Mat src = image;
+//    cv::Mat src_mask = mask;
+//
+//    cv::Mat dilated_mask;
+//    if( !mask.empty() )
+//    {
+//        dilate( mask, dilated_mask, cv::Mat() );
+//        cv::Mat mask255( mask.size(), CV_8UC1, cv::Scalar(0) );
+//        mask255.setTo( cv::Scalar(255), dilated_mask != 0 );
+//        dilated_mask = mask255;
+//    }
+//
+//    for( int l = 0, multiplier = 1; l <= maxLevel; ++l, multiplier *= 2 )
+//    {
+//        // Detect on current level of the pyramid
+//        std::vector<cv::KeyPoint> new_pts;
+//        detector->detect( src, new_pts, src_mask );
+//        std::vector<cv::KeyPoint>::iterator it = new_pts.begin(),
+//                                   end = new_pts.end();
+//        for( ; it != end; ++it)
+//        {
+//            it->pt.x *= multiplier;
+//            it->pt.y *= multiplier;
+//            it->size *= multiplier;
+//            it->octave = l;
+//        }
+//        keypoints.insert( keypoints.end(), new_pts.begin(), new_pts.end() );
+//
+//        // Downsample
+//        if( l < maxLevel )
+//        {
+//            cv::Mat dst;
+//            pyrDown( src, dst );
+//            src = dst;
+//
+//            if( !mask.empty() )
+//                resize( dilated_mask, src_mask, src.size(), 0, 0, CV_INTER_AREA );
+//        }
+//    }
+//
+//    if( !mask.empty() )
+//  {
+//        //KeyPointsFilter::runByPixelsMask( keypoints, mask );
+//  }
+//}
+//#endif
 
 /*!
   Constructor to initialize specified detector, extractor, matcher and filtering method.
@@ -1084,7 +1166,7 @@ void vpKeyPoint::init() {
 
   m_currentImageId = 0;
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) // Require opencv >= 2.4.0
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require 2.4.0 <= opencv < 3.0.0
   //The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
     std::cerr << "Cannot init module non free, SIFT or SURF cannot be used."
@@ -1103,7 +1185,8 @@ void vpKeyPoint::init() {
    \param detectorName : Name of the detector (e.g FAST, SIFT, SURF, etc.).
  */
 void vpKeyPoint::initDetector(const std::string &detectorName) {
-  // TODO: Fix compat with OpenCV 3.0.0
+  // TODO: Add function to process detection in pyramid images with OpenCV 3.0.0
+  // since there seems to have no equivalent function (2014/12/11)
   //  std::string pyramid = "Pyramid";
   //  std::size_t pos = detectorName.find(pyramid);
   //  if(pos != std::string::npos) {
@@ -1116,7 +1199,38 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
 #else
-  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
+  //TODO: Add a pyramidal feature detection
+  std::string detectorNameTmp = detectorName;
+  std::string pyramid = "Pyramid";
+  std::size_t pos = detectorName.find(pyramid);
+  if(pos != std::string::npos) {
+    detectorNameTmp = detectorName.substr(pos + pyramid.size());
+  }
+
+  if(detectorNameTmp == "SIFT") {
+    m_detectors[detectorNameTmp] = cv::xfeatures2d::SIFT::create();
+  } else if(detectorNameTmp == "SURF") {
+    m_detectors[detectorNameTmp] = cv::xfeatures2d::SURF::create();
+  } else if(detectorNameTmp == "FAST") {
+    m_detectors[detectorNameTmp] = cv::FastFeatureDetector::create();
+  } else if(detectorNameTmp == "MSER") {
+    m_detectors[detectorNameTmp] = cv::MSER::create();
+  } else if(detectorNameTmp == "ORB") {
+    m_detectors[detectorNameTmp] = cv::ORB::create();
+  } else if(detectorNameTmp == "BRISK") {
+    m_detectors[detectorNameTmp] = cv::BRISK::create();
+  } else if(detectorNameTmp == "KAZE") {
+    m_detectors[detectorNameTmp] = cv::KAZE::create();
+  } else if(detectorNameTmp == "AKAZE") {
+    m_detectors[detectorNameTmp] = cv::AKAZE::create();
+  } else if(detectorNameTmp == "GFFT") {
+    m_detectors[detectorNameTmp] = cv::GFTTDetector::create();
+  } else if(detectorNameTmp == "SimpleBlob") {
+    m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
+  } else {
+    std::cerr << "The detector:" << detectorName << " seems to be not available." << std::endl;
+  }
+//  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
 #endif
 }
 
@@ -1140,7 +1254,18 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
-  m_extractors[extractorName] = cv::DescriptorExtractor::create<cv::DescriptorExtractor>(extractorName);
+  if(extractorName == "SIFT") {
+    m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
+  } else if(extractorName == "SURF") {
+    m_extractors[extractorName] = cv::xfeatures2d::SURF::create();
+  } else if(extractorName == "ORB") {
+    m_extractors[extractorName] = cv::ORB::create();
+  } else if(extractorName == "BRISK") {
+    m_extractors[extractorName] = cv::BRISK::create();
+  } else {
+    std::cerr << "The extractor:" << extractorName << " seems to be not available." << std::endl;
+  }
+//  m_extractors[extractorName] = cv::DescriptorExtractor::create<cv::DescriptorExtractor>(extractorName);
 #endif
 }
 
