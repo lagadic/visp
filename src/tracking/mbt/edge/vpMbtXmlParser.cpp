@@ -58,7 +58,7 @@
   Default constructor. 
   
 */
-vpMbtXmlParser::vpMbtXmlParser() : m_ecm()
+vpMbtXmlParser::vpMbtXmlParser() : m_ecm(), useLod(false), minLineLengthThreshold(50.0), minPolygonAreaThreshold(2500.0)
 {
   init();
 }
@@ -91,6 +91,10 @@ vpMbtXmlParser::init()
   nodeMap["sample"] = sample;
   nodeMap["step"] = step;
   nodeMap["nb_sample"] = nb_sample;
+  nodeMap["lod"] = lod;
+  nodeMap["use_lod"] = use_lod;
+  nodeMap["min_line_length_threshold"] = min_line_length_threshold;
+  nodeMap["min_polygon_area_threshold"] = min_polygon_area_threshold;
 }
 
 /*!
@@ -131,6 +135,7 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool face_node = false;
   bool ecm_node = false;
   bool sample_node = false;
+  bool lod_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -152,6 +157,10 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         case sample:{
           this->read_sample (doc, dataNode);
           sample_node = true;
+          }break;
+        case lod:{
+          this->read_lod(doc, dataNode);
+          lod_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -185,6 +194,12 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   if(!sample_node) {
     std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
     std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+  }
+
+  if(!lod_node) {
+    std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
@@ -456,6 +471,54 @@ vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<" (default)" <<std::endl;
   else
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<std::endl;
+}
+
+void
+vpMbtXmlParser::read_lod (xmlDocPtr doc, xmlNodePtr node) {
+  bool use_lod_node = false;
+  bool min_line_length_threshold_node = false;
+  bool min_polygon_area_threshold_node = false;
+
+
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case use_lod:
+          useLod = (xmlReadIntChild(doc, dataNode) != 0);
+          use_lod_node = true;
+          break;
+        case min_line_length_threshold:
+          minLineLengthThreshold = xmlReadDoubleChild(doc, dataNode);
+          min_line_length_threshold_node = true;
+          break;
+        case min_polygon_area_threshold:
+          minPolygonAreaThreshold = xmlReadDoubleChild(doc, dataNode);
+          min_polygon_area_threshold_node = true;
+          break;
+        default:{
+//          vpTRACE("unknown tag in read_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  if(!use_lod_node)
+    std::cout << "lod : use lod : " << useLod << " (default)" <<std::endl;
+  else
+    std::cout << "lod : use lod : " << useLod << std::endl;
+
+  if(!min_line_length_threshold_node)
+    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<" (default)" <<std::endl;
+  else
+    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<std::endl;
+
+  if(!min_polygon_area_threshold_node)
+    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<" (default)" <<std::endl;
+  else
+    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<std::endl;
 }
 
 #endif

@@ -44,6 +44,7 @@
 #include <time.h>       // time
 #include <fstream>      // std::ofstream
 #include <numeric>      // std::accumulate
+#include <float.h>      // DBL_MAX
 
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>

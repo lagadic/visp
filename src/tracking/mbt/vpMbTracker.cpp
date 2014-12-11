@@ -113,9 +113,13 @@ vpMbTracker::vpMbTracker()
   poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
   m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
   distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
-  nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0)
+  nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
+  useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
+  minPolygonAreaThresholdGeneral(2500.0)
 {
     oJo.setIdentity();
+    //Map used to parse additional information in CAO model files,
+    //like name of faces or LOD setting
     mapOfParameterNames["name"] = "string";
     mapOfParameterNames["minPolygonAreaThreshold"] = "number";
     mapOfParameterNames["minLineLengthThreshold"] = "number";
@@ -778,15 +782,18 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
-  //if(minPolygonAreaThreshold != -1.0) {
-  if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
-    polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
-  }
+//  //if(minPolygonAreaThreshold != -1.0) {
+//  if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
+//    polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+//  }
+//
+//  //if(minLineLengthThreshold != -1.0) {
+//  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
+//    polygon.setMinLineLengthThresh(minLineLengthThreshold);
+//  }
 
-  //if(minLineLengthThreshold != -1.0) {
-  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
-    polygon.setMinLineLengthThresh(minLineLengthThreshold);
-  }
+  polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+  polygon.setMinLineLengthThresh(minLineLengthThreshold);
 
   for(unsigned int j = 0; j < corners_without_duplicates.size(); j++) {
     polygon.addPoint(j, corners_without_duplicates[j]);
@@ -812,10 +819,14 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
     polygon.setName(polygonName);
     polygon.setLod(useLod);
 
-    //if(minPolygonAreaThreshold != -1.0) {
-    if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
-      polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
-    }
+//    //if(minPolygonAreaThreshold != -1.0) {
+//    if(std::fabs(minPolygonAreaThreshold + 1.0) > std::fabs(minPolygonAreaThreshold)*std::numeric_limits<double>::epsilon()) {
+//      polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+//    }
+    polygon.setMinPolygonAreaThresh(minPolygonAreaThreshold);
+    //Non sense to set minLineLengthThreshold for circle
+    //but used to be coherent when applying LOD settings for all polygons
+    polygon.setMinLineLengthThresh(minLineLengthThresholdGeneral);
 
     {
       // Create the 4 points of the circle bounding box
@@ -884,7 +895,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
 void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace, const std::string &polygonName,
     const bool useLod, const double minLineLengthThreshold)
 {
-  // A a polygon as a single line that corresponds to the revolution axis of the cylinder
+  // A polygon as a single line that corresponds to the revolution axis of the cylinder
   vpMbtPolygon polygon;
   polygon.setNbPoint(2);
 
@@ -895,10 +906,14 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigne
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
-  //if(minLineLengthThreshold != -1.0) {
-  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
-    polygon.setMinLineLengthThresh(minLineLengthThreshold);
-  }
+//  //if(minLineLengthThreshold != -1.0) {
+//  if(std::fabs(minLineLengthThreshold + 1.0) > std::fabs(minLineLengthThreshold)*std::numeric_limits<double>::epsilon()) {
+//    polygon.setMinLineLengthThresh(minLineLengthThreshold);
+//  }
+  polygon.setMinLineLengthThresh(minLineLengthThreshold);
+  //Non sense to set minPolygonAreaThreshold for cylinder
+  //but used to be coherent when applying LOD settings for all polygons
+  polygon.setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
 
   faces.addPolygon(&polygon) ;
 
@@ -1387,8 +1402,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 //          fileId.ignore(256, '\n'); // skip the rest of the line
 
           std::string segmentName = "";
-          double minLineLengthThresh = -1.0;
-          bool useLod = false;
+          double minLineLengthThresh = !applyLodSettingInConfig ? minLineLengthThresholdGeneral : 50.0;
+          bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
           if(mapOfParams.find("name") != mapOfParams.end()) {
             segmentName = mapOfParams["name"];
           }
@@ -1480,29 +1495,29 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 
 //          fileId.ignore(256, '\n'); // skip the rest of the line
 
-    std::string polygonName = "";
-    bool useLod = false;
-    double minPolygonAreaThreshold = -1.0;
-    if(mapOfParams.find("name") != mapOfParams.end()) {
-      polygonName = mapOfParams["name"];
-    }
-    if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
-      minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
-    }
-    if(mapOfParams.find("useLod") != mapOfParams.end()) {
-      useLod = parseBoolean(mapOfParams["useLod"]);
-    }
+          std::string polygonName = "";
+          bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
+          double minPolygonAreaThreshold = !applyLodSettingInConfig ? minPolygonAreaThresholdGeneral : 2500.0;
+          if(mapOfParams.find("name") != mapOfParams.end()) {
+            polygonName = mapOfParams["name"];
+          }
+          if(mapOfParams.find("minPolygonAreaThreshold") != mapOfParams.end()) {
+            minPolygonAreaThreshold = std::atof(mapOfParams["minPolygonAreaThreshold"].c_str());
+          }
+          if(mapOfParams.find("useLod") != mapOfParams.end()) {
+            useLod = parseBoolean(mapOfParams["useLod"]);
+          }
 
-    addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold);
-//      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-    initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
-  }
+          addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
+      //      initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+          initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
+      }
 
       //Add the segments which were not already added in the face segment case
       for(std::map<std::pair<unsigned int, unsigned int>, SegmentInfo >::const_iterator it =
           segmentTemporaryMap.begin(); it != segmentTemporaryMap.end(); ++it) {
         if(std::find(faceSegmentKeyVector.begin(), faceSegmentKeyVector.end(), it->first) == faceSegmentKeyVector.end()) {
-          addPolygon(it->second.extremities, idFace++, it->second.name, it->second.useLod, -1.0,
+          addPolygon(it->second.extremities, idFace++, it->second.name, it->second.useLod, minPolygonAreaThresholdGeneral,
               it->second.minLineLengthThresh);
           initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
         }
@@ -1558,8 +1573,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 //          fileId.ignore(256, '\n'); // skip the rest of the line
 
           std::string polygonName = "";
-          bool useLod = false;
-          double minPolygonAreaThreshold = -1.0;
+          bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
+          double minPolygonAreaThreshold = !applyLodSettingInConfig ? minPolygonAreaThresholdGeneral : 2500.0;
           if(mapOfParams.find("name") != mapOfParams.end()) {
             polygonName = mapOfParams["name"];
           }
@@ -1571,9 +1586,9 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
           }
 
 
-    addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold);
-    initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
-  }
+          addPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
+          initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
+      }
 
       //////////////////////////Read the cylinder declaration part//////////////////////////
       unsigned int caoNbCylinder;
@@ -1619,8 +1634,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 //              fileId.ignore(256, '\n'); // skip the rest of the line
 
               std::string polygonName = "";
-              bool useLod = false;
-              double minLineLengthThreshold = -1.0;
+              bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
+              double minLineLengthThreshold = !applyLodSettingInConfig ? minLineLengthThresholdGeneral : 50.0;
               if(mapOfParams.find("name") != mapOfParams.end()) {
                 polygonName = mapOfParams["name"];
               }
@@ -1631,8 +1646,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
                 useLod = parseBoolean(mapOfParams["useLod"]);
               }
 
-      addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace, polygonName, useLod, minLineLengthThreshold);
-      initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++, polygonName);
+              addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace, polygonName, useLod, minLineLengthThreshold);
+              initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++, polygonName);
           }
 
       } catch (...) {
@@ -1688,8 +1703,8 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
 //              fileId.ignore(256, '\n'); // skip the rest of the line
 
               std::string polygonName = "";
-              bool useLod = false;
-              double minPolygonAreaThreshold = -1.0;
+              bool useLod = !applyLodSettingInConfig ? useLodGeneral : false;
+              double minPolygonAreaThreshold = !applyLodSettingInConfig ? minPolygonAreaThresholdGeneral : 2500.0;
               if(mapOfParams.find("name") != mapOfParams.end()) {
                 polygonName = mapOfParams["name"];
               }

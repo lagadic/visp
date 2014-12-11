@@ -70,9 +70,6 @@
 class VISP_EXPORT vpMbtXmlParser: virtual public vpMbXmlParser
 {
 protected:
-  //! Moving edges parameters.
-  vpMe m_ecm;
-
   typedef enum{
     ecm = vpMbXmlParser::last,
     mask,
@@ -87,17 +84,56 @@ protected:
     sample,
     step,
     nb_sample,
+    lod,
+    use_lod,
+    min_line_length_threshold,
+    min_polygon_area_threshold,
     last
   } dataToParseMb;
+
+  //! Moving edges parameters.
+  vpMe m_ecm;
+  //! If true, the LOD is enabled, otherwise it is not
+  bool useLod;
+  //! Minimum line length to track a segment when LOD is enabled
+  double minLineLengthThreshold;
+  //! Minimum polygon area to track a face when LOD is enabled
+  double minPolygonAreaThreshold;
 
 
 public:
 
-	vpMbtXmlParser();
-	virtual ~vpMbtXmlParser();
+  vpMbtXmlParser();
+  virtual ~vpMbtXmlParser();
+
+  /*!
+     Get the state of LOD setting.
+
+     \return True if LOD is enabled, false otherwise.
+   */
+  inline bool getLodState() const {
+    return useLod;
+  }
 
   void getMe(vpMe& _ecm) const { _ecm = this->m_ecm;}
   
+  /*!
+     Get the minimum line length to track a segment when LOD is enabled.
+
+     \return The minimum line length.
+   */
+  inline double getMinLineLengthThreshold() const {
+    return minLineLengthThreshold;
+  }
+
+  /*!
+     Get the minimum polygon area to track a face when LOD is enabled.
+
+     \return The minimum polygon area.
+   */
+  inline double getMinPolygonAreaThreshold() const {
+    return minPolygonAreaThreshold;
+  }
 
   void parse(const char * filename);
 
@@ -107,11 +143,12 @@ public:
   void read_mask (xmlDocPtr doc, xmlNodePtr node);
   void read_range (xmlDocPtr doc, xmlNodePtr node);
   void read_contrast (xmlDocPtr doc, xmlNodePtr node);
+  void read_lod (xmlDocPtr doc, xmlNodePtr node);
   
   void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }
-	
+
   void writeMainClass(xmlNodePtr node);
-	
+
 protected:
   void init();
 

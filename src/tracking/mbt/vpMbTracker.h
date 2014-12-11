@@ -156,6 +156,14 @@ protected:
   unsigned int nbCylinders;
   //! Number of circles in CAO model
   unsigned int nbCircles;
+  //! True if LOD mode is enabled
+  bool useLodGeneral;
+  //! True if the CAO model is loaded before the call to loadConfigFile, (deduced by the number of polygons)
+  bool applyLodSettingInConfig;
+  //! Minimum line length threshold for LOD mode (general setting)
+  double minLineLengthThresholdGeneral;
+  //! Minimum polygon area threshold for LOD mode (general setting)
+  double minPolygonAreaThresholdGeneral;
   //! Map with [map.first]=parameter_names and [map.second]=type (string, number or boolean)
   std::map<std::string, std::string> mapOfParameterNames;
 
@@ -444,11 +452,11 @@ public:
 
 protected:
   void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace=-1, const std::string &polygonName="",
-      const bool useLod=false, const double minPolygonAreaThreshold=-1.0, const double minLineLengthThreshold=-1.0);
+      const bool useLod=false, const double minPolygonAreaThreshold=2500.0, const double minLineLengthThreshold=50.0);
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=-1,
-      const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=-1.0);
+      const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=2500.0);
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace=-1, const std::string &polygonName="",
-      const bool useLod=false, const double minLineLengthThreshold=-1.0);
+      const bool useLod=false, const double minLineLengthThreshold=50);
 
   void computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
@@ -512,7 +520,9 @@ protected:
     std::transform(input.begin(), input.end(), input.begin(), ::tolower);
     std::istringstream is(input);
     bool b;
-    is >> std::boolalpha >> b;
+    //Parse string to boolean either in the textual representation (True/False)
+    //or in numeric representation (1/0)
+    is >> (input.size() > 1 ? std::boolalpha : std::noboolalpha) >> b;
     return b;
   }
 
