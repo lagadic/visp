@@ -89,6 +89,8 @@ public:
   //! Copy constructor.
   vpRowVector(const vpRowVector &v);
 
+  void insert(unsigned int i, const vpRowVector &v);
+
   //! Set the size of the Row vector
   inline void resize(unsigned int i)      {   vpMatrix::resize(1, i) ;  }
   //! Access  V[i] = x

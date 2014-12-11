@@ -782,8 +782,54 @@ void vpColVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned 
 	  m[i][j]=data[j*ncols+i];
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
+/*!
+  Insert a column vector.
+  \param i : Index of the first element to introduce. This index starts from 0.
+  \param v : Column vector to insert.
+
+  The following example shows how to use this function:
+  \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  vpColVector v(4);
+  for (unsigned int i=0; i < v.size(); i++)
+    v[i] = i;
+  std::cout << "v:\n" << v << std::endl;
+
+  vpColVector w(2);
+  for (unsigned int i=0; i < w.size(); i++)
+    w[i] = i+10;
+  std::cout << "w:\n" << w << std::endl;
+
+  v.insert(1, w);
+  std::cout << "v:\n" << v << std::endl;
+}
+  \endcode
+  It produces the following output:
+  \code
+v:
+0
+1
+2
+3
+
+w:
+10
+11
+
+v:
+0
+10
+11
+3
+  \endcode
  */
+void vpColVector::insert(unsigned int i, const vpColVector &v)
+{
+  if (i+v.size() > this->size())
+    throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
+  for (unsigned int j=0; j < v.size(); j++)
+    (*this)[i+j] = v[j];
+}

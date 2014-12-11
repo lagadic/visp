@@ -268,3 +268,46 @@ void vpRowVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned 
          for(unsigned int j =0; j< ncols; j++)
          	  m[i][j]=data[i*nrows+j];
 }
+
+/*!
+  Insert a row vector.
+  \param i : Index of the first element to introduce. This index starts from 0.
+  \param v : Row vector to insert.
+
+  The following example shows how to use this function:
+  \code
+#include <visp/vpRowVector.h>
+
+int main()
+{
+  vpRowVector v(4);
+  for (unsigned int i=0; i < v.size(); i++)
+    v[i] = i;
+  std::cout << "v:\n" << v << std::endl;
+
+  vpRowVector w(2);
+  for (unsigned int i=0; i < w.size(); i++)
+    w[i] = i+10;
+  std::cout << "w:\n" << w << std::endl;
+
+  v.insert(1, w);
+  std::cout << "v:\n" << v << std::endl;
+}
+  \endcode
+  It produces the following output:
+  \code
+v:
+0  1  2  3
+w:
+10  11
+v:
+0  10  11  3
+  \endcode
+ */
+void vpRowVector::insert(unsigned int i, const vpRowVector &v)
+{
+  if (i+v.size() > this->size())
+    throw(vpException(vpException::dimensionError, "Unable to insert a row vector"));
+  for (unsigned int j=0; j < v.size(); j++)
+    (*this)[i+j] = v[j];
+}

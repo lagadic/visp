@@ -89,6 +89,8 @@ public:
   //! Constructor that initialize a vpColVector from a vpRotationVector.
   vpColVector (const vpRotationVector &v);
 
+  void insert(unsigned int i, const vpColVector &v);
+
   /*! Set the size of the column vector.
     \param i : Column vector size.
     \param flagNullify : If true, set the data to zero.

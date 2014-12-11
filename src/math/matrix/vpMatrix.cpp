@@ -2311,20 +2311,118 @@ vpMatrix::row(const unsigned int j)
 
 
 /*!
-\brief  Return the ith columns of the matrix
-\warning notice column(1) is the 0th column.
+  Return the i-th columns of the matrix.
+  \warning notice column(1) is the 0-th column.
+  \param col : Index of the column to extract.
 */
 
 vpColVector
-vpMatrix::column(const unsigned int j)
+vpMatrix::column(const unsigned int col)
 {
   vpColVector c(getRows()) ;
 
-  for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][j-1] ;
+  for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][col-1] ;
   return c ;
 }
 
 
+/*!
+  Extract a column vector from a matrix.
+  \warning All the indexes start from 0 in this function.
+  \param col : Index of the column to extract. If col=0, the first column is extracted.
+  \param row_begin : Index of the row that gives the location of the first element of the column vector to extract.
+  \param size : Size of the column vector to extract.
+  \return The extracted column vector.
+
+  The following example shows ho to use this function:
+  \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  for(unsigned int i=0; i < A.getRows(); i++)
+    for(unsigned int j=0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
+
+  A.print(std::cout, 4);
+
+  vpColVector cv = A.col(1, 1, 3);
+  std::cout << "Column vector: \n" << cv << std::endl;
+}
+  \endcode
+It produces the following output:
+  \code
+[4,4]=
+   0  1  2  3
+   4  5  6  7
+   8  9 10 11
+  12 13 14 15
+column vector:
+5
+9
+13
+  \endcode
+ */
+vpColVector
+vpMatrix::col(const unsigned int col, const unsigned int row_begin, const unsigned int size)
+{
+  if (row_begin + size > getRows() || col >= getCols())
+    throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
+  vpColVector c(size);
+  for (unsigned int i=0 ; i < size ; i++)
+    c[i] = (*this)[row_begin+i][col];
+  return c;
+}
+
+/*!
+  Extract a row vector from a matrix.
+  \warning All the indexes start from 0 in this function.
+  \param row : Index of the row to extract. If row=0, the first row is extracted.
+  \param col_begin : Index of the column that gives the location of the first element of the row vector to extract.
+  \param size : Size of the row vector to extract.
+  \return The extracted row vector.
+  The following example shows ho to use this function:
+  \code
+#include <visp/vpMatrix.h>
+#include <visp/vpRowVector.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  for(unsigned int i=0; i < A.getRows(); i++)
+    for(unsigned int j=0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
+
+  A.print(std::cout, 4);
+
+  vpRowVector rv = A.row(1, 1, 3);
+  std::cout << "Row vector: \n" << rv << std::endl;
+}  \endcode
+It produces the following output:
+  \code
+[4,4]=
+   0  1  2  3
+   4  5  6  7
+   8  9 10 11
+  12 13 14 15
+Row vector:
+5  6  7
+  \endcode
+ */
+vpRowVector
+vpMatrix::row(const unsigned int row, const unsigned int col_begin, const unsigned int size)
+{
+  if (col_begin + size > getCols() || row >= getRows())
+    throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
+  vpRowVector r(size);
+  for (unsigned int i=0 ; i < size ; i++)
+    r[i] = (*this)[row][col_begin+i];
+  return r;
+}
 
 
 /*!
@@ -2745,7 +2843,7 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
   if (maxAfter==1) maxAfter=0;
 
   // the following line is useful for debugging
-  std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
+  //std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
   if (intro) s <<intro;
   s <<"["<<m<<","<<n<<"]=\n";

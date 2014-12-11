@@ -161,6 +161,8 @@ protected:
   inline unsigned int getRows() const { return rowNum ;}
   //! Return the number of columns of the matrix
   inline unsigned int getCols() const { return colNum; }
+  //! Return the number of elements of the matrix.
+  inline unsigned int size() const { return colNum*rowNum; }
 
   // Set the size of the matrix A, initialization with a zero matrix
   void resize(const unsigned int nrows, const unsigned int ncols, 
@@ -394,9 +396,11 @@ protected:
   /** @name Columns, Rows extraction, Submatrix  */
   //@{
   //! Row extraction
-  vpRowVector row(const unsigned int i);
+  vpRowVector row(const unsigned int row);
+  vpRowVector row(const unsigned int row, const unsigned int col_begin, const unsigned int size);
   //! Column extraction
-  vpColVector column(const unsigned int j);
+  vpColVector column(const unsigned int col);
+  vpColVector col(const unsigned int col, const unsigned int row_begin, const unsigned int size);
   //! subvpMatrix extraction
   void init(const vpMatrix &m, unsigned int r, unsigned int c, 
 	    unsigned int nrows, unsigned int ncols);
