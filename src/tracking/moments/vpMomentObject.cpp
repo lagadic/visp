@@ -503,7 +503,7 @@ vpMomentObject::vpMomentObject(unsigned int max_order)
   Copy constructor
  */
 vpMomentObject::vpMomentObject(const vpMomentObject& srcobj)
-  : flg_normalize_intensity(true), order(order+1), type(vpMomentObject::DENSE_FULL_OBJECT),
+  : flg_normalize_intensity(true), order(1), type(vpMomentObject::DENSE_FULL_OBJECT),
     values()
 {
     init(srcobj);
