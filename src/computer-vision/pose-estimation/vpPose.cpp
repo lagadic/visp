@@ -715,8 +715,8 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   vpMatrix Kinv =K.pseudoInverse();
 
   vpMatrix KinvH =Kinv*H;
-  kh1=KinvH.column(1);
-  kh2=KinvH.column(2);
+  kh1=KinvH.getCol(0);
+  kh2=KinvH.getCol(1);
 
 
   double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());

@@ -395,13 +395,10 @@ protected:
   //-------------------------------------------------
   /** @name Columns, Rows extraction, Submatrix  */
   //@{
-  //! Row extraction
-  vpRowVector row(const unsigned int row);
-  vpRowVector row(const unsigned int row, const unsigned int col_begin, const unsigned int size);
-  //! Column extraction
-  vpColVector column(const unsigned int col);
-  vpColVector col(const unsigned int col, const unsigned int row_begin, const unsigned int size);
-  //! subvpMatrix extraction
+  vpRowVector getRow(const unsigned int i) const;
+  vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
+  vpColVector getCol(const unsigned int j) const;
+  vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
   void init(const vpMatrix &m, unsigned int r, unsigned int c, 
 	    unsigned int nrows, unsigned int ncols);
   //@}
@@ -557,6 +554,14 @@ protected:
   // Infinity norm ||x||=max(sum(fabs(x_i)))
   double infinityNorm () const;
   //@}
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated vpRowVector row(const unsigned int i);
+  vp_deprecated vpColVector column(const unsigned int j);
+#endif
 
  private:
   double detByLU() const;

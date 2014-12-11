@@ -613,7 +613,7 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
       //calcul de U
       vpColVector U(3) ;
-      U = ata.column(imin+1) ;
+      U = ata.getCol(imin) ;
 
 #if (DEBUG_LEVEL2)
       {

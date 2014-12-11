@@ -417,7 +417,7 @@ void vpHomography::DLT(unsigned int n,
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
 
-    h=V.column(indexSmallestSv+1);
+    h=V.getCol(indexSmallestSv);
 
     // build the homography
     for(unsigned int i =0;i<3;i++)
@@ -599,7 +599,7 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     for (unsigned int i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
-    h=V.column(indexSmallestSv+1);
+    h=V.getCol(indexSmallestSv);
 
     // build the homography
     for(unsigned int i =0;i<3;i++)

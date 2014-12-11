@@ -2232,7 +2232,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   for (j = 0; j < ncols_orig ; j++)
   {
     //if ( cons.row(j+1).sumSquare() != 0)
-    if ( std::fabs(cons.row(j+1).sumSquare()) > std::numeric_limits<double>::epsilon())
+    if ( std::fabs(cons.getRow(j).sumSquare()) > std::numeric_limits<double>::epsilon())
     {
       for (i = 0; i < cons.getCols(); i++)
         Ker[k][i] = cons[j][i];
@@ -2294,47 +2294,49 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   return rank ;
 }
 
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-\brief  Return the ith rows of the matrix
-\warning notice row(1) is the 0th row.
-*/
+  \deprecated This method is deprecated. You should use getRow().
 
+  Return the i-th row of the matrix.
+  \warning notice row(1) is the 0th row.
+*/
 vpRowVector
-vpMatrix::row(const unsigned int j)
+vpMatrix::row(const unsigned int i)
 {
   vpRowVector c(getCols()) ;
 
-  for (unsigned int i =0 ; i < getCols() ; i++)  c[i] = (*this)[j-1][i] ;
+  for (unsigned int j =0 ; j < getCols() ; j++)  c[j] = (*this)[i-1][j] ;
   return c ;
 }
 
-
 /*!
-  Return the i-th columns of the matrix.
-  \warning notice column(1) is the 0-th column.
-  \param col : Index of the column to extract.
-*/
+  \deprecated This method is deprecated. You should use getCol().
 
+  Return the j-th columns of the matrix.
+  \warning notice column(1) is the 0-th column.
+  \param j : Index of the column to extract.
+*/
 vpColVector
-vpMatrix::column(const unsigned int col)
+vpMatrix::column(const unsigned int j)
 {
   vpColVector c(getRows()) ;
 
-  for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][col-1] ;
+  for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][j-1] ;
   return c ;
 }
+#endif
 
 
 /*!
   Extract a column vector from a matrix.
   \warning All the indexes start from 0 in this function.
-  \param col : Index of the column to extract. If col=0, the first column is extracted.
-  \param row_begin : Index of the row that gives the location of the first element of the column vector to extract.
+  \param j : Index of the column to extract. If col=0, the first column is extracted.
+  \param i_begin : Index of the row that gives the location of the first element of the column vector to extract.
   \param size : Size of the column vector to extract.
   \return The extracted column vector.
 
-  The following example shows ho to use this function:
+  The following example shows how to use this function:
   \code
 #include <visp/vpColVector.h>
 #include <visp/vpMatrix.h>
@@ -2349,7 +2351,7 @@ int main()
 
   A.print(std::cout, 4);
 
-  vpColVector cv = A.col(1, 1, 3);
+  vpColVector cv = A.getCol(1, 1, 3);
   std::cout << "Column vector: \n" << cv << std::endl;
 }
   \endcode
@@ -2367,24 +2369,74 @@ column vector:
   \endcode
  */
 vpColVector
-vpMatrix::col(const unsigned int col, const unsigned int row_begin, const unsigned int size)
+vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const
 {
-  if (row_begin + size > getRows() || col >= getCols())
+  if (i_begin + size > getRows() || j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
   vpColVector c(size);
   for (unsigned int i=0 ; i < size ; i++)
-    c[i] = (*this)[row_begin+i][col];
+    c[i] = (*this)[i_begin+i][j];
+  return c;
+}
+
+/*!
+  Extract a column vector from a matrix.
+  \warning All the indexes start from 0 in this function.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
+
+  The following example shows how to use this function:
+  \code
+#include <visp/vpColVector.h>
+#include <visp/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  for(unsigned int i=0; i < A.getRows(); i++)
+    for(unsigned int j=0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
+
+  A.print(std::cout, 4);
+
+  vpColVector cv = A.getCol(1);
+  std::cout << "Column vector: \n" << cv << std::endl;
+}
+  \endcode
+It produces the following output:
+  \code
+[4,4]=
+   0  1  2  3
+   4  5  6  7
+   8  9 10 11
+  12 13 14 15
+column vector:
+1
+5
+9
+13
+  \endcode
+ */
+vpColVector
+vpMatrix::getCol(const unsigned int j) const
+{
+  if (j >= getCols())
+    throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
+  unsigned int size = getRows();
+  vpColVector c(size);
+  for (unsigned int i=0 ; i < size ; i++)
+    c[i] = (*this)[i][j];
   return c;
 }
 
 /*!
   Extract a row vector from a matrix.
   \warning All the indexes start from 0 in this function.
-  \param row : Index of the row to extract. If row=0, the first row is extracted.
-  \param col_begin : Index of the column that gives the location of the first element of the row vector to extract.
-  \param size : Size of the row vector to extract.
+  \param i : Index of the row to extract. If i=0, the first row is extracted.
   \return The extracted row vector.
-  The following example shows ho to use this function:
+
+  The following example shows how to use this function:
   \code
 #include <visp/vpMatrix.h>
 #include <visp/vpRowVector.h>
@@ -2399,7 +2451,56 @@ int main()
 
   A.print(std::cout, 4);
 
-  vpRowVector rv = A.row(1, 1, 3);
+  vpRowVector rv = A.getRow(1);
+  std::cout << "Row vector: \n" << rv << std::endl;
+}  \endcode
+It produces the following output:
+  \code
+[4,4]=
+   0  1  2  3
+   4  5  6  7
+   8  9 10 11
+  12 13 14 15
+Row vector:
+4  5  6  7
+  \endcode
+ */
+vpRowVector
+vpMatrix::getRow(const unsigned int i) const
+{
+  if (i >= getRows())
+    throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
+  unsigned int size = getCols();
+  vpRowVector r( size );
+  for (unsigned int j=0 ; j < size ; j++)
+    r[j] = (*this)[i][j];
+  return r;
+}
+
+/*!
+  Extract a row vector from a matrix.
+  \warning All the indexes start from 0 in this function.
+  \param i : Index of the row to extract. If i=0, the first row is extracted.
+  \param j_begin : Index of the column that gives the location of the first element of the row vector to extract.
+  \param size : Size of the row vector to extract.
+  \return The extracted row vector.
+
+  The following example shows how to use this function:
+  \code
+#include <visp/vpMatrix.h>
+#include <visp/vpRowVector.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  for(unsigned int i=0; i < A.getRows(); i++)
+    for(unsigned int j=0; j < A.getCols(); j++)
+      A[i][j] = i*A.getCols()+j;
+
+  A.print(std::cout, 4);
+
+  vpRowVector rv = A.getRow(1, 1, 3);
   std::cout << "Row vector: \n" << rv << std::endl;
 }  \endcode
 It produces the following output:
@@ -2414,16 +2515,15 @@ Row vector:
   \endcode
  */
 vpRowVector
-vpMatrix::row(const unsigned int row, const unsigned int col_begin, const unsigned int size)
+vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const
 {
-  if (col_begin + size > getCols() || row >= getRows())
+  if (j_begin + size > getCols() || i >= getRows())
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
   vpRowVector r(size);
-  for (unsigned int i=0 ; i < size ; i++)
-    r[i] = (*this)[row][col_begin+i];
+  for (unsigned int j=0 ; j < size ; j++)
+    r[j] = (*this)[i][j_begin+i];
   return r;
 }
-
 
 /*!
 \brief Stack matrices. "Stack" two matrices  C = [ A B ]^T
@@ -3574,7 +3674,7 @@ vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
           //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
 
           //if (cons.row(j+1).sumSquare() !=0)
-          if (std::fabs(cons.row(j+1).sumSquare()) > std::numeric_limits<double>::epsilon())
+          if (std::fabs(cons.getRow(j).sumSquare()) > std::numeric_limits<double>::epsilon())
           {
             for (i=0 ; i < cons.getCols() ; i++)
               Ker[k][i] = cons[j][i] ;
