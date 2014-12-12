@@ -1204,7 +1204,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
 
   if(m_detectors[detectorName] == NULL) {
-    std::string msg = "The detector:" + detectorName + " is not available.";
+    std::string msg = "Fail to initialize the detector:" + detectorName + " or it is not available.";
     throw vpException(vpException::fatalError, msg);
   }
 #else
@@ -1237,11 +1237,11 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   } else if(detectorNameTmp == "SimpleBlob") {
     m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
   } else {
-    m_detectors[detectorNameTmp] = NULL;
+    std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
 
   if(m_detectors[detectorNameTmp] == NULL) {
-    std::string msg = "The detector:" + detectorNameTmp + " is not available.";
+    std::string msg = "Fail to initialize the detector:" + detectorNameTmp + " or it is not available.";
     throw vpException(vpException::fatalError, msg);
   }
 //  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
@@ -1277,13 +1277,13 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
   } else if(extractorName == "BRISK") {
     m_extractors[extractorName] = cv::BRISK::create();
   } else {
-    m_extractors[extractorName] = NULL;
+    std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
 //  m_extractors[extractorName] = cv::DescriptorExtractor::create<cv::DescriptorExtractor>(extractorName);
 #endif
 
   if(m_extractors[extractorName] == NULL) {
-    std::string msg = "The extractor:" + extractorName + " is not available.";
+    std::string msg = "Fail to initialize:" + extractorName + " or it is not available.";
     throw vpException(vpException::fatalError, msg);
   }
 }
@@ -1308,7 +1308,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
 
   if(m_matcher == NULL) {
-    std::string msg = "The matcher:" + matcherName + " is not available.";
+    std::string msg = "Fail to initialize the matcher:" + matcherName + " or it is not available.";
     throw vpException(vpException::fatalError, msg);
   }
 }
