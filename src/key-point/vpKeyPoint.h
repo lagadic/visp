@@ -45,6 +45,7 @@
 #include <fstream>      // std::ofstream
 #include <numeric>      // std::accumulate
 #include <float.h>      // DBL_MAX
+#include <map>          // std::map
 
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>

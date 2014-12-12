@@ -1198,6 +1198,11 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   //  }
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
+
+  if(m_detectors[detectorName] == NULL) {
+    std::string msg = "The detector:" + detectorName + " is not available.";
+    throw vpException(vpException::fatalError, msg);
+  }
 #else
   //TODO: Add a pyramidal feature detection
   std::string detectorNameTmp = detectorName;
@@ -1228,7 +1233,12 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   } else if(detectorNameTmp == "SimpleBlob") {
     m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
   } else {
-    std::cerr << "The detector:" << detectorName << " seems to be not available." << std::endl;
+    m_detectors[detectorNameTmp] = NULL;
+  }
+
+  if(m_detectors[detectorNameTmp] == NULL) {
+    std::string msg = "The detector:" + detectorNameTmp + " is not available.";
+    throw vpException(vpException::fatalError, msg);
   }
 //  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
 #endif
@@ -1263,10 +1273,15 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
   } else if(extractorName == "BRISK") {
     m_extractors[extractorName] = cv::BRISK::create();
   } else {
-    std::cerr << "The extractor:" << extractorName << " seems to be not available." << std::endl;
+    m_extractors[extractorName] = NULL;
   }
 //  m_extractors[extractorName] = cv::DescriptorExtractor::create<cv::DescriptorExtractor>(extractorName);
 #endif
+
+  if(m_extractors[extractorName] == NULL) {
+    std::string msg = "The extractor:" + extractorName + " is not available.";
+    throw vpException(vpException::fatalError, msg);
+  }
 }
 
 /*!
@@ -1287,6 +1302,11 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
  */
 void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
+
+  if(m_matcher == NULL) {
+    std::string msg = "The matcher:" + matcherName + " is not available.";
+    throw vpException(vpException::fatalError, msg);
+  }
 }
 
 /*!
@@ -1705,6 +1725,9 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   //Convert OpenCV type to ViSP type for compatibility
   convertToVpType(m_trainKeyPoints, referenceImagePointsList);
   convertToVpType(this->m_trainPoints, m_trainVpPoints);
+
+  //Set _reference_computed to true as we load learning file
+  _reference_computed = true;
 }
 
 /*!
@@ -1736,6 +1759,14 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
    \return The number of matched keypoints.
  */
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I) {
+  if(m_trainDescriptors.empty()) {
+    if(!_reference_computed) {
+      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+    }
+
+    return 0;
+  }
+
   detect(I, m_queryKeyPoints, m_detectionTime);
   extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   match(m_trainDescriptors, m_queryDescriptors, m_matches, m_matchingTime);
@@ -1790,6 +1821,14 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
  */
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
                                     const vpRect& rectangle) {
+  if(m_trainDescriptors.empty()) {
+    if(!_reference_computed) {
+      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+    }
+
+    return 0;
+  }
+
   detect(I, m_queryKeyPoints, m_detectionTime, rectangle);
   extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   match(m_trainDescriptors, m_queryDescriptors, m_matches, m_matchingTime);
@@ -1829,6 +1868,14 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime) {
+  if(m_trainDescriptors.empty()) {
+    if(!_reference_computed) {
+      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+    }
+
+    return 0;
+  }
+
   detect(I, m_queryKeyPoints, m_detectionTime);
   extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   match(m_trainDescriptors, m_queryDescriptors, m_matches, m_matchingTime);
