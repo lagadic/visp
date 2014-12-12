@@ -965,6 +965,8 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
 
   if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
     elapsedTime = (vpTime::measureTimeMs() - t);
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)."
+
     return false;
   }
 
@@ -1002,6 +1004,8 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
 
   if(objectVpPoints.size() < 4) {
     elapsedTime = (vpTime::measureTimeMs() - t);
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)."
+
     return false;
   }
 
@@ -1760,9 +1764,11 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
  */
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I) {
   if(m_trainDescriptors.empty()) {
+    std::cerr << "Reference is empty." << std::endl;
     if(!_reference_computed) {
-      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+      std::cerr << "Reference is not computed." << std::endl;
     }
+    std::cerr << "Matching is not possible." << std::endl;
 
     return 0;
   }
@@ -1822,9 +1828,11 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
                                     const vpRect& rectangle) {
   if(m_trainDescriptors.empty()) {
+    std::cerr << "Reference is empty." << std::endl;
     if(!_reference_computed) {
-      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+      std::cerr << "Reference is not computed." << std::endl;
     }
+    std::cerr << "Matching is not possible." << std::endl;
 
     return 0;
   }
@@ -1869,9 +1877,11 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime) {
   if(m_trainDescriptors.empty()) {
+    std::cerr << "Reference is empty." << std::endl;
     if(!_reference_computed) {
-      std::cerr << "Reference is not computed or empty. Matching is not possible." << std::endl;
+      std::cerr << "Reference is not computed." << std::endl;
     }
+    std::cerr << "Matching is not possible." << std::endl;
 
     return 0;
   }
