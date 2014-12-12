@@ -975,9 +975,36 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
   cv::Mat rvec, tvec;
   cv::Mat distCoeffs;
 
-  cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-                     rvec, tvec, false, m_nbRansacIterations, (float) m_ransacReprojectionError,
-                     m_nbRansacMinInlierCount, inlierIndex);
+  try {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    //OpenCV 3.0.0 (2014/12/12)
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
+        rvec, tvec, false, m_nbRansacIterations, (float) m_ransacReprojectionError,
+        0.99,//confidence=0.99 (default) – The probability that the algorithm produces a useful result.
+        inlierIndex,
+        cv::SOLVEPNP_ITERATIVE);
+    //SOLVEPNP_ITERATIVE (default): Iterative method is based on Levenberg-Marquardt optimization.
+    //In this case the function finds such a pose that minimizes reprojection error, that is the sum of squared distances
+    //between the observed projections imagePoints and the projected (using projectPoints() ) objectPoints .
+    //SOLVEPNP_P3P: Method is based on the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution Classification
+    //for the Perspective-Three-Point Problem”. In this case the function requires exactly four object and image points.
+    //SOLVEPNP_EPNP: Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the paper “EPnP: Efficient
+    //Perspective-n-Point Camera Pose Estimation”.
+    //SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I. Roumeliotis. “A Direct Least-Squares (DLS)
+    //Method for PnP”.
+    //SOLVEPNP_UPNP Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto, F.Moreno-Noguer.
+    //“Exhaustive Linearization for Robust Camera Pose and Focal Length Estimation”. In this case the function also
+    //estimates the parameters f_x and f_y assuming that both have the same value. Then the cameraMatrix is updated with the
+    //estimated focal length.
+#else
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
+        rvec, tvec, false, m_nbRansacIterations,
+        (float) m_ransacReprojectionError, m_nbRansacMinInlierCount,
+        inlierIndex);
+#endif
+  } catch (cv::Exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
   vpTranslationVector translationVec(tvec.at<double>(0),
                                      tvec.at<double>(1), tvec.at<double>(2));
   vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1),
