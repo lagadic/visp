@@ -965,7 +965,7 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
 
   if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
     elapsedTime = (vpTime::measureTimeMs() - t);
-    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)."
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
 
     return false;
   }
@@ -1004,7 +1004,7 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
 
   if(objectVpPoints.size() < 4) {
     elapsedTime = (vpTime::measureTimeMs() - t);
-    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)."
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
 
     return false;
   }
