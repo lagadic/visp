@@ -1743,7 +1743,7 @@ vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)
   if(!inside) return false;
 
 //  if(!T1.inTriangle(iP) && !T2.inTriangle(iP)){
-////      std::cout << "Le pixel est dans la zone projetée" << std::endl;
+////      std::cout << "The pixel is inside the projected area" << std::endl;
 //    return false;}
 
   //methoed algebrique

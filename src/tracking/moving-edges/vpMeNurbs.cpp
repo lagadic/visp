@@ -1071,7 +1071,7 @@ vpMeNurbs::track(const vpImage<unsigned char> &I)
   //Suppressions des points ejectes par le tracking
   suppressPoints();
 
-  //Recalcule les param�tres
+  //Recalcule les parametres
 //  nurbs.globalCurveInterp(list);
   nurbs.globalCurveApprox(list,nbControlPoints);
   

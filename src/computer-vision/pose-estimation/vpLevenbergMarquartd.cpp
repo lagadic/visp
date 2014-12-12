@@ -857,7 +857,7 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
   /*
    *	resolution du systeme triangulaire pour z. Si le systeme est
-   *	singulier, on obtient une solution au moindres carrés.
+   *	singulier, on obtient une solution au moindres carres.
    */
   nsing =  n;
 
@@ -917,7 +917,7 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
  * xtol		Erreur relative desiree dans la solution approximee. La
  *		terminaison survient quand l'erreur relative entre deux
  *		iterations consecutives est au moins egal a xtol.
- * gtol		Mesure de l'orthogonalité entre le vecteur des fonctions et les
+ * gtol		Mesure de l'orthogonalite entre le vecteur des fonctions et les
  *		colonnes du jacobien. La terminaison survient quand le cosinus
  *		de l'angle entre fvec et n'importe quelle colonne du jacobien
  *		est au moins egal a gtol, en valeur absolue.

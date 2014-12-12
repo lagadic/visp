@@ -196,7 +196,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 
   if (nsignal == 1) mean = signal;
 
-  // Calcul des variables cumulées
+  // Calcul des variables cumulees
   computeSk(signal);
 
   computeMk();
@@ -204,7 +204,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
 	    << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
 
-  // teste si les variables cumulées excèdent le seuil
+  // teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
     jump = downwardJump;
 
@@ -254,7 +254,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 
   if (nsignal == 1) mean = signal;
 
-  // Calcul des variables cumulées
+  // Calcul des variables cumulees
   computeTk(signal);
 
   computeNk();
@@ -262,7 +262,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
 	    << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
 
-  // teste si les variables cumulées excèdent le seuil
+  // teste si les variables cumulees excedent le seuil
   if ((Tk - Nk) > alpha)
     jump = upwardJump;
 
@@ -311,7 +311,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 
   if (nsignal == 1) mean = signal;
 
-  // Calcul des variables cumulées
+  // Calcul des variables cumulees
   computeSk(signal);
   computeTk(signal);
 
@@ -323,7 +323,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 	      << " Sk: " << Sk << " Mk: " << Mk
 	      << " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
-  // teste si les variables cumulées excèdent le seuil
+  // teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
     jump = downwardJump;
   else if ((Tk - Nk) > alpha)
@@ -370,10 +370,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 void vpHinkley::computeMean(double signal)
 {
   // Debut modif FS le 03/09/2003
-  // Lors d'une chute ou d'une remontée lente du signal, pariculièrement
-  // après un saut, la moyenne a tendance à "dériver". Pour réduire ces
-  // dérives de la moyenne, elle n'est remise à jour avec la valeur
-  // courante du signal que si un début de saut potentiel n'est pas détecté.
+  // Lors d'une chute ou d'une remontee lente du signal, pariculierement
+  // apres un saut, la moyenne a tendance a "deriver". Pour reduire ces
+  // derives de la moyenne, elle n'est remise a jour avec la valeur
+  // courante du signal que si un debut de saut potentiel n'est pas detecte.
   //if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
   if ( ( std::fabs(Mk-Sk) <= std::fabs(vpMath::maximum(Mk,Sk))*std::numeric_limits<double>::epsilon() ) 
        && 
@@ -394,7 +394,7 @@ void vpHinkley::computeMean(double signal)
 void vpHinkley::computeSk(double signal)
 {
 
-  // Calcul des variables cumulées
+  // Calcul des variables cumulees
   Sk += signal - mean + dmin2;
 }
 /*!
@@ -415,7 +415,7 @@ void vpHinkley::computeMk()
 void vpHinkley::computeTk(double signal)
 {
 
-  // Calcul des variables cumulées
+  // Calcul des variables cumulees
   Tk += signal - mean - dmin2;
 }
 /*!

@@ -783,7 +783,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
   //Import
   cvCopy(I, image, 0);
 
-  //Recherche de points d'int�rets
+  //Recherche de points d'interets
   countFeatures = maxFeatures;
   countPrevFeatures = 0;
   IplImage* eig = cvCreateImage(cvGetSize(image), 32, 1);

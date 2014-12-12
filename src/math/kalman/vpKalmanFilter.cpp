@@ -255,11 +255,11 @@ vpKalmanFilter::filtering(vpColVector &z)
   \param Vn : Variance of measure noise
   \param Vw : Variance of the state noise
 
-  modèle d'état
+  State model:
   \f[ S = \left[\; y  \quad \frac{\partial y}{\partial t}\;\right]^T = \left[\;  y  \quad \dot{ y}\;\right]^T
   \f]
 
-  Modélisation des filtres
+  Filter model:
   \f[
   \begin{array}{rclll} \\
   S(t+1) &= & F S(t) + W(t)&~~~~~~~~~~~& S(t+1) \mbox{ est un vecteur} \left[\;
@@ -269,16 +269,15 @@ vpKalmanFilter::filtering(vpColVector &z)
   \f]
 
 
-  La matrice F décrit le modèle d'évolution de l'état. Dans le cas présent elle
-  est donnée par :
+  Matrix F describes the evolution of the state. This matrix is given by:
   \f[
   F= \left( \begin{array}{cc} 1 & \Delta t  \\ 0 & 1 \end{array} \right)
   \f]
 
-  Le bruit \f$W = \left( \begin{array}{c} \;W_1 \quad W_2\;  \end{array} \right)^T\f$
-  vient modéliser les variations sur le modèle à vitesse constante (dues aux accélérations)
+  The noise \f$W = \left( \begin{array}{c} \;W_1 \quad W_2\;  \end{array} \right)^T\f$
+  take into account the variations of the constant velocity model due to the accelerations.
 
-  En effet on a:
+  Thus we have:
   \f[
   \left\{
   \begin{array}{rcl}

@@ -207,7 +207,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const char *title )
   else
     title_ = std::string(" ");
 
-  // Positionnement de la fenetre dans l'�cran.
+  // Positionnement de la fenetre dans l'ecran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -1121,7 +1121,7 @@ void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char
     windowXPosition = x ;
   if (y != -1)
     windowYPosition = y ;
-  // Positionnement de la fenetre dans l'�cran.
+  // Positionnement de la fenetre dans l'ecran.
   if ( ( windowXPosition < 0 ) || ( windowYPosition < 0 ) )
   {
     hints.flags = 0;
@@ -2846,7 +2846,7 @@ vpDisplayX::getClick(bool blocking)
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqu�. */
+      /* Recuperation de la coordonnee du pixel clique. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,
@@ -3037,7 +3037,7 @@ vpDisplayX::getClickUp ( vpImagePoint &ip,
     }
        
     if(ret){
-      /* Recuperation de la coordonnee du pixel cliqu�. */
+      /* Recuperation de la coordonnee du pixel clique. */
       if ( XQueryPointer ( display,
                            window,
                            &rootwin, &childwin,

@@ -36,7 +36,7 @@
  *
  * Authors:
  * Romain Tallonneau
- * Aurélien Yol
+ * Aurelien Yol
  *
  *****************************************************************************/
 #pragma once

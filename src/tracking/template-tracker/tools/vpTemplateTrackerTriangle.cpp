@@ -202,7 +202,7 @@ void vpTemplateTrackerTriangle::init(double x1, double y1, double x2,double y2, 
   C3.x=x3;C3.y=y3;
 
   double minx,miny,maxx,maxy;
-  //calcul du rectangle minimal contenant le triangle seletionn�
+  //calcul du rectangle minimal contenant le triangle seletionne
   minx=(x1<x2)?x1:x2;
   miny=(y1<y2)?y1:y2;
   minx=(minx<x3)?minx:x3;

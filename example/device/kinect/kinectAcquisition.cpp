@@ -35,7 +35,7 @@
  * Kinect example.
  *
  * Authors:
- * C�line Teuli�re
+ * Celine Teuliere
  *
  *****************************************************************************/
 

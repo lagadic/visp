@@ -75,7 +75,7 @@ vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
 void
 vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 				      unsigned int order,
-				      const vpMatrix &moment_pixel,
+              const vpMatrix &moment_pixel,
 				      vpMatrix &moment_meter)
 {
 
@@ -83,13 +83,13 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
   double yc = -cam.v0 ;
   double xc = -cam.u0 ;
 
-  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
+  for (unsigned int k=0; k<order; k++) // iteration correspondant e l'ordre du moment
   {
-    for (unsigned int p=0 ; p<order; p++) // itération en X
-      for (unsigned int q=0; q<order; q++) // itération en Y
-	if (p+q==k) // on est bien dans la matrice triangulaire supérieure
+    for (unsigned int p=0 ; p<order; p++) // iteration en X
+      for (unsigned int q=0; q<order; q++) // iteration en Y
+  if (p+q==k) // on est bien dans la matrice triangulaire superieure
 	{
-	  m[p][q] = 0; // initialisation à 0
+    m[p][q] = 0; // initialisation e 0
 	  for(unsigned int r=0; r<=p; r++) // somme externe
 	    for(unsigned int t=0; t<=q; t++) // somme interne
 	    {
@@ -104,7 +104,7 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 
   }
 
-  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
+  for (unsigned int k=0; k<order; k++) // iteration correspondant e l'ordre du moment
     for (unsigned int p=0 ; p<order; p++)
       for (unsigned int q=0; q<order; q++)
 	if (p+q==k)
@@ -112,7 +112,7 @@ vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
 	  m[p][q] *= pow(cam.inv_px,(int)(1+p)) * pow(cam.inv_py,(int)(1+q));
 	}
 
-  for (unsigned int k=0; k<order; k++) // itération correspondant à l'ordre du moment
+  for (unsigned int k=0; k<order; k++) // iteration correspondant e l'ordre du moment
     for (unsigned int p=0 ; p<order; p++)
       for (unsigned int q=0; q<order; q++)
 	if (p+q==k)

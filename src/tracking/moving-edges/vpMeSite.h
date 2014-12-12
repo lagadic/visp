@@ -215,7 +215,7 @@ public:
   */
   inline double getWeight() const { return weight; }
   
-//Opérators
+//Operators
   vpMeSite &operator=(const vpMeSite &m) ;
   int       operator!=(const vpMeSite  &m) ;
   
