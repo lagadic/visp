@@ -672,7 +672,8 @@ INPUT                  = "@VISP_SOURCE_DIR@/src" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/test" \
-                         "@VISP_SOURCE_DIR@/doc"
+                         "@VISP_SOURCE_DIR@/doc" \
+                         "@VISP_BINARY_DIR@/doc"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
