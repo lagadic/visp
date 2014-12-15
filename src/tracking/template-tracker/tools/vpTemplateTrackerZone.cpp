@@ -176,42 +176,57 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>&
                                            , const std::vector< vpImagePoint > &vip, bool delaunay)
 {
   if (delaunay) {
+    if(vip.size() == 3) {
+      initFromPoints(I, vip, false);
+    }
+    else if(vip.size() == 4) {
+      std::vector<vpImagePoint> vip_delaunay;
+      vip_delaunay.push_back(vip[0]);
+      vip_delaunay.push_back(vip[1]);
+      vip_delaunay.push_back(vip[2]);
+      vip_delaunay.push_back(vip[2]);
+      vip_delaunay.push_back(vip[3]);
+      vip_delaunay.push_back(vip[0]);
+      initFromPoints(I, vip_delaunay, false);
+    }
+    else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
-    // Init Delaunay
-    cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
-    for(size_t i=0; i< vip.size(); i++) {
-      cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
-      //std::cout << "Click point: " << vip[i] << std::endl;
-      subdiv.insert(fp);
-    }
-
-    // Compute Delaunay triangulation
-    std::vector<cv::Vec6f> triangleList;
-    subdiv.getTriangleList(triangleList);
-
-    // Keep only the Delaunay points that are inside the area
-    vpRect rect(0, 0, I.getWidth(), I.getHeight());
-
-    std::vector<vpImagePoint> vip_delaunay;
-    for( size_t i = 0; i < triangleList.size(); i++ ) {
-      cv::Vec6f t = triangleList[i];
-      std::vector<vpImagePoint> p(3);
-
-      p[0].set_uv(t[0], t[1]);
-      p[1].set_uv(t[2], t[3]);
-      p[2].set_uv(t[4], t[5]);
-
-      if (p[0].inRectangle(rect) && p[1].inRectangle(rect) && p[2].inRectangle(rect)) {
-        vip_delaunay.push_back(p[0]);
-        vip_delaunay.push_back(p[1]);
-        vip_delaunay.push_back(p[2]);
+      // Init Delaunay
+      cv::Subdiv2D subdiv(cv::Rect(0, 0, (int)I.getWidth(), (int)I.getHeight()));
+      for(size_t i=0; i< vip.size(); i++) {
+        cv::Point2f fp((float)vip[i].get_u(), (float)vip[i].get_v());
+        //std::cout << "Click point: " << vip[i] << std::endl;
+        subdiv.insert(fp);
       }
-    }
 
-    initFromPoints(I, vip_delaunay, false);
+      // Compute Delaunay triangulation
+      std::vector<cv::Vec6f> triangleList;
+      subdiv.getTriangleList(triangleList);
+
+      // Keep only the Delaunay points that are inside the area
+      vpRect rect(0, 0, I.getWidth(), I.getHeight());
+
+      std::vector<vpImagePoint> vip_delaunay;
+      for( size_t i = 0; i < triangleList.size(); i++ ) {
+        cv::Vec6f t = triangleList[i];
+        std::vector<vpImagePoint> p(3);
+
+        p[0].set_uv(t[0], t[1]);
+        p[1].set_uv(t[2], t[3]);
+        p[2].set_uv(t[4], t[5]);
+
+        if (p[0].inRectangle(rect) && p[1].inRectangle(rect) && p[2].inRectangle(rect)) {
+          vip_delaunay.push_back(p[0]);
+          vip_delaunay.push_back(p[1]);
+          vip_delaunay.push_back(p[2]);
+        }
+      }
+
+      initFromPoints(I, vip_delaunay, false);
 #else
-    throw vpException(vpException::functionNotImplementedError,"Delaunay triangulation is not available!");
+      throw vpException(vpException::functionNotImplementedError,"Delaunay triangulation is not available!");
 #endif
+    }
   }
   else {
     Zone.clear();
