@@ -39,6 +39,7 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+
 #include <visp/vpTemplateTracker.h>
 #include <visp/vpTemplateTrackerBSpline.h>
 
@@ -88,19 +89,20 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char>& I, vpTemplate
   int hauteur_im=(int)I.getHeight();
 
   unsigned int NbPointDsZone=0;
-  double xtotal=0,ytotal=0;
+  //double xtotal=0,ytotal=0;
   int mod_fi,mod_fj;
   mod_fi=mod_i;mod_fj=mod_i;
 
-  for(int j=0;j<largeur_im;j++)
-    for(int i=0;i<hauteur_im;i++)
-      if(i%mod_fi ==0 && j%mod_fj ==0)
-        if(zone.inZone(i,j))
-        {
-          NbPointDsZone++;
-          xtotal+=j;
-          ytotal+=i;
-        }
+  for(int i=0;i<hauteur_im;i+=mod_fi) {
+    for(int j=0;j<largeur_im;j+=mod_fj) {
+      if(zone.inZone(i,j))  {
+        NbPointDsZone++;
+        //xtotal+=j;
+        //ytotal+=i;
+      }
+    }
+  }
+
   //Warp->setCentre((double)xtotal/NbPointDsZone,(double)ytotal/NbPointDsZone);
 
   templateSize=NbPointDsZone;
@@ -110,7 +112,6 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char>& I, vpTemplate
   Hdesire.resize(nbParam,nbParam);
   HLMdesire.resize(nbParam,nbParam);
 
-  //RecupÃration des donnÃes des triangles de la pyramide gaussienne
   vpTemplateTrackerPoint pt;
   //vpTemplateTrackerZPoint ptZ;
   vpImage<double> GaussI ;
@@ -120,12 +121,12 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char>& I, vpTemplate
 
   unsigned int cpt_point=0;
   templateSelectSize=0;
-  for(int i=0;i<hauteur_im;i++)
+  for(int i=0;i<hauteur_im;i+=mod_i)
   {
     //for(int  j=minx_t;j<maxx_t;j++)
-    for(int j=0;j<largeur_im;j++)
+    for(int j=0;j<largeur_im;j+=mod_j)
     {
-      if(i%mod_i ==0 && j%mod_j ==0)
+//      if(i%mod_i ==0 && j%mod_j ==0)
         if(zone.inZone(i,j))
         {
           pt.x=j;
@@ -664,7 +665,6 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char>& I,vpTempla
     init_pos_evalRMS(ptemp);
   }*/
   zoneTracked=&zoneTrackedPyr[0];
-
 
   // 	vpTRACE("fin initTrackingPyr");
 
