@@ -53,13 +53,16 @@ int main(int argc, char** argv)
 
     vpMbKltTracker tracker;
     bool usexml = false;
+    //! [Load xml]
 #ifdef VISP_HAVE_XML2
     if(vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
 #endif
+    //! [Load xml]
     if (! usexml) {
+      //! [Set parameters]
       tracker.setMaskBorder(5);
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -77,6 +80,7 @@ int main(int argc, char** argv)
       tracker.setNearClippingDistance(0.1);
       tracker.setFarClippingDistance(100.0);
       tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+      //! [Set parameters]
     }
     tracker.setOgreVisibilityTest(true);
     tracker.loadModel(objectname + "-triangle.cao");

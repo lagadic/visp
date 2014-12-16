@@ -4,7 +4,9 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
+//! [Include]
 #include <visp/vpMbEdgeTracker.h>
+//! [Include]
 #include <visp/vpVideoReader.h>
 
 int main(int argc, char** argv)
@@ -36,9 +38,13 @@ int main(int argc, char** argv)
               << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
+    //! [Image]
     vpImage<unsigned char> I;
     vpCameraParameters cam;
+    //! [Image]
+    //! [cMo]
     vpHomogeneousMatrix cMo;
+    //! [cMo]
 
     vpVideoReader g;
     g.setFileName(videoname);
@@ -54,15 +60,20 @@ int main(int argc, char** argv)
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
+    //! [Constructor]
     vpMbEdgeTracker tracker;
+    //! [Constructor]
     bool usexml = false;
+    //! [Load xml]
 #ifdef VISP_HAVE_XML2
     if(vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
 #endif
+    //! [Load xml]
     if (! usexml) {
+      //! [Set parameters]
       vpMe me;
       me.setMaskSize(5);
       me.setMaskNumber(180);
@@ -75,27 +86,50 @@ int main(int argc, char** argv)
       tracker.setMovingEdge(me);
       cam.initPersProjWithoutDistortion(839, 839, 325, 243);
       tracker.setCameraParameters(cam);
+      //! [Set angles]
       tracker.setAngleAppear( vpMath::rad(70) );
       tracker.setAngleDisappear( vpMath::rad(80) );
+      //! [Set angles]
+      //! [Set clipping distance]
       tracker.setNearClippingDistance(0.1);
       tracker.setFarClippingDistance(100.0);
+      //! [Set clipping distance]
+      //! [Set clipping fov]
       tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+      //! [Set clipping fov]
+      //! [Set parameters]
     }
+    //! [Set ogre]
     tracker.setOgreVisibilityTest(false);
+    //! [Set ogre]
+    //! [Load cao]
     if(vpIoTools::checkFilename(objectname + ".cao"))
       tracker.loadModel(objectname + ".cao");
+    //! [Load cao]
+    //! [Load wrl]
     else if(vpIoTools::checkFilename(objectname + ".wrl"))
       tracker.loadModel(objectname + ".wrl");
+    //! [Load wrl]
+    //! [Set display]
     tracker.setDisplayFeatures(true);
+    //! [Set display]
+    //! [Init]
     tracker.initClick(I, objectname + ".init", true);
+    //! [Init]
 
     while(! g.end()){
       g.acquire(I);
       vpDisplay::display(I);
+      //! [Track]
       tracker.track(I);
-      tracker.getPose(cMo);
+      //! [Track]
+      //! [Get pose]
+      tracker.getPose(cTw);
+      //! [Get pose]
+      //! [Display]
       tracker.getCameraParameters(cam);
       tracker.display(I, cMo, cam, vpColor::red, 2);
+      //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
       vpDisplay::flush(I);
@@ -103,12 +137,14 @@ int main(int argc, char** argv)
         break;
     }
     vpDisplay::getClick(I);
+    //! [Cleanup]
 #ifdef VISP_HAVE_XML2
     vpXmlParser::cleanup();
 #endif
 #if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
     SoDB::finish();
 #endif
+    //! [Cleanup]
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
