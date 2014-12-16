@@ -126,7 +126,7 @@ int main()
   writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
 #endif
 #elif defined VISP_HAVE_OPENCV
-  writer.setCodec( CV_FOURCC('M','P','E','G') );
+  writer.setCodec( CV_FOURCC('P','I','M','1') );
 #endif
   writer.setFileName("./test.mpeg");
 

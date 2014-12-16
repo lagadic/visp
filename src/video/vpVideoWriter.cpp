@@ -86,11 +86,10 @@ vpVideoWriter::vpVideoWriter() :
   framerate = 25;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
   framerate = 25.0;
-  //fourcc = cv::VideoWriter::fourcc('I','Y','U','V');
-  fourcc = cv::VideoWriter::fourcc('M','P','E','G');
+  fourcc = cv::VideoWriter::fourcc('P','I','M','1');
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   framerate = 25.0;
-  fourcc = CV_FOURCC_DEFAULT;
+  fourcc = CV_FOURCC('P','I','M','1'); // default is a MPEG-1 codec
 #endif
 }
 
