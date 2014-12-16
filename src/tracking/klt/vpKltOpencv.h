@@ -110,7 +110,7 @@ public:
   std::vector<long> getFeaturesId() const {return m_points_id;}
   //long* getFeaturesId() const {return featuresid;}
   //! Get the free parameter of the Harris detector.
-  double getHarrisFreeParameter() const {return m_blockSize;}
+  double getHarrisFreeParameter() const {return m_harris_k;}
   //! Get the list of lost feature
   //bool *getListOfLostFeature() const { return lostDuringTrack; }
   //! Get the maximum number of features to track in the image.

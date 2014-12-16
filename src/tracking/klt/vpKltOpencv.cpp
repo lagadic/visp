@@ -118,6 +118,8 @@ vpKltOpencv::~vpKltOpencv()
 */
 void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 {
+  m_next_points_id = 0;
+
   //cvtColor(I, m_gray, cv::COLOR_BGR2GRAY);
   I.copyTo(m_gray);
 
@@ -162,7 +164,7 @@ void vpKltOpencv::track(const cv::Mat &I)
   std::vector<uchar> status;
 
   cv::calcOpticalFlowPyrLK(m_prevGray, m_gray, m_points[0], m_points[1], status, err, cv::Size(m_winSize, m_winSize),
-      m_pyrMaxLevel, m_termcrit, flags, 0.001);
+      m_pyrMaxLevel, m_termcrit, flags);
 
   // Remove points that are lost
   for (int i=(int)status.size()-1; i>=0; i--) {
@@ -437,6 +439,7 @@ vpKltOpencv::initTracking(const std::vector<cv::Point2f> &guess_pts, bool reset_
 {
   m_points[1] = guess_pts;
   if (reset_id || m_points_id.empty()) {
+    m_next_points_id = 0;
     m_points_id.clear();
     for(size_t i=0; i<m_points[1].size(); i++) {
       m_points_id.push_back(m_next_points_id ++);
