@@ -3,13 +3,13 @@
 \page tutorial-tracking-mb Tutorial: Model-based tracking
 \tableofcontents
 
-With ViSP it is possible to track an object using its cad model. Considered objects should be modeled by lines or cylinders. The model of the object could be defined in vrml format, or in cao format.
+With ViSP it is possible to track an object using its cad model. Considered objects should be modeled by lines, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format.
 
 The model-based tracker can consider moving-edges behind the lines of the model (see section \ref tracking_mb_edges). It can also consider keypoints that are detected and tracked on each visible face of the model (see section \ref tracking_mb_klt). The tracker can also handle moving-edges and keypoints in an hybrid scheme (see section \ref tracking_mb_hybrid).
 
 While the \ref tracking_mb_edges is appropriate to track untextured object, the \ref tracking_mb_klt is more designed to exploit textured objects with edges that are not really visible. The \ref tracking_mb_hybrid is appropriate to track textured objects with visible edges.
 
-In the following sections, we consider the tracking of a tea box modeled in cao format. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. 
+In the following sections, we consider the tracking of a tea box modeled in cao format. 
 
 \section tracking_mb_edges Model-based edges tracker
 
@@ -29,7 +29,7 @@ Hereafter is the description of the new lines introduced in this example.
 #include <visp/vpMbEdgeTracker.h>
 \endcode
 
-Here we include the header of the vpMbEdgeTracker class that allows to track an object from its cad model by using the moving-edges. The tracker will use image \c I and the intrinsic camera parameters \c cam as input. 
+Here we include the header of the vpMbEdgeTracker class that allows to track an object from its cad model using moving-edges. The tracker will use image \c I and the intrinsic camera parameters \c cam as input. 
 
 \code
   vpImage<unsigned char> I;
@@ -198,7 +198,7 @@ It is also possible to enable them in the xml file. This is done with the follow
 
 Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
 
-\note When clipping parameters are not set in the xml file, nor in the code, clipping is not used. Usually clipping is not helpfull when the oject to track is simple.  
+\note When clipping parameters are not set in the xml file, nor in the code, clipping is not used. Usually clipping is not helpful when the oject to track is simple.  
 
 Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format with:
 \code
