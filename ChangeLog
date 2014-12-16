@@ -55,6 +55,7 @@ ViSP 2.10.0 (under development)
       installed
     . [18258] Stack overflow when using vpDot under Windows
     . [16895] undefined reference to `vpGaussRand::gaussianDraw()'
+    . [18406] Infinite loop in `vpPose::poseRansac()'
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features

@@ -37,6 +37,7 @@
  * Authors:
  * Eric Marchand
  * Aurelien Yol
+ * Souriya Trinh
  *
  *****************************************************************************/
 
@@ -47,10 +48,11 @@
 */
 
 #include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+#include <cmath>        // std::fabs
+#include <limits>       // numeric_limits
 #include <stdlib.h>
 #include <algorithm>    // std::count
+#include <float.h>      //DBL_MAX
 
 #include <visp/vpPose.h>
 #include <visp/vpColVector.h>
@@ -95,13 +97,14 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     cur_outliers.clear();
     cur_randoms.clear();
     
+    //Vector of used points, initialized at false for all points
     std::vector<bool> usedPt(size, false);
     
     vpPose poseMin ;
     for(unsigned int i = 0; i < nbMinRandom;)
     {
       if((size_t) std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
-        //All points was picked, break otherwise we stay in an infinite loop
+        //All points was picked once, break otherwise we stay in an infinite loop
         break;
       }
 
@@ -127,7 +130,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
           break;
         }
       }
-      if(!degenerate){
+      if(!degenerate) {
         poseMin.addPoint(pt) ;
         cur_randoms.push_back(r_);
         //Increment the number of points picked
@@ -135,78 +138,115 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       }
     }
 
-    poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
-    r_lagrange = poseMin.computeResidual(cMo_lagrange) ;
-    poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
-    r_dementhon = poseMin.computeResidual(cMo_dementhon) ;
+    //Flags set if pose computation is OK
+    bool is_valid_lagrange = false;
+    bool is_valid_dementhon = false;
 
-    if (r_lagrange < r_dementhon) {
-      r = r_lagrange;
-      cMo = cMo_lagrange;
+    //Set maximum value for residuals
+    r_lagrange = DBL_MAX;
+    r_dementhon = DBL_MAX;
+
+    try {
+      poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
+      r_lagrange = poseMin.computeResidual(cMo_lagrange);
+      is_valid_lagrange = true;
+    } catch(vpException &e) {
+      std::cerr << e.what() << std::endl;
     }
-    else {
-      r = r_dementhon;
-      cMo = cMo_dementhon;
+
+    try {
+      poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon);
+      r_dementhon = poseMin.computeResidual(cMo_dementhon);
+      is_valid_dementhon = true;
+    } catch(vpException &e) {
+      std::cerr << e.what() << std::endl;
     }
-    r = sqrt(r)/(double)nbMinRandom;
 
-    if (r < ransacThreshold)
-    {
-      unsigned int nbInliersCur = 0;
-      unsigned int iter = 0;
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
-      { 
-        vpPoint pt = *it;
-        vpPoint p(pt) ;
-        p.track(cMo) ;
+    //If at least one pose computation is OK,
+    //we can continue, otherwise pick another random set
+    if(is_valid_lagrange || is_valid_dementhon) {
+      if (r_lagrange < r_dementhon) {
+        r = r_lagrange;
+        cMo = cMo_lagrange;
+      }
+      else {
+        r = r_dementhon;
+        cMo = cMo_dementhon;
+      }
+      r = sqrt(r)/(double)nbMinRandom;
 
-        double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y()) ;
-        double error = sqrt(d) ;
-        if(error < ransacThreshold){
-          // the point is considered as inlier if the error is below the threshold
-          // But, we need also to check if it is not a degenerate point
-          bool degenerate = false;
+      if (r < ransacThreshold)
+      {
+        unsigned int nbInliersCur = 0;
+        unsigned int iter = 0;
+        for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+        {
+          vpPoint pt = *it;
+          vpPoint p(pt) ;
+          p.track(cMo) ;
 
-          for(unsigned int it_inlier_index = 0; it_inlier_index< cur_consensus.size(); it_inlier_index++){
-            std::list<vpPoint>::const_iterator it_point = listP.begin();
-            std::advance(it_point, cur_consensus[it_inlier_index]);
-            pt = *it_point;
+          double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y()) ;
+          double error = sqrt(d) ;
+          if(error < ransacThreshold) {
+            // the point is considered as inlier if the error is below the threshold
+            // But, we need also to check if it is not a degenerate point
+            bool degenerate = false;
 
-            vpPoint ptdeg = *it;
-            if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
-                ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
-              degenerate = true;
-              break;
+            for(unsigned int it_inlier_index = 0; it_inlier_index< cur_consensus.size(); it_inlier_index++){
+              std::list<vpPoint>::const_iterator it_point = listP.begin();
+              std::advance(it_point, cur_consensus[it_inlier_index]);
+              pt = *it_point;
+
+              vpPoint ptdeg = *it;
+              if( ((fabs(pt.get_x() - ptdeg.get_x()) < 1e-6) && (fabs(pt.get_y() - ptdeg.get_y()) < 1e-6))  ||
+                  ((fabs(pt.get_oX() - ptdeg.get_oX()) < 1e-6) && (fabs(pt.get_oY() - ptdeg.get_oY()) < 1e-6) && (fabs(pt.get_oZ() - ptdeg.get_oZ()) < 1e-6))){
+                degenerate = true;
+                break;
+              }
             }
-          }
 
-          if(!degenerate){
-            nbInliersCur++;
-            cur_consensus.push_back(iter);
+            if(!degenerate) {
+              nbInliersCur++;
+              cur_consensus.push_back(iter);
+            }
+            else {
+              cur_outliers.push_back(iter);
+            }
           }
           else {
             cur_outliers.push_back(iter);
           }
-        }    
-        else
-          cur_outliers.push_back(iter);
-        
-        iter++;
-      }
 
-      if(nbInliersCur > nbInliers)
-      {
-        foundSolution = true;
-        best_consensus = cur_consensus;
-        nbInliers = nbInliersCur;
+          iter++;
+        }
+
+        if(nbInliersCur > nbInliers)
+        {
+          foundSolution = true;
+          best_consensus = cur_consensus;
+          nbInliers = nbInliersCur;
+        }
+
+        nbTrials++;
+        cur_consensus.clear();
+        
+        if(nbTrials >= ransacMaxTrials){
+          vpERROR_TRACE("Ransac reached the maximum number of trials");
+          foundSolution = true;
+        }
       }
-      
+      else {
+        nbTrials++;
+
+        if(nbTrials >= ransacMaxTrials){
+          vpERROR_TRACE("Ransac reached the maximum number of trials");
+        }
+      }
+    } else {
       nbTrials++;
-      cur_consensus.clear();
-      
+
       if(nbTrials >= ransacMaxTrials){
         vpERROR_TRACE("Ransac reached the maximum number of trials");
-        foundSolution = true;
       }
     }
   }
@@ -242,17 +282,38 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
         pose.addPoint(pt) ;
         ransacInliers.push_back(pt);
       }
-        
-      pose.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
-      r_lagrange = pose.computeResidual(cMo_lagrange) ;
-      pose.computePose(vpPose::DEMENTHON, cMo_dementhon) ;
-      r_dementhon = pose.computeResidual(cMo_dementhon) ;
 
-      if (r_lagrange < r_dementhon) {
-        cMo = cMo_lagrange;
+      //Flags set if pose computation is OK
+      bool is_valid_lagrange = false;
+      bool is_valid_dementhon = false;
+
+      //Set maximum value for residuals
+      r_lagrange = DBL_MAX;
+      r_dementhon = DBL_MAX;
+
+      try {
+        pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
+        r_lagrange = pose.computeResidual(cMo_lagrange);
+        is_valid_lagrange = true;
+      } catch(vpException &e) {
+        std::cerr << e.what() << std::endl;
       }
-      else {
-        cMo = cMo_dementhon;
+
+      try {
+        pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
+        r_dementhon = pose.computeResidual(cMo_dementhon);
+        is_valid_dementhon = true;
+      } catch(vpException &e) {
+        std::cerr << e.what() << std::endl;
+      }
+
+      if(is_valid_lagrange || is_valid_dementhon) {
+        if (r_lagrange < r_dementhon) {
+          cMo = cMo_lagrange;
+        }
+        else {
+          cMo = cMo_dementhon;
+        }
       }
 
       pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
