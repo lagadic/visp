@@ -1,7 +1,5 @@
 /*! \example tutorial-video-recorder.cpp */
-#include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
 #include <visp/vpTime.h>
 #include <visp/vpVideoWriter.h>
 
@@ -48,6 +46,21 @@ int main(int argc, char** argv)
     vpDisplayOpenCV d(I);
 
     vpVideoWriter writer;
+
+#ifdef VISP_HAVE_FFMPEG
+    // Set up the bit rate
+    writer.setBitRate(1000000);
+    // Set up the codec to use
+#  if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
+    writer.setCodec(CODEC_ID_MPEG2VIDEO);
+#  else
+    writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
+#  endif
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    writer.setCodec( cv::VideoWriter::fourcc('P','I','M','1') ); // MPEG-1 codec
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writer.setCodec( CV_FOURCC('P','I','M','1') );
+#endif
     writer.setFileName(videoname);
     writer.open(I);
     bool recording = false;
