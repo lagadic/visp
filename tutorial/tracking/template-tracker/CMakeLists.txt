@@ -8,7 +8,7 @@ find_package(VISP REQUIRED)
 set(tutorial_cpp
   tutorial-template-tracker.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/pattern-template-tracker.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/bruegel.mpg" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

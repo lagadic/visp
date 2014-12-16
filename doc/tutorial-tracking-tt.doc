@@ -22,58 +22,47 @@ The video below shows the result of the template tracking.
 
 Hereafter is the description of the new lines introduced in this example.
 
-\code
-#include <visp/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp/vpTemplateTrackerWarpHomography.h>
-\endcode
+\snippet tutorial-template-tracker.cpp Include
+
 
 Here we include the header of the vpTemplateTrackerSSDInverseCompositional class that allows to track the template. Actually, the tracker estimates the displacement of the template in the current image according to its initial pose. The computed displacement can be represented by multiple transformations, also called warps (vpTemplateTrackerWarp classes). In this example, we include the header vpTemplateTrackerWarpHomography class to define the possible transformation of the template as an homography.
 
-\code
-vpTemplateTrackerWarpHomography warp;
-vpTemplateTrackerSSDInverseCompositional tracker(&warp);
-\endcode
+\snippet tutorial-template-tracker.cpp Construction
 
-Once the tracker is created with the desired warp, parameters can be tuned to be more consistent with the expected behavior.
+Once the tracker is created with the desired warp function, parameters can be tuned to be more consistent with the expected behavior. Depending on these parameters the perfomances of the tracker in terms of processing time and estimation could be affected. Since here we deal with 640 by 480 pixel wide images, the images are significantly subsampled in order to reduce the time of the image processing to be compatible with real-time.
 
 \code
-tracker.setSampling(2,2);     // Will consider only one pixel from two along rows and columns 
-                              // to create the reference template
-tracker.setLambda(0.001);     // Gain used in the optimization loop
-tracker.setIterationMax(200); // Maximum number of iterations for the optimization loop
-tracker.setPyramidal(2, 1);   // First and last level of the pyramid
+  tracker.setSampling(2, 2);    // Will consider only one pixel from two along rows and columns 
+                                // to create the reference template
+  tracker.setLambda(0.001);     // Gain used in the optimization loop
+  tracker.setIterationMax(200); // Maximum number of iterations for the optimization loop
+  tracker.setPyramidal(2, 1);   // First and last level of the pyramid. Full resolution image is at level 0.
 \endcode
 
 The last step of the initialization is to select the template that will be tracked during the sequence. 
 
-\code
-tracker.initClick(I);
-\endcode
+\snippet tutorial-template-tracker.cpp Init
 
-The vpTemplateTracker classes proposed in ViSP offer you the possibility to defined your template as multiple planar triangles. When calling vpTemplateTracker::initClick(I), you will have to specify the triangles that define the template.
+The vpTemplateTracker classes proposed in ViSP offer you the possibility to defined your template as multiple planar triangles. When calling the previous line, you will have to specify the triangles that define the template.
 
-\image html initClickTemplateTracker.png Initialization of the template without Delaunay triangulation.
+\image html img-initClickTemplateTracker.png Initialization of the template without Delaunay triangulation.
 
-Let us denote that those triangles don't have to be spatially tied up. However, if you want to track a simple image as in this example, you should initialize the template as on the figure above. Left clicks on zero, one and two points create the green triangle. Left clicks on three, four and right click on five point create the red triangle and ends the initialization.
-If ViSP is build with OpenCV, we also provide an initialization with automatic triangulation using Delaunay. To use it, you just have to call vpTemplateTracker::initClick(I, true). Then by left clicking on zero, one, two, four and right clicking on five it initializes the tracker as on the image above.    
+Let us denote that those triangles don't have to be spatially tied up. However, if you want to track a simple image as in this example, you should initialize the template as on the figure above. Left clicks on point number zero, one and two create the green triangle. Left clicks on point three and four and then right click on point number five create the red triangle and ends the initialization.
+If ViSP is build with OpenCV, we also provide an initialization with automatic triangulation using Delaunay. To use it, you just have to call vpTemplateTracker::initClick(I, true). Then by left clicking on points number zero, one, two, four and right clicking on point number five initializes the tracker as on the image above.      
 
 Next, in the infinite while loop, after displaying the next image, we track the object on a new image I.
 
-\code
-tracker.track(I);
-\endcode
+\snippet tutorial-template-tracker.cpp Track
 
 If you need to get the parameters of the current transformation of the template, it can be done by calling:
 
-\code
-vpColVector p = tracker.getp();
-\endcode
+\snippet tutorial-template-tracker.cpp Homography
 
-For further information about the warping parameters, see the following section of \ref warp_tt. Next line is used to display the template using red lines and according to the computed transformation from the last call to track.
+For further information about the warping parameters, see the following \ref warp_tt section.
 
-\code
-tracker.display(I, vpColor::red);
-\endcode
+Then according to the computed transformation obtained from the last call to track() function, next line is used to display the template using red lines.
+
+\snippet tutorial-template-tracker.cpp Display
 
 \subsection warp_tt Warping classes
 
@@ -125,7 +114,7 @@ The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemp
 When you want to obtain a perfect pose estimation, it is often time-consuming. However, by tuning the tracker, you can find a good compromise between speed and efficiency. Basically, what will make the difference is the size of the reference template. The more pixels it contains, the more time-consuming it will be. Fortunately, the solutions to avoid this problem are multiple. First of all lets come back on the vpTemplateTracker::setSampling() function.
 
 \code
-tracker.setSampling(4,4);     // Will consider only one pixel from four along rows and columns
+tracker.setSampling(4, 4);    // Will consider only one pixel from four along rows and columns
                               // to create the reference template.
 \endcode
 
