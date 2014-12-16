@@ -46,17 +46,18 @@
   \brief function used to estimate a pose using the Ransac algorithm
 */
 
+#include <iostream>
+#include <cmath>    // std::fabs
+#include <limits>   // numeric_limits
+#include <stdlib.h>
+#include <algorithm>    // std::count
+
 #include <visp/vpPose.h>
 #include <visp/vpColVector.h>
 #include <visp/vpRansac.h>
 #include <visp/vpTime.h>
 #include <visp/vpList.h>
 #include <visp/vpPoseException.h>
-
-#include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-#include <stdlib.h>
 
 #define eps 1e-6
 
@@ -97,10 +98,20 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     std::vector<bool> usedPt(size, false);
     
     vpPose poseMin ;
-    for(unsigned int i = 0; i < nbMinRandom; i++)
+    for(unsigned int i = 0; i < nbMinRandom;)
     {
-      unsigned int r_ = (unsigned int)rand()%size;
-      while(usedPt[r_] ) r_ = (unsigned int)rand()%size;
+      if((size_t) std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
+        //All points was picked, break otherwise we stay in an infinite loop
+        break;
+      }
+
+      //Pick a point randomly
+      unsigned int r_ = (unsigned int) rand() % size;
+      while(usedPt[r_]) {
+        //If already picked, pick another point randomly
+        r_ = (unsigned int) rand() % size;
+      }
+      //Mark this point as already picked
       usedPt[r_] = true;
       
       std::list<vpPoint>::const_iterator iter = listP.begin();
@@ -119,9 +130,9 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
       if(!degenerate){
         poseMin.addPoint(pt) ;
         cur_randoms.push_back(r_);
+        //Increment the number of points picked
+        i++;
       }
-      else
-        i--;
     }
 
     poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange) ;
