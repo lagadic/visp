@@ -124,7 +124,7 @@ int main(int argc, char** argv)
       tracker.track(I);
       //! [Track]
       //! [Get pose]
-      tracker.getPose(cTw);
+      tracker.getPose(cMo);
       //! [Get pose]
       //! [Display]
       tracker.getCameraParameters(cam);
