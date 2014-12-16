@@ -177,7 +177,11 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>&
 {
   if (delaunay) {
     if(vip.size() == 3) {
-      initFromPoints(I, vip, false);
+      initFromPoints(
+      #if VISP_HAVE_OPENCV_VERSION >= 0x020300
+            I,
+      #endif
+            vip, false);
     }
     else if(vip.size() == 4) {
       std::vector<vpImagePoint> vip_delaunay;
@@ -187,7 +191,11 @@ void vpTemplateTrackerZone::initFromPoints(const vpImage<unsigned char>&
       vip_delaunay.push_back(vip[2]);
       vip_delaunay.push_back(vip[3]);
       vip_delaunay.push_back(vip[0]);
-      initFromPoints(I, vip_delaunay, false);
+      initFromPoints(
+      #if VISP_HAVE_OPENCV_VERSION >= 0x020300
+            I,
+      #endif
+            vip_delaunay, false);
     }
     else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
