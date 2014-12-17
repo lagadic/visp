@@ -3,7 +3,11 @@
 \page tutorial-tracking-mb Tutorial: Model-based tracking
 \tableofcontents
 
-With ViSP it is possible to track an object using its cad model. Considered objects should be modeled by lines, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format.
+With ViSP it is possible to track an object using its cad model. Considered objects should be modeled by lines, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format. 
+
+Next section highlights the differents versions of the markerless model-based trackers that are implemented in ViSP.
+
+\section tracking_mb Markerless model-based trackers
 
 The model-based tracker can consider moving-edges behind the lines of the model (see section \ref tracking_mb_edges). It can also consider keypoints that are detected and tracked on each visible face of the model (see section \ref tracking_mb_klt). The tracker can also handle moving-edges and keypoints in an hybrid scheme (see section \ref tracking_mb_hybrid).
 
@@ -11,7 +15,7 @@ While the \ref tracking_mb_edges is appropriate to track untextured object, the 
 
 In the following sections, we consider the tracking of a tea box modeled in cao format. 
 
-\section tracking_mb_edges Model-based edges tracker
+\subsection tracking_mb_edges Model-based edges tracker
 
 The following example that comes from tutorial-mb-edge-tracker.cpp allows to track the tea box using vpMbEdgeTracker class.
 
@@ -211,7 +215,7 @@ The last lines are here to free the memory allocated by libxml2 or Coin 3rd part
 
 \snippet tutorial-mb-edge-tracker.cpp Cleanup
 
-\section tracking_mb_klt Model-based KLT tracker
+\subsection tracking_mb_klt Model-based keypoint tracker
 
 The following example that comes from tutorial-mb-klt-tracker.cpp allows to track the tea box using vpMbKltTracker class.
 
@@ -269,7 +273,7 @@ The file \c teabox-triangle.cao describes first the vertices of the box, then th
 
 Note that this is the only tracker for which lines of the model are not necessary edges of the object.
 
-\section tracking_mb_hybrid Model-based hybrid tracker
+\subsection tracking_mb_hybrid Model-based hybrid tracker
 
 The following example that comes from tutorial-mb-hybrid-tracker.cpp allows to track the tea box using vpMbEdgeKltTracker class.
 
@@ -330,10 +334,12 @@ We provide just hereafter the content of the \c teabox.xml file:
 </conf>
 \endcode
 
+\section tracking_model How to model the objects to track
 
-\section tracking_mb_cao CAD model in cao format
+ViSP supports two different ways to describe CAD models, either in cao or in vrml format.
+- cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
+- vrml format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
 
-cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
 
 \subsection tracking_mb_cao_face teabox.cao example
 
@@ -372,10 +378,6 @@ This file describes the model of the tea box corresponding to the next image:
 
 Until line 15, the content of this file is similar to the one described in 
 \ref tracking_mb_cao_face. Line 17 we specify that the model contains 12 faces. Each face is then described as a triangle.
-
-\section tracking_mb_wrl CAD model in vrml format
-
-ViSP support vrml format only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
 
 \subsection tracking_mb_vrml_face teabox.wrl example
 
