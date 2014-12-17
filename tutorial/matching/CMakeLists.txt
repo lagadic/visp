@@ -6,8 +6,10 @@ find_package(VISP REQUIRED)
 
 # set the list of source files
 set(tutorial_cpp
-  tutorial-matching-surf.cpp
-  tutorial-matching-surf-homography.cpp)
+  tutorial-matching-keypoint.cpp
+  tutorial-matching-keypoint-homography.cpp
+  tutorial-matching-surf-deprecated.cpp
+  tutorial-matching-surf-homography-deprecated.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video-postcard.mpeg" )
 
@@ -20,5 +22,5 @@ endforeach()
 
 # Copy the data files to the same location than the target
 foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-matching-surf.cpp ${data})
+  visp_copy_data(tutorial-matching-keypoint.cpp ${data})
 endforeach()

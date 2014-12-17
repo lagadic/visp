@@ -1,10 +1,12 @@
 /**
 
-\page tutorial-homography Tutorial: Homography estimation from points
+\page tutorial-homography-deprecated Tutorial: Homography estimation from points (deprecated)
 
 \tableofcontents
 
 \section intro Introduction
+
+\note The second part of this tutorial is deprecated if your OpenCV version is equal to 2.8.0 or more recent. If so you should rather follow \ref tutorial-homography.
 
 This tutorial shows how to estimate an homography from points. Two cases are considered in the next sections:
 - points are matched without possible mismatches. In that case vpHomography::DLT() or vpHomography::HLM() are used to estimate the homography,
@@ -70,16 +72,16 @@ Estimation from homography: Point 3 in pixels in frame a: 353.8501593, 486.18518
 
 \section ransac Ransac or robust homography estimation
 
-This section follows the \ref tutorial-matching. It explains how to exploit couples of matched points obtained using SURF detector in order to estimate an homography that allows to reject mismatched couples of points. The homography is then used to track a postcard from its initial position in the reference image.
+This section follows the \ref tutorial-matching-deprecated. It explains how to exploit couples of matched points obtained using SURF detector in order to estimate an homography that allows to reject mismatched couples of points. The homography is then used to track a postcard from its initial position in the reference image.
 
-Let us consider the following source code also available in tutorial-matching-keypoint-homography.cpp. 
+Let us consider the following source code also available in tutorial-matching-surf-homography-deprecated.cpp. 
 
-\include tutorial-matching-keypoint-homography.cpp
+\include tutorial-matching-surf-homography-deprecated.cpp
 
 The command line allows to use either Ransac algorithm of a robust M-estimator approach:
 \code
-% ./tutorial-matching-keypoint-homography 0 // to run Ransac
-% ./tutorial-matching-keypoint-homography 1 // to run the robust M-estimator
+% ./tutorial-matching-surf-homography-deprecated 0 // to run Ransac
+% ./tutorial-matching-surf-homography-deprecated 1 // to run the robust M-estimator
 \endcode
 
 Here after is the resulting video. The left image represents the reference image. The right images correspond to the successive images of the input video. All the green lines extremities represent the points that are well matched and used in the homography estimation process. All the red lines represent couple of matched points that are rejected by the robust estimator.
@@ -91,39 +93,39 @@ Here after is the resulting video. The left image represents the reference image
 Now, let us explain the new lines that were introduced to estimate the homography.
 
 First we detect the command line arguments to be able later to user either Ransac or the robust M-estimator:
-\snippet tutorial-matching-keypoint-homography.cpp Select method
+\snippet tutorial-matching-surf-homography-deprecated.cpp Select method
 
 We also initialize the coordinates of the pixels in the reference image that correspond to the postcard corners. These coordinates were obtained after a user initial click. To simplify the code, we set directly the coordinates of the points:
-\snippet tutorial-matching-keypoint-homography.cpp Set coordinates
+\snippet tutorial-matching-surf-homography-deprecated.cpp Set coordinates
 
 Using these coordinates, we display red lines around the postcard:
-\snippet tutorial-matching-keypoint-homography.cpp Display
+\snippet tutorial-matching-surf-homography-deprecated.cpp Display
 
 We need also to define roughly the parameters of our camera:
-\snippet tutorial-matching-keypoint-homography.cpp Camera
+\snippet tutorial-matching-surf-homography-deprecated.cpp Camera
 
 For each new image, once points are matched using:
-\snippet tutorial-matching-keypoint-homography.cpp Matching
+\snippet tutorial-matching-surf-homography-deprecated.cpp Matching
 
 We allocate new containers useful for the homography estimation. The coordinates of the points in the reference image will be stored in \c (mPref_x, mPref_y), while the corresponding coordinates in the current image will be stored in \c (mPcur_x, mPcur_y). We also allocate \c inliers a vector of boolean that will indicate if a couple of point is an inlier or an outlier:
-\snippet tutorial-matching-keypoint-homography.cpp Allocation
+\snippet tutorial-matching-surf-homography-deprecated.cpp Allocation
 
 To estimate the homography we need first to convert the points from pixel to meters:
-\snippet tutorial-matching-keypoint-homography.cpp Pixel conversion
+\snippet tutorial-matching-surf-homography-deprecated.cpp Pixel conversion
 
 We can now estimate the homography using either Ransac or the robust M-estimator approach:
-\snippet tutorial-matching-keypoint-homography.cpp Homography estimation
+\snippet tutorial-matching-surf-homography-deprecated.cpp Homography estimation
 
 For Ransac we consider that at least 50 percent of the points should be inliers (\c mPref_x.size()/2) to reach a consensus and that a couple of point is stated as an inlier if the reprojection error is lower than 2 pixels (\c 2.0/cam.get_px()).
 
 Then using the homography, we project the coordinates of the postcard corners in the current image:
-\snippet tutorial-matching-keypoint-homography.cpp Projection
+\snippet tutorial-matching-surf-homography-deprecated.cpp Projection
 
 We use these coordinates to draw blue lines arround the postcard:
-\snippet tutorial-matching-keypoint-homography.cpp Display contour
+\snippet tutorial-matching-surf-homography-deprecated.cpp Display contour
 
 Since the homography estimation updates the status of the couples of matched points as inliers or outliers, between the matched points we are able to draw green lines when they are inliers, or red lines when they are outliers.
-\snippet tutorial-matching-keypoint-homography.cpp Display matches
+\snippet tutorial-matching-surf-homography-deprecated.cpp Display matches
 
 
 */

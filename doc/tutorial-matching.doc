@@ -5,15 +5,17 @@
 
 \section intro Introduction
 
-This tutorial focuses on SURF key points manipulation. You will learn how to detect SURF key points on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, key points that match those detected in the reference image using SURF descriptor are displayed.
+\note This tutorial is adapted if your OpenCV version is equal or greater than 2.1.1 version. 
+
+This tutorial focuses on key points detection and mathing. You will learn how to detect key points on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, key points that match those detected in the reference image are displayed.
 
 \note We assume that you are familiar with video framegrabbing described in \ref tutorial-grabber and with the way to display an image in a window described in \ref tutorial-getting-started.
 
-\section surf SURF key points detection and matching
+\section keypoint Key points detection and matching
 
-Let us consider the following source code also available in tutorial-matching-surf.cpp.
+Let us consider the following source code also available in tutorial-matching-keypoint.cpp.
 
-\include tutorial-matching-surf.cpp
+\include tutorial-matching-keypoint.cpp
 
 Here after is the resulting video. The left image represents the reference image. The right images correspond to the successive images of the input video. All the green lines extremities represent the points that are matched.
 
@@ -21,73 +23,40 @@ Here after is the resulting video. The left image represents the reference image
 <iframe width="560" height="315" src="http://www.youtube.com/embed/sMbed_oYJgQ" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-Now, let us explain the lines dedicated to the SURF keypoint usage.
+Now, let us explain the lines dedicated to the ORB keypoint detection and matching usage.
 
-First we have to include the header of the vpKeyPointSurf class that is a wrapper over OpenCV classes.
-\code
-#include <visp/vpKeyPointSurf.h>
-\endcode
+First we have to include the header of the vpKeyPoint class that is a wrapper over OpenCV classes.
+\snippet tutorial-matching-keypoint.cpp Include
 
-Note that this class is only available if ViSP was build with OpenCV non free module. This is ensured by the check of VISP_HAVE_OPENCV_NONFREE macro. To grab the images from the mpeg video stream we need also that ViSP was build with ffmpeg 3rd party. That's why we check VISP_HAVE_FFMPEG macro definition:
-\code
-#if defined(VISP_HAVE_OPENCV_NONFREE) && defined(VISP_HAVE_FFMPEG)
-\endcode
+Note that this class is only available if ViSP was build with OpenCV. This is ensured by the check of VISP_HAVE_OPENCV_VERSION macro. 
+\snippet tutorial-matching-keypoint.cpp Define
 
-Then we open the mpeg video stream and grab the first image of the video that is stored in \c I container. A Surf keypoint class is instantiated and keypoints are detected on the first image which is considered as the reference image:
-\code
-  vpKeyPointSurf surf;
-  surf.buildReference(I);
-\endcode
+Then we open the mpeg video stream and grab the first image of the video that is stored in \c I container. The vpKeyPoint class is instantiated and keypoints are detected on the first image which is considered as the reference image:
+\snippet tutorial-matching-keypoint.cpp Construction
 
 The next lines are used to create image \c Idisp to render the matching results; left image for the reference image, right image for the current image that is processed:
-\code
-  vpImage<unsigned char> Idisp;
-  Idisp.resize(I.getHeight(), 2*I.getWidth());
-  Idisp.insert(I, vpImagePoint(0, 0));
-  Idisp.insert(I, vpImagePoint(0, I.getWidth()));
-\endcode
+\snippet tutorial-matching-keypoint.cpp Create image
 
 Then a display using OpenCV is created and image \c Idisp is rendered:
-\code
-  vpDisplayOpenCV d(Idisp, 0, 0, "Matching surf keypoints") ;
-  vpDisplay::display(Idisp);
-  vpDisplay::flush(Idisp);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Init display
 
 We enter then in the \c while() loop where a new image is acquired from the video stream and inserted in the right part of image \c Idisp dedicated to rendering of the matching results.
-\code
-    reader.acquire(I);
-    Idisp.insert(I, vpImagePoint(0, I.getWidth()));
-\endcode
+\snippet tutorial-matching-keypoint.cpp Acquisition
 
 We start the rendering by displaying the rendered image and by drawing a white vertical line to separate the reference image from the current one:
-\code
-    vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()), vpColor::white, 2);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Display
 
 Keypoint matches between the reference image and the current image \c I are detected using:
-\code
-    int nbMatch = surf.matchPoint(I);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Matching
 
 Then we parse all the matches to retrieve the coordinates of the points in the reference image (in \c iPref variable) and in the current image (in \c iPcur variable):
-\code
-    vpImagePoint iPref, iPcur;
-    for (int i = 0; i < nbMatch; i++)
-    {
-      surf.getMatchedPoints(i, iPref, iPcur);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Get matches
 
 Next we draw green lines between the matched points:
-\code
-      vpDisplay::displayLine(Idisp, iPref, iPcur + vpImagePoint(0, I.getWidth()), vpColor::green);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Display matches
 
 At the end of the iteration, we flush all the previous display to the render window:
-\code
-    vpDisplay::flush(Idisp);
-\endcode
+\snippet tutorial-matching-keypoint.cpp Display flush
 
 You can now follow \ref tutorial-homography to see how to exploit couple of matched points in order to estimate an homography that allows to track the position of an object.
 

@@ -77,6 +77,9 @@
   \brief Class that implements the SURF key points and technics thanks
   to the OpenCV library.
 
+  \note This class is deprecated. You should rather use vpKeyPoint class that
+  is more generic.
+
   The goal of this class is to provide a tool to match points from a
   model and points belonging to an image in which the model appears.
   The coordinates of the different reference points and matched points

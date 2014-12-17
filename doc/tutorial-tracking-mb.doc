@@ -168,11 +168,11 @@ Here for simplicity, the user just has the possibility to either activate all th
 
 Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format with:
 \snippet tutorial-mb-edge-tracker.cpp Load cao
-The file \c teabox.cao describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_face). The next figure gives the index of the vertices that are defined in \c teabox.cao.
+The file \c teabox.cao describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_cao_face. The next figure gives the index of the vertices that are defined in \c teabox.cao.
 
 To load the cad model in vrml the user has to replace the previous line by the following:
 \snippet tutorial-mb-edge-tracker.cpp Load wrl
-As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_wrl.
+As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. A more complete description of this file is provided in \ref tracking_mb_vrml_face.
 
 \image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
 
@@ -269,7 +269,7 @@ Note also that in this example we can model the tea box with triangles:
 \code
   tracker.loadModel("teabox-triangle.cao");
 \endcode
-The file \c teabox-triangle.cao describes first the vertices of the box, then the triangular faces. A more complete description of this file is provided in \ref tracking_mb_cao (\ref tracking_mb_cao_triangle).
+The file \c teabox-triangle.cao describes first the vertices of the box, then the triangular faces. A more complete description of this file is provided in \ref tracking_mb_cao_triangle).
 
 Note that this is the only tracker for which lines of the model are not necessary edges of the object.
 
@@ -393,6 +393,111 @@ We provide now a line by line description of the file where the faces of the box
 - line 1 to 10: Header of the \c .wrl file.
 - line 13 to 20: 3D coordinates of the 8 tea box vertices.
 - line 34 to 29: Each line describe a face. In this example, a face is defined by 4 vertices. For example, the first face join vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
+
+\section advanced_model_sec Advanced: How to manipulate the model
+
+The following code shows how to access to the CAD model
+- to check if a face is visible, 
+- to get the name of the face (TODO Souriya, check if also in vrml)
+- to check if the level of detail is enable/disable (TODO Souriya)
+- to access to the coordinates of the 3D points used to model a face
+- from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image 
+
+\code
+       vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+       std::cout << "Number of faces: " << faces.size() << std::endl;
+       for (unsigned int i=0; i < faces.size(); i++) {
+         std::vector<vpMbtPolygon*> &poly = faces.getPolygon();
+         std::cout << "face " << i << " with index: " << poly[i]->getIndex()
+             << " is visible: " << poly[i]->isVisible()
+             << " and has " << poly[i]->getNbPoint()
+             << " points" << std::endl;
+         for (unsigned j=0; j<poly[i]->getNbPoint(); j++) {
+           vpPoint P = poly[i]->getPoint(j);
+           P.project(cMo);
+           std::cout << " P obj " << j << ": " << P.get_oX() << " " << P.get_oY() << " " << P.get_oZ() << std::endl;
+           std::cout << " P cam" << j << ": " << P.get_X() << " " << P.get_Y() << " " << P.get_Z() << std::endl;
+
+           vpImagePoint iP;
+           vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), iP);
+           std::cout << " iP " << j << ": " << iP.get_u() << " " << iP.get_v() << std::endl;
+         }
+       }
+\endcode
+
+\section advanced_lod_sec Advanced: Level of detail
+
+The level of detail (lod) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used 
+- the line lenght
+- the area of the face that could be closed or not)
+
+The tracker allows to enable/disable the level of detail concept using vpMbTracker::setLod() function.
+For example, with the next line we enable the level of detail for the face named "top face". To set a name to a face see \ref advanced_cao_nam_sec.
+\code
+tracker.setLod(true, "top face");
+\endcode
+
+
+\code
+vpMbTracker::setMinLineLengthThresh()
+\endcode
+
+\code
+vpMbTracker::setMinPolygonAreaThresh()
+\endcode
+
+\section advanced_cao_sec Advanced: CAD model in cao format
+
+\subsection advanced_cao_lin_sec How to model faces from lines
+
+\subsection advanced_cao_cyl_sec How to model cylinders
+
+\subsection advanced_cao_cir_sec How to model circles
+
+\code
+V1
+# Modele reacteur droit exterieur
+3
+#------------------------------
+# reacteurs
+#------------------------------
+# cercle reacteur droit exterieur
+-3.47243 14.6304 1.07673  # point 0 centre cercle de rayon 0.81026
+-3.47243 15.44066 1.07673 # point gauche axe horizontal
+-3.48039 14.63040 1.84957 # point bas axe vertical
+# segments
+0
+# face segments
+0
+# face points
+0
+# cylindres
+0
+# cercles
+1
+0.81026 0 2 1 name="Reacteur droit exterieur"
+\endcode
+
+
+\subsection advanced_cao_hie_sec How to create hierachical model
+
+\code
+exemple
+\endcode
+
+\subsection advanced_cao_nam_sec How to set a name to a face
+
+To exploit the name of a face in the code, see \ref advanced_lod_sec.
+
+\subsection advanced_cao_lod_sec How to tune the level of detail
+
+As explained in section \ref advanced_lod_sec the parameters of the lod can be set in the source code. They can also be set directly in the CAD model in cao format.
+
+\code
+exemple
+\endcode
+
+
 
 You are now ready to see the next \ref tutorial-tracking-tt.
 

@@ -80,7 +80,14 @@
 #  include <libxml/xmlwriter.h>
 #endif
 
+/*!
+  \class vpKeyPoint
 
+  Class that allows key points detection and matching thanks to OpenCV library.
+
+  This class is also described in \ref tutorial-matching.
+
+ */
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint {
 
 public:

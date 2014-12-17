@@ -78,12 +78,14 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 
 \subsection tuto_keypoint Keypoint 
 
-- \ref tutorial-matching <br>This tutorial shows how to detect and match SURF keypoints.
+- \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints. New since ViSP 2.10.0.
+- \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 
 \subsection tuto_computer_vision Computer vision
 
-- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
+- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points. New since ViSP 2.10.0.
 - \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
+- \ref tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 
 \subsection tuto_vs Visual servoing
 
