@@ -1,6 +1,7 @@
 /*! \example tutorial-template-tracker.cpp */
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
 //! [Include]
 #include <visp/vpTemplateTrackerSSDInverseCompositional.h>
