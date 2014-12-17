@@ -2086,10 +2086,13 @@ vpMbTracker::setFarClippingDistance(const double &dist)
 }
 
 /*!
- 	Set the flag to consider if the level of detail (LOD) is used
+  Set the flag to consider if the level of detail (LOD) is used.
 
- 	\param useLod : true if the level of detail must be used, false otherwise
- 	\param name : name of the face we want to modify the LOD parameter
+  \param useLod : true if the level of detail must be used, false otherwise. When true,
+  two parameters can be set, see setMinLineLengthThresh() and setMinPolygonAreaThresh().
+  \param name : name of the face we want to modify the LOD parameter.
+
+  \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
 void
 vpMbTracker::setLod(const bool useLod, const std::string &name)
@@ -2103,10 +2106,12 @@ vpMbTracker::setLod(const bool useLod, const std::string &name)
 }
 
 /*!
-    Set the threshold for the minimum line length to be considered as visible in the LOD case
+    Set the threshold for the minimum line length to be considered as visible in the LOD case.
 
-    \param minLineLengthThresh : threshold for the minimum line length in pixel
-    \param name : name of the face we want to modify the LOD threshold
+    \param minLineLengthThresh : threshold for the minimum line length in pixel.
+    \param name : name of the face we want to modify the LOD threshold.
+
+    \sa setLod(), setMinPolygonAreaThresh()
  */
 void
 vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
@@ -2120,10 +2125,12 @@ vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std:
 }
 
 /*!
-  Set the minimum polygon area to be considered as visible in the LOD case
+  Set the minimum polygon area to be considered as visible in the LOD case.
 
-  \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel
-    \param name : name of the face we want to modify the LOD threshold
+  \param minPolygonAreaThresh : threshold for the minimum polygon area in pixel.
+  \param name : name of the face we want to modify the LOD threshold.
+
+  \sa setLod(), setMinLineLengthThresh()
  */
 void
 vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
