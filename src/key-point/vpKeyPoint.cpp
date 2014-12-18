@@ -1265,6 +1265,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     m_detectors[detectorNameTmp] = cv::GFTTDetector::create();
   } else if(detectorNameTmp == "SimpleBlob") {
     m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
+  } else if(detectorNameTmp == "STAR") {
+    m_detectors[detectorNameTmp] = cv::xfeatures2d::StarDetector::create();
   } else {
     std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
@@ -1307,6 +1309,10 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     m_extractors[extractorName] = cv::ORB::create();
   } else if(extractorName == "BRISK") {
     m_extractors[extractorName] = cv::BRISK::create();
+  } else if(extractorName == "FREAK") {
+    m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
+  } else if(extractorName == "BRIEF") {
+    m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
   } else {
     std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
