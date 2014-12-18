@@ -1599,16 +1599,22 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       descriptorValue.push_back(rowValue);
     }
 
-    m_trainDescriptors = cv::Mat((int) descriptorValue.size(),
-                               (int) descriptorValue[0].size(), CV_32F);
+    cv::Mat trainDescriptorsTmp = cv::Mat((int) descriptorValue.size(),
+                                          (int) descriptorValue[0].size(), CV_32F);
     int i = 0;
     for (std::vector<std::vector<double> >::const_iterator it1 =
          descriptorValue.begin(); it1 != descriptorValue.end(); ++it1, i++) {
       int j = 0;
       for (std::vector<double>::const_iterator it2 = it1->begin();
            it2 != it1->end(); ++it2, j++) {
-        m_trainDescriptors.at<float>(i, j) = (float) *it2;
+        trainDescriptorsTmp.at<float>(i, j) = (float) *it2;
       }
+    }
+
+    if(!append || m_trainDescriptors.empty()) {
+      trainDescriptorsTmp.copyTo(m_trainDescriptors);
+    } else {
+      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
 
     file.close();
@@ -1728,7 +1734,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       }
     }
 
-    m_trainDescriptors = cv::Mat((int) descriptor_value.size(),
+    cv::Mat trainDescriptorsTmp = cv::Mat((int) descriptor_value.size(),
                                (int) descriptor_value[0].size(), CV_32F);
     int i = 0;
     for (std::vector<std::vector<double> >::const_iterator it1 =
@@ -1736,8 +1742,14 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       int j = 0;
       for (std::vector<double>::const_iterator it2 = it1->begin();
            it2 != it1->end(); ++it2, j++) {
-        m_trainDescriptors.at<float>(i, j) = (float) *it2;
+        trainDescriptorsTmp.at<float>(i, j) = (float) *it2;
       }
+    }
+
+    if(!append || m_trainDescriptors.empty()) {
+      trainDescriptorsTmp.copyTo(m_trainDescriptors);
+    } else {
+      cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
 
     /*free the document */
