@@ -7,7 +7,9 @@ find_package(VISP REQUIRED)
 # set the list of source files
 set(tutorial_cpp
   tutorial-matching-keypoint.cpp
+  tutorial-matching-keypoint-SIFT.cpp
   tutorial-matching-keypoint-homography.cpp
+  tutorial-matching-ferns-deprecated.cpp
   tutorial-matching-surf-deprecated.cpp
   tutorial-matching-surf-homography-deprecated.cpp)
 

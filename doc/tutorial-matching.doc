@@ -58,6 +58,13 @@ Next we draw green lines between the matched points:
 At the end of the iteration, we flush all the previous display to the render window:
 \snippet tutorial-matching-keypoint.cpp Display flush
 
+\section keypoint2 Using others types of detectors / descriptors (SIFT, SURF, etc.) or matchers (Brute Force, Flann based matcher)
+This can be easily done by using the correct identifier name. For example, if we want to use the couple of detector / descriptor SIFT with a matching using FLANN, we only have to change to this following lines :
+\snippet tutorial-matching-keypoint-SIFT.cpp Construction
+
+The available types of detectors, extractors or matchers depend of the OpenCV version used. Check the OpenCV documentation to know which ones are available. 
+
 You can now follow \ref tutorial-homography to see how to exploit couple of matched points in order to estimate an homography that allows to track the position of an object.
 
 */
+

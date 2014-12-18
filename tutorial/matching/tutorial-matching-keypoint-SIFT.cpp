@@ -1,4 +1,4 @@
-//! \example tutorial-matching-keypoint.cpp
+//! \example tutorial-matching-keypoint-SIFT.cpp
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
 #include <visp/vpImageIo.h>
@@ -17,14 +17,17 @@ int main() {
   reader.acquire(I);
 
   //! [Construction]
-  const std::string detectorName = "ORB";
-  const std::string extractorName = "ORB";
-  //Hamming distance must be used with ORB
-  const std::string matcherName = "BruteForce-Hamming";
+  const std::string detectorName = "SIFT";
+  const std::string extractorName = "SIFT";
+  //Use L2 distance with a matching done using FLANN (Fast Library for Approximate Nearest Neighbors)
+  const std::string matcherName = "FlannBased";
   vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
   vpKeyPoint keypoint(detectorName, extractorName, matcherName, filterType);
-  std::cout << "Reference keypoints=" << keypoint.buildReference(I) << std::endl;
   //! [Construction]
+
+  //! [Build Reference]
+  std::cout << "Reference keypoints=" << keypoint.buildReference(I) << std::endl;
+  //! [Build Reference]
 
   //! [Create image]
   vpImage<unsigned char> Idisp;
@@ -33,7 +36,7 @@ int main() {
   Idisp.insert(I, vpImagePoint(0, I.getWidth()));
   //! [Create image]
   //! [Init display]
-  vpDisplayOpenCV d(Idisp, 0, 0, "Matching keypoints with ORB keypoints") ;
+  vpDisplayOpenCV d(Idisp, 0, 0, "Matching keypoints with SIFT keypoints") ;
   vpDisplay::display(Idisp);
   vpDisplay::flush(Idisp);
   //! [Init display]
