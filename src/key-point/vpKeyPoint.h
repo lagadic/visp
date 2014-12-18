@@ -391,6 +391,18 @@ public:
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
 
   /*!
+     Set and initialize a detector denominated by his name \p detectorName.
+
+     \param detectorName : Name of the detector.
+   */
+  inline void setDetector(const std::string &detectorName) {
+    m_detectorNames.clear();
+    m_detectorNames.push_back(detectorName);
+    m_detectors.clear();
+    initDetector(detectorName);
+  }
+
+  /*!
     Template function to set to a \p parameterName a value for a specific detector named by his \p detectorName.
 
     \param detectorName : Name of the detector
@@ -405,6 +417,30 @@ public:
   }
 
   /*!
+     Set and initialize a list of detectors denominated by their names \p detectorNames.
+
+     \param detectorNames : List of detector names.
+   */
+  inline void setDetectors(const std::vector<std::string> &detectorNames) {
+    m_detectorNames.clear();
+    m_detectors.clear();
+    m_detectorNames = detectorNames;
+    initDetectors(m_detectorNames);
+  }
+
+  /*!
+     Set and initialize an extractor denominated by his name \p extractorName.
+
+     \param extractorName : Name of the extractor.
+   */
+  inline void setExtractor(const std::string &extractorName) {
+    m_extractorNames.clear();
+    m_extractorNames.push_back(extractorName);
+    m_extractors.clear();
+    initExtractor(extractorName);
+  }
+
+  /*!
     Template function to set to a \p parameterName a value for a specific extractor named by his \p extractorName.
 
     \param extractorName : Name of the extractor
@@ -416,6 +452,28 @@ public:
     if(m_extractors.find(extractorName) != m_extractors.end()) {
       m_extractors[extractorName]->set(parameterName, value);
     }
+  }
+
+  /*!
+     Set and initialize a list of extractors denominated by their names \p extractorNames.
+
+     \param extractorNames : List of extractor names.
+   */
+  inline void setExtractors(const std::vector<std::string> &extractorNames) {
+    m_extractorNames.clear();
+    m_extractorNames = extractorNames;
+    m_extractors.clear();
+    initExtractors(m_extractorNames);
+  }
+
+  /*!
+     Set and initialize a matcher denominated by his name \p matcherName.
+
+     \param matcherName : Name of the matcher.
+   */
+  inline void setMatcher(const std::string &matcherName) {
+    m_matcherName = matcherName;
+    initMatcher(m_matcherName);
   }
 
   /*!
@@ -516,13 +574,15 @@ private:
   double m_detectionTime;
   //! List of detector names.
   std::vector<std::string> m_detectorNames;
-  //! Map of detectors, with a key based upon the detector name.
+  //! Map of smart reference-counting pointers (similar to shared_ptr in Boost) detectors,
+  // with a key based upon the detector name.
   std::map<std::string, cv::Ptr<cv::FeatureDetector> > m_detectors;
   //! Elapsed time to extract descriptors for the detected keypoints.
   double m_extractionTime;
   //! List of extractor name.
   std::vector<std::string> m_extractorNames;
-  //! Map of extractors, with a key based upon the extractor name.
+  //! Map of smart reference-counting pointers (similar to shared_ptr in Boost) extractors,
+  // with a key based upon the extractor name.
   std::map<std::string, cv::Ptr<cv::DescriptorExtractor> > m_extractors;
   //! List of filtered matches between the detected and the trained keypoints.
   std::vector<cv::DMatch> m_filteredMatches;
@@ -534,7 +594,7 @@ private:
   std::map<int, int> m_mapOfImageId;
   //! Map of images to have access to the image buffer according to his image id.
   std::map<int, vpImage<unsigned char> > m_mapOfImages;
-  //! Descriptor matcher (e.g BruteForce or FlannBased).
+  //! Smart reference-counting pointer (similar to shared_ptr in Boost) of descriptor matcher (e.g. BruteForce or FlannBased).
   cv::Ptr<cv::DescriptorMatcher> m_matcher;
   //! Name of the matcher.
   std::string m_matcherName;
