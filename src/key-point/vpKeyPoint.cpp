@@ -960,7 +960,8 @@ void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
    \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
  */
 bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-                         const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime) {
+                         const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+                         double &elapsedTime) {
   double t = vpTime::measureTimeMs();
 
   if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
@@ -1024,9 +1025,11 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
    \param inliers : List of inliers.
    \param elapsedTime : Elapsed time.
    \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
  */
 bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-                         std::vector<vpPoint> &inliers, double &elapsedTime) {
+                         std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
   double t = vpTime::measureTimeMs();
 
   if(objectVpPoints.size() < 4) {
@@ -1054,7 +1057,7 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
   pose.setRansacMaxTrials(m_nbRansacIterations);
 
   try {
-    pose.computePose(vpPose::RANSAC, cMo);
+    pose.computePose(vpPose::RANSAC, cMo, func);
     inliers = pose.getRansacInliers();
   } catch(vpException &e) {
     std::cerr << "e=" << e.what() << std::endl;
@@ -1926,9 +1929,11 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \param error : Reprojection mean square error (in pixel) between the 2D points and the projection of the 3D points with
    the estimated pose
    \param elapsedTime : Time to detect, extract, match and compute the pose
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                            double &error, double &elapsedTime) {
+                            double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
   if(m_trainDescriptors.empty()) {
     std::cerr << "Reference is empty." << std::endl;
     if(!_reference_computed) {
@@ -1985,7 +1990,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     std::vector<vpPoint> inliers;
-    bool res = getPose(objectVpPoints, cMo, inliers, m_poseTime);
+    bool res = getPose(objectVpPoints, cMo, inliers, m_poseTime, func);
     m_ransacInliers.resize(inliers.size());
     for(size_t i = 0; i < m_ransacInliers.size(); i++) {
       vpMeterPixelConversion::convertPoint(cam, inliers[i].get_x(), inliers[i].get_y(), m_ransacInliers[i]);

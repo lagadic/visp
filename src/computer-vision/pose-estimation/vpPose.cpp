@@ -383,7 +383,7 @@ Lagrange approach
 
 */
 void
-vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
+vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*func)(vpHomogeneousMatrix *))
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::ComputePose()" << std::endl ;
@@ -509,7 +509,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo)
         "Not enough points ")) ;
     }
     try {
-      poseRansac(cMo);
+      poseRansac(cMo, func);
     }
     catch(...)
     {

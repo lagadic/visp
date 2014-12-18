@@ -68,8 +68,10 @@
   Compute the pose using the Ransac approach. 
  
   \param cMo : Computed pose
+  \param func : Pointer to a function that takes in parameter a vpHomogeneousMatrix
+  and returns true if the pose check is OK or false otherwise
 */
-void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
+void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *))
 {  
   srand(0);
   std::vector<unsigned int> best_consensus;
@@ -94,6 +96,10 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
   
   while (nbTrials < ransacMaxTrials && nbInliers < (unsigned)ransacNbInlierConsensus)
   { 
+    //Use a temporary variable because if not, the cMo passed in parameters will be modified when
+    // we compute the pose for the minimal sample sets but if the pose is not correct when we pass
+    // a function pointer we do not want to modify the cMo passed in parameters
+    vpHomogeneousMatrix cMo_tmp;
     cur_outliers.clear();
     cur_randoms.clear();
     
@@ -167,15 +173,29 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo)
     if(is_valid_lagrange || is_valid_dementhon) {
       if (r_lagrange < r_dementhon) {
         r = r_lagrange;
-        cMo = cMo_lagrange;
+//        cMo = cMo_lagrange;
+        cMo_tmp = cMo_lagrange;
       }
       else {
         r = r_dementhon;
-        cMo = cMo_dementhon;
+//        cMo = cMo_dementhon;
+        cMo_tmp = cMo_dementhon;
       }
-      r = sqrt(r)/(double)nbMinRandom;
+      r = sqrt(r) / (double) nbMinRandom;
 
-      if (r < ransacThreshold)
+      //Filter the pose using some criterion (orientation angles, translations, etc.)
+      bool isPoseValid = true;
+      if(func != NULL) {
+        isPoseValid = func(&cMo_tmp);
+        if(isPoseValid) {
+          cMo = cMo_tmp;
+        }
+      } else {
+        //No post filtering on pose, so copy cMo_temp to cMo
+        cMo = cMo_tmp;
+      }
+
+      if (isPoseValid && r < ransacThreshold)
       {
         unsigned int nbInliersCur = 0;
         unsigned int iter = 0;

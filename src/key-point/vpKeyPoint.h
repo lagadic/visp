@@ -319,7 +319,7 @@ public:
                const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime);
 
   bool getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-               std::vector<vpPoint> &inliers, double &elapsedTime);
+               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   /*!
     Get the elapsed time to compute the pose.
@@ -386,7 +386,7 @@ public:
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect& rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime);
+                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
 
