@@ -70,7 +70,7 @@
 #  include <opencv2/nonfree/nonfree.hpp>
 #endif
 
-//TODO: Add flag to detect if there is the contrib module in OpenCV
+//TODO: Add macro to detect if there is the contrib module in OpenCV
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 //In current code source (2014/12/11) xfeatures2d.hpp already calls "opencv2/xfeatures2d/nonfree.hpp"
 #  include <opencv2/xfeatures2d.hpp>
@@ -83,11 +83,130 @@
 /*!
   \class vpKeyPoint
 
-  Class that allows key points detection and matching thanks to OpenCV library.
+  \brief Class that allows keypoints detection (and descriptors extraction) and matching thanks to OpenCV library.
+  This class permits to use different types of detectors, extractors and matchers easily.
+  So, the classical SIFT and SURF keypoints could be used, as well as ORB, FAST, (etc.) keypoints,
+  depending of the version of OpenCV you use.
+
+  \note Due to some patents, SIFT and SURF are packaged in an external module called nonfree module
+  in OpenCV version before 3.0.0 and in xfeatures2d from 3.0.0. You have to check you have the
+  corresponding module to use SIFT and SURF.
+
+  The goal of this class is to provide a tool to match reference keypoints from a
+  reference image (or train keypoints in OpenCV terminology) and detected keypoints from a current image (or query
+  keypoints in OpenCV terminology).
+
+  If you supply the corresponding 3D coordinates corresponding to the 2D coordinates of the reference keypoints,
+  you can also estimate the pose of the object by matching a set of detected keypoints in the current image with
+  the reference keypoints.
+
+
+  If you use this class, the first thing you have to do is to build
+  the reference keypoints by detecting keypoints in a reference image which contains the
+  object to detect. Then you match keypoints detected in a current image with those detected in a reference image
+  by calling matchPoint() methods.
+  You can access to the lists of matched points thanks to the
+  methods getMatchedPointsInReferenceImage() and
+  getMatchedPointsInCurrentImage(). These two methods return a list of
+  matched points. The nth element of the first list is matched with
+  the nth element of the second list.
+  To provide easy compatibility with OpenCV terminology, getTrainKeyPoints() give you access to the list
+  of keypoints detected in train images (or reference images) and getQueryKeyPoints() give you access to the list
+  of keypoints detected in a query image (or current image).
+  The method getMatches() give you access to a list of cv::DMatch with the correspondence between the index of the
+  train keypoints and the index of the query keypoints.
+
+  The following small example shows how to use the class to do the matching between current and reference keypoints.
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpKeyPoint.h>
+
+int main()
+{
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpImage<unsigned char> Ireference;
+  vpImage<unsigned char> Icurrent;
+  vpKeyPoint surf;
+
+  // First grab the reference image Ireference
+  // Add your code to load the reference image in Ireference
+
+  // Build the reference SURF points.
+  surf.buildReference(Ireference);
+
+  // Then grab another image which represents the current image Icurrent
+
+  // Match points between the reference points and the SURF points computed in the current image.
+  surf.matchPoint(Icurrent);
+
+  // Add your code to display image
+  // Display the matched points
+  surf.display(Ireference, Icurrent);
+
+  return (0);
+#endif
+}
+  \endcode
+
+  It is also possible to build the reference keypoints in a region of interest (ROI) of an image
+  and find keypoints to match in only a part of the current image. The small following example shows how to do this:
+
+  \code
+#include <visp/vpConfig.h>
+#include <visp/vpImage.h>
+#include <visp/vpDisplay.h>
+#include <visp/vpKeyPoint.h>
+
+int main()
+{
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpImage<unsigned char> Ireference;
+  vpImage<unsigned char> Icurrent;
+  vpKeyPoint surf;
+
+  //First grab the reference image Ireference
+  // Add your code to load the reference image in Ireference
+
+  //Select a part of the image by clicking on top-left and bottom-right corners which define a ROI
+  vpImagePoint corners[2];
+  for (int i=0 ; i < 2 ; i++)
+  {
+    vpDisplay::getClick(Ireference, corners[i]);
+  }
+
+  //Build the reference SURF keypoints.
+  int nbrRef;
+  unsigned int height, width;
+  height = (unsigned int) (corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int) (corners[1].get_j() - corners[0].get_j());
+  nbrRef = surf.buildReference(Ireference, corners[0], height, width);
+
+  //Then grab another image which represents the current image Icurrent
+
+  //Select a part of the image by clicking on two points which define a rectangle
+  for (int i=0 ; i < 2 ; i++)
+  {
+    vpDisplay::getClick(Icurrent, corners[i]);
+  }
+
+  //Match points between the reference keypoints and the SURF keypoints computed in the current image.
+  int nbrMatched;
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrMatched = surf.matchPoint(Icurrent, corners[0], height, width);
+
+  //Display the matched points
+  surf.display(Ireference, Icurrent);
+
+  return(0);
+#endif
+}
+  \endcode
 
   This class is also described in \ref tutorial-matching.
-
- */
+*/
 class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint {
 
 public:
