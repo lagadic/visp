@@ -1231,8 +1231,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
 
   if(m_detectors[detectorName] == NULL) {
-    std::string msg = "Fail to initialize the detector:" + detectorName + " or it is not available.";
-    throw vpException(vpException::fatalError, msg);
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the detector: " << detectorName << " or it is not available in OpenCV version: "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+    throw vpException(vpException::fatalError, ss_msg.str());
   }
 #else
   //TODO: Add a pyramidal feature detection
@@ -1268,8 +1270,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   }
 
   if(m_detectors[detectorNameTmp] == NULL) {
-    std::string msg = "Fail to initialize the detector:" + detectorNameTmp + " or it is not available.";
-    throw vpException(vpException::fatalError, msg);
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the detector: " << detectorNameTmp << " or it is not available in OpenCV version: "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+    throw vpException(vpException::fatalError, ss_msg.str());
   }
 //  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
 #endif
@@ -1310,8 +1314,10 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #endif
 
   if(m_extractors[extractorName] == NULL) {
-    std::string msg = "Fail to initialize:" + extractorName + " or it is not available.";
-    throw vpException(vpException::fatalError, msg);
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: " << extractorName << " or it is not available in OpenCV version: "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+    throw vpException(vpException::fatalError, ss_msg.str());
   }
 }
 
@@ -1335,8 +1341,10 @@ void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
 
   if(m_matcher == NULL) {
-    std::string msg = "Fail to initialize the matcher:" + matcherName + " or it is not available.";
-    throw vpException(vpException::fatalError, msg);
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the matcher: " << matcherName << " or it is not available in OpenCV version: "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+    throw vpException(vpException::fatalError, ss_msg.str());
   }
 }
 
