@@ -48,6 +48,8 @@ int main(int argc, char** argv)
     vpDisplayX display(I,100,100,"Model-based hybrid tracker");;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display(I,100,100,"Model-based hybrid tracker");;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display(I,100,100,"Model-based hybrid tracker");;
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

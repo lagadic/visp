@@ -51,14 +51,17 @@ int main(int argc, char** argv)
     g.open(I);
 
 #if defined(VISP_HAVE_X11)
-    vpDisplayX display(I,100,100,"Model-based edge tracker");;
+    vpDisplayX display;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display(I,100,100,"Model-based edge tracker");;
+    vpDisplayGDI display;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I,100,100,"Model-based edge tracker");;
+    vpDisplayOpenCV display;
 #else
     std::cout << "No image viewer is available..." << std::endl;
+    return 0;
 #endif
+
+    display.init(I, 100, 100,"Model-based edge tracker");
 
     //! [Constructor]
     vpMbEdgeTracker tracker;
