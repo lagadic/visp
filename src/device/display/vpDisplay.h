@@ -45,11 +45,9 @@
 #define vpDisplay_h
 
 #include <string>
+#include <sstream>
 
-// image
 #include <visp/vpImage.h>
-
-//color
 #include <visp/vpColor.h>
 #include <visp/vpMouseButton.h>
 #include <visp/vpRGBa.h>
