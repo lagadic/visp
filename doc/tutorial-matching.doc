@@ -1,17 +1,17 @@
 /**
 
-\page tutorial-matching Tutorial: Keypoint matching
+\page tutorial-matching Tutorial: Keypoints matching
 \tableofcontents
 
 \section intro Introduction
 
 \note This tutorial is adapted if your OpenCV version is equal or greater than 2.1.1 version. 
 
-This tutorial focuses on key points detection and mathing. You will learn how to detect key points on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, key points that match those detected in the reference image are displayed.
+This tutorial focuses on keypoints detection and mathing. You will learn how to detect keypoints on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, keypoints that match those detected in the reference image are displayed.
 
 \note We assume that you are familiar with video framegrabbing described in \ref tutorial-grabber and with the way to display an image in a window described in \ref tutorial-getting-started.
 
-\section keypoint Key points detection and matching
+\section orb_keypoints ORB keypoints detection and matching
 
 Let us consider the following source code also available in tutorial-matching-keypoint.cpp.
 
@@ -58,14 +58,16 @@ Next we draw green lines between the matched points:
 At the end of the iteration, we flush all the previous display to the render window:
 \snippet tutorial-matching-keypoint.cpp Display flush
 
-\section keypoint2 Using others types of detectors / descriptors (SIFT, SURF, etc.) or matchers (Brute Force, Flann based matcher)
-This can be easily done by using the correct identifier name. For example, if we want to use the couple of detector / descriptor SIFT with a matching using FLANN, we only have to change to this following lines :
+\section other_keypoints Using others types of keypoints
+
+Using other types of detectors / descriptors (SIFT, SURF, etc.) or matchers (Brute Force, Flann based matcher) is also possible. This can be easily done by using the correct OpenCV identifier name. For example, if you want to use the couple of detector / descriptor SIFT with a matching using FLANN, you only have to change the following lines :
 \snippet tutorial-matching-keypoint-SIFT.cpp Construction
 
-The available types of detectors, extractors or matchers depend of the OpenCV version used. Check the OpenCV documentation to know which ones are available.
+A complete example is given in tutorial-matching-keypoint-SIFT.cpp
 
-Due to some patents, SIFT and SURF keypoints are available in a separate module in OpenCV: in nonfree module in OpenCV version before 3.0.0 and in xfeatures2d in OpenCV version from 3.0.0.
-If you want to use them, be sure that you have the nonfree module or xfeatures2d module.
+Available types of detectors, extractors or matchers depend on OpenCV version. Check the OpenCV documentation to know which ones are available.
+
+Due to some patents, SIFT and SURF keypoints are available in a separate module in OpenCV: in nonfree module in OpenCV version before 3.0.0 and in xfeatures2d in OpenCV version from 3.0.0 if OpenCV contrib modules are build. If you want to use them, be sure that you have the nonfree module or xfeatures2d module.
 
 Some usage restrictions could also exist according to the usage you plan (e.g. research or commercial use).
 
