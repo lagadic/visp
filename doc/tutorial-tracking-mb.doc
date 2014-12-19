@@ -398,8 +398,8 @@ We provide now a line by line description of the file where the faces of the box
 
 The following code shows how to access to the CAD model
 - to check if a face is visible, 
-- to get the name of the face (TODO Souriya, check if also in vrml)
-- to check if the level of detail is enable/disable (TODO Souriya)
+- to get the name of the face (only with models in .cao format for the moment)
+- to check if the level of detail is enable/disable (only with models in .cao format for the moment)
 - to access to the coordinates of the 3D points used to model a face
 - from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image 
 
@@ -409,9 +409,10 @@ The following code shows how to access to the CAD model
        for (unsigned int i=0; i < faces.size(); i++) {
          std::vector<vpMbtPolygon*> &poly = faces.getPolygon();
          std::cout << "face " << i << " with index: " << poly[i]->getIndex()
-             << " is visible: " << poly[i]->isVisible()
-             << " and has " << poly[i]->getNbPoint()
-             << " points" << std::endl;
+             << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
+             << " and has " << poly[i]->getNbPoint() << " points" 
+             << " and LOD is" << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
+             
          for (unsigned j=0; j<poly[i]->getNbPoint(); j++) {
            vpPoint P = poly[i]->getPoint(j);
            P.project(cMo);
@@ -425,78 +426,261 @@ The following code shows how to access to the CAD model
        }
 \endcode
 
-\section advanced_lod_sec Advanced: Level of detail
 
-The level of detail (lod) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used 
-- the line lenght
-- the area of the face that could be closed or not)
+\section advanced_lod_sec Advanced: Level of detail (LOD)
+
+The level of detail (LOD) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used 
+- the line length (in pixel)
+- the area of the face (in pixel²), that could be closed or not (you can define an open face by adding all the segments without the last one which closes the face)
 
 The tracker allows to enable/disable the level of detail concept using vpMbTracker::setLod() function.
-For example, with the next line we enable the level of detail for the face named "top face". To set a name to a face see \ref advanced_cao_nam_sec.
+This example permits to set LOD settings to all elements :
+\code
+tracker.setLod(true);
+tracker.setMinLineLengthThresh(40.0);
+tracker.setMinPolygonAreaThresh(500.0);
+\endcode
+
+This example permits to set LOD settings to specific elements denominated by a name.
+\code
+tracker.setLod(false);
+tracker.setLod(true, "Left line");
+tracker.setLod(true, "Front face");
+tracker.setMinLineLengthThresh(35.0, "Left line");
+tracker.setMinPolygonAreaThresh(120.0, "Front face");
+\endcode
+
+Furthermore, to set a name to a face see \ref advanced_cao_nam_sec.
+
+
+
+You can set the minimum line length threshold to track a line. 
+The first example do it for all the line, while the second do it for a particular line denominated by his name.
 \code
 tracker.setLod(true, "top face");
+tracker.setMinLineLengthThresh(55.0, "Front face");
 \endcode
 
 
+The same idea is also feasible for defining a minimum area threshold to track a face.
+The first line do it for all the faces, while the second line do it for a particular face denominated by his name.
 \code
-vpMbTracker::setMinLineLengthThresh()
-\endcode
-
-\code
-vpMbTracker::setMinPolygonAreaThresh()
+tracker.setMinPolygonAreaThresh(215.0, "Roof");
 \endcode
 
 \section advanced_cao_sec Advanced: CAD model in cao format
 
 \subsection advanced_cao_lin_sec How to model faces from lines
+The first thing to do is to declare the differents points. Then you define each segment of the face with the index of the start point and with the index of the end point.
+Finally, you define the face with the index of the segments which constitute the face.
 
-\subsection advanced_cao_cyl_sec How to model cylinders
-
-\subsection advanced_cao_cir_sec How to model circles
+\note The way you declare the face segments (clockwise or counter clockwise) will determine the direction of the normal of the face and so will influe on the visibility of the face.
 
 \code
 V1
-# Modele reacteur droit exterieur
-3
-#------------------------------
-# reacteurs
-#------------------------------
-# cercle reacteur droit exterieur
--3.47243 14.6304 1.07673  # point 0 centre cercle de rayon 0.81026
--3.47243 15.44066 1.07673 # point gauche axe horizontal
--3.48039 14.63040 1.84957 # point bas axe vertical
-# segments
-0
-# face segments
-0
+# Left wing model
+6				# number of points
+# 3D points
+-4   	-3.8  	0.7
+-6   	-8.8  	0.2
+-12 	-21.7 	-1.2
+-9  	-21.7 	-1.2
+0.8   	-8.8  	0.2
+4.6   	-3.8  	0.7
+# 3D lines
+6				# number of lines
+0 1
+1 2
+2 3
+3 4
+4 5
+5 0
+# 3D face segments
+1				# number of face defined by segments
+6 0 1 2 3 4 5	# Face 0: [number of segments] [index of the lines]...
 # face points
 0
-# cylindres
+# 3D cylinders
 0
-# cercles
-1
-0.81026 0 2 1 name="Reacteur droit exterieur"
+# 3D circles
+0
 \endcode
 
 
-\subsection advanced_cao_hie_sec How to create hierachical model
+\subsection advanced_cao_cyl_sec How to model cylinders
+The first thing to do is to declare the two points defining the cylinder axis of revolution. Then you declare the cylinder with the index of the points that define the cylinder axis of revolution and with the cylinder radius.
+
+\note For the level of detail, in a case of a cylinder, this is taking into account by using the length of the axis of revolution to determine the visibility.
 
 \code
-exemple
+V1
+# Cylinder model
+2			# number of points
+# 3D points
+-20 0 4
+-25 0 6
+# 3D lines
+0
+# 3D face segments
+0
+# 3D face points 
+0
+# 3D cylinders
+1			# number of cylinders
+0 1 0.06	# Cylinder 0: [start point index of the cylinder axis of revolution] [end point index of the cylinder axis of revolution] [radius]
+# 3D circles
+0
 \endcode
 
-\subsection advanced_cao_nam_sec How to set a name to a face
 
+\subsection advanced_cao_cir_sec How to model circles
+The first thing to do is to declare three points: one point for the center of the circle and two points on the circle plane. Then you declare your circle with the radius and with index of the three points.
+
+\note The way you declare the two points on the circle plane (clockwise or counter clockwise) will determine the direction of the normal of the circle and so will influe on the visibility of the circle.
+For the level of detail, in a case of a circle, this is taking into account by using the area of the bounding box of the circle to determine the visibility.
+
+\code
+V1
+# Circle model
+3			# number of points
+# 3D points
+-3.4 	14.6 	1.1
+-3.4 	15.4 	1.1
+-3.4 	14.6 	1.8
+# 3D lines
+0
+# 3D face segments
+0
+# 3D face points
+0
+# 3D cylinders
+0
+# 3D circles
+1			# number of circles
+0.8 0 2 1	# Circle 0: [radius] [point index of the circle center] [index of one point in the circle plane] [index of a second point in the circle plane]
+\endcode
+
+
+\subsection advanced_cao_hie_sec How to create an hierachical model
+It could be useful to define a complex model instead of using one big model file with all the declaration with different sub-models, each one representing a specific part of the complex model in a specific model file.
+To create an hierarchical model, the first step is to define all the elementary parts and then regroup them.
+
+\image html img-plane-hierarchical-diagram.jpg Example of a possible hierarchical modelling of a plane.
+
+For example, if we want to have a model of a plane, we could represent as elementary parts the left and right wings, the tailplane, which is constituted of some other parts and a cylinder for the plane fuselage
+The following lines represent the top model of the plane.
+
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")
+load("tailplane.cao")
+# 3D points
+2			# number of points
+-21 0 4
+-24 0 6
+# 3D lines
+0
+# 3D face segments
+0
+# 3D face points 
+0
+# 3D cylinders
+1			# number of cylinders
+0 1 0.05
+# 3D circles
+0
+\endcode
+
+\note The path to include another model can be expressed as an absolute or a relative path (relative to the file which includes the model).
+
+
+\subsection advanced_cao_nam_sec How to set a name to a face
 To exploit the name of a face in the code, see \ref advanced_lod_sec.
+
+It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example.
+This is done directly in the model file :
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")
+load("tailplane.cao")
+# 3D points
+5				# number of points
+-21 	0 		4.2
+-24 	0 		6
+-3.5 	14.6 	1
+-3.5 	15.4 	1
+-3.5 	14.6 	1.8
+# 3D lines
+0
+# 3D face segments
+0
+# 3D face points 
+0
+# 3D cylinders
+1				# number of cylinders
+0 1 0.05	name=plane_fuselage
+# 3D circles
+1				# number of circles
+0.8	2 4 5	name="left reactor"
+\endcode
+
+\note If the name contains space characters, it must be surrounded by quotes.
+You can give a name to all the elements excepts for points.
+
 
 \subsection advanced_cao_lod_sec How to tune the level of detail
 
-As explained in section \ref advanced_lod_sec the parameters of the lod can be set in the source code. They can also be set directly in the CAD model in cao format.
+As explained in section \ref advanced_lod_sec the parameters of the lod can be set in the source code. They can also be set directly in the configuration file or in the CAD model in cao format.
+
+The following lines show the content of the configuration file :
 
 \code
-exemple
+<?xml version="1.0"?>
+<conf>
+  <lod>
+	<use_lod>1</use_lod>
+	<min_line_length_threshold>40</min_line_length_threshold>
+	<min_polygon_area_threshold>150</min_polygon_area_threshold>
+  </lod>
+</conf>
 \endcode
 
+In CAD model file, you can specify the LOD settings to the desired elements :
+
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")
+load("tailplane.cao")
+# 3D points
+5				# number of points
+-21 	0 		4.2
+-24 	0 		6
+-3.5 	14.6 	1
+-3.5 	15.4 	1
+-3.5 	14.6 	1.8
+# 3D lines
+0
+# 3D face segments
+0
+# 3D face points 
+0
+# 3D cylinders
+1				# number of cylinders
+0 1 0.05	name=plane_fuselage useLod=true minLineLengthThreshold=100.0
+# 3D circles
+1				# number of circles
+0.8 2 4 5	name="left reactor" useLod=true minPolygonAreaThreshold=40.0
+\endcode
+
+\note The order you call the methods to load the configuration file and to load the CAD model in the code will modify the result of the LOD parameters.
+Basically, the LOD settings expressed in configuration file will have effect on all the elements in the CAD model while the LOD settings expressed in CAD model will be specific to an element.
+The natural order would be to load first the configuration file and after the CAD model.
 
 
 You are now ready to see the next \ref tutorial-tracking-tt.
