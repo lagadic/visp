@@ -8,7 +8,7 @@
 
 int main() {
   //! [Define]
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) && (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
   //! [Define]
   vpImage<unsigned char> I;
 

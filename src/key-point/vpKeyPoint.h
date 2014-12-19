@@ -66,13 +66,11 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(VISP_HAVE_OPENCV_NONFREE)
 #  include <opencv2/nonfree/nonfree.hpp>
 #endif
 
-//TODO: Add macro to detect if there is the contrib module in OpenCV
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-//In current code source (2014/12/11) xfeatures2d.hpp already calls "opencv2/xfeatures2d/nonfree.hpp"
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
 #  include <opencv2/xfeatures2d.hpp>
 #endif
 

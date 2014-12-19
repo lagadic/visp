@@ -1434,14 +1434,16 @@ if(USE_OPENCV)
     #message("OpenCV_NONFREE_FOUND: ${OPENCV_NONFREE_FOUND}")
     if(OpenCV_VERSION)
       if(OpenCV_VERSION VERSION_LESS "2.4.2")
-        message(STATUS "OpenCV nonfree found")
+        message(STATUS "OpenCV nonfree module found")
         set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
       else() # Version is greater or equal to 2.4.0
-        if(OPENCV_NONFREE_FOUND)
-          message(STATUS "OpenCV nonfree found")
+        if(OPENCV_NONFREE_FOUND) # OpenCV < 3.0.0
+          message(STATUS "OpenCV xfeatures2d module found")
           set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
+        elseif(OPENCV_XFEATURES2D_FOUND) # OpenCV >= 3.0.0
+          set(VISP_HAVE_OPENCV_XFEATURES2D TRUE)  # for header vpConfig.h
         else()
-          message(STATUS "OpenCV nonfree not found")
+          message(STATUS "OpenCV nonfree or xfeature2d module not found")
         endif()
       endif()
     else()

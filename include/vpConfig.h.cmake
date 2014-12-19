@@ -105,8 +105,11 @@
 // Defined if OpenCV available.
 #cmakedefine VISP_HAVE_OPENCV
 
-// Defined if OpenCV_nonfree available.
+// Defined if OpenCV nonfree module available. Only with OpenCV < 3.0.0
 #cmakedefine VISP_HAVE_OPENCV_NONFREE
+
+// Defined if OpenCV xfeatures2d module available. Only since OpenCV >= 3.0.0
+#cmakedefine VISP_HAVE_OPENCV_XFEATURES2D
 
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
