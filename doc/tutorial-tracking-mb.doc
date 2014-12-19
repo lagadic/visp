@@ -409,6 +409,7 @@ The following code shows how to access to the CAD model
        for (unsigned int i=0; i < faces.size(); i++) {
          std::vector<vpMbtPolygon*> &poly = faces.getPolygon();
          std::cout << "face " << i << " with index: " << poly[i]->getIndex()
+			 << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
              << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
              << " and has " << poly[i]->getNbPoint() << " points" 
              << " and LOD is" << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
@@ -441,7 +442,7 @@ tracker.setMinLineLengthThresh(40.0);
 tracker.setMinPolygonAreaThresh(500.0);
 \endcode
 
-This example permits to set LOD settings to specific elements denominated by a name.
+This example permits to set LOD settings to specific elements denominated by his name.
 \code
 tracker.setLod(false);
 tracker.setLod(true, "Left line");
@@ -452,21 +453,6 @@ tracker.setMinPolygonAreaThresh(120.0, "Front face");
 
 Furthermore, to set a name to a face see \ref advanced_cao_nam_sec.
 
-
-
-You can set the minimum line length threshold to track a line. 
-The first example do it for all the line, while the second do it for a particular line denominated by his name.
-\code
-tracker.setLod(true, "top face");
-tracker.setMinLineLengthThresh(55.0, "Front face");
-\endcode
-
-
-The same idea is also feasible for defining a minimum area threshold to track a face.
-The first line do it for all the faces, while the second line do it for a particular face denominated by his name.
-\code
-tracker.setMinPolygonAreaThresh(215.0, "Roof");
-\endcode
 
 \section advanced_cao_sec Advanced: CAD model in cao format
 
