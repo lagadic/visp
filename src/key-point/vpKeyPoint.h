@@ -66,12 +66,10 @@
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
-#if defined(VISP_HAVE_OPENCV_NONFREE)
-#  include <opencv2/nonfree/nonfree.hpp>
-#endif
-
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
 #  include <opencv2/xfeatures2d.hpp>
+#elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#  include <opencv2/nonfree/nonfree.hpp>
 #endif
 
 #ifdef VISP_HAVE_XML2
