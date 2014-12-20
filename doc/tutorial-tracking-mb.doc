@@ -553,7 +553,7 @@ To create an hierarchical model, the first step is to define all the elementary 
 
 \image html img-plane-hierarchical-diagram.jpg Example of a possible hierarchical modelling of a plane.
 
-For example, if we want to have a model of a plane, we could represent as elementary parts the left and right wings, the tailplane, which is constituted of some other parts and a cylinder for the plane fuselage
+For example, if we want to have a model of a plane, we could represent as elementary parts the left and right wings, the tailplane, which is constituted of some other parts and a cylinder for the plane fuselage.
 The following lines represent the top model of the plane.
 
 \code
@@ -585,7 +585,7 @@ load("tailplane.cao")
 \subsection advanced_cao_nam_sec How to set a name to a face
 To exploit the name of a face in the code, see \ref advanced_lod_sec.
 
-It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example.
+It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example, or just for debuging purpose.
 This is done directly in the model file :
 \code
 V1

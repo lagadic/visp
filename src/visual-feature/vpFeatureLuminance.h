@@ -51,7 +51,7 @@
   \file vpFeatureLuminance.h
   \brief Class that defines the image luminance visual feature
 
-  For more details see \cite collewet:inria-00261398.
+  For more details see \cite Collewet08c.
 */
 
 
@@ -78,7 +78,7 @@ class VISP_EXPORT vpLuminance
   \class vpFeatureLuminance
   \brief Class that defines the image luminance visual feature
 
-  For more details see \cite collewet:inria-00261398.
+  For more details see \cite Collewet08c.
 */
 
 class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature

@@ -15,7 +15,7 @@
   \file vpFeatureLuminance.cpp
   \brief Class that defines the image luminance visual feature
 
-  For more details see \cite collewet:inria-00261398..
+  For more details see \cite Collewet08c.
 */
 
 
