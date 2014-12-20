@@ -1514,11 +1514,27 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile) {
    \param append : If true, concatenate the learning data, otherwise reset the variables.
  */
 void vpKeyPoint::loadLearningData(const std::string &filename, const bool binaryMode, const bool append) {
+  int startClassId = 0;
+  int startImageId = 0;
   if(!append) {
     m_trainKeyPoints.clear();
     m_trainPoints.clear();
     m_mapOfImageId.clear();
     m_mapOfImages.clear();
+  } else {
+    //In append case, find the max index of keypoint class Id
+    for(std::map<int, int>::const_iterator it = m_mapOfImageId.begin(); it != m_mapOfImageId.end(); ++it) {
+      if(startClassId < it->first) {
+        startClassId = it->first;
+      }
+    }
+
+    //In append case, find the max index of images Id
+    for(std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end(); ++it) {
+      if(startImageId < it->first) {
+        startImageId = it->first;
+      }
+    }
   }
 
   //Get parent directory
@@ -1558,7 +1574,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
         vpImageIo::read(I, parent + path);
       }
 
-      m_mapOfImages[id] = I;
+      m_mapOfImages[id + startImageId] = I;
     }
 
     //Read if 3D point information are saved or not
@@ -1589,12 +1605,12 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       file.read((char *)(&octave), sizeof(octave));
       file.read((char *)(&class_id), sizeof(class_id));
       file.read((char *)(&image_id), sizeof(image_id));
-      cv::KeyPoint keyPoint(cv::Point2f(u, v), size, angle, response, octave, class_id);
+      cv::KeyPoint keyPoint(cv::Point2f(u, v), size, angle, response, octave, (class_id + startClassId));
       m_trainKeyPoints.push_back(keyPoint);
 
       if(image_id != -1) {
         //No training images if image_id == -1
-        m_mapOfImageId[class_id] = image_id;
+        m_mapOfImageId[class_id] = image_id + startImageId;
       }
 
       if(have3DInfo) {
@@ -1684,7 +1700,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
               vpImageIo::read(I, parent + path);
             }
 
-            m_mapOfImages[id] = I;
+            m_mapOfImages[id + startImageId] = I;
           }
         }
       } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
@@ -1715,13 +1731,13 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             } else if(name == "class_id") {
               class_id = std::atoi((char *) point_node->children->content);
               cv::KeyPoint keyPoint(cv::Point2f((float) u, (float) v), (float) size,
-                                    (float) angle, (float) response, octave, class_id);
+                                    (float) angle, (float) response, octave, (class_id + startClassId));
               m_trainKeyPoints.push_back(keyPoint);
             } else if(name == "image_id") {
               image_id = std::atoi((char *) point_node->children->content);
               if(image_id != -1) {
                 //No training images if image_id == -1
-                m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id;
+                m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id + startImageId;
               }
             } else if (name == "oX") {
               oX = std::atof((char *) point_node->children->content);
