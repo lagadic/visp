@@ -1,5 +1,6 @@
 /*! \example tutorial-mb-hybrid-tracker.cpp */
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpIoTools.h>
