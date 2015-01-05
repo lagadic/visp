@@ -207,40 +207,18 @@ Once the camera is calibrated, you can remove the distortion in the images. The 
 \include tutorial-undistort.cpp
 
 In this example we first load the image \c chessboard.pgm
+\snippet tutorial-undistort.cpp Load image
 
-\code
-  vpImage<unsigned char> I;
-  vpImageIo::read(I, "chessboard.pgm");
-\endcode
+Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support. 
 
-Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file. This is only possible if ViSP was build with \c libxml2 3rd party support.
-
-\code
-  vpCameraParameters cam;
-#ifdef VISP_HAVE_XML2
-  vpXmlParserCamera p;
-  vpCameraParameters::vpCameraParametersProjType projModel;
-  projModel = vpCameraParameters::perspectiveProjWithDistortion;
-  if (p.parse(cam, "camera.xml", "Camera", projModel, I.getWidth(), I.getHeight()) != vpXmlParserCamera::SEQUENCE_OK) {
-    std::cout << "Cannot found parameters for camera named \"Camera\"" << std::endl;
-  }
-\endcode
+\snippet tutorial-undistort.cpp Load camera parameters from xml
 
 If vpXmlParserCamera is not available (this may occur if ViSP was not build with \c libxml2), we initialize the camera parameters "by hand" using the following code:
-
-\code
-#else
-  cam.initPersProjWithDistortion(582.7, 580.6, 326.6, 215.0, -0.3372, 0.4021);
-#endif
-\endcode
+\snippet tutorial-undistort.cpp Set camera parameters
 
 Finally, we create a new image \c Iud where distortion is removed. This image is saved in \c chessboard-undistort.pgm.
 
-\code
-  vpImage<unsigned char> Iud;
-  vpImageTools::undistort(I, cam, Iud);
-  vpImageIo::write(Iud, "chessboard-undistort.pgm");
-\endcode
+\snippet tutorial-undistort.cpp Create image without distorsion
 
 The resulting \c chessboard-undistort.pgm image is the following.
 
