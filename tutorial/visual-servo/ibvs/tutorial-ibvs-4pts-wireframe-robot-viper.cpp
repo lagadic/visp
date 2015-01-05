@@ -1,5 +1,6 @@
 /*! \example tutorial-ibvs-4pts-wireframe-robot-viper.cpp */
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpServo.h>
@@ -119,6 +120,8 @@ int main()
     vpDisplayX displayInt(Iint, 700, 0, "Internal view");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI displayInt(Iint, 700, 0, "Internal view");
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV displayInt(Iint, 700, 0, "Internal view");
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

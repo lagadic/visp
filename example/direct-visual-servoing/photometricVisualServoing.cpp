@@ -279,9 +279,11 @@ main(int argc, const char ** argv)
     vpDisplayGDI d;
 #elif defined VISP_HAVE_GTK
     vpDisplayGTK d;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV d;
 #endif
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) 
     if (opt_display) {
       d.init(I, 20, 10, "Photometric visual servoing : s") ;
       vpDisplay::display(I);

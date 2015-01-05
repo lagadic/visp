@@ -1,5 +1,6 @@
 /*! \example tutorial-ibvs-4pts-ogre-tracking.cpp */
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpAROgre.h>
 #include <visp/vpFeatureBuilder.h>
@@ -43,7 +44,7 @@ void ogre_get_render_image(vpAROgre &ogre, const vpImage<unsigned char> &backgro
 
 int main()
 {
-#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   try {
     unsigned int thickness = 3;
 
@@ -108,6 +109,8 @@ int main()
     vpDisplayX d(I, 0, 0, "Camera view at desired position");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, 0, 0, "Camera view at desired position");
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I, 0, 0, "Camera view at desired position");
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

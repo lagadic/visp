@@ -3,6 +3,7 @@
 #include <visp/vpServo.h>
 #include <visp/vpSimulatorCamera.h>
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpProjectionDisplay.h>
 #include <visp/vpServoDisplay.h>
@@ -69,6 +70,9 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
     vpDisplayGDI displayExt(Iext, 670, 0, "External view");
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV displayInt(Iint, 0, 0, "Internal view");
+    vpDisplayOpenCV displayExt(Iext, 670, 0, "External view");
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

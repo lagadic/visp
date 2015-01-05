@@ -1,5 +1,6 @@
 /*! \example tutorial-image-simulator.cpp */
 #include <visp/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImageSimulator.h>
@@ -41,6 +42,8 @@ int main()
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

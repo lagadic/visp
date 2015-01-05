@@ -1,5 +1,6 @@
 /*! \example tutorial-pose-from-points-image.cpp */
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDot2.h>
 #include <visp/vpImageIo.h>
@@ -20,8 +21,19 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
     pose.addPoint(point[i]);
   }
 
-  if (init == true) pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
-  else              pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+  if (init == true) {
+	  vpHomogeneousMatrix cMo_dem;
+	  vpHomogeneousMatrix cMo_lag;
+	  pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_dem);
+	  pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_lag);
+	  double residual_dem = pose.computeResidual(cMo_dem);
+	  double residual_lag = pose.computeResidual(cMo_lag);
+	  if (residual_dem < residual_lag)
+		  cMo = cMo_dem;
+	  else
+		  cMo = cMo_lag;
+  }
+  pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
 
 int main()
@@ -34,6 +46,8 @@ int main()
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I);
 #endif
 
     vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);

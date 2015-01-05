@@ -3,6 +3,7 @@
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpMeLine.h>
 
@@ -26,6 +27,8 @@ int main()
     vpDisplayX d(I, 0, 0, "Camera view");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, 0, 0, "Camera view");
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I, 0, 0, "Camera view");
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

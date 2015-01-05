@@ -60,7 +60,7 @@
 #include <visp/vpDebug.h>
 #include <visp/vpConfig.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -69,6 +69,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpFeatureBuilder.h>
 #include <visp/vpFeaturePointPolar.h>
 #include <visp/vpHomogeneousMatrix.h>
@@ -225,6 +226,9 @@ main(int argc, const char ** argv)
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI displayInt;
     vpDisplayGDI displayExt;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV displayInt;
+    vpDisplayOpenCV displayExt;
 #endif
 
     // open a display for the visualization
@@ -507,7 +511,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  std::cout << "You do not have X11, GTK, GDI or OpenCV display functionalities..." << std::endl;
 }
 
 #endif

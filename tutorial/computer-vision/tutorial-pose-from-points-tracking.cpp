@@ -2,6 +2,7 @@
 #include <visp/vp1394CMUGrabber.h>
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDot2.h>
 #include <visp/vpPixelMeterConversion.h>
@@ -9,7 +10,7 @@
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
                  const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init);
 #endif
 
@@ -24,11 +25,22 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
     pose.addPoint(point[i]);
   }
 
-  if (init == true) pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
-  else              pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+  if (init == true) {
+	vpHomogeneousMatrix cMo_dem;
+	vpHomogeneousMatrix cMo_lag;
+	pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_dem);
+	pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_lag);
+	double residual_dem = pose.computeResidual(cMo_dem);
+	double residual_lag = pose.computeResidual(cMo_lag);
+	if (residual_dem < residual_lag)
+      cMo = cMo_dem;
+	else
+      cMo = cMo_lag;
+  }
+  pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 {
   if (init) {
@@ -50,15 +62,25 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 
 int main()
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV))
   try {  vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_DC1394_2)
     vp1394TwoGrabber g;
+    g.open(I);
 #elif defined(VISP_HAVE_CMU1394)
     vp1394CMUGrabber g;
-#endif
     g.open(I);
+#elif defined(VISP_HAVE_OPENCV)
+    cv::VideoCapture g(0); // open the default camera
+    if(!g.isOpened()) { // check if we succeeded
+      std::cout << "Failed to open the camera" << std::endl;
+      return -1;
+    }
+    cv::Mat frame;
+    g >> frame; // get a new frame from camera
+	vpImageConvert::convert(frame, I);
+#endif
 
     // Parameters of our camera
     vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
@@ -79,11 +101,19 @@ int main()
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I);
 #endif
 
     while(1){
       // Image Acquisition
+#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394)
       g.acquire(I);
+#elif defined(VISP_HAVE_OPENCV)
+	  g >> frame;
+      vpImageConvert::convert(frame, I);
+#endif
+
       vpDisplay::display(I);
       track(I, dot, init);
       computePose(point, dot, cam, init, cMo);

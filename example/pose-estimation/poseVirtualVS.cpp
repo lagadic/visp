@@ -69,7 +69,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
@@ -78,6 +78,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 
 #include <visp/vpPose.h>
 #include <visp/vpDot.h>
@@ -386,6 +387,8 @@ main(int argc, const char** argv)
     vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV display;
 #endif
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
@@ -634,7 +637,7 @@ main(int argc, const char** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11 or GTK functionalities to display images...");
+  vpERROR_TRACE("You do not have X11, GTK, GDI or OpenCV functionalities to display images...");
 }
 
 #endif

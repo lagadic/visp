@@ -1,5 +1,6 @@
 /*! \example tutorial-image-viewer.cpp */
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpImagePoint.h>
@@ -14,6 +15,8 @@ int main()
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -28,7 +31,7 @@ int main()
 
     try {
       vpImageIo::write(I, "lena-out.jpg");
-      vpImageIo::write(O, "lena-out-with-overlay.jpg2");
+      vpImageIo::write(O, "lena-out-with-overlay.jpg");
     }
     catch(...) {
       std::cout << "Cannot write the image: unsupported format..." << std::endl;

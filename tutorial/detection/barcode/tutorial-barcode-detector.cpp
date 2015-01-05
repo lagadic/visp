@@ -2,12 +2,13 @@
 #include <visp/vpDetectorDataMatrixCode.h>
 #include <visp/vpDetectorQRCode.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpImageIo.h>
 
 int main(int argc, const char** argv)
 {
-#if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   try {
     vpImage<unsigned char> I;
     vpImageIo::read(I, "bar-code.pgm");
@@ -16,6 +17,8 @@ int main(int argc, const char** argv)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d(I);
 #endif
 
     vpDetectorBarCodeBase *detector;

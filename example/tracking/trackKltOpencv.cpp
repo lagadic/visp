@@ -53,7 +53,7 @@
 #include <iomanip>
 #include <vector>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV))
 
 #if defined (VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
@@ -63,6 +63,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpParseArgv.h>
 #include <visp/vpIoTools.h>
 
@@ -341,6 +342,8 @@ main(int argc, const char ** argv)
     vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV display;
 #endif
 
     if (opt_display) {
@@ -396,8 +399,6 @@ main(int argc, const char ** argv)
         filename = cfilename;
       }
       // read the image
-      std::cout << "read : " << filename << std::endl;
-      // Load a ViSP image used for the display
       vpImageIo::read(vpI, filename) ;
       vpImageConvert::convert(vpI, cvI);
 
@@ -417,7 +418,7 @@ main(int argc, const char ** argv)
       // Tracking of the detected points
       tracker.track(cvI);
       std::cout << "Tracking performed in " <<
-                   vpTime::measureTimeMs() - time << " ms): " << std::endl;
+                   vpTime::measureTimeMs() - time << " ms" << std::endl;
 
       if (opt_display) {
         // Display the tracked points
@@ -450,7 +451,7 @@ main()
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  vpERROR_TRACE("You do not have X11, GTK, GDI or OpenCV display functionalities...");
 }
 
 #endif

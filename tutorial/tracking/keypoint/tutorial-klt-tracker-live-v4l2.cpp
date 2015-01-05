@@ -7,7 +7,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_V4L2)
+#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
   try {
     bool opt_init_by_click = false;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -24,15 +24,27 @@ int main(int argc, const char *argv[])
     (void)argv;
 #endif
     vpImage<unsigned char> I;
-    vpV4l2Grabber g;
-    g.acquire(I);
 
+#if defined(VISP_HAVE_V4L2)
+    vpV4l2Grabber g;
+    g.open(I);
+	g.acquire(I);
+#elif defined(VISP_HAVE_OPENCV)
+    cv::VideoCapture g(0); // open the default camera
+    if(!g.isOpened()) { // check if we succeeded
+      std::cout << "Failed to open the camera" << std::endl;
+      return -1;
+    }
+    cv::Mat frame;
+    g >> frame; // get a new frame from camera
+    vpImageConvert::convert(frame, I);
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
 #endif
     vpImageConvert::convert(I, cvI);
+#endif
 
     // Display initialisation
     vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
@@ -60,7 +72,7 @@ int main(int argc, const char *argv[])
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            guess.push_back(cv::Point2f(ip.get_u(), ip.get_v()));
+            guess.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
             vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
@@ -76,7 +88,12 @@ int main(int argc, const char *argv[])
     }
 
     while ( 1 ) {
+#if defined(VISP_HAVE_V4L2)
       g.acquire(I);
+#elif defined(VISP_HAVE_OPENCV)
+	  g >> frame;
+      vpImageConvert::convert(frame, I);
+#endif
       vpDisplay::display(I);
 
       vpImageConvert::convert(I, cvI);

@@ -59,13 +59,14 @@
 #include <sstream>
 #include <iomanip>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <visp/vpImage.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpColor.h>
 
 #include <visp/vpMeEllipse.h>
@@ -261,6 +262,8 @@ main(int argc, const char ** argv)
     vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV display;
 #endif
 
     if (opt_display) {
@@ -332,7 +335,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
+  vpERROR_TRACE("You do not have X11, GTK, GDI or OpenCV display functionalities...");
 }
 
 #endif
