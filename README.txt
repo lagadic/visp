@@ -1,4 +1,4 @@
-                            ViSP-2.7.0
+                            ViSP-2.10.0
                      Visual Servoing Platform
 
       Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
