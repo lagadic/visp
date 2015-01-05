@@ -278,9 +278,9 @@ public:
     \param devname : Device name (like /dev/video0).
 
   */
-  inline void setDevice(const char *devname)
+  inline void setDevice(const std::string &devname)
   {
-    sprintf(device, "%s", devname);
+    sprintf(device, "%s", devname.c_str());
   }
   /*!
 
