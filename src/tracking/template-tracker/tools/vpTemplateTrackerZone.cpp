@@ -146,13 +146,13 @@ void vpTemplateTrackerZone::initClick(const vpImage<unsigned char> &I, bool dela
 
         }
       }
-      vpDisplay::flush(I);
 
       if (button == vpMouseButton::button3)
         end = true;
     }
 
     vpTime::wait(20);
+    vpDisplay::flush(I);
   } while(!end);
 
   initFromPoints(I, vip, delaunay);
