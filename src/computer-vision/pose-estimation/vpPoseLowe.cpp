@@ -40,18 +40,16 @@
 *
 *****************************************************************************/
 
-
-
-
+#include <math.h>
+#include <float.h>
+#include <string.h>
+#include <limits>   // numeric_limits
 
 // besoin de la librairie mathematique, en particulier des
 // fonctions de minimisation de Levenberg Marquartd
 #include <visp/vpLevenbergMarquartd.h>
-
 #include <visp/vpPose.h>
-#include <math.h>
-#include <float.h>
-#include <string.h>
+
 #define NBR_PAR	6
 #define X3_SIZE	3
 #define MINIMUM 0.000001
@@ -306,7 +304,7 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
   m = (int)(2 * npt);		/* nombres d'equations	*/
   lwa = 2 * NBPTMAX + 50;  /* taille du vecteur de travail	*/
   ldfjac = 2 * NBPTMAX;	/* nombre d'elements max sur une ligne	*/
-  tol = DBL_EPSILON;		/* critere d'arret	*/
+  tol = std::numeric_limits<double>::epsilon();		/* critere d'arret	*/
 
   //  c = cam ;
   // for (i=0;i<3;i++)

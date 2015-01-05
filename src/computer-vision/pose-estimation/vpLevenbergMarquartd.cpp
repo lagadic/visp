@@ -40,13 +40,13 @@
  *
  *****************************************************************************/
 
-#include <visp/vpLevenbergMarquartd.h>
-#include <visp/vpMath.h>
-
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <iostream>
 #include <algorithm>    // std::min
+
+#include <visp/vpLevenbergMarquartd.h>
+#include <visp/vpMath.h>
 
 #define	SIGN(x)		((x) < 0 ? -1 : 1)
 #define	SWAP(a,b,c)	{(c) = (a); (a) = (b); (b) = (c);}
@@ -575,7 +575,7 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
   /*
    *	epsmch est la precision machine.
    */
-  epsmch = DBL_EPSILON;
+  epsmch = std::numeric_limits<double>::epsilon();
 
   /*
    *	calcul des normes initiales des lignes et initialisation
@@ -1025,12 +1025,12 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   int count = 0;
   int		i, j, l;
   double		actred, delta, dirder, epsmch, fnorm, fnorm1, gnorm;
-  double		ratio = DBL_EPSILON;
+  double		ratio = std::numeric_limits<double>::epsilon();
   double		par, pnorm, prered;
   double		sum, temp, temp1, temp2, xnorm = 0.0;
 
   /* epsmch est la precision machine.	*/
-  epsmch = DBL_EPSILON;
+  epsmch = std::numeric_limits<double>::epsilon();
 
   *info = 0;
   iflag = 0;
