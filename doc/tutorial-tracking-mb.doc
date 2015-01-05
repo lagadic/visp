@@ -465,26 +465,26 @@ Finally, you define the face with the index of the segments which constitute the
 \code
 V1
 # Left wing model
-6				# number of points
+6                               # Number of points
 # 3D points
--4   	-3.8  	0.7
--6   	-8.8  	0.2
--12 	-21.7 	-1.2
--9  	-21.7 	-1.2
-0.8   	-8.8  	0.2
-4.6   	-3.8  	0.7
+-4     -3.8  	0.7
+-6     -8.8  	0.2
+-12   -21.7    -1.2
+-9    -21.7    -1.2
+ 0.8   -8.8  	0.2
+ 4.6   -3.8  	0.7
 # 3D lines
-6				# number of lines
-0 1
+6                               # Number of lines
+0 1                             # line 0
 1 2
 2 3
 3 4
 4 5
-5 0
-# 3D face segments
-1				# number of face defined by segments
-6 0 1 2 3 4 5	# Face 0: [number of segments] [index of the lines]...
-# face points
+5 0                             # line 5
+# Faces from 3D lines
+1                               # Number of faces defined by lines
+6 0 1 2 3 4 5	                # face 0: [number of lines] [index of the lines]...
+# Faces from 3D points
 0
 # 3D cylinders
 0
@@ -501,19 +501,19 @@ The first thing to do is to declare the two points defining the cylinder axis of
 \code
 V1
 # Cylinder model
-2			# number of points
+2                 # Number of points
 # 3D points
-16.9 0 0.5
--20  0 0.5
+16.9 0 0.5        # point 0
+-20  0 0.5        # point 1
 # 3D lines
 0
-# 3D face segments
+# Faces from 3D lines
 0
-# 3D face points 
+# Faces from 3D points
 0
 # 3D cylinders
-1			# number of cylinders
-0 1 2.4	# Cylinder 0: [start point index of the cylinder axis of revolution] [end point index of the cylinder axis of revolution] [radius]
+1                 # Number of cylinders
+0 1 2.4           # cylinder 0: [1st point on revolution axis] [2nd point on revolution axis] [radius]
 # 3D circles
 0
 \endcode
@@ -528,22 +528,22 @@ For the level of detail, in a case of a circle, this is taking into account by u
 \code
 V1
 # Circle model
-3			# number of points
+3                    # Number of points
 # 3D points
--3.4 	14.6 	1.1
+-3.4 	14.6 	1.1  # point 0
 -3.4 	15.4 	1.1
--3.4 	14.6 	1.8
+-3.4 	14.6 	1.8  # point 2
 # 3D lines
 0
-# 3D face segments
+# Faces from 3D lines
 0
-# 3D face points
+# Faces from 3D points
 0
 # 3D cylinders
 0
 # 3D circles
-1			# number of circles
-0.8 0 2 1	# Circle 0: [radius] [point index of the circle center] [index of one point in the circle plane] [index of a second point in the circle plane]
+1                    # Number of circles
+0.8 0 2 1            # circle 0: [radius] [circle center] [1st point on circle plane] [2nd point on circle plane]
 \endcode
 
 
@@ -560,21 +560,21 @@ The following lines represent the top model of the plane.
 V1
 # header
 # load the different parts of the plane
-load("wings.cao")		# load the left and right wings
+load("wings.cao")       # load the left and right wings
 load("tailplane.cao")
 # 3D points
-2			# number of points
+2                       # Number of points
 16.9 0 0.5
 -20  0 0.5
 # 3D lines
 0
-# 3D face segments
+# Faces from 3D lines
 0
-# 3D face points 
+# Faces from 3D points
 0
 # 3D cylinders
-1			# number of cylinders
-0 1 2.4		# define the plane fuselage as a cylinder
+1                       # Number of cylinders
+0 1 2.4                 # define the plane fuselage as a cylinder
 # 3D circles
 0
 \endcode
@@ -594,23 +594,23 @@ V1
 load("wings.cao")
 load("tailplane.cao")
 # 3D points
-5				# number of points
-16.9 	0 		0.5
--20  	0 		0.5
+5                                    # Number of points
+16.9 	0 	0.5
+-20  	0 	0.5
 -3.4 	14.6 	1.1
 -3.4 	15.4 	1.1
 -3.4 	14.6 	1.8
 # 3D lines
 0
-# 3D face segments
+# Faces from 3D lines
 0
-# 3D face points 
+# Faces from 3D points
 0
 # 3D cylinders
-1				# number of cylinders
+1                                    # Number of cylinders
 0 1 2.4		name=plane_fuselage
 # 3D circles
-1				# number of circles
+1                                    # Number of circles
 0.8	2 4 3	name="right reactor"
 \endcode
 
@@ -645,22 +645,22 @@ load("wings.cao")
 load("tailplane.cao")
 # 3D points
 5				# number of points
-16.9 	0 		0.5
--20  	0 		0.5
+16.9 	0 	0.5
+-20  	0 	0.5
 -3.4 	14.6 	1.1
 -3.4 	15.4 	1.1
 -3.4 	14.6 	1.8
 # 3D lines
 0
-# 3D face segments
+# Faces from 3D lines
 0
-# 3D face points 
+# Faces from 3D points
 0
 # 3D cylinders
-1				# number of cylinders
+1                               # Number of cylinders
 0 1 2.4	name=plane_fuselage useLod=true minLineLengthThreshold=100.0
 # 3D circles
-1				# number of circles
+1                               # Number of circles
 0.8 2 4 3	name="right reactor" useLod=true minPolygonAreaThreshold=40.0
 \endcode
 
