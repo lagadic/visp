@@ -10,27 +10,30 @@ int main(int argc, const char *argv[])
 #if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
   try {
     bool opt_init_by_click = false;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+    int opt_device = 0;
+
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--init-by-click")
         opt_init_by_click = true;
+      else if (std::string(argv[i]) == "--device")
+        opt_device = atoi(argv[i+1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--help]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--device <camera device>] [--help]" << std::endl;
         return 0;
       }
     }
-#else
-    (void)argc;
-    (void)argv;
-#endif
+
     vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
+    std::ostringstream device;
+    device << "/dev/video" << opt_device;
+    g.setDevice(device.str());
     g.open(I);
     g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-    cv::VideoCapture g(0); // open the default camera
+    cv::VideoCapture g(opt_device);
     if(!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return -1;
