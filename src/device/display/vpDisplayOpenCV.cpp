@@ -1185,7 +1185,7 @@ vpDisplayOpenCV::displayDotLine(const vpImagePoint &ip1,
 
   if (displayHasBeenInitialized)
   {
-    vpTRACE("Dot lines are not yet implemented");
+    //vpTRACE("Dot lines are not yet implemented");
     if (color.id < vpColor::id_unknown) {
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
       cvLine( background,
