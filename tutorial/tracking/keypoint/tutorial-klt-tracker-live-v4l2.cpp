@@ -28,7 +28,7 @@ int main(int argc, const char *argv[])
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
     g.open(I);
-	g.acquire(I);
+    g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
     cv::VideoCapture g(0); // open the default camera
     if(!g.isOpened()) { // check if we succeeded
@@ -38,13 +38,14 @@ int main(int argc, const char *argv[])
     cv::Mat frame;
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
+#endif
+
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
 #endif
     vpImageConvert::convert(I, cvI);
-#endif
 
     // Display initialisation
     vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
@@ -91,7 +92,7 @@ int main(int argc, const char *argv[])
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  g >> frame;
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
       vpDisplay::display(I);
