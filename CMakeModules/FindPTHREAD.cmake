@@ -48,7 +48,6 @@
     "$ENV{PTHREAD_HOME}/include"
     "$ENV{PTHREAD_DIR}/include"
     /usr/include
-    "C:/MinGW/include"
   )
   #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
   
@@ -61,7 +60,6 @@
     /usr/lib
     /usr/local/lib
     /lib    
-    "C:/MinGW/lib"
     )
 
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
