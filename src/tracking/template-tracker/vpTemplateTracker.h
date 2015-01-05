@@ -171,7 +171,15 @@ class VISP_EXPORT vpTemplateTracker
     void    setGain(double g){gain=g;}
     void    setGaussianFilterSize(unsigned int new_taill);
     void    setHDes(vpMatrix &tH){ Hdesire=tH; vpMatrix::computeHLM(Hdesire,lambdaDep,HLMdesire); HLMdesireInverse = HLMdesire.inverseByLU();}
+    /*!
+      Set the maximum number of iteration of the estimation scheme.
+      \param n : Maximum number of iterations to stop the estimation scheme. A typical value is arround 100.
+     */
     void    setIterationMax(const unsigned int &n) { iterationMax = n ; }
+    /*!
+      Set the convergence gain used in the estimation scheme.
+      \param l : Gain. A typical value is 0.001.
+      */
     void    setLambda(double l) { lambdaDep = l ; }
     void    setNbIterBrent(const unsigned int &b){nbIterBrent=b;}
     void    setp(const vpColVector &tp){ p=tp; diverge=false; iterationGlobale=0; }
@@ -179,8 +187,8 @@ class VISP_EXPORT vpTemplateTracker
      Set the number of pyramid levels used in the multi-resolution scheme.
      If \e nlevels > 1, the tracker uses a pyramidal approach.
 
-     \param nlevels: Number of pyramid levels. Algorithm starts at level nlevels-1.
-     \param level_to_stop: Last level of the pyramid that will be considered. (Lowest level is Zero)
+     \param nlevels : Number of pyramid levels. Algorithm starts at level nlevels-1.
+     \param level_to_stop : Last level of the pyramid that will be considered. Lowest level is zero.
      */
     void    setPyramidal(unsigned int nlevels=2, unsigned int level_to_stop=1) {
         nbLvlPyr = nlevels;
@@ -191,8 +199,15 @@ class VISP_EXPORT vpTemplateTracker
           l0Pyr = nlevels-1;
         }
     }
+    /*!
+      Set the pixel sampling parameters along the rows and the columns.
+      \param sample_i : Sampling factor along the rows.
+      If 1 all the lines are considered. If 2, consider one line over two.
 
-    void    setSampling(int _mod_i,int _mod_j){mod_i=_mod_i;mod_j=_mod_j;}
+      \param sample_j : Sampling factor along the columns.
+      If 1 all the columns are considered. If 2, consider one column over two.
+     */
+    void    setSampling(int sample_i,int sample_j){mod_i=sample_i; mod_j=sample_j;}
     void    setThresholdGradient(double threshold){thresholdGradient=threshold;}
     /*! By default Brent usage is disabled. */
     void    setUseBrent(bool b){useBrent = b;}
