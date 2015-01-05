@@ -37,7 +37,7 @@
  *****************************************************************************/
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_OPENCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
 
 #include <algorithm>
 

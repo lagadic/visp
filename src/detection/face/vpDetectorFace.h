@@ -41,7 +41,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_OPENCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
 
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -53,9 +53,10 @@
   \class vpDetectorFace
 
   The vpDetectorFace class is a wrapper over OpenCV Haar cascade face detection capabilities.
+  To use this class ViSP should be build against OpenCV 2.2.0 or a more recent version.
 
-  The following sample code shows how to use this class to detect the largest face in the image. The cascade classifier file "haarcascade_frontalface_alt.xml"
-  can be found in ViSP source code or in OpenCV.
+  The following sample code shows how to use this class to detect the largest face in the image.
+  The cascade classifier file "haarcascade_frontalface_alt.xml" can be found in ViSP source code or in OpenCV.
   \code
 #include <visp/vpDetectorFace.h>
 
