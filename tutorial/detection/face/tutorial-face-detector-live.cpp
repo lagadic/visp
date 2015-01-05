@@ -7,7 +7,7 @@
 
 int main(int argc, const char* argv[])
 {
-#ifdef VISP_HAVE_OPENCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
 
