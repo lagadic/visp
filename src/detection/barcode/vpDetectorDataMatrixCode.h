@@ -49,7 +49,7 @@
 
 #ifdef VISP_HAVE_DMTX
 
-#include <visp/vpDetectorBarCodeBase.h>
+#include <visp/vpDetectorBase.h>
 #include <visp/vpImage.h>
 
 /*!
@@ -110,7 +110,7 @@ Bar code 1:
   tutorial-barcode-detector-live.cpp
 
  */
-class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBarCodeBase
+class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {
 public:
   vpDetectorDataMatrixCode();

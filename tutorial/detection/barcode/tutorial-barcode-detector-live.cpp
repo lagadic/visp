@@ -1,9 +1,11 @@
-/*! \example tutorial-barcode-detector-live.cpp */
+//! \example tutorial-barcode-detector-live.cpp
+#include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayX.h>
 #include <visp/vpImageConvert.h>
 #include <visp/vpDetectorDataMatrixCode.h>
 #include <visp/vpDetectorQRCode.h>
-
+#include <visp/vpV4l2Grabber.h>
 
 int main(int argc, const char** argv)
 {
@@ -26,6 +28,16 @@ int main(int argc, const char** argv)
   std::cout << "Use device: " << opt_device << std::endl;
 
   try {
+    vpImage<unsigned char> I; // for gray images
+
+#if defined(VISP_HAVE_V4L2)
+    vpV4l2Grabber g;
+    std::ostringstream device;
+    device << "/dev/video" << opt_device;
+    g.setDevice(device.str());
+    g.setScale(1);
+    g.acquire(I);
+#else
     cv::VideoCapture cap(opt_device); // open the default camera
     if(!cap.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -33,14 +45,19 @@ int main(int argc, const char** argv)
     }
     cv::Mat frame;
     cap >> frame; // get a new frame from camera
-    std::cout << "Image size: " << frame.rows << " " << frame.cols << std::endl;
-
-    vpImage<unsigned char> I; // for gray images
     vpImageConvert::convert(frame, I);
+#endif
 
+#if defined(VISP_HAVE_X11)
+    vpDisplayX d(I);
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayDGI d(I);
+#elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV d(I);
+#endif
+    vpDisplay::setTitle(I, "ViSP viewer");
 
-    vpDetectorBarCodeBase *detector;
+    vpDetectorBase *detector;
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     if (opt_barcode == 0)
       detector = new vpDetectorQRCode;
@@ -55,9 +72,12 @@ int main(int argc, const char** argv)
 #endif
 
     for(;;) {
+#if defined(VISP_HAVE_V4L2)
+      g.acquire(I);
+#else
       cap >> frame; // get a new frame from camera
-      // Convert the image in ViSP format and display it
       vpImageConvert::convert(frame, I);
+#endif
       vpDisplay::display(I);
 
       bool status = detector->detect(I);
@@ -66,7 +86,7 @@ int main(int argc, const char** argv)
       vpDisplay::displayText(I, 10, 10, legend.str(), vpColor::red);
 
       if (status) {
-        for(size_t i=0; i<detector->getNbObjects(); i++) {
+        for(size_t i=0; i < detector->getNbObjects(); i++) {
           std::vector<vpImagePoint> p = detector->getPolygon(i);
           vpRect bbox = detector->getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green);

@@ -21,7 +21,7 @@ int main(int argc, const char** argv)
     vpDisplayOpenCV d(I);
 #endif
 
-    vpDetectorBarCodeBase *detector;
+    vpDetectorBase *detector;
 
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
@@ -58,7 +58,7 @@ int main(int argc, const char** argv)
     vpDisplay::displayText(I, I.getHeight()-30, 10, legend.str(), vpColor::red);
 
     if (status) {
-      for(size_t i=0; i<detector->getNbObjects(); i++) {
+      for(size_t i=0; i < detector->getNbObjects(); i++) {
         std::vector<vpImagePoint> p = detector->getPolygon(i);
         vpRect bbox = detector->getBBox(i);
         vpDisplay::displayRectangle(I, bbox, vpColor::green);

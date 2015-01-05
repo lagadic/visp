@@ -54,6 +54,11 @@ vpDetectorQRCode::vpDetectorQRCode()
   m_scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
 }
 
+/*!
+  Detect QR codes in the image. Return true if a code is detected, false otherwise.
+
+  \param I : Input image.
+ */
 bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
 {
   bool detected = false;

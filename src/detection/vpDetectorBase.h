@@ -31,15 +31,15 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Base class for bar code detection.
+ * Base class for object detection.
  *
  * Authors:
  * Fabien Spindler
  *
  *****************************************************************************/
 
-#ifndef __vpDetectorBarCodeBase_h__
-#define __vpDetectorBarCodeBase_h__
+#ifndef __vpDetectorBase_h__
+#define __vpDetectorBase_h__
 
 #include <vector>
 #include <utility>
@@ -51,39 +51,41 @@
 #include <visp/vpRect.h>
 
 /*!
-  \class vpDetectorBarCodeBase
+  \class vpDetectorBase
 
-  Base class for bar code detector.
+  Base class for object detection.
 
-  The example given in tutorial-barcode-detector.cpp shows how to detect one or more bar codes in an
-  image. In tutorial-barcode-detector-live.cpp you will find an other example that shows how
-  to use this class to detect bar codes in images acquired by a camera.
+  This class is a generic class that can be used to detect:
+  - bar codes like QRcodes of Data matrices. The example given in tutorial-barcode-detector.cpp shows
+    how to detect one or more bar codes in an image. In tutorial-barcode-detector-live.cpp you will find
+    an other example that shows how to use this class to detect bar codes in images acquired by a camera.
+  - faces. An example is provided in tutorial-face-detector-live.cpp.
  */
-class VISP_EXPORT vpDetectorBarCodeBase
+class VISP_EXPORT vpDetectorBase
 {
 protected:
-  std::vector< std::vector<vpImagePoint> > m_polygon;
-  std::vector< std::string > m_message;
-  size_t m_nb_objects;
+  std::vector< std::vector<vpImagePoint> > m_polygon; //!< For each object, defines the polygon that contains the object.
+  std::vector< std::string > m_message; //!< Message attached to each object.
+  size_t m_nb_objects; //!< Number of detected objects.
 
 public:
   /*!
      Default constructor.
    */
-  vpDetectorBarCodeBase() : m_polygon(), m_message(), m_nb_objects(0) {}
+  vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0) {}
   /*!
      Default destructor.
      */
-  virtual ~vpDetectorBarCodeBase() {};
+  virtual ~vpDetectorBase() {};
 
   /*!
-    Detect bar code pattern in image.
-    \param I : Image where to detect pattern.
-    \return true if one or multiple codes are detected, false otherwise.
+    Detect objects in an image.
+    \param I : Image where to detect objects.
+    \return true if one or multiple objects are detected, false otherwise.
    */
   virtual bool detect(const vpImage<unsigned char> &I) = 0;
   /*!
-    Returns pattern container box as a vector of points.
+    Returns object container box as a vector of points.
    */
   std::vector< std::vector<vpImagePoint> > & getPolygon()
   {
@@ -91,27 +93,27 @@ public:
   }
 
   /*!
-    Returns ith pattern container box as a vector of points.
+    Returns ith object container box as a vector of points.
    */
   std::vector<vpImagePoint> & getPolygon(size_t i)
   {
     if (i < m_polygon.size())
       return m_polygon[i];
     else
-      throw(vpException(vpException::badValue, "Bad index %d to retrieve bar code. Only %d codes are detected.", i, m_polygon.size()));
+      throw(vpException(vpException::badValue, "Bad index to retrieve object %d. Only %d objects are detected.", i, m_polygon.size()));
   }
   /*!
-    Returns the contained message of the ith bar code if there is one.
+    Returns the contained message of the ith object if there is one.
    */
   std::string & getMessage(size_t i)
   {
     if (i < m_polygon.size())
       return m_message[i];
     else
-      throw(vpException(vpException::badValue, "Bad index %d to retrieve bar code. Only %d codes are detected.", i, m_polygon.size()));
+      throw(vpException(vpException::badValue, "Bad index to retrieve object %d . Only %d objects are detected.", i, m_polygon.size()));
   }
   /*!
-    Returns the contained message of the ith bar code if there is one.
+    Returns the contained message of the ith object if there is one.
    */
   std::vector< std::string > & getMessage()
   {
@@ -122,7 +124,7 @@ public:
     */
   size_t getNbObjects() const {return m_nb_objects; }
   /*!
-    Return the center of gravity location of the ith bar code.
+    Return the center of gravity location of the ith object.
    */
   vpImagePoint getCog(size_t i) const
   {
@@ -134,7 +136,7 @@ public:
     return cog;
   }
   /*!
-    Return the bounding box of the ith bar code.
+    Return the bounding box of the ith object.
    */
   vpRect getBBox(size_t i) const
   {

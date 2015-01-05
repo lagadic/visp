@@ -383,12 +383,17 @@ if(VISP_HAVE_XML2)
   list(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbtEdgeKltXmlParser.cpp)
 endif()
 
-IF(VISP_HAVE_OPENCV)
-  LIST(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPoints.cpp)
-  LIST(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
-ENDIF()
+if(VISP_HAVE_OPENCV)
+#  list(APPEND SRC_TRACKING detection/face/vpDetectorFace.cpp)
+  list(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPoints.cpp)
+  list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
+endif()
+
+if(VISP_HAVE_ZBAR)
+#  list(APPEND SRC_TRACKING tracking/barcode/vpBarCodeTracker.cpp)
+endif()
 
 SET (SRC_VIDEO
   video/vpVideoReader.cpp

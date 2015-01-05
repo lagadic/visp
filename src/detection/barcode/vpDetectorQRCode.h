@@ -51,7 +51,7 @@
 
 #include <zbar.h>
 
-#include <visp/vpDetectorBarCodeBase.h>
+#include <visp/vpDetectorBase.h>
 #include <visp/vpImage.h>
 
 /*!
@@ -111,10 +111,10 @@ Bar code 1:
   Other examples are also provided in tutorial-barcode-detector.cpp and
   tutorial-barcode-detector-live.cpp
  */
-class VISP_EXPORT vpDetectorQRCode : public vpDetectorBarCodeBase
+class VISP_EXPORT vpDetectorQRCode : public vpDetectorBase
 {
 protected:
-  zbar::ImageScanner m_scanner;
+  zbar::ImageScanner m_scanner; //!< QR code detector.
 
 public:
   vpDetectorQRCode();

@@ -67,9 +67,10 @@ SET (HEADER_DATA_STRUCTURE
   )
 
 set(HEADER_DETECTION
-  detection/barcode/vpDetectorBarCodeBase.h
+  detection/vpDetectorBase.h
   detection/barcode/vpDetectorDataMatrixCode.h
   detection/barcode/vpDetectorQRCode.h
+#  detection/face/vpDetectorFace.h
 )
 
 SET (HEADER_EXCEPTION
@@ -251,6 +252,7 @@ SET (HEADER_TOOLS
   )
 
 SET (HEADER_TRACKING
+#  tracking/barcode/vpBarCodeTracker.h
   tracking/dots/vpDot2.h
   tracking/dots/vpDot.h
   tracking/feature-builder/vpFeatureBuilder.h
