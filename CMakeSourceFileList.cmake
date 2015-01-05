@@ -384,7 +384,7 @@ if(VISP_HAVE_XML2)
 endif()
 
 if(VISP_HAVE_OPENCV)
-#  list(APPEND SRC_TRACKING detection/face/vpDetectorFace.cpp)
+  list(APPEND SRC_TRACKING detection/face/vpDetectorFace.cpp)
   list(APPEND SRC_TRACKING tracking/klt/vpKltOpencv.cpp)
   list(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
   list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPoints.cpp)

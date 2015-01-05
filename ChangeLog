@@ -11,6 +11,8 @@ ViSP 2.10.0 (under development)
     . New bar code detectors that uses libdmtx and libzbar:
       + vpDetectorQRcode class allows to detect QR codes
       + vpDetectorDataMatrixCode class allows to detect data matrices
+    . New vpDetectorFace class that allows face detection based on OpenCV 
+      Haar cascade capabilities
     . Model-based tracker:
       + Introduction of 3D circles that project as ellipses.
       + In *.cao files comments are allowed on lines starting with # character.
@@ -33,6 +35,7 @@ ViSP 2.10.0 (under development)
     . Compat with RaspberryPi architecture
     . Compat with OpenCV 3.x
     . Compat with CMake 3.x
+    . Compat with MinGW w64 from http://mingw-w64.sourceforge.net/
   - Tutorials
     . Introduce a new tutorial to show how to install ViSP from Ubuntu
       official packages.

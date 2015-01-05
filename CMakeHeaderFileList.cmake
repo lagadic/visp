@@ -70,7 +70,7 @@ set(HEADER_DETECTION
   detection/vpDetectorBase.h
   detection/barcode/vpDetectorDataMatrixCode.h
   detection/barcode/vpDetectorQRCode.h
-#  detection/face/vpDetectorFace.h
+  detection/face/vpDetectorFace.h
 )
 
 SET (HEADER_EXCEPTION
