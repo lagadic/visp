@@ -36,14 +36,14 @@ int main(int argc, const char *argv[])
     reader.acquire(I);
     //! [Acquire]
 
-    //! Convert to OpenCV image
+    //! [Convert to OpenCV image]
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
 #endif
     vpImageConvert::convert(I, cvI);
-    //! Convert to OpenCV image
+    //! [Convert to OpenCV image]
 
     //! [Init display]
     vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
