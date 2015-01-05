@@ -120,7 +120,7 @@ static void set_zy (Matrix m, Vector *v0, Vector *v1)
  */
 void set_parallel (View_parameters *vp, Matrix wc)
 {
-	Matrix		m;
+  Matrix		m = IDENTITY_MATRIX;
 	Point3f		cop;
 	Point4f		doprim;
 	Vector		dop, v;
@@ -190,7 +190,7 @@ void set_parallel (View_parameters *vp, Matrix wc)
  */
 void set_perspective (View_parameters *vp, Matrix wc)
 {
-	Matrix		m;
+  Matrix		m = IDENTITY_MATRIX;
 	Point4f		vrprim, cw;
 	float	zmin;
 	Vector		v;
