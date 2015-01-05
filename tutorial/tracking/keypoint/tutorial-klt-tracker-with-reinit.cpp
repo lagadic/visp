@@ -1,4 +1,4 @@
-/*! \example tutorial-klt-tracker-with-reinit.cpp */
+//! \example tutorial-klt-tracker-with-reinit.cpp
 #include <visp/vpImageConvert.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpDisplayOpenCV.h>
@@ -48,6 +48,7 @@ int main()
 
       vpImageConvert::convert(I, cvI);
 
+      //! [Re-init tracker]
       // Restart the initialization to detect new keypoints
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
@@ -126,6 +127,8 @@ int main()
       }
       // Track the features
       tracker.track(cvI);
+      //! [Re-init tracker]
+
       std::cout << "tracking of " << tracker.getNbFeatures() << " features" << std::endl;
 
       tracker.display(I, vpColor::red);

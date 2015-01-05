@@ -1,6 +1,4 @@
-/*!
-  \example tutorial-blob-tracker-live-v4l2.cpp
-  */
+//! \example tutorial-blob-tracker-live-v4l2.cpp
 #include <visp/vpV4l2Grabber.h>
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayGTK.h>
@@ -49,7 +47,7 @@ int main()
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  g >> frame;
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
       vpDisplay::display(I);

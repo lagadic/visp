@@ -1,6 +1,4 @@
-/*!
-  \example tutorial-blob-tracker-live-firewire.cpp
-  */
+//! \example tutorial-blob-tracker-live-firewire.cpp
 #include <visp/vp1394CMUGrabber.h>
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpDisplayGDI.h>
@@ -38,9 +36,13 @@ int main()
   vpDisplayOpenCV d(I, 0, 0, "Camera view");
 #endif
 
+  //! [Construction]
   vpDot2 blob;
+  //! [Construction]
+  //! [Setting]
   blob.setGraphics(true);
   blob.setGraphicsThickness(2);
+  //! [Setting]
 
   vpImagePoint germ;
   bool init_done = false;
@@ -50,7 +52,7 @@ int main()
 #if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  g >> frame;
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
       vpDisplay::display(I);
@@ -58,12 +60,16 @@ int main()
       if (! init_done) {
         vpDisplay::displayText(I, vpImagePoint(10,10), "Click in the blob to initialize the tracker", vpColor::red);
         if (vpDisplay::getClick(I, germ, false)) {
+          //! [Init]
           blob.initTracking(I, germ);
+          //! [Init]
           init_done = true;
         }
       }
       else {
+        //! [Track]
         blob.track(I);
+        //! [Track]
       }
 
       vpDisplay::flush(I);

@@ -1,4 +1,4 @@
-/*! \example tutorial-blob-auto-tracker.cpp */
+//! \example tutorial-blob-auto-tracker.cpp
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
@@ -25,7 +25,10 @@ int main()
     vpDisplay::display(I);
     vpDisplay::flush(I);
 
+    //! [Construction]
     vpDot2 blob;
+    //! [Construction]
+    //! [Learn]
     if (learn) {
       // Learn the characteristics of the blob to auto detect
       blob.setGraphics(true);
@@ -44,6 +47,8 @@ int main()
       std::cout << " sizePrecision: " << blob.getSizePrecision() << std::endl;
       std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
     }
+    //! [Learn]
+    //! [Setting]
     else {
       // Set blob characteristics for the auto detection
       blob.setWidth(50);
@@ -57,26 +62,33 @@ int main()
       blob.setSizePrecision(0.65);
       blob.setEllipsoidShapePrecision(0.65);
     }
+    //! [Setting]
 
+    //! [Search]
     std::list<vpDot2> blob_list;
     blob.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), blob_list);
+    //! [Search]
 
+    //! [Add learned dot]
     if (learn) {
       // The blob that is tracked by initTracking() is not in the list of auto detected blobs
       // We add it:
       blob_list.push_back(blob);
     }
+    //! [Add learned dot]
     std::cout << "Number of auto detected blob: " << blob_list.size() << std::endl;
     std::cout << "A click to exit..." << std::endl;
 
     while(1) {
       vpDisplay::display(I);
 
+      //! [Display]
       for(std::list<vpDot2>::iterator it=blob_list.begin(); it != blob_list.end(); ++it) {
         (*it).setGraphics(true);
         (*it).setGraphicsThickness(3);
         (*it).track(I);
       }
+      //! [Display]
 
       vpDisplay::flush(I);
 

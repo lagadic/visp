@@ -1,12 +1,16 @@
-/*! \example tutorial-klt-tracker.cpp */
+//! \example tutorial-klt-tracker.cpp
+//! [Include]
 #include <visp/vpImageConvert.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
+//! [Include]
 
 int main(int argc, const char *argv[])
 {
+  //! [Check 3rd party]
 #ifdef VISP_HAVE_OPENCV
+  //! [Check 3rd party]
   try {
     bool opt_init_by_click = false;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -22,26 +26,33 @@ int main(int argc, const char *argv[])
     (void)argc;
     (void)argv;
 #endif
+    //! [Create reader]
     vpVideoReader reader;
     reader.setFileName("video-postcard.mpeg");
+    //! [Create reader]
 
+    //! [Acquire]
     vpImage<unsigned char> I;
     reader.acquire(I);
+    //! [Acquire]
 
+    //! Convert to OpenCV image
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage * cvI = NULL;
 #else
     cv::Mat cvI;
 #endif
     vpImageConvert::convert(I, cvI);
+    //! Convert to OpenCV image
 
-    // Display initialisation
+    //! [Init display]
     vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
     vpDisplay::display(I);
     vpDisplay::flush(I);
+    //! [Init display]
 
+    //! [Create tracker]
     vpKltOpencv tracker;
-    // Set tracker parameters
     tracker.setMaxFeatures(200);
     tracker.setWindowSize(10);
     tracker.setQuality(0.01);
@@ -50,6 +61,7 @@ int main(int argc, const char *argv[])
     tracker.setBlockSize(9);
     tracker.setUseHarris(1);
     tracker.setPyramidLevels(3);
+    //! [Create tracker]
 
     // Initialise the tracking
     if (opt_init_by_click) {
@@ -72,9 +84,11 @@ int main(int argc, const char *argv[])
 #endif
     }
     else {
+      //! [Init tracker]
       tracker.initTracking(cvI);
+      //! [Init tracker]
     }
-
+    //! [While loop]
     while ( ! reader.end() )
     {
       reader.acquire(I);
@@ -86,12 +100,17 @@ int main(int argc, const char *argv[])
       tracker.display(I, vpColor::red);
       vpDisplay::flush(I);
     }
+    //! [While loop]
 
+    //! [Wait click]
     vpDisplay::getClick(I);
+    //! [Wait click]
 
+    //! [Release IplImage]
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     cvReleaseImage(&cvI);
 #endif
+    //! [Release IplImage]
 
     return 0;
   }

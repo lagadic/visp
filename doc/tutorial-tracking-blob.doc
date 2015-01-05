@@ -29,28 +29,16 @@ To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-l
 From now, we assume that you have successfully followed the \ref tutorial-getting-started and the \ref tutorial-grabber.
 Here after we explain the new lines that are introduced.
 
-
-First an instance of the blob tracker is created. 
-\code
-  vpDot2 d;
-\endcode
+\snippet tutorial-blob-tracker-live-firewire.cpp Construction
 
 Then we are modifying some default settings to allow drawings in overlay the contours pixels and the position of the center of gravity with a thickness of 2 pixels.
-\code
-  blob.setGraphics(true);
-  blob.setGraphicsThickness(2);
-\endcode
+\snippet tutorial-blob-tracker-live-firewire.cpp Setting
 
 Then we are waiting for a user initialization throw a mouse click event in the blob to track. 
-\code
-  blob.initTracking(I);
-\endcode
+\snippet tutorial-blob-tracker-live-firewire.cpp Init
 
 The tracker is now initialized. The tracking can be performed on new images:
-
-\code
-  blob.track(I);
-\endcode
+\snippet tutorial-blob-tracker-live-firewire.cpp Track
 
 \subsection live-v4l2 From a v4l2 live camera
 
@@ -76,74 +64,31 @@ The following example also available in tutorial-blob-auto-tracker.cpp file prov
 
 \include tutorial-blob-auto-tracker.cpp
 
-  Here is a screen shot of the resulting program :
+Here is a screen shot of the resulting program :
 
-  \image html img-blob-auto-detection.png
+\image html img-blob-auto-detection.png
 
-  And here is the detailed explanation of the source :
+And here is the detailed explanation of the source :
 
-  First we create an instance of the tracker.
-\code
-   vpDot2 blob;
-\endcode
-  Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image.
+First we create an instance of the tracker.
+\snippet tutorial-blob-auto-tracker.cpp Construction
 
-\code
-  if (learn) {
-    // Learn the characteristics of the blob to auto detect
-    blob.setGraphics(true);
-    blob.setGraphicsThickness(1);
-    blob.initTracking(I);
-    blob.track(I);
-    std::cout << "Blob characteristics: " << std::endl;
-    std::cout << " width : " << blob.getWidth() << std::endl;
-    std::cout << " height: " << blob.getHeight() << std::endl;
-    std::cout << " area: " << blob.getArea() << std::endl;
-    std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
-    std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
-    std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
-    std::cout << " sizePrecision: " << blob.getSizePrecision() << std::endl;
-    std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
-  }
-\endcode
-  If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
-\code
-  else {
-    // Set blob characteristics for the auto detection
-    blob.setWidth(50);
-    blob.setHeight(50);
-    blob.setArea(1700);
-    blob.setGrayLevelMin(0);
-    blob.setGrayLevelMax(30);
-    blob.setGrayLevelPrecision(0.8);
-    blob.setSizePrecision(0.65);
-    blob.setEllipsoidShapePrecision(0.65);
-  }
-\endcode
+Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image.
+
+\snippet tutorial-blob-auto-tracker.cpp Learn
+
+If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
+\snippet tutorial-blob-auto-tracker.cpp Setting
 
 Once the blob characteristics are known, to search similar blobs in the image is simply done by:
-\code
-  std::list<vpDot2> blob_list;
-  blob.searchDotsInArea(I, 0, 0, I.getWidth(), I.getHeight(), auto_detected_blob_list);
-\endcode
+\snippet tutorial-blob-auto-tracker.cpp Search
+
 Here \c blob_list contains the list of the blobs that are detected in the image  \c I. When learning is enabled, the blob that is tracked is not in the list of auto detected blobs. We add it to the end of the list:
 
-\code
-  if (learn) {
-    // The blob that is tracked by initTracking() is not in the list of auto detected blobs
-    // We add it:
-    blob_list.push_back(blob);
-  }
-\endcode
+\snippet tutorial-blob-auto-tracker.cpp Add learned dot
 
 Finally, when a new image is available we do the tracking of all the blobs:
-\code
-    for(std::list<vpDot2>::iterator it=blob_list.begin(); it != blob_list.end(); ++it) {
-      (*it).setGraphics(true);
-      (*it).setGraphicsThickness(3);
-      (*it).track(I);
-    }
-\endcode
+\snippet tutorial-blob-auto-tracker.cpp Display
 
 You are now ready to see the next \ref tutorial-tracking-keypoint.
 

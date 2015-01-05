@@ -21,68 +21,30 @@ Let's start to write our first program to see how to read an image and
 \include tutorial-viewer.cpp
 
 Here is the detailed explanation of the source, line by line :
-\code
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTk.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-\endcode
-  Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+\snippet tutorial-viewer.cpp Include display
 
-\code
-#include <visp/vpImageIo.h>
-\endcode
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+
+\snippet tutorial-viewer.cpp Include io
 Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
 
-\code
-vpImage<vpRGBa> I;
-\endcode
+\snippet tutorial-viewer.cpp vpImage construction
 Create an instance of a color image where each pixel is coded in RGBa.
 
-\code
-try {
-  vpImageIo::read(I, argv[1]);
-}
-catch(...) {
-  std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
-  return -1;
-}
-\endcode
+\snippet tutorial-viewer.cpp vpImage reading
 The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
 
-\code
-#if defined(VISP_HAVE_X11)
-vpDisplayX d(I);
-#elif defined(VISP_HAVE_OPENCV)
-vpDisplayOpenCV d(I);
-#elif defined(VISP_HAVE_GTK)
-vpDisplayGTK d(I);
-#elif defined(VISP_HAVE_GDI)
-vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_D3D9)
-vpDisplayD3d d(I);
-#else
-std::cout << "No image viewer is available..." << std::endl;
-#endif
-\endcode
+\snippet tutorial-viewer.cpp vpDisplay construction
 Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
 
-\code
- vpDisplay::setTitle(I, "My image");
-\endcode
+\snippet tutorial-viewer.cpp vpDisplay set title
 The title of the display is then set to \c "My image".  
 
-\code
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-\endcode
-  First we display the content of the image \c I, then we flush the display to render the image.
+\snippet tutorial-viewer.cpp vpDisplay display
+First we display the content of the image \c I, then we flush the display to render the image.
 
-\code
-  vpDisplay::getClick(I);
-\endcode
-  Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
+\snippet tutorial-viewer.cpp vpDisplay get click
+Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
 
 \section image_cmake Create a CMake file
 

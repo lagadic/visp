@@ -1,4 +1,4 @@
-/*! \example tutorial-image-filter.cpp */
+//! \example tutorial-image-filter.cpp
 
 #include <visp/vpDisplayD3D.h>
 #include <visp/vpDisplayGDI.h>
@@ -48,8 +48,9 @@ int main(int argc, char** argv )
       printf( "Usage: %s <image name.[pgm,ppm,jpeg,png,bmp]>\n", argv[0] );
       return -1;
     }
-
+    //! [vpImage construction]
     vpImage<unsigned char> I;
+    //! [vpImage construction]
 
     try {
       vpImageIo::read(I, argv[1]);
@@ -61,36 +62,48 @@ int main(int argc, char** argv )
 
     display(I, "Original image");
 
+    //! [Gaussian blur]
     vpImage<double> F;
     vpImageFilter::gaussianBlur(I, F);
+    //! [Gaussian blur]
     display(F, "Blur (default)");
 
     vpImageFilter::gaussianBlur(I, F, 7, 2);
     display(F, "Blur (var=2)");
 
+    //! [Gradients x]
     vpImage<double> dIx;
     vpImageFilter::getGradX(I, dIx);
+    //! [Gradients x]
     display(dIx, "Gradient dIx");
 
+    //! [Gradients y]
     vpImage<double> dIy;
     vpImageFilter::getGradY(I, dIy);
+    //! [Gradients y]
     display(dIy, "Gradient dIy");
 
-
+    //! [Canny]
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, 15, 3);
     display(C, "Canny");
 #endif
+    //! [Canny]
 
+    //! [Convolution kernel]
     vpMatrix K(3,3); // Sobel kernel along x
     K[0][0] = 1; K[0][1] = 0; K[0][2] = -1;
     K[1][0] = 2; K[1][1] = 0; K[1][2] = -2;
     K[2][0] = 1; K[2][1] = 0; K[2][2] = -1;
+    //! [Convolution kernel]
+    //! [Convolution]
     vpImage<double> Gx;
     vpImageFilter::filter(I, Gx, K);
+    //! [Convolution]
     display(Gx, "Sobel x");
 
+    //! [Gaussian pyramid]
     size_t nlevel = 3;
     std::vector< vpImage<unsigned char> > pyr(nlevel);
     pyr[0] = I;
@@ -98,6 +111,7 @@ int main(int argc, char** argv )
       vpImageFilter::getGaussPyramidal(pyr[i-1], pyr[i]);
       display(pyr[i], "Pyramid");
     }
+    //! [Gaussian pyramid]
     return 0;
   }
   catch(vpException &e) {

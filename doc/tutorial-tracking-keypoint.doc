@@ -17,91 +17,46 @@ The video shows the result of the tracking:
 
 And here is the line by line explanation of the source : 
 
-\code
-#include <visp/vpImageConvert.h>
-#include <visp/vpKltOpencv.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpVideoReader.h>
-\endcode
+\snippet tutorial-klt-tracker.cpp Include
 
 We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV IplImage structure used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation. We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
 
-\code
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && defined(VISP_HAVE_FFMPEG)
-\endcode
+\snippet tutorial-klt-tracker.cpp Check 3rd party
 
 We use the previous macro to ensure that OpenCV at least version 1.1.0 requested by the tracker and the image viewer, and ffmpeg requested to read the video stream are available.
 
-\code
-  vpVideoReader reader;
-  reader.setFileName("video-postcard.mpeg");
-\endcode
+\snippet tutorial-klt-tracker.cpp Create reader
 
 The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file \c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
 
-\code
-  vpImage<unsigned char> I;
-  reader.acquire(I);
-\endcode
+\snippet tutorial-klt-tracker.cpp Acquire
 Returns the first image of the video in the gray level ViSP image container \c I.
 
-\code
-  IplImage * cvI = NULL;
-  vpImageConvert::convert(I, cvI);
-\endcode
+\snippet tutorial-klt-tracker.cpp Convert to OpenCV image
 
 Then we convert \c I into \c cvI, an image in OpenCV IplImage format that will be used by the tracker.
 
-\code
-  vpDisplayOpenCV d(I, 0, 0, "Klt tracking");
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-\endcode
+\snippet tutorial-klt-tracker.cpp Init display
 Create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
  
-\code
-  vpKltOpencv tracker;
-
-  tracker.setMaxFeatures(200);
-  tracker.setWindowSize(10);
-  tracker.setQuality(0.01);
-  tracker.setMinDistance(15);
-  tracker.setHarrisFreeParameter(0.04);
-  tracker.setBlockSize(9);
-  tracker.setUseHarris(1);
-  tracker.setPyramidLevels(3);
-
-  tracker.initTracking(cvI);
-\endcode
+\snippet tutorial-klt-tracker.cpp Create tracker
  
-Create an instance of the tracker, set parameters of the Harris keypoint detector and finally initialize the tracker on \c cvI image.
+Create an instance of the tracker, set parameters of the Harris keypoint detector.
 
-\code
-  while ( ! reader.end() )
-  {
-    reader.acquire(I);
-    vpImageConvert::convert(I, cvI);
-    vpDisplay::display(I);
-    
-    tracker.track(cvI);
-    tracker.display(I, vpColor::red);
-    
-    vpDisplay::flush(I);
-  }
-\endcode
+\snippet tutorial-klt-tracker.cpp Init tracker
+
+Finally initialize the tracker on \c cvI image.
+
+\snippet tutorial-klt-tracker.cpp While loop
 
 Until the end of the video is not reached, we get \c I the next image in ViSP format, display and convert it in IplImage format. Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
 
-\code
-  vpDisplay::getClick(I);
-\endcode
+\snippet tutorial-klt-tracker.cpp Wait click
 We are waiting a mouse click event on image \c I to end the program.
 
 With the following line, we release the memory allocated for the OpenCV IplImage \c cvI before ending the program.
 
-\code
-  cvReleaseImage(&cvI);
-\endcode
+\snippet tutorial-klt-tracker.cpp Release IplImage
 
 \section tracking_keypoint_klt_init KLT tracker with re-initialisation
 
@@ -120,48 +75,39 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
 \code
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
-
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
         // Save of previous features
-        int prev_nfeatures = tracker.getNbFeatures();
-        float x, y;
-        int id, j=0;
-
-        CvPoint2D32f *prev_features = (CvPoint2D32f*)cvAlloc(prev_nfeatures*sizeof(CvPoint2D32f));
-
-        for (int i=0; i <prev_nfeatures ; i ++) {
-          tracker.getFeature(i, id, x, y);
-          prev_features[i].x=x;
-          prev_features[i].y=y;
-        }
-
+        std::vector<cv::Point2f> prev_features = tracker.getFeatures();
+ 
         // Start a new feature detection
         tracker.initTracking(cvI);
+        std::vector<cv::Point2f> new_features = tracker.getFeatures();
 
         // Add previous features if they are not to close to detected one
-        float distance, minDistance_ = 2.f;// choose to keep old points distant of 2
+        double distance, minDistance_ = tracker.getMinDistance();
         bool is_redundant;
-        for(int i = tracker.getNbFeatures() ;
-            j<prev_nfeatures && i<tracker.getMaxFeatures() ;
-            j++){
-          // Test if a previous feature is not redundant with new the one that are newly detected
+        for (size_t i=0; i < prev_features.size(); i++) {
+          // Test if a previous feature is not redundant with one of the newly detected
           is_redundant = false;
-          for(int k=0; k<tracker.getNbFeatures(); k++){
-            tracker.getFeature(k,id,x,y);
-            distance = sqrt(vpMath::sqr(x-prev_features[j].x) + vpMath::sqr(y-prev_features[j].y));
+          for (size_t j=0; j < new_features.size(); j++){
+            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x) 
+                       + vpMath::sqr(new_features[j].y-prev_features[i].y));
             if(distance < minDistance_){
               is_redundant = true;
               break;
             }
           }
-          if(is_redundant)
+          if(is_redundant){
             continue;
-      
-          tracker.addFeature(i, prev_features[j].x, prev_features[j].y);
-          i++;
+          }
+          //std::cout << "Add previous feature with index " << i << std::endl;
+          tracker.addFeature(prev_features[i]);
         }
-        cvFree(&prev_features);
+#else
+      ...
+#endif
       }
-
+      // Track the features
       tracker.track(cvI);
 \endcode
 

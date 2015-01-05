@@ -22,62 +22,32 @@ The result of this program is shown in the next image.
 
 The provide hereafter the explanation of the new lines that were introduced.
 
-\code
-#include <visp/vpImageSimulator.h>
-\endcode
+\snippet tutorial-image-simulator.cpp Include
 Include the header of the vpImageSimulator class that allows to project an image to a given camera position.
 
 Then in the main() function we create an instance of a gray level image that corresponds to the image of the planar target, and then we read the image from the disk. 
-\code
-  vpImage<unsigned char> target; 
-  vpImageIo::read(target, "./target_square.pgm");
-\endcode
+\snippet tutorial-image-simulator.cpp Read image
 
 Since the previous image corresponds to a 20cm by 20cm target, we initialize the 3D coordinates of each corner in the plane Z=0. Each
-\code
-  vpColVector X[4]; 
-  for (int i = 0; i < 4; i++) X[i].resize(3);
-  // Top left     Top right       Bottom right   Bottom left
-  X[0][0] = -0.1; X[1][0] =  0.1; X[2][0] = 0.1; X[3][0] = -0.1;
-  X[0][1] = -0.1; X[1][1] = -0.1; X[2][1] = 0.1; X[3][1] =  0.1;
-  X[0][2] =  0;   X[1][2] =  0;   X[2][2] = 0;   X[3][2] =  0;
-\endcode
+\snippet tutorial-image-simulator.cpp Set model
 
 Then we create an instance of the image \c I that will contain the rendered image from a given camera position.
-\code
-  vpImage<unsigned char> I(480, 640);
-\endcode
+\snippet tutorial-image-simulator.cpp Image construction
 
 Since the projection depends on the camera, we set its intrinsic parameters.
-\code
-  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
-\endcode
+\snippet tutorial-image-simulator.cpp Camera parameters
 
 We also set the render position of the camera as an homogeneous transformation between the camera frame and the target frame.
-\code
-  vpHomogeneousMatrix cMo(0, 0, 0.35, 0, vpMath::rad(30), vpMath::rad(15));
-\endcode
+\snippet tutorial-image-simulator.cpp Set cMo
 
 We create here an instance of the planar image projector, set the interpolation to bilinear and initialize the projector with the image of the target and the coordinates of its corners.
-\code
-  vpImageSimulator sim;
-  sim.setInterpolationType(vpImageSimulator::BILINEAR_INTERPOLATION);
-  sim.init(target, X);
-\endcode
+\snippet tutorial-image-simulator.cpp Create simulator
 
 Now to retrieve the rendered image we first clean the content of the image to render, set the camera position, and finally get the image using the camera parameters.
-\code
-  sim.setCleanPreviousImage(true);
-  sim.setCameraPosition(cMo);
-  sim.getImage(I, cam);
-\endcode
+\snippet tutorial-image-simulator.cpp Render image
 
 Then, if \c libjpeg is available, the rendered image is saved in the same directory then the executable.  
-\code
-#ifdef VISP_HAVE_JPEG
-  vpImageIo::write(I, "./rendered_image.jpg");
-#endif
-\endcode
+\snippet tutorial-image-simulator.cpp Write image
 
 Finally, as in \ref tutorial-getting-started we open a window to display the rendered image.
 
