@@ -1015,7 +1015,7 @@ vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
 */
 void
 vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-    const unsigned int idFace, const std::string &name)
+    const int idFace, const std::string &name)
 {
   vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 }
@@ -1031,7 +1031,7 @@ vpMbEdgeKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoi
   \param name : The optional name of the cylinder.
 */
 void
-vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace,
+vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace,
     const std::string &name)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);

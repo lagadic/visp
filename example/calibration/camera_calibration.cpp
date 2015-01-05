@@ -66,7 +66,9 @@
 class Settings
 {
 public:
-  Settings() {
+  Settings()
+    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse()
+  {
     boardSize = cv::Size(0, 0);
     calibrationPattern = UNDEFINED;
     squareSize = 0.025f;
@@ -132,8 +134,8 @@ public:
 private:
   std::string patternToUse;
 };
-
 #endif
+
 int main(int argc, const char ** argv)
 {
   try {

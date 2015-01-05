@@ -59,6 +59,8 @@ vpVideoReader::vpVideoReader()
 	: imSequence(NULL),
 #ifdef VISP_HAVE_FFMPEG
 	ffmpeg(NULL),
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+  capture(), frame(),
 #endif
 	formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
 	firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)

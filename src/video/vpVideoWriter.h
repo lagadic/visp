@@ -255,7 +255,7 @@ class VISP_EXPORT vpVideoWriter
     inline void setCodec(const AVCodecID codec_id) {this->codec = codec_id;}
 #endif
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	inline void setCodec(const int fourcc) {this->fourcc = fourcc;}
+    inline void setCodec(const int fourcc_codec) {this->fourcc = fourcc_codec;}
 #endif
 
     void setFileName(const char *filename);

@@ -264,10 +264,10 @@ public:
   /*!
    Set the name of the face.
 
-   \param name : name of the face.
+   \param face_name : name of the face.
    */
-  inline        void        setName(const std::string &name) {
-    this->name = name;
+  inline        void        setName(const std::string &face_name) {
+    this->name = face_name;
   }
 
   virtual        void     setNbPoint(const unsigned int nb)  ;

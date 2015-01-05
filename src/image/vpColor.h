@@ -205,6 +205,8 @@ class VISP_EXPORT vpColor : public vpRGBa
      vpColor::vpColorIdentifier cid=vpColor::id_unknown)
     : vpRGBa(r, g, b), id(cid)
   {};
+  /*! Default destructor. */
+  inline virtual ~vpColor() {};
 
   friend VISP_EXPORT bool operator==( const vpColor &c1, const vpColor &c2 );
   friend VISP_EXPORT bool operator!=( const vpColor &c1, const vpColor &c2 );

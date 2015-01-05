@@ -88,7 +88,7 @@ vpMatrix::LUDcmp(unsigned int *perm, int& d)
   unsigned int n = rowNum;
 
   unsigned int i,imax=0,j,k;
-  double big,dum,sum,temp;
+  double big,dum,sum_,temp;
   vpColVector vv(n);
 
   d=1;
@@ -100,40 +100,40 @@ vpMatrix::LUDcmp(unsigned int *perm, int& d)
     if (std::fabs(big) <= std::numeric_limits<double>::epsilon())
     {
       //vpERROR_TRACE("Singular vpMatrix in  LUDcmp") ;
-        throw(vpMatrixException(vpMatrixException::matrixError,
-          "Singular vpMatrix in  LUDcmp")) ;
+      throw(vpMatrixException(vpMatrixException::matrixError,
+                              "Singular vpMatrix in  LUDcmp")) ;
     }
     vv[i]=1.0/big;
   }
   for (j=0;j<n;j++) {
     for (i=0;i<j;i++) {
-      sum=rowPtrs[i][j];
-      for (k=0;k<i;k++) sum -= rowPtrs[i][k]*rowPtrs[k][j];
-      rowPtrs[i][j]=sum;
+      sum_=rowPtrs[i][j];
+      for (k=0;k<i;k++) sum_ -= rowPtrs[i][k]*rowPtrs[k][j];
+      rowPtrs[i][j]=sum_;
     }
     big=0.0;
     for (i=j;i<n;i++) {
-      sum=rowPtrs[i][j];
+      sum_=rowPtrs[i][j];
       for (k=0;k<j;k++)
-	sum -= rowPtrs[i][k]*rowPtrs[k][j];
-      rowPtrs[i][j]=sum;
-      if ( (dum=vv[i]*fabs(sum)) >= big) {
-	big=dum;
-	imax=i;
+        sum_ -= rowPtrs[i][k]*rowPtrs[k][j];
+      rowPtrs[i][j]=sum_;
+      if ( (dum=vv[i]*fabs(sum_)) >= big) {
+        big=dum;
+        imax=i;
       }
     }
     if (j != imax) {
       for (k=0;k<n;k++) {
-	dum=rowPtrs[imax][k];
-	rowPtrs[imax][k]=rowPtrs[j][k];
-	rowPtrs[j][k]=dum;
+        dum=rowPtrs[imax][k];
+        rowPtrs[imax][k]=rowPtrs[j][k];
+        rowPtrs[j][k]=dum;
       }
       d *= -1;
       vv[imax]=vv[j];
     }
     perm[j]=imax;
-    //if (rowPtrs[j][j] == 0.0) 
-    if (std::fabs(rowPtrs[j][j]) <= std::numeric_limits<double>::epsilon()) 
+    //if (rowPtrs[j][j] == 0.0)
+    if (std::fabs(rowPtrs[j][j]) <= std::numeric_limits<double>::epsilon())
       rowPtrs[j][j]=TINY;
     if (j != n) {
       dum=1.0/(rowPtrs[j][j]);
@@ -169,36 +169,36 @@ void vpMatrix::LUBksb(unsigned int *perm, vpColVector& b)
 
   unsigned int ii=0;
   unsigned int ip;
-  double sum;
+  double sum_;
   bool flag = false;
   unsigned int i;
 
   for (i=0;i<n;i++) {
     ip=perm[i];
-    sum=b[ip];
+    sum_=b[ip];
     b[ip]=b[i];
     if (flag) {
-      for (unsigned int j=ii;j<=i-1;j++) sum -= rowPtrs[i][j]*b[j];
+      for (unsigned int j=ii;j<=i-1;j++) sum_ -= rowPtrs[i][j]*b[j];
 	}
-    //else if (sum) {
-    else if (std::fabs(sum) > std::numeric_limits<double>::epsilon()) {
+    //else if (sum_) {
+    else if (std::fabs(sum_) > std::numeric_limits<double>::epsilon()) {
       ii=i;
       flag = true;
     }
-    b[i]=sum;
+    b[i]=sum_;
   }
   // for (int i=n-1;i>=0;i--) {
-  //   sum=b[i];
-  //   for (int j=i+1;j<n;j++) sum -= rowPtrs[i][j]*b[j];
-  //   b[i]=sum/rowPtrs[i][i];
+  //   sum_=b[i];
+  //   for (int j=i+1;j<n;j++) sum_ -= rowPtrs[i][j]*b[j];
+  //   b[i]=sum_/rowPtrs[i][i];
   // }
   i=n;
   do {
     i --;
 
-    sum=b[i];
-    for (unsigned int j=i+1;j<n;j++) sum -= rowPtrs[i][j]*b[j];
-    b[i]=sum/rowPtrs[i][i];
+    sum_=b[i];
+    for (unsigned int j=i+1;j<n;j++) sum_ -= rowPtrs[i][j]*b[j];
+    b[i]=sum_/rowPtrs[i][i];
   } while(i != 0);
 }
 #endif // doxygen should skip this

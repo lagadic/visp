@@ -409,9 +409,9 @@ protected:
           
           virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
           virtual void            initFaceFromLines(vpMbtPolygon &polygon);
-          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const unsigned int,
+          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const int,
               const std::string &name="");
-          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const unsigned int,
+          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const int,
               const std::string &name="");
 
           void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);

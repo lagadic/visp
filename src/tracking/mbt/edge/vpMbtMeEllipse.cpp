@@ -58,7 +58,7 @@
 */
 vpMbtMeEllipse::vpMbtMeEllipse()
   : iPc(), a(0.), b(0.), e(0.),
-    ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.), expecteddensity(0.)
+    ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.), thresholdWeight(0.), expecteddensity(0.)
 {
 }
 
@@ -67,7 +67,7 @@ vpMbtMeEllipse::vpMbtMeEllipse()
 */
 vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &meellipse)
   : vpMeTracker(meellipse), iPc(), a(0.), b(0.), e(0.),
-    ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.),expecteddensity(0.)
+    ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.), thresholdWeight(0.), expecteddensity(0.)
 {
   iPc = meellipse.iPc;
   a = meellipse.a;
@@ -299,9 +299,9 @@ vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint
   try{
     track(I) ;
   }
-  catch(vpException &e)
+  catch(vpException &exception)
   {
-    throw(e) ;
+    throw(exception) ;
   }
 }
 
@@ -316,9 +316,9 @@ vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
   try{
     vpMeTracker::track(I) ;
   }
-  catch(vpException &e)
+  catch(vpException &exception)
   {
-    throw(e) ;
+    throw(exception) ;
   }
 }
 

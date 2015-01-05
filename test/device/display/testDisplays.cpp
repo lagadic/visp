@@ -68,7 +68,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"hl:dc"
+#define GETOPTARGS	"hldc"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display);
@@ -236,8 +236,6 @@ void draw(vpImage<vpRGBa> &I)
   iP1.set_i(380);
   iP1.set_j(400);
   vpDisplay::displayRectangle (I, iP1, 45, w, h, vpColor::green, 3);
-
-
 }
 
 int
@@ -260,23 +258,23 @@ main(int argc, const char ** argv)
       unsigned nbDevices = 0;
       std::cout << "List of video-devices available: \n";
 #if defined VISP_HAVE_GTK
-      std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
+      std::cout << "  GTK\n";
       nbDevices ++;
 #endif
 #if defined VISP_HAVE_X11
-      std::cout << "  X11 (use \"-t X11\" option to use it)\n";
+      std::cout << "  X11\n";
       nbDevices ++;
 #endif
 #if defined VISP_HAVE_GDI
-      std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
+      std::cout << "  GDI\n";
       nbDevices ++;
 #endif
 #if defined VISP_HAVE_D3D9
-      std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
+      std::cout << "  D3D\n";
       nbDevices ++;
 #endif
 #if defined VISP_HAVE_OPENCV
-      std::cout << "  CV (use \"-t CV\" option to use it)\n";
+      std::cout << "  OpenCV\n";
       nbDevices ++;
 #endif   
       if (!nbDevices) {

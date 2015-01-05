@@ -616,8 +616,8 @@ private:
   std::vector<cv::Point3f> m_objectFilteredPoints;
   //! Elapsed time to compute the pose.
   double m_poseTime;
-  //! Matrix of descriptors (each row contains the descriptors values for each keypoints
-  //detected in the current image).
+  /*! Matrix of descriptors (each row contains the descriptors values for each keypoints
+      detected in the current image). */
   cv::Mat m_queryDescriptors;
   //! List of detected keypoints filtered after the matching.
   std::vector<cv::KeyPoint> m_queryFilteredKeyPoints;

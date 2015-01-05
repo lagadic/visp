@@ -74,7 +74,7 @@
 
   Turn the ring light off.
 */
-vpRingLight::vpRingLight()
+vpRingLight::vpRingLight() : parport()
 {
   off();
 }

@@ -222,9 +222,8 @@ vpRowVector &vpRowVector::normalize(vpRowVector &x) const
 */
 vpRowVector &vpRowVector::normalize()
 {
-
-  double sum = sumSquare() ;
-  *this /= sum ;
+  double sum_square = sumSquare() ;
+  *this /= sum_square ;
 
   return *this;
 }

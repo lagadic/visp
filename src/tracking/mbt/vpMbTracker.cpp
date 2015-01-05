@@ -97,6 +97,8 @@
   Structure to store info about segment in CAO model files.
  */
 struct SegmentInfo {
+  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {};
+
   std::vector<vpPoint> extremities;
   std::string name;
   bool useLod;
@@ -115,7 +117,7 @@ vpMbTracker::vpMbTracker()
   distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
-  minPolygonAreaThresholdGeneral(2500.0)
+  minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()
 {
     oJo.setIdentity();
     //Map used to parse additional information in CAO model files,
@@ -269,7 +271,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
           vpImage<vpRGBa> Iref ;
           vpImageIo::read(Iref, dispF) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-          d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+80, I.display->getWindowYPosition(),
+          d_help->init(Iref, I.display->getWindowXPosition()+(int)I.getWidth()+80, I.display->getWindowYPosition(),
                        "Where to initialize...")  ;
           vpDisplay::display(Iref) ;
           vpDisplay::flush(Iref);
@@ -449,7 +451,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 
       vpImageIo::read(Iref, displayFile) ;
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
-      d_help->init(Iref, I.display->getWindowXPosition()+I.getWidth()+80, I.display->getWindowYPosition(),
+      d_help->init(Iref, I.display->getWindowXPosition()+(int)I.getWidth()+80, I.display->getWindowYPosition(),
                    "Where to initialize...")  ;
       vpDisplay::display(Iref) ;
       vpDisplay::flush(Iref);
@@ -763,7 +765,7 @@ void vpMbTracker::savePose(const std::string &filename)
 }
 
 
-void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace, const std::string &polygonName,
+void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const int idFace, const std::string &polygonName,
     const bool useLod, const double minPolygonAreaThreshold, const double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
@@ -812,7 +814,7 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const unsigned
 }
 
 void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-    const unsigned int idFace, const std::string &polygonName, const bool useLod, const double minPolygonAreaThreshold)
+    const int idFace, const std::string &polygonName, const bool useLod, const double minPolygonAreaThreshold)
 {
     vpMbtPolygon polygon;
     polygon.setNbPoint(4);
@@ -892,7 +894,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
       faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace, const std::string &polygonName,
+void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idFace, const std::string &polygonName,
     const bool useLod, const double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the cylinder
@@ -1088,7 +1090,7 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
   in.closeFile();
 
   vpHomogeneousMatrix transform;
-  unsigned int indexFace = 0;
+  int indexFace = 0;
   extractGroup(sceneGraphVRML2, transform, indexFace);
   
   sceneGraphVRML2->unref();
@@ -1213,7 +1215,7 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string& end
 */
 void
 vpMbTracker::loadCAOModel(const std::string& modelFile,
-		std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
+    std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
 		const bool verbose, const bool parent) {
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
@@ -1763,10 +1765,10 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
   
   \param sceneGraphVRML2 : Current node (either Transform, or Group node).
   \param transform : Transformation matrix for this group.
-  \param indexFace : Index of the face.
+  \param idFace : Index of the face.
 */
 void
-vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace)
+vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace)
 { 
   vpHomogeneousMatrix transformCur;
   SoVRMLTransform *sceneGraphVRML2Trasnform = dynamic_cast<SoVRMLTransform *>(sceneGraphVRML2);
@@ -1812,11 +1814,11 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
     child = sceneGraphVRML2->getChild(i);
     
     if (child->getTypeId() == SoVRMLGroup::getClassTypeId()){
-      extractGroup((SoVRMLGroup*)child, transform_recursive, indexFace);
+      extractGroup((SoVRMLGroup*)child, transform_recursive, idFace);
     }
     
     if (child->getTypeId() == SoVRMLTransform::getClassTypeId()){
-      extractGroup((SoVRMLTransform*)child, transform_recursive, indexFace);
+      extractGroup((SoVRMLTransform*)child, transform_recursive, idFace);
     }
     
     if (child->getTypeId() == SoVRMLShape::getClassTypeId()){
@@ -1828,16 +1830,16 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
           SoVRMLIndexedFaceSet * face_set;
           face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
           if(!strncmp(face_set->getName().getString(),"cyl",3)){
-            extractCylinders(face_set, transform, indexFace);
+            extractCylinders(face_set, transform, idFace);
           }else{
-            extractFaces(face_set, transform, indexFace);
+            extractFaces(face_set, transform, idFace);
           }
         }
         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
         {
           SoVRMLIndexedLineSet * line_set;
           line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
-          extractLines(line_set, indexFace);
+          extractLines(line_set, idFace);
         }
       }
     }
@@ -1853,7 +1855,7 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
   \param idFace : Face id.
 */
 void
-vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace)
+vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -1908,7 +1910,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
   \param idFace : Id of the face.
 */
 void
-vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace)
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace)
 {
   std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
   SoVRMLCoordinate* coords = (SoVRMLCoordinate *)face_set->coord.getValue();
@@ -1973,7 +1975,7 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
   \param idFace : Id of the face.
 */
 void
-vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace)
+vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);

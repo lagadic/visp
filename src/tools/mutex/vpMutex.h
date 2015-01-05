@@ -62,7 +62,7 @@
 */
 class VISP_EXPORT vpMutex {
 public:
-	vpMutex() {
+  vpMutex() : m_mutex() {
 		pthread_mutex_init( &m_mutex, NULL );
 	}
 	void lock() {

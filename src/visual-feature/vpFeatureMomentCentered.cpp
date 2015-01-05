@@ -55,16 +55,16 @@
 
 /*!
   Default constructor
-  \param moments : Database of moment primitives.
+  \param moments_ : Database of moment primitives.
   \param A_ : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param B_ : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param C_ : Third plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
   \param featureMoments : Database of features.
 */
-vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments,
+vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase& moments_,
                                                  double A_, double B_, double C_,
                                                  vpFeatureMomentDatabase* featureMoments)
-  : vpFeatureMoment(moments,A_,B_,C_,featureMoments), order(0)
+  : vpFeatureMoment(moments_, A_, B_, C_, featureMoments), order(0)
 {
 }
 
@@ -109,11 +109,11 @@ vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int& p, const unsigned in
 
   for (unsigned int k = 0; k <=p; ++k)
   {
-      pmk = p-(int)k;
+      pmk = (int)p-(int)k;
       pcombk = static_cast<double>(vpMath::comb(p,k));
       for (unsigned int l = 0; l <= q; ++l)
       {
-          qml = q - (int)l;
+          qml = (int)q - (int)l;
           qcombl = static_cast<double>(vpMath::comb(q,l));
 		  minus1pow = pow((double)-1, (double)(pmk + qml));
           pcombkqcombl =  pcombk * qcombl;

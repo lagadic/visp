@@ -55,7 +55,7 @@ vpMbKltTracker::vpMbKltTracker()
 #endif
     c0Mo(), compute_interaction(true),
     firstInitialisation(true), maskBorder(5), lambda(0.8), maxIter(200), threshold_outlier(0.5),
-    percentGood(0.6), ctTc0(), tracker(), firstTrack(false)
+    percentGood(0.6), ctTc0(), tracker(), firstTrack(false), kltPolygons(), cylinders_disp(), circles_disp()
 {  
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);
@@ -398,7 +398,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       vpMbtDistanceKltPoints *kltpoly;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       // Retrieve the number of features that are tracked
-      int nbp = 0;
+      unsigned int nbp = 0;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it) {
         nbp += (*it)->getInitialNumberPoint();
       }
@@ -451,10 +451,10 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
             //Set value to the KLT tracker
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
             cv::Point2f p((float)cdp[0], (float)cdp[1]);
-            initial_guess.at((kltpoly->getCurrentPointsInd())[iter->first]) = p;
+            initial_guess.at((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]) = p;
 #else
-            initial_guess[(kltpoly->getCurrentPointsInd())[iter->first]].x = (float)cdp[0];
-            initial_guess[(kltpoly->getCurrentPointsInd())[iter->first]].y = (float)cdp[1];
+            initial_guess[(kltpoly->getCurrentPointsInd())[(size_t)iter->first]].x = (float)cdp[0];
+            initial_guess[(kltpoly->getCurrentPointsInd())[(size_t)iter->first]].y = (float)cdp[1];
 #endif
           }
         }
@@ -1032,7 +1032,7 @@ vpMbKltTracker::testTracking()
   \param name : The optional name of the cylinder.
 */
 void
-vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int /*idFace*/,
+vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int /*idFace*/,
     const std::string &name)
 {
   addCylinder(p1, p2, radius, name);
@@ -1082,7 +1082,7 @@ vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r
 */
 void
 vpMbKltTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-    const unsigned int /*idFace*/, const std::string &name)
+    const int /*idFace*/, const std::string &name)
 {
   addCircle(p1, p2, p3, radius, name);
 }

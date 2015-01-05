@@ -48,7 +48,7 @@
 /*!
    Default constructor.
  */
-vpDetectorQRCode::vpDetectorQRCode()
+vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
 {
   // configure the reader
   m_scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
@@ -67,14 +67,14 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   m_nb_objects = 0;
 
   m_scanner.set_config(zbar::ZBAR_NONE, zbar::ZBAR_CFG_ENABLE, 1);
-  int width = I.getWidth();
-  int height = I.getHeight();
+  unsigned int width = I.getWidth();
+  unsigned int height = I.getHeight();
 
   // wrap image data
-  zbar::Image img(width, height, "Y800", I.bitmap, width * height);
+  zbar::Image img(width, height, "Y800", I.bitmap, (unsigned long)(width * height));
 
   // scan the image for barcodes
-  m_nb_objects =  m_scanner.scan(img);
+  m_nb_objects =  (size_t) m_scanner.scan(img);
 
   // extract results
   for(zbar::Image::SymbolIterator symbol = img.symbol_begin();
@@ -84,7 +84,7 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
     detected = true;
 
     std::vector<vpImagePoint> polygon;
-    for(int i=0; i<symbol->get_location_size(); i++){
+    for(unsigned int i=0; i < (unsigned int)symbol->get_location_size(); i++){
       polygon.push_back(vpImagePoint(symbol->get_location_y(i), symbol->get_location_x(i)));
     }
     m_polygon.push_back(polygon);

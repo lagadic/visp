@@ -97,17 +97,20 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int x,
                                  int y,
                                  const char *title)
+  :
+    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+    background(NULL), col(NULL), cvcolor(), font(NULL),
+    #else
+    background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    #endif
+    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+    x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
+    x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+    x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
+    x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
+    x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  col = NULL;
-  background = NULL;
-  font = NULL;
-#else
-  col = NULL;
-  font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8f;
-#endif
-
   init(I, x, y, title) ;
 }
 
@@ -124,16 +127,20 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
                                  int x,
                                  int y,
                                  const char *title)
+  :
+    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+    background(NULL), col(NULL), cvcolor(), font(NULL),
+    #else
+    background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    #endif
+    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+    x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
+    x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+    x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
+    x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
+    x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  col = NULL;
-  background = NULL;
-  font = NULL;
-#else
-  col = NULL;
-  font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8f;
-#endif
   init(I, x, y, title) ;
 }
 
@@ -160,16 +167,20 @@ int main()
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
+  :
+    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+    background(NULL), col(NULL), cvcolor(), font(NULL),
+    #else
+    background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    #endif
+    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+    x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
+    x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+    x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
+    x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
+    x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  col = NULL;
-  background = NULL;
-  font = NULL;
-#else
-  col = NULL;
-  font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8f;
-#endif
   windowXPosition = x;
   windowYPosition = y;
 
@@ -181,7 +192,6 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
       s << m_nbWindows++;
       title_ = std::string("Window ") + s.str();
   }
-
 
   bool isInList;
   do{
@@ -199,16 +209,6 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
   while(isInList);
 
   m_listTitles.push_back(title_);
-
-  fontHeight = 10;
-  ncol = nrow = 0;
-  x_move = y_move = 0; move = false;
-  x_lbuttondown = y_lbuttondown = 0; lbuttondown = false;
-  x_mbuttondown = y_mbuttondown = 0; mbuttondown = false;
-  x_rbuttondown = y_rbuttondown = 0; rbuttondown = false;
-  x_lbuttonup = y_lbuttonup = 0; lbuttonup = false;
-  x_mbuttonup = y_mbuttonup = 0; mbuttonup = false;
-  x_rbuttonup = y_rbuttonup = 0; rbuttonup = false;
 }
 
 /*!
@@ -231,25 +231,20 @@ int main()
   \endcode
 */
 vpDisplayOpenCV::vpDisplayOpenCV()
+  :
+    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+    background(NULL), col(NULL), cvcolor(), font(NULL),
+    #else
+    background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+    #endif
+    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+    x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
+    x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+    x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
+    x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
+    x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  col = NULL;
-  background = NULL;
-  font = NULL;
-#else
-  col = NULL;
-  font = cv::FONT_HERSHEY_PLAIN;
-  fontScale = 0.8f;
-#endif
-  fontHeight = 10;
-  ncol = nrow = 0;
-  x_move = y_move = 0; move = false;
-  x_lbuttondown = y_lbuttondown = 0; lbuttondown = false;
-  x_mbuttondown = y_mbuttondown = 0; mbuttondown = false;
-  x_rbuttondown = y_rbuttondown = 0; rbuttondown = false;
-  x_lbuttonup = y_lbuttonup = 0; lbuttonup = false;
-  x_mbuttonup = y_mbuttonup = 0; mbuttonup = false;
-  x_rbuttonup = y_rbuttonup = 0; rbuttonup = false;
 }
 
 /*!
@@ -841,7 +836,7 @@ void vpDisplayOpenCV::closeDisplay()
 
     for(size_t i = 0 ; i < m_listTitles.size() ; i++){
         if(title_ == m_listTitles[i]){
-            m_listTitles.erase(m_listTitles.begin()+i);
+            m_listTitles.erase(m_listTitles.begin()+(long int)i);
             break;
         }
     }

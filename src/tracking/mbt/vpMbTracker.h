@@ -451,21 +451,21 @@ public:
   virtual void track(const vpImage<unsigned char>& I)=0;
 
 protected:
-  void addPolygon(const std::vector<vpPoint>& corners, const unsigned int idFace=-1, const std::string &polygonName="",
+  void addPolygon(const std::vector<vpPoint>& corners, const int idFace=-1, const std::string &polygonName="",
       const bool useLod=false, const double minPolygonAreaThreshold=2500.0, const double minLineLengthThreshold=50.0);
-  void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const unsigned int idFace=-1,
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace=-1,
       const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=2500.0);
-  void addPolygon(const vpPoint& p1, const vpPoint &p2, const unsigned int idFace=-1, const std::string &polygonName="",
+  void addPolygon(const vpPoint& p1, const vpPoint &p2, const int idFace=-1, const std::string &polygonName="",
       const bool useLod=false, const double minLineLengthThreshold=50);
 
   void computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN
-  virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, unsigned int &indexFace);
-  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace);
-  virtual void extractLines(SoVRMLIndexedLineSet* line_set, unsigned int &idFace);
-  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, unsigned int &idFace);
+  virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
+  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace);
+  virtual void extractLines(SoVRMLIndexedLineSet* line_set, int &idFace);
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace);
 #endif
   
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
@@ -482,7 +482,7 @@ protected:
     \param name : Name of the circle.
   */
   virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-      const unsigned int idFace=0, const std::string &name="")=0;
+      const int idFace=0, const std::string &name="")=0;
   /*!
     Add a cylinder to track from two points on the axis (defining the length of
     the cylinder) and its radius.
@@ -493,7 +493,7 @@ protected:
     \param idFace : Id of the face associated to the cylinder.
     \param name : Name of the cylinder.
   */
-  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0,
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace=0,
       const std::string &name="")=0;
 
   /*!
@@ -511,8 +511,7 @@ protected:
 
   virtual void loadVRMLModel(const std::string& modelFile);
   virtual void loadCAOModel(const std::string& modelFile, std::vector<std::string>& vectorOfModelFilename, int& startIdFace,
-		  const bool verbose=false, const bool parent=true);
-
+                            const bool verbose=false, const bool parent=true);
 
   void removeComment(std::ifstream& fileId);
 

@@ -184,29 +184,29 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
                 vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
                 vpImage_type &image_type, bool &save, std::string &opath)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
     case 'd': display = false; break;
-    case 'f': fps = (unsigned) atoi(optarg); break;
-    case 'i': input = (unsigned) atoi(optarg); break;
-    case 'n': niter = atol(optarg); break;
+    case 'f': fps = (unsigned) atoi(optarg_); break;
+    case 'i': input = (unsigned) atoi(optarg_); break;
+    case 'n': niter = atol(optarg_); break;
     case 'o':
       save = true;
-      opath = optarg; break;
-    case 'p': pixelformat = (vpV4l2Grabber::vpV4l2PixelFormatType) atoi(optarg); break;
-    case 's': scale = (unsigned) atoi(optarg); break;
-    case 't': image_type = (vpImage_type) atoi(optarg); break;
-    case 'v': sprintf(device, "%s", optarg); break;
+      opath = optarg_; break;
+    case 'p': pixelformat = (vpV4l2Grabber::vpV4l2PixelFormatType) atoi(optarg_); break;
+    case 's': scale = (unsigned) atoi(optarg_); break;
+    case 't': image_type = (vpImage_type) atoi(optarg_); break;
+    case 'v': sprintf(device, "%s", optarg_); break;
     case 'x': verbose = true; break;
     case 'h': usage(argv[0], NULL, fps, input, scale, niter, 
                     device, pixelformat, image_type, opath);
       return false; break;
 
     default:
-      usage(argv[0], optarg, fps, input, scale, niter, 
+      usage(argv[0], optarg_, fps, input, scale, niter,
             device, pixelformat, image_type, opath); return false; break;
     }
   }
@@ -216,7 +216,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input,
     usage(argv[0], NULL, fps, input, scale, niter, 
           device, pixelformat, image_type, opath);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

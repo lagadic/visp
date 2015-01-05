@@ -865,12 +865,12 @@ void vpImage<Type>::insert(const vpImage<Type> &src,
   int dest_jbegin = 0;
   int src_ibegin = 0;
   int src_jbegin = 0;
-  int dest_w = this->getWidth();
-  int dest_h = this->getHeight();
-  int src_w = src.getWidth();
-  int src_h = src.getHeight();
-  int wsize = src.getWidth();
-  int hsize = src.getHeight();
+  int dest_w = (int)this->getWidth();
+  int dest_h = (int)this->getHeight();
+  int src_w = (int)src.getWidth();
+  int src_h = (int)src.getHeight();
+  int wsize = (int)src.getWidth();
+  int hsize = (int)src.getHeight();
 
   if (itl >= dest_h || jtl >= dest_w)
     return;

@@ -49,7 +49,8 @@
 */
 vpMbtDistanceKltPoints::vpMbtDistanceKltPoints()
   : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
-    nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.), cam()
+    nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.),
+    cam(), polygon(NULL)
 {
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();

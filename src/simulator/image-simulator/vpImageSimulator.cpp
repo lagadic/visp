@@ -60,12 +60,12 @@
   By default the class uses colored images.
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
-  : cMt(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
+  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
     distance(1.), visible_result(1.), visible(false), X0_2_optim(NULL),
     euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(), vbase_v(),
-    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
+    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(),
     colorI(col), Ig(), Ic(), rect(), cleanPrevImage(false),
-    setBackgroundTexture(false), bgColor(vpColor::white), focal()
+    setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   for(int i=0;i<4;i++)
     X[i].resize(3);
@@ -100,12 +100,12 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   Copy constructor
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
-  : cMt(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
+  : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(),
     distance(1.), visible_result(1.), visible(false), X0_2_optim(NULL),
     euclideanNorm_u(0.), euclideanNorm_v(0.), vbase_u(), vbase_v(),
-    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL),
+    vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(),
     colorI(GRAY_SCALED), Ig(), Ic(), rect(), cleanPrevImage(false),
-    setBackgroundTexture(false), bgColor(vpColor::white), focal()
+    setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   pt.resize(4);
   for(unsigned int i=0;i<4;i++)

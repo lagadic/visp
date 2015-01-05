@@ -127,17 +127,13 @@ protected:
   
 */
 vpExampleDataParser::vpExampleDataParser()
+ : m_range(0.), m_step(0), m_size_filter(0), m_name("")
 {
   nodeMap["config"] = config;
   nodeMap["range"] = range;
   nodeMap["step"] = step;
   nodeMap["size_filter"] = size_filter;
   nodeMap["name"] = name;
-  
-  m_range = 0.0;
-  m_step = 0;
-  m_size_filter = 0;
-  m_name = "";
 }
 
 /*!

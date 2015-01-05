@@ -151,7 +151,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
 
   // Calculate median
-  med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  med = select(sorted_residues, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
    //residualMedian = med ;
 
   // Normalize residues
@@ -163,7 +163,7 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method,
   }
 
   // Calculate MAD
-  normmedian = select(sorted_normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  normmedian = select(sorted_normres, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
   //normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
   sigma = 1.4826*normmedian; // median Absolute Deviation
@@ -312,7 +312,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
   // calculation.
   
   unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
-  med = select(sorted_residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  med = select(sorted_residues, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
 
   unsigned int i;
   // Normalize residues
@@ -329,7 +329,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres,
 
   //normmedian = Median(normres, weights);
   //normmedian = Median(normres);
-  normmedian = select(sorted_normres, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  normmedian = select(sorted_normres, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
 
   return normmedian;
 }
@@ -360,7 +360,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
 
   // Calculate Median
   unsigned int ind_med = (unsigned int)(ceil(n_data/2.0))-1;
-  med = select(residues, 0, n_data-1, ind_med/*(int)n_data/2*/);
+  med = select(residues, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
 
   // Normalize residues
   for(unsigned int i=0; i<n_data; i++)
@@ -371,7 +371,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   // For Others use MAD calculated on first iteration
   if(it==0)
   {
-    normmedian = select(norm_res, 0, n_data-1, ind_med/*(int)n_data/2*/);
+    normmedian = select(norm_res, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826*normmedian; // Median Absolute Deviation
   }
@@ -726,16 +726,16 @@ vpRobust::partition(vpColVector &a, int l, int r)
 {
   int i = l-1;
   int j = r;
-  double v = a[r];
+  double v = a[(unsigned int)r];
 
   for (;;)
   {
-    while (a[++i] < v) ;
-    while (v < a[--j]) if (j == l) break;
+    while (a[(unsigned int)++i] < v) ;
+    while (v < a[(unsigned int)--j]) if (j == l) break;
     if (i >= j) break;
-    exch(a[i], a[j]);
+    exch(a[(unsigned int)i], a[(unsigned int)j]);
   }
-  exch(a[i], a[r]);
+  exch(a[(unsigned int)i], a[(unsigned int)r]);
   return i;
 }
 
@@ -755,7 +755,7 @@ vpRobust::select(vpColVector &a, int l, int r, int k)
     if (i >= k) r = i-1;
     if (i <= k) l = i+1;
   }
-  return a[k];
+  return a[(unsigned int)k];
 }
 
 

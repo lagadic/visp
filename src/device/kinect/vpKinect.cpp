@@ -56,7 +56,10 @@
 */
 vpKinect::vpKinect(freenect_context *ctx, int index)
   : Freenect::FreenectDevice(ctx, index),
+    m_rgb_mutex(), m_depth_mutex(), RGBcam(), IRcam(),
+    rgbMir(), irMrgb(), DMres(DMAP_LOW_RES),
     hd(240), wd(320),
+    dmap(), IRGB(),
     m_new_rgb_frame(false),
     m_new_depth_map(false),
     m_new_depth_image(false),
@@ -79,7 +82,7 @@ vpKinect::~vpKinect()
 
 void vpKinect::start(vpKinect::vpDMResolution res)
 {
-    DMres = res;
+  DMres = res;
 	height = 480;
 	width = 640;
   //!Calibration parameters are the parameters found for our Kinect device. Note that they can differ from one device to another.
@@ -240,12 +243,12 @@ bool vpKinect::getDepthMap(vpImage<float>& map,vpImage<unsigned char>& Imap)
 /*!
   Get RGB image
 */
-bool vpKinect::getRGB(vpImage<vpRGBa>& IRGB)
+bool vpKinect::getRGB(vpImage<vpRGBa>& I_RGB)
 {
   vpMutex::vpScopedLock lock(m_rgb_mutex);
   if (!m_new_rgb_frame)
     return false;
-  IRGB = this->IRGB;
+  I_RGB = this->IRGB;
   m_new_rgb_frame = false;
   return true;
 }

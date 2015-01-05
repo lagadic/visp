@@ -80,9 +80,11 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          int x,
                          int y,
                          const char *title )
+  : display(NULL), window(), Ximage(NULL), lut(), context(),
+    screen(0), planes(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
-  size = 0;
-  x_color = NULL;
   init ( I, x, y, title ) ;
 }
 
@@ -100,9 +102,11 @@ vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int x,
                          int y,
                          const char *title )
+  : display(NULL), window(), Ximage(NULL), lut(), context(),
+    screen(0), planes(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
-  size = 0;
-  x_color = NULL;
   init ( I, x, y, title ) ;
 }
 
@@ -129,20 +133,18 @@ int main()
   \endcode
 */
 vpDisplayX::vpDisplayX ( int x, int y, const char *title )
+  : display(NULL), window(), Ximage(NULL), lut(), context(),
+    screen(0), planes(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
   windowXPosition = x ;
   windowYPosition = y ;
-
-  this->x_color = NULL;
 
   if (title != NULL)
     title_ = std::string(title);
   else
     title_ = std::string(" ");
-
-  ximage_data_init = false;
-
-  size = 0;
 }
 
 /*!
@@ -165,10 +167,11 @@ int main()
   \endcode
 */
 vpDisplayX::vpDisplayX()
+  : display(NULL), window(), Ximage(NULL), lut(), context(),
+    screen(0), planes(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
-  x_color = NULL;
-  ximage_data_init = false;
-  size = 0;
 }
 
 /*!
@@ -1714,8 +1717,9 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
       {
         unsigned short *dst_16 = ( unsigned short* ) Ximage->data;
         unsigned char  *dst_8  = NULL;
+        unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
         for ( unsigned int i = 0; i < height ; i++ ) {
-          dst_8 =  (unsigned char*) Ximage->data + i * Ximage->bytes_per_line;
+          dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
           dst_16 = (unsigned short *) dst_8;
           for ( unsigned int j=0 ; j < width; j++ )
           {
@@ -1787,9 +1791,10 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
       unsigned char  *dst_8  = NULL;
       vpRGBa* bitmap = I.bitmap;
       unsigned int r, g, b;
+      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
 
       for ( unsigned int i = 0; i < height ; i++ ) {
-        dst_8 =  (unsigned char*) Ximage->data + i * Ximage->bytes_per_line;
+        dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
         dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=0 ; j < width; j++ )
         {
@@ -1976,8 +1981,9 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
     {
       unsigned short *dst_16 = NULL;
       unsigned char  *dst_8  = NULL;
+      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
-        dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
+        dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
         dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {
@@ -2092,9 +2098,9 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
       unsigned short *dst_16 = NULL;
       unsigned char  *dst_8  = NULL;
       unsigned int r, g, b;
-
+      unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
-        dst_8 =  (unsigned char  *) Ximage->data + i * Ximage->bytes_per_line;
+        dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
         dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {

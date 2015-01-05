@@ -55,7 +55,7 @@ int main(int argc, const char** argv)
     bool status = detector->detect(I);
     std::ostringstream legend;
     legend << detector->getNbObjects() << " bar code detected";
-    vpDisplay::displayText(I, I.getHeight()-30, 10, legend.str(), vpColor::red);
+    vpDisplay::displayText(I, (int)I.getHeight()-30, 10, legend.str(), vpColor::red);
 
     if (status) {
       for(size_t i=0; i < detector->getNbObjects(); i++) {
@@ -71,7 +71,7 @@ int main(int argc, const char** argv)
         }
       }
 
-      vpDisplay::displayText(I, I.getHeight()-15, 10, "A click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight()-15, 10, "A click to quit...", vpColor::red);
       vpDisplay::flush(I);
       vpDisplay::getClick(I);
     }

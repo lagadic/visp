@@ -196,7 +196,7 @@ vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
 #else
   cv::Mat img_cvmat, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
-  cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size(gaussianFilterSize, gaussianFilterSize), 0, 0);
+  cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
   cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny, (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
 #endif

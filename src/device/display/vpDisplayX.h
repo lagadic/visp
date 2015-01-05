@@ -152,7 +152,6 @@ int main()
 class VISP_EXPORT vpDisplayX: public vpDisplay
 {
 private:
-  int num_Xdisplay ;
   Display 	*display ;
   Window   	window ;
   XImage   	*Ximage ;

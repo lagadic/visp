@@ -152,13 +152,13 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
    */
   vpTranslationVector getTranslationVector()
   {
-    vpTranslationVector t;
-    this->extract(t);
-    return t;
+    vpTranslationVector tr;
+    this->extract(tr);
+    return tr;
   }
-  /*!
-    Return the rotation matrix from the homogeneous transformation matrix.
-   */
+//  /*!
+//    Return the rotation matrix from the homogeneous transformation matrix.
+//   */
 //  vpThetaUVector getThetaUVector()
 //  vpRotationMatrix getRotationMatrix()
 //  {

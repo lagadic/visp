@@ -259,7 +259,7 @@ VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMoment& f
     A const_cast is forced here since interaction() defined in vpBasicFeature() is not const
     But introducing const in vpBasicFeature() can break a lot of client code
     */
-    vpMatrix Lcomplete(featM.getDimension(), 6); // 6 corresponds to 6velocities in standard interaction matrix
+    vpMatrix Lcomplete((unsigned int)featM.getDimension(), 6); // 6 corresponds to 6velocities in standard interaction matrix
     Lcomplete = const_cast<vpFeatureMoment&>(featM).interaction(vpBasicFeature::FEATURE_ALL);
     Lcomplete.matlabPrint(os);
     return os;

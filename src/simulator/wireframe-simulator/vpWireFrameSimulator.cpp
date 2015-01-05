@@ -158,8 +158,9 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
 #if defined(VISP_HAVE_COIN)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef struct
+typedef struct indexFaceSet
 {
+  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() {};
   int nbPt;
   std::vector<vpPoint> pt;
   int nbIndex;

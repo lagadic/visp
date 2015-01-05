@@ -131,11 +131,11 @@ vpTranslationVector::set(const double tx,
 vpTranslationVector
 vpTranslationVector::operator+(const vpTranslationVector &tv) const
 {
-    vpTranslationVector sum ;
+  vpTranslationVector s;
 
-    for (unsigned int i=0;i<3;i++)  sum[i] = (*this)[i]+tv[i] ;
+  for (unsigned int i=0;i<3;i++)  s[i] = (*this)[i]+tv[i] ;
 
-    return sum;
+  return s;
 }
 
 /*!

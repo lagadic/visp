@@ -402,11 +402,11 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 vpColVector &vpColVector::normalize()
 {
 
-  double sum = sumSquare() ;
+  double sum_square = sumSquare() ;
 
   //if (sum != 0.0)
-  if (std::fabs(sum) > std::numeric_limits<double>::epsilon())
-    *this /= sqrt(sum) ;
+  if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon())
+    *this /= sqrt(sum_square) ;
 
   // If sum = 0, we have a nul vector. So we return just.
   return *this;

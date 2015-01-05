@@ -823,7 +823,7 @@ vpMatrix vpMatrix::operator-() const //negate
 double
 vpMatrix::sumSquare() const
 {
-  double sum=0.0;
+  double sum_square=0.0;
   double x ;
 
   // 	double t0,t1;
@@ -834,43 +834,40 @@ vpMatrix::sumSquare() const
   // 	while (d < n )
   // 	{
   // 	  x = *d++ ;
-  // 	  sum += x*x ;
+  // 	  sum_square += x*x ;
   // 	}
   // 	t1=vpTime::measureTimeMicros();
   // 	std::cout<< t1-t0<<" "<< sum << " ";
   // 	
 
 
-  // 	sum= 0.0;
+  // 	sum_square= 0.0;
   // 	t0=vpTime::measureTimeMicros();
   for (unsigned int i=0;i<rowNum;i++)
     for(unsigned int j=0;j<colNum;j++)
     {
       x=rowPtrs[i][j];
-      sum+=x*x;
+      sum_square += x*x;
     }
     // 	t1=vpTime::measureTimeMicros();
     // 	std::cout<< t1-t0<<" "<< sum << std::endl;
 
-
-
-
-    return sum;
+    return sum_square;
 }
 
 double
 vpMatrix::sum() const
 {
-  double sum=0.0;
+  double s=0.0;
   for (unsigned int i=0;i<rowNum;i++)
   {
     for(unsigned int j=0;j<colNum;j++)
     {
-      sum += rowPtrs[i][j];
+      s += rowPtrs[i][j];
     }
   }
 
-  return sum;
+  return s;
 }
 
 
@@ -2333,7 +2330,7 @@ vpMatrix::column(const unsigned int j)
   \warning All the indexes start from 0 in this function.
   \param j : Index of the column to extract. If col=0, the first column is extracted.
   \param i_begin : Index of the row that gives the location of the first element of the column vector to extract.
-  \param size : Size of the column vector to extract.
+  \param column_size : Size of the column vector to extract.
   \return The extracted column vector.
 
   The following example shows how to use this function:
@@ -2369,12 +2366,12 @@ column vector:
   \endcode
  */
 vpColVector
-vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const
+vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, const unsigned int column_size) const
 {
-  if (i_begin + size > getRows() || j >= getCols())
+  if (i_begin + column_size > getRows() || j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
-  vpColVector c(size);
-  for (unsigned int i=0 ; i < size ; i++)
+  vpColVector c(column_size);
+  for (unsigned int i=0 ; i < column_size ; i++)
     c[i] = (*this)[i_begin+i][j];
   return c;
 }
@@ -2423,9 +2420,9 @@ vpMatrix::getCol(const unsigned int j) const
 {
   if (j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the matrix"));
-  unsigned int size = getRows();
-  vpColVector c(size);
-  for (unsigned int i=0 ; i < size ; i++)
+  unsigned int nb_rows = getRows();
+  vpColVector c(nb_rows);
+  for (unsigned int i=0 ; i < nb_rows ; i++)
     c[i] = (*this)[i][j];
   return c;
 }
@@ -2470,9 +2467,9 @@ vpMatrix::getRow(const unsigned int i) const
 {
   if (i >= getRows())
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
-  unsigned int size = getCols();
-  vpRowVector r( size );
-  for (unsigned int j=0 ; j < size ; j++)
+  unsigned int nb_cols = getCols();
+  vpRowVector r( nb_cols );
+  for (unsigned int j=0 ; j < nb_cols ; j++)
     r[j] = (*this)[i][j];
   return r;
 }
@@ -2482,7 +2479,7 @@ vpMatrix::getRow(const unsigned int i) const
   \warning All the indexes start from 0 in this function.
   \param i : Index of the row to extract. If i=0, the first row is extracted.
   \param j_begin : Index of the column that gives the location of the first element of the row vector to extract.
-  \param size : Size of the row vector to extract.
+  \param row_size : Size of the row vector to extract.
   \return The extracted row vector.
 
   The following example shows how to use this function:
@@ -2515,12 +2512,12 @@ Row vector:
   \endcode
  */
 vpRowVector
-vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const
+vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigned int row_size) const
 {
-  if (j_begin + size > getCols() || i >= getRows())
+  if (j_begin + row_size > getCols() || i >= getRows())
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
-  vpRowVector r(size);
-  for (unsigned int j=0 ; j < size ; j++)
+  vpRowVector r(row_size);
+  for (unsigned int j=0 ; j < row_size ; j++)
     r[j] = (*this)[i][j_begin+i];
   return r;
 }
@@ -4104,16 +4101,16 @@ vpMatrix::expm()
   else
   {
 #ifdef VISP_HAVE_GSL
-    size_t size = rowNum * colNum;
-    double *b = new double [size];
-    for (size_t i=0; i< size; i++)
+    size_t size_ = rowNum * colNum;
+    double *b = new double [size_];
+    for (size_t i=0; i< size_; i++)
       b[i] = 0.;
     gsl_matrix_view m  = gsl_matrix_view_array(this->data, rowNum, colNum);
     gsl_matrix_view em = gsl_matrix_view_array(b, rowNum, colNum);
     gsl_linalg_exponential_ss(&m.matrix, &em.matrix, 0);
     //gsl_matrix_fprintf(stdout, &em.matrix, "%g");
     vpMatrix expA(rowNum, colNum);
-    memcpy(expA.data, b, size * sizeof(double));
+    memcpy(expA.data, b, size_ * sizeof(double));
 
     delete [] b;
     return expA;

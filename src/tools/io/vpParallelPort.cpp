@@ -74,7 +74,7 @@ static unsigned char vpParallelPortData;
   write access.
 
 */
-vpParallelPort::vpParallelPort()
+vpParallelPort::vpParallelPort() : fd(0), device()
 {
   sprintf(device, "/dev/parport0");
 

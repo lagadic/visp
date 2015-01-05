@@ -439,9 +439,9 @@ protected:
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char>& I);
   virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-      const unsigned int idFace=0, const std::string &name="");
-  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace=0,
-      const std::string &name="");
+                          const int idFace=0, const std::string &name="");
+  virtual void initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace=0,
+                            const std::string &name="");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;

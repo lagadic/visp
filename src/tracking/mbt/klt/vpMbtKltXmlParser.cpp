@@ -55,9 +55,9 @@
   
 */
 vpMbtKltXmlParser::vpMbtKltXmlParser()
+  : maskBorder(0), maxFeatures(0), winSize(0), qualityValue(0.), minDist(0.),
+    harrisParam(0.), blockSize(0), pyramidLevels(0)
 {
-  maskBorder = maxFeatures = winSize = blockSize = pyramidLevels = 0;
-  qualityValue = minDist = harrisParam = 0.;
   init();
 }
 

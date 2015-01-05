@@ -115,24 +115,14 @@ const unsigned int vpV4l2Grabber::FRAME_SIZE    = 288;
 
 */
 vpV4l2Grabber::vpV4l2Grabber()
+  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
+    m_input(vpV4l2Grabber::DEFAULT_INPUT),
+    m_framerate(vpV4l2Grabber::framerate_25fps),
+    m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+    m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
-  fd        = -1;
-  streaming = false;
-  verbose   = false;
-  field     = 0;
-  width     = 0;
-  height    = 0;
-  queue     = 0;
-  waiton_cpt= 0;
-  index_buffer = 0;
-
-  inp       = NULL;
-  std       = NULL;
-  fmt       = NULL;
-  ctl       = NULL;
-  buf_v4l2  = NULL;
-  buf_me    = NULL;
-
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
@@ -184,24 +174,14 @@ vpV4l2Grabber::vpV4l2Grabber()
 
 */
 vpV4l2Grabber::vpV4l2Grabber(bool verbose)
+  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    waiton_cpt(0), index_buffer(0), m_verbose(verbose), m_nbuffers(3), field(0), streaming(false),
+    m_input(vpV4l2Grabber::DEFAULT_INPUT),
+    m_framerate(vpV4l2Grabber::framerate_25fps),
+    m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+    m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
-  fd        = -1;
-  streaming = false;
-  this->verbose   = verbose;
-  field     = 0;
-  width     = 0;
-  height    = 0;
-  queue     = 0;
-  waiton_cpt= 0;
-  index_buffer = 0;
-
-  inp       = NULL;
-  std       = NULL;
-  fmt       = NULL;
-  ctl       = NULL;
-  buf_v4l2  = NULL;
-  buf_me    = NULL;
-
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
@@ -244,24 +224,14 @@ vpV4l2Grabber::vpV4l2Grabber(bool verbose)
     \endcode
 */
 vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
+  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
+    m_input(vpV4l2Grabber::DEFAULT_INPUT),
+    m_framerate(vpV4l2Grabber::framerate_25fps),
+    m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+    m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
-  fd        = -1;
-  streaming = false;
-  verbose   = false;
-  field     = 0;
-  width     = 0;
-  height    = 0;
-  queue     = 0;
-  waiton_cpt= 0;
-  index_buffer = 0;
-
-  inp       = NULL;
-  std       = NULL;
-  fmt       = NULL;
-  ctl       = NULL;
-  buf_v4l2  = NULL;
-  buf_me    = NULL;
-
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
@@ -302,26 +272,15 @@ vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
 
     \endcode
 */
-vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
-			     unsigned input, unsigned scale )
+vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale )
+  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
+    m_input(vpV4l2Grabber::DEFAULT_INPUT),
+    m_framerate(vpV4l2Grabber::framerate_25fps),
+    m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+    m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
-  fd        = -1;
-  streaming = false;
-  verbose   = false;
-  field     = 0;
-  width     = 0;
-  height    = 0;
-  queue     = 0;
-  waiton_cpt= 0;
-  index_buffer = 0;
-
-  inp       = NULL;
-  std       = NULL;
-  fmt       = NULL;
-  ctl       = NULL;
-  buf_v4l2  = NULL;
-  buf_me    = NULL;
-
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
@@ -339,8 +298,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
   Setup the Video For Linux Two (V4L2) driver in streaming mode.
 
   \param I : Image data structure (Color RGB32 bits image)
-  \param _input : Video input port.
-  \param _scale : Decimation factor.
+  \param input : Video input port.
+  \param scale : Decimation factor.
 
   Default settings are:
 
@@ -365,30 +324,20 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I,
     \endcode
 
 */
-vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned _input, unsigned _scale )
+vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale )
+  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
+    m_input(vpV4l2Grabber::DEFAULT_INPUT),
+    m_framerate(vpV4l2Grabber::framerate_25fps),
+    m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+    m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
-  fd        = -1;
-  streaming = false;
-  verbose   = false;
-  field     = 0;
-  width     = 0;
-  height    = 0;
-  queue     = 0;
-  waiton_cpt= 0;
-  index_buffer = 0;
-
-  inp       = NULL;
-  std       = NULL;
-  fmt       = NULL;
-  ctl       = NULL;
-  buf_v4l2  = NULL;
-  buf_me    = NULL;
-
   setDevice("/dev/video0");
   setNBuffers(3);
   setFramerate(vpV4l2Grabber::framerate_25fps);
-  setInput(_input);
-  setScale(_scale);
+  setInput(input);
+  setScale(scale);
 
   init = false;
 
@@ -411,7 +360,7 @@ vpV4l2Grabber::~vpV4l2Grabber()
 void
 vpV4l2Grabber::setInput(unsigned input)
 {
-  this->input = input;
+  this->m_input = input;
 }
 
 /*!
@@ -457,9 +406,9 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 {
   open();
 
-  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
+  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &m_input) == -1 )
   {
-    std::cout << "Warning: cannot set input channel to " << input << std::endl;
+    std::cout << "Warning: cannot set input channel to " << m_input << std::endl;
   }
   
   vpV4l2PixelFormatType req_pixelformat = getPixelFormat();
@@ -470,7 +419,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
     startStreaming();
   }
   catch(...) {
-    if (verbose) {
+    if (m_verbose) {
       std::cout << "Requested pixel format [" << req_pixelformat 
 		<< "] not compatible with camera" << std::endl;
       std::cout << "Try to found a compatible pixel format..." << std::endl;
@@ -485,15 +434,15 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
 	setPixelFormat((vpV4l2PixelFormatType)format);
 	setFormat();
 	startStreaming();
-	if (verbose)
-	  std::cout << "This format [" << pixelformat 
+  if (m_verbose)
+    std::cout << "This format [" << m_pixelformat
 		    << "] is compatible with camera" << std::endl;
 	
 	break;
       }
       catch (...) {
-	if (verbose)
-	  std::cout << "This format [" << pixelformat 
+  if (m_verbose)
+    std::cout << "This format [" << m_pixelformat
 		    << "] is not compatible with camera" << std::endl;
 	if (format == (int)V4L2_MAX_FORMAT) {
 	  std::cout << "No pixel format compatible with the camera was found" << std::endl;
@@ -525,9 +474,9 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 {
   open();
 
-  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &input) == -1 )
+  if( v4l2_ioctl (fd, VIDIOC_S_INPUT, &m_input) == -1 )
   {
-    std::cout << "Warning: cannot set input channel to " << input << std::endl;
+    std::cout << "Warning: cannot set input channel to " << m_input << std::endl;
   }
 
   vpV4l2PixelFormatType req_pixelformat = getPixelFormat();
@@ -538,8 +487,8 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
     startStreaming();
   }
   catch(...) {
-    if (verbose) {
-      std::cout << "Requested pixel format [" << pixelformat 
+    if (m_verbose) {
+      std::cout << "Requested pixel format [" << m_pixelformat
 		<< "] not compatible with camera" << std::endl;
       std::cout << "Try to found a compatible pixel format..." << std::endl;
     }
@@ -553,15 +502,15 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
 	setPixelFormat((vpV4l2PixelFormatType)format);
 	setFormat();
 	startStreaming();
-	if (verbose)
-	  std::cout << "This format [" << pixelformat 
+  if (m_verbose)
+    std::cout << "This format [" << m_pixelformat
 		    << "] is compatible with camera" << std::endl;
 	
 	break;
       }
       catch (...) {
-	if (verbose)
-	  std::cout << "This format [" << pixelformat 
+  if (m_verbose)
+    std::cout << "This format [" << m_pixelformat
 		    << "] is not compatible with camera" << std::endl;
 
       }
@@ -628,7 +577,7 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
   if ((I.getWidth() != width)||(I.getHeight() != height))
     I.resize(height, width) ;
 
-  switch(pixelformat) {
+  switch(m_pixelformat) {
   case V4L2_GREY_FORMAT:
     memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
     break;
@@ -711,7 +660,7 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
 
-  switch(pixelformat) {
+  switch(m_pixelformat) {
   case V4L2_GREY_FORMAT:
     vpImageConvert::GreyToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
     break;
@@ -784,7 +733,7 @@ vpV4l2Grabber::getField()
 void
 vpV4l2Grabber::setFramerate(vpV4l2Grabber::vpV4l2FramerateType framerate)
 {
-   this->framerate = framerate;
+   this->m_framerate = framerate;
 
    if (framerate == vpV4l2Grabber::framerate_25fps)
      setFrameFormat(V4L2_IMAGE_FORMAT);
@@ -805,7 +754,7 @@ vpV4l2Grabber::setFramerate(vpV4l2Grabber::vpV4l2FramerateType framerate)
 vpV4l2Grabber::vpV4l2FramerateType
 vpV4l2Grabber::getFramerate()
 {
-  return framerate;
+  return m_framerate;
 }
 
 
@@ -894,7 +843,7 @@ vpV4l2Grabber::open()
     throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
 				   "Is not a V4L2 device") );
   }
-  if (verbose) {
+  if (m_verbose) {
     fprintf(stdout, "v4l2 info:\n"
 	    "     device: %s\n"
 	    "     %s %d.%d.%d / %s @ %s\n",
@@ -929,7 +878,6 @@ vpV4l2Grabber::open()
     else
       fprintf(stdout, "     Does not support time per frame field\n");
     // Get framerate
-    struct v4l2_streamparm streamparm;
     streamparm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (v4l2_ioctl(fd, VIDIOC_G_PARM, &streamparm) != -1) {
       fprintf(stdout, "     Current acquisition framerate: %d fps\n",
@@ -993,30 +941,30 @@ vpV4l2Grabber::getCapabilities()
 void
 vpV4l2Grabber::setFormat()
 {
-  fmt_me.width  = _width;
-  fmt_me.height = _height;
-  //fmt_me.bytesperline = _width; // bad (normally _width * depth / 8), but works
+  fmt_me.width  = width;
+  fmt_me.height = height;
+  //fmt_me.bytesperline = width; // bad (normally width * depth / 8), but works
   // because initialized later by an ioctl call to VIDIOC_S_FMT
 
-  switch(pixelformat) {
+  switch(m_pixelformat) {
   case V4L2_GREY_FORMAT : fmt_me.pixelformat = V4L2_PIX_FMT_GREY; 
-    if (verbose) 
+    if (m_verbose)
       fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_GREY)\n");
     break;
   case V4L2_RGB24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB24; 
-    if (verbose) 
+    if (m_verbose)
       fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_RGB24)\n");
     break;
   case V4L2_RGB32_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_RGB32; 
-    if (verbose) 
+    if (m_verbose)
       fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_RGB32)\n");
     break;
   case V4L2_BGR24_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_BGR24; 
-    if (verbose) 
+    if (m_verbose)
       fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_BGR24)\n");
     break;
   case V4L2_YUYV_FORMAT: fmt_me.pixelformat = V4L2_PIX_FMT_YUYV;
-    if (verbose) 
+    if (m_verbose)
       fprintf(stdout,"v4l2: new capture params (V4L2_PIX_FMT_YUYV)\n");
     break;
 
@@ -1044,14 +992,14 @@ vpV4l2Grabber::setFormat()
   //printf("1 - w: %d h: %d\n", fmt_v4l2.fmt.pix.width, fmt_v4l2.fmt.pix.height);
 
 
-  switch (frameformat) {
+  switch (m_frameformat) {
   case V4L2_FRAME_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_ALTERNATE;
-    if (verbose) {
+    if (m_verbose) {
       fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_ALTERNATE)\n");
     }
     break;
   case V4L2_IMAGE_FORMAT: fmt_v4l2.fmt.pix.field = V4L2_FIELD_INTERLACED;
-    if (verbose) {
+    if (m_verbose) {
       fprintf(stdout,"v4l2: new capture params (V4L2_FIELD_INTERLACED)\n");
     }
     break;
@@ -1063,9 +1011,7 @@ vpV4l2Grabber::setFormat()
   }
 
   //height and width of the captured image or frame
-  width = _width;
-  height = _height;
-  if( frameformat == V4L2_FRAME_FORMAT && height > FRAME_SIZE )
+  if( m_frameformat == V4L2_FRAME_FORMAT && height > FRAME_SIZE )
   {
     height = FRAME_SIZE;
   }
@@ -1093,7 +1039,7 @@ vpV4l2Grabber::setFormat()
   fmt_me.height       = fmt_v4l2.fmt.pix.height;
   fmt_me.bytesperline = fmt_v4l2.fmt.pix.bytesperline;
 
-  if (verbose) {
+  if (m_verbose) {
     fprintf(stdout,"v4l2: new capture params (%dx%d, %c%c%c%c, %d byte, %d bytes per line)\n",
 	    fmt_me.width, fmt_me.height,
 	    fmt_v4l2.fmt.pix.pixelformat & 0xff,
@@ -1123,7 +1069,7 @@ vpV4l2Grabber::startStreaming()
 
   /* setup buffers */
   memset (&(reqbufs), 0, sizeof (reqbufs));
-  reqbufs.count  = nbuffers;
+  reqbufs.count  = m_nbuffers;
   reqbufs.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   reqbufs.memory = V4L2_MEMORY_MMAP;
 
@@ -1155,7 +1101,7 @@ vpV4l2Grabber::startStreaming()
     memcpy(&buf_me[i].fmt, &fmt_me, sizeof(ng_video_fmt));
     buf_me[i].size = buf_me[i].fmt.bytesperline * buf_me[i].fmt.height;
 
-    // if (verbose)
+    // if (m_verbose)
     //   std::cout << "1: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
     // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
     // 	   << std::endl;
@@ -1174,7 +1120,7 @@ vpV4l2Grabber::startStreaming()
 
     buf_me[i].refcount = 0;
 
-//     if (verbose)
+//     if (m_verbose)
 //     {
 //       std::cout << "2: buf_v4l2[" << i << "].length: " << buf_v4l2[i].length
 // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
@@ -1182,7 +1128,7 @@ vpV4l2Grabber::startStreaming()
 //       std::cout << "2: buf_me[" << i << "].size: " << buf_me[i].size << std::endl;
 //     }
 
-    if (verbose)
+    if (m_verbose)
       printBufInfo(buf_v4l2[i]);
   }
 
@@ -1222,7 +1168,7 @@ vpV4l2Grabber::stopStreaming()
     }
     /* free buffers */
     for (i = 0; i < reqbufs.count; i++) {
-      if (verbose)
+      if (m_verbose)
 	printBufInfo(buf_v4l2[i]);
       //vpTRACE("v4l2_munmap()");
 
@@ -1317,7 +1263,7 @@ vpV4l2Grabber::waiton(__u32 &index, struct timeval &timestamp)
 
   timestamp = buf_v4l2[index].timestamp;
 
-  // if(verbose)
+  // if(m_verbose)
   // {
   //   vpERROR_TRACE("field: %d\n", buf_v4l2[index].field);
 

@@ -66,6 +66,8 @@ vpVideoWriter::vpVideoWriter() :
 #  endif
     bit_rate(500000),
     framerate(25),
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writer(), fourcc(0), framerate(0.),
 #endif
     formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
     firstFrame(0), width(0), height(0)
@@ -179,7 +181,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
       throw (vpException(vpException::ioError ,"Could not open encode the video with ffmpeg"));
     }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if(!writer.isOpened())
     {
@@ -232,7 +234,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
       throw (vpException(vpException::ioError ,"Could not encode the video with ffmpeg"));
     }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size(I.getWidth(), I.getHeight()));
+    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if(!writer.isOpened())
     {

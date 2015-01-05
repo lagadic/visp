@@ -72,7 +72,7 @@ vpScale::vpScale()
 }
 
 //! Constructor
-vpScale::vpScale(double kernel_bandwidth, int dim=1, int type=EPANECHNIKOV)
+vpScale::vpScale(double kernel_bandwidth, unsigned int dim, int type)
   : bandwidth(kernel_bandwidth), dimension(dim), kernel_type(type)
 
 {

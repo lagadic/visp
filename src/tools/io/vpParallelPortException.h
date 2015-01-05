@@ -90,18 +90,18 @@ class VISP_EXPORT vpParallelPortException : public vpException
     } ;
 
   public:
-    vpParallelPortException (const int code,  const char* format, ...)
+    vpParallelPortException (const int id,  const char* format, ...)
     {
-      this->code = code;
+      this->code = id;
       va_list args;
       va_start(args, format);
       setMessage(format, args);
       va_end (args);
     }
-    vpParallelPortException (const int code, const std::string & msg)
-      : vpException(code, msg){ ; }
-    vpParallelPortException (const int code)
-      : vpException(code){ ; }
+    vpParallelPortException (const int id, const std::string & msg)
+      : vpException(id, msg){ ; }
+    vpParallelPortException (const int id)
+      : vpException(id){ ; }
 
 };
 

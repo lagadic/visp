@@ -324,6 +324,23 @@ vpSimulator::kill()
 }
 
 vpSimulator::vpSimulator()
+  :
+#if defined(VISP_HAVE_SOWIN)
+    mainWindow(),
+#elif defined(VISP_HAVE_SOQT)
+    mainWindow(NULL),
+#elif defined(VISP_HAVE_SOXT)
+    mainWindow(),
+#endif
+    mainWindowInitialized(false), typeImage(vpSimulator::grayImage),
+    image_background(NULL), internalView(NULL), externalView(NULL),
+    mainThread(NULL), internal_width(0), internal_height(0),
+    external_width(0), external_height(0), scene(NULL), internalRoot(NULL),
+    externalRoot(NULL), internalCamera(NULL), externalCamera(NULL),
+    internalCameraPosition(NULL), extrenalCameraPosition(NULL), internalCameraObject(NULL),
+    zoomFactor(0.), cameraPositionInitialized(false), cMf(), internalCameraParameters(),
+    externalCameraParameters(), realtime(NULL), offScreenRenderer(NULL), bufferView(NULL),
+    get(0)
 {
   vpSimulator::init() ;
 }

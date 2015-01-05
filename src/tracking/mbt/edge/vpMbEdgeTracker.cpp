@@ -559,7 +559,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       cVo.buildFrom(cMo);
 
       vpMatrix K; // kernel
-      int rank = (L*cVo).kernel(K);
+      unsigned int rank = (L*cVo).kernel(K);
       if(rank == 0) {
         throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
       }
@@ -2057,9 +2057,9 @@ vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
 */
 void
 vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-    const unsigned int idFace, const std::string &name)
+                            const int idFace, const std::string &name)
 {
-  addCircle(p1, p2, p3, radius, idFace, name);
+  addCircle(p1, p2, p3, radius, (int)idFace, name);
 }
 
 /*!
@@ -2073,10 +2073,10 @@ vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint 
   \param name : The optional name of the cylinder.
 */
 void
-vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const unsigned int idFace,
+vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace,
     const std::string &name)
 {
-  addCylinder(p1, p2, radius, idFace, name);
+  addCylinder(p1, p2, radius, (int)idFace, name);
 }
 
 /*!

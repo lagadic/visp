@@ -88,7 +88,7 @@ public:
 
   //! Constructor
   vpScale();
-  vpScale(double, int, int);
+  vpScale(double kernel_bandwidth, unsigned int dim=1, int type=EPANECHNIKOV);
   //! Destructor
   virtual ~vpScale(void);
 

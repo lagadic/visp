@@ -25,6 +25,7 @@ public:
     \param cam : Intrinsic camera parameters.
     */
   vpVirtualGrabber(const std::string &filename, const vpCameraParameters &cam)
+    : sim_(), target_(), cam_()
   {
     // The target is a square 20cm by 2cm square
     // Initialise the 3D coordinates of the target corners

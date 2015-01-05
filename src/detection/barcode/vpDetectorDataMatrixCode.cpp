@@ -71,7 +71,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   DmtxImage      *img;
   DmtxMessage    *msg;
 
-  img = dmtxImageCreate(I.bitmap, I.getWidth(), I.getHeight(), DmtxPack8bppK);
+  img = dmtxImageCreate(I.bitmap, (int) I.getWidth(), (int) I.getHeight(), DmtxPack8bppK);
   assert(img != NULL);
 
   dec = dmtxDecodeCreate(img, 1);

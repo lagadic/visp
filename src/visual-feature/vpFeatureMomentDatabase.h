@@ -164,7 +164,7 @@ class VISP_EXPORT vpFeatureMomentDatabase{
   /*!
     Default constructor.
   */
-  vpFeatureMomentDatabase() {}
+  vpFeatureMomentDatabase() : featureMomentsDataBase() {}
   /*!
     Virtual destructor that does nothing.
   */

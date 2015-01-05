@@ -73,6 +73,9 @@ vpKltOpencv::vpKltOpencv()
   Copy constructor.
  */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
+  : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
+    m_minDistance(15), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1), m_pyrMaxLevel(3),
+    m_next_points_id(0), m_initial_guess(false)
 {
   *this = copy;
 }
@@ -168,7 +171,7 @@ void vpKltOpencv::track(const cv::Mat &I)
 
   // Remove points that are lost
   for (int i=(int)status.size()-1; i>=0; i--) {
-    if (status[i] == 0) { // point is lost
+    if (status[(size_t)i] == 0) { // point is lost
       m_points[0].erase(m_points[0].begin()+i);
       m_points[1].erase(m_points[1].begin()+i);
       m_points_id.erase(m_points_id.begin()+i);
@@ -195,9 +198,9 @@ void vpKltOpencv::getFeature(const int &index, int &id, float &x, float &y) cons
     throw(vpException(vpException::badValue, "Feature [%d] doesn't exist", index));
   }
 
-  x = m_points[1][index].x;
-  y = m_points[1][index].y;
-  id = m_points_id[index];
+  x = m_points[1][(size_t)index].x;
+  y = m_points[1][(size_t)index].y;
+  id = m_points_id[(size_t)index];
 }
 
 /*!

@@ -100,7 +100,7 @@ int main(int argc, const char** argv)
         }
       }
 
-      vpDisplay::displayText(I, I.getHeight()-25, 10, "Click to quit...", vpColor::red);
+      vpDisplay::displayText(I, (int)I.getHeight()-25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
         break;

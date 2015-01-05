@@ -53,7 +53,11 @@
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   : vpWireFrameSimulator(), vpRobotSimulator(),
     I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
-    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+#if defined(_WIN32)
+#elif defined(VISP_HAVE_PTHREAD)
+    thread(), attr(),
+#endif
+    mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
     displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
     cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
@@ -81,6 +85,10 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   : vpWireFrameSimulator(), vpRobotSimulator(),
     I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+#if defined(_WIN32)
+#elif defined(VISP_HAVE_PTHREAD)
+    thread(), attr(),
+#endif
     /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
     displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
     cameraParam(),
