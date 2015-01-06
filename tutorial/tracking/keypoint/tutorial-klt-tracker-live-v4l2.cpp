@@ -7,7 +7,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   try {
     bool opt_init_by_click = false;
     int opt_device = 0;

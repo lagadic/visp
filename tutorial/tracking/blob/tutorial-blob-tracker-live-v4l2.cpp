@@ -8,7 +8,7 @@
 
 int main()
 {
-#if ((defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
+#if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
   vpImage<unsigned char> I; // Create a gray level image container
 
 #if defined(VISP_HAVE_V4L2)

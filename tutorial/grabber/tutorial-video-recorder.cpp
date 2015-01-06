@@ -11,7 +11,7 @@
  */
 int main(int argc, char** argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   std::string videoname = "video-recorded.mpg";
   int device = 0;
 

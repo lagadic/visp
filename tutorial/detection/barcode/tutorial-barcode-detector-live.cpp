@@ -9,7 +9,7 @@
 
 int main(int argc, const char** argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
   int opt_device = 0;
   int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
 

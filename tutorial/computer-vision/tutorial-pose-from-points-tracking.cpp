@@ -62,7 +62,7 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 
 int main()
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   try {  vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_DC1394_2)

@@ -110,7 +110,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE) 
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 	// Image to store gathered data
     // Here we acquire a grey level image. The consequence will be that
