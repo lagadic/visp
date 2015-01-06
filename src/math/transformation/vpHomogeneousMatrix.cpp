@@ -447,7 +447,7 @@ vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
 }
 
 vpColVector
-vpHomogeneousMatrix::operator*(vpColVector &v) const
+vpHomogeneousMatrix::operator*(const vpColVector &v) const
 {
   vpColVector p(rowNum);
 

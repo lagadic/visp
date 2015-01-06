@@ -174,7 +174,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
 
   //! Multiply by a vector ! size 4 !!!
-  vpColVector operator*(vpColVector &v) const;
+  vpColVector operator*(const vpColVector &v) const;
 
   // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;
