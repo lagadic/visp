@@ -51,7 +51,7 @@ int main(int argc, const char** argv)
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayDGI d(I);
+    vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV d(I);
 #endif
