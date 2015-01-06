@@ -132,7 +132,7 @@ public:
     for(size_t j=0; j < m_polygon[i].size(); j++) {
       cog += m_polygon[i][j];
     }
-    cog /= m_polygon[i].size();
+    cog /= (double)m_polygon[i].size();
     return cog;
   }
   /*!
