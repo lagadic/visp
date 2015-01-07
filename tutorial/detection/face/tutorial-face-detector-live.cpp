@@ -76,7 +76,7 @@ int main(int argc, const char* argv[])
           std::vector<vpImagePoint> p = face_detector.getPolygon(i);
           vpRect bbox = face_detector.getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green, false, 4);
-          vpDisplay::displayText(I, bbox.getTop()-10, bbox.getLeft(), "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
+          vpDisplay::displayText(I, (int)bbox.getTop()-10, (int)bbox.getLeft(), "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
         }
       }
       vpDisplay::displayText(I, (int)I.getHeight()-25, 10, "Click to quit...", vpColor::red);
