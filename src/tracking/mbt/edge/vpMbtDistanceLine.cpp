@@ -228,6 +228,7 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   me = _me ;
   if (meline != NULL)
   {
+    meline->reset();
     meline->setMe(me) ;
   }
 }
@@ -461,7 +462,7 @@ vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousM
        ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){ 
       vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
       vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
-    
+
       vpDisplay::displayLine(I,ip1,ip2,col, thickness);
     }
   }
