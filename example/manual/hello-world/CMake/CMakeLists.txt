@@ -1,10 +1,10 @@
-PROJECT(HelloWorld)
+project(HelloWorld)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
-FIND_PACKAGE(VISP REQUIRED)
-IF(VISP_FOUND)
-  INCLUDE(${VISP_USE_FILE})
-ENDIF(VISP_FOUND)
+find_package(VISP REQUIRED)
+if(VISP_FOUND)
+  include(${VISP_USE_FILE})
+endif()
 
-ADD_EXECUTABLE(HelloWorld HelloWorld.cpp)
+add_executable(HelloWorld HelloWorld.cpp)
