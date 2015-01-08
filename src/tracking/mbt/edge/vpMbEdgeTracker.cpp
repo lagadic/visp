@@ -1664,11 +1664,7 @@ vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2)
   double dy = fabs(P1.get_oY() - P2.get_oY());
   double dz = fabs(P1.get_oZ() - P2.get_oZ());
 
-  double dxmax = vpMath::maximum(P1.get_oX(),P2.get_oX());
-  double dymax = vpMath::maximum(P1.get_oY(),P2.get_oY());
-  double dzmax = vpMath::maximum(P1.get_oZ(),P2.get_oZ());
-
-  if (dx  < std::numeric_limits<double>::epsilon()*dxmax && dy  < std::numeric_limits<double>::epsilon()*dymax && dz  < std::numeric_limits<double>::epsilon()*dzmax)
+  if (dx  <= std::numeric_limits<double>::epsilon() && dy  <= std::numeric_limits<double>::epsilon() && dz <= std::numeric_limits<double>::epsilon())
     return true ;
   else
     return false ;
