@@ -438,7 +438,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 
           //Points displacement
           std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
-          nbCur+= kltpoly->getCurrentPoints().size();
+          nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
           for( ; iter != kltpoly->getCurrentPoints().end(); iter++){
             vpColVector cdp(3);
             cdp[0] = iter->second.get_j(); cdp[1] = iter->second.get_i(); cdp[2] = 1.0;
