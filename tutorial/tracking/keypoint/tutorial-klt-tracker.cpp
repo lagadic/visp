@@ -80,7 +80,7 @@ int main(int argc, const char *argv[])
         vpDisplay::flush(I);
         vpTime::wait(20);
       } while(button != vpMouseButton::button3);
-      tracker.initTracking(guess);
+      tracker.initTracking(cvI, guess);
 #endif
     }
     else {
