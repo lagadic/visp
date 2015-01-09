@@ -135,19 +135,22 @@ public:
   /*!
     Get the number of point that was belonging to the face at the initialisation
 
-    \return the number of initial point
+    \return the number of initial point.
+
+    \sa getCurrentNumberPoints()
   */
   inline unsigned int getInitialNumberPoint() const { return nbPointsInit;}
-
   /*!
-    get the number of points detected in the last image.
+    Get the number of points detected in the last image.
 
-    \warning to have the real number of points, the function computeNbDetectedCurrent
+    \warning To have the real number of points, the function computeNbDetectedCurrent()
     must be called first.
 
-    \return the number of points detected in the current image
+    \return the number of points detected in the current image.
+
+    \sa getInitialNumberPoint()
   */
-  inline unsigned int getNbPointsCur() const {return nbPointsCur;}
+  inline unsigned int getCurrentNumberPoints() const {return nbPointsCur;}
 
   inline  bool        hasEnoughPoints() const {return enoughPoints;}
 
@@ -168,9 +171,27 @@ public:
   void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #endif
 
-//###################
-// Static Functions
-//###################
+  //###################
+  // Deprecated Functions
+  //###################
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+public:
+  /*!
+    \deprecated Use rather getCurrentNumberPoints() that does the same.
+
+    Get the number of points detected in the last image.
+
+    \warning to have the real number of points, the function computeNbDetectedCurrent()
+    must be called first.
+
+    \return the number of points detected in the current image
+  */
+  vp_deprecated inline unsigned int getNbPointsCur() const {return nbPointsCur;}
+#endif
+
+  //###################
+  // Static Functions
+  //###################
 private:
   static bool         isInside(const std::vector<vpImagePoint>& roi, const double i, const double  j);
   static bool         intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  i, const double  j, const double  i_test, const double  j_test);

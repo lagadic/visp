@@ -636,11 +636,11 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=vpMbKltTracker::kltPolygons.begin(); it!=vpMbKltTracker::kltPolygons.end(); ++it){
         kltpoly = *it;
         if(kltpoly->polygon->isVisible() && kltpoly->hasEnoughPoints()){
-          vpSubColVector subR(R_klt, shift, 2*kltpoly->getNbPointsCur());
-          vpSubMatrix subL(L_klt, shift, 0, 2*kltpoly->getNbPointsCur(), 6);
+          vpSubColVector subR(R_klt, shift, 2*kltpoly->getCurrentNumberPoints());
+          vpSubMatrix subL(L_klt, shift, 0, 2*kltpoly->getCurrentNumberPoints(), 6);
           kltpoly->computeHomography(ctTc0, H);
           kltpoly->computeInteractionMatrixAndResidu(subR, subL);
-          shift += 2*kltpoly->getNbPointsCur();
+          shift += 2*kltpoly->getCurrentNumberPoints();
         }
       }
     }

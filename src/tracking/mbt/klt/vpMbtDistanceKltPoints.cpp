@@ -97,6 +97,9 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
     }
   }
 
+  if(nbPointsCur >= minNbPoint) enoughPoints = true;
+  else enoughPoints = false;
+
   // initialisation of the value for the computation in SE3
   vpPlane plan(polygon->getPoint(0), polygon->getPoint(1), polygon->getPoint(2));
 
@@ -326,9 +329,8 @@ vpMbtDistanceKltPoints::updateMask(
   int width  = mask->width;
   int height = mask->width;
 #endif
+
   int i_min, i_max, j_min, j_max;
-  cam.computeFov((unsigned)width, (unsigned)height);
-  polygon->computeRoiClipped(cam);
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
   vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
