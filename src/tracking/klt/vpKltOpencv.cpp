@@ -56,13 +56,14 @@
 
 #include <visp/vpDisplay.h>
 #include <visp/vpKltOpencv.h>
+#include <visp/vpTrackingException.h>
 
 /*!
   Default constructor.
  */
 vpKltOpencv::vpKltOpencv()
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
-    m_minDistance(15), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1), m_pyrMaxLevel(3),
+    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1), m_pyrMaxLevel(3),
     m_next_points_id(0), m_initial_guess(false)
 {
   m_termcrit = cv::TermCriteria(cv::TermCriteria::COUNT|cv::TermCriteria::EPS, 20, 0.03);
@@ -74,7 +75,7 @@ vpKltOpencv::vpKltOpencv()
  */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv& copy)
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
-    m_minDistance(15), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1), m_pyrMaxLevel(3),
+    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1), m_pyrMaxLevel(3),
     m_next_points_id(0), m_initial_guess(false)
 {
   *this = copy;
@@ -95,6 +96,7 @@ vpKltOpencv & vpKltOpencv::operator=(const vpKltOpencv& copy)
   m_winSize = copy.m_winSize;
   m_qualityLevel = copy.m_qualityLevel;
   m_minDistance = copy.m_minDistance;
+  m_minEigThreshold = copy.m_minEigThreshold;
   m_harris_k = copy.m_harris_k;
   m_blockSize = copy.m_blockSize;
   m_useHarrisDetector = copy.m_useHarrisDetector;
@@ -139,19 +141,23 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
     m_points_id.push_back(m_next_points_id++);
 }
 
+/*!
+   Track KLT keypoints using the iterative Lucas-Kanade method with pyramids.
+
+   \param I : Input image.
+ */
 void vpKltOpencv::track(const cv::Mat &I)
 {
+  if(m_points[1].size() == 0)
+    throw vpTrackingException(vpTrackingException::fatalError, "Not enough key points to track.");
+
   std::vector<float> err;
   int flags = 0;
 
   cv::swap(m_prevGray, m_gray);
 
   if (m_initial_guess) {
-    if (m_points[0].size() != m_points[1].size())
-      std::swap(m_points[1], m_points[0]);
-    else {
-      flags |= cv::OPTFLOW_USE_INITIAL_FLOW;
-    }
+    flags |= cv::OPTFLOW_USE_INITIAL_FLOW;
     m_initial_guess = false;
   }
   else {
@@ -161,13 +167,14 @@ void vpKltOpencv::track(const cv::Mat &I)
   //cvtColor(I, m_gray, cv::COLOR_BGR2GRAY);
   I.copyTo(m_gray);
 
-  if(m_prevGray.empty())
+  if(m_prevGray.empty()){
     m_gray.copyTo(m_prevGray);
+  }
 
   std::vector<uchar> status;
 
   cv::calcOpticalFlowPyrLK(m_prevGray, m_gray, m_points[0], m_points[1], status, err, cv::Size(m_winSize, m_winSize),
-      m_pyrMaxLevel, m_termcrit, flags);
+      m_pyrMaxLevel, m_termcrit, flags, m_minEigThreshold);
 
   // Remove points that are lost
   for (int i=(int)status.size()-1; i>=0; i--) {
@@ -327,7 +334,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2
 /*!
   Set the maximum number of features to track in the image.
 
-  \param maxCount : Maximum number of features to detect and track.
+  \param maxCount : Maximum number of features to detect and track. Default value is set to 500.
 */
 void vpKltOpencv::setMaxFeatures(const int maxCount)
 {
@@ -337,7 +344,7 @@ void vpKltOpencv::setMaxFeatures(const int maxCount)
 /*!
   Set the window size used to refine the corner locations.
 
-  \param winSize : Half of the side length of the search window.
+  \param winSize : Half of the side length of the search window. Default value is set to 10.
   For example, if \e winSize=5 , then a 5*2+1 \f$\times\f$ 5*2+1 = 11 \f$\times\f$ 11 search window is used.
 */
 void vpKltOpencv::setWindowSize(const int winSize)
@@ -348,7 +355,7 @@ void vpKltOpencv::setWindowSize(const int winSize)
 /*!
   Set the parameter characterizing the minimal accepted quality of image corners.
 
-  \param qualityLevel : The parameter value is multiplied by the
+  \param qualityLevel : Quality level parameter. Default value is set to 0.01. The parameter value is multiplied by the
   best corner quality measure, which is the minimal eigenvalue or the Harris function response. The corners with
   the quality measure less than the product are rejected. For example, if the best corner has the quality
   measure = 1500, and the qualityLevel=0.01, then all the corners with the quality measure less than 15 are rejected.
@@ -361,7 +368,7 @@ void vpKltOpencv::setQuality(double qualityLevel)
 /*!
   Set the free parameter of the Harris detector.
 
-  \param harris_k : Free parameter of the Harris detector.
+  \param harris_k : Free parameter of the Harris detector. Default value is set to 0.04.
 */
 void vpKltOpencv::setHarrisFreeParameter(double harris_k)
 {
@@ -371,7 +378,7 @@ void vpKltOpencv::setHarrisFreeParameter(double harris_k)
 /*!
   Set the parameter indicating whether to use a Harris detector or
   the minimal eigenvalue of gradient matrices for corner detection.
-  \param useHarrisDetector : If 1, use the Harris detector. If 0 use the eigenvalue.
+  \param useHarrisDetector : If 1 (default value), use the Harris detector. If 0 use the eigenvalue.
 */
 void vpKltOpencv::setUseHarris(const int useHarrisDetector)
 {
@@ -381,11 +388,21 @@ void vpKltOpencv::setUseHarris(const int useHarrisDetector)
 /*!
   Set the minimal Euclidean distance between detected corners during initialization.
 
-  \param minDistance : Minimum possible Euclidean distance between the detected corners.
+  \param minDistance : Minimal possible Euclidean distance between the detected corners.
+  Default value is set to 15.
 */
 void vpKltOpencv::setMinDistance(double minDistance)
 {
   m_minDistance = minDistance;
+}
+
+/*!
+  Set the minimal eigen value threshold used to reject a point during the tracking.
+  \param minEigThreshold : Minimal eigen value threshold. Default value is set to 1e-4.
+*/
+void vpKltOpencv::setMinEigThreshold(double minEigThreshold)
+{
+  m_minEigThreshold = minEigThreshold;
 }
 
 /*!
@@ -394,7 +411,8 @@ void vpKltOpencv::setMinDistance(double minDistance)
   \warning The input is a signed integer to be compatible with OpenCV. However,
   it must be a positive integer.
 
-  \param blockSize : Size of an average block for computing a derivative covariation matrix over each pixel neighborhood.
+  \param blockSize : Size of an average block for computing a derivative covariation
+  matrix over each pixel neighborhood. Default value is set to 3.
 */
 void vpKltOpencv::setBlockSize(const int blockSize)
 {
@@ -406,7 +424,7 @@ void vpKltOpencv::setBlockSize(const int blockSize)
   computed for the optical flow.
 
   \param pyrMaxLevel : 0-based maximal pyramid level number; if set to 0, pyramids are not used (single level),
-  if set to 1, two levels are used, and so on.
+  if set to 1, two levels are used, and so on. Default value is set to 3.
 */
 void vpKltOpencv::setPyramidLevels(const int pyrMaxLevel)
 {
@@ -415,40 +433,70 @@ void vpKltOpencv::setPyramidLevels(const int pyrMaxLevel)
 
 /*!
   Set the points that will be used as initial guess during the next call to track().
-  This method is equivalent to initTracking(const std::vector<cv::Point2f> &, bool) .
+  A typical usage of this function is to predict the position of the features before the
+  next call to track().
 
-  \param guess_pts : Vector of points that should be tracked.
-  \param reset_id : If true, reset the id of the points to a unique id. If false, the id used previously is keept.
+  \param guess_pts : Vector of points that should be tracked. The size of this
+  vector should be the same as the one returned by getFeatures(). If this is not the case,
+  an exception is returned. Note also that the id of the points is not modified.
 
   \sa initTracking()
 */
 void
-vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts, bool reset_id)
+vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
 {
-  initTracking(guess_pts, reset_id);
+  if(guess_pts.size() != m_points[1].size()){
+    throw(vpException(vpException::badValue,
+                      "Cannot set initial guess: size feature vector [%d] and guess vector [%d] doesn't match",
+                      m_points[1].size(), guess_pts.size()));
+  }
+
+  m_points[1] = guess_pts;
+  m_initial_guess = true;
 }
 
 /*!
-  Set the points that will be used as initial guess during the next call to track().
-  This method is equivalent to setInitialGuess(const std::vector<cv::Point2f> &) .
+  Set the points that will be used as initialization during the next call to track().
 
-  \param guess_pts : Vector of points that should be tracked.
-  \param reset_id : If true, reset the id of the points to a unique id. If false, the id used previously is keept.
+  \param pts : Vector of points that should be tracked.
 
-  \sa setInitialGuess()
 */
 void
-vpKltOpencv::initTracking(const std::vector<cv::Point2f> &guess_pts, bool reset_id)
+vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts)
 {
-  m_points[1] = guess_pts;
-  if (reset_id || m_points_id.empty()) {
-    m_next_points_id = 0;
-    m_points_id.clear();
-    for(size_t i=0; i<m_points[1].size(); i++) {
-      m_points_id.push_back(m_next_points_id ++);
-    }
+  m_initial_guess = false;
+  m_points[1] = pts;
+  m_next_points_id = 0;
+  m_points_id.clear();
+  for(size_t i=0; i < m_points[1].size(); i++) {
+    m_points_id.push_back(m_next_points_id ++);
   }
-  m_initial_guess = true;
+
+  I.copyTo(m_gray);
+}
+
+void
+vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts, const std::vector<long> &ids)
+{
+  m_initial_guess = false;
+  m_points[1] = pts;
+  m_points_id.clear();
+
+  if(ids.size() != pts.size()){
+    m_next_points_id = 0;
+    for(size_t i=0; i < m_points[1].size(); i++)
+      m_points_id.push_back(m_next_points_id ++);
+  }
+  else{
+    long max = 0;
+    for(size_t i=0; i < m_points[1].size(); i++){
+      m_points_id.push_back(ids[i]);
+      if(ids[i] > max) max = ids[i];
+    }
+    m_next_points_id = max + 1;
+  }
+
+  I.copyTo(m_gray);
 }
 
 /*!
@@ -818,6 +866,89 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
   }
 }
 
+/*!
+  Set the points that will be used as initialization during the next call to track().
+
+  \param I : Input image.
+  \param pts : Vector of points that should be tracked.
+
+*/
+void
+vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, int size)
+{
+  if (size > maxFeatures)
+    throw(vpException(vpTrackingException::initializationError,
+                      "Cannot initialize tracker from points"));
+
+  //Creation des buffers
+  CvSize Sizeim, SizeI;
+  SizeI = cvGetSize(I);
+  bool b_imOK = true;
+  if(image != NULL){
+    Sizeim = cvGetSize(image);
+    if(SizeI.width != Sizeim.width || SizeI.height != Sizeim.height) b_imOK = false;
+  }
+  if(image == NULL || prev_image == NULL || pyramid==NULL || prev_pyramid ==NULL || !b_imOK){
+    reset();
+    image = cvCreateImage(cvGetSize(I), 8, 1);image->origin = I->origin;
+    prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  } else {
+    flags = 0;
+  }
+  // Save current features as previous features
+  countFeatures = size;
+  for (int i=0; i<countFeatures;i++)  {
+    features[i] = (*pts)[i];
+    featuresid[i] = i;
+  }
+
+  globalcountFeatures = size;
+  initialized = 1;
+
+  cvCopy(I, image, 0);
+}
+
+void
+vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, long *fid, int size)
+{
+  if (size > maxFeatures)
+    throw(vpException(vpTrackingException::initializationError,
+                      "Cannot initialize tracker from points"));
+
+  //Creation des buffers
+  CvSize Sizeim, SizeI;
+  SizeI = cvGetSize(I);
+  bool b_imOK = true;
+  if(image != NULL){
+    Sizeim = cvGetSize(image);
+    if(SizeI.width != Sizeim.width || SizeI.height != Sizeim.height) b_imOK = false;
+  }
+  if(image == NULL || prev_image == NULL || pyramid==NULL || prev_pyramid ==NULL || !b_imOK){
+    reset();
+    image = cvCreateImage(cvGetSize(I), 8, 1);image->origin = I->origin;
+    prev_image = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+    prev_pyramid = cvCreateImage(cvGetSize(I), IPL_DEPTH_8U, 1);
+  } else {
+    flags = 0;
+  }
+  // Save current features as previous features
+  countFeatures = size;
+  long max = 0;
+  for (int i=0; i<countFeatures;i++)  {
+    features[i] = (*pts)[i];
+    featuresid[i] = fid[i];
+    if (fid[i] > max)
+      max = fid[i];
+  }
+
+  globalcountFeatures = max + 1;
+  initialized = 1;
+
+  cvCopy(I, image, 0);
+}
 
 void vpKltOpencv::track(const IplImage *I)
 {

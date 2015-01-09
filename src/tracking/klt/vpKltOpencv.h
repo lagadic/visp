@@ -135,15 +135,17 @@ public:
   int getWindowSize() const {return m_winSize;}
 
   void initTracking(const cv::Mat &I, const cv::Mat &mask=cv::Mat());
-  void initTracking(const std::vector<cv::Point2f> &guess_pts, bool reset_id=true);
+  void initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts);
+  void initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts, const std::vector<long> &ids);
 
   vpKltOpencv & operator=(const vpKltOpencv& copy);
   void track(const cv::Mat &I);
   void setBlockSize(const int blockSize);
   void setHarrisFreeParameter(double harris_k);
-  void setInitialGuess(const std::vector<cv::Point2f> &guess_pts, bool reset_id=true);
+  void setInitialGuess(const std::vector<cv::Point2f> &guess_pts);
   void setMaxFeatures(const int maxCount);
   void setMinDistance(double minDistance);
+  void setMinEigThreshold(double minEigThreshold);
   void setPyramidLevels(const int pyrMaxLevel);
   void setQuality(double qualityLevel);
   //! Does nothing. Just here for compat with previous releases that use OpenCV C api to do the tracking.
@@ -161,6 +163,7 @@ protected:
   int m_winSize;
   double m_qualityLevel;
   double m_minDistance;
+  double m_minEigThreshold;
   double m_harris_k;
   int m_blockSize;
   int m_useHarrisDetector;
@@ -317,7 +320,8 @@ public:
 
   //Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
-
+  void initTracking(const IplImage *I, CvPoint2D32f **pts, int size);
+  void initTracking(const IplImage *I, CvPoint2D32f **pts, long *fid, int size);
   vpKltOpencv & operator=(const vpKltOpencv& copy);
   //Track !
   void track(const IplImage *I);
