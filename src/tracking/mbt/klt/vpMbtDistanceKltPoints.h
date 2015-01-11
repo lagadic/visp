@@ -46,6 +46,8 @@
 
 #if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
+#include <map>
+
 #include <visp/vpMbtPolygon.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpPlane.h>
