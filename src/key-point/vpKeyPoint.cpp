@@ -1270,9 +1270,23 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   }
 
   if(detectorNameTmp == "SIFT") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_detectors[detectorNameTmp] = cv::xfeatures2d::SIFT::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else if(detectorNameTmp == "SURF") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_detectors[detectorNameTmp] = cv::xfeatures2d::SURF::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the detector: SURF. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else if(detectorNameTmp == "FAST") {
     m_detectors[detectorNameTmp] = cv::FastFeatureDetector::create();
   } else if(detectorNameTmp == "MSER") {
@@ -1290,7 +1304,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   } else if(detectorNameTmp == "SimpleBlob") {
     m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
   } else if(detectorNameTmp == "STAR") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_detectors[detectorNameTmp] = cv::xfeatures2d::StarDetector::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the detector: STAR. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else {
     std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
@@ -1326,17 +1347,45 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if(extractorName == "SIFT") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else if(extractorName == "SURF") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_extractors[extractorName] = cv::xfeatures2d::SURF::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else if(extractorName == "ORB") {
     m_extractors[extractorName] = cv::ORB::create();
   } else if(extractorName == "BRISK") {
     m_extractors[extractorName] = cv::BRISK::create();
   } else if(extractorName == "FREAK") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: FREAK. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else if(extractorName == "BRIEF") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
     m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: BRIEF. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
   } else {
     std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
