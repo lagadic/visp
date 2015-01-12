@@ -498,6 +498,8 @@ The first thing to do is to declare the two points defining the cylinder axis of
 
 \note For the level of detail, in a case of a cylinder, this is taking into account by using the length of the axis of revolution to determine the visibility.
 
+\image html img-cylinder.png Example of a cylinder.
+
 \code
 V1
 # Cylinder model
@@ -524,6 +526,8 @@ The first thing to do is to declare three points: one point for the center of th
 
 \note The way you declare the two points on the circle plane (clockwise or counter clockwise) will determine the direction of the normal of the circle and so will influe on the visibility of the circle.
 For the level of detail, in a case of a circle, this is taking into account by using the area of the bounding box of the circle to determine the visibility.
+
+\image html img-circle.png Example of a circle.
 
 \code
 V1
