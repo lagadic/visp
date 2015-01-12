@@ -13,7 +13,6 @@ int main(int argc, const char *argv[])
   //! [Check 3rd party]
   try {
     bool opt_init_by_click = false;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--init-by-click")
         opt_init_by_click = true;
@@ -22,10 +21,7 @@ int main(int argc, const char *argv[])
         return 0;
       }
     }
-#else
-    (void)argc;
-    (void)argv;
-#endif
+
     //! [Create reader]
     vpVideoReader reader;
     reader.setFileName("video-postcard.mpeg");
@@ -65,22 +61,28 @@ int main(int argc, const char *argv[])
 
     // Initialise the tracking
     if (opt_init_by_click) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-      vpMouseButton::vpMouseButtonType button;
-      std::vector<cv::Point2f> guess;
+      vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+      std::vector<CvPoint2D32f> feature;
+#else
+      std::vector<cv::Point2f> feature;
+#endif
       vpImagePoint ip;
       do {
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
-            guess.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+            feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
             vpDisplay::displayCross(I, ip, 12, vpColor::green);
           }
         }
         vpDisplay::flush(I);
         vpTime::wait(20);
       } while(button != vpMouseButton::button3);
-      tracker.initTracking(cvI, guess);
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+      tracker.initTracking(cvI, &feature[0], feature.size());
+#else
+      tracker.initTracking(cvI, feature);
 #endif
     }
     else {
@@ -95,6 +97,33 @@ int main(int argc, const char *argv[])
       vpDisplay::display(I);
 
       vpImageConvert::convert(I, cvI);
+
+      if (opt_init_by_click && reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
+        vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+        std::vector<CvPoint2D32f> feature;
+#else
+        std::vector<cv::Point2f> feature;
+#endif
+        vpImagePoint ip;
+        do {
+          vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
+          if (vpDisplay::getClick(I, ip, button, false)) {
+            if (button == vpMouseButton::button1) {
+              feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
+              vpDisplay::displayCross(I, ip, 12, vpColor::green);
+            }
+          }
+          vpDisplay::flush(I);
+          vpTime::wait(20);
+        } while(button != vpMouseButton::button3);
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+        tracker.initTracking(cvI, &feature[0], feature.size());
+#else
+        tracker.initTracking(cvI, feature);
+#endif
+      }
+
       tracker.track(cvI);
 
       tracker.display(I, vpColor::red);
