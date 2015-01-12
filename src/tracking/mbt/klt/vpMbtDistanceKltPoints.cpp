@@ -327,7 +327,7 @@ vpMbtDistanceKltPoints::updateMask(
   int height = mask.rows;
 #else
   int width  = mask->width;
-  int height = mask->width;
+  int height = mask->height;
 #endif
 
   int i_min, i_max, j_min, j_max;
@@ -372,7 +372,7 @@ vpMbtDistanceKltPoints::updateMask(
     }
   }
 #else
-  unsigned char* ptrData = (unsigned char*)mask->imageData + i_min*width+j_min;
+  unsigned char* ptrData = (unsigned char*)mask->imageData + i_min*mask->widthStep+j_min;
   for(int i=i_min; i< i_max; i++){
     double i_d = (double) i;
     for(int j=j_min; j< j_max; j++){
@@ -398,7 +398,7 @@ vpMbtDistanceKltPoints::updateMask(
         }
       }
     }
-    ptrData += width - j_max + j_min;
+    ptrData += mask->widthStep - j_max + j_min;
   }
 #endif
 }
