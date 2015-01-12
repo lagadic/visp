@@ -674,6 +674,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
       w_true.resize(2*nbInfos);
       w.resize(2*nbInfos);
       w = 1;
+      w_true = 1;
     }
     robust.setIteration(iter);
     robust.setThreshold(2/cam.get_px());
@@ -692,7 +693,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
     normRes_1 = normRes;
     normRes = 0;
     for (unsigned int i = 0; i < static_cast<unsigned int>(R.getRows()); i += 1){
-      w_true = w[i] * w[i];
+      w_true[i] = w[i];
       R[i] = R[i] * w[i];
       normRes += R[i];
     }

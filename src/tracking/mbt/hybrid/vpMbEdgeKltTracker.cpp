@@ -716,7 +716,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       num += m_w[i]*vpMath::sqr((*R)[i]);
       den += m_w[i];
       
-      w_true[i] = m_w[i]*m_w[i];
+      w_true[i] = m_w[i];
       (*R)[i] *= m_w[i];
       if(compute_interaction){
         for (unsigned int j = 0; j < 6; j += 1){
