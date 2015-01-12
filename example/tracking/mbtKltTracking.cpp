@@ -391,14 +391,11 @@ main(int argc, const char ** argv)
 
     while (!reader.end())
     {
-      // acquire a new image 
+      // acquire a new image
       reader.acquire(I);
       // display the image
       if (opt_display)
         vpDisplay::display(I);
-      // track the object
-      tracker.track(I);
-      tracker.getPose(cMo);
 
       // Test to reset the tracker
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 10) {
@@ -408,6 +405,30 @@ main(int argc, const char ** argv)
         tracker.resetTracker();
 #if defined (VISP_HAVE_XML2)
         tracker.loadConfigFile(configFile);
+#else
+        // By setting the parameters:
+        cam.initPersProjWithoutDistortion(547, 542, 338, 234);
+
+        vpKltOpencv klt;
+        klt.setMaxFeatures(10000);
+        klt.setWindowSize(5);
+        klt.setQuality(0.01);
+        klt.setMinDistance(5);
+        klt.setHarrisFreeParameter(0.01);
+        klt.setBlockSize(3);
+        klt.setPyramidLevels(3);
+
+        tracker.setCameraParameters(cam);
+        tracker.setKltOpencv(klt);
+        tracker.setAngleAppear( vpMath::rad(65) );
+        tracker.setAngleDisappear( vpMath::rad(75) );
+        tracker.setMaskBorder(5);
+
+        // Specify the clipping to use
+        tracker.setNearClippingDistance(0.01);
+        tracker.setFarClippingDistance(0.90);
+        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
@@ -416,21 +437,34 @@ main(int argc, const char ** argv)
       }
 
       // Test to set an initial pose
-      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
+      if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
+        cMo.buildFrom(0.04371844921,  0.08438820979,  0.5382029442,  2.200417277,  0.873535825, -0.3479076844);
         vpTRACE("Test set pose");
-        if (opt_display)
-          vpDisplay::display(I);
-        cMo[2][3] += 0.05;
         tracker.setPose(I, cMo);
+        if (opt_display) {
+          // display the 3D model
+          tracker.display(I, cMo, cam, vpColor::darkRed);
+          // display the frame
+          vpDisplay::displayFrame (I, cMo, cam, 0.05);
+//          if (opt_click_allowed) {
+//            vpDisplay::flush(I);
+//            vpDisplay::getClick(I);
+//          }
+        }
       }
 
-      // display the 3D model  
-      if (opt_display)
-      {
-        tracker.display(I, cMo, cam, vpColor::darkRed);
-        // display the frame
-        vpDisplay::displayFrame (I, cMo, cam, 0.05);
+      // track the object: stop tracking from frame 40 to 50
+      if (reader.getFrameIndex() < reader.getFirstFrameIndex() + 40 || reader.getFrameIndex() > reader.getFirstFrameIndex() + 50) {
+        tracker.track(I);
+        tracker.getPose(cMo);
+        if (opt_display) {
+          // display the 3D model
+          tracker.display(I, cMo, cam, vpColor::darkRed);
+          // display the frame
+          vpDisplay::displayFrame (I, cMo, cam, 0.05);
+        }
       }
+
       if (opt_click_allowed) {
         vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
         if (vpDisplay::getClick(I, false)) {
@@ -443,7 +477,7 @@ main(int argc, const char ** argv)
       // Make sure tracker.setCovarianceComputation(true) has been called (uncomment below).
       // std::cout << tracker.getCovarianceMatrix() << std::endl << std::endl;
 
-      vpDisplay::flush(I) ;
+      vpDisplay::flush(I);
     }
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I);
