@@ -874,7 +874,7 @@ void vpKltOpencv::initTracking(const IplImage *I, const IplImage *mask)
 
 */
 void
-vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, int size)
+vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, int size)
 {
   if (size > maxFeatures)
     throw(vpException(vpTrackingException::initializationError,
@@ -900,7 +900,7 @@ vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, int size)
   // Save current features as previous features
   countFeatures = size;
   for (int i=0; i<countFeatures;i++)  {
-    features[i] = (*pts)[i];
+    features[i] = pts[i];
     featuresid[i] = i;
   }
 
@@ -911,7 +911,7 @@ vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, int size)
 }
 
 void
-vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, long *fid, int size)
+vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f *pts, long *fid, int size)
 {
   if (size > maxFeatures)
     throw(vpException(vpTrackingException::initializationError,
@@ -938,7 +938,7 @@ vpKltOpencv::initTracking(const IplImage *I, CvPoint2D32f **pts, long *fid, int 
   countFeatures = size;
   long max = 0;
   for (int i=0; i<countFeatures;i++)  {
-    features[i] = (*pts)[i];
+    features[i] = pts[i];
     featuresid[i] = fid[i];
     if (fid[i] > max)
       max = fid[i];

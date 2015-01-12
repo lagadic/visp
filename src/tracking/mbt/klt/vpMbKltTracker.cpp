@@ -473,7 +473,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       tracker.initTracking(cur,initial_pts,initial_ids); // false to keep the id of the points
 #else
-      tracker.initTracking(cur, &initial_pts, initial_ids, iter_points);
+      tracker.initTracking(cur, initial_pts, initial_ids, iter_points);
 
       if(initial_pts) cvFree(&initial_pts);
       initial_pts = NULL;

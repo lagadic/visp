@@ -320,8 +320,8 @@ public:
 
   //Detect corners in the image. Initialize the tracker
   void initTracking(const IplImage *I, const IplImage *mask = NULL);
-  void initTracking(const IplImage *I, CvPoint2D32f **pts, int size);
-  void initTracking(const IplImage *I, CvPoint2D32f **pts, long *fid, int size);
+  void initTracking(const IplImage *I, CvPoint2D32f *pts, int size);
+  void initTracking(const IplImage *I, CvPoint2D32f *pts, long *fid, int size);
   vpKltOpencv & operator=(const vpKltOpencv& copy);
   //Track !
   void track(const IplImage *I);
