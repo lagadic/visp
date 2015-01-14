@@ -76,10 +76,11 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
-\subsection tuto_keypoint Keypoint 
+\subsection tuto_keypoint Detection 
 
 - \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints. New since ViSP 2.10.0.
 - \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
+- \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection. New since ViSP 2.10.0
 
 \subsection tuto_computer_vision Computer vision
 
@@ -119,72 +120,6 @@ scheme, ...</p>
 - If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 
 <p>You can also ask for help using either <a href="https://gforge.inria.fr/forum/?group_id=397">the french or the english forum</a>, or <a href="https://gforge.inria.fr/mail/?group_id=397">ViSP users mailing list</a>. 
-
-*/
-
-
-/*
- ******************************************
- * Tutorial list
- ******************************************
- */
-/*!
-  \defgroup Tutorial ViSP tutorials
-
-
-Here after you will find a list of tutorials that shows the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-
-\section tuto_install_mod Installation
-
-- \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
-- \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
-- \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
-- \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
-- \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
-
-\section tuto_started_mod Getting started
-
-- \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
-- \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
-
-\section tuto_image_mod Image manipulation
-
-- \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
-- \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
-- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
-
-\section tuto_calib_mod Camera calibration
-
-- \ref tutorial-calibration <br>This tutorial explains how to calibrate a camera.
-
-\section tuto_tracking_mod Tracking
-
-- \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
-- \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
-- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
-- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
-- \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
-
-\section tuto_keypoint_mod Keypoint 
-
-- \ref tutorial-matching <br>This tutorial shows how to detect and match SURF keypoints.
-
-\section tuto_computer_vision_mod Computer vision
-
-- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
-- \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
-
-\section tuto_vs_mod Visual servoing
-
-- \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
-- \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
-- \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
-
-\section tuto_tools_mod Other tools
-
-- \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
-- \ref tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 
 */
 

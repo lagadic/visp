@@ -30,6 +30,7 @@ int main(int argc, const char** argv)
   try {
     vpImage<unsigned char> I; // for gray images
 
+    //! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
     std::ostringstream device;
@@ -47,6 +48,7 @@ int main(int argc, const char** argv)
     cap >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
+    //! [Construct grabber]
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
@@ -57,7 +59,7 @@ int main(int argc, const char** argv)
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
 
-    vpDetectorBase *detector;
+    vpDetectorBase *detector = NULL;
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     if (opt_barcode == 0)
       detector = new vpDetectorQRCode;
@@ -72,12 +74,14 @@ int main(int argc, const char** argv)
 #endif
 
     for(;;) {
+      //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
 #else
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #endif
+      //! [Acquisition]
       vpDisplay::display(I);
 
       bool status = detector->detect(I);

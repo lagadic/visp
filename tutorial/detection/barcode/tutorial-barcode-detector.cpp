@@ -1,6 +1,8 @@
-/*! \example tutorial-barcode-detector.cpp */
+//! \example tutorial-barcode-detector.cpp
+//! [Include]
 #include <visp/vpDetectorDataMatrixCode.h>
 #include <visp/vpDetectorQRCode.h>
+//! [Include]
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
@@ -8,7 +10,9 @@
 
 int main(int argc, const char** argv)
 {
+  //! [Macro defined]
 #if (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+  //! [Macro defined]
   try {
     vpImage<unsigned char> I;
     vpImageIo::read(I, "bar-code.pgm");
@@ -21,7 +25,9 @@ int main(int argc, const char** argv)
     vpDisplayOpenCV d(I);
 #endif
 
-    vpDetectorBase *detector;
+    //! [Create base detector]
+    vpDetectorBase *detector = NULL;
+    //! [Create base detector]
 
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
@@ -36,10 +42,12 @@ int main(int argc, const char** argv)
         return 0;
       }
     }
+    //! [Create detector]
     if (opt_barcode == 0)
       detector = new vpDetectorQRCode;
     else
       detector = new vpDetectorDataMatrixCode;
+    //! [Create detector]
 #elif defined(VISP_HAVE_ZBAR)
     detector = new vpDetectorQRCode;
     (void)argc;
@@ -52,17 +60,27 @@ int main(int argc, const char** argv)
 
     vpDisplay::display(I);
 
+    //! [Detection]
     bool status = detector->detect(I);
+    //! [Detection]
     std::ostringstream legend;
     legend << detector->getNbObjects() << " bar code detected";
     vpDisplay::displayText(I, (int)I.getHeight()-30, 10, legend.str(), vpColor::red);
 
+    //! [Parse detected codes]
     if (status) {
       for(size_t i=0; i < detector->getNbObjects(); i++) {
+        //! [Parse detected codes]
+        //! [Get location]
         std::vector<vpImagePoint> p = detector->getPolygon(i);
         vpRect bbox = detector->getBBox(i);
+        //! [Get location]
         vpDisplay::displayRectangle(I, bbox, vpColor::green);
-        vpDisplay::displayText(I, bbox.getTop()-10, bbox.getLeft(), "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
+        //! [Get message]
+        vpDisplay::displayText(I, bbox.getTop()-10, bbox.getLeft(),
+                               "Message: \"" + detector->getMessage(i) + "\"",
+                               vpColor::red);
+        //! [Get message]
         for(size_t j=0; j < p.size(); j++) {
           vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
           std::ostringstream number;
