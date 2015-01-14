@@ -3,7 +3,7 @@
 \page tutorial-boost-vs Tutorial: How to boost your visual servo control law
 \tableofcontents
 
-\section intro Introduction
+\section intro_boost_vs Introduction
 
 This tutorial gives some hints to boost your visual servo control law in order to speed up the time to convergence.
 

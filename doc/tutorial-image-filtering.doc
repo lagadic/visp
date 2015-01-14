@@ -5,7 +5,7 @@
 
 This tutorial supposes that you have followed the \ref tutorial-getting-started.
 
-\section intro Introduction
+\section intro_img_filtering Introduction
 
 In this tutorial you will learn how to use ViSP filtering functions implemented in vpImageFilter class.
 

@@ -3,7 +3,7 @@
 \page tutorial-detection-barcode Tutorial: Bar code detection
 \tableofcontents
 
-\section intro Introduction
+\section intro_barcode Introduction
 
 This tutorial shows how to detect one or more barcodes with ViSP. To this end we provide two classes that are wrapper over 3rd party libraries:
 - vpDetectorQRCode that is a wrappers over zbar library <http://zbar.sourceforge.net>. It allows to detect QR codes

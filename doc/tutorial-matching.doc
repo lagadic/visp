@@ -3,7 +3,7 @@
 \page tutorial-matching Tutorial: Keypoints matching
 \tableofcontents
 
-\section intro Introduction
+\section intro_matching Introduction
 
 \note This tutorial is adapted if your OpenCV version is equal or greater than 2.1.1 version. 
 

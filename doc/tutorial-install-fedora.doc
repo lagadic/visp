@@ -15,7 +15,7 @@ ViSP can also be installed from source on other platforms including OSX, CentOS,
 
 Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
 
-\section install_ubuntu_required Required packages
+\section install_fedora_required Required packages
 
 - gcc 4.4.x or later. This can be installed with:
 \code
@@ -197,7 +197,7 @@ ccmake ../ViSP-2.9.0
 The following image shows now that all the previous optional 3rd party are detected.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.9.0 command used to configure ViSP after installation of optional 3rd party libraries.
 
-\subsection install_ubuntu_generate Generating Makefiles
+\subsection install_fedora_generate Generating Makefiles
 
 To generate the makefiles, just press [g] key in the ccmake gui.
 

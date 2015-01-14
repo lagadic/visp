@@ -3,7 +3,7 @@
 \page tutorial-matching-deprecated Tutorial: Keypoint matching (deprecated)
 \tableofcontents
 
-\section intro Introduction
+\section intro_matching_deprecated Introduction
 
 \note This tutorial is deprecated if your OpenCV version is equal to 2.8.0 or more recent. If so you should rather follow \ref tutorial-matching.
 
@@ -11,7 +11,7 @@ This tutorial focuses on SURF key points manipulation. You will learn how to det
 
 \note We assume that you are familiar with video framegrabbing described in \ref tutorial-grabber and with the way to display an image in a window described in \ref tutorial-getting-started.
 
-\section surf SURF key points detection and matching
+\section surf_deprecated SURF key points detection and matching
 
 Let us consider the following source code also available in tutorial-matching-surf-deprecated.cpp.
 
