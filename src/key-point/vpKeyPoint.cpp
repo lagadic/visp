@@ -441,7 +441,7 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPo
   point_cam[3] = 1;
   vpColVector point_obj(4);
   point_obj = cMo.inverse() * point_cam;
-  point = cv::Point3f(point_obj[0], point_obj[1], point_obj[2]);
+  point = cv::Point3f((float) point_obj[0], (float) point_obj[1], (float) point_obj[2]);
 }
 
 /*!
