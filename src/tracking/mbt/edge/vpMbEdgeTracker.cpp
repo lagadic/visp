@@ -2264,37 +2264,6 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
   return nbGoodPoints;
 }
 
-
-/*!
-  Return the polygon (face) "index".
-  
-  \exception vpException::dimensionError if index does not represent a good 
-  polygon.
-  
-  \param index : Index of the polygon to return.
-  \return Pointer to the polygon index.
-*/
-vpMbtPolygon* 
-vpMbEdgeTracker::getPolygon(const unsigned int index)
-{
-  if(index >= static_cast<unsigned int>(faces.size()) ){
-    throw vpException(vpException::dimensionError, "index out of range");
-  }
-  
-  return faces[index];
-}
-
-/*!
-  Get the number of polygon (face) representing the object to track.
-  
-  \return Number of polygon.
-*/
-unsigned int 
-vpMbEdgeTracker::getNbPolygon() const
-{
-  return static_cast<unsigned int>(faces.size());
-}
-
 /*!
   Set the scales to use to realize the tracking. The vector of boolean activates
   or not the scales to set for the object tracking. The first element of the list

@@ -339,8 +339,6 @@ public:
   inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
 
   unsigned int getNbPoints(const unsigned int level=0) const;
-  unsigned int getNbPolygon() const ;
-  vpMbtPolygon* getPolygon(const unsigned int index);
   
   /*!
     Return the scales levels used for the tracking. 

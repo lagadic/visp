@@ -282,11 +282,54 @@ public:
   }
 
   /*!
+    Get the number of polygons (faces) representing the object to track.
+
+    \return Number of polygons.
+  */
+  virtual inline unsigned int getNbPolygon() const {
+    return static_cast<unsigned int>(faces.size());
+  }
+
+  /*!
     Get the near distance for clipping.
 
     \return Near clipping value.
   */
   virtual inline double   getNearClippingDistance() const { return distNearClip; }
+
+  /*!
+    Return the polygon (face) "index" in a constant way.
+
+    \exception vpException::dimensionError if index does not represent a good
+    polygon.
+
+    \param index : Index of the polygon to return.
+    \return The polygon at the specified index.
+  */
+  virtual inline vpMbtPolygon getPolygon(const unsigned int index) const {
+    if(index >= static_cast<unsigned int>(faces.size()) ){
+      throw vpException(vpException::dimensionError, "index out of range");
+    }
+
+    return *faces[index];
+  }
+
+  /*!
+    Return the polygon (face) "index".
+
+    \exception vpException::dimensionError if index does not represent a good
+    polygon.
+
+    \param index : Index of the polygon to return.
+    \return Pointer to the polygon index.
+  */
+  virtual inline vpMbtPolygon* getPolygon(const unsigned int index) {
+    if(index >= static_cast<unsigned int>(faces.size()) ){
+      throw vpException(vpException::dimensionError, "index out of range");
+    }
+
+    return faces[index];
+  }
 
   /*!
     Get the current pose between the object and the camera.
