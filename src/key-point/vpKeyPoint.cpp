@@ -220,26 +220,23 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
   : m_currentImageId(0), m_detectionTime(0.), m_detectorNames(), m_detectors(), m_extractionTime(0.),
     m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
-    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(), m_matches(),
-    m_matchingFactorThreshold(0.), m_matchingRatioThreshold(0.), m_matchingTime(0.),
+    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
+    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchQueryToTrainKeyPoints(), m_matchRansacKeyPointsToPoints(), m_matchRansacQueryToTrainKeyPoints(),
-    m_nbRansacIterations(0), m_nbRansacMinInlierCount(0), m_objectFilteredPoints(),
+    m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(0.), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(0.),
-    m_ransacThreshold(0.), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
+    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
   if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
     m_useKnn = true;
-  } else {
-    m_useKnn = false;
   }
 
   m_detectorNames.push_back(detectorName);
   m_extractorNames.push_back(extractorName);
-  m_matcherName = matcherName;
 
   init();
 }
@@ -254,30 +251,22 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
  */
 vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
-  : m_currentImageId(0), m_detectionTime(0.), m_detectorNames(), m_detectors(), m_extractionTime(0.),
-    m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
-    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(), m_matches(),
-    m_matchingFactorThreshold(0.), m_matchingRatioThreshold(0.), m_matchingTime(0.),
+  : m_currentImageId(0), m_detectionTime(0.), m_detectorNames(detectorNames), m_detectors(), m_extractionTime(0.),
+    m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(), m_filterType(filterType),
+    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
+    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchQueryToTrainKeyPoints(), m_matchRansacKeyPointsToPoints(), m_matchRansacQueryToTrainKeyPoints(),
-    m_nbRansacIterations(0), m_nbRansacMinInlierCount(0), m_objectFilteredPoints(),
+    m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
-    m_ransacConsensusPercentage(0.), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(0.),
-    m_ransacThreshold(0.), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
+    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
 {
-  m_filterType = filterType;
-
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
   if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
     m_useKnn = true;
-  } else {
-    m_useKnn = false;
   }
-
-  m_detectorNames = detectorNames;
-  m_extractorNames = extractorNames;
-  m_matcherName = matcherName;
 
   init();
 }
@@ -1204,23 +1193,6 @@ void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) {
    Initialize method for RANSAC parameters and for detectors, extractors and matcher, and for others parameters.
  */
 void vpKeyPoint::init() {
-  m_useRansacVVS = false;
-  m_useConsensusPercentage = false;
-  m_matchingFactorThreshold = 2.0;
-  m_matchingRatioThreshold = 0.85;
-  m_nbRansacIterations = 200;
-  m_ransacReprojectionError = 6.0; //In pixel, used in OpenCV function
-  m_nbRansacMinInlierCount = 100;
-  m_ransacThreshold = 0.001; //In meter, used in ViSP function
-  m_ransacConsensusPercentage = 20.0;
-
-  m_detectionTime = -1.0;
-  m_extractionTime = -1.0;
-  m_matchingTime = -1.0;
-  m_poseTime = -1.0;
-
-  m_currentImageId = 0;
-
 #if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require 2.4.0 <= opencv < 3.0.0
   //The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
@@ -1554,6 +1526,7 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile) {
 
     m_matchingFactorThreshold = xmlp.getMatchingFactorThreshold();
     m_matchingRatioThreshold = xmlp.getMatchingRatioThreshold();
+
     m_useRansacVVS = xmlp.getUseRansacVVSPoseEstimation();
     m_useConsensusPercentage = xmlp.getUseRansacConsensusPercentage();
     m_nbRansacIterations = xmlp.getNbRansacIterations();
@@ -1608,7 +1581,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   }
 
   //Get parent directory
-  std::string parent = vpIoTools::getParent(filename) + "/";
+  std::string parent = vpIoTools::getParent(filename);
+  if(!parent.empty()) {
+    parent += "/";
+  }
 
   if(binaryMode) {
     std::ifstream file(filename.c_str(), std::ifstream::binary);
@@ -2145,7 +2121,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       ss << "train_image_" << buffer << ".jpg";
       std::string filename_ = ss.str();
       mapOfImgPath[it->first] = filename_;
-      vpImageIo::write(it->second, parent + "/" + filename_);
+      vpImageIo::write(it->second, parent + (!parent.empty() ? "/" : "") + filename_);
     }
   }
 

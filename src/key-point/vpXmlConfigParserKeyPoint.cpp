@@ -144,15 +144,15 @@ vpXmlConfigParserKeyPoint::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if(!detector_node) {
-    std::cout << "detector : name : "<< m_detectorName << " (default)" << std::endl;
+    std::cout << "detector: name: "<< m_detectorName << " (default)" << std::endl;
   }
 
   if(!extractor_node) {
-    std::cout << "extractor : name : "<< m_extractorName << " (default)" << std::endl;
+    std::cout << "extractor: name: "<< m_extractorName << " (default)" << std::endl;
   }
 
   if(!matcher_node) {
-    std::cout << "matcher : name : "<< m_matcherName << " (default)" << std::endl;
+    std::cout << "matcher: name: "<< m_matcherName << " (default)" << std::endl;
   }
 }
 
@@ -277,16 +277,6 @@ vpXmlConfigParserKeyPoint::read_matcher(xmlDocPtr doc, xmlNodePtr node)
               m_matchingMethod = noFilterMatching;
               break;
 
-            case matching_factor_threshold:
-              m_matchingFactorThreshold = xmlReadDoubleChild(doc, dataNode);
-              matching_factor_threshold_node = true;
-              break;
-
-            case matching_ratio_threshold:
-              m_matchingRatioThreshold = xmlReadDoubleChild(doc, dataNode);
-              matching_ratio_threshold_node = true;
-              break;
-
             default:
               matching_method_node = false;
               break;
@@ -294,6 +284,16 @@ vpXmlConfigParserKeyPoint::read_matcher(xmlDocPtr doc, xmlNodePtr node)
           }
           break;
         }
+
+        case matching_factor_threshold:
+          m_matchingFactorThreshold = xmlReadDoubleChild(doc, dataNode);
+          matching_factor_threshold_node = true;
+          break;
+
+        case matching_ratio_threshold:
+          m_matchingRatioThreshold = xmlReadDoubleChild(doc, dataNode);
+          matching_ratio_threshold_node = true;
+          break;
 
         default:
           break;
@@ -388,39 +388,39 @@ vpXmlConfigParserKeyPoint::read_ransac(xmlDocPtr doc, xmlNodePtr node)
   }
 
   if(!use_ransac_vvs_node)
-    std::cout << "ransac : use ransac vvs pose estimation : "<< m_useRansacVVS << " (default)" << std::endl;
+    std::cout << "ransac: use ransac vvs pose estimation: "<< m_useRansacVVS << " (default)" << std::endl;
   else
-    std::cout << "ransac : use ransac vvs pose estimation : "<< m_useRansacVVS <<std::endl;
+    std::cout << "ransac: use ransac vvs pose estimation: "<< m_useRansacVVS <<std::endl;
 
   if(!use_ransac_consensus_percentage_node)
-    std::cout << "ransac : use consensus percentage : "<< m_useRansacConsensusPercentage << " (default)" << std::endl;
+    std::cout << "ransac: use consensus percentage: "<< m_useRansacConsensusPercentage << " (default)" << std::endl;
   else
-    std::cout << "ransac : use consensus percentage : "<< m_useRansacConsensusPercentage <<std::endl;
+    std::cout << "ransac: use consensus percentage: "<< m_useRansacConsensusPercentage <<std::endl;
 
   if(!nb_ransac_iterations_node)
-    std::cout << "ransac : nb ransac iterations : "<< m_nbRansacIterations << " (default)" << std::endl;
+    std::cout << "ransac: nb ransac iterations: "<< m_nbRansacIterations << " (default)" << std::endl;
   else
-    std::cout << "ransac : nb ransac iterations : "<< m_nbRansacIterations <<std::endl;
+    std::cout << "ransac: nb ransac iterations: "<< m_nbRansacIterations <<std::endl;
 
   if(!ransac_reprojection_error_node)
-    std::cout << "ransac : ransac reprojection error : "<< m_ransacReprojectionError << " (default)" << std::endl;
+    std::cout << "ransac: ransac reprojection error in pixel (for OpenCV function): "<< m_ransacReprojectionError << " (default)" << std::endl;
   else
-    std::cout << "ransac : ransac reprojection error : "<< m_ransacReprojectionError <<std::endl;
+    std::cout << "ransac: ransac reprojection error in pixel (for OpenCV function): "<< m_ransacReprojectionError <<std::endl;
 
   if(!nb_ransac_min_inlier_count_node)
-    std::cout << "ransac : nb ransac min inlier count : "<< m_nbRansacMinInlierCount << " (default)" << std::endl;
+    std::cout << "ransac: nb ransac min inlier count: "<< m_nbRansacMinInlierCount << " (default)" << std::endl;
   else
-    std::cout << "ransac : nb ransac min inlier count : "<< m_nbRansacMinInlierCount <<std::endl;
+    std::cout << "ransac: nb ransac min inlier count: "<< m_nbRansacMinInlierCount <<std::endl;
 
   if(!ransac_threshold_node)
-    std::cout << "ransac : ransac threshold : "<< m_ransacThreshold << " (default)" << std::endl;
+    std::cout << "ransac: ransac threshold in meter (for ViSP function): "<< m_ransacThreshold << " (default)" << std::endl;
   else
-    std::cout << "ransac : ransac threshold : "<< m_ransacThreshold <<std::endl;
+    std::cout << "ransac: ransac threshold in meter (for ViSP function): "<< m_ransacThreshold <<std::endl;
 
   if(!ransac_consensus_percentage_node)
-    std::cout << "ransac : consensus percentage : "<< m_ransacConsensusPercentage << " (default)" << std::endl;
+    std::cout << "ransac: consensus percentage: "<< m_ransacConsensusPercentage << " (default)" << std::endl;
   else
-    std::cout << "ransac : consensus percentage : "<< m_ransacConsensusPercentage <<std::endl;
+    std::cout << "ransac: consensus percentage: "<< m_ransacConsensusPercentage <<std::endl;
 }
 
 #endif //VISP_HAVE_XML2
