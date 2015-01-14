@@ -58,6 +58,7 @@
 #include <visp/vpIoTools.h>
 #include <visp/vpPose.h>
 #include <visp/vpImageIo.h>
+#include <visp/vpPolygon.h>
 #include <visp/vpXmlConfigParserKeyPoint.h>
 
 // Require at least OpenCV >= 2.1.1
@@ -228,6 +229,20 @@ public:
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
                       std::vector<cv::Point3f> &points3f, bool append=false);
+
+  static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
+      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point);
+
+  static void compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
+      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point);
+
+  static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+      std::vector<cv::KeyPoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
+      std::vector<cv::Point3f> &points);
+
+  static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+      std::vector<vpImagePoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
+      std::vector<vpPoint> &points);
 
   static void convertToOpenCVType(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
   static void convertToOpenCVType(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame=false);

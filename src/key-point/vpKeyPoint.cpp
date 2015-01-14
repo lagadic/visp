@@ -406,6 +406,151 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
 }
 
 /*!
+   Compute the 3D coordinate given the 2D image coordinate and under the assumption that the point is located on a plane
+   whose the plane equation is known in the camera frame.
+   The Z-coordinate is retrieved according to the proportional relation between the plane equation expressed in the
+   normalized camera frame (derived from the image coordinate) and the same plane equation expressed in the camera frame.
+
+   \param candidate : Keypoint we want to compute the 3D coordinate.
+   \param roi : List of 3D points representing a planar face.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param point : 3D coordinate computed.
+ */
+void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
+    const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point) {
+  /* compute plane equation */
+  std::vector<vpPoint>::const_iterator it_roi = roi.begin();
+  vpPoint pts[3];
+  pts[0] = *it_roi;
+  ++it_roi;
+  pts[1] = *it_roi;
+  ++it_roi;
+  pts[2] = *it_roi;
+  vpPlane Po(pts[0], pts[1], pts[2]);
+  double xc = 0.0, yc = 0.0;
+  vpPixelMeterConversion::convertPoint(cam, candidate.pt.x, candidate.pt.y,
+      xc, yc);
+  double Z = -Po.getD() / (Po.getA() * xc + Po.getB() * yc + Po.getC());
+  double X = xc * Z;
+  double Y = yc * Z;
+  vpColVector point_cam(4);
+  point_cam[0] = X;
+  point_cam[1] = Y;
+  point_cam[2] = Z;
+  point_cam[3] = 1;
+  vpColVector point_obj(4);
+  point_obj = cMo.inverse() * point_cam;
+  point = cv::Point3f(point_obj[0], point_obj[1], point_obj[2]);
+}
+
+/*!
+   Compute the 3D coordinate given the 2D image coordinate and under the assumption that the point is located on a plane
+   whose the plane equation is known in the camera frame.
+   The Z-coordinate is retrieved according to the proportional relation between the plane equation expressed in the
+   normalized camera frame (derived from the image coordinate) and the same plane equation expressed in the camera frame.
+
+   \param candidate : vpImagePoint we want to compute the 3D coordinate.
+   \param roi : List of 3D points representing a planar face.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param point : 3D coordinate computed.
+ */
+void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
+    const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point) {
+  /* compute plane equation */
+  std::vector<vpPoint>::const_iterator it_roi = roi.begin();
+  vpPoint pts[3];
+  pts[0] = *it_roi;
+  ++it_roi;
+  pts[1] = *it_roi;
+  ++it_roi;
+  pts[2] = *it_roi;
+  vpPlane Po(pts[0], pts[1], pts[2]);
+  double xc = 0.0, yc = 0.0;
+  vpPixelMeterConversion::convertPoint(cam, candidate, xc, yc);
+  double Z = -Po.getD() / (Po.getA() * xc + Po.getB() * yc + Po.getC());
+  double X = xc * Z;
+  double Y = yc * Z;
+  vpColVector point_cam(4);
+  point_cam[0] = X;
+  point_cam[1] = Y;
+  point_cam[2] = Z;
+  point_cam[3] = 1;
+  vpColVector point_obj(4);
+  point_obj = cMo.inverse() * point_cam;
+  point.setWorldCoordinates(point_obj);
+}
+
+/*!
+   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate given the 2D image coordinate
+   and under the assumption that the point is located on a plane.
+
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param cam : Camera parameters.
+   \param candidates : In input, list of keypoints detected in the whole image, in output, list of keypoints only located
+   on planes.
+   \param polygons : List of 2D polygons representing the projection of the faces in the image plane.
+   \param  roisPt : List of faces.
+   \param points : Output list of computed 3D coordinates of keypoints located only on faces.
+ */
+void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+    std::vector<cv::KeyPoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
+    std::vector<cv::Point3f> &points) {
+
+  std::vector<cv::KeyPoint> candidateToCheck = candidates;
+  candidates.clear();
+  vpImagePoint iPt;
+  cv::Point3f pt;
+  int cpt = 0;
+  for (std::vector<vpPolygon>::iterator it1 = polygons.begin();
+      it1 != polygons.end(); ++it1, cpt++) {
+    for (std::vector<cv::KeyPoint>::const_iterator it2 =
+        candidateToCheck.begin(); it2 != candidateToCheck.end(); ++it2) {
+      iPt.set_ij(it2->pt.y, it2->pt.x);
+      if (it1->isInside(iPt)) {
+        candidates.push_back(*it2);
+        vpKeyPoint::compute3D(*it2, roisPt[cpt], cam, cMo, pt);
+        points.push_back(pt);
+      }
+    }
+  }
+}
+
+/*!
+   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate given the 2D image coordinate
+   and under the assumption that the point is located on a plane.
+
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param cam : Camera parameters.
+   \param candidates : In input, list of vpImagePoint located in the whole image, in output, list of vpImagePoint only located
+   on planes.
+   \param polygons : List of 2D polygons representing the projection of the faces in the image plane.
+   \param  roisPt : List of faces.
+   \param points : Output list of computed 3D coordinates of vpImagePoint located only on faces.
+ */
+void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+    std::vector<vpImagePoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
+    std::vector<vpPoint> &points) {
+
+  std::vector<vpImagePoint> candidateToCheck = candidates;
+  candidates.clear();
+  vpPoint pt;
+  int cpt = 0;
+  for (std::vector<vpPolygon>::iterator it1 = polygons.begin();
+      it1 != polygons.end(); ++it1, cpt++) {
+    for (std::vector<vpImagePoint>::const_iterator it2 =
+        candidateToCheck.begin(); it2 != candidateToCheck.end(); ++it2) {
+      if (it1->isInside(*it2)) {
+        candidates.push_back(*it2);
+        vpKeyPoint::compute3D(*it2, roisPt[cpt], cam, cMo, pt);
+        points.push_back(pt);
+      }
+    }
+  }
+}
+
+/*!
    Compute the pose estimation error, the mean square error (in pixel) between the location of the detected keypoints
    and the location of the projection of the 3D model with the estimated pose.
 
