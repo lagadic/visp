@@ -97,12 +97,29 @@
   Structure to store info about segment in CAO model files.
  */
 struct SegmentInfo {
-  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {};
+  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {}
 
   std::vector<vpPoint> extremities;
   std::string name;
   bool useLod;
   double minLineLengthThresh;
+};
+
+/*!
+  Structure to store info about a polygon face represented by a vpPolygon and by a list of vpPoint
+  representing the corners of the polygon face in 3D.
+ */
+struct PolygonFaceInfo {
+  PolygonFaceInfo(const double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
+: distanceToCamera(dist), polygon(poly), faceCorners(corners) {}
+
+  bool operator<(const PolygonFaceInfo &pfi) const {
+    return distanceToCamera < pfi.distanceToCamera;
+  }
+
+  double distanceToCamera;
+  vpPolygon polygon;
+  std::vector<vpPoint> faceCorners;
 };
 
 /*!
@@ -2042,6 +2059,93 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
 
   G.setWorldCoordinates(oX/pts.size(), oY/pts.size(), oZ/pts.size());
   return G;
+}
+
+/*!
+  Get the list of polygons faces (a vpPolygon representing the projection of the face in the image and a list of face corners
+  in 3D), with the possibility to order by distance to the camera or to use the visibility check to consider if the polygon
+  face must be retrieved or not.
+
+  \param orderPolygons : If true, the resulting list is ordered from the nearest polygon faces to the farther.
+  \param useVisibility : If true, only visible faces will be retrieved.
+  \return A pair object containing the list of vpPolygon and the list of face corners.
+ */
+std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
+vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility)
+{
+  vpHomogeneousMatrix cMo;
+  vpCameraParameters cam;
+  getPose(cMo);
+  getCameraParameters(cam);
+
+  //Temporary variable to permit to order polygons by distance
+  std::vector<vpPolygon> polygonsTmp;
+  std::vector<std::vector<vpPoint> > roisPtTmp;
+
+  //Pair containing the list of vpPolygon and the list of face corners
+  std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pairOfPolygonFaces;
+
+  for (unsigned int i = 0; i < getNbPolygon(); i++) {
+    std::vector<vpImagePoint> roi;
+    std::vector<vpPoint> roiPt;
+    //A face has at least three points
+    if (getPolygon(i)->nbpt >= 3) {
+      if((useVisibility && getPolygon(i)->isvisible) || !useVisibility) {
+        for (unsigned int j = 0; j < getPolygon(i)->nbpt; j++) {
+          vpPoint pt(getPolygon(i)->p[j]);
+          pt.project(cMo);
+          double u = 0, v = 0;
+          vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), u, v);
+          roi.push_back(vpImagePoint(v, u));
+          roiPt.push_back(pt);
+        }
+
+        polygonsTmp.push_back(vpPolygon(roi));
+        roisPtTmp.push_back(roiPt);
+      }
+    }
+  }
+
+  if(orderPolygons) {
+    //Order polygons by distance (near to far)
+    std::vector<PolygonFaceInfo> listOfPolygonFaces;
+    for(unsigned int i = 0; i < polygonsTmp.size(); i++) {
+      double x_centroid = 0.0, y_centroid = 0.0, z_centroid = 0.0;
+      for(unsigned int j = 0; j < roisPtTmp[i].size(); j++) {
+        x_centroid += roisPtTmp[i][j].get_X();
+        y_centroid += roisPtTmp[i][j].get_Y();
+        z_centroid += roisPtTmp[i][j].get_Z();
+      }
+
+      x_centroid /= roisPtTmp[i].size();
+      y_centroid /= roisPtTmp[i].size();
+      z_centroid /= roisPtTmp[i].size();
+
+      double squared_dist = x_centroid*x_centroid + y_centroid*y_centroid + z_centroid*z_centroid;
+      listOfPolygonFaces.push_back(PolygonFaceInfo(squared_dist, polygonsTmp[i], roisPtTmp[i]));
+    }
+
+    //Sort the list of polygon faces
+    std::sort(listOfPolygonFaces.begin(), listOfPolygonFaces.end());
+
+    polygonsTmp.resize(listOfPolygonFaces.size());
+    roisPtTmp.resize(listOfPolygonFaces.size());
+
+    int cpt = 0;
+    for(std::vector<PolygonFaceInfo>::const_iterator it = listOfPolygonFaces.begin(); it != listOfPolygonFaces.end();
+        ++it, cpt++) {
+      polygonsTmp[cpt] = it->polygon;
+      roisPtTmp[cpt] = it->faceCorners;
+    }
+
+    pairOfPolygonFaces.first = polygonsTmp;
+    pairOfPolygonFaces.second = roisPtTmp;
+  } else {
+    pairOfPolygonFaces.first = polygonsTmp;
+    pairOfPolygonFaces.second = roisPtTmp;
+  }
+
+  return pairOfPolygonFaces;
 }
 
 /*!
