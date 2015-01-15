@@ -1781,10 +1781,12 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
     int nCols = 0;
     file.read((char *)(&nCols), sizeof(nCols));
 
-    std::vector<std::vector<double> > descriptorValue;
-    for(int i = 0; i < nRows; i++) {
-      std::vector<double> rowValue;
+    //Read the type of the descriptor
+    int descriptorType = 5; //CV_32F
+    file.read((char *)(&descriptorType), sizeof(descriptorType));
 
+    cv::Mat trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
+    for(int i = 0; i < nRows; i++) {
       //Read information about keyPoint
       float u, v, size, angle, response;
       int octave, class_id, image_id;
@@ -1815,23 +1817,71 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
       for(int j = 0; j < nCols; j++) {
         //Read the value of the descriptor
-        float value;
-        file.read((char *)(&value), sizeof(value));
-        rowValue.push_back(value);
-      }
+        switch(descriptorType) {
+          case CV_8U:
+          {
+            unsigned char value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<unsigned char>(i, j) = value;
+          }
+          break;
 
-      descriptorValue.push_back(rowValue);
-    }
+          case CV_8S:
+          {
+            char value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<char>(i, j) = value;
+          }
+          break;
 
-    cv::Mat trainDescriptorsTmp = cv::Mat((int) descriptorValue.size(),
-                                          (int) descriptorValue[0].size(), CV_32F);
-    int i = 0;
-    for (std::vector<std::vector<double> >::const_iterator it1 =
-         descriptorValue.begin(); it1 != descriptorValue.end(); ++it1, i++) {
-      int j = 0;
-      for (std::vector<double>::const_iterator it2 = it1->begin();
-           it2 != it1->end(); ++it2, j++) {
-        trainDescriptorsTmp.at<float>(i, j) = (float) *it2;
+          case CV_16U:
+          {
+            unsigned short int value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<unsigned short int>(i, j) = value;
+          }
+          break;
+
+          case CV_16S:
+          {
+            short int value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<short int>(i, j) = value;
+          }
+          break;
+
+          case CV_32S:
+          {
+            int value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<int>(i, j) = value;
+          }
+          break;
+
+          case CV_32F:
+          {
+            float value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<float>(i, j) = value;
+          }
+          break;
+
+          case CV_64F:
+          {
+            double value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<double>(i, j) = value;
+          }
+          break;
+
+          default:
+          {
+            float value;
+            file.read((char *)(&value), sizeof(value));
+            trainDescriptorsTmp.at<float>(i, j) = value;
+          }
+          break;
+        }
       }
     }
 
@@ -1863,9 +1913,14 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     root_element = xmlDocGetRootElement(doc);
 
-    std::vector<std::vector<double> > descriptor_value;
     xmlNodePtr first_level_node = NULL;
     char *pEnd = NULL;
+
+    int descriptorType = CV_32F; //float
+    int nRows = 0, nCols = 0;
+    int i = 0, j = 0;
+
+    cv::Mat trainDescriptorsTmp;
 
     for (first_level_node = root_element->children; first_level_node;
          first_level_node = first_level_node->next) {
@@ -1894,12 +1949,31 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             m_mapOfImages[id + startImageId] = I;
           }
         }
+      } else if(first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorsInfo") {
+        xmlNodePtr descriptors_info_node = NULL;
+        for (descriptors_info_node = first_level_node->children; descriptors_info_node; descriptors_info_node =
+            descriptors_info_node->next) {
+          if (descriptors_info_node->type == XML_ELEMENT_NODE) {
+            name = std::string ((char *) descriptors_info_node->name);
+
+            if(name == "nrows") {
+              nRows = std::atoi((char *) descriptors_info_node->children->content);
+            } else if(name == "ncols") {
+              nCols = std::atoi((char *) descriptors_info_node->children->content);
+            } else if(name == "type") {
+              descriptorType = std::atoi((char *) descriptors_info_node->children->content);
+            }
+          }
+        }
+
+        trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
       } else if (first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorInfo") {
         xmlNodePtr point_node = NULL;
         double u = 0.0, v = 0.0, size = 0.0, angle = 0.0, response = 0.0;
         int octave = 0, class_id = 0, image_id = 0;
         double oX = 0.0, oY = 0.0, oZ = 0.0;
-        std::vector<double> row_value;
+
+        std::stringstream ss;
 
         for (point_node = first_level_node->children; point_node; point_node =
              point_node->next) {
@@ -1939,34 +2013,71 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
               m_trainPoints.push_back(cv::Point3f((float) oX, (float) oY, (float) oZ));
             } else if (name == "desc") {
               xmlNodePtr descriptor_value_node = NULL;
+              j = 0;
+
               for (descriptor_value_node = point_node->children;
                    descriptor_value_node; descriptor_value_node =
                    descriptor_value_node->next) {
 
                 if (descriptor_value_node->type == XML_ELEMENT_NODE) {
                   //Read descriptors values
-                  row_value.push_back(
-                        std::atof(
-                          (char *) descriptor_value_node->children->content));
+                  std::string parseStr((char *) descriptor_value_node->children->content);
+                  ss.clear();
+                  ss.str(parseStr);
+
+                  if(!ss.fail()) {
+                    switch(descriptorType) {
+                      case CV_8U:
+                      {
+                        //Parse the numeric value [0 ; 255] to an int
+                        int parseValue;
+                        ss >> parseValue;
+                        trainDescriptorsTmp.at<unsigned char>(i, j) = (unsigned char) parseValue;
+                      }
+                      break;
+
+                      case CV_8S:
+                        //Parse the numeric value [-128 ; 127] to an int
+                        int parseValue;
+                        ss >> parseValue;
+                        trainDescriptorsTmp.at<char>(i, j) = (char) parseValue;
+                      break;
+
+                      case CV_16U:
+                        ss >> trainDescriptorsTmp.at<unsigned short int>(i, j);
+                      break;
+
+                      case CV_16S:
+                        ss >> trainDescriptorsTmp.at<short int>(i, j);
+                      break;
+
+                      case CV_32S:
+                        ss >> trainDescriptorsTmp.at<int>(i, j);
+                      break;
+
+                      case CV_32F:
+                        ss >> trainDescriptorsTmp.at<float>(i, j);
+                      break;
+
+                      case CV_64F:
+                        ss >> trainDescriptorsTmp.at<double>(i, j);
+                      break;
+
+                      default:
+                        ss >> trainDescriptorsTmp.at<float>(i, j);
+                      break;
+                    }
+                  } else {
+                    std::cerr << "Error when converting:" << ss.str() << std::endl;
+                  }
+
+                  j++;
                 }
               }
             }
           }
         }
-
-        descriptor_value.push_back(row_value);
-      }
-    }
-
-    cv::Mat trainDescriptorsTmp = cv::Mat((int) descriptor_value.size(),
-                               (int) descriptor_value[0].size(), CV_32F);
-    int i = 0;
-    for (std::vector<std::vector<double> >::const_iterator it1 =
-         descriptor_value.begin(); it1 != descriptor_value.end(); ++it1, i++) {
-      int j = 0;
-      for (std::vector<double>::const_iterator it2 = it1->begin();
-           it2 != it1->end(); ++it2, j++) {
-        trainDescriptorsTmp.at<float>(i, j) = (float) *it2;
+        i++;
       }
     }
 
@@ -2307,11 +2418,16 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     int nRows = m_trainDescriptors.rows,
         nCols = m_trainDescriptors.cols;
+    int descriptorType = m_trainDescriptors.type();
+
     //Write the number of descriptors
     file.write((char *)(&nRows), sizeof(nRows));
 
     //Write the size of the descriptor
     file.write((char *)(&nCols), sizeof(nCols));
+
+    //Write the type of the descriptor
+    file.write((char *)(&descriptorType), sizeof(descriptorType));
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int) i;
@@ -2361,7 +2477,39 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
       for (int j = 0; j < nCols; j++) {
         //Write the descriptor value
-        file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+        switch(descriptorType) {
+        case CV_8U:
+          file.write((char *)(&m_trainDescriptors.at<unsigned char>(i, j)), sizeof(m_trainDescriptors.at<unsigned char>(i, j)));
+          break;
+
+        case CV_8S:
+          file.write((char *)(&m_trainDescriptors.at<char>(i, j)), sizeof(m_trainDescriptors.at<char>(i, j)));
+          break;
+
+        case CV_16U:
+          file.write((char *)(&m_trainDescriptors.at<unsigned short int>(i, j)), sizeof(m_trainDescriptors.at<unsigned short int>(i, j)));
+          break;
+
+        case CV_16S:
+          file.write((char *)(&m_trainDescriptors.at<short int>(i, j)), sizeof(m_trainDescriptors.at<short int>(i, j)));
+          break;
+
+        case CV_32S:
+          file.write((char *)(&m_trainDescriptors.at<int>(i, j)), sizeof(m_trainDescriptors.at<int>(i, j)));
+          break;
+
+        case CV_32F:
+          file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+          break;
+
+        case CV_64F:
+          file.write((char *)(&m_trainDescriptors.at<double>(i, j)), sizeof(m_trainDescriptors.at<double>(i, j)));
+          break;
+
+        default:
+          file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+          break;
+        }
       }
     }
 
@@ -2370,8 +2518,8 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
   } else {
 #ifdef VISP_HAVE_XML2
     xmlDocPtr doc = NULL;
-    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL, descriptor_node = NULL,
-        point_node = NULL, desc_node = NULL, desc_val_node = NULL;
+    xmlNodePtr root_node = NULL, image_node = NULL, image_info_node = NULL, descriptors_info_node = NULL,
+        descriptor_node = NULL, desc_node = NULL;
 
     /*
      * this initialize the library and check potential ABI mismatches
@@ -2401,8 +2549,28 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       xmlNewProp(image_info_node, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
     }
 
+    //Write information about descriptors
+    descriptors_info_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
+
     int nRows = m_trainDescriptors.rows,
         nCols = m_trainDescriptors.cols;
+    int descriptorType = m_trainDescriptors.type();
+
+    //Write the number of rows
+    ss.str("");
+    ss << nRows;
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "nrows", BAD_CAST ss.str().c_str());
+
+    //Write the number of cols
+    ss.str("");
+    ss << nCols;
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "ncols", BAD_CAST ss.str().c_str());
+
+    //Write the descriptors type
+    ss.str("");
+    ss << descriptorType;
+    xmlNewChild(descriptors_info_node, NULL, BAD_CAST "type", BAD_CAST ss.str().c_str());
+
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int) i;
       descriptor_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorInfo",
@@ -2410,58 +2578,58 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
       ss.str("");
       ss << m_trainKeyPoints[i_].pt.x;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "u",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "u",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].pt.y;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "v",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "v",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].size;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "size",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "size",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].angle;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "angle",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "angle",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].response;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "response",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "response",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].octave;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "octave",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "octave",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << m_trainKeyPoints[i_].class_id;
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "class_id",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
       ss << ((saveTrainingImages && m_mapOfImageId.size() > 0) ? m_mapOfImageId[m_trainKeyPoints[i_].class_id] : -1);
-      point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
                                BAD_CAST ss.str().c_str());
 
       if (have3DInfo) {
         ss.str("");
         ss << m_trainPoints[i_].x;
-        point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "oX",
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oX",
                                  BAD_CAST ss.str().c_str());
 
         ss.str("");
         ss << m_trainPoints[i_].y;
-        point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "oY",
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oY",
                                  BAD_CAST ss.str().c_str());
 
         ss.str("");
         ss << m_trainPoints[i_].z;
-        point_node = xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ",
+        xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ",
                                  BAD_CAST ss.str().c_str());
       }
 
@@ -2469,14 +2637,59 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
       for (int j = 0; j < nCols; j++) {
         ss.str("");
-        ss << m_trainDescriptors.at<float>(i, j);
-        desc_val_node = xmlNewChild(desc_node, NULL, BAD_CAST "val",
-                                    BAD_CAST ss.str().c_str());
+
+        switch(descriptorType) {
+        case CV_8U:
+          {
+            //Promote an unsigned char to an int
+            //val_tmp holds the numeric value that will be written
+            //We save the value in numeric form otherwise libxml2 will not be able to parse
+            //A better solution could be possible
+            int val_tmp = m_trainDescriptors.at<unsigned char>(i, j);
+            ss << val_tmp;
+          }
+          break;
+
+          case CV_8S:
+          {
+            //Promote a char to an int
+            //val_tmp holds the numeric value that will be written
+            //We save the value in numeric form otherwise libxml2 will not be able to parse
+            //A better solution could be possible
+            int val_tmp = m_trainDescriptors.at<char>(i, j);
+            ss << val_tmp;
+          }
+          break;
+
+          case CV_16U:
+            ss << m_trainDescriptors.at<unsigned short int>(i, j);
+            break;
+
+          case CV_16S:
+            ss << m_trainDescriptors.at<short int>(i, j);
+            break;
+
+          case CV_32S:
+            ss << m_trainDescriptors.at<int>(i, j);
+            break;
+
+          case CV_32F:
+            ss << m_trainDescriptors.at<float>(i, j);
+            break;
+
+          case CV_64F:
+            ss << m_trainDescriptors.at<double>(i, j);
+            break;
+
+          default:
+            ss << m_trainDescriptors.at<float>(i, j);
+            break;
+        }
+        xmlNewChild(desc_node, NULL, BAD_CAST "val",
+                    BAD_CAST ss.str().c_str());
       }
     }
 
-    (void)point_node;    // TODO: Fix to avoid compiler warning
-    (void)desc_val_node; // TODO: Fix to avoid compiler warning
     xmlSaveFormatFileEnc(filename.c_str(), doc, "UTF-8", 1);
 
     /*free the document */
