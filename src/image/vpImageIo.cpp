@@ -66,7 +66,7 @@ vpImageIo::openFileRead(const char *filename)
   FILE *fd ;
 
   // Lecture du nom du fichier image.
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
     vpERROR_TRACE("filename empty ") ;
     throw (vpImageException(vpImageException::noFileNameError,
 			    "filename empty ")) ;
@@ -100,7 +100,7 @@ vpImageIo::openFileWrite(const char *filename, const char *mode)
   FILE *fd ;
 
  // Lecture du nom du fichier image.
-  if (filename == '\0')
+  if (!filename || *filename == '\0')
   {
     vpERROR_TRACE("filename empty ") ;
     throw (vpImageException(vpImageException::noFileNameError,
@@ -619,7 +619,7 @@ vpImageIo::writePFM(const vpImage<float> &I,
   FILE* fd;
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -675,7 +675,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   FILE* fd;
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -750,7 +750,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
   FILE* fd;
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -819,7 +819,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
   unsigned int   w, h;
 
   // Test the filename
-  if (filename == '\0')
+  if (!filename || *filename == '\0')
   {
     vpERROR_TRACE("no filename") ;
     throw (vpImageException(vpImageException::ioError,
@@ -986,7 +986,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
   unsigned int magic=5, w=0, h=0, maxval=255;
 
   // Test the filename
-  if (filename == '\0') {
+  if (!filename || *filename == '\0') {
     throw (vpImageException(vpImageException::ioError,
           "No filename")) ;
   }
@@ -1266,7 +1266,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
   unsigned int magic=5, w=0, h=0, maxval=255;
 
   // Test the filename
-  if (filename == '\0') {
+  if (!filename || *filename == '\0') {
     throw (vpImageException(vpImageException::ioError,
           "No filename")) ;
   }
@@ -1501,7 +1501,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
 
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -1751,7 +1751,7 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
   jpeg_create_compress(&cinfo);
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -1830,7 +1830,7 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
   jpeg_create_compress(&cinfo);
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -1920,7 +1920,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
   jpeg_create_decompress(&cinfo);
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -2033,7 +2033,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   jpeg_create_decompress(&cinfo);
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -2365,7 +2365,7 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   FILE *file;
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -2517,7 +2517,7 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   FILE *file;
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -2679,7 +2679,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   FILE *file;
   png_byte magic[8];
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;
@@ -2898,7 +2898,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   png_byte magic[8];
 
   // Test the filename
-  if (filename == '\0')   {
+  if (!filename || *filename == '\0')   {
      vpERROR_TRACE("no filename\n");
     throw (vpImageException(vpImageException::ioError,
            "no filename")) ;

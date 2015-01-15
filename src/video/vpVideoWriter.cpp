@@ -117,7 +117,7 @@ vpVideoWriter::~vpVideoWriter()
 */
 void vpVideoWriter::setFileName(const char *filename)
 {
-  if (filename == '\0')
+  if (!filename || *filename == '\0')
   {
     vpERROR_TRACE("filename empty ") ;
     throw (vpImageException(vpImageException::noFileNameError,"filename empty ")) ;
