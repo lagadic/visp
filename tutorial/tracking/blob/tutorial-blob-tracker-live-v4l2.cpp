@@ -41,7 +41,7 @@ int main()
 
   vpImagePoint germ;
   bool init_done = false;
-
+  std::cout << "Click!!!" << std::endl;
   while(1) {
     try {
 #if defined(VISP_HAVE_V4L2)
