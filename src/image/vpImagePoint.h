@@ -55,6 +55,7 @@
 #include <ostream>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include <vector>
 
 class vpHomography;
 class vpRect;
@@ -273,6 +274,9 @@ class VISP_EXPORT vpImagePoint
   */
   static double distance (const vpImagePoint &iP1, const vpImagePoint &iP2) {
     return(sqrt(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j())));}
+
+
+  static vpRect getBBox(const std::vector<vpImagePoint>& ipVec);
     
   /*!
 
