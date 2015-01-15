@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<conf>
+  <detector>
+    <name>SIFT</name>
+  </detector>
+
+  <extractor>
+    <name>SIFT</name>
+  </extractor>
+
+  <matcher>
+    <name>BruteForce</name>
+    <matching_method>ratioDistanceThreshold</matching_method>
+    <matchingRatioThreshold>0.8</matchingRatioThreshold>
+  </matcher>
+  
+  <ransac>
+	<useRansacVVS>1</useRansacVVS>
+	<useRansacConsensusPercentage>1</useRansacConsensusPercentage>
+	<ransacConsensusPercentage>20.0</ransacConsensusPercentage>
+	<nbRansacIterations>200</nbRansacIterations>
+	<ransacThreshold>0.005</ransacThreshold>
+  </ransac>
+</conf>
+

@@ -1,0 +1,122 @@
+/**
+
+\page tutorial-detection-object Tutorial: Object detection and localization
+\tableofcontents
+
+This tutorial will show you how to use keypoints to detect and estimate the pose of a known object using his cad model. The first step consists in detecting and learning keypoints located on the faces of an object, while the second step makes the matching between the detected keypoints in the query image with those previously learned. The pair of matches are then used to estimate the pose of the object with the knowledge of the correspondences between the 2D and 3D coordinates.
+
+The next section presents a basic example of the detection of a teabox with a detailed description of the different steps.
+
+\section object_detection Object detection using keypoints
+
+\subsection detection_object_preamble Preamble
+
+You are advised to read the following tutorials \ref tutorial-tracking-mb and \ref tutorial-matching if you are not aware of these concepts.
+
+\subsection detection_object_principle Principle of object detection using keypoints
+
+A quick overview of the principle is summed-up in the following diagrams.
+
+\image html img-learning-step.png Learning step.
+
+The first part of the process consists in learning the characteristics of the considered object by extracting the keypoints detected on the different faces.
+We use here the model-based tracker initialized given a known initial pose to have access to the cad model of the object. The cad model is then used to select only keypoints on faces that are visible and to calculate the 3D coordinates of keypoints.
+
+\note The calculation of the 3D coordinates of a keypoint is based on a planar location hypothesis. We assume that the keypoint is located on a planar face and the Z-coordinate is retrieved according to the proportional relation between the plane equation expressed in the normalized camera frame (derived from the image coordinate) and the same plane equation expressed in the camera frame, thanks to the known pose of the object.
+
+In this example the learned data (the list of 3D coordinates and the corresponding descriptors) are saved in a file and will be used later in the detection part.
+
+\image html img-detection-step.png Detection step.
+
+In a query image where we want to detect the object, we find the matches between the keypoints detected in the current image with those previously learned.
+The estimation of the pose of the object can then be computed with the 3D/2D information.
+
+The next section presents an example of the detection and the pose estimation of a teabox.
+
+\subsection detection_object_teabox_example Teabox detection and pose estimation
+
+The following example comes from tutorial-detection-object-mbt.cpp and shows the different steps to detect and get the pose of a teabox.
+
+\include tutorial-detection-object-mbt.cpp
+
+You may recognize with the following lines the code used in \ref tutorial-mb-edge-tracker.cpp to initialize the model-based tracker at a given pose and with the appropriate configuration.
+
+\snippet tutorial-detection-object-mbt.cpp MBT code
+
+The modifications made to the code start from now.
+
+First, we have to choose about which type of keypoints will be used. SIFT keypoints are a widely type of keypoints used in computer vision, but depending of your version of OpenCV and due to some patents, certain types of keypoints will not be available.
+Here, we will use SIFT if available, otherwise a combination of FAST keypoint detector and ORB descriptor extractor.
+
+\snippet tutorial-detection-object-mbt.cpp Keypoint selection
+
+The following line declares an instance of the vpKeyPoint class :
+
+\snippet tutorial-detection-object-mbt.cpp Keypoint declaration
+
+If libxml2 is available, you can load the configuration (type of detector, extractor, matcher, ransac pose estimation parameters) directly with an xml configuration file :
+
+\snippet tutorial-detection-object-mbt.cpp Keypoint xml config
+
+Otherwise, the configuration must be made in the code.
+
+\snippet tutorial-detection-object-mbt.cpp Keypoint code config
+
+We then detect keypoints in the reference image with the object we want to learn : 
+
+\snippet tutorial-detection-object-mbt.cpp Keypoints reference detection
+
+But we need to keep keypoints only on faces of the teabox. This is done by using the model-based tracker to first eliminate keypoints which do not belong to the teabox and secondly to have the plane equation for each faces (and so to be able to compute the 3D coordinate from the 2D information).
+
+\snippet tutorial-detection-object-mbt.cpp Keypoints selection on faces
+
+The next step is the building of the reference keypoints. The descriptors for each keypoints are also extracted and the reference data consist of the lists of keypoints / descriptors and the list of 3D points.
+
+\snippet tutorial-detection-object-mbt.cpp Keypoints build reference
+
+We save the learning data in a binary format (the other possibilitie is to save in an xml format but which takes more space) to be able to use it later.
+
+\snippet tutorial-detection-object-mbt.cpp Save learning data
+
+We then visualize the result of the learning process by displaying with a cross the location of the keypoints:
+
+\snippet tutorial-detection-object-mbt.cpp Display reference keypoints
+
+We declare now another instance of the vpKeyPoint class dedicated this time to the detection of the teabox. If libxml2 is available, the configuration is directly loaded from an xml file, otherwise this is done directly in the code.
+
+\snippet tutorial-detection-object-mbt.cpp Init keypoint detection
+
+The previously saved binary file corresponding to the teabox learning data is loaded:
+
+\snippet tutorial-detection-object-mbt.cpp Load teabox learning data
+
+We are now ready to detect the teabox in a query image. The call to the function vpKeyPoint::matchPoint() returns true if the matching was successful and permits to get the estimated homogeneous matrix corresponding to the pose of the object. The reprojection error is also computed.
+
+\snippet tutorial-detection-object-mbt.cpp Matching and pose estimation
+
+In order to display the result, we use the tracker initialized at the estimated pose and we display also the location of the world frame:
+
+\snippet tutorial-detection-object-mbt.cpp Tracker set pose
+\snippet tutorial-detection-object-mbt.cpp Display
+
+The pose of the detected object can then be used to initialize a tracker automatically rather then using a human initialization; see \ref tutorial-tracking-mb and \ref tutorial-tracking-tt.
+
+\subsection detection_object_quick_explanation Quick explanation about some parameters used in the example
+
+The content of the configuration file is described in the following lines :
+
+\include detection-config-SIFT.xml
+
+In this configuration file, SIFT keypoints are used.
+
+Let us explain now the configuration of the matcher:
+- a brute force matching will explore all the possible solutions to match a considered keypoints detected in the current image to the closest (in descriptor distance term) one in the reference set, contrary to the other type of matching using the library FLANN (Fast Library for Approximate Nearest Neighbors) which contains some optimizations to reduce the complexity of the solution set,
+- to eliminate some possible false matching, one technique consists of keeping only the keypoints whose are sufficienly discriminated using a ratio test.
+
+Now, for the Ransac pose estimation part :
+- two methods are provided to estimate the pose in a robust way: one using OpenCV, the other method uses a virtual visual servoing approach using ViSP,
+- basically, a Ransac method is composed of two steps repeated a certain number of iterations: first we pick randomly 4 points and estimate the pose, the second step is to keep all points which sufficienly "agree" (the reprojection error is below a threshold) with the pose determinated in the first step. These points are inliers and form the consensus set, the other are outliers.
+If enough points are in the consensus set (here 20 % of all the points), the pose is refined and returned, otherwise another iteration is made (here 200 iterations maximum).
+
+
+*/
