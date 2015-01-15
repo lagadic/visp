@@ -28,9 +28,9 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
   if (init == true) {
 	vpHomogeneousMatrix cMo_dem;
 	vpHomogeneousMatrix cMo_lag;
-	pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_dem);
-	pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_lag);
-	double residual_dem = pose.computeResidual(cMo_dem);
+  pose.computePose(vpPose::DEMENTHON, cMo_dem);
+  pose.computePose(vpPose::LAGRANGE, cMo_lag);
+  double residual_dem = pose.computeResidual(cMo_dem);
 	double residual_lag = pose.computeResidual(cMo_lag);
 	if (residual_dem < residual_lag)
       cMo = cMo_dem;
