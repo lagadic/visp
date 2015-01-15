@@ -2268,7 +2268,7 @@ vpSimulatorViper850::stopMotion()
   stop = 0;
   set_artVel(stop);
   set_velocity(stop);
-  setRobotState (vpRobot::STATE_STOP);
+  vpRobot::setRobotState (vpRobot::STATE_STOP);
 }
 
 
