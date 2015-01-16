@@ -159,7 +159,8 @@ int main(int argc, char ** argv) {
     for(std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
       vpDisplay::displayCross(I, it->pt.y, it->pt.x, 4, vpColor::red);
     }
-    vpDisplay::displayText(I, 10, 10, "Keypoints detected on faces of the teabox", vpColor::red);
+    vpDisplay::displayText(I, 10, 10, "Learning step: keypoints are detected on visible teabox faces", vpColor::red);
+    vpDisplay::displayText(I, 30, 10, "Click to continue with detection...", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I, true);
     //! [Display reference keypoints]
@@ -189,9 +190,13 @@ int main(int argc, char ** argv) {
     //! [Load teabox learning data]
 
     double error;
+    bool click_done = false;
+
     while(! g.end()) {
       g.acquire(I);
       vpDisplay::display(I);
+
+      vpDisplay::displayText(I, 10, 10, "Detection and localization in process...", vpColor::red);
 
       //! [Matching and pose estimation]
       if(keypoint_detection.matchPoint(I, cam, cMo, error, elapsedTime)) {
@@ -206,13 +211,15 @@ int main(int argc, char ** argv) {
         //! [Display]
       }
 
-      vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 30, 10, "A click to exit.", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) {
+        click_done = true;
         break;
       }
     }
-    vpDisplay::getClick(I);
+    if (! click_done)
+      vpDisplay::getClick(I);
 #ifdef VISP_HAVE_XML2
     vpXmlParser::cleanup();
 #endif

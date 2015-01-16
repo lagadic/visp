@@ -103,7 +103,7 @@ The pose of the detected object can then be used to initialize a tracker automat
 
 \subsection detection_object_quick_explanation Quick explanation about some parameters used in the example
 
-The content of the configuration file is described in the following lines :
+The content of the configuration file named detection-config-SIFT.xml and provided with this example is described in the following lines :
 
 \include detection-config-SIFT.xml
 
@@ -118,5 +118,8 @@ Now, for the Ransac pose estimation part :
 - basically, a Ransac method is composed of two steps repeated a certain number of iterations: first we pick randomly 4 points and estimate the pose, the second step is to keep all points which sufficienly "agree" (the reprojection error is below a threshold) with the pose determinated in the first step. These points are inliers and form the consensus set, the other are outliers.
 If enough points are in the consensus set (here 20 % of all the points), the pose is refined and returned, otherwise another iteration is made (here 200 iterations maximum).
 
+Below you will also find the content of detection-config.xml configuration file, also provided in this example. It allows to use FAST detector and ORB extractor.
+
+\include detection-config.xml
 
 */
