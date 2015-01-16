@@ -115,7 +115,9 @@ int main(int argc, char ** argv) {
     //! [Keypoint declaration]
     if(usexml) {
       //! [Keypoint xml config]
+#ifdef VISP_HAVE_XML2
       keypoint_learning.loadConfigFile(configurationFile);
+#endif
       //! [Keypoint xml config]
     } else {
       //! [Keypoint code config]
@@ -165,7 +167,9 @@ int main(int argc, char ** argv) {
     //! [Init keypoint detection]
     vpKeyPoint keypoint_detection;
     if(usexml) {
+#ifdef VISP_HAVE_XML2
       keypoint_detection.loadConfigFile(configurationFile);
+#endif
     } else {
       keypoint_detection.setDetector(detectorName);
       keypoint_detection.setExtractor(extractorName);
