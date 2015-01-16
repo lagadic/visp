@@ -49,10 +49,8 @@
   \brief Class for generating random number
   with uniform and normal probability density
 
-  The algorithms and notations used are described in
+  The algorithms and notations used are described in \cite Gentle:2004.
 
-  James E. Gentle, Random Number Generation and Monte Carlo Methods,
-  Springer 1998
  */
 
 #include <visp/vpConfig.h>
@@ -97,7 +95,7 @@ class VISP_EXPORT vpUniRand
   \ingroup Random
   \brief Class for generating random number with normal probability density.
 
-  The algorithms and notations used are described in \cite Gentle:1998.
+  The algorithms and notations used are described in \cite Gentle:2004.
 
   The code below shows how to use the random generator to get values that have their mean equal to
   10 with a standart deviation equal to 0.5.

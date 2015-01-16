@@ -458,6 +458,7 @@ vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
 /*!
   Set the points that will be used as initialization during the next call to track().
 
+  \param I : Input image.
   \param pts : Vector of points that should be tracked.
 
 */
