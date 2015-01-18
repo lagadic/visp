@@ -111,6 +111,10 @@ void vpVideoReader::setFileName(const char *filename)
 
 	formatType = getFormat(fileName);
 
+  if (formatType == FORMAT_UNKNOWN) {
+    throw(vpException(vpException::badValue, "Filename extension not supported"));
+  }
+
 	initFileName = true;
 }
 

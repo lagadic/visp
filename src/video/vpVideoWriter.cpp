@@ -131,6 +131,10 @@ void vpVideoWriter::setFileName(const char *filename)
   strcpy(this->fileName,filename);
   
   formatType = getFormat(fileName);
+
+  if (formatType == FORMAT_UNKNOWN) {
+    throw(vpException(vpException::badValue, "Filename extension not supported"));
+  }
   
   initFileName = true;
 }
