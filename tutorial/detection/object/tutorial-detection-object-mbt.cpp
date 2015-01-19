@@ -94,6 +94,7 @@ int main(int argc, char ** argv) {
       tracker.loadModel(objectname + ".wrl");
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
+    tracker.track(I);
     //! [MBT code]
 
     //! [Keypoint selection]
