@@ -91,8 +91,14 @@ public:
 
   void insert(unsigned int i, const vpRowVector &v);
 
-  //! Set the size of the Row vector
-  inline void resize(unsigned int i)      {   vpMatrix::resize(1, i) ;  }
+  /*! Set the size of the row vector.
+    \param i : Column vector size.
+    \param flagNullify : If true, set the data to zero.
+   */
+  inline void resize(const unsigned int i, const bool flagNullify = true)
+  {
+    vpMatrix::resize(1, i, flagNullify);
+  }
   //! Access  V[i] = x
   inline double &operator [](unsigned int n)             { return *(data+n); }
   //! Access x = V[i]
@@ -102,25 +108,35 @@ public:
   vpRowVector &operator=(const vpRowVector &v);
   //! copy from a matrix
   vpRowVector & operator=(const vpMatrix &m) ;
+  //! Initialize each element of the vector to x
+  vpRowVector& operator=(const double x);
 
   //!operator dot product
   double  operator*(const vpColVector &x) const;
   //!operator dot product
   vpRowVector operator*(const vpMatrix &A) const;
-  
-  //! initialisation each element of the vector is x
-  vpRowVector& operator=(const double x);
 
-  //! Reshape methods
+  //! Addition of two vectors V = A+v
+  vpRowVector operator+(const vpRowVector &v) const;
+
+  //! Substraction of two vectors V = A-v
+  vpRowVector operator-(const vpRowVector &v) const;
+
+  //! Operator A = -A
+  vpRowVector operator-() const;
+  // Copy operator.   Allow operation such as A << v
+  vpRowVector &operator<<(const vpRowVector &v);
+
+  //! Reshape methods.
   void reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
   
-  //! Transpose the vector
+  //! Transpose the vector.
   vpColVector t() const;
 
-  //! normalise the vector
+  //! Normalise the vector.
   vpRowVector &normalize() ;
-  //! normalise the vector
+  //! Normalise the vector.
   vpRowVector &normalize(vpRowVector &x) const ;
 
   /*!

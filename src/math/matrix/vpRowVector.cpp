@@ -115,9 +115,9 @@ double vpRowVector::operator*(const vpColVector &x) const
 {
   unsigned int nelements = x.getRows();
   if (getCols() != nelements ) {
-    vpERROR_TRACE("\n\t\t Illegal matrix operation") ;
-    throw(vpMatrixException(vpMatrixException::matrixError,
-			    "\n\t\t Illegal matrix operation, bad vector size")) ;
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpRowVector (1x%d) by vpColVector (%dx1) multiplication",
+                      colNum, x.getRows())) ;
   }
 
   double scalar = 0.0;
@@ -144,7 +144,6 @@ double vpRowVector::operator*(const vpColVector &x) const
 */
 vpRowVector vpRowVector::operator*(const vpMatrix &A) const
 {
-
   vpRowVector c(A.getCols());
 
   if (colNum != A.getRows())
@@ -166,6 +165,87 @@ vpRowVector vpRowVector::operator*(const vpMatrix &A) const
   }
 
   return c ;
+}
+
+//! Operator A = -A
+vpRowVector vpRowVector::operator-() const
+{
+ vpRowVector A ;
+ try {
+   A.resize(colNum)  ;
+ }
+ catch(vpException me)
+ {
+   vpERROR_TRACE("Error caught") ;
+   throw ;
+ }
+
+ double *vd = A.data ;   double *d = data ;
+
+ for (unsigned int i=0; i<colNum; i++)
+   *(vd++)= - (*d++);
+
+ return A;
+}
+
+//! Substraction of two vectors V = A-v
+vpRowVector vpRowVector::operator-(const vpRowVector &m) const
+{
+  if (getCols() != m.getCols() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpRowVector (1x%d) and vpRowVector (1x%d) substraction",
+                      getCols(), m.getCols())) ;
+  }
+
+  vpRowVector v(colNum) ;
+
+  for (unsigned int i=0;i<colNum;i++)
+    v[i] = (*this)[i] - m[i];
+  return v;
+}
+
+//! Addition of two vectors V = A-v
+vpRowVector vpRowVector::operator+(const vpRowVector &m) const
+{
+  if (getCols() != m.getCols() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpRowVector (1x%d) and vpRowVector (1x%d) substraction",
+                      getCols(), m.getCols())) ;
+  }
+
+  vpRowVector v(colNum) ;
+
+  for (unsigned int i=0;i<colNum;i++)
+    v[i] = (*this)[i] + m[i];
+  return v;
+}
+
+/*!
+  Copy operator.
+  Allows operation such as A << v
+  \code
+#include <visp/vpRowVector.h>
+
+int main()
+{
+  vpRowVector A, B(5);
+  for (unsigned int i=0; i<B.size(); i++)
+    B[i] = i;
+  A << B;
+  std::cout << "A: \n" << A << std::endl;
+}
+  \endcode
+  In row vector A we get:
+  \code
+A:
+0  1  2  3  4
+  \endcode
+
+  */
+vpRowVector & vpRowVector::operator<<(const vpRowVector &v)
+{
+  *this = v;
+  return *this;
 }
 
 /*!

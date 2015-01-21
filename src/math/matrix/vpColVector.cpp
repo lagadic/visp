@@ -64,22 +64,15 @@
 vpColVector
 vpColVector::operator+(const vpColVector &m) const
 {
-  vpColVector v ;
-
-  try {
-    v.resize(rowNum) ;
+  if (getRows() != m.getRows() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpColVector (%dx1) and vpColVector (%dx1) substraction",
+                      getRows(), m.getRows())) ;
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-
-  double *vd = v.data ;   double *d = data ;  double *md = m.data ;
+  vpColVector v(rowNum);
 
   for (unsigned int i=0;i<rowNum;i++)
-      *(vd++) = *(d++) + *(md++);
-
+    v[i] = (*this)[i] + m[i];
   return v;
 }
 
@@ -104,19 +97,15 @@ vpMatrix vpColVector::operator*(const vpRowVector &m) const
   //! operator substraction of two vectors V = A-v
 vpColVector vpColVector::operator-(const vpColVector &m) const
 {
-  vpColVector v ;
-
-  try {
-    v.resize(rowNum) ;
+  if (getRows() != m.getRows() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Bad size during vpColVector (%dx1) and vpColVector (%dx1) substraction",
+                      getRows(), m.getRows())) ;
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
+  vpColVector v(rowNum);
 
   for (unsigned int i=0;i<rowNum;i++)
-      v[i] = (*this)[i] - m[i];
+    v[i] = (*this)[i] - m[i];
   return v;
 }
 
@@ -138,7 +127,7 @@ vpColVector::vpColVector (const vpRotationVector &v){
 }
 
   
- //! operator A = -A
+ //! Operator A = -A
 vpColVector vpColVector::operator-() const
 {
   vpColVector A ;
@@ -180,8 +169,8 @@ vpColVector vpColVector::operator*(double x) const
 }
 
 /*!
-  \brief copy from a matrix
-  \warning  Handled with care m should be a 1 row matrix
+  Copy from a matrix
+  \warning  Handled with care m should be a 1 row matrix.
 */
 vpColVector &vpColVector::operator=(const vpMatrix &m)
 {
@@ -248,27 +237,66 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
   return *this;
 }
 
-//! Copy operator.   Allow operation such as A = v
+/*!
+  Copy operator.
+  Allows operation such as A << v
+  \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  vpColVector A, B(5);
+  for (unsigned int i=0; i<B.size(); i++)
+    B[i] = i;
+  A << B;
+  std::cout << "A: \n" << A << std::endl;
+}
+  \endcode
+  In column vector A we get:
+  \code
+A:
+0
+1
+2
+3
+4
+  \endcode
+  */
 vpColVector & vpColVector::operator<<(const vpColVector &v)
 {
-  try {
-    resize(v.getRows());
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-
-  for (unsigned int i=0; i<rowNum; i++) {
-    for (unsigned int j=0; j<colNum; j++) {
-      rowPtrs[i][j] = v.rowPtrs[i][j];
-    }
-  }
+  *this = v;
   return *this;
 }
 
-//! Assigment operator.   Allow operation such as A = *v
+/*!
+  Assigment operator.   Allow operation such as A = *v
+
+  The following example shows how to use this operator.
+  \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  size_t n = 5;
+  vpColVector A(n);
+  double *B = new double [n];
+  for (unsigned int i = 0; i < n; i++)
+    B[i] = i;
+  A << B;
+  std::cout << "A: \n" << A << std::endl;
+  delete [] B;
+}
+  \endcode
+  It produces the following output:
+  \code
+A:
+0
+1
+2
+3
+4
+  \endcode
+  */
 vpColVector & vpColVector::operator<<( double *x )
 {
   for (unsigned int i=0; i<rowNum; i++) {
