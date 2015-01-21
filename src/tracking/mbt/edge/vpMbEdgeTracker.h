@@ -333,10 +333,16 @@ public:
 
   /*!
     Get the moving edge parameters.
-    
+
     \return an instance of the moving edge parameters used by the tracker.
   */
   inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
+  /*!
+    Get the moving edge parameters.
+
+    \return an instance of the moving edge parameters used by the tracker.
+  */
+  inline vpMe getMovingEdge() const { return this->me;}
 
   unsigned int getNbPoints(const unsigned int level=0) const;
   
