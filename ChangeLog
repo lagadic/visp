@@ -62,6 +62,8 @@ ViSP 2.10.0 (under development)
     . [18446] Bad KLT points detection in vpMbKtlTracker and vpMbEdgeKltTracker.
     . [18451] Infinite loop in vpSimulatorViper850::stopMotion()
     . [18452] Empty filename check in vpImageIo, vpVideoReader, vpVideoWriter is erroneous
+    . [18459] Error when initializing KLT related trackers but no key point is deteted.
+
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
   - New features

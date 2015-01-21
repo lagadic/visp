@@ -178,7 +178,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   }
   
   tracker.initTracking(cur, mask);
-  tracker.track(cur); // Makes sure that the points are valid for tracking
+//  tracker.track(cur); // AY: Not sure to be usefull but makes sure that the points are valid for tracking and avoid too fast reinitialisations.
 //  vpCTRACE << "init klt. detected " << tracker.getNbFeatures() << " points" << std::endl;
 
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
@@ -753,9 +753,15 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 void
 vpMbKltTracker::track(const vpImage<unsigned char>& I)
 {   
-  unsigned int nbInfos;
-  unsigned int nbFaceUsed;
-  preTracking(I, nbInfos, nbFaceUsed);
+  unsigned int nbInfos = 0;
+  unsigned int nbFaceUsed = 0;
+
+  try{
+    preTracking(I, nbInfos, nbFaceUsed);
+  }
+  catch(vpException &e){
+    throw e;
+  }
   
   if(nbInfos < 4 || nbFaceUsed == 0){
     vpERROR_TRACE("\n\t\t Error-> not enough data") ;

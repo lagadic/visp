@@ -648,15 +648,19 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     if(iter == 0){
       m_w.resize(nbrow + 2*nbInfos);
       m_w=1;
-      
-      w_mbt.resize(nbrow);
-      w_mbt = 1;
-      robust_mbt.resize(nbrow);
-      
-      w_klt.resize(2*nbInfos);
-      w_klt = 1;
-      robust_klt.resize(2*nbInfos);
-      
+
+      if(nbrow != 0){
+        w_mbt.resize(nbrow);
+        w_mbt = 1;
+        robust_mbt.resize(nbrow);
+      }
+
+      if(nbInfos != 0){
+        w_klt.resize(2*nbInfos);
+        w_klt = 1;
+        robust_klt.resize(2*nbInfos);
+      }
+
       w_true.resize(nbrow + 2*nbInfos);
     }
 
@@ -777,11 +781,14 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
 void
 vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
 { 
-  unsigned int nbInfos;
-  unsigned int nbFaceUsed;
+  unsigned int nbInfos  = 0;
+  unsigned int nbFaceUsed = 0;
   vpColVector w_klt;
-  
-  vpMbKltTracker::preTracking(I, nbInfos, nbFaceUsed);
+
+  try{
+    vpMbKltTracker::preTracking(I, nbInfos, nbFaceUsed);
+  }
+  catch(...){}
   
   if(nbInfos >= 4)
     vpMbKltTracker::computeVVS(nbInfos, w_klt);
