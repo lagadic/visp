@@ -223,8 +223,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   }
 
   if (nbrow==0){
-    vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data in the interaction matrix...");
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "No data found to compute the interaction matrix...");
   }
   
   vpMatrix L(nbrow,6), Lp;
@@ -1054,21 +1053,19 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         {
           computeVVS(*Ipyramid[lvl]);
         }
-        catch(...)
+        catch(vpException &e)
         {
           covarianceMatrix = -1;
-          vpTRACE("Error in computeVVS") ;
-          throw vpException(vpException::fatalError, "Error in computeVVS");
+          throw e;
         }
 
         try
         {
           testTracking();
         }
-        catch(...)
+        catch(vpException &e)
         {
-            vpTRACE("Error in testTracking") ;
-            throw vpException(vpException::fatalError, "Error in testTracking");
+          throw e;
         }
 
         if (displayFeatures)
@@ -1101,10 +1098,9 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         {
           updateMovingEdge(I);
         }
-        catch(...)
+        catch(vpException &e)
         {
-          vpTRACE("Error in moving edge updating") ;
-          throw ;
+          throw e;
         }
 
         // Looking for new visible face
@@ -1126,8 +1122,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         else{
           upScale(lvl);
-          vpTRACE("Error in upScale(lvl);") ;
-          throw ;
+          throw(vpException(vpException::fatalError, "Error in upScale(lvl)")) ;
         }
       }
     }
@@ -1309,8 +1304,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
     xmlp.parse(configFile);
   }
   catch(...){
-    vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile);
-    throw vpException(vpException::ioError, "problem to parse configuration file.");
+    throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile);
   }
   
   vpCameraParameters camera;
@@ -2221,7 +2215,7 @@ unsigned int
 vpMbEdgeTracker::getNbPoints(const unsigned int level) const
 {
   if((level > scales.size()) || !scales[level]){
-    throw vpException(vpException::dimensionError, "Level is not used");
+    throw vpException(vpException::dimensionError, "Cannot get the number of points for level %d: level is not used", level);
   }
   
   unsigned int nbGoodPoints = 0;
