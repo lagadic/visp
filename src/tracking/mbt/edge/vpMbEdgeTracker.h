@@ -318,8 +318,6 @@ public:
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
 
-  inline double getFirstThreshold() const { return percentageGdPt;}
-  
   /*!
     Get the value of the gain used to compute the control law.
     
@@ -352,7 +350,14 @@ public:
     \return The scales levels used for the tracking. 
   */
   std::vector<bool> getScales() const {return scales;}
-  
+  /*!
+     \return The threshold value between 0 and 1 that allows to decide if the tracker
+     has enough valid moving edges to compute a pose.
+
+     \sa setThresholdGoodMovingEdges()
+   */
+  inline double getThresholdGoodMovingEdges() const { return percentageGdPt;}
+
   void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char* configFile);
   void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
@@ -407,16 +412,17 @@ public:
   }
 
   /*!
-    Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
-    
-    The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.
-    
-    The threshold is ideally between 0 and 1.
-    
-    \param threshold1 : The new value of the threshold. 
-  */
-  void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
-  
+     Set the threshold value between 0 and 1 that allows to decide if the tracker
+     has enough valid moving edges to compute a pose.
+
+     \param threshold : Value between 0 and 1 that corresponds to the percentage of good
+     moving edges that is necessary to consider that the estimated pose is valid. 1 means that allo
+     the moving-edges should be used in the tracking scheme. Default value is 0.4.
+
+     \sa getThresholdGoodMovingEdges()
+   */
+  void setThresholdGoodMovingEdges(const double  threshold) {percentageGdPt = threshold;}
+
   /*!
     Set the value of the gain used to compute the control law.
     
@@ -469,6 +475,12 @@ protected:
 
 public:
   /*!
+    \deprecated Since this function name is not explicit, use rather getThresholdGoodMovingEdges() that does the same.
+    \return The threshold value between 0 and 1 that allows to decide if the tracker
+    has enough valid moving edges to compute a pose.
+   */
+  vp_deprecated inline double getFirstThreshold() const { return percentageGdPt;}
+  /*!
     \deprecated Use vpMbTracker::setDisplayFeatures() instead.
     Enable to display the points along the line with a color corresponding to their state.
 
@@ -480,7 +492,18 @@ public:
     \param displayMe : set it to true to display the points.
   */
   vp_deprecated void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
-#endif
+  /*!
+    \deprecated Since this function name is not explicit, use rather setThresholdGoodMovingEdges() that does the same.
+    Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
+
+    The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.
+
+    The threshold is ideally between 0 and 1.
+
+    \param threshold1 : The new value of the threshold.
+  */
+  vp_deprecated void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
+  #endif
 };
 
 #endif
