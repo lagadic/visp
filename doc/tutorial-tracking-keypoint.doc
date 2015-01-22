@@ -15,46 +15,75 @@ The video shows the result of the tracking:
 <iframe width="420" height="315" src="http://www.youtube.com/embed/ZYOG4kJPtaM?rel=0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-And here is the line by line explanation of the source : 
+The previous example can be run without command line options. In that case, keypoints are automatically detected before tracking.
+\code
+$ ./tutorial-klt-tracker
+\endcode
+
+It can also be run with [--init-by-click] option. In that case, the user can select a set of keypoints to track with a left mouse click. A right mouse click stops the keypoints selection and allows to start the tracking.
+\code
+$ ./tutorial-klt-tracker --init-by-click
+\endcode
+
+Here is the line by line explanation of the source : 
 
 \snippet tutorial-klt-tracker.cpp Include
 
-We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV IplImage structure used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation. We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
+We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV IplImage or cv::Mat structures used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation. 
+
+\note 
+- If OpenCV version is less that 2.8.0, vpKltOpencv class takes as input an IplImage.
+- If OpenCV version is 2.8.0 or ;ore recent, vpKltOpencv class takes as input a cv::Mat image.
+
+We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
+
+At the beginning of the main() function, we use the following macro to ensure that OpenCV requested by the tracker is available. Note that OpenCV will also be used to render the images and read the input video stream.
 
 \snippet tutorial-klt-tracker.cpp Check 3rd party
 
-We use the previous macro to ensure that OpenCV at least version 1.1.0 requested by the tracker and the image viewer, and ffmpeg requested to read the video stream are available.
+The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file \c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
 
 \snippet tutorial-klt-tracker.cpp Create reader
 
-The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file \c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
+Then we extract the first image of the video in the gray level ViSP image container \c I.
 
 \snippet tutorial-klt-tracker.cpp Acquire
-Returns the first image of the video in the gray level ViSP image container \c I.
+
+This image \c I is then converted into \c cvI, an OpenCV image format that will be used by the tracker.
 
 \snippet tutorial-klt-tracker.cpp Convert to OpenCV image
 
-Then we convert \c I into \c cvI, an image in OpenCV IplImage format that will be used by the tracker.
+We also create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
 
 \snippet tutorial-klt-tracker.cpp Init display
-Create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
  
+From now we have to create an instance of the tracker and set the parameters of the Harris keypoint detector.
+
 \snippet tutorial-klt-tracker.cpp Create tracker
  
-Create an instance of the tracker, set parameters of the Harris keypoint detector.
+The tracker is then initialized on \c cvI image.
 
 \snippet tutorial-klt-tracker.cpp Init tracker
 
-Finally initialize the tracker on \c cvI image.
+With the next line the user can know how many keypoints were detected automatically or selected by the user during initialization. 
+
+\snippet tutorial-klt-tracker.cpp How many features
+
+\note If no keypoints were found, the next call to vpKltTracker::track() will throw an exception.
+
+To detect more keypoints, you may decrease the quality parameter set with the following line:
+
+\snippet tutorial-klt-tracker.cpp Quality
+
+Until the end of the video, we get \c I the next image in ViSP format, display and convert it in OpenCV format. Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
 
 \snippet tutorial-klt-tracker.cpp While loop
 
-Until the end of the video is not reached, we get \c I the next image in ViSP format, display and convert it in IplImage format. Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
+We are waiting for a mouse click event on image \c I to end the program.
 
 \snippet tutorial-klt-tracker.cpp Wait click
-We are waiting a mouse click event on image \c I to end the program.
 
-With the following line, we release the memory allocated for the OpenCV IplImage \c cvI before ending the program.
+With the following line, we release the memory allocated for the OpenCV IplImage \c cvI before ending the program. This has to be done only if OpenCV version is less than 2.8.0. 
 
 \snippet tutorial-klt-tracker.cpp Release IplImage
 

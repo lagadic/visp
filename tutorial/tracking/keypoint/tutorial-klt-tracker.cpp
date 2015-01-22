@@ -51,7 +51,9 @@ int main(int argc, const char *argv[])
     vpKltOpencv tracker;
     tracker.setMaxFeatures(200);
     tracker.setWindowSize(10);
+    //! [Quality]
     tracker.setQuality(0.01);
+    //! [Quality]
     tracker.setMinDistance(15);
     tracker.setHarrisFreeParameter(0.04);
     tracker.setBlockSize(9);
@@ -69,7 +71,9 @@ int main(int argc, const char *argv[])
 #endif
       vpImagePoint ip;
       do {
-        vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
+        vpDisplay::displayText(I, 10, 10,
+                               "Left click to select a point, right to start tracking",
+                               vpColor::red);
         if (vpDisplay::getClick(I, ip, button, false)) {
           if (button == vpMouseButton::button1) {
             feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
@@ -90,6 +94,11 @@ int main(int argc, const char *argv[])
       tracker.initTracking(cvI);
       //! [Init tracker]
     }
+
+    //! [How many features]
+    std::cout << "Tracker initialized with " << tracker.getNbFeatures() << " features" << std::endl;
+    //! [How many features]
+
     //! [While loop]
     while ( ! reader.end() )
     {
@@ -107,7 +116,9 @@ int main(int argc, const char *argv[])
 #endif
         vpImagePoint ip;
         do {
-          vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
+          vpDisplay::displayText(I, 10, 10,
+                                 "Left click to select a point, right to start tracking",
+                                 vpColor::red);
           if (vpDisplay::getClick(I, ip, button, false)) {
             if (button == vpMouseButton::button1) {
               feature.push_back(cv::Point2f((float)ip.get_u(), (float)ip.get_v()));
