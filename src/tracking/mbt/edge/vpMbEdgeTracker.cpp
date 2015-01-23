@@ -203,9 +203,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;
-    nbrow += l->nbFeature ;
+    nbrow += l->nbFeature;
     nberrors_lines+=l->nbFeature;
-    l->initInteractionMatrixError() ;
+    l->initInteractionMatrixError();
   }
 
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
@@ -350,7 +350,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       
       n+= l->nbFeature ;
     }
-
     for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
       cy = *it;
       cy->computeInteractionMatrixError(cMo, _I);
@@ -981,15 +980,22 @@ vpMbEdgeTracker::testTracking()
     }
   }
 
-  // Compare the number of good points with the min between the number of expected points and number of points that are tracked
+  // Compare the number of good points with the min between the number of expected points and
+  // number of points that are tracked
   int nb_min = (int)vpMath::minimum(percentageGdPt *nbExpectedPoint, percentageGdPt *(nbGoodPoint + nbBadPoint) );
   //int nb_min = std::min(val1, val2);
   if (nbGoodPoint < nb_min || nbExpectedPoint < 2) {
-    throw vpTrackingException(vpTrackingException::fatalError, "Not enough points (%d) to track the object: expected %d",
-                              nbGoodPoint, nb_min);
+    std::ostringstream oss;
+    oss << "Not enough moving edges ("
+        << nbGoodPoint
+        << ") to track the object: expected "
+        << nb_min
+        << ". Try to reduce the threshold="
+        << percentageGdPt
+        << " using vpMbTracker::setThresholdGoodMovingEdges()";
+    throw vpTrackingException(vpTrackingException::fatalError, oss.str());
   }      
 }
-
 
 /*!
   Compute each state of the tracking procedure for all the feature sets.
@@ -1112,17 +1118,16 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         reinitMovingEdge(I,cMo);
         upScale(lvl);
       }
-      catch(...)
+      catch(vpException &e)
       {
         if(lvl != 0){
-            std::cout << "Level Stopped before 0" << std::endl;
           cMo = cMo_1;
           reInitLevel(lvl);
           upScale(lvl);
         }
         else{
           upScale(lvl);
-          throw(vpException(vpException::fatalError, "Error in upScale(lvl)")) ;
+          throw(e) ;
         }
       }
     }
