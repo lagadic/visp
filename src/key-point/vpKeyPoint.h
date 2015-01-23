@@ -46,6 +46,7 @@
 #include <numeric>      // std::accumulate
 #include <float.h>      // DBL_MAX
 #include <map>          // std::map
+#include <limits>
 
 #include <visp/vpConfig.h>
 #include <visp/vpBasicKeyPoint.h>
@@ -271,6 +272,29 @@ public:
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime);
 
   /*!
+    Get the covariance matrix when estimating the pose using the Virtual Visual Servoing approach.
+
+    \warning The compute covariance flag has to be true if you want to compute the covariance matrix.
+
+    \sa setCovarianceComputation
+  */
+  inline vpMatrix getCovarianceMatrix() const {
+    if(!m_computeCovariance) {
+      std::cout << "Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it." << std::endl;
+      return vpMatrix();
+    }
+
+    if(m_computeCovariance && !m_useRansacVVS) {
+      std::cout << "Warning : The covariance matrix can only be computed with a Virtual Visual Servoing approach." << std::endl
+          << "Use setUseRansacVVS(true) to choose to use a pose estimation method based on a Virtual Visual Servoing approach."
+          << std::endl;
+      return vpMatrix();
+    }
+
+    return m_covarianceMatrix;
+  }
+
+  /*!
     Get the elapsed time to compute the keypoint detection.
 
     \return The elapsed time.
@@ -327,7 +351,8 @@ public:
   void getObjectPoints(std::vector<cv::Point3f> &objectPoints);
 
   bool getPose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime);
+               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime,
+               bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   bool getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
                std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
@@ -400,6 +425,20 @@ public:
                   double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
+
+  /*!
+    Set if the covariance matrix has to be computed in the Virtual Visual Servoing approach.
+
+    \param flag : True if the covariance has to be computed, false otherwise.
+  */
+  inline void setCovarianceComputation(const bool& flag) {
+    m_computeCovariance = flag;
+    if(!m_useRansacVVS) {
+      std::cout << "Warning : The covariance matrix can only be computed with a Virtual Visual Servoing approach." << std::endl
+                << "Use setUseRansacVVS(true) to choose to use a pose estimation method based on a Virtual "
+                    "Visual Servoing approach." << std::endl;
+    }
+  }
 
   /*!
      Set and initialize a detector denominated by his name \p detectorName.
@@ -520,7 +559,11 @@ public:
     \param percentage : Percentage value (]0 ; 100])
   */
   inline void setRansacConsensusPercentage(const double percentage) {
-    m_ransacConsensusPercentage = percentage;
+    if(percentage > 0.0 && (percentage < 100.0 || std::fabs(percentage - 100.0) < std::numeric_limits<double>::epsilon())) {
+      m_ransacConsensusPercentage = percentage;
+    } else {
+      throw vpException(vpException::badValue, "The percentage must be in the interval ]0 ; 100].");
+    }
   }
 
   /*!
@@ -529,7 +572,11 @@ public:
     \param nbIter : Maximum number of iterations for the Ransac
   */
   inline void setRansacIteration(const int nbIter) {
-    m_nbRansacIterations = nbIter;
+    if(nbIter > 0) {
+      m_nbRansacIterations = nbIter;
+    } else {
+      throw vpException(vpException::badValue, "The number of iterations must be greater than zero.");
+    }
   }
 
   /*!
@@ -538,7 +585,11 @@ public:
     \param reprojectionError : Maximum reprojection error in pixel (used by OpenCV function)
   */
   inline void setRansacReprojectionError(const double reprojectionError) {
-    m_ransacReprojectionError = reprojectionError;
+    if(reprojectionError > 0.0) {
+      m_ransacReprojectionError = reprojectionError;
+    } else {
+      throw vpException(vpException::badValue, "The Ransac reprojection threshold must be positive as we deal with distance.");
+    }
   }
 
   /*!
@@ -547,7 +598,11 @@ public:
     \param minCount : Minimum number of inlier for the consensus
   */
   inline void setRansacMinInlierCount(const int minCount) {
-    m_nbRansacMinInlierCount = minCount;
+    if(minCount > 0) {
+      m_nbRansacMinInlierCount = minCount;
+    } else {
+      throw vpException(vpException::badValue, "The minimum number of inliers must be greater than zero.");
+    }
   }
 
   /*!
@@ -556,7 +611,11 @@ public:
     \param threshold : Maximum error in meter for ViSP function
   */
   inline void setRansacThreshold(const double threshold) {
-    m_ransacThreshold = threshold;
+    if(threshold > 0.0) {
+      m_ransacThreshold = threshold;
+    } else {
+      throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
+    }
   }
 
   /*!
@@ -579,6 +638,10 @@ public:
   }
 
 private:
+  //! If true, compute covariance matrix if the user select the pose estimation method using ViSP
+  bool m_computeCovariance;
+  //! Covariance matrix
+  vpMatrix m_covarianceMatrix;
   //! Current id associated to the training image used for the learning.
   int m_currentImageId;
   //! Elapsed time to detect keypoints.

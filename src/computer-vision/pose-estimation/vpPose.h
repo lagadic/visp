@@ -167,7 +167,14 @@ public:
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
   
   void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
-  void setRansacThreshold(const double &t){ ransacThreshold = t; }
+  void setRansacThreshold(const double &t) {
+    //Test whether or not t is > 0
+    if(t > 0) {
+      ransacThreshold = t;
+    } else {
+      throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
+    }
+  }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
   unsigned int getRansacNbInliers() const { return (unsigned int) ransacInliers.size(); }
   std::vector<vpPoint> getRansacInliers() const{ return ransacInliers; }

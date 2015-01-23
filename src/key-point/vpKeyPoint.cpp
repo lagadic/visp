@@ -218,8 +218,8 @@ inline cv::Point3f vpObjectPointToPoint3f(const vpPoint &point) {
  */
 vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extractorName,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
-  : m_currentImageId(0), m_detectionTime(0.), m_detectorNames(), m_detectors(), m_extractionTime(0.),
-    m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionTime(0.), m_detectorNames(),
+    m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
     m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
     m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchQueryToTrainKeyPoints(), m_matchRansacKeyPointsToPoints(), m_matchRansacQueryToTrainKeyPoints(),
@@ -251,10 +251,10 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
  */
 vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
-  : m_currentImageId(0), m_detectionTime(0.), m_detectorNames(detectorNames), m_detectors(), m_extractionTime(0.),
-    m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(), m_filterType(filterType),
-    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
-    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionTime(0.), m_detectorNames(detectorNames),
+    m_detectors(), m_extractionTime(0.), m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(),
+    m_filterType(filterType), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName),
+    m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchQueryToTrainKeyPoints(), m_matchRansacKeyPointsToPoints(), m_matchRansacQueryToTrainKeyPoints(),
     m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
@@ -1112,11 +1112,12 @@ void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
    \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param inlierIndex : List of indexes of inliers.
    \param elapsedTime : Elapsed time.
+   \param func : Function pointer to filter the final pose returned by OpenCV pose estimation method.
    \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
  */
 bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                          const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                         double &elapsedTime) {
+                         double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
   double t = vpTime::measureTimeMs();
 
   if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
@@ -1160,6 +1161,8 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
 #endif
   } catch (cv::Exception &e) {
     std::cerr << e.what() << std::endl;
+    elapsedTime = (vpTime::measureTimeMs() - t);
+    return false;
   }
   vpTranslationVector translationVec(tvec.at<double>(0),
                                      tvec.at<double>(1), tvec.at<double>(2));
@@ -1167,8 +1170,17 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
                               rvec.at<double>(2));
   cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
 
-  elapsedTime = (vpTime::measureTimeMs() - t);
+  if(func != NULL) {
+    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
+    //we can converge toward a final cMo that does not respect the pose criterion even
+    //if the 4 minimal points picked to respect the pose criterion.
+    if(!func(&cMo)) {
+      elapsedTime = (vpTime::measureTimeMs() - t);
+      return false;
+    }
+  }
 
+  elapsedTime = (vpTime::measureTimeMs() - t);
   return true;
 }
 
@@ -1195,6 +1207,7 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
   }
 
   vpPose pose;
+  pose.setCovarianceComputation(true);
 
   for(std::vector<vpPoint>::const_iterator it = objectVpPoints.begin(); it != objectVpPoints.end(); ++it) {
     pose.addPoint(*it);
@@ -1212,12 +1225,24 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
   pose.setRansacMaxTrials(m_nbRansacIterations);
 
   try {
+    pose.setCovarianceComputation(m_computeCovariance);
     pose.computePose(vpPose::RANSAC, cMo, func);
     inliers = pose.getRansacInliers();
+    m_covarianceMatrix = pose.getCovarianceMatrix();
   } catch(vpException &e) {
     std::cerr << "e=" << e.what() << std::endl;
     elapsedTime = (vpTime::measureTimeMs() - t);
     return false;
+  }
+
+  if(func != NULL) {
+    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
+    //we can converge toward a final cMo that does not respect the pose criterion even
+    //if the 4 minimal points picked to respect the pose criterion.
+    if(!func(&cMo)) {
+      elapsedTime = (vpTime::measureTimeMs() - t);
+      return false;
+    }
   }
 
   elapsedTime = (vpTime::measureTimeMs() - t);
@@ -2259,7 +2284,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
     std::cerr << "Matching is not possible." << std::endl;
 
-    return 0;
+    return false;
   }
 
   detect(I, m_queryKeyPoints, m_detectionTime);

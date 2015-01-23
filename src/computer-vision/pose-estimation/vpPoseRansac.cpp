@@ -156,16 +156,16 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
       r_lagrange = poseMin.computeResidual(cMo_lagrange);
       is_valid_lagrange = true;
-    } catch(vpException &e) {
-      std::cerr << e.what() << std::endl;
+    } catch(/*vpException &e*/...) {
+//      std::cerr << e.what() << std::endl;
     }
 
     try {
       poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon);
       r_dementhon = poseMin.computeResidual(cMo_dementhon);
       is_valid_dementhon = true;
-    } catch(vpException &e) {
-      std::cerr << e.what() << std::endl;
+    } catch(/*vpException &e*/...) {
+//      std::cerr << e.what() << std::endl;
     }
 
     //If at least one pose computation is OK,
@@ -315,16 +315,16 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
         r_lagrange = pose.computeResidual(cMo_lagrange);
         is_valid_lagrange = true;
-      } catch(vpException &e) {
-        std::cerr << e.what() << std::endl;
+      } catch(/*vpException &e*/...) {
+//        std::cerr << e.what() << std::endl;
       }
 
       try {
         pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
         r_dementhon = pose.computeResidual(cMo_dementhon);
         is_valid_dementhon = true;
-      } catch(vpException &e) {
-        std::cerr << e.what() << std::endl;
+      } catch(/*vpException &e*/...) {
+//        std::cerr << e.what() << std::endl;
       }
 
       if(is_valid_lagrange || is_valid_dementhon) {
@@ -336,7 +336,11 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         }
       }
 
-      pose.computePose(vpPose::VIRTUAL_VS, cMo) ;
+      if(computeCovariance) {
+        pose.setCovarianceComputation(true);
+        pose.computePose(vpPose::VIRTUAL_VS, cMo);
+        covarianceMatrix = pose.covarianceMatrix;
+      }
     }
   }
 }
