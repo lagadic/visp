@@ -391,15 +391,14 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
 
     if (s<1e-10)
     {
-      std::cout << "Points that produce an error: " << std::endl;
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
-      {
-        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() << " "
-                  << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oZ() << std::endl;
-      }
-      vpERROR_TRACE( "division par zero ") ;
+//      std::cout << "Points that produce an error: " << std::endl;
+//      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+//      {
+//        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() << " "
+//                  << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oZ() << std::endl;
+//      }
       throw(vpException(vpException::divideByZeroError,
-        "division by zero  ")) ;
+                        "Division by zero in Lagrange pose computation (planar plane case)")) ;
     }
 
     s = 1.0/sqrt(s);
@@ -454,12 +453,10 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
       }
     }
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE(" ") ;
-    throw ;
+    throw e;
   }
-
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpCalculPose::PoseLagrange(...) " << std::endl ;
@@ -566,16 +563,15 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     if (s<1e-10)
     {
-      std::cout << "Points that produce an error: " << std::endl;
-      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
-      {
-        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() << " "
-                  << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oZ() << std::endl;
-      }
-      vpERROR_TRACE(" division par zero " ) ;
+//      std::cout << "Points that produce an error: " << std::endl;
+//      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+//      {
+//        std::cout << "P: " << (*it).get_x() << " " << (*it).get_y() << " "
+//                  << (*it).get_oX() << " " << (*it).get_oY() << " " << (*it).get_oZ() << std::endl;
+//      }
+      //vpERROR_TRACE(" division par zero " ) ;
       throw(vpException(vpException::divideByZeroError,
-        "division by zero  ")) ;
-
+                        "Division by zero in Lagrange pose computation (non planar plane case)")) ;
     }
 
     s = 1.0/sqrt(s);
@@ -587,7 +583,6 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     calculTranslation (a, b, nl, 3, 6, X1, X2) ;
 
-
     for (i=0 ; i<3 ; i++)
     {
       cMo[i][0] = X1[i];
@@ -597,10 +592,9 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     }
 
   }
-  catch(...)
+  catch(vpException &e)
   {
-    vpERROR_TRACE(" ") ;
-    throw ;
+    throw e;
   }
 
 #if (DEBUG_LEVEL1)
@@ -611,11 +605,3 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
-
-
-
-/*
-* Local variables:
-* c-basic-offset: 2
-* End:
-*/
