@@ -47,6 +47,8 @@
 
 */
 
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <visp/vpIoTools.h>
 
@@ -117,6 +119,242 @@ main(int argc, const char ** argv)
 
 	pathname = "fictional directory/fictional file.txt";
 	std::cout << "isAbsolutePath of " << pathname << "=" << vpIoTools::isAbsolutePathname(pathname) << std::endl;
+
+
+	//Test vpIoTools::splitDrive
+  unsigned int nbFail = 0, nbOk = 0;
+#if defined(_WIN32)
+	if(strcmp(vpIoTools::splitDrive("c:\\foo\\bar").first.c_str(), "c:") == 0) {
+	  nbOk++;
+	}
+	else {
+	  nbFail++;
+	  std::cout << "Fail=" << vpIoTools::splitDrive("c:\\foo\\bar").first << " should be=c:" << std::endl;
+  }
+	if(strcmp(vpIoTools::splitDrive("c:\\foo\\bar").second.c_str(), "\\foo\\bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("c:\\foo\\bar").second << " should be=\\foo\\bar" << std::endl;
+  }
+
+	if(strcmp(vpIoTools::splitDrive("c:/foo/bar").first.c_str(), "c:") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("c:/foo/bar").first << " should be=c:" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("c:/foo/bar").second.c_str(), "/foo/bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("c:/foo/bar").second << " should be=/foo/bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("\\\\conky\\mountpoint\\foo\\bar").first.c_str(), "\\\\conky\\mountpoint") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\conky\\mountpoint\\foo\\bar").first << " should be=\\\\conky\\mountpoint" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("\\\\conky\\mountpoint\\foo\\bar").second.c_str(), "\\foo\\bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\conky\\mountpoint\\foo\\bar").second << " should be=\\foo\\bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("//conky/mountpoint/foo/bar").first.c_str(), "//conky/mountpoint") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("//conky/mountpoint/foo/bar").first << " should be=//conky/mountpoint" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("//conky/mountpoint/foo/bar").second.c_str(), "/foo/bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("//conky/mountpoint/foo/bar").second << " should be=/foo/bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("\\\\\\conky\\mountpoint\\foo\\bar").first.c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\\\conky\\mountpoint\\foo\\bar").first << " should be=" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("\\\\\\conky\\mountpoint\\foo\\bar").second.c_str(),
+      "\\\\\\conky\\mountpoint\\foo\\bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\\\conky\\mountpoint\\foo\\bar").second << " should be=\\\\\\conky\\mountpoint\\foo\\bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("///conky/mountpoint/foo/bar").first.c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("///conky/mountpoint/foo/bar").first << " should be=" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("///conky/mountpoint/foo/bar").second.c_str(), "///conky/mountpoint/foo/bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("///conky/mountpoint/foo/bar").second << " should be=///conky/mountpoint/foo/bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("\\\\conky\\\\mountpoint\\foo\\bar").first.c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\conky\\\\mountpoint\\foo\\bar").first << " should be=" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("\\\\conky\\\\mountpoint\\foo\\bar").second.c_str(),
+      "\\\\conky\\\\mountpoint\\foo\\bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("\\\\conky\\\\mountpoint\\foo\\bar").second << " should be=\\\\conky\\\\mountpoint\\foo\\bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::splitDrive("//conky//mountpoint/foo/bar").first.c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("//conky//mountpoint/foo/bar").first << " should be=" << std::endl;
+  }
+  if(strcmp(vpIoTools::splitDrive("//conky//mountpoint/foo/bar").second.c_str(), "//conky//mountpoint/foo/bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::splitDrive("//conky//mountpoint/foo/bar").second << " should be=//conky//mountpoint/foo/bar" << std::endl;
+  }
+
+  std::cout << "Test vpIoTools::splitDrive (Win32) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
+#endif
+
+
+  //Test vpIoTools::getFileExtension
+#if defined(_WIN32)
+  //TODO: add unit test with WIN32 platform
+#else
+  nbFail = 0;
+  nbOk = 0;
+  if(strcmp(vpIoTools::getFileExtension("foo.bar").c_str(), ".bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.bar") << " should be=.bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("foo.boo.bar").c_str(), ".bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.boo.bar") << " should be=.bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("foo.boo.biff.bar").c_str(), ".bar") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.boo.biff.bar") << " should be=.bar" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension(".csh.rc").c_str(), ".rc") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension(".csh.rc") << " should be=.rc" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("nodots").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("nodots") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension(".cshrc").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension(".cshrc") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("...manydots").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("...manydots") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("...manydots.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("...manydots.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension(".").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension(".") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("..").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("..") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("........").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("........") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("") << " should be=" << std::endl;
+  }
+
+
+  std::cout << "Test vpIoTools::getFileExtension (Unix-like platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
+#endif
 
 
 	std::cout << std::endl << "End" << std::endl;

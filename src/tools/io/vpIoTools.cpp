@@ -1093,6 +1093,89 @@ std::string vpIoTools::getViSPImagesDataPath()
   return data_path;
 }
 
+/*!
+   Returns the extension of the file or an empty string if the file has no extension. If checkFile flag is set,
+   it will check first if the pathname denotes a directory and so return an empty string and second it will check
+   if the file denoted by the pathanme exists. If so, it will return the extension if present.
+   \param pathname : The pathname of the file we want to get the extension.
+   \param checkFile : If true, the file must exist otherwise an empty string will be returned.
+   \return The extension of the file or an empty string if the file has no extension.
+   or if the pathname is empty.
+ */
+std::string vpIoTools::getFileExtension(const std::string& pathname, const bool checkFile)
+{
+  if(checkFile && (vpIoTools::checkDirectory(pathname) || !vpIoTools::checkFilename(pathname))) {
+    return "";
+  }
+
+  //On Unix, or on the Mac
+  std::string sep = "/";
+  std::string altsep = "";
+  std::string extsep = ".";
+
+#if defined(_WIN32)
+  sep = "\\";
+  altsep = "/";
+  extsep = ".";
+#endif
+
+  //Python 2.7.8 module.
+//# Split a path in root and extension.
+//# The extension is everything starting at the last dot in the last
+//# pathname component; the root is everything before that.
+//# It is always true that root + ext == p.
+//
+//# Generic implementation of splitext, to be parametrized with
+//# the separators
+//def _splitext(p, sep, altsep, extsep):
+//    """Split the extension from a pathname.
+//
+//    Extension is everything from the last dot to the end, ignoring
+//    leading dots.  Returns "(root, ext)"; ext may be empty."""
+//
+//    sepIndex = p.rfind(sep)
+//    if altsep:
+//        altsepIndex = p.rfind(altsep)
+//        sepIndex = max(sepIndex, altsepIndex)
+//
+//    dotIndex = p.rfind(extsep)
+//    if dotIndex > sepIndex:
+//        # skip all leading dots
+//        filenameIndex = sepIndex + 1
+//        while filenameIndex < dotIndex:
+//            if p[filenameIndex] != extsep:
+//                return p[:dotIndex], p[dotIndex:]
+//            filenameIndex += 1
+//
+//    return p, ''
+
+  size_t sepIndex = pathname.rfind(sep);
+  if(!altsep.empty()) {
+    size_t altsepIndex = pathname.rfind(altsep);
+    sepIndex = std::max(sepIndex, altsepIndex);
+  }
+
+  size_t dotIndex = pathname.rfind(extsep);
+  if(dotIndex != std::string::npos) {
+    //The extsep character exists
+    if((sepIndex != std::string::npos && dotIndex > sepIndex) || sepIndex == std::string::npos) {
+      if(sepIndex == std::string::npos) {
+        sepIndex = -1;
+      }
+      size_t filenameIndex = sepIndex + 1;
+
+      while(filenameIndex < dotIndex) {
+        if(pathname.compare(filenameIndex, 1, extsep) != 0) {
+          return pathname.substr(dotIndex);
+        }
+        filenameIndex++;
+      }
+    }
+  }
+
+
+  return "";
+}
 
 /*!
    Returns the name of the file or directory denoted by this pathname.
@@ -1223,6 +1306,8 @@ bool vpIoTools::isAbsolutePathname(const std::string& pathname)
 }
 
 /*!
+   Split a path in a drive specification (a drive letter followed by a colon) and the path specification.
+   It is always true that drivespec + pathspec == p
  	 Inspired by the Python 2.7.8 module.
  	 \return a pair whose the first element is the drive specification and the second element
  	 the path specification
@@ -1273,6 +1358,13 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pat
 //            return p[:2], p[2:]
 //    return '', p
 
+
+  //On Unix, the drive is always empty.
+  //On the Mac, the drive is always empty (don't use the volume name -- it doesn't have the same
+  //syntactic and semantic oddities as DOS drive letters, such as there being a separate current directory per drive).
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  return std::pair<std::string, std::string>("", pathname);
+#else
 	const std::string sep = "\\";
 	const std::string sepsep = "\\\\";
 	const std::string altsep = "/";
@@ -1311,4 +1403,5 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pat
 	}
 
 	return std::pair<std::string, std::string>("", pathname);
+#endif
 }
