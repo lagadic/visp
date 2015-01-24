@@ -165,9 +165,12 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
 }
 
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION < 0x020408) // Removed since transcient from OpenCV C to C++ api
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Deprecated: will be removed with OpenCV transcient from C to C++ api
 /*!
-  Convert a IplImage to a vpImage\<vpRGBa\>
+  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
+  IplImage structure will be removed with OpenCV transcient from C to C++ api.
+
+  Convert an IplImage to a vpImage\<vpRGBa\>.
 
   An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
   image structure. See http://opencvlibrary.sourceforge.net/ for general
@@ -270,7 +273,10 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 }
 
 /*!
-  Convert a IplImage to a vpImage\<unsigned char\>
+  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
+  IplImage structure will be removed with OpenCV transcient from C to C++ api.
+
+  Convert an IplImage to a vpImage\<unsigned char\>.
 
   An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
   image structure. See http://opencvlibrary.sourceforge.net/ for general
@@ -370,7 +376,10 @@ vpImageConvert::convert(const IplImage* src, vpImage<unsigned char> &dest, bool 
 }
 
 /*!
-  Convert a vpImage\<vpRGBa\> to a IplImage
+  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
+  IplImage structure will be removed with OpenCV transcient from C to C++ api.
+
+  Convert a vpImage\<vpRGBa\> to a IplImage.
 
   An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
   image structure. See http://opencvlibrary.sourceforge.net/ for general
@@ -455,7 +464,10 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 }
 
 /*!
-  Convert a vpImage\<unsigned char\> to a IplImage
+  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
+  IplImage structure will be removed with OpenCV transcient from C to C++ api.
+
+  Convert a vpImage\<unsigned char\> to a IplImage.
 
   An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
   image structure. See http://opencvlibrary.sourceforge.net/ for general
@@ -529,7 +541,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src, IplImage* &dest)
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
 /*!
-  Convert a cv::Mat to a vpImage\<vpRGBa\>
+  Convert a cv::Mat to a vpImage\<vpRGBa\>.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
@@ -622,7 +634,7 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool fl
 }
 
 /*!
-  Convert a cv::Mat to a vpImage\<unsigned char\>
+  Convert a cv::Mat to a vpImage\<unsigned char\>.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
@@ -707,7 +719,7 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<unsigned char>& dest, const 
 
 
 /*!
-  Convert a vpImage\<unsigned char\> to a cv::Mat
+  Convert a vpImage\<unsigned char\> to a cv::Mat.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
@@ -759,7 +771,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, cv::Mat& dest)
 }
 
 /*!
-  Convert a vpImage\<unsigned char\> to a cv::Mat
+  Convert a vpImage\<unsigned char\> to a cv::Mat.
 
   A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
   the general OpenCV documentation, or
