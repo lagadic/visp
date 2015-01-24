@@ -65,7 +65,8 @@
   \brief Class that implements the Fern classifier and the YAPE detector thanks
   to the OpenCV library.
   
-  
+  \deprecated This class is deprecated with OpenCV 3.0.0 or more recent.
+
   This class provides a way to detect and match point using the YAPE and 
   a Fern Classifiers, thanks to the OpenCV library (version >= 2.0)
 

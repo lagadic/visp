@@ -69,6 +69,8 @@
   \class vpPlanarObjectDetector
   \ingroup PlanarSurfaceDetector
   \brief Class used to detect a planar surface. 
+
+  \deprecated This class is deprecated with OpenCV 3.0.0 or more recent.
   
   This class allows to learn and recognise a surface in an image based on the 
   Fern Classifier or any other point of interest matching class.
