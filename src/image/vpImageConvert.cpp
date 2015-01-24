@@ -165,7 +165,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
 }
 
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Deprecated: will be removed with OpenCV transcient from C to C++ api
+// Deprecated: will be removed with OpenCV transcient from C to C++ api
 /*!
   \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
   IplImage structure will be removed with OpenCV transcient from C to C++ api.
@@ -537,7 +537,6 @@ vpImageConvert::convert(const vpImage<unsigned char> & src, IplImage* &dest)
     }
   }
 }
-#endif //  if (VISP_HAVE_OPENCV_VERSION < 0x020408) // Removed since transcient from OpenCV C to C++ api
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
 /*!

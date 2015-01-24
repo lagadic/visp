@@ -69,11 +69,8 @@
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 
-#include <opencv2/imgproc/imgproc.hpp>
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#  include <opencv2/imgproc/imgproc.hpp>
 #  include <opencv2/core/core_c.h> // for CV_FILLED versus cv::FILLED
-#endif
 
 #  ifndef CV_RGB
 #    define CV_RGB( r, g, b )  cv::Scalar( (b), (g), (r), 0 )

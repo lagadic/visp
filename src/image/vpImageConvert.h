@@ -124,7 +124,7 @@ public:
           vpImage<double> &dest);
           
 #ifdef VISP_HAVE_OPENCV
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020100) // Deprecated: will be removed with OpenCV transcient from C to C++ api
+  // Deprecated: will be removed with OpenCV transcient from C to C++ api
   static void convert(const IplImage* src,
           vpImage<vpRGBa> & dest, bool flip = false) ;
   static void convert(const IplImage* src,
@@ -133,7 +133,6 @@ public:
           IplImage *&dest) ;
   static void convert(const vpImage<unsigned char> & src,
           IplImage* &dest) ;
-#  endif
 #  if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat& src,
           vpImage<vpRGBa>& dest, const bool flip = false);
