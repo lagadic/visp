@@ -43,7 +43,7 @@
 #include <visp/vpKeyPointSurf.h>
 
 #if defined (VISP_HAVE_OPENCV_NONFREE)
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && VISP_HAVE_OPENCV_VERSION < 0x020408// Require opencv >= 1.1.0 < 2.4.8
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && VISP_HAVE_OPENCV_VERSION < 0x030000// Require opencv >= 1.1.0 < 3.0.0
 
 #include <visp/vpImageConvert.h>
 #include <visp/vpImageTools.h>

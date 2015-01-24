@@ -8,7 +8,7 @@
 int main()
 {  
   //! [Define]
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   //! [Define]
   vpImage<unsigned char> I;
 

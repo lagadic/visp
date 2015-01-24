@@ -58,9 +58,9 @@
 #include <list>
 #include <vector>
 
-#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)  // Require opencv >= 1.1.0 < 2.4.8
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)  // Require opencv >= 1.1.0 < 3.0.0
 #  include <opencv2/features2d/features2d.hpp>
 #  include <opencv2/legacy/compat.hpp>
 #  include <opencv2/nonfree/nonfree.hpp>
@@ -75,10 +75,10 @@
   \class vpKeyPointSurf
 
   \brief Class that implements the SURF key points and technics thanks
-  to the OpenCV library.
+  to OpenCV library.
 
-  \note This class is deprecated. You should rather use vpKeyPoint class that
-  is more generic.
+  \deprecated This class is deprecated with OpenCV 3.0.0 or ;ore recent.
+  You should rather use vpKeyPoint class that is more generic.
 
   The goal of this class is to provide a tool to match points from a
   model and points belonging to an image in which the model appears.
@@ -109,7 +109,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
@@ -144,7 +144,7 @@ int main()
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;

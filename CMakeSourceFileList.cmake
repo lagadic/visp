@@ -122,14 +122,14 @@ SET (SRC_KEY_POINT
   key-point/vpBasicKeyPoint.cpp
   )
 
-IF(VISP_HAVE_OPENCV_NONFREE AND OpenCV_VERSION VERSION_LESS 2.4.8)
-  LIST(APPEND SRC_KEY_POINT key-point/vpKeyPointSurf.cpp)
-ENDIF()
-IF(VISP_HAVE_OPENCV)
-  LIST(APPEND SRC_KEY_POINT key-point/vpPlanarObjectDetector.cpp)
-  LIST(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
-  LIST(APPEND SRC_KEY_POINT key-point/vpKeyPoint.cpp)
-ENDIF()
+if(VISP_HAVE_OPENCV_NONFREE AND OpenCV_VERSION VERSION_LESS 3.0.0)
+  list(APPEND SRC_KEY_POINT key-point/vpKeyPointSurf.cpp)
+endif()
+if(VISP_HAVE_OPENCV)
+  list(APPEND SRC_KEY_POINT key-point/vpPlanarObjectDetector.cpp)
+  list(APPEND SRC_KEY_POINT key-point/vpFernClassifier.cpp)
+  list (APPEND SRC_KEY_POINT key-point/vpKeyPoint.cpp)
+endif()
 
 IF(VISP_HAVE_XML2)
   LIST(APPEND SRC_KEY_POINT key-point/vpXmlConfigParserKeyPoint.cpp)
@@ -389,10 +389,6 @@ if(VISP_HAVE_OPENCV)
   list(APPEND SRC_TRACKING tracking/mbt/hybrid/vpMbEdgeKltTracker.cpp)
   list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbtDistanceKltPoints.cpp)
   list(APPEND SRC_TRACKING tracking/mbt/klt/vpMbKltTracker.cpp)
-endif()
-
-if(VISP_HAVE_ZBAR)
-#  list(APPEND SRC_TRACKING tracking/barcode/vpBarCodeTracker.cpp)
 endif()
 
 SET (SRC_VIDEO

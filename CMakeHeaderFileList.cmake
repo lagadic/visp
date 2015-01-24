@@ -252,7 +252,6 @@ SET (HEADER_TOOLS
   )
 
 SET (HEADER_TRACKING
-#  tracking/barcode/vpBarCodeTracker.h
   tracking/dots/vpDot2.h
   tracking/dots/vpDot.h
   tracking/feature-builder/vpFeatureBuilder.h

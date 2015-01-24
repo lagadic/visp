@@ -5,7 +5,7 @@
 
 \section intro_matching_deprecated Introduction
 
-\note This tutorial is deprecated if your OpenCV version is equal to 2.8.0 or more recent. If so you should rather follow \ref tutorial-matching.
+\note This tutorial is deprecated if your OpenCV version is equal to 3.0.0 or more recent. If so you should rather follow \ref tutorial-matching.
 
 This tutorial focuses on SURF key points manipulation. You will learn how to detect SURF key points on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, key points that match those detected in the reference image using SURF descriptor are displayed.
 
