@@ -77,7 +77,7 @@
   \brief Class that implements the SURF key points and technics thanks
   to OpenCV library.
 
-  \deprecated This class is deprecated with OpenCV 3.0.0 or ;ore recent.
+  \deprecated This class is deprecated with OpenCV 3.0.0 or more recent.
   You should rather use vpKeyPoint class that is more generic.
 
   The goal of this class is to provide a tool to match points from a
@@ -109,7 +109,7 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
@@ -144,7 +144,7 @@ int main()
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
   vpKeyPointSurf surf;
