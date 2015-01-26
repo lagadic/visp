@@ -611,7 +611,7 @@ void
   else if (! lastFrameIndexIsSet)
   {
     lastFrame = (long) capture.get(cv::CAP_PROP_FRAME_COUNT);
-    if(lastFrame <= 2) // with tutorial/matching/video-postcard.mpeg it return 2
+    if(lastFrame <= 2) // with tutorial/matching/video-postcard.mpeg it return 2 with OpenCV 3.0.0
     {
       //std::cout << "Warning: Problem with cv::CAP_PROP_FRAME_COUNT. We set video last frame to an arbitrary value (1000)." << std::endl;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
@@ -622,7 +622,7 @@ void
   else if (! lastFrameIndexIsSet)
   {
     lastFrame = (long) capture.get(CV_CAP_PROP_FRAME_COUNT);
-    if(lastFrame <= 1)
+    if(lastFrame <= 2) // with tutorial/matching/video-postcard.mpeg it return 2 with OpenCV 2.4.10
     {
       //std::cout << "Warning: Problem with CV_CAP_PROP_FRAME_COUNT. We set video last frame to an arbitrary value (1000)." << std::endl;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
