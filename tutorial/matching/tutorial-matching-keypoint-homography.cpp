@@ -45,10 +45,10 @@ int main(int argc, const char **argv)
 
   //! [Set coordinates]
   vpImagePoint corner_ref[4];
-  corner_ref[0].set_ij(115,  64);
-  corner_ref[1].set_ij( 83, 253);
-  corner_ref[2].set_ij(282, 307);
-  corner_ref[3].set_ij(330,  72);
+  corner_ref[0].set_ij(114, 224);
+  corner_ref[1].set_ij(103, 428);
+  corner_ref[2].set_ij(346, 475);
+  corner_ref[3].set_ij(361, 210);
   //! [Set coordinates]
   //! [Display]
   for (unsigned int i=0; i<4; i++) {
@@ -72,6 +72,7 @@ int main(int argc, const char **argv)
 
     //! [Matching]
     unsigned int nbMatch = keypoint.matchPoint(I);
+    std::cout << "Nb matches: " << nbMatch << std::endl;
     //! [Matching]
 
     std::vector<vpImagePoint> iPref(nbMatch), iPcur(nbMatch); // Coordinates in pixels (for display only)
@@ -95,13 +96,19 @@ int main(int argc, const char **argv)
     }
 
     //! [Homography estimation]
-    double residual;
-    if (method == 0)
-      vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                           (unsigned int)mPref_x.size()/2, 2.0/cam.get_px(), true);
-    else
-      vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                           0.4, 4, true);
+    try{
+      double residual;
+      if (method == 0)
+        vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
+                             (unsigned int)mPref_x.size()*0.25, 2.0/cam.get_px(), true);
+      else
+        vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
+                             0.4, 4, true);
+    } catch(...)
+    {
+      std::cout << "Cannot compute homography from matches..." << std::endl;
+    }
+
     //! [Homography estimation]
 
     //! [Projection]
