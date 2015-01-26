@@ -34,16 +34,16 @@ int main(int argc, const char **argv)
   Idisp.insert(I, vpImagePoint(0, 0));
   Idisp.insert(I, vpImagePoint(0, I.getWidth()));
 
-  vpDisplayOpenCV d(Idisp, 0, 0, "Homography from matched Surf keypoints") ;
+  vpDisplayOpenCV d(Idisp, 0, 0, "Homography from matched Surf keypoints");
   vpDisplay::display(Idisp);
   vpDisplay::flush(Idisp);
 
   //! [Set coordinates]
   vpImagePoint corner_ref[4];
-  corner_ref[0].set_ij(115,  64);
-  corner_ref[1].set_ij( 83, 253);
-  corner_ref[2].set_ij(282, 307);
-  corner_ref[3].set_ij(330,  72);
+  corner_ref[0].set_ij(114, 224);
+  corner_ref[1].set_ij(103, 428);
+  corner_ref[2].set_ij(346, 475);
+  corner_ref[3].set_ij(361, 210);
   //! [Set coordinates]
   //! [Display]
   for (unsigned int i=0; i<4; i++) {
@@ -57,7 +57,6 @@ int main(int argc, const char **argv)
   //! [Camera]
 
   vpHomography curHref;
-
   while ( ! reader.end() )
   {
     reader.acquire(I);
