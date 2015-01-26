@@ -391,7 +391,6 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
 
   if (npt <4)
   {
-    std::cout << "methode=" << methode << " ; RANSAC:" << (methode == LAGRANGE) << std::endl;
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
       "No enough point ")) ;
