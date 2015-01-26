@@ -2178,6 +2178,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I) {
 
   if(m_filterType != noFilterMatching) {
     m_queryFilteredKeyPoints.clear();
+    m_objectFilteredPoints.clear();
     m_filteredMatches.clear();
 
     filterMatches();
@@ -2242,12 +2243,13 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 
   if(m_filterType != noFilterMatching) {
     m_queryFilteredKeyPoints.clear();
-    m_objectFilteredPoints = m_trainPoints;
+    m_objectFilteredPoints.clear();
     m_filteredMatches.clear();
 
     filterMatches();
   } else {
     m_queryFilteredKeyPoints = m_queryKeyPoints;
+    m_objectFilteredPoints = m_trainPoints;
     m_filteredMatches = m_matches;
 
     for (size_t i = 0; i < m_matches.size(); i++) {

@@ -213,15 +213,15 @@ public:
   typedef enum {
     constantFactorDistanceThreshold,  /*!< Keep all the points below a constant factor threshold. */
     stdDistanceThreshold,             /*!< Keep all the points below a minimal distance + the standard deviation. */
-    ratioDistanceThreshold,           /*!< Keep all the points enough discriminated. */
-    stdAndRatioDistanceThreshold,     /*!< Keep all the points which fall with the two conditions. */
+    ratioDistanceThreshold,           /*!< Keep all the points enough discriminated (the ratio distance between the two best matches is below the threshold). */
+    stdAndRatioDistanceThreshold,     /*!< Keep all the points which fall with the two conditions above. */
     noFilterMatching                  /*!< No filtering. */
   } vpFilterMatchingType;
 
-  vpKeyPoint(const std::string &detectorName="SIFT", const std::string &extractorName="SIFT",
-             const std::string &matcherName="BruteForce", const vpFilterMatchingType &filterType=stdDistanceThreshold);
+  vpKeyPoint(const std::string &detectorName="ORB", const std::string &extractorName="ORB",
+             const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
-             const std::string &matcherName="BruteForce", const vpFilterMatchingType &filterType=stdDistanceThreshold);
+             const std::string &matcherName="BruteForce", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
   unsigned int buildReference(const vpImage<unsigned char> &I,
@@ -518,6 +518,15 @@ public:
 
   /*!
      Set and initialize a matcher denominated by his name \p matcherName.
+     The different matchers are:
+       - BruteForce (it uses L2 distance)
+       - BruteForce-L1
+       - BruteForce-Hamming
+       - BruteForce-Hamming(2)
+       - FlannBased
+
+     L1 and L2 norms are preferable choices for SIFT and SURF descriptors, NORM_HAMMING should be used with ORB,
+     BRISK and BRIEF, NORM_HAMMING2 should be used with ORB when WTA_K==3 or 4.
 
      \param matcherName : Name of the matcher.
    */
@@ -528,11 +537,25 @@ public:
 
   /*!
     Set the filtering method to eliminate false matching.
+    The different methods are:
+      - constantFactorDistanceThreshold (keep matches whose the descriptor distance is below dist_min * factor)
+      - stdDistanceThreshold (keep matches whose the descriptor distance is below dist_min + standard_deviation)
+      - ratioDistanceThreshold (keep matches enough discriminated: the ratio distance between the 2 best matches is below the threshold)
+      - stdAndRatioDistanceThreshold (keep matches that agree with at least one of the two conditions)
+      - noFilterMatching
 
     \param filterType : Type of the filtering method
   */
   inline void setFilterMatchingType(const vpFilterMatchingType &filterType) {
     m_filterType = filterType;
+
+    //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
+    //So this is useful only for ratioDistanceThreshold method
+    if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
+      m_useKnn = true;
+    } else {
+      m_useKnn = false;
+    }
   }
 
   /*!
@@ -541,7 +564,11 @@ public:
     \param factor : Factor value
   */
   inline void setMatchingFactorThreshold(const double factor) {
-    m_matchingFactorThreshold = factor;
+    if(factor > 0.0) {
+      m_matchingFactorThreshold = factor;
+    } else {
+      throw vpException(vpException::badValue, "The factor must be positive.");
+    }
   }
 
   /*!
@@ -550,7 +577,11 @@ public:
     \param ratio : Ratio value (]0 ; 1])
   */
   inline void setMatchingRatioThreshold(const double ratio) {
-    m_matchingRatioThreshold = ratio;
+    if(ratio > 0.0 && (ratio < 1.0 || std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
+      m_matchingRatioThreshold = ratio;
+    } else {
+      throw vpException(vpException::badValue, "The ratio must be in the interval ]0 ; 1].");
+    }
   }
 
   /*!

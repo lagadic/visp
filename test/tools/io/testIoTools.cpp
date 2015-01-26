@@ -252,10 +252,94 @@ main(int argc, const char ** argv)
 
   //Test vpIoTools::getFileExtension
 #if defined(_WIN32)
-  //TODO: add unit test with WIN32 platform
+  nbFail = 0;
+  nbOk = 0;
+
+  if(strcmp(vpIoTools::getFileExtension("foo.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("/foo/foo.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("/foo/foo.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension(".ext").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension(".ext") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("\\foo.ext\\foo").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("\\foo.ext\\foo") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("foo.ext\\").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.ext\\") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("").c_str(), "") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("") << " should be=" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("foo.bar.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("foo.bar.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("xx/foo.bar.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("xx/foo.bar.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("xx\\foo.bar.ext").c_str(), ".ext") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("xx\\foo.bar.ext") << " should be=.ext" << std::endl;
+  }
+
+  if(strcmp(vpIoTools::getFileExtension("c:a/b\\c.d").c_str(), ".d") == 0) {
+    nbOk++;
+  }
+  else {
+    nbFail++;
+    std::cout << "Fail=" << vpIoTools::getFileExtension("c:a/b\\c.d") << " should be=.d" << std::endl;
+  }
+
+  std::cout << "Test vpIoTools::getFileExtension (WIN32 platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
 #else
   nbFail = 0;
   nbOk = 0;
+
   if(strcmp(vpIoTools::getFileExtension("foo.bar").c_str(), ".bar") == 0) {
     nbOk++;
   }
@@ -351,7 +435,6 @@ main(int argc, const char ** argv)
     nbFail++;
     std::cout << "Fail=" << vpIoTools::getFileExtension("") << " should be=" << std::endl;
   }
-
 
   std::cout << "Test vpIoTools::getFileExtension (Unix-like platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
 #endif
