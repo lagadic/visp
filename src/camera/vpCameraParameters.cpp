@@ -80,7 +80,7 @@ vpCameraParameters::vpCameraParameters()
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
     width(0), height(0),
-    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
@@ -96,7 +96,7 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
     width(0), height(0),
-    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
@@ -117,7 +117,7 @@ vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
     width(0), height(0),
-    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
@@ -141,7 +141,7 @@ vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
     u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER),
     width(0), height(0),
-    isFov(false), fovAngleX(0), fovAngleY(0), fovNormals(),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(),
     inv_px(1./DEFAULT_PX_PARAMETER), inv_py(1./DEFAULT_PY_PARAMETER),
     projModel(DEFAULT_PROJ_TYPE)
 {
@@ -173,8 +173,38 @@ vpCameraParameters::init()
 /*!
   Initialization with specific parameters using perpective projection without
   distortion model.
-  \param cam_px,cam_py : pixel size
-  \param cam_u0,cam_v0 : principal point
+  \param cam_px,cam_py : the ratio between the focal length and the size of a pixel.
+  \param cam_u0,cam_v0 : principal point coordinates in pixels.
+
+   The following sample code shows how to use this function:
+   \code
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640);
+  double u0 = I.getWidth()  / 2.;
+  double v0 = I.getHeight() / 2.;
+  double px = 600;
+  double py = 600;
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(px, py, u0, v0);
+  cam.computeFov(I.getWidth(), I.getHeight());
+  std::cout << cam << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) << " degrees)" << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+Camera parameters for perspective projection without distortion:
+  px = 600	 py = 600
+  u0 = 320	 v0 = 240
+
+Field of view (horizontal: 56.145 and vertical: 43.6028 degrees)
+   \endcode
+
  */
 void
 vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const double cam_py,
@@ -208,10 +238,42 @@ vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const dou
 /*!
   Initialization with specific parameters using perpective projection with
   distortion model.
-  \param cam_px,cam_py : pixel size
-  \param cam_u0,cam_v0 : principal points
-  \param cam_kud : undistorted to distorted radial distortion
-  \param cam_kdu : distorted to undistorted radial distortion
+  \param cam_px,cam_py : the ratio between the focal length and the size of a pixel.
+  \param cam_u0,cam_v0 : principal points coordinates in pixels.
+  \param cam_kud : undistorted to distorted radial distortion.
+  \param cam_kdu : distorted to undistorted radial distortion.
+
+   The following sample code shows how to use this function:
+   \code
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640);
+  double u0 = I.getWidth()  / 2.;
+  double v0 = I.getHeight() / 2.;
+  double px = 600;
+  double py = 600;
+  double kud = -0.19;
+  double kdu = 0.20;
+  vpCameraParameters cam;
+  cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
+  cam.computeFov(I.getWidth(), I.getHeight());
+  std::cout << cam << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) << " degrees)" << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+Camera parameters for perspective projection with distortion:
+  px = 600	 py = 600
+  u0 = 320	 v0 = 240
+  kud = -0.19
+  kdu = 0.2
+
+Field of view (horizontal: 56.14497387 and vertical: 43.60281897 degrees)   \endcode
 */
 void
 vpCameraParameters::initPersProjWithDistortion(const double cam_px, const double cam_py,
@@ -288,6 +350,54 @@ vpCameraParameters::initFromCalibrationMatrix(const vpMatrix& _K)
   initPersProjWithoutDistortion (_K[0][0], _K[1][1], _K[0][2], _K[1][2]);
 }
 
+/*!
+   Initialize the camera model without distorsion from the image dimension and the camera field of view.
+   \param w : Image width.
+   \param h : Image height.
+   \param hfov : Camera horizontal field of view angle expressed in radians.
+   \param vfov : Camera vertical field of view angle expressed in radians.
+
+   The following sample code shows how to use this function:
+   \code
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImage.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640);
+  vpCameraParameters cam;
+  double hfov = vpMath::rad(56);
+  double vfov = vpMath::rad(43);
+  cam.initFromFov(I.getWidth(), I.getHeight(), hfov, vfov);
+
+  std::cout << cam << std::endl;
+  std::cout << "Field of view (horizontal: " << vpMath::deg(cam.getHorizontalFovAngle())
+            << " and vertical: " << vpMath::deg(cam.getVerticalFovAngle()) << " degrees)" << std::endl;
+}
+   \endcode
+   It produces the following output:
+   \code
+Camera parameters for perspective projection without distortion:
+  px = 601.832	 py = 609.275
+  u0 = 320	 v0 = 240
+
+Field of view (horizontal: 56 and vertical: 43 degrees)
+   \endcode
+ */
+void
+vpCameraParameters::initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov)
+{
+  projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
+  u0 = (double)w/2.;
+  v0 = (double)h/2.;
+  px = u0 / tan(hfov/2);
+  py = v0 / tan(vfov/2);
+  kud = 0;
+  kdu = 0;
+  inv_px = 1./px;
+  inv_py = 1./py;
+  computeFov(w, h);
+}
 
 /*!
   copy operator
@@ -307,9 +417,8 @@ vpCameraParameters&
   inv_py = cam.inv_py;
   
   isFov = cam.isFov;
-  fovAngleX = cam.fovAngleX;
-  fovAngleY = cam.fovAngleY;
-  fovNormals = cam.fovNormals;
+  m_hFovAngle = cam.m_hFovAngle;
+  m_vFovAngle = cam.m_vFovAngle;
   width = cam.width;
   height = cam.height;
   
@@ -330,8 +439,8 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     
     isFov = true;
     
-    fovAngleX = atan((double)w / ( 2.0 * px ));
-    fovAngleY = atan((double)h / ( 2.0 * py ));
+    double half_hFovAngle = atan((double)w / ( 2.0 * px ));
+    double half_vFovAngle = atan((double)h / ( 2.0 * py ));
     
     width = w;
     height = h;
@@ -340,8 +449,8 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     n = 0;
     n[0] = 1.0;
     
-    vpRotationMatrix Rleft(0,-fovAngleX,0);
-    vpRotationMatrix Rright(0,fovAngleX,0);
+    vpRotationMatrix Rleft (0,-half_hFovAngle,0);
+    vpRotationMatrix Rright(0, half_hFovAngle,0);
     
     vpColVector nLeft, nRight;
     
@@ -354,8 +463,8 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     n = 0;
     n[1] = 1.0;
   
-    vpRotationMatrix Rup(fovAngleY,0,0);
-    vpRotationMatrix Rdown(-fovAngleY,0,0);
+    vpRotationMatrix Rup  ( half_vFovAngle,0,0);
+    vpRotationMatrix Rdown(-half_vFovAngle,0,0);
     
     vpColVector nUp, nDown;
     
@@ -364,6 +473,9 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     
     nDown = Rdown * n;
     fovNormals[3] = nDown.normalize();
+
+    m_hFovAngle = 2 * half_hFovAngle;
+    m_vFovAngle = 2 * half_vFovAngle;
   }
 }
 

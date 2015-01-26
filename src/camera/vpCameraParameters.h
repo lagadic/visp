@@ -90,10 +90,9 @@
   \end{array}\right.
   \f]
 
-  The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
-  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
-  the conversion from normalized coordinates into pixel is implemented
-  in vpMeterPixelConversion.
+  The initialization of such a model can be done using:
+  - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$ parameters;
+  - initFromFov() that computes the parameters from an image size and a camera field of view.
 
   <b>2. Camera parameters for a perspective projection with distortion model</b>
 
@@ -152,13 +151,19 @@
   y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
   \end{array}\right.
   \f]
-  The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
-  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion.
+
+  The initialization of such a model can be done using:
+  - initPersProjWithDistortion() that allows to set \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
+
+  \note The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
+  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
+  the conversion from normalized coordinates into pixel is implemented
+  in vpMeterPixelConversion.
 
   The selection of one of these modelisations is done during
   vpCameraParameters initialisation.
 
-  Here an example of camera initialisation, for a model without distortion:
+  Here an example of camera initialisation, for a model without distortion. A complete example is given in initPersProjWithoutDistortion().
   \code
   double px = 600;
   double py = 600;
@@ -173,7 +178,7 @@
   std::cout << cam << std::endl;
   \endcode
 
-  Here an example of camera initialisation, for a model with distortion:
+  Here an example of camera initialisation, for a model with distortion. A complete example is given in initPersProjWithDistortion().
   \code
   double px = 600;
   double py = 600;
@@ -198,6 +203,9 @@
   \endcode
 
   An XML parser for camera parameters is also provided in vpXmlParserCamera.
+
+  Note also that the \ref tutorial-calibration shows how to calibrate a camera
+  to obtain the parameters corresponding to both models implemented in this class.
 */
 class VISP_EXPORT vpCameraParameters
 {
@@ -225,11 +233,10 @@ public :
   void init() ;
   void init(const vpCameraParameters &c) ;
   void initFromCalibrationMatrix(const vpMatrix& _K);
-  
-  void initPersProjWithoutDistortion(const double px, const double py,
-                                      const double u0, const double v0) ;
-  void initPersProjWithDistortion(const double px, const double py,
-     const double u0, const double v0, const double kud,const double kdu) ;
+  void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
+  void initPersProjWithoutDistortion(const double px, const double py, const double u0, const double v0);
+  void initPersProjWithDistortion(const double px, const double py, const double u0, const double v0,
+                                  const double kud,const double kdu) ;
      
   /*!
     Specify if the fov has been computed.
@@ -243,27 +250,27 @@ public :
   void computeFov(const unsigned int &w, const unsigned int &h);
   
   /*!
-    Get the horizontal angle of the field of view.
-    
-    \sa computeFov()
-    
-    \return AngleX computed with px and width.
+    Get the horizontal angle in radian of the field of view.
+
+    \return FOV horizontal angle computed with px and width.
+
+    \sa computeFov(), getVerticalFovAngle()
   */
-  inline double getFovAngleX() const { 
-    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleX() won't be significant.");
-    return fovAngleX; 
+  inline double getHorizontalFovAngle() const {
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getHorizontalFovAngle() won't be significant.");
+    return m_hFovAngle;
   }
-  
+
   /*!
-    Get the vertical angle of the field of view.
-    
-    \sa computeFov()
-    
-    \return AngleY computed with py and height.
+    Get the vertical angle in radian of the field of view.
+
+    \return FOV vertical angle computed with py and height.
+
+    \sa computeFov(), getHorizontalFovAngle()
   */
-  inline double getFovAngleY() const { 
-    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleY() won't be significant.");
-    return fovAngleY; 
+  inline double getVerticalFovAngle() const {
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getVerticalFovAngle() won't be significant.");
+    return m_vFovAngle;
   }
   
   /*!
@@ -301,6 +308,35 @@ public :
   void printParameters() ;
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpCameraParameters &cam);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    \deprecated This function is deprecated. Use rather getHorizontalFovAngle().
+    Get the horizontal angle of the field of view.
+
+    \sa computeFov()
+
+    \return AngleX computed with px and width.
+  */
+  vp_deprecated inline double getFovAngleX() const {
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleX() won't be significant.");
+    return m_hFovAngle;
+  }
+
+  /*!
+    \deprecated This function is deprecated. Use rather getVerticalFovAngle().
+    Get the vertical angle in radian of the field of view.
+
+    \sa computeFov()
+
+    \return FOV vertical angle computed with py and height.
+  */
+  vp_deprecated inline double getFovAngleY() const {
+    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleY() won't be significant.");
+    return m_hFovAngle;
+  }
+
+#endif
+
 private:
   static const double DEFAULT_U0_PARAMETER;
   static const double DEFAULT_V0_PARAMETER;
@@ -319,8 +355,8 @@ private:
   unsigned int width ; //!< Width of the image used for the fov computation
   unsigned int height ; //!< Height of the image used for the fov computation
   bool isFov ; //!< Boolean to specify if the fov has been computed
-  double fovAngleX ; //!< AngleX/2.0 of the fov
-  double fovAngleY ; //!< AngleY/2.0 of the fov
+  double m_hFovAngle ; //!< Field of view horizontal angle
+  double m_vFovAngle ; //!< Field of view vertical angle
   std::vector<vpColVector> fovNormals ; //!< Normals of the planes describing the fov
   
   double inv_px, inv_py; 
