@@ -70,10 +70,11 @@
   \param cMo : Computed pose
   \param func : Pointer to a function that takes in parameter a vpHomogeneousMatrix
   and returns true if the pose check is OK or false otherwise
+  \return True if we found at least 4 points with a reprojection error below ransacThreshold.
 */
-void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *))
+bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *))
 {  
-  srand(0);
+  srand(0); //Fix seed here so we will have the same pseudo-random series at each run.
   std::vector<unsigned int> best_consensus;
   std::vector<unsigned int> cur_consensus;
   std::vector<unsigned int> cur_outliers;
@@ -95,7 +96,10 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
   bool foundSolution = false;
   
   while (nbTrials < ransacMaxTrials && nbInliers < (unsigned)ransacNbInlierConsensus)
-  { 
+  {
+    //Hold the list of the index of the inliers (points in the consensus set)
+    cur_consensus.clear();
+
     //Use a temporary variable because if not, the cMo passed in parameters will be modified when
     // we compute the pose for the minimal sample sets but if the pose is not correct when we pass
     // a function pointer we do not want to modify the cMo passed in parameters
@@ -106,7 +110,7 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     //Vector of used points, initialized at false for all points
     std::vector<bool> usedPt(size, false);
     
-    vpPose poseMin ;
+    vpPose poseMin;
     for(unsigned int i = 0; i < nbMinRandom;)
     {
       if((size_t) std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
@@ -137,11 +141,16 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         }
       }
       if(!degenerate) {
-        poseMin.addPoint(pt) ;
+        poseMin.addPoint(pt);
         cur_randoms.push_back(r_);
         //Increment the number of points picked
         i++;
       }
+    }
+
+    if(poseMin.npt < nbMinRandom) {
+      nbTrials++;
+      continue;
     }
 
     //Flags set if pose computation is OK
@@ -248,9 +257,8 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         }
 
         nbTrials++;
-        cur_consensus.clear();
         
-        if(nbTrials >= ransacMaxTrials){
+        if(nbTrials >= ransacMaxTrials) {
           vpERROR_TRACE("Ransac reached the maximum number of trials");
           foundSolution = true;
         }
@@ -258,20 +266,20 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       else {
         nbTrials++;
 
-        if(nbTrials >= ransacMaxTrials){
+        if(nbTrials >= ransacMaxTrials) {
           vpERROR_TRACE("Ransac reached the maximum number of trials");
         }
       }
     } else {
       nbTrials++;
 
-      if(nbTrials >= ransacMaxTrials){
+      if(nbTrials >= ransacMaxTrials) {
         vpERROR_TRACE("Ransac reached the maximum number of trials");
       }
     }
   }
     
-  if(foundSolution){
+  if(foundSolution) {
     //std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
     
     //Display the random picked points
@@ -290,8 +298,12 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     std::cout << std::endl;
     */
     
-    if(nbInliers >= (unsigned)ransacNbInlierConsensus)
-    {    
+    //Even if the cardinality of the best consensus set is inferior to ransacNbInlierConsensus,
+    //we want to refine the solution with data in best_consensus and return this pose.
+    //This is an approach used for example in p118 in Multiple View Geometry in Computer Vision, Hartley, R.~I. and Zisserman, A.
+    if(nbInliers >= nbMinRandom) //if(nbInliers >= (unsigned)ransacNbInlierConsensus)
+    {
+      //Refine the solution using all the points in the consensus set and with VVS pose estimation
       vpPose pose ;
       for(unsigned i = 0 ; i < best_consensus.size(); i++)
       {
@@ -334,15 +346,19 @@ void vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         else {
           cMo = cMo_dementhon;
         }
-      }
 
-      if(computeCovariance) {
-        pose.setCovarianceComputation(true);
+        pose.setCovarianceComputation(computeCovariance);
         pose.computePose(vpPose::VIRTUAL_VS, cMo);
-        covarianceMatrix = pose.covarianceMatrix;
+        if(computeCovariance) {
+          covarianceMatrix = pose.covarianceMatrix;
+        }
       }
+    } else {
+      return false;
     }
   }
+
+  return foundSolution;
 }
 
 /*!

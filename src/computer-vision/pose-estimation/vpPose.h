@@ -130,7 +130,7 @@ public:
   void clearPoint() ;
 
   //! compute the pose for a given method
-  void computePose(vpPoseMethodType methode, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
+  bool computePose(vpPoseMethodType methode, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
   //! compute the residual (i.e., the quality of the result)
   //! compute the residual (in meter for pose M)
   double computeResidual(const vpHomogeneousMatrix &cMo) const ;
@@ -156,7 +156,7 @@ public:
   //! Levenberg Marquartd non linear minimization approach)
   void poseLowe(vpHomogeneousMatrix & cMo) ;
   //! compute the pose using the Ransac approach 
-  void poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
+  bool poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
   //! compute the pose using a robust virtual visual servoing approach
   void poseVirtualVSrobust(vpHomogeneousMatrix & cMo) ;
   //! compute the pose using virtual visual servoing approach

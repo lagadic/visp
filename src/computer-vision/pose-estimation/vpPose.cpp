@@ -382,7 +382,7 @@ LAGRANGE_VIRTUAL_VS  Virtual visual servoing initialized using
 Lagrange approach
 
 */
-void
+bool
 vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*func)(vpHomogeneousMatrix *))
 {
 #if (DEBUG_LEVEL1)
@@ -391,6 +391,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
 
   if (npt <4)
   {
+    std::cout << "methode=" << methode << " ; RANSAC:" << (methode == LAGRANGE) << std::endl;
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
       "No enough point ")) ;
@@ -509,7 +510,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
         "Not enough points ")) ;
     }
     try {
-      poseRansac(cMo, func);
+      return poseRansac(cMo, func);
     }
     catch(...)
     {
@@ -563,6 +564,9 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::ComputePose()" << std::endl ;
 #endif
+
+  //If here, there was no exception thrown so return true
+  return true;
 }
 
 

@@ -1026,6 +1026,7 @@ void vpKeyPoint::filterMatches() {
 //        float ratio = std::sqrt((vecMatches[i][0].distance * vecMatches[i][0].distance)
 //            / (vecMatches[i][1].distance * vecMatches[i][1].distance));
         double dist = m_knnMatches[i][0].distance;
+
         if(ratio < m_matchingRatioThreshold || (m_filterType == stdAndRatioDistanceThreshold && dist < threshold)) {
           m.push_back(cv::DMatch((int) queryKpts.size(), m_knnMatches[i][0].trainIdx, m_knnMatches[i][0].distance));
 
@@ -1224,18 +1225,21 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
 
+  bool isRansacPoseEstimationOk = false;
   try {
     pose.setCovarianceComputation(m_computeCovariance);
-    pose.computePose(vpPose::RANSAC, cMo, func);
+    isRansacPoseEstimationOk = pose.computePose(vpPose::RANSAC, cMo, func);
     inliers = pose.getRansacInliers();
-    m_covarianceMatrix = pose.getCovarianceMatrix();
+    if(m_computeCovariance) {
+      m_covarianceMatrix = pose.getCovarianceMatrix();
+    }
   } catch(vpException &e) {
     std::cerr << "e=" << e.what() << std::endl;
     elapsedTime = (vpTime::measureTimeMs() - t);
     return false;
   }
 
-  if(func != NULL) {
+  if(func != NULL && isRansacPoseEstimationOk) {
     //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
     //we can converge toward a final cMo that does not respect the pose criterion even
     //if the 4 minimal points picked to respect the pose criterion.
@@ -1246,7 +1250,7 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
   }
 
   elapsedTime = (vpTime::measureTimeMs() - t);
-  return true;
+  return isRansacPoseEstimationOk;
 }
 
 /*!
@@ -2279,6 +2283,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+  //Check if we have training descriptors
   if(m_trainDescriptors.empty()) {
     std::cerr << "Reference is empty." << std::endl;
     if(!_reference_computed) {
@@ -2319,6 +2324,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
   if(m_useRansacVVS) {
     std::vector<vpPoint> objectVpPoints(m_objectFilteredPoints.size());
     size_t cpt = 0;
+    //Create a list of vpPoint with 2D coordinates (current keypoint location) + 3D coordinates (world/object coordinates)
     for(std::vector<cv::Point3f>::const_iterator it = m_objectFilteredPoints.begin(); it != m_objectFilteredPoints.end();
         ++it, cpt++) {
       vpPoint pt;
