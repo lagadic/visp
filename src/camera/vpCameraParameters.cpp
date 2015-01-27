@@ -421,6 +421,7 @@ vpCameraParameters&
   m_vFovAngle = cam.m_vFovAngle;
   width = cam.width;
   height = cam.height;
+  fovNormals = cam.fovNormals;
   
   return *this ;
 }
