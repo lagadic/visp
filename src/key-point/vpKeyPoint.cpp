@@ -979,6 +979,10 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
       }
     }
   }
+
+  if(keyPoints.size() != (size_t) descriptors.rows) {
+    std::cerr << "keyPoints.size() != (size_t) descriptors.rows" << std::endl;
+  }
   elapsedTime = vpTime::measureTimeMs() - t;
 }
 
@@ -2150,10 +2154,12 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
   double t = vpTime::measureTimeMs();
 
   if(m_useKnn) {
+    m_knnMatches.clear();
     m_matcher->knnMatch(queryDescriptors, trainDescriptors, m_knnMatches, 2);
     matches.resize(m_knnMatches.size());
     std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
   } else {
+    matches.clear();
     m_matcher->match(queryDescriptors, trainDescriptors, matches);
   }
   elapsedTime = vpTime::measureTimeMs() - t;
