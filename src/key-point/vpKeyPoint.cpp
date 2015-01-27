@@ -502,7 +502,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
   candidates.clear();
   vpImagePoint iPt;
   cv::Point3f pt;
-  int cpt = 0;
+  size_t cpt = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin();
       it1 != polygons.end(); ++it1, cpt++) {
     for (std::vector<cv::KeyPoint>::const_iterator it2 =
@@ -536,7 +536,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
   std::vector<vpImagePoint> candidateToCheck = candidates;
   candidates.clear();
   vpPoint pt;
-  int cpt = 0;
+  size_t cpt = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin();
       it1 != polygons.end(); ++it1, cpt++) {
     for (std::vector<vpImagePoint>::const_iterator it2 =

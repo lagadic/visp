@@ -3104,7 +3104,7 @@ void vpDisplayX::getImage ( vpImage<vpRGBa> &I )
         size_t i_ = i*I.getWidth();
         for ( unsigned int j = 0; j < I.getWidth() ; j++ ) {
           size_t ij_ = i_+j;
-          unsigned long pixel = XGetPixel(xi, j, i);
+          unsigned long pixel = XGetPixel(xi, (int)j, (int)i);
           I.bitmap[ij_].R = (((pixel & RMask) << RShift) >> 8);
           I.bitmap[ij_].G = (((pixel & GMask) << GShift) >> 8);
           I.bitmap[ij_].B = (((pixel & BMask) << BShift) >> 8);

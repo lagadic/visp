@@ -1149,20 +1149,20 @@ std::string vpIoTools::getFileExtension(const std::string& pathname, const bool 
 //
 //    return p, ''
 
-  size_t sepIndex = pathname.rfind(sep);
+  int sepIndex = (int)pathname.rfind(sep);
   if(!altsep.empty()) {
-    size_t altsepIndex = pathname.rfind(altsep);
+    int altsepIndex = (int)pathname.rfind(altsep);
     sepIndex = (std::max)(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);
   if(dotIndex != std::string::npos) {
     //The extsep character exists
-    if((sepIndex != std::string::npos && dotIndex > sepIndex) || sepIndex == std::string::npos) {
-      if(sepIndex == std::string::npos) {
+    if((sepIndex != (int)std::string::npos && (int)dotIndex > sepIndex) || sepIndex == (int)std::string::npos) {
+      if(sepIndex == (int)std::string::npos) {
         sepIndex = -1;
       }
-      size_t filenameIndex = sepIndex + 1;
+      size_t filenameIndex = (size_t)(sepIndex + 1);
 
       while(filenameIndex < dotIndex) {
         if(pathname.compare(filenameIndex, 1, extsep) != 0) {

@@ -2131,7 +2131,7 @@ vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility)
     polygonsTmp.resize(listOfPolygonFaces.size());
     roisPtTmp.resize(listOfPolygonFaces.size());
 
-    int cpt = 0;
+    size_t cpt = 0;
     for(std::vector<PolygonFaceInfo>::const_iterator it = listOfPolygonFaces.begin(); it != listOfPolygonFaces.end();
         ++it, cpt++) {
       polygonsTmp[cpt] = it->polygon;

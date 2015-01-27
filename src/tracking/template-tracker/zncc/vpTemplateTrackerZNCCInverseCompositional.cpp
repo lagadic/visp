@@ -295,7 +295,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
 
 
     }
-    if(Nbpoint!=0)
+    if(Nbpoint > 0)
     {
       moyIref=moyIref/Nbpoint;
       moyIc=moyIc/Nbpoint;

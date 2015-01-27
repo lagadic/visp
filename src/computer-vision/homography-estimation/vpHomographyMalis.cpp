@@ -532,10 +532,10 @@ HLM3D(unsigned int nb_pts,
     perm = 0;
     for (i=1; i < nc ;i++) {
       if (svSorted[i-1] > svSorted[i]) {
-	v_temp = svSorted[i-1] ;
-	svSorted[i-1] = svSorted[i] ;
-	svSorted[i] = v_temp ;
-	perm = perm + 1;
+        v_temp = svSorted[i-1] ;
+        svSorted[i-1] = svSorted[i] ;
+        svSorted[i] = v_temp ;
+        perm = perm + 1;
       }
     }
   }

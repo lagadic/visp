@@ -179,7 +179,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
   for(int i=0; i<=vpMath::round(n_sample); i++)
   {
     // If point is in the image, add to the sample list
-    if(!outOfImage(vpMath::round(is), vpMath::round(js), me->getRange()+me->getMaskSize()+1, rows, cols))
+    if(!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange()+me->getMaskSize()+1), (int)rows, (int)cols))
     {
       vpMeSite pix ; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign) ;
@@ -243,7 +243,7 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & I)
 
     }
 
-    if (outOfImage(s.i, s.j, me->getRange()+me->getMaskSize()+1, I.getHeight(), I.getWidth()))
+    if (outOfImage(s.i, s.j, (int)(me->getRange()+me->getMaskSize()+1), (int)I.getHeight(), (int)I.getWidth()))
     {
       s.setState(vpMeSite::TOO_NEAR);
     }
@@ -309,7 +309,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
       if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j,5,vpColor::cyan) ;
     }
     else
-    if(!outOfImage(P.i, P.j, me->getRange()+me->getMaskSize()+1, rows, cols))
+    if(!outOfImage(P.i, P.j, (int)(me->getRange()+me->getMaskSize()+1), (int)rows, (int)cols))
     {
       P.track(I,me,false) ;
 
@@ -336,7 +336,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
     }
 
     else
-    if(!outOfImage(P.i, P.j, me->getRange()+me->getMaskSize()+1, rows, cols))
+    if(!outOfImage(P.i, P.j, (int)(me->getRange()+me->getMaskSize()+1), (int)rows, (int)cols))
     {
       P.track(I,me,false) ;
 
