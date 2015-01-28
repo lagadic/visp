@@ -351,12 +351,14 @@ public:
   */
   std::vector<bool> getScales() const {return scales;}
   /*!
-     \return The threshold value between 0 and 1 that allows to decide if the tracker
-     has enough valid moving edges to compute a pose.
+     \return The threshold value between 0 and 1 over good moving edges ratio. It allows to
+     decide if the tracker has enough valid moving edges to compute a pose. 1 means that all
+     moving edges should be considered as good to have a valid pose, while 0.1 means that
+     10% of the moving edge are enough to declare a pose valid.
 
-     \sa setThresholdGoodMovingEdges()
+     \sa setGoodMovingEdgesRatioThreshold()
    */
-  inline double getThresholdGoodMovingEdges() const { return percentageGdPt;}
+  inline double getGoodMovingEdgesRatioThreshold() const { return percentageGdPt;}
 
   void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char* configFile);
@@ -412,16 +414,18 @@ public:
   }
 
   /*!
-     Set the threshold value between 0 and 1 that allows to decide if the tracker
-     has enough valid moving edges to compute a pose.
+     Set the threshold value between 0 and 1 over good moving edges ratio. It allows to
+     decide if the tracker has enough valid moving edges to compute a pose. 1 means that all
+     moving edges should be considered as good to have a valid pose, while 0.1 means that
+     10% of the moving edge are enough to declare a pose valid.
 
-     \param threshold : Value between 0 and 1 that corresponds to the percentage of good
-     moving edges that is necessary to consider that the estimated pose is valid. 1 means that allo
-     the moving-edges should be used in the tracking scheme. Default value is 0.4.
+     \param threshold : Value between 0 and 1 that corresponds to the ratio of good
+     moving edges that is necessary to consider that the estimated pose is valid.
+     Default value is 0.4.
 
-     \sa getThresholdGoodMovingEdges()
+     \sa getGoodMovingEdgesRatioThreshold()
    */
-  void setThresholdGoodMovingEdges(const double  threshold) {percentageGdPt = threshold;}
+  void setGoodMovingEdgesRatioThreshold(const double  threshold) {percentageGdPt = threshold;}
 
   /*!
     Set the value of the gain used to compute the control law.
@@ -475,7 +479,9 @@ protected:
 
 public:
   /*!
-    \deprecated Since this function name is not explicit, use rather getThresholdGoodMovingEdges() that does the same.
+    \deprecated Since this function name is not explicit, use rather getGoodMovingEdgesRatioThreshold()
+    that does the same.
+
     \return The threshold value between 0 and 1 that allows to decide if the tracker
     has enough valid moving edges to compute a pose.
    */
@@ -493,8 +499,10 @@ public:
   */
   vp_deprecated void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
   /*!
-    \deprecated Since this function name is not explicit, use rather setThresholdGoodMovingEdges() that does the same.
-    Set the first threshold used to check if the tracking failed. It corresponds to the percentage of good point which is necessary.
+    \deprecated Since this function name is not explicit, use rather setGoodMovingEdgesRatioThreshold()
+    that does the same.
+    Set the first threshold used to check if the tracking failed. It corresponds to the percentage
+    of good point which is necessary.
 
     The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.
 

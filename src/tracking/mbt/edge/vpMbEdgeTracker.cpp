@@ -992,7 +992,7 @@ vpMbEdgeTracker::testTracking()
         << nb_min
         << ". Try to reduce the threshold="
         << percentageGdPt
-        << " using vpMbTracker::setThresholdGoodMovingEdges()";
+        << " using vpMbTracker::setGoodMovingEdgesRatioThreshold()";
     throw vpTrackingException(vpTrackingException::fatalError, oss.str());
   }      
 }
