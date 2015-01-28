@@ -560,6 +560,9 @@ public:
   vpColVector sv ;
 
   double mu;
+
+  vpColVector e1_initial;
+
 } ;
 
 #endif

@@ -1068,7 +1068,7 @@ vpColVector vpServo::computeControlLaw()
 vpColVector vpServo::computeControlLaw(double t)
 {
   static int iteration =0;
-  static vpColVector e1_initial;
+  //static vpColVector e1_initial;
 
   try
   {
@@ -1183,6 +1183,9 @@ vpColVector vpServo::computeControlLaw(double t)
     if (iteration==0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
       e1_initial = e1;
     }
+    // Security check. If size of e1_initial and e1 differ, that means that e1_initial was not set
+    if (e1_initial.getRows() != e1.getRows())
+      e1_initial = e1;
 
     e = - lambda(e1) * e1 + lambda(e1) * e1_initial*exp(-mu*t);
 
@@ -1241,7 +1244,6 @@ vpColVector vpServo::computeControlLaw(double t)
 vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
   static int iteration =0;
-  static vpColVector e1_initial;
 
   try
   {
@@ -1356,6 +1358,9 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     if (iteration==0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
       e1_initial = e1;
     }
+    // Security check. If size of e1_initial and e1 differ, that means that e1_initial was not set
+    if (e1_initial.getRows() != e1.getRows())
+      e1_initial = e1;
 
     e = - lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial)*exp(-mu*t);
 
