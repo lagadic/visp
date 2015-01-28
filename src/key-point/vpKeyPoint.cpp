@@ -1024,6 +1024,9 @@ void vpKeyPoint::filterMatches() {
     double threshold = min_dist + stdev;
 
     for(size_t i = 0; i < m_knnMatches.size(); i++) {
+      if(m_knnMatches[i].size() < 50) {
+        std::cout << "m_knnMatches[i].size()=" << m_knnMatches[i].size() << std::endl;
+      }
       if(m_knnMatches[i].size() >= 2) {
         //Calculate ratio of the descriptor distance between the two nearest neighbors of the keypoint
         float ratio = m_knnMatches[i][0].distance / m_knnMatches[i][1].distance;
@@ -1159,9 +1162,14 @@ bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std:
     //estimates the parameters f_x and f_y assuming that both have the same value. Then the cameraMatrix is updated with the
     //estimated focal length.
 #else
+    int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
+    if(m_useConsensusPercentage) {
+      nbInlierToReachConsensus = (int) (m_ransacConsensusPercentage / 100.0 * (double) m_queryFilteredKeyPoints.size());
+    }
+
     cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
         rvec, tvec, false, m_nbRansacIterations,
-        (float) m_ransacReprojectionError, m_nbRansacMinInlierCount,
+        (float) m_ransacReprojectionError, nbInlierToReachConsensus,
         inlierIndex);
 #endif
   } catch (cv::Exception &e) {
@@ -1218,14 +1226,13 @@ bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneo
     pose.addPoint(*it);
   }
 
+  unsigned int nbInlierToReachConsensus = (unsigned int) m_nbRansacMinInlierCount;
   if(m_useConsensusPercentage) {
-    unsigned int nbInlierToReachConsensus = (unsigned int) (m_ransacConsensusPercentage
-                                                            * (double) m_queryFilteredKeyPoints.size() / 100.0);
-    pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
-  } else {
-    pose.setRansacNbInliersToReachConsensus((unsigned int)m_nbRansacMinInlierCount);
+    nbInlierToReachConsensus = (unsigned int) (m_ransacConsensusPercentage / 100.0 *
+                               (double) m_queryFilteredKeyPoints.size());
   }
 
+  pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
   pose.setRansacThreshold(m_ransacThreshold);
   pose.setRansacMaxTrials(m_nbRansacIterations);
 
