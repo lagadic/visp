@@ -100,7 +100,7 @@ int main(int argc, const char **argv)
       double residual;
       if (method == 0)
         vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                             (unsigned int)mPref_x.size()*0.25, 2.0/cam.get_px(), true);
+                             (unsigned int)(mPref_x.size()*0.25), 2.0/cam.get_px(), true);
       else
         vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
                              0.4, 4, true);

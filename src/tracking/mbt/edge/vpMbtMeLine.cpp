@@ -121,7 +121,7 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
     delta_1 = delta;
 
     sample(I) ;
-    expecteddensity = list.size();
+    expecteddensity = (double)list.size();
 
     vpMeTracker::track(I);
   }
@@ -376,7 +376,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
     double delta_new = delta;
     delta = delta_1;
     sample(I) ;
-    expecteddensity = list.size();
+    expecteddensity = (double)list.size();
     delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
     {
@@ -412,7 +412,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImage
     PExt[1].ifloat = (float)ip2.get_i() ;
     PExt[1].jfloat = (float)ip2.get_j() ;
     sample(I) ;
-    expecteddensity = list.size();
+    expecteddensity = (double)list.size();
     delta = delta_new;
     vpMeTracker::track(I) ;
   }
