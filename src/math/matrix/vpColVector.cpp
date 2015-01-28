@@ -66,7 +66,7 @@ vpColVector::operator+(const vpColVector &m) const
 {
   if (getRows() != m.getRows() ) {
     throw(vpException(vpException::dimensionError,
-                      "Bad size during vpColVector (%dx1) and vpColVector (%dx1) substraction",
+                      "Bad size during vpColVector (%dx1) and vpColVector (%dx1) addition",
                       getRows(), m.getRows())) ;
   }
   vpColVector v(rowNum);
