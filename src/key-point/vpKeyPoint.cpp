@@ -1024,9 +1024,6 @@ void vpKeyPoint::filterMatches() {
     double threshold = min_dist + stdev;
 
     for(size_t i = 0; i < m_knnMatches.size(); i++) {
-      if(m_knnMatches[i].size() < 50) {
-        std::cout << "m_knnMatches[i].size()=" << m_knnMatches[i].size() << std::endl;
-      }
       if(m_knnMatches[i].size() >= 2) {
         //Calculate ratio of the descriptor distance between the two nearest neighbors of the keypoint
         float ratio = m_knnMatches[i][0].distance / m_knnMatches[i][1].distance;
