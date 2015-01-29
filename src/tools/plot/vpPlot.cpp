@@ -322,10 +322,10 @@ void vpPlot::plot(const unsigned int graphNum,
   \param y : The coordinate of the new point along the y axis and given in the user unit system.
   \param z : The coordinate of the new point along the z axis and given in the user unit system.
 */
-void
+vpMouseButton::vpMouseButtonType
 vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z)
 {
-  (graphList+graphNum)->plot(I,curveNum,x,y,z);
+  return (graphList+graphNum)->plot(I,curveNum,x,y,z);
 }
 
 /*!
@@ -336,24 +336,31 @@ vpPlot::plot (const unsigned int graphNum, const unsigned int curveNum, const do
   \param v_y : y coordinates vector. The coordinates of the new points along the y axis and given in the user unit system.
   \param v_z : z coordinates vector. The coordinates of the new points along the z axis and given in the user unit system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z)
+vpMouseButton::vpMouseButtonType
+vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z)
 {
+  vpMouseButton::vpMouseButtonType button = vpMouseButton::none;
 	if((graphList+graphNum)->curveNbr == v_y.getRows() && (graphList+graphNum)->curveNbr == v_z.getRows())
 	{
 		for(unsigned int i = 0;i < v_y.getRows();++i)
-			this->plot(graphNum, i, x, v_y[i], v_z[i]);
+      button = this->plot(graphNum, i, x, v_y[i], v_z[i]);
 	}
 	else
 		vpTRACE("error in plot vector : not the right dimension");
+  return button;
 }
 
 /*!
   This method allows to change the point of view with the mouse if you have a 3D graphic.
+  The navigation is performed using the mouse.
+  - A click on left mouse button allows rotations
+  - A click on middle mouse button allows zoom
+  - A click on rigt mouse button quit the infinite navigation loop.
 */
 void
 vpPlot::navigate()
 {
-  vpMouseButton::vpMouseButtonType b = vpMouseButton::button1;
+  vpMouseButton::vpMouseButtonType b = vpMouseButton::none;
   
   bool blocked = false;
   unsigned int iblocked = 0;
@@ -372,21 +379,21 @@ vpPlot::navigate()
           break;
         }
       }
-      if ((graphList+iblocked)->move(I))
+      if ((graphList+iblocked)->move(I, b))
       {
         (graphList+iblocked)->replot3D(I);
       }
-      
       blocked = (graphList+iblocked)->blocked;
     }
     else
     {
-      if ((graphList+iblocked)->move(I))
+      if ((graphList+iblocked)->move(I, b))
       {
         (graphList+iblocked)->replot3D(I);
       }
       blocked = (graphList+iblocked)->blocked;
     }
+    vpTime::sleepMs(20);
   }
 }
 

@@ -1131,7 +1131,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     displayLegend(I);
 }
 
-void
+vpMouseButton::vpMouseButtonType
 vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y, const double z)
 {
   if (!scaleInitialized)
@@ -1193,7 +1193,9 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   if (z > zmax) {rescalez(1,z);changed = true;}
   else if(z < zmin) {rescalez(0,z);changed = true;}
   
-  if (changed || move(I))
+  vpMouseButton::vpMouseButtonType button = vpMouseButton::none;
+
+  if (changed || move(I, button))
   {
     computeGraphParameters3D();
     replot3D(I);
@@ -1235,10 +1237,10 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   (curveList+curveNb)->pointListz.push_back(z);
   (curveList+curveNb)->nbPoint++;
   
-  
 #if( !defined VISP_HAVE_X11 && defined FLUSH_ON_PLOT)  
   vpDisplay::flushROI(I,graphZone);
 #endif
+  return button;
 }
 
 void
@@ -1306,12 +1308,16 @@ vpPlotGraph::rescalez(unsigned int side, double extremity)
   zdelt = (zmax-zmin)/(double)nbDivisionz;
 }
 
+/*!
+  \param I : Image used to display the graph.
+  \param button : Mouse button used during navigation.
+ */
 bool
-vpPlotGraph::move(const vpImage<unsigned char> &I)
+vpPlotGraph::move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button)
 {
   bool changed = false;
-  vpHomogeneousMatrix displacement = navigation(I,changed);
-  
+  vpHomogeneousMatrix displacement = navigation(I, changed, button);
+
   //if (displacement[2][3] != 0)
   if (std::fabs(displacement[2][3]) > std::numeric_limits<double>::epsilon())
     cMf = cMf*displacement;
@@ -1322,13 +1328,12 @@ vpPlotGraph::move(const vpImage<unsigned char> &I)
 }
 
 vpHomogeneousMatrix
-vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed)
+vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseButton::vpMouseButtonType &b)
 {
   vpImagePoint iP;
   vpImagePoint trash;
   bool clicked = false;
   bool clickedUp = false;
-  vpMouseButton::vpMouseButtonType b = vpMouseButton::button1;
 
   vpHomogeneousMatrix mov(0,0,0,0,0,0);
   changed = false;
@@ -1370,7 +1375,7 @@ vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed)
       //while (vpDisplay::getClick(I,trash,b,false)) {};
     }
   }
-  
+
   vpDisplay::getPointerPosition(I,iP);
 
   double anglei = 0;

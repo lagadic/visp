@@ -49,6 +49,7 @@
 #include <visp/vpImage.h>
 
 #include <visp/vpPlotCurve.h>
+#include <visp/vpMouseButton.h>
 
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpRect.h>
@@ -168,11 +169,11 @@ class vpPlotGraph
 
     bool getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP);
 
-    bool move(const vpImage<unsigned char> &I);
-    vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed);
+    bool move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button);
+    vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseButton::vpMouseButtonType &b);
 
     void plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y);
-    void plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y, const double z);
+    vpMouseButton::vpMouseButtonType plot (vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y, const double z);
     void replot (vpImage<unsigned char> &I);
     void replot3D (vpImage<unsigned char> &I);
 
