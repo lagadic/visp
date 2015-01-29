@@ -56,7 +56,8 @@ public:
   typedef enum {
     button1 = 1, /*!< Mouse left button. */
     button2 = 2, /*!< Mouse middle button, or roll. */
-    button3 = 3  /*!< Mouse right button. */
+    button3 = 3,  /*!< Mouse right button. */
+    none = 0  /*!< No button. */
   } vpMouseButtonType ;
 } ;
 
