@@ -82,8 +82,9 @@ int main ()
 
     unsigned long iter = 0;
 
-    std::cout << "Hit CTRL-C to exit...";
-    while(1) {
+    std::cout << "Hit CTRL-C to or right mouse button to exit..." << std::endl;
+    bool end = false;
+    while( !end ) {
       if (iter < 300) {
         //y*y+z*z = 1
         if (fabs(y) < 1.0)
@@ -91,8 +92,10 @@ int main ()
         else z = 0;
 
         //Add points to the graphic
-        plot.plot(0,0, x, y,z*zsign);
-        plot.plot(0,1, x, -y,-z*zsign);
+        if (plot.plot(0,0, x,  y,  z*zsign) == vpMouseButton::button3)
+          end = true;
+        if (plot.plot(0,1, x, -y, -z*zsign) == vpMouseButton::button3)
+          end = true;
 
         x += dx;
 
@@ -105,12 +108,13 @@ int main ()
       else {
         // Tip: to allows modifying the point of view with the mouse we
         // plot always the last point
-        plot.plot(0,0, x, y,z*zsign);
-        plot.plot(0,1, x, -y,-z*zsign);
+        if (plot.plot(0,0, x, y,z*zsign) == vpMouseButton::button3)
+          end = true;
+        if (plot.plot(0,1, x, -y,-z*zsign) == vpMouseButton::button3)
+          end = true;
       }
       iter ++;
     }
-
     return 0;
   }
   catch(vpException e) {
