@@ -218,7 +218,8 @@ inline cv::Point3f vpObjectPointToPoint3f(const vpPoint &point) {
  */
 vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extractorName,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
-  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionTime(0.), m_detectorNames(),
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(),
     m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
     m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
     m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
@@ -227,7 +228,7 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
+    m_trainVpPoints(), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -251,7 +252,8 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
  */
 vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
-  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionTime(0.), m_detectorNames(detectorNames),
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(detectorNames),
     m_detectors(), m_extractionTime(0.), m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(),
     m_filterType(filterType), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName),
     m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
@@ -260,7 +262,7 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
+    m_trainVpPoints(), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -1001,7 +1003,7 @@ void vpKeyPoint::filterMatches() {
     //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
     double min_dist = DBL_MAX;
     double mean = 0.0;
-    std::vector<double> distance_vec((size_t)m_queryDescriptors.rows);
+    std::vector<double> distance_vec((size_t) m_queryDescriptors.rows);
 
     if(m_filterType == stdAndRatioDistanceThreshold) {
       for(size_t i = 0; i < m_knnMatches.size(); i++) {
@@ -1039,10 +1041,10 @@ void vpKeyPoint::filterMatches() {
           }
           queryKpts.push_back(m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx]);
 
-          //Add the pair with the correspondence between the detected keypoints and the one matched in the train keypoints list
-          m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
-                                                   m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx],
-              m_trainKeyPoints[(size_t)m_knnMatches[i][0].trainIdx]));
+//          //Add the pair with the correspondence between the detected keypoints and the one matched in the train keypoints list
+//          m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
+//                                                 m_queryKeyPoints[(size_t)m_knnMatches[i][0].queryIdx],
+//                                                 m_trainKeyPoints[(size_t)m_knnMatches[i][0].trainIdx]));
         }
       }
     }
@@ -1051,8 +1053,8 @@ void vpKeyPoint::filterMatches() {
     //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
     double min_dist = DBL_MAX;
     double mean = 0.0;
-    std::vector<double> distance_vec((size_t)m_queryDescriptors.rows);
-    for (unsigned int i = 0; i < (unsigned int)m_queryDescriptors.rows; i++) {
+    std::vector<double> distance_vec((size_t) m_queryDescriptors.rows);
+    for(unsigned int i = 0; i < (unsigned int) m_queryDescriptors.rows; i++) {
       double dist = m_matches[i].distance;
       mean += dist;
       distance_vec[i] = dist;
@@ -1086,16 +1088,48 @@ void vpKeyPoint::filterMatches() {
         }
         queryKpts.push_back(m_queryKeyPoints[(size_t)m_matches[i].queryIdx]);
 
-        //Add the pair with the correspondence between the detected keypoints and the one matched in the train keypoints list
-        m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
-                                              m_queryKeyPoints[(size_t)m_matches[i].queryIdx], m_trainKeyPoints[(size_t)m_matches[i].trainIdx]));
+//        //Add the pair with the correspondence between the detected keypoints and the one matched in the train keypoints list
+//        m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
+//                                              m_queryKeyPoints[(size_t)m_matches[i].queryIdx], m_trainKeyPoints[(size_t)m_matches[i].trainIdx]));
       }
     }
   }
 
-  m_filteredMatches = m;
-  m_objectFilteredPoints = trainPts;
-  m_queryFilteredKeyPoints = queryKpts;
+  //Eliminate matches where multiple query keypoints are matched to the same train keypoint
+  std::vector<cv::DMatch> mTmp;
+  std::vector<cv::Point3f> trainPtsTmp;
+  std::vector<cv::KeyPoint> queryKptsTmp;
+
+  std::map<int, int> mapOfTrainIdx;
+  //Count the number of query points matched to the same train point
+  for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
+    mapOfTrainIdx[it->trainIdx]++;
+  }
+
+  //Keep matches with only one correspondence
+  for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
+    if(mapOfTrainIdx[it->trainIdx] == 1) {
+      mTmp.push_back(cv::DMatch((int) queryKptsTmp.size(), it->trainIdx, it->distance));
+
+      if(!m_trainPoints.empty()) {
+        trainPtsTmp.push_back(m_trainPoints[(size_t) it->trainIdx]);
+      }
+      queryKptsTmp.push_back(queryKpts[(size_t) it->queryIdx]);
+
+      //Add the pair with the correspondence between the detected keypoints and the one matched in the train keypoints list
+      m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
+                                             queryKpts[(size_t) it->queryIdx],
+                                             m_trainKeyPoints[(size_t) it->trainIdx]));
+    }
+  }
+
+  m_filteredMatches = mTmp;
+  m_objectFilteredPoints = trainPtsTmp;
+  m_queryFilteredKeyPoints = queryKptsTmp;
+
+//  m_filteredMatches = m;
+//  m_objectFilteredPoints = trainPts;
+//  m_queryFilteredKeyPoints = queryKpts;
 }
 
 /*!
@@ -1572,6 +1606,10 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
  */
 void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
+
+  if(m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
+    m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
+  }
 
   if(m_matcher == NULL) {
     std::stringstream ss_msg;
@@ -2290,6 +2328,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \param elapsedTime : Time to detect, extract, match and compute the pose
    \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
    the poses which do not respect some criterion
+   \return True if the matching and the pose estimation are OK, false otherwise
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
@@ -2393,6 +2432,179 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     return res;
   }
+}
+
+/*!
+   Match keypoints detected in the image with those built in the reference list and return the bounding box and the center
+   of gravity.
+
+   \param I : Input image
+   \param boundingBox : Bounding box that contains the good matches
+   \param centerOfGravity : Center of gravity computed from the location of the good matches (could differ of the center of
+   the bounding box)
+   \param isPlanarObject : If the object is planar, the homography matrix is estimated to eliminate outliers, otherwise
+   it is the fundamental matrix which is estimated
+   \param imPts1 : Pointer to the list of reference keypoints if not null
+   \param imPts2 : Pointer to the list of current keypoints if not null
+   \param meanDescriptorDistance : Pointer to the value of the average distance of the descriptors if not null
+   \param detectionScore : Pointer to the value of the detection score if not null
+   \return True if the object is present, false otherwise
+ */
+bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+    const bool isPlanarObject, std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
+    double *meanDescriptorDistance, double *detectionScore) {
+  if(imPts1 != NULL && imPts2 != NULL) {
+    imPts1->clear();
+    imPts2->clear();
+  }
+
+  matchPoint(I);
+
+  double meanDescriptorDistanceTmp = 0.0;
+  for(std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
+    meanDescriptorDistanceTmp += (double) it->distance;
+  }
+
+  meanDescriptorDistanceTmp /= (double) m_filteredMatches.size();
+  double score = (double) m_filteredMatches.size() / meanDescriptorDistanceTmp;
+
+  if(meanDescriptorDistance != NULL) {
+    *meanDescriptorDistance = meanDescriptorDistanceTmp;
+  }
+  if(detectionScore != NULL) {
+    *detectionScore = score;
+  }
+
+  if(m_filteredMatches.size() >= 4) {
+    //Training / Reference 2D points
+    std::vector<cv::Point2f> points1(m_filteredMatches.size());
+    //Query / Current 2D points
+    std::vector<cv::Point2f> points2(m_filteredMatches.size());
+
+    for(size_t i = 0; i < m_filteredMatches.size(); i++) {
+      points1[i] = cv::Point2f(m_trainKeyPoints[m_filteredMatches[i].trainIdx].pt);
+      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[m_filteredMatches[i].queryIdx].pt);
+    }
+
+    std::vector<vpImagePoint> inliers;
+    if(isPlanarObject) {
+      cv::Mat homographyMatrix = cv::findHomography(points1, points2, CV_RANSAC);
+
+      for(size_t i = 0; i < m_filteredMatches.size(); i++ ) {
+        //Compute reprojection error
+        cv::Mat realPoint = cv::Mat(3, 1, CV_64F);
+        realPoint.at<double>(0,0) = points1[i].x;
+        realPoint.at<double>(1,0) = points1[i].y;
+        realPoint.at<double>(2,0) = 1.f;
+
+        cv::Mat reprojectedPoint = homographyMatrix * realPoint;
+        double err_x = (reprojectedPoint.at<double>(0,0) / reprojectedPoint.at<double>(2,0)) - points2[i].x;
+        double err_y = (reprojectedPoint.at<double>(1,0) / reprojectedPoint.at<double>(2,0)) - points2[i].y;
+        double reprojectionError = std::sqrt(err_x*err_x + err_y*err_y);
+
+        if(reprojectionError < 6.0) {
+          inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+          imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
+          imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+        }
+      }
+    } else if(m_filteredMatches.size() >= 8) {
+      cv::Mat fundamentalInliers;
+      cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
+
+      for(int i = 0; i < fundamentalInliers.rows; i++) {
+        if(fundamentalInliers.at<uchar>(i, 0)) {
+          inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+          imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
+          imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+        }
+      }
+    }
+
+    if(!inliers.empty()) {
+      //Build a polygon with the list of inlier keypoints detected in the current image to get the bounding box
+      vpPolygon polygon(inliers);
+      boundingBox = polygon.getBoundingBox();
+
+      //Compute the center of gravity
+      double meanU = 0.0, meanV = 0.0;
+      for(std::vector<vpImagePoint>::const_iterator it = inliers.begin(); it != inliers.end(); ++it) {
+        meanU += it->get_u();
+        meanV += it->get_v();
+      }
+
+      meanU /= (double) inliers.size();
+      meanV /= (double) inliers.size();
+
+      centerOfGravity.set_u(meanU);
+      centerOfGravity.set_v(meanV);
+    }
+  } else {
+    //Too few matches
+    return false;
+  }
+
+  if(m_detectionMethod == detectionThreshold) {
+    return meanDescriptorDistanceTmp < m_detectionThreshold;
+  } else {
+    return score > m_detectionScore;
+  }
+}
+
+/*!
+   Match keypoints detected in the image with those built in the reference list, compute the pose and return also
+   the bounding box and the center of gravity.
+
+   \param I : Input image
+   \param cam : Camera parameters
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param error : Reprojection mean square error (in pixel) between the 2D points and the projection of the 3D points with
+   the estimated pose
+   \param elapsedTime : Time to detect, extract, match and compute the pose
+   \param boundingBox : Bounding box that contains the good matches
+   \param centerOfGravity : Center of gravity computed from the location of the good matches (could differ of the center of
+   the bounding box)
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
+   \return True if the matching and the pose estimation are OK, false otherwise.
+ */
+bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                                     double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                                     bool (*func)(vpHomogeneousMatrix *)) {
+  bool isMatchOk = matchPoint(I, cam, cMo, error, elapsedTime, func);
+  if(isMatchOk) {
+    //Use the pose estimated to project the model points in the image
+    vpPoint pt;
+    vpImagePoint imPt;
+    std::vector<vpImagePoint> modelImagePoints(m_trainVpPoints.size());
+    size_t cpt = 0;
+    for(std::vector<vpPoint>::const_iterator it = m_trainVpPoints.begin(); it != m_trainVpPoints.end(); ++it, cpt++) {
+      pt = *it;
+      pt.project(cMo);
+      vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
+      modelImagePoints[cpt] = imPt;
+    }
+
+    //Build a polygon with the list of model image points to get the bounding box
+    vpPolygon polygon(modelImagePoints);
+    boundingBox = polygon.getBoundingBox();
+
+    //Compute the center of gravity of the current inlier keypoints
+    double meanU = 0.0, meanV = 0.0;
+    for(std::vector<vpImagePoint>::const_iterator it = m_ransacInliers.begin(); it != m_ransacInliers.end();
+        ++it) {
+      meanU += it->get_u();
+      meanV += it->get_v();
+    }
+
+    meanU /= (double) m_ransacInliers.size();
+    meanV /= (double) m_ransacInliers.size();
+
+    centerOfGravity.set_u(meanU);
+    centerOfGravity.set_v(meanV);
+  }
+
+  return isMatchOk;
 }
 
 /*!

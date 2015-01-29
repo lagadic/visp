@@ -218,6 +218,14 @@ public:
     noFilterMatching                  /*!< No filtering. */
   } vpFilterMatchingType;
 
+  /*! Predefined detection method identifier. */
+  typedef enum {
+    detectionThreshold,  /*!< The object is present if the average of the descriptor distances is below the threshold. */
+    detectionScore       /*!< Same condition than the previous but with a formula taking into account the number of matches,
+                              the object is present if the score is above the threshold. */
+  } vpDetectionMethodType;
+
+
   vpKeyPoint(const std::string &detectorName="ORB", const std::string &extractorName="ORB",
              const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
@@ -424,6 +432,15 @@ public:
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                   double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
+  bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                           const bool isPlanarObject=true, std::vector<vpImagePoint> *imPts1=NULL,
+                           std::vector<vpImagePoint> *imPts2=NULL, double *meanDescriptorDistance=NULL,
+                           double *detectionScore=NULL);
+
+  bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                  bool (*func)(vpHomogeneousMatrix *)=NULL);
+
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
 
   /*!
@@ -438,6 +455,15 @@ public:
                 << "Use setUseRansacVVS(true) to choose to use a pose estimation method based on a Virtual "
                     "Visual Servoing approach." << std::endl;
     }
+  }
+
+  /*!
+     Set the method to decide if the object is present or not.
+
+     \param method : Detection method (detectionThreshold or detectionScore).
+   */
+  inline void setDetectionMethod(const vpDetectionMethodType &method) {
+    m_detectionMethod = method;
   }
 
   /*!
@@ -650,12 +676,15 @@ public:
   }
 
   /*!
-    Set the flag to choose between the OpenCV or ViSP Ransac pose estimation function.
+    Set if cross check method must be used to eliminate some false matches with a brute-force matching method.
 
-    \param ransacVVS : True to use ViSP function, otherwise use OpenCV function
+    \param useCrossCheck : True to use cross check, false otherwise
   */
-  inline void setUseRansacVVS(const bool ransacVVS) {
-    m_useRansacVVS = ransacVVS;
+  inline void setUseBruteForceCrossCheck(const bool useCrossCheck) {
+    //Only available with BruteForce and with k=1 (i.e not used with a ratioDistanceThreshold method)
+    if(m_matcher != NULL && !m_useKnn && m_matcherName == "BruteForce") {
+      m_matcher->set("crossCheck", useCrossCheck);
+    }
   }
 
   /*!
@@ -668,6 +697,15 @@ public:
     m_useConsensusPercentage = usePercentage;
   }
 
+  /*!
+    Set the flag to choose between the OpenCV or ViSP Ransac pose estimation function.
+
+    \param ransacVVS : True to use ViSP function, otherwise use OpenCV function
+  */
+  inline void setUseRansacVVS(const bool ransacVVS) {
+    m_useRansacVVS = ransacVVS;
+  }
+
 private:
   //! If true, compute covariance matrix if the user select the pose estimation method using ViSP
   bool m_computeCovariance;
@@ -675,6 +713,12 @@ private:
   vpMatrix m_covarianceMatrix;
   //! Current id associated to the training image used for the learning.
   int m_currentImageId;
+  //! Method (based on descriptor distances) to decide if the object is present or not.
+  vpDetectionMethodType m_detectionMethod;
+  //! Detection score to decide if the object is present or not.
+  double m_detectionScore;
+  //! Detection threshold based on average of descriptor distances to decide if the object is present or not.
+  double m_detectionThreshold;
   //! Elapsed time to detect keypoints.
   double m_detectionTime;
   //! List of detector names.
@@ -751,6 +795,9 @@ private:
   std::vector<cv::Point3f> m_trainPoints;
   //! List of 3D points in vpPoint format (in the object frame) corresponding to the train keypoints.
   std::vector<vpPoint> m_trainVpPoints;
+  //! If true, some false matches will be eliminate by keeping only pairs (i,j) such that for i-th
+  //! query descriptor the j-th descriptor in the matcher’s collection is the nearest and vice versa.
+  bool m_useBruteForceCrossCheck;
   //! Flag set if a percentage value is used to determine the number of inliers for the Ransac method.
   bool m_useConsensusPercentage;
   //! Flag set if a knn matching method must be used.
