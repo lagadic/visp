@@ -126,134 +126,157 @@ main(int argc, const char ** argv)
     if (getOptions(argc, argv) == false) {
       exit (-1);
     }
+    {
+      vpMatrix M(4,5);
+      int val = 0;
+      for(size_t i=0; i<M.getRows(); i++) {
+        for(size_t j=0; j<M.getCols(); j++) {
+          M[i][j] = val++;
+        }
+      }
+      std::cout <<"M ";
+      M.print (std::cout, 4);
 
-    vpTRACE("------------------------");
-    vpTRACE("--- TEST PRETTY PRINT---");
-    vpTRACE("------------------------");
-    vpMatrix M ;
-    M.eye(4);
+      vpMatrix N;
+      N.init(M, 0, 1, 2, 3);
+      std::cout <<"N ";
+      N.print (std::cout, 4);
+    }
+    {
 
-    vpTRACE("call std::cout << M;");
-    std::cout << M << std::endl;
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST PRETTY PRINT---" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpMatrix M ;
+      M.eye(4);
 
-    vpTRACE("call M.print (std::cout, 4);");
-    M.print (std::cout, 4);
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M << std::endl;
 
-    vpTRACE("------------------------");
-    M.resize(3,3) ;
-    M.eye(3);
-    M[1][0]=1.235;
-    M[1][1]=12.345;
-    M[1][2]=.12345;
-    vpTRACE("call std::cout << M;");
-    std::cout << M;
-    vpTRACE("call M.print (std::cout, 6);");
-    M.print (std::cout, 6);
+      std::cout << "call M.print (std::cout, 4);" << std::endl;
+      M.print (std::cout, 4);
 
-    vpTRACE("------------------------");
-    M[0][0]=-1.235;
-    M[1][0]=-12.235;
+      std::cout << "------------------------" << std::endl;
+      M.resize(3,3) ;
+      M.eye(3);
+      M[1][0]=1.235;
+      M[1][1]=12.345;
+      M[1][2]=.12345;
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M;
+      std::cout << "call M.print (std::cout, 6);" << std::endl;
+      M.print (std::cout, 6);
+      std::cout << std::endl;
 
-    vpTRACE("call std::cout << M;");
-    std::cout << M;
+      std::cout << "------------------------" << std::endl;
+      M[0][0]=-1.235;
+      M[1][0]=-12.235;
 
-    vpTRACE("call M.print (std::cout, 10);");
-    M.print (std::cout, 10);
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M << std::endl;
 
-    vpTRACE("call M.print (std::cout, 2);");
-    M.print (std::cout, 2);
+      std::cout << "call M.print (std::cout, 10);" << std::endl;
+      M.print (std::cout, 10);
+      std::cout << std::endl;
 
-    vpTRACE("------------------------");
-    M.resize(3,3) ;
-    M.eye(3);
-    M[0][2]=-0.0000000876;
-    vpTRACE("call std::cout << M;");
-    std::cout << M;
+      std::cout << "call M.print (std::cout, 2);" << std::endl;
+      M.print (std::cout, 2);
+      std::cout << std::endl;
 
-    vpTRACE("call M.print (std::cout, 4);");
-    M.print (std::cout, 4);
-    vpTRACE("call M.print (std::cout, 10, \"M\");");
-    M.print (std::cout, 10, "M");
-    vpTRACE("call M.print (std::cout, 20, \"M\");");
-    M.print (std::cout, 20, "M");
+      std::cout << "------------------------" << std::endl;
+      M.resize(3,3) ;
+      M.eye(3);
+      M[0][2]=-0.0000000876;
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M << std::endl;
 
-
-    vpTRACE("------------------------");
-    vpTRACE("--- TEST RESIZE --------");
-    vpTRACE("------------------------");
-    vpCTRACE  << "5x5" << std::endl;
-    M.resize(5,5,false);
-    vpCTRACE << std::endl<< M;
-    vpCTRACE  << "3x2" << std::endl;
-    M.resize(3,2,false);
-    vpCTRACE <<std::endl<< M;
-    vpCTRACE  << "2x2" << std::endl;
-    M.resize(2,2,false);
-    vpCTRACE << std::endl<<M;
-    vpTRACE("------------------------");
+      std::cout << "call M.print (std::cout, 4);" << std::endl;
+      M.print (std::cout, 4);
+      std::cout << std::endl;
+      std::cout << "call M.print (std::cout, 10, \"M\");" << std::endl;
+      M.print (std::cout, 10, "M");
+      std::cout << std::endl;
+      std::cout << "call M.print (std::cout, 20, \"M\");" << std::endl;
+      M.print (std::cout, 20, "M");
+      std::cout << std::endl;
 
 
-    vpVelocityTwistMatrix vMe;
-    vpMatrix A(1,6),B;
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST RESIZE --------" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      std::cout <<  "5x5" << std::endl;
+      M.resize(5,5,false);
+      std::cout << M << std::endl;
+      std::cout << "3x2" << std::endl;
+      M.resize(3,2,false);
+      std::cout << M << std::endl;
+      std::cout << "2x2" << std::endl;
+      M.resize(2,2,false);
+      std::cout << M << std::endl;
+      std::cout << "------------------------" << std::endl;
 
-    A=1.0;
-    //vMe=1.0;
-    B=A*vMe;
+      vpVelocityTwistMatrix vMe;
+      vpMatrix A(1,6),B;
 
-    vpTRACE("------------------------");
-    vpTRACE("--- TEST vpRowVector * vpColVector");
-    vpTRACE("------------------------");
-    vpRowVector r(3);
-    r[0] = 2;
-    r[1] = 3;
-    r[2] = 4;
+      A=1.0;
+      //vMe=1.0;
+      B=A*vMe;
 
-    vpColVector c(3);
-    c[0] = 1;
-    c[1] = 2;
-    c[2] = -1;
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpRowVector * vpColVector" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      vpRowVector r(3);
+      r[0] = 2;
+      r[1] = 3;
+      r[2] = 4;
 
-    double rc = r * c;
+      vpColVector c(3);
+      c[0] = 1;
+      c[1] = 2;
+      c[2] = -1;
 
-    r.print(std::cout, 2, "r");
-    c.print(std::cout, 2, "c");
-    std::cout << "r * c = " << rc << std::endl;
+      double rc = r * c;
 
-    vpTRACE("------------------------");
-    vpTRACE("--- TEST vpRowVector * vpMatrix");
-    vpTRACE("------------------------");
-    M.resize(3,3) ;
-    M.eye(3);
+      r.print(std::cout, 2, "r");
+      c.print(std::cout, 2, "c");
+      std::cout << "r * c = " << rc << std::endl;
 
-    M[1][0] = 1.5;
-    M[2][0] = 2.3;
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpRowVector * vpMatrix" << std::endl;
+      std::cout << "------------------------" << std::endl;
+      M.resize(3,3) ;
+      M.eye(3);
 
-    vpRowVector rM = r * M;
+      M[1][0] = 1.5;
+      M[2][0] = 2.3;
 
-    r.print(std::cout, 2, "r");
-    M.print(std::cout, 10, "M");
-    std::cout << "r * M = " << rM << std::endl;
+      vpRowVector rM = r * M;
 
-    vpTRACE("------------------------");
-    vpTRACE("--- TEST vpGEMM ");
-    vpTRACE("------------------------");
-    M.resize(3,3) ;
-    M.eye(3);
-    vpMatrix N(3, 3);
-    N[0][0] = 2;
-    N[1][0] = 1.2;
-    N[1][2] = 0.6;
-    N[2][2] = 0.25;
+      r.print(std::cout, 2, "r");
+      M.print(std::cout, 10, "M");
+      std::cout << "r * M = " << rM << std::endl;
 
-    vpMatrix C(3, 3);
-    C.eye(3);
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpGEMM " << std::endl;
+      std::cout << "------------------------" << std::endl;
+      M.resize(3,3) ;
+      M.eye(3);
+      vpMatrix N(3, 3);
+      N[0][0] = 2;
+      N[1][0] = 1.2;
+      N[1][2] = 0.6;
+      N[2][2] = 0.25;
 
-    vpMatrix D;
+      vpMatrix C(3, 3);
+      C.eye(3);
 
-    //realise the operation D = 2 * M^T * N + 3 C
-    vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
-    std::cout << D << std::endl;
-    return 0;
+      vpMatrix D;
+
+      //realise the operation D = 2 * M^T * N + 3 C
+      vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
+      std::cout << D << std::endl;
+      return 0;
+    }
   }
   catch(vpException e) {
     std::cout << "Catch an exception: " << e << std::endl;
