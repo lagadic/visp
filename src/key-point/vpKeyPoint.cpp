@@ -2510,8 +2510,13 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
         if(reprojectionError < 6.0) {
           inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
-          imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
-          imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+          if(imPts1 != NULL) {
+            imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
+          }
+
+          if(imPts2 != NULL) {
+            imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+          }
         }
       }
     } else if(m_filteredMatches.size() >= 8) {
@@ -2521,8 +2526,14 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
       for(size_t i = 0; i < (size_t) fundamentalInliers.rows; i++) {
         if(fundamentalInliers.at<uchar>(i, 0)) {
           inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
-          imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
-          imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+
+          if(imPts1 != NULL) {
+            imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
+          }
+
+          if(imPts2 != NULL) {
+            imPts2->push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
+          }
         }
       }
     }
