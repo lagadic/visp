@@ -113,19 +113,19 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
   }
   unsigned char v;
 
-  double factor = (B_star - A_star)/(B - A);
+  double factor = (double)(B_star - A_star)/(double)(B - A);
 
   for (unsigned int i=0 ; i < I.getHeight(); i++)
     for (unsigned int j=0 ; j < I.getWidth(); j++) {
       v = I[i][j];
 
       if (v <= A)
-	I[i][j] = A_star;
+        I[i][j] = A_star;
       else if (v >= B)
-	I[i][j] = B_star;
+        I[i][j] = B_star;
       else
-	I[i][j] = (unsigned char)(A_star + factor*(v-A));
-  }
+        I[i][j] = (unsigned char)(A_star + factor*(v-A));
+    }
 }
 
 /*!
