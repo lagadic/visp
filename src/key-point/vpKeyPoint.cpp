@@ -2490,7 +2490,11 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
     std::vector<vpImagePoint> inliers;
     if(isPlanarObject) {
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
       cv::Mat homographyMatrix = cv::findHomography(points1, points2, CV_RANSAC);
+#else
+      cv::Mat homographyMatrix = cv::findHomography(points1, points2, cv::RANSAC);
+#endif
 
       for(size_t i = 0; i < m_filteredMatches.size(); i++ ) {
         //Compute reprojection error
