@@ -251,7 +251,6 @@ void vpFeatureMoment::compute_interaction (){
 }
 
 vpFeatureMoment::~vpFeatureMoment (){
-  delete[] flags;
 }
 
 VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMoment& featM) {

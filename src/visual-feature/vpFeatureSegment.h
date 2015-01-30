@@ -80,7 +80,7 @@ public:
   vpFeatureSegment(bool normalized=false);
 
   //! Destructor. Does nothing.
-  ~vpFeatureSegment() { if (flags != NULL) delete [] flags; }
+  ~vpFeatureSegment() {}
   // change values of the segment
   void buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2);
 

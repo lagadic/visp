@@ -210,10 +210,10 @@ private:
   double A,B,C,D ;
 
 public:
-
   void init() ;
   vpFeatureLine() ;
-  virtual ~vpFeatureLine() { if (flags != NULL) delete [] flags; }
+  //! Destructor.
+  virtual ~vpFeatureLine() {}
 
 public:
 

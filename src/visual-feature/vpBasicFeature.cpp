@@ -68,12 +68,24 @@ const unsigned int vpBasicFeature::FEATURE_ALL = 0xffff;
 /*!
   \file vpBasicFeature.cpp
   \brief Class that defines what is a visual feature.
-
+*/
+/*!
   Default constructor.
 */
 vpBasicFeature::vpBasicFeature()
   : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user)
 {
+}
+
+/*!
+  Destructor that free allocated memory.
+*/
+vpBasicFeature::~vpBasicFeature()
+{
+  if (flags != NULL) {
+    delete [] flags;
+    flags = NULL;
+  }
 }
 
 /*!

@@ -106,15 +106,12 @@ vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance& f)
 }
 
 /*! 
-  Default destructor.
+  Destructor that free allocated memory.
 */
 vpFeatureLuminance::~vpFeatureLuminance() 
 {
   if (pixInfo != NULL) delete [] pixInfo ;
-  if (flags != NULL) delete [] flags;
 }
-
-
 
 /*!
   Set the value of \f$ Z \f$ which represents the depth in the 3D camera frame.

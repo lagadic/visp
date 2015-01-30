@@ -74,12 +74,12 @@ private:
 
 
 public:
-  //! basic construction
+  //! Default initialization.
   void init() ;
-  //! basic constructor
+  //! Default constructor.
   vpFeatureEllipse() ;
-  //! destructor
-  virtual ~vpFeatureEllipse() { if (flags != NULL) delete [] flags; }
+  //! Destructor.
+  virtual ~vpFeatureEllipse() { }
 
 public:
   /*!

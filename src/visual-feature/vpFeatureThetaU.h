@@ -271,9 +271,8 @@ public:
   // build from an homogeneous  matrix
   void buildFrom(const vpHomogeneousMatrix &M) ;
 
-		  
   //! Destructor. Does nothing.
-  virtual ~vpFeatureThetaU() { if (flags != NULL) delete [] flags; /*vpTRACE("0x%x", this)*/ ;}
+  virtual ~vpFeatureThetaU() {}
 
 public:
 

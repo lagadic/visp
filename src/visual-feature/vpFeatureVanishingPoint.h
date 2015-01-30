@@ -82,12 +82,12 @@ public:
   //no Z required
 
 public:
-  //! basic construction
+  //! Default initialization.
   void init() ;
-  //! basic constructor
+  //! Default constructor.
   vpFeatureVanishingPoint() ;
-  //! destructor
-  virtual ~vpFeatureVanishingPoint() { if (flags != NULL) delete [] flags; }
+  //! Destructor.
+  virtual ~vpFeatureVanishingPoint() {}
 
 
 public:

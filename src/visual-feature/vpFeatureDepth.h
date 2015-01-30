@@ -175,13 +175,10 @@ private:
   double Z;
 
 public:
-
   void init() ;
-
   vpFeatureDepth() ;
-  //! destructor
-  virtual ~vpFeatureDepth() { if (flags != NULL) delete [] flags; }
-
+  //! Destructor.
+  virtual ~vpFeatureDepth() {}
 
   /*
     section Set coordinates
