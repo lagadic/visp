@@ -48,7 +48,7 @@
 /*!
   \class vpMouseButton
   \ingroup ImageGUI
-  \brief Class that defines mouse button identiers.
+  \brief Class that defines mouse button identifiers.
 */
 class VISP_EXPORT vpMouseButton
 {
