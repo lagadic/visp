@@ -2524,7 +2524,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
       cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
 
       for(size_t i = 0; i < (size_t) fundamentalInliers.rows; i++) {
-        if(fundamentalInliers.at<uchar>(i, 0)) {
+        if(fundamentalInliers.at<uchar>((int)i, 0)) {
           inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
 
           if(imPts1 != NULL) {
