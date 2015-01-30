@@ -2482,8 +2482,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
     std::vector<cv::Point2f> points2(m_filteredMatches.size());
 
     for(size_t i = 0; i < m_filteredMatches.size(); i++) {
-      points1[i] = cv::Point2f(m_trainKeyPoints[m_filteredMatches[i].trainIdx].pt);
-      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[m_filteredMatches[i].queryIdx].pt);
+      points1[i] = cv::Point2f(m_trainKeyPoints[(size_t)m_filteredMatches[i].trainIdx].pt);
+      points2[i] = cv::Point2f(m_queryFilteredKeyPoints[(size_t)m_filteredMatches[i].queryIdx].pt);
     }
 
     std::vector<vpImagePoint> inliers;
@@ -2512,7 +2512,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
       cv::Mat fundamentalInliers;
       cv::Mat fundamentalMatrix = cv::findFundamentalMat(points1, points2, cv::FM_RANSAC, 3, 0.99, fundamentalInliers);
 
-      for(int i = 0; i < fundamentalInliers.rows; i++) {
+      for(size_t i = 0; i < (size_t) fundamentalInliers.rows; i++) {
         if(fundamentalInliers.at<uchar>(i, 0)) {
           inliers.push_back(vpImagePoint((double) points2[i].y, (double) points2[i].x));
           imPts1->push_back(vpImagePoint((double) points1[i].y, (double) points1[i].x));
