@@ -1607,9 +1607,11 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
 void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   if(m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
     m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
   }
+#endif
 
   if(m_matcher == NULL) {
     std::stringstream ss_msg;

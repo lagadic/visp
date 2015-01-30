@@ -675,6 +675,7 @@ public:
     }
   }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   /*!
     Set if cross check method must be used to eliminate some false matches with a brute-force matching method.
 
@@ -686,6 +687,7 @@ public:
       m_matcher->set("crossCheck", useCrossCheck);
     }
   }
+#endif
 
   /*!
     Set the flag to choose between a percentage value of inliers for the cardinality of the consensus group
