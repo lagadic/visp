@@ -409,6 +409,7 @@ main(int argc, const char ** argv)
         case vpMouseButton::button1: std::cout << "with left button.\n"; break;
         case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
         case vpMouseButton::button3: std::cout << "with right button.\n"; break;
+        case vpMouseButton::none: break;
         }
         vpDisplay::getClickUp(I, ip, button);
         std::cout << "  You click up on pixel (" << ip <<") ";
@@ -416,6 +417,7 @@ main(int argc, const char ** argv)
         case vpMouseButton::button1: std::cout << "with left button.\n"; break;
         case vpMouseButton::button2: std::cout << "with middle button.\n"; break;
         case vpMouseButton::button3: std::cout << "with right button.\n"; break;
+        case vpMouseButton::none: break;
         }
         vpDisplay::getPointerPosition(I,ip);
         std::cout << "  Pointer poisition : " << ip << std::endl;

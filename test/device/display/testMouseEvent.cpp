@@ -557,6 +557,7 @@ main(int argc, const char ** argv)
               std::cout << "Right button was pressed. Bye. " << std::endl;
               delete display;
               return 0; break;
+            case vpMouseButton::none: break;
             }
           }
         }
