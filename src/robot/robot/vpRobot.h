@@ -117,7 +117,7 @@ protected:
 public:
   vpRobot (void);
   vpRobot (const vpRobot &robot);
-  virtual ~vpRobot() { ; }
+  virtual ~vpRobot();
 
   //---------- Jacobian -----------------------------
   //! Get the robot Jacobian expressed in the end-effector frame

@@ -74,6 +74,21 @@ vpRobot::vpRobot (const vpRobot &robot)
   *this = robot;
 }
 
+/*!
+   Destructor that free allocated memory.
+ */
+vpRobot::~vpRobot()
+{
+  if (qmin != NULL) {
+    delete [] qmin;
+    qmin = NULL;
+  }
+  if (qmax != NULL) {
+    delete [] qmax;
+    qmax = NULL;
+  }
+}
+
 /*! Copy operator. */
 vpRobot & vpRobot::operator=(const vpRobot &robot)
 {

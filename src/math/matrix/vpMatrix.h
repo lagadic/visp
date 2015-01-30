@@ -399,8 +399,7 @@ protected:
   vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
   vpColVector getCol(const unsigned int j) const;
   vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
-  void init(const vpMatrix &m, unsigned int r, unsigned int c, 
-	    unsigned int nrows, unsigned int ncols);
+  void init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
   //@}
 
   //-------------------------------------------------

@@ -450,9 +450,6 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
                if (string != NULL) {
                   FPRINTF(stderr, " \"%s\"", string);
                }
-               else {
-                  FPRINTF(stderr, " \"%s\"", string);
-               }
             }
 
             break;

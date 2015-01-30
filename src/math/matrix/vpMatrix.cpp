@@ -202,7 +202,7 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
 
   if ((nrows == rowNum) && (ncols == colNum))
   {
-    if (flagNullify)
+    if (flagNullify && this->data != NULL)
     { memset(this->data,0,this->dsize*sizeof(double)) ;}
   }
   else
@@ -214,7 +214,7 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     vpDEBUG_TRACE (25, "Recopy case per case is required iff number of "
       "cols has changed (structure of double array is not "
       "the same in this case.");
-    if (recopyNeeded)
+    if (recopyNeeded && this->data != NULL)
     {
       copyTmp = new double[this->dsize];
       memcpy (copyTmp, this ->data, sizeof(double)*this->dsize);
@@ -258,7 +258,7 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
     { memset(this->data,0,this->dsize*sizeof(double)) ;}
     else
     {
-      if (recopyNeeded)
+      if (recopyNeeded && this->rowPtrs != NULL)
       {
         vpDEBUG_TRACE (25, "Recopy...");
         const unsigned int minRow = (this->rowNum<rowTmp)?this->rowNum:rowTmp;
@@ -283,25 +283,69 @@ void vpMatrix::resize(const unsigned int nrows, const unsigned int ncols,
 
 }
 
+/*!
+  Initialize the matrix from a part of an input matrix M.
 
-void
-vpMatrix::init(const vpMatrix &m,unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols)
+  \param M : Input matrix used for initialization.
+  \param r : row index in matrix M.
+  \param c : column index in matrix M.
+  \param nrows : Number of rows of the matrix that should be initialized.
+  \param ncols : Number of columns of the matrix that should be initialized.
+
+  The sub-matrix starting from M[r][c] element and ending on M[r+nrows-1][c+ncols-1] element
+  is used to initialize the matrix.
+
+  The following code shows how to use this function:
+\code
+#include <visp/vpMatrix.h>
+
+int main()
 {
-  try {
-    resize(nrows, ncols) ;
+  vpMatrix M(4,5);
+  int val = 0;
+  for(size_t i=0; i<M.getRows(); i++) {
+    for(size_t j=0; j<M.getCols(); j++) {
+      M[i][j] = val++;
+    }
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
-  }
+  M.print (std::cout, 4, "M ");
 
+  vpMatrix N;
+  N.init(M, 0, 1, 2, 3);
+  N.print (std::cout, 4, "N ");
+}
+\endcode
+  It produces the following output:
+  \code
+M [4,5]=
+   0  1  2  3  4
+   5  6  7  8  9
+  10 11 12 13 14
+  15 16 17 18 19
+N [2,3]=
+  1 2 3
+  6 7 8
+  \endcode
+ */
+void
+vpMatrix::init(const vpMatrix &M,unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols)
+{
   unsigned int rnrows = r+nrows ;
   unsigned int cncols = c+ncols ;
+
+  if (rnrows > M.getRows())
+    throw(vpException(vpException::dimensionError,
+                      "Bad row dimension (%d > %d) used to initialize vpMatrix", rnrows, M.getRows()));
+  if (cncols > M.getCols())
+    throw(vpException(vpException::dimensionError,
+                      "Bad column dimension (%d > %d) used to initialize vpMatrix", cncols, M.getCols()));
+  resize(nrows, ncols);
+
+  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+    return; // Noting to do
   for (unsigned int i=r ; i < rnrows; i++)
     for (unsigned int j=c ; j < cncols; j++)
-      (*this)[i-r][j-c] = m[i][j] ;
+      (*this)[i-r][j-c] = M[i][j] ;
 }
 
 /*!
