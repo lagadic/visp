@@ -238,6 +238,8 @@ public:
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
                       std::vector<cv::Point3f> &points3f, bool append=false);
+  void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
+                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f, bool append=false);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
       const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point);
@@ -247,11 +249,11 @@ public:
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
       std::vector<cv::KeyPoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<cv::Point3f> &points);
+      std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
       std::vector<vpImagePoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<vpPoint> &points);
+      std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   static void convertToOpenCVType(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
   static void convertToOpenCVType(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame=false);
@@ -266,6 +268,12 @@ public:
 
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const vpRect& rectangle=vpRect());
+  void detect(cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+              const cv::Mat &mask=cv::Mat());
+
+  void detectExtractAffine(const vpImage<unsigned char> &I, std::vector<std::vector<cv::KeyPoint> >& listOfKeypoints,
+                           std::vector<cv::Mat>& listOfDescriptors,
+                           std::vector<vpImage<unsigned char> > *listOfAffineI=NULL);
 
   void display(const vpImage<unsigned char> &IRef, const vpImage<unsigned char> &ICurrent, unsigned int size=3);
   void display(const vpImage<unsigned char> &ICurrent, unsigned int size=3, const vpColor &color=vpColor::green);
@@ -278,6 +286,7 @@ public:
                        unsigned int lineThickness=1);
 
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime);
+  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime);
 
   /*!
     Get the covariance matrix when estimating the pose using the Virtual Visual Servoing approach.
@@ -675,6 +684,15 @@ public:
     }
   }
 
+  /*!
+    Set if multiple affine transformations must be used to detect and extract keypoints.
+
+    \param useAffine : True to use multiple affine transformations, false otherwise
+  */
+  inline void setUseAffineDetection(const bool useAffine) {
+    m_useAffineDetection = useAffine;
+  }
+
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   /*!
     Set if cross check method must be used to eliminate some false matches with a brute-force matching method.
@@ -797,6 +815,8 @@ private:
   std::vector<cv::Point3f> m_trainPoints;
   //! List of 3D points in vpPoint format (in the object frame) corresponding to the train keypoints.
   std::vector<vpPoint> m_trainVpPoints;
+  //! If true, use multiple affine transformations to cober the 6 affine parameters
+  bool m_useAffineDetection;
   //! If true, some false matches will be eliminate by keeping only pairs (i,j) such that for i-th
   //! query descriptor the j-th descriptor in the matcher’s collection is the nearest and vice versa.
   bool m_useBruteForceCrossCheck;
@@ -807,6 +827,8 @@ private:
   //! Flag set if a Ransac VVS pose estimation must be used.
   bool m_useRansacVVS;
 
+
+  void affineSkew(double tilt, double phi, cv::Mat& img, cv::Mat& mask, cv::Mat& Ai);
 
   double computePoseEstimationError(const std::vector<std::pair<cv::KeyPoint, cv::Point3f> > &matchKeyPoints,
                                     const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo_est);
