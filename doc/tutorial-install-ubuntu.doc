@@ -3,7 +3,7 @@
 \page tutorial-install-ubuntu Tutorial: Installation from source on Linux Ubuntu
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested for Ubuntu 13.04 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested for Ubuntu 14.04 (64 bit) distribution, but should work with any other distribution as well. 
 
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-fedora
@@ -170,7 +170,7 @@ sudo apt-get install libv4l-dev
 \endcode
 - Coin, to be able to support vrml cad model used by the model-based trackers
 \code
-sudo apt-get install libCoin60-dev
+sudo apt-get install libCoin80-dev
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
@@ -186,7 +186,7 @@ sudo apt-get install libswscale-dev libavutil-dev libavformat-dev libavcodec-dev
 \endcode
 - Ogre 3D if you want to do augmented reality or simulation
 \code
-sudo apt-get install libogre-dev libois-dev
+sudo apt-get install libogre-1.9-dev libois-dev
 \endcode
 
 Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
