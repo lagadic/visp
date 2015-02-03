@@ -407,36 +407,9 @@ VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpImagePoint& ip)
  * @param ipVec : Vector of input image points.
  * @return Bounding box of the points.
  */
-
 vpRect vpImagePoint::getBBox(const std::vector<vpImagePoint>& ipVec)
 {
-
-  if (ipVec.size() == 0) {
-    throw(vpException(vpException::dimensionError, "Cannot return a bounding box of an empty vector"));
-  }
-
-  vpRect rec;
-
-  rec.setTopLeft(ipVec.at(0));
-
-  for (size_t n = 1; n < ipVec.size(); ++n) {
-
-    const vpImagePoint& ip = ipVec.at(n);
-
-    if (ip.get_u() < rec.getLeft()) {
-      rec.setLeft(ip.get_u());
-    }
-    if (ip.get_v() < rec.getTop()) {
-      rec.setTop(ip.get_v());
-    }
-    if (ip.get_u() > rec.getRight()) {
-      rec.setRight(ip.get_u());
-    }
-    if (ip.get_v() > rec.getBottom()) {
-      rec.setBottom(ip.get_v());
-    }
-  }
+  vpRect rec(ipVec);
 
   return rec;
-
 }
