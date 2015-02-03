@@ -46,28 +46,8 @@
 #  include <opencv2/calib3d/calib3d.hpp>
 #endif
 
+
 //Specific Type transformation functions
-// TODO: Create a vpBridge for all the conversions in src/tools/type-convertors
-/*!
-   Convert a cv::KeyPoint to a vpImagePoint.
-
-   \param keypoint : Keypoint to convert.
-   \return The result vpImagePoint.
- */
-inline vpImagePoint keyPointToVpImagePoint(const cv::KeyPoint &keypoint) {
-  return vpImagePoint(keypoint.pt.y, keypoint.pt.x);
-}
-
-///*!
-//   Convert a cv::Point2f to a vpImagePoint.
-//
-//   \param point : Point2f to convert in ViSP type.
-//   \return The result vpImagePoint.
-// */
-inline vpImagePoint point2fToVpImagePoint(const cv::Point2f &point) {
-  return vpImagePoint(point.y, point.x);
-}
-
 ///*!
 //   Convert a list of cv::DMatch to a cv::DMatch (extract the first cv::DMatch, the nearest neighbor).
 //
@@ -83,30 +63,6 @@ inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches) {
 }
 
 ///*!
-//   Convert a cv::Point3f to a vpPoint.
-//
-//   \param point3f : Point to convert in ViSP type.
-//   \return The result vpPoint.
-// */
-inline vpPoint point3fToVpPoint(const cv::Point3f &point3f) {
-  vpPoint pt;
-  pt.set_oX(point3f.x);
-  pt.set_oY(point3f.y);
-  pt.set_oZ(point3f.z);
-  return pt;
-}
-
-///*!
-//   Convert a cv::DMatch to an index (extract the train index).
-//
-//   \param match : Point to convert in ViSP type.
-//   \return The train index.
-// */
-inline int dMatchToTrainIndex(const cv::DMatch &match) {
-  return match.trainIdx;
-}
-
-///*!
 //   Convert a cv::DMatch to an index (extract the train index).
 //
 //   \param match : Point to convert in ViSP type.
@@ -114,24 +70,6 @@ inline int dMatchToTrainIndex(const cv::DMatch &match) {
 // */
 inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair) {
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
-}
-
-///*!
-//   Convert an imagePoint to cv::Point2f.
-//
-//   \param point : Point to convert in ViSP type.
-//   \return The train index.
-// */
-inline cv::Point2f vpImagePointToPoint2f(const vpImagePoint &point) {
-  return cv::Point2f((float) point.get_u(), (float) point.get_v());
-}
-
-inline cv::Point3f vpCamPointToPoint3f(const vpPoint &point) {
-  return cv::Point3f((float) point.get_X(), (float) point.get_Y(), (float) point.get_Z());
-}
-
-inline cv::Point3f vpObjectPointToPoint3f(const vpPoint &point) {
-  return cv::Point3f((float) point.get_oX(), (float) point.get_oY(), (float) point.get_oZ());
 }
 
 //TODO: Try to implement a pyramidal feature detection
@@ -414,7 +352,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
   m_mapOfImages[m_currentImageId] = I;
 
   //Convert OpenCV type to ViSP type for compatibility
-  convertToVpType(m_trainKeyPoints, referenceImagePointsList);
+  vpConvert::convertFromOpenCV(m_trainKeyPoints, referenceImagePointsList);
 
   _reference_computed = true;
 
@@ -478,8 +416,8 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
 
 
   //Convert OpenCV type to ViSP type for compatibility
-  convertToVpType(this->m_trainKeyPoints, referenceImagePointsList);
-  convertToVpType(this->m_trainPoints, m_trainVpPoints);
+  vpConvert::convertFromOpenCV(this->m_trainKeyPoints, referenceImagePointsList);
+  vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
 
   _reference_computed = true;
 }
@@ -585,7 +523,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 
   size_t cpt1 = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
-    size_t cpt2 = 0;
+    int cpt2 = 0;
 
     for (std::vector<cv::KeyPoint>::iterator it2 = candidateToCheck.begin(); it2 != candidateToCheck.end(); cpt2++) {
       iPt.set_ij(it2->pt.y, it2->pt.x);
@@ -595,7 +533,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row((int)cpt2));
+          desc.push_back(descriptors->row(cpt2));
         }
 
         //Remove candidate keypoint which is located on the current polygon
@@ -635,7 +573,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 
   size_t cpt1 = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
-    size_t cpt2 = 0;
+    int cpt2 = 0;
 
     for (std::vector<vpImagePoint>::iterator it2 = candidateToCheck.begin(); it2 != candidateToCheck.end(); cpt2++) {
       if (it1->isInside(*it2)) {
@@ -644,7 +582,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row((int)cpt2));
+          desc.push_back(descriptors->row(cpt2));
         }
 
         //Remove candidate keypoint which is located on the current polygon
@@ -842,83 +780,6 @@ double vpKeyPoint::computePoseEstimationError(const std::vector<std::pair<cv::Ke
   }
 
   return std::accumulate(errors.begin(), errors.end(), 0.0) / errors.size();
-}
-
-/*!
-  Convert a list of vpImagePoint to a list of cv::Point2f.
-
-  \param from : List of vpImagePoint to convert.
-  \param to : List of cv::Point2f converted.
- */
-void vpKeyPoint::convertToOpenCVType(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to) {
-  to.resize(from.size());
-  std::transform(from.begin(), from.end(), to.begin(), vpImagePointToPoint2f);
-}
-
-/*!
-  Convert a list of vpPoint to a list of cv::Point3. As a vpPoint contains coordinates in the camera frame
-  and also in the object frame, which of this two frames to convert must be specified.
-
-  \param from : List of vpPoint to convert.
-  \param to : List of cv::Point3f converted.
-  \param cameraFrame : If true, the coordinates in the camera frame must be converted, otherwise it will be
-  those in the object frame.
- */
-void vpKeyPoint::convertToOpenCVType(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame) {
-  to.resize(from.size());
-  if(cameraFrame) {
-    std::transform(from.begin(), from.end(), to.begin(), vpCamPointToPoint3f);
-  } else {
-    std::transform(from.begin(), from.end(), to.begin(), vpObjectPointToPoint3f);
-  }
-}
-
-/*!
-  Convert a list of cv::KeyPoint to a list of vpImagePoint. Only the 2D coordinate is converted.
-
-  \param from : List of cv::KeyPoint to convert.
-  \param to : List of vpImagePoint converted.
- */
-void vpKeyPoint::convertToVpType(const std::vector<cv::KeyPoint> &from, std::vector<vpImagePoint> &to) {
-  to.resize(from.size());
-  std::transform(from.begin(), from.end(), to.begin(), keyPointToVpImagePoint);
-}
-
-/*!
-  Convert a list of cv::Point2f to a list of vpImagePoint.
-
-  \param from : List of cv::Point2f to convert.
-  \param to : List of vpImagePoint converted.
- */
-void vpKeyPoint::convertToVpType(const std::vector<cv::Point2f> &from, std::vector<vpImagePoint> &to) {
-  to.resize(from.size());
-  std::transform(from.begin(), from.end(), to.begin(), point2fToVpImagePoint);
-}
-
-/*!
-  Convert a list of cv::Point3f to a list of vpPoint.
-
-  \param from : List of cv::Point3f to convert.
-  \param to : List of vpPoint converted.
- */
-void vpKeyPoint::convertToVpType(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to) {
-  to.resize(from.size());
-  std::transform(from.begin(), from.end(), to.begin(), point3fToVpPoint);
-}
-
-/*!
-  Convert a list of cv::DMatch to a list of indexes. At each entry of the result list of indexes contains the
-  index of the corresponding point in the reference list (i.e index_train = to[0] is the corresponding index
-  of the keypoint in currentImagePointsList[0]).
-
-  \warning The list of query indexes in DMatch must be ordered in a way that from[i].queryIdx == i.
-
-  \param from : List of cv::DMatch to convert.
-  \param to : List of indexes converted.
- */
-void vpKeyPoint::convertToVpType(const std::vector<cv::DMatch> &from, std::vector<unsigned int> &to) {
-  to.resize(from.size());
-  std::transform(from.begin(), from.end(), to.begin(), dMatchToTrainIndex);
 }
 
 /*!
@@ -1424,7 +1285,7 @@ void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
    \param objectPoints : List of 3D coordinates in the object frame.
  */
 void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) {
-  convertToVpType(m_objectFilteredPoints, objectPoints);
+  vpConvert::convertFromOpenCV(m_objectFilteredPoints, objectPoints);
 }
 
 /*!
@@ -1432,7 +1293,7 @@ void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) {
 
    \param keyPoints : List of query keypoints (or keypoints detected in the current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) {
+void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const {
   keyPoints = m_queryFilteredKeyPoints;
 }
 
@@ -1441,7 +1302,7 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) {
 
    \param keyPoints : List of query keypoints (or keypoints detected in the current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) {
+void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const {
   keyPoints = currentImagePointsList;
 }
 
@@ -2282,8 +2143,8 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   }
 
   //Convert OpenCV type to ViSP type for compatibility
-  convertToVpType(m_trainKeyPoints, referenceImagePointsList);
-  convertToVpType(this->m_trainPoints, m_trainVpPoints);
+  vpConvert::convertFromOpenCV(m_trainKeyPoints, referenceImagePointsList);
+  vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
 
   //Set _reference_computed to true as we load learning file
   _reference_computed = true;
@@ -2409,8 +2270,8 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
   }
 
   //Convert OpenCV type to ViSP type for compatibility
-  convertToVpType(m_queryFilteredKeyPoints, currentImagePointsList);
-  convertToVpType(m_filteredMatches, matchedReferencePoints);
+  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints, currentImagePointsList);
+  vpConvert::convertFromOpenCV(m_filteredMatches, matchedReferencePoints);
 
   return static_cast<unsigned int>(m_filteredMatches.size());
 }
@@ -2493,8 +2354,8 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
   }
 
   //Convert OpenCV type to ViSP type for compatibility
-  convertToVpType(m_queryFilteredKeyPoints, currentImagePointsList);
-  convertToVpType(m_filteredMatches, matchedReferencePoints);
+  vpConvert::convertFromOpenCV(m_queryFilteredKeyPoints, currentImagePointsList);
+  vpConvert::convertFromOpenCV(m_filteredMatches, matchedReferencePoints);
 
   //error = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
   error = DBL_MAX;

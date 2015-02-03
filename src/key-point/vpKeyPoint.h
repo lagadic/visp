@@ -61,6 +61,7 @@
 #include <visp/vpImageIo.h>
 #include <visp/vpPolygon.h>
 #include <visp/vpXmlConfigParserKeyPoint.h>
+#include <visp/vpConvert.h>
 
 // Require at least OpenCV >= 2.1.1
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -262,14 +263,6 @@ public:
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
                std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
-  static void convertToOpenCVType(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
-  static void convertToOpenCVType(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame=false);
-
-  static void convertToVpType(const std::vector<cv::KeyPoint> &from, std::vector<vpImagePoint> &to);
-  static void convertToVpType(const std::vector<cv::Point2f> &from, std::vector<vpImagePoint> &to);
-  static void convertToVpType(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to);
-  static void convertToVpType(const std::vector<cv::DMatch> &from, std::vector<unsigned int> &to);
-
   void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
   void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
@@ -393,8 +386,8 @@ public:
     return m_queryDescriptors;
   }
 
-  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints);
-  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints);
+  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const;
+  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const;
 
   /*!
     Get the list of Ransac inliers.

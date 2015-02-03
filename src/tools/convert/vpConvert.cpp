@@ -36,6 +36,7 @@
  *
  * Authors:
  * Fabien Spindler
+ * Souriya Trinh
  *
  *****************************************************************************/
 
@@ -325,6 +326,9 @@
 
   /*!
      Convert a vector of cv::DMatch to a vector of unsigned int (for a query index 0, to[0] ==> train index).
+
+     \warning The list of query indexes in DMatch must be ordered in a way that from[i].queryIdx == i.
+
      \param from : Vector of cv::DMatch to convert.
      \param to : Vector of unsigned int converted.
    */
