@@ -36,6 +36,8 @@
  *
  *****************************************************************************/
 
+#include <limits>
+
 #include <visp/vpKeyPoint.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -292,7 +294,8 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat& img,
 
   cv::Mat A = cv::Mat::eye(2, 3, CV_32F);
 
-  if (phi != 0.0) {
+  //if (phi != 0.0) {
+  if (std::fabs(phi) > std::numeric_limits<double>::epsilon()) {
     phi *= M_PI / 180.;
     double s = sin(phi);
     double c = cos(phi);
@@ -315,13 +318,15 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat& img,
     cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height),
         cv::INTER_LINEAR, cv::BORDER_REPLICATE);
   }
-  if (tilt != 1.0) {
+  //if (tilt != 1.0) {
+  if (std::fabs(tilt - 1.0) > std::numeric_limits<double>::epsilon()) {
     double s = 0.8 * sqrt(tilt * tilt - 1);
     cv::GaussianBlur(img, img, cv::Size(0, 0), s, 0.01);
     cv::resize(img, img, cv::Size(0, 0), 1.0 / tilt, 1.0, cv::INTER_NEAREST);
     A.row(0) = A.row(0) / tilt;
   }
-  if (tilt != 1.0 || phi != 0.0) {
+  //if (tilt != 1.0 || phi != 0.0) {
+  if (std::fabs(tilt - 1.0) > std::numeric_limits<double>::epsilon() || std::fabs(phi) > std::numeric_limits<double>::epsilon() ) {
     h = img.rows;
     w = img.cols;
     cv::warpAffine(mask, mask, A, cv::Size(w, h), cv::INTER_NEAREST);
