@@ -77,7 +77,7 @@ int main(int argc, const char** argv)
         //! [Get location]
         vpDisplay::displayRectangle(I, bbox, vpColor::green);
         //! [Get message]
-        vpDisplay::displayText(I, bbox.getTop()-10, bbox.getLeft(),
+        vpDisplay::displayText(I, (int)(bbox.getTop()-10), (int)bbox.getLeft(),
                                "Message: \"" + detector->getMessage(i) + "\"",
                                vpColor::red);
         //! [Get message]
