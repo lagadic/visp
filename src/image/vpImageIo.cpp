@@ -318,10 +318,18 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     //std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+    if (cvI.cols == 0 && cvI.rows == 0) {
+      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      throw (vpImageException(vpImageException::ioError, message)) ;
+    }
     vpImageConvert::convert(cvI, I);
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     //std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+    if (cvI.cols == 0 && cvI.rows == 0) {
+      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      throw (vpImageException(vpImageException::ioError, message)) ;
+    }
     vpImageConvert::convert(cvI, I);
 #else
     std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
@@ -411,10 +419,18 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     // std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, cv::IMREAD_COLOR);
+    if (cvI.cols == 0 && cvI.rows == 0) {
+      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      throw (vpImageException(vpImageException::ioError, message)) ;
+    }
     vpImageConvert::convert(cvI, I);
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     // std::cout << "Use opencv to read the image" << std::endl;
     cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
+    if (cvI.cols == 0 && cvI.rows == 0) {
+      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      throw (vpImageException(vpImageException::ioError, message)) ;
+    }
     vpImageConvert::convert(cvI, I);
 #else
     std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
