@@ -255,6 +255,13 @@ public:
       std::vector<vpImagePoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
       std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
+  bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
+               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime,
+               bool (*func)(vpHomogeneousMatrix *)=NULL);
+
+  bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+
   static void convertToOpenCVType(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
   static void convertToOpenCVType(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame=false);
 
@@ -268,7 +275,7 @@ public:
 
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const vpRect& rectangle=vpRect());
-  void detect(cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const cv::Mat &mask=cv::Mat());
 
   void detectExtractAffine(const vpImage<unsigned char> &I, std::vector<std::vector<cv::KeyPoint> >& listOfKeypoints,
@@ -316,7 +323,7 @@ public:
 
     \return The elapsed time.
   */
-  inline double getDetectionTime() {
+  inline double getDetectionTime() const {
     return m_detectionTime;
   }
 
@@ -325,7 +332,7 @@ public:
 
     \return The elapsed time.
   */
-  inline double getExtractionTime() {
+  inline double getExtractionTime() const {
     return m_extractionTime;
   }
 
@@ -334,7 +341,7 @@ public:
 
     \return The elapsed time.
   */
-  inline double getMatchingTime() {
+  inline double getMatchingTime() const {
     return m_matchingTime;
   }
 
@@ -343,7 +350,7 @@ public:
 
     \return The list of matches.
   */
-  inline std::vector<cv::DMatch> getMatches() {
+  inline std::vector<cv::DMatch> getMatches() const {
     return m_filteredMatches;
   }
 
@@ -352,7 +359,7 @@ public:
 
     \return The list of pairs with the correspondence between the matched query and train keypoints.
   */
-  inline std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > getMatchQueryToTrainKeyPoints() {
+  inline std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > getMatchQueryToTrainKeyPoints() const {
     return m_matchQueryToTrainKeyPoints;
   }
 
@@ -361,30 +368,30 @@ public:
 
     \return The number of train images.
   */
-  inline unsigned int getNbImages() {
+  inline unsigned int getNbImages() const {
     return static_cast<unsigned int>(m_mapOfImages.size());
   }
 
   void getObjectPoints(std::vector<cv::Point3f> &objectPoints);
-
-  bool getPose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime,
-               bool (*func)(vpHomogeneousMatrix *)=NULL);
-
-  bool getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+  void getObjectPoints(std::vector<vpPoint> &objectPoints);
 
   /*!
     Get the elapsed time to compute the pose.
 
     \return The elapsed time.
   */
-  inline double getPoseTime() {
+  inline double getPoseTime() const {
     return m_poseTime;
   }
 
-  void getQueryDescriptors(cv::Mat &descriptors);
-  void getQueryDescriptors(std::vector<std::vector<float> > &descriptors);
+  /*!
+     Get the descriptors matrix for the query keypoints.
+
+     \return Matrix with descriptors values at each row for each query keypoints.
+   */
+  inline cv::Mat getQueryDescriptors() const {
+    return m_queryDescriptors;
+  }
 
   void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints);
   void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints);
@@ -392,21 +399,19 @@ public:
   /*!
     Get the list of Ransac inliers.
 
-    \param inliers: List of Ransac inliers
     \return The list of Ransac inliers.
   */
-  inline void getRansacInliers(std::vector<vpImagePoint> &inliers) {
-    inliers = m_ransacInliers;
+  inline std::vector<vpImagePoint> getRansacInliers() const {
+    return m_ransacInliers;
   }
 
   /*!
     Get the list of Ransac outliers.
 
-    \param outliers: List of Ransac outliers
     \return The list of Ransac outliers.
   */
-  inline void getRansacOutliers(std::vector<vpImagePoint> &outliers) {
-    outliers = m_ransacOutliers;
+  inline std::vector<vpImagePoint> getRansacOutliers() const {
+    return m_ransacOutliers;
   }
 
   void getTrainDescriptors(cv::Mat &descriptors);

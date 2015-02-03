@@ -657,6 +657,159 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 }
 
 /*!
+   Compute the pose using the correspondence between 2D points and 3D points using OpenCV function with RANSAC method.
+
+   \param imagePoints : List of 2D points corresponding to the location of the detected keypoints.
+   \param  objectPoints : List of the 3D points in the object frame matched.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inlierIndex : List of indexes of inliers.
+   \param elapsedTime : Elapsed time.
+   \param func : Function pointer to filter the final pose returned by OpenCV pose estimation method.
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+ */
+bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
+                         const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+                         double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+  double t = vpTime::measureTimeMs();
+
+  if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
+    elapsedTime = (vpTime::measureTimeMs() - t);
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
+
+    return false;
+  }
+
+  cv::Mat cameraMatrix =
+      (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
+  cv::Mat rvec, tvec;
+  cv::Mat distCoeffs;
+
+  try {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    //OpenCV 3.0.0 (2014/12/12)
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
+        rvec, tvec, false, m_nbRansacIterations, (float) m_ransacReprojectionError,
+        0.99,//confidence=0.99 (default) – The probability that the algorithm produces a useful result.
+        inlierIndex,
+        cv::SOLVEPNP_ITERATIVE);
+    //SOLVEPNP_ITERATIVE (default): Iterative method is based on Levenberg-Marquardt optimization.
+    //In this case the function finds such a pose that minimizes reprojection error, that is the sum of squared distances
+    //between the observed projections imagePoints and the projected (using projectPoints() ) objectPoints .
+    //SOLVEPNP_P3P: Method is based on the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution Classification
+    //for the Perspective-Three-Point Problem”. In this case the function requires exactly four object and image points.
+    //SOLVEPNP_EPNP: Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the paper “EPnP: Efficient
+    //Perspective-n-Point Camera Pose Estimation”.
+    //SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I. Roumeliotis. “A Direct Least-Squares (DLS)
+    //Method for PnP”.
+    //SOLVEPNP_UPNP Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto, F.Moreno-Noguer.
+    //“Exhaustive Linearization for Robust Camera Pose and Focal Length Estimation”. In this case the function also
+    //estimates the parameters f_x and f_y assuming that both have the same value. Then the cameraMatrix is updated with the
+    //estimated focal length.
+#else
+    int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
+    if(m_useConsensusPercentage) {
+      nbInlierToReachConsensus = (int) (m_ransacConsensusPercentage / 100.0 * (double) m_queryFilteredKeyPoints.size());
+    }
+
+    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
+        rvec, tvec, false, m_nbRansacIterations,
+        (float) m_ransacReprojectionError, nbInlierToReachConsensus,
+        inlierIndex);
+#endif
+  } catch (cv::Exception &e) {
+    std::cerr << e.what() << std::endl;
+    elapsedTime = (vpTime::measureTimeMs() - t);
+    return false;
+  }
+  vpTranslationVector translationVec(tvec.at<double>(0),
+                                     tvec.at<double>(1), tvec.at<double>(2));
+  vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1),
+                              rvec.at<double>(2));
+  cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
+
+  if(func != NULL) {
+    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
+    //we can converge toward a final cMo that does not respect the pose criterion even
+    //if the 4 minimal points picked to respect the pose criterion.
+    if(!func(&cMo)) {
+      elapsedTime = (vpTime::measureTimeMs() - t);
+      return false;
+    }
+  }
+
+  elapsedTime = (vpTime::measureTimeMs() - t);
+  return true;
+}
+
+/*!
+   Compute the pose using the correspondence between 2D points and 3D points using ViSP function with RANSAC method.
+
+   \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inliers : List of inliers.
+   \param elapsedTime : Elapsed time.
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
+ */
+bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+                         std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+  double t = vpTime::measureTimeMs();
+
+  if(objectVpPoints.size() < 4) {
+    elapsedTime = (vpTime::measureTimeMs() - t);
+    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
+
+    return false;
+  }
+
+  vpPose pose;
+  pose.setCovarianceComputation(true);
+
+  for(std::vector<vpPoint>::const_iterator it = objectVpPoints.begin(); it != objectVpPoints.end(); ++it) {
+    pose.addPoint(*it);
+  }
+
+  unsigned int nbInlierToReachConsensus = (unsigned int) m_nbRansacMinInlierCount;
+  if(m_useConsensusPercentage) {
+    nbInlierToReachConsensus = (unsigned int) (m_ransacConsensusPercentage / 100.0 *
+                               (double) m_queryFilteredKeyPoints.size());
+  }
+
+  pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
+  pose.setRansacThreshold(m_ransacThreshold);
+  pose.setRansacMaxTrials(m_nbRansacIterations);
+
+  bool isRansacPoseEstimationOk = false;
+  try {
+    pose.setCovarianceComputation(m_computeCovariance);
+    isRansacPoseEstimationOk = pose.computePose(vpPose::RANSAC, cMo, func);
+    inliers = pose.getRansacInliers();
+    if(m_computeCovariance) {
+      m_covarianceMatrix = pose.getCovarianceMatrix();
+    }
+  } catch(vpException &e) {
+    std::cerr << "e=" << e.what() << std::endl;
+    elapsedTime = (vpTime::measureTimeMs() - t);
+    return false;
+  }
+
+  if(func != NULL && isRansacPoseEstimationOk) {
+    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
+    //we can converge toward a final cMo that does not respect the pose criterion even
+    //if the 4 minimal points picked to respect the pose criterion.
+    if(!func(&cMo)) {
+      elapsedTime = (vpTime::measureTimeMs() - t);
+      return false;
+    }
+  }
+
+  elapsedTime = (vpTime::measureTimeMs() - t);
+  return isRansacPoseEstimationOk;
+}
+
+/*!
    Compute the pose estimation error, the mean square error (in pixel) between the location of the detected keypoints
    and the location of the projection of the 3D model with the estimated pose.
 
@@ -868,7 +1021,7 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
    \param elapsedTime : Elapsed time.
    \param mask : Optional mask to detect only where mask[i][j] == 1.
  */
-void vpKeyPoint::detect(cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
+void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
                         const cv::Mat &mask) {
   double t = vpTime::measureTimeMs();
   keyPoints.clear();
@@ -1252,10 +1405,6 @@ void vpKeyPoint::filterMatches() {
   m_filteredMatches = mTmp;
   m_objectFilteredPoints = trainPtsTmp;
   m_queryFilteredKeyPoints = queryKptsTmp;
-
-//  m_filteredMatches = m;
-//  m_objectFilteredPoints = trainPts;
-//  m_queryFilteredKeyPoints = queryKpts;
 }
 
 /*!
@@ -1269,184 +1418,13 @@ void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
 }
 
 /*!
-   Compute the pose using the correspondence between 2D points and 3D points using OpenCV function with RANSAC method.
+   Get the 3D coordinates of the object points matched (the corresponding 3D coordinates in the object frame
+   of the keypoints detected in the current image after the matching).
 
-   \param imagePoints : List of 2D points corresponding to the location of the detected keypoints.
-   \param  objectPoints : List of the 3D points in the object frame matched.
-   \param cam : Camera parameters.
-   \param cMo : Homogeneous matrix between the object frame and the camera frame.
-   \param inlierIndex : List of indexes of inliers.
-   \param elapsedTime : Elapsed time.
-   \param func : Function pointer to filter the final pose returned by OpenCV pose estimation method.
-   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+   \param objectPoints : List of 3D coordinates in the object frame.
  */
-bool vpKeyPoint::getPose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-                         const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                         double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
-  double t = vpTime::measureTimeMs();
-
-  if(imagePoints.size() < 4 || objectPoints.size() < 4 || imagePoints.size() != objectPoints.size()) {
-    elapsedTime = (vpTime::measureTimeMs() - t);
-    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
-
-    return false;
-  }
-
-  cv::Mat cameraMatrix =
-      (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
-  cv::Mat rvec, tvec;
-  cv::Mat distCoeffs;
-
-  try {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    //OpenCV 3.0.0 (2014/12/12)
-    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-        rvec, tvec, false, m_nbRansacIterations, (float) m_ransacReprojectionError,
-        0.99,//confidence=0.99 (default) – The probability that the algorithm produces a useful result.
-        inlierIndex,
-        cv::SOLVEPNP_ITERATIVE);
-    //SOLVEPNP_ITERATIVE (default): Iterative method is based on Levenberg-Marquardt optimization.
-    //In this case the function finds such a pose that minimizes reprojection error, that is the sum of squared distances
-    //between the observed projections imagePoints and the projected (using projectPoints() ) objectPoints .
-    //SOLVEPNP_P3P: Method is based on the paper of X.S. Gao, X.-R. Hou, J. Tang, H.-F. Chang “Complete Solution Classification
-    //for the Perspective-Three-Point Problem”. In this case the function requires exactly four object and image points.
-    //SOLVEPNP_EPNP: Method has been introduced by F.Moreno-Noguer, V.Lepetit and P.Fua in the paper “EPnP: Efficient
-    //Perspective-n-Point Camera Pose Estimation”.
-    //SOLVEPNP_DLS: Method is based on the paper of Joel A. Hesch and Stergios I. Roumeliotis. “A Direct Least-Squares (DLS)
-    //Method for PnP”.
-    //SOLVEPNP_UPNP Method is based on the paper of A.Penate-Sanchez, J.Andrade-Cetto, F.Moreno-Noguer.
-    //“Exhaustive Linearization for Robust Camera Pose and Focal Length Estimation”. In this case the function also
-    //estimates the parameters f_x and f_y assuming that both have the same value. Then the cameraMatrix is updated with the
-    //estimated focal length.
-#else
-    int nbInlierToReachConsensus = m_nbRansacMinInlierCount;
-    if(m_useConsensusPercentage) {
-      nbInlierToReachConsensus = (int) (m_ransacConsensusPercentage / 100.0 * (double) m_queryFilteredKeyPoints.size());
-    }
-
-    cv::solvePnPRansac(objectPoints, imagePoints, cameraMatrix, distCoeffs,
-        rvec, tvec, false, m_nbRansacIterations,
-        (float) m_ransacReprojectionError, nbInlierToReachConsensus,
-        inlierIndex);
-#endif
-  } catch (cv::Exception &e) {
-    std::cerr << e.what() << std::endl;
-    elapsedTime = (vpTime::measureTimeMs() - t);
-    return false;
-  }
-  vpTranslationVector translationVec(tvec.at<double>(0),
-                                     tvec.at<double>(1), tvec.at<double>(2));
-  vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1),
-                              rvec.at<double>(2));
-  cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
-
-  if(func != NULL) {
-    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
-    //we can converge toward a final cMo that does not respect the pose criterion even
-    //if the 4 minimal points picked to respect the pose criterion.
-    if(!func(&cMo)) {
-      elapsedTime = (vpTime::measureTimeMs() - t);
-      return false;
-    }
-  }
-
-  elapsedTime = (vpTime::measureTimeMs() - t);
-  return true;
-}
-
-/*!
-   Compute the pose using the correspondence between 2D points and 3D points using ViSP function with RANSAC method.
-
-   \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
-   \param cMo : Homogeneous matrix between the object frame and the camera frame.
-   \param inliers : List of inliers.
-   \param elapsedTime : Elapsed time.
-   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
-   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
-   the poses which do not respect some criterion
- */
-bool vpKeyPoint::getPose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-                         std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
-  double t = vpTime::measureTimeMs();
-
-  if(objectVpPoints.size() < 4) {
-    elapsedTime = (vpTime::measureTimeMs() - t);
-    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
-
-    return false;
-  }
-
-  vpPose pose;
-  pose.setCovarianceComputation(true);
-
-  for(std::vector<vpPoint>::const_iterator it = objectVpPoints.begin(); it != objectVpPoints.end(); ++it) {
-    pose.addPoint(*it);
-  }
-
-  unsigned int nbInlierToReachConsensus = (unsigned int) m_nbRansacMinInlierCount;
-  if(m_useConsensusPercentage) {
-    nbInlierToReachConsensus = (unsigned int) (m_ransacConsensusPercentage / 100.0 *
-                               (double) m_queryFilteredKeyPoints.size());
-  }
-
-  pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
-  pose.setRansacThreshold(m_ransacThreshold);
-  pose.setRansacMaxTrials(m_nbRansacIterations);
-
-  bool isRansacPoseEstimationOk = false;
-  try {
-    pose.setCovarianceComputation(m_computeCovariance);
-    isRansacPoseEstimationOk = pose.computePose(vpPose::RANSAC, cMo, func);
-    inliers = pose.getRansacInliers();
-    if(m_computeCovariance) {
-      m_covarianceMatrix = pose.getCovarianceMatrix();
-    }
-  } catch(vpException &e) {
-    std::cerr << "e=" << e.what() << std::endl;
-    elapsedTime = (vpTime::measureTimeMs() - t);
-    return false;
-  }
-
-  if(func != NULL && isRansacPoseEstimationOk) {
-    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
-    //we can converge toward a final cMo that does not respect the pose criterion even
-    //if the 4 minimal points picked to respect the pose criterion.
-    if(!func(&cMo)) {
-      elapsedTime = (vpTime::measureTimeMs() - t);
-      return false;
-    }
-  }
-
-  elapsedTime = (vpTime::measureTimeMs() - t);
-  return isRansacPoseEstimationOk;
-}
-
-/*!
-   Get the descriptors matrix for the query keypoints.
-
-   \param descriptors : Matrix with descriptors values at each row for each query keypoints.
- */
-void vpKeyPoint::getQueryDescriptors(cv::Mat &descriptors) {
-  descriptors = m_queryDescriptors;
-}
-
-/*!
-   Get the descriptors list for the query keypoints.
-
-   \param descriptors : List of descriptors values.
- */
-void vpKeyPoint::getQueryDescriptors(std::vector<std::vector<float> > &descriptors) {
-  int nRows = m_queryDescriptors.rows;
-  int nCols = m_queryDescriptors.cols;
-  descriptors.resize((size_t)nRows);
-
-  for(int i = 0; i < nRows; i++) {
-    std::vector<float> desc((size_t)nCols);
-    for(int j = 0; j < nCols; j++) {
-      desc[(size_t)j] = m_queryDescriptors.at<float>(i, j);
-    }
-    descriptors[(size_t)i] = desc;
-  }
+void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) {
+  convertToVpType(m_objectFilteredPoints, objectPoints);
 }
 
 /*!
@@ -2422,9 +2400,11 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
     m_objectFilteredPoints = m_trainPoints;
     m_filteredMatches = m_matches;
 
+    m_matchQueryToTrainKeyPoints.clear();
     for (size_t i = 0; i < m_matches.size(); i++) {
       m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
-                                            m_queryKeyPoints[(size_t)m_matches[i].queryIdx], m_trainKeyPoints[(size_t)m_matches[i].trainIdx]));
+                                            m_queryKeyPoints[(size_t) m_matches[i].queryIdx],
+                                            m_trainKeyPoints[(size_t) m_matches[i].trainIdx]));
     }
   }
 
@@ -2503,6 +2483,13 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     m_queryFilteredKeyPoints = m_queryKeyPoints;
     m_objectFilteredPoints = m_trainPoints;
     m_filteredMatches = m_matches;
+
+    m_matchQueryToTrainKeyPoints.clear();
+    for (size_t i = 0; i < m_matches.size(); i++) {
+      m_matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
+                                            m_queryKeyPoints[(size_t) m_matches[i].queryIdx],
+                                            m_trainKeyPoints[(size_t) m_matches[i].trainIdx]));
+    }
   }
 
   //Convert OpenCV type to ViSP type for compatibility
@@ -2534,7 +2521,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     std::vector<vpPoint> inliers;
-    bool res = getPose(objectVpPoints, cMo, inliers, m_poseTime, func);
+    bool res = computePose(objectVpPoints, cMo, inliers, m_poseTime, func);
     m_ransacInliers.resize(inliers.size());
     for(size_t i = 0; i < m_ransacInliers.size(); i++) {
       vpMeterPixelConversion::convertPoint(cam, inliers[i].get_x(), inliers[i].get_y(), m_ransacInliers[i]);
@@ -2547,7 +2534,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     std::vector<cv::Point2f> imageFilteredPoints;
     cv::KeyPoint::convert(m_queryFilteredKeyPoints, imageFilteredPoints);
     std::vector<int> inlierIndex;
-    bool res = getPose(imageFilteredPoints, m_objectFilteredPoints, cam, cMo, inlierIndex, m_poseTime);
+    bool res = computePose(imageFilteredPoints, m_objectFilteredPoints, cam, cMo, inlierIndex, m_poseTime);
 
     std::map<int, bool> mapOfInlierIndex;
     m_matchRansacKeyPointsToPoints.clear();
