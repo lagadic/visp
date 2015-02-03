@@ -284,6 +284,7 @@ IF(VISP_HAVE_OGRE)
 ENDIF()
 
 SET (SRC_TOOLS
+  tools/convert/vpConvert.cpp
   tools/geometry/vpPlane.cpp
   tools/geometry/vpRect.cpp
   tools/geometry/vpTriangle.cpp

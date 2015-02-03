@@ -229,6 +229,7 @@ SET (HEADER_SIMULATOR
   )
 
 SET (HEADER_TOOLS
+  tools/convert/vpConvert.h
   tools/geometry/vpPlane.h
   tools/geometry/vpRect.h
   tools/geometry/vpTriangle.h

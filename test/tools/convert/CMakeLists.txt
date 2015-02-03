@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: CMakeLists.txt 4961 2014-11-14 13:06:26Z fspindle $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -38,17 +38,31 @@
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
+# SOURCE variable corresponds to the list of all the sources to build binaries.
+# The generate binary comes by removing the .cpp extension to
+# the source name.
 #
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  convert
-  io
-  geometry
-  time
-  xml
+# If you want to add/remove a source, modify here
+set(SOURCE
+  testConvert.cpp
 )
 
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+# rule for binary build
+foreach(source ${SOURCE})
+  # Compute the name of the binary to create
+  get_filename_component(binary ${source} NAME_WE)
+
+  # From source compile the binary and add link rules
+  add_executable(${binary} ${source})
+  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+
+  # Add test
+  add_test(${binary} ${binary})
+
+  add_dependencies(visp_tests ${binary})
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(${binary} PROPERTIES FOLDER "tests")
+  endif()
+endforeach()
+
+
