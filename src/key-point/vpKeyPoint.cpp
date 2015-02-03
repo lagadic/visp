@@ -1274,7 +1274,7 @@ void vpKeyPoint::filterMatches() {
 
    \param objectPoints : List of 3D coordinates in the object frame.
  */
-void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
+void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) const {
   objectPoints = m_objectFilteredPoints;
 }
 
@@ -1284,7 +1284,7 @@ void vpKeyPoint::getObjectPoints(std::vector<cv::Point3f> &objectPoints) {
 
    \param objectPoints : List of 3D coordinates in the object frame.
  */
-void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) {
+void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) const {
   vpConvert::convertFromOpenCV(m_objectFilteredPoints, objectPoints);
 }
 
@@ -1307,39 +1307,11 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const {
 }
 
 /*!
-   Get the train descriptors matrix.
-
-   \param descriptors : Matrix with descriptors values at each row for each train keypoints (or reference keypoints).
- */
-void vpKeyPoint::getTrainDescriptors(cv::Mat &descriptors) {
-  descriptors = m_trainDescriptors;
-}
-
-/*!
-   Get the train descriptors list.
-
-   \param descriptors : List of train descriptors values (or reference descriptors values).
- */
-void vpKeyPoint::getTrainDescriptors(std::vector<std::vector<float> > &descriptors) {
-  int nRows = m_trainDescriptors.rows;
-  int nCols = m_trainDescriptors.cols;
-  descriptors.resize((size_t)nRows);
-
-  for(int i = 0; i < nRows; i++) {
-    std::vector<float> desc((size_t)nCols);
-    for(int j = 0; j < nCols; j++) {
-      desc[(size_t)j] = m_trainDescriptors.at<float>(i, j);
-    }
-    descriptors[(size_t)i] = desc;
-  }
-}
-
-/*!
    Get the train keypoints list in OpenCV type.
 
    \param keyPoints : List of train keypoints (or reference keypoints).
  */
-void vpKeyPoint::getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) {
+void vpKeyPoint::getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const {
   keyPoints = m_trainKeyPoints;
 }
 
@@ -1348,7 +1320,7 @@ void vpKeyPoint::getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) {
 
    \param keyPoints : List of train keypoints (or reference keypoints).
  */
-void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) {
+void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) const {
   keyPoints = referenceImagePointsList;
 }
 
@@ -1357,7 +1329,7 @@ void vpKeyPoint::getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) {
 
    \param points : List of train points (or reference points).
  */
-void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) {
+void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) const {
   points = m_trainPoints;
 }
 
@@ -1366,7 +1338,7 @@ void vpKeyPoint::getTrainPoints(std::vector<cv::Point3f> &points) {
 
    \param points : List of train points (or reference points).
  */
-void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) {
+void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const {
   points = m_trainVpPoints;
 }
 
@@ -2618,6 +2590,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCa
     Apply a set of affine transormations to the image, detect keypoints and
     reproject them into initial image coordinates.
     See http://www.ipol.im/pub/algo/my_affine_sift/ for the details.
+    See https://github.com/Itseez/opencv/blob/master/samples/python2/asift.py for the Python implementation by Itseez
+    and Matt Sheckells for the current implementation in C++.
     \param I : Input image
     \param listOfKeypoints : List of detected keypoints in the multiple images after affine transformations
     \param listOfDescriptors : Corresponding list of descriptors

@@ -124,28 +124,29 @@
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-  vpImage<unsigned char> Ireference;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020300)
+  vpImage<unsigned char> Irefrence;
   vpImage<unsigned char> Icurrent;
-  vpKeyPoint surf;
 
-  // First grab the reference image Ireference
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint keypoint("ORB", "ORB", "BruteForce-Hamming", filterType);
+
+  // First grab the reference image Irefrence
   // Add your code to load the reference image in Ireference
 
-  // Build the reference SURF points.
-  surf.buildReference(Ireference);
+  // Build the reference ORB points.
+  keypoint.buildReference(Irefrence);
 
   // Then grab another image which represents the current image Icurrent
 
-  // Match points between the reference points and the SURF points computed in the current image.
-  surf.matchPoint(Icurrent);
+  // Match points between the reference points and the ORB points computed in the current image.
+  keypoint.matchPoint(Icurrent);
 
-  // Add your code to display image
   // Display the matched points
-  surf.display(Ireference, Icurrent);
+  keypoint.display(Irefrence, Icurrent);
+#endif
 
   return (0);
-#endif
 }
   \endcode
 
@@ -160,47 +161,49 @@ int main()
 
 int main()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020300)
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
-  vpKeyPoint surf;
 
-  //First grab the reference image Ireference
-  // Add your code to load the reference image in Ireference
+  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint keypoint("ORB", "ORB", "BruteForce-Hamming", filterType);
 
-  //Select a part of the image by clicking on top-left and bottom-right corners which define a ROI
+  //First grab the reference image Irefrence
+  //Add your code to load the reference image in Ireference
+
+  //Select a part of the image by clincking on two points which define a rectangle
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++)
   {
     vpDisplay::getClick(Ireference, corners[i]);
   }
 
-  //Build the reference SURF keypoints.
+  //Build the reference ORB points.
   int nbrRef;
   unsigned int height, width;
-  height = (unsigned int) (corners[1].get_i() - corners[0].get_i());
-  width = (unsigned int) (corners[1].get_j() - corners[0].get_j());
-  nbrRef = surf.buildReference(Ireference, corners[0], height, width);
+  height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
+  width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
+  nbrRef = keypoint.buildReference(Ireference, corners[0], height, width);
 
   //Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clicking on two points which define a rectangle
+  //Select a part of the image by clincking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++)
   {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
 
-  //Match points between the reference keypoints and the SURF keypoints computed in the current image.
+  //Match points between the reference points and the ORB points computed in the current image.
   int nbrMatched;
   height = (unsigned int)(corners[1].get_i() - corners[0].get_i());
   width = (unsigned int)(corners[1].get_j() - corners[0].get_j());
-  nbrMatched = surf.matchPoint(Icurrent, corners[0], height, width);
+  nbrMatched = keypoint.matchPoint(Icurrent, corners[0], height, width);
 
   //Display the matched points
-  surf.display(Ireference, Icurrent);
+  keypoint.display(Ireference, Icurrent);
+#endif
 
   return(0);
-#endif
 }
   \endcode
 
@@ -365,8 +368,8 @@ public:
     return static_cast<unsigned int>(m_mapOfImages.size());
   }
 
-  void getObjectPoints(std::vector<cv::Point3f> &objectPoints);
-  void getObjectPoints(std::vector<vpPoint> &objectPoints);
+  void getObjectPoints(std::vector<cv::Point3f> &objectPoints) const;
+  void getObjectPoints(std::vector<vpPoint> &objectPoints) const;
 
   /*!
     Get the elapsed time to compute the pose.
@@ -407,14 +410,20 @@ public:
     return m_ransacOutliers;
   }
 
-  void getTrainDescriptors(cv::Mat &descriptors);
-  void getTrainDescriptors(std::vector<std::vector<float> > &descriptors);
+  /*!
+     Get the train descriptors matrix.
 
-  void getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints);
-  void getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints);
+     \return : Matrix with descriptors values at each row for each train keypoints (or reference keypoints).
+   */
+  inline cv::Mat getTrainDescriptors() const {
+    return m_trainDescriptors;
+  }
 
-  void getTrainPoints(std::vector<cv::Point3f> &points);
-  void getTrainPoints(std::vector<vpPoint> &points);
+  void getTrainKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const;
+  void getTrainKeyPoints(std::vector<vpImagePoint> &keyPoints) const;
+
+  void getTrainPoints(std::vector<cv::Point3f> &points) const;
+  void getTrainPoints(std::vector<vpPoint> &points) const;
 
   void initMatcher(const std::string &matcherName);
 
