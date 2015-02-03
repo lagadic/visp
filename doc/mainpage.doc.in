@@ -81,7 +81,7 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 - \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints. New since ViSP 2.10.0.
 - \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 - \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection. New since ViSP 2.10.0.
-- \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade. New since ViSP 2.10.0.
+- \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier. New since ViSP 2.10.0.
 - \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. New since ViSP 2.10.0.
 
 \subsection tuto_computer_vision Computer vision
