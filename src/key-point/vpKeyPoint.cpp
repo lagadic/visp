@@ -595,7 +595,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row(cpt2));
+          desc.push_back(descriptors->row((int)cpt2));
         }
 
         //Remove candidate keypoint which is located on the current polygon
@@ -644,7 +644,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row(cpt2));
+          desc.push_back(descriptors->row((int)cpt2));
         }
 
         //Remove candidate keypoint which is located on the current polygon
@@ -2771,7 +2771,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
 
   for (int tl = 1; tl < 6; tl++) {
     double t = pow(2, 0.5 * tl);
-    for (int phi = 0; phi < 180; phi += 72.0 / t) {
+    for (int phi = 0; phi < 180; phi += (int)(72.0 / t)) {
       std::vector<cv::KeyPoint> keypoints;
       cv::Mat descriptors;
 
