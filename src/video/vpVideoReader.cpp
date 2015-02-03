@@ -490,7 +490,7 @@ Gets the format of the file(s) which has/have to be read.
 */
 vpVideoReader::vpVideoFormatType
 	vpVideoReader::getFormat(const char *filename)
-{
+{  
 	std::string sfilename(filename);
 
 	std::string ext = vpVideoReader::getExtension(sfilename);
@@ -515,7 +515,35 @@ vpVideoReader::vpVideoFormatType
 		return FORMAT_PNG;
 	else if (ext.compare(".png") == 0)
 		return FORMAT_PNG;
-	else if (ext.compare(".AVI") == 0)
+  else if (ext.compare(".TIFF") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".tiff") == 0)
+    return FORMAT_TIFF;
+  else if (ext.compare(".BMP") == 0)
+    return FORMAT_BMP;
+  else if (ext.compare(".bmp") == 0)
+    return FORMAT_BMP;
+  else if (ext.compare(".DIB") == 0)
+    return FORMAT_DIB;
+  else if (ext.compare(".dib") == 0)
+    return FORMAT_DIB;
+  else if (ext.compare(".PBM") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".PBM") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".SR") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".sr") == 0)
+    return FORMAT_PBM;
+  else if (ext.compare(".RAS") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".ras") == 0)
+    return FORMAT_RASTER;
+  else if (ext.compare(".JP2") == 0)
+    return FORMAT_JPEG2000;
+  else if (ext.compare(".jp2") == 0)
+    return FORMAT_JPEG2000;
+  else if (ext.compare(".AVI") == 0)
 		return FORMAT_AVI;
 	else if (ext.compare(".avi") == 0)
 		return FORMAT_AVI;
@@ -707,16 +735,16 @@ Return true if the image file extension is supported, false otherwise.
 */
 bool vpVideoReader::isImageExtensionSupported()
 {
-	return (formatType == FORMAT_PGM ||
-		formatType == FORMAT_PPM ||
-		formatType == FORMAT_JPEG ||
-		formatType == FORMAT_PNG ||
-		formatType == FORMAT_TIFF ||
-		formatType == FORMAT_BMP ||
-		formatType == FORMAT_DIB ||
-		formatType == FORMAT_PBM ||
-		formatType == FORMAT_RASTER ||
-		formatType == FORMAT_JPEG2000);
+  return (formatType == FORMAT_PGM ||
+          formatType == FORMAT_PPM ||
+          formatType == FORMAT_JPEG ||
+          formatType == FORMAT_PNG ||
+          formatType == FORMAT_TIFF ||
+          formatType == FORMAT_BMP ||
+          formatType == FORMAT_DIB ||
+          formatType == FORMAT_PBM ||
+          formatType == FORMAT_RASTER ||
+          formatType == FORMAT_JPEG2000);
 }
 
 /*!
