@@ -48,6 +48,7 @@ ViSP 2.10.0 (alpha released January 28th, 2015)
     . Update blob tracker tutorial to show how to use v4l2 live camera.
     . New keypoints matching tutorial
     . New bar code detection tutorial
+    . New face detection tutorial
     . New object detection and localization tutorial
     . Update model-based tracking tutorial for advanced usage
   - Bug fixed

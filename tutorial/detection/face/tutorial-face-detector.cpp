@@ -1,50 +1,39 @@
-//! \example tutorial-face-detector-live.cpp
+//! \example tutorial-face-detector.cpp
 #include <visp/vpDisplayGDI.h>
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
+//! [Include]
 #include <visp/vpDetectorFace.h>
-#include <visp/vpV4l2Grabber.h>
+//! [Include]
+#include <visp/vpVideoReader.h>
 
 int main(int argc, const char* argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
+//! [Macro defined]
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020200)
+  //! [Macro defined]
   try {
+    //! [Default settings]
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
-
-    int opt_device = 0;
+    std::string opt_video = "video.mpeg";
+    //! [Default settings]
 
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--haar")
         opt_face_cascade_name = std::string(argv[i+1]);
-      else if (std::string(argv[i]) == "--device")
-        opt_device = atoi(argv[i+1]);
+      else if (std::string(argv[i]) == "--video")
+        opt_video = std::string(argv[i+1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--device <camera device>] [--help]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--video <input video file>] [--help]" << std::endl;
         return 0;
       }
     }
 
-    vpImage<unsigned char> I; // for gray images
+    vpImage<unsigned char> I;
 
-    //! [Construct grabber]
-#if defined(VISP_HAVE_V4L2)
-    vpV4l2Grabber g;
-    std::ostringstream device;
-    device << "/dev/video" << opt_device;
-    g.setDevice(device.str());
-    g.setScale(2);
-    g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
-    cv::VideoCapture cap(opt_device); // open the default camera
-    if(!cap.isOpened()) { // check if we succeeded
-      std::cout << "Failed to open the camera" << std::endl;
-      return -1;
-    }
-    cv::Mat frame;
-    cap >> frame; // get a new frame from camera
-    vpImageConvert::convert(frame, I);
-#endif
-    //! [Construct grabber]
+    vpVideoReader g;
+    g.setFileName(opt_video);
+    g.open(I);
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
@@ -55,41 +44,45 @@ int main(int argc, const char* argv[])
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
 
+    //! [Face detector construction]
     vpDetectorFace face_detector;
+    //! [Face detector construction]
+    //! [Face detector setting]
     face_detector.setCascadeClassifierFile(opt_face_cascade_name);
+    //! [Face detector setting]
 
-    while(1) {
-      double t = vpTime::measureTimeMs();
-      //! [Acquisition]
-#if defined(VISP_HAVE_V4L2)
+    bool exit_requested = false;
+    while( ! g.end() && ! exit_requested) {
       g.acquire(I);
-#else
-      cap >> frame; // get a new frame from camera
-      vpImageConvert::convert(frame, I);
-#endif
-      //! [Acquisition]
 
       vpDisplay::display(I);
+      //! [Face detection]
       bool face_found = face_detector.detect(I);
+      //! [Face detection]
 
       if (face_found) {
         std::ostringstream text;
+        //! [Get number faces]
         text << "Found " << face_detector.getNbObjects() << " face(s)";
+        //! [Get number faces]
         vpDisplay::displayText(I, 10, 10, text.str(), vpColor::red);
+        //! [Get face characteristics]
         for(size_t i=0; i < face_detector.getNbObjects(); i++) {
           std::vector<vpImagePoint> p = face_detector.getPolygon(i);
           vpRect bbox = face_detector.getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green, false, 4);
-          vpDisplay::displayText(I, (int)bbox.getTop()-10, (int)bbox.getLeft(), "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
+          vpDisplay::displayText(I, (int)bbox.getTop()-10, (int)bbox.getLeft(),
+                                 "Message: \"" + face_detector.getMessage(i) + "\"", vpColor::red);
         }
+        //! [Get face characteristics]
       }
       vpDisplay::displayText(I, (int)I.getHeight()-25, 10, "Click to quit...", vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // a click to exit
-        break;
-
-      std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
+        exit_requested = true;
     }
+    if (! exit_requested)
+      vpDisplay::getClick(I);
   }
   catch(vpException &e) {
     std::cout << e.getMessage() << std::endl;

@@ -6,9 +6,11 @@ find_package(VISP REQUIRED)
 
 # set the list of source files
 set(tutorial_cpp
+  tutorial-face-detector.cpp
   tutorial-face-detector-live.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/haarcascade_frontalface_alt.xml" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mpeg" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

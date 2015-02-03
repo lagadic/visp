@@ -1,0 +1,103 @@
+/**
+
+\page tutorial-detection-face Tutorial: Face detection
+\tableofcontents
+
+\section intro_face Introduction
+
+This tutorial shows how to detect one or more faces with ViSP. Face detection is performed using OpenCV Haar cascade capabilities that are used in vpDetectorFace class. At least OpenCV 2.2.0 or a more recent version is requested.
+
+In the next sections you will find examples that show how to detect faces in a video, or in images acquired by a camera connected to your computer.
+
+\section face_detection_video Face detection in a video
+
+The following example also available in tutorial-face-detector.cpp allows to detect faces in an mpeg video located near the source code. The Haar cascade classifier file requested by OpenCV is also provided in the same folder as the source code.
+
+\include tutorial-face-detector.cpp
+
+To detect the faces just run:
+\code
+$ ./tutorial-face-detector
+\endcode
+You will get the following result:
+
+\htmlonly
+<iframe width="420" height="315" src="https://www.youtube.com/embed/zizukjfNLvE" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+Now we explain the main lines of the source.
+
+First we have to include the header of the class that allows to detect a face.
+\snippet tutorial-face-detector.cpp Include
+
+Then in the main() function before going further we need to check if OpenCV 2.2.0 is available. 
+
+\snippet tutorial-face-detector.cpp Macro defined
+
+We set then the default input data:
+- the name of the Haar cascade classifier file "haarcascade_frontalface_alt.xml"
+- the name of the input video "video.mpeg"
+
+\snippet tutorial-face-detector.cpp Default settings
+
+With command line options it is possible to use other inputs. To know how just run:
+
+\code
+$ ./tutorial-face-detector --help
+Usage: ./tutorial-face-detector [--haar <haarcascade xml filename>] [--video <input video file>] [--help]
+\endcode
+
+Then we open the video stream, create a windows named "ViSP viewer" where images and the resulting face detection will be displayed.
+  
+The creation of the face detector is performed using
+
+\snippet tutorial-face-detector.cpp Face detector construction
+ 
+We need also to set the location and name of the xml file that contains the Haar cascade classifier data used to recognized a face.
+
+\snippet tutorial-face-detector.cpp Face detector setting
+
+Then we enter in the while loop where for each new image, the try to detect one or more faces:
+
+\snippet tutorial-face-detector.cpp Face detection
+
+If a face is detected, vpDetectorFace::detect() returns true. It is then possible to retrieve the number of faces that are detected:
+
+\snippet tutorial-face-detector.cpp Get number faces
+
+For each face, we have access to its location using vpDetectorFace::getPolygon(), its bounding box using vpDetectorFace::getBBox() and its identifier message using vpDetectorFace::getMessage().
+
+\snippet tutorial-face-detector.cpp Get face characteristics
+
+\note When more than one face is detected, faces are ordered from the largest to the smallest. That means that vpDetectorFace::getPolygon(0), vpDetectorFace::getBBox(0) and vpDetectorFace::getMessage(0) return always the characteristics of the largest face.
+
+\section face_detection_live Face detection from a camera
+
+This other example also available in tutorial-face-detector-live.cpp shows how to detect one or more faces in images acquired by a camera connected to your computer.
+
+\include tutorial-face-detector-live.cpp
+
+The usage of this example is similar to the previous one. Just run 
+\code
+$ ./tutorial-face-detector-live
+\endcode
+
+Additional command line options are available to specify the location of the Haar cascade file and also the camera identifier if more than one camera is connected to your computer:
+
+\code
+$ ./tutorial-face-detector-live --help
+Usage: ./tutorial-face-detector-live [--device <camera device>] [--haar <haarcascade xml filename>] [--help]
+\endcode
+
+The source code of this example is very similar to the previous one except that here we use camera framegrabber devices (see \ref tutorial-grabber). Two different grabber may be used:
+- If ViSP was build with Video For Linux (V4L2) support available for example on Fedora or Ubuntu distribution, VISP_HAVE_V4L2 macro is defined. In that case, images coming from an USB camera are acquired using vpV4l2Grabber class. 
+- If ViSP wasn't build with V4L2 support, but with OpenCV we use cv::VideoCapture class to grab the images. Notice that when images are acquired with OpenCV there is an additional conversion from cv::Mat to vpImage.
+
+\snippet tutorial-face-detector-live.cpp Construct grabber
+
+Then in the while loop, at each iteration we acquire a new image
+\snippet tutorial-face-detector-live.cpp Acquisition
+
+This new image is then given as input to the face detector.
+
+*/
