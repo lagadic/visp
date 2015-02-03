@@ -45,6 +45,7 @@
 
   
 find_path(ZBAR_INCLUDE_DIRS zbar.h
+  $ENV{ZBAR_DIR}/include
   /usr/include 
   /usr/local/include 
 )
@@ -52,6 +53,7 @@ find_path(ZBAR_INCLUDE_DIRS zbar.h
 find_library(ZBAR_LIBRARIES
   NAMES zbar
   PATHS 
+    $ENV{ZBAR_DIR}/lib
     /usr/lib
     /usr/local/lib
 )

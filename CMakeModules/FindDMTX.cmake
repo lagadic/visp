@@ -45,13 +45,15 @@
 
   
 find_path(DMTX_INCLUDE_DIRS dmtx.h
-  /usr/include 
+  $ENV{DMTX_DIR}/include
+  /usr/include
   /usr/local/include 
 )
 
 find_library(DMTX_LIBRARIES
   NAMES dmtx
   PATHS 
+    $ENV{DMTX_DIR}/lib
     /usr/lib
     /usr/local/lib
 )
