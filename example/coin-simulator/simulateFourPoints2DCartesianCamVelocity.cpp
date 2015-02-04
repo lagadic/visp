@@ -62,8 +62,6 @@
 #include <visp/vpCameraParameters.h>
 #include <visp/vpTime.h>
 #include <visp/vpSimulator.h>
-
-
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpFeaturePoint.h>
@@ -163,160 +161,138 @@ void *mainLoop (void *_simu)
   vpSimulator *simu = (vpSimulator *)_simu ;
   simu->initMainApplication() ;
 
-  for ( ; ; ) {
-    int i ;
+  vpServo task ;
+  vpRobotCamera robot ;
 
-    vpServo task ;
-    vpRobotCamera robot ;
+  float sampling_time = 0.040f; // Sampling period in second
+  robot.setSamplingTime(sampling_time);
 
-    float sampling_time = 0.040f; // Sampling period in second
-    robot.setSamplingTime(sampling_time);
+  std::cout << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << " Test program for vpServo "  <<std::endl ;
+  std::cout << " Eye-in-hand task control, articular velocities are computed" << std::endl ;
+  std::cout << " Simulation " << std::endl ;
+  std::cout << " task : servo 4 points " << std::endl ;
+  std::cout << "-------------------------------------------------------" << std::endl ;
+  std::cout << std::endl ;
 
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control,  articular velocity are computed" << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo 4 points " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+  // Sets the initial camera location
+  vpPoseVector vcMo ;
 
+  vcMo[0] = 0.3 ;
+  vcMo[1] = 0.2 ;
+  vcMo[2] = 3 ;
+  vcMo[3] = 0 ;
+  vcMo[4] = vpMath::rad(0)  ;
+  vcMo[5] = vpMath::rad(40) ;
 
-    vpTRACE("sets the initial camera location " ) ;
-    vpPoseVector vcMo ;
+  vpHomogeneousMatrix cMo(vcMo)  ;
+  robot.setPosition(cMo) ;
+  simu->setCameraPosition(cMo) ;
 
-    vcMo[0] = 0.3 ;
-    vcMo[1] = 0.2 ;
-    vcMo[2] = 3 ;
-    vcMo[3] = 0 ;
-    vcMo[4] = vpMath::rad(0)  ;
-    vcMo[5] = vpMath::rad(40) ;
+  simu->getCameraPosition(cMo) ;
+  robot.setPosition(cMo) ;
+  robot.setMaxTranslationVelocity(4.);
 
-    vpHomogeneousMatrix cMo(vcMo)  ;
-    robot.setPosition(cMo) ;
-    simu->setCameraPosition(cMo) ;
+  vpCameraParameters cam ;
 
-    simu->getCameraPosition(cMo) ;
-    robot.setPosition(cMo) ;
+  // Sets the point coordinates in the world frame
+  vpPoint point[4] ;
+  point[0].setWorldCoordinates(-0.1,-0.1,0) ;
+  point[1].setWorldCoordinates(0.1,-0.1,0) ;
+  point[2].setWorldCoordinates(0.1,0.1,0) ;
+  point[3].setWorldCoordinates(-0.1,0.1,0) ;
 
-    vpCameraParameters cam ;
+  // Project : computes the point coordinates in the camera frame and its 2D coordinates
+  for (int i = 0 ; i < 4 ; i++)
+    point[i].track(cMo) ;
 
-    vpTRACE("sets the point coordinates in the world frame "  ) ;
-    vpPoint point[4] ;
-    point[0].setWorldCoordinates(-0.1,-0.1,0) ;
-    point[1].setWorldCoordinates(0.1,-0.1,0) ;
-    point[2].setWorldCoordinates(0.1,0.1,0) ;
-    point[3].setWorldCoordinates(-0.1,0.1,0) ;
+  // Sets the desired position of the point
+  vpFeaturePoint p[4] ;
+  for (int i = 0 ; i < 4 ; i++)
+    vpFeatureBuilder::create(p[i], point[i])  ;  //retrieve x,y and Z of the vpPoint structure
 
-    vpTRACE("project : computes  the point coordinates in the camera frame and its 2D coordinates"  ) ;
-    for (i = 0 ; i < 4 ; i++)
-      point[i].track(cMo) ;
+  // Sets the desired position of the point
+  vpFeaturePoint pd[4] ;
 
-    vpTRACE("sets the desired position of the point ") ;
-    vpFeaturePoint p[4] ;
-    for (i = 0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(p[i], point[i])  ;  //retrieve x,y and Z of the vpPoint structure
+  pd[0].buildFrom(-0.1,-0.1,1) ;
+  pd[1].buildFrom(0.1,-0.1,1) ;
+  pd[2].buildFrom(0.1,0.1,1) ;
+  pd[3].buildFrom(-0.1,0.1,1) ;
 
+  // Define the task
+  // We want an eye-in-hand control law
+  // Articular velocity are computed
+  task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
+  task.setInteractionMatrixType(vpServo::CURRENT) ;
 
-    vpTRACE("sets the desired position of the point ") ;
-    vpFeaturePoint pd[4] ;
+  // Set the position of the camera in the end-effector frame
+  vpHomogeneousMatrix cMe ;
+  vpVelocityTwistMatrix cVe(cMe) ;
+  task.set_cVe(cVe) ;
 
-    pd[0].buildFrom(-0.1,-0.1,1) ;
-    pd[1].buildFrom(0.1,-0.1,1) ;
-    pd[2].buildFrom(0.1,0.1,1) ;
-    pd[3].buildFrom(-0.1,0.1,1) ;
+  // Set the Jacobian (expressed in the end-effector frame)
+  vpMatrix eJe ;
+  robot.get_eJe(eJe) ;
+  task.set_eJe(eJe) ;
 
-    vpTRACE("define the task") ;
-    vpTRACE("\t we want an eye-in-hand control law") ;
-    vpTRACE("\t articular velocity are computed") ;
-    task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
-    task.setInteractionMatrixType(vpServo::CURRENT) ;
+  // We want to see a point on a point
+  for (int i = 0 ; i < 4 ; i++)
+    task.addFeature(p[i],pd[i]) ;
 
+  // Set the gain
+  task.setLambda(1.0) ;
 
-    vpTRACE("Set the position of the camera in the end-effector frame ") ;
-    vpHomogeneousMatrix cMe ;
-    vpVelocityTwistMatrix cVe(cMe) ;
-    task.set_cVe(cVe) ;
+  std::cout << "Display task information" << std::endl;
+  task.print() ;
 
-    vpTRACE("Set the Jacobian (expressed in the end-effector frame)") ;
-    vpMatrix eJe ;
+  vpTime::wait(1000); // Sleep 1s to ensure that all the thread are initialized
+
+  unsigned int iter=0 ;
+  // visual servo loop
+  while(iter++ < 100) {
+    double t = vpTime::measureTimeMs();
+
+    vpColVector v ;
+
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    vpTRACE("\t we want to see a point on a point..") ;
-    for (i = 0 ; i < 4 ; i++)
-      task.addFeature(p[i],pd[i]) ;
-
-    vpTRACE("\t set the gain") ;
-    task.setLambda(1.0) ;
-
-
-    vpTRACE("Display task information " ) ;
-    task.print() ;
-
-    vpTime::wait(1000); // Sleep 1s
-    std::cout << "\nEnter a character to continue or CTRL-C to quit... "
-              << std::endl ;
-    {    char a ; std::cin >> a ; }
-
-
-    char name[FILENAME_MAX];
-    unsigned int iter=0 ;
-    vpTRACE("\t loop") ;
-    while(iter++ < 100) {
-      double t = vpTime::measureTimeMs();
-
-      vpColVector v ;
-
-      robot.get_eJe(eJe) ;
-      task.set_eJe(eJe) ;
-
-      robot.getPosition(cMo) ;
-      for (i = 0 ; i < 4 ; i++)
-      {
-        point[i].track(cMo) ;
-        vpFeatureBuilder::create(p[i],point[i])  ;
-      }
-
-      v = task.computeControlLaw() ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      //vpTime::wait(100) ;
-
-
-      simu->setCameraPosition(cMo) ;
-
-
-      if(SAVE==1)
-	    {
-	      sprintf(name,"/tmp/image.%04d.external.png",iter) ;
-	      std::cout << name << std::endl ;
-	      simu->write(name) ;
-	      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
-	      simu->write(name) ;
-	    }
-
-      vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
-
+    robot.getPosition(cMo) ;
+    for (int i = 0 ; i < 4 ; i++)
+    {
+      point[i].track(cMo) ;
+      vpFeatureBuilder::create(p[i],point[i])  ;
     }
-    vpTRACE("Display task information " ) ;
-    task.print() ;
-    task.kill() ;
-    std::cout << "\nEnter a character to continue..." <<std::endl ;
-    {    char a ; std::cin >> a ; }
+
+    v = task.computeControlLaw() ;
+    robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+    simu->setCameraPosition(cMo) ;
+
+    if(SAVE==1)
+    {
+      char name[FILENAME_MAX];
+      sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+      std::cout << name << std::endl ;
+      simu->write(name) ;
+      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+      simu->write(name) ;
+    }
+
+    vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
   }
+  std::cout << "\nDisplay task information" << std::endl;
+  task.print() ;
+  task.kill() ;
 
   simu->closeMainApplication() ;
 
-
   void *a=NULL ;
   return a ;
-  // return (void *);
 }
 
-
-int
-main(int argc, const char ** argv)
+int main(int argc, const char ** argv)
 {
   try {
     std::string env_ipath;
@@ -368,7 +344,6 @@ main(int argc, const char ** argv)
 
     vpCameraParameters cam ;
     vpHomogeneousMatrix fMo ; fMo[2][3] = 0 ;
-
 
     if (opt_display) {
       vpSimulator simu ;

@@ -866,7 +866,6 @@ vpSimulator::addObject(SoSeparator * object,
 
   if (identity==true)
   {
-    vpTRACE("identity ") ;
     root->addChild (object);
   }
   else
