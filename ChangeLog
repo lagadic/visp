@@ -9,12 +9,13 @@
 ViSP 2.10.0 (alpha released January 28th, 2015)
   - New features
     . New object detection and localisation capabilities that allow to
-      initialize for instance the model-based tracker.
-    . New bar code detectors that uses libdmtx and libzbar:
+      initialize for instance the model-based tracker (see tutorial).
+    . New bar code detectors that uses libdmtx and libzbar (see tutorial):
       + vpDetectorQRcode class allows to detect QR codes
       + vpDetectorDataMatrixCode class allows to detect data matrices
     . New vpDetectorFace class that allows face detection based on OpenCV
-      Haar cascade capabilities
+      Haar cascade classifier capabilities (see tutorial)
+    . New vpConvert class for type conversions from OpenCV to ViSP.
     . Model-based tracker:
       + Introduction of 3D circles that project as ellipses.
       + In *.cao files comments are allowed on lines starting with # character.
@@ -35,22 +36,21 @@ ViSP 2.10.0 (alpha released January 28th, 2015)
       testing without setting VISP_INPUT_IMAGE_PATH
     . If OpenCV version >= 2.4.8 use only OpenCV C++ api. Classes that use
       IplImages as input are deprecated.
-      more supported in ViSP.
     . Compat with RaspberryPi architecture
     . Compat with OpenCV 3.x
+    . Compat with Yarp 2.3.63
     . Compat with CMake 3.x
     . Compat with MinGW w64 from http://mingw-w64.sourceforge.net/
   - Tutorials
-    . Introduce a new tutorial to show how to install ViSP from Ubuntu
-      official packages.
-    . Introduce a new tutorial to show how to install ViSP on Raspberry Pi.
+    . New tutorial to show how to install ViSP from Ubuntu official packages.
+    . New tutorial to show how to install ViSP on Raspberry Pi.
+    . New keypoints matching tutorial.
+    . New bar code detection tutorial.
+    . New face detection tutorial.
+    . New object detection and localization tutorial
     . Update KLT tracker tutorial to show how to initialize the tracker online.
     . Update blob tracker tutorial to show how to use v4l2 live camera.
-    . New keypoints matching tutorial
-    . New bar code detection tutorial
-    . New face detection tutorial
-    . New object detection and localization tutorial
-    . Update model-based tracking tutorial for advanced usage
+    . Update model-based tracking tutorial for advanced usage.
   - Bug fixed
     . [17112] Error after second call to track() in vpMbEdgeTracker
     . [17212] vp1394TwoGrabber: unable to select a camera from its guid

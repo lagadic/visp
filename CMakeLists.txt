@@ -648,10 +648,12 @@ IF(USE_YARP)
       ENDFOREACH()
     ENDFOREACH()
     
-	# Remove Yarp libraries since they were added previously with full absolute library path and name
-    FOREACH(lib ${YARP_LIBRARIES})
-      LIST(REMOVE_ITEM YARP_LINK_LIBS ${lib})
-    ENDFOREACH()
+    # Remove Yarp libraries since they were added previously with full absolute library path and name
+    if(YARP_LINK_LIBS)
+      foreach(lib ${YARP_LIBRARIES})
+        list(REMOVE_ITEM YARP_LINK_LIBS ${lib})
+      endforeach()
+    endif()
     # Add 3rd party libraries requested by Yarp  	
     LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LINK_LIBS})
     
