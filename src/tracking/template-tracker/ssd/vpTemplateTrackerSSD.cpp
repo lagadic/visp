@@ -100,7 +100,7 @@ double vpTemplateTrackerSSD::getSSD(vpImage<unsigned char> &I,vpColVector &tp)
   double IW,Tij;
   int i,j;
   double i2,j2;
-  int Nbpoint=0;
+  unsigned int Nbpoint=0;
 
   if(pyrInitialised)
   {

@@ -112,7 +112,7 @@ void vpTemplateTrackerSSDInverseCompositional::initHessienDesired(const vpImage<
 void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned char> &I)
 {
   double erreur=0;
-  int Nbpoint=0;
+  unsigned int Nbpoint=0;
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
 

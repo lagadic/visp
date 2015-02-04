@@ -74,7 +74,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   if(!compoInitialised)
     std::cout<<"Compositionnal tracking no initialised\nUse InitCompo(vpImage<unsigned char> &I) function"<<std::endl;
   double erreur=0;
-  int Nbpoint=0;
+  unsigned int Nbpoint=0;
 
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);

@@ -276,7 +276,7 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
   vpXmlCodeType prop;
 
   vpXmlCodeSequenceType back = SEQUENCE_OK;
-  int nbCamera = 0;
+  unsigned int nbCamera = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {

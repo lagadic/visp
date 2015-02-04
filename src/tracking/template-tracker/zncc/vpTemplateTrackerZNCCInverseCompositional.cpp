@@ -252,7 +252,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
     vpImageFilter::filter(I, BI,fgG,taillef);
 
   double erreur=0;
-  int Nbpoint=0;
+  unsigned int Nbpoint=0;
   vpColVector dpinv(nbParam);
   double Ic;
   double Iref;

@@ -220,7 +220,7 @@ vpXmlParserHomogeneousMatrix::read (xmlDocPtr doc, xmlNodePtr node,
   vpXmlCodeType prop;
 
   vpXmlCodeSequenceType back = SEQUENCE_OK;
-  int nbM = 0;
+  unsigned int nbM = 0;
 
   for (node = node->xmlChildrenNode; node != NULL;  node = node->next)
   {

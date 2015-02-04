@@ -343,7 +343,7 @@ HLM3D(unsigned int nb_pts,
   unsigned int  pts_ref[4];		/*** definit lesquels des points de
 				     l'image sont les points de reference***/
   /***  ***/
-  int perm;			/***  Compte le nombre de permutations, quand le nombre
+  unsigned int perm;			/***  Compte le nombre de permutations, quand le nombre
 				      de permutations =0 arret de l'ordonnancement **/
   int  cont_zeros;		/*** pour compter les valeurs quasi= a zero	***/
   unsigned int  cont;
