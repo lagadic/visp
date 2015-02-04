@@ -20,15 +20,20 @@ The table below shows which are the packages available given the distribution an
 <tr>
   <th colspan="2">Ubuntu 13.10
   <th colspan="2">Ubuntu 14.04 LTS
+  <th colspan="2">Ubuntu 14.10 
 </tr>
 <tr>
   <th>i386</th>
   <th>amd64</th>
   <th>i386</th>
   <th>amd64</th>
+  <th>i386</th>
+  <th>amd64</th>
 </tr>
 <tr>
   <td></td>
+  <td>libvisp-dev</td>
+  <td>libvisp-dev</td>
   <td>libvisp-dev</td>
   <td>libvisp-dev</td>
   <td>libvisp-dev</td>
@@ -38,21 +43,29 @@ The table below shows which are the packages available given the distribution an
   <td>libvisp2.8</td>
   <td>libvisp2.8</td>
   <td>libvisp2.8</td>
+  <td>libvisp2.9</td>
+  <td>libvisp2.9</td>
 </tr>
 <tr>
   <td></td>
   <td>libvisp2.8-dbg</td>
   <td>libvisp2.8-dbg</td>
   <td>libvisp2.8-dbg</td>
+  <td>libvisp2.9-dbg</td>
+  <td>libvisp2.9-dbg</td>
 </tr>
 <tr>
   <td></td>
   <td>libvisp-doc</td>
   <td>libvisp-doc</td>
   <td>libvisp-doc</td>
+  <td>libvisp-doc</td>
+  <td>libvisp-doc</td>
 </tr>
 <tr>
   <td></td>
+  <td>visp-images</td>
+  <td>visp-images</td>
   <td>visp-images</td>
   <td>visp-images</td>
   <td>visp-images</td>

@@ -114,8 +114,8 @@ There are different ways to get ViSP source code on Raspberry Pi:
 - You can download the <a href="http://team.inria.fr/lagadic/visp/download.html#latest">latest stable release</a> tarball. Once downloaded, uncompress the file using:
 \code
 mkdir /home/pi/soft; cd /home/pi/soft
-wget http://gforge.inria.fr/frs/download.php/33403/ViSP-2.9.0.tar.gz
-tar xvzf ViSP-2.9.0.tar.gz 
+wget http://gforge.inria.fr/frs/download.php/latestfile/475/ViSP-2.10.0.tar.gz
+tar xvzf ViSP-2.10.0.tar.gz 
 \endcode
 
 - You can also download the cutting-edge version of the source code from Subversion repository using:
@@ -124,7 +124,7 @@ mkdir /home/pi/soft; cd /home/pi/soft
 svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/ViSP-2.9.0 or \c /home/pi/soft/ViSP-trunk
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/ViSP-2.10.0 or \c /home/pi/soft/ViSP-trunk
 
 \subsection config Configuring ViSP from source
 
@@ -140,14 +140,14 @@ cmake [<optional parameters>] <source_dir>
 For example:
 \code
 cd /home/pi/soft/ViSP-build-release
-cmake -D CMAKE_BUILD_TYPE=RELEASE -D BUILD_SHARED_LIBS=ON ../ViSP-2.9.0
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_SHARED_LIBS=ON ../ViSP-2.10.0
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../ViSP-2.9.0
+ccmake ../ViSP-2.10.0
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used. Then to generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../ViSP-2.9.0 command used to configure ViSP. 
+\image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP. 
 
 - There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
@@ -204,6 +204,8 @@ Misc:
   XML2                        : yes
   pthread                     : yes
   OpenMP                      : yes
+  zbar                        : no
+  dmtx                        : no
 Documentation:
   Doxygen                     : no
   Graphviz dot                : no
@@ -228,7 +230,7 @@ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
-make html-doc
+make visp_doc
 \endcode
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
