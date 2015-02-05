@@ -74,6 +74,7 @@ ViSP 2.10.0 (alpha released January 28th, 2015)
     . [18452] Empty filename check in vpImageIo, vpVideoReader, vpVideoWriter is erroneous
     . [18459] Error when initializing KLT related trackers but no key point is deteted.
     . [18471] Bad fov computation in vpCameraParameters.
+    . [18550] Linking error with Homebrew install of OpenCV on MacOS
 
 ----------------------------------------------
 ViSP 2.9.0 (released February 18th, 2014)
