@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-centos Tutorial: Installation from source on CentOS
+\page tutorial-install-centos Tutorial: Installation from source on Linux CentOS
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on CentOS. These steps have been tested for CentOS 7.0 (x86_64) distribution, but should work with any other distribution as well. 
