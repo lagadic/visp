@@ -8,6 +8,7 @@ In this tutorial you will learn how to install ViSP from source on Windows. Thes
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
+- \ref tutorial-install-centos
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-iOS
 
@@ -48,7 +49,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \image html img-cmake-win-msvc-version.jpg 
 
-- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface) and OpenMP 3rd party are automatically detected. 
+- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface) and OpenMP 3rd parties are automatically detected. 
 
 \image html img-cmake-win-4.jpg 
 

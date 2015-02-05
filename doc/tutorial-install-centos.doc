@@ -1,36 +1,33 @@
 /**
 
-\page tutorial-install-ubuntu Tutorial: Installation from source on Linux Ubuntu
+\page tutorial-install-centos Tutorial: Installation from source on CentOS
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested for Ubuntu 14.04 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on CentOS. These steps have been tested for CentOS 7.0 (x86_64) distribution, but should work with any other distribution as well. 
 
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
+- \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
-- \ref tutorial-install-centos
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-win
 - \ref tutorial-install-iOS
 
-ViSP can also be installed  from source on other platforms including OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+ViSP can also be installed from source on other platforms including OSX, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
-Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
-
-\section install_ubuntu_required Required packages
+\section install_centos_required Required packages
 
 - gcc 4.4.x or later. This can be installed with:
 \code
-sudo apt-get install build-essential
+sudo yum install gcc-c++
 \endcode
 - CMake 2.6 or higher that could be installed with:
 \code
-sudo apt-get install cmake-curses-gui
+sudo yum install cmake
 \endcode
 
+ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_centos_3rdparty section.
 
-ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_ubuntu_3rdparty section.
-
-\section install_ubuntu_get_source Getting ViSP source code
+\section install_centos_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
@@ -49,7 +46,7 @@ unzip ViSP-2.y.z-snapshot-2015.mm.dd.zip
 \endcode
 - Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
 \code
-sudo apt-get install subversion
+sudo yum install subversion
 \endcode
 and then use the following command
 \code
@@ -58,7 +55,7 @@ svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
 
 We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.10.0
 
-\section install_ubuntu_config Configuring ViSP from source
+\section install_centos_config Configuring ViSP from source
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
@@ -79,7 +76,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 ccmake ../ViSP-2.10.0
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used.
-\image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP.
+\image html img-ccmake-centos.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP.
 
 - There is an other way to see which are the 3rd parties that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
@@ -146,70 +143,86 @@ ViSP built with C++11 features: no
 \endcode
 In our case, only \c pthread an OpenMP 3rd parties are detected.  
 
-\subsection install_ubuntu_3rdparty Optional 3rd party packages
+\subsection install_centos_3rdparty Optional 3rd party packages
 
 As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
 
 - OpenCV
 \code
-sudo apt-get install libopencv-dev
+sudo yum install opencv-devel
 \endcode
 - libX11 to be able to open a window to display images
 \code
-sudo apt-get install libx11-dev
+sudo yum install libX11-devel
 \endcode
-- lapack and GSL to benefit from optimized mathematical capabilities
+- lapack and gsl to benefit from optimized mathematical capabilities
 \code
-sudo apt-get install liblapack-dev libgsl0-dev
-\endcode
-- libdc1394 to grab images from firewire cameras
-\code
-sudo apt-get install libdc1394-22-dev
+sudo yum install lapack-devel gsl-devel
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
-sudo apt-get install libv4l-dev
-\endcode
-- Coin, to be able to support vrml cad model used by the model-based trackers
-\code
-sudo apt-get install libCoin80-dev
+sudo yum install libv4l-devel
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
-sudo apt-get install libxml2-dev
+sudo yum install libxml2-devel
 \endcode
 - libjpeg, libpng to support jpeg and png images
 \code
-sudo apt-get install libjpeg-dev libpng12-dev
-\endcode
-- ffmpeg, to be able to read or encode compressed video streams
-\code
-sudo apt-get install libswscale-dev libavutil-dev libavformat-dev libavcodec-dev libbz2-dev libbz2-1.0
-\endcode
-- Ogre 3D if you want to do augmented reality or simulation
-\code
-sudo apt-get install libogre-1.9-dev libois-dev
-\endcode
-- Bar code detection
-\code
-sudo apt-get install libzbar-dev libdmtx-dev
+sudo yum install libjpeg-devel libpng-devel
 \endcode
 
-Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
+Once installed, if you want that ViSP exploit the new 3rd parties, you have to configure ViSP again.
 
 \code
 ccmake ../ViSP-2.10.0
 \endcode
 The following image shows now that all the previous optional 3rd parties are detected.
-\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP after installation of optional 3rd party libraries.
+\image html img-ccmake-centos-all.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP after installation of optional 3rd party libraries.
 
-\subsection install_ubuntu_generate Generating Makefiles
+\note Other <a href="http://www.irisa.fr/lagadic/visp/libraries.html">3rd party libraries</a> are interfaced with ViSP. This is for example the case of <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">Ogre</a> that can be used to enhance the visibility computation of the faces that are tracked with the model-based tracker (see \ref tutorial-tracking-mb), or <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Coin">Coin</a> that can be used to parse vrml files that describe the 3D model of the object to track using the same model-based tracker. It seems that these 3rd parties are not packaged on CentOS. If you want to use these 3rd parties, you have to install them from source code.
+
+\subsection install_centos_generate Generating Makefiles
 
 To generate the makefiles, just press [g] key in the ccmake gui.
 
 Now we can build ViSP.
 
-\section install_ubuntu_build Building ViSP from source
+\subsection install_centos_issues Known issues
+
+- With CentOS 7.0 and cmake 2.8.11, during cmake configuration you may encounter the following issue:
+\code
+CMake Warning at src/CMakeLists.txt:80 (add_library):
+   Cannot generate a safe runtime search path for target visp because files in
+   some directories may conflict with libraries in implicit directories:
+
+     runtime library [libpthread.so] in /usr/lib64 may be hidden by files in:
+       //lib64
+
+   Some of these libraries may not be found correctly.
+\endcode
+The problem was that libpthread.so exists in /usr/lib64 and in //lib64. In //lib64 it should be a symbolic link to /usr/lib64.
+\code
+$ ls -als //lib64
+  0 lrwxrwxrwx. 1 root root 9 Feb  4 12:16 //lib64 -> usr/lib64
+$ ls -als //lib64/libpthread*
+140 -rwxr-xr-x. 1 root root 141616 Jan 27 15:13 //lib64/libpthread-2.17.so
+  4 -rw-r--r--. 1 root root    222 Jan 27 14:42 //lib64/libpthread.so
+  0 lrwxrwxrwx. 1 root root     18 Feb  4 12:34 //lib64/libpthread.so.0 -> libpthread-2.17.so
+\endcode  
+The fix consists in removing //lib64/libpthread.so and creating a new symbolic link
+\code
+$ cd //lib64
+$ sudo rm libpthread.so
+$ sudo ln -s libpthread-2.17.so libpthread.so
+$ ls -als libpthread*
+140 -rwxr-xr-x. 1 root root 141616 Jan 27 15:13 libpthread-2.17.so
+  0 lrwxrwxrwx. 1 root root     18 Feb  4 16:09 libpthread.so -> libpthread-2.17.so
+  0 lrwxrwxrwx. 1 root root     18 Feb  4 12:34 libpthread.so.0 -> libpthread-2.17.so
+\endcode
+
+
+\section install_fedora_build Building ViSP from source
 
 - To build ViSP proceed with:
 \code
@@ -223,7 +236,7 @@ sudo make install
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
-sudo apt-get install doxygen graphviz texlive-latex-base
+sudo yum install doxygen graphviz
 \endcode
 Then you can proceed with:
 \code

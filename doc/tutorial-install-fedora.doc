@@ -7,6 +7,7 @@ In this tutorial you will learn how to install ViSP from source on Linux Fedora.
 
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
+- \ref tutorial-install-centos
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-win
 - \ref tutorial-install-iOS
@@ -77,10 +78,10 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
 ccmake ../ViSP-2.10.0
 \endcode
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used.
 \image html img-ccmake-ubuntu.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP.
 
-- There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+- There is an other way to see which are the 3rd parties that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
                     ViSP third-party libraries
 
@@ -143,7 +144,7 @@ Documentation:
   Graphviz dot                : no
 ViSP built with C++11 features: no
 \endcode
-In our case, only \c pthread an OpenMP 3rd party are detected.  
+In our case, only \c pthread an OpenMP 3rd parties are detected.  
 
 \subsection install_fedora_3rdparty Optional 3rd party packages
 
@@ -194,12 +195,12 @@ su -c "yum install ogre-devel ogre-samples ois-devel"
 su -c "yum install zbar-devel libdmtx-devel"
 \endcode
 
-Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
+Once installed, if you want that ViSP exploit the new 3rd parties, you have to configure ViSP again.
 
 \code
 ccmake ../ViSP-2.10.0
 \endcode
-The following image shows now that all the previous optional 3rd party are detected.
+The following image shows now that all the previous optional 3rd parties are detected.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP after installation of optional 3rd party libraries.
 
 \subsection install_fedora_generate Generating Makefiles

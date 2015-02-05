@@ -12,6 +12,7 @@ In a first section we give some useful instructions to start with a Raspberry PI
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
+- \ref tutorial-install-centos
 - \ref tutorial-install-win
 - \ref tutorial-install-iOS
 
@@ -146,10 +147,10 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
 ccmake ../ViSP-2.10.0
 \endcode
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used. Then to generate the makefiles, just press [g] key in the ccmake gui.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. Then to generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP. 
 
-- There is an other way to see which are the 3rd party that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+- There is an other way to see which are the 3rd parties that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
                     ViSP third-party libraries
 

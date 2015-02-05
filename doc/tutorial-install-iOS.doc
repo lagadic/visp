@@ -8,6 +8,7 @@ In this tutorial you will learn how to install ViSP from source on OSX in order 
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
+- \ref tutorial-install-centos
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-win
 
@@ -70,7 +71,7 @@ As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <
 
 - liblapack, libxml2, libjpeg, libpng, ffmpeg should be already included in your OS X package
 
-Once installed, if you want that ViSP exploit the new 3rd party, you have to configure ViSP again.
+Once installed, if you want that ViSP exploit the new 3rd parties, you have to configure ViSP again.
 
 Now we can finish the configuration stage by generating the Xcode project.
 
