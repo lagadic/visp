@@ -13,10 +13,11 @@ Concerning ViSP installation, we provide also other tutorials that explain how t
 - \ref tutorial-install-ubuntu
 - \ref tutorial-install-fedora
 - \ref tutorial-install-centos
+- \ref tutorial-install-opensuse
 - \ref tutorial-install-win
 - \ref tutorial-install-iOS
 
-ViSP can also be installed from source on other platforms including OSX, CentOS, openSUZE (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
+ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
 Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
  
