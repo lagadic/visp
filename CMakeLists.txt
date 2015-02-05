@@ -1419,6 +1419,7 @@ if(USE_OPENCV)
                   endif()
                 else()
                   find_library(3rdparty_location_ NAMES ${3rdparty_})
+                  mark_as_advanced(3rdparty_location_)
                   if(3rdparty_location_)
 	                  #message(${3rdparty_location_})
     	              list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_location_}) # should be a system dependency
