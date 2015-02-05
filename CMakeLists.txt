@@ -1363,6 +1363,13 @@ if(USE_OPENCV)
     #if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
     if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)    
       set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO") # RelWithDebugInfo was requested under Fedora 20
+      
+      if(POLICY CMP0045)
+        # Fix Error on non-existent target in get_target_property for 3rd party location extraction
+        cmake_policy(PUSH)
+        cmake_policy(SET CMP0045 OLD)
+      endif()
+      
       foreach(component_ ${OpenCV_LIB_COMPONENTS})
         foreach(imp_config_ ${config_})
           if(OpenCV_SHARED)
@@ -1424,6 +1431,12 @@ if(USE_OPENCV)
           endif()
         endforeach()
       endforeach()
+      
+      if(POLICY CMP0045)
+        # Fix Error on non-existent target in get_target_property for 3rd party location extraction
+        cmake_policy(POP)
+      endif()
+      
     else()
       # this should be an old OpenCV version that doesn't have the previous behavior
       list(APPEND VISP_EXTERN_LIBRARIES ${OpenCV_LIBS})
