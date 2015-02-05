@@ -43,6 +43,7 @@ ViSP 2.10.0 (alpha released January 28th, 2015)
     . Compat with MinGW w64 from http://mingw-w64.sourceforge.net/
   - Tutorials
     . New tutorial to show how to install ViSP from Ubuntu official packages.
+    . New tutorial to show how to install ViSP on CentOS.
     . New tutorial to show how to install ViSP on Raspberry Pi.
     . New keypoints matching tutorial.
     . New bar code detection tutorial.
