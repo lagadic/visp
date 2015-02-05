@@ -105,7 +105,7 @@ int main(int argc, char ** argv) {
 
 #if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
     detectorName = "SIFT";
-    extractorName = "ORB";
+    extractorName = "SIFT";
     matcherName = "BruteForce";
     configurationFile = "detection-config-SIFT.xml";
 #endif
