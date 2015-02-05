@@ -621,8 +621,10 @@ void
 				sprintf(name,fileName,image_number) ;
 				file.open(name, std::ios::in);
 				failed = file.fail();
-				if (!failed) file.close();
-				image_number++;
+        if (!failed) {
+          file.close();
+          image_number++;
+        }
 			}while(!failed);
 
 			lastFrame = image_number - 1;

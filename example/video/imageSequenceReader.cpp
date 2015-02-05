@@ -252,7 +252,7 @@ main(int argc, const char ** argv)
     }
 
     //Initialize the reader and get the first frame.
-    reader.setFileName(filename.c_str());
+    reader.setFileName(filename);
     reader.setFirstFrameIndex(opt_first);
     reader.open(I);
 
@@ -272,7 +272,6 @@ main(int argc, const char ** argv)
       display.init(I, 100, 100,"Display video frame") ;
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
-
     }
 
     if (opt_display && opt_click_allowed)
