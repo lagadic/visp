@@ -190,7 +190,7 @@ Now we can build ViSP.
 
 \subsection install_centos_issues Known issues
 
-- With CentOS 7.0 and cmake 2.8.11, during cmake configuration you may encounter the following issue:
+- On CentOS 7.0 with cmake 2.8.11, during cmake configuration you may encounter the following issue:
 \code
 CMake Warning at src/CMakeLists.txt:80 (add_library):
    Cannot generate a safe runtime search path for target visp because files in
@@ -221,6 +221,11 @@ $ ls -als libpthread*
   0 lrwxrwxrwx. 1 root root     18 Feb  4 12:34 libpthread.so.0 -> libpthread-2.17.so
 \endcode
 
+- On CentOS 7.0, vpVideoReader is not able to read mpeg videos. If ffmpeg is not installed (this is our case since ffmpeg is not packaged for CentOS 7.0), this class uses OpenCV to read and decode videos. Some examples or tutorials provided in ViSP hang during cv::Capture::open() call. The reason is that OpenCV 2.4.5 cv::Capture seams buggy. This is for example the case if you run:
+\code
+$ ./example/video/videoReader
+\endcode
+A work arround consists in installing a more recent OpenCV version from source. 
 
 \section install_fedora_build Building ViSP from source
 
