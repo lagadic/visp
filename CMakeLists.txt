@@ -1361,8 +1361,8 @@ if(USE_OPENCV)
     #message("OpenCV_LIB_COMPONENTS: ${OpenCV_LIB_COMPONENTS}")
     #message("OpenCV_LIBS: ${OpenCV_LIBS}")
     #if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
-    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
-      set(config_ "RELEASE" "DEBUG" "RELEASEWITHDEBINFO") # RelWithDebugInfo was requested under Fedora 20
+    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)    
+      set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO") # RelWithDebugInfo was requested under Fedora 20
       foreach(component_ ${OpenCV_LIB_COMPONENTS})
         foreach(imp_config_ ${config_})
           if(OpenCV_SHARED)
@@ -1375,8 +1375,8 @@ if(USE_OPENCV)
               get_target_property(component_property_${imp_config_}_ ${component_} IMPORTED_LOCATION_${imp_config_})
           endif()
           get_target_property(component_property_3rdparty_${imp_config_}_ ${component_} IMPORTED_LINK_INTERFACE_LIBRARIES_${imp_config_})
-          # message("component_property_${imp_config_}_: ${component_property_${imp_config_}_}")
-          # message("component_property_3rdparty_${imp_config_}_: ${component_property_3rdparty_${imp_config_}_}")
+          #message("component_property_${imp_config_}_: ${component_property_${imp_config_}_}")
+          #message("component_property_3rdparty_${imp_config_}_: ${component_property_3rdparty_${imp_config_}_}")
 
           # Under Unix, there is no specific suffix for OpenCV libraries. If one is found we add it
           # Under Windows, we add the "optimized", "debug" specific keywords
@@ -1411,7 +1411,13 @@ if(USE_OPENCV)
                     list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_opt_location_})
                   endif()
                 else()
-                  list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_}) # should be a system dependency
+                  find_library(3rdparty_location_ NAMES ${3rdparty_})
+                  if(3rdparty_location_)
+	                  #message(${3rdparty_location_})
+    	              list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_location_}) # should be a system dependency
+    	          else()
+    	              list(APPEND VISP_EXTERN_LIBRARIES ${3rdparty_}) # should be a system dependency
+    	          endif()
                 endif()
               endif()
             endforeach()
@@ -1463,7 +1469,6 @@ else(USE_OPENCV)
   SET(OpenCV_VERSION_PATCH 0)
   set(VISP_HAVE_OPENCV_VERSION "(0)") # for ViSP-third-party.txt
 endif(USE_OPENCV)
-
 
 # gnu scientific library
 IF(USE_GSL)
