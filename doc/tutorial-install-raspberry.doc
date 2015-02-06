@@ -14,7 +14,8 @@ Concerning ViSP installation, we provide also other tutorials that explain how t
 - \ref tutorial-install-fedora
 - \ref tutorial-install-centos
 - \ref tutorial-install-opensuse
-- \ref tutorial-install-win
+- \ref tutorial-install-win7
+- \ref tutorial-install-win81
 - \ref tutorial-install-iOS
 
 ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
@@ -35,7 +36,7 @@ We suggest to start with NOOBS (New Out Of the Box Software). Bellow we resume t
 - Insert your SD Card into your Raspberry Pi.
 - Plug in your keyboard, mouse, monitor and Ethernet cables.
 - Now plug in the USB power cable to your Pi.
-- Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install. Select the "recommanded Raspbian" checkbox and click on "Install" button.
+- Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install. Select the "recommended Raspbian" checkbox and click on "Install" button.
 - When the install process has completed, the Raspberry Pi configuration menu (raspi-config) will load. Here you are able to set the time and date for your region and enable a Raspberry Pi camera board, or even create users. You can exit this menu by using Tab on your keyboard to move to Finish.
 
 \subsection login Logging in 

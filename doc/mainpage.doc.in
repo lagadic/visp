@@ -52,7 +52,8 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
-- \ref tutorial-install-win <br>In this tutorial you will learn how to install ViSP from source on Windows.
+- \ref tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7.
+- \ref tutorial-install-win81 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 
 \subsection tuto_started Getting started

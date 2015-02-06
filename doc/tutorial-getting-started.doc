@@ -4,9 +4,15 @@
   \tableofcontents
 
 \note We assume in this tutorial that you have successfully installed ViSP. Information on ViSP installation is provided in:
- - \ref tutorial-install-ubuntu
- - \ref tutorial-install-win
- - or on <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>
+- \ref tutorial-install-ubuntu
+- \ref tutorial-install-fedora
+- \ref tutorial-install-opensuse
+- \ref tutorial-install-raspberry
+- \ref tutorial-install-win7
+- \ref tutorial-install-win81
+- \ref tutorial-install-iOS
+- \ref tutorial-install-ubuntu-package
+- or on <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>
 
 In this tutorial you will learn how to use ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 

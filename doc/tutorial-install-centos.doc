@@ -10,7 +10,8 @@ Concerning ViSP installation, we provide also other tutorials that explain how t
 - \ref tutorial-install-fedora
 - \ref tutorial-install-opensuse
 - \ref tutorial-install-raspberry
-- \ref tutorial-install-win
+- \ref tutorial-install-win7
+- \ref tutorial-install-win81
 - \ref tutorial-install-iOS
 
 ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
@@ -146,7 +147,7 @@ In our case, only \c pthread an OpenMP 3rd parties are detected.
 
 \subsection install_centos_3rdparty Optional 3rd party packages
 
-As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommand to install the following:
+As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommend to install the following:
 
 - OpenCV
 \code
@@ -228,11 +229,11 @@ $ ./example/video/videoReader
 \endcode
 A work arround consists in installing a more recent OpenCV version from source. 
 
-\section install_fedora_build Building ViSP from source
+\section install_centos_build Building ViSP from source
 
 - To build ViSP proceed with:
 \code
-make
+make -j4
 \endcode
 
 - To install ViSP proceed with:
