@@ -52,7 +52,6 @@
 #include <limits>
 #include <algorithm>
 #include <map>
-#include <float.h>  // DBL_EPSILON
 
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
@@ -2355,7 +2354,7 @@ vpMbTracker::computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const v
     vpMatrix Js = Ls * LpInv;
 
     // building deltaP
-    vpColVector deltaP = (Js).pseudoInverse(Js.getRows()*DBL_EPSILON) * deltaS;
+    vpColVector deltaP = (Js).pseudoInverse(Js.getRows()*std::numeric_limits<double>::epsilon()) * deltaS;
 
     covarianceMatrix = vpMatrix::computeCovarianceMatrix(Js,deltaP,deltaS,W);
 }

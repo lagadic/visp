@@ -108,11 +108,12 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
 
 BOOL vpReleaseSemaphore(HANDLE hSemaphore,LONG IReleaseCount,LPLONG lpPreviousCount){
   BOOL ret = ReleaseSemaphore(hSemaphore,IReleaseCount,lpPreviousCount);
+#ifndef __MINGW32__
   if(ret==0){
     vpProcessErrors("ReleaseSemaphore");
   }
+#endif
   return ret;
-  
 }
 
 void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){

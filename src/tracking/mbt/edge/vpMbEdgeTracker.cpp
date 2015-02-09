@@ -573,7 +573,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if(isoJoIdentity_){
         LTL = L.AtA();
         computeJTR(L, weighted_error, LTR);
-        v = -0.7*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+        v = -0.7*LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon())*LTR;
     }
     else{
         cVo.buildFrom(cMo);
@@ -581,7 +581,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         vpMatrix LVJTLVJ = (LVJ).AtA();
         vpMatrix LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
-        v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
+        v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
         v = cVo * v;
     }
 
@@ -754,7 +754,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
     if(isoJoIdentity_){
         LTL = L.AtA();
         computeJTR(L, weighted_error, LTR);
-        v = -lambda*LTL.pseudoInverse(LTL.getRows()*DBL_EPSILON)*LTR;
+        v = -lambda*LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon())*LTR;
     }
     else{
         cVo.buildFrom(cMo);
@@ -762,7 +762,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         vpMatrix LVJTLVJ = (LVJ).AtA();
         vpMatrix LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
-        v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*DBL_EPSILON)*LVJTR;
+        v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
         v = cVo * v;
     }
 

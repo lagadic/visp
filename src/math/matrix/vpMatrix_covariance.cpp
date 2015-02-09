@@ -39,8 +39,8 @@
  *
  *****************************************************************************/
 
-#include <limits>   // numeric_limits
-#include <float.h>  // DBL_EPSILON
+#include <limits> // numeric_limits
+#include <cmath>  // std::fabs()
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
@@ -71,7 +71,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
   sigma2 /= denom;
 
-  return (A.t()*A).pseudoInverse(A.getCols()*DBL_EPSILON)*sigma2;
+  return (A.t()*A).pseudoInverse(A.getCols()*std::numeric_limits<double>::epsilon())*sigma2;
 }
 
 /*!
@@ -102,5 +102,5 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
   double sigma2 = (W * b - (W * A * x)).t() * (W*b - (W * A * x));
   sigma2 /= denom;
 
-  return (A.t()*(W2)*A).pseudoInverse(A.getCols()*DBL_EPSILON)*sigma2;
+  return (A.t()*(W2)*A).pseudoInverse(A.getCols()*std::numeric_limits<double>::epsilon())*sigma2;
 }

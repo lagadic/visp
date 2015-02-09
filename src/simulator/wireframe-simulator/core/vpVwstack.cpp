@@ -45,8 +45,8 @@
 
 #include	<stdio.h>
 #include	<string.h>
-#include	<float.h>
-#include	<math.h>
+#include	<limits>
+#include	<cmath> // std::fabs()
 
 // #include	<varargs.h> /* modif Fedora
 #include	<stdarg.h>
@@ -239,7 +239,7 @@ add_vwstack (const char* path, ... )
 		float	z = (float) va_arg (ap, double);
 
 		//if (x == 0 && y == 0 && z == 0)
-		if (fabs(x) <= DBL_EPSILON && fabs(y) <= DBL_EPSILON && fabs(z) <= DBL_EPSILON)
+    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon())
 			fprintf (stderr, "%s: bad vpn\n", proc_name);
 		else {
 			SET_COORD3(sp->vpn,x,y,z);
@@ -259,7 +259,7 @@ add_vwstack (const char* path, ... )
 		float	z = (float) va_arg (ap, double);
 
 		//if (x == 0 && y == 0 && z == 0)
-		if (fabs(x) <= DBL_EPSILON && fabs(y) <= DBL_EPSILON && fabs(z) <= DBL_EPSILON)
+    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon())
 			fprintf (stderr, "%s: bad vup\n", proc_name);
 		else {
 			SET_COORD3(sp->vup,x,y,z);
