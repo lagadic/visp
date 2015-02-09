@@ -627,7 +627,7 @@ void
         }
 			}while(!failed);
 
-			lastFrame = image_number - 1;
+			lastFrame = image_number;
 		}
 	}
 
