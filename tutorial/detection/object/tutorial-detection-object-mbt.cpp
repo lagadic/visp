@@ -9,7 +9,7 @@
 
 
 int main(int argc, char ** argv) {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FFMPEG)
+#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FFMPEG))
   //! [MBT code]
   try {
     std::string videoname = "teabox.mpg";
