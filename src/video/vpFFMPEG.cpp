@@ -602,7 +602,10 @@ void vpFFMPEG::closeStream()
 {
   if (streamWasOpen)
   {
-    av_free(buffer);
+    if (buffer != NULL) {
+      free(buffer);
+      buffer = NULL;
+    }
     
     if (color_type == vpFFMPEG::COLORED)
       av_free(pFrameRGB);
