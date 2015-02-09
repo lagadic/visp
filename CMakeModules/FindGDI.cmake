@@ -49,6 +49,9 @@ IF(WIN32)
   IF(MINGW)
     FIND_LIBRARY(GDI_LIBRARY gdi32
                  "C:/MinGW/lib"
+                 "C:/mingw/mingw/lib"
+                 "$ENV{MINGW_DIR}/lib"
+                 "$ENV{MINGW_DIR}/mingw/lib"
                  DOC "Where can the GDI (Graphics Device Interface) library be found"
                  NO_DEFAULT_PATH
                 )
