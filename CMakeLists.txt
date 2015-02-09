@@ -691,8 +691,16 @@ IF(WIN32 AND NOT CYGWIN)
   if(MINGW)
     CHECK_LIBRARY_EXISTS("ws2_32.a" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
     if(HAVE_LIBWS2_32)
-      #message("have ws2_32.a")
       list(APPEND VISP_EXTERN_LIBRARIES "ws2_32.a")
+	else()
+	  find_library(WS2_32_LIBRARY "libws2_32.a"
+        "$ENV{MINGW_DIR}/lib"
+        "$ENV{MINGW_DIR}/mingw/lib"
+        C:/mingw/mingw/lib)
+	  mark_as_advanced(WS2_32_LIBRARY)
+	  if(WS2_32_LIBRARY)
+	    list(APPEND VISP_EXTERN_LIBRARIES "${WS2_32_LIBRARY}")
+	  endif()
     endif()
   else() # pure WIN32
     CHECK_LIBRARY_EXISTS("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
@@ -702,7 +710,6 @@ IF(WIN32 AND NOT CYGWIN)
     endif()
   endif()
 ENDIF(WIN32 AND NOT CYGWIN)
-
 if(UNIX)
   if(BUILD_DEPRECATED_FUNCTIONS)
     list(APPEND VISP_DEFS "-DUNIX")
