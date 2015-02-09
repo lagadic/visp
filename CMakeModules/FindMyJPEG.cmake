@@ -54,6 +54,8 @@
     $ENV{LIBJPEG_DIR}/include
     $ENV{LIBJPEG_DIR}
     "C:/Program Files/GnuWin32/include"
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
     )
   #MESSAGE("JPEG_INCLUDE_DIR=${JPEG_INCLUDE_DIR}")
 
@@ -69,6 +71,9 @@
     $ENV{LIBJPEG_DIR}/Release
     $ENV{LIBJPEG_DIR}
     "C:/Program Files/GnuWin32/lib"
+    "$ENV{MINGW_DIR}/lib"
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
     )
   #MESSAGE("JPEG_LIBRARY=${JPEG_LIBRARY}")
 
