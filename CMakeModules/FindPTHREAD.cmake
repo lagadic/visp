@@ -47,6 +47,9 @@
   FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
     "$ENV{PTHREAD_HOME}/include"
     "$ENV{PTHREAD_DIR}/include"
+    "$ENV{MINGW_DIR}/include"
+    "$ENV{MINGW_DIR}/mingw/include"
+    C:/mingw/mingw/include
     /usr/include
   )
   #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
@@ -57,9 +60,12 @@
     PATHS
     "$ENV{PTHREAD_HOME}/lib"
     "$ENV{PTHREAD_DIR}/lib"
+    "$ENV{MINGW_DIR}/lib"
+    "$ENV{MINGW_DIR}/mingw/lib"
     /usr/lib
     /usr/local/lib
     /lib    
+    C:/mingw/mingw/lib
     )
 
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
