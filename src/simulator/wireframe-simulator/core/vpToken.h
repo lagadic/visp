@@ -48,7 +48,7 @@
 
 
 typedef	struct	{
-	char	*ident;	/* identifateur 	*/
+  const char	*ident;	/* identifateur 	*/
 	Index	token;	/* code du jeton 	*/
 } Keyword;
 

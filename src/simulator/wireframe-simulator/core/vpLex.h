@@ -53,8 +53,8 @@
 int lex(void);
 void unlex (void);
 void lexerr (const char* path, ...);
-int pusherr (char *str);
-int popuperr (char *str);
+int pusherr (const char *str);
+int popuperr (const char *str);
 int poperr (void);
 int lexecho (FILE *f, int token);
 

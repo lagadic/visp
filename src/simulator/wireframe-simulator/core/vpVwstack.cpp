@@ -77,7 +77,7 @@ fprintf_vwstack (FILE *fp, char *argv)
 	static	 char	proc_name[] = "fprintf_vwstack";
 
 	if (argv == NULL || strcmp (argv, "type") == 0) {
-		char	*typetoa;
+    const char	*typetoa;
 
 		switch (sp->type) {
 		case PARALLEL	:

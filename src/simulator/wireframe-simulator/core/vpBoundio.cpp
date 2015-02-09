@@ -166,9 +166,9 @@ void fscanf_Face_list (Face_list *lp)
  */
 void fscanf_Point3f_list (Point3f_list *lp)
 {
-	static	char	proc_name[] = "fscanf_Point3f_list";
+  static const char	proc_name[] = "fscanf_Point3f_list";
 
-static	char	*err_tbl[] = {
+static const char	*err_tbl[] = {
 "float expected (coordinate ",
 " of point)"
 };

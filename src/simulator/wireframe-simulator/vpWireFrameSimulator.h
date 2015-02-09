@@ -55,7 +55,6 @@
 #include <list>
 #include <string>
 
-extern "C" {
 #include <visp/vpMy.h>
 #include <visp/vpArit.h>
 #include <visp/vpBound.h>
@@ -83,9 +82,8 @@ void display_scene(Matrix mat, Bound_scene sc);
 int View_to_Matrix (View_parameters *vp, Matrix m);
 Bound *clipping_Bound (Bound *bp, Matrix m);
 int set_Bound_face_display (Bound *bp, Byte b);
-int point_3D_2D (Point3f *p3, Index size, unsigned int xsize, unsigned int ysize, Point2i *p2);
+void point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
 int wireframe_Face (Face *fp, Point2i *pp);
-}
 
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>

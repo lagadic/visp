@@ -53,8 +53,8 @@
 void open_keyword (Keyword *kwp);
 static	void	open_hash (void);
 static	void	close_hash (void);
-static	int hashpjw (char *str);
-static	void insert_keyword (char *str, Index token);
+static	int hashpjw (const char *str);
+static	void insert_keyword (const char *str, Index token);
 Index get_symbol (char *ident, int length);
 
 #ifdef	debug
@@ -68,7 +68,7 @@ static	char	*get_keyword (void);
 
 typedef struct	bucket {
 	struct	bucket	*next;	/* element suivant	*/
-	char		*ident;	/* identifateur 	*/
+  char		*ident;	/* identifateur 	*/
 	Byte		length;	/* longueur de "ident"	*/
 	Index		token;	/* code du jeton 	*/
 } Bucket;
@@ -151,7 +151,7 @@ close_hash (void)
  *		Le code de la chaine.
  */
 static	int
-hashpjw (char *str)
+hashpjw (const char *str)
 {
 	unsigned	h = 0;	/* "hash value"	*/
 	unsigned	g;
@@ -176,9 +176,9 @@ hashpjw (char *str)
  * token	Valeur du jeton associe au mot cle.
  */
 static	void
-insert_keyword (char *str, Index token)
+insert_keyword (const char *str, Index token)
 {
-	static	 char	proc_name[] = "insert_keyword";
+  static	const char	proc_name[] = "insert_keyword";
 
 	Bucket	**head = hash_tbl + hashpjw (str);
 	Bucket	*bp;
@@ -212,7 +212,7 @@ insert_keyword (char *str, Index token)
 Index get_symbol (char *ident, int length)
 {
 	Bucket	*bp; 
-	char	*kwd; 
+  const char	*kwd;
 	char	*idn = ident;
 	int	len  = length;
 

@@ -76,7 +76,7 @@ void skip_cmd (void)
  * token	Jeton du mot cle a reconnaitre.
  * err		Message d'erreur si le mot cle n'est pas reconnu.
  */
-void skip_keyword (int token, char *err)
+void skip_keyword (int token, const char *err)
 {
 	int	t;
 

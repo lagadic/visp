@@ -253,23 +253,23 @@ SET (SRC_SERVO
 SET (SRC_SIMULATOR
   simulator/image-simulator/vpImageSimulator.cpp
   simulator/wireframe-simulator/vpWireFrameSimulator.cpp
-  simulator/wireframe-simulator/core/vpArit.c
-  simulator/wireframe-simulator/core/vpAritio.c
-  simulator/wireframe-simulator/core/vpBound.c
-  simulator/wireframe-simulator/core/vpBoundio.c
-  simulator/wireframe-simulator/core/vpClipping.c
-  simulator/wireframe-simulator/core/vpDisplay.c
-  simulator/wireframe-simulator/core/vpKeyword.c
-  simulator/wireframe-simulator/core/vpLex.c
-  simulator/wireframe-simulator/core/vpMyio.c
-  simulator/wireframe-simulator/core/vpParser.c
-  simulator/wireframe-simulator/core/vpProjection.c
-  simulator/wireframe-simulator/core/vpRfstack.c
-  simulator/wireframe-simulator/core/vpSkipio.c
-  simulator/wireframe-simulator/core/vpTmstack.c
-  simulator/wireframe-simulator/core/vpToken.c
-  simulator/wireframe-simulator/core/vpViewio.c
-  simulator/wireframe-simulator/core/vpVwstack.c
+  simulator/wireframe-simulator/core/vpArit.cpp
+  simulator/wireframe-simulator/core/vpAritio.cpp
+  simulator/wireframe-simulator/core/vpBound.cpp
+  simulator/wireframe-simulator/core/vpBoundio.cpp
+  simulator/wireframe-simulator/core/vpClipping.cpp
+  simulator/wireframe-simulator/core/vpDisplay.cpp
+  simulator/wireframe-simulator/core/vpKeyword.cpp
+  simulator/wireframe-simulator/core/vpLex.cpp
+  simulator/wireframe-simulator/core/vpMyio.cpp
+  simulator/wireframe-simulator/core/vpParser.cpp
+  simulator/wireframe-simulator/core/vpProjection.cpp
+  simulator/wireframe-simulator/core/vpRfstack.cpp
+  simulator/wireframe-simulator/core/vpSkipio.cpp
+  simulator/wireframe-simulator/core/vpTmstack.cpp
+  simulator/wireframe-simulator/core/vpToken.cpp
+  simulator/wireframe-simulator/core/vpViewio.cpp
+  simulator/wireframe-simulator/core/vpVwstack.cpp
   )
 IF(VISP_HAVE_X11 OR VISP_HAVE_GDI OR VISP_HAVE_OPENCV OR VISP_HAVE_D3D9 OR VISP_HAVE_GTK)
   list(APPEND SRC_SIMULATOR simulator/coin-simulator/vpProjectionDisplay.cpp)

@@ -134,7 +134,7 @@ void lexerr (const char* path, ...);
 #define	E_9		9
 
 
-char	*lex_errtbl[] = {	/* table des messages d'erreur		*/
+const char	*lex_errtbl[] = {	/* table des messages d'erreur		*/
 	"error unknown",
 	"symbol undefined",
 	"unexpected EOF in comment",
@@ -718,7 +718,7 @@ static	void	next_source (void)
 #define	ERR_STACK_MAX	32
 
 
-static	char	*err_stack[ERR_STACK_MAX];
+static	const char	*err_stack[ERR_STACK_MAX];
 static	int	size_stack = 0;
 
 
@@ -794,9 +794,9 @@ void poperr (void)
 /*
  * La procedure "popup_error" remplace le message d'erreur du sommet de pile.
  */
-void popuperr (/*const */char *str)
+void popuperr (const char *str)
 {
-	static	char	proc_name[] = "popuerr";
+  static const char	proc_name[] = "popuerr";
 
 	if (size_stack <= 0) {
 		fprintf (stderr, "%s: error stack underflow\n", proc_name);
@@ -808,9 +808,9 @@ void popuperr (/*const */char *str)
 /*
  * La procedure "pusherr" empile le message d'erreur.
  */
-void pusherr (/*const */char *str)
+void pusherr (const char *str)
 {
-	static	char	proc_name[] = "pusherr";
+  static const char	proc_name[] = "pusherr";
 
 	if (size_stack >= ERR_STACK_MAX) {
 		fprintf (stderr, "%s: error stack overflow\n", proc_name);

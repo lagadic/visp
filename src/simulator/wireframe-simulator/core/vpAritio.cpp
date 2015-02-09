@@ -74,7 +74,7 @@ void fprintf_Position (FILE *f, AritPosition *pp)
  */
 void fscanf_Point3f (Point3f *pp)
 {
-static	 char	*err_tbl[] = {
+static const char	*err_tbl[] = {
 "float expected (coordinate ",
 " of point)"
 };
@@ -106,7 +106,7 @@ static	 char	*err_tbl[] = {
  */
 void fscanf_Vector (Vector *vp)
 {
-static	 char	*err_tbl[] = {
+static const char	*err_tbl[] = {
 "float expected (coordinate ",
 " of vector)"
 };
