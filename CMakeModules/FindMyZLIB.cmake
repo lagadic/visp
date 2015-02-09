@@ -50,6 +50,8 @@ FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
   /usr/include
   /usr/local/include
   "C:/Program Files/zlib/include"
+  "$ENV{MINGW_DIR}/include"
+  C:/mingw/include
   )
 
 IF(UNIX)
@@ -64,13 +66,15 @@ IF(UNIX)
   #MESSAGE("ZLIB_LIBRARY=${ZLIB_LIBRARY}")
   #MESSAGE("ZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}")
 ELSE(UNIX)
-  FIND_LIBRARY(ZLIB_LIBRARY_RELEASE zlib
+  FIND_LIBRARY(ZLIB_LIBRARY_RELEASE z zlib
     $ENV{ZLIB_DIR}/lib
     $ENV{ZLIB_LIBRARY_RELEASE_DIR}
     /lib
     /usr/lib
     /usr/local/lib
     "C:/Program Files/zlib/lib"
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
     )
 
   FIND_LIBRARY(ZLIB_LIBRARY_DEBUG zlibd

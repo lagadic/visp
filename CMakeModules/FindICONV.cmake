@@ -51,6 +51,8 @@ FIND_PATH(ICONV_INCLUDE_DIR iconv.h
     $ENV{XML2_HOME}/include
     "c:/libxml2/include"
     "c:/iconv/include"
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
 )
 FIND_LIBRARY(ICONV_LIBRARY iconv
     $ENV{ICONV_DIR}/lib
@@ -59,6 +61,8 @@ FIND_LIBRARY(ICONV_LIBRARY iconv
     $ENV{XML2_HOME}/lib
     "c:/libxml2/lib"
     "c:/iconv/lib"
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
 )
 
 IF(ICONV_LIBRARY)

@@ -52,6 +52,8 @@
     "/usr/local/include"
     $ENV{FFMPEG_DIR}/include
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -64,6 +66,8 @@
     "/usr/local/include"
     $ENV{FFMPEG_DIR}/include
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -76,6 +80,8 @@
     "/usr/local/include"
     $ENV{FFMPEG_DIR}/include
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
@@ -88,6 +94,8 @@
     "/usr/local/include"
     $ENV{FFMPEG_DIR}/include
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
     PATH_SUFFIXES
       libswscale
       ffmpeg
@@ -104,6 +112,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
   )
   FIND_LIBRARY(FFMPEG_AVCODEC_LIBRARY
     NAMES
@@ -115,6 +125,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
   )
   FIND_LIBRARY(FFMPEG_AVFORMAT_LIBRARY
     NAMES
@@ -126,6 +138,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
   )
 
   FIND_LIBRARY(FFMPEG_AVCORE_LIBRARY
@@ -138,6 +152,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
   )
 
   FIND_LIBRARY(FFMPEG_SWSCALE_LIBRARY
@@ -150,6 +166,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
   )
 
   # FFMpeg depend son Zlib
@@ -192,6 +210,29 @@ IF(FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_INCLUDE_DIR_AVFORMAT AND FFMPEG_INCLUDE
     LIST(APPEND FFMPEG_LIBRARIES ${FFMPEG_AVCORE_LIBRARY})
   endif()
   list(APPEND FFMPEG_LIBRARIES ${ZLIB_LIBRARIES} ${BZIP2_LIBRARIES})
+  if(ICONV_FOUND)
+    list(APPEND FFMPEG_LIBRARIES ${ICONV_LIBRARIES})
+  endif()
+
+else(MINGW AND FFMPEG_INCLUDE_DIR_AVCODEC AND FFMPEG_INCLUDE_DIR_AVFORMAT AND FFMPEG_INCLUDE_DIR_AVUTIL AND FFMPEG_INCLUDE_DIR_SWSCALE AND FFMPEG_SWSCALE_LIBRARY AND FFMPEG_AVFORMAT_LIBRARY AND FFMPEG_AVCODEC_LIBRARY AND FFMPEG_AVUTIL_LIBRARY AND ZLIB_LIBRARIES)
+  # Bzip2 is nor requested with mingw-w64
+  SET(FFMPEG_FOUND TRUE)
+  SET(FFMPEG_INCLUDE_DIRS
+    ${FFMPEG_INCLUDE_DIR_AVCODEC}
+    ${FFMPEG_INCLUDE_DIR_AVFORMAT}
+    ${FFMPEG_INCLUDE_DIR_AVUTIL}
+    ${FFMPEG_INCLUDE_DIR_SWSCALE}
+  )
+  SET(FFMPEG_LIBRARIES
+    ${FFMPEG_SWSCALE_LIBRARY}
+    ${FFMPEG_AVFORMAT_LIBRARY}
+    ${FFMPEG_AVCODEC_LIBRARY}
+    ${FFMPEG_AVUTIL_LIBRARY}
+  )
+  if(FFMPEG_AVCORE_LIBRARY)
+    LIST(APPEND FFMPEG_LIBRARIES ${FFMPEG_AVCORE_LIBRARY})
+  endif()
+  list(APPEND FFMPEG_LIBRARIES ${ZLIB_LIBRARIES})
   if(ICONV_FOUND)
     list(APPEND FFMPEG_LIBRARIES ${ICONV_LIBRARIES})
   endif()
