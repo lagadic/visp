@@ -254,12 +254,25 @@ void vpMomentCInvariant::printI(unsigned int index){
 }
 
 /*!
+  Print out all invariants that were computed
+  There are 15 of them, as in [Point-based and region based.ITRO05]
+  \cite Tahri05z
+ */
+void vpMomentCInvariant::printInvariants(std::ostream& os) const{
+    for (unsigned int i = 1; i < I.size(); ++i){ // i = 1 since vector I has been indexed from 1 in vpMomentCinvariant
+        os << "I[" << i << "]=" << I[i] << std::endl;
+    }
+    os << std::endl;
+
+}
+
+/*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentCInvariant& c){
+VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpMomentCInvariant& c){
     for(unsigned int i = 0;i<c.values.size();i++){
       os << c.values[i] << "," << std::endl;
     }
-
     return os;
 }
+
