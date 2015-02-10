@@ -62,6 +62,21 @@
   // 4986 : undocumented
 #endif
 
+#if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
+// Work arround to fix build issues that may occur with Mingw:
+// error: 'DBL_EPSILON' was not declared in this scope
+// error: 'FLT_EPSILON' was not declared in this scope
+
+#  include <float.h>
+
+#  ifndef DBL_EPSILON
+#    define DBL_EPSILON __DBL_EPSILON__
+#  endif
+#  ifndef FLT_EPSILON
+#    define FLT_EPSILON __FLT_EPSILON__
+#  endif
+#endif
+
 // ViSP major version.
 #define VISP_VERSION_MAJOR ${VISP_VERSION_MAJOR}
 
