@@ -59,7 +59,7 @@ class vpCameraParameters;
 
   \ingroup TrackingMoments
 
-  \brief Class for generic objects. 
+  \brief Class for generic objects.
 
   It contains all basic moments often described by \f$m_{ij}\f$ of order \f$i+j\f$ going from \f$m_{00}\f$ to the order used as parameter in vpMomentObject() constructor.
   All other moments implemented in ViSP (gravity center, alpha orientation, centered moments...) use this moment object as a combination of its different values.
@@ -134,11 +134,11 @@ int main()
   std::vector<double> moment = obj.get();
   std::cout << std::endl << "Basic moment available (from vector of doubles) " << std::endl;
   for(unsigned int k=0; k<=obj.getOrder(); k++) {
-		for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++){
-			std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
-		}
-		std::cout<<std::endl;
-	}
+        for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++){
+            std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
+        }
+        std::cout<<std::endl;
+    }
 
   // 2. Print the contents of moment object directly
   std::cout << std::endl << "Basic moment available: ";
@@ -172,7 +172,7 @@ int main()
 
   This example produces the following results:
   \code
-Considered points: 
+Considered points:
 point 0: -0.2, 0.1
 point 1: 0.3, 0.1
 point 2: 0.2, -0.1
@@ -187,14 +187,14 @@ m04=0.00080625  m14=-7.125e-05
 m05=-6.59375e-05
 
 Basic moment available:
-4	0.1	0.21	0.019	0.0129	0.00211	
--0.05	0.02	0.003	0.0023	0.00057	x	
-0.0525	-0.0015	0.0026	9e-05	x	x	
--0.002375	0.000575	-4.5e-05	x	x	x	
-0.00080625	-7.125e-05	x	x	x	x	
--6.59375e-05	x	x	x	x	x	
+4	0.1	0.21	0.019	0.0129	0.00211
+-0.05	0.02	0.003	0.0023	0.00057	x
+0.0525	-0.0015	0.0026	9e-05	x	x
+-0.002375	0.000575	-4.5e-05	x	x	x
+0.00080625	-7.125e-05	x	x	x	x
+-6.59375e-05	x	x	x	x	x
 
-Direct acces to some basic moments: 
+Direct acces to some basic moments:
 m00: 4
 m10: 0.1
 m01: -0.05
@@ -205,7 +205,7 @@ m02: 0.0525
 Common moments computed using basic moments:
 Surface: 0.259375
 Alpha: 0.133296
-Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000421875 
+Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000421875
   \endcode
 
   Note that in the continuous case, the moment object \f$m_{00}\f$ corresponds to the surface \f$a\f$ of the object.
@@ -239,6 +239,14 @@ public:
   // Constructors
   vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject& srcobj);
+  /*!
+  Virtual destructor to allow polymorphic usage.
+  For instance,
+  \code
+  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER); where vpWeightedMomentObject is child class of vpMomentObject
+  \endcode
+  */
+  virtual ~vpMomentObject();
 
   void fromImage(const vpImage<unsigned char>& image,unsigned char threshold, const vpCameraParameters& cam); // Binary version
   void fromImage(const vpImage<unsigned char>& image, const vpCameraParameters& cam, vpCameraImgBckGrndType bg_type, bool normalize_with_pix_size = true); // Photometric version
