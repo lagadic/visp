@@ -78,7 +78,7 @@ void vpFeatureMomentArea::compute_interaction(){
 		interaction_matrices[0][0][5] = 0.;
 	}
 	else {
-		// Get Xg and Yg
+        // Get Xg and Yg
 		bool found_xgyg;
 		const vpMomentGravityCenter& momentGravity = static_cast<const vpMomentGravityCenter&>(moments.get("vpMomentGravityCenter",found_xgyg));
 		if (!found_xgyg) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
@@ -91,8 +91,8 @@ void vpFeatureMomentArea::compute_interaction(){
 		double Yg = momentGravity.getYg();
 
 		double a = areamoment.get()[0];	// Area scalar
-        //assert(a==mobj.get(0,0));
-        assert(std::fabs(a-mobj.get(0,0)) < a*std::numeric_limits<double>::epsilon());
+        assert(a==mobj.get(0,0));
+        //assert(std::fabs(a-mobj.get(0,0)) < a*std::numeric_limits<double>::epsilon());
 
 		interaction_matrices[0][0][0] = -a*A;
 		interaction_matrices[0][0][1] = -a*B;
