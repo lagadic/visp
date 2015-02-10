@@ -143,11 +143,11 @@ void vpMomentObject::cacheValues(std::vector<double>& cache,double x, double y){
  */
 void vpMomentObject::cacheValues(std::vector<double>& cache,double x, double y, double IntensityNormalized) {
 
-	cache[0]=IntensityNormalized;
+    cache[0]=IntensityNormalized;
 
-	double invIntensityNormalized = 0.;
-	if (std::fabs(IntensityNormalized)>=std::numeric_limits<double>::epsilon())
-		 invIntensityNormalized = 1.0/IntensityNormalized;
+    double invIntensityNormalized = 0.;
+    if (std::fabs(IntensityNormalized)>=std::numeric_limits<double>::epsilon())
+         invIntensityNormalized = 1.0/IntensityNormalized;
 
     for(register unsigned int i=1;i<order;i++)
         cache[i]=cache[i-1]*x;
@@ -460,11 +460,11 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
  */
 void
 vpMomentObject::init(unsigned int orderinp) {
-	order = orderinp + 1;
-	type = vpMomentObject::DENSE_FULL_OBJECT;
-	flg_normalize_intensity = true;                 // By default, the intensity values are normalized
-	values.resize((order+1)*(order+1));
-	values.assign((order+1)*(order+1),0);
+    order = orderinp + 1;
+    type = vpMomentObject::DENSE_FULL_OBJECT;
+    flg_normalize_intensity = true;                 // By default, the intensity values are normalized
+    values.resize((order+1)*(order+1));
+    values.assign((order+1)*(order+1),0);
 }
 
 /*!
@@ -472,11 +472,11 @@ vpMomentObject::init(unsigned int orderinp) {
  */
 void
 vpMomentObject::init(const vpMomentObject& objin){
-	order = objin.getOrder()+1;
-	type = objin.getType();
-	flg_normalize_intensity = objin.flg_normalize_intensity;
-	values.resize(objin.values.size());
-	values = objin.values;
+    order = objin.getOrder()+1;
+    type = objin.getType();
+    flg_normalize_intensity = objin.flg_normalize_intensity;
+    values.resize(objin.values.size());
+    values = objin.values;
 }
 
 /*!
@@ -559,7 +559,7 @@ void vpMomentObject::set(unsigned int i, unsigned int j, const double& value_ij)
 }
 
 /*!
-  Outputs the basic moment's values \f$m_{ij}\f$ to a stream presented as a matrix.    
+  Outputs the basic moment's values \f$m_{ij}\f$ to a stream presented as a matrix.
   The first line corresponds to \f$m_{0[0:order]}\f$, the second one to \f$m_{1[0:order]}\f$
   Values in table corresponding to a higher order are marked with an "x" and not computed.
 
@@ -646,4 +646,15 @@ vpMomentObject::convertTovpMatrix(const vpMomentObject& momobj) {
         }
     }
     return M;
+}
+
+/*!
+  Nothing to destruct. This will allow for a polymorphic usage
+  For instance,
+  \code
+  vpMomentObject* obj = new vpWeightedMomentObject(weightfunc,ORDER); where vpWeightedMomentObject is child class of vpMomentObject
+  \endcode
+ */
+vpMomentObject::~vpMomentObject(){
+// deliberate empty
 }
