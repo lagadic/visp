@@ -198,6 +198,8 @@ class vpMomentDatabase;
 
 */
 class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
+ private:
+    std::vector<vpMatrix> LI;
  public:
     /*!
     Initializes the feature with information about the database of moment primitives, the object plane and feature database.
@@ -209,7 +211,7 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
 
     */
     vpFeatureMomentCInvariant(vpMomentDatabase& data_base,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments=NULL) :
-        vpFeatureMoment(data_base,A_,B_,C_,featureMoments,16){}
+        vpFeatureMoment(data_base,A_,B_,C_,featureMoments,16){LI.resize(16);}
     void compute_interaction();
         /*!
           associated moment name
@@ -276,6 +278,16 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
           Shortcut selector for \f$P_y\f$.
           */
         static unsigned int selectPy(){ return 1 << 13; }
+
+        /*!
+          Print all the interaction matrices of the moment invariants
+         */
+        void printLsofInvariants(std::ostream& os) const;
+
+        /*!
+          Print all the interaction matrices of visual features
+         */
+        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpFeatureMomentCInvariant& featcinv);
 
 };
 #endif
