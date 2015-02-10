@@ -207,7 +207,8 @@ void vpFeatureMomentCInvariant::compute_interaction(){
 */
 void vpFeatureMomentCInvariant::compute_interaction(){
 
-    std::vector<vpMatrix> LI(16);
+    //std::vector<vpMatrix> LI(16);
+    LI.resize(16); // LI made class member
 
     bool found_moment_centered;
     bool found_moment_cinvariant;
@@ -340,7 +341,13 @@ void vpFeatureMomentCInvariant::compute_interaction(){
 
     interaction_matrices.resize(14);
 
+    /*
+    momentCInvariant.printInvariants(std::cout);
+    printLsofInvariants(std::cout);
+    */
+
     interaction_matrices[0] = (1./(momentCInvariant.getI(2)*momentCInvariant.getI(2)))*(momentCInvariant.getI(2)*LI[1]-momentCInvariant.getI(1)*LI[2]);
+
     interaction_matrices[1] = (1./(momentCInvariant.getI(4)*momentCInvariant.getI(4)))*(momentCInvariant.getI(4)*LI[3]-momentCInvariant.getI(3)*LI[4]);
 
     interaction_matrices[2] = (1./(momentCInvariant.getI(6)*momentCInvariant.getI(6)))*(momentCInvariant.getI(6)*LI[5]-momentCInvariant.getI(5)*LI[6]);
@@ -366,5 +373,52 @@ void vpFeatureMomentCInvariant::compute_interaction(){
     interaction_matrices[12] = (1/(I3*I3))*LI1-(2*I1/(I3*I3*I3))*LI3;
 
     interaction_matrices[13] = (I2/(I3*I3*I3))*La+(a/(I3*I3*I3))*LI2-(3*a*I2/(I3*I3*I3*I3))*LI3;
+
+    /*
+    std::cout << (*this);
+    vpTRACE("Done.");
+    std::exit(-1);
+    */
+}
+
+/*!
+  Print out all invariants that were computed
+  There are 15 of them, as in [Point-based and region based.ITRO05]
+  \cite Tahri05z
+ */
+void vpFeatureMomentCInvariant::printLsofInvariants(std::ostream& os) const{
+    for (unsigned int i = 1; i < 15; ++i){
+        os << "LI[" << i << "] = ";
+        LI[i].matlabPrint(os);
+        os << std::endl;
+    }
+}
+
+VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCInvariant& featcinv)
+{
+    //Print L for c1 .. c10
+    for (unsigned int i = 0; i < 10; ++i){
+        os << "L_c[" << i << "] = ";
+        featcinv.interaction_matrices[i].matlabPrint(os);
+        os << std::endl;
+    }
+
+    // sx, sy
+    os << "L_sx = ";
+    featcinv.interaction_matrices[10].matlabPrint(os);
+    os << std::endl;
+    os << "L_sy = ";
+    featcinv.interaction_matrices[11].matlabPrint(os);
+    os << std::endl;
+    // Px,Py
+    os << "L_Px = ";
+    featcinv.interaction_matrices[12].matlabPrint(os);
+    os << std::endl;
+    os << "L_Py = ";
+    featcinv.interaction_matrices[13].matlabPrint(os);
+    os << std::endl;
+
+    return os;
+
 }
 #endif
