@@ -44,9 +44,12 @@ href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http:
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
-\subsection tuto_install Installation
+\subsection tuto_install_sdk Installation from prebuild SDK
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
+
+\subsection tuto_install_src Installation from source
+
 - \ref tutorial-install-ubuntu <br>In this first tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 - \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
