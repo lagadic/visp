@@ -195,6 +195,11 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
         double getI(unsigned int index) const {return I[index];}
 
         /*!
+          Print the moment invariants used to obtain the actual visual features
+         */
+        void printInvariants(std::ostream& os) const;
+
+        /*!
           Access to partial invariant I (see [2]).
           */
         double getII(unsigned int i) const {return II[i];}
