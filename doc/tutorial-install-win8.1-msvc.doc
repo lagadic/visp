@@ -132,11 +132,11 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 
 - To finish the configuration, click on "Generate" button.
 
-\image html img-cmake-win-generate.jpg 
+\image html img-cmake-win8.1-msvc-generate.jpg 
 
 - Once the generation is done, in \c C:/ViSP/ViSP-2.10.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
 
-\image html img-cmake-win-solution.jpg 
+\image html img-win8.1-msvc-solution.jpg 
 
 \section install_win81_msvc_build Building ViSP from source
 
