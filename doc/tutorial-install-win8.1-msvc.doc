@@ -205,7 +205,7 @@ Some ViSP examples and tests require data set (images, models). These data set i
 
 \image html img-win8.1-visp-images.jpg 
 
-\subsection install_win82_annex_usage Using testing data
+\subsection install_win81_msvc_annex_usage Using testing data
 - ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called \c VISP_INPUT_IMAGE_PATH. In our case, this variable should be set to \c C:\\ViSP.
 \code
 setx VISP_INPUT_IMAGE_PATH C:\ViSP
