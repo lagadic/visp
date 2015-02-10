@@ -65,25 +65,25 @@
 #include <visp/vpRfstack.h>
 #include <visp/vpArit.h>
 
-int open_display();
-int close_display();
-int open_clipping();
-int close_clipping();
-int open_keyword (Keyword *kwp);
-int open_lex (void);
-int open_source (FILE *fd, const char *str);
-int malloc_Bound_scene (Bound_scene *bsp, const char *name,Index bn);
-int free_Bound_scene (Bound_scene *bsp);
-int parser (Bound_scene *bsp);
-int close_source (void);
-int close_lex (void);
-int close_keyword (void);
+void open_display();
+void close_display();
+void open_clipping();
+void close_clipping();
+void open_keyword (Keyword *kwp);
+void open_lex (void);
+void open_source (FILE *fd, const char *str);
+void malloc_Bound_scene (Bound_scene *bsp, const char *name,Index bn);
+void free_Bound_scene (Bound_scene *bsp);
+void parser (Bound_scene *bsp);
+void close_source (void);
+void close_lex (void);
+void close_keyword (void);
 void display_scene(Matrix mat, Bound_scene sc);
-int View_to_Matrix (View_parameters *vp, Matrix m);
+void View_to_Matrix (View_parameters *vp, Matrix m);
 Bound *clipping_Bound (Bound *bp, Matrix m);
-int set_Bound_face_display (Bound *bp, Byte b);
+void set_Bound_face_display (Bound *bp, Byte b);
 void point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
-int wireframe_Face (Face *fp, Point2i *pp);
+void wireframe_Face (Face *fp, Point2i *pp);
 
 #include <visp/vpConfig.h>
 #include <visp/vpImage.h>

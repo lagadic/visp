@@ -73,8 +73,8 @@
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
 #endif
 
-extern "C"{extern Point2i *point2i;}
-extern "C"{extern Point2i *listpoint2i;}
+extern Point2i *point2i;
+extern Point2i *listpoint2i;
 
 typedef enum
 {
