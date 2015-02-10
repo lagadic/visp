@@ -258,7 +258,7 @@ SET (SRC_SIMULATOR
   simulator/wireframe-simulator/core/vpBound.cpp
   simulator/wireframe-simulator/core/vpBoundio.cpp
   simulator/wireframe-simulator/core/vpClipping.cpp
-  simulator/wireframe-simulator/core/vpDisplay.cpp
+  simulator/wireframe-simulator/core/vpCoreDisplay.cpp
   simulator/wireframe-simulator/core/vpKeyword.cpp
   simulator/wireframe-simulator/core/vpLex.cpp
   simulator/wireframe-simulator/core/vpMyio.cpp

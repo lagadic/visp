@@ -9,7 +9,8 @@
 - \ref tutorial-install-opensuse
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-win7
-- \ref tutorial-install-win81
+- \ref tutorial-install-win81-msvc
+- \ref tutorial-install-win81-mingw64
 - \ref tutorial-install-iOS
 - \ref tutorial-install-ubuntu-package
 - or on <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>

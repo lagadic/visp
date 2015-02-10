@@ -46,7 +46,8 @@ ViSP 2.10.0 (alpha released January 28th, 2015)
     . New tutorial to show how to install ViSP on CentOS.
     . New tutorial to show how to install ViSP on openSUSE.
     . New tutorial to show how to install ViSP on Raspberry Pi.
-    . New tutorial to show how to install ViSP on Windows 8.1.
+    . New tutorial to show how to install ViSP on Windows 8.1 with msvc.
+    . New tutorial to show how to install ViSP on Windows 8.1 with mingw.
     . New keypoints matching tutorial.
     . New bar code detection tutorial.
     . New face detection tutorial.

@@ -12,7 +12,8 @@ Concerning ViSP installation, we provide also other tutorials that explain how t
 - \ref tutorial-install-opensuse
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-win7
-- \ref tutorial-install-win81
+- \ref tutorial-install-win81-msvc
+- \ref tutorial-install-win81-mingw64
 
 ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 

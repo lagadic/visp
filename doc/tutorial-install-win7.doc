@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-install-win7 Tutorial: Installation from source on Windows 7
+\page tutorial-install-win7 Tutorial: Installation from source on Windows 7 with Visual C++
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows. These steps have been tested on Windows 7 (64 bit), with CMake 2.8 and Visual Studio 2012 but should work with any other version as well. 
+In this tutorial you will learn how to install ViSP from source on Windows with Visual C++. These steps have been tested on Windows 7 (64 bit), with CMake 2.8 and Visual Studio 2012 but should work with any other version as well. 
 
 Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
 - \ref tutorial-install-ubuntu
@@ -12,6 +12,8 @@ Concerning ViSP installation, we provide also other tutorials that explain how t
 - \ref tutorial-install-opensuse
 - \ref tutorial-install-raspberry
 - \ref tutorial-install-iOS
+- \ref tutorial-install-win81-msvc
+- \ref tutorial-install-win81-mingw64
 
 ViSP can also be installed from source on other platforms OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
 
@@ -25,15 +27,44 @@ Note also that it is possible to install ViSP from Ubuntu packages following \re
 
 \section install_win7_get_source Getting ViSP source code
 
-There are different ways to get ViSP source code:
+There are different ways to get ViSP source code.
 
-- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip. 
-- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. 
-- Or you can get the cutting-edge ViSP from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP.
+\subsection install_win7_get_source_release Getting the latest release
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0
+You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip. 
+
+\subsection install_win7_get_source_snapshot Getting the latest snapshot
+
+When significant changes or bug fixes were introduced in the current developpement version of the source code, we provide snapshots. 
+
+If available, you can download a <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a> following the link. 
+
+\subsection install_win7_get_source_svn Getting the source from Subversion
+
+You can also get the cutting-edge ViSP version from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP. 
+
+One way to do that under Windows is to install Subversion that comes with Cygwin installer that is available on https://cygwin.com/install.html
+
+- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
+- Double click on the setup binary to start installation. Keep the default settings and select a mirror.
+- As shown in the next image, in the window that allows to select the packages, search for "subversion" and select "subversion" package in "Devel":
+\image html img-win8.1-cygwin-svn.jpg
+- Click on Next button twice to start installation, and then on Finish button to exit installer. 
+- Now you should be able to use subversion
+\code
+C:\Users\...> C:\cygwin64\bin\svn --version
+svn, version 1.7.14
+\endcode
+
+Once installed, to get ViSP source code run:
+\code
+C:\Users\...> cd C:\ViSP
+C:\Users\...> C:\cygwin64\bin\svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
+\endcode
 
 \section install_win7_config Configuring ViSP from source 
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0-build.
 
@@ -85,7 +116,7 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 
 \image html img-cmake-win-opencv.jpg 
 
-- As shown in the next image, if you enable the advance view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/vc11/lib folder.
+- As shown in the next image, if you enable the advanced view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/vc11/lib folder.
  
 \image html img-cmake-win-opencv-advanced.jpg 
 
