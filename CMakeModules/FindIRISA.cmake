@@ -50,6 +50,7 @@ ELSE(NOT UNIX)
   FIND_PATH(IRISA_INCLUDE_DIR irisa_Afma6.h
     $ENV{IRISA_HOME}/include
     /local/soft/Cerebellum/Irisa/current/src
+    /home/soft/Cerebellum/Irisa/current/src
     )
   #MESSAGE("DBG IRISA_INCLUDE_DIR=${IRISA_INCLUDE_DIR}")  
   
@@ -58,6 +59,7 @@ ELSE(NOT UNIX)
     PATHS 
     $ENV{IRISA_HOME}/lib
     /local/soft/Cerebellum/Irisa/current/src
+    /home/soft/Cerebellum/Irisa/current/src
     )
 
   #MESSAGE("DBG IRISA_LIBRARY=${IRISA_LIBRARY}")

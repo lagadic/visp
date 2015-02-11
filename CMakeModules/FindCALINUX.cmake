@@ -50,6 +50,7 @@ ELSE(NOT UNIX)
   FIND_PATH(CALINUX_INCLUDE_DIR calinux.h
     $ENV{CALINUX_HOME}/include
     /local/soft/Cerebellum/CALinux/current/include
+    /home/soft/Cerebellum/CALinux/current/include
     )
   #MESSAGE("DBG CALINUX_INCLUDE_DIR=${CALINUX_INCLUDE_DIR}")  
   
@@ -58,6 +59,7 @@ ELSE(NOT UNIX)
     PATHS 
     $ENV{CALINUX_HOME}/lib
     /local/soft/Cerebellum/CALinux/current/lib
+    /home/soft/Cerebellum/CALinux/current/lib
     )
 
   #MESSAGE("DBG CALINUX_LIBRARY=${CALINUX_LIBRARY}")
