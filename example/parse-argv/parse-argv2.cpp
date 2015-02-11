@@ -70,9 +70,12 @@ main(int argc, const char ** argv)
     int    i_val = 3;
     float  f_val = 3.14f;
     double d_val = 3.1415;
+    int    flag = 0;
 
     vpParseArgv::vpArgvInfo argTable[] =
     {
+      {"-flag", vpParseArgv::ARGV_CONSTANT, 0, (char *) &flag,
+       "Flag enabled."},
       {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
        "An integer value."},
       {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
@@ -91,6 +94,8 @@ main(int argc, const char ** argv)
     cout << "  Integer value: " << i_val << endl;
     cout << "  Float   value: " << f_val << endl;
     cout << "  Double  value: " << d_val << endl << endl;
+    cout << "  Flag         : " << flag << endl << endl;
+
     cout << "Call  " << argv[0]
          << " -h to see how to change these parameters." << endl;
 

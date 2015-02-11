@@ -173,7 +173,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
       infoPtr = matchPtr;
       switch (infoPtr->type) {
       case ARGV_CONSTANT:
-	*((long long *) infoPtr->dst) = (intptr_t) infoPtr->src;
+  *((long long *) infoPtr->dst) = 1;
          break;
       case ARGV_INT:
          nargs = (uintptr_t) infoPtr->src;
