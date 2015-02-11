@@ -115,7 +115,7 @@ open_hash (void)
 	}
 	head = hash_tbl;
 	bend = head + PRIME;
-	for (; head < bend; *head++ = NULL);
+  for (; head < bend; *head++ = NULL) {};
 }
 
 /*

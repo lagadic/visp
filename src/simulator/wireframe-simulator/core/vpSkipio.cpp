@@ -65,7 +65,7 @@ void skip_cmd (void)
 
 	fprintf (stderr, "\n$ ");
 	fwrite (mytext, mylength, 1, stderr);
-	while ((token = lexecho (stderr, '$')) !=  T_EOF && token != '$');
+  while ((token = lexecho (stderr, '$')) !=  T_EOF && token != '$') {};
 	unlex ();
 }
 

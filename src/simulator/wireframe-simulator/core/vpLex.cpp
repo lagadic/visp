@@ -257,7 +257,7 @@ int lex (void)
 {
 lex_loop :
 
-	for (; chtbl[(int)CURC] == SPCT; mysptr++);	/* saute les espaces	*/
+  for (; chtbl[(int)CURC] == SPCT; mysptr++) {};	/* saute les espaces	*/
 
 	switch (chtbl[(int)CURC]) {
 
@@ -288,7 +288,7 @@ lex_loop :
 			return (*mytext);
 		mysptr++;
 comment :
-		for (; iscmtt((int)CURC); mysptr++);
+    for (; iscmtt((int)CURC); mysptr++) {};
 		switch (chtbl[(int)CURC]) {
 		case EOBT	:
 			next_source ();
@@ -318,7 +318,7 @@ comment :
 	case IDNT	:
 		mytext = mysptr;	/* sauvegarde le jeton	*/
 		mysptr++;
-		for (; isidnt((int)CURC); mysptr++);
+    for (; isidnt((int)CURC); mysptr++) {};
 		mylength = (int)(mysptr - mytext);
 		return (get_symbol (mytext, mylength));
 		break;
@@ -333,7 +333,7 @@ int_part :
 		case '.'	:	/* lecture fraction	*/
 float_part :
 			mysptr++;
-			for (; isintt((int)CURC); mysptr++);
+      for (; isintt((int)CURC); mysptr++) {};
 			if (CURC != 'E' && CURC != 'e') {
 				myfloat = (float) atof (mytext);
 /* FC
@@ -354,7 +354,7 @@ printf("mytext %s, myfloat %f\n",mytext,myfloat);
 				myfloat = (float) atof (mytext);
 				return (T_FLOAT);
 			}
-			for (; isintt((int)CURC); mysptr++);
+      for (; isintt((int)CURC); mysptr++) {};
 			myfloat = (float) atof (mytext);
 			return (T_FLOAT);
 			break;
@@ -385,7 +385,7 @@ printf("mytext %s, myfloat %f\n",mytext,myfloat);
 		mytext = mysptr;	/* sauvegarde le jeton	*/
 		mysptr++;
 string :
-		for (; isstgt((int)CURC); mysptr++);
+    for (; isstgt((int)CURC); mysptr++) {};
 		switch (chtbl[(int)CURC]) {
 		case EOBT	:
 			next_source ();
@@ -508,7 +508,7 @@ comment :
   case IDNT	:
     mytext = mysptr;	/* sauvegarde le jeton	*/
     mysptr++;
-    for (; isidnt((int)CURC); mysptr++);
+    for (; isidnt((int)CURC); mysptr++) {};
     mylength = (int)(mysptr - mytext);
     if (token != get_symbol (mytext, mylength))
       fwrite (mytext, mylength, 1, f);
@@ -518,12 +518,12 @@ comment :
     mytext = mysptr;	/* sauvegarde le jeton	*/
 int_part	:
     mysptr++;
-    for (; isintt((int)CURC); mysptr++);
+    for (; isintt((int)CURC); mysptr++) {};
     switch (CURC) {
     case '.'	:	/* lecture fraction	*/
 float_part :
       mysptr++;
-      for (; isintt((int)CURC); mysptr++);
+      for (; isintt((int)CURC); mysptr++) {};
       if (CURC != 'E' && CURC != 'e') {
         if (token != T_FLOAT)
           fwrite (mytext, mysptr - mytext, 1, f);
@@ -541,7 +541,7 @@ float_part :
           fwrite (mytext, mysptr - mytext, 1, f);
         return (T_FLOAT);
       }
-      for (; isintt((int)CURC); mysptr++);
+      for (; isintt((int)CURC); mysptr++) {};
       if (token != T_FLOAT)
         fwrite (mytext, mysptr - mytext, 1, f);
       return (T_FLOAT);
@@ -688,7 +688,7 @@ static	void	next_source (void)
 	/* recopie la derniere ligne devant "buf"	*/
 
 	*bot = EOL;	/* evite le debordement de "buf"	*/
-	while ((*--bot = *--top) != EOL);
+  while ((*--bot = *--top) != EOL) {};
 	myline = mysptr = bot + 1;
 
   size = fread (buf,sizeof (char), BUFSIZE,fds);
@@ -704,7 +704,7 @@ static	void	next_source (void)
 
 		/* recherche de la derniere ligne	*/
 		top = topbuf;
-		while (*--top != EOL);
+    while (*--top != EOL) {};
 		lastline = top;
 	}
 }
