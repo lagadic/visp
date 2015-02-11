@@ -37,10 +37,10 @@ display, simulation, ...) you need, prior to install ViSP you may
 install third party libraries <a
 href="http://team.inria.fr/lagadic/visp/libraries.html" target="_parent">http://team.inria.fr/lagadic/visp/libraries.html</a>.</p>
 
-<p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install "Installation tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
+<p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
 href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http://team.inria.fr/lagadic/visp/publication.html</a>.</p>
  
-\section Tutorial_sec Tutorials
+\section tutorial Tutorials
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 

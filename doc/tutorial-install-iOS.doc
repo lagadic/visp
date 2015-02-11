@@ -5,19 +5,7 @@
 
 In this tutorial you will learn how to install ViSP from source on OSX in order to be able to compile and use it for iOS development. These steps have been tested for OSX 10.8.4  but should work with any other distribution as well.
 
-Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
-- \ref tutorial-install-ubuntu
-- \ref tutorial-install-fedora
-- \ref tutorial-install-centos
-- \ref tutorial-install-opensuse
-- \ref tutorial-install-raspberry
-- \ref tutorial-install-win7
-- \ref tutorial-install-win81-msvc
-- \ref tutorial-install-win81-mingw64
-
-ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
-
-Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
+\note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_iOS_required Required software
 

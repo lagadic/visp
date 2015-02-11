@@ -5,19 +5,7 @@
 
 In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21 (64 bit) distribution, but should work with any other distribution as well. 
 
-Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
-- \ref tutorial-install-ubuntu
-- \ref tutorial-install-centos
-- \ref tutorial-install-opensuse
-- \ref tutorial-install-raspberry
-- \ref tutorial-install-win7
-- \ref tutorial-install-win81-msvc
-- \ref tutorial-install-win81-mingw64
-- \ref tutorial-install-iOS
-
-ViSP can also be installed from source on other platforms including OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
-
-Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
+\note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_fedora_required Required packages
 

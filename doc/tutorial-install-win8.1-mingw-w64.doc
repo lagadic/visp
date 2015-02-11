@@ -5,19 +5,7 @@
 
 In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.1.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. 
 
-Concerning ViSP installation, we provide also other tutorials that explain how to install ViSP from source:
-- \ref tutorial-install-ubuntu
-- \ref tutorial-install-fedora
-- \ref tutorial-install-centos
-- \ref tutorial-install-opensuse
-- \ref tutorial-install-raspberry
-- \ref tutorial-install-iOS
-- \ref tutorial-install-win7
-- \ref tutorial-install-win81-msvc
-
-ViSP can also be installed from source on other platforms OSX (see <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>).
-
-Note also that it is possible to install ViSP from Ubuntu packages following \ref tutorial-install-ubuntu-package.
+\note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_win81_mingw64_required Required packages
 
@@ -188,6 +176,7 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 C:\Users\...> cd C:\ViSP\ViSP-2.10.0-build
 C:\ViSP\ViSP-2.10.0-build> mingw32-make
 \endcode
+\note To \ref issue_win81_mingw_warning_pragma just follow the link.
 
 - Now to install ViSP, in the same cmd terminal run:
 \code
@@ -310,5 +299,21 @@ The following image shows the link issue that may appear when building OpenCV wi
 \image html img-opencv-issue-dshow.jpg
 
 A work arround is to configure OpenCV without Direct Show support turning WITH_DSHOW=OFF and then trying to build again.
+
+\subsection issue_win81_mingw_warning_pragma Fix warning "ignoring #pragma comment(lib,"uuid.lib")" during build
+
+During the build of ViSP the following warning may occur:
+\code
+C:/mingw/mingw/include/urlmon.h:301:0: warning: ignoring #pragma comment [-Wunknown-pragmas]
+#pragma comment(lib,"uuid.lib")
+^
+\endcode
+
+To remove this warning, edit C:/mingw/mingw/include/urlmon.h and comment line 301:
+\code
+//#pragma comment(lib,"uuid.lib")
+\endcode
+
+
 
 */
