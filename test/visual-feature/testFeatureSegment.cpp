@@ -71,7 +71,7 @@ int main(int argc, const char **argv)
 {  
   try {
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-    int opt_display = 1;
+    int opt_no_display = 0;
     int opt_curves = 1;
 #endif
     int opt_normalized = 1;
@@ -80,7 +80,7 @@ int main(int argc, const char **argv)
     vpParseArgv::vpArgvInfo argTable[] =
     {
   #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-      {"-d", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_display,
+      {"-d", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_no_display,
        "Disable display and graphics viewer."},
   #endif
       {"-normalized", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &opt_normalized,
@@ -100,8 +100,8 @@ int main(int argc, const char **argv)
 
     std::cout << "Used options: " << std::endl;
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-    opt_curves = opt_display;
-    std::cout << " - display   : " << opt_display << std::endl;
+    opt_curves = (opt_no_display == 0) ? 1 : 0;
+    std::cout << " - no display: " << opt_no_display << std::endl;
     std::cout << " - curves    : " << opt_curves << std::endl;
 #endif
     std::cout << " - normalized: " << opt_normalized << std::endl;
@@ -110,7 +110,7 @@ int main(int argc, const char **argv)
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     vpDisplay *display = NULL;
-    if (opt_display) {
+    if (!opt_no_display) {
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
@@ -121,7 +121,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I(480,640,0);
 
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-    if (opt_display)
+    if (!opt_no_display)
       display->init(I);
 #endif
 
@@ -172,7 +172,7 @@ int main(int argc, const char **argv)
       task.addFeature(seg_cur[i], seg_des[i]);
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-    if (opt_display) {
+    if (!opt_no_display) {
       vpDisplay::display(I);
       for (int i=0; i <2; i++) {
         seg_cur[i].display(cam, I, vpColor::red);
@@ -214,7 +214,7 @@ int main(int argc, const char **argv)
         vpFeatureBuilder::create(seg_cur[i], Pc[i*2], Pc[i*2+1]);
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-      if (opt_display) {
+      if (!opt_no_display) {
         vpDisplay::display(I);
         for (int i=0; i <2; i++) {
           seg_cur[i].display(cam, I, vpColor::red);
@@ -249,7 +249,7 @@ int main(int argc, const char **argv)
       delete graph;
 #endif
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-    if (opt_display && display != NULL)
+    if (!opt_no_display && display != NULL)
       delete display;
 #endif
 
