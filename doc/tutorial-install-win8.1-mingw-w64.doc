@@ -72,14 +72,14 @@ One way to do that under Windows is to install Subversion that comes with Cygwin
 - Click on Next button twice to start installation, and then on Finish button to exit installer. 
 - Now you should be able to use subversion
 \code
-C:\Users\...> C:\cygwin64\bin\svn --version
+C:\Users\...> C:\cygwin64\bin\svn.exe --version
 svn, version 1.7.14
 \endcode
 
 Once installed, to get ViSP source code run:
 \code
 C:\Users\...> cd C:\ViSP
-C:\Users\...> C:\cygwin64\bin\svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
+C:\Users\...> C:\cygwin64\bin\svn.exe checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
 \endcode
 
 
