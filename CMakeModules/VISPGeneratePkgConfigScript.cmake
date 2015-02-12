@@ -114,7 +114,6 @@ if (UNIX)
   get_filename_component(visp_libname "${visp_libpath}" NAME)
 
   #message("ViSP libname: ${visp_libname}")
-
   # Manage the libs	
   list(REMOVE_ITEM VISP_EXTERN_LIBRARIES "debug")
   list(REMOVE_ITEM VISP_EXTERN_LIBRARIES "optimized")
@@ -129,26 +128,32 @@ if (UNIX)
       #message("add -framework ${FRAMEWORK}")
       list(APPEND TMP_LIBS "-framework ${FRAMEWORK}")
     elseif("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
+      list(APPEND TMP_LIBS ${lib})
+    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]+$")
+      # does nothing
+      list(APPEND TMP_LIBS ${lib})
+    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]*[.][0123456789]+$")
+      # does nothing
+      list(APPEND TMP_LIBS ${lib})
+    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]*[.][0123456789]*[.][0123456789]+$")
       # does nothing
       list(APPEND TMP_LIBS ${lib})
     elseif("${lib}" MATCHES ".[.][d][y][l][i][b]+$")
       # does nothing
       list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES "[-][l]+.")
+    elseif("${lib}" MATCHES "^(-l)")
       # does nothing
       list(APPEND TMP_LIBS ${lib})
     else()
       # add -l prefix
       #MESSAGE("add -l${lib}")
-      list(APPEND TMP_LIBS "-l${lib}")
+      list(APPEND TMP_LIBS "${lib}")
     endif()
   endforeach()
 
   foreach(val ${TMP_LIBS})
      set(VISP_CONFIG_LIBS "${VISP_CONFIG_LIBS} ${val}")
   endforeach(val)
-
-  #message("EXTERN LIBS : ${VISP_CONFIG_LIBS}")
  
   #---------------------------------------------------------------------
   # Updates the <build dir>/bin/visp-config shell script
