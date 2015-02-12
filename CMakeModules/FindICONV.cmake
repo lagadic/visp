@@ -43,40 +43,46 @@
 #
 #############################################################################
 
-
-FIND_PATH(ICONV_INCLUDE_DIR iconv.h
+if(MINGW)
+  find_path(ICONV_INCLUDE_DIR iconv.h
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
+  )
+  find_library(ICONV_LIBRARY iconv
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+else()
+  find_path(ICONV_INCLUDE_DIR iconv.h
     $ENV{ICONV_DIR}/include
     $ENV{ICONV_HOME}/include
     $ENV{XML2_DIR}/include
     $ENV{XML2_HOME}/include
     "c:/libxml2/include"
     "c:/iconv/include"
-    "$ENV{MINGW_DIR}/include"
-    C:/mingw/include
-)
-FIND_LIBRARY(ICONV_LIBRARY iconv
+  )
+  find_library(ICONV_LIBRARY iconv
     $ENV{ICONV_DIR}/lib
     $ENV{ICONV_HOME}/lib
     $ENV{XML2_DIR}/lib
     $ENV{XML2_HOME}/lib
     "c:/libxml2/lib"
     "c:/iconv/lib"
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
-)
+  )
+endif()
 
-IF(ICONV_LIBRARY)
+if(ICONV_LIBRARY)
   SET(ICONV_LIBRARIES ${ICONV_LIBRARY})
-ENDIF(ICONV_LIBRARY)
+endif()
 
-IF(ICONV_LIBRARIES AND ICONV_INCLUDE_DIR)
+if(ICONV_LIBRARIES AND ICONV_INCLUDE_DIR)
   SET(ICONV_INCLUDE_DIRS ${ICONV_INCLUDE_DIR})
   SET(ICONV_FOUND TRUE)
-ELSE(ICONV_LIBRARIES AND ICONV_INCLUDE_DIR)
+else()
   SET(ICONV_FOUND FALSE)
-ENDIF(ICONV_LIBRARIES AND ICONV_INCLUDE_DIR)
+endif()
 
-MARK_AS_ADVANCED(
+mark_as_advanced(
   ICONV_INCLUDE_DIR
   ICONV_LIBRARIES
   ICONV_LIBRARY

@@ -43,31 +43,39 @@
 #
 #############################################################################
 
-  
-  FIND_PATH(PTHREAD_INCLUDE_DIR pthread.h
-    "$ENV{PTHREAD_HOME}/include"
-    "$ENV{PTHREAD_DIR}/include"
+if(MINGW)
+  find_path(PTHREAD_INCLUDE_DIR pthread.h
     "$ENV{MINGW_DIR}/include"
     "$ENV{MINGW_DIR}/mingw/include"
     C:/mingw/mingw/include
+  )
+
+  # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
+  find_library(PTHREAD_LIBRARY
+    NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
+    PATHS
+    "$ENV{MINGW_DIR}/lib"
+    "$ENV{MINGW_DIR}/mingw/lib"
+    C:/mingw/mingw/lib
+    )
+else()
+  find_path(PTHREAD_INCLUDE_DIR pthread.h
+    "$ENV{PTHREAD_HOME}/include"
+    "$ENV{PTHREAD_DIR}/include"
     /usr/include
   )
-  #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
-  
   # pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2 are comming from web
-  FIND_LIBRARY(PTHREAD_LIBRARY
+  find_library(PTHREAD_LIBRARY
     NAMES pthread pthreadGC2 pthreadVSE pthreadGCE pthreadGC pthreadVC1 pthreadVC2
     PATHS
     "$ENV{PTHREAD_HOME}/lib"
     "$ENV{PTHREAD_DIR}/lib"
-    "$ENV{MINGW_DIR}/lib"
-    "$ENV{MINGW_DIR}/mingw/lib"
     /usr/lib
     /usr/local/lib
     /lib    
-    C:/mingw/mingw/lib
     )
-
+endif()
+  #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
   
   ## --------------------------------

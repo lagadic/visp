@@ -44,18 +44,23 @@
 # Authors:
 # Fabien Spindler
 
-FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
-  $ENV{ZLIB_DIR}/include
-  $ENV{ZLIB_INCLUDE_DIR}
-  /usr/include
-  /usr/local/include
-  "C:/Program Files/zlib/include"
-  "$ENV{MINGW_DIR}/include"
-  C:/mingw/include
-  )
+if(MINGW)
+  find_path(ZLIB_INCLUDE_DIR zlib.h
+    "$ENV{MINGW_DIR}/include"
+    C:/mingw/include
+    )
+else()
+  find_path(ZLIB_INCLUDE_DIR zlib.h
+    $ENV{ZLIB_DIR}/include
+    $ENV{ZLIB_INCLUDE_DIR}
+    /usr/include
+    /usr/local/include
+    "C:/Program Files/zlib/include"
+    )
+endif()
 
-IF(UNIX)
-  FIND_LIBRARY(ZLIB_LIBRARY z zlib
+if(UNIX)
+  find_library(ZLIB_LIBRARY z zlib
     $ENV{ZLIB_DIR}/lib
     $ENV{ZLIB_LIBRARY_DIR}
     /lib
@@ -65,8 +70,13 @@ IF(UNIX)
     )
   #MESSAGE("ZLIB_LIBRARY=${ZLIB_LIBRARY}")
   #MESSAGE("ZLIB_INCLUDE_DIRS=${ZLIB_INCLUDE_DIRS}")
-ELSE(UNIX)
-  FIND_LIBRARY(ZLIB_LIBRARY_RELEASE z zlib
+elseif(MINGW)
+  find_library(ZLIB_LIBRARY z zlib
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+    )
+else()
+  find_library(ZLIB_LIBRARY_RELEASE z zlib
     $ENV{ZLIB_DIR}/lib
     $ENV{ZLIB_LIBRARY_RELEASE_DIR}
     /lib
@@ -87,8 +97,7 @@ ELSE(UNIX)
     )
   #MESSAGE("ZLIB_LIBRARY_RELEASE=${ZLIB_LIBRARY_RELEASE}")
   #MESSAGE("ZLIB_LIBRARY_DEBUG=${ZLIB_LIBRARY_DEBUG}")
-
-ENDIF(UNIX)
+endif()
 ## --------------------------------
 
 

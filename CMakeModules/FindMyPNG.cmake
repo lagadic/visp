@@ -46,24 +46,32 @@
 
 
 # detection of the Libpng headers location
-FIND_PATH(PNG_INCLUDE_DIR 
-  NAMES
-    png.h
-  PATHS
-    "$ENV{LIBPNG_DIR}/include"
-    "$ENV{LIBPNG_DIR}"
-    "$ENV{LIBPNG_INCLUDE_DIR}"
-    "/usr/include"
-    "/usr/local/include"
-    "C:/Program Files/libpng/include"
-	"C:/mingw/include/libpng14"
-	"$ENV{MINGW_DIR}/include/libpng14"
+if(MINGW)
+  find_path(PNG_INCLUDE_DIR 
+    NAMES
+      png.h
+    PATHS
+      "C:/mingw/include/libpng14"
+      "$ENV{MINGW_DIR}/include/libpng14"
   )
+else()
+  find_path(PNG_INCLUDE_DIR 
+    NAMES
+      png.h
+    PATHS
+      "$ENV{LIBPNG_DIR}/include"
+      "$ENV{LIBPNG_DIR}"
+      "$ENV{LIBPNG_INCLUDE_DIR}"
+      "/usr/include"
+      "/usr/local/include"
+      "C:/Program Files/libpng/include"
+  )
+endif()
 #MESSAGE("PNG_INCLUDE_DIR=${PNG_INCLUDE_DIR}")
 
-IF(UNIX)
+if(UNIX)
   # Detection of the Libpng library on Unix
-  FIND_LIBRARY(PNG_LIBRARY
+  find_library(PNG_LIBRARY
     NAMES
       png15 libpng15 libpng14 png12 libpng12 png libpng
     PATHS
@@ -75,11 +83,18 @@ IF(UNIX)
       /usr/local/lib
       /lib
       "C:/Program Files/libpng/lib"
-	  "C:/mingw/lib64"
-	  "$ENV{MINGW_DIR}/lib64"
+    )
+elseif(MINGW)
+  # Detection of the Libpng library on mingw
+  find_library(PNG_LIBRARY
+    NAMES
+      png15 libpng15 libpng14 png12 libpng12 png libpng
+    PATHS
+      "C:/mingw/lib64"
+      "$ENV{MINGW_DIR}/lib64"
     )
   #MESSAGE("PNG_LIBRARY=${PNG_LIBRARY}")
-ELSE(UNIX)
+else()
   FIND_LIBRARY(PNG_LIBRARY_RELEASE
     NAMES
       png15 libpng15 png12 libpng12 png libpng

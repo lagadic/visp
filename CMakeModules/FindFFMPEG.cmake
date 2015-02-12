@@ -44,56 +44,41 @@
 #############################################################################
 
 # detection of the FFMPEG headers location
-  FIND_PATH(FFMPEG_INCLUDE_DIR_AVCODEC
+if(MINGW)
+  find_path(FFMPEG_INCLUDE_DIR_AVCODEC
     NAMES
       libavcodec/avcodec.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
     "$ENV{MINGW_DIR}/include"
     C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
 
-  FIND_PATH(FFMPEG_INCLUDE_DIR_AVFORMAT
+  find_path(FFMPEG_INCLUDE_DIR_AVFORMAT
     NAMES
       libavformat/avformat.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
     "$ENV{MINGW_DIR}/include"
     C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
 
-  FIND_PATH(FFMPEG_INCLUDE_DIR_AVUTIL
+  find_path(FFMPEG_INCLUDE_DIR_AVUTIL
     NAMES
       libavutil/avutil.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
     "$ENV{MINGW_DIR}/include"
     C:/mingw/include
     PATH_SUFFIXES
       ffmpeg
   )
 
-  FIND_PATH(FFMPEG_INCLUDE_DIR_SWSCALE
+  find_path(FFMPEG_INCLUDE_DIR_SWSCALE
     NAMES
       libswscale/swscale.h
     PATHS
-    "/usr/include"
-    "/usr/local/include"
-    $ENV{FFMPEG_DIR}/include
-    $ENV{FFMPEG_DIR}
     "$ENV{MINGW_DIR}/include"
     C:/mingw/include
     PATH_SUFFIXES
@@ -102,7 +87,95 @@
   )
 
   # Detection of the FFMPEG library on Unix
-  FIND_LIBRARY(FFMPEG_AVUTIL_LIBRARY
+  find_library(FFMPEG_AVUTIL_LIBRARY
+    NAMES
+      avutil
+    PATHS
+   "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+  find_library(FFMPEG_AVCODEC_LIBRARY
+    NAMES
+      avcodec
+    PATHS
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+  find_library(FFMPEG_AVFORMAT_LIBRARY
+    NAMES
+      avformat
+    PATHS
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+
+  find_library(FFMPEG_AVCORE_LIBRARY
+    NAMES
+      avcore
+    PATHS
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+
+  find_library(FFMPEG_SWSCALE_LIBRARY
+    NAMES
+      swscale
+    PATHS
+    "$ENV{MINGW_DIR}/lib64"
+    C:/mingw/lib64
+  )
+else(MINGW)
+  find_path(FFMPEG_INCLUDE_DIR_AVCODEC
+    NAMES
+      libavcodec/avcodec.h
+    PATHS
+    "/usr/include"
+    "/usr/local/include"
+    $ENV{FFMPEG_DIR}/include
+    $ENV{FFMPEG_DIR}
+    PATH_SUFFIXES
+      ffmpeg
+  )
+
+  find_path(FFMPEG_INCLUDE_DIR_AVFORMAT
+    NAMES
+      libavformat/avformat.h
+    PATHS
+    "/usr/include"
+    "/usr/local/include"
+    $ENV{FFMPEG_DIR}/include
+    $ENV{FFMPEG_DIR}
+    PATH_SUFFIXES
+      ffmpeg
+  )
+
+  find_path(FFMPEG_INCLUDE_DIR_AVUTIL
+    NAMES
+      libavutil/avutil.h
+    PATHS
+    "/usr/include"
+    "/usr/local/include"
+    $ENV{FFMPEG_DIR}/include
+    $ENV{FFMPEG_DIR}
+    PATH_SUFFIXES
+      ffmpeg
+  )
+
+  find_path(FFMPEG_INCLUDE_DIR_SWSCALE
+    NAMES
+      libswscale/swscale.h
+    PATHS
+    "/usr/include"
+    "/usr/local/include"
+    $ENV{FFMPEG_DIR}/include
+    $ENV{FFMPEG_DIR}
+    PATH_SUFFIXES
+      libswscale
+      ffmpeg
+  )
+
+  # Detection of the FFMPEG library on Unix
+  find_library(FFMPEG_AVUTIL_LIBRARY
     NAMES
       avutil
     PATHS
@@ -112,10 +185,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
   )
-  FIND_LIBRARY(FFMPEG_AVCODEC_LIBRARY
+  find_library(FFMPEG_AVCODEC_LIBRARY
     NAMES
       avcodec
     PATHS
@@ -125,10 +196,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
   )
-  FIND_LIBRARY(FFMPEG_AVFORMAT_LIBRARY
+  find_library(FFMPEG_AVFORMAT_LIBRARY
     NAMES
       avformat
     PATHS
@@ -138,11 +207,9 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
   )
 
-  FIND_LIBRARY(FFMPEG_AVCORE_LIBRARY
+  find_library(FFMPEG_AVCORE_LIBRARY
     NAMES
       avcore
     PATHS
@@ -152,11 +219,9 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
   )
 
-  FIND_LIBRARY(FFMPEG_SWSCALE_LIBRARY
+  find_library(FFMPEG_SWSCALE_LIBRARY
     NAMES
       swscale
     PATHS
@@ -166,9 +231,8 @@
     $ENV{FFMPEG_DIR}/lib
     $ENV{FFMPEG_DIR}/Release
     $ENV{FFMPEG_DIR}
-    "$ENV{MINGW_DIR}/lib64"
-    C:/mingw/lib64
   )
+endif(MINGW)
 
   # FFMpeg depend son Zlib
   FIND_PACKAGE(ZLIB)
