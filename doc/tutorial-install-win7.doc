@@ -1,15 +1,15 @@
 /**
 
-\page tutorial-install-win7 Tutorial: Installation from source on Windows 7 with Visual C++
+\page tutorial-install-win7 Tutorial: Installation from source on Windows 7 with Visual C++ 2012
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows with Visual C++. These steps have been tested on Windows 7 (64 bit), with CMake 2.8 and Visual Studio 2012 but should work with any other version as well. 
+In this tutorial you will learn how to install ViSP from source on Windows with Visual C++. These steps have been tested on Windows 7 (64 bit), with CMake 3.1 and Visual Studio 2012 but should work with any other version as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_win7_required Required packages
 
-- Visual Studio C++. Note that ViSP can also be build with Visual Studio Express that could be downloaded from http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products
+- Visual Studio C++. In this tutorial we use Visual Studio 2012. Note that ViSP can also be build with Visual Studio Express that could be downloaded from http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products
 - CMake 2.8 or higher that could be download at : http://www.cmake.org/cmake/resources/software.html
 
 
@@ -58,32 +58,27 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 - Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
 
-\image html img-cmake-win-1.jpg 
+\image html img-cmake-win7-msvc-launch.jpg
 
 - Click then on "Configure" button.
 
-\image html img-cmake-win-2.jpg 
+\image html img-cmake-win7-create-build-folder.jpg 
 
 - Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.10.0-build folder.
 - Select then your compiler, for example here Visual Studio 11 Win64, and click on "Finish" button. 
 
-\image html img-cmake-win-msvc-version.jpg 
+\image html img-cmake-win7-msvc-version.jpg 
 
 - This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface) and OpenMP 3rd parties are automatically detected. 
 
-\image html img-cmake-win-4.jpg 
+\image html img-cmake-win7-msvc-config.jpg 
 
-- As given in the previous image, note also that the installation folder is set to \c C:/Program \c Files \c (x86)/ViSP. Make sure that you have administrator privileges to write in that folder. If not and if you want to install ViSP, you have to set an other folder, for example \c C:/ViSP/ViSP-install. 
-
-\image html img-cmake-win-install-prefix.jpg 
+- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\ViSP-2.10.0-build\\install. 
+\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
 
 - Click then on "Configure" button. All the red lines should disappear.
-
-\image html img-cmake-win-6.jpg 
-
-- Note also that the default configuration lead to the creation of a static library (with \c .lib extension). It is recommended to rather create a shared library (with \c .dll extension). As shown in the next image you have to check the \c BUILD_SHARED_LIBS option to enable DLL creation. Click then on "Configure" button.
-
-\image html img-cmake-win-shared.jpg 
+\image html img-cmake-win7-msvc-config-end.jpg 
+\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
 
 \subsection install_win7_3rdparty Optional 3rd party packages
 
@@ -91,18 +86,18 @@ ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.
 
 \subsubsection install_win7_3rdparty_opencv OpenCV 3rd party
 
-- We recommend to install OpenCV. The simplest is to install OpenCV pre-build libraries by following <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a>. In our case we install \c OpenCV-2.4.5.exe pre-build SDK in \c C:\\OpenCV. The installer copied all the material in \c C:\\OpenCV\\opencv.
+- We recommend to install OpenCV. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help. In our case we install \c OpenCV-3.0.0-beta.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0-beta.exe copied all the material in \c C:\\OpenCV\\opencv.
 
 - Now in order that ViSP detects OpenCV you have to set \c OpenCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
 \code
-setx OpenCV_DIR C:\OpenCV\opencv\build
+setx OpenCV_DIR C:\OpenCV\opencv-3.0.0-beta\build
 \endcode
 
 - Here the directory is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
 
 - Quit and restart CMake (cmake gui). <b>It is important to quit CMake</b> in order to take into account the new \c OpenCV_DIR environment variable. Click "Configure" button. As shown in the next image, a new red line indicating that OpenCV is found should appear.
 
-\image html img-cmake-win-opencv.jpg 
+\image html img-cmake-win7-opencv.jpg 
 
 - As shown in the next image, if you enable the advanced view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/vc11/lib folder.
  
@@ -110,62 +105,37 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 
 - Press "Configure" button again.
 
-\subsubsection install_win7_3rdparty_ogre Ogre3D 3rd party
-
-- We recommend also to install Ogre3D. As given in <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">ViSP third party pages</a>, follow the steps described on <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">Ogre Wiki</a>. In our case we install <a href="http://www.microsoft.com/en-us/download/confirmation.aspx?id=6812">DirectX SDK (June 2010)</a> and the latest <a href="http://www.ogre3d.org/download/sdk">Ogre SDK</a>; OGRE 1.9 RC 1 SDK for Visual C++ .Net 2012 (64-bit) in \c C:/ViSP/OgreSDK. You should adapt the versions that match your environment.
-
-- After Ogre3D installation you should get something similar to the next snapshot where Ogre3D SDK is installed in \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable.
-\image html img-win-ogre-dir.jpg 
-
-- To help CMake detection of Ogre3D, set the following environment variables (\c OGRE_HOME and \c BOOST_ROOT) by opening a Window Command Shell. In our case it becomes:
-\image html img-win-ogre-var.jpg 
-
-- Set also the \c PATH environment variable to append the location of Ogre3D libraries used during execution. In our case we add \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable/bin/Debug and \c C:/ViSP/OgreSDK/OgreSDK_vc11_x64_v1-9-0unstable/bin/Release.
-
-- Now quit and restart CMake to take into account the environment variables changes. Select "Configure" button. Ogre3D should be detected.
-
-\image html img-cmake-win-ogre-found.jpg 
-
-- If you enter in the advanced view, you should have something similar to:
-
-\image html img-cmake-win-ogre-found-advanced.jpg 
-
-- Make sure that \c Boost_, \c OGRE_ and \c DIRECT3D_ prefixed vars are well set. 
-
-- Press "Configure" button again.
- 
-
 \subsection install_win7_gene Ending the configuration
 
 - To finish the configuration, click on "Generate" button.
 
-\image html img-cmake-win-generate.jpg 
+\image html img-cmake-win7-generate.jpg 
 
 - Once the generation is done, in \c C:/ViSP/ViSP-2.10.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
 
-\image html img-cmake-win-solution.jpg 
+\image html img-cmake-win7-solution.jpg 
 
 \section install_win7_build Building ViSP from source
 
 - To build ViSP just double click on \c C:/ViSP/ViSP-2.10.0-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
 
-\image html img-msvc-1.jpg 
+\image html img-win7-msvc-open.jpg 
 
 - Enter menu "BUILD/Build Solution" to build ViSP.
 
-\image html img-msvc-build.jpg 
+\image html img-win7-msvc-build.jpg 
 
 - At the end of the build process you should have the following indicating that all the build succeeded.
 
-\image html img-msvc-2.jpg 
+\image html img-win7-msvc-build-succeed.jpg 
 
 - Now to install ViSP, build "INSTALL" project. To this end, apply a left click on "INSTALL" to select the project, then a right click to enter in the "Build" menu.
 
-\image html img-msvc-install.jpg 
+\image html img-win7-msvc-install.jpg 
 
 - At the end of the installation, you should have the following.
 
-\image html img-msvc-4.jpg 
+\image html img-win7-msvc-install-succeed.jpg 
 
 - As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/ViSP-install folder.
 
@@ -173,21 +143,36 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 
 - We recommend now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
 
-\image html img-msvc-release.jpg 
+\image html img-win7-msvc-release.jpg 
 
 - Now, as previously, build and install ViSP again.
 
 - At the end, in \c C:/ViSP/ViSP-install/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
 
-\image html img-msvc-install-end.jpg 
+\image html img-win7-msvc-install-end.jpg 
 
 \section install_win7_env_var Setting up PATH variable
 
-If you built static libraries then you are done. Otherwise, if you follow this tutorial step by step you need to add the bin folders path to the systems path. This is because you will use the ViSP and OpenCV libraries in form of "Dynamic-link libraries" (also known as DLL). Inside these are stored all the algorithms and information the libraries contains. The operating system will load them only on demand, during runtime. However, to do this he needs to know where they are. The systems \c PATH variable contains a list of folders where DLLs can be found. Add the ViSP and OpenCV libraries path to this and the OS will know where to look if he ever needs the libraries. Otherwise, you will need to copy the used DLLs right beside the applications executable file (exe) for the OS to find it.
+If you built static libraries then you are done. Otherwise, if you follow this tutorial step by step you need to add the bin folders path to the systems path. This is because you will use ViSP and OpenCV libraries in form of "Dynamic-link libraries" (also known as DLL). Inside these are stored all the algorithms and information the libraries contains. The operating system will load them only on demand, during runtime. However, to do this he needs to know where they are. The systems \c PATH variable contains a list of folders where DLLs can be found. Add ViSP and OpenCV libraries path to this and the OS will know where to look if he ever needs the libraries. Otherwise, you will need to copy the used DLLs right beside the applications executable file (exe) for the OS to find it.
+
+To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
+\code
+C:\Users\...> echo %PATH%
+C:\Users\...> setx PATH "%PATH%;C:\ViSP\ViSP-2.10.0-build\install\x64\vc12\bin"
+\endcode
+
+Then to add the path to OpenCV 3rd party libraries, close and re-open a cmd-terminal and run:
+\code
+C:\Users\...> echo %PATH%
+C:\Users\...> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc12\bin"
+\endcode
+
+Then close and re-open a cmd terminal to check if the PATH var was well positioned
 
 \code
-C:\ViSP\ViSP-install\bin; C:\OpenCV\opencv\build\x64\vc11\bin
+C:\Users\...> echo %PATH%
 \endcode
+
 
 \section install_win7_annex Appendix
 \subsection install_win7_annex_data Installing testing data
@@ -196,7 +181,7 @@ Some ViSP examples and tests require data set (images, models). These data set i
 
 - Download ViSP-images-2.10.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
 
-\image html img-ViSP-images.jpg 
+\image html img-win7-ViSP-images.jpg 
 
 \subsection install_win7_annex_usage Using testing data
 - ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called \c VISP_INPUT_IMAGE_PATH. In our case, this variable should be set to \c C:\\ViSP.
@@ -209,7 +194,7 @@ setx VISP_INPUT_IMAGE_PATH C:\ViSP
 displayGDI.exe -i C:\ViSP
 \endcode
 
-\image html img-cmd-displayGDI.jpg 
+\image html img-win7-cmd-displayGDI.jpg 
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
