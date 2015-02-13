@@ -264,7 +264,8 @@ public:
                bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+               std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex,
+               double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
   void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);

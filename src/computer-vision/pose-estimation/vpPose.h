@@ -111,6 +111,7 @@ private:
   unsigned int ransacNbInlierConsensus;
   int ransacMaxTrials;
   std::vector<vpPoint> ransacInliers;
+  std::vector<unsigned int> ransacInlierIndex;
   double ransacThreshold;
 
 protected:
@@ -177,6 +178,7 @@ public:
   }
   void setRansacMaxTrials(const int &rM){ ransacMaxTrials = rM; }
   unsigned int getRansacNbInliers() const { return (unsigned int) ransacInliers.size(); }
+  std::vector<unsigned int> getRansacInlierIndex() const{ return ransacInlierIndex; }
   std::vector<vpPoint> getRansacInliers() const{ return ransacInliers; }
   
   /*!

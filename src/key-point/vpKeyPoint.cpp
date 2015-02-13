@@ -692,7 +692,8 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
    the poses which do not respect some criterion
  */
 bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-                         std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+                         std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex,
+                         double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
   double t = vpTime::measureTimeMs();
 
   if(objectVpPoints.size() < 4) {
@@ -724,6 +725,8 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     pose.setCovarianceComputation(m_computeCovariance);
     isRansacPoseEstimationOk = pose.computePose(vpPose::RANSAC, cMo, func);
     inliers = pose.getRansacInliers();
+    inlierIndex = pose.getRansacInlierIndex();
+
     if(m_computeCovariance) {
       m_covarianceMatrix = pose.getCovarianceMatrix();
     }
@@ -2354,11 +2357,32 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     std::vector<vpPoint> inliers;
-    bool res = computePose(objectVpPoints, cMo, inliers, m_poseTime, func);
-    m_ransacInliers.resize(inliers.size());
-    for(size_t i = 0; i < m_ransacInliers.size(); i++) {
-      vpMeterPixelConversion::convertPoint(cam, inliers[i].get_x(), inliers[i].get_y(), m_ransacInliers[i]);
+    std::vector<unsigned int> inlierIndex;
+    bool res = computePose(objectVpPoints, cMo, inliers, inlierIndex, m_poseTime, func);
+
+    std::map<int, bool> mapOfInlierIndex;
+    m_matchRansacKeyPointsToPoints.clear();
+    m_matchRansacQueryToTrainKeyPoints.clear();
+
+    for (std::vector<unsigned int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
+      m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(m_queryFilteredKeyPoints[(size_t)(*it)],
+                                              m_objectFilteredPoints[(size_t)(*it)]));
+      m_matchRansacQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(m_queryFilteredKeyPoints[(size_t)(*it)],
+                                                  m_trainKeyPoints[(size_t)m_matches[(size_t)(*it)].trainIdx]));
+      mapOfInlierIndex[*it] = true;
     }
+
+    for(size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
+      if(mapOfInlierIndex.find((int) i) == mapOfInlierIndex.end()) {
+        m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
+      }
+    }
+
+    error = computePoseEstimationError(m_matchRansacKeyPointsToPoints, cam, cMo);
+
+    m_ransacInliers.resize(m_matchRansacKeyPointsToPoints.size());
+    std::transform(m_matchRansacKeyPointsToPoints.begin(), m_matchRansacKeyPointsToPoints.end(), m_ransacInliers.begin(),
+                   matchRansacToVpImage);
 
     elapsedTime += m_poseTime;
 
@@ -2372,6 +2396,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     std::map<int, bool> mapOfInlierIndex;
     m_matchRansacKeyPointsToPoints.clear();
     m_matchRansacQueryToTrainKeyPoints.clear();
+
     for (std::vector<int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
       m_matchRansacKeyPointsToPoints.push_back(std::pair<cv::KeyPoint, cv::Point3f>(m_queryFilteredKeyPoints[(size_t)(*it)],
                                               m_objectFilteredPoints[(size_t)(*it)]));

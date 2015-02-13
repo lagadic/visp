@@ -74,6 +74,9 @@
 */
 bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *))
 {  
+  ransacInliers.clear();
+  ransacInlierIndex.clear();
+
   srand(0); //Fix seed here so we will have the same pseudo-random series at each run.
   std::vector<unsigned int> best_consensus;
   std::vector<unsigned int> cur_consensus;
@@ -314,6 +317,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         pose.addPoint(pt) ;
         ransacInliers.push_back(pt);
       }
+
+      //Update the list of inlier index
+      ransacInlierIndex = best_consensus;
 
       //Flags set if pose computation is OK
       bool is_valid_lagrange = false;
