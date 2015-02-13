@@ -667,9 +667,8 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
   cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
 
   if(func != NULL) {
-    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
-    //we can converge toward a final cMo that does not respect the pose criterion even
-    //if the 4 minimal points picked to respect the pose criterion.
+    //Check the final pose returned by solvePnPRansac to discard
+    //solutions which do not respect the pose criterion.
     if(!func(&cMo)) {
       elapsedTime = (vpTime::measureTimeMs() - t);
       return false;
@@ -686,6 +685,24 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
    \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
    \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param inliers : List of inliers.
+   \param elapsedTime : Elapsed time.
+   \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
+ */
+bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+                         std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+  std::vector<unsigned int> inlierIndex;
+  return computePose(objectVpPoints, cMo, inliers, inlierIndex, elapsedTime, func);
+}
+
+/*!
+   Compute the pose using the correspondence between 2D points and 3D points using ViSP function with RANSAC method.
+
+   \param objectVpPoints : List of vpPoint with coordinates expressed in the object and in the camera frame.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
+   \param inliers : List of inlier points.
+   \param inlierIndex : List of inlier index.
    \param elapsedTime : Elapsed time.
    \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
    \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
@@ -736,15 +753,15 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     return false;
   }
 
-  if(func != NULL && isRansacPoseEstimationOk) {
-    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
-    //we can converge toward a final cMo that does not respect the pose criterion even
-    //if the 4 minimal points picked to respect the pose criterion.
-    if(!func(&cMo)) {
-      elapsedTime = (vpTime::measureTimeMs() - t);
-      return false;
-    }
-  }
+//  if(func != NULL && isRansacPoseEstimationOk) {
+//    //Check the final pose returned by the Ransac VVS pose estimation as in rare some cases
+//    //we can converge toward a final cMo that does not respect the pose criterion even
+//    //if the 4 minimal points picked to respect the pose criterion.
+//    if(!func(&cMo)) {
+//      elapsedTime = (vpTime::measureTimeMs() - t);
+//      return false;
+//    }
+//  }
 
   elapsedTime = (vpTime::measureTimeMs() - t);
   return isRansacPoseEstimationOk;

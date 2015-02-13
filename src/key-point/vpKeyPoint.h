@@ -260,8 +260,11 @@ public:
       std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex, double &elapsedTime,
-               bool (*func)(vpHomogeneousMatrix *)=NULL);
+               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+               double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+
+  bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
+               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
                std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex,
@@ -596,8 +599,23 @@ public:
     //So this is useful only for ratioDistanceThreshold method
     if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
       m_useKnn = true;
+
+      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+        if(m_matcher != NULL && m_matcherName == "BruteForce") {
+          //if a matcher is already initialized, disable the crossCheck
+          //because it will not work with knnMatch
+          m_matcher->set("crossCheck", false);
+        }
+      #endif
     } else {
       m_useKnn = false;
+
+      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+        if(m_matcher != NULL && m_matcherName == "BruteForce") {
+          //if a matcher is already initialized, set the crossCheck mode if necessary
+          m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
+        }
+      #endif
     }
   }
 

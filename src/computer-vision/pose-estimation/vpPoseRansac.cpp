@@ -355,6 +355,13 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
         pose.setCovarianceComputation(computeCovariance);
         pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+        //In some rare cases, the final pose could not respect the pose criterion even
+        //if the 4 minimal points picked respect the pose criterion.
+        if(func != NULL && !func(&cMo)) {
+          return false;
+        }
+
         if(computeCovariance) {
           covarianceMatrix = pose.covarianceMatrix;
         }
