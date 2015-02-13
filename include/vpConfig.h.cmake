@@ -62,6 +62,14 @@
   // 4986 : undocumented
 #endif
 
+#if defined _MSC_VER && (_MSC_VER == 1500)
+// Visual Studio 9 2008 specific stuff
+// Fix running 64-bit OpenMP Debug Builds compiled with Visual Studio 2008 SP1
+// See discussion on https://gforge.inria.fr/forum/message.php?msg_id=149273&group_id=397
+// and the proposed fix: http://www.johanseland.com/2010/08/running-64-bit-openmp-debug-builds.html
+#  define _BIND_TO_CURRENT_OPENMP_VERSION 1
+#endif
+
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
 // Work arround to fix build issues that may occur with Mingw:
 // error: 'DBL_EPSILON' was not declared in this scope
