@@ -91,8 +91,8 @@ void vpFeatureMomentArea::compute_interaction(){
 		double Yg = momentGravity.getYg();
 
 		double a = areamoment.get()[0];	// Area scalar
-        assert(a==mobj.get(0,0));
-        //assert(std::fabs(a-mobj.get(0,0)) < a*std::numeric_limits<double>::epsilon());
+        
+        assert(std::fabs(a-mobj.get(0,0)) < a*std::numeric_limits<double>::epsilon());
 
 		interaction_matrices[0][0][0] = -a*A;
 		interaction_matrices[0][0][1] = -a*B;
