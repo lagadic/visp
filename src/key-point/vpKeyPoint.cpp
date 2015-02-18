@@ -248,9 +248,9 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat& img,
     std::vector<cv::Mat> channels;
     channels.push_back(tcorners_x);
     channels.push_back(tcorners_y);
-    merge(channels, tcorners);
+    cv::merge(channels, tcorners);
 
-    cv::Rect rect = boundingRect(tcorners);
+    cv::Rect rect = cv::boundingRect(tcorners);
     A = (cv::Mat_<float>(2, 3) << c, -s, -rect.x, s, c, -rect.y);
 
     cv::warpAffine(img, img, A, cv::Size(rect.width, rect.height),
@@ -269,7 +269,7 @@ void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat& img,
     w = img.cols;
     cv::warpAffine(mask, mask, A, cv::Size(w, h), cv::INTER_NEAREST);
   }
-  invertAffineTransform(A, Ai);
+  cv::invertAffineTransform(A, Ai);
 }
 
 /*!

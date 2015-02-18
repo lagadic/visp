@@ -55,19 +55,20 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpPlane.h>
 #include <visp/vpPixelMeterConversion.h>
-#include <visp/vpMbEdgeTracker.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpPose.h>
 #include <visp/vpImageIo.h>
 #include <visp/vpPolygon.h>
 #include <visp/vpXmlConfigParserKeyPoint.h>
 #include <visp/vpConvert.h>
+#include <visp/vpMeterPixelConversion.h>
 
 // Require at least OpenCV >= 2.1.1
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
 #  include <opencv2/xfeatures2d.hpp>
