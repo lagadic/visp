@@ -185,20 +185,29 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   unsigned int nbrow  = 0;
   for(std::list<vpMbtDistanceLine*>::iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
-    nbrow += l->nbFeature ;
-    l->initInteractionMatrixError() ;
+
+    if(l->isVisible()){
+      nbrow += l->nbFeature ;
+      l->initInteractionMatrixError() ;
+    }
   }
   
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
-    nbrow += cy->nbFeature ;
-    cy->initInteractionMatrixError() ;
+
+    if(cy->isVisible()){
+      nbrow += cy->nbFeature ;
+      cy->initInteractionMatrixError() ;
+    }
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     ci = *it;
-    nbrow += ci->nbFeature ;
-    ci->initInteractionMatrixError() ;
+
+    if(ci->isVisible()){
+      nbrow += ci->nbFeature ;
+      ci->initInteractionMatrixError() ;
+    }
   }
 
   return nbrow;  
@@ -356,7 +365,6 @@ bool
 vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
                                  const unsigned int lvl)
 {
-  bool reInit = vpMbKltTracker::postTracking(I, w_klt);
   
   postTrackingMbt(w_mbt,lvl);
 
@@ -388,13 +396,15 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
     }
   }
   
-  if(reInit)
-    return true;
-  
   vpMbEdgeTracker::updateMovingEdge(I);
+
+  bool reInit = vpMbKltTracker::postTracking(I, w_klt);
   
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
+
+  if(reInit)
+    return true;
   
   return false;
 }
@@ -805,19 +815,21 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
   if(postTracking(I, w_mbt, w_klt)){
     vpMbKltTracker::reinit(I);
     
-    initPyramid(I, Ipyramid);
+    // AY : Removed as edge tracked, if necessary, is reinitialized in postTracking()
+
+//    initPyramid(I, Ipyramid);
     
-    unsigned int i = (unsigned int)scales.size();
-    do {
-      i--;
-      if(scales[i]){
-        downScale(i);
-        initMovingEdge(*Ipyramid[i], cMo);
-        upScale(i);
-      }
-    } while(i != 0);
+//    unsigned int i = (unsigned int)scales.size();
+//    do {
+//      i--;
+//      if(scales[i]){
+//        downScale(i);
+//        initMovingEdge(*Ipyramid[i], cMo);
+//        upScale(i);
+//      }
+//    } while(i != 0);
     
-    cleanPyramid(Ipyramid);
+//    cleanPyramid(Ipyramid);
   }
 }
 

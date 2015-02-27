@@ -202,24 +202,37 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   unsigned int nberrors_circles = 0;
 
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+
     l = *it;
-    nbrow += l->nbFeature;
-    nberrors_lines+=l->nbFeature;
-    l->initInteractionMatrixError();
+
+    if(l->isVisible())
+    {
+      nbrow += l->nbFeature;
+      nberrors_lines+=l->nbFeature;
+      l->initInteractionMatrixError();
+    }
   }
 
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
-    nbrow += cy->nbFeature ;
-    nberrors_cylinders += cy->nbFeature ;
-    cy->initInteractionMatrixError() ;
+
+    if(cy->isVisible())
+    {
+      nbrow += cy->nbFeature ;
+      nberrors_cylinders += cy->nbFeature ;
+      cy->initInteractionMatrixError() ;
+    }
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     ci = *it;
-    nbrow += ci->nbFeature ;
-    nberrors_circles += ci->nbFeature ;
-    ci->initInteractionMatrixError() ;
+
+    if(ci->isVisible())
+    {
+      nbrow += ci->nbFeature ;
+      nberrors_circles += ci->nbFeature ;
+      ci->initInteractionMatrixError() ;
+    }
   }
 
   if (nbrow==0){
@@ -793,13 +806,13 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       double wmean = 0 ;
       std::list<vpMeSite>::iterator itListLine;
       if (l->nbFeature > 0) itListLine = l->meline->getMeList().begin();
-      
+
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
         wmean += m_w[n+i] ;
         vpMeSite p = *itListLine;
         if (m_w[n+i] < 0.5){
           p.setState(vpMeSite::M_ESTIMATOR);
-          
+
           *itListLine = p;
         }
 
@@ -1029,9 +1042,13 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           throw ;
         }
 
+        vpMbtDistanceLine *l ;
+        vpMbtDistanceCylinder *cy ;
+        vpMbtDistanceCircle *ci ;
         // initialize the vector that contains the error and the matrix that contains
         // the interaction matrix
-        vpMbtDistanceLine *l ;
+        // AY: Useless as it is done in coputeVVS()
+        /*
         for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
           l = *it;
           if (l->isVisible()){
@@ -1039,7 +1056,6 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           }
         }  
 
-        vpMbtDistanceCylinder *cy ;
         for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
           cy = *it;
           if(cy->isVisible()) {
@@ -1047,13 +1063,13 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
           }
         }
 
-        vpMbtDistanceCircle *ci ;
         for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
           ci = *it;
           if (ci->isVisible()){
             ci->initInteractionMatrixError();
           }
         }
+        */
 
         try
         {
@@ -1467,11 +1483,12 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     }
     else
     {
+      l->nbFeature = 0;
       l->setVisible(false) ;
       if (l->meline!=NULL) delete l->meline;
       l->meline=NULL;
     }
-  }   
+  }
 
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
@@ -1501,6 +1518,9 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       if (cy->meline2!=NULL) delete cy->meline2;
       cy->meline1=NULL;
       cy->meline2=NULL;
+      cy->nbFeature = 0;
+      cy->nbFeaturel1 = 0;
+      cy->nbFeaturel2= 0;
     }
   }
 
@@ -1529,6 +1549,7 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       ci->setVisible(false) ;
       if (ci->meEllipse!=NULL) delete ci->meEllipse;
       ci->meEllipse=NULL;
+      ci->nbFeature = 0;
     }
   }
 }
