@@ -169,7 +169,7 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(false)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -204,7 +204,7 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useRansacVVS(false)
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(false)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -2156,12 +2156,44 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
 
   if(m_useKnn) {
     m_knnMatches.clear();
-    m_matcher->knnMatch(queryDescriptors, trainDescriptors, m_knnMatches, 2);
-    matches.resize(m_knnMatches.size());
-    std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
+
+    if(m_useMatchTrainToQuery) {
+      std::vector<std::vector<cv::DMatch> > knnMatchesTmp;
+
+      //Match train descriptors to query descriptors
+      m_matcher->knnMatch(trainDescriptors, queryDescriptors, knnMatchesTmp, 2);
+
+      for(std::vector<std::vector<cv::DMatch> >::const_iterator it1 = knnMatchesTmp.begin(); it1 != knnMatchesTmp.end(); ++it1) {
+        std::vector<cv::DMatch> tmp;
+        for(std::vector<cv::DMatch>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+          tmp.push_back(cv::DMatch(it2->trainIdx, it2->queryIdx, it2->distance));
+        }
+        m_knnMatches.push_back(tmp);
+      }
+
+      matches.resize(m_knnMatches.size());
+      std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
+    } else {
+      //Match query descriptors to train descriptors
+      m_matcher->knnMatch(queryDescriptors, trainDescriptors, m_knnMatches, 2);
+      matches.resize(m_knnMatches.size());
+      std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
+    }
   } else {
     matches.clear();
-    m_matcher->match(queryDescriptors, trainDescriptors, matches);
+
+    if(m_useMatchTrainToQuery) {
+      std::vector<cv::DMatch> matchesTmp;
+      //Match train descriptors to query descriptors
+      m_matcher->match(trainDescriptors, queryDescriptors, matchesTmp);
+
+      for(std::vector<cv::DMatch>::const_iterator it = matchesTmp.begin(); it != matchesTmp.end(); ++it) {
+        matches.push_back(cv::DMatch(it->trainIdx, it->queryIdx, it->distance));
+      }
+    } else {
+      //Match query descriptors to train descriptors
+      m_matcher->match(queryDescriptors, trainDescriptors, matches);
+    }
   }
   elapsedTime = vpTime::measureTimeMs() - t;
 }
@@ -2249,7 +2281,15 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
 
     filterMatches();
   } else {
-    m_queryFilteredKeyPoints = m_queryKeyPoints;
+    if(m_useMatchTrainToQuery) {
+      //Add only query keypoints matched with a train keypoints
+      m_queryFilteredKeyPoints.clear();
+      for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[it->queryIdx]);
+      }
+    } else {
+      m_queryFilteredKeyPoints = m_queryKeyPoints;
+    }
 
     if(!m_trainPoints.empty()) {
       m_objectFilteredPoints.clear();
@@ -2343,7 +2383,15 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     filterMatches();
   } else {
-    m_queryFilteredKeyPoints = m_queryKeyPoints;
+    if(m_useMatchTrainToQuery) {
+      //Add only query keypoints matched with a train keypoints
+      m_queryFilteredKeyPoints.clear();
+      for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[it->queryIdx]);
+      }
+    } else {
+      m_queryFilteredKeyPoints = m_queryKeyPoints;
+    }
 
     if(!m_trainPoints.empty()) {
       m_objectFilteredPoints.clear();

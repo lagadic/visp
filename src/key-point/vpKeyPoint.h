@@ -731,9 +731,21 @@ public:
     //Only available with BruteForce and with k=1 (i.e not used with a ratioDistanceThreshold method)
     if(m_matcher != NULL && !m_useKnn && m_matcherName == "BruteForce") {
       m_matcher->set("crossCheck", useCrossCheck);
+    } else if(m_matcher != NULL && m_useKnn && m_matcherName == "BruteForce") {
+      std::cout << "Warning, you try to set the crossCheck parameter with a BruteForce matcher but knn is enabled";
+      std::cout << " (the filtering method uses a ratio constraint)" << std::endl;
     }
   }
 #endif
+
+  /*!
+    Set if we want to match the train keypoints to the query keypoints.
+
+    \param useMatchTrainToQuery : True to match the train keypoints to the query keypoints
+   */
+  inline void setUseMatchTrainToQuery(const bool useMatchTrainToQuery) {
+    m_useMatchTrainToQuery = useMatchTrainToQuery;
+  }
 
   /*!
     Set the flag to choose between a percentage value of inliers for the cardinality of the consensus group
@@ -852,6 +864,10 @@ private:
   bool m_useConsensusPercentage;
   //! Flag set if a knn matching method must be used.
   bool m_useKnn;
+  //! Flag set if we want to match the train keypoints to the query keypoints, useful when there is only one train image
+  //! because it reduces the number of possible false matches (by default it is the inverse because normally there are multiple
+  //! train images of different views of the object)
+  bool m_useMatchTrainToQuery;
   //! Flag set if a Ransac VVS pose estimation must be used.
   bool m_useRansacVVS;
 
