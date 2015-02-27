@@ -451,16 +451,17 @@ public:
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect& rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+                  double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL,
+                  const vpRect& rectangle=vpRect());
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
                            const bool isPlanarObject=true, std::vector<vpImagePoint> *imPts1=NULL,
                            std::vector<vpImagePoint> *imPts2=NULL, double *meanDescriptorDistance=NULL,
-                           double *detectionScore=NULL);
+                           double *detectionScore=NULL, const vpRect& rectangle=vpRect());
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                   double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                  bool (*func)(vpHomogeneousMatrix *)=NULL);
+                  bool (*func)(vpHomogeneousMatrix *)=NULL, const vpRect& rectangle=vpRect());
 
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
 

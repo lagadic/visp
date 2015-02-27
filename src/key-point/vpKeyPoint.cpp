@@ -2250,7 +2250,17 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
     filterMatches();
   } else {
     m_queryFilteredKeyPoints = m_queryKeyPoints;
-    m_objectFilteredPoints = m_trainPoints;
+
+    if(!m_trainPoints.empty()) {
+      m_objectFilteredPoints.clear();
+      //Add 3D object points such as the same index in m_queryFilteredKeyPoints and in m_objectFilteredPoints
+      // matches to the same train object
+      for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        //m_matches is normally ordered following the queryDescriptor index
+        m_objectFilteredPoints.push_back(m_trainPoints[it->trainIdx]);
+      }
+    }
+
     m_filteredMatches = m_matches;
 
     m_matchQueryToTrainKeyPoints.clear();
@@ -2282,7 +2292,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \return True if the matching and the pose estimation are OK, false otherwise
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                            double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)) {
+                            double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *), const vpRect& rectangle) {
   //Check if we have training descriptors
   if(m_trainDescriptors.empty()) {
     std::cerr << "Reference is empty." << std::endl;
@@ -2318,7 +2328,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       }
     }
   } else {
-    detect(I, m_queryKeyPoints, m_detectionTime);
+    detect(I, m_queryKeyPoints, m_detectionTime, rectangle);
     extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   }
 
@@ -2334,7 +2344,17 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     filterMatches();
   } else {
     m_queryFilteredKeyPoints = m_queryKeyPoints;
-    m_objectFilteredPoints = m_trainPoints;
+
+    if(!m_trainPoints.empty()) {
+      m_objectFilteredPoints.clear();
+      //Add 3D object points such as the same index in m_queryFilteredKeyPoints and in m_objectFilteredPoints
+      // matches to the same train object
+      for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
+        //m_matches is normally ordered following the queryDescriptor index
+        m_objectFilteredPoints.push_back(m_trainPoints[it->trainIdx]);
+      }
+    }
+
     m_filteredMatches = m_matches;
 
     m_matchQueryToTrainKeyPoints.clear();
@@ -2458,13 +2478,13 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
     const bool isPlanarObject, std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-    double *meanDescriptorDistance, double *detectionScore) {
+    double *meanDescriptorDistance, double *detectionScore, const vpRect& rectangle) {
   if(imPts1 != NULL && imPts2 != NULL) {
     imPts1->clear();
     imPts2->clear();
   }
 
-  matchPoint(I);
+  matchPoint(I, rectangle);
 
   double meanDescriptorDistanceTmp = 0.0;
   for(std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
@@ -2591,8 +2611,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                                      double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                                     bool (*func)(vpHomogeneousMatrix *)) {
-  bool isMatchOk = matchPoint(I, cam, cMo, error, elapsedTime, func);
+                                     bool (*func)(vpHomogeneousMatrix *), const vpRect& rectangle) {
+  bool isMatchOk = matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
   if(isMatchOk) {
     //Use the pose estimated to project the model points in the image
     vpPoint pt;
