@@ -42,12 +42,9 @@
 #include <visp/vpConfig.h>
 #if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
 
-#define FLUSH_ROI
 #include <visp/vpDisplayWin32.h>
 #include <visp/vpDisplayException.h>
 #include <string>
-
-
 
 const int vpDisplayWin32::MAX_INIT_DELAY  = 5000;
 
@@ -685,39 +682,22 @@ void vpDisplayWin32::flushDisplayROI(const vpImagePoint &iP, const unsigned int 
 {
   //waits if the window is not initialized
   waitForInit();
-  
   /*
   Under windows, flushing an ROI takes more time than
   flushing the whole image.
   Therefore, we update the maximum area even when asked to update a region.
   */
-#ifdef FLUSH_ROI
-  typedef struct _half_rect_t{
-    unsigned short left_top;
-    unsigned short right_bottom;
-  } half_rect_t;
+  WORD left  = (WORD)iP.get_u();
+  WORD right = (WORD)(iP.get_u()+width-1);
 
-  half_rect_t hr1;
-  half_rect_t hr2;
-
-  hr1.left_top = (unsigned short)iP.get_u();
-  hr1.right_bottom = (unsigned short)(iP.get_u()+width-1);
-
-  hr2.left_top = (unsigned short)iP.get_v();
-  hr2.right_bottom = (unsigned short)(iP.get_v()+height-1);
+  WORD top    = (WORD)iP.get_v();
+  WORD bottom = (WORD)(iP.get_v()+height-1);
 
   //sends a message to the window
-#  if 1 // new version FS
-  WPARAM wp = (WPARAM)(hr1.left_top << sizeof(unsigned short)) + hr1.right_bottom;
-  LPARAM lp = (hr2.left_top << sizeof(unsigned short)) + hr2.right_bottom;
-#  else // produce warnings with MinGW
-  WPARAM wp=*((WPARAM*)(&hr1));
-  LPARAM lp=*((WPARAM*)(&hr2));
-#  endif
+  WPARAM wp = MAKEWPARAM(left, right);
+  LPARAM lp = MAKELPARAM(top, bottom);
+
   PostMessage(window.getHWnd(), vpWM_DISPLAY_ROI, wp,lp);
-#else
-  PostMessage(window.getHWnd(), vpWM_DISPLAY, 0,0);
-#endif
 }
 
 

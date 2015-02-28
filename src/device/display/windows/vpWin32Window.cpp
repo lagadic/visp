@@ -83,7 +83,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       vpReleaseSemaphore(window->semaInit,1,NULL);      
     }
   }
-
   switch (message)
   {
     case vpWM_DISPLAY:
@@ -95,22 +94,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case vpWM_DISPLAY_ROI:
 	{
       RECT rect;
-      typedef struct _half_rect_t{
-        unsigned short left_top;
-        unsigned short right_bottom;
-      } half_rect_t;
 
-      half_rect_t hr1;
-      half_rect_t hr2;
-                  
-      hr1 = *((half_rect_t*)(&wParam));
-      hr2 = *((half_rect_t*)(&lParam));
+      rect.left = LOWORD(wParam);
+      rect.right = HIWORD(wParam);
 
-      rect.left = hr1.left_top;
-      rect.right = hr1.right_bottom;
-
-      rect.top = hr2.left_top;
-      rect.bottom = hr2.right_bottom;
+      rect.top = LOWORD(lParam);
+      rect.bottom = HIWORD(lParam);
 
       InvalidateRect(window->getHWnd(), &rect, TRUE);
       UpdateWindow(window->getHWnd());

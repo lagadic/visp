@@ -195,7 +195,7 @@ int main(int argc, const char ** argv)
     C = vpRGBa(0,255,0,0);
 
     vpDisplay::displayROI(C, roi);
-    vpDisplay::flush(C);
+    vpDisplay::flushROI(C, roi);
     if (opt_click_allowed) {
       std::cout << "A click in the image to exit..." << std::endl;
       vpDisplay::getClick(C);
