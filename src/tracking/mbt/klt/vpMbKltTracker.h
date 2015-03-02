@@ -393,6 +393,14 @@ public:
   }
   
   virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+
+  /*!
+    Set if the projection error criteria has to be computed.
+
+    \param flag : True if the projection error criteria has to be computed, false otherwise
+  */
+  virtual void            setProjectionErrorComputation(const bool &/*flag*/) {
+                vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
   
           /*!
             Set the threshold for the acceptation of a point.

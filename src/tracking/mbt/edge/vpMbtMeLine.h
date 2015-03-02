@@ -78,6 +78,8 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
   public:  
     vpMbtMeLine();
     ~vpMbtMeLine();
+
+    void computeProjectionError(const vpImage<unsigned char>& _I, double &_sumErrorRad, unsigned int &_nbFeatures);
     
     void display(const vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
     void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker

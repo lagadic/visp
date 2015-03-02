@@ -124,6 +124,10 @@ protected:
   bool computeCovariance;
   //! Covariance matrix
   vpMatrix covarianceMatrix;
+  //! Flag used to specify if the gradient error criteria has to be computed or not.
+  bool computeProjError;
+  //! Error angle between the gradient direction of the model features projected at the resulting pose and their normal.
+  double projectionError;
   //! If true, the features are displayed. 
   bool displayFeatures;
   //! Weights used in the robust scheme
@@ -228,6 +232,13 @@ public:
     
     return covarianceMatrix; 
   }
+
+  /*!
+    Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
+
+    \return the value for the error.
+  */
+  virtual double getProjectionError() const { return projectionError; }
 
   virtual vpColVector getEstimatedDoF();
 
@@ -414,6 +425,13 @@ public:
     \param flag : True if the covariance has to be computed, false otherwise
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
+
+  /*!
+    Set if the projection error criteria has to be computed.
+
+    \param flag : True if the projection error criteria has to be computed, false otherwise
+  */
+  virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   virtual void setEstimatedDoF(const vpColVector& v);
 

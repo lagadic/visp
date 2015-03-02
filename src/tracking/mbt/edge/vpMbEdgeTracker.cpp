@@ -934,6 +934,76 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
 }
 
 /*!
+  Compute the projection error of the model.
+  This approach compares the gradient direction around samples of each lines of the model with their direction.
+  Error is expressed in degrees between 0 and 90;
+
+  \param _I : Image in which the model appears.
+*/
+void
+vpMbEdgeTracker::computeProjectionError(const vpImage<unsigned char>& _I)
+{
+  vpMbtDistanceLine *l ;
+  projectionError = 0.0;
+  unsigned int nbFeatures = 0;
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+    l = *it;
+    if (l->isVisible() && l->meline != NULL)
+    {
+      double lineNormGradient = 0;
+      unsigned int lineNbFeatures = 0;
+      l->meline->computeProjectionError(_I, lineNormGradient, lineNbFeatures);
+      projectionError += lineNormGradient;
+      nbFeatures += lineNbFeatures;
+    }
+  }
+
+  vpMbtDistanceCylinder *cy;
+  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
+    cy = *it;
+    if (cy->isVisible())
+    {
+      if(cy->meline1 != NULL)
+      {
+        double cylinderNormGradient = 0;
+        unsigned int cylinderNbFeatures = 0;
+        cy->meline1->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures);
+        projectionError += cylinderNormGradient;
+        nbFeatures += cylinderNbFeatures;
+      }
+
+      if(cy->meline2 != NULL)
+      {
+        double cylinderNormGradient = 0;
+        unsigned int cylinderNbFeatures = 0;
+        cy->meline2->computeProjectionError(_I, cylinderNormGradient, cylinderNbFeatures);
+        projectionError += cylinderNormGradient;
+        nbFeatures += cylinderNbFeatures;
+      }
+    }
+  }
+
+  vpMbtDistanceCircle *c;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+    c = *it;
+    if (c->isVisible() && c->meEllipse != NULL)
+    {
+      double circleNormGradient = 0;
+      unsigned int circleNbFeatures = 0;
+      c->meEllipse->computeProjectionError(_I, circleNormGradient, circleNbFeatures);
+      projectionError += circleNormGradient;
+      nbFeatures += circleNbFeatures;
+    }
+  }
+
+  if(nbFeatures > 0)
+    projectionError = vpMath::deg(projectionError/(double)nbFeatures);
+  else
+    projectionError = 90.0;
+//  std::cout << "Norm Gradient = " << errorGradient << std::endl;
+}
+
+/*!
   Check if the tracking failed.
   
   \throw vpTrackingException::fatalError if the test fails. 
@@ -1026,6 +1096,9 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
   unsigned int lvl = (unsigned int)scales.size();
   do{
     lvl--;
+
+    projectionError = 90.0;
+
     if(scales[lvl]){
       vpHomogeneousMatrix cMo_1 = cMo;
       try
@@ -1132,6 +1205,10 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 
         // Reinit the moving edge for the lines which need it.
         reinitMovingEdge(I,cMo);
+
+        if(computeProjError)
+          computeProjectionError(I);
+
         upScale(lvl);
       }
       catch(vpException &e)

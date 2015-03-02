@@ -128,9 +128,10 @@ struct PolygonFaceInfo {
 */
 vpMbTracker::vpMbTracker()
 : cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
-  poseSavingFilename(), computeCovariance(false), covarianceMatrix(), displayFeatures(false),
-  m_w(), m_error(), faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ),
-  distNearClip(0.001), distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
+  poseSavingFilename(), computeCovariance(false), covarianceMatrix(), computeProjError(false),
+  projectionError(90.0), displayFeatures(false), m_w(), m_error(), faces(),
+  angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ), distNearClip(0.001),
+  distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
   minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()

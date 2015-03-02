@@ -449,6 +449,7 @@ protected:
   void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p) ;
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
+  void computeProjectionError(const vpImage<unsigned char>& _I);
   void computeVVS(const vpImage<unsigned char>& _I);
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char>& I);

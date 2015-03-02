@@ -356,6 +356,177 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl  ;
 }
 
+
+/*!
+  Compute the projection error of the line. Compare the gradient direction around samples of the line to its direction.
+  Error is expressed in radians between 0 and M_PI/2.0;
+
+  \param _I : Image in which the line appears.
+  \param _sumErrorRad : sum of the error per feature.
+  \param _nbFeatures : Number of features used to compute _sumErrorRad.
+*/
+void
+vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_sumErrorRad, unsigned int &_nbFeatures)
+{
+  _sumErrorRad = 0;
+  _nbFeatures = 0;
+  double deltaNormalized = theta;
+  unsigned int iter = 0;
+
+  while (deltaNormalized<0) deltaNormalized += M_PI;
+  while (deltaNormalized>M_PI) deltaNormalized -= M_PI;
+
+//  vpMatrix filterX(3,3);
+//  filterX[0][0] = -1;
+//  filterX[1][0] = -2;
+//  filterX[2][0] = -1;
+
+//  filterX[0][1] = 0;
+//  filterX[1][1] = 0;
+//  filterX[2][1] = 0;
+
+//  filterX[0][2] = 1;
+//  filterX[1][2] = 2;
+//  filterX[2][2] = 1;
+
+//  vpMatrix filterY(3,3);
+//  filterY[0][0] = -1;
+//  filterY[0][1] = -2;
+//  filterY[0][2] = -1;
+
+//  filterY[1][0] = 0;
+//  filterY[1][1] = 0;
+//  filterY[1][2] = 0;
+
+//  filterY[2][0] = 1;
+//  filterY[2][1] = 2;
+//  filterY[2][2] = 1;
+
+  vpMatrix filterX(5,5);
+  filterX[0][0] = -1;
+  filterX[1][0] = -4;
+  filterX[2][0] = -6;
+  filterX[3][0] = -4;
+  filterX[4][0] = -1;
+
+  filterX[0][1] = -2;
+  filterX[1][1] = -8;
+  filterX[2][1] = -12;
+  filterX[3][1] = -8;
+  filterX[4][1] = -2;
+
+  filterX[0][2] = 0;
+  filterX[1][2] = 0;
+  filterX[2][2] = 0;
+  filterX[3][2] = 0;
+  filterX[4][2] = 0;
+
+  filterX[0][3] = 2;
+  filterX[1][3] = 8;
+  filterX[2][3] = 12;
+  filterX[3][3] = 8;
+  filterX[4][3] = 2;
+
+  filterX[0][4] = 1;
+  filterX[1][4] = 4;
+  filterX[2][4] = 6;
+  filterX[3][4] = 4;
+  filterX[4][4] = 1;
+
+  vpMatrix filterY(5,5);
+  filterY[0][0] = -1;
+  filterY[0][1] = -4;
+  filterY[0][2] = -6;
+  filterY[0][3] = -4;
+  filterY[0][4] = -1;
+
+  filterY[1][0] = -2;
+  filterY[1][1] = -8;
+  filterY[1][2] = -12;
+  filterY[1][3] = -8;
+  filterY[1][4] = -2;
+
+  filterY[2][0] = 0;
+  filterY[2][1] = 0;
+  filterY[2][2] = 0;
+  filterY[2][3] = 0;
+  filterY[2][4] = 0;
+
+  filterY[3][0] = 2;
+  filterY[3][1] = 8;
+  filterY[3][2] = 12;
+  filterY[3][3] = 8;
+  filterY[3][4] = 2;
+
+  filterY[4][0] = 1;
+  filterY[4][1] = 4;
+  filterY[4][2] = 6;
+  filterY[4][3] = 4;
+  filterY[4][4] = 1;
+
+  double offset = std::floor(filterX.getRows() / 2);
+
+  for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
+    if(iter != 0 && iter+1 != list.size()){
+      double gradientX = 0;
+      double gradientY = 0;
+
+      double iSite = it->ifloat;
+      double jSite = it->jfloat;
+
+      for(unsigned int i = 0; i<filterX.getRows() ; i++){
+        for(unsigned int j = 0; j< filterX.getCols() ; j++){
+          double iImg = iSite + (i-offset);
+          double jImg = jSite + (j-offset);
+
+          if(iImg < 0) iImg = 0.0;
+          if(jImg < 0) jImg = 0.0;
+
+          if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
+          if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
+
+          gradientX += filterX[i][j] * _I(iImg,jImg);
+        }
+      }
+
+      for(unsigned int i = 0; i<filterY.getRows() ; i++){
+        for(unsigned int j = 0; j< filterY.getCols() ; j++){
+          double iImg = iSite + (i-offset);
+          double jImg = jSite + (j-offset);
+
+          if(iImg < 0) iImg = 0.0;
+          if(jImg < 0) jImg = 0.0;
+
+          if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
+          if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
+
+          gradientY += filterY[i][j] * _I(iImg,jImg);
+        }
+      }
+
+      double angle = atan2(gradientX,gradientY);
+      while (angle<0) angle += M_PI;
+      while (angle>M_PI) angle -= M_PI;
+
+      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
+      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
+
+//      _sumErrorRad += angle1;
+      _sumErrorRad += std::min(angle1,angle2);
+
+//      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
+//      {
+//        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle)) - M_PI / 2;
+//      } else {
+//        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle));
+//      }
+
+      _nbFeatures++;
+    }
+    iter++;
+  }
+}
+
 /*!
   Resample the line if the number of sample is less than 50% of the
   expected value.
