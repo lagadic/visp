@@ -285,16 +285,19 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
       try
       {
         meline->initTracking(I,ip1,ip2,rho,theta);
+        nbFeature =(unsigned int) meline->getMeList().size();
       }
       catch(...)
       {
         //vpTRACE("the line can't be initialized");
+        nbFeature = 0;
         return false;
       }
     }
     else{
       if (meline!=NULL) delete meline;
       meline=NULL;
+      nbFeature = 0;
       isvisible = false;
     }
   }   
@@ -336,13 +339,14 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
     try 
     {
       meline->track(I) ;
+      nbFeature =(unsigned int) meline->getMeList().size();
     }
     catch(...)
     {
-      meline->reset();
+      meline->reset(); // Might not be necessary
+      nbFeature = 0;
       Reinit = true;
     }
-    nbFeature =(unsigned int) meline->getMeList().size();
   }
 }
 
@@ -391,17 +395,19 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
       {
         //meline->updateParameters(I,rho,theta) ;
         meline->updateParameters(I,ip1,ip2,rho,theta) ;
+        nbFeature = (unsigned int)meline->getMeList().size();
       }
       catch(...)
       {
         Reinit = true;
+        nbFeature = 0;
       }
-      nbFeature = (unsigned int)meline->getMeList().size();
     }
     else{
       if (meline!=NULL) delete meline;
       meline=NULL;
       isvisible = false;
+      nbFeature = 0;
     }
   }
 }
@@ -540,10 +546,10 @@ vpMbtDistanceLine::initInteractionMatrixError()
   {
     L.resize((unsigned int)meline->getMeList().size(),6) ;
     error.resize((unsigned int)meline->getMeList().size()) ;
-    nbFeature = (unsigned int)meline->getMeList().size() ;
+    //nbFeature = (unsigned int)meline->getMeList().size() ;
   }
-  else
-    nbFeature = 0 ;
+//  else
+//    nbFeature = 0 ;
 }
 
 /*!
