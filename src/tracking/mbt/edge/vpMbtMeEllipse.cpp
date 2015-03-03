@@ -215,6 +215,11 @@ vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char>& _I, double 
       while (deltaNormalized<0) deltaNormalized += M_PI;
       while (deltaNormalized>M_PI) deltaNormalized -= M_PI;
 
+      vpColVector vecSite(2);
+      vecSite[0] = cos(deltaNormalized);
+      vecSite[1] = sin(deltaNormalized);
+      vecSite.normalize();
+
       double gradientX = 0;
       double gradientY = 0;
 
@@ -249,12 +254,8 @@ vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char>& _I, double 
       }
 
       double angle = atan2(gradientY,gradientX);
-//      std::cout << "angle=" << vpMath::deg(angle) << " ; theta=" << vpMath::deg(theta) << std::endl;
       while (angle<0) angle += M_PI;
       while (angle>M_PI) angle -= M_PI;
-
-
-//      std::cout << "angle=" << vpMath::deg(angle) << " ; deltaNormalized=" << vpMath::deg(deltaNormalized) << std::endl;// << std::endl;
 
 //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
 //      {
@@ -263,8 +264,17 @@ vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char>& _I, double 
 //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle));
 //      }
 
-      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
-      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
+//      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
+//      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
+
+      vpColVector vecGrad(2);
+      vecGrad[0] = cos(angle);
+      vecGrad[1] = sin(angle);
+      vecGrad.normalize();
+
+      double angle1 = acos(vecSite * vecGrad);
+      double angle2 = acos(vecSite * (-vecGrad));
+
       _sumErrorRad += std::min(angle1,angle2);
 
       _nbFeatures++;

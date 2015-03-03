@@ -377,6 +377,11 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
   while (deltaNormalized<0) deltaNormalized += M_PI;
   while (deltaNormalized>M_PI) deltaNormalized -= M_PI;
 
+  vpColVector vecLine(2);
+  vecLine[0] = cos(deltaNormalized);
+  vecLine[1] = sin(deltaNormalized);
+  vecLine.normalize();
+
 //  vpMatrix filterX(3,3);
 //  filterX[0][0] = -1;
 //  filterX[1][0] = -2;
@@ -509,10 +514,17 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
       while (angle<0) angle += M_PI;
       while (angle>M_PI) angle -= M_PI;
 
-      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
-      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
+      vpColVector vecGrad(2);
+      vecGrad[0] = cos(angle);
+      vecGrad[1] = sin(angle);
+      vecGrad.normalize();
 
-//      _sumErrorRad += angle1;
+      double angle1 = acos(vecLine * vecGrad);
+      double angle2 = acos(vecLine * (-vecGrad));
+
+//      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
+//      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
+
       _sumErrorRad += std::min(angle1,angle2);
 
 //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
