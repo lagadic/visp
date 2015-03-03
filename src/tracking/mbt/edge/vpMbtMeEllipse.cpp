@@ -51,6 +51,7 @@
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
+#include <algorithm>    // std::min
 
 
 /*!
