@@ -2329,6 +2329,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
    \param elapsedTime : Time to detect, extract, match and compute the pose
    \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
    the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
    \return True if the matching and the pose estimation are OK, false otherwise
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -2522,6 +2523,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
    \param imPts2 : Pointer to the list of current keypoints if not null
    \param meanDescriptorDistance : Pointer to the value of the average distance of the descriptors if not null
    \param detectionScore : Pointer to the value of the detection score if not null
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
    \return True if the object is present, false otherwise
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
@@ -2655,6 +2657,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
    the bounding box)
    \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
    the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
    \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
