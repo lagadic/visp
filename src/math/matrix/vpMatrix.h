@@ -66,7 +66,7 @@ class vpTranslationVector;
 class vpRowVector;
 class vpHomography;
 
-
+class vpHomogeneousMatrix;
 
 /*!
   \file vpMatrix.h
@@ -226,10 +226,16 @@ protected:
   // Matrix operations (Static).
   //---------------------------------  
 
+private:
+  static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, vpMatrix &Js, vpColVector &deltaP);
+
+public:
   static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
   static void add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C);
   static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b);
   static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const vpMatrix &w);
+  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
+  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls);
   static void computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM);
 
   // Create a diagonal matrix with the element of a vector DAii = Ai

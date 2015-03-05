@@ -505,8 +505,6 @@ protected:
       const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=2500.0);
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const int idFace=-1, const std::string &polygonName="",
       const bool useLod=false, const double minLineLengthThreshold=50);
-
-  void computeCovarianceMatrix(const vpHomogeneousMatrix &cMoPrev, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN

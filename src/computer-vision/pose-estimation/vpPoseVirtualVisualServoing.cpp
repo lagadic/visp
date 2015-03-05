@@ -91,6 +91,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       k ++;
     }
 
+    vpHomogeneousMatrix cMoPrev = cMo;
     while((int)((residu_1 - r)*1e12) !=0)
     {      
       residu_1 = r ;
@@ -139,12 +140,13 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
       //std::cout << "r=" << r <<std::endl ;
       // update the pose
 
+      cMoPrev = cMo;
       cMo = vpExponentialMap::direct(v).inverse()*cMo ; ;
       if (iter++>vvsIterMax) break ;
     }
     
     if(computeCovariance)
-      covarianceMatrix = vpMatrix::computeCovarianceMatrix(L,v,-lambda*err);
+      covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, err, L);
   }
 
   catch(...)

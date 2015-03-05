@@ -399,8 +399,9 @@ public:
 
     \param flag : True if the projection error criteria has to be computed, false otherwise
   */
-  virtual void            setProjectionErrorComputation(const bool &/*flag*/) {
-                vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
+  virtual void            setProjectionErrorComputation(const bool &flag) {
+                if(flag)
+                  vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
   
           /*!
             Set the threshold for the acceptation of a point.

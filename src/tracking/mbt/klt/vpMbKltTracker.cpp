@@ -735,10 +735,10 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 
     // Note that here the covariance is computed on cMoPrev for time computation efficiency
     if(isoJoIdentity){
-        computeCovarianceMatrix(cMoPrev,m_error,L_true,D);
+        covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev,m_error,L_true,D);
     }
     else{
-        computeCovarianceMatrix(cMoPrev,m_error,LVJ_true,D);
+        covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev,m_error,LVJ_true,D);
     }
   }
 }

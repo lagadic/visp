@@ -44,7 +44,9 @@
 
 #include <visp/vpConfig.h>
 #include <visp/vpMatrix.h>
+#include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpColVector.h>
+#include <visp/vpTranslationVector.h>
 #include <visp/vpMatrixException.h>
 
 
@@ -103,4 +105,115 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
   sigma2 /= denom;
 
   return (A.t()*(W2)*A).pseudoInverse(A.getCols()*std::numeric_limits<double>::epsilon())*sigma2;
+}
+
+/*!
+  Compute the covariance matrix of an image-based virtual visual servoing.
+  This assumes the optimization has been done via v = Ls.pseudoInverse() * DeltaS.
+
+  \param cMo : Pose matrix that has been computed with the v.
+
+  \param deltaS : Error vector used in v = Ls.pseudoInverse() * DeltaS
+
+  \param Ls : interaction matrix used in v = Ls.pseudoInverse() * DeltaS
+*/
+vpMatrix
+vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls)
+{
+  vpMatrix Js;
+  vpColVector deltaP;
+  vpMatrix::computeCovarianceMatrixVVS(cMo,deltaS,Ls,Js,deltaP);
+
+  return vpMatrix::computeCovarianceMatrix(Js,deltaP,deltaS);
+}
+
+/*!
+  Compute the covariance matrix of an image-based virtual visual servoing.
+  This assumes the optimization has been done via v = (W * Ls).pseudoInverse() * W * DeltaS.
+
+  \param cMo : Pose matrix that has been computed with the v.
+
+  \param deltaS : Error vector used in v = (W * Ls).pseudoInverse() * W * DeltaS.
+
+  \param Ls : interaction matrix used in v = (W * Ls).pseudoInverse() * W * DeltaS.
+
+  \param W : Weight matrix used in v = (W * Ls).pseudoInverse() * W * DeltaS.
+*/
+vpMatrix
+vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W)
+{
+  vpMatrix Js;
+  vpColVector deltaP;
+  vpMatrix::computeCovarianceMatrixVVS(cMo,deltaS,Ls,Js,deltaP);
+
+  return vpMatrix::computeCovarianceMatrix(Js,deltaP,deltaS,W);
+}
+
+void
+vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, vpMatrix &Js, vpColVector &deltaP)
+{
+    //building Lp
+    vpMatrix LpInv(6,6);
+    LpInv = 0;
+    LpInv[0][0] = -1.0;
+    LpInv[1][1] = -1.0;
+    LpInv[2][2] = -1.0;
+
+    vpTranslationVector ctoInit;
+
+    cMo.extract(ctoInit);
+    vpMatrix ctoInitSkew = ctoInit.skew();
+
+    vpThetaUVector thetau;
+    cMo.extract(thetau);
+
+    vpColVector tu(3);
+    for(unsigned int i = 0 ; i < 3 ; i++)
+        tu[i] = thetau[i];
+
+    double theta = sqrt(tu.sumSquare()) ;
+
+//    vpMatrix Lthetau(3,3);
+    vpMatrix LthetauInvAnalytic(3,3);
+    vpMatrix I3(3,3);
+    I3.setIdentity();
+//    Lthetau = -I3;
+    LthetauInvAnalytic = -I3;
+
+    if(theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon())
+    {
+        // Computing [theta/2 u]_x
+        vpColVector theta2u(3)  ;
+        for (unsigned int i=0 ; i < 3 ; i++) {
+          theta2u[i] = tu[i]/2.0 ;
+        }
+        vpMatrix theta2u_skew = vpColVector::skew(theta2u);
+
+        vpColVector u(3)  ;
+        for (unsigned int i=0 ; i < 3 ; i++) {
+          u[i] = tu[i]/theta ;
+        }
+        vpMatrix u_skew = vpColVector::skew(u);
+
+//        Lthetau += (theta2u_skew - (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
+        LthetauInvAnalytic += -(vpMath::sqr(vpMath::sinc(theta/2.0)) * theta2u_skew - (1.0-vpMath::sinc(theta))*u_skew*u_skew);
+    }
+
+//    vpMatrix LthetauInv = Lthetau.inverseByLU();
+
+    ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
+
+    for(unsigned int a = 0 ; a < 3 ; a++)
+        for(unsigned int b = 0 ; b < 3 ; b++)
+            LpInv[a][b+3] = ctoInitSkew[a][b];
+
+    for(unsigned int a = 0 ; a < 3 ; a++)
+        for(unsigned int b = 0 ; b < 3 ; b++)
+            LpInv[a+3][b+3] = LthetauInvAnalytic[a][b];
+
+    // Building Js
+    Js = Ls * LpInv;
+
+    // building deltaP
+    deltaP = (Js).pseudoInverse(Js.getRows()*std::numeric_limits<double>::epsilon()) * deltaS;
 }
