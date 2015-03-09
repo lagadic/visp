@@ -48,8 +48,8 @@
 */
 
 #include <iostream>
+#include <math.h>       // isnan
 #include <cmath>        // std::fabs
-#include <math.h>       // isnan()
 #include <limits>       // numeric_limits
 #include <stdlib.h>
 #include <algorithm>    // std::count
@@ -182,12 +182,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     }
 
     //If residual returned is not a number (NAN), set valid to false
-    if(isnan(r_lagrange)) {
+    if((isnan)(r_lagrange)) {
       is_valid_lagrange = false;
       r_lagrange = DBL_MAX;
     }
 
-    if(isnan(r_dementhon)) {
+    if((isnan)(r_dementhon)) {
       is_valid_dementhon = false;
       r_dementhon = DBL_MAX;
     }
@@ -358,12 +358,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       }
 
       //If residual returned is not a number (NAN), set valid to false
-      if(isnan(r_lagrange)) {
+      if((isnan)(r_lagrange)) {
         is_valid_lagrange = false;
         r_lagrange = DBL_MAX;
       }
 
-      if(isnan(r_dementhon)) {
+      if((isnan)(r_dementhon)) {
         is_valid_dementhon = false;
         r_dementhon = DBL_MAX;
       }
