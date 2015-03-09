@@ -47,6 +47,7 @@ set(SOURCE
   testColvector.cpp
   testKalmanAcceleration.cpp
   testKalmanVelocity.cpp
+  testMath.cpp
   testMatrix.cpp
   testMatrixException.cpp
   testMatrixInverse.cpp

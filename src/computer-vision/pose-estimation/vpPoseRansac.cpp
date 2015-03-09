@@ -48,7 +48,6 @@
 */
 
 #include <iostream>
-#include <math.h>       // isnan
 #include <cmath>        // std::fabs
 #include <limits>       // numeric_limits
 #include <stdlib.h>
@@ -61,6 +60,7 @@
 #include <visp/vpTime.h>
 #include <visp/vpList.h>
 #include <visp/vpPoseException.h>
+#include <visp/vpMath.h>
 
 #define eps 1e-6
 
@@ -182,12 +182,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     }
 
     //If residual returned is not a number (NAN), set valid to false
-    if((isnan)(r_lagrange)) {
+    if(vpMath::isNaN(r_lagrange)) {
       is_valid_lagrange = false;
       r_lagrange = DBL_MAX;
     }
 
-    if((isnan)(r_dementhon)) {
+    if(vpMath::isNaN(r_dementhon)) {
       is_valid_dementhon = false;
       r_dementhon = DBL_MAX;
     }
@@ -358,12 +358,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       }
 
       //If residual returned is not a number (NAN), set valid to false
-      if((isnan)(r_lagrange)) {
+      if(vpMath::isNaN(r_lagrange)) {
         is_valid_lagrange = false;
         r_lagrange = DBL_MAX;
       }
 
-      if((isnan)(r_dementhon)) {
+      if(vpMath::isNaN(r_dementhon)) {
         is_valid_dementhon = false;
         r_dementhon = DBL_MAX;
       }
