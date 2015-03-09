@@ -370,7 +370,30 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
 void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
                                 std::vector<cv::Point3f> &points3f, bool append) {
   cv::Mat trainDescriptors;
+  //Copy the input list of keypoints
+  std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
+
   extract(I, trainKeyPoints, trainDescriptors, m_extractionTime);
+
+  if(trainKeyPoints.size() != trainKeyPoints_tmp.size()) {
+    //Keypoints have been removed
+    //Store the hash of a keypoint as the key and the index of the keypoint as the value
+    std::map<size_t, size_t> mapOfKeypointHashes;
+    size_t cpt = 0;
+    for(std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it, cpt++) {
+      mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
+    }
+
+    std::vector<cv::Point3f> trainPoints_tmp;
+    for(std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
+      if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+        trainPoints_tmp.push_back(points3f[mapOfKeypointHashes[myKeypointHash(*it)]]);
+      }
+    }
+
+    //Copy trainPoints_tmp to points3f
+    points3f = trainPoints_tmp;
+  }
 
   buildReference(I, trainKeyPoints, trainDescriptors, points3f, append);
 }
@@ -715,13 +738,12 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
 
   if(objectVpPoints.size() < 4) {
     elapsedTime = (vpTime::measureTimeMs() - t);
-    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
+//    std::cerr << "Not enough points to compute the pose (at least 4 points are needed)." << std::endl;
 
     return false;
   }
 
   vpPose pose;
-  pose.setCovarianceComputation(true);
 
   for(std::vector<vpPoint>::const_iterator it = objectVpPoints.begin(); it != objectVpPoints.end(); ++it) {
     pose.addPoint(*it);
@@ -1133,14 +1155,123 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
       it != m_extractors.end(); ++it) {
     if(first) {
       first = false;
-      it->second->compute(matImg, keyPoints, descriptors);
-    } else {
-      cv::Mat desc;
-      it->second->compute(matImg, keyPoints, desc);
-      if(descriptors.empty()) {
-        desc.copyTo(descriptors);
+      //Check if we have 3D object points information
+      if(m_trainPoints.size() == keyPoints.size()) {
+        //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
+        std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
+
+        //Extract descriptors for the given list of keypoints
+        it->second->compute(matImg, keyPoints, descriptors);
+
+        if(keyPoints.size() != keyPoints_tmp.size()) {
+          //Keypoints have been removed
+          //Store the hash of a keypoint as the key and the index of the keypoint as the value
+          std::map<size_t, size_t> mapOfKeypointHashes;
+          size_t cpt = 0;
+          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end(); ++it, cpt++) {
+            mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
+          }
+
+          std::vector<cv::Point3f> trainPoints_tmp;
+          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
+            if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+              trainPoints_tmp.push_back(m_trainPoints[mapOfKeypointHashes[myKeypointHash(*it)]]);
+            }
+          }
+
+          //Copy trainPoints_tmp to m_trainPoints
+          m_trainPoints = trainPoints_tmp;
+        }
       } else {
-        cv::hconcat(descriptors, desc, descriptors);
+        //Extract descriptors for the given list of keypoints
+        it->second->compute(matImg, keyPoints, descriptors);
+      }
+    } else {
+      //Check if we have 3D object points information
+      if(m_trainPoints.size() == keyPoints.size()) {
+        //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
+        std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
+
+        cv::Mat desc;
+        //Extract descriptors for the given list of keypoints
+        it->second->compute(matImg, keyPoints, desc);
+
+        if(keyPoints.size() != keyPoints_tmp.size()) {
+          //Keypoints have been removed
+          //Store the hash of a keypoint as the key and the index of the keypoint as the value
+          std::map<size_t, size_t> mapOfKeypointHashes;
+          size_t cpt = 0;
+          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end(); ++it, cpt++) {
+            mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
+          }
+
+          std::vector<cv::Point3f> trainPoints_tmp;
+          cv::Mat descriptors_tmp;
+          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
+            if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+              trainPoints_tmp.push_back(m_trainPoints[mapOfKeypointHashes[myKeypointHash(*it)]]);
+
+              if(!descriptors.empty()) {
+                switch(descriptors.type()) {
+                case CV_8U:
+                  descriptors_tmp.push_back(descriptors.at<unsigned char>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_8S:
+                  descriptors_tmp.push_back(descriptors.at<char>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_16U:
+                  descriptors_tmp.push_back(descriptors.at<unsigned short int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_16S:
+                  descriptors_tmp.push_back(descriptors.at<short int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_32S:
+                  descriptors_tmp.push_back(descriptors.at<int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_32F:
+                  descriptors_tmp.push_back(descriptors.at<float>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                case CV_64F:
+                  descriptors_tmp.push_back(descriptors.at<double>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
+                  break;
+
+                default:
+                  throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
+                  break;
+                }
+              }
+            }
+          }
+
+          //Copy trainPoints_tmp to m_trainPoints
+          m_trainPoints = trainPoints_tmp;
+          //Copy descriptors_tmp to descriptors
+          descriptors_tmp.copyTo(descriptors);
+        }
+
+        //Merge descriptors horizontally
+        if(descriptors.empty()) {
+          desc.copyTo(descriptors);
+        } else {
+          cv::hconcat(descriptors, desc, descriptors);
+        }
+      } else {
+        cv::Mat desc;
+        //Extract descriptors for the given list of keypoints
+        it->second->compute(matImg, keyPoints, desc);
+
+        //Merge descriptors horizontally
+        if(descriptors.empty()) {
+          desc.copyTo(descriptors);
+        } else {
+          cv::hconcat(descriptors, desc, descriptors);
+        }
       }
     }
   }
@@ -2444,6 +2575,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     std::vector<vpPoint> inliers;
     std::vector<unsigned int> inlierIndex;
+
     bool res = computePose(objectVpPoints, cMo, inliers, inlierIndex, m_poseTime, func);
 
     std::map<int, bool> mapOfInlierIndex;
@@ -2919,7 +3051,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
           break;
 
         default:
-          file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+          throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
           break;
         }
       }
@@ -3094,7 +3226,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
             break;
 
           default:
-            ss << m_trainDescriptors.at<float>(i, j);
+            throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
             break;
         }
         xmlNewChild(desc_node, NULL, BAD_CAST "val",
