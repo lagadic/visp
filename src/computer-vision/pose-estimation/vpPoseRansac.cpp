@@ -180,6 +180,17 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 //      std::cerr << e.what() << std::endl;
     }
 
+    //If residual returned is not a number (NAN), set valid to false
+    if(isnan(r_lagrange)) {
+      is_valid_lagrange = false;
+      r_lagrange = DBL_MAX;
+    }
+
+    if(isnan(r_dementhon)) {
+      r_dementhon = false;
+      r_dementhon = DBL_MAX;
+    }
+
     //If at least one pose computation is OK,
     //we can continue, otherwise pick another random set
     if(is_valid_lagrange || is_valid_dementhon) {
@@ -262,7 +273,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         nbTrials++;
         
         if(nbTrials >= ransacMaxTrials) {
-          vpERROR_TRACE("Ransac reached the maximum number of trials");
+//          vpERROR_TRACE("Ransac reached the maximum number of trials");
           foundSolution = true;
         }
       }
@@ -270,20 +281,20 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         nbTrials++;
 
         if(nbTrials >= ransacMaxTrials) {
-          vpERROR_TRACE("Ransac reached the maximum number of trials");
+//          vpERROR_TRACE("Ransac reached the maximum number of trials");
         }
       }
     } else {
       nbTrials++;
 
       if(nbTrials >= ransacMaxTrials) {
-        vpERROR_TRACE("Ransac reached the maximum number of trials");
+//        vpERROR_TRACE("Ransac reached the maximum number of trials");
       }
     }
   }
     
   if(foundSolution) {
-    //std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
+//    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
     
     //Display the random picked points
     /*
@@ -343,6 +354,17 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
         is_valid_dementhon = true;
       } catch(/*vpException &e*/...) {
 //        std::cerr << e.what() << std::endl;
+      }
+
+      //If residual returned is not a number (NAN), set valid to false
+      if(isnan(r_lagrange)) {
+        is_valid_lagrange = false;
+        r_lagrange = DBL_MAX;
+      }
+
+      if(isnan(r_dementhon)) {
+        r_dementhon = false;
+        r_dementhon = DBL_MAX;
       }
 
       if(is_valid_lagrange || is_valid_dementhon) {
