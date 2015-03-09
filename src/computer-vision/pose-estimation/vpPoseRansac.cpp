@@ -187,7 +187,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     }
 
     if(isnan(r_dementhon)) {
-      r_dementhon = false;
+      is_valid_dementhon = false;
       r_dementhon = DBL_MAX;
     }
 
@@ -363,7 +363,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       }
 
       if(isnan(r_dementhon)) {
-        r_dementhon = false;
+        is_valid_dementhon = false;
         r_dementhon = DBL_MAX;
       }
 
