@@ -423,7 +423,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
         }
         catch(...)
         {
-          vpERROR_TRACE(" ") ;
+//          vpERROR_TRACE(" ") ;
           throw ;
         }
         //std::cout << "Fin Plan" << std::endl;
@@ -436,7 +436,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
         }
         catch(...)
         {
-          vpERROR_TRACE(" ") ;
+//          vpERROR_TRACE(" ") ;
           throw ;
         }
         //std::cout << "Fin No Plan" << std::endl;
@@ -474,7 +474,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
         }
         catch(...)
         {
-          vpERROR_TRACE(" ") ;
+//          vpERROR_TRACE(" ") ;
           throw ;
         }
       }
@@ -493,7 +493,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
         }
         catch(...)
         {
-          vpERROR_TRACE(" ") ;
+//          vpERROR_TRACE(" ") ;
           throw ;
         }
       }
@@ -513,7 +513,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
     }
     catch(...)
     {
-      vpERROR_TRACE(" ") ;
+//      vpERROR_TRACE(" ") ;
       throw ;
     }
     break;
@@ -538,7 +538,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
       }
       catch(...)
       {
-        vpERROR_TRACE(" ") ;
+//        vpERROR_TRACE(" ") ;
         throw ;
       }
     }
@@ -553,7 +553,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
       }
       catch(...)
       {
-        vpERROR_TRACE(" ") ;
+//        vpERROR_TRACE(" ") ;
         throw ;
       }
     }
