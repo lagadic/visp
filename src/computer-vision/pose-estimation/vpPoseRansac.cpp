@@ -49,10 +49,11 @@
 
 #include <iostream>
 #include <cmath>        // std::fabs
+#include <math.h>       // isnan()
 #include <limits>       // numeric_limits
 #include <stdlib.h>
 #include <algorithm>    // std::count
-#include <float.h>      //DBL_MAX
+#include <float.h>      // DBL_MAX
 
 #include <visp/vpPose.h>
 #include <visp/vpColVector.h>
