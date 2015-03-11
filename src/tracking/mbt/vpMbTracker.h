@@ -509,9 +509,9 @@ protected:
   
 #ifdef VISP_HAVE_COIN
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
-  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace);
-  virtual void extractLines(SoVRMLIndexedLineSet* line_set, int &idFace);
-  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace);
+  virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");
+  virtual void extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std::string &polygonName="");
+  virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");
 #endif
   
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);

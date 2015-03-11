@@ -1840,6 +1840,8 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
     
     if (child->getTypeId() == SoVRMLShape::getClassTypeId()){
       SoChildList * child2list = child->getChildren();
+      std::string name = child->getName().getString();
+
       for (int j = 0; j < child2list->getLength(); j++)
       {
         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedFaceSet::getClassTypeId())
@@ -1847,16 +1849,16 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
           SoVRMLIndexedFaceSet * face_set;
           face_set = (SoVRMLIndexedFaceSet*)child2list->get(j);
           if(!strncmp(face_set->getName().getString(),"cyl",3)){
-            extractCylinders(face_set, transform, idFace);
+            extractCylinders(face_set, transform, idFace, name);
           }else{
-            extractFaces(face_set, transform, idFace);
+            extractFaces(face_set, transform, idFace, name);
           }
         }
         if (((SoNode*)child2list->get(j))->getTypeId() == SoVRMLIndexedLineSet::getClassTypeId())
         {
           SoVRMLIndexedLineSet * line_set;
           line_set = (SoVRMLIndexedLineSet*)child2list->get(j);
-          extractLines(line_set, idFace);
+          extractLines(line_set, idFace, name);
         }
       }
     }
@@ -1870,9 +1872,10 @@ vpMbTracker::extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &tra
   \param face_set : Pointer to the face in the vrml format.
   \param transform : Transformation matrix applied to the face.
   \param idFace : Face id.
+  \param polygonName: Name of the polygon.
 */
 void
-vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace)
+vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -1891,7 +1894,7 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
     {
       if(corners.size() > 1)
       {
-        addPolygon(corners, idFace++);
+        addPolygon(corners, idFace++, polygonName);
         initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
         corners.resize(0);
       }
@@ -1925,9 +1928,10 @@ vpMbTracker::extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &t
   \param face_set : Pointer to the cylinder in the vrml format.
   \param transform : Transformation matrix applied to the cylinder.
   \param idFace : Id of the face.
+  \param polygonName: Name of the polygon.
 */
 void
-vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace)
+vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName)
 {
   std::vector<vpPoint> corners_c1, corners_c2;//points belonging to the first circle and to the second one.
   SoVRMLCoordinate* coords = (SoVRMLCoordinate *)face_set->coord.getValue();
@@ -1980,7 +1984,7 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
     throw vpException(vpException::badValue, "Radius from the two circles of the cylinders are different.");
   }
 
-  addPolygon(p1, p2, idFace);
+  addPolygon(p1, p2, idFace, polygonName);
   initCylinder(p1, p2, radius_c1, idFace++);
 }
 
@@ -1990,9 +1994,10 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
 
   \param line_set : Pointer to the line in the vrml format.
   \param idFace : Id of the face.
+  \param polygonName: Name of the polygon.
 */
 void
-vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace)
+vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std::string &polygonName)
 {
   std::vector<vpPoint> corners;
   corners.resize(0);
@@ -2009,7 +2014,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace)
     {
       if(corners.size() > 1)
       {
-        addPolygon(corners, idFace++);
+        addPolygon(corners, idFace++, polygonName);
         initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
         corners.resize(0);
       }
