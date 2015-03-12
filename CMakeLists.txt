@@ -50,7 +50,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 SET(VISP_VERSION_MAJOR "2")
-SET(VISP_VERSION_MINOR "10")
+SET(VISP_VERSION_MINOR "11")
 SET(VISP_VERSION_PATCH "0")
 SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 # Package revision number
@@ -2198,10 +2198,12 @@ SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
 # Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator)
+  message("test 1: VISP_HAVE_OGRE_RESOURCES_PATH: ${VISP_HAVE_OGRE_RESOURCES_PATH}")
 endif()
 # Only if plugins.cfg created by hand, we change the path to plugins.cfg in install/vpConfig.h
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   SET(VISP_HAVE_OGRE_PLUGINS_PATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator)
+  message("test 2: VISP_HAVE_OGRE_PLUGINS_PATH: ${VISP_HAVE_OGRE_PLUGINS_PATH}")
 endif()
 
 #----------------------------------------------------------------------
