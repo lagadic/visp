@@ -104,9 +104,9 @@ IF(VISP_HAVE_DIRECTSHOW)
   LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowDevice.cpp)
   LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/directshow/vpDirectShowSampleGrabberI.cpp)
 ENDIF()
-IF(VISP_HAVE_OPENCV)
-  LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/OpenCV/vpOpenCVGrabber.cpp)
-ENDIF()
+if(VISP_HAVE_OPENCV AND OpenCV_VERSION VERSION_LESS 2.4.8)
+  list(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/OpenCV/vpOpenCVGrabber.cpp)
+endif()
 
 SET (SRC_IMAGE
   image/vpColor.cpp
