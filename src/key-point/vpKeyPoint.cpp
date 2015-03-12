@@ -1674,6 +1674,13 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
         << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+  if(extractorName == "SURF") {
+    //Use extended set of SURF descriptors (128 instead of 64)
+    m_extractors[extractorName]->set("extended", 1);
+  }
+#endif
 }
 
 /*!
