@@ -195,9 +195,9 @@ class VISP_EXPORT vpMath
   /*!
      Check whether a double number is not a number (NaN) or not.
      \param value : Double number to check.
-     \return Return 0 if value is not a number.
+     \return Return true if value is not a number.
    */
-  static inline int isNaN(const double value)
+  static inline bool isNaN(const double value)
   {
 #if 0
     //This trick should work for any compiler which claims to use IEEE floating point.
@@ -207,8 +207,8 @@ class VISP_EXPORT vpMath
     //Taken from OpenCV source code CvIsNan()
     Cv64suf ieee754;
     ieee754.f = value;
-    return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
-           ((unsigned)ieee754.u != 0) > 0x7ff00000;
+    return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
+           ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
 #endif
   }
 

@@ -46,15 +46,71 @@
 */
 
 #include <iostream>
+#include <limits>
 
 #include <visp/vpMath.h>
 
 
 int main() {
-  std::cout << "IsNaN()=" << vpMath::isNaN(0.0) << " / should print 0" << std::endl;
-  std::cout << "IsNaN()=" << vpMath::isNaN(1.0/0.0) << " / should print 0" << std::endl;
-  std::cout << "IsNaN()=" << vpMath::isNaN(sqrt(-1.0)) << " / should print 1" << std::endl;
-  std::cout << "IsNaN()=" << vpMath::isNaN(sqrt(0.0/0.0)) << " / should print 1" << std::endl;
+  if(vpMath::isNaN(0.0)) {
+    std::cerr << "Fail : IsNaN(0.0)=" << vpMath::isNaN(0.0) << " / should be false" << std::endl;
+    return -1;
+  }
+
+  double num = 1.0, den = 0.0;
+  if(vpMath::isNaN(num/den)) {
+    std::cerr << "Fail : IsNaN(1.0/0.0)=" << vpMath::isNaN(num/den) << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if(!vpMath::isNaN(sqrt(-1.0))) {
+    std::cerr << "Fail : IsNaN(sqrt(-1.0))=" << vpMath::isNaN(sqrt(-1.0)) << " / should be true" << std::endl;
+    return -1;
+  }
+
+  num = 0.0;
+  if(!vpMath::isNaN(num/den)) {
+    std::cerr << "Fail : IsNaN(0.0/0.0)=" << vpMath::isNaN(num/den) << " / should be true" << std::endl;
+    return -1;
+  }
+
+  if(!vpMath::isNaN(std::numeric_limits<double>::quiet_NaN())) {
+    std::cerr << "Fail : IsNaN(quiet_NaN)=" << vpMath::isNaN(std::numeric_limits<double>::quiet_NaN())
+      << " / should be true" << std::endl;
+    return -1;
+  }
+
+  if(!vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())) {
+    std::cerr << "Fail : IsNaN(signaling_NaN)=" << vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())
+      << " / should be true" << std::endl;
+    return -1;
+  }
+
+  if(vpMath::isNaN(std::numeric_limits<double>::infinity())) {
+    std::cerr << "Fail : IsNaN(infinity)=" << vpMath::isNaN(std::numeric_limits<double>::infinity())
+      << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if(vpMath::isNaN(1.0 / std::numeric_limits<double>::epsilon())) {
+    std::cerr << "Fail : IsNaN(1.0/epsilon)=" << vpMath::isNaN(1.0/std::numeric_limits<double>::epsilon())
+      << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if(!vpMath::isNaN(std::numeric_limits<double>::infinity() - std::numeric_limits<double>::infinity())) {
+    std::cerr << "Fail : IsNaN(1.0/epsilon)=" << vpMath::isNaN(1.0/std::numeric_limits<double>::epsilon())
+      << " / should be true" << std::endl;
+    return -1;
+  }
+
+  float a = 0.0f, b = 0.0f;
+  if(!vpMath::isNaN(a/b)) {
+    std::cerr << "Fail : IsNaN(0.0f/0.0f)=" << vpMath::isNaN(a/b) << " / should be true" << std::endl;
+    return -1;
+  }
+
+  std::cout << "OK !" << std::endl;
 
   return 0;
 }
