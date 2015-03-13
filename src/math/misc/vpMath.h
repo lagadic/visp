@@ -52,7 +52,6 @@
 
 #include <visp/vpConfig.h>
 
-#include <stdint.h>
 #include <math.h>
 
 #if defined(_WIN32)	// Not defined in Microsoft math.h
@@ -69,14 +68,6 @@
 #   define M_PI_4          (M_PI/4.f)
 # endif
 
-#endif
-
-#if defined _MSC_VER || defined __BORLANDC__
-   typedef __int64 int64;
-   typedef unsigned __int64 uint64;
-#else
-   typedef int64_t int64;
-   typedef uint64_t uint64;
 #endif
 
 
@@ -192,37 +183,11 @@ class VISP_EXPORT vpMath
     a = tmp;
   }
 
-  /*!
-     Check whether a double number is not a number (NaN) or not.
-     \param value : Double number to check.
-     \return Return true if value is not a number.
-   */
-  static inline bool isNaN(const double value)
-  {
-#if 0
-    //This trick should work for any compiler which claims to use IEEE floating point.
-    //Do not work with g++ and -ffast-math option.
-    return (value != value);
-#else
-    //Taken from OpenCV source code CvIsNan()
-    Cv64suf ieee754;
-    ieee754.f = value;
-    return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
-           ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
-#endif
-  }
+  static bool isNaN(const double value);
 
  private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
-
-  typedef union Cv64suf
-  {
-      int64 i;
-      uint64 u;
-      double f;
-  }
-  Cv64suf;
 };
 
 
