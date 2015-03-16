@@ -195,9 +195,16 @@ void
 vpSimulatorViper850::init()
 {
   // set arm_dir from #define VISP_ROBOT_ARMS_DIR if it exists
-  if (vpIoTools::checkDirectory(VISP_ROBOT_ARMS_DIR) == true) // directory exists
-    arm_dir = VISP_ROBOT_ARMS_DIR;
-  else {
+  // VISP_ROBOT_ARMS_DIR may contain multiple locations separated by ";"
+  std::vector<std::string> arm_dirs = vpIoTools::splitChain(std::string(VISP_ROBOT_ARMS_DIR), std::string(";"));
+  bool armDirExists = false;
+  for(size_t i=0; i < arm_dirs.size(); i++)
+  if (vpIoTools::checkDirectory(arm_dirs[i]) == true) { // directory exists
+    arm_dir = arm_dirs[i];
+    armDirExists = true;
+    break;
+  }
+  if (! armDirExists) {
     try {
       arm_dir = vpIoTools::getenv("VISP_ROBOT_ARMS_DIR");
       std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR=" << arm_dir << std::endl;
@@ -2290,10 +2297,17 @@ void
 vpSimulatorViper850::initArms()
 {
   // set scene_dir from #define VISP_SCENE_DIR if it exists
+  // VISP_SCENES_DIR may contain multiple locations separated by ";"
   std::string scene_dir_;
-  if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
-    scene_dir_ = VISP_SCENES_DIR;
-  else {
+  std::vector<std::string> scene_dirs = vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
+  bool sceneDirExists = false;
+  for(size_t i=0; i < scene_dirs.size(); i++)
+  if (vpIoTools::checkDirectory(scene_dirs[i]) == true) { // directory exists
+    scene_dir_ = scene_dirs[i];
+    sceneDirExists = true;
+    break;
+  }
+  if (! sceneDirExists) {
     try {
       scene_dir_ = vpIoTools::getenv("VISP_SCENES_DIR");
       std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir_ << std::endl;

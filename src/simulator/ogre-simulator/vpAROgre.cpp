@@ -222,14 +222,31 @@ void vpAROgre::init(bool
 		    )
 {
   // Create the root
+  // mPluginsPath may contain more than one folder location separated by ";"
+  bool pluginsFileExists = false;
+  std::string pluginFile;
+  std::vector<std::string> plugingsPaths = vpIoTools::splitChain(std::string(mPluginsPath), std::string(";"));
+  for (size_t i=0; i<plugingsPaths.size(); i++) {
 #if defined(NDEBUG) || !defined(_WIN32)
-  std::string pluginFile = mPluginsPath+"/plugins.cfg";
+    pluginFile = plugingsPaths[i]+"/plugins.cfg";
 #else
-  std::string pluginFile = mPluginsPath+"/plugins_d.cfg";
+    pluginFile = plugingsPaths[i]+"/plugins_d.cfg";
 #endif
-  if(!vpIoTools::checkFilename(pluginFile)){
-    std::string errorMsg = "Error: the requested plugins file \""
-      + pluginFile + "\" doesn't exist.";
+
+    if(vpIoTools::checkFilename(pluginFile)) {
+      pluginsFileExists = true;
+      break;
+    }
+  }
+  if (! pluginsFileExists) {
+    std::string errorMsg = std::string("Error: the requested plugins file \"")
+#if defined(NDEBUG) || !defined(_WIN32)
+        + std::string("plugins.cfg")
+#else
+        + std::string("plugins_d.cfg")
+#endif
+    + std::string("\" doesn't exist in ")
+    + std::string(mPluginsPath);
     std::cout << errorMsg << std::endl;
 
     throw (vpException(vpException::ioError, errorMsg));
@@ -251,16 +268,29 @@ void vpAROgre::init(bool
   //  [General]
   //  FileSystem=media/
   //  Zip=packages/level1.zip
-  Ogre::ConfigFile cf;
-  std::string resourceFile = mResourcePath+"/resources.cfg";
-  if(!vpIoTools::checkFilename(resourceFile)){
-    std::string errorMsg = "Error: the requested resource file \""
-      + resourceFile + "\" doesn't exist.";
+
+  // mResourcePath may contain more than one folder location separated by ";"
+  bool resourcesFileExists = false;
+  std::string resourceFile;
+  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
+  for (size_t i=0; i<resourcesPaths.size(); i++) {
+    resourceFile = resourcesPaths[i]+"/resources.cfg";
+    if(vpIoTools::checkFilename(resourceFile)) {
+      resourcesFileExists = true;
+      break;
+    }
+  }
+  if (! resourcesFileExists) {
+    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"")
+        + std::string("doesn't exist in ")
+        + std::string(mResourcePath);
+
     std::cout << errorMsg << std::endl;
 
     throw (vpException(vpException::ioError, errorMsg));
   }
   std::cout << "######################### Load resource file: " << resourceFile << std::endl;
+  Ogre::ConfigFile cf;
   cf.load(resourceFile);
 
   // Go through all sections & settings in the file

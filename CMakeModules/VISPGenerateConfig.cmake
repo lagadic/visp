@@ -120,9 +120,6 @@ if(UNIX)
     ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
     IMMEDIATE @ONLY)
 
-  configure_file(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
-    ${VISP_BINARY_DIR}/unix-install/vpConfig.h)
-
   install(FILES
     ${VISP_BINARY_DIR}/unix-install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake

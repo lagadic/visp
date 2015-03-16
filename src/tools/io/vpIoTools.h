@@ -195,6 +195,7 @@ public:
   static std::string createFilePath(const std::string& parent, const std::string child);
   static bool isAbsolutePathname(const std::string& pathname);
   static std::pair<std::string, std::string> splitDrive(const std::string& pathname);
+  static std::vector<std::string> splitChain(const std::string & chain, const std::string & sep);
 
   // read configuration file
   static bool loadConfigFile(const std::string &confFile);

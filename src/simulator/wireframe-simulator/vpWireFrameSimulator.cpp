@@ -522,9 +522,16 @@ vpWireFrameSimulator::vpWireFrameSimulator()
     cameraFactor(1.), camTrajType(CT_LINE), extCamChanged(false), rotz(), thickness_(1), scene_dir()
 {
   // set scene_dir from #define VISP_SCENE_DIR if it exists
-  if (vpIoTools::checkDirectory(VISP_SCENES_DIR) == true) // directory exists
-    scene_dir = VISP_SCENES_DIR;
-  else {
+  // VISP_SCENES_DIR may contain multiple locations separated by ";"
+  std::vector<std::string> scene_dirs = vpIoTools::splitChain(std::string(VISP_SCENES_DIR), std::string(";"));
+  bool sceneDirExists = false;
+  for(size_t i=0; i < scene_dirs.size(); i++)
+  if (vpIoTools::checkDirectory(scene_dirs[i]) == true) { // directory exists
+    scene_dir = scene_dirs[i];
+    sceneDirExists = true;
+    break;
+  }
+  if (! sceneDirExists) {
     try {
       scene_dir = vpIoTools::getenv("VISP_SCENES_DIR");
       std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir << std::endl;

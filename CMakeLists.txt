@@ -2180,11 +2180,6 @@ set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
 SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
 SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
     
-# Generate the package dependent file include/visp/vpConfig.h
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
-  ${VISP_INCLUDE_DIR}/vpConfig.h
-)
-
 # case 2: when ViSP is build with make install; files are used in <install dir>
 #--------------
 IF(UNIX)
@@ -2193,16 +2188,22 @@ ELSE()
   set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
 
-SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
-SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
+list(APPEND VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
+list(APPEND VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
 # Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  SET(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator)
+  list(APPEND VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator")
 endif()
-# Only if plugins.cfg created by hand, we change the path to plugins.cfg in install/vpConfig.h
+# append to VISP_HAVE_OGRE_PLUGINS_PATH the path of the installed plugins.cfg file
+# to be able to use ViSP from build tree or install tree
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  SET(VISP_HAVE_OGRE_PLUGINS_PATH ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator)
+  list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator")
 endif()
+
+# Generate the package dependent file include/visp/vpConfig.h
+CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
+  ${VISP_INCLUDE_DIR}/vpConfig.h
+)
 
 #----------------------------------------------------------------------
 # Generate the ViSP-third-party.txt information file

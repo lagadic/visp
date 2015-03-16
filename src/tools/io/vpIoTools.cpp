@@ -1405,3 +1405,71 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pat
 	return std::pair<std::string, std::string>("", pathname);
 #endif
 }
+
+/*!
+ Split a chain.
+ \param chain : Input chain to split.
+ \param sep : Character separator.
+ \return A vector that contains all the subchains.
+
+ The following code shows how to use this function:
+ \code
+#include <visp/vpIoTools.h>
+
+int main()
+{
+  {
+    std::string chain("/home/user;/usr/local/include;/usr/include");
+    std::string sep = ";";
+
+    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+    std::cout << "Found the following subchains: " << std::endl;
+    for (size_t i=0; i < subChain.size(); i++)
+      std::cout << subChain[i] << std::endl;
+  }
+
+  {
+    std::string chain("This is an other example");
+    std::string sep = " ";
+
+    std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
+    std::cout << "Found the following subchains: " << std::endl;
+    for (size_t i=0; i < subChain.size(); i++)
+      std::cout << subChain[i] << std::endl;
+  }
+}
+ \endcode
+
+ It produces the following output:
+ \code
+Found the following subchains:
+/home/user
+/usr/local/include
+/usr/include
+Found the following subchains:
+This
+is
+an
+other
+example
+ \endcode
+ */
+std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const std::string & sep)
+{
+  size_t startIndex = 0;
+
+  std::string chainToSplit = chain;
+  std::vector<std::string> subChain;
+  size_t sepIndex = chainToSplit.find(sep);
+
+  while(sepIndex != std::string::npos) {
+
+    subChain.push_back( chainToSplit.substr(startIndex, sepIndex) );
+    chainToSplit = chainToSplit.substr(sepIndex+1, chain.size()-1);
+
+    sepIndex = chainToSplit.find(sep);
+  }
+  subChain.push_back(chainToSplit);
+
+  return subChain;
+}
