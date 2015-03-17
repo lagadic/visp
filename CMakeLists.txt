@@ -4,7 +4,7 @@
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
-# 
+#
 # This software is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
 # distribution for additional information about the GNU GPL.
 #
 # For using ViSP with software that can not be combined with the GNU
-# GPL, please contact INRIA about acquiring a ViSP Professional 
+# GPL, please contact INRIA about acquiring a ViSP Professional
 # Edition License.
 #
 # See http://www.irisa.fr/lagadic/visp/visp.html for more information.
-# 
+#
 # This software was developed at:
 # INRIA Rennes - Bretagne Atlantique
 # Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
 #
 # If you have questions regarding the use of this file, please contact
 # INRIA at visp@inria.fr
-# 
+#
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
@@ -103,14 +103,14 @@ SET(OS ${CMAKE_SYSTEM_NAME})
 SET(OGRE_HOME $ENV{OGRE_HOME})
 if(OGRE_HOME)
   # replace \ with / especially for windows
-  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME}) 
+  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME})
 endif()
 
 # add the path to detect Ogre3D
 if(WIN32)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
 endif(WIN32)
- 
+
 if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/cmake")
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
@@ -265,7 +265,7 @@ IF(WIN32)
   ELSE(DIRECTSHOW_FOUND)
     SET(USE_DIRECTSHOW OFF)
   ENDIF(DIRECTSHOW_FOUND)
-  
+
 ENDIF(WIN32)
 
 include(FindOpenMP)
@@ -326,7 +326,7 @@ IF (OGRE_FOUND)
 ELSE ()
   SET(USE_OGRE OFF)
 ENDIF ()
- 
+
 FIND_PACKAGE(OIS QUIET)
 MARK_AS_ADVANCED(OIS_DIR)
 IF (OGRE_FOUND AND OIS_FOUND)
@@ -366,7 +366,7 @@ IF(USE_COIN)
     SET(USE_SOQT OFF)
   ENDIF (SOQT_FOUND)
   IF(USE_SOQT)
-    INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake) 
+    INCLUDE (${CMAKE_ROOT}/Modules/FindQt.cmake)
     IF (QT_FOUND)
       OPTION(USE_QT    "Compile ViSP with Qt" ON)
     ELSE (QT_FOUND)
@@ -430,8 +430,8 @@ ELSE(X11_FOUND)
   SET(USE_X11 OFF)
 ENDIF(X11_FOUND)
 
-# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
-# requested by ViSP. That's why we use our FindMyGTK2.cmake 
+# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is
+# requested by ViSP. That's why we use our FindMyGTK2.cmake
 #FIND_PACKAGE(GTK2)
 #mark_as_advanced(GTK2_ATK_INCLUDE_DIR)
 #mark_as_advanced(GTK2_CAIRO_INCLUDE_DIR)
@@ -621,19 +621,19 @@ IF(USE_YARP)
     SET(VISP_HAVE_YARP TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_YARP_FOUND "yes")  # for ViSP-third-party.txt
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${YARP_INCLUDE_DIRS})
-    
+
   # Work around to add Yarp libraries and also third party libraries requested by Yarp
     LIST(REVERSE YARP_LIBRARIES) # to start with YARP_init, that depends on YARP_dev, YARP_sig and YARP_OS
     FOREACH(lib ${YARP_LIBRARIES})
  	  #MESSAGE("lib: ${lib}")
       GET_TARGET_PROPERTY(CONFIGURATIONS ${lib} IMPORTED_CONFIGURATIONS)
-	  FOREACH(CONFIGURATION ${CONFIGURATIONS})		
+	  FOREACH(CONFIGURATION ${CONFIGURATIONS})
 		GET_TARGET_PROPERTY(YARP_LIB ${lib} "IMPORTED_LOCATION_${CONFIGURATION}") # Get Yarp full absolute library path and name
-		
+
 	    IF(WIN32)
 		  #Work around when YARP is build as shared libraries
 		  STRING(REGEX REPLACE ".dll$" ".lib" YARP_LIB ${YARP_LIB})
-		  
+
           IF(${CONFIGURATION} STREQUAL "RELEASE")
             LIST(APPEND VISP_EXTERN_LIBRARIES optimized ${YARP_LIB}) # Append full absolute library path and name
 	      ELSEIF(${CONFIGURATION} STREQUAL "DEBUG")
@@ -642,21 +642,21 @@ IF(USE_YARP)
         ELSE()
  	      LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LIB}) # Append full absolute library path and name
 	    ENDIF()
-        # Get 3rd party libraries requested by Yarp 
-        GET_TARGET_PROPERTY(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}") 
+        # Get 3rd party libraries requested by Yarp
+        GET_TARGET_PROPERTY(YARP_LINK_LIBS_ ${lib} "IMPORTED_LINK_INTERFACE_LIBRARIES_${CONFIGURATION}")
         LIST(APPEND YARP_LINK_LIBS ${YARP_LINK_LIBS_})
       ENDFOREACH()
     ENDFOREACH()
-    
+
     # Remove Yarp libraries since they were added previously with full absolute library path and name
     if(YARP_LINK_LIBS)
       foreach(lib ${YARP_LIBRARIES})
         list(REMOVE_ITEM YARP_LINK_LIBS ${lib})
       endforeach()
     endif()
-    # Add 3rd party libraries requested by Yarp  	
+    # Add 3rd party libraries requested by Yarp
     LIST(APPEND VISP_EXTERN_LIBRARIES ${YARP_LINK_LIBS})
-    
+
     LIST(APPEND VISP_DEFS ${YARP_DEFINES})
   ELSE()
     MESSAGE(STATUS "yarp not found")
@@ -665,7 +665,7 @@ IF(USE_YARP)
 ENDIF(USE_YARP)
 
 #---------------------------------------------------------------------
-# Try to determine if Inria's NAS server hosting /udd/ is available 
+# Try to determine if Inria's NAS server hosting /udd/ is available
 #----------------------------------------------------------------------
 FIND_PACKAGE(NAS)
 IF(NAS_FOUND)
@@ -762,7 +762,7 @@ IF(USE_LAPACK)
   MESSAGE(STATUS "lapack/blas found")
   SET(VISP_HAVE_LAPACK TRUE)          # for header vpConfig.h
   SET(VISP_HAVE_LAPACK_FOUND "yes")   # for ViSP-third-party.txt
-  
+
   #MESSAGE("LAPACK_LIBRARIES = ${LAPACK_LIBRARIES}")
   LIST(APPEND VISP_EXTERN_LIBRARIES ${LAPACK_LIBRARIES})
 ENDIF(USE_LAPACK)
@@ -829,7 +829,7 @@ IF(USE_OGRE)
 	set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES} "")
     endif ()
     #set(Boost_ADDITIONAL_VERSIONS "1.53.0" "1.52.0" "1.51.0" "1.50.0" "1.49.0" "1.48.0" "1.47.0" "1.46.0" "1.45.0" "1.44.0" "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40" "1.39.0" "1.39" "1.38.0" "1.38" "1.37.0" "1.37" )
-    # Components that need to be linked with. Since Ogre 1.9 we need not only boost_thread and boost_date_time, but also boost_system 
+    # Components that need to be linked with. Since Ogre 1.9 we need not only boost_thread and boost_date_time, but also boost_system
     set(OGRE_BOOST_COMPONENTS thread system date_time)
     if(WIN32)
       list(APPEND OGRE_BOOST_COMPONENTS chrono)
@@ -848,11 +848,11 @@ IF(USE_OGRE)
       set(Boost_USE_STATIC_LIBS NOT ${Boost_USE_STATIC_LIBS})
       find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
     endif()
-    
+
     if (Boost_FOUND)
       # Set up referencing of Boost
       #LIST(APPEND VISP_DEFS "-DBOOST_ALL_NO_LIB")
-      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${Boost_INCLUDE_DIR})  
+      LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
       LIST(APPEND VISP_EXTERN_LIBRARIES ${Boost_LIBRARIES})
     endif()
   endif()
@@ -868,10 +868,10 @@ IF(USE_OGRE)
   if(NOT OGRE_MEDIA_DIR)
     FIND_PATH(OGRE_MEDIA_DIR ../plugins.cfg
       $ENV{OGRE_MEDIA_DIR}
-      /usr/share/OGRE-1.7.4/media	
-      /usr/share/OGRE-1.8.0/media	
-      /usr/share/OGRE-1.8.1/media	
-      /usr/share/OGRE-1.9.0/media	
+      /usr/share/OGRE-1.7.4/media
+      /usr/share/OGRE-1.8.0/media
+      /usr/share/OGRE-1.8.1/media
+      /usr/share/OGRE-1.9.0/media
     )
   endif()
 
@@ -895,17 +895,17 @@ IF(USE_OGRE)
 
   # Try to search for an existing plugins.cfg file
   # Here we cannot use OGRE_PLUGIN_DIR_REL or OGRE_PLUGIN_DIR_DBG where
-  # we may find an existing plugins.cfg file, since under Windows in these 
-  # files the PluginFolder is set to a relative path. We need an absolute 
+  # we may find an existing plugins.cfg file, since under Windows in these
+  # files the PluginFolder is set to a relative path. We need an absolute
   # path to avoid recopy of the plugins in ViSP.
-  # Under Linux or OSX, we may find plugins.cfg with a PluginFolder set 
+  # Under Linux or OSX, we may find plugins.cfg with a PluginFolder set
   # to an absolute path in OGRE_MEDIA_DIR/..
-  FIND_PATH(VISP_HAVE_OGRE_PLUGINS_PATH 
+  FIND_PATH(VISP_HAVE_OGRE_PLUGINS_PATH
     NAMES plugins.cfg
     PATHS ${OGRE_MEDIA_DIR}/..
     NO_SYSTEM_ENVIRONMENT_PATH
   )
-  
+
   # If no plugins.cfg file is found, we create one with absolute path
   IF(NOT VISP_HAVE_OGRE_PLUGINS_PATH)
     include(${VISP_CMAKE_MODULE_PATH}/OgreTools.cmake)
@@ -952,10 +952,10 @@ IF(USE_OGRE)
         )
       endif()
     ENDIF()
-  ENDIF()  
+  ENDIF()
 
   # Try to search for an existing resources.cfg file
-  FIND_PATH(VISP_HAVE_OGRE_RESOURCES_PATH 
+  FIND_PATH(VISP_HAVE_OGRE_RESOURCES_PATH
     NAMES resources.cfg
     PATHS ${OGRE_MEDIA_DIR}/..
     NO_SYSTEM_ENVIRONMENT_PATH
@@ -1054,18 +1054,18 @@ IF(USE_OGRE)
       endif()
     endif()
   endif()
-  
+
   MARK_AS_ADVANCED(VISP_HAVE_OGRE_PLUGINS_PATH)
   MARK_AS_ADVANCED(VISP_HAVE_OGRE_RESOURCES_PATH)
   #message("VISP_HAVE_OGRE_PLUGINS_PATH: ${VISP_HAVE_OGRE_PLUGINS_PATH}")
   #message("VISP_HAVE_OGRE_RESOURCES_PATH: ${VISP_HAVE_OGRE_RESOURCES_PATH}")
-  
+
   # hack to fix possible presence of NOTFOUND in OGRE_INCLUDE_DIRS
   #message("OGRE_INCLUDE_DIRS: ${OGRE_INCLUDE_DIRS}")
-  #LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})  
+  #LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS})
   foreach(inc_ ${OGRE_INCLUDE_DIRS})
     if(NOT ${inc_} MATCHES "NOTFOUND")
-	    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${inc_})  
+	    LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${inc_})
 	endif()
   endforeach()
   LIST(APPEND VISP_EXTERN_LIBRARIES ${OGRE_LIBRARIES})
@@ -1075,7 +1075,7 @@ IF(USE_OIS AND USE_OGRE)
   SET(VISP_HAVE_OIS_FOUND "yes")   # for ViSP-third-party.txt
   SET(VISP_HAVE_OIS TRUE)           # for header vpConfig.h
   LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${OIS_INCLUDE_DIR})
-  LIST(APPEND VISP_EXTERN_LIBRARIES ${OIS_LIBRARIES})   
+  LIST(APPEND VISP_EXTERN_LIBRARIES ${OIS_LIBRARIES})
   IF(APPLE)
     # With Ogre 1.7.4 and 1.8.1 to be able to link with libOIS.a, Cocoa framework is requested.
     # This is a work around since it should come with FindOGRE.cmake
@@ -1107,16 +1107,16 @@ IF(USE_COIN)
     #MESSAGE("COIN3D_INCLUDE_DIRS = ${COIN3D_INCLUDE_DIRS}")
     #MESSAGE("COIN3D_LIBRARIES = ${COIN3D_LIBRARIES}")
     LIST(APPEND VISP_EXTERN_LIBRARIES ${COIN3D_LIBRARIES})
- 
+
     IF (USE_SOWIN AND SOWIN_FOUND)
       # We manage SoWin and Coin
       SET(VISP_HAVE_SOWIN TRUE)         # for header vpConfig.h
       SET(VISP_HAVE_SOWIN_FOUND "yes")  # for ViSP-third-party.txt
-      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
-      
+      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h
+
       #MESSAGE("SOWIN_INCLUDE_DIR = ${SOWIN_INCLUDE_DIRS}")
       #MESSAGE("SOWIN_LIBRARIES = ${SOWIN_LIBRARIES}")
- 
+
       LIST(APPEND VISP_DEFS "-DSOWIN_DLL")
       LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${SOWIN_INCLUDE_DIRS})
       LIST(APPEND VISP_EXTERN_LIBRARIES ${SOWIN_LIBRARIES})
@@ -1129,10 +1129,10 @@ IF(USE_COIN)
 	#MESSAGE("Qt found")
 	# OpenGL, QT and SOQT are found
 	# We first manage OpenGL
-	SET(VISP_HAVE_SOQT   TRUE) # for header vpConfig.h 
+	SET(VISP_HAVE_SOQT   TRUE) # for header vpConfig.h
 	SET(VISP_HAVE_SOQT_FOUND "yes")      # for ViSP-third-party.txt
 	SET(VISP_HAVE_QT     TRUE) # for header vpConfig.h
-      	SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
+      	SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h
 
         #MESSAGE(STATUS "SOQT_INCLUDE_DIRS = ${SOQT_INCLUDE_DIRS}")
 	LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${SOQT_INCLUDE_DIRS})
@@ -1175,22 +1175,22 @@ IF(USE_COIN)
 	# Because in QT_DEFINITIONS defs are separated by ";", parse the
 	# QT_DEFINITIONS in order to build a space separated string
 	#SET(VISP_DEFS "${VISP_DEFS} ${QT_DEFINITIONS}") did not work
-	# in third party projects which use visp-config shell script 
+	# in third party projects which use visp-config shell script
 	# (due to ";" # separate char)
 	FOREACH(DEF ${QT_DEFINITIONS})
 	  #MESSAGE("DEF: ${DEF}")
 	  LIST(APPEND VISP_DEFS ${DEF})
 	ENDFOREACH(DEF)
-					  
+
 	LIST(APPEND VISP_DEFS "-DQT_DLL")
       ENDIF (USE_QT AND QT_FOUND)
     ENDIF(USE_SOQT AND SOQT_FOUND)
-        
+
     IF (USE_SOXT AND SOXT_FOUND)
       # OPenGL and SoXt are found
       # We first manage OpenGL
-      SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h    
-      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
+      SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h
+      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h
       SET(VISP_HAVE_SOXT_FOUND "yes")       # for ViSP-third-party.txt
       LIST(APPEND VISP_EXTERN_LIBRARIES ${SOXT_LIBRARIES})
     ENDIF(USE_SOXT AND SOXT_FOUND)
@@ -1232,15 +1232,15 @@ ENDIF(USE_XML2)
 #---------------------------------------------------------------------
 # default initialisation for ViSP-third-party.txt
 SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND "no")
-SET(VISP_HAVE_LIBFREENECT_FOUND "no") 
-SET(VISP_HAVE_LIBUSB_1_FOUND "no") 
+SET(VISP_HAVE_LIBFREENECT_FOUND "no")
+SET(VISP_HAVE_LIBUSB_1_FOUND "no")
 
 IF(USE_LIBFREENECT)
   #FIND_PACKAGE(LIBFREENECT)
   IF(LIBFREENECT_FOUND)
     SET(VISP_HAVE_LIBFREENECT TRUE)
     SET(VISP_HAVE_LIBFREENECT_FOUND "yes")  # for ViSP-third-party.txt
- 
+
     MESSAGE(STATUS "libfreenect found")
 
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${LIBFREENECT_INCLUDE_DIRS})
@@ -1256,9 +1256,9 @@ IF(USE_LIBUSB_1)
   IF(LIBUSB_1_FOUND)
     SET(VISP_HAVE_LIBUSB_1 TRUE)
     SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt
- 
+
     MESSAGE(STATUS "libusb-1.0 found")
- 
+
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${LIBUSB_1_INCLUDE_DIRS})
     LIST(APPEND VISP_EXTERN_LIBRARIES ${LIBUSB_1_LIBRARIES})
   ELSE()
@@ -1325,9 +1325,9 @@ ENDIF(USE_PTHREAD)
 # parallel port usage
 #--------------------------------------------------------------------
 FIND_PACKAGE(PARPORT)
-IF(PARPORT_FOUND) 
+IF(PARPORT_FOUND)
   SET(VISP_HAVE_PARPORT TRUE)  # for header vpConfig.h
-ENDIF(PARPORT_FOUND)  
+ENDIF(PARPORT_FOUND)
 
 #----------------------------------------------------------------------
 # Third party software :
@@ -1353,30 +1353,30 @@ if(USE_OPENCV)
     set(VISP_HAVE_OPENCV  TRUE)  # for header vpConfig.h
     set(VISP_HAVE_OPENCV_FOUND "yes")  # for ViSP-third-party.txt
     # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
-    # Using OpenCV_LIBS works to build visp library, examples, demos and test thanks to the components, 
+    # Using OpenCV_LIBS works to build visp library, examples, demos and test thanks to the components,
     # but not tutorials that are stand alone Cmake project that use ViSP as a 3rd party.
     # To be clear OpenCV_LIBS contains opencv_core and not c:\...\opencv_core248.lib full path as requested
     # to use ViSP. This was not the case with OpenCV 2.4.6.
     # For the build of ViSP it works with OpenCV_LIBS: in that case thanks to opencv_core properties, CMake
     # is able to find the real name and location of the libraries.
-    # But when ViSP is used as a 3rd party where it should import OpenCV libraries, it doesn't work with 
+    # But when ViSP is used as a 3rd party where it should import OpenCV libraries, it doesn't work with
     # OpenCV_LIBS.
-    # The solution here is to get the real name of OpenCV libraries thanks to the properties and link 
+    # The solution here is to get the real name of OpenCV libraries thanks to the properties and link
     # with these names.
     # An other way could be to include OpenCVConfig.cmake, but in that case, visp-config and visp.pc
     # will be not able to give the names of OpenCV libraries when used without CMake.
     #message("OpenCV_LIB_COMPONENTS: ${OpenCV_LIB_COMPONENTS}")
     #message("OpenCV_LIBS: ${OpenCV_LIBS}")
     #if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
-    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)    
+    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
       set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO") # RelWithDebugInfo was requested under Fedora 20
-      
+
       if(POLICY CMP0045)
         # Fix Error on non-existent target in get_target_property for 3rd party location extraction
         cmake_policy(PUSH)
         cmake_policy(SET CMP0045 OLD)
       endif()
-      
+
       foreach(component_ ${OpenCV_LIB_COMPONENTS})
         foreach(imp_config_ ${config_})
           if(OpenCV_SHARED)
@@ -1439,12 +1439,12 @@ if(USE_OPENCV)
           endif()
         endforeach()
       endforeach()
-      
+
       if(POLICY CMP0045)
         # Fix Error on non-existent target in get_target_property for 3rd party location extraction
         cmake_policy(POP)
       endif()
-      
+
     else()
       # this should be an old OpenCV version that doesn't have the previous behavior
       list(APPEND VISP_EXTERN_LIBRARIES ${OpenCV_LIBS})
@@ -1517,7 +1517,7 @@ IF(USE_GTK2)
       SET(VISP_HAVE_GTK TRUE)  # for header vpConfig.h
       SET(VISP_HAVE_GTK_FOUND "yes")  # for ViSP-third-party.txt
       LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${GTK2_INCLUDE_DIRS})
-      
+
       IF(UNIX)
 	## ignore gtk pedantic warnings by gcc specific -isystem :
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
@@ -1602,7 +1602,7 @@ IF(USE_LIBJPEG)
     LIST(APPEND VISP_EXTERN_LIBRARIES ${JPEG_LIBRARIES})
 
     # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
-    # handle a compilation error "conflicting declaration 'typedef long int 
+    # handle a compilation error "conflicting declaration 'typedef long int
     # INT32'"
     IF(VISP_HAVE_QT3_FOUND)
       LIST(APPEND VISP_DEFS "-DQT_CLEAN_NAMESPACE")
@@ -1675,7 +1675,7 @@ IF(USE_DC1394)
 
     #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
     #MESSAGE("DBG DC1394_INCLUDE_DIRS=${DC1394_INCLUDE_DIRS}")
-    
+
     IF(APPLE)
       #SET(VISP_EXTERN_LIBRARIES ${VISP_EXTERN_LIBRARIES} IOkit "-framework Carbon")
       LIST(APPEND VISP_EXTERN_LIBRARIES "-framework IOkit -framework Carbon")
@@ -1786,7 +1786,7 @@ SET(WIREFRAME_SCENES_LIST "")
 foreach(SCENE ${WIREFRAME_SCENES})
   set(WIREFRAME_SCENES_SRC "${VISP_SOURCE_DIR}/src/simulator/wireframe-simulator/scene/${SCENE}")
   set(WIREFRAME_SCENES_DST "${VISP_BINARY_DIR}/data/wireframe-simulator/${SCENE}")
-  IF(CMAKE_MINOR_VERSION LESS 8 
+  IF(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${WIREFRAME_SCENES_DST}
@@ -1794,7 +1794,7 @@ foreach(SCENE ${WIREFRAME_SCENES})
     DEPENDS ${WIREFRAME_SCENES_SRC}
     )
   SET(WIREFRAME_SCENES_LIST ${WIREFRAME_SCENES_LIST} ${WIREFRAME_SCENES_DST})
-  ELSE(CMAKE_MINOR_VERSION LESS 8 
+  ELSE(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
     file(COPY ${WIREFRAME_SCENES_SRC}
       DESTINATION data/wireframe-simulator
@@ -1802,16 +1802,16 @@ foreach(SCENE ${WIREFRAME_SCENES})
       OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
       OWNER_WRITE
       )
-  ENDIF(CMAKE_MINOR_VERSION LESS 8 
+  ENDIF(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
 endforeach(SCENE)
 
-IF(CMAKE_MINOR_VERSION LESS 8 
+IF(CMAKE_MINOR_VERSION LESS 8
   AND CMAKE_MAJOR_VERSION GREATER 1)
   ADD_CUSTOM_TARGET(SCENE ALL
     DEPENDS ${WIREFRAME_SCENES_LIST}
     )
-ENDIF(CMAKE_MINOR_VERSION LESS 8 
+ENDIF(CMAKE_MINOR_VERSION LESS 8
   AND CMAKE_MAJOR_VERSION GREATER 1)
 
 
@@ -1824,7 +1824,7 @@ SET(ROBOT_ARMS_LIST "")
 foreach(SCENE_ROBOT ${ROBOT_ARMS_SCENES})
   set(ROBOT_ARMS_SRC "${VISP_SOURCE_DIR}/src/robot/simulator-robot/arms/${SCENE_ROBOT}")
   set(ROBOT_ARMS_DST "${VISP_BINARY_DIR}/data/robot-simulator/${SCENE_ROBOT}")
-  IF(CMAKE_MINOR_VERSION LESS 8 
+  IF(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
   ADD_CUSTOM_COMMAND(
     OUTPUT ${ROBOT_ARMS_DST}
@@ -1832,7 +1832,7 @@ foreach(SCENE_ROBOT ${ROBOT_ARMS_SCENES})
     DEPENDS ${ROBOT_ARMS_SRC}
     )
   SET(ROBOT_ARMS_LIST ${ROBOT_ARMS_LIST} ${ROBOT_ARMS_DST})
-  ELSE(CMAKE_MINOR_VERSION LESS 8 
+  ELSE(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
     file(COPY ${ROBOT_ARMS_SRC}
       DESTINATION data/robot-simulator
@@ -1840,16 +1840,16 @@ foreach(SCENE_ROBOT ${ROBOT_ARMS_SCENES})
       OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
       OWNER_WRITE
       )
-  ENDIF(CMAKE_MINOR_VERSION LESS 8 
+  ENDIF(CMAKE_MINOR_VERSION LESS 8
     AND CMAKE_MAJOR_VERSION GREATER 1)
 endforeach(SCENE_ROBOT)
 
-IF(CMAKE_MINOR_VERSION LESS 8 
+IF(CMAKE_MINOR_VERSION LESS 8
   AND CMAKE_MAJOR_VERSION GREATER 1)
   ADD_CUSTOM_TARGET(SCENE_ROBOT ALL
     DEPENDS ${ROBOT_ARMS_LIST}
     )
-ENDIF(CMAKE_MINOR_VERSION LESS 8 
+ENDIF(CMAKE_MINOR_VERSION LESS 8
   AND CMAKE_MAJOR_VERSION GREATER 1)
 
 #----------------------------------------------------------------------
@@ -1866,7 +1866,7 @@ SET(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
 
 # library for Irisa's Afma4 cylindrical robot
 IF(USE_AFMA4)
-  # Low level API to control the robot: 
+  # Low level API to control the robot:
   # libcalinux - librt - libraw1394 - libirisa
 #   IF(NOT RAW1394_FOUND)
 #     FIND_PACKAGE(RAW1394)
@@ -1895,7 +1895,7 @@ ENDIF(USE_AFMA4)
 
 # library for Irisa's Afma6 cartesian robot
 IF(USE_AFMA6)
-  # Low level API to control the robot: 
+  # Low level API to control the robot:
   # libcalinux - librt - libraw1394 - libirisa
 #   IF(NOT RAW1394_FOUND)
 #     FIND_PACKAGE(RAW1394)
@@ -1924,7 +1924,7 @@ ENDIF(USE_AFMA6)
 
 # library for Irisa's Viper850 arm robot
 IF(USE_VIPER850)
-  # Low level API to control the robot: 
+  # Low level API to control the robot:
   # libcalinux - librt - libraw1394 - libirisa
 #   IF(NOT RAW1394_FOUND)
 #     FIND_PACKAGE(RAW1394)
@@ -2179,7 +2179,7 @@ set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
 
 SET(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
 SET(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
-    
+
 # Generate the package dependent file include/visp/vpConfig.h
 CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
   ${VISP_INCLUDE_DIR}/vpConfig.h
