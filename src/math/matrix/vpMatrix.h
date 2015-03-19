@@ -181,7 +181,7 @@ protected:
   /** @name Printing  */
   //@{
 
-  int print(std::ostream& s, unsigned int length, char const* intro=0);
+  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
   std::ostream & matlabPrint(std::ostream & os) const;
   std::ostream & maplePrint(std::ostream & os) const;
   std::ostream & csvPrint(std::ostream & os) const;

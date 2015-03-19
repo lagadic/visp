@@ -2934,7 +2934,7 @@ Returns the common total width for all matrix elements
 \sa std::ostream &operator <<(ostream &s,const vpMatrix &m)
 */
 int
-vpMatrix::print(std::ostream& s, unsigned int length, char const* intro)
+vpMatrix::print(std::ostream& s, unsigned int length, char const* intro) const
 {
   typedef std::string::size_type size_type;
 

@@ -73,8 +73,8 @@ class VISP_EXPORT vpColVector : public vpMatrix
 {
    friend class vpMatrix;
 protected:
-  vpColVector (vpMatrix &m, unsigned int j);
-  vpColVector (vpColVector &m, unsigned int r, unsigned int nrows) ;
+  vpColVector (const vpMatrix &m, unsigned int j);
+  vpColVector (const vpColVector &m, unsigned int r, unsigned int nrows) ;
 
 public:
 
@@ -128,7 +128,7 @@ public:
   //! Multiplication by a scalar V =  A * x
   vpColVector operator*(const double x) const;
 
-  vpColVector rows(unsigned int first_row, unsigned int last_row)
+  vpColVector rows(unsigned int first_row, unsigned int last_row) const
   { 
     return vpColVector(*this, first_row-1, last_row-first_row+1);
   }

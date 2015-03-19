@@ -109,7 +109,7 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
   return v;
 }
 
-vpColVector::vpColVector (vpColVector &m, unsigned int r, unsigned int nrows)
+vpColVector::vpColVector (const vpColVector &m, unsigned int r, unsigned int nrows)
 {
   if ( (r+nrows) > m.getRows() )
   {
@@ -371,7 +371,7 @@ vpColVector::vpColVector (const vpColVector &v) : vpMatrix(v)
 {
 }
 
-vpColVector::vpColVector (vpMatrix &m, unsigned int j) : vpMatrix(m, 0, j, m.getRows(), 1)
+vpColVector::vpColVector (const vpMatrix &m, unsigned int j) : vpMatrix(m, 0, j, m.getRows(), 1)
 {
 }
 
