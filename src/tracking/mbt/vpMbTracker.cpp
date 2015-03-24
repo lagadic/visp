@@ -1026,11 +1026,11 @@ vpMbTracker::loadModel(const std::string& modelFile, const bool verbose)
       loadVRMLModel(modelFile);
     }
     else{
-      throw vpException(vpException::ioError, "file cannot be open");
+      throw vpException(vpException::ioError, "Error: File %s doesn't contain a cao or wrl model", modelFile.c_str());
     }
   }
   else{
-    throw vpException(vpException::ioError, "file cannot be open");
+    throw vpException(vpException::ioError, "Error: File %s doesn't exist", modelFile.c_str());
   }
   
   this->modelInitialised = true;
