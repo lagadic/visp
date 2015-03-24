@@ -76,6 +76,8 @@ class vpMbHiddenFaces
 #ifdef VISP_HAVE_OGRE
   vpImage<unsigned char> ogreBackground;
   bool ogreInitialised;
+  unsigned int nbRayAttempts;
+  double ratioVisibleRay;
   vpAROgre *ogre;
   std::vector< Ogre::ManualObject* > lOgrePolygons;
 #endif
@@ -123,11 +125,30 @@ class vpMbHiddenFaces
 
 #ifdef VISP_HAVE_OGRE
     /*!
+      Get the number of rays that will be sent toward each polygon for visibility test.
+      Each ray will go from the optic center of the camera to a random point inside the considered polygon.
+
+      \sa getGoodNbRayCastingAttemptsRatio()
+
+      \return Number of rays sent.
+    */
+    unsigned int getNbRayCastingAttemptsForVisibility() { return nbRayAttempts; }
+
+    /*!
       Get the Ogre3D Context.
 
       \return A pointer on a vpAROgre instance.
     */
     vpAROgre*     getOgreContext(){return ogre;}
+
+    /*!
+      Get the ratio of visibility attempts that has to be successful to consider a polygon as visible.
+
+      \sa getNbRayCastingAttemptsForVisibility()
+
+      \return Ratio of succesful attempts that has to be considered. Value will be between 0.0 (0%) and 1.0 (100%).
+    */
+    double  getGoodNbRayCastingAttemptsRatio(){ return ratioVisibleRay; }
 #endif
 
     bool          isAppearing(const unsigned int i){ return Lpol[i]->isAppearing(); }
@@ -173,6 +194,25 @@ class vpMbHiddenFaces
       \param w : Width of the background
     */
     void          setBackgroundSizeOgre(const unsigned int &h, const unsigned int &w) { ogreBackground = vpImage<unsigned char>(h, w, 0); }
+
+    /*!
+      Set the number of rays that will be sent toward each polygon for visibility test.
+      Each ray will go from the optic center of the camera to a random point inside the considered polygon.
+
+      \sa setGoodNbRayCastingAttemptsRatio(const double &)
+
+      \param attempts Number of rays to be sent.
+    */
+    void          setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) { nbRayAttempts = attempts; }
+
+    /*!
+      Set the ratio of visibility attempts that has to be successful to consider a polygon as visible.
+
+      \sa setNbRayCastingAttemptsForVisibility(const unsigned int &)
+
+      \param ratio : Ratio of succesful attempts that has to be considered. Value has to be between 0.0 (0%) and 1.0 (100%).
+    */
+    void          setGoodNbRayCastingAttemptsRatio(const double &ratio) {ratioVisibleRay = ratio; if(ratioVisibleRay > 1.0) ratioVisibleRay = 1.0; if(ratioVisibleRay < 0.0) ratioVisibleRay = 0.0;}
 #endif
     
     unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed) ;
@@ -230,6 +270,8 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
+  nbRayAttempts = 1;
+  ratioVisibleRay = 100;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640, 0);
@@ -367,6 +409,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo,
   }
   
   for (unsigned int i = 0; i < Lpol.size(); i++){
+    //std::cout << "Calling poly: " << i << std::endl;
     if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, testRoi, I, cam, cameraPos, i))
       nbVisiblePolygon ++;
   }
@@ -554,7 +597,7 @@ vpMbHiddenFaces<PolygonType>::initOgre(const vpCameraParameters &cam)
   
   for(unsigned int n = 0 ; n < Lpol.size(); n++){
     Ogre::ManualObject* manual = ogre->getSceneManager()->createManualObject(Ogre::StringConverter::toString(n));
-  
+
     manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
     for(unsigned int i = 0; i < Lpol[n]->nbpt; i++){
       manual->position( (Ogre::Real)Lpol[n]->p[i].get_oX(), (Ogre::Real)Lpol[n]->p[i].get_oY(), (Ogre::Real)Lpol[n]->p[i].get_oZ());
@@ -564,7 +607,7 @@ vpMbHiddenFaces<PolygonType>::initOgre(const vpCameraParameters &cam)
     
     manual->index(0);
     manual->end();
-    
+
     ogre->getSceneManager()->getRootSceneNode()->createChildSceneNode()->attachObject(manual);
     
     lOgrePolygons.push_back(manual);
@@ -639,68 +682,130 @@ vpMbHiddenFaces<PolygonType>::setVisibleOgre(const vpHomogeneousMatrix &cMo, con
 template<class PolygonType>
 bool                           
 vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos, const unsigned int &index)
-{ 
-//   std::cout << "visible" << std::endl;
-  // A line is always visible
-  if(Lpol[index]->getNbPoint() <= 2){
-    lOgrePolygons[index]->setVisible(true);
-    Lpol[index]->isvisible = true;
-    return true;
-  }
-  
+{
   Ogre::Vector3 camera((Ogre::Real)cameraPos[0],(Ogre::Real)cameraPos[1],(Ogre::Real)cameraPos[2]);
   if(!ogre->getCamera()->isVisible(lOgrePolygons[index]->getBoundingBox())){
     lOgrePolygons[index]->setVisible(false);
     Lpol[index]->isvisible = false;
-    return false;  
+    return false;
   }
-  
-  //Get the center of gravity 
-  Ogre::Vector3 origin(0,0,0);
-  for(unsigned int j = 0 ; j < Lpol[index]->getNbPoint() ; j++){
-      Ogre::Vector3 tmp((Ogre::Real)Lpol[index]->getPoint(j).get_oX(), (Ogre::Real)Lpol[index]->getPoint(j).get_oY(), (Ogre::Real)Lpol[index]->getPoint(j).get_oZ());
-      origin += tmp;
-  }
-  origin /= (Ogre::Real)Lpol[index]->getNbPoint();
-  Ogre::Vector3 direction = origin - camera;
-  
-  Ogre::RaySceneQuery *mRaySceneQuery = ogre->getSceneManager()->createRayQuery(Ogre::Ray(camera, direction));
-  mRaySceneQuery->setSortByDistance(true);
-  
-  Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
-  Ogre::RaySceneQueryResult::iterator it = result.begin();
-  
-  bool visible = false;
-  double distance, distancePrev;
-  if(it != result.end()){
-    if(it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) //Test if the ogreBackground is intersect in first
-      it++;
 
-    if(it != result.end()){
-      distance = it->distance;
-      distancePrev = distance;
-      if(it->movable->getName() == Ogre::StringConverter::toString(index)){
-        visible = true;
-      }
-      else{
+  //Get the center of gravity
+  bool visible = false;
+  unsigned int nbVisible = 0;
+
+  for(unsigned int i = 0; i < nbRayAttempts; i++)
+  {
+    Ogre::Vector3 origin(0,0,0);
+    Ogre::Real totalFactor = 0.0f;
+
+    for(unsigned int j = 0 ; j < Lpol[index]->getNbPoint() ; j++)
+    {
+        Ogre::Real factor = 1.0f;
+
+        if(nbRayAttempts > 1){
+          int r = rand() % 101;
+
+          if(r != 0)
+            factor = ((Ogre::Real)r)/100.0f;
+        }
+
+        Ogre::Vector3 tmp((Ogre::Real)Lpol[index]->getPoint(j).get_oX(), (Ogre::Real)Lpol[index]->getPoint(j).get_oY(), (Ogre::Real)Lpol[index]->getPoint(j).get_oZ());
+        tmp *= factor;
+        origin += tmp;
+        totalFactor += factor;
+    }
+
+    origin /= totalFactor;
+
+    Ogre::Vector3 direction = origin - camera;
+    Ogre::Real distanceCollision = direction.length();
+
+    direction.normalise();
+    Ogre::RaySceneQuery *mRaySceneQuery = ogre->getSceneManager()->createRayQuery(Ogre::Ray(camera, direction));
+    mRaySceneQuery->setSortByDistance(true);
+
+    Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
+    Ogre::RaySceneQueryResult::iterator it = result.begin();
+
+//    while(it != result.end()){
+//      std::cout << it->movable->getName() << "(" << it->distance<< ") : " << std::flush;
+//      it++;
+//    }
+//    std::cout << std::endl;
+//    it = result.begin();
+
+    if(it != result.end())
+      if(it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) //Test if the ogreBackground is intersect in first
         it++;
-        while(!visible && it != result.end()){
+
+    double distance, distancePrev;
+    // In a case of a two-axis aligned segment, ray collision is not always working.
+    if(Lpol[index]->getNbPoint() == 2 &&
+       (((std::fabs(Lpol[index]->getPoint(0).get_oX() - Lpol[index]->getPoint(1).get_oX()) < std::numeric_limits<double>::epsilon()) +
+         (std::fabs(Lpol[index]->getPoint(0).get_oY() - Lpol[index]->getPoint(1).get_oY()) < std::numeric_limits<double>::epsilon()) +
+         (std::fabs(Lpol[index]->getPoint(0).get_oZ() - Lpol[index]->getPoint(1).get_oZ()) < std::numeric_limits<double>::epsilon())) >= 2 ))
+    {
+      if(it != result.end())
+      {
+        if(it->movable->getName() == Ogre::StringConverter::toString(index)){
+          nbVisible++;
+        }
+        else
+        {
           distance = it->distance;
-          //if(distance == distancePrev){
-          if(std::fabs(distance - distancePrev) < distance * std::numeric_limits<double>::epsilon()){
-            if(it->movable->getName() == Ogre::StringConverter::toString(index)){
-              visible = true;
-              break;
+          // Cannot use epsilon for comparison as ray lenght is slightly different from the collision distance returned by Ogre::RaySceneQueryResult.
+          if(distance > distanceCollision || std::fabs(distance - distanceCollision) < 1e-6 /*std::fabs(distance) * std::numeric_limits<double>::epsilon()*/)
+            nbVisible++;
+        }
+      }
+      else
+        nbVisible++; // Collision not detected but present.
+    }
+    else
+    {
+      if(it != result.end())
+      {
+        distance = it->distance;
+        distancePrev = distance;
+
+        //std::cout << "For " << Ogre::StringConverter::toString(index) << ": " << it->movable->getName() << " / " << std::flush;
+
+        if(it->movable->getName() == Ogre::StringConverter::toString(index)){
+          nbVisible++;
+        }
+        else
+        {
+          it++;
+          while(it != result.end())
+          {
+            distance = it->distance;
+
+            if(std::fabs(distance - distancePrev) < 1e-6 /*std::fabs(distance) * std::numeric_limits<double>::epsilon()*/){
+              //std::cout << it->movable->getName() << " / " << std::flush;
+              if(it->movable->getName() == Ogre::StringConverter::toString(index)){
+                nbVisible++;
+                break;
+              }
+              it++;
+              distancePrev = distance;
             }
-            it++;
-            distancePrev = distance;
+            else
+              break;
           }
-          else
-            break;
         }
       }
     }
+
+    ogre->getSceneManager()->destroyQuery(mRaySceneQuery);
+
   }
+
+  if(((double)nbVisible)/((double)nbRayAttempts) > ratioVisibleRay ||
+     std::fabs(((double)nbVisible)/((double)nbRayAttempts) - ratioVisibleRay) < ratioVisibleRay * std::numeric_limits<double>::epsilon())
+    visible = true;
+  else
+    visible = false;
 
   if(visible){
     lOgrePolygons[index]->setVisible(true);
@@ -710,9 +815,7 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
     lOgrePolygons[index]->setVisible(false);
     Lpol[index]->isvisible = false;
   }
-  
-  ogre->getSceneManager()->destroyQuery(mRaySceneQuery); 
-  
+
   return Lpol[index]->isvisible;
 }
 #endif //VISP_HAVE_OGRE

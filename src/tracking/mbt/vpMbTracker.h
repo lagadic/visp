@@ -484,6 +484,27 @@ public:
 
   virtual void setOgreVisibilityTest(const bool &v);
 
+#ifdef VISP_HAVE_OGRE
+  /*!
+    Set the number of rays that will be sent toward each polygon for visibility test.
+    Each ray will go from the optic center of the camera to a random point inside the considered polygon.
+
+    \sa setGoodNbRayCastingAttemptsRatio(const unsigned int &)
+
+    \param attempts Number of rays to be sent.
+  */
+  void          setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) { faces.setNbRayCastingAttemptsForVisibility(attempts); }
+
+  /*!
+    Set the ratio of visibility attempts that has to be successful to consider a polygon as visible.
+
+    \sa setNbRayCastingAttemptsForVisibility(const unsigned int &)
+
+    \param ratio : Ratio of succesful attempts that has to be considered. Value has to be between 0.0 (0%) and 1.0 (100%).
+  */
+  void          setGoodNbRayCastingAttemptsRatio(const double &ratio){ faces.setGoodNbRayCastingAttemptsRatio(ratio); }
+#endif
+
   /*!
     Test the quality of the tracking.
 
