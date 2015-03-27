@@ -58,7 +58,7 @@
   Default constructor. 
   
 */
-vpMbtXmlParser::vpMbtXmlParser() : m_ecm(), useLod(false), minLineLengthThreshold(50.0), minPolygonAreaThreshold(2500.0)
+vpMbtXmlParser::vpMbtXmlParser() : m_ecm()
 {
   init();
 }
@@ -91,10 +91,6 @@ vpMbtXmlParser::init()
   nodeMap["sample"] = sample;
   nodeMap["step"] = step;
   nodeMap["nb_sample"] = nb_sample;
-  nodeMap["lod"] = lod;
-  nodeMap["use_lod"] = use_lod;
-  nodeMap["min_line_length_threshold"] = min_line_length_threshold;
-  nodeMap["min_polygon_area_threshold"] = min_polygon_area_threshold;
 }
 
 /*!
@@ -474,54 +470,6 @@ vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<" (default)" <<std::endl;
   else
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<std::endl;
-}
-
-void
-vpMbtXmlParser::read_lod (xmlDocPtr doc, xmlNodePtr node) {
-  bool use_lod_node = false;
-  bool min_line_length_threshold_node = false;
-  bool min_polygon_area_threshold_node = false;
-
-
-  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
-    if(dataNode->type == XML_ELEMENT_NODE){
-      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
-      if(iter_data != nodeMap.end()){
-        switch (iter_data->second){
-        case use_lod:
-          useLod = (xmlReadIntChild(doc, dataNode) != 0);
-          use_lod_node = true;
-          break;
-        case min_line_length_threshold:
-          minLineLengthThreshold = xmlReadDoubleChild(doc, dataNode);
-          min_line_length_threshold_node = true;
-          break;
-        case min_polygon_area_threshold:
-          minPolygonAreaThreshold = xmlReadDoubleChild(doc, dataNode);
-          min_polygon_area_threshold_node = true;
-          break;
-        default:{
-//          vpTRACE("unknown tag in read_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
-          }break;
-        }
-      }
-    }
-  }
-
-  if(!use_lod_node)
-    std::cout << "lod : use lod : " << useLod << " (default)" <<std::endl;
-  else
-    std::cout << "lod : use lod : " << useLod << std::endl;
-
-  if(!min_line_length_threshold_node)
-    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<" (default)" <<std::endl;
-  else
-    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<std::endl;
-
-  if(!min_polygon_area_threshold_node)
-    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<" (default)" <<std::endl;
-  else
-    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<std::endl;
 }
 
 #endif

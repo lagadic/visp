@@ -83,6 +83,12 @@ protected:
   double farClipping;
   //! Fov Clipping
   bool fovClipping;
+  //! If true, the LOD is enabled, otherwise it is not
+  bool useLod;
+  //! Minimum line length to track a segment when LOD is enabled
+  double minLineLengthThreshold;
+  //! Minimum polygon area to track a face when LOD is enabled
+  double minPolygonAreaThreshold;
     
   typedef enum{
     conf,
@@ -99,6 +105,10 @@ protected:
     v0,
     px,
     py,
+    lod,
+    use_lod,
+    min_line_length_threshold,
+    min_polygon_area_threshold,
     last
   } dataToParseMb;
 
@@ -137,7 +147,34 @@ public:
     \return True if yes, False otherwise.
   */
   inline bool getFovClipping() const {return fovClipping;}
+
+  /*!
+     Get the state of LOD setting.
+
+     \return True if LOD is enabled, false otherwise.
+   */
+  inline bool getLodState() const {
+    return useLod;
+  }
   
+  /*!
+     Get the minimum line length to track a segment when LOD is enabled.
+
+     \return The minimum line length.
+   */
+  inline double getMinLineLengthThreshold() const {
+    return minLineLengthThreshold;
+  }
+
+  /*!
+     Get the minimum polygon area to track a face when LOD is enabled.
+
+     \return The minimum polygon area.
+   */
+  inline double getMinPolygonAreaThreshold() const {
+    return minPolygonAreaThreshold;
+  }
+
   /*!
     Get the near clipping distance.
 
@@ -164,6 +201,7 @@ public:
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_camera (xmlDocPtr doc, xmlNodePtr node);
   void read_face(xmlDocPtr doc, xmlNodePtr node);
+  void read_lod (xmlDocPtr doc, xmlNodePtr node);
   
   /*!
     Set the angle to determine if a face appeared.

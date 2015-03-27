@@ -888,6 +888,18 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   if(xmlp.getFovClipping())
     setClipping(clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING);
 
+  useLodGeneral = xmlp.getLodState();
+  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+
+  applyLodSettingInConfig = false;
+  if(this->getNbPolygon() > 0) {
+    applyLodSettingInConfig = true;
+    setLod(useLodGeneral);
+    setMinLineLengthThresh(minLineLengthThresholdGeneral);
+    setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
+  }
+
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif

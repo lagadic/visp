@@ -341,6 +341,18 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
     setClipping(vpMbEdgeTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
   }
 
+  useLodGeneral = xmlp.getLodState();
+  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+
+  applyLodSettingInConfig = false;
+  if(this->getNbPolygon() > 0) {
+    applyLodSettingInConfig = true;
+    setLod(useLodGeneral);
+    setMinLineLengthThresh(minLineLengthThresholdGeneral);
+    setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
+  }
+
   vpMe meParser;
   xmlp.getMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);

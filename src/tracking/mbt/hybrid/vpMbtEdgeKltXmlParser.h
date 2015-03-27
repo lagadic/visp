@@ -72,7 +72,8 @@ protected:
     face,
     klt,
     ecm,
-    sample
+    sample,
+    lod
   } dataToParseMbtEdgeKlt;
 public:
 

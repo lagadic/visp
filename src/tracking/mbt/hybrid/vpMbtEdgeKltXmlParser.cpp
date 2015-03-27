@@ -81,6 +81,7 @@ vpMbtEdgeKltXmlParser::init()
   nodeMap["klt"] = vpMbtEdgeKltXmlParser::klt;
   nodeMap["ecm"] = vpMbtEdgeKltXmlParser::ecm;
   nodeMap["sample"] = vpMbtEdgeKltXmlParser::sample;
+  nodeMap["lod"] = vpMbtEdgeKltXmlParser::lod;
 }
 
 /*!
@@ -122,6 +123,7 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool ecm_node = false;
   bool sample_node = false;
   bool klt_node = false;
+  bool lod_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -147,6 +149,10 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         case vpMbtEdgeKltXmlParser::sample:{
           this->read_sample (doc, dataNode);
           sample_node = true;
+          }break;
+        case vpMbtEdgeKltXmlParser::lod:{
+          this->read_lod(doc, dataNode);
+          lod_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -191,6 +197,12 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   if(!sample_node) {
     std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
     std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+  }
+
+  if(!lod_node) {
+    std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 

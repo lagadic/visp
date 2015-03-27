@@ -58,7 +58,8 @@
 vpMbXmlParser::vpMbXmlParser()
   : cam(), angleAppear(70), angleDisappear(80),
     hasNearClipping(false), nearClipping(false),
-    hasFarClipping(false), farClipping(false), fovClipping(false)
+    hasFarClipping(false), farClipping(false), fovClipping(false),
+    useLod(false), minLineLengthThreshold(50.0), minPolygonAreaThreshold(2500.0)
 
 {
   init();
@@ -93,6 +94,10 @@ vpMbXmlParser::init()
   nodeMap["v0"] = v0;
   nodeMap["px"] = px;
   nodeMap["py"] = py;
+  nodeMap["lod"] = lod;
+  nodeMap["use_lod"] = use_lod;
+  nodeMap["min_line_length_threshold"] = min_line_length_threshold;
+  nodeMap["min_polygon_area_threshold"] = min_polygon_area_threshold;
 }
 
 /*!
@@ -131,6 +136,7 @@ vpMbXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
   bool camera_node = false;
   bool face_node = false;
+  bool lod_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -144,6 +150,10 @@ vpMbXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         case face:{
           this->read_face(doc, dataNode);
           face_node = true;
+          }break;
+        case lod:{
+          this->read_lod(doc, dataNode);
+          lod_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -163,6 +173,12 @@ vpMbXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   if(!face_node) {
     std::cout << "face : Angle Appear : "<< angleAppear <<" (default)" <<std::endl;
     std::cout << "face : Angle Disappear : "<< angleDisappear <<" (default)" <<std::endl;
+  }
+
+  if(!lod_node) {
+    std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
@@ -317,6 +333,54 @@ vpMbXmlParser::read_face(xmlDocPtr doc, xmlNodePtr node)
     else
       std::cout << "face : Fov Clipping : False" <<std::endl;
   }
+}
+
+void
+vpMbXmlParser::read_lod (xmlDocPtr doc, xmlNodePtr node) {
+  bool use_lod_node = false;
+  bool min_line_length_threshold_node = false;
+  bool min_polygon_area_threshold_node = false;
+
+
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case use_lod:
+          useLod = (xmlReadIntChild(doc, dataNode) != 0);
+          use_lod_node = true;
+          break;
+        case min_line_length_threshold:
+          minLineLengthThreshold = xmlReadDoubleChild(doc, dataNode);
+          min_line_length_threshold_node = true;
+          break;
+        case min_polygon_area_threshold:
+          minPolygonAreaThreshold = xmlReadDoubleChild(doc, dataNode);
+          min_polygon_area_threshold_node = true;
+          break;
+        default:{
+//          vpTRACE("unknown tag in read_contrast : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  if(!use_lod_node)
+    std::cout << "lod : use lod : " << useLod << " (default)" <<std::endl;
+  else
+    std::cout << "lod : use lod : " << useLod << std::endl;
+
+  if(!min_line_length_threshold_node)
+    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<" (default)" <<std::endl;
+  else
+    std::cout <<"lod : min line length threshold : " << minLineLengthThreshold <<std::endl;
+
+  if(!min_polygon_area_threshold_node)
+    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<" (default)" <<std::endl;
+  else
+    std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<std::endl;
 }
 
 #endif

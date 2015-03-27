@@ -124,6 +124,7 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool camera_node = false;
   bool face_node = false;
   bool klt_node = false;
+  bool lod_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -141,6 +142,10 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
         case klt:{
           this->read_klt(doc, dataNode);
           klt_node = true;
+          }break;
+        case lod:{
+          this->read_lod(doc, dataNode);
+          lod_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -171,6 +176,12 @@ vpMbtKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "klt : Harris Parameter : "<< harrisParam <<" (default)" <<std::endl;
     std::cout << "klt : Block Size : "<< blockSize <<" (default)" <<std::endl;
     std::cout << "klt : Pyramid Levels : "<< pyramidLevels <<" (default)" <<std::endl;
+  }
+
+  if(!lod_node) {
+    std::cout << "lod : use lod : " << useLod << " (default)" << std::endl;
+    std::cout << "lod : min line length threshold : " << minLineLengthThreshold << " (default)" << std::endl;
+    std::cout << "lod : min polygon area threshold : " << minPolygonAreaThreshold << " (default)" << std::endl;
   }
 }
 
