@@ -2070,6 +2070,23 @@ else()
   set(VISP_HAVE_DMTX_FOUND "no")  # for ViSP-third-party.txt
 endif()
 
+# Find IsNaN
+find_package(IsNaN)
+# Find isnan macro (C-style)
+if(HAVE_FUNC_ISNAN)
+  SET(VISP_HAVE_FUNC_ISNAN TRUE)
+endif()
+
+# Find std::isnan function (cmath)
+if(HAVE_FUNC_STD_ISNAN)
+  SET(VISP_HAVE_FUNC_STD_ISNAN TRUE)
+endif()
+
+# Find _isnan function for MSVC
+if(HAVE_FUNC__ISNAN)
+  SET(VISP_HAVE_FUNC__ISNAN TRUE)
+endif()
+
 #----------------------------------------------------------------------
 # Add definitions
 #----------------------------------------------------------------------

@@ -305,6 +305,15 @@
 //Defined if we want to use c++ 11
 #cmakedefine VISP_HAVE_CPP11_COMPATIBILITY
 
+// Defined if isnan macro is available
+#cmakedefine VISP_HAVE_FUNC_ISNAN
+
+// Defined if std::isnan function is available
+#cmakedefine VISP_HAVE_FUNC_STD_ISNAN
+
+// Defined if _isnan (Microsoft version) is available
+#cmakedefine VISP_HAVE_FUNC__ISNAN
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.

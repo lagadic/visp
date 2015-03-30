@@ -48,25 +48,30 @@
 #include <stdint.h>
 #include <visp/vpMath.h>
 
-#if defined _MSC_VER || defined __BORLANDC__
-   typedef __int64 int64;
-   typedef unsigned __int64 uint64;
+#if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)
+  #include <cmath>
+#elif defined(VISP_HAVE_FUNC__ISNAN)
+  #include <float.h>
 #else
-   typedef int64_t int64;
-   typedef uint64_t uint64;
-#endif
+  #if defined _MSC_VER || defined __BORLANDC__
+     typedef __int64 int64;
+     typedef unsigned __int64 uint64;
+  #else
+     typedef int64_t int64;
+     typedef uint64_t uint64;
+  #endif
 
+   typedef union Cv64suf
+   {
+       int64 i;
+       uint64 u;
+       double f;
+   }
+   Cv64suf;
+#endif
 
 const double vpMath::ang_min_sinc = 1.0e-8;
 const double vpMath::ang_min_mc = 2.5e-4;
-
-typedef union Cv64suf
-{
-    int64 i;
-    uint64 u;
-    double f;
-}
-Cv64suf;
 
 
 /*!
@@ -76,15 +81,23 @@ Cv64suf;
  */
 bool vpMath::isNaN(const double value)
 {
-#if 0
-  //This trick should work for any compiler which claims to use IEEE floating point.
-  //Do not work with g++ and -ffast-math option.
-  return (value != value);
+#if defined(VISP_HAVE_FUNC_ISNAN)
+  return isnan(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISNAN)
+  return std::isnan(value);
+#elif defined(VISP_HAVE_FUNC__ISNAN)
+  return _isnan(value);
 #else
-  //Taken from OpenCV source code CvIsNan()
-  Cv64suf ieee754;
-  ieee754.f = value;
-  return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
-         ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
+  #if 0
+    //This trick should work for any compiler which claims to use IEEE floating point.
+    //Do not work with g++ and -ffast-math option.
+    return (value != value);
+  #else
+    //Taken from OpenCV source code CvIsNan()
+    Cv64suf ieee754;
+    ieee754.f = value;
+    return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
+           ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
+  #endif
 #endif
 }
