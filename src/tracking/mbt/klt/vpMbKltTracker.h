@@ -54,7 +54,6 @@
 #include <visp/vpKltOpencv.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
-#include <visp/vpDisplayX.h>
 #include <visp/vpMbtKltXmlParser.h>
 #include <visp/vpHomography.h>
 #include <visp/vpRobust.h>
