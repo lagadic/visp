@@ -3558,177 +3558,128 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
 
 /*!
 Function to compute the null space (the kernel) of the interaction matrix A which is not full rank.
-The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(M) ={KerA : A*KerA =0}.
+The null space ( the kernel ) of a matrix A is defined as Null(A) = Ker(A) = {X : A*X =0}.
 
-\param kerA : The matrix to contain the null space (kernel) of A (A*KerA.t()=0) 
+\param kerA : The matrix to contain the null space (kernel) of A defined by the row vectors (A*KerA.t()=0)
 \param svThreshold : Specify the used threshold in the svd(...) function (a function to compute the singular value decomposition)
 
 \return the rank of the matrix.
 */
+
 unsigned int 
 vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
 {
 #if (DEBUG_LEVEL1)
-  std::cout << "begin Kernel" << std::endl ;
+    std::cout << "begin vpMatrix::kernel" << std::endl ;
 #endif
   unsigned int i, j ;
-  unsigned int ncaptor = getRows() ;
-  unsigned int ddl = getCols() ;
-  vpMatrix C ;
+  unsigned int nbline = getRows() ;
+  unsigned int nbcol = getCols() ;
 
-  if (ncaptor == 0)
-    std::cout << "Erreur Matrice  non initialise" << std::endl ;
+  if ( (nbline <= 0) || (nbcol <= 0) )
+  {
+      vpTRACE("Matrix is empty");
+      throw( vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Matrix must be initialized") );
+  }
 
 #if (DEBUG_LEVEL2)
   {
     std::cout << "Interaction matrix L" << std::endl ;
-    std::cout << *this   ;
-    std::cout << "signaux capteurs : " << ncaptor << std::endl ;
+    std::cout << *this << std::endl;
+    std::cout << "signaux capteurs : " << nbline << std::endl ;
   }
 #endif
 
-  C.resize(ddl,ncaptor) ;
-  unsigned int min ;
+    vpMatrix A ; // Copy of the matrix, SVD function is destructive
+    vpColVector sv(nbcol) ;   // singular values
+    vpMatrix v(nbcol,nbcol) ; // V matrix of singular value decomposition
 
-  if (ncaptor > ddl) min = ddl ; else min = ncaptor ;
+    // Copy and resize matrix to have at least as many rows as columns
+    // kernel is computed in svd method only if the matrix has more rows than columns
 
-  // ! the SVDcmp function inthe matrix lib is destructive
+    if (nbline < nbcol) A.resize(nbcol,nbcol) ;
+    else A.resize(nbline,nbcol) ;
 
-  vpMatrix a1 ;
-  vpMatrix a2 ;
-
-  vpColVector sv(ddl) ;   // singular values
-  vpMatrix v(ddl,ddl) ;
-
-  if (ncaptor < ddl)
-  {
-    a1.resize(ddl,ddl) ;
-  }
-  else
-  {
-    a1.resize(ncaptor,ddl) ;
-  }
-
-  a2.resize(ncaptor,ddl) ;
-
-  for (i=0 ; i < ncaptor ; i++)
-    for (j=0 ; j < ddl ; j++)
+    for (i=0 ; i < nbline ; i++)
     {
-      a1[i][j] = (*this)[i][j] ;
-      a2[i][j] = (*this)[i][j] ;
-    }
-
-
-    if (ncaptor < ddl)
-    {
-      for (i=ncaptor ; i < ddl ; i++)
-        for (j=0 ; j < ddl ; j++)
+        for (j=0 ; j < nbcol ; j++)
         {
-          a1[i][j] = 0 ;
+            A[i][j] = (*this)[i][j] ;
         }
-        a1.svd(sv,v);
-    }
-    else
-    {
-      a1.svd(sv,v);
     }
 
-    // compute the highest singular value and the rank of h
+    A.svd(sv,v);
+
+    // Compute the highest singular value and rank of the matrix
 
     double maxsv = 0 ;
-    for (i=0 ; i < ddl ; i++)
+    for (i=0 ; i < nbcol ; i++)
       if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
 
 #if (DEBUG_LEVEL2)
     {
       std::cout << "Singular Value : (" ;
-      for (i=0 ; i < ddl ; i++) std::cout << sv[i] << " , " ;
+      for (i=0 ; i < nbcol ; i++) std::cout << sv[i] << " , " ;
       std::cout << ")" << std::endl ;
     }
 #endif
 
     unsigned int rank = 0 ;
-    for (i=0 ; i < ddl ; i++)
+    for (i=0 ; i < nbcol ; i++)
       if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
 
 #if (DEBUG_LEVEL2)
     {
 
-      for (i = 0 ; i < ddl ; i++)
-      {
-        for (j = 0 ; j < ncaptor ; j++)
-        {
-          unsigned int k=0 ;
-          C[i][j] = 0.0;
+    vpMatrix C(nbcol, nbline);
 
-          // modif le 25 janvier 1999 0.001 <-- maxsv*1.e-ndof
-          // sinon on peut observer une perte de range de la matrice
-          // ( d'ou venait ce 0.001 ??? )
-          for (k=0 ; k < ddl ; k++)  if (fabs(sv[k]) > maxsv*svThreshold)
-          {
-            C[i][j] += v[i][k]*a1[j][k]/sv[k];
-          }
-        }
-      }
-
-      // cout << v << endl ;
-      std::cout << C << std::endl ;
-    }
-#endif
-    /*------------------------------------------------------- */
-    if (rank != ddl)
+    for (i = 0 ; i < nbcol ; i++)
     {
-      // Compute the kernel if wanted
-      if (min < ddl)
-      {
-        vpMatrix ch(ddl,ddl) ;
-        ch = C*a2 ;
-        ch.svd(sv,v) ;
-
-      }
-      //   if (noyau == 1)
-      {
-        maxsv = 0 ;
-        for (i=0 ; i < ddl ; i++)
-          if (fabs(sv[i]) > maxsv) maxsv = fabs(sv[i]) ;
-        rank = 0 ;
-        for (i=0 ; i < ddl ; i++)
-          if (fabs(sv[i]) > maxsv*svThreshold) rank++ ;
-        vpMatrix cons(ddl,ddl) ;
-
-        cons =0 ;
-        for (j = 0 ; j < ddl ; j++)
+        for (j = 0 ; j < nbline ; j++)
         {
-          for (i = 0 ; i < ddl ; i++)
-            // Change Nicolas Mansard 23/4/04
-            // was         if (fabs(sv[i]) < maxsv*seuilvp)
-            if (fabs(sv[i]) <= maxsv*svThreshold)
+            unsigned int k=0 ;
+            C[i][j] = 0.0;
+
+            for (k=0 ; k < nbcol ; k++)  if (fabs(sv[k]) > maxsv*svThreshold)
             {
-              cons[i][j] = v[j][i];
+                C[i][j] += v[i][k]*A[j][k]/sv[k];
             }
         }
+    }
+    std::cout << "Matrix pseudoinverse" << std::endl;
+    std::cout << C << std::endl ;
 
-        vpMatrix Ker(ddl-rank,ddl) ;
-        unsigned int k =0 ;
-        for (j = 0 ; j < ddl ; j++)
+    }
+#endif
+
+    if (rank != nbcol)
+    {
+        vpMatrix Ker(nbcol-rank,nbcol) ;
+        unsigned int k = 0 ;
+        for (j = 0 ; j < nbcol ; j++)
         {
-          //    cout << cons.Row(j+1) << " = " << cons.Row(j+1).SumSquare() << endl ;
-
-          //if (cons.row(j+1).sumSquare() !=0)
-          if (std::fabs(cons.getRow(j).sumSquare()) > std::numeric_limits<double>::epsilon())
-          {
-            for (i=0 ; i < cons.getCols() ; i++)
-              Ker[k][i] = cons[j][i] ;
-            //  Ker.Row(k+1) = cons.Row(j+1) ;
-            k++;
-          }
+            //if( v.col(j) in kernel and non zero )
+            if ( (fabs(sv[j]) <= maxsv*svThreshold) && (std::fabs(v.getCol(j).sumSquare()) > std::numeric_limits<double>::epsilon()))
+            {
+                //  Ker.Row(k) = v.Col(j) ;
+                for (i=0 ; i < v.getRows() ; i++)
+                {
+                    Ker[k][i] = v[i][j];
+                }
+                k++;
+            }
         }
         kerA = Ker ;
-      }
     }
+    else
+    {
+        kerA.resize(0,0);
+    }
+
 #if (DEBUG_LEVEL1) 
-    std::cout << "end Kernel" << std::endl ;
+    std::cout << "end vpMatrix::kernel" << std::endl ;
 #endif
+
     return rank ;
 }
 
