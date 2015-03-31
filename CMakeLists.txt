@@ -1368,9 +1368,10 @@ if(USE_OPENCV)
     #message("OpenCV_LIB_COMPONENTS: ${OpenCV_LIB_COMPONENTS}")
     #message("OpenCV_LIBS: ${OpenCV_LIBS}")
     #if(WIN32 AND OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)
-    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1)    
-      set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO") # RelWithDebugInfo was requested under Fedora 20
-      
+    if(OpenCV_LIB_COMPONENTS AND OpenCV_VERSION AND OpenCV_VERSION VERSION_GREATER 2.4.6.1) 
+      # ReleaseWithDebugInfo was requested to detect libopencv-devel under Fedora 20
+      # RelWithDebugInfo was requested to detect ros-hydro-opencv2 2.4.9 under Ubuntu 12.04 LTS with ROS hydro   
+      set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO") 
       if(POLICY CMP0045)
         # Fix Error on non-existent target in get_target_property for 3rd party location extraction
         cmake_policy(PUSH)
