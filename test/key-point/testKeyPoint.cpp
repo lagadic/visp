@@ -191,7 +191,7 @@ int main(int argc, const char ** argv) {
     vpDisplayGDI display;
 #else
     std::cerr << "No display available." << std::endl;
-    return -1;
+    return 0;
 #endif
 
     if (opt_display)
