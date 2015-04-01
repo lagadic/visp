@@ -46,6 +46,7 @@
 set(SOURCE
   testSurfKeyPoint.cpp
   testKeyPoint.cpp
+  testKeyPoint-2.cpp
 )
 
 # rule for binary build
@@ -65,4 +66,5 @@ endforeach()
 
 # Add test
 add_test(testSurfKeyPoint      testSurfKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(testKeyPoint      testKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testKeyPoint      testKeyPoint)
+add_test(testKeyPoint-2      testKeyPoint-2)
