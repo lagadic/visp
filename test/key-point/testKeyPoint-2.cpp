@@ -52,16 +52,103 @@
 #include <visp/vpVideoReader.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpMbEdgeTracker.h>
+#include <visp/vpParseArgv.h>
 
+// List of allowed command line options
+#define GETOPTARGS	"cdi:h"
+
+void usage(const char *name, const char *badparam);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
-  \example testKeyPoint.cpp
+
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+  \param ipath: Input image path.
+
+*/
+void usage(const char *name, const char *badparam)
+{
+  fprintf(stdout, "\n\
+Test key points matching.\n\
+\n\
+SYNOPSIS\n\
+  %s [-c] [-d] [-h]\n", name);
+
+  fprintf(stdout, "\n\
+OPTIONS:                                               \n\
+\n\
+  -c\n\
+     Disable the mouse click. Useful to automaze the \n\
+     execution of this program without humain intervention.\n\
+\n\
+  -d \n\
+     Turn off the display.\n\
+\n\
+  -h\n\
+     Print the help.\n");
+
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
+
+/*!
+
+  Set the program options.
+
+  \param argc : Command line number of parameters.
+  \param argv : Array of command line parameters.
+  \param click_allowed : Mouse click activation.
+  \param display : Display activation.
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+{
+  const char *optarg_;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+
+    switch (c) {
+    case 'c': click_allowed = false; break;
+    case 'd': display = false; break;
+    case 'h': usage(argv[0], NULL); return false; break;
+
+    default:
+      usage(argv[0], optarg_);
+      return false; break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+/*!
+  \example testKeyPoint-2.cpp
 
   \brief   Test keypoint matching and pose estimation.
 */
-int main() {
+int main(int argc, const char ** argv) {
   try {
     std::string env_ipath;
+    bool opt_click_allowed = true;
+    bool opt_display = true;
+
+    // Read the command line options
+    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+      exit (-1);
+    }
+
     //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
@@ -81,18 +168,19 @@ int main() {
     vpImageIo::read(I, filenameRef);
     std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
 
-
 #if defined VISP_HAVE_X11
-    vpDisplayX display(I, 0, 0, "ORB keypoints matching");
+    vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display(Imatch, 0, 0, "ORB keypoints matching");
+    vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display(Imatch, 0, 0, "ORB keypoints matching");
+    vpDisplayGDI display;
 #else
     std::cerr << "No display available." << std::endl;
     return -1;
 #endif
 
+    if (opt_display)
+      display.init(I, 0, 0, "ORB keypoints matching");
 
     vpMbEdgeTracker tracker;
     //Load config for tracker
@@ -110,12 +198,18 @@ int main() {
 
     //Initialize the pose
     std::string init_file = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.init");
-    tracker.initClick(I, init_file);
+    if (opt_display && opt_click_allowed) {
+      tracker.initClick(I, init_file);
+    }
+    else
+    {
+      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
+      tracker.initFromPose(I, cMoi);
+    }
 
     //Get the init pose
     vpHomogeneousMatrix cMo;
     tracker.getPose(cMo);
-
 
     //Init keypoints
     vpKeyPoint keypoints("ORB", "ORB");
@@ -138,7 +232,6 @@ int main() {
 
     //Build the reference keypoints
     keypoints.buildReference(I, trainKeyPoints, points3f);
-
 
     //Init reader for getting the input image sequence
     vpVideoReader g;
@@ -163,20 +256,22 @@ int main() {
 
       vpDisplay::flush(I);
 
-      //Click requested to process next image
-      if(opt_click) {
-        vpDisplay::getClick(I, button, true);
-        if(button == vpMouseButton::button3) {
-          opt_click = false;
-        }
-      } else {
-        //Use right click to enable/disable step by step tracking
-        if(vpDisplay::getClick(I, button, false)) {
-          if (button == vpMouseButton::button3) {
-            opt_click = true;
+      if (opt_click_allowed && opt_display) {
+        //Click requested to process next image
+        if(opt_click) {
+          vpDisplay::getClick(I, button, true);
+          if(button == vpMouseButton::button3) {
+            opt_click = false;
           }
-          else if(button == vpMouseButton::button1) {
-            break;
+        } else {
+          //Use right click to enable/disable step by step tracking
+          if(vpDisplay::getClick(I, button, false)) {
+            if (button == vpMouseButton::button3) {
+              opt_click = true;
+            }
+            else if(button == vpMouseButton::button1) {
+              break;
+            }
           }
         }
       }

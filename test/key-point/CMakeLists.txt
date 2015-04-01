@@ -65,6 +65,6 @@ foreach(source ${SOURCE})
 endforeach()
 
 # Add test
-add_test(testSurfKeyPoint      testSurfKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(testKeyPoint      testKeyPoint)
-add_test(testKeyPoint-2      testKeyPoint-2)
+add_test(testSurfKeyPoint  testSurfKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testKeyPoint      testKeyPoint     -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testKeyPoint-2    testKeyPoint-2   -c ${OPTION_TO_DESACTIVE_DISPLAY})
