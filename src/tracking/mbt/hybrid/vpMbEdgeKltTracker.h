@@ -331,6 +331,15 @@ public:
       }
 
   virtual void    setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+  /*!
+    Set if the projection error criteria has to be computed.
+
+    \param flag : True if the projection error criteria has to be computed, false otherwise
+  */
+  virtual void setProjectionErrorComputation(const bool &flag) {
+	  vpMbEdgeTracker::setProjectionErrorComputation(flag);
+  }
+
 
   virtual void    testTracking(){};
   virtual void    track(const vpImage<unsigned char>& I);

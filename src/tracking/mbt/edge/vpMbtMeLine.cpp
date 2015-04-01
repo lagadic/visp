@@ -470,7 +470,7 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
   filterY[4][3] = 4;
   filterY[4][4] = 1;
 
-  double offset = std::floor(filterX.getRows() / 2);
+  double offset = std::floor((double)(filterX.getRows()) / 2.);
 
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
     if(iter != 0 && iter+1 != list.size()){
@@ -481,8 +481,8 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
       double jSite = it->jfloat;
 
       for(unsigned int i = 0; i<filterX.getRows() ; i++){
-        for(unsigned int j = 0; j< filterX.getCols() ; j++){
-          double iImg = iSite + (i-offset);
+		double iImg = iSite + (i - offset);
+		for (unsigned int j = 0; j< filterX.getCols(); j++){
           double jImg = jSite + (j-offset);
 
           if(iImg < 0) iImg = 0.0;
@@ -491,13 +491,13 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
           if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
           if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
 
-          gradientX += filterX[i][j] * _I(iImg,jImg);
+		  gradientX += filterX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
       for(unsigned int i = 0; i<filterY.getRows() ; i++){
-        for(unsigned int j = 0; j< filterY.getCols() ; j++){
-          double iImg = iSite + (i-offset);
+		double iImg = iSite + (i - offset);
+		for (unsigned int j = 0; j< filterY.getCols(); j++){
           double jImg = jSite + (j-offset);
 
           if(iImg < 0) iImg = 0.0;
@@ -506,7 +506,7 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
           if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
           if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
 
-          gradientY += filterY[i][j] * _I(iImg,jImg);
+		  gradientY += filterY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
