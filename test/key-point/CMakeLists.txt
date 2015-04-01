@@ -45,6 +45,7 @@
 # If you want to add/remove a source, modify here
 set(SOURCE
   testSurfKeyPoint.cpp
+  testKeyPoint.cpp
 )
 
 # rule for binary build
@@ -64,3 +65,4 @@ endforeach()
 
 # Add test
 add_test(testSurfKeyPoint      testSurfKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(testKeyPoint      testKeyPoint -c ${OPTION_TO_DESACTIVE_DISPLAY})

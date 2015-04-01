@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id: FindIsNaN 5375 2015-03-30 15:59:26Z strinh $
+# $Id: FindIsNaN.cmake 5375 2015-03-30 15:59:26Z strinh $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
