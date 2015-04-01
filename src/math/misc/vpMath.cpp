@@ -49,25 +49,25 @@
 #include <visp/vpMath.h>
 
 #if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)
-  #include <cmath>
+#  include <cmath>
 #elif defined(VISP_HAVE_FUNC__ISNAN)
-  #include <float.h>
+#  include <float.h>
 #else
-  #if defined _MSC_VER || defined __BORLANDC__
-     typedef __int64 int64;
-     typedef unsigned __int64 uint64;
-  #else
-     typedef int64_t int64;
-     typedef uint64_t uint64;
-  #endif
+#  if defined _MSC_VER || defined __BORLANDC__
+typedef __int64 int64;
+typedef unsigned __int64 uint64;
+#  else
+typedef int64_t int64;
+typedef uint64_t uint64;
+#  endif
 
-   typedef union Cv64suf
-   {
-       int64 i;
-       uint64 u;
-       double f;
-   }
-   Cv64suf;
+typedef union Cv64suf
+{
+  int64 i;
+  uint64 u;
+  double f;
+}
+Cv64suf;
 #endif
 
 const double vpMath::ang_min_sinc = 1.0e-8;
