@@ -248,7 +248,7 @@ int main() {
   std::cerr << "You need OpenCV library." << std::endl;
 #endif
 
-  return -1;
+  return 0;
 }
 
 #endif
