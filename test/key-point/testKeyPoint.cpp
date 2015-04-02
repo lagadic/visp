@@ -39,9 +39,11 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
 #include <iostream>
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_OPENCV))
+
+#include <visp/vpConfig.h>
+
+#if defined(VISP_HAVE_OPENCV)
 
 #include <visp/vpKeyPoint.h>
 #include <visp/vpImage.h>
@@ -49,6 +51,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
@@ -174,7 +177,6 @@ int main(int argc, const char ** argv) {
     vpKeyPoint keypoints("ORB", "ORB");
     std::cout << "Build " << keypoints.buildReference(Iref) << " reference points." << std::endl;
 
-
     vpVideoReader g;
     g.setFileName(filenameCur);
     g.open(Icur);
@@ -190,8 +192,7 @@ int main(int argc, const char ** argv) {
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
 #else
-    std::cerr << "No display available." << std::endl;
-    return 0;
+    vpDisplayOpenCV display;
 #endif
 
     if (opt_display)
@@ -242,11 +243,7 @@ int main(int argc, const char ** argv) {
 }
 #else
 int main() {
-#if ( !(defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) )
-  std::cerr << "You do not have X11, GTK or GDI display functionalities." << std::endl;
-#else
   std::cerr << "You need OpenCV library." << std::endl;
-#endif
 
   return 0;
 }

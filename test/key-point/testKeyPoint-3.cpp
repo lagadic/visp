@@ -39,9 +39,11 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
 #include <iostream>
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
+
+#include <visp/vpConfig.h>
+
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -50,6 +52,7 @@
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayOpenCV.h>
 #include <visp/vpVideoReader.h>
 #include <visp/vpIoTools.h>
 #include <visp/vpParseArgv.h>
@@ -149,9 +152,6 @@ int main(int argc, const char ** argv) {
       exit (-1);
     }
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
-    env_ipath = vpIoTools::getViSPImagesDataPath();
-
     //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
@@ -182,7 +182,6 @@ int main(int argc, const char ** argv) {
     detector->detect(matImg, trainKeyPoints);
     extractor->compute(matImg, trainKeyPoints, trainDescriptors);
 
-
     vpVideoReader g;
     g.setFileName(filenameCur);
     g.open(Icur);
@@ -198,8 +197,7 @@ int main(int argc, const char ** argv) {
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
 #else
-    std::cerr << "No display available." << std::endl;
-    return 0;
+    vpDisplayOpenCV display;
 #endif
 
     if (opt_display)
@@ -239,7 +237,6 @@ int main(int argc, const char ** argv) {
               + Iref.getWidth());
           vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
         }
-
       }
 
       vpDisplay::flush(Imatch);
@@ -274,11 +271,7 @@ int main(int argc, const char ** argv) {
 }
 #else
 int main() {
-#if ( !(defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) )
-  std::cerr << "You do not have X11, GTK or GDI display functionalities." << std::endl;
-#else
   std::cerr << "You need OpenCV library." << std::endl;
-#endif
 
   return 0;
 }

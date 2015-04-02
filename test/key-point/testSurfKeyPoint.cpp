@@ -39,28 +39,26 @@
  *
  *****************************************************************************/
 
-
-
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
-#if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000))  // Require opencv >= 1.1.0 < 3.0.0
+#include <iostream>
 
-#include <visp/vpKeyPointSurf.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
+#include <visp/vpConfig.h>
+
+#if (defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000))  // Require opencv >= 1.1.0 < 3.0.0
+
+#include <visp/vpCameraParameters.h>
 #include <visp/vpDisplayX.h>
 #include <visp/vpDisplayGTK.h>
 #include <visp/vpDisplayGDI.h>
-
-
-#include <visp/vpCameraParameters.h>
-
-#include <visp/vpParseArgv.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpKeyPointSurf.h>
 #include <visp/vpIoTools.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpParseArgv.h>
 
 /*!
   \example testSurfKeyPoint.cpp
@@ -180,7 +178,6 @@ main(int argc, const char ** argv)
     if (! env_ipath.empty())
       ipath = env_ipath;
 
-
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath,
                    opt_click_allowed, opt_display) == false) {
@@ -236,11 +233,11 @@ main(int argc, const char ** argv)
     // exception readPGM may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
     try{
-      vpCTRACE << "Load: " << filenameRef << std::endl;
+      std::cout << "Load: " << filenameRef << std::endl;
 
       vpImageIo::read(Iref, filenameRef) ;
 
-      vpCTRACE << "Load: " << filenameCur << std::endl;
+      std::cout << "Load: " << filenameCur << std::endl;
 
       vpImageIo::read(Icur, filenameCur) ;
     }
@@ -266,6 +263,8 @@ main(int argc, const char ** argv)
     vpDisplayGTK display[2];
 #elif defined VISP_HAVE_GDI
     vpDisplayGDI display[2];
+#else
+    vpDisplayOpenCV display[2];
 #endif
 
     if (opt_display) {
@@ -311,10 +310,9 @@ main(int argc, const char ** argv)
 
     if(nbrRef < 1)
     {
-      vpTRACE("No reference point");
+      std::cerr << "No reference point" << std::endl;
       exit(-1);
     }
-
 
     unsigned int nbrPair;
     if (opt_display) {
@@ -351,7 +349,7 @@ main(int argc, const char ** argv)
 
     if(nbrPair < 1)
     {
-      vpTRACE("No point matched");
+      std::cout << "No point matched" << std::endl;
     }
 
     if (opt_display)
@@ -367,7 +365,7 @@ main(int argc, const char ** argv)
     }
     return (0);
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return (1);
   }
@@ -376,11 +374,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-#if ( ! (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) )
-  vpERROR_TRACE("You do not have X11, GTK or GDI display functionalities...");
-#else
-  vpERROR_TRACE("You do not have 1.1.0 <= OpenCV < 2.4.8 that contains opencv_nonfree component...");
-#endif
+  std::cerr << "You do not have 1.1.0 <= OpenCV < 2.3.0 that contains opencv_nonfree component..." << std::endl;
 }
 
 #endif
