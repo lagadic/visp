@@ -644,7 +644,14 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
   cv::Mat cameraMatrix =
       (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
   cv::Mat rvec, tvec;
-  cv::Mat distCoeffs;
+
+
+  //Bug with OpenCV < 2.4.0 when zero distorsion is provided by an empty array.
+  //http://code.opencv.org/issues/1700 ; http://code.opencv.org/issues/1718
+  //what(): Distortion coefficients must be 1x4, 4x1, 1x5, 5x1, 1x8 or 8x1 floating-point vector in function cvProjectPoints2
+  //Fixed in OpenCV 2.4.0 (r7558)
+//  cv::Mat distCoeffs;
+  cv::Mat distCoeffs(1, 5, CV_32F);
 
   try {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
