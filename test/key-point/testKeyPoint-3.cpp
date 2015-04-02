@@ -43,7 +43,7 @@
 
 #include <visp/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020301) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
