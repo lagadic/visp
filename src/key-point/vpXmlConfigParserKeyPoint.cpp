@@ -49,10 +49,11 @@
 
 #ifdef VISP_HAVE_XML2
 
-vpXmlConfigParserKeyPoint::vpXmlConfigParserKeyPoint() : m_detectorName("SIFT"), m_extractorName("SIFT"), m_matcherName("BruteForce"),
-m_matchingFactorThreshold(2.0), m_matchingMethod(stdDistanceThreshold), m_matchingRatioThreshold(0.85), m_nbRansacIterations(200),
-m_nbRansacMinInlierCount(100), m_ransacConsensusPercentage(20.0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.001),
-m_useRansacConsensusPercentage(false), m_useRansacVVS(false)
+vpXmlConfigParserKeyPoint::vpXmlConfigParserKeyPoint() : m_detectorName("ORB"), m_extractorName("ORB"),
+  m_matcherName("BruteForce-Hamming"), m_matchingFactorThreshold(2.0), m_matchingMethod(ratioDistanceThreshold),
+  m_matchingRatioThreshold(0.85), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
+  m_ransacConsensusPercentage(20.0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
+  m_useRansacConsensusPercentage(false), m_useRansacVVS(true)
 {
   init();
 }

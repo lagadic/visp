@@ -1283,6 +1283,7 @@ vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMa
   cMo = cdMo;
   
   if (! lines[scaleLevel].empty()) {
+    //TODO: Check with Fabien or Aurelien the following line
     lines[scaleLevel].front() ;
     for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
       if((*it)->meline != NULL){
@@ -1293,6 +1294,7 @@ vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMa
   }
 
   if (! cylinders[scaleLevel].empty()) {
+    //TODO: Check with Fabien or Aurelien the following line
     cylinders[scaleLevel].front() ;
     for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
       if((*it)->meline1 != NULL){
@@ -1307,6 +1309,7 @@ vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMa
   }
 
   if (! circles[scaleLevel].empty()) {
+    //TODO: Check with Fabien or Aurelien the following line
     circles[scaleLevel].front() ;
     for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
       if((*it)->meEllipse != NULL){
@@ -1532,7 +1535,10 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
 {  
   vpMbtDistanceLine *l ;
 
-  lines[scaleLevel].front() ;
+  if(!lines[scaleLevel].empty()) {
+    //TODO: Check with Fabien or Aurelien the following line
+    lines[scaleLevel].front() ;
+  }
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;
     bool isvisible = false ;
