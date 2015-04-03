@@ -86,7 +86,7 @@ bool vpMath::isNaN(const double value)
 #elif defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
 #elif defined(VISP_HAVE_FUNC__ISNAN)
-  return _isnan(value);
+  return (_isnan(value) != 0);
 #else
   #if 0
     //This trick should work for any compiler which claims to use IEEE floating point.

@@ -167,9 +167,9 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
-    m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
+    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(false)
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -202,9 +202,9 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
-    m_ransacThreshold(0.001), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
+    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(false)
+    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -538,29 +538,34 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
     std::vector<cv::KeyPoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
     std::vector<cv::Point3f> &points, cv::Mat *descriptors) {
 
-  std::vector<cv::KeyPoint> candidateToCheck = candidates;
+  std::vector<cv::KeyPoint> candidatesToCheck = candidates;
   candidates.clear();
-  vpImagePoint iPt;
+  vpImagePoint imPt;
   cv::Point3f pt;
   cv::Mat desc;
 
+  std::vector<std::pair<cv::KeyPoint, size_t> > pairOfCandidatesToCheck(candidatesToCheck.size());
+  for(size_t i = 0; i < candidatesToCheck.size(); i++) {
+    pairOfCandidatesToCheck[i] = std::pair<cv::KeyPoint, size_t>(candidatesToCheck[i], i);
+  }
+
   size_t cpt1 = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
-    int cpt2 = 0;
+    std::vector<std::pair<cv::KeyPoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
-    for (std::vector<cv::KeyPoint>::iterator it2 = candidateToCheck.begin(); it2 != candidateToCheck.end(); cpt2++) {
-      iPt.set_ij(it2->pt.y, it2->pt.x);
-      if (it1->isInside(iPt)) {
-        candidates.push_back(*it2);
-        vpKeyPoint::compute3D(*it2, roisPt[cpt1], cam, cMo, pt);
+    while(it2 != pairOfCandidatesToCheck.end()) {
+      imPt.set_ij(it2->first.pt.y, it2->first.pt.x);
+      if (it1->isInside(imPt)) {
+        candidates.push_back(it2->first);
+        vpKeyPoint::compute3D(it2->first, roisPt[cpt1], cam, cMo, pt);
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row(cpt2));
+          desc.push_back(descriptors->row((int) it2->second));
         }
 
         //Remove candidate keypoint which is located on the current polygon
-        candidateToCheck.erase(it2);
+        it2 = pairOfCandidatesToCheck.erase(it2);
       } else {
         ++it2;
       }
@@ -589,27 +594,32 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
     std::vector<vpImagePoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
     std::vector<vpPoint> &points, cv::Mat *descriptors) {
 
-  std::vector<vpImagePoint> candidateToCheck = candidates;
+  std::vector<vpImagePoint> candidatesToCheck = candidates;
   candidates.clear();
   vpPoint pt;
   cv::Mat desc;
 
+  std::vector<std::pair<vpImagePoint, size_t> > pairOfCandidatesToCheck(candidatesToCheck.size());
+  for(size_t i = 0; i < candidatesToCheck.size(); i++) {
+    pairOfCandidatesToCheck[i] = std::pair<vpImagePoint, size_t>(candidatesToCheck[i], i);
+  }
+
   size_t cpt1 = 0;
   for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
-    int cpt2 = 0;
+    std::vector<std::pair<vpImagePoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
-    for (std::vector<vpImagePoint>::iterator it2 = candidateToCheck.begin(); it2 != candidateToCheck.end(); cpt2++) {
-      if (it1->isInside(*it2)) {
-        candidates.push_back(*it2);
-        vpKeyPoint::compute3D(*it2, roisPt[cpt1], cam, cMo, pt);
+    while(it2 != pairOfCandidatesToCheck.end()) {
+      if (it1->isInside(it2->first)) {
+        candidates.push_back(it2->first);
+        vpKeyPoint::compute3D(it2->first, roisPt[cpt1], cam, cMo, pt);
         points.push_back(pt);
 
         if(descriptors != NULL) {
-          desc.push_back(descriptors->row(cpt2));
+          desc.push_back(descriptors->row((int) it2->second));
         }
 
         //Remove candidate keypoint which is located on the current polygon
-        candidateToCheck.erase(it2);
+        it2 = pairOfCandidatesToCheck.erase(it2);
       } else {
         ++it2;
       }
