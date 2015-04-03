@@ -193,7 +193,6 @@ main()
     std::cin >> beta ;
 
     vpDot2 dot ;
-    
 
     std::cout << "Click on a dot..." << std::endl;
     dot.initTracking(I) ;
@@ -336,18 +335,17 @@ main()
     task.kill();
     return 0;
   }
-  catch (...)
+  catch (vpException &e)
   {
-    vpERROR_TRACE(" Test failed") ;
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 0;
   }
 }
-
 
 #else
 int
 main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an Viper 850 robot or a firewire framegrabber connected to your computer...");
 }
 #endif
