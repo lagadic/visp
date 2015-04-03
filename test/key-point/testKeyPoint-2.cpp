@@ -268,7 +268,7 @@ int main(int argc, const char ** argv) {
     bool opt_click = false;
     double error;
     vpMouseButton::vpMouseButtonType button;
-    while(!g.end()) {
+    while((opt_display && !g.end()) || (!opt_display && g.getFrameIndex() < 30)) {
       g.acquire(I);
 
       vpDisplay::display(I);
