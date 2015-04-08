@@ -40,7 +40,6 @@
  *****************************************************************************/
 
 #include <iostream>
-#include <fstream>
 
 #include <visp/vpConfig.h>
 
@@ -335,16 +334,16 @@ int main(int argc, const char ** argv) {
       bool is_pose_estimated = false;
       if(estimated_pose.npt >= 4) {
         try {
-          unsigned int nb_inliers = 0.6 * estimated_pose.npt;
+          unsigned int nb_inliers = (unsigned int) (0.6 * estimated_pose.npt);
           estimated_pose.setRansacNbInliersToReachConsensus(nb_inliers);
           estimated_pose.setRansacThreshold(0.01);
           estimated_pose.setRansacMaxTrials(500);
           estimated_pose.computePose(vpPose::RANSAC, cMo);
           is_pose_estimated = true;
         } catch(...) {
+          is_pose_estimated = false;
         }
       }
-
 
       if(opt_display) {
         vpDisplay::display(I);
