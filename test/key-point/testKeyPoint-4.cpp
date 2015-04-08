@@ -179,11 +179,11 @@ int main(int argc, const char ** argv) {
 #if defined VISP_HAVE_X11
     vpDisplayX display, display2;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
+    vpDisplayGTK display, display2;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display;
+    vpDisplayGDI display, display2;
 #else
-    vpDisplayOpenCV display;
+    vpDisplayOpenCV display, display2;
 #endif
 
     if (opt_display) {
