@@ -297,7 +297,7 @@ int main(int argc, const char ** argv) {
 
     bool opt_click = false;
     vpMouseButton::vpMouseButtonType button;
-    while(!g.end()) {
+    while((opt_display && !g.end()) || (!opt_display && g.getFrameIndex() < 30)) {
       g.acquire(I);
 
       vpImageConvert::convert(I, matImg);
