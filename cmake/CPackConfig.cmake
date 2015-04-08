@@ -99,14 +99,14 @@ set(BUILD_SHARED_LIBS ON CACHE BOOL "Build ViSP with shared libraries." FORCE)
 
 
 if(WIN32 AND NOT UNIX)
-  include(${VISP_SOURCE_DIR}/CMakeModules/CPackConfigNsis.cmake)
+  include(${VISP_CMAKE_MODULE_PATH}/CPackConfigNsis.cmake)
 elseif(APPLE)
   set(CPACK_GENERATOR "PackageMaker;TBZ2")
 elseif(UNIX)
   if(BUILD_PACKAGE_DEBIAN)
-    include(${VISP_SOURCE_DIR}/CMakeModules/CPackConfigDeb.cmake)
+    include(${VISP_CMAKE_MODULE_PATH}/CPackConfigDeb.cmake)
   elseif(BUILD_PACKAGE_RPM)
-    include(${VISP_SOURCE_DIR}/CMakeModules/CPackConfigRpm.cmake)
+    include(${VISP_CMAKE_MODULE_PATH}/CPackConfigRpm.cmake)
   endif()
 endif()
 

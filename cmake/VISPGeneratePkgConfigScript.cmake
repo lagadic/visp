@@ -50,13 +50,13 @@ if (UNIX)
   # for Unix platforms: Linux, OSX
   #
   ####################################################################### 
-  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.in")
+  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.in")
   set(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
 
-  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.install.in")
+  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.install.in")
   set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/unix-install/visp-config")
   
-  set(FILE_VISP_CONFIG_PC_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp.pc.in")
+  set(FILE_VISP_CONFIG_PC_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp.pc.in")
   set(FILE_VISP_CONFIG_PC_INSTALL    "${VISP_BINARY_DIR}/unix-install/visp.pc")
 
   #---------------------------------------------------------------------
@@ -205,10 +205,10 @@ else(UNIX)
   # for windows platforms
   #
   ####################################################################### 
-  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.bat.in")
+  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.bat.in")
   set(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config.bat")
     
-  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_SOURCE_DIR}/CMakeModules/visp-config.bat.in")
+  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.bat.in")
   set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/win-install/visp-config-${VISP_ARCH}-${VISP_RUNTIME}.bat")
 
   #---------------------------------------------------------------------

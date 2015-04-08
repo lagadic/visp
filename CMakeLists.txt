@@ -57,7 +57,7 @@ SET(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PAT
 SET(VISP_REVISION "1")
 
 # where are user-specific cmake modules
-set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/CMakeModules)
+set(VISP_CMAKE_MODULE_PATH ${VISP_SOURCE_DIR}/cmake)
 
 find_file(GNU_INSTALL_DIRS_FROM_CMAKE NAMES GNUInstallDirs.cmake PATHS ${CMAKE_ROOT}/Modules)
 mark_as_advanced(GNU_INSTALL_DIRS_FROM_CMAKE)
@@ -2161,20 +2161,20 @@ endif()
 #----------------------------------------------------------------------
 # Cleanify the libraries list
 #----------------------------------------------------------------------
-IF(APPLE)
-  LIST(REMOVE_DUPLICATES VISP_EXTERN_LIBRARIES)
-ENDIF()
+if(APPLE)
+  list(REMOVE_DUPLICATES VISP_EXTERN_LIBRARIES)
+endif()
 
 #----------------------------------------------------------------------
 # customize clean target
 #----------------------------------------------------------------------
-INCLUDE(${VISP_SOURCE_DIR}/CMakeHeaderFileList.cmake)
+include(${VISP_CMAKE_MODULE_PATH}/CMakeHeaderFileList.cmake)
 
-SET(FILE_TO_CLEAN "core*;*~;gmon.out;DartTestfile.txt")
-FOREACH(header ${HEADER_ALL})
-  GET_FILENAME_COMPONENT(headerName ${header} NAME)
-  LIST(APPEND FILE_TO_CLEAN ${CMAKE_SOURCE_DIR}/include/visp/${headerName})
-ENDFOREACH(header)
+set(FILE_TO_CLEAN "core*;*~;gmon.out;DartTestfile.txt")
+foreach(header ${HEADER_ALL})
+  get_filename_component(headerName ${header} NAME)
+  list(APPEND FILE_TO_CLEAN ${CMAKE_SOURCE_DIR}/include/visp/${headerName})
+endforeach()
 
 SET_DIRECTORY_PROPERTIES(PROPERTIES
   ADDITIONAL_MAKE_CLEAN_FILES "${FILE_TO_CLEAN}"
@@ -2226,7 +2226,7 @@ CONFIGURE_FILE(${VISP_SOURCE_DIR}/include/vpConfig.h.cmake
 #----------------------------------------------------------------------
 # Generate the ViSP-third-party.txt information file
 #----------------------------------------------------------------------
-CONFIGURE_FILE(${VISP_SOURCE_DIR}/ViSP-third-party.txt.cmake
+CONFIGURE_FILE(${VISP_CMAKE_MODULE_PATH}/ViSP-third-party.txt.cmake
   ${VISP_BINARY_DIR}/ViSP-third-party.txt
 )
 
@@ -2305,7 +2305,7 @@ if (BUILD_PACKAGE)
     option(BUILD_PACKAGE_RPM "Build rpm package" ON)
   endif()
 
-  include (${VISP_SOURCE_DIR}/CMakeModules/CPackConfig.cmake)
+  include (${VISP_CMAKE_MODULE_PATH}/CPackConfig.cmake)
 endif(BUILD_PACKAGE)
 
 #----------------------------------------------------------------------

@@ -42,9 +42,9 @@
 # Include project files 
 #----------------------------------------------------------------------
 # include all the ViSP project .cpp files
-include(${VISP_SOURCE_DIR}/CMakeSourceFileList.cmake)
+include(${VISP_CMAKE_MODULE_PATH}/CMakeSourceFileList.cmake)
 # include all the ViSP project .h files
-include(${VISP_SOURCE_DIR}/CMakeHeaderFileList.cmake)
+include(${VISP_CMAKE_MODULE_PATH}/CMakeHeaderFileList.cmake)
 
 #----------------------------------------------------------------------
 # Create rule to copy all the headers from src to include/visp
