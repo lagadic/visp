@@ -2341,7 +2341,7 @@ if(BUILD_TESTS)
   # Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
   #----------------------------------------------------------------------
   enable_testing()
-  include(Dart)
+  include(CTest)
   mark_as_advanced(DART_ROOT)
   mark_as_advanced(BUILD_TESTING)
   #
