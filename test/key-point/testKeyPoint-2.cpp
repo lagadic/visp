@@ -181,8 +181,9 @@ int main(int argc, const char ** argv) {
     vpDisplayOpenCV display;
 #endif
 
-    if (opt_display)
-      display.init(I, 0, 0, "ORB keypoints matching");
+    if (opt_display) {
+      display.init(I, 0, 0, "ORB keypoints matching and pose estimation");
+    }
 
     vpCameraParameters cam;
     vpMbEdgeTracker tracker;
@@ -238,6 +239,9 @@ int main(int argc, const char ** argv) {
 
     //Init keypoints
     vpKeyPoint keypoints("ORB", "ORB");
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020301) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+    keypoints.setDetectorParameter("ORB", "nLevels", 1);
+#endif
 
 
     //Detect keypoints on the current image
@@ -271,7 +275,9 @@ int main(int argc, const char ** argv) {
     while((opt_display && !g.end()) || (!opt_display && g.getFrameIndex() < 30)) {
       g.acquire(I);
 
-      vpDisplay::display(I);
+      if(opt_display) {
+        vpDisplay::display(I);
+      }
 
       //Match keypoints and estimate the pose
       if(keypoints.matchPoint(I, cam, cMo, error, elapsedTime)) {
@@ -280,7 +286,9 @@ int main(int argc, const char ** argv) {
         vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       }
 
-      vpDisplay::flush(I);
+      if(opt_display) {
+        vpDisplay::flush(I);
+      }
 
       if (opt_click_allowed && opt_display) {
         //Click requested to process next image

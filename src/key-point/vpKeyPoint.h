@@ -500,6 +500,7 @@ public:
     initDetector(detectorName);
   }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Template function to set to a \p parameterName a value for a specific detector named by his \p detectorName.
 
@@ -513,6 +514,7 @@ public:
       m_detectors[detectorName]->set(parameterName, value);
     }
   }
+#endif
 
   /*!
      Set and initialize a list of detectors denominated by their names \p detectorNames.
@@ -538,6 +540,7 @@ public:
     initExtractor(extractorName);
   }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Template function to set to a \p parameterName a value for a specific extractor named by his \p extractorName.
 
@@ -551,6 +554,7 @@ public:
       m_extractors[extractorName]->set(parameterName, value);
     }
   }
+#endif
 
   /*!
      Set and initialize a list of extractors denominated by their names \p extractorNames.
@@ -602,7 +606,7 @@ public:
     if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
       m_useKnn = true;
 
-      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
         if(m_matcher != NULL && m_matcherName == "BruteForce") {
           //if a matcher is already initialized, disable the crossCheck
           //because it will not work with knnMatch
@@ -612,7 +616,7 @@ public:
     } else {
       m_useKnn = false;
 
-      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+      #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
         if(m_matcher != NULL && m_matcherName == "BruteForce") {
           //if a matcher is already initialized, set the crossCheck mode if necessary
           m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
@@ -721,7 +725,7 @@ public:
     m_useAffineDetection = useAffine;
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
     Set if cross check method must be used to eliminate some false matches with a brute-force matching method.
 

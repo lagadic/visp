@@ -927,7 +927,7 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
                       (int) rectangle.getBottom());
     cv::rectangle(mask, leftTop, rightBottom, cv::Scalar(255), CV_FILLED);
   } else {
-    mask = cv::Mat::ones(matImg.rows, matImg.cols, CV_8U);
+    mask = cv::Mat::ones(matImg.rows, matImg.cols, CV_8U) * 255;
   }
 
   detect(matImg, keyPoints, elapsedTime, mask);
@@ -1692,7 +1692,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   if(extractorName == "SURF") {
     //Use extended set of SURF descriptors (128 instead of 64)
     m_extractors[extractorName]->set("extended", 1);
@@ -1719,7 +1719,7 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
 void vpKeyPoint::initMatcher(const std::string &matcherName) {
   m_matcher = cv::DescriptorMatcher::create(matcherName);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   if(m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
     m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
   }

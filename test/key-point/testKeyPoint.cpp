@@ -195,8 +195,9 @@ int main(int argc, const char ** argv) {
     vpDisplayOpenCV display;
 #endif
 
-    if (opt_display)
+    if (opt_display) {
       display.init(Imatch, 0, 0, "ORB keypoints matching");
+    }
 
     bool opt_click = false;
     vpMouseButton::vpMouseButtonType button;
@@ -204,14 +205,18 @@ int main(int argc, const char ** argv) {
       g.acquire(Icur);
       Imatch.insert(Icur, vpImagePoint(0, Icur.getWidth()));
 
-      vpDisplay::display(Imatch);
+      if(opt_display) {
+        vpDisplay::display(Imatch);
+      }
 
       //Match keypoints
       keypoints.matchPoint(Icur);
       //Display image with keypoints matched
       keypoints.displayMatching(Iref, Imatch);
 
-      vpDisplay::flush(Imatch);
+      if(opt_display) {
+        vpDisplay::flush(Imatch);
+      }
 
       //Click requested to process next image
       if (opt_click_allowed && opt_display) {
