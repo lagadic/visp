@@ -252,7 +252,7 @@ int main(int argc, const char ** argv) {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     detector = cv::ORB::create(500, 1.2f, 1);
     extractor = cv::ORB::create(500, 1.2f, 1);
-#else
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020400)
     detector = cv::FeatureDetector::create("ORB");
     detector->set("nLevels", 1);
     extractor = cv::DescriptorExtractor::create("ORB");

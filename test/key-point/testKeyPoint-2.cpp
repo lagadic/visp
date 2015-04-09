@@ -239,7 +239,7 @@ int main(int argc, const char ** argv) {
 
     //Init keypoints
     vpKeyPoint keypoints("ORB", "ORB");
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020301) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
     keypoints.setDetectorParameter("ORB", "nLevels", 1);
 #endif
 
