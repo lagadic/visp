@@ -258,7 +258,7 @@ int main(int argc, const char ** argv) {
 #endif
     matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     detector->set("nLevels", 1);
 #endif
 
