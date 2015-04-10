@@ -252,12 +252,15 @@ int main(int argc, const char ** argv) {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     detector = cv::ORB::create(500, 1.2f, 1);
     extractor = cv::ORB::create(500, 1.2f, 1);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020301)
     detector = cv::FeatureDetector::create("ORB");
-    detector->set("nLevels", 1);
     extractor = cv::DescriptorExtractor::create("ORB");
 #endif
     matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+    detector->set("nLevels", 1);
+#endif
 
     //Detect keypoints on the current image
     std::vector<cv::KeyPoint> trainKeyPoints;
