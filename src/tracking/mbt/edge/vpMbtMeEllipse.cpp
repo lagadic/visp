@@ -196,7 +196,7 @@ vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char>& _I, double 
   filterY[4][3] = 4;
   filterY[4][4] = 1;
 
-  double offset = std::floor((double)(filterX.getRows()) / 2.);
+  double offset = std::floor(filterX.getRows() / 2.0f);
 //  std::cout << "offset=" << offset << std::endl;
   int height = (int) _I.getHeight() ;
   int width = (int) _I.getWidth() ;
