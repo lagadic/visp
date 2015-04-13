@@ -565,7 +565,7 @@ void vpMatrix::svdOpenCV(vpColVector& w, vpMatrix& v){
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
 extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt, int *ldvt, double *work, int *lwork, int *iwork, int *info);
 #include <stdio.h>
 #include <string.h>

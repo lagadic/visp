@@ -285,11 +285,11 @@ endif()
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 FIND_PACKAGE(LAPACK_C)
-IF(LAPACK_FOUND)
+IF(LAPACK_C_FOUND)
     OPTION(USE_LAPACK    "Compile ViSP with the lapack/blas libraries" ON)
-ELSE(LAPACK_FOUND)
+ELSE()
     SET(USE_LAPACK OFF)
-ENDIF(LAPACK_FOUND)
+ENDIF()
 
 #IF(NOT USE_LAPACK) # line removed since the template tracker needs gsl
   find_package(GSL)
@@ -342,7 +342,7 @@ ELSE(LIBFREENECT_FOUND)
   SET(USE_LIBFREENECT OFF)
 ENDIF(LIBFREENECT_FOUND)
 
-FIND_PACKAGE(LIBUSB-1)
+FIND_PACKAGE(LIBUSB_1)
 IF(LIBUSB_1_FOUND)
   OPTION(USE_LIBUSB_1    "Compile ViSP with the libusb-1.0 library" ON)
 ELSE(LIBUSB_1_FOUND)
@@ -757,15 +757,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" F
 #--------------------------------------------------------------------
 # LAPACK lib
 #--------------------------------------------------------------------
-SET(VISP_HAVE_LAPACK_FOUND "no")      # for ViSP-third-party.txt
+SET(VISP_HAVE_LAPACK_C_FOUND "no")      # for ViSP-third-party.txt
 IF(USE_LAPACK)
   MESSAGE(STATUS "lapack/blas found")
-  SET(VISP_HAVE_LAPACK TRUE)          # for header vpConfig.h
-  SET(VISP_HAVE_LAPACK_FOUND "yes")   # for ViSP-third-party.txt
+  SET(VISP_HAVE_LAPACK_C TRUE)          # for header vpConfig.h
+  SET(VISP_HAVE_LAPACK_C_FOUND "yes")   # for ViSP-third-party.txt
   
-  #MESSAGE("LAPACK_LIBRARIES = ${LAPACK_LIBRARIES}")
-  LIST(APPEND VISP_EXTERN_LIBRARIES ${LAPACK_LIBRARIES})
-ENDIF(USE_LAPACK)
+  #MESSAGE("LAPACK_C_LIBRARIES = ${LAPACK_C_LIBRARIES}")
+  LIST(APPEND VISP_EXTERN_LIBRARIES ${LAPACK_C_LIBRARIES})
+ENDIF()
 
 #--------------------------------------------------------------------
 # X11 lib
@@ -1252,7 +1252,7 @@ IF(USE_LIBFREENECT)
 ENDIF()
 
 IF(USE_LIBUSB_1)
-  #FIND_PACKAGE(LIBUSB-1)
+  #FIND_PACKAGE(LIBUSB_1)
   IF(LIBUSB_1_FOUND)
     SET(VISP_HAVE_LIBUSB_1 TRUE)
     SET(VISP_HAVE_LIBUSB_1_FOUND "yes")  # for ViSP-third-party.txt

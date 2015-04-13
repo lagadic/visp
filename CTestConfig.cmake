@@ -200,7 +200,7 @@ endif(VISP_HAVE_OPENCV)
 
 #---- Mathematics ----
 # Lapack (Linear Algebra PACKage)
-IF(VISP_HAVE_LAPACK)
+IF(VISP_HAVE_LAPACK_C)
   SET(BUILDNAME "${BUILDNAME}-lapack")
 ENDIF()
 # GSL (Gnu Scientific Library)

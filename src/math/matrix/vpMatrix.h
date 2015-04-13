@@ -467,7 +467,7 @@ public:
 #endif // doxygen should skip this
   // inverse matrix A using the LU decomposition 
   vpMatrix inverseByLU() const;
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK_C)
   // inverse matrix A using the Cholesky decomposition (only for real symmetric matrices)
   vpMatrix inverseByCholesky() const;
   //lapack implementation of inverse by Cholesky
@@ -513,7 +513,7 @@ public:
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   void svdOpenCV(vpColVector& w, vpMatrix& v);
 #endif
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
   void svdLapack(vpColVector& W, vpMatrix& V);
 #endif
   //! solve AX=B using the SVD decomposition

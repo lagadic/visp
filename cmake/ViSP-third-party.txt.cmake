@@ -5,7 +5,7 @@ build ViSP on your computer.
 
 Mathematics:
   Gnu Scientific Library      : ${VISP_HAVE_GSL_FOUND}
-  Lapack/blas                 : ${VISP_HAVE_LAPACK_FOUND}
+  Lapack/blas                 : ${VISP_HAVE_LAPACK_C_FOUND}
 Simulator:
   Ogre simulator              : ${VISP_HAVE_OGRE_FOUND}
   \- Ogre3D                   : ${VISP_HAVE_OGRE_FOUND}

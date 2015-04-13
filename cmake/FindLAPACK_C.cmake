@@ -36,8 +36,8 @@
 # this file is able to detect lapack for C language.
 # Once run this will define:
 #
-# LAPACK_FOUND
-# LAPACK_LIBRARIES
+# LAPACK_C_FOUND
+# LAPACK_C_LIBRARIES
 #
 # Authors:
 # Filip Novotny
@@ -45,121 +45,104 @@
 #
 #############################################################################
 
-SET(LAPACK_FOUND FALSE)
-SET(LAPACK_LIBRARIES "")
-IF(WIN32)
-    FIND_LIBRARY(LAPACK_LIBRARY_LAPACK_RELEASE
-            NAMES lapack
-            PATHS
-            $ENV{LAPACK_HOME}           
-            $ENV{LAPACK_DIR}
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-        )
+set(LAPACK_C_FOUND FALSE)
+set(LAPACK_C_LIBRARIES "")
+if(WIN32)
+  set(LAPACK_C_LIB_SEARCH_PATH
+    $ENV{LAPACK_C_HOME}
+    $ENV{LAPACK_C_DIR}
+    $ENV{LAPACK_C_HOME}/lib
+    $ENV{LAPACK_C_DIR}/lib
+    $ENV{LAPACK_HOME}
+    $ENV{LAPACK_DIR}
+    $ENV{LAPACK_HOME}/lib
+    $ENV{LAPACK_DIR}/lib
+  )
 
-    FIND_LIBRARY(LAPACK_LIBRARY_BLAS_RELEASE
-            NAMES blas
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-        )
+  find_library(LAPACK_C_LIBRARY_LAPACK_C_RELEASE
+    NAMES lapack
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
+
+  find_library(LAPACK_C_LIBRARY_BLAS_RELEASE
+    NAMES blas
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
     
-	FIND_LIBRARY(LAPACK_LIBRARY_F2C_RELEASE
-            NAMES libf2c 
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-        )
+  find_library(LAPACK_C_LIBRARY_F2C_RELEASE
+    NAMES libf2c
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 			
-    FIND_LIBRARY(LAPACK_LIBRARY_LAPACK_DEBUG
-            NAMES lapackd 
-            PATHS
-            $ENV{LAPACK_HOME}           
-            $ENV{LAPACK_DIR}
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-        )
+  find_library(LAPACK_C_LIBRARY_LAPACK_C_DEBUG
+    NAMES lapackd
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 
-    FIND_LIBRARY(LAPACK_LIBRARY_BLAS_DEBUG
-            NAMES blasd 
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-       )
+  find_library(LAPACK_C_LIBRARY_BLAS_DEBUG
+    NAMES blasd
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 		
-	FIND_LIBRARY(LAPACK_LIBRARY_F2C_DEBUG
-            NAMES libf2cd 
-            PATHS
-            $ENV{LAPACK_HOME}                   
-            $ENV{LAPACK_DIR}                   
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-        )
+  find_library(LAPACK_C_LIBRARY_F2C_DEBUG
+    NAMES libf2cd
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 				 
-    IF((LAPACK_LIBRARY_LAPACK_RELEASE AND LAPACK_LIBRARY_BLAS_RELEASE AND LAPACK_LIBRARY_F2C_RELEASE))
-      LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_LAPACK_RELEASE})
-      LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_BLAS_RELEASE})
- 	  LIST(APPEND LAPACK_LIBRARIES optimized ${LAPACK_LIBRARY_F2C_RELEASE})
+  if((LAPACK_C_LIBRARY_LAPACK_C_RELEASE AND LAPACK_C_LIBRARY_BLAS_RELEASE AND LAPACK_C_LIBRARY_F2C_RELEASE))
+    list(APPEND LAPACK_C_LIBRARIES optimized ${LAPACK_C_LIBRARY_LAPACK_C_RELEASE})
+    list(APPEND LAPACK_C_LIBRARIES optimized ${LAPACK_C_LIBRARY_BLAS_RELEASE})
+    list(APPEND LAPACK_C_LIBRARIES optimized ${LAPACK_C_LIBRARY_F2C_RELEASE})
+    set(LAPACK_C_FOUND TRUE)
+  endif()
+  if((LAPACK_C_LIBRARY_LAPACK_C_DEBUG AND LAPACK_C_LIBRARY_BLAS_DEBUG AND LAPACK_C_LIBRARY_F2C_DEBUG))
+    list(APPEND LAPACK_C_LIBRARIES debug ${LAPACK_C_LIBRARY_LAPACK_C_DEBUG})
+    list(APPEND LAPACK_C_LIBRARIES debug ${LAPACK_C_LIBRARY_BLAS_DEBUG})
+    list(APPEND LAPACK_C_LIBRARIES debug ${LAPACK_C_LIBRARY_F2C_DEBUG})
+    set(LAPACK_C_FOUND TRUE)
+  endif()
 
-      SET(LAPACK_FOUND TRUE)
-    ENDIF()
-    IF((LAPACK_LIBRARY_LAPACK_DEBUG AND LAPACK_LIBRARY_BLAS_DEBUG AND LAPACK_LIBRARY_F2C_DEBUG))
-      LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_LAPACK_DEBUG})
-      LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_BLAS_DEBUG})
-	  LIST(APPEND LAPACK_LIBRARIES debug ${LAPACK_LIBRARY_F2C_DEBUG})
-      SET(LAPACK_FOUND TRUE)
-    ENDIF()
+else(WIN32)
 
+  set(LAPACK_C_LIB_SEARCH_PATH
+    $ENV{LAPACK_C_HOME}
+    $ENV{LAPACK_C_DIR}
+    $ENV{LAPACK_C_HOME}/lib
+    $ENV{LAPACK_C_DIR}/lib
+    $ENV{LAPACK_HOME}
+    $ENV{LAPACK_DIR}
+    $ENV{LAPACK_HOME}/lib
+    $ENV{LAPACK_DIR}/lib
+    /usr/lib
+    /usr/lib64
+    /usr/local/lib
+    /usr/local/lib64
+  )
+  find_library(LAPACK_C_LIBRARY_LAPACK
+    NAMES lapack
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 
-ELSE(WIN32)
-    FIND_LIBRARY(LAPACK_LIBRARY_LAPACK
-            NAMES lapack
-            PATHS
-            $ENV{LAPACK_HOME}
-            $ENV{LAPACK_DIR}
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-            /usr/lib
-            /usr/lib64
-            /usr/local/lib
-            /usr/local/lib64
-        )
+  find_library(LAPACK_C_LIBRARY_BLAS
+    NAMES blas
+    PATHS ${LAPACK_C_LIB_SEARCH_PATH}
+  )
 
-    FIND_LIBRARY(LAPACK_LIBRARY_BLAS
-            NAMES blas
-            PATHS
-            $ENV{LAPACK_DIR}
-            $ENV{LAPACK_HOME}
-            $ENV{LAPACK_HOME}/lib                   
-            $ENV{LAPACK_DIR}/lib                   
-            /usr/lib
-            /usr/lib64
-            /usr/local/lib
-            /usr/local/lib64        
-        )
-  IF((LAPACK_LIBRARY_LAPACK AND LAPACK_LIBRARY_BLAS))
-    SET(LAPACK_LIBRARIES ${LAPACK_LIBRARY_LAPACK} ${LAPACK_LIBRARY_BLAS})
-    SET(LAPACK_FOUND TRUE)
-  ENDIF()
-ENDIF(WIN32)
-## --------------------------------
+  if((LAPACK_C_LIBRARY_LAPACK AND LAPACK_C_LIBRARY_BLAS))
+    set(LAPACK_C_LIBRARIES ${LAPACK_C_LIBRARY_LAPACK} ${LAPACK_C_LIBRARY_BLAS})
+    set(LAPACK_C_FOUND TRUE)
+  endif()
+endif(WIN32)
 
-
-MARK_AS_ADVANCED(
-  LAPACK_LIBRARIES
-  LAPACK_LIBRARY_LAPACK
-  LAPACK_LIBRARY_BLAS
-  LAPACK_LIBRARY_LAPACK_RELEASE
-  LAPACK_LIBRARY_BLAS_RELEASE
-  LAPACK_LIBRARY_LAPACK_DEBUG
-  LAPACK_LIBRARY_BLAS_DEBUG
-  LAPACK_LIBRARY_F2C_DEBUG
-  LAPACK_LIBRARY_F2C_RELEASE
+mark_as_advanced(
+  LAPACK_C_LIBRARIES
+  LAPACK_C_LIBRARY_LAPACK
+  LAPACK_C_LIBRARY_BLAS
+  LAPACK_C_LIBRARY_LAPACK_C_RELEASE
+  LAPACK_C_LIBRARY_BLAS_RELEASE
+  LAPACK_C_LIBRARY_LAPACK_C_DEBUG
+  LAPACK_C_LIBRARY_BLAS_DEBUG
+  LAPACK_C_LIBRARY_F2C_DEBUG
+  LAPACK_C_LIBRARY_F2C_RELEASE
 )
 

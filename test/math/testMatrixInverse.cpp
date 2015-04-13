@@ -202,7 +202,7 @@ vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols)
 int
 main(int argc, const char ** argv)
 {
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
   try {
     unsigned int nb_matrices=1000;
     unsigned int nb_iterations=10;

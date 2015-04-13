@@ -186,7 +186,7 @@ SET (SRC_MATH
   math/transformation/vpVelocityTwistMatrix.cpp
   )
 
-IF(VISP_HAVE_LAPACK)
+IF(VISP_HAVE_LAPACK_C)
   LIST(APPEND SRC_MATH math/matrix/vpMatrix_cholesky.cpp)
 ENDIF()
 

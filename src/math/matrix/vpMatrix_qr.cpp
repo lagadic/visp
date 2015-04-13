@@ -55,7 +55,7 @@
 
 int allocate_work(double** work);
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
 extern "C" int dgeqrf_(int *m, int *n, double*a, int *lda, double *tau, double *work, int *lwork, int *info);
 extern "C" int dormqr_(char *side, char *trans, int *m, int *n,
         int *k, double *a, int *lda, double *tau, double *c__,
@@ -72,7 +72,7 @@ int allocate_work(double** work)
   *work = new double[dimWork];
   return (int)dimWork;
 }
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
 vpMatrix vpMatrix::inverseByQRLapack() const{
   int rowNum_ = (int)this->getRows();
   int colNum_ = (int)this->getCols();
@@ -223,7 +223,7 @@ int main()
   \sa pseudoInverse()
 */
 
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK_C)
 vpMatrix
 vpMatrix::inverseByQR() const
 {
@@ -234,7 +234,7 @@ vpMatrix::inverseByQR() const
     throw(vpMatrixException(vpMatrixException::matrixError,
                             "Cannot invert a non-square vpMatrix")) ;
   }
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
   return inverseByQRLapack();
 #endif
 }

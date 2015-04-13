@@ -52,13 +52,13 @@
 // Debug trace
 #include <visp/vpDebug.h>
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
 extern "C" void dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
 extern "C" int dpotri_(char *uplo, int *n, double *a, int *lda, int *info);
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
 vpMatrix vpMatrix::inverseByCholeskyLapack() const{
   int rowNum_ = (int)this->getRows();
   int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
@@ -117,7 +117,7 @@ int main()
   \sa pseudoInverse()
 */
 
-#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK_C)
 vpMatrix
 vpMatrix::inverseByCholesky() const
 {
@@ -128,7 +128,7 @@ vpMatrix::inverseByCholesky() const
     throw(vpMatrixException(vpMatrixException::matrixError,
                             "Cannot invert a non-square vpMatrix")) ;
   }
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_LAPACK_C
   return inverseByCholeskyLapack();
 #endif
 }
