@@ -269,12 +269,23 @@ int main(int argc, const char ** argv) {
     g.open(I);
     g.acquire(I);
 
+#if defined VISP_HAVE_X11
+    vpDisplayX display2;
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK display2;
+#elif defined VISP_HAVE_GDI
+    vpDisplayGDI display2;
+#else
+    vpDisplayOpenCV display2;
+#endif
+
     vpImage<unsigned char> IMatching;
 
     keypoints.createImageMatching(I, IMatching);
-    vpDisplayX display2(IMatching, 0, I.getHeight() + 80, "IMatching");
-//    keypoints.setFilterMatchingType(vpKeyPoint::noFilterMatching);
-//    keypoints.setUseMatchTrainToQuery(true);
+
+    if (opt_display) {
+      display2.init(IMatching, 0, I.getHeight() + 80, "IMatching");
+    }
 
     bool opt_click = false;
     double error;
@@ -284,52 +295,54 @@ int main(int argc, const char ** argv) {
 
       if(opt_display) {
         vpDisplay::display(I);
+
+        //Display image matching
+        keypoints.insertImageMatching(I, IMatching);
+
+        vpDisplay::display(IMatching);
       }
 
       //Match keypoints and estimate the pose
       if(keypoints.matchPoint(I, cam, cMo, error, elapsedTime)) {
         tracker.setCameraParameters(cam);
         tracker.setPose(I, cMo);
-        tracker.display(I, cMo, cam, vpColor::red, 2);
-        vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
 
-        //Display image matching
-        keypoints.insertImageMatching(I, IMatching);
+        if(opt_display) {
+          tracker.display(I, cMo, cam, vpColor::red, 2);
+          vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
 
-        vpDisplay::display(IMatching);
+          std::vector<vpImagePoint> ransacInliers = keypoints.getRansacInliers();
+          std::vector<vpImagePoint> ransacOutliers = keypoints.getRansacOutliers();
 
-        std::vector<vpImagePoint> ransacInliers = keypoints.getRansacInliers();
-        std::vector<vpImagePoint> ransacOutliers = keypoints.getRansacOutliers();
+          for(std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
+            vpDisplay::displayCircle(I, *it, 4, vpColor::green);
+            vpImagePoint imPt(*it);
+            imPt.set_u(imPt.get_u() + I.getWidth());
+            vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::green);
+          }
 
-        for(std::vector<vpImagePoint>::const_iterator it = ransacInliers.begin(); it != ransacInliers.end(); ++it) {
-          vpDisplay::displayCircle(I, *it, 4, vpColor::green);
-          vpImagePoint imPt(*it);
-          imPt.set_u(imPt.get_u() + I.getWidth());
-          vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::green);
+          for(std::vector<vpImagePoint>::const_iterator it = ransacOutliers.begin(); it != ransacOutliers.end(); ++it) {
+            vpDisplay::displayCircle(I, *it, 4, vpColor::red);
+            vpImagePoint imPt(*it);
+            imPt.set_u(imPt.get_u() + I.getWidth());
+            vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::red);
+          }
+
+          keypoints.displayMatching(I, IMatching);
+
+          //Display model in the image
+          vpCameraParameters cam2;
+          cam2.initPersProjWithoutDistortion(cam.get_px(), cam.get_py(), cam.get_u0() + I.getWidth(), cam.get_v0());
+          tracker.setCameraParameters(cam2);
+          tracker.setPose(IMatching, cMo);
+          tracker.display(IMatching, cMo, cam2, vpColor::red, 2);
+          vpDisplay::displayFrame(IMatching, cMo, cam2, 0.025, vpColor::none, 3);
         }
-
-        for(std::vector<vpImagePoint>::const_iterator it = ransacOutliers.begin(); it != ransacOutliers.end(); ++it) {
-          vpDisplay::displayCircle(I, *it, 4, vpColor::red);
-          vpImagePoint imPt(*it);
-          imPt.set_u(imPt.get_u() + I.getWidth());
-          vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::red);
-        }
-
-        keypoints.displayMatching(I, IMatching);
-
-        //Display model in the image
-        vpCameraParameters cam2;
-        cam2.initPersProjWithoutDistortion(cam.get_px(), cam.get_py(), cam.get_u0() + I.getWidth(), cam.get_v0());
-        tracker.setCameraParameters(cam2);
-        tracker.setPose(IMatching, cMo);
-        tracker.display(IMatching, cMo, cam2, vpColor::red, 2);
-        vpDisplay::displayFrame(IMatching, cMo, cam2, 0.025, vpColor::none, 3);
-
-        vpDisplay::flush(IMatching);
       }
 
       if(opt_display) {
         vpDisplay::flush(I);
+        vpDisplay::flush(IMatching);
       }
 
       if (opt_click_allowed && opt_display) {
