@@ -470,7 +470,7 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
   filterY[4][3] = 4;
   filterY[4][4] = 1;
 
-  double offset = std::floor((double)(filterX.getRows()) / 2.);
+  double offset = std::floor(filterX.getRows() / 2.0f);
 
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
     if(iter != 0 && iter+1 != list.size()){
