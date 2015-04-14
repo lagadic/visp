@@ -361,7 +361,13 @@ public:
     \return The list of pairs with the correspondence between the matched query and train keypoints.
   */
   inline std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > getMatchQueryToTrainKeyPoints() const {
-    return m_matchQueryToTrainKeyPoints;
+    std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > matchQueryToTrainKeyPoints(m_filteredMatches.size());
+    for (size_t i = 0; i < m_filteredMatches.size(); i++) {
+      matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
+                                            m_queryFilteredKeyPoints[(size_t) m_filteredMatches[i].queryIdx],
+                                            m_trainKeyPoints[(size_t) m_filteredMatches[i].trainIdx]));
+    }
+    return matchQueryToTrainKeyPoints;
   }
 
   /*!
@@ -819,12 +825,8 @@ private:
   double m_matchingRatioThreshold;
   //! Elapsed time to do the matching.
   double m_matchingTime;
-  //! List of pairs between the matched query and train keypoints.
-  std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > m_matchQueryToTrainKeyPoints;
   //! List of pairs between the keypoint and the 3D point after the Ransac.
   std::vector<std::pair<cv::KeyPoint, cv::Point3f> > m_matchRansacKeyPointsToPoints;
-  //! List of pairs between the matched query and train keypoints after the Ransac.
-  std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > m_matchRansacQueryToTrainKeyPoints;
   //! Maximum number of iterations for the Ransac method.
   int m_nbRansacIterations;
   //! Minimum number of inliers for the Ransac method.
