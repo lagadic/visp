@@ -1565,7 +1565,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_SOQT \
                          VISP_HAVE_SOWIN \
                          VISP_HAVE_SOXT \
-                         VISP_HAVE_DC1394_2 \
+                         VISP_HAVE_DC1394 \
                          VISP_HAVE_CMU1394 \
                          VISP_HAVE_V4L2 \
                          VISP_HAVE_DIRECTSHOW \

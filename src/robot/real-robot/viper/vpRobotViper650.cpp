@@ -158,7 +158,7 @@ int main()
   vpImage<unsigned char> I(480, 640);
 
   // Get an image from the camera attached to the robot
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   vp1394TwoGrabber g;
   g.acquire(I);
 #endif
@@ -392,7 +392,7 @@ int main()
   vpImage<unsigned char> I(480, 640);
 
   // Get an image from the camera attached to the robot
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   vp1394TwoGrabber g;
   g.acquire(I);
 #endif

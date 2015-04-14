@@ -59,7 +59,7 @@
 #include <fstream>
 #include <sstream>
 
-#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2) && defined(VISP_HAVE_DISPLAY))
+#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>

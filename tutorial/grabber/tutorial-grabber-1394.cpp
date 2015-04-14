@@ -5,7 +5,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   try {
     vpImage<unsigned char> I; // Create a gray level image container
     bool reset = true; // Enable bus reset during construction (default)

@@ -231,17 +231,26 @@
 #cmakedefine VISP_HAVE_FFMPEG
 
 // Defined if raw1394 and dc1394-2.x libraries available.
-#cmakedefine VISP_HAVE_DC1394_2
+#cmakedefine VISP_HAVE_DC1394
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_DC1394)
+#  define VISP_HAVE_DC1394_2
+#endif
 
 // Defined if dc1394_camera_enumerate() is available in dc1394-2.x.
 // dc1394_camera_enumerate() was introduced after libdc1394-2.0.0-rc7.
-#cmakedefine VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#cmakedefine VISP_HAVE_DC1394_CAMERA_ENUMERATE
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_DC1394_CAMERA_ENUMERATE)
+#  define VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#endif
 
 // Defined if dc1394_find_cameras() is available in dc1394-2.x 
 // dc1394_find_cameras() is still present until libdc1394-2.0.0-rc7.
 // This function was suppress and replace by dc1394_camera_enumerate()
 // in more recent releases.
-#cmakedefine VISP_HAVE_DC1394_2_FIND_CAMERAS
+#cmakedefine VISP_HAVE_DC1394_FIND_CAMERAS
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_DC1394_FIND_CAMERAS)
+#  define VISP_HAVE_DC1394_2_FIND_CAMERAS
+#endif
 
 // Defined if CMU 1394 Digital Camera SDK available.
 #cmakedefine VISP_HAVE_CMU1394

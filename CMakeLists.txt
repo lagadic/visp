@@ -1652,7 +1652,7 @@ ENDIF(USE_FFMPEG)
 # Specific hardware : framegrabbers and cameras
 #----------------------------------------------------------------------
 # default initialisation
-SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_DC1394_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_V4L2_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_DIRECTSHOW_FOUND "no")  # for ViSP-third-party.txt
 
@@ -1663,18 +1663,18 @@ IF(USE_DC1394)
     set(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
 
     MESSAGE(STATUS "libdc1394-2.x found")
-    SET(VISP_HAVE_DC1394_2 TRUE) # for header vpConfig.h
-    SET(VISP_HAVE_DC1394_2_FOUND "yes")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_DC1394 TRUE) # for header vpConfig.h
+    SET(VISP_HAVE_DC1394_FOUND "yes")  # for ViSP-third-party.txt
     IF(DC1394_CAMERA_ENUMERATE_FOUND)
-      SET(VISP_HAVE_DC1394_2_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE) # for header vpConfig.h
     ENDIF(DC1394_CAMERA_ENUMERATE_FOUND)
     IF(DC1394_FIND_CAMERAS_FOUND)
-      SET(VISP_HAVE_DC1394_2_FIND_CAMERAS TRUE) # for header vpConfig.h
+      SET(VISP_HAVE_DC1394_FIND_CAMERAS TRUE) # for header vpConfig.h
     ENDIF(DC1394_FIND_CAMERAS_FOUND)
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${DC1394_INCLUDE_DIRS})
     LIST(APPEND VISP_EXTERN_LIBRARIES ${DC1394_LIBRARY})
 
-    #MESSAGE("DBG VISP_HAVE_DC1394_2= ${VISP_HAVE_DC1394_2}")
+    #MESSAGE("DBG VISP_HAVE_DC1394= ${VISP_HAVE_DC1394}")
     #MESSAGE("DBG DC1394_INCLUDE_DIRS=${DC1394_INCLUDE_DIRS}")
     
     IF(APPLE)
@@ -1684,7 +1684,7 @@ IF(USE_DC1394)
     #MESSAGE("DC1394_LIBRARIES = ${DC1394_LIBRARIES}")
   ELSE(DC1394_FOUND)
     MESSAGE(STATUS "libdc1394-2.x not found")
-    SET(VISP_HAVE_DC1394_2_FOUND "no")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_DC1394_FOUND "no")  # for ViSP-third-party.txt
     #MESSAGE("Firewire dc1394 requested but not found. Turn off USE_DC1394!")
     # SET(USE_DC1394 OFF)
   ENDIF(DC1394_FOUND)

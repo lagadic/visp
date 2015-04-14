@@ -74,11 +74,11 @@
 
 int main()
 {
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vpFrameGrabber *g; // Generic framegrabber
 
-#if defined( VISP_HAVE_DC1394_2 )
+#if defined( VISP_HAVE_DC1394 )
   vp1394TwoGrabber *g_1394_2 = new vp1394TwoGrabber;
   // specific settings for firewire grabber based on libdc1394-2.x version
   g_1394_2->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_320x240_YUV422);

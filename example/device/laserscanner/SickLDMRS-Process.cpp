@@ -236,7 +236,7 @@ void *laser_acq_loop(void *)
 
 void *camera_acq_and_display_loop(void *)
 {
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   try {
     // Initialize the firewire framegrabber
     vp1394TwoGrabber g;       // Create a grabber based on libdc1394-2.x third party lib

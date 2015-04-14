@@ -52,7 +52,7 @@
 /*
  * Interface with libdc1394 2.x
  */
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
 #include <unistd.h>
 
 #include <visp/vp1394TwoGrabber.h>
@@ -151,7 +151,7 @@ const char * vp1394TwoGrabber::strColorCoding[DC1394_COLOR_CODING_NUM]= {
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -171,7 +171,7 @@ vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
   : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
     num_buffers(4), // ring buffer size
     isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
-  #ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+  #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   , d(NULL),
     list(NULL)
   #endif
@@ -231,7 +231,7 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   unsigned int ncameras; // Number of cameras on the bus
   vpImage<unsigned char> I;
 
@@ -258,7 +258,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
   bool reset = false; // Disable bus reset during construction
   vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
@@ -297,7 +297,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   unsigned int ncameras; // Number of cameras on the bus
   vp1394TwoGrabber g;
   ncameras = g.getNumCameras();
@@ -486,7 +486,7 @@ vp1394TwoGrabber::getNumCameras() const
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -1040,7 +1040,7 @@ vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode,
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -1476,7 +1476,7 @@ vp1394TwoGrabber::initialize(bool reset)
 {
   if (init == false){
     // Find cameras
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     if (d != NULL)
       dc1394_free (d);
 
@@ -1526,7 +1526,7 @@ vp1394TwoGrabber::initialize(bool reset)
       dc1394_camera_free_list (list);
     list = NULL;
 
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     if (cameras != NULL)
       free(cameras);
     cameras = NULL;
@@ -1598,7 +1598,7 @@ vp1394TwoGrabber::open()
   if (camIsOpen[camera_id] == false){
     dc1394switch_t status = DC1394_OFF;
 
-    //#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+    //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     dc1394_video_get_transmission(cameras[camera_id], &status);
     if (status != DC1394_OFF){
       //#endif
@@ -1612,12 +1612,12 @@ vp1394TwoGrabber::open()
           if (status==DC1394_ON) {
             vpTRACE("ISO transmission refuses to stop");
           }
-#ifdef VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
           // No yet in the new API
           cameras[camera_id]->is_iso_on=status;
 #endif
         }
-        //#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+        //#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
       }
       //#endif
     }
@@ -1673,9 +1673,9 @@ vp1394TwoGrabber::close()
           if (dc1394_camera_set_power(camera, DC1394_OFF) != DC1394_SUCCESS)
             std::cout << "Unable to turn camera off" << std::endl;
         }
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
         dc1394_camera_free(cameras[i]);
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
         dc1394_free_camera(cameras[i]);
 #endif
       }
@@ -1685,7 +1685,7 @@ vp1394TwoGrabber::close()
       camIsOpen = NULL;
     }
 
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     if (cameras != NULL) {
       delete [] cameras;
       cameras = NULL;
@@ -1695,7 +1695,7 @@ vp1394TwoGrabber::close()
       d = NULL;
     }
 
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     if (cameras != NULL) {
       free(cameras);
       cameras = NULL;
@@ -1789,7 +1789,7 @@ vp1394TwoGrabber::getRingBufferSize() const
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -1865,7 +1865,7 @@ vp1394TwoGrabber::setAutoShutter(bool enable)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -1949,7 +1949,7 @@ vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxvalue)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -2025,7 +2025,7 @@ vp1394TwoGrabber::setAutoGain(bool enable)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -2224,7 +2224,7 @@ vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g(false); // Don't reset the bus
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0 );
@@ -2366,7 +2366,7 @@ vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
   g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
@@ -2427,7 +2427,7 @@ vp1394TwoGrabber::dequeue()
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
@@ -2486,7 +2486,7 @@ vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
@@ -2596,7 +2596,7 @@ vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<vpRGBa> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
@@ -2655,7 +2655,7 @@ vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<vpRGBa> I;
   vp1394TwoGrabber g;
   dc1394video_frame_t *frame;
@@ -3060,16 +3060,16 @@ vp1394TwoGrabber::printCameraInfo()
   << "            -----" << std::endl
   << "----------------------------------------------------------" << std::endl;
 
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   dc1394_camera_print_info( camera, stdout);
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   dc1394_print_camera_info( camera);
 #endif
 
   dc1394featureset_t features;
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   if (dc1394_feature_get_all(camera, &features) != DC1394_SUCCESS)
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
   if (dc1394_get_camera_feature_set(camera, &features) != DC1394_SUCCESS)
 #endif
   {
@@ -3079,9 +3079,9 @@ vp1394TwoGrabber::printCameraInfo()
                                    "Cannot get camera features") );
 
   } else {
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     dc1394_feature_print_all(&features, stdout);
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
     dc1394_print_feature_set(&features);
 #endif
   }
@@ -3297,7 +3297,7 @@ vp1394TwoGrabber::string2colorCoding(std::string colorcoding)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   unsigned int ncameras; // Number of cameras on the bus
   vp1394TwoGrabber g;
   ncameras = g.getNumCameras();
@@ -3320,7 +3320,7 @@ void vp1394TwoGrabber::resetBus()
       setCapture(DC1394_OFF);
     }
   }
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
   setCamera(camera_id);
   // free the other cameras
   for (unsigned int i=0;i<num_cameras;i++){
@@ -3336,7 +3336,7 @@ void vp1394TwoGrabber::resetBus()
   //if (cameras != NULL)
     delete [] cameras;
   cameras = NULL ;
-#elif defined VISP_HAVE_DC1394_2_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
+#elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
 
   setCamera(camera_id);
   // free the other cameras

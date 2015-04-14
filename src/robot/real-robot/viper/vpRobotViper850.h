@@ -142,7 +142,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
   g.acquire(I);

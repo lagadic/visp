@@ -69,7 +69,7 @@
 #include <visp/vpDebug.h> // Debug trace
 #include <signal.h>
 #include <stdlib.h>
-#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394_2) || defined(VISP_HAVE_DIRECTSHOW)) )
+#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394) || defined(VISP_HAVE_DIRECTSHOW)) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>
@@ -276,7 +276,7 @@ main(int argc, const char ** argv)
 
     vpImage<unsigned char> I ;
 
-#if defined VISP_HAVE_DC1394_2
+#if defined VISP_HAVE_DC1394
     vp1394TwoGrabber g;
 #elif defined VISP_HAVE_DIRECTSHOW
     vpDirectShowGrabber g;

@@ -64,7 +64,7 @@
 #include <visp/vpPose.h>
 #include <visp/vpDebug.h>
 #include <iostream>
-#if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394)
 
 int main()
 {

@@ -70,7 +70,7 @@
 
 
 
-#if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394_2) )
+#if (defined(VISP_HAVE_PTU46) & defined (VISP_HAVE_DC1394) )
 
 #ifdef VISP_HAVE_PTHREAD
 #  include <pthread.h>

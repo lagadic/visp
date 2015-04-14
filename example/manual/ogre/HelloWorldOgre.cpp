@@ -58,7 +58,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE) 
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 	// Image to stock gathered data
     // Here we acquire a color image. The consequence will be that
@@ -71,7 +71,7 @@ int main()
     vpV4l2Grabber grabber;
 	grabber.open(I);
     grabber.acquire(I);
-#elif defined(VISP_HAVE_DC1394_2)
+#elif defined(VISP_HAVE_DC1394)
     // libdc1394-2
     vp1394TwoGrabber grabber;
 	grabber.open(I);
@@ -133,7 +133,7 @@ int main()
     // Rendering loop, ended with on escape
     while(ogre.continueRendering()){
       // Acquire a new image
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
 	  grabber >> frame;

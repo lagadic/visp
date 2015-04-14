@@ -32,7 +32,7 @@ Video devices (display)
   GDI                         : ${VISP_HAVE_GDI_FOUND}
   Direct3D                    : ${VISP_HAVE_D3D9_FOUND}
 Framegrabbers
-  Firewire libdc1394-2.x      : ${VISP_HAVE_DC1394_2_FOUND}
+  Firewire libdc1394-2.x      : ${VISP_HAVE_DC1394_FOUND}
   Video For Linux Two         : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                  : ${VISP_HAVE_DIRECTSHOW_FOUND}
   CMU 1394 Digital Camera SDK : ${VISP_HAVE_CMU1394_FOUND}

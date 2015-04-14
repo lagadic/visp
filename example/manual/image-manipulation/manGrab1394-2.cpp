@@ -61,7 +61,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   try {
     unsigned int ncameras; // Number of cameras on the bus
     vp1394TwoGrabber g;

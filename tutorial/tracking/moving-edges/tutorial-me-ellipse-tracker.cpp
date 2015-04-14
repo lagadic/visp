@@ -9,11 +9,11 @@
 
 int main()
 {
-#if (defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2))
+#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2))
   try {
     vpImage<unsigned char> I;
 
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
     vp1394TwoGrabber g(false);
 #elif defined(VISP_HAVE_CMU1394)
     vp1394CMUGrabber g;

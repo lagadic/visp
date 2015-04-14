@@ -64,7 +64,7 @@
 
 #include <list>
 
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
 
 
 /*!
@@ -101,7 +101,7 @@
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
   bool reset = false; // Disable bus reset during construction
   vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
@@ -140,7 +140,7 @@ int main()
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   bool reset = false; // Disable bus reset during construction
   vp1394TwoGrabber g(reset);    // Creation of a grabber instance based on libdc1394-2.x third party lib.
   unsigned int ncameras; // Number of cameras on the bus
@@ -461,7 +461,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   dc1394feature_mode_t* initialShutterMode;
   vpDc1394TwoCameraParametersData* dataCam;
 
-#ifdef VISP_HAVE_DC1394_2_CAMERA_ENUMERATE
+#ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE
   dc1394_t * d;
   dc1394camera_list_t * list;
 #endif

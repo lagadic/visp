@@ -110,7 +110,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE) 
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 	// Image to store gathered data
     // Here we acquire a grey level image. The consequence will be that
@@ -127,7 +127,7 @@ int main()
     // the image size
     grabber.open(I);
     grabber.acquire(I);
-#elif defined(VISP_HAVE_DC1394_2)
+#elif defined(VISP_HAVE_DC1394)
     // libdc1394-2
     vp1394TwoGrabber grabber;
     // Open frame grabber
@@ -165,7 +165,7 @@ int main()
     // Rendering loop
     while(ogre.continueRendering()){
       // Acquire a new image
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
 	  grabber >> frame;

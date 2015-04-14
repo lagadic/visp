@@ -542,7 +542,7 @@ int main()
 {
   vpImage<unsigned char> I(480, 640);
 
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   vp1394TwoGrabber g;
 
   // Acquire an image to update image structure
@@ -770,7 +770,7 @@ int main()
 {
   vpImage<unsigned char> I(480, 640);
 
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   vp1394TwoGrabber g;
 
   // Acquire an image to update image structure
@@ -839,7 +839,7 @@ int main()
 {
   vpImage<vpRGBa> I(480, 640);
 
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   vp1394TwoGrabber g;
 
   // Acquire an image to update image structure

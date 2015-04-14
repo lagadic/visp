@@ -84,7 +84,7 @@
 #if defined(VISP_HAVE_PIONEER) && defined(VISP_HAVE_BICLOPS)
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_DC1394_2) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   try {
     vpImage<unsigned char> I; // Create a gray level image container
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     g.open(I);
     // Logitec sphere parameters
     cam.initPersProjWithoutDistortion(558, 555, 312, 210);
-#elif defined(VISP_HAVE_DC1394_2)
+#elif defined(VISP_HAVE_DC1394)
     // Create a grabber based on libdc1394-2.x third party lib (for firewire cameras under Linux)
     vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);

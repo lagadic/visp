@@ -67,7 +67,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <list>
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394_2))
+#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394))
 
 #define SAVE 0
 

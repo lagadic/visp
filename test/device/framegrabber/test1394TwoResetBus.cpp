@@ -54,7 +54,7 @@
 
 #include <iostream>
 
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>

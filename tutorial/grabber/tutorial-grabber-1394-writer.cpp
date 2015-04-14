@@ -6,7 +6,7 @@
 
 int main(int argc, char **)
 {
-#ifdef VISP_HAVE_DC1394_2
+#ifdef VISP_HAVE_DC1394
   try {
     bool save = false;
     if(argc == 2) {

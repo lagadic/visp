@@ -1217,7 +1217,7 @@ vpAfma6::parseConfigFile (const char * filename)
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_AFMA6)
+#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
 
@@ -1439,7 +1439,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_AFMA6)
+#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
   vpImage<unsigned char> I;
   vp1394TwoGrabber g;
 
@@ -1487,7 +1487,7 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2) && defined(VISP_HAVE_AFMA6)
+#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_AFMA6)
   vpImage<vpRGBa> I;
   vp1394TwoGrabber g;
 

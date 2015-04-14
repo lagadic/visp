@@ -89,7 +89,7 @@ SET (SRC_DEVICE_FRAMEGRABBER
   device/framegrabber/disk/vpDiskGrabber.cpp
   )
 
-IF(VISP_HAVE_DC1394_2)
+IF(VISP_HAVE_DC1394)
   LIST(APPEND SRC_DEVICE_FRAMEGRABBER device/framegrabber/1394/vp1394TwoGrabber.cpp)
 ENDIF()
 IF(VISP_HAVE_CMU1394)

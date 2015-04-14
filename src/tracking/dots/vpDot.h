@@ -88,7 +88,7 @@
 
 int main()
 {
-#if defined(VISP_HAVE_DC1394_2)
+#if defined(VISP_HAVE_DC1394)
   vpImage<unsigned char> I; // Create a gray level image container
   vp1394TwoGrabber g(false); // Create a grabber based on libdc1394-2.x third party lib
   g.acquire(I); // Acquire an image
