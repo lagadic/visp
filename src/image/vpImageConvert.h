@@ -82,7 +82,7 @@
 #  include <windows.h>
 #endif
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if defined(VISP_HAVE_JPEG)
 #  include <jpeglib.h>
 #  include <jerror.h>
 #endif
@@ -163,7 +163,7 @@ public:
     vpImage<vpRGBa> & dest) ;
 #endif
     
-#ifdef VISP_HAVE_LIBJPEG
+#ifdef VISP_HAVE_JPEG
 #if JPEG_LIB_VERSION > 70
   static void convertToJPEGBuffer(const vpImage<unsigned char> &src, 
                                   unsigned char **dest, long unsigned int &destSize, int quality = 100);

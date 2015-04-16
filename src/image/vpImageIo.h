@@ -60,7 +60,7 @@
 #  include <windows.h>
 #endif
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if defined(VISP_HAVE_JPEG)
 #include <jpeglib.h>
 #include <jerror.h>
 #endif
@@ -180,7 +180,7 @@ public:
   static
   void readPPM(vpImage<vpRGBa> &I, const std::string filename) ;
 
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
   static
   void readJPEG(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -229,7 +229,7 @@ public:
   static
   void writePPM(const vpImage<vpRGBa> &I, const std::string filename) ;
 
-#if (defined(VISP_HAVE_LIBJPEG) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
   static
   void writeJPEG(const vpImage<unsigned char> &I, const char *filename) ;
   static

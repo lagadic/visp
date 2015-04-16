@@ -1101,7 +1101,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *sr
 
 #endif
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if defined(VISP_HAVE_JPEG)
 #if JPEG_LIB_VERSION > 70
 /*!
   Convert a vpImage\<unsigned char> to a JPEG compressed buffer
@@ -1200,7 +1200,7 @@ void vpImageConvert::convertToJPEGBuffer(unsigned char *src, long unsigned int s
   jpeg_destroy_decompress(&cinfo);
 }
 #endif
-#endif // defined(VISP_HAVE_LIBJPEG)
+#endif // defined(VISP_HAVE_JPEG)
 
 
 #define vpSAT(c) \

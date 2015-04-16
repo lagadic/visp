@@ -208,7 +208,10 @@
 #cmakedefine VISP_HAVE_SOXT
 
 // Defined if libjpeg library available.
-#cmakedefine VISP_HAVE_LIBJPEG
+#cmakedefine VISP_HAVE_JPEG
+#ifdef VISP_HAVE_JPEG
+#  define VISP_HAVE_LIBJPEG
+#endif
 
 // Defined if libpng library available.
 #cmakedefine VISP_HAVE_LIBPNG

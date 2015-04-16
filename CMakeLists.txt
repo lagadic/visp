@@ -1338,7 +1338,7 @@ SET(VISP_HAVE_GSL_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_JPEG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
@@ -1593,8 +1593,8 @@ IF(USE_LIBJPEG)
   #MESSAGE("test ${JPEG_FOUND}")
   IF(JPEG_FOUND)
     MESSAGE(STATUS "libjpeg found")
-    SET(VISP_HAVE_LIBJPEG  TRUE)  # for header vpConfig.h
-    SET(VISP_HAVE_LIBJPEG_FOUND "yes")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_JPEG  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_JPEG_FOUND "yes")  # for ViSP-third-party.txt
 
 	#message("JPEG_INCLUDE_DIR: ${JPEG_INCLUDE_DIR}")
  	# Here we use JPEG_INCLUDE_DIR that is the var name defined in CMake/Modules/FindJPEG.cmake
@@ -1612,7 +1612,7 @@ IF(USE_LIBJPEG)
 
   ELSE(JPEG_FOUND)
     MESSAGE(STATUS "libjpeg not found")
-    SET(VISP_HAVE_LIBJPEG_FOUND "no")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_JPEG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF(JPEG_FOUND)
 ENDIF(USE_LIBJPEG)
 

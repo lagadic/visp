@@ -290,7 +290,7 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
   case FORMAT_PPM :
     readPPM(I,filename); break;
   case FORMAT_JPEG :
-#ifdef VISP_HAVE_LIBJPEG
+#ifdef VISP_HAVE_JPEG
     readJPEG(I,filename);
 #else
     try_opencv_reader = true;
@@ -391,7 +391,7 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
   case FORMAT_PPM :
     readPPM(I,filename); break;
   case FORMAT_JPEG :
-#ifdef VISP_HAVE_LIBJPEG
+#ifdef VISP_HAVE_JPEG
     readJPEG(I,filename);
 #else
     try_opencv_reader = true;
@@ -483,7 +483,7 @@ vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
   case FORMAT_PPM :
     writePPM(I,filename); break;
   case FORMAT_JPEG :
-#ifdef VISP_HAVE_LIBJPEG
+#ifdef VISP_HAVE_JPEG
     writeJPEG(I,filename);
 #else
     try_opencv_writer = true;
@@ -560,7 +560,7 @@ vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
   case FORMAT_PPM :
     writePPM(I,filename); break;
   case FORMAT_JPEG :
-#ifdef VISP_HAVE_LIBJPEG
+#ifdef VISP_HAVE_JPEG
     writeJPEG(I,filename);
 #else
     try_opencv_writer = true;
@@ -1747,7 +1747,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
 // JPEG
 //--------------------------------------------------------------------------
 
-#if defined(VISP_HAVE_LIBJPEG)
+#if defined(VISP_HAVE_JPEG)
 
 /*!
   Write the content of the image bitmap in the file which name is given by \e
