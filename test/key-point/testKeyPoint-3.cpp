@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: testKeyPoint.cpp 5202 2015-01-24 09:29:06Z fspindle $
+ * $Id: testKeyPoint-3.cpp 5202 2015-01-24 09:29:06Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -32,7 +32,8 @@
  *
  *
  * Description:
- * Test keypoint matching.
+ * Test keypoint matching with mostly OpenCV functions calls
+ * to detect potential memory leaks in testKeyPoint.cpp.
  *
  * Authors:
  * Souriya Trinh
@@ -137,9 +138,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 }
 
 /*!
-  \example testKeyPoint.cpp
+  \example testKeyPoint-3.cpp
 
-  \brief   Test keypoint matching.
+  \brief   Test keypoint matching with mostly OpenCV functions calls
+  to detect potential memory leaks in testKeyPoint.cpp.
 */
 int main(int argc, const char ** argv) {
   try {

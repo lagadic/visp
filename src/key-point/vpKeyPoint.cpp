@@ -72,82 +72,6 @@ inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
-//TODO: Try to implement a pyramidal feature detection
-//#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-//class MaskPredicate
-//{
-//public:
-//    MaskPredicate( const cv::Mat& _mask ) : mask(_mask) {}
-//    bool operator() (const cv::KeyPoint& key_pt) const
-//    {
-//        return mask.at<uchar>( (int)(key_pt.pt.y + 0.5f), (int)(key_pt.pt.x + 0.5f) ) == 0;
-//    }
-//
-//private:
-//    const cv::Mat mask;
-//    MaskPredicate& operator=(const MaskPredicate&);
-//};
-//
-//void vpKeyPoint::runByPixelsMask( std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask )
-//{
-//    if( mask.empty() )
-//  {
-//        return;
-//  }
-//
-//    keypoints.erase(std::remove_if(keypoints.begin(), keypoints.end(), MaskPredicate(mask)), keypoints.end());
-//}
-//
-//void vpKeyPoint::pyramidFeatureDetection(cv::Ptr<cv::FeatureDetector> &detector, const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask,
-//               const int maxLevel)
-//{
-//    cv::Mat src = image;
-//    cv::Mat src_mask = mask;
-//
-//    cv::Mat dilated_mask;
-//    if( !mask.empty() )
-//    {
-//        dilate( mask, dilated_mask, cv::Mat() );
-//        cv::Mat mask255( mask.size(), CV_8UC1, cv::Scalar(0) );
-//        mask255.setTo( cv::Scalar(255), dilated_mask != 0 );
-//        dilated_mask = mask255;
-//    }
-//
-//    for( int l = 0, multiplier = 1; l <= maxLevel; ++l, multiplier *= 2 )
-//    {
-//        // Detect on current level of the pyramid
-//        std::vector<cv::KeyPoint> new_pts;
-//        detector->detect( src, new_pts, src_mask );
-//        std::vector<cv::KeyPoint>::iterator it = new_pts.begin(),
-//                                   end = new_pts.end();
-//        for( ; it != end; ++it)
-//        {
-//            it->pt.x *= multiplier;
-//            it->pt.y *= multiplier;
-//            it->size *= multiplier;
-//            it->octave = l;
-//        }
-//        keypoints.insert( keypoints.end(), new_pts.begin(), new_pts.end() );
-//
-//        // Downsample
-//        if( l < maxLevel )
-//        {
-//            cv::Mat dst;
-//            pyrDown( src, dst );
-//            src = dst;
-//
-//            if( !mask.empty() )
-//                resize( dilated_mask, src_mask, src.size(), 0, 0, CV_INTER_AREA );
-//        }
-//    }
-//
-//    if( !mask.empty() )
-//  {
-//        //KeyPointsFilter::runByPixelsMask( keypoints, mask );
-//  }
-//}
-//#endif
-
 /*!
   Constructor to initialize specified detector, extractor, matcher and filtering method.
 
@@ -1492,17 +1416,6 @@ void vpKeyPoint::init() {
    \param detectorName : Name of the detector (e.g FAST, SIFT, SURF, etc.).
  */
 void vpKeyPoint::initDetector(const std::string &detectorName) {
-  // TODO: Add function to process detection in pyramid images with OpenCV 3.0.0
-  // since there seems to have no equivalent function (2014/12/11)
-  //  std::string pyramid = "Pyramid";
-  //  std::size_t pos = detectorName.find(pyramid);
-  //  if(pos != std::string::npos) {
-  //    std::string sub = detectorName.substr(pos + pyramid.size());
-  //    detectors[detectorName] = cv::Ptr<cv::FeatureDetector>(
-  //        new cv::PyramidAdaptedFeatureDetector(cv::FeatureDetector::create<cv::FeatureDetector>(sub), 2));
-  //  } else {
-  //    detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
-  //  }
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
 
@@ -1517,8 +1430,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   std::string detectorNameTmp = detectorName;
   std::string pyramid = "Pyramid";
   std::size_t pos = detectorName.find(pyramid);
+  bool usePyramid = false;
   if(pos != std::string::npos) {
     detectorNameTmp = detectorName.substr(pos + pyramid.size());
+    usePyramid = true;
   }
 
   if(detectorNameTmp == "SIFT") {
@@ -1540,9 +1455,19 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(detectorNameTmp == "FAST") {
-    m_detectors[detectorNameTmp] = cv::FastFeatureDetector::create();
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = cv::FastFeatureDetector::create();
+    } else {
+//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::FastFeatureDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::FastFeatureDetector::create());
+    }
   } else if(detectorNameTmp == "MSER") {
-    m_detectors[detectorNameTmp] = cv::MSER::create();
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = cv::MSER::create();
+    } else {
+//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::MSER::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::MSER::create());
+    }
   } else if(detectorNameTmp == "ORB") {
     m_detectors[detectorNameTmp] = cv::ORB::create();
   } else if(detectorNameTmp == "BRISK") {
@@ -1551,13 +1476,28 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     m_detectors[detectorNameTmp] = cv::KAZE::create();
   } else if(detectorNameTmp == "AKAZE") {
     m_detectors[detectorNameTmp] = cv::AKAZE::create();
-  } else if(detectorNameTmp == "GFFT") {
-    m_detectors[detectorNameTmp] = cv::GFTTDetector::create();
+  } else if(detectorNameTmp == "GFTT") {
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = cv::GFTTDetector::create();
+    } else {
+//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::GFTTDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::GFTTDetector::create());
+    }
   } else if(detectorNameTmp == "SimpleBlob") {
-    m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
+    } else {
+//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::SimpleBlobDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::SimpleBlobDetector::create());
+    }
   } else if(detectorNameTmp == "STAR") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_detectors[detectorNameTmp] = cv::xfeatures2d::StarDetector::create();
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = cv::xfeatures2d::StarDetector::create();
+    } else {
+//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::xfeatures2d::StarDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::xfeatures2d::StarDetector::create());
+    }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: STAR. OpenCV version  "
@@ -1568,13 +1508,20 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
 
-  if(m_detectors[detectorNameTmp] == NULL) {
+  bool detectorInitialized = false;
+  if(!usePyramid) {
+    detectorInitialized = (m_detectors[detectorNameTmp] != NULL);
+  } else {
+    detectorInitialized = (m_detectors[detectorName] != NULL);
+  }
+
+  if(!detectorInitialized) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorNameTmp << " or it is not available in OpenCV version: "
         << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
-//  m_detectors[detectorName] = cv::FeatureDetector::create<cv::FeatureDetector>(detectorName);
+
 #endif
 }
 
@@ -1641,7 +1588,6 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
   } else {
     std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
-//  m_extractors[extractorName] = cv::DescriptorExtractor::create<cv::DescriptorExtractor>(extractorName);
 #endif
 
   if(m_extractors[extractorName] == NULL) {
@@ -1711,9 +1657,17 @@ void vpKeyPoint::initMatcher(const std::string &matcherName) {
     }
 
     if(descriptorType == CV_8U) {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(cv::makePtr<cv::flann::LshIndexParams>(12, 20, 2));
+#else
       m_matcher = new cv::FlannBasedMatcher(new cv::flann::LshIndexParams(12, 20, 2));
+#endif
     } else {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+      m_matcher = cv::makePtr<cv::FlannBasedMatcher>(cv::makePtr<cv::flann::KDTreeIndexParams>());
+#else
       m_matcher = new cv::FlannBasedMatcher(new cv::flann::KDTreeIndexParams());
+#endif
     }
   } else {
     m_matcher = cv::DescriptorMatcher::create(matcherName);
@@ -3261,5 +3215,238 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 #endif
   }
 }
+
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+//From OpenCV 2.4.11 source code.
+struct KeypointResponseGreaterThanThreshold {
+  KeypointResponseGreaterThanThreshold(float _value) :
+      value(_value) {
+  }
+  inline bool operator()(const cv::KeyPoint& kpt) const {
+    return kpt.response >= value;
+  }
+  float value;
+};
+
+struct KeypointResponseGreater {
+  inline bool operator()(const cv::KeyPoint& kp1,
+      const cv::KeyPoint& kp2) const {
+    return kp1.response > kp2.response;
+  }
+};
+
+// takes keypoints and culls them by the response
+void vpKeyPoint::KeyPointsFilter::retainBest(
+    std::vector<cv::KeyPoint>& keypoints, int n_points) {
+  //this is only necessary if the keypoints size is greater than the number of desired points.
+  if (n_points >= 0 && keypoints.size() > (size_t) n_points) {
+    if (n_points == 0) {
+      keypoints.clear();
+      return;
+    }
+    //first use nth element to partition the keypoints into the best and worst.
+    std::nth_element(keypoints.begin(), keypoints.begin() + n_points,
+        keypoints.end(), KeypointResponseGreater());
+    //this is the boundary response, and in the case of FAST may be ambigous
+    float ambiguous_response = keypoints[n_points - 1].response;
+    //use std::partition to grab all of the keypoints with the boundary response.
+    std::vector<cv::KeyPoint>::const_iterator new_end = std::partition(
+        keypoints.begin() + n_points, keypoints.end(),
+        KeypointResponseGreaterThanThreshold(ambiguous_response));
+    //resize the keypoints, given this new end point. nth_element and partition reordered the points inplace
+    keypoints.resize(new_end - keypoints.begin());
+  }
+}
+
+struct RoiPredicate {
+  RoiPredicate(const cv::Rect& _r) :
+      r(_r) {
+  }
+
+  bool operator()(const cv::KeyPoint& keyPt) const {
+    return !r.contains(keyPt.pt);
+  }
+
+  cv::Rect r;
+};
+
+void vpKeyPoint::KeyPointsFilter::runByImageBorder(
+    std::vector<cv::KeyPoint>& keypoints, cv::Size imageSize, int borderSize) {
+  if (borderSize > 0) {
+    if (imageSize.height <= borderSize * 2 || imageSize.width <= borderSize * 2)
+      keypoints.clear();
+    else
+      keypoints.erase(
+          std::remove_if(keypoints.begin(), keypoints.end(),
+              RoiPredicate(
+                  cv::Rect(cv::Point(borderSize, borderSize),
+                      cv::Point(imageSize.width - borderSize,
+                          imageSize.height - borderSize)))), keypoints.end());
+  }
+}
+
+struct SizePredicate {
+  SizePredicate(float _minSize, float _maxSize) :
+      minSize(_minSize), maxSize(_maxSize) {
+  }
+
+  bool operator()(const cv::KeyPoint& keyPt) const {
+    float size = keyPt.size;
+    return (size < minSize) || (size > maxSize);
+  }
+
+  float minSize, maxSize;
+};
+
+void vpKeyPoint::KeyPointsFilter::runByKeypointSize(
+    std::vector<cv::KeyPoint>& keypoints, float minSize, float maxSize) {
+  CV_Assert(minSize >= 0);
+  CV_Assert(maxSize >= 0);
+  CV_Assert(minSize <= maxSize);
+
+  keypoints.erase(
+      std::remove_if(keypoints.begin(), keypoints.end(),
+          SizePredicate(minSize, maxSize)), keypoints.end());
+}
+
+class MaskPredicate {
+public:
+  MaskPredicate(const cv::Mat& _mask) :
+      mask(_mask) {
+  }
+  bool operator()(const cv::KeyPoint& key_pt) const {
+    return mask.at<uchar>((int) (key_pt.pt.y + 0.5f),
+        (int) (key_pt.pt.x + 0.5f)) == 0;
+  }
+
+private:
+  const cv::Mat mask;
+  MaskPredicate& operator=(const MaskPredicate&);
+};
+
+void vpKeyPoint::KeyPointsFilter::runByPixelsMask(
+    std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask) {
+  if (mask.empty())
+    return;
+
+  keypoints.erase(
+      std::remove_if(keypoints.begin(), keypoints.end(), MaskPredicate(mask)),
+      keypoints.end());
+}
+
+struct KeyPoint_LessThan {
+  KeyPoint_LessThan(const std::vector<cv::KeyPoint>& _kp) :
+      kp(&_kp) {
+  }
+  bool operator()(int i, int j) const {
+    const cv::KeyPoint& kp1 = (*kp)[i];
+    const cv::KeyPoint& kp2 = (*kp)[j];
+    if (kp1.pt.x != kp2.pt.x)
+      return kp1.pt.x < kp2.pt.x;
+    if (kp1.pt.y != kp2.pt.y)
+      return kp1.pt.y < kp2.pt.y;
+    if (kp1.size != kp2.size)
+      return kp1.size > kp2.size;
+    if (kp1.angle != kp2.angle)
+      return kp1.angle < kp2.angle;
+    if (kp1.response != kp2.response)
+      return kp1.response > kp2.response;
+    if (kp1.octave != kp2.octave)
+      return kp1.octave > kp2.octave;
+    if (kp1.class_id != kp2.class_id)
+      return kp1.class_id > kp2.class_id;
+
+    return i < j;
+  }
+  const std::vector<cv::KeyPoint>* kp;
+};
+
+void vpKeyPoint::KeyPointsFilter::removeDuplicated(
+    std::vector<cv::KeyPoint>& keypoints) {
+  int i, j, n = (int) keypoints.size();
+  std::vector<int> kpidx(n);
+  std::vector<uchar> mask(n, (uchar) 1);
+
+  for (i = 0; i < n; i++)
+    kpidx[i] = i;
+  std::sort(kpidx.begin(), kpidx.end(), KeyPoint_LessThan(keypoints));
+  for (i = 1, j = 0; i < n; i++) {
+    cv::KeyPoint& kp1 = keypoints[kpidx[i]];
+    cv::KeyPoint& kp2 = keypoints[kpidx[j]];
+    if (kp1.pt.x != kp2.pt.x || kp1.pt.y != kp2.pt.y || kp1.size != kp2.size
+        || kp1.angle != kp2.angle)
+      j = i;
+    else
+      mask[kpidx[i]] = 0;
+  }
+
+  for (i = j = 0; i < n; i++) {
+    if (mask[i]) {
+      if (i != j)
+        keypoints[j] = keypoints[i];
+      j++;
+    }
+  }
+  keypoints.resize(j);
+}
+
+/*
+ *  PyramidAdaptedFeatureDetector
+ */
+vpKeyPoint::PyramidAdaptedFeatureDetector::PyramidAdaptedFeatureDetector(
+    const cv::Ptr<cv::FeatureDetector>& _detector, int _maxLevel) :
+    detector(_detector), maxLevel(_maxLevel) {
+}
+
+bool vpKeyPoint::PyramidAdaptedFeatureDetector::empty() const {
+  return detector.empty() || (cv::FeatureDetector*) detector->empty();
+}
+
+void vpKeyPoint::PyramidAdaptedFeatureDetector::detect( cv::InputArray image, CV_OUT std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask ) {
+  detectImpl(image.getMat(), keypoints, mask.getMat());
+}
+
+void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat& image,
+    std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask) const {
+  cv::Mat src = image;
+  cv::Mat src_mask = mask;
+
+  cv::Mat dilated_mask;
+  if (!mask.empty()) {
+    cv::dilate(mask, dilated_mask, cv::Mat());
+    cv::Mat mask255(mask.size(), CV_8UC1, cv::Scalar(0));
+    mask255.setTo(cv::Scalar(255), dilated_mask != 0);
+    dilated_mask = mask255;
+  }
+
+  for (int l = 0, multiplier = 1; l <= maxLevel; ++l, multiplier *= 2) {
+    // Detect on current level of the pyramid
+    std::vector<cv::KeyPoint> new_pts;
+    detector->detect(src, new_pts, src_mask);
+    std::vector<cv::KeyPoint>::iterator it = new_pts.begin(), end =
+        new_pts.end();
+    for (; it != end; ++it) {
+      it->pt.x *= multiplier;
+      it->pt.y *= multiplier;
+      it->size *= multiplier;
+      it->octave = l;
+    }
+    keypoints.insert(keypoints.end(), new_pts.begin(), new_pts.end());
+
+    // Downsample
+    if (l < maxLevel) {
+      cv::Mat dst;
+      pyrDown(src, dst);
+      src = dst;
+
+      if (!mask.empty())
+        resize(dilated_mask, src_mask, src.size(), 0, 0, CV_INTER_AREA);
+    }
+  }
+
+  if (!mask.empty())
+    vpKeyPoint::KeyPointsFilter::runByPixelsMask(keypoints, mask);
+}
+#endif
 
 #endif

@@ -920,12 +920,71 @@ private:
     return _Val;
   }
 
-//TODO: Try to implement a pyramidal feature detection
-//#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-//  void pyramidFeatureDetection(cv::Ptr<cv::FeatureDetector> &detector, const cv::Mat& image, std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask,
-//      const int maxLevel=2);
-//  void runByPixelsMask(std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask);
-//#endif
+
+  //TODO: Try to implement a pyramidal feature detection
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  /*
+   * Adapts a detector to detect points over multiple levels of a Gaussian
+   * pyramid. Useful for detectors that are not inherently scaled.
+   * From OpenCV 2.4.11 source code.
+   */
+  class PyramidAdaptedFeatureDetector: public cv::FeatureDetector {
+  public:
+    // maxLevel - The 0-based index of the last pyramid layer
+    PyramidAdaptedFeatureDetector(const cv::Ptr<cv::FeatureDetector>& detector, int maxLevel = 2);
+
+    // TODO implement read/write
+    virtual bool empty() const;
+
+  protected:
+    virtual void detect(cv::InputArray image,
+        CV_OUT std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask =
+            cv::noArray());
+    virtual void detectImpl(const cv::Mat& image,
+        std::vector<cv::KeyPoint>& keypoints, const cv::Mat& mask =
+            cv::Mat()) const;
+
+    cv::Ptr<cv::FeatureDetector> detector;
+    int maxLevel;
+  };
+
+  /*
+   * A class filters a vector of keypoints.
+   * Because now it is difficult to provide a convenient interface for all usage scenarios of the keypoints filter class,
+   * it has only several needed by now static methods.
+   */
+  class KeyPointsFilter {
+  public:
+    KeyPointsFilter() {
+    }
+
+    /*
+     * Remove keypoints within borderPixels of an image edge.
+     */
+    static void runByImageBorder(std::vector<cv::KeyPoint>& keypoints,
+        cv::Size imageSize, int borderSize);
+    /*
+     * Remove keypoints of sizes out of range.
+     */
+    static void runByKeypointSize(std::vector<cv::KeyPoint>& keypoints,
+        float minSize, float maxSize = FLT_MAX);
+    /*
+     * Remove keypoints from some image by mask for pixels of this image.
+     */
+    static void runByPixelsMask(std::vector<cv::KeyPoint>& keypoints,
+        const cv::Mat& mask);
+    /*
+     * Remove duplicated keypoints.
+     */
+    static void removeDuplicated(std::vector<cv::KeyPoint>& keypoints);
+
+    /*
+     * Retain the specified number of the best keypoints (according to the response)
+     */
+    static void retainBest(std::vector<cv::KeyPoint>& keypoints, int npoints);
+  };
+
+#endif
 };
 
 #endif

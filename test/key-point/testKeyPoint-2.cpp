@@ -238,7 +238,7 @@ int main(int argc, const char ** argv) {
     tracker.getPose(cMo);
 
     //Init keypoints
-    vpKeyPoint keypoints("ORB", "ORB");
+    vpKeyPoint keypoints("ORB", "ORB", "FlannBased");
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
     keypoints.setDetectorParameter("ORB", "nLevels", 1);
 #endif
