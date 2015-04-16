@@ -65,7 +65,7 @@
 #include <jerror.h>
 #endif
 
-#if defined(VISP_HAVE_LIBPNG)
+#if defined(VISP_HAVE_PNG)
 #include <png.h>
 #endif
 
@@ -191,7 +191,7 @@ public:
   void readJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
   static
   void readPNG(vpImage<unsigned char> &I, const char *filename) ;
   static
@@ -240,7 +240,7 @@ public:
   void writeJPEG(const vpImage<vpRGBa> &I, const std::string filename) ;
 #endif
 
-#if (defined(VISP_HAVE_LIBPNG) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
   static
   void writePNG(const vpImage<unsigned char> &I, const char *filename) ;
   static

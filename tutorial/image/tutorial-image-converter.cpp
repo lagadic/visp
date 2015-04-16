@@ -16,7 +16,7 @@ int main()
     vpImage<unsigned char> I;
     vpImageConvert::convert(A, I);
 
-#  ifdef VISP_HAVE_LIBPNG
+#  ifdef VISP_HAVE_PNG
     vpImageIo::write(I, "lena.png"); // Gray
 #  endif
   }

@@ -46,7 +46,7 @@ Specific devices
 Video and image Read/Write:
   FFMPEG                      : ${VISP_HAVE_FFMPEG_FOUND}
   libjpeg                     : ${VISP_HAVE_JPEG_FOUND}
-  libpng                      : ${VISP_HAVE_LIBPNG_FOUND}
+  libpng                      : ${VISP_HAVE_PNG_FOUND}
 Misc:
   XML2                        : ${VISP_HAVE_XML2_FOUND}
   pthread                     : ${VISP_HAVE_PTHREAD_FOUND}

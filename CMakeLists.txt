@@ -1339,7 +1339,7 @@ SET(VISP_HAVE_GTK_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_D3D9_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_GDI_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_JPEG_FOUND "no")  # for ViSP-third-party.txt
-SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
+SET(VISP_HAVE_PNG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_ZLIB_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_FFMPEG_FOUND "no")  # for ViSP-third-party.txt
 SET(VISP_HAVE_CMU1394_FOUND "no")  # for ViSP-third-party.txt
@@ -1621,15 +1621,15 @@ IF(USE_LIBPNG)
   #FIND_PACKAGE(PNG)
   IF(PNG_FOUND)
     MESSAGE(STATUS "libpng found")
-    SET(VISP_HAVE_LIBPNG  TRUE)  # for header vpConfig.h
-    SET(VISP_HAVE_LIBPNG_FOUND "yes")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_PNG  TRUE)  # for header vpConfig.h
+    SET(VISP_HAVE_PNG_FOUND "yes")  # for ViSP-third-party.txt
 
     LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
     LIST(APPEND VISP_EXTERN_LIBRARIES ${PNG_LIBRARIES})
     LIST(APPEND VISP_DEFS ${PNG_DEFINITIONS})
   ELSE()
     MESSAGE(STATUS "libpng not found")
-    SET(VISP_HAVE_LIBPNG_FOUND "no")  # for ViSP-third-party.txt
+    SET(VISP_HAVE_PNG_FOUND "no")  # for ViSP-third-party.txt
   ENDIF()
 ENDIF(USE_LIBPNG)
 

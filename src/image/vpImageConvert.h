@@ -87,7 +87,7 @@
 #  include <jerror.h>
 #endif
 
-#if defined(VISP_HAVE_LIBPNG)
+#if defined(VISP_HAVE_PNG)
 #  include <png.h>
 #endif
 

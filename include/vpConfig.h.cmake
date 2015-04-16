@@ -214,7 +214,10 @@
 #endif
 
 // Defined if libpng library available.
-#cmakedefine VISP_HAVE_LIBPNG
+#cmakedefine VISP_HAVE_PNG
+#ifdef VISP_HAVE_PNG
+#  define VISP_HAVE_LIBPNG
+#endif
 
 // Defined if libfreenect, libusb-1.0 and libpthread libraries available.
 #cmakedefine VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES

@@ -297,7 +297,7 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 #endif
     break;
   case FORMAT_PNG :
-#if defined(VISP_HAVE_LIBPNG)
+#if defined(VISP_HAVE_PNG)
     readPNG(I,filename);
 #else
     try_opencv_reader = true;
@@ -398,7 +398,7 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 #endif
     break;
   case FORMAT_PNG :
-#if defined(VISP_HAVE_LIBPNG)
+#if defined(VISP_HAVE_PNG)
     readPNG(I,filename);
 #else
     try_opencv_reader = true;
@@ -490,7 +490,7 @@ vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
 #endif
     break;
   case FORMAT_PNG :
-#ifdef VISP_HAVE_LIBPNG
+#ifdef VISP_HAVE_PNG
     writePNG(I,filename);
 #else
     try_opencv_writer = true;
@@ -567,7 +567,7 @@ vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
 #endif
     break;
   case FORMAT_PNG :
-#ifdef VISP_HAVE_LIBPNG
+#ifdef VISP_HAVE_PNG
     writePNG(I,filename);
 #else
     try_opencv_writer = true;
@@ -2366,7 +2366,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
 // PNG
 //--------------------------------------------------------------------------
 
-#if defined(VISP_HAVE_LIBPNG)
+#if defined(VISP_HAVE_PNG)
 
 /*!
   Write the content of the image bitmap in the file which name is given by \e
