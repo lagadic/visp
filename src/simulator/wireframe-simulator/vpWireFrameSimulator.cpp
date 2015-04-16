@@ -50,7 +50,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include <visp/vpSimulatorException.h>
+#include <visp/vpException.h>
 #include <visp/vpPoint.h>
 #include <visp/vpCameraParameters.h>
 #include <visp/vpMeterPixelConversion.h>
@@ -127,7 +127,7 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   {
     std::string error = "The file " + std::string(str) + " can not be opened";
 
-    throw(vpException(vpSimulatorException::ioError, error.c_str())) ;
+    throw(vpException(vpException::ioError, error.c_str())) ;
   }
   open_keyword (keyword_tbl);
   open_lex ();
@@ -1073,7 +1073,7 @@ void
 vpWireFrameSimulator::getInternalImage(vpImage<vpRGBa> &I)
 {
   if (!sceneInitialized)
-    throw(vpException(vpSimulatorException::notInitializedError,"The scene has to be initialized")) ;
+    throw(vpException(vpException::notInitialized,"The scene has to be initialized")) ;
 
   double u;
   double v;
@@ -1358,7 +1358,7 @@ void
 vpWireFrameSimulator::getInternalImage(vpImage<unsigned char> &I)
 {
   if (!sceneInitialized)
-    throw(vpException(vpSimulatorException::notInitializedError,"The scene has to be initialized")) ;
+    throw(vpException(vpException::notInitialized,"The scene has to be initialized")) ;
 
   double u;
   double v;
