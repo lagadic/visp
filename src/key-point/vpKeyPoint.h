@@ -293,8 +293,10 @@ public:
                        const std::vector<vpImagePoint> &ransacInliers=std::vector<vpImagePoint>(), unsigned int crossSize=3,
                        unsigned int lineThickness=1);
 
-  void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime);
-  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime);
+  void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints=NULL);
+  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints=NULL);
 
   /*!
     Get the covariance matrix when estimating the pose using the Virtual Visual Servoing approach.
@@ -776,6 +778,15 @@ public:
     m_useRansacVVS = ransacVVS;
   }
 
+  /*!
+    Set the flag to filter matches where multiple query keypoints are matched to the same train keypoints.
+
+    \param singleMatchFilter : True to use the single match filter.
+   */
+  inline void setUseSingleMatchFilter(const bool singleMatchFilter) {
+    m_useSingleMatchFilter = singleMatchFilter;
+  }
+
 private:
   //! If true, compute covariance matrix if the user select the pose estimation method using ViSP
   bool m_computeCovariance;
@@ -876,6 +887,8 @@ private:
   bool m_useMatchTrainToQuery;
   //! Flag set if a Ransac VVS pose estimation must be used.
   bool m_useRansacVVS;
+  //! If true, keep only pairs of keypoints where each train keypoint is matched to a single query keypoint
+  bool m_useSingleMatchFilter;
 
 
   void affineSkew(double tilt, double phi, cv::Mat& img, cv::Mat& mask, cv::Mat& Ai);

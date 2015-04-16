@@ -167,8 +167,8 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true)
+    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false),
+    m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -201,8 +201,8 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true),
-    m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true)
+    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false),
+    m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
   //So this is useful only for ratioDistanceThreshold method
@@ -354,6 +354,10 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
 
   _reference_computed = true;
 
+  //Add train descriptors in matcher object
+  m_matcher->clear();
+  m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
+
   return static_cast<unsigned int>(m_trainKeyPoints.size());
 }
 
@@ -371,7 +375,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
   //Copy the input list of keypoints
   std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
 
-  extract(I, trainKeyPoints, trainDescriptors, m_extractionTime);
+  extract(I, trainKeyPoints, trainDescriptors, m_extractionTime, &points3f);
 
   if(trainKeyPoints.size() != trainKeyPoints_tmp.size()) {
     //Keypoints have been removed
@@ -439,6 +443,10 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
   //Convert OpenCV type to ViSP type for compatibility
   vpConvert::convertFromOpenCV(this->m_trainKeyPoints, referenceImagePointsList);
   vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
+
+  //Add train descriptors in matcher object
+  m_matcher->clear();
+  m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
 
   _reference_computed = true;
 }
@@ -1146,12 +1154,14 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors values for each keypoint.
    \param elapsedTime : Elapsed time.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint cannot be extracted, we need to remove
+   the corresponding 3D point.
  */
 void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-                         double &elapsedTime) {
+                         double &elapsedTime, std::vector<cv::Point3f> *trainPoints) {
   cv::Mat matImg;
   vpImageConvert::convert(I, matImg, false);
-  extract(matImg, keyPoints, descriptors, elapsedTime);
+  extract(matImg, keyPoints, descriptors, elapsedTime, trainPoints);
 }
 
 /*!
@@ -1161,9 +1171,11 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors values for each keypoint.
    \param elapsedTime : Elapsed time.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint cannot be extracted, we need to remove
+   the corresponding 3D point.
  */
 void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-                         double &elapsedTime) {
+                         double &elapsedTime, std::vector<cv::Point3f> *trainPoints) {
   double t = vpTime::measureTimeMs();
   bool first = true;
 
@@ -1172,7 +1184,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
     if(first) {
       first = false;
       //Check if we have 3D object points information
-      if(m_trainPoints.size() == keyPoints.size()) {
+      if(trainPoints != NULL && !trainPoints->empty()) {
         //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
         std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
 
@@ -1191,103 +1203,61 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
           std::vector<cv::Point3f> trainPoints_tmp;
           for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
             if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
-              trainPoints_tmp.push_back(m_trainPoints[mapOfKeypointHashes[myKeypointHash(*it)]]);
+              trainPoints_tmp.push_back((*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
             }
           }
 
           //Copy trainPoints_tmp to m_trainPoints
-          m_trainPoints = trainPoints_tmp;
+          *trainPoints = trainPoints_tmp;
         }
       } else {
         //Extract descriptors for the given list of keypoints
         it->second->compute(matImg, keyPoints, descriptors);
       }
     } else {
-      //Check if we have 3D object points information
-      if(m_trainPoints.size() == keyPoints.size()) {
-        //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
-        std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
+      //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
+      std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
 
-        cv::Mat desc;
-        //Extract descriptors for the given list of keypoints
-        it->second->compute(matImg, keyPoints, desc);
+      cv::Mat desc;
+      //Extract descriptors for the given list of keypoints
+      it->second->compute(matImg, keyPoints, desc);
 
-        if(keyPoints.size() != keyPoints_tmp.size()) {
-          //Keypoints have been removed
-          //Store the hash of a keypoint as the key and the index of the keypoint as the value
-          std::map<size_t, size_t> mapOfKeypointHashes;
-          size_t cpt = 0;
-          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end(); ++it, cpt++) {
-            mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
-          }
+      if(keyPoints.size() != keyPoints_tmp.size()) {
+        //Keypoints have been removed
+        //Store the hash of a keypoint as the key and the index of the keypoint as the value
+        std::map<size_t, size_t> mapOfKeypointHashes;
+        size_t cpt = 0;
+        for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints_tmp.begin(); it != keyPoints_tmp.end(); ++it, cpt++) {
+          mapOfKeypointHashes[myKeypointHash(*it)] = cpt;
+        }
 
-          std::vector<cv::Point3f> trainPoints_tmp;
-          cv::Mat descriptors_tmp;
-          for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
-            if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
-              trainPoints_tmp.push_back(m_trainPoints[mapOfKeypointHashes[myKeypointHash(*it)]]);
+        std::vector<cv::Point3f> trainPoints_tmp;
+        cv::Mat descriptors_tmp;
+        for(std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
+          if(mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
+            if(trainPoints != NULL && !trainPoints->empty()) {
+              trainPoints_tmp.push_back((*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
+            }
 
-              if(!descriptors.empty()) {
-                switch(descriptors.type()) {
-                case CV_8U:
-                  descriptors_tmp.push_back(descriptors.at<unsigned char>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_8S:
-                  descriptors_tmp.push_back(descriptors.at<char>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_16U:
-                  descriptors_tmp.push_back(descriptors.at<unsigned short int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_16S:
-                  descriptors_tmp.push_back(descriptors.at<short int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_32S:
-                  descriptors_tmp.push_back(descriptors.at<int>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_32F:
-                  descriptors_tmp.push_back(descriptors.at<float>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                case CV_64F:
-                  descriptors_tmp.push_back(descriptors.at<double>((int) mapOfKeypointHashes[myKeypointHash(*it)]));
-                  break;
-
-                default:
-                  throw vpException(vpException::fatalError, "Problem with the data type of descriptors !");
-                  break;
-                }
-              }
+            if(!descriptors.empty()) {
+              descriptors_tmp.push_back(descriptors.row((int) mapOfKeypointHashes[myKeypointHash(*it)]));
             }
           }
+        }
 
+        if(trainPoints != NULL) {
           //Copy trainPoints_tmp to m_trainPoints
-          m_trainPoints = trainPoints_tmp;
-          //Copy descriptors_tmp to descriptors
-          descriptors_tmp.copyTo(descriptors);
+          *trainPoints = trainPoints_tmp;
         }
+        //Copy descriptors_tmp to descriptors
+        descriptors_tmp.copyTo(descriptors);
+      }
 
-        //Merge descriptors horizontally
-        if(descriptors.empty()) {
-          desc.copyTo(descriptors);
-        } else {
-          cv::hconcat(descriptors, desc, descriptors);
-        }
+      //Merge descriptors horizontally
+      if(descriptors.empty()) {
+        desc.copyTo(descriptors);
       } else {
-        cv::Mat desc;
-        //Extract descriptors for the given list of keypoints
-        it->second->compute(matImg, keyPoints, desc);
-
-        //Merge descriptors horizontally
-        if(descriptors.empty()) {
-          desc.copyTo(descriptors);
-        } else {
-          cv::hconcat(descriptors, desc, descriptors);
-        }
+        cv::hconcat(descriptors, desc, descriptors);
       }
     }
   }
@@ -1391,32 +1361,38 @@ void vpKeyPoint::filterMatches() {
     }
   }
 
-  //Eliminate matches where multiple query keypoints are matched to the same train keypoint
-  std::vector<cv::DMatch> mTmp;
-  std::vector<cv::Point3f> trainPtsTmp;
-  std::vector<cv::KeyPoint> queryKptsTmp;
+  if(m_useSingleMatchFilter) {
+    //Eliminate matches where multiple query keypoints are matched to the same train keypoint
+    std::vector<cv::DMatch> mTmp;
+    std::vector<cv::Point3f> trainPtsTmp;
+    std::vector<cv::KeyPoint> queryKptsTmp;
 
-  std::map<int, int> mapOfTrainIdx;
-  //Count the number of query points matched to the same train point
-  for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
-    mapOfTrainIdx[it->trainIdx]++;
-  }
-
-  //Keep matches with only one correspondence
-  for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
-    if(mapOfTrainIdx[it->trainIdx] == 1) {
-      mTmp.push_back(cv::DMatch((int) queryKptsTmp.size(), it->trainIdx, it->distance));
-
-      if(!m_trainPoints.empty()) {
-        trainPtsTmp.push_back(m_trainPoints[(size_t) it->trainIdx]);
-      }
-      queryKptsTmp.push_back(queryKpts[(size_t) it->queryIdx]);
+    std::map<int, int> mapOfTrainIdx;
+    //Count the number of query points matched to the same train point
+    for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
+      mapOfTrainIdx[it->trainIdx]++;
     }
-  }
 
-  m_filteredMatches = mTmp;
-  m_objectFilteredPoints = trainPtsTmp;
-  m_queryFilteredKeyPoints = queryKptsTmp;
+    //Keep matches with only one correspondence
+    for(std::vector<cv::DMatch>::const_iterator it = m.begin(); it != m.end(); ++it) {
+      if(mapOfTrainIdx[it->trainIdx] == 1) {
+        mTmp.push_back(cv::DMatch((int) queryKptsTmp.size(), it->trainIdx, it->distance));
+
+        if(!m_trainPoints.empty()) {
+          trainPtsTmp.push_back(m_trainPoints[(size_t) it->trainIdx]);
+        }
+        queryKptsTmp.push_back(queryKpts[(size_t) it->queryIdx]);
+      }
+    }
+
+    m_filteredMatches = mTmp;
+    m_objectFilteredPoints = trainPtsTmp;
+    m_queryFilteredKeyPoints = queryKptsTmp;
+  } else {
+    m_filteredMatches = m;
+    m_objectFilteredPoints = trainPts;
+    m_queryFilteredKeyPoints = queryKpts;
+  }
 }
 
 /*!
@@ -1692,6 +1668,20 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
   for(std::vector<std::string>::const_iterator it = extractorNames.begin(); it != extractorNames.end(); ++it) {
     initExtractor(*it);
   }
+
+  int descriptorType = CV_32F;
+  bool firstIteration = true;
+  for(std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator it = m_extractors.begin();
+      it != m_extractors.end(); ++it) {
+    if(firstIteration) {
+      firstIteration = false;
+      descriptorType = it->second->descriptorType();
+    } else {
+      if(descriptorType != it->second->descriptorType()) {
+        throw vpException(vpException::fatalError, "All the descriptors must have the same type !");
+      }
+    }
+  }
 }
 
 /*!
@@ -1700,7 +1690,34 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
    \param matcherName : Name of the matcher (e.g BruteForce, FlannBased).
  */
 void vpKeyPoint::initMatcher(const std::string &matcherName) {
-  m_matcher = cv::DescriptorMatcher::create(matcherName);
+  int descriptorType = CV_32F;
+  bool firstIteration = true;
+  for(std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator it = m_extractors.begin();
+      it != m_extractors.end(); ++it) {
+    if(firstIteration) {
+      firstIteration = false;
+      descriptorType = it->second->descriptorType();
+    } else {
+      if(descriptorType != it->second->descriptorType()) {
+        throw vpException(vpException::fatalError, "All the descriptors must have the same type !");
+      }
+    }
+  }
+
+  if(matcherName == "FlannBased") {
+    if(m_extractors.empty()) {
+      std::cout << "Warning: No extractor initialized, by default use floating values (CV_32F) "
+          "for descriptor type !" << std::endl;
+    }
+
+    if(descriptorType == CV_8U) {
+      m_matcher = new cv::FlannBasedMatcher(new cv::flann::LshIndexParams(12, 20, 2));
+    } else {
+      m_matcher = new cv::FlannBasedMatcher(new cv::flann::KDTreeIndexParams());
+    }
+  } else {
+    m_matcher = cv::DescriptorMatcher::create(matcherName);
+  }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   if(m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
@@ -2276,6 +2293,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   vpConvert::convertFromOpenCV(m_trainKeyPoints, referenceImagePointsList);
   vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
 
+  //Add train descriptors in matcher object
+  m_matcher->clear();
+  m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
+
   //Set _reference_computed to true as we load learning file
   _reference_computed = true;
 }
@@ -2299,7 +2320,8 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
       std::vector<std::vector<cv::DMatch> > knnMatchesTmp;
 
       //Match train descriptors to query descriptors
-      m_matcher->knnMatch(trainDescriptors, queryDescriptors, knnMatchesTmp, 2);
+      cv::Ptr<cv::DescriptorMatcher> matcherTmp = m_matcher->clone(true);
+      matcherTmp->knnMatch(trainDescriptors, queryDescriptors, knnMatchesTmp, 2);
 
       for(std::vector<std::vector<cv::DMatch> >::const_iterator it1 = knnMatchesTmp.begin(); it1 != knnMatchesTmp.end(); ++it1) {
         std::vector<cv::DMatch> tmp;
@@ -2313,7 +2335,7 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
       std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
     } else {
       //Match query descriptors to train descriptors
-      m_matcher->knnMatch(queryDescriptors, trainDescriptors, m_knnMatches, 2);
+      m_matcher->knnMatch(queryDescriptors, m_knnMatches, 2);
       matches.resize(m_knnMatches.size());
       std::transform(m_knnMatches.begin(), m_knnMatches.end(), matches.begin(), knnToDMatch);
     }
@@ -2323,14 +2345,15 @@ void vpKeyPoint::match(const cv::Mat &trainDescriptors, const cv::Mat &queryDesc
     if(m_useMatchTrainToQuery) {
       std::vector<cv::DMatch> matchesTmp;
       //Match train descriptors to query descriptors
-      m_matcher->match(trainDescriptors, queryDescriptors, matchesTmp);
+      cv::Ptr<cv::DescriptorMatcher> matcherTmp = m_matcher->clone(true);
+      matcherTmp->match(trainDescriptors, queryDescriptors, matchesTmp);
 
       for(std::vector<cv::DMatch>::const_iterator it = matchesTmp.begin(); it != matchesTmp.end(); ++it) {
         matches.push_back(cv::DMatch(it->trainIdx, it->queryIdx, it->distance));
       }
     } else {
       //Match query descriptors to train descriptors
-      m_matcher->match(queryDescriptors, trainDescriptors, matches);
+      m_matcher->match(queryDescriptors, matches);
     }
   }
   elapsedTime = vpTime::measureTimeMs() - t;
