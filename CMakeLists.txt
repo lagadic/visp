@@ -803,7 +803,7 @@ endif()
 #--------------------------------------------------------------------
 # default initialisation
 SET(VISP_HAVE_SIMULATOR_FOUND "no") # for ViSP-third-party.txt
-SET(VISP_HAVE_COIN_FOUND "no")      # for ViSP-third-party.txt
+SET(VISP_HAVE_COIN3D_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_OGRE_FOUND "no")      # for ViSP-third-party.txt
 SET(VISP_HAVE_OIS_FOUND "no")       # for ViSP-third-party.txt
 SET(VISP_HAVE_SOWIN_FOUND "no")     # for ViSP-third-party.txt
@@ -1087,8 +1087,8 @@ ENDIF(USE_OIS AND USE_OGRE)
 IF(USE_COIN)
   IF (COIN3D_FOUND)
     MESSAGE(STATUS "Coin3D found")
-    SET(VISP_HAVE_COIN_FOUND "yes")   # for ViSP-third-party.txt
-    SET(VISP_HAVE_COIN TRUE)          # for header vpConfig.h
+    SET(VISP_HAVE_COIN3D_FOUND "yes")   # for ViSP-third-party.txt
+    SET(VISP_HAVE_COIN3D TRUE)          # for header vpConfig.h
     SET(VISP_HAVE_OPENGL TRUE)  # for header vpConfig.h
     SET(VISP_HAVE_OPENGL_FOUND "yes")  # for ViSP-third-party.txt
     IF(WIN32)
@@ -1112,7 +1112,7 @@ IF(USE_COIN)
       # We manage SoWin and Coin
       SET(VISP_HAVE_SOWIN TRUE)         # for header vpConfig.h
       SET(VISP_HAVE_SOWIN_FOUND "yes")  # for ViSP-third-party.txt
-      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
+      SET(VISP_HAVE_COIN3D_AND_GUI TRUE)  # for header vpConfig.h    
       
       #MESSAGE("SOWIN_INCLUDE_DIR = ${SOWIN_INCLUDE_DIRS}")
       #MESSAGE("SOWIN_LIBRARIES = ${SOWIN_LIBRARIES}")
@@ -1132,7 +1132,7 @@ IF(USE_COIN)
 	SET(VISP_HAVE_SOQT   TRUE) # for header vpConfig.h 
 	SET(VISP_HAVE_SOQT_FOUND "yes")      # for ViSP-third-party.txt
 	SET(VISP_HAVE_QT     TRUE) # for header vpConfig.h
-      	SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
+      	SET(VISP_HAVE_COIN3D_AND_GUI TRUE)  # for header vpConfig.h    
 
         #MESSAGE(STATUS "SOQT_INCLUDE_DIRS = ${SOQT_INCLUDE_DIRS}")
 	LIST(APPEND VISP_EXTERN_INCLUDE_DIRS ${SOQT_INCLUDE_DIRS})
@@ -1190,18 +1190,18 @@ IF(USE_COIN)
       # OPenGL and SoXt are found
       # We first manage OpenGL
       SET(VISP_HAVE_SOXT TRUE)  # for header vpConfig.h    
-      SET(VISP_HAVE_COIN_AND_GUI TRUE)  # for header vpConfig.h    
+      SET(VISP_HAVE_COIN3D_AND_GUI TRUE)  # for header vpConfig.h    
       SET(VISP_HAVE_SOXT_FOUND "yes")       # for ViSP-third-party.txt
       LIST(APPEND VISP_EXTERN_LIBRARIES ${SOXT_LIBRARIES})
     ENDIF(USE_SOXT AND SOXT_FOUND)
 
-    IF(VISP_HAVE_COIN_AND_GUI)
-      SET(VISP_HAVE_COIN_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
+    IF(VISP_HAVE_COIN3D_AND_GUI)
+      SET(VISP_HAVE_COIN3D_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
       MESSAGE(STATUS "Coin3D + GUI found")
-    ELSE(VISP_HAVE_COIN_AND_GUI)
+    ELSE(VISP_HAVE_COIN3D_AND_GUI)
       MESSAGE(STATUS "Coin3D + GUI not found")
-      SET(VISP_HAVE_COIN_AND_GUI_FOUND "no")  # for ViSP-third-party.txt
-    ENDIF(VISP_HAVE_COIN_AND_GUI)
+      SET(VISP_HAVE_COIN3D_AND_GUI_FOUND "no")  # for ViSP-third-party.txt
+    ENDIF(VISP_HAVE_COIN3D_AND_GUI)
   ENDIF (COIN3D_FOUND)
 ENDIF(USE_COIN)
 

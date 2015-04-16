@@ -179,10 +179,18 @@
 
 // Defined if Coin3D and one of the GUI (SoXt, SoWin, SoQt + Qt) 
 // libraries are available.
-#cmakedefine VISP_HAVE_COIN_AND_GUI
+#cmakedefine VISP_HAVE_COIN3D_AND_GUI
+// provided for compat with previous releases
+#ifdef VISP_HAVE_COIN3D_AND_GUI
+#  define VISP_HAVE_COIN_AND_GUI
+#endif
 
 // Defined if Coin3D library available.
-#cmakedefine VISP_HAVE_COIN
+#cmakedefine VISP_HAVE_COIN3D
+// provided for compat with previous releases
+#ifdef VISP_HAVE_COIN3D
+#  define VISP_HAVE_COIN
+#endif
 
 // Defined if OpenGL library available.
 #cmakedefine VISP_HAVE_OPENGL

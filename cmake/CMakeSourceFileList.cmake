@@ -274,7 +274,7 @@ SET (SRC_SIMULATOR
 IF(VISP_HAVE_X11 OR VISP_HAVE_GDI OR VISP_HAVE_OPENCV OR VISP_HAVE_D3D9 OR VISP_HAVE_GTK)
   list(APPEND SRC_SIMULATOR simulator/coin-simulator/vpProjectionDisplay.cpp)
 ENDIF()
-IF(VISP_HAVE_COIN_AND_GUI)
+IF(VISP_HAVE_COIN3D_AND_GUI)
   LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpAR.cpp)
   LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpSimulator.cpp)
   LIST(APPEND SRC_SIMULATOR simulator/coin-simulator/vpViewer.cpp)

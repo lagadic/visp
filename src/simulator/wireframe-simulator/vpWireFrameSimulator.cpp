@@ -58,7 +58,7 @@
 #include <visp/vpIoTools.h>
 
 //Inventor includes
-#if defined(VISP_HAVE_COIN)
+#if defined(VISP_HAVE_COIN3D)
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
@@ -105,7 +105,7 @@ getExtension(const char* file)
     return BND_MODEL;
   else if ((wrl>0 && wrl<size) || ( WRL>0 && WRL<size))
   {
-#if defined(VISP_HAVE_COIN)
+#if defined(VISP_HAVE_COIN3D)
     return WRL_MODEL;
 #else
     std::cout << "Coin not installed, cannot read VRML files" << std::endl;
@@ -155,7 +155,7 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
   fclose(fd);
 }
 
-#if defined(VISP_HAVE_COIN)
+#if defined(VISP_HAVE_COIN3D)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct indexFaceSet

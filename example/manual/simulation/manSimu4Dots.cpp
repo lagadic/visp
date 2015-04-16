@@ -55,7 +55,7 @@
 #include <visp/vpDebug.h>
 
 
-#if (defined(VISP_HAVE_COIN_AND_GUI) && (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)))
+#if (defined(VISP_HAVE_COIN3D_AND_GUI) && (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)))
 
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>

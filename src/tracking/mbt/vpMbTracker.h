@@ -70,7 +70,7 @@
 #include <visp/vpMbHiddenFaces.h>
 #include <visp/vpPolygon.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
 //Work around to avoid type redefinition int8_t with Coin
 // #if defined(_WIN32) && defined(VISP_HAVE_OGRE) && (_MSC_VER >= 1600) // Visual Studio 2010
 //   #define HAVE_INT8_T 1
@@ -528,7 +528,7 @@ protected:
       const bool useLod=false, const double minLineLengthThreshold=50);
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
   virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");
   virtual void extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std::string &polygonName="");

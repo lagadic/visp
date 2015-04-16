@@ -56,7 +56,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN_AND_GUI
+#ifdef VISP_HAVE_COIN3D_AND_GUI
 
 #if defined(VISP_HAVE_SOWIN)
 
@@ -164,6 +164,6 @@ private:
 #endif
 };
 
-#endif //VISP_HAVE_COIN_AND_GUI
+#endif //VISP_HAVE_COIN3D_AND_GUI
 
 #endif

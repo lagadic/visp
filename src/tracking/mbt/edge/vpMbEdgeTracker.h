@@ -63,7 +63,7 @@
 #include <vector>
 #include <list>
 
-#if defined(VISP_HAVE_COIN)
+#if defined(VISP_HAVE_COIN3D)
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>

@@ -10,8 +10,8 @@ Simulator:
   Ogre simulator              : ${VISP_HAVE_OGRE_FOUND}
   \- Ogre3D                   : ${VISP_HAVE_OGRE_FOUND}
   \- OIS                      : ${VISP_HAVE_OIS_FOUND}
-  Coin simulator              : ${VISP_HAVE_COIN_AND_GUI_FOUND}
-  \- Coin3D                   : ${VISP_HAVE_COIN_FOUND}
+  Coin simulator              : ${VISP_HAVE_COIN3D_AND_GUI_FOUND}
+  \- Coin3D                   : ${VISP_HAVE_COIN3D_FOUND}
   \- SoWin                    : ${VISP_HAVE_SOWIN_FOUND}
   \- SoXt                     : ${VISP_HAVE_SOXT_FOUND}
   \- SoQt                     : ${VISP_HAVE_SOQT_FOUND}

@@ -72,7 +72,7 @@
 #include <visp/vpMatrixException.h>
 #include <visp/vpIoTools.h>
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
 //Inventor includes
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
@@ -957,7 +957,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idF
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
@@ -988,7 +988,7 @@ vpMbTracker::loadModel(const char *modelFile, const bool verbose)
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
@@ -1048,7 +1048,7 @@ vpMbTracker::loadModel(const std::string& modelFile, const bool verbose)
 int main()
 {
     ...
-#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
   SoDB::finish();
 #endif
 }
@@ -1071,7 +1071,7 @@ geometry DEF cyl_cylinder1 IndexedFaceSet
 void 
 vpMbTracker::loadVRMLModel(const std::string& modelFile)
 {
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
   SoDB::init(); // Call SoDB::finish() before ending the program.
 
   SoInput in;
@@ -1776,7 +1776,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
   }
 }
 
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
 /*!
   Extract a VRML object Group. 
   
@@ -2033,7 +2033,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std
   }
 }
 
-#endif // VISP_HAVE_COIN
+#endif // VISP_HAVE_COIN3D
 
 /*!
   Compute the center of gravity of a set of point. This is used in the cylinder

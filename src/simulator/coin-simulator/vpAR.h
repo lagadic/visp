@@ -59,7 +59,7 @@
 
 #include <visp/vpConfig.h>
 
-#ifdef VISP_HAVE_COIN_AND_GUI
+#ifdef VISP_HAVE_COIN3D_AND_GUI
 
 // visp
 #include <visp/vpDebug.h>
@@ -95,7 +95,7 @@
 #include <visp/vpImage.h>
 #include <visp/vpHomogeneousMatrix.h>
 
-#ifdef VISP_HAVE_COIN_AND_GUI
+#ifdef VISP_HAVE_COIN3D_AND_GUI
 static void *mainloopfunction(void *_simu)
 {
   vpAR *simu = (vpAR *)_simu ;
@@ -117,7 +117,7 @@ static void *mainloopfunction(void *_simu)
 
 int main()
 {
-#ifdef VISP_HAVE_COIN_AND_GUI
+#ifdef VISP_HAVE_COIN3D_AND_GUI
   vpAR simu;
   //Camera parameters.
   vpCameraParameters cam(600,600,160,120);

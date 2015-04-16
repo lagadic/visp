@@ -256,7 +256,7 @@ main(int argc, const char ** argv)
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
         }
         else{
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
@@ -269,7 +269,7 @@ main(int argc, const char ** argv)
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
         }
         else{
-#ifdef VISP_HAVE_COIN
+#ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
           std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
@@ -502,7 +502,7 @@ main(int argc, const char ** argv)
     vpXmlParser::cleanup();
 #endif
 
-#if defined(VISP_HAVE_COIN) && (COIN_MAJOR_VERSION == 3)
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
     // Cleanup memory allocated by Coin library used to load a vrml model in vpMbEdgeTracker::loadModel()
     // We clean only if Coin was used.
     if(! cao3DModel)

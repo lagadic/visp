@@ -56,7 +56,7 @@
 #include <visp/vpDebug.h>
 
 
-#ifdef VISP_HAVE_COIN_AND_GUI
+#ifdef VISP_HAVE_COIN3D_AND_GUI
 
 #include <visp/vpImage.h>
 #include <visp/vpCameraParameters.h>
