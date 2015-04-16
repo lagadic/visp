@@ -54,7 +54,6 @@
 #include <visp/vpDisplay.h>
 #include <visp/vpGEMM.h>
 #include <visp/vpHomography.h>
-#include <visp/vpPlot.h>
 #include <visp/vpMbHiddenFaces.h>
 
 /*!
