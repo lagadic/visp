@@ -238,9 +238,14 @@ int main(int argc, const char ** argv) {
     tracker.getPose(cMo);
 
     //Init keypoints
-    vpKeyPoint keypoints("ORB", "ORB", "FlannBased");
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
-    keypoints.setDetectorParameter("ORB", "nLevels", 1);
+    vpKeyPoint keypoints("ORB", "ORB", "BruteForce-Hamming");
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+    //Bug when using LSH index with FLANN and OpenCV 2.3.1.
+    //see http://code.opencv.org/issues/1741 (Bug #1741)
+    keypoints.setMatcher("FlannBased");
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000)
+      keypoints.setDetectorParameter("ORB", "nLevels", 1);
+#endif
 #endif
 
 
