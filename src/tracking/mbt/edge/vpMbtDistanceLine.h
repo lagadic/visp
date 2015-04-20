@@ -73,6 +73,8 @@ class VISP_EXPORT vpMbtDistanceLine
     unsigned int index;
     vpCameraParameters cam;
     vpMe *me;
+    bool isTrackedLine;
+    bool isTrackedLineWithVisibility;
     double alpha;
     double wmean;
     vpFeatureLine featureline ;
@@ -100,12 +102,16 @@ class VISP_EXPORT vpMbtDistanceLine
     vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
     //! Index of the faces which contain the line
     std::list<int> Lindex_polygon;
+    //! Vector of bool associated with Lindex_polygon to know if Lindex_polygon[i] is tracked
+    std::vector<bool> Lindex_polygon_tracked;
     //! Indicates if the line is visible or not
     bool isvisible;
     
   public:
     vpMbtDistanceLine() ;
     ~vpMbtDistanceLine() ;
+
+    void addPolygon(const int &index);
 
     void buildFrom(vpPoint &_p1, vpPoint &_p2);
     
@@ -155,6 +161,13 @@ class VISP_EXPORT vpMbtDistanceLine
     void initInteractionMatrixError();
     
     bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+
+    /*!
+     Return if the line is used for tracking.
+
+     \return True if it is used, False otherwise.
+    */
+    inline bool isTracked() const {return isTrackedLineWithVisibility;}
     
     /*!
       Check if the line is visible in the image or not.
@@ -201,16 +214,20 @@ class VISP_EXPORT vpMbtDistanceLine
     */
     inline void setName(const char* line_name) {this->name = std::string(line_name);}
 
+    void setTracked(const std::string &name, const bool &track);
+
     /*!
       Set a boolean parameter to indicates if the line is visible in the image or not.
       
       \param _isvisible : Set to true if the line is visible
     */
-    inline void setVisible(bool _isvisible) {isvisible = _isvisible ;}
+    void setVisible(bool _isvisible) {isvisible = _isvisible ; }
     
     void trackMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
     
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+
+    void updateTracked();
 
   private:
     void project(const vpHomogeneousMatrix &cMo);

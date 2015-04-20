@@ -186,7 +186,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   for(std::list<vpMbtDistanceLine*>::iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
 
-    if(l->isVisible()){
+    if(l->isVisible() && l->isTracked()){
       nbrow += l->nbFeature ;
       l->initInteractionMatrixError() ;
     }
@@ -195,7 +195,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
 
-    if(cy->isVisible()){
+    if(cy->isVisible() && cy->isTracked()){
       nbrow += cy->nbFeature ;
       cy->initInteractionMatrixError() ;
     }
@@ -204,7 +204,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     ci = *it;
 
-    if(ci->isVisible()){
+    if(ci->isVisible() && ci ->isTracked()){
       nbrow += ci->nbFeature ;
       ci->initInteractionMatrixError() ;
     }
@@ -386,7 +386,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
       vpMbtDistanceLine* l;
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
         l = *it;
-        if (l->isVisible()){
+        if (l->isVisible() && l->isTracked()){
           l->displayMovingEdges(I);
         }
       }
@@ -394,14 +394,15 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
       vpMbtDistanceCylinder *cy ;
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
         cy = *it;
-        // A cylinder is always visible
-        cy->displayMovingEdges(I);
+        // A cylinder is always visible: #FIXME AY: Still valid?
+        if(cy->isTracked())
+          cy->displayMovingEdges(I);
       }
 
       vpMbtDistanceCircle *ci ;
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
         ci = *it;
-        if (ci->isVisible()){
+        if (ci->isVisible() && ci->isTracked()){
           ci->displayMovingEdges(I);
         }
       }
@@ -440,30 +441,30 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
   unsigned int n =0 ;
   vpMbtDistanceLine* l;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
-    l = *it;
-    {
+    if((*it)->isTracked()){
+      l = *it;
       double wmean = 0 ;
       std::list<vpMeSite>::iterator itListLine;
       if (l->nbFeature > 0) itListLine = l->meline->getMeList().begin();
-      
+
       for (unsigned int i=0 ; i < l->nbFeature ; i++){
         wmean += w[n+i] ;
         vpMeSite p = *itListLine;
         if (w[n+i] < 0.5){
           p.setState(vpMeSite::M_ESTIMATOR);
-          
+
           *itListLine = p;
         }
 
         ++itListLine;
       }
       n+= l->nbFeature ;
-      
+
       if (l->nbFeature!=0)
         wmean /= l->nbFeature ;
       else
         wmean = 1;
-            
+
       l->setMeanWeight(wmean);
 
       if (wmean < 0.8)
@@ -474,102 +475,106 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
   // Same thing with cylinders as with lines
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
-    cy = *it;
-    double wmean = 0 ;
-    std::list<vpMeSite>::iterator itListCyl1;
-    std::list<vpMeSite>::iterator itListCyl2;
-    if (cy->nbFeature > 0){
-      itListCyl1 = cy->meline1->getMeList().begin();
-      itListCyl2 = cy->meline2->getMeList().begin();
-    }
-
-    wmean = 0;
-    for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
-      wmean += w[n+i] ;
-      vpMeSite p = *itListCyl1;
-      if (w[n+i] < 0.5){
-        p.setState(vpMeSite::M_ESTIMATOR);
-          
-        *itListCyl1 = p;
+    if((*it)->isTracked()){
+      cy = *it;
+      double wmean = 0 ;
+      std::list<vpMeSite>::iterator itListCyl1;
+      std::list<vpMeSite>::iterator itListCyl2;
+      if (cy->nbFeature > 0){
+        itListCyl1 = cy->meline1->getMeList().begin();
+        itListCyl2 = cy->meline2->getMeList().begin();
       }
 
-      ++itListCyl1;
-    }
+      wmean = 0;
+      for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
+        wmean += w[n+i] ;
+        vpMeSite p = *itListCyl1;
+        if (w[n+i] < 0.5){
+          p.setState(vpMeSite::M_ESTIMATOR);
 
-    if (cy->nbFeaturel1!=0)
-      wmean /= cy->nbFeaturel1 ;
-    else
-      wmean = 1;
+          *itListCyl1 = p;
+        }
 
-    cy->setMeanWeight1(wmean);
-
-    if (wmean < 0.8){
-      cy->Reinit = true;
-    }
-
-    wmean = 0;
-    for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
-      wmean += w[n+i] ;
-      vpMeSite p = *itListCyl2;
-      if (w[n+i] < 0.5){
-        p.setState(vpMeSite::M_ESTIMATOR);
-        
-        *itListCyl2 = p;
+        ++itListCyl1;
       }
 
-      ++itListCyl2;
+      if (cy->nbFeaturel1!=0)
+        wmean /= cy->nbFeaturel1 ;
+      else
+        wmean = 1;
+
+      cy->setMeanWeight1(wmean);
+
+      if (wmean < 0.8){
+        cy->Reinit = true;
+      }
+
+      wmean = 0;
+      for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
+        wmean += w[n+i] ;
+        vpMeSite p = *itListCyl2;
+        if (w[n+i] < 0.5){
+          p.setState(vpMeSite::M_ESTIMATOR);
+
+          *itListCyl2 = p;
+        }
+
+        ++itListCyl2;
+      }
+
+      if (cy->nbFeaturel2!=0)
+        wmean /= cy->nbFeaturel2 ;
+      else
+        wmean = 1;
+
+      cy->setMeanWeight2(wmean);
+
+      if (wmean < 0.8){
+        cy->Reinit = true;
+      }
+
+      n+= cy->nbFeature ;
     }
-
-    if (cy->nbFeaturel2!=0)
-      wmean /= cy->nbFeaturel2 ;
-    else
-      wmean = 1;
-
-    cy->setMeanWeight2(wmean);
-
-    if (wmean < 0.8){
-      cy->Reinit = true;
-    }
-
-    n+= cy->nbFeature ;
   }
 
   // Same thing with circles as with lines
   vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
-    ci = *it;
-    double wmean = 0 ;
-    std::list<vpMeSite>::iterator itListCir;
+    if((*it)->isTracked()){
+      ci = *it;
+      double wmean = 0 ;
+      std::list<vpMeSite>::iterator itListCir;
 
-    if (ci->nbFeature > 0){
-      itListCir = ci->meEllipse->getMeList().begin();
-    }
-
-    wmean = 0;
-    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-      wmean += w[n+i] ;
-      vpMeSite p = *itListCir;
-      if (w[n+i] < 0.5){
-        p.setState(vpMeSite::M_ESTIMATOR);
-
-        *itListCir = p;
+      if (ci->nbFeature > 0){
+        itListCir = ci->meEllipse->getMeList().begin();
       }
 
-      ++itListCir;
+      wmean = 0;
+      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+        wmean += w[n+i] ;
+        vpMeSite p = *itListCir;
+        if (w[n+i] < 0.5){
+          p.setState(vpMeSite::M_ESTIMATOR);
+
+          *itListCir = p;
+        }
+
+        ++itListCir;
+      }
+
+      if (ci->nbFeature!=0)
+        wmean /= ci->nbFeature ;
+      else
+        wmean = 1;
+
+      ci->setMeanWeight(wmean);
+
+      if (wmean < 0.8){
+        ci->Reinit = true;
+      }
+
+      n+= ci->nbFeature ;
     }
-
-    if (ci->nbFeature!=0)
-      wmean /= ci->nbFeature ;
-    else
-      wmean = 1;
-
-    ci->setMeanWeight(wmean);
-
-    if (wmean < 0.8){
-      ci->Reinit = true;
-    }
-
-    n+= ci->nbFeature ;
   }
 }
 
@@ -657,7 +662,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
     //  for (unsigned int i = 0; i < faces.size(); i += 1){
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=vpMbKltTracker::kltPolygons.begin(); it!=vpMbKltTracker::kltPolygons.end(); ++it){
         kltpoly = *it;
-        if(kltpoly->polygon->isVisible() && kltpoly->hasEnoughPoints()){
+        if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->hasEnoughPoints()){
           vpSubColVector subR(R_klt, shift, 2*kltpoly->getCurrentNumberPoints());
           vpSubMatrix subL(L_klt, shift, 0, 2*kltpoly->getCurrentNumberPoints(), 6);
           kltpoly->computeHomography(ctTc0, H);
@@ -869,82 +874,88 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
     
   unsigned int n = 0;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
-    l = *it;
-    l->computeInteractionMatrixError(cMo);
-    
-    double fac = 1;
-    for(std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
-      int index = *itindex;
-      if (l->hiddenface->isAppearing((unsigned int)index)) {
-        fac = 0.2;
-        break;
+    if((*it)->isTracked()){
+      l = *it;
+      l->computeInteractionMatrixError(cMo);
+
+      double fac = 1;
+      for(std::list<int>::const_iterator itindex = l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
+        int index = *itindex;
+        if (l->hiddenface->isAppearing((unsigned int)index)) {
+          fac = 0.2;
+          break;
+        }
+        if(l->closeToImageBorder(I, 10)){
+          fac = 0.1;
+          break;
+        }
       }
-      if(l->closeToImageBorder(I, 10)){
-        fac = 0.1;
-        break;
+
+      std::list<vpMeSite>::const_iterator itListLine;
+      if (l->meline != NULL)
+        itListLine = l->meline->getMeList().begin();
+
+      for (unsigned int i=0 ; i < l->nbFeature ; i++){
+          factor[n+i] = fac;
+          vpMeSite site = *itListLine;
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+          ++itListLine;
       }
+      n+= l->nbFeature ;
     }
-    
-    std::list<vpMeSite>::const_iterator itListLine;
-    if (l->meline != NULL)
-      itListLine = l->meline->getMeList().begin();
-    
-    for (unsigned int i=0 ; i < l->nbFeature ; i++){
-        factor[n+i] = fac;
-        vpMeSite site = *itListLine;
-        if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
-        ++itListLine;
-    }   
-    n+= l->nbFeature ;
   }
   
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
-    cy = *it;
-    cy->computeInteractionMatrixError(cMo, I);
-    double fac = 1.0;
+    if((*it)->isTracked()){
+      cy = *it;
+      cy->computeInteractionMatrixError(cMo, I);
+      double fac = 1.0;
 
-    std::list<vpMeSite>::const_iterator itCyl1;
-    std::list<vpMeSite>::const_iterator itCyl2;
-    if ((cy->meline1 != NULL || cy->meline2 != NULL)){
-      itCyl1 = cy->meline1->getMeList().begin();
-      itCyl2 = cy->meline2->getMeList().begin();
-    }
-
-    for(unsigned int i=0 ; i < cy->nbFeature ; i++){
-      factor[n+i] = fac;
-      vpMeSite site;
-      if(i<cy->nbFeaturel1) {
-        site= *itCyl1;
-        ++itCyl1;
+      std::list<vpMeSite>::const_iterator itCyl1;
+      std::list<vpMeSite>::const_iterator itCyl2;
+      if ((cy->meline1 != NULL || cy->meline2 != NULL)){
+        itCyl1 = cy->meline1->getMeList().begin();
+        itCyl2 = cy->meline2->getMeList().begin();
       }
-      else{
-        site= *itCyl2;
-        ++itCyl2;
-      }
-      if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
-    }
 
-    n+= cy->nbFeature ;
+      for(unsigned int i=0 ; i < cy->nbFeature ; i++){
+        factor[n+i] = fac;
+        vpMeSite site;
+        if(i<cy->nbFeaturel1) {
+          site= *itCyl1;
+          ++itCyl1;
+        }
+        else{
+          site= *itCyl2;
+          ++itCyl2;
+        }
+        if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+      }
+
+      n+= cy->nbFeature ;
+    }
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
-    ci = *it;
-    ci->computeInteractionMatrixError(cMo);
-    double fac = 1.0;
+    if((*it)->isTracked()){
+      ci = *it;
+      ci->computeInteractionMatrixError(cMo);
+      double fac = 1.0;
 
-    std::list<vpMeSite>::const_iterator itCir;
-    if (ci->meEllipse != NULL) {
-      itCir = ci->meEllipse->getMeList().begin();
+      std::list<vpMeSite>::const_iterator itCir;
+      if (ci->meEllipse != NULL) {
+        itCir = ci->meEllipse->getMeList().begin();
+      }
+
+      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+        factor[n+i] = fac;
+        vpMeSite site = *itCir;
+        if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+        ++itCir;
+      }
+
+      n+= ci->nbFeature ;
     }
-
-    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-      factor[n+i] = fac;
-      vpMeSite site = *itCir;
-      if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
-      ++itCir;
-    }
-
-    n+= ci->nbFeature ;
   }
   
   return nbrow;
@@ -960,39 +971,45 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
 
   unsigned int n = 0 ;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
-    l = *it;
-    l->computeInteractionMatrixError(cMo_) ;
-    for (unsigned int i=0 ; i < l->nbFeature ; i++){
-      for (unsigned int j=0; j < 6 ; j++){
-        L[n+i][j] = l->L[i][j];
-        error[n+i] = l->error[i];
+    if((*it)->isTracked()){
+      l = *it;
+      l->computeInteractionMatrixError(cMo_) ;
+      for (unsigned int i=0 ; i < l->nbFeature ; i++){
+        for (unsigned int j=0; j < 6 ; j++){
+          L[n+i][j] = l->L[i][j];
+          error[n+i] = l->error[i];
+        }
       }
+      n+= l->nbFeature;
     }
-    n+= l->nbFeature;
   }
   
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
-    cy = *it;
-    cy->computeInteractionMatrixError(cMo_, I) ;
-    for(unsigned int i=0 ; i < cy->nbFeature ; i++){
-      for(unsigned int j=0; j < 6 ; j++){
-        L[n+i][j] = cy->L[i][j];
-        error[n+i] = cy->error[i];
+    if((*it)->isTracked()){
+      cy = *it;
+      cy->computeInteractionMatrixError(cMo_, I) ;
+      for(unsigned int i=0 ; i < cy->nbFeature ; i++){
+        for(unsigned int j=0; j < 6 ; j++){
+          L[n+i][j] = cy->L[i][j];
+          error[n+i] = cy->error[i];
+        }
       }
+      n+= cy->nbFeature ;
     }
-    n+= cy->nbFeature ;
   }
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
-    ci = *it;
-    ci->computeInteractionMatrixError(cMo) ;
-    for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-      for(unsigned int j=0; j < 6 ; j++){
-        L[n+i][j] = ci->L[i][j];
-        error[n+i] = ci->error[i];
+    if((*it)->isTracked()){
+      ci = *it;
+      ci->computeInteractionMatrixError(cMo) ;
+      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+        for(unsigned int j=0; j < 6 ; j++){
+          L[n+i][j] = ci->L[i][j];
+          error[n+i] = ci->error[i];
+        }
       }
-    }
 
-    n+= ci->nbFeature ;
+      n+= ci->nbFeature ;
+    }
   }
 }
 
@@ -1081,7 +1098,7 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const dou
 void
 vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
                             const vpColor& col, const unsigned int thickness, const bool displayFullModel)
-{  
+{
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
@@ -1099,15 +1116,15 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
       break ; //displaying model on one scale only
     }
   }
-  
+
   vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
   }
-  
+
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
     faces.displayOgre(cMo_);
@@ -1127,7 +1144,7 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
 void
 vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
                             const vpColor& col , const unsigned int thickness, const bool displayFullModel)
-{   
+{
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
@@ -1145,15 +1162,15 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
       break ; //displaying model on one scale only
     }
   }
-  
+
   vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
   }
-  
+
 #ifdef VISP_HAVE_OGRE
   if(useOgre)
     faces.displayOgre(cMo_);

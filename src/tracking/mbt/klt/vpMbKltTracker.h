@@ -407,7 +407,9 @@ public:
 
             \param th : Threshold for the weight below which a point is rejected.
           */
-  inline  void            setThresholdAcceptation(const double th) {threshold_outlier = th;}
+  inline  void            setThresholdAcceptation(const double th) {threshold_outlier = th;}  
+
+          void            setUseKltTracking(const std::string &name, const bool &useKltTracking);
   
   virtual void            testTracking();
   virtual void            track(const vpImage<unsigned char>& I);

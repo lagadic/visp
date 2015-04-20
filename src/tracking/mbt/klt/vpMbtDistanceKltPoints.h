@@ -98,6 +98,8 @@ private:
   double d0;
   //! Camera parameters
   vpCameraParameters cam;
+  //! Boolean to specify if the klt points have to be tracked or not
+  bool isTrackedKltPoints;
 
 public:
   //! Pointer to the polygon that define a face
@@ -157,6 +159,13 @@ public:
 
           void        init(const vpKltOpencv& _tracker);
 
+  /*!
+   Return if the klt points are used for tracking.
+
+   \return True if it is used, False otherwise.
+  */
+  inline  bool        isTracked() const {return isTrackedKltPoints;}
+
           void        removeOutliers(const vpColVector& weight, const double &threshold_outlier);
 
   /*!
@@ -165,6 +174,13 @@ public:
     \param _cam : the new camera parameters
   */
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
+
+  /*!
+    Set if the klt points have to considered during tracking phase.
+
+    \param track : True if they have to be tracked, False otherwise.
+  */
+  inline void setTracked(const bool& track) {this->isTrackedKltPoints = track;}
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);

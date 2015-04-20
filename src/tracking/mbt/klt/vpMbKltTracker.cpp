@@ -171,7 +171,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       kltpoly->polygon->computeRoiClipped(cam);
       kltpoly->updateMask(mask, val, maskBorder);
     }
@@ -183,7 +183,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
 
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       kltpoly->init(tracker);
     }
   }
@@ -394,7 +394,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       unsigned int nbp = 0;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it) {
         kltpoly = *it;
-        if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints() )
+        if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints() )
           nbp += (*it)->getCurrentNumberPoints();
       }
 
@@ -417,7 +417,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it) {
         kltpoly = *it;
 
-        if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints() ) {
+        if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints() ) {
 
           //Get the normal to the face at the current state cMo
           vpPlane plan(kltpoly->polygon->p[0], kltpoly->polygon->p[1], kltpoly->polygon->p[2]);
@@ -482,7 +482,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
         kltpoly = *it;
-        if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+        if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
           kltpoly->polygon->computeRoiClipped(cam);
           kltpoly->init(tracker);
         }
@@ -549,7 +549,7 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       kltpoly->computeNbDetectedCurrent(tracker);
 //       faces[i]->ransac();
       if(kltpoly->hasEnoughPoints()){
@@ -577,7 +577,7 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       initialNumber += kltpoly->getInitialNumberPoint();
       if(kltpoly->hasEnoughPoints()){
         vpSubColVector sub_w(w, shift, 2*kltpoly->getCurrentNumberPoints());
@@ -654,7 +654,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   //  for (unsigned int i = 0; i < faces.size(); i += 1){
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
       kltpoly = *it;
-      if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2 &&
+      if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 &&
          kltpoly->hasEnoughPoints()){
         vpSubColVector subR(R, shift, 2*kltpoly->getCurrentNumberPoints());
         vpSubMatrix subL(L, shift, 0, 2*kltpoly->getCurrentNumberPoints(), 6);
@@ -950,7 +950,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
         }
       }
     }
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
         kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
@@ -1015,7 +1015,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
         }
       }
     }
-    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible()) {
+    if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
         kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
@@ -1051,7 +1051,7 @@ vpMbKltTracker::testTracking()
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       nbTotalPoints += kltpoly->getCurrentNumberPoints();
     }
   }
@@ -1206,6 +1206,24 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
 
   loadModel(cad_name, verbose);
   initFromPose(I, cMo_);
+}
+
+/*!
+  Set if the polygons that have the given name have to be considered during the tracking phase.
+
+  \param name : name of the polygon(s).
+  \param useKltTracking : True if it has to be considered, False otherwise.
+*/
+void
+vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useKltTracking)
+{
+  vpMbtDistanceKltPoints *kltpoly;
+  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    if(kltpoly->polygon->getName() == name){
+      kltpoly->setTracked(useKltTracking);
+    }
+  }
 }
 
 #endif //VISP_HAVE_OPENCV

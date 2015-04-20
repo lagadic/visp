@@ -440,6 +440,8 @@ public:
   
   void setScales(const std::vector<bool>& _scales);
 
+  void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
+
   void track(const vpImage<unsigned char> &I);
 
 protected:

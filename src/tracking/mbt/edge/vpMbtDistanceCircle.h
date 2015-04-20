@@ -72,6 +72,7 @@ class VISP_EXPORT vpMbtDistanceCircle
     vpFeatureEllipse featureEllipse ;
     //! Polygon describing the circle bbox
 //    vpMbtPolygon poly;
+    bool isTrackedCircle;
     
   public: 
     //! The moving edge containers
@@ -156,6 +157,12 @@ class VISP_EXPORT vpMbtDistanceCircle
     void initInteractionMatrixError();
     
     bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+    /*!
+     Return if the circle is used for tracking.
+
+     \return True if it is used, False otherwise.
+    */
+    inline bool isTracked() const {return isTrackedCircle;}
 
     /*!
       Check if the circle is visible in the image or not.
@@ -171,6 +178,13 @@ class VISP_EXPORT vpMbtDistanceCircle
      \param camera : The camera parameters.
     */
     inline void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
+
+    /*!
+      Set if the circle has to considered during tracking phase.
+
+      \param track : True if the circle has to be tracked, False otherwise.
+    */
+    inline void setTracked(const bool& track) {this->isTrackedCircle = track;}
     
     /*!
       Set the index of the circle.

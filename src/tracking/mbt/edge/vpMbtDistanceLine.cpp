@@ -60,10 +60,10 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), alpha(0), wmean(1),
-    featureline(), poly(), meline(NULL), line(NULL), p1(NULL), p2(NULL), L(),
+  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), alpha(0),
+    wmean(1), featureline(), poly(), meline(NULL), line(NULL), p1(NULL), p2(NULL), L(),
     error(), nbFeature(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
-    isvisible(false)
+    Lindex_polygon_tracked(), isvisible(false)
 {
 }
 
@@ -216,6 +216,74 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   }
 }
 
+/*!
+  Add a polygon to the list of polygons the line belongs to.
+
+  \param index : Index of the polygon
+*/
+void
+vpMbtDistanceLine::addPolygon(const int &index)
+{
+  Lindex_polygon.push_back(index);
+  Lindex_polygon_tracked.push_back(true);
+}
+
+/*!
+  Set if the line has to considered during tracking phase.
+  Line won't be considered if all of its polygons are desactivated.
+
+  \param name : name of the polygons that have to be modified.
+  \param track : True if the polygon has to be tracked, False otherwise.
+*/
+void
+vpMbtDistanceLine::setTracked(const std::string &name, const bool &track)
+{
+  unsigned int ind = 0;
+  for(std::list<int>::const_iterator itpoly=Lindex_polygon.begin(); itpoly!=Lindex_polygon.end(); ++itpoly){
+    if((*hiddenface)[(unsigned)(*itpoly)]->getName() == name){
+      Lindex_polygon_tracked[ind] = track;
+    }
+    ind++;
+  }
+
+  isTrackedLine = false;
+  for(unsigned int i = 0 ; i < Lindex_polygon_tracked.size() ; i++)
+    if(Lindex_polygon_tracked[i])
+    {
+      isTrackedLine = true;
+      break;
+    }
+
+  if(!isTrackedLine){
+    isTrackedLineWithVisibility = false;
+    return;
+  }
+
+  updateTracked();
+}
+
+/*!
+  Update the boolean specifying if the line has to be tracked.
+  It takes into account the desactivated polygons and the visibility of the others.
+*/
+void
+vpMbtDistanceLine::updateTracked()
+{
+  if(!isTrackedLine){
+    isTrackedLineWithVisibility = false;
+    return;
+  }
+
+  unsigned int ind = 0;
+  isTrackedLineWithVisibility = false;
+  for(std::list<int>::const_iterator itpoly=Lindex_polygon.begin(); itpoly!=Lindex_polygon.end(); ++itpoly){
+    if((*hiddenface)[(unsigned)(*itpoly)]->isVisible() && Lindex_polygon_tracked[ind]){
+      isTrackedLineWithVisibility = true;
+      break;
+    }
+    ind++;
+  }
+}
 
 /*! 
   Set the moving edge parameters.

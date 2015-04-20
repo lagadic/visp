@@ -65,7 +65,7 @@
 */
 vpMbtDistanceCylinder::vpMbtDistanceCylinder()
   : name(), index(0), cam(), me(NULL), alpha(0), wmean1(1), wmean2(1),
-    featureline1(), featureline2(), meline1(NULL), meline2(NULL),
+    featureline1(), featureline2(), isTrackedCylinder(true), meline1(NULL), meline2(NULL),
     cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(),
     error(), nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false),
     c(NULL), hiddenface(NULL), index_polygon(-1), isvisible(false)

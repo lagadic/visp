@@ -77,6 +77,7 @@ class VISP_EXPORT vpMbtDistanceCylinder
     double wmean2;
     vpFeatureLine featureline1 ;
     vpFeatureLine featureline2 ;
+    bool isTrackedCylinder;
     
   public: 
     //! The moving edge containers (first line of the cylinder)
@@ -171,6 +172,13 @@ class VISP_EXPORT vpMbtDistanceCylinder
     void initInteractionMatrixError();
     
     bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+
+    /*!
+     Return if the cylinder is used for tracking.
+
+     \return True if it is used, False otherwise.
+    */
+    inline bool isTracked() const {return isTrackedCylinder;}
     
     /*!
       Check if the cylinder is visible in the image or not.
@@ -186,6 +194,13 @@ class VISP_EXPORT vpMbtDistanceCylinder
      \param camera : The camera parameters.
     */
     inline void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
+
+    /*!
+      Set if the cylinder has to considered during tracking phase.
+
+      \param track : True if the cylinder has to be tracked, False otherwise.
+    */
+    inline void setTracked(const bool& track) {this->isTrackedCylinder = track;}
     
     /*!
       Set the index of the cylinder.
