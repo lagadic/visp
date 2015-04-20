@@ -54,7 +54,7 @@
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include "vpMeSite.h"
+#include <visp/vpMeSite.h>
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
