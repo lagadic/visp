@@ -2402,7 +2402,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       m_filteredMatches.clear();
       for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         m_filteredMatches.push_back(cv::DMatch((int) m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
-        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[it->queryIdx]);
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t) it->queryIdx]);
       }
     } else {
       m_queryFilteredKeyPoints = m_queryKeyPoints;
@@ -2415,7 +2415,7 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
       // matches to the same train object
       for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         //m_matches is normally ordered following the queryDescriptor index
-        m_objectFilteredPoints.push_back(m_trainPoints[it->trainIdx]);
+        m_objectFilteredPoints.push_back(m_trainPoints[(size_t) it->trainIdx]);
       }
     }
   }
@@ -2499,7 +2499,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       m_filteredMatches.clear();
       for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         m_filteredMatches.push_back(cv::DMatch((int) m_queryFilteredKeyPoints.size(), it->trainIdx, it->distance));
-        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[it->queryIdx]);
+        m_queryFilteredKeyPoints.push_back(m_queryKeyPoints[(size_t) it->queryIdx]);
       }
     } else {
       m_queryFilteredKeyPoints = m_queryKeyPoints;
@@ -2512,7 +2512,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
       // matches to the same train object
       for(std::vector<cv::DMatch>::const_iterator it = m_matches.begin(); it != m_matches.end(); ++it) {
         //m_matches is normally ordered following the queryDescriptor index
-        m_objectFilteredPoints.push_back(m_trainPoints[it->trainIdx]);
+        m_objectFilteredPoints.push_back(m_trainPoints[(size_t) it->trainIdx]);
       }
     }
   }
@@ -2550,7 +2550,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
 
     bool res = computePose(objectVpPoints, cMo, inliers, inlierIndex, m_poseTime, func);
 
-    std::map<int, bool> mapOfInlierIndex;
+    std::map<unsigned int, bool> mapOfInlierIndex;
     m_matchRansacKeyPointsToPoints.clear();
 
     for (std::vector<unsigned int>::const_iterator it = inlierIndex.begin(); it != inlierIndex.end(); ++it) {
@@ -2560,7 +2560,7 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
     }
 
     for(size_t i = 0; i < m_queryFilteredKeyPoints.size(); i++) {
-      if(mapOfInlierIndex.find((int) i) == mapOfInlierIndex.end()) {
+      if(mapOfInlierIndex.find((unsigned int) i) == mapOfInlierIndex.end()) {
         m_ransacOutliers.push_back(vpImagePoint(m_queryFilteredKeyPoints[i].pt.y, m_queryFilteredKeyPoints[i].pt.x));
       }
     }
