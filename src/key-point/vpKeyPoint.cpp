@@ -2886,14 +2886,14 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
   }
 
   #pragma omp parallel for
-  for(size_t cpt = 0; cpt < listOfAffineParams.size(); cpt++) {
+  for(int cpt = 0; cpt < static_cast<int>(listOfAffineParams.size()); cpt++) {
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
 
     cv::Mat timg, mask, Ai;
     img.copyTo(timg);
 
-    affineSkew(listOfAffineParams[cpt].first, listOfAffineParams[cpt].second, timg, mask, Ai);
+    affineSkew(listOfAffineParams[(size_t) cpt].first, listOfAffineParams[(size_t) cpt].second, timg, mask, Ai);
 
 
     if(listOfAffineI != NULL) {
@@ -2901,7 +2901,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
       bitwise_and(mask, timg, img_disp);
       vpImage<unsigned char> tI;
       vpImageConvert::convert(img_disp, tI);
-      (*listOfAffineI)[cpt] = tI;
+      (*listOfAffineI)[(size_t) cpt] = tI;
     }
 
 #if 0
@@ -2929,8 +2929,8 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
       keypoints[i].pt.y = kpt_t.at<float>(1, 0);
     }
 
-    listOfKeypoints[cpt] = keypoints;
-    listOfDescriptors[cpt] = descriptors;
+    listOfKeypoints[(size_t) cpt] = keypoints;
+    listOfDescriptors[(size_t) cpt] = descriptors;
   }
 #endif
 }
