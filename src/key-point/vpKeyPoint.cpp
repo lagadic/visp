@@ -2810,6 +2810,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCa
  */
 void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector<std::vector<cv::KeyPoint> >& listOfKeypoints,
     std::vector<cv::Mat>& listOfDescriptors, std::vector<vpImage<unsigned char> > *listOfAffineI) {
+#if 0
   cv::Mat img;
   vpImageConvert::convert(I, img);
   listOfKeypoints.clear();
@@ -2835,12 +2836,15 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
         listOfAffineI->push_back(tI);
       }
 #if 0
+      cv::Mat img_disp;
+      cv::bitwise_and(mask, timg, img_disp);
       cv::namedWindow( "Skew", cv::WINDOW_AUTOSIZE ); // Create a window for display.
       cv::imshow( "Skew", img_disp );
       cv::waitKey(0);
 #endif
 
-      for(std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin(); it != m_detectors.end(); ++it) {
+      for(std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin();
+          it != m_detectors.end(); ++it) {
         std::vector<cv::KeyPoint> kp;
         it->second->detect(timg, kp, mask);
         keypoints.insert(keypoints.end(), kp.begin(), kp.end());
@@ -2860,6 +2864,75 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
       listOfDescriptors.push_back(descriptors);
     }
   }
+
+#else
+  cv::Mat img;
+  vpImageConvert::convert(I, img);
+
+  //Create a vector for storing the affine skew parameters
+  std::vector<std::pair<double, int> > listOfAffineParams;
+  for (int tl = 1; tl < 6; tl++) {
+    double t = pow(2, 0.5 * tl);
+    for (int phi = 0; phi < 180; phi += (int)(72.0 / t)) {
+      listOfAffineParams.push_back(std::pair<double, int>(t, phi));
+    }
+  }
+
+  listOfKeypoints.resize(listOfAffineParams.size());
+  listOfDescriptors.resize(listOfAffineParams.size());
+
+  if(listOfAffineI != NULL) {
+    listOfAffineI->resize(listOfAffineParams.size());
+  }
+
+  #pragma omp parallel for
+  for(size_t cpt = 0; cpt < listOfAffineParams.size(); cpt++) {
+    std::vector<cv::KeyPoint> keypoints;
+    cv::Mat descriptors;
+
+    cv::Mat timg, mask, Ai;
+    img.copyTo(timg);
+
+    affineSkew(listOfAffineParams[cpt].first, listOfAffineParams[cpt].second, timg, mask, Ai);
+
+
+    if(listOfAffineI != NULL) {
+      cv::Mat img_disp;
+      bitwise_and(mask, timg, img_disp);
+      vpImage<unsigned char> tI;
+      vpImageConvert::convert(img_disp, tI);
+      (*listOfAffineI)[cpt] = tI;
+    }
+
+#if 0
+    cv::Mat img_disp;
+    cv::bitwise_and(mask, timg, img_disp);
+    cv::namedWindow( "Skew", cv::WINDOW_AUTOSIZE ); // Create a window for display.
+    cv::imshow( "Skew", img_disp );
+    cv::waitKey(0);
+#endif
+
+    for(std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin();
+        it != m_detectors.end(); ++it) {
+      std::vector<cv::KeyPoint> kp;
+      it->second->detect(timg, kp, mask);
+      keypoints.insert(keypoints.end(), kp.begin(), kp.end());
+    }
+
+    double elapsedTime;
+    extract(timg, keypoints, descriptors, elapsedTime);
+
+    for(size_t i = 0; i < keypoints.size(); i++) {
+      cv::Point3f kpt(keypoints[i].pt.x, keypoints[i].pt.y, 1.f);
+      cv::Mat kpt_t = Ai * cv::Mat(kpt);
+      keypoints[i].pt.x = kpt_t.at<float>(0, 0);
+      keypoints[i].pt.y = kpt_t.at<float>(1, 0);
+    }
+
+    listOfKeypoints[cpt] = keypoints;
+    listOfDescriptors[cpt] = descriptors;
+  }
+#endif
 }
 
 /*!
