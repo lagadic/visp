@@ -53,11 +53,11 @@
   Rzyx(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(x,psi)
 */
 
-#include <visp/vpRotationMatrix.h>
-#include <visp/vpRotationVector.h>
-
 class vpRotationMatrix;
 class vpThetaUVector;
+
+#include <visp/vpRotationMatrix.h>
+#include <visp/vpRotationVector.h>
 
 /*!
   \class vpRzyxVector

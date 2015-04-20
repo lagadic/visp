@@ -44,8 +44,6 @@
 #include <visp/vpDebug.h>
 #include <visp/vpFeatureDisplay.h>
 
-#include <visp/vpHomography.h>
-
 /*!
   \file vpPoint.cpp
   \brief   class that defines what is a point
@@ -165,6 +163,28 @@ vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP)
 }
 
 /*!
+  From the 3D coordinates of the point in the object frame set using for example
+  setWorldCoordinates() or set_oX(), set_oY(), set_oZ(), compute the 3D coordinates
+  of the point in the camera frame.
+
+  \param cMo : Transformation from camera to object frame.
+
+*/
+void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo) {
+  double X = cMo[0][0]*oP[0]+ cMo[0][1]*oP[1]+ cMo[0][2]*oP[2]+ cMo[0][3]*oP[3] ;
+  double Y = cMo[1][0]*oP[0]+ cMo[1][1]*oP[1]+ cMo[1][2]*oP[2]+ cMo[1][3]*oP[3] ;
+  double Z = cMo[2][0]*oP[0]+ cMo[2][1]*oP[1]+ cMo[2][2]*oP[2]+ cMo[2][3]*oP[3] ;
+  double W = cMo[3][0]*oP[0]+ cMo[3][1]*oP[1]+ cMo[3][2]*oP[2]+ cMo[3][3]*oP[3] ;
+
+  double d = 1/W ;
+  cP[0] =X*d ;
+  cP[1] =Y*d ;
+  cP[2] =Z*d ;
+  cP[3] =1 ;
+}
+
+#if 0
+/*!
   From the coordinates of the point in camera frame b and the transformation between
   camera frame a and camera frame b computes the coordinates of the point in camera frame a.
 
@@ -237,7 +257,7 @@ operator*(const vpHomography &aHb, const vpPoint& bP)
 
   return aP ;
 }
-
+#endif
 //! For memory issue (used by the vpServo class only).
 vpPoint *vpPoint::duplicate() const
 {
@@ -313,8 +333,69 @@ vpPoint::display(const vpImage<unsigned char> &I,
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness) ;
 }
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+
+// Get coordinates
+//! Get the point X coordinate in the camera frame.
+double vpPoint::get_X()  const { return cP[0] ; }
+//! Get the point Y coordinate in the camera frame.
+double vpPoint::get_Y()  const { return cP[1] ; }
+//! Get the point Z coordinate in the camera frame.
+double vpPoint::get_Z() const  { return cP[2] ; }
+//! Get the point W coordinate in the camera frame.
+double vpPoint::get_W()  const { return cP[3] ; }
+
+//! Get the point X coordinate in the object frame.
+double vpPoint::get_oX() const { return oP[0] ; }
+//! Get the point Y coordinate in the object frame.
+double vpPoint::get_oY() const { return oP[1] ; }
+//! Get the point Z coordinate in the object frame.
+double vpPoint::get_oZ() const { return oP[2] ; }
+//! Get the point W coordinate in the object frame.
+double vpPoint::get_oW() const { return oP[3] ; }
+
+//! Get the point x coordinate in the image plane.
+double vpPoint::get_x()  const { return p[0] ; }
+//! Get the point y coordinate in the image plane.
+double vpPoint::get_y()  const { return p[1] ; }
+//! Get the point w coordinate in the image plane.
+double vpPoint::get_w()  const { return p[2] ; }
+
+/*!
+  Perspective projection of the point.
+
+  Projection onto the //image plane of the point. Update the object
+  attribute p (2D //homogeneous coordinates) according to object
+  attribute cP (current //3D coordinates in the camera frame).
+
+*/
+void vpPoint::projection() {
+  double d = 1/cP[2] ;
+  p[0] = cP[0]*d ;
+  p[1] = cP[1]*d ;
+  p[2] = 1 ;
+}
+
+//! Set the point X coordinate in the camera frame.
+void vpPoint::set_X(const double X) { cP[0] = X ; }
+//! Set the point Y coordinate in the camera frame.
+void vpPoint::set_Y(const double Y) { cP[1] = Y ; }
+//! Set the point Z coordinate in the camera frame.
+void vpPoint::set_Z(const double Z) { cP[2] = Z ; }
+//! Set the point W coordinate in the camera frame.
+void vpPoint::set_W(const double W) { cP[3] = W ; }
+
+//! Set the point X coordinate in the object frame.
+void vpPoint::set_oX(const double X) { oP[0] = X ; }
+//! Set the point Y coordinate in the object frame.
+void vpPoint::set_oY(const double Y) { oP[1] = Y ; }
+//! Set the point Z coordinate in the object frame.
+void vpPoint::set_oZ(const double Z) { oP[2] = Z ; }
+//! Set the point W coordinate in the object frame.
+void vpPoint::set_oW(const double W) { oP[3] = W ; }
+
+//! Set the point x coordinate in the image plane.
+void vpPoint::set_x(const double x) {  p[0] = x ; }
+//! Set the point y coordinate in the image plane.
+void vpPoint::set_y(const double y) {  p[1] = y ; }
+//! Set the point w coordinate in the image plane.
+void vpPoint::set_w(const double w) {  p[2] = w ; }

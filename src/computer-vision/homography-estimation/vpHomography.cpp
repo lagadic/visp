@@ -334,6 +334,34 @@ vpHomography vpHomography::operator*(const double &v) const
 }
 
 /*!
+  From the coordinates of the point in image plane b and the homography between image
+  a and b computes the coordinates of the point in image plane a.
+
+  \param bP : 2D coordinates of the point in the image plane b.
+
+  \return A point with 2D coordinates in the image plane a.
+*/
+vpPoint vpHomography::operator*(const vpPoint& bP) const
+{
+  vpPoint aP ;
+  vpColVector v(3),v1(3) ;
+
+  v[0] = bP.get_x() ;
+  v[1] = bP.get_y() ;
+  v[2] = bP.get_w() ;
+
+  v1[0] = (*this)[0][0]*v[0] + (*this)[0][1]*v[1]+ (*this)[0][2]*v[2] ;
+  v1[1] = (*this)[1][0]*v[0] + (*this)[1][1]*v[1]+ (*this)[1][2]*v[2] ;
+  v1[2] = (*this)[2][0]*v[0] + (*this)[2][1]*v[1]+ (*this)[2][2]*v[2] ;
+
+  //  v1 = M*v ;
+  aP.set_x(v1[0]) ;
+  aP.set_y(v1[1]) ;
+  aP.set_w(v1[2]) ;
+
+  return aP ;
+}
+/*!
  
   Divide an homography by a scalar.
 

@@ -58,6 +58,7 @@ tools for homography computation.
 #include <visp/vpImagePoint.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPlane.h>
+#include <visp/vpPoint.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
@@ -273,10 +274,11 @@ class VISP_EXPORT vpHomography
 
     // Multiplication by an homography
     vpHomography operator*(const vpHomography &H) const;
-
     // Multiplication by a scalar
     vpHomography operator*(const double &v) const;
     vpColVector operator*(const vpColVector &b) const;
+    // Multiplication by a point
+    vpPoint operator*(const vpPoint &H) const;
 
     // Division by a scalar
     vpHomography operator/(const double &v) const;

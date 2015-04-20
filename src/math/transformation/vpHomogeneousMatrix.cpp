@@ -50,6 +50,7 @@
 #include <visp/vpMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpQuaternionVector.h>
+#include <visp/vpPoint.h>
 
 // Exception
 #include <visp/vpException.h>
@@ -462,6 +463,46 @@ vpHomogeneousMatrix::operator*(const vpColVector &v) const
   return p;
 }
 
+/*!
+  From the coordinates of the point in camera frame b and the transformation between
+  camera frame a and camera frame b computes the coordinates of the point in camera frame a.
+
+  \param bP : 3D coordinates of the point in camera frame bP.
+
+  \return A point with 3D coordinates in the camera frame a. The coordinates in the world or object
+  frame are set to the same coordinates than the one in the camera frame.
+*/
+vpPoint vpHomogeneousMatrix::operator*(const vpPoint& bP) const
+{
+  vpPoint aP ;
+
+  vpColVector v(4),v1(4) ;
+
+  v[0] = bP.get_X() ;
+  v[1] = bP.get_Y() ;
+  v[2] = bP.get_Z() ;
+  v[3] = bP.get_W() ;
+
+  v1[0] = (*this)[0][0]*v[0] + (*this)[0][1]*v[1]+ (*this)[0][2]*v[2]+ (*this)[0][3]*v[3] ;
+  v1[1] = (*this)[1][0]*v[0] + (*this)[1][1]*v[1]+ (*this)[1][2]*v[2]+ (*this)[1][3]*v[3] ;
+  v1[2] = (*this)[2][0]*v[0] + (*this)[2][1]*v[1]+ (*this)[2][2]*v[2]+ (*this)[2][3]*v[3] ;
+  v1[3] = (*this)[3][0]*v[0] + (*this)[3][1]*v[1]+ (*this)[3][2]*v[2]+ (*this)[3][3]*v[3] ;
+
+  v1 /= v1[3] ;
+
+  //  v1 = M*v ;
+  aP.set_X(v1[0]) ;
+  aP.set_Y(v1[1]) ;
+  aP.set_Z(v1[2]) ;
+  aP.set_W(v1[3]) ;
+
+  aP.set_oX(v1[0]) ;
+  aP.set_oY(v1[1]) ;
+  aP.set_oZ(v1[2]) ;
+  aP.set_oW(v1[3]) ;
+
+  return aP ;
+}
 
 /*********************************************************************/
 

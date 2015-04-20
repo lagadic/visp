@@ -52,6 +52,7 @@
     where tu is a rotation vector (theta u representation) and t is a
     translation vector.
 */
+
 class vpRotationMatrix;
 class vpHomogeneousMatrix;
 class vpTranslationVector;
@@ -60,11 +61,6 @@ class vpThetaUVector;
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpHomogeneousMatrix.h>
-
-class vpRotationMatrix;
-class vpHomogeneousMatrix;
-class vpTranslationVector;
-class vpThetaUVector;
 
 
 /*!

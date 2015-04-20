@@ -55,22 +55,17 @@ class vpMatrix;
 class vpRotationMatrix;
 class vpPoseVector;
 class vpThetaUVector;
+class vpQuaternionVector;
+class vpPoint;
 
 #include <vector>
+#include <fstream>
 
 #include <visp/vpMatrix.h>
 #include <visp/vpRotationMatrix.h>
 #include <visp/vpThetaUVector.h>
 #include <visp/vpTranslationVector.h>
 #include <visp/vpPoseVector.h>
-
-#include <fstream>
-
-class vpMatrix;
-class vpRotationMatrix;
-class vpPoseVector;
-class vpThetaUVector;
-class vpQuaternionVector;
 
 /*!
   \class vpHomogeneousMatrix
@@ -175,6 +170,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
 
   //! Multiply by a vector ! size 4 !!!
   vpColVector operator*(const vpColVector &v) const;
+  // Multiply by a point
+  vpPoint operator*(const vpPoint &bP) const;
 
   // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;
