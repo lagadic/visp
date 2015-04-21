@@ -46,8 +46,6 @@
 
 #include <visp/vpPose.h>
 #include <visp/vpPoint.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeaturePoint.h>
 #include <visp/vpExponentialMap.h>
 #include <visp/vpRobust.h>
 
