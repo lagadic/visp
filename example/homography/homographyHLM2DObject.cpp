@@ -244,8 +244,7 @@ main(int argc, const char ** argv)
     std::list<vpTranslationVector> laTb ;
     std::list<vpColVector> lnb ;
 
-    vpHomography::computeDisplacement(aHb,bP[0].get_x(),bP[0].get_y(),
-        laRb, laTb, lnb) ;
+    vpHomography::computeDisplacement(aHb.convert(),bP[0].get_x(),bP[0].get_y(), laRb, laTb, lnb) ;
 
     std::list<vpRotationMatrix>::const_iterator it_laRb = laRb.begin();
     std::list<vpTranslationVector>::const_iterator it_laTb = laTb.begin();

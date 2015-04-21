@@ -56,7 +56,9 @@
 
 #include <visp/vpMatrix.h>
 #include <visp/vpMath.h>
-#include <visp/vpHomography.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpHomography.h>
+#endif
 #include <visp/vpTranslationVector.h>
 
 // Exception
@@ -149,11 +151,16 @@ vpMatrix::vpMatrix(unsigned int r, unsigned int c, double val)
   *this = val;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+/*!
+  \deprecated Use rather vpHomography::convert()
+ */
 vpMatrix::vpMatrix(const vpHomography& H)
   : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
 {
-  (*this) = H;
+  (*this) = H.convert();
 }
+#endif
 
 /*!
 \brief submatrix constructor
@@ -401,11 +408,13 @@ vpMatrix::operator=(const vpMatrix &B)
   return *this;
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
-\brief Copy operator.
-Allow operation such as A = H
+  \deprecated Use rather vpHomography::convert()
+  \brief Copy operator.
+  Allow operation such as A = H
 
-\param H : homography matrix to be copied.
+  \param H : homography matrix to be copied.
 */
 vpMatrix &
 vpMatrix::operator=(const vpHomography& H)
@@ -418,6 +427,7 @@ vpMatrix::operator=(const vpHomography& H)
 
   return *this;
 }
+#endif
 
 //! set all the element of the matrix A to x
 vpMatrix &
@@ -528,7 +538,10 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 
   return C;
 }
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated Use rather vpHomography::convert() to convert the homography
+  in a vpMatrix and then multiply them by the vpMatrix.
   Allows to multiply a matrix by an homography.
   Operation M = K * H (H is unchanged).
 
@@ -549,6 +562,7 @@ vpMatrix vpMatrix::operator*(const vpHomography &H) const
 
   return M;
 }
+#endif
 
 /*!
 Operation C = A*wA + B*wB 

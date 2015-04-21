@@ -249,7 +249,7 @@ vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix& _cTc0, vpHo
 
   _cTc0.extract(cRc0);
   _cTc0.extract(ctransc0);
-  vpMatrix cHc0(_cHc0);
+  vpMatrix cHc0 = _cHc0.convert();
 
 //   vpGEMM(cRc0, 1.0, invd0, cRc0, -1.0, _cHc0, VP_GEMM_A_T);
   vpGEMM(ctransc0, N, -invd0, cRc0, 1.0, cHc0, VP_GEMM_B_T);

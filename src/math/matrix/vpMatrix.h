@@ -59,14 +59,11 @@
 class vpRowVector;
 class vpColVector;
 class vpTranslationVector;
-
-
-class vpColVector;
-class vpTranslationVector;
-class vpRowVector;
-class vpHomography;
-
 class vpHomogeneousMatrix;
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+class vpHomography;
+#endif
 
 /*!
   \file vpMatrix.h
@@ -135,7 +132,9 @@ protected:
   vpMatrix(const vpMatrix &m, unsigned int r, unsigned int c, 
 	   unsigned int nrows, unsigned int ncols) ;
 
-  vpMatrix(const vpHomography& H);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpMatrix(const vpHomography& H);
+#endif
 
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix();
@@ -204,8 +203,10 @@ protected:
 
   //! Copy operator.   Allow operation such as A = B
   vpMatrix &operator=(const vpMatrix &B);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   //! Copy operator.   Allow operation such as A = H
-  vpMatrix &operator=(const vpHomography &H);
+  vp_deprecated vpMatrix &operator=(const vpHomography &H);
+#endif
   //! Set all the element of the matrix A to x
   vpMatrix &operator=(const double x);
   void diag(const vpColVector &A);
@@ -347,7 +348,9 @@ public:
   vpMatrix &operator-=(const vpMatrix &B);
 
   vpMatrix operator*(const vpMatrix &B) const;
-  vpMatrix operator*(const vpHomography &H) const;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpMatrix operator*(const vpHomography &H) const;
+#endif
   vpMatrix operator+(const vpMatrix &B) const;
   vpMatrix operator-(const vpMatrix &B) const;
   vpMatrix operator-() const;

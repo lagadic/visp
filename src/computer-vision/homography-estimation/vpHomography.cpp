@@ -221,7 +221,7 @@ vpHomography::insert(const vpPlane &p)
 vpHomography
 vpHomography::inverse() const
 {
-  vpMatrix M = (*this);
+  vpMatrix M = (*this).convert();
   vpMatrix Minv;
   M.pseudoInverse(Minv, 1e-16);
 
@@ -566,7 +566,7 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
 {
   double xa = iPa.get_u();
   double ya = iPa.get_v();
-  vpMatrix H = cam.get_K() * bHa * cam.get_K_inverse();
+  vpMatrix H = cam.get_K() * bHa.convert() * cam.get_K_inverse();
   double z = xa * H[2][0] + ya * H[2][1] + H[2][2];
   double xb = (xa * H[0][0] + ya * H[0][1] + H[0][2]) / z;
   double yb = (xa * H[1][0] + ya * H[1][1] + H[1][2]) / z;
@@ -728,7 +728,7 @@ vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &y
         aHbn.data[i]= X[i];
       aHbn[2][2] = 1;
       {
-        vpMatrix aHbnorm = aHbn;
+        vpMatrix aHbnorm = aHbn.convert();
         aHbnorm /= aHbnorm[2][2] ;
       }
 
@@ -819,4 +819,18 @@ vpHomography::projection(const vpImagePoint &ipb)
   }
 
   return ipa;
+}
+
+/*!
+  Converts an homography to a matrix.
+  \return The 3x3 matrix corresponding to the homography.
+ */
+vpMatrix vpHomography::convert() const
+{
+  vpMatrix M(3, 3);
+  for(unsigned int i=0; i<3; i++)
+    for(unsigned int j=0; j<3; j++)
+      M[i][j] = (*this)[i][j];
+
+  return M;
 }

@@ -60,6 +60,7 @@ tools for homography computation.
 #include <visp/vpPlane.h>
 #include <visp/vpPoint.h>
 #include <visp/vpImagePoint.h>
+#include <visp/vpMatrix.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
@@ -245,6 +246,7 @@ class VISP_EXPORT vpHomography
     //! Construction from homogeneous matrix and a plane
     void buildFrom(const vpHomogeneousMatrix &aMb,
                    const vpPlane &bP) ;
+    vpMatrix convert() const;
 
     void computeDisplacement(vpRotationMatrix &aRb,
                              vpTranslationVector &atb,
@@ -440,8 +442,6 @@ class VISP_EXPORT vpHomography
                                      double areaThreshold = 0.0);
 
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
-} ;
-
-
+};
 
 #endif
