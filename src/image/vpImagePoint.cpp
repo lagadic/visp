@@ -44,7 +44,9 @@
 #include <visp/vpConfig.h>
 #include <visp/vpImagePoint.h>
 #include <visp/vpRect.h>
-#include <visp/vpHomography.h>
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+#  include <visp/vpHomography.h>
+#endif
 
 /*!
 
@@ -63,7 +65,10 @@ bool vpImagePoint::inRectangle( const vpRect &rect ) const
 	   this->j >= rect.getLeft());
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
+  \deprecated You should rather use vpHomograpy::projection().
+
   Project the current image point (in frame b) into the frame a using the
   homography aHb.
 
@@ -86,7 +91,7 @@ vpImagePoint::projection(const vpHomography& aHb)
 
   return ap;
 }
-
+#endif
 /*!
 
   Operator +=.

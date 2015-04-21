@@ -59,6 +59,7 @@ tools for homography computation.
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPlane.h>
 #include <visp/vpPoint.h>
+#include <visp/vpImagePoint.h>
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp/vpList.h>
 #endif
@@ -285,6 +286,8 @@ class VISP_EXPORT vpHomography
     vpHomography & operator/=(double v);
     vpHomography & operator=(const vpHomography &H);
     vpHomography & operator=(const vpMatrix &H);
+
+    vpImagePoint projection(const vpImagePoint &p);
 
     //! Save an homography in a file
     void save(std::ofstream &f) const ;

@@ -794,3 +794,29 @@ VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHomography &H)
 
   return s;
 }
+
+/*!
+  Project the current image point (in frame b) into the frame a using the
+  homography aHb.
+
+  \param ipb : Homography defining the relation between frame a and frame b.
+  \return The projected image point in the frame a.
+*/
+vpImagePoint
+vpHomography::projection(const vpImagePoint &ipb)
+{
+  vpImagePoint ipa;
+  double i = ipb.get_i();
+  double j = ipb.get_j();
+
+  double i_a = (*this)[0][0] * i + (*this)[0][1] * j + (*this)[0][2];
+  double j_a = (*this)[1][0] * i + (*this)[1][1] * j + (*this)[1][2];
+  double k_a = (*this)[2][0] * i + (*this)[2][1] * j + (*this)[2][2];
+
+  if(std::fabs(k_a) > std::numeric_limits<double>::epsilon()){
+    ipa.set_i(i_a / k_a);
+    ipa.set_j(j_a / k_a);
+  }
+
+  return ipa;
+}

@@ -57,7 +57,9 @@
 #include <limits>   // numeric_limits
 #include <vector>
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 class vpHomography;
+#endif
 class vpRect;
 
 /*!
@@ -306,8 +308,9 @@ class VISP_EXPORT vpImagePoint
   friend VISP_EXPORT vpImagePoint operator/( const vpImagePoint &ip1, const double scale );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpImagePoint& ip);
 
-  vpImagePoint projection(const vpHomography& aHb);
-
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  vp_deprecated vpImagePoint projection(const vpHomography& aHb);
+#endif
  private:
   double i,j;
 };
