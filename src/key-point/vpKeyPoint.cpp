@@ -2885,7 +2885,9 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
     listOfAffineI->resize(listOfAffineParams.size());
   }
 
+#ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
+#endif
   for(int cpt = 0; cpt < static_cast<int>(listOfAffineParams.size()); cpt++) {
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
